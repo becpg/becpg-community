@@ -344,12 +344,51 @@
 		<property name="enabled" value="${beCPG.version.cleaner.enabled}" />
 	</bean>
   
-   
-   	<bean id="batchThreadPoolExecutor" class="org.alfresco.util.ThreadPoolExecutorFactoryBean">
-      <property name="poolName" value="beCPGBatchThreadPoolExecutor" />
-      <property name="corePoolSize" value="1" />
-      <property name="maximumPoolSize" value="1" />
-      <property name="threadPriority" value="4" />
+   <bean id="batchThreadPoolExecutor0" class="org.alfresco.util.ThreadPoolExecutorFactoryBean">
+        <property name="poolName" value="beCPGBatchThreadPoolExecutor0" />
+        <property name="corePoolSize" value="1" />
+        <property name="maximumPoolSize" value="1" />
+        <property name="threadPriority" value="4" />
+    </bean>
+  
+   <bean id="batchThreadPoolExecutor1" class="org.alfresco.util.ThreadPoolExecutorFactoryBean">
+        <property name="poolName" value="beCPGBatchThreadPoolExecutor0" />
+        <property name="corePoolSize" value="1" />
+        <property name="maximumPoolSize" value="1" />
+        <property name="threadPriority" value="4" />
+    </bean>
+  
+   <bean id="batchThreadPoolExecutor2" class="org.alfresco.util.ThreadPoolExecutorFactoryBean">
+        <property name="poolName" value="beCPGBatchThreadPoolExecutor0" />
+        <property name="corePoolSize" value="1" />
+        <property name="maximumPoolSize" value="1" />
+        <property name="threadPriority" value="4" />
+    </bean>
+  
+   <bean id="batchThreadPoolExecutor3" class="org.alfresco.util.ThreadPoolExecutorFactoryBean">
+        <property name="poolName" value="beCPGBatchThreadPoolExecutor0" />
+        <property name="corePoolSize" value="1" />
+        <property name="maximumPoolSize" value="1" />
+        <property name="threadPriority" value="4" />
+    </bean>
+  
+   <bean id="batchThreadPoolExecutor4" class="org.alfresco.util.ThreadPoolExecutorFactoryBean">
+        <property name="poolName" value="beCPGBatchThreadPoolExecutor0" />
+        <property name="corePoolSize" value="1" />
+        <property name="maximumPoolSize" value="1" />
+        <property name="threadPriority" value="4" />
+    </bean>
+    
+    <bean id="batchThreadPoolExecutorMap" class="java.util.HashMap">
+        <constructor-arg>
+            <map>
+                <entry key="0" value-ref="batchThreadPoolExecutor0"/>
+                <entry key="1" value-ref="batchThreadPoolExecutor1"/>
+                <entry key="2" value-ref="batchThreadPoolExecutor2"/>
+                <entry key="3" value-ref="batchThreadPoolExecutor3"/>
+                <entry key="4" value-ref="batchThreadPoolExecutor4"/>
+            </map>
+        </constructor-arg>
     </bean>
     
     <bean id="repositoryNodeService" class="org.springframework.aop.framework.ProxyFactoryBean" >

@@ -83,6 +83,7 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.audit.helper.StopWatchSupport;
 import fr.becpg.repo.batch.BatchInfo;
+import fr.becpg.repo.batch.BatchPriority;
 import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.batch.EntityListBatchProcessWorkProvider;
 import fr.becpg.repo.cache.BeCPGCacheService;
@@ -1035,7 +1036,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		BatchInfo batchInfo = new BatchInfo(String.format("generateReports-%s", Calendar.getInstance().getTimeInMillis()),
 				"becpg.batch.entity.generateReports", entityDescription);
 		batchInfo.setRunAsSystem(true);
-
+		batchInfo.setPriority(BatchPriority.LOW);
+		
 		BatchProcessWorkProvider<NodeRef> workProvider = new EntityListBatchProcessWorkProvider<>(List.of(internalBranchToNodeRef));
 
 		BatchProcessWorker<NodeRef> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<>() {
