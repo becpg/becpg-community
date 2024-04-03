@@ -25,6 +25,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.batch.BatchInfo;
+import fr.becpg.repo.batch.BatchPriority;
 import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.batch.EntityListBatchProcessWorkProvider;
 import fr.becpg.repo.helper.AssociationService;
@@ -147,6 +148,8 @@ public class ReportTplWebScript extends AbstractWebScript {
 			BatchInfo batchInfo = new BatchInfo( String.format("generateReports-%s-%s", action, nodeRef.getId()), "becpg.batch.entityTpl.generateReports", entityDescription);
 			batchInfo.enableNotifyByMail("generate-reports", null);
 			batchInfo.setRunAsSystem(true);
+			batchInfo.setPriority(BatchPriority.VERY_LOW);
+			
 			BatchProcessWorkProvider<NodeRef> workProvider = new EntityListBatchProcessWorkProvider<>(refs);
 
 			BatchProcessWorker<NodeRef> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<>() {
@@ -180,6 +183,8 @@ public class ReportTplWebScript extends AbstractWebScript {
 
 		BatchInfo batchInfo = new BatchInfo( String.format("deleteReports-%s",nodeRef.getId()), "becpg.batch.entityTpl.deleteReports");
 		batchInfo.setRunAsSystem(true);
+		batchInfo.setPriority(BatchPriority.VERY_LOW);
+		
 		BatchProcessWorkProvider<AssociationRef> workProvider = new EntityListBatchProcessWorkProvider<>(assocRefs);
 
 		BatchProcessWorker<AssociationRef> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<>() {
