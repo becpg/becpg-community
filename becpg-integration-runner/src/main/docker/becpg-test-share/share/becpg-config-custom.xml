@@ -1,0 +1,42 @@
+<alfresco-config>
+
+   <!-- Global config section -->
+   <config replace="true">
+      <flags>
+         <!--
+            Developer debugging setting to turn on DEBUG mode for client scripts in the browser
+         -->
+         <client-debug>true</client-debug>
+
+         <!--
+            LOGGING can always be toggled at runtime when in DEBUG mode (Ctrl, Ctrl, Shift, Shift).
+            This flag automatically activates logging on page load.
+         -->
+         <client-debug-autologging>false</client-debug-autologging>
+      </flags>
+   </config>
+   
+   <config evaluator="string-compare" condition="WebFramework">
+      <web-framework>
+         <!-- SpringSurf Autowire Runtime Settings -->
+         <!-- 
+              Developers can set mode to 'development' to disable; SpringSurf caches,
+              FreeMarker template caching and Rhino JavaScript compilation.
+         -->
+         <autowire>
+            <!-- Pick the mode: "production" or "development" -->
+            <mode>production</mode>
+         </autowire>
+<!-- 
+		<aggregate-dependencies>true</aggregate-dependencies>
+		<generate-css-data-images>true</generate-css-data-images> 
+ -->
+         <!-- Allows extension modules with <auto-deploy> set to true to be automatically deployed -->
+         <module-deployment>
+            <mode>manual</mode>
+            <enable-auto-deploy-modules>true</enable-auto-deploy-modules>
+         </module-deployment>
+      </web-framework>
+   </config>
+
+</alfresco-config>
