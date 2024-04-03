@@ -13,7 +13,7 @@ import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
-import fr.becpg.repo.survey.data.Survey;
+import fr.becpg.repo.survey.data.SurveyList;
 
 /**
  * <p>FinishedProductData class.</p>
@@ -71,7 +71,7 @@ public class FinishedProductData extends ProductData {
 		return this;
 	}
 
-	public FinishedProductData withSurveyList(List<Survey> surveyList) {
+	public FinishedProductData withSurveyList(List<SurveyList> surveyList) {
 		setSurveyList(surveyList);
 		return this;
 	}

@@ -1,4 +1,4 @@
-package fr.becpg.repo.web.scripts.survey;
+package fr.becpg.repo.survey.web.scripts;
 
 import java.io.IOException;
 
