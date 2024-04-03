@@ -61,6 +61,7 @@ import fr.becpg.model.DataListModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.batch.BatchInfo;
+import fr.becpg.repo.batch.BatchPriority;
 import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.batch.EntityListBatchProcessWorkProvider;
 import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
@@ -616,7 +617,8 @@ public class EntityTplServiceImpl implements EntityTplService {
 		BatchInfo batchInfo = new BatchInfo(String.format("formulateEntities-%s", tplNodeRef.getId()), "becpg.batch.entityTpl.formulateEntities");
 		batchInfo.enableNotifyByMail("entitiesTemplate.formulate", String.format(ASYNC_ACTION_URL_PREFIX, tplNodeRef.toString()));
 		batchInfo.setRunAsSystem(true);
-
+		batchInfo.setPriority(BatchPriority.LOW);
+		
 		BatchProcessWorkProvider<NodeRef> workProvider = createWorkProcessWorkProvider(tplNodeRef, false);
 
 		BatchProcessWorker<NodeRef> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<>() {
