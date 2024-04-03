@@ -7,12 +7,12 @@ import java.util.Map.Entry;
 import java.util.Optional;
 
 import fr.becpg.repo.formulation.FormulationBaseHandler;
-import fr.becpg.repo.product.data.SurveyableEntity;
 import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
-import fr.becpg.repo.survey.data.Survey;
+import fr.becpg.repo.survey.data.SurveyList;
 import fr.becpg.repo.survey.data.SurveyQuestion;
+import fr.becpg.repo.survey.data.SurveyableEntity;
 
 /**
  * 
@@ -47,7 +47,7 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 			Map<String, Integer> scoresPerCriterion = new HashMap<>();
 			Map<String, Integer> nbOfQuestionsPerCriterion = new HashMap<>();
 
-			for (Survey s : formulatedEntity.getSurveyList()) {
+			for (SurveyList s : formulatedEntity.getSurveyList()) {
 
 				SurveyQuestion question = (SurveyQuestion) alfrescoRepository.findOne(s.getQuestion());
 
