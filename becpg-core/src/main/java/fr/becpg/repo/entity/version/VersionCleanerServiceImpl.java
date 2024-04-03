@@ -38,6 +38,7 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.batch.BatchInfo;
+import fr.becpg.repo.batch.BatchPriority;
 import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.batch.BatchStep;
 import fr.becpg.repo.batch.BatchStepAdapter;
@@ -276,7 +277,7 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 	private void convertAndDeleteVersions(int maxProcessedNodes, String tenantDomain, String path) {
 		BatchInfo batchInfo = new BatchInfo("cleanVersions." + tenantDomain + "." + UUID.randomUUID(), "becpg.batch.versionCleaner.cleanVersions");
 		batchInfo.setRunAsSystem(true);
-		batchInfo.setPriority(BatchInfo.LOW_PRIORITY);
+		batchInfo.setPriority(BatchPriority.VERY_LOW);
 
 		BatchProcessWorker<NodeRef> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<>() {
 
@@ -378,6 +379,7 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 		
 		BatchInfo batchInfo = new BatchInfo("cleanOrphanVersions." + tenantDomain, "becpg.batch.versionCleaner.cleanOrphanVersions");
 		batchInfo.setRunAsSystem(true);
+		batchInfo.setPriority(BatchPriority.VERY_LOW);
 		
 		List<NodeRef> entityNodeRefs = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			
