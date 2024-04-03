@@ -52,6 +52,7 @@ import fr.becpg.config.mapping.MappingException;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.batch.BatchInfo;
+import fr.becpg.repo.batch.BatchPriority;
 import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.batch.BatchStep;
 import fr.becpg.repo.batch.BatchStepAdapter;
@@ -187,6 +188,7 @@ public class ImportServiceImpl implements ImportService {
 		
 		batchInfo.setWorkerThreads(1);
 		batchInfo.setBatchSize(1);
+		batchInfo.setPriority(BatchPriority.VERY_HIGH);
 		
 		BatchStep<Integer> batchStep = new BatchStep<>();
 		

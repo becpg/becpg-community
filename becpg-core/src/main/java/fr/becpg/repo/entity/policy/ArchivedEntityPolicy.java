@@ -14,6 +14,7 @@ import org.alfresco.service.namespace.QName;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.BeCPGModel.EntityFormat;
 import fr.becpg.repo.batch.BatchInfo;
+import fr.becpg.repo.batch.BatchPriority;
 import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.batch.BatchStep;
 import fr.becpg.repo.batch.EntityListBatchProcessWorkProvider;
@@ -80,7 +81,7 @@ public class ArchivedEntityPolicy extends AbstractBeCPGPolicy implements OnAddAs
 				BatchInfo batchInfo = new BatchInfo("entityArchiving", "becpg.batch.entityArchiving",
 						entityDescription);
 				batchInfo.setRunAsSystem(true);
-
+				batchInfo.setPriority(BatchPriority.HIGH);
 				BatchStep<NodeRef> formulationStep = new BatchStep<>();
 				formulationStep.setStepDescId("becpg.batch.entityArchiving.formulation");
 				formulationStep.setWorkProvider(new EntityListBatchProcessWorkProvider<>(List.of(nodeRef)));
@@ -120,6 +121,7 @@ public class ArchivedEntityPolicy extends AbstractBeCPGPolicy implements OnAddAs
 				BatchInfo batchInfo = new BatchInfo("entityUnarchiving", "becpg.batch.entityUnarchiving",
 						entityDescription);
 				batchInfo.setRunAsSystem(true);
+				batchInfo.setPriority(BatchPriority.HIGH);
 				BatchStep<NodeRef> batchStep = new BatchStep<>();
 
 				batchStep.setWorkProvider(new EntityListBatchProcessWorkProvider<>(List.of(nodeRef)));

@@ -60,6 +60,7 @@ import fr.becpg.repo.audit.model.AuditType;
 import fr.becpg.repo.audit.plugin.impl.ActivityAuditPlugin;
 import fr.becpg.repo.audit.service.BeCPGAuditService;
 import fr.becpg.repo.batch.BatchInfo;
+import fr.becpg.repo.batch.BatchPriority;
 import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.batch.EntityListBatchProcessWorkProvider;
 import fr.becpg.repo.entity.EntityDictionaryService;
@@ -1058,6 +1059,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 		BatchInfo batchInfo = new BatchInfo("cleanActivities", "becpg.batch.activity.cleanActivities");
 		batchInfo.setRunAsSystem(true);
+		batchInfo.setPriority(BatchPriority.VERY_LOW);
 
 		BatchProcessWorkProvider<NodeRef> workProvider = createActivityProcessWorkProvider();
 
