@@ -14,7 +14,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 @AlfType
 @AlfQname(qname = "survey:surveyList")
-public class Survey extends BeCPGDataObject {
+public class SurveyList extends BeCPGDataObject {
 
 	/**
 	 * 
@@ -85,7 +85,7 @@ public class Survey extends BeCPGDataObject {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Survey other = (Survey) obj;
+		SurveyList other = (SurveyList) obj;
 		return Objects.equals(choices, other.choices) && Objects.equals(comment, other.comment) && Objects.equals(question, other.question);
 	}
 

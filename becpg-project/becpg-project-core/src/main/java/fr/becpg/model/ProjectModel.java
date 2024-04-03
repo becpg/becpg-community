@@ -244,8 +244,7 @@ public interface ProjectModel {
 	QName PROP_NOTIFICATION_INITIAL_VALUE = QName.createQName(PROJECT_URI, "notificationInitialValue");
 	QName ASSOC_NOTIFICATION_AUTHORITIES = QName.createQName(PROJECT_URI, "notificationAuthorities");
 
-	// Project survey
-	/** Constant <code>PROP_QNAME_DELEGATION_STATE</code> */
-	QName PROP_QNAME_SURVEY_CRITERION = QName.createQName(PROJECT_URI, "slCriterion");
+
+	QName PROP_SL_CRITERION = QName.createQName(PROJECT_URI, "slCriterion");
 
 }

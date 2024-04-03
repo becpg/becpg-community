@@ -28,7 +28,7 @@ import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.survey.SurveyModel;
 import fr.becpg.repo.survey.SurveyService;
-import fr.becpg.repo.survey.data.Survey;
+import fr.becpg.repo.survey.data.SurveyList;
 import fr.becpg.repo.survey.data.SurveyQuestion;
 
 /**
@@ -78,7 +78,7 @@ public class SurveyServiceImpl implements SurveyService {
 
 			Set<SurveyQuestion> questions = new HashSet<>();
 
-			for (Survey survey : getSurveys(entityNodeRef, dataListName)) {
+			for (SurveyList survey : getSurveys(entityNodeRef, dataListName)) {
 				JSONObject value = new JSONObject();
 
 				SurveyQuestion surveyQuestion = (SurveyQuestion) alfrescoRepository.findOne(survey.getQuestion());
@@ -120,7 +120,7 @@ public class SurveyServiceImpl implements SurveyService {
 			String strData = data.getString("data");
 
 			JSONArray values = new JSONArray(strData);
-			for (Survey survey : getSurveys(entityNodeRef, dataListName)) {
+			for (SurveyList survey : getSurveys(entityNodeRef, dataListName)) {
 				List<NodeRef> choices = new LinkedList<>();
 				survey.setComment(null);
 
@@ -164,7 +164,7 @@ public class SurveyServiceImpl implements SurveyService {
 		return new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, id);
 	}
 
-	private List<Survey> getSurveys(NodeRef entityNodeRef, String dataListName) {
+	private List<SurveyList> getSurveys(NodeRef entityNodeRef, String dataListName) {
 
 		NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
 		if (listContainerNodeRef != null) {
@@ -173,7 +173,7 @@ public class SurveyServiceImpl implements SurveyService {
 			if (dataListNodeRef != null) {
 
 				return entityListDAO.getListItems(dataListNodeRef, null).stream().map(el -> {
-					Survey s = (Survey) alfrescoRepository.findOne(el);
+					SurveyList s = (SurveyList) alfrescoRepository.findOne(el);
 					s.setParentNodeRef(dataListNodeRef);
 					return s;
 				}).collect(Collectors.toCollection(LinkedList::new));

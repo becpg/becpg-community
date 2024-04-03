@@ -46,12 +46,14 @@
 		<property name="models">
 			<list>
 				<value>alfresco/module/${pom.artifactId}/model/projectModel.xml</value>
+                <value>alfresco/module/${pom.artifactId}/model/surveyModel.xml</value>
 			</list>
 		</property>
 
 		<property name="labels">
 			<list>
 				<value>alfresco/module/${pom.artifactId}/model/projectModel</value>
+				<value>alfresco/module/${pom.artifactId}/model/surveyModel</value>
 			</list>
 		</property>
 	</bean>
@@ -158,6 +160,8 @@
 	</bean>
 
 
+
+ 
 	<!-- Webscripts -->
 	<bean id="webscript.fr.becpg.project.projectModuleInfo.get" class="fr.becpg.repo.project.web.scripts.ProjectModuleInfoWebScript" parent="webscript">
 		<property name="nodeService" ref="NodeService" />
@@ -180,6 +184,17 @@
     	<property name="nodeService" ref="nodeService" />
     	<property name="sysAdminParams" ref="sysAdminParams" />
     </bean>
+    
+       <!-- Survey -->
+    
+    <bean id="webscript.fr.becpg.survey.survey.get" class="fr.becpg.repo.survey.web.scripts.SurveyWebScript" parent="webscript">
+      	<property name="surveyService" ref="surveyService"/>
+      	<property name="nodeService" ref="NodeService"/>
+      	<property name="permissionService" ref="permissionService"/>
+   	</bean>
+   	
+   	<alias alias="webscript.fr.becpg.survey.survey.post" name="webscript.fr.becpg.survey.survey.get"/>
+    
 	
    <!--                 -->
    <!-- Scheduled tasks -->
