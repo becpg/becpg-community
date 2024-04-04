@@ -81,14 +81,11 @@ public class DecernisServiceImpl implements DecernisService {
 	@Value("#{new Boolean('${beCPG.formulation.specification.addInfoReqCtrl}'.trim())}")
 	private Boolean addInfoReqCtrl;
 
-	private RestTemplate restTemplate;
-
 	/**
 	 * <p>Constructor for DecernisServiceImpl.</p>
 	 */
 	public DecernisServiceImpl() {
 		super();
-		restTemplate = new RestTemplate();
 	}
 
 	// 1, Food Additives
@@ -138,6 +135,9 @@ public class DecernisServiceImpl implements DecernisService {
 		if (logger.isTraceEnabled()) {
 			logger.trace("GET url: " + url + " params: " + params);
 		}
+		
+		RestTemplate restTemplate = new RestTemplate();
+		
 		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, createEntity(null), String.class, params);
 
 		if (HttpStatus.OK.equals(response.getStatusCode()) && (response.getBody() != null)) {
@@ -250,6 +250,9 @@ public class DecernisServiceImpl implements DecernisService {
 							if (logger.isTraceEnabled()) {
 								logger.trace("GET url: " + url + " params: " + params);
 							}
+							
+							RestTemplate restTemplate = new RestTemplate();
+							
 							ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, createEntity(null), String.class, params);
 
 							if ((response != null) && HttpStatus.OK.equals(response.getStatusCode()) && (response.getBody() != null)) {
@@ -378,6 +381,7 @@ public class DecernisServiceImpl implements DecernisService {
 			if (logger.isTraceEnabled()) {
 				logger.trace("POST url: " + url + " body: " + data);
 			}
+			RestTemplate restTemplate = new RestTemplate();
 			JSONObject jsonObject = new JSONObject(restTemplate.postForObject(url, request, String.class));
 			if (jsonObject.has("id")) {
 				return jsonObject.get("id").toString();
@@ -397,6 +401,7 @@ public class DecernisServiceImpl implements DecernisService {
 		if (logger.isTraceEnabled()) {
 			logger.trace("DELETE url: " + url);
 		}
+		RestTemplate restTemplate = new RestTemplate();
 		restTemplate.exchange(url, HttpMethod.DELETE, createEntity(null), String.class,
 				params);
 
@@ -450,6 +455,7 @@ public class DecernisServiceImpl implements DecernisService {
 			logger.trace("POST url: " + url + " params: " + params);
 		}
 		HttpEntity<String> entity = createEntity(null);
+		RestTemplate restTemplate = new RestTemplate();
 		JSONObject jsonObject = new JSONObject(restTemplate.postForObject(url, entity, String.class, params));
 		if (jsonObject.has(PARAM_ANALYSIS_RESULTS) && (jsonObject.getJSONObject(PARAM_ANALYSIS_RESULTS).length() > 0)) {
 			return jsonObject;
