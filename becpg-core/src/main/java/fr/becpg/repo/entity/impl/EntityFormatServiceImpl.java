@@ -707,7 +707,9 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 		List<ChildAssociationRef> parentRefs = nodeService.getParentAssocs(originalEntity);
 		
 		for (AssociationRef assocRef : assocRefs) {
-			refs.add(assocRef.getSourceRef());
+			if (!assocRef.getTypeQName().equals(ContentModel.ASSOC_ORIGINAL)) {
+				refs.add(assocRef.getSourceRef());
+			}
 		}
 		
 		for (ChildAssociationRef parentRef : parentRefs) {
@@ -716,7 +718,7 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 		
 		for (NodeRef ref : refs) {
 			
-			NodeRef entitySource = entityService.getEntityNodeRef(ref, BeCPGModel.TYPE_ENTITY_V2);
+			NodeRef entitySource = entityService.getEntityNodeRef(ref, nodeService.getType(ref));
 			
 			if (entitySource != null) {
 				
