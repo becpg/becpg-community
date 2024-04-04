@@ -207,6 +207,10 @@ function getNode(node) {
  * @param {boolean} exactLocale
  * @returns {string} node multilingual property value for given locale or empty
  */
+function getMLProp(node, propName, locale) {
+	return getMLProp(node, propName, locale, false);
+}
+
 function getMLProp(node, propName, locale, exactLocale) {
 	return isEmpty(node) ? "" : orEmpty(bcpg.getMLProperty(getNode(node), propName, locale, exactLocale));
 }
@@ -220,6 +224,10 @@ function getMLProp(node, propName, locale, exactLocale) {
  * @param {boolean} exactLocale 
  * @returns {string} node multilingual property value for given locale or empty
  */
+function mlPropValue(node, propName, locale) {
+	return getMLProp(node, propName, locale, false);
+}
+
 function mlPropValue(node, propName, locale, exactLocale) {
 	return getMLProp(node, propName, locale, exactLocale);
 }
