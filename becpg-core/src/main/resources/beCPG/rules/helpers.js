@@ -143,7 +143,7 @@ const SUPPLIER_PORTAL_SITE_ID = "supplier-portal";
  * @returns {boolean} true if value is empty or null
  */
 function isNullOrEmpty(value) {
-	 return value == null || value === "" || (typeof value === 'string' && value.trim() === "");
+	 return value == null || value === "";
 }
 
 /**
