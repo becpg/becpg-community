@@ -481,6 +481,10 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * @param exactLocale a {@link java.lang.Boolean} object.
 	 * @return a {@link java.lang.String} object.
 	 */
+	public String getMLProperty(ScriptNode sourceNode, String propQName, String locale) {
+		return getMLProperty(sourceNode, propQName, locale, false);
+	}
+	
 	public String getMLProperty(ScriptNode sourceNode, String propQName, String locale, Boolean exactLocale) {
 		
 		MLText mlText = (MLText) mlNodeService.getProperty(sourceNode.getNodeRef(), getQName(propQName));
