@@ -7,6 +7,7 @@ import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 
 /**
  * 
+ * @author frederic
  */
 public interface SurveyableEntity extends FormulatedEntity {
 
@@ -18,9 +19,8 @@ public interface SurveyableEntity extends FormulatedEntity {
 
 	void setScoreList(List<ScoreListDataItem> scoreList);
 
-// TODO	
-//	Integer getScore();
-//
-//	void setScore(Integer score);
+	Integer getScore();
+
+	void setScore(Integer score);
 
 }
