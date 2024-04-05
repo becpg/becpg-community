@@ -205,7 +205,7 @@
 					<property name="nodeService" ref="nodeService" />
 				</bean>
 				<bean parent="abstractSimpleFormulationHandler" class="fr.becpg.repo.product.formulation.SvhcCalculatingFormulationHandler" />
-				<bean class="fr.becpg.repo.product.formulation.ScoreListFormulationHandler">
+				<bean class="fr.becpg.repo.project.formulation.ScoreListFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.FormulaFormulationHandler">
@@ -263,7 +263,7 @@
 	<bean id="supplierFormulationChain" class="fr.becpg.repo.formulation.FormulationChain" init-method="init">
 		<property name="handlers">
 			<list>
-				<bean class="fr.becpg.repo.product.formulation.ScoreListFormulationHandler">
+				<bean class="fr.becpg.repo.project.formulation.ScoreListFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 				</bean>
 				<bean class="fr.becpg.repo.formulation.impl.ScriptsFormulationHandler">
@@ -278,6 +278,28 @@
 		</property>
 		<property name="formulationService" ref="formulationService" />
 		<property name="contextClass" value="fr.becpg.repo.product.data.SupplierData" />
+	</bean>
+	
+		
+	
+	<bean id="clientFormulationChain" class="fr.becpg.repo.formulation.FormulationChain" init-method="init">
+		<property name="handlers">
+			<list>
+				<bean class="fr.becpg.repo.project.formulation.ScoreListFormulationHandler">
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+				</bean>
+				<bean class="fr.becpg.repo.formulation.impl.ScriptsFormulationHandler">
+					<property name="nodeService" ref="nodeService" />
+					<property name="namespaceService" ref="namespaceService" />
+					<property name="scriptService" ref="scriptService" />
+					<property name="formulaService" ref="formulaService" />
+					<property name="contentService" ref="contentService" />
+					<property name="associationService" ref="associationService" />
+				</bean>
+			</list>
+		</property>
+		<property name="formulationService" ref="formulationService" />
+		<property name="contextClass" value="fr.becpg.repo.product.data.ClientData" />
 	</bean>
 	
 	
