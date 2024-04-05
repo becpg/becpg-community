@@ -883,6 +883,14 @@
                 <value>true</value>
             </parameter>
 		</constraint>
+		<constraint name="bcpg:percentage" type="MINMAX">
+			<parameter name="minValue">
+				<value>0</value>
+			</parameter>
+			<parameter name="maxValue">
+				<value>100</value>
+			</parameter>
+		</constraint>
 
 	</constraints>
 
@@ -1695,6 +1703,16 @@
 					<type>d:text</type>
 					<index enabled="false" />
 				</property>
+				<property name="bcpg:supplierScore">
+					<type>d:int</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
+					<constraints>
+						<constraint ref="bcpg:percentage" />
+					</constraints>
+				</property>
 			</properties>
 			<mandatory-aspects>
 				<aspect>bcpg:supplierAccountRefAspect</aspect>
@@ -1744,6 +1762,16 @@
 				<property name="bcpg:clientEmail">
 					<type>d:text</type>
 					<index enabled="false" />
+				</property>
+				<property name="bcpg:clientScore">
+					<type>d:int</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
+					<constraints>
+						<constraint ref="bcpg:percentage" />
+					</constraints>
 				</property>
 			</properties>
 			<mandatory-aspects>
@@ -4485,7 +4513,16 @@
 				<property name="bcpg:isIngListManual">
 					<type>d:boolean</type>
 				</property>
-
+				<property name="bcpg:productScore">
+					<type>d:int</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
+					<constraints>
+						<constraint ref="bcpg:percentage" />
+					</constraints>
+				</property>
 
 			</properties>
 		</aspect>
