@@ -3812,6 +3812,7 @@
 					<show id="bcpg:supplierEmail" />
 					<show id="bcpg:supplierFax" />
 					<show id="bcpg:entityTplRef" force="true" />
+					<show id="pjt:projectScore"/>
 					<show id="bcpg:parentEntityRef" />
 					
 					<!-- bcpg:location type -->
@@ -3900,6 +3901,7 @@
 							</control-param>
 						</control>
 					</field>
+					<field id="pjt:projectScore" set="mainInfo" mandatory="false" read-only="false"/>
 					<field id="cm:title" set="mainInfo" />
 
 					<field id="bcpg:supplierHierarchy1" set="mainInfo">
@@ -4062,6 +4064,7 @@
 					<show id="bcpg:supplierTel" />
 					<show id="bcpg:supplierEmail" />
 					<show id="bcpg:supplierFax" />
+					<show id="pjt:projectScore"/>
 					<!-- bcpg:location type -->
 					<show id="bcpg:locationAddress1" />
 					<show id="bcpg:locationAddress2" />
@@ -4121,6 +4124,7 @@
 						</constraint-handlers>
 					</field>
 					<field id="bcpg:supplierFax" set="mainInfo" />
+					<field id="pjt:projectScore" set="mainInfo" mandatory="false" read-only="false"/>
 					
 					<!-- bcpg:location type -->
 					<field id="bcpg:locationAddress1" help-id="becpg.forms.help.locationAddress1" set="location" />
@@ -4273,6 +4277,7 @@
 					<show id="bcpg:locationZip" />
 					<show id="bcpg:locationState" />
 					<show id="bcpg:locationCountry" />
+					<show id="pjt:projectScore" />
 					
 					<!-- local security rule -->
 					<show id="sec:securityRef" />	
@@ -4310,6 +4315,7 @@
 					<field id="bcpg:code" read-only="true" />
 					<field id="bcpg:locationAddress1" help-id="becpg.forms.help.locationAddress1" />
 					<field id="bcpg:locationAddress2" help-id="becpg.forms.help.locationAddress2" />
+					<field id="pjt:projectScore" mandatory="false" read-only="false"/>
 
 					<field id="sec:securityRef" set="securityRule" mandatory="false" read-only="false">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -4352,6 +4358,7 @@
 					<show id="bcpg:locationZip" />
 					<show id="bcpg:locationState" />
 					<show id="bcpg:locationCountry" />
+					<show id="pjt:projectScore" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:clientHierarchy1">
@@ -4375,6 +4382,7 @@
 					</field>
 					<field id="bcpg:locationAddress1" help-id="becpg.forms.help.locationAddress1" />
 					<field id="bcpg:locationAddress2" help-id="becpg.forms.help.locationAddress2" />
+					<field id="pjt:projectScore" mandatory="false" read-only="false"/>					
 					<field id="bcpg:code" read-only="true" />
 				</appearance>
 			</form>
