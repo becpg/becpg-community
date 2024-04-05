@@ -237,7 +237,8 @@
 						return asset.name != null &&
 							(asset.name != "View-documents" && asset.name != "View-reports" && asset.name != "activityList" && asset.name != "WUsed")
 							&& entity != null && (beCPG.util.contains(entity.aspects,
-								"bcpg:productAspect") || entity.type == "bcpg:productSpecification" || entity.type == "qa:batch" || entity.type == "pjt:project" || entity.type == "bcpg:productCollection" || entity.type == "bcpg:supplier") 
+								"bcpg:productAspect") || entity.type == "bcpg:productSpecification" || entity.type == "qa:batch" || entity.type == "pjt:project" 
+								|| entity.type == "bcpg:productCollection" || entity.type == "bcpg:supplier" || entity.type == "bcpg:client") 
 								&& entity.userAccess.edit && !entity.aspects.includes("bcpg:archivedEntityAspect");
 					},
 					fn: function(instance) {
