@@ -1,6 +1,8 @@
 package fr.becpg.repo.product.data;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
@@ -8,12 +10,15 @@ import fr.becpg.model.SystemState;
 import fr.becpg.repo.hierarchy.HierarchicalEntity;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.LCAListDataItem;
+import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.repository.model.StateableEntity;
+import fr.becpg.repo.survey.data.SurveyList;
+import fr.becpg.repo.survey.data.SurveyableEntity;
 
 /**
  * <p>ClientData class.</p>
@@ -23,18 +28,34 @@ import fr.becpg.repo.repository.model.StateableEntity;
  */
 @AlfType
 @AlfQname(qname = "bcpg:client")
-public class ClientData extends BeCPGDataObject implements HierarchicalEntity, StateableEntity {
-
+public class ClientData extends BeCPGDataObject implements HierarchicalEntity, StateableEntity, SurveyableEntity {
 
 	private static final long serialVersionUID = 5302327031354625757L;
 	private NodeRef hierarchy1;
 	private NodeRef hierarchy2;
 	private SystemState state = SystemState.Simulation;
-	
+	private NodeRef clientTpl;
+
+	/*
+	 * Formulation
+	 */
+	private Date formulatedDate;
+
+	private Integer reformulateCount;
+	private Integer currentReformulateCount;
+	private String formulationChainId;
+	private Boolean updateFormulatedDate = true;
+	private String requirementChecksum;
+
+	/*
+	 * Survey Score
+	 */
+	private Integer clientScore;
+
 	private List<CostListDataItem> costList;
 	private List<LCAListDataItem> lcaList;
-	
-
+	private List<ScoreListDataItem> scoreList;
+	private List<SurveyList> surveyList;
 
 	/**
 	 * <p>Getter for the field <code>state</code>.</p>
@@ -55,11 +76,11 @@ public class ClientData extends BeCPGDataObject implements HierarchicalEntity, S
 	public void setState(SystemState state) {
 		this.state = state;
 	}
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public String getEntityState() {
-		return state!=null ? state.toString() : null;
+		return state != null ? state.toString() : null;
 	}
 
 	/** {@inheritDoc} */
@@ -115,22 +136,214 @@ public class ClientData extends BeCPGDataObject implements HierarchicalEntity, S
 	public void setCostList(List<CostListDataItem> costList) {
 		this.costList = costList;
 	}
-	
+
 	@DataList
 	@AlfQname(qname = "bcpg:lcaList")
 	public List<LCAListDataItem> getLcaList() {
 		return lcaList;
 	}
-	
+
 	public void setLcaList(List<LCAListDataItem> lcaList) {
 		this.lcaList = lcaList;
 	}
-	
+
+	/**
+	 * @return the clientScore
+	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:clientScore")
+	@Override
+	public Integer getScore() {
+		return clientScore;
+	}
+
+	/**
+	 * @param clientScore the clientScore to set
+	 */
+	@Override
+	public void setScore(Integer clientScore) {
+		this.clientScore = clientScore;
+	}
+
+	/**
+	 * <p>Getter for the field <code>formulatedDate</code>.</p>
+	 *
+	 * @return a {@link java.util.Date} object.
+	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:formulatedDate")
+	@Override
+	public Date getFormulatedDate() {
+		return formulatedDate;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public void setFormulatedDate(Date formulatedDate) {
+		this.formulatedDate = formulatedDate;
+	}
+
+	/**
+	 * <p>Getter for the field <code>requirementChecksum</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:requirementChecksum")
+	@Override
+	public String getRequirementChecksum() {
+		return requirementChecksum;
+	}
+
+	/**
+	 * <p>Setter for the field <code>requirementChecksum</code>.</p>
+	 *
+	 * @param requirementChecksum a {@link java.lang.String} object.
+	 */
+	public void setRequirementChecksum(String requirementChecksum) {
+		this.requirementChecksum = requirementChecksum;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public boolean shouldUpdateFormulatedDate() {
+		return updateFormulatedDate;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public void setUpdateFormulatedDate(boolean updateFormulatedDate) {
+		this.updateFormulatedDate = updateFormulatedDate;
+	}
+
+	/**
+	 * <p>Getter for the field <code>reformulateCount</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
+	@Override
+	public Integer getReformulateCount() {
+		return reformulateCount;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public void setReformulateCount(Integer reformulateCount) {
+		this.reformulateCount = reformulateCount;
+	}
+
+	/**
+	 * <p>Getter for the field <code>currentReformulateCount</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
+	@Override
+	public Integer getCurrentReformulateCount() {
+		return currentReformulateCount;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public void setCurrentReformulateCount(Integer currentReformulateCount) {
+		this.currentReformulateCount = currentReformulateCount;
+	}
+
+	/**
+	 * <p>Getter for the field <code>formulationChainId</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
+	@Override
+	public String getFormulationChainId() {
+		return formulationChainId;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public void setFormulationChainId(String formulationChainId) {
+		this.formulationChainId = formulationChainId;
+	}
+
+	/**
+	 * <p>getFormulatedEntityTpl.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
+	@Override
+	public NodeRef getFormulatedEntityTpl() {
+		return clientTpl;
+	}
+
+	/**
+	 * <p>Getter for the field <code>surveyList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
+	@DataList
+	@AlfQname(qname = "survey:surveyList")
+	@Override
+	public List<SurveyList> getSurveyList() {
+		return surveyList;
+	}
+
+	@Override
+	public void setSurveyList(List<SurveyList> surveyList) {
+		this.surveyList = surveyList;
+	}
+
+	/**
+	 * <p>Getter for the field <code>scoreList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
+	@DataList
+	@AlfQname(qname = "pjt:scoreList")
+	@Override
+	public List<ScoreListDataItem> getScoreList() {
+		return scoreList;
+	}
+
+	/**
+	 * <p>Setter for the field <code>scoreList</code>.</p>
+	 *
+	 * @param scoreList a {@link java.util.List} object.
+	 */
+	@Override
+	public void setScoreList(List<ScoreListDataItem> scoreList) {
+		this.scoreList = scoreList;
+	}
+
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return "ClientData [name=" + name + ", hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", state="
-				+ state + "]";
+		return "ClientData [name=" + name + ", hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", state=" + state + "]";
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Objects.hash(clientScore, clientTpl, costList, currentReformulateCount, formulatedDate, formulationChainId,
+				hierarchy1, hierarchy2, lcaList, reformulateCount, requirementChecksum, scoreList, state, surveyList, updateFormulatedDate);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ClientData other = (ClientData) obj;
+		return Objects.equals(clientScore, other.clientScore) && Objects.equals(clientTpl, other.clientTpl)
+				&& Objects.equals(costList, other.costList) && Objects.equals(currentReformulateCount, other.currentReformulateCount)
+				&& Objects.equals(formulatedDate, other.formulatedDate) && Objects.equals(formulationChainId, other.formulationChainId)
+				&& Objects.equals(hierarchy1, other.hierarchy1) && Objects.equals(hierarchy2, other.hierarchy2)
+				&& Objects.equals(lcaList, other.lcaList) && Objects.equals(reformulateCount, other.reformulateCount)
+				&& Objects.equals(requirementChecksum, other.requirementChecksum) && Objects.equals(scoreList, other.scoreList)
+				&& state == other.state && Objects.equals(surveyList, other.surveyList)
+				&& Objects.equals(updateFormulatedDate, other.updateFormulatedDate);
+	}
 }
