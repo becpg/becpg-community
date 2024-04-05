@@ -41,6 +41,8 @@ import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.model.AspectAwareDataItem;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.repository.model.StateableEntity;
+import fr.becpg.repo.survey.data.SurveyList;
+import fr.becpg.repo.survey.data.SurveyableEntity;
 
 /**
  * ProjectData used to manipulate project
@@ -50,9 +52,9 @@ import fr.becpg.repo.repository.model.StateableEntity;
  */
 @AlfType
 @AlfQname(qname = "pjt:project")
-public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem, FormulatedEntity, HierarchicalEntity, StateableEntity {
+public class ProjectData extends BeCPGDataObject
+		implements AspectAwareDataItem, FormulatedEntity, HierarchicalEntity, StateableEntity, SurveyableEntity {
 
-	
 	/**
 	 * 
 	 */
@@ -83,30 +85,28 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	private Double budgetedCost = 0d;
 	private Double work = 0d;
 	private Double loggedTime = 0d;
-	
+
 	/*
 	 * Formulation
 	 */
 	private Date formulatedDate;
-	
+
 	private Integer reformulateCount;
 	private Integer currentReformulateCount;
 	private String formulationChainId;
 	private Boolean updateFormulatedDate = true;
 	private String requirementChecksum;
-	
+
 	private List<TaskListDataItem> taskList;
 	private List<DeliverableListDataItem> deliverableList;
-	private List<ScoreListDataItem> scoreList;
 	private List<LogTimeListDataItem> logTimeList;
 	private List<BudgetListDataItem> budgetList;
 	private List<InvoiceListDataItem> invoiceList;
 	private List<ExpenseListDataItem> expenseList;
-	
-	
+	private List<ScoreListDataItem> scoreList;
+	private List<SurveyList> surveyList;
+
 	private List<NodeRef> currTasks;
-
-
 
 	/**
 	 * <p>Constructor for ProjectData.</p>
@@ -132,9 +132,9 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	 * @param completionPercent a {@link java.lang.Integer} object.
 	 * @param entities a {@link java.util.List} object.
 	 */
-	public ProjectData(NodeRef nodeRef, String name, NodeRef hierarchy1, NodeRef hierarchy2, Date startDate, Date dueDate, Date completionDate, 
-			PlanningMode planningMode, Integer priority,ProjectState projectState,
-			NodeRef projectTpl, Integer completionPercent, List<NodeRef> entities) {
+	public ProjectData(NodeRef nodeRef, String name, NodeRef hierarchy1, NodeRef hierarchy2, Date startDate, Date dueDate, Date completionDate,
+			PlanningMode planningMode, Integer priority, ProjectState projectState, NodeRef projectTpl, Integer completionPercent,
+			List<NodeRef> entities) {
 		super(nodeRef, name);
 		this.hierarchy1 = hierarchy1;
 		this.hierarchy2 = hierarchy2;
@@ -147,11 +147,9 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 		this.projectTpl = projectTpl;
 		this.completionPercent = completionPercent;
 		this.entities = entities;
-		
+
 	}
 
-	
-	
 	/**
 	 * <p>Getter for the field <code>code</code>.</p>
 	 *
@@ -231,7 +229,6 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
 	}
-	
 
 	public Date getTargetStartDate() {
 		return targetStartDate;
@@ -248,17 +245,17 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:formulatedDate")
+	@Override
 	public Date getFormulatedDate() {
 		return formulatedDate;
 	}
 
 	/** {@inheritDoc} */
+	@Override
 	public void setFormulatedDate(Date formulatedDate) {
 		this.formulatedDate = formulatedDate;
 	}
-	
 
-	
 	/**
 	 * <p>Getter for the field <code>requirementChecksum</code>.</p>
 	 *
@@ -266,6 +263,7 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:requirementChecksum")
+	@Override
 	public String getRequirementChecksum() {
 		return requirementChecksum;
 	}
@@ -296,11 +294,13 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	 *
 	 * @return a {@link java.lang.Integer} object.
 	 */
+	@Override
 	public Integer getReformulateCount() {
 		return reformulateCount;
 	}
 
 	/** {@inheritDoc} */
+	@Override
 	public void setReformulateCount(Integer reformulateCount) {
 		this.reformulateCount = reformulateCount;
 	}
@@ -310,26 +310,29 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	 *
 	 * @return a {@link java.lang.Integer} object.
 	 */
+	@Override
 	public Integer getCurrentReformulateCount() {
 		return currentReformulateCount;
 	}
 
 	/** {@inheritDoc} */
+	@Override
 	public void setCurrentReformulateCount(Integer currentReformulateCount) {
 		this.currentReformulateCount = currentReformulateCount;
 	}
-	
-	
+
 	/**
 	 * <p>Getter for the field <code>formulationChainId</code>.</p>
 	 *
 	 * @return a {@link java.lang.String} object.
 	 */
+	@Override
 	public String getFormulationChainId() {
 		return formulationChainId;
 	}
 
 	/** {@inheritDoc} */
+	@Override
 	public void setFormulationChainId(String formulationChainId) {
 		this.formulationChainId = formulationChainId;
 	}
@@ -403,7 +406,7 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	@AlfQname(qname = "pjt:projectPriority")
 	public Integer getPriority() {
 		return priority;
-	}	
+	}
 
 	/**
 	 * <p>Setter for the field <code>priority</code>.</p>
@@ -433,14 +436,14 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	public void setProjectState(ProjectState projectState) {
 		this.projectState = projectState;
 	}
-	
+
 	/**
 	 * <p>getState.</p>
 	 *
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String getState() {
-		return projectState!=null ? projectState.toString() : ProjectState.Planned.toString();
+		return projectState != null ? projectState.toString() : ProjectState.Planned.toString();
 	}
 
 	/**
@@ -451,7 +454,6 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	public void setState(String state) {
 		this.projectState = ProjectState.valueOf(state);
 	}
-	
 
 	/**
 	 * <p>Getter for the field <code>projectTpl</code>.</p>
@@ -463,12 +465,13 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	public NodeRef getProjectTpl() {
 		return projectTpl;
 	}
-	
+
 	/**
 	 * <p>getFormulatedEntityTpl.</p>
 	 *
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
+	@Override
 	public NodeRef getFormulatedEntityTpl() {
 		return projectTpl;
 	}
@@ -541,7 +544,7 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	public void setLegends(List<NodeRef> legends) {
 		this.legends = legends;
 	}
-	
+
 	/**
 	 * <p>Getter for the field <code>overdue</code>.</p>
 	 *
@@ -605,6 +608,7 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:projectScore")
+	@Override
 	public Integer getScore() {
 		return score;
 	}
@@ -614,10 +618,11 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	 *
 	 * @param score a {@link java.lang.Integer} object.
 	 */
+	@Override
 	public void setScore(Integer score) {
 		this.score = score;
 	}
-	
+
 	/**
 	 * <p>Getter for the field <code>projectManager</code>.</p>
 	 *
@@ -637,7 +642,7 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	public void setProjectManager(NodeRef projectManager) {
 		this.projectManager = projectManager;
 	}
-	
+
 	/**
 	 * <p>Getter for the field <code>created</code>.</p>
 	 *
@@ -758,7 +763,6 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 		this.work = work;
 	}
 
-	
 	/**
 	 * <p>Getter for the field <code>currTasks</code>.</p>
 	 *
@@ -805,18 +809,18 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	 * @return a {@link java.util.List} object.
 	 */
 	@DataList
-	@AlfQname(qname="pjt:taskList")
+	@AlfQname(qname = "pjt:taskList")
 	public List<TaskListDataItem> getTaskList() {
 		return taskList;
 	}
-	
+
 	/**
 	 * <p>Getter for the field <code>deliverableList</code>.</p>
 	 *
 	 * @return a {@link java.util.List} object.
 	 */
 	@DataList
-	@AlfQname(qname="pjt:deliverableList")
+	@AlfQname(qname = "pjt:deliverableList")
 	public List<DeliverableListDataItem> getDeliverableList() {
 		return deliverableList;
 	}
@@ -845,7 +849,8 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	 * @return a {@link java.util.List} object.
 	 */
 	@DataList
-	@AlfQname(qname="pjt:scoreList")
+	@AlfQname(qname = "pjt:scoreList")
+	@Override
 	public List<ScoreListDataItem> getScoreList() {
 		return scoreList;
 	}
@@ -855,17 +860,18 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	 *
 	 * @param scoreList a {@link java.util.List} object.
 	 */
+	@Override
 	public void setScoreList(List<ScoreListDataItem> scoreList) {
 		this.scoreList = scoreList;
 	}
-	
+
 	/**
 	 * <p>Getter for the field <code>logTimeList</code>.</p>
 	 *
 	 * @return a {@link java.util.List} object.
 	 */
 	@DataList
-	@AlfQname(qname="pjt:logTimeList")
+	@AlfQname(qname = "pjt:logTimeList")
 	public List<LogTimeListDataItem> getLogTimeList() {
 		return logTimeList;
 	}
@@ -878,17 +884,18 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	public void setLogTimeList(List<LogTimeListDataItem> logTimeList) {
 		this.logTimeList = logTimeList;
 	}
-	
+
 	/**
 	 * <p>Getter for the field <code>budgetList</code>.</p>
 	 *
 	 * @return a {@link java.util.List} object.
 	 */
 	@DataList
-	@AlfQname(qname="pjt:budgetList")
+	@AlfQname(qname = "pjt:budgetList")
 	public List<BudgetListDataItem> getBudgetList() {
 		return budgetList;
 	}
+
 	/**
 	 * <p>Setter for the field <code>budgetList</code>.</p>
 	 *
@@ -897,17 +904,18 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	public void setBudgetList(List<BudgetListDataItem> budgetList) {
 		this.budgetList = budgetList;
 	}
-	
+
 	/**
 	 * <p>Getter for the field <code>invoiceList</code>.</p>
 	 *
 	 * @return a {@link java.util.List} object.
 	 */
 	@DataList
-	@AlfQname(qname="pjt:invoiceList")
+	@AlfQname(qname = "pjt:invoiceList")
 	public List<InvoiceListDataItem> getInvoiceList() {
 		return invoiceList;
 	}
+
 	/**
 	 * <p>Setter for the field <code>invoiceList</code>.</p>
 	 *
@@ -916,14 +924,14 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	public void setInvoiceList(List<InvoiceListDataItem> invoiceList) {
 		this.invoiceList = invoiceList;
 	}
-	
+
 	/**
 	 * <p>Getter for the field <code>expenseList</code>.</p>
 	 *
 	 * @return a {@link java.util.List} object.
 	 */
 	@DataList
-	@AlfQname(qname="pjt:expenseList")
+	@AlfQname(qname = "pjt:expenseList")
 	public List<ExpenseListDataItem> getExpenseList() {
 		return expenseList;
 	}
@@ -937,11 +945,25 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 		this.expenseList = expenseList;
 	}
 
-	
 	/** {@inheritDoc} */
 	@Override
 	public String getEntityState() {
-		return projectState!=null ? projectState.toString() : null;
+		return projectState != null ? projectState.toString() : null;
+	}
+
+	/**
+	 * <p>Getter for the field <code>surveyList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
+	@Override
+	public List<SurveyList> getSurveyList() {
+		return surveyList;
+	}
+
+	@Override
+	public void setSurveyList(List<SurveyList> surveyList) {
+		this.surveyList = surveyList;
 	}
 
 	/** {@inheritDoc} */
@@ -1166,28 +1188,14 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return "ProjectData [hierarchy1=" + hierarchy1 + ", hierarchy2="
-				+ hierarchy2 + ", startDate=" + startDate + ", dueDate="
-				+ dueDate + ", completionDate=" + completionDate
-				+ ", planningMode=" + planningMode + ", priority=" + priority
-				+ ", projectState=" + projectState + ", projectTpl="
-				+ projectTpl + ", completionPercent=" + completionPercent
-				+ ", entities=" + entities + ", legends=" + legends
-				+ ", overdue=" + overdue + ", score=" + score + ", created="
-				+ created + ", modified=" + modified + ", creator=" + creator
-				+ ", modifier=" + modifier + ", projectManager="
-				+ projectManager + ", budgetedCost=" + budgetedCost + ", work="
-				+ work + ", loggedTime=" + loggedTime + ", formulatedDate="
-				+ formulatedDate + ", reformulateCount=" + reformulateCount
-				+ ", taskList=" + taskList + ", deliverableList="
-				+ deliverableList + ", scoreList=" + scoreList
-				+ ", logTimeList=" + logTimeList + ", budgetList=" + budgetList
-				+ ", invoiceList=" + invoiceList + ", expenseList="
-				+ expenseList + "]";
+		return "ProjectData [hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", startDate=" + startDate + ", dueDate=" + dueDate
+				+ ", completionDate=" + completionDate + ", planningMode=" + planningMode + ", priority=" + priority + ", projectState="
+				+ projectState + ", projectTpl=" + projectTpl + ", completionPercent=" + completionPercent + ", entities=" + entities + ", legends="
+				+ legends + ", overdue=" + overdue + ", score=" + score + ", created=" + created + ", modified=" + modified + ", creator=" + creator
+				+ ", modifier=" + modifier + ", projectManager=" + projectManager + ", budgetedCost=" + budgetedCost + ", work=" + work
+				+ ", loggedTime=" + loggedTime + ", formulatedDate=" + formulatedDate + ", reformulateCount=" + reformulateCount + ", taskList="
+				+ taskList + ", deliverableList=" + deliverableList + ", scoreList=" + scoreList + ", logTimeList=" + logTimeList + ", budgetList="
+				+ budgetList + ", invoiceList=" + invoiceList + ", expenseList=" + expenseList + "]";
 	}
 
-
-
-	
-	
 }
