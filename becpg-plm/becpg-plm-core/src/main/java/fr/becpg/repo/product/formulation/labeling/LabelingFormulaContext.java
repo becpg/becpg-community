@@ -1196,7 +1196,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			}
 
 			detectedAllergens.add(allergenName);
-			return ma.replaceAll(allergenReplacementPattern.replace("$1", allergenName));
+			return ma.replaceFirst(allergenReplacementPattern.replace("$1", allergenName));
 		}
 
 		StringBuilder ret = new StringBuilder();
