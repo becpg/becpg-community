@@ -58,8 +58,8 @@ import fr.becpg.repo.product.data.CharactDetailsValue;
  */
 public class CharactDetailsHelper {
 
-	private static final String PREVIOUS_COST_KEY = I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_costListPreviousValue.title");
-	private static final String FUTURE_COST_KEY = I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_costListFutureValue.title");
+	private static final Map<String, String> FORECAST_KEYS = new HashMap<>();
+	
 	private static final String MINI_VALUE_KEY = I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_nutListMini.title");
 	private static final String MAXI_VALUE_KEY = I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_nutListMaxi.title");
 	private static final String LEVEL_KEY = I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_depthLevel.title");
@@ -179,10 +179,9 @@ public class CharactDetailsHelper {
 				Double currentAdditionalValue = null;
 				boolean isNutrient = key.equals(MINI_VALUE_KEY) || key.equals(MAXI_VALUE_KEY);
 
-				if (key.equals(PREVIOUS_COST_KEY)) {
-					currentAdditionalValue = charactDetailsValue.getPreviousValue();
-				} else if (key.equals(FUTURE_COST_KEY)) {
-					currentAdditionalValue = charactDetailsValue.getFutureValue();
+				if (FORECAST_KEYS.values().contains(key)) {
+					String forecastColumn = FORECAST_KEYS.keySet().stream().filter(k -> FORECAST_KEYS.get(k).equals(key)).findFirst().orElseGet(null);
+					currentAdditionalValue = charactDetailsValue.getForecastValue(forecastColumn);
 				} else if (key.equals(MINI_VALUE_KEY)) {
 					currentAdditionalValue = charactDetailsValue.getMini();
 				} else if (key.equals(MAXI_VALUE_KEY)) {
@@ -277,14 +276,15 @@ public class CharactDetailsHelper {
 
 	private static void fillAdditionalValuesMap(Map<String, String> additionalValues, CharactDetailsValue currentValue, String propName) {
 
-		if (currentValue.getPreviousValue() != null) {
-			additionalValues.put(PREVIOUS_COST_KEY, propName);
+		for (String forecastColumn : currentValue.getForecastColumns()) {
+			if (currentValue.getForecastValue(forecastColumn) != null) {
+				String forecastKey = I18NUtil.getMessage("bcpg_bcpgmodel.property." + forecastColumn.replace(":", "_") + ".title");
+				FORECAST_KEYS.put(forecastColumn, forecastKey);
+				additionalValues.put(forecastKey, propName);
+			}
 		}
-		if (currentValue.getFutureValue() != null) {
-			additionalValues.put(FUTURE_COST_KEY, propName);
-		}
+		
 		if (currentValue.getMini() != null) {
-
 			additionalValues.put(MINI_VALUE_KEY, propName);
 		}
 		if (currentValue.getMaxi() != null) {
@@ -432,10 +432,9 @@ public class CharactDetailsHelper {
 					Integer index = indexMap.get(key);
 					Double currentAdditionalValue = 0d;
 
-					if (key.equals(PREVIOUS_COST_KEY)) {
-						currentAdditionalValue = charactDetailsValue.getPreviousValue();
-					} else if (key.equals(FUTURE_COST_KEY)) {
-						currentAdditionalValue = charactDetailsValue.getFutureValue();
+					if (FORECAST_KEYS.values().contains(key)) {
+						String forecastColumn = FORECAST_KEYS.keySet().stream().filter(k -> FORECAST_KEYS.get(k).equals(key)).findFirst().orElseGet(null);
+						currentAdditionalValue = charactDetailsValue.getForecastValue(forecastColumn);
 					} else if (key.equals(MINI_VALUE_KEY)) {
 						currentAdditionalValue = charactDetailsValue.getMini();
 					} else if (key.equals(MAXI_VALUE_KEY)) {

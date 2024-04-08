@@ -259,8 +259,9 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 						minMaxValueDataItem.setMaxi(null);
 					}
 					if (sl instanceof ForecastValueDataItem forecastValueDataItem) {
-						forecastValueDataItem.setPreviousValue(null);
-						forecastValueDataItem.setFutureValue(null);
+						for (String forecastColumn : forecastValueDataItem.getForecastColumns()) {
+							forecastValueDataItem.setForecastValue(forecastColumn, null);
+						}
 					}
 					if (sl instanceof VariantAwareDataItem variantAwareDataItem) {
 						for (int i = 1; i <= VariantAwareDataItem.VARIANT_COLUMN_SIZE; i++) {
@@ -490,18 +491,14 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 					}
 
 					if (newSimpleListDataItem instanceof ForecastValueDataItem forecastValueDataItem) {
-						if (forecastValueDataItem.getPreviousValue() != null) {
-							forecastValueDataItem.setPreviousValue(BigDecimal
-									.valueOf(forecastValueDataItem.getPreviousValue())
-									.multiply(BigDecimal.valueOf(netQty).divide(BigDecimal.valueOf(totalQty), MathContext.DECIMAL64)).doubleValue());
+						for (String forecastColumn : forecastValueDataItem.getForecastColumns()) {
+							if (forecastValueDataItem.getForecastValue(forecastColumn) != null) {
+								forecastValueDataItem.setForecastValue(forecastColumn,
+										BigDecimal.valueOf(forecastValueDataItem.getForecastValue(forecastColumn))
+												.multiply(BigDecimal.valueOf(netQty).divide(BigDecimal.valueOf(totalQty), MathContext.DECIMAL64))
+												.doubleValue());
+							}
 						}
-
-						if (forecastValueDataItem.getFutureValue() != null) {
-							forecastValueDataItem.setFutureValue(BigDecimal
-									.valueOf(forecastValueDataItem.getFutureValue())
-									.multiply(BigDecimal.valueOf(netQty).divide(BigDecimal.valueOf(totalQty), MathContext.DECIMAL64)).doubleValue());
-						}
-
 					}
 				}
 
@@ -721,13 +718,12 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 				}
 			}
 
-			if (calculatedListItem instanceof ForecastValueDataItem) {
-				((ForecastValueDataItem) calculatedListItem)
-						.setPreviousValue(FormulationHelper.calculateValue(((ForecastValueDataItem) calculatedListItem).getPreviousValue(), qtyUsed,
-								((ForecastValueDataItem) visitedListItem).getPreviousValue(), netQty));
-				((ForecastValueDataItem) calculatedListItem)
-						.setFutureValue(FormulationHelper.calculateValue(((ForecastValueDataItem) calculatedListItem).getFutureValue(), qtyUsed,
-								((ForecastValueDataItem) visitedListItem).getFutureValue(), netQty));
+			if (calculatedListItem instanceof ForecastValueDataItem forecastListItem) {
+				for (String forecastColumn : forecastListItem.getForecastColumns()) {
+					forecastListItem.setForecastValue(forecastColumn,
+							FormulationHelper.calculateValue(forecastListItem.getForecastValue(forecastColumn), qtyUsed,
+									((ForecastValueDataItem) visitedListItem).getForecastValue(forecastColumn), netQty));
+				}
 			}
 
 			if (logger.isDebugEnabled()) {
@@ -741,11 +737,11 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 						logger.debug("charact: " + nodeService.getProperty(calculatedListItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME)
 								+ " - newMaxi : " + ((MinMaxValueDataItem) calculatedListItem).getMaxi());
 					}
-					if (calculatedListItem instanceof ForecastValueDataItem) {
-						logger.debug("charact: " + nodeService.getProperty(calculatedListItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME)
-								+ " - previousValue : " + ((ForecastValueDataItem) calculatedListItem).getPreviousValue());
-						logger.debug("charact: " + nodeService.getProperty(calculatedListItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME)
-								+ " - futureValue : " + ((ForecastValueDataItem) calculatedListItem).getFutureValue());
+					if (calculatedListItem instanceof ForecastValueDataItem forecastListItem) {
+						for (String forecastColumn : forecastListItem.getForecastColumns()) {
+							logger.debug("charact: " + nodeService.getProperty(calculatedListItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME)
+							+ " - " + forecastColumn + " : " + forecastListItem.getForecastValue(forecastColumn));
+						}
 					}
 				}
 			}
@@ -867,18 +863,17 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 											}
 										}
 
-										if (formula.contains(".value") && (formulatedCharactDataItem instanceof ForecastValueDataItem)) {
-											try {
-												exp = parser.parseExpression(formula.replace(".value", ".futureValue"));
-												((ForecastValueDataItem) formulatedCharactDataItem).setFutureValue((Double) exp.getValue(context));
-												exp = parser.parseExpression(formula.replace(".value", ".previousValue"));
-												((ForecastValueDataItem) formulatedCharactDataItem)
-														.setPreviousValue(((Double) exp.getValue(context)));
-											} catch (Exception e) {
-												((ForecastValueDataItem) formulatedCharactDataItem).setFutureValue(null);
-												((ForecastValueDataItem) formulatedCharactDataItem).setPreviousValue(null);
-												if (logger.isDebugEnabled()) {
-													logger.debug("Error in formula :" + formula, e);
+										if (formula.contains(".value") && (formulatedCharactDataItem instanceof ForecastValueDataItem forecastListItem)) {
+											for (String forecastColumn : forecastListItem.getForecastColumns()) {
+												try {
+													String forecastAccessor = forecastListItem.getForecastAccessor(forecastColumn);
+													exp = parser.parseExpression(formula.replace(".value", "." + forecastAccessor));
+													forecastListItem.setForecastValue(forecastColumn, (Double) exp.getValue(context));
+												} catch (Exception e) {
+													forecastListItem.setForecastValue(forecastColumn, null);
+													if (logger.isDebugEnabled()) {
+														logger.debug("Error in formula :" + formula, e);
+													}
 												}
 											}
 										}
