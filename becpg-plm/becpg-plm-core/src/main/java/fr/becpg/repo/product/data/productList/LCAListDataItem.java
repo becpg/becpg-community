@@ -21,7 +21,48 @@ public class LCAListDataItem extends AbstractCostListDataItem<LCAListDataItem> {
 	
 	private static final long serialVersionUID = 4160545876076772520L;
 
+	private static final String FORECAST_COLUMN_UNKNOWN = "forecastColumn unknown: ";
+
+	private static final List<ForecastContext<LCAListDataItem>> FORECAST_CONTEXTS = List.of(
+			new ForecastContext<>("bcpg:lcaListPreviousValue", "previousValue",
+					LCAListDataItem::setPreviousValue, LCAListDataItem::getPreviousValue),
+			new ForecastContext<>("bcpg:lcaListFutureValue", "futureValue",
+					LCAListDataItem::setFutureValue, LCAListDataItem::getFutureValue)
+			);
+	
+	@Override
+	public List<String> getForecastColumns() {
+		return FORECAST_CONTEXTS.stream().map(c -> c.getForecastColumn()).toList();
+	}
+	
+	private ForecastContext<LCAListDataItem> getForecastContext(String forecastColumn) {
+		for (ForecastContext<LCAListDataItem> context : FORECAST_CONTEXTS) {
+			if (context.getForecastColumn().equals(forecastColumn)) {
+				return context;
+			}
+		}
+		throw new IllegalStateException(FORECAST_COLUMN_UNKNOWN + forecastColumn);
+	}
+	
+	@Override
+	public void setForecastValue(String forecastColumn, Double value) {
+		getForecastContext(forecastColumn).setValue(this, value);
+	}
+	
+	@Override
+	public Double getForecastValue(String forecastColumn) {
+		return getForecastContext(forecastColumn).getValue(this);
+	}
+	
+	@Override
+	public String getForecastAccessor(String forecastColumn) {
+		return getForecastContext(forecastColumn).getAccessor();
+	}
+	
 	private String method;
+
+	private Double previousValue = 0d;
+	private Double futureValue = 0d;
 
 	public LCAListDataItem() {
 		super();
@@ -32,7 +73,9 @@ public class LCAListDataItem extends AbstractCostListDataItem<LCAListDataItem> {
 	}
 	
 	public LCAListDataItem(NodeRef nodeRef, Double value, String unit, Double maxi, NodeRef cost, Boolean isManual, List<NodeRef> plants, Double previousValue, Double futureValue){
-		super(nodeRef, value, unit, maxi, cost, isManual, plants, previousValue, futureValue);
+		super(nodeRef, value, unit, maxi, cost, isManual, plants);
+		this.previousValue = previousValue;
+		this.futureValue = futureValue;
 	}
 	
 	public LCAListDataItem(LCAListDataItem c){
@@ -71,11 +114,19 @@ public class LCAListDataItem extends AbstractCostListDataItem<LCAListDataItem> {
 	public Double getPreviousValue() {
 		return previousValue;
 	}
+	
+	public void setPreviousValue(Double previousValue) {
+		this.previousValue = previousValue;
+	}
 
 	@AlfProp
 	@AlfQname(qname="bcpg:lcaListFutureValue")
 	public Double getFutureValue() {
 		return futureValue;
+	}
+	
+	public void setFutureValue(Double futureValue) {
+		this.futureValue = futureValue;
 	}
 
 	@AlfProp
