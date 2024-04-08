@@ -1,7 +1,10 @@
 package fr.becpg.repo.product.data;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
@@ -16,9 +19,9 @@ public class CharactDetailsValue {
 	private NodeRef parentNodeRef;
 	private NodeRef keyNodeRef;
 	private NodeRef compositeNodeRef;
+	private List<String> forecastColumns = new ArrayList<>();
+	private Map<String, Double> forecastValues = new HashMap<>();
 	private Double value;
-	private Double previousValue;
-	private Double futureValue;
 	private Double mini;
 	private Double maxi;
 	private Integer level;
@@ -44,6 +47,21 @@ public class CharactDetailsValue {
 		this.value = value;
 		this.level = level;
 		this.unit = unit;
+	}
+	
+	public List<String> getForecastColumns() {
+		return forecastColumns;
+	}
+	
+	public void setForecastValue(String forecastColumn, Double value) {
+		if (!forecastColumns.contains(forecastColumn)) {
+			forecastColumns.add(forecastColumn);
+		}
+		this.forecastValues.put(forecastColumn, value);
+	}
+	
+	public Double getForecastValue(String forecastColumn) {
+		return forecastValues.get(forecastColumn);
 	}
 	
 	public List<CharactDetailAdditionalValue> getAdditionalValues() {
@@ -105,42 +123,6 @@ public class CharactDetailsValue {
 	 */
 	public String getUnit() {
 		return unit;
-	}
-
-	/**
-	 * <p>Getter for the field <code>previousValue</code>.</p>
-	 *
-	 * @return a {@link java.lang.Double} object.
-	 */
-	public Double getPreviousValue() {
-		return previousValue;
-	}
-
-	/**
-	 * <p>Setter for the field <code>previousValue</code>.</p>
-	 *
-	 * @param previousValue a {@link java.lang.Double} object.
-	 */
-	public void setPreviousValue(Double previousValue) {
-		this.previousValue = previousValue;
-	}
-
-	/**
-	 * <p>Getter for the field <code>futureValue</code>.</p>
-	 *
-	 * @return a {@link java.lang.Double} object.
-	 */
-	public Double getFutureValue() {
-		return futureValue;
-	}
-
-	/**
-	 * <p>Setter for the field <code>futureValue</code>.</p>
-	 *
-	 * @param futureValue a {@link java.lang.Double} object.
-	 */
-	public void setFutureValue(Double futureValue) {
-		this.futureValue = futureValue;
 	}
 
 	/**
@@ -224,18 +206,15 @@ public class CharactDetailsValue {
 			maxi += caractValue.getMaxi();
 		}
 		
-		if (caractValue.getPreviousValue() != null) {
-			if(previousValue==null) {
-				previousValue = 0d;
+		for (Entry<String, Double> entry : caractValue.forecastValues.entrySet()) {
+			String forecastColumn = entry.getKey();
+			Double forecastValue = entry.getValue();
+			if (forecastValue != null) {
+				if (getForecastValue(forecastColumn) == null) {
+					setForecastValue(forecastColumn, 0d);
+				}
+				setForecastValue(forecastColumn, getForecastValue(forecastColumn) + forecastValue);
 			}
-			previousValue += caractValue.getPreviousValue();
-		}
-		
-		if (caractValue.getFutureValue() != null) {
-			if(futureValue==null) {
-				futureValue = 0d;
-			}
-			futureValue += caractValue.getFutureValue();
 		}
 		
 		for (CharactDetailAdditionalValue additionalValue : caractValue.getAdditionalValues()) {
@@ -294,7 +273,6 @@ public class CharactDetailsValue {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((futureValue == null) ? 0 : futureValue.hashCode());
 		result = prime * result + ((keyNodeRef == null) ? 0 : keyNodeRef.hashCode());
 		result = prime * result + ((level == null) ? 0 : level.hashCode());
 		result = prime * result + ((maxi == null) ? 0 : maxi.hashCode());
@@ -302,7 +280,6 @@ public class CharactDetailsValue {
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((parentNodeRef == null) ? 0 : parentNodeRef.hashCode());
 		result = prime * result + ((compositeNodeRef == null) ? 0 : compositeNodeRef.hashCode());
-		result = prime * result + ((previousValue == null) ? 0 : previousValue.hashCode());
 		result = prime * result + ((unit == null) ? 0 : unit.hashCode());
 		result = prime * result + ((value == null) ? 0 : value.hashCode());
 		return result;
@@ -318,11 +295,6 @@ public class CharactDetailsValue {
 		if (getClass() != obj.getClass())
 			return false;
 		CharactDetailsValue other = (CharactDetailsValue) obj;
-		if (futureValue == null) {
-			if (other.futureValue != null)
-				return false;
-		} else if (!futureValue.equals(other.futureValue))
-			return false;
 		if (keyNodeRef == null) {
 			if (other.keyNodeRef != null)
 				return false;
@@ -358,11 +330,6 @@ public class CharactDetailsValue {
 				return false;
 		} else if (!compositeNodeRef.equals(other.compositeNodeRef))
 			return false;
-		if (previousValue == null) {
-			if (other.previousValue != null)
-				return false;
-		} else if (!previousValue.equals(other.previousValue))
-			return false;
 		if (unit == null) {
 			if (other.unit != null)
 				return false;
@@ -380,7 +347,7 @@ public class CharactDetailsValue {
 	@Override
 	public String toString() {
 		return "CharactDetailsValue [parentNodeRef=" + parentNodeRef + ", keyNodeRef=" + keyNodeRef + ", compositeNodeRef=" + compositeNodeRef
-				+ ", value=" + value + ", previousValue=" + previousValue + ", futureValue=" + futureValue + ", mini=" + mini + ", maxi=" + maxi
+				+ ", value=" + value + ", mini=" + mini + ", maxi=" + maxi
 				+ ", level=" + level + ", unit=" + unit + ", name=" + name + "]";
 	}
 
