@@ -100,13 +100,15 @@ public abstract class AbstractCostCharactDetailsVisitor<T extends AbstractCostLi
 							if (formulatedProduct.getUnit().isLb()) {
 								value.setValue(ProductUnit.lbToKg(value.getValue()));
 								value.setMaxi(ProductUnit.lbToKg(value.getMaxi()));
-								value.setPreviousValue(ProductUnit.lbToKg(value.getPreviousValue()));
-								value.setFutureValue(ProductUnit.lbToKg(value.getFutureValue()));
+								for (String forecastColumn : value.getForecastColumns()) {
+									value.setForecastValue(forecastColumn, ProductUnit.lbToKg(value.getForecastValue(forecastColumn)));
+								}
 							} else {
 								value.setValue(ProductUnit.GalToL(value.getValue()));
 								value.setMaxi(ProductUnit.GalToL(value.getMaxi()));
-								value.setPreviousValue(ProductUnit.GalToL(value.getPreviousValue()));
-								value.setFutureValue(ProductUnit.GalToL(value.getFutureValue()));
+								for (String forecastColumn : value.getForecastColumns()) {
+									value.setForecastValue(forecastColumn, ProductUnit.GalToL(value.getForecastValue(forecastColumn)));
+								}
 							}
 
 						}
@@ -307,18 +309,16 @@ public abstract class AbstractCostCharactDetailsVisitor<T extends AbstractCostLi
 					CharactDetailsValue key = new CharactDetailsValue(formulatedProduct.getNodeRef(), entityNodeRef, null, value, 0, unit);
 					if (!ret.isMultiple()) {
 
-						Double previous = templateCostList.getPreviousValue() != null
-								? FormulationHelper.calculateValue(0d, qtyUsed, templateCostList.getPreviousValue(), netQty)
-								: null;
-						Double future = templateCostList.getFutureValue() != null
-								? FormulationHelper.calculateValue(0d, qtyUsed, templateCostList.getFutureValue(), netQty)
-								: null;
+						for (String forecastColumn : templateCostList.getForecastColumns()) {
+							Double forecastValue = templateCostList.getForecastValue(forecastColumn) != null
+									? FormulationHelper.calculateValue(0d, qtyUsed, templateCostList.getForecastValue(forecastColumn), netQty)
+									: null;
+							key.setForecastValue(forecastColumn, forecastValue);
+						}
 						Double maxi = templateCostList.getMaxi() != null
 								? FormulationHelper.calculateValue(0d, qtyUsed, templateCostList.getMaxi(), netQty)
 								: null;
 
-						key.setPreviousValue(previous);
-						key.setFutureValue(future);
 						key.setMaxi(maxi);
 					}
 
