@@ -220,6 +220,9 @@ function getMLProp(node, propName, locale) {
 }
 
 function getMLProp(node, propName, locale, exactLocale) {
+	if(!exactLocale){
+		exactLocale = false;
+	}
 	return isEmpty(node) ? "" : orEmpty(bcpg.getMLProperty(getNode(node), propName, locale, exactLocale));
 }
 

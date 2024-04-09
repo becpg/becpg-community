@@ -90,6 +90,7 @@ public class ExcelSearchDownloadExporter extends AbstractSearchDownloadExporter 
 
 			mainType = excelReportSearchRenderer.fillSheet(sheet, Arrays.asList(entityNodeRef), excelSheetExportContext);
 
+			sheet.setForceFormulaRecalculation(true);
 			updateStatus();
 		}
 
