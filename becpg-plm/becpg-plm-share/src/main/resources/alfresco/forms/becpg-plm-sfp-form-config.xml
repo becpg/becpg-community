@@ -16,7 +16,7 @@
           <show force="true" id="bcpg:erpCode"/>
           <show force="true" id="bcpg:entityTplRef"/>
           <show force="false" id="bcpg:parentEntityRef"/>
-          <show force="false" id="pjt:projectScore"/>
+          <show force="false" id="bcpg:productScore"/>
           <show id="bcpg:suppliers" force="false" />
           <show force="true" id="bcpg:plants"/>
           <show force="true" id="bcpg:productGeoOrigin"/>
@@ -194,7 +194,7 @@
               <control-param name="excludeSources">true</control-param>
             </control>
           </field>
-          <field id="pjt:projectScore" mandatory="false" read-only="false" set="mainInfo"/>
+          <field id="bcpg:productScore" mandatory="false" read-only="false" set="mainInfo"/>
           <field id="bcpg:suppliers" mandatory="false" read-only="false" set="mainInfo"/>
           <field id="bcpg:plants" mandatory="false" read-only="false" set="mainInfo"/>
           <field id="bcpg:productGeoOrigin" mandatory="false" read-only="false" set="mainInfo"/>
@@ -1142,7 +1142,7 @@
           <show force="true" id="bcpg:erpCode"/>
           <show force="true" id="bcpg:entityTplRef"/>
           <show force="true" id="bcpg:parentEntityRef"/>
-          <show force="true" id="pjt:projectScore"/>
+          <show force="true" id="bcpg:productScore"/>
           <show force="true" id="bcpg:plants"/>
           <show force="true" id="bcpg:productGeoOrigin"/>
           <show force="true" id="bcpg:productQty"/>
@@ -1238,7 +1238,7 @@
               <control-param name="excludeSources">true</control-param>
             </control>
           </field>
-          <field id="pjt:projectScore" mandatory="false" read-only="false" set="mainInfo"/>
+          <field id="bcpg:productScore" mandatory="false" read-only="false" set="mainInfo"/>
           <field id="bcpg:plants" mandatory="false" read-only="false" set="mainInfo"/>
           <field id="bcpg:productGeoOrigin" mandatory="false" read-only="false" set="mainInfo"/>
          <set appearance="bordered-panel" id="formulation" label-id="becpg.forms.set.formulation.label" template="/org/alfresco/components/form/3-column-set.ftl"/>
