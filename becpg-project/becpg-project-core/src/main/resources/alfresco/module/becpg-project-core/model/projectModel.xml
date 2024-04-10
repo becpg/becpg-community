@@ -328,6 +328,16 @@
 		                  <facetable>true</facetable>
 		            </index>
 				</property>
+				<property name="pjt:projectScore">
+					<type>d:int</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
+					<constraints>
+						<constraint ref="pjt:percentage" />
+					</constraints>
+				</property>
 				<property name="pjt:projectBudgetedCost">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
@@ -1385,21 +1395,6 @@
 					</target>
 				</association>
 			</associations>
-		</aspect>
-		
-		<aspect name="pjt:projectScoreAspect">
-			<properties>
-				<property name="pjt:projectScore">
-					<type>d:int</type>
-					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		            </index>
-					<constraints>
-						<constraint ref="pjt:percentage" />
-					</constraints>
-				</property>
-			</properties>
 		</aspect>
 	</aspects>
 </model>
