@@ -334,7 +334,8 @@ public class CostListDataItem extends AbstractCostListDataItem<CostListDataItem>
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(futureValue, futureValuePerProduct, previousValue, previousValuePerProduct);
+		result = prime * result
+				+ Objects.hash(futureValue, futureValue2, futureValue3, futureValue4, futureValuePerProduct, previousValue, previousValuePerProduct);
 		return result;
 	}
 
@@ -347,14 +348,17 @@ public class CostListDataItem extends AbstractCostListDataItem<CostListDataItem>
 		if (getClass() != obj.getClass())
 			return false;
 		CostListDataItem other = (CostListDataItem) obj;
-		return Objects.equals(futureValue, other.futureValue) && Objects.equals(futureValuePerProduct, other.futureValuePerProduct)
-				&& Objects.equals(previousValue, other.previousValue) && Objects.equals(previousValuePerProduct, other.previousValuePerProduct);
+		return Objects.equals(futureValue, other.futureValue) && Objects.equals(futureValue2, other.futureValue2)
+				&& Objects.equals(futureValue3, other.futureValue3) && Objects.equals(futureValue4, other.futureValue4)
+				&& Objects.equals(futureValuePerProduct, other.futureValuePerProduct) && Objects.equals(previousValue, other.previousValue)
+				&& Objects.equals(previousValuePerProduct, other.previousValuePerProduct);
 	}
 
 	@Override
 	public String toString() {
-		return "CostListDataItem [previousValue=" + previousValue + ", futureValue=" + futureValue + ", previousValuePerProduct="
-				+ previousValuePerProduct + ", futureValuePerProduct=" + futureValuePerProduct + "]";
+		return "CostListDataItem [previousValue=" + previousValue + ", futureValue=" + futureValue + ", futureValue2=" + futureValue2
+				+ ", futureValue3=" + futureValue3 + ", futureValue4=" + futureValue4 + ", previousValuePerProduct=" + previousValuePerProduct
+				+ ", futureValuePerProduct=" + futureValuePerProduct + "]";
 	}
 
 }
