@@ -4,6 +4,7 @@
 package fr.becpg.repo.product.data.productList;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
@@ -174,8 +175,29 @@ public class LCAListDataItem extends AbstractCostListDataItem<LCAListDataItem> {
 	}
 
 	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Objects.hash(futureValue, method, previousValue);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		LCAListDataItem other = (LCAListDataItem) obj;
+		return Objects.equals(futureValue, other.futureValue) && Objects.equals(method, other.method)
+				&& Objects.equals(previousValue, other.previousValue);
+	}
+
+	@Override
 	public String toString() {
-		return "LcaListDataItem [value=" + value + ", unit=" + unit + ", maxi=" + maxi + ", method=" + method + ", lca=" + charact + "]";
+		return "LCAListDataItem [method=" + method + ", previousValue=" + previousValue + ", futureValue=" + futureValue + "]";
 	}
 
 }
