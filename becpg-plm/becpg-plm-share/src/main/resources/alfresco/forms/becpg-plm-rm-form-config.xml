@@ -28,7 +28,7 @@
           <show force="true" id="bcpg:productGeoOrigin"/>
           <show force="true" id="bcpg:entityTplRef"/>
           <show force="false" id="bcpg:parentEntityRef"/>
-          <show force="false" id="pjt:projectScore"/>
+          <show force="false" id="bcpg:productScore"/>
           <show force="false" id="bcpg:productUnit"/>
           <show force="true" id="bcpg:netWeight"/>
           <show force="false" id="bcpg:productDensity"/>
@@ -225,7 +225,7 @@
               <control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
             </control>
           </field>
-          <field id="pjt:projectScore" mandatory="false" read-only="false" set="mainInfo"/>
+          <field id="bcpg:productScore" mandatory="false" read-only="false" set="mainInfo"/>
           <set appearance="bordered-panel" id="consumer" label-id="becpg.forms.set.consumer.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field id="bcpg:productUnit" mandatory="false" read-only="false" set="consumer">
             <control template="/org/alfresco/components/form/controls/product-unit.ftl">
@@ -1272,7 +1272,7 @@
           <show force="true" id="bcpg:productGeoOrigin"/>
           <show force="true" id="bcpg:entityTplRef"/>
           <show force="true" id="bcpg:parentEntityRef"/>
-          <show force="false" id="pjt:projectScore"/>
+          <show force="false" id="bcpg:productScore"/>
           <show force="true" id="bcpg:productUnit"/>
           <show force="true" id="bcpg:netWeight"/>
           <show force="true" id="bcpg:productDensity"/>
@@ -1395,7 +1395,7 @@
               <control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
             </control>
           </field>
-          <field id="pjt:projectScore" mandatory="false" read-only="false" set="mainInfo"/>
+          <field id="bcpg:productScore" mandatory="false" read-only="false" set="mainInfo"/>
           <set appearance="bordered-panel" id="consumer" label-id="becpg.forms.set.consumer.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field id="bcpg:productUnit" mandatory="false" read-only="false" set="consumer">
             <control template="/org/alfresco/components/form/controls/product-unit.ftl">
