@@ -2657,7 +2657,7 @@ public class ProductData extends AbstractScorableEntity
 	 * @return the productScore
 	 */
 	@AlfProp
-	@AlfQname(qname = "pjt:projectScore")
+	@AlfQname(qname = "bcpg:productScore")
 	@Override
 	public Integer getScore() {
 		return productScore;

@@ -358,7 +358,7 @@ public class SupplierData extends BeCPGDataObject implements HierarchicalEntity,
 	 * @return the supplierScore
 	 */
 	@AlfProp
-	@AlfQname(qname = "pjt:projectScore")
+	@AlfQname(qname = "bcpg:supplierScore")
 	@Override
 	public Integer getScore() {
 		return supplierScore;
