@@ -154,13 +154,15 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 							if (!internalKeepProductUnit() && unit.isLb()) {
 								c.setValue(ProductUnit.lbToKg(c.getValue()));
 								c.setMaxi(ProductUnit.lbToKg(c.getMaxi()));
-								c.setPreviousValue(ProductUnit.lbToKg(c.getPreviousValue()));
-								c.setFutureValue(ProductUnit.lbToKg(c.getFutureValue()));
+								for (String forecastColumn : c.getForecastColumns()) {
+									c.setForecastValue(forecastColumn, ProductUnit.lbToKg(c.getForecastValue(forecastColumn)));
+								}
 							} else if (!internalKeepProductUnit() && unit.isGal()) {
 								c.setValue(ProductUnit.GalToL(c.getValue()));
 								c.setMaxi(ProductUnit.GalToL(c.getMaxi()));
-								c.setPreviousValue(ProductUnit.GalToL(c.getPreviousValue()));
-								c.setFutureValue(ProductUnit.GalToL(c.getFutureValue()));
+								for (String forecastColumn : c.getForecastColumns()) {
+									c.setForecastValue(forecastColumn, ProductUnit.GalToL(c.getForecastValue(forecastColumn)));
+								}
 							}
 						}
 					}
@@ -376,20 +378,14 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 
 		Double value = templateCostList.getValue();
 		Double maxi = templateCostList.getMaxi();
-		Double previousValue = templateCostList.getPreviousValue();
-		Double futureValue = templateCostList.getFutureValue();
 
 		if ((divide != null) && (qty != null)) {
 			if (Boolean.TRUE.equals(divide)) {
 				value = divide(value, qty);
 				maxi = divide(maxi, qty);
-				previousValue = divide(previousValue, qty);
-				futureValue = divide(futureValue, qty);
 			} else {
 				value = multiply(value, qty);
 				maxi = multiply(maxi, qty);
-				previousValue = multiply(previousValue, qty);
-				futureValue = multiply(futureValue, qty);
 			}
 		}
 
@@ -399,12 +395,20 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 		if (maxi != null) {
 			costList.setMaxi(maxi);
 		}
-		if (previousValue != null) {
-			costList.setPreviousValue(previousValue);
+		for (String forecastColumn : costList.getForecastColumns()) {
+			if (templateCostList.getForecastValue(forecastColumn) != null) {
+				Double forecastValue = templateCostList.getForecastValue(forecastColumn);
+				if ((divide != null) && (qty != null)) {
+					if (Boolean.TRUE.equals(divide)) {
+						forecastValue = divide(forecastValue, qty);
+					} else {
+						forecastValue = multiply(forecastValue, qty);
+					}
+				}
+				costList.setForecastValue(forecastColumn, forecastValue);
+			}
 		}
-		if (futureValue != null) {
-			costList.setFutureValue(futureValue);
-		}
+		
 	}
 
 	private Double divide(Double a, Double b) {
@@ -426,9 +430,9 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 
 			Double value = 0d;
 			Double maxi = 0d;
-			Double previousValue = 0d;
-			Double futureValue = 0d;
 			Map<String, Double> variantValues = new HashMap<>();
+			Map<String, Double> forecastValues = new HashMap<>();
+			
 			for (Composite<T> component : composite.getChildren()) {
 				calculateParentCost(formulatedProduct, component);
 				T costListDataItem = component.getData();
@@ -441,12 +445,17 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 				if (costListDataItem.getMaxi() != null) {
 					maxi += costListDataItem.getMaxi();
 				}
-				if (costListDataItem.getPreviousValue() != null) {
-					previousValue += costListDataItem.getPreviousValue();
+				for (String forecastColumn : costListDataItem.getForecastColumns()) {
+					if (costListDataItem.getForecastValue(forecastColumn) != null) {
+						Double forecastValue = forecastValues.get(forecastColumn);
+						if (forecastValue == null) {
+							forecastValue = 0d;
+						}
+						forecastValue += costListDataItem.getForecastValue(forecastColumn);
+						forecastValues.put(forecastColumn, forecastValue);
+					}
 				}
-				if (costListDataItem.getFutureValue() != null) {
-					futureValue += costListDataItem.getFutureValue();
-				}
+					
 				if (costListDataItem instanceof VariantAwareDataItem) {
 					for (int i = 1; i <= VariantAwareDataItem.VARIANT_COLUMN_SIZE; i++) {
 						Double variantValue = costListDataItem.getValue(VariantAwareDataItem.VARIANT_COLUMN_NAME + i);
@@ -464,8 +473,9 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 			if (!composite.isRoot()) {
 				composite.getData().setValue(value);
 				composite.getData().setMaxi(maxi);
-				composite.getData().setPreviousValue(previousValue);
-				composite.getData().setFutureValue(futureValue);
+				for (String forecastColumn : composite.getData().getForecastColumns()) {
+					composite.getData().setForecastValue(forecastColumn, forecastValues.get(forecastColumn));
+				}
 
 				if (composite.getData() instanceof VariantAwareDataItem) {
 					for (int i = 1; i <= VariantAwareDataItem.VARIANT_COLUMN_SIZE; i++) {

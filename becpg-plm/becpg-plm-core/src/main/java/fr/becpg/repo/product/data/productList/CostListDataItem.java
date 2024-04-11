@@ -25,12 +25,60 @@ import fr.becpg.repo.repository.annotation.InternalField;
 @AlfQname(qname = "bcpg:costList")
 public class CostListDataItem extends AbstractCostListDataItem<CostListDataItem> {
 	
-	
+	private static final String FORECAST_COLUMN_UNKNOWN = "forecastColumn unknown: ";
+
 	private static final long serialVersionUID = 4160545876076772520L;
 
+	private Double previousValue = 0d;
+	private Double futureValue = 0d;
+	private Double futureValue2 = 0d;
+	private Double futureValue3 = 0d;
+	private Double futureValue4 = 0d;
 	private Double previousValuePerProduct;
 	private Double futureValuePerProduct;
 		
+	private static final List<ForecastContext<CostListDataItem>> FORECAST_CONTEXTS = List.of(
+			new ForecastContext<>("bcpg:costListPreviousValue", "previousValue",
+					CostListDataItem::setPreviousValue, CostListDataItem::getPreviousValue),
+			new ForecastContext<>("bcpg:costListFutureValue", "futureValue",
+					CostListDataItem::setFutureValue, CostListDataItem::getFutureValue),
+			new ForecastContext<>("bcpg:costListFutureValue2", "futureValue2",
+					CostListDataItem::setFutureValue2, CostListDataItem::getFutureValue2),
+			new ForecastContext<>("bcpg:costListFutureValue3", "futureValue3",
+					CostListDataItem::setFutureValue3, CostListDataItem::getFutureValue3),
+			new ForecastContext<>("bcpg:costListFutureValue4", "futureValue4",
+					CostListDataItem::setFutureValue4, CostListDataItem::getFutureValue4)
+			);
+	
+	@Override
+	public List<String> getForecastColumns() {
+		return FORECAST_CONTEXTS.stream().map(c -> c.getForecastColumn()).toList();
+	}
+	
+	private ForecastContext<CostListDataItem> getForecastContext(String forecastColumn) {
+		for (ForecastContext<CostListDataItem> context : FORECAST_CONTEXTS) {
+			if (context.getForecastColumn().equals(forecastColumn)) {
+				return context;
+			}
+		}
+		throw new IllegalStateException(FORECAST_COLUMN_UNKNOWN + forecastColumn);
+	}
+	
+	@Override
+	public void setForecastValue(String forecastColumn, Double value) {
+		getForecastContext(forecastColumn).setValue(this, value);
+	}
+	
+	@Override
+	public Double getForecastValue(String forecastColumn) {
+		return getForecastContext(forecastColumn).getValue(this);
+	}
+	
+	@Override
+	public String getForecastAccessor(String forecastColumn) {
+		return getForecastContext(forecastColumn).getAccessor();
+	}
+	
 	/**
 	 * <p>Getter for the field <code>value</code>.</p>
 	 *
@@ -63,6 +111,10 @@ public class CostListDataItem extends AbstractCostListDataItem<CostListDataItem>
 	public Double getPreviousValue() {
 		return previousValue;
 	}
+	
+	public void setPreviousValue(Double previousValue) {
+		this.previousValue = previousValue;
+	}
 
 	/**
 	 * <p>Getter for the field <code>futureValue</code>.</p>
@@ -73,6 +125,38 @@ public class CostListDataItem extends AbstractCostListDataItem<CostListDataItem>
 	@AlfQname(qname="bcpg:costListFutureValue")
 	public Double getFutureValue() {
 		return futureValue;
+	}
+	
+	public void setFutureValue(Double futureValue) {
+		this.futureValue = futureValue;
+	}
+	
+	@AlfProp
+	@AlfQname(qname="bcpg:costListFutureValue2")
+	public Double getFutureValue2() {
+		return futureValue2;
+	}
+	
+	public void setFutureValue2(Double futureValue2) {
+		this.futureValue2 = futureValue2;
+	}
+	@AlfProp
+	@AlfQname(qname="bcpg:costListFutureValue3")
+	public Double getFutureValue3() {
+		return futureValue3;
+	}
+	
+	public void setFutureValue3(Double futureValue3) {
+		this.futureValue3 = futureValue3;
+	}
+	@AlfProp
+	@AlfQname(qname="bcpg:costListFutureValue4")
+	public Double getFutureValue4() {
+		return futureValue4;
+	}
+	
+	public void setFutureValue4(Double futureValue4) {
+		this.futureValue4 = futureValue4;
 	}
 
 	/**
@@ -216,7 +300,9 @@ public class CostListDataItem extends AbstractCostListDataItem<CostListDataItem>
 	 * @param futureValue a {@link java.lang.Double} object.
 	 */
 	public CostListDataItem(NodeRef nodeRef, Double value, String unit, Double maxi, NodeRef cost, Boolean isManual, List<NodeRef> plants, Double previousValue, Double futureValue){
-		super(nodeRef, value, unit, maxi, cost, isManual, plants, previousValue, futureValue);
+		super(nodeRef, value, unit, maxi, cost, isManual, plants);
+		this.previousValue = previousValue;
+		this.futureValue = futureValue;
 	}
 	
 	
@@ -228,6 +314,8 @@ public class CostListDataItem extends AbstractCostListDataItem<CostListDataItem>
 	 */
 	public CostListDataItem(CostListDataItem c){
 		super(c);	
+		this.previousValue = c.previousValue;
+		this.futureValue = c.futureValue;
 		this.previousValuePerProduct = c.previousValuePerProduct;
 		this.futureValuePerProduct = c.futureValuePerProduct;
 	}
@@ -242,12 +330,12 @@ public class CostListDataItem extends AbstractCostListDataItem<CostListDataItem>
 		return ret;
 	}
 
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(futureValuePerProduct, previousValuePerProduct);
+		result = prime * result
+				+ Objects.hash(futureValue, futureValue2, futureValue3, futureValue4, futureValuePerProduct, previousValue, previousValuePerProduct);
 		return result;
 	}
 
@@ -260,14 +348,17 @@ public class CostListDataItem extends AbstractCostListDataItem<CostListDataItem>
 		if (getClass() != obj.getClass())
 			return false;
 		CostListDataItem other = (CostListDataItem) obj;
-		return Objects.equals(futureValuePerProduct, other.futureValuePerProduct)
+		return Objects.equals(futureValue, other.futureValue) && Objects.equals(futureValue2, other.futureValue2)
+				&& Objects.equals(futureValue3, other.futureValue3) && Objects.equals(futureValue4, other.futureValue4)
+				&& Objects.equals(futureValuePerProduct, other.futureValuePerProduct) && Objects.equals(previousValue, other.previousValue)
 				&& Objects.equals(previousValuePerProduct, other.previousValuePerProduct);
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return "CostListDataItem [value=" + value + ", unit=" + unit + ", maxi=" + maxi + ", cost=" + charact + "]";
+		return "CostListDataItem [previousValue=" + previousValue + ", futureValue=" + futureValue + ", futureValue2=" + futureValue2
+				+ ", futureValue3=" + futureValue3 + ", futureValue4=" + futureValue4 + ", previousValuePerProduct=" + previousValuePerProduct
+				+ ", futureValuePerProduct=" + futureValuePerProduct + "]";
 	}
 
 }
