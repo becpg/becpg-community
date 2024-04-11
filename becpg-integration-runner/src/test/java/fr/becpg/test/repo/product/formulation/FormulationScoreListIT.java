@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.policy.BehaviourFilter;
-import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -63,6 +63,9 @@ public class FormulationScoreListIT extends PLMBaseTestCase {
 
 	@Autowired
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
+
+	@Autowired
+	protected Repository repositoryHelper;
 
 	@Test
 	public void testFormulationScore() throws Exception {
@@ -108,10 +111,9 @@ public class FormulationScoreListIT extends PLMBaseTestCase {
 	private FinishedProductData createTestEvaluationCriteria() {
 
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery();
-		queryBuilder.inPath("/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:ScoreCriteria");
 
-		ChildAssociationRef childAssocRef = nodeService.getPrimaryParent(queryBuilder.list().get(0));
-		NodeRef parent = childAssocRef.getParentRef();
+		NodeRef parent = queryBuilder.selectNodeByPath(repositoryHelper.getCompanyHome(),
+				"cm:System/cm:ProjectLists/bcpg:entityLists/cm:ScoreCriteria");
 
 		/*-- characteristics --*/
 		Map<QName, Serializable> properties = new HashMap<>();
