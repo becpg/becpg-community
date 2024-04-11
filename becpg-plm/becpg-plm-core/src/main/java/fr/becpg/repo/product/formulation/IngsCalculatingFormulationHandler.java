@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -38,6 +39,7 @@ import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
+import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
@@ -126,8 +128,6 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 					formulatedProduct.setIngList(new LinkedList<>());
 				}
 
-				// Load product specification
-
 				// IngList
 				calculateIL(formulatedProduct, reqCtrlMap);
 			}
@@ -172,9 +172,10 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		}
 
 		Set<NodeRef> visited = new HashSet<>();
+		
+		boolean shouldSort = compoList!=null && compoList.size()> 1;
 
 		Double totalQtyUsedWithYield = 0d;
-		Double totalQtyUsed = 0d;
 		Double totalVolumeUsed = 0d;
 		if (compoList != null) {
 			for (CompoListDataItem compoItem : compoList) {
@@ -190,7 +191,6 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 						Double qty = FormulationHelper.getQtyInKg(compoItem);
 						if (qty != null) {
-							totalQtyUsed += qty;
 							totalQtyUsedWithYield += (qty * FormulationHelper.getYield(compoItem)) / 100d;
 						}
 
@@ -288,8 +288,9 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		}
 
 		// sort collection
-		sortIL(formulatedProduct.getIngList());
-
+		if(shouldSort) {
+			sortIL(formulatedProduct.getIngList());
+		}
 	}
 
 	private void addReqCtrl(Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap, NodeRef reqNodeRef, RequirementType requirementType, MLText message,
@@ -417,6 +418,9 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				newIngListDataItem.setIsSupport(true);
 				ingList.add(newIngListDataItem);
 			}
+			
+			//Keep Sort
+			newIngListDataItem.setSort(ingListDataItem.getSort());
 
 			if (!retainNodes.contains(newIngListDataItem)) {
 				retainNodes.add(newIngListDataItem);
@@ -618,16 +622,16 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			int i = 1;
 
 			byParent.getOrDefault(nullPlaceholder, Collections.emptyList()).stream().sorted(Comparator
-					.comparing(IngListDataItem::getQtyPerc, Comparator.nullsFirst(Comparator.naturalOrder())).thenComparing(IngListDataItem::getName))
-					.collect(Collectors.toList()).forEach(processor::add);
+					.comparing(IngListDataItem::getQtyPerc, Comparator.nullsFirst(Comparator.naturalOrder())).thenComparing(this::getLegaleName))
+					.toList().forEach(processor::add);
 
 			while (!processor.isEmpty()) {
 				i++;
 				IngListDataItem il = processor.removeLast();
 				byParent.getOrDefault(il, Collections.emptyList()).stream()
 						.sorted(Comparator.comparing(IngListDataItem::getQtyPerc, Comparator.nullsFirst(Comparator.naturalOrder()))
-								.thenComparing(IngListDataItem::getName))
-						.collect(Collectors.toList()).forEach(processor::add);
+								.thenComparing(this::getLegaleName))
+						.toList().forEach(processor::add);
 
 				il.setSort(i);
 
@@ -636,6 +640,15 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			ingList.sort(Comparator.comparing(IngListDataItem::getSort, Comparator.nullsLast(Comparator.naturalOrder())));
 		}
 
+	}
+
+	private String getLegaleName(IngListDataItem ingListDataItem) {
+		
+		if(ingListDataItem.getIng()!=null ) {
+			IngItem ingItem  = (IngItem) alfrescoRepository.findOne(ingListDataItem.getIng());
+			return ingItem.getLegalName(Locale.getDefault());
+		}
+		return ingListDataItem.getName();
 	}
 
 }
