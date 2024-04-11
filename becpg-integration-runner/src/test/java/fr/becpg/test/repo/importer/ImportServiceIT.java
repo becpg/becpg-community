@@ -799,7 +799,7 @@ public class ImportServiceIT extends PLMBaseTestCase {
 					PlmRepoConsts.PATH_LABELCLAIMS);
 			List<NodeRef> labelClaimsFileInfo = entityListDAO.getListItems(labelClaimListsFolder, PLMModel.TYPE_LABEL_CLAIM);
 
-			Assert.assertTrue(labelClaimsFileInfo.size() == 3);
+			Assert.assertEquals(labelClaimsFileInfo.size(), 3);
 
 			for (NodeRef fileInfo : labelClaimsFileInfo) {
 				String formula = (String) nodeService.getProperty(fileInfo, PLMModel.PROP_LABEL_CLAIM_FORMULA);
