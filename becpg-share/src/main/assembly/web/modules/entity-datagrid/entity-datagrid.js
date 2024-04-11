@@ -933,7 +933,7 @@
 									: ""),
 								{
 									itemKind: "type",
-									itemId: this_getItemType(),
+									itemId: this._getItemType(),
 									formId: this.options.filterFormId != null ? this.options.filterFormId : "filter",
 									siteId: this.options.siteId,
 									list: listName
