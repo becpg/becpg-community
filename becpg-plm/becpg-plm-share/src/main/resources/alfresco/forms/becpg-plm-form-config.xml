@@ -6098,6 +6098,9 @@
 					<show id="bcpg:costListUnit" />
 					<show id="bcpg:costListPreviousValue" />
 					<show id="bcpg:costListFutureValue" />
+					<show id="bcpg:costListFutureValue2" />
+					<show id="bcpg:costListFutureValue3" />
+					<show id="bcpg:costListFutureValue4" />
 					<show id="bcpg:costListValuePerProduct" />
 					<show id="bcpg:variantColumn1" force="true" />
 					<show id="bcpg:variantColumn2" force="true" />
