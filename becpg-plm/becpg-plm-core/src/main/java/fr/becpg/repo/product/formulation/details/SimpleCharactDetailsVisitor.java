@@ -309,19 +309,15 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 						currentCharactDetailsValue = new CharactDetailsValue(formulatedProduct.getNodeRef(), partProduct.getNodeRef(),
 								componentDataList, value, currLevel, unit);
 						
-						if ((simpleCharact instanceof ForecastValueDataItem) && !charactDetails.isMultiple()) {
-							ForecastValueDataItem forecastValue = (ForecastValueDataItem) simpleCharact;
+						if ((simpleCharact instanceof ForecastValueDataItem forecastValue) && !charactDetails.isMultiple()) {
 
-							logger.debug("ForecastDataItem, prev=" + forecastValue.getPreviousValue() + ", future=" + forecastValue.getFutureValue());
-							// add future and past values
-							if (forecastValue.getPreviousValue() != null) {
-								currentCharactDetailsValue
-										.setPreviousValue(FormulationHelper.calculateValue(0d, qtyUsed, forecastValue.getPreviousValue(), netQty));
-							}
-
-							if (forecastValue.getFutureValue() != null) {
-								currentCharactDetailsValue
-										.setFutureValue(FormulationHelper.calculateValue(0d, qtyUsed, forecastValue.getFutureValue(), netQty));
+							for (String forecastColumn : forecastValue.getForecastColumns()) {
+								logger.debug("ForecastDataItem, " + forecastColumn + "=" + forecastValue.getForecastValue(forecastColumn));
+								// add future and past values
+								if (forecastValue.getForecastValue(forecastColumn) != null) {
+									currentCharactDetailsValue
+									.setForecastValue(forecastColumn, FormulationHelper.calculateValue(0d, qtyUsed, forecastValue.getForecastValue(forecastColumn), netQty));
+								}
 							}
 						}
 
