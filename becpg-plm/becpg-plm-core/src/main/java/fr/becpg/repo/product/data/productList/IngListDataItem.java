@@ -32,6 +32,7 @@ import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.annotation.InternalField;
+import fr.becpg.repo.repository.annotation.MultiLevelDataList;
 import fr.becpg.repo.repository.model.AbstractManualDataItem;
 import fr.becpg.repo.repository.model.AspectAwareDataItem;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
@@ -44,6 +45,7 @@ import fr.becpg.repo.repository.model.SimpleCharactDataItem;
  */
 @AlfType
 @AlfQname(qname = "bcpg:ingList")
+@MultiLevelDataList
 public class IngListDataItem extends AbstractManualDataItem
 		implements SimpleCharactDataItem, AspectAwareDataItem, CompositeDataItem<IngListDataItem> {
 
@@ -344,7 +346,7 @@ public class IngListDataItem extends AbstractManualDataItem
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
 	@AlfSingleAssoc
-	@DataListIdentifierAttr
+	@DataListIdentifierAttr(isDefaultPivotAssoc = false)
 	@AlfQname(qname = "bcpg:ingListIng")
 	@InternalField
 	public NodeRef getIng() {
