@@ -38,7 +38,7 @@
           <show force="false" id="bcpg:supplierRefCode"/>
           <show force="true" id="bcpg:entityTplRef"/>
           <show force="false" id="bcpg:parentEntityRef"/>
-          <show force="false" id="bcpg:productScore"/>
+          <show force="false" id="pjt:projectScore"/>
           <show force="false" id="gs1:tradeItemMarketingMessage"/>
           <show force="false" id="gs1:tradeItemFeatureBenefit"/>
           <show force="false" id="gs1:specialItemCode"/>
@@ -374,7 +374,7 @@
               <control-param name="excludeSources">true</control-param>
             </control>
           </field>          
-          <field id="bcpg:productScore" mandatory="false" read-only="false" set="mainInfo"/>
+          <field id="pjt:projectScore" mandatory="false" read-only="false" set="mainInfo"/>
           <set appearance="bordered-panel" id="marketing" label-id="becpg.forms.set.marketing.label" parent="mainTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field help-id="becpg.forms.help.gs1.tradeItemMarketingMessage" id="gs1:tradeItemMarketingMessage" mandatory="false" read-only="false" set="marketing"/>
           <field help-id="becpg.forms.help.gs1.tradeItemFeatureBenefit" id="gs1:tradeItemFeatureBenefit" mandatory="false" read-only="false" set="marketing"/>
@@ -2001,7 +2001,7 @@
           <show force="true" id="bcpg:supplierRefCode"/>
           <show force="true" id="bcpg:entityTplRef"/>
           <show force="true" id="bcpg:parentEntityRef"/>
-          <show force="false" id="bcpg:productScore"/>
+          <show force="false" id="pjt:projectScore"/>
           <show force="true" id="gs1:tradeItemMarketingMessage"/>
           <show force="true" id="gs1:tradeItemFeatureBenefit"/>
           <show force="true" id="gs1:specialItemCode"/>
@@ -2267,7 +2267,7 @@
               <control-param name="excludeSources">true</control-param>
             </control>
           </field>
-          <field id="bcpg:productScore" mandatory="false" read-only="false" set="mainInfo"/>          
+          <field id="pjt:projectScore" mandatory="false" read-only="false" set="mainInfo"/>          
           <set appearance="bordered-panel" id="marketing" label-id="becpg.forms.set.marketing.label" parent="mainTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field help-id="becpg.forms.help.gs1.tradeItemMarketingMessage" id="gs1:tradeItemMarketingMessage" mandatory="false" read-only="false" set="marketing"/>
           <field help-id="becpg.forms.help.gs1.tradeItemFeatureBenefit" id="gs1:tradeItemFeatureBenefit" mandatory="false" read-only="false" set="marketing"/>
