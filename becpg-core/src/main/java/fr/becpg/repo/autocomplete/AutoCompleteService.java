@@ -66,7 +66,7 @@ public interface AutoCompleteService {
 	final String PROP_PRODUCT_TYPE = "productType";
 	
 	final String PROP_INCLUDE_DELETED = "includeDeleted";
-
+	
 	/** Constant <code>EXTRA_PARAM="extra"</code> */
 	final String EXTRA_PARAM = "extra";
 
@@ -95,6 +95,10 @@ public interface AutoCompleteService {
 	final String EXTRA_PARAM_DEPTH_LEVEL = "depthLevel";
 
 	final String EXTRA_PARAM_TASKID = "taskId";
+	
+	final String EXTRA_PARAM_SEARCH_TEMPLATE = "searchTemplate";
+
+	
 	
 	/**
 	 * <p>suggestBySourceType.</p>
