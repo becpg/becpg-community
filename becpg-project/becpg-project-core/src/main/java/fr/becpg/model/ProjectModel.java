@@ -247,4 +247,6 @@ public interface ProjectModel {
 
 	QName PROP_SL_CRITERION = QName.createQName(PROJECT_URI, "slCriterion");
 
+	QName ASPECT_PROJECT_SCORE = QName.createQName(PROJECT_URI, "projectScoreAspect");
+
 }
