@@ -1718,6 +1718,7 @@
 			<form id="sub-datagrid-filter">
 				<field-visibility>
 					<show id="bcpg:charactName" />
+					<show id="bcpg:casNumber" force="true" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
 				<appearance>
@@ -1732,6 +1733,31 @@
 							</control-param>
 						</control>
 					</field>
+				</appearance>
+			</form>
+			
+			<form id="filter-ingList">
+				<field-visibility>
+					<show id="bcpg:charactName" />
+					<show id="bcpg:casNumber" force="true" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:charactName" label-id="becpg.forms.field.ing">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+				</appearance>
+			</form>
+			
+			
+			
+			<form id="sub-datagrid">
+				<field-visibility>
+					<show id="bcpg:ingTypeV2" force="true" />
+					<show id="bcpg:casNumber" force="true" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:ingTypeV2" read-only="true" />
+					<field id="bcpg:casNumber" read-only="true" />
 				</appearance>
 			</form>
 
@@ -6850,7 +6876,9 @@
 					<set id="1-col-2" />
 
 					<field id="bcpg:ingListIng" set="1-col-1">
-						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ing?extra.searchTemplate=%25(bcpg%3AcharactName%20bcpg%3AerpCode%20bcpg%3AlegalName%20bcpg%3AingCEECode%20bcpg%3AcasNumber%20bcpg%3AecNumber%20bcpg%3AceNumber%20bcpg%3AfdaNumber%20bcpg%3AfemaNumber%20bcpg%3AflNumber)</control-param>
+						</control>
 					</field>
 					<field id="bcpg:ingListQtyPerc" set="1-col-1">
 						<control template="/org/alfresco/components/form/controls/number-unit.ftl">
@@ -6886,7 +6914,7 @@
 
 					<field id="bcpg:parentLevel" set="1-col-2">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:ingList&#38;attributeName=bcpg:ingListIng
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:ingList&#38;attributeName=bcpg:ingListIng&#38;extra.showFullPath=true
 							</control-param>
 						</control>
 					</field>
@@ -6922,6 +6950,7 @@
 					<show id="bcpg:ingListBioOrigin" />
 					<show id="bcpg:ingListClaims" />
 					<show id="dataList_bcpg:reqCtrlList" />
+					<show id="entity_bcpg:ingListIng_bcpg:ing_asColumn" force="true" />
 					<show id="fm:commentCount" force="true" />
 					<show id="bcpg:glopTarget" />
 					<show id="bcpg:glopValue" />
@@ -6971,6 +7000,7 @@
 					<show id="bcpg:variantIds" force="true" />
 					<show id="bcpg:depthLevel" />
 					<show id="bcpg:ingListIng" />
+					<show id="entity_bcpg:ingListIng_bcpg:ing_asColumn" force="true"  />
 					<show id="bcpg:ingListQtyPerc" />
 					<show id="bcpg:ingListIsGMO" />
 					<show id="bcpg:ingListIsIonized" />
@@ -6991,7 +7021,10 @@
 			</form>
 			<form id="filter">
 				<field-visibility>
+				
+					<show id="bcpg:depthLevel" />
 					<show id="bcpg:ingListIng" />
+					<show id="entity_bcpg:ingListIng_bcpg:ing@filter-ingList" force="true" />
 					<show id="bcpg:ingListQtyPerc" />
 					<show id="bcpg:ingListQtyMini" />
 					<show id="bcpg:ingListQtyMaxi" />
@@ -7006,8 +7039,19 @@
 
 				<appearance>
 					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
+					
+					<field id="bcpg:depthLevel" set="2-col">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">0|,1|1,2|2,3|3,4|4,All|data.level.all
+							</control-param>
+						</control>
+					</field>
+					
+					<field id="entity_bcpg:ingListIng_bcpg:ing@filter-ingList" set="2-col"></field>
 					<field id="bcpg:ingListIng" set="2-col">
-						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ing?extra.searchTemplate=%25(bcpg%3AcharactName%20bcpg%3AerpCode%20bcpg%3AlegalName%20bcpg%3AingCEECode%20bcpg%3AcasNumber%20bcpg%3AecNumber%20bcpg%3AceNumber%20bcpg%3AfdaNumber%20bcpg%3AfemaNumber%20bcpg%3AflNumber)</control-param>
+						</control>
 					</field>
 					<field id="bcpg:ingListQtyPerc" set="2-col">
 						<control template="/org/alfresco/components/form/controls/number-unit.ftl">
@@ -7088,7 +7132,9 @@
 					<set id="1-col-2" />
 
 					<field id="bcpg:ingListIng" set="1-col-1">
-						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ing?extra.searchTemplate=%25(bcpg%3AcharactName%20bcpg%3AerpCode%20bcpg%3AlegalName%20bcpg%3AingCEECode%20bcpg%3AcasNumber%20bcpg%3AecNumber%20bcpg%3AceNumber%20bcpg%3AfdaNumber%20bcpg%3AfemaNumber%20bcpg%3AflNumber)</control-param>
+						</control>
 					</field>
 					<field id="bcpg:ingListQtyPerc" set="1-col-1">
 						<control template="/org/alfresco/components/form/controls/number-unit.ftl">
@@ -7123,7 +7169,7 @@
 
 					<field id="bcpg:parentLevel" set="1-col-2">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:ingList&#38;attributeName=bcpg:ingListIng
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:ingList&#38;attributeName=bcpg:ingListIng&#38;extra.showFullPath=true
 							</control-param>
 							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
