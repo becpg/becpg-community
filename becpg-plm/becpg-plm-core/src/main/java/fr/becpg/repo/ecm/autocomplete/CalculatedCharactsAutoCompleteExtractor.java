@@ -37,14 +37,16 @@ public class CalculatedCharactsAutoCompleteExtractor extends TargetAssocAutoComp
 
 			for (AutoCompleteEntry entry : suggestions) {
 				if ("labelingRuleList".equals(entry.getCssClass())) {
-					entry.setName(getParentOfLabellingListValue(new NodeRef(entry.getValue())) + " > " + entry.getName());
+					entry.setName(getParentOfLabelingListValue(new NodeRef(entry.getValue())) + " > " + entry.getName());
 				}
 			}
 		}
 		return suggestions;
 	}
+	
+	
 
-	private String getParentOfLabellingListValue(NodeRef value) {
+	private String getParentOfLabelingListValue(NodeRef value) {
 
 		String ret = "";
 		NodeRef parent = entityListDAO.getEntity(value);
