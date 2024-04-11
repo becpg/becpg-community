@@ -108,7 +108,8 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * 
  * ParentValue
  *
- * ds:  becpg/autocomplete/ParentValue?className={className}&amp;attributeName={attributeName}
+ * ds:  becpg/autocomplete/ParentValue?className={className}&amp;attributeName={attributeName}&amp;extra.showFullPath=false
+ * param: {showFullPath} false, show fullpath
  * param: {className} type of dataListItem to retrieve exclude current item
  * param: {attributeName} attribute names coma separated list that is used to filter on and display title
  * control-param: {urlParamsToPass} itemId 
@@ -142,6 +143,7 @@ public class DataListItemAutoCompletePlugin extends TargetAssocAutoCompletePlugi
 
 		NodeRef itemId = null;
 		String listName = null;
+		boolean showFullPath = false;
 
 		@SuppressWarnings("unchecked")
 		Map<String, String> extras = (HashMap<String, String>) props.get(AutoCompleteService.EXTRA_PARAM);
@@ -151,6 +153,10 @@ public class DataListItemAutoCompletePlugin extends TargetAssocAutoCompletePlugi
 			}
 			if (extras.get("dataListsName") != null) {
 				listName = extras.get("dataListsName");
+			}
+			
+			if (extras.get("showFullPath") != null) {
+				showFullPath = "true".equalsIgnoreCase(extras.get("showFullPath"));
 			}
 		}
 		String parent = (String) props.get(AutoCompleteService.PROP_PARENT);
@@ -241,7 +247,7 @@ public class DataListItemAutoCompletePlugin extends TargetAssocAutoCompletePlugi
 				if (dictionaryService.getProperty(attributeQNames.iterator().next()) != null) {
 					return suggestFromProp(dataListNodeRefs, itemId, type, attributeQNames, query, queryFilter, parent, pageNum, pageSize);
 				} else {
-					return suggestFromAssoc(sourceType, dataListNodeRefs, itemId, type, attributeQNames.iterator().next(), query, pageNum, pageSize);
+					return suggestFromAssoc(sourceType, dataListNodeRefs, itemId, type, attributeQNames.iterator().next(), query, pageNum, pageSize, showFullPath);
 				}
 			}
 
@@ -305,7 +311,7 @@ public class DataListItemAutoCompletePlugin extends TargetAssocAutoCompletePlugi
 	}
 
 	private AutoCompletePage suggestFromAssoc(String sourceType, List<NodeRef> dataListNodeRefs, NodeRef itemId, QName datalistType,
-			QName associationQName, String query, Integer pageNum, Integer pageSize) {
+			QName associationQName, String query, Integer pageNum, Integer pageSize, boolean showFullPath) {
 
 		List<AutoCompleteEntry> result = new ArrayList<>();
 		for (NodeRef dataListNodeRef : dataListNodeRefs) {
@@ -319,9 +325,15 @@ public class DataListItemAutoCompletePlugin extends TargetAssocAutoCompletePlugi
 
 						if (isQueryMatch(query, name)) {
 							String cssClass = attributeExtractorService.extractMetadata(type, targetNode);
+						
+							
 							if (SOURCE_TYPE_DATA_LIST_CHARACT.equals(sourceType)) {
 								result.add(new AutoCompleteEntry(targetNode.toString(), name, cssClass));
 							} else {
+								if(showFullPath) {
+								   name = extractHierarchyFullName(dataListItemNodeRef,associationQName, new HashSet<>() );
+								}
+								
 								result.add(new AutoCompleteEntry(dataListItemNodeRef.toString(), name, cssClass));
 							}
 
@@ -331,6 +343,26 @@ public class DataListItemAutoCompletePlugin extends TargetAssocAutoCompletePlugi
 			}
 		}
 		return new AutoCompletePage(result, pageNum, pageSize, null);
+	}
+
+	private String extractHierarchyFullName(NodeRef dataListItemNodeRef, QName associationQName, Set<NodeRef> visited) {
+		visited.add(dataListItemNodeRef);
+
+		NodeRef targetNode = associationService.getTargetAssoc(dataListItemNodeRef, associationQName);
+		String res = "";
+		if (targetNode != null) {
+			res = extractHierarchyName(targetNode);
+			NodeRef parent = (NodeRef) nodeService.getProperty(dataListItemNodeRef, BeCPGModel.PROP_PARENT_LEVEL);
+			if ((parent != null) && !visited.contains(parent)) {
+				res = extractHierarchyFullName(parent, associationQName, visited) + " > " + res;
+			}
+		}
+		return res;
+	}
+
+	private String extractHierarchyName(NodeRef nodeRef) {
+		QName type = nodeService.getType(nodeRef);
+		return attributeExtractorService.extractPropName(type, nodeRef);
 	}
 
 	private boolean accepts(NodeRef dataListItemNodeRef, NodeRef itemId, String sourceType) {
