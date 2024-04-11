@@ -60,6 +60,7 @@ public class SupplierData extends BeCPGDataObject implements HierarchicalEntity,
 	// Survey Entity
 	private List<ScoreListDataItem> scoreList;
 	private List<SurveyList> surveyList;
+	private Integer supplierScore;
 
 	/**
 	 * <p>Getter for the field <code>state</code>.</p>
@@ -191,35 +192,6 @@ public class SupplierData extends BeCPGDataObject implements HierarchicalEntity,
 		this.lcaList = lcaList;
 	}
 
-	/** {@inheritDoc} */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + Objects.hash(costList, hierarchy1, hierarchy2, plantList, state);
-		return result;
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		SupplierData other = (SupplierData) obj;
-		return Objects.equals(costList, other.costList) && Objects.equals(lcaList, other.lcaList) && Objects.equals(hierarchy1, other.hierarchy1)
-				&& Objects.equals(hierarchy2, other.hierarchy2) && Objects.equals(plantList, other.plantList) && state == other.state;
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public String toString() {
-		return "SupplierData [name=" + name + ", hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", state=" + state + "]";
-	}
-
 	/**
 	 * <p>Getter for the field <code>reformulateCount</code>.</p>
 	 *
@@ -345,6 +317,7 @@ public class SupplierData extends BeCPGDataObject implements HierarchicalEntity,
 	 */
 	@DataList
 	@AlfQname(qname = "pjt:scoreList")
+	@Override
 	public List<ScoreListDataItem> getScoreList() {
 		return scoreList;
 	}
@@ -354,6 +327,7 @@ public class SupplierData extends BeCPGDataObject implements HierarchicalEntity,
 	 *
 	 * @param scoreList a {@link java.util.List} object.
 	 */
+	@Override
 	public void setScoreList(List<ScoreListDataItem> scoreList) {
 		this.scoreList = scoreList;
 	}
@@ -365,6 +339,7 @@ public class SupplierData extends BeCPGDataObject implements HierarchicalEntity,
 	 */
 	@DataList
 	@AlfQname(qname = "survey:surveyList")
+	@Override
 	public List<SurveyList> getSurveyList() {
 		return surveyList;
 	}
@@ -374,8 +349,56 @@ public class SupplierData extends BeCPGDataObject implements HierarchicalEntity,
 	 *
 	 * @param scoreList a {@link java.util.List} object.
 	 */
+	@Override
 	public void setSurveyList(List<SurveyList> surveyList) {
 		this.surveyList = surveyList;
+	}
+
+	/**
+	 * @return the supplierScore
+	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:supplierScore")
+	@Override
+	public Integer getScore() {
+		return supplierScore;
+	}
+
+	/**
+	 * @param supplierScore the supplierScore to set
+	 */
+	@Override
+	public void setScore(Integer supplierScore) {
+		this.supplierScore = supplierScore;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Objects.hash(costList, hierarchy1, hierarchy2, plantList, state);
+		return result;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SupplierData other = (SupplierData) obj;
+		return Objects.equals(costList, other.costList) && Objects.equals(lcaList, other.lcaList) && Objects.equals(hierarchy1, other.hierarchy1)
+				&& Objects.equals(hierarchy2, other.hierarchy2) && Objects.equals(plantList, other.plantList) && state == other.state;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public String toString() {
+		return "SupplierData [name=" + name + ", hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", state=" + state + "]";
 	}
 
 }
