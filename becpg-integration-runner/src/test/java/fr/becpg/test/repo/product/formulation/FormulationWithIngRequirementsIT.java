@@ -323,7 +323,7 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 					checks++;
 					
 				} else {
-					logger.info("Unexpected rclDataItem: " + reqCtrlList.getReqMessage());
+					logger.error("Unexpected rclDataItem: " + reqCtrlList.getReqMessage());
 					fail();
 				}
 			}
