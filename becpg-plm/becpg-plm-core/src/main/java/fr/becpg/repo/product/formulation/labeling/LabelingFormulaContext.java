@@ -1772,7 +1772,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 							subLabel = getIngTextFormat(component, qtyPerc, ((CompositeLabeling) component).getIngList().size() > 1)
 									.format(new Object[] { ingName, qtyPerc,
-											renderCompositeIng((CompositeLabeling) component, subRatio, null, true, true), null, null });
+											renderCompositeIng((CompositeLabeling) component, subRatio, ingsLabelingWithYield && force100Perc ? totalWithYield : null, true, true), null, null });
 
 						} else {
 							logger.error(String.format(UNSUPPORTED_ING_TYPE, component.getName()));
