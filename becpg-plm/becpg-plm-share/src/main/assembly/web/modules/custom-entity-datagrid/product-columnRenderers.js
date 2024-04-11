@@ -83,6 +83,47 @@ if (beCPG.module.EntityDataGridRenderers) {
 
 	});
 	
+	
+
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+		propertyName: ["bcpg:ing_bcpg:ingListIng"],
+		renderer:  function(oRecord, data, label, scope, z, zz, elCell, oColumn) {
+			var url = null;
+			var toogleGroupButton = null;
+			var padding = 0;
+			if (scope.datalistMeta && scope.datalistMeta.name.indexOf("WUsed") > -1) {
+				url = beCPG.util.entityURL(data.siteId, data.value);
+			}
+
+			var tr = scope.widgets.dataTable.getTrEl(elCell);
+
+			if (oRecord.getData("itemData")["prop_bcpg_depthLevel"] && oRecord.getData("itemData")["prop_bcpg_depthLevel"].value) {
+				padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 25;
+
+				Dom.addClass(tr, "mtl-level-" + oRecord.getData("itemData")["prop_bcpg_depthLevel"].value);
+			}
+
+
+			if (false === oRecord.getData("itemData")["isLeaf"]) {
+				toogleGroupButton = '<div id="group_' + (oRecord.getData("itemData")["open"] ? "expanded" : "collapsed") + '_' + oRecord.getData("nodeRef") + '" style="margin-left:' + padding
+					+ 'px;" class="onCollapsedAndExpanded" ><a href="#" class="' + scope.id + '-action-link"><span class="gicon ggroup-'
+					+ (oRecord.getData("itemData")["open"] ? "expanded" : "collapsed") + '"></span></a></div>';
+				Dom.addClass(tr, "mtl-" + (oRecord.getData("itemData")["open"] ? "expanded" : "collapsed"));
+
+			} else if (true === oRecord.getData("itemData")["isLeaf"]) {
+				padding += 25;
+
+				Dom.addClass(tr, "mtl-leaf");
+			}
+
+
+			return (toogleGroupButton != null ? toogleGroupButton : '') + '<span class="' + data.metadata + '" ' + (toogleGroupButton == null && padding != 0 ? 'style="margin-left:' + padding + 'px;"' : '') + '>'
+				+ (url != null ? '<a href="' + url + '">' : '')
+				+ Alfresco.util.encodeHTML(data.displayValue) + (url != null ? '</a>' : '') + '</span>';
+		}
+
+	});
+
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : [ "boolean_bcpg:allergenListVoluntary", "boolean_bcpg:allergenListInVoluntary",
@@ -279,6 +320,9 @@ if (beCPG.module.EntityDataGridRenderers) {
 		}
 
 	});
+	
+	
+	
 	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
         propertyName : "bcpg:physicoChem",

@@ -14,6 +14,7 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
+import fr.becpg.repo.entity.datalist.impl.MultiLevelExtractor;
 import fr.becpg.repo.helper.impl.AttributeExtractorField;
 
 /**
@@ -24,7 +25,7 @@ import fr.becpg.repo.helper.impl.AttributeExtractorField;
  * @author matthieu
  * @version $Id: $Id
  */
-public class IngListExtractor extends SimpleCharactListExtractor {
+public class IngListExtractor extends MultiLevelExtractor {
 
 	private static final String ING_LIST = "ingList";
 
@@ -37,6 +38,7 @@ public class IngListExtractor extends SimpleCharactListExtractor {
 	/** {@inheritDoc} */
 	@Override
 	public PaginatedExtractedItems extract(DataListFilter dataListFilter, List<AttributeExtractorField> metadataFields) {
+		
 		PaginatedExtractedItems ret = super.extract(dataListFilter, metadataFields);
 
 		if (!(RepoConsts.FORMAT_CSV.equals(dataListFilter.getFormat()) || RepoConsts.FORMAT_XLSX.equals(dataListFilter.getFormat()))) {
@@ -44,6 +46,7 @@ public class IngListExtractor extends SimpleCharactListExtractor {
 			Map<String, Object> totalRow = new HashMap<>(20);
 
 			totalRow.put(PROP_TYPE, "total");
+			totalRow.put(PROP_LEAF, true);
 
 			Map<String, Map<String, Boolean>> permissions = new HashMap<>(1);
 			Map<String, Boolean> userAccess = new HashMap<>(5);
@@ -138,7 +141,7 @@ public class IngListExtractor extends SimpleCharactListExtractor {
 	/** {@inheritDoc} */
 	@Override
 	public boolean applyTo(DataListFilter dataListFilter) {
-		return (dataListFilter.getDataListName() != null) && dataListFilter.getDataListName().equals(ING_LIST);
+		return !dataListFilter.isSimpleItem() && (dataListFilter.getDataListName() != null) && dataListFilter.getDataListName().equals(ING_LIST);
 	}
 
 }

@@ -59,10 +59,7 @@
 		<property name="alfrescoRepository" ref="alfrescoRepository"/>
 	</bean>
 	
-	<bean id="ingListExtractor" parent="simpleCharactListExtractor" class="fr.becpg.repo.product.extractor.IngListExtractor">
-		<property name="defaultExtractor" value="false"/>
-		<property name="alfrescoRepository" ref="alfrescoRepository"/>
-	</bean>
+	<bean id="ingListExtractor" parent="multiLevelExtractor" class="fr.becpg.repo.product.extractor.IngListExtractor"></bean>
 	
 	<bean id="ingRegulatoryListExtractor" parent="simpleCharactListExtractor" class="fr.becpg.repo.product.extractor.IngRegulatoryListExtractor">
 		<property name="defaultExtractor" value="false"/>
