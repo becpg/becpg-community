@@ -151,7 +151,7 @@ public class ClientData extends BeCPGDataObject implements HierarchicalEntity, S
 	 * @return the clientScore
 	 */
 	@AlfProp
-	@AlfQname(qname = "bcpg:clientScore")
+	@AlfQname(qname = "pjt:projectScore")
 	@Override
 	public Integer getScore() {
 		return clientScore;
