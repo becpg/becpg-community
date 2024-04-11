@@ -2201,6 +2201,21 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
+				<property name="bcpg:costListFutureValue2">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:costListFutureValue3">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:costListFutureValue4">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 				<property name="bcpg:costListValuePerProduct">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
