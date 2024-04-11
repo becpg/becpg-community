@@ -249,8 +249,6 @@ public class ProductData extends AbstractScorableEntity
 	private List<RegulatoryListDataItem> regulatoryList;
 	private List<IngRegulatoryListDataItem> ingRegulatoryList;
 	private List<SvhcListDataItem> svhcList;
-	private List<ScoreListDataItem> scoreList;
-	private List<SurveyList> surveyList;
 
 	/*
 	 * View
@@ -290,6 +288,13 @@ public class ProductData extends AbstractScorableEntity
 	private String entityScore;
 	private List<String> reportLocales;
 	private List<ProductData> compareWithEntities;
+
+	/*
+	 * Survey score
+	 */
+	private List<ScoreListDataItem> scoreList;
+	private List<SurveyList> surveyList;
+	private Integer productScore;
 
 	/** {@inheritDoc} */
 	public GlopData getGlopData() {
@@ -2646,6 +2651,24 @@ public class ProductData extends AbstractScorableEntity
 	/** {@inheritDoc} */
 	public void setFormulationChainId(String formulationChainId) {
 		this.formulationChainId = formulationChainId;
+	}
+
+	/**
+	 * @return the productScore
+	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:productScore")
+	@Override
+	public Integer getScore() {
+		return productScore;
+	}
+
+	/**
+	 * @param productScore the productScore to set
+	 */
+	@Override
+	public void setScore(Integer productScore) {
+		this.productScore = productScore;
 	}
 
 	/**
