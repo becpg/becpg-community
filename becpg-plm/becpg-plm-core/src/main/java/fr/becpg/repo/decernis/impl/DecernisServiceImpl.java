@@ -68,6 +68,11 @@ import fr.becpg.repo.variant.filters.VariantFilters;
 @Service("decernisService")
 public class DecernisServiceImpl implements DecernisService, FormulationChainPlugin {
 
+	private static final String FORMULATION_CHECK = "FORMULATION_CHECK";
+	private static final String COSMETICS = "COSMETICS";
+	private static final String STANDARDS_OF_IDENTITY_FOOD = "STANDARDS_OF_IDENTITY_FOOD";
+	private static final String FOOD_ADDITIVES = "FOOD_ADDITIVES";
+
 	private static final Log logger = LogFactory.getLog(DecernisServiceImpl.class);
 
 	private static final String MESSAGE_NO_RID_ING = "message.decernis.ingredient.noRid";
@@ -104,10 +109,10 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 		ingNumbers.put(PLMModel.PROP_FL_NUMBER, "FL No.");
 		ingNumbers.put(PLMModel.PROP_FDA_NUMBER, "FDA Cat.");
 
-		moduleIdMap.put("FOOD_ADDITIVES", 1);
-		moduleIdMap.put("STANDARDS_OF_IDENTITY_FOOD", 2);
-		moduleIdMap.put("COSMETICS", 9);
-		moduleIdMap.put("FORMULATION_CHECK", 100);
+		moduleIdMap.put(FOOD_ADDITIVES, 1);
+		moduleIdMap.put(STANDARDS_OF_IDENTITY_FOOD, 2);
+		moduleIdMap.put(COSMETICS, 9);
+		moduleIdMap.put(FORMULATION_CHECK, 100);
 	}
 
 	public DecernisServiceImpl(@Qualifier("nodeService") NodeService nodeService,
@@ -306,7 +311,7 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 
 	private void checkUsagesID(RegulatoryContext context) {
 		for (RegulatoryContextItem contextItem : context.getContextItems()) {
-			for (NodeRef usageRef : contextItem.getItem().getRegulatoryUsages()) {
+			for (NodeRef usageRef : contextItem.getItem().getRegulatoryUsagesRef()) {
 				updateUsageID(usageRef);
 			}
 		}
@@ -604,13 +609,35 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 		RegulatoryContext context = new RegulatoryContext();
 		context.setProduct(product);
 
-		context.getContextItems().add(createContextItem(product, context));
+		context.getContextItems().add(createProductContextItem(product, context));
 
 		for (RegulatoryListDataItem item : product.getRegulatoryList()) {
 			context.getContextItems().add(createContextItem(item, context));
 		}
 
 		return context;
+	}
+	
+	private RegulatoryContextItem createProductContextItem(ProductData product, RegulatoryContext context) {
+		if (!product.getRegulatoryCountries().isEmpty() && !product.getRegulatoryUsages().isEmpty()) {
+			RegulatoryContextItem contextItem = new RegulatoryContextItem();
+			contextItem.setItem(product);
+			Map<String, NodeRef> countries = new HashMap<>();
+			List<UsageContext> usages = new ArrayList<>();
+			for (String country : product.getRegulatoryCountries()) {
+				countries.put(country, null);
+			}
+			for (String usage : product.getRegulatoryUsages()) {
+				UsageContext usageContext = new UsageContext();
+				usageContext.setModuleId(moduleIdMap.get(FOOD_ADDITIVES));
+				usageContext.setName(usage);
+				usages.add(usageContext);
+			}
+			contextItem.setCountries(countries);
+			contextItem.setUsages(usages);
+			return contextItem;
+		}
+		return createContextItem(product, context);
 	}
 
 	private RegulatoryContextItem createContextItem(RegulatoryEntity item, RegulatoryContext context) {
@@ -621,10 +648,10 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 		Map<String, NodeRef> countries = new HashMap<>();
 		List<UsageContext> usages = new ArrayList<>();
 
-		for (NodeRef nodeRef : item.getRegulatoryCountries()) {
+		for (NodeRef nodeRef : item.getRegulatoryCountriesRef()) {
 			extractCodes(context, countries, nodeRef);
 		}
-		for (NodeRef nodeRef : item.getRegulatoryUsages()) {
+		for (NodeRef nodeRef : item.getRegulatoryUsagesRef()) {
 			UsageContext usageContext = createUsage(context, nodeRef);
 			if (usageContext != null) {
 				usages.add(usageContext);
