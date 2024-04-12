@@ -85,7 +85,7 @@
 			</div>
 			<div id="watson-chatbot-chat-frame" class="transition show">
 				<iframe
-					src="${url.context}/proxy/becpg-ai/watson" referrerpolicy="origin" sandbox="allow-scripts allow-forms allow-same-origin allow-popups allow-popups-to-escape-sandbox"></iframe>
+					src="${url.context}/proxy/ai/watson/chat" referrerpolicy="origin" sandbox="allow-scripts allow-forms allow-same-origin allow-popups allow-popups-to-escape-sandbox"></iframe>
 			</div>
 			<div id="watson-chatbot-footer">
 				<div class="footer-content">
@@ -95,7 +95,7 @@
 			<button id="watson-chatbot-chat-activate-bar" class="chat-activate-bar">
 				<svg width="48" height="48" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
 					<g fill="none" fill-rule="evenodd">
-					<circle fill="#4284F4" cx="24" cy="24" r="24"></circle>
+					<circle fill="#00ffbd" cx="24" cy="24" r="24"></circle>
 					<path d="M12 12h24v24H12z"></path>
 					<path d="M32 14H16c-1.1 0-1.99.9-1.99 2L14 34l4-4h14c1.1 0 2-.9 2-2V16c0-1.1-.9-2-2-2zm0 14H16V16h16v12zm-14-4h8v2h-8v-2zm0-3h12v2H18v-2zm0-3h12v2H18v-2z" fill="#FFF"
 						fill-rule="nonzero"></path></g></svg>
@@ -107,6 +107,4 @@
 		</div>
 	</div>
 </#if>	
-</@>
-
 </@>
