@@ -56,7 +56,7 @@ public class TargetAssocAutoCompleteExtractor implements AutoCompleteExtractor<N
 	private FavouritesService favouritesService;
 	
 	@Autowired
-	private AttributeExtractorService attributeExtractorService;
+	protected AttributeExtractorService attributeExtractorService;
 
 	/** {@inheritDoc} */
 	@Override
