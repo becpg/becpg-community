@@ -238,7 +238,7 @@ function main() {
 
 }
 
-function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEntityType, entityNodeRef ) {
+function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEntityType, entityNodeRef , nestedPrefKey) {
 	
 	var columns = [], defaultColumns = [], ret = [];
 
@@ -334,8 +334,13 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 
 			for (var i in visibleFields) {
 
-				var fieldId = visibleFields[i], name, column,
-					preferences = AlfrescoUtil.getPreferences("fr.becpg.formulation.dashlet.custom.datagrid-prefs" + "." + itemType.replace(":", "_") + "." + fieldId.replace(":", "_"));
+				  var fieldId = visibleFields[i], name, column;
+				  var prefKey =  itemType.replace(":", "_") + "."  + fieldId.replace(":", "_");
+				   if(nestedPrefKey){
+					    prefKey =nestedPrefKey+"_"+fieldId.replace(":", "_");
+				   } 
+				   
+					var preferences = AlfrescoUtil.getPreferences("fr.becpg.formulation.dashlet.custom.datagrid-prefs." +prefKey);
 
 				if (fieldId.indexOf("dataList_") == 0) {
 
@@ -364,12 +369,12 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 					ret.push(column);
 
 				} else if (fieldId.indexOf("entity_") == 0) {
-					var splitted = fieldId.replace("entity_", "").split("_");
+					var splitted = fieldId.replace("entity_", "").replace("_asColumn","").split("_");
 					name = splitted[0];
 					column = {
 						type: "entity",
 						name: name,
-						"dataType": "nested"
+						"dataType": (fieldId.indexOf("_asColumn") > 0) ? "nested_column" : "nested"
 					};
 
 					if(!override){
@@ -383,13 +388,15 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 						}
 					}
 					
+					var subPrefKey =  itemType.replace(":", "_") + "."  + name.replace(":", "_");
+					
 					if (splitted[1].includes("@")) {
 						var formSplitted = splitted[1].split("@");
-						column.columns = getColumns(formSplitted[0] + "", "sub-datagrid", formSplitted[1] + "");
+						column.columns = getColumns(formSplitted[0] + "", "sub-datagrid", formSplitted[1] + "",mode,null,null,null,subPrefKey);
 					} else if (formIdArgs != null) {
-						column.columns = getColumns(splitted[1] + "", "sub-datagrid", "sub-datagrid-" + formIdArgs);
+						column.columns = getColumns(splitted[1] + "", "sub-datagrid", "sub-datagrid-" + formIdArgs, mode,null,null,null,subPrefKey);
 					} else {
-						column.columns = getColumns(splitted[1] + "", "sub-datagrid");
+						column.columns = getColumns(splitted[1] + "", "sub-datagrid",null, mode,null,null,null,subPrefKey);
 					}
 
 					ret.push(column);
@@ -412,9 +419,8 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 								
 								columns[j].readOnly = formConfig.fields[fieldId].isReadOnly();
 								
-							}
-
-
+							}	
+							
 							if (mode == "datagrid-prefs") {
 
 								if(existInPref(preferences)){
