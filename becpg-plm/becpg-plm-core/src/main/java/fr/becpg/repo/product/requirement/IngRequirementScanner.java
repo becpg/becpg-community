@@ -239,16 +239,16 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 	}
 	
 	private String extractRegulatoryId(ForbiddenIngListDataItem fil, ProductSpecificationData specification) {
-		if (fil.getRegulatoryCountries() != null && !fil.getRegulatoryCountries().isEmpty()) {
-			String countryCode = (String) nodeService.getProperty(fil.getRegulatoryCountries().get(0), PLMModel.PROP_REGULATORY_CODE);
-			if (fil.getRegulatoryUsages() != null && !fil.getRegulatoryUsages().isEmpty()) {
-				return countryCode + " - " + (String) nodeService.getProperty(fil.getRegulatoryUsages().get(0), PLMModel.PROP_REGULATORY_CODE);
+		if (fil.getRegulatoryCountriesRef() != null && !fil.getRegulatoryCountriesRef().isEmpty()) {
+			String countryCode = (String) nodeService.getProperty(fil.getRegulatoryCountriesRef().get(0), PLMModel.PROP_REGULATORY_CODE);
+			if (fil.getRegulatoryUsagesRef() != null && !fil.getRegulatoryUsagesRef().isEmpty()) {
+				return countryCode + " - " + (String) nodeService.getProperty(fil.getRegulatoryUsagesRef().get(0), PLMModel.PROP_REGULATORY_CODE);
 			}
 		}
-		if (specification.getRegulatoryCountries() != null && !specification.getRegulatoryCountries().isEmpty()) {
-			String countryCode = (String) nodeService.getProperty(specification.getRegulatoryCountries().get(0), PLMModel.PROP_REGULATORY_CODE);
-			if (specification.getRegulatoryUsages() != null && !specification.getRegulatoryUsages().isEmpty()) {
-				return countryCode + " - " + (String) nodeService.getProperty(specification.getRegulatoryUsages().get(0), PLMModel.PROP_REGULATORY_CODE);
+		if (specification.getRegulatoryCountriesRef() != null && !specification.getRegulatoryCountriesRef().isEmpty()) {
+			String countryCode = (String) nodeService.getProperty(specification.getRegulatoryCountriesRef().get(0), PLMModel.PROP_REGULATORY_CODE);
+			if (specification.getRegulatoryUsagesRef() != null && !specification.getRegulatoryUsagesRef().isEmpty()) {
+				return countryCode + " - " + (String) nodeService.getProperty(specification.getRegulatoryUsagesRef().get(0), PLMModel.PROP_REGULATORY_CODE);
 			}
 		}
 		return null;
