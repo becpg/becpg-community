@@ -294,14 +294,17 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 
 										String regulatoryCode = country + (!usage.isEmpty() ? " - " + usage : "");
 
-										IngRegulatoryListDataItem ingRegulatoryListDataItem = createIngRegulatoryListDataItem(ingItem.getIng(), contextItem.getCountries().get(country),usageContext.getNodeRef());
-										
-										ingRegulatoryListDataItem.setCitation(new MLText(result.getString(CITATION)));
-										ingRegulatoryListDataItem.setUsages(new MLText(result.getString(USAGE_NAME)));
-										ingRegulatoryListDataItem.setRestrictionLevels(new MLText(result.getString(THRESHOLD)));
-										ingRegulatoryListDataItem.setResultIndicator(new MLText(result.getString(RESULT_INDICATOR)));
-
-										productContext.getIngRegulatoryList().add(ingRegulatoryListDataItem);
+										if (contextItem.getCountries().get(country) != null && usageContext.getNodeRef() != null) {
+											IngRegulatoryListDataItem ingRegulatoryListDataItem = createIngRegulatoryListDataItem(ingItem.getIng(),
+													contextItem.getCountries().get(country), usageContext.getNodeRef());
+											
+											ingRegulatoryListDataItem.setCitation(new MLText(result.getString(CITATION)));
+											ingRegulatoryListDataItem.setUsages(new MLText(result.getString(USAGE_NAME)));
+											ingRegulatoryListDataItem.setRestrictionLevels(new MLText(result.getString(THRESHOLD)));
+											ingRegulatoryListDataItem.setResultIndicator(new MLText(result.getString(RESULT_INDICATOR)));
+											
+											productContext.getIngRegulatoryList().add(ingRegulatoryListDataItem);
+										}
 
 										if (result.getString(RESULT_INDICATOR).toLowerCase().startsWith("prohibited")) {
 											String threshold = (result.has(THRESHOLD) && !result.getString(THRESHOLD).equals("None")

@@ -217,33 +217,33 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 				List<RegulatoryListDataItem> regulatoryList = product.getRegulatoryList();
 				
 				RegulatoryListDataItem item1 = new RegulatoryListDataItem();
-				item1.setRegulatoryUsages(new ArrayList<>(List.of(usage1NodeRef)));
-				item1.setRegulatoryCountries(new ArrayList<>(List.of(country1NodeRef)));
+				item1.setRegulatoryUsagesRef(new ArrayList<>(List.of(usage1NodeRef)));
+				item1.setRegulatoryCountriesRef(new ArrayList<>(List.of(country1NodeRef)));
 				item1.setRegulatoryState(SystemState.Valid);
 				
 				RegulatoryListDataItem item2 = new RegulatoryListDataItem();
-				item2.setRegulatoryUsages(new ArrayList<>(List.of(usage2NodeRef)));
-				item2.setRegulatoryCountries(new ArrayList<>(List.of(country2NodeRef)));
+				item2.setRegulatoryUsagesRef(new ArrayList<>(List.of(usage2NodeRef)));
+				item2.setRegulatoryCountriesRef(new ArrayList<>(List.of(country2NodeRef)));
 				
 				regulatoryList.add(item1);
 				regulatoryList.add(item2);
 				
 				productService.formulate(product);
 				
-				assertTrue(product.getRegulatoryCountries().contains(country1NodeRef));
-				assertFalse(product.getRegulatoryCountries().contains(country2NodeRef));
-				assertTrue(product.getRegulatoryUsages().contains(usage1NodeRef));
-				assertFalse(product.getRegulatoryUsages().contains(usage2NodeRef));
+				assertTrue(product.getRegulatoryCountriesRef().contains(country1NodeRef));
+				assertFalse(product.getRegulatoryCountriesRef().contains(country2NodeRef));
+				assertTrue(product.getRegulatoryUsagesRef().contains(usage1NodeRef));
+				assertFalse(product.getRegulatoryUsagesRef().contains(usage2NodeRef));
 				
 				item1.setRegulatoryState(SystemState.Simulation);
 				item2.setRegulatoryState(SystemState.Valid);
 				
 				productService.formulate(product);
 				
-				assertFalse(product.getRegulatoryCountries().contains(country1NodeRef));
-				assertTrue(product.getRegulatoryCountries().contains(country2NodeRef));
-				assertFalse(product.getRegulatoryUsages().contains(usage1NodeRef));
-				assertTrue(product.getRegulatoryUsages().contains(usage2NodeRef));
+				assertFalse(product.getRegulatoryCountriesRef().contains(country1NodeRef));
+				assertTrue(product.getRegulatoryCountriesRef().contains(country2NodeRef));
+				assertFalse(product.getRegulatoryUsagesRef().contains(usage1NodeRef));
+				assertTrue(product.getRegulatoryUsagesRef().contains(usage2NodeRef));
 				
 				return null;
 			});
@@ -380,8 +380,8 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 				List<RegulatoryListDataItem> regulatoryList = product.getRegulatoryList();
 				
 				RegulatoryListDataItem item1 = new RegulatoryListDataItem();
-				item1.setRegulatoryUsages(new ArrayList<>(List.of(usage1NodeRef)));
-				item1.setRegulatoryCountries(new ArrayList<>(List.of(country1NodeRef)));
+				item1.setRegulatoryUsagesRef(new ArrayList<>(List.of(usage1NodeRef)));
+				item1.setRegulatoryCountriesRef(new ArrayList<>(List.of(country1NodeRef)));
 				item1.setRegulatoryState(SystemState.Simulation);
 				
 				regulatoryList.add(item1);
@@ -504,8 +504,8 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 				List<RegulatoryListDataItem> regulatoryList = product.getRegulatoryList();
 				
 				RegulatoryListDataItem item1 = new RegulatoryListDataItem();
-				item1.setRegulatoryUsages(new ArrayList<>(List.of(usage1NodeRef)));
-				item1.setRegulatoryCountries(new ArrayList<>(List.of(country1NodeRef)));
+				item1.setRegulatoryUsagesRef(new ArrayList<>(List.of(usage1NodeRef)));
+				item1.setRegulatoryCountriesRef(new ArrayList<>(List.of(country1NodeRef)));
 				item1.setRegulatoryState(SystemState.Simulation);
 				
 				regulatoryList.add(item1);
@@ -728,8 +728,8 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 				List<RegulatoryListDataItem> regulatoryList = product.getRegulatoryList();
 				
 				RegulatoryListDataItem item1 = new RegulatoryListDataItem();
-				item1.setRegulatoryUsages(new ArrayList<>(List.of(usage2NodeRef)));
-				item1.setRegulatoryCountries(new ArrayList<>(List.of(country3NodeRef)));
+				item1.setRegulatoryUsagesRef(new ArrayList<>(List.of(usage2NodeRef)));
+				item1.setRegulatoryCountriesRef(new ArrayList<>(List.of(country3NodeRef)));
 				item1.setRegulatoryState(SystemState.Simulation);
 				
 				regulatoryList.add(item1);
@@ -931,8 +931,8 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 				List<RegulatoryListDataItem> regulatoryList = product.getRegulatoryList();
 				
 				RegulatoryListDataItem item1 = new RegulatoryListDataItem();
-				item1.setRegulatoryUsages(new ArrayList<>(List.of(usage2NodeRef)));
-				item1.setRegulatoryCountries(new ArrayList<>(List.of(country3NodeRef)));
+				item1.setRegulatoryUsagesRef(new ArrayList<>(List.of(usage2NodeRef)));
+				item1.setRegulatoryCountriesRef(new ArrayList<>(List.of(country3NodeRef)));
 				item1.setRegulatoryState(SystemState.Simulation);
 				
 				regulatoryList.add(item1);
