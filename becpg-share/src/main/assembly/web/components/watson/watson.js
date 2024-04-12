@@ -36,11 +36,21 @@
 					
 						var chatButton = YAHOO.util.Dom.get("watson-chatbot-chat-activate-bar");
 						var chatContainer = YAHOO.util.Dom.get("watson-container");
-						
+						// Créer une fonction pour ajouter ou supprimer la classe
+					    function toggleClass(element, className) {
+					        if (YAHOO.util.Dom.hasClass(element, className)) {
+					            YAHOO.util.Dom.removeClass(element, className);
+					        } else {
+					            YAHOO.util.Dom.addClass(element, className);
+					        }
+					    }
+					
+					    // Ajouter un écouteur d'événement de clic aux boutons d'activation du chat
 					    YAHOO.util.Event.addListener(chatButton, 'click', function() {
-					        YAHOO.util.Dom.toggleClass(chatButton, 'transition');
-					        YAHOO.util.Dom.toggleClass(chatContainer, 'transition');
-					        YAHOO.util.Dom.toggleClass(chatContainer, 'round');
+					        // Basculer la classe 'transition' pour changer la visibilité
+					        toggleClass(chatButton, 'transition');
+					        toggleClass(chatContainer, 'transition');
+					        toggleClass(chatContainer, 'round');
 					    });
 
 				}
