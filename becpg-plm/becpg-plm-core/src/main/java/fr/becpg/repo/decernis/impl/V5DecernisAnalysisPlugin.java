@@ -289,16 +289,18 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 
 											if (ingItem != null) {
 
-												IngRegulatoryListDataItem ingRegulatoryListDataItem = createIngRegulatoryListDataItem(
-														ingItem.getIng(), contextItem.getCountries().get(country), usageContext.getNodeRef());
-
-												ingRegulatoryListDataItem.setCitation(new MLText(tabularReport.getString(CITATION)));
-												ingRegulatoryListDataItem.setUsages(new MLText(usage));
-
-												ingRegulatoryListDataItem.setRestrictionLevels(new MLText(tabularReport.getString(THRESHOLD)));
-												ingRegulatoryListDataItem.setResultIndicator(new MLText(tabularReport.getString(RESULT_INDICATOR)));
-
-												productContext.getIngRegulatoryList().add(ingRegulatoryListDataItem);
+												if (contextItem.getCountries().get(country) != null && usageContext.getNodeRef() != null) {
+													IngRegulatoryListDataItem ingRegulatoryListDataItem = createIngRegulatoryListDataItem(
+															ingItem.getIng(), contextItem.getCountries().get(country), usageContext.getNodeRef());
+													
+													ingRegulatoryListDataItem.setCitation(new MLText(tabularReport.getString(CITATION)));
+													ingRegulatoryListDataItem.setUsages(new MLText(usage));
+													
+													ingRegulatoryListDataItem.setRestrictionLevels(new MLText(tabularReport.getString(THRESHOLD)));
+													ingRegulatoryListDataItem.setResultIndicator(new MLText(tabularReport.getString(RESULT_INDICATOR)));
+													
+													productContext.getIngRegulatoryList().add(ingRegulatoryListDataItem);
+												}
 
 												if (tabularReport.getString(RESULT_INDICATOR).toLowerCase().startsWith("prohibited")
 														|| tabularReport.getString(RESULT_INDICATOR).toLowerCase().startsWith("over limit")) {
