@@ -207,8 +207,10 @@ public class ProductData extends AbstractScorableEntity
 	/*
 	 * Compliance
 	 */
-	private List<NodeRef> regulatoryCountries = new ArrayList<>();
-	private List<NodeRef> regulatoryUsages = new ArrayList<>();
+	private List<NodeRef> regulatoryCountriesRef = new ArrayList<>();
+	private List<NodeRef> regulatoryUsagesRef = new ArrayList<>();
+	private List<String> regulatoryCountries = new ArrayList<>();
+	private List<String> regulatoryUsages = new ArrayList<>();
 	private Date regulatoryFormulatedDate;
 	private DecernisMode regulatoryMode = DecernisMode.BECPG_ONLY;
 	private String regulatoryRecipeId;
@@ -2205,8 +2207,9 @@ public class ProductData extends AbstractScorableEntity
 	 */
 	@AlfMultiAssoc
 	@AlfQname(qname = "bcpg:regulatoryCountries")
-	public List<NodeRef> getRegulatoryCountries() {
-		return regulatoryCountries;
+	@InternalField
+	public List<NodeRef> getRegulatoryCountriesRef() {
+		return regulatoryCountriesRef;
 	}
 
 	/**
@@ -2214,8 +2217,24 @@ public class ProductData extends AbstractScorableEntity
 	 *
 	 * @param regulatoryCountries a {@link java.util.List} object.
 	 */
-	public void setRegulatoryCountries(List<NodeRef> regulatoryCountries) {
+	public void setRegulatoryCountriesRef(List<NodeRef> regulatoryCountries) {
+		this.regulatoryCountriesRef = regulatoryCountries;
+	}
+	
+	public List<String> getRegulatoryCountries() {
+		return regulatoryCountries;
+	}
+	
+	public void setRegulatoryCountries(List<String> regulatoryCountries) {
 		this.regulatoryCountries = regulatoryCountries;
+	}
+	
+	public List<String> getRegulatoryUsages() {
+		return regulatoryUsages;
+	}
+	
+	public void setRegulatoryUsages(List<String> regulatoryUsages) {
+		this.regulatoryUsages = regulatoryUsages;
 	}
 
 	/**
@@ -2225,8 +2244,9 @@ public class ProductData extends AbstractScorableEntity
 	 */
 	@AlfMultiAssoc
 	@AlfQname(qname = "bcpg:regulatoryUsageRef")
-	public List<NodeRef> getRegulatoryUsages() {
-		return regulatoryUsages;
+	@InternalField
+	public List<NodeRef> getRegulatoryUsagesRef() {
+		return regulatoryUsagesRef;
 	}
 
 	/**
@@ -2234,8 +2254,8 @@ public class ProductData extends AbstractScorableEntity
 	 *
 	 * @param regulatoryUsages a {@link java.util.List} object.
 	 */
-	public void setRegulatoryUsages(List<NodeRef> regulatoryUsages) {
-		this.regulatoryUsages = regulatoryUsages;
+	public void setRegulatoryUsagesRef(List<NodeRef> regulatoryUsages) {
+		this.regulatoryUsagesRef = regulatoryUsages;
 	}
 
 	/**
@@ -2693,7 +2713,7 @@ public class ProductData extends AbstractScorableEntity
 		result = prime * result + Objects.hash(clients, suppliers, supplierPlants, density, erpCode, formulatedDate, futureUnitTotalCost, hierarchy1,
 				hierarchy2, ingType, legalName, netVolume, netWeight, netWeightSecondary, netWeightTertiary, nutrientClass, nutrientProfile,
 				nutrientScore, plants, profitability, projectedQty, qty, recipeQtyUsed, recipeQtyUsedWithLossPerc, recipeVolumeUsed, reformulateCount,
-				regulatoryCountries, regulatoryUsages, regulatoryMode, regulatoryRecipeId, reportLocales, servingSize, servingSizeByCountry,
+				regulatoryCountriesRef, regulatoryUsagesRef, regulatoryMode, regulatoryRecipeId, reportLocales, servingSize, servingSizeByCountry,
 				servingSizeUnit, state, tare, tareUnit, title, unit, unitPrice, unitTotalCost, updateFormulatedDate, weightPrimary, weightSecondary,
 				weightTertiary, yield, yieldVolume, suppliers);
 		return result;
@@ -2722,7 +2742,7 @@ public class ProductData extends AbstractScorableEntity
 				&& Objects.equals(projectedQty, other.projectedQty) && Objects.equals(qty, other.qty)
 				&& Objects.equals(recipeQtyUsed, other.recipeQtyUsed) && Objects.equals(recipeQtyUsedWithLossPerc, other.recipeQtyUsedWithLossPerc)
 				&& Objects.equals(recipeVolumeUsed, other.recipeVolumeUsed) && Objects.equals(reformulateCount, other.reformulateCount)
-				&& Objects.equals(regulatoryCountries, other.regulatoryCountries) && Objects.equals(regulatoryUsages, other.regulatoryUsages)
+				&& Objects.equals(regulatoryCountriesRef, other.regulatoryCountriesRef) && Objects.equals(regulatoryUsagesRef, other.regulatoryUsagesRef)
 				&& Objects.equals(regulatoryMode, other.regulatoryMode) && Objects.equals(regulatoryRecipeId, other.regulatoryRecipeId)
 				&& Objects.equals(reportLocales, other.reportLocales) && Objects.equals(servingSize, other.servingSize)
 				&& Objects.equals(servingSizeByCountry, other.servingSizeByCountry) && servingSizeUnit == other.servingSizeUnit
