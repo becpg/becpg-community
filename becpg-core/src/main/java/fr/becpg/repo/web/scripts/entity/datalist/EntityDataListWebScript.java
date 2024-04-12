@@ -22,6 +22,7 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.poi.hemf.record.emfplus.HemfPlusMisc.EmfPlusSetPageTransform;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -356,6 +357,10 @@ public class EntityDataListWebScript extends AbstractWebScript {
 				dataListFilter.setSortMap(WebscriptHelper.extractSortMap((String) json.get(PARAM_SORT), namespaceService));
 			}
 
+			if ((json != null) && json.has(PARAM_PAGE_SIZE) && !json.isNull(PARAM_PAGE_SIZE)) {
+				dataListFilter.getPagination().setPageSize((Integer) json.get(PARAM_PAGE_SIZE));
+			}
+			
 			if ((json != null) && json.has(PARAM_QUERY_EXECUTION_ID) && !json.isNull(PARAM_QUERY_EXECUTION_ID)) {
 				dataListFilter.getPagination().setQueryExecutionId((String) json.get(PARAM_QUERY_EXECUTION_ID));
 			}
