@@ -32,17 +32,17 @@ public class EntityIconServiceImpl implements EntityIconService {
 	private static final String DATA_BASE64_ENCODING = ";base64,";
 	private static final String URL_OPEN_TARGET_PATTERN = "url('";
 	private static final String URL_CLOSE_TARGET_PATTERN = "')";
-	private static final String IMPORTANT_CSS = "!important";
 	private static final String OPEN_CURLY_BRACKET = "{";
 	private static final String CLOSE_CURLY_BRACKET = "}";
-	private static final String BACKGROUND_IMAGE = "background-image:";
-	private static final String FULL_STOP = ".";
+	private static final String DOUBLE_DASH = "--";
+	private static final String COLON = ":";
+	private static final String DOT = ".";
 
 	@Override
 	public void writeIconCSS(OutputStream out) {
 
 		StringBuilder builder = new StringBuilder();
-
+		
 		for (Map.Entry<String, NodeRef> icon : entityService.getEntityIcons().entrySet()) {
 			String name = icon.getKey();
 			NodeRef iconNodeRef = icon.getValue();
@@ -56,9 +56,9 @@ public class EntityIconServiceImpl implements EntityIconService {
 				try {
 					String encodedImage = encodeImage(reader.getContentInputStream());
 					String cssClassName = extractCSSClassName(name);
-					builder.append(FULL_STOP + cssClassName + OPEN_CURLY_BRACKET + BACKGROUND_IMAGE
-							+ URL_OPEN_TARGET_PATTERN + DATA_IMAGE_PREFIX + reader.getMimetype() + DATA_BASE64_ENCODING
-							+ encodedImage + URL_CLOSE_TARGET_PATTERN + IMPORTANT_CSS + ";" + CLOSE_CURLY_BRACKET);
+					String cssVarName = cssClassName.indexOf('-') != -1 ? cssClassName.substring(0, cssClassName.indexOf('-')): cssClassName;
+					builder.append("span" + DOT + cssClassName + OPEN_CURLY_BRACKET + DOUBLE_DASH + cssVarName + "-icon" + COLON + URL_OPEN_TARGET_PATTERN 
+					+ DATA_IMAGE_PREFIX + reader.getMimetype() + DATA_BASE64_ENCODING + encodedImage + URL_CLOSE_TARGET_PATTERN + ";" + CLOSE_CURLY_BRACKET);
 				} catch (IOException e) {
 					throw beCPGException("Failed to encode image for node ref " + iconNodeRef, e);
 				}
@@ -73,10 +73,8 @@ public class EntityIconServiceImpl implements EntityIconService {
 	}
 
 	public String extractCSSClassName(String fileName) {
-
 		String withoutPrefix = fileName.replace("generic-", "");
-		return withoutPrefix.lastIndexOf('-') != -1 ? withoutPrefix.substring(0, withoutPrefix.lastIndexOf('-'))
-				: withoutPrefix;
+		return withoutPrefix.lastIndexOf('-') != -1 ? withoutPrefix.substring(0, withoutPrefix.lastIndexOf('-')): withoutPrefix;
 	}
 
 	public static String encodeImage(InputStream inputStream) throws IOException {
