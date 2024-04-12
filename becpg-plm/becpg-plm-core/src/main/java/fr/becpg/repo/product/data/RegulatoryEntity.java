@@ -8,13 +8,13 @@ import fr.becpg.repo.product.data.constraints.RegulatoryResult;
 
 public interface RegulatoryEntity {
 
-	public List<NodeRef> getRegulatoryCountries();
+	public List<NodeRef> getRegulatoryCountriesRef();
 
-	public void setRegulatoryCountries(List<NodeRef> regulatoryCountries);
+	public void setRegulatoryCountriesRef(List<NodeRef> regulatoryCountries);
 
-	public List<NodeRef> getRegulatoryUsages();
+	public List<NodeRef> getRegulatoryUsagesRef();
 
-	public void setRegulatoryUsages(List<NodeRef> regulatoryUsages);
+	public void setRegulatoryUsagesRef(List<NodeRef> regulatoryUsages);
 
 	public RegulatoryResult getRegulatoryResult();
 
