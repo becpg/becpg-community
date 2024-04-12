@@ -627,7 +627,7 @@
 				successCallback : {
 					fn : function (response) {
 						var prefs = "fr.becpg.formulation.dashlet.custom.datagrid-prefs"+"."+itemType.replace(":","_");
-
+						var idx=0;
 						for (var i = 0; i < response.json.columns.length; i++) {
 							var column = response.json.columns[i];
 							var propLabel = column.label;
@@ -635,9 +635,25 @@
 							var checked = column.checked ? "checked" : "";
 							
 							if (propLabel!="hidden" && propLabel && hiddenColumnsInPopup.indexOf(value) < 0) {
-								html += '<li class=""><input id="propSelected-' + i + '" type="checkbox" name="propChecked" value="'+ value +'" '+ checked + '/>' 
-										+ '<label for="propSelected-' + i + '" >' + propLabel + '</label></li>';
+								html += '<li class=""><input id="propSelected-' + idx + '" type="checkbox" name="propChecked" value="'+ value +'" '+ checked + '/>' 
+										+ '<label for="propSelected-' + idx + '" >' + propLabel + '</label></li>';
 							}
+							
+							idx++;
+							if (column.dataType == "nested_column") {
+								for (var j = 0; j < column.columns.length; j++) {
+									var nestedColumn = column.columns[j];								
+									var subLabel = nestedColumn.label;
+									var subValue = value+"_"+nestedColumn.name.replace(":", "_");
+									
+									if (subLabel!="hidden" && subLabel && hiddenColumnsInPopup.indexOf(subValue) < 0) {
+										html += '<li class=""><input id="propSelected-' + idx + '" type="checkbox" name="propChecked" value="'+ subValue +'" '+  (nestedColumn.checked ? "checked" : "") + '/>' 
+												+ '<label for="propSelected-' + idx + '" >' + subLabel + '</label></li>';
+									}	
+								  idx++;
+								}
+							}
+							
 						}
 
 						 html = "<span>"+this.msg("label.select-columns.title")
