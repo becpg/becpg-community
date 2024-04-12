@@ -1,9 +1,9 @@
 
 .basket {
 	right: 5%;
-	bottom: 5%;
+	bottom: 24px;
 	display: flex;
-	z-index: 99999;
+	z-index: 1015;
 	position: fixed;
 	transition: all 250ms ease-in-out 0s;
 	flex-direction: column-reverse;
