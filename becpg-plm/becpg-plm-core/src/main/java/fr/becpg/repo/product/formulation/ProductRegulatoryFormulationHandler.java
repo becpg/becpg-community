@@ -74,10 +74,10 @@ public class ProductRegulatoryFormulationHandler extends FormulationBaseHandler<
 	
 	private List<String> extractRegulatoryIds(RegulatoryEntity regulatoryListItem) {
 		List<String> regulatoryIds = new ArrayList<>();
-		if (regulatoryListItem.getRegulatoryCountries() != null && regulatoryListItem.getRegulatoryUsages() != null) {
-			for (NodeRef country : regulatoryListItem.getRegulatoryCountries()) {
+		if (regulatoryListItem.getRegulatoryCountriesRef() != null && regulatoryListItem.getRegulatoryUsagesRef() != null) {
+			for (NodeRef country : regulatoryListItem.getRegulatoryCountriesRef()) {
 				String countryCode = (String) nodeService.getProperty(country, PLMModel.PROP_REGULATORY_CODE);
-				for (NodeRef usage : regulatoryListItem.getRegulatoryUsages()) {
+				for (NodeRef usage : regulatoryListItem.getRegulatoryUsagesRef()) {
 					String usageCode = (String) nodeService.getProperty(usage, PLMModel.PROP_REGULATORY_CODE);
 					regulatoryIds.add(countryCode + " - " + usageCode);
 				}

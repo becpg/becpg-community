@@ -24,9 +24,9 @@ public class RegulatoryListDataItem  extends BeCPGDataObject implements Regulato
 
 	private static final long serialVersionUID = 6048458461427271748L;
 
-	private List<NodeRef> regulatoryCountries;
+	private List<NodeRef> regulatoryCountriesRef;
 	
-	private List<NodeRef> regulatoryUsages;
+	private List<NodeRef> regulatoryUsagesRef;
 	
 	private RegulatoryResult regulatoryResult;
 	
@@ -84,22 +84,22 @@ public class RegulatoryListDataItem  extends BeCPGDataObject implements Regulato
 
 	@AlfMultiAssoc
 	@AlfQname(qname = "bcpg:regulatoryCountries")
-	public List<NodeRef> getRegulatoryCountries() {
-		return regulatoryCountries;
+	public List<NodeRef> getRegulatoryCountriesRef() {
+		return regulatoryCountriesRef;
 	}
 
-	public void setRegulatoryCountries(List<NodeRef> regulatoryCountries) {
-		this.regulatoryCountries = regulatoryCountries;
+	public void setRegulatoryCountriesRef(List<NodeRef> regulatoryCountries) {
+		this.regulatoryCountriesRef = regulatoryCountries;
 	}
 
 	@AlfMultiAssoc
 	@AlfQname(qname = "bcpg:regulatoryUsageRef")
-	public List<NodeRef> getRegulatoryUsages() {
-		return regulatoryUsages;
+	public List<NodeRef> getRegulatoryUsagesRef() {
+		return regulatoryUsagesRef;
 	}
 
-	public void setRegulatoryUsages(List<NodeRef> regulatoryUsages) {
-		this.regulatoryUsages = regulatoryUsages;
+	public void setRegulatoryUsagesRef(List<NodeRef> regulatoryUsages) {
+		this.regulatoryUsagesRef = regulatoryUsages;
 	}
 
 	@AlfProp
@@ -136,7 +136,7 @@ public class RegulatoryListDataItem  extends BeCPGDataObject implements Regulato
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(regulatoryCountries, regulatoryResult, regulatoryState, regulatoryUsages, validationDate);
+		result = prime * result + Objects.hash(regulatoryCountriesRef, regulatoryResult, regulatoryState, regulatoryUsagesRef, validationDate);
 		return result;
 	}
 
@@ -149,14 +149,14 @@ public class RegulatoryListDataItem  extends BeCPGDataObject implements Regulato
 		if (getClass() != obj.getClass())
 			return false;
 		RegulatoryListDataItem other = (RegulatoryListDataItem) obj;
-		return Objects.equals(regulatoryCountries, other.regulatoryCountries) && Objects.equals(regulatoryResult, other.regulatoryResult)
-				&& regulatoryState == other.regulatoryState && Objects.equals(regulatoryUsages, other.regulatoryUsages)
+		return Objects.equals(regulatoryCountriesRef, other.regulatoryCountriesRef) && Objects.equals(regulatoryResult, other.regulatoryResult)
+				&& regulatoryState == other.regulatoryState && Objects.equals(regulatoryUsagesRef, other.regulatoryUsagesRef)
 				&& Objects.equals(validationDate, other.validationDate);
 	}
 
 	@Override
 	public String toString() {
-		return "RegulatoryListDataItem [regulatoryCountries=" + regulatoryCountries + ", regulatoryUsages=" + regulatoryUsages + ", regulatoryResult="
+		return "RegulatoryListDataItem [regulatoryCountries=" + regulatoryCountriesRef + ", regulatoryUsages=" + regulatoryUsagesRef + ", regulatoryResult="
 				+ regulatoryResult + ", regulatoryState=" + regulatoryState + ", validationDate=" + validationDate + "]";
 	}
 	
