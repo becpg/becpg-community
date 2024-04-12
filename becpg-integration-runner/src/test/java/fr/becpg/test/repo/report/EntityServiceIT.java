@@ -39,49 +39,25 @@ public class EntityServiceIT extends RepoBaseTestCase {
 	
 	@Test
 	public void testEntityIcon() {
-
-		inWriteTx(() -> { 
+		inWriteTx(() -> {
 
 			NodeRef tempRMNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					ContentModel.ASSOC_CONTAINS, PLMModel.TYPE_RAWMATERIAL).getChildRef();
+			
+			NodeRef tempFPNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					ContentModel.ASSOC_CONTAINS, PLMModel.TYPE_FINISHEDPRODUCT).getChildRef();
 
-			
-			//getEntityDefaultIcon()			
-			
-			// Récuperation des entitées avec une résolution "thumb"
 			assertNotNull(entityService.getEntityDefaultIcon(tempRMNodeRef, "thumb"));
-			System.out.println("thumb => " + "http://localhost:8180/share/page/document-details?nodeRef=" + entityService.getEntityDefaultIcon(tempRMNodeRef, "thumb"));
+			assertNotNull(entityService.getEntityDefaultIcon(tempFPNodeRef, "thumb"));
 
-			// Récuperation des entitées avec une résolution "32"
-			assertNotNull(entityService.getEntityDefaultIcon(tempRMNodeRef, "32"));
-			System.out.println("32 => " + "http://localhost:8180/share/page/document-details?nodeRef=" + entityService.getEntityDefaultIcon(tempRMNodeRef, "32"));
-			
-			// Récuperation des entitées qui n'existe pas
 			assertNull(entityService.getEntityDefaultIcon(tempRMNodeRef, "16"));
-			System.out.println("16 => " + entityService.getEntityDefaultIcon(tempRMNodeRef, "16"));
-			
-			
-//			FileInfo folder = fileFolderService.getFileInfo(tempRMNodeRef);
-//			ContentWriter writer = fileFolderService.getWriter(tempRMNodeRef);
-//			
-//			entityIconService.writeIconCSS(new FileOutputStream(tempRMNodeRef.toString()));
-//			assertNotNull(writer);
-//			entityIconService.writeIconCSS(writer.getContentOutputStream());
+			assertNull(entityService.getEntityDefaultIcon(tempFPNodeRef, "16"));
 			
 			return null;
 		});
 
 		inReadTx(() -> {
-
-			//getEntityIcons()
-			
-			//tmp, pour me repérer
-			for (Map.Entry<String, NodeRef> icon : entityService.getEntityIcons().entrySet()) {
-				System.out.println(icon.getKey() + " => " + icon.getValue());
-			}
 			assertNotNull(entityService.getEntityIcons());
-			System.out.println("getEntityIcons() null ? => " + entityService.getEntityIcons().isEmpty());
-
 			return null;
 		});
 	}
@@ -132,45 +108,12 @@ public class EntityServiceIT extends RepoBaseTestCase {
 		}, false, true);
 
 	}
-		
-	
-//	@Before
-//	public void setUp() throws Exception {
-//		MockitoAnnotations.initMocks(this);
-//		entityIconService = mock(EntityIconService.class);
-//		webScript = new EntityIconWebScript();
-//		webScript.setEntityIconService(entityIconService);
-//	}
-//	
-//	
+			
 	@Test
 	public void testExecute() throws Exception {
-
-		//Exemple
 		Response response = TestWebscriptExecuters.sendRequest(new GetRequest("/becpg/entity/icons.css"), 200, "admin");
 		assertNotNull(response);
-//		System.out.println("testExecute() => " + response.getContentAsString().replaceAll(";}", ";}\n\n\n")); // mise en page dans le terminal...
-		System.out.println("testExecute() => " + response.getContentAsString());
-		
-//		
-//		MockitoAnnotations.initMocks(this);
-//		entityIconService = mock(EntityIconService.class);
-//		webScript = new EntityIconWebScript();
-//		webScript.setEntityIconService(entityIconService);
-//		
-//		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-//		webScriptResponse = mock(WebScriptResponse.class);
-//		when(webScriptResponse.getOutputStream()).thenReturn(outputStream);
-//		
-//		webScript.execute(null, webScriptResponse);
-//		
-//		String result = outputStream.toString();
-//		System.out.println("testExecute() " + result);
-//		assertNotNull(result);
 	}
-	
-
-	
 	
 	// Assert twelve monkey is not used because to slow
 //	private byte[] twelveMonkeyExtractor(NodeRef nodeRef) {

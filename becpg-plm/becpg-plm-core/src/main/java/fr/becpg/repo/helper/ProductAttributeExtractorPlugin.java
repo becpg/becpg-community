@@ -97,9 +97,9 @@ public class ProductAttributeExtractorPlugin extends AbstractExprNameExtractor {
 		}
 		
 	NodeRef entityTplRef =	associationService.getTargetAssoc(nodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
-		//TODO 
-//		Si entityTpl
-//		ret += " entityTplClass-"+tplNodeRef.getId();
+	if (entityTplRef != null) {
+		ret += type.toPrefixString(namespaceService).split(":")[1] + "-" + entityTplRef.getId();
+	}
 		
 		return ret;
 	}
