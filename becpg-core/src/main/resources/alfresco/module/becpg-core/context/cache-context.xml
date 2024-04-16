@@ -38,7 +38,7 @@
 			  <entry key="fr.becpg.repo.entity.version.EntityVersionService" value="10" />
 			  <entry key="fr.becpg.repo.helper.AttributeExtractorService" value="100" />
 			  <entry key="fr.becpg.repo.entity.catalog.EntityCatalogService" value="5" />
-			  <entry key="fr.becpg.repo.jscript.Thumbnail" value="20" />
+			  <entry key="fr.becpg.repo.entity.impl.EntityServiceImpl" value="1" />
 			  <entry key="fr.becpg.repo.search.PaginatedSearchCache" value="300" />
 			  <entry key="fr.becpg.repo.search.PaginatedSearchCache.multiLevel" value="300" />
 			  <entry key="fr.becpg.repo.entity.datalist.MultiLevelDataListService" value="50" />
