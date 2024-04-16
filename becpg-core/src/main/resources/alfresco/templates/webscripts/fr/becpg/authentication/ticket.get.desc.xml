@@ -1,0 +1,9 @@
+<webscript>
+  <shortname>Get beCPG Authentication ticket</shortname>
+  <description>Get beCPG Authentication ticket</description>
+  <format default="json" />
+  <authentication>user</authentication>
+  <transaction allow="readwrite" >required</transaction>
+  <url>/becpg/authentication/ticket</url>
+  <lifecycle>internal</lifecycle>
+</webscript>

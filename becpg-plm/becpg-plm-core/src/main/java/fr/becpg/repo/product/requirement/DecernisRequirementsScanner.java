@@ -137,8 +137,8 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 		}
 		
 		for (RegulatoryListDataItem regulatoryListDataItem : product.getRegulatoryList()) {
-			Set<String> countries = regulatoryListDataItem.getRegulatoryCountries().stream().map(this::extractCode).collect(Collectors.toSet());
-			Set<String> usages = regulatoryListDataItem.getRegulatoryUsages().stream().map(this::extractCode).collect(Collectors.toSet());
+			Set<String> countries = regulatoryListDataItem.getRegulatoryCountriesRef().stream().map(this::extractCode).collect(Collectors.toSet());
+			Set<String> usages = regulatoryListDataItem.getRegulatoryUsagesRef().stream().map(this::extractCode).collect(Collectors.toSet());
 			if (!CheckSumHelper.isSameChecksum(DECERNIS_KEY, regulatoryListDataItem.getRequirementChecksum(), createRequirementChecksum(countries, usages))) {
 				return false;
 			}
@@ -152,21 +152,25 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 		formulatedProduct.setRequirementChecksum(CheckSumHelper.updateChecksum(DECERNIS_KEY, formulatedProduct.getRequirementChecksum(), checkSum));
 		
 		for (RegulatoryListDataItem regulatoryListDataItem : formulatedProduct.getRegulatoryList()) {
-			Set<String> itemCountries = regulatoryListDataItem.getRegulatoryCountries().stream().map(this::extractCode).collect(Collectors.toSet());
-			Set<String> itemUsages = regulatoryListDataItem.getRegulatoryUsages().stream().map(this::extractCode).collect(Collectors.toSet());
+			Set<String> itemCountries = regulatoryListDataItem.getRegulatoryCountriesRef().stream().map(this::extractCode).collect(Collectors.toSet());
+			Set<String> itemUsages = regulatoryListDataItem.getRegulatoryUsagesRef().stream().map(this::extractCode).collect(Collectors.toSet());
 			String itemCheckSum = createRequirementChecksum(itemCountries, itemUsages);
 			regulatoryListDataItem.setRequirementChecksum(CheckSumHelper.updateChecksum(DECERNIS_KEY, regulatoryListDataItem.getRequirementChecksum(), itemCheckSum));
 		}
 	}
 	
 	private String createProductCheckum(ProductData formulatedProduct) {
-		Set<String> countries = formulatedProduct.getRegulatoryCountries().stream().map(this::extractCode).collect(Collectors.toSet());
-		Set<String> usages = formulatedProduct.getRegulatoryUsages().stream().map(this::extractCode).collect(Collectors.toSet());
+		Set<String> countries = formulatedProduct.getRegulatoryCountriesRef().stream().map(this::extractCode).collect(Collectors.toSet());
+		Set<String> usages = formulatedProduct.getRegulatoryUsagesRef().stream().map(this::extractCode).collect(Collectors.toSet());
+		if (!formulatedProduct.getRegulatoryUsages().isEmpty() && !formulatedProduct.getRegulatoryCountries().isEmpty()) {
+			countries = formulatedProduct.getRegulatoryCountries().stream().collect(Collectors.toSet());
+			usages = formulatedProduct.getRegulatoryUsages().stream().collect(Collectors.toSet());
+		}
 		StringBuilder checksumBuilder = new StringBuilder();
 		checksumBuilder.append(createRequirementChecksum(countries, usages));
 		for (RegulatoryListDataItem regulatoryListDataItem : formulatedProduct.getRegulatoryList()) {
-			Set<String> itemCountries = regulatoryListDataItem.getRegulatoryCountries().stream().map(this::extractCode).collect(Collectors.toSet());
-			Set<String> itemUsages = regulatoryListDataItem.getRegulatoryUsages().stream().map(this::extractCode).collect(Collectors.toSet());
+			Set<String> itemCountries = regulatoryListDataItem.getRegulatoryCountriesRef().stream().map(this::extractCode).collect(Collectors.toSet());
+			Set<String> itemUsages = regulatoryListDataItem.getRegulatoryUsagesRef().stream().map(this::extractCode).collect(Collectors.toSet());
 			checksumBuilder.append(createRequirementChecksum(itemCountries, itemUsages));
 		}
 		
@@ -203,16 +207,16 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 		
 		for (RegulatoryListDataItem item : product.getRegulatoryList()) {
 			if (SystemState.Valid.equals(item.getRegulatoryState())) {
-				countries.addAll(item.getRegulatoryCountries());
-				usages.addAll(item.getRegulatoryUsages());
+				countries.addAll(item.getRegulatoryCountriesRef());
+				usages.addAll(item.getRegulatoryUsagesRef());
 			}
 		}
 		
 		if (!countries.isEmpty() || !usages.isEmpty()) {
-			product.getRegulatoryCountries().clear();
-			product.getRegulatoryCountries().addAll(countries);
-			product.getRegulatoryUsages().clear();
-			product.getRegulatoryUsages().addAll(usages);
+			product.getRegulatoryCountriesRef().clear();
+			product.getRegulatoryCountriesRef().addAll(countries);
+			product.getRegulatoryUsagesRef().clear();
+			product.getRegulatoryUsagesRef().addAll(usages);
 		}
 	}
 
@@ -244,11 +248,14 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 		if (product.getRequirementChecksum() != null) {
 			return true;
 		}
+		if (!product.getRegulatoryCountriesRef().isEmpty() && !product.getRegulatoryUsagesRef().isEmpty()) {
+			return true;
+		}
 		if (!product.getRegulatoryCountries().isEmpty() && !product.getRegulatoryUsages().isEmpty()) {
 			return true;
 		}
 		for (RegulatoryListDataItem item : product.getRegulatoryList()) {
-			if (!item.getRegulatoryCountries().isEmpty() && !item.getRegulatoryUsages().isEmpty()) {
+			if (!item.getRegulatoryCountriesRef().isEmpty() && !item.getRegulatoryUsagesRef().isEmpty()) {
 				return true;
 			}
 		}

@@ -20,45 +20,33 @@ package fr.becpg.repo.web.scripts.remote;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.SocketException;
-import java.util.Map;
 
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
-import org.alfresco.model.ContentModel;
 import org.alfresco.query.PagingRequest;
 import org.alfresco.query.PagingResults;
 import org.alfresco.repo.domain.activities.ActivityFeedEntity;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.repo.virtual.VirtualContentModel;
 import org.alfresco.service.cmr.activities.ActivityService;
-import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
-import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.cmr.site.SiteService;
-import org.alfresco.service.namespace.NamespaceService;
-import org.alfresco.util.JSONtoFmModel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.json.JSONException;
-import org.springframework.extensions.surf.util.ISO8601DateFormat;
-import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
-import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
+import fr.becpg.common.BeCPGException;
+import fr.becpg.repo.activity.remote.JsonActivityVisitor;
+import fr.becpg.repo.activity.remote.RemoteActivityVisitor;
+import fr.becpg.repo.activity.remote.XmlActivityVisitor;
+import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 
 /**
- * Get activities as XML
+ * Get activities as XML or JSON
  *
  * @author matthieu
  * @version $Id: $Id
  */
-public class GetActivitiesWebScript extends AbstractWebScript {
+public class GetActivitiesWebScript extends AbstractEntityWebScript {
 
 	/** Constant <code>PARAM_FEED_ID="feedDBID"</code> */
 	protected static final String PARAM_FEED_ID = "feedDBID";
@@ -67,29 +55,7 @@ public class GetActivitiesWebScript extends AbstractWebScript {
 
 	private SiteService siteService;
 
-	private NodeService nodeService;
-
-	private NamespaceService namespaceService;
-
 	private ContentService contentService;
-
-	/**
-	 * <p>Setter for the field <code>nodeService</code>.</p>
-	 *
-	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
-	 */
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
-
-	/**
-	 * <p>Setter for the field <code>namespaceService</code>.</p>
-	 *
-	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
-	 */
-	public void setNamespaceService(NamespaceService namespaceService) {
-		this.namespaceService = namespaceService;
-	}
 
 	/**
 	 * <p>Setter for the field <code>contentService</code>.</p>
@@ -141,19 +107,33 @@ public class GetActivitiesWebScript extends AbstractWebScript {
 			logger.debug("Get user feed entries: " + feedUserId + ", " + feedDBID);
 		}
 
-		  try (OutputStream out = resp.getOutputStream()){
+		try (OutputStream out = resp.getOutputStream()) {
+			resp.setContentEncoding("UTF-8");
+
+			RemoteActivityVisitor remoteActivityVisitor = null;
+
+			RemoteEntityFormat format = getFormat(req);
+
+			switch (format) {
+			case xml, xml_all, xml_light:
+				remoteActivityVisitor = new XmlActivityVisitor(siteService, nodeService, namespaceService, contentService);
+				break;
+
+			case json, json_all:
+				remoteActivityVisitor = new JsonActivityVisitor(siteService, nodeService, namespaceService, contentService);
+				break;
+			default:
+				throw new BeCPGException("Unknown format " + format.toString());
+			}
 
 			PagingResults<ActivityFeedEntity> feedEntries = activityService.getPagedUserFeedEntries(feedUserId, null, false, false, feedDBID,
 					new PagingRequest(1000));
-			
-			resp.setContentType("application/xml");
-			resp.setContentEncoding("UTF-8");
-			visit(feedEntries, out);
 
-			// set mimetype for the content and the character encoding + length
-			// for the stream
-			
+			resp.setContentType(remoteActivityVisitor.getContentType());
+			remoteActivityVisitor.visit(feedEntries.getPage(), out);
+
 			resp.setStatus(Status.STATUS_OK);
+
 		} catch (SocketException e1) {
 
 			// the client cut the connection - our mission was accomplished
@@ -161,114 +141,10 @@ public class GetActivitiesWebScript extends AbstractWebScript {
 			if (logger.isInfoEnabled()) {
 				logger.info("Client aborted stream read:\n\tcontent", e1);
 			}
-
-		} catch (XMLStreamException e) {
+		} catch (BeCPGException e) {
 			logger.error(e, e);
 		}
 
-	}
-
-	/**
-	 * <p>visit.</p>
-	 *
-	 * @param feedEntries a {@link org.alfresco.query.PagingResults} object.
-	 * @param result a {@link java.io.OutputStream} object.
-	 * @throws javax.xml.stream.XMLStreamException if any.
-	 */
-	public void visit(PagingResults<ActivityFeedEntity> feedEntries, OutputStream result) throws XMLStreamException {
-
-		// Create an output factory
-		XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
-		xmlof.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, true);
-		// Create an XML stream writer
-		XMLStreamWriter xmlw = xmlof.createXMLStreamWriter(result);
-
-		if (logger.isDebugEnabled()) {
-			logger.debug("Indent xml formater ON");
-			xmlw = new IndentingXMLStreamWriter(xmlw);
-		}
-
-		// Write XML prologue
-		xmlw.writeStartDocument();
-		// Visit node
-
-		xmlw.writeStartElement("activities");
-
-		if (feedEntries.getPage().size() > 0) {
-
-			for (ActivityFeedEntity feedEntry : feedEntries.getPage()) {
-				try {
-					String type = feedEntry.getActivityType();
-
-					xmlw.writeStartElement("activity");
-					xmlw.writeAttribute("id", feedEntry.getId().toString());
-					xmlw.writeAttribute("site", feedEntry.getSiteNetwork());
-					xmlw.writeAttribute("type", type.substring(type.lastIndexOf(".") + 1));
-					xmlw.writeAttribute("user", feedEntry.getPostUserId());
-					xmlw.writeAttribute("date", ISO8601DateFormat.format(feedEntry.getPostDate()));
-
-					Map<String, Object> summary = JSONtoFmModel.convertJSONObjectToMap(feedEntry.getActivitySummary());
-
-					NodeRef nodeRef = null;
-
-					if (summary.containsKey("nodeRef")) {
-						nodeRef = new NodeRef(toString(summary.get("nodeRef")));
-					} else if (summary.containsKey("entityNodeRef")) {
-						nodeRef = new NodeRef(toString(summary.get("entityNodeRef")));
-					}
-					if (nodeRef != null) {
-						if (nodeService.exists(nodeRef)) {
-							if ((nodeRef != null) && nodeService.hasAspect(nodeRef, VirtualContentModel.ASPECT_VIRTUAL_DOCUMENT)) {
-								nodeRef = new NodeRef((String) nodeService.getProperty(nodeRef, VirtualContentModel.PROP_ACTUAL_NODE_REF));
-							}
-
-							xmlw.writeAttribute("nodeRef", nodeRef.toString());
-
-							xmlw.writeAttribute("nodeType", nodeService.getType(nodeRef).toPrefixString(namespaceService));
-							ContentReader contentReader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
-							if ((contentReader != null) && (contentReader.getMimetype() != null)) {
-								xmlw.writeAttribute("mimeType", contentReader.getMimetype());
-							}
-						}
-
-					}
-
-					xmlw.writeAttribute("title", toString(summary.get("title")));
-					xmlw.writeAttribute("lastName", toString(summary.get("lastName")));
-					xmlw.writeAttribute("firstName", toString(summary.get("firstName")));
-					if (feedEntry.getSiteNetwork() != null) {
-						SiteInfo siteInfo = siteService.getSite(feedEntry.getSiteNetwork());
-						if (siteInfo != null) {
-							xmlw.writeAttribute("siteTitle", siteInfo.getTitle());
-						}
-					}
-
-					xmlw.writeCData(feedEntry.getActivitySummary());
-
-					xmlw.writeEndElement();
-
-				} catch (JSONException je) {
-					// skip this feed entry
-					logger.warn("Skip feed entry : " + je.getMessage());
-					continue;
-				}
-			}
-
-		}
-		xmlw.writeEndElement();
-
-		// Write document end. This closes all open structures
-		xmlw.writeEndDocument();
-		// Close the writer to flush the output
-		xmlw.close();
-
-	}
-
-	private String toString(Object val) {
-		if (val != null) {
-			return val.toString();
-		}
-		return "";
 	}
 
 }

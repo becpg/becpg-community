@@ -214,6 +214,10 @@ public class PropertyFormats {
 	public Date parseDate(String dateString) throws ParseException {
 		return localDateFormat.get().parse(dateString);
 	}
+	
+	public Date parseDateTime(String dateString) throws ParseException {
+		return localDateTimeFormat.get().parse(dateString);
+	}
 
 	/**
 	 * <p>parseDecimal.</p>

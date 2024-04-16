@@ -108,6 +108,8 @@
 		</filterTypes>
 		<aspectSubstitutions>
 			<aspect name="qa:controlListAspect" type="qa:controlDefList"/>
+			<aspect name="bcpg:suppliersAspect" type="bcpg:product"/>
+			<aspect name="bcpg:clientsAspect" type="bcpg:product"/>
 		</aspectSubstitutions>
 	</config>
 	
@@ -132,7 +134,7 @@
 			<list id="replacementList" index="190" />
 			<list id="certification" index="200"/>
 			<list id="plant" index="210"/>
-			<list id="surveyList" index="211"/>
+			
 			<list id="regulatoryList" index="212"/>
 			<list id="ingRegulatoryList" index="213"/>
 			

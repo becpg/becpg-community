@@ -46,12 +46,14 @@
 		<property name="models">
 			<list>
 				<value>alfresco/module/${pom.artifactId}/model/projectModel.xml</value>
+                <value>alfresco/module/${pom.artifactId}/model/surveyModel.xml</value>
 			</list>
 		</property>
 
 		<property name="labels">
 			<list>
 				<value>alfresco/module/${pom.artifactId}/model/projectModel</value>
+				<value>alfresco/module/${pom.artifactId}/model/surveyModel</value>
 			</list>
 		</property>
 	</bean>
@@ -106,7 +108,7 @@
 				  <property name="nodeService" ref="nodeService"/>
 				  <property name="alfrescoRepository" ref="alfrescoRepository" />
 				</bean>
-				<bean class="fr.becpg.repo.project.formulation.ScoreFormulationHandler" />
+				<bean class="fr.becpg.repo.project.formulation.ScoreListFormulationHandler" />
 				<bean class="fr.becpg.repo.project.formulation.TaskOverdueFormulationHandler">
 					<property name="beCPGMailService" ref="beCPGMailService"/>
 					<property name="workflowService" ref="WorkflowService"/>
@@ -145,20 +147,21 @@
 
 	<!-- DataList Extractor -->
 
-
-	<bean id="projectListExtractor" parent="activityListExtractor" class="fr.becpg.repo.project.extractor.ProjectListExtractor">
+	<bean id="projectListExtractor" class="fr.becpg.repo.project.extractor.ProjectListExtractor" parent="simpleExtractor" >
 		<property name="personService" ref="personService" />
-		<property name="entityListDAO" ref="entityListDAO" />
-		<property name="associationService" ref="associationService" />
-		<property name="dataListSortRegistry" ref="dataListSortRegistry" />
 		<property name="preferenceService" ref="preferenceService" />
 		<property name="projectService" ref="projectService" />
 		<property name="securityService" ref="securityService" />
 	 	<property name="namespaceService" ref="namespaceService" />
+	 	<property name="entityActivityExtractorService" ref="entityActivityExtractorService" />
+	 	<property name="dataListExtractorFactory" ref="dataListExtractorFactory" />
+	 	<property name="defaultExtractor" value="false"/>
 	 	<property name="systemConfigurationService" ref="systemConfigurationService" />
 	</bean>
 
 
+
+ 
 	<!-- Webscripts -->
 	<bean id="webscript.fr.becpg.project.projectModuleInfo.get" class="fr.becpg.repo.project.web.scripts.ProjectModuleInfoWebScript" parent="webscript">
 		<property name="nodeService" ref="NodeService" />
@@ -181,6 +184,17 @@
     	<property name="nodeService" ref="nodeService" />
     	<property name="sysAdminParams" ref="sysAdminParams" />
     </bean>
+    
+       <!-- Survey -->
+    
+    <bean id="webscript.fr.becpg.survey.survey.get" class="fr.becpg.repo.survey.web.scripts.SurveyWebScript" parent="webscript">
+      	<property name="surveyService" ref="surveyService"/>
+      	<property name="nodeService" ref="NodeService"/>
+      	<property name="permissionService" ref="permissionService"/>
+   	</bean>
+   	
+   	<alias alias="webscript.fr.becpg.survey.survey.post" name="webscript.fr.becpg.survey.survey.get"/>
+    
 	
    <!--                 -->
    <!-- Scheduled tasks -->
@@ -241,6 +255,7 @@
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="projectService" ref="projectService" />
 		<property name="serviceRegistry" ref="ServiceRegistry" />
+		<property name="entityService" ref="entityService" />
 	</bean>
     
 

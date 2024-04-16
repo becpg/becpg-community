@@ -303,12 +303,29 @@ public class ImportHelper {
 					}
 				}
 				// Date
-				else if (dataType.isMatch(DataTypeDefinition.DATE) || dataType.isMatch(DataTypeDefinition.DATETIME)) {
+				else if (dataType.isMatch(DataTypeDefinition.DATE)) {
 
 					if (values.get(pos).isEmpty()) {
 						value = null;
 					} else {
-						value = importContext.getPropertyFormats().parseDate(values.get(pos));
+						try {
+							value = importContext.getPropertyFormats().parseDate(values.get(pos));
+						} catch (ParseException e) {
+							value = importContext.getPropertyFormats().parseDateTime(values.get(pos));
+						}
+					}
+				}
+				// Datetime
+				else if (dataType.isMatch(DataTypeDefinition.DATETIME)) {
+					
+					if (values.get(pos).isEmpty()) {
+						value = null;
+					} else {
+						try {
+							value = importContext.getPropertyFormats().parseDateTime(values.get(pos));
+						} catch (ParseException e) {
+							value = importContext.getPropertyFormats().parseDate(values.get(pos));
+						}
 					}
 				}
 				// int, long
@@ -365,7 +382,7 @@ public class ImportHelper {
 		return value;
 	}
 	
-	private static final  Pattern NUMBER_PATTERN = Pattern.compile("^[0-9\\s.,]+$");
+	private static final Pattern NUMBER_PATTERN = Pattern.compile("^-?[0-9\\s.,]+$");
 
 	public static Number parseNumber(ImportContext importContext, String val) throws ParseException {
 		

@@ -17,7 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.repository.model;
 
-
+import java.util.List;
 
 /**
  * <p>ForecastValueDataItem interface.</p>
@@ -26,34 +26,47 @@ package fr.becpg.repo.repository.model;
  * @version $Id: $Id
  */
 public interface ForecastValueDataItem extends ManualDataItem, SimpleCharactDataItem, AspectAwareDataItem {
+	
+	List<String> getForecastColumns();
+	
+	void setForecastValue(String forecastColumn, Double value);
+	
+	Double getForecastValue(String forecastColumn);
+	
+	String getForecastAccessor(String forecastColumn);
 
-
-	/**
-	 * <p>getPreviousValue.</p>
-	 *
-	 * @return a {@link java.lang.Double} object.
-	 */
-	Double getPreviousValue();
-	
-	/**
-	 * <p>setPreviousValue.</p>
-	 *
-	 * @param previousValue a {@link java.lang.Double} object.
-	 */
-	void setPreviousValue(Double previousValue);
-	
-	/**
-	 * <p>getFutureValue.</p>
-	 *
-	 * @return a {@link java.lang.Double} object.
-	 */
-	Double getFutureValue();
-	
-	/**
-	 * <p>setFutureValue.</p>
-	 *
-	 * @param futureValue a {@link java.lang.Double} object.
-	 */
-	void setFutureValue(Double futureValue);
-	
+	public static class ForecastContext<T> {
+		private String forecastColumn;
+		private String accessor;
+		private ForecastValueGetter<T> valueGetter;
+		private ForecastValueSetter<T> valueSetter;
+		public ForecastContext(String forecastColumn, String accessor, ForecastValueSetter<T> valueSetter,
+				ForecastValueGetter<T> valueGetter) {
+			super();
+			this.forecastColumn = forecastColumn;
+			this.accessor = accessor;
+			this.valueSetter = valueSetter;
+			this.valueGetter = valueGetter;
+		}
+		public String getForecastColumn() {
+			return forecastColumn;
+		}
+		
+		public String getAccessor() {
+			return accessor;
+		}
+		public void setValue(T forecastItem, Double value) {
+			valueSetter.setValue(forecastItem, value);
+		}
+		public Double getValue(T forecastItem) {
+			return valueGetter.getValue(forecastItem);
+		}
+		public interface ForecastValueGetter<T>{
+			Double getValue(T forecastItem);
+		}
+		
+		public interface ForecastValueSetter<T> {
+			void setValue(T forecastItem, Double value);
+		}
+	}
 }

@@ -91,6 +91,12 @@ public class LazyLoadingDataList<E extends RepositoryEntity> implements List<E>,
 	}
 	
 	
+	public void  refresh() {
+		backedList = null;
+		loaded = false;
+		deletedNodes.clear();
+	}
+	
 
 	// List interfaces methods
 	

@@ -119,7 +119,7 @@
    YAHOO.Bubbling.fire("registerToolbarButtonAction", {
        actionName : "entity-add-aspect",
        evaluate : function(asset, entity) {
-           return asset.name !== null && asset.name.indexOf("View-properties") == 0 && entity.userAccess.edit;
+           return asset.name !== null && asset.name.indexOf("View-properties") == 0 && (entity.userAccess.edit || entity.aspects.includes("bcpg:archivedEntityAspect"));
        },
        fn : function(instance) {
            
@@ -149,7 +149,7 @@
    YAHOO.Bubbling.fire("registerToolbarButtonAction", {
        actionName : "entity-refresh-reports",
        evaluate : function(asset, entity) {
-           return asset.name !== null && asset.name.indexOf("View-reports") == 0 ;
+           return asset.name !== null && asset.name.indexOf("View-reports") == 0 && !entity.aspects.includes("bcpg:archivedEntityAspect");
        },
        fn : function(instance) {
     	   
@@ -237,7 +237,9 @@
 						return asset.name != null &&
 							(asset.name != "View-documents" && asset.name != "View-reports" && asset.name != "activityList" && asset.name != "WUsed")
 							&& entity != null && (beCPG.util.contains(entity.aspects,
-								"bcpg:productAspect") || entity.type == "bcpg:productSpecification" || entity.type == "qa:batch" || entity.type == "pjt:project" || entity.type == "bcpg:productCollection") && entity.userAccess.edit;
+								"bcpg:productAspect") || entity.type == "bcpg:productSpecification" || entity.type == "qa:batch" || entity.type == "pjt:project" 
+								|| entity.type == "bcpg:productCollection" || entity.type == "bcpg:supplier" || entity.type == "bcpg:client") 
+								&& entity.userAccess.edit && !entity.aspects.includes("bcpg:archivedEntityAspect");
 					},
 					fn: function(instance) {
 

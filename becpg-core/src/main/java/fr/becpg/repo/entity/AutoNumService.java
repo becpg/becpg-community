@@ -40,6 +40,14 @@ public interface AutoNumService {
 	String getAutoNumValue(QName className, QName propertyName);
 
 	/**
+	 * @param className
+	 * @param propertyName
+	 * @param counter
+	 * @return
+	 */
+	boolean setAutoNumValue(QName className, QName propertyName, Long counter);
+
+	/**
 	 * Delete auto num value.
 	 *
 	 * @param className
@@ -67,5 +75,14 @@ public interface AutoNumService {
 	 * @return the prefixed String for the given type
 	 */
 	String getPrefixedCode(QName type, QName propertyName, Long autoNum);
+
+	/**
+	 * <p>getAutoNumNodeRef.</p>
+	 * 
+	 * @param className
+	 * @param propertyName
+	 * @return the NodeRef of the AutoNum value
+	 */
+	NodeRef getAutoNumNodeRef(final QName className, final QName propertyName);
 
 }

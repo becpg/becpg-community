@@ -93,6 +93,7 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 			for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
 				XSSFSheet sheet = workbook.getSheetAt(i);
 				mainType = fillSheet(sheet, searchResults, mainType);
+				sheet.setForceFormulaRecalculation(true);
 			}
 		  //Disable for XLSM (break #2259 ?) workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
 			workbook.setForceFormulaRecalculation(true);

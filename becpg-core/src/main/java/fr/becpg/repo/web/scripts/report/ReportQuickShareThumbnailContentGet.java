@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.jscript.ScriptNode;
@@ -178,7 +178,7 @@ public class ReportQuickShareThumbnailContentGet extends QuickShareContentGet {
 				boolean ph = false;
 				String phString = req.getParameter("ph");
 				if (phString != null) {
-					ph = new Boolean(phString);
+					ph =  Boolean.valueOf(phString);
 				}
 
 				// Queue the creation of the thumbnail if appropriate

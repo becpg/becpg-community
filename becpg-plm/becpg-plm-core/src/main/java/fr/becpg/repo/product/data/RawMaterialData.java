@@ -3,6 +3,9 @@
  */
 package fr.becpg.repo.product.data;
 
+import org.alfresco.service.cmr.repository.MLText;
+
+import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.repository.annotation.AlfCacheable;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
@@ -22,23 +25,38 @@ public class RawMaterialData extends ProductData {
 
 	private static final long serialVersionUID = -2176815295417841030L;
 
-
-
-	@Override
-	public int hashCode() {
-		return super.hashCode();
+	public static RawMaterialData build() {
+		return new RawMaterialData();
 	}
 
+	public RawMaterialData withName(String name) {
+		setName(name);
+		return this;
+	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		return true;
+	public RawMaterialData withLegalName(String legalName) {
+		setLegalName(legalName);
+		return this;
+	}
+	
+	public RawMaterialData withLegalName(MLText legalName) {
+		setLegalName(legalName);
+		return this;
+	}
+
+	public RawMaterialData withUnit(ProductUnit unit) {
+		setUnit(unit);
+		return this;
+	}
+
+	public RawMaterialData withQty(Double qty) {
+		setQty(qty);
+		return this;
+	}
+
+	public RawMaterialData withDensity(Double density) {
+		setDensity(density);
+		return this;
 	}
 
 

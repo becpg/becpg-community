@@ -1,14 +1,20 @@
 package fr.becpg.repo.batch;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.Deque;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.annotation.Nullable;
 
@@ -33,6 +39,10 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.repo.audit.model.AuditScope;
+import fr.becpg.repo.audit.model.AuditType;
+import fr.becpg.repo.audit.plugin.impl.BatchAuditPlugin;
+import fr.becpg.repo.audit.service.BeCPGAuditService;
 import fr.becpg.repo.mail.BeCPGMailService;
 
 @Service("batchQueueService")
@@ -50,27 +60,37 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 	private BeCPGMailService beCPGMailService;
 
 	@Autowired
-	@Qualifier("batchThreadPoolExecutor")
-	private ThreadPoolExecutor threadExecutor;
+	@Qualifier("batchThreadPoolExecutorMap")
+	private Map<String, ThreadPoolExecutor> threadExecutorMap;
 
 	@Autowired
 	private TenantAdminService tenantAdminService;
-
+	
+	@Autowired
+	private BeCPGAuditService beCPGAuditService;
+	
 	private BatchMonitor lastRunningBatch;
 	
-	private Runnable runningCommand;
+	private AtomicReference<BatchCommand<?>> runningCommand = new AtomicReference<>();
 
-	private Set<String> cancelledBatches = new HashSet<>();
+	private Set<String> cancelledBatches = ConcurrentHashMap.newKeySet();
+	
+	private Deque<BatchCommand<?>> pausedCommands = new ConcurrentLinkedDeque<>();
+	
+	private static final String CANCELLED = "cancelled";
+	private static final String PERCENT_COMPLETED = "percentCompleted";
+	private static final String STEPS_MAX = "stepsMax";
+	private static final String STEP_COUNT = "stepCount";
 
 	@Override
 	public <T> Boolean queueBatch(@NonNull BatchInfo batchInfo, @NonNull BatchProcessWorkProvider<T> workProvider,
 			@NonNull BatchProcessWorker<T> processWorker, @Nullable BatchErrorCallback errorCallback) {
 
 		BatchStep<T> batchStep = new BatchStep<>();
-
+		
 		batchStep.setWorkProvider(workProvider);
 		batchStep.setProcessWorker(processWorker);
-
+		
 		BatchStepListener batchStepListener = new BatchStepAdapter() {
 			@Override
 			public void onError(String lastErrorEntryId, String lastError) {
@@ -79,13 +99,13 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 				}
 			}
 		};
-
+		
 		batchStep.setBatchStepListener(batchStepListener);
-
+		
 		return queueBatch(batchInfo, Arrays.asList(batchStep));
-
+		
 	}
-
+	
 	@Override
 	public <T> Boolean queueBatch(@NonNull BatchInfo batchInfo, @NonNull List<BatchStep<T>> batchSteps) {
 		return queueBatch(batchInfo, batchSteps, null);
@@ -105,11 +125,12 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 		cancelledBatches.remove(batchInfo.getBatchId());
 		
 		Runnable command = new BatchCommand<>(batchInfo, batchSteps, closingHook);
-		if (!threadExecutor.getQueue().contains(command) && !command.equals(runningCommand)) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Batch " + batchInfo.getBatchId() + " added to execution queue");
+		ThreadPoolExecutor threadPoolExecutor = threadExecutorMap.get(Integer.toString(batchInfo.getPriority()));
+		if (!threadPoolExecutor.getQueue().contains(command) && !command.equals(runningCommand.get())) {
+			if(logger.isInfoEnabled()) {
+				logger.info("Batch " + batchInfo.getBatchId() + " added to execution queue");
 			}
-			threadExecutor.execute(command);
+			threadPoolExecutor.execute(command);
 		} else {
 			String label = I18NUtil.getMessage(batchInfo.getBatchDescId(), batchInfo.getEntityDescription());
 			logger.warn("Same batch already in queue " + (label != null ? label : batchInfo.getBatchDescId()) + " (" + batchInfo.getBatchId() + ")");
@@ -119,60 +140,125 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 	}
 
 	@Override
+	public String getRunningBatchInfo() {
+		if (runningCommand.get() != null) {
+			return buildJsonBatchInfo(runningCommand.get().batchInfo).toString();
+		}
+		return null;
+	}
+	
+	private JSONObject buildJsonBatchInfo(BatchInfo batchInfo) throws JSONException {
+		JSONObject json = new JSONObject();
+			
+		String entityDescription = null;
+		
+		if (batchInfo.getEntityDescription() != null) {
+			entityDescription = batchInfo.getEntityDescription();
+		}
+		
+		if (batchInfo.getCurrentStep() != null && batchInfo.getTotalSteps() != null) {
+			json.put(STEP_COUNT, batchInfo.getCurrentStep());
+			json.put(STEPS_MAX, batchInfo.getTotalSteps());
+		}
+		
+		json.put(BatchInfo.BATCH_ID, batchInfo.getBatchId());
+		json.put(BatchInfo.BATCH_USER, batchInfo.getBatchUser());
+		
+		String descriptionLabel = I18NUtil.getMessage(batchInfo.getBatchDescId(), entityDescription);
+		
+		if (batchInfo.getStepDescId() != null) {
+			descriptionLabel += " - " + I18NUtil.getMessage(batchInfo.getStepDescId());
+		}
+		
+		json.put(BatchInfo.BATCH_DESC_ID, descriptionLabel != null ? descriptionLabel : batchInfo.getBatchDescId());
+		
+		if (batchInfo.isCancelled()) {
+			json.put(CANCELLED, true);
+		}
+		
+		if (pausedCommands.stream().anyMatch(c -> c.getBatchId().equals(batchInfo.getBatchId()))) {
+			json.put("paused", true);
+		}
+		
+		if (batchInfo.getCurrentItem() != null && batchInfo.getTotalItems() != null && batchInfo.getTotalItems() != 0) {
+			json.put("currentItem", batchInfo.getCurrentItem());
+			json.put("totalItems", batchInfo.getTotalItems());
+			json.put(PERCENT_COMPLETED, 100 * batchInfo.getCurrentItem() / batchInfo.getTotalItems());
+		} else {
+			json.put(PERCENT_COMPLETED, 0);
+		}
+		
+		return json;
+	}
+	
+	@Override
 	public BatchMonitor getLastRunningBatch() {
 		return lastRunningBatch;
 	}
-
+	
 	@Override
-	public List<BatchInfo> getBatchesInQueue() {
+	public List<String> getBatchesInQueue() {
 
-		List<BatchInfo> batchInfos = new LinkedList<>();
-
-		for (Runnable batch : threadExecutor.getQueue()) {
-			if (batch instanceof BatchCommand) {
-				batchInfos.add(((BatchCommand<?>) batch).getBatchInfo());
+		List<String> batchInfos = new ArrayList<>();
+		
+		for (Entry<String, ThreadPoolExecutor> entry : threadExecutorMap.entrySet()) {
+			String priority = entry.getKey();
+			ThreadPoolExecutor poolExecutor = entry.getValue();
+			Iterator<BatchCommand<?>> it = pausedCommands.descendingIterator();
+			while (it.hasNext()) {
+				BatchCommand<?> pausedBatch = it.next();
+				if (Integer.toString(pausedBatch.getBatchInfo().getPriority()).equals(priority)) {
+					batchInfos.add(buildJsonBatchInfo(pausedBatch.getBatchInfo()).toString());
+					break;
+				}
+			}
+			for (Runnable batch : poolExecutor.getQueue()) {
+				if (batch instanceof BatchCommand) {
+					batchInfos.add(buildJsonBatchInfo(((BatchCommand<?>) batch).getBatchInfo()).toString());
+				}
 			}
 		}
-
+		
 		return batchInfos;
 
 	}
 
 	@Override
 	public boolean removeBatchFromQueue(String batchId) {
-
-		BatchCommand<?> command = findCommandInQueue(batchId);
-
-		if (command != null) {
-			return threadExecutor.remove(command);
+		
+		if (pausedCommands.stream().anyMatch(c -> c.getBatchId().equals(batchId))) {
+			cancelBatch(batchId);
 		}
-
+		
+		BatchCommand<?> command = findCommandInQueue(batchId);
+		
+		if (command != null) {
+			return threadExecutorMap.get(Integer.toString(command.getBatchInfo().getPriority())).remove(command);
+		}
+		
 		return false;
 
 	}
 
 	private BatchCommand<?> findCommandInQueue(String batchId) {
-		for (Runnable batch : threadExecutor.getQueue()) {
-			if ((batch instanceof BatchCommand) && batchId.equals(((BatchCommand<?>) batch).getBatchId())) {
-				return (BatchCommand<?>) batch;
+		for (ThreadPoolExecutor executor : threadExecutorMap.values()) {
+			for (Runnable batch : executor.getQueue()) {
+				if ((batch instanceof BatchCommand) && batchId.equals(((BatchCommand<?>) batch).getBatchId())) {
+					return (BatchCommand<?>) batch;
+				}
 			}
 		}
 		return null;
 	}
-
+	
 	@Override
 	public boolean cancelBatch(String batchId) {
-
+		
 		if (findCommandInQueue(batchId) == null) {
 			return cancelledBatches.add(batchId);
 		}
-
+		
 		return false;
-	}
-	
-	@Override
-	public Set<String> getCancelledBatches() {
-		return cancelledBatches;
 	}
 
 	public class BatchCommand<T> implements Runnable {
@@ -181,7 +267,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 		private BatchInfo batchInfo;
 		private List<BatchStep<T>> batchSteps;
 		private BatchClosingHook closingHook;
-
+		
 		public BatchCommand(BatchInfo batchInfo, List<BatchStep<T>> batchSteps, BatchClosingHook closingHook) {
 			super();
 			this.batchInfo = batchInfo;
@@ -200,115 +286,157 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 
 		@Override
 		public void run() {
-
-			runningCommand = this;
 			
-			try {
+			if (runningCommand.get() != null) {
+				if (runningCommand.get().getBatchInfo().getPriority() < this.getBatchInfo().getPriority()) {
+					pausedCommands.push(this);
+					if (logger.isInfoEnabled()) {
+						logger.info("Batch '" + this.getBatchId() + "' is waiting for '" + runningCommand.get().getBatchId() + "' to finish");
+					}
+					checkPausedCommand();
+				} else {
+					pausedCommands.push(runningCommand.get());
+					if (logger.isInfoEnabled()) {
+						logger.info("Batch '" + runningCommand.get().getBatchId() + "' is paused because '" + this.getBatchId() + "' started");
+					}
+					runningCommand.set(this);
+				}
+			} else {
+				runningCommand.set(this);
+			}
+			
+			try (AuditScope auditScope = beCPGAuditService.startAudit(AuditType.BATCH)) {
 				boolean hasError = false;
-				
+
 				Date startTime = new Date();
-				
+
+				int totalItems = 0;
+				int totalErrors = 0;
+
+				auditScope.putAttribute(BatchAuditPlugin.BATCH_USER, batchInfo.getBatchUser());
+				auditScope.putAttribute(BatchAuditPlugin.BATCH_ID, batchInfo.getBatchId());
+				auditScope.putAttribute(BatchAuditPlugin.IS_COMPLETED, false);
+
 				Integer stepCount = batchSteps.size() > 1 ? 1 : null;
-				
+
 				for (BatchStep<T> batchStep : batchSteps) {
-					try {
-						if (batchStep.getBatchStepListener() != null) {
-							
-							pushAndSetBatchAuthentication();
-							
-							transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-								batchStep.getBatchStepListener().beforeStep();
-								return true;
-							}, false, true);
-							
-							AuthenticationUtil.popAuthentication();
-						}
-						
-						JSONObject jsonBatch = new JSONObject();
-						
-						jsonBatch.put("batchId", batchInfo.getBatchId());
-						jsonBatch.put("batchDescId", batchInfo.getBatchDescId());
-						jsonBatch.put("batchUser", batchInfo.getBatchUser());
-						jsonBatch.put("entityDescription", batchInfo.getEntityDescription());
-						if (stepCount != null) {
-							jsonBatch.put("stepCount", stepCount);
-							jsonBatch.put("stepsMax", batchSteps.size());
-							stepCount++;
-						}
-						
-						BatchProcessor<T> batchProcessor = new BatchProcessor<>(jsonBatch.toString(),
-								transactionService.getRetryingTransactionHelper(), getNextWorkWrapper(batchStep.getWorkProvider()),
-								batchInfo.getWorkerThreads(), batchInfo.getBatchSize(), applicationEventPublisher, logger, 100);
-						
-						batchProcessor.processLong(runAsWrapper(batchStep.getProcessWorker()), true);
-						
-						if (batchProcessor.getTotalErrorsLong() > 0 && batchStep.getBatchStepListener() != null) {
-							
-							hasError = true;
-							
-							AuthenticationUtil.runAs(() -> transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-								batchStep.getBatchStepListener().onError(batchProcessor.getLastErrorEntryId(), batchProcessor.getLastError());
-								return null;
-								
-							}, false, true), batchInfo.getBatchUser());
-							
-						}
-						if (batchStep.getBatchStepListener() != null) {
-							
-							pushAndSetBatchAuthentication();
-							
-							transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-								batchStep.getBatchStepListener().afterStep();
-								return true;
-							}, false, true);
-							
-							AuthenticationUtil.popAuthentication();
-							
-						}
-						
-					} catch (JSONException e) {
-						logger.error("Failed to fill JSON information", e);
+
+					if (batchStep.getBatchStepListener() != null) {
+
+						pushAndSetBatchAuthentication();
+
+						transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+							batchStep.getBatchStepListener().beforeStep();
+							return true;
+						}, false, true);
+
+						AuthenticationUtil.popAuthentication();
+
 					}
 					
+					batchInfo.setCurrentItem(0);
+					batchInfo.setTotalItems((int) batchStep.getWorkProvider().getTotalEstimatedWorkSizeLong());
+
+					batchInfo.setStepDescId(batchStep.getStepDescId());
+					if (stepCount != null) {
+						batchInfo.setCurrentStep(stepCount);
+						batchInfo.setTotalSteps(batchSteps.size());
+						stepCount++;
+					}
+					
+					BatchProcessor<T> batchProcessor = new BatchProcessor<>(batchInfo.toJson().toString(),
+							transactionService.getRetryingTransactionHelper(),
+							getNextWorkWrapper(batchStep.getWorkProvider()), batchInfo.getWorkerThreads(),
+							batchInfo.getBatchSize(), applicationEventPublisher, logger, 100);
+
+					batchProcessor.processLong(runAsWrapper(batchStep.getProcessWorker()), true);
+
+					totalItems += batchProcessor.getTotalResultsLong();
+					totalErrors += batchProcessor.getTotalErrorsLong();
+
+					if (batchProcessor.getTotalErrorsLong() > 0 && batchStep.getBatchStepListener() != null) {
+
+						hasError = true;
+
+						AuthenticationUtil
+								.runAs(() -> transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+									batchStep.getBatchStepListener().onError(batchProcessor.getLastErrorEntryId(),
+											batchProcessor.getLastError());
+									return null;
+
+							}, false, true), batchInfo.getBatchUser());
+
+					}
+					if (batchStep.getBatchStepListener() != null) {
+
+						pushAndSetBatchAuthentication();
+
+						transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+							batchStep.getBatchStepListener().afterStep();
+							return true;
+						}, false, true);
+
+						AuthenticationUtil.popAuthentication();
+
+					}
 				}
-				
+
 				if (closingHook != null) {
-					
+
 					pushAndSetBatchAuthentication();
-					
+
 					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 						closingHook.run();
 						return true;
 					}, false, true);
-					
+
 					AuthenticationUtil.popAuthentication();
-					
+
 				}
-				
+
+				batchInfo.setIsCompleted(true);
+
+				auditScope.putAttribute(BatchAuditPlugin.TOTAL_ITEMS, totalItems);
+				auditScope.putAttribute(BatchAuditPlugin.TOTAL_ERRORS, totalErrors);
+				auditScope.putAttribute(BatchAuditPlugin.IS_COMPLETED, true);
+
 				if (Boolean.TRUE.equals(batchInfo.getNotifyByMail())) {
-					
+
 					Date endTime = new Date();
 					
 					boolean finalHasError = hasError;
-					
+
 					int secondsBetween = (int) ((endTime.getTime() - startTime.getTime()) / 1000);
-					
-					AuthenticationUtil.runAs(() -> transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-						
-						beCPGMailService.sendMailOnAsyncAction(batchInfo.getBatchUser(), batchInfo.getMailAction(), batchInfo.getMailActionUrl(),
-								!finalHasError, secondsBetween, batchInfo.getEntityDescription());
-						
-						return null;
+
+					AuthenticationUtil
+							.runAs(() -> transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+								beCPGMailService.sendMailOnAsyncAction(batchInfo.getBatchUser(),
+										batchInfo.getMailAction(), batchInfo.getMailActionUrl(), !finalHasError,
+										secondsBetween, batchInfo.getEntityDescription());
+
+								return null;
 					}, false, true), batchInfo.getBatchUser());
 				}
-				
+
 				batchInfo.setIsCompleted(true);
-				
+
+			} finally {
 				if (cancelledBatches.contains(batchId)) {
 					cancelledBatches.remove(batchId);
 				}
-			} finally {
-				runningCommand = null;
+				if (pausedCommands.contains(this)) {
+					pausedCommands.remove(this);
+				}
+				if (runningCommand.get() == this) {
+					runningCommand.set(null);
+				}
+				if (!pausedCommands.isEmpty()) {
+					runningCommand.set(pausedCommands.pop());
+					if (logger.isInfoEnabled()) {
+						logger.info("Resume batch: " + ((BatchCommand<?>) runningCommand.get()).getBatchId());
+					}
+				}
 			}
 		}
 
@@ -342,12 +470,12 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 				public long getTotalEstimatedWorkSizeLong() {
 					return getTotalEstimatedWorkSize();
 				}
-
+				
 				@Override
 				public Collection<T> getNextWork() {
 					return workProvider.getNextWork();
 				}
-
+				
 			};
 		}
 
@@ -367,16 +495,18 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 
 				@Override
 				public void process(T entry) throws Throwable {
-
 					if (cancelledBatches.contains(batchId)) {
 						if (logger.isDebugEnabled()) {
 							logger.debug("Skip entry '" + entry + "' as batch : '" + batchId + "' was cancelled");
 						}
+						BatchCommand.this.getBatchInfo().setCancelled(true);
 						return;
 					}
-
+					checkPausedCommand();
 					processWorker.process(entry);
+					batchInfo.setCurrentItem(batchInfo.getCurrentItem() + 1);
 				}
+
 
 				@Override
 				public void afterProcess() throws Throwable {
@@ -387,6 +517,11 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 			};
 		}
 
+		private void checkPausedCommand() {
+			while (pausedCommands.contains(this) && !cancelledBatches.contains(this.getBatchId())) {
+				// do nothing: command is currently paused
+			}
+		}
 		/*
 		 * Is important to keep only batchId in equals method
 		 */
@@ -427,5 +562,5 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 			lastRunningBatch = event.getBatchMonitor();
 		}
 	}
-
+	
 }

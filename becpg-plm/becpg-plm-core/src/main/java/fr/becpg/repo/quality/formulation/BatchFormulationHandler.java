@@ -14,7 +14,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
-
 import fr.becpg.model.QualityModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
@@ -25,7 +24,6 @@ import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
-import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.formulation.FormulationHelper;
@@ -142,9 +140,10 @@ public class BatchFormulationHandler extends FormulationBaseHandler<BatchData> {
 							item.setState(SystemState.Refused);
 
 							if (reqCtrl == null) {
-								reqCtrl = new ReqCtrlListDataItem(null, RequirementType.Forbidden,
-										new MLText(I18NUtil.getMessage(MESSAGE_MISSING_STOCK)), null, new ArrayList<>(),
-										RequirementDataType.Formulation);
+								reqCtrl = ReqCtrlListDataItem.forbidden()
+										.withMessage(new MLText(I18NUtil.getMessage(MESSAGE_MISSING_STOCK)))
+										.ofDataType(RequirementDataType.Formulation);
+										
 								batchData.getReqCtrlList().add(reqCtrl);
 							}
 

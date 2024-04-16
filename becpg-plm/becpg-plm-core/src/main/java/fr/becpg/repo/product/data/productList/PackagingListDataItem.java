@@ -222,7 +222,36 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 	 * </p>
 	 */
 	public PackagingListDataItem() {
+		super();
+	}
+	
+	public static PackagingListDataItem build() {
+		return new PackagingListDataItem();
+	}
 
+	public PackagingListDataItem withUnit(ProductUnit unit) {
+		setPackagingListUnit(unit);
+		return this;
+	}
+
+	public PackagingListDataItem withQty(Double qty) {
+		setQty(qty);
+		return this;
+	}
+
+	public PackagingListDataItem withProduct(NodeRef product) {
+		setProduct(product);
+		return this;
+	}
+
+	public PackagingListDataItem withPkgLevel(PackagingLevel pkgLevel) {
+		setPkgLevel(pkgLevel);
+		return this;
+	}
+
+	public PackagingListDataItem withIsMaster(Boolean isMaster) {
+		setIsMaster(isMaster);
+		return this;
 	}
 
 	/**
@@ -246,6 +275,7 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 	 * @param product
 	 *            a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
+	@Deprecated
 	public PackagingListDataItem(NodeRef nodeRef, Double qty, ProductUnit packagingListUnit, PackagingLevel pkgLevel, Boolean isMaster,
 			NodeRef product) {
 

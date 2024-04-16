@@ -162,7 +162,6 @@ public class MultiLevelExtractor extends SimpleExtractor {
 			props.put(PROP_DEPTH, entry.getValue().getDepth());
 			props.put(PROP_ENTITYNODEREF, entityNodeRef);
 			props.put(PROP_PATH, curPath + "/" + entry.getKey().getId());
-		
 
 			if ((currIndex >= startIndex) && (currIndex < (startIndex + pageSize))) {
 
@@ -269,7 +268,9 @@ public class MultiLevelExtractor extends SimpleExtractor {
 	public boolean applyTo(DataListFilter dataListFilter) {
 		return !dataListFilter.isSimpleItem() && (dataListFilter.getDataType() != null)
 				&& entityDictionaryService.isMultiLevelDataList(dataListFilter.getDataType())
-				&& !dataListFilter.getDataListName().startsWith(RepoConsts.WUSED_PREFIX) && !dataListFilter.getDataListName().equals("projectList") // TODO better
+				&& !dataListFilter.getDataListName().startsWith(RepoConsts.WUSED_PREFIX) 
+				&& !dataListFilter.getDataListName().equals("projectList") // TODO better
+				&& !dataListFilter.getDataListName().equals("ingList") // TODO better
 				&& !dataListFilter.isVersionFilter();
 	}
 
