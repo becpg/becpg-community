@@ -121,7 +121,7 @@ public class AIWSProxyHandler {
 
 	private String createWSURL(String endpointUrl, String queryString) {
 		String protocol = endpointUrl.contains("443") ? WSS_PROTOCOL : WS_PROTOCOL;
-		return endpointUrl.replace("http", protocol).replace("/api", "/ws") + (queryString!=null  ? "?" + queryString : "");
+		return endpointUrl.replace("http", protocol) + "/ws" + (queryString!=null  ? "?" + queryString : "");
 	}
 
 	private void forwardMessage(Session session, String message) throws IOException {

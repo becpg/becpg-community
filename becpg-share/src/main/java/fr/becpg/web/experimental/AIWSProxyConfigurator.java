@@ -1,12 +1,9 @@
 package fr.becpg.web.experimental;
 
 import java.text.MessageFormat;
-import java.util.Arrays;
 
 import org.springframework.extensions.webscripts.connector.ConnectorService;
 
-import jakarta.websocket.HandshakeResponse;
-import jakarta.websocket.server.HandshakeRequest;
 import jakarta.websocket.server.ServerEndpointConfig;
 
 public class AIWSProxyConfigurator extends ServerEndpointConfig.Configurator{
