@@ -24,15 +24,16 @@ public class EntityIconWebScript extends AbstractWebScript{
 	public void setEntityIconService(EntityIconService entityIconService) {
 		this.entityIconService = entityIconService;
 	}
-
-
+	
+	
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
 		try (OutputStream out = resp.getOutputStream()){
+			resp.setContentType("text/css;charset=UTF-8");
+			resp.setContentEncoding("UTF-8");
+			
 			entityIconService.writeIconCSS(out);
 			
-			resp.setContentType("text/css");
-			resp.setContentEncoding("UTF-8");
 			resp.setStatus(Status.STATUS_OK);
 		} catch (BeCPGException e) {
 			logger.error("Cannot generate CSS Entity Icons ", e);
