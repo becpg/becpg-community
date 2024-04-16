@@ -2,11 +2,33 @@
 /**            beCPG               **/
 /************************************/
 * {
-	--finishedProduct-icon: url("../../components/images/filetypes/generic-finishedProduct-16.png");
-	--rawMaterial-icon: url("../../components/images/filetypes/generic-rawMaterial-16.png");
-	--semiFinishedProduct-icon: url("../../components/images/filetypes/generic-semiFinishedProduct-16.png");
+	--icon-finishedProduct-16:
+		url("../../components/images/filetypes/generic-finishedProduct-16.png");
+	--icon-rawMaterial-16:
+		url("../../components/images/filetypes/generic-rawMaterial-16.png");
+	--icon-semiFinishedProduct-16:
+		url("../../components/images/filetypes/generic-semiFinishedProduct-16.png");
+	--icon-localSemiFinishedProduct-16:
+		url("../../components/images/filetypes/generic-localSemiFinishedProduct-16.png");
+	--icon-supplier-16:
+		url("../../components/images/filetypes/generic-supplier-16.png");
+	--icon-packagingKit-16:
+		url("../../components/images/filetypes/generic-packagingKit-16.png");
+	--icon-packagingMaterial-16:
+		url("../../components/images/filetypes/generic-packagingMaterial-16.png");
+	--icon-resourceProduct-16:
+		url("../../components/images/filetypes/generic-resourceProduct-16.png");
+	--icon-productCollection-16:
+		url("../../components/images/filetypes/generic-productCollection-16.png");
+	--icon-productCatalog-16:
+		url("../../components/images/filetypes/generic-productCatalog-16.png");
+	--icon-client-16:
+		url("../../components/images/filetypes/generic-client-16.png");
+	--icon-entity-16:
+		url("../../components/images/filetypes/generic-entity-16.png");
+	--icon-project-16:
+		url("../../components/images/filetypes/generic-project-16.png");
 }
-
 
 .footer-becpg .copyright {
 	display: inline-block;
@@ -300,7 +322,7 @@
 
 @media print {
 	body {
-		-webkit-print-color-adjust: exact;
+		print-color-adjust: exact;
 	}
 }
 
@@ -480,7 +502,7 @@ span.physicoChem-formulated {
 
 span.entity,
 .entity {
-    background-image: url("../../components/images/filetypes/generic-entity-16.png") !important;
+    background-image: var(--icon-entity-16) !important;
     padding-left: 20px;
     background-repeat: no-repeat
 }
@@ -500,7 +522,7 @@ span.listValue {
 
 span.client,
 .entity.client {
-    background-image: url("../../components/images/filetypes/generic-client-16.png") !important;
+    background-image: var(--icon-client-16) !important;
     padding-left: 20px;
     background-repeat: no-repeat
 }
@@ -508,7 +530,7 @@ span.client,
 span.supplier,
 .entity.bcpg-supplier,
 .entity.supplier {
-    background-image: url("../../components/images/filetypes/generic-supplier-16.png") !important;
+    background-image: var(--icon-supplier-16) !important;
     padding-left: 20px;
     background-repeat: no-repeat
 }
@@ -517,7 +539,7 @@ span.supplier,
 
 
 span.productCatalog {
-    background-image: url("../../components/images/filetypes/generic-productCatalog-16.png") !important;
+    background-image: var(--icon-productCatalog-16) !important;
     padding-left: 20px;
     background-repeat: no-repeat
 }
@@ -527,7 +549,7 @@ span.productCollection,
 span.productCollection-ToValidate,
 .entity.bcpg-productCollection,
 .entity.productCollection  {
-    background-image: url("../../components/images/filetypes/generic-productCollection-16.png") !important;
+    background-image: var(--icon-productCollection-16) !important;
     padding-left: 20px;
     background-repeat: no-repeat
 }
@@ -538,7 +560,7 @@ span.finishedProduct,
 span.finishedProduct-ToValidate,
 .entity.bcpg-finishedProduct,
 .entity.finishedProduct  {
-    background-image: var(--finishedProduct-icon) !important;
+    background-image: var(--icon-finishedProduct-16) !important;
     background-size: contain;
     padding-left: 20px;
     background-repeat: no-repeat
@@ -548,7 +570,7 @@ span.localSemiFinishedProduct,
 span.localSemiFinishedProduct-ToValidate,
 .entity.bcpg-localSemiFinishedProduct,
 .entity.localSemiFinishedProduct {
-    background-image: url("../../components/images/filetypes/generic-localSemiFinishedProduct-16.png") !important;
+    background-image: var(--icon-localSemiFinishedProduct-16) !important;
     padding-left: 20px;
     background-repeat: no-repeat
 }
@@ -557,7 +579,7 @@ span.packagingKit,
 span.packagingKit-ToValidate,
 .entity.bcpg-packagingKit,
 .entity.packagingKit {
-    background-image: url("../../components/images/filetypes/generic-packagingKit-16.png") !important;
+    background-image: var(--icon-packagingKit-16) !important;
     padding-left: 20px;
     background-repeat: no-repeat
 }
@@ -565,7 +587,7 @@ span.packagingMaterial,
 span.packagingMaterial-ToValidate,
 .entity.bcpg-packagingMaterial,
 .entity.packagingMaterial {
-    background-image: url("../../components/images/filetypes/generic-packagingMaterial-16.png") !important;
+    background-image: var(--icon-packagingMaterial-16) !important;
     padding-left: 20px;
     background-repeat: no-repeat
 }
@@ -579,7 +601,7 @@ span.rawMaterial,
 span.rawMaterial-ToValidate,
 .entity.bcpg-rawMaterial,
 .entity.rawMaterial  {
-    background-image: var(--rawMaterial-icon) !important;
+    background-image: var(--icon-rawMaterial-16) !important;
     background-size: contain;
     padding-left: 20px;
     background-repeat: no-repeat
@@ -589,7 +611,7 @@ span.semiFinishedProduct,
 span.semiFinishedProduct-ToValidate,
 .entity.bcpg-semiFinishedProduct,
 .entity.semiFinishedProduct {
-    background-image: var(--semiFinishedProduct-icon) !important;
+    background-image: var(--icon-semiFinishedProduct-16) !important;
     background-size: contain;
     padding-left: 20px;
     background-repeat: no-repeat
@@ -599,7 +621,7 @@ span.resourceProduct,
 span.resourceProduct-ToValidate,
 .entity.bcpg-resourceProduct,
 .entity.resourceProduct {
-    background-image: url("../../components/images/filetypes/generic-resourceProduct-16.png") !important;
+    background-image: var(--icon-resourceProduct-16) !important;
     padding-left: 20px;
     background-repeat: no-repeat
 }
@@ -655,131 +677,131 @@ span.semiFinishedProduct-Stopped {
 
 
 span.finishedProduct-ToValidate {
-    background-image: url("../../components/images/states/tovalidate-10.png") , var(--finishedProduct-icon) !important
+    background-image: url("../../components/images/states/tovalidate-10.png") , var(--icon-finishedProduct-16) !important
 }
 span.localSemiFinishedProduct-ToValidate {
-    background-image: url("../../components/images/states/tovalidate-10.png") , url("../../components/images/filetypes/generic-localSemiFinishedProduct-16.png") !important
+    background-image: url("../../components/images/states/tovalidate-10.png") , var(--icon-localSemiFinishedProduct-16) !important
 }
 span.packagingKit-ToValidate {
-    background-image: url("../../components/images/states/tovalidate-10.png") , url("../../components/images/filetypes/generic-packagingKit-16.png") !important
+    background-image: url("../../components/images/states/tovalidate-10.png") , var(--icon-packagingKit-16) !important
 }
 span.packagingMaterial-ToValidate {
-    background-image: url("../../components/images/states/tovalidate-10.png") , url("../../components/images/filetypes/generic-packagingMaterial-16.png") !important
+    background-image: url("../../components/images/states/tovalidate-10.png") , var(--icon-packagingMaterial-16) !important
 }
 span.rawMaterial-ToValidate {
-    background-image: url("../../components/images/states/tovalidate-10.png") , var(--rawMaterial-icon) !important
+    background-image: url("../../components/images/states/tovalidate-10.png") , var(--icon-rawMaterial-16) !important
 }
 span.resourceProduct-ToValidate {
-    background-image: url("../../components/images/states/tovalidate-10.png") , url("../../components/images/filetypes/generic-resourceProduct-16.png") !important
+    background-image: url("../../components/images/states/tovalidate-10.png") , var(--icon-resourceProduct-16) !important
 }
 span.semiFinishedProduct-ToValidate {
-    background-image: url("../../components/images/states/tovalidate-10.png") , var(--semiFinishedProduct-icon) !important
+    background-image: url("../../components/images/states/tovalidate-10.png") , var(--icon-semiFinishedProduct-16) !important
 }
 span.finishedProduct-Valid {
-    background-image: url("../../components/images/states/valid-10.png") , var(--finishedProduct-icon) !important
+    background-image: url("../../components/images/states/valid-10.png") , var(--icon-finishedProduct-16) !important
 }
 span.localSemiFinishedProduct-Valid {
-    background-image: url("../../components/images/states/valid-10.png") , url("../../components/images/filetypes/generic-localSemiFinishedProduct-16.png") !important
+    background-image: url("../../components/images/states/valid-10.png") , var(--icon-localSemiFinishedProduct-16) !important
 }
 span.packagingKit-Valid {
-    background-image: url("../../components/images/states/valid-10.png") , url("../../components/images/filetypes/generic-packagingKit-16.png") !important
+    background-image: url("../../components/images/states/valid-10.png") , var(--icon-packagingKit-16) !important
 }
 span.packagingMaterial-Valid {
-    background-image: url("../../components/images/states/valid-10.png") , url("../../components/images/filetypes/generic-packagingMaterial-16.png") !important
+    background-image: url("../../components/images/states/valid-10.png") , var(--icon-packagingMaterial-16) !important
 }
 span.rawMaterial-Valid {
-    background-image: url("../../components/images/states/valid-10.png") , var(--rawMaterial-icon) !important
+    background-image: url("../../components/images/states/valid-10.png") , var(--icon-rawMaterial-16) !important
 }
 span.semiFinishedProduct-Valid {
-    background-image: url("../../components/images/states/valid-10.png") , var(--semiFinishedProduct-icon) !important
+    background-image: url("../../components/images/states/valid-10.png") , var(--icon-semiFinishedProduct-16) !important
 }
 span.resourceProduct-Valid {
-    background-image: url("../../components/images/states/valid-10.png") , url("../../components/images/filetypes/generic-resourceProduct-16.png") !important
+    background-image: url("../../components/images/states/valid-10.png") , var(--icon-resourceProduct-16) !important
 }
 span.finishedProduct-Simulation {
-    background-image: url("../../components/images/states/simulation-10.png") , var(--finishedProduct-icon) !important
+    background-image: url("../../components/images/states/simulation-10.png") , var(--icon-finishedProduct-16) !important
 }
 span.localSemiFinishedProduct-Simulation {
-    background-image: url("../../components/images/states/simulation-10.png") , url("../../components/images/filetypes/generic-localSemiFinishedProduct-16.png") !important
+    background-image: url("../../components/images/states/simulation-10.png") , var(--icon-localSemiFinishedProduct-16) !important
 }
 span.packagingKit-Simulation {
-    background-image: url("../../components/images/states/simulation-10.png") , url("../../components/images/filetypes/generic-packagingKit-16.png") !important
+    background-image: url("../../components/images/states/simulation-10.png") , var(--icon-packagingKit-16) !important
 }
 span.packagingMaterial-Simulation {
-    background-image: url("../../components/images/states/simulation-10.png") , url("../../components/images/filetypes/generic-packagingMaterial-16.png") !important
+    background-image: url("../../components/images/states/simulation-10.png") , var(--icon-packagingMaterial-16) !important
 }
 span.rawMaterial-Simulation {
-    background-image: url("../../components/images/states/simulation-10.png") , var(--rawMaterial-icon) !important
+    background-image: url("../../components/images/states/simulation-10.png") , var(--icon-rawMaterial-16) !important
 }
 span.semiFinishedProduct-Simulation {
-    background-image: url("../../components/images/states/simulation-10.png") , var(--semiFinishedProduct-icon) !important
+    background-image: url("../../components/images/states/simulation-10.png") , var(--icon-semiFinishedProduct-16) !important
 }
 span.resourceProduct-Simulation {
-    background-image: url("../../components/images/states/simulation-10.png") , url("../../components/images/filetypes/generic-resourceProduct-16.png") !important
+    background-image: url("../../components/images/states/simulation-10.png") , var(--icon-resourceProduct-16) !important
 }
 span.finishedProduct-Archived {
-    background-image: url("../../components/images/states/archived-10.png") , var(--finishedProduct-icon) !important
+    background-image: url("../../components/images/states/archived-10.png") , var(--icon-finishedProduct-16) !important
 }
 span.localSemiFinishedProduct-Archived {
-    background-image: url("../../components/images/states/archived-10.png") , url("../../components/images/filetypes/generic-localSemiFinishedProduct-16.png") !important
+    background-image: url("../../components/images/states/archived-10.png") , var(--icon-localSemiFinishedProduct-16) !important
 }
 span.packagingKit-Archived {
-    background-image: url("../../components/images/states/archived-10.png") , url("../../components/images/filetypes/generic-packagingKit-16.png") !important
+    background-image: url("../../components/images/states/archived-10.png") , var(--icon-packagingKit-16) !important
 }
 span.packagingMaterial-Archived {
-    background-image: url("../../components/images/states/archived-10.png") , url("../../components/images/filetypes/generic-packagingMaterial-16.png") !important
+    background-image: url("../../components/images/states/archived-10.png") , var(--icon-packagingMaterial-16) !important
 }
 span.rawMaterial-Archived {
-    background-image: url("../../components/images/states/archived-10.png") , var(--rawMaterial-icon) !important
+    background-image: url("../../components/images/states/archived-10.png") , var(--icon-rawMaterial-16) !important
 }
 span.semiFinishedProduct-Archived {
-    background-image: url("../../components/images/states/archived-10.png") , var(--semiFinishedProduct-icon) !important
+    background-image: url("../../components/images/states/archived-10.png") , var(--icon-semiFinishedProduct-16) !important
 }
 span.resourceProduct-Archived {
-    background-image: url("../../components/images/states/archived-10.png") , url("../../components/images/filetypes/generic-resourceProduct-16.png") !important
+    background-image: url("../../components/images/states/archived-10.png") , var(--icon-resourceProduct-16) !important
 }
 span.finishedProduct-Refused {
-    background-image: url("../../components/images/states/refused-10.png") , var(--finishedProduct-icon) !important
+    background-image: url("../../components/images/states/refused-10.png") , var(--icon-finishedProduct-16) !important
 }
 span.localSemiFinishedProduct-Refused {
-    background-image: url("../../components/images/states/refused-10.png") , url("../../components/images/filetypes/generic-localSemiFinishedProduct-16.png") !important
+    background-image: url("../../components/images/states/refused-10.png") , var(--icon-localSemiFinishedProduct-16) !important
 }
 span.packagingKit-Refused {
-    background-image: url("../../components/images/states/refused-10.png") , url("../../components/images/filetypes/generic-packagingKit-16.png") !important
+    background-image: url("../../components/images/states/refused-10.png") , var(--icon-packagingKit-16) !important
 }
 span.packagingMaterial-Refused {
-    background-image: url("../../components/images/states/refused-10.png") , url("../../components/images/filetypes/generic-packagingMaterial-16.png") !important
+    background-image: url("../../components/images/states/refused-10.png") , var(--icon-packagingMaterial-16) !important
 }
 span.rawMaterial-Refused {
-    background-image: url("../../components/images/states/refused-10.png") , var(--rawMaterial-icon) !important
+    background-image: url("../../components/images/states/refused-10.png") , var(--icon-rawMaterial-16) !important
 }
 span.semiFinishedProduct-Refused {
-    background-image: url("../../components/images/states/refused-10.png") , var(--semiFinishedProduct-icon) !important
+    background-image: url("../../components/images/states/refused-10.png") , var(--icon-semiFinishedProduct-16) !important
 }
 span.resourceProduct-Refused {
-    background-image: url("../../components/images/states/refused-10.png") , url("../../components/images/filetypes/generic-resourceProduct-16.png") !important
+    background-image: url("../../components/images/states/refused-10.png") , var(--icon-resourceProduct-16) !important
 }
 
 span.finishedProduct-Stopped {
-    background-image: url("../../components/images/states/stopped-10.png") , var(--finishedProduct-icon) !important
+    background-image: url("../../components/images/states/stopped-10.png") , var(--icon-finishedProduct-16) !important
 }
 span.localSemiFinishedProduct-Stopped {
-    background-image: url("../../components/images/states/stopped-10.png") , url("../../components/images/filetypes/generic-localSemiFinishedProduct-16.png") !important
+    background-image: url("../../components/images/states/stopped-10.png") , var(--icon-localSemiFinishedProduct-16) !important
 }
 span.packagingKit-Stopped {
-    background-image: url("../../components/images/states/stopped-10.png") , url("../../components/images/filetypes/generic-packagingKit-16.png") !important
+    background-image: url("../../components/images/states/stopped-10.png") , var(--icon-packagingKit-16) !important
 }
 span.packagingMaterial-Stopped {
-    background-image: url("../../components/images/states/stopped-10.png") , url("../../components/images/filetypes/generic-packagingMaterial-16.png") !important
+    background-image: url("../../components/images/states/stopped-10.png") , var(--icon-packagingMaterial-16) !important
 }
 span.rawMaterial-Stopped {
-    background-image: url("../../components/images/states/stopped-10.png") , var(--rawMaterial-icon) !important
+    background-image: url("../../components/images/states/stopped-10.png") , var(--icon-rawMaterial-16) !important
 }
 span.semiFinishedProduct-Stopped {
-    background-image: url("../../components/images/states/stopped-10.png") , var(--semiFinishedProduct-icon) !important
+    background-image: url("../../components/images/states/stopped-10.png") , var(--icon-semiFinishedProduct-16) !important
 }
 span.resourceProduct-Stopped {
-    background-image: url("../../components/images/states/stopped-10.png") , url("../../components/images/filetypes/generic-resourceProduct-16.png") !important
+    background-image: url("../../components/images/states/stopped-10.png") , var(--icon-resourceProduct-16) !important
 }
 
 
@@ -877,7 +899,7 @@ span.organoList {
 }
 
 span.compoList {
-    background-image: var(--finishedProduct-icon) !important;
+    background-image: url("../../components/images/filetypes/generic-finishedProduct-16.png") !important;
     padding-left: 20px;
     background-repeat: no-repeat
 }
@@ -905,7 +927,7 @@ span.processList {
 span.project,
 .entity.pjt-project,
 .entity.project {
-    background-image: url("../../components/images/filetypes/generic-project-16.png") !important;
+    background-image: var(--icon-project-16) !important;
     padding-left: 20px;
     background-repeat: no-repeat
 }
