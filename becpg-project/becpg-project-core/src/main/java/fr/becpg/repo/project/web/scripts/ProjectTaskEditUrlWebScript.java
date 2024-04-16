@@ -2,8 +2,6 @@ package fr.becpg.repo.project.web.scripts;
 
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletResponse;
-
 import org.alfresco.repo.admin.SysAdminParams;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -13,6 +11,7 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 import org.springframework.extensions.webscripts.servlet.WebScriptServletRuntime;
 
 import fr.becpg.model.ProjectModel;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * <p>TaskEditUrlWebScript class.</p>

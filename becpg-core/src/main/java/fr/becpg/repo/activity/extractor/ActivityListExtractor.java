@@ -339,14 +339,14 @@ public class ActivityListExtractor extends SimpleExtractor {
 								&& !stringVal.isBlank() && !"null".equals(stringVal)  && !"[\"\"]".equals(stringVal))) {
 					NodeRef nodeRef = null;
 				 	String name = null;
-					if (Pattern.matches("\\(.*,.*\\)", propertyArray.getString(i))) {
-						String nodeRefString = propertyArray.getString(i).substring(propertyArray.getString(i).indexOf("(") + 1,
-								propertyArray.getString(i).indexOf(","));
+					if (Pattern.matches("\\(.*,.*\\)", propertyArray.get(i).toString())) {
+						String nodeRefString = propertyArray.get(i).toString().substring(propertyArray.get(i).toString().indexOf("(") + 1,
+								propertyArray.get(i).toString().indexOf(","));
 						if (NodeRef.isNodeRef(nodeRefString)) {
 							nodeRef = new NodeRef(nodeRefString);
 						}
-						name = propertyArray.getString(i).substring(propertyArray.getString(i).indexOf(",") + 1,
-								propertyArray.getString(i).indexOf(")"));
+						name = propertyArray.get(i).toString().substring(propertyArray.get(i).toString().indexOf(",") + 1,
+								propertyArray.get(i).toString().indexOf(")"));
 					} else {
 						
 						int lastForwardSlash = stringVal.lastIndexOf('/');

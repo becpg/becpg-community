@@ -403,20 +403,20 @@
 						var last = response.json.last;
 
 						if (last) {
+							last = JSON.parse(last);
 							var batchId = last.batchId;
 							var batchDescId = last.batchDescId + (last.stepCount ? (" (" + last.stepCount + "/" + last.stepsMax + ")") : "");
-							var percentCompleted = last.percentCompleted.replace(/\s+/g, '');
+							if (last.currentItem && last.totalItems) {
+								batchDescId += " - " + last.currentItem + " / " + last.totalItems;
+							}
+							var percent = last.percentCompleted;
 
-							var percent = percentCompleted.substring(0, percentCompleted.length - 1);
-							
-							var removeLast = percent == 100;
-							
-							if (removeLast) {
+							if (percent == 100) {
 								ulCur.innerHTML = "";
 							} else if (ulCur.firstChild) {
 								ulCur.children[0].children[0].innerText = batchDescId;
 								ulCur.children[1].children[0].firstChild.value = percent;
-								ulCur.children[1].children[0].firstChild.title = percentCompleted;
+								ulCur.children[1].children[0].firstChild.title = percent + " %";
 								ulCur.children[1].children[1].firstChild.id = batchId;
 								ulCur.children[1].children[1].firstChild.style = "cursor:pointer";
 							} else {
@@ -435,7 +435,7 @@
 								meter.style = "width:100px";
 								meter.value = percent;
 								meter.max = "100";
-								meter.title = percentCompleted;
+								meter.title = percent + " %";
 								var spanButton = document.createElement("span");
 								meterLine.appendChild(spanButton);
 								var button = document.createElement("a");
@@ -455,6 +455,8 @@
 									event.target.style = "display:none";
 								};
 							}
+						} else {
+							ulCur.innerHTML = "";
 						}
 					}
 
@@ -462,26 +464,68 @@
 
 						for (var j = 0; j < response.json.queue.length; j++) {
 							
-							var batchId = response.json.queue[j].batchId;
-							var batchDescId = response.json.queue[j].batchDescId;
+							var curQueue = JSON.parse(response.json.queue[j]);
+							var batchId = curQueue.batchId;
+							var batchDescId = curQueue.batchDescId + (curQueue.stepCount ? (" (" + curQueue.stepCount + "/" + curQueue.stepsMax + ")") : "");
 							
-							var child = ulQu.children[j];
+							if (curQueue.currentItem && curQueue.totalItems) {
+								batchDescId += " - " + curQueue.currentItem + " / " + curQueue.totalItems;
+							}
 							
-							if (child) {
-								child.id = batchId;
-								child.firstChild.innerText = batchDescId;
-								child.children[1].firstChild.id = batchId;
-								child.children[1].firstChild.style = "cursor:pointer; float:right; padding-right:20px; padding-top:15px";
+							var percent = curQueue.percentCompleted;
+							var queueLine = ulQu.children[j];
+							
+							if (queueLine) {
+								var textLine = queueLine.children[0];
+								textLine.id = batchId;
+								textLine.firstChild.innerText = batchDescId;
+								textLine.children[1].firstChild.id = batchId;
+								textLine.children[1].firstChild.style = "cursor:pointer; float:right; padding-right:20px; padding-top:15px";
+								var meterLine = queueLine.children[1];
+								if (percent) {
+									if (!meterLine) {
+										var meterLine = document.createElement("li");
+										queueLine.appendChild(meterLine);
+										var spanMeter = document.createElement("span");
+										meterLine.appendChild(spanMeter);
+										var meter = document.createElement("progress");
+										spanMeter.appendChild(meter);
+										meter.style = "width:100px";
+										meter.value = percent;
+										meter.max = "100";
+										meter.title = percent + " %";
+									}
+									meterLine.firstChild.value = percent;
+									meterLine.firstChild.title = percent + " %";
+								} else if (meterLine) {
+									meterLine.remove();
+								}
 							} else {
-								var li = document.createElement("li");
-								li.style = "width:100%";
-								li.id = batchId;
-								ulQu.appendChild(li);
+								var queueLine = document.createElement("li");
+								ulQu.appendChild(queueLine);
+								var textLine = document.createElement("li");
+								textLine.style = "width:100%";
+								textLine.id = batchId;
+								queueLine.appendChild(textLine);
+								
+								if (percent) {
+									var meterLine = document.createElement("li");
+									queueLine.appendChild(meterLine);
+									var spanMeter = document.createElement("span");
+									meterLine.appendChild(spanMeter);
+									var meter = document.createElement("progress");
+									spanMeter.appendChild(meter);
+									meter.style = "width:100px";
+									meter.value = percent;
+									meter.max = "100";
+									meter.title = percent + " %";
+								}
+								
 								var spanText = document.createElement("span");
-								li.appendChild(spanText);
+								textLine.appendChild(spanText);
 								spanText.innerText = batchDescId;
 								var spanButton = document.createElement("span");
-								li.appendChild(spanButton);
+								textLine.appendChild(spanButton);
 								var button = document.createElement("a");
 								spanButton.appendChild(button);
 								button.classList.add("removeIcon");

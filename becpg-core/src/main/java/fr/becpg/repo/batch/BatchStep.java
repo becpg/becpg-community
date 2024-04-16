@@ -11,6 +11,16 @@ public class BatchStep<T> {
 	
 	private BatchStepListener batchStepListener;
 	
+	private String stepDescId;
+	
+	public void setStepDescId(String descId) {
+		this.stepDescId = descId;
+	}
+	
+	public String getStepDescId() {
+		return stepDescId;
+	}
+	
 	public BatchProcessWorkProvider<T> getWorkProvider() {
 		return workProvider;
 	}

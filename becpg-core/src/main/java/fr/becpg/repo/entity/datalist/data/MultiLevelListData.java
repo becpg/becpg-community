@@ -88,7 +88,7 @@ public class MultiLevelListData {
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
 	public NodeRef getEntityNodeRef() {
-		return entityNodeRefs!=null && entityNodeRefs.size()>0 ? entityNodeRefs.get(0) : null;
+		return entityNodeRefs!=null && !entityNodeRefs.isEmpty() ? entityNodeRefs.get(0) : null;
 	}
 
 	
@@ -111,13 +111,17 @@ public class MultiLevelListData {
 	}
 	
 	
+	public boolean isEmpty() {
+		return  tree.isEmpty();
+	}
+	
 	/**
 	 * <p>isLeaf.</p>
 	 *
 	 * @return a boolean.
 	 */
 	public boolean isLeaf() {
-		return isLeaf && (tree==null || tree.isEmpty());
+		return isLeaf && isEmpty();
 	}
 
 	/**
@@ -177,18 +181,11 @@ public class MultiLevelListData {
 	}
 	
 	
-	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + depth;
-		result = prime * result + ((entityNodeRefs == null) ? 0 : entityNodeRefs.hashCode());
-		result = prime * result + ((tree == null) ? 0 : tree.hashCode());
-		return result;
+		return Objects.hash(depth, entityNodeRefs, isLeaf, tree);
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -198,24 +195,9 @@ public class MultiLevelListData {
 		if (getClass() != obj.getClass())
 			return false;
 		MultiLevelListData other = (MultiLevelListData) obj;
-		if (depth != other.depth)
-			return false;
-		if (entityNodeRefs == null) {
-			if (other.entityNodeRefs != null)
-				return false;
-		} else if (!entityNodeRefs.equals(other.entityNodeRefs))
-			return false;
-		if (tree == null) {
-			if (other.tree != null)
-				return false;
-		} else if (!tree.equals(other.tree))
-			return false;
-		return true;
+		return depth == other.depth && Objects.equals(entityNodeRefs, other.entityNodeRefs) && isLeaf == other.isLeaf
+				&& Objects.equals(tree, other.tree);
 	}
-
-
-	
-	
 	
 	
 	

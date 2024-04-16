@@ -122,7 +122,7 @@
         <property name="reportAssociationDecorator" ref="reportAssociationDecorator"/>
 	</bean>
 
-	<bean id="webscript.fr.becpg.entity.entityDictionnary.get" class="fr.becpg.repo.web.scripts.entity.EntityDictionnaryWebScript" parent="webscript">
+	<bean id="webscript.fr.becpg.entity.entityDictionary.get" class="fr.becpg.repo.web.scripts.entity.EntityDictionaryWebScript" parent="webscript">
 		<property name="entityDictionaryService" ref="entityDictionaryService" />
 		<property name="namespaceService" ref="NamespaceService" />
 		<property name="dictionaryService" ref="cachedDictionaryService"/>
@@ -241,7 +241,7 @@
 		<property name="nodeService" ref="NodeService" />
 		<property name="paginatedSearchCache" ref="paginatedSearchCache"/>
 	</bean>
-
+	
 	<!-- beCPG Remote API -->
 
 	<bean id="abstractEntityWebScript" parent="webscript" abstract="true">
@@ -254,6 +254,9 @@
 
 
 	<bean id="webscript.fr.becpg.remote.entity.get" class="fr.becpg.repo.web.scripts.remote.GetEntityWebScript" parent="abstractEntityWebScript">
+	</bean>
+	
+	<bean id="webscript.fr.becpg.remote.dictionary.get" class="fr.becpg.repo.web.scripts.remote.EntityDictionaryWebScript" parent="abstractEntityWebScript">
 	</bean>
 	
 	<bean id="webscript.fr.becpg.remote.activities.get" parent="webscript" class="fr.becpg.repo.web.scripts.remote.GetActivitiesWebScript">
@@ -342,6 +345,13 @@
           <property name="attributeExtractorService" ref="attributeExtractorService" />
     </bean>
     
+	<!-- Statistics webscript -->
+	<bean id="webscript.fr.becpg.statistics.statistics.get" class="fr.becpg.repo.web.scripts.statistics.GetStatisticsWebScript" parent="webscript">
+		<property name="beCPGAuditService" ref="beCPGAuditService" />
+	</bean>
+	<bean id="webscript.fr.becpg.statistics.statistics.delete" class="fr.becpg.repo.web.scripts.statistics.DeleteStatisticsWebScript" parent="webscript">
+		<property name="beCPGAuditService" ref="beCPGAuditService" />
+	</bean>
 
     
 </beans>

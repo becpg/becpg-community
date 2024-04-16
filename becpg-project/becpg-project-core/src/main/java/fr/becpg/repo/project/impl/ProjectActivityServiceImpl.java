@@ -17,8 +17,6 @@
  ******************************************************************************/
 package fr.becpg.repo.project.impl;
 
-import java.util.Collections;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.activities.post.lookup.PostLookup;
 import org.alfresco.repo.forum.CommentService;
@@ -40,6 +38,8 @@ import fr.becpg.repo.activity.EntityActivityPlugin;
 import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.activity.data.ActivityEvent;
 import fr.becpg.repo.activity.data.ActivityListDataItem;
+import fr.becpg.repo.activity.data.ActivityType;
+import fr.becpg.repo.activity.helper.AuditActivityHelper;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
@@ -143,12 +143,10 @@ public class ProjectActivityServiceImpl implements ProjectActivityService, Entit
 				projectNotificationService.notifyTaskStateChanged(entityNodeRef, taskNodeRef, beforeState, afterState);
 				
 				if(commentNodeRef!=null) {
-					NodeRef activityItemNodeRef  = entityActivityService.postCommentActivity(entityNodeRef, commentNodeRef, ActivityEvent.Create, false);
+					 ActivityListDataItem activityItem = entityActivityService.postCommentActivity(entityNodeRef, commentNodeRef, ActivityEvent.Create, false);
 					
-					// Update curr comments assoc
-					associationService.update(entityNodeRef, ProjectModel.ASSOC_PROJECT_CUR_COMMENTS,
-							Collections.singletonList(activityItemNodeRef));
-					
+					nodeService.setProperty(entityNodeRef, ProjectModel.PROP_PROJECT_CUR_COMMENT, AuditActivityHelper.serializeActivity(activityItem));
+
 				}
 				
 				postStateChangeActivity(TASK_STATE_ACTIVITY, (String) nodeService.getProperty(taskNodeRef, ProjectModel.PROP_TL_TASK_NAME),
@@ -218,8 +216,8 @@ public class ProjectActivityServiceImpl implements ProjectActivityService, Entit
 
 	/** {@inheritDoc} */
 	@Override
-	public void notify(NodeRef entityNodeRef, fr.becpg.repo.activity.data.ActivityListDataItem activityListDataItem) {
-		if (fr.becpg.repo.activity.data.ActivityType.Comment.equals(activityListDataItem.getActivityType())) {
+	public void notify(NodeRef entityNodeRef, ActivityListDataItem activityListDataItem) {
+		if (ActivityType.Comment.equals(activityListDataItem.getActivityType())) {
 
 			if (ProjectModel.TYPE_PROJECT.equals(nodeService.getType(entityNodeRef))) {
 				try {
@@ -257,9 +255,7 @@ public class ProjectActivityServiceImpl implements ProjectActivityService, Entit
 
 					}
 
-					// Update curr comments assoc
-					associationService.update(entityNodeRef, ProjectModel.ASSOC_PROJECT_CUR_COMMENTS,
-							Collections.singletonList(activityListDataItem.getNodeRef()));
+					nodeService.setProperty(entityNodeRef, ProjectModel.PROP_PROJECT_CUR_COMMENT, AuditActivityHelper.serializeActivity(activityListDataItem));
 
 				} catch (JSONException e) {
 					logger.error(e, e);
@@ -267,5 +263,5 @@ public class ProjectActivityServiceImpl implements ProjectActivityService, Entit
 			}
 		}
 	}
-
+	
 }

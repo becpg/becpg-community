@@ -18,9 +18,18 @@
  * 
  * getNode(node) returns node or get the node if node is a nodeRef string
  * 
- * mlPropValue(node, propName, locale) alias getMLProp(node, propName, locale) returns node multilingual property value for given locale or empty
+ * mlPropValue(node, propName, locale, exactLocale? false) alias getMLProp(node, propName, locale, exactLocale? false) returns the node's multilingual property value for the specified locale
+ * or empty if exactLocale = true else it will return the default locale
  * 
  * mlPropConstraint(propValue, propName, locale) alias getMLConstraint(propValue, propName, locale) display value or empty for multilingual constraint value
+ * 
+ * incrementAndGetAutoNumValue(autoNumClassName, propName) alias autoNumValue(autoNumClassName, propName) increments and return the autonum value of the property's classname provided
+ * 
+ * incrementAndGetAutoNumCounter(autoNumClassName, propName) alias autoNumCounter(autoNumClassName, propName) increments and return the counter value of the property's classname provided (without prefix)
+ * 
+ * getAutoNumNodeRef(autoNumClassName, propName) alias autoNumNodeRef(autoNumClassName, propName) returns the NodeRef of the counter for the property's classname provided
+ * 
+ * setAutoNumValue(autoNumClassName, propName, counter) sets the value of the counter of the autonum value for the property's classname provided
  * 
  * assocValue(node, assocName) returns first matching nodeRef for given assocName
  * 
@@ -142,7 +151,7 @@ const SUPPLIER_PORTAL_SITE_ID = "supplier-portal";
  * @returns {boolean} true if value is empty or null
  */
 function isNullOrEmpty(value) {
-	return value == null || value == "";
+	 return value == null || value === "";
 }
 
 /**
@@ -203,10 +212,18 @@ function getNode(node) {
  * @param {(ScriptNode|NodeRef|string)} node
  * @param {string} propName
  * @param {string} locale
+ * @param {boolean} exactLocale
  * @returns {string} node multilingual property value for given locale or empty
  */
 function getMLProp(node, propName, locale) {
-	return isEmpty(node) ? "" : orEmpty(bcpg.getMLProperty(getNode(node), propName, locale));
+	return getMLProp(node, propName, locale, false);
+}
+
+function getMLProp(node, propName, locale, exactLocale) {
+	if(!exactLocale){
+		exactLocale = false;
+	}
+	return isEmpty(node) ? "" : orEmpty(bcpg.getMLProperty(getNode(node), propName, locale, exactLocale));
 }
 
 /**
@@ -215,10 +232,15 @@ function getMLProp(node, propName, locale) {
  * @param {(ScriptNode|NodeRef|string)} node
  * @param {string} propName
  * @param {string} locale
+ * @param {boolean} exactLocale 
  * @returns {string} node multilingual property value for given locale or empty
  */
 function mlPropValue(node, propName, locale) {
-	return getMLProp(node, propName, locale);
+	return getMLProp(node, propName, locale, false);
+}
+
+function mlPropValue(node, propName, locale, exactLocale) {
+	return getMLProp(node, propName, locale, exactLocale);
 }
 
 /**
@@ -231,6 +253,50 @@ function mlPropValue(node, propName, locale) {
  */
 function getMLConstraint(propValue, propName, locale) {
 	return isEmpty(propValue) ? "" : orEmpty(bcpg.getMLConstraint(propValue, propName, locale));
+}
+
+/**
+ * (alias autoNumValue)
+ *
+ * @param {string} autoNumClassName
+ * @param {string} propName
+ * @returns {string} increments and return the autonum value of the property's classname provided
+ */
+function incrementAndGetAutoNumValue(autoNumClassName, propName) {
+	return isEmpty(autoNumClassName) ? "" : orEmpty(bcpg.getAutoNumValue(autoNumClassName, propName));
+}
+
+/**
+ * (alias autoNumCounter)
+ *
+ * @param {string} autoNumClassName
+ * @param {string} propName
+ * @returns {string} increments and return the counter value of the property's classname provided (without prefix)
+ */
+function incrementAndGetAutoNumCounter(autoNumClassName, propName) {
+	return isEmpty(autoNumClassName) ? "" : orEmpty(bcpg.getAutoNumCounter(autoNumClassName, propName));
+}
+
+/**
+ * (alias autoNumNodeRef)
+ *
+ * @param {string} autoNumClassName
+ * @param {string} propName
+ * @returns {string} the NodeRef of the counter for the property's classname provided
+ */
+function getAutoNumNodeRef(autoNumClassName, propName) {
+	return isEmpty(autoNumClassName) ? "" : orEmpty(bcpg.getAutoNumNodeRef(autoNumClassName, propName));
+}
+
+/**
+ *
+ * @param {string} autoNumClassName
+ * @param {string} propName
+ * @param {number} counter
+ * @returns {boolean} if the counter for the property's classname provided has been set to the desired value
+ */
+function setAutoNumValue(autoNumClassName, propName, counter) {
+	return isEmpty(autoNumClassName) ? "" : orEmpty(bcpg.setAutoNumValue(autoNumClassName, propName, counter));
 }
 
 /**

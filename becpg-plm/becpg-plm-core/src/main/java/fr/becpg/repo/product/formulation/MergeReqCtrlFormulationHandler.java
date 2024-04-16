@@ -152,11 +152,12 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Scora
 		Set<ReqCtrlListDataItem> toAdd = new HashSet<>();
 		for (ReqCtrlListDataItem tmp : componentProductData.getReqCtrlList()) {
 			if (tmp.getReqDataType() != RequirementDataType.Completion) {
-				ReqCtrlListDataItem reqCtl = new ReqCtrlListDataItem(null, tmp.getReqType(), tmp.getReqMlMessage(), tmp.getCharact(),
-						(addChildRclSources() == null || Boolean.TRUE.equals(addChildRclSources())) ? tmp.getSources() : null,
-						tmp.getReqDataType() != null ? tmp.getReqDataType() : RequirementDataType.Nutrient);
-				reqCtl.setRegulatoryCode(tmp.getRegulatoryCode());
-				reqCtl.setFormulationChainId(tmp.getFormulationChainId());
+				ReqCtrlListDataItem reqCtl = ReqCtrlListDataItem.build().ofType(tmp.getReqType())
+						.withMessage(tmp.getReqMlMessage()).withCharact(tmp.getCharact())
+						.withSources((addChildRclSources() == null || Boolean.TRUE.equals(addChildRclSources())) ? tmp.getSources() : new ArrayList<>())
+						.ofDataType(tmp.getReqDataType() != null ? tmp.getReqDataType() : RequirementDataType.Nutrient)
+						.withFormulationChainId(tmp.getFormulationChainId())
+						.withRegulatoryCode(tmp.getRegulatoryCode());
 				toAdd.add(reqCtl);
 			}
 		}

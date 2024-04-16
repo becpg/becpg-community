@@ -41,16 +41,18 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONObject;
 
 import fr.becpg.config.format.FormatMode;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.activity.extractor.ActivityListExtractor;
+import fr.becpg.repo.activity.EntityActivityExtractorService;
 import fr.becpg.repo.entity.datalist.DataListSortPlugin;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.DataListPagination;
+import fr.becpg.repo.entity.datalist.impl.SimpleExtractor;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.impl.AttributeExtractorField;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
@@ -67,7 +69,7 @@ import fr.becpg.repo.system.SystemConfigurationService;
  * @author matthieu
  * @version $Id: $Id
  */
-public class ProjectListExtractor extends ActivityListExtractor {
+public class ProjectListExtractor extends SimpleExtractor {
 
 	private static final String PREF_FOLDER_FAVOURITES = "org.alfresco.share.folders.favourites";
 	private static final String PROP_IS_FAVOURITE = "isFavourite";
@@ -112,9 +114,15 @@ public class ProjectListExtractor extends ActivityListExtractor {
 	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
 		this.systemConfigurationService = systemConfigurationService;
 	}
-
+	
+	private EntityActivityExtractorService entityActivityExtractorService;
+	
 	private static final Log logger = LogFactory.getLog(ProjectListExtractor.class);
-
+	
+	public void setEntityActivityExtractorService(EntityActivityExtractorService entityActivityExtractorService) {
+		this.entityActivityExtractorService = entityActivityExtractorService;
+	}
+	
 	/**
 	 * <p>Setter for the field <code>projectService</code>.</p>
 	 *
@@ -133,8 +141,6 @@ public class ProjectListExtractor extends ActivityListExtractor {
 		this.personService = personService;
 	}
 
-	/** {@inheritDoc} */
-	@Override
 	public void setSecurityService(SecurityService securityService) {
 		this.securityService = securityService;
 	}
@@ -443,44 +449,58 @@ public class ProjectListExtractor extends ActivityListExtractor {
 									|| (ProjectModel.TYPE_DELIVERABLE_LIST.equals(field.getFieldQname())
 											&& ProjectModel.TYPE_TASK_LIST.equals(itemType))) {
 								// Only in progress tasks
-								List<NodeRef> assocRefs;
 								if (BeCPGModel.TYPE_ACTIVITY_LIST.equals(field.getFieldQname())) {
-									assocRefs = associationService.getTargetAssocs(nodeRef, ProjectModel.ASSOC_PROJECT_CUR_COMMENTS);
-								} else if ((ProjectModel.TYPE_TASK_LIST.equals(field.getFieldQname()))) {
-									assocRefs = associationService.getTargetAssocs(nodeRef, ProjectModel.ASSOC_PROJECT_CUR_TASKS);
+
+									Map<String, Object> tmp = new HashMap<>(4);
+
+									Map<String, Map<String, Boolean>> permissions = new HashMap<>(1);
+									Map<String, Boolean> userAccess = new HashMap<>(1);
+
+									permissions.put("userAccess", userAccess);
+									userAccess.put("edit", false);
+
+									tmp.put(PROP_TYPE, BeCPGModel.TYPE_ACTIVITY_LIST);
+									
+									tmp.put(PROP_PERMISSIONS, permissions);
+									if (BeCPGModel.TYPE_ACTIVITY_LIST.equals(field.getFieldQname())) {
+										String currentComment = (String) nodeService.getProperty(nodeRef, ProjectModel.PROP_PROJECT_CUR_COMMENT);
+										
+										if (currentComment != null && !currentComment.isBlank()) {
+											tmp.put(PROP_NODEDATA, entityActivityExtractorService.extractAuditActivityData(new JSONObject(currentComment), metadataFields));
+										}
+									}
+									ret.add(tmp);
 								} else {
-									assocRefs = associationService.getSourcesAssocs(nodeRef, ProjectModel.ASSOC_DL_TASK);
-								}
-
-								for (NodeRef itemNodeRef : assocRefs) {
-									if ((permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED) && (securityService
-											.computeAccessMode(nodeRef, itemType, field.getFieldQname()) >= SecurityService.READ_ACCESS)) {
-
-										Map<String, Object> tmp = new HashMap<>(4);
-
-										Map<String, Map<String, Boolean>> permissions = new HashMap<>(1);
-										Map<String, Boolean> userAccess = new HashMap<>(1);
-
-										permissions.put("userAccess", userAccess);
-										userAccess.put("edit",
-												(permissionService.hasPermission(itemNodeRef, "Write") == AccessStatus.ALLOWED)
-														&& (securityService.computeAccessMode(nodeRef, itemType,
-																field.getFieldQname()) == SecurityService.WRITE_ACCESS));
-
-										QName itemType = nodeService.getType(itemNodeRef);
-										Map<QName, Serializable> properties = nodeService.getProperties(itemNodeRef);
-										tmp.put(PROP_TYPE, itemType.toPrefixString(services.getNamespaceService()));
-										tmp.put(PROP_NODE, itemNodeRef.toString());
-
-										tmp.put(PROP_SORT, nodeService.getProperty(itemNodeRef, BeCPGModel.PROP_SORT));
-
-										tmp.put(PROP_PERMISSIONS, permissions);
-										if (BeCPGModel.TYPE_ACTIVITY_LIST.equals(field.getFieldQname())) {
-											Map<String, Object> tmp2 = doExtract(itemNodeRef, itemType, field.getChildrens(), mode, properties, props,
-													cache);
-											postLookupActivity(itemNodeRef, tmp2, properties, mode);
-											tmp.put(PROP_NODEDATA, tmp2);
-										} else {
+									List<NodeRef> assocRefs = new ArrayList<>();
+									if ((ProjectModel.TYPE_TASK_LIST.equals(field.getFieldQname()))) {
+										assocRefs = associationService.getTargetAssocs(nodeRef, ProjectModel.ASSOC_PROJECT_CUR_TASKS);
+									} else {
+										assocRefs = associationService.getSourcesAssocs(nodeRef, ProjectModel.ASSOC_DL_TASK);
+									}
+									
+									for (NodeRef itemNodeRef : assocRefs) {
+										if ((permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED)
+												&& (securityService.computeAccessMode(nodeRef, itemType, field.getFieldQname()) >= SecurityService.READ_ACCESS)) {
+											
+											Map<String, Object> tmp = new HashMap<>(4);
+											
+											Map<String, Map<String, Boolean>> permissions = new HashMap<>(1);
+											Map<String, Boolean> userAccess = new HashMap<>(1);
+											
+											permissions.put("userAccess", userAccess);
+											userAccess.put("edit",
+													(permissionService.hasPermission(itemNodeRef, "Write") == AccessStatus.ALLOWED) && (securityService
+															.computeAccessMode(nodeRef,itemType, field.getFieldQname()) == SecurityService.WRITE_ACCESS));
+											
+											QName itemType = nodeService.getType(itemNodeRef);
+											Map<QName, Serializable> properties = nodeService.getProperties(itemNodeRef);
+											tmp.put(PROP_TYPE, itemType.toPrefixString(services.getNamespaceService()));
+											tmp.put(PROP_NODE, itemNodeRef.toString());
+											
+											tmp.put(PROP_SORT, nodeService.getProperty(itemNodeRef, BeCPGModel.PROP_SORT));
+											
+											tmp.put(PROP_PERMISSIONS, permissions);
+											
 											Map<String, Object> metadata = doExtract(itemNodeRef, itemType, field.getChildrens(), mode, properties,
 													props, cache);
 											if ((ProjectModel.TYPE_TASK_LIST.equals(field.getFieldQname()))) {
@@ -497,8 +517,8 @@ public class ProjectListExtractor extends ActivityListExtractor {
 												}
 											}
 											tmp.put(PROP_NODEDATA, metadata);
+											ret.add(tmp);
 										}
-										ret.add(tmp);
 									}
 								}
 							} else {

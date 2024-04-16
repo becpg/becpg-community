@@ -427,6 +427,8 @@
          Also used to generate the "View in Alfresco Explorer" action for folders.
       -->
       <repository-url>http://REPO_HOST:REPO_PORT/alfresco</repository-url>
+      
+      
 
       <!--
          Google Docs™ integration
@@ -461,8 +463,7 @@
          <adobe-flash-enabled>true</adobe-flash-enabled>
       </file-upload>
    </config>
-
-
+   
    <!-- Custom DocLibActions config section -->
    <config evaluator="string-compare" condition="DocLibActions">
       <actionGroups>
@@ -568,6 +569,14 @@
    -->
 
    <config evaluator="string-compare" condition="Remote">
+   
+  	   <becpg-instance>BECPG_INSTANCE</becpg-instance>
+  	   <authenticator>
+  	   		
+  	   
+  	   </authenticator>
+  	   
+  	   
       <remote>
       
           <connector>
@@ -577,6 +586,34 @@
             <class>org.alfresco.web.site.servlet.SlingshotAlfrescoConnector</class>
             <userHeader>X-Alfresco-Remote-User</userHeader>
          </connector>
+         
+           <connector>
+            <id>becpgTicket</id>
+            <name>beCPG Ticket Connector</name>
+            <description>Connects to a beCPG Services instance using token</description>
+            <class>fr.becpg.web.connector.BecpgTicketConnector</class>
+            <authenticator-id>becpg-ticket</authenticator-id> 
+            <reconnect-timeout>0</reconnect-timeout>
+            <external-auth>BECPG_EXTERNAL_AUTH</external-auth>
+         </connector>
+         
+      
+         <authenticator>
+            <id>becpg-ticket</id>
+            <name>beCPG Authenticator</name>
+            <description>becpg Authenticator</description>
+            <class>fr.becpg.web.connector.BecpgTicketAuthenticator</class>
+         </authenticator>
+         
+         <endpoint>
+            <id>ai</id>
+            <parent-id>alfresco</parent-id>
+            <name>beCPG AI - user access</name>
+            <description>Access to beCPG AI</description>
+            <connector-id>becpgTicket</connector-id>
+            <endpoint-url>http://AI_HOST:AI_PORT/</endpoint-url>
+            <identity>user</identity>
+         </endpoint>
       
          <endpoint>
             <id>alfresco-noauth</id>

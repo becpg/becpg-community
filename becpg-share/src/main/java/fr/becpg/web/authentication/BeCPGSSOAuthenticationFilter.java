@@ -48,15 +48,15 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
 import javax.security.sasl.RealmCallback;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import org.alfresco.error.AlfrescoRuntimeException;
 import org.alfresco.jlan.server.auth.kerberos.KerberosDetails;
@@ -384,8 +384,8 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
     /**
      * <p>wrapHeaderAuthenticatedRequest.</p>
      *
-     * @param sreq a {@link javax.servlet.ServletRequest} object.
-     * @return a {@link javax.servlet.ServletRequest} object.
+     * @param sreq a {@link jakarta.servlet.ServletRequest} object.
+     * @return a {@link jakarta.servlet.ServletRequest} object.
      */
     protected ServletRequest wrapHeaderAuthenticatedRequest(ServletRequest sreq)
     {
@@ -470,7 +470,7 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
      * @exception IOException
      * @exception ServletException
      * @throws java.io.IOException if any.
-     * @throws javax.servlet.ServletException if any.
+     * @throws jakarta.servlet.ServletException if any.
      */
     public void doFilter(ServletRequest sreq, ServletResponse sresp, FilterChain chain)
         throws IOException, ServletException
@@ -946,7 +946,7 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
     }
 
     /* (non-Javadoc)
-     * @see javax.servlet.Filter#destroy()
+     * @see jakarta.servlet.Filter#destroy()
      */
     /**
      * <p>destroy.</p>
@@ -1554,8 +1554,8 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 	/**
 	 * <p>beforeSuccess.</p>
 	 *
-	 * @param request a {@link javax.servlet.http.HttpServletRequest} object.
-	 * @param response a {@link javax.servlet.http.HttpServletResponse} object.
+	 * @param request a {@link jakarta.servlet.http.HttpServletRequest} object.
+	 * @param response a {@link jakarta.servlet.http.HttpServletResponse} object.
 	 * @throws java.lang.Exception if any.
 	 */
 	protected void beforeSuccess(HttpServletRequest request, HttpServletResponse response) throws Exception

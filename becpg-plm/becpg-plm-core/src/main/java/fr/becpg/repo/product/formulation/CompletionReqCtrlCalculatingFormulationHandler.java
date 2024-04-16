@@ -20,7 +20,6 @@ import fr.becpg.repo.product.data.AbstractProductDataView;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
-import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.model.CompositionDataItem;
@@ -82,13 +81,13 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 
 			extractReqCtrl(product, catalogs);
 
-			ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Tolerated,
-					MLTextHelper.getI18NMessage(MESSAGE_NON_VALIDATED_STATE), null, new ArrayList<>(), RequirementDataType.Validation);
+			ReqCtrlListDataItem rclDataItem = ReqCtrlListDataItem.tolerated().withMessage(MLTextHelper.getI18NMessage(MESSAGE_NON_VALIDATED_STATE))
+					.ofDataType(RequirementDataType.Validation);
 
 			boolean shouldAdd = false;
 
 			Predicate<EffectiveDataItem> predicate = new EffectiveFilters<>(EffectiveFilters.EFFECTIVE).createPredicate(product);
-			
+
 			// visits all refs and adds rclDataItem to them if required
 			for (AbstractProductDataView view : product.getViews()) {
 				if (view.getMainDataList() != null) {
@@ -137,9 +136,8 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 								? MLTextHelper.getI18NMessage(MESSAGE_MANDATORY_FIELD_MISSING_LOCALIZED, displayName, catalogName, "(" + lang + ")")
 								: MLTextHelper.getI18NMessage(MESSAGE_MANDATORY_FIELD_MISSING, displayName, catalogName));
 
-						ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, null, new ArrayList<>(),
-								RequirementDataType.Completion);
-				//		rclDataItem.getSources().add(productData.getNodeRef());
+						ReqCtrlListDataItem rclDataItem = ReqCtrlListDataItem.forbidden().withMessage(message)
+								.ofDataType(RequirementDataType.Completion);
 
 						productData.getReqCtrlList().add(rclDataItem);
 
@@ -163,9 +161,11 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 
 						// Uniquefields
 
-						ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Forbidden,
-								MLTextHelper.getI18NMessage(MESSAGE_NON_UNIQUE_FIELD, displayName, value), null, propDuplicates,
-								RequirementDataType.Completion);
+						ReqCtrlListDataItem rclDataItem = ReqCtrlListDataItem.forbidden()
+								.withMessage(MLTextHelper.getI18NMessage(MESSAGE_NON_UNIQUE_FIELD, displayName, value)).withSources(propDuplicates)
+
+								.ofDataType(RequirementDataType.Completion);
+
 						productData.getReqCtrlList().add(rclDataItem);
 
 					}
@@ -211,7 +211,8 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 	public boolean checkProductValidity(NodeRef node) {
 		ProductData found = alfrescoRepository.findOne(node);
 		if (found != null) {
-			return SystemState.Valid.equals(found.getState()) ||  SystemState.Stopped.equals(found.getState()) ||  SystemState.Archived.equals(found.getState());
+			return SystemState.Valid.equals(found.getState()) || SystemState.Stopped.equals(found.getState())
+					|| SystemState.Archived.equals(found.getState());
 		}
 		return false;
 	}

@@ -57,8 +57,8 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject{
 	private List<NodeRef> requiredGeoOrigins = new ArrayList<>();
 	private List<NodeRef> geoTransfo = new ArrayList<>();
 	private List<NodeRef> bioOrigins = new ArrayList<>();
-	private List<NodeRef> regulatoryCountries = new ArrayList<>();
-	private List<NodeRef> regulatoryUsages = new ArrayList<>();
+	private List<NodeRef> regulatoryCountriesRef = new ArrayList<>();
+	private List<NodeRef> regulatoryUsagesRef = new ArrayList<>();
 	
 	public void setQtyPercMaxiUnit(String qtyPercMaxiUnit) {
 		this.qtyPercMaxiUnit = qtyPercMaxiUnit;
@@ -66,22 +66,22 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject{
 	
 	@AlfMultiAssoc
 	@AlfQname(qname = "bcpg:regulatoryCountries")
-	public List<NodeRef> getRegulatoryCountries() {
-		return regulatoryCountries;
+	public List<NodeRef> getRegulatoryCountriesRef() {
+		return regulatoryCountriesRef;
 	}
 
-	public void setRegulatoryCountries(List<NodeRef> regulatoryCountries) {
-		this.regulatoryCountries = regulatoryCountries;
+	public void setRegulatoryCountriesRef(List<NodeRef> regulatoryCountries) {
+		this.regulatoryCountriesRef = regulatoryCountries;
 	}
 
 	@AlfMultiAssoc
 	@AlfQname(qname = "bcpg:regulatoryUsageRef")
-	public List<NodeRef> getRegulatoryUsages() {
-		return regulatoryUsages;
+	public List<NodeRef> getRegulatoryUsagesRef() {
+		return regulatoryUsagesRef;
 	}
 
-	public void setRegulatoryUsages(List<NodeRef> regulatoryUsages) {
-		this.regulatoryUsages = regulatoryUsages;
+	public void setRegulatoryUsagesRef(List<NodeRef> regulatoryUsages) {
+		this.regulatoryUsagesRef = regulatoryUsages;
 	}
 
 	/**

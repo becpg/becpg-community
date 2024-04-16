@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
@@ -55,6 +57,8 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AccessPermission;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.site.SiteService;
+import org.alfresco.service.cmr.version.Version;
+import org.alfresco.service.cmr.version.VersionHistory;
 import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.NamespaceService;
@@ -69,10 +73,10 @@ import org.springframework.extensions.webscripts.ScriptValueConverter;
 import fr.becpg.api.BeCPGPublicApi;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.EntityListState;
+import fr.becpg.repo.authentication.BeCPGTicketService;
 import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.entity.EntityDictionaryService;
-import fr.becpg.repo.entity.EntityFormatService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.version.EntityVersionService;
@@ -107,6 +111,9 @@ import fr.becpg.repo.system.SystemConfigurationService;
 public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 	private static Log logger = LogFactory.getLog(BeCPGScriptHelper.class);
+
+	// Matches the counter at the end of the string (exists the prefix and keeps the numbers at the end)
+	private static final Pattern END_COUNTER_PATTERN = Pattern.compile("\\d+$");
 
 	private NodeService nodeService;
 
@@ -144,8 +151,6 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 	private SiteService siteService;
 
-	private EntityFormatService entityFormatService;
-
 	private TenantAdminService tenantAdminService;
 
 	private ContentService contentService;
@@ -157,17 +162,19 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	private BeCPGLicenseManager beCPGLicenseManager;
 
 	private BeCPGMailService beCPGMailService;
-	
+
 	private Repository repositoryHelper;
-	
+
 	private FormulationService<FormulatedEntity> formulationService;
-	
+
 	private HierarchyService hierarchyService;
-	
+
 	private FileFolderService fileFolderService;
-	
+
 	private SystemConfigurationService systemConfigurationService;
-	
+
+	private BeCPGTicketService beCPGTicketService;
+
 	private boolean useBrowserLocale;
 
 	private boolean showUnauthorizedWarning = true;
@@ -179,19 +186,19 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
 		this.systemConfigurationService = systemConfigurationService;
 	}
-	
+
 	public void setFileFolderService(FileFolderService fileFolderService) {
 		this.fileFolderService = fileFolderService;
 	}
-	
+
 	public void setHierarchyService(HierarchyService hierarchyService) {
 		this.hierarchyService = hierarchyService;
 	}
-	
+
 	public void setFormulationService(FormulationService<FormulatedEntity> formulationService) {
 		this.formulationService = formulationService;
 	}
-	
+
 	public void setRepositoryHelper(Repository repositoryHelper) {
 		this.repositoryHelper = repositoryHelper;
 	}
@@ -199,11 +206,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public void setBeCPGLicenseManager(BeCPGLicenseManager beCPGLicenseManager) {
 		this.beCPGLicenseManager = beCPGLicenseManager;
 	}
-	
-	public void setEntityFormatService(EntityFormatService entityFormatService) {
-		this.entityFormatService = entityFormatService;
-	}
-	
+
 	public void setBeCPGMailService(BeCPGMailService beCPGMailService) {
 		this.beCPGMailService = beCPGMailService;
 	}
@@ -214,6 +217,10 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 	public void setTenantAdminService(TenantAdminService tenantAdminService) {
 		this.tenantAdminService = tenantAdminService;
+	}
+
+	public void setBeCPGTicketService(BeCPGTicketService beCPGTicketService) {
+		this.beCPGTicketService = beCPGTicketService;
 	}
 
 	/**
@@ -276,10 +283,58 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 *
 	 * @param className a {@link java.lang.String} object.
 	 * @param propertyName a {@link java.lang.String} object.
-	 * @return a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} representing the incremented autonum value of the property provided
 	 */
 	public String getAutoNumValue(String className, String propertyName) {
 		return autoNumService.getAutoNumValue(QName.createQName(className, namespaceService), QName.createQName(propertyName, namespaceService));
+	}
+
+	/**
+	 * <p>setAutoNumValue.</p>
+	 *
+	 * @param className a {@link java.lang.String} object.
+	 * @param propertyName a {@link java.lang.String} object.
+	 * @param counter a {@link java.lang.Long} value from which we want to set the autonum
+	 * @return a {@link java.lang.Boolean} telling if the autonum value of the property provided has properly been set
+	 */
+	public boolean setAutoNumValue(String className, String propertyName, Long counter) {
+		return autoNumService.setAutoNumValue(QName.createQName(className, namespaceService), QName.createQName(propertyName, namespaceService),
+				counter);
+	}
+
+	/**
+	 * <p>getAutoNumCounter.</p>
+	 *
+	 * @param className a {@link java.lang.String} object.
+	 * @param propertyName a {@link java.lang.String} object.
+	 * @return a {@link java.lang.Long} of the value of the counter after incrementation.
+	 */
+	public Long getAutoNumCounter(String className, String propertyName) {
+
+		String autoNumValue = getAutoNumValue(className, propertyName);
+
+		// Create a matcher object to find the pattern in the input string
+		Matcher matcher = END_COUNTER_PATTERN.matcher(autoNumValue);
+
+		// Check if the pattern is found
+		if (matcher.find()) {
+			// Extract the matched counter value and parse it as a long
+			String counterStr = matcher.group();
+			return Long.parseLong(counterStr);
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * <p>getAutoNumNodeRef.</p>
+	 *
+	 * @param className a {@link java.lang.String} object.
+	 * @param propertyName a {@link java.lang.String} object.
+	 * @return the {@link NodeRef} of the counter for the property's classname provided.
+	 */
+	public NodeRef getAutoNumNodeRef(String className, String propertyName) {
+		return autoNumService.getAutoNumNodeRef(QName.createQName(className, namespaceService), QName.createQName(propertyName, namespaceService));
 	}
 
 	/**
@@ -434,11 +489,10 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public boolean isShowUnauthorizedWarning() {
 		return showUnauthorizedWarning;
 	}
-	
+
 	public boolean isShowLicenceWarning() {
 		return isShowUnauthorizedWarning();
 	}
-
 
 	/**
 	 * <p>Setter for the field <code>showUnauthorizedWarning</code>.</p>
@@ -476,12 +530,21 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * @param sourceNode a {@link org.alfresco.repo.jscript.ScriptNode} object.
 	 * @param propQName a {@link java.lang.String} object.
 	 * @param locale a {@link java.lang.String} object.
+	 * @param exactLocale a {@link java.lang.Boolean} object.
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String getMLProperty(ScriptNode sourceNode, String propQName, String locale) {
-		
+		return getMLProperty(sourceNode, propQName, locale, false);
+	}
+	
+	public String getMLProperty(ScriptNode sourceNode, String propQName, String locale, Boolean exactLocale) {
+
 		MLText mlText = (MLText) mlNodeService.getProperty(sourceNode.getNodeRef(), getQName(propQName));
-		
+
+		if (Boolean.TRUE.equals(exactLocale)) {
+			return mlText.get(MLTextHelper.parseLocale(locale));
+		}
+
 		if (mlText != null) {
 			return MLTextHelper.getClosestValue(mlText, MLTextHelper.parseLocale(locale));
 		}
@@ -625,7 +688,6 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public Object assocValues(NodeRef nodeRef, String assocQname) {
 		return wrapValue(associationService.getTargetAssocs(nodeRef, getQName(assocQname)));
 	}
-	
 
 	/**
 	 * <p>sourceAssocValues.</p>
@@ -637,7 +699,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public Object sourceAssocValues(ScriptNode sourceNode, String assocQname) {
 		return sourceAssocValues(sourceNode.getNodeRef(), assocQname);
 	}
-	
+
 	/**
 	 * <p>sourceAssocValues.</p>
 	 *
@@ -660,13 +722,11 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		return wrapValue(associationService.getSourcesAssocs(nodeRef, getQName(assocQname)));
 	}
 
-
 	// TODO Perfs
 	private Object wrapValue(Object object) {
 		return ScriptValueConverter.wrapValue(Context.getCurrentContext().initSafeStandardObjects(), object);
 	}
-	
-	
+
 	/**
 	 * <p>assocPropValues.</p>
 	 *
@@ -928,7 +988,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public String getMessage(String messageKey, Object... param) {
 		return I18NUtil.getMessage(messageKey, param);
 	}
-	
+
 	public String getLocalizedMessage(String messageKey, String locale) {
 		Locale localeObject = I18NUtil.getLocale();
 		if (locale != null && !locale.isBlank()) {
@@ -952,6 +1012,15 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 */
 	public String getOlapSSOUrl() {
 		return olapService.getSSOUrl();
+	}
+
+	/**
+	 * <p>getBeCPGAuthTocken.</p>
+	 * 
+	 * @return a {@link java.lang.String} object.
+	 */
+	public String getBeCPGAuthTocken() {
+		return beCPGTicketService.getCurrentAuthToken();
 	}
 
 	/**
@@ -1216,7 +1285,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 			Set<AccessPermission> acls = permissionService.getAllSetPermissions(nodeRef);
 			for (AccessPermission permission : acls) {
 				if (permission.isSetDirectly()) {
-				   permissionService.deletePermission(nodeRef, permission.getAuthority(), permission.getPermission());
+					permissionService.deletePermission(nodeRef, permission.getAuthority(), permission.getPermission());
 				}
 			}
 			permissionService.setInheritParentPermissions(nodeRef, inherit);
@@ -1298,17 +1367,14 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public static String generateEAN13Code(String prefix) throws CheckDigitException {
 		return GTINHelper.generateEAN13Code(prefix);
 	}
-	
-	
+
 	public static String createEAN13Code(String prefix, String serialNumber) throws CheckDigitException {
 		return GTINHelper.createEAN13Code(prefix, serialNumber);
 	}
 
-	
 	public static String addDigitToEANPrefix(String eanCode) throws CheckDigitException {
 		return GTINHelper.addDigitToEANPrefix(eanCode);
 	}
-
 
 	public ScriptNode getDocumentLibraryNodeRef(String siteId) {
 
@@ -1331,7 +1397,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 		long start = System.currentTimeMillis();
 
-		NodeRef convertedNode = entityFormatService.convertVersionHistoryNodeRef(notConvertedNode);
+		NodeRef convertedNode = entityVersionService.convertVersion(notConvertedNode);
 
 		if (convertedNode != null) {
 			long timeElapsed = System.currentTimeMillis() - start;
@@ -1372,7 +1438,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		List<NodeRef> reports = entityReportService.getOrRefreshReportsOfKind(sourceNodeRef, reportKind);
 
 		return reports.stream().map(r -> new ScriptNode(r, serviceRegistry, getScope())).toArray(ScriptNode[]::new);
-		
+
 	}
 
 	/**
@@ -1407,20 +1473,23 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void sendMail(List<ScriptNode> recipientNodeRefs, String subject, String mailTemplate, Map<String, Object> templateArgs, boolean sendToSelf) {
+	public void sendMail(List<ScriptNode> recipientNodeRefs, String subject, String mailTemplate, Map<String, Object> templateArgs,
+			boolean sendToSelf) {
 		beCPGMailService.sendMail(recipientNodeRefs.stream().map(ScriptNode::getNodeRef).collect(Collectors.toList()), subject, mailTemplate,
 				(Map<String, Object>) ScriptValueConverter.unwrapValue(templateArgs), sendToSelf);
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public void sendMLAwareMail(String[] authorities, String fromEmail, String subjectKey, Object[] subjectParams, String mailTemplate, Map<String, Object> templateArgs) {
-		beCPGMailService.sendMLAwareMail(Set.of(authorities), fromEmail, subjectKey, subjectParams, mailTemplate, (Map<String, Object>) ScriptValueConverter.unwrapValue(templateArgs));
+	public void sendMLAwareMail(String[] authorities, String fromEmail, String subjectKey, Object[] subjectParams, String mailTemplate,
+			Map<String, Object> templateArgs) {
+		beCPGMailService.sendMLAwareMail(Set.of(authorities), fromEmail, subjectKey, subjectParams, mailTemplate,
+				(Map<String, Object>) ScriptValueConverter.unwrapValue(templateArgs));
 	}
-	
+
 	public String extractSiteDisplayPath(ScriptNode scriptNode) {
 		return SiteHelper.extractSiteDisplayPath(nodeService.getPath(scriptNode.getNodeRef()), permissionService, nodeService, namespaceService);
 	}
-	
+
 	public boolean isEntityV2SubType(ScriptNode scriptNode) {
 		return dictionaryService.isSubClass(nodeService.getType(scriptNode.getNodeRef()), BeCPGModel.TYPE_ENTITY_V2);
 	}
@@ -1437,180 +1506,195 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 			entityReportService.generateReports(extractedNode, versionNode);
 		}
 	}
-	
+
+	public void generateVersionReports(ScriptNode node) {
+		NodeRef entityNodeRef = node.getNodeRef();
+		VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
+		for (Version version : versionHistory.getAllVersions()) {
+			NodeRef versionNode = VersionUtil.convertNodeRef(version.getFrozenStateNodeRef());
+			if (entityVersionService.isVersion(versionNode) && (nodeService.getProperty(versionNode, BeCPGModel.PROP_ENTITY_FORMAT) != null)) {
+				NodeRef extractedNode = entityVersionService.extractVersion(versionNode);
+				entityReportService.generateReports(extractedNode, versionNode);
+			}
+		}
+	}
+
 	public boolean classifyByHierarchy(ScriptNode productNode, ScriptNode folderNode, String propHierarchy) {
 		return classifyByHierarchy(productNode.getNodeRef(), folderNode.getNodeRef(), propHierarchy, null);
 	}
-	
+
 	public boolean classifyByHierarchy(ScriptNode productNode, ScriptNode folderNode, String propHierarchy, String locale) {
 		return classifyByHierarchy(productNode.getNodeRef(), folderNode.getNodeRef(), propHierarchy, locale);
 	}
 
 	private boolean classifyByHierarchy(NodeRef productNode, NodeRef folderNode, String propHierarchy, String localeString) {
-		
+
 		QName hierarchyQname = null;
-		
+
 		if (propHierarchy != null && !propHierarchy.isEmpty()) {
 			hierarchyQname = getQName(propHierarchy);
 		}
-		
+
 		Locale locale = Locale.getDefault();
-		
+
 		if (localeString != null && !localeString.isBlank()) {
 			locale = new Locale(localeString);
 		}
-		
+
 		return hierarchyService.classifyByHierarchy(folderNode, productNode, hierarchyQname, locale);
 	}
 
-	public boolean classifyByPropAndHierarchy(ScriptNode productNode, ScriptNode folderNode, String propHierarchy, String propPathName, String locale) {
-		
+	public boolean classifyByPropAndHierarchy(ScriptNode productNode, ScriptNode folderNode, String propHierarchy, String propPathName,
+			String locale) {
+
 		if (propPathName == null || propPathName.isEmpty()) {
 			return classifyByHierarchy(productNode, folderNode, propHierarchy, locale);
 		} else if (propPathName.split("\\|").length == 1) {
-			
+
 			QName propPathNameQName = getQName(propPathName);
-			
+
 			String subFolderName = nodeService.getProperty(productNode.getNodeRef(), propPathNameQName).toString();
-			
+
 			if (locale != null && !locale.isEmpty()) {
 				subFolderName = getMLConstraint(subFolderName, propPathName, locale);
 			}
-			
+
 			NodeRef childNodeRef = nodeService.getChildByName(folderNode.getNodeRef(), ContentModel.ASSOC_CONTAINS, subFolderName);
-			
-			if (childNodeRef == null) { 
+
+			if (childNodeRef == null) {
 				childNodeRef = fileFolderService.create(folderNode.getNodeRef(), subFolderName, ContentModel.TYPE_FOLDER).getNodeRef();
 			}
-			
+
 			classifyByHierarchy(productNode.getNodeRef(), childNodeRef, propHierarchy, locale);
 		} else {
 			String[] assocs = propPathName.split("\\|");
-			
+
 			String assocName = assocs[0];
-			
+
 			String property = assocs[assocs.length - 1];
-			
+
 			NodeRef finalAssoc = classifyPropAndHierarchyExtractAssoc(productNode.getNodeRef(), assocName, new ArrayList<>(Arrays.asList(assocs)));
-			
+
 			String subFolderName = nodeService.getProperty(finalAssoc, getQName(property)).toString();
-			
+
 			if (locale != null && !locale.isEmpty()) {
 				subFolderName = getMLConstraint(subFolderName, propPathName, locale);
 			}
-			
+
 			NodeRef childNodeRef = nodeService.getChildByName(folderNode.getNodeRef(), ContentModel.ASSOC_CONTAINS, subFolderName);
-			
-			if (childNodeRef == null) { 
+
+			if (childNodeRef == null) {
 				childNodeRef = fileFolderService.create(folderNode.getNodeRef(), subFolderName, ContentModel.TYPE_FOLDER).getNodeRef();
 			}
-			
+
 			classifyByHierarchy(productNode.getNodeRef(), childNodeRef, propHierarchy, locale);
-	
+
 		}
-		
+
 		return false;
 	}
 
 	private NodeRef classifyPropAndHierarchyExtractAssoc(NodeRef nodeRef, String assocName, List<String> assocList) {
-		
+
 		if (assocList.isEmpty()) {
 			return nodeRef;
 		}
-		
+
 		String nextAssocName = assocList.get(0);
-		
+
 		NodeRef nextNode = associationService.getTargetAssoc(nodeRef, getQName(assocName));
-		
+
 		if (nextNode == null) {
 			return nodeRef;
 		}
-		
-		 assocList.remove(0);
-		
+
+		assocList.remove(0);
+
 		return classifyPropAndHierarchyExtractAssoc(nextNode, nextAssocName, assocList);
 	}
-	
+
 	public String getQNameTitle(String qname) {
-		
+
 		QName type = QName.createQName(qname, namespaceService);
-		
+
 		ClassDefinition classDef = dictionaryService.getClass(type);
 
 		return classDef.getTitle(dictionaryService);
 	}
-	
+
 	public boolean classifyByDate(ScriptNode product, String path, Date date, String dateFormat) {
-		
+
 		if (date != null && dateFormat != null) {
-			
+
 			StringBuilder pathBuilder = new StringBuilder(path);
-			
+
 			for (String formatPart : dateFormat.split("/")) {
-				
+
 				pathBuilder.append("/");
-				
+
 				boolean isFirstSubPart = true;
-				
+
 				for (String subFormatPart : formatPart.split(" - ")) {
-					
+
 					if (!isFirstSubPart) {
 						pathBuilder.append(" - ");
 					}
-					
+
 					SimpleDateFormat subFormat = new SimpleDateFormat(subFormatPart);
 					pathBuilder.append(subFormat.format(date));
-					
+
 					isFirstSubPart = false;
 				}
 			}
-			
-			NodeRef parentFolder = repoService.getOrCreateFolderByPaths(repositoryHelper.getRootHome(), Arrays.asList(pathBuilder.toString().split("/")));
-			
+
+			NodeRef parentFolder = repoService.getOrCreateFolderByPaths(repositoryHelper.getRootHome(),
+					Arrays.asList(pathBuilder.toString().split("/")));
+
 			if (!ContentModel.TYPE_FOLDER.equals(nodeService.getType(parentFolder))) {
 				logger.warn("Incorrect destination node type:" + nodeService.getType(parentFolder));
 			} else {
 				return repoService.moveNode(product.getNodeRef(), parentFolder);
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	public boolean classifyByDate(ScriptNode product, ScriptNode documentLibrary, String subPath, Date date, String dateFormat) {
-		
+
 		StringBuilder pathBuilder = new StringBuilder();
-		
+
 		if (subPath != null && !subPath.isBlank()) {
 			for (String split : subPath.split("/")) {
 				pathBuilder.append("/");
 				pathBuilder.append(getTranslatedPath(split));
 			}
 		}
-		
+
 		if (date != null && dateFormat != null) {
-			
+
 			QName type = nodeService.getType(product.getNodeRef());
-			
+
 			ClassDefinition classDef = dictionaryService.getClass(type);
 
-			NodeRef destinationNodeRef = repoService.getOrCreateFolderByPath(documentLibrary.getNodeRef(), type.getLocalName(), classDef.getTitle(dictionaryService));
-			
+			NodeRef destinationNodeRef = repoService.getOrCreateFolderByPath(documentLibrary.getNodeRef(), type.getLocalName(),
+					classDef.getTitle(dictionaryService));
+
 			for (String formatPart : dateFormat.split("/")) {
-				
+
 				pathBuilder.append("/");
-				
+
 				boolean isFirstSubPart = true;
-				
+
 				for (String subFormatPart : formatPart.split(" - ")) {
-					
+
 					if (!isFirstSubPart) {
 						pathBuilder.append(" - ");
 					}
-					
+
 					SimpleDateFormat subFormat = new SimpleDateFormat(subFormatPart);
 					pathBuilder.append(subFormat.format(date));
-					
+
 					isFirstSubPart = false;
 				}
 			}
@@ -1623,16 +1707,16 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 				return repoService.moveNode(product.getNodeRef(), newFolder);
 			}
 		}
-		
+
 		return false;
 	}
 
 	public void formulate(ScriptNode productNode) {
 		formulationService.formulate(productNode.getNodeRef());
 	}
-	
+
 	public String[] extractPeople(String[] authorities) {
 		return AuthorityHelper.extractPeople(Set.of(authorities)).toArray(new String[0]);
 	}
-	
+
 }

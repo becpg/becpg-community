@@ -145,22 +145,24 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 				ProductUnit unit = formulatedProduct.getUnit();
 
 				for (T c : getDataListVisited(formulatedProduct)) {
-					if ((unit != null) && (c.getCost() != null)) {
-						Boolean fixed = (Boolean) nodeService.getProperty(c.getCost(), getCostFixedPropName());
+					if ((unit != null) && (c.getCharactNodeRef() != null)) {
+						Boolean fixed = (Boolean) nodeService.getProperty(c.getCharactNodeRef(), getCostFixedPropName());
 
-						c.setUnit(calculateUnit(unit, (String) nodeService.getProperty(c.getCost(), getCostUnitPropName()), fixed));
+						c.setUnit(calculateUnit(unit, (String) nodeService.getProperty(c.getCharactNodeRef(), getCostUnitPropName()), fixed));
 
 						if (!Boolean.TRUE.equals(fixed) && hasCompoEl) {
 							if (!internalKeepProductUnit() && unit.isLb()) {
 								c.setValue(ProductUnit.lbToKg(c.getValue()));
 								c.setMaxi(ProductUnit.lbToKg(c.getMaxi()));
-								c.setPreviousValue(ProductUnit.lbToKg(c.getPreviousValue()));
-								c.setFutureValue(ProductUnit.lbToKg(c.getFutureValue()));
+								for (String forecastColumn : c.getForecastColumns()) {
+									c.setForecastValue(forecastColumn, ProductUnit.lbToKg(c.getForecastValue(forecastColumn)));
+								}
 							} else if (!internalKeepProductUnit() && unit.isGal()) {
 								c.setValue(ProductUnit.GalToL(c.getValue()));
 								c.setMaxi(ProductUnit.GalToL(c.getMaxi()));
-								c.setPreviousValue(ProductUnit.GalToL(c.getPreviousValue()));
-								c.setFutureValue(ProductUnit.GalToL(c.getFutureValue()));
+								for (String forecastColumn : c.getForecastColumns()) {
+									c.setForecastValue(forecastColumn, ProductUnit.GalToL(c.getForecastValue(forecastColumn)));
+								}
 							}
 						}
 					}
@@ -214,11 +216,11 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 
 	/** {@inheritDoc} */
 	@Override
-	protected void synchronizeTemplate(ProductData formulatedProduct, List<T> simpleListDataList) {
+	protected void synchronizeTemplate(ProductData formulatedProduct, List<T> simpleListDataList, List<T> toRemove) {
 
 		if ((formulatedProduct.getEntityTpl() != null) && !formulatedProduct.getEntityTpl().equals(formulatedProduct)) {
 			getDataListVisited(formulatedProduct.getEntityTpl())
-					.forEach(templateCostList -> synchronizeCost(formulatedProduct, templateCostList, simpleListDataList, true));
+					.forEach(templateCostList -> synchronizeCost(formulatedProduct, templateCostList, simpleListDataList, true, toRemove));
 
 			// check sorting
 			int lastSort = 0;
@@ -242,7 +244,7 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 		}
 		if (formulatedProduct.getClients() != null) {
 			for (ClientData client : formulatedProduct.getClients()) {
-				getDataListVisited(client).forEach(templateCostList -> synchronizeCost(formulatedProduct, templateCostList, simpleListDataList, false));
+				getDataListVisited(client).forEach(templateCostList -> synchronizeCost(formulatedProduct, templateCostList, simpleListDataList, false, toRemove));
 			}
 		}
 		
@@ -250,7 +252,7 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 		if (formulatedProduct.getSuppliers() != null) {
 			for (NodeRef supplierNodeRef : formulatedProduct.getSuppliers()) {
 				SupplierData supplier = (SupplierData) alfrescoRepository.findOne(supplierNodeRef);
-				getDataListVisited(supplier).forEach(templateCostList -> synchronizeCost(formulatedProduct, templateCostList, simpleListDataList, false));
+				getDataListVisited(supplier).forEach(templateCostList -> synchronizeCost(formulatedProduct, templateCostList, simpleListDataList, false, toRemove));
 			}
 		}
 
@@ -268,8 +270,8 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 	
 			for (T costListDataItem : getDataListVisited(formulatedProduct)) {
 				for (T c : costList) {
-					if ((c.getCost() != null) && c.getCost().equals(costListDataItem.getCost()) && isCharactFormulated(costListDataItem)) {
-						mandatoryCharacts.put(c.getCost(), new ArrayList<>());
+					if ((c.getCharactNodeRef() != null) && c.getCharactNodeRef().equals(costListDataItem.getCharactNodeRef()) && isCharactFormulated(costListDataItem)) {
+						mandatoryCharacts.put(c.getCharactNodeRef(), new ArrayList<>());
 						break;
 					}
 				}
@@ -279,7 +281,7 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 	}
 	
 	private void synchronizeCost(ProductData formulatedProduct, T templateCostListItem, List<T> costList,
-			boolean isTemplateCost) {
+			boolean isTemplateCost, List<T> toRemove) {
 
 		boolean addCost = !costList.isEmpty() || templateCostListItem.getPlants().isEmpty() || !Collections.disjoint(templateCostListItem.getPlants(), formulatedProduct.getAllPlants());
 		for (T costListItem : costList) {
@@ -287,7 +289,7 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 			if (templateCostListItem.getPlants().isEmpty()
 					|| !Collections.disjoint(templateCostListItem.getPlants(), formulatedProduct.getAllPlants())) {
 				// same cost
-				if ((costListItem.getCost() != null) && costListItem.getCost().equals(templateCostListItem.getCost())) {
+				if ((costListItem.getCharactNodeRef() != null) && costListItem.getCharactNodeRef().equals(templateCostListItem.getCharactNodeRef())) {
 					if (isTemplateCost) {
 						if (templateCostListItem.getParent() != null) {
 							costListItem.setParent(findParentByCharactName(costList, templateCostListItem.getParent().getCharactNodeRef()));
@@ -299,6 +301,7 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 					if (!Boolean.TRUE.equals(costListItem.getIsManual())) {
 						copyTemplateCost(formulatedProduct, templateCostListItem, costListItem);
 					}
+					toRemove.remove(costListItem);
 					addCost = false;
 					break;
 				}
@@ -325,7 +328,7 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 	private void copyTemplateCost(ProductData formulatedProduct, T templateCostList, T costList) {
 
 		if (logger.isDebugEnabled()) {
-			logger.debug("copy cost " + nodeService.getProperty(templateCostList.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " unit "
+			logger.debug("copy cost " + nodeService.getProperty(templateCostList.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME) + " unit "
 					+ templateCostList.getUnit() + " PackagingData " + formulatedProduct.getDefaultVariantPackagingData());
 		}
 		boolean isCalculated = false;
@@ -370,25 +373,19 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 	private void calculateValues(T templateCostList, T costList, Boolean divide, Double qty) {
 
 		if (logger.isDebugEnabled()) {
-			logger.debug("calculateValues " + nodeService.getProperty(templateCostList.getCost(), BeCPGModel.PROP_CHARACT_NAME));
+			logger.debug("calculateValues " + nodeService.getProperty(templateCostList.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME));
 		}
 
 		Double value = templateCostList.getValue();
 		Double maxi = templateCostList.getMaxi();
-		Double previousValue = templateCostList.getPreviousValue();
-		Double futureValue = templateCostList.getFutureValue();
 
 		if ((divide != null) && (qty != null)) {
 			if (Boolean.TRUE.equals(divide)) {
 				value = divide(value, qty);
 				maxi = divide(maxi, qty);
-				previousValue = divide(previousValue, qty);
-				futureValue = divide(futureValue, qty);
 			} else {
 				value = multiply(value, qty);
 				maxi = multiply(maxi, qty);
-				previousValue = multiply(previousValue, qty);
-				futureValue = multiply(futureValue, qty);
 			}
 		}
 
@@ -398,12 +395,20 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 		if (maxi != null) {
 			costList.setMaxi(maxi);
 		}
-		if (previousValue != null) {
-			costList.setPreviousValue(previousValue);
+		for (String forecastColumn : costList.getForecastColumns()) {
+			if (templateCostList.getForecastValue(forecastColumn) != null) {
+				Double forecastValue = templateCostList.getForecastValue(forecastColumn);
+				if ((divide != null) && (qty != null)) {
+					if (Boolean.TRUE.equals(divide)) {
+						forecastValue = divide(forecastValue, qty);
+					} else {
+						forecastValue = multiply(forecastValue, qty);
+					}
+				}
+				costList.setForecastValue(forecastColumn, forecastValue);
+			}
 		}
-		if (futureValue != null) {
-			costList.setFutureValue(futureValue);
-		}
+		
 	}
 
 	private Double divide(Double a, Double b) {
@@ -425,9 +430,9 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 
 			Double value = 0d;
 			Double maxi = 0d;
-			Double previousValue = 0d;
-			Double futureValue = 0d;
 			Map<String, Double> variantValues = new HashMap<>();
+			Map<String, Double> forecastValues = new HashMap<>();
+			
 			for (Composite<T> component : composite.getChildren()) {
 				calculateParentCost(formulatedProduct, component);
 				T costListDataItem = component.getData();
@@ -440,12 +445,17 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 				if (costListDataItem.getMaxi() != null) {
 					maxi += costListDataItem.getMaxi();
 				}
-				if (costListDataItem.getPreviousValue() != null) {
-					previousValue += costListDataItem.getPreviousValue();
+				for (String forecastColumn : costListDataItem.getForecastColumns()) {
+					if (costListDataItem.getForecastValue(forecastColumn) != null) {
+						Double forecastValue = forecastValues.get(forecastColumn);
+						if (forecastValue == null) {
+							forecastValue = 0d;
+						}
+						forecastValue += costListDataItem.getForecastValue(forecastColumn);
+						forecastValues.put(forecastColumn, forecastValue);
+					}
 				}
-				if (costListDataItem.getFutureValue() != null) {
-					futureValue += costListDataItem.getFutureValue();
-				}
+					
 				if (costListDataItem instanceof VariantAwareDataItem) {
 					for (int i = 1; i <= VariantAwareDataItem.VARIANT_COLUMN_SIZE; i++) {
 						Double variantValue = costListDataItem.getValue(VariantAwareDataItem.VARIANT_COLUMN_NAME + i);
@@ -463,8 +473,9 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 			if (!composite.isRoot()) {
 				composite.getData().setValue(value);
 				composite.getData().setMaxi(maxi);
-				composite.getData().setPreviousValue(previousValue);
-				composite.getData().setFutureValue(futureValue);
+				for (String forecastColumn : composite.getData().getForecastColumns()) {
+					composite.getData().setForecastValue(forecastColumn, forecastValues.get(forecastColumn));
+				}
 
 				if (composite.getData() instanceof VariantAwareDataItem) {
 					for (int i = 1; i <= VariantAwareDataItem.VARIANT_COLUMN_SIZE; i++) {
@@ -492,7 +503,7 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 				}
 
 				for (T c2 : getDataListVisited(componentData)) {
-					if (c2.getCost().equals(simulatedCost.getParent().getCost()) && (simulatedCost.getSimulatedValue() != null) ) {
+					if (c2.getCharactNodeRef().equals(simulatedCost.getParent().getCharactNodeRef()) && (simulatedCost.getSimulatedValue() != null) ) {
 
 						if (logger.isDebugEnabled()) {
 							logger.debug("add simulationCost " + "c2 value " + c2.getValue() + "c simulated value " + simulatedCost.getSimulatedValue()
@@ -513,7 +524,7 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 				}
 			}
 			if (simulatedCost.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM) && (simulatedCost.getSimulatedValue() == null) && (simulatedCost.getParent() != null)
-					&& !nodeService.hasAspect(simulatedCost.getParent().getCost(), BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM)) {
+					&& !nodeService.hasAspect(simulatedCost.getParent().getCharactNodeRef(), BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM)) {
 				simulatedCost.getParent().getAspectsToRemove().add(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
 			}
 		}

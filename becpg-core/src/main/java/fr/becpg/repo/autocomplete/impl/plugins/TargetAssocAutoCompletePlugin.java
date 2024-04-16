@@ -82,6 +82,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * ds: /becpg/autocomplete/targetassoc/associations/{className}?classNames={classNames?}&amp;excludeProps={excludeProps?)&amp;path={path?}&amp;filter={}&
  * param: {className} type of item to retrieve
  * param: {classNames} (optional)  comma separated lists of classNames, can be uses to filter by aspect or boost certain types (inc_ or ^)
+ * param: {extra.searchTemplate} (optional) Allow to define a custom search template
 
  * Examples:
  *
@@ -224,8 +225,11 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 		}
 
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery();
-		
-		Boolean includeDeleted = props != null && props.containsKey(AutoCompleteService.PROP_INCLUDE_DELETED) && (Boolean) props.get(AutoCompleteService.PROP_INCLUDE_DELETED);
+
+		queryBuilder.excludeArchivedEntities();
+
+		Boolean includeDeleted = props != null && props.containsKey(AutoCompleteService.PROP_INCLUDE_DELETED)
+				&& (Boolean) props.get(AutoCompleteService.PROP_INCLUDE_DELETED);
 		if (!includeDeleted.booleanValue()) {
 			queryBuilder.excludeProp(BeCPGModel.PROP_IS_DELETED, "true");
 		}
@@ -263,6 +267,14 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 		} else {
 			if (isAllQuery(query)) {
 				queryBuilder.addSort(ContentModel.PROP_NAME, true);
+			}
+		}
+		
+		if (props != null) {
+			@SuppressWarnings("unchecked")
+			Map<String, String> extras = (HashMap<String, String>) props.get(AutoCompleteService.EXTRA_PARAM);
+			if (extras != null && extras.containsKey(AutoCompleteService.EXTRA_PARAM_SEARCH_TEMPLATE)) {
+				template = extras.get(AutoCompleteService.EXTRA_PARAM_SEARCH_TEMPLATE);
 			}
 		}
 
@@ -337,7 +349,6 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 			}
 		}
 
-
 		if (ret == null) {
 
 			if (RepoConsts.MAX_RESULTS_UNLIMITED.equals(pageSize)) {
@@ -345,11 +356,12 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 			} else {
 				queryBuilder.maxResults(RepoConsts.MAX_SUGGESTIONS);
 			}
-			
+
 			ret = queryBuilder.list();
 		}
-		
-		if (props != null && props.containsKey(AutoCompleteService.PROP_EXCLUDE_SOURCES) && "true".equals(props.get(AutoCompleteService.PROP_EXCLUDE_SOURCES))) {
+
+		if (props != null && props.containsKey(AutoCompleteService.PROP_EXCLUDE_SOURCES)
+				&& "true".equals(props.get(AutoCompleteService.PROP_EXCLUDE_SOURCES))) {
 			String itemId = (String) props.get(AutoCompleteService.PROP_ITEM_ID);
 			String fieldName = (String) props.get(AutoCompleteService.PROP_FIELD_NAME);
 			excludeSources(ret, itemId, fieldName);
@@ -369,8 +381,8 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 	private List<NodeRef> extractAllSources(NodeRef source, QName fieldQname, List<NodeRef> allSources) {
 		if (!allSources.contains(source)) {
 			allSources.add(source);
-			List<EntitySourceAssoc> entitySourceAssocs = associationService.getEntitySourceAssocs(Arrays.asList(source),
-					fieldQname, null, true, null);
+			List<EntitySourceAssoc> entitySourceAssocs = associationService.getEntitySourceAssocs(Arrays.asList(source), fieldQname, null, true,
+					null);
 			for (EntitySourceAssoc sourceSource : entitySourceAssocs) {
 				extractAllSources(sourceSource.getDataListItemNodeRef(), fieldQname, allSources);
 			}
@@ -378,9 +390,9 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 		return allSources;
 	}
 
-	private List<NodeRef> filterByAssoc(BeCPGQueryBuilder queryBuilder, Integer pageSize, NodeRef entityNodeRef,
-			String filterByAssoc, NodeRef targetNodeRef) {
-		
+	private List<NodeRef> filterByAssoc(BeCPGQueryBuilder queryBuilder, Integer pageSize, NodeRef entityNodeRef, String filterByAssoc,
+			NodeRef targetNodeRef) {
+
 		List<NodeRef> ret = null;
 		boolean isOrOperand = false;
 		if (filterByAssoc.endsWith("_or")) {
@@ -389,7 +401,6 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 		}
 
 		QName assocQName = QName.createQName(filterByAssoc, namespaceService);
-
 
 		List<NodeRef> targetNodeRefs = null;
 
@@ -400,22 +411,20 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 		}
 
 		if ((targetNodeRefs != null) && !targetNodeRefs.isEmpty()) {
-			
-			if(logger.isDebugEnabled()) {
-				logger.debug("Filter by assoc: " +filterByAssoc+ " " +targetNodeRefs.toString() );
+
+			if (logger.isDebugEnabled()) {
+				logger.debug("Filter by assoc: " + filterByAssoc + " " + targetNodeRefs.toString());
 			}
-			
+
 			List<NodeRef> tmp = queryBuilder.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list();
 			List<NodeRef> nodesToKeep = new ArrayList<>();
 
-			
-
-			List<EntitySourceAssoc> entitySourceAssocs = associationService.getEntitySourceAssocs(new ArrayList<>(targetNodeRefs),
-						assocQName, null, isOrOperand, null);
+			List<EntitySourceAssoc> entitySourceAssocs = associationService.getEntitySourceAssocs(new ArrayList<>(targetNodeRefs), assocQName, null,
+					isOrOperand, null);
 			for (EntitySourceAssoc assocRef : entitySourceAssocs) {
 				nodesToKeep.add(assocRef.getDataListItemNodeRef());
 			}
-			
+
 			tmp.retainAll(nodesToKeep);
 			if (!RepoConsts.MAX_RESULTS_UNLIMITED.equals(pageSize)) {
 				ret = tmp.subList(0, Math.min(RepoConsts.MAX_SUGGESTIONS, tmp.size()));

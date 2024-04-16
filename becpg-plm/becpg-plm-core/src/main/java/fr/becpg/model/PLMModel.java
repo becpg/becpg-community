@@ -12,7 +12,6 @@ import org.alfresco.service.namespace.QName;
  * @version $Id: $Id
  */
 public interface PLMModel {
-	
 
 	// product
 	/** Constant <code>TYPE_PRODUCT</code> */
@@ -31,7 +30,7 @@ public interface PLMModel {
 	QName TYPE_PACKAGINGMATERIAL = QName.createQName(BeCPGModel.BECPG_URI, "packagingMaterial");
 	/** Constant <code>TYPE_RESOURCEPRODUCT</code> */
 	QName TYPE_RESOURCEPRODUCT = QName.createQName(BeCPGModel.BECPG_URI, "resourceProduct");
-	
+
 	QName TYPE_PRODUCTCOLLECTION = QName.createQName(BeCPGModel.BECPG_URI, "productCollection");
 
 	/** Constant <code>TYPE_PRODUCT_SPECIFICATION</code> */
@@ -67,10 +66,10 @@ public interface PLMModel {
 	QName ASSOC_ALLERGENSUBSETS = QName.createQName(BeCPGModel.BECPG_URI, "allergenSubset");
 
 	//productList
-	
+
 	QName TYPE_PRODUCTLIST = QName.createQName(BeCPGModel.BECPG_URI, "productList");
 	QName ASSOC_PRODUCTLIST_PRODUCT = QName.createQName(BeCPGModel.BECPG_URI, "productListProduct");
-	
+
 	// compoList
 	/** Constant <code>TYPE_COMPOLIST</code> */
 	QName TYPE_COMPOLIST = QName.createQName(BeCPGModel.BECPG_URI, "compoList");
@@ -134,7 +133,7 @@ public interface PLMModel {
 	QName PROP_COSTLIST_MAXI = QName.createQName(BeCPGModel.BECPG_URI, "costListMaxi");
 	/** Constant <code>ASSOC_COSTLIST_COST</code> */
 	QName ASSOC_COSTLIST_COST = QName.createQName(BeCPGModel.BECPG_URI, "costListCost");
-	
+
 	// priceList
 	/** Constant <code>TYPE_PRICELIST</code> */
 	QName TYPE_PRICELIST = QName.createQName(BeCPGModel.BECPG_URI, "priceList");
@@ -156,11 +155,10 @@ public interface PLMModel {
 	QName TYPE_INGLIST = QName.createQName(BeCPGModel.BECPG_URI, "ingList");
 	/** Constant <code>PROP_INGLIST_QTY_PERC</code> */
 	QName PROP_INGLIST_QTY_PERC = QName.createQName(BeCPGModel.BECPG_URI, "ingListQtyPerc");
-	
+
 	QName PROP_INGLIST_QTY_PERCWITHYIELD = QName.createQName(BeCPGModel.BECPG_URI, "ingListQtyPercWithYield");
-	
+
 	QName PROP_INGLIST_QTY_PERCWITHSECONDARYYIELD = QName.createQName(BeCPGModel.BECPG_URI, "ingListQtyPercWithSecondaryYield");
-	
 
 	/** Constant <code>PROP_INGLIST_IS_GMO</code> */
 	QName PROP_INGLIST_IS_GMO = QName.createQName(BeCPGModel.BECPG_URI, "ingListIsGMO");
@@ -176,8 +174,7 @@ public interface PLMModel {
 	QName ASSOC_INGLIST_BIO_ORIGIN = QName.createQName(BeCPGModel.BECPG_URI, "ingListBioOrigin");
 	/** Constant <code>ASSOC_INGLIST_ING</code> */
 	QName ASSOC_INGLIST_ING = QName.createQName(BeCPGModel.BECPG_URI, "ingListIng");
-	
-	
+
 	// nutList
 	/** Constant <code>TYPE_NUTLIST</code> */
 	QName TYPE_NUTLIST = QName.createQName(BeCPGModel.BECPG_URI, "nutList");
@@ -187,29 +184,27 @@ public interface PLMModel {
 	QName PROP_NUTLIST_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "nutListValue");
 	/** Constant <code>PROP_NUTLIST_VALUE_PER_SERVING</code> */
 	QName PROP_NUTLIST_VALUE_PER_SERVING = QName.createQName(BeCPGModel.BECPG_URI, "nutListValuePerServing");
-	
+
 	QName PROP_NUTLIST_MEASUREMENTPRECISION = QName.createQName(BeCPGModel.BECPG_URI, "nutListMeasurementPrecision");
-	
+
 	QName PROP_NUTLIST_FORMULATED_VALUE_PER_SERVING = QName.createQName(BeCPGModel.BECPG_URI, "nutListFormulatedValuePerServing");
 	/** Constant <code>PROP_NUTLIST_FORMULATED_VALUE</code> */
 	QName PROP_NUTLIST_FORMULATED_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "nutListFormulatedValue");
 	/** Constant <code>PROP_NUTLIST_UNIT</code> */
 	QName PROP_NUTLIST_UNIT = QName.createQName(BeCPGModel.BECPG_URI, "nutListUnit");
-	
+
 	QName PROP_NUTLIST_UNIT_PREPARED = QName.createQName(BeCPGModel.BECPG_URI, "nutListUnitPrepared");
 	/** Constant <code>PROP_NUTLIST_MINI</code> */
 	QName PROP_NUTLIST_MINI = QName.createQName(BeCPGModel.BECPG_URI, "nutListMini");
-	
-	
-	QName ASPECT_NUTLIST_PREPARED = QName.createQName(BeCPGModel.BECPG_URI,"nutListPreparedAspect");
-	
-	QName PROP_NUTLIST_VALUE_PREPARED = QName.createQName(BeCPGModel.BECPG_URI,"nutListValuePrepared");
-	
-	QName PROP_NUTLIST_FORMULATED_PREPARED = QName.createQName(BeCPGModel.BECPG_URI,"nutListFormulatedValuePrepared");
-	
+
+	QName ASPECT_NUTLIST_PREPARED = QName.createQName(BeCPGModel.BECPG_URI, "nutListPreparedAspect");
+
+	QName PROP_NUTLIST_VALUE_PREPARED = QName.createQName(BeCPGModel.BECPG_URI, "nutListValuePrepared");
+
+	QName PROP_NUTLIST_FORMULATED_PREPARED = QName.createQName(BeCPGModel.BECPG_URI, "nutListFormulatedValuePrepared");
 
 	QName PROP_NUTLIST_FORMULATED_MINI = QName.createQName(BeCPGModel.BECPG_URI, "nutListFormulatedMini");
-	
+
 	QName PROP_NUTLIST_FORMULATED_MAXI = QName.createQName(BeCPGModel.BECPG_URI, "nutListFormulatedMaxi");
 	/** Constant <code>PROP_NUTLIST_MAXI</code> */
 	QName PROP_NUTLIST_MAXI = QName.createQName(BeCPGModel.BECPG_URI, "nutListMaxi");
@@ -222,7 +217,7 @@ public interface PLMModel {
 	QName PROP_NUTLIST_FORMULA_ERROR = QName.createQName(BeCPGModel.BECPG_URI, "nutListFormulaErrorLog");
 	/** Constant <code>PROP_NUTLIST_METHOD</code> */
 	QName PROP_NUTLIST_METHOD = QName.createQName(BeCPGModel.BECPG_URI, "nutListMethod");
-	
+
 	// organoList
 	/** Constant <code>TYPE_ORGANOLIST</code> */
 	QName TYPE_ORGANOLIST = QName.createQName(BeCPGModel.BECPG_URI, "organoList");
@@ -261,7 +256,7 @@ public interface PLMModel {
 	QName PROP_MICROBIOLIST_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "mblValue");
 	/** Constant <code>PROP_MICROBIOLIST_UNIT</code> */
 	QName PROP_MICROBIOLIST_UNIT = QName.createQName(BeCPGModel.BECPG_URI, "mblUnit");
-	
+
 	QName PROP_MICROBIOLIST_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "mblType");
 	/** Constant <code>PROP_MICROBIOLIST_MAXI</code> */
 	QName PROP_MICROBIOLIST_MAXI = QName.createQName(BeCPGModel.BECPG_URI, "mblMaxi");
@@ -279,7 +274,7 @@ public interface PLMModel {
 	QName PROP_PHYSICOCHEMLIST_UNIT = QName.createQName(BeCPGModel.BECPG_URI, "pclUnit");
 	/** Constant <code>PROP_PHYSICOCHEMLIST_TYPE</code> */
 	QName PROP_PHYSICOCHEMLIST_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "pclType");
-	
+
 	/** Constant <code>PROP_PHYSICOCHEMLIST_MINI</code> */
 	QName PROP_PHYSICOCHEMLIST_MINI = QName.createQName(BeCPGModel.BECPG_URI, "pclMini");
 	/** Constant <code>PROP_PHYSICOCHEMLIST_MAXI</code> */
@@ -299,7 +294,7 @@ public interface PLMModel {
 	QName PROP_FIL_REQ_MESSAGE = QName.createQName(BeCPGModel.BECPG_URI, "filReqMessage");
 	/** Constant <code>PROP_FIL_QTY_PERC_MAXI</code> */
 	QName PROP_FIL_QTY_PERC_MAXI = QName.createQName(BeCPGModel.BECPG_URI, "filQtyPercMaxi");
-	
+
 	QName PROP_FIL_QTY_PERC_MAXI_UNIT = QName.createQName(BeCPGModel.BECPG_URI, "filQtyPercMaxiUnit");
 	/** Constant <code>PROP_FIL_IS_GMO</code> */
 	QName PROP_FIL_IS_GMO = QName.createQName(BeCPGModel.BECPG_URI, "filIsGMO");
@@ -322,18 +317,18 @@ public interface PLMModel {
 	/** Constant <code>ASSOC_RCL_SOURCES</code> */
 	@Deprecated
 	QName ASSOC_RCL_SOURCES = QName.createQName(BeCPGModel.BECPG_URI, "rclSources");
-	
-	QName PROP_RCL_SOURCES_V2 =  QName.createQName(BeCPGModel.BECPG_URI, "rclSourcesV2");
-	
+
+	QName PROP_RCL_SOURCES_V2 = QName.createQName(BeCPGModel.BECPG_URI, "rclSourcesV2");
+
 	/** Constant <code>ASSOC_RCL_CHARACT</code> */
 	QName ASSOC_RCL_CHARACT = QName.createQName(BeCPGModel.BECPG_URI, "rclCharact");
-	
+
 	/** Constant <code>PROP_RCL_REQ_DATA_TYPE</code> */
 	QName PROP_RCL_REQ_DATA_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "rclDataType");
-	
+
 	/** Constant <code>TYPE_SPEC_COMPATIBILTY_LIST</code> */
 	QName TYPE_SPEC_COMPATIBILTY_LIST = QName.createQName(BeCPGModel.BECPG_URI, "productSpecCompatibilityList");
-	
+
 	/** Constant <code>PROP_SPEC_COMPATIBILITY_JOB_ON</code> */
 	QName PROP_SPEC_COMPATIBILITY_JOB_ON = QName.createQName(BeCPGModel.BECPG_URI, "specCompatibilityJobOn");
 	/** Constant <code>PROP_SPEC_COMPATIBILITY_LOG</code> */
@@ -341,7 +336,6 @@ public interface PLMModel {
 
 	/** Constant <code>ASSOC_PSCL_SOURCE_ITEM</code> */
 	QName ASSOC_PSCL_SOURCE_ITEM = QName.createQName(BeCPGModel.BECPG_URI, "psclSourceItem");
-	
 
 	/** Constant <code>TYPE_DYNAMICCHARACTLIST</code> */
 	QName TYPE_DYNAMICCHARACTLIST = QName.createQName(BeCPGModel.BECPG_URI, "dynamicCharactList");
@@ -365,7 +359,7 @@ public interface PLMModel {
 	QName PROP_CONTACT_LIST_FIRST_NAME = QName.createQName(BeCPGModel.BECPG_URI, "contactListFirstName");
 	/** Constant <code>PROP_CONTACT_LIST_LAST_NAME</code> */
 	QName PROP_CONTACT_LIST_LAST_NAME = QName.createQName(BeCPGModel.BECPG_URI, "contactListLastName");
-	
+
 	// labelClaimList
 	/** Constant <code>TYPE_LABELCLAIMLIST</code> */
 	QName TYPE_LABELCLAIMLIST = QName.createQName(BeCPGModel.BECPG_URI, "labelClaimList");
@@ -379,8 +373,21 @@ public interface PLMModel {
 	QName PROP_LCL_FORMULAERROR = QName.createQName(BeCPGModel.BECPG_URI, "lclFormulaErrorLog");
 	/** Constant <code>ASSOC_LCL_MISSING_LABELCLAIMS</code> */
 	QName ASSOC_LCL_MISSING_LABELCLAIMS = QName.createQName(BeCPGModel.BECPG_URI, "lclMissingLabelClaims");
+
+	// svhcList
+	/** Constant <code>TYPE_SVHCLIST</code> */
+	QName TYPE_SVHCLIST = QName.createQName(BeCPGModel.BECPG_URI, "svhcList");
+	/** Constant <code>TYPE_SVHC_LIST_QTY_PERC</code> */
+	QName PROP_SVHCLIST_QTY_PERC = QName.createQName(BeCPGModel.BECPG_URI, "svhcListQtyPerc");
 	
+	QName PROP_IS_SVHC = QName.createQName(BeCPGModel.BECPG_URI, "isSubstanceOfVeryHighConcern");
 	
+	/** Constant <code>TYPE_SVHC_LIST_ING</code> */
+	QName ASSOC_SVHCLIST_ING = QName.createQName(BeCPGModel.BECPG_URI, "svhcListIng");
+
+	/** Constant <code>PROP_SVHC_REASONS_FOR_INCLUSION</code> */
+	QName PROP_SVHC_REASONS_FOR_INCLUSION = QName.createQName(BeCPGModel.BECPG_URI, "svhcReasonsForInclusion");
+
 	// allergen
 	/** Constant <code>TYPE_ALLERGEN</code> */
 	QName TYPE_ALLERGEN = QName.createQName(BeCPGModel.BECPG_URI, "allergen");
@@ -390,9 +397,9 @@ public interface PLMModel {
 	QName PROP_ALLERGEN_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "allergenType");
 	/** Constant <code>PROP_ALLERGEN_REGULATORY_THRESHOLD</code> */
 	QName PROP_ALLERGEN_REGULATORY_THRESHOLD = QName.createQName(BeCPGModel.BECPG_URI, "allergenRegulatoryThreshold");
-	
+
 	QName PROP_ALLERGEN_INVOL_REGULATORY_THRESHOLD = QName.createQName(BeCPGModel.BECPG_URI, "allergenInVoluntaryRegulatoryThreshold");
-	
+
 	// cost
 	/** Constant <code>TYPE_COST</code> */
 	QName TYPE_COST = QName.createQName(BeCPGModel.BECPG_URI, "cost");
@@ -428,7 +435,7 @@ public interface PLMModel {
 
 	/** Constant <code>ASPECT_ING_TYPE</code> */
 	QName ASPECT_ING_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "ingTypeAspect");
-	
+
 	/** Constant <code>PROP_ING_TYPE_V2</code> */
 	QName PROP_ING_TYPE_V2 = QName.createQName(BeCPGModel.BECPG_URI, "ingTypeV2");
 	/** Constant <code>TYPE_ING_TYPE_ITEM</code> */
@@ -441,7 +448,7 @@ public interface PLMModel {
 	// microbio
 	/** Constant <code>TYPE_MICROBIO</code> */
 	QName TYPE_MICROBIO = QName.createQName(BeCPGModel.BECPG_URI, "microbio");
-	
+
 	QName PROP_MICROBIO_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "microbioType");
 	// geoOrigin
 	/** Constant <code>TYPE_GEO_ORIGIN</code> */
@@ -469,7 +476,7 @@ public interface PLMModel {
 	/** Constant <code>PROP_NUTUL</code> */
 	QName PROP_NUTUL = QName.createQName(BeCPGModel.BECPG_URI, "nutUL");
 	/** Constant <code>PROP_NUT_FORMULA</code> */
-	QName PROP_NUT_FORMULA = QName.createQName(BeCPGModel.BECPG_URI, "nutFormula");	
+	QName PROP_NUT_FORMULA = QName.createQName(BeCPGModel.BECPG_URI, "nutFormula");
 
 	// organo
 	/** Constant <code>TYPE_ORGANO</code> */
@@ -481,16 +488,15 @@ public interface PLMModel {
 	/** Constant <code>PROP_PHYSICO_CHEM_UNIT</code> */
 	QName PROP_PHYSICO_CHEM_UNIT = QName.createQName(BeCPGModel.BECPG_URI, "physicoChemUnit");
 	/** Constant <code>PROP_PHYSICO_CHEM_TYPE</code> */
-	QName PROP_PHYSICO_CHEM_TYPE  = QName.createQName(BeCPGModel.BECPG_URI, "physicoChemType");
+	QName PROP_PHYSICO_CHEM_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "physicoChemType");
 	/** Constant <code>PROP_PHYSICO_CHEM_FORMULATED</code> */
 	QName PROP_PHYSICO_CHEM_FORMULATED = QName.createQName(BeCPGModel.BECPG_URI, "physicoChemFormulated");
 	/** Constant <code>PROP_PHYSICO_CHEM_FORMULATED_FROM_VOL</code> */
 	QName PROP_PHYSICO_CHEM_FORMULATED_FROM_VOL = QName.createQName(BeCPGModel.BECPG_URI, "physicoChemFormulatedFromVol");
 	/** Constant <code>PROP_PHYSICO_CHEM_FORMULA</code> */
 	QName PROP_PHYSICO_CHEM_FORMULA = QName.createQName(BeCPGModel.BECPG_URI, "physicoChemFormula");
-	
-	QName PROP_PHYSICO_CHEM_CODE = QName.createQName(BeCPGModel.BECPG_URI, "physicoChemCode");
 
+	QName PROP_PHYSICO_CHEM_CODE = QName.createQName(BeCPGModel.BECPG_URI, "physicoChemCode");
 
 	// supplier aspect
 	/** Constant <code>ASPECT_SUPPLIERS</code> */
@@ -505,14 +511,12 @@ public interface PLMModel {
 	// supplier
 	/** Constant <code>TYPE_SUPPLIER</code> */
 	QName TYPE_SUPPLIER = QName.createQName(BeCPGModel.BECPG_URI, "supplier");
-	
+
 	// supplierAccountRef aspect
 	/** Constant <code>ASPECT_SUPPLIERS_ACCOUNTREF</code> */
 	QName ASPECT_SUPPLIERS_ACCOUNTREF = QName.createQName(BeCPGModel.BECPG_URI, "supplierAccountRefAspect");
 	/** Constant <code>ASSOC_SUPPLIER_ACCOUNTS</code> */
 	QName ASSOC_SUPPLIER_ACCOUNTS = QName.createQName(BeCPGModel.BECPG_URI, "supplierAccountRef");
-	
-
 
 	// client aspect
 	/** Constant <code>ASPECT_CLIENTS</code> */
@@ -549,21 +553,21 @@ public interface PLMModel {
 	QName PROP_PRODUCT_DROP_PACKAGING_OF_COMPONENTS = QName.createQName(BeCPGModel.BECPG_URI, "dropPackagingOfComponents");
 	/** Constant <code>PROP_PRODUCT_SERVING_SIZE</code> */
 	QName PROP_PRODUCT_SERVING_SIZE = QName.createQName(BeCPGModel.BECPG_URI, "servingSize");
-	
+
 	/** Constant <code>PROP_PRODUCT_SERVING_SIZE_BY_COUNTRY</code> */
 	QName PROP_PRODUCT_SERVING_SIZE_BY_COUNTRY = QName.createQName(BeCPGModel.BECPG_URI, "servingSizeByCountry");
-	
+
 	/** Constant <code>PROP_PRODUCT_SERVING_SIZE_UNIT</code> */
 	QName PROP_PRODUCT_SERVING_SIZE_UNIT = QName.createQName(BeCPGModel.BECPG_URI, "servingSizeUnit");
-	
+
 	QName PROP_NUTRIENT_PREPARED_UNIT = QName.createQName(BeCPGModel.BECPG_URI, "nutrientPreparedUnit");
-	
+
 	// transformation
 	/** Constant <code>ASPECT_TRANSFORMATION</code> */
-	QName ASPECT_TRANSFORMATION = QName.createQName(BeCPGModel.BECPG_URI, "transformationAspect");	
+	QName ASPECT_TRANSFORMATION = QName.createQName(BeCPGModel.BECPG_URI, "transformationAspect");
 	/** Constant <code>ASSOC_PRODUCT_SPECIFICATIONS</code> */
 	QName ASSOC_PRODUCT_SPECIFICATIONS = QName.createQName(BeCPGModel.BECPG_URI, "productSpecifications");
-	
+
 	/** Constant <code>PROP_PRODUCT_NET_VOLUME</code> */
 	QName PROP_PRODUCT_NET_VOLUME = QName.createQName(BeCPGModel.BECPG_URI, "netVolume");
 	/** Constant <code>PROP_PRODUCT_NET_WEIGHT</code> */
@@ -608,9 +612,8 @@ public interface PLMModel {
 	// subsidiary
 	/** Constant <code>TYPE_SUBSIDIARY</code> */
 	QName TYPE_SUBSIDIARY = QName.createQName(BeCPGModel.BECPG_URI, "subsidiary");
-	
-	QName ASSOC_SUBSIDIARY_CERTIFICATIONS = QName.createQName(BeCPGModel.BECPG_URI, "subsidiaryCertifications");
 
+	QName ASSOC_SUBSIDIARY_CERTIFICATIONS = QName.createQName(BeCPGModel.BECPG_URI, "subsidiaryCertifications");
 
 	// plant
 	/** Constant <code>TYPE_PLANT</code> */
@@ -618,13 +621,11 @@ public interface PLMModel {
 	/** Constant <code>ASSOC_PLANT_CERTIFICATIONS</code> */
 	QName ASSOC_PLANT_CERTIFICATIONS = QName.createQName(BeCPGModel.BECPG_URI, "plantCertifications");
 
-
 	// trademark
 	/** Constant <code>TYPE_TRADEMARK</code> */
 	QName TYPE_TRADEMARK = QName.createQName(BeCPGModel.BECPG_URI, "trademark");
 	/** Constant <code>PROP_TRADEMARK_TYPE</code> */
 	QName PROP_TRADEMARK_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "trademarkType");
-	
 
 	// certification
 	/** Constant <code>TYPE_CERTIFICATION</code> */
@@ -643,15 +644,15 @@ public interface PLMModel {
 	QName PROP_LABEL_CLAIM_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "labelClaimType");
 	/** Constant <code>PROP_LABEL_CLAIM_FORMULA</code> */
 	QName PROP_LABEL_CLAIM_FORMULA = QName.createQName(BeCPGModel.BECPG_URI, "labelClaimFormula");
-	
-	QName PROP_CLAIM_REGULATORY_THRESHOLD =  QName.createQName(BeCPGModel.BECPG_URI, "labelClaimRegulatoryThreshold");
+
+	QName PROP_CLAIM_REGULATORY_THRESHOLD = QName.createQName(BeCPGModel.BECPG_URI, "labelClaimRegulatoryThreshold");
 
 	// storageConditions
 	/** Constant <code>TYPE_STORAGE_CONDITIONS</code> */
 	QName TYPE_STORAGE_CONDITIONS = QName.createQName(BeCPGModel.BECPG_URI, "storageConditions");
 	/** Constant <code>ASSOC_STORAGE_CONDITIONS</code> */
 	QName ASSOC_STORAGE_CONDITIONS = QName.createQName(BeCPGModel.BECPG_URI, "storageConditionsRef");
-	
+
 	// precautionOfUse
 	/** Constant <code>TYPE_PRECAUTION_OF_USE</code> */
 	QName TYPE_PRECAUTION_OF_USE = QName.createQName(BeCPGModel.BECPG_URI, "precautionOfUse");
@@ -663,48 +664,46 @@ public interface PLMModel {
 	QName ASPECT_INSTRUCTION = QName.createQName(BeCPGModel.BECPG_URI, "instruction");
 	/** Constant <code>PROP_INSTRUCTION</code> */
 	QName PROP_INSTRUCTION = QName.createQName(BeCPGModel.BECPG_URI, "instruction");
-	
+
 	/** Constant <code>ASPECT_RECONSTITUTABLE</code> */
 	QName ASPECT_RECONSTITUTABLE = QName.createQName(BeCPGModel.BECPG_URI, "reconstitutableAspect");
 	/** Constant <code>PROP_RECONSTITUTION_RATE</code> */
-	QName PROP_RECONSTITUTION_RATE =  QName.createQName(BeCPGModel.BECPG_URI, "reconstitutionRate");
+	QName PROP_RECONSTITUTION_RATE = QName.createQName(BeCPGModel.BECPG_URI, "reconstitutionRate");
 	/** Constant <code>PROP_RECONSTITUTION_PRIORITY</code> */
-	QName PROP_RECONSTITUTION_PRIORITY =  QName.createQName(BeCPGModel.BECPG_URI, "reconstitutionPriority");
+	QName PROP_RECONSTITUTION_PRIORITY = QName.createQName(BeCPGModel.BECPG_URI, "reconstitutionPriority");
 	/** Constant <code>ASSOC_DILUENT_REF</code> */
-	QName ASSOC_DILUENT_REF =  QName.createQName(BeCPGModel.BECPG_URI, "diluentRef");
+	QName ASSOC_DILUENT_REF = QName.createQName(BeCPGModel.BECPG_URI, "diluentRef");
 	/** Constant <code>ASSOC_TARGET_RECONSTITUTION_REF</code> */
-	QName ASSOC_TARGET_RECONSTITUTION_REF =  QName.createQName(BeCPGModel.BECPG_URI, "targetReconstitutionRef");
-	
+	QName ASSOC_TARGET_RECONSTITUTION_REF = QName.createQName(BeCPGModel.BECPG_URI, "targetReconstitutionRef");
+
 	//Compare
 	/** Constant <code>ASPECT_COMPARE_WITH_DYN_COLUMN</code> */
 	QName ASPECT_COMPARE_WITH_DYN_COLUMN = QName.createQName(BeCPGModel.BECPG_URI, "compareWithDynColumnAspect");
 	/** Constant <code>PROP_COMPARE_WITH_DYN_COLUMN</code> */
-	QName PROP_COMPARE_WITH_DYN_COLUMN =  QName.createQName(BeCPGModel.BECPG_URI, "compareWithDynColumn");
+	QName PROP_COMPARE_WITH_DYN_COLUMN = QName.createQName(BeCPGModel.BECPG_URI, "compareWithDynColumn");
 
 	//Nutrient profile
 	/** Constant <code>ASPECT_NUTRIENT_PROFILING_SCORE</code> */
 	QName ASPECT_NUTRIENT_PROFILING_SCORE = QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfilingScoreAspect");
 	/** Constant <code>PROP_NUTRIENT_PROFILING_SCORE</code> */
-	QName PROP_NUTRIENT_PROFILING_SCORE =  QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfilingScore");
+	QName PROP_NUTRIENT_PROFILING_SCORE = QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfilingScore");
 	/** Constant <code>PROP_NUTRIENT_PROFILING_CLASS</code> */
-	QName PROP_NUTRIENT_PROFILING_CLASS =  QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfilingClass");
+	QName PROP_NUTRIENT_PROFILING_CLASS = QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfilingClass");
 	/** Constant <code>PROP_NUTRIENT_PROFILE_SCORE_FORMULA</code> */
-	QName PROP_NUTRIENT_PROFILE_SCORE_FORMULA =  QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfileScoreFormula");
+	QName PROP_NUTRIENT_PROFILE_SCORE_FORMULA = QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfileScoreFormula");
 	/** Constant <code>PROP_NUTRIENT_PROFILE_CLASS_FORMULA</code> */
-	QName PROP_NUTRIENT_PROFILE_CLASS_FORMULA =  QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfileClassFormula");
-	
+	QName PROP_NUTRIENT_PROFILE_CLASS_FORMULA = QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfileClassFormula");
+
 	QName PROP_NUTRIENT_PROFILE_CATEGORY = QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfileCategory");
-	
+
 	QName PROP_NUTRIENT_PROFILE_VERSION = QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfileVersion");
-	
-	
-	
+
 	//Eco score
 	QName ASPECT_ECO_SCORE = QName.createQName(BeCPGModel.BECPG_URI, "ecoScoreAspect");
 	QName PROP_ECO_SCORE = QName.createQName(BeCPGModel.BECPG_URI, "ecoScore");
 	QName PROP_ECO_SCORE_CLASS = QName.createQName(BeCPGModel.BECPG_URI, "ecoScoreClass");
 	QName PROP_ECO_SCORE_CATEGORY = QName.createQName(BeCPGModel.BECPG_URI, "ecoScoreCategory");
-		
+
 	//Custom codes
 	/** Constant <code>TYPE_CUSTOMSCODE</code> */
 	QName TYPE_CUSTOMSCODE = QName.createQName(BeCPGModel.BECPG_URI, "customsCode");
@@ -714,70 +713,67 @@ public interface PLMModel {
 	QName ASPECT_CUSTOMSCODE = QName.createQName(BeCPGModel.BECPG_URI, "customsCodeAspect");
 	/** Constant <code>ASSOC_CUSTOMSCODE</code> */
 	QName ASSOC_CUSTOMSCODE = QName.createQName(BeCPGModel.BECPG_URI, "customsCodeRef");
-	
+
 	// Regulatory code
 	/** Constant <code>ASPECT_REGULATORY_CODE</code> */
-	QName ASPECT_REGULATORY_CODE= QName.createQName(BeCPGModel.BECPG_URI, "regulatoryCodeAspect");
-	
-	QName ASPECT_REGULATORY= QName.createQName(BeCPGModel.BECPG_URI, "regulatoryAspect");
+	QName ASPECT_REGULATORY_CODE = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryCodeAspect");
+
+	QName ASPECT_REGULATORY = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryAspect");
 	/** Constant <code>PROP_REGULATORY_CODE</code> */
 	QName PROP_REGULATORY_CODE = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryCode");
-	
+
 	QName TYPE_REGULATORY_USAGE = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryUsage");
-	
+
 	QName PROP_REGULATORY_COMMENT = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryComment");
 
 	QName PROP_REGULATORY_MODULE = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryModule");
-	
+
 	QName PROP_REGULATORY_ID = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryId");
-	
+
 	QName PROP_REGULATORY_RESULT = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryResult");
-	
+
 	QName TYPE_REGULATORY_LIST = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryList");
-	
+
 	QName TYPE_ING_REGULATORY_LIST = QName.createQName(BeCPGModel.BECPG_URI, "ingRegulatoryList");
-	
+
 	//Chemical code
 	/** Constant <code>PROP_CAS_NUMBER</code> */
-	QName PROP_CAS_NUMBER= QName.createQName(BeCPGModel.BECPG_URI, "casNumber");
+	QName PROP_CAS_NUMBER = QName.createQName(BeCPGModel.BECPG_URI, "casNumber");
 	/** Constant <code>PROP_CE_NUMBER</code> */
-	QName PROP_CE_NUMBER= QName.createQName(BeCPGModel.BECPG_URI, "ceNumber");
+	QName PROP_CE_NUMBER = QName.createQName(BeCPGModel.BECPG_URI, "ceNumber");
 	/** Constant <code>PROP_EC_NUMBER</code> */
-	QName PROP_EC_NUMBER= QName.createQName(BeCPGModel.BECPG_URI, "ecNumber");
+	QName PROP_EC_NUMBER = QName.createQName(BeCPGModel.BECPG_URI, "ecNumber");
 	/** Constant <code>PROP_FDA_NUMBER</code> */
-	QName PROP_FDA_NUMBER= QName.createQName(BeCPGModel.BECPG_URI, "fdaNumber");
+	QName PROP_FDA_NUMBER = QName.createQName(BeCPGModel.BECPG_URI, "fdaNumber");
 	/** Constant <code>PROP_FEMA_NUMBER</code> */
-	QName PROP_FEMA_NUMBER= QName.createQName(BeCPGModel.BECPG_URI, "femaNumber");
+	QName PROP_FEMA_NUMBER = QName.createQName(BeCPGModel.BECPG_URI, "femaNumber");
 	/** Constant <code>PROP_FL_NUMBER</code> */
-	QName PROP_FL_NUMBER= QName.createQName(BeCPGModel.BECPG_URI, "flNumber");
+	QName PROP_FL_NUMBER = QName.createQName(BeCPGModel.BECPG_URI, "flNumber");
 
-	
 	/** Constant <code>ASPECT_WATER</code> */
 	QName ASPECT_WATER = QName.createQName(BeCPGModel.BECPG_URI, "waterAspect");
 	/** Constant <code>LABELING_RULE_ASPECT</code> */
-	QName LABELING_RULE_ASPECT =  QName.createQName(BeCPGModel.BECPG_URI, "labelingRuleAspect");
-	
-	/** Constant <code>PROP_MODIFIED_CATALOG1</code> */
-	QName PROP_MODIFIED_CATALOG1 =  QName.createQName(BeCPGModel.BECPG_URI, "modifiedCatalog1");
-	/** Constant <code>PROP_MODIFIED_CATALOG2</code> */
-	QName PROP_MODIFIED_CATALOG2 =  QName.createQName(BeCPGModel.BECPG_URI, "modifiedCatalog2");
-	/** Constant <code>PROP_MODIFIED_CATALOG3</code> */
-	QName PROP_MODIFIED_CATALOG3 =  QName.createQName(BeCPGModel.BECPG_URI, "modifiedCatalog3");
+	QName LABELING_RULE_ASPECT = QName.createQName(BeCPGModel.BECPG_URI, "labelingRuleAspect");
 
-	QName PROP_GLOP_TARGET =  QName.createQName(BeCPGModel.BECPG_URI, "glopTarget");
-	
-	QName PROP_GLOP_VALUE =  QName.createQName(BeCPGModel.BECPG_URI, "glopValue");
-	
+	/** Constant <code>PROP_MODIFIED_CATALOG1</code> */
+	QName PROP_MODIFIED_CATALOG1 = QName.createQName(BeCPGModel.BECPG_URI, "modifiedCatalog1");
+	/** Constant <code>PROP_MODIFIED_CATALOG2</code> */
+	QName PROP_MODIFIED_CATALOG2 = QName.createQName(BeCPGModel.BECPG_URI, "modifiedCatalog2");
+	/** Constant <code>PROP_MODIFIED_CATALOG3</code> */
+	QName PROP_MODIFIED_CATALOG3 = QName.createQName(BeCPGModel.BECPG_URI, "modifiedCatalog3");
+
+	QName PROP_GLOP_TARGET = QName.createQName(BeCPGModel.BECPG_URI, "glopTarget");
+
+	QName PROP_GLOP_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "glopValue");
+
 	QName PROP_IS_CHARACT_PROPAGATE_UP = QName.createQName(BeCPGModel.BECPG_URI, "isCharactPropagateUp");
-	
+
 	QName ASPECT_PROPAGATE_UP = QName.createQName(BeCPGModel.BECPG_URI, "propagateUpAspect");
 
 	QName ASSOC_PROPAGATED_CHARACTS = QName.createQName(BeCPGModel.BECPG_URI, "propagatedCharacts");
-	
-	QName PROP_BEST_BEFORE_DATE =  QName.createQName(BeCPGModel.BECPG_URI, "bestBeforeDate");
-	QName PROP_USE_BY_DATE =  QName.createQName(BeCPGModel.BECPG_URI, "useByDate");
-	QName PROP_PERIOD_AFTER_OPENING =  QName.createQName(BeCPGModel.BECPG_URI, "periodAfterOpening");
 
+	QName PROP_BEST_BEFORE_DATE = QName.createQName(BeCPGModel.BECPG_URI, "bestBeforeDate");
+	QName PROP_USE_BY_DATE = QName.createQName(BeCPGModel.BECPG_URI, "useByDate");
+	QName PROP_PERIOD_AFTER_OPENING = QName.createQName(BeCPGModel.BECPG_URI, "periodAfterOpening");
 
-		
 }

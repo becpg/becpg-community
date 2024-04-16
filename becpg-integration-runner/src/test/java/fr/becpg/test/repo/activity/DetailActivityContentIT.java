@@ -3,6 +3,7 @@ package fr.becpg.test.repo.activity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -15,6 +16,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
+import fr.becpg.repo.activity.data.ActivityListDataItem;
+import fr.becpg.repo.activity.helper.AuditActivityHelper;
+import fr.becpg.repo.audit.model.AuditQuery;
+import fr.becpg.repo.audit.model.AuditType;
+import fr.becpg.repo.audit.plugin.impl.ActivityAuditPlugin;
+import fr.becpg.repo.audit.service.BeCPGAuditService;
 import fr.becpg.repo.product.data.ClientData;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
@@ -33,6 +40,9 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 	protected AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 	
 	@Autowired
+	protected BeCPGAuditService beCPGAuditService;
+	
+	@Autowired
 	protected AlfrescoRepository<ClientData> clientRepository;
 
 	protected NodeRef getActivityList(NodeRef productNodeRef) {
@@ -45,31 +55,15 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 
 	}
 
-	protected List<NodeRef> getActivities(NodeRef entityNodeRef, Map<String, Boolean> sortMap) {
-	
+	protected List<ActivityListDataItem> getActivities(NodeRef entityNodeRef, Map<String, Boolean> sortMap) {
+		AuditQuery auditFilter = AuditQuery.createQuery().asc(false).dbAsc(false)
+				.sortBy(ActivityAuditPlugin.PROP_CM_CREATED).filter(ActivityAuditPlugin.ENTITY_NODEREF, entityNodeRef.toString());
 
-		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			List<NodeRef> ret = new ArrayList<>();
-			beCPGCacheService.clearAllCaches();
-			
-			NodeRef activityListNodeRef = getActivityList(entityNodeRef);
-			if (activityListNodeRef != null) {
-				// All activities of product
-				ret = sortMap != null
-						? entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST, sortMap)
-								: entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
+		return transactionService.getRetryingTransactionHelper().doInTransaction(
+				() -> beCPGAuditService.listAuditEntries(AuditType.ACTIVITY, auditFilter).stream()
+						.map(json -> AuditActivityHelper.parseActivity(json)).collect(Collectors.toList()),
+				false, true);
 
-						ret.forEach(tmp -> {
-							logger.info("Data: " + nodeService.getProperty(tmp, BeCPGModel.PROP_ACTIVITYLIST_DATA) + " user: "
-									+ nodeService.getProperty(tmp, BeCPGModel.PROP_ACTIVITYLIST_USERID));
-						});
-
-			} else {
-				logger.error("No activity list");
-			}
-
-			return ret;
-		}, false, true);
 	}
 
 	private NodeRef createFinishedProduct() {
@@ -110,10 +104,8 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 		assertEquals("Activity 2: erpCode modification", 2, getActivities(finishedProductNodeRef, null).size());
 
 		// Check activity data
-		NodeRef activityListNodeRef = getActivityList(finishedProductNodeRef);
-		List<NodeRef> activities = entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
-		NodeRef activity = activities.get(getActivities(finishedProductNodeRef, null).size()-1);
-		String activityData = nodeService.getProperty(activity, BeCPGModel.PROP_ACTIVITYLIST_DATA).toString();
+		ActivityListDataItem activity = getActivities(finishedProductNodeRef, null).get(0);
+		String activityData = activity.getActivityData();
 		assertNotNull("Activity data", activityData);
 
 		try {
@@ -175,10 +167,8 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 		assertEquals("Activity 2: Modify client association", 2, getActivities(finishedProductNodeRef, null).size());
 
 		// Check activity data
-		NodeRef activityListNodeRef = getActivityList(finishedProductNodeRef);
-		List<NodeRef> activities = entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
-		NodeRef activity = activities.get(getActivities(finishedProductNodeRef, null).size()-1);
-		String activityData = nodeService.getProperty(activity, BeCPGModel.PROP_ACTIVITYLIST_DATA).toString();
+		ActivityListDataItem activity = getActivities(finishedProductNodeRef, null).get(0);
+		String activityData = activity.getActivityData();
 		assertNotNull("Activity data", activityData);
 
 		try {
@@ -234,10 +224,8 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 		assertEquals("Check update compoList item ", 3, getActivities(finishedProductNodeRef, null).size()); 
 
 		// Check activity data
-		NodeRef activityListNodeRef = getActivityList(finishedProductNodeRef);
-		List<NodeRef> activities = entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
-		NodeRef activity = activities.get(getActivities(finishedProductNodeRef, null).size()-1);
-		String activityData = nodeService.getProperty(activity, BeCPGModel.PROP_ACTIVITYLIST_DATA).toString();
+		ActivityListDataItem activity = getActivities(finishedProductNodeRef, null).get(0);
+		String activityData = activity.getActivityData();
 		assertNotNull("Activity data", activityData);
 
 		try {

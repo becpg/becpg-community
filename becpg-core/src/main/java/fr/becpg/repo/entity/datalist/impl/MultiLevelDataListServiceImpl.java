@@ -210,15 +210,19 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 							if ((parentNodeRef != null) && currTmp.containsKey(parentNodeRef)) {
 								MultiLevelListData parent = currTmp.get(parentNodeRef);
 								parent.getTree().put(childRef, tmp);
-								if(currEntityNodeRef == null && !parent.getTree().isEmpty()) {
-									parent.setLeaf(false);
-								}
 							} else {
 								ret.getTree().put(childRef, tmp);
 							
 							}
 						}
 
+					} 
+					
+					if(parentNodeRef!=null  && currTmp.containsKey(parentNodeRef) && currEntityNodeRef==null ) {
+						MultiLevelListData parent = currTmp.get(parentNodeRef);
+						if(currEntityNodeRef == null ) {
+							parent.setLeaf(false);
+						}
 					}
 				}
 

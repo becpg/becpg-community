@@ -50,7 +50,7 @@ public class CompareProductReportWebScriptIT extends AbstractCompareProductTest 
 	@Test
 	public void testCompareProducts() throws IOException {
 
-		NodeRef fpNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef fpNodeRef = inWriteTx(() -> {
 
 			logger.debug("createRawMaterial 1");
 
@@ -157,18 +157,21 @@ public class CompareProductReportWebScriptIT extends AbstractCompareProductTest 
 
 			return fpNodeRef1;
 
-		}, false, true);
+		});
 
 		// when the version is created, a node in version history folder is created for reports,
 		// wait for this node to be created and use it for comparison
 		waitForSolr();
 		
-		String url = String.format("/becpg/entity/compare/%s/%s/version.pdf", fpNodeRef.toString().replace("://", "/"), "1.0");
-
-		Response response = TestWebscriptExecuters.sendRequest(new GetRequest(url), 200, "admin");
-
-		Assert.assertNotNull(response);
-		
+		inWriteTx(() -> {
+			String url = String.format("/becpg/entity/compare/%s/%s/version.pdf", fpNodeRef.toString().replace("://", "/"), "1.0");
+	
+			Response response = TestWebscriptExecuters.sendRequest(new GetRequest(url), 200, "admin");
+	
+			Assert.assertNotNull(response);
+			
+			return response;
+		});
 
 	}
 	

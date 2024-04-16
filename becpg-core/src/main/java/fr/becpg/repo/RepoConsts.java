@@ -144,6 +144,8 @@ public class RepoConsts
 	/** Constant <code>MAX_RESULTS_5000</code> */
 	public static final Integer MAX_RESULTS_5000 = 5000;
 	
+	public static final Integer MAX_RESULTS_1000000 = 1000000;
+	
 
 	
 	public static final Map<String, Boolean> DEFAULT_SORT = new LinkedHashMap<>();

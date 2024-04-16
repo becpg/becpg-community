@@ -1078,8 +1078,7 @@
          <property name="lockService" ref="lockService"/>
 	</bean>
 	
-	
-	  <bean id="patch.bcpg.plm.reqCtrlSourcesPatch" class="fr.becpg.repo.admin.patch.ReqCtrlSourcesPatch" parent="beCPGBasePatch" >
+    <bean id="patch.bcpg.plm.reqCtrlSourcesPatch" class="fr.becpg.repo.admin.patch.ReqCtrlSourcesPatch" parent="beCPGBasePatch" >
         <property name="id"><value>patch.bcpg.plm.reqCtrlSourcesPatch</value></property>
         <property name="description"><value>patch.bcpg.plm.reqCtrlSourcesPatch.description</value></property>
         <property name="fixesFromSchema" value="0"/>
@@ -1105,6 +1104,7 @@
         </property>
 	</bean>
 	
+
 	  <bean id="patch.bcpg.plm.errorLogPatch" class="fr.becpg.repo.admin.patch.ErrorLogPatch" parent="beCPGBasePatch" >
         <property name="id"><value>patch.bcpg.plm.errorLogPatch</value></property>
         <property name="description"><value>patch.bcpg.plm.errorLogPatch.description</value></property>
@@ -1127,8 +1127,32 @@
             <ref bean="policyBehaviourFilter"/>
         </property>
 	</bean>
-	
-	  <bean id="patch.bcpg.plm.regulatoryResultPatchPatch" class="fr.becpg.repo.admin.patch.RegulatoryResultPatch" parent="beCPGBasePatch" >
+
+	<bean id="patch.bcpg.plm.auditActivityPatch" class="fr.becpg.repo.admin.patch.AuditActivityPatch" parent="basePatch" >
+        <property name="id"><value>patch.bcpg.plm.auditActivityPatch</value></property>
+        <property name="description"><value>patch.bcpg.plm.auditActivityPatch.description</value></property>
+        <property name="fixesFromSchema" value="0"/>
+        <property name="fixesToSchema" value="16000" />
+        <property name="targetSchema" value="16001"/>
+        <property name="ruleService" ref="ruleService"/>
+        <property name="lockService" ref="lockService"/>
+        <property name="patchDAO">
+            <ref bean="patchDAO"/>
+        </property>
+        <property name="nodeDAO">
+            <ref bean="nodeDAO"/>
+        </property>
+        <property name="qnameDAO">
+            <ref bean="qnameDAO"/>
+        </property>
+        <property name="integrityChecker" ref="integrityChecker"/>
+        <property name="beCPGAuditService" ref="beCPGAuditService"/>
+        <property name="entityService" ref="entityService"/>
+        <property name="associationService" ref="associationService"/>
+        <property name="policyBehaviourFilter" ref="policyBehaviourFilter"/>
+    </bean>
+    
+    <bean id="patch.bcpg.plm.regulatoryResultPatchPatch" class="fr.becpg.repo.admin.patch.RegulatoryResultPatch" parent="beCPGBasePatch" >
         <property name="id"><value>patch.bcpg.plm.regulatoryResultPatchPatch</value></property>
         <property name="description"><value>patch.bcpg.plm.regulatoryResultPatchPatch.description</value></property>
         <property name="fixesFromSchema" value="0"/>
@@ -1196,6 +1220,4 @@
             <ref bean="policyBehaviourFilter"/>
         </property>
 	</bean>
-
-	
 </beans>

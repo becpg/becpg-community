@@ -37,6 +37,13 @@
 	<bean id="codePolicy" class="fr.becpg.repo.entity.policy.CodePolicy" parent="abstractBeCPGPolicy">
 		<property name="autoNumService" ref="autoNumService" />
 	</bean>
+
+	<bean id="archivedEntityPolicy" class="fr.becpg.repo.entity.policy.ArchivedEntityPolicy" parent="abstractBeCPGPolicy">
+		<property name="entityFormatService" ref="entityFormatService" />
+		<property name="entityReportService" ref="entityReportService" />
+		<property name="batchQueueService" ref="batchQueueService" />
+		<property name="formulationService" ref="formulationService" />
+	</bean>
 	
 	<bean id="listValuePolicy" class="fr.becpg.repo.dictionary.constraint.ListValuePolicy" parent="abstractBeCPGPolicy">
 		<property name="beCPGCacheService" ref="beCPGCacheService" />

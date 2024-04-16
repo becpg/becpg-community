@@ -6,8 +6,6 @@ import java.util.Map;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
-import fr.becpg.repo.entity.datalist.data.DataListFilter;
-
 /**
  * <p>CompareEntityServicePlugin interface.</p>
  *

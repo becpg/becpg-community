@@ -539,7 +539,8 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 				QName propName = entry.getKey().getPrefixedQName(namespaceService);
 				if ((entry.getValue() != null) && !propQName.getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
 						&& !propQName.getNamespaceURI().equals(NamespaceService.RENDITION_MODEL_1_0_URI)
-						&& (!propQName.getNamespaceURI().equals(ReportModel.REPORT_URI) || matchProp(assocName, propName, true))
+						&& (!propQName.getNamespaceURI().equals(ReportModel.REPORT_URI) || matchProp(assocName, propName, true)
+								|| Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_REPORT_PROPS, Boolean.FALSE)))
 						&& !propQName.equals(ContentModel.PROP_CONTENT) && params.shouldExtractField(propQName)) {
 					PropertyDefinition propertyDefinition = entityDictionaryService.getProperty(entry.getKey());
 					if (propertyDefinition != null) {
@@ -570,7 +571,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 						visitPropValue(propName, entity, entry.getValue(), context);
 
 					} else {
-						logger.debug("Properties not in dictionnary: " + entry.getKey());
+						logger.debug("Properties not in dictionary: " + entry.getKey());
 					}
 
 				}
