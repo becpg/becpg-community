@@ -7,8 +7,8 @@
 
 
 <@markup id="custom-css-alfrescoResources" target="resources" action="after">
+    <link rel="stylesheet" type="text/css" href="${url.context}/proxy/alfresco/becpg/entity/icons.css" />
     <@link rel="stylesheet" type="text/css" href="${url.context}/res/css/beCPG.css" group="template-common" />
-    <@link rel="stylesheet" type="text/css" href="${url.context}/proxy/alfresco/becpg/entity/icons.css" group="template-common" />
 	<#if user.capabilities["isbeCPGExternalUser"]?? && user.capabilities["isbeCPGExternalUser"] >
     	<@link rel="stylesheet" type="text/css" href="${url.context}/res/css/external.css" group="template-common" />
    	</#if>

@@ -44,8 +44,6 @@ import fr.becpg.repo.report.entity.EntityReportService;
  */
 public final class Thumbnail extends BaseScopableProcessorExtension {
 
-
-
 	private static final Log logger = LogFactory.getLog(Thumbnail.class);
 
 	private NodeService nodeService;
@@ -113,9 +111,9 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 			} catch (BeCPGException e) {
 				logger.debug(e, e);
 			}
-			
-			if(img==null) {
-				img = entityService.getEntityDefaultIcon(sourceNode.getNodeRef(),"thumb");
+
+			if (img == null) {
+				img = entityService.getEntityDefaultIcon(sourceNode.getNodeRef(), "thumb");
 			}
 
 		}
@@ -238,7 +236,7 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 		}
 
 		return reportNode;
- 
+
 	}
 
 	private void cleanThumbnails(NodeRef reportNodeRef) {
@@ -255,6 +253,5 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 		}
 
 	}
-
 
 }
