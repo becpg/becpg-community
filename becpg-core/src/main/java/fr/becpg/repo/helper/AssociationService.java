@@ -27,6 +27,7 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.QNamePattern;
 
 import fr.becpg.repo.helper.impl.AssociationCriteriaFilter;
+import fr.becpg.repo.helper.impl.ChildAssocCacheEntry;
 import fr.becpg.repo.helper.impl.EntitySourceAssoc;
 
 /**
@@ -123,9 +124,13 @@ public interface AssociationService {
 	 */
 	List<EntitySourceAssoc> getEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocQName, QName listTypeQname, boolean isOrOperator, List<AssociationCriteriaFilter> criteriaFilters);
 	
+	List<EntitySourceAssoc> getEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocQName, QName listTypeQname, boolean isOrOperator, List<AssociationCriteriaFilter> criteriaFilters, Integer limit);
+	
 	
 	void removeChildCachedAssoc(NodeRef nodeRef, QName qName);
 	
 	void removeAllCacheAssocs(NodeRef nodeRef);
+	
+	ChildAssocCacheEntry getChildAssocsByType(NodeRef nodeRef, QName qName);
 	
 }

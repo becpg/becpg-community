@@ -32,8 +32,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.cache.TransactionalCache;
 import org.alfresco.repo.node.NodeServicePolicies;
@@ -82,6 +80,7 @@ import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.annotation.DataListView;
 import fr.becpg.repo.repository.model.AspectAwareDataItem;
 import fr.becpg.repo.repository.model.DefaultListDataItem;
+import jakarta.annotation.PostConstruct;
 
 /**
  * <p>

@@ -17,7 +17,6 @@
  ******************************************************************************/
 package fr.becpg.repo.product.formulation;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -31,7 +30,6 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ResourceProductData;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
-import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.productList.ResourceParamListItem;
@@ -109,8 +107,8 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 						boolean isFound = false;
 						for (ResourceParamListItem param2 : formulatedProduct.getResourceParamList()) {
 							if ((Objects.equals(param2.getParam(), param.getParam()) && Objects.equals(param2.getResource(), resource.getNodeRef())
-									&& Objects.equals(param2.getProduct(), p.getProduct())
-									&& Objects.equals(param2.getStep(), p.getStep()) && Objects.equals(param2.getParamType(), param.getParamType())
+									&& Objects.equals(param2.getProduct(), p.getProduct()) && Objects.equals(param2.getStep(), p.getStep())
+									&& Objects.equals(param2.getParamType(), param.getParamType())
 									&& Objects.equals(param2.getVariants(), p.getVariants()))
 
 									|| (isMultiLevel && Objects.equals(param2.getParam(), param.getParam())
@@ -176,9 +174,9 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 
 			if (p.getRateResource() != null) {
 				if (ProductUnit.P.equals(p.getUnit())) {
-					if(formulatedProduct.getUnit()!=null && formulatedProduct.getUnit().isP()) {
-						Double nbP = formulatedProduct.getQty() != null && formulatedProduct.getQty()!=0d ? formulatedProduct.getQty() : 1d;
-						p.setRateProduct(p.getRateResource()/nbP);
+					if (formulatedProduct.getUnit() != null && formulatedProduct.getUnit().isP()) {
+						Double nbP = formulatedProduct.getQty() != null && formulatedProduct.getQty() != 0d ? formulatedProduct.getQty() : 1d;
+						p.setRateProduct(p.getRateResource() / nbP);
 					} else {
 						p.setRateProduct(p.getRateResource());
 					}
@@ -188,8 +186,10 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 							&& (formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() != null)) {
 						p.setRateProduct(p.getRateResource() * formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes());
 					} else {
-						formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, MLTextHelper.getI18NMessage(FormulationHelper.MISSING_NUMBER_OF_PRODUCT_PER_BOX), null,
-								new ArrayList<>(), RequirementDataType.Packaging));
+						formulatedProduct.getReqCtrlList()
+								.add(ReqCtrlListDataItem.forbidden()
+										.withMessage(MLTextHelper.getI18NMessage(FormulationHelper.MISSING_NUMBER_OF_PRODUCT_PER_BOX))
+										.ofDataType(RequirementDataType.Packaging));
 					}
 				} else {
 					Double productQtyToTransform = p.getQty() != null ? p.getQty() : FormulationHelper.getNetWeight(formulatedProduct, null);

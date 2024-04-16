@@ -148,7 +148,6 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 
 		}, false, true);
 		
-		waitForSolr();
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 

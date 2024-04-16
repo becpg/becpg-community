@@ -23,8 +23,10 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
+import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.extensions.surf.util.I18NUtil;
@@ -37,7 +39,13 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.audit.model.AuditQuery;
+import fr.becpg.repo.audit.model.AuditType;
+import fr.becpg.repo.audit.plugin.AuditPlugin;
+import fr.becpg.repo.audit.plugin.impl.BatchAuditPlugin;
+import fr.becpg.repo.audit.service.BeCPGAuditService;
 import fr.becpg.repo.batch.BatchInfo;
+import fr.becpg.repo.batch.BatchPriority;
 import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.batch.BatchStep;
 import fr.becpg.repo.batch.BatchStepAdapter;
@@ -72,6 +80,8 @@ import fr.becpg.repo.system.SystemConfigurationService;
 @Service("automaticECOService")
 public class AutomaticECOServiceImpl implements AutomaticECOService {
 
+	private static final String REFORMULATE_BATCH_ID = "reformulateChangedEntities";
+
 	private static final String CURRENT_ECO_PREF = "fr.becpg.ecm.currentEcmNodeRef";
 
 	private static final Log logger = LogFactory.getLog(AutomaticECOServiceImpl.class);
@@ -82,6 +92,9 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 	@Autowired
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 	
+	@Autowired
+	private BeCPGAuditService beCPGAuditService;
+
 	@Autowired
 	private SystemConfigurationService systemConfigurationService;
 
@@ -314,6 +327,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 		batchInfo.setRunAsSystem(true);
 		batchInfo.setWorkerThreads(autoMergeWorkerThreads != null ? autoMergeWorkerThreads : 3);
 		batchInfo.setBatchSize(autoMergeBatchSize != null ? autoMergeBatchSize : 1);
+		batchInfo.setPriority(BatchPriority.HIGH);
 
 		List<NodeRef> nodeRefs = transactionService.getRetryingTransactionHelper()
 				.doInTransaction(() -> BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_ENTITY_V2)
@@ -357,23 +371,20 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 	}
 
 	private boolean reformulateChangedEntities() {
-		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.DATE, -1);
-
+		
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 
-		String dateRange = dateFormat.format(cal.getTime());
+		String dateRange = dateFormat.format(getFromDate());
 
-		String ftsQuery = String.format("@cm\\:created:[%s TO MAX] OR @cm\\:modified:[%s TO MAX]", dateRange, dateRange);
-
-		BatchInfo batchInfo = new BatchInfo("reformulateChangedEntities", "becpg.batch.automaticECO.reformulateChangedEntities");
+		BatchInfo batchInfo = new BatchInfo(REFORMULATE_BATCH_ID, "becpg.batch.automaticECO.reformulateChangedEntities");
 		batchInfo.setRunAsSystem(true);
 		batchInfo.setWorkerThreads(reformulateWorkerThreads != null ? reformulateWorkerThreads : 2);
 		batchInfo.setBatchSize(reformulateBatchSize != null ? reformulateBatchSize : 1);
-
-		List<NodeRef> nodeRefs = transactionService.getRetryingTransactionHelper().doInTransaction(() -> BeCPGQueryBuilder.createQuery()
-				.ofType(PLMModel.TYPE_PRODUCT).andFTSQuery(ftsQuery).maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list(), false, true);
+		batchInfo.setPriority(BatchPriority.LOW);
 		
+		List<NodeRef> nodeRefs = transactionService.getRetryingTransactionHelper().doInTransaction(() -> BeCPGQueryBuilder.createQuery()
+				.excludeArchivedEntities()
+				.ofType(PLMModel.TYPE_PRODUCT).orBetween(ContentModel.PROP_CREATED, dateRange, "MAX").orBetween(ContentModel.PROP_MODIFIED, dateRange, "MAX").inDBIfPossible().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list(), false, true);
 		logger.info("modified products size: " + nodeRefs.size());
 		
 		List<NodeRef> toReformulateEntities = new ArrayList<>();
@@ -421,6 +432,39 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 		batchQueueService.queueBatch(batchInfo, steps);
 
 		return true;
+	}
+
+	private Date getFromDate() {
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.DATE, -1);
+
+		Date dateFrom = cal.getTime();
+		
+		AuditQuery auditQuery = AuditQuery.createQuery().asc(false).dbAsc(false).sortBy(AuditPlugin.STARTED_AT)
+				.filter(BatchAuditPlugin.BATCH_ID, REFORMULATE_BATCH_ID).maxResults(1);
+		
+		List<JSONObject> lastActivityResult = beCPGAuditService.listAuditEntries(AuditType.BATCH, auditQuery);
+		
+		if (!lastActivityResult.isEmpty()) {
+			JSONObject lastActivity = lastActivityResult.get(0);
+			if (lastActivity.has(AuditPlugin.STARTED_AT)) {
+				
+				Date lastBatchStartDate = null;
+				
+				Object startedAt = lastActivity.get(AuditPlugin.STARTED_AT);
+				
+				if (startedAt instanceof Date) {
+					lastBatchStartDate = (Date) startedAt;
+				} else {
+					lastBatchStartDate = ISO8601DateFormat.parse(startedAt.toString());
+				}
+				
+				if (lastBatchStartDate.before(dateFrom)) {
+					dateFrom = lastBatchStartDate;
+				}
+			}
+		}
+		return dateFrom;
 	}
 
 	private class ReformulateChangedEntitiesProcessWorker extends BatchProcessor.BatchProcessWorkerAdaptor<NodeRef> {

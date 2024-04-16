@@ -18,6 +18,7 @@
 package fr.becpg.repo.product.formulation.labeling;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -73,7 +74,6 @@ import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.LabelingRuleType;
 import fr.becpg.repo.product.data.constraints.PlaceOfActivityTypeCode;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
-import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.ing.CompositeLabeling;
 import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.ing.IngTypeItem;
@@ -96,8 +96,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 	private static final Log logger = LogFactory.getLog(LabelingFormulaContext.class);
 
-	/** Constant <code>PRECISION_FACTOR=100</code> */
-	public static final int PRECISION_FACTOR = 100;
+	public static final int PRECISION_FACTOR = 8;
+	public static final BigDecimal DEFAULT_RATIO = BigDecimal.valueOf(1d);
 
 	public static final Pattern ALLERGEN_DETECTION_PATTERN = Pattern.compile(
 			"(<\\s*up[^>]*>.*?<\\s*/\\s*up>|<\\s*b[^>]*>.*?<\\s*/\\s*b>|<\\s*u[^>]*>.*?<\\s*/\\s*u>|<\\s*i[^>]*>.*?<\\s*/\\s*i>|[A-Z]{4,}|\\p{Lu}{4,})");
@@ -388,6 +388,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	private String subIngsDefaultFormat = "{0} ({2}) [{3}]";
 	private String geoPlaceOfActivityFormat = "{0}: {1}";
 
+	private final static String HTML_BREAK_LINE = "<br/>";
+
 	private String allergenDetailsFormat = "{0} ({2})";
 	private String allergenReplacementPattern = "<b>$1</b>";
 	private String htmlTableRowFormat = "<tr><td style=\"border: solid 1px; padding: 5px;\" >{0}</td>"
@@ -412,7 +414,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	private String geoPlaceOfActiviySeparator = RepoConsts.LABEL_SEPARATOR;
 	private String bioOriginsSeparator = RepoConsts.LABEL_SEPARATOR;
 	private String subIngsSeparator = RepoConsts.LABEL_SEPARATOR;
-	private String footNotesLabelSeparator = "<br/>";
+	private String footNotesLabelSeparator = HTML_BREAK_LINE;
 
 	private boolean showIngCEECode = false;
 	private boolean useVolume = false;
@@ -422,6 +424,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	private boolean labelingByLanguage = false;
 	private boolean force100Perc = false;
 	private boolean useSecondaryYield = false;
+	private boolean forceKeepOrder = false;
 
 	private Double yield = null;
 
@@ -432,9 +435,9 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 */
 	private String disableAllergensForLocales = "";
 
-	private Double qtyPrecisionThreshold = (1d / (PRECISION_FACTOR * PRECISION_FACTOR));
-
 	private Integer maxPrecision = 4;
+
+	private Double qtyPrecisionThreshold = 1d / Math.pow(10, (double) maxPrecision + (double) 2);
 
 	/**
 	 * <p>
@@ -528,7 +531,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	public Double getYield() {
 		return yield;
 	}
-	
+
 	/**
 	 * <p>
 	 * Setter for the field <code>yield</code>.
@@ -541,8 +544,6 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		this.yield = yield;
 		this.ingsLabelingWithYield = true;
 	}
-	
-	
 
 	public boolean isUseSecondaryYield() {
 		return useSecondaryYield;
@@ -863,6 +864,10 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		this.force100Perc = force100Perc;
 	}
 
+	public void setForceKeepOrder(boolean forceKeepOrder) {
+		this.forceKeepOrder = forceKeepOrder;
+	}
+
 	@Override
 	void updateDefaultFormat(TextFormatRule textFormatRule) {
 
@@ -884,35 +889,39 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 		if (lblComponent instanceof CompositeLabeling) {
 			if (((CompositeLabeling) lblComponent).isGroup()) {
-				return applyRoundingMode(new MessageFormat(getTextFormatByName("groupDefaultFormat",groupDefaultFormat), getContentLocale()), qty);
+				return applyRoundingMode(new MessageFormat(getTextFormatByName("groupDefaultFormat", groupDefaultFormat), getContentLocale()), qty);
 			}
 			if (DeclarationType.Detail.equals(((CompositeLabeling) lblComponent).getDeclarationType())) {
 				if ((lblComponent instanceof IngItem) && !((CompositeLabeling) lblComponent).getIngList().isEmpty()) {
-					return applyRoundingMode(new MessageFormat(getTextFormatByName("subIngsDefaultFormat",subIngsDefaultFormat), getContentLocale()), qty);
+					return applyRoundingMode(new MessageFormat(getTextFormatByName("subIngsDefaultFormat", subIngsDefaultFormat), getContentLocale()),
+							qty);
 				}
-				return applyRoundingMode(new MessageFormat(getTextFormatByName("detailsDefaultFormat",detailsDefaultFormat), getContentLocale()), qty);
+				return applyRoundingMode(new MessageFormat(getTextFormatByName("detailsDefaultFormat", detailsDefaultFormat), getContentLocale()),
+						qty);
 			}
 
-			return applyRoundingMode(new MessageFormat(getTextFormatByName("ingDefaultFormat",ingDefaultFormat), getContentLocale()), qty);
+			return applyRoundingMode(new MessageFormat(getTextFormatByName("ingDefaultFormat", ingDefaultFormat), getContentLocale()), qty);
 		} else if (lblComponent instanceof IngTypeItem) {
 			if (isDoNotDetails((IngTypeItem) lblComponent)) {
-				return applyRoundingMode(new MessageFormat(getTextFormatByName("ingTypeDecThresholdFormat",ingTypeDecThresholdFormat), getContentLocale()), qty);
+				return applyRoundingMode(
+						new MessageFormat(getTextFormatByName("ingTypeDecThresholdFormat", ingTypeDecThresholdFormat), getContentLocale()), qty);
 			} else if (ingTypeSingleValueFormat != null && !multiple) {
-				return applyRoundingMode(new MessageFormat(getTextFormatByName("ingTypeSingleValueFormat",ingTypeSingleValueFormat), getContentLocale()), qty);
+				return applyRoundingMode(
+						new MessageFormat(getTextFormatByName("ingTypeSingleValueFormat", ingTypeSingleValueFormat), getContentLocale()), qty);
 			}
-			return applyRoundingMode(new MessageFormat(getTextFormatByName("ingTypeDefaultFormat",ingTypeDefaultFormat), getContentLocale()), qty);
+			return applyRoundingMode(new MessageFormat(getTextFormatByName("ingTypeDefaultFormat", ingTypeDefaultFormat), getContentLocale()), qty);
 		}
 
-		return applyRoundingMode(new MessageFormat(getTextFormatByName("ingDefaultFormat",ingDefaultFormat), getContentLocale()), qty);
+		return applyRoundingMode(new MessageFormat(getTextFormatByName("ingDefaultFormat", ingDefaultFormat), getContentLocale()), qty);
 	}
 
 	private String getTextFormatByName(String formatName, String defaultFormat) {
-		if(formatsByName.containsKey(formatName)) {
+		if (formatsByName.containsKey(formatName)) {
 			TextFormatRule textFormatRule = formatsByName.get(formatName);
 			if (textFormatRule.matchLocale(I18NUtil.getLocale())) {
 				return textFormatRule.getTextFormat();
 			}
-		}		
+		}
 		return defaultFormat;
 	}
 
@@ -1061,29 +1070,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	private boolean showPerc(LabelingComponent lblComponent) {
-	    if (showPercRules.isEmpty() || showPercRules.containsKey(lblComponent.getNodeRef())) {
-	        return true;
-	    }
-
-	    if (renameRules.containsKey(lblComponent.getNodeRef())) {
-			RenameRule renameRule = renameRules.get(lblComponent.getNodeRef());
-			if (renameRule.matchLocale(I18NUtil.getLocale()) && (renameRule.getReplacement() != null) && showPercRules.containsKey(renameRule.getReplacement())) {
-				return true;
-			}
-		}
-	    
-	    for (Map.Entry<NodeRef, RenameRule> entry : renameRules.entrySet()) {
-	        NodeRef nodeRef = entry.getKey();
-	        RenameRule renameRule = entry.getValue();
-
-	        if (Objects.equals(renameRule.getReplacement(), lblComponent.getNodeRef()) && renameRule.matchLocale(I18NUtil.getLocale())) {
-	            return showPercRules.containsKey(nodeRef);
-	        }
-	    }
-
-	    return false;
+		return showPercRules.isEmpty() || (getSelectedRule(lblComponent, null) != null);
 	}
-
 
 	private Pair<DecimalFormat, RoundingMode> getDecimalFormat(LabelingComponent lblComponent, Double qty) {
 		DecimalFormat decimalFormat = null;
@@ -1091,57 +1079,19 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 		DecimalFormatSymbols symbols = new DecimalFormatSymbols(getContentLocale());
 		if ((lblComponent != null)) {
-			ShowRule selectedRule = null;
 
 			boolean applyAllPerc = true;
-			NodeRef nodeRef = lblComponent.getNodeRef();
 
-			if (lblComponent instanceof IngTypeItem) {
-
-				if (!isDoNotDetails((IngTypeItem) lblComponent)) {
-					applyAllPerc = false;
-				}
-
+			if (lblComponent instanceof IngTypeItem && !isDoNotDetails((IngTypeItem) lblComponent)) {
+				applyAllPerc = false;
 			}
 
-			if (applyAllPerc) {
+			ShowRule selectedRule = getSelectedRule(lblComponent, qty);
+
+			if (selectedRule == null && applyAllPerc) {
 				for (ShowRule showRule : showAllPerc) {
-					if (showRule.matchLocale(I18NUtil.getLocale()) && showRule.matchQty(qty)) {
-						if ((selectedRule == null) || ((selectedRule.getThreshold() == null) && (showRule.getThreshold() != null))
-								|| ((selectedRule.getThreshold() != null) && (showRule.getThreshold() != null)
-										&& (selectedRule.getThreshold() > showRule.getThreshold()))) {
-							selectedRule = showRule;
-						}
-
-					}
-				}
-			}
-
-			if (renameRules.containsKey(lblComponent.getNodeRef())) {
-				RenameRule renameRule = renameRules.get(lblComponent.getNodeRef());
-				if (renameRule.matchLocale(I18NUtil.getLocale()) && (renameRule.getReplacement() != null)) {
-					if (showPercRules.containsKey(renameRule.getReplacement())) {
-						for (ShowRule showRule : showPercRules.get(renameRule.getReplacement())) {
-							if (showRule.matchLocale(I18NUtil.getLocale()) && showRule.matchQty(qty)) {
-								if ((selectedRule == null) || ((selectedRule.getThreshold() == null) && (showRule.getThreshold() != null))
-										|| ((selectedRule.getThreshold() != null) && (showRule.getThreshold() != null)
-												&& (selectedRule.getThreshold() > showRule.getThreshold()))) {
-									selectedRule = showRule;
-									break;
-								}
-							}
-						}
-					}
-				}
-			} else if (showPercRules.get(nodeRef) != null) {
-				for (ShowRule showRule : showPercRules.get(nodeRef)) {
-					if (showRule.matchLocale(I18NUtil.getLocale()) && showRule.matchQty(qty)) {
-						if ((selectedRule == null) || ((selectedRule.getThreshold() == null) && (showRule.getThreshold() != null))
-								|| ((selectedRule.getThreshold() != null) && (showRule.getThreshold() != null)
-										&& (selectedRule.getThreshold() > showRule.getThreshold()))) {
-							selectedRule = showRule;
-							break;
-						}
+					if (isShowRuleMatch(selectedRule, showRule, qty)) {
+						selectedRule = showRule;
 					}
 				}
 			}
@@ -1163,6 +1113,63 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return null;
 	}
 
+	private ShowRule getSelectedRule(LabelingComponent lblComponent, Double qty) {
+		NodeRef nodeRef = lblComponent.getNodeRef();
+
+		ShowRule selectedRule = null;
+
+		if (showPercRules.containsKey(nodeRef)) {
+			for (ShowRule showRule : showPercRules.get(nodeRef)) {
+				if (isShowRuleMatch(selectedRule, showRule, qty)) {
+					selectedRule = showRule;
+				}
+			}
+		} else {
+
+			if (renameRules.containsKey(nodeRef)) {
+				RenameRule renameRule = renameRules.get(nodeRef);
+				if (renameRule.matchLocale(I18NUtil.getLocale()) && (renameRule.getReplacement() != null)
+						&& showPercRules.containsKey(renameRule.getReplacement())) {
+					for (ShowRule showRule : showPercRules.get(renameRule.getReplacement())) {
+						if (isShowRuleMatch(selectedRule, showRule, qty)) {
+							selectedRule = showRule;
+						}
+
+					}
+				}
+			}
+
+			for (Map.Entry<NodeRef, RenameRule> entry : renameRules.entrySet()) {
+				NodeRef entryNodeRef = entry.getKey();
+				RenameRule renameRule = entry.getValue();
+
+				if (Objects.equals(renameRule.getReplacement(), nodeRef) && renameRule.matchLocale(I18NUtil.getLocale())
+						&& showPercRules.get(entryNodeRef) != null) {
+
+					for (ShowRule showRule : showPercRules.get(entryNodeRef)) {
+						if (isShowRuleMatch(selectedRule, showRule, qty)) {
+							selectedRule = showRule;
+						}
+					}
+				}
+			}
+		}
+
+		return selectedRule;
+	}
+
+	private boolean isShowRuleMatch(ShowRule selectedRule, ShowRule showRule, Double qty) {
+		if (showRule.matchLocale(I18NUtil.getLocale()) && showRule.matchQty(qty)) {
+			if ((selectedRule == null) || ((selectedRule.getThreshold() == null) && (showRule.getThreshold() != null))
+					|| ((selectedRule.getThreshold() != null) && (showRule.getThreshold() != null)
+							&& (selectedRule.getThreshold() > showRule.getThreshold()))) {
+				return true;
+			}
+
+		}
+		return false;
+	}
+
 	private String uncapitalize(String legalName) {
 		if ((legalName == null) || legalName.isEmpty() || Pattern.compile("^([A-Z]{2}|[A-Z][1-9]|[A-Z]\\-|[A-Z]_).*$").matcher(legalName).find()) {
 			return legalName;
@@ -1171,6 +1178,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	private static final String[] ESCAPED_ALLERGEN_TAGS = new String[] { "<b>", "</b>", "<u>", "</u>", "<i>", "</i>", "<up>", "</up>" };
+
+	private static final String ING_TYPE_PREFIX = "ingType-";
 
 	private String createAllergenAwareLabel(String ingLegalName, Set<NodeRef> allergens, boolean boldOnly) {
 		if (isAllergensDisableForLocale()) {
@@ -1187,7 +1196,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			}
 
 			detectedAllergens.add(allergenName);
-			return ma.replaceAll(allergenReplacementPattern.replace("$1", allergenName));
+			return ma.replaceFirst(allergenReplacementPattern.replace("$1", allergenName));
 		}
 
 		StringBuilder ret = new StringBuilder();
@@ -1324,16 +1333,16 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		BigDecimal total = null;
 		if (showGroup) {
 			if (force100Perc) {
-				total = getTotal(lblCompositeContext);
+				total = getTotal(lblCompositeContext, ingsLabelingWithYield);
 			}
 
-			return decorate(renderCompositeIng(lblCompositeContext, 1d, total, false, false));
+			return decorate(renderCompositeIng(lblCompositeContext, DEFAULT_RATIO, total, false, false));
 		} else {
 			if (force100Perc) {
-				total = getTotal(mergedLblCompositeContext);
+				total = getTotal(mergedLblCompositeContext, ingsLabelingWithYield);
 			}
 
-			return decorate(renderCompositeIng(mergedLblCompositeContext, 1d, total, false, false));
+			return decorate(renderCompositeIng(mergedLblCompositeContext, DEFAULT_RATIO, total, false, false));
 		}
 
 	}
@@ -1353,11 +1362,12 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		}
 
 		List<LabelingComponent> components = new LinkedList<>(lblCompositeContext.getIngList().values());
-		Collections.sort(components);
+
+		sort(components);
 
 		for (LabelingComponent component : components) {
 
-			Double qtyPerc = computeQtyPerc(lblCompositeContext, component, 1d);
+			Double qtyPerc = doubleOrNull(computeQtyPerc(lblCompositeContext, component, DEFAULT_RATIO));
 
 			String ingName = getLegalIngName(component, qtyPerc, false, false);
 
@@ -1370,6 +1380,10 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		}
 
 		return decorate(ret.toString());
+	}
+
+	private Double doubleOrNull(BigDecimal qtyPerc) {
+		return qtyPerc != null ? qtyPerc.doubleValue() : null;
 	}
 
 	/**
@@ -1417,9 +1431,9 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	private class CompositeParent {
 		CompositeLabeling parent;
 		LabelingComponent component;
-		Double ratio;
+		BigDecimal ratio;
 
-		public CompositeParent(CompositeLabeling parent, LabelingComponent component, Double ratio) {
+		public CompositeParent(CompositeLabeling parent, LabelingComponent component, BigDecimal ratio) {
 			super();
 			this.parent = parent;
 			this.component = component;
@@ -1435,16 +1449,16 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 			// Add all LabelingComponents with a ratio of 1 to the queue
 			for (LabelingComponent component : lblCompositeContext.getIngList().values()) {
-				queue.add(new CompositeParent(lblCompositeContext, component, 1d));
+				queue.add(new CompositeParent(lblCompositeContext, component, DEFAULT_RATIO));
 			}
 
 			while (!queue.isEmpty()) {
 				CompositeParent compositeParent = queue.poll();
 
-				Double subQty = computeQtyPerc(compositeParent.parent, compositeParent.component, compositeParent.ratio);
+				BigDecimal subQty = computeQtyPerc(compositeParent.parent, compositeParent.component, compositeParent.ratio);
 
-				if (subQty!=null && compositeParent.component.getFootNotes() != null && compositeParent.component.getFootNotes().contains(f)) {
-					qtyPerc += subQty;
+				if (subQty != null && compositeParent.component.getFootNotes() != null && compositeParent.component.getFootNotes().contains(f)) {
+					qtyPerc += subQty.doubleValue();
 
 				}
 
@@ -1453,7 +1467,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 					// If the CompositeLabeling component is a Kit, set subRatio to 1
 					if (DeclarationType.Kit.equals(composite.getDeclarationType())) {
-						subQty = 1d;
+						subQty = DEFAULT_RATIO;
 					}
 
 					// Add all child LabelingComponents to the queue with the updated ratio
@@ -1508,6 +1522,70 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return toSortHashMap.entrySet().stream()
 				.sorted(Comparator.comparing(Map.Entry<NodeRef, Double>::getValue, Comparator.nullsLast(Comparator.naturalOrder())))
 				.map(Map.Entry<NodeRef, Double>::getKey).collect(Collectors.toSet());
+	}
+
+	private void sort(List<LabelingComponent> toSort) {
+		Collections.sort(toSort, (a, b) -> {
+			int result = compareLabelingComponents(a, b);
+			if (result == 0) {
+				result = compareIngredientNames(a, b);
+			}
+			return result;
+		});
+	}
+
+	private int compareLabelingComponents(LabelingComponent a, LabelingComponent b) {
+
+		if ((b instanceof CompositeLabeling) && ((CompositeLabeling) b).isGroup()
+				&& !((a instanceof CompositeLabeling) && ((CompositeLabeling) a).isGroup())) {
+			return 1;
+		}
+
+		if (!((b instanceof CompositeLabeling) && ((CompositeLabeling) b).isGroup())
+				&& ((a instanceof CompositeLabeling) && ((CompositeLabeling) a).isGroup())) {
+			return -1;
+		}
+
+		if (a instanceof IngTypeItem && IngTypeItem.DEFAULT_GROUP.equals(a) || b instanceof IngTypeItem && ((IngTypeItem) b).lastGroup()) {
+			return -1;
+		}
+
+		if (b instanceof IngTypeItem && IngTypeItem.DEFAULT_GROUP.equals(b) || a instanceof IngTypeItem && ((IngTypeItem) a).lastGroup()) {
+			return 1;
+		}
+
+		if (useVolume) {
+			Double volumeA = a.getVolume(ingsLabelingWithYield);
+			Double volumeB = b.getVolume(ingsLabelingWithYield);
+			if (volumeA == null && volumeB == null) {
+				return 0;
+			} else if (volumeA == null) {
+				return 1; // b is considered greater if a is null
+			} else if (volumeB == null) {
+				return -1; // a is considered greater if b is null
+			}
+			return Double.compare(volumeB, volumeA); // Comparing b
+		}
+
+		Double qtyA = a.getQty(ingsLabelingWithYield);
+		Double qtyB = b.getQty(ingsLabelingWithYield);
+
+		if (qtyA == null && qtyB == null) {
+			return 0;
+		} else if (qtyA == null) {
+			return 1; // b is considered greater if a is null
+		} else if (qtyB == null) {
+			return -1; // a is considered greater if b is null
+		}
+
+		return Double.compare(qtyB, qtyA);
+
+	}
+
+	private int compareIngredientNames(LabelingComponent a, LabelingComponent b) {
+		String nameA = getLegalIngName(a);
+		String nameB = getLegalIngName(b);
+		return (nameA == null ? "" : nameA).compareTo(nameB == null ? "" : nameB);
 	}
 
 	/**
@@ -1578,12 +1656,12 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 *            a boolean.
 	 * @return a {@link java.lang.String} object.
 	 */
-	public String renderAsHtmlTable(String styleCss, boolean showTotal, boolean force100Perc) {
+	public String renderAsHtmlTable(String styleCss, boolean showTotal, boolean force100PercForTable) {
 		StringBuilder ret = new StringBuilder();
 		StringBuilder tableContent = new StringBuilder();
 
-		BigDecimal total = BigDecimal.valueOf(0d);
-		BigDecimal totalWithYield = BigDecimal.valueOf(0d);
+		BigDecimal total = getTotal(lblCompositeContext, false);
+		BigDecimal totalWithYield = getTotal(lblCompositeContext, true);
 
 		ret.append("<table class=\"labelingTable\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\""
 				+ ((styleCss == null) || (styleCss).isBlank() ? "border: solid 1px; border-collapse:collapse" : styleCss) + "\" rules=\"none\">");
@@ -1611,10 +1689,10 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 			if ((kv.getKey() != null) && (getLegalIngName(kv.getKey(), null, false, false) != null)) {
 
-				Double qtyPerc = computeQtyPerc(lblCompositeContext, kv.getKey(), 1d, false);
-				Double volumePerc = computeVolumePerc(lblCompositeContext, kv.getKey(), 1d, false);
-				Double qtyPercWithYield = computeQtyPerc(lblCompositeContext, kv.getKey(), 1d, true);
-				Double volumePercWithYield = computeVolumePerc(lblCompositeContext, kv.getKey(), 1d, true);
+				Double qtyPerc = doubleOrNull(computeQtyPerc(lblCompositeContext, kv.getKey(), DEFAULT_RATIO, false));
+				Double volumePerc = doubleOrNull(computeVolumePerc(lblCompositeContext, kv.getKey(), DEFAULT_RATIO, false));
+				Double qtyPercWithYield = doubleOrNull(computeQtyPerc(lblCompositeContext, kv.getKey(), DEFAULT_RATIO, true));
+				Double volumePercWithYield = doubleOrNull(computeVolumePerc(lblCompositeContext, kv.getKey(), DEFAULT_RATIO, true));
 
 				qtyPerc = (useVolume ? volumePerc : qtyPerc);
 				qtyPercWithYield = (useVolume ? volumePercWithYield : qtyPercWithYield);
@@ -1629,13 +1707,20 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				String geoOriginsLabel = createGeoOriginsLabel(null, kv.getValue(), PlaceOfActivityTypeCode.LAST_PROCESSING);
 				String otherGeoOriginsLabel = createGeoOriginsLabel(null, kv.getValue(), PlaceOfActivityTypeCode.EMPTY);
 				String bioOriginsLabel = createBioOriginsLabel(null, kv.getValue());
+				NodeRef origNodeRef = kv.getKey().getOrigNodeRef() != null ? kv.getKey().getOrigNodeRef() : kv.getKey().getNodeRef();
 
 				String subLabel = getIngTextFormat(kv.getKey(), qtyPerc, kv.getValue().size() > 1).format(new Object[] { ingTypeLegalName, null,
-						isDoNotDetails(kv.getKey().getOrigNodeRef() != null ? kv.getKey().getOrigNodeRef() : kv.getKey().getNodeRef()) ? null
-								: renderLabelingComponent(lblCompositeContext, kv.getValue(), true, 1d, null, true, true),
+						isDoNotDetails(origNodeRef) ? null
+								: renderLabelingComponent(lblCompositeContext, kv.getValue(), true, DEFAULT_RATIO,
+										ingsLabelingWithYield && force100Perc ? totalWithYield : null, true, true),
 						null, null });
 
 				if ((subLabel != null) && !subLabel.isEmpty()) {
+
+					if (force100Perc && totalWithYield != null && qtyPercWithYield != null) {
+						qtyPercWithYield = BigDecimal.valueOf(qtyPercWithYield).divide(totalWithYield, MathContext.DECIMAL64)
+								.multiply(BigDecimal.valueOf(1d)).doubleValue();
+					}
 
 					if (first) {
 						first = false;
@@ -1655,14 +1740,6 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 								bioOriginsLabel != null ? decorate(bioOriginsLabel) : "", showPerc ? qtyPercWithYield : null,
 								otherGeoOriginsLabel }));
 					}
-					if (qtyPerc != null) {
-						total = total.add(roundeedValue(kv.getKey(), qtyPerc, new MessageFormat(htmlTableRowFormat, getContentLocale())));
-					}
-					if (qtyPercWithYield != null) {
-						totalWithYield = totalWithYield
-								.add(roundeedValue(kv.getKey(), qtyPercWithYield, new MessageFormat(htmlTableRowFormat, getContentLocale())));
-
-					}
 
 				}
 
@@ -1670,11 +1747,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 				for (LabelingComponent component : kv.getValue()) {
 
-					Double qtyPerc = computeQtyPerc(lblCompositeContext, component, 1d, false);
-					Double volumePerc = computeVolumePerc(lblCompositeContext, component, 1d, false);
+					Double qtyPerc = doubleOrNull(computeQtyPerc(lblCompositeContext, component, DEFAULT_RATIO, false));
+					Double volumePerc = doubleOrNull(computeVolumePerc(lblCompositeContext, component, DEFAULT_RATIO, false));
 
-					Double qtyPercWithYield = computeQtyPerc(lblCompositeContext, component, 1d, true);
-					Double volumePercWithYield = computeVolumePerc(lblCompositeContext, component, 1d, true);
+					Double qtyPercWithYield = doubleOrNull(computeQtyPerc(lblCompositeContext, component, DEFAULT_RATIO, true));
+					Double volumePercWithYield = doubleOrNull(computeVolumePerc(lblCompositeContext, component, DEFAULT_RATIO, true));
 
 					String ingName = getLegalIngName(component, null, false, false);
 					String geoOriginsLabel = createGeoOriginsLabel(null, component.getGeoOriginsByPlaceOfActivity(),
@@ -1693,21 +1770,27 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 						String subLabel = "";
 						if (component instanceof CompositeLabeling) {
-							Double subRatio = computeQtyPerc(lblCompositeContext, component, 1d, false);
+							BigDecimal subRatio = computeQtyPerc(lblCompositeContext, component, DEFAULT_RATIO, false);
 
 							if (DeclarationType.Kit.equals(((CompositeLabeling) component).getDeclarationType()) || computePercByParent) {
-								subRatio = 1d;
+								subRatio = DEFAULT_RATIO;
 							}
 
 							subLabel = getIngTextFormat(component, qtyPerc, ((CompositeLabeling) component).getIngList().size() > 1)
 									.format(new Object[] { ingName, qtyPerc,
-											renderCompositeIng((CompositeLabeling) component, subRatio, null, true, true), null, null });
+											renderCompositeIng((CompositeLabeling) component, subRatio, ingsLabelingWithYield && force100Perc ? totalWithYield : null, true, true), null, null });
 
 						} else {
 							logger.error(String.format(UNSUPPORTED_ING_TYPE, component.getName()));
 						}
 
 						if ((subLabel != null) && !subLabel.isEmpty()) {
+
+							if (force100Perc && totalWithYield != null && qtyPercWithYield != null) {
+								qtyPercWithYield = BigDecimal.valueOf(qtyPercWithYield).divide(totalWithYield, MathContext.DECIMAL64)
+										.multiply(BigDecimal.valueOf(1d)).doubleValue();
+							}
+
 							if (first) {
 								firstLabelingComponent = component;
 								first = false;
@@ -1718,7 +1801,6 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 								firstBio = bioOriginsLabel != null ? bioOriginsLabel : "";
 								firstOtherGeo = otherGeoOriginsLabel != null ? otherGeoOriginsLabel : "";
 							} else {
-
 								boolean showPerc = showPerc(component);
 
 								tableContent.append(
@@ -1728,14 +1810,6 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 												showPerc && !shouldSkipWithYield ? qtyPercWithYield : null, otherGeoOriginsLabel }));
 							}
 
-							if (qtyPerc != null) {
-								total = total.add(roundeedValue(component, qtyPerc, new MessageFormat(htmlTableRowFormat, getContentLocale())));
-							}
-							if (qtyPercWithYield != null) {
-								totalWithYield = totalWithYield
-										.add(roundeedValue(component, qtyPercWithYield, new MessageFormat(htmlTableRowFormat, getContentLocale())));
-
-							}
 						}
 
 					} else {
@@ -1747,18 +1821,16 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 		}
 
-		if (force100Perc) {
+		if (force100PercForTable) {
 
 			BigDecimal diffValue = BigDecimal.valueOf(1d).subtract(total);
-
 			total = total.add(diffValue);
-
 			firstQtyPerc = roundeedValue(firstLabelingComponent, firstQtyPerc, new MessageFormat(htmlTableRowFormat, getContentLocale()))
 					.add(diffValue).doubleValue();
 
 		}
 
-		ret.append(getHtmlTableRowFormat(firstLabelingComponent, firstQtyPerc, firstQtyPercWithYield, force100Perc)
+		ret.append(getHtmlTableRowFormat(firstLabelingComponent, firstQtyPerc, firstQtyPercWithYield, force100PercForTable)
 				.format(new Object[] { decorate(firstLabel), showPerc(firstLabelingComponent) ? firstQtyPerc : null, decorate(firstGeo),
 						decorate(firstBio), showPerc(firstLabelingComponent) ? firstQtyPercWithYield : null, firstOtherGeo }));
 
@@ -1811,7 +1883,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 						((DecimalFormat) format).applyPattern(decimalFormat.getFirst().toPattern());
 						applyAutomaticPrecicion((DecimalFormat) format, qtyPerc, decimalFormat.getSecond(), false);
 					} else {
-						applyAutomaticPrecicion(((DecimalFormat) format), qty, defaultRoundingMode, isFirst && isForce100Perc);
+						if ((isFirst && isForce100Perc)) {
+							applyAutomaticPrecicion(((DecimalFormat) format), totalPrecision, defaultRoundingMode, true);
+						} else {
+							applyAutomaticPrecicion(((DecimalFormat) format), qty, defaultRoundingMode, false);
+						}
 					}
 
 					isFirst = false;
@@ -1891,7 +1967,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 			tableContent.append("<table cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"" + styleCss + "\" rules=\"none\">");
 
-			List<HtmlTableStruct> flatList = flatCompositeLabeling(lblCompositeContext, 1d, 0);
+			List<HtmlTableStruct> flatList = flatCompositeLabeling(lblCompositeContext, DEFAULT_RATIO, 0);
 			if (!flatList.isEmpty()) {
 
 				boolean first = true;
@@ -1952,15 +2028,15 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return label;
 	}
 
-	private List<HtmlTableStruct> flatCompositeLabeling(CompositeLabeling parent, Double ratio, Integer level) {
+	private List<HtmlTableStruct> flatCompositeLabeling(CompositeLabeling parent, BigDecimal ratio, Integer level) {
 		List<HtmlTableStruct> ret = new LinkedList<>();
 
 		for (Map.Entry<IngTypeItem, List<LabelingComponent>> kv : getSortedIngListByType(parent).entrySet()) {
 
 			for (LabelingComponent component : kv.getValue()) {
 
-				Double qtyPerc = computeQtyPerc(parent, component, ratio);
-				Double volumePerc = computeVolumePerc(parent, component, ratio);
+				Double qtyPerc = doubleOrNull(computeQtyPerc(parent, component, ratio));
+				Double volumePerc = doubleOrNull(computeVolumePerc(parent, component, ratio));
 
 				qtyPerc = (useVolume ? volumePerc : qtyPerc);
 
@@ -1976,10 +2052,10 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 						ingTypeLegalName = createAllergenAwareLabel(ingTypeLegalName, kv.getValue());
 					}
 
-					ingName = getIngTextFormat(kv.getKey(), qtyPerc, false).format(new Object[] { ingTypeLegalName, null,
-							isDoNotDetails(kv.getKey().getOrigNodeRef() != null ? kv.getKey().getOrigNodeRef() : kv.getKey().getNodeRef()) ? null
-									: ingName,
-							null });
+					NodeRef origNodeRef = kv.getKey().getOrigNodeRef() != null ? kv.getKey().getOrigNodeRef() : kv.getKey().getNodeRef();
+
+					ingName = getIngTextFormat(kv.getKey(), qtyPerc, false)
+							.format(new Object[] { ingTypeLegalName, null, isDoNotDetails(origNodeRef) ? null : ingName, null });
 
 				}
 
@@ -1989,9 +2065,9 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 				if (!shouldSkip(component.getNodeRef(), qtyPerc)) {
 					if (component instanceof CompositeLabeling) {
-						Double subRatio = computeQtyPerc(parent, component, ratio, false);
+						BigDecimal subRatio = computeQtyPerc(parent, component, ratio, false);
 						if (DeclarationType.Kit.equals(((CompositeLabeling) component).getDeclarationType()) || computePercByParent) {
-							subRatio = 1d;
+							subRatio = DEFAULT_RATIO;
 						}
 
 						ret.add(new HtmlTableStruct(ingName, qtyPerc, geoOriginsLabel != null ? geoOriginsLabel : "",
@@ -2064,18 +2140,18 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 	}
 
-	private BigDecimal getTotal(CompositeLabeling compositeLabeling) {
+	private BigDecimal getTotal(CompositeLabeling compositeLabeling, boolean withYield) {
 		BigDecimal total = BigDecimal.valueOf(0d);
 
 		for (Map.Entry<IngTypeItem, List<LabelingComponent>> kv : getSortedIngListByType(compositeLabeling).entrySet()) {
 
 			if ((kv.getKey() != null) && (getLegalIngName(kv.getKey(), null, false, false) != null)) {
 
-				Double qtyPerc = computeQtyPerc(compositeLabeling, kv.getKey(), 1d);
-				Double volumePerc = computeVolumePerc(compositeLabeling, kv.getKey(), 1d);
+				Double qtyPerc = doubleOrNull(computeQtyPerc(compositeLabeling, kv.getKey(), DEFAULT_RATIO, withYield));
+				Double volumePerc = doubleOrNull(computeVolumePerc(compositeLabeling, kv.getKey(), DEFAULT_RATIO, withYield));
 				qtyPerc = (useVolume ? volumePerc : qtyPerc);
 
-				if (qtyPerc != null) {
+				if (qtyPerc != null && qtyPerc > 0d) {
 					total = total.add(roundeedValue(qtyPerc, kv.getKey()));
 				}
 
@@ -2083,12 +2159,12 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 				for (LabelingComponent component : kv.getValue()) {
 
-					Double qtyPerc = computeQtyPerc(compositeLabeling, component, 1d);
-					Double volumePerc = computeVolumePerc(compositeLabeling, component, 1d);
+					Double qtyPerc = doubleOrNull(computeQtyPerc(compositeLabeling, component, DEFAULT_RATIO, withYield));
+					Double volumePerc = doubleOrNull(computeVolumePerc(compositeLabeling, component, DEFAULT_RATIO, withYield));
 
 					qtyPerc = (useVolume ? volumePerc : qtyPerc);
 
-					if (!shouldSkip(component.getNodeRef(), qtyPerc) && (qtyPerc != null)) {
+					if (!shouldSkip(component.getNodeRef(), qtyPerc) && (qtyPerc != null) && qtyPerc > 0) {
 						total = total.add(roundeedValue(qtyPerc, component));
 
 					}
@@ -2099,7 +2175,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 	}
 
-	private String renderCompositeIng(CompositeLabeling compositeLabeling, Double ratio, BigDecimal total, boolean hideGeo, boolean hideBio) {
+	private String renderCompositeIng(CompositeLabeling compositeLabeling, BigDecimal ratio, BigDecimal total, boolean hideGeo, boolean hideBio) {
 		StringBuilder ret = new StringBuilder();
 		boolean appendEOF = false;
 		boolean first = true;
@@ -2111,10 +2187,12 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			StringBuilder toAppend = new StringBuilder();
 
 			Double qtyPerc = null;
+
+			BigDecimal subTotal = first || ingsLabelingWithYield ? total : null;
 			if ((kv.getKey() != null) && (getLegalIngName(kv.getKey(), null, false, false) != null)) {
 
-				qtyPerc = computeQtyPerc(compositeLabeling, kv.getKey(), ratio);
-				Double volumePerc = computeVolumePerc(compositeLabeling, kv.getKey(), ratio);
+				qtyPerc = doubleOrNull(computeQtyPerc(compositeLabeling, kv.getKey(), ratio));
+				Double volumePerc = doubleOrNull(computeVolumePerc(compositeLabeling, kv.getKey(), ratio));
 				qtyPerc = (useVolume ? volumePerc : qtyPerc);
 				if (ingsLabelingWithYield) {
 					kv.getKey().setQtyWithYield(qtyPerc);
@@ -2134,26 +2212,28 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				String geoOriginsLabel = createGeoOriginsLabel(kv.getKey().getNodeRef(), kv.getValue(), PlaceOfActivityTypeCode.LAST_PROCESSING);
 				String bioOriginsLabel = createBioOriginsLabel(kv.getKey().getNodeRef(), kv.getValue());
 
+				NodeRef origNodeRef = kv.getKey().getOrigNodeRef() != null ? kv.getKey().getOrigNodeRef() : kv.getKey().getNodeRef();
+
 				toAppend.append(getIngTextFormat(kv.getKey(), qtyPerc, kv.getValue().size() > 1).format(new Object[] { ingTypeLegalName, qtyPerc,
-						isDoNotDetails(kv.getKey().getOrigNodeRef() != null ? kv.getKey().getOrigNodeRef() : kv.getKey().getNodeRef()) ? null
-								: renderLabelingComponent(compositeLabeling, kv.getValue(), true, ratio, first ? total : null, hideGeo, hideBio),
+						isDoNotDetails(origNodeRef) ? null
+								: renderLabelingComponent(compositeLabeling, kv.getValue(), true, ratio, subTotal, hideGeo, hideBio),
 						hideGeo ? null : geoOriginsLabel, hideBio ? null : bioOriginsLabel }));
 
 			} else {
 				if (!kv.getValue().isEmpty()) {
-					qtyPerc = computeQtyPerc(compositeLabeling, kv.getValue().get(0), ratio);
-					Double volumePerc = computeVolumePerc(compositeLabeling, kv.getValue().get(0), ratio);
+					qtyPerc = doubleOrNull(computeQtyPerc(compositeLabeling, kv.getValue().get(0), ratio));
+					Double volumePerc = doubleOrNull(computeVolumePerc(compositeLabeling, kv.getValue().get(0), ratio));
 					qtyPerc = (useVolume ? volumePerc : qtyPerc);
 				}
 
-				toAppend.append(renderLabelingComponent(compositeLabeling, kv.getValue(), false, ratio, first ? total : null, hideGeo, hideBio));
+				toAppend.append(renderLabelingComponent(compositeLabeling, kv.getValue(), false, ratio, subTotal, hideGeo, hideBio));
 			}
 
 			first = false;
 			if ((toAppend != null) && !toAppend.toString().isEmpty()) {
 				if (ret.length() > 0) {
 					if (appendEOF) {
-						ret.append("<br/>");
+						ret.append(HTML_BREAK_LINE);
 					} else {
 						if ((separatorRules != null) && !separatorRules.isEmpty() && applySeparatorRule) {
 
@@ -2220,10 +2300,10 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return I18NUtil.getContentLocale();
 	}
 
-	Double totalPrecision = 1 / Math.pow(10, (double) maxPrecision + (double) 2);
+	Double totalPrecision = 1d / Math.pow(10, (double) maxPrecision + (double) 2);
 
-	private StringBuilder renderLabelingComponent(CompositeLabeling parent, List<LabelingComponent> subComponents, boolean isIngType, Double ratio,
-			BigDecimal total, boolean hideGeo, boolean hideBio) {
+	private StringBuilder renderLabelingComponent(CompositeLabeling parent, List<LabelingComponent> subComponents, boolean isIngType,
+			BigDecimal ratio, BigDecimal total, boolean hideGeo, boolean hideBio) {
 
 		StringBuilder ret = new StringBuilder();
 
@@ -2232,16 +2312,24 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 		for (LabelingComponent component : subComponents) {
 
-			Double qtyPerc = computeQtyPerc(parent, component, ratio);
-			Double volumePerc = computeVolumePerc(parent, component, ratio);
+			Double qtyPerc = doubleOrNull(computeQtyPerc(parent, component, ratio));
+			Double volumePerc = doubleOrNull(computeVolumePerc(parent, component, ratio));
+			BigDecimal subTotal = first || ingsLabelingWithYield ? total : null;
+			Boolean useTotalPrecision = first && total != null;
 
 			qtyPerc = (useVolume ? volumePerc : qtyPerc);
-			if (first && (total != null)) {
-				BigDecimal diffValue = BigDecimal.valueOf(1d).subtract(total);
-				qtyPerc = roundeedValue(qtyPerc, component).add(diffValue).doubleValue();
+			if (ingsLabelingWithYield && total != null && qtyPerc != null) {
+				qtyPerc = roundeedValue(
+						BigDecimal.valueOf(qtyPerc).divide(total, MathContext.DECIMAL64).multiply(BigDecimal.valueOf(1d)).doubleValue(), component)
+								.doubleValue();
+			} else {
+				if (first && (total != null)) {
+					BigDecimal diffValue = BigDecimal.valueOf(1d).subtract(total);
+					qtyPerc = roundeedValue(qtyPerc, component).add(diffValue).doubleValue();
+				}
 			}
 
-			String ingName = getLegalIngName(component, qtyPerc, false, first && (total != null));
+			String ingName = getLegalIngName(component, qtyPerc, false, useTotalPrecision);
 
 			String geoOriginsLabel = createGeoOriginsLabel(component.getNodeRef(), component.getGeoOriginsByPlaceOfActivity(),
 					PlaceOfActivityTypeCode.LAST_PROCESSING);
@@ -2261,20 +2349,20 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				if (component instanceof CompositeLabeling) {
 
 					MessageFormat formater = getIngTextFormat(component, qtyPerc, ((CompositeLabeling) component).getIngList().size() > 1);
-					Double subRatio = computeQtyPerc(parent, component, ratio, ingsLabelingWithYield && (component instanceof IngItem));
+					BigDecimal subRatio = computeQtyPerc(parent, component, ratio, ingsLabelingWithYield && (component instanceof IngItem));
 
 					if (DeclarationType.Kit.equals(((CompositeLabeling) component).getDeclarationType()) || computePercByParent) {
-						subRatio = 1d;
-					} else if (first && (total != null)) {
+						subRatio = DEFAULT_RATIO;
+					} else if (Boolean.TRUE.equals(useTotalPrecision)) {
 						applyTotalRoundingMode(formater);
-						if (!DeclarationType.Group.equals(((CompositeLabeling) component).getDeclarationType())) {
-							first = false;
-						}
+						//	Bizarre				if (!DeclarationType.Group.equals(((CompositeLabeling) component).getDeclarationType())) {
+						//							first = false;
+						//						}
 					}
 
-					toAppend = formater.format(new Object[] { ingName, qtyPerc,
-							renderCompositeIng((CompositeLabeling) component, subRatio, first ? total : null, hideGeo, hideBio),
-							hideGeo ? null : geoOriginsLabel, hideBio ? null : bioOriginsLabel });
+					toAppend = formater.format(
+							new Object[] { ingName, qtyPerc, renderCompositeIng((CompositeLabeling) component, subRatio, subTotal, hideGeo, hideBio),
+									hideGeo ? null : geoOriginsLabel, hideBio ? null : bioOriginsLabel });
 
 					first = false;
 
@@ -2285,7 +2373,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				if ((toAppend != null) && !toAppend.isEmpty()) {
 					if (ret.length() > 0) {
 						if (appendEOF) {
-							ret.append("<br/>");
+							ret.append(HTML_BREAK_LINE);
 						} else {
 							if (isIngType) {
 								ret.append(getLocaleSeparator(ingTypeDefaultSeparator));
@@ -2488,13 +2576,13 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 */
 	public String createJsonLog(boolean mergedLabeling) {
 		if (!mergedLabeling) {
-			return createJsonLog(lblCompositeContext, null, 1d, new HashSet<>()).toString();
+			return createJsonLog(lblCompositeContext, null, DEFAULT_RATIO, new HashSet<>()).toString();
 		}
-		return createJsonLog(mergedLblCompositeContext, null, 1d, new HashSet<>()).toString();
+		return createJsonLog(mergedLblCompositeContext, null, DEFAULT_RATIO, new HashSet<>()).toString();
 	}
 
 	@SuppressWarnings("unchecked")
-	private JSONObject createJsonLog(LabelingComponent component, CompositeLabeling parent, Double ratio, Set<LabelingComponent> visited) {
+	private JSONObject createJsonLog(LabelingComponent component, CompositeLabeling parent, BigDecimal ratio, Set<LabelingComponent> visited) {
 
 		JSONObject tree = new JSONObject();
 
@@ -2516,8 +2604,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			tree.put("name", getName(component));
 			tree.put("legal", decorate(getLegalIngName(component, null, component.isPlural(), false)));
 
-			Double qtyPerc = computeQtyPerc(parent, component, ratio);
-			Double volumePerc = computeVolumePerc(parent, component, ratio);
+			Double qtyPerc = doubleOrNull(computeQtyPerc(parent, component, ratio));
+			Double volumePerc = doubleOrNull(computeVolumePerc(parent, component, ratio));
 
 			if (volumePerc != null) {
 				tree.put("vol", volumePerc * 100);
@@ -2527,9 +2615,9 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 				if (component instanceof CompositeLabeling) {
 
-					ratio = qtyPerc;
+					ratio = BigDecimal.valueOf(qtyPerc);
 					if (DeclarationType.Kit.equals(((CompositeLabeling) component).getDeclarationType()) || computePercByParent) {
-						ratio = 1d;
+						ratio = DEFAULT_RATIO;
 					}
 
 				}
@@ -2584,8 +2672,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 						ingTypeJson.put("legal", decorate(getLegalIngName(kv.getKey(), null,
 								(kv.getValue().size() > 1) || (!kv.getValue().isEmpty() && kv.getValue().get(0).isPlural()), false)));
 
-						qtyPerc = computeQtyPerc((CompositeLabeling) component, kv.getKey(), ratio);
-						volumePerc = computeVolumePerc((CompositeLabeling) component, kv.getKey(), ratio);
+						qtyPerc = doubleOrNull(computeQtyPerc((CompositeLabeling) component, kv.getKey(), ratio));
+						volumePerc = doubleOrNull(computeVolumePerc((CompositeLabeling) component, kv.getKey(), ratio));
 						if (ingsLabelingWithYield) {
 							kv.getKey().setQtyWithYield(qtyPerc);
 							kv.getKey().setVolumeWithYield(volumePerc);
@@ -2669,22 +2757,23 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 *            a {@link java.lang.Double} object.
 	 * @return a {@link java.lang.Double} object.
 	 */
-	public Double computeQtyPerc(CompositeLabeling parent, LabelingComponent component, Double ratio) {
+	public BigDecimal computeQtyPerc(CompositeLabeling parent, LabelingComponent component, BigDecimal ratio) {
 		return computeQtyPerc(parent, component, ratio, ingsLabelingWithYield);
 	}
 
-	private Double computeQtyPerc(CompositeLabeling parent, LabelingComponent component, Double ratio, boolean withYield) {
+	private BigDecimal computeQtyPerc(CompositeLabeling parent, LabelingComponent component, BigDecimal ratio, boolean withYield) {
+
 		if ((ratio == null) || (parent == null)) {
 			return null;
 		}
 		Double qty = component.getQty(withYield);
 
-		if ((parent.getQtyTotal() != null) && (parent.getQtyTotal() > 0) && (qty != null)) {
+		if ((parent.getQtyTotal() != null) && (parent.getQtyTotal().doubleValue() != 0d) && (qty != null)) {
 
-			return BigDecimal.valueOf(qty).divide(BigDecimal.valueOf(parent.getQtyTotal()), 10, RoundingMode.HALF_UP)
-					.multiply(BigDecimal.valueOf(ratio)).doubleValue();
+			return BigDecimal.valueOf(qty).multiply(ratio, MathContext.DECIMAL64).divide(parent.getQtyTotal(), PRECISION_FACTOR,
+					RoundingMode.HALF_DOWN);
 		}
-		return qty;
+		return qty != null ? BigDecimal.valueOf(qty) : null;
 	}
 
 	/**
@@ -2702,20 +2791,21 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 *            a {@link java.lang.Double} object.
 	 * @return a {@link java.lang.Double} object.
 	 */
-	public Double computeVolumePerc(CompositeLabeling parent, LabelingComponent component, Double ratio) {
+	public BigDecimal computeVolumePerc(CompositeLabeling parent, LabelingComponent component, BigDecimal ratio) {
 		return computeVolumePerc(parent, component, ratio, ingsLabelingWithYield);
 	}
 
-	private Double computeVolumePerc(CompositeLabeling parent, LabelingComponent component, Double ratio, boolean withYield) {
+	private BigDecimal computeVolumePerc(CompositeLabeling parent, LabelingComponent component, BigDecimal ratio, boolean withYield) {
 		if ((ratio == null) || (parent == null)) {
 			return null;
 		}
 
 		Double volume = component.getVolume(withYield);
-		if ((parent.getVolumeTotal() != null) && (parent.getVolumeTotal() > 0) && (volume != null)) {
-			return (volume / parent.getVolumeTotal()) * ratio;
+		if ((parent.getVolumeTotal() != null) && (parent.getVolumeTotal().doubleValue() != 0d) && (volume != null)) {
+			return BigDecimal.valueOf(volume).multiply(ratio, MathContext.DECIMAL64).divide(parent.getVolumeTotal(), PRECISION_FACTOR,
+					RoundingMode.HALF_UP);
 		}
-		return volume;
+		return volume != null ? BigDecimal.valueOf(volume) : null;
 	}
 
 	Map<IngTypeItem, List<LabelingComponent>> getSortedIngListByType(CompositeLabeling compositeLabeling) {
@@ -2726,7 +2816,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 		boolean keepOrder = false;
 		for (CompositeLabeling lblComponent : compositeLabeling.getIngList().values()) {
-			IngTypeItem ingType = lblComponent.getIngType()!=null ? lblComponent.getIngType().createCopy(): null;
+			IngTypeItem ingType = lblComponent.getIngType() != null ? lblComponent.getIngType().createCopy() : null;
 
 			if (aggregateRules.containsKey(lblComponent.getNodeRef())) {
 				for (AggregateRule aggregateRule : aggregateRules.get(lblComponent.getNodeRef())) {
@@ -2793,13 +2883,13 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				if ((ingType.getNodeRef() != null) && (ingType.getOrigNodeRef() == null)) {
 					ingType.setOrigNodeRef(ingType.getNodeRef());
 				}
-				ingType.setNodeRef(new NodeRef(RepoConsts.SPACES_STORE, "ingType-" + lblComponent.getNodeRef().hashCode()));
+				ingType.setNodeRef(new NodeRef(RepoConsts.SPACES_STORE, ING_TYPE_PREFIX + lblComponent.getNodeRef().hashCode()));
 
 			}
 
 			if (ingType == null) {
 				ingType = new IngTypeItem();
-				ingType.setNodeRef(new NodeRef(RepoConsts.SPACES_STORE, "ingType-" + lblComponent.getNodeRef().hashCode()));
+				ingType.setNodeRef(new NodeRef(RepoConsts.SPACES_STORE, ING_TYPE_PREFIX + lblComponent.getNodeRef().hashCode()));
 			}
 
 			// Reset qty for equality
@@ -2815,7 +2905,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 		}
 
-		keepOrder = DeclarationType.Detail.equals(compositeLabeling.getDeclarationType()) && keepOrder;
+		keepOrder = forceKeepOrder || (DeclarationType.Detail.equals(compositeLabeling.getDeclarationType()) && keepOrder);
 
 		List<Map.Entry<IngTypeItem, List<LabelingComponent>>> entries = new ArrayList<>(tmp.entrySet());
 		/*
@@ -2854,50 +2944,33 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		 */
 
 		if (!keepOrder) {
+
+			for (Map.Entry<IngTypeItem, List<LabelingComponent>> entry : entries) {
+				sort(entry.getValue());
+			}
+
 			Collections.sort(entries, (a, b) -> {
-
-				if (IngTypeItem.DEFAULT_GROUP.equals(a.getKey())) {
-					return -1;
-				}
-
-				if (IngTypeItem.DEFAULT_GROUP.equals(b.getKey()) || a.getKey().lastGroup()) {
-					return 1;
-				}
-
-				if (b.getKey().lastGroup()) {
-					return -1;
-				}
-
-				int ret = b.getKey().getQty(ingsLabelingWithYield).compareTo(a.getKey().getQty(ingsLabelingWithYield));
-				if (useVolume) {
-					ret = b.getKey().getVolume(ingsLabelingWithYield).compareTo(a.getKey().getVolume(ingsLabelingWithYield));
-				}
-
-				if (ret == 0) {
-
-					String name = getLegalIngName(b.getKey());
-					if (name == null) {
-						name = "";
+				int result = compareLabelingComponents(a.getKey(), b.getKey());
+				if (result == 0) {
+					String nameA = getLegalIngName(a.getKey());
+					if (nameA == null && !a.getValue().isEmpty()) {
+						nameA = getLegalIngName(a.getValue().get(0));
 					}
 
-					String name2 = getLegalIngName(a.getKey());
-					if (name2 == null) {
-						name2 = "";
+					String nameB = getLegalIngName(b.getKey());
+					if (nameB == null && !b.getValue().isEmpty()) {
+						nameB = getLegalIngName(b.getValue().get(0));
 					}
 
-					ret = name.compareTo(name2);
+					result = Comparator.nullsLast(String::compareTo).compare(nameA, nameB);
 				}
-
-				return ret;
+				return result;
 			});
+
 		}
+
 		Map<IngTypeItem, List<LabelingComponent>> sortedIngListByType = new LinkedHashMap<>();
 		for (Map.Entry<IngTypeItem, List<LabelingComponent>> entry : entries) {
-
-			if (!keepOrder) {
-				// Sort by value
-				Collections.sort(entry.getValue());
-			}
 			sortedIngListByType.put(entry.getKey(), entry.getValue());
 		}
 
@@ -2957,11 +3030,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			if (repositoryEntity instanceof IngTypeItem) {
 				ingType = (IngTypeItem) repositoryEntity;
 			}
-		} else if(aggregateRule.getLabel()!=null && !MLTextHelper.isEmpty(aggregateRule.getLabel())){
-			
+		} else if (aggregateRule.getLabel() != null && !MLTextHelper.isEmpty(aggregateRule.getLabel())) {
+
 			ingType = new IngTypeItem();
 			ingType.setLegalName(aggregateRule.getLabel());
-			ingType.setNodeRef(new NodeRef(RepoConsts.SPACES_STORE, "ingType-" + aggregateRule.getLabel().getDefaultValue()));
+			ingType.setNodeRef(new NodeRef(RepoConsts.SPACES_STORE, ING_TYPE_PREFIX + aggregateRule.getLabel().getDefaultValue()));
 		}
 
 		return ingType;
@@ -2991,20 +3064,20 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 					Expression exp = parser.parseExpression(SpelHelper.formatFormula(formulaFilter.getFormula()));
 
-					boolean ret = exp.getValue(dataContext, Boolean.class);
+					Boolean ret = exp.getValue(dataContext, Boolean.class);
 
-					if (ret && logger.isDebugEnabled()) {
+					if (Boolean.TRUE.equals(ret) && logger.isDebugEnabled()) {
 						logger.debug("Matching formula :" + formulaFilter.getFormula());
 					}
 
-					return ret;
+					return Boolean.TRUE.equals(ret);
 				} catch (Exception e) {
 
-					getEntity().getReqCtrlList()
-							.add(new ReqCtrlListDataItem(
-									null, RequirementType.Forbidden, MLTextHelper.getI18NMessage("message.formulate.labelRule.error",
-											formulaFilter.getRuleName(), e.getLocalizedMessage()),
-									null, new ArrayList<>(), RequirementDataType.Labelling));
+					getEntity().getReqCtrlList().add(ReqCtrlListDataItem.forbidden().withMessage(
+							MLTextHelper.getI18NMessage("message.formulate.labelRule.error", formulaFilter.getRuleName(), e.getLocalizedMessage()))
+							.ofDataType(RequirementDataType.Labelling)
+
+					);
 					if (logger.isDebugEnabled()) {
 						logger.debug("Cannot evaluate formula :" + formulaFilter.getFormula() + " on " + formulaFilterContext.toString(), e);
 					}

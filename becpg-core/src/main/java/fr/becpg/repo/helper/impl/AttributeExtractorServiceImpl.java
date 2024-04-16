@@ -900,7 +900,6 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 						if (!((PropertyDefinition) attribute).isMultiValued()) {
 							metadata = extractMetadata(nodeService.getType((NodeRef) value), (NodeRef) value);
 						} else {
-							@SuppressWarnings("unchecked")
 							List<NodeRef> values = (List<NodeRef>) value;
 							for (NodeRef tempValue : values) {
 								if (tempValue != null) {
@@ -1274,6 +1273,11 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 							}
 
 						}
+					} else if (compValue != null && data.containsKey("metadata")
+							&& ("datetime".equals(data.get("metadata")) || "date".equals(data.get("metadata")))) {
+						if (!dateMatches(value, compValue)) {
+							return false;
+						}
 					} else if ((compValue != null) && (!value.equals(compValue) && !displayValue.equals(compValue))) {
 						return false;
 
@@ -1286,6 +1290,16 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			I18NUtil.setContentLocale(currentContentLocal);
 		}
 
+	}
+
+	private boolean dateMatches(String value, String compValue) {
+		String dateRegex = "^\\d{4}-\\d{2}-\\d{2}$";
+		Pattern pattern = Pattern.compile(dateRegex);
+		Matcher matcher = pattern.matcher(compValue);
+		if (matcher.matches()) {
+			return value.startsWith(compValue);
+		}
+		return false;
 	}
 
 	/** {@inheritDoc} */

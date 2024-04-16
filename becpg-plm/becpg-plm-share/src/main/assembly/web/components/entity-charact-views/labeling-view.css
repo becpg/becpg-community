@@ -246,3 +246,7 @@
 	height:16px;
 	padding-right: 5px;
 }
+
+u {
+   text-underline-position: under;
+}

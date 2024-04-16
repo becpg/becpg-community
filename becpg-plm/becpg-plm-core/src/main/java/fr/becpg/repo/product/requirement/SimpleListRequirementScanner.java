@@ -1,7 +1,6 @@
 package fr.becpg.repo.product.requirement;
 
 import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +37,7 @@ public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem>
 		List<ReqCtrlListDataItem> ret = new LinkedList<>();
 
 		List<T> dataListVisited = getDataListVisited(formulatedProduct);
-		
+
 		if ((dataListVisited != null) && !dataListVisited.isEmpty()) {
 
 			for (Map.Entry<ProductSpecificationData, List<T>> entry : extractRequirements(specifications).entrySet()) {
@@ -68,9 +67,9 @@ public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem>
 								}
 
 								if (!isCharactAllowed || Boolean.TRUE.equals(addInfoReqCtrl)) {
-									
+
 									String keyMessage = isCharactAllowed ? getSpecInfoMessageKey() : getSpecErrorMessageKey();
-									
+
 									MLText message = MLTextHelper
 											.getI18NMessage(keyMessage,
 													mlNodeService.getProperty(listDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME),
@@ -86,16 +85,13 @@ public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem>
 																: "");
 													}));
 
-									ReqCtrlListDataItem reqCtrl = new ReqCtrlListDataItem(null, isCharactAllowed ? RequirementType.Info : RequirementType.Forbidden, message,
-											listDataItem.getCharactNodeRef(), new ArrayList<>(), RequirementDataType.Specification);
-
-									if (specification.getRegulatoryCode() != null && !specification.getRegulatoryCode().isBlank()) {
-										reqCtrl.setRegulatoryCode(specification.getRegulatoryCode());
-									} else {
-										reqCtrl.setRegulatoryCode(specification.getName());
-									}
-
-									ret.add(reqCtrl);
+									ret.add(ReqCtrlListDataItem.build()
+											.ofType(isCharactAllowed ? RequirementType.Info : RequirementType.Forbidden).withMessage(message)
+											.withCharact(listDataItem.getCharactNodeRef()).ofDataType(RequirementDataType.Specification)
+											.withRegulatoryCode(
+													(specification.getRegulatoryCode() != null) && !specification.getRegulatoryCode().isBlank()
+															? specification.getRegulatoryCode()
+															: specification.getName()));
 
 								}
 							}
@@ -115,7 +111,7 @@ public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem>
 	 * @return a {@link java.lang.String} object.
 	 */
 	protected abstract String getSpecErrorMessageKey();
-	
+
 	protected abstract String getSpecInfoMessageKey();
 
 	/** {@inheritDoc} */

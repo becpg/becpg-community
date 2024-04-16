@@ -66,6 +66,12 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	protected static final Log logger = LogFactory.getLog(AbstractEntityWebScript.class);
 	
 
+
+	protected static final String JSON_PARAM = "jsonParam";
+	
+	protected static final String PARAM_TYPE = "type";
+	
+	protected static final String PARAM_PARAMS = "params";
 	/** Constant <code>PARAM_QUERY="query"</code> */
 	protected static final String PARAM_QUERY = "query";
 	/** Constant <code>PARAM_PATH="path"</code> */
@@ -265,7 +271,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 			if(RemoteEntityFormat.json.equals(format)) {
 				JSONObject ret = new JSONObject();
 				try {
-					ret.put("nodeRef", entityNodeRef);
+					ret.put(PARAM_NODEREF, entityNodeRef);
 					ret.put("status", "SUCCESS");
 	
 					resp.setContentType("application/json");
@@ -383,21 +389,30 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 
 			String[] splitted = decodeParam(listsParams).split(",");
 			for (String list : splitted) {
-				String[] listName = list.split(":");
-				if ((listName != null) ) {
-					if(listName.length > 1){
-						if(listName[0].startsWith("!")) {
-							lists.add("!"+listName[1]);
-						} else {
-							lists.add(listName[1]);
-						}
-					} else {
-						lists.add(listName[0]);
-					}
+				
+				String listToAdd = "";
+				if (list.contains("@")) {
+					String firstPart = list.split("@")[0];
+					String secondPart = list.split("@")[1];
+					listToAdd = formatListName(firstPart) + "@" + secondPart;
+				} else {
+					listToAdd = formatListName(list);
 				}
+				lists.add(listToAdd);
 			}
 		}
 		return lists;
+	}
+
+	private String formatListName(String list) {
+		String[] listName = list.split(":");
+		if (listName.length > 1) {
+			if (listName[0].startsWith("!")) {
+				return "!" + listName[1];
+			}
+			return listName[1];
+		}
+		return listName[0];
 	}
 
 
@@ -432,5 +447,49 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		}
 		return param;
 	}
+	
+	protected JSONObject extractParams(WebScriptRequest req) {
+
+		JSONObject jsonParams = null;
+		
+		String params = req.getParameter(PARAM_PARAMS);
+		if ((params != null) && !params.isEmpty()) {
+
+			try {
+				jsonParams = new JSONObject(params);
+			} catch (JSONException e) {
+				logger.error("Cannot parse params:" + params);
+			}
+		}
+		
+		for (String parameterName : req.getParameterNames()) {
+			
+			String jsonParamName = extractJsonParamName(parameterName);
+			if (jsonParamName != null && !jsonParamName.isBlank()) {
+				if (jsonParams == null) {
+					jsonParams = new JSONObject();
+				}
+				jsonParams.put(jsonParamName, JSONObject.stringToValue(req.getParameter(parameterName)));
+			}
+		}
+		
+		return jsonParams;
+	}
+
+	protected String extractJsonParamName(String parameterName) {
+		if (parameterName.startsWith(JSON_PARAM)) {
+			String[] split = parameterName.split(JSON_PARAM);
+			
+			if (split.length > 1) {
+				String jsonParamName = split[1];
+				char[] c = jsonParamName.toCharArray();
+				c[0] = Character.toLowerCase(c[0]);
+				return new String(c);
+			}
+		}
+		
+		return null;
+	}
+	
 
 }

@@ -304,7 +304,14 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		}
 
 		//Common sort returning from search
-		ChildAssocCacheEntry cachedAssocs = getFromCache(childsAssocsCache, new AssociationCacheRegion(nodeRef, qName), () -> {
+		ChildAssocCacheEntry cachedAssocs = getChildAssocsByType(nodeRef, qName);
+
+		return cachedAssocs.get(childType);
+	}
+
+	@Override
+	public ChildAssocCacheEntry getChildAssocsByType(final NodeRef nodeRef, final QName qName) {
+		return getFromCache(childsAssocsCache, new AssociationCacheRegion(nodeRef, qName), () -> {
 			ChildAssocCacheEntry childAssocCacheEntry = new ChildAssocCacheEntry();
 
 			for (ChildAssociationRef assocRef : nodeService.getChildAssocs(nodeRef, qName, RegexQNamePattern.MATCH_ALL, true)) {
@@ -319,8 +326,6 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 			return childAssocCacheEntry;
 
 		});
-
-		return cachedAssocs.get(childType);
 	}
 
 	private boolean isDefaultSort(Map<String, Boolean> sortProps) {
@@ -453,10 +458,16 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 
 	private static final String SQL_SELECT_SOURCE_ASSOC_ENTITY_FINAL_PART = " where  assoc.type_qname_id=? and q1.qname_id IS NULL and q2.qname_id IS NULL ";
 
+	@Override
+	public List<EntitySourceAssoc> getEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocQName, QName listTypeQname,
+			boolean isOrOperator, List<AssociationCriteriaFilter> criteriaFilters) {
+		return getEntitySourceAssocs(nodeRefs, assocQName, listTypeQname, isOrOperator, criteriaFilters, null);
+	}
+	
 	/** {@inheritDoc} */
 	@Override
 	public List<EntitySourceAssoc> getEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocTypeQName, QName listTypeQname, boolean isOrOperator,
-			List<AssociationCriteriaFilter> criteriaFilters) {
+			List<AssociationCriteriaFilter> criteriaFilters, Integer limit) {
 		List<EntitySourceAssoc> ret = null;
 
 		StopWatch watch = null;
@@ -480,10 +491,10 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 			if (isAnd) {
 				for (NodeRef nodeRef : nodeRefs) {
 					if (ret == null) {
-						ret = internalEntitySourceAssocs(Arrays.asList(nodeRef), assocTypeQName, listTypeQname, criteriaFilters);
+						ret = internalEntitySourceAssocs(Arrays.asList(nodeRef), assocTypeQName, listTypeQname, criteriaFilters, limit);
 					} else {
 						List<EntitySourceAssoc> tmp = internalEntitySourceAssocs(Arrays.asList(nodeRef), assocTypeQName, listTypeQname,
-								criteriaFilters);
+								criteriaFilters, limit);
 
 						for (Iterator<EntitySourceAssoc> iterator = ret.iterator(); iterator.hasNext();) {
 							EntitySourceAssoc entitySourceAssoc = iterator.next();
@@ -502,7 +513,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 				}
 
 			} else {
-				ret = internalEntitySourceAssocs(nodeRefs, assocTypeQName, listTypeQname, criteriaFilters);
+				ret = internalEntitySourceAssocs(nodeRefs, assocTypeQName, listTypeQname, criteriaFilters, limit);
 			}
 
 		}
@@ -516,7 +527,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 	}
 
 	private List<EntitySourceAssoc> internalEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocTypeQName, QName listTypeQname,
-			List<AssociationCriteriaFilter> criteriaFilters) {
+			List<AssociationCriteriaFilter> criteriaFilters, Integer limit) {
 		List<EntitySourceAssoc> ret = new ArrayList<>();
 
 		if ((nodeRefs != null) && !nodeRefs.isEmpty()) {
@@ -663,7 +674,11 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 			}
 
 			query.append("  group by dataListItem.uuid ");
-
+			
+			if (limit != null && limit > -1) {
+				query.append(" LIMIT " + limit);
+			}
+			
 			StoreRef storeRef = StoreRef.STORE_REF_WORKSPACE_SPACESSTORE;
 			if (AuthenticationUtil.isMtEnabled()) {
 				storeRef = tenantService.getName(storeRef);

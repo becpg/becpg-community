@@ -109,21 +109,27 @@ public class TaskOverdueFormulationHandler extends FormulationBaseHandler<Projec
 						Date nextNotification = calculateNextNotificationDate(task, firstNotificationDate);
 						if (nextNotification != null) {
 							String workflowTaskId = extractWorkflowTask(task);
-
-							if (logger.isDebugEnabled()) {
-								logger.debug("First notification: " + firstNotificationDate);
-								logger.debug("Last notification: " + task.getLastNotification());
-								logger.debug("Next notification: " + nextNotification);
-								logger.debug("workflowTaskId: " + workflowTaskId);
-							}
-
-							if (currentDate.after(nextNotification)) {
-								task.setLastNotification(currentDate);
-								if(logger.isDebugEnabled()) {
-									logger.debug("authoritiesNR: " + task.getNotificationAuthorities());
+		
+								
+								if (logger.isDebugEnabled()) {
+									logger.debug("First notification: " + firstNotificationDate);
+									logger.debug("Last notification: " + task.getLastNotification());
+									logger.debug("Next notification: " + nextNotification);
+									logger.debug("workflowTaskId: " + workflowTaskId);
 								}
-								sendTaskNotificationEmails(task.getNotificationAuthorities(), task, projectData, workflowTaskId);
-							}
+	
+								if (currentDate.after(nextNotification)) {
+									task.setLastNotification(currentDate);
+									if(logger.isDebugEnabled()) {
+										logger.debug("authoritiesNR: " + task.getNotificationAuthorities());
+									}
+									if(workflowTaskId !=null) {
+										sendTaskNotificationEmails(task.getNotificationAuthorities(), task, projectData, workflowTaskId);
+									} else {
+										logger.warn("No workflowTaskId for task :"+task.getTaskName()+ " "+task.getNodeRef()+" - skipping notification" );
+									}
+								}
+				
 						} else {
 							logger.debug("No new notification scheduled, skipping..");
 						}

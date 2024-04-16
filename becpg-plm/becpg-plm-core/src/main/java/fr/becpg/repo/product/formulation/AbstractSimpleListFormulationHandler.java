@@ -254,22 +254,23 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 				if (isCharactFormulated(sl)) {
 					sl.setValue(null);
 
-					if (sl instanceof MinMaxValueDataItem) {
-						((MinMaxValueDataItem) sl).setMini(null);
-						((MinMaxValueDataItem) sl).setMaxi(null);
+					if (sl instanceof MinMaxValueDataItem minMaxValueDataItem) {
+						minMaxValueDataItem.setMini(null);
+						minMaxValueDataItem.setMaxi(null);
 					}
-					if (sl instanceof ForecastValueDataItem) {
-						((ForecastValueDataItem) sl).setPreviousValue(null);
-						((ForecastValueDataItem) sl).setFutureValue(null);
+					if (sl instanceof ForecastValueDataItem forecastValueDataItem) {
+						for (String forecastColumn : forecastValueDataItem.getForecastColumns()) {
+							forecastValueDataItem.setForecastValue(forecastColumn, null);
+						}
 					}
-					if (sl instanceof VariantAwareDataItem) {
+					if (sl instanceof VariantAwareDataItem variantAwareDataItem) {
 						for (int i = 1; i <= VariantAwareDataItem.VARIANT_COLUMN_SIZE; i++) {
-							((VariantAwareDataItem) sl).setValue(null, VariantAwareDataItem.VARIANT_COLUMN_NAME + i);
+							variantAwareDataItem.setValue(null, VariantAwareDataItem.VARIANT_COLUMN_NAME + i);
 						}
 					}
 
-					if (sl instanceof SourceableDataItem) {
-						((SourceableDataItem) sl).getSources().clear();
+					if (sl instanceof SourceableDataItem sourceableDataItem) {
+						sourceableDataItem.getSources().clear();
 					}
 					
 					// add detailable aspect
@@ -297,7 +298,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		List<T> toRemove = new ArrayList<>();
 
 		cleanSimpleList( simpleListDataList, isFormulatedProduct, toRemove);
-		synchronizeTemplate(formulatedProduct, simpleListDataList);
+		synchronizeTemplate(formulatedProduct, simpleListDataList, toRemove);
 
 		if (isFormulatedProduct) {
 			visitComposition(formulatedProduct, simpleListDataList, simpleListQtyProvider, null, toRemove);
@@ -308,11 +309,9 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 				visitComposition(formulatedProduct, simpleListDataList, simpleListQtyProvider, variant, toRemove);
 				visitPackaging(formulatedProduct, simpleListDataList, simpleListQtyProvider, variant, toRemove);
 				visitProcess(formulatedProduct, simpleListDataList, simpleListQtyProvider, variant, toRemove);
-
 			}
 			
 		   simpleListDataList.removeAll(toRemove);
-			
 			
 		}
 
@@ -414,8 +413,10 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 					Double qty = qtyProvider.getQty(packagingListDataItem, partProduct);
 
 					FormulatedQties qties = new FormulatedQties(qty, qty, qtyProvider.getNetQty(variant), qtyProvider.getNetWeight(variant));
-
-					visitPart(formulatedProduct, packagingListDataItem, partProduct, simpleListDataList, qties, mandatoryCharacts2, null, null, variant, toRemove);
+					
+					if (qties.isNotNull()) {
+						visitPart(formulatedProduct, packagingListDataItem, partProduct, simpleListDataList, qties, mandatoryCharacts2, null, null, variant, toRemove);
+					}
 				}
 			}
 
@@ -449,8 +450,9 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 					ProductData partProduct = (ProductData) alfrescoRepository.findOne(processListDataItem.getResource());
 
 					FormulatedQties qties = new FormulatedQties(qty, null, netQtyForCost, null);
-
-					visitPart(formulatedProduct, processListDataItem , partProduct, simpleListDataList, qties, mandatoryCharacts3, null, null, variant, toRemove);
+					if (qties.isNotNull()) {
+						visitPart(formulatedProduct, processListDataItem , partProduct, simpleListDataList, qties, mandatoryCharacts3, null, null, variant, toRemove);
+					}
 				}
 			}
 
@@ -477,8 +479,8 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 					Double value = null;
 					
-					if (newSimpleListDataItem instanceof FormulatedCharactDataItem) {
-						value = ((FormulatedCharactDataItem) newSimpleListDataItem).getFormulatedValue();
+					if (newSimpleListDataItem instanceof FormulatedCharactDataItem formulatedCharactDataItem) {
+						value = formulatedCharactDataItem.getFormulatedValue();
 					} else {
 						value = newSimpleListDataItem.getValue();
 					}
@@ -488,19 +490,15 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 								.multiply(BigDecimal.valueOf(netQty).divide(BigDecimal.valueOf(totalQty), MathContext.DECIMAL64)).doubleValue());
 					}
 
-					if (newSimpleListDataItem instanceof ForecastValueDataItem) {
-						if (((ForecastValueDataItem) newSimpleListDataItem).getPreviousValue() != null) {
-							((ForecastValueDataItem) newSimpleListDataItem).setPreviousValue(BigDecimal
-									.valueOf(((ForecastValueDataItem) newSimpleListDataItem).getPreviousValue())
-									.multiply(BigDecimal.valueOf(netQty).divide(BigDecimal.valueOf(totalQty), MathContext.DECIMAL64)).doubleValue());
+					if (newSimpleListDataItem instanceof ForecastValueDataItem forecastValueDataItem) {
+						for (String forecastColumn : forecastValueDataItem.getForecastColumns()) {
+							if (forecastValueDataItem.getForecastValue(forecastColumn) != null) {
+								forecastValueDataItem.setForecastValue(forecastColumn,
+										BigDecimal.valueOf(forecastValueDataItem.getForecastValue(forecastColumn))
+												.multiply(BigDecimal.valueOf(netQty).divide(BigDecimal.valueOf(totalQty), MathContext.DECIMAL64))
+												.doubleValue());
+							}
 						}
-
-						if (((ForecastValueDataItem) newSimpleListDataItem).getFutureValue() != null) {
-							((ForecastValueDataItem) newSimpleListDataItem).setFutureValue(BigDecimal
-									.valueOf(((ForecastValueDataItem) newSimpleListDataItem).getFutureValue())
-									.multiply(BigDecimal.valueOf(netQty).divide(BigDecimal.valueOf(totalQty), MathContext.DECIMAL64)).doubleValue());
-						}
-
 					}
 				}
 
@@ -522,10 +520,12 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		for (Map.Entry<NodeRef, List<NodeRef>> mandatoryCharact : mandatoryCharacts.entrySet()) {
 			if ((mandatoryCharact.getValue() != null) && !mandatoryCharact.getValue().isEmpty()) {
 
-				reqCtrlList.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated,
-						MLTextHelper.getI18NMessage(MESSAGE_UNDEFINED_CHARACT,
-								mlNodeService.getProperty(mandatoryCharact.getKey(), BeCPGModel.PROP_CHARACT_NAME)),
-						mandatoryCharact.getKey(), mandatoryCharact.getValue(), dataType));
+				reqCtrlList.add( ReqCtrlListDataItem.build().ofType( RequirementType.Tolerated)
+					.withMessage(MLTextHelper.getI18NMessage(MESSAGE_UNDEFINED_CHARACT,
+							mlNodeService.getProperty(mandatoryCharact.getKey(), BeCPGModel.PROP_CHARACT_NAME)))
+					.withCharact(mandatoryCharact.getKey())
+					.withSources( mandatoryCharact.getValue())
+					.ofDataType(dataType));
 			}
 		}
 	}
@@ -568,7 +568,9 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 						SimpleListDataItem slDataItem = simpleListDataList.stream()
 								.filter(s -> componentSimpleListDataItem.getCharactNodeRef().equals(s.getCharactNodeRef())).findFirst().orElse(null);
 						if(slDataItem == null) {
-							simpleListDataList.add( newSimpleListDataItem(componentSimpleListDataItem.getCharactNodeRef()));
+							if( extractValue(formulatedProduct, partProduct, componentSimpleListDataItem)!=null) {
+								simpleListDataList.add( newSimpleListDataItem(componentSimpleListDataItem.getCharactNodeRef()));
+							}
 						} else {
 							toRemove.remove(slDataItem);
 						}
@@ -590,8 +592,8 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 						// is it a mandatory charact ?
 						if ((slDataItem == null) || (slDataItem.getValue() == null)) {
-							if (!(slDataItem instanceof MinMaxValueDataItem) || ((((MinMaxValueDataItem) slDataItem).getMaxi() == null)
-									&& (((MinMaxValueDataItem) slDataItem).getMini() == null))) {
+							if (!(slDataItem instanceof MinMaxValueDataItem minMaxValueDataItem) || (((minMaxValueDataItem).getMaxi() == null)
+									&& ((minMaxValueDataItem).getMini() == null))) {
 								addMissingMandatoryCharact(mandatoryCharacts, newSimpleListDataItem.getCharactNodeRef(), partProduct.getNodeRef());
 							}
 						}
@@ -716,13 +718,12 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 				}
 			}
 
-			if (calculatedListItem instanceof ForecastValueDataItem) {
-				((ForecastValueDataItem) calculatedListItem)
-						.setPreviousValue(FormulationHelper.calculateValue(((ForecastValueDataItem) calculatedListItem).getPreviousValue(), qtyUsed,
-								((ForecastValueDataItem) visitedListItem).getPreviousValue(), netQty));
-				((ForecastValueDataItem) calculatedListItem)
-						.setFutureValue(FormulationHelper.calculateValue(((ForecastValueDataItem) calculatedListItem).getFutureValue(), qtyUsed,
-								((ForecastValueDataItem) visitedListItem).getFutureValue(), netQty));
+			if (calculatedListItem instanceof ForecastValueDataItem forecastListItem) {
+				for (String forecastColumn : forecastListItem.getForecastColumns()) {
+					forecastListItem.setForecastValue(forecastColumn,
+							FormulationHelper.calculateValue(forecastListItem.getForecastValue(forecastColumn), qtyUsed,
+									((ForecastValueDataItem) visitedListItem).getForecastValue(forecastColumn), netQty));
+				}
 			}
 
 			if (logger.isDebugEnabled()) {
@@ -736,11 +737,11 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 						logger.debug("charact: " + nodeService.getProperty(calculatedListItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME)
 								+ " - newMaxi : " + ((MinMaxValueDataItem) calculatedListItem).getMaxi());
 					}
-					if (calculatedListItem instanceof ForecastValueDataItem) {
-						logger.debug("charact: " + nodeService.getProperty(calculatedListItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME)
-								+ " - previousValue : " + ((ForecastValueDataItem) calculatedListItem).getPreviousValue());
-						logger.debug("charact: " + nodeService.getProperty(calculatedListItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME)
-								+ " - futureValue : " + ((ForecastValueDataItem) calculatedListItem).getFutureValue());
+					if (calculatedListItem instanceof ForecastValueDataItem forecastListItem) {
+						for (String forecastColumn : forecastListItem.getForecastColumns()) {
+							logger.debug("charact: " + nodeService.getProperty(calculatedListItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME)
+							+ " - " + forecastColumn + " : " + forecastListItem.getForecastValue(forecastColumn));
+						}
 					}
 				}
 			}
@@ -862,18 +863,17 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 											}
 										}
 
-										if (formula.contains(".value") && (formulatedCharactDataItem instanceof ForecastValueDataItem)) {
-											try {
-												exp = parser.parseExpression(formula.replace(".value", ".futureValue"));
-												((ForecastValueDataItem) formulatedCharactDataItem).setFutureValue((Double) exp.getValue(context));
-												exp = parser.parseExpression(formula.replace(".value", ".previousValue"));
-												((ForecastValueDataItem) formulatedCharactDataItem)
-														.setPreviousValue(((Double) exp.getValue(context)));
-											} catch (Exception e) {
-												((ForecastValueDataItem) formulatedCharactDataItem).setFutureValue(null);
-												((ForecastValueDataItem) formulatedCharactDataItem).setPreviousValue(null);
-												if (logger.isDebugEnabled()) {
-													logger.debug("Error in formula :" + formula, e);
+										if (formula.contains(".value") && (formulatedCharactDataItem instanceof ForecastValueDataItem forecastListItem)) {
+											for (String forecastColumn : forecastListItem.getForecastColumns()) {
+												try {
+													String forecastAccessor = forecastListItem.getForecastAccessor(forecastColumn);
+													exp = parser.parseExpression(formula.replace(".value", "." + forecastAccessor));
+													forecastListItem.setForecastValue(forecastColumn, (Double) exp.getValue(context));
+												} catch (Exception e) {
+													forecastListItem.setForecastValue(forecastColumn, null);
+													if (logger.isDebugEnabled()) {
+														logger.debug("Error in formula :" + formula, e);
+													}
 												}
 											}
 										}
@@ -915,11 +915,11 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 				if (error != null) {
 					formulatedCharactDataItem.setValue(null);
 
-					ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Tolerated,
-							MLTextHelper.getI18NMessage(errorKey,
-									mlNodeService.getProperty(formulatedCharactDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME), error),
-							formulatedCharactDataItem.getCharactNodeRef(), new ArrayList<>(), getRequirementDataType());
-					formulatedProduct.getReqCtrlList().add(rclDataItem);
+					formulatedProduct.getReqCtrlList().add(ReqCtrlListDataItem.build()
+							.ofType( RequirementType.Tolerated)
+							.withMessage(MLTextHelper.getI18NMessage(errorKey,
+									mlNodeService.getProperty(formulatedCharactDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME), error))
+							.withCharact(formulatedCharactDataItem.getCharactNodeRef()).ofDataType(getRequirementDataType()));
 				}
 
 			}
@@ -934,7 +934,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	 * @param simpleListDataList a {@link java.util.List} object.
 	 */
 	@SuppressWarnings("unchecked")
-	protected void synchronizeTemplate(ProductData formulatedProduct, List<T> simpleListDataList) {
+	protected void synchronizeTemplate(ProductData formulatedProduct, List<T> simpleListDataList, List<T> toRemove) {
 		if ((formulatedProduct.getEntityTpl() != null) && !formulatedProduct.getEntityTpl().equals(formulatedProduct)) {
 
 			List<T> templateSimpleListDataList = getDataListVisited(formulatedProduct.getEntityTpl());
@@ -954,7 +954,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 									((CompositeDataItem<T>) sl).setParent(null);
 								}
 							}
-							
+							toRemove.remove(sl);
 							break;
 						}
 					}

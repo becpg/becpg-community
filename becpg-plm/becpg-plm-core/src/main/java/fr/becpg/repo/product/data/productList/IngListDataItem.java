@@ -32,6 +32,7 @@ import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.annotation.InternalField;
+import fr.becpg.repo.repository.annotation.MultiLevelDataList;
 import fr.becpg.repo.repository.model.AbstractManualDataItem;
 import fr.becpg.repo.repository.model.AspectAwareDataItem;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
@@ -44,6 +45,7 @@ import fr.becpg.repo.repository.model.SimpleCharactDataItem;
  */
 @AlfType
 @AlfQname(qname = "bcpg:ingList")
+@MultiLevelDataList
 public class IngListDataItem extends AbstractManualDataItem
 		implements SimpleCharactDataItem, AspectAwareDataItem, CompositeDataItem<IngListDataItem> {
 
@@ -344,7 +346,7 @@ public class IngListDataItem extends AbstractManualDataItem
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
 	@AlfSingleAssoc
-	@DataListIdentifierAttr
+	@DataListIdentifierAttr(isDefaultPivotAssoc = false)
 	@AlfQname(qname = "bcpg:ingListIng")
 	@InternalField
 	public NodeRef getIng() {
@@ -460,6 +462,21 @@ public class IngListDataItem extends AbstractManualDataItem
 	public IngListDataItem() {
 		super();
 	}
+	
+	public static IngListDataItem build() {
+		return new IngListDataItem();
+	}
+
+	public IngListDataItem withIngredient(NodeRef ing) {
+		this.ing = ing;
+		return this;
+	}
+
+	public IngListDataItem withQtyPerc(Double qtyPerc) {
+		this.qtyPerc = qtyPerc;
+		return this;
+	}
+	
 
 	/**
 	 * <p>Constructor for IngListDataItem.</p>
@@ -474,6 +491,7 @@ public class IngListDataItem extends AbstractManualDataItem
 	 * @param ing a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param isManual a {@link java.lang.Boolean} object.
 	 */
+	@Deprecated
 	public IngListDataItem(NodeRef nodeRef, Double qtyPerc, List<NodeRef> geoOrigin, List<NodeRef> bioOrigin, Boolean isGMO, Boolean isIonized,
 			Boolean processingAid, NodeRef ing, Boolean isManual) {
 		setNodeRef(nodeRef);
@@ -503,6 +521,7 @@ public class IngListDataItem extends AbstractManualDataItem
 	 * @param ing a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param isManual a {@link java.lang.Boolean} object.
 	 */
+	@Deprecated
 	public IngListDataItem(NodeRef nodeRef, IngListDataItem ingList, Double qtyPerc, List<NodeRef> geoOrigin, List<NodeRef> geoTransfo,
 			List<NodeRef> bioOrigin, Boolean isGMO, Boolean isIonized, Boolean processingAid, Boolean isSupport, NodeRef ing, Boolean isManual) {
 		setNodeRef(nodeRef);

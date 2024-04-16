@@ -28,12 +28,10 @@ MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ForecastValue
 	
 	private static final long serialVersionUID = 4160545876076772520L;
 	protected Double value = 0d;	
-	protected String unit;		
-	protected Double previousValue = 0d;
-	protected Double futureValue = 0d;
+	protected String unit;
 	protected Double valuePerProduct = 0d;
 	protected Double maxi = null;	
-	protected NodeRef cost;	
+	protected NodeRef charact;	
 	protected Boolean isFormulated;	
 	protected List<NodeRef> plants = new ArrayList<>();
 	protected Integer depthLevel;
@@ -41,38 +39,34 @@ MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ForecastValue
 	protected NodeRef componentNodeRef;
 	protected Double simulatedValue;	
 
-	protected AbstractCostListDataItem(NodeRef nodeRef, Double value, String unit, Double maxi, NodeRef cost, Boolean isManual){
+	protected AbstractCostListDataItem(NodeRef nodeRef, Double value, String unit, Double maxi, NodeRef charact, Boolean isManual){
 		super();
 		this.nodeRef = nodeRef;		
 		this.value = value;
 		this.unit =  unit;
 		this.maxi = maxi;
-		this.cost = cost;
+		this.charact = charact;
 		this.isManual = isManual;
 	}
 	
-	protected AbstractCostListDataItem(NodeRef nodeRef, Double value, String unit, Double maxi, NodeRef cost, Boolean isManual, List<NodeRef> plants, Double previousValue, Double futureValue){
+	protected AbstractCostListDataItem(NodeRef nodeRef, Double value, String unit, Double maxi, NodeRef charact, Boolean isManual, List<NodeRef> plants){
 		super();
 		this.nodeRef = nodeRef;		
 		this.value = value;
 		this.unit =  unit;
 		this.maxi = maxi;
-		this.cost = cost;
+		this.charact = charact;
 		this.isManual = isManual;
 		this.plants = plants;
-		this.previousValue = previousValue;
-		this.futureValue = futureValue;
 	}
 	
 	protected AbstractCostListDataItem(T c){
 		super(c);	
 		this.value =c.value;	
 		this.unit = c.unit;		
-		this.previousValue = c.previousValue;
-		this.futureValue = c.futureValue;
 		this.valuePerProduct = c.valuePerProduct;
 		this.maxi = c.maxi;	
-		this.cost = c.cost;	
+		this.charact = c.charact;	
 		this.isFormulated = c.isFormulated;	
 		this.plants = c.plants;
 		this.depthLevel = c.depthLevel;
@@ -85,8 +79,6 @@ MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ForecastValue
 
 	public abstract Double getSimulatedValue();
 	
-	public abstract NodeRef getCost();
-
 	public abstract Double getValuePerProduct();
 
 	public abstract T copy();
@@ -108,34 +100,22 @@ MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ForecastValue
 	@Override
 	@InternalField
 	public NodeRef getCharactNodeRef() {
-		return getCost();
+		return charact;
 	}
 	
 	@Override
-	public void setCharactNodeRef(NodeRef nodeRef) {
-		setCost(nodeRef);
+	public void setCharactNodeRef(NodeRef charact) {
+		this.charact = charact;
 	}
 
 	public void setUnit(String unit) {
 		this.unit = unit;
-	}
-		
-	public void setPreviousValue(Double previousValue) {
-		this.previousValue = previousValue;
-	}
-
-	public void setFutureValue(Double futureValue) {
-		this.futureValue = futureValue;
 	}
 
 	public void setValuePerProduct(Double valuePerProduct) {
 		this.valuePerProduct = valuePerProduct;
 	}
 
-	public void setCost(NodeRef cost) {
-		this.cost = cost;
-	}
-	
 	public void setMaxi(Double maxi) {
 		this.maxi = maxi;
 	}
@@ -210,8 +190,8 @@ MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ForecastValue
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(componentNodeRef, cost, depthLevel, futureValue, isFormulated, maxi, parent, plants,
-				previousValue, simulatedValue, unit, value, valuePerProduct);
+		result = prime * result + Objects.hash(componentNodeRef, charact, depthLevel, isFormulated, maxi, parent, plants,
+				simulatedValue, unit, value, valuePerProduct);
 		return result;
 	}
 
@@ -224,11 +204,11 @@ MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ForecastValue
 		if (getClass() != obj.getClass())
 			return false;
 		AbstractCostListDataItem<?> other = (AbstractCostListDataItem<?>) obj;
-		return Objects.equals(componentNodeRef, other.componentNodeRef) && Objects.equals(cost, other.cost)
+		return Objects.equals(componentNodeRef, other.componentNodeRef) && Objects.equals(charact, other.charact)
 				&& Objects.equals(depthLevel, other.depthLevel)
-				&& Objects.equals(futureValue, other.futureValue) && Objects.equals(isFormulated, other.isFormulated)
+				&& Objects.equals(isFormulated, other.isFormulated)
 				&& Objects.equals(maxi, other.maxi) && Objects.equals(parent, other.parent) && Objects.equals(plants, other.plants)
-				&& Objects.equals(previousValue, other.previousValue) && Objects.equals(simulatedValue, other.simulatedValue)
+				&& Objects.equals(simulatedValue, other.simulatedValue)
 				&& Objects.equals(unit, other.unit) && Objects.equals(value, other.value) && Objects.equals(valuePerProduct, other.valuePerProduct);
 	}
 
