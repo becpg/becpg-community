@@ -30,6 +30,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.MPMModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.RepoConsts;
@@ -54,6 +55,10 @@ public class ProductAttributeExtractorPlugin extends AbstractExprNameExtractor {
 	
 	@Autowired
 	private SystemConfigurationService systemConfigurationService;
+	
+	@Autowired
+	private AssociationService associationService;
+	
 	
 	private String productNameFormat() {
 		return systemConfigurationService.confValue("beCPG.product.name.format");
@@ -90,6 +95,12 @@ public class ProductAttributeExtractorPlugin extends AbstractExprNameExtractor {
 				ret += " nutrientClass-" + nutClass;
 			}
 		}
+		
+	NodeRef entityTplRef =	associationService.getTargetAssoc(nodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
+	if (entityTplRef != null) {
+		ret += type.toPrefixString(namespaceService).split(":")[1] + "-" + entityTplRef.getId();
+	}
+		
 		return ret;
 	}
 	
