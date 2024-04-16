@@ -611,7 +611,7 @@
             <name>beCPG AI - user access</name>
             <description>Access to beCPG AI</description>
             <connector-id>becpgTicket</connector-id>
-            <endpoint-url>http://AI_HOST:AI_PORT/</endpoint-url>
+            <endpoint-url>http://AI_HOST:AI_PORT</endpoint-url>
             <identity>user</identity>
          </endpoint>
       
