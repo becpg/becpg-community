@@ -47,17 +47,22 @@ public class EntityIconServiceImpl implements EntityIconService {
 			String name = icon.getKey();
 			NodeRef iconNodeRef = icon.getValue();
 
-			if (name.matches("generic-.*\\.png")) {
+			if (name.matches("generic-.*-16\\.png")) {
 				ContentReader reader = contentService.getReader(iconNodeRef, ContentModel.PROP_CONTENT);
 				if ((reader == null) || !reader.exists()) {
 					throw beCPGException("Unable to locate content for node ref " + iconNodeRef, null);
 				}
 
 				try {
+			        String[] parts = name.split("-");
+			        
+			        String type = parts[1];
+			        String resolution = parts[parts.length - 1].split("\\.")[0];
+					
 					String encodedImage = encodeImage(reader.getContentInputStream());
 					String cssClassName = extractCSSClassName(name);
-					String cssVarName = cssClassName.indexOf('-') != -1 ? cssClassName.substring(0, cssClassName.indexOf('-')): cssClassName;
-					builder.append("span" + DOT + cssClassName + OPEN_CURLY_BRACKET + DOUBLE_DASH + cssVarName + "-icon" + COLON + URL_OPEN_TARGET_PATTERN 
+					String cssVarName = "icon-"+type+"-"+resolution ;
+					builder.append("span" + DOT + cssClassName + OPEN_CURLY_BRACKET + DOUBLE_DASH + cssVarName + COLON + URL_OPEN_TARGET_PATTERN 
 					+ DATA_IMAGE_PREFIX + reader.getMimetype() + DATA_BASE64_ENCODING + encodedImage + URL_CLOSE_TARGET_PATTERN + ";" + CLOSE_CURLY_BRACKET);
 				} catch (IOException e) {
 					throw beCPGException("Failed to encode image for node ref " + iconNodeRef, e);
@@ -71,6 +76,7 @@ public class EntityIconServiceImpl implements EntityIconService {
 			throw beCPGException("Failed to write CSS to output stream.", e);
 		}
 	}
+	
 
 	public String extractCSSClassName(String fileName) {
 		String withoutPrefix = fileName.replace("generic-", "");

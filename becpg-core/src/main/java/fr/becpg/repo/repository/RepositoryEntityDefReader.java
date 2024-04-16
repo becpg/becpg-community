@@ -152,11 +152,12 @@ public interface RepositoryEntityDefReader<T> {
 	
 	
 	/**
+	 * @param allowWrite 
 	 * isRegisteredQName
 	 * @param qname
 	 * @return
 	 */
-	boolean isRegisteredQName(RepositoryEntity entity, QName qname);
+	boolean isRegisteredQName(RepositoryEntity entity, QName qname, boolean allowWrite);
 	
 	
 	
