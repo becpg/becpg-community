@@ -98,11 +98,14 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 	}
 
 	@Override
-	public boolean isRegisteredQName(RepositoryEntity entity, QName qname) {
+	public boolean isRegisteredQName(RepositoryEntity entity, QName qname, boolean allowWrite) {
 		if (qnameCache.containsValue(qname)) {
 			Method[] methods = AopProxyUtils.ultimateTargetClass(entity).getMethods();
 			for (Method method : methods) {
-				if (method != null && method.isAnnotationPresent(AlfQname.class) && readQName(method).isMatch(qname)) {
+				if (method != null && method.isAnnotationPresent(AlfQname.class) && readQName(method).isMatch(qname) && !allowWrite
+						|| (!method.isAnnotationPresent(AlfReadOnly.class)
+								&& !(method.isAnnotationPresent(AlfMultiAssoc.class) && method.getAnnotation(AlfMultiAssoc.class).isEntity())
+								&& !(method.isAnnotationPresent(AlfSingleAssoc.class) && method.getAnnotation(AlfSingleAssoc.class).isEntity()))) {
 					return true;
 				}
 			}
