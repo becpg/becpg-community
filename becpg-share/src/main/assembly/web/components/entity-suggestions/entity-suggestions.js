@@ -94,7 +94,7 @@
 			var me = this;
 			var counter = 0;
 
-			me.stompClient.subscribe('/queue/suggestions', function(suggestionResponse) {
+			me.stompClient.subscribe('/queue/suggestions/' + me.options.entityNodeRef, function(suggestionResponse) {
 				counter++;
 				var suggestions = JSON.parse(suggestionResponse.body);
 				var suggestionHtml = '<div class="card" id="suggestion-' + counter + '" data-id="' + counter + '">';
