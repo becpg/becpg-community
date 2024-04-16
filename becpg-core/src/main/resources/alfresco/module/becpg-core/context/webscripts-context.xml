@@ -157,6 +157,11 @@
 		<property name="entityListDAO" ref="entityListDAO" />
 	</bean>
 	
+	
+	<!-- Entity Icon -->
+	<bean id="webscript.fr.becpg.entity.entityIcons.get" class="fr.becpg.repo.web.scripts.entity.EntityIconWebScript" parent="webscript">
+    	<property name="entityIconService" ref="entityIconService"/>
+	</bean>
 
 	<!-- Entity report -->
 	<bean id="webscript.fr.becpg.entity.entityReport.get" class="fr.becpg.repo.web.scripts.entity.ReportWebScript" parent="webscript">
