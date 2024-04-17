@@ -198,7 +198,7 @@
 			var owner = args[1].anchor, me = this;
 			var remoteEntity = JSON.parse(decodeURIComponent(owner.getAttribute("data-entity")));
 
-			var url = Alfresco.constants.URL_CONTEXT + "proxy/ai/api/suggestions/apply";
+			var url = Alfresco.constants.URL_CONTEXT + "proxy/ai/api/suggestions/apply?ticket=" + me.options.ticket;
 
 			Alfresco.util.Ajax
 				.jsonPost(
