@@ -83,10 +83,7 @@
 					<h2>${msg("watson.welcome.message")}</h2>
 				</div>
 			</div>
-			<div id="watson-chatbot-chat-frame" class="transition show">
-				<iframe
-					src="${url.context}/proxy/ai/watson/chat" referrerpolicy="origin" sandbox="allow-scripts allow-forms allow-same-origin allow-popups allow-popups-to-escape-sandbox"></iframe>
-			</div>
+			<div id="watson-chatbot-chat-frame" class="transition show"></div>
 			<div id="watson-chatbot-footer">
 				<div class="footer-content">
 					<p>${msg("watson.footer.message")}</p>
