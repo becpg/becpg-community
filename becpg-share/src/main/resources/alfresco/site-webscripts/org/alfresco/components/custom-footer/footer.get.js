@@ -3,6 +3,15 @@
  * JS Controller for Share's footer component
  */
 
+function getBeCPGAuthTocken(user) {
+	for (var i in user.capabilities) {
+		if (i.indexOf("beCPGAuthTocken_") == 0) {
+			return i.substring(16);
+		}
+	}
+	return null;
+}
+
 function main() {
 
 	var basket = {
@@ -11,15 +20,16 @@ function main() {
 	};
 	model.widgets = [basket];
 
-	model.isAIEnable = (user!=null && user.capabilities["isAIUser"] != null && user.capabilities["isAIUser"] == true) || false;
+	model.isAIEnable = (user != null && user.capabilities["isAIUser"] != null && user.capabilities["isAIUser"] == true) || false;
 
 	if (model.isAIEnable) {
 
-		//https://gweb-cloud-chat-prod.appspot.com/chat/bot
-
 		var watson = {
 			id: "Watson",
-			name: "beCPG.component.Watson"
+			name: "beCPG.component.Watson",
+			options: {
+				ticket: getBeCPGAuthTocken(user)
+			}
 		};
 		model.widgets.push(watson);
 

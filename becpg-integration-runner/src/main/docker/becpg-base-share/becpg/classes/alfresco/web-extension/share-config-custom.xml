@@ -587,7 +587,7 @@
             <userHeader>X-Alfresco-Remote-User</userHeader>
          </connector>
          
-           <connector>
+          <!--  <connector>
             <id>becpgTicket</id>
             <name>beCPG Ticket Connector</name>
             <description>Connects to a beCPG Services instance using token</description>
@@ -595,7 +595,7 @@
             <authenticator-id>becpg-ticket</authenticator-id> 
             <reconnect-timeout>0</reconnect-timeout>
             <external-auth>BECPG_EXTERNAL_AUTH</external-auth>
-         </connector>
+         </connector> -->
          
       
          <authenticator>
@@ -607,12 +607,12 @@
          
          <endpoint>
             <id>ai</id>
-            <parent-id>alfresco</parent-id>
+           <!--  <parent-id>alfresco</parent-id> -->
             <name>beCPG AI - user access</name>
             <description>Access to beCPG AI</description>
-            <connector-id>becpgTicket</connector-id>
+            <connector-id>alfresco</connector-id>
             <endpoint-url>http://AI_HOST:AI_PORT</endpoint-url>
-            <identity>user</identity>
+            <identity>none</identity>
          </endpoint>
       
          <endpoint>

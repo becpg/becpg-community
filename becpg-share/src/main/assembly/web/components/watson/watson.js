@@ -1,59 +1,59 @@
 (function() {
-	/**
-	 * YUI Library aliases
-	 */
+	// Shortcut for Dom
 	var Dom = YAHOO.util.Dom;
 
-	var $html = Alfresco.util.encodeHTML;
-
-	/**
-	 * beCPG.component.Watson constructor.
-	 * 
-	 * @param {String}
-	 *            htmlId The HTML id of the parent element
-	 * @return {beCPG.component.Watson} The new Watson instance
-	 * @constructor
-	 */
-	beCPG.component.Watson = function Watson_constructor(htmlId) {
+	// Constructor function for beCPG.component.Watson
+	beCPG.component.Watson = function(htmlId) {
+		// Call superclass constructor
 		beCPG.component.Watson.superclass.constructor.call(this, "beCPG.component.Watson", htmlId);
-
 		return this;
 	};
 
-	YAHOO
-		.extend(
-			beCPG.component.Watson,
-			Alfresco.component.Base,
-			{
+	// Extend beCPG.component.Watson from Alfresco.component.Base
+	YAHOO.extend(beCPG.component.Watson, Alfresco.component.Base, {
 
-				/**
-				 * Fired by YUI when parent element is available for
-				 * scripting.
-				 * 
-				 * @method onReady
-				 */
-				onReady: function Watson_onReady() {
-					
-						var chatButton = YAHOO.util.Dom.get("watson-chatbot-chat-activate-bar");
-						var chatContainer = YAHOO.util.Dom.get("watson-container");
-						// Créer une fonction pour ajouter ou supprimer la classe
-					    function toggleClass(element, className) {
-					        if (YAHOO.util.Dom.hasClass(element, className)) {
-					            YAHOO.util.Dom.removeClass(element, className);
-					        } else {
-					            YAHOO.util.Dom.addClass(element, className);
-					        }
-					    }
-					
-					    // Ajouter un écouteur d'événement de clic aux boutons d'activation du chat
-					    YAHOO.util.Event.addListener(chatButton, 'click', function() {
-					        // Basculer la classe 'transition' pour changer la visibilité
-					        toggleClass(chatButton, 'transition');
-					        toggleClass(chatContainer, 'transition');
-					        toggleClass(chatContainer, 'round');
-					    });
+		options: {
+			ticket: null
+		},
 
+		isIFrameLoaded: false,
+
+		// Function to toggle a CSS class
+		toggleClass: function(element, className) {
+			if (Dom.hasClass(element, className)) {
+				Dom.removeClass(element, className);
+			} else {
+				Dom.addClass(element, className);
+			}
+		},
+
+		// Fired by YUI when parent element is available for scripting
+		onReady: function() {
+	
+			var me = this;
+			// Bind click event to handle chat button click
+			YAHOO.util.Event.addListener(Dom.get("watson-chatbot-chat-activate-bar"), 'click',
+				function() {
+					var chatButton = Dom.get("watson-chatbot-chat-activate-bar");
+					var chatContainer = Dom.get("watson-container");
+					var chatFrame = Dom.get("watson-chatbot-chat-frame");
+
+					// Toggle visibility classes
+					me.toggleClass(chatButton, 'transition');
+					me.toggleClass(chatContainer, 'transition');
+					me.toggleClass(chatContainer, 'round');
+
+					if (!me.isIFrameLoaded) {
+						var currentUrl = window.location.href;
+
+						// Load iframe with chat URL including current URL
+						chatFrame.innerHTML = '<iframe src="' + Alfresco.constants.URL_CONTEXT + 'proxy/ai/watson/chat?ticket=' + me.options.ticket + '&referer=' + encodeURIComponent(currentUrl) + '" referrerpolicy="origin" sandbox="allow-scripts allow-forms allow-same-origin allow-popups allow-popups-to-escape-sandbox"></iframe>';
+						me.isIFrameLoaded = true;
+					}
 				}
-			});
+
+				, this);
+		}
+	});
 
 })();
