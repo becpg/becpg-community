@@ -326,7 +326,7 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 
 
 	private void addPermission(String authority, String permission, HashMap<String, String> toAdd, Set<String> toRemove) {
-		if (PermissionService.READ.equals(permission) && toAdd.containsKey(authority)) {
+		if ((PermissionService.READ.equals(permission) || PermissionService.CONSUMER.equals(permission)) && toAdd.containsKey(authority)) {
 			return;
 		}
 		toAdd.put(authority, permission);
