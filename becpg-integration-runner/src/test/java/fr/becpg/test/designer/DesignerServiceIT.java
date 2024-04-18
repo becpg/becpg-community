@@ -64,16 +64,15 @@ public class DesignerServiceIT extends AbstractDesignerServiceTest {
 	public void testMetaModelVisitor() {
 
 		logger.info("testMetaModelVisitor");
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			InputStream in = (new ClassPathResource("beCPG/designer/testModel.xml")).getInputStream();
 			assertNotNull(in);
 
 			M2Model m2Model = M2Model.createModel(in);
 
-			NodeRef modelNodeRef = nodeService
-					.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, DesignerModel.TYPE_M2_MODEL)
-					.getChildRef();
+			NodeRef modelNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					ContentModel.ASSOC_CHILDREN, DesignerModel.TYPE_M2_MODEL).getChildRef();
 
 			// Try to parse becpgModel
 			metaModelVisitor.visitModelNodeRef(modelNodeRef, m2Model);
@@ -90,7 +89,7 @@ public class DesignerServiceIT extends AbstractDesignerServiceTest {
 
 			return null;
 
-		}, false, true);
+		});
 
 	}
 
@@ -98,18 +97,17 @@ public class DesignerServiceIT extends AbstractDesignerServiceTest {
 	public void testFormModelVisitor() {
 
 		logger.info("testFormModelVisitor");
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			InputStream in = (new ClassPathResource("beCPG/designer/testConfig.xml")).getInputStream();
 			assertNotNull(in);
 
-			NodeRef modelNodeRef = nodeService
-					.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, ContentModel.TYPE_CONTENT)
-					.getChildRef();
+			NodeRef modelNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					ContentModel.ASSOC_CHILDREN, ContentModel.TYPE_CONTENT).getChildRef();
 			nodeService.addAspect(modelNodeRef, DesignerModel.ASPECT_CONFIG, new HashMap<QName, Serializable>());
 
-			ChildAssociationRef childAssociationRef = nodeService.createNode(modelNodeRef, DesignerModel.ASSOC_DSG_CONFIG,
-					DesignerModel.ASSOC_DSG_CONFIG, DesignerModel.TYPE_DSG_CONFIG);
+			ChildAssociationRef childAssociationRef = nodeService.createNode(modelNodeRef,
+					DesignerModel.ASSOC_DSG_CONFIG, DesignerModel.ASSOC_DSG_CONFIG, DesignerModel.TYPE_DSG_CONFIG);
 			NodeRef configNodeRef = childAssociationRef.getChildRef();
 
 			formModelVisitor.visitConfigNodeRef(configNodeRef, in);
@@ -123,7 +121,7 @@ public class DesignerServiceIT extends AbstractDesignerServiceTest {
 
 			return null;
 
-		}, false, true);
+		});
 
 	}
 
@@ -131,7 +129,7 @@ public class DesignerServiceIT extends AbstractDesignerServiceTest {
 	public void testDesignerService() {
 
 		logger.info("testDesignerService");
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			List<FormControl> controls = designerService.getFormControls();
 
@@ -143,9 +141,8 @@ public class DesignerServiceIT extends AbstractDesignerServiceTest {
 
 			M2Model m2Model = M2Model.createModel(in);
 
-			NodeRef modelNodeRef = nodeService
-					.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, DesignerModel.TYPE_M2_MODEL)
-					.getChildRef();
+			NodeRef modelNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					ContentModel.ASSOC_CHILDREN, DesignerModel.TYPE_M2_MODEL).getChildRef();
 
 			// Try to parse becpgModel
 			metaModelVisitor.visitModelNodeRef(modelNodeRef, m2Model);
@@ -153,15 +150,16 @@ public class DesignerServiceIT extends AbstractDesignerServiceTest {
 			Map<QName, Serializable> props = new HashMap<>();
 			props.put(DesignerModel.PROP_M2_NAME, "bcpg:test");
 
-			NodeRef elNodeRef = designerService.createModelElement(modelNodeRef, DesignerModel.TYPE_M2_TYPE, DesignerModel.ASSOC_M2_TYPES, props,
-					"templateModel_STARTTASK");
+			NodeRef elNodeRef = designerService.createModelElement(modelNodeRef, DesignerModel.TYPE_M2_TYPE,
+					DesignerModel.ASSOC_M2_TYPES, props, "templateModel_STARTTASK");
 
 			assertEquals("bcpg:test", (String) nodeService.getProperty(elNodeRef, DesignerModel.PROP_M2_NAME));
-			assertEquals("bpm:startTask", (String) nodeService.getProperty(elNodeRef, DesignerModel.PROP_M2_PARENT_NAME));
+			assertEquals("bpm:startTask",
+					(String) nodeService.getProperty(elNodeRef, DesignerModel.PROP_M2_PARENT_NAME));
 
 			return null;
 
-		}, false, true);
+		});
 
 	}
 
@@ -169,7 +167,7 @@ public class DesignerServiceIT extends AbstractDesignerServiceTest {
 	public void testFindOrCreateModel() {
 
 		logger.info("testFindOrCreateModel");
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			String name = "testFindOrCreateModel.xml";
 
@@ -190,7 +188,7 @@ public class DesignerServiceIT extends AbstractDesignerServiceTest {
 			nodeService.deleteNode(configNodeRef);
 			return null;
 
-		}, false, true);
+		});
 
 	}
 

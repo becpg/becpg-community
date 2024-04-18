@@ -43,7 +43,6 @@ import fr.becpg.repo.report.entity.EntityReportData;
  */
 public class DefaultProductReportExtractorIT extends AbstractFinishedProductTest {
 
-	
 	private static final Log logger = LogFactory.getLog(DefaultProductReportExtractorIT.class);
 
 	@Autowired
@@ -66,7 +65,7 @@ public class DefaultProductReportExtractorIT extends AbstractFinishedProductTest
 
 		logger.debug("testReport()");
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			/*-- Create finished product --*/
 			logger.debug("/*-- Create finished product --*/");
@@ -79,9 +78,12 @@ public class DefaultProductReportExtractorIT extends AbstractFinishedProductTest
 			finishedProduct.setQty(2d);
 			finishedProduct.setNetWeight(2d);
 			List<PackagingListDataItem> packagingList = new ArrayList<>();
-			packagingList.add(new PackagingListDataItem(null, 1d, ProductUnit.P, PackagingLevel.Primary, true, packagingMaterial1NodeRef));
-			packagingList.add(new PackagingListDataItem(null, 3d, ProductUnit.m, PackagingLevel.Primary, true, packagingMaterial2NodeRef));
-			packagingList.add(new PackagingListDataItem(null, 8d, ProductUnit.PP, PackagingLevel.Tertiary, true, packagingMaterial3NodeRef));
+			packagingList.add(new PackagingListDataItem(null, 1d, ProductUnit.P, PackagingLevel.Primary, true,
+					packagingMaterial1NodeRef));
+			packagingList.add(new PackagingListDataItem(null, 3d, ProductUnit.m, PackagingLevel.Primary, true,
+					packagingMaterial2NodeRef));
+			packagingList.add(new PackagingListDataItem(null, 8d, ProductUnit.PP, PackagingLevel.Tertiary, true,
+					packagingMaterial3NodeRef));
 			finishedProduct.getPackagingListView().setPackagingList(packagingList);
 			List<CostListDataItem> costList = new ArrayList<>();
 			costList.add(new CostListDataItem(null, 1d, "€/P", null, pkgCost1, false));
@@ -92,11 +94,15 @@ public class DefaultProductReportExtractorIT extends AbstractFinishedProductTest
 			nutList.add(new NutListDataItem(null, null, "g/100g", null, null, "Group1", nut2, false));
 			finishedProduct.setNutList(nutList);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, 1d, 1d, ProductUnit.kg, 3d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, null, 0.5d, 0.5d, ProductUnit.kg, 3d, DeclarationType.Declare, rawMaterial2NodeRef));
-			compoList.add(new CompoListDataItem(null, null, 0.5d, 0.5d, ProductUnit.kg, 3d, DeclarationType.Declare, rawMaterial3NodeRef));
+			compoList.add(new CompoListDataItem(null, null, 1d, 1d, ProductUnit.kg, 3d, DeclarationType.Declare,
+					rawMaterial1NodeRef));
+			compoList.add(new CompoListDataItem(null, null, 0.5d, 0.5d, ProductUnit.kg, 3d, DeclarationType.Declare,
+					rawMaterial2NodeRef));
+			compoList.add(new CompoListDataItem(null, null, 0.5d, 0.5d, ProductUnit.kg, 3d, DeclarationType.Declare,
+					rawMaterial3NodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
-			NodeRef finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+			NodeRef finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct)
+					.getNodeRef();
 
 			// ProductSpecification
 			ProductSpecificationData psd = new ProductSpecificationData();
@@ -115,20 +121,22 @@ public class DefaultProductReportExtractorIT extends AbstractFinishedProductTest
 			ProductData finishedProductData = alfrescoRepository.findOne(finishedProductNodeRef);
 			Map<QName, Serializable> properties = new HashMap<>();
 			properties.put(PackModel.PROP_LABELING_POSITION, "Côté de la boîte");
-			nodeService.addAspect(finishedProductData.getPackagingList().get(0).getNodeRef(), PackModel.ASPECT_LABELING, properties);
-			associationService.update(finishedProductData.getPackagingList().get(0).getNodeRef(), PackModel.ASSOC_LABELING_TEMPLATE,
-					labelingTemplateNodeRef);
+			nodeService.addAspect(finishedProductData.getPackagingList().get(0).getNodeRef(), PackModel.ASPECT_LABELING,
+					properties);
+			associationService.update(finishedProductData.getPackagingList().get(0).getNodeRef(),
+					PackModel.ASSOC_LABELING_TEMPLATE, labelingTemplateNodeRef);
 
 			nodeService.setProperty(finishedProductNodeRef, ContentModel.PROP_DESCRIPTION,
 					"Descr line 1 " + System.getProperty("line.separator") + " descr line 2");
 
 			productService.formulate(finishedProductNodeRef);
 
-			EntityReportData entityReportData = defaultProductReportExtractor.extract(finishedProductNodeRef, new HashMap<>());
-			Assert.assertNotNull( entityReportData.getXmlDataSource());
+			EntityReportData entityReportData = defaultProductReportExtractor.extract(finishedProductNodeRef,
+					new HashMap<>());
+			Assert.assertNotNull(entityReportData.getXmlDataSource());
 			logger.info("XmlData : " + entityReportData.getXmlDataSource().asXML());
 
 			return null;
-		}, false, true);
+		});
 	}
 }

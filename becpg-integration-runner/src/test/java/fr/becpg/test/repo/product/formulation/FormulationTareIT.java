@@ -50,62 +50,127 @@ public class FormulationTareIT extends AbstractFinishedProductTest {
 	/**
 	 * Test formulate product.
 	 *
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	@Test
 	public void testFormulationTare() throws Exception {
 
 		logger.info("testFormulationFull");
 
-		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
 
-				logger.info("/*-- Create finished product --*/");
-				FinishedProductData finishedProduct = new FinishedProductData();
-				finishedProduct.setName("Produit fini 1");
-				finishedProduct.setLegalName("Legal Produit fini 1");
-				finishedProduct.setUnit(ProductUnit.kg);
-				finishedProduct.setQty(1d);
-				finishedProduct.setDensity(1d);
-				List<CompoListDataItem> compoList = new ArrayList<>();
-				compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial5NodeRef));// 90g
-				compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.P, 0d, DeclarationType.Detail, rawMaterial5NodeRef));// 9g
-				compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.lb, 0d, DeclarationType.Declare, rawMaterial5NodeRef));// 9 * 0.453592 / 0.1 = 40.8233
-				compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.oz, 0d, DeclarationType.Detail, rawMaterial5NodeRef));// 2.5514 g
-				finishedProduct.getCompoListView().setCompoList(compoList);
+			logger.info("/*-- Create finished product --*/");
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName("Produit fini 1");
+			finishedProduct.setLegalName("Legal Produit fini 1");
+			finishedProduct.setUnit(ProductUnit.kg);
+			finishedProduct.setQty(1d);
+			finishedProduct.setDensity(1d);
+			List<CompoListDataItem> compoList = new ArrayList<>();
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial5NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d,
+			 * DeclarationType.Declare, rawMaterial5NodeRef));
+			 */
+			// 90g
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.P).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial5NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.P, 0d,
+			 * DeclarationType.Detail, rawMaterial5NodeRef));
+			 */
+			// 9g
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.lb).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial5NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.lb, 0d,
+			 * DeclarationType.Declare, rawMaterial5NodeRef));
+			 */
+			// 9 * 0.453592 / 0.1 = 40.8233
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.oz).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial5NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.oz, 0d,
+			 * DeclarationType.Detail, rawMaterial5NodeRef));
+			 */
+			// 2.5514 g
+			finishedProduct.getCompoListView().setCompoList(compoList);
 
-				List<PackagingListDataItem> packList = new ArrayList<>();
-				packList.add(new PackagingListDataItem(null, 1d, ProductUnit.P, PackagingLevel.Primary, true, packagingMaterial1NodeRef));// 15g
-				packList.add(new PackagingListDataItem(null, 2d, ProductUnit.P, PackagingLevel.Primary, true, packagingMaterial2NodeRef));// 2*5g
-				packList.add(new PackagingListDataItem(null, 3d, ProductUnit.g, PackagingLevel.Primary, true, packagingMaterial3NodeRef));// 3g
-				packList.add(new PackagingListDataItem(null, 1d, ProductUnit.P, PackagingLevel.Primary, true, packagingMaterial4NodeRef));// 50g
-				packList.add(new PackagingListDataItem(null, 1d, ProductUnit.oz, PackagingLevel.Primary, true, packagingMaterial5NodeRef));// 28.349523125g
-				packList.add(new PackagingListDataItem(null, 10d, ProductUnit.mL, PackagingLevel.Primary, true, packagingMaterial4NodeRef));// 0.5
-				packList.add(new PackagingListDataItem(null, 0.2d, ProductUnit.L, PackagingLevel.Primary, true, packagingMaterial6NodeRef));// 0.2 but was 0
-				
-				finishedProduct.getPackagingListView().setPackagingList(packList);
-				
-				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+			List<PackagingListDataItem> packList = new ArrayList<>();
+			packList.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.P)
+					.withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packagingMaterial1NodeRef));
+			/*
+			 * packList.add(new PackagingListDataItem(null, 1d, ProductUnit.P,
+			 * PackagingLevel.Primary, true, packagingMaterial1NodeRef));
+			 */
+			// 15g
+			packList.add(PackagingListDataItem.build().withQty(2d).withUnit(ProductUnit.P)
+					.withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packagingMaterial2NodeRef));
+			/*
+			 * packList.add(new PackagingListDataItem(null, 2d, ProductUnit.P,
+			 * PackagingLevel.Primary, true, packagingMaterial2NodeRef));
+			 */
+			// 2*5g
+			packList.add(PackagingListDataItem.build().withQty(3d).withUnit(ProductUnit.g)
+					.withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packagingMaterial3NodeRef));
+			/*
+			 * packList.add(new PackagingListDataItem(null, 3d, ProductUnit.g,
+			 * PackagingLevel.Primary, true, packagingMaterial3NodeRef));
+			 */
+			// 3g
+			packList.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.P)
+					.withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packagingMaterial4NodeRef));
+			/*
+			 * packList.add(new PackagingListDataItem(null, 1d, ProductUnit.P,
+			 * PackagingLevel.Primary, true, packagingMaterial4NodeRef));
+			 */
+			// 50g
+			packList.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.oz)
+					.withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packagingMaterial5NodeRef));
+			/*
+			 * packList.add(new PackagingListDataItem(null, 1d, ProductUnit.oz,
+			 * PackagingLevel.Primary, true, packagingMaterial5NodeRef));
+			 */
+			// 28.349523125g
+			packList.add(PackagingListDataItem.build().withQty(10d).withUnit(ProductUnit.mL)
+					.withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packagingMaterial4NodeRef));
+			/*
+			 * packList.add(new PackagingListDataItem(null, 10d, ProductUnit.mL,
+			 * PackagingLevel.Primary, true, packagingMaterial4NodeRef));
+			 */
+			// 0.5
+			packList.add(PackagingListDataItem.build().withQty(0.2d).withUnit(ProductUnit.L)
+					.withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packagingMaterial6NodeRef));
+			/*
+			 * packList.add(new PackagingListDataItem(null, 0.2d, ProductUnit.L,
+			 * PackagingLevel.Primary, true, packagingMaterial6NodeRef));
+			 */
+			// 0.2 but was 0
 
-			}, false, true);
-		
+			finishedProduct.getPackagingListView().setPackagingList(packList);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+
+		});
+
 		final Double compoTare = 90d + 9d + 40.8233d + 2.5514d;
-		final Double packTare = 15d +  2*5d + 3d + 50d + 28.349523125d + 0.5d + 0.2d;
+		final Double packTare = 15d + 2 * 5d + 3d + 50d + 28.349523125d + 0.5d + 0.2d;
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
-				productService.formulate(finishedProductNodeRef);
-				ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+			productService.formulate(finishedProductNodeRef);
+			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
 
-				DecimalFormat df = new DecimalFormat("0.####");
-				assertEquals(df.format(compoTare + packTare), df.format(formulatedProduct.getTare()));
-				assertEquals(TareUnit.g, formulatedProduct.getTareUnit());
-				return null;
+			DecimalFormat df = new DecimalFormat("0.####");
+			assertEquals(df.format(compoTare + packTare), df.format(formulatedProduct.getTare()));
+			assertEquals(TareUnit.g, formulatedProduct.getTareUnit());
+			return null;
 
-		}, false, true);
-		
-		final NodeRef finishedProduct2NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			
+		});
+
+		final NodeRef finishedProduct2NodeRef = inWriteTx(() -> {
+
 			logger.info("/*-- Create finished product --*/");
 			FinishedProductData finishedProduct = new FinishedProductData();
 			finishedProduct.setName("Produit fini 2");
@@ -114,27 +179,32 @@ public class FormulationTareIT extends AbstractFinishedProductTest {
 			finishedProduct.setQty(1d);
 			finishedProduct.setDensity(1d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.P, 0d, DeclarationType.Declare, finishedProductNodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.P).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(finishedProductNodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.P, 0d,
+			 * DeclarationType.Declare, finishedProductNodeRef));
+			 */
 			finishedProduct.getCompoListView().setCompoList(compoList);
-			
-			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
-	
-		}, false, true);
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-		
-				productService.formulate(finishedProduct2NodeRef);
-				ProductData formulatedProduct = alfrescoRepository.findOne(finishedProduct2NodeRef);
-				
-				DecimalFormat df = new DecimalFormat("0.####");
-				assertEquals(df.format(compoTare + packTare), df.format(formulatedProduct.getTare()));
-				assertEquals(TareUnit.g, formulatedProduct.getTareUnit());
-				return null;
-		
-		}, false, true);
-		
-		final NodeRef finishedProduct3NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+
+		});
+
+		inWriteTx(() -> {
+
+			productService.formulate(finishedProduct2NodeRef);
+			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProduct2NodeRef);
+
+			DecimalFormat df = new DecimalFormat("0.####");
+			assertEquals(df.format(compoTare + packTare), df.format(formulatedProduct.getTare()));
+			assertEquals(TareUnit.g, formulatedProduct.getTareUnit());
+			return null;
+
+		});
+
+		final NodeRef finishedProduct3NodeRef = inWriteTx(() -> {
+
 			logger.info("/*-- Create finished product --*/");
 			FinishedProductData finishedProduct = new FinishedProductData();
 			finishedProduct.setName("Produit fini 3");
@@ -144,40 +214,85 @@ public class FormulationTareIT extends AbstractFinishedProductTest {
 			finishedProduct.setDensity(1d);
 			finishedProduct.setDropPackagingOfComponents(true);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.P, 0d, DeclarationType.Declare, finishedProductNodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.P).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(finishedProductNodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.P, 0d,
+			 * DeclarationType.Declare, finishedProductNodeRef));
+			 */
 			finishedProduct.getCompoListView().setCompoList(compoList);
-			
+
 			List<PackagingListDataItem> packList = new ArrayList<>();
-			packList.add(new PackagingListDataItem(null, 1d, ProductUnit.P, PackagingLevel.Primary, true, packagingMaterial1NodeRef));// 15g
-			packList.add(new PackagingListDataItem(null, 2d, ProductUnit.P, PackagingLevel.Primary, true, packagingMaterial2NodeRef));// 2*5g
-			packList.add(new PackagingListDataItem(null, 3d, ProductUnit.g, PackagingLevel.Primary, true, packagingMaterial3NodeRef));// 3g
-			packList.add(new PackagingListDataItem(null, 1d, ProductUnit.P, PackagingLevel.Primary, true, packagingMaterial4NodeRef));// 50g
-			packList.add(new PackagingListDataItem(null, 1d, ProductUnit.oz, PackagingLevel.Primary, true, packagingMaterial5NodeRef));// 28.349523125g
-			packList.add(new PackagingListDataItem(null, 10d, ProductUnit.mL, PackagingLevel.Primary, true, packagingMaterial4NodeRef));// 0.5
-			packList.add(new PackagingListDataItem(null, 0.2d, ProductUnit.L, PackagingLevel.Primary, true, packagingMaterial6NodeRef));// 0.2 but was 0
-			
+			packList.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.P)
+					.withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packagingMaterial1NodeRef));
+			/*
+			 * packList.add(new PackagingListDataItem(null, 1d, ProductUnit.P,
+			 * PackagingLevel.Primary, true, packagingMaterial1NodeRef));
+			 */
+			// 15g
+			packList.add(PackagingListDataItem.build().withQty(2d).withUnit(ProductUnit.P)
+					.withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packagingMaterial2NodeRef));
+			/*
+			 * packList.add(new PackagingListDataItem(null, 2d, ProductUnit.P,
+			 * PackagingLevel.Primary, true, packagingMaterial2NodeRef));
+			 */
+			// 2*5g
+			packList.add(PackagingListDataItem.build().withQty(3d).withUnit(ProductUnit.g)
+					.withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packagingMaterial3NodeRef));
+			/*
+			 * packList.add(new PackagingListDataItem(null, 3d, ProductUnit.g,
+			 * PackagingLevel.Primary, true, packagingMaterial3NodeRef));
+			 */
+			// 3g
+			packList.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.P)
+					.withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packagingMaterial4NodeRef));
+			/*
+			 * packList.add(new PackagingListDataItem(null, 1d, ProductUnit.P,
+			 * PackagingLevel.Primary, true, packagingMaterial4NodeRef));
+			 */
+			// 50g
+			packList.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.oz)
+					.withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packagingMaterial5NodeRef));
+			/*
+			 * packList.add(new PackagingListDataItem(null, 1d, ProductUnit.oz,
+			 * PackagingLevel.Primary, true, packagingMaterial5NodeRef));
+			 */
+			// 28.349523125g
+			packList.add(PackagingListDataItem.build().withQty(10d).withUnit(ProductUnit.mL)
+					.withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packagingMaterial4NodeRef));
+			/*
+			 * packList.add(new PackagingListDataItem(null, 10d, ProductUnit.mL,
+			 * PackagingLevel.Primary, true, packagingMaterial4NodeRef));
+			 */
+			// 0.5
+			packList.add(PackagingListDataItem.build().withQty(0.2d).withUnit(ProductUnit.L)
+					.withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packagingMaterial6NodeRef));
+			/*
+			 * packList.add(new PackagingListDataItem(null, 0.2d, ProductUnit.L,
+			 * PackagingLevel.Primary, true, packagingMaterial6NodeRef));
+			 */
+			// 0.2 but was 0
 
 			finishedProduct.getPackagingListView().setPackagingList(packList);
 
-			
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
-	
-		}, false, true);
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-		
-				productService.formulate(finishedProduct3NodeRef);
-				ProductData formulatedProduct = alfrescoRepository.findOne(finishedProduct3NodeRef);
-		
-				DecimalFormat df = new DecimalFormat("0.####");
-				assertEquals(df.format(packTare), df.format(formulatedProduct.getTare()));
-				assertEquals(TareUnit.g, formulatedProduct.getTareUnit());
-				return null;
-		
-		}, false, true);
-		
-		final NodeRef finishedProduct4NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			
+		});
+
+		inWriteTx(() -> {
+
+			productService.formulate(finishedProduct3NodeRef);
+			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProduct3NodeRef);
+
+			DecimalFormat df = new DecimalFormat("0.####");
+			assertEquals(df.format(packTare), df.format(formulatedProduct.getTare()));
+			assertEquals(TareUnit.g, formulatedProduct.getTareUnit());
+			return null;
+
+		});
+
+		final NodeRef finishedProduct4NodeRef = inWriteTx(() -> {
+
 			logger.info("/*-- Create finished product --*/");
 			FinishedProductData finishedProduct = new FinishedProductData();
 			finishedProduct.setName("Produit fini 4");
@@ -185,34 +300,36 @@ public class FormulationTareIT extends AbstractFinishedProductTest {
 			finishedProduct.setUnit(ProductUnit.kg);
 			finishedProduct.setQty(1d);
 			finishedProduct.setDensity(1d);
-			
+
 			List<PackagingListDataItem> packList = new ArrayList<>();
-			PackagingListDataItem p = new PackagingListDataItem(null, 1d, ProductUnit.P, PackagingLevel.Primary, true, packagingMaterial1NodeRef);
+			PackagingListDataItem p = PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.P)
+					.withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packagingMaterial1NodeRef);
+			/*
+			 * PackagingListDataItem p = new PackagingListDataItem(null, 1d, ProductUnit.P,
+			 * PackagingLevel.Primary, true, packagingMaterial1NodeRef);
+			 */
 			p.setIsRecycle(true);
 			packList.add(p);// 15g
-			
+
 			finishedProduct.getPackagingListView().setPackagingList(packList);
-			
+
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
-	
-		}, false, true);
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		});
 
-		
-				productService.formulate(finishedProduct4NodeRef);
-				ProductData formulatedProduct = alfrescoRepository.findOne(finishedProduct4NodeRef);
-		
-				DecimalFormat df = new DecimalFormat("0.####");
-				assertEquals(df.format(15d), df.format(formulatedProduct.getTare()));
-				assertEquals(TareUnit.g, formulatedProduct.getTareUnit());
-				
-				assertEquals(0d, formulatedProduct.getUnitTotalCost());
-				return null;
-		
+		inWriteTx(() -> {
 
-		}, false, true);
-	
+			productService.formulate(finishedProduct4NodeRef);
+			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProduct4NodeRef);
+
+			DecimalFormat df = new DecimalFormat("0.####");
+			assertEquals(df.format(15d), df.format(formulatedProduct.getTare()));
+			assertEquals(TareUnit.g, formulatedProduct.getTareUnit());
+
+			assertEquals(0d, formulatedProduct.getUnitTotalCost());
+			return null;
+
+		});
 
 	}
 

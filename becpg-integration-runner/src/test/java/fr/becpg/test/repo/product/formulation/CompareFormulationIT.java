@@ -45,55 +45,47 @@ public class CompareFormulationIT extends FormulationFullIT {
 	/**
 	 * Test formulate product.
 	 *
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	@Test
 	public void testCompareFormulation() throws Exception {
-
 		logger.info("testFormulationFull");
 
-		final NodeRef finishedProductNodeRef1 = createFullProductNodeRef("Produit fini 1");
-		final NodeRef finishedProductNodeRef2 = createFullProductNodeRef("Produit fini 2");
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef finishedProductNodeRef1 = createFullProductNodeRef("Produit fini 1");
+		NodeRef finishedProductNodeRef2 = createFullProductNodeRef("Produit fini 2");
 
+		inWriteTx(() -> {
 			associationService.update(finishedProductNodeRef1, BeCPGModel.ASSOC_COMPARE_WITH_ENTITIES,
 					Collections.singletonList(finishedProductNodeRef2));
 
-			/*-- Formulate product --*/
 			logger.info("/*-- Formulate product --*/");
 			productService.formulate(finishedProductNodeRef1);
 
-			/*-- Verify formulation --*/
 			logger.info("/*-- Verify formulation --*/");
 			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef1);
 
 			checkProduct(formulatedProduct);
 
 			return null;
+		});
 
-		}, false, true);
-
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-
+		inWriteTx(() -> {
 			ProductData product2 = alfrescoRepository.findOne(finishedProductNodeRef2);
-
 			product2.setQty(3d);
-
 			alfrescoRepository.save(product2);
 
-			/*-- Formulate product --*/
 			logger.info("/*-- Formulate product --*/");
 			productService.formulate(finishedProductNodeRef1);
 
-			/*-- Verify formulation --*/
 			logger.info("/*-- Verify formulation --*/");
 			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef1);
 
-			for (DynamicCharactListItem dynamicCharactListItem : formulatedProduct.getCompoListView().getDynamicCharactList()) {
-				String trace = "Dyn charact :" + dynamicCharactListItem.getName() + " value " + dynamicCharactListItem.getValue();
+			for (DynamicCharactListItem dynamicCharactListItem : formulatedProduct.getCompoListView()
+					.getDynamicCharactList()) {
+				String trace = "Dyn charact :" + dynamicCharactListItem.getName() + " value "
+						+ dynamicCharactListItem.getValue();
 				logger.info(trace);
-				Assert.assertNotEquals("#Error",dynamicCharactListItem.getValue());
+				Assert.assertNotEquals("#Error", dynamicCharactListItem.getValue());
 			}
 
 			// assertEquals((String)formulatedProduct.getCompoListView().getDynamicCharactList().get(0).getValue(),
@@ -107,16 +99,17 @@ public class CompareFormulationIT extends FormulationFullIT {
 			// +
 			// "\"nodeRef\":\""+finishedProductNodeRef2.toString()+"\",\"displayValue\":\"3\"}]}");
 
-			JSONTokener tokener = new JSONTokener((String) formulatedProduct.getCompoListView().getDynamicCharactList().get(0).getValue());
+			JSONTokener tokener = new JSONTokener(
+					(String) formulatedProduct.getCompoListView().getDynamicCharactList().get(0).getValue());
 			JSONObject jsonObject = new JSONObject(tokener);
 			JSONArray array = (JSONArray) jsonObject.get(JsonFormulaHelper.JSON_COMP_ITEMS);
 			Assert.assertEquals(2, array.length());
 
 			Assert.assertEquals(3, ((JSONObject) array.get(1)).get(JsonFormulaHelper.JSON_VALUE));
-			Assert.assertEquals(finishedProductNodeRef2.toString(), ((JSONObject) array.get(1)).get(JsonFormulaHelper.JSON_NODEREF));
+			Assert.assertEquals(finishedProductNodeRef2.toString(),
+					((JSONObject) array.get(1)).get(JsonFormulaHelper.JSON_NODEREF));
 
 			return null;
-		}, false, true);
+		});
 	}
-
 }

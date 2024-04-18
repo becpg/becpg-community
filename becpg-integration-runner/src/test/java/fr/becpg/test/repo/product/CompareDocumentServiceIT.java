@@ -31,7 +31,7 @@ public class CompareDocumentServiceIT extends AbstractCompareProductTest {
 	@Test
 	public void testStructcomparisonDocument() {
 
-		fp1NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		fp1NodeRef = inWriteTx(() -> {
 
 			logger.debug("createDocument 1");
 			FinishedProductData fp1 = new FinishedProductData();
@@ -57,9 +57,9 @@ public class CompareDocumentServiceIT extends AbstractCompareProductTest {
 			createFolderNode(folder3Noderef, "Sub-Empty-folder", "some folder content");
 
 			return fp1NodeRef;
-		}, false, true);
+		});
 
-		fp2NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		fp2NodeRef = inWriteTx(() -> {
 
 			logger.debug("createDocument 2");
 			FinishedProductData fp2 = new FinishedProductData();
@@ -73,7 +73,8 @@ public class CompareDocumentServiceIT extends AbstractCompareProductTest {
 			createFileNode(folderNoderef, "fx.pdf", "some file content");
 			NodeRef fileNodeRef = createFileNode(folderNoderef, "f1.pdf", "some file content");
 			ContentData contentData = (ContentData) nodeService.getProperty(fileNodeRef, ContentModel.PROP_CONTENT);
-			ContentData newContentData = new ContentData(contentData.getContentUrl(), contentData.getMimetype(), 75l, contentData.getEncoding());
+			ContentData newContentData = new ContentData(contentData.getContentUrl(), contentData.getMimetype(), 75l,
+					contentData.getEncoding());
 			nodeService.setProperty(fileNodeRef, ContentModel.PROP_CONTENT, newContentData);
 
 			NodeRef subFolderNoderef = createFolderNode(fp2NodeRef, "Transport", "some folder content");
@@ -84,8 +85,8 @@ public class CompareDocumentServiceIT extends AbstractCompareProductTest {
 			createFolderNode(folder2Noderef, "Sub-WonderLand", "some folder content");
 
 			return fp2NodeRef;
-		}, false, true);
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		});
+		inWriteTx(() -> {
 
 			List<NodeRef> productsNodeRef = new ArrayList<>();
 			productsNodeRef.add(fp2NodeRef);
@@ -100,84 +101,90 @@ public class CompareDocumentServiceIT extends AbstractCompareProductTest {
 				String fileName1 = "";
 				String fileName2 = "";
 				if (structCompareResultItem.getCharacteristic1() != null) {
-					fileName1 = (String) nodeService.getProperty(structCompareResultItem.getCharacteristic1(), ContentModel.PROP_NAME);
+					fileName1 = (String) nodeService.getProperty(structCompareResultItem.getCharacteristic1(),
+							ContentModel.PROP_NAME);
 				}
 				if (structCompareResultItem.getCharacteristic2() != null) {
-					fileName2 = (String) nodeService.getProperty(structCompareResultItem.getCharacteristic2(), ContentModel.PROP_NAME);
+					fileName2 = (String) nodeService.getProperty(structCompareResultItem.getCharacteristic2(),
+							ContentModel.PROP_NAME);
 				}
 
-				String tempfile = structCompareResultItem.getEntityList() == null ? "" : structCompareResultItem.getEntityList().toString();
-				logger.debug("content : " + tempfile + ", depthLevel : " + structCompareResultItem.getDepthLevel() + " ,  Operator : "
-						+ structCompareResultItem.getOperator() + " , file Name 1 :" + fileName1 + "  , file Name 2 : " + fileName2
-						+ " ,  properties  1 : " + structCompareResultItem.getProperties1().toString() + ",  properties 2 : "
+				String tempfile = structCompareResultItem.getEntityList() == null ? ""
+						: structCompareResultItem.getEntityList().toString();
+				logger.debug("content : " + tempfile + ", depthLevel : " + structCompareResultItem.getDepthLevel()
+						+ " ,  Operator : " + structCompareResultItem.getOperator() + " , file Name 1 :" + fileName1
+						+ "  , file Name 2 : " + fileName2 + " ,  properties  1 : "
+						+ structCompareResultItem.getProperties1().toString() + ",  properties 2 : "
 						+ structCompareResultItem.getProperties2().toString());
 			}
 
-			assertTrue(checkStructCompareRow(structCompareResult, "{http://www.alfresco.org/model/content/1.0}content", 1,
-					StructCompareOperator.Added, "", "f4.pdf", "{}", "{{http://www.alfresco.org/model/content/1.0}name=f4.pdf}"));
+			assertTrue(checkStructCompareRow(structCompareResult, "{http://www.alfresco.org/model/content/1.0}content",
+					1, StructCompareOperator.Added, "", "f4.pdf", "{}",
+					"{{http://www.alfresco.org/model/content/1.0}name=f4.pdf}"));
 
-			assertTrue(checkStructCompareRow(structCompareResult, "{http://www.alfresco.org/model/content/1.0}content", 1,
-					StructCompareOperator.Modified, "", "Transport", "{}", "{}"));
+			assertTrue(checkStructCompareRow(structCompareResult, "{http://www.alfresco.org/model/content/1.0}content",
+					1, StructCompareOperator.Modified, "", "Transport", "{}", "{}"));
 
-			assertTrue(checkStructCompareRow(structCompareResult, "{http://www.alfresco.org/model/content/1.0}content", 2,
-					StructCompareOperator.Added, "", "f3.pdf", "{}", "{{http://www.alfresco.org/model/content/1.0}name=f3.pdf}"));
+			assertTrue(checkStructCompareRow(structCompareResult, "{http://www.alfresco.org/model/content/1.0}content",
+					2, StructCompareOperator.Added, "", "f3.pdf", "{}",
+					"{{http://www.alfresco.org/model/content/1.0}name=f3.pdf}"));
 
-			assertTrue(checkStructCompareRow(structCompareResult, "{http://www.alfresco.org/model/content/1.0}content", 1,
-					StructCompareOperator.Equal, "Brief", "Brief", "{}", "{}"));
+			assertTrue(checkStructCompareRow(structCompareResult, "{http://www.alfresco.org/model/content/1.0}content",
+					1, StructCompareOperator.Equal, "Brief", "Brief", "{}", "{}"));
 
-			assertTrue(checkStructCompareRow(structCompareResult, "{http://www.alfresco.org/model/content/1.0}content", 1,
-					StructCompareOperator.Equal, "Documents", "Documents", "{}", "{}"));
+			assertTrue(checkStructCompareRow(structCompareResult, "{http://www.alfresco.org/model/content/1.0}content",
+					1, StructCompareOperator.Equal, "Documents", "Documents", "{}", "{}"));
 
-			assertTrue(checkStructCompareRow(structCompareResult, "{http://www.alfresco.org/model/content/1.0}content", 1,
-					StructCompareOperator.Equal, "Images", "Images", "{}", "{}"));
+			assertTrue(checkStructCompareRow(structCompareResult, "{http://www.alfresco.org/model/content/1.0}content",
+					1, StructCompareOperator.Equal, "Images", "Images", "{}", "{}"));
 
-			assertTrue(checkStructCompareRow(structCompareResult, "{http://www.alfresco.org/model/content/1.0}content", 1,
-					StructCompareOperator.Equal, "Empty-folder", "", "{}", "{}"));
+			assertTrue(checkStructCompareRow(structCompareResult, "{http://www.alfresco.org/model/content/1.0}content",
+					1, StructCompareOperator.Equal, "Empty-folder", "", "{}", "{}"));
 
-			assertTrue(checkStructCompareRow(structCompareResult, "{http://www.alfresco.org/model/content/1.0}content", 2,
-					StructCompareOperator.Equal, "Sub-Empty-folder", "", "{}", "{}"));
+			assertTrue(checkStructCompareRow(structCompareResult, "{http://www.alfresco.org/model/content/1.0}content",
+					2, StructCompareOperator.Equal, "Sub-Empty-folder", "", "{}", "{}"));
 
-			assertTrue(checkStructCompareRow(structCompareResult, "{http://www.alfresco.org/model/content/1.0}content", 1,
-					StructCompareOperator.Modified, "WonderLand", "WonderLand", "{}", "{}"));
+			assertTrue(checkStructCompareRow(structCompareResult, "{http://www.alfresco.org/model/content/1.0}content",
+					1, StructCompareOperator.Modified, "WonderLand", "WonderLand", "{}", "{}"));
 
-			assertTrue(checkStructCompareRow(structCompareResult, "{http://www.alfresco.org/model/content/1.0}content", 2,
-					StructCompareOperator.Modified, "Sub-WonderLand", "Sub-WonderLand", "{}", "{}"));
+			assertTrue(checkStructCompareRow(structCompareResult, "{http://www.alfresco.org/model/content/1.0}content",
+					2, StructCompareOperator.Modified, "Sub-WonderLand", "Sub-WonderLand", "{}", "{}"));
 
-			assertTrue(checkStructCompareRow(structCompareResult, "{http://www.alfresco.org/model/content/1.0}content", 3,
-					StructCompareOperator.Removed, "f4.pdf", "", "{{http://www.alfresco.org/model/content/1.0}name=f4.pdf}", "{}"));
+			assertTrue(checkStructCompareRow(structCompareResult, "{http://www.alfresco.org/model/content/1.0}content",
+					3, StructCompareOperator.Removed, "f4.pdf", "",
+					"{{http://www.alfresco.org/model/content/1.0}name=f4.pdf}", "{}"));
 
-			assertTrue(checkStructCompareRow(structCompareResult, "{http://www.alfresco.org/model/content/1.0}content", 1,
-					StructCompareOperator.Modified, "Presentation", "Presentation", "{}", "{}"));
+			assertTrue(checkStructCompareRow(structCompareResult, "{http://www.alfresco.org/model/content/1.0}content",
+					1, StructCompareOperator.Modified, "Presentation", "Presentation", "{}", "{}"));
 
-			assertTrue(checkStructCompareRow(structCompareResult, "{http://www.alfresco.org/model/content/1.0}content", 2,
-					StructCompareOperator.Equal, "fx.pdf", "fx.pdf", "{}", "{}"));
+			assertTrue(checkStructCompareRow(structCompareResult, "{http://www.alfresco.org/model/content/1.0}content",
+					2, StructCompareOperator.Equal, "fx.pdf", "fx.pdf", "{}", "{}"));
 
-			assertTrue(checkStructCompareRow(structCompareResult, "{http://www.alfresco.org/model/content/1.0}content", 2,
-					StructCompareOperator.Modified, "f1.pdf", "f1.pdf", "{}", "{}"));
+			assertTrue(checkStructCompareRow(structCompareResult, "{http://www.alfresco.org/model/content/1.0}content",
+					2, StructCompareOperator.Modified, "f1.pdf", "f1.pdf", "{}", "{}"));
 
-			assertTrue(checkStructCompareRow(structCompareResult, "{http://www.alfresco.org/model/content/1.0}content", 2,
-					StructCompareOperator.Modified, "Sub-Presentation", "", "{}", "{}"));
+			assertTrue(checkStructCompareRow(structCompareResult, "{http://www.alfresco.org/model/content/1.0}content",
+					2, StructCompareOperator.Modified, "Sub-Presentation", "", "{}", "{}"));
 
-			assertTrue(checkStructCompareRow(structCompareResult, "{http://www.alfresco.org/model/content/1.0}content", 3,
-					StructCompareOperator.Removed, "f2.pdf", "", "{{http://www.alfresco.org/model/content/1.0}name=f2.pdf}", "{}"));
+			assertTrue(checkStructCompareRow(structCompareResult, "{http://www.alfresco.org/model/content/1.0}content",
+					3, StructCompareOperator.Removed, "f2.pdf", "",
+					"{{http://www.alfresco.org/model/content/1.0}name=f2.pdf}", "{}"));
 
-			assertTrue(checkStructCompareRow(structCompareResult, "{http://www.alfresco.org/model/content/1.0}content", 3,
-					StructCompareOperator.Removed, "f3.pdf", "", "{{http://www.alfresco.org/model/content/1.0}name=f3.pdf}", "{}"));
+			assertTrue(checkStructCompareRow(structCompareResult, "{http://www.alfresco.org/model/content/1.0}content",
+					3, StructCompareOperator.Removed, "f3.pdf", "",
+					"{{http://www.alfresco.org/model/content/1.0}name=f3.pdf}", "{}"));
 
 			return fp2NodeRef;
-		}, false, true);
+		});
 
 	}
 
 	/**
 	 * Creates a new folder node setting the content provided.
 	 *
-	 * @param parent
-	 *            the parent node reference
-	 * @param name
-	 *            the name of the newly created content object
-	 * @param text
-	 *            the content text to be set on the newly created node
+	 * @param parent the parent node reference
+	 * @param name   the name of the newly created content object
+	 * @param text   the content text to be set on the newly created node
 	 * @return NodeRef node reference to the newly created content node
 	 */
 	private NodeRef createFolderNode(NodeRef parent, String name, String text) {
@@ -195,12 +202,9 @@ public class CompareDocumentServiceIT extends AbstractCompareProductTest {
 	/**
 	 * Creates a new file node setting the content provided.
 	 *
-	 * @param parent
-	 *            the parent node reference
-	 * @param name
-	 *            the name of the file.
-	 * @param text
-	 *            the content text to be set on the file node
+	 * @param parent the parent node reference
+	 * @param name   the name of the file.
+	 * @param text   the content text to be set on the file node
 	 * @return NodeRef node reference of the file nodeRef
 	 */
 	private NodeRef createFileNode(NodeRef parent, String name, String text) {

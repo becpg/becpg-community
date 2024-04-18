@@ -50,7 +50,6 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 
 	protected static final Log logger = LogFactory.getLog(ScoreCalculatingIT.class);
 
-
 	@Autowired
 	private Repository repositoryHelper;
 
@@ -59,7 +58,6 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 
 	@Autowired
 	private ContentService contentService;
-	
 
 	@Autowired
 	private ContentHelper contentHelper;
@@ -85,7 +83,7 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 	public void testScore() {
 
 		// create FP
-		NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef finishedProductNodeRef = inWriteTx(() -> {
 
 			FinishedProductData finishedProduct = new FinishedProductData();
 
@@ -113,11 +111,36 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 			alfrescoRepository.save(rawMaterial12);
 
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial5NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial6NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial11NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial12NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d,
+			 * DeclarationType.Declare, rawMaterial1NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial5NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d,
+			 * DeclarationType.Declare, rawMaterial5NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial6NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d,
+			 * DeclarationType.Declare, rawMaterial6NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial11NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d,
+			 * DeclarationType.Declare, rawMaterial11NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial12NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d,
+			 * DeclarationType.Declare, rawMaterial12NodeRef));
+			 */
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
 			/**
@@ -136,9 +159,24 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 			alfrescoRepository.save(packagingKit);
 
 			List<PackagingListDataItem> packagingList = new ArrayList<>();
-			packagingList.add(new PackagingListDataItem(null, 1d, ProductUnit.kg, PackagingLevel.Primary, false, packagingMaterial1NodeRef));
-			packagingList.add(new PackagingListDataItem(null, 1d, ProductUnit.kg, PackagingLevel.Primary, false, packagingMaterial2NodeRef));
-			packagingList.add(new PackagingListDataItem(null, 1d, ProductUnit.kg, PackagingLevel.Secondary, true, packagingKit1NodeRef));
+			packagingList.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.kg)
+					.withPkgLevel(PackagingLevel.Primary).withIsMaster(false).withProduct(packagingMaterial1NodeRef));
+			/*
+			 * packagingList.add(new PackagingListDataItem(null, 1d, ProductUnit.kg,
+			 * PackagingLevel.Primary, false, packagingMaterial1NodeRef));
+			 */
+			packagingList.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.kg)
+					.withPkgLevel(PackagingLevel.Primary).withIsMaster(false).withProduct(packagingMaterial2NodeRef));
+			/*
+			 * packagingList.add(new PackagingListDataItem(null, 1d, ProductUnit.kg,
+			 * PackagingLevel.Primary, false, packagingMaterial2NodeRef));
+			 */
+			packagingList.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.kg)
+					.withPkgLevel(PackagingLevel.Secondary).withIsMaster(true).withProduct(packagingKit1NodeRef));
+			/*
+			 * packagingList.add(new PackagingListDataItem(null, 1d, ProductUnit.kg,
+			 * PackagingLevel.Secondary, true, packagingKit1NodeRef));
+			 */
 			finishedProduct.getPackagingListView().setPackagingList(packagingList);
 
 			finishedProduct.setLegalName(new MLText(Locale.FRENCH, "Produit fini 1"));
@@ -146,49 +184,52 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			/**
 			 * Spec
 			 */
 			Map<QName, Serializable> properties = new HashMap<>();
 			properties.put(ContentModel.PROP_NAME, "Spec1");
-			NodeRef productSpecificationNodeRef1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
-					PLMModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
+			NodeRef productSpecificationNodeRef1 = nodeService
+					.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+									(String) properties.get(ContentModel.PROP_NAME)),
+							PLMModel.TYPE_PRODUCT_SPECIFICATION, properties)
+					.getChildRef();
 
-			ProductSpecificationData specifications = (ProductSpecificationData) alfrescoRepository.findOne(productSpecificationNodeRef1);
+			ProductSpecificationData specifications = (ProductSpecificationData) alfrescoRepository
+					.findOne(productSpecificationNodeRef1);
 			List<ForbiddenIngListDataItem> forbiddenIngList2 = new ArrayList<>();
 
 			ings = new ArrayList<>();
 			List<NodeRef> geoOrigins = new ArrayList<>();
 			ings.add(ing2);
 			geoOrigins.add(geoOrigin2);
-			forbiddenIngList2.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "Ing2 geoOrigin2 interdit sur charcuterie", null,
-					null, null, ings, geoOrigins, new ArrayList<>()));
+			forbiddenIngList2.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden,
+					"Ing2 geoOrigin2 interdit sur charcuterie", null, null, null, ings, geoOrigins, new ArrayList<>()));
 
 			specifications.setForbiddenIngList(forbiddenIngList2);
 			alfrescoRepository.save(specifications);
 
-			nodeService.createAssociation(finishedProductNodeRef, productSpecificationNodeRef1, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
+			nodeService.createAssociation(finishedProductNodeRef, productSpecificationNodeRef1,
+					PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
 			return null;
 
-		}, false, true);
+		});
 
 		// formulate and check FP score
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			productService.formulate(finishedProductNodeRef);
-			
 
 			return null;
-		}, false, true);	
-			
+		});
 
 		// formulate and check FP score
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			ProductData finishedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
 
 			assertNotNull(finishedProduct.getEntityScore());
@@ -217,12 +258,14 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 			// 37.5 + 90 + 20 = 49.1 % global score
 			assertEquals(50, globalScore);
 
-			JSONArray missingFieldsArray = scoresObject.getJSONArray("catalogs").getJSONObject(0).getJSONArray("missingFields");
+			JSONArray missingFieldsArray = scoresObject.getJSONArray("catalogs").getJSONObject(0)
+					.getJSONArray("missingFields");
 			assertNotNull(missingFieldsArray);
 
 			// 1/5 mandatory fields -> 4 missing
 			assertEquals(3, missingFieldsArray.length());
-			logger.info("score=" + scoresObject.getJSONArray("catalogs").getJSONObject(0).getDouble("score") + " (expecting 25)");
+			logger.info("score=" + scoresObject.getJSONArray("catalogs").getJSONObject(0).getDouble("score")
+					+ " (expecting 25)");
 
 			assertEquals(25, (int) scoresObject.getJSONArray("catalogs").getJSONObject(0).getDouble("score"));
 
@@ -231,11 +274,11 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 			assertTrue(missingFieldsString.contains("cm:title"));
 
 			return null;
-		}, false, true);
+		});
 	}
 
 	private void setUpCatalogs(NodeRef family) {
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			String catalogJSONString = "[{\"entityType\":[\"bcpg:finishedProduct\"],\"uniqueFields\":[\"bcpg:erpCode\"],\"id\":\"incoFinishedProduct\",\"label\":\"EU 1169/2011 (INCO)\",\"fields\":[\"bcpg:legalName\",\"bcpg:precautionOfUseRef\",\"bcpg:useByDate|bcpg:bestBeforeDate\",\"bcpg:storageConditionsRef\",\"cm:title\"]},{\"entityType\":[\"bcpg:rawMaterial\"],\"uniqueFields\":[\"bcpg:erpCode\"],\"id\":\"incoRawMaterials\",\"label\":\"EU 1169/2011 (INCO)\",\"fields\":[\"bcpg:legalName\"]}]";
 
 			JSONArray properCatalogs = new JSONArray(catalogJSONString);
@@ -256,7 +299,8 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 				try {
 					catalogs = new JSONArray(content);
 					JSONObject catalog = catalogs.getJSONObject(0);
-					catalog.put("entityFilter", "hierarchy1!=null && hierarchy1.toString() == '" + family + "' ? true : false");
+					catalog.put("entityFilter",
+							"hierarchy1!=null && hierarchy1.toString() == '" + family + "' ? true : false");
 					logger.info("Catalog before writing: " + catalogs);
 					ContentWriter writer = contentService.getWriter(catalogFile, ContentModel.PROP_CONTENT, true);
 					PrintWriter printWriter = new PrintWriter(writer.getContentOutputStream());
@@ -273,19 +317,19 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 			}
 
 			return null;
-		}, false, true);
+		});
 	}
 
 	private void restoreCatalogs() {
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			
+		inWriteTx(() -> {
+
 			NodeRef folderNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(),
 					"/app:company_home/cm:System/cm:PropertyCatalogs");
 
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/catalogs/*.json", true);
-			
+
 			return null;
-		}, false, true);
+		});
 	}
 
 	@Override
@@ -297,12 +341,15 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 
 	private NodeRef getFamilyNodeRef() {
 
-		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		return inWriteTx(() -> {
 			Map<QName, Serializable> props = new HashMap<>(1);
-			props.put(BeCPGModel.PROP_LKV_VALUE, "Famille 1-"+(Calendar.getInstance().getTimeInMillis()));
-			return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) props.get(BeCPGModel.PROP_LKV_VALUE)),
-					BeCPGModel.TYPE_LINKED_VALUE, props).getChildRef();
-		}, false, true);
+			props.put(BeCPGModel.PROP_LKV_VALUE, "Famille 1-" + (Calendar.getInstance().getTimeInMillis()));
+			return nodeService
+					.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+									(String) props.get(BeCPGModel.PROP_LKV_VALUE)),
+							BeCPGModel.TYPE_LINKED_VALUE, props)
+					.getChildRef();
+		});
 	}
 }

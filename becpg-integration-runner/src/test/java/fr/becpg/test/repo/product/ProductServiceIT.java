@@ -109,17 +109,16 @@ public class ProductServiceIT extends PLMBaseTestCase {
 	/**
 	 * Test report product.
 	 *
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	@Test
 	public void testReportProduct() throws Exception {
 
-		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef rawMaterialNodeRef = inWriteTx(() -> {
 
 			/*-- Create images folder --*/
-			NodeRef imagesNodeRef = fileFolderService
-					.create(getTestFolderNodeRef(), TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES), ContentModel.TYPE_FOLDER).getNodeRef();
+			NodeRef imagesNodeRef = fileFolderService.create(getTestFolderNodeRef(),
+					TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES), ContentModel.TYPE_FOLDER).getNodeRef();
 
 			addProductImage(imagesNodeRef, PLMModel.TYPE_FINISHEDPRODUCT);
 
@@ -127,16 +126,17 @@ public class ProductServiceIT extends PLMBaseTestCase {
 			logger.debug("Create product");
 			return BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test report");
 
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			/*-- Generate report --*/
 			entityReportService.generateReports(rawMaterialNodeRef);
 
 			/*-- Check report --*/
 			logger.debug("/*-- Check report --*/");
-			NodeRef documentsNodeRef = nodeService.getChildByName(rawMaterialNodeRef, ContentModel.ASSOC_CONTAINS, "Documents");
+			NodeRef documentsNodeRef = nodeService.getChildByName(rawMaterialNodeRef, ContentModel.ASSOC_CONTAINS,
+					"Documents");
 			assertNotNull(documentsNodeRef);
 
 			NodeRef documentNodeRef = nodeService.getChildByName(documentsNodeRef, ContentModel.ASSOC_CONTAINS,
@@ -160,28 +160,28 @@ public class ProductServiceIT extends PLMBaseTestCase {
 			properties = new HashMap<>();
 			properties.put(ContentModel.PROP_NAME, "Product Tpl");
 			nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(ContentModel.PROP_NAME)),
 					BeCPGModel.TYPE_ENTITY_V2, properties).getChildRef();
 
 			entityReportService.generateReports(rawMaterialNodeRef);
 
 			return null;
 
-		}, false, true);
+		});
 	}
 
 	/**
 	 * Test initialize product folder.
 	 *
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	@Test
 	public void testInitializeProductFolder() throws Exception {
 
 		logger.debug("testInitializeProductFolder");
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			NodeRef entityTplNodeRef = entityTplService.getEntityTpl(PLMModel.TYPE_FINISHEDPRODUCT);
 			NodeRef imagesFolder = nodeService.getChildByName(entityTplNodeRef, ContentModel.ASSOC_CONTAINS,
@@ -197,24 +197,27 @@ public class ProductServiceIT extends PLMBaseTestCase {
 					zones.add(AuthorityService.ZONE_APP_DEFAULT);
 					zones.add(AuthorityService.ZONE_APP_SHARE);
 					zones.add(AuthorityService.ZONE_AUTH_ALFRESCO);
-					authorityService.createAuthority(AuthorityType.GROUP, collaboratorGroupName, collaboratorGroupName, zones);
+					authorityService.createAuthority(AuthorityType.GROUP, collaboratorGroupName, collaboratorGroupName,
+							zones);
 				}
-				NodeRef groupNodeRef = authorityDAO.getAuthorityNodeRefOrNull(PermissionService.GROUP_PREFIX + collaboratorGroupName);
+				NodeRef groupNodeRef = authorityDAO
+						.getAuthorityNodeRefOrNull(PermissionService.GROUP_PREFIX + collaboratorGroupName);
 				logger.debug("imagesFolder: " + imagesFolder);
 				logger.debug("groupNodeRef: " + groupNodeRef);
 				nodeService.addAspect(imagesFolder, BeCPGModel.ASPECT_PERMISSIONS_TPL, null);
 				logger.debug("aspects: " + nodeService.getAspects(imagesFolder));
 				logger.info("imagesFolder" + imagesFolder);
 				logger.info("groupNodeRef" + groupNodeRef);
-				nodeService.createAssociation(imagesFolder, groupNodeRef, BeCPGModel.ASSOC_PERMISSIONS_TPL_COLLABORATOR_GROUPS);
+				nodeService.createAssociation(imagesFolder, groupNodeRef,
+						BeCPGModel.ASSOC_PERMISSIONS_TPL_COLLABORATOR_GROUPS);
 			}
 
 			return null;
 
-		}, false, true);
+		});
 
 		/*-- Create raw material --*/
-		NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef rawMaterialNodeRef = inWriteTx(() -> {
 
 			logger.debug("/*-- Create raw material --*/");
 			RawMaterialData rawMaterial = new RawMaterialData();
@@ -224,45 +227,48 @@ public class ProductServiceIT extends PLMBaseTestCase {
 
 			return rawMaterialNodeRef1;
 
-		}, false, true);
+		});
 
 		// Check
 		logger.debug("//Check raw material");
 		NodeRef parentRawMaterialNodeRef = nodeService.getPrimaryParent(rawMaterialNodeRef).getParentRef();
-		assertEquals("Parent of raw material must be the getTestFolderNodeRef()", getTestFolderNodeRef(), parentRawMaterialNodeRef);
-		assertEquals("Parent of raw material must have the type FOLDER", ContentModel.TYPE_FOLDER, nodeService.getType(parentRawMaterialNodeRef));
+		assertEquals("Parent of raw material must be the getTestFolderNodeRef()", getTestFolderNodeRef(),
+				parentRawMaterialNodeRef);
+		assertEquals("Parent of raw material must have the type FOLDER", ContentModel.TYPE_FOLDER,
+				nodeService.getType(parentRawMaterialNodeRef));
 
 		/*-- Create finished product --*/
-		NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef finishedProductNodeRef = inWriteTx(() -> {
 
 			logger.debug("/*-- Create finished product --*/");
 			FinishedProductData finishedProduct = new FinishedProductData();
 			finishedProduct.setName("Finished Product");
-			NodeRef finishedProductNodeRef1 = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+			NodeRef finishedProductNodeRef1 = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct)
+					.getNodeRef();
 			// productService.initializeProductFolder(finishedProductNodeRef);
 
 			return finishedProductNodeRef1;
 
-		}, false, true);
+		});
 
 		// Check
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			logger.debug("//Check finished product");
 			NodeRef imagesFolder = nodeService.getChildByName(finishedProductNodeRef, ContentModel.ASSOC_CONTAINS,
 					TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
 			assertNotNull(imagesFolder);
 
-			assertNotNull("Image product must be not null", entityService.getEntityDefaultImage(finishedProductNodeRef));
+			assertNotNull("Image product must be not null",
+					entityService.getEntityDefaultImage(finishedProductNodeRef));
 			return null;
 
-		}, false, true);
+		});
 	}
 
 	/**
 	 * Adds the product image.
 	 *
-	 * @param parentNodeRef
-	 *            the parent node ref
+	 * @param parentNodeRef       the parent node ref
 	 * @param typeFinishedproduct
 	 * @throws IOException
 	 */
@@ -279,7 +285,8 @@ public class ProductServiceIT extends PLMBaseTestCase {
 			Map<QName, Serializable> properties = new HashMap<>();
 			properties.put(ContentModel.PROP_NAME, imageName);
 			imageNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(ContentModel.PROP_NAME)),
 					ContentModel.TYPE_CONTENT, properties).getChildRef();
 
 			ContentWriter writer = contentService.getWriter(imageNodeRef, ContentModel.PROP_CONTENT, true);
@@ -302,15 +309,14 @@ public class ProductServiceIT extends PLMBaseTestCase {
 	/**
 	 * Test classify product.
 	 *
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	@Test
 	public void testClassifyProductByHierarchy() throws Exception {
 
 		logger.debug("testClassifyProductByHierarchy");
 
-		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef rawMaterialNodeRef = inWriteTx(() -> {
 
 			/*-- Create raw material --*/
 			logger.debug("/*-- Create raw material --*/");
@@ -321,11 +327,11 @@ public class ProductServiceIT extends PLMBaseTestCase {
 			rawMaterial.setState(SystemState.Valid);
 			return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef();
 
-		}, false, true);
+		});
 
 		waitForSolr();
 
-		final NodeRef rawMaterial2NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef rawMaterial2NodeRef = inWriteTx(() -> {
 
 			/*-- classify --*/
 			logger.debug("/*-- classify --*/");
@@ -343,7 +349,8 @@ public class ProductServiceIT extends PLMBaseTestCase {
 			assertEquals("5th Path should be 'Matièrespremière'", "Matière première", arrDisplayPaths[2]);
 			assertEquals("6th Path should be 'Frozen'", HIERARCHY1_SEA_FOOD, arrDisplayPaths[3]);
 			assertEquals("7th Path should be 'Pizza'", HIERARCHY2_FISH, arrDisplayPaths[4]);
-			assertEquals("check name", "Raw material", nodeService.getProperty(rawMaterialNodeRef, ContentModel.PROP_NAME));
+			assertEquals("check name", "Raw material",
+					nodeService.getProperty(rawMaterialNodeRef, ContentModel.PROP_NAME));
 
 			/*-- classify twice --*/
 			logger.debug("/*-- classify twice --*/");
@@ -361,7 +368,8 @@ public class ProductServiceIT extends PLMBaseTestCase {
 			assertEquals("5th Path should be 'Matière première'", "Matière première", arrDisplayPaths[2]);
 			assertEquals("6th Path should be 'Frozen'", HIERARCHY1_SEA_FOOD, arrDisplayPaths[3]);
 			assertEquals("7th Path should be 'Pizza'", HIERARCHY2_FISH, arrDisplayPaths[4]);
-			assertEquals("check name", "Raw material", nodeService.getProperty(rawMaterialNodeRef, ContentModel.PROP_NAME));
+			assertEquals("check name", "Raw material",
+					nodeService.getProperty(rawMaterialNodeRef, ContentModel.PROP_NAME));
 
 			/*-- Create raw material 2 --*/
 			// logger.debug("/*-- Create raw material --*/");
@@ -372,9 +380,9 @@ public class ProductServiceIT extends PLMBaseTestCase {
 			rawMaterial2.setState(SystemState.Valid);
 			return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial2).getNodeRef();
 
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			/*-- classify --*/
 			logger.debug("/*-- classify --*/");
@@ -395,9 +403,9 @@ public class ProductServiceIT extends PLMBaseTestCase {
 
 			return null;
 
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			// clean
 			nodeService.deleteNode(rawMaterialNodeRef);
@@ -405,7 +413,7 @@ public class ProductServiceIT extends PLMBaseTestCase {
 
 			return null;
 
-		}, false, true);
+		});
 	}
 
 	/**
@@ -416,7 +424,7 @@ public class ProductServiceIT extends PLMBaseTestCase {
 
 		logger.debug("testGetWUsedProduct");
 
-		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef rawMaterialNodeRef = inWriteTx(() -> {
 
 			/*-- Create raw material --*/
 			logger.debug("/*-- Create raw material --*/");
@@ -424,40 +432,43 @@ public class ProductServiceIT extends PLMBaseTestCase {
 			rawMaterial.setName("Raw material");
 			return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef();
 
-		}, false, true);
+		});
 
-		final NodeRef lSF1NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef lSF1NodeRef = inWriteTx(() -> {
 
 			LocalSemiFinishedProductData lSF1 = new LocalSemiFinishedProductData();
 			lSF1.setName("Local semi finished 1");
 			return alfrescoRepository.create(getTestFolderNodeRef(), lSF1).getNodeRef();
 
-		}, false, true);
+		});
 
-		final NodeRef lSF2NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef lSF2NodeRef = inWriteTx(() -> {
 
 			LocalSemiFinishedProductData lSF2 = new LocalSemiFinishedProductData();
 			lSF2.setName("Local semi finished 2");
 			return alfrescoRepository.create(getTestFolderNodeRef(), lSF2).getNodeRef();
 
-		}, false, true);
+		});
 
-		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
 
 			/*-- Create finished product --*/
 			logger.debug("/*-- Create finished product --*/");
 			FinishedProductData finishedProduct = new FinishedProductData();
 			finishedProduct.setName("Finished Product");
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, 1d, 1d, ProductUnit.P, 0d, DeclarationType.Declare, lSF1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), 1d, 4d, ProductUnit.P, 0d, DeclarationType.Declare, lSF2NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(1), 3d, 0d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterialNodeRef));
+			compoList.add(
+					new CompoListDataItem(null, null, 1d, 1d, ProductUnit.P, 0d, DeclarationType.Declare, lSF1NodeRef));
+			compoList.add(new CompoListDataItem(null, compoList.get(0), 1d, 4d, ProductUnit.P, 0d,
+					DeclarationType.Declare, lSF2NodeRef));
+			compoList.add(new CompoListDataItem(null, compoList.get(1), 3d, 0d, ProductUnit.kg, 0d,
+					DeclarationType.Omit, rawMaterialNodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			logger.debug("local semi finished 1: " + lSF1NodeRef);
 			logger.debug("local semi finished 2: " + lSF2NodeRef);
@@ -465,8 +476,9 @@ public class ProductServiceIT extends PLMBaseTestCase {
 			List<CompoListDataItem> wUsedProducts = getWUsedCompoList(rawMaterialNodeRef);
 
 			for (CompoListDataItem wUsedProduct : wUsedProducts) {
-				logger.debug(String.format("wUsedProduct.getProduct(): %s - level: %d - qty: %e - unit: %s", wUsedProduct.getProduct(),
-						wUsedProduct.getDepthLevel(), wUsedProduct.getQty(), wUsedProduct.getCompoListUnit()));
+				logger.debug(String.format("wUsedProduct.getProduct(): %s - level: %d - qty: %e - unit: %s",
+						wUsedProduct.getProduct(), wUsedProduct.getDepthLevel(), wUsedProduct.getQty(),
+						wUsedProduct.getCompoListUnit()));
 			}
 
 			assertEquals("MP should have 1 where Useds", 1, wUsedProducts.size());
@@ -482,7 +494,7 @@ public class ProductServiceIT extends PLMBaseTestCase {
 
 			return null;
 
-		}, false, true);
+		});
 	}
 
 	private List<CompoListDataItem> getWUsedCompoList(NodeRef productNodeRef) {
@@ -490,18 +502,22 @@ public class ProductServiceIT extends PLMBaseTestCase {
 		logger.debug("getWUsedProduct");
 
 		List<CompoListDataItem> wUsedList = new ArrayList<>();
-		MultiLevelListData wUsedData = wUsedListService.getWUsedEntity(productNodeRef, PLMModel.ASSOC_COMPOLIST_PRODUCT, WUSED_LEVEL);
+		MultiLevelListData wUsedData = wUsedListService.getWUsedEntity(productNodeRef, PLMModel.ASSOC_COMPOLIST_PRODUCT,
+				WUSED_LEVEL);
 
 		for (Map.Entry<NodeRef, MultiLevelListData> kv : wUsedData.getTree().entrySet()) {
 
 			Map<QName, Serializable> properties = nodeService.getProperties(kv.getKey());
 
 			ProductUnit compoListUnit = ProductUnit.valueOf((String) properties.get(PLMModel.PROP_COMPOLIST_UNIT));
-			DeclarationType declType = DeclarationType.valueOf((String) properties.get(PLMModel.PROP_COMPOLIST_DECL_TYPE));
+			DeclarationType declType = DeclarationType
+					.valueOf((String) properties.get(PLMModel.PROP_COMPOLIST_DECL_TYPE));
 
-			CompoListDataItem compoListDataItem = new CompoListDataItem(kv.getKey(), null, (Double) properties.get(PLMModel.PROP_COMPOLIST_QTY),
+			CompoListDataItem compoListDataItem = new CompoListDataItem(kv.getKey(), null,
+					(Double) properties.get(PLMModel.PROP_COMPOLIST_QTY),
 					(Double) properties.get(PLMModel.PROP_COMPOLIST_QTY_SUB_FORMULA), compoListUnit,
-					(Double) properties.get(PLMModel.PROP_COMPOLIST_LOSS_PERC), declType, kv.getValue().getEntityNodeRef());
+					(Double) properties.get(PLMModel.PROP_COMPOLIST_LOSS_PERC), declType,
+					kv.getValue().getEntityNodeRef());
 
 			wUsedList.add(compoListDataItem);
 		}
@@ -519,7 +535,7 @@ public class ProductServiceIT extends PLMBaseTestCase {
 
 		logger.debug("testGetWUsedProduct");
 
-		NodeRef packagingMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef packagingMaterialNodeRef = inWriteTx(() -> {
 
 			/*-- Create raw material --*/
 			logger.debug("/*-- Create pkg material --*/");
@@ -527,33 +543,35 @@ public class ProductServiceIT extends PLMBaseTestCase {
 			packagingMaterial.setName("Packaging material");
 			return alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial).getNodeRef();
 
-		}, false, true);
+		});
 
-		NodeRef finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef finishedProductNodeRef1 = inWriteTx(() -> {
 			/*-- Create finished product --*/
 			logger.debug("/*-- Create finished product --*/");
 
 			FinishedProductData finishedProduct1 = new FinishedProductData();
 			finishedProduct1.setName("Finished Product 1");
 			List<PackagingListDataItem> packagingList1 = new ArrayList<>();
-			packagingList1.add(new PackagingListDataItem(null, 1d, ProductUnit.P, PackagingLevel.Primary, true, packagingMaterialNodeRef));
+			packagingList1.add(new PackagingListDataItem(null, 1d, ProductUnit.P, PackagingLevel.Primary, true,
+					packagingMaterialNodeRef));
 			finishedProduct1.getPackagingListView().setPackagingList(packagingList1);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
-		}, false, true);
+		});
 
-		NodeRef finishedProductNodeRef2 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef finishedProductNodeRef2 = inWriteTx(() -> {
 			FinishedProductData finishedProduct2 = new FinishedProductData();
 			finishedProduct2.setName("Finished Product");
 			List<PackagingListDataItem> packagingList2 = new ArrayList<>();
-			packagingList2.add(new PackagingListDataItem(null, 8d, ProductUnit.PP, PackagingLevel.Secondary, true, packagingMaterialNodeRef));
+			packagingList2.add(new PackagingListDataItem(null, 8d, ProductUnit.PP, PackagingLevel.Secondary, true,
+					packagingMaterialNodeRef));
 			finishedProduct2.getPackagingListView().setPackagingList(packagingList2);
 			alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct2).getNodeRef();
 
 			return null;
 
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			List<PackagingListDataItem> wUsedProducts = getWUsedPackagingList(packagingMaterialNodeRef);
 
 			assertEquals("MP should have 2 where Useds", 2, wUsedProducts.size());
@@ -573,7 +591,7 @@ public class ProductServiceIT extends PLMBaseTestCase {
 
 			return null;
 
-		}, false, true);
+		});
 	}
 
 	private List<PackagingListDataItem> getWUsedPackagingList(NodeRef productNodeRef) {
@@ -581,13 +599,16 @@ public class ProductServiceIT extends PLMBaseTestCase {
 		logger.debug("getWUsedProduct");
 
 		List<PackagingListDataItem> wUsedList = new ArrayList<>();
-		MultiLevelListData wUsedData = wUsedListService.getWUsedEntity(productNodeRef, PLMModel.ASSOC_PACKAGINGLIST_PRODUCT, WUSED_LEVEL);
+		MultiLevelListData wUsedData = wUsedListService.getWUsedEntity(productNodeRef,
+				PLMModel.ASSOC_PACKAGINGLIST_PRODUCT, WUSED_LEVEL);
 
 		for (Map.Entry<NodeRef, MultiLevelListData> kv : wUsedData.getTree().entrySet()) {
 
 			Map<QName, Serializable> properties = nodeService.getProperties(kv.getKey());
-			ProductUnit packagingListUnit = ProductUnit.valueOf((String) properties.get(PLMModel.PROP_PACKAGINGLIST_UNIT));
-			PackagingLevel packagingLevel = PackagingLevel.valueOf((String) properties.get(PLMModel.PROP_PACKAGINGLIST_PKG_LEVEL));
+			ProductUnit packagingListUnit = ProductUnit
+					.valueOf((String) properties.get(PLMModel.PROP_PACKAGINGLIST_UNIT));
+			PackagingLevel packagingLevel = PackagingLevel
+					.valueOf((String) properties.get(PLMModel.PROP_PACKAGINGLIST_PKG_LEVEL));
 
 			PackagingListDataItem packagingListDataItem = new PackagingListDataItem(kv.getKey(),
 					(Double) properties.get(PLMModel.PROP_PACKAGINGLIST_QTY), packagingListUnit, packagingLevel, true,

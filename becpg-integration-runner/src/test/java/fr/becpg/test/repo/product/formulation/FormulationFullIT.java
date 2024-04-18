@@ -61,7 +61,7 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 	}
 
 	protected NodeRef createFullProductNodeRef(final String name) {
-		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		return inWriteTx(() -> {
 
 			/*-- Create finished product --*/
 			logger.info("/*-- Create finished product --*/");
@@ -75,12 +75,46 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 			finishedProduct.setServingSize(50d);// 50g
 			finishedProduct.setProjectedQty(10000l);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF1NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d,
+			 * DeclarationType.Detail, localSF1NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(1d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare)
+					.withProduct(rawMaterial1NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d,
+			 * ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(2d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail)
+					.withProduct(rawMaterial2NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d,
+			 * ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF2NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d,
+			 * DeclarationType.Detail, localSF2NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQtyUsed(3d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare)
+					.withProduct(rawMaterial3NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d,
+			 * ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQtyUsed(3d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Omit)
+					.withProduct(rawMaterial4NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d,
+			 * ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+			 */
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
 			List<CostListDataItem> costList = new ArrayList<>();
@@ -109,14 +143,17 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 			dynamicCharactListItems.add(new DynamicCharactListItem("Property  1", "costList[0].value"));
 			dynamicCharactListItems.add(new DynamicCharactListItem("Property  1Bis", "costList[1].value"));
 			dynamicCharactListItems.add(new DynamicCharactListItem("Property  2", "costList[0].unit"));
-			dynamicCharactListItems.add(new DynamicCharactListItem("Property  3", "costList[0].value / costList[1].value"));
+			dynamicCharactListItems
+					.add(new DynamicCharactListItem("Property  3", "costList[0].value / costList[1].value"));
 			dynamicCharactListItems.add(new DynamicCharactListItem("Property  4", "profitability"));
-			dynamicCharactListItems.add(new DynamicCharactListItem("Collection Selection  1", "costList.?[value == 4.0][0].unit"));
-			dynamicCharactListItems.add(new DynamicCharactListItem("Collection Selection  2", "costList.?[value < 5.0][0].value"));
+			dynamicCharactListItems
+					.add(new DynamicCharactListItem("Collection Selection  1", "costList.?[value == 4.0][0].unit"));
+			dynamicCharactListItems
+					.add(new DynamicCharactListItem("Collection Selection  2", "costList.?[value < 5.0][0].value"));
 			dynamicCharactListItems.add(new DynamicCharactListItem("Collection Projection  1", "costList.![value]"));
 			// Variables
-			dynamicCharactListItems
-					.add(new DynamicCharactListItem("Variable  1", "compoListView.dynamicCharactList.?[title == 'Property  1' ][0].value"));
+			dynamicCharactListItems.add(new DynamicCharactListItem("Variable  1",
+					"compoListView.dynamicCharactList.?[title == 'Property  1' ][0].value"));
 			// Template need Template Context
 			// dynamicCharactListItems.add(new
 			// DynamicCharactListItem("Template 1","Cost1/Cost2 :
@@ -128,12 +165,14 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 			// Boolean
 			dynamicCharactListItems.add(new DynamicCharactListItem("Boolean  1", "costList[1].value > 1"));
 			// Assignment
-			dynamicCharactListItems.add(new DynamicCharactListItem("Assignement  1", "nutList.?[nut.toString() == '" + nut1 + "' ][0].value = 4d"));
+			dynamicCharactListItems.add(new DynamicCharactListItem("Assignement  1",
+					"nutList.?[nut.toString() == '" + nut1 + "' ][0].value = 4d"));
 
 			// Spel method
 			dynamicCharactListItems.add(new DynamicCharactListItem(" beCPG findOne", "@beCPG.findOne(nodeRef).qty"));
 
-			dynamicCharactListItems.add(new DynamicCharactListItem(" beCPG propValue", "@beCPG.propValue(nodeRef,'bcpg:bestBeforeDate')\n"));
+			dynamicCharactListItems.add(new DynamicCharactListItem(" beCPG propValue",
+					"@beCPG.propValue(nodeRef,'bcpg:bestBeforeDate')\n"));
 
 			dynamicCharactListItems.add(new DynamicCharactListItem(" beCPG SUM ",
 					"@beCPG.sum(compoListView.compoList.?[parent == null],\"entity.costList[0].value + dataListItem.qty\")"));
@@ -144,20 +183,22 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 			// Static fonction
 			dynamicCharactListItems.add(new DynamicCharactListItem("Autonum V1 ",
 					"T(fr.becpg.repo.helper.AutoNumHelper).getAutoNumValue(\"bcpg:finishedProduct\",\"bcpg:eanCode\")"));
-			dynamicCharactListItems.add(
-					new DynamicCharactListItem("Autonum V2 ", "T(fr.becpg.repo.helper.AutoNumHelper).getOrCreateCode(nodeRef,\"bcpg:eanCode\")"));
+			dynamicCharactListItems.add(new DynamicCharactListItem("Autonum V2 ",
+					"T(fr.becpg.repo.helper.AutoNumHelper).getOrCreateCode(nodeRef,\"bcpg:eanCode\")"));
 
 			// Formulate twice
 			dynamicCharactListItems.add(new DynamicCharactListItem("Formulate twice", "reformulateCount=1"));
 
 			// Multi Lines
 			dynamicCharactListItems.add(new DynamicCharactListItem("MTLine1", "var abc=10+30;\n#abc + 5;"));
-			dynamicCharactListItems.add(new DynamicCharactListItem("MTLine2", "var b = costList[1].value;\n#abc + #b;"));
+			dynamicCharactListItems
+					.add(new DynamicCharactListItem("MTLine2", "var b = costList[1].value;\n#abc + #b;"));
 			dynamicCharactListItems.add(new DynamicCharactListItem("MTLine3", "#abc - #b;\n\n"));
 
 			// DynamicColumn
 
-			DynamicCharactListItem dynCol = new DynamicCharactListItem("Col Dyn 1", "entity.costList[0].value + dataListItem.qty");
+			DynamicCharactListItem dynCol = new DynamicCharactListItem("Col Dyn 1",
+					"entity.costList[0].value + dataListItem.qty");
 			dynCol.setColumnName("bcpg_dynamicCharactColumn1");
 			dynamicCharactListItems.add(dynCol);
 
@@ -187,11 +228,12 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 
 			List<LabelClaimListDataItem> labelClaimListDataItems = new ArrayList<>();
 
-			nodeService.setProperty(labelClaims.get(0), PLMModel.PROP_LABEL_CLAIM_FORMULA, "((nutList.?[nut.toString() == '" + nut1
-					+ "'][0].value < 40 and unit != T(fr.becpg.repo.product.data.constraints.ProductUnit).L and unit != T(fr.becpg.repo.product.data.constraints.ProductUnit).mL )"
-					+ " or (nutList.?[nut.toString() == '" + nut1
-					+ "'][0].value < 20 and (unit == T(fr.becpg.repo.product.data.constraints.ProductUnit).L or unit== T(fr.becpg.repo.product.data.constraints.ProductUnit).mL )))"
-					+ " and (nutList.?[nut.toString() == '" + nut1 + "'][0].value > 4 )");
+			nodeService.setProperty(labelClaims.get(0), PLMModel.PROP_LABEL_CLAIM_FORMULA,
+					"((nutList.?[nut.toString() == '" + nut1
+							+ "'][0].value < 40 and unit != T(fr.becpg.repo.product.data.constraints.ProductUnit).L and unit != T(fr.becpg.repo.product.data.constraints.ProductUnit).mL )"
+							+ " or (nutList.?[nut.toString() == '" + nut1
+							+ "'][0].value < 20 and (unit == T(fr.becpg.repo.product.data.constraints.ProductUnit).L or unit== T(fr.becpg.repo.product.data.constraints.ProductUnit).mL )))"
+							+ " and (nutList.?[nut.toString() == '" + nut1 + "'][0].value > 4 )");
 			nodeService.setProperty(labelClaims.get(1), PLMModel.PROP_LABEL_CLAIM_FORMULA,
 					"nutList.?[nut.toString() == '" + nut1 + "'][0].value <= 4");
 
@@ -204,11 +246,12 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 
 			labelingRuleList.add(new LabelingRuleListDataItem("Test", "render()", LabelingRuleType.Render));
 
-			LabelingRuleListDataItem percRule = new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format);
+			LabelingRuleListDataItem percRule = new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}",
+					LabelingRuleType.Format);
 			percRule.setComponents(Arrays.asList(ing2, ing3, ing4));
 			labelingRuleList.add(percRule);
-			labelingRuleList.add(new LabelingRuleListDataItem("Param1", "detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"",
-					LabelingRuleType.Prefs, null, null));
+			labelingRuleList.add(new LabelingRuleListDataItem("Param1",
+					"detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
 
 			labelingRuleList.add(new LabelingRuleListDataItem("Langue", "fr,en", LabelingRuleType.Locale));
 
@@ -216,14 +259,13 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
-		}, false, true);
+		});
 	}
 
 	/**
 	 * Test formulate product.
 	 *
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	@Test
 	public void testFormulationFull() throws Exception {
@@ -232,7 +274,7 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 
 		final NodeRef finishedProductNodeRef = createFullProductNodeRef("Produit fini 1");
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			/*-- Formulate product --*/
 			logger.info("/*-- Formulate product --*/");
@@ -246,7 +288,7 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 
 			return null;
 
-		}, false, true);
+		});
 
 	}
 
@@ -255,8 +297,8 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 		int checks = 0;
 		assertNotNull("CostList is null", formulatedProduct.getCostList());
 		for (CostListDataItem costListDataItem : formulatedProduct.getCostList()) {
-			String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: "
-					+ costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
+			String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME)
+					+ " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
 			logger.info(trace);
 			if (costListDataItem.getCost().equals(cost1)) {
 				assertEquals("cost1.getValue() == 4.0, actual values: " + trace, 4.0d, costListDataItem.getValue());
@@ -269,7 +311,8 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 				checks++;
 			}
 			if (costListDataItem.getCost().equals(fixedCost)) {
-				assertEquals("fixedCost.getValue() == 4000d, actual values: " + trace, 4000d, costListDataItem.getValue());
+				assertEquals("fixedCost.getValue() == 4000d, actual values: " + trace, 4000d,
+						costListDataItem.getValue());
 				assertEquals("fixedCost.getUnit() == €/kg, actual values: " + trace, "€", costListDataItem.getUnit());
 				checks++;
 			}
@@ -278,9 +321,10 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 
 		// dynamicCharact
 		assertNotNull("DynamicCharact is null", formulatedProduct.getCompoListView().getDynamicCharactList());
-		for (DynamicCharactListItem dynamicCharactListItem : formulatedProduct.getCompoListView().getDynamicCharactList()) {
-			String trace = "Dyn charact :" + dynamicCharactListItem.getTitle() + " value " + dynamicCharactListItem.getValue() + " "
-					+ dynamicCharactListItem.getErrorLog();
+		for (DynamicCharactListItem dynamicCharactListItem : formulatedProduct.getCompoListView()
+				.getDynamicCharactList()) {
+			String trace = "Dyn charact :" + dynamicCharactListItem.getTitle() + " value "
+					+ dynamicCharactListItem.getValue() + " " + dynamicCharactListItem.getErrorLog();
 			logger.info(trace);
 			assertFalse("#Error".equals(dynamicCharactListItem.getValue()));
 
@@ -303,19 +347,21 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 		checks = 0;
 		assertNotNull("NutList is null", formulatedProduct.getNutList());
 		for (NutListDataItem nutListDataItem : formulatedProduct.getNutList()) {
-			String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME) + " - value: "
-					+ nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
+			String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME)
+					+ " - value: " + nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
 			logger.info(trace);
 			if (nutListDataItem.getNut().equals(nut1)) {
 				assertNotSame("nut1.getValue() == 3, actual values: " + trace, 3d, nutListDataItem.getValue());
 				assertEquals("nut1.getValue() == 4 (Formula), actual values: " + trace, 4d, nutListDataItem.getValue());
-				assertEquals("nut1.getUnit() == kJ/100g, actual values: " + trace, "kJ/100g", nutListDataItem.getUnit());
+				assertEquals("nut1.getUnit() == kJ/100g, actual values: " + trace, "kJ/100g",
+						nutListDataItem.getUnit());
 				assertEquals("must be group1", GROUP1, nutListDataItem.getGroup());
 				checks++;
 			}
 			if (nutListDataItem.getNut().equals(nut2)) {
 				assertEquals("nut2.getValue() == 6, actual values: " + trace, 6d, nutListDataItem.getValue());
-				assertEquals("nut2.getUnit() == kcal/100g, actual values: " + trace, "kcal/100g", nutListDataItem.getUnit());
+				assertEquals("nut2.getUnit() == kcal/100g, actual values: " + trace, "kcal/100g",
+						nutListDataItem.getUnit());
 				assertEquals("must be group2", GROUP2, nutListDataItem.getGroup());
 				assertEquals((6d * 50d) / 100, nutListDataItem.getValuePerServing());
 				assertEquals((100 * nutListDataItem.getValuePerServing()) / 2000d, nutListDataItem.getGdaPerc());
@@ -344,10 +390,11 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 				inVoluntarySources += nodeService.getProperty(part, BeCPGModel.PROP_CHARACT_NAME) + ", ";
 			}
 
-			String trace = "allergen: " + nodeService.getProperty(allergenListDataItem.getAllergen(), BeCPGModel.PROP_CHARACT_NAME) + " qty Perc:  "
-					+ allergenListDataItem.getQtyPerc() + " - voluntary: " + allergenListDataItem.getVoluntary() + " - involuntary: "
-					+ allergenListDataItem.getInVoluntary() + " - voluntary sources:" + voluntarySources + " - involuntary sources:"
-					+ inVoluntarySources;
+			String trace = "allergen: "
+					+ nodeService.getProperty(allergenListDataItem.getAllergen(), BeCPGModel.PROP_CHARACT_NAME)
+					+ " qty Perc:  " + allergenListDataItem.getQtyPerc() + " - voluntary: "
+					+ allergenListDataItem.getVoluntary() + " - involuntary: " + allergenListDataItem.getInVoluntary()
+					+ " - voluntary sources:" + voluntarySources + " - involuntary sources:" + inVoluntarySources;
 			logger.info(trace);
 
 			// allergen1 - voluntary: true - involuntary: false -
@@ -436,9 +483,10 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 				bioOriginsText += nodeService.getProperty(bioOrigin, BeCPGModel.PROP_CHARACT_NAME) + ", ";
 			}
 
-			String trace = "ing: " + nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME) + " - qty: "
-					+ ingListDataItem.getQtyPerc() + " - geo origins: " + geoOriginsText + " - bio origins: " + bioOriginsText + " is gmo: "
-					+ ingListDataItem.getIsGMO() + " is ionized: " + ingListDataItem.getIsIonized();
+			String trace = "ing: " + nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME)
+					+ " - qty: " + ingListDataItem.getQtyPerc() + " - geo origins: " + geoOriginsText
+					+ " - bio origins: " + bioOriginsText + " is gmo: " + ingListDataItem.getIsGMO() + " is ionized: "
+					+ ingListDataItem.getIsIonized();
 			logger.debug(trace);
 
 			df = new DecimalFormat("0.000000");
@@ -446,15 +494,18 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 			// ing: ing1 - qty: 13.88888888888889 - geo origins:
 			// geoOrigin1, - bio origins: bioOrigin1, is gmo: true
 			if (ingListDataItem.getIng().equals(ing1)) {
-				assertEquals("ing1.getQtyPerc() == 13.88888888888889, actual values: " + trace, df.format(13.88888888888889),
-						df.format(ingListDataItem.getQtyPerc()));
-				assertEquals("ing1.getGeoOrigin() contains geo1, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(geoOrigin1));
+				assertEquals("ing1.getQtyPerc() == 13.88888888888889, actual values: " + trace,
+						df.format(13.88888888888889), df.format(ingListDataItem.getQtyPerc()));
+				assertEquals("ing1.getGeoOrigin() contains geo1, actual values: " + trace, true,
+						ingListDataItem.getGeoOrigin().contains(geoOrigin1));
 				assertEquals("ing1.getGeoOrigin() doesn't contain geo2, actual values: " + trace, false,
 						ingListDataItem.getGeoOrigin().contains(geoOrigin2));
-				assertEquals("ing1.getBioOrigin() contains bio1, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(bioOrigin1));
+				assertEquals("ing1.getBioOrigin() contains bio1, actual values: " + trace, true,
+						ingListDataItem.getBioOrigin().contains(bioOrigin1));
 				assertEquals("ing1.getBioOrigin() doesn't contain bio2, actual values: " + trace, false,
 						ingListDataItem.getBioOrigin().contains(bioOrigin2));
-				assertEquals("ing1.getIsGMO() is false, actual values: " + trace, true, ingListDataItem.getIsGMO().booleanValue());
+				assertEquals("ing1.getIsGMO() is false, actual values: " + trace, true,
+						ingListDataItem.getIsGMO().booleanValue());
 				assertEquals("ing1.getIsIonized().booleanValue() is false, actual values: " + trace, true,
 						ingListDataItem.getIsIonized().booleanValue());
 				checks++;
@@ -463,15 +514,20 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 			// geoOrigin2, - bio origins: bioOrigin1, bioOrigin2, is
 			// gmo: false
 			if (ingListDataItem.getIng().equals(ing2)) {
-				assertEquals("ing2.getQtyPerc() == 36.111111111111114, actual values: " + trace, df.format(36.111111111111114),
-						df.format(ingListDataItem.getQtyPerc()));
-				assertEquals("ing2.getGeoOrigin() contains geo1, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(geoOrigin1));
-				assertEquals("ing2.getGeoOrigin() contains geo2, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(geoOrigin2));
-				assertEquals("ing2.getBioOrigin() contains bio1, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(bioOrigin1));
-				assertEquals("ing2.getBioOrigin() contains bio2, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(bioOrigin2));
+				assertEquals("ing2.getQtyPerc() == 36.111111111111114, actual values: " + trace,
+						df.format(36.111111111111114), df.format(ingListDataItem.getQtyPerc()));
+				assertEquals("ing2.getGeoOrigin() contains geo1, actual values: " + trace, true,
+						ingListDataItem.getGeoOrigin().contains(geoOrigin1));
+				assertEquals("ing2.getGeoOrigin() contains geo2, actual values: " + trace, true,
+						ingListDataItem.getGeoOrigin().contains(geoOrigin2));
+				assertEquals("ing2.getBioOrigin() contains bio1, actual values: " + trace, true,
+						ingListDataItem.getBioOrigin().contains(bioOrigin1));
+				assertEquals("ing2.getBioOrigin() contains bio2, actual values: " + trace, true,
+						ingListDataItem.getBioOrigin().contains(bioOrigin2));
 				assertEquals(1, ingListDataItem.getGeoTransfo().size());
 				assertTrue(ingListDataItem.getGeoTransfo().contains(geoOrigin2));
-				assertEquals("ing2.getIsGMO() is false, actual values: " + trace, false, ingListDataItem.getIsGMO().booleanValue());
+				assertEquals("ing2.getIsGMO() is false, actual values: " + trace, false,
+						ingListDataItem.getIsGMO().booleanValue());
 				assertEquals("ing2.getIsIonized().booleanValue() is false, actual values: " + trace, false,
 						ingListDataItem.getIsIonized().booleanValue());
 				checks++;
@@ -479,13 +535,18 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 			// ing3 - qty: 50 - geo origins: geoOrigin2, - bio origins:
 			// bioOrigin1, bioOrigin2, is gmo: true
 			if (ingListDataItem.getIng().equals(ing3)) {
-				assertEquals("ing3.getQtyPerc() == 50, actual values: " + trace, df.format(50), df.format(ingListDataItem.getQtyPerc()));
+				assertEquals("ing3.getQtyPerc() == 50, actual values: " + trace, df.format(50),
+						df.format(ingListDataItem.getQtyPerc()));
 				assertEquals("ing3.getGeoOrigin() doesn't contain geo1, actual values: " + trace, false,
 						ingListDataItem.getGeoOrigin().contains(geoOrigin1));
-				assertEquals("ing3.getGeoOrigin() contains geo2, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(geoOrigin2));
-				assertEquals("ing3.getBioOrigin() contains bio1, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(bioOrigin1));
-				assertEquals("ing3.getBioOrigin() contains bio2, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(bioOrigin2));
-				assertEquals("ing3.getIsGMO() is false, actual values: " + trace, true, ingListDataItem.getIsGMO().booleanValue());
+				assertEquals("ing3.getGeoOrigin() contains geo2, actual values: " + trace, true,
+						ingListDataItem.getGeoOrigin().contains(geoOrigin2));
+				assertEquals("ing3.getBioOrigin() contains bio1, actual values: " + trace, true,
+						ingListDataItem.getBioOrigin().contains(bioOrigin1));
+				assertEquals("ing3.getBioOrigin() contains bio2, actual values: " + trace, true,
+						ingListDataItem.getBioOrigin().contains(bioOrigin2));
+				assertEquals("ing3.getIsGMO() is false, actual values: " + trace, true,
+						ingListDataItem.getIsGMO().booleanValue());
 				assertEquals("ing3.getIsIonized().booleanValue() is false, actual values: " + trace, true,
 						ingListDataItem.getIsIonized().booleanValue());
 				checks++;
@@ -499,8 +560,10 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 
 		for (IngLabelingListDataItem illDataItem : formulatedProduct.getLabelingListView().getIngLabelingList()) {
 
-			logger.info("grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.FRENCH));
-			logger.info("grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.ENGLISH));
+			logger.info(
+					"grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.FRENCH));
+			logger.info(
+					"grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.ENGLISH));
 
 			// Pâte 50 % (Legal Raw material 2 66,67 % (ing2 75,00 %,
 			// ing1 25,00 %), ing2 22,22 %, ing1 11,11 %), Garniture 50
@@ -541,13 +604,15 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 		checks = 0;
 		for (LabelClaimListDataItem labelClaimListDataItem : formulatedProduct.getLabelClaimList()) {
 
-			logger.info(nodeService.getProperty(labelClaimListDataItem.getLabelClaim(), BeCPGModel.PROP_CHARACT_NAME) + " - Evaluate to : "
-					+ labelClaimListDataItem.getIsClaimed());
+			logger.info(nodeService.getProperty(labelClaimListDataItem.getLabelClaim(), BeCPGModel.PROP_CHARACT_NAME)
+					+ " - Evaluate to : " + labelClaimListDataItem.getIsClaimed());
 
-			if (labelClaimListDataItem.getLabelClaim().equals(labelClaims.get(0)) && !labelClaimListDataItem.getIsClaimed()) {
+			if (labelClaimListDataItem.getLabelClaim().equals(labelClaims.get(0))
+					&& !labelClaimListDataItem.getIsClaimed()) {
 				checks++;
 			}
-			if (labelClaimListDataItem.getLabelClaim().equals(labelClaims.get(1)) && labelClaimListDataItem.getIsClaimed()) {
+			if (labelClaimListDataItem.getLabelClaim().equals(labelClaims.get(1))
+					&& labelClaimListDataItem.getIsClaimed()) {
 				checks++;
 			}
 		}
@@ -563,7 +628,7 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 
 		final NodeRef finishedProductNodeRef = createFullProductNodeRef("Produit fini 2");
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			nodeService.setProperty(finishedProductNodeRef, PLMModel.PROP_PRODUCT_NET_VOLUME, 2.5d);
 			nodeService.setProperty(finishedProductNodeRef, PLMModel.PROP_PRODUCT_SERVING_SIZE, 62.5);// 62,5mL
@@ -582,26 +647,33 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 			DecimalFormat df = new DecimalFormat("0.00");
 			assertNotNull("NutList is null", formulatedProduct.getNutList());
 			for (NutListDataItem nutListDataItem : formulatedProduct.getNutList()) {
-				String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME) + " - value: "
-						+ nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
+				String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME)
+						+ " - value: " + nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
 				logger.info(trace);
 				if (nutListDataItem.getNut().equals(nut1)) {
-					assertNotSame("nut1.getValue() == 2.4, actual values: " + trace, df.format(2.4), df.format(nutListDataItem.getValue()));
-					assertEquals("nut1.getValue() == 4 (Formula), actual values: ", df.format(4.0), df.format(nutListDataItem.getValue()));
-					assertEquals("nut1.getUnit() == kJ/100mL, actual values: " + trace, "kJ/100mL", nutListDataItem.getUnit());
+					assertNotSame("nut1.getValue() == 2.4, actual values: " + trace, df.format(2.4),
+							df.format(nutListDataItem.getValue()));
+					assertEquals("nut1.getValue() == 4 (Formula), actual values: ", df.format(4.0),
+							df.format(nutListDataItem.getValue()));
+					assertEquals("nut1.getUnit() == kJ/100mL, actual values: " + trace, "kJ/100mL",
+							nutListDataItem.getUnit());
 					assertEquals("must be group1", GROUP1, nutListDataItem.getGroup());
 					checks++;
 				}
 				if (nutListDataItem.getNut().equals(nut2)) {
-					assertEquals("nut2.getValue() == 4.8, actual values: ", df.format(4.8), df.format(nutListDataItem.getValue()));
-					assertEquals("nut2.getUnit() == kcal/100mL, actual values: " + trace, "kcal/100mL", nutListDataItem.getUnit());
+					assertEquals("nut2.getValue() == 4.8, actual values: ", df.format(4.8),
+							df.format(nutListDataItem.getValue()));
+					assertEquals("nut2.getUnit() == kcal/100mL, actual values: " + trace, "kcal/100mL",
+							nutListDataItem.getUnit());
 					assertEquals("must be group2", GROUP2, nutListDataItem.getGroup());
 					assertEquals(df.format((4.8 * 62.5) / 100), df.format(nutListDataItem.getValuePerServing()));
-					assertEquals(df.format((100 * nutListDataItem.getValuePerServing()) / 2000d), df.format(nutListDataItem.getGdaPerc()));
+					assertEquals(df.format((100 * nutListDataItem.getValuePerServing()) / 2000d),
+							df.format(nutListDataItem.getGdaPerc()));
 					checks++;
 				}
 				if (nutListDataItem.getNut().equals(nut3)) {
-					assertEquals("nut3.getValue() == 11.2, actual values: " + trace, df.format(11.2), df.format(nutListDataItem.getValue()));
+					assertEquals("nut3.getValue() == 11.2, actual values: " + trace, df.format(11.2),
+							df.format(nutListDataItem.getValue()));
 
 					checks++;
 				}
@@ -611,7 +683,7 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 
 			return null;
 
-		}, false, true);
+		});
 
 	}
 

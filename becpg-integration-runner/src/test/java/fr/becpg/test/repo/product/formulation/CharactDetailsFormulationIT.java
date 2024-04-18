@@ -1,6 +1,3 @@
-/*
- *  Copyright (C) 2010-2011 beCPG. All rights reserved.
- */
 package fr.becpg.test.repo.product.formulation;
 
 import java.util.ArrayList;
@@ -37,7 +34,7 @@ import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.web.scripts.product.CharactDetailsHelper;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
-/**
+/*
  * The Class FormulationTest.
  *
  * @author querephi
@@ -59,15 +56,14 @@ public class CharactDetailsFormulationIT extends AbstractFinishedProductTest {
 	/**
 	 * Test formulate product.
 	 *
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	@Test
 	public void testFormulateCharactDetails() throws Exception {
 
 		logger.info("testFormulateCharactDetails");
 
-		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
 
 			/*-- Create finished product --*/
 			logger.debug("/*-- Create finished product --*/");
@@ -78,38 +74,81 @@ public class CharactDetailsFormulationIT extends AbstractFinishedProductTest {
 			finishedProduct.setQty(2d);
 			finishedProduct.setUnitPrice(12.4d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			CompoListDataItem item = new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef);
+
+			CompoListDataItem item = CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF1NodeRef);
 
 			compoList.add(item);
-			compoList.add(new CompoListDataItem(null, item, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, item, null, 2d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-			compoList.add(new CompoListDataItem(null, item, null, 2d, ProductUnit.kg, 0d, DeclarationType.Detail,
-					rawMaterial2NodeRef));
-			item = new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef);
-			compoList.add(item);
-			compoList.add(new CompoListDataItem(null, item, null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-			compoList.add(new CompoListDataItem(null, item, null, 3d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+
+			/*
+			 * CompoListDataItem item = new CompoListDataItem(null, null, null, 1d,
+			 * ProductUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef);
+			 */
+
+			/* compoList.add(item); */
+
+			compoList.add(CompoListDataItem.build().withParent(item).withQtyUsed(1d).withUnit(ProductUnit.kg)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, item, null, 1d, ProductUnit.kg, 0d,
+			 * DeclarationType.Declare, rawMaterial1NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(item).withQtyUsed(2d).withUnit(ProductUnit.kg)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial2NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, item, null, 2d, ProductUnit.kg, 0d,
+			 * DeclarationType.Detail, rawMaterial2NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(item).withQtyUsed(2d).withUnit(ProductUnit.kg)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial2NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, item, null, 2d, ProductUnit.kg, 0d,
+			 * DeclarationType.Detail, rawMaterial2NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF2NodeRef));
+			/*
+			 * item = new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d,
+			 * DeclarationType.Detail, localSF2NodeRef);
+			 */
+			/* compoList.add(item); */
+			compoList.add(CompoListDataItem.build().withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial3NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, item, null, 3d, ProductUnit.kg, 0d,
+			 * DeclarationType.Declare, rawMaterial3NodeRef));
+			 */
+
+			compoList.add(CompoListDataItem.build().withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Omit).withProduct(rawMaterial4NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, item, null, 3d, ProductUnit.kg, 0d,
+			 * DeclarationType.Omit, rawMaterial4NodeRef));
+			 */
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
-			NodeRef finishedProductNodeRef1 = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+			NodeRef finishedProductNodeRef1 = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct)
+					.getNodeRef();
 
 			/*-- Formulate product --*/
 			logger.debug("/*-- Formulate details --*/");
 			productService.formulate(finishedProductNodeRef1);
-			CharactDetails ret = productService.formulateDetails(finishedProductNodeRef1, PLMModel.TYPE_NUTLIST, "nutList", null, null);
+			CharactDetails ret = productService.formulateDetails(finishedProductNodeRef1, PLMModel.TYPE_NUTLIST,
+					"nutList", null, null);
 
 			Assert.assertNotNull(ret);
 
 			logger.info(CharactDetailsHelper.toJSONObject(ret, nodeService, attributeExtractorService).toString(3));
 			return finishedProductNodeRef1;
 
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			productService.formulate(finishedProductNodeRef);
 
-			FinishedProductData finishedProduct = (FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+			FinishedProductData finishedProduct = (FinishedProductData) alfrescoRepository
+					.findOne(finishedProductNodeRef);
 
 			Assert.assertNotNull(finishedProduct.getNutList());
 			for (NutListDataItem nutItem : finishedProduct.getNutList()) {
@@ -117,22 +156,15 @@ public class CharactDetailsFormulationIT extends AbstractFinishedProductTest {
 			}
 			return null;
 
-		}, false, true);
+		});
 
 	}
 
-	/**
-	 * Test formulate product and check cost details message
-	 * 
-	 * @throws Exception
-	 *             the exception
-	 */
-	@Test
 	public void testCalculateCostDetails() throws Exception {
 
 		logger.info("testCalculateCostDetails");
 
-		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
 
 			FinishedProductData finishedProduct = new FinishedProductData();
 			finishedProduct.setName("Produit fini 1");
@@ -140,35 +172,83 @@ public class CharactDetailsFormulationIT extends AbstractFinishedProductTest {
 			finishedProduct.setUnit(ProductUnit.kg);
 			finishedProduct.setQty(2d);
 			List<PackagingListDataItem> packagingList = new ArrayList<>();
-			packagingList.add(new PackagingListDataItem(null, 1d, ProductUnit.P, PackagingLevel.Primary, true, packagingMaterial1NodeRef));
-			packagingList.add(new PackagingListDataItem(null, 3d, ProductUnit.m, PackagingLevel.Primary, true, packagingMaterial2NodeRef));
-			packagingList.add(new PackagingListDataItem(null, 8d, ProductUnit.PP, PackagingLevel.Tertiary, true, packagingMaterial3NodeRef));
+			packagingList.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.P)
+					.withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packagingMaterial1NodeRef));
+			/*
+			 * packagingList.add(new PackagingListDataItem(null, 1d, ProductUnit.P,
+			 * PackagingLevel.Primary, true, packagingMaterial1NodeRef));
+			 */
+			packagingList.add(PackagingListDataItem.build().withQty(3d).withUnit(ProductUnit.m)
+					.withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packagingMaterial2NodeRef));
+			/*
+			 * packagingList.add(new PackagingListDataItem(null, 3d, ProductUnit.m,
+			 * PackagingLevel.Primary, true, packagingMaterial2NodeRef));
+			 */
+			packagingList.add(PackagingListDataItem.build().withQty(8d).withUnit(ProductUnit.PP)
+					.withPkgLevel(PackagingLevel.Tertiary).withIsMaster(true).withProduct(packagingMaterial3NodeRef));
+			/*
+			 * packagingList.add(new PackagingListDataItem(null, 8d, ProductUnit.PP,
+			 * PackagingLevel.Tertiary, true, packagingMaterial3NodeRef));
+			 */
 			finishedProduct.getPackagingListView().setPackagingList(packagingList);
 
 			/*
 			 * Composition
 			 */
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			CompoListDataItem item = new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 10d, DeclarationType.Detail, localSF1NodeRef);
+			CompoListDataItem item = CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg)
+					.withLossPerc(10d).withDeclarationType(DeclarationType.Detail).withProduct(localSF1NodeRef);
 
 			compoList.add(item);
-			compoList.add(new CompoListDataItem(null, item, null, 1d, ProductUnit.kg, 5d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, item, null, 2d, ProductUnit.kg, 10d, DeclarationType.Detail, rawMaterial2NodeRef));
-			item = new CompoListDataItem(null, null, 1d, 0d, ProductUnit.kg, 20d, DeclarationType.Detail, localSF2NodeRef);
-			compoList.add(item);
-			compoList.add(new CompoListDataItem(null, item, null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-			compoList.add(new CompoListDataItem(null, item, null, 3d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+			/*
+			 * CompoListDataItem item = new CompoListDataItem(null, null, null, 1d,
+			 * ProductUnit.kg, 10d, DeclarationType.Detail, localSF1NodeRef);
+			 */
+			/* compoList.add(item); */
+
+			compoList.add(CompoListDataItem.build().withParent(item).withQtyUsed(1d).withUnit(ProductUnit.kg)
+					.withLossPerc(5d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, item, null, 1d, ProductUnit.kg, 5d,
+			 * DeclarationType.Declare, rawMaterial1NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(item).withQtyUsed(2d).withUnit(ProductUnit.kg)
+					.withLossPerc(10d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial2NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, item, null, 2d, ProductUnit.kg,
+			 * 10d, DeclarationType.Detail, rawMaterial2NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQty(1d).withQtyUsed(0d).withUnit(ProductUnit.kg)
+					.withLossPerc(20d).withDeclarationType(DeclarationType.Detail).withProduct(localSF2NodeRef));
+			/*
+			 * item = new CompoListDataItem(null, null, 1d, 0d, ProductUnit.kg, 20d,
+			 * DeclarationType.Detail, localSF2NodeRef);
+			 */
+			/* compoList.add(item); */
+			compoList.add(CompoListDataItem.build().withParent(item).withQtyUsed(3d).withUnit(ProductUnit.kg)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial3NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, item, null, 3d, ProductUnit.kg, 0d,
+			 * DeclarationType.Declare, rawMaterial3NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(item).withQtyUsed(3d).withUnit(ProductUnit.kg)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Omit).withProduct(rawMaterial4NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, item, null, 3d, ProductUnit.kg, 0d,
+			 * DeclarationType.Omit, rawMaterial4NodeRef));
+			 */
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			// formulate Details
 			List<NodeRef> costNodeRefs = new ArrayList<>();
 			productService.formulate(finishedProductNodeRef);
-			CharactDetails ret = productService.formulateDetails(finishedProductNodeRef, PLMModel.TYPE_COSTLIST, "costList", costNodeRefs, null);
+			CharactDetails ret = productService.formulateDetails(finishedProductNodeRef, PLMModel.TYPE_COSTLIST,
+					"costList", costNodeRefs, null);
 
 			Assert.assertNotNull(ret);
 			logger.info(CharactDetailsHelper.toJSONObject(ret, nodeService, attributeExtractorService).toString(3));
@@ -180,8 +260,9 @@ public class CharactDetailsFormulationIT extends AbstractFinishedProductTest {
 
 				for (CharactDetailsValue kv2 : kv.getValue()) {
 
-					String trace = "cost: " + nodeService.getProperty(kv.getKey(), BeCPGModel.PROP_CHARACT_NAME) + " - source: "
-							+ nodeService.getProperty(kv2.getKeyNodeRef(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + kv2.getValue();
+					String trace = "cost: " + nodeService.getProperty(kv.getKey(), BeCPGModel.PROP_CHARACT_NAME)
+							+ " - source: " + nodeService.getProperty(kv2.getKeyNodeRef(), BeCPGModel.PROP_CHARACT_NAME)
+							+ " - value: " + kv2.getValue();
 					logger.debug(trace);
 
 					// cost1
@@ -190,21 +271,24 @@ public class CharactDetailsFormulationIT extends AbstractFinishedProductTest {
 						if (kv2.getKeyNodeRef().equals(rawMaterial1NodeRef)) {
 
 							checks++;
-							assertEquals("cost.getValue() == 1.7325, actual values: " + trace, df.format(1.7325d), df.format(kv2.getValue()));
+							assertEquals("cost.getValue() == 1.7325, actual values: " + trace, df.format(1.7325d),
+									df.format(kv2.getValue()));
 							// assertEquals("cost.getPercentage() == 36.5314,
 							// actual values: " + trace, df.format(36.5314),
 							// df.format(kv2.getPercentage()));
 						} else if (kv2.getKeyNodeRef().equals(rawMaterial2NodeRef)) {
 
 							checks++;
-							assertEquals("cost.getValue() == 1.21, actual values: " + trace, df.format(1.21d), df.format(kv2.getValue()));
+							assertEquals("cost.getValue() == 1.21, actual values: " + trace, df.format(1.21d),
+									df.format(kv2.getValue()));
 							// assertEquals("cost.getPercentage() == 25.5140,
 							// actual values: " + trace, df.format(25.5140),
 							// df.format(kv2.getPercentage()));
 						} else if (kv2.getKeyNodeRef().equals(rawMaterial3NodeRef)) {
 
 							checks++;
-							assertEquals("cost.getValue() == 1.8, actual values: " + trace, df.format(1.8d), df.format(kv2.getValue()));
+							assertEquals("cost.getValue() == 1.8, actual values: " + trace, df.format(1.8d),
+									df.format(kv2.getValue()));
 							// assertEquals("cost.getPercentage() == 37.9547,
 							// actual values: " + trace, df.format(37.9547),
 							// df.format(kv2.getPercentage()));
@@ -219,21 +303,24 @@ public class CharactDetailsFormulationIT extends AbstractFinishedProductTest {
 						if (kv2.getKeyNodeRef().equals(rawMaterial1NodeRef)) {
 
 							checks++;
-							assertEquals("cost.getValue() == 1.155, actual values: " + trace, df.format(1.155d), df.format(kv2.getValue()));
+							assertEquals("cost.getValue() == 1.155, actual values: " + trace, df.format(1.155d),
+									df.format(kv2.getValue()));
 							// assertEquals("cost.getPercentage() == 16.0976,
 							// actual values: " + trace, df.format(16.0976),
 							// df.format(kv2.getPercentage()));
 						} else if (kv2.getKeyNodeRef().equals(rawMaterial2NodeRef)) {
 
 							checks++;
-							assertEquals("cost.getValue() == 2.42, actual values: " + trace, df.format(2.42d), df.format(kv2.getValue()));
+							assertEquals("cost.getValue() == 2.42, actual values: " + trace, df.format(2.42d),
+									df.format(kv2.getValue()));
 							// assertEquals("cost.getPercentage() == 33.7282,
 							// actual values: " + trace, df.format(33.7282),
 							// df.format(kv2.getPercentage()));
 						} else if (kv2.getKeyNodeRef().equals(rawMaterial3NodeRef)) {
 
 							checks++;
-							assertEquals("cost.getValue() == 3.6, actual values: " + trace, df.format(3.6d), df.format(kv2.getValue()));
+							assertEquals("cost.getValue() == 3.6, actual values: " + trace, df.format(3.6d),
+									df.format(kv2.getValue()));
 							// assertEquals("cost.getPercentage() == 50.1742,
 							// actual values: " + trace, df.format(50.1742),
 							// df.format(kv2.getPercentage()));
@@ -250,21 +337,24 @@ public class CharactDetailsFormulationIT extends AbstractFinishedProductTest {
 						if (kv2.getKeyNodeRef().equals(packagingMaterial1NodeRef)) {
 
 							checks++;
-							assertEquals("cost.getValue() == 1.5, actual values: " + trace, df.format(1.5d), df.format(kv2.getValue()));
+							assertEquals("cost.getValue() == 1.5, actual values: " + trace, df.format(1.5d),
+									df.format(kv2.getValue()));
 							// assertEquals("cost.getPercentage() == 48.9796,
 							// actual values: " + trace, df.format(48.9796),
 							// df.format(kv2.getPercentage()));
 						} else if (kv2.getKeyNodeRef().equals(packagingMaterial2NodeRef)) {
 
 							checks++;
-							assertEquals("cost.getValue() == 1.5, actual values: " + trace, df.format(1.5d), df.format(kv2.getValue()));
+							assertEquals("cost.getValue() == 1.5, actual values: " + trace, df.format(1.5d),
+									df.format(kv2.getValue()));
 							// assertEquals("cost.getPercentage() == 48.9796,
 							// actual values: " + trace, df.format(48.9796),
 							// df.format(kv2.getPercentage()));
 						} else if (kv2.getKeyNodeRef().equals(packagingMaterial3NodeRef)) {
 
 							checks++;
-							assertEquals("cost.getValue() == 0.0625, actual values: " + trace, df.format(0.0625d), df.format(kv2.getValue()));
+							assertEquals("cost.getValue() == 0.0625, actual values: " + trace, df.format(0.0625d),
+									df.format(kv2.getValue()));
 							// assertEquals("cost.getPercentage() == 2.0408,
 							// actual values: " + trace, df.format(2.0408),
 							// df.format(kv2.getPercentage()));
@@ -279,21 +369,24 @@ public class CharactDetailsFormulationIT extends AbstractFinishedProductTest {
 						if (kv2.getKeyNodeRef().equals(packagingMaterial1NodeRef)) {
 
 							checks++;
-							assertEquals("cost.getValue() == 1, actual values: " + trace, df.format(1d), df.format(kv2.getValue()));
+							assertEquals("cost.getValue() == 1, actual values: " + trace, df.format(1d),
+									df.format(kv2.getValue()));
 							// assertEquals("cost.getPercentage() == 24.2424,
 							// actual values: " + trace, df.format(24.2424),
 							// df.format(kv2.getPercentage()));
 						} else if (kv2.getKeyNodeRef().equals(packagingMaterial2NodeRef)) {
 
 							checks++;
-							assertEquals("cost.getValue() == 3, actual values: " + trace, df.format(3d), df.format(kv2.getValue()));
+							assertEquals("cost.getValue() == 3, actual values: " + trace, df.format(3d),
+									df.format(kv2.getValue()));
 							// assertEquals("cost.getPercentage() == 72.7273,
 							// actual values: " + trace, df.format(72.7273),
 							// df.format(kv2.getPercentage()));
 						} else if (kv2.getKeyNodeRef().equals(packagingMaterial3NodeRef)) {
 
 							checks++;
-							assertEquals("cost.getValue() == 0.125, actual values: " + trace, df.format(0.125d), df.format(kv2.getValue()));
+							assertEquals("cost.getValue() == 0.125, actual values: " + trace, df.format(0.125d),
+									df.format(kv2.getValue()));
 							// assertEquals("cost.getPercentage() == 3.0303,
 							// actual values: " + trace, df.format(3.0303),
 							// df.format(kv2.getPercentage()));
@@ -311,210 +404,7 @@ public class CharactDetailsFormulationIT extends AbstractFinishedProductTest {
 
 			return null;
 
-		}, false, true);
+		});
 
 	}
-
-	@Test
-	public void testCalculateNutDetails() throws Exception {
-
-		logger.info("testCalculateNutDetails");
-
-		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-
-			RawMaterialData rawMaterial = new RawMaterialData();
-			rawMaterial.setName("Raw material");
-			rawMaterial.setQty(0.1d);
-			rawMaterial.setUnit(ProductUnit.kg);
-			rawMaterial.setNetWeight(0.1d);
-			rawMaterial.setDensity(0.1d);
-			rawMaterial.setTare(9d);
-			rawMaterial.setTareUnit(TareUnit.g);
-			// nutList
-			List<NutListDataItem> nutList = new ArrayList<>();
-			nutList.add(new NutListDataItem(null, 1d, "g/100g", 0.75d, null, "Groupe 1", nut1, false));
-			nutList.add(new NutListDataItem(null, 3d, "g/100g", null, 4d, "Groupe 1", nut2, false));
-			rawMaterial.setNutList(nutList);
-			return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef();
-
-		}, false, true);
-
-		final NodeRef semiFinishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-
-			// Semi finished product
-
-			SemiFinishedProductData semiFinishedProduct = new SemiFinishedProductData();
-			semiFinishedProduct.setName("Semi fini 1");
-			semiFinishedProduct.setUnit(ProductUnit.kg);
-			List<CompoListDataItem> compoListSF = new ArrayList<>();
-			compoListSF.add(new CompoListDataItem(null, null, null, 0.75d, ProductUnit.kg, 5d, DeclarationType.Declare, rawMaterial3NodeRef));
-			compoListSF.add(new CompoListDataItem(null, null, null, 1.5d, ProductUnit.kg, 5d, DeclarationType.Declare, rawMaterialNodeRef));
-			semiFinishedProduct.getCompoListView().setCompoList(compoListSF);
-
-			List<NutListDataItem> nutList = new ArrayList<>();
-			nutList.add(new NutListDataItem(null, null, "g/100g", null, null, "Groupe 1", nut1, false));
-			nutList.add(new NutListDataItem(null, null, "g/100g", null, null, "Groupe 1", nut2, false));
-			nutList.add(new NutListDataItem(null, null, "g/100g", null, null, "Groupe 1", nut3, false));
-			nutList.add(new NutListDataItem(null, null, "g/100g", null, null, "Groupe 1", nut4, false));
-
-			semiFinishedProduct.setNutList(nutList);
-
-			return alfrescoRepository.create(getTestFolderNodeRef(), semiFinishedProduct).getNodeRef();
-
-		}, false, true);
-
-		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-
-			// Finished Product
-
-			FinishedProductData finishedProduct = new FinishedProductData();
-			finishedProduct.setName("Produit fini 2");
-			finishedProduct.setLegalName("Legal Produit fini 2");
-			finishedProduct.setUnit(ProductUnit.kg);
-			finishedProduct.setQty(1.5d);
-
-			// Composition
-
-			List<CompoListDataItem> compoList = new ArrayList<>();
-			logger.info("semiFinishedNR: " + semiFinishedProductNodeRef);
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, semiFinishedProductNodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 2d, ProductUnit.kg, 5d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1.5d, ProductUnit.kg, 10d, DeclarationType.Declare, rawMaterial2NodeRef));
-
-			finishedProduct.getCompoListView().setCompoList(compoList);
-
-			List<NutListDataItem> nutList = new ArrayList<>();
-			nutList.add(new NutListDataItem(null, null, "g/100g", null, null, "Groupe 1", nut1, false));
-			nutList.add(new NutListDataItem(null, null, "g/100g", null, null, "Groupe 1", nut2, false));
-			nutList.add(new NutListDataItem(null, null, "g/100g", null, null, "Groupe 1", nut3, false));
-			nutList.add(new NutListDataItem(null, null, "g/100g", null, null, "Groupe 1", nut4, false));
-
-			finishedProduct.setNutList(nutList);
-
-			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
-
-		}, false, true);
-
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
-
-				// formulate Details
-				List<NodeRef> nutsNodeRefs = new ArrayList<>();
-				productService.formulate(finishedProductNodeRef);
-				CharactDetails ret = productService.formulateDetails(finishedProductNodeRef, PLMModel.TYPE_NUTLIST, "nutList", nutsNodeRefs, null);
-
-				Assert.assertNotNull(ret);
-				JSONObject jsonRet = CharactDetailsHelper.toJSONObject(ret, nodeService, attributeExtractorService);
-
-				logger.info(jsonRet.toString(3));
-				Assert.assertTrue("no metadata array", jsonRet.has("metadatas"));
-				JSONArray metadataArray = jsonRet.getJSONArray("metadatas");
-
-				Assert.assertEquals(8, metadataArray.length());
-				Assert.assertEquals("nut1 unset", ((JSONObject) metadataArray.get(1)).get("colName"), "nut1");
-				Assert.assertEquals("nut2 unset", ((JSONObject) metadataArray.get(2)).get("colName"), "nut2");
-				Assert.assertEquals("nut3 unset", ((JSONObject) metadataArray.get(3)).get("colName"), "nut3");
-				Assert.assertEquals("nut4 unset", ((JSONObject) metadataArray.get(4)).get("colName"), "nut4");
-				Assert.assertEquals("nut3 mini unset", ((JSONObject) metadataArray.get(5)).get("colName"), "Mini");
-				Assert.assertEquals("nut3 maxi unset", ((JSONObject) metadataArray.get(6)).get("colName"), "Maxi");
-
-				Assert.assertTrue("no resultsets", jsonRet.has("resultsets"));
-				JSONArray resultsArray = jsonRet.getJSONArray("resultsets");
-				Assert.assertEquals("result array does not have 4 arrays inside", 4, resultsArray.length());
-
-				DecimalFormat df = new DecimalFormat("0.###");
-
-				/*
-				 * SF 1
-				 */
-				JSONArray tmpResultsArray = (JSONArray) resultsArray.getJSONArray(0);
-				Assert.assertEquals("Semi fini 1", tmpResultsArray.get(0));
-				Assert.assertEquals(df.format(0.667d), df.format(tmpResultsArray.get(1)));
-				// Assert.assertEquals(df.format(0.556d),
-				// df.format(tmpResultsArray.get(2)));
-
-				Assert.assertEquals(df.format(1.778d), df.format(tmpResultsArray.get(2)));
-				// Assert.assertEquals(df.format(2.222d),
-				// df.format(tmpResultsArray.get(5)));
-				// Assert.assertEquals("\u2014",tmpResultsArray.get(6));
-				// Assert.assertNull(tmpResultsArray.get(4));
-				// Assert.assertNull(tmpResultsArray.get(5));
-
-				Assert.assertEquals(df.format(0.889d), df.format(tmpResultsArray.get(3)));
-
-				/*
-				 * RM 1
-				 */
-				tmpResultsArray = (JSONArray) resultsArray.getJSONArray(1);
-				Assert.assertEquals("Raw material 1", tmpResultsArray.get(0));
-				Assert.assertEquals(df.format(1.333d), df.format(tmpResultsArray.get(1)));
-				// Assert.assertEquals(df.format(1.067d),
-				// df.format(tmpResultsArray.get(2)));
-				// Assert.assertEquals(df.format(2.8d),
-				// df.format(tmpResultsArray.get(4)));
-
-				Assert.assertEquals(df.format(2.667d), df.format(tmpResultsArray.get(2)));
-				// Assert.assertEquals(df.format(2.933d),
-				// df.format(tmpResultsArray.get(5)));
-				// Assert.assertEquals(df.format(2d),
-				// df.format(tmpResultsArray.get(5)));
-
-				Assert.assertEquals(df.format(5.333d), df.format(tmpResultsArray.get(3)));
-
-				/*
-				 * RM 2
-				 */
-				tmpResultsArray = (JSONArray) resultsArray.getJSONArray(2);
-				Assert.assertEquals("Raw material 2", tmpResultsArray.get(0));
-				Assert.assertEquals(df.format(1d), df.format(tmpResultsArray.get(1)));
-				// Assert.assertEquals(df.format(0.8d),
-				// df.format(tmpResultsArray.get(2)));
-				// Assert.assertEquals(df.format(1.1d),
-				// df.format(tmpResultsArray.get(3)));
-				//
-				Assert.assertEquals(df.format(2d), df.format(tmpResultsArray.get(2)));
-				// Assert.assertEquals(df.format(2.1d),
-				// df.format(tmpResultsArray.get(5)));
-				// Assert.assertEquals(df.format(0.8d),
-				// df.format(tmpResultsArray.get(6)));
-				//
-				Assert.assertEquals(df.format(6d), df.format(tmpResultsArray.get(3)));
-
-				/*
-				 * Totals
-				 */
-				JSONArray totalArray = (JSONArray) resultsArray.get(3);
-				// TODO put entity.datalist.item.details.totals language key
-				// instead ?
-				Assert.assertEquals("Totaux ", totalArray.get(0));
-				Assert.assertEquals(df.format(3d), df.format(totalArray.get(1)));
-				// Assert.assertEquals(df.format(2.422d),
-				// df.format(totalArray.get(2)));
-				// Assert.assertEquals(df.format(4.567d),
-				// df.format(totalArray.get(3)));
-				//
-				Assert.assertEquals(df.format(6.444d), df.format(totalArray.get(2)));
-				// Assert.assertEquals(df.format(7.256d),
-				// df.format(totalArray.get(5)));
-				// Assert.assertEquals(df.format(4.578d),
-				// df.format(totalArray.get(6)));
-
-				Assert.assertEquals(df.format(12.222d), df.format(totalArray.get(3)));
-				// Assert.assertEquals(df.format(2.044d),
-				// df.format(totalArray.get(8)));
-				// Assert.assertEquals(df.format(5.367d),
-				// df.format(totalArray.get(9)));
-
-				Assert.assertEquals(df.format(4d), df.format(totalArray.get(4)));
-				Assert.assertEquals(df.format(2.8d), df.format(totalArray.get(6)));
-				Assert.assertEquals(df.format(1.067d), df.format(totalArray.get(5)));
-
-				return null;
-
-			}
-		}, false, true);
-
-	}
-
 }
