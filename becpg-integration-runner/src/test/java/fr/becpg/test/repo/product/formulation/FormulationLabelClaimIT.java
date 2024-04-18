@@ -43,7 +43,7 @@ public class FormulationLabelClaimIT extends AbstractFinishedProductTest {
 	}
 
 	private NodeRef createTestProduct(final List<LabelingRuleListDataItem> labelingRuleList) {
-		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		return inWriteTx(() -> {
 
 			/**
 			 * Finished product 1
@@ -58,124 +58,192 @@ public class FormulationLabelClaimIT extends AbstractFinishedProductTest {
 			finishedProduct1.setUnit(ProductUnit.kg);
 			finishedProduct1.setDensity(1d);
 			List<CompoListDataItem> compoList1 = new ArrayList<>();
-			compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF11NodeRef));
-			compoList1
-					.add(new CompoListDataItem(null, compoList1.get(0), null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial11NodeRef));
-			compoList1
-					.add(new CompoListDataItem(null, compoList1.get(0), null, 2d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial12NodeRef));
-			compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF12NodeRef));
-			compoList1
-					.add(new CompoListDataItem(null, compoList1.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial13NodeRef));
-			compoList1
-					.add(new CompoListDataItem(null, compoList1.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial14NodeRef));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg,
+			 * 0d, DeclarationType.Detail, localSF11NodeRef));
+			 */
+			compoList1.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF11NodeRef));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, compoList1.get(0), null, 1d,
+			 * ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial11NodeRef));
+			 */
+			compoList1.add(CompoListDataItem.build().withParent(compoList1.get(0)).withQtyUsed(1d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare)
+					.withProduct(rawMaterial11NodeRef));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, compoList1.get(0), null, 2d,
+			 * ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial12NodeRef));
+			 */
+			compoList1.add(CompoListDataItem.build().withParent(compoList1.get(0)).withQtyUsed(2d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail)
+					.withProduct(rawMaterial12NodeRef));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg,
+			 * 0d, DeclarationType.Detail, localSF12NodeRef));
+			 */
+			compoList1.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF12NodeRef));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, compoList1.get(3), null, 3d,
+			 * ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial13NodeRef));
+			 */
+			compoList1.add(CompoListDataItem.build().withParent(compoList1.get(3)).withQtyUsed(3d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare)
+					.withProduct(rawMaterial13NodeRef));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, compoList1.get(3), null, 3d,
+			 * ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial14NodeRef));
+			 */
+			compoList1.add(CompoListDataItem.build().withParent(compoList1.get(3)).withQtyUsed(3d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare)
+					.withProduct(rawMaterial14NodeRef));
 
 			List<PackagingListDataItem> packagingList = new ArrayList<>();
-			
-			packagingList.add(new PackagingListDataItem(null, 1d, ProductUnit.kg, PackagingLevel.Primary, true, packagingMaterial1NodeRef));
-			packagingList.add(new PackagingListDataItem(null, 1d, ProductUnit.kg, PackagingLevel.Primary, true, packagingMaterial2NodeRef));
-			
+
+			/*
+			 * packagingList.add(new PackagingListDataItem(null, 1d, ProductUnit.kg,
+			 * PackagingLevel.Primary, true, packagingMaterial1NodeRef));
+			 */
+			packagingList.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.kg)
+					.withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packagingMaterial1NodeRef));
+
+			/*
+			 * packagingList.add(new PackagingListDataItem(null, 1d, ProductUnit.kg,
+			 * PackagingLevel.Primary, true, packagingMaterial2NodeRef));
+			 */
+			packagingList.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.kg)
+					.withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packagingMaterial2NodeRef));
+
 			finishedProduct1.getCompoListView().setCompoList(compoList1);
 			finishedProduct1.getPackagingListView().setPackagingList(packagingList);
 
 			finishedProduct1.getLabelingListView().setLabelingRuleList(labelingRuleList);
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
-		}, false, true);
+		});
 	}
 
 	@Test
 	public void testSpecificationsLabelingMerge() {
 
-		NodeRef testProduct = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef testProduct = inWriteTx(() -> {
 			Map<QName, Serializable> properties = new HashMap<>();
 			// properties.put(BeCPGModel.PROP_CHARACT_NAME, "labelClaim1");
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "labelClaim1");
 			properties.put(ContentModel.PROP_NAME, "labelClaim1");
 			NodeRef tmp = createTestProduct(null);
 			NodeRef labelClaimNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_LABEL_CLAIM, properties).getChildRef();
 
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "labelClaim2");
 			properties.put(ContentModel.PROP_NAME, "labelClaim2");
 			NodeRef labelClaimNodeRef2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_LABEL_CLAIM, properties).getChildRef();
 
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "labelClaim3");
 			properties.put(ContentModel.PROP_NAME, "labelClaim3");
 			NodeRef labelClaimNodeRef3 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_LABEL_CLAIM, properties).getChildRef();
 
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "labelClaim4");
 			properties.put(ContentModel.PROP_NAME, "labelClaim4");
 			NodeRef labelClaimNodeRef4 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_LABEL_CLAIM, properties).getChildRef();
 
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "labelClaim5");
 			properties.put(ContentModel.PROP_NAME, "labelClaim5");
 			NodeRef labelClaimNodeRef5 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_LABEL_CLAIM, properties).getChildRef();
 
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "labelClaim6");
 			properties.put(ContentModel.PROP_NAME, "labelClaim6");
 			NodeRef labelClaimNodeRef6 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_LABEL_CLAIM, properties).getChildRef();
 
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "labelClaim7");
 			properties.put(ContentModel.PROP_NAME, "labelClaim7");
 			NodeRef labelClaimNodeRef7 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_LABEL_CLAIM, properties).getChildRef();
 
 			properties = new HashMap<>();
 			properties.put(ContentModel.PROP_NAME, "Spec1");
-			NodeRef productSpecificationNodeRef1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
-					PLMModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
+			NodeRef productSpecificationNodeRef1 = nodeService
+					.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+									(String) properties.get(ContentModel.PROP_NAME)),
+							PLMModel.TYPE_PRODUCT_SPECIFICATION, properties)
+					.getChildRef();
 
-			ProductSpecificationData productSpec1 = (ProductSpecificationData) alfrescoRepository.findOne(productSpecificationNodeRef1);
+			ProductSpecificationData productSpec1 = (ProductSpecificationData) alfrescoRepository
+					.findOne(productSpecificationNodeRef1);
 			productSpec1.setLabelClaimList(new ArrayList<LabelClaimListDataItem>());
 
-			productSpec1.getLabelClaimList().add(new LabelClaimListDataItem(labelClaimNodeRef, LABEL_CLAIM_TYPE, Boolean.TRUE));
-			productSpec1.getLabelClaimList().add(new LabelClaimListDataItem(labelClaimNodeRef2, LABEL_CLAIM_TYPE, Boolean.FALSE));
-			productSpec1.getLabelClaimList().add(new LabelClaimListDataItem(labelClaimNodeRef3, LABEL_CLAIM_TYPE, Boolean.TRUE));
-			productSpec1.getLabelClaimList().add(new LabelClaimListDataItem(labelClaimNodeRef5, LABEL_CLAIM_TYPE, Boolean.FALSE));
-			productSpec1.getLabelClaimList().add(new LabelClaimListDataItem(labelClaimNodeRef6, LABEL_CLAIM_TYPE, Boolean.TRUE));
+			productSpec1.getLabelClaimList()
+					.add(new LabelClaimListDataItem(labelClaimNodeRef, LABEL_CLAIM_TYPE, Boolean.TRUE));
+			productSpec1.getLabelClaimList()
+					.add(new LabelClaimListDataItem(labelClaimNodeRef2, LABEL_CLAIM_TYPE, Boolean.FALSE));
+			productSpec1.getLabelClaimList()
+					.add(new LabelClaimListDataItem(labelClaimNodeRef3, LABEL_CLAIM_TYPE, Boolean.TRUE));
+			productSpec1.getLabelClaimList()
+					.add(new LabelClaimListDataItem(labelClaimNodeRef5, LABEL_CLAIM_TYPE, Boolean.FALSE));
+			productSpec1.getLabelClaimList()
+					.add(new LabelClaimListDataItem(labelClaimNodeRef6, LABEL_CLAIM_TYPE, Boolean.TRUE));
 			alfrescoRepository.save(productSpec1);
 
 			properties = new HashMap<>();
 			properties.put(ContentModel.PROP_NAME, "Spec2");
-			NodeRef productSpecificationNodeRef2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
-					PLMModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
+			NodeRef productSpecificationNodeRef2 = nodeService
+					.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+									(String) properties.get(ContentModel.PROP_NAME)),
+							PLMModel.TYPE_PRODUCT_SPECIFICATION, properties)
+					.getChildRef();
 
-			ProductSpecificationData productSpec2 = (ProductSpecificationData) alfrescoRepository.findOne(productSpecificationNodeRef2);
+			ProductSpecificationData productSpec2 = (ProductSpecificationData) alfrescoRepository
+					.findOne(productSpecificationNodeRef2);
 
 			productSpec2.setLabelClaimList(new ArrayList<LabelClaimListDataItem>());
-			productSpec2.getLabelClaimList().add(new LabelClaimListDataItem(labelClaimNodeRef, LABEL_CLAIM_TYPE, Boolean.FALSE));
-			productSpec2.getLabelClaimList().add(new LabelClaimListDataItem(labelClaimNodeRef2, LABEL_CLAIM_TYPE, Boolean.TRUE));
-			productSpec2.getLabelClaimList().add(new LabelClaimListDataItem(labelClaimNodeRef5, LABEL_CLAIM_TYPE, Boolean.FALSE));
+			productSpec2.getLabelClaimList()
+					.add(new LabelClaimListDataItem(labelClaimNodeRef, LABEL_CLAIM_TYPE, Boolean.FALSE));
+			productSpec2.getLabelClaimList()
+					.add(new LabelClaimListDataItem(labelClaimNodeRef2, LABEL_CLAIM_TYPE, Boolean.TRUE));
+			productSpec2.getLabelClaimList()
+					.add(new LabelClaimListDataItem(labelClaimNodeRef5, LABEL_CLAIM_TYPE, Boolean.FALSE));
 
 			alfrescoRepository.save(productSpec2);
 
 			properties = new HashMap<>();
 			properties.put(ContentModel.PROP_NAME, "global Spec");
-			NodeRef globalProductSpecificationNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
-					PLMModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
+			NodeRef globalProductSpecificationNodeRef = nodeService
+					.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+									(String) properties.get(ContentModel.PROP_NAME)),
+							PLMModel.TYPE_PRODUCT_SPECIFICATION, properties)
+					.getChildRef();
 
-			ProductSpecificationData globalSpec = (ProductSpecificationData) alfrescoRepository.findOne(globalProductSpecificationNodeRef);
+			ProductSpecificationData globalSpec = (ProductSpecificationData) alfrescoRepository
+					.findOne(globalProductSpecificationNodeRef);
 
 			globalSpec.setProductSpecifications(new ArrayList<ProductSpecificationData>());
 			globalSpec.getProductSpecifications().add(productSpec1);
@@ -185,16 +253,24 @@ public class FormulationLabelClaimIT extends AbstractFinishedProductTest {
 			product.setProductSpecifications(new ArrayList<ProductSpecificationData>());
 			product.getProductSpecifications().add(globalSpec);
 			product.setLabelClaimList(new ArrayList<LabelClaimListDataItem>());
-			LabelClaimListDataItem productLabelClaimFalse = new LabelClaimListDataItem(labelClaimNodeRef, LABEL_CLAIM_TYPE, Boolean.TRUE);
-			LabelClaimListDataItem productLabelClaimFalse2 = new LabelClaimListDataItem(labelClaimNodeRef2, LABEL_CLAIM_TYPE, Boolean.FALSE);
-			LabelClaimListDataItem productLabelClaimFalse4 = new LabelClaimListDataItem(labelClaimNodeRef4, LABEL_CLAIM_TYPE, Boolean.TRUE);
-			LabelClaimListDataItem productLabelClaimFalse5 = new LabelClaimListDataItem(labelClaimNodeRef5, LABEL_CLAIM_TYPE, Boolean.TRUE);
-			LabelClaimListDataItem productLabelClaimFalse6 = new LabelClaimListDataItem(labelClaimNodeRef6, LABEL_CLAIM_TYPE, Boolean.TRUE);
-			LabelClaimListDataItem productLabelClaimFalse7 = new LabelClaimListDataItem(labelClaimNodeRef7, LABEL_CLAIM_TYPE, Boolean.TRUE);
+			LabelClaimListDataItem productLabelClaimFalse = new LabelClaimListDataItem(labelClaimNodeRef,
+					LABEL_CLAIM_TYPE, Boolean.TRUE);
+			LabelClaimListDataItem productLabelClaimFalse2 = new LabelClaimListDataItem(labelClaimNodeRef2,
+					LABEL_CLAIM_TYPE, Boolean.FALSE);
+			LabelClaimListDataItem productLabelClaimFalse4 = new LabelClaimListDataItem(labelClaimNodeRef4,
+					LABEL_CLAIM_TYPE, Boolean.TRUE);
+			LabelClaimListDataItem productLabelClaimFalse5 = new LabelClaimListDataItem(labelClaimNodeRef5,
+					LABEL_CLAIM_TYPE, Boolean.TRUE);
+			LabelClaimListDataItem productLabelClaimFalse6 = new LabelClaimListDataItem(labelClaimNodeRef6,
+					LABEL_CLAIM_TYPE, Boolean.TRUE);
+			LabelClaimListDataItem productLabelClaimFalse7 = new LabelClaimListDataItem(labelClaimNodeRef7,
+					LABEL_CLAIM_TYPE, Boolean.TRUE);
 
-			LabelClaimListDataItem subProductLabelClaim6 = new LabelClaimListDataItem(labelClaimNodeRef6, LABEL_CLAIM_TYPE, Boolean.TRUE);
+			LabelClaimListDataItem subProductLabelClaim6 = new LabelClaimListDataItem(labelClaimNodeRef6,
+					LABEL_CLAIM_TYPE, Boolean.TRUE);
 			subProductLabelClaim6.setLabelClaimValue(LabelClaimListDataItem.VALUE_EMPTY);
-			LabelClaimListDataItem subProductLabelClaim7 = new LabelClaimListDataItem(labelClaimNodeRef7, LABEL_CLAIM_TYPE, Boolean.TRUE);
+			LabelClaimListDataItem subProductLabelClaim7 = new LabelClaimListDataItem(labelClaimNodeRef7,
+					LABEL_CLAIM_TYPE, Boolean.TRUE);
 			subProductLabelClaim7.setLabelClaimValue(LabelClaimListDataItem.VALUE_EMPTY);
 
 			productLabelClaimFalse.setIsManual(Boolean.TRUE);
@@ -210,19 +286,20 @@ public class FormulationLabelClaimIT extends AbstractFinishedProductTest {
 				rm12.getLabelClaimList().add(subProductLabelClaim7);
 				alfrescoRepository.save(rm12);
 			}
-			
+
 			ProductData packaging1 = alfrescoRepository.findOne(packagingMaterial1NodeRef);
 			if ((packaging1 != null) && (packaging1.getLabelClaimList() != null)) {
-				
-				LabelClaimListDataItem subPackagingProductLabelClaim6 = new LabelClaimListDataItem(labelClaimNodeRef6, LABEL_CLAIM_TYPE, Boolean.TRUE);
+
+				LabelClaimListDataItem subPackagingProductLabelClaim6 = new LabelClaimListDataItem(labelClaimNodeRef6,
+						LABEL_CLAIM_TYPE, Boolean.TRUE);
 				subPackagingProductLabelClaim6.setLabelClaimValue(LabelClaimListDataItem.VALUE_EMPTY);
-				LabelClaimListDataItem subPackagingProductLabelClaim7 = new LabelClaimListDataItem(labelClaimNodeRef7, LABEL_CLAIM_TYPE, Boolean.TRUE);
+				LabelClaimListDataItem subPackagingProductLabelClaim7 = new LabelClaimListDataItem(labelClaimNodeRef7,
+						LABEL_CLAIM_TYPE, Boolean.TRUE);
 
 				packaging1.getLabelClaimList().add(subPackagingProductLabelClaim6);
 				packaging1.getLabelClaimList().add(subPackagingProductLabelClaim7);
 				alfrescoRepository.save(packaging1);
 			}
-
 
 			product.getLabelClaimList().add(productLabelClaimFalse);
 			product.getLabelClaimList().add(productLabelClaimFalse2);
@@ -233,28 +310,29 @@ public class FormulationLabelClaimIT extends AbstractFinishedProductTest {
 
 			alfrescoRepository.save(product);
 
-			nodeService.createAssociation(globalProductSpecificationNodeRef, productSpecificationNodeRef2, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
-			nodeService.createAssociation(globalProductSpecificationNodeRef, productSpecificationNodeRef1, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
+			nodeService.createAssociation(globalProductSpecificationNodeRef, productSpecificationNodeRef2,
+					PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
+			nodeService.createAssociation(globalProductSpecificationNodeRef, productSpecificationNodeRef1,
+					PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
 
 			// create association
-			nodeService.createAssociation(tmp, globalProductSpecificationNodeRef, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
+			nodeService.createAssociation(tmp, globalProductSpecificationNodeRef,
+					PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
 
 			/*-- Formulation --*/
 			logger.info("/*-- Formulation --*/");
 			productService.formulate(tmp);
 
-
 			return tmp;
-		}, false, true);
-			
-		
+		});
+
 		checkRequirement(testProduct);
 
 	}
 
 	private void checkRequirement(NodeRef testProduct) {
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			/* -- Check formulation -- */
 			ProductData formulatedProduct = alfrescoRepository.findOne(testProduct);
 
@@ -299,7 +377,7 @@ public class FormulationLabelClaimIT extends AbstractFinishedProductTest {
 			assertEquals(5, checks);
 
 			return null;
-		}, false, true);
-		
+		});
+
 	}
 }

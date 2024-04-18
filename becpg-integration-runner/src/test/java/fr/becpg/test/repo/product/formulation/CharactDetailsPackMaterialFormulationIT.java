@@ -33,7 +33,7 @@ import fr.becpg.repo.web.scripts.product.CharactDetailsHelper;
  * The Class FormulationTest.
  *
  */
-public class CharactDetailsPackMaterialFormulationIT extends  FormulationPackMaterialIT {
+public class CharactDetailsPackMaterialFormulationIT extends FormulationPackMaterialIT {
 
 	protected static final Log logger = LogFactory.getLog(CharactDetailsPackMaterialFormulationIT.class);
 
@@ -48,15 +48,14 @@ public class CharactDetailsPackMaterialFormulationIT extends  FormulationPackMat
 	/**
 	 * Test formulate product and check pack material details
 	 *
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	@Test
 	public void testFormulateCharactDetailsPackMaterial() throws Exception {
 
 		logger.info("testFormulateCharactDetailsPackMaterial");
 
-		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
 
 			logger.info("/*-- Create finished product --*/");
 			FinishedProductData finishedProduct = new FinishedProductData();
@@ -66,66 +65,108 @@ public class CharactDetailsPackMaterialFormulationIT extends  FormulationPackMat
 			finishedProduct.setQty(1d);
 			finishedProduct.setDensity(1d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, PF1NodeRef));// Allu
-																																// 20
-																																// /
-																																// Carton
-																																// 40
-			compoList.add(new CompoListDataItem(null, null, null, 500d, ProductUnit.g, 0d, DeclarationType.Declare, SF1NodeRef));// Fer
-																																	// 60
-																																	// /
-																																	// Plastique
-																																	// 80
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.lb, 0d, DeclarationType.Declare, rawMaterial1NodeRef));// Verre
-																																			// 56.699
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.oz, 0d, DeclarationType.Declare, rawMaterial2NodeRef));// no
-																																			// material
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(PF1NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d,
+			 * DeclarationType.Declare, PF1NodeRef));
+			 */
+			// Allu
+			// 20
+			// /
+			// Carton
+			// 40
+			compoList.add(CompoListDataItem.build().withQtyUsed(500d).withUnit(ProductUnit.g).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(SF1NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 500d, ProductUnit.g,
+			 * 0d, DeclarationType.Declare, SF1NodeRef));
+			 */
+			// Fer
+			// 60
+			// /
+			// Plastique
+			// 80
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.lb).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.lb, 0d,
+			 * DeclarationType.Declare, rawMaterial1NodeRef));
+			 */
+			// Verre
+			// 56.699
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.oz).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial2NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.oz, 0d,
+			 * DeclarationType.Declare, rawMaterial2NodeRef));
+			 */
+			// no
+			// material
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
 			List<PackagingListDataItem> packList = new ArrayList<>();
-			packList.add(new PackagingListDataItem(null, 3d, ProductUnit.g, PackagingLevel.Primary, true, packaging1NodeRef));// Allu
-																																// 20
-																																// +
-																																// 3g
-																																// =
-																																// 23
-			packList.add(new PackagingListDataItem(null, 1d, ProductUnit.oz, PackagingLevel.Primary, true, packaging2NodeRef));// Carton
-																																// 40
-																																// +
-																																// 28.349523125g
-																																// =
-																																// 68.35
-			packList.add(new PackagingListDataItem(null, 1d, ProductUnit.lb, PackagingLevel.Primary, true, packaging3NodeRef));// Fer
-																																// 60
-																																// +
-																																// 226,796
-																																// =
-																																// 286.796
-																																// /
-																																// Plastique
-																																// =
-																																// 80
-																																// +
-																																// 226,796
-																																// =
-																																// 306.796
+			packList.add(PackagingListDataItem.build().withQty(3d).withUnit(ProductUnit.g)
+					.withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packaging1NodeRef));
+			/*
+			 * packList.add(new PackagingListDataItem(null, 3d, ProductUnit.g,
+			 * PackagingLevel.Primary, true, packaging1NodeRef));
+			 */
+			// Allu
+			// 20
+			// +
+			// 3g
+			// =
+			// 23
+			packList.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.oz)
+					.withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packaging2NodeRef));
+			/*
+			 * packList.add(new PackagingListDataItem(null, 1d, ProductUnit.oz,
+			 * PackagingLevel.Primary, true, packaging2NodeRef));
+			 */
+			// Carton
+			// 40
+			// +
+			// 28.349523125g
+			//
+			// 68.35
+			packList.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.lb)
+					.withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packaging3NodeRef));
+			/*
+			 * packList.add(new PackagingListDataItem(null, 1d, ProductUnit.lb,
+			 * PackagingLevel.Primary, true, packaging3NodeRef));
+			 */
+			// Fer
+			// 60
+			// +
+			// 226,796
+			// =
+			// 286.796
+			// /
+			// Plastique
+			// =
+			// 80
+			// +
+			// 226,796
+			// =
+			// 306.796
 			finishedProduct.getPackagingListView().setPackagingList(packList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			NodeRef listContainerNodeRef = entityListDAO.getListContainer(finishedProductNodeRef);
-			if(entityListDAO.getList(listContainerNodeRef, PackModel.PACK_MATERIAL_LIST_TYPE) == null) {
+			if (entityListDAO.getList(listContainerNodeRef, PackModel.PACK_MATERIAL_LIST_TYPE) == null) {
 				entityListDAO.createList(listContainerNodeRef, PackModel.PACK_MATERIAL_LIST_TYPE);
 			}
 
 			// formulate Details
 			List<NodeRef> packMaterialNodeRefs = new ArrayList<>();
 			productService.formulate(finishedProductNodeRef);
-			CharactDetails ret = productService.formulateDetails(finishedProductNodeRef, PackModel.PACK_MATERIAL_LIST_TYPE, "packMaterialList",
-					packMaterialNodeRefs, null);
+			CharactDetails ret = productService.formulateDetails(finishedProductNodeRef,
+					PackModel.PACK_MATERIAL_LIST_TYPE, "packMaterialList", packMaterialNodeRefs, null);
 
 			Assert.assertNotNull(ret);
 			logger.info(CharactDetailsHelper.toJSONObject(ret, nodeService, attributeExtractorService).toString(3));
@@ -137,8 +178,8 @@ public class CharactDetailsPackMaterialFormulationIT extends  FormulationPackMat
 
 				for (CharactDetailsValue kv2 : kv.getValue()) {
 
-					String trace = "material: " + nodeService.getProperty(kv.getKey(), BeCPGModel.PROP_LV_VALUE) + " - source: " + kv2.getKeyNodeRef()
-							+ " - value: " + kv2.getValue();
+					String trace = "material: " + nodeService.getProperty(kv.getKey(), BeCPGModel.PROP_LV_VALUE)
+							+ " - source: " + kv2.getKeyNodeRef() + " - value: " + kv2.getValue();
 					logger.info(trace);
 
 					// material 1 (Alluminium)
@@ -205,9 +246,8 @@ public class CharactDetailsPackMaterialFormulationIT extends  FormulationPackMat
 
 			return null;
 
-		}, false, true);
+		});
 
 	}
-
 
 }

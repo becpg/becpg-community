@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -80,7 +80,7 @@ public class MeatContentFormulationIT extends AbstractFinishedProductTest {
 	 */
 	protected void initParts2() {
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			/*-- characteristics --*/
 			Map<QName, Serializable> properties = new HashMap<>();
@@ -93,7 +93,8 @@ public class MeatContentFormulationIT extends AbstractFinishedProductTest {
 			properties.put(GS1Model.PROP_NUTRIENT_TYPE_CODE, "PRO-");
 			properties.put(PLMModel.PROP_NUTGROUP, GROUP1);
 			protein = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_NUT, properties).getChildRef();
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "fat");
@@ -101,7 +102,8 @@ public class MeatContentFormulationIT extends AbstractFinishedProductTest {
 			properties.put(GS1Model.PROP_NUTRIENT_TYPE_CODE, "FAT");
 			properties.put(PLMModel.PROP_NUTGROUP, GROUP2);
 			fat = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_NUT, properties).getChildRef();
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "collagen");
@@ -109,7 +111,8 @@ public class MeatContentFormulationIT extends AbstractFinishedProductTest {
 			properties.put(GS1Model.PROP_NUTRIENT_TYPE_CODE, "COLG");
 			properties.put(PLMModel.PROP_NUTGROUP, GROUP2);
 			collagen = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_NUT, properties).getChildRef();
 
 			// Ings
@@ -121,7 +124,8 @@ public class MeatContentFormulationIT extends AbstractFinishedProductTest {
 			mlName.addValue(Locale.FRENCH, "beef french");
 			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
 			beef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_ING, properties).getChildRef();
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "beefFat");
@@ -132,7 +136,8 @@ public class MeatContentFormulationIT extends AbstractFinishedProductTest {
 			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
 
 			beefFat = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_ING, properties).getChildRef();
 
 			mlName = new MLText();
@@ -142,7 +147,8 @@ public class MeatContentFormulationIT extends AbstractFinishedProductTest {
 			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
 
 			porc = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_ING, properties).getChildRef();
 
 			mlName = new MLText();
@@ -150,7 +156,8 @@ public class MeatContentFormulationIT extends AbstractFinishedProductTest {
 			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
 
 			porcFat = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_ING, properties).getChildRef();
 
 			/*-- Create raw materials --*/
@@ -206,7 +213,8 @@ public class MeatContentFormulationIT extends AbstractFinishedProductTest {
 			rawMaterial2.setNutList(nutList);
 
 			ingList = new ArrayList<>();
-			ingList.add(new IngListDataItem(null, 100d, new ArrayList<>(), new ArrayList<>(), false, false, false, porc, false));
+			ingList.add(new IngListDataItem(null, 100d, new ArrayList<>(), new ArrayList<>(), false, false, false, porc,
+					false));
 
 			rawMaterial2.setIngList(ingList);
 
@@ -214,7 +222,7 @@ public class MeatContentFormulationIT extends AbstractFinishedProductTest {
 
 			return null;
 
-		}, false, true);
+		});
 	}
 
 	@Override
@@ -226,13 +234,18 @@ public class MeatContentFormulationIT extends AbstractFinishedProductTest {
 	}
 
 	private NodeRef createTestProduct(final List<LabelingRuleListDataItem> labelingRuleList) {
-		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		return inWriteTx(() -> {
 
 			SemiFinishedProductData semifinishedProduct1 = new SemiFinishedProductData();
 			semifinishedProduct1.setName("Semi Finished product " + Calendar.getInstance().getTimeInMillis());
 
 			List<CompoListDataItem> compoList1 = new ArrayList<>();
-			compoList1.add(new CompoListDataItem(null, null, null, 100d, ProductUnit.Perc, 0d, DeclarationType.Declare, mpPorc2));
+			compoList1.add(CompoListDataItem.build().withQtyUsed(100d).withUnit(ProductUnit.Perc).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(mpPorc2));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, null, null, 100d,
+			 * ProductUnit.Perc, 0d, DeclarationType.Declare, mpPorc2));
+			 */
 			semifinishedProduct1.getCompoListView().setCompoList(compoList1);
 
 			/**
@@ -248,7 +261,21 @@ public class MeatContentFormulationIT extends AbstractFinishedProductTest {
 			finishedProduct1.setUnit(ProductUnit.kg);
 			finishedProduct1.setDensity(1d);
 			compoList1 = new ArrayList<>();
-			compoList1.add(new CompoListDataItem(null, null, null, 2d, ProductUnit.kg, 0d, DeclarationType.Declare, mpBeef1));
+			compoList1.add(CompoListDataItem.build().withQtyUsed(2d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(mpBeef1));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, null, null, 2d, ProductUnit.kg,
+			 * 0d, DeclarationType.Declare, mpBeef1));
+			 */
+
+			/*
+			 * compoList1.add(
+			 * CompoListDataItem.build().withQtyUsed(3d).withUnit(ProductUnit.kg).
+			 * withLossPerc(0d) .withDeclarationType(DeclarationType.Declare),
+			 * alfrescoRepository.create(getTestFolderNodeRef(),
+			 * semifinishedProduct1).getNodeRef());
+			 */
+
 			compoList1.add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare,
 					alfrescoRepository.create(getTestFolderNodeRef(), semifinishedProduct1).getNodeRef()));
 
@@ -257,7 +284,7 @@ public class MeatContentFormulationIT extends AbstractFinishedProductTest {
 			finishedProduct1.getLabelingListView().setLabelingRuleList(labelingRuleList);
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
-		}, false, true);
+		});
 	}
 
 	@Test
@@ -272,9 +299,10 @@ public class MeatContentFormulationIT extends AbstractFinishedProductTest {
 		labelingRuleList.add(new LabelingRuleListDataItem("%", "", LabelingRuleType.ShowPerc, null, null));
 
 		checkILL(finishedProductNodeRef1, labelingRuleList, "porc french 60%, beef french 40%", Locale.FRENCH);
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
-			FinishedProductData finishedProductData = (FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef1);
+			FinishedProductData finishedProductData = (FinishedProductData) alfrescoRepository
+					.findOne(finishedProductNodeRef1);
 
 			productService.formulate(finishedProductData);
 
@@ -287,18 +315,19 @@ public class MeatContentFormulationIT extends AbstractFinishedProductTest {
 			Assert.assertTrue(meatContentData.getCollagenPerc() == (0.5 / 1000d));
 
 			return null;
-		}, false, true);
+		});
 
 		labelingRuleList = new ArrayList<>();
 
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
 		labelingRuleList.add(new LabelingRuleListDataItem("%", "", LabelingRuleType.ShowPerc, null, null));
-		labelingRuleList.add(new LabelingRuleListDataItem("QUID Boeuf", MeatType.Mammals.toString(), LabelingRuleType.Group, Arrays.asList(beef),
-				Arrays.asList(beefFat)));
-		labelingRuleList.add(new LabelingRuleListDataItem("QUID porc", MeatType.Porcines.toString(), LabelingRuleType.Group, Arrays.asList(porc),
-				Arrays.asList(porcFat)));
+		labelingRuleList.add(new LabelingRuleListDataItem("QUID Boeuf", MeatType.Mammals.toString(),
+				LabelingRuleType.Group, Arrays.asList(beef), Arrays.asList(beefFat)));
+		labelingRuleList.add(new LabelingRuleListDataItem("QUID porc", MeatType.Porcines.toString(),
+				LabelingRuleType.Group, Arrays.asList(porc), Arrays.asList(porcFat)));
 
-		checkILL(finishedProductNodeRef1, labelingRuleList, "porc french 60%, beefFat french 34,7%, beef french 5,3%", Locale.FRENCH);
+		checkILL(finishedProductNodeRef1, labelingRuleList, "porc french 60%, beefFat french 34,7%, beef french 5,3%",
+				Locale.FRENCH);
 
 	}
 

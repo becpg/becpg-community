@@ -64,23 +64,29 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 	/**
 	 * Test formulate product, that has ings requirements defined
 	 *
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	@Test
 	public void testFormulationWithIngRequirements() throws Exception {
 
 		logger.info("testFormulationWithIngRequirements");
 
-		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
 
 			SemiFinishedProductData semiFinishedProduct = new SemiFinishedProductData();
 			semiFinishedProduct.setName("Semi fini 1");
 			semiFinishedProduct.setUnit(ProductUnit.kg);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.L, null, null, rawMaterial6NodeRef));
+			compoList.add(
+					CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.L).withProduct(rawMaterial6NodeRef));
 			semiFinishedProduct.getCompoListView().setCompoList(compoList);
-			NodeRef semiFinishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), semiFinishedProduct).getNodeRef();
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.L,
+			 * null, null, rawMaterial6NodeRef));
+			 * semiFinishedProduct.getCompoListView().setCompoList(compoList);
+			 */
+			NodeRef semiFinishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), semiFinishedProduct)
+					.getNodeRef();
 
 			/*-- Create finished product --*/
 			logger.info("/*-- Create finished product --*/");
@@ -92,39 +98,88 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 
 			compoList = new ArrayList<>();
 
-			CompoListDataItem parent1 = new CompoListDataItem(null, null, null, 2d, ProductUnit.kg, 10d, DeclarationType.Detail, localSF1NodeRef);
-
+			/*
+			 * CompoListDataItem parent1 = new CompoListDataItem(null, null, null, 2d,
+			 * ProductUnit.kg, 10d, DeclarationType.Detail, localSF1NodeRef);
+			 */
+			CompoListDataItem parent1 = CompoListDataItem.build().withQtyUsed(2d).withUnit(ProductUnit.kg)
+					.withLossPerc(10d).withDeclarationType(DeclarationType.Detail).withProduct(localSF1NodeRef);
 			compoList.add(parent1);
-			CompoListDataItem parent12 = new CompoListDataItem(null, parent1, null, 1d, ProductUnit.kg, 10d, DeclarationType.Detail, localSF2NodeRef);
+			/*
+			 * CompoListDataItem parent12 = new CompoListDataItem(null, parent1, null, 1d,
+			 * ProductUnit.kg, 10d, DeclarationType.Detail, localSF2NodeRef);
+			 */
+			CompoListDataItem parent12 = CompoListDataItem.build().withParent(parent1).withQtyUsed(1d)
+					.withUnit(ProductUnit.kg).withLossPerc(10d).withDeclarationType(DeclarationType.Detail)
+					.withProduct(localSF2NodeRef);
 			compoList.add(parent12);
+			/*
+			 * compoList.add(new CompoListDataItem(null, parent12, null, 0.80d,
+			 * ProductUnit.kg, 5d, DeclarationType.Declare, rawMaterial1NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(parent12).withQtyUsed(0.80d).withUnit(ProductUnit.kg)
+					.withLossPerc(5d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, parent12, null, 0.30d,
+			 * ProductUnit.kg, 10d, DeclarationType.Detail, rawMaterial2NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(parent12).withQtyUsed(0.30d).withUnit(ProductUnit.kg)
+					.withLossPerc(10d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial2NodeRef));
 
-			compoList.add(new CompoListDataItem(null, parent12, null, 0.80d, ProductUnit.kg, 5d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, parent12, null, 0.30d, ProductUnit.kg, 10d, DeclarationType.Detail, rawMaterial2NodeRef));
-
-			CompoListDataItem parent22 = new CompoListDataItem(null, parent1, null, 2d, ProductUnit.kg, 20d, DeclarationType.Detail, localSF3NodeRef);
-
+			/*
+			 * CompoListDataItem parent22 = new CompoListDataItem(null, parent1, null, 2d,
+			 * ProductUnit.kg, 20d, DeclarationType.Detail, localSF3NodeRef);
+			 */
+			CompoListDataItem parent22 = CompoListDataItem.build().withParent(parent1).withQtyUsed(2d)
+					.withUnit(ProductUnit.kg).withLossPerc(20d).withDeclarationType(DeclarationType.Detail)
+					.withProduct(localSF3NodeRef);
 			compoList.add(parent22);
-			compoList.add(new CompoListDataItem(null, parent22, null, 0.170d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-			compoList.add(new CompoListDataItem(null, parent22, null, 0.40d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
-			compoList.add(new CompoListDataItem(null, parent22, null, 1d, ProductUnit.P, 0d, DeclarationType.Declare, rawMaterial5NodeRef));
 
-			compoList.add(new CompoListDataItem(null, null, null, 2d, ProductUnit.kg, null, null, semiFinishedProductNodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, parent22, null, 0.170d,
+			 * ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(parent22).withQtyUsed(0.170d).withUnit(ProductUnit.kg)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial3NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, parent22, null, 0.40d,
+			 * ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(parent22).withQtyUsed(0.40d).withUnit(ProductUnit.kg)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Omit).withProduct(rawMaterial4NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, parent22, null, 1d, ProductUnit.P,
+			 * 0d, DeclarationType.Declare, rawMaterial5NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(parent22).withQtyUsed(1d).withUnit(ProductUnit.P)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial5NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 2d, ProductUnit.kg,
+			 * null, null, semiFinishedProductNodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQtyUsed(2d).withUnit(ProductUnit.kg)
+					.withProduct(semiFinishedProductNodeRef));
+
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			// specification1
 			Map<QName, Serializable> properties = new HashMap<>();
 			properties.put(ContentModel.PROP_NAME, "Spec1");
-			NodeRef productSpecificationNodeRef1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
-					PLMModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
+			NodeRef productSpecificationNodeRef1 = nodeService
+					.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+									(String) properties.get(ContentModel.PROP_NAME)),
+							PLMModel.TYPE_PRODUCT_SPECIFICATION, properties)
+					.getChildRef();
 
-			ProductSpecificationData productSpecification1 = (ProductSpecificationData) alfrescoRepository.findOne(productSpecificationNodeRef1);
+			ProductSpecificationData productSpecification1 = (ProductSpecificationData) alfrescoRepository
+					.findOne(productSpecificationNodeRef1);
 
 			List<NodeRef> ings = new ArrayList<>();
 			List<NodeRef> geoOrigins = new ArrayList<>();
@@ -133,39 +188,40 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 			List<NodeRef> inVoluntary = new ArrayList<>();
 
 			List<ForbiddenIngListDataItem> forbiddenIngList1 = new ArrayList<>();
-			forbiddenIngList1.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "OGM interdit", null, Boolean.TRUE, null, ings,
-					geoOrigins, bioOrigins));
-			forbiddenIngList1.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "Ionisation interdite", null, null, Boolean.TRUE,
-					ings, geoOrigins, bioOrigins));
+			forbiddenIngList1.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "OGM interdit", null,
+					Boolean.TRUE, null, ings, geoOrigins, bioOrigins));
+			forbiddenIngList1.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "Ionisation interdite",
+					null, null, Boolean.TRUE, ings, geoOrigins, bioOrigins));
 
 			ings = new ArrayList<>();
 			geoOrigins = new ArrayList<>();
 			ings.add(ing3);
 			geoOrigins.add(geoOrigin1);
-			forbiddenIngList1.add(new ForbiddenIngListDataItem(null, RequirementType.Tolerated, "Ing3 geoOrigin1 toléré", null, null, null, ings,
-					geoOrigins, bioOrigins));
+			forbiddenIngList1.add(new ForbiddenIngListDataItem(null, RequirementType.Tolerated,
+					"Ing3 geoOrigin1 toléré", null, null, null, ings, geoOrigins, bioOrigins));
 
 			ings = new ArrayList<>();
 			geoOrigins = new ArrayList<>();
 			ings.add(ing3);
-			forbiddenIngList1
-					.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "Ing3 < 40%", 0.4d, null, null, ings, geoOrigins, bioOrigins));
+			forbiddenIngList1.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "Ing3 < 40%", 0.4d,
+					null, null, ings, geoOrigins, bioOrigins));
 
 			ings = new ArrayList<>();
 			geoOrigins = new ArrayList<>();
 			ings.add(ing1);
 			ings.add(ing4);
 			geoOrigins.clear();
-			forbiddenIngList1.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "Ing1 et ing4 interdits", null, null, null, ings,
-					geoOrigins, bioOrigins));
+			forbiddenIngList1.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden,
+					"Ing1 et ing4 interdits", null, null, null, ings, geoOrigins, bioOrigins));
 
 			ings = new ArrayList<>();
 			geoOrigins = new ArrayList<>();
 			ings.add(ing3);
 			geoOrigins.add(geoOrigin1);
 
-			ForbiddenIngListDataItem forbiddenIngListDataItem = new ForbiddenIngListDataItem(null, RequirementType.Forbidden,
-					"Ing3 geoOrigin1 obligatoire", null, null, null, ings, new ArrayList<NodeRef>(), bioOrigins);
+			ForbiddenIngListDataItem forbiddenIngListDataItem = new ForbiddenIngListDataItem(null,
+					RequirementType.Forbidden, "Ing3 geoOrigin1 obligatoire", null, null, null, ings,
+					new ArrayList<NodeRef>(), bioOrigins);
 			forbiddenIngListDataItem.setRequiredGeoOrigins(geoOrigins);
 			forbiddenIngList1.add(forbiddenIngListDataItem);
 			productSpecification1.setForbiddenIngList(forbiddenIngList1);
@@ -174,7 +230,8 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 			ArrayList<AllergenListDataItem> allergenList = new ArrayList<>();
 			voluntary.add(rawMaterial5NodeRef);
 			inVoluntary.add(rawMaterial2NodeRef);
-			allergenList.add(new AllergenListDataItem(null, null, false, false, voluntary, inVoluntary, allergen1, false));
+			allergenList
+					.add(new AllergenListDataItem(null, null, false, false, voluntary, inVoluntary, allergen1, false));
 			productSpecification1.setAllergenList(allergenList);
 
 			alfrescoRepository.save(productSpecification1);
@@ -182,26 +239,32 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 			// specification2
 			properties = new HashMap<>();
 			properties.put(ContentModel.PROP_NAME, "Spec2");
-			NodeRef productSpecificationNodeRef2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
-					PLMModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
+			NodeRef productSpecificationNodeRef2 = nodeService
+					.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+									(String) properties.get(ContentModel.PROP_NAME)),
+							PLMModel.TYPE_PRODUCT_SPECIFICATION, properties)
+					.getChildRef();
 
-			ProductSpecificationData productSpecification2 = (ProductSpecificationData) alfrescoRepository.findOne(productSpecificationNodeRef2);
+			ProductSpecificationData productSpecification2 = (ProductSpecificationData) alfrescoRepository
+					.findOne(productSpecificationNodeRef2);
 			List<ForbiddenIngListDataItem> forbiddenIngList2 = new ArrayList<>();
 
 			ings = new ArrayList<>();
 			geoOrigins = new ArrayList<>();
 			ings.add(ing2);
 			geoOrigins.add(geoOrigin2);
-			forbiddenIngList2.add(new ForbiddenIngListDataItem(null, RequirementType.Info, "Ing2 geoOrigin2 interdit sur charcuterie", null, null,
-					null, ings, geoOrigins, bioOrigins));
+			forbiddenIngList2.add(new ForbiddenIngListDataItem(null, RequirementType.Info,
+					"Ing2 geoOrigin2 interdit sur charcuterie", null, null, null, ings, geoOrigins, bioOrigins));
 
 			productSpecification2.setForbiddenIngList(forbiddenIngList2);
 			alfrescoRepository.save(productSpecification2);
 
 			// create association
-			nodeService.createAssociation(finishedProductNodeRef, productSpecificationNodeRef2, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
-			nodeService.createAssociation(finishedProductNodeRef, productSpecificationNodeRef1, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
+			nodeService.createAssociation(finishedProductNodeRef, productSpecificationNodeRef2,
+					PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
+			nodeService.createAssociation(finishedProductNodeRef, productSpecificationNodeRef1,
+					PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
 
 			/*-- Formulate product --*/
 			logger.info("/*-- Formulate product --*/");
@@ -215,13 +278,15 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 			logger.info("/*-- Formulation raised " + formulatedProduct.getReqCtrlList().size() + " rclDataItems --*/");
 
 			for (ReqCtrlListDataItem reqCtrlList : formulatedProduct.getReqCtrlList()) {
-				logger.info("/*-- Verify reqCtrlList : " + reqCtrlList.getReqMessage() + " --*/"+ reqCtrlList.getKey() );
+				logger.info(
+						"/*-- Verify reqCtrlList : " + reqCtrlList.getReqMessage() + " --*/" + reqCtrlList.getKey());
 				logger.info("/*-- This item has " + reqCtrlList.getSources().size() + " sources --*/");
 
 				/*
 				 * #1909 added non validation rclDataItem
 				 */
-				if (I18NUtil.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_NON_VALIDATED_STATE).equals(reqCtrlList.getReqMessage())) {
+				if (I18NUtil.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_NON_VALIDATED_STATE)
+						.equals(reqCtrlList.getReqMessage())) {
 					assertEquals(RequirementType.Tolerated, reqCtrlList.getReqType());
 					assertEquals(RequirementDataType.Validation, reqCtrlList.getReqDataType());
 					assertEquals(10, reqCtrlList.getSources().size());
@@ -282,8 +347,9 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 					assertTrue(reqCtrlList.getSources().contains(rawMaterial2NodeRef));
 					assertTrue(reqCtrlList.getSources().contains(rawMaterial6NodeRef));
 					checks++;
-				} else if (reqCtrlList.getReqMessage().equals(I18NUtil.getMessage(AllergensCalculatingFormulationHandler.MESSAGE_FORBIDDEN_ALLERGEN,
-						nodeService.getProperty(allergen1, BeCPGModel.PROP_CHARACT_NAME)))) {
+				} else if (reqCtrlList.getReqMessage()
+						.equals(I18NUtil.getMessage(AllergensCalculatingFormulationHandler.MESSAGE_FORBIDDEN_ALLERGEN,
+								nodeService.getProperty(allergen1, BeCPGModel.PROP_CHARACT_NAME)))) {
 
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
 					assertEquals(3, reqCtrlList.getSources().size());
@@ -292,26 +358,34 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 					assertTrue(reqCtrlList.getSources().contains(rawMaterial6NodeRef));
 					checks++;
 				} else if (I18NUtil
-						.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Libellé légal", "EU 1169/2011 (INCO)")
+						.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING,
+								"Libellé légal", "EU 1169/2011 (INCO)")
 						.equals(reqCtrlList.getReqMessage())) {
 
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
 					checks++;
 					checks++;
-				} else if (I18NUtil.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Conditions de conservation ou Conseils de préparation et d'utilisation",
-						"EU 1169/2011 (INCO)").equals(reqCtrlList.getReqMessage())) {
+				} else if (I18NUtil
+						.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING,
+								"Conditions de conservation ou Conseils de préparation et d'utilisation",
+								"EU 1169/2011 (INCO)")
+						.equals(reqCtrlList.getReqMessage())) {
 
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
 					checks++;
-				} else if (I18NUtil.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "DLC (J) ou DDM/DLUO (J)",
-						"EU 1169/2011 (INCO)").equals(reqCtrlList.getReqMessage())) {
+				} else if (I18NUtil
+						.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING,
+								"DLC (J) ou DDM/DLUO (J)", "EU 1169/2011 (INCO)")
+						.equals(reqCtrlList.getReqMessage())) {
 
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
 					checks++;
-				} else if (I18NUtil.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_NON_UNIQUE_FIELD, "Nom",
-						"EU 1169/2011 (INCO)").equals(reqCtrlList.getReqMessage())) {
+				} else if (I18NUtil.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_NON_UNIQUE_FIELD,
+						"Nom", "EU 1169/2011 (INCO)").equals(reqCtrlList.getReqMessage())) {
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
-				} else if (I18NUtil.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Libellé commercial", "EU 1169/2011 (INCO)")
+				} else if (I18NUtil
+						.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING,
+								"Libellé commercial", "EU 1169/2011 (INCO)")
 						.equals(reqCtrlList.getReqMessage())) {
 
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
@@ -321,7 +395,7 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 
 					assertEquals(RequirementType.Tolerated, reqCtrlList.getReqType());
 					checks++;
-					
+
 				} else {
 					logger.error("Unexpected rclDataItem: " + reqCtrlList.getReqMessage());
 					fail();
@@ -332,11 +406,13 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 			assertEquals(16, checks);
 
 			/*
-			 * #257: check reqCtrlList is clear if all req are respected (we
-			 * remove specification to get everything OK)
+			 * #257: check reqCtrlList is clear if all req are respected (we remove
+			 * specification to get everything OK)
 			 */
-			nodeService.removeAssociation(finishedProductNodeRef, productSpecificationNodeRef1, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
-			nodeService.removeAssociation(finishedProductNodeRef, productSpecificationNodeRef2, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
+			nodeService.removeAssociation(finishedProductNodeRef, productSpecificationNodeRef1,
+					PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
+			nodeService.removeAssociation(finishedProductNodeRef, productSpecificationNodeRef2,
+					PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
 
 			/*-- Formulate product --*/
 			logger.debug("/*-- Formulate product --*/");
@@ -347,10 +423,9 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 			formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
 
 			/*
-			 * 7 rclDataItem remains : one for non validated product, and three
-			 * for INCO missing fields: legal name, conservation conditions,
-			 * precautions for use, title, use by date| best before date, and
-			 * DLC
+			 * 7 rclDataItem remains : one for non validated product, and three for INCO
+			 * missing fields: legal name, conservation conditions, precautions for use,
+			 * title, use by date| best before date, and DLC
 			 */
 
 			logger.debug("After removing specs, " + formulatedProduct.getReqCtrlList().size() + " remain");
@@ -358,7 +433,7 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 
 			return null;
 
-		}, false, true);
+		});
 
 	}
 }

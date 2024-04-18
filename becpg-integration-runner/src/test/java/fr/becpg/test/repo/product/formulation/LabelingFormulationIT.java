@@ -106,16 +106,46 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			finishedProduct1.setUnit(ProductUnit.kg);
 			finishedProduct1.setDensity(1d);
 			List<CompoListDataItem> compoList1 = new ArrayList<>();
-			compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF11NodeRef));
-			compoList1
-					.add(new CompoListDataItem(null, compoList1.get(0), null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial11NodeRef));
-			compoList1
-					.add(new CompoListDataItem(null, compoList1.get(0), null, 2d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial12NodeRef));
-			compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF12NodeRef));
-			compoList1
-					.add(new CompoListDataItem(null, compoList1.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial13NodeRef));
-			compoList1
-					.add(new CompoListDataItem(null, compoList1.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial14NodeRef));
+			compoList1.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF11NodeRef));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg,
+			 * 0d, DeclarationType.Detail, localSF11NodeRef));
+			 */
+			compoList1.add(CompoListDataItem.build().withParent(compoList1.get(0)).withQtyUsed(1d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare)
+					.withProduct(rawMaterial11NodeRef));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, compoList1.get(0), null, 1d,
+			 * ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial11NodeRef));
+			 */
+			compoList1.add(CompoListDataItem.build().withParent(compoList1.get(0)).withQtyUsed(2d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail)
+					.withProduct(rawMaterial12NodeRef));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, compoList1.get(0), null, 2d,
+			 * ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial12NodeRef));
+			 */
+			compoList1.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF12NodeRef));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg,
+			 * 0d, DeclarationType.Detail, localSF12NodeRef));
+			 */
+			compoList1.add(CompoListDataItem.build().withParent(compoList1.get(3)).withQtyUsed(3d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare)
+					.withProduct(rawMaterial13NodeRef));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, compoList1.get(3), null, 3d,
+			 * ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial13NodeRef));
+			 */
+			compoList1.add(CompoListDataItem.build().withParent(compoList1.get(3)).withQtyUsed(3d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare)
+					.withProduct(rawMaterial14NodeRef));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, compoList1.get(3), null, 3d,
+			 * ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial14NodeRef));
+			 */
 
 			finishedProduct1.getCompoListView().setCompoList(compoList1);
 
@@ -138,7 +168,12 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			finishedProduct1.setUnit(ProductUnit.kg);
 			finishedProduct1.setDensity(1d);
 			List<CompoListDataItem> compoList1 = new ArrayList<>();
-			compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial16NodeRef));
+			compoList1.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial16NodeRef));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg,
+			 * 0d, DeclarationType.Declare, rawMaterial16NodeRef));
+			 */
 
 			finishedProduct1.getCompoListView().setCompoList(compoList1);
 
@@ -154,9 +189,10 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
 
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
-		labelingRuleList
-				.add(new LabelingRuleListDataItem("Declare", null, LabelingRuleType.Declare, Collections.singletonList(rawMaterial16NodeRef), null));
-		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Declare", null, LabelingRuleType.Declare,
+				Collections.singletonList(rawMaterial16NodeRef), null));
+		labelingRuleList.add(
+				new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, null, null));
 
 		checkILL(finishedProductNodeRef1, labelingRuleList, "ing3 french 55%, ing1 french, ing2 french", Locale.FRENCH);
 		
@@ -172,11 +208,13 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		labelingRuleList = new ArrayList<>();
 
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
-		labelingRuleList
-				.add(new LabelingRuleListDataItem("Detail", null, LabelingRuleType.Detail, Collections.singletonList(rawMaterial16NodeRef), null));
-		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Detail", null, LabelingRuleType.Detail,
+				Collections.singletonList(rawMaterial16NodeRef), null));
+		labelingRuleList.add(
+				new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, null, null));
 
-		checkILL(finishedProductNodeRef1, labelingRuleList, "legal Raw material 16 100% (ing1 french, ing3 french 55%, ing2 french)", Locale.FRENCH);
+		checkILL(finishedProductNodeRef1, labelingRuleList,
+				"legal Raw material 16 100% (ing1 french, ing3 french 55%, ing2 french)", Locale.FRENCH);
 
 		final NodeRef finishProduct1 = createTestProduct(null);
 
@@ -198,14 +236,46 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			finishedProduct1.setUnit(ProductUnit.kg);
 			finishedProduct1.setDensity(1d);
 			List<CompoListDataItem> compoList1 = new ArrayList<>();
-			compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF11NodeRef));
-			compoList1.add(new CompoListDataItem(null, compoList1.get(0), null, 1d, ProductUnit.kg, 0d, DeclarationType.Kit, finishProduct1));
-			compoList1.add(new CompoListDataItem(null, compoList1.get(0), null, 2d, ProductUnit.kg, 0d, DeclarationType.Kit, finishProduct2));
-			compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF12NodeRef));
-			compoList1
-					.add(new CompoListDataItem(null, compoList1.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial13NodeRef));
-			compoList1
-					.add(new CompoListDataItem(null, compoList1.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial16NodeRef));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg,
+			 * 0d, DeclarationType.Detail, localSF11NodeRef));
+			 */
+			compoList1.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF11NodeRef));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, compoList1.get(0), null, 1d,
+			 * ProductUnit.kg, 0d, DeclarationType.Kit, finishProduct1));
+			 */
+			compoList1.add(
+					CompoListDataItem.build().withParent(compoList1.get(0)).withQtyUsed(1d).withUnit(ProductUnit.kg)
+							.withLossPerc(0d).withDeclarationType(DeclarationType.Kit).withProduct(finishProduct1));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, compoList1.get(0), null, 2d,
+			 * ProductUnit.kg, 0d, DeclarationType.Kit, finishProduct2));
+			 */
+			compoList1.add(
+					CompoListDataItem.build().withParent(compoList1.get(0)).withQtyUsed(2d).withUnit(ProductUnit.kg)
+							.withLossPerc(0d).withDeclarationType(DeclarationType.Kit).withProduct(finishProduct2));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg,
+			 * 0d, DeclarationType.Detail, localSF12NodeRef));
+			 */
+			compoList1.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF12NodeRef));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, compoList1.get(3), null, 3d,
+			 * ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial13NodeRef));
+			 */
+			compoList1.add(CompoListDataItem.build().withParent(compoList1.get(3)).withQtyUsed(3d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare)
+					.withProduct(rawMaterial13NodeRef));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, compoList1.get(3), null, 3d,
+			 * ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial16NodeRef));
+			 */
+			compoList1.add(CompoListDataItem.build().withParent(compoList1.get(3)).withQtyUsed(3d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare)
+					.withProduct(rawMaterial16NodeRef));
 
 			finishedProduct1.getCompoListView().setCompoList(compoList1);
 
@@ -214,16 +284,16 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, null, null));
-		labelingRuleList.add(new LabelingRuleListDataItem("% group", "groupDefaultFormat=\"<up>{0} ({1,number,0.#%}):</up> {2}\"",
-				LabelingRuleType.Prefs, null, null));
 		labelingRuleList.add(
-				new LabelingRuleListDataItem("Aggr", null, LabelingRuleType.Group, Arrays.asList(rawMaterial13NodeRef, rawMaterial16NodeRef), null));
+				new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("% group",
+				"groupDefaultFormat=\"<up>{0} ({1,number,0.#%}):</up> {2}\"", LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Aggr", null, LabelingRuleType.Group,
+				Arrays.asList(rawMaterial13NodeRef, rawMaterial16NodeRef), null));
 
 		checkILL(finishedProductNodeRef1, labelingRuleList,
 				"AGGR (38,7%) : ing3 french 38,7%, ing1 french, ing2 french<br/>LEGAL FINISHED PRODUCT 2 (33,3%) : garniture french 50% (ing3 french 41,7%, ing4 french 8,3%), pâte french 50% (legal Raw material 12 33,3% (ing2 french 25%, ing1 french 8,3%), ing2 french 11,1%, ing1 french 5,6%)<br/>LEGAL FINISHED PRODUCT 1 (16,7%) : garniture french 50% (ing3 french 41,7%, ing4 french 8,3%), pâte french 50% (legal Raw material 12 33,3% (ing2 french 25%, ing1 french 8,3%), ing2 french 11,1%, ing1 french 5,6%)<br/>garniture french 11,2%",
 				Locale.FRENCH);
-		
 
 		checkError(finishedProductNodeRef1, labelingRuleList,
 				"Impossible de déclarer ou d'aggreger l'ingrédient ing2 sans quantité, changer le type de déclaration du composant");
@@ -257,9 +327,24 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			finishedProduct1.setUnit(ProductUnit.kg);
 
 			List<CompoListDataItem> compoList1 = new ArrayList<>();
-			compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.DoNotDetails, rawMaterialWaterNodeRef));
-			compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.DoNotDetails, rawMaterial1NodeRef));
-			compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.DoNotDetails, rawMaterial2NodeRef));
+			compoList1.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.DoNotDetails).withProduct(rawMaterialWaterNodeRef));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg,
+			 * 0d, DeclarationType.DoNotDetails, rawMaterialWaterNodeRef));
+			 */
+			compoList1.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.DoNotDetails).withProduct(rawMaterial1NodeRef));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg,
+			 * 0d, DeclarationType.DoNotDetails, rawMaterial1NodeRef));
+			 */
+			compoList1.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.DoNotDetails).withProduct(rawMaterial2NodeRef));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg,
+			 * 0d, DeclarationType.DoNotDetails, rawMaterial2NodeRef));
+			 */
 
 			finishedProduct1.getCompoListView().setCompoList(compoList1);
 
@@ -269,11 +354,14 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
 
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, null, null));
-		labelingRuleList.add(new LabelingRuleListDataItem("Param1", "ingsLabelingWithYield=true", LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(
+				new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param1", "ingsLabelingWithYield=true",
+				LabelingRuleType.Prefs, null, null));
 
 		checkILL(finishedProductNodeRef1, labelingRuleList,
-				"legal Raw material 1 (<b>allergen1</b>) 50%, legal Raw material 2 (<b>allergen1</b>) 50%", Locale.FRENCH);
+				"legal Raw material 1 (<b>allergen1</b>) 50%, legal Raw material 2 (<b>allergen1</b>) 50%",
+				Locale.FRENCH);
 
 		finishedProductNodeRef1 = inWriteTx(() -> {
 			FinishedProductData finishedProduct1 = new FinishedProductData();
@@ -282,13 +370,32 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			finishedProduct1.setUnit(ProductUnit.kg);
 
 			List<CompoListDataItem> compoList1 = new ArrayList<>();
-
-			compoList1.add(new CompoListDataItem(null, null, null, 2d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF11NodeRef));
-			compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.DoNotDetails, rawMaterialWaterNodeRef));
-			compoList1.add(
-					new CompoListDataItem(null, compoList1.get(0), null, 1d, ProductUnit.kg, 0d, DeclarationType.DoNotDetails, rawMaterial1NodeRef));
-			compoList1.add(
-					new CompoListDataItem(null, compoList1.get(0), null, 1d, ProductUnit.kg, 0d, DeclarationType.DoNotDetails, rawMaterial2NodeRef));
+			compoList1.add(CompoListDataItem.build().withQtyUsed(2d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF11NodeRef));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, null, null, 2d, ProductUnit.kg,
+			 * 0d, DeclarationType.Detail, localSF11NodeRef));
+			 */
+			compoList1.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.DoNotDetails).withProduct(rawMaterialWaterNodeRef));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg,
+			 * 0d, DeclarationType.DoNotDetails, rawMaterialWaterNodeRef));
+			 */
+			compoList1.add(CompoListDataItem.build().withParent(compoList1.get(0)).withQtyUsed(1d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.DoNotDetails)
+					.withProduct(rawMaterial1NodeRef));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, compoList1.get(0), null, 1d,
+			 * ProductUnit.kg, 0d, DeclarationType.DoNotDetails, rawMaterial1NodeRef));
+			 */
+			compoList1.add(CompoListDataItem.build().withParent(compoList1.get(0)).withQtyUsed(1d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.DoNotDetails)
+					.withProduct(rawMaterial2NodeRef));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, compoList1.get(0), null, 1d,
+			 * ProductUnit.kg, 0d, DeclarationType.DoNotDetails, rawMaterial2NodeRef));
+			 */
 
 			finishedProduct1.getCompoListView().setCompoList(compoList1);
 
@@ -298,24 +405,28 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		labelingRuleList = new ArrayList<>();
 
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, null, null));
-		labelingRuleList.add(new LabelingRuleListDataItem("Param1", "ingsLabelingWithYield=true", LabelingRuleType.Prefs, null, null));
-		labelingRuleList.add(new LabelingRuleListDataItem("Param1bis", "detailsDefaultFormat = \"{0} ({2})\"", LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(
+				new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param1", "ingsLabelingWithYield=true",
+				LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param1bis", "detailsDefaultFormat = \"{0} ({2})\"",
+				LabelingRuleType.Prefs, null, null));
 
 		checkILL(finishedProductNodeRef1, labelingRuleList,
-				"pâte french 100% (legal Raw material 1 (<b>allergen1</b>) 50%, legal Raw material 2 (<b>allergen1</b>) 50%)", Locale.FRENCH);
+				"pâte french 100% (legal Raw material 1 (<b>allergen1</b>) 50%, legal Raw material 2 (<b>allergen1</b>) 50%)",
+				Locale.FRENCH);
 
 		// En ingrédient:
-		//		Qty	Meo	netQty	Rdmt	Qty perc	Qty with yield
-		//		B	3	3	2	66,6666666666667	100	150
-		//		MP2	2	3	2	44,4444444444444	66,6666666666667	150
-		//		--- ing1	25,00 %			44,4	16,6666666666667	37,5375375375375
-		//		--- ing2	75,00 %			44,4	50	112,612612612613
-		//		C	1	3	2	44,4444444444444	33,3333333333333	75
-		//		MP1	1	2	2	44,4444444444444	16,6666666666667	37,5
-		//		-- ing1	33,00 %			44,4	5,5	12,3873873873874
-		//		-- ing2	66,00 %			44,4	11	24,7747747747748
-		//		EAU	1	2	2	44,4444444444444	16,6666666666667	37,5
+		// Qty Meo netQty Rdmt Qty perc Qty with yield
+		// B 3 3 2 66,6666666666667 100 150
+		// MP2 2 3 2 44,4444444444444 66,6666666666667 150
+		// --- ing1 25,00 % 44,4 16,6666666666667 37,5375375375375
+		// --- ing2 75,00 % 44,4 50 112,612612612613
+		// C 1 3 2 44,4444444444444 33,3333333333333 75
+		// MP1 1 2 2 44,4444444444444 16,6666666666667 37,5
+		// -- ing1 33,00 % 44,4 5,5 12,3873873873874
+		// -- ing2 66,00 % 44,4 11 24,7747747747748
+		// EAU 1 2 2 44,4444444444444 16,6666666666667 37,5
 
 		//
 
@@ -326,10 +437,20 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			finishedProduct1.setUnit(ProductUnit.kg);
 
 			List<CompoListDataItem> compoList1 = new ArrayList<>();
-			compoList1.add(new CompoListDataItem(null, null, null, 0.5d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterialWaterNodeRef));
-			compoList1.add(new CompoListDataItem(null, null, null, 0.5d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterialWaterNodeRef));
-			compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial2NodeRef));
+			compoList1.add(CompoListDataItem.build().withQtyUsed(0.5d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterialWaterNodeRef));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, null, null, 0.5d, ProductUnit.kg,
+			 * 0d, DeclarationType.Declare, rawMaterialWaterNodeRef));
+			 */
+			compoList1.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg,
+			 * 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+			 */
+			compoList1.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial2NodeRef));
 
 			finishedProduct1.getCompoListView().setCompoList(compoList1);
 
@@ -339,21 +460,26 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		labelingRuleList = new ArrayList<>();
 
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, null, null));
-		labelingRuleList.add(new LabelingRuleListDataItem("Param1", "ingsLabelingWithYield=true", LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(
+				new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param1", "ingsLabelingWithYield=true",
+				LabelingRuleType.Prefs, null, null));
 
 		checkILL(finishedProductNodeRef1, labelingRuleList, "ing2 french 70,8%, ing1 french 29,2%", Locale.FRENCH);
 
 		labelingRuleList = new ArrayList<>();
-		//#
+		// #
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, null, null));
-		labelingRuleList.add(new LabelingRuleListDataItem("Param1", "ingsLabelingWithYield=true", LabelingRuleType.Prefs, null, null));
-		labelingRuleList
-				.add(new LabelingRuleListDataItem("Detail", null, LabelingRuleType.Detail, Collections.singletonList(rawMaterial1NodeRef), null));
+		labelingRuleList.add(
+				new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param1", "ingsLabelingWithYield=true",
+				LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Detail", null, LabelingRuleType.Detail,
+				Collections.singletonList(rawMaterial1NodeRef), null));
 
 		checkILL(finishedProductNodeRef1, labelingRuleList,
-				"legal Raw material 1 50% (ing2 french 33,3%, ing1 french 16,7%), ing2 french 37,5%, ing1 french 12,5%", Locale.FRENCH);
+				"legal Raw material 1 50% (ing2 french 33,3%, ing1 french 16,7%), ing2 french 37,5%, ing1 french 12,5%",
+				Locale.FRENCH);
 
 		//
 		// En ingrédient:
@@ -372,9 +498,18 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			finishedProduct1.setUnit(ProductUnit.kg);
 
 			List<CompoListDataItem> compoList1 = new ArrayList<>();
-			compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterialWaterNodeRef));
-			compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-
+			compoList1.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterialWaterNodeRef));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg,
+			 * 0d, DeclarationType.Declare, rawMaterialWaterNodeRef));
+			 */
+			compoList1.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg,
+			 * 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+			 */
 			finishedProduct1.getCompoListView().setCompoList(compoList1);
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
@@ -388,8 +523,18 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			finishedProduct1.setUnit(ProductUnit.kg);
 
 			List<CompoListDataItem> compoList1 = new ArrayList<>();
-			compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, finishedProductNodeRefC));
-			compoList1.add(new CompoListDataItem(null, null, null, 2d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial2NodeRef));
+			compoList1.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(finishedProductNodeRefC));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg,
+			 * 0d, DeclarationType.Declare, finishedProductNodeRefC));
+			 */
+			compoList1.add(CompoListDataItem.build().withQtyUsed(2d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial2NodeRef));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, null, null, 2d, ProductUnit.kg,
+			 * 0d, DeclarationType.Declare, rawMaterial2NodeRef));
+			 */
 
 			finishedProduct1.getCompoListView().setCompoList(compoList1);
 
@@ -403,8 +548,12 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			finishedProduct1.setUnit(ProductUnit.kg);
 
 			List<CompoListDataItem> compoList1 = new ArrayList<>();
-			compoList1.add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, finishedProductNodeRefB));
-
+			compoList1.add(CompoListDataItem.build().withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(finishedProductNodeRefB));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg,
+			 * 0d, DeclarationType.Declare, finishedProductNodeRefB));
+			 */
 			finishedProduct1.getCompoListView().setCompoList(compoList1);
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
@@ -413,8 +562,10 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		labelingRuleList = new ArrayList<>();
 
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, null, null));
-		labelingRuleList.add(new LabelingRuleListDataItem("Param1", "ingsLabelingWithYield=true", LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(
+				new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param1", "ingsLabelingWithYield=true",
+				LabelingRuleType.Prefs, null, null));
 
 		// └──[root - 0.0 (200.00000000000006, vol: 200.00000000000006) ]
 		// ├──[Test yield Sub - C 1476452333120 - 150.0 (88.8888888888889, vol:
@@ -463,8 +614,18 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			finishedProduct1.setUnit(ProductUnit.g);
 
 			List<CompoListDataItem> compoList1 = new ArrayList<>();
-			compoList1.add(new CompoListDataItem(null, null, null, 160d, ProductUnit.g, 0d, DeclarationType.Group, finishedProductNodeRefC));
-			compoList1.add(new CompoListDataItem(null, null, null, 40d, ProductUnit.g, 0d, DeclarationType.Group, finishedProductNodeRefB));
+			compoList1.add(CompoListDataItem.build().withQtyUsed(160d).withUnit(ProductUnit.g).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Group).withProduct(finishedProductNodeRefC));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, null, null, 160d, ProductUnit.g,
+			 * 0d, DeclarationType.Group, finishedProductNodeRefC));
+			 */
+			compoList1.add(CompoListDataItem.build().withQtyUsed(40d).withUnit(ProductUnit.g).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Group).withProduct(finishedProductNodeRefB));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, null, null, 40d, ProductUnit.g,
+			 * 0d, DeclarationType.Group, finishedProductNodeRefB));
+			 */
 
 			finishedProduct1.getCompoListView().setCompoList(compoList1);
 
@@ -474,16 +635,20 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		labelingRuleList = new ArrayList<>();
 
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, null, null));
-		labelingRuleList.add(new LabelingRuleListDataItem("Param1", "ingsLabelingWithYield=true", LabelingRuleType.Prefs, null, null));
-		labelingRuleList.add(new LabelingRuleListDataItem("% group", "groupDefaultFormat=\"<b>{0} ({1,number,0.#%}):</b> {2}\"",
+		labelingRuleList.add(
+				new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param1", "ingsLabelingWithYield=true",
 				LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("% group",
+				"groupDefaultFormat=\"<b>{0} ({1,number,0.#%}):</b> {2}\"", LabelingRuleType.Prefs, null, null));
 
 		checkILL(finishedProductNodeRef1, labelingRuleList,
 				"<b>test yield Sub - C (80%) :</b> eau 37,9%, ing2 french 28,1%, ing1 french 14%<br/><b>test yield Sub - B (20%) :</b> ing2 french 19,3%, ing1 french 7%",
 				Locale.FRENCH);
-		//<b>test yield Sub - C (80%) :</b> eau 35,8%, ing2 french 28,1%, ing1 french 14%<br/><b>test yield Sub - B (20%) :</b> ing2 french 19,3%, ing1 french 7%
-		//<b>test yield Sub - C (84,2%) :</b> eau 35,8%, ing2 french 28,1%, ing1 french 14%<br/><b>test yield Sub - B (21,1%) :</b> ing2 french 19,3%, ing1 french 7%
+		// <b>test yield Sub - C (80%) :</b> eau 35,8%, ing2 french 28,1%, ing1 french
+		// 14%<br/><b>test yield Sub - B (20%) :</b> ing2 french 19,3%, ing1 french 7%
+		// <b>test yield Sub - C (84,2%) :</b> eau 35,8%, ing2 french 28,1%, ing1 french
+		// 14%<br/><b>test yield Sub - B (21,1%) :</b> ing2 french 19,3%, ing1 french 7%
 
 		// #2944
 
@@ -495,8 +660,18 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			finishedProduct1.setUnit(ProductUnit.kg);
 
 			List<CompoListDataItem> compoList1 = new ArrayList<>();
-			compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterialWaterNodeRef));
-			compoList1.add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+			compoList1.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterialWaterNodeRef));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg,
+			 * 0d, DeclarationType.Declare, rawMaterialWaterNodeRef));
+			 */
+			compoList1.add(CompoListDataItem.build().withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg,
+			 * 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+			 */
 
 			finishedProduct1.getCompoListView().setCompoList(compoList1);
 
@@ -510,9 +685,18 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			finishedProduct1.setUnit(ProductUnit.g);
 
 			List<CompoListDataItem> compoList1 = new ArrayList<>();
-			compoList1.add(new CompoListDataItem(null, null, null, 160d, ProductUnit.g, 0d, DeclarationType.Group, finishedProductNodeRefD));
-			compoList1.add(new CompoListDataItem(null, null, null, 40d, ProductUnit.g, 0d, DeclarationType.Group, finishedProductNodeRefB));
-
+			compoList1.add(CompoListDataItem.build().withQtyUsed(160d).withUnit(ProductUnit.g).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Group).withProduct(finishedProductNodeRefD));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, null, null, 160d, ProductUnit.g,
+			 * 0d, DeclarationType.Group, finishedProductNodeRefD));
+			 */
+			compoList1.add(CompoListDataItem.build().withQtyUsed(40d).withUnit(ProductUnit.g).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Group).withProduct(finishedProductNodeRefB));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, null, null, 40d, ProductUnit.g,
+			 * 0d, DeclarationType.Group, finishedProductNodeRefB));
+			 */
 			finishedProduct1.getCompoListView().setCompoList(compoList1);
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
@@ -521,16 +705,18 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		labelingRuleList = new ArrayList<>();
 
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, null, null));
-		labelingRuleList.add(new LabelingRuleListDataItem("Param1", "ingsLabelingWithYield=true", LabelingRuleType.Prefs, null, null));
-		labelingRuleList.add(new LabelingRuleListDataItem("% group", "groupDefaultFormat=\"<b>{0} ({1,number,0.#%}):</b> {2}\"",
+		labelingRuleList.add(
+				new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param1", "ingsLabelingWithYield=true",
 				LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("% group",
+				"groupDefaultFormat=\"<b>{0} ({1,number,0.#%}):</b> {2}\"", LabelingRuleType.Prefs, null, null));
 
 		checkILL(finishedProductNodeRef1, labelingRuleList,
 				"<b>test yield Sub - D (80%) :</b> ing2 french 84,2%, ing1 french 42,1%<br/><b>test yield Sub - B (20%) :</b> ing2 french 19,3%, ing1 french 7%",
 				Locale.FRENCH);
 
-		//#16323
+		// #16323
 
 		NodeRef sfProductNodeRef1 = inWriteTx(() -> {
 			SemiFinishedProductData finishedProduct1 = new SemiFinishedProductData();
@@ -538,9 +724,24 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			finishedProduct1.setUnit(ProductUnit.kg);
 
 			List<CompoListDataItem> compoList1 = new ArrayList<>();
-			compoList1.add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg, 0d, DeclarationType.DoNotDetails, rawMaterial1NodeRef));
-			compoList1.add(new CompoListDataItem(null, null, null, 6d, ProductUnit.kg, 0d, DeclarationType.DoNotDetails, rawMaterial2NodeRef));
-			compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.DoNotDetails, rawMaterialWaterNodeRef));
+			compoList1.add(CompoListDataItem.build().withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.DoNotDetails).withProduct(rawMaterial1NodeRef));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg,
+			 * 0d, DeclarationType.DoNotDetails, rawMaterial1NodeRef));
+			 */
+			compoList1.add(CompoListDataItem.build().withQtyUsed(6d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.DoNotDetails).withProduct(rawMaterial2NodeRef));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, null, null, 6d, ProductUnit.kg,
+			 * 0d, DeclarationType.DoNotDetails, rawMaterial2NodeRef));
+			 */
+			compoList1.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.DoNotDetails).withProduct(rawMaterialWaterNodeRef));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg,
+			 * 0d, DeclarationType.DoNotDetails, rawMaterialWaterNodeRef));
+			 */
 
 			finishedProduct1.getCompoListView().setCompoList(compoList1);
 
@@ -553,7 +754,12 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			finishedProduct1.setUnit(ProductUnit.kg);
 
 			List<CompoListDataItem> compoList1 = new ArrayList<>();
-			compoList1.add(new CompoListDataItem(null, null, null, 10d, ProductUnit.kg, 0d, DeclarationType.DoNotDetails, rawMaterial3NodeRef));
+			compoList1.add(CompoListDataItem.build().withQtyUsed(10d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.DoNotDetails).withProduct(rawMaterial3NodeRef));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, null, null, 10d, ProductUnit.kg,
+			 * 0d, DeclarationType.DoNotDetails, rawMaterial3NodeRef));
+			 */
 			finishedProduct1.getCompoListView().setCompoList(compoList1);
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
@@ -566,11 +772,21 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 			List<CompoListDataItem> compoList1 = new ArrayList<>();
 
-			CompoListDataItem yieldCompoListDataItem = new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare,
-					sfProductNodeRef1);
+			/*
+			 * CompoListDataItem yieldCompoListDataItem = new CompoListDataItem(null, null,
+			 * null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, sfProductNodeRef1);
+			 */
+			CompoListDataItem yieldCompoListDataItem = CompoListDataItem.build().withQtyUsed(1d)
+					.withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
+					.withProduct(sfProductNodeRef1);
 			yieldCompoListDataItem.setYieldPerc(90d);
 			compoList1.add(yieldCompoListDataItem);
-			compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, sfProductNodeRef2));
+			compoList1.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(sfProductNodeRef2));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg,
+			 * 0d, DeclarationType.Declare, sfProductNodeRef2));
+			 */
 
 			finishedProduct1.getCompoListView().setCompoList(compoList1);
 
@@ -581,7 +797,8 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
 		labelingRuleList.add(new LabelingRuleListDataItem("%", "", LabelingRuleType.ShowPerc, null, null));
-		labelingRuleList.add(new LabelingRuleListDataItem("Param1", "ingsLabelingWithYield=true", LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param1", "ingsLabelingWithYield=true",
+				LabelingRuleType.Prefs, null, null));
 
 		checkILL(finishedProductNodeRef1, labelingRuleList,
 				"legal Raw material 3 (<b>allergen3</b>) 50%, legal Raw material 2 (<b>allergen1</b>) 33,3%, legal Raw material 1 (<b>allergen1</b>) 16,7%",
@@ -611,14 +828,46 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			finishedProduct1.setUnit(ProductUnit.kg);
 			finishedProduct1.setDensity(1d);
 			List<CompoListDataItem> compoList1 = new ArrayList<>();
-			compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF11NodeRef));
-			compoList1.add(new CompoListDataItem(null, compoList1.get(0), null, 1d, ProductUnit.kg, 0d, DeclarationType.Group, finishProduct1));
-			compoList1.add(new CompoListDataItem(null, compoList1.get(0), null, 2d, ProductUnit.kg, 0d, DeclarationType.Group, finishProduct2));
-			compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF12NodeRef));
-			compoList1
-					.add(new CompoListDataItem(null, compoList1.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial13NodeRef));
-			compoList1
-					.add(new CompoListDataItem(null, compoList1.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial14NodeRef));
+			compoList1.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF11NodeRef));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg,
+			 * 0d, DeclarationType.Detail, localSF11NodeRef));
+			 */
+			compoList1.add(
+					CompoListDataItem.build().withParent(compoList1.get(0)).withQtyUsed(1d).withUnit(ProductUnit.kg)
+							.withLossPerc(0d).withDeclarationType(DeclarationType.Group).withProduct(finishProduct1));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, compoList1.get(0), null, 1d,
+			 * ProductUnit.kg, 0d, DeclarationType.Group, finishProduct1));
+			 */
+			compoList1.add(
+					CompoListDataItem.build().withParent(compoList1.get(0)).withQtyUsed(2d).withUnit(ProductUnit.kg)
+							.withLossPerc(0d).withDeclarationType(DeclarationType.Group).withProduct(finishProduct2));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, compoList1.get(0), null, 2d,
+			 * ProductUnit.kg, 0d, DeclarationType.Group, finishProduct2));
+			 */
+			compoList1.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF12NodeRef));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg,
+			 * 0d, DeclarationType.Detail, localSF12NodeRef));
+			 */
+			compoList1.add(CompoListDataItem.build().withParent(compoList1.get(3)).withQtyUsed(3d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail)
+					.withProduct(rawMaterial13NodeRef));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, compoList1.get(3), null, 3d,
+			 * ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial13NodeRef));
+			 */
+			compoList1.add(CompoListDataItem.build().withParent(compoList1.get(3)).withQtyUsed(3d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare)
+					.withProduct(rawMaterial14NodeRef));
+			/*
+			 * compoList1.add(new CompoListDataItem(null, compoList1.get(3), null, 3d,
+			 * ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial14NodeRef));
+			 */
 			finishedProduct1.getCompoListView().setCompoList(compoList1);
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
@@ -628,9 +877,10 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
 
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, null, null));
-		labelingRuleList.add(new LabelingRuleListDataItem("% group", "groupDefaultFormat=\"<b>{0} ({1,number,0.#%}):</b> {2}\"",
-				LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(
+				new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("% group",
+				"groupDefaultFormat=\"<b>{0} ({1,number,0.#%}):</b> {2}\"", LabelingRuleType.Prefs, null, null));
 
 		// └──[root - 0.0 (2.0) ]
 		// ├──[garniture french - 1.0 (6.0) Detail]
@@ -666,12 +916,13 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		labelingRuleList = new ArrayList<>();
 
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, null, null));
-
-		labelingRuleList.add(new LabelingRuleListDataItem("% group", "groupDefaultFormat=\"<b>{0} ({1,number,0.#%}):</b> {2}\"",
-				LabelingRuleType.Prefs, null, null));
 		labelingRuleList.add(
-				new LabelingRuleListDataItem("Aggr", null, LabelingRuleType.Group, Arrays.asList(rawMaterial13NodeRef, rawMaterial14NodeRef), null));
+				new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, null, null));
+
+		labelingRuleList.add(new LabelingRuleListDataItem("% group",
+				"groupDefaultFormat=\"<b>{0} ({1,number,0.#%}):</b> {2}\"", LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Aggr", null, LabelingRuleType.Group,
+				Arrays.asList(rawMaterial13NodeRef, rawMaterial14NodeRef), null));
 
 		// └──[root - 0.0 (2.0) ]
 		// ├──[Aggr - 1.0 (6.0) Group]
@@ -715,8 +966,18 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			finishedProduct.setDensity(1d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
 
-			compoList.add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial7NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial7NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg, 0d,
+			 * DeclarationType.Declare, rawMaterial7NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d,
+			 * DeclarationType.Declare, rawMaterial1NodeRef));
+			 */
 
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
@@ -725,9 +986,10 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
 
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, null, null));
-		labelingRuleList
-				.add(new LabelingRuleListDataItem("DoNotDetail", null, LabelingRuleType.DoNotDetails, Collections.singletonList(ingType1), null));
+		labelingRuleList.add(
+				new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("DoNotDetail", null, LabelingRuleType.DoNotDetails,
+				Collections.singletonList(ingType1), null));
 
 		// └──[root - 0.0 (11.0, vol: 11.0) ]
 		// ├──[ing5 french - 5.0 (10.0, vol: 10.0) Detail]
@@ -737,7 +999,8 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		// ├──[ing1 french - 2.0 ( vol : 2.0) ]
 		// └──[ing2 french - 4.0 ( vol : 4.0) ]
 
-		checkILL(finishedProductNodeRef, labelingRuleList, "epaississant french, ing2 french 16,7%, ing1 french 8,3%", Locale.FRENCH);
+		checkILL(finishedProductNodeRef, labelingRuleList, "epaississant french, ing2 french 16,7%, ing1 french 8,3%",
+				Locale.FRENCH);
 
 	}
 
@@ -755,9 +1018,18 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			finishedProduct.setQty(4d);
 			finishedProduct.setDensity(1d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-
-			compoList.add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial7NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial7NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg, 0d,
+			 * DeclarationType.Declare, rawMaterial7NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d,
+			 * DeclarationType.Declare, rawMaterial1NodeRef));
+			 */
 
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
@@ -777,26 +1049,31 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		// └──[ing2 french - 4.0 ( vol : 4.0) ]
 
 		checkILL(finishedProductNodeRef, labelingRuleList,
-				"epaississant french : ing5 french 75% (ing1 french 52,5%, ing4 french 22,5%), ing2 french 16,7%, ing1 french 8,3%", Locale.FRENCH);
+				"epaississant french : ing5 french 75% (ing1 french 52,5%, ing4 french 22,5%), ing2 french 16,7%, ing1 french 8,3%",
+				Locale.FRENCH);
 
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
 		labelingRuleList.add(new LabelingRuleListDataItem("%", "#.#%|UP", LabelingRuleType.ShowPerc));
 
 		checkILL(finishedProductNodeRef, labelingRuleList,
-				"epaississant french : ing5 french 75% (ing1 french 52,5%, ing4 french 22,5%), ing2 french 16,7%, ing1 french 8,4%", Locale.FRENCH);
+				"epaississant french : ing5 french 75% (ing1 french 52,5%, ing4 french 22,5%), ing2 french 16,7%, ing1 french 8,4%",
+				Locale.FRENCH);
 
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
 		labelingRuleList.add(new LabelingRuleListDataItem("%", "#.#%", LabelingRuleType.ShowPerc));
-		labelingRuleList.add(new LabelingRuleListDataItem("Pref1", "defaultRoundingMode=T(java.math.RoundingMode).UP", LabelingRuleType.Prefs));
+		labelingRuleList.add(new LabelingRuleListDataItem("Pref1", "defaultRoundingMode=T(java.math.RoundingMode).UP",
+				LabelingRuleType.Prefs));
 
 		checkILL(finishedProductNodeRef, labelingRuleList,
-				"epaississant french : ing5 french 75% (ing1 french 52,5%, ing4 french 22,5%), ing2 french 16,7%, ing1 french 8,4%", Locale.FRENCH);
+				"epaississant french : ing5 french 75% (ing1 french 52,5%, ing4 french 22,5%), ing2 french 16,7%, ing1 french 8,4%",
+				Locale.FRENCH);
 
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("%", "#.#%|DOWN", LabelingRuleType.ShowPerc, Arrays.asList(ing2), null));
+		labelingRuleList.add(
+				new LabelingRuleListDataItem("%", "#.#%|DOWN", LabelingRuleType.ShowPerc, Arrays.asList(ing2), null));
 
 		checkILL(finishedProductNodeRef, labelingRuleList,
 				"epaississant french : ing5 french (ing1 french, ing4 french), ing2 french 16,6%, ing1 french", Locale.FRENCH);
@@ -831,9 +1108,18 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			finishedProduct.setQty(4d);
 			finishedProduct.setDensity(1d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-
-			compoList.add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial7NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial7NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg, 0d,
+			 * DeclarationType.Declare, rawMaterial7NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d,
+			 * DeclarationType.Declare, rawMaterial1NodeRef));
+			 */
 
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
@@ -843,7 +1129,8 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
 		labelingRuleList.add(new LabelingRuleListDataItem("%", "#.#%|HALF_DOWN", LabelingRuleType.ShowPerc));
-		labelingRuleList.add(new LabelingRuleListDataItem("Decl ing5 ", null, LabelingRuleType.Declare, Arrays.asList(ing5), null));
+		labelingRuleList.add(
+				new LabelingRuleListDataItem("Decl ing5 ", null, LabelingRuleType.Declare, Arrays.asList(ing5), null));
 
 		// └──[root - 0.0 (11.0, vol: 11.0) ]
 		// ├──[ing5 french - 5.0 (10.0, vol: 10.0) Detail]
@@ -853,26 +1140,31 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		// ├──[ing1 french - 2.0 ( vol : 2.0) ]
 		// └──[ing2 french - 4.0 ( vol : 4.0) ]
 
-		checkILL(finishedProductNodeRef, labelingRuleList, "ing1 french 60,8%, ing4 french 22,5%, ing2 french 16,7%", Locale.FRENCH);
+		checkILL(finishedProductNodeRef, labelingRuleList, "ing1 french 60,8%, ing4 french 22,5%, ing2 french 16,7%",
+				Locale.FRENCH);
 		labelingRuleList = new ArrayList<>();
 
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
 		labelingRuleList.add(new LabelingRuleListDataItem("%", "#.#%|HALF_DOWN", LabelingRuleType.ShowPerc));
-		labelingRuleList.add(new LabelingRuleListDataItem("Decl ing5 ", null, LabelingRuleType.Declare, Arrays.asList(ing5), null));
-		labelingRuleList.add(new LabelingRuleListDataItem("DoNotDecl ing1 ", "ingListDataItem.isProcessingAid == true", LabelingRuleType.DoNotDeclare,
-				null, null));
+		labelingRuleList.add(
+				new LabelingRuleListDataItem("Decl ing5 ", null, LabelingRuleType.Declare, Arrays.asList(ing5), null));
+		labelingRuleList.add(new LabelingRuleListDataItem("DoNotDecl ing1 ", "ingListDataItem.isProcessingAid == true",
+				LabelingRuleType.DoNotDeclare, null, null));
 
-		checkILL(finishedProductNodeRef, labelingRuleList, "ing4 french 22,5%, ing2 french 16,7%, ing1 french 8,3%", Locale.FRENCH);
+		checkILL(finishedProductNodeRef, labelingRuleList, "ing4 french 22,5%, ing2 french 16,7%, ing1 french 8,3%",
+				Locale.FRENCH);
 
 		labelingRuleList = new ArrayList<>();
 
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
 		labelingRuleList.add(new LabelingRuleListDataItem("%", "#.#%|HALF_DOWN", LabelingRuleType.ShowPerc));
-		labelingRuleList.add(new LabelingRuleListDataItem("Decl ing5 ", null, LabelingRuleType.Declare, Arrays.asList(ing5), null));
-		labelingRuleList
-				.add(new LabelingRuleListDataItem("Omit ing1 ", "ingListDataItem.isProcessingAid == true", LabelingRuleType.Omit, null, null));
+		labelingRuleList.add(
+				new LabelingRuleListDataItem("Decl ing5 ", null, LabelingRuleType.Declare, Arrays.asList(ing5), null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Omit ing1 ", "ingListDataItem.isProcessingAid == true",
+				LabelingRuleType.Omit, null, null));
 
-		checkILL(finishedProductNodeRef, labelingRuleList, "ing4 french 75%, ing2 french 16,7%, ing1 french 8,3%", Locale.FRENCH);
+		checkILL(finishedProductNodeRef, labelingRuleList, "ing4 french 75%, ing2 french 16,7%, ing1 french 8,3%",
+				Locale.FRENCH);
 	}
 
 	@Test
@@ -914,9 +1206,18 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			finishedProduct.setQty(4d);
 			finishedProduct.setDensity(1d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-
-			compoList.add(new CompoListDataItem(null, null, null, 10d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial7NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(10d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial7NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 10d, ProductUnit.kg,
+			 * 0d, DeclarationType.Declare, rawMaterial7NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d,
+			 * DeclarationType.Declare, rawMaterial1NodeRef));
+			 */
 
 			Map<QName, Serializable> props = new HashMap<>();
 			props.put(PLMModel.PROP_RECONSTITUTION_RATE, 5d);
@@ -933,15 +1234,20 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 		// labelingRuleList.add(new LabelingRuleListDataItem("Pref1",
 		// "useVolume = true", LabelingRuleType.Prefs));
-		labelingRuleList.add(new LabelingRuleListDataItem("Pref2", "ingDefaultFormat = \"{0} {1,number,0.#%}\"", LabelingRuleType.Prefs));
-		labelingRuleList
-				.add(new LabelingRuleListDataItem("Pref3", "groupDefaultFormat = \"<b>{0} ({1,number,0.#%}):</b> {2}\"", LabelingRuleType.Prefs));
-		labelingRuleList.add(new LabelingRuleListDataItem("Pref4", "detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs));
-		labelingRuleList.add(new LabelingRuleListDataItem("Pref5", "ingTypeDefaultFormat = \"{0}: {2}\"", LabelingRuleType.Prefs));
-		labelingRuleList.add(new LabelingRuleListDataItem("Pref6", "subIngsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs));
+		labelingRuleList.add(new LabelingRuleListDataItem("Pref2", "ingDefaultFormat = \"{0} {1,number,0.#%}\"",
+				LabelingRuleType.Prefs));
+		labelingRuleList.add(new LabelingRuleListDataItem("Pref3",
+				"groupDefaultFormat = \"<b>{0} ({1,number,0.#%}):</b> {2}\"", LabelingRuleType.Prefs));
+		labelingRuleList.add(new LabelingRuleListDataItem("Pref4",
+				"detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs));
+		labelingRuleList.add(
+				new LabelingRuleListDataItem("Pref5", "ingTypeDefaultFormat = \"{0}: {2}\"", LabelingRuleType.Prefs));
+		labelingRuleList.add(new LabelingRuleListDataItem("Pref6",
+				"subIngsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs));
 
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, null, null));
+		labelingRuleList.add(
+				new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, null, null));
 
 		// └──[root - 0.0 (11.0, vol: 11.0) ]
 		// ├──[ing5 french - 5.0 (10.0, vol: 10.0) Detail]
@@ -952,7 +1258,8 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		// └──[ing2 french - 4.0 ( vol : 4.0) ]
 
 		checkILL(finishedProductNodeRef1, labelingRuleList,
-				"epaississant french : ing5 french 54,5% (ing1 french 38,2%, ing4 french 16,4%), epices french : ing6 french 45,5%", Locale.FRENCH);
+				"epaississant french : ing5 french 54,5% (ing1 french 38,2%, ing4 french 16,4%), epices french : ing6 french 45,5%",
+				Locale.FRENCH);
 
 		/** Partial Reconstitution **/
 
@@ -965,9 +1272,18 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			finishedProduct.setQty(4d);
 			finishedProduct.setDensity(1d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-
-			compoList.add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial7NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg, 0d,
+			 * DeclarationType.Declare, rawMaterial1NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d,
+			 * DeclarationType.Declare, rawMaterial1NodeRef));
+			 */
 
 			Map<QName, Serializable> props = new HashMap<>();
 			props.put(PLMModel.PROP_RECONSTITUTION_RATE, 5d);
@@ -987,8 +1303,8 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		// ├──[ing1 french - 2.0 ( vol : 2.0) ]
 		// └──[ing2 french - 4.0 ( vol : 4.0) ]
 
-		checkILL(finishedProductNodeRef2, labelingRuleList, "epices french : ing6 french 93,7%, legal Raw material 1 (<b>allergen1</b>) 6,2%",
-				Locale.FRENCH);
+		checkILL(finishedProductNodeRef2, labelingRuleList,
+				"epices french : ing6 french 93,7%, legal Raw material 1 (<b>allergen1</b>) 6,2%", Locale.FRENCH);
 
 		/** Test with priority **/
 
@@ -1002,9 +1318,24 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			finishedProduct.setDensity(1d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
 
-			compoList.add(new CompoListDataItem(null, null, null, 5d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial7NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial2NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(5d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial7NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 5d, ProductUnit.kg, 0d,
+			 * DeclarationType.Declare, rawMaterial7NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d,
+			 * DeclarationType.Declare, rawMaterial1NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial2NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d,
+			 * DeclarationType.Declare, rawMaterial2NodeRef));
+			 */
 
 			Map<QName, Serializable> props = new HashMap<>();
 			props.put(PLMModel.PROP_RECONSTITUTION_RATE, 5d);
@@ -1022,20 +1353,24 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 		});
 
-		checkILL(finishedProductNodeRef3, labelingRuleList, "ing4 french 71,4%, epices french, legal Raw material 1 (<b>allergen1</b>) 10,7%",
-				Locale.FRENCH);
+		checkILL(finishedProductNodeRef3, labelingRuleList,
+				"ing4 french 71,4%, epices french, legal Raw material 1 (<b>allergen1</b>) 10,7%", Locale.FRENCH);
 
 		// Test allergen rules
-		labelingRuleList.add(new LabelingRuleListDataItem("PrefAllergen", "disableAllergensForLocales = \"fr\"", LabelingRuleType.Prefs));
+		labelingRuleList.add(new LabelingRuleListDataItem("PrefAllergen", "disableAllergensForLocales = \"fr\"",
+				LabelingRuleType.Prefs));
 		labelingRuleList.add(new LabelingRuleListDataItem("Langue", "fr,en", LabelingRuleType.Locale));
 
-		checkILL(finishedProductNodeRef3, labelingRuleList, "ing4 french 71,4%, epices french, legal Raw material 1 10,7%", Locale.FRENCH);
-		checkILL(finishedProductNodeRef3, labelingRuleList, "ing4 english 71.4%, epices english, legal Raw material 1 (<b>allergen1</b>) 10.7%",
-				Locale.ENGLISH);
+		checkILL(finishedProductNodeRef3, labelingRuleList,
+				"ing4 french 71,4%, epices french, legal Raw material 1 10,7%", Locale.FRENCH);
+		checkILL(finishedProductNodeRef3, labelingRuleList,
+				"ing4 english 71.4%, epices english, legal Raw material 1 (<b>allergen1</b>) 10.7%", Locale.ENGLISH);
 
-		labelingRuleList.add(new LabelingRuleListDataItem("PrefAllergen", "disableAllergensForLocales = \"*\"", LabelingRuleType.Prefs));
+		labelingRuleList.add(new LabelingRuleListDataItem("PrefAllergen", "disableAllergensForLocales = \"*\"",
+				LabelingRuleType.Prefs));
 
-		checkILL(finishedProductNodeRef3, labelingRuleList, "ing4 english 71.4%, epices english, legal Raw material 1 10.7%", Locale.ENGLISH);
+		checkILL(finishedProductNodeRef3, labelingRuleList,
+				"ing4 english 71.4%, epices english, legal Raw material 1 10.7%", Locale.ENGLISH);
 	}
 
 	@Test
@@ -1050,10 +1385,24 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			finishedProduct.setQty(4d);
 			finishedProduct.setDensity(1d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-
-			compoList.add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial7NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial2NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial7NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d,
+			 * DeclarationType.Declare, rawMaterial7NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d,
+			 * DeclarationType.Declare, rawMaterial1NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial2NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d,
+			 * DeclarationType.Declare, rawMaterial2NodeRef));
+			 */
 
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
@@ -1062,9 +1411,12 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		// Declare
 		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "renderAllergens()", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("Rendu2", "renderInvoluntaryAllergens()", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("Rendu3", "renderInvoluntaryAllergenInProcess()", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("Rendu4", "renderInvoluntaryInRawMaterial()", LabelingRuleType.Render));
+		labelingRuleList
+				.add(new LabelingRuleListDataItem("Rendu2", "renderInvoluntaryAllergens()", LabelingRuleType.Render));
+		labelingRuleList.add(new LabelingRuleListDataItem("Rendu3", "renderInvoluntaryAllergenInProcess()",
+				LabelingRuleType.Render));
+		labelingRuleList.add(
+				new LabelingRuleListDataItem("Rendu4", "renderInvoluntaryInRawMaterial()", LabelingRuleType.Render));
 
 		checkILL(finishedProductNodeRef, labelingRuleList, "allergen1", Locale.FRENCH, "Rendu");
 		checkILL(finishedProductNodeRef, labelingRuleList, "allergen2", Locale.FRENCH, "Rendu2");
@@ -1085,10 +1437,24 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			finishedProduct.setQty(4d);
 			finishedProduct.setDensity(1d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-
-			compoList.add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial7NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial2NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial7NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg, 0d,
+			 * DeclarationType.Declare, rawMaterial7NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d,
+			 * DeclarationType.Declare, rawMaterial1NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial2NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d,
+			 * DeclarationType.Declare, rawMaterial2NodeRef));
+			 */
 
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
@@ -1096,8 +1462,10 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 		// Declare
 		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
-		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "entity.name+\"-\"+renderAllergens()", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("Rendu2", "var a=3;\n#a+\"-\"+renderInvoluntaryAllergens()", LabelingRuleType.Render));
+		labelingRuleList.add(
+				new LabelingRuleListDataItem("Rendu", "entity.name+\"-\"+renderAllergens()", LabelingRuleType.Render));
+		labelingRuleList.add(new LabelingRuleListDataItem("Rendu2", "var a=3;\n#a+\"-\"+renderInvoluntaryAllergens()",
+				LabelingRuleType.Render));
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu3", "locale", LabelingRuleType.Render));
 
 		checkILL(finishedProductNodeRef, labelingRuleList, "Produit fini 2-allergen1", Locale.FRENCH, "Rendu");
@@ -1117,9 +1485,18 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			finishedProduct.setQty(4d);
 			finishedProduct.setDensity(1d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-
-			compoList.add(new CompoListDataItem(null, null, null, 10d, ProductUnit.kg, 0d, DeclarationType.DoNotDetails, rawMaterial7NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(10d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.DoNotDetails).withProduct(rawMaterial7NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 10d, ProductUnit.kg,
+			 * 0d, DeclarationType.DoNotDetails, rawMaterial7NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d,
+			 * DeclarationType.Declare, rawMaterial1NodeRef));
+			 */
 
 			Map<QName, Serializable> props = new HashMap<>();
 			props.put(PLMModel.PROP_ING_TYPE_V2, ingType2);
@@ -1132,18 +1509,23 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		// Declare
 		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
 
-		labelingRuleList.add(new LabelingRuleListDataItem("Pref2", "ingDefaultFormat = \"{0} {1,number,0.#%}\"", LabelingRuleType.Prefs));
-		labelingRuleList
-				.add(new LabelingRuleListDataItem("Pref3", "groupDefaultFormat = \"<b>{0} ({1,number,0.#%}):</b> {2}\"", LabelingRuleType.Prefs));
-		labelingRuleList.add(new LabelingRuleListDataItem("Pref4", "detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs));
-		labelingRuleList.add(new LabelingRuleListDataItem("Pref5", "ingTypeDefaultFormat = \"{0}: {2};\"", LabelingRuleType.Prefs));
-		labelingRuleList.add(new LabelingRuleListDataItem("Pref6", "subIngsDefaultFormat = \"{0} ({2})\"", LabelingRuleType.Prefs));
+		labelingRuleList.add(new LabelingRuleListDataItem("Pref2", "ingDefaultFormat = \"{0} {1,number,0.#%}\"",
+				LabelingRuleType.Prefs));
+		labelingRuleList.add(new LabelingRuleListDataItem("Pref3",
+				"groupDefaultFormat = \"<b>{0} ({1,number,0.#%}):</b> {2}\"", LabelingRuleType.Prefs));
+		labelingRuleList.add(new LabelingRuleListDataItem("Pref4",
+				"detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs));
+		labelingRuleList.add(
+				new LabelingRuleListDataItem("Pref5", "ingTypeDefaultFormat = \"{0}: {2};\"", LabelingRuleType.Prefs));
+		labelingRuleList.add(
+				new LabelingRuleListDataItem("Pref6", "subIngsDefaultFormat = \"{0} ({2})\"", LabelingRuleType.Prefs));
 
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, null, null));
+		labelingRuleList.add(
+				new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, null, null));
 
-		checkILL(finishedProductNodeRef1, labelingRuleList, "epices french : legal Raw material 7 90,9% ;, ing2 french 6,1%, ing1 french 3%",
-				Locale.FRENCH);
+		checkILL(finishedProductNodeRef1, labelingRuleList,
+				"epices french : legal Raw material 7 90,9% ;, ing2 french 6,1%, ing1 french 3%", Locale.FRENCH);
 
 		inWriteTx(() -> {
 			nodeService.removeAspect(rawMaterial7NodeRef, PLMModel.ASPECT_ING_TYPE);
@@ -1163,9 +1545,18 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			finishedProduct.setQty(4d);
 			finishedProduct.setDensity(1d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-
-			compoList.add(new CompoListDataItem(null, null, null, 10d, ProductUnit.kg, 0d, DeclarationType.DoNotDetails, rawMaterial7NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(10d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.DoNotDetails).withProduct(rawMaterial7NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 10d, ProductUnit.kg,
+			 * 0d, DeclarationType.DoNotDetails, rawMaterial7NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d,
+			 * DeclarationType.Declare, rawMaterial1NodeRef));
+			 */
 
 			Map<QName, Serializable> props = new HashMap<>();
 			props.put(PLMModel.PROP_ING_TYPE_V2, ingType2);
@@ -1178,52 +1569,72 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		// Declare
 		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
 
-		labelingRuleList.add(new LabelingRuleListDataItem("Pref2", "ingDefaultFormat = \"{0} {1,number,0.#%}\"", LabelingRuleType.Prefs));
-		labelingRuleList
-				.add(new LabelingRuleListDataItem("Pref3", "groupDefaultFormat = \"<b>{0} ({1,number,0.#%}):</b> {2}\"", LabelingRuleType.Prefs));
-		labelingRuleList.add(new LabelingRuleListDataItem("Pref4", "detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs));
-		labelingRuleList.add(new LabelingRuleListDataItem("Pref5", "ingTypeDefaultFormat = \"{0}: {2};\"", LabelingRuleType.Prefs));
-		labelingRuleList.add(new LabelingRuleListDataItem("Pref6", "subIngsDefaultFormat = \"{0} ({2})\"", LabelingRuleType.Prefs));
+		labelingRuleList.add(new LabelingRuleListDataItem("Pref2", "ingDefaultFormat = \"{0} {1,number,0.#%}\"",
+				LabelingRuleType.Prefs));
+		labelingRuleList.add(new LabelingRuleListDataItem("Pref3",
+				"groupDefaultFormat = \"<b>{0} ({1,number,0.#%}):</b> {2}\"", LabelingRuleType.Prefs));
+		labelingRuleList.add(new LabelingRuleListDataItem("Pref4",
+				"detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs));
+		labelingRuleList.add(
+				new LabelingRuleListDataItem("Pref5", "ingTypeDefaultFormat = \"{0}: {2};\"", LabelingRuleType.Prefs));
+		labelingRuleList.add(
+				new LabelingRuleListDataItem("Pref6", "subIngsDefaultFormat = \"{0} ({2})\"", LabelingRuleType.Prefs));
 
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, null, null));
+		labelingRuleList.add(
+				new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, null, null));
 
-		labelingRuleList.add(new LabelingRuleListDataItem("Threshold", "6.2", LabelingRuleType.DeclareThreshold, Arrays.asList(ing2), null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Threshold", "6.2", LabelingRuleType.DeclareThreshold,
+				Arrays.asList(ing2), null));
 
-		checkILL(finishedProductNodeRef1, labelingRuleList, "epices french : legal Raw material 7 90,9% ;, ing1 french 3%", Locale.FRENCH);
+		checkILL(finishedProductNodeRef1, labelingRuleList,
+				"epices french : legal Raw material 7 90,9% ;, ing1 french 3%", Locale.FRENCH);
 
 		labelingRuleList = new ArrayList<>();
 
-		labelingRuleList.add(new LabelingRuleListDataItem("Pref2", "ingDefaultFormat = \"{0} {1,number,0.#%}\"", LabelingRuleType.Prefs));
-		labelingRuleList
-				.add(new LabelingRuleListDataItem("Pref3", "groupDefaultFormat = \"<b>{0} ({1,number,0.#%}):</b> {2}\"", LabelingRuleType.Prefs));
-		labelingRuleList.add(new LabelingRuleListDataItem("Pref4", "detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs));
-		labelingRuleList.add(new LabelingRuleListDataItem("Pref5", "ingTypeDefaultFormat = \"{0}: {2};\"", LabelingRuleType.Prefs));
-		labelingRuleList.add(new LabelingRuleListDataItem("Pref6", "subIngsDefaultFormat = \"{0} ({2})\"", LabelingRuleType.Prefs));
+		labelingRuleList.add(new LabelingRuleListDataItem("Pref2", "ingDefaultFormat = \"{0} {1,number,0.#%}\"",
+				LabelingRuleType.Prefs));
+		labelingRuleList.add(new LabelingRuleListDataItem("Pref3",
+				"groupDefaultFormat = \"<b>{0} ({1,number,0.#%}):</b> {2}\"", LabelingRuleType.Prefs));
+		labelingRuleList.add(new LabelingRuleListDataItem("Pref4",
+				"detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs));
+		labelingRuleList.add(
+				new LabelingRuleListDataItem("Pref5", "ingTypeDefaultFormat = \"{0}: {2};\"", LabelingRuleType.Prefs));
+		labelingRuleList.add(
+				new LabelingRuleListDataItem("Pref6", "subIngsDefaultFormat = \"{0} ({2})\"", LabelingRuleType.Prefs));
 
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, null, null));
+		labelingRuleList.add(
+				new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, null, null));
 
-		labelingRuleList.add(new LabelingRuleListDataItem("Threshold", "6.0", LabelingRuleType.DeclareThreshold, Arrays.asList(ing2), null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Threshold", "6.0", LabelingRuleType.DeclareThreshold,
+				Arrays.asList(ing2), null));
 
-		checkILL(finishedProductNodeRef1, labelingRuleList, "epices french : legal Raw material 7 90,9% ;, ing2 french 6,1%, ing1 french 3%",
+		checkILL(finishedProductNodeRef1, labelingRuleList,
+				"epices french : legal Raw material 7 90,9% ;, ing2 french 6,1%, ing1 french 3%", Locale.FRENCH);
+
+		labelingRuleList = new ArrayList<>();
+
+		labelingRuleList.add(new LabelingRuleListDataItem("Pref2", "ingDefaultFormat = \"{0} {1,number,0.#%}\"",
+				LabelingRuleType.Prefs));
+		labelingRuleList.add(new LabelingRuleListDataItem("Pref3",
+				"groupDefaultFormat = \"<b>{0} ({1,number,0.#%}):</b> {2}\"", LabelingRuleType.Prefs));
+		labelingRuleList.add(new LabelingRuleListDataItem("Pref4",
+				"detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs));
+		labelingRuleList.add(
+				new LabelingRuleListDataItem("Pref5", "ingTypeDefaultFormat = \"{0}: {2};\"", LabelingRuleType.Prefs));
+		labelingRuleList.add(
+				new LabelingRuleListDataItem("Pref6", "subIngsDefaultFormat = \"{0} ({2})\"", LabelingRuleType.Prefs));
+
+		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
+		labelingRuleList.add(
+				new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, null, null));
+
+		labelingRuleList
+				.add(new LabelingRuleListDataItem("Threshold", "6.2", LabelingRuleType.DeclareThreshold, null, null));
+
+		checkILL(finishedProductNodeRef1, labelingRuleList, "epices french : legal Raw material 7 90,9% ;",
 				Locale.FRENCH);
-
-		labelingRuleList = new ArrayList<>();
-
-		labelingRuleList.add(new LabelingRuleListDataItem("Pref2", "ingDefaultFormat = \"{0} {1,number,0.#%}\"", LabelingRuleType.Prefs));
-		labelingRuleList
-				.add(new LabelingRuleListDataItem("Pref3", "groupDefaultFormat = \"<b>{0} ({1,number,0.#%}):</b> {2}\"", LabelingRuleType.Prefs));
-		labelingRuleList.add(new LabelingRuleListDataItem("Pref4", "detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs));
-		labelingRuleList.add(new LabelingRuleListDataItem("Pref5", "ingTypeDefaultFormat = \"{0}: {2};\"", LabelingRuleType.Prefs));
-		labelingRuleList.add(new LabelingRuleListDataItem("Pref6", "subIngsDefaultFormat = \"{0} ({2})\"", LabelingRuleType.Prefs));
-
-		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, null, null));
-
-		labelingRuleList.add(new LabelingRuleListDataItem("Threshold", "6.2", LabelingRuleType.DeclareThreshold, null, null));
-
-		checkILL(finishedProductNodeRef1, labelingRuleList, "epices french : legal Raw material 7 90,9% ;", Locale.FRENCH);
 
 		inWriteTx(() -> {
 			nodeService.removeAspect(rawMaterial7NodeRef, PLMModel.ASPECT_ING_TYPE);
@@ -1255,9 +1666,18 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			finishedProduct.setQty(3d);
 			finishedProduct.setDensity(1d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-
-			compoList.add(new CompoListDataItem(null, null, null, 2d, ProductUnit.kg, 0d, DeclarationType.DoNotDetails, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.DoNotDetails, rawMaterial2NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(2d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.DoNotDetails).withProduct(rawMaterial1NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 2d, ProductUnit.kg, 0d,
+			 * DeclarationType.DoNotDetails, rawMaterial1NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.DoNotDetails).withProduct(rawMaterial2NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d,
+			 * DeclarationType.DoNotDetails, rawMaterial2NodeRef));
+			 */
 
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
@@ -1271,9 +1691,11 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 				Arrays.asList(rawMaterial1NodeRef, rawMaterial2NodeRef), null));
 
 		labelingRuleList.add(new LabelingRuleListDataItem("Aggregate 1", null, LabelingRuleType.DoNotDetails,
-				Arrays.asList(rawMaterial1NodeRef, rawMaterial2NodeRef), Collections.singletonList(rawMaterial2NodeRef)));
+				Arrays.asList(rawMaterial1NodeRef, rawMaterial2NodeRef),
+				Collections.singletonList(rawMaterial2NodeRef)));
 
-		checkILL(finishedProductNodeRef1, labelingRuleList, "legal Raw material 2 (<b>allergen1</b>) 100%", Locale.FRENCH);
+		checkILL(finishedProductNodeRef1, labelingRuleList, "legal Raw material 2 (<b>allergen1</b>) 100%",
+				Locale.FRENCH);
 
 		labelingRuleList = new ArrayList<>();
 
@@ -1281,21 +1703,23 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format,
 				Arrays.asList(rawMaterial1NodeRef, rawMaterial2NodeRef), null));
 
-		labelingRuleList.add(new LabelingRuleListDataItem("Rename 1", null, LabelingRuleType.Rename, Arrays.asList(rawMaterial1NodeRef),
-				Collections.singletonList(rawMaterial2NodeRef)));
+		labelingRuleList.add(new LabelingRuleListDataItem("Rename 1", null, LabelingRuleType.Rename,
+				Arrays.asList(rawMaterial1NodeRef), Collections.singletonList(rawMaterial2NodeRef)));
 
-		checkILL(finishedProductNodeRef1, labelingRuleList, "legal Raw material 2 (<b>allergen1</b>) 100%", Locale.FRENCH);
+		checkILL(finishedProductNodeRef1, labelingRuleList, "legal Raw material 2 (<b>allergen1</b>) 100%",
+				Locale.FRENCH);
 
 		labelingRuleList = new ArrayList<>();
 
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, Arrays.asList(ing2), null));
+		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format,
+				Arrays.asList(ing2), null));
 
 		labelingRuleList.add(new LabelingRuleListDataItem("Declare 1", null, LabelingRuleType.Declare,
 				Arrays.asList(rawMaterial1NodeRef, rawMaterial2NodeRef), null));
 
-		labelingRuleList.add(new LabelingRuleListDataItem("Aggregate 1", null, LabelingRuleType.DoNotDetails, Arrays.asList(ing1, ing2),
-				Collections.singletonList(ing2)));
+		labelingRuleList.add(new LabelingRuleListDataItem("Aggregate 1", null, LabelingRuleType.DoNotDetails,
+				Arrays.asList(ing1, ing2), Collections.singletonList(ing2)));
 
 		checkILL(finishedProductNodeRef1, labelingRuleList, "ing2 french 100%", Locale.FRENCH);
 
@@ -1304,8 +1728,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 	/**
 	 * Test ingredients calculating.
 	 *
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	@Test
 	public void testCalculateILL() throws Exception {
@@ -1330,10 +1753,10 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
 		labelingRuleList.add(new LabelingRuleListDataItem("Declare", null, LabelingRuleType.Declare,
 				Arrays.asList(localSF11NodeRef, rawMaterial12NodeRef, localSF12NodeRef), null));
-		labelingRuleList.add(
-				new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, Arrays.asList(ing1, ing2, ing3, ing4), null));
-		labelingRuleList.add(
-				new LabelingRuleListDataItem("Param1", "detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format,
+				Arrays.asList(ing1, ing2, ing3, ing4), null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param1",
+				"detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
 
 		// └──[root - 0.0 (9.0)]
 		// ├──[ing1 french - 0.8333333333333334]
@@ -1341,19 +1764,21 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		// ├──[ing3 french - 5.0]
 		// └──[ing4 french - 1.0]
 
-		checkILL(finishedProductNodeRef1, labelingRuleList, "ing3 french 55,6%, ing2 french 24,1%, ing4 french 11,1%, ing1 french 9,3%",
-				Locale.FRENCH);
+		checkILL(finishedProductNodeRef1, labelingRuleList,
+				"ing3 french 55,6%, ing2 french 24,1%, ing4 french 11,1%, ing1 french 9,3%", Locale.FRENCH);
 
 		// Omit
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("Omit", null, LabelingRuleType.Omit, Collections.singletonList(localSF12NodeRef), null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Omit", null, LabelingRuleType.Omit,
+				Collections.singletonList(localSF12NodeRef), null));
 		// Ing2 dans rawMaterial 12 est un auxiliare
-		labelingRuleList.add(new LabelingRuleListDataItem("Auxiliare", "ingListDataItem.isProcessingAid == true", LabelingRuleType.Omit, null, null));
-		labelingRuleList.add(
-				new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, Arrays.asList(ing1, ing2, ing3, ing4), null));
-		labelingRuleList.add(
-				new LabelingRuleListDataItem("Param1", "detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Auxiliare", "ingListDataItem.isProcessingAid == true",
+				LabelingRuleType.Omit, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format,
+				Arrays.asList(ing1, ing2, ing3, ing4), null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param1",
+				"detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
 
 		// └──[root - 0.0 (1.0)]
 		// └──[pâte french - 1.0 (3.0)]
@@ -1363,19 +1788,21 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		// └──[ing1 french - 0.5]
 
 		checkILL(finishedProductNodeRef1, labelingRuleList,
-				"pâte french 100% (legal Raw material 12 66,7% (ing1 french 66,7%), ing2 french 22,2%, ing1 french 11,1%)", Locale.FRENCH);
+				"pâte french 100% (legal Raw material 12 66,7% (ing1 french 66,7%), ing2 french 22,2%, ing1 french 11,1%)",
+				Locale.FRENCH);
 
 		// Do not declare
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("Omit", null, LabelingRuleType.Omit, Collections.singletonList(localSF12NodeRef), null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Omit", null, LabelingRuleType.Omit,
+				Collections.singletonList(localSF12NodeRef), null));
 		// Ing2 dans rawMaterial 12 est un auxiliare
-		labelingRuleList
-				.add(new LabelingRuleListDataItem("Auxiliare", "ingListDataItem.isProcessingAid == true", LabelingRuleType.DoNotDeclare, null, null));
-		labelingRuleList.add(
-				new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, Arrays.asList(ing1, ing2, ing3, ing4), null));
-		labelingRuleList.add(
-				new LabelingRuleListDataItem("Param1", "detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Auxiliare", "ingListDataItem.isProcessingAid == true",
+				LabelingRuleType.DoNotDeclare, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format,
+				Arrays.asList(ing1, ing2, ing3, ing4), null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param1",
+				"detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
 
 		// └──[root - 0.0 (1.0)]
 		// └──[pâte french - 1.0 (3.0)]
@@ -1385,17 +1812,18 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		// └──[ing1 french - 0.5]
 
 		checkILL(finishedProductNodeRef1, labelingRuleList,
-				"pâte french 100% (legal Raw material 12 66,7% (ing1 french 16,7%), ing2 french 22,2%, ing1 french 11,1%)", Locale.FRENCH);
+				"pâte french 100% (legal Raw material 12 66,7% (ing1 french 16,7%), ing2 french 22,2%, ing1 french 11,1%)",
+				Locale.FRENCH);
 
 		// Test Do not Declare IngType
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("Aggregate 2", null, LabelingRuleType.DoNotDetails, Collections.singletonList(ing4),
-				Collections.singletonList(ing5)));
-		labelingRuleList
-				.add(new LabelingRuleListDataItem("Do not declare", null, LabelingRuleType.DoNotDeclare, Collections.singletonList(ingType1), null));
-		labelingRuleList.add(
-				new LabelingRuleListDataItem("Param1", "detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Aggregate 2", null, LabelingRuleType.DoNotDetails,
+				Collections.singletonList(ing4), Collections.singletonList(ing5)));
+		labelingRuleList.add(new LabelingRuleListDataItem("Do not declare", null, LabelingRuleType.DoNotDeclare,
+				Collections.singletonList(ingType1), null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param1",
+				"detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
 
 		//
 		// └──[root - 0.0 (2.0)]
@@ -1416,11 +1844,12 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		// Test Omit IngType
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("Aggregate 2", null, LabelingRuleType.DoNotDetails, Collections.singletonList(ing4),
-				Collections.singletonList(ing5)));
-		labelingRuleList.add(new LabelingRuleListDataItem("Omit", null, LabelingRuleType.Omit, Collections.singletonList(ingType1), null));
-		labelingRuleList.add(
-				new LabelingRuleListDataItem("Param1", "detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Aggregate 2", null, LabelingRuleType.DoNotDetails,
+				Collections.singletonList(ing4), Collections.singletonList(ing5)));
+		labelingRuleList.add(new LabelingRuleListDataItem("Omit", null, LabelingRuleType.Omit,
+				Collections.singletonList(ingType1), null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param1",
+				"detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
 		//
 		// └──[root - 0.0 (2.0)]
 		// ├──[pâte french - 1.0 (3.0)]
@@ -1440,12 +1869,12 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		// Details
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
-		labelingRuleList
-				.add(new LabelingRuleListDataItem("Details", null, LabelingRuleType.Detail, Collections.singletonList(rawMaterial11NodeRef), null));
-		labelingRuleList.add(
-				new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, Arrays.asList(ing1, ing2, ing3, ing4), null));
-		labelingRuleList.add(
-				new LabelingRuleListDataItem("Param1", "detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Details", null, LabelingRuleType.Detail,
+				Collections.singletonList(rawMaterial11NodeRef), null));
+		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format,
+				Arrays.asList(ing1, ing2, ing3, ing4), null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param1",
+				"detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
 
 		// └──[root - 0.0 (2.0)]
 		// ├──[pâte french - 1.0 (3.0)]
@@ -1468,10 +1897,10 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
 		labelingRuleList.add(new LabelingRuleListDataItem("DoNotDetails", null, LabelingRuleType.DoNotDetails,
 				Collections.singletonList(rawMaterial11NodeRef), null));
-		labelingRuleList.add(
-				new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, Arrays.asList(ing1, ing2, ing3, ing4), null));
-		labelingRuleList.add(
-				new LabelingRuleListDataItem("Param1", "detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format,
+				Arrays.asList(ing1, ing2, ing3, ing4), null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param1",
+				"detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
 
 		// └──[root - 0.0 (2.0)]
 		// ├──[pâte french - 1.0 (3.0)]
@@ -1491,16 +1920,16 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		// Rename
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("Rename 1", null, LabelingRuleType.Rename, Collections.singletonList(ing1),
-				Collections.singletonList(ing5)));
-		labelingRuleList.add(new LabelingRuleListDataItem("Aggregate 2", null, LabelingRuleType.DoNotDetails, Collections.singletonList(ing4),
-				Collections.singletonList(ing5)));
+		labelingRuleList.add(new LabelingRuleListDataItem("Rename 1", null, LabelingRuleType.Rename,
+				Collections.singletonList(ing1), Collections.singletonList(ing5)));
+		labelingRuleList.add(new LabelingRuleListDataItem("Aggregate 2", null, LabelingRuleType.DoNotDetails,
+				Collections.singletonList(ing4), Collections.singletonList(ing5)));
 		labelingRuleList.add(new LabelingRuleListDataItem("Rename 2", "Test rename2", LabelingRuleType.Rename,
 				Collections.singletonList(rawMaterial12NodeRef), null));
-		labelingRuleList
-				.add(new LabelingRuleListDataItem("Rename 3", "path.allergens", LabelingRuleType.Rename, Collections.singletonList(ingType1), null));
-		labelingRuleList.add(
-				new LabelingRuleListDataItem("Param1", "detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Rename 3", "path.allergens", LabelingRuleType.Rename,
+				Collections.singletonList(ingType1), null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param1",
+				"detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
 
 		// └──[root - 0.0 (2.0)]
 		// ├──[pâte french - 1.0 (3.0)]
@@ -1520,12 +1949,12 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		// Aggregate
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("Aggregate 1", null, LabelingRuleType.DoNotDetails, Arrays.asList(ing1, ing2),
-				Collections.singletonList(ing3)));
-		labelingRuleList.add(new LabelingRuleListDataItem("Aggregate 2", null, LabelingRuleType.DoNotDetails, Collections.singletonList(ing4),
-				Collections.singletonList(ing5)));
-		labelingRuleList.add(
-				new LabelingRuleListDataItem("Param1", "detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Aggregate 1", null, LabelingRuleType.DoNotDetails,
+				Arrays.asList(ing1, ing2), Collections.singletonList(ing3)));
+		labelingRuleList.add(new LabelingRuleListDataItem("Aggregate 2", null, LabelingRuleType.DoNotDetails,
+				Collections.singletonList(ing4), Collections.singletonList(ing5)));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param1",
+				"detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
 
 		// Todo test aggregate type or MP
 
@@ -1546,17 +1975,20 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("Aggregate 1", null, LabelingRuleType.DoNotDetails, Arrays.asList(ing1, ing2),
-				Collections.singletonList(ing3)));
-		labelingRuleList.add(new LabelingRuleListDataItem("Aggregate 2", null, LabelingRuleType.DoNotDetails, Collections.singletonList(ing4),
-				Collections.singletonList(ing5)));
-		labelingRuleList.add(new LabelingRuleListDataItem("Change type", null, LabelingRuleType.Type, Collections.singletonList(ing3),
-				Collections.singletonList(ingType1)));
-		labelingRuleList.add(
-				new LabelingRuleListDataItem("Param1", "detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
-		labelingRuleList.add(new LabelingRuleListDataItem("Param2", "defaultSeparator = \"; \"", LabelingRuleType.Prefs, null, null));
-		labelingRuleList.add(new LabelingRuleListDataItem("Param3", "ingTypeDefaultSeparator = \"# \"", LabelingRuleType.Prefs, null, null));
-		labelingRuleList.add(new LabelingRuleListDataItem("Param4", "groupDefaultSeparator = \"! \"", LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Aggregate 1", null, LabelingRuleType.DoNotDetails,
+				Arrays.asList(ing1, ing2), Collections.singletonList(ing3)));
+		labelingRuleList.add(new LabelingRuleListDataItem("Aggregate 2", null, LabelingRuleType.DoNotDetails,
+				Collections.singletonList(ing4), Collections.singletonList(ing5)));
+		labelingRuleList.add(new LabelingRuleListDataItem("Change type", null, LabelingRuleType.Type,
+				Collections.singletonList(ing3), Collections.singletonList(ingType1)));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param1",
+				"detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param2", "defaultSeparator = \"; \"", LabelingRuleType.Prefs,
+				null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param3", "ingTypeDefaultSeparator = \"# \"",
+				LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param4", "groupDefaultSeparator = \"! \"",
+				LabelingRuleType.Prefs, null, null));
 
 		checkILL(finishedProductNodeRef1, labelingRuleList,
 				"garniture french 50% (epaississants french : ing3 french# ing5 french) ; pâte french 50% (legal Raw material 12 33,3% (epaississant french : ing3 french) ; epaississant french : ing3 french)",
@@ -1566,12 +1998,12 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
-		labelingRuleList.add(
-				new LabelingRuleListDataItem("Combine 1", new MLText("Comb 1"), "20,30", LabelingRuleType.Detail, Arrays.asList(ing1, ing2), null));
-		labelingRuleList.add(
-				new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, Arrays.asList(ing1, ing2, ing3, ing4), null));
-		labelingRuleList.add(
-				new LabelingRuleListDataItem("Param1", "detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Combine 1", new MLText("Comb 1"), "20,30",
+				LabelingRuleType.Detail, Arrays.asList(ing1, ing2), null));
+		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format,
+				Arrays.asList(ing1, ing2, ing3, ing4), null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param1",
+				"detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
 
 		// └──[root - 0.0 (2.0)]
 		// ├──[pâte french - 1.0 (3.0)]
@@ -1596,12 +2028,12 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
-		labelingRuleList.add(
-				new LabelingRuleListDataItem("Combine 1", new MLText("Comb 1"), "100,30", LabelingRuleType.Detail, Arrays.asList(ing1, ing2), null));
-		labelingRuleList.add(
-				new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, Arrays.asList(ing1, ing2, ing3, ing4), null));
-		labelingRuleList.add(
-				new LabelingRuleListDataItem("Param1", "detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Combine 1", new MLText("Comb 1"), "100,30",
+				LabelingRuleType.Detail, Arrays.asList(ing1, ing2), null));
+		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format,
+				Arrays.asList(ing1, ing2, ing3, ing4), null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param1",
+				"detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
 
 		// └──[root - 0.0 (2.0)]
 		// ├──[pâte french - 1.0 (3.0)]
@@ -1624,12 +2056,12 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("Combine 2", new MLText("Decors 1"), null, LabelingRuleType.Group,
-				Arrays.asList(localSF11NodeRef, localSF12NodeRef), null));
-		labelingRuleList.add(
-				new LabelingRuleListDataItem("Param1", "detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
-		labelingRuleList.add(new LabelingRuleListDataItem("% group", "groupDefaultFormat=\"<b>{0} ({1,number,0.#%}):</b> {2}\"",
-				LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Combine 2", new MLText("Decors 1"), null,
+				LabelingRuleType.Group, Arrays.asList(localSF11NodeRef, localSF12NodeRef), null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param1",
+				"detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("% group",
+				"groupDefaultFormat=\"<b>{0} ({1,number,0.#%}):</b> {2}\"", LabelingRuleType.Prefs, null, null));
 
 		// └──[root - 0.0 (2.0)]
 		// └──[Decors 1 - 2.0 (2.0)]
@@ -1650,16 +2082,16 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		// Group
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "renderGroupList()", LabelingRuleType.Render));
-		labelingRuleList
-				.add(new LabelingRuleListDataItem("Group 1", null, LabelingRuleType.Group, Collections.singletonList(localSF11NodeRef), null));
-		labelingRuleList
-				.add(new LabelingRuleListDataItem("Group 2", null, LabelingRuleType.Group, Collections.singletonList(localSF12NodeRef), null));
-		labelingRuleList.add(
-				new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, Arrays.asList(ing1, ing2, ing3, ing4), null));
-		labelingRuleList.add(
-				new LabelingRuleListDataItem("Param1", "detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
-		labelingRuleList.add(new LabelingRuleListDataItem("% grouplist", "groupListDefaultFormat = \"<b>{0} {1,number,0.#%}</b>\"",
-				LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Group 1", null, LabelingRuleType.Group,
+				Collections.singletonList(localSF11NodeRef), null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Group 2", null, LabelingRuleType.Group,
+				Collections.singletonList(localSF12NodeRef), null));
+		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format,
+				Arrays.asList(ing1, ing2, ing3, ing4), null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param1",
+				"detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("% grouplist",
+				"groupListDefaultFormat = \"<b>{0} {1,number,0.#%}</b>\"", LabelingRuleType.Prefs, null, null));
 
 		// └──[root - 0.0 (2.0)]
 		// ├──[pâte french - 1.0 (3.0)]
@@ -1672,20 +2104,21 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		// ├──[ing3 french - 5.0]
 		// └──[ing4 french - 1.0]
 
-		checkILL(finishedProductNodeRef1, labelingRuleList, "<b>garniture french 50%</b>, <b>pâte french 50%</b>", Locale.FRENCH);
+		checkILL(finishedProductNodeRef1, labelingRuleList, "<b>garniture french 50%</b>, <b>pâte french 50%</b>",
+				Locale.FRENCH);
 
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu 1", "render()", LabelingRuleType.Render));
-		labelingRuleList
-				.add(new LabelingRuleListDataItem("Group 1", null, LabelingRuleType.Group, Collections.singletonList(localSF11NodeRef), null));
-		labelingRuleList
-				.add(new LabelingRuleListDataItem("Group 2", null, LabelingRuleType.Group, Collections.singletonList(localSF12NodeRef), null));
-		labelingRuleList.add(
-				new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, Arrays.asList(ing1, ing2, ing3, ing4), null));
-		labelingRuleList.add(
-				new LabelingRuleListDataItem("Param1", "detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
-		labelingRuleList.add(new LabelingRuleListDataItem("% group", "groupDefaultFormat=\"<b>{0} ({1,number,0.#%}):</b> {2}\"",
-				LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Group 1", null, LabelingRuleType.Group,
+				Collections.singletonList(localSF11NodeRef), null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Group 2", null, LabelingRuleType.Group,
+				Collections.singletonList(localSF12NodeRef), null));
+		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format,
+				Arrays.asList(ing1, ing2, ing3, ing4), null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param1",
+				"detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("% group",
+				"groupDefaultFormat=\"<b>{0} ({1,number,0.#%}):</b> {2}\"", LabelingRuleType.Prefs, null, null));
 
 		// └──[root - 0.0 (2.0)]
 		// ├──[pâte french - 1.0 (3.0)]
@@ -1704,14 +2137,14 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu 2", "render(false)", LabelingRuleType.Render));
-		labelingRuleList
-				.add(new LabelingRuleListDataItem("Group 1", null, LabelingRuleType.Group, Collections.singletonList(localSF11NodeRef), null));
-		labelingRuleList
-				.add(new LabelingRuleListDataItem("Group 2", null, LabelingRuleType.Group, Collections.singletonList(localSF12NodeRef), null));
-		labelingRuleList.add(
-				new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, Arrays.asList(ing1, ing2, ing3, ing4), null));
-		labelingRuleList.add(
-				new LabelingRuleListDataItem("Param1", "detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Group 1", null, LabelingRuleType.Group,
+				Collections.singletonList(localSF11NodeRef), null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Group 2", null, LabelingRuleType.Group,
+				Collections.singletonList(localSF12NodeRef), null));
+		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format,
+				Arrays.asList(ing1, ing2, ing3, ing4), null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param1",
+				"detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
 
 		// └──[root - 0.0 (2.0)]
 		// ├──[ing1 french - 0.11111111111111112]
@@ -1728,16 +2161,16 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu 2", "render(false)", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("Aggregate 1", null, LabelingRuleType.DoNotDetails, Collections.singletonList(ing1),
-				Collections.singletonList(ing3)));
-		labelingRuleList
-				.add(new LabelingRuleListDataItem("Group 1", null, LabelingRuleType.Group, Collections.singletonList(localSF11NodeRef), null));
-		labelingRuleList
-				.add(new LabelingRuleListDataItem("Group 2", null, LabelingRuleType.Group, Collections.singletonList(localSF12NodeRef), null));
-		labelingRuleList.add(
-				new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, Arrays.asList(ing1, ing2, ing3, ing4), null));
-		labelingRuleList.add(
-				new LabelingRuleListDataItem("Param1", "detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Aggregate 1", null, LabelingRuleType.DoNotDetails,
+				Collections.singletonList(ing1), Collections.singletonList(ing3)));
+		labelingRuleList.add(new LabelingRuleListDataItem("Group 1", null, LabelingRuleType.Group,
+				Collections.singletonList(localSF11NodeRef), null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Group 2", null, LabelingRuleType.Group,
+				Collections.singletonList(localSF12NodeRef), null));
+		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format,
+				Arrays.asList(ing1, ing2, ing3, ing4), null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param1",
+				"detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
 
 		// └──[root - 0.0 (2.0)]
 		// ├──[ing1 french - 0.11111111111111112]
@@ -1756,8 +2189,8 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
-		labelingRuleList.add(
-				new LabelingRuleListDataItem("Param1", "detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param1",
+				"detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
 
 		inWriteTx(() -> {
 			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef1);
@@ -1786,13 +2219,12 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 				"garniture french 50% (ing3 french, ing4 french), pâte french 50% (legal Raw material 7 33,3% (epaississant french : ing5 french (ing1 french, ing4 french)), ing2 french, ing1 french)",
 				Locale.FRENCH);
 
-
-
 		// MultiLevel
 
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render(false)", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, null, null));
+		labelingRuleList.add(
+				new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, null, null));
 		final NodeRef finishProduct2 = createTestProduct(null);
 
 		inWriteTx(() -> {
@@ -1800,8 +2232,14 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef1);
 			formulatedProduct.setQty(7d);
 			formulatedProduct.getCompoListView().getCompoList().get(2).setProduct(finishProduct2);
+			/*
+			 * formulatedProduct.getCompoListView().getCompoList().add(new
+			 * CompoListDataItem(null, null, 5d, null, ProductUnit.kg, 0d,
+			 * DeclarationType.Group, finishProduct2));
+			 */
 			formulatedProduct.getCompoListView().getCompoList()
-					.add(new CompoListDataItem(null, null, 5d, null, ProductUnit.kg, 0d, DeclarationType.Group, finishProduct2));
+					.add(CompoListDataItem.build().withQtyUsed(5d).withUnit(ProductUnit.kg).withLossPerc(0d)
+							.withDeclarationType(DeclarationType.Group).withProduct(finishProduct2));
 			alfrescoRepository.save(formulatedProduct);
 			return null;
 		});
@@ -1841,9 +2279,10 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		// Declare multilevel
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render(false)", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, null, null));
-		labelingRuleList
-				.add(new LabelingRuleListDataItem("Declare", null, LabelingRuleType.Declare, Collections.singletonList(finishProduct2), null));
+		labelingRuleList.add(
+				new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Declare", null, LabelingRuleType.Declare,
+				Collections.singletonList(finishProduct2), null));
 
 		// └──[root - 0.0 (200.0, vol: 49.99999999999999) ]
 		// ├──[Pâte french - 100.0 (444.44444444444446, vol: 411.1111111111111)
@@ -1875,10 +2314,10 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 				"garniture french 50% (ing3 french 41,7%, ing4 french 8,3%), pâte french 50% (legal Raw material 12 22,5% (ing2 french 16,9%, ing1 french 5,6%), ing2 french 15%, ing1 french 7,5%, garniture french 2,5% (ing3 french 2,1%, ing4 french 0,4%), pâte french 2,5% (legal Raw material 12 1,7% (ing2 french 1,2%, ing1 french 0,4%), ing2 french 0,6%, ing1 french 0,3%))",
 				Locale.FRENCH);
 
-
 	}
 
-	private void checkError(final NodeRef productNodeRef, final List<LabelingRuleListDataItem> labelingRuleList, final String errorMessage) {
+	private void checkError(final NodeRef productNodeRef, final List<LabelingRuleListDataItem> labelingRuleList,
+			final String errorMessage) {
 		inWriteTx(() -> {
 
 			ProductData formulatedProduct = alfrescoRepository.findOne(productNodeRef);
@@ -1918,10 +2357,10 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		// Test locale + format %
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
 		labelingRuleList.add(new LabelingRuleListDataItem("Langue", "fr,en", LabelingRuleType.Locale));
-		labelingRuleList
-				.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, Arrays.asList(ing2, ing3, ing4), null));
-		labelingRuleList.add(
-				new LabelingRuleListDataItem("Param1", "detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format,
+				Arrays.asList(ing2, ing3, ing4), null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param1",
+				"detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
 
 		final NodeRef finishedProductNodeRef1 = createTestProduct(labelingRuleList);
 
@@ -1965,18 +2404,18 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		// Aggregate
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("Aggregate 1", null, LabelingRuleType.DoNotDetails, Arrays.asList(ing1, ing2),
-				Collections.singletonList(ing3)));
-		labelingRuleList.add(new LabelingRuleListDataItem("Aggregate 2", null, LabelingRuleType.DoNotDetails, Collections.singletonList(ing4),
-				Collections.singletonList(ing6)));
-		labelingRuleList.add(
-				new LabelingRuleListDataItem("Param1", "detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
-		labelingRuleList
-				.add(new LabelingRuleListDataItem("Param1bis", "ingDefaultFormat = \"{0} {1,number,0.#%}\"", LabelingRuleType.Prefs, null, null));
-		labelingRuleList.add(
-				new LabelingRuleListDataItem("Param2", "ingTypeDefaultFormat = \"{0} {1,number,0.#%}: ({2})\"", LabelingRuleType.Prefs, null, null));
-		labelingRuleList.add(new LabelingRuleListDataItem("Param3", "ingTypeDecThresholdFormat = \"{0} {1,number,0.#%} [{2}] \"",
+		labelingRuleList.add(new LabelingRuleListDataItem("Aggregate 1", null, LabelingRuleType.DoNotDetails,
+				Arrays.asList(ing1, ing2), Collections.singletonList(ing3)));
+		labelingRuleList.add(new LabelingRuleListDataItem("Aggregate 2", null, LabelingRuleType.DoNotDetails,
+				Collections.singletonList(ing4), Collections.singletonList(ing6)));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param1",
+				"detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param1bis", "ingDefaultFormat = \"{0} {1,number,0.#%}\"",
 				LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param2",
+				"ingTypeDefaultFormat = \"{0} {1,number,0.#%}: ({2})\"", LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param3",
+				"ingTypeDecThresholdFormat = \"{0} {1,number,0.#%} [{2}] \"", LabelingRuleType.Prefs, null, null));
 
 		final NodeRef finishedProductNodeRef1 = createTestProduct(labelingRuleList);
 
@@ -1993,7 +2432,8 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 				"garniture french 50% (ing3 french 41,7%, epices french 8,3% [ing6 french 8,3%]), pâte french 50% (legal Raw material 12 33,3% (ing3 french 33,3%), ing3 french 16,7%)",
 				Locale.FRENCH);
 
-		labelingRuleList.add(new LabelingRuleListDataItem("Param4", "showIngCEECode = true", LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(
+				new LabelingRuleListDataItem("Param4", "showIngCEECode = true", LabelingRuleType.Prefs, null, null));
 
 		checkILL(finishedProductNodeRef1, labelingRuleList,
 				"garniture french 50% (ing3 french 41,7%, epices french 8,3% [CEE6 8,3%]), pâte french 50% (legal Raw material 12 33,3% (ing3 french 33,3%), ing3 french 16,7%)",
@@ -2035,7 +2475,9 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		if (LabelingFormulaContext.ALLERGEN_DETECTION_PATTERN.matcher("大豆卵磷脂").find()) {
 			fail();
 		}
-		assertEquals(replaceAllergen("соевый", "какао-бобы, сахар, какао-масло, эмульгатор: соевый лецитин , натуральный ванильный экстракт"),
+		assertEquals(
+				replaceAllergen("соевый",
+						"какао-бобы, сахар, какао-масло, эмульгатор: соевый лецитин , натуральный ванильный экстракт"),
 				"какао-бобы, сахар, какао-масло, эмульгатор: <b>соевый</b> лецитин , натуральный ванильный экстракт");
 
 		// Ca c'est faux car en francais laitage ne doit pas être
@@ -2048,7 +2490,8 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 	}
 
 	String replaceAllergen(String allergenName, String ingLegalName) {
-		Matcher ma = Pattern.compile("\\b(" + Pattern.quote(allergenName) + "(s?))\\b", Pattern.CASE_INSENSITIVE).matcher(ingLegalName);
+		Matcher ma = Pattern.compile("\\b(" + Pattern.quote(allergenName) + "(s?))\\b", Pattern.CASE_INSENSITIVE)
+				.matcher(ingLegalName);
 		if (ma.find() && (ma.group(1) != null)) {
 			return ma.replaceAll("<b>$1</b>");
 		}
@@ -2061,7 +2504,8 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 		try {
 			BeCPGTestHelper.createUser("labellingUser1");
-			permissionService.setPermission(getTestFolderNodeRef(), "labellingUser1", PermissionService.ALL_PERMISSIONS, true);
+			permissionService.setPermission(getTestFolderNodeRef(), "labellingUser1", PermissionService.ALL_PERMISSIONS,
+					true);
 
 			authenticationComponent.setCurrentUser("labellingUser1");
 
@@ -2090,16 +2534,46 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 				finishedProduct1.setUnit(ProductUnit.kg);
 				finishedProduct1.setDensity(1d);
 				List<CompoListDataItem> compoList1 = new ArrayList<>();
-				compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF11NodeRef));
-				compoList1.add(
-						new CompoListDataItem(null, compoList1.get(0), null, 1d, ProductUnit.kg, 0d, DeclarationType.DoNotDetails, finishProduct1));
-				compoList1.add(
-						new CompoListDataItem(null, compoList1.get(0), null, 2d, ProductUnit.kg, 0d, DeclarationType.DoNotDetails, finishProduct2));
-				compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF12NodeRef));
-				compoList1.add(
-						new CompoListDataItem(null, compoList1.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial13NodeRef));
-				compoList1.add(
-						new CompoListDataItem(null, compoList1.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial14NodeRef));
+				compoList1.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+						.withDeclarationType(DeclarationType.Detail).withProduct(localSF11NodeRef));
+				/*
+				 * compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg,
+				 * 0d, DeclarationType.Detail, localSF11NodeRef));
+				 */
+				compoList1.add(CompoListDataItem.build().withParent(compoList1.get(0)).withQtyUsed(1d)
+						.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.DoNotDetails)
+						.withProduct(finishProduct1));
+				/*
+				 * compoList1.add(new CompoListDataItem(null, compoList1.get(0), null, 1d,
+				 * ProductUnit.kg, 0d, DeclarationType.DoNotDetails, finishProduct1));
+				 */
+				compoList1.add(CompoListDataItem.build().withParent(compoList1.get(0)).withQtyUsed(2d)
+						.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.DoNotDetails)
+						.withProduct(finishProduct2));
+				/*
+				 * compoList1.add(new CompoListDataItem(null, compoList1.get(0), null, 2d,
+				 * ProductUnit.kg, 0d, DeclarationType.DoNotDetails, finishProduct2));
+				 */
+				compoList1.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withQtyUsed(0d)
+						.withDeclarationType(DeclarationType.Detail).withProduct(localSF12NodeRef));
+				/*
+				 * compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg,
+				 * 0d, DeclarationType.Detail, localSF12NodeRef));
+				 */
+				compoList1.add(CompoListDataItem.build().withParent(compoList1.get(3)).withQtyUsed(3d)
+						.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail)
+						.withProduct(rawMaterial13NodeRef));
+				/*
+				 * compoList1.add(new CompoListDataItem(null, compoList1.get(3), null, 3d,
+				 * ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial13NodeRef));
+				 */
+				compoList1.add(CompoListDataItem.build().withParent(compoList1.get(3)).withQtyUsed(3d)
+						.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare)
+						.withProduct(rawMaterial14NodeRef));
+				/*
+				 * compoList1.add(new CompoListDataItem(null, compoList1.get(3), null, 3d,
+				 * ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial14NodeRef));
+				 */
 
 				finishedProduct1.getCompoListView().setCompoList(compoList1);
 
@@ -2107,9 +2581,10 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 				List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
 
 				labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
-				labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, null, null));
-				labelingRuleList.add(new LabelingRuleListDataItem("Param1", "detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"",
-						LabelingRuleType.Prefs, null, null));
+				labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})",
+						LabelingRuleType.Format, null, null));
+				labelingRuleList.add(new LabelingRuleListDataItem("Param1",
+						"detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
 
 				finishedProduct1.getLabelingListView().setLabelingRuleList(labelingRuleList);
 
@@ -2146,12 +2621,15 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 					// verify IngLabelingList
 
-					Assert.assertNotNull("IngLabelingList is null", formulatedProduct.getLabelingListView().getIngLabelingList());
+					Assert.assertNotNull("IngLabelingList is null",
+							formulatedProduct.getLabelingListView().getIngLabelingList());
 					Assert.assertTrue(formulatedProduct.getLabelingListView().getIngLabelingList().size() > 0);
 
-					for (IngLabelingListDataItem illDataItem : formulatedProduct.getLabelingListView().getIngLabelingList()) {
+					for (IngLabelingListDataItem illDataItem : formulatedProduct.getLabelingListView()
+							.getIngLabelingList()) {
 						String formulatedIll = illDataItem.getValue().getValue(Locale.FRENCH);
-						Assert.assertEquals("Incorrect label :" + formulatedIll + "\n   - compare to " + ill, ill, formulatedIll);
+						Assert.assertEquals("Incorrect label :" + formulatedIll + "\n   - compare to " + ill, ill,
+								formulatedIll);
 						Assert.assertNotNull(illDataItem.getLogValue());
 						logger.info("Finished labeling in thread " + threadName);
 					}

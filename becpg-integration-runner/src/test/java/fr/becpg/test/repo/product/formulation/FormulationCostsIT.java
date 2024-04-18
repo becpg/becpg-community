@@ -68,7 +68,7 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 
 	@Autowired
 	private AssociationService associationService;
-	
+
 	@Autowired
 	private SystemConfigurationService systemConfigurationService;
 
@@ -82,15 +82,14 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 	/**
 	 * Test cost product.
 	 *
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	@Test
 	public void testFormulationCostsFromTemplate() throws Exception {
 
 		logger.info("testFormulationCostsFromTemplate");
 
-		final ProductData entityTpl = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final ProductData entityTpl = inWriteTx(() -> {
 
 			// template
 			FinishedProductData templateFinishedProduct = new FinishedProductData();
@@ -112,9 +111,9 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 			nodeService.addAspect(entityTpl1.getNodeRef(), BeCPGModel.ASPECT_ENTITY_TPL, null);
 
 			return entityTpl1;
-		}, false, true);
+		});
 
-		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
 
 			// Client
 			ClientData client = new ClientData();
@@ -135,7 +134,12 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 			finishedProduct.setPlants(plants);
 
 			List<PackagingListDataItem> packList = new ArrayList<>();
-			packList.add(new PackagingListDataItem(null, 25d, ProductUnit.PP, PackagingLevel.Secondary, true, packagingKit1NodeRef));
+			packList.add(PackagingListDataItem.build().withQty(25d).withUnit(ProductUnit.PP)
+					.withPkgLevel(PackagingLevel.Secondary).withIsMaster(true).withProduct(packagingKit1NodeRef));
+			/*
+			 * packList.add(new PackagingListDataItem(null, 25d, ProductUnit.PP,
+			 * PackagingLevel.Secondary, true, packagingKit1NodeRef));
+			 */
 			finishedProduct.getPackagingListView().setPackagingList(packList);
 
 			finishedProduct = (FinishedProductData) alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct);
@@ -146,17 +150,16 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 
 			return finishedProduct.getNodeRef();
 
-		}, false, true);
-		
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			productService.formulate(finishedProductNodeRef);
 			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
-			
+
 			for (CostListDataItem c1 : formulatedProduct.getCostList()) {
-				String trace1 = "cost: " + nodeService.getProperty(c1.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + c1.getValue()
-						+ " - unit: " + c1.getUnit() + " level: " + c1.getDepthLevel();
+				String trace1 = "cost: " + nodeService.getProperty(c1.getCost(), BeCPGModel.PROP_CHARACT_NAME)
+						+ " - value: " + c1.getValue() + " - unit: " + c1.getUnit() + " level: " + c1.getDepthLevel();
 				logger.info(trace1);
 
 				assertEquals("€/kg", c1.getUnit());
@@ -184,8 +187,6 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 			assertEquals(5, formulatedProduct.getCostList().size());
 			assertEquals(TareUnit.g, formulatedProduct.getTareUnit());
 
-			
-
 			assertEquals(44d, formulatedProduct.getUnitTotalCost());
 
 			// change data
@@ -207,8 +208,8 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 
 			for (CostListDataItem c3 : formulatedProduct.getCostList()) {
 
-				String trace2 = "cost: " + nodeService.getProperty(c3.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + c3.getValue()
-						+ " - unit: " + c3.getUnit();
+				String trace2 = "cost: " + nodeService.getProperty(c3.getCost(), BeCPGModel.PROP_CHARACT_NAME)
+						+ " - value: " + c3.getValue() + " - unit: " + c3.getUnit();
 				logger.info(trace2);
 
 				assertEquals("€/kg", c3.getUnit());
@@ -237,14 +238,14 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 
 			return null;
 
-		}, false, true);
+		});
 
 	}
 
 	@Test
 	public void testFormulationCostsWithSimulation() throws Exception {
 
-		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
 
 			/*-- Create finished product --*/
 			FinishedProductData finishedProduct = new FinishedProductData();
@@ -252,12 +253,46 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 			finishedProduct.setUnit(ProductUnit.kg);
 			finishedProduct.setQty(2d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF1NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d,
+			 * DeclarationType.Detail, localSF1NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(1d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare)
+					.withProduct(rawMaterial1NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d,
+			 * ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(2d)
+					.withUnit(ProductUnit.kg).withLossPerc(1d).withDeclarationType(DeclarationType.Detail)
+					.withProduct(rawMaterial2NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d,
+			 * ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF2NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d,
+			 * DeclarationType.Detail, localSF2NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQtyUsed(3d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare)
+					.withProduct(rawMaterial3NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d,
+			 * ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQtyUsed(3d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Omit)
+					.withProduct(rawMaterial4NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d,
+			 * ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+			 */
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
 			List<CostListDataItem> costList = new LinkedList<>();
@@ -271,9 +306,9 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			productService.formulate(finishedProductNodeRef);
 			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
@@ -282,9 +317,11 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 			int checks = 0;
 			assertNotNull("CostList is null", formulatedProduct.getCostList());
 			for (CostListDataItem costListDataItem : formulatedProduct.getCostList()) {
-				String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: "
-						+ costListDataItem.getValue() + " - previous value: " + costListDataItem.getPreviousValue() + " - future value: "
-						+ costListDataItem.getFutureValue() + " - unit: " + costListDataItem.getUnit();
+				String trace = "cost: "
+						+ nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME)
+						+ " - value: " + costListDataItem.getValue() + " - previous value: "
+						+ costListDataItem.getPreviousValue() + " - future value: " + costListDataItem.getFutureValue()
+						+ " - unit: " + costListDataItem.getUnit();
 				logger.info(trace);
 				if (costListDataItem.getCost().equals(cost1) && (costListDataItem.getComponentNodeRef() == null)) {
 					assertEquals(3.5d, costListDataItem.getValue());
@@ -314,20 +351,30 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 
 			return null;
 
-		}, false, true);
+		});
 	}
 
 	@Test
 	public void testFormulationCostsWithPackagingKitCostSimulation() {
-		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
 
 			/*-- Packaging kit --*/
 			ProductData packagingKit = alfrescoRepository.findOne(packagingKit1NodeRef);
 
 			// Packaging list Of packaging kit
 			List<PackagingListDataItem> kitPackList = new ArrayList<>();
-			kitPackList.add(new PackagingListDataItem(null, 1d, ProductUnit.P, PackagingLevel.Secondary, true, packagingMaterial2NodeRef));
-			kitPackList.add(new PackagingListDataItem(null, 1d, ProductUnit.P, PackagingLevel.Tertiary, true, packagingMaterial3NodeRef));
+			kitPackList.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.P)
+					.withPkgLevel(PackagingLevel.Secondary).withIsMaster(true).withProduct(packagingMaterial2NodeRef));
+			/*
+			 * kitPackList.add(new PackagingListDataItem(null, 1d, ProductUnit.P,
+			 * PackagingLevel.Secondary, true, packagingMaterial2NodeRef));
+			 */
+			kitPackList.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.P)
+					.withPkgLevel(PackagingLevel.Tertiary).withIsMaster(true).withProduct(packagingMaterial3NodeRef));
+			/*
+			 * kitPackList.add(new PackagingListDataItem(null, 1d, ProductUnit.P,
+			 * PackagingLevel.Tertiary, true, packagingMaterial3NodeRef));
+			 */
 
 			packagingKit.getPackagingListView().setPackagingList(kitPackList);
 
@@ -348,8 +395,18 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 			// Packaging list Of finished product
 			List<PackagingListDataItem> finishedProductPackList = new ArrayList<>();
 			finishedProduct.getPackagingListView().setPackagingList(finishedProductPackList);
-			finishedProductPackList.add(new PackagingListDataItem(null, 8d, ProductUnit.P, PackagingLevel.Primary, true, packagingMaterial1NodeRef));
-			finishedProductPackList.add(new PackagingListDataItem(null, 10d, ProductUnit.PP, PackagingLevel.Secondary, true, packagingKit1NodeRef));
+			finishedProductPackList.add(PackagingListDataItem.build().withQty(8d).withUnit(ProductUnit.PP)
+					.withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packagingMaterial1NodeRef));
+			/*
+			 * finishedProductPackList.add(new PackagingListDataItem(null, 8d,
+			 * ProductUnit.P, PackagingLevel.Primary, true, packagingMaterial1NodeRef));
+			 */
+			finishedProductPackList.add(PackagingListDataItem.build().withQty(10d).withUnit(ProductUnit.PP)
+					.withPkgLevel(PackagingLevel.Secondary).withIsMaster(true).withProduct(packagingKit1NodeRef));
+			/*
+			 * finishedProductPackList.add(new PackagingListDataItem(null, 10d,
+			 * ProductUnit.PP, PackagingLevel.Secondary, true, packagingKit1NodeRef));
+			 */
 
 			finishedProduct = (FinishedProductData) alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct);
 
@@ -364,9 +421,9 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			productService.formulate(finishedProductNodeRef);
 			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
@@ -374,9 +431,11 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 			int checks = 0;
 			assertNotNull("CostList is null", formulatedProduct.getCostList());
 			for (CostListDataItem costListDataItem : formulatedProduct.getCostList()) {
-				String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: "
-						+ costListDataItem.getValue() + " - previous value: " + costListDataItem.getPreviousValue() + " - future value: "
-						+ costListDataItem.getFutureValue() + " - unit: " + costListDataItem.getUnit();
+				String trace = "cost: "
+						+ nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME)
+						+ " - value: " + costListDataItem.getValue() + " - previous value: "
+						+ costListDataItem.getPreviousValue() + " - future value: " + costListDataItem.getFutureValue()
+						+ " - unit: " + costListDataItem.getUnit();
 				logger.info(trace);
 				if (costListDataItem.getCost().equals(pkgCost1) && (costListDataItem.getComponentNodeRef() == null)) {
 					assertEquals(12.15125d, costListDataItem.getValue());
@@ -392,20 +451,20 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 			assertEquals(2, checks);
 
 			return null;
-		}, false, true);
+		});
 
 	}
 
 	@Test
 	public void testFormulationCostsWithKeepProductUnit() throws Exception {
 		try {
-			
+
 			inWriteTx(() -> {
 				systemConfigurationService.updateConfValue("beCPG.formulation.costList.keepProductUnit", "true");
 				return null;
 			});
 
-			final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			final NodeRef rawMaterialNodeRef = inWriteTx(() -> {
 
 				RawMaterialData rawMaterial = new RawMaterialData();
 				rawMaterial.setName("Raw material keepProductUnit cost");
@@ -416,16 +475,21 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 				rawMaterial.setCostList(costList);
 
 				return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef();
-			}, false, true);
+			});
 
-			final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			final NodeRef finishedProductNodeRef = inWriteTx(() -> {
 
 				/*-- Create finished product --*/
 				FinishedProductData finishedProduct = new FinishedProductData();
 				finishedProduct.setName("Produit fini 1");
 				finishedProduct.setUnit(ProductUnit.kg);
 				List<CompoListDataItem> compoList = new ArrayList<>();
-				compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.g, 0d, DeclarationType.Detail, rawMaterialNodeRef));
+				compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.g).withLossPerc(0d)
+						.withDeclarationType(DeclarationType.Detail).withProduct(rawMaterialNodeRef));
+				/*
+				 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.g, 0d,
+				 * DeclarationType.Detail, rawMaterialNodeRef));
+				 */
 				finishedProduct.getCompoListView().setCompoList(compoList);
 
 				List<CostListDataItem> costList = new LinkedList<>();
@@ -434,9 +498,9 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 
 				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
-			}, false, true);
+			});
 
-			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			inWriteTx(() -> {
 
 				productService.formulate(finishedProductNodeRef);
 				ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
@@ -449,8 +513,10 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 				int checks = 0;
 				assertNotNull("CostList is null", formulatedProduct.getCostList());
 				for (CostListDataItem costListDataItem : formulatedProduct.getCostList()) {
-					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: "
-							+ costListDataItem.getValue() + " - previous value: " + costListDataItem.getPreviousValue() + " - future value: "
+					String trace = "cost: "
+							+ nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME)
+							+ " - value: " + costListDataItem.getValue() + " - previous value: "
+							+ costListDataItem.getPreviousValue() + " - future value: "
 							+ costListDataItem.getFutureValue() + " - unit: " + costListDataItem.getUnit();
 					logger.info(trace);
 					if (costListDataItem.getCost().equals(cost1) && (costListDataItem.getComponentNodeRef() == null)) {
@@ -465,7 +531,7 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 
 				return null;
 
-			}, false, true);
+			});
 		} finally {
 			systemConfigurationService.resetConfValue("beCPG.formulation.costList.keepProductUnit");
 		}
@@ -474,7 +540,7 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 	@Test
 	public void testFormulationCostsWithoutKeepProductUnit() throws Exception {
 
-		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef rawMaterialNodeRef = inWriteTx(() -> {
 
 			RawMaterialData rawMaterial = new RawMaterialData();
 			rawMaterial.setName("Raw material keepProductUnit cost");
@@ -485,16 +551,21 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 			rawMaterial.setCostList(costList);
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef();
-		}, false, true);
+		});
 
-		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
 
 			/*-- Create finished product --*/
 			FinishedProductData finishedProduct = new FinishedProductData();
 			finishedProduct.setName("Produit fini 1");
 			finishedProduct.setUnit(ProductUnit.kg);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.g, 0d, DeclarationType.Detail, rawMaterialNodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.g).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(rawMaterialNodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.g, 0d,
+			 * DeclarationType.Detail, rawMaterialNodeRef));
+			 */
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
 			List<CostListDataItem> costList = new LinkedList<>();
@@ -502,9 +573,9 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 			finishedProduct.setCostList(costList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			productService.formulate(finishedProductNodeRef);
 			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
@@ -517,9 +588,11 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 			int checks = 0;
 			assertNotNull("CostList is null", formulatedProduct.getCostList());
 			for (CostListDataItem costListDataItem : formulatedProduct.getCostList()) {
-				String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: "
-						+ costListDataItem.getValue() + " - previous value: " + costListDataItem.getPreviousValue() + " - future value: "
-						+ costListDataItem.getFutureValue() + " - unit: " + costListDataItem.getUnit();
+				String trace = "cost: "
+						+ nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME)
+						+ " - value: " + costListDataItem.getValue() + " - previous value: "
+						+ costListDataItem.getPreviousValue() + " - future value: " + costListDataItem.getFutureValue()
+						+ " - unit: " + costListDataItem.getUnit();
 				logger.info(trace);
 				if (costListDataItem.getCost().equals(cost1) && (costListDataItem.getComponentNodeRef() == null)) {
 					assertEquals(20d, costListDataItem.getValue());
@@ -533,7 +606,7 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 
 			return null;
 
-		}, false, true);
+		});
 
 	}
 
@@ -542,7 +615,7 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 
 		try {
 
-			final NodeRef varnishNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			final NodeRef varnishNodeRef = inWriteTx(() -> {
 
 				// varnish packList
 				PackagingMaterialData varnish = new PackagingMaterialData();
@@ -556,9 +629,9 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 
 				return alfrescoRepository.create(getTestFolderNodeRef(), varnish).getNodeRef();
 
-			}, false, true);
+			});
 
-			final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			final NodeRef finishedProductNodeRef = inWriteTx(() -> {
 				/*-- Create process steps, resources --*/
 				Map<QName, Serializable> properties = new HashMap<>();
 				properties.put(BeCPGModel.PROP_CHARACT_NAME, "Etape emb");
@@ -569,7 +642,8 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 				List<CostListDataItem> costList = new LinkedList<>();
 				costList.add(new CostListDataItem(null, 5d, "€/h", null, cost3, false));
 				processRessource.setCostList(costList);
-				NodeRef emballageResourceNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), processRessource).getNodeRef();
+				NodeRef emballageResourceNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), processRessource)
+						.getNodeRef();
 
 				/*-- Create finished product --*/
 				FinishedProductData finishedProduct = new FinishedProductData();
@@ -578,24 +652,45 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 
 				// compoList
 				List<CompoListDataItem> compoList = new ArrayList<>();
-				compoList.add(new CompoListDataItem(null, null, null, 0.5d, ProductUnit.lb, 0d, DeclarationType.Detail, rawMaterial8NodeRef));// 5€/lb
-																																				// ->
-																																				// 2.5
-				compoList.add(new CompoListDataItem(null, null, null, 0.5d, ProductUnit.lb, 0d, DeclarationType.Detail, rawMaterial3NodeRef));// 1€/kg
-																																				// ->
-																																				// 0.226796185
+				compoList.add(CompoListDataItem.build().withQtyUsed(0.5d).withUnit(ProductUnit.lb).withLossPerc(0d)
+						.withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial8NodeRef));
+				/*
+				 * compoList.add(new CompoListDataItem(null, null, null, 0.5d, ProductUnit.lb,
+				 * 0d, DeclarationType.Detail, rawMaterial8NodeRef));
+				 */
+				// 5€/lb
+				// ->
+				// 2.5
+				compoList.add(CompoListDataItem.build().withQtyUsed(0.5d).withUnit(ProductUnit.lb).withLossPerc(0d)
+						.withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial8NodeRef));
+				/*
+				 * compoList.add(new CompoListDataItem(null, null, null, 0.5d, ProductUnit.lb,
+				 * 0d, DeclarationType.Detail, rawMaterial8NodeRef));
+				 */
+				// 1€/kg
+				// ->
+				// 0.226796185
 				finishedProduct.getCompoListView().setCompoList(compoList);
 
 				// packList
 				List<PackagingListDataItem> packList = new ArrayList<>();
-				packList.add(new PackagingListDataItem(null, 2d, ProductUnit.L, PackagingLevel.Primary, true, varnishNodeRef)); // 5€/L
-																																// ->
-																																// 10€/lb
+				packList.add(PackagingListDataItem.build().withQty(2d).withUnit(ProductUnit.L)
+						.withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(varnishNodeRef));
+				/*
+				 * packList.add(new PackagingListDataItem(null, 2d, ProductUnit.L,
+				 * PackagingLevel.Primary, true, varnishNodeRef));
+				 */
+				// 5€/L
+				// ->
+				// 10€/lb
 				finishedProduct.getPackagingListView().setPackagingList(packList);
 
 				// processList
 				List<ProcessListDataItem> processList = new ArrayList<>();
-				processList.add(new ProcessListDataItem(null, 1d, 1d, 1d, ProductUnit.lb, null, null, null, null, emballageResourceNodeRef)); // 5€/h
+
+				processList.add(new ProcessListDataItem(null, 1d, 1d, 1d, ProductUnit.lb, null, null, null, null,
+						emballageResourceNodeRef));
+				// 5€/h
 
 				finishedProduct.getProcessListView().setProcessList(processList);
 
@@ -608,9 +703,9 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 
 				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
-			}, false, true);
+			});
 
-			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			inWriteTx(() -> {
 
 				productService.formulate(finishedProductNodeRef);
 				ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
@@ -624,8 +719,10 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 				int checks = 0;
 				assertNotNull("CostList is null", formulatedProduct.getCostList());
 				for (CostListDataItem costListDataItem : formulatedProduct.getCostList()) {
-					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: "
-							+ costListDataItem.getValue() + " - previous value: " + costListDataItem.getPreviousValue() + " - future value: "
+					String trace = "cost: "
+							+ nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME)
+							+ " - value: " + costListDataItem.getValue() + " - previous value: "
+							+ costListDataItem.getPreviousValue() + " - future value: "
 							+ costListDataItem.getFutureValue() + " - unit: " + costListDataItem.getUnit();
 					logger.info(trace);
 					if (costListDataItem.getCost().equals(cost1) && (costListDataItem.getComponentNodeRef() == null)) {
@@ -633,7 +730,8 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 						assertEquals(df.format(2.726796185d), df.format(costListDataItem.getValue()));
 						assertEquals(df.format(2.726796185d), df.format(costListDataItem.getValuePerProduct()));
 					}
-					if (costListDataItem.getCost().equals(pkgCost1) && (costListDataItem.getComponentNodeRef() == null)) {
+					if (costListDataItem.getCost().equals(pkgCost1)
+							&& (costListDataItem.getComponentNodeRef() == null)) {
 						assertEquals("€/lb", costListDataItem.getUnit());
 						assertEquals(df.format(10d), df.format(costListDataItem.getValue()));
 						assertEquals(df.format(10d), df.format(costListDataItem.getValuePerProduct()));
@@ -651,10 +749,9 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 
 				return null;
 
-			}, false, true);
+			});
 
 		} finally {
 		}
 	}
-
 }

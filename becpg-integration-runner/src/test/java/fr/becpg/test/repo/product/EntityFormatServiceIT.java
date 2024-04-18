@@ -23,12 +23,12 @@ public class EntityFormatServiceIT extends PLMBaseTestCase {
 	@Test
 	public void convertToJsonTest() {
 
-		NodeRef rawMaterialNoderef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef rawMaterialNoderef = inWriteTx(() -> {
 			NodeRef result = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test report");
 			return result;
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			entityFormatService.convertToFormat(rawMaterialNoderef, EntityFormat.JSON);
 			String format = entityFormatService.getEntityFormat(rawMaterialNoderef);
@@ -50,6 +50,6 @@ public class EntityFormatServiceIT extends PLMBaseTestCase {
 			assertNotNull(ingList);
 
 			return true;
-		}, false, true);
+		});
 	}
 }

@@ -46,7 +46,7 @@ public class FormulationMultiLevelILIT extends AbstractFinishedProductTest {
 	@Test
 	public void testFormulationMultiLevelILTest() throws Exception {
 
-		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
 
 			/*-- Create finished product --*/
 			logger.debug("/*-- Create finished product --*/");
@@ -57,23 +57,33 @@ public class FormulationMultiLevelILIT extends AbstractFinishedProductTest {
 			finishedProduct.setQty(4d);
 			finishedProduct.setDensity(1d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg, 3d, DeclarationType.Declare, rawMaterial7NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 1d, DeclarationType.Declare, rawMaterial6NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg, 3d,
+			 * DeclarationType.Declare, rawMaterial7NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(3d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial7NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 1d,
+			 * DeclarationType.Declare, rawMaterial6NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(3d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial6NodeRef));
 
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			productService.formulate(finishedProductNodeRef);
 
 			return null;
 
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
 
@@ -91,7 +101,7 @@ public class FormulationMultiLevelILIT extends AbstractFinishedProductTest {
 
 			return null;
 
-		}, false, true);
+		});
 
 	}
 

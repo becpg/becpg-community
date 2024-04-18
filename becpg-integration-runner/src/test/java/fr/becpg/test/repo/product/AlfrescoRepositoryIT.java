@@ -40,7 +40,6 @@ import fr.becpg.test.PLMBaseTestCase;
  */
 public class AlfrescoRepositoryIT extends PLMBaseTestCase {
 
-	
 	private static final Log logger = LogFactory.getLog(AlfrescoRepositoryIT.class);
 
 	@Autowired
@@ -56,7 +55,7 @@ public class AlfrescoRepositoryIT extends PLMBaseTestCase {
 	@Test
 	public void testAllergenListDAO() {
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			// create RM
 			RawMaterialData rmData = new RawMaterialData();
@@ -69,10 +68,14 @@ public class AlfrescoRepositoryIT extends PLMBaseTestCase {
 			List<NodeRef> allSources = new ArrayList<>();
 			allSources.add(rmNodeRef);
 			List<AllergenListDataItem> allergenList = new ArrayList<>();
-			allergenList.add(new AllergenListDataItem(null, null, true, true, allSources, null, allergens.get(0), false));
-			allergenList.add(new AllergenListDataItem(null, null, false, true, null, allSources, allergens.get(1), false));
-			allergenList.add(new AllergenListDataItem(null, null, true, false, null, allSources, allergens.get(2), false));
-			allergenList.add(new AllergenListDataItem(null, null, false, false, allSources, null, allergens.get(3), false));
+			allergenList
+					.add(new AllergenListDataItem(null, null, true, true, allSources, null, allergens.get(0), false));
+			allergenList
+					.add(new AllergenListDataItem(null, null, false, true, null, allSources, allergens.get(1), false));
+			allergenList
+					.add(new AllergenListDataItem(null, null, true, false, null, allSources, allergens.get(2), false));
+			allergenList
+					.add(new AllergenListDataItem(null, null, false, false, allSources, null, allergens.get(3), false));
 			sfData.setAllergenList(allergenList);
 
 			NodeRef sfNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), sfData).getNodeRef();
@@ -80,7 +83,8 @@ public class AlfrescoRepositoryIT extends PLMBaseTestCase {
 			// load SF and test it
 			sfData = (SemiFinishedProductData) alfrescoRepository.findOne(sfNodeRef);
 			assertNotNull("check allergenList", sfData.getAllergenList());
-			assertFalse(nodeService.hasAspect(sfData.getAllergenList().get(0).getNodeRef(), BeCPGModel.ASPECT_ENTITYLISTS));
+			assertFalse(
+					nodeService.hasAspect(sfData.getAllergenList().get(0).getNodeRef(), BeCPGModel.ASPECT_ENTITYLISTS));
 
 			for (AllergenListDataItem d : sfData.getAllergenList()) {
 
@@ -119,7 +123,7 @@ public class AlfrescoRepositoryIT extends PLMBaseTestCase {
 
 			return null;
 
-		}, false, true);
+		});
 
 	}
 
@@ -129,7 +133,7 @@ public class AlfrescoRepositoryIT extends PLMBaseTestCase {
 	@Test
 	public void testGetListItem() {
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			NodeRef rawMaterialNodeRef = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test report");
 			ProductData rawMaterial = alfrescoRepository.findOne(rawMaterialNodeRef);
@@ -152,48 +156,48 @@ public class AlfrescoRepositoryIT extends PLMBaseTestCase {
 
 			return null;
 
-		}, false, true);
+		});
 
 	}
 
 	@Test
 	public void testNullProperties() {
 		inWriteTx(() -> {
-			
-			NodeRef rawMaterialNodeRef = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test properties");
+
+			NodeRef rawMaterialNodeRef = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(),
+					"MP test properties");
 			ProductData rawMaterial = alfrescoRepository.findOne(rawMaterialNodeRef);
-			
+
 			Assert.assertFalse(rawMaterial.getAspects().contains(PLMModel.ASPECT_NUTRIENT_PROFILING_SCORE));
-			
+
 			MLText title = new MLText();
-			title.addValue(Locale.getDefault(),"Test update property");
-			
+			title.addValue(Locale.getDefault(), "Test update property");
+
 			rawMaterial.setTitle(title);
 
 			alfrescoRepository.save(rawMaterial);
-			
+
 			Assert.assertFalse(rawMaterial.getAspects().contains(PLMModel.ASPECT_NUTRIENT_PROFILING_SCORE));
-			
+
 			rawMaterial.setNutrientClass("A");
-			
+
 			alfrescoRepository.save(rawMaterial);
-			
+
 			Assert.assertTrue(rawMaterial.getAspects().contains(PLMModel.ASPECT_NUTRIENT_PROFILING_SCORE));
-			
+
 			return true;
-			
+
 		});
-		
+
 	}
-	
-	
+
 	/**
 	 * Test ing labeling list.
 	 */
 	@Test
 	public void testIngLabelingList() {
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			// create node
 			MLText mlTextILL = new MLText();
@@ -203,26 +207,30 @@ public class AlfrescoRepositoryIT extends PLMBaseTestCase {
 			Map<QName, Serializable> properties = new HashMap<>();
 			properties.put(PLMModel.PROP_ILL_VALUE, mlTextILL);
 
-			NodeRef illNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN,
-					PLMModel.TYPE_INGLABELINGLIST, properties).getChildRef();
+			NodeRef illNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					ContentModel.ASSOC_CHILDREN, PLMModel.TYPE_INGLABELINGLIST, properties).getChildRef();
 
 			nodeService.setProperty(illNodeRef, PLMModel.PROP_ILL_VALUE, mlTextILL);
 
 			// check node saved
 			logger.debug("get property : " + mlNodeServiceImpl.getProperty(illNodeRef, PLMModel.PROP_ILL_VALUE));
-			logger.debug("get property fr : " + mlNodeServiceImpl.getProperty(illNodeRef, QName.createQName(BeCPGModel.BECPG_PREFIX, "illValue_fr")));
+			logger.debug("get property fr : " + mlNodeServiceImpl.getProperty(illNodeRef,
+					QName.createQName(BeCPGModel.BECPG_PREFIX, "illValue_fr")));
 			logger.debug("get properties : " + mlNodeServiceImpl.getProperties(illNodeRef));
-			logger.debug("get property 2 : " + mlNodeServiceImpl.getProperties(illNodeRef).get(PLMModel.PROP_ILL_VALUE));
+			logger.debug(
+					"get property 2 : " + mlNodeServiceImpl.getProperties(illNodeRef).get(PLMModel.PROP_ILL_VALUE));
 			MLText mlTextILLSaved = (MLText) mlNodeServiceImpl.getProperty(illNodeRef, PLMModel.PROP_ILL_VALUE);
 
 			assertNotNull("MLText exist", mlTextILLSaved);
 			assertEquals("MLText exist has 2 Locales", 2, mlTextILL.getLocales().size());
-			assertEquals("Check english value", mlTextILL.getValue(Locale.ENGLISH), mlTextILLSaved.getValue(Locale.ENGLISH));
-			assertEquals("Check french value", mlTextILL.getValue(Locale.FRENCH), mlTextILLSaved.getValue(Locale.FRENCH));
+			assertEquals("Check english value", mlTextILL.getValue(Locale.ENGLISH),
+					mlTextILLSaved.getValue(Locale.ENGLISH));
+			assertEquals("Check french value", mlTextILL.getValue(Locale.FRENCH),
+					mlTextILLSaved.getValue(Locale.FRENCH));
 
 			return null;
 
-		}, false, true);
+		});
 
 	}
 

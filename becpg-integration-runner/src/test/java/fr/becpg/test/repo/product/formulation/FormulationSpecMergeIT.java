@@ -53,9 +53,9 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 		// create RM and lSF
 		initParts();
 	}
-	
+
 	private NodeRef createTestProduct(final String name) {
-		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		return inWriteTx(() -> {
 
 			/**
 			 * Finished product 1
@@ -70,13 +70,13 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			finishedProduct.setServingSize(50d);// 50g
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
-		}, false, true);
+		});
 	}
 
 	@Test
 	public void testSpecificationsLabelClaimMerge() {
 
-		NodeRef testProduct = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef testProduct = inWriteTx(() -> {
 
 			logger.info("/*************************************/");
 			logger.info("/*--     Test LabelClaim Merge     --*/");
@@ -87,65 +87,88 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			NodeRef tmp = createTestProduct("Finished product 1");
 
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF11NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial12NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d,
+			 * DeclarationType.Detail, localSF11NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF11NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d,
+			 * ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial12NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(2d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail)
+					.withProduct(rawMaterial12NodeRef));
+
 			ProductData finishedProduct = alfrescoRepository.findOne(tmp);
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			alfrescoRepository.save(finishedProduct);
 
 			NodeRef labelClaimNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_LABEL_CLAIM, properties).getChildRef();
 
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "labelClaim2");
 			properties.put(ContentModel.PROP_NAME, "labelClaim2");
 			NodeRef labelClaimNodeRef2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_LABEL_CLAIM, properties).getChildRef();
 
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "labelClaim3");
 			properties.put(ContentModel.PROP_NAME, "labelClaim3");
 			NodeRef labelClaimNodeRef3 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_LABEL_CLAIM, properties).getChildRef();
 
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "labelClaim4");
 			properties.put(ContentModel.PROP_NAME, "labelClaim4");
 			NodeRef labelClaimNodeRef4 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_LABEL_CLAIM, properties).getChildRef();
 
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "labelClaim5");
 			properties.put(ContentModel.PROP_NAME, "labelClaim5");
 			NodeRef labelClaimNodeRef5 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_LABEL_CLAIM, properties).getChildRef();
 
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "labelClaim6");
 			properties.put(ContentModel.PROP_NAME, "labelClaim6");
 			NodeRef labelClaimNodeRef6 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_LABEL_CLAIM, properties).getChildRef();
 
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "labelClaim7");
 			properties.put(ContentModel.PROP_NAME, "labelClaim7");
 			NodeRef labelClaimNodeRef7 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_LABEL_CLAIM, properties).getChildRef();
 
 			properties = new HashMap<>();
 			properties.put(ContentModel.PROP_NAME, "Spec1");
-			NodeRef productSpecificationNodeRef1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
-					PLMModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
+			NodeRef productSpecificationNodeRef1 = nodeService
+					.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+									(String) properties.get(ContentModel.PROP_NAME)),
+							PLMModel.TYPE_PRODUCT_SPECIFICATION, properties)
+					.getChildRef();
 
-			ProductSpecificationData productSpec1 = (ProductSpecificationData) alfrescoRepository.findOne(productSpecificationNodeRef1);
+			ProductSpecificationData productSpec1 = (ProductSpecificationData) alfrescoRepository
+					.findOne(productSpecificationNodeRef1);
 			productSpec1.setLabelClaimList(new ArrayList<LabelClaimListDataItem>());
 
 			productSpec1.getLabelClaimList().add(new LabelClaimListDataItem(labelClaimNodeRef, "toto", Boolean.TRUE));
@@ -157,11 +180,15 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 
 			properties = new HashMap<>();
 			properties.put(ContentModel.PROP_NAME, "Spec2");
-			NodeRef productSpecificationNodeRef2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
-					PLMModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
+			NodeRef productSpecificationNodeRef2 = nodeService
+					.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+									(String) properties.get(ContentModel.PROP_NAME)),
+							PLMModel.TYPE_PRODUCT_SPECIFICATION, properties)
+					.getChildRef();
 
-			ProductSpecificationData productSpec2 = (ProductSpecificationData) alfrescoRepository.findOne(productSpecificationNodeRef2);
+			ProductSpecificationData productSpec2 = (ProductSpecificationData) alfrescoRepository
+					.findOne(productSpecificationNodeRef2);
 
 			productSpec2.setLabelClaimList(new ArrayList<LabelClaimListDataItem>());
 			productSpec2.getLabelClaimList().add(new LabelClaimListDataItem(labelClaimNodeRef, "toto", Boolean.FALSE));
@@ -172,11 +199,15 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 
 			properties = new HashMap<>();
 			properties.put(ContentModel.PROP_NAME, "global Spec");
-			NodeRef globalProductSpecificationNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
-					PLMModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
+			NodeRef globalProductSpecificationNodeRef = nodeService
+					.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+									(String) properties.get(ContentModel.PROP_NAME)),
+							PLMModel.TYPE_PRODUCT_SPECIFICATION, properties)
+					.getChildRef();
 
-			ProductSpecificationData globalSpec = (ProductSpecificationData) alfrescoRepository.findOne(globalProductSpecificationNodeRef);
+			ProductSpecificationData globalSpec = (ProductSpecificationData) alfrescoRepository
+					.findOne(globalProductSpecificationNodeRef);
 
 			globalSpec.setProductSpecifications(new ArrayList<ProductSpecificationData>());
 			globalSpec.getProductSpecifications().add(productSpec1);
@@ -186,16 +217,24 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			product.setProductSpecifications(new ArrayList<ProductSpecificationData>());
 			product.getProductSpecifications().add(globalSpec);
 			product.setLabelClaimList(new ArrayList<LabelClaimListDataItem>());
-			LabelClaimListDataItem productLabelClaimFalse = new LabelClaimListDataItem(labelClaimNodeRef, "toto", Boolean.TRUE);
-			LabelClaimListDataItem productLabelClaimFalse2 = new LabelClaimListDataItem(labelClaimNodeRef2, "toto", Boolean.FALSE);
-			LabelClaimListDataItem productLabelClaimFalse4 = new LabelClaimListDataItem(labelClaimNodeRef4, "toto", Boolean.TRUE);
-			LabelClaimListDataItem productLabelClaimFalse5 = new LabelClaimListDataItem(labelClaimNodeRef5, "toto", Boolean.TRUE);
-			LabelClaimListDataItem productLabelClaimFalse6 = new LabelClaimListDataItem(labelClaimNodeRef6, "toto", Boolean.TRUE);
-			LabelClaimListDataItem productLabelClaimFalse7 = new LabelClaimListDataItem(labelClaimNodeRef7, "toto", Boolean.TRUE);
+			LabelClaimListDataItem productLabelClaimFalse = new LabelClaimListDataItem(labelClaimNodeRef, "toto",
+					Boolean.TRUE);
+			LabelClaimListDataItem productLabelClaimFalse2 = new LabelClaimListDataItem(labelClaimNodeRef2, "toto",
+					Boolean.FALSE);
+			LabelClaimListDataItem productLabelClaimFalse4 = new LabelClaimListDataItem(labelClaimNodeRef4, "toto",
+					Boolean.TRUE);
+			LabelClaimListDataItem productLabelClaimFalse5 = new LabelClaimListDataItem(labelClaimNodeRef5, "toto",
+					Boolean.TRUE);
+			LabelClaimListDataItem productLabelClaimFalse6 = new LabelClaimListDataItem(labelClaimNodeRef6, "toto",
+					Boolean.TRUE);
+			LabelClaimListDataItem productLabelClaimFalse7 = new LabelClaimListDataItem(labelClaimNodeRef7, "toto",
+					Boolean.TRUE);
 
-			LabelClaimListDataItem subProductLabelClaim6 = new LabelClaimListDataItem(labelClaimNodeRef6, "toto", Boolean.TRUE);
+			LabelClaimListDataItem subProductLabelClaim6 = new LabelClaimListDataItem(labelClaimNodeRef6, "toto",
+					Boolean.TRUE);
 			subProductLabelClaim6.setLabelClaimValue(LabelClaimListDataItem.VALUE_EMPTY);
-			LabelClaimListDataItem subProductLabelClaim7 = new LabelClaimListDataItem(labelClaimNodeRef7, "toto", Boolean.TRUE);
+			LabelClaimListDataItem subProductLabelClaim7 = new LabelClaimListDataItem(labelClaimNodeRef7, "toto",
+					Boolean.TRUE);
 			subProductLabelClaim7.setLabelClaimValue(LabelClaimListDataItem.VALUE_EMPTY);
 
 			productLabelClaimFalse.setIsManual(Boolean.TRUE);
@@ -221,25 +260,28 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 
 			alfrescoRepository.save(product);
 
-			nodeService.createAssociation(globalProductSpecificationNodeRef, productSpecificationNodeRef2, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
-			nodeService.createAssociation(globalProductSpecificationNodeRef, productSpecificationNodeRef1, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
+			nodeService.createAssociation(globalProductSpecificationNodeRef, productSpecificationNodeRef2,
+					PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
+			nodeService.createAssociation(globalProductSpecificationNodeRef, productSpecificationNodeRef1,
+					PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
 
 			// create association
-			nodeService.createAssociation(tmp, globalProductSpecificationNodeRef, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
+			nodeService.createAssociation(tmp, globalProductSpecificationNodeRef,
+					PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
 
 			/*-- Formulation --*/
 			logger.info("/*-- Formulation --*/");
 			productService.formulate(tmp);
 
 			return tmp;
-		}, false, true);
+		});
 
 		checkRequirement(testProduct);
 	}
 
 	private void checkRequirement(NodeRef testProduct) {
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			/* -- Check formulation -- */
 			ProductData formulatedProduct = alfrescoRepository.findOne(testProduct);
 
@@ -280,13 +322,13 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			assertEquals(5, checks);
 
 			return null;
-		}, false, true);
-		
+		});
+
 	}
-	
+
 	@Test
 	public void testNutrientsMerge() {
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			logger.info("/*************************************/");
 			logger.info("/*--     Test Nutrients Merge      --*/");
@@ -298,14 +340,18 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 
 			Map<QName, Serializable> properties = new HashMap<>();
 			properties.put(ContentModel.PROP_NAME, name + " Spec Nut 1");
-			NodeRef productSpecificationNodeRef1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
-					PLMModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
+			NodeRef productSpecificationNodeRef1 = nodeService
+					.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+									(String) properties.get(ContentModel.PROP_NAME)),
+							PLMModel.TYPE_PRODUCT_SPECIFICATION, properties)
+					.getChildRef();
 
 			/*
 			 * ================ Specifications ================
 			 */
-			ProductSpecificationData productSpecification1 = (ProductSpecificationData) alfrescoRepository.findOne(productSpecificationNodeRef1);
+			ProductSpecificationData productSpecification1 = (ProductSpecificationData) alfrescoRepository
+					.findOne(productSpecificationNodeRef1);
 
 			List<NutListDataItem> nutList = new ArrayList<>();
 			nutList.add(new NutListDataItem(null, null, null, 3d, 4d, null, nut1, null));
@@ -315,11 +361,15 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			productSpecification1.setNutList(nutList);
 
 			properties.put(ContentModel.PROP_NAME, name + " Spec Nut 2");
-			NodeRef productSpecificationNodeRef2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
-					PLMModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
+			NodeRef productSpecificationNodeRef2 = nodeService
+					.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+									(String) properties.get(ContentModel.PROP_NAME)),
+							PLMModel.TYPE_PRODUCT_SPECIFICATION, properties)
+					.getChildRef();
 
-			ProductSpecificationData productSpecification2 = (ProductSpecificationData) alfrescoRepository.findOne(productSpecificationNodeRef2);
+			ProductSpecificationData productSpecification2 = (ProductSpecificationData) alfrescoRepository
+					.findOne(productSpecificationNodeRef2);
 			List<NutListDataItem> nutList2 = new ArrayList<>();
 			nutList2.add(new NutListDataItem(null, null, null, 0.3d, 1.5d, null, nut4, null));
 			productSpecification2.setNutList(nutList2);
@@ -328,9 +378,12 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			alfrescoRepository.save(productSpecification2);
 
 			properties.put(ContentModel.PROP_NAME, name + " Spec Nut Global");
-			NodeRef globalProductSpecificationNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
-					PLMModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
+			NodeRef globalProductSpecificationNodeRef = nodeService
+					.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+									(String) properties.get(ContentModel.PROP_NAME)),
+							PLMModel.TYPE_PRODUCT_SPECIFICATION, properties)
+					.getChildRef();
 
 			ProductSpecificationData globalProductSpecification = (ProductSpecificationData) alfrescoRepository
 					.findOne(globalProductSpecificationNodeRef);
@@ -347,12 +400,47 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			 * ======= Compo =======
 			 */
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d,
+			 * DeclarationType.Detail, localSF1NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF1NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d,
+			 * ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(1d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare)
+					.withProduct(rawMaterial1NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d,
+			 * ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(2d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail)
+					.withProduct(rawMaterial2NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d,
+			 * DeclarationType.Detail, localSF2NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF2NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d,
+			 * ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQtyUsed(3d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare)
+					.withProduct(rawMaterial3NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d,
+			 * ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQtyUsed(3d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Omit)
+					.withProduct(rawMaterial4NodeRef));
+
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
 			/*
@@ -367,9 +455,12 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 
 			alfrescoRepository.save(finishedProduct);
 
-			nodeService.createAssociation(globalProductSpecificationNodeRef, productSpecificationNodeRef1, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
-			nodeService.createAssociation(globalProductSpecificationNodeRef, productSpecificationNodeRef2, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
-			nodeService.createAssociation(finishedProduct.getNodeRef(), globalProductSpecificationNodeRef, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
+			nodeService.createAssociation(globalProductSpecificationNodeRef, productSpecificationNodeRef1,
+					PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
+			nodeService.createAssociation(globalProductSpecificationNodeRef, productSpecificationNodeRef2,
+					PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
+			nodeService.createAssociation(finishedProduct.getNodeRef(), globalProductSpecificationNodeRef,
+					PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
 
 			/*
 			 * ========= Formulate =========
@@ -425,7 +516,7 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			assertEquals(4, checks);
 
 			return null;
-		}, false, true);
+		});
 	}
 
 	@Test
@@ -437,32 +528,40 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 
 		NodeRef fp3 = createTestProduct("Finished Product 3");
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			ProductData finishedProduct = alfrescoRepository.findOne(fp3);
 			final String name = finishedProduct.getName();
-			
+
 			Map<QName, Serializable> properties = new HashMap<>();
 			properties.put(ContentModel.PROP_NAME, name + " Spec Allergen globale");
-			NodeRef productSpecificationNodeRef1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
-					PLMModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
+			NodeRef productSpecificationNodeRef1 = nodeService
+					.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+									(String) properties.get(ContentModel.PROP_NAME)),
+							PLMModel.TYPE_PRODUCT_SPECIFICATION, properties)
+					.getChildRef();
 
 			// two catalogs
 			properties.clear();
 			properties.put(ContentModel.PROP_NAME, name + " Spec Allergen 1");
-			NodeRef productSpecificationNodeRef2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
-					PLMModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
+			NodeRef productSpecificationNodeRef2 = nodeService
+					.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+									(String) properties.get(ContentModel.PROP_NAME)),
+							PLMModel.TYPE_PRODUCT_SPECIFICATION, properties)
+					.getChildRef();
 
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "allergen5");
 			properties.put(PLMModel.PROP_ALLERGEN_TYPE, "Major");
 			NodeRef allergen5 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_ALLERGEN, properties).getChildRef();
 
-			ProductSpecificationData productSpecification2 = (ProductSpecificationData) alfrescoRepository.findOne(productSpecificationNodeRef2);
+			ProductSpecificationData productSpecification2 = (ProductSpecificationData) alfrescoRepository
+					.findOne(productSpecificationNodeRef2);
 
 			List<AllergenListDataItem> allergens = new ArrayList<>();
 
@@ -475,10 +574,14 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			/*-- Spec allergen 2 : allergen 1 is allowed in RM1&3 if voluntary--*/
 			properties.clear();
 			properties.put(ContentModel.PROP_NAME, name + " Spec Allergen 2");
-			NodeRef productSpecificationNodeRef3 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
-					PLMModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
-			ProductSpecificationData productSpecification3 = (ProductSpecificationData) alfrescoRepository.findOne(productSpecificationNodeRef3);
+			NodeRef productSpecificationNodeRef3 = nodeService
+					.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+									(String) properties.get(ContentModel.PROP_NAME)),
+							PLMModel.TYPE_PRODUCT_SPECIFICATION, properties)
+					.getChildRef();
+			ProductSpecificationData productSpecification3 = (ProductSpecificationData) alfrescoRepository
+					.findOne(productSpecificationNodeRef3);
 
 			allergens = new ArrayList<>();
 			allergens.add(new AllergenListDataItem(null, null, true, false, null, null, allergen4, false));
@@ -487,14 +590,47 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			productSpecification3.setAllergenList(allergens);
 			alfrescoRepository.save(productSpecification3);
 
-
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d,
+			 * DeclarationType.Detail, localSF1NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF1NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d,
+			 * ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(1d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare)
+					.withProduct(rawMaterial1NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d,
+			 * ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(2d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail)
+					.withProduct(rawMaterial2NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d,
+			 * DeclarationType.Detail, localSF2NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF2NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d,
+			 * ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQtyUsed(3d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare)
+					.withProduct(rawMaterial3NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d,
+			 * ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQtyUsed(3d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Omit)
+					.withProduct(rawMaterial4NodeRef));
 
 			// avoids rclDataItems due to invalid status
 			for (CompoListDataItem compo : compoList) {
@@ -510,19 +646,26 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			ProductData rm1 = alfrescoRepository.findOne(rawMaterial1NodeRef);
 			if (rm1.getAllergenList() != null) {
 				rm1.getAllergenList().clear();
-				rm1.getAllergenList().add(new AllergenListDataItem(null, null, true, false, new ArrayList<>(), new ArrayList<>(), allergen1, false));
-				rm1.getAllergenList().add(new AllergenListDataItem(null, null, true, false, new ArrayList<>(), new ArrayList<>(), allergen2, false));
-				rm1.getAllergenList().add(new AllergenListDataItem(null, null, true, false, new ArrayList<>(), new ArrayList<>(), allergen3, false));
-				rm1.getAllergenList().add(new AllergenListDataItem(null, null, true, false, new ArrayList<>(), new ArrayList<>(), allergen5, false));
+				rm1.getAllergenList().add(new AllergenListDataItem(null, null, true, false, new ArrayList<>(),
+						new ArrayList<>(), allergen1, false));
+				rm1.getAllergenList().add(new AllergenListDataItem(null, null, true, false, new ArrayList<>(),
+						new ArrayList<>(), allergen2, false));
+				rm1.getAllergenList().add(new AllergenListDataItem(null, null, true, false, new ArrayList<>(),
+						new ArrayList<>(), allergen3, false));
+				rm1.getAllergenList().add(new AllergenListDataItem(null, null, true, false, new ArrayList<>(),
+						new ArrayList<>(), allergen5, false));
 			}
 			alfrescoRepository.save(rm1);
 
 			ProductData rm2 = alfrescoRepository.findOne(rawMaterial2NodeRef);
 			if (rm2.getAllergenList() != null) {
 				rm2.getAllergenList().clear();
-				rm2.getAllergenList().add(new AllergenListDataItem(null, null, true, true, new ArrayList<>(), new ArrayList<>(), allergen2, false));
-				rm2.getAllergenList().add(new AllergenListDataItem(null, null, false, false, new ArrayList<>(), new ArrayList<>(), allergen3, false));
-				rm2.getAllergenList().add(new AllergenListDataItem(null, null, false, true, new ArrayList<>(), new ArrayList<>(), allergen4, false));
+				rm2.getAllergenList().add(new AllergenListDataItem(null, null, true, true, new ArrayList<>(),
+						new ArrayList<>(), allergen2, false));
+				rm2.getAllergenList().add(new AllergenListDataItem(null, null, false, false, new ArrayList<>(),
+						new ArrayList<>(), allergen3, false));
+				rm2.getAllergenList().add(new AllergenListDataItem(null, null, false, true, new ArrayList<>(),
+						new ArrayList<>(), allergen4, false));
 
 			}
 			alfrescoRepository.save(rm2);
@@ -537,22 +680,23 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 
 			logger.debug("Create spec association");
 			// Binding specifications
-			nodeService.createAssociation(productSpecificationNodeRef1, productSpecificationNodeRef3, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
-			nodeService.createAssociation(productSpecificationNodeRef1, productSpecificationNodeRef2, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
+			nodeService.createAssociation(productSpecificationNodeRef1, productSpecificationNodeRef3,
+					PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
+			nodeService.createAssociation(productSpecificationNodeRef1, productSpecificationNodeRef2,
+					PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
 			nodeService.createAssociation(fp3, productSpecificationNodeRef1, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
 
 			finishedProduct = alfrescoRepository.findOne(fp3);
-			assertEquals(1,finishedProduct.getProductSpecifications().size());
-			assertEquals(2,finishedProduct.getProductSpecifications().get(0).getProductSpecifications().size());
-			
-			
+			assertEquals(1, finishedProduct.getProductSpecifications().size());
+			assertEquals(2, finishedProduct.getProductSpecifications().get(0).getProductSpecifications().size());
+
 			/*
 			 * ============= Formulation =============
 			 */
-			
+
 			logger.debug("Formulate Finished Product 3");
 			productService.formulate(fp3);
-			
+
 			logger.debug("Find one Finished Product 3");
 
 			finishedProduct = alfrescoRepository.findOne(fp3);
@@ -560,45 +704,55 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			int checkMissingFields = 0;
 			int checks = 0;
 			for (ReqCtrlListDataItem r : finishedProduct.getReqCtrlList()) {
-				if(RequirementType.Forbidden.equals(r.getReqType())) {
-				logger.debug("Checking rclDataItem " + r.getReqMessage());
-				if (I18NUtil
-						.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "DLC (J) ou DDM/DLUO (J)", "EU 1169/2011 (INCO)")
-						.equals(r.getReqMessage())) {
-					assertEquals(RequirementType.Forbidden, r.getReqType());
-					checkMissingFields++;
-				} else if (I18NUtil.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Conditions de conservation ou Conseils de préparation et d'utilisation",
-						"EU 1169/2011 (INCO)").equals(r.getReqMessage())) {
-					assertEquals(RequirementType.Forbidden, r.getReqType());
-					checkMissingFields++;
-				} else if (I18NUtil.getMessage(AllergensCalculatingFormulationHandler.MESSAGE_FORBIDDEN_ALLERGEN,
-						nodeService.getProperty(allergen2, BeCPGModel.PROP_CHARACT_NAME)).equals(r.getReqMessage())) {
+				if (RequirementType.Forbidden.equals(r.getReqType())) {
+					logger.debug("Checking rclDataItem " + r.getReqMessage());
+					if (I18NUtil
+							.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING,
+									"DLC (J) ou DDM/DLUO (J)", "EU 1169/2011 (INCO)")
+							.equals(r.getReqMessage())) {
+						assertEquals(RequirementType.Forbidden, r.getReqType());
+						checkMissingFields++;
+					} else if (I18NUtil
+							.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING,
+									"Conditions de conservation ou Conseils de préparation et d'utilisation",
+									"EU 1169/2011 (INCO)")
+							.equals(r.getReqMessage())) {
+						assertEquals(RequirementType.Forbidden, r.getReqType());
+						checkMissingFields++;
+					} else if (I18NUtil
+							.getMessage(AllergensCalculatingFormulationHandler.MESSAGE_FORBIDDEN_ALLERGEN,
+									nodeService.getProperty(allergen2, BeCPGModel.PROP_CHARACT_NAME))
+							.equals(r.getReqMessage())) {
 
-					assertEquals(2, r.getSources().size());
-					assertTrue(r.getSources().contains(rawMaterial1NodeRef));
-					assertTrue(r.getSources().contains(rawMaterial2NodeRef));
-					assertEquals(RequirementType.Forbidden, r.getReqType());
-					checks++;
-				} else if (I18NUtil.getMessage(AllergensCalculatingFormulationHandler.MESSAGE_FORBIDDEN_ALLERGEN,
-						nodeService.getProperty(allergen1, BeCPGModel.PROP_CHARACT_NAME)).equals(r.getReqMessage())) {
+						assertEquals(2, r.getSources().size());
+						assertTrue(r.getSources().contains(rawMaterial1NodeRef));
+						assertTrue(r.getSources().contains(rawMaterial2NodeRef));
+						assertEquals(RequirementType.Forbidden, r.getReqType());
+						checks++;
+					} else if (I18NUtil
+							.getMessage(AllergensCalculatingFormulationHandler.MESSAGE_FORBIDDEN_ALLERGEN,
+									nodeService.getProperty(allergen1, BeCPGModel.PROP_CHARACT_NAME))
+							.equals(r.getReqMessage())) {
 
-					assertEquals(1, r.getSources().size());
-					assertTrue(r.getSources().contains(rawMaterial1NodeRef));
-					assertEquals(RequirementType.Forbidden, r.getReqType());
-					checks++;
-				} else if (I18NUtil.getMessage(AllergensCalculatingFormulationHandler.MESSAGE_FORBIDDEN_ALLERGEN,
-						nodeService.getProperty(allergen4, BeCPGModel.PROP_CHARACT_NAME)).equals(r.getReqMessage())) {
+						assertEquals(1, r.getSources().size());
+						assertTrue(r.getSources().contains(rawMaterial1NodeRef));
+						assertEquals(RequirementType.Forbidden, r.getReqType());
+						checks++;
+					} else if (I18NUtil
+							.getMessage(AllergensCalculatingFormulationHandler.MESSAGE_FORBIDDEN_ALLERGEN,
+									nodeService.getProperty(allergen4, BeCPGModel.PROP_CHARACT_NAME))
+							.equals(r.getReqMessage())) {
 
-					assertEquals(1, r.getSources().size());
-					assertTrue(r.getSources().contains(rawMaterial2NodeRef));
-					assertEquals(RequirementType.Forbidden, r.getReqType());
-					
-					checks++;
-				} /*else if (!RequirementDataType.Completion.equals(r.getReqDataType())) {
-					logger.debug("Unexpected rclDataItem: " + r.getReqMessage());
-					fail();
-				}*/
-			}
+						assertEquals(1, r.getSources().size());
+						assertTrue(r.getSources().contains(rawMaterial2NodeRef));
+						assertEquals(RequirementType.Forbidden, r.getReqType());
+
+						checks++;
+					} /*
+						 * else if (!RequirementDataType.Completion.equals(r.getReqDataType())) {
+						 * logger.debug("Unexpected rclDataItem: " + r.getReqMessage()); fail(); }
+						 */
+				}
 			}
 			logger.debug("Missing fields : " + checkMissingFields + " (should be 2)");
 			assertEquals(2, checkMissingFields);
@@ -607,7 +761,7 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			assertEquals(3, checks);
 
 			return null;
-		}, false, true);
+		});
 	}
 
 	@Test
@@ -621,24 +775,33 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 		ProductData finishedProduct = alfrescoRepository.findOne(fp4);
 		final String name = finishedProduct.getName();
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			finishedProduct.setPhysicoChemList(new ArrayList<>());
-			finishedProduct.getPhysicoChemList().add(new PhysicoChemListDataItem(null, 7d, null, null, null, physicoChem1));
-			finishedProduct.getPhysicoChemList().add(new PhysicoChemListDataItem(null, 6d, null, null, null, physicoChem2));
-			finishedProduct.getPhysicoChemList().add(new PhysicoChemListDataItem(null, 1.29d, null, null, null, physicoChem6));
-			finishedProduct.getPhysicoChemList().add(new PhysicoChemListDataItem(null, 3.4d, null, null, null, physicoChem7));
-			finishedProduct.getPhysicoChemList().add(new PhysicoChemListDataItem(null, 0.6774d, null, null, null, physicoChem8));
+			finishedProduct.getPhysicoChemList()
+					.add(new PhysicoChemListDataItem(null, 7d, null, null, null, physicoChem1));
+			finishedProduct.getPhysicoChemList()
+					.add(new PhysicoChemListDataItem(null, 6d, null, null, null, physicoChem2));
+			finishedProduct.getPhysicoChemList()
+					.add(new PhysicoChemListDataItem(null, 1.29d, null, null, null, physicoChem6));
+			finishedProduct.getPhysicoChemList()
+					.add(new PhysicoChemListDataItem(null, 3.4d, null, null, null, physicoChem7));
+			finishedProduct.getPhysicoChemList()
+					.add(new PhysicoChemListDataItem(null, 0.6774d, null, null, null, physicoChem8));
 			alfrescoRepository.save(finishedProduct);
 
 			// specification1
 			Map<QName, Serializable> properties = new HashMap<>();
 			properties.put(ContentModel.PROP_NAME, name + " Spec Physico-Chem 1");
-			NodeRef productSpecificationNodeRef1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
-					PLMModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
+			NodeRef productSpecificationNodeRef1 = nodeService
+					.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+									(String) properties.get(ContentModel.PROP_NAME)),
+							PLMModel.TYPE_PRODUCT_SPECIFICATION, properties)
+					.getChildRef();
 
-			ProductSpecificationData productSpecification1 = (ProductSpecificationData) alfrescoRepository.findOne(productSpecificationNodeRef1);
+			ProductSpecificationData productSpecification1 = (ProductSpecificationData) alfrescoRepository
+					.findOne(productSpecificationNodeRef1);
 
 			// physico chem must not be higher than 7
 			ArrayList<PhysicoChemListDataItem> physicoChemList = new ArrayList<>();
@@ -650,11 +813,15 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			// specification2
 			properties = new HashMap<>();
 			properties.put(ContentModel.PROP_NAME, name + " Spec Physico-Chem 2");
-			NodeRef productSpecificationNodeRef2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
-					PLMModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
+			NodeRef productSpecificationNodeRef2 = nodeService
+					.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+									(String) properties.get(ContentModel.PROP_NAME)),
+							PLMModel.TYPE_PRODUCT_SPECIFICATION, properties)
+					.getChildRef();
 
-			ProductSpecificationData productSpecification2 = (ProductSpecificationData) alfrescoRepository.findOne(productSpecificationNodeRef2);
+			ProductSpecificationData productSpecification2 = (ProductSpecificationData) alfrescoRepository
+					.findOne(productSpecificationNodeRef2);
 
 			// physico chem must not be lower than 7 (must be 7 precisely)
 			physicoChemList = new ArrayList<>();
@@ -666,19 +833,25 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 
 			properties = new HashMap<>();
 			properties.put(ContentModel.PROP_NAME, name + " Spec Physico-Chem 3 (global)");
-			NodeRef productSpecificationNodeRef3 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
-					PLMModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
+			NodeRef productSpecificationNodeRef3 = nodeService
+					.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+									(String) properties.get(ContentModel.PROP_NAME)),
+							PLMModel.TYPE_PRODUCT_SPECIFICATION, properties)
+					.getChildRef();
 
-			ProductSpecificationData productSpecification3 = (ProductSpecificationData) alfrescoRepository.findOne(productSpecificationNodeRef3);
+			ProductSpecificationData productSpecification3 = (ProductSpecificationData) alfrescoRepository
+					.findOne(productSpecificationNodeRef3);
 			physicoChemList = new ArrayList<>();
 			physicoChemList.add(new PhysicoChemListDataItem(null, null, null, 5d, 8.5d, physicoChem2));
 			productSpecification3.setPhysicoChemList(physicoChemList);
 			alfrescoRepository.save(productSpecification3);
 
 			// spec 3 has both spec 1 and spec 2
-			nodeService.createAssociation(productSpecificationNodeRef3, productSpecificationNodeRef2, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
-			nodeService.createAssociation(productSpecificationNodeRef3, productSpecificationNodeRef1, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
+			nodeService.createAssociation(productSpecificationNodeRef3, productSpecificationNodeRef2,
+					PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
+			nodeService.createAssociation(productSpecificationNodeRef3, productSpecificationNodeRef1,
+					PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
 
 			// create association
 			nodeService.createAssociation(fp4, productSpecificationNodeRef3, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
@@ -696,18 +869,18 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			for (ReqCtrlListDataItem reqCtrlList : formulatedProduct.getReqCtrlList()) {
 				logger.debug("/*-- Checking : \"" + reqCtrlList.getReqMessage() + "\" --*/");
 
-				if (I18NUtil.getMessage(PhysicoRequirementScanner.MESSAGE_PHYSICO_NOT_IN_RANGE, "physicoChem2", "6", "8<= ", " <=8,5")
-						.equals(reqCtrlList.getReqMessage())) {
+				if (I18NUtil.getMessage(PhysicoRequirementScanner.MESSAGE_PHYSICO_NOT_IN_RANGE, "physicoChem2", "6",
+						"8<= ", " <=8,5").equals(reqCtrlList.getReqMessage())) {
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
 					assertEquals(0, reqCtrlList.getSources().size());
 					checks++;
-				} else if (I18NUtil.getMessage(PhysicoRequirementScanner.MESSAGE_PHYSICO_NOT_IN_RANGE, "physicoChem6", 1.29, "3<= ", "")
-						.equals(reqCtrlList.getReqMessage())) {
+				} else if (I18NUtil.getMessage(PhysicoRequirementScanner.MESSAGE_PHYSICO_NOT_IN_RANGE, "physicoChem6",
+						1.29, "3<= ", "").equals(reqCtrlList.getReqMessage())) {
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
 					assertEquals(0, reqCtrlList.getSources().size());
 					checks++;
-				} else if (I18NUtil.getMessage(PhysicoRequirementScanner.MESSAGE_PHYSICO_NOT_IN_RANGE, "physicoChem7", 3.4, "", " <=3")
-						.equals(reqCtrlList.getReqMessage())) {
+				} else if (I18NUtil.getMessage(PhysicoRequirementScanner.MESSAGE_PHYSICO_NOT_IN_RANGE, "physicoChem7",
+						3.4, "", " <=3").equals(reqCtrlList.getReqMessage())) {
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
 					assertEquals(0, reqCtrlList.getSources().size());
 					checks++;
@@ -718,7 +891,7 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			assertEquals(3, checks);
 
 			return null;
-		}, false, true);
+		});
 	}
 
 	// NO merge for now @Test
@@ -733,12 +906,16 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 		ProductData finishedProduct = alfrescoRepository.findOne(fp5);
 		final String name = finishedProduct.getName();
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
-			IngListDataItem gmoAndIonizedIng1 = new IngListDataItem(null, null, new ArrayList<>(), new ArrayList<>(), true, true, false, ing1, true);
-			IngListDataItem ionizedIng2 = new IngListDataItem(null, null, new ArrayList<>(), new ArrayList<>(), false, true, false, ing2, true);
-			IngListDataItem gmoIng3 = new IngListDataItem(null, null, new ArrayList<>(), new ArrayList<>(), true, false, false, ing3, true);
-			IngListDataItem cleanIng4 = new IngListDataItem(null, null, new ArrayList<>(), new ArrayList<>(), false, false, false, ing4, true);
+			IngListDataItem gmoAndIonizedIng1 = new IngListDataItem(null, null, new ArrayList<>(), new ArrayList<>(),
+					true, true, false, ing1, true);
+			IngListDataItem ionizedIng2 = new IngListDataItem(null, null, new ArrayList<>(), new ArrayList<>(), false,
+					true, false, ing2, true);
+			IngListDataItem gmoIng3 = new IngListDataItem(null, null, new ArrayList<>(), new ArrayList<>(), true, false,
+					false, ing3, true);
+			IngListDataItem cleanIng4 = new IngListDataItem(null, null, new ArrayList<>(), new ArrayList<>(), false,
+					false, false, ing4, true);
 
 			RawMaterialData rawMaterial1 = new RawMaterialData();
 			rawMaterial1.setName("Raw material 1b");
@@ -765,52 +942,81 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			NodeRef rawMaterial4bNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial4).getNodeRef();
 
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 0.80d, ProductUnit.kg, 5d, DeclarationType.Declare, rawMaterial2bNodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 0.30d, ProductUnit.kg, 10d, DeclarationType.Detail, rawMaterial3bNodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 0.80d, ProductUnit.kg, 5d, DeclarationType.Declare, rawMaterial1bNodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 0.30d, ProductUnit.kg, 10d, DeclarationType.Detail, rawMaterial4bNodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 0.80d, ProductUnit.kg,
+			 * 5d, DeclarationType.Declare, rawMaterial2bNodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQtyUsed(0.80d).withUnit(ProductUnit.kg).withLossPerc(5d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial2bNodeRef));
+
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 0.30d, ProductUnit.kg,
+			 * 10d, DeclarationType.Detail, rawMaterial3bNodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQtyUsed(0.30d).withUnit(ProductUnit.kg).withLossPerc(10d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial3bNodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 0.80d, ProductUnit.kg,
+			 * 5d, DeclarationType.Declare, rawMaterial1bNodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQtyUsed(0.80d).withUnit(ProductUnit.kg).withLossPerc(5d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1bNodeRef));
+
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			alfrescoRepository.save(finishedProduct);
 
 			// spec
 
 			List<ForbiddenIngListDataItem> forbiddenIngList1 = new ArrayList<>();
-			forbiddenIngList1.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "Regulation OGM", null, Boolean.TRUE, null,
-					new ArrayList<>(), null, null));
-			forbiddenIngList1.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "Regulation Ionisation", null, null, Boolean.FALSE,
-					new ArrayList<>(), null, null));
+			forbiddenIngList1.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "Regulation OGM", null,
+					Boolean.TRUE, null, new ArrayList<>(), null, null));
+			forbiddenIngList1.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "Regulation Ionisation",
+					null, null, Boolean.FALSE, new ArrayList<>(), null, null));
 
 			Map<QName, Serializable> properties = new HashMap<>();
 			properties.put(ContentModel.PROP_NAME, name + " Spec Fbd ings 1");
-			NodeRef productSpecificationNodeRef1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
-					PLMModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
+			NodeRef productSpecificationNodeRef1 = nodeService
+					.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+									(String) properties.get(ContentModel.PROP_NAME)),
+							PLMModel.TYPE_PRODUCT_SPECIFICATION, properties)
+					.getChildRef();
 
-			ProductSpecificationData productSpecification1 = (ProductSpecificationData) alfrescoRepository.findOne(productSpecificationNodeRef1);
+			ProductSpecificationData productSpecification1 = (ProductSpecificationData) alfrescoRepository
+					.findOne(productSpecificationNodeRef1);
 			productSpecification1.setForbiddenIngList(forbiddenIngList1);
 			alfrescoRepository.save(productSpecification1);
 
 			properties.put(ContentModel.PROP_NAME, name + " Spec Fbd ings 2");
-			NodeRef productSpecificationNodeRef2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
-					PLMModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
+			NodeRef productSpecificationNodeRef2 = nodeService
+					.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+									(String) properties.get(ContentModel.PROP_NAME)),
+							PLMModel.TYPE_PRODUCT_SPECIFICATION, properties)
+					.getChildRef();
 
-			ProductSpecificationData productSpecification2 = (ProductSpecificationData) alfrescoRepository.findOne(productSpecificationNodeRef2);
+			ProductSpecificationData productSpecification2 = (ProductSpecificationData) alfrescoRepository
+					.findOne(productSpecificationNodeRef2);
 			List<ForbiddenIngListDataItem> forbiddenIngList2 = new ArrayList<>();
-			forbiddenIngList2.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "Regulation OGM", null, Boolean.FALSE, null,
-					new ArrayList<>(), null, null));
-			forbiddenIngList2.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "Regulation Ionisation", null, null, Boolean.TRUE,
-					new ArrayList<>(), null, null));
+			forbiddenIngList2.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "Regulation OGM", null,
+					Boolean.FALSE, null, new ArrayList<>(), null, null));
+			forbiddenIngList2.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "Regulation Ionisation",
+					null, null, Boolean.TRUE, new ArrayList<>(), null, null));
 			productSpecification2.setForbiddenIngList(forbiddenIngList2);
 			alfrescoRepository.save(productSpecification2);
 
 			properties.put(ContentModel.PROP_NAME, name + " Spec Fbd ings global");
-			NodeRef productSpecificationNodeRef3 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
-					PLMModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
+			NodeRef productSpecificationNodeRef3 = nodeService
+					.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+									(String) properties.get(ContentModel.PROP_NAME)),
+							PLMModel.TYPE_PRODUCT_SPECIFICATION, properties)
+					.getChildRef();
 
-			nodeService.createAssociation(productSpecificationNodeRef3, productSpecificationNodeRef2, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
-			nodeService.createAssociation(productSpecificationNodeRef3, productSpecificationNodeRef1, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
+			nodeService.createAssociation(productSpecificationNodeRef3, productSpecificationNodeRef2,
+					PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
+			nodeService.createAssociation(productSpecificationNodeRef3, productSpecificationNodeRef1,
+					PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
 			nodeService.createAssociation(fp5, productSpecificationNodeRef3, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
 
 			/*-- Formulate product --*/
@@ -826,13 +1032,14 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			for (ReqCtrlListDataItem reqCtrlList : formulatedProduct.getReqCtrlList()) {
 				logger.debug("/*-- Checking : \"" + reqCtrlList.getReqMessage() + "\" --*/");
 
-				if (I18NUtil
-						.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Précautions d'emploi", "EU 1169/2011 (INCO)")
-						.equals(reqCtrlList.getReqMessage())) {
+				if (I18NUtil.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING,
+						"Précautions d'emploi", "EU 1169/2011 (INCO)").equals(reqCtrlList.getReqMessage())) {
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
 					checkMissingFields++;
-				} else if (I18NUtil.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Conditions de conservation",
-						"EU 1169/2011 (INCO)").equals(reqCtrlList.getReqMessage())) {
+				} else if (I18NUtil
+						.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING,
+								"Conditions de conservation", "EU 1169/2011 (INCO)")
+						.equals(reqCtrlList.getReqMessage())) {
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
 					checkMissingFields++;
 				} else if ("Regulation OGM".equals(reqCtrlList.getReqMessage())) {
@@ -858,6 +1065,6 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			assertEquals(2, checkMissingFields);
 
 			return null;
-		}, false, true);
+		});
 	}
 }

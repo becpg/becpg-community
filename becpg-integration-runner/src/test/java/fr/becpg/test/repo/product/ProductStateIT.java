@@ -28,7 +28,7 @@ public class ProductStateIT extends PLMBaseTestCase {
 	@Test
 	public void testCopyProduct() throws InterruptedException {
 
-		NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef rawMaterialNodeRef = inWriteTx(() -> {
 
 			/*-- Create raw material --*/
 			NodeRef ret = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP state test");
@@ -39,25 +39,28 @@ public class ProductStateIT extends PLMBaseTestCase {
 			nodeService.setProperty(ret, BeCPGModel.PROP_ERP_CODE, "0001");
 
 			return ret;
-		}, false, true);
+		});
 
-		NodeRef copiedNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef copiedNodeRef = inWriteTx(() -> {
 
-			NodeRef ret = copyService.copy(rawMaterialNodeRef, getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
+			NodeRef ret = copyService.copy(rawMaterialNodeRef, getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					ContentModel.ASSOC_CONTAINS);
 
 			return ret;
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
-			assertEquals("Check state", SystemState.Simulation.toString(), nodeService.getProperty(copiedNodeRef, PLMModel.PROP_PRODUCT_STATE));
+			assertEquals("Check state", SystemState.Simulation.toString(),
+					nodeService.getProperty(copiedNodeRef, PLMModel.PROP_PRODUCT_STATE));
 
 			assertNull("Check Erp Code", nodeService.getProperty(copiedNodeRef, BeCPGModel.PROP_ERP_CODE));
 
-			assertEquals("Check state", SystemState.Valid.toString(), nodeService.getProperty(rawMaterialNodeRef, PLMModel.PROP_PRODUCT_STATE));
+			assertEquals("Check state", SystemState.Valid.toString(),
+					nodeService.getProperty(rawMaterialNodeRef, PLMModel.PROP_PRODUCT_STATE));
 
 			return rawMaterialNodeRef;
-		}, false, true);
+		});
 
 	}
 
