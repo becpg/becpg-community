@@ -31,14 +31,13 @@ import org.junit.Test;
  */
 public class DesignerInitServiceIT extends AbstractDesignerServiceTest {
 
-	
 	private static final Log logger = LogFactory.getLog(DesignerInitServiceIT.class);
 
 	@Test
 	public void testInitDesigner() {
 
 		logger.info("testInitDesigner");
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			NodeRef workflowFolder = designerInitService.getWorkflowsNodeRef();
 
@@ -46,14 +45,14 @@ public class DesignerInitServiceIT extends AbstractDesignerServiceTest {
 			Assert.assertNotNull(designerInitService.getModelsNodeRef());
 			Assert.assertNotNull(designerInitService.getConfigsNodeRef());
 
-			Assert.assertNotNull(
-					nodeService.getChildByName(designerInitService.getModelsNodeRef(), ContentModel.ASSOC_CONTAINS, "extCustomModel.xml"));
-			Assert.assertNotNull(
-					nodeService.getChildByName(designerInitService.getConfigsNodeRef(), ContentModel.ASSOC_CONTAINS, "extCustomForm.xml"));
+			Assert.assertNotNull(nodeService.getChildByName(designerInitService.getModelsNodeRef(),
+					ContentModel.ASSOC_CONTAINS, "extCustomModel.xml"));
+			Assert.assertNotNull(nodeService.getChildByName(designerInitService.getConfigsNodeRef(),
+					ContentModel.ASSOC_CONTAINS, "extCustomForm.xml"));
 
 			return null;
 
-		}, false, true);
+		});
 
 	}
 

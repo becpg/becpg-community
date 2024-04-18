@@ -44,8 +44,6 @@ import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.variant.model.VariantData;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
-
-
 /**
  * Test variant columns calculation
  *
@@ -54,7 +52,6 @@ import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 public class FormulationVariantColumnsIT extends AbstractFinishedProductTest {
 
 	protected static final Log logger = LogFactory.getLog(FormulationVariantColumnsIT.class);
-
 
 	@Override
 	public void setUp() throws Exception {
@@ -66,13 +63,12 @@ public class FormulationVariantColumnsIT extends AbstractFinishedProductTest {
 	/**
 	 * Test variant columns.
 	 *
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	@Test
 	public void testFormulationCostsWithVariantColumns() throws Exception {
 
-		final ProductData entityTpl = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final ProductData entityTpl = inWriteTx(() -> {
 
 			// template
 			FinishedProductData templateFinishedProduct = new FinishedProductData();
@@ -80,16 +76,17 @@ public class FormulationVariantColumnsIT extends AbstractFinishedProductTest {
 			ProductData entityTpl1 = alfrescoRepository.create(getTestFolderNodeRef(), templateFinishedProduct);
 			nodeService.addAspect(entityTpl1.getNodeRef(), BeCPGModel.ASPECT_ENTITY_TPL, null);
 			nodeService.addAspect(entityTpl1.getNodeRef(), BeCPGModel.ASPECT_ENTITY_VARIANT, null);
-			//add variants on template
+			// add variants on template
 			Map<QName, Serializable> props = new HashMap<>();
 			props.put(ContentModel.PROP_NAME, "variantTpl");
 			props.put(BeCPGModel.PROP_IS_DEFAULT_VARIANT, true);
 			props.put(BeCPGModel.PROP_VARIANT_COLUMN, "bcpg_variantColumn1");
-			nodeService.createNode(entityTpl1.getNodeRef(), BeCPGModel.ASSOC_VARIANTS, BeCPGModel.ASSOC_VARIANTS, BeCPGModel.TYPE_VARIANT, props);
+			nodeService.createNode(entityTpl1.getNodeRef(), BeCPGModel.ASSOC_VARIANTS, BeCPGModel.ASSOC_VARIANTS,
+					BeCPGModel.TYPE_VARIANT, props);
 			return entityTpl1;
-		}, false, true);
+		});
 
-		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
 
 			// product
 			FinishedProductData finishedProduct = new FinishedProductData();
@@ -99,29 +96,56 @@ public class FormulationVariantColumnsIT extends AbstractFinishedProductTest {
 			finishedProduct.setEntityTpl(entityTpl);
 			finishedProduct = (FinishedProductData) alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct);
 			return finishedProduct.getNodeRef();
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			FinishedProductData finishedProduct = (FinishedProductData)alfrescoRepository.findOne(finishedProductNodeRef);
-			//Variants
-			for (int i=2; i<5; i++) {
+		inWriteTx(() -> {
+			FinishedProductData finishedProduct = (FinishedProductData) alfrescoRepository
+					.findOne(finishedProductNodeRef);
+			// Variants
+			for (int i = 2; i < 5; i++) {
 				Map<QName, Serializable> props = new HashMap<>();
-				props.put(ContentModel.PROP_NAME, "variant"+i);
+				props.put(ContentModel.PROP_NAME, "variant" + i);
 				props.put(BeCPGModel.PROP_IS_DEFAULT_VARIANT, false);
-				if (i<4) {
-					props.put(BeCPGModel.PROP_VARIANT_COLUMN, "bcpg_variantColumn"+i);
+				if (i < 4) {
+					props.put(BeCPGModel.PROP_VARIANT_COLUMN, "bcpg_variantColumn" + i);
 				}
-				nodeService.createNode(finishedProductNodeRef, BeCPGModel.ASSOC_VARIANTS, BeCPGModel.ASSOC_VARIANTS, BeCPGModel.TYPE_VARIANT, props);
+				nodeService.createNode(finishedProductNodeRef, BeCPGModel.ASSOC_VARIANTS, BeCPGModel.ASSOC_VARIANTS,
+						BeCPGModel.TYPE_VARIANT, props);
 			}
 
-			//CompoList
+			// CompoList
 
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 2d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial4NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial5NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d,
+			 * DeclarationType.Declare, rawMaterial1NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQtyUsed(2d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial2NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 2d, ProductUnit.kg, 0d,
+			 * DeclarationType.Detail, rawMaterial2NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial3NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg, 0d,
+			 * DeclarationType.Declare, rawMaterial3NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial4NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg, 0d,
+			 * DeclarationType.Declare, rawMaterial4NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial3NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg, 0d,
+			 * DeclarationType.Declare, rawMaterial3NodeRef));
+			 */
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
 			// CostList
@@ -152,33 +176,38 @@ public class FormulationVariantColumnsIT extends AbstractFinishedProductTest {
 
 			alfrescoRepository.save(finishedProduct);
 			return finishedProductNodeRef;
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			int checks = 0;
 			ProductData finishedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
 			List<VariantData> variants = finishedProduct.getVariants();
-			
-			assertNotNull(variants);
-			assertEquals(4,variants.size());
-			assertEquals(5,finishedProduct.getCompoListView().getCompoList().size());
-			//Add variant to composition
-			
-			finishedProduct.getCompoListView().getCompoList().get(0).setVariants(Collections.singletonList(variants.get(variants.size()-1).getNodeRef()));
-			finishedProduct.getCompoListView().getCompoList().get(1).setVariants(Collections.singletonList(variants.get(variants.size()-1).getNodeRef()));
 
-			for (int i=2; i<5; i++) {
-				finishedProduct.getCompoListView().getCompoList().get(i).setVariants(Collections.singletonList(finishedProduct.getVariants().get(i-2).getNodeRef()));
+			assertNotNull(variants);
+			assertEquals(4, variants.size());
+			assertEquals(5, finishedProduct.getCompoListView().getCompoList().size());
+			// Add variant to composition
+
+			finishedProduct.getCompoListView().getCompoList().get(0)
+					.setVariants(Collections.singletonList(variants.get(variants.size() - 1).getNodeRef()));
+			finishedProduct.getCompoListView().getCompoList().get(1)
+					.setVariants(Collections.singletonList(variants.get(variants.size() - 1).getNodeRef()));
+
+			for (int i = 2; i < 5; i++) {
+				finishedProduct.getCompoListView().getCompoList().get(i)
+						.setVariants(Collections.singletonList(finishedProduct.getVariants().get(i - 2).getNodeRef()));
 			}
 			alfrescoRepository.save(finishedProduct);
 			productService.formulate(finishedProductNodeRef);
 			finishedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
 
-			//Check costList
+			// Check costList
 			for (CostListDataItem costListDataItem : finishedProduct.getCostList()) {
-				String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: "
-						+ costListDataItem.getValue() + " - previous value: " + costListDataItem.getPreviousValue() + " - future value: "
-						+ costListDataItem.getFutureValue() + " - unit: " + costListDataItem.getUnit();
+				String trace = "cost: "
+						+ nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME)
+						+ " - value: " + costListDataItem.getValue() + " - previous value: "
+						+ costListDataItem.getPreviousValue() + " - future value: " + costListDataItem.getFutureValue()
+						+ " - unit: " + costListDataItem.getUnit();
 				logger.info(trace);
 				if (costListDataItem.getCost().equals(cost1)) {
 					assertEquals(5d, costListDataItem.getValue());
@@ -186,10 +215,14 @@ public class FormulationVariantColumnsIT extends AbstractFinishedProductTest {
 					assertEquals(10d, costListDataItem.getFutureValue());
 					assertEquals("€/kg", costListDataItem.getUnit());
 					assertEquals(5d, costListDataItem.getValuePerProduct());
-					assertEquals(5d, nodeService.getProperty(costListDataItem.getNodeRef(),QName.createQName(BeCPGModel.BECPG_URI, "variantColumn1")));
-					assertEquals(3d, nodeService.getProperty(costListDataItem.getNodeRef(),QName.createQName(BeCPGModel.BECPG_URI, "variantColumn2")));
-					assertEquals(null, nodeService.getProperty(costListDataItem.getNodeRef(),QName.createQName(BeCPGModel.BECPG_URI, "variantColumn3")));
-					assertEquals(null, nodeService.getProperty(costListDataItem.getNodeRef(),QName.createQName(BeCPGModel.BECPG_URI, "variantColumn4")));
+					assertEquals(5d, nodeService.getProperty(costListDataItem.getNodeRef(),
+							QName.createQName(BeCPGModel.BECPG_URI, "variantColumn1")));
+					assertEquals(3d, nodeService.getProperty(costListDataItem.getNodeRef(),
+							QName.createQName(BeCPGModel.BECPG_URI, "variantColumn2")));
+					assertEquals(null, nodeService.getProperty(costListDataItem.getNodeRef(),
+							QName.createQName(BeCPGModel.BECPG_URI, "variantColumn3")));
+					assertEquals(null, nodeService.getProperty(costListDataItem.getNodeRef(),
+							QName.createQName(BeCPGModel.BECPG_URI, "variantColumn4")));
 
 					checks++;
 				}
@@ -199,71 +232,92 @@ public class FormulationVariantColumnsIT extends AbstractFinishedProductTest {
 					assertEquals(12d, costListDataItem.getFutureValue());
 					assertEquals("€/kg", costListDataItem.getUnit());
 					assertEquals(6d, costListDataItem.getValuePerProduct());
-					assertEquals(6d, nodeService.getProperty(costListDataItem.getNodeRef(),QName.createQName(BeCPGModel.BECPG_URI, "variantColumn1")));
-					assertEquals(6d, nodeService.getProperty(costListDataItem.getNodeRef(),QName.createQName(BeCPGModel.BECPG_URI, "variantColumn2")));
-					assertEquals(null, nodeService.getProperty(costListDataItem.getNodeRef(),QName.createQName(BeCPGModel.BECPG_URI, "variantColumn3")));
-					assertEquals(null, nodeService.getProperty(costListDataItem.getNodeRef(),QName.createQName(BeCPGModel.BECPG_URI, "variantColumn4")));
+					assertEquals(6d, nodeService.getProperty(costListDataItem.getNodeRef(),
+							QName.createQName(BeCPGModel.BECPG_URI, "variantColumn1")));
+					assertEquals(6d, nodeService.getProperty(costListDataItem.getNodeRef(),
+							QName.createQName(BeCPGModel.BECPG_URI, "variantColumn2")));
+					assertEquals(null, nodeService.getProperty(costListDataItem.getNodeRef(),
+							QName.createQName(BeCPGModel.BECPG_URI, "variantColumn3")));
+					assertEquals(null, nodeService.getProperty(costListDataItem.getNodeRef(),
+							QName.createQName(BeCPGModel.BECPG_URI, "variantColumn4")));
 
 					checks++;
 				}
 			}
 			assertEquals(2, checks);
-			//Check nutList
+			// Check nutList
 			checks = 0;
 			for (NutListDataItem nutListDataItem : finishedProduct.getNutList()) {
-				String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME) + " - value: "
-						+ nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
+				String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME)
+						+ " - value: " + nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
 				logger.info(trace);
 
 				if (nutListDataItem.getNut().equals(nut1)) {
 					assertEquals(3d, nutListDataItem.getValue());
-					assertEquals(3d, nodeService.getProperty(nutListDataItem.getNodeRef(),QName.createQName(BeCPGModel.BECPG_URI, "variantColumn1")));
-					assertEquals(3d, nodeService.getProperty(nutListDataItem.getNodeRef(),QName.createQName(BeCPGModel.BECPG_URI, "variantColumn2")));
-					assertEquals(null, nodeService.getProperty(nutListDataItem.getNodeRef(),QName.createQName(BeCPGModel.BECPG_URI, "variantColumn4")));
+					assertEquals(3d, nodeService.getProperty(nutListDataItem.getNodeRef(),
+							QName.createQName(BeCPGModel.BECPG_URI, "variantColumn1")));
+					assertEquals(3d, nodeService.getProperty(nutListDataItem.getNodeRef(),
+							QName.createQName(BeCPGModel.BECPG_URI, "variantColumn2")));
+					assertEquals(null, nodeService.getProperty(nutListDataItem.getNodeRef(),
+							QName.createQName(BeCPGModel.BECPG_URI, "variantColumn4")));
 					checks++;
 				}
 				if (nutListDataItem.getNut().equals(nut2)) {
 					assertEquals(6d, nutListDataItem.getValue());
-					assertEquals(6d, nodeService.getProperty(nutListDataItem.getNodeRef(),QName.createQName(BeCPGModel.BECPG_URI, "variantColumn1")));
-					assertEquals(6d, nodeService.getProperty(nutListDataItem.getNodeRef(),QName.createQName(BeCPGModel.BECPG_URI, "variantColumn2")));
-					assertEquals(null, nodeService.getProperty(nutListDataItem.getNodeRef(),QName.createQName(BeCPGModel.BECPG_URI, "variantColumn4")));
+					assertEquals(6d, nodeService.getProperty(nutListDataItem.getNodeRef(),
+							QName.createQName(BeCPGModel.BECPG_URI, "variantColumn1")));
+					assertEquals(6d, nodeService.getProperty(nutListDataItem.getNodeRef(),
+							QName.createQName(BeCPGModel.BECPG_URI, "variantColumn2")));
+					assertEquals(null, nodeService.getProperty(nutListDataItem.getNodeRef(),
+							QName.createQName(BeCPGModel.BECPG_URI, "variantColumn4")));
 					checks++;
 				}
 				if (nutListDataItem.getNut().equals(nut3)) {
 					assertEquals(16d, nutListDataItem.getValue());
-					assertEquals(16d, nodeService.getProperty(nutListDataItem.getNodeRef(),QName.createQName(BeCPGModel.BECPG_URI, "variantColumn1")));
-					assertEquals(12d, nodeService.getProperty(nutListDataItem.getNodeRef(),QName.createQName(BeCPGModel.BECPG_URI, "variantColumn2")));
-					assertEquals(null, nodeService.getProperty(nutListDataItem.getNodeRef(),QName.createQName(BeCPGModel.BECPG_URI, "variantColumn4")));
-					assertEquals(null, nodeService.getProperty(nutListDataItem.getNodeRef(),QName.createQName(BeCPGModel.BECPG_URI, "variantColumn5")));
+					assertEquals(16d, nodeService.getProperty(nutListDataItem.getNodeRef(),
+							QName.createQName(BeCPGModel.BECPG_URI, "variantColumn1")));
+					assertEquals(12d, nodeService.getProperty(nutListDataItem.getNodeRef(),
+							QName.createQName(BeCPGModel.BECPG_URI, "variantColumn2")));
+					assertEquals(null, nodeService.getProperty(nutListDataItem.getNodeRef(),
+							QName.createQName(BeCPGModel.BECPG_URI, "variantColumn4")));
+					assertEquals(null, nodeService.getProperty(nutListDataItem.getNodeRef(),
+							QName.createQName(BeCPGModel.BECPG_URI, "variantColumn5")));
 					checks++;
 				}
 				if (nutListDataItem.getNut().equals(nut4)) {
 					assertEquals(3d, nutListDataItem.getValue());
-					assertEquals(3d, nodeService.getProperty(nutListDataItem.getNodeRef(),QName.createQName(BeCPGModel.BECPG_URI, "variantColumn1")));
-					assertEquals(null, nodeService.getProperty(nutListDataItem.getNodeRef(),QName.createQName(BeCPGModel.BECPG_URI, "variantColumn2")));
-					assertEquals(null, nodeService.getProperty(nutListDataItem.getNodeRef(),QName.createQName(BeCPGModel.BECPG_URI, "variantColumn4")));
-					assertEquals(null, nodeService.getProperty(nutListDataItem.getNodeRef(),QName.createQName(BeCPGModel.BECPG_URI, "variantColumn5")));
+					assertEquals(3d, nodeService.getProperty(nutListDataItem.getNodeRef(),
+							QName.createQName(BeCPGModel.BECPG_URI, "variantColumn1")));
+					assertEquals(null, nodeService.getProperty(nutListDataItem.getNodeRef(),
+							QName.createQName(BeCPGModel.BECPG_URI, "variantColumn2")));
+					assertEquals(null, nodeService.getProperty(nutListDataItem.getNodeRef(),
+							QName.createQName(BeCPGModel.BECPG_URI, "variantColumn4")));
+					assertEquals(null, nodeService.getProperty(nutListDataItem.getNodeRef(),
+							QName.createQName(BeCPGModel.BECPG_URI, "variantColumn5")));
 					checks++;
 				}
 			}
 			assertEquals(4, checks);
 
-			//Check physicoChemList
+			// Check physicoChemList
 			checks = 0;
 			for (PhysicoChemListDataItem physicoChemListDataItem : finishedProduct.getPhysicoChemList()) {
 
 				if (physicoChemListDataItem.getPhysicoChem().equals(physicoChem3)) {
 					assertEquals(3d, physicoChemListDataItem.getValue());
-					assertEquals(3d, nodeService.getProperty(physicoChemListDataItem.getNodeRef(),QName.createQName(BeCPGModel.BECPG_URI, "variantColumn1")));
-					assertEquals(3d, nodeService.getProperty(physicoChemListDataItem.getNodeRef(),QName.createQName(BeCPGModel.BECPG_URI, "variantColumn2")));
-					assertEquals(null, nodeService.getProperty(physicoChemListDataItem.getNodeRef(),QName.createQName(BeCPGModel.BECPG_URI, "variantColumn3")));
+					assertEquals(3d, nodeService.getProperty(physicoChemListDataItem.getNodeRef(),
+							QName.createQName(BeCPGModel.BECPG_URI, "variantColumn1")));
+					assertEquals(3d, nodeService.getProperty(physicoChemListDataItem.getNodeRef(),
+							QName.createQName(BeCPGModel.BECPG_URI, "variantColumn2")));
+					assertEquals(null, nodeService.getProperty(physicoChemListDataItem.getNodeRef(),
+							QName.createQName(BeCPGModel.BECPG_URI, "variantColumn3")));
 					checks++;
 				}
 			}
 			assertEquals(1, checks);
 
 			return null;
-		}, false, true);
+		});
 	}
 
 }

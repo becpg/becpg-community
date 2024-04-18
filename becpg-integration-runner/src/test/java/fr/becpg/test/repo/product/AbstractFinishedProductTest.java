@@ -248,56 +248,65 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "cost1");
 			properties.put(PLMModel.PROP_COSTCURRENCY, "€");
 			cost1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_COST, properties).getChildRef();
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "cost2");
 			properties.put(PLMModel.PROP_COSTCURRENCY, "€");
 			cost2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_COST, properties).getChildRef();
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "cost3");
 			properties.put(PLMModel.PROP_COSTCURRENCY, "€");
 			cost3 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_COST, properties).getChildRef();
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "cost4");
 			properties.put(PLMModel.PROP_COSTCURRENCY, "€");
 			cost4 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_COST, properties).getChildRef();
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "cost5");
 			properties.put(PLMModel.PROP_COSTCURRENCY, "€");
 			cost5 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_COST, properties).getChildRef();
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "parentCost");
 			properties.put(PLMModel.PROP_COSTCURRENCY, "€");
 			parentCost = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_COST, properties).getChildRef();
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "pkgCost1");
 			properties.put(PLMModel.PROP_COSTCURRENCY, "€");
 			pkgCost1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_COST, properties).getChildRef();
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "pkgCost2");
 			properties.put(PLMModel.PROP_COSTCURRENCY, "€");
 			pkgCost2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_COST, properties).getChildRef();
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "fixedCost");
 			properties.put(PLMModel.PROP_COSTCURRENCY, "€");
 			properties.put(PLMModel.PROP_COSTFIXED, true);
 			fixedCost = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_COST, properties).getChildRef();
 
 			// Nuts
@@ -307,7 +316,8 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			properties.put(PLMModel.PROP_NUTUNIT, "kJ");
 			properties.put(PLMModel.PROP_NUTGROUP, GROUP1);
 			nut1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_NUT, properties).getChildRef();
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut2");
@@ -316,7 +326,8 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			properties.put(PLMModel.PROP_NUTGDA, 2000d);
 			properties.put(PLMModel.PROP_NUTUL, 2000d);
 			nut2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_NUT, properties).getChildRef();
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut3");
@@ -325,7 +336,8 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			properties.put(PLMModel.PROP_NUTGDA, 5d);
 			properties.put(PLMModel.PROP_NUTUL, 5d);
 			nut3 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_NUT, properties).getChildRef();
 
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut4");
@@ -334,7 +346,8 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			properties.put(PLMModel.PROP_NUTGDA, 5d);
 			properties.put(PLMModel.PROP_NUTUL, 5d);
 			nut4 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_NUT, properties).getChildRef();
 
 			// Allergens
@@ -342,25 +355,29 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "allergen1");
 			properties.put(PLMModel.PROP_ALLERGEN_TYPE, "Major");
 			allergen1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_ALLERGEN, properties).getChildRef();
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "allergen2");
 			properties.put(PLMModel.PROP_ALLERGEN_TYPE, "Major");
 			allergen2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_ALLERGEN, properties).getChildRef();
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "allergen3");
 			properties.put(PLMModel.PROP_ALLERGEN_TYPE, "Major");
 			allergen3 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_ALLERGEN, properties).getChildRef();
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "allergen4");
 			properties.put(PLMModel.PROP_ALLERGEN_TYPE, "Major");
 			allergen4 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_ALLERGEN, properties).getChildRef();
 			// Ings
 			properties.clear();
@@ -376,7 +393,8 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			plmlName.addValue(Locale.FRENCH, "Epaississants french");
 			properties.put(PLMModel.PROP_PLURAL_LEGAL_NAME, plmlName);
 			ingType1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_LV_VALUE)),
 					PLMModel.TYPE_ING_TYPE_ITEM, properties).getChildRef();
 			properties.clear();
 			properties.put(BeCPGModel.PROP_LV_VALUE, "Epices");
@@ -387,7 +405,8 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
 			properties.put(PLMModel.PROP_ING_TYPE_DEC_THRESHOLD, 20);
 			ingType2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_LV_VALUE)),
 					PLMModel.TYPE_ING_TYPE_ITEM, properties).getChildRef();
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "ing1");
@@ -397,7 +416,8 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			mlName.addValue(Locale.FRENCH, "ing1 french");
 			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
 			ing1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_ING, properties).getChildRef();
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "ing2");
@@ -408,7 +428,8 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
 
 			ing2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_ING, properties).getChildRef();
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "ing3");
@@ -418,7 +439,8 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			mlName.addValue(Locale.FRENCH, "ing3 french");
 			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
 			ing3 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_ING, properties).getChildRef();
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "ing4");
@@ -428,7 +450,8 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			mlName.addValue(Locale.FRENCH, "ing4 french");
 			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
 			ing4 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_ING, properties).getChildRef();
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "ing5");
@@ -439,7 +462,8 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			mlName.addValue(Locale.FRENCH, "ing5 french");
 			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
 			ing5 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_ING, properties).getChildRef();
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "ing6");
@@ -451,7 +475,8 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			mlName.addValue(Locale.FRENCH, "ing6 french");
 			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
 			ing6 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_ING, properties).getChildRef();
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "water");
@@ -460,99 +485,120 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			mlName.addValue(Locale.FRENCH, "eau");
 			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
 			ingWater = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_ING, properties).getChildRef();
 			// Geo origins
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "geoOrigin1");
 			geoOrigin1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_GEO_ORIGIN, properties).getChildRef();
 			nodeService.setProperty(geoOrigin1, PLMModel.PROP_GEO_ORIGIN_ISOCODE, "FR");
 
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "geoOrigin2");
 			geoOrigin2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_GEO_ORIGIN, properties).getChildRef();
 			// Bio origins
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "bioOrigin1");
 			bioOrigin1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_BIO_ORIGIN, properties).getChildRef();
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "bioOrigin2");
 			bioOrigin2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_BIO_ORIGIN, properties).getChildRef();
 			// physicoChem
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "physicoChem1");
 			physicoChem1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_PHYSICO_CHEM, properties).getChildRef();
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "physicoChem2");
 			physicoChem2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_PHYSICO_CHEM, properties).getChildRef();
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "physicoChem3");
 			properties.put(PLMModel.PROP_PHYSICO_CHEM_FORMULATED, true);
 			physicoChem3 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_PHYSICO_CHEM, properties).getChildRef();
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "physicoChem4");
 			properties.put(PLMModel.PROP_PHYSICO_CHEM_FORMULATED, true);
 			physicoChem4 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_PHYSICO_CHEM, properties).getChildRef();
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "physicoChem5");
 			properties.put(PLMModel.PROP_PHYSICO_CHEM_FORMULATED, true);
 			properties.put(PLMModel.PROP_PHYSICO_CHEM_UNIT, "%");
 			physicoChem5 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_PHYSICO_CHEM, properties).getChildRef();
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "physicoChem6");
 			physicoChem6 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_PHYSICO_CHEM, properties).getChildRef();
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "physicoChem7");
 			physicoChem7 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_PHYSICO_CHEM, properties).getChildRef();
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "physicoChem8");
 			physicoChem8 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_PHYSICO_CHEM, properties).getChildRef();
 
 			// Suppliers
 			properties.put(ContentModel.PROP_NAME, "supplier1");
 			supplier1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(ContentModel.PROP_NAME)),
 					PLMModel.TYPE_SUPPLIER, properties).getChildRef();
 			properties.clear();
 			properties.put(ContentModel.PROP_NAME, "supplier2");
 			supplier2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(ContentModel.PROP_NAME)),
 					PLMModel.TYPE_SUPPLIER, properties).getChildRef();
 
 			// Plants
 			properties.put(ContentModel.PROP_NAME, "plant1");
-			plant1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_PLANT,
-					properties).getChildRef();
+			plant1 = nodeService
+					.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+									(String) properties.get(ContentModel.PROP_NAME)),
+							PLMModel.TYPE_PLANT, properties)
+					.getChildRef();
 			properties.clear();
 			properties.put(ContentModel.PROP_NAME, "plant2");
-			plant2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_PLANT,
-					properties).getChildRef();
+			plant2 = nodeService
+					.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+									(String) properties.get(ContentModel.PROP_NAME)),
+							PLMModel.TYPE_PLANT, properties)
+					.getChildRef();
 			return null;
 		});
 
@@ -596,7 +642,8 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			List<NodeRef> geoOrigins = new ArrayList<>();
 			geoOrigins.add(geoOrigin1);
 
-			IngListDataItem rawMaterial1Ing1 = new IngListDataItem(null, 100 / 3d, geoOrigins, bioOrigins, false, false, false, ing1, false);
+			IngListDataItem rawMaterial1Ing1 = new IngListDataItem(null, 100 / 3d, geoOrigins, bioOrigins, false, false,
+					false, ing1, false);
 			rawMaterial1Ing1.setMini(25d);
 			rawMaterial1Ing1.setMaxi(90d);
 			ingList.add(rawMaterial1Ing1);
@@ -607,8 +654,8 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			List<NodeRef> geoTransfo = new ArrayList<>();
 			geoTransfo.add(geoOrigin2);
 
-			IngListDataItem rawMaterial1Ing2 = new IngListDataItem(null, null, 200 / 3d, geoOrigins, geoTransfo, bioOrigins, false, false, false,
-					false, ing2, false);
+			IngListDataItem rawMaterial1Ing2 = new IngListDataItem(null, null, 200 / 3d, geoOrigins, geoTransfo,
+					bioOrigins, false, false, false, false, ing2, false);
 			rawMaterial1Ing2.setMini(18d);
 			rawMaterial1Ing2.setMaxi(80d);
 			ingList.add(rawMaterial1Ing2);
@@ -664,7 +711,8 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			List<NodeRef> geoOrigins = new ArrayList<>();
 			geoOrigins.add(geoOrigin1);
 
-			IngListDataItem rawMaterial2Ing1 = new IngListDataItem(null, 100 / 4d, geoOrigins, bioOrigins, true, true, false, ing1, false);
+			IngListDataItem rawMaterial2Ing1 = new IngListDataItem(null, 100 / 4d, geoOrigins, bioOrigins, true, true,
+					false, ing1, false);
 			rawMaterial2Ing1.setMini(15d);
 			rawMaterial2Ing1.setMaxi(75d);
 			ingList.add(rawMaterial2Ing1);
@@ -674,7 +722,8 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			geoOrigins = new ArrayList<>();
 			geoOrigins.add(geoOrigin2);
 
-			IngListDataItem rawMaterial2Ing2 = new IngListDataItem(null, 300 / 4d, geoOrigins, bioOrigins, false, false, false, ing2, false);
+			IngListDataItem rawMaterial2Ing2 = new IngListDataItem(null, 300 / 4d, geoOrigins, bioOrigins, false, false,
+					false, ing2, false);
 			rawMaterial2Ing2.setMini(25d);
 			rawMaterial2Ing2.setMaxi(86d);
 			ingList.add(rawMaterial2Ing2);
@@ -886,8 +935,10 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 
 			List<IngListDataItem> ingList = new ArrayList<>();
 			ingList.add(new IngListDataItem(null, 100d, null, null, false, false, false, ing5, false));
-			ingList.add(new IngListDataItem(null, ingList.get(0), 70d, null, null, null, false, false, true, false, ing1, false));
-			ingList.add(new IngListDataItem(null, ingList.get(0), 30d, null, null, null, false, false, false, false, ing4, false));
+			ingList.add(new IngListDataItem(null, ingList.get(0), 70d, null, null, null, false, false, true, false,
+					ing1, false));
+			ingList.add(new IngListDataItem(null, ingList.get(0), 30d, null, null, null, false, false, false, false,
+					ing4, false));
 			rawMaterial7.setIngList(ingList);
 			rawMaterial7NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial7).getNodeRef();
 
@@ -1135,7 +1186,8 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			costList.add(new CostListDataItem(null, 3d, "€/P", null, pkgCost1, false));
 			costList.add(new CostListDataItem(null, 2d, "€/P", null, pkgCost2, false));
 			packagingMaterial1.setCostList(costList);
-			packagingMaterial1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial1).getNodeRef();
+			packagingMaterial1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial1)
+					.getNodeRef();
 
 			return null;
 		});
@@ -1152,7 +1204,8 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			costList.add(new CostListDataItem(null, 1d, "€/m", null, pkgCost1, false));
 			costList.add(new CostListDataItem(null, 2d, "€/m", null, pkgCost2, false));
 			packagingMaterial2.setCostList(costList);
-			packagingMaterial2NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial2).getNodeRef();
+			packagingMaterial2NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial2)
+					.getNodeRef();
 
 			return null;
 		});
@@ -1167,7 +1220,8 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			costList.add(new CostListDataItem(null, 1d, "€/P", null, pkgCost1, false));
 			costList.add(new CostListDataItem(null, 2d, "€/P", null, pkgCost2, false));
 			packagingMaterial3.setCostList(costList);
-			packagingMaterial3NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial3).getNodeRef();
+			packagingMaterial3NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial3)
+					.getNodeRef();
 
 			return null;
 		});
@@ -1179,7 +1233,8 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			packagingMaterial4.setLegalName("Legal Packaging material 4");
 			packagingMaterial4.setTare(0.110231d); // 50g
 			packagingMaterial4.setTareUnit(TareUnit.lb);
-			packagingMaterial4NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial4).getNodeRef();
+			packagingMaterial4NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial4)
+					.getNodeRef();
 
 			return null;
 		});
@@ -1191,7 +1246,8 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			packagingMaterial5.setLegalName("Legal Packaging material 5");
 			packagingMaterial5.setTare(1.410958478d); // 40g
 			packagingMaterial5.setTareUnit(TareUnit.oz);
-			packagingMaterial5NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial5).getNodeRef();
+			packagingMaterial5NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial5)
+					.getNodeRef();
 
 			return null;
 		});
@@ -1203,7 +1259,8 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			packagingMaterial6.setUnit(ProductUnit.L);
 			packagingMaterial6.setTare(1d);
 			packagingMaterial6.setTareUnit(TareUnit.g);
-			packagingMaterial6NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial6).getNodeRef();
+			packagingMaterial6NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial6)
+					.getNodeRef();
 
 			return null;
 		});
@@ -1230,7 +1287,8 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			expectedStr = expectedStr2 + ", " + expectedStr1;
 		}
 		try {
-			Assert.assertEquals("Incorrect label :" + expectedStr + "\n   - compare to " + actualStr, expectedStr, actualStr);
+			Assert.assertEquals("Incorrect label :" + expectedStr + "\n   - compare to " + actualStr, expectedStr,
+					actualStr);
 		} catch (Throwable e) {
 			
 			if (RetryingTransactionHelper.extractRetryCause(e) == null) {
@@ -1241,21 +1299,23 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 		}
 	}
 
-	protected void checkILL(final NodeRef productNodeRef, final List<LabelingRuleListDataItem> labelingRuleList, final String ill, Locale locale) {
+	protected void checkILL(final NodeRef productNodeRef, final List<LabelingRuleListDataItem> labelingRuleList,
+			final String ill, Locale locale) {
 
 		checkILL(productNodeRef, labelingRuleList, ill, locale, null);
 	}
 
-	protected void checkILL(final NodeRef productNodeRef, final List<LabelingRuleListDataItem> labelingRuleList, final String ill, Locale locale,
-			final String ruleName) {
+	protected void checkILL(final NodeRef productNodeRef, final List<LabelingRuleListDataItem> labelingRuleList,
+			final String ill, Locale locale, final String ruleName) {
 
 		logger.info("checkILL : " + ill + (ruleName != null ? " " + ruleName : ""));
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			try {
 				ProductData formulatedProduct = alfrescoRepository.findOne(productNodeRef);
-				labelingRuleList.add(new LabelingRuleListDataItem("Pref7", "uncapitalizeLegalName = true", LabelingRuleType.Prefs));
+				labelingRuleList.add(
+						new LabelingRuleListDataItem("Pref7", "uncapitalizeLegalName = true", LabelingRuleType.Prefs));
 
 				NodeRef grpNodeRef = null;
 
@@ -1275,16 +1335,19 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 				Assert.assertTrue(formulatedProduct.getLabelingListView().getLabelingRuleList().size() > 0);
 				// verify IngLabelingList
 
-				Assert.assertNotNull("IngLabelingList is null", formulatedProduct.getLabelingListView().getIngLabelingList());
+				Assert.assertNotNull("IngLabelingList is null",
+						formulatedProduct.getLabelingListView().getIngLabelingList());
 				Assert.assertTrue(formulatedProduct.getLabelingListView().getIngLabelingList().size() > 0);
 
-				for (IngLabelingListDataItem illDataItem : formulatedProduct.getLabelingListView().getIngLabelingList()) {
+				for (IngLabelingListDataItem illDataItem : formulatedProduct.getLabelingListView()
+						.getIngLabelingList()) {
 					if ((grpNodeRef == null) || grpNodeRef.equals(illDataItem.getGrp())) {
 
 						String formulatedIll = illDataItem.getValue().getValue(locale);
 						Assert.assertTrue(illDataItem.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM));
 
-						Assert.assertEquals("Incorrect label. Formulated :" + formulatedIll + "\n   - junit ref " + ill, ill, formulatedIll);
+						Assert.assertEquals("Incorrect label. Formulated :" + formulatedIll + "\n   - junit ref " + ill,
+								ill, formulatedIll);
 						Assert.assertNotNull(illDataItem.getLogValue());
 					}
 				}
@@ -1298,7 +1361,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 
 			return null;
 
-		}, false, true);
+		});
 
 	}
 

@@ -56,15 +56,14 @@ public class FormulationProductWithoutQtyIT extends AbstractFinishedProductTest 
 	/**
 	 * Test the formulation of the costs and nuts in kg and g.
 	 *
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	@Test
 	public void testFormulateCostAndNutOfProductInkgAndg() throws Exception {
 
 		logger.info("testFormulateCostAndNutOfProductInkgAndg");
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			/*-- Create finished product --*/
 			logger.debug("/*-- Create finished product --*/");
@@ -73,12 +72,46 @@ public class FormulationProductWithoutQtyIT extends AbstractFinishedProductTest 
 			finishedProduct.setLegalName("Legal Produit fini 1");
 			finishedProduct.setUnit(ProductUnit.kg);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, ProductUnit.g, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d,
+			 * DeclarationType.Detail, localSF1NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF1NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d,
+			 * ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(1d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare)
+					.withProduct(rawMaterial1NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d,
+			 * ProductUnit.g, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(2d).withUnit(ProductUnit.g)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial2NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d,
+			 * DeclarationType.Detail, localSF2NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF2NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d,
+			 * ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQtyUsed(3d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare)
+					.withProduct(rawMaterial3NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d,
+			 * ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQtyUsed(3d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Omit)
+					.withProduct(rawMaterial4NodeRef));
+
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
 			List<CostListDataItem> costList = new ArrayList<>();
@@ -91,7 +124,8 @@ public class FormulationProductWithoutQtyIT extends AbstractFinishedProductTest 
 			nutList.add(new NutListDataItem(null, null, null, null, null, null, nut2, null));
 			finishedProduct.setNutList(nutList);
 
-			NodeRef finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+			NodeRef finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct)
+					.getNodeRef();
 
 			/*-- Formulate product --*/
 			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
@@ -106,8 +140,9 @@ public class FormulationProductWithoutQtyIT extends AbstractFinishedProductTest 
 			DecimalFormat df = new DecimalFormat("0.000");
 			assertNotNull("CostList is null", formulatedProduct.getCostList());
 			for (CostListDataItem costListDataItem : formulatedProduct.getCostList()) {
-				String trace1 = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: "
-						+ costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
+				String trace1 = "cost: "
+						+ nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME)
+						+ " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
 				logger.debug(trace1);
 				if (costListDataItem.getCost().equals(cost1)) {
 					assertEquals(df.format(1.499750125), df.format(costListDataItem.getValue()));
@@ -125,7 +160,8 @@ public class FormulationProductWithoutQtyIT extends AbstractFinishedProductTest 
 			checks = 0;
 			assertNotNull("NutList is null", formulatedProduct.getNutList());
 			for (NutListDataItem nutListDataItem : formulatedProduct.getNutList()) {
-				String trace2 = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME) + " - value: "
+				String trace2 = "nut: "
+						+ nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME) + " - value: "
 						+ nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
 				logger.info(trace2);
 				if (nutListDataItem.getNut().equals(nut1)) {
@@ -144,22 +180,21 @@ public class FormulationProductWithoutQtyIT extends AbstractFinishedProductTest 
 
 			return null;
 
-		}, false, true);
+		});
 
 	}
 
 	/**
 	 * Test the formulation of the costs and nuts in kg, g, mL and m.
 	 *
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	@Test
 	public void testFormulateCostAndNutOfProductInkgAndgAndmLAndm() throws Exception {
 
 		logger.info("testFormulateCostAndNutOfProductInkgAndgAndmLAndm");
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			/*-- Create finished product --*/
 			logger.debug("/*-- Create finished product --*/");
@@ -168,12 +203,47 @@ public class FormulationProductWithoutQtyIT extends AbstractFinishedProductTest 
 			finishedProduct.setLegalName("Legal Produit fini 1");
 			finishedProduct.setUnit(ProductUnit.P);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 42d, ProductUnit.g, 0d, DeclarationType.Detail, localSF1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 40d, ProductUnit.g, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, ProductUnit.mL, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 30d, ProductUnit.g, 0d, DeclarationType.Detail, localSF2NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(3), null, 30d, ProductUnit.g, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(3), null, 0.05d, ProductUnit.P, 0d, DeclarationType.Omit, rawMaterial5NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 42d, ProductUnit.g, 0d,
+			 * DeclarationType.Detail, localSF1NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQtyUsed(42d).withUnit(ProductUnit.g).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF1NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, compoList.get(0), null, 40d,
+			 * ProductUnit.g, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(40d)
+					.withUnit(ProductUnit.g).withLossPerc(0d).withDeclarationType(DeclarationType.Declare)
+					.withProduct(rawMaterial1NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d,
+			 * ProductUnit.mL, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(2d)
+					.withUnit(ProductUnit.mL).withLossPerc(0d).withDeclarationType(DeclarationType.Detail)
+					.withProduct(rawMaterial2NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 30d, ProductUnit.g, 0d,
+			 * DeclarationType.Detail, localSF2NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQtyUsed(30d).withUnit(ProductUnit.g).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF2NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, compoList.get(3), null, 30d,
+			 * ProductUnit.g, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQtyUsed(30d)
+					.withUnit(ProductUnit.g).withLossPerc(0d).withDeclarationType(DeclarationType.Declare)
+					.withProduct(rawMaterial3NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, compoList.get(3), null, 0.05d,
+			 * ProductUnit.P, 0d, DeclarationType.Omit, rawMaterial5NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQtyUsed(0.05d)
+					.withUnit(ProductUnit.P).withLossPerc(0d).withDeclarationType(DeclarationType.Omit)
+					.withProduct(rawMaterial5NodeRef));
+
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
 			List<CostListDataItem> costList = new ArrayList<>();
@@ -186,7 +256,8 @@ public class FormulationProductWithoutQtyIT extends AbstractFinishedProductTest 
 			nutList.add(new NutListDataItem(null, null, null, null, null, null, nut2, null));
 			finishedProduct.setNutList(nutList);
 
-			NodeRef finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+			NodeRef finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct)
+					.getNodeRef();
 
 			/*-- Formulate product --*/
 			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
@@ -202,8 +273,9 @@ public class FormulationProductWithoutQtyIT extends AbstractFinishedProductTest 
 			int checks = 0;
 			assertNotNull("CostList is null", formulatedProduct.getCostList());
 			for (CostListDataItem costListDataItem : formulatedProduct.getCostList()) {
-				String trace1 = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: "
-						+ costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
+				String trace1 = "cost: "
+						+ nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME)
+						+ " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
 				logger.info(trace1);
 
 				if (costListDataItem.getCost().equals(cost1)) {
@@ -222,7 +294,8 @@ public class FormulationProductWithoutQtyIT extends AbstractFinishedProductTest 
 			checks = 0;
 			assertNotNull("NutList is null", formulatedProduct.getNutList());
 			for (NutListDataItem nutListDataItem : formulatedProduct.getNutList()) {
-				String trace2 = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME) + " - value: "
+				String trace2 = "nut: "
+						+ nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME) + " - value: "
 						+ nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
 				logger.info(trace2);
 				if (nutListDataItem.getNut().equals(nut1)) {
@@ -242,7 +315,7 @@ public class FormulationProductWithoutQtyIT extends AbstractFinishedProductTest 
 
 			return null;
 
-		}, false, true);
+		});
 
 	}
 }

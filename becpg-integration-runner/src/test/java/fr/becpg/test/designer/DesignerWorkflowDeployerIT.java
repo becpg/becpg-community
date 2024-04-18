@@ -62,7 +62,7 @@ public class DesignerWorkflowDeployerIT extends AbstractDesignerServiceTest {
 	public void testCreateMissingFormsAndType() {
 
 		logger.info("testCreateMissingFormsAndType");
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			InputStream in = (new ClassPathResource("beCPG/designer/testWorkflow.xml")).getInputStream();
 			assertNotNull(in);
@@ -75,7 +75,8 @@ public class DesignerWorkflowDeployerIT extends AbstractDesignerServiceTest {
 			properties.put(WorkflowModel.PROP_WORKFLOW_DEF_ENGINE_ID, ActivitiConstants.ENGINE_ID);
 
 			NodeRef workflowNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(ContentModel.PROP_NAME)),
 					WorkflowModel.TYPE_WORKFLOW_DEF, properties).getChildRef();
 
 			ContentWriter writer = contentService.getWriter(workflowNodeRef, ContentModel.PROP_CONTENT, true);
@@ -110,7 +111,7 @@ public class DesignerWorkflowDeployerIT extends AbstractDesignerServiceTest {
 			nodeService.deleteNode(nodeService.getPrimaryParent(configNodeRef).getParentRef());
 			return null;
 
-		}, false, true);
+		});
 
 	}
 

@@ -17,7 +17,9 @@ import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.survey.data.SurveyList;
 
 /**
- * <p>FinishedProductData class.</p>
+ * <p>
+ * FinishedProductData class.
+ * </p>
  *
  * @author matthieu
  * @version $Id: $Id
@@ -84,6 +86,11 @@ public class FinishedProductData extends ProductData {
 	
 	public FinishedProductData withLabelingRuleList(List<LabelingRuleListDataItem> labelingRuleList) {
 		getLabelingListView().setLabelingRuleList(labelingRuleList);
+		return this;
+	}
+	
+	public FinishedProductData addCostList(List<CostListDataItem> costList) {
+		setCostList(costList);
 		return this;
 	}
 
