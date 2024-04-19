@@ -378,6 +378,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 *
 	 *
 	 */
+	private static final String HTML_BREAK_LINE = "<br/>";
+	
 	private String ingDefaultFormat = "{0} [{3}]";
 	private String groupDefaultFormat = "<b>{0}:</b> {2}";
 	private String groupListDefaultFormat = "<b>{0}</b>";
@@ -387,8 +389,6 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	private String ingTypeDecThresholdFormat = "{0} [{3}]";
 	private String subIngsDefaultFormat = "{0} ({2}) [{3}]";
 	private String geoPlaceOfActivityFormat = "{0}: {1}";
-
-	private final static String HTML_BREAK_LINE = "<br/>";
 
 	private String allergenDetailsFormat = "{0} ({2})";
 	private String allergenReplacementPattern = "<b>$1</b>";
@@ -2355,9 +2355,6 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 						subRatio = DEFAULT_RATIO;
 					} else if (Boolean.TRUE.equals(useTotalPrecision)) {
 						applyTotalRoundingMode(formater);
-						//	Bizarre				if (!DeclarationType.Group.equals(((CompositeLabeling) component).getDeclarationType())) {
-						//							first = false;
-						//						}
 					}
 
 					toAppend = formater.format(
