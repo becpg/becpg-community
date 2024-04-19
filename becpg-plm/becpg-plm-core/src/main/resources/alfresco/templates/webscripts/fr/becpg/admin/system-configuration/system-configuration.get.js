@@ -16,7 +16,8 @@ function main() {
 		"mail.logo.url",
 		"beCPG.version.cleaner.maxProcessedNodes",
 		"beCPG.remote.rateLimiter.capacity",
-        "beCPG.remote.rateLimiter.refillRate"
+        "beCPG.remote.rateLimiter.refillRate",
+		"beCPG.security.supplierPermission",
 	].forEach(function(p) {
 				model.sysBeCPGAttributes[p] = { "type": "java.lang.String", "readonly": false, "qname": p, "name": p, "value": bSys.confValue(p), "set": "system" }
 			});
