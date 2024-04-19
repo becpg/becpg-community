@@ -105,14 +105,14 @@
       	
           <rule>
 	         <request>
-	            <method>POST|PUT|DELETE</method>
-	            <path>/proxy/ai/.*</path>
+	            <method>POST</method>
+	            <path>/proxy/ai/api/.*</path>
 	         </request>
 	         <action name="assertReferer">
-	            <param name="referer">{referer}</param>
+	            <param name='always'>false</param>
 	         </action>
 	         <action name="assertOrigin">
-	            <param name="origin">{origin}</param>
+	            <param name='always'>false</param>
 	         </action>
 	      </rule>
 
@@ -598,17 +598,7 @@
             <userHeader>X-Alfresco-Remote-User</userHeader>
          </connector>
          
-         <connector>
-            <id>becpgTicket</id>
-            <name>beCPG Ticket Connector</name>
-            <description>Connects to a beCPG Services instance using token</description>
-            <class>fr.becpg.web.connector.BecpgTicketConnector</class>
-            <authenticator-id>becpg-ticket</authenticator-id> 
-            <reconnect-timeout>0</reconnect-timeout>
-            <!-- <external-auth>BECPG_EXTERNAL_AUTH</external-auth> -->
-         </connector> 
-         
-      
+         <!-- 
          <authenticator>
             <id>becpg-ticket</id>
             <name>beCPG Authenticator</name>
@@ -616,14 +606,23 @@
             <class>fr.becpg.web.connector.BecpgTicketAuthenticator</class>
          </authenticator>
          
+         
+         <connector>
+            <id>becpgTicket</id>
+            <name>beCPG Ticket Connector</name>
+            <description>Connects to a beCPG Services instance using token</description>
+            <class>fr.becpg.web.connector.BecpgTicketConnector</class>
+            <authenticator-id>becpg-ticket</authenticator-id> 
+         </connector>  -->
+         
+      
          <endpoint>
             <id>ai</id>
-            <parent-id>alfresco</parent-id>
             <name>beCPG AI - user access</name>
             <description>Access to beCPG AI</description>
-            <connector-id>becpgTicket</connector-id>
+            <connector-id>http</connector-id>
             <endpoint-url>http://AI_HOST:AI_PORT</endpoint-url>
-            <identity>user</identity>
+            <identity>none</identity>
          </endpoint>
       
          <endpoint>
