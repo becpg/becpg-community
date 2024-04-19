@@ -351,12 +351,14 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 							repoService.moveNode(supplierNodeRef, documentLibraryNodeRef);
 						}
 
+						String supplierPermission = systemConfigurationService.confValue("beCPG.security.supplierPermission");
+						
 						for (NodeRef resourceRef : resources) {
-							permissionService.setPermission(supplierNodeRef,
-									(String) nodeService.getProperty(resourceRef, ContentModel.PROP_USERNAME), PermissionService.CONTRIBUTOR, true);
-							
+							// remove this permission for old versions
 							permissionService.deletePermission(supplierNodeRef,
 									(String) nodeService.getProperty(resourceRef, ContentModel.PROP_USERNAME), PermissionService.COORDINATOR);
+							permissionService.setPermission(supplierNodeRef,
+									(String) nodeService.getProperty(resourceRef, ContentModel.PROP_USERNAME), supplierPermission, true);
 						}
 					} finally {
 						I18NUtil.setLocale(currentLocal);
