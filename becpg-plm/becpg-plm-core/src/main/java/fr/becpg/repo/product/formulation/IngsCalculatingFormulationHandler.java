@@ -622,7 +622,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			int i = 1;
 
 			byParent.getOrDefault(nullPlaceholder, Collections.emptyList()).stream().sorted(Comparator
-					.comparing(IngListDataItem::getQtyPerc, Comparator.nullsFirst(Comparator.naturalOrder())).thenComparing(this::getLegaleName))
+					.comparing(IngListDataItem::getQtyPerc, Comparator.nullsFirst(Comparator.naturalOrder())).thenComparing(Comparator.comparing(this::getLegaleName).reversed()))
 					.toList().forEach(processor::add);
 
 			while (!processor.isEmpty()) {
@@ -630,7 +630,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				IngListDataItem il = processor.removeLast();
 				byParent.getOrDefault(il, Collections.emptyList()).stream()
 						.sorted(Comparator.comparing(IngListDataItem::getQtyPerc, Comparator.nullsFirst(Comparator.naturalOrder()))
-								.thenComparing(this::getLegaleName))
+								.thenComparing(Comparator.comparing(this::getLegaleName).reversed()))
 						.toList().forEach(processor::add);
 
 				il.setSort(i);
