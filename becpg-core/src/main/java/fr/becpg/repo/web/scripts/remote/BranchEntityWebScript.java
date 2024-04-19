@@ -45,7 +45,7 @@ public class BranchEntityWebScript extends AbstractEntityWebScript {
 
 	/** {@inheritDoc} */
 	@Override
-	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
+	public void executeInternal(WebScriptRequest req, WebScriptResponse resp) throws IOException {
 
 		NodeRef entityNodeRef = findEntity(req);
 

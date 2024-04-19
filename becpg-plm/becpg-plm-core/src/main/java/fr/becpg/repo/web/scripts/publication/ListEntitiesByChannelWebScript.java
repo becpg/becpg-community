@@ -48,7 +48,7 @@ public class ListEntitiesByChannelWebScript extends ListEntitiesWebScript {
 
 
 	@Override
-	protected List<NodeRef> findEntities(WebScriptRequest req) {
+	protected List<NodeRef> findEntities(WebScriptRequest req, Boolean limit) {
 		
 		String channelId = req.getParameter(PARAM_CHANNELID);
 		String channelNodeRefStr = req.getParameter(PARAM_CHANNELNODEREF);

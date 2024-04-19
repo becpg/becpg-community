@@ -71,7 +71,7 @@ public class GetContentWebScript extends AbstractEntityWebScript {
 
 	/** {@inheritDoc} */
 	@Override
-	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
+	public void executeInternal(WebScriptRequest req, WebScriptResponse res) throws IOException {
 		NodeRef documentNodeRef = findEntity(req);
 
 		try {

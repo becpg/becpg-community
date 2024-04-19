@@ -51,6 +51,7 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.remote.EntityProviderCallBack;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
+import fr.becpg.repo.entity.remote.RemoteRateLimiter;
 import fr.becpg.repo.entity.remote.impl.HttpEntityProviderCallback;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
@@ -114,6 +115,8 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	
 	protected NamespaceService namespaceService;
 	
+	protected RemoteRateLimiter remoteRateLimiter;
+	
 	
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
@@ -155,13 +158,30 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		this.permissionService = permissionService;
 	}
 
+	public void setRemoteRateLimiter(RemoteRateLimiter remoteRateLimiter) {
+		this.remoteRateLimiter = remoteRateLimiter;
+	}
+
+	
+	/** {@inheritDoc} */
+	@Override
+	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
+		 if (!remoteRateLimiter.allowRequest()) {
+			 throw new WebScriptException("beCPG Remote API Call RATE limit reached");
+	      }
+		 executeInternal(req,resp);
+	}
+	
+	protected abstract void executeInternal(WebScriptRequest req, WebScriptResponse resp) throws IOException;
+
 	/**
+	 * @param limit 
 	 * <p>findEntities.</p>
 	 *
 	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object.
 	 * @return a {@link java.util.List} object.
 	 */
-	protected List<NodeRef> findEntities(WebScriptRequest req) {
+	protected List<NodeRef> findEntities(WebScriptRequest req, Boolean limit) {
 
 		String path = decodeParam(req.getParameter(PARAM_PATH));
 		String query = decodeParam(req.getParameter(PARAM_QUERY));
@@ -194,7 +214,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 			}
 		}
 
-		if (maxResults == null) {
+		if (maxResults == null || Boolean.TRUE.equals(limit)) {
 			queryBuilder.maxResults(RepoConsts.MAX_RESULTS_256);
 		} else {
 			queryBuilder.maxResults(maxResults);
@@ -250,7 +270,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 				&& ((req.getParameter(PARAM_QUERY) == null) || req.getParameter(PARAM_QUERY).isEmpty())) {
 			throw new WebScriptException(Status.STATUS_NOT_IMPLEMENTED, "One of nodeRef query or path parameter is mandatory");
 		}
-		List<NodeRef> ret = findEntities(req);
+		List<NodeRef> ret = findEntities(req, true);
 		if ((ret != null) && !ret.isEmpty()) {
 			return ret.get(0);
 		}
