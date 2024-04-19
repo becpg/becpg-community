@@ -255,6 +255,7 @@
 		<property name="remoteEntityService" ref="RemoteEntityService" />
 		<property name="mimetypeService" ref="MimetypeService" />
 		<property name="permissionService" ref="permissionService" />
+		<property name="remoteRateLimiter" ref="remoteRateLimiter" />
 	</bean>
 
 

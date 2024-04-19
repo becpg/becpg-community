@@ -38,7 +38,7 @@ public class CreateEntityWebScript extends AbstractEntityWebScript {
 
 	/** {@inheritDoc} */
 	@Override
-	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
+	public void executeInternal(WebScriptRequest req, WebScriptResponse resp) throws IOException {
 
 		logger.debug("Create entity");
 		if (logger.isTraceEnabled()) {
