@@ -11,7 +11,6 @@ import org.springframework.extensions.webscripts.connector.RemoteClient;
 public class BecpgTicketConnector extends RequestCachingConnector {
 
 	public static final String PARAM_TICKETNAME_TICKET = "ticket";
-	private static final String PARAM_TICKETNAME_ALF_TICKET = "alf_ticket";
 
 	public BecpgTicketConnector(ConnectorDescriptor descriptor, String endpoint) {
 		super(descriptor, endpoint);
@@ -28,13 +27,19 @@ public class BecpgTicketConnector extends RequestCachingConnector {
 	}
 
 	public String getCurrentAuthToken(RemoteClient remoteClient, ConnectorContext context) {
+
+		if (context != null) {
+			//beCPG ticket is passed in URI
+			String becpgTicket = context.getParameters().get(PARAM_TICKETNAME_TICKET);
+			if (becpgTicket != null) {
+				return becpgTicket;
+			}
+		}
+
+		//Else connector are authenticating again'st Alfresco
 		String alfTicket = null;
 		String userName = "guest";
 		String instanceName = null;
-
-		if (context != null) {
-			alfTicket = context.getParameters().get(PARAM_TICKETNAME_ALF_TICKET);
-		}
 
 		if (getCredentials() != null) {
 
