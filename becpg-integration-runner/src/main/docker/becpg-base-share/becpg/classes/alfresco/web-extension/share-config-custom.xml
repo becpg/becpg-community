@@ -62,7 +62,7 @@
          </action>
       </rule>
    -->
-   <config evaluator="string-compare" condition="CSRFPolicy" replace="false">
+   <config evaluator="string-compare" condition="CSRFPolicy" replace="true">
 
       <!--
          Properties that may be used inside the rest of the CSRFPolicy config to avoid repetition but
@@ -106,7 +106,7 @@
           <rule>
 	         <request>
 	            <method>POST</method>
-	            <path>/proxy/ai/api/.*</path>
+	            <path>/proxy/ai/.*</path>
 	         </request>
 	         <action name="assertReferer">
 	            <param name='always'>false</param>
