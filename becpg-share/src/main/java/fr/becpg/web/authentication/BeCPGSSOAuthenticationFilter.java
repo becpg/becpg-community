@@ -781,12 +781,11 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
      * 
      * @param session Session
      */
-    @SuppressWarnings("unchecked")
     private void clearSession(HttpSession session)
     {
         if (logger.isDebugEnabled())
             logger.debug("Clearing the session.");
-        Enumeration<String> names = (Enumeration<String>) session.getAttributeNames();
+        Enumeration<String> names =  session.getAttributeNames();
         while (names.hasMoreElements())
         {
             session.removeAttribute(names.nextElement());

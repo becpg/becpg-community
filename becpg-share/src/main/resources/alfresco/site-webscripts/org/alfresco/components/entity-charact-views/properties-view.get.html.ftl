@@ -14,7 +14,6 @@
    <#include "../form/form.js.ftl"/>  
    <@script src="${url.context}/res/components/comments/comments-list.js" group="properties-view"/>
    <@script src="${url.context}/res/components/entity-catalog/entity-catalog.js" group="properties-view"/>
-   <@script src="${url.context}/res/components/entity-suggestions/stomp.js" group="properties-view"/> 
    <@script src="${url.context}/res/components/entity-suggestions/entity-suggestions.js" group="properties-view"/> 
    <@script src="${url.context}/res/components/entity-charact-views/properties-view.js" group="properties-view"/>
 </@>
@@ -110,7 +109,7 @@
 								   		 <#if isAIEnable >
 									     	 <div id="tab_${el}-suggestions">
 										   		<div id="${el}_sug">
-									   				<div id="${el}_sug-entity-suggestions"></div> 
+									   				<div id="${el}_sug-entity-suggestions" class="suggestions-panel"></div> 
 									   		   </div>	
 									   		</div> 
 								   		</#if>
