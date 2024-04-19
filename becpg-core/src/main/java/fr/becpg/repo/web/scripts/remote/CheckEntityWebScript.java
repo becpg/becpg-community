@@ -33,7 +33,7 @@ public class CheckEntityWebScript extends AbstractEntityWebScript {
 
 	/** {@inheritDoc} */
 	@Override
-	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
+	public void executeInternal(WebScriptRequest req, WebScriptResponse resp) throws IOException {
 		String nodeRef = req.getParameter(PARAM_NODEREF);
 		if ((nodeRef != null) && (nodeRef.length() > 0)) {
 			NodeRef node = new NodeRef(nodeRef);
