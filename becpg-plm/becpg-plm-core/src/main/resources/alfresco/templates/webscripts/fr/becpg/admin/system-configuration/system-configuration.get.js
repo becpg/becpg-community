@@ -15,6 +15,7 @@ function main() {
 		"beCPG.copyOrBranch.propertiesToReset",
 		"mail.logo.url",
 		"beCPG.version.cleaner.maxProcessedNodes",
+		"beCPG.security.supplierPermission",
 	].forEach(function(p) {
 				model.sysBeCPGAttributes[p] = { "type": "java.lang.String", "readonly": false, "qname": p, "name": p, "value": bSys.confValue(p), "set": "system" }
 			});
