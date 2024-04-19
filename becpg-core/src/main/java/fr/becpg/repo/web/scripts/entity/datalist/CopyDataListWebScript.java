@@ -10,12 +10,12 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.repo.entity.EntityListDAO;
-import fr.becpg.repo.web.scripts.remote.AbstractEntityWebScript;
 
 /**
  * Webscript that copy a datalist to another entity
@@ -23,7 +23,7 @@ import fr.becpg.repo.web.scripts.remote.AbstractEntityWebScript;
  * @author matthieu
  * @version $Id: $Id
  */
-public class CopyDataListWebScript extends AbstractEntityWebScript {
+public class CopyDataListWebScript extends AbstractWebScript {
 
 	/** Constant <code>PARAM_STORE_TYPE="store_type"</code> */
 	protected static final String PARAM_STORE_TYPE = "store_type";
