@@ -56,6 +56,7 @@ import fr.becpg.repo.security.autocomplete.SecurityAutoCompletePlugin;
 import fr.becpg.repo.security.data.ACLGroupData;
 import fr.becpg.repo.security.data.PermissionModel;
 import fr.becpg.repo.security.data.dataList.ACLEntryDataItem;
+import fr.becpg.repo.system.SystemConfigurationService;
 import fr.becpg.test.BeCPGTestHelper;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
@@ -89,6 +90,9 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 
 	@Autowired
 	NamespaceService namespaceService;
+	
+	@Autowired
+	private SystemConfigurationService systemConfigurationService;
 	
 	private void createUsers() {
 
@@ -626,111 +630,124 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 	@Test
 	public void testDataListPermissions() {
 		
-		initParts();
-		
-		NodeRef securityRuleNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			NodeRef ret = createDataListSecurityRule();
-			securityService.refreshAcls();
-			return ret;
-		}, false, true);
-
-		NodeRef productNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			FinishedProductData productData = new FinishedProductData();
-			productData.setParentNodeRef(getTestFolderNodeRef());
-			productData.setName("FP testDataListPermissions");
-			List<NutListDataItem> nutList = new LinkedList<>();
-			nutList.add(new NutListDataItem(null, 1d, null, null, null, null, nut1, null));
-			productData.setNutList(nutList);
-			return alfrescoRepository.save(productData).getNodeRef();
-		}, false, true);
-		
-		// grp1 write and grp2 read
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			productService.formulate(productNodeRef);
-			FinishedProductData productData = (FinishedProductData) alfrescoRepository.findOne(productNodeRef);
-			NodeRef nutListNodeRef = productData.getNutList().get(0).getParentNodeRef();
-			assertFalse(permissionService.getInheritParentPermissions(nutListNodeRef));
-			Set<AccessPermission> permissions = permissionService.getAllSetPermissions(nutListNodeRef);
-			checkPermissions(productNodeRef, permissions, new ArrayList<>(List.of(grp2)), new ArrayList<>(List.of(grp1)));
+		inWriteTx(() -> {
+			systemConfigurationService.updateConfValue("beCPG.formulation.security.enforceACL", "true");
 			return null;
-		}, false, true);
+		});
 		
-		
-		// grp2 read
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			ACLGroupData securityRule = (ACLGroupData) alfrescoRepository.findOne(securityRuleNodeRef);
-			for (ACLEntryDataItem permissionList : securityRule.getAcls()) {
-				if (permissionList.getAclPermission().equals(PermissionModel.READ_WRITE)) {
+		try {
+			initParts();
+			
+			NodeRef securityRuleNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				NodeRef ret = createDataListSecurityRule();
+				securityService.refreshAcls();
+				return ret;
+			}, false, true);
+			
+			NodeRef productNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				FinishedProductData productData = new FinishedProductData();
+				productData.setParentNodeRef(getTestFolderNodeRef());
+				productData.setName("FP testDataListPermissions");
+				List<NutListDataItem> nutList = new LinkedList<>();
+				nutList.add(new NutListDataItem(null, 1d, null, null, null, null, nut1, null));
+				productData.setNutList(nutList);
+				return alfrescoRepository.save(productData).getNodeRef();
+			}, false, true);
+			
+			// grp1 write and grp2 read
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				productService.formulate(productNodeRef);
+				FinishedProductData productData = (FinishedProductData) alfrescoRepository.findOne(productNodeRef);
+				NodeRef nutListNodeRef = productData.getNutList().get(0).getParentNodeRef();
+				assertFalse(permissionService.getInheritParentPermissions(nutListNodeRef));
+				Set<AccessPermission> permissions = permissionService.getAllSetPermissions(nutListNodeRef);
+				checkPermissions(productNodeRef, permissions, new ArrayList<>(List.of(grp2)), new ArrayList<>(List.of(grp1)));
+				return null;
+			}, false, true);
+			
+			
+			// grp2 read
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				ACLGroupData securityRule = (ACLGroupData) alfrescoRepository.findOne(securityRuleNodeRef);
+				for (ACLEntryDataItem permissionList : securityRule.getAcls()) {
+					if (permissionList.getAclPermission().equals(PermissionModel.READ_WRITE)) {
+						permissionList.setPropName("cm:description");
+					}
+				}
+				alfrescoRepository.save(securityRule);
+				securityService.refreshAcls();
+				productService.formulate(productNodeRef);
+				FinishedProductData productData = (FinishedProductData) alfrescoRepository.findOne(productNodeRef);
+				NodeRef nutListNodeRef = productData.getNutList().get(0).getParentNodeRef();
+				assertFalse(permissionService.getInheritParentPermissions(nutListNodeRef));
+				Set<AccessPermission> permissions = permissionService.getAllSetPermissions(nutListNodeRef);
+				checkPermissions(productNodeRef, permissions, new ArrayList<>(List.of(grp2)), new ArrayList<>(List.of()));
+				return null;
+			}, false, true);
+			
+			// grp1 write
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				ACLGroupData securityRule = (ACLGroupData) alfrescoRepository.findOne(securityRuleNodeRef);
+				for (ACLEntryDataItem permissionList : securityRule.getAcls()) {
+					if (permissionList.getAclPermission().equals(PermissionModel.READ_WRITE)) {
+						permissionList.setPropName("bcpg:nutList");
+					} else if (permissionList.getAclPermission().equals(PermissionModel.READ_ONLY)) {
+						permissionList.setPropName("cm:description");
+					}
+				}
+				alfrescoRepository.save(securityRule);
+				securityService.refreshAcls();
+				productService.formulate(productNodeRef);
+				FinishedProductData productData = (FinishedProductData) alfrescoRepository.findOne(productNodeRef);
+				NodeRef nutListNodeRef = productData.getNutList().get(0).getParentNodeRef();
+				assertFalse(permissionService.getInheritParentPermissions(nutListNodeRef));
+				Set<AccessPermission> permissions = permissionService.getAllSetPermissions(nutListNodeRef);
+				checkPermissions(productNodeRef, permissions, new ArrayList<>(List.of()), new ArrayList<>(List.of(grp1)));
+				return null;
+			}, false, true);
+			
+			// grp1 write and grp2 read
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				ACLGroupData securityRule = (ACLGroupData) alfrescoRepository.findOne(securityRuleNodeRef);
+				for (ACLEntryDataItem permissionList : securityRule.getAcls()) {
+					if (permissionList.getAclPermission().equals(PermissionModel.READ_ONLY) || permissionList.getAclPermission().equals(PermissionModel.READ_WRITE)) {
+						permissionList.setPropName("bcpg:nutList");
+					}
+				}
+				alfrescoRepository.save(securityRule);
+				securityService.refreshAcls();
+				productService.formulate(productNodeRef);
+				FinishedProductData productData = (FinishedProductData) alfrescoRepository.findOne(productNodeRef);
+				NodeRef nutListNodeRef = productData.getNutList().get(0).getParentNodeRef();
+				assertFalse(permissionService.getInheritParentPermissions(nutListNodeRef));
+				Set<AccessPermission> permissions = permissionService.getAllSetPermissions(nutListNodeRef);
+				checkPermissions(productNodeRef, permissions, new ArrayList<>(List.of(grp2)), new ArrayList<>(List.of(grp1)));
+				return null;
+			}, false, true);
+			
+			// nothing
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				ACLGroupData securityRule = (ACLGroupData) alfrescoRepository.findOne(securityRuleNodeRef);
+				for (ACLEntryDataItem permissionList : securityRule.getAcls()) {
 					permissionList.setPropName("cm:description");
 				}
-			}
-			alfrescoRepository.save(securityRule);
-			securityService.refreshAcls();
-			productService.formulate(productNodeRef);
-			FinishedProductData productData = (FinishedProductData) alfrescoRepository.findOne(productNodeRef);
-			NodeRef nutListNodeRef = productData.getNutList().get(0).getParentNodeRef();
-			assertFalse(permissionService.getInheritParentPermissions(nutListNodeRef));
-			Set<AccessPermission> permissions = permissionService.getAllSetPermissions(nutListNodeRef);
-			checkPermissions(productNodeRef, permissions, new ArrayList<>(List.of(grp2)), new ArrayList<>(List.of()));
-			return null;
-		}, false, true);
-		
-		// grp1 write
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			ACLGroupData securityRule = (ACLGroupData) alfrescoRepository.findOne(securityRuleNodeRef);
-			for (ACLEntryDataItem permissionList : securityRule.getAcls()) {
-				if (permissionList.getAclPermission().equals(PermissionModel.READ_WRITE)) {
-					permissionList.setPropName("bcpg:nutList");
-				} else if (permissionList.getAclPermission().equals(PermissionModel.READ_ONLY)) {
-					permissionList.setPropName("cm:description");
-				}
-			}
-			alfrescoRepository.save(securityRule);
-			securityService.refreshAcls();
-			productService.formulate(productNodeRef);
-			FinishedProductData productData = (FinishedProductData) alfrescoRepository.findOne(productNodeRef);
-			NodeRef nutListNodeRef = productData.getNutList().get(0).getParentNodeRef();
-			assertFalse(permissionService.getInheritParentPermissions(nutListNodeRef));
-			Set<AccessPermission> permissions = permissionService.getAllSetPermissions(nutListNodeRef);
-			checkPermissions(productNodeRef, permissions, new ArrayList<>(List.of()), new ArrayList<>(List.of(grp1)));
-			return null;
-		}, false, true);
-		
-		// grp1 write and grp2 read
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			ACLGroupData securityRule = (ACLGroupData) alfrescoRepository.findOne(securityRuleNodeRef);
-			for (ACLEntryDataItem permissionList : securityRule.getAcls()) {
-				if (permissionList.getAclPermission().equals(PermissionModel.READ_ONLY) || permissionList.getAclPermission().equals(PermissionModel.READ_WRITE)) {
-					permissionList.setPropName("bcpg:nutList");
-				}
-			}
-			alfrescoRepository.save(securityRule);
-			securityService.refreshAcls();
-			productService.formulate(productNodeRef);
-			FinishedProductData productData = (FinishedProductData) alfrescoRepository.findOne(productNodeRef);
-			NodeRef nutListNodeRef = productData.getNutList().get(0).getParentNodeRef();
-			assertFalse(permissionService.getInheritParentPermissions(nutListNodeRef));
-			Set<AccessPermission> permissions = permissionService.getAllSetPermissions(nutListNodeRef);
-			checkPermissions(productNodeRef, permissions, new ArrayList<>(List.of(grp2)), new ArrayList<>(List.of(grp1)));
-			return null;
-		}, false, true);
-		
-		// nothing
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			ACLGroupData securityRule = (ACLGroupData) alfrescoRepository.findOne(securityRuleNodeRef);
-			for (ACLEntryDataItem permissionList : securityRule.getAcls()) {
-				permissionList.setPropName("cm:description");
-			}
-			alfrescoRepository.save(securityRule);
-			securityService.refreshAcls();
-			productService.formulate(productNodeRef);
-			FinishedProductData productData = (FinishedProductData) alfrescoRepository.findOne(productNodeRef);
-			NodeRef nutListNodeRef = productData.getNutList().get(0).getParentNodeRef();
-			assertTrue(permissionService.getInheritParentPermissions(nutListNodeRef));
-			Set<AccessPermission> permissions = permissionService.getAllSetPermissions(nutListNodeRef);
-			checkPermissions(productNodeRef, permissions, new ArrayList<>(List.of()), new ArrayList<>(List.of()));
-			return null;
-		}, false, true);
+				alfrescoRepository.save(securityRule);
+				securityService.refreshAcls();
+				productService.formulate(productNodeRef);
+				FinishedProductData productData = (FinishedProductData) alfrescoRepository.findOne(productNodeRef);
+				NodeRef nutListNodeRef = productData.getNutList().get(0).getParentNodeRef();
+				assertTrue(permissionService.getInheritParentPermissions(nutListNodeRef));
+				Set<AccessPermission> permissions = permissionService.getAllSetPermissions(nutListNodeRef);
+				checkPermissions(productNodeRef, permissions, new ArrayList<>(List.of()), new ArrayList<>(List.of()));
+				return null;
+			}, false, true);
+			
+		} finally {
+			inWriteTx(() -> {
+				systemConfigurationService.resetConfValue("beCPG.formulation.security.enforceACL");
+				return null;
+			});
+		}
 		
 	}
 	
