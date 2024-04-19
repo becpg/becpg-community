@@ -141,6 +141,8 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
     private static final String LOGIN_PARAMETER = "login";
     private static final String ERROR_PARAMETER = "error";
     private static final String UNAUTHENTICATED_ACCESS_PROXY = "/proxy/alfresco-noauth";
+    
+    private static final String AI_ACCESS_PROXY = "/proxy/ai";
     private static final String PAGE_VIEW_RESOLVER = "pageViewResolver";
     
     private ApplicationContext context;
@@ -498,7 +500,9 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
         HttpServletResponse res = (HttpServletResponse)sresp;
         HttpSession session = req.getSession();
         
-        if (req.getServletPath() != null && req.getServletPath().startsWith(UNAUTHENTICATED_ACCESS_PROXY))
+        if (req.getServletPath() != null && (req.getServletPath().startsWith(UNAUTHENTICATED_ACCESS_PROXY)
+        		||  req.getServletPath().startsWith(AI_ACCESS_PROXY))
+        		)
         {
             if (debug)
                 logger.debug("SSO is by-passed for unauthenticated access endpoint.");
