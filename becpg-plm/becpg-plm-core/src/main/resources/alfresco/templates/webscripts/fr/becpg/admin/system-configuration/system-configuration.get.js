@@ -75,6 +75,7 @@ function main() {
 		"beCPG.formulation.ingsCalculatingWithYield",
 		"beCPG.formulation.costList.keepProductUnit",
 		"beCPG.formulation.score.nutriscore.regulatoryClass",
+		"beCPG.formulation.security.enforceACL",
 	].forEach(function(p) {
 				model.sysBeCPGAttributes[p] = { "type": "java.lang.String", "readonly": false, "qname": p, "name": p, "value": bSys.confValue(p), "set": "formulation"  }
 			});
