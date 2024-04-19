@@ -102,6 +102,7 @@
 					<property name="authorityDAO" ref="authorityDAO"/>
 					<property name="siteService" ref="siteService"/>
 					<property name="associationService" ref="associationService"/>
+					<property name="enforceACL" value="${beCPG.formulation.security.enforceACL}"/>
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.CompositionQtyCalculatingFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />

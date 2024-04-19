@@ -77,6 +77,22 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 	
 	private AssociationService associationService;
 	
+	private boolean enforceACL;
+
+	private static SecurityFormulationHandler instance;
+	
+	public SecurityFormulationHandler() {
+		instance = this;
+	}
+	
+	public static void setStaticEnforceACL(boolean enforceACL) {
+		instance.enforceACL = enforceACL;
+	}
+	
+	public void setEnforceACL(String enforceACL) {
+		this.enforceACL = Boolean.parseBoolean(enforceACL);
+	}
+	
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
@@ -147,14 +163,14 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 			for(NodeRef dataListNodeRef : datalists) {
 				String dataListQName = (String)nodeService.getProperty(dataListNodeRef, DataListModel.PROP_DATALISTITEMTYPE);
 				List<ACLEntryDataItem.PermissionModel> perms = securityService.getNodeACLPermissions(productDataNodeRef, nodeService.getType(productDataNodeRef), dataListQName);
-				updatePermissions(siteInfo, dataListNodeRef, perms);
+				updatePermissions(siteInfo, dataListNodeRef, perms, false);
 			}
 
 			//Set document permissions
 			List<ACLEntryDataItem.PermissionModel> perms = securityService.getNodeACLPermissions(productDataNodeRef, nodeService.getType(productDataNodeRef), VIEW_DOCUMENTS);
 			List<ChildAssociationRef> folders = nodeService.getChildAssocs(productDataNodeRef, ContentModel.ASSOC_CONTAINS, RegexQNamePattern.MATCH_ALL);
 			for (ChildAssociationRef folder : folders) {
-				updatePermissions(siteInfo, folder.getChildRef(), perms);
+				updatePermissions(siteInfo, folder.getChildRef(), perms, true);
 			}
 		}
 		return true;
@@ -180,7 +196,7 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 	}
 
-	private void updatePermissions(SiteInfo siteInfo, NodeRef nodeRef, List<PermissionModel> permissionModels) {
+	private void updatePermissions(SiteInfo siteInfo, NodeRef nodeRef, List<PermissionModel> permissionModels, boolean areDocuments) {
 		
 		boolean hasParentPermissions = permissionService.getInheritParentPermissions(nodeRef);
 		Map<String, String> specificPermissions = new HashMap<>();
@@ -199,7 +215,7 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 		HashMap<String, String> toAdd = new HashMap<>();
 		Set<String> toRemove = new HashSet<>();
 		
-		if (permissionModels != null && !permissionModels.isEmpty()) {
+		if (permissionModels != null && !permissionModels.isEmpty() && (areDocuments || enforceACL)) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("specificPermissions: " + specificPermissions + " on node: " + nodeRef);
 				logger.debug("parentPermissions: " + parentPermissions + " on node: " + nodeRef);
