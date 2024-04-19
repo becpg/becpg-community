@@ -1,0 +1,7 @@
+.suggestions-panel iframe {
+	width:100%;
+	height: 100%;
+	border:none;
+	overflow-y: auto;
+	min-height: 600px;
+}
