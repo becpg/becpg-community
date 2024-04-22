@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.system.SystemConfigurationService;
-import jakarta.annotation.PostConstruct;
 
 /**
  * @author Matthieu
@@ -14,8 +13,8 @@ import jakarta.annotation.PostConstruct;
 @Service("remoteRateLimiter")
 public class RemoteRateLimiter {
 	
-    private double tokens; // Current number of tokens in the bucket
-    private Instant lastRefillTime; // Time of last refill
+    private double tokens = 100; // Current number of tokens in the bucket
+    private Instant lastRefillTime = Instant.now(); // Time of last refill
     
     @Autowired
     private SystemConfigurationService systemConfigurationService;
@@ -28,12 +27,6 @@ public class RemoteRateLimiter {
 	private Double remoteRateLimiterRefillRate() {
 		return Double.valueOf(systemConfigurationService.confValue("beCPG.remote.rateLimiter.refillRate"));
 	}
-
-	@PostConstruct
-    public void init() {
-        this.tokens = remoteRateLimiterCapacity();
-        this.lastRefillTime = Instant.now();
-    }
 
     public synchronized boolean allowRequest() {
         refillTokens();
