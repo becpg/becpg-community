@@ -5,6 +5,7 @@
         <field-visibility>
           <show force="false" id="cm:name"/>
           <show force="false" id="gs1:descriptionShort"/>
+          <show force="false" id="gs1:functionalName"/>
           <show force="true" id="cm:title"/>
           <show force="false" id="gs1:variantDescription"/>
           <show force="false" id="bcpg:productHierarchy1"/>
@@ -258,6 +259,9 @@
           <set appearance="bordered-panel" id="mainInfo" label-id="becpg.forms.set.designation.label" parent="mainTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field id="cm:name" mandatory="false" read-only="false" set="mainInfo"/>
           <field help-id="becpg.forms.help.gs1.descriptionShort" id="gs1:descriptionShort" mandatory="false" read-only="false" set="mainInfo">
+            <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
+          </field>
+           <field id="gs1:functionalName" mandatory="false" read-only="false" set="mainInfo">
             <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
           </field>
           <field id="cm:title" label-id="becpg.forms.field.tradeName" description-id="becpg.forms.field.tradeName" mandatory="false" read-only="false" set="mainInfo">
@@ -1968,6 +1972,7 @@
         <field-visibility>
           <show force="true" id="cm:name"/>
           <show force="true" id="gs1:descriptionShort"/>
+          <show force="true" id="gs1:functionalName"/>
           <show force="true" id="cm:title"/>
           <show force="true" id="gs1:variantDescription"/>
           <show force="true" id="bcpg:productHierarchy1"/>
@@ -2164,6 +2169,9 @@
           <set appearance="bordered-panel" id="mainInfo" label-id="becpg.forms.set.designation.label" parent="mainTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field id="cm:name" mandatory="false" read-only="false" set="mainInfo"/>
           <field help-id="becpg.forms.help.gs1.descriptionShort" id="gs1:descriptionShort" mandatory="false" read-only="false" set="mainInfo">
+            <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
+          </field>
+          <field id="gs1:functionalName" mandatory="false" read-only="false" set="mainInfo">
             <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
           </field>
           <field id="cm:title" label-id="becpg.forms.field.tradeName" description-id="becpg.forms.field.tradeName" mandatory="false" read-only="false" set="mainInfo">
