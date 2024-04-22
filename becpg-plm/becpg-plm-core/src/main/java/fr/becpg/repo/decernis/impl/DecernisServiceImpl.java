@@ -363,7 +363,7 @@ public class DecernisServiceImpl implements DecernisService {
 				JSONArray synonyms = result.getJSONArray("synonyms");
 				int j = 0;
 				while (j < synonyms.length()) {
-					if (synonyms.getString(j).toLowerCase().replace(",", "").equals(ingName.toLowerCase().replace(",", ""))) {
+					if (ingName != null && synonyms.getString(j).toLowerCase().replace(",", "").equals(ingName.toLowerCase().replace(",", ""))) {
 						return result;
 					}
 					j++;
@@ -537,9 +537,9 @@ public class DecernisServiceImpl implements DecernisService {
 	
 	private IngListDataItem findIngredientItem(List<IngListDataItem> ingList, String decernisID, String function, String ingredientName) {
 		for (IngListDataItem ing : ingList) {
-			if (decernisID.equals(nodeService.getProperty(ing.getIng(), PLMModel.PROP_REGULATORY_CODE))) {
+			if (ing.getIng() != null && decernisID.equals(nodeService.getProperty(ing.getIng(), PLMModel.PROP_REGULATORY_CODE))) {
 				NodeRef ingType = (NodeRef) nodeService.getProperty(ing.getIng(), PLMModel.PROP_ING_TYPE_V2);
-				if (function.equalsIgnoreCase((String) nodeService.getProperty(ingType, BeCPGModel.PROP_LV_CODE))) {
+				if (ingType != null && function.equalsIgnoreCase((String) nodeService.getProperty(ingType, BeCPGModel.PROP_LV_CODE))) {
 					return ing;
 				}
 			}
@@ -553,17 +553,17 @@ public class DecernisServiceImpl implements DecernisService {
 		try {
 			for (IngListDataItem ing : ingList) {
 				MLText charactName = (MLText) nodeService.getProperty(ing.getIng(), BeCPGModel.PROP_CHARACT_NAME);
-				if (ingredientName.equalsIgnoreCase(charactName.getDefaultValue())) {
+				if (charactName != null && ingredientName.equalsIgnoreCase(charactName.getDefaultValue())) {
 					return ing;
 				}
-				if (ingredientName.equalsIgnoreCase(charactName.getValue(Locale.ENGLISH))) {
+				if (charactName != null && ingredientName.equalsIgnoreCase(charactName.getValue(Locale.ENGLISH))) {
 					return ing;
 				}
 				MLText legalName = (MLText) nodeService.getProperty(ing.getIng(), BeCPGModel.PROP_LEGAL_NAME);
-				if (ingredientName.equalsIgnoreCase(legalName.getDefaultValue())) {
+				if (legalName != null && ingredientName.equalsIgnoreCase(legalName.getDefaultValue())) {
 					return ing;
 				}
-				if (ingredientName.equalsIgnoreCase(legalName.getValue(Locale.ENGLISH))) {
+				if (legalName != null && ingredientName.equalsIgnoreCase(legalName.getValue(Locale.ENGLISH))) {
 					return ing;
 				}
 			}
