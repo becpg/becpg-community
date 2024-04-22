@@ -545,6 +545,10 @@
 				<value>BeerStyleTypeCode</value>
 			</parameter>
 		</constraint>
+		
+		 <constraint name='gs1:text200' type='LENGTH'>
+	        <parameter name='maxLength'><value>200</value></parameter>
+	     </constraint>
 
 
 
@@ -842,6 +846,9 @@
 						<constraint ref="gs1:organicProductPlaceOfFarmingCodes" />
 					</constraints>
 				</property>
+				
+				<!-- gs1:organicProductPlaceOfFarmingCode assoc vers geoOrigin ?-->
+				
 			</properties>
 		</aspect>
 
@@ -1236,6 +1243,8 @@
 					</index>
 				</property>
 
+				<!-- Additional trade item classification ? -->
+
 			</properties>
 			<associations />
 			<overrides />
@@ -1348,6 +1357,12 @@
 
 		<aspect name="gs1:packagingAspect">
 			<properties>
+			<!-- 	gs1:stackingFactor
+gs1:stackingMaxWeight
+
+gs1:secondaryStackingFactor
+gs1:secondaryStackingMaxWeight -->
+			
 				<property name="gs1:height">
 					<type>d:float</type>
 					<mandatory>false</mandatory>
@@ -1738,7 +1753,20 @@
 						<tokenised>both</tokenised>
 						<facetable>false</facetable>
 					</index>
+					<constraints>
+						<constraint ref="gs1:text200"/>
+					</constraints>
 				</property>
+				
+				<property name="gs1:functionalName">
+					<type>d:mltext</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+				
 				<property name="gs1:tradeItemUnitDescriptorCode">
 					<type>d:text</type>
 					<index enabled="true">
@@ -1773,6 +1801,10 @@
 						<constraint ref="gs1:handlingInstructions" />
 					</constraints>
 				</property>
+				
+				
+				
+				
 				<property name="gs1:preparationType">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
