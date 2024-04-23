@@ -1243,6 +1243,10 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 					if (compValue.startsWith("\"") && compValue.endsWith("\"")) {
 						compValue = compValue.replace("\"", "");
 					}
+					
+					if ((compValue != null) && compValue.contains("\\ ")) {
+						compValue = compValue.replace("\\ ", " ");
+					}
 
 					if (logger.isTraceEnabled()) {
 						logger.trace("Test Match on: " + critKey);
