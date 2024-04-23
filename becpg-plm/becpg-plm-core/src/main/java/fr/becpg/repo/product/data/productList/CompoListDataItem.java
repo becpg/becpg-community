@@ -462,8 +462,8 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result
-				+ Objects.hash(compoListUnit, declType, depthLevel, lossPerc, overrunPerc, parent, product, qty, qtySubFormula, volume, yieldPerc);
+		result = prime * result + Objects.hash(compoListUnit, declType, depthLevel, lossPerc, overrunPerc,
+				parent != null ? parent.getNodeRef() : null, product, qty, qtySubFormula, volume, yieldPerc);
 		return result;
 	}
 
@@ -478,7 +478,8 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem
 			return false;
 		CompoListDataItem other = (CompoListDataItem) obj;
 		return compoListUnit == other.compoListUnit && declType == other.declType && Objects.equals(depthLevel, other.depthLevel)
-				&& Objects.equals(lossPerc, other.lossPerc) && Objects.equals(overrunPerc, other.overrunPerc) && Objects.equals(parent, other.parent)
+				&& Objects.equals(lossPerc, other.lossPerc) && Objects.equals(overrunPerc, other.overrunPerc)
+				&& Objects.equals(parent != null ? parent.getNodeRef() : null, other.parent != null ? other.parent.getNodeRef() : null)
 				&& Objects.equals(product, other.product) && Objects.equals(qty, other.qty) && Objects.equals(qtySubFormula, other.qtySubFormula)
 				&& Objects.equals(volume, other.volume) && Objects.equals(yieldPerc, other.yieldPerc);
 	}
