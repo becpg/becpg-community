@@ -1195,7 +1195,7 @@
 						var column = this.datalistColumns[i], columnName = column.name.replace(":", "_"), fieldLookup = (column.type == "property" ? "prop"
 							: "assoc");
 
-						if (column.dataType == "nested" || column.dataType == "nested_column" && column.columns) {
+						if ((column.dataType == "nested" || column.dataType == "nested_column") && column.columns) {
 							fieldLookup = "dt";
 							fieldLookup += "_" + columnName;
 							for (var j = 0; j < column.columns.length; j++) {
