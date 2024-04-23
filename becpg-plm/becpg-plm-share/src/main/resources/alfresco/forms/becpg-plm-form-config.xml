@@ -1760,6 +1760,17 @@
 					<field id="bcpg:casNumber" read-only="true" />
 				</appearance>
 			</form>
+			
+			<form id="sub-datagrid-export">
+				<field-visibility>
+					<show id="bcpg:ingTypeV2" force="true" />
+					<show id="bcpg:casNumber" force="true" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:ingTypeV2" read-only="true" />
+					<field id="bcpg:casNumber" read-only="true" />
+				</appearance>
+			</form>
 
 			<form id="datagrid">
 				<field-visibility>
@@ -7002,6 +7013,40 @@
 					<field id="bcpg:ingListQtyPercWithYield" read-only="true"></field>
 					<field id="bcpg:ingListQtyPercWithSecondaryYield" read-only="true"></field>
 					<field id="bcpg:depthLevel" label="hidden"></field>
+				</appearance>
+			</form>
+			
+			<form id="export">
+				<field-visibility>
+					<show id="bcpg:entityDataListState" force="true" />
+					<show id="bcpg:variantIds" force="true" />
+					<show id="bcpg:depthLevel" />
+					<show id="bcpg:ingListIng" />
+					<show id="bcpg:ingListVolumeQtyPerc" />
+					<show id="bcpg:ingListQtyPerc" />
+					<show id="bcpg:ingListQtyPercWithYield" />
+					<show id="bcpg:ingListQtyPercWithSecondaryYield" />
+					<show id="bcpg:ingListIsGMO" />
+					<show id="bcpg:ingListIsIonized" />
+					<show id="bcpg:ingListIsProcessingAid" />
+					<show id="bcpg:ingListIsSupport" />
+					<show id="bcpg:ingListGeoOrigin" />
+					<show id="bcpg:ingListGeoTransfo" />
+					<show id="bcpg:ingListBioOrigin" />
+					<show id="bcpg:ingListClaims" />
+					<show id="entity_bcpg:ingListIng_bcpg:ing_asColumn" force="true" />
+					<show id="fm:commentCount" force="true" />
+					<show id="bcpg:glopTarget" />
+					<show id="bcpg:glopValue" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:entityDataListState" label="hidden" />
+					<field id="bcpg:variantIds" label="hidden"></field>
+					<field id="bcpg:ingListVolumeQtyPerc" read-only="true" label="hidden"></field>
+					<field id="bcpg:ingListQtyPercWithYield" read-only="true"></field>
+					<field id="bcpg:ingListQtyPercWithSecondaryYield" read-only="true"></field>
+					<field id="bcpg:depthLevel" label="hidden"></field>
+					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
 			</form>
 
