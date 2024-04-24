@@ -557,6 +557,17 @@
 			</parameter>
 		</constraint>
 		
+		<constraint name="gs1:seasonParameterCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
+				</list>
+			</parameter>
+			<parameter name="constraintFilter">
+				<value>SeasonParameterCode</value>
+			</parameter>
+		</constraint>
+		
 		 <constraint name='gs1:text200' type='LENGTH'>
 	        <parameter name='maxLength'><value>200</value></parameter>
 	     </constraint>
@@ -2289,6 +2300,56 @@ gs1:secondaryStackingMaxWeight -->
 					</index>
 					<constraints>
 						<constraint ref="gs1:referencedTradeItemTypeCodes"/>
+					</constraints>
+				</property>
+			</properties>
+		</aspect>
+		
+		<aspect name="gs1:seasonalAspect">
+			<properties>
+				<property name="gs1:isTradeItemSeasonal">
+					<type>d:boolean</type>
+					<index enabled="false" />
+				</property>
+				<property name="gs1:seasonalAvailabilityStartDateTime">
+					<type>d:date</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
+				<property name="gs1:seasonalAvailabilityEndDateTime">
+					<type>d:date</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
+				<property name="gs1:seasonCalendarYear">
+					<type>d:date</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
+				<property name="gs1:seasonName">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+				<property name="gs1:seasonParameterCode">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+					<constraints>
+						<constraint ref="gs1:seasonParameterCodes"/>
 					</constraints>
 				</property>
 			</properties>

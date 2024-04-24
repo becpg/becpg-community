@@ -87,6 +87,13 @@
           <show force="false" id="gs1:referencedTradeItemEanCode"/>
           <show force="false" id="gs1:referencedTradeItemTypeCode"/>
           
+          <show force="false" id="gs1:isTradeItemSeasonal"/>
+          <show force="false" id="gs1:seasonalAvailabilityStartDateTime"/>
+          <show force="false" id="gs1:seasonalAvailabilityEndDateTime"/>
+          <show force="false" id="gs1:seasonCalendarYear"/>
+          <show force="false" id="gs1:seasonName"/>
+          <show force="false" id="gs1:seasonParameterCode"/>
+          
           <show force="false" id="gs1:cheeseMaturationPeriodDescription"/>
 		  <show force="false" id="gs1:cheeseMaturationProcessContainerTypeCode"/>
 		  <show force="false" id="gs1:fatPercentageInDryMatter"/>
@@ -251,12 +258,12 @@
           <show id="bcpg:entityTplEnabled" force="false" />
           <show id="bcpg:entityTplIsDefault" force="false" />
           <show id="bcpg:entityTplScript" force="false" />
-			<show id="bcpg:regulatoryCountries" />
-			<show id="bcpg:regulatoryUsageRef" />
-			<show id="bcpg:regulatoryMode" />
-			<show id="bcpg:regulatoryRecipeId" />
-			<show id="bcpg:regulatoryResult" />
-			<show id="bcpg:regulatoryValidationDate" />
+		  <show id="bcpg:regulatoryCountries" />
+		  <show id="bcpg:regulatoryUsageRef" />
+		  <show id="bcpg:regulatoryMode" />
+		  <show id="bcpg:regulatoryRecipeId" />
+		  <show id="bcpg:regulatoryResult" />
+		  <show id="bcpg:regulatoryValidationDate" />
         </field-visibility>
         <appearance>
           <set id="mainTab" label-id="becpg.forms.set.characteristics.label"/>
@@ -356,6 +363,40 @@
               <constraint event="keyup,change" type="MANDATORY" validation-handler="beCPG.forms.validation.GTIN"/>
             </constraint-handlers>
           </field>
+          
+          <set id="season" label-id="becpg.forms.set.season.label"/>
+          <field id="gs1:isTradeItemSeasonal" mandatory="false" read-only="false" set="season"/>
+          <field id="gs1:seasonalAvailabilityStartDateTime" mandatory="false" read-only="false" set="season">
+          	<control template="/org/alfresco/components/form/controls/boolean.ftl"/>
+            <constraint-handlers>
+              <constraint event="change@[{'prop':'prop_gs1_isTradeItemSeasonal', 'condition' : '|false'}]" type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf"/>
+            </constraint-handlers>
+          </field>
+          <field id="gs1:seasonalAvailabilityEndDateTime" mandatory="false" read-only="false" set="season">
+          	<control template="/org/alfresco/components/form/controls/boolean.ftl"/>
+            <constraint-handlers>
+              <constraint event="change@[{'prop':'prop_gs1_isTradeItemSeasonal', 'condition' : '|false'}]" type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf"/>
+            </constraint-handlers>
+          </field>
+          <field id="gs1:seasonCalendarYear" mandatory="false" read-only="false" set="season">
+          	<control template="/org/alfresco/components/form/controls/boolean.ftl"/>
+            <constraint-handlers>
+              <constraint event="change@[{'prop':'prop_gs1_isTradeItemSeasonal', 'condition' : '|false'}]" type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf"/>
+            </constraint-handlers>
+          </field>
+          <field id="gs1:seasonName" mandatory="false" read-only="false" set="season">
+          	<control template="/org/alfresco/components/form/controls/boolean.ftl"/>
+            <constraint-handlers>
+              <constraint event="change@[{'prop':'prop_gs1_isTradeItemSeasonal', 'condition' : '|false'}]" type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf"/>
+            </constraint-handlers>
+          </field>
+          <field id="gs1:seasonParameterCode" mandatory="false" read-only="false" set="season">
+          	<control template="/org/alfresco/components/form/controls/boolean.ftl"/>
+            <constraint-handlers>
+              <constraint event="change@[{'prop':'prop_gs1_isTradeItemSeasonal', 'condition' : '|false'}]" type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf"/>
+            </constraint-handlers>
+          </field>
+          
           <field id="gs1:referencedTradeItemTypeCode" mandatory="false" read-only="false" set="mainInfo"/>
           <field id="bcpg:subsidiaryRef" mandatory="false" read-only="false" set="mainInfo"/>
           <field id="bcpg:trademarkRef" mandatory="false" read-only="false" set="mainInfo"/>
@@ -1756,9 +1797,9 @@
           <show force="true" id="bcpg:projectedQty"/>
           <show force="false" id="cm:taggable"/>
           <show force="false" id="cm:categories"/>
-			<show force ="true" id="bcpg:regulatoryMode" />
+		  <show force ="true" id="bcpg:regulatoryMode" />
           <show force ="true" id="bcpg:regulatoryCountries" />
-			<show force ="true" id="bcpg:regulatoryUsageRef" />
+		  <show force ="true" id="bcpg:regulatoryUsageRef" />
         </field-visibility>
         <appearance>
           <set appearance="bordered-panel" id="mainInfo" label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
@@ -2199,6 +2240,12 @@
           <show force="true" id="gs1:sellingUnitOfMeasure"/>
           <show force="true" id="gs1:isTradeItemAFullDisplayStand"/>
           <show force="true" id="gs1:hasDisplayReadyPackaging"/>
+          <show force="true" id="gs1:isTradeItemSeasonal"/>
+          <show force="true" id="gs1:seasonalAvailabilityStartDateTime"/>
+          <show force="true" id="gs1:seasonalAvailabilityEndDateTime"/>
+          <show force="true" id="gs1:seasonCalendarYear"/>
+          <show force="true" id="gs1:seasonName"/>
+          <show force="true" id="gs1:seasonParameterCode"/>
         </field-visibility>
         <appearance>
           <set id="mainTab" label-id="becpg.forms.set.characteristics.label"/>
@@ -2287,6 +2334,15 @@
             </constraint-handlers>
           </field>
           <field id="gs1:referencedTradeItemTypeCode" mandatory="false" read-only="false" set="mainInfo"/>
+          
+          <set id="season" label-id="becpg.forms.set.season.label"/>
+          <field id="gs1:isTradeItemSeasonal" mandatory="false" read-only="false" set="season"/>
+          <field id="gs1:seasonalAvailabilityStartDateTime" mandatory="false" read-only="false" set="season"/>
+          <field id="gs1:seasonalAvailabilityEndDateTime" mandatory="false" read-only="false" set="season"/>
+          <field id="gs1:seasonCalendarYear" mandatory="false" read-only="false" set="season"/>
+          <field id="gs1:seasonName" mandatory="false" read-only="false" set="season"/>
+          <field id="gs1:seasonParameterCode" mandatory="false" read-only="false" set="season"/>
+          
           <field id="bcpg:subsidiaryRef" mandatory="false" read-only="false" set="mainInfo"/>
           <field id="bcpg:trademarkRef" mandatory="false" read-only="false" set="mainInfo"/>
           <field id="bcpg:plants" mandatory="false" read-only="false" set="mainInfo"/>
