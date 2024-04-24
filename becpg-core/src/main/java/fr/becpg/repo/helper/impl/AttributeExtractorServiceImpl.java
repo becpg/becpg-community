@@ -576,7 +576,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 			if ((value instanceof NodeRef) || (value instanceof String) || (value instanceof List)) {
 				if (DataTypeDefinition.ANY.toString().equals(propertyDef.getDataType().toString()) && (value instanceof String)) {
-					Object ret =  (Serializable) JsonFormulaHelper.cleanCompareJSON((String) value);
+					Object ret =  JsonFormulaHelper.cleanCompareJSON((String) value);
 					if(ret instanceof Serializable) {
 						value = (Serializable) ret;
 					} else {
