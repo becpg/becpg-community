@@ -63,7 +63,7 @@
 			<parent>bcpg:entityListItem</parent>
 			<properties>
 				<property name="survey:slComment">
-					<type>d:any</type>
+					<type>d:text</type>
 				</property>
 				<property name="survey:slResponse">
 					<type>d:any</type>
