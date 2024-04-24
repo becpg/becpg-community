@@ -546,11 +546,32 @@
 			</parameter>
 		</constraint>
 		
+		<constraint name="gs1:referencedTradeItemTypeCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
+				</list>
+			</parameter>
+			<parameter name="constraintFilter">
+				<value>ReferencedTradeItemTypeCode</value>
+			</parameter>
+		</constraint>
+		
 		 <constraint name='gs1:text200' type='LENGTH'>
 	        <parameter name='maxLength'><value>200</value></parameter>
 	     </constraint>
 
-
+		<constraint name='gs1:text1000' type='LENGTH'>
+	        <parameter name='maxLength'><value>1000</value></parameter>
+	     </constraint>
+	     
+	     <constraint name='gs1:text35' type='LENGTH'>
+	        <parameter name='maxLength'><value>35</value></parameter>
+	     </constraint>
+	     
+	     <constraint name='gs1:text500' type='LENGTH'>
+	        <parameter name='maxLength'><value>500</value></parameter>
+	     </constraint>
 
 	</constraints>
 	<types>
@@ -1745,6 +1766,9 @@ gs1:secondaryStackingMaxWeight -->
 						<tokenised>both</tokenised>
 						<facetable>false</facetable>
 					</index>
+					<constraints>
+						<constraint ref="gs1:text35"/>
+					</constraints>
 				</property>
 				<property name="gs1:descriptionShort">
 					<type>d:mltext</type>
@@ -1754,7 +1778,7 @@ gs1:secondaryStackingMaxWeight -->
 						<facetable>false</facetable>
 					</index>
 					<constraints>
-						<constraint ref="gs1:text200"/>
+						<constraint ref="gs1:text500"/>
 					</constraints>
 				</property>
 				
@@ -1765,6 +1789,9 @@ gs1:secondaryStackingMaxWeight -->
 						<tokenised>both</tokenised>
 						<facetable>false</facetable>
 					</index>
+					<constraints>
+						<constraint ref="gs1:text200"/>
+					</constraints>
 				</property>
 				
 				<property name="gs1:tradeItemUnitDescriptorCode">
@@ -1804,7 +1831,14 @@ gs1:secondaryStackingMaxWeight -->
 				
 				
 				
-				
+				<property name="gs1:healthClaimDescription">
+					<type>d:mltext</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
 				<property name="gs1:preparationType">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
@@ -2234,6 +2268,28 @@ gs1:secondaryStackingMaxWeight -->
 						<tokenised>false</tokenised>
 						<facetable>false</facetable>
 					</index>
+				</property>
+			</properties>
+		</aspect>
+		
+		<aspect name="gs1:referencedTradeItemAspect">
+			<properties>
+				<property name="gs1:referencedTradeItemEanCode">
+					<type>d:text</type>
+					<index enabled="true">
+					    <tokenised>false</tokenised>
+					    <facetable>false</facetable>
+					</index>
+				</property>
+				<property name="gs1:referencedTradeItemTypeCode">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+					<constraints>
+						<constraint ref="gs1:referencedTradeItemTypeCodes"/>
+					</constraints>
 				</property>
 			</properties>
 		</aspect>
