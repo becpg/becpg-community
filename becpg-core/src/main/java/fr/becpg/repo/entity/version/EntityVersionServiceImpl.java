@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.alfresco.model.ApplicationModel;
 import org.alfresco.model.ContentModel;
@@ -65,6 +66,7 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
 import org.alfresco.service.transaction.TransactionService;
+import org.alfresco.util.transaction.TransactionListenerAdapter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
@@ -99,6 +101,7 @@ import fr.becpg.repo.jscript.BeCPGStateHelper;
 import fr.becpg.repo.jscript.BeCPGStateHelper.ActionStateContext;
 import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
+import fr.becpg.util.MutexFactory;
 
 /**
  * Store the entity version history in the SpacesStore otherwise we cannot use
@@ -201,7 +204,10 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	
 	@Autowired
 	private NamespaceService namespaceService;
-
+	
+	@Autowired
+	private MutexFactory mutexFactory;
+	
 	/** {@inheritDoc} */
 	@Override
 	public void cancelCheckOut(final NodeRef origNodeRef, final NodeRef workingCopyNodeRef) {
@@ -417,29 +423,54 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	public  NodeRef getVersionHistoryNodeRef(NodeRef nodeRef, boolean shouldCreate) {
 		NodeRef vhNodeRef = null;
 		if (nodeRef != null) {
-			final NodeRef entitiesHistoryFolder = getEntitiesHistoryFolder();
-
-			vhNodeRef = nodeService.getChildByName(entitiesHistoryFolder, ContentModel.ASSOC_CONTAINS, nodeRef.getId());
-
-			if (vhNodeRef == null) {
-				vhNodeRef = nodeService.getChildByName(entitiesHistoryFolder, ContentModel.ASSOC_CHILDREN, nodeRef.getId());
-			}
-
-			if (shouldCreate && vhNodeRef == null && AlfrescoTransactionSupport.getTransactionReadState() == TxnReadState.TXN_READ_WRITE) {
-				return AuthenticationUtil.runAsSystem(() -> {
-					Map<QName, Serializable> props = new HashMap<>();
-					props.put(ContentModel.PROP_NAME, nodeRef.getId());
-
-					return nodeService
-							.createNode(entitiesHistoryFolder, ContentModel.ASSOC_CONTAINS,
-									QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, nodeRef.getId()), ContentModel.TYPE_FOLDER, props)
-							.getChildRef();
-
-				});
+			
+			ReentrantLock lock = mutexFactory.getMutex(nodeRef.toString());
+			lock.lock();
+			
+			AlfrescoTransactionSupport.bindListener(new TransactionListenerAdapter() {
+				@Override
+				public void afterCommit() {
+					releaseLock(nodeRef, lock);
+				}
+				@Override
+				public void afterRollback() {
+					releaseLock(nodeRef, lock);
+				}
+			});
+			
+			try {
+				final NodeRef entitiesHistoryFolder = getEntitiesHistoryFolder();
+				
+				vhNodeRef = nodeService.getChildByName(entitiesHistoryFolder, ContentModel.ASSOC_CONTAINS, nodeRef.getId());
+				
+				if (vhNodeRef == null) {
+					vhNodeRef = nodeService.getChildByName(entitiesHistoryFolder, ContentModel.ASSOC_CHILDREN, nodeRef.getId());
+				}
+				
+				if (shouldCreate && vhNodeRef == null && AlfrescoTransactionSupport.getTransactionReadState() == TxnReadState.TXN_READ_WRITE) {
+					return AuthenticationUtil.runAsSystem(() -> {
+						Map<QName, Serializable> props = new HashMap<>();
+						props.put(ContentModel.PROP_NAME, nodeRef.getId());
+						
+						return nodeService
+								.createNode(entitiesHistoryFolder, ContentModel.ASSOC_CONTAINS,
+										QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, nodeRef.getId()), ContentModel.TYPE_FOLDER, props)
+								.getChildRef();
+						
+					});
+				}
+			} catch (Exception e) {
+				releaseLock(nodeRef, lock);
+				throw e;
 			}
 
 		}
 		return vhNodeRef;
+	}
+
+	private void releaseLock(NodeRef nodeRef, ReentrantLock lock) {
+		mutexFactory.removeMutex(nodeRef.toString(), lock);
+		lock.unlock();
 	}
 
 	/**
