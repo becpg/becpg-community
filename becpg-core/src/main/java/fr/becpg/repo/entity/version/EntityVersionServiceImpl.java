@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.ReentrantLock;
 
 import org.alfresco.model.ApplicationModel;
 import org.alfresco.model.ContentModel;
@@ -66,7 +65,6 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
 import org.alfresco.service.transaction.TransactionService;
-import org.alfresco.util.transaction.TransactionListenerAdapter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
@@ -101,7 +99,6 @@ import fr.becpg.repo.jscript.BeCPGStateHelper;
 import fr.becpg.repo.jscript.BeCPGStateHelper.ActionStateContext;
 import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
-import fr.becpg.util.MutexFactory;
 
 /**
  * Store the entity version history in the SpacesStore otherwise we cannot use
@@ -204,9 +201,6 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	
 	@Autowired
 	private NamespaceService namespaceService;
-	
-	@Autowired
-	private MutexFactory mutexFactory;
 	
 	/** {@inheritDoc} */
 	@Override
@@ -424,20 +418,6 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		NodeRef vhNodeRef = null;
 		if (nodeRef != null) {
 			
-			ReentrantLock lock = mutexFactory.getMutex(nodeRef.toString());
-			lock.lock();
-			
-			AlfrescoTransactionSupport.bindListener(new TransactionListenerAdapter() {
-				@Override
-				public void afterCommit() {
-					releaseLock(nodeRef, lock);
-				}
-				@Override
-				public void afterRollback() {
-					releaseLock(nodeRef, lock);
-				}
-			});
-			
 			try {
 				final NodeRef entitiesHistoryFolder = getEntitiesHistoryFolder();
 				
@@ -459,18 +439,12 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 						
 					});
 				}
-			} catch (Exception e) {
-				releaseLock(nodeRef, lock);
-				throw e;
+			} catch (DuplicateChildNodeNameException e) {
+				throw new ConcurrencyFailureException(e.getMessage());
 			}
 
 		}
 		return vhNodeRef;
-	}
-
-	private void releaseLock(NodeRef nodeRef, ReentrantLock lock) {
-		mutexFactory.removeMutex(nodeRef.toString(), lock);
-		lock.unlock();
 	}
 
 	/**
