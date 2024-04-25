@@ -128,6 +128,7 @@
 	<bean id="permissionPolicy" class="fr.becpg.repo.security.policy.PermissionPolicy" parent="abstractBeCPGPolicy">
 		<property name="associationService" ref="associationService" />
 		<property name="permissionService" ref="permissionService" />
+		<property name="securityService" ref="securityService" />
 	</bean>
 
 </beans>

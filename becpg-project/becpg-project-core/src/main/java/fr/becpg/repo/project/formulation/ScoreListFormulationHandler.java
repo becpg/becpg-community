@@ -28,12 +28,15 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
+
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
+
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.survey.SurveyModel;
+
 import fr.becpg.repo.survey.data.SurveyList;
 import fr.becpg.repo.survey.data.SurveyQuestion;
 import fr.becpg.repo.survey.data.SurveyableEntity;
@@ -62,6 +65,7 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 	/** {@inheritDoc} */
 	@Override
 	public boolean process(SurveyableEntity surveyableEntity) {
+
 		
 		if(accept(surveyableEntity)){
 
@@ -102,11 +106,13 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 				} else {
 					surveyableEntity.setScore(totalScore / totalWeight);
 				}
+
 			}
 		}
 
 		return true;
 	}
+
 
 	private boolean accept(SurveyableEntity surveyableEntity) {
 		
@@ -157,6 +163,7 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 					.findFirst();
 			if (scoreForCriterion.isPresent()) {
 				scoreForCriterion.get().setScore(score);
+
 			}
 		}
 	}
