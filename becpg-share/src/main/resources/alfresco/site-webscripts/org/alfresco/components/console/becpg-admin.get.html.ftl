@@ -103,10 +103,6 @@
 					    		<button type="button" name="${el}-init-repo-button" id="${el}-init-repo-button">${msg("button.init-repo")}</button>
 					    		<label for="${el}-init-repo-button">${msg("label.init-repo")}</label>   		
 					    	</div>
-					    	<div class="action">
-					    		<button type="button" name="${el}-init-acl-button" id="${el}-init-acl-button">${msg("button.init-acl")}</button>
-					    		 <label for="${el}-init-acl-button">${msg("label.init-acl")}</label>   	
-					    	</div>
 						</div>
 					 </@markup>	
 				    </div>
