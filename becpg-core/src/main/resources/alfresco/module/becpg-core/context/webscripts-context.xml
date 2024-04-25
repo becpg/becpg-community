@@ -52,7 +52,6 @@
 	<bean id="webscript.fr.becpg.admin.adminModule.get" class="fr.becpg.repo.web.scripts.admin.AdminModuleWebScript" parent="webscript">
 		<property name="repository" ref="repositoryHelper" />
 		<property name="beCPGCacheService" ref="beCPGCacheService" />
-		<property name="securityService" ref="securityService" />
 		<property name="dictionaryDAO" ref="dictionaryDAO" />
 		<property name="entitySystemService" ref="entitySystemService" />
 		<property name="authenticationService" ref="authenticationService" />
