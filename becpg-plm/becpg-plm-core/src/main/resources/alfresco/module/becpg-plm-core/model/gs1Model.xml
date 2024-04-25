@@ -568,6 +568,17 @@
 			</parameter>
 		</constraint>
 		
+		<constraint name="gs1:pegHoleTypeCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
+				</list>
+			</parameter>
+			<parameter name="constraintFilter">
+				<value>PegHoleTypeCode</value>
+			</parameter>
+		</constraint>
+		
 		 <constraint name='gs1:text200' type='LENGTH'>
 	        <parameter name='maxLength'><value>200</value></parameter>
 	     </constraint>
@@ -1927,6 +1938,28 @@ gs1:secondaryStackingMaxWeight -->
 						<constraint ref="gs1:dataCarrierTypeCodes" />
 					</constraints>
 				</property>
+				<property name="gs1:secondaryDataCarrierTypeCode">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="gs1:dataCarrierTypeCodes" />
+					</constraints>
+				</property>
+				<property name="gs1:tertiaryDataCarrierTypeCode">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="gs1:dataCarrierTypeCodes" />
+					</constraints>
+				</property>
 
 				<property name="gs1:freeQuantityOfProduct">
 					<type>d:float</type>
@@ -2351,6 +2384,45 @@ gs1:secondaryStackingMaxWeight -->
 					<constraints>
 						<constraint ref="gs1:seasonParameterCodes"/>
 					</constraints>
+				</property>
+			</properties>
+		</aspect>
+		
+		<aspect name="gs1:pegHoleAspect">
+			<properties>
+				<property name="gs1:pegHoleNumber">
+					<type>d:int</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
+				<property name="gs1:pegHoleTypeCode">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+					<constraints>
+						<constraint ref="gs1:pegHoleTypeCode"/>
+					</constraints>
+				</property>
+				<property name="gs1:pegHorizontal">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
+				<property name="gs1:pegVertical">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
 				</property>
 			</properties>
 		</aspect>
