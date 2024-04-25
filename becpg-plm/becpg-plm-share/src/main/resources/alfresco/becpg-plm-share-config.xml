@@ -134,10 +134,8 @@
 			<list id="replacementList" index="190" />
 			<list id="certification" index="200"/>
 			<list id="plant" index="210"/>
-			
-			<list id="regulatoryList" index="212"/>
-			<list id="ingRegulatoryList" index="213"/>
-			
+			<list id="regulatoryList" index="213"/>
+			<list id="ingRegulatoryList" index="214"/>
 			<list id="wUsedList" index="220" />
 			<list id="calculatedCharactList" index="230" />
 			<list id="changeUnitList" index="240" />

@@ -65,13 +65,14 @@
 		<lists>
 		   <list id="taskList" index="20" view="true" />
 		   <list id="deliverableList" index="30" />
-		   <list id="scoreList" index="35" />
-		   <list id="surveyList" index="211"/>
+	
 		   <list id="entityRequestList" index="40" />
 		   <list id="budgetList" index="45" />
 		   <list id="expenseList" index="50" />
 		   <list id="invoiceList" index="60" />
 		   <list id="logTimeList" index="70" />
+		   <list id="scoreList" index="211" />
+		   <list id="surveyList" index="212"/>
 		</lists>
 	</config>
 	

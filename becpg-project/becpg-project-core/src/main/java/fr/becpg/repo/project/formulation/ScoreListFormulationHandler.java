@@ -26,10 +26,14 @@ import java.util.Optional;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
+import fr.becpg.repo.repository.model.BeCPGDataObject;
+import fr.becpg.repo.survey.SurveyModel;
 import fr.becpg.repo.survey.data.SurveyList;
 import fr.becpg.repo.survey.data.SurveyQuestion;
 import fr.becpg.repo.survey.data.SurveyableEntity;
@@ -58,45 +62,60 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 	/** {@inheritDoc} */
 	@Override
 	public boolean process(SurveyableEntity surveyableEntity) {
+		
+		if(accept(surveyableEntity)){
 
-		List<ScoreListDataItem> scoreList = surveyableEntity.getScoreList();
+			List<ScoreListDataItem> scoreList = surveyableEntity.getScoreList();
+	
+			// Score can be set manually
+			if ((surveyableEntity.getScoreList() != null) && !surveyableEntity.getScoreList().isEmpty()) {
+				
 
-		// If surveyList is empty, we do nothing
-		if ((surveyableEntity.getSurveyList() != null) && !surveyableEntity.getSurveyList().isEmpty()) {
-
-			Map<String, Integer> scoresPerCriterion = new HashMap<>();
-			Map<String, Integer> nbOfQuestionsPerCriterion = new HashMap<>();
-
-			fillScoresAndNbQuestions(surveyableEntity, scoresPerCriterion, nbOfQuestionsPerCriterion);
-
-			// For each criterion present in the surveyList, we calculate the score for each criterion in the scoreList. For the criterion that are not
-			// in the surveyList, we do nothing
-			calculateAndFillScoreList(scoreList, scoresPerCriterion, nbOfQuestionsPerCriterion);
-		}
-
-		// Score can be set manually
-		if ((surveyableEntity.getScoreList() != null) && !surveyableEntity.getScoreList().isEmpty()) {
-
-			int totalScore = 0;
-			int totalWeight = 0;
-			surveyableEntity.setScore(null);
-			for (ScoreListDataItem sl : surveyableEntity.getScoreList()) {
-
-				if ((sl.getWeight() != null) && (sl.getScore() != null)) {
-					totalScore += sl.getWeight() * sl.getScore();
-					totalWeight += sl.getWeight();
+				// If surveyList is empty, we do nothing
+				if ((surveyableEntity.getSurveyList() != null) && !surveyableEntity.getSurveyList().isEmpty()) {
+		
+					Map<String, Integer> scoresPerCriterion = new HashMap<>();
+					Map<String, Integer> nbOfQuestionsPerCriterion = new HashMap<>();
+		
+					fillScoresAndNbQuestions(surveyableEntity, scoresPerCriterion, nbOfQuestionsPerCriterion);
+		
+					// For each criterion present in the surveyList, we calculate the score for each criterion in the scoreList. For the criterion that are not
+					// in the surveyList, we do nothing
+					calculateAndFillScoreList(scoreList, scoresPerCriterion, nbOfQuestionsPerCriterion);
 				}
-				logger.debug("totalScore: " + totalScore + " totalWeight: " + totalWeight);
-			}
-
-			if (totalWeight == 0) {
-				logger.debug("Total weight of project " + surveyableEntity.getNodeRef() + " is equal to 0.");
-			} else {
-				surveyableEntity.setScore(totalScore / totalWeight);
+		
+	
+				int totalScore = 0;
+				int totalWeight = 0;
+				surveyableEntity.setScore(null);
+				for (ScoreListDataItem sl : surveyableEntity.getScoreList()) {
+	
+					if ((sl.getWeight() != null) && (sl.getScore() != null)) {
+						totalScore += sl.getWeight() * sl.getScore();
+						totalWeight += sl.getWeight();
+					}
+					logger.debug("totalScore: " + totalScore + " totalWeight: " + totalWeight);
+				}
+	
+				if (totalWeight == 0) {
+					logger.debug("Total weight of project " + surveyableEntity.getNodeRef() + " is equal to 0.");
+				} else {
+					surveyableEntity.setScore(totalScore / totalWeight);
+				}
 			}
 		}
 
 		return true;
+	}
+
+	private boolean accept(SurveyableEntity surveyableEntity) {
+		
+		if(surveyableEntity instanceof BeCPGDataObject && ((BeCPGDataObject)surveyableEntity).getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
+			return false;
+		}
+		
+		return alfrescoRepository.hasDataList(surveyableEntity, ProjectModel.TYPE_SCORE_LIST)
+						&& alfrescoRepository.hasDataList(surveyableEntity, SurveyModel.TYPE_SURVEY_LIST);
 	}
 
 	/**
@@ -138,13 +157,6 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 					.findFirst();
 			if (scoreForCriterion.isPresent()) {
 				scoreForCriterion.get().setScore(score);
-
-			} else {
-				ScoreListDataItem scoreItem = new ScoreListDataItem();
-				scoreItem.setCriterion(criterionScore.getKey());
-				scoreItem.setScore(score);
-
-				scoreList.add(scoreItem);
 			}
 		}
 	}
