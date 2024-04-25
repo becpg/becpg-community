@@ -94,6 +94,11 @@
           <show force="false" id="gs1:seasonName"/>
           <show force="false" id="gs1:seasonParameterCode"/>
           
+          <show force="false" id="gs1:pegHoleNumber"/>
+          <show force="false" id="gs1:pegHoleTypeCode"/>
+          <show force="false" id="gs1:pegHorizontal"/>
+          <show force="false" id="gs1:pegVertical"/>
+          
           <show force="false" id="gs1:cheeseMaturationPeriodDescription"/>
 		  <show force="false" id="gs1:cheeseMaturationProcessContainerTypeCode"/>
 		  <show force="false" id="gs1:fatPercentageInDryMatter"/>
@@ -187,6 +192,7 @@
           <show force="false" id="gs1:secondaryDiameter"/>
           <show force="false" id="gs1:secondaryNetWeight"/>
           <show force="false" id="gs1:secondaryWeight"/>
+          <show force="false" id="gs1:secondaryDataCarrierTypeCode"/>
           <show force="false" id="gs1:palletTypeCode"/>
           <show force="false" id="pack:palletLayers"/>
           <show force="false" id="pack:palletBoxesPerLayer"/>
@@ -195,6 +201,7 @@
           <show force="false" id="pack:palletHeight"/>
           <show force="false" id="gs1:tertiaryWidth"/>
           <show force="false" id="gs1:tertiaryDepth"/>
+          <show force="false" id="gs1:tertiaryDataCarrierTypeCode"/>
           <show force="false" id="pack:palletNumberOnGround"/>
           <show force="false" id="pack:palletStackingMaxWeight"/>
           <show force="false" id="gs1:tertiaryNetWeight"/>
@@ -364,7 +371,7 @@
             </constraint-handlers>
           </field>
           
-          <set id="season" label-id="becpg.forms.set.season.label"/>
+          <set appearance="bordered-panel" id="season" label-id="becpg.forms.set.season.label" parent="mainTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field id="gs1:isTradeItemSeasonal" mandatory="false" read-only="false" set="season"/>
           <field id="gs1:seasonalAvailabilityStartDateTime" mandatory="false" read-only="false" set="season">
           	<control template="/org/alfresco/components/form/controls/boolean.ftl"/>
@@ -396,6 +403,12 @@
               <constraint event="change@[{'prop':'prop_gs1_isTradeItemSeasonal', 'condition' : '|false'}]" type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf"/>
             </constraint-handlers>
           </field>
+          
+          <set appearance="bordered-panel" id="pegHole" label-id="becpg.forms.set.pegHole.label" parent="mainTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
+          <field id="gs1:pegHoleNumber" mandatory="false" read-only="false" set="pegHole"/>
+          <field id="gs1:pegHoleTypeCode" mandatory="false" read-only="false" set="pegHole"/>
+          <field id="gs1:pegHorizontal" mandatory="false" read-only="false" set="pegHole"/>
+          <field id="gs1:pegVertical" mandatory="false" read-only="false" set="pegHole"/>
           
           <field id="gs1:referencedTradeItemTypeCode" mandatory="false" read-only="false" set="mainInfo"/>
           <field id="bcpg:subsidiaryRef" mandatory="false" read-only="false" set="mainInfo"/>
@@ -837,6 +850,8 @@
               <control-param name="unit">kg</control-param>
             </control>
           </field>
+          <field help-id="becpg.forms.help.gs1.dataCarrierTypeCode" id="gs1:secondaryDataCarrierTypeCode" mandatory="false" read-only="false" set="secondaryPackaging"/>
+          
           <set appearance="bordered-panel" id="tertiaryPackaging" label-id="becpg.forms.set.tertiaryPackaging.label" parent="conditioningTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field help-id="becpg.forms.help.gs1.palletTypeCode" id="gs1:palletTypeCode" mandatory="false" read-only="false" set="tertiaryPackaging"/>
           <field id="pack:palletLayers" mandatory="false" read-only="false" set="tertiaryPackaging"/>
@@ -874,6 +889,7 @@
               <control-param name="unit">kg</control-param>
             </control>
           </field>
+          <field help-id="becpg.forms.help.gs1.dataCarrierTypeCode" id="gs1:tertiaryDataCarrierTypeCode" mandatory="false" read-only="false" set="tertiaryPackaging"/>
           <set appearance="bordered-panel" id="packSorting" label-id="becpg.forms.set.packSorting.label" parent="conditioningTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field help-id="becpg.forms.help.gs1.isTradeItemMarkedAsRecyclable" id="gs1:isTradeItemMarkedAsRecyclable" mandatory="false" read-only="false" set="packSorting">
             <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
@@ -2178,6 +2194,7 @@
           <show force="true" id="gs1:secondaryDiameter"/>
           <show force="true" id="gs1:secondaryNetWeight"/>
           <show force="true" id="gs1:secondaryWeight"/>
+          <show force="true" id="gs1:secondaryDataCarrierTypeCode"/>
           <show force="true" id="gs1:palletTypeCode"/>
           <show force="true" id="pack:palletLayers"/>
           <show force="true" id="pack:palletBoxesPerLayer"/>
@@ -2190,6 +2207,7 @@
           <show force="true" id="pack:palletStackingMaxWeight"/>
           <show force="true" id="gs1:tertiaryNetWeight"/>
           <show force="true" id="gs1:tertiaryWeight"/>
+          <show force="true" id="gs1:tertiaryDataCarrierTypeCode"/>
           <show force="true" id="gs1:isTradeItemMarkedAsRecyclable"/>
           <show force="true" id="gs1:isPackagingMarkedReturnable"/>
           <show force="true" id="gs1:packagingRecyclingProcessTypeCode" />
@@ -2246,6 +2264,10 @@
           <show force="true" id="gs1:seasonCalendarYear"/>
           <show force="true" id="gs1:seasonName"/>
           <show force="true" id="gs1:seasonParameterCode"/>
+          <show force="true" id="gs1:pegHoleNumber"/>
+          <show force="true" id="gs1:pegHoleTypeCode"/>
+          <show force="true" id="gs1:pegHorizontal"/>
+          <show force="true" id="gs1:pegVertical"/>
         </field-visibility>
         <appearance>
           <set id="mainTab" label-id="becpg.forms.set.characteristics.label"/>
@@ -2335,13 +2357,19 @@
           </field>
           <field id="gs1:referencedTradeItemTypeCode" mandatory="false" read-only="false" set="mainInfo"/>
           
-          <set id="season" label-id="becpg.forms.set.season.label"/>
+          <set appearance="bordered-panel" id="season" label-id="becpg.forms.set.season.label" parent="mainTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field id="gs1:isTradeItemSeasonal" mandatory="false" read-only="false" set="season"/>
           <field id="gs1:seasonalAvailabilityStartDateTime" mandatory="false" read-only="false" set="season"/>
           <field id="gs1:seasonalAvailabilityEndDateTime" mandatory="false" read-only="false" set="season"/>
           <field id="gs1:seasonCalendarYear" mandatory="false" read-only="false" set="season"/>
           <field id="gs1:seasonName" mandatory="false" read-only="false" set="season"/>
           <field id="gs1:seasonParameterCode" mandatory="false" read-only="false" set="season"/>
+          
+          <set appearance="bordered-panel" id="pegHole" label-id="becpg.forms.set.pegHole.label" parent="mainTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
+          <field id="gs1:pegHoleNumber" mandatory="false" read-only="false" set="pegHole"/>
+          <field id="gs1:pegHoleTypeCode" mandatory="false" read-only="false" set="pegHole"/>
+          <field id="gs1:pegHorizontal" mandatory="false" read-only="false" set="pegHole"/>
+          <field id="gs1:pegVertical" mandatory="false" read-only="false" set="pegHole"/>
           
           <field id="bcpg:subsidiaryRef" mandatory="false" read-only="false" set="mainInfo"/>
           <field id="bcpg:trademarkRef" mandatory="false" read-only="false" set="mainInfo"/>
@@ -2676,6 +2704,8 @@
               <control-param name="unit">kg</control-param>
             </control>
           </field>
+          <field help-id="becpg.forms.help.gs1.dataCarrierTypeCode" id="gs1:secondaryDataCarrierTypeCode" mandatory="false" read-only="false" set="secondaryPackaging"/>
+          
           <set appearance="bordered-panel" id="tertiaryPackaging" label-id="becpg.forms.set.tertiaryPackaging.label" parent="conditioningTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field help-id="becpg.forms.help.gs1.palletTypeCode" id="gs1:palletTypeCode" mandatory="false" read-only="false" set="tertiaryPackaging"/>
           <field id="pack:palletLayers" mandatory="false" read-only="false" set="tertiaryPackaging"/>
@@ -2713,6 +2743,7 @@
               <control-param name="unit">kg</control-param>
             </control>
           </field>
+          <field help-id="becpg.forms.help.gs1.dataCarrierTypeCode" id="gs1:tertiaryDataCarrierTypeCode" mandatory="false" read-only="false" set="tertiaryPackaging"/>
           <set appearance="bordered-panel" id="packSorting" label-id="becpg.forms.set.packSorting.label" parent="conditioningTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field help-id="becpg.forms.help.gs1.isTradeItemMarkedAsRecyclable" id="gs1:isTradeItemMarkedAsRecyclable" mandatory="false" read-only="false" set="packSorting">
             <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
