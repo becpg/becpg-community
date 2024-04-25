@@ -121,6 +121,16 @@ public class BeCPGOwnableServiceImpl extends OwnableServiceImpl {
 	/** {@inheritDoc} */
 	@Override
 	public String getOwner(NodeRef nodeRef) {
+		
+		// case of ExternalUser
+		String currentUser = AuthenticationUtil.getRunAsUser();
+		if (currentUser != null && AuthorityHelper.isExternalUser(currentUser) && nodeService.hasAspect(nodeRef, ContentModel.ASPECT_AUDITABLE)) {
+			String creator = DefaultTypeConverter.INSTANCE.convert(String.class, nodeService.getProperty(nodeRef, ContentModel.PROP_CREATOR));
+			if (AuthorityHelper.isExternalUser(creator)) {
+				return currentUser;
+			}
+		}
+		
 		String userName = nodeOwnerCache.get(nodeRef);
 
 		if (userName == null) {
