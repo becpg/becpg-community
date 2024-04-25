@@ -53,13 +53,10 @@ services:
 #      - becpg_data:/data2
 #      - becpg_share_data:/data1      
 #    command: sh -c "chown -R 33000:1000 /data1 && chown -R alfresco:alfresco /data2"   
-<<<<<<< HEAD
-
 
   becpg-report:
     image:  europe-west1-docker.pkg.dev/becpg-314807/becpg-docker/becpg-report:4.4.0
     user: root
     ports:
        - "8086:8080"
-=======
->>>>>>> 3d04468b42e0cbf9ab3287c77a753f2dc3802bbb
+
