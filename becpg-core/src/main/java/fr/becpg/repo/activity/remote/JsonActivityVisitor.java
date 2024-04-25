@@ -121,20 +121,21 @@ public class JsonActivityVisitor implements RemoteActivityVisitor {
 			} else if (summary.keySet().contains("entityNodeRef")) {
 				nodeRef = new NodeRef(toString(summary.get("entityNodeRef")));
 			}
-			if (nodeRef != null && (nodeService.exists(nodeRef))) {
-				if (nodeService.hasAspect(nodeRef, VirtualContentModel.ASPECT_VIRTUAL_DOCUMENT)) {
-					nodeRef = new NodeRef((String) nodeService.getProperty(nodeRef, VirtualContentModel.PROP_ACTUAL_NODE_REF));
-				}
-
+			if (nodeRef != null) {
 				feedEntityJson.put(NODE_REF, nodeRef.toString());
 
-				feedEntityJson.put("nodeType", nodeService.getType(nodeRef).toPrefixString(namespaceService));
-				ContentReader contentReader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
-				if ((contentReader != null) && (contentReader.getMimetype() != null)) {
-					feedEntityJson.put("mimeType", contentReader.getMimetype());
+				if (nodeService.exists(nodeRef)) {
+					if (nodeService.hasAspect(nodeRef, VirtualContentModel.ASPECT_VIRTUAL_DOCUMENT)) {
+						nodeRef = new NodeRef((String) nodeService.getProperty(nodeRef, VirtualContentModel.PROP_ACTUAL_NODE_REF));
+					}
+
+					feedEntityJson.put("nodeType", nodeService.getType(nodeRef).toPrefixString(namespaceService));
+					ContentReader contentReader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
+					if ((contentReader != null) && (contentReader.getMimetype() != null)) {
+						feedEntityJson.put("mimeType", contentReader.getMimetype());
+					}
 				}
 			}
-
 			feedEntityJson.put(TITLE, toString(summary.opt(TITLE)));
 			feedEntityJson.put(LAST_NAME, toString(summary.opt(LAST_NAME)));
 			feedEntityJson.put(FIRST_NAME, toString(summary.opt(FIRST_NAME)));
