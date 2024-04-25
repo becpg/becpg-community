@@ -403,6 +403,9 @@ public class JSONVersionExtractor extends ActivityListExtractor {
 		} else if (metadata.equals("text") && attribute.isMultiValued()) {
 			seri = (Serializable) convertStringToList(seri.toString());
 			displayName = attributeExtractorService.getStringValue(attribute, seri, attributeExtractorService.getPropertyFormats(mode, false));
+		} else if (metadata.equals("qname")) {
+			seri = QName.createQName(seri.toString());
+			displayName = attributeExtractorService.getStringValue(attribute, seri, attributeExtractorService.getPropertyFormats(mode, false));
 		} else {
 			displayName = attributeExtractorService.getStringValue(attribute, seri, attributeExtractorService.getPropertyFormats(mode, false));
 		}
