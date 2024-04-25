@@ -327,7 +327,11 @@ public class StartProcessWebscript extends AbstractWebScript {
 				Map<String, Object> model = new HashMap<>();
 				model.put("items",  nodeRefs.stream().map(n -> new ActivitiScriptNode(n,serviceRegistry)).toArray(ScriptNode[]::new));
 				model.put("formData", json == null ? "" : json.toString());
-				model.put("currentUserNodeRef", personService.getPerson(AuthenticationUtil.getFullyAuthenticatedUser()).toString());
+				
+				NodeRef currentUserNodeRef = personService.getPerson(AuthenticationUtil.getFullyAuthenticatedUser());
+				if(currentUserNodeRef!=null) {
+					model.put("currentUserNodeRef", currentUserNodeRef.toString());
+				}
 				
 				ret.put("persistedObject", scriptService.executeScript(processScriptNodeRef, ContentModel.PROP_CONTENT, model));
 			}

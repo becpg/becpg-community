@@ -217,6 +217,7 @@
 		<property name="workflowService" ref="WorkflowService"/>	
 		<property name="authorityDAO" ref="authorityDAO"/>	
 		<property name="associationService" ref="associationService"/>	
+		<property name="personService" ref="PersonService" />
 	</bean>
 
 	<alias name="webscript.fr.becpg.workflow.startProcess.get" alias="webscript.fr.becpg.workflow.startProcess.post" />
