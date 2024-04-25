@@ -211,14 +211,14 @@ public class ECOServiceImpl implements ECOService {
 				
 				List<NodeRef> impactedProducts = new ArrayList<>();
 				
-				if (ChangeOrderType.ImpactWUsed.equals(ecoData.getEcoType())) {
+				if (ChangeOrderType.ImpactWUsed.equals(ecoData.getEcoType()) || ChangeOrderType.Replacement.equals(ecoData.getEcoType())) {
 					batchStepList.add(createAddChangeOrderAspectStep(batchInfo, ecoData, impactedProducts));
 				}
 				
 				batchStepList.add(createApplyECOStep(ecoData, deleteOnApply));
 				batchStepList.add(createCopyPropertiesStep(ecoData));
 				
-				if (ChangeOrderType.ImpactWUsed.equals(ecoData.getEcoType())) {
+				if (ChangeOrderType.ImpactWUsed.equals(ecoData.getEcoType()) || ChangeOrderType.Replacement.equals(ecoData.getEcoType())) {
 					closingHook = () -> closeECO(ecoNodeRef, impactedProducts);
 				}
 			}
