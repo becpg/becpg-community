@@ -11,23 +11,22 @@ services:
                       -Dcom.sun.management.jmxremote.authenticate=false
                       -Dcom.sun.management.jmxremote.local.only=false
                       -Djava.rmi.server.hostname=127.0.0.1
-                      -XX:HotswapAgent=external
-                      -XX:HotswapAgent=fatjar
-                       --add-opens=java.base/java.lang=ALL-UNNAMED
-                       --add-opens=java.base/java.lang.invoke=ALL-UNNAMED
-                       --add-opens=java.base/java.lang.reflect=ALL-UNNAMED
-                       --add-opens=java.base/java.io=ALL-UNNAMED
-                       --add-opens=java.base/java.net=ALL-UNNAMED
-                       --add-opens=java.base/java.nio=ALL-UNNAMED
-                       --add-opens=java.base/java.util=ALL-UNNAMED
-                       --add-opens=java.base/java.util.concurrent=ALL-UNNAMED
-                       --add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED
-                       --add-opens=java.base/sun.nio.ch=ALL-UNNAMED
-                       --add-opens=java.base/sun.nio.cs=ALL-UNNAMED
-                       --add-opens=java.base/sun.security.action=ALL-UNNAMED
-                       --add-opens=java.base/sun.util.calendar=ALL-UNNAMED
-                       --add-opens=java.security.jgss/sun.security.krb5=ALL-UNNAMED
-                       "
+#                      --XXaltjvm=dcevm -javaagent:/usr/java/jbr_jcef-17.0.10-linux-x64-b1207.14/lib/hotswap/hotswap-agent.jar
+#                      -XX:+AllowEnhancedClassRedefinition -XX:HotswapAgent=fatjar
+#                       --add-opens=java.base/java.lang=ALL-UNNAMED
+#                       --add-opens=java.base/java.lang.invoke=ALL-UNNAMED
+#                       --add-opens=java.base/java.lang.reflect=ALL-UNNAMED
+#                       --add-opens=java.base/java.io=ALL-UNNAMED
+#                       --add-opens=java.base/java.net=ALL-UNNAMED
+#                       --add-opens=java.base/java.nio=ALL-UNNAMED
+#                       --add-opens=java.base/java.util=ALL-UNNAMED
+#                       --add-opens=java.base/java.util.concurrent=ALL-UNNAMED
+#                       --add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED
+#                       --add-opens=java.base/sun.nio.ch=ALL-UNNAMED
+#                       --add-opens=java.base/sun.nio.cs=ALL-UNNAMED
+#                       --add-opens=java.base/sun.security.action=ALL-UNNAMED
+#                       --add-opens=java.base/sun.util.calendar=ALL-UNNAMED
+#                       --add-opens=java.security.jgss/sun.security.krb5=ALL-UNNAMED"
 #      JAVA_HOME : "/usr/lib/jvm/java"
 #      CATALINA_OPTS: "-Xmx4G -Duser.language=fr -Duser.country=FR 
 #                      -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:8888 
