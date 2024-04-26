@@ -47,7 +47,18 @@ public class ACLEntryDataItem extends BeCPGDataObject {
 	private String aclPermission;
 
 	private List<NodeRef> groupsAssignee;
-
+	
+	private Boolean isEnforceACL;
+	
+	@AlfProp
+	@AlfQname(qname = "sec:isEnforceACL")
+	public Boolean getIsEnforceACL() {
+		return isEnforceACL;
+	}
+	
+	public void setIsEnforceACL(Boolean isEnforceACL) {
+		this.isEnforceACL = isEnforceACL;
+	}
 
 	/**
 	 * <p>Getter for the field <code>propName</code>.</p>
@@ -138,6 +149,14 @@ public class ACLEntryDataItem extends BeCPGDataObject {
 		this.propName = propName;
 		this.aclPermission = aclPermission;
 		this.groupsAssignee = groupsAssignee;
+	}
+	
+	public ACLEntryDataItem(String propName, String aclPermission, List<NodeRef> groupsAssignee, boolean isEnforceACL) {
+		super();
+		this.propName = propName;
+		this.aclPermission = aclPermission;
+		this.groupsAssignee = groupsAssignee;
+		this.isEnforceACL = isEnforceACL;
 	}
 
 	/** {@inheritDoc} */
