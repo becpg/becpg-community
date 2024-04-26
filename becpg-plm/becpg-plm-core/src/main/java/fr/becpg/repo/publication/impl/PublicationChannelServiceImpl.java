@@ -6,9 +6,12 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.query.EmptyPagingResults;
+import org.alfresco.query.ListBackedPagingResults;
+import org.alfresco.query.PagingRequest;
+import org.alfresco.query.PagingResults;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -21,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.DataListModel;
 import fr.becpg.model.PublicationModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.catalog.EntityCatalogObserver;
 import fr.becpg.repo.entity.datalist.policy.AuditEntityListItemPolicy;
@@ -124,13 +128,13 @@ public class PublicationChannelServiceImpl implements PublicationChannelService,
 	}
 
 	@Override
-	public List<NodeRef> getEntitiesByChannel(NodeRef channelNodeRef) {
+	public PagingResults<NodeRef> getEntitiesByChannel(NodeRef channelNodeRef, PagingRequest pagingRequest) {
 
 		String action = (String) nodeService.getProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_ACTION);
 		Date lastDate = (Date) nodeService.getProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_LASTDATE);
 
 		if (PublicationChannelAction.STOP.toString().equals(action)) {
-			return new ArrayList<>();
+			return new EmptyPagingResults<>();
 		}
 
 		if (PublicationChannelAction.RESET.toString().equals(action)) {
@@ -144,7 +148,7 @@ public class PublicationChannelServiceImpl implements PublicationChannelService,
 					Arrays.asList(new AssociationCriteriaFilter(PublicationModel.PROP_PUBCHANNELLIST_STATUS,
 							PublicationChannelStatus.FAILED.toString())));
 
-			return sourceAssocs.stream().map(EntitySourceAssoc::getEntityNodeRef).collect(Collectors.toList());
+			return asPagingResults(sourceAssocs.stream().map(EntitySourceAssoc::getEntityNodeRef).toList(),pagingRequest);
 
 		}
 
@@ -172,7 +176,7 @@ public class PublicationChannelServiceImpl implements PublicationChannelService,
 							PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST, false,
 							Arrays.asList(new AssociationCriteriaFilter(PublicationModel.PROP_PUBCHANNELLIST_ACTION,
 									PublicationChannelAction.RETRY.toString())))
-					.stream().map(EntitySourceAssoc::getEntityNodeRef).collect(Collectors.toList()));
+					.stream().map(EntitySourceAssoc::getEntityNodeRef).toList());
 		}
 
 		if (!searchRuleFilter.isEmptyJsonQuery()) {
@@ -191,14 +195,14 @@ public class PublicationChannelServiceImpl implements PublicationChannelService,
 									new AssociationCriteriaFilter(PublicationModel.PROP_PUBCHANNELLIST_ACTION,
 											PublicationChannelAction.STOP.toString(), AssociationCriteriaFilterMode.NOT_EQUALS)
 								))
-						.stream().map(EntitySourceAssoc::getEntityNodeRef).collect(Collectors.toList()));
+						.stream().map(EntitySourceAssoc::getEntityNodeRef).toList());
 
 			} else {
 				ret.addAll(associationService
 						.getEntitySourceAssocs(Arrays.asList(channelNodeRef), PublicationModel.ASSOC_PUBCHANNELLIST_CHANNEL,
 								PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST, false, Arrays.asList(new AssociationCriteriaFilter(PublicationModel.PROP_PUBCHANNELLIST_ACTION,
 										PublicationChannelAction.STOP.toString(), AssociationCriteriaFilterMode.NOT_EQUALS)))
-						.stream().map(EntitySourceAssoc::getEntityNodeRef).collect(Collectors.toList()));
+						.stream().map(EntitySourceAssoc::getEntityNodeRef).toList());
 			}
 
 			if (searchRuleFilter.isFilter()) {
@@ -209,7 +213,15 @@ public class PublicationChannelServiceImpl implements PublicationChannelService,
 			ret.addAll(results);
 		}
 
-		return new ArrayList<>(ret);
+		return asPagingResults(new ArrayList<>(ret),pagingRequest);
+	}
+
+	private PagingResults<NodeRef> asPagingResults(List<NodeRef> ret, PagingRequest pagingRequest) {
+		if(pagingRequest.getMaxItems() == RepoConsts.MAX_RESULTS_UNLIMITED) {
+			return new ListBackedPagingResults<>(ret);
+		}
+		
+		return new ListBackedPagingResults<>(ret,pagingRequest);
 	}
 
 }

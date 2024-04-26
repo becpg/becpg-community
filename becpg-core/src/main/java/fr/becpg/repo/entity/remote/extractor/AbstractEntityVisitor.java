@@ -85,7 +85,7 @@ public abstract class AbstractEntityVisitor implements RemoteEntityVisitor {
 	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object.
 	 * @param siteService a {@link org.alfresco.service.cmr.site.SiteService} object.
 	 */
-	public AbstractEntityVisitor(NodeService mlNodeService, NodeService nodeService, NamespaceService namespaceService,
+	protected AbstractEntityVisitor(NodeService mlNodeService, NodeService nodeService, NamespaceService namespaceService,
 			EntityDictionaryService entityDictionaryService, ContentService contentService, SiteService siteService) {
 		super();
 		this.mlNodeService = mlNodeService;

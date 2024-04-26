@@ -29,6 +29,8 @@ import java.util.Set;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 
+import org.alfresco.query.EmptyPagingResults;
+import org.alfresco.query.PagingResults;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -101,7 +103,9 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	/** Constant <code>PARAM_CALLBACK_PASSWORD="callbackPassword"</code> */
 	protected static final String PARAM_CALLBACK_PASSWORD = "callbackPassword";
 
-	private static final String PARAM_MAX_RESULTS = "maxResults";
+	protected static final String PARAM_MAX_RESULTS = "maxResults";
+	
+	protected static final String PARAM_PAGE = "skipCount";
 
 	/** Services **/
 
@@ -181,21 +185,14 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object.
 	 * @return a {@link java.util.List} object.
 	 */
-	protected List<NodeRef> findEntities(WebScriptRequest req, Boolean limit) {
+	protected PagingResults<NodeRef> findEntities(WebScriptRequest req, Boolean limit) {
 
 		String path = decodeParam(req.getParameter(PARAM_PATH));
 		String query = decodeParam(req.getParameter(PARAM_QUERY));
-		String maxResultsString = req.getParameter(PARAM_MAX_RESULTS);
 
-
-		Integer maxResults = null;
-		if (maxResultsString != null) {
-			try {
-				maxResults = Integer.parseInt(maxResultsString);
-			} catch (NumberFormatException e) {
-				logger.error("Cannot parse page argument", e);
-			}
-		}
+		Integer maxResults = intParam(req, PARAM_MAX_RESULTS);
+		Integer page = intParam(req, PARAM_PAGE);
+		
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery();
 
 		if ((query != null) && !query.toUpperCase().contains("TYPE")) {
@@ -219,7 +216,12 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		} else {
 			queryBuilder.maxResults(maxResults);
 		}
+		
+		if (page != null ) {
+			queryBuilder.page(page);
+		}
 
+		
 		if ((path != null) && (path.length() > 0)) {
 			queryBuilder.inPath(path);
 		}
@@ -229,11 +231,11 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 
 		}
 
-		List<NodeRef> refs = queryBuilder.inDBIfPossible().list();
+		PagingResults<NodeRef> refs = queryBuilder.inDBIfPossible().pagingResults();
 
-		if ((refs != null) && !refs.isEmpty()) {
+		if ((refs != null) ) {
 			if (logger.isDebugEnabled()) {
-				logger.debug("Returning " + refs.size() + " entities");
+				logger.debug("Returning " + refs.getTotalResultCount() + " entities");
 			}
 			return refs;
 		}
@@ -241,8 +243,23 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		if (logger.isDebugEnabled()) {
 			logger.debug("No entities found for query " + queryBuilder.toString());
 		}
-		return new ArrayList<>();
+		return new EmptyPagingResults<>();
 
+	}
+
+	protected Integer intParam(WebScriptRequest req,  String paramName) {
+		String paramString = req.getParameter(paramName);
+
+		Integer ret = null;
+		if (paramString != null) {
+			try {
+				ret = Integer.parseInt(paramString);
+			} catch (NumberFormatException e) {
+				logger.error("Cannot parse "+paramName+" argument", e);
+			}
+		}
+		
+		return ret;
 	}
 
 	/**
@@ -270,9 +287,9 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 				&& ((req.getParameter(PARAM_QUERY) == null) || req.getParameter(PARAM_QUERY).isEmpty())) {
 			throw new WebScriptException(Status.STATUS_NOT_IMPLEMENTED, "One of nodeRef query or path parameter is mandatory");
 		}
-		List<NodeRef> ret = findEntities(req, true);
-		if ((ret != null) && !ret.isEmpty()) {
-			return ret.get(0);
+		PagingResults<NodeRef> ret = findEntities(req, true);
+		if ((ret != null) && !ret.getPage().isEmpty()) {
+			return ret.getPage().get(0);
 		}
 
 		throw new WebScriptException(Status.STATUS_NOT_FOUND ,"No entity found for this parameters");
@@ -435,8 +452,6 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		return listName[0];
 	}
 
-
-	//TODO move that to CompressParamHelper in becpg-tools
 	private static final String BASE_64_PREFIX = "b64-";
 	
 	private static final Map<String,String> replacementMaps = new HashMap<>();
