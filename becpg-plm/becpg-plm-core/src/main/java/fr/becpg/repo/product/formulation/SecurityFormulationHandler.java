@@ -40,6 +40,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.DataListModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.model.SecurityModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.formulation.FormulateException;
@@ -134,10 +135,6 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 		this.permissionService = permissionService;
 	}
 
-	public SiteService getSiteService() {
-		return siteService;
-	}
-
 	public void setSiteService(SiteService siteService) {
 		this.siteService = siteService;
 	}
@@ -164,6 +161,7 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 			for(NodeRef dataListNodeRef : datalists) {
 				String dataListQName = (String)nodeService.getProperty(dataListNodeRef, DataListModel.PROP_DATALISTITEMTYPE);
 				PermissionContext permissionContext = securityService.getPermissionContext(productDataNodeRef, nodeService.getType(productDataNodeRef), dataListQName);
+				updateSupplierPortalPermissionContext(permissionContext, productDataNodeRef);
 				updatePermissions(siteInfo, dataListNodeRef, permissionContext.getPermissions(), false);
 			}
 
@@ -174,11 +172,25 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 					updatePermissionsFromTemplateFolder(folder.getNodeRef(), templateFolderWithSpecificPermissions);
 				} else {
 					PermissionContext permissionContext = securityService.getPermissionContext(productDataNodeRef, nodeService.getType(productDataNodeRef), VIEW_DOCUMENTS);
+					updateSupplierPortalPermissionContext(permissionContext, productDataNodeRef);
 					updatePermissions(siteInfo, folder.getNodeRef(), permissionContext.getPermissions(), true);
 				}
 			}
 		}
 		return true;
+	}
+
+	private void updateSupplierPortalPermissionContext(PermissionContext permissionContext, NodeRef productDataNodeRef) {
+		List<NodeRef> supplierAccountNodeRefs = associationService.getTargetAssocs(productDataNodeRef, PLMModel.ASSOC_SUPPLIERS).stream()
+				.flatMap(s -> associationService.getTargetAssocs(s, PLMModel.ASSOC_SUPPLIER_ACCOUNTS).stream()).collect(Collectors.toList());
+		for (PermissionModel permissionModel : permissionContext.getPermissions()) {
+			NodeRef externalUserGroup = permissionModel.getGroups().stream()
+					.filter(n -> "GROUP_ExternalUser".equals(authorityDAO.getAuthorityName(n))).findFirst().orElse(null);
+			if (externalUserGroup != null) {
+				permissionModel.getGroups().remove(externalUserGroup);
+				permissionModel.getGroups().addAll(supplierAccountNodeRefs);
+			}
+		}
 	}
 
 	private NodeRef findTemplateFolderWithSpecificPermissions(NodeRef folderNodeRef, ProductData entityTpl) {
@@ -254,7 +266,7 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 				logger.debug("parentPermissions: " + parentPermissions + " on node: " + nodeRef);
 				logger.debug("permissionModels to be applied: " + permissionModels + " on node: " + nodeRef);
 			}
-			visitPermissions(siteInfo, parentPermissions, specificPermissions, permissionModels, toAdd, toRemove);
+			computePermissions(siteInfo, parentPermissions, specificPermissions, permissionModels, toAdd, toRemove);
 			for (Entry<String, String> entry : toAdd.entrySet()) {
 				String authority = entry.getKey();
 				String permission = entry.getValue();
@@ -288,17 +300,24 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 	}
 	
-	private void visitPermissions(SiteInfo siteInfo, Map<String, String> parentPermissions, Map<String, String> specificPermissions, List<PermissionModel> permissionModels, HashMap<String, String> toAdd, Set<String> toRemove) {
+	private void computePermissions(SiteInfo siteInfo, Map<String, String> parentPermissions, Map<String, String> specificPermissions, List<PermissionModel> permissionModels, HashMap<String, String> toAdd, Set<String> toRemove) {
 		for (PermissionModel permissionModel : permissionModels) {
-			String basePermission = PermissionModel.READ_ONLY.equals(permissionModel.getPermission()) ? PermissionService.CONSUMER : PermissionService.CONTRIBUTOR;
+			String targetPermission = PermissionModel.READ_ONLY.equals(permissionModel.getPermission()) ? PermissionService.CONSUMER : PermissionService.CONTRIBUTOR;
 			
 			List<String> permissionAuthorities = permissionModel.getGroups().stream()
 					.map(n -> authorityDAO.getAuthorityName(n))
 					.collect(Collectors.toList());
 			
 			for (String authority : permissionAuthorities) {
-				String permission = extractPermission(basePermission, siteInfo, authority);
-				addPermission(authority, permission, toAdd, toRemove);
+				boolean enforceACL = Boolean.TRUE.equals(permissionModel.getIsEnforceACL());
+				if (parentPermissions.containsKey(authority) && !enforceACL) {
+					String currentPermission = parentPermissions.get(authority);
+					if (currentPermission.equals(PermissionService.CONSUMER) || currentPermission.equals(PermissionService.READ)) {
+						targetPermission = PermissionService.CONSUMER;
+					}
+				}
+				targetPermission = adaptPermissionToSite(targetPermission, siteInfo, authority, enforceACL);
+				addPermission(authority, targetPermission, toAdd, toRemove);
 			}
 			
 			// set read to parent permissions as business logic is "read for others"
@@ -316,23 +335,23 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 	}
 	
-	private String extractPermission(String basePermission, SiteInfo siteInfo, String authorityName) {
+	private String adaptPermissionToSite(String targetPermission, SiteInfo siteInfo, String authorityName, boolean enforceACL) {
 		if (siteInfo != null) {
 			String sitePermission = siteService.getMembersRole(siteInfo.getShortName(), authorityName);
 			if (sitePermission != null) {		
-				if (PermissionService.CONSUMER.equals(basePermission) || sitePermission.contains(basePermission)) {
-					return basePermission;
+				if (PermissionService.CONSUMER.equals(targetPermission) || sitePermission.contains(targetPermission)) {
+					return targetPermission;
 				}
 				if (SiteModel.SITE_COLLABORATOR.equals(sitePermission) || SiteModel.SITE_MANAGER.equals(sitePermission)) {
 					return PermissionService.COORDINATOR;
 				} 
-				if(SiteModel.SITE_CONSUMER.equals(sitePermission)) {
+				if (SiteModel.SITE_CONSUMER.equals(sitePermission) && !enforceACL) {
 					return PermissionService.CONSUMER;
 				}
 			}
 		}
 		
-		return basePermission;
+		return targetPermission;
 	}
 
 

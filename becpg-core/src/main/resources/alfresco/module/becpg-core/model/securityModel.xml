@@ -77,6 +77,10 @@
 					<mandatory>true</mandatory>
 					<index enabled="false"/>
 				</property>
+				<property name="sec:isEnforceACL">
+					<type>d:boolean</type>
+					<index enabled="false"/>
+				</property>
 			</properties>
 			<associations>
 				<association name="sec:groupsAssignee">
