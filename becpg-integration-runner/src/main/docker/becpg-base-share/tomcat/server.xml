@@ -30,6 +30,8 @@
   <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener" />
   <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener" />
   <Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener" />
+  
+  <Valve className="org.apache.catalina.valves.RemoteIpValve" />
 
   <!-- Global JNDI resources
        Documentation at /docs/jndi-resources-howto.html
@@ -70,6 +72,7 @@
                    executor="tomcatThreadPool"
                    maxHttpHeaderSize="65536"
                    port="8080" protocol="HTTP/1.1"
+                   Server=" "
               	   redirectPort="8443"  />
   
 
@@ -79,6 +82,7 @@
                    connectionTimeout="300000"
                    executor="tomcatThreadPool"
                    protocol="AJP/1.3" redirectPort="8443"
+                   Server=" "
                    secretRequired="false" 
                    address="0.0.0.0" 
                     />
