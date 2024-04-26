@@ -23,13 +23,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.query.PagingResults;
 import org.alfresco.repo.admin.SysAdminParams;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.ServiceRegistry;
@@ -84,6 +84,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	private static final Log logger = LogFactory.getLog(RemoteEntityServiceImpl.class);
 
 	private static final String UNKNOW_FORMAT_ERROR = "Unknown format %s";
+	private static final String CREATE_ERROR = "Cannot create or update entity: %s at format %s - %s";
 
 	@Autowired
 	@Qualifier("ServiceRegistry")
@@ -167,9 +168,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 		RemoteEntityFormat format = params.getFormat();
 		RemoteEntityVisitor remoteEntityVisitor = null;
 		switch (format) {
-		case xml:
-		case xml_all:
-		case xml_light:
+		case xml, xml_all, xml_light:
 			remoteEntityVisitor = new XmlEntityVisitor(mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService,
 					siteService, associationService);
 
@@ -178,8 +177,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 			remoteEntityVisitor = new ExcelXmlEntityVisitor(mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService,
 					siteService);
 			break;
-		case json:
-		case json_all:
+		case json, json_all:
 			remoteEntityVisitor = new JsonEntityVisitor(mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService,
 					siteService, attributeExtractor, versionService, lockService, associationService, entityListDAO);
 			break;
@@ -187,8 +185,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 			remoteEntityVisitor = new JsonSchemaEntityVisitor(sysAdminParams, mlNodeService, nodeService, namespaceService, entityDictionaryService,
 					contentService, siteService, attributeExtractor, versionService, lockService, associationService, entityListDAO);
 			break;
-		case xsd:
-		case xsd_excel:
+		case xsd, xsd_excel:
 
 			remoteSchemaGenerator.generateSchema(out);
 			break;
@@ -203,7 +200,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 			try {
 				remoteEntityVisitor.visit(entityNodeRef, out);
 			} catch (Exception e) {
-				throw new BeCPGException("Cannot export entity :" + entityNodeRef + " at format " + format, e);
+				throw new BeCPGException("Cannot export entity :" + entityNodeRef + " at format: " + format, e);
 			}
 		}
 
@@ -213,12 +210,10 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	public void getEntitySchema(QName type, OutputStream out, RemoteParams params) {
 		RemoteEntityFormat format = params.getFormat();
 		switch (format) {
-		case xsd:
-		case xsd_excel:
+		case xsd, xsd_excel:
 			remoteSchemaGenerator.generateSchema(out);
 			break;
-		case json_schema:
-		case json:
+		case json_schema, json:
 			try {
 				JsonSchemaEntityVisitor jsonSchemaVisitor = new JsonSchemaEntityVisitor(sysAdminParams, mlNodeService, nodeService, namespaceService,
 						entityDictionaryService, contentService, siteService, attributeExtractor, versionService, lockService, associationService,
@@ -253,7 +248,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 			}, false, false);
 
 			if (rets.isEmpty()) {
-				throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format + " -  results is empty");
+				throw new BeCPGException(String.format(CREATE_ERROR, entityNodeRef , format, "No entity created"));
 			}
 
 			return rets.iterator().next();
@@ -295,7 +290,9 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 				}
 			} catch (IOException | ParserConfigurationException | SAXException | JSONException e) {
 				logger.error("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
-				throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format + " - " + e.getMessage(), e);
+				
+				throw new BeCPGException(String.format(CREATE_ERROR, entityNodeRef , format, e.getMessage()),e);
+				
 			}
 
 		} finally {
@@ -310,7 +307,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 
 	/** {@inheritDoc} */
 	@Override
-	public void listEntities(List<NodeRef> entities, OutputStream result, RemoteParams params) throws BeCPGException {
+	public void listEntities(PagingResults<NodeRef> entities, OutputStream result, RemoteParams params) throws BeCPGException {
 
 		RemoteEntityFormat format = params.getFormat();
 		RemoteEntityVisitor remoteEntityVisitor = null;
@@ -328,8 +325,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 					siteService, attributeExtractor, versionService, lockService, associationService, entityListDAO);
 			break;
 		default:
-			throw new BeCPGException("Unknown format " + format.toString());
-
+			throw new BeCPGException(String.format(UNKNOW_FORMAT_ERROR, format.toString()));
 		}
 
 		remoteEntityVisitor.setParams(params);
@@ -361,7 +357,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 					siteService, attributeExtractor, versionService, lockService, associationService, entityListDAO);
 			break;
 		default:
-			throw new BeCPGException("Unknown format " + format.toString());
+			throw new BeCPGException(String.format(UNKNOW_FORMAT_ERROR, format.toString()));
 
 		}
 
@@ -389,7 +385,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 			try (OutputStream out = writer.getContentOutputStream()) {
 				xmlEntityVisitor.visitData(in, out);
 			} catch (IOException | ParserConfigurationException | SAXException e) {
-				throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
+				throw new BeCPGException(String.format(CREATE_ERROR, entityNodeRef , format, e.getMessage()),e);
 			}
 		} else {
 			throw new BeCPGException(String.format(UNKNOW_FORMAT_ERROR, format.toString()));

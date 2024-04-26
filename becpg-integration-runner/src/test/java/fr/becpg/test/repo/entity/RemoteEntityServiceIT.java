@@ -19,6 +19,7 @@ import java.util.Set;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.alfresco.query.ListBackedPagingResults;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.apache.commons.logging.Log;
@@ -81,7 +82,7 @@ public class RemoteEntityServiceIT extends PLMBaseTestCase {
 				List<NodeRef> entities = new ArrayList<>();
 				entities.add(sfNodeRef);
 
-				remoteEntityService.listEntities(entities, new FileOutputStream(tempFile2), new RemoteParams(RemoteEntityFormat.xml));
+				remoteEntityService.listEntities(new ListBackedPagingResults<>(entities), new FileOutputStream(tempFile2), new RemoteParams(RemoteEntityFormat.xml));
 
 				remoteEntityService.getEntity(sfNodeRef, new FileOutputStream(tempFile),new RemoteParams(RemoteEntityFormat.xml));
 

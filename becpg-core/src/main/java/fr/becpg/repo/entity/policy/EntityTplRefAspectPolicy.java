@@ -5,9 +5,9 @@ package fr.becpg.repo.entity.policy;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.query.PagingRequest;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.service.cmr.repository.AssociationRef;
@@ -138,8 +138,8 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy
 	public void beforeDeleteNode(NodeRef nodeRef) {
 		
 		List<NodeRef> sourcesAssocs = associationService
-				.getEntitySourceAssocs(List.of(nodeRef), BeCPGModel.ASSOC_ENTITY_TPL_REF, null, true, null, 5).stream()
-				.map(e -> e.getEntityNodeRef()).collect(Collectors.toList());
+				.getEntitySourceAssocs(List.of(nodeRef), BeCPGModel.ASSOC_ENTITY_TPL_REF, null, true, null, new PagingRequest(5)).stream()
+				.map(e -> e.getEntityNodeRef()).toList();
 		
 		if (sourcesAssocs != null && !sourcesAssocs.isEmpty()) {
 			

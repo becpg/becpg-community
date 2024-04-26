@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.query.PagingResults;
 import org.alfresco.repo.rule.RuleModel;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
@@ -87,7 +88,6 @@ import fr.becpg.repo.helper.SiteHelper;
  * @author matthieu
  * @version $Id: $Id
  */
-//TODO use association service and entityListDao for perfs
 public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 	private AttributeExtractorService attributeExtractor;
@@ -132,13 +132,18 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 	/** {@inheritDoc} */
 	@Override
-	public void visit(List<NodeRef> entities, OutputStream result) throws JSONException, IOException {
+	public void visit(PagingResults<NodeRef> pagingResult, OutputStream result) throws JSONException, IOException {
 
-		JSONObject ret = new JSONObject();
-		JSONArray jsonEntities = new JSONArray();
 		try (OutputStreamWriter out = new OutputStreamWriter(result, StandardCharsets.UTF_8)) {
+			JSONObject ret = new JSONObject();
+			JSONObject pagination = new JSONObject();
+			
+			pagination.put("hasMoreItems", pagingResult.hasMoreItems());
+			pagination.put("count", pagingResult.getTotalResultCount().getFirst());
+			
+			JSONArray jsonEntities = new JSONArray();
 
-			for (NodeRef nodeRef : entities) {
+			for (NodeRef nodeRef : pagingResult.getPage()) {
 				JSONObject root = new JSONObject();
 				JSONObject entity = new JSONObject();
 				root.put(RemoteEntityService.ELEM_ENTITY, entity);
@@ -149,6 +154,8 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 			}
 
 			ret.put("entities", jsonEntities);
+			ret.put("pagination", pagination);
+
 			ret.write(out);
 		}
 

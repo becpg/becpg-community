@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 
+import org.alfresco.query.PagingResults;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
@@ -156,7 +157,7 @@ public interface RemoteEntityService {
 	 * @param fields a {@link java.util.List} object.
 	 * @throws fr.becpg.common.BeCPGException if any.
 	 */
-	void listEntities(List<NodeRef> entities, OutputStream result, RemoteParams params);
+	void listEntities(PagingResults<NodeRef> entities, OutputStream result, RemoteParams params);
 
 	/**
 	 * Return entity data
