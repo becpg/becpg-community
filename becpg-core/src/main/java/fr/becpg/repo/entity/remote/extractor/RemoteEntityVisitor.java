@@ -1,8 +1,8 @@
 package fr.becpg.repo.entity.remote.extractor;
 
 import java.io.OutputStream;
-import java.util.List;
 
+import org.alfresco.query.PagingResults;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.entity.remote.RemoteParams;
@@ -30,7 +30,7 @@ public interface RemoteEntityVisitor {
 	 * @throws Exception 
 	 * @throws java.lang.Exception if any.
 	 */
-	public  void visit(List<NodeRef> entities, OutputStream result) throws Exception ;
+	public  void visit(PagingResults<NodeRef> entities, OutputStream result) throws Exception ;
 
 	/**
 	 * <p>visitData.</p>

@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.query.PagingRequest;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -26,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 
 import fr.becpg.model.PublicationModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.catalog.EntityCatalogService;
@@ -111,7 +113,7 @@ public class PublicationServiceIT extends PLMBaseTestCase {
 			return productData.getNodeRef();
 
 		});
-		
+
 		final NodeRef pf2NodeRef = inWriteTx(() -> {
 
 			FinishedProductData productData = new FinishedProductData();
@@ -123,12 +125,11 @@ public class PublicationServiceIT extends PLMBaseTestCase {
 
 		});
 
-
 		//Test query search
 		inReadTx(() -> {
 			Assert.assertEquals(channelNodeRef, publicationChannelService.getChannelById(CHANNEL_ID));
-			Assert.assertFalse(publicationChannelService.getEntitiesByChannel(channelNodeRef).isEmpty());
-			Assert.assertEquals(pfNodeRef, publicationChannelService.getEntitiesByChannel(channelNodeRef).get(0));
+			Assert.assertFalse(getEntities(channelNodeRef).isEmpty());
+			Assert.assertEquals(pfNodeRef, getEntities(channelNodeRef).get(0));
 			return true;
 		});
 
@@ -140,7 +141,7 @@ public class PublicationServiceIT extends PLMBaseTestCase {
 
 		//No results
 		inReadTx(() -> {
-			Assert.assertTrue(publicationChannelService.getEntitiesByChannel(channelNodeRef).isEmpty());
+			Assert.assertTrue(getEntities(channelNodeRef).isEmpty());
 			return true;
 		});
 
@@ -154,13 +155,13 @@ public class PublicationServiceIT extends PLMBaseTestCase {
 		final NodeRef channelListItemNodeRef = inWriteTx(() -> {
 
 			NodeRef listContainerNodeRef = entityListDAO.getListContainer(pfNodeRef);
-			
+
 			NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST);
-			
+
 			if (listNodeRef == null) {
 				listNodeRef = entityListDAO.createList(listContainerNodeRef, PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST);
 			}
-			
+
 			Map<QName, Serializable> properties = new HashMap<>();
 			Map<QName, List<NodeRef>> associations = new HashMap<>();
 			associations.put(PublicationModel.ASSOC_PUBCHANNELLIST_CHANNEL, Arrays.asList(channelNodeRef));
@@ -171,8 +172,8 @@ public class PublicationServiceIT extends PLMBaseTestCase {
 
 		//Query with no date
 		inReadTx(() -> {
-			Assert.assertTrue(!publicationChannelService.getEntitiesByChannel(channelNodeRef).isEmpty());
-			Assert.assertEquals(pfNodeRef, publicationChannelService.getEntitiesByChannel(channelNodeRef).get(0));
+			Assert.assertTrue(!getEntities(channelNodeRef).isEmpty());
+			Assert.assertEquals(pfNodeRef, getEntities(channelNodeRef).get(0));
 			return true;
 		});
 
@@ -191,8 +192,8 @@ public class PublicationServiceIT extends PLMBaseTestCase {
 
 		//Still having a result
 		inReadTx(() -> {
-			Assert.assertTrue(!publicationChannelService.getEntitiesByChannel(channelNodeRef).isEmpty());
-			Assert.assertEquals(pfNodeRef, publicationChannelService.getEntitiesByChannel(channelNodeRef).get(0));
+			Assert.assertTrue(!getEntities(channelNodeRef).isEmpty());
+			Assert.assertEquals(pfNodeRef, getEntities(channelNodeRef).get(0));
 			return true;
 		});
 
@@ -204,7 +205,7 @@ public class PublicationServiceIT extends PLMBaseTestCase {
 
 		//No results
 		inReadTx(() -> {
-			Assert.assertTrue(publicationChannelService.getEntitiesByChannel(channelNodeRef).isEmpty());
+			Assert.assertTrue(getEntities(channelNodeRef).isEmpty());
 			return true;
 		});
 
@@ -216,8 +217,8 @@ public class PublicationServiceIT extends PLMBaseTestCase {
 
 		//One result
 		inReadTx(() -> {
-			Assert.assertTrue(!publicationChannelService.getEntitiesByChannel(channelNodeRef).isEmpty());
-			Assert.assertEquals(pfNodeRef, publicationChannelService.getEntitiesByChannel(channelNodeRef).get(0));
+			Assert.assertTrue(!getEntities(channelNodeRef).isEmpty());
+			Assert.assertEquals(pfNodeRef, getEntities(channelNodeRef).get(0));
 			return true;
 		});
 
@@ -230,8 +231,8 @@ public class PublicationServiceIT extends PLMBaseTestCase {
 		});
 
 		inReadTx(() -> {
-			Assert.assertTrue(!publicationChannelService.getEntitiesByChannel(channelNodeRef).isEmpty());
-			Assert.assertEquals(pfNodeRef, publicationChannelService.getEntitiesByChannel(channelNodeRef).get(0));
+			Assert.assertTrue(!getEntities(channelNodeRef).isEmpty());
+			Assert.assertEquals(pfNodeRef, getEntities(channelNodeRef).get(0));
 			return true;
 		});
 
@@ -244,7 +245,7 @@ public class PublicationServiceIT extends PLMBaseTestCase {
 		});
 
 		inReadTx(() -> {
-			Assert.assertTrue(publicationChannelService.getEntitiesByChannel(channelNodeRef).isEmpty());
+			Assert.assertTrue(getEntities(channelNodeRef).isEmpty());
 			return true;
 		});
 
@@ -257,13 +258,13 @@ public class PublicationServiceIT extends PLMBaseTestCase {
 
 			nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_LASTDATE, null);
 			nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_CONFIG, channelConfig.toString());
-			nodeService.setProperty(channelListItemNodeRef, PublicationModel.PROP_PUBCHANNELLIST_ACTION,null);
+			nodeService.setProperty(channelListItemNodeRef, PublicationModel.PROP_PUBCHANNELLIST_ACTION, null);
 			return true;
 		});
-		
+
 		inReadTx(() -> {
-			Assert.assertTrue(!publicationChannelService.getEntitiesByChannel(channelNodeRef).isEmpty());
-			Assert.assertEquals(pfNodeRef, publicationChannelService.getEntitiesByChannel(channelNodeRef).get(0));
+			Assert.assertTrue(!getEntities(channelNodeRef).isEmpty());
+			Assert.assertEquals(pfNodeRef, getEntities(channelNodeRef).get(0));
 			return true;
 		});
 
@@ -277,13 +278,13 @@ public class PublicationServiceIT extends PLMBaseTestCase {
 			nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_CONFIG, channelConfig.toString());
 			return true;
 		});
-		
+
 		inReadTx(() -> {
-			Assert.assertTrue(!publicationChannelService.getEntitiesByChannel(channelNodeRef).isEmpty());
-			Assert.assertEquals(pf2NodeRef, publicationChannelService.getEntitiesByChannel(channelNodeRef).get(0));
+			Assert.assertTrue(!getEntities(channelNodeRef).isEmpty());
+			Assert.assertEquals(pf2NodeRef, getEntities(channelNodeRef).get(0));
 			return true;
 		});
-		
+
 		inWriteTx(() -> {
 
 			JSONObject channelConfig = new JSONObject();
@@ -294,51 +295,54 @@ public class PublicationServiceIT extends PLMBaseTestCase {
 			nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_CONFIG, channelConfig.toString());
 			return true;
 		});
-		
+
 		inReadTx(() -> {
-			Assert.assertTrue(publicationChannelService.getEntitiesByChannel(channelNodeRef).isEmpty());
+			Assert.assertTrue(getEntities(channelNodeRef).isEmpty());
 			return true;
 		});
-		
-		
+
 		// test audit
 		Date beforeModifiedDate = (Date) inReadTx(() -> {
 			return nodeService.getProperty(pfNodeRef, ContentModel.PROP_MODIFIED);
 		});
-		
+
 		inWriteTx(() -> {
 			nodeService.setProperty(channelListItemNodeRef, PublicationModel.PROP_PUBCHANNELLIST_PUBLISHEDDATE, new Date());
 			return true;
 		});
-		
+
 		Date currentModifiedDate = (Date) inReadTx(() -> {
 			return nodeService.getProperty(pfNodeRef, ContentModel.PROP_MODIFIED);
 		});
-		
+
 		assertEquals(currentModifiedDate, beforeModifiedDate);
-		
+
 		Date beforeChannelModifiedDate = (Date) inReadTx(() -> {
 			return nodeService.getProperty(channelListItemNodeRef, PublicationModel.PROP_PUBCHANNELLIST_MODIFIED_DATE);
 		});
-		
+
 		inWriteTx(() -> {
 			nodeService.removeProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_CATALOG_ID);
 			nodeService.setProperty(channelListItemNodeRef, PublicationModel.PROP_PUBCHANNELLIST_ACTION, PublicationChannelAction.RETRY);
 			return true;
 		});
-		
+
 		currentModifiedDate = (Date) inReadTx(() -> {
 			return nodeService.getProperty(pfNodeRef, ContentModel.PROP_MODIFIED);
 		});
-		
+
 		assertTrue(currentModifiedDate.compareTo(beforeModifiedDate) > 0);
-		
+
 		Date currentChannelModifiedDate = (Date) inReadTx(() -> {
 			return nodeService.getProperty(channelListItemNodeRef, PublicationModel.PROP_PUBCHANNELLIST_MODIFIED_DATE);
 		});
-		
+
 		assertEquals(beforeChannelModifiedDate, currentChannelModifiedDate);
 
+	}
+
+	private List<NodeRef> getEntities(NodeRef channelNodeRef) {
+		return publicationChannelService.getEntitiesByChannel(channelNodeRef, new PagingRequest(RepoConsts.MAX_RESULTS_UNLIMITED)).getPage();
 	}
 
 }

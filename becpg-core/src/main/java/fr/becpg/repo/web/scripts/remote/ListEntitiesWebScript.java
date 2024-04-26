@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import java.net.SocketException;
 import java.util.List;
 
+import org.alfresco.query.PagingResults;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
@@ -58,8 +59,7 @@ public class ListEntitiesWebScript extends AbstractEntityWebScript {
 			resp.setContentType(getContentType(req));
 			resp.setContentEncoding("UTF-8");
 			
-
-			List<NodeRef> entities = findEntities(req,shouldLimit);
+			PagingResults<NodeRef> entities = findEntities(req,shouldLimit);
 
 			logger.debug("List entities");
 

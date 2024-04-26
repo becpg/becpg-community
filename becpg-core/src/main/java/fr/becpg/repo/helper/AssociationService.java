@@ -22,6 +22,7 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
+import org.alfresco.query.PagingRequest;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.QNamePattern;
@@ -124,7 +125,7 @@ public interface AssociationService {
 	 */
 	List<EntitySourceAssoc> getEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocQName, QName listTypeQname, boolean isOrOperator, List<AssociationCriteriaFilter> criteriaFilters);
 	
-	List<EntitySourceAssoc> getEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocQName, QName listTypeQname, boolean isOrOperator, List<AssociationCriteriaFilter> criteriaFilters, Integer limit);
+	List<EntitySourceAssoc> getEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocQName, QName listTypeQname, boolean isOrOperator, List<AssociationCriteriaFilter> criteriaFilters, PagingRequest pagingRequest);
 	
 	
 	void removeChildCachedAssoc(NodeRef nodeRef, QName qName);

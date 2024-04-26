@@ -37,6 +37,7 @@ import javax.annotation.Nonnull;
 import javax.sql.DataSource;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.query.PagingRequest;
 import org.alfresco.repo.cache.RefreshableCacheListener;
 import org.alfresco.repo.cache.SimpleCache;
 import org.alfresco.repo.coci.CheckOutCheckInServicePolicies;
@@ -467,7 +468,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 	/** {@inheritDoc} */
 	@Override
 	public List<EntitySourceAssoc> getEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocTypeQName, QName listTypeQname, boolean isOrOperator,
-			List<AssociationCriteriaFilter> criteriaFilters, Integer limit) {
+			List<AssociationCriteriaFilter> criteriaFilters, PagingRequest pagingRequest) {
 		List<EntitySourceAssoc> ret = null;
 
 		StopWatch watch = null;
@@ -491,10 +492,10 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 			if (isAnd) {
 				for (NodeRef nodeRef : nodeRefs) {
 					if (ret == null) {
-						ret = internalEntitySourceAssocs(Arrays.asList(nodeRef), assocTypeQName, listTypeQname, criteriaFilters, limit);
+						ret = internalEntitySourceAssocs(Arrays.asList(nodeRef), assocTypeQName, listTypeQname, criteriaFilters, pagingRequest);
 					} else {
 						List<EntitySourceAssoc> tmp = internalEntitySourceAssocs(Arrays.asList(nodeRef), assocTypeQName, listTypeQname,
-								criteriaFilters, limit);
+								criteriaFilters, pagingRequest);
 
 						for (Iterator<EntitySourceAssoc> iterator = ret.iterator(); iterator.hasNext();) {
 							EntitySourceAssoc entitySourceAssoc = iterator.next();
@@ -513,7 +514,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 				}
 
 			} else {
-				ret = internalEntitySourceAssocs(nodeRefs, assocTypeQName, listTypeQname, criteriaFilters, limit);
+				ret = internalEntitySourceAssocs(nodeRefs, assocTypeQName, listTypeQname, criteriaFilters, pagingRequest);
 			}
 
 		}
@@ -527,7 +528,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 	}
 
 	private List<EntitySourceAssoc> internalEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocTypeQName, QName listTypeQname,
-			List<AssociationCriteriaFilter> criteriaFilters, Integer limit) {
+			List<AssociationCriteriaFilter> criteriaFilters, PagingRequest pagingRequest) {
 		List<EntitySourceAssoc> ret = new ArrayList<>();
 
 		if ((nodeRefs != null) && !nodeRefs.isEmpty()) {
@@ -675,8 +676,14 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 
 			query.append("  group by dataListItem.uuid ");
 			
-			if (limit != null && limit > -1) {
-				query.append(" LIMIT " + limit);
+			if(pagingRequest != null ) {
+			if (pagingRequest.getMaxItems() > -1) {
+				query.append(" LIMIT " +  pagingRequest.getMaxItems());
+			}
+			
+			if (pagingRequest.getSkipCount()>0) {
+				query.append(" OFFSET " +  pagingRequest.getSkipCount());
+			}
 			}
 			
 			StoreRef storeRef = StoreRef.STORE_REF_WORKSPACE_SPACESSTORE;
