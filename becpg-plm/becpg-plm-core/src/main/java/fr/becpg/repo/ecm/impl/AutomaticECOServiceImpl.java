@@ -21,6 +21,7 @@ import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.service.cmr.preference.PreferenceService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.namespace.NamespacePrefixResolver;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
 import org.alfresco.util.ISO8601DateFormat;
@@ -28,6 +29,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
@@ -37,6 +39,7 @@ import fr.becpg.model.ECMModel;
 import fr.becpg.model.MPMModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.ReportModel;
+import fr.becpg.model.SecurityModel;
 import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.audit.model.AuditQuery;
@@ -57,6 +60,7 @@ import fr.becpg.repo.ecm.data.ChangeOrderData;
 import fr.becpg.repo.ecm.data.ChangeOrderType;
 import fr.becpg.repo.ecm.data.RevisionType;
 import fr.becpg.repo.ecm.data.dataList.ReplacementListDataItem;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.datalist.WUsedListService;
 import fr.becpg.repo.entity.datalist.WUsedListService.WUsedOperator;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
@@ -69,6 +73,8 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
+import fr.becpg.repo.security.data.ACLGroupData;
+import fr.becpg.repo.security.data.dataList.ACLEntryDataItem;
 import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
@@ -97,6 +103,13 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 
 	@Autowired
 	private SystemConfigurationService systemConfigurationService;
+	
+	@Autowired
+	private EntityDictionaryService entityDictionaryService;
+
+	@Autowired
+	@Qualifier("namespaceService")
+    private NamespacePrefixResolver namespacePrefixResolver;
 
 	private Boolean shouldApplyAutomaticECO() {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.eco.automatic.apply"));
@@ -382,9 +395,18 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 		batchInfo.setBatchSize(reformulateBatchSize != null ? reformulateBatchSize : 1);
 		batchInfo.setPriority(BatchPriority.LOW);
 		
-		List<NodeRef> nodeRefs = transactionService.getRetryingTransactionHelper().doInTransaction(() -> BeCPGQueryBuilder.createQuery()
-				.excludeArchivedEntities()
-				.ofType(PLMModel.TYPE_PRODUCT).orBetween(ContentModel.PROP_CREATED, dateRange, "MAX").orBetween(ContentModel.PROP_MODIFIED, dateRange, "MAX").inDBIfPossible().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list(), false, true);
+		List<NodeRef> nodeRefs = transactionService.getRetryingTransactionHelper()
+				.doInTransaction(() -> BeCPGQueryBuilder.createQuery()
+						.excludeArchivedEntities()
+						.ofType(PLMModel.TYPE_PRODUCT)
+						.orBetween(ContentModel.PROP_CREATED, dateRange, "MAX")
+						.orBetween(ContentModel.PROP_MODIFIED, dateRange, "MAX")
+						.inDBIfPossible()
+						.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED)
+						.list(), false, true);
+		
+		addACLProducts(dateRange, nodeRefs);
+		
 		logger.info("modified products size: " + nodeRefs.size());
 		
 		List<NodeRef> toReformulateEntities = new ArrayList<>();
@@ -432,6 +454,61 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 		batchQueueService.queueBatch(batchInfo, steps);
 
 		return true;
+	}
+
+	private void addACLProducts(String dateRange, List<NodeRef> nodeRefs) {
+		List<NodeRef> modifiedACLs = transactionService.getRetryingTransactionHelper()
+				.doInTransaction(() -> BeCPGQueryBuilder.createQuery()
+						.excludeArchivedEntities()
+						.ofType(SecurityModel.TYPE_ACL_GROUP)
+						.orBetween(ContentModel.PROP_CREATED, dateRange, "MAX")
+						.orBetween(ContentModel.PROP_MODIFIED, dateRange, "MAX")
+						.inDBIfPossible()
+						.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED)
+						.list(), false, true);
+		
+		for (NodeRef modifiedACL : modifiedACLs) {
+			ACLGroupData aclGroupData = (ACLGroupData) alfrescoRepository.findOne(modifiedACL);
+			String nodeTypeString = aclGroupData.getNodeType();
+			if (nodeTypeString != null && nodeTypeString.contains(":")) {
+				QName nodeType = QName.createQName(nodeTypeString.split(":")[0], nodeTypeString.split(":")[1], namespacePrefixResolver);
+				if (entityDictionaryService.isSubClass(nodeType, PLMModel.TYPE_PRODUCT) && isACLApplied(aclGroupData)) {
+					List<NodeRef> aclProducts = transactionService.getRetryingTransactionHelper()
+							.doInTransaction(() -> BeCPGQueryBuilder.createQuery()
+									.excludeArchivedEntities().ofType(nodeType)
+									.orBetween(BeCPGModel.PROP_FORMULATED_DATE, "MIN", dateRange)
+									.inDBIfPossible()
+									.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED)
+									.list(), false, true);
+					
+					for (NodeRef aclProduct : aclProducts) {
+						if (!nodeRefs.contains(aclProduct)) {
+							nodeRefs.add(aclProduct);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	private boolean isACLApplied(ACLGroupData aclGroupData) {
+		for (ACLEntryDataItem acl : aclGroupData.getAcls()) {
+			String propNameString = acl.getPropName();
+			if ("View-documents".equals(propNameString)) {
+				return true;
+			}
+			if (propNameString != null && propNameString.contains(":") && enforceACL()) {
+				QName propName = QName.createQName(propNameString.split(":")[0], propNameString.split(":")[1], namespacePrefixResolver);
+				if (entityDictionaryService.isSubClass(propName, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	private boolean enforceACL() {
+		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.formulation.security.enforceACL"));
 	}
 
 	private Date getFromDate() {
