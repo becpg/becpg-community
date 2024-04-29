@@ -2,6 +2,7 @@
 {
    "status": "${status}"<#if authenticated??>,
    "authenticated": true,
+   "solr_status": "${solr_status}",
 	   "systemInfo" : {
 	   		"diskFreeSpace": ${diskFreeSpace?c},
 	   		"diskTotalSpace": ${diskTotalSpace?c},
