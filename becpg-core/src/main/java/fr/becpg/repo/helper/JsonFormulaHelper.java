@@ -109,7 +109,7 @@ public class JsonFormulaHelper {
 			}
 		}
 		
-		return value;
+		return null;
 	}
 	
 
