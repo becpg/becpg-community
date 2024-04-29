@@ -29,7 +29,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 import org.alfresco.model.ApplicationModel;
 import org.alfresco.model.ContentModel;
@@ -1543,7 +1542,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 						nodes.add(tenantService.getBaseName(node));
 					}
 				} else {
-					nodes = result.getNodeRefs();
+					nodes = new ArrayList<>(result.getNodeRefs());
 				}
 
 				if (maxResults == RepoConsts.MAX_RESULTS_UNLIMITED && hasMore) {
