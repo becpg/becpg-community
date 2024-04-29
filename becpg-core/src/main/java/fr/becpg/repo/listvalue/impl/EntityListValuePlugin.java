@@ -30,7 +30,6 @@ import org.alfresco.repo.dictionary.IndexTokenisationMode;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
-import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceException;
@@ -50,6 +49,7 @@ import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.BeCPGQueryHelper;
+import fr.becpg.repo.helper.impl.EntitySourceAssoc;
 import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.listvalue.ListValueExtractor;
 import fr.becpg.repo.listvalue.ListValuePage;
@@ -291,12 +291,14 @@ public class EntityListValuePlugin implements ListValuePlugin {
 
 						List<NodeRef> tmp = queryBuilder.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list();
 
-						List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, assocQName);
-
 						List<NodeRef> nodesToKeep = new ArrayList<>();
-						for (AssociationRef assocRef : assocRefs) {
-							nodesToKeep.add(assocRef.getSourceRef());
+						List<EntitySourceAssoc> entitySourceAssocs = associationService.getEntitySourceAssocs(new ArrayList<>(Arrays.asList(nodeRef)),
+									assocQName, null, false, null);
+						for (EntitySourceAssoc assocRef : entitySourceAssocs) {
+							nodesToKeep.add(assocRef.getDataListItemNodeRef());
 						}
+						
+						
 						tmp.retainAll(nodesToKeep);
 						if (!RepoConsts.MAX_RESULTS_UNLIMITED.equals(pageSize)) {
 							ret = tmp.subList(0, Math.min(RepoConsts.MAX_SUGGESTIONS, tmp.size()));
