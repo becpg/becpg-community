@@ -2,6 +2,7 @@ package fr.becpg.repo.audit.service.impl;
 
 import java.util.List;
 
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -49,15 +50,13 @@ public class BeCPGAuditServiceImpl implements BeCPGAuditService, AuditScopeListe
 
 	@Override
 	public List<JSONObject> listAuditEntries(AuditType type, AuditQuery auditQuery) {
-		
-		AuditPlugin plugin = getPlugin(type);
-		
-		if (plugin.isDatabaseEnable()) {
-			return databaseAuditService.listAuditEntries((DatabaseAuditPlugin) plugin, auditQuery);
-		}
-		
-		throw new BeCPGAuditException(String.format(NOT_DATABASE_PLUGIN, type));
-		
+		return AuthenticationUtil.runAsSystem(() -> {
+			AuditPlugin plugin = getPlugin(type);
+			if (plugin.isDatabaseEnable()) {
+				return databaseAuditService.listAuditEntries((DatabaseAuditPlugin) plugin, auditQuery);
+			}
+			throw new BeCPGAuditException(String.format(NOT_DATABASE_PLUGIN, type));
+		});
 	}
 
 	@Override
