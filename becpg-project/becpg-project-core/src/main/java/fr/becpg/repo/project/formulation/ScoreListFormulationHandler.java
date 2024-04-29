@@ -44,7 +44,7 @@ import fr.becpg.repo.survey.data.SurveyableEntity;
 /**
  * Project visitor to calculate project score
  *
- * @author quere
+ * @author frederic
  * @version $Id: $Id
  */
 public class ScoreListFormulationHandler extends FormulationBaseHandler<SurveyableEntity> {
@@ -66,41 +66,42 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 	@Override
 	public boolean process(SurveyableEntity surveyableEntity) {
 
-		
-		if(accept(surveyableEntity)){
+		if (accept(surveyableEntity)) {
 
 			List<ScoreListDataItem> scoreList = surveyableEntity.getScoreList();
-	
-			// Score can be set manually
-			if ((surveyableEntity.getScoreList() != null) && !surveyableEntity.getScoreList().isEmpty()) {
-				
+
+			if (alfrescoRepository.hasDataList(surveyableEntity, ProjectModel.TYPE_SCORE_LIST)
+					&& alfrescoRepository.hasDataList(surveyableEntity, SurveyModel.TYPE_SURVEY_LIST)) {
 
 				// If surveyList is empty, we do nothing
 				if ((surveyableEntity.getSurveyList() != null) && !surveyableEntity.getSurveyList().isEmpty()) {
-		
+
 					Map<String, Integer> scoresPerCriterion = new HashMap<>();
 					Map<String, Integer> nbOfQuestionsPerCriterion = new HashMap<>();
-		
+
 					fillScoresAndNbQuestions(surveyableEntity, scoresPerCriterion, nbOfQuestionsPerCriterion);
-		
+
 					// For each criterion present in the surveyList, we calculate the score for each criterion in the scoreList. For the criterion that are not
 					// in the surveyList, we do nothing
 					calculateAndFillScoreList(scoreList, scoresPerCriterion, nbOfQuestionsPerCriterion);
 				}
-		
-	
+			}
+
+			// Score can be set manually
+			if ((surveyableEntity.getScoreList() != null) && !surveyableEntity.getScoreList().isEmpty()) {
+
 				int totalScore = 0;
 				int totalWeight = 0;
 				surveyableEntity.setScore(null);
 				for (ScoreListDataItem sl : surveyableEntity.getScoreList()) {
-	
+
 					if ((sl.getWeight() != null) && (sl.getScore() != null)) {
 						totalScore += sl.getWeight() * sl.getScore();
 						totalWeight += sl.getWeight();
 					}
 					logger.debug("totalScore: " + totalScore + " totalWeight: " + totalWeight);
 				}
-	
+
 				if (totalWeight == 0) {
 					logger.debug("Total weight of project " + surveyableEntity.getNodeRef() + " is equal to 0.");
 				} else {
@@ -113,15 +114,13 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 		return true;
 	}
 
-
 	private boolean accept(SurveyableEntity surveyableEntity) {
-		
-		if(surveyableEntity instanceof BeCPGDataObject && ((BeCPGDataObject)surveyableEntity).getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
+
+		if (surveyableEntity instanceof BeCPGDataObject dataObj && dataObj.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
 			return false;
 		}
-		
-		return alfrescoRepository.hasDataList(surveyableEntity, ProjectModel.TYPE_SCORE_LIST)
-						&& alfrescoRepository.hasDataList(surveyableEntity, SurveyModel.TYPE_SURVEY_LIST);
+
+		return true;
 	}
 
 	/**
