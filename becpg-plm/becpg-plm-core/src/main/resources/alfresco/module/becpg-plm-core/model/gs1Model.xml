@@ -1502,6 +1502,36 @@ gs1:secondaryStackingMaxWeight -->
 						<facetable>true</facetable>
 					</index>
 				</property>
+				
+				<property name="gs1:stackingFactor">
+					<type>d:int</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
+				</property>
+				<property name="gs1:stackingMaxWeight">
+					<type>d:double</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
+				</property>
+				<property name="gs1:secondaryStackingFactor">
+					<type>d:int</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
+				</property>
+				<property name="gs1:secondaryStackingMaxWeight">
+					<type>d:double</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
+				</property>
+				
 				<property name="gs1:tertiaryWeight">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
@@ -2405,7 +2435,7 @@ gs1:secondaryStackingMaxWeight -->
 						<facetable>false</facetable>
 					</index>
 					<constraints>
-						<constraint ref="gs1:pegHoleTypeCode"/>
+						<constraint ref="gs1:pegHoleTypeCodes"/>
 					</constraints>
 				</property>
 				<property name="gs1:pegHorizontal">
