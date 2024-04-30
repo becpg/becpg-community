@@ -31,6 +31,8 @@ import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.StoreRef;
+import org.alfresco.service.cmr.security.AccessStatus;
+import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.codec.binary.Base64InputStream;
@@ -94,6 +96,8 @@ public class ImportEntityJsonVisitor {
 	private MimetypeService mimetypeService;
 
 	private RemoteParams remoteParams;
+	
+	private PermissionService permissionService;
 
 	/**
 	 * <p>Constructor for ImportEntityJsonVisitor.</p>
@@ -115,6 +119,7 @@ public class ImportEntityJsonVisitor {
 		this.entityListDAO = entityListDAO;
 		this.mimetypeService = serviceRegistry.getMimetypeService();
 		this.contentService = serviceRegistry.getContentService();
+		this.permissionService = serviceRegistry.getPermissionService();
 	}
 
 	/**
@@ -349,6 +354,10 @@ public class ImportEntityJsonVisitor {
 			if (logger.isDebugEnabled()) {
 				logger.debug(" - Node not found creating: " + name + " in " + parentNodeRef);
 			}
+			
+			if (permissionService.hasPermission(parentNodeRef, PermissionService.WRITE) != AccessStatus.ALLOWED) {
+				throw new IllegalAccessError("You have no rights to perform this operation");
+			}
 
 			entityNodeRef = nodeService
 					.createNode(parentNodeRef, assocName,
@@ -360,6 +369,10 @@ public class ImportEntityJsonVisitor {
 			}
 
 		} else {
+			
+			if (permissionService.hasPermission(entityNodeRef, PermissionService.WRITE) != AccessStatus.ALLOWED) {
+				throw new IllegalAccessError("You have no rights to perform this operation");
+			}
 
 			for (Entry<QName, Serializable> prop : properties.entrySet()) {
 				if (prop.getValue() == null) {
