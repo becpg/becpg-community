@@ -838,7 +838,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		/**
 		 * Helper @beCPG.formatNumber($number, $format )
 		 *
-		 *    Example: @beCPG.formatNumber(10,00005,
+		 *    Example: @beCPG.formatNumber(10.00005d,
 		 *                              "0.##")
 		 *
 		 * @param number
@@ -852,8 +852,8 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		/**
 		 * Helper  @beCPG.formatDate($date )
 		 *
-		 *  Example: @beCPG.formatNumber(10,00005,
-		 *                         "0.##")
+		 *  Example: @beCPG.formatDate(new
+		 *                          java.util.Date() )
 		 *
 		 * @param date
 		 * @return standard becpg date format
