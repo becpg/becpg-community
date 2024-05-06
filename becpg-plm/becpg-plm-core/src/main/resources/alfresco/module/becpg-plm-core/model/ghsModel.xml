@@ -84,6 +84,7 @@
 		<constraint name="ghs:sdsStandardCodes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
+				    <value></value>
 					<value>ANSI</value>
 					<value>FITPC</value>
 					<value>GHS</value>
