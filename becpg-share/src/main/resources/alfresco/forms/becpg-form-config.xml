@@ -581,7 +581,7 @@
 							<control-param name="saveTitle">false</control-param>
 						</control>
 					</field>
-					<field id="bcpg:nrTimeNumber" set="notificationRule">
+					<field id="bcpg:nrTimeNumber" set="notificationRule" mandatory="true">
 						<control template="/org/alfresco/components/form/controls/number.ftl" />
 					</field>
 					<field id="bcpg:nrTimeType" set="notificationRule" help-id="becpg.forms.help.notificationTimeType" />
@@ -726,7 +726,7 @@
 							<control-param name="saveTitle">false</control-param>
 						</control>
 					</field>
-					<field id="bcpg:nrTimeNumber" set="notificationRule">
+					<field id="bcpg:nrTimeNumber" set="notificationRule" mandatory="true">
 						<control template="/org/alfresco/components/form/controls/number.ftl" />
 					</field>
 					<field id="bcpg:nrTimeType" set="notificationRule" help-id="becpg.forms.help.notificationTimeType" />
