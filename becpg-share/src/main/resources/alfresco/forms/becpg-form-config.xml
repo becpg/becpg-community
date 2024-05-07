@@ -519,6 +519,7 @@
 		<forms>
 			<!-- Create item form -->
 			<form>
+				<edit-form template="tab-edit" />
 				<field-visibility>
 					<show id="bcpg:nrNotificationAuthorities" />
 					<show id="bcpg:nrTimeType" />
@@ -665,6 +666,7 @@
 		<forms>
 			<!-- Popup update existing node form -->
 			<form>
+				<edit-form template="tab-edit" />
 				<field-visibility>
 					<show id="bcpg:nrNotificationAuthorities" />
 					<show id="bcpg:nrTimeType" />
