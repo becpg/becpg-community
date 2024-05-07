@@ -119,8 +119,12 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 			templateArgs = new HashMap<>();
 			entities = new HashMap<>();
 
-			notification = alfrescoRepository.findOne(notificationNodeRef);
-			
+			try {
+				notification = alfrescoRepository.findOne(notificationNodeRef);
+			} catch (final Exception e) {
+				logger.warn("Error while retrieving notification data: " + e.getMessage());
+				continue;
+			}
 			try {
 				if (notification.getNodeType() == null || notification.getTarget() == null || !nodeService.exists(notification.getTarget())
 						|| notification.getAuthorities() == null || !isAllowed(notification)) {
