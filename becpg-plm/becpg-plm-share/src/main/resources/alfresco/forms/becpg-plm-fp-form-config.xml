@@ -98,6 +98,13 @@
           <show force="false" id="gs1:pegHorizontal"/>
           <show force="false" id="gs1:pegVertical"/>
           
+          <show force="false" id="gs1:animalNutritionalClaim"/>
+          <show force="false" id="gs1:animalFeedAdditiveStatement"/>
+          <show force="false" id="gs1:animalFeedAnalyticalConstituentsStatement"/>
+          <show force="false" id="gs1:animalFeedCompositionStatement"/>
+          <show force="false" id="gs1:animalFeedingInstructions"/>
+          <show force="false" id="gs1:animalFeedType"/>
+          
           <show force="false" id="gs1:cheeseMaturationPeriodDescription"/>
 		  <show force="false" id="gs1:cheeseMaturationProcessContainerTypeCode"/>
 		  <show force="false" id="gs1:fatPercentageInDryMatter"/>
@@ -219,11 +226,16 @@
           <show force="false" id="gs1:sortingBonusCriteria"/>
           <show force="false" id="gs1:sortingMalusCriteria"/>
           <show force="false" id="gs1:sortingInstructions"/>
+          <show force="false" id="gs1:consumerUsageInstructions"/>
           <show force="false" id="gs1:productHierarchy1"/>
           <show force="false" id="gs1:productHierarchy2"/>
           <show force="false" id="gs1:productHierarchy3"/>
           <show force="false" id="gs1:productHierarchy4"/>
           <show force="false" id="gs1:productHierarchy5"/>
+          <show force="false" id="gs1:additionalTradeItemClassification1"/>
+          <show force="false" id="gs1:additionalTradeItemClassificationText1"/>
+          <show force="false" id="gs1:additionalTradeItemClassification2"/>
+          <show force="false" id="gs1:additionalTradeItemClassificationText2"/>
           <show force="false" id="gs1:dataCarrierTypeCode"/>
           <show force="false" id="bcpg:customsCodeRef"/>
           <show force="false" id="gs1:isTradeItemAVariableUnit"/>
@@ -245,6 +257,7 @@
           <show force="false" id="gs1:effectiveDate"/>
           <show force="false" id="gs1:publicationDate"/>
           <show force="false" id="gs1:cancelledDateTime"/>
+          <show force="false" id="gs1:discontinuedDateTime"/>
           <show force="false" id="gs1:isTradeItemAnInvoiceUnit"/>
           <show force="false" id="gs1:isTradeItemAnOrderableUnit"/>
           <show force="false" id="gs1:firstShipDateTime"/>
@@ -256,6 +269,7 @@
           <show force="false" id="gs1:orderQuantityMultiple"/>
           <show force="false" id="gs1:orderingLeadTime"/>
           <show force="false" id="gs1:sellingUnitOfMeasure"/>
+          <show force="false" id="gs1:priceComparisonContentTypeCode"/>
           <show force="false" id="gs1:isTradeItemAFullDisplayStand"/>
           <show force="false" id="gs1:hasDisplayReadyPackaging"/>
           <show force="false" id="bcpg:autoMergeDate"/>
@@ -394,6 +408,14 @@
           <field id="gs1:pegHoleTypeCode" mandatory="false" read-only="false" set="pegHole"/>
           <field id="gs1:pegHorizontal" mandatory="false" read-only="false" set="pegHole"/>
           <field id="gs1:pegVertical" mandatory="false" read-only="false" set="pegHole"/>
+          
+          <set appearance="bordered-panel" id="animalFeeding" label-id="becpg.forms.set.animalFeeding.label" parent="mainTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
+          <field id="gs1:animalNutritionalClaim" mandatory="false" read-only="false" set="animalFeeding"/>
+          <field id="gs1:animalFeedAdditiveStatement" mandatory="false" read-only="false" set="animalFeeding"/>
+          <field id="gs1:animalFeedAnalyticalConstituentsStatement" mandatory="false" read-only="false" set="animalFeeding"/>
+          <field id="gs1:animalFeedCompositionStatement" mandatory="false" read-only="false" set="animalFeeding"/>
+          <field id="gs1:animalFeedingInstructions" mandatory="false" read-only="false" set="animalFeeding"/>
+          <field id="gs1:animalFeedType" mandatory="false" read-only="false" set="animalFeeding"/>
           
           <field id="gs1:referencedTradeItemTypeCode" mandatory="false" read-only="false" set="mainInfo"/>
           <field id="bcpg:subsidiaryRef" mandatory="false" read-only="false" set="mainInfo"/>
@@ -913,7 +935,12 @@
        
           <field id="gs1:sortingBonusCriteria" mandatory="false" read-only="false" set="packSorting"/>
           <field id="gs1:sortingMalusCriteria" mandatory="false" read-only="false" set="packSorting"/>
-           <field id="gs1:sortingInstructions" mandatory="false" read-only="false" set="packSorting">
+          <field id="gs1:sortingInstructions" mandatory="false" read-only="false" set="packSorting">
+            <control template="/org/alfresco/components/form/controls/textarea.ftl">
+              <control-param name="rows">2</control-param>
+            </control>
+          </field>
+          <field id="gs1:consumerUsageInstructions" mandatory="false" read-only="false" set="packSorting">
             <control template="/org/alfresco/components/form/controls/textarea.ftl">
               <control-param name="rows">2</control-param>
             </control>
@@ -950,6 +977,10 @@
               <control-param name="parent">gs1_productHierarchy4</control-param>
             </control>
           </field>
+          <field id="gs1:additionalTradeItemClassification1" mandatory="false" read-only="false" set="hierarchyPanel"/>
+          <field id="gs1:additionalTradeItemClassificationText1" mandatory="false" read-only="false" set="hierarchyPanel"/>
+          <field id="gs1:additionalTradeItemClassification2" mandatory="false" read-only="false" set="hierarchyPanel"/>
+          <field id="gs1:additionalTradeItemClassificationText2" mandatory="false" read-only="false" set="hierarchyPanel"/>
           <field help-id="becpg.forms.help.gs1.dataCarrierTypeCode" id="gs1:dataCarrierTypeCode" mandatory="false" read-only="false" set="hierarchyPanel"/>
           <field id="bcpg:customsCodeRef" mandatory="false" read-only="false" set="hierarchyPanel">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -997,6 +1028,7 @@
           <field help-id="becpg.forms.help.gs1.effectiveDate" id="gs1:effectiveDate" mandatory="false" read-only="false" set="commercialPanel"/>
           <field help-id="becpg.forms.help.gs1.publicationDate" id="gs1:publicationDate" mandatory="false" read-only="false" set="commercialPanel"/>
           <field help-id="becpg.forms.help.gs1.cancelledDateTime" id="gs1:cancelledDateTime" mandatory="false" read-only="false" set="commercialPanel"/>
+          <field help-id="becpg.forms.help.gs1.discontinuedDateTime" id="gs1:discontinuedDateTime" mandatory="false" read-only="false" set="commercialPanel"/>
           <field help-id="becpg.forms.help.gs1.isTradeItemAnInvoiceUnit" id="gs1:isTradeItemAnInvoiceUnit" mandatory="false" read-only="false" set="commercialPanel">
             <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
           </field>
@@ -1021,6 +1053,7 @@
             </control>
           </field>
           <field help-id="becpg.forms.help.gs1.sellingUnitOfMeasure" id="gs1:sellingUnitOfMeasure" mandatory="false" read-only="false" set="commercialPanel"/>
+          <field help-id="becpg.forms.help.gs1.priceComparisonContentTypeCode" id="gs1:priceComparisonContentTypeCode" mandatory="false" read-only="false" set="commercialPanel"/>
           <field help-id="becpg.forms.help.gs1.isTradeItemAFullDisplayStand" id="gs1:isTradeItemAFullDisplayStand" mandatory="false" read-only="false" set="commercialPanel">
             <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
           </field>
@@ -2224,6 +2257,7 @@
           <show force="true" id="gs1:platformTermsAndConditionsCode"/>
           <show force="true" id="gs1:packUnitNumber"/>
           <show force="true" id="gs1:sortingInstructions"/>
+          <show force="true" id="gs1:consumerUsageInstructions"/>
           <show force="true" id="gs1:sortingBonusCriteria"/>
           <show force="true" id="gs1:sortingMalusCriteria"/>
           <show force="true" id="gs1:productHierarchy1"/>
@@ -2231,6 +2265,10 @@
           <show force="true" id="gs1:productHierarchy3"/>
           <show force="true" id="gs1:productHierarchy4"/>
           <show force="true" id="gs1:productHierarchy5"/>
+          <show force="true" id="gs1:additionalTradeItemClassification1"/>
+          <show force="true" id="gs1:additionalTradeItemClassificationText1"/>
+          <show force="true" id="gs1:additionalTradeItemClassification2"/>
+          <show force="true" id="gs1:additionalTradeItemClassificationText2"/>
           <show force="true" id="gs1:dataCarrierTypeCode"/>
           <show force="true" id="bcpg:customsCodeRef"/>
           <show force="true" id="gs1:isTradeItemAVariableUnit"/>
@@ -2252,6 +2290,7 @@
           <show force="true" id="gs1:effectiveDate"/>
           <show force="true" id="gs1:publicationDate"/>
           <show force="true" id="gs1:cancelledDateTime"/>
+          <show force="true" id="gs1:discontinuedDateTime"/>
           <show force="true" id="gs1:isTradeItemAnInvoiceUnit"/>
           <show force="true" id="gs1:isTradeItemAnOrderableUnit"/>
           <show force="true" id="gs1:firstShipDateTime"/>
@@ -2263,6 +2302,7 @@
           <show force="true" id="gs1:orderQuantityMultiple"/>
           <show force="true" id="gs1:orderingLeadTime"/>
           <show force="true" id="gs1:sellingUnitOfMeasure"/>
+          <show force="true" id="gs1:priceComparisonContentTypeCode"/>
           <show force="true" id="gs1:isTradeItemAFullDisplayStand"/>
           <show force="true" id="gs1:hasDisplayReadyPackaging"/>
           <show force="true" id="gs1:isTradeItemSeasonal"/>
@@ -2275,6 +2315,12 @@
           <show force="true" id="gs1:pegHoleTypeCode"/>
           <show force="true" id="gs1:pegHorizontal"/>
           <show force="true" id="gs1:pegVertical"/>
+          <show force="false" id="gs1:animalNutritionalClaim"/>
+          <show force="true" id="gs1:animalFeedAdditiveStatement"/>
+          <show force="true" id="gs1:animalFeedAnalyticalConstituentsStatement"/>
+          <show force="true" id="gs1:animalFeedCompositionStatement"/>
+          <show force="true" id="gs1:animalFeedingInstructions"/>
+          <show force="true" id="gs1:animalFeedType"/>
         </field-visibility>
         <appearance>
           <set id="mainTab" label-id="becpg.forms.set.characteristics.label"/>
@@ -2377,6 +2423,14 @@
           <field id="gs1:pegHoleTypeCode" mandatory="false" read-only="false" set="pegHole"/>
           <field id="gs1:pegHorizontal" mandatory="false" read-only="false" set="pegHole"/>
           <field id="gs1:pegVertical" mandatory="false" read-only="false" set="pegHole"/>
+          
+          <set appearance="bordered-panel" id="animalFeeding" label-id="becpg.forms.set.animalFeeding.label" parent="mainTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
+          <field id="gs1:animalNutritionalClaim" mandatory="false" read-only="false" set="animalFeeding"/>
+          <field id="gs1:animalFeedAdditiveStatement" mandatory="false" read-only="false" set="animalFeeding"/>
+          <field id="gs1:animalFeedAnalyticalConstituentsStatement" mandatory="false" read-only="false" set="animalFeeding"/>
+          <field id="gs1:animalFeedCompositionStatement" mandatory="false" read-only="false" set="animalFeeding"/>
+          <field id="gs1:animalFeedingInstructions" mandatory="false" read-only="false" set="animalFeeding"/>
+          <field id="gs1:animalFeedType" mandatory="false" read-only="false" set="animalFeeding"/>
           
           <field id="bcpg:subsidiaryRef" mandatory="false" read-only="false" set="mainInfo"/>
           <field id="bcpg:trademarkRef" mandatory="false" read-only="false" set="mainInfo"/>
@@ -2785,6 +2839,11 @@
               <control-param name="rows">2</control-param>
             </control>
           </field>
+          <field id="gs1:consumerUsageInstructions" mandatory="false" read-only="false" set="packSorting">
+            <control template="/org/alfresco/components/form/controls/textarea.ftl">
+              <control-param name="rows">2</control-param>
+            </control>
+          </field>
           <field id="gs1:sortingBonusCriteria" mandatory="false" read-only="false" set="packSorting"/>
           <field id="gs1:sortingMalusCriteria" mandatory="false" read-only="false" set="packSorting"/>
          
@@ -2820,6 +2879,10 @@
               <control-param name="parent">gs1_productHierarchy4</control-param>
             </control>
           </field>
+          <field id="gs1:additionalTradeItemClassification1" mandatory="false" read-only="false" set="hierarchyPanel"/>
+          <field id="gs1:additionalTradeItemClassificationText1" mandatory="false" read-only="false" set="hierarchyPanel"/>
+          <field id="gs1:additionalTradeItemClassification2" mandatory="false" read-only="false" set="hierarchyPanel"/>
+          <field id="gs1:additionalTradeItemClassificationText2" mandatory="false" read-only="false" set="hierarchyPanel"/>
           <field help-id="becpg.forms.help.gs1.dataCarrierTypeCode" id="gs1:dataCarrierTypeCode" mandatory="false" read-only="false" set="hierarchyPanel"/>
           <field id="bcpg:customsCodeRef" mandatory="false" read-only="false" set="hierarchyPanel">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -2861,6 +2924,7 @@
           <field help-id="becpg.forms.help.gs1.effectiveDate" id="gs1:effectiveDate" mandatory="false" read-only="false" set="commercialPanel"/>
           <field help-id="becpg.forms.help.gs1.publicationDate" id="gs1:publicationDate" mandatory="false" read-only="false" set="commercialPanel"/>
           <field help-id="becpg.forms.help.gs1.cancelledDateTime" id="gs1:cancelledDateTime" mandatory="false" read-only="false" set="commercialPanel"/>
+          <field help-id="becpg.forms.help.gs1.discontinuedDateTime" id="gs1:discontinuedDateTime" mandatory="false" read-only="false" set="commercialPanel"/>
           <field help-id="becpg.forms.help.gs1.isTradeItemAnInvoiceUnit" id="gs1:isTradeItemAnInvoiceUnit" mandatory="false" read-only="false" set="commercialPanel">
             <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
           </field>
@@ -2882,6 +2946,7 @@
             </control>
           </field>
           <field help-id="becpg.forms.help.gs1.sellingUnitOfMeasure" id="gs1:sellingUnitOfMeasure" mandatory="false" read-only="false" set="commercialPanel"/>
+          <field help-id="becpg.forms.help.gs1.priceComparisonContentTypeCode" id="gs1:priceComparisonContentTypeCode" mandatory="false" read-only="false" set="commercialPanel"/>
           <field help-id="becpg.forms.help.gs1.isTradeItemAFullDisplayStand" id="gs1:isTradeItemAFullDisplayStand" mandatory="false" read-only="false" set="commercialPanel">
             <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
           </field>
