@@ -232,6 +232,9 @@ public class NutrientHelper {
 			if (profileName.contains("Fats") || profileName.contains("Matières grasses")) {
 				return NutrientProfileCategory.Fats.toString();
 			}
+			if (profileName.contains("Red meats") || profileName.contains("Viandes rouges")) {
+				return NutrientProfileCategory.RedMeats.toString();
+			}
 		}
 		
 		throw new IllegalStateException("Nutrient category not found");
