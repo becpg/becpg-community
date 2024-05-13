@@ -86,6 +86,14 @@ public class SimpleCharactListExtractor extends SimpleExtractor {
 
 											if (((charact != null) && charact.equals(associationService.getTargetAssoc(reqCtrl, PLMModel.ASSOC_RCL_CHARACT))
 													|| (sources!=null && sources.contains(charact)))) {
+												if (item instanceof IngRegulatoryListDataItem) {
+													String reqCtrlCode = (String) nodeService.getProperty(reqCtrl, PLMModel.PROP_REGULATORY_CODE);
+													if (reqCtrlCode != null && ((IngRegulatoryListDataItem) item).getRegulatoryCountries().stream().anyMatch(u -> reqCtrlCode.contains(((String) nodeService.getProperty(u, PLMModel.PROP_REGULATORY_CODE))))) {
+														addExtracted(reqCtrl, field, mode, ret);
+													}
+												} else {
+													addExtracted(reqCtrl, field, mode, ret);
+												}
 												addExtracted(reqCtrl, field, mode, ret);
 											}
 										}
