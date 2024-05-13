@@ -1615,6 +1615,30 @@ if (beCPG.module.EntityDataGridRenderers) {
 	});
 	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+		propertyName : [ "bcpg:irlCitation", "bcpg:irlRestrictionLevels", "bcpg:irlResultIndicator", "bcpg:irlUsages" ],
+		renderer : function(oRecord, data, label, scope) {
+			
+			if (data.displayValue) {
+			    var parts = data.displayValue.split(";;");
+			    var displayedData = "";
+			    for (var i in parts) {
+					var part = parts[i];
+					if (label != "bcpg:irlUsages") {
+						var subParts = part.split(" :: ");
+						part = "<b>" + Alfresco.util.encodeHTML(subParts[0]) + "</b>" + " : " + Alfresco.util.encodeHTML(subParts[1]);
+					}
+					displayedData += "- " + part;
+					if (i != parts.length - 1) {
+						displayedData += "<br>";
+					}
+				}
+			    return displayedData;
+			}
+			return Alfresco.util.encodeHTML(data.displayValue);
+		}
+	});
+	
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : [ "bcpg:nutListGDAPerc" ],
 		renderer : function(oRecord, data, label, scope) {
 			

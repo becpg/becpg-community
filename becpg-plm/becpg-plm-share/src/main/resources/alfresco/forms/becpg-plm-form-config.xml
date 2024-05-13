@@ -9794,10 +9794,10 @@
 				<field-visibility>
 					<show id="bcpg:irlIng" />
 					<show id="bcpg:regulatoryCountries" force="true" />
-					<show id="bcpg:irlCitation" />
-					<show id="bcpg:irlResultIndicator" />
 					<show id="bcpg:irlUsages" />
+					<show id="bcpg:irlResultIndicator" />
 					<show id="bcpg:irlRestrictionLevels" />
+					<show id="bcpg:irlCitation" />
 					<show id="bcpg:irlSources" />
 				</field-visibility>
 			</form>
@@ -9828,10 +9828,10 @@
 				<field-visibility>
 					<show id="bcpg:irlIng" />
 					<show id="bcpg:regulatoryCountries" force="true" />
-					<show id="bcpg:irlCitation" />
-					<show id="bcpg:irlResultIndicator" />
 					<show id="bcpg:irlUsages" />
+					<show id="bcpg:irlResultIndicator" />
 					<show id="bcpg:irlRestrictionLevels" />
+					<show id="bcpg:irlCitation" />
 					<show id="bcpg:regulatoryComment" force="true" />
 					<show id="bcpg:irlSources" />
 					<show id="dataList_bcpg:reqCtrlList" />
@@ -9839,11 +9839,11 @@
 				<appearance>
 					<field id="bcpg:irlIng" read-only="true" />
 					<field id="bcpg:regulatoryCountries" read-only="true" />
-					<field id="bcpg:irlCitation" read-only="true" />
-					<field id="bcpg:irlResultIndicator" read-only="true" />
 					<field id="bcpg:irlUsages" read-only="true" />
-					<field id="bcpg:regulatoryComment" read-only="true" />
+					<field id="bcpg:irlResultIndicator" read-only="true" />
 					<field id="bcpg:irlRestrictionLevels" read-only="true" />
+					<field id="bcpg:irlCitation" read-only="true" />
+					<field id="bcpg:regulatoryComment" read-only="true" />
 					<field id="bcpg:irlSources" read-only="true" />
 					<field id="dataList_bcpg:reqCtrlList" label-id="hidden" />
 				</appearance>
@@ -9856,19 +9856,19 @@
 				<field-visibility>
 					<show id="bcpg:irlIng" />
 					<show id="bcpg:regulatoryCountries" force="true" />
-					<show id="bcpg:irlCitation" />
-					<show id="bcpg:irlResultIndicator" force="true" />
 					<show id="bcpg:irlUsages" force="true" />
+					<show id="bcpg:irlResultIndicator" force="true" />
 					<show id="bcpg:irlRestrictionLevels" />
+					<show id="bcpg:irlCitation" />
 					<show id="bcpg:regulatoryComment" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:irlIng" read-only="true" />
 					<field id="bcpg:regulatoryCountries" read-only="true" />
-					<field id="bcpg:irlCitation" read-only="true" />
 					<field id="bcpg:irlResultIndicator" read-only="true" />
-					<field id="bcpg:regulatoryUsageRef" read-only="true" />
 					<field id="bcpg:irlRestrictionLevels" read-only="true" />
+					<field id="bcpg:irlCitation" read-only="true" />
+					<field id="bcpg:regulatoryUsageRef" read-only="true" />
 					<field id="bcpg:regulatoryComment" read-only="true" />
 				</appearance>
 			</form>
