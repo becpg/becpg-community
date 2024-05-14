@@ -1148,6 +1148,8 @@
 							a.doc->>"$.bcpg_nutListNut_bcpg_nodeRef[0]" as nodeRef,
 							a.doc->>"$.bcpg_nutListGroup" as nutGroup,
 							a.doc->>"$.bcpg_nutListValue" as nutValue,
+							a.doc->>"$.bcpg_nutListMaxi" as nutMaxi,
+							a.doc->>"$.bcpg_nutListMini" as nutMini,
 							a.doc->>"$.bcpg_nutListFormulatedValue" as nutFormulatedValue,
 							a.doc->>"$.bcpg_nutListGDAPerc" as nutListGDAPerc,
 							a.doc->>"$.bcpg_nutListValuePerServing" as nutListValuePerServing,
@@ -1265,6 +1267,8 @@
 		
 
 		<Measure name="nutValue" caption="${msg("jsolap.nutritionalValues.title")}" column="nutValue" datatype="Numeric" aggregator="avg" visible="true"></Measure>	
+		<Measure name="nutMini" caption="${msg("jsolap.nutritionalMini.title")}" column="nutMini" datatype="Numeric" aggregator="avg" visible="true"></Measure>	
+		<Measure name="nutMaxi" caption="${msg("jsolap.nutritionalMaxi.title")}" column="nutMaxi" datatype="Numeric" aggregator="avg" visible="true"></Measure>	
 		<Measure name="nutFormulatedValue" caption="${msg("jsolap.nutritionalFormulatedValues.title")}" column="nutFormulatedValue" datatype="Numeric" aggregator="avg" visible="true"></Measure>	
 		<Measure name="nutListValuePerServing" caption="${msg("jsolap.nutListValuePerServing.title")}" column="nutListValuePerServing" datatype="Numeric" aggregator="avg" visible="true"></Measure>
 		<Measure name="nutListGDAPerc" caption="${msg("jsolap.nutListGDAPerc.title")}" column="nutListGDAPerc" datatype="Numeric" aggregator="avg" visible="true"></Measure>
@@ -1288,6 +1292,7 @@
 						doc->>"$.bcpg_legalName" as legalName,
 						doc->>"$.bcpg_nutrientProfilingScore" as nutrientProfilingScore,
 						doc->>"$.bcpg_nutrientProfilingClass" as nutrientProfilingClass,
+						doc->>"$.bcpg_storageConditionsRef" as storageConditions,
 						CAST( doc->>"$.cm_created" as DATE) as productDateCreated,
 						CAST( doc->>"$.cm_modified" as DATE) as productDateModified,
 						CAST( doc->>"$.bcpg_startEffectivity" as DATE) as startEffectivity,
@@ -1299,7 +1304,7 @@
 						doc->>"$.bcpg_unitPrice" as unitPrice,
 						doc->>"$.cm_versionLabel" as versionLabel,
 						doc->>"$.cm_creator" as creator,
-						doc->>"$.cm_modifier" as modifier,
+						doc->>"$.cm_modifier" as modifier
 					from
 						bcpg_product
 				</SQL>
@@ -1685,6 +1690,12 @@
 		<Dimension  name="creation" caption="${msg("jsolap.creator.title")}" >
 			<Hierarchy name="creators" caption="${msg("jsolap.creator.caption")}" hasAll="true" allMemberCaption="${msg("jsolap.creator.caption")}">
 				<Level name="creator"  caption="${msg("jsolap.creator.title")}"  column="creator"  type="String" />
+			</Hierarchy>
+		</Dimension>
+		
+	    <Dimension  name="storageConditions" caption="${msg("jsolap.storageConditions.title")}" >
+			<Hierarchy name="storageConditions" caption="${msg("jsolap.storageConditions.caption")}" hasAll="true" allMemberCaption="${msg("jsolap.storageConditions.caption")}">
+				<Level name="storageCondition"  caption="${msg("jsolap.storageConditions.title")}"  column="storageConditions"  type="String" />
 			</Hierarchy>
 		</Dimension>
 		
