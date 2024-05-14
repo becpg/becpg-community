@@ -338,6 +338,13 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		this.page = page;
 		return this;
 	}
+	
+	public BeCPGQueryBuilder page(PagingRequest pagingRequest) {
+		this.maxResults = pagingRequest.getMaxItems();
+		this.page = pagingRequest.getSkipCount()/pagingRequest.getMaxItems();
+		return this;
+	}
+
 
 	/**
 	 * <p>
@@ -1832,4 +1839,5 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 	}
 
+	
 }

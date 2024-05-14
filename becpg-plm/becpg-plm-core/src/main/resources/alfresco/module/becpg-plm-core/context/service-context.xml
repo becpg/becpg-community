@@ -157,6 +157,15 @@
 	</bean>
 	
 	<!-- Publication -->
+	
+	<bean id="publicationChannelService"
+		class="fr.becpg.repo.publication.impl.PublicationChannelServiceImpl"
+		parent="abstractBeCPGPolicy" depends-on="bcpg.plm.dictionaryBootstrap">
+		<property name="namespaceService" ref="namespaceService"/>
+		<property name="entityListDAO" ref="entityListDAO"/>
+		<property name="associationService" ref="associationService"/>
+	</bean>
+	
 	<bean id="webscript.fr.becpg.publication.channelList.get" class="fr.becpg.repo.web.scripts.publication.ListEntitiesByChannelWebScript" parent="webscript.fr.becpg.remote.entities.get">
 		<property name="publicationChannelService" ref="publicationChannelService" />
 	</bean>
