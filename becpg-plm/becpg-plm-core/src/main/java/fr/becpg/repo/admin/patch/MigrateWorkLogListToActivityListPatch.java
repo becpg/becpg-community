@@ -85,7 +85,7 @@ public class MigrateWorkLogListToActivityListPatch extends AbstractBeCPGPatch {
 				logger.info("Migrate workLog list of non conformity: " + ncNodeRef);
 
 				int sort = 100;
-				NodeRef activityListRef = entityTplService.createActivityList(ncNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
+				NodeRef activityListRef = entityTplService.createOrUpdateList(ncNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
 
 				NodeRef datalistsRef = nodeService.getChildByName(ncNodeRef, BeCPGModel.ASSOC_ENTITYLISTS, "DataLists");
 
