@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -77,7 +78,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 
 	private List<String> availableCountries;
 
-	private Map<Integer, List<String>> functionsMap = new HashMap<>();
+	private Map<Integer, List<String>> functionsMap = new ConcurrentHashMap<>();
 
 	@Override
 	public boolean isEnabled() {
@@ -324,6 +325,9 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 		if (!functionsMap.containsKey(moduelId)) {
 			List<String> functions = fetchFunctions(moduelId);
 			functionsMap.put(moduelId, functions);
+		}
+		if (logger.isTraceEnabled()) {
+			logger.trace("functionsMap=" + functionsMap);
 		}
 		for (String function : functionsMap.get(moduelId)) {
 			if (function.trim().equalsIgnoreCase(ingTypeValue.trim())) {
