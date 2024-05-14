@@ -37,9 +37,15 @@
         <PathMap source="/becpg/audit/activity/prop_bcpg_alType" target="/beCPGActivityAudit/activity/prop_bcpg_alType"/>
         <PathMap source="/becpg/audit/activity/prop_bcpg_alData" target="/beCPGActivityAudit/activity/prop_bcpg_alData"/>
         <PathMap source="/becpg/audit/activity/prop_cm_created" target="/beCPGActivityAudit/activity/prop_cm_created"/>
-        <PathMap source="/becpg/audit/activity/startedAt" target="/beCPGActivityAudit/activity/startedAt"/>
-       <PathMap source="/becpg/audit/activity/completedAt" target="/beCPGActivityAudit/activity/completedAt"/>
        <PathMap source="/becpg/audit/activity/entityNodeRef" target="/beCPGActivityAudit/activity/entityNodeRef"/>
+        <PathMap source="/becpg/audit/report/startedAt" target="/beCPGReportAudit/report/startedAt"/>
+       <PathMap source="/becpg/audit/report/completedAt" target="/beCPGReportAudit/report/completedAt"/>
+       <PathMap source="/becpg/audit/report/duration" target="/beCPGReportAudit/report/duration"/>
+       <PathMap source="/becpg/audit/report/entityNodeRef" target="/beCPGReportAudit/report/entityNodeRef"/>
+       <PathMap source="/becpg/audit/report/locale" target="/beCPGReportAudit/report/locale"/>
+       <PathMap source="/becpg/audit/report/format" target="/beCPGReportAudit/report/format"/>
+       <PathMap source="/becpg/audit/report/name" target="/beCPGReportAudit/report/name"/>
+       <PathMap source="/becpg/audit/report/datasourceSize" target="/beCPGReportAudit/report/datasourceSize"/>
     </PathMappings>
 
     <Application name="beCPGBatchAudit" key="beCPGBatchAudit">
@@ -105,12 +111,6 @@
         	<AuditPath key="id">
 	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGActivityAudit/activity/id"/>
 	        </AuditPath>
-	        <AuditPath key="startedAt">
-	            <RecordValue key="value" dataExtractor="simpleValue" dataSource="/beCPGActivityAudit/activity/startedAt"/>
-	        </AuditPath>
-        	<AuditPath key="completedAt">
-	            <RecordValue key="value" dataExtractor="simpleValue" dataSource="/beCPGActivityAudit/activity/completedAt"/>
-	        </AuditPath>
         	<AuditPath key="prop_bcpg_alUserId">
 	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGActivityAudit/activity/prop_bcpg_alUserId"/>
 	        </AuditPath>
@@ -125,6 +125,38 @@
 	        </AuditPath>
         	<AuditPath key="entityNodeRef">
 	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGActivityAudit/activity/entityNodeRef"/>
+	        </AuditPath>
+        </AuditPath>
+    </Application>
+    
+    <Application name="beCPGReportAudit" key="beCPGReportAudit">
+        <AuditPath key="report">
+        	<AuditPath key="id">
+	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGReportAudit/report/id"/>
+	        </AuditPath>
+	        <AuditPath key="startedAt">
+	            <RecordValue key="value" dataExtractor="simpleValue" dataSource="/beCPGReportAudit/report/startedAt"/>
+	        </AuditPath>
+        	<AuditPath key="completedAt">
+	            <RecordValue key="value" dataExtractor="simpleValue" dataSource="/beCPGReportAudit/report/completedAt"/>
+	        </AuditPath>
+            <AuditPath key="duration">
+	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGReportAudit/report/duration"/>
+	        </AuditPath>
+        	<AuditPath key="entityNodeRef">
+	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGReportAudit/report/entityNodeRef"/>
+	        </AuditPath>
+        	<AuditPath key="locale">
+	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGReportAudit/report/locale"/>
+	        </AuditPath>
+        	<AuditPath key="format">
+	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGReportAudit/report/format"/>
+	        </AuditPath>
+        	<AuditPath key="name">
+	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGReportAudit/report/name"/>
+	        </AuditPath>
+        	<AuditPath key="datasourceSize">
+	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGReportAudit/report/datasourceSize"/>
 	        </AuditPath>
         </AuditPath>
     </Application>
