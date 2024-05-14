@@ -146,16 +146,20 @@ public class TranslateHelper {
 		String shortPrefix = classQName.getPrefixString().split(":")[0];
 
 		if (logger.isDebugEnabled()) {
-
 			logger.debug("getting title mltext for class: " + classQName + " (" + localName + ", pfx:" + shortPrefix + ")");
 			logger.debug("Full path: " + shortPrefix + "_" + shortPrefix + "model.type." + shortPrefix + "_" + localName + "." + key);
 		}
+	
 		if("gs1".equals(shortPrefix)) {
-			return getTranslatedKey(shortPrefix + "_" + shortPrefix + "Model.type." + shortPrefix + "_" + localName + "." + key);
+			return getTranslatedKey("gs1_gs1Model.type." + shortPrefix + "_" + localName + "." + key);
+		} else if("bp".equals(shortPrefix)) {
+			return getTranslatedKey("bp_publicationModel.type." + shortPrefix + "_" + localName + "." + key);
+		} else if("smp".equals(shortPrefix)) {
+			return getTranslatedKey("smp_samplemodel.type." + shortPrefix + "_" + localName + "." + key);	
 		} else {
 			return getTranslatedKey(shortPrefix + "_" + shortPrefix + "model.type." + shortPrefix + "_" + localName + "." + key);
 		}
-		
+
 	}
 
 	/**
