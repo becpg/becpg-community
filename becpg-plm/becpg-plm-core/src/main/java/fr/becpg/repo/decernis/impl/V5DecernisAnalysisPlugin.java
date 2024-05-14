@@ -88,6 +88,10 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 	public boolean needsRecipeId() {
 		return false;
 	}
+	
+	private Boolean ingredientAnalysisEnabled() {
+		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.decernis.ingredient.analysis.enabled"));
+	}
 
 	@Override
 	public void extractRequirements(RegulatoryContext productContext, RegulatoryContextItem contextItem) {
@@ -118,23 +122,25 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 					parseRecipeAnalysisResults(productContext, contextItem, usageContext, countries, recipeAnalysisResults);
 				}
 				
-				JSONObject ingredientAnalysisResults = null;
-
-				try {
-					ingredientAnalysisResults = postV5IngredientAnalysis(productContext, countries, usageContext.getName(), usageContext.getModuleId());
-				} catch (HttpStatusCodeException e) {
-					logger.error("Error during Decernis ingredients analysis: " + e.getMessage(), e);
-					for (String country : countries) {
-						ReqCtrlListDataItem req = ReqCtrlListDataItem.forbidden()
-								.withMessage(MLTextHelper.getI18NMessage("message.decernis.error",
-										"Error while creating Decernis recipe: " + e.getMessage()))
-								.ofDataType(RequirementDataType.Formulation).withFormulationChainId(DecernisService.DECERNIS_CHAIN_ID)
-								.withRegulatoryCode(country + (!usageContext.getName().isEmpty() ? " - " + usageContext.getName() : ""));
-						productContext.getRequirements().add(req);
+				if (ingredientAnalysisEnabled()) {
+					JSONObject ingredientAnalysisResults = null;
+					
+					try {
+						ingredientAnalysisResults = postV5IngredientAnalysis(productContext, countries, usageContext.getName(), usageContext.getModuleId());
+					} catch (HttpStatusCodeException e) {
+						logger.error("Error during Decernis ingredients analysis: " + e.getMessage(), e);
+						for (String country : countries) {
+							ReqCtrlListDataItem req = ReqCtrlListDataItem.forbidden()
+									.withMessage(MLTextHelper.getI18NMessage("message.decernis.error",
+											"Error while creating Decernis recipe: " + e.getMessage()))
+									.ofDataType(RequirementDataType.Formulation).withFormulationChainId(DecernisService.DECERNIS_CHAIN_ID)
+									.withRegulatoryCode(country + (!usageContext.getName().isEmpty() ? " - " + usageContext.getName() : ""));
+							productContext.getRequirements().add(req);
+						}
 					}
-				}
-				if (ingredientAnalysisResults != null) {
-					parseIngredientAnalysisResults(productContext, contextItem, usageContext, countries, ingredientAnalysisResults);
+					if (ingredientAnalysisResults != null) {
+						parseIngredientAnalysisResults(productContext, contextItem, usageContext, countries, ingredientAnalysisResults);
+					}
 				}
 			}
 		}
