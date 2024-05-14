@@ -172,8 +172,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		}
 
 		Set<NodeRef> visited = new HashSet<>();
-		
-		boolean shouldSort = compoList!=null && compoList.size()> 1;
+
+		boolean shouldSort = compoList != null && compoList.size() > 1;
 
 		Double totalQtyUsedWithYield = 0d;
 		Double totalVolumeUsed = 0d;
@@ -221,14 +221,13 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				Double totalQtyIngWithYield = totalQtyIngMap.get(ingListDataItem.getName() + YIELD_SUFFIX);
 				if ((totalQtyIngWithYield != null) && !formulatedProduct.isGeneric()) {
 					Double x = (formulatedProduct.getYield() != null ? formulatedProduct.getYield() / 100d : 1d);
-					
-					Double qtyPercWithYield = (totalQtyIngWithYield)
-							/ (totalQtyUsedWithYield );
+
+					Double qtyPercWithYield = (totalQtyIngWithYield) / (totalQtyUsedWithYield);
 
 					if ((formulatedProduct.getYield() != null) && nodeService.hasAspect(ingListDataItem.getIng(), PLMModel.ASPECT_WATER)) {
-						qtyPercWithYield = qtyPercWithYield /x + (100d - 100d/x);
+						qtyPercWithYield = qtyPercWithYield / x + (100d - 100d / x);
 					} else {
-						qtyPercWithYield = qtyPercWithYield/x;
+						qtyPercWithYield = qtyPercWithYield / x;
 					}
 					ingListDataItem.setQtyPercWithYield(qtyPercWithYield);
 				} else {
@@ -240,11 +239,11 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 					Double qtyPercWithSecondaryYield = ingListDataItem.getQtyPercWithYield() != null ? ingListDataItem.getQtyPercWithYield()
 							: ingListDataItem.getQtyPerc();
-					 Double x= (formulatedProduct.getSecondaryYield() / 100d);
+					Double x = (formulatedProduct.getSecondaryYield() / 100d);
 					if (nodeService.hasAspect(ingListDataItem.getIng(), PLMModel.ASPECT_WATER)) {
-					
-						qtyPercWithSecondaryYield = qtyPercWithSecondaryYield /x + (100d - 100d/x);
-						
+
+						qtyPercWithSecondaryYield = qtyPercWithSecondaryYield / x + (100d - 100d / x);
+
 					} else {
 
 						if (qtyPercWithSecondaryYield != null) {
@@ -288,7 +287,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		}
 
 		// sort collection
-		if(shouldSort) {
+		if (shouldSort) {
 			sortIL(formulatedProduct.getIngList());
 		}
 	}
@@ -416,7 +415,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				newIngListDataItem.setIsSupport(true);
 				ingList.add(newIngListDataItem);
 			}
-			
+
 			//Keep Sort
 			newIngListDataItem.setSort(ingListDataItem.getSort());
 
@@ -455,7 +454,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				}
 
 				if ((qtyIngWithYield != null)) {
-                              
+
 					double valueToAdd = qty * qtyIngWithYield;
 
 					if (totalQtyIngWithYield == null) {
@@ -464,7 +463,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 					if ((FormulationHelper.getYield(compoListDataItem) != null)
 							&& nodeService.hasAspect(ingListDataItem.getIng(), PLMModel.ASPECT_WATER)) {
-						 valueToAdd = qty *  (( qtyIngWithYield ) - (100d - FormulationHelper.getYield(compoListDataItem)) );	
+						valueToAdd = qty * ((qtyIngWithYield) - (100d - FormulationHelper.getYield(compoListDataItem)));
 					}
 
 					totalQtyIngWithYield += valueToAdd;
@@ -619,9 +618,10 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 			int i = 1;
 
-			byParent.getOrDefault(nullPlaceholder, Collections.emptyList()).stream().sorted(Comparator
-					.comparing(IngListDataItem::getQtyPerc, Comparator.nullsFirst(Comparator.naturalOrder())).thenComparing(Comparator.comparing(this::getLegaleName).reversed()))
-					.toList().forEach(processor::add);
+			byParent.getOrDefault(nullPlaceholder, Collections.emptyList()).stream()
+					.sorted(Comparator.comparing(IngListDataItem::getQtyPerc, Comparator.nullsFirst(Comparator.naturalOrder()))
+							.thenComparing(Comparator.comparing(this::getLegaleName).reversed()))
+					.collect(Collectors.toList()).forEach(processor::add);
 
 			while (!processor.isEmpty()) {
 				i++;
@@ -629,7 +629,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				byParent.getOrDefault(il, Collections.emptyList()).stream()
 						.sorted(Comparator.comparing(IngListDataItem::getQtyPerc, Comparator.nullsFirst(Comparator.naturalOrder()))
 								.thenComparing(Comparator.comparing(this::getLegaleName).reversed()))
-						.toList().forEach(processor::add);
+						.collect(Collectors.toList()).forEach(processor::add);
 
 				il.setSort(i);
 
@@ -641,9 +641,9 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	}
 
 	private String getLegaleName(IngListDataItem ingListDataItem) {
-		
-		if(ingListDataItem.getIng()!=null ) {
-			IngItem ingItem  = (IngItem) alfrescoRepository.findOne(ingListDataItem.getIng());
+
+		if (ingListDataItem.getIng() != null) {
+			IngItem ingItem = (IngItem) alfrescoRepository.findOne(ingListDataItem.getIng());
 			return ingItem.getLegalName(Locale.getDefault());
 		}
 		return ingListDataItem.getName();
