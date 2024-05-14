@@ -361,12 +361,12 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 							for (Entry<QName, List<NodeRef>> entry : listItemsByType.entrySet()) {
 								QName listItemType = entry.getKey();
 								List<NodeRef> listItems = entry.getValue();
-								String listName = dataListName;
+								String listName = dataListType;
 								boolean shouldExtract = true;
 								
 								if (!listItemType.equals(dataListTypeQName)) {
 									shouldExtract = Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_NESTED_DATALIST_TYPE, Boolean.TRUE));
-									listName = dataListName + "@" + listItemType.toPrefixString(namespaceService);
+									listName = dataListType + "@" + listItemType.toPrefixString(namespaceService);
 								}
 								
 								shouldExtract = shouldExtract && params.shouldExtractList(listName);
