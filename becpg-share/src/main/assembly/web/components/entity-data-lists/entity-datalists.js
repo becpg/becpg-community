@@ -587,7 +587,7 @@
 							var destination = this.containerNodeRef.nodeRef, selectedClass = "theme-bg-selected", me = this;
 
 							var fnPopulateItemTypes = function DataLists_onNewList_fnPopulateItemTypes(domId, formFieldId, p_form) {
-								var fnOnClick = function DataLists_oNL_fnOnClick(myDiv, listType) {
+								var fnOnClick = function DataLists_oNL_fnOnClick(myDiv, listType, listTitle) {
 									return function DataLists_oNL_onClick() {
 										var divs = Selector.query("div", domId);
 										Dom.removeClass(divs, selectedClass);
@@ -604,6 +604,8 @@
 										
 										Dom.get(formFieldId).type= "hidden";
 										Dom.get(formFieldId).value = listType;
+										
+									
 										
 										
 										if("CustomView" == listType){
@@ -629,6 +631,8 @@
 											Dom.insertAfter(nameHtml,inputType.parentNode);
 											
 											
+										} else if(Dom.get(me.id+"-newList_prop_cm_title")) {
+											Dom.get(me.id+"-newList_prop_cm_title").value = listTitle;
 										}
 										
 										
@@ -655,7 +659,7 @@
 
 									if(list.title!=null && list.title.length > 0){
 										el.innerHTML = '<h4>' + $html(list.title) + '</h4><span>' + $html(list.description) + '</span>';
-										el.onclick = fnOnClick(el, list.name);
+										el.onclick = fnOnClick(el, list.name, list.title);
 										containerEl.appendChild(el);
 									}
 								}
