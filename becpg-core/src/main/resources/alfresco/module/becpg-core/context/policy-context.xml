@@ -93,7 +93,8 @@
 	<!-- Entity Datalist Policies -->
 	<bean id="initEntityListPolicy" class="fr.becpg.repo.entity.datalist.policy.InitEntityListPolicy" parent="abstractBeCPGPolicy">
 		<property name="namespaceService" ref="namespaceService" />
-		<property name="dictionaryService" ref="cachedDictionaryService" />
+		<property name="mlNodeService" ref="mlAwareNodeService"/>
+		<property name="entityDictionaryService" ref="entityDictionaryService"/>
 	</bean>
 	<bean id="auditEntityListItemPolicy" class="fr.becpg.repo.entity.datalist.policy.AuditEntityListItemPolicy" parent="abstractBeCPGPolicy">
 		<property name="authenticationService" ref="authenticationService" />
