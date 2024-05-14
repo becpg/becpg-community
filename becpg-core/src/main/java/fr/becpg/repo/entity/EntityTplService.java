@@ -108,12 +108,12 @@ public interface EntityTplService {
 	void removeDataListOnEntities(NodeRef entityTplNodeRef, String entityListName);
 
 	/**
-	 * <p>createActivityList.</p>
+	 * <p>createOrUpdateList.</p>
 	 *
 	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param typeActivityList a {@link org.alfresco.service.namespace.QName} object.
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
-	NodeRef createActivityList(NodeRef entityNodeRef, QName typeActivityList);
+	NodeRef createOrUpdateList(NodeRef entityNodeRef, QName type);
 	
 }
