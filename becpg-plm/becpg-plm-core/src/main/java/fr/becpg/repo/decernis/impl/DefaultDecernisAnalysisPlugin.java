@@ -83,8 +83,6 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 
 	protected final SystemConfigurationService systemConfigurationService;
 
-	private final RestTemplate restTemplate = new RestTemplate();
-
 	public DefaultDecernisAnalysisPlugin(@Qualifier("nodeService") NodeService nodeService, SystemConfigurationService systemConfigurationService) {
 		super();
 		this.nodeService = nodeService;
@@ -176,6 +174,7 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 		if (logger.isTraceEnabled()) {
 			logger.trace("POST url: " + url + " params: " + params);
 		}
+		RestTemplate restTemplate = new RestTemplate();
 		JSONObject jsonObject = new JSONObject(restTemplate.postForObject(url, entity, String.class, params));
 		if (jsonObject.has(PARAM_ANALYSIS_RESULTS) && (jsonObject.getJSONObject(PARAM_ANALYSIS_RESULTS).length() > 0)) {
 			return jsonObject;
@@ -220,6 +219,7 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 		if (logger.isTraceEnabled()) {
 			logger.trace("GET url: " + url + " params: " + params);
 		}
+		RestTemplate restTemplate = new RestTemplate();
 		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, createEntity(null), String.class, params);
 
 		if (HttpStatus.OK.equals(response.getStatusCode()) && (response.getBody() != null)) {
