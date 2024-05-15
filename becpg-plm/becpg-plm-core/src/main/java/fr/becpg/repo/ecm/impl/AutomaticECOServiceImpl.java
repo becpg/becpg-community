@@ -68,7 +68,6 @@ import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.RepoService;
-import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -148,7 +147,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 	private PreferenceService preferenceService;
 
 	@Autowired
-	private FormulationService<ProductData> formulationService;
+	private FormulationService<FormulatedEntity> formulationService;
 
 	@Autowired
 	private BehaviourFilter policyBehaviourFilter;
@@ -363,7 +362,9 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 
 						NodeRef newEntityNodeRef = entityVersionService.mergeBranch(entityNodeRef, newEffectivity);
 
-						nodeService.removeAspect(newEntityNodeRef, BeCPGModel.ASPECT_AUTO_MERGE_ASPECT);
+						if (newEntityNodeRef != null) {
+							nodeService.removeAspect(newEntityNodeRef, BeCPGModel.ASPECT_AUTO_MERGE_ASPECT);
+						}
 
 						return true;
 					});
