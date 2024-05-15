@@ -545,10 +545,6 @@
 				<value>BeerStyleTypeCode</value>
 			</parameter>
 		</constraint>
-		
-		 <constraint name='gs1:text200' type='LENGTH'>
-	        <parameter name='maxLength'><value>200</value></parameter>
-	     </constraint>
 
 		<constraint name="gs1:referencedTradeItemTypeCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
@@ -631,7 +627,6 @@
 	     <constraint name='gs1:text500' type='LENGTH'>
 	        <parameter name='maxLength'><value>500</value></parameter>
 	     </constraint>
->>>>>>> f8454c8df1d0b629a51a548849efa3594cf0fedc
 
 		<constraint name='gs1:text1000' type='LENGTH'>
 	        <parameter name='maxLength'><value>1000</value></parameter>
@@ -1484,11 +1479,7 @@
 
 		<aspect name="gs1:packagingAspect">
 			<properties>
-			<!-- 	gs1:stackingFactor
-gs1:stackingMaxWeight
 
-gs1:secondaryStackingFactor
-gs1:secondaryStackingMaxWeight -->
 			
 				<property name="gs1:height">
 					<type>d:float</type>
