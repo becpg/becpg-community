@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -60,8 +61,6 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 		super(nodeService, systemConfigurationService);
 	}
 	
-	private final RestTemplate restTemplate = new RestTemplate();
-
 	private static final Map<Integer, String> moduleIdMap = new HashMap<>();
 
 	private static final String PARAM_COUNTRY = "country";
@@ -77,7 +76,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 
 	private List<String> availableCountries;
 
-	private Map<Integer, List<String>> functionsMap = new HashMap<>();
+	private Map<Integer, List<String>> functionsMap = new ConcurrentHashMap<>();
 
 	@Override
 	public boolean isEnabled() {
@@ -235,6 +234,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 			if (logger.isTraceEnabled()) {
 				logger.trace("POST url: " + url + " body: " + payload);
 			}
+			RestTemplate restTemplate = new RestTemplate();
 			recipeAnalysisResult = restTemplate.postForObject(url, entity, String.class, new HashMap<>());
 
 			return new JSONObject(recipeAnalysisResult);
@@ -312,6 +312,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 			if (logger.isTraceEnabled()) {
 				logger.trace("POST url: " + url + " body: " + payload);
 			}
+			RestTemplate restTemplate = new RestTemplate();
 			ingredientAnalysisResult = restTemplate.postForObject(url, entity, String.class, new HashMap<>());
 			
 			return new JSONObject(ingredientAnalysisResult);
@@ -324,6 +325,9 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 		if (!functionsMap.containsKey(moduelId)) {
 			List<String> functions = fetchFunctions(moduelId);
 			functionsMap.put(moduelId, functions);
+		}
+		if (logger.isTraceEnabled()) {
+			logger.trace("functionsMap=" + functionsMap);
 		}
 		for (String function : functionsMap.get(moduelId)) {
 			if (function.trim().equalsIgnoreCase(ingTypeValue.trim())) {
@@ -349,6 +353,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 		if (logger.isTraceEnabled()) {
 			logger.trace("GET url: " + url);
 		}
+		RestTemplate restTemplate = new RestTemplate();
 		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class, new HashMap<>());
 
 		if (HttpStatus.OK.equals(response.getStatusCode()) && (response.getBody() != null)) {
@@ -594,6 +599,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 		if (logger.isTraceEnabled()) {
 			logger.trace("GET url: " + url);
 		}
+		RestTemplate restTemplate = new RestTemplate();
 		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class, new HashMap<>());
 
 		if (HttpStatus.OK.equals(response.getStatusCode()) && (response.getBody() != null)) {
