@@ -87,8 +87,6 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 
 	private static final String MISSING_VALUE = "NA";
 
-	private final RestTemplate restTemplate = new RestTemplate();
-
 	private final NodeService nodeService;
 
 	private final DecernisAnalysisPlugin[] decernisPlugins;
@@ -336,6 +334,7 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 				if (logger.isTraceEnabled()) {
 					logger.trace("POST url: " + url + " body: " + recipePayload);
 				}
+				RestTemplate restTemplate = new RestTemplate();
 				JSONObject jsonObject = new JSONObject(restTemplate.postForObject(url, request, String.class));
 				if (jsonObject.has("id")) {
 					recipeId = jsonObject.get("id").toString();
@@ -509,6 +508,7 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 		if (logger.isTraceEnabled()) {
 			logger.trace("GET url: " + url + " params: " + params);
 		}
+		RestTemplate restTemplate = new RestTemplate();
 		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, createEntity(null), String.class, params);
 
 		if ((response != null) && HttpStatus.OK.equals(response.getStatusCode()) && (response.getBody() != null)) {
@@ -599,6 +599,7 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 			if (logger.isTraceEnabled()) {
 				logger.trace("DELETE url: " + url);
 			}
+			RestTemplate restTemplate = new RestTemplate();
 			restTemplate.exchange(url, HttpMethod.DELETE, createEntity(null),
 					String.class, params);
 		} catch (Exception e) {
@@ -709,6 +710,7 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 		if (logger.isTraceEnabled()) {
 			logger.trace("GET url: " + url);
 		}
+		RestTemplate restTemplate = new RestTemplate();
 		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, createEntity(null),
 				String.class, new HashMap<>());
 
