@@ -76,7 +76,7 @@
 			if (!me.isIFrameLoaded) {
 
 				// Load iframe with chat URL including current URL
-				suggestionsDiv.innerHTML = '<iframe src="' + Alfresco.constants.URL_CONTEXT + 'proxy/ai/suggestions?ticket=' + me.options.ticket + '&nodeRef=' + me.options.entityNodeRef + '" referrerpolicy="origin" sandbox="allow-scripts allow-forms allow-same-origin allow-popups allow-popups-to-escape-sandbox"></iframe>';
+				suggestionsDiv.innerHTML = '<iframe src="' + Alfresco.constants.URL_CONTEXT + 'proxy/ai/suggestions?ticket=' + me.options.ticket + '&nodeRef=' + me.options.entityNodeRef + '&locale=' + me.options.locale + '" referrerpolicy="origin" sandbox="allow-scripts allow-forms allow-same-origin allow-popups allow-popups-to-escape-sandbox"></iframe>';
 				me.isIFrameLoaded = true;
 			}
 
