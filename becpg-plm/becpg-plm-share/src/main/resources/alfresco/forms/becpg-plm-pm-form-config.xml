@@ -60,6 +60,7 @@
           <show force="true" id="gs1:sortingBonusCriteria"/>
           <show force="true" id="gs1:sortingMalusCriteria"/>
           <show force="true" id="gs1:sortingInstructions"/>
+          <show force="true" id="gs1:consumerUsageInstructions"/>
           
           <show force="false" id="sec:securityRef" />
           <show force="false" id="cm:taggable"/>
@@ -240,7 +241,12 @@
           <field id="gs1:packagingRecyclingSchemeCode" mandatory="false" read-only="false" set="packSorting"/>
            <field id="gs1:sortingBonusCriteria" mandatory="false" read-only="false" set="packSorting"/>
           <field id="gs1:sortingMalusCriteria" mandatory="false" read-only="false" set="packSorting"/>
-           <field id="gs1:sortingInstructions" mandatory="false" read-only="false" set="packSorting">
+          <field id="gs1:sortingInstructions" mandatory="false" read-only="false" set="packSorting">
+            <control template="/org/alfresco/components/form/controls/textarea.ftl">
+              <control-param name="rows">2</control-param>
+            </control>
+          </field>
+          <field id="gs1:consumerUsageInstructions" mandatory="false" read-only="false" set="packSorting">
             <control template="/org/alfresco/components/form/controls/textarea.ftl">
               <control-param name="rows">2</control-param>
             </control>
@@ -393,6 +399,7 @@
           <show force="true" id="gs1:sortingBonusCriteria"/>
           <show force="true" id="gs1:sortingMalusCriteria"/>
           <show force="true" id="gs1:sortingInstructions"/>
+          <show force="true" id="gs1:consumerUsageInstructions"/>
           
         </field-visibility>
         <appearance>
@@ -505,7 +512,12 @@
           <field id="gs1:packagingRecyclingSchemeCode" mandatory="false" read-only="false" set="packSorting"/>
            <field id="gs1:sortingBonusCriteria" mandatory="false" read-only="false" set="packSorting"/>
           <field id="gs1:sortingMalusCriteria" mandatory="false" read-only="false" set="packSorting"/>
-           <field id="gs1:sortingInstructions" mandatory="false" read-only="false" set="packSorting">
+          <field id="gs1:sortingInstructions" mandatory="false" read-only="false" set="packSorting">
+            <control template="/org/alfresco/components/form/controls/textarea.ftl">
+              <control-param name="rows">2</control-param>
+            </control>
+          </field>
+          <field id="gs1:consumerUsageInstructions" mandatory="false" read-only="false" set="packSorting">
             <control template="/org/alfresco/components/form/controls/textarea.ftl">
               <control-param name="rows">2</control-param>
             </control>
@@ -572,6 +584,7 @@
           <show force="true" id="gs1:sortingBonusCriteria"/>
           <show force="true" id="gs1:sortingMalusCriteria"/>
           <show force="true" id="gs1:sortingInstructions"/>
+          <show force="true" id="gs1:consumerUsageInstructions"/>
       
         </field-visibility>
       </form>
@@ -613,6 +626,7 @@
           <show force="true" id="gs1:sortingBonusCriteria"/>
           <show force="true" id="gs1:sortingMalusCriteria"/>
           <show force="true" id="gs1:sortingInstructions"/>
+          <show force="true" id="gs1:consumerUsageInstructions"/>
           <show force="false" id="cm:taggable"/>
           <show force="false" id="cm:categories"/>
         </field-visibility>
@@ -714,7 +728,12 @@
           <field id="gs1:packagingRecyclingSchemeCode" mandatory="false" read-only="false" set="packSorting"/>
            <field id="gs1:sortingBonusCriteria" mandatory="false" read-only="false" set="packSorting"/>
           <field id="gs1:sortingMalusCriteria" mandatory="false" read-only="false" set="packSorting"/>
-           <field id="gs1:sortingInstructions" mandatory="false" read-only="false" set="packSorting">
+          <field id="gs1:sortingInstructions" mandatory="false" read-only="false" set="packSorting">
+            <control template="/org/alfresco/components/form/controls/textarea.ftl">
+              <control-param name="rows">2</control-param>
+            </control>
+          </field>
+          <field id="gs1:consumerUsageInstructions" mandatory="false" read-only="false" set="packSorting">
             <control template="/org/alfresco/components/form/controls/textarea.ftl">
               <control-param name="rows">2</control-param>
             </control>
