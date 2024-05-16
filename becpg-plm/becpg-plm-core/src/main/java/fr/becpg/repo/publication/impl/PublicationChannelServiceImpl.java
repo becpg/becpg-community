@@ -246,7 +246,7 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 		String action = (String) nodeService.getProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_ACTION);
 		Date lastDate = (Date) nodeService.getProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_LASTDATE);
 		String channelId = (String) nodeService.getProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_ID);
-		BeCPGQueryBuilder query = BeCPGQueryBuilder.createQuery().page(pagingRequest);
+		BeCPGQueryBuilder query = BeCPGQueryBuilder.createQuery().excludeDefaults().page(pagingRequest);
 
 		if (PublicationChannelAction.STOP.toString().equals(action)) {
 			return new EmptyPagingResults<>();
