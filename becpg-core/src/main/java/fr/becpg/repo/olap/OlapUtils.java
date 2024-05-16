@@ -99,6 +99,8 @@ public class OlapUtils {
 
 			HttpPost httpPost = new HttpPost(builder.build());
 			HttpEntity entity = new StringEntity("xml=" + xml, "UTF-8");
+			
+			httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
 
 			httpPost.setEntity(entity);
 			try (CloseableHttpResponse response = olapContext.getSession().execute(httpPost)) {
