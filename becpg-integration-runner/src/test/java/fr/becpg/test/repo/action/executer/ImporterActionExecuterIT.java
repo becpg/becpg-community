@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 
 import fr.becpg.repo.PlmRepoConsts;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.test.PLMBaseTestCase;
 
@@ -54,7 +55,7 @@ public class ImporterActionExecuterIT extends PLMBaseTestCase {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			NodeRef exchangeFolder = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
-					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_EXCHANGE));
+					TranslateHelper.getTranslatedPath(RepoConsts.PATH_EXCHANGE));
 			if (exchangeFolder == null) {
 				throw new Exception("Missing exchange folder.");
 			}
@@ -112,7 +113,7 @@ public class ImporterActionExecuterIT extends PLMBaseTestCase {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			NodeRef exchangeFolder = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
-					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_EXCHANGE));
+					TranslateHelper.getTranslatedPath(RepoConsts.PATH_EXCHANGE));
 			if (exchangeFolder == null) {
 				throw new Exception("Missing exchange folder.");
 			}

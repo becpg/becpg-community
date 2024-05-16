@@ -106,8 +106,6 @@ public class PlmRepoConsts {
 	public static final String PATH_QUALITY_TEMPLATES = "QualityTemplates";
 	/** Constant <code>PATH_PRODUCTS="Products"</code> */
 	public static final String PATH_PRODUCTS = "Products";
-	/** Constant <code>PATH_EXCHANGE="Exchange"</code> */
-	public static final String PATH_EXCHANGE = "Exchange";
 	/** Constant <code>PATH_IMPORT="Import"</code> */
 	public static final String PATH_IMPORT = "Import";
 	/** Constant <code>PATH_IMPORT_TO_TREAT="ImportToTreat"</code> */

@@ -541,12 +541,15 @@
 					<show id="bcpg:nrRecurringDay" />
 					<show id="bcpg:nrFrequencyStartDate" />
 					<show id="bcpg:nrForceNotification" />
+				
+					<show id="rep:reportTpls" force="true" />
 				</field-visibility>
 				<appearance>
 					<set id="notificationRule" appearance="bordered-panel" label-id="becpg.forms.set.notification-rule.label" />
 					<set id="notificationFilter" appearance="bordered-panel" label-id="becpg.forms.set.notification-filter.label" />
 					<set id="notificationEMail" appearance="bordered-panel" label-id="becpg.forms.set.notification-email.label" />
 					<set id="notificationRecurring" appearance="bordered-panel" label-id="becpg.forms.set.notification-recurring.label" />
+					<set id="notificationReport" appearance="bordered-panel" label-id="becpg.forms.set.notification-report.label" />
 					
 					<field id="bcpg:nrNodeType" set="notificationFilter">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
@@ -607,7 +610,13 @@
 					<field id="bcpg:nrForceNotification" set="notificationRecurring" />
 					<field id="bcpg:nrRecurringTimeType" set="notificationRecurring" help-id="becpg.forms.help.notificationFrequency" />
 					<field id="bcpg:nrRecurringDay" set="notificationRecurring" />
-					
+					<field id="rep:reportTpls" set="notificationReport">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">
+								becpg/autocomplete/targetassoc/associations/rep:reportTpl?excludeProps=rep%3AreportTplIsSystem%7Ctrue%2Crep%3AreportTplIsDisabled%7Ctrue&amp;filter=rep%3AreportTplType%7CExportSearch
+							</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 			
@@ -687,12 +696,15 @@
 					<show id="bcpg:nrRecurringTimeType" />
 					<show id="bcpg:nrRecurringDay" />
 					<show id="bcpg:nrForceNotification" />
+					
+					<show id="rep:reportTpls" force="true" />
 				</field-visibility>
 				<appearance>
 					<set id="notificationRule" appearance="bordered-panel" label-id="becpg.forms.set.notification-rule.label" />
 					<set id="notificationFilter" appearance="bordered-panel" label-id="becpg.forms.set.notification-filter.label" />
 					<set id="notificationEMail" appearance="bordered-panel" label-id="becpg.forms.set.notification-email.label" />
 					<set id="notificationRecurring" appearance="bordered-panel" label-id="becpg.forms.set.notification-recurring.label" />
+					<set id="notificationReport" appearance="bordered-panel" label-id="becpg.forms.set.notification-report.label" />	
 					
 					<field id="bcpg:nrNodeType" set="notificationFilter">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
@@ -753,7 +765,13 @@
 					<field id="bcpg:nrForceNotification" set="notificationRecurring" />
 					<field id="bcpg:nrRecurringTimeType" set="notificationRecurring" help-id="becpg.forms.help.notificationFrequency"/>
 					<field id="bcpg:nrRecurringDay" set="notificationRecurring" />
-					
+					<field id="rep:reportTpls" set="notificationReport">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">
+								becpg/autocomplete/targetassoc/associations/rep:reportTpl?excludeProps=rep%3AreportTplIsSystem%7Ctrue%2Crep%3AreportTplIsDisabled%7Ctrue&amp;filter=rep%3AreportTplType%7CExportSearch
+							</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 		</forms>

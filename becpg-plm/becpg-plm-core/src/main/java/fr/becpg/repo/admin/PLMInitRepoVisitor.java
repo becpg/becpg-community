@@ -291,7 +291,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		visitSystemSecurityListValuesEntity(systemNodeRef, PlmRepoConsts.PATH_SECURITY_LISTS);
 
 		// Exchange
-		NodeRef exchangeNodeRef = visitFolder(companyHome, PlmRepoConsts.PATH_EXCHANGE);
+		NodeRef exchangeNodeRef = visitFolder(companyHome, RepoConsts.PATH_EXCHANGE);
 		NodeRef importNodeRef = visitFolder(exchangeNodeRef, PlmRepoConsts.PATH_IMPORT);
 		visitFolder(importNodeRef, PlmRepoConsts.PATH_IMPORT_TO_TREAT);
 		visitFolder(importNodeRef, PlmRepoConsts.PATH_IMPORT_TO_DO);
@@ -341,7 +341,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		visitFolder(systemNodeRef, RepoConsts.PATH_AUTO_NUM);
 
 		// System exchange
-		NodeRef systemExchangeNodeRef = visitFolder(systemNodeRef, PlmRepoConsts.PATH_EXCHANGE);
+		NodeRef systemExchangeNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_EXCHANGE);
 		NodeRef systemImportNodeRef = visitFolder(systemExchangeNodeRef, PlmRepoConsts.PATH_IMPORT);
 		visitFolder(systemImportNodeRef, PlmRepoConsts.PATH_MAPPING);
 
@@ -948,7 +948,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	@Override
 	protected void visitPermissions(NodeRef nodeRef, String folderName) {
 
-		if (Objects.equals(folderName, PlmRepoConsts.PATH_EXCHANGE)) {
+		if (Objects.equals(folderName, RepoConsts.PATH_EXCHANGE)) {
 			permissionService.setInheritParentPermissions(nodeRef, false);
 			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + SystemGroup.SystemMgr.toString(), PermissionService.COORDINATOR,
 					true);
