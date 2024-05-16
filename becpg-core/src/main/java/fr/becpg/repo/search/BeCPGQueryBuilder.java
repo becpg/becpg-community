@@ -876,6 +876,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	public BeCPGQueryBuilder excludeDefaults() {
 		excludeVersions();
 		excludeSystems();
+		excludeArchivedEntities();
 		return this;
 	}
 
