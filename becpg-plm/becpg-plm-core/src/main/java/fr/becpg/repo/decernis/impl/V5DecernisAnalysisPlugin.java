@@ -59,8 +59,6 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 		super(nodeService, systemConfigurationService);
 	}
 	
-	private final RestTemplate restTemplate = new RestTemplate();
-
 	private static final Map<Integer, String> moduleIdMap = new HashMap<>();
 
 	private static final String PARAM_COUNTRY = "country";
@@ -174,6 +172,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 			
 			HttpEntity<String> entity = createEntity(payload.toString());
 			
+			RestTemplate restTemplate = new RestTemplate();
 			recipeAnalysisResult = restTemplate.postForObject(url, entity, String.class, new HashMap<>());
 			
 			return new JSONObject(recipeAnalysisResult);
@@ -211,6 +210,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 		if (logger.isTraceEnabled()) {
 			logger.trace("GET url: " + url);
 		}
+		RestTemplate restTemplate = new RestTemplate();
 		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class, new HashMap<>());
 
 		if (HttpStatus.OK.equals(response.getStatusCode()) && (response.getBody() != null)) {
@@ -407,6 +407,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 		if (logger.isTraceEnabled()) {
 			logger.trace("GET url: " + url);
 		}
+		RestTemplate restTemplate = new RestTemplate();
 		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class, new HashMap<>());
 
 		if (HttpStatus.OK.equals(response.getStatusCode()) && (response.getBody() != null)) {
