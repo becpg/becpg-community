@@ -54,7 +54,7 @@ public class ListEntitiesWebScript extends AbstractEntityWebScript {
 			params.setFilteredFields(fields, namespaceService);
 			params.setFilteredLists(lists);
 			
-			boolean shouldLimit =  fields !=null && !fields.isEmpty() || lists!=null && lists.isEmpty();
+			boolean shouldLimit =  fields !=null && !fields.isEmpty() || lists!=null && !lists.isEmpty();
 
 			resp.setContentType(getContentType(req));
 			resp.setContentEncoding("UTF-8");
