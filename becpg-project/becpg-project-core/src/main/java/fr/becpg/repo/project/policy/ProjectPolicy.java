@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -103,24 +104,26 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 	/** {@inheritDoc} */
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
+		if(policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE)) {
 
-		Set<NodeRef> toReformulates = new HashSet<>();
-		String beforeState = (String) before.get(ProjectModel.PROP_PROJECT_STATE);
-		String afterState = (String) after.get(ProjectModel.PROP_PROJECT_STATE);
-
-		// change state
-		if ((afterState != null) && !afterState.equals(beforeState)) {
-			toReformulates.addAll( projectService.updateProjectState(nodeRef, beforeState, afterState));
-		}
-
-		// change startdate, duedate
-		if (isPropChanged(before, after, ProjectModel.PROP_PROJECT_START_DATE) || isPropChanged(before, after, ProjectModel.PROP_PROJECT_DUE_DATE)) {
-			toReformulates.add(nodeRef);
-		}
-
-		if (!toReformulates.isEmpty()) {
-			for(NodeRef n : toReformulates) {
-				queueNode(n);
+			Set<NodeRef> toReformulates = new HashSet<>();
+			String beforeState = (String) before.get(ProjectModel.PROP_PROJECT_STATE);
+			String afterState = (String) after.get(ProjectModel.PROP_PROJECT_STATE);
+	
+			// change state
+			if ((afterState != null) && !afterState.equals(beforeState)) {
+				toReformulates.addAll( projectService.updateProjectState(nodeRef, beforeState, afterState));
+			}
+	
+			// change startdate, duedate
+			if (isPropChanged(before, after, ProjectModel.PROP_PROJECT_START_DATE) || isPropChanged(before, after, ProjectModel.PROP_PROJECT_DUE_DATE)) {
+				toReformulates.add(nodeRef);
+			}
+	
+			if (!toReformulates.isEmpty()) {
+				for(NodeRef n : toReformulates) {
+					queueNode(n);
+				}
 			}
 		}
 	}

@@ -141,6 +141,13 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 				String action = (String) nodeService.getProperty(channelListItemNodeRef, PublicationModel.PROP_PUBCHANNELLIST_ACTION);
 				String status = (String) nodeService.getProperty(channelListItemNodeRef, PublicationModel.PROP_PUBCHANNELLIST_STATUS);
 				Date modifiedDate = (Date) nodeService.getProperty(channelListItemNodeRef, PublicationModel.PROP_PUBCHANNELLIST_MODIFIED_DATE);
+				if(modifiedDate == null) {
+					 modifiedDate = (Date) nodeService.getProperty(entityNodeRef,ContentModel.PROP_MODIFIED);
+					 if(modifiedDate == null) {
+						 modifiedDate = (Date) nodeService.getProperty(entityNodeRef,ContentModel.PROP_CREATED);
+					 }
+				}
+				
 				Date publishDate = (Date) nodeService.getProperty(channelListItemNodeRef, PublicationModel.PROP_PUBCHANNELLIST_PUBLISHEDDATE);
 	
 				List<String> channelIds = getPropertyOrDefault(entityNodeRef, PublicationModel.PROP_CHANNELIDS);
