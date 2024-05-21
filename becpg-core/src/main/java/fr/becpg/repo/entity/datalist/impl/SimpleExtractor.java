@@ -38,6 +38,7 @@ import fr.becpg.config.format.FormatMode;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.entity.datalist.DataListItemExtractor;
 import fr.becpg.repo.entity.datalist.DataListSortPlugin;
 import fr.becpg.repo.entity.datalist.DataListSortRegistry;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
@@ -65,9 +66,15 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 	protected DataListSortRegistry dataListSortRegistry;
 
 	protected PaginatedSearchCache paginatedSearchCache;
+	
+	private static final Map<QName, DataListItemExtractor> dataListItemExtractors = new HashMap<>();
 
 	private static final Log logger = LogFactory.getLog(SimpleExtractor.class);
 
+	public static void registerDataListItemExtractor(QName key, DataListItemExtractor dataListItemExtractor) {
+		dataListItemExtractors.put(key, dataListItemExtractor);
+	}
+	
 	/**
 	 * <p>Setter for the field <code>paginatedSearchCache</code>.</p>
 	 *
@@ -240,15 +247,24 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 					public List<Map<String, Object>> extractNestedField(NodeRef nodeRef, AttributeExtractorStructure field,FormatMode mode) {
 						List<Map<String, Object>> ret = new ArrayList<>();
 						if (field.isDataListItems()) {
-							NodeRef listContainerNodeRef = entityListDAO.getListContainer(nodeRef);
-							NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, field.getFieldQname());
-							if (listNodeRef != null) {
-								List<NodeRef> results = entityListDAO.getListItems(listNodeRef, field.getFieldQname());
-
+							
+							if (dataListItemExtractors.get(field.getFieldQname()) != null) {
+								List<NodeRef> results = dataListItemExtractors.get(field.getFieldQname()).extractItems(nodeRef);
 								for (NodeRef itemNodeRef : results) {
 									addExtracted(itemNodeRef, field, mode, ret);
 								}
+							} else {
+								NodeRef listContainerNodeRef = entityListDAO.getListContainer(nodeRef);
+								NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, field.getFieldQname());
+								if (listNodeRef != null) {
+									List<NodeRef> results = entityListDAO.getListItems(listNodeRef, field.getFieldQname());
+									
+									for (NodeRef itemNodeRef : results) {
+										addExtracted(itemNodeRef, field, mode, ret);
+									}
+								}
 							}
+							
 						} else if (field.isEntityField()) {
 							NodeRef entityNodeRef = entityListDAO.getEntity(nodeRef);
 							addExtracted(entityNodeRef, field, mode, ret);
