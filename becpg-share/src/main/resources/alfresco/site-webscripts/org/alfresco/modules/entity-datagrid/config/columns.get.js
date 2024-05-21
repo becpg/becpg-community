@@ -393,7 +393,7 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 					if (splitted[1].includes("@")) {
 						var formSplitted = splitted[1].split("@");
 						column.columns = getColumns(formSplitted[0] + "", "sub-datagrid", formSplitted[1] + "",mode,null,null,null,subPrefKey);
-					} else if (formIdArgs != null || formIdArgs.length > 0) {
+					} else if (formIdArgs != null && formIdArgs.length > 0) {
 						column.columns = getColumns(splitted[1] + "", "sub-datagrid", "sub-datagrid-" + formIdArgs, mode,null,null,null,subPrefKey);
 					} else {
 						column.columns = getColumns(splitted[1] + "", "sub-datagrid",null, mode,null,null,null,subPrefKey);
