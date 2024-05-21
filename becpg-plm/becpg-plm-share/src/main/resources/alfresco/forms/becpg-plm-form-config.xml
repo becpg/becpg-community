@@ -7056,7 +7056,6 @@
 					<show id="bcpg:variantIds" force="true" />
 					<show id="bcpg:depthLevel" />
 					<show id="bcpg:ingListIng" />
-					<show id="entity_bcpg:ingListIng_bcpg:ing_asColumn" force="true"  />
 					<show id="bcpg:ingListQtyPerc" />
 					<show id="bcpg:ingListIsGMO" />
 					<show id="bcpg:ingListIsIonized" />
@@ -7066,6 +7065,7 @@
 					<show id="bcpg:ingListGeoTransfo" />
 					<show id="bcpg:ingListBioOrigin" />
 					<show id="bcpg:ingListClaims" />
+					<show id="entity_bcpg:ingListIng_bcpg:ing_asColumn" force="true"  />
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
@@ -7077,7 +7077,6 @@
 			</form>
 			<form id="filter">
 				<field-visibility>
-				
 					<show id="bcpg:depthLevel" />
 					<show id="bcpg:ingListIng" />
 					<show id="entity_bcpg:ingListIng_bcpg:ing@filter-ingList" force="true" />
