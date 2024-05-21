@@ -413,8 +413,10 @@ public class CharactDetailsHelper {
 							int entryIndex = entry.getValue().indexOf(matchingCharact.get());
 							if (entryIndex != -1) {
 								Double value = entry.getValue().get(entryIndex).getValue();
-								cell = row.createCell(currentIndex);
-								cell.setCellValue(value);
+								if(value!=null) {
+									cell = row.createCell(currentIndex);
+									cell.setCellValue(value);
+								}
 							}
 
 					}
