@@ -467,7 +467,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 								sourceNodeRefs.add(partProduct.getNodeRef());
 
 								error = ReqCtrlListDataItem.forbidden().ofDataType(RequirementDataType.Allergen)
-										.withMessage(MLTextHelper.getI18NMessage(MESSAGE_NULL_PERC)).withSources(sourceNodeRefs)
+										.withMessage(MLTextHelper.getI18NMessage(MESSAGE_NULL_PERC, mlNodeService.getProperty(allergenNodeRef, BeCPGModel.PROP_CHARACT_NAME))).withSources(sourceNodeRefs)
 										.withCharact(allergenNodeRef);
 
 								errors.put(message, error);

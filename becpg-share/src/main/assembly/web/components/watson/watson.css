@@ -8,15 +8,6 @@
 	z-index: 1100
 }
 
-.mdc-layout-grid {
-    overflow-y: scroll;
-    height: 88%;
-}
-
-.watson {
-    overflow: hidden;
-}
-
 #watson-chatbot-chat-fab-close {
 	background-color: #fff;
 	border-radius: 50%;
