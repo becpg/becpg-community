@@ -135,9 +135,11 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 										boolean isInfo = qtyPerc != null && filMaxQtyPerc != null && (filMaxQtyPerc > qtyPerc);
 										
 										// req not respecte
-										ReqCtrlListDataItem reqCtrl = ReqCtrlListDataItem.build().ofType(isInfo ? RequirementType.Info : fil.getReqType())
-												.withMessage(fil.getReqMessage()).withCharact(ingListDataItem.getIng()).ofDataType(RequirementDataType.Specification);
-										
+										ReqCtrlListDataItem reqCtrl = ReqCtrlListDataItem.build()
+												.ofType(isInfo ? RequirementType.Info : fil.getReqType()).withMessage(fil.getReqMessage())
+												.withCharact(ingListDataItem.getIng())
+												.withSources(List.of(ingListDataItem.getIng()))
+												.ofDataType(RequirementDataType.Specification);										
 										
 										String regulatoryId = extractRegulatoryId(fil, specification);
 										
