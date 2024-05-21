@@ -42,7 +42,7 @@ public class GeoOriginAttributeExtractorPlugin implements AttributeExtractorPlug
 		StringBuilder ret = new StringBuilder();
 		ret.append(nodeService.getProperty(nodeRef, BeCPGModel.PROP_CHARACT_NAME));
 		
-		if(placeOfActivityCode!=null && !placeOfActivityCode.isEmpty()){
+		if(placeOfActivityCode!=null && !placeOfActivityCode.isEmpty() && placeOfActivityCode.get(0)!=null){
 			ret.append(" (");
 			ret.append(I18NUtil.getMessage("listconstraint.gs1_productActivityTypeCodes."+placeOfActivityCode.get(0)));
 			ret.append(")");
@@ -60,7 +60,7 @@ public class GeoOriginAttributeExtractorPlugin implements AttributeExtractorPlug
 		if(nodeRef!=null) {
 			@SuppressWarnings("unchecked")
 			List<String> placeOfActivityCode = (List<String>) nodeService.getProperty(nodeRef, GS1Model.PROP_PRODUCT_ACTIVITY_TYPE_CODE);
-			if(placeOfActivityCode!=null && !placeOfActivityCode.isEmpty()){
+			if(placeOfActivityCode!=null && !placeOfActivityCode.isEmpty() && placeOfActivityCode.get(0)!=null){
 				ret.append("-"+placeOfActivityCode.get(0));
 			}
 		}
