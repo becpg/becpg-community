@@ -21,9 +21,4 @@
 	<url>/becpg/entity/icons.css</url>
 	<authentication>user</authentication>
 	<transaction allow="readonly" >required</transaction>
-	<cache>
-        <never>false</never>
-        <public>false</public>
-        <mustrevalidate/>
-    </cache>
 </webscript>
