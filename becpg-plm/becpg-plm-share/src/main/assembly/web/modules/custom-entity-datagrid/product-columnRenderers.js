@@ -440,7 +440,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-		propertyName: ["bcpg:nutListRoundedValue"],
+		propertyName: ["bcpg:nutListRoundedValue","bcpg:nutListRoundedValuePrepared"],
 		renderer: function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
 			var ret = "";
 
