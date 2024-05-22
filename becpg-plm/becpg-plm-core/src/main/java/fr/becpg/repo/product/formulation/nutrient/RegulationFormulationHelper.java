@@ -472,13 +472,18 @@ public class RegulationFormulationHelper {
 	 */
 	public static void extractRoundedValue(ProductData formulatedProduct, String nutCode, NutListDataItem n) {
 		JSONObject jsonRound = new JSONObject();
-
+		JSONObject jsonPreparedRound = new JSONObject();
 		try {
 
 			JSONObject value = new JSONObject();
 			JSONObject secondaryValue = new JSONObject();
 			JSONObject secondaryValuePerServing = new JSONObject();
-
+			JSONObject secondaryTmin = new JSONObject();
+			JSONObject secondaryTmax = new JSONObject();
+			JSONObject secondaryGda = new JSONObject();
+			JSONObject secondaryValuePerContainer = new JSONObject();
+			JSONObject secondaryGdaPerContainer = new JSONObject();
+			
 			JSONObject tmin = new JSONObject();
 			JSONObject tmax = new JSONObject();
 			JSONObject mini = new JSONObject();
@@ -498,6 +503,7 @@ public class RegulationFormulationHelper {
 				NutrientDefinition def = regulation.getNutrientDefinition(nutCode);
 				value.put(key, regulation.round(n.getValue(), nutCode, nutUnit));
 				secondaryValue.put(key, regulation.round(n.getPreparedValue(), nutCode, nutUnit));
+
 				mini.put(key, regulation.round(n.getMini(), nutCode, nutUnit));
 				maxi.put(key, regulation.round(n.getMaxi(), nutCode, nutUnit));
 
@@ -505,6 +511,12 @@ public class RegulationFormulationHelper {
 				if (tolerances != null) {
 					tmin.put(key, tolerances.getFirst());
 					tmax.put(key, tolerances.getSecond());
+				}
+				
+				tolerances = regulation.tolerances(n.getPreparedValue(), nutCode, nutUnit);
+				if (tolerances != null) {
+					secondaryTmin.put(key, tolerances.getFirst());
+					secondaryTmax.put(key, tolerances.getSecond());
 				}
 
 				if (n instanceof VariantAwareDataItem) {
@@ -537,14 +549,30 @@ public class RegulationFormulationHelper {
 				if ((n.getPreparedValue() != null) && (servingSize != null)) {
 					Double valuePerserving = (n.getPreparedValue() * (servingSize * 1000d)) / 100;
 					secondaryValuePerServing.put(key, regulation.round(valuePerserving, nutCode, nutUnit));
+					
+					Double vps = regulation.round(valuePerserving, nutCode, nutUnit);
+					valuePerServing.put(key, vps);
+					if ((def != null) && (def.getGda() != null) && (def.getGda() != 0)) {
+						secondaryGda.put(key, regulation.roundGDA((100 * vps) / def.getGda(), nutCode));
+					}
+					
 				}
 
 				Double containerQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d);
-				if ((key.equals("US")) && (n.getValue() != null)) {
-					Double vpc = regulation.round(n.getValue() * containerQty * 10, nutCode, nutUnit);
-					valuePerContainer.put(key, vpc);
-					if ((def != null) && (def.getGda() != null) && (def.getGda() != 0)) {
-						gdaPerContainer.put(key, regulation.roundGDA((100 * vpc) / def.getGda(), nutCode));
+				if ((key.equals("US"))) {
+					if((n.getValue() != null)) {
+						Double vpc = regulation.round(n.getValue() * containerQty * 10, nutCode, nutUnit);
+						valuePerContainer.put(key, vpc);
+						if ((def != null) && (def.getGda() != null) && (def.getGda() != 0)) {
+							gdaPerContainer.put(key, regulation.roundGDA((100 * vpc) / def.getGda(), nutCode));
+						}
+					}
+					if ((n.getPreparedValue() != null)) {
+						Double vpc = regulation.round(n.getPreparedValue() * containerQty * 10, nutCode, nutUnit);
+						secondaryValuePerContainer.put(key, vpc);
+						if ((def != null) && (def.getGda() != null) && (def.getGda() != 0)) {
+							secondaryGdaPerContainer.put(key, regulation.roundGDA((100 * vpc) / def.getGda(), nutCode));
+						}
 					}
 				}
 
@@ -560,6 +588,16 @@ public class RegulationFormulationHelper {
 				jsonRound.put(KEY_UL, ul);
 				jsonRound.put(KEY_VALUE_PER_CONTAINER, valuePerContainer);
 				jsonRound.put(KEY_GDA_PERC_PER_CONTAINER, gdaPerContainer);
+				
+				
+				jsonPreparedRound.put(KEY_VALUE, secondaryValue);
+				jsonPreparedRound.put(KEY_TOLERANCE_MIN, secondaryTmin);
+				jsonPreparedRound.put(KEY_TOLERANCE_MAX, secondaryTmax);
+				jsonPreparedRound.put(KEY_VALUE_PER_SERVING, secondaryValuePerServing);
+				jsonPreparedRound.put(KEY_GDA_PERC, secondaryGda);
+				jsonPreparedRound.put(KEY_VALUE_PER_CONTAINER, secondaryValuePerContainer);
+				jsonPreparedRound.put(KEY_GDA_PERC_PER_CONTAINER, secondaryGdaPerContainer);
+				
 
 				for (String variantKey : variants.keySet()) {
 					jsonRound.put(variantKey, variants.get(variantKey));
@@ -568,6 +606,12 @@ public class RegulationFormulationHelper {
 
 		} catch (JSONException e) {
 			logger.error(e, e);
+		}
+		
+		if(n.getPreparedValue()!=null) {
+			n.setRoundedValuePrepared(jsonPreparedRound.toString());
+		} else {
+			n.setRoundedValuePrepared(null);
 		}
 		n.setRoundedValue(jsonRound.toString());
 	}

@@ -7451,6 +7451,7 @@
 					<show id="bcpg:variantColumn4" force="true" />
 					<show id="bcpg:variantColumn5" force="true" />
 					<show id="bcpg:nutListRoundedValue" />
+					<show id="bcpg:nutListRoundedValuePrepared" />
 					<show id="bcpg:nutListGDAPerc" force="true" />
 					<show id="bcpg:nutListLossPerc" />
 					<show id="bcpg:nutListMethod" />
@@ -7476,6 +7477,7 @@
 					<field id="bcpg:nutListFormulatedValuePerServing" label="hidden" read-only="true" />
 					<field id="bcpg:nutListUnitPrepared" read-only="true" label="hidden"></field>
 					<field id="bcpg:nutListRoundedValue" read-only="true"></field>
+					<field id="bcpg:nutListRoundedValuePrepared" read-only="true"></field>
 					<field id="bcpg:variantColumn1" read-only="true" label="hidden"></field>
 					<field id="bcpg:variantColumn2" read-only="true" label="hidden"></field>
 					<field id="bcpg:variantColumn3" read-only="true" label="hidden"></field>

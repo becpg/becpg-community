@@ -5464,6 +5464,11 @@
 						<constraint ref="bcpg:nutListUnit" />
 					</constraints>
 				</property>
+			    <property name="bcpg:nutListRoundedValuePrepared">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 			</properties>
 		</aspect>
 
