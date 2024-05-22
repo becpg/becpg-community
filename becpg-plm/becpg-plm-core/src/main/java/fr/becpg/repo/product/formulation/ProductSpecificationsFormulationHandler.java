@@ -140,7 +140,7 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 							stopWatch.start();
 							StringBuilder logs = new StringBuilder( "Start formulate specification at " + Calendar.getInstance().getTime().toString() + ":\n");
 
-							Map<NodeRef, String> toUpdate = new HashMap<>();
+							Map<NodeRef, List<String>> toUpdate = new HashMap<>();
 							Set<NodeRef> toSkipProduct = new HashSet<>();
 							List<NodeRef> productNodeRefs = getProductNodeRefs((ProductSpecificationData) formulatedProduct);
 							logs.append( "- found " + productNodeRefs.size() + " products to test specification on\n");
@@ -181,7 +181,9 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 												if (logger.isDebugEnabled()) {
 													logger.debug("Adding Forbidden for " + productNodeRef);
 												}
-												toUpdate.put(productNodeRef, reqDetails.toString());
+												
+												List<String> reqList = toUpdate.computeIfAbsent(productNodeRef, k -> new ArrayList<>());
+												reqList.add(reqDetails.toString());
 											}
 										}
 										return productData;
@@ -192,31 +194,19 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 								}
 							}
 
-							List<SpecCompatibilityDataItem> toRemove = new ArrayList<>();
+							specificationData.getSpecCompatibilityList().removeIf(p -> !toSkipProduct.contains(p.getSourceItem()));
 
-							for (SpecCompatibilityDataItem cul1 : specificationData.getSpecCompatibilityList()) {
-								if (!toSkipProduct.contains(cul1.getSourceItem())) {
-									if (!toUpdate.containsKey(cul1.getSourceItem())) {
-										toRemove.add(cul1);
-									} else {
-										cul1.setReqDetails(toUpdate.get(cul1.getSourceItem()));
-										toUpdate.remove(cul1.getSourceItem());
-									}
+							for (Map.Entry<NodeRef, List<String>> entry : toUpdate.entrySet()) {
+								for (String req :  entry.getValue()) {
+									specificationData.getSpecCompatibilityList()
+									.add(new SpecCompatibilityDataItem(RequirementType.Forbidden, req, entry.getKey()));
 								}
 							}
-
-							for (Map.Entry<NodeRef, String> entry : toUpdate.entrySet()) {
-								specificationData.getSpecCompatibilityList()
-										.add(new SpecCompatibilityDataItem(RequirementType.Forbidden, entry.getValue(), entry.getKey()));
-							}
-
-							specificationData.getSpecCompatibilityList().removeAll(toRemove);
 
 							stopWatch.stop();
 
 							logs.append( "- found " + toUpdate.size() + " new forbidden products,\n");
 							logs.append( "- found " + toSkipProduct.size() + " products to skip,\n");
-							logs.append( "- found " + toRemove.size() + " products to remove,\n");
 							logs.append( "formulation end in " + stopWatch.getTotalTimeSeconds() + "s at " + Calendar.getInstance().getTime().toString()
 									+ "\n");
 							specificationData.setSpecCompatibilityLog(logs.toString());
