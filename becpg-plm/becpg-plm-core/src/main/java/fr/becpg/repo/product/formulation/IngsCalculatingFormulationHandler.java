@@ -631,8 +631,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	}
 
 	private List<IngListDataItem> sorted(List<IngListDataItem> items) {
-		return items.stream().sorted(Comparator.comparing(IngListDataItem::getQtyPerc, Comparator.nullsFirst(Comparator.naturalOrder()))
-				.thenComparing(Comparator.comparing(this::getLegalName).reversed())).toList();
+		return items.stream().sorted(Comparator.comparing(IngListDataItem::getQtyPerc, Comparator.nullsLast(Comparator.reverseOrder()))
+				.thenComparing(Comparator.comparing(this::getLegalName))).toList();
 	}
 
 	private String getLegalName(IngListDataItem ingListDataItem) {
