@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import org.alfresco.service.cmr.repository.MLText;
@@ -608,39 +609,32 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	 *
 	 */
 	private void sortIL(List<IngListDataItem> ingList) {
-
 		if (!ingList.isEmpty()) {
 			final IngListDataItem nullPlaceholder = new IngListDataItem();
 			Map<IngListDataItem, List<IngListDataItem>> byParent = ingList.stream()
-					.collect(Collectors.groupingBy(obj -> (obj.getParent() == null ? nullPlaceholder : obj.getParent()), Collectors.toList()));
+					.collect(Collectors.groupingBy(item -> item.getParent() == null ? nullPlaceholder : item.getParent()));
 
-			Deque<IngListDataItem> processor = new ArrayDeque<>();
+			List<IngListDataItem> sortedList = new ArrayList<>();
+			AtomicInteger index = new AtomicInteger(1);
 
-			int i = 1;
+			sorted(byParent.getOrDefault(nullPlaceholder, Collections.emptyList())).forEach(root -> processItem(root, byParent, sortedList));
 
-			byParent.getOrDefault(nullPlaceholder, Collections.emptyList()).stream()
-					.sorted(Comparator.comparing(IngListDataItem::getQtyPerc, Comparator.nullsFirst(Comparator.naturalOrder()))
-							.thenComparing(Comparator.comparing(this::getLegaleName).reversed()))
-					.collect(Collectors.toList()).forEach(processor::add);
-
-			while (!processor.isEmpty()) {
-				i++;
-				IngListDataItem il = processor.removeLast();
-				byParent.getOrDefault(il, Collections.emptyList()).stream()
-						.sorted(Comparator.comparing(IngListDataItem::getQtyPerc, Comparator.nullsFirst(Comparator.naturalOrder()))
-								.thenComparing(Comparator.comparing(this::getLegaleName).reversed()))
-						.collect(Collectors.toList()).forEach(processor::add);
-
-				il.setSort(i);
-
-			}
-
+			sortedList.forEach(item -> item.setSort(index.getAndIncrement()));
 			ingList.sort(Comparator.comparing(IngListDataItem::getSort, Comparator.nullsLast(Comparator.naturalOrder())));
 		}
-
 	}
 
-	private String getLegaleName(IngListDataItem ingListDataItem) {
+	private void processItem(IngListDataItem item, Map<IngListDataItem, List<IngListDataItem>> byParent, List<IngListDataItem> sortedList) {
+		sortedList.add(item);
+		sorted(byParent.getOrDefault(item, Collections.emptyList())).forEach(child -> processItem(child, byParent, sortedList));
+	}
+
+	private List<IngListDataItem> sorted(List<IngListDataItem> items) {
+		return items.stream().sorted(Comparator.comparing(IngListDataItem::getQtyPerc, Comparator.nullsLast(Comparator.reverseOrder()))
+				.thenComparing(Comparator.comparing(this::getLegalName))).collect(Collectors.toList());
+	}
+
+	private String getLegalName(IngListDataItem ingListDataItem) {
 
 		if (ingListDataItem.getIng() != null) {
 			IngItem ingItem = (IngItem) alfrescoRepository.findOne(ingListDataItem.getIng());
@@ -648,5 +642,6 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		}
 		return ingListDataItem.getName();
 	}
+
 
 }
