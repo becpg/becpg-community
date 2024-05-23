@@ -4,18 +4,22 @@
 package fr.becpg.repo.product.data.ing;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
+import fr.becpg.repo.product.formulation.labeling.EvaporatedDataItem;
+import fr.becpg.repo.product.formulation.labeling.ReconstituableDataItem;
 
 /**
  * <p>CompositeLabeling class.</p>
@@ -39,6 +43,10 @@ public class CompositeLabeling extends LabelingComponent {
 
 	private Double evaporatedQty = 0d;
 	private Double evaporatedVolume = 0d;
+
+	private transient Set<EvaporatedDataItem> evaporatedDataItems = new HashSet<>();
+
+	private transient Set<ReconstituableDataItem> reconstituableDataItems = new HashSet<>();
 
 	private BigDecimal volumeTotal = BigDecimal.valueOf(0d);
 	private BigDecimal volumeTotalWithYield = BigDecimal.valueOf(0d);
@@ -192,12 +200,10 @@ public class CompositeLabeling extends LabelingComponent {
 	public void setQtyTotal(BigDecimal qtyTotal) {
 		this.qtyTotal = qtyTotal;
 	}
-	
 
 	public void setDoubleQtyTotal(Double qty) {
-		this.qtyTotal = qty!=null ? BigDecimal.valueOf(qty) : null;
+		this.qtyTotal = qty != null ? BigDecimal.valueOf(qty) : null;
 	}
-
 
 	public Double getEvaporatedQty() {
 		return evaporatedQty;
@@ -213,6 +219,28 @@ public class CompositeLabeling extends LabelingComponent {
 
 	public void setEvaporatedVolume(Double evaporatedVolume) {
 		this.evaporatedVolume = evaporatedVolume;
+	}
+
+	/**
+	 * <p>
+	 * Getter for the field <code>evaporatedDataItems</code>.
+	 * </p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
+	public Set<EvaporatedDataItem> getEvaporatedDataItems() {
+		return evaporatedDataItems;
+	}
+
+	/**
+	 * <p>
+	 * Getter for the field <code>reconstituableDataItems</code>.
+	 * </p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
+	public Set<ReconstituableDataItem> getReconstituableDataItems() {
+		return reconstituableDataItems;
 	}
 
 	/**
@@ -233,10 +261,8 @@ public class CompositeLabeling extends LabelingComponent {
 		this.volumeTotal = volumeTotal;
 	}
 
-	
-
 	public void setDoubleVolumeTotal(Double volumeTotal) {
-		this.volumeTotal = volumeTotal!=null ? BigDecimal.valueOf(volumeTotal) : null;
+		this.volumeTotal = volumeTotal != null ? BigDecimal.valueOf(volumeTotal) : null;
 	}
 
 	/**
@@ -375,8 +401,8 @@ public class CompositeLabeling extends LabelingComponent {
 	private void print(StringBuilder sb, String prefix, boolean isTail) {
 		sb.append(prefix).append(isTail ? "└──[" : "├──[")
 				.append(getLegalName(I18NUtil.getContentLocaleLang()) == null ? ROOT : getLegalName(I18NUtil.getContentLocaleLang()))
-				.append(" ( allergens:" + getAllergens() + ") ").append(" ( plural:" + isPlural() + ") ").append(" - ").append(getQty()).append("/").append(getQtyTotal()).append(" (")
-				.append(getQtyWithYield()).append("/").append(getQtyTotal()).append(") ")
+				.append(" (allergens:" + getAllergens() + ") ").append(" (plural:" + isPlural() + ") ").append(" - qty/qtyYield:(").append(getQty())
+				.append("/").append(getQtyWithYield()).append(") - total: ").append(getQtyTotal()).append(" - ")
 				.append(declarationType != null ? declarationType.toString() : "").append("]\n");
 		for (Iterator<CompositeLabeling> iterator = ingList.values().iterator(); iterator.hasNext();) {
 			CompositeLabeling labelingComponent = iterator.next();
@@ -385,8 +411,8 @@ public class CompositeLabeling extends LabelingComponent {
 			} else {
 				sb.append(prefix).append(isTail ? "    " : "│   ").append(!iterator.hasNext() ? "└──[" : "├──[")
 						.append(labelingComponent.getLegalName(I18NUtil.getContentLocaleLang()))
-						.append(" ( plural:" + labelingComponent.isPlural() + " ) ").append(" - ").append(labelingComponent.getQty())
-						.append(" (").append(labelingComponent.getQtyWithYield()+") ").append(" ]\n");
+						.append(" ( plural:" + labelingComponent.isPlural() + " ) ").append(" - ").append(labelingComponent.getQty()).append(" (")
+						.append(labelingComponent.getQtyWithYield() + ") ").append(" ]\n");
 			}
 
 		}

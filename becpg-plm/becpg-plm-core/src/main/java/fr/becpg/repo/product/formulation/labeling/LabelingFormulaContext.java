@@ -117,10 +117,6 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 	private List<ReqCtrlListDataItem> errors = new ArrayList<>();
 
-	private List<ReconstituableDataItem> reconstituableDataItems = new ArrayList<>();
-
-	private List<EvaporatedDataItem> evaporatedDataItems = new ArrayList<>();
-
 	private Map<Locale, Set<String>> detectedAllergensByLocale = new HashMap<>();
 
 	private Map<NodeRef, Double> allergens = new HashMap<>();
@@ -253,27 +249,6 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return inVolAllergensRawMaterial;
 	}
 
-	/**
-	 * <p>
-	 * Getter for the field <code>reconstituableDataItems</code>.
-	 * </p>
-	 *
-	 * @return a {@link java.util.List} object.
-	 */
-	public List<ReconstituableDataItem> getReconstituableDataItems() {
-		return reconstituableDataItems;
-	}
-
-	/**
-	 * <p>
-	 * Getter for the field <code>evaporatedDataItems</code>.
-	 * </p>
-	 *
-	 * @return a {@link java.util.List} object.
-	 */
-	public List<EvaporatedDataItem> getEvaporatedDataItems() {
-		return evaporatedDataItems;
-	}
 
 	/**
 	 * <p>
