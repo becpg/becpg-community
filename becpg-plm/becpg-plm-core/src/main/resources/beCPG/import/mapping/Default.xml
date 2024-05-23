@@ -99,8 +99,8 @@
 
    <mapping name="bcpg:ingTypeItem">
 		<nodeColumnKeys>
-			<nodeColumnKey attribute="bcpg:lvCode" />
 			<nodeColumnKey attribute="bcpg:lvValue" />
+			<nodeColumnKey attribute="bcpg:lvCode" />
 		</nodeColumnKeys>
 	</mapping>
 	
