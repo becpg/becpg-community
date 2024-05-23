@@ -4235,7 +4235,14 @@
 		<!-- Deprecated -->
 		<aspect name="bcpg:diluentAspect"></aspect>
 
-		<aspect name="bcpg:waterAspect"></aspect>
+		<aspect name="bcpg:waterAspect">
+			<properties>
+				<property name="bcpg:evaporatedRate">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+			</properties>
+		</aspect>
 		
 		<!-- Aspect used to store the entity type of the template (entityFolderTpl, entityTpl, etc...) -->
 		<aspect name="bcpg:entityTplAspect">
