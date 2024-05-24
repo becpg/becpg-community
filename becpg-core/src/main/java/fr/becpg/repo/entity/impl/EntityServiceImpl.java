@@ -149,6 +149,14 @@ public class EntityServiceImpl implements EntityService {
 		Map<String, NodeRef> icons = getEntityIcons();
 		QName type = nodeService.getType(entityNodeRef);
 
+		if(nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)) {
+			String iconName = String.format(ICON_NAME_TEMPLATE, type.getLocalName(), entityNodeRef.getId(),
+					imageResolution);
+			if (icons.containsKey(iconName)) {
+				return icons.get(iconName);
+			}
+		}
+		
 		// Try to find a logo for the specific type
 		List<AssociationRef> entityTplAssocs = nodeService.getTargetAssocs(entityNodeRef,
 				BeCPGModel.ASSOC_ENTITY_TPL_REF);
@@ -160,7 +168,7 @@ public class EntityServiceImpl implements EntityService {
 			if (icons.containsKey(iconName)) {
 				return icons.get(iconName);
 			}
-		}
+		} 
 
 		String iconName = String.format(ICON_NAME, type.getLocalName(), imageResolution);
 
