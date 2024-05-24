@@ -3,7 +3,6 @@
  */
 package fr.becpg.repo.product.data.ing;
 
-import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -38,8 +37,8 @@ public class CompositeLabeling extends LabelingComponent {
 
 	private Map<NodeRef, CompositeLabeling> ingListAtEnd = new LinkedHashMap<>();
 
-	private BigDecimal qtyTotal = BigDecimal.valueOf(0d);
-	private BigDecimal qtyTotalWithYield = BigDecimal.valueOf(0d);
+	private Double qtyTotal = 0d;
+	private Double qtyTotalWithYield = 0d;
 
 	private Double evaporatedQty = 0d;
 	private Double evaporatedVolume = 0d;
@@ -48,8 +47,8 @@ public class CompositeLabeling extends LabelingComponent {
 
 	private transient Set<ReconstituableDataItem> reconstituableDataItems = new HashSet<>();
 
-	private BigDecimal volumeTotal = BigDecimal.valueOf(0d);
-	private BigDecimal volumeTotalWithYield = BigDecimal.valueOf(0d);
+	private Double volumeTotal = 0d;
+	private Double volumeTotalWithYield = 0d;
 
 	private IngTypeItem ingType;
 
@@ -188,7 +187,7 @@ public class CompositeLabeling extends LabelingComponent {
 	 *
 	 * @return a {@link java.lang.Double} object.
 	 */
-	public BigDecimal getQtyTotal() {
+	public Double getQtyTotal() {
 		return qtyTotal;
 	}
 
@@ -197,12 +196,8 @@ public class CompositeLabeling extends LabelingComponent {
 	 *
 	 * @param qtyTotal a {@link java.lang.Double} object.
 	 */
-	public void setQtyTotal(BigDecimal qtyTotal) {
+	public void setQtyTotal(Double qtyTotal) {
 		this.qtyTotal = qtyTotal;
-	}
-
-	public void setDoubleQtyTotal(Double qty) {
-		this.qtyTotal = qty != null ? BigDecimal.valueOf(qty) : null;
 	}
 
 	public Double getEvaporatedQty() {
@@ -248,7 +243,7 @@ public class CompositeLabeling extends LabelingComponent {
 	 *
 	 * @return a {@link java.lang.Double} object.
 	 */
-	public BigDecimal getVolumeTotal() {
+	public Double getVolumeTotal() {
 		return volumeTotal;
 	}
 
@@ -257,12 +252,8 @@ public class CompositeLabeling extends LabelingComponent {
 	 *
 	 * @param volumeTotal a {@link java.lang.Double} object.
 	 */
-	public void setVolumeTotal(BigDecimal volumeTotal) {
+	public void setVolumeTotal(Double volumeTotal) {
 		this.volumeTotal = volumeTotal;
-	}
-
-	public void setDoubleVolumeTotal(Double volumeTotal) {
-		this.volumeTotal = volumeTotal != null ? BigDecimal.valueOf(volumeTotal) : null;
 	}
 
 	/**
