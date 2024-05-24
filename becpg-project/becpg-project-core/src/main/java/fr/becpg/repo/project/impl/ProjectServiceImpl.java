@@ -261,6 +261,7 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_SYSTEM_ENTITY);
 
 				L2CacheSupport.doInCacheContext(() -> {
 					AuthenticationUtil.runAsSystem(() -> {
@@ -296,6 +297,7 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_SCORE_LIST);
 				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_BUDGET_LIST);
 				policyBehaviourFilter.enableBehaviour(ProjectModel.ASPECT_BUDGET);
+				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_SYSTEM_ENTITY);
 			}
 		}
 	}
