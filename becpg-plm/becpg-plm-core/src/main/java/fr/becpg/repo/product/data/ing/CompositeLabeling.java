@@ -34,14 +34,14 @@ public class CompositeLabeling extends LabelingComponent {
 
 	private Map<NodeRef, CompositeLabeling> ingListAtEnd = new LinkedHashMap<>();
 
-	private BigDecimal qtyTotal = BigDecimal.valueOf(0d);
-	private BigDecimal qtyTotalWithYield = BigDecimal.valueOf(0d);
+	private Double qtyTotal = 0d;
+	private Double qtyTotalWithYield = 0d;
 
 	private Double evaporatedQty = 0d;
 	private Double evaporatedVolume = 0d;
 
-	private BigDecimal volumeTotal = BigDecimal.valueOf(0d);
-	private BigDecimal volumeTotalWithYield = BigDecimal.valueOf(0d);
+	private Double volumeTotal = 0d;
+	private Double volumeTotalWithYield = 0d;
 
 	private IngTypeItem ingType;
 
@@ -180,7 +180,7 @@ public class CompositeLabeling extends LabelingComponent {
 	 *
 	 * @return a {@link java.lang.Double} object.
 	 */
-	public BigDecimal getQtyTotal() {
+	public Double getQtyTotal() {
 		return qtyTotal;
 	}
 
@@ -189,15 +189,9 @@ public class CompositeLabeling extends LabelingComponent {
 	 *
 	 * @param qtyTotal a {@link java.lang.Double} object.
 	 */
-	public void setQtyTotal(BigDecimal qtyTotal) {
+	public void setQtyTotal(Double qtyTotal) {
 		this.qtyTotal = qtyTotal;
 	}
-	
-
-	public void setDoubleQtyTotal(Double qty) {
-		this.qtyTotal = qty!=null ? BigDecimal.valueOf(qty) : null;
-	}
-
 
 	public Double getEvaporatedQty() {
 		return evaporatedQty;
@@ -220,7 +214,7 @@ public class CompositeLabeling extends LabelingComponent {
 	 *
 	 * @return a {@link java.lang.Double} object.
 	 */
-	public BigDecimal getVolumeTotal() {
+	public Double getVolumeTotal() {
 		return volumeTotal;
 	}
 
@@ -229,14 +223,8 @@ public class CompositeLabeling extends LabelingComponent {
 	 *
 	 * @param volumeTotal a {@link java.lang.Double} object.
 	 */
-	public void setVolumeTotal(BigDecimal volumeTotal) {
+	public void setVolumeTotal(Double volumeTotal) {
 		this.volumeTotal = volumeTotal;
-	}
-
-	
-
-	public void setDoubleVolumeTotal(Double volumeTotal) {
-		this.volumeTotal = volumeTotal!=null ? BigDecimal.valueOf(volumeTotal) : null;
 	}
 
 	/**
@@ -375,8 +363,8 @@ public class CompositeLabeling extends LabelingComponent {
 	private void print(StringBuilder sb, String prefix, boolean isTail) {
 		sb.append(prefix).append(isTail ? "└──[" : "├──[")
 				.append(getLegalName(I18NUtil.getContentLocaleLang()) == null ? ROOT : getLegalName(I18NUtil.getContentLocaleLang()))
-				.append(" ( allergens:" + getAllergens() + ") ").append(" ( plural:" + isPlural() + ") ").append(" - ").append(getQty()).append("/").append(getQtyTotal()).append(" (")
-				.append(getQtyWithYield()).append("/").append(getQtyTotal()).append(") ")
+				.append(" ( allergens:" + getAllergens() + ") ").append(" ( plural:" + isPlural() + ") ").append(" - ").append(getQty()).append("/")
+				.append(getQtyTotal()).append(" (").append(getQtyWithYield()).append("/").append(getQtyTotal()).append(") ")
 				.append(declarationType != null ? declarationType.toString() : "").append("]\n");
 		for (Iterator<CompositeLabeling> iterator = ingList.values().iterator(); iterator.hasNext();) {
 			CompositeLabeling labelingComponent = iterator.next();
@@ -385,8 +373,8 @@ public class CompositeLabeling extends LabelingComponent {
 			} else {
 				sb.append(prefix).append(isTail ? "    " : "│   ").append(!iterator.hasNext() ? "└──[" : "├──[")
 						.append(labelingComponent.getLegalName(I18NUtil.getContentLocaleLang()))
-						.append(" ( plural:" + labelingComponent.isPlural() + " ) ").append(" - ").append(labelingComponent.getQty())
-						.append(" (").append(labelingComponent.getQtyWithYield()+") ").append(" ]\n");
+						.append(" ( plural:" + labelingComponent.isPlural() + " ) ").append(" - ").append(labelingComponent.getQty()).append(" (")
+						.append(labelingComponent.getQtyWithYield() + ") ").append(" ]\n");
 			}
 
 		}
