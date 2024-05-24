@@ -9,7 +9,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -18,6 +17,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.version.EntityVersionPlugin;
@@ -104,7 +104,7 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 	/** {@inheritDoc} */
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
-		if(policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE)) {
+		if(policyBehaviourFilter.isEnabled(BeCPGModel.TYPE_SYSTEM_ENTITY)) {
 
 			Set<NodeRef> toReformulates = new HashSet<>();
 			String beforeState = (String) before.get(ProjectModel.PROP_PROJECT_STATE);
