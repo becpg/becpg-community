@@ -800,6 +800,20 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 		checkILL(finishedProductNodeRef, labelingRuleList,
 				"epaississant french : ing5 french (ing1 french, ing4 french), ing2 french 16,6%, ing1 french", Locale.FRENCH);
+		
+		labelingRuleList = new ArrayList<>();
+		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
+		labelingRuleList.add(new LabelingRuleListDataItem("%", "#.#%|HALF_UP||NEAREST_HALF_DOWN", LabelingRuleType.ShowPerc, Arrays.asList(ing2), null));
+
+		checkILL(finishedProductNodeRef, labelingRuleList,
+				"epaississant french : ing5 french (ing1 french, ing4 french), ing2 french 16,5%, ing1 french", Locale.FRENCH);
+		
+		labelingRuleList = new ArrayList<>();
+		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
+		labelingRuleList.add(new LabelingRuleListDataItem("%", "#.#%|HALF_UP||NEAREST_HALF_UP", LabelingRuleType.ShowPerc, Arrays.asList(ing2), null));
+
+		checkILL(finishedProductNodeRef, labelingRuleList,
+				"epaississant french : ing5 french (ing1 french, ing4 french), ing2 french 17%, ing1 french", Locale.FRENCH);
 
 	}
 

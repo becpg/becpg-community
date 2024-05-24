@@ -14,6 +14,7 @@ class ShowRule {
 	String format;
 	RoundingMode roundingMode = null;
 	Double threshold = null;
+	String qtyFormula = null;
 	Set<Locale> locales = new HashSet<>();
 
 	/**
@@ -32,6 +33,9 @@ class ShowRule {
 			} 
 			if(splitted.length>2 && !splitted[2].isEmpty()) {
 				threshold = Double.valueOf(splitted[2]);
+			}
+			if(splitted.length>3 && !splitted[3].isEmpty()) {
+				qtyFormula = splitted[3];
 			}
 			
 		} else {
