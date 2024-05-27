@@ -128,19 +128,13 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 						String itemKey = itemEntry.getKey();
 						Object itemValue = itemEntry.getValue();
 						if (itemKey.startsWith("prop_bcpg_dynamicCharactColumn")) {
-							
-							if (itemValue instanceof String) {
+							if (dynamicCharactColumnCache.get(itemKey) == null && JsonFormulaHelper.isJsonString(itemValue)) {
 								dynamicCharactColumnCache.put(itemKey, (String) itemValue);
 								Object value = JsonFormulaHelper.cleanCompareJSON((String) itemValue);
 								item.put(itemKey, value);
-							} else if (itemValue == null) {
-								itemValue = dynamicCharactColumnCache.get(itemKey);
-								if (itemValue instanceof String) {
-									Object subValue = JsonFormulaHelper.extractComponentValue((String) itemValue, itemNodeRef.getId());
-									item.put(itemKey, subValue);
-								}
-							} else {
-								item.put(itemKey, itemValue);
+							} else if (dynamicCharactColumnCache.get(itemKey) != null) {
+								Object subValue = JsonFormulaHelper.extractComponentValue(dynamicCharactColumnCache.get(itemKey), itemNodeRef.getId());
+								item.put(itemKey, subValue);
 							}
 						}
 					}
