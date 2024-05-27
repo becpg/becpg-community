@@ -118,6 +118,11 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 	public boolean needsRecipeId() {
 		return true;
 	}
+	
+	@Override
+	public void ingredientAnalysis(RegulatoryContext productContext, RegulatoryContextItem contextItem) {
+		// implemented in extractRequirements()
+	}
 
 	/**
 	 * {"search_parameters": { "usage": "Breakfast foods", "country": [ "United
@@ -297,7 +302,7 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 
 										if (contextItem.getCountries().get(country) != null && usageContext.getNodeRef() != null) {
 											IngRegulatoryListDataItem ingRegulatoryListDataItem = createIngRegulatoryListDataItem(ingItem.getIng(),
-													contextItem.getCountries().get(country), usageContext.getNodeRef());
+													contextItem.getCountries().get(country));
 											
 											ingRegulatoryListDataItem.setCitation(new MLText(result.getString(CITATION)));
 											ingRegulatoryListDataItem.setUsages(new MLText(result.getString(USAGE_NAME)));
@@ -420,13 +425,12 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 		return reqCtrlItem;
 	}
 
-	protected IngRegulatoryListDataItem createIngRegulatoryListDataItem(NodeRef ing, NodeRef country, NodeRef usage) {
+	protected IngRegulatoryListDataItem createIngRegulatoryListDataItem(NodeRef ing, NodeRef country) {
 
 		IngRegulatoryListDataItem ingRegulatoryListDataItem = new IngRegulatoryListDataItem();
 		ingRegulatoryListDataItem.setIng(ing);
 		ingRegulatoryListDataItem.setRegulatoryCountries(Arrays.asList(country));
-
-		ingRegulatoryListDataItem.setRegulatoryUsages(Arrays.asList(usage));
+		
 		return ingRegulatoryListDataItem;
 	}
 

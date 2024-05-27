@@ -82,7 +82,14 @@ public class ReqCtrlListItemExtractor implements DataListItemExtractor {
 
 						if (((charact != null) && charact.equals(associationService.getTargetAssoc(reqCtrl, PLMModel.ASSOC_RCL_CHARACT))
 								|| (sources!=null && sources.contains(charact)))) {
-							extractedItems.add(reqCtrl);
+							if (item instanceof IngRegulatoryListDataItem ingRegItem) {
+								String reqCtrlCode = (String) nodeService.getProperty(reqCtrl, PLMModel.PROP_REGULATORY_CODE);
+								if (reqCtrlCode != null && ingRegItem.getRegulatoryCountries().stream().anyMatch(u -> reqCtrlCode.contains(((String) nodeService.getProperty(u, PLMModel.PROP_REGULATORY_CODE))))) {
+									extractedItems.add(reqCtrl);
+								}
+							} else {
+								extractedItems.add(reqCtrl);
+							}
 						}
 					}
 				}

@@ -88,59 +88,54 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 		return false;
 	}
 	
-	private Boolean ingredientAnalysisEnabled() {
-		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.decernis.ingredient.analysis.enabled"));
-	}
-
 	@Override
 	public void extractRequirements(RegulatoryContext productContext, RegulatoryContextItem contextItem) {
 	
 		for (UsageContext usageContext : contextItem.getUsages()) {
-	
+			
 			List<List<String>> countriesBatch = Lists.partition(new ArrayList<>(contextItem.getCountries().keySet()), DECERNIS_MAX_COUNTRIES);
-	
 			for (List<String> countries : countriesBatch) {
-	
-				JSONObject recipeAnalysisResults = null;
-	
-				try {
-					recipeAnalysisResults = postV5RecipeAnalysis(productContext, countries, usageContext.getName(), usageContext.getModuleId());
-				} catch (HttpStatusCodeException e) {
-					logger.error("Error during Decernis recipe analysis: " + e.getMessage(), e);
-					for (String country : countries) {
-						ReqCtrlListDataItem req = ReqCtrlListDataItem.forbidden()
-								.withMessage(MLTextHelper.getI18NMessage("message.decernis.error",
-										"Error while creating Decernis recipe: " + e.getMessage()))
-								.ofDataType(RequirementDataType.Formulation).withFormulationChainId(DecernisService.DECERNIS_CHAIN_ID)
-								.withRegulatoryCode(country + (!usageContext.getName().isEmpty() ? " - " + usageContext.getName() : ""));
-	
-						productContext.getRequirements().add(req);
-					}
-				}
-				if (recipeAnalysisResults != null) {
-					parseRecipeAnalysisResults(productContext, contextItem, usageContext, countries, recipeAnalysisResults);
-				}
-				
-				if (ingredientAnalysisEnabled()) {
-					JSONObject ingredientAnalysisResults = null;
-					
+				if (!usageContext.getName().endsWith(DecernisService.MODULE_SUFFIX)) {
+					JSONObject recipeAnalysisResults = null;
 					try {
-						ingredientAnalysisResults = postV5IngredientAnalysis(productContext, countries, usageContext.getName(), usageContext.getModuleId());
+						recipeAnalysisResults = postV5RecipeAnalysis(productContext, countries, usageContext.getName(), usageContext.getModuleId());
 					} catch (HttpStatusCodeException e) {
-						logger.error("Error during Decernis ingredients analysis: " + e.getMessage(), e);
+						logger.error("Error during Decernis recipe analysis: " + e.getMessage(), e);
 						for (String country : countries) {
 							ReqCtrlListDataItem req = ReqCtrlListDataItem.forbidden()
 									.withMessage(MLTextHelper.getI18NMessage("message.decernis.error",
 											"Error while creating Decernis recipe: " + e.getMessage()))
 									.ofDataType(RequirementDataType.Formulation).withFormulationChainId(DecernisService.DECERNIS_CHAIN_ID)
 									.withRegulatoryCode(country + (!usageContext.getName().isEmpty() ? " - " + usageContext.getName() : ""));
+							
 							productContext.getRequirements().add(req);
 						}
 					}
-					if (ingredientAnalysisResults != null) {
-						parseIngredientAnalysisResults(productContext, contextItem, usageContext, countries, ingredientAnalysisResults);
+					if (recipeAnalysisResults != null) {
+						parseRecipeAnalysisResults(productContext, contextItem, usageContext, countries, recipeAnalysisResults);
 					}
 				}
+			}
+		}
+	}
+	
+	@Override
+	public void ingredientAnalysis(RegulatoryContext productContext, RegulatoryContextItem contextItem) {
+		List<List<String>> countriesBatch = Lists.partition(new ArrayList<>(contextItem.getCountries().keySet()), DECERNIS_MAX_COUNTRIES);
+		for (List<String> countries : countriesBatch) {
+			JSONObject ingredientAnalysisResults = null;
+			try {
+				ingredientAnalysisResults = postV5IngredientAnalysis(productContext, contextItem, countries);
+			} catch (HttpStatusCodeException e) {
+				logger.error("Error during Decernis ingredients analysis: " + e.getMessage(), e);
+				ReqCtrlListDataItem req = ReqCtrlListDataItem.forbidden()
+						.withMessage(MLTextHelper.getI18NMessage("message.decernis.error",
+								"Error while creating Decernis recipe: " + e.getMessage()))
+						.ofDataType(RequirementDataType.Formulation).withFormulationChainId(DecernisService.DECERNIS_CHAIN_ID);
+				productContext.getRequirements().add(req);
+			}
+			if (ingredientAnalysisResults != null) {
+				parseIngredientAnalysisResults(productContext, contextItem, countries, ingredientAnalysisResults);
 			}
 		}
 	}
@@ -243,7 +238,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 		return null;
 	}
 	
-	private JSONObject postV5IngredientAnalysis(RegulatoryContext context, List<String> countries, String usage, Integer moduleId) throws JSONException {
+	private JSONObject postV5IngredientAnalysis(RegulatoryContext context, RegulatoryContextItem contextItem, List<String> countries) throws JSONException {
 		
 		String ingredientAnalysisResult = "";
 		
@@ -296,12 +291,16 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 			JSONObject topic = new JSONObject();
 			topics.put(topic);
 			
-			topic.put(PARAM_NAME, moduleIdMap.get(moduleId));
+			topic.put(PARAM_NAME, moduleIdMap.get(contextItem.getUsages().get(0).getModuleId()));
 			JSONObject scopeDetail = new JSONObject();
 			topic.put("scopeDetail", scopeDetail);
 			
 			JSONArray usages = new JSONArray();
-			usages.put(usage);
+			for (UsageContext usage : contextItem.getUsages()) {
+				if (!usage.getName().endsWith(DecernisService.MODULE_SUFFIX)) {
+					usages.put(usage.getName());
+				}
+			}
 			
 			scopeDetail.put("usage", usages);
 			
@@ -363,8 +362,8 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 				JSONArray functionArray = responseBody.getJSONArray("functions");
 				for (int i = 0; i < functionArray.length(); i++) {
 					functions.add(functionArray.getString(i));
-				}
 			}
+		}
 		}
 		return functions;
 	}
@@ -467,7 +466,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 		}
 	}
 	
-	private void parseIngredientAnalysisResults(RegulatoryContext productContext, RegulatoryContextItem contextItem, UsageContext usageContext,
+	private void parseIngredientAnalysisResults(RegulatoryContext productContext, RegulatoryContextItem contextItem,
 			List<String> countries, JSONObject analysisResults) {
 		for (String country : countries) {
 			
@@ -490,7 +489,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 						IngListDataItem ingItem = findIngredientItemV5(productContext.getProduct().getIngList(), decernisID, null,
 								countryDidReports.get(0).getString("customerName"));
 						IngRegulatoryListDataItem ingRegulatoryListDataItem = createIngRegulatoryListDataItem(ingItem.getIng(),
-								contextItem.getCountries().get(country), usageContext.getNodeRef());
+								contextItem.getCountries().get(country));
 
 						String usage = String.join(";;",
 								countryDidReports.stream()
