@@ -3777,7 +3777,10 @@
 				</property>
 				<property name="bcpg:irlCitation">
 					<type>d:mltext</type>
-					<index enabled="false"></index>
+					<index enabled="true">
+						<tokenised>true</tokenised>
+						<facetable>false</facetable>
+					</index>
 				</property>
 				<property name="bcpg:irlResultIndicator">
 					<type>d:mltext</type>
@@ -3788,16 +3791,25 @@
 				</property>
 				<property name="bcpg:irlUsages">
 					<type>d:mltext</type>
-					<index enabled="false"></index>
+					<index enabled="true">
+						<tokenised>true</tokenised>
+						<facetable>false</facetable>
+					</index>
 				</property>
 				<property name="bcpg:irlRestrictionLevels">
 					<type>d:mltext</type>
-					<index enabled="false"></index>
+					<index enabled="true">
+						<tokenised>true</tokenised>
+						<facetable>false</facetable>
+					</index>
 				</property>
 				<property name="bcpg:irlSources">
 					<type>d:noderef</type>
 					<multiple>true</multiple>
-					<index enabled="false"></index>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
 				</property>
 			</properties>
 			<mandatory-aspects>
