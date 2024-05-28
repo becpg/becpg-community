@@ -112,7 +112,7 @@ public class JsonFormulaHelper {
 							return jsonValue.get(JSON_VALUE);
 						}
 					}
-					return "";
+					return null;
 				} catch (Exception e) {
 					logger.debug("Cannot parse " + value, e);
 				}
