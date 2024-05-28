@@ -299,6 +299,28 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 								}
 
+							} else if (propName.endsWith(":added")) {
+								
+								List<String> nodes = new ArrayList<>();
+								String[] results = propValue.split(",");
+								for (String result : results) {
+									result = result.replace("\"", "");
+									nodes.add(result);
+								}
+								
+								String propNameReplaced = propName.replace(":added", "");
+								
+								String nodesString = nodes.toString().replace(", ", "\" OR @" + propNameReplaced + ":\"")
+										.replaceAll(Pattern.quote("["), "\"").replaceAll(Pattern.quote("]"), "\"");
+								
+								StringBuilder query = new StringBuilder();
+								query.append("@");
+								query.append(propNameReplaced);
+								query.append(":");
+								query.append(nodesString);
+								
+								queryBuilder.andFTSQuery(query.toString());
+								
 							} else if (propName.endsWith("depthLevel")) {
 								Integer maxLevel = null;
 								try {
