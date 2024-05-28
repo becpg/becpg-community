@@ -39,9 +39,14 @@ public class QtyFormater {
 	}
 
 	public Double apply(Double qtyPerc) {
-		if(qtyPerc!=null && "NEAREST_HALF_DOWN".equals(qtyFormula)) {
-	        return Math.round(qtyPerc * 200) / 200.0;
-		} else if(qtyPerc!=null && "NEAREST_HALF_UP".equals(qtyFormula) ) {
+		if (qtyPerc != null && "NEAREST_HALF_DOWN".equals(qtyFormula)) {
+			double rounded = Math.floor(qtyPerc * 200) / 200.0;
+			// Si le nombre est exactement au milieu entre deux arrondis (x.5), il reste tel quel
+			if (qtyPerc * 200 == Math.floor(qtyPerc * 200) + 1) {
+				return qtyPerc;
+			}
+			return rounded;
+		} else if (qtyPerc != null && "NEAREST_HALF_UP".equals(qtyFormula)) {
 			return Math.ceil(qtyPerc * 200) / 200.0;
 		}
 		return qtyPerc;
