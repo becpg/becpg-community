@@ -131,8 +131,8 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 	}
 
 	private void updateChannelStates(NodeRef channelListItemNodeRef) {
-		
-		if(nodeService.exists(channelListItemNodeRef)) {
+
+		if (nodeService.exists(channelListItemNodeRef)) {
 
 			NodeRef entityNodeRef = entityListDAO.getEntity(channelListItemNodeRef);
 			NodeRef channelNodeRef = associationService.getTargetAssoc(channelListItemNodeRef, PublicationModel.ASSOC_PUBCHANNELLIST_CHANNEL);
@@ -141,24 +141,24 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 				String action = (String) nodeService.getProperty(channelListItemNodeRef, PublicationModel.PROP_PUBCHANNELLIST_ACTION);
 				String status = (String) nodeService.getProperty(channelListItemNodeRef, PublicationModel.PROP_PUBCHANNELLIST_STATUS);
 				Date modifiedDate = (Date) nodeService.getProperty(channelListItemNodeRef, PublicationModel.PROP_PUBCHANNELLIST_MODIFIED_DATE);
-				if(modifiedDate == null) {
-					 modifiedDate = (Date) nodeService.getProperty(entityNodeRef,ContentModel.PROP_MODIFIED);
-					 if(modifiedDate == null) {
-						 modifiedDate = (Date) nodeService.getProperty(entityNodeRef,ContentModel.PROP_CREATED);
-					 }
+				if (modifiedDate == null) {
+					modifiedDate = (Date) nodeService.getProperty(entityNodeRef, ContentModel.PROP_MODIFIED);
+					if (modifiedDate == null) {
+						modifiedDate = (Date) nodeService.getProperty(entityNodeRef, ContentModel.PROP_CREATED);
+					}
 				}
-				
+
 				Date publishDate = (Date) nodeService.getProperty(channelListItemNodeRef, PublicationModel.PROP_PUBCHANNELLIST_PUBLISHEDDATE);
-	
+
 				List<String> channelIds = getPropertyOrDefault(entityNodeRef, PublicationModel.PROP_CHANNELIDS);
-	
+
 				List<String> failedChannelIds = getPropertyOrDefault(entityNodeRef, PublicationModel.PROP_FAILED_CHANNELIDS);
 				List<String> publishedChannelIds = getPropertyOrDefault(entityNodeRef, PublicationModel.PROP_PUBLISHED_CHANNELIDS);
-	
+
 				if (!channelIds.contains(channelId)) {
 					channelIds.add(channelId);
 				}
-	
+
 				if (PublicationChannelStatus.FAILED.toString().equals(status)) {
 					if (!failedChannelIds.contains(channelId)) {
 						failedChannelIds.add(channelId);
@@ -166,7 +166,7 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 				} else {
 					failedChannelIds.remove(channelId);
 				}
-	
+
 				if (!PublicationChannelAction.RETRY.toString().equals(action) && PublicationChannelStatus.COMPLETED.toString().equals(status)
 						&& modifiedDate != null && publishDate != null && (publishDate.after(modifiedDate) || publishDate.equals(modifiedDate))) {
 					if (!publishedChannelIds.contains(channelId)) {
@@ -175,13 +175,13 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 				} else {
 					publishedChannelIds.remove(channelId);
 				}
-	
+
 				if (PublicationChannelAction.STOP.toString().equals(action)) {
 					if (!publishedChannelIds.contains(channelId)) {
 						publishedChannelIds.add(channelId);
 					}
 				}
-	
+
 				nodeService.setProperty(entityNodeRef, PublicationModel.PROP_FAILED_CHANNELIDS, (Serializable) failedChannelIds);
 				nodeService.setProperty(entityNodeRef, PublicationModel.PROP_PUBLISHED_CHANNELIDS, (Serializable) publishedChannelIds);
 				nodeService.setProperty(entityNodeRef, PublicationModel.PROP_CHANNELIDS, (Serializable) channelIds);
@@ -263,16 +263,18 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 			return query.andPropEquals(PublicationModel.PROP_FAILED_CHANNELIDS, channelId).inDB().ftsLanguage().pagingResults();
 		}
 
-		if (PublicationChannelAction.RESET.toString().equals(action)) {
-			lastDate = null;
-		} else {
-			query.excludeProp(PublicationModel.PROP_PUBLISHED_CHANNELIDS, channelId);
-		}
-
 		String jsonConfig = (String) nodeService.getProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_CONFIG);
 
 		SearchRuleFilter searchRuleFilter = new SearchRuleFilter();
 		searchRuleFilter.fromJsonString(jsonConfig, namespaceService);
+
+		if (PublicationChannelAction.RESET.toString().equals(action)) {
+			lastDate = null;
+		} else {
+			if (searchRuleFilter.excludePublishedEntities()) {
+				query.excludeProp(PublicationModel.PROP_PUBLISHED_CHANNELIDS, channelId);
+			}
+		}
 
 		if (searchRuleFilter.getNodeType() != null) {
 			query.ofType(searchRuleFilter.getNodeType());
