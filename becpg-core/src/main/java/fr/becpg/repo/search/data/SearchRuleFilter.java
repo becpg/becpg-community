@@ -25,6 +25,7 @@ public class SearchRuleFilter {
 	private static final String PROP_QUERY = "query";
 
 	private static final String PROP_IS_FILTER = "isFilter";
+	private static final String PROP_EXCLUDE_PUBLISHED_ENTITIES = "excludePublishedEntities";
 	private static final String ENTITY_FILTER = "entityFilter";
 	private static final String ENTITY_TYPE = "entityType";
 
@@ -66,6 +67,9 @@ public class SearchRuleFilter {
 	private Boolean isEmptyJsonQuery = true;
 
 	private Boolean isFilter = false;
+	
+	private Boolean excludePublishedEntities = true;
+
 
 	/**
 	 * <p>Constructor for NotificationRuleFilter.</p>
@@ -239,6 +243,15 @@ public class SearchRuleFilter {
 	public void setIsFilter(Boolean isFilter) {
 		this.isFilter = isFilter;
 	}
+	
+
+	public boolean excludePublishedEntities() {
+		return excludePublishedEntities;
+	}
+
+	public void setExcludePublishedEntities(Boolean excludePublishedEntities) {
+		this.excludePublishedEntities = excludePublishedEntities;
+	}
 
 	public SearchRuleFilter fromJsonString(String jsonString, NamespaceService namespaceService) {
 		try {
@@ -263,6 +276,11 @@ public class SearchRuleFilter {
 		if (filterObject.has(PROP_IS_FILTER)) {
 			setIsFilter(filterObject.getBoolean(PROP_IS_FILTER));
 		}
+		
+		if (filterObject.has(PROP_EXCLUDE_PUBLISHED_ENTITIES)) {
+			setExcludePublishedEntities(filterObject.getBoolean(PROP_EXCLUDE_PUBLISHED_ENTITIES));
+		}
+		
 		if (filterObject.has(ENTITY_FILTER)) {
 			isEmptyJsonQuery = false;
 			JSONObject entityFilter = filterObject.getJSONObject(ENTITY_FILTER);
