@@ -9806,8 +9806,12 @@
 				<field-visibility>
 					<show id="bcpg:irlIng" />
 					<show id="bcpg:regulatoryCountries" />
+					<show id="bcpg:irlUsages" />
 					<show id="bcpg:irlResultIndicator" />
-					<show id="bcpg:regulatoryUsageRef" />
+					<show id="bcpg:irlRestrictionLevels" />
+					<show id="bcpg:irlCitation" />
+					<show id="bcpg:regulatoryComment" />
+					<show id="bcpg:irlSources" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:irlIng">
@@ -9819,8 +9823,12 @@
 					<field id="bcpg:regulatoryCountries">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
-					<field id="bcpg:regulatoryUsageRef">
-						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					<field id="bcpg:irlSources">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/product</control-param>
+							<control-param name="showTooltip">true</control-param>
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
+						</control>
 					</field>
 				</appearance>
 
