@@ -468,7 +468,7 @@ if (beCPG.module.EntityDataGridRenderers) {
          			    var nutName = oRecord._oData.itemData.assoc_bcpg_nutListNut[0].displayValue || '';
 
 						var keys = Object.keys(jsonData.v);
-						ret += '<div id="nut-details-' + oRecord.getData("nodeRef") + '" class="nut-details hidden" ><div class="hd">'+nutName+'</div><div class="bd" >';
+						ret += '<div id="nut-details-'+ oColumn.field +"-"+ oRecord.getData("nodeRef") + '" class="nut-details hidden" ><div class="hd">'+nutName+'</div><div class="bd" >';
 						for (var i = 0; i < keys.length; i++) {
 							var k = keys[i];
 							var value = jsonData.v[k];
@@ -494,7 +494,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 						}
 						ret += '</div></div>';
 	
-						ret += '<span class="node-' + oRecord.getData("nodeRef") + '">';
+						ret += '<span class="node-' + oColumn.field +"-"+ oRecord.getData("nodeRef") + '">';
 						ret += '<a class="show-details ' + NUTDETAILS_EVENTCLASS + '" title="' + scope.msg("link.title.nut-details") + '" href="" >';
 						ret += "&nbsp;";
 						ret += "</a></span>";
