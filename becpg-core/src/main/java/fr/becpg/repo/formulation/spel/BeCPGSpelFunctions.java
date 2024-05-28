@@ -1101,8 +1101,8 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 
 	private void assertIsNotMappedQname(RepositoryEntity item, QName qName, boolean allowWrite) {
 		if (item != null && repositoryEntityDefReader.isRegisteredQName(item, qName, allowWrite)) {
-			throw new FormulateException(String.format("QName is %s mapped in entity. Please use entity.%s to access it ",
-					qName.getPrefixedQName(namespaceService), qName.getLocalName()));
+			throw new FormulateException(String.format("QName is %s mapped in entity %s. Please use entity.%s to access it ",
+					qName.getPrefixedQName(namespaceService), item.getClass().getName() , qName.getLocalName()));
 		}
 	}
 
