@@ -252,60 +252,77 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 							RepoConsts.PATH_EXCHANGE, RepoConsts.PATH_EXPORT, RepoConsts.PATH_NOTIFICATIONS);
 					final var exchangeExportNotificationsNodeRef = repoService
 							.getFolderByPath(exchangeExportNotificationsPath);
+					var i = 0;
 					for (final var reportTplNodeRef : notification.getReportTpls()) {
-						final var downloadNode = exportSearchService.createReport(nodeType, reportTplNodeRef, items, reportTplService.getReportFormat(reportTplNodeRef));
-						// TODO replace thread by batch
-						new Thread(() -> {
-							AuthenticationUtil.runAsSystem(() ->
-								transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-									logger.debug("waiting for download to complete");
-									DownloadStatus downloadStatus;
-									final var startTime = new Date().getTime();
-									statusChecking: while ((downloadStatus = transactionService
-											.getRetryingTransactionHelper().doInTransaction(
-													() -> downloadService.getDownloadStatus(downloadNode), true, true))
-											.getStatus() != DownloadStatus.Status.DONE) {
-										final var currentTime = new Date().getTime();
-										switch (downloadStatus.getStatus()) {
-										case CANCELLED:
-										case MAX_CONTENT_SIZE_EXCEEDED:
-											break statusChecking;
-										case PENDING:
-											if (currentTime - startTime > 30_000) {
-												notification.setErrorLog("Export still pending after 30 seconds");
-												logger.debug(notification.getErrorLog());
-												return null;
-											}
-											break;
-										case IN_PROGRESS:
-											if (currentTime - startTime > 5 * 60_000) {
-												notification.setErrorLog("Export download exceeded 5 minutes");
-												logger.debug(notification.getErrorLog());
-												return null;
-											}
-											break;
-										default:
-											logger.debug(StringUtils.capitalize(downloadStatus.getStatus().name()));
+						final var downloadNode = exportSearchService.createReport(nodeType, reportTplNodeRef, items,
+								reportTplService.getReportFormat(reportTplNodeRef));
+						final var batchId = "notificationReportDownload" + (i++);
+						final var batchInfo = new BatchInfo(batchId, "becpg.batch." + batchId);
+						final var batchStep = new BatchStep<NodeRef>();
+						batchStep.setWorkProvider(new EntityListBatchProcessWorkProvider<>(List.of(downloadNode)));
+						batchStep.setProcessWorker(new BatchProcessor.BatchProcessWorkerAdaptor<NodeRef>() {
+							@Override
+							public void process(NodeRef downloadNode) throws Throwable {
+								logger.debug("waiting for download to complete");
+								DownloadStatus downloadStatus;
+								final var startTime = new Date().getTime();
+								statusChecking: while ((downloadStatus = transactionService
+										.getRetryingTransactionHelper().doInTransaction(
+												() -> downloadService.getDownloadStatus(downloadNode), true, true))
+										.getStatus() != DownloadStatus.Status.DONE) {
+									final var currentTime = new Date().getTime();
+									switch (downloadStatus.getStatus()) {
+									case CANCELLED:
+									case MAX_CONTENT_SIZE_EXCEEDED:
+										batchInfo.setCancelled(true);
+										break statusChecking;
+									case PENDING:
+										if (currentTime - startTime > 30_000) {
+											notification.setErrorLog("Export still pending after 30 seconds");
+											logger.debug(notification.getErrorLog());
+											return;
 										}
-										try {
-											Thread.sleep(5_000);
-										} catch (InterruptedException e) {
-											throw new RuntimeException(e);
+										break;
+									case IN_PROGRESS:
+										if (batchInfo.getTotalItems() == null)
+											batchInfo.setTotalItems((int) downloadStatus.getTotal());
+										batchInfo.setCurrentItem((int) downloadStatus.getDone());
+										if (currentTime - startTime > 5 * 60_000) {
+											notification.setErrorLog("Export download exceeded 5 minutes");
+											logger.debug(notification.getErrorLog());
+											return;
 										}
+										break;
+									default:
+										logger.debug(StringUtils.capitalize(downloadStatus.getStatus().name()));
 									}
-									logger.debug("download completed");
-									final var name = notification.getName() + "_"
-											+ nodeService.getProperty(reportTplNodeRef, ContentModel.PROP_NAME);
-									var exportNodeRef = nodeService.getChildByName(exchangeExportNotificationsNodeRef, ContentModel.ASSOC_CONTAINS, name);
-									if (exportNodeRef == null) {
-										exportNodeRef = fileFolderService.create(exchangeExportNotificationsNodeRef, name, ReportModel.TYPE_REPORT).getNodeRef();
-									}
-									nodeService.setProperty(exportNodeRef, ContentModel.PROP_NAME, name);
-									fileFolderService.getWriter(exportNodeRef).putContent(fileFolderService.getReader(downloadNode));
-									mailSender.accept(exportNodeRef);
-									return null;
-							}, false, true));
-						}).start();
+									Thread.sleep(5_000);
+								}
+								logger.debug("download completed");
+								batchInfo.setIsCompleted(true);
+								final var name = notification.getSubject() + "_"
+										+ nodeService.getProperty(reportTplNodeRef, ContentModel.PROP_NAME);
+								var exportNodeRef = nodeService.getChildByName(exchangeExportNotificationsNodeRef,
+										ContentModel.ASSOC_CONTAINS, name);
+								if (exportNodeRef == null) {
+									exportNodeRef = fileFolderService
+											.create(exchangeExportNotificationsNodeRef, name, ReportModel.TYPE_REPORT)
+											.getNodeRef();
+								}
+								nodeService.setProperty(exportNodeRef, ContentModel.PROP_NAME, name);
+								fileFolderService.getWriter(exportNodeRef)
+										.putContent(fileFolderService.getReader(downloadNode));
+								mailSender.accept(exportNodeRef);
+							}
+						});
+						batchStep.setBatchStepListener(new BatchStepAdapter() {
+							@Override
+							public void onError(String lastErrorEntryId, String lastError) {
+								notification.setErrorLog(lastError);
+								alfrescoRepository.save(notification);
+							}
+						});
+						batchQueueService.queueBatch(batchInfo, List.of(batchStep));
 					}
 				} else 
 					mailSender.accept(null);
