@@ -41,7 +41,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.batch.BatchInfo;
 import fr.becpg.repo.batch.BatchQueueService;
@@ -306,7 +305,7 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 										ContentModel.ASSOC_CONTAINS, name);
 								if (exportNodeRef == null) {
 									exportNodeRef = fileFolderService
-											.create(exchangeExportNotificationsNodeRef, name, ReportModel.TYPE_REPORT)
+											.create(exchangeExportNotificationsNodeRef, name, ContentModel.TYPE_CONTENT)
 											.getNodeRef();
 								}
 								nodeService.setProperty(exportNodeRef, ContentModel.PROP_NAME, name);
