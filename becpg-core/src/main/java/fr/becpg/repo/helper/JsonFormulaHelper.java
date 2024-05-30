@@ -22,6 +22,7 @@ package fr.becpg.repo.helper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -49,6 +50,14 @@ public class JsonFormulaHelper {
 	
 	private JsonFormulaHelper() {
 		//Singleton
+	}
+	
+	public static boolean isJsonString(Object value) {
+		try {
+			return value instanceof String && new JSONObject((String) value) != null;
+		} catch (JSONException e) {
+			return false;
+		}
 	}
 	
 	/**
@@ -98,11 +107,12 @@ public class JsonFormulaHelper {
 					JSONArray arrayValues = jsonObject.getJSONArray(JSON_SUB_VALUES);
 					for (int i = 0; i < arrayValues.length(); i++) {
 						JSONObject jsonValue = arrayValues.getJSONObject(i);
-						if (jsonValue.getString(JSON_PATH).split("/")[2].equals(componentId)) {
+						String[] split = jsonValue.getString(JSON_PATH).split("/");
+						if (split[split.length - 1].equals(componentId)) {
 							return jsonValue.get(JSON_VALUE);
 						}
 					}
-					return "";
+					return null;
 				} catch (Exception e) {
 					logger.debug("Cannot parse " + value, e);
 				}

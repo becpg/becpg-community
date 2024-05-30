@@ -200,7 +200,7 @@ public class CSVReader implements AutoCloseable {
         }
 
         List<String> tokensOnThisLine = new ArrayList<>();
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         boolean inQuotes = false;
         do {
         	if (inQuotes) {
@@ -236,7 +236,7 @@ public class CSVReader implements AutoCloseable {
                 	}
                 } else if (c == separator && !inQuotes) {
                     tokensOnThisLine.add(sb.toString());
-                    sb = new StringBuffer(); // start work on next token
+                    sb = new StringBuilder(); // start work on next token
                 } else {
                     sb.append(c);
                 }

@@ -272,9 +272,22 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 		}
 	}
 
-
+	private boolean noVersionToConvert(String path, int maxProcessedNodes) {
+		if (!BeCPGQueryBuilder.createQuery().withAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION).excludeAspect(BeCPGModel.ASPECT_ENTITY_FORMAT)
+				.excludeAspect(ContentModel.ASPECT_TEMPORARY).maxResults(1).list().isEmpty()) {
+			return false;
+		}
+		NodeRef parentNode = BeCPGQueryBuilder.createQuery().selectNodeByPath(nodeService.getRootNode(RepoConsts.SPACES_STORE), path);
+		return parentNode == null || !nodeService.exists(parentNode) || nodeService.getChildAssocs(parentNode, ContentModel.ASSOC_CONTAINS, RegexQNamePattern.MATCH_ALL, maxProcessedNodes, false).isEmpty();
+	}
 
 	private void convertAndDeleteVersions(int maxProcessedNodes, String tenantDomain, String path) {
+		
+		if (noVersionToConvert(path, maxProcessedNodes)) {
+			logger.debug("No version to convert");
+			return;
+		}
+		
 		BatchInfo batchInfo = new BatchInfo("cleanVersions." + tenantDomain + "." + UUID.randomUUID(), "becpg.batch.versionCleaner.cleanVersions");
 		batchInfo.setRunAsSystem(true);
 		batchInfo.setPriority(BatchPriority.VERY_LOW);

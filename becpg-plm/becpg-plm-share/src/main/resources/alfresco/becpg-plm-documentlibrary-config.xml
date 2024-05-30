@@ -10,6 +10,7 @@
 				<aspect name="bcpg:suppliersAspect" />
 				<aspect name="bcpg:profitabilityAspect" />
 				<aspect name="bcpg:reconstitutableAspect" />
+				<aspect name="bcpg:waterAspect" />
 				<aspect name="bcpg:customsCodeAspect" />
 				<aspect name="qa:batchAspect" />
 				<aspect name="qa:acAspect" />
@@ -37,6 +38,10 @@
 				<aspect name="bcpg:undeletableAspect" />
 				<aspect name="bcpg:regulatoryAspect" />
 				<aspect name="bcpg:archivedEntityAspect" />
+				<aspect name="gs1:referencedTradeItemAspect"/>
+				<aspect name="gs1:seasonalAspect"/>
+				<aspect name="gs1:pegHoleAspect"/>
+				<aspect name="gs1:animalFeedingAspect"/>
 				
 			</visible>
 			<!-- Aspects that a user can add. Same as "visible" if left empty -->

@@ -80,7 +80,7 @@
 					<SQL dialect="generic">
 						select  
 							entityNodeRef,
-							cm_name as name,
+							doc->>"$.name" as name,
 							nodeRef
 						from
 							assoc_cm_taggable
@@ -98,11 +98,11 @@
 								<SQL dialect="generic">
 									select  
 										a.entityNodeRef as entityNodeRef,
-										a.cm_name as name,
+										a.doc->>"$.name" as name,
 										a.nodeRef as nodeRef,
-										b.bcpg_clientState as clientState,
-										b.bcpg_clientHierarchy1 as clientHierarchy1,
-										b.bcpg_clientHierarchy2 as clientHierarchy2
+										b.doc->>"$.bcpg_clientState" as clientState,
+										b.doc->>"$.bcpg_clientHierarchy1[0]" as clientHierarchy1,
+										b.doc->>"$.bcpg_clientHierarchy2[0]" as clientHierarchy2
 									from
 										assoc_bcpg_clients a left join bcpg_client b on a.nodeRef = b.nodeRef	
 								</SQL>
@@ -124,11 +124,11 @@
 								<SQL dialect="generic">
 									select  
 										a.entityNodeRef,
-										a.cm_name as name,
+										a.doc->>"$.name" as name,
 										a.nodeRef as nodeRef,
-										b.bcpg_supplierState as supplierState,
-										b.bcpg_supplierHierarchy1 as supplierHierarchy1,
-										b.bcpg_supplierHierarchy2 as supplierHierarchy2
+										b.doc->>"$.bcpg_supplierState" as supplierState,
+										b.doc->>"$.bcpg_supplierHierarchy1[0]" as supplierHierarchy1,
+										b.doc->>"$.bcpg_supplierHierarchy2[0]" as supplierHierarchy2
 									from
 										assoc_bcpg_suppliers a left join bcpg_supplier b on a.nodeRef = b.nodeRef						
 								</SQL>
@@ -151,16 +151,16 @@
 					<SQL dialect="generic">
 						select
 							nodeRef,
-							cm_name as name,
-							bcpg_productHierarchy1 as productHierarchy1,
-							bcpg_productHierarchy2 as productHierarchy2,
-							bcpg_code as code,
-							bcpg_erpCode as erpCode,
-							bcpg_eanCode as eanCode,
-							bcpg_legalName as legalName,
-							bcpg_productState as productState,
-							type as productType,
-							cm_versionLabel as versionLabel
+							doc->>"$.cm_name" as name,
+							doc->>"$.bcpg_productHierarchy1[0]" as productHierarchy1,
+							doc->>"$.bcpg_productHierarchy2[0]" as productHierarchy2,
+							doc->>"$.bcpg_code" as code,
+							doc->>"$.bcpg_erpCode" as erpCode,
+							doc->>"$.bcpg_eanCode" as eanCode,
+							doc->>"$.bcpg_legalName" as legalName,
+							doc->>"$.bcpg_productState" as productState,
+							doc->>"$.type" as productType,
+							doc->>"$.cm_versionLabel" as versionLabel
 						from
 							bcpg_product
 					</SQL>
@@ -262,7 +262,7 @@
 			<Hierarchy name="users" caption="${msg("jsolap.user.caption")}" primaryKey="user_id" hasAll="true" allMemberCaption="${msg("jsolap.user.caption")}" >
 			   <Table name="becpg_activities_names" alias="becpg_activities_names">
 					<SQL dialect="generic">
-				.entity_id IS NULL
+						 becpg_activities_names.site_id IS NULL AND becpg_activities_names.entity_id IS NULL
 					</SQL>
 				</Table>
 			
@@ -325,11 +325,11 @@
 					select
 						nodeRef,
 						entityNodeRef,
-						cm_name as name,
-						bcpg_rclReqType as rclReqType,
-						bcpg_rclReqMessage as rclReqMessage,
-						bcpg_rclDataType as rclDataType,
-						bcpg_regulatoryCode as regulatoryCode
+						doc->>"$.cm_name" as name,
+						doc->>"$.bcpg_rclReqType" as rclReqType,
+						doc->>"$.bcpg_rclReqMessage" as rclReqMessage,
+						doc->>"$.bcpg_rclDataType" as rclDataType,
+						doc->>"$.bcpg_regulatoryCode" as regulatoryCode
 					from
 						reqCtrlList
 				</SQL>
@@ -417,13 +417,13 @@
 			<View name="rclSources" alias="rclSources">
 						<SQL dialect="generic">
 							select  a.dataListNodeRef,
-								cm_name as name,
+								b.doc->>"$.cm_name" as name,
 								b.nodeRef,
-								bcpg_productHierarchy1 as productHierarchy1,
-								bcpg_productHierarchy2 as productHierarchy2,
-								bcpg_productState as productState,
-								type as productType,
-								cm_versionLabel nLabel
+								b.doc->>"$.bcpg_productHierarchy1[0]" as productHierarchy1,
+								b.doc->>"$.bcpg_productHierarchy2[0]" as productHierarchy2,
+								b.doc->>"$.bcpg_productState" as productState,
+								b.doc->>"$.type" as productType,
+								b.doc->>"$.cm_versionLabel" as versionLabel
 							from
 								assoc_bcpg_rclSources a left join  bcpg_product b on a.nodeRef = b.nodeRef
 						</SQL>
@@ -505,22 +505,22 @@
 				<SQL dialect="generic">
 					select
 						nodeRef,
-						cm_name as name,
-						bcpg_code as code,
-						qa_ncType as ncType,
-						qa_ncPriority as ncPriority,
-						qa_ncState as ncState,
-						qa_ncQuantityNc as ncQuantityNc,
-						qa_ncCost as ncCost,
-						qa_batchId as batchId,
-						qa_claimType as claimType,
-						qa_claimOriginHierarchy1 as claimOriginHierarchy1,
-						qa_claimOriginHierarchy2 as claimOriginHierarchy2,
-						cm_created as dateCreated,
-						qa_claimResponseDate as claimResponseDate,
-						qa_claimTreatementDate as claimTreatmentDate,
-						qa_claimClosingDate as claimClosingDate,
-						qa_product_bcpg_nodeRef as productNodeRef
+						doc->>"$.cm_name" as name,
+						doc->>"$.bcpg_code" as code,
+						doc->>"$.qa_ncType" as ncType,
+						doc->>"$.qa_ncPriority" as ncPriority,
+						doc->>"$.qa_ncState" as ncState,
+						doc->>"$.qa_ncQuantityNc" as ncQuantityNc,
+						doc->>"$.qa_ncCost" as ncCost,
+						doc->>"$.qa_batchId" as batchId,
+						doc->>"$.qa_claimType" as claimType,
+						doc->>"$.qa_claimOriginHierarchy1[0]" as claimOriginHierarchy1,
+						doc->>"$.qa_claimOriginHierarchy2[0]" as claimOriginHierarchy2,
+						CAST(doc->>"$.cm_created" as DATE) as dateCreated,
+						CAST(doc->>"$.qa_claimResponseDate" as DATE)  as claimResponseDate,
+						CAST(doc->>"$.qa_claimTreatementDate" as DATE)  as claimTreatmentDate,
+						doc->>"$.qa_claimClosingDate" as claimClosingDate,
+						doc->>"$.qa_product_bcpg_nodeRef[0]" as productNodeRef
 					from
 						qa_nc
 				</SQL>
@@ -626,7 +626,7 @@
 								<SQL dialect="generic">
 									select  
 										entityNodeRef,
-										cm_name,
+										doc->>"$.name" as name,
 										nodeRef
 									from
 										assoc_bcpg_plants
@@ -664,30 +664,30 @@
 						select  
 							a.nodeRef,
 							a.entityNodeRef,
-							pjt_tlTaskName as tlTaskName,
-							pjt_tlDuration as tlDuration,
-							pjt_tlRealDuration as tlRealDuration,
-							pjt_tlStart as tlStart,
-							pjt_tlEnd as tlEnd,
-							pjt_tlTargetStart as tlTargetStart,
-							pjt_tlTargetEnd as tlTargetEnd,
-							pjt_tlState as tlState,
-							pjt_tlWork as tlWork,
-							pjt_tlLoggedTime as tlLoggedTime,
-							bcpg_sort as sortOrder,
-							cm_modified as projectDateModified,
-							pjt_projectManager as projectManager,
-							pjt_projectState as projectState,
+							a.doc->>"$.pjt_tlTaskName" as tlTaskName,
+							a.doc->>"$.pjt_tlDuration" as tlDuration,
+							a.doc->>"$.pjt_tlRealDuration" as tlRealDuration,
+							CAST(a.doc->>"$.pjt_tlStart" as DATE) as tlStart,
+							CAST(a.doc->>"$.pjt_tlEnd" as DATE) as tlEnd,
+							CAST(a.doc->>"$.pjt_tlTargetStart" as DATE) as tlTargetStart,
+							CAST(a.doc->>"$.pjt_tlTargetEnd" as DATE) as tlTargetEnd,
+							a.doc->>"$.pjt_tlState" as tlState,
+							a.doc->>"$.pjt_tlWork" as tlWork,
+							a.doc->>"$.pjt_tlLoggedTime" as tlLoggedTime,
+							a.doc->>"$.bcpg_sort" as sortOrder,
+							CAST(a.doc->>"$.cm_modified" as DATE) as projectDateModified,
+							b.doc->>"$.pjt_projectManager[0]" as projectManager,
+							b.doc->>"$.pjt_projectState" as projectState,
 							b.nodeRef as projectNodeRef,
-							cm_name as projectName,
-							pjt_projectHierarchy1 as	projectHierarchy1,
-							pjt_projectHierarchy2 as	projectHierarchy2,
-							pjt_projectOverdue as projectOverdue,
-							bcpg_code as projectCode,
-							metadata_siteId as siteId,
-							metadata_siteName as siteName,
-							pjt_projectEntity_bcpg_nodeRef as projectEntityNodeRef,
-							bcpg_entityTplRef as entityTplRef
+							b.doc->>"$.cm_name" as projectName,
+							b.doc->>"$.pjt_projectHierarchy1[0]" as	projectHierarchy1,
+							b.doc->>"$.pjt_projectHierarchy2[0]" as	projectHierarchy2,
+							b.doc->>"$.pjt_projectOverdue" as projectOverdue,
+							b.doc->>"$.bcpg_code" as projectCode,
+							b.doc->>"$.metadata_siteId" as siteId,
+							b.doc->>"$.metadata_siteName" as siteName,
+							b.doc->>"$.pjt_projectEntity_bcpg_nodeRef[0]" as projectEntityNodeRef,
+							b.doc->>"$.bcpg_entityTplRef[0]" as entityTplRef
 						from
 							taskList a inner join pjt_project b on a.entityNodeRef = b.nodeRef 					
 					</SQL>
@@ -742,11 +742,11 @@
 						a.entityNodeRef as entityNodeRef,
 						a.dataListNodeRef as dataListNodeRef,
 						CASE 
-								 WHEN cm_name LIKE 'GROUP_PROJECT%'
+								 WHEN a.doc->>"$.name" LIKE 'GROUP_PROJECT%'
 								 	THEN
-								 	  REGEXP_REPLACE(SUBSTRING_INDEX (b.name,"_",-2),'[\\[\\"\\]]*','')
+								 	  REGEXP_REPLACE(json_extract(b.doc,CONCAT('$.', SUBSTRING_INDEX (a.doc->>"$.name","_",-2))),'[\\[\\"\\]]*','')
 								 ELSE
-								 	cm_name
+								 	a.doc->>"$.name"
 						END as taskResources
 					from
 						assoc_pjt_tlResources a left join pjt_project b on a.entityNodeRef = b.nodeRef
@@ -805,11 +805,11 @@
 					<View name="logTimeList" alias="logTimeList">
 								<SQL dialect="generic">
 									select  
-										pjt_ltlTask_bcpg_nodeRef as ltlTaskNodeRef,
-										pjt_ltlTime as ltlTime,
-										cm_creator as ltlcreator,
-										pjt_ltlType as ltlType,
-										DATE_FORMAT(pjt_ltlDate, "%d/%m/%Y") as ltlDate
+										doc->>"$.pjt_ltlTask_bcpg_nodeRef[0]" as ltlTaskNodeRef,
+										doc->>"$.pjt_ltlTime" as ltlTime,
+										doc->>"$.cm_creator" as ltlcreator,
+										doc->>"$.pjt_ltlType" as ltlType,
+										DATE_FORMAT(doc->>"$.pjt_ltlDate", "%d/%m/%Y") as ltlDate
 									from
 										logTimeList
 								</SQL>
@@ -850,17 +850,17 @@
 					<SQL dialect="generic">
 						select  
 							a.entityNodeRef,
-							pjt_slCriterion as slCriterion,
-							pjt_slWeight as slWeight,
-							pjt_slScore as slScore,
+							a.doc->>"$.pjt_slCriterion" as slCriterion,
+							a.doc->>"$.pjt_slWeight" as slWeight,
+							a.doc->>"$.pjt_slScore" as slScore,
 							b.nodeRef as projectNodeRef,
-							cm_name as projectName,
-							pjt_projectHierarchy1 as	projectHierarchy1,
-							pjt_projectHierarchy2 as	projectHierarchy2,
-							pjt_projectManager as projectManager,
-							pjt_projectState as projectState,
-							metadata_siteId as siteId,
-							metadata_siteName as siteName	
+							b.doc->>"$.cm_name" as projectName,
+							b.doc->>"$.pjt_projectHierarchy1[0]" as	projectHierarchy1,
+							b.doc->>"$.pjt_projectHierarchy2[0]" as	projectHierarchy2,
+							b.doc->>"$.pjt_projectManager[0]" as projectManager,
+							b.doc->>"$.pjt_projectState" as projectState,
+							b.doc->>"$.metadata_siteId" as siteId,
+							b.doc->>"$.metadata_siteName" as siteName	
 						from
 							scoreList a inner join pjt_project b on a.entityNodeRef = b.nodeRef 
 
@@ -935,30 +935,30 @@
 				<SQL dialect="generic">
 					select
 						nodeRef,
-						cm_name as name,
-						pjt_projectState as projectState,
-						pjt_projectHierarchy1 as	projectHierarchy1,
-						pjt_projectHierarchy2 as	projectHierarchy2,
-						metadata_siteId as siteId,
-						metadata_siteName as siteName,
-						bcpg_code as code,
-						cm_created as projectDateCreated,
-						cm_creator as projectCreator,
-						cm_modified  as projectDateModified,
-						cm_modifier as  projectModifier,
-						pjt_projectStartDate  as projectStartDate,
-						pjt_projectDueDate  as projectDueDate,
-						pjt_projectCompletionDate  as completionDate,
-						pjt_projectPriority as projectPriority,
-						pjt_completionPercent as completionPercent,
-						pjt_projectScore as projectScore,
-						pjt_projectOverdue as projectOverdue,
-						pjt_projectManager as projectManager,
-						pjt_projectOrigin as projectOrigin,
-						pjt_projectSponsor as projectSponsor,
-						bcpg_entityTplRef as entityTplRef,
-						pjt_projectEntity_bcpg_nodeRef as projectEntityNodeRef,
-						DATEDIFF(pjt_projectCompletionDate, pjt_projectStartDate) as duration
+						doc->>"$.cm_name" as name,
+						doc->>"$.pjt_projectState" as projectState,
+						doc->>"$.pjt_projectHierarchy1[0]" as	projectHierarchy1,
+						doc->>"$.pjt_projectHierarchy2[0]" as	projectHierarchy2,
+						doc->>"$.metadata_siteId" as siteId,
+						doc->>"$.metadata_siteName" as siteName,
+						doc->>"$.bcpg_code" as code,
+						CAST(doc->>"$.cm_created" as DATE) as projectDateCreated,
+						doc->>"$.cm_creator" as projectCreator,
+						CAST(doc->>"$.cm_modified" as DATE)  as projectDateModified,
+						doc->>"$.cm_modifier" as  projectModifier,
+						CAST(doc->>"$.pjt_projectStartDate" as DATE)  as projectStartDate,
+						CAST(doc->>"$.pjt_projectDueDate" as DATE)  as projectDueDate,
+						CAST(doc->>"$.pjt_projectCompletionDate" as DATE)  as completionDate,
+						doc->>"$.pjt_projectPriority" as projectPriority,
+						doc->>"$.pjt_completionPercent" as completionPercent,
+						doc->>"$.pjt_projectScore" as projectScore,
+						doc->>"$.pjt_projectOverdue" as projectOverdue,
+						doc->>"$.pjt_projectManager[0]" as projectManager,
+						doc->>"$.pjt_projectOrigin" as projectOrigin,
+						doc->>"$.pjt_projectSponsor" as projectSponsor,
+						doc->>"$.bcpg_entityTplRef[0]" as entityTplRef,
+						doc->>"$.pjt_projectEntity_bcpg_nodeRef[0]" as projectEntityNodeRef,
+						DATEDIFF(CAST(doc->>"$.pjt_projectCompletionDate" as DATE),CAST(doc->>"$.pjt_projectStartDate" as DATE)) as duration
 					from
 						pjt_project
 				</SQL>
@@ -1077,11 +1077,11 @@
 								<SQL dialect="generic">
 									select  
 										a.entityNodeRef as entityNodeRef,
-										a.cm_name as name,
+										a.doc->>"$.name" as name,
 										a.nodeRef as nodeRef,
-										b.pjt_tlTaskName as taskName,
-										b.pjt_tlState as taskState,
-										b.pjt_tlDuration as tlDuration
+										b.doc->>"$.pjt_tlTaskName" as taskName,
+										b.doc->>"$.pjt_tlState" as taskState,
+										b.doc->>"$.pjt_tlDuration" as tlDuration
 									from
 										assoc_pjt_projectCurrentTasks a left join taskList b on a.nodeRef = b.nodeRef	
 								</SQL>
@@ -1144,28 +1144,31 @@
 					<SQL dialect="generic">
 						select  
 							a.entityNodeRef,
-							a.bcpg_nutListNut as name,
-							a.bcpg_nutListNut_bcpg_nodeRef as nodeRef,
-							a.bcpg_nutListGroup as nutGroup,
-							a.bcpg_nutListValue as nutValue,
-							a.bcpg_nutListFormulatedValue as nutFormulatedValue,
-							a.bcpg_nutListGDAPerc as nutListGDAPerc,
-							a.bcpg_nutListValuePerServing as nutListValuePerServing,
+							a.doc->>"$.bcpg_nutListNut[0]" as name,
+							a.doc->>"$.bcpg_nutListNut_bcpg_nodeRef[0]" as nodeRef,
+							a.doc->>"$.bcpg_nutListGroup" as nutGroup,
+							a.doc->>"$.bcpg_nutListValue" as nutValue,
+							a.doc->>"$.bcpg_nutListMaxi" as nutMaxi,
+							a.doc->>"$.bcpg_nutListMini" as nutMini,
+							a.doc->>"$.bcpg_nutListFormulatedValue" as nutFormulatedValue,
+							a.doc->>"$.bcpg_nutListGDAPerc" as nutListGDAPerc,
+							a.doc->>"$.bcpg_nutListValuePerServing" as nutListValuePerServing,
 							b.nodeRef as productNodeRef,
-							b.cm_name as productName,
-							b.bcpg_productHierarchy1 as productHierarchy1,
-							b.bcpg_productHierarchy2 as productHierarchy2,
-							b.bcpg_code as productCode,
-							b.bcpg_erpCode as productErpCode,
-							b.bcpg_eanCode as productEanCode,
-							b.bcpg_legalName as productLegalName,
-							b.bcpg_productState as productState,
-							b.type as productType,
-							b.cm_versionLabel as productVersionLabel,
-							b.metadata_siteId as siteId,
-							b.metadata_siteName as siteName	
+							b.doc->>"$.cm_name" as productName,
+							b.doc->>"$.bcpg_productHierarchy1[0]" as productHierarchy1,
+							b.doc->>"$.bcpg_productHierarchy2[0]" as productHierarchy2,
+							b.doc->>"$.bcpg_code" as productCode,
+							b.doc->>"$.bcpg_erpCode" as productErpCode,
+							b.doc->>"$.bcpg_eanCode" as productEanCode,
+							b.doc->>"$.bcpg_legalName" as productLegalName,
+							b.doc->>"$.bcpg_productState" as productState,
+							b.doc->>"$.type" as productType,
+							b.doc->>"$.cm_versionLabel" as productVersionLabel,
+							b.doc->>"$.metadata_siteId" as siteId,
+							b.doc->>"$.metadata_siteName" as siteName	
 						from
-							nutList a inner join bcpg_product b on a.entityNodeRef = b.nodeRef
+							nutList a inner join bcpg_product b on a.entityNodeRef = b.nodeRef 
+
 					</SQL>
 		</View>
 	
@@ -1264,6 +1267,8 @@
 		
 
 		<Measure name="nutValue" caption="${msg("jsolap.nutritionalValues.title")}" column="nutValue" datatype="Numeric" aggregator="avg" visible="true"></Measure>	
+		<Measure name="nutMini" caption="${msg("jsolap.nutritionalMini.title")}" column="nutMini" datatype="Numeric" aggregator="avg" visible="true"></Measure>	
+		<Measure name="nutMaxi" caption="${msg("jsolap.nutritionalMaxi.title")}" column="nutMaxi" datatype="Numeric" aggregator="avg" visible="true"></Measure>	
 		<Measure name="nutFormulatedValue" caption="${msg("jsolap.nutritionalFormulatedValues.title")}" column="nutFormulatedValue" datatype="Numeric" aggregator="avg" visible="true"></Measure>	
 		<Measure name="nutListValuePerServing" caption="${msg("jsolap.nutListValuePerServing.title")}" column="nutListValuePerServing" datatype="Numeric" aggregator="avg" visible="true"></Measure>
 		<Measure name="nutListGDAPerc" caption="${msg("jsolap.nutListGDAPerc.title")}" column="nutListGDAPerc" datatype="Numeric" aggregator="avg" visible="true"></Measure>
@@ -1275,30 +1280,31 @@
 				<SQL dialect="generic">
 					select
 						nodeRef,
-						cm_name as name,
-						type as productType,
-						bcpg_productHierarchy1 as productHierarchy1,
-						bcpg_productHierarchy2 as productHierarchy2,
-						metadata_siteId as siteId,
-						metadata_siteName as siteName,
-						bcpg_code as code,
-						bcpg_erpCode as erpCode,
-						bcpg_eanCode as eanCode,
-						bcpg_legalName as legalName,
-						bcpg_nutrientProfilingScore as nutrientProfilingScore,
-						bcpg_nutrientProfilingClass as nutrientProfilingClass,
-						cm_created as productDateCreated,
-						cm_modified as productDateModified,
-						bcpg_startEffectivity as startEffectivity,
-						bcpg_endEffectivity as endEffectivity,
-						bcpg_productState as productState,
-						bcpg_projectedQty as projectedQty,
-						bcpg_unitTotalCost as unitTotalCost,
-						bcpg_profitability as profitability,
-						bcpg_unitPrice as unitPrice,
-						cm_versionLabel as versionLabel,
-						cm_creator as creator,
-						cm_modifier as modifier
+						doc->>"$.cm_name" as name,
+						doc->>"$.type" as productType,
+						doc->>"$.bcpg_productHierarchy1[0]" as productHierarchy1,
+						doc->>"$.bcpg_productHierarchy2[0]" as productHierarchy2,
+						doc->>"$.metadata_siteId" as siteId,
+						doc->>"$.metadata_siteName" as siteName,
+						doc->>"$.bcpg_code" as code,
+						doc->>"$.bcpg_erpCode" as erpCode,
+						doc->>"$.bcpg_eanCode" as eanCode,
+						doc->>"$.bcpg_legalName" as legalName,
+						doc->>"$.bcpg_nutrientProfilingScore" as nutrientProfilingScore,
+						doc->>"$.bcpg_nutrientProfilingClass" as nutrientProfilingClass,
+						doc->>"$.bcpg_storageConditionsRef" as storageConditions,
+						CAST( doc->>"$.cm_created" as DATE) as productDateCreated,
+						CAST( doc->>"$.cm_modified" as DATE) as productDateModified,
+						CAST( doc->>"$.bcpg_startEffectivity" as DATE) as startEffectivity,
+						CAST( doc->>"$.bcpg_endEffectivity" as DATE) as endEffectivity,
+						doc->>"$.bcpg_productState" as productState,
+						doc->>"$.bcpg_projectedQty" as projectedQty,
+						doc->>"$.bcpg_unitTotalCost" as unitTotalCost,
+						doc->>"$.bcpg_profitability" as profitability,
+						doc->>"$.bcpg_unitPrice" as unitPrice,
+						doc->>"$.cm_versionLabel" as versionLabel,
+						doc->>"$.cm_creator" as creator,
+						doc->>"$.cm_modifier" as modifier
 					from
 						bcpg_product
 				</SQL>
@@ -1368,7 +1374,7 @@
 								<SQL dialect="generic">
 									select  
 										entityNodeRef,
-										cm_name,
+										doc->>"$.name" as name,
 										nodeRef
 									from
 										assoc_bcpg_ingListGeoOrigin
@@ -1385,7 +1391,7 @@
 								<SQL dialect="generic">
 									select  
 										entityNodeRef,
-										cm_name,
+										doc->>"$.name" as name,
 										nodeRef
 									from
 										assoc_bcpg_productGeoOrigin
@@ -1402,7 +1408,7 @@
 								<SQL dialect="generic">
 									select  
 										entityNodeRef,
-										cm_name,
+										doc->>"$.name" as name,
 										nodeRef
 									from
 										assoc_bcpg_plants
@@ -1419,7 +1425,7 @@
 								<SQL dialect="generic">
 									select  
 										entityNodeRef,
-										cm_name,
+										doc->>"$.name" as name,
 										nodeRef
 									from
 										assoc_bcpg_trademarkRef
@@ -1436,7 +1442,7 @@
 								<SQL dialect="generic">
 									select  
 										entityNodeRef,
-										cm_name,
+										doc->>"$.name" as name,
 										nodeRef
 									from
 										assoc_bcpg_subsidiaryRef
@@ -1493,12 +1499,12 @@
 								<SQL dialect="generic">
 									select  
 										entityNodeRef,
-										bcpg_allergenListAllergen as name,
-										bcpg_allergenListAllergen_bcpg_nodeRef as nodeRef
+										doc->>"$.bcpg_allergenListAllergen[0]" as name,
+										doc->>"$.bcpg_allergenListAllergen_bcpg_nodeRef[0]" as nodeRef
 									from
 										allergenList
 									where 
-									   bcpg_allergenListVoluntary = "true"
+									   doc->>"$.bcpg_allergenListVoluntary" = "true"
 								</SQL>
 					</View>
 				<Level approxRowCount="100" name="name" caption="${msg("jsolap.allergenVoluntary.title")}" column="nodeRef"  nameColumn="name" type="String"   >
@@ -1512,12 +1518,12 @@
 								<SQL dialect="generic">
 									select  
 										entityNodeRef,
-										bcpg_allergenListAllergen as name,
-										bcpg_allergenListAllergen_bcpg_nodeRef as nodeRef
+										doc->>"$.bcpg_allergenListAllergen[0]" as name,
+										doc->>"$.bcpg_allergenListAllergen_bcpg_nodeRef[0]" as nodeRef
 									from
 										allergenList
 									where 
-									   bcpg_allergenListVoluntary = "false" and bcpg_allergenListInVoluntary = "true"
+									   doc->>"$.bcpg_allergenListVoluntary" = "false" and doc->>"$.bcpg_allergenListInVoluntary" = "true"
 								</SQL>
 				</View>
 				<Level approxRowCount="100" name="name" caption="${msg("jsolap.allergenInVoluntary.title")}" column="nodeRef"  nameColumn="name" type="String"   >
@@ -1533,8 +1539,8 @@
 								<SQL dialect="generic">
 									select  
 										entityNodeRef,
-										bcpg_ingListIng as name,
-										bcpg_ingListIng_bcpg_nodeRef as nodeRef
+										doc->>"$.bcpg_ingListIng[0]" as name,
+										doc->>"$.bcpg_ingListIng_bcpg_nodeRef[0]" as nodeRef
 									from
 										ingList
 								</SQL>
@@ -1550,11 +1556,11 @@
 								<SQL dialect="generic">
 									select  
 										entityNodeRef,
-										bcpg_lclLabelClaim as name,
-										bcpg_lclLabelClaim_bcpg_nodeRef as nodeRef
+										doc->>"$.bcpg_lclLabelClaim[0]" as name,
+										doc->>"$.bcpg_lclLabelClaim_bcpg_nodeRef[0]" as nodeRef
 									from
 										labelClaimList
-									where bcpg_lclClaimValue = "true" 
+									where doc->>"$.bcpg_lclClaimValue" = "true" 
 								</SQL>
 				</View>
 				<Level name="lclLabelClaimName" caption="${msg("jsolap.labelClaim.title")}" table="labelClaimList" column="nodeRef" nameColumn="name" type="String" ></Level>
@@ -1567,15 +1573,15 @@
 				<View name="compoList" alias="compoList">
 								<SQL dialect="generic">
 									select  a.entityNodeRef,
-										b.cm_name as name,
+										b.doc->>"$.cm_name" as name,
 										b.nodeRef,
-										b.bcpg_productHierarchy1 as productHierarchy1,
-										b.bcpg_productHierarchy2 as productHierarchy2,
-										b.bcpg_productState as productState,
-										b.type as productType,
-										b.cm_versionLabel as versionLabel
+										b.doc->>"$.bcpg_productHierarchy1[0]" as productHierarchy1,
+										b.doc->>"$.bcpg_productHierarchy2[0]" as productHierarchy2,
+										b.doc->>"$.bcpg_productState" as productState,
+										b.doc->>"$.type" as productType,
+										b.doc->>"$.cm_versionLabel" as versionLabel
 									from
-										compoList a left join  bcpg_product b on a.bcpg_compoListProduct_bcpg_nodeRef = b.nodeRef
+										compoList a left join  bcpg_product b on a.doc->>"$.bcpg_compoListProduct_bcpg_nodeRef[0]" = b.nodeRef
 								</SQL>
 				</View>
 		
@@ -1650,13 +1656,13 @@
 				<View name="packagingList" alias="packagingList">
 						<SQL dialect="generic">
 							select  a.entityNodeRef,
-								b.cm_name as name,
+								b.doc->>"$.cm_name" as name,
 								b.nodeRef,
-								b.bcpg_productHierarchy1 as productHierarchy1,
-								b.bcpg_productHierarchy2 as productHierarchy2,
-								b.cm_versionLabel as versionLabel
+								b.doc->>"$.bcpg_productHierarchy1[0]" as productHierarchy1,
+								b.doc->>"$.bcpg_productHierarchy2[0]" as productHierarchy2,
+								b.doc->>"$.cm_versionLabel" as versionLabel
 							from
-								packagingList a left join  bcpg_product b on a.bcpg_packagingListProduct_bcpg_nodeRef = b.nodeRef
+								packagingList a left join  bcpg_product b on a.doc->>"$.bcpg_packagingListProduct_bcpg_nodeRef[0]" = b.nodeRef
 						</SQL>
 				</View>
 				
@@ -1684,6 +1690,12 @@
 		<Dimension  name="creation" caption="${msg("jsolap.creator.title")}" >
 			<Hierarchy name="creators" caption="${msg("jsolap.creator.caption")}" hasAll="true" allMemberCaption="${msg("jsolap.creator.caption")}">
 				<Level name="creator"  caption="${msg("jsolap.creator.title")}"  column="creator"  type="String" />
+			</Hierarchy>
+		</Dimension>
+		
+	    <Dimension  name="storageConditions" caption="${msg("jsolap.storageConditions.title")}" >
+			<Hierarchy name="storageConditions" caption="${msg("jsolap.storageConditions.caption")}" hasAll="true" allMemberCaption="${msg("jsolap.storageConditions.caption")}">
+				<Level name="storageCondition"  caption="${msg("jsolap.storageConditions.title")}"  column="storageConditions"  type="String" />
 			</Hierarchy>
 		</Dimension>
 		

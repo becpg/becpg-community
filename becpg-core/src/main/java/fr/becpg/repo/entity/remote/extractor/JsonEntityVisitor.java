@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 
 import org.alfresco.model.ContentModel;
@@ -342,13 +343,6 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 		if (listContainerNodeRef != null) {
 			List<ChildAssociationRef> assocRefs = nodeService.getChildAssocs(listContainerNodeRef);
 
-			Map<String, Boolean> dataListTypeMap = new HashMap<>();
-
-			assocRefs.forEach(assocRef -> {
-				String dataListType = (String) nodeService.getProperty(assocRef.getChildRef(), DataListModel.PROP_DATALISTITEMTYPE);
-				dataListTypeMap.put(dataListType, dataListTypeMap.containsKey(dataListType));
-			});
-
 			for (ChildAssociationRef assocRef : assocRefs) {
 
 				NodeRef listNodeRef = assocRef.getChildRef();
@@ -358,30 +352,45 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 					QName dataListTypeQName = QName.createQName(dataListType, namespaceService);
 					String dataListName = (String) nodeService.getProperty(listNodeRef, ContentModel.PROP_NAME);
-					if (!(dataListName).startsWith(RepoConsts.WUSED_PREFIX) && !dataListName.startsWith(RepoConsts.CUSTOM_VIEW_PREFIX)
-							&& params.shouldExtractList(dataListName)) {
+					if (!(dataListName).startsWith(RepoConsts.WUSED_PREFIX) && !dataListName.startsWith(RepoConsts.CUSTOM_VIEW_PREFIX)) {
 						if ((BeCPGModel.TYPE_ENTITYLIST_ITEM.equals(dataListTypeQName)
 								|| entityDictionaryService.isSubClass(dataListTypeQName, BeCPGModel.TYPE_ENTITYLIST_ITEM))) {
-
-							List<NodeRef> listItemRefs = entityListDAO.getListItems(listNodeRef, dataListTypeQName);
-
-							if ((listItemRefs != null) && !listItemRefs.isEmpty()) {
-								JSONArray list = new JSONArray();
-
-								if (Boolean.FALSE.equals(dataListTypeMap.get(dataListType))
-										|| dataListName.equals(dataListTypeQName.getLocalName())) {
-									entityLists.put(dataListType, list);
-								} else {
-									entityLists.put(dataListType + "|" + dataListName, list);
+							
+							Map<QName, List<NodeRef>> listItemsByType = entityListDAO.getListItemsByType(listNodeRef);
+							
+							for (Entry<QName, List<NodeRef>> entry : listItemsByType.entrySet()) {
+								QName listItemType = entry.getKey();
+								List<NodeRef> listItems = entry.getValue();
+								String listName = dataListName;
+								String listType = dataListType;
+								boolean shouldExtract = true;
+								
+								if (!listItemType.equals(dataListTypeQName)) {
+									shouldExtract = Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_NESTED_DATALIST_TYPE, Boolean.TRUE));
+									listName = dataListName + "@" + listItemType.toPrefixString(namespaceService);
+									listType = dataListType + "@" + listItemType.toPrefixString(namespaceService);
 								}
+								
+								shouldExtract = shouldExtract && params.shouldExtractList(listName);
+								
+								if (shouldExtract && (listItems != null) && !listItems.isEmpty()) {
+									
+									JSONArray list = new JSONArray();
 
-								for (NodeRef listItem : listItemRefs) {
-									JSONObject jsonAssocNode = new JSONObject();
-									list.put(jsonAssocNode);
-
-									visitNode(listItem, jsonAssocNode, JsonVisitNodeType.DATALIST, context);
+									if (!entityLists.has(listType)) {
+										entityLists.put(listType, list);
+									} else {
+										entityLists.put(listType + "|" + dataListName, list);
+									}
+									for (NodeRef listItem : listItems) {
+										JSONObject jsonAssocNode = new JSONObject();
+										list.put(jsonAssocNode);
+										
+										visitNode(listItem, jsonAssocNode, JsonVisitNodeType.DATALIST, context);
+									}
 								}
 							}
+							
 						} else {
 							logger.warn(
 									"Existing " + dataListName + " (" + dataListTypeQName + ") list doesn't inheritate from 'bcpg:entityListItem'.");

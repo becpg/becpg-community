@@ -440,7 +440,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-		propertyName: ["bcpg:nutListRoundedValue"],
+		propertyName: ["bcpg:nutListRoundedValue","bcpg:nutListRoundedValuePrepared"],
 		renderer: function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
 			var ret = "";
 
@@ -468,7 +468,7 @@ if (beCPG.module.EntityDataGridRenderers) {
          			    var nutName = oRecord._oData.itemData.assoc_bcpg_nutListNut[0].displayValue || '';
 
 						var keys = Object.keys(jsonData.v);
-						ret += '<div id="nut-details-' + oRecord.getData("nodeRef") + '" class="nut-details hidden" ><div class="hd">'+nutName+'</div><div class="bd" >';
+						ret += '<div id="nut-details-'+ oColumn.field +"-"+ oRecord.getData("nodeRef") + '" class="nut-details hidden" ><div class="hd">'+nutName+'</div><div class="bd" >';
 						for (var i = 0; i < keys.length; i++) {
 							var k = keys[i];
 							var value = jsonData.v[k];
@@ -494,7 +494,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 						}
 						ret += '</div></div>';
 	
-						ret += '<span class="node-' + oRecord.getData("nodeRef") + '">';
+						ret += '<span class="node-' + oColumn.field +"-"+ oRecord.getData("nodeRef") + '">';
 						ret += '<a class="show-details ' + NUTDETAILS_EVENTCLASS + '" title="' + scope.msg("link.title.nut-details") + '" href="" >';
 						ret += "&nbsp;";
 						ret += "</a></span>";
@@ -1611,6 +1611,30 @@ if (beCPG.module.EntityDataGridRenderers) {
 			}
 			
 			return (url!=null?'<a href="' + url + '">':'')  + Alfresco.util.encodeHTML(data.displayValue);
+		}
+	});
+	
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+		propertyName : [ "bcpg:irlCitation", "bcpg:irlRestrictionLevels", "bcpg:irlResultIndicator", "bcpg:irlUsages" ],
+		renderer : function(oRecord, data, label, scope) {
+			
+			if (data.displayValue) {
+			    var parts = data.displayValue.split(";;");
+			    var displayedData = "";
+			    for (var i in parts) {
+					var part = parts[i];
+					if (label != "bcpg:irlUsages") {
+						var subParts = part.split(" :: ");
+						part = "<b>" + Alfresco.util.encodeHTML(subParts[0]) + "</b>" + " : " + Alfresco.util.encodeHTML(subParts[1]);
+					}
+					displayedData += "- " + part;
+					if (i != parts.length - 1) {
+						displayedData += "<br>";
+					}
+				}
+			    return displayedData;
+			}
+			return Alfresco.util.encodeHTML(data.displayValue);
 		}
 	});
 	

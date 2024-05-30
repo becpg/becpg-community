@@ -70,4 +70,8 @@ public class PublicationModel {
 	public static final QName PROP_PUBCHANNEL_LASTSUCCESSBATCHID = QName.createQName(PUBLICATION_URI, "pubChannelLastSuccessBatchId");
 	public static final QName PROP_PUBCHANNEL_STATUS = QName.createQName(PUBLICATION_URI, "pubChannelStatus");
 
+	public static final QName PROP_FAILED_CHANNELIDS = QName.createQName(PUBLICATION_URI, "failedPubChannelIds");
+	public static final QName PROP_PUBLISHED_CHANNELIDS = QName.createQName(PUBLICATION_URI, "publishedPubChannelIds");
+	public static final QName PROP_CHANNELIDS = QName.createQName(PUBLICATION_URI, "pubChannelIds");
+
 }
