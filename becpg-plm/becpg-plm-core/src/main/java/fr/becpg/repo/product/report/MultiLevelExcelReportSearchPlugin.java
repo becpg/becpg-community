@@ -134,7 +134,9 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 								item.put(itemKey, value);
 							} else if (dynamicCharactColumnCache.get(itemKey) != null) {
 								Object subValue = JsonFormulaHelper.extractComponentValue(dynamicCharactColumnCache.get(itemKey), itemNodeRef.getId());
-								item.put(itemKey, subValue);
+								if (subValue != null) {
+									item.put(itemKey, subValue);
+								}
 							}
 						}
 					}
