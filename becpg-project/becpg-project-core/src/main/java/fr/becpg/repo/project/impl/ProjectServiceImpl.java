@@ -32,7 +32,6 @@ import org.alfresco.repo.forum.CommentService;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authority.AuthorityDAO;
-import org.alfresco.repo.tenant.TenantUtil;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -255,7 +254,6 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_LOG_TIME_LIST);
 				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
 				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
-				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_PROJECT);
 				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_SCORE_LIST);
 				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_BUDGET_LIST);
 				policyBehaviourFilter.disableBehaviour(ProjectModel.ASPECT_BUDGET);
@@ -263,6 +261,7 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_SYSTEM_ENTITY);
 
 				L2CacheSupport.doInCacheContext(() -> {
 					AuthenticationUtil.runAsSystem(() -> {
@@ -295,10 +294,10 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_LOG_TIME_LIST);
 				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
 				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
-				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_PROJECT);
 				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_SCORE_LIST);
 				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_BUDGET_LIST);
 				policyBehaviourFilter.enableBehaviour(ProjectModel.ASPECT_BUDGET);
+				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_SYSTEM_ENTITY);
 			}
 		}
 	}

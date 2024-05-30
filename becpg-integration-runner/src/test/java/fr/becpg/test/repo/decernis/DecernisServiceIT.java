@@ -193,7 +193,7 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 		
 	}
 	
-	public NodeRef createFinishedProduct(final String finishedProductName) throws Exception {
+	private NodeRef createFinishedProduct(final String finishedProductName) throws Exception {
 		return inWriteTx(() -> {
 			FinishedProductData finishedProduct = new FinishedProductData();
 			finishedProduct.setName(finishedProductName);
@@ -207,6 +207,7 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 		
 		inWriteTx(() -> {
 			systemConfigurationService.updateConfValue("beCPG.decernis.token", "TEST_TOKEN");
+			systemConfigurationService.updateConfValue("beCPG.decernis.ingredient.analysis.enabled", "false");
 			return null;
 		});
 		
@@ -250,6 +251,7 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 		} finally {
 			inWriteTx(() -> {
 				systemConfigurationService.resetConfValue("beCPG.decernis.token");
+				systemConfigurationService.resetConfValue("beCPG.decernis.ingredient.analysis.enabled");
 				return null;
 			});
 		}
@@ -412,6 +414,7 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 		inWriteTx(() -> {
 			systemConfigurationService.updateConfValue("beCPG.decernis.serverUrl", mockServerUrl);
 			systemConfigurationService.updateConfValue("beCPG.decernis.analysisUrl", mockAnalysisUrl);
+			systemConfigurationService.updateConfValue("beCPG.decernis.ingredient.analysis.enabled", "false");
 			mockWebAnalysis.enqueue(new MockResponse().setBody("{" +
 				    "\"functions\": [" +
 			        "\"Acidity Regulator/Buffer/Alkalizing Agents\"," +
@@ -524,6 +527,7 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 			inWriteTx(() -> {
 				systemConfigurationService.resetConfValue("beCPG.decernis.serverUrl");
 				systemConfigurationService.resetConfValue("beCPG.decernis.analysisUrl");
+				systemConfigurationService.resetConfValue("beCPG.decernis.ingredient.analysis.enabled");
 				return null;
 			});
 		}
@@ -776,6 +780,7 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 		inWriteTx(() -> {
 			systemConfigurationService.updateConfValue("beCPG.decernis.serverUrl", mockServerUrl);
 			systemConfigurationService.updateConfValue("beCPG.decernis.analysisUrl", mockAnalysisUrl);
+			systemConfigurationService.updateConfValue("beCPG.decernis.ingredient.analysis.enabled", "false");
 			mockWebAnalysis.enqueue(new MockResponse().setBody("{" +
 				    "\"functions\": [" +
 			        "\"Acidity Regulator/Buffer/Alkalizing Agents\"," +
@@ -967,6 +972,7 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 			inWriteTx(() -> {
 				systemConfigurationService.resetConfValue("beCPG.decernis.serverUrl");
 				systemConfigurationService.resetConfValue("beCPG.decernis.analysisUrl");
+				systemConfigurationService.resetConfValue("beCPG.decernis.ingredient.analysis.enabled");
 				return null;
 			});
 		}

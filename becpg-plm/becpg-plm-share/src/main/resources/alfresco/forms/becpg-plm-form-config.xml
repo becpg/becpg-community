@@ -3844,6 +3844,7 @@
 					<show id="cm:description" />
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:eanCode" force="true" />
 					<show id="bcpg:supplierAccountRef" />
 					<show id="bcpg:supplierTel" />
 					<show id="bcpg:supplierEmail" />
@@ -3963,6 +3964,7 @@
 					</field>
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
+					<field id="bcpg:eanCode" set="mainInfo" />
 					<field id="bcpg:supplierAccountRef" set="mainInfo" />
 					<field id="bcpg:supplierTel" set="mainInfo" />
 					<field id="bcpg:supplierEmail" set="mainInfo">
@@ -7056,7 +7058,6 @@
 					<show id="bcpg:variantIds" force="true" />
 					<show id="bcpg:depthLevel" />
 					<show id="bcpg:ingListIng" />
-					<show id="entity_bcpg:ingListIng_bcpg:ing_asColumn" force="true"  />
 					<show id="bcpg:ingListQtyPerc" />
 					<show id="bcpg:ingListIsGMO" />
 					<show id="bcpg:ingListIsIonized" />
@@ -7066,6 +7067,7 @@
 					<show id="bcpg:ingListGeoTransfo" />
 					<show id="bcpg:ingListBioOrigin" />
 					<show id="bcpg:ingListClaims" />
+					<show id="entity_bcpg:ingListIng_bcpg:ing_asColumn" force="true"  />
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
@@ -7077,7 +7079,6 @@
 			</form>
 			<form id="filter">
 				<field-visibility>
-				
 					<show id="bcpg:depthLevel" />
 					<show id="bcpg:ingListIng" />
 					<show id="entity_bcpg:ingListIng_bcpg:ing@filter-ingList" force="true" />
@@ -7452,6 +7453,7 @@
 					<show id="bcpg:variantColumn4" force="true" />
 					<show id="bcpg:variantColumn5" force="true" />
 					<show id="bcpg:nutListRoundedValue" />
+					<show id="bcpg:nutListRoundedValuePrepared" />
 					<show id="bcpg:nutListGDAPerc" force="true" />
 					<show id="bcpg:nutListLossPerc" />
 					<show id="bcpg:nutListMethod" />
@@ -7477,6 +7479,7 @@
 					<field id="bcpg:nutListFormulatedValuePerServing" label="hidden" read-only="true" />
 					<field id="bcpg:nutListUnitPrepared" read-only="true" label="hidden"></field>
 					<field id="bcpg:nutListRoundedValue" read-only="true"></field>
+					<field id="bcpg:nutListRoundedValuePrepared" read-only="true"></field>
 					<field id="bcpg:variantColumn1" read-only="true" label="hidden"></field>
 					<field id="bcpg:variantColumn2" read-only="true" label="hidden"></field>
 					<field id="bcpg:variantColumn3" read-only="true" label="hidden"></field>
@@ -9794,10 +9797,10 @@
 				<field-visibility>
 					<show id="bcpg:irlIng" />
 					<show id="bcpg:regulatoryCountries" force="true" />
-					<show id="bcpg:irlCitation" />
-					<show id="bcpg:irlResultIndicator" />
 					<show id="bcpg:irlUsages" />
+					<show id="bcpg:irlResultIndicator" />
 					<show id="bcpg:irlRestrictionLevels" />
+					<show id="bcpg:irlCitation" />
 					<show id="bcpg:irlSources" />
 				</field-visibility>
 			</form>
@@ -9805,8 +9808,12 @@
 				<field-visibility>
 					<show id="bcpg:irlIng" />
 					<show id="bcpg:regulatoryCountries" />
+					<show id="bcpg:irlUsages" />
 					<show id="bcpg:irlResultIndicator" />
-					<show id="bcpg:regulatoryUsageRef" />
+					<show id="bcpg:irlRestrictionLevels" />
+					<show id="bcpg:irlCitation" />
+					<show id="bcpg:regulatoryComment" />
+					<show id="bcpg:irlSources" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:irlIng">
@@ -9818,8 +9825,12 @@
 					<field id="bcpg:regulatoryCountries">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
-					<field id="bcpg:regulatoryUsageRef">
-						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					<field id="bcpg:irlSources">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/product</control-param>
+							<control-param name="showTooltip">true</control-param>
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
+						</control>
 					</field>
 				</appearance>
 
@@ -9828,10 +9839,10 @@
 				<field-visibility>
 					<show id="bcpg:irlIng" />
 					<show id="bcpg:regulatoryCountries" force="true" />
-					<show id="bcpg:irlCitation" />
-					<show id="bcpg:irlResultIndicator" />
 					<show id="bcpg:irlUsages" />
+					<show id="bcpg:irlResultIndicator" />
 					<show id="bcpg:irlRestrictionLevels" />
+					<show id="bcpg:irlCitation" />
 					<show id="bcpg:regulatoryComment" force="true" />
 					<show id="bcpg:irlSources" />
 					<show id="dataList_bcpg:reqCtrlList" />
@@ -9839,11 +9850,11 @@
 				<appearance>
 					<field id="bcpg:irlIng" read-only="true" />
 					<field id="bcpg:regulatoryCountries" read-only="true" />
-					<field id="bcpg:irlCitation" read-only="true" />
-					<field id="bcpg:irlResultIndicator" read-only="true" />
 					<field id="bcpg:irlUsages" read-only="true" />
-					<field id="bcpg:regulatoryComment" read-only="true" />
+					<field id="bcpg:irlResultIndicator" read-only="true" />
 					<field id="bcpg:irlRestrictionLevels" read-only="true" />
+					<field id="bcpg:irlCitation" read-only="true" />
+					<field id="bcpg:regulatoryComment" read-only="true" />
 					<field id="bcpg:irlSources" read-only="true" />
 					<field id="dataList_bcpg:reqCtrlList" label-id="hidden" />
 				</appearance>
@@ -9856,19 +9867,19 @@
 				<field-visibility>
 					<show id="bcpg:irlIng" />
 					<show id="bcpg:regulatoryCountries" force="true" />
-					<show id="bcpg:irlCitation" />
-					<show id="bcpg:irlResultIndicator" force="true" />
 					<show id="bcpg:irlUsages" force="true" />
+					<show id="bcpg:irlResultIndicator" force="true" />
 					<show id="bcpg:irlRestrictionLevels" />
+					<show id="bcpg:irlCitation" />
 					<show id="bcpg:regulatoryComment" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:irlIng" read-only="true" />
 					<field id="bcpg:regulatoryCountries" read-only="true" />
-					<field id="bcpg:irlCitation" read-only="true" />
 					<field id="bcpg:irlResultIndicator" read-only="true" />
-					<field id="bcpg:regulatoryUsageRef" read-only="true" />
 					<field id="bcpg:irlRestrictionLevels" read-only="true" />
+					<field id="bcpg:irlCitation" read-only="true" />
+					<field id="bcpg:regulatoryUsageRef" read-only="true" />
 					<field id="bcpg:regulatoryComment" read-only="true" />
 				</appearance>
 			</form>

@@ -106,7 +106,8 @@ function main()
 	 	         initArgs :  ["\"" + args.htmlid+"_sug\""],
 	 	         options : {
 	 	        	 entityNodeRef : model.nodeRef,
-	 	        	 ticket: getBeCPGAuthTocken(user)
+	 	        	 ticket: getBeCPGAuthTocken(user),
+	 	        	 locale: locale
 	 	         }
 	 	   };
 	      

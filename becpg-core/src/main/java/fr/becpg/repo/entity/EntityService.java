@@ -186,7 +186,7 @@ public interface EntityService {
 	 */
 	NodeRef getDocumentsFolder(NodeRef entityNodeRef, boolean create);
 
-	NodeRef getEntityDefaultIcon(NodeRef nodeRef, String string);
+	NodeRef getEntityDefaultIcon(NodeRef nodeRef, String resolution);
 
 	Map<String, NodeRef> getEntityIcons();
 

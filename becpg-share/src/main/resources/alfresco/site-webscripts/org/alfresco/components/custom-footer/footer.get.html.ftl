@@ -1,7 +1,7 @@
 <@markup id="customFooter-css" target="css"  action="after">
    <#-- CSS Dependencies -->
   <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/basket/basket.css" group="footer"/> 
-  <#if isAIEnable??>
+  <#if isAIEnable>
   <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/watson/watson.css" group="footer"/>
   </#if>
 </@>
@@ -9,7 +9,7 @@
 <@markup id="customFooter-js"  target="js" action="after">
 	
    <@script type="text/javascript" src="${url.context}/res/components/basket/basket.js"  group="footer" />
-   <#if isAIEnable??>
+   <#if isAIEnable>
    <@script type="text/javascript" src="${url.context}/res/components/watson/watson.js" group="footer"/>
    </#if>
    
@@ -63,7 +63,7 @@
 
 
 <@markup id="watson"  target="html" action="after">
-<#if isAIEnable??>
+<#if isAIEnable>
 	<div id="watson-container" class="expanded round">
 		<div id="watson-chatbot-container">
 			<div id="watson-chatbot-header">

@@ -361,6 +361,12 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem
 		this.qtySubFormula = qtySubFormula;
 		return this;
 	}
+	
+	public CompoListDataItem withQty(Double qty) {
+		this.qty = qty;
+		return this;
+	}
+
 
 	public CompoListDataItem withProduct(NodeRef product) {
 		this.product = product;
