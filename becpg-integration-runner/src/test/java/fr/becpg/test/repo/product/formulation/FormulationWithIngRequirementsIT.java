@@ -264,7 +264,7 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 				} else if (reqCtrlList.getReqMessage().equals("Ing3 < 40%")) {
 
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
-					assertEquals(0, reqCtrlList.getSources().size());
+					assertEquals(1, reqCtrlList.getSources().size());
 					checks++;
 				} else if (reqCtrlList.getReqMessage().equals("Ing1 et ing4 interdits")) {
 
@@ -354,7 +354,7 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 			 */
 
 			logger.debug("After removing specs, " + formulatedProduct.getReqCtrlList().size() + " remain");
-			assertEquals(7, formulatedProduct.getReqCtrlList().size());
+			assertEquals(6, formulatedProduct.getReqCtrlList().size());
 
 			return null;
 

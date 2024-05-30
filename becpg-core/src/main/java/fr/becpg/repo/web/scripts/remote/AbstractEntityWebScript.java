@@ -105,7 +105,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 
 	protected static final String PARAM_MAX_RESULTS = "maxResults";
 	
-	protected static final String PARAM_PAGE = "skipCount";
+	protected static final String PARAM_PAGE = "page";
 
 	/** Services **/
 

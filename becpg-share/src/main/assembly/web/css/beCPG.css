@@ -561,7 +561,6 @@ span.finishedProduct-ToValidate,
 .entity.bcpg-finishedProduct,
 .entity.finishedProduct  {
     background-image: var(--icon-finishedProduct-16) !important;
-    background-size: contain;
     padding-left: 20px;
     background-repeat: no-repeat
 }
@@ -602,7 +601,6 @@ span.rawMaterial-ToValidate,
 .entity.bcpg-rawMaterial,
 .entity.rawMaterial  {
     background-image: var(--icon-rawMaterial-16) !important;
-    background-size: contain;
     padding-left: 20px;
     background-repeat: no-repeat
 }
@@ -612,7 +610,6 @@ span.semiFinishedProduct-ToValidate,
 .entity.bcpg-semiFinishedProduct,
 .entity.semiFinishedProduct {
     background-image: var(--icon-semiFinishedProduct-16) !important;
-    background-size: contain;
     padding-left: 20px;
     background-repeat: no-repeat
 }
@@ -669,7 +666,7 @@ span.semiFinishedProduct-Valid,
 span.semiFinishedProduct-ToValidate,
 span.semiFinishedProduct-Stopped {
     padding-left: 25px;
-    background-size: auto, contain;
+    background-size: auto;
     background-repeat: no-repeat;
     background-position: 14px 6px, 0 0;
     padding-bottom: 2px;

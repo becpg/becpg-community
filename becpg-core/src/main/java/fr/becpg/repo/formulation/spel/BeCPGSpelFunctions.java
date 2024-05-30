@@ -838,7 +838,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		/**
 		 * Helper @beCPG.formatNumber($number, $format )
 		 *
-		 *    Example: @beCPG.formatNumber(10,00005,
+		 *    Example: @beCPG.formatNumber(10.00005d,
 		 *                              "0.##")
 		 *
 		 * @param number
@@ -852,8 +852,8 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		/**
 		 * Helper  @beCPG.formatDate($date )
 		 *
-		 *  Example: @beCPG.formatNumber(10,00005,
-		 *                         "0.##")
+		 *  Example: @beCPG.formatDate(new
+		 *                          java.util.Date() )
 		 *
 		 * @param date
 		 * @return standard becpg date format
@@ -1101,8 +1101,8 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 
 	private void assertIsNotMappedQname(RepositoryEntity item, QName qName, boolean allowWrite) {
 		if (item != null && repositoryEntityDefReader.isRegisteredQName(item, qName, allowWrite)) {
-			throw new FormulateException(String.format("QName is %s mapped in entity. Please use entity.%s to access it ",
-					qName.getPrefixedQName(namespaceService), qName.getLocalName()));
+			throw new FormulateException(String.format("QName is %s mapped in entity %s. Please use entity.%s to access it ",
+					qName.getPrefixedQName(namespaceService), item.getClass().getName() , qName.getLocalName()));
 		}
 	}
 

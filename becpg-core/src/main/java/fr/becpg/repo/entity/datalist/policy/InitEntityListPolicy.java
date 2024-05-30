@@ -9,8 +9,10 @@ import java.util.Map;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
-import org.alfresco.service.cmr.dictionary.DictionaryService;
+import org.alfresco.service.cmr.dictionary.ClassDefinition;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -19,6 +21,9 @@ import org.apache.commons.logging.LogFactory;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.entity.EntityDictionaryService;
+import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
 /**
@@ -29,7 +34,6 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
  */
 public class InitEntityListPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy {
 
-	
 	private static final int MAX_SIBLING_LISTS = 20;
 
 	private static final Log logger = LogFactory.getLog(InitEntityListPolicy.class);
@@ -38,7 +42,9 @@ public class InitEntityListPolicy extends AbstractBeCPGPolicy implements NodeSer
 	private NamespaceService namespaceService;
 
 	/** The dictionary service. */
-	private DictionaryService dictionaryService;
+	private EntityDictionaryService entityDictionaryService;
+
+	private NodeService mlNodeService;
 
 	/**
 	 * Sets the namespace service.
@@ -50,14 +56,12 @@ public class InitEntityListPolicy extends AbstractBeCPGPolicy implements NodeSer
 		this.namespaceService = namespaceService;
 	}
 
-	/**
-	 * Sets the dictionary service.
-	 *
-	 * @param dictionaryService
-	 *            the new dictionary service
-	 */
-	public void setDictionaryService(DictionaryService dictionaryService) {
-		this.dictionaryService = dictionaryService;
+	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
+		this.entityDictionaryService = entityDictionaryService;
+	}
+
+	public void setMlNodeService(NodeService mlNodeService) {
+		this.mlNodeService = mlNodeService;
 	}
 
 	/**
@@ -92,17 +96,37 @@ public class InitEntityListPolicy extends AbstractBeCPGPolicy implements NodeSer
 			if ((afterDLType != null) && !afterDLType.isEmpty() && !afterDLType.equals(beforeDLType)) {
 
 				QName dataListTypeQName = QName.createQName(afterDLType, namespaceService);
-				if (dictionaryService.isSubClass(dataListTypeQName, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
+				if (entityDictionaryService.isSubClass(dataListTypeQName, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
 
 					String dataListName = (String) nodeService.getProperty(dataListNodeRef, ContentModel.PROP_NAME);
 					if (!dataListName.startsWith(RepoConsts.WUSED_PREFIX) && !dataListName.startsWith(RepoConsts.CUSTOM_VIEW_PREFIX)
-							&& !dataListTypeQName.getLocalName().equals(dataListName) 	&& !BeCPGModel.TYPE_LIST_VALUE.equals(dataListTypeQName)) {
+							&& !dataListTypeQName.getLocalName().equals(dataListName) && !BeCPGModel.TYPE_LIST_VALUE.equals(dataListTypeQName)) {
 
-						nodeService.moveNode(dataListNodeRef, nodeService.getPrimaryParent(dataListNodeRef).getParentRef(),  ContentModel.ASSOC_CONTAINS, dataListTypeQName);
+						nodeService.moveNode(dataListNodeRef, nodeService.getPrimaryParent(dataListNodeRef).getParentRef(),
+								ContentModel.ASSOC_CONTAINS, dataListTypeQName);
 						nodeService.setProperty(dataListNodeRef, ContentModel.PROP_NAME,
 								createName(dataListNodeRef, dataListTypeQName.getLocalName()));
-						
-						
+
+						ClassDefinition classDef = entityDictionaryService.getClass(dataListTypeQName);
+
+						MLText title = (MLText) mlNodeService.getProperty(dataListNodeRef, ContentModel.PROP_TITLE);
+						MLText description = (MLText) mlNodeService.getProperty(dataListNodeRef, ContentModel.PROP_DESCRIPTION);
+
+						MLText classTitleMLText = TranslateHelper.getTemplateTitleMLText(classDef.getName());
+						MLText classDescritptionMLText = TranslateHelper.getTemplateDescriptionMLText(classDef.getName());
+
+						if ((title != null) && (classTitleMLText != null)) {
+							mlNodeService.setProperty(dataListNodeRef, ContentModel.PROP_TITLE, MLTextHelper.merge(title, classTitleMLText));
+						} else if(classTitleMLText != null) {
+							mlNodeService.setProperty(dataListNodeRef, ContentModel.PROP_TITLE, classTitleMLText);
+						}
+						if ((description != null) && (classDescritptionMLText != null)) {
+							mlNodeService.setProperty(dataListNodeRef, ContentModel.PROP_DESCRIPTION,
+									MLTextHelper.merge(description, classDescritptionMLText));
+						} if(classDescritptionMLText != null) {
+							mlNodeService.setProperty(dataListNodeRef, ContentModel.PROP_DESCRIPTION, classDescritptionMLText);
+						}
+
 					}
 				}
 			}
@@ -115,7 +139,8 @@ public class InitEntityListPolicy extends AbstractBeCPGPolicy implements NodeSer
 			count = Integer.parseInt(localName.split("@")[1]);
 		}
 		count++;
-		if ((count < MAX_SIBLING_LISTS) && (nodeService.getChildByName(nodeService.getPrimaryParent(dataListNodeRef).getParentRef(), ContentModel.ASSOC_CONTAINS, localName) != null)) {
+		if ((count < MAX_SIBLING_LISTS) && (nodeService.getChildByName(nodeService.getPrimaryParent(dataListNodeRef).getParentRef(),
+				ContentModel.ASSOC_CONTAINS, localName) != null)) {
 			return createName(dataListNodeRef, localName.split("@")[0] + "@" + count);
 		}
 		return localName;

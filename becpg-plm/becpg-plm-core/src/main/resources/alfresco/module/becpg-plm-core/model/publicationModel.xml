@@ -268,6 +268,37 @@
 
 	</types>
 	<aspects>
+	
+	  <aspect name="bp:pubChannelAspect">
+			<properties>
+				<property name="bp:pubChannelIds">
+					<type>d:text</type>
+					<multiple>true</multiple>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+				<property name="bp:failedPubChannelIds">
+					<type>d:text</type>
+					<multiple>true</multiple>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+				<property name="bp:publishedPubChannelIds">
+					<type>d:text</type>
+					<multiple>true</multiple>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+			</properties>
+
+		</aspect>
+	
 	<!-- Deprecated TO Remove -->
 		<aspect name="bp:MailingListChannelAspect">
 			<title>Mailing List Delivery Channel Aspect</title>

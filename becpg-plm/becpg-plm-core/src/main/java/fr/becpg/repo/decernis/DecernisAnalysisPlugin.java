@@ -16,6 +16,8 @@ public interface DecernisAnalysisPlugin {
 	boolean needsRecipeId();
 	
 	void extractRequirements(RegulatoryContext productContext, RegulatoryContextItem contextItem);
+
+	void ingredientAnalysis(RegulatoryContext productContext, RegulatoryContextItem contextItem);
 	
 
 

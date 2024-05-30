@@ -86,9 +86,7 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 	private static final String PARAM_QUERY = "query";
 
 	private static final String MISSING_VALUE = "NA";
-
-	private final RestTemplate restTemplate = new RestTemplate();
-
+	
 	private final NodeService nodeService;
 
 	private final DecernisAnalysisPlugin[] decernisPlugins;
@@ -134,6 +132,10 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 
 	private String token() {
 		return systemConfigurationService.confValue("beCPG.decernis.token");
+	}
+	
+	private Boolean ingredientAnalysisEnabled() {
+		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.decernis.ingredient.analysis.enabled"));
 	}
 
 	@Override
@@ -238,10 +240,10 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 	            return newItem;
 	        });
 
-		String citation = items.stream().map(item -> item.getCitation().getDefaultValue()).distinct().sorted().collect(Collectors.joining(", "));
-		String usages = items.stream().map(item -> item.getUsages().getDefaultValue()).distinct().sorted().collect(Collectors.joining(", "));
-		String restrictionLevels = items.stream().map(item -> item.getRestrictionLevels().getDefaultValue()).filter(r -> r != null && !r.equals("-")).distinct().sorted().collect(Collectors.joining(", "));
-		String resultIndicators = items.stream().map(item -> item.getResultIndicator().getDefaultValue()).distinct().sorted().collect(Collectors.joining(", "));
+		String citation = items.stream().map(item -> item.getCitation().getDefaultValue()).distinct().sorted().collect(Collectors.joining(";;"));
+		String usages = items.stream().map(item -> item.getUsages().getDefaultValue()).distinct().sorted().collect(Collectors.joining(";;"));
+		String restrictionLevels = items.stream().map(item -> item.getRestrictionLevels().getDefaultValue()).filter(r -> r != null && !r.isBlank() && !r.equals("-")).distinct().sorted().collect(Collectors.joining(";;"));
+		String resultIndicators = items.stream().map(item -> item.getResultIndicator().getDefaultValue()).distinct().sorted().collect(Collectors.joining(";;"));
 
 		mergedItem.setResultIndicator(new MLText(resultIndicators));
 		mergedItem.setCitation(new MLText(citation));
@@ -255,12 +257,7 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 			MLPropertyInterceptor.setMLAware(mlAware);
 		}
 
-		List<NodeRef> regulatoryUsages = items.stream().flatMap(item -> item.getRegulatoryUsages().stream()).collect(Collectors.toList());
-
-		mergedItem.setRegulatoryUsages(Arrays.asList(regulatoryUsages.toArray(new NodeRef[0])));
-		
 		mergedItem.setSources(extractSources(mergedItem.getIng(), context.getProduct()));
-		
 
 		return mergedItem;
 	}
@@ -305,6 +302,9 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 		for (RegulatoryContextItem contextItem : productContext.getContextItems()) {
 			if (!contextItem.isEmpty()) {
 				getAnalysisPlugin().extractRequirements(productContext, contextItem);
+				if (Boolean.TRUE.equals(ingredientAnalysisEnabled())) {
+					getAnalysisPlugin().ingredientAnalysis(productContext, contextItem);
+				}
 			}
 		}
 	}
@@ -336,6 +336,7 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 				if (logger.isTraceEnabled()) {
 					logger.trace("POST url: " + url + " body: " + recipePayload);
 				}
+				RestTemplate restTemplate = new RestTemplate();
 				JSONObject jsonObject = new JSONObject(restTemplate.postForObject(url, request, String.class));
 				if (jsonObject.has("id")) {
 					recipeId = jsonObject.get("id").toString();
@@ -508,6 +509,7 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 		if (logger.isTraceEnabled()) {
 			logger.trace("GET url: " + url + " params: " + params);
 		}
+		RestTemplate restTemplate = new RestTemplate();
 		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, createEntity(null), String.class, params);
 
 		if ((response != null) && HttpStatus.OK.equals(response.getStatusCode()) && (response.getBody() != null)) {
@@ -598,6 +600,7 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 			if (logger.isTraceEnabled()) {
 				logger.trace("DELETE url: " + url);
 			}
+			RestTemplate restTemplate = new RestTemplate();
 			restTemplate.exchange(url, HttpMethod.DELETE, createEntity(null),
 					String.class, params);
 		} catch (Exception e) {
@@ -708,6 +711,7 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 		if (logger.isTraceEnabled()) {
 			logger.trace("GET url: " + url);
 		}
+		RestTemplate restTemplate = new RestTemplate();
 		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, createEntity(null),
 				String.class, new HashMap<>());
 
