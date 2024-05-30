@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -187,8 +188,8 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 					continue;
 				}
 				
-				templateArgs.put(NODE_TYPE, dictionaryService.getType(nodeType).getTitle(serviceRegistry.getDictionaryService()));
-				templateArgs.put(DATE_FIELD, dictionaryService.getProperty(filter.getDateField()).getTitle(serviceRegistry.getDictionaryService()));
+				templateArgs.put(NODE_TYPE, Objects.toString(dictionaryService.getType(nodeType).getTitle(serviceRegistry.getDictionaryService()), nodeType.toString()));
+				templateArgs.put(DATE_FIELD, Objects.toString(dictionaryService.getProperty(filter.getDateField()).getTitle(serviceRegistry.getDictionaryService()), filter.getDateField().toString()));
 				templateArgs.put(TARGET_PATH,
 						filter.getNodePath().subPath(2, filter.getNodePath().size() - 1).toDisplayPath(nodeService, permissionService) + "/"
 								+ nodeService.getProperty(notification.getTarget(), ContentModel.PROP_NAME));
