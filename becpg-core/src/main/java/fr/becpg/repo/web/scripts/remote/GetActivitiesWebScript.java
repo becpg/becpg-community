@@ -90,7 +90,7 @@ public class GetActivitiesWebScript extends AbstractEntityWebScript {
 	@Override
 	public void executeInternal(WebScriptRequest req, WebScriptResponse resp) throws IOException {
 
-		String feedUserId = AuthenticationUtil.getFullyAuthenticatedUser();
+		String feedUserId = AuthenticationUtil.getAdminUserName();
 
 		String feedId = req.getParameter(PARAM_FEED_ID);
 
