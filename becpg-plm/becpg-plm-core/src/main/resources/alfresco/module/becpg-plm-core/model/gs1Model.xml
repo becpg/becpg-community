@@ -2391,6 +2391,12 @@
 						<facetable>true</facetable>
 					</index>
 				</property>
+				
+				<property name="gs1:certificationCode">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 			</properties>
 			<associations>
 
