@@ -46,6 +46,7 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 	private NodeRef script;
 	private ScriptMode scriptMode;
 	private String errorLog;
+	private List<NodeRef> reportTpls;
 	
 	
 	
@@ -386,6 +387,26 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 	
 	public void setErrorLog(String errorLog) {
 		this.errorLog = errorLog;
+	}
+	
+	/**
+	 * <p>Getter for the field <code>reportTpls</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
+	@AlfMultiAssoc
+	@AlfQname(qname = "rep:reportTpls")
+	public List<NodeRef> getReportTpls() {
+		return reportTpls;
+	}
+
+	/**
+	 * <p>Setter for the field <code>reportTpls</code>.</p>
+	 *
+	 * @param email a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
+	public void setReportTpls(List<NodeRef> reportTpls) {
+		this.reportTpls = reportTpls;
 	}
 
 	/** {@inheritDoc} */
