@@ -152,6 +152,9 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 
 		// version
 		visitVersionFolder(entityVersionService.getEntitiesHistoryFolder());
+		
+		// exchange/export/notifications
+		 visitFolder(visitFolder(visitFolder(systemNodeRef, RepoConsts.PATH_EXCHANGE), RepoConsts.PATH_EXPORT), RepoConsts.PATH_NOTIFICATIONS);
 
 		return new ArrayList<>();
 	}
