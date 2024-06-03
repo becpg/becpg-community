@@ -98,6 +98,11 @@ public class RepoConsts
 	public static final String PATH_REPORTS_COMPARE_ENTITIES = "CompareProducts";
 	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH="ExportSearch"</code> */
 	public static final String PATH_REPORTS_EXPORT_SEARCH = "ExportSearch";
+
+	/** Constant <code>PATH_EXCHANGE="Exchange"</code> */
+	public static final String PATH_EXCHANGE = "Exchange";
+	/** Constant <code>PATH_EXPORT="Export"</code> */
+	public static final String PATH_EXPORT = "Export";
 	
 
 	/** Constant <code>PATH_REPORT_PARAMS="ReportParams"</code> */
@@ -288,7 +293,6 @@ public class RepoConsts
 	
 	/** Constant <code>CATALOGS_PATH="/app:company_home/cm:System/cm:Property"{trunked}</code> */
 	public static final String CATALOGS_PATH = "/app:company_home/cm:System/cm:PropertyCatalogs";
-
 
 	
 }
