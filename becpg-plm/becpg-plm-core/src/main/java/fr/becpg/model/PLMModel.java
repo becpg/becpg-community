@@ -752,8 +752,9 @@ public interface PLMModel {
 
 	/** Constant <code>ASPECT_WATER</code> */
 	QName ASPECT_WATER = QName.createQName(BeCPGModel.BECPG_URI, "waterAspect");
+
+	QName ASPECT_EVAPORABLE = QName.createQName(BeCPGModel.BECPG_URI, "evaporableAspect");
 	QName PROP_EVAPORATED_RATE = QName.createQName(BeCPGModel.BECPG_URI, "evaporatedRate");
-	
 	/** Constant <code>LABELING_RULE_ASPECT</code> */
 	QName LABELING_RULE_ASPECT = QName.createQName(BeCPGModel.BECPG_URI, "labelingRuleAspect");
 
@@ -777,6 +778,7 @@ public interface PLMModel {
 	QName PROP_BEST_BEFORE_DATE = QName.createQName(BeCPGModel.BECPG_URI, "bestBeforeDate");
 	QName PROP_USE_BY_DATE = QName.createQName(BeCPGModel.BECPG_URI, "useByDate");
 	QName PROP_PERIOD_AFTER_OPENING = QName.createQName(BeCPGModel.BECPG_URI, "periodAfterOpening");
+	
 	
 
 }

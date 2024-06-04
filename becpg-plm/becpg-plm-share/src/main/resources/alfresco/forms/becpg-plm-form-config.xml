@@ -1533,6 +1533,7 @@
 					<show id="bcpg:regulatoryCode" force="true" />
 					<show id="bcpg:regulatoryComment" force="true" />
 					<show id="bcpg:ingTypeV2" force="true" />
+					<show id="bcpg:evaporatedRate" force="true" />
 					<show id="bcpg:ingAllergens" force="true" />
 					<show id="bcpg:ingAllergensQtyPerc" force="true" />
 					<show id="gs1:productActivityTypeCode" force="true" />
@@ -1574,6 +1575,7 @@
 							</control-param>
 						</control>
 					</field>
+				    <field id="bcpg:evaporatedRate"  set="1-col-2" />
 					<field id="bcpg:linkedSearchAssociation" set="1-col-2">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:ing
@@ -1626,6 +1628,7 @@
 					<show id="bcpg:regulatoryCode" force="true" />
 					<show id="bcpg:regulatoryComment" force="true" />
 					<show id="bcpg:ingTypeV2" force="true" />
+					<show id="bcpg:evaporatedRate" force="true" />
 					<show id="bcpg:ingAllergens" />
 					<show id="bcpg:ingAllergensQtyPerc" />
 					<show id="gs1:productActivityTypeCode" force="true" />
@@ -1667,6 +1670,8 @@
 							</control-param>
 						</control>
 					</field>
+					
+					<field id="bcpg:evaporatedRate"  set="1-col-2" />
 					<field id="bcpg:linkedSearchAssociation" set="1-col-2">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:ing
@@ -1808,6 +1813,7 @@
 					<show id="bcpg:regulatoryCode" force="true" />
 					<show id="bcpg:regulatoryComment" force="true" />
 					<show id="bcpg:ingTypeV2" force="true" />
+					<show id="bcpg:evaporatedRate" force="true" />
 					<show id="gs1:productActivityTypeCode" force="true" />
 					<show id="bcpg:linkedSearchAssociation" force="true" />
 					<show id="bcpg:ingAllergens" />
