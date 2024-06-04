@@ -23,6 +23,7 @@ import java.util.List;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.product.data.RegulatoryEntityItem;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
@@ -39,7 +40,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
  */
 @AlfType
 @AlfQname(qname = "bcpg:forbiddenIngList")
-public class ForbiddenIngListDataItem extends BeCPGDataObject{
+public class ForbiddenIngListDataItem extends BeCPGDataObject implements RegulatoryEntityItem {
 
 	
 	/**

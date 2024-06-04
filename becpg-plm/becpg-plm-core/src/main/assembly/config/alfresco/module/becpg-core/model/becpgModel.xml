@@ -3752,7 +3752,7 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>bcpg:ing</class>
+						<class>bcpg:charact</class>
 						<mandatory>false</mandatory>
 						<many>true</many>
 					</target>

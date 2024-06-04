@@ -13,6 +13,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
+import fr.becpg.repo.product.data.RegulatoryEntityItem;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
@@ -30,7 +31,7 @@ public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem>
 	private static final String MESSAGE_UNDEFINED_VALUE = "message.formulate.undefined.value";
 
 	private static Log logger = LogFactory.getLog(SimpleListRequirementScanner.class);
-
+	
 	/** {@inheritDoc} */
 	@Override
 	public List<ReqCtrlListDataItem> checkRequirements(ProductData formulatedProduct, List<ProductSpecificationData> specifications) {
@@ -59,10 +60,15 @@ public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem>
 										isCharactAllowed = false;
 									}
 								}
+								
+								Double reqCtrlMaxQty = null;
 
 								if (minMaxSpecValueDataItem.getMaxi() != null) {
 									if ((listDataItem.getValue() == null) || (listDataItem.getValue() > minMaxSpecValueDataItem.getMaxi())) {
 										isCharactAllowed = false;
+										if (listDataItem.getValue() != null && listDataItem.getValue() != 0) {
+											reqCtrlMaxQty = minMaxSpecValueDataItem.getMaxi() / listDataItem.getValue() * 100d;
+										}
 									}
 								}
 
@@ -84,18 +90,28 @@ public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem>
 																? " <=" + NumberFormat.getInstance(l).format(minMaxSpecValueDataItem.getMaxi())
 																: "");
 													}));
-
+									
+									
+									String regulatoryId = null;
+									
+									if (minMaxSpecValueDataItem instanceof RegulatoryEntityItem regulatoryEntityItem) {
+										regulatoryId = extractRegulatoryId(regulatoryEntityItem, specification);
+									}
+									
+									if (regulatoryId == null || regulatoryId.isBlank()) {
+										if (specification.getRegulatoryCode() != null && !specification.getRegulatoryCode().isBlank()) {
+											regulatoryId = specification.getRegulatoryCode();
+										} else {
+											regulatoryId = specification.getName();
+										}
+									}
 									ret.add(ReqCtrlListDataItem.build()
 											.ofType(isCharactAllowed ? RequirementType.Info : RequirementType.Forbidden).withMessage(message)
 											.withCharact(listDataItem.getCharactNodeRef()).ofDataType(RequirementDataType.Specification)
-											.withRegulatoryCode(
-													(specification.getRegulatoryCode() != null) && !specification.getRegulatoryCode().isBlank()
-															? specification.getRegulatoryCode()
-															: specification.getName()));
-
+											.withReqMaxQty(reqCtrlMaxQty)
+											.withRegulatoryCode(regulatoryId));
 								}
 							}
-
 						}
 					});
 				});

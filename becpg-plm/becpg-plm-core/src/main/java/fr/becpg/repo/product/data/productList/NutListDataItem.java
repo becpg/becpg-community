@@ -11,6 +11,7 @@ import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
+import fr.becpg.repo.product.data.RegulatoryEntityItem;
 import fr.becpg.repo.product.formulation.nutrient.RegulationFormulationHelper;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
@@ -37,7 +38,7 @@ import fr.becpg.repo.repository.model.VariantAwareDataItem;
 @AlfType
 @AlfQname(qname = "bcpg:nutList")
 public class NutListDataItem extends VariantAwareDataItem implements SimpleListDataItem, MinMaxValueDataItem, FormulatedCharactDataItem, SourceableDataItem,
-		UnitAwareDataItem, ControlableListDataItem, CompositeDataItem<NutListDataItem>, ManualDataItem {
+		UnitAwareDataItem, ControlableListDataItem, CompositeDataItem<NutListDataItem>, ManualDataItem, RegulatoryEntityItem {
 
 	/** Constant <code>UNIT_PER100G="/100g"</code> */
 	public static final String UNIT_PER100G = "/100g";
@@ -96,6 +97,29 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	
 	private List<NodeRef> sources = new ArrayList<>();
 
+	private List<NodeRef> regulatoryCountriesRef = new ArrayList<>();
+	private List<NodeRef> regulatoryUsagesRef = new ArrayList<>();
+	
+	@AlfMultiAssoc
+	@AlfQname(qname = "bcpg:regulatoryCountries")
+	public List<NodeRef> getRegulatoryCountriesRef() {
+		return regulatoryCountriesRef;
+	}
+
+	public void setRegulatoryCountriesRef(List<NodeRef> regulatoryCountries) {
+		this.regulatoryCountriesRef = regulatoryCountries;
+	}
+
+	@AlfMultiAssoc
+	@AlfQname(qname = "bcpg:regulatoryUsageRef")
+	public List<NodeRef> getRegulatoryUsagesRef() {
+		return regulatoryUsagesRef;
+	}
+
+	public void setRegulatoryUsagesRef(List<NodeRef> regulatoryUsages) {
+		this.regulatoryUsagesRef = regulatoryUsages;
+	}
+	
 	/** {@inheritDoc} */
 	@Override
 	@AlfProp
