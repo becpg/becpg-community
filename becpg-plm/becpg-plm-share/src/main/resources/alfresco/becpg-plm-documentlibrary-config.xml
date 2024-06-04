@@ -10,7 +10,7 @@
 				<aspect name="bcpg:suppliersAspect" />
 				<aspect name="bcpg:profitabilityAspect" />
 				<aspect name="bcpg:reconstitutableAspect" />
-				<aspect name="bcpg:waterAspect" />
+				<aspect name="bcpg:evaporableAspect" />
 				<aspect name="bcpg:customsCodeAspect" />
 				<aspect name="qa:batchAspect" />
 				<aspect name="qa:acAspect" />
