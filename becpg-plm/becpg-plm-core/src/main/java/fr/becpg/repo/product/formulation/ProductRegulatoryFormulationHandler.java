@@ -110,7 +110,7 @@ public class ProductRegulatoryFormulationHandler extends FormulationBaseHandler<
 		}
 		
 		double finalMinValue = minValue;
-		return reqList.stream().filter(r -> r.getReqMaxQty() == finalMinValue).collect(Collectors.toList());
+		return reqList.stream().filter(r -> r.getReqMaxQty() != null && r.getReqMaxQty() == finalMinValue).collect(Collectors.toList());
 	}
 
 }

@@ -15,6 +15,7 @@ import javax.annotation.Nullable;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.product.data.RegulatoryEntityItem;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -36,7 +37,7 @@ import fr.becpg.repo.variant.model.VariantDataItem;
 @AlfType
 @AlfQname(qname = "bcpg:allergenList")
 public class AllergenListDataItem extends AbstractManualVariantListDataItem
-		implements SimpleCharactDataItem, AspectAwareDataItem, ControlableListDataItem {
+		implements SimpleCharactDataItem, AspectAwareDataItem, ControlableListDataItem, RegulatoryEntityItem {
 
 	private static final long serialVersionUID = -6746076643301742367L;
 	private Double qtyPerc;
@@ -50,6 +51,8 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem
 	private List<NodeRef> voluntarySources = new ArrayList<>();
 	private List<NodeRef> inVoluntarySources = new ArrayList<>();
 	private NodeRef allergen;
+	private List<NodeRef> regulatoryCountriesRef = new ArrayList<>();
+	private List<NodeRef> regulatoryUsagesRef = new ArrayList<>();
 
 	Map<NodeRef, Double> qtyByVariant = null;
 
@@ -67,6 +70,26 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem
 	        qtyPerc = Math.min(qtyPerc + toAdd, 100d);
 	    }
 
+	}
+	
+	@AlfMultiAssoc
+	@AlfQname(qname = "bcpg:regulatoryCountries")
+	public List<NodeRef> getRegulatoryCountriesRef() {
+		return regulatoryCountriesRef;
+	}
+
+	public void setRegulatoryCountriesRef(List<NodeRef> regulatoryCountries) {
+		this.regulatoryCountriesRef = regulatoryCountries;
+	}
+
+	@AlfMultiAssoc
+	@AlfQname(qname = "bcpg:regulatoryUsageRef")
+	public List<NodeRef> getRegulatoryUsagesRef() {
+		return regulatoryUsagesRef;
+	}
+
+	public void setRegulatoryUsagesRef(List<NodeRef> regulatoryUsages) {
+		this.regulatoryUsagesRef = regulatoryUsages;
 	}
 
 	/** {@inheritDoc} */

@@ -134,23 +134,16 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 
 										boolean isInfo = qtyPerc != null && filMaxQtyPerc != null && (filMaxQtyPerc > qtyPerc);
 										
+										String regulatoryId = extractRegulatoryId(fil, specification);
+										
 										// req not respecte
 										ReqCtrlListDataItem reqCtrl = ReqCtrlListDataItem.build()
 												.ofType(isInfo ? RequirementType.Info : fil.getReqType()).withMessage(fil.getReqMessage())
 												.withCharact(ingListDataItem.getIng())
 												.withSources(List.of(ingListDataItem.getIng()))
+												.withRegulatoryCode(regulatoryId)
 												.ofDataType(RequirementDataType.Specification);										
 										
-										String regulatoryId = extractRegulatoryId(fil, specification);
-										
-										if (regulatoryId != null && !regulatoryId.isBlank()) {
-											reqCtrl.setRegulatoryCode(regulatoryId);
-										} else if ((specification.getRegulatoryCode() != null) && !specification.getRegulatoryCode().isBlank()) {
-											reqCtrl.setRegulatoryCode(specification.getRegulatoryCode());
-										} else {
-											reqCtrl.setRegulatoryCode(specification.getName());
-										}
-
 										if (!isInfo && (qtyPerc != null) && (filMaxQtyPerc != null) && (qtyPerc != 0)) {
 											reqCtrl.setReqMaxQty((filMaxQtyPerc / qtyPerc) * 100d);
 										}
@@ -241,22 +234,6 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 		return fil.getQtyPercMaxi();
 	}
 	
-	private String extractRegulatoryId(ForbiddenIngListDataItem fil, ProductSpecificationData specification) {
-		if (fil.getRegulatoryCountriesRef() != null && !fil.getRegulatoryCountriesRef().isEmpty()) {
-			String countryCode = (String) nodeService.getProperty(fil.getRegulatoryCountriesRef().get(0), PLMModel.PROP_REGULATORY_CODE);
-			if (fil.getRegulatoryUsagesRef() != null && !fil.getRegulatoryUsagesRef().isEmpty()) {
-				return countryCode + " - " + (String) nodeService.getProperty(fil.getRegulatoryUsagesRef().get(0), PLMModel.PROP_REGULATORY_CODE);
-			}
-		}
-		if (specification.getRegulatoryCountriesRef() != null && !specification.getRegulatoryCountriesRef().isEmpty()) {
-			String countryCode = (String) nodeService.getProperty(specification.getRegulatoryCountriesRef().get(0), PLMModel.PROP_REGULATORY_CODE);
-			if (specification.getRegulatoryUsagesRef() != null && !specification.getRegulatoryUsagesRef().isEmpty()) {
-				return countryCode + " - " + (String) nodeService.getProperty(specification.getRegulatoryUsagesRef().get(0), PLMModel.PROP_REGULATORY_CODE);
-			}
-		}
-		return null;
-	}
-
 	/**
 	 * check the ingredients of the part according to the specification
 	 *
