@@ -10,8 +10,10 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
+import fr.becpg.repo.product.data.RegulatoryEntityItem;
 
 /**
  * <p>Abstract AbstractRequirementScanner class.</p>
@@ -77,6 +79,25 @@ public abstract class AbstractRequirementScanner<T> implements RequirementScanne
 			}
 		}
 		return ret;
+	}
+	
+	protected String extractRegulatoryId(RegulatoryEntityItem regulatoryEntityItem, ProductSpecificationData specification) {
+		if (regulatoryEntityItem.getRegulatoryCountriesRef() != null && !regulatoryEntityItem.getRegulatoryCountriesRef().isEmpty()) {
+			String countryCode = (String) mlNodeService.getProperty(regulatoryEntityItem.getRegulatoryCountriesRef().get(0), PLMModel.PROP_REGULATORY_CODE);
+			if (regulatoryEntityItem.getRegulatoryUsagesRef() != null && !regulatoryEntityItem.getRegulatoryUsagesRef().isEmpty()) {
+				return countryCode + " - " + (String) mlNodeService.getProperty(regulatoryEntityItem.getRegulatoryUsagesRef().get(0), PLMModel.PROP_REGULATORY_CODE);
+			}
+		}
+		if (specification.getRegulatoryCountriesRef() != null && !specification.getRegulatoryCountriesRef().isEmpty()) {
+			String countryCode = (String) mlNodeService.getProperty(specification.getRegulatoryCountriesRef().get(0), PLMModel.PROP_REGULATORY_CODE);
+			if (specification.getRegulatoryUsagesRef() != null && !specification.getRegulatoryUsagesRef().isEmpty()) {
+				return countryCode + " - " + (String) mlNodeService.getProperty(specification.getRegulatoryUsagesRef().get(0), PLMModel.PROP_REGULATORY_CODE);
+			}
+		}
+		if (specification.getRegulatoryCode() != null && !specification.getRegulatoryCode().isBlank()) {
+			return specification.getRegulatoryCode();
+		}
+		return specification.getName();
 	}
 
 	/**
