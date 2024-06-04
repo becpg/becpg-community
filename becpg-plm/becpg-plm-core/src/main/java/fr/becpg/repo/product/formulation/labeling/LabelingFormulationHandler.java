@@ -1534,7 +1534,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 				//Water loss
 				if ((qty != null) && (calculatedYield != null) && (calculatedYield.doubleValue() != 100d)
-						&& nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_WATER)) {
+						&& (nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_WATER)  || nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_EVAPORABLE))) {
 
 					if (logger.isTraceEnabled()) {
 						logger.trace("Detected evaporated components (" + productData.getName() + " - " + productNodeRef + "), rate: "
@@ -2112,7 +2112,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			CompoListDataItem compoListDataItem, Map<String, ReqCtrlListDataItem> errors) {
 
 		boolean applyThreshold = false;
-		if (nodeService.hasAspect(product.getNodeRef(), PLMModel.ASPECT_WATER)) {
+		if (nodeService.hasAspect(product.getNodeRef(), PLMModel.ASPECT_WATER)  || nodeService.hasAspect(product.getNodeRef(), PLMModel.ASPECT_EVAPORABLE)) {
 			applyThreshold = true;
 		}
 
@@ -2181,7 +2181,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							logger.trace("- Add new ing " + getName(ingLabelItem) + " to current Label " + getName(parent));
 						}
 
-						if (nodeService.hasAspect(ingNodeRef, PLMModel.ASPECT_WATER)) {
+						if (nodeService.hasAspect(ingNodeRef, PLMModel.ASPECT_WATER) || nodeService.hasAspect(ingNodeRef, PLMModel.ASPECT_EVAPORABLE)) {
 
 							if (logger.isTraceEnabled()) {
 								logger.trace("Detected water lost");

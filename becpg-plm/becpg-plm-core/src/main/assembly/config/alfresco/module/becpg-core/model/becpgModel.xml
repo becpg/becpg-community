@@ -4247,7 +4247,9 @@
 		<!-- Deprecated -->
 		<aspect name="bcpg:diluentAspect"></aspect>
 
-		<aspect name="bcpg:waterAspect">
+		<aspect name="bcpg:waterAspect"></aspect>
+		
+		<aspect name="bcpg:evaporableAspect">
 			<properties>
 				<property name="bcpg:evaporatedRate">
 					<type>d:double</type>
