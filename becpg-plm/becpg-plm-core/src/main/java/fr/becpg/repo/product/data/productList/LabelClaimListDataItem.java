@@ -23,6 +23,7 @@ import java.util.Objects;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.product.data.RegulatoryEntityItem;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -43,7 +44,7 @@ import fr.becpg.repo.repository.model.SimpleCharactDataItem;
  */
 @AlfType
 @AlfQname(qname = "bcpg:labelClaimList")
-public class LabelClaimListDataItem extends AbstractManualDataItem implements SimpleCharactDataItem, CopiableDataItem, AspectAwareDataItem {
+public class LabelClaimListDataItem extends AbstractManualDataItem implements SimpleCharactDataItem, CopiableDataItem, AspectAwareDataItem, RegulatoryEntityItem {
 
 	/**
 	 * 
@@ -70,7 +71,29 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements Si
 	private Boolean isFormulated;
 	private String errorLog;
 	private List<NodeRef> missingLabelClaims = new ArrayList<>();
+	private List<NodeRef> regulatoryCountriesRef = new ArrayList<>();
+	private List<NodeRef> regulatoryUsagesRef = new ArrayList<>();
 	
+	@AlfMultiAssoc
+	@AlfQname(qname = "bcpg:regulatoryCountries")
+	public List<NodeRef> getRegulatoryCountriesRef() {
+		return regulatoryCountriesRef;
+	}
+
+	public void setRegulatoryCountriesRef(List<NodeRef> regulatoryCountries) {
+		this.regulatoryCountriesRef = regulatoryCountries;
+	}
+
+	@AlfMultiAssoc
+	@AlfQname(qname = "bcpg:regulatoryUsageRef")
+	public List<NodeRef> getRegulatoryUsagesRef() {
+		return regulatoryUsagesRef;
+	}
+
+	public void setRegulatoryUsagesRef(List<NodeRef> regulatoryUsages) {
+		this.regulatoryUsagesRef = regulatoryUsages;
+	}
+
 	/**
 	 * <p>Getter for the field <code>labelClaim</code>.</p>
 	 *

@@ -58,10 +58,7 @@ public class AllergenRequirementScanner extends AbstractRequirementScanner<Aller
 										.withCharact(listDataItem.getAllergen()).ofDataType(RequirementDataType.Specification)
 										.withSources(Stream.of(listDataItem.getVoluntarySources(), listDataItem.getInVoluntarySources())
 												.flatMap(List::stream).distinct().collect(Collectors.toList()))
-										.withRegulatoryCode(
-												(specification.getRegulatoryCode() != null) && !specification.getRegulatoryCode().isBlank()
-														? specification.getRegulatoryCode()
-														: specification.getName());
+										.withRegulatoryCode(extractRegulatoryId(specDataItem, specification));
 
 								ret.add(rclDataItem);
 							}
