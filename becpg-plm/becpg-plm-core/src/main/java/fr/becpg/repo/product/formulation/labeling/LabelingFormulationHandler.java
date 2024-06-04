@@ -68,6 +68,7 @@ import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.spel.LabelingFormulaFilterContext;
 import fr.becpg.repo.product.formulation.FormulationHelper;
+import fr.becpg.repo.product.helper.IngListHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.system.SystemConfigurationService;
@@ -1701,7 +1702,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 						if (!isMultiLevel && (productData.getIngList() != null) && !productData.getIngList().isEmpty()) {
 
-							visitIngList(compositeLabeling, productData, CompositeHelper.getHierarchicalCompoList(productData.getIngList()), null,
+							visitIngList(compositeLabeling, productData, CompositeHelper.getHierarchicalCompoList(IngListHelper.extractParentList(productData.getIngList(), associationService, alfrescoRepository)), null,
 									qty, volume, qtyWithYield, volumeWithYield, labelingFormulaContext, compoListDataItem, errors);
 						}
 

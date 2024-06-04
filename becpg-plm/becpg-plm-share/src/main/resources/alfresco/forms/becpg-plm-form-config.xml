@@ -1539,6 +1539,7 @@
 					<show id="bcpg:linkedSearchAssociation" force="true" />
 					<show id="bcpg:isSubstanceOfVeryHighConcern" force="true" />
 					<show id="bcpg:svhcReasonsForInclusion" force="true" />
+					<show id="bcpg:parentEntityRef" force="true" />
 					<show id="sec:readGroups" force="true" />
 					<show id="bcpg:isDeleted" />
 
@@ -1589,6 +1590,15 @@
 					<field id="gs1:productActivityTypeCode" set="1-col-2" />
 					<field id="bcpg:isSubstanceOfVeryHighConcern" set="1-col-2" />
 					<field id="bcpg:svhcReasonsForInclusion" set="1-col-2" />
+					<field id="bcpg:parentEntityRef"  set="1-col-2" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:rawMaterial
+							</control-param>
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
+							</control-param>
+							<control-param name="excludeSources">true</control-param>
+						</control>
+					</field>
 					<field id="bcpg:isDeleted" set="2-col-2" />
 					<field id="sec:readGroups" set="2-col-2" />
 				</appearance>
@@ -1622,6 +1632,7 @@
 					<show id="bcpg:linkedSearchAssociation" force="true" />
 					<show id="bcpg:isSubstanceOfVeryHighConcern" force="true" />
 					<show id="bcpg:svhcReasonsForInclusion" force="true" />
+					<show id="bcpg:parentEntityRef" force="true" />
 					<show id="sec:readGroups" force="true" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
@@ -1670,6 +1681,16 @@
 					<field id="gs1:productActivityTypeCode" set="1-col-2" />
 					<field id="bcpg:isSubstanceOfVeryHighConcern" set="1-col-2" />
 					<field id="bcpg:svhcReasonsForInclusion" set="1-col-2" />
+					
+					<field id="bcpg:parentEntityRef"  set="1-col-2" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:rawMaterial
+							</control-param>
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
+							</control-param>
+							<control-param name="excludeSources">true</control-param>
+						</control>
+					</field>
 					<field id="bcpg:isDeleted" set="2-col-3" />
 					<field id="sec:readGroups" set="2-col-3" />
 				</appearance>
@@ -1793,6 +1814,7 @@
 					<show id="bcpg:ingAllergensQtyPerc" />
 					<show id="bcpg:isSubstanceOfVeryHighConcern" force="true" />
 					<show id="bcpg:svhcReasonsForInclusion" force="true" />
+					<show id="bcpg:parentEntityRef" force="true" />
 					<show id="sec:readGroups" force="true" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted" />

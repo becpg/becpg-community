@@ -3,12 +3,10 @@
  */
 package fr.becpg.repo.product.formulation;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -33,6 +31,7 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
@@ -44,6 +43,7 @@ import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.product.helper.IngListHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.variant.filters.VariantFilters;
@@ -70,6 +70,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 	private NodeService nodeService;
 
+	private AssociationService associationService;
+
 	protected AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
 	/**
@@ -83,6 +85,10 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
+	}
+
+	public void setAssociationService(AssociationService associationService) {
+		this.associationService = associationService;
 	}
 
 	/**
@@ -373,8 +379,9 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 		// calculate ingList of formulated product
 		calculateILOfPart(formulatedProduct, componentProductData, compoListDataItem,
-				CompositeHelper.getHierarchicalCompoList(componentProductData.getIngList()), formulatedProduct.getIngList(), retainNodes,
-				totalQtyIngMap, totalQtyVolMap, null, formulatedProduct.isGeneric());
+				CompositeHelper.getHierarchicalCompoList(
+						IngListHelper.extractParentList(componentProductData.getIngList(), associationService, alfrescoRepository)),
+				formulatedProduct.getIngList(), retainNodes, totalQtyIngMap, totalQtyVolMap, null, formulatedProduct.isGeneric());
 	}
 
 	/**
