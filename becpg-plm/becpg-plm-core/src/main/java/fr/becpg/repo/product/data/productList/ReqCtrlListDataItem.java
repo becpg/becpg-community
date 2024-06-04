@@ -353,6 +353,11 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 		}
 		return this;
 	}
+	
+	public ReqCtrlListDataItem withReqMaxQty(Double reqMaxQty) {
+		this.reqMaxQty = reqMaxQty;
+		return this;
+	}
 
 	public ReqCtrlListDataItem ofDataType(RequirementDataType reqDataType) {
 		this.reqDataType = reqDataType != null ? reqDataType : RequirementDataType.Nutrient;

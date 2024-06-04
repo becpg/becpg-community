@@ -3,9 +3,14 @@
  */
 package fr.becpg.repo.product.data.productList;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.product.data.RegulatoryEntityItem;
+import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
@@ -27,7 +32,7 @@ import fr.becpg.repo.repository.model.VariantAwareDataItem;
  */
 @AlfType
 @AlfQname(qname = "bcpg:physicoChemList")
-public class PhysicoChemListDataItem extends VariantAwareDataItem implements SimpleListDataItem, MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ControlableListDataItem{
+public class PhysicoChemListDataItem extends VariantAwareDataItem implements SimpleListDataItem, MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ControlableListDataItem, RegulatoryEntityItem {
 			
 	
 	private static final long serialVersionUID = -3018711765028656339L;
@@ -45,6 +50,10 @@ public class PhysicoChemListDataItem extends VariantAwareDataItem implements Sim
 	private Boolean isFormulated;
 	
 	private String type;
+	
+	private List<NodeRef> regulatoryCountriesRef = new ArrayList<>();
+	
+	private List<NodeRef> regulatoryUsagesRef = new ArrayList<>();
 	
 
 	/**
@@ -197,6 +206,25 @@ public class PhysicoChemListDataItem extends VariantAwareDataItem implements Sim
 		 setValue(formulatedValue);
 	}
 
+	@AlfMultiAssoc
+	@AlfQname(qname = "bcpg:regulatoryCountries")
+	public List<NodeRef> getRegulatoryCountriesRef() {
+		return regulatoryCountriesRef;
+	}
+
+	public void setRegulatoryCountriesRef(List<NodeRef> regulatoryCountries) {
+		this.regulatoryCountriesRef = regulatoryCountries;
+	}
+
+	@AlfMultiAssoc
+	@AlfQname(qname = "bcpg:regulatoryUsageRef")
+	public List<NodeRef> getRegulatoryUsagesRef() {
+		return regulatoryUsagesRef;
+	}
+
+	public void setRegulatoryUsagesRef(List<NodeRef> regulatoryUsages) {
+		this.regulatoryUsagesRef = regulatoryUsages;
+	}
 	
 	
 	/** {@inheritDoc} */

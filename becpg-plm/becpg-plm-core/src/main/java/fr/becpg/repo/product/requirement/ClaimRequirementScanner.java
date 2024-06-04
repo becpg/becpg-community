@@ -74,11 +74,11 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 							if (isForbidden || Boolean.TRUE.equals(addInfoReqCtrl)) {
 								MLText message = MLTextHelper.getI18NMessage(MESSAGE_NOT_CLAIM, extractName(listDataItem.getLabelClaim()), extractClaimValue(specDataItem.getLabelClaimValue()));
 								
+								String regulatoryId = extractRegulatoryId(specDataItem, specification);
+								
 								ReqCtrlListDataItem reqCtrl = ReqCtrlListDataItem.build().ofType(isForbidden ? RequirementType.Forbidden : RequirementType.Info)
-										.withMessage(message).withCharact(listDataItem.getLabelClaim()).ofDataType(RequirementDataType.Specification).withRegulatoryCode(
-												(specification.getRegulatoryCode() != null) && !specification.getRegulatoryCode().isBlank()
-												? specification.getRegulatoryCode()
-												: specification.getName());
+										.withMessage(message).withCharact(listDataItem.getLabelClaim()).ofDataType(RequirementDataType.Specification)
+										.withRegulatoryCode(regulatoryId);
 							
 								
 								ret.add(reqCtrl);
