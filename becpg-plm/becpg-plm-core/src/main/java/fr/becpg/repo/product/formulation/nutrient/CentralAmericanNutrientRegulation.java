@@ -98,6 +98,7 @@ public class CentralAmericanNutrientRegulation extends AbstractNutrientRegulatio
 		return formatDouble(roundedValue, locale);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public Double roundGDA(Double value, String nutrientTypeCode) {
 		if(value != null && 

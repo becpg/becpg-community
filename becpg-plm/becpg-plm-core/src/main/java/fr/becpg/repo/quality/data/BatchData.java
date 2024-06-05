@@ -81,6 +81,7 @@ public class BatchData extends AbstractScorableEntity {
 
 	private CompoListView compoListView = new CompoListView();
 
+	/** {@inheritDoc} */
 	@Override
 	public List<AbstractProductDataView> getViews() {
 		return Arrays.asList(compoListView);
@@ -126,50 +127,90 @@ public class BatchData extends AbstractScorableEntity {
 		this.product = product;
 	}
 
+	/**
+	 * <p>Getter for the field <code>batchQty</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "qa:batchQty")
 	public Double getBatchQty() {
 		return batchQty;
 	}
 
+	/**
+	 * <p>Setter for the field <code>batchQty</code>.</p>
+	 *
+	 * @param batchQty a {@link java.lang.Double} object
+	 */
 	public void setBatchQty(Double batchQty) {
 		this.batchQty = batchQty;
 	}
 
+	/**
+	 * <p>Getter for the field <code>state</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.model.SystemState} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "qa:batchState")
 	public SystemState getState() {
 		return state;
 	}
 
+	/**
+	 * <p>Setter for the field <code>state</code>.</p>
+	 *
+	 * @param state a {@link fr.becpg.model.SystemState} object
+	 */
 	public void setState(SystemState state) {
 		this.state = state;
 	}
 
+	/**
+	 * <p>Getter for the field <code>unit</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "qa:batchQtyUnit")
 	public ProductUnit getUnit() {
 		return unit;
 	}
 
+	/**
+	 * <p>Setter for the field <code>unit</code>.</p>
+	 *
+	 * @param unit a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object
+	 */
 	public void setUnit(ProductUnit unit) {
 		this.unit = unit;
 	}
 
+	/**
+	 * <p>Getter for the field <code>allocationList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	@DataList
 	@AlfQname(qname = "qa:batchAllocationList")
 	public List<AllocationListDataItem> getAllocationList() {
 		return allocationList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>allocationList</code>.</p>
+	 *
+	 * @param allocationList a {@link java.util.List} object
+	 */
 	public void setAllocationList(List<AllocationListDataItem> allocationList) {
 		this.allocationList = allocationList;
 	}
 
 	/**
-	 * <p>Getter for the field <code>entityScore</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @return a {@link java.lang.String} object.
+	 * <p>Getter for the field <code>entityScore</code>.</p>
 	 */
 	@Override
 	@AlfProp
@@ -179,9 +220,9 @@ public class BatchData extends AbstractScorableEntity {
 	}
 
 	/**
-	 * <p>Setter for the field <code>entityScore</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @param string a {@link java.lang.String} object.
+	 * <p>Setter for the field <code>entityScore</code>.</p>
 	 */
 	@Override
 	public void setEntityScore(String string) {
@@ -292,9 +333,9 @@ public class BatchData extends AbstractScorableEntity {
 	}
 
 	/**
-	 * <p>getFormulatedEntityTpl.</p>
+	 * {@inheritDoc}
 	 *
-	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * <p>getFormulatedEntityTpl.</p>
 	 */
 	@Override
 	public NodeRef getFormulatedEntityTpl() {
@@ -304,16 +345,16 @@ public class BatchData extends AbstractScorableEntity {
 	/**
 	 * <p>Setter for the field <code>projectTpl</code>.</p>
 	 *
-	 * @param projectTpl a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param entityTpl a {@link fr.becpg.repo.quality.data.BatchData} object
 	 */
 	public void setEntityTpl(BatchData entityTpl) {
 		this.entityTpl = entityTpl;
 	}
 
 	/**
-	 * <p>Getter for the field <code>formulatedDate</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @return a {@link java.util.Date} object.
+	 * <p>Getter for the field <code>formulatedDate</code>.</p>
 	 */
 	@Override
 	@AlfProp
@@ -329,9 +370,9 @@ public class BatchData extends AbstractScorableEntity {
 	}
 
 	/**
-	 * <p>Getter for the field <code>requirementChecksum</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @return a {@link java.lang.String} object.
+	 * <p>Getter for the field <code>requirementChecksum</code>.</p>
 	 */
 	@Override
 	@AlfProp
@@ -362,9 +403,9 @@ public class BatchData extends AbstractScorableEntity {
 	}
 
 	/**
-	 * <p>Getter for the field <code>reformulateCount</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @return a {@link java.lang.Integer} object.
+	 * <p>Getter for the field <code>reformulateCount</code>.</p>
 	 */
 	@Override
 	public Integer getReformulateCount() {
@@ -378,9 +419,9 @@ public class BatchData extends AbstractScorableEntity {
 	}
 
 	/**
-	 * <p>Getter for the field <code>currentReformulateCount</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @return a {@link java.lang.Integer} object.
+	 * <p>Getter for the field <code>currentReformulateCount</code>.</p>
 	 */
 	@Override
 	public Integer getCurrentReformulateCount() {
@@ -394,9 +435,9 @@ public class BatchData extends AbstractScorableEntity {
 	}
 
 	/**
-	 * <p>Getter for the field <code>formulationChainId</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @return a {@link java.lang.String} object.
+	 * <p>Getter for the field <code>formulationChainId</code>.</p>
 	 */
 	@Override
 	public String getFormulationChainId() {
@@ -409,6 +450,7 @@ public class BatchData extends AbstractScorableEntity {
 		this.formulationChainId = formulationChainId;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "BatchData [batchId=" + batchId + ", batchQty=" + batchQty + ", state=" + state + ", unit=" + unit + ", product=" + product
@@ -418,6 +460,7 @@ public class BatchData extends AbstractScorableEntity {
 				+ allocationList + ", compoListView=" + compoListView + "]";
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -427,6 +470,7 @@ public class BatchData extends AbstractScorableEntity {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {

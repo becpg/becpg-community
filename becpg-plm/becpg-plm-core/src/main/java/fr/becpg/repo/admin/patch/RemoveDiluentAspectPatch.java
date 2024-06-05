@@ -141,6 +141,11 @@ public class RemoveDiluentAspectPatch extends AbstractBeCPGPatch {
 	}
 
 	
+	/**
+	 * <p>Setter for the field <code>integrityChecker</code>.</p>
+	 *
+	 * @param integrityChecker a {@link org.alfresco.repo.node.integrity.IntegrityChecker} object
+	 */
 	public void setIntegrityChecker(IntegrityChecker integrityChecker) {
 		this.integrityChecker = integrityChecker;
 	}

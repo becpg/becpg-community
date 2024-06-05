@@ -151,6 +151,7 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Set<NodeRef> updateProjectState(NodeRef projectNodeRef, String beforeState, String afterState) {
 		Set<NodeRef> toReformulates = new HashSet<>();
@@ -651,6 +652,7 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 		formulate(entityNodeRef);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean checkIsInSecurityGroup(NodeRef nodeRef, PermissionModel permissionModel) {
 		if (nodeRef != null) {
@@ -668,11 +670,13 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 		return false;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean accept(QName nodeType) {
 		return ProjectModel.TYPE_PROJECT.equals(nodeType);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public TaskListDataItem createNewTask(ProjectData project) {
 		NodeRef listContainer = entityListDAO.getListContainer(project.getNodeRef());

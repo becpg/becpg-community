@@ -61,6 +61,7 @@ public interface QualityModel {
 	QName TYPE_QUALITY_CONTROL = QName.createQName(QUALITY_URI, "qualityControl");
 	
 
+	/** Constant <code>TYPE_BATCH</code> */
 	QName TYPE_BATCH = QName.createQName(QUALITY_URI, "batch");
 
 	/** Constant <code>PROP_QC_SAMPLES_COUNTER</code> */
@@ -140,8 +141,10 @@ public interface QualityModel {
 	/** Constant <code>PROP_SDL_FREQUNIT</code> */
 	QName PROP_SDL_FREQUNIT = QName.createQName(QUALITY_URI, "sdlFreqUnit");
 
+	/** Constant <code>TYPE_BATCH_ALLOCATION_LIST</code> */
 	QName TYPE_BATCH_ALLOCATION_LIST = QName.createQName(QUALITY_URI, "batchAllocationList");
 	
+	/** Constant <code>TYPE_STOCK_LIST</code> */
 	QName TYPE_STOCK_LIST = QName.createQName(QUALITY_URI, "stockList");
 	/** sampling list **/
 	QName TYPE_SAMPLING_LIST = QName.createQName(QUALITY_URI, "samplingList");

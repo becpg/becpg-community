@@ -49,6 +49,7 @@ public interface NutrientRegulation {
 	 * @param nutrientTypeCode a {@link java.lang.String} object.
 	 * @param locale a {@link java.util.Locale} object.
 	 * @return a {@link java.lang.String} object.
+	 * @param measurementPrecision a {@link java.lang.String} object
 	 */
 	String displayValue(Double value, Double roundedValue, String nutrientTypeCode, String measurementPrecision, Locale locale);
 
@@ -63,5 +64,13 @@ public interface NutrientRegulation {
 	Double convertValue(Double value, String nutUnit, String regulUnit);
 	
 	
+	/**
+	 * <p>tolerances.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object
+	 * @param nutrientTypeCode a {@link java.lang.String} object
+	 * @param nutUnit a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.util.Pair} object
+	 */
 	Pair<Double, Double> tolerances(Double value, String nutrientTypeCode, String nutUnit);
 }

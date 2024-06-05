@@ -437,7 +437,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.5.0</version>
+				<version>3.7.0</version>
 				<configuration>
 				</configuration>
 			</plugin>
@@ -456,7 +456,7 @@
 					<release>17</release>
 				<!--	<compilerArgs>-Xlint:deprecation</compilerArgs>-->
 				</configuration>
-				
+
 			</plugin>
 
 			<plugin>

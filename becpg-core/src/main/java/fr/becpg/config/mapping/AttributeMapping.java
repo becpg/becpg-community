@@ -84,11 +84,13 @@ public class AttributeMapping extends AbstractAttributeMapping {
 		super(id, attribute);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "AttributeMapping [targetClass=" + targetClass + ", isMLText=" + isMLText + ", id=" + id + "]";
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -97,6 +99,7 @@ public class AttributeMapping extends AbstractAttributeMapping {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

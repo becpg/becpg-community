@@ -40,10 +40,20 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 
 	private TaskWrapper parent = null;
 
+	/**
+	 * <p>Getter for the field <code>parent</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.project.formulation.TaskWrapper} object
+	 */
 	public TaskWrapper getParent() {
 		return parent;
 	}
 
+	/**
+	 * <p>Setter for the field <code>parent</code>.</p>
+	 *
+	 * @param parent a {@link fr.becpg.repo.project.formulation.TaskWrapper} object
+	 */
 	public void setParent(TaskWrapper parent) {
 		this.parent = parent;
 	}
@@ -148,6 +158,11 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 		return (task != null) && (task.getSubProject() != null);
 	}
 
+	/**
+	 * <p>isCancelled.</p>
+	 *
+	 * @return a boolean
+	 */
 	public boolean isCancelled() {
 		return (task != null) && TaskState.Cancelled.equals(task.getTaskState());
 	}
@@ -471,6 +486,7 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 		return ret.toString();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "TaskWrapper [task=" + task + "]";
@@ -501,11 +517,13 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		return Objects.hash(task);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {

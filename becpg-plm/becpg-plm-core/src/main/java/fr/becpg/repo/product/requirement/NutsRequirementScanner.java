@@ -18,6 +18,7 @@ public class NutsRequirementScanner extends SimpleListRequirementScanner<NutList
 	/** Constant <code>MESSAGE_NUT_NOT_IN_RANGE="message.formulate.nut.notInRangeValue"</code> */
 	public static final String MESSAGE_NUT_NOT_IN_RANGE = "message.formulate.nut.notInRangeValue";
 	
+	/** Constant <code>MESSAGE_NUT_NOT_IN_RANGE_INFO="message.formulate.info.nut.notInRangeVa"{trunked}</code> */
 	public static final String MESSAGE_NUT_NOT_IN_RANGE_INFO = "message.formulate.info.nut.notInRangeValue";
 	
 
@@ -32,6 +33,7 @@ public class NutsRequirementScanner extends SimpleListRequirementScanner<NutList
 		return partProduct.getNutList()!=null ? partProduct.getNutList() : new ArrayList<>();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected String getSpecInfoMessageKey() {
 		return MESSAGE_NUT_NOT_IN_RANGE_INFO;

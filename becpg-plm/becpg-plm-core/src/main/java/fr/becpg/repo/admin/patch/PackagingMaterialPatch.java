@@ -17,6 +17,8 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
+ * <p>PackagingMaterialPatch class.</p>
+ *
  * @author matthieu
  * @version $Id: $Id
  */
@@ -77,6 +79,11 @@ public class PackagingMaterialPatch extends AbstractBeCPGPatch {
 		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>lockService</code>.</p>
+	 *
+	 * @param lockService a {@link org.alfresco.service.cmr.lock.LockService} object
+	 */
 	public void setLockService(LockService lockService) {
 		this.lockService = lockService;
 	}

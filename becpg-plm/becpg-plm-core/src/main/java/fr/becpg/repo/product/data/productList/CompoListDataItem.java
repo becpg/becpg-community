@@ -348,31 +348,66 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem
 		super();
 	}
 
+	/**
+	 * <p>build.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object
+	 */
 	public static CompoListDataItem build() {
 		return new CompoListDataItem();
 	}
 
+	/**
+	 * <p>withUnit.</p>
+	 *
+	 * @param unit a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object
+	 */
 	public CompoListDataItem withUnit(ProductUnit unit) {
 		this.compoListUnit = unit;
 		return this;
 	}
 
+	/**
+	 * <p>withQtyUsed.</p>
+	 *
+	 * @param qtySubFormula a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object
+	 */
 	public CompoListDataItem withQtyUsed(Double qtySubFormula) {
 		this.qtySubFormula = qtySubFormula;
 		return this;
 	}
 	
+	/**
+	 * <p>withQty.</p>
+	 *
+	 * @param qty a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object
+	 */
 	public CompoListDataItem withQty(Double qty) {
 		this.qty = qty;
 		return this;
 	}
 
 
+	/**
+	 * <p>withProduct.</p>
+	 *
+	 * @param product a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object
+	 */
 	public CompoListDataItem withProduct(NodeRef product) {
 		this.product = product;
 		return this;
 	}
 
+	/**
+	 * <p>withDeclarationType.</p>
+	 *
+	 * @param declType a {@link fr.becpg.repo.product.data.constraints.DeclarationType} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object
+	 */
 	public CompoListDataItem withDeclarationType(DeclarationType declType) {
 		this.declType = declType;
 		return this;
@@ -490,6 +525,7 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem
 				&& Objects.equals(volume, other.volume) && Objects.equals(yieldPerc, other.yieldPerc);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "CompoListDataItem [depthLevel=" + depthLevel + ", qty=" + qty + ", qtySubFormula=" + qtySubFormula + ", compoListUnit="

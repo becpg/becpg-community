@@ -47,6 +47,7 @@ public interface SecurityService {
 	 * @return Access Mode status
 	 * @param nodeType a {@link org.alfresco.service.namespace.QName} object.
 	 * @param name a {@link java.lang.String} object.
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
 	int computeAccessMode(NodeRef nodeRef, QName nodeType, String name);
 	
@@ -56,6 +57,7 @@ public interface SecurityService {
 	 * @return Access Mode status
 	 * @param nodeType a {@link org.alfresco.service.namespace.QName} object.
 	 * @param name a {@link org.alfresco.service.namespace.QName} object.
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
 	int computeAccessMode(NodeRef nodeRef, QName nodeType, QName name);
 	
@@ -90,6 +92,9 @@ public interface SecurityService {
 	 * Get the permission context for a given node and a given property
 	 *
 	 * @return a {@link java.util.List} object.
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param nodeType a {@link org.alfresco.service.namespace.QName} object
+	 * @param propName a {@link java.lang.String} object
 	 */
 	PermissionContext getPermissionContext(NodeRef nodeRef, QName nodeType, String propName);
 }

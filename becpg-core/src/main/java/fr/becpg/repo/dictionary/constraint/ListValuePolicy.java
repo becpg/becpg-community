@@ -44,6 +44,11 @@ public class ListValuePolicy extends AbstractBeCPGPolicy implements NodeServiceP
 		this.beCPGCacheService = beCPGCacheService;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object
+	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
@@ -88,11 +93,13 @@ public class ListValuePolicy extends AbstractBeCPGPolicy implements NodeServiceP
 		queueNode(itemNodeRef);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onCreateAssociation(AssociationRef nodeAssocRef) {
 		queueNode(nodeAssocRef.getSourceRef());
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void onDeleteAssociation(AssociationRef nodeAssocRef) {
 		queueNode(nodeAssocRef.getSourceRef());

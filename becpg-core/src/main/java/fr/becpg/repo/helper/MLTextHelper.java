@@ -39,10 +39,18 @@ public class MLTextHelper {
 	
 	private String instanceSupportedLocales = null;
 	
+	/**
+	 * <p>setSupportedLocalesInstance.</p>
+	 *
+	 * @param supportedLocales a {@link java.lang.String} object
+	 */
 	public void setSupportedLocalesInstance(String supportedLocales) {
 		instanceSupportedLocales = supportedLocales;
 	}
 	
+	/**
+	 * <p>Constructor for MLTextHelper.</p>
+	 */
 	public MLTextHelper() {
 		instance = this;
 	}
@@ -64,6 +72,11 @@ public class MLTextHelper {
 		return instance.getSupportedLocalesInstance();
 	}
 	
+	/**
+	 * <p>getSupportedLocalesInstance.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	public List<Locale> getSupportedLocalesInstance() {
 		
 		List<Locale> ret = new LinkedList<>();
@@ -211,6 +224,12 @@ public class MLTextHelper {
 		return instance.isSupportedLocaleInstance(contentLocale);
 	}
 	
+	/**
+	 * <p>isSupportedLocaleInstance.</p>
+	 *
+	 * @param contentLocale a {@link java.util.Locale} object
+	 * @return a boolean
+	 */
 	public boolean isSupportedLocaleInstance(Locale contentLocale) {
 		return (contentLocale != null) && getSupportedLocalesInstance().contains(contentLocale);
 	}
@@ -351,6 +370,13 @@ public class MLTextHelper {
 		return instance.getI18NMessageInstance(messageKey, variables);
 	}
 	
+	/**
+	 * <p>getI18NMessageInstance.</p>
+	 *
+	 * @param messageKey a {@link java.lang.String} object
+	 * @param variables a {@link java.lang.Object} object
+	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object
+	 */
 	public MLText getI18NMessageInstance(String messageKey, Object... variables) {
 		return internalI18NMessageInstance(messageKey, variables);
 	}
@@ -430,7 +456,9 @@ public class MLTextHelper {
 	}
 
 	/**
-	 * @param contentLocale
+	 * <p>getSupportedLocale.</p>
+	 *
+	 * @param contentLocale a {@link java.util.Locale} object
 	 * @return if contentLocale is supported or language only locale
 	 */
 	public static Locale getSupportedLocale(Locale contentLocale) {
@@ -444,6 +472,13 @@ public class MLTextHelper {
 		return null;
 	}
 	
+	/**
+	 * <p>getUserLocale.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @param personNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.util.Locale} object
+	 */
 	public static Locale getUserLocale(NodeService nodeService, NodeRef personNodeRef) {
 		String loc = (String) nodeService.getProperty(personNodeRef, BeCPGModel.PROP_USER_LOCALE);
 		if ((loc == null) || loc.isEmpty()) {
@@ -469,6 +504,7 @@ public class MLTextHelper {
 	 *
 	 * @param personNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @return a {@link java.util.Locale} object.
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
 	 */
 	public static Locale getUserContentLocale(NodeService nodeService, NodeRef personNodeRef) {
 		String loc = (String) nodeService.getProperty(personNodeRef, BeCPGModel.PROP_USER_CONTENT_LOCAL);

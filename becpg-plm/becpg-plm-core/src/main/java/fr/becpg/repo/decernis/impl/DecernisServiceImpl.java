@@ -113,6 +113,14 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 		moduleIdMap.put(FORMULATION_CHECK, 100);
 	}
 
+	/**
+	 * <p>Constructor for DecernisServiceImpl.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @param decernisPlugins an array of {@link fr.becpg.repo.decernis.DecernisAnalysisPlugin} objects
+	 * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 */
 	public DecernisServiceImpl(@Qualifier("nodeService") NodeService nodeService,
 			DecernisAnalysisPlugin[] decernisPlugins, SystemConfigurationService systemConfigurationService, AlfrescoRepository<ProductData> alfrescoRepository) {
 		super();
@@ -138,16 +146,19 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.decernis.ingredient.analysis.enabled"));
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getChainId() {
 		return DECERNIS_CHAIN_ID;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isChainActiveOnEntity(NodeRef entityNodeRef) {
 		return isEnabled();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isEnabled() {
 		return serverUrl() != null && !serverUrl().isBlank() && token() != null && !token().isBlank();
@@ -201,6 +212,11 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 		}
 	}
 
+	/**
+	 * <p>processRegulatoryList.</p>
+	 *
+	 * @param context a {@link fr.becpg.repo.decernis.model.RegulatoryContext} object
+	 */
 	public void processRegulatoryList(RegulatoryContext context) {
 		Map<NodeRef, Map<NodeRef, List<IngRegulatoryListDataItem>>> groupedByIngAndCountry = context.getIngRegulatoryList().stream().collect(
 				Collectors.groupingBy(IngRegulatoryListDataItem::getIng, Collectors.groupingBy(item -> item.getRegulatoryCountries().get(0))));

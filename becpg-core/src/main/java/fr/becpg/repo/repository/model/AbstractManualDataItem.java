@@ -88,6 +88,7 @@ public abstract class AbstractManualDataItem extends BeCPGDataObject implements 
 		this.sort = sort;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -96,6 +97,7 @@ public abstract class AbstractManualDataItem extends BeCPGDataObject implements 
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

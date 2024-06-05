@@ -33,8 +33,10 @@ public abstract class VariantAwareDataItem extends AbstractManualDataItem {
 
 	private static final long serialVersionUID = -2757971744559304500L;
 
+	/** Constant <code>VARIANT_COLUMN_NAME="bcpg_variantColumn"</code> */
 	public static final String VARIANT_COLUMN_NAME = "bcpg_variantColumn";
 
+	/** Constant <code>VARIANT_COLUMN_SIZE=5</code> */
 	public static final int VARIANT_COLUMN_SIZE= 5;
 	
 
@@ -55,6 +57,12 @@ public abstract class VariantAwareDataItem extends AbstractManualDataItem {
 	}
 
 
+	/**
+	 * <p>getValue.</p>
+	 *
+	 * @param variant a {@link fr.becpg.repo.variant.model.VariantData} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	public Double getValue(VariantData variant) {
 		String variantColumn = variant.getVariantColumn();
 		if (variantColumn != null && !variantColumn.isEmpty()) {
@@ -63,6 +71,12 @@ public abstract class VariantAwareDataItem extends AbstractManualDataItem {
 		return null;
 	}
 	
+	/**
+	 * <p>getValue.</p>
+	 *
+	 * @param variantColumn a {@link java.lang.String} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	public Double getValue(String variantColumn) {
 		if (variantColumn != null && !variantColumn.isEmpty() && variantColumn.startsWith(VARIANT_COLUMN_NAME)) {
 			QName variantColumnName= QName.createQName(BeCPGModel.BECPG_URI, variantColumn.replace("bcpg_", ""));
@@ -72,6 +86,12 @@ public abstract class VariantAwareDataItem extends AbstractManualDataItem {
 	}
 
 
+	/**
+	 * <p>setValue.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object
+	 * @param variant a {@link fr.becpg.repo.variant.model.VariantData} object
+	 */
 	public void setValue(Double value, VariantData variant) {
 		String variantColumn = variant.getVariantColumn();
 		if (variantColumn != null && !variantColumn.isEmpty()) {
@@ -79,6 +99,12 @@ public abstract class VariantAwareDataItem extends AbstractManualDataItem {
 		}
 	}
 
+	/**
+	 * <p>setValue.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object
+	 * @param variantColumn a {@link java.lang.String} object
+	 */
 	public void setValue(Double value, String variantColumn) {
 		QName variantColumnName= QName.createQName(BeCPGModel.BECPG_URI, variantColumn.replace("bcpg_", ""));
 		this.getExtraProperties().put(variantColumnName, value);

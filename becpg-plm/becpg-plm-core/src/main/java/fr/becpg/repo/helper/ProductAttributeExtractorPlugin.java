@@ -78,6 +78,7 @@ public class ProductAttributeExtractorPlugin extends AbstractExprNameExtractor {
 		return extractExpr(nodeRef, productNameFormat());
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String extractPropName(JSONObject jsonEntity) {
 		return expressionService.extractExpr(jsonEntity, productNameFormat());
@@ -104,6 +105,7 @@ public class ProductAttributeExtractorPlugin extends AbstractExprNameExtractor {
 		return ret;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean matchCriteria(NodeRef nodeRef, Map<String, String> criteriaMap) {
 		return matchWUsedCriteria(nodeRef, criteriaMap, PLMModel.ASSOC_COMPOLIST_PRODUCT)

@@ -196,6 +196,12 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 		return qty;
 	}
 
+	/**
+	 * <p>Getter for the field <code>qty</code>.</p>
+	 *
+	 * @param withYield a boolean
+	 * @return a {@link java.lang.Double} object
+	 */
 	public Double getQty(boolean withYield) {
 		return withYield ? qtyWithYield : qty;
 	}
@@ -209,10 +215,20 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 		this.qty = qty;
 	}
 
+	/**
+	 * <p>Getter for the field <code>qtyWithYield</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	public Double getQtyWithYield() {
 		return qtyWithYield;
 	}
 
+	/**
+	 * <p>Setter for the field <code>qtyWithYield</code>.</p>
+	 *
+	 * @param qtyWithYield a {@link java.lang.Double} object
+	 */
 	public void setQtyWithYield(Double qtyWithYield) {
 		this.qtyWithYield = qtyWithYield;
 	}
@@ -226,6 +242,12 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 		return volume;
 	}
 
+	/**
+	 * <p>Getter for the field <code>volume</code>.</p>
+	 *
+	 * @param withYield a boolean
+	 * @return a {@link java.lang.Double} object
+	 */
 	public Double getVolume(boolean withYield) {
 		return withYield ? qtyWithYield : volume;
 	}
@@ -239,14 +261,29 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 		this.volume = volume;
 	}
 
+	/**
+	 * <p>Getter for the field <code>volumeWithYield</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	public Double getVolumeWithYield() {
 		return volumeWithYield;
 	}
 
+	/**
+	 * <p>Setter for the field <code>volumeWithYield</code>.</p>
+	 *
+	 * @param volumeWithYield a {@link java.lang.Double} object
+	 */
 	public void setVolumeWithYield(Double volumeWithYield) {
 		this.volumeWithYield = volumeWithYield;
 	}
 
+	/**
+	 * <p>setQties.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object
+	 */
 	public void setQties(Double value) {
 		this.qty = value;
 		this.qtyWithYield = value;
@@ -272,10 +309,20 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 		this.allergens = allergens;
 	}
 
+	/**
+	 * <p>Getter for the field <code>footNotes</code>.</p>
+	 *
+	 * @return a {@link java.util.Set} object
+	 */
 	public Set<FootNoteRule> getFootNotes() {
 		return footNotes;
 	}
 
+	/**
+	 * <p>Setter for the field <code>footNotes</code>.</p>
+	 *
+	 * @param footNotes a {@link java.util.Set} object
+	 */
 	public void setFootNotes(Set<FootNoteRule> footNotes) {
 		this.footNotes = footNotes;
 	}
@@ -298,16 +345,32 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 		this.bioOrigins = bioOrigins;
 	}
 
+	/**
+	 * <p>Getter for the field <code>geoOriginsByPlaceOfActivity</code>.</p>
+	 *
+	 * @return a {@link java.util.Map} object
+	 */
 	public Map<PlaceOfActivityTypeCode, Set<NodeRef>> getGeoOriginsByPlaceOfActivity() {
 		return geoOriginsByPlaceOfActivity;
 	}
 
+	/**
+	 * <p>Setter for the field <code>geoOriginsByPlaceOfActivity</code>.</p>
+	 *
+	 * @param geoOriginsByPlaceOfActivity a {@link java.util.Map} object
+	 */
 	public void setGeoOriginsByPlaceOfActivity(Map<PlaceOfActivityTypeCode, Set<NodeRef>> geoOriginsByPlaceOfActivity) {
 		this.geoOriginsByPlaceOfActivity = geoOriginsByPlaceOfActivity;
 	}
 
+	/**
+	 * <p>createCopy.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object
+	 */
 	public abstract LabelingComponent createCopy();
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -317,6 +380,7 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -334,6 +398,7 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 				&& Objects.equals(volumeWithYield, other.volumeWithYield);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "LabelingComponent [qty=" + qty + ", qtyWithYield=" + qtyWithYield + ", volume=" + volume + ", volumeWithYield=" + volumeWithYield

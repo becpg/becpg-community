@@ -104,6 +104,11 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 		this.googleApiKey = googleApiKey;
 	}
 
+	/**
+	 * <p>Setter for the field <code>deepLAPIKey</code>.</p>
+	 *
+	 * @param deepLAPIKey a {@link java.lang.String} object
+	 */
 	public void setDeepLAPIKey(String deepLAPIKey) {
 		this.deepLAPIKey = deepLAPIKey;
 	}

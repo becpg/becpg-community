@@ -128,6 +128,11 @@ public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem>
 	 */
 	protected abstract String getSpecErrorMessageKey();
 
+	/**
+	 * <p>getSpecInfoMessageKey.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	protected abstract String getSpecInfoMessageKey();
 
 	/** {@inheritDoc} */

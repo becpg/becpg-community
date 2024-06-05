@@ -27,6 +27,11 @@ public abstract class AbstractRequirementScanner<T> implements RequirementScanne
 	
 	protected Boolean addInfoReqCtrl;
 	
+	/**
+	 * <p>Setter for the field <code>addInfoReqCtrl</code>.</p>
+	 *
+	 * @param addInfoReqCtrl a {@link java.lang.Boolean} object
+	 */
 	public void setAddInfoReqCtrl(Boolean addInfoReqCtrl) {
 		this.addInfoReqCtrl = addInfoReqCtrl;
 	}
@@ -81,6 +86,13 @@ public abstract class AbstractRequirementScanner<T> implements RequirementScanne
 		return ret;
 	}
 	
+	/**
+	 * <p>extractRegulatoryId.</p>
+	 *
+	 * @param regulatoryEntityItem a {@link fr.becpg.repo.product.data.RegulatoryEntityItem} object
+	 * @param specification a {@link fr.becpg.repo.product.data.ProductSpecificationData} object
+	 * @return a {@link java.lang.String} object
+	 */
 	protected String extractRegulatoryId(RegulatoryEntityItem regulatoryEntityItem, ProductSpecificationData specification) {
 		if (regulatoryEntityItem.getRegulatoryCountriesRef() != null && !regulatoryEntityItem.getRegulatoryCountriesRef().isEmpty()) {
 			String countryCode = (String) mlNodeService.getProperty(regulatoryEntityItem.getRegulatoryCountriesRef().get(0), PLMModel.PROP_REGULATORY_CODE);
