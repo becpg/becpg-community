@@ -9,6 +9,7 @@ package fr.becpg.repo.importer.annotation;
  */
 public class Key extends Attribute {
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "Key [id=" + id + ", attribute=" + attribute + ", targetClass=" + targetClass + ", targetKey=" + targetKey + ", type=" + type

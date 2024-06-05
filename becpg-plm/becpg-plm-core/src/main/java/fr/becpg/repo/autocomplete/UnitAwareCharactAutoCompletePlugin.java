@@ -16,9 +16,9 @@ import fr.becpg.repo.autocomplete.impl.plugins.TargetAssocAutoCompletePlugin;
  *
  * @author matthieu
  * @version $Id: $Id
- * 
+ *
  * Autocomplete plugin that provide a custom extractor for nut and physico appending unit to charact name
- * 
+ *
  * Example:
  * <pre>
  * {@code
@@ -27,13 +27,11 @@ import fr.becpg.repo.autocomplete.impl.plugins.TargetAssocAutoCompletePlugin;
  *		</control>
  * }
  * </pre>
- *   
+ *
  *  Datasources available:
- * 
+ *
  *  becpg/autocomplete/nut
  *  becpg/autocomplete/physicoChem
- * 
- * 
  */
 @Service("unitAwareCharactAutoCompletePlugin")
 public class UnitAwareCharactAutoCompletePlugin extends TargetAssocAutoCompletePlugin {

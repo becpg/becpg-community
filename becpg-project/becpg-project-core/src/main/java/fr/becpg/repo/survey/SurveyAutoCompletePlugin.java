@@ -21,30 +21,31 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  *
  * @author "Matthieu Laborie"
  * @version $Id: $Id
- * 
+ *
  * Autocomplete plugin that allows to get survey questions
- * 
+ *
  * Example:
  * 	<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
  *		<control-param name="ds">becpg/autocomplete/survey</control-param>
  *		<control-param name="parentAssoc">survey_slQuestion</control-param>
- *	</control>		
- *   
+ *	</control>
+ *
  *  Datasources available:
- * 
- * Return all survey questions by code or questionLabel, if parentAssoc is provided filter by parent question 
- * 
+ *
+ * Return all survey questions by code or questionLabel, if parentAssoc is provided filter by parent question
+ *
  *  becpg/autocomplete/survey
- * 
  */
 @Service("surveyAutoCompletePlugin")
 public class SurveyAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 
+	/** {@inheritDoc} */
 	@Override
 	public String[] getHandleSourceTypes() {
 		return new String[] { "survey" };
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public AutoCompletePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
 

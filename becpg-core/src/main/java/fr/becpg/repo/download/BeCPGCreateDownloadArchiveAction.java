@@ -69,12 +69,13 @@ import fr.becpg.repo.entity.EntityService;
 
 /**
  * {@link ActionExecuter} for creating an archive (ie. zip) file containing
- * content from the repository. 
- * 
+ * content from the repository.
+ *
  * The maximum total size of the content which can be downloaded is controlled
  * by the maximumContentSie property. -1 indicates no limit.
  *
  * @author Alex Miller
+ * @version $Id: $Id
  */
 public class BeCPGCreateDownloadArchiveAction extends ActionExecuterAbstractBase
 {
@@ -134,29 +135,59 @@ public class BeCPGCreateDownloadArchiveAction extends ActionExecuterAbstractBase
     }
     
     // Dependency setters
+    /**
+     * <p>setCheckOutCheckInSerivce.</p>
+     *
+     * @param checkOutCheckInService a {@link org.alfresco.service.cmr.coci.CheckOutCheckInService} object
+     */
     public void setCheckOutCheckInSerivce(CheckOutCheckInService checkOutCheckInService)
     {
         this.checkOutCheckInService = checkOutCheckInService;
     }
     
+    /**
+     * <p>Setter for the field <code>permissionService</code>.</p>
+     *
+     * @param permissionService a {@link org.alfresco.service.cmr.security.PermissionService} object
+     */
     public void setPermissionService(PermissionService permissionService) {
 		this.permissionService = permissionService;
 	}
     
+    /**
+     * <p>Setter for the field <code>entityService</code>.</p>
+     *
+     * @param entityService a {@link fr.becpg.repo.entity.EntityService} object
+     */
     public void setEntityService(EntityService entityService) {
 		this.entityService = entityService;
 	}
     
+    /**
+     * <p>Setter for the field <code>contentServiceHelper</code>.</p>
+     *
+     * @param contentServiceHelper a {@link org.alfresco.repo.download.ContentServiceHelper} object
+     */
     public void setContentServiceHelper(ContentServiceHelper contentServiceHelper)
     {
         this.contentServiceHelper = contentServiceHelper;
     }
     
+    /**
+     * <p>Setter for the field <code>downloadStorage</code>.</p>
+     *
+     * @param downloadStorage a {@link org.alfresco.repo.download.DownloadStorage} object
+     */
     public void setDownloadStorage(DownloadStorage downloadStorage)
     {
         this.downloadStorage = downloadStorage;
     }
     
+    /**
+     * <p>Setter for the field <code>exporterService</code>.</p>
+     *
+     * @param exporterService a {@link org.alfresco.service.cmr.view.ExporterService} object
+     */
     public void setExporterService(ExporterService exporterService)
     {
         this.exporterService = exporterService;
@@ -164,23 +195,40 @@ public class BeCPGCreateDownloadArchiveAction extends ActionExecuterAbstractBase
     
     /**
      * Set the maximum total size of content that can be added to a single
-     * download. -1 indicates no limit. 
+     * download. -1 indicates no limit.
+     *
+     * @param maximumContentSize a long
      */
     public void setMaximumContentSize(long maximumContentSize)
     {
         this.maximumContentSize = maximumContentSize;
     }
     
+    /**
+     * <p>Setter for the field <code>nodeService</code>.</p>
+     *
+     * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+     */
     public void setNodeService(NodeService nodeService)
     {
         this.nodeService = nodeService;
     }
     
+    /**
+     * <p>Setter for the field <code>transactionHelper</code>.</p>
+     *
+     * @param transactionHelper a {@link org.alfresco.repo.transaction.RetryingTransactionHelper} object
+     */
     public void setTransactionHelper(RetryingTransactionHelper transactionHelper)
     {
         this.transactionHelper = transactionHelper;
     }
     
+    /**
+     * <p>Setter for the field <code>updateService</code>.</p>
+     *
+     * @param updateService a {@link org.alfresco.repo.download.DownloadStatusUpdateService} object
+     */
     public void setUpdateService(DownloadStatusUpdateService updateService)
     {
         this.updateService = updateService;
@@ -188,20 +236,19 @@ public class BeCPGCreateDownloadArchiveAction extends ActionExecuterAbstractBase
     
     
 
+    /** {@inheritDoc} */
     public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
 	}
 
 
-	/**
+    /**
+     * {@inheritDoc}
+     *
      * Create an archive file containing content from the repository.
-     * 
+     *
      * Uses the {@link ExporterService} with custom exporters to create the
      * archive files.
-     * 
-     * @param actionedUponNodeRef Download node containing information required
-     *   to create the archive file, and which will eventually have its content
-     *   updated with the archive file. 
      */
     @Override
     protected void executeImpl(Action action, final NodeRef actionedUponNodeRef)
@@ -246,6 +293,7 @@ public class BeCPGCreateDownloadArchiveAction extends ActionExecuterAbstractBase
 
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void addParameterDefinitions(List<ParameterDefinition> paramList)
     {

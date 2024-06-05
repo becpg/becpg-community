@@ -69,11 +69,13 @@ public abstract class AbstractAttributeMapping{
 		this.attribute = attribute;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		return Objects.hash(attribute, id);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

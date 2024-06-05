@@ -70,10 +70,13 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	
 
 
+	/** Constant <code>JSON_PARAM="jsonParam"</code> */
 	protected static final String JSON_PARAM = "jsonParam";
 	
+	/** Constant <code>PARAM_TYPE="type"</code> */
 	protected static final String PARAM_TYPE = "type";
 	
+	/** Constant <code>PARAM_PARAMS="params"</code> */
 	protected static final String PARAM_PARAMS = "params";
 	/** Constant <code>PARAM_QUERY="query"</code> */
 	protected static final String PARAM_QUERY = "query";
@@ -103,8 +106,10 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	/** Constant <code>PARAM_CALLBACK_PASSWORD="callbackPassword"</code> */
 	protected static final String PARAM_CALLBACK_PASSWORD = "callbackPassword";
 
+	/** Constant <code>PARAM_MAX_RESULTS="maxResults"</code> */
 	protected static final String PARAM_MAX_RESULTS = "maxResults";
 	
+	/** Constant <code>PARAM_PAGE="page"</code> */
 	protected static final String PARAM_PAGE = "page";
 
 	/** Services **/
@@ -122,6 +127,11 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	protected RemoteRateLimiter remoteRateLimiter;
 	
 	
+	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object
+	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
@@ -162,6 +172,11 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		this.permissionService = permissionService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>remoteRateLimiter</code>.</p>
+	 *
+	 * @param remoteRateLimiter a {@link fr.becpg.repo.entity.remote.RemoteRateLimiter} object
+	 */
 	public void setRemoteRateLimiter(RemoteRateLimiter remoteRateLimiter) {
 		this.remoteRateLimiter = remoteRateLimiter;
 	}
@@ -176,14 +191,21 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		 executeInternal(req,resp);
 	}
 	
+	/**
+	 * <p>executeInternal.</p>
+	 *
+	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object
+	 * @param resp a {@link org.springframework.extensions.webscripts.WebScriptResponse} object
+	 * @throws java.io.IOException if any.
+	 */
 	protected abstract void executeInternal(WebScriptRequest req, WebScriptResponse resp) throws IOException;
 
 	/**
-	 * @param limit 
 	 * <p>findEntities.</p>
 	 *
 	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object.
 	 * @return a {@link java.util.List} object.
+	 * @param limit a {@link java.lang.Boolean} object
 	 */
 	protected PagingResults<NodeRef> findEntities(WebScriptRequest req, Boolean limit) {
 
@@ -247,6 +269,13 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 
 	}
 
+	/**
+	 * <p>intParam.</p>
+	 *
+	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object
+	 * @param paramName a {@link java.lang.String} object
+	 * @return a {@link java.lang.Integer} object
+	 */
 	protected Integer intParam(WebScriptRequest req,  String paramName) {
 		String paramString = req.getParameter(paramName);
 
@@ -460,6 +489,12 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	}
 	
 	
+	/**
+	 * <p>decodeParam.</p>
+	 *
+	 * @param param a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	protected static  String decodeParam(String param)   {
 		if ((param != null) && param.startsWith(BASE_64_PREFIX) ) {
 		     try {
@@ -483,6 +518,12 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		return param;
 	}
 	
+	/**
+	 * <p>extractParams.</p>
+	 *
+	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object
+	 * @return a {@link org.json.JSONObject} object
+	 */
 	protected JSONObject extractParams(WebScriptRequest req) {
 
 		JSONObject jsonParams = null;
@@ -511,6 +552,12 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		return jsonParams;
 	}
 
+	/**
+	 * <p>extractJsonParamName.</p>
+	 *
+	 * @param parameterName a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	protected String extractJsonParamName(String parameterName) {
 		if (parameterName.startsWith(JSON_PARAM)) {
 			String[] split = parameterName.split(JSON_PARAM);

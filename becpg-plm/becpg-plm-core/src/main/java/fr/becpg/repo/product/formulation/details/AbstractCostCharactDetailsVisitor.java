@@ -374,10 +374,26 @@ public abstract class AbstractCostCharactDetailsVisitor<T extends AbstractCostLi
 		}
 	}
 
+	/**
+	 * <p>getDataListVisited.</p>
+	 *
+	 * @param product a {@link fr.becpg.repo.repository.model.BeCPGDataObject} object
+	 * @return a {@link java.util.List} object
+	 */
 	protected abstract List<T> getDataListVisited(BeCPGDataObject product);
 
+	/**
+	 * <p>getCostFixedPropName.</p>
+	 *
+	 * @return a {@link org.alfresco.service.namespace.QName} object
+	 */
 	protected abstract QName getCostFixedPropName();
 	
+	/**
+	 * <p>getCostUnitPropName.</p>
+	 *
+	 * @return a {@link org.alfresco.service.namespace.QName} object
+	 */
 	protected abstract QName getCostUnitPropName();
 
 }

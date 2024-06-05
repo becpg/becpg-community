@@ -42,10 +42,16 @@ public class ListEntitiesByChannelWebScript extends ListEntitiesWebScript {
 
 	PublicationChannelService publicationChannelService;
 
+	/**
+	 * <p>Setter for the field <code>publicationChannelService</code>.</p>
+	 *
+	 * @param publicationChannelService a {@link fr.becpg.repo.publication.PublicationChannelService} object
+	 */
 	public void setPublicationChannelService(PublicationChannelService publicationChannelService) {
 		this.publicationChannelService = publicationChannelService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected PagingResults<NodeRef> findEntities(WebScriptRequest req, Boolean limit) {
 

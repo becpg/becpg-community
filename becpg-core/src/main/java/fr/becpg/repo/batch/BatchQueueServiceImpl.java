@@ -45,6 +45,12 @@ import fr.becpg.repo.audit.plugin.impl.BatchAuditPlugin;
 import fr.becpg.repo.audit.service.BeCPGAuditService;
 import fr.becpg.repo.mail.BeCPGMailService;
 
+/**
+ * <p>BatchQueueServiceImpl class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service("batchQueueService")
 public class BatchQueueServiceImpl implements BatchQueueService, ApplicationListener<BatchMonitorEvent> {
 
@@ -82,6 +88,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 	private static final String STEPS_MAX = "stepsMax";
 	private static final String STEP_COUNT = "stepCount";
 
+	/** {@inheritDoc} */
 	@Override
 	public <T> Boolean queueBatch(@NonNull BatchInfo batchInfo, @NonNull BatchProcessWorkProvider<T> workProvider,
 			@NonNull BatchProcessWorker<T> processWorker, @Nullable BatchErrorCallback errorCallback) {
@@ -106,11 +113,13 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 		
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public <T> Boolean queueBatch(@NonNull BatchInfo batchInfo, @NonNull List<BatchStep<T>> batchSteps) {
 		return queueBatch(batchInfo, batchSteps, null);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public <T> Boolean queueBatch(@NonNull BatchInfo batchInfo, @NonNull List<BatchStep<T>> batchSteps, BatchClosingHook closingHook) {
 		
@@ -139,6 +148,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 		return false;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getRunningBatchInfo() {
 		if (runningCommand.get() != null) {
@@ -191,11 +201,13 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 		return json;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public BatchMonitor getLastRunningBatch() {
 		return lastRunningBatch;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public List<String> getBatchesInQueue() {
 
@@ -223,6 +235,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean removeBatchFromQueue(String batchId) {
 		
@@ -251,6 +264,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 		return null;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public boolean cancelBatch(String batchId) {
 		
@@ -556,6 +570,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onApplicationEvent(BatchMonitorEvent event) {
 		if (event.getBatchMonitor().getProcessName() != null && event.getBatchMonitor().getProcessName().contains("batchId")) {

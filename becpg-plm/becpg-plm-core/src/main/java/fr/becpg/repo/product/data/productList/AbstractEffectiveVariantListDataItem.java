@@ -44,10 +44,18 @@ public abstract class AbstractEffectiveVariantListDataItem extends AbstractEffec
 	
 	
 
+	/**
+	 * <p>Constructor for AbstractEffectiveVariantListDataItem.</p>
+	 */
 	public AbstractEffectiveVariantListDataItem() {
 		super();
 	}
 	
+	/**
+	 * <p>Constructor for AbstractEffectiveVariantListDataItem.</p>
+	 *
+	 * @param c a {@link fr.becpg.repo.product.data.productList.AbstractEffectiveVariantListDataItem} object
+	 */
 	public AbstractEffectiveVariantListDataItem(AbstractEffectiveVariantListDataItem c) {
 		super(c);
 		this.variants = c.variants;

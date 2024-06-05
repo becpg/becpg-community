@@ -130,11 +130,13 @@ public class OrganoListDataItem extends BeCPGDataObject implements ControlableLi
 		this.organo = o.organo;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public OrganoListDataItem copy() {
 		return new OrganoListDataItem(this);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -143,6 +145,7 @@ public class OrganoListDataItem extends BeCPGDataObject implements ControlableLi
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -155,6 +158,7 @@ public class OrganoListDataItem extends BeCPGDataObject implements ControlableLi
 		return Objects.equals(organo, other.organo) && Objects.equals(textCriteria, other.textCriteria);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "OrganoListDataItem [textCriteria=" + textCriteria + ", organo=" + organo + ", nodeRef=" + nodeRef + ", parentNodeRef=" + parentNodeRef

@@ -82,10 +82,25 @@ public class SimulationCostHelper implements InitializingBean {
 		return priceListItemByCriteria(productData, new NodeRef(cost), null, geoOrigins);
 	}
 
+	/**
+	 * <p>priceListItemByCriteria.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param cost a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.PriceListDataItem} object
+	 */
 	public static PriceListDataItem priceListItemByCriteria(ProductData productData, String cost) {
 		return priceListItemByCriteria(productData, new NodeRef(cost), null, null);
 	}
 
+	/**
+	 * <p>priceListItemByCriteria.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param cost a {@link java.lang.String} object
+	 * @param effectiveDate a {@link java.util.Date} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.PriceListDataItem} object
+	 */
 	public static PriceListDataItem priceListItemByCriteria(ProductData productData, String cost, Date effectiveDate) {
 		return priceListItemByCriteria(productData, new NodeRef(cost), null, null, effectiveDate);
 	}
@@ -121,6 +136,15 @@ public class SimulationCostHelper implements InitializingBean {
 		return priceListItemByCriteria(productData, new NodeRef(cost), qtyInKg, geoOrigins);
 	}
 
+	/**
+	 * <p>priceListItemByCriteria.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param cost a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param qtyInKg a {@link java.lang.Double} object
+	 * @param geoOrigins a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.PriceListDataItem} object
+	 */
 	public static PriceListDataItem priceListItemByCriteria(ProductData productData, NodeRef cost, Double qtyInKg, List<NodeRef> geoOrigins) {
 		return priceListItemByCriteria(productData, cost, qtyInKg, geoOrigins, new Date());
 	}
@@ -133,6 +157,7 @@ public class SimulationCostHelper implements InitializingBean {
 	 * @param qtyInKg a {@link java.lang.Double} object.
 	 * @param geoOrigins a {@link java.util.List} object.
 	 * @return a {@link fr.becpg.repo.product.data.productList.PriceListDataItem} object.
+	 * @param effectiveDate a {@link java.util.Date} object
 	 */
 	public static PriceListDataItem priceListItemByCriteria(ProductData productData, NodeRef cost, Double qtyInKg, List<NodeRef> geoOrigins,
 			Date effectiveDate) {

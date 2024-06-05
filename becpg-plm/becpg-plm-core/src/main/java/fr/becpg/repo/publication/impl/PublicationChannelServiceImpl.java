@@ -30,11 +30,11 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.search.data.SearchRuleFilter;
 
 /**
+ * <p>PublicationChannelServiceImpl class.</p>
  *
  * @author matthieu
- *
+ * @version $Id: $Id
  */
-
 public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implements PublicationChannelService, EntityCatalogObserver,
 		NodeServicePolicies.BeforeDeleteNodePolicy, NodeServicePolicies.OnUpdateNodePolicy, NodeServicePolicies.OnCreateNodePolicy {
 
@@ -44,6 +44,7 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 
 	private NamespaceService namespaceService;
 
+	/** {@inheritDoc} */
 	@Override
 	public void doInit() {
 
@@ -69,18 +70,34 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 				new JavaBehaviour(this, "onUpdateNode"));
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityListDAO</code>.</p>
+	 *
+	 * @param entityListDAO a {@link fr.becpg.repo.entity.EntityListDAO} object
+	 */
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
 	}
 
+	/**
+	 * <p>Setter for the field <code>associationService</code>.</p>
+	 *
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object
+	 */
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object
+	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void notifyAuditedFieldChange(String catalogId, NodeRef entityNodeRef) {
 		NodeRef listContainer = entityListDAO.getListContainer(entityNodeRef);
@@ -105,16 +122,19 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onUpdateNode(NodeRef channelListItemNodeRef) {
 		queueNode(channelListItemNodeRef);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onCreateNode(ChildAssociationRef childAssocRef) {
 		queueNode(childAssocRef.getChildRef());
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 		try {
@@ -189,6 +209,7 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void beforeDeleteNode(NodeRef channelListItemNodeRef) {
 		try {
@@ -222,6 +243,7 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 		return propertyValue != null ? propertyValue : new ArrayList<>();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean acceptCatalogEvents(QName type, NodeRef entityNodeRef, Set<NodeRef> listNodeRefs) {
 
@@ -241,12 +263,14 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 		return false;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getChannelById(String channelId) {
 		return BeCPGQueryBuilder.createQuery().ofExactType(PublicationModel.TYPE_PUBLICATION_CHANNEL)
 				.andPropEquals(PublicationModel.PROP_PUBCHANNEL_ID, channelId).ftsLanguage().inDB().singleValue();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public PagingResults<NodeRef> getEntitiesByChannel(NodeRef channelNodeRef, PagingRequest pagingRequest) {
 

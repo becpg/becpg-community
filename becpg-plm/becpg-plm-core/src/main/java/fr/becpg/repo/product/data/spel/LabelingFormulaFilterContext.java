@@ -47,6 +47,7 @@ public class LabelingFormulaFilterContext extends DataListItemSpelContext<Produc
 	 *
 	 * @param compoListDataItem a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object.
 	 * @param ingListDataItem a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object.
+	 * @param formulaService a {@link fr.becpg.repo.formulation.spel.SpelFormulaService} object
 	 */
 	public LabelingFormulaFilterContext(SpelFormulaService formulaService, CompoListDataItem compoListDataItem, IngListDataItem ingListDataItem) {
 		super(formulaService);
@@ -57,6 +58,9 @@ public class LabelingFormulaFilterContext extends DataListItemSpelContext<Produc
 
 	/**
 	 * <p>Constructor for DeclarationFilterContext.</p>
+	 *
+	 * @param formulaService a {@link fr.becpg.repo.formulation.spel.SpelFormulaService} object
+	 * @param ingTypeItem a {@link fr.becpg.repo.product.data.ing.IngTypeItem} object
 	 */
 	public LabelingFormulaFilterContext(SpelFormulaService formulaService, IngTypeItem ingTypeItem) {
 		super(formulaService);
@@ -81,19 +85,31 @@ public class LabelingFormulaFilterContext extends DataListItemSpelContext<Produc
 		return ingListDataItem;
 	}
 
+	/**
+	 * <p>Getter for the field <code>ingTypeItem</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.ing.IngTypeItem} object
+	 */
 	public IngTypeItem getIngTypeItem() {
 		return ingTypeItem;
 	}
 	
 	/**
 	 * Spel Helper do not remove
-	 * @param claimNodeRefStr
-	 * @return Check for claim on ingredient or product 
+	 *
+	 * @param claimNodeRefStr a {@link java.lang.String} object
+	 * @return Check for claim on ingredient or product
 	 */
 	public boolean isClaimed(String claimNodeRefStr) {
 		return isClaimed(new NodeRef(claimNodeRefStr));
 	}
 
+	/**
+	 * <p>isClaimed.</p>
+	 *
+	 * @param claimNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
 	public boolean isClaimed(NodeRef claimNodeRef) {
 		if (ingListDataItem != null) {
 			return (ingListDataItem.getClaims() != null) && ingListDataItem.getClaims().contains(claimNodeRef);
@@ -117,11 +133,13 @@ public class LabelingFormulaFilterContext extends DataListItemSpelContext<Produc
 		return "DeclarationFilterContext [compoListDataItem=" + compoListDataItem + ", ingListDataItem=" + ingListDataItem + "]";
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		return Objects.hash(compoListDataItem, ingListDataItem, ingTypeItem);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {

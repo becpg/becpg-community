@@ -122,16 +122,47 @@ public interface AssociationService {
 	 * @param assocQName a {@link org.alfresco.service.namespace.QName} object.
 	 * @param isOrOperator a boolean.
 	 * @return a {@link java.util.List} object.
+	 * @param listTypeQname a {@link org.alfresco.service.namespace.QName} object
+	 * @param criteriaFilters a {@link java.util.List} object
 	 */
 	List<EntitySourceAssoc> getEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocQName, QName listTypeQname, boolean isOrOperator, List<AssociationCriteriaFilter> criteriaFilters);
 	
+	/**
+	 * <p>getEntitySourceAssocs.</p>
+	 *
+	 * @param nodeRefs a {@link java.util.List} object
+	 * @param assocQName a {@link org.alfresco.service.namespace.QName} object
+	 * @param listTypeQname a {@link org.alfresco.service.namespace.QName} object
+	 * @param isOrOperator a boolean
+	 * @param criteriaFilters a {@link java.util.List} object
+	 * @param pagingRequest a {@link org.alfresco.query.PagingRequest} object
+	 * @return a {@link java.util.List} object
+	 */
 	List<EntitySourceAssoc> getEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocQName, QName listTypeQname, boolean isOrOperator, List<AssociationCriteriaFilter> criteriaFilters, PagingRequest pagingRequest);
 	
 	
+	/**
+	 * <p>removeChildCachedAssoc.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param qName a {@link org.alfresco.service.namespace.QName} object
+	 */
 	void removeChildCachedAssoc(NodeRef nodeRef, QName qName);
 	
+	/**
+	 * <p>removeAllCacheAssocs.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	void removeAllCacheAssocs(NodeRef nodeRef);
 	
+	/**
+	 * <p>getChildAssocsByType.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param qName a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link fr.becpg.repo.helper.impl.ChildAssocCacheEntry} object
+	 */
 	ChildAssocCacheEntry getChildAssocsByType(NodeRef nodeRef, QName qName);
 	
 }

@@ -230,11 +230,13 @@ public  abstract class  BeCPGDataObject  extends BaseObject implements Repositor
 		this.isTransient = isTransient;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		return Objects.hash(aspects, aspectsToRemove, extraProperties, name, nodeRef, parentNodeRef);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

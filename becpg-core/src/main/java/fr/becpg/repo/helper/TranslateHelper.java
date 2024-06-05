@@ -211,6 +211,12 @@ public class TranslateHelper {
 		return translation;
 	}
 	
+	/**
+	 * <p>getLocaleAwarePath.</p>
+	 *
+	 * @param path a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	public static String getLocaleAwarePath(String path) {
 		String lang = "en";
 		if(Locale.FRENCH.getLanguage().equals(Locale.getDefault().getLanguage())) {

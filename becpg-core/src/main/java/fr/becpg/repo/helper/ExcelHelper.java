@@ -303,21 +303,41 @@ public class ExcelHelper {
 		return null;
 	}
 
+	/**
+	 * <p>createGreenColor.</p>
+	 *
+	 * @return a {@link org.apache.poi.xssf.usermodel.XSSFColor} object
+	 */
 	public static XSSFColor createGreenColor() {
 		byte[] rgb = { (byte) 0, (byte) 255, (byte) 0 };
 		return new XSSFColor(rgb, new DefaultIndexedColorMap());
 	}
 
+	/**
+	 * <p>createRedColor.</p>
+	 *
+	 * @return a {@link org.apache.poi.xssf.usermodel.XSSFColor} object
+	 */
 	public static XSSFColor createRedColor() {
 		byte[] rgb = { (byte) 255, (byte) 0, (byte) 0 };
 		return new XSSFColor(rgb, new DefaultIndexedColorMap());
 	}
 
+	/**
+	 * <p>beCPGHeaderColor.</p>
+	 *
+	 * @return a {@link org.apache.poi.xssf.usermodel.XSSFColor} object
+	 */
 	public static XSSFColor beCPGHeaderColor() {
 		byte[] rgb = { (byte) 242, (byte) 247, (byte) 250 };
 		return new XSSFColor(rgb, new DefaultIndexedColorMap());
 	}
 
+	/**
+	 * <p>beCPGHeaderTextColor.</p>
+	 *
+	 * @return a {@link org.apache.poi.xssf.usermodel.XSSFColor} object
+	 */
 	public static XSSFColor beCPGHeaderTextColor() {
 		byte[] rgb = { (byte) 0, (byte) 66, (byte) 84 };
 		return new XSSFColor(rgb, new DefaultIndexedColorMap());

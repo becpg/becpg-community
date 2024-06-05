@@ -97,6 +97,7 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isRegisteredQName(RepositoryEntity entity, QName qname, boolean allowWrite) {
 		if (qnameCache.containsValue(qname)) {

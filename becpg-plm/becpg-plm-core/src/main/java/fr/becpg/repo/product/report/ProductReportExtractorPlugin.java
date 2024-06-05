@@ -442,6 +442,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void loadDataListItemAttributes(BeCPGDataObject dataListItem, Element nodeElt, DefaultExtractorContext context,
 			List<QName> hiddentAttributes) {
@@ -765,6 +766,16 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		return false;
 	}
 
+	/**
+	 * <p>loadCompoListItem.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param parentDataItem a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object
+	 * @param compoListElt a {@link org.dom4j.Element} object
+	 * @param level a int
+	 * @param currentLevelQuantities a {@link fr.becpg.repo.product.data.CurrentLevelQuantities} object
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
+	 */
 	protected void loadCompoListItem(NodeRef entityNodeRef, CompoListDataItem parentDataItem, Element compoListElt, int level,
 			CurrentLevelQuantities currentLevelQuantities, DefaultExtractorContext context) {
 

@@ -50,9 +50,9 @@ import fr.becpg.repo.entity.datalist.impl.MultiLevelExtractor;
  *
  * @author matthieu
  * @version $Id: $Id
- * 
- * Autocomplete plugin that provide parent compoListItem using the multilevel extractor  
- * 
+ *
+ * Autocomplete plugin that provide parent compoListItem using the multilevel extractor
+ *
  * Example:
  * <pre>
  * {@code
@@ -60,12 +60,12 @@ import fr.becpg.repo.entity.datalist.impl.MultiLevelExtractor;
  *		<control-param name="ds">becpg/autocomplete/compoListParentLevel
  * </control-param>
  *  }
- * </pre>  
- *   
+ * </pre>
+ *
  *  Datasources available:
- *  
+ *
  *  Return compoListItem using the multilevel extractor
- * 
+ *
  *  becpg/autocomplete/compoListParentLevel
  */
 @Service("compoListAutoCompletePlugin")

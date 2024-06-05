@@ -109,6 +109,7 @@ public class CompositeLabeling extends LabelingComponent {
 	 *
 	 * @param list a {@link java.util.List} object.
 	 * @return a {@link java.util.List} object.
+	 * @param <T> a T class
 	 */
 	@SuppressWarnings("unchecked")
 	protected <T extends CompositeLabeling> List<T> clone(List<T> list) {
@@ -200,18 +201,38 @@ public class CompositeLabeling extends LabelingComponent {
 		this.qtyTotal = qtyTotal;
 	}
 
+	/**
+	 * <p>Getter for the field <code>evaporatedQty</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	public Double getEvaporatedQty() {
 		return evaporatedQty;
 	}
 
+	/**
+	 * <p>Setter for the field <code>evaporatedQty</code>.</p>
+	 *
+	 * @param evaporatedQty a {@link java.lang.Double} object
+	 */
 	public void setEvaporatedQty(Double evaporatedQty) {
 		this.evaporatedQty = evaporatedQty;
 	}
 
+	/**
+	 * <p>Getter for the field <code>evaporatedVolume</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	public Double getEvaporatedVolume() {
 		return evaporatedVolume;
 	}
 
+	/**
+	 * <p>Setter for the field <code>evaporatedVolume</code>.</p>
+	 *
+	 * @param evaporatedVolume a {@link java.lang.Double} object
+	 */
 	public void setEvaporatedVolume(Double evaporatedVolume) {
 		this.evaporatedVolume = evaporatedVolume;
 	}
@@ -355,6 +376,7 @@ public class CompositeLabeling extends LabelingComponent {
 		return new CompositeLabeling(this);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -364,6 +386,7 @@ public class CompositeLabeling extends LabelingComponent {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {

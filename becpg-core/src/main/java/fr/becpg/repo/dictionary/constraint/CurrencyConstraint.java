@@ -50,6 +50,11 @@ public class CurrencyConstraint extends ListOfValuesConstraint {
 		CurrencyConstraint.beCPGCacheService = beCPGCacheService;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>systemConfigurationService</code>.</p>
+	 *
+	 * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
+	 */
 	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
 		CurrencyConstraint.systemConfigurationService = systemConfigurationService;
 	}

@@ -71,12 +71,22 @@ public class SvhcListDataItem extends AbstractManualDataItem implements SimpleLi
 		this.qtyPerc = qtyPerc;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>migrationPerc</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:svhcListMigrationPerc")
 	public Double getMigrationPerc() {
 		return migrationPerc;
 	}
 
+	/**
+	 * <p>Setter for the field <code>migrationPerc</code>.</p>
+	 *
+	 * @param migrationPerc a {@link java.lang.Double} object
+	 */
 	public void setMigrationPerc(Double migrationPerc) {
 		this.migrationPerc = migrationPerc;
 	}
@@ -121,7 +131,7 @@ public class SvhcListDataItem extends AbstractManualDataItem implements SimpleLi
 	 * Setter for the field <code>reasonsForInclusion</code>.
 	 * </p>
 	 *
-	 * @param reasonsForInclusion
+	 * @param reasonsForInclusion a {@link java.util.List} object
 	 */
 	public void setReasonsForInclusion(List<String> reasonsForInclusion) {
 		this.reasonsForInclusion = reasonsForInclusion;
@@ -156,11 +166,13 @@ public class SvhcListDataItem extends AbstractManualDataItem implements SimpleLi
 	}
 	
 
+	/** {@inheritDoc} */
 	@Override
 	public Double getMini() {
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void setMini(Double value) {
 		//Do Nothing
@@ -169,6 +181,7 @@ public class SvhcListDataItem extends AbstractManualDataItem implements SimpleLi
 
 	private Double maxQtyPerc = null;
 
+	/** {@inheritDoc} */
 	@Override
 	public Double getMaxi() {
 		if(maxQtyPerc == null) {
@@ -177,6 +190,7 @@ public class SvhcListDataItem extends AbstractManualDataItem implements SimpleLi
 		return maxQtyPerc;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void setMaxi(Double maxi) {
 		this.maxQtyPerc = maxi;
@@ -190,31 +204,66 @@ public class SvhcListDataItem extends AbstractManualDataItem implements SimpleLi
 		super();
 	}
 
+	/**
+	 * <p>build.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.productList.SvhcListDataItem} object
+	 */
 	public static SvhcListDataItem build() {
 		return new SvhcListDataItem();
 	}
 
+	/**
+	 * <p>withIngredient.</p>
+	 *
+	 * @param ing a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.SvhcListDataItem} object
+	 */
 	public SvhcListDataItem withIngredient(NodeRef ing) {
 		this.ing = ing;
 		return this;
 	}
 
+	/**
+	 * <p>withQtyPerc.</p>
+	 *
+	 * @param qtyPerc a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.SvhcListDataItem} object
+	 */
 	public SvhcListDataItem withQtyPerc(Double qtyPerc) {
 		this.qtyPerc = qtyPerc;
 		return this;
 	}
 	
 
+	/**
+	 * <p>withMigrationPerc.</p>
+	 *
+	 * @param migrationPerc a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.SvhcListDataItem} object
+	 */
 	public SvhcListDataItem withMigrationPerc(Double migrationPerc) {
 		this.migrationPerc = migrationPerc;
 		return this;
 	}
 
+	/**
+	 * <p>isManual.</p>
+	 *
+	 * @param isManual a boolean
+	 * @return a {@link fr.becpg.repo.product.data.productList.SvhcListDataItem} object
+	 */
 	public SvhcListDataItem isManual(boolean isManual) {
 		this.isManual = isManual;
 		return this;
 	}
 
+	/**
+	 * <p>withReasonsForInclusion.</p>
+	 *
+	 * @param reasonsForInclusion a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.SvhcListDataItem} object
+	 */
 	public SvhcListDataItem withReasonsForInclusion(List<String> reasonsForInclusion) {
 		this.reasonsForInclusion = reasonsForInclusion;
 		return this;
@@ -233,6 +282,7 @@ public class SvhcListDataItem extends AbstractManualDataItem implements SimpleLi
 		this.migrationPerc = i.migrationPerc;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public SvhcListDataItem copy() {
 		SvhcListDataItem ret = new SvhcListDataItem(this);
@@ -242,6 +292,7 @@ public class SvhcListDataItem extends AbstractManualDataItem implements SimpleLi
 		return ret;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -250,6 +301,7 @@ public class SvhcListDataItem extends AbstractManualDataItem implements SimpleLi
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -263,6 +315,7 @@ public class SvhcListDataItem extends AbstractManualDataItem implements SimpleLi
 				&& Objects.equals(reasonsForInclusion, other.reasonsForInclusion);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "SvhcListDataItem [qtyPerc=" + qtyPerc + ", migrationPerc=" + migrationPerc + ", ing=" + ing + ", reasonsForInclusion="

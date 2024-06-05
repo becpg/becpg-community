@@ -12,8 +12,9 @@ import java.lang.annotation.Target;
  * we will not change it within a release in a way that would make
  * it no longer backwardly compatible with an earlier version within
  * the release.
- * 
+ *
  * @author Matthieu Laborie
+ * @version $Id: $Id
  */
 @Target( {ElementType.TYPE,ElementType.METHOD} )
 @Retention(RetentionPolicy.RUNTIME)

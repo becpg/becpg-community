@@ -14,6 +14,12 @@ import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
+/**
+ * <p>ImageSpelFunctions class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class ImageSpelFunctions implements CustomSpelFunctions {
 
