@@ -50,6 +50,7 @@ public class CostListDataItem extends AbstractCostListDataItem<CostListDataItem>
 					CostListDataItem::setFutureValue4, CostListDataItem::getFutureValue4)
 			);
 	
+	/** {@inheritDoc} */
 	@Override
 	public List<String> getForecastColumns() {
 		return FORECAST_CONTEXTS.stream().map(c -> c.getForecastColumn()).toList();
@@ -64,16 +65,19 @@ public class CostListDataItem extends AbstractCostListDataItem<CostListDataItem>
 		throw new IllegalStateException(FORECAST_COLUMN_UNKNOWN + forecastColumn);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void setForecastValue(String forecastColumn, Double value) {
 		getForecastContext(forecastColumn).setValue(this, value);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public Double getForecastValue(String forecastColumn) {
 		return getForecastContext(forecastColumn).getValue(this);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public String getForecastAccessor(String forecastColumn) {
 		return getForecastContext(forecastColumn).getAccessor();
@@ -112,6 +116,11 @@ public class CostListDataItem extends AbstractCostListDataItem<CostListDataItem>
 		return previousValue;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>previousValue</code>.</p>
+	 *
+	 * @param previousValue a {@link java.lang.Double} object
+	 */
 	public void setPreviousValue(Double previousValue) {
 		this.previousValue = previousValue;
 	}
@@ -127,34 +136,69 @@ public class CostListDataItem extends AbstractCostListDataItem<CostListDataItem>
 		return futureValue;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>futureValue</code>.</p>
+	 *
+	 * @param futureValue a {@link java.lang.Double} object
+	 */
 	public void setFutureValue(Double futureValue) {
 		this.futureValue = futureValue;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>futureValue2</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:costListFutureValue2")
 	public Double getFutureValue2() {
 		return futureValue2;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>futureValue2</code>.</p>
+	 *
+	 * @param futureValue2 a {@link java.lang.Double} object
+	 */
 	public void setFutureValue2(Double futureValue2) {
 		this.futureValue2 = futureValue2;
 	}
+	/**
+	 * <p>Getter for the field <code>futureValue3</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:costListFutureValue3")
 	public Double getFutureValue3() {
 		return futureValue3;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>futureValue3</code>.</p>
+	 *
+	 * @param futureValue3 a {@link java.lang.Double} object
+	 */
 	public void setFutureValue3(Double futureValue3) {
 		this.futureValue3 = futureValue3;
 	}
+	/**
+	 * <p>Getter for the field <code>futureValue4</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:costListFutureValue4")
 	public Double getFutureValue4() {
 		return futureValue4;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>futureValue4</code>.</p>
+	 *
+	 * @param futureValue4 a {@link java.lang.Double} object
+	 */
 	public void setFutureValue4(Double futureValue4) {
 		this.futureValue4 = futureValue4;
 	}
@@ -182,10 +226,20 @@ public class CostListDataItem extends AbstractCostListDataItem<CostListDataItem>
 		return previousValuePerProduct;
 	}
 
+	/**
+	 * <p>Setter for the field <code>futureValuePerProduct</code>.</p>
+	 *
+	 * @param futureValuePerProduct a {@link java.lang.Double} object
+	 */
 	public void setFutureValuePerProduct(Double futureValuePerProduct) {
 		this.futureValuePerProduct = futureValuePerProduct;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>previousValuePerProduct</code>.</p>
+	 *
+	 * @param previousValuePerProduct a {@link java.lang.Double} object
+	 */
 	public void setPreviousValuePerProduct(Double previousValuePerProduct) {
 		this.previousValuePerProduct = previousValuePerProduct;
 	}
@@ -215,6 +269,11 @@ public class CostListDataItem extends AbstractCostListDataItem<CostListDataItem>
 		return getCharactNodeRef();
 	}
 	
+	/**
+	 * <p>setCost.</p>
+	 *
+	 * @param cost a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public void setCost(NodeRef cost) {
 		setCharactNodeRef(cost);
 	}
@@ -330,6 +389,7 @@ public class CostListDataItem extends AbstractCostListDataItem<CostListDataItem>
 		return ret;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -339,6 +399,7 @@ public class CostListDataItem extends AbstractCostListDataItem<CostListDataItem>
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -354,6 +415,7 @@ public class CostListDataItem extends AbstractCostListDataItem<CostListDataItem>
 				&& Objects.equals(previousValuePerProduct, other.previousValuePerProduct);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "CostListDataItem [previousValue=" + previousValue + ", futureValue=" + futureValue + ", futureValue2=" + futureValue2

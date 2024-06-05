@@ -62,6 +62,11 @@ public class ReportTplWebScript extends AbstractWebScript {
 	private BatchQueueService batchQueueService;
 
 
+	/**
+	 * <p>Setter for the field <code>batchQueueService</code>.</p>
+	 *
+	 * @param batchQueueService a {@link fr.becpg.repo.batch.BatchQueueService} object
+	 */
 	public void setBatchQueueService(BatchQueueService batchQueueService) {
 		this.batchQueueService = batchQueueService;
 	}

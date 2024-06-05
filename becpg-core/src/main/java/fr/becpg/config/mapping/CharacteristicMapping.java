@@ -99,6 +99,7 @@ public class CharacteristicMapping extends AbstractAttributeMapping {
 		this.charactNodeRef = charactNodeRef;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -107,6 +108,7 @@ public class CharacteristicMapping extends AbstractAttributeMapping {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -120,6 +122,7 @@ public class CharacteristicMapping extends AbstractAttributeMapping {
 				&& Objects.equals(dataListQName, other.dataListQName);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "CharacteristicMapping [dataListQName=" + dataListQName + ", charactQName=" + charactQName + ", charactNodeRef=" + charactNodeRef

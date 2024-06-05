@@ -75,37 +75,68 @@ public class TradeItemPriceListDataItem extends AbstractEffectiveDataItem {
 		this.unit = unit;
 	}
 
+	/**
+	 * <p>Getter for the field <code>priceBasisQuantity</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "gs1:priceBasisQuantity")
 	public Double getPriceBasisQuantity() {
 		return priceBasisQuantity;
 	}
 
+	/**
+	 * <p>Setter for the field <code>priceBasisQuantity</code>.</p>
+	 *
+	 * @param priceBasisQuantity a {@link java.lang.Double} object
+	 */
 	public void setPriceBasisQuantity(Double priceBasisQuantity) {
 		this.priceBasisQuantity = priceBasisQuantity;
 	}
 
+	/**
+	 * <p>Getter for the field <code>priceBasisQuantityUnit</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "gs1:priceBasisQuantityUnit")
 	public String getPriceBasisQuantityUnit() {
 		return priceBasisQuantityUnit;
 	}
 
+	/**
+	 * <p>Setter for the field <code>priceBasisQuantityUnit</code>.</p>
+	 *
+	 * @param priceBasisQuantityUnit a {@link java.lang.String} object
+	 */
 	public void setPriceBasisQuantityUnit(String priceBasisQuantityUnit) {
 		this.priceBasisQuantityUnit = priceBasisQuantityUnit;
 	}
 
+	/**
+	 * <p>Getter for the field <code>priceType</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "gs1:tradeItemPriceType")
 	public String getPriceType() {
 		return priceType;
 	}
 
+	/**
+	 * <p>Setter for the field <code>priceType</code>.</p>
+	 *
+	 * @param priceType a {@link java.lang.String} object
+	 */
 	public void setPriceType(String priceType) {
 		this.priceType = priceType;
 	}
 
 	
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -114,6 +145,7 @@ public class TradeItemPriceListDataItem extends AbstractEffectiveDataItem {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -127,6 +159,7 @@ public class TradeItemPriceListDataItem extends AbstractEffectiveDataItem {
 				&& Objects.equals(priceType, other.priceType) && Objects.equals(unit, other.unit) && Objects.equals(value, other.value);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "TradeItemPriceListDataItem [value=" + value + ", unit=" + unit + ", priceBasisQuantity=" + priceBasisQuantity

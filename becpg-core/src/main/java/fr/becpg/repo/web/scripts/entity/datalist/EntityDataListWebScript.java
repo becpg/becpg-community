@@ -79,6 +79,7 @@ public class EntityDataListWebScript extends AbstractWebScript {
 	/** Constant <code>PARAM_DATA_LIST_NAME="dataListName"</code> */
 	protected static final String PARAM_DATA_LIST_NAME = "dataListName";
 	
+	/** Constant <code>PARAM_ASYNC="async"</code> */
 	protected static final String PARAM_ASYNC = "async";
 
 	/**
@@ -161,6 +162,11 @@ public class EntityDataListWebScript extends AbstractWebScript {
 
 	private SystemConfigurationService systemConfigurationService;
 	
+	/**
+	 * <p>Setter for the field <code>systemConfigurationService</code>.</p>
+	 *
+	 * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
+	 */
 	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
 		this.systemConfigurationService = systemConfigurationService;
 	}

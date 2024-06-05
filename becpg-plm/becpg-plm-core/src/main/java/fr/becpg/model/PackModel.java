@@ -117,10 +117,13 @@ public class PackModel {
 	/** Constant <code>ASSOC_PM_MATERIAL</code> */
 	public static final QName ASSOC_PM_MATERIAL = QName.createQName(PACK_URI, "pmMaterialRefs");
 
+	/** Constant <code>TYPE_PACKAGING_MATERIAL</code> */
 	public static final QName TYPE_PACKAGING_MATERIAL  = QName.createQName(PACK_URI, "packMaterial");
 
+	/** Constant <code>PROP_PM_ECOSCORE</code> */
 	public static final QName PROP_PM_ECOSCORE   = QName.createQName(PACK_URI, "pmEcoScore");
 
+	/** Constant <code>PROP_PM_ISNOTRECYCLABLE</code> */
 	public static final QName PROP_PM_ISNOTRECYCLABLE  = QName.createQName(PACK_URI, "pmIsNotRecyclable");
 
 }

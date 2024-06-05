@@ -135,17 +135,20 @@ public class Annotation {
 	}
 
 	
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "Annotation [id=" + id + ", type=" + type + ", key=" + key + "]";
 	}
 	
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		return Objects.hash(attribute, id, key, targetClass, targetKey, type);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

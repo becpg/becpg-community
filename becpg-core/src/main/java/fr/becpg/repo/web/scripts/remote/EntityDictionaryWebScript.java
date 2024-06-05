@@ -34,6 +34,7 @@ import fr.becpg.common.BeCPGException;
 import fr.becpg.repo.entity.remote.RemoteParams;
 
 /**
+ * <p>EntityDictionaryWebScript class.</p>
  *
  * @author matthieu
  * @version $Id: $Id

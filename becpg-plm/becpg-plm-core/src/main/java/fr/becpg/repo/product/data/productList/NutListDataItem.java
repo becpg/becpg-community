@@ -100,22 +100,34 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	private List<NodeRef> regulatoryCountriesRef = new ArrayList<>();
 	private List<NodeRef> regulatoryUsagesRef = new ArrayList<>();
 	
+	/**
+	 * <p>Getter for the field <code>regulatoryCountriesRef</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	@AlfMultiAssoc
 	@AlfQname(qname = "bcpg:regulatoryCountries")
 	public List<NodeRef> getRegulatoryCountriesRef() {
 		return regulatoryCountriesRef;
 	}
 
+	/** {@inheritDoc} */
 	public void setRegulatoryCountriesRef(List<NodeRef> regulatoryCountries) {
 		this.regulatoryCountriesRef = regulatoryCountries;
 	}
 
+	/**
+	 * <p>Getter for the field <code>regulatoryUsagesRef</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	@AlfMultiAssoc
 	@AlfQname(qname = "bcpg:regulatoryUsageRef")
 	public List<NodeRef> getRegulatoryUsagesRef() {
 		return regulatoryUsagesRef;
 	}
 
+	/** {@inheritDoc} */
 	public void setRegulatoryUsagesRef(List<NodeRef> regulatoryUsages) {
 		this.regulatoryUsagesRef = regulatoryUsages;
 	}
@@ -181,6 +193,7 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	 *
 	 * @param variantColumn a {@link java.lang.String} object.
 	 * @return a {@link java.lang.Double} object.
+	 * @param key a {@link java.lang.String} object
 	 */
 	public Double variantValue(String variantColumn, String key) {
 		return RegulationFormulationHelper.extractVariantValue(getRoundedValue(), variantColumn, key);
@@ -209,6 +222,7 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	
 	
 	
+	/** {@inheritDoc} */
 	@AlfMultiAssoc
 	@InternalField
 	@AlfQname(qname="bcpg:nutListSources")
@@ -217,26 +231,51 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 		return sources;
 	}
 
+	/**
+	 * <p>Setter for the field <code>sources</code>.</p>
+	 *
+	 * @param sources a {@link java.util.List} object
+	 */
 	public void setSources(List<NodeRef> sources) {
 		this.sources = sources;
 	}
 
+	/**
+	 * <p>Getter for the field <code>formulatedPreparedValue</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:nutListFormulatedValuePrepared")
 	public Double getFormulatedPreparedValue() {
 		return formulatedPreparedValue;
 	}
 
+	/**
+	 * <p>Setter for the field <code>formulatedPreparedValue</code>.</p>
+	 *
+	 * @param formulatedPreparedValue a {@link java.lang.Double} object
+	 */
 	public void setFormulatedPreparedValue(Double formulatedPreparedValue) {
 		this.formulatedPreparedValue = formulatedPreparedValue;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>manualPreparedValue</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:nutListValuePrepared")
 	public Double getManualPreparedValue() {
 		return manualPreparedValue;
 	}
 
+	/**
+	 * <p>Setter for the field <code>manualPreparedValue</code>.</p>
+	 *
+	 * @param manualPreparedValue a {@link java.lang.Double} object
+	 */
 	public void setManualPreparedValue(Double manualPreparedValue) {
 		this.manualPreparedValue = manualPreparedValue;
 	}
@@ -259,12 +298,22 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 		this.formulatedPreparedValue = preparedValue;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>measurementPrecision</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:nutListMeasurementPrecision")
 	public String getMeasurementPrecision() {
 		return measurementPrecision;
 	}
 
+	/**
+	 * <p>Setter for the field <code>measurementPrecision</code>.</p>
+	 *
+	 * @param measurementPrecision a {@link java.lang.String} object
+	 */
 	public void setMeasurementPrecision(String measurementPrecision) {
 		this.measurementPrecision = measurementPrecision;
 	}
@@ -320,16 +369,31 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 		this.formulatedMini = mini;
 	}
 
+	/**
+	 * <p>Getter for the field <code>manualMini</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:nutListMini")
 	public Double getManualMini() {
 		return manualMini;
 	}
 
+	/**
+	 * <p>Setter for the field <code>manualMini</code>.</p>
+	 *
+	 * @param manualMini a {@link java.lang.Double} object
+	 */
 	public void setManualMini(Double manualMini) {
 		this.manualMini = manualMini;
 	}
 
+	/**
+	 * <p>Getter for the field <code>formulatedMini</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@InternalField
 	@AlfQname(qname = "bcpg:nutListFormulatedMini")
@@ -337,6 +401,11 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 		return formulatedMini;
 	}
 
+	/**
+	 * <p>Setter for the field <code>formulatedMini</code>.</p>
+	 *
+	 * @param formulatedMini a {@link java.lang.Double} object
+	 */
 	public void setFormulatedMini(Double formulatedMini) {
 		this.formulatedMini = formulatedMini;
 	}
@@ -363,16 +432,31 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 		this.formulatedMaxi = mini;
 	}
 
+	/**
+	 * <p>Getter for the field <code>manualMaxi</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:nutListMaxi")
 	public Double getManualMaxi() {
 		return manualMaxi;
 	}
 
+	/**
+	 * <p>Setter for the field <code>manualMaxi</code>.</p>
+	 *
+	 * @param manualMaxi a {@link java.lang.Double} object
+	 */
 	public void setManualMaxi(Double manualMaxi) {
 		this.manualMaxi = manualMaxi;
 	}
 
+	/**
+	 * <p>Getter for the field <code>formulatedMaxi</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@InternalField
 	@AlfQname(qname = "bcpg:nutListFormulatedMaxi")
@@ -380,6 +464,11 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 		return formulatedMaxi;
 	}
 
+	/**
+	 * <p>Setter for the field <code>formulatedMaxi</code>.</p>
+	 *
+	 * @param formulatedMaxi a {@link java.lang.Double} object
+	 */
 	public void setFormulatedMaxi(Double formulatedMaxi) {
 		this.formulatedMaxi = formulatedMaxi;
 	}
@@ -396,6 +485,11 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	
 	
 	
+	/**
+	 * <p>Getter for the field <code>formulatedValuePerServing</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@InternalField
 	@AlfQname(qname = "bcpg:nutListFormulatedValuePerServing")
@@ -403,16 +497,31 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 		return formulatedValuePerServing;
 	}
 
+	/**
+	 * <p>Setter for the field <code>formulatedValuePerServing</code>.</p>
+	 *
+	 * @param formulatedValuePerServing a {@link java.lang.Double} object
+	 */
 	public void setFormulatedValuePerServing(Double formulatedValuePerServing) {
 		this.formulatedValuePerServing = formulatedValuePerServing;
 	}
 
+	/**
+	 * <p>Getter for the field <code>manualValuePerServing</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:nutListValuePerServing")
 	public Double getManualValuePerServing() {
 		return manualValuePerServing;
 	}
 
+	/**
+	 * <p>Setter for the field <code>manualValuePerServing</code>.</p>
+	 *
+	 * @param manualValuePerServing a {@link java.lang.Double} object
+	 */
 	public void setManualValuePerServing(Double manualValuePerServing) {
 		this.manualValuePerServing = manualValuePerServing;
 	}
@@ -628,7 +737,7 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	/**
 	 * <p>Setter for the field <code>roundedValuePrepared</code>.</p>
 	 *
-	 * @param roundedValue a {@link java.lang.String} object.
+	 * @param roundedValuePrepared a {@link java.lang.String} object
 	 */
 	public void setRoundedValuePrepared(String roundedValuePrepared) {
 		this.roundedValuePrepared = roundedValuePrepared;
@@ -716,6 +825,7 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	}
 	
 	
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -726,6 +836,7 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -748,6 +859,7 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 				&& Objects.equals(sources, other.sources) && Objects.equals(unit, other.unit);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "NutListDataItem [manualValue=" + manualValue + ", formulatedValue=" + formulatedValue + ", manualPreparedValue=" + manualPreparedValue

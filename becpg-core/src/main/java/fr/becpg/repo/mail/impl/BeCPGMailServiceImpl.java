@@ -241,6 +241,7 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void sendMLAwareMail(Set<String> authorities, String fromEmail, String subjectKey, Object[] subjectParams, String mailTemplate, Map<String, Object> templateArgs) {
 		
@@ -356,11 +357,13 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getEmailActivitiesTemplatesFolder() {
 		return searchFolder("app:company_home/app:dictionary/app:email_templates/cm:activities/.");
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getEmailInviteTemplatesFolder() {
 		return searchFolder("app:company_home/app:dictionary/app:email_templates/cm:invite/.");

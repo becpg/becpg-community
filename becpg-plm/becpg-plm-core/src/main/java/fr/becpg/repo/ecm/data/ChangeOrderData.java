@@ -63,12 +63,22 @@ public class ChangeOrderData extends BeCPGDataObject {
 	private List<ChangeUnitDataItem> changeUnitList;
 	private List<String> propertiesToCopy;
 
+	/**
+	 * <p>Getter for the field <code>propertiesToCopy</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "ecm:propertiesToCopy")
 	public List<String> getPropertiesToCopy() {
 		return propertiesToCopy;
 	}
 
+	/**
+	 * <p>Setter for the field <code>propertiesToCopy</code>.</p>
+	 *
+	 * @param propertiesToCopy a {@link java.util.List} object
+	 */
 	public void setPropertiesToCopy(List<String> propertiesToCopy) {
 		this.propertiesToCopy = propertiesToCopy;
 	}

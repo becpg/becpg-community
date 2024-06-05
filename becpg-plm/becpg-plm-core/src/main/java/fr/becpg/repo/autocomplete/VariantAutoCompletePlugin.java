@@ -38,9 +38,9 @@ import fr.becpg.repo.autocomplete.impl.plugins.TargetAssocAutoCompletePlugin;
  *
  * @author matthieu
  * @version $Id: $Id
- * 
+ *
  *  Autocomplete plugin that provide available variants for current entity
- * 
+ *
  * Example:
  * <pre>
  * {@code
@@ -49,11 +49,10 @@ import fr.becpg.repo.autocomplete.impl.plugins.TargetAssocAutoCompletePlugin;
  * </control-param>
  * }
  * </pre>
- *   
+ *
  *  Datasources available:
- * 
+ *
  *  becpg/autocomplete/variantList
- * 
  */
 @Service("variantAutoCompletePlugin")
 public class VariantAutoCompletePlugin extends TargetAssocAutoCompletePlugin {

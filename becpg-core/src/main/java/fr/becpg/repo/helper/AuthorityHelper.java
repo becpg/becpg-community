@@ -24,6 +24,12 @@ import com.google.common.base.Objects;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemGroup;
 
+/**
+ * <p>AuthorityHelper class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class AuthorityHelper implements InitializingBean {
 	
@@ -45,11 +51,18 @@ public class AuthorityHelper implements InitializingBean {
 		//Singleton
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		instance = this;	
 	}
 
+	/**
+	 * <p>extractPeople.</p>
+	 *
+	 * @param authorities a {@link java.util.Set} object
+	 * @return a {@link java.util.Set} object
+	 */
 	@SuppressWarnings("deprecation")
 	public static Set<String> extractPeople(Set<String> authorities) {
 		Set<String> people = new HashSet<>();
@@ -76,6 +89,12 @@ public class AuthorityHelper implements InitializingBean {
 		return people;
 	}
 	
+	/**
+	 * <p>extractPeople.</p>
+	 *
+	 * @param viewRecipients a {@link java.util.List} object
+	 * @return a {@link java.util.List} object
+	 */
 	public static List<NodeRef> extractPeople(List<NodeRef> viewRecipients) {
 		List<NodeRef> recipients = new ArrayList<>();
 
@@ -92,6 +111,12 @@ public class AuthorityHelper implements InitializingBean {
 		return recipients;
 	}
 
+	/**
+	 * <p>getCommonLocale.</p>
+	 *
+	 * @param people a {@link java.util.Set} object
+	 * @return a {@link java.util.Locale} object
+	 */
 	public static Locale getCommonLocale(Set<String> people) {
 		
 		Locale commonLocale = null;
@@ -121,6 +146,13 @@ public class AuthorityHelper implements InitializingBean {
 		return commonLocale;
 	}
 	
+	/**
+	 * <p>extractAuthoritiesFromGroup.</p>
+	 *
+	 * @param group a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param includeCurrentUser a boolean
+	 * @return a {@link java.util.List} object
+	 */
 	public static List<String> extractAuthoritiesFromGroup(NodeRef group, boolean includeCurrentUser) {
 		List<String> ret = new ArrayList<>();
 		String authorityName = (String) instance.nodeService.getProperty(group, ContentModel.PROP_AUTHORITY_NAME);
@@ -133,6 +165,11 @@ public class AuthorityHelper implements InitializingBean {
 		return ret;
 	}
 	
+	/**
+	 * <p>isCurrentUserExternal.</p>
+	 *
+	 * @return a boolean
+	 */
 	public static boolean isCurrentUserExternal() {
 		for (String currAuth : instance.authorityService.getAuthorities()) {
 			if ((PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser.toString()).equals(currAuth)) {
@@ -142,6 +179,12 @@ public class AuthorityHelper implements InitializingBean {
 		return false;
 	}
 	
+	/**
+	 * <p>isExternalUser.</p>
+	 *
+	 * @param userName a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	public static boolean isExternalUser(String userName) {
 		for (String currAuth : instance.authorityService.getAuthoritiesForUser(userName)) {
 			if ((PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser.toString()).equals(currAuth)) {

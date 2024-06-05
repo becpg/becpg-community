@@ -50,6 +50,11 @@ public class UpdateEntityWebScript extends AbstractEntityWebScript {
 
 	private EntityVersionService entityVersionService;
 
+	/**
+	 * <p>Setter for the field <code>entityVersionService</code>.</p>
+	 *
+	 * @param entityVersionService a {@link fr.becpg.repo.entity.version.EntityVersionService} object
+	 */
 	public void setEntityVersionService(EntityVersionService entityVersionService) {
 		this.entityVersionService = entityVersionService;
 	}

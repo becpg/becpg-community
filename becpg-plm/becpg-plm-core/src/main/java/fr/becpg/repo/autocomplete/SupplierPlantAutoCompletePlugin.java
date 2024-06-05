@@ -55,7 +55,6 @@ import fr.becpg.repo.entity.EntityListDAO;
  *
  * ds: becpg/autocomplete/supplierPlants
  * param: {none} If current connected user is associated to supplier return all plants in the plant list of this supplier else return all plants
- *
  */
 @BeCPGPublicApi
 @Service("supplierPlantAutoCompletePlugin")
@@ -70,9 +69,9 @@ public class SupplierPlantAutoCompletePlugin extends TargetAssocAutoCompletePlug
 	private PersonService personService;
 
 	/**
-	 * <p>getHandleSourceTypes.</p>
+	 * {@inheritDoc}
 	 *
-	 * @return an array of {@link java.lang.String} objects.
+	 * <p>getHandleSourceTypes.</p>
 	 */
 	@Override
 	public String[] getHandleSourceTypes() {

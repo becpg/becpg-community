@@ -83,6 +83,8 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * <p>doInit.</p>
 	 */
 	@Override

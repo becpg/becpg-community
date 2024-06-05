@@ -149,6 +149,11 @@ public class BeCPGLicenseManager {
 		return getLicense().licenseName;
 	}
 	
+	/**
+	 * <p>isLicenseValid.</p>
+	 *
+	 * @return a boolean
+	 */
 	public boolean isLicenseValid() {
 		return getLicenseFile() != null && !INVALID_LICENSE_FILE.equals(getLicenseName());
 	}

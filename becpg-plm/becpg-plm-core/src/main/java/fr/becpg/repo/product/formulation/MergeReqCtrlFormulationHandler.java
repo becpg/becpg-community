@@ -61,10 +61,20 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Scora
 	
 	private FormulationExecutor formulationExecutor;
 	
+	/**
+	 * <p>Setter for the field <code>formulationExecutor</code>.</p>
+	 *
+	 * @param formulationExecutor a {@link fr.becpg.repo.formulation.FormulationExecutor} object
+	 */
 	public void setFormulationExecutor(FormulationExecutor formulationExecutor) {
 		this.formulationExecutor = formulationExecutor;
 	}
 
+	/**
+	 * <p>Setter for the field <code>systemConfigurationService</code>.</p>
+	 *
+	 * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
+	 */
 	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
 		this.systemConfigurationService = systemConfigurationService;
 	}
@@ -164,6 +174,7 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Scora
 		return toAdd;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onError(ScorableEntity repositoryEntity) {
 		repositoryEntity.merge(formulationExecutor.getDisabledFormulationChainIds(repositoryEntity));

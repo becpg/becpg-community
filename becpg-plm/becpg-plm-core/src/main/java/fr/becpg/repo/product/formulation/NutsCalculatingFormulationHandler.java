@@ -48,6 +48,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 
 	private static final Log logger = LogFactory.getLog(NutsCalculatingFormulationHandler.class);
 
+	/** {@inheritDoc} */
 	protected boolean propagateModeEnable(ProductData formulatedProduct) {
 		return formulatedProduct.getAspects().contains(PLMModel.ASPECT_PROPAGATE_UP)
 				|| Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.formulation.nutList.propagateUpEnable"));
@@ -59,6 +60,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 		return NutListDataItem.class;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected NutListDataItem newSimpleListDataItem(NodeRef charactNodeRef) {
 		NutListDataItem newNutListDataItem = new NutListDataItem();
