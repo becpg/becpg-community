@@ -34,16 +34,16 @@ public class VariantPackagingData implements Serializable {
 	private String secondaryPackagingTypeCode;
 
 	
-	private Float height;
-	private Float width;
-	private Float depth;
+	private Double height;
+	private Double width;
+	private Double depth;
 
-	private Float secondaryHeight;
-	private Float secondaryWidth;
-	private Float secondaryDepth;
+	private Double secondaryHeight;
+	private Double secondaryWidth;
+	private Double secondaryDepth;
 
-	private Float tertiaryWidth;
-	private Float tertiaryDepth;
+	private Double tertiaryWidth;
+	private Double tertiaryDepth;
 
 	private boolean isManualPrimary = true;
 	private boolean isManualTertiary = true;
@@ -218,144 +218,144 @@ public class VariantPackagingData implements Serializable {
 	/**
 	 * <p>Getter for the field <code>height</code>.</p>
 	 *
-	 * @return a {@link java.lang.Float} object.
+	 * @return a {@link java.lang.Double} object.
 	 */
-	public Float getHeight() {
+	public Double getHeight() {
 		return height;
 	}
 
 	/**
 	 * <p>Setter for the field <code>height</code>.</p>
 	 *
-	 * @param height a {@link java.lang.Float} object.
+	 * @param height a {@link java.lang.Double} object.
 	 */
-	public void setHeight(Float height) {
+	public void setHeight(Double height) {
 		this.height = height;
 	}
 
 	/**
 	 * <p>Getter for the field <code>width</code>.</p>
 	 *
-	 * @return a {@link java.lang.Float} object.
+	 * @return a {@link java.lang.Double} object.
 	 */
-	public Float getWidth() {
+	public Double getWidth() {
 		return width;
 	}
 
 	/**
 	 * <p>Setter for the field <code>width</code>.</p>
 	 *
-	 * @param width a {@link java.lang.Float} object.
+	 * @param width a {@link java.lang.Double} object.
 	 */
-	public void setWidth(Float width) {
+	public void setWidth(Double width) {
 		this.width = width;
 	}
 
 	/**
 	 * <p>Getter for the field <code>depth</code>.</p>
 	 *
-	 * @return a {@link java.lang.Float} object.
+	 * @return a {@link java.lang.Double} object.
 	 */
-	public Float getDepth() {
+	public Double getDepth() {
 		return depth;
 	}
 
 	/**
 	 * <p>Setter for the field <code>depth</code>.</p>
 	 *
-	 * @param depth a {@link java.lang.Float} object.
+	 * @param depth a {@link java.lang.Double} object.
 	 */
-	public void setDepth(Float depth) {
+	public void setDepth(Double depth) {
 		this.depth = depth;
 	}
 
 	/**
 	 * <p>Getter for the field <code>secondaryHeight</code>.</p>
 	 *
-	 * @return a {@link java.lang.Float} object.
+	 * @return a {@link java.lang.Double} object.
 	 */
-	public Float getSecondaryHeight() {
+	public Double getSecondaryHeight() {
 		return secondaryHeight;
 	}
 
 	/**
 	 * <p>Setter for the field <code>secondaryHeight</code>.</p>
 	 *
-	 * @param secondaryHeight a {@link java.lang.Float} object.
+	 * @param secondaryHeight a {@link java.lang.Double} object.
 	 */
-	public void setSecondaryHeight(Float secondaryHeight) {
+	public void setSecondaryHeight(Double secondaryHeight) {
 		this.secondaryHeight = secondaryHeight;
 	}
 
 	/**
 	 * <p>Getter for the field <code>secondaryWidth</code>.</p>
 	 *
-	 * @return a {@link java.lang.Float} object.
+	 * @return a {@link java.lang.Double} object.
 	 */
-	public Float getSecondaryWidth() {
+	public Double getSecondaryWidth() {
 		return secondaryWidth;
 	}
 
 	/**
 	 * <p>Setter for the field <code>secondaryWidth</code>.</p>
 	 *
-	 * @param secondaryWidth a {@link java.lang.Float} object.
+	 * @param secondaryWidth a {@link java.lang.Double} object.
 	 */
-	public void setSecondaryWidth(Float secondaryWidth) {
+	public void setSecondaryWidth(Double secondaryWidth) {
 		this.secondaryWidth = secondaryWidth;
 	}
 
 	/**
 	 * <p>Getter for the field <code>secondaryDepth</code>.</p>
 	 *
-	 * @return a {@link java.lang.Float} object.
+	 * @return a {@link java.lang.Double} object.
 	 */
-	public Float getSecondaryDepth() {
+	public Double getSecondaryDepth() {
 		return secondaryDepth;
 	}
 
 	/**
 	 * <p>Setter for the field <code>secondaryDepth</code>.</p>
 	 *
-	 * @param secondaryDepth a {@link java.lang.Float} object.
+	 * @param secondaryDepth a {@link java.lang.Double} object.
 	 */
-	public void setSecondaryDepth(Float secondaryDepth) {
+	public void setSecondaryDepth(Double secondaryDepth) {
 		this.secondaryDepth = secondaryDepth;
 	}
 
 	/**
 	 * <p>Getter for the field <code>tertiaryWidth</code>.</p>
 	 *
-	 * @return a {@link java.lang.Float} object.
+	 * @return a {@link java.lang.Double} object.
 	 */
-	public Float getTertiaryWidth() {
+	public Double getTertiaryWidth() {
 		return tertiaryWidth;
 	}
 
 	/**
 	 * <p>Setter for the field <code>tertiaryWidth</code>.</p>
 	 *
-	 * @param tertiaryWidth a {@link java.lang.Float} object.
+	 * @param tertiaryWidth a {@link java.lang.Double} object.
 	 */
-	public void setTertiaryWidth(Float tertiaryWidth) {
+	public void setTertiaryWidth(Double tertiaryWidth) {
 		this.tertiaryWidth = tertiaryWidth;
 	}
 
 	/**
 	 * <p>Getter for the field <code>tertiaryDepth</code>.</p>
 	 *
-	 * @return a {@link java.lang.Float} object.
+	 * @return a {@link java.lang.Double} object.
 	 */
-	public Float getTertiaryDepth() {
+	public Double getTertiaryDepth() {
 		return tertiaryDepth;
 	}
 
 	/**
 	 * <p>Setter for the field <code>tertiaryDepth</code>.</p>
 	 *
-	 * @param tertiaryDepth a {@link java.lang.Float} object.
+	 * @param tertiaryDepth a {@link java.lang.Double} object.
 	 */
-	public void setTertiaryDepth(Float tertiaryDepth) {
+	public void setTertiaryDepth(Double tertiaryDepth) {
 		this.tertiaryDepth = tertiaryDepth;
 	}
 
