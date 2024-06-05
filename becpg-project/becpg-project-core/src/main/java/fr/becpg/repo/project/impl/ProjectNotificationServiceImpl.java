@@ -184,6 +184,7 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 	}
 	
 
+	/** {@inheritDoc} */
 	@Override
 	public void notifyAuditedFieldChange(String catalogId, NodeRef projectNodeRef) {
 		logger.debug("Notifying properties");
@@ -196,6 +197,7 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 		notifyObservers(projectNodeRef, null, subject, templateArgs, MAIL_TEMPLATE);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean acceptCatalogEvents(QName type, NodeRef entityNodeRef, Set<NodeRef> listNodeRefs) {
 		return ProjectModel.TYPE_PROJECT.equals(type);

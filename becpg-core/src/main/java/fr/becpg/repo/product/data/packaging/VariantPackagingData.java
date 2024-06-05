@@ -459,10 +459,20 @@ public class VariantPackagingData implements Serializable {
 	}
 
 	
+	/**
+	 * <p>isManualPalletInformations.</p>
+	 *
+	 * @return a boolean
+	 */
 	public boolean isManualPalletInformations() {
 		return isManualPalletInformations;
 	}
 
+	/**
+	 * <p>setManualPalletInformations.</p>
+	 *
+	 * @param isManualPalletInformations a boolean
+	 */
 	public void setManualPalletInformations(boolean isManualPalletInformations) {
 		this.isManualPalletInformations = isManualPalletInformations;
 	}
@@ -549,30 +559,61 @@ public class VariantPackagingData implements Serializable {
 	
 	
 
+	/**
+	 * <p>Getter for the field <code>packagingTypeCode</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	public String getPackagingTypeCode() {
 		return packagingTypeCode;
 	}
 
+	/**
+	 * <p>Setter for the field <code>packagingTypeCode</code>.</p>
+	 *
+	 * @param packagingTypeCode a {@link java.lang.String} object
+	 */
 	public void setPackagingTypeCode(String packagingTypeCode) {
 		this.packagingTypeCode = packagingTypeCode;
 	}
 
+	/**
+	 * <p>Getter for the field <code>packagingTermsAndConditionsCode</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	public String getPackagingTermsAndConditionsCode() {
 		return packagingTermsAndConditionsCode;
 	}
 
+	/**
+	 * <p>Setter for the field <code>packagingTermsAndConditionsCode</code>.</p>
+	 *
+	 * @param packagingTermsAndConditionsCode a {@link java.lang.String} object
+	 */
 	public void setPackagingTermsAndConditionsCode(String packagingTermsAndConditionsCode) {
 		this.packagingTermsAndConditionsCode = packagingTermsAndConditionsCode;
 	}
 
+	/**
+	 * <p>Getter for the field <code>secondaryPackagingTypeCode</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	public String getSecondaryPackagingTypeCode() {
 		return secondaryPackagingTypeCode;
 	}
 
+	/**
+	 * <p>Setter for the field <code>secondaryPackagingTypeCode</code>.</p>
+	 *
+	 * @param secondaryPackagingTypeCode a {@link java.lang.String} object
+	 */
 	public void setSecondaryPackagingTypeCode(String secondaryPackagingTypeCode) {
 		this.secondaryPackagingTypeCode = secondaryPackagingTypeCode;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "VariantPackagingData [tarePrimary=" + tarePrimary + ", tareSecondary=" + tareSecondary + ", tareTertiary=" + tareTertiary
@@ -587,6 +628,7 @@ public class VariantPackagingData implements Serializable {
 				+ ", isManualSecondary=" + isManualSecondary + ", isManualPalletInformations=" + isManualPalletInformations + "]";
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		return Objects.hash(boxesPerPallet, depth, height, isManualPalletInformations, isManualPrimary, isManualSecondary, isManualTertiary,
@@ -596,6 +638,7 @@ public class VariantPackagingData implements Serializable {
 				width);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

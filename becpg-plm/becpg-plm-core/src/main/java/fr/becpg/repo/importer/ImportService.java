@@ -22,9 +22,8 @@ public interface ImportService {
 	 * @param nodeRef the node ref
 	 * @param doUpdate the do update
 	 * @param requiresNewTransaction a boolean.
-	 * @param doNotMoveNode 
+	 * @param doNotMoveNode a {@link java.lang.Boolean} object
 	 * @return a {@link java.util.List} object.
-	 * @throws java.lang.Exception if any.
 	 */
 	BatchInfo importText(NodeRef nodeRef, boolean doUpdate, boolean requiresNewTransaction, Boolean doNotMoveNode);
 	

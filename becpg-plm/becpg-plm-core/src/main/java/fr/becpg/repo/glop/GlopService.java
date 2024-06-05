@@ -31,14 +31,13 @@ public interface GlopService {
 	/**
 	 * Finds the optimal recipe for a product given a target to optimize and a list of constraints.
 	 *
-	 * @param productData the data of the product to optimize
-	 * @param characts the list of constraints the optimization is subject to
-	 * @param target the target function specification
 	 * @return the solution computed by the Glop server
 	 * @throws fr.becpg.repo.glop.GlopException if the linear program is unfeasible
 	 * @throws org.springframework.web.client.RestClientException if an error was met while communicating with the Glop server
 	 * @throws java.net.URISyntaxException if the Glop server URL specified is syntactically incorrect
 	 * @throws org.json.JSONException if an error was met building one of the JSON objects involved
+	 * @param entity a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param buildGlopContext a {@link fr.becpg.repo.glop.model.GlopContext} object
 	 */
 	public GlopData optimize(ProductData entity, GlopContext buildGlopContext) throws GlopException, RestClientException, URISyntaxException, JSONException;
 

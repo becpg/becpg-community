@@ -23,6 +23,7 @@ class RenameRule {
 	 * @param mlText a {@link org.alfresco.service.cmr.repository.MLText} object.
 	 * @param pluralMlText a {@link org.alfresco.service.cmr.repository.MLText} object.
 	 * @param locales a {@link java.util.List} object.
+	 * @param replacement a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
 	public RenameRule(MLText mlText, MLText pluralMlText, List<String> locales,NodeRef replacement) {
 		this.mlText = mlText;
@@ -67,6 +68,11 @@ class RenameRule {
 		return ret;
 	}
 
+	/**
+	 * <p>Getter for the field <code>replacement</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public NodeRef getReplacement() {
 		return replacement;
 	}

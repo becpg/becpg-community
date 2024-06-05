@@ -29,6 +29,12 @@ import fr.becpg.model.NutrientProfileVersion;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.RepoConsts;
 
+/**
+ * <p>MigrateNutrientProfilePatch class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 
 	private static final Log logger = LogFactory.getLog(MigrateNutrientProfilePatch.class);
@@ -47,6 +53,11 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 	private BehaviourFilter policyBehaviourFilter;
 	private IntegrityChecker integrityChecker;
 	
+	/**
+	 * <p>Setter for the field <code>integrityChecker</code>.</p>
+	 *
+	 * @param integrityChecker a {@link org.alfresco.repo.node.integrity.IntegrityChecker} object
+	 */
 	public void setIntegrityChecker(IntegrityChecker integrityChecker) {
 		this.integrityChecker = integrityChecker;
 	}
@@ -142,6 +153,7 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected String applyInternal() throws Exception {
 

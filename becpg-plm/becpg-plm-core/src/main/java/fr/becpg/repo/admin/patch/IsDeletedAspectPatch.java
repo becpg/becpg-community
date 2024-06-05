@@ -254,6 +254,11 @@ public class IsDeletedAspectPatch extends AbstractBeCPGPatch {
 		this.integrityChecker = integrityChecker;
 	}
 
+	/**
+	 * <p>Setter for the field <code>lockService</code>.</p>
+	 *
+	 * @param lockService a {@link org.alfresco.service.cmr.lock.LockService} object
+	 */
 	public void setLockService(LockService lockService) {
 		this.lockService = lockService;
 	}

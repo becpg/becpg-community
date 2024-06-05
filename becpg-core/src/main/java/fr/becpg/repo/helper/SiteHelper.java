@@ -133,11 +133,17 @@ public class SiteHelper {
 	
 	/**
 	 * <p>extractSiteDisplayPath.</p>
-	 * 
-	 * 
+	 *
+	 *
 	 * Extracts the display path out of a path but from the site name, and without "documentLibrary".
-	 * 
+	 *
 	 * If there no site in path, the result is just the display path
+	 *
+	 * @param path a {@link org.alfresco.service.cmr.repository.Path} object
+	 * @param permissionService a {@link org.alfresco.service.cmr.security.PermissionService} object
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object
+	 * @return a {@link java.lang.String} object
 	 */
 	public static String extractSiteDisplayPath(Path path, PermissionService permissionService, NodeService nodeService, NamespaceService namespaceService) {
 

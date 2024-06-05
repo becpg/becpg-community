@@ -56,6 +56,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 	/** Constant <code>MESSAGE_NULL_PERC="message.formulate.allergen.error.nullQt"{trunked}</code> */
 	public static final String MESSAGE_NULL_PERC = "message.formulate.allergen.error.nullQtyPerc";
 
+	/** Constant <code>MESSAGE_EMPTY_ALLERGEN="message.formulate.allergen.error.empty"</code> */
 	public static final String MESSAGE_EMPTY_ALLERGEN = "message.formulate.allergen.error.empty";
 
 	private static final Log logger = LogFactory.getLog(AllergensCalculatingFormulationHandler.class);

@@ -225,30 +225,65 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 		super();
 	}
 	
+	/**
+	 * <p>build.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.productList.PackagingListDataItem} object
+	 */
 	public static PackagingListDataItem build() {
 		return new PackagingListDataItem();
 	}
 
+	/**
+	 * <p>withUnit.</p>
+	 *
+	 * @param unit a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.PackagingListDataItem} object
+	 */
 	public PackagingListDataItem withUnit(ProductUnit unit) {
 		setPackagingListUnit(unit);
 		return this;
 	}
 
+	/**
+	 * <p>withQty.</p>
+	 *
+	 * @param qty a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.PackagingListDataItem} object
+	 */
 	public PackagingListDataItem withQty(Double qty) {
 		setQty(qty);
 		return this;
 	}
 
+	/**
+	 * <p>withProduct.</p>
+	 *
+	 * @param product a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.PackagingListDataItem} object
+	 */
 	public PackagingListDataItem withProduct(NodeRef product) {
 		setProduct(product);
 		return this;
 	}
 
+	/**
+	 * <p>withPkgLevel.</p>
+	 *
+	 * @param pkgLevel a {@link fr.becpg.repo.product.data.constraints.PackagingLevel} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.PackagingListDataItem} object
+	 */
 	public PackagingListDataItem withPkgLevel(PackagingLevel pkgLevel) {
 		setPkgLevel(pkgLevel);
 		return this;
 	}
 
+	/**
+	 * <p>withIsMaster.</p>
+	 *
+	 * @param isMaster a {@link java.lang.Boolean} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.PackagingListDataItem} object
+	 */
 	public PackagingListDataItem withIsMaster(Boolean isMaster) {
 		setIsMaster(isMaster);
 		return this;

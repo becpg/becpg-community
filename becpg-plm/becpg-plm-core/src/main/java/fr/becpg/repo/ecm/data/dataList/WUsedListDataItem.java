@@ -57,32 +57,62 @@ public class WUsedListDataItem extends BeCPGDataObject implements CompositeDataI
 	private Double qty;
 	private Double loss;
 
+	/**
+	 * <p>Getter for the field <code>effectiveDate</code>.</p>
+	 *
+	 * @return a {@link java.util.Date} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "ecm:wulEffectiveDate")
 	public Date getEffectiveDate() {
 		return effectiveDate;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>effectiveDate</code>.</p>
+	 *
+	 * @param effectiveDate a {@link java.util.Date} object
+	 */
 	public void setEffectiveDate(Date effectiveDate) {
 		this.effectiveDate = effectiveDate;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>qty</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "ecm:wulQty")
 	public Double getQty() {
 		return qty;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>qty</code>.</p>
+	 *
+	 * @param qtyPerc a {@link java.lang.Double} object
+	 */
 	public void setQty(Double qtyPerc) {
 		this.qty = qtyPerc;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>loss</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "ecm:wulLoss")
 	public Double getLoss() {
 		return loss;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>loss</code>.</p>
+	 *
+	 * @param lossPerc a {@link java.lang.Double} object
+	 */
 	public void setLoss(Double lossPerc) {
 		this.loss = lossPerc;
 	}
@@ -231,12 +261,22 @@ public class WUsedListDataItem extends BeCPGDataObject implements CompositeDataI
 		this.link = link;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>targetItem</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	@AlfSingleAssoc
 	@AlfQname(qname = "ecm:wulTargetItem")
 	public NodeRef getTargetItem() {
 		return targetItem;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>targetItem</code>.</p>
+	 *
+	 * @param targetItem a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public void setTargetItem(NodeRef targetItem) {
 		this.targetItem = targetItem;
 	}

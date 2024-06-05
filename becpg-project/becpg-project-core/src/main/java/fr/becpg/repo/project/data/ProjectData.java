@@ -230,18 +230,28 @@ public class ProjectData extends BeCPGDataObject
 		this.startDate = startDate;
 	}
 
+	/**
+	 * <p>Getter for the field <code>targetStartDate</code>.</p>
+	 *
+	 * @return a {@link java.util.Date} object
+	 */
 	public Date getTargetStartDate() {
 		return targetStartDate;
 	}
 
+	/**
+	 * <p>Setter for the field <code>targetStartDate</code>.</p>
+	 *
+	 * @param targetStartDate a {@link java.util.Date} object
+	 */
 	public void setTargetStartDate(Date targetStartDate) {
 		this.targetStartDate = targetStartDate;
 	}
 
 	/**
-	 * <p>Getter for the field <code>formulatedDate</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @return a {@link java.util.Date} object.
+	 * <p>Getter for the field <code>formulatedDate</code>.</p>
 	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:formulatedDate")
@@ -257,9 +267,9 @@ public class ProjectData extends BeCPGDataObject
 	}
 
 	/**
-	 * <p>Getter for the field <code>requirementChecksum</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @return a {@link java.lang.String} object.
+	 * <p>Getter for the field <code>requirementChecksum</code>.</p>
 	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:requirementChecksum")
@@ -290,9 +300,9 @@ public class ProjectData extends BeCPGDataObject
 	}
 
 	/**
-	 * <p>Getter for the field <code>reformulateCount</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @return a {@link java.lang.Integer} object.
+	 * <p>Getter for the field <code>reformulateCount</code>.</p>
 	 */
 	@Override
 	public Integer getReformulateCount() {
@@ -306,9 +316,9 @@ public class ProjectData extends BeCPGDataObject
 	}
 
 	/**
-	 * <p>Getter for the field <code>currentReformulateCount</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @return a {@link java.lang.Integer} object.
+	 * <p>Getter for the field <code>currentReformulateCount</code>.</p>
 	 */
 	@Override
 	public Integer getCurrentReformulateCount() {
@@ -322,9 +332,9 @@ public class ProjectData extends BeCPGDataObject
 	}
 
 	/**
-	 * <p>Getter for the field <code>formulationChainId</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @return a {@link java.lang.String} object.
+	 * <p>Getter for the field <code>formulationChainId</code>.</p>
 	 */
 	@Override
 	public String getFormulationChainId() {
@@ -467,9 +477,9 @@ public class ProjectData extends BeCPGDataObject
 	}
 
 	/**
-	 * <p>getFormulatedEntityTpl.</p>
+	 * {@inheritDoc}
 	 *
-	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * <p>getFormulatedEntityTpl.</p>
 	 */
 	@Override
 	public NodeRef getFormulatedEntityTpl() {
@@ -602,9 +612,9 @@ public class ProjectData extends BeCPGDataObject
 	}
 
 	/**
-	 * <p>Getter for the field <code>score</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @return a {@link java.lang.Integer} object.
+	 * <p>Getter for the field <code>score</code>.</p>
 	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:projectScore")
@@ -614,9 +624,9 @@ public class ProjectData extends BeCPGDataObject
 	}
 
 	/**
-	 * <p>Setter for the field <code>score</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @param score a {@link java.lang.Integer} object.
+	 * <p>Setter for the field <code>score</code>.</p>
 	 */
 	@Override
 	public void setScore(Integer score) {
@@ -844,9 +854,9 @@ public class ProjectData extends BeCPGDataObject
 	}
 
 	/**
-	 * <p>Getter for the field <code>scoreList</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @return a {@link java.util.List} object.
+	 * <p>Getter for the field <code>scoreList</code>.</p>
 	 */
 	@DataList
 	@AlfQname(qname = "pjt:scoreList")
@@ -856,9 +866,9 @@ public class ProjectData extends BeCPGDataObject
 	}
 
 	/**
-	 * <p>Setter for the field <code>scoreList</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @param scoreList a {@link java.util.List} object.
+	 * <p>Setter for the field <code>scoreList</code>.</p>
 	 */
 	@Override
 	public void setScoreList(List<ScoreListDataItem> scoreList) {
@@ -952,15 +962,16 @@ public class ProjectData extends BeCPGDataObject
 	}
 
 	/**
-	 * <p>Getter for the field <code>surveyList</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @return a {@link java.util.List} object.
+	 * <p>Getter for the field <code>surveyList</code>.</p>
 	 */
 	@Override
 	public List<SurveyList> getSurveyList() {
 		return surveyList;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void setSurveyList(List<SurveyList> surveyList) {
 		this.surveyList = surveyList;

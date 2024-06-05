@@ -91,6 +91,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 	/** Constant <code>DYN_COLUMN_NAME="bcpg:dynamicCharactColumn"</code> */
 	public static final String DYN_COLUMN_NAME = "bcpg:dynamicCharactColumn";
 
+	/** Constant <code>JSON_PATH_SEPARATOR="/"</code> */
 	public static final String JSON_PATH_SEPARATOR = "/";
 
 	static {

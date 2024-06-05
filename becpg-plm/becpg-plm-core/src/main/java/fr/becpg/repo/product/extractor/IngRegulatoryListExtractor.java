@@ -16,6 +16,7 @@ public class IngRegulatoryListExtractor extends SimpleExtractor {
 	private static final String ING_REGULATORY_LIST = "ingRegulatoryList";
 
 	
+	/** {@inheritDoc} */
 	@Override
 	public boolean hasWriteAccess() {
 		return false;

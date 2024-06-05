@@ -81,6 +81,11 @@ public class QualityControlServiceImpl implements QualityControlService {
 	private NamespaceService namespaceService;
 	private SystemConfigurationService systemConfigurationService;
 	
+	/**
+	 * <p>Setter for the field <code>systemConfigurationService</code>.</p>
+	 *
+	 * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
+	 */
 	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
 		this.systemConfigurationService = systemConfigurationService;
 	}

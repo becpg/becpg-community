@@ -40,10 +40,18 @@ public abstract class AbstractEffectiveDataItem extends BeCPGDataObject implemen
 	
 	protected Date endEffectivity;
 	
+	/**
+	 * <p>Constructor for AbstractEffectiveDataItem.</p>
+	 */
 	protected AbstractEffectiveDataItem() {
 		super();
 	}
 	
+	/**
+	 * <p>Constructor for AbstractEffectiveDataItem.</p>
+	 *
+	 * @param c a {@link fr.becpg.repo.repository.model.AbstractEffectiveDataItem} object
+	 */
 	protected AbstractEffectiveDataItem(AbstractEffectiveDataItem c) {
 		super(c);
 		this.startEffectivity = c.startEffectivity;

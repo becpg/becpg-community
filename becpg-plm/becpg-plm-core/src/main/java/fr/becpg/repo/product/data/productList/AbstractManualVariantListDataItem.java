@@ -44,10 +44,18 @@ public abstract class AbstractManualVariantListDataItem extends AbstractManualDa
 
 	
 	
+	/**
+	 * <p>Constructor for AbstractManualVariantListDataItem.</p>
+	 */
 	protected AbstractManualVariantListDataItem() {
 		super();
 	}
 
+	/**
+	 * <p>Constructor for AbstractManualVariantListDataItem.</p>
+	 *
+	 * @param a a {@link fr.becpg.repo.product.data.productList.AbstractManualVariantListDataItem} object
+	 */
 	protected AbstractManualVariantListDataItem(AbstractManualVariantListDataItem a) {
 		super(a);
 		//DO not copy variants

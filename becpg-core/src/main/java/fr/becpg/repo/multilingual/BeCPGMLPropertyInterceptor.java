@@ -88,19 +88,34 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
     
     private SystemConfigurationService systemConfigurationService;
     
+    /**
+     * <p>Setter for the field <code>systemConfigurationService</code>.</p>
+     *
+     * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
+     */
     public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
 		this.systemConfigurationService = systemConfigurationService;
 	}
     
+    /**
+     * <p>getDisabledMLTextFields.</p>
+     *
+     * @return a {@link java.lang.String} object
+     */
     public String getDisabledMLTextFields() {
 		return systemConfigurationService.confValue("beCPG.multilinguale.disabledMLTextFields");
 	}
 
+	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object
+	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
 
-	/**
+    /**
      * <p>isMLAware.</p>
      *
      * @return Returns <tt>true</tt> if the current thread has marked itself

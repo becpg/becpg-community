@@ -59,6 +59,7 @@ public class NutCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 		return ret;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	protected void provideAdditionalValues(ProductData rootProduct, ProductData formulatedProduct, SimpleCharactDataItem simpleCharact, String unit, Double qtyUsed, Double netQty, CharactDetailsValue currentCharactDetailsValue) {
 		NutListDataItem nutListDataItem = (NutListDataItem) simpleCharact;

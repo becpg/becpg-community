@@ -277,6 +277,11 @@ public class NutListMiniMaxiPatch extends AbstractBeCPGPatch {
 		this.entityListDAO = entityListDAO;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>lockService</code>.</p>
+	 *
+	 * @param lockService a {@link org.alfresco.service.cmr.lock.LockService} object
+	 */
 	public void setLockService(LockService lockService) {
 		this.lockService = lockService;
 	}
