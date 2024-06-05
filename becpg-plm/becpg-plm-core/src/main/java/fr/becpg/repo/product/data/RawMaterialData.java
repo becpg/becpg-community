@@ -25,35 +25,76 @@ public class RawMaterialData extends ProductData {
 
 	private static final long serialVersionUID = -2176815295417841030L;
 
+	/**
+	 * <p>build.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.RawMaterialData} object
+	 */
 	public static RawMaterialData build() {
 		return new RawMaterialData();
 	}
 
+	/**
+	 * <p>withName.</p>
+	 *
+	 * @param name a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.product.data.RawMaterialData} object
+	 */
 	public RawMaterialData withName(String name) {
 		setName(name);
 		return this;
 	}
 
+	/**
+	 * <p>withLegalName.</p>
+	 *
+	 * @param legalName a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.product.data.RawMaterialData} object
+	 */
 	public RawMaterialData withLegalName(String legalName) {
 		setLegalName(legalName);
 		return this;
 	}
 	
+	/**
+	 * <p>withLegalName.</p>
+	 *
+	 * @param legalName a {@link org.alfresco.service.cmr.repository.MLText} object
+	 * @return a {@link fr.becpg.repo.product.data.RawMaterialData} object
+	 */
 	public RawMaterialData withLegalName(MLText legalName) {
 		setLegalName(legalName);
 		return this;
 	}
 
+	/**
+	 * <p>withUnit.</p>
+	 *
+	 * @param unit a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object
+	 * @return a {@link fr.becpg.repo.product.data.RawMaterialData} object
+	 */
 	public RawMaterialData withUnit(ProductUnit unit) {
 		setUnit(unit);
 		return this;
 	}
 
+	/**
+	 * <p>withQty.</p>
+	 *
+	 * @param qty a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.product.data.RawMaterialData} object
+	 */
 	public RawMaterialData withQty(Double qty) {
 		setQty(qty);
 		return this;
 	}
 
+	/**
+	 * <p>withDensity.</p>
+	 *
+	 * @param density a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.product.data.RawMaterialData} object
+	 */
 	public RawMaterialData withDensity(Double density) {
 		setDensity(density);
 		return this;

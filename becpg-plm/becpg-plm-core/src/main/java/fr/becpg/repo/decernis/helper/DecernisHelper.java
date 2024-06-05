@@ -9,6 +9,12 @@ import java.util.regex.Pattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+/**
+ * <p>DecernisHelper class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class DecernisHelper {
 	
 	private static final Pattern THRESHOLD_PATTERN_1 = Pattern.compile("\\(?<=([0-9.]+)\\s*(mg/l|mg/kg)\\)?");
@@ -22,6 +28,12 @@ public class DecernisHelper {
 		
 	}
 	
+	/**
+	 * <p>truncateDoubleValue.</p>
+	 *
+	 * @param ingQtyPerc a {@link java.lang.Double} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	public static Double truncateDoubleValue(Double ingQtyPerc) {
 		if (ingQtyPerc == null) {
 			return null;
@@ -30,6 +42,12 @@ public class DecernisHelper {
 		return Double.parseDouble(formattedValue);
 	}
 	
+	/**
+	 * <p>extractThresholdValue.</p>
+	 *
+	 * @param threshold a {@link java.lang.String} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	public static Double extractThresholdValue(String threshold) {
 		try {
 			Matcher matcher = THRESHOLD_PATTERN_1.matcher(threshold);

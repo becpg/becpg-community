@@ -61,20 +61,40 @@ public class MeatContentRule {
 		this.meatType = meatType;
 	}
 
+	/**
+	 * <p>Getter for the field <code>fatReplacement</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public NodeRef getFatReplacement() {
 		return fatReplacement;
 	}
 
+	/**
+	 * <p>Setter for the field <code>fatReplacement</code>.</p>
+	 *
+	 * @param fatReplacement a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public void setFatReplacement(NodeRef fatReplacement) {
 		this.fatReplacement = fatReplacement;
 	}
 
 
 
+	/**
+	 * <p>Getter for the field <code>ctReplacement</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public NodeRef getCtReplacement() {
 		return ctReplacement;
 	}
 
+	/**
+	 * <p>Setter for the field <code>ctReplacement</code>.</p>
+	 *
+	 * @param ctReplacement a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public void setCtReplacement(NodeRef ctReplacement) {
 		this.ctReplacement = ctReplacement;
 	}
@@ -107,11 +127,13 @@ public class MeatContentRule {
 		this.component = component;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		return Objects.hash(component, ctReplacement, fatReplacement, locales, meatType);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -126,6 +148,7 @@ public class MeatContentRule {
 				&& Objects.equals(meatType, other.meatType);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "MeatContentRule [fatReplacement=" + fatReplacement + ", ctReplacement=" + ctReplacement + ", meatType=" + meatType + ", component="

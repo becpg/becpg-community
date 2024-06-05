@@ -32,9 +32,10 @@ import fr.becpg.repo.survey.data.SurveyList;
 import fr.becpg.repo.survey.data.SurveyQuestion;
 
 /**
+ * <p>SurveyServiceImpl class.</p>
  *
  * @author matthieu
- *
+ * @version $Id: $Id
  */
 @Service("surveyService")
 public class SurveyServiceImpl implements SurveyService {
@@ -68,6 +69,7 @@ public class SurveyServiceImpl implements SurveyService {
 	 *
 	 * { id : "r1", label : "Enjoy your bright day!" }, { id : "r2", label : "Beware to not take cold!" }, { id : "r3", label : "Try to avoid getting outside!" } ]
 	 */
+	/** {@inheritDoc} */
 	@Override
 	public JSONObject getSurveyData(NodeRef entityNodeRef, String dataListName) throws JSONException {
 		JSONObject ret = new JSONObject();
@@ -114,6 +116,7 @@ public class SurveyServiceImpl implements SurveyService {
 		return ret;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void saveSurveyData(NodeRef entityNodeRef, String dataListName, JSONObject data) throws JSONException {
 		if (data.has("data")) {

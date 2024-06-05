@@ -37,6 +37,7 @@ public class PlmEntityActivityPlugin extends DefaultEntityActivityPlugin impleme
 		return entityDictionaryService.isSubClass(entityType, PLMModel.TYPE_PRODUCT) || PLMModel.TYPE_SUPPLIER.isMatch(entityType);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		EntityActivityExtractorServiceImpl.registerIgnoredType(PLMModel.PROP_ILL_LOG_VALUE);

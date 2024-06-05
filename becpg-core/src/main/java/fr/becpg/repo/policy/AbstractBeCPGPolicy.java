@@ -71,7 +71,9 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 	
 	protected BeCPGPolicyTransactionListener postTransactionListener = new BeCPGPolicyTransactionListener("post");
 
+	/** Constant <code>KEY_REGISTRY="key_registry"</code> */
 	protected static final String KEY_REGISTRY = "key_registry";
+	/** Constant <code>ASSOC_REGISTRY="assoc_registry"</code> */
 	protected static final String ASSOC_REGISTRY = "assoc_registry";
 
 	private static final Log logger = LogFactory.getLog(AbstractBeCPGPolicy.class);
@@ -219,6 +221,12 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 	/** Constant <code>KEY_PENDING_DELETE_NODES="DbNodeServiceImpl.pendingDeleteNodes"</code> */
 	public static final String KEY_PENDING_DELETE_NODES = "DbNodeServiceImpl.pendingDeleteNodes";
 
+	/**
+	 * <p>isPendingDelete.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
 	protected boolean isPendingDelete(NodeRef nodeRef) {
 		// Avoid creating a Set if the transaction is read-only
 		if (AlfrescoTransactionSupport.getTransactionReadState() != TxnReadState.TXN_READ_WRITE) {
@@ -268,6 +276,12 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 
 	}
 	
+	/**
+	 * <p>doAfterAssocsCommit.</p>
+	 *
+	 * @param key a {@link java.lang.String} object
+	 * @param pendingAssocs a {@link java.util.Set} object
+	 */
 	protected void doAfterAssocsCommit(String key, Set<AssociationRef> pendingAssocs) {
 		// Do Nothing
 		
@@ -310,6 +324,12 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 		
 	}
 	
+	/**
+	 * <p>getKeyRegistry.</p>
+	 *
+	 * @param registry a {@link java.lang.String} object
+	 * @return a {@link java.util.Set} object
+	 */
 	protected Set<String> getKeyRegistry(String registry) {
 		Set<String> keys = TransactionSupportUtil.getResource(generateDefaultKey()+"_"+registry);
 		if (keys == null) {

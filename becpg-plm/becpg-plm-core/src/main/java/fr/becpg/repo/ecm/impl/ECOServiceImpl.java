@@ -899,6 +899,7 @@ public class ECOServiceImpl implements ECOService {
 		return null;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public BatchInfo closeECO(NodeRef ecoNodeRef, List<NodeRef> impactedProducts) {
 		
@@ -1563,6 +1564,12 @@ public class ECOServiceImpl implements ECOService {
 		return null;
 	}
 
+	/**
+	 * <p>setInProgress.</p>
+	 *
+	 * @param ecoNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.lang.Boolean} object
+	 */
 	public Boolean setInProgress(NodeRef ecoNodeRef) {
 		ChangeOrderData om = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
 		if (!ECOState.InProgress.equals(om.getEcoState())) {

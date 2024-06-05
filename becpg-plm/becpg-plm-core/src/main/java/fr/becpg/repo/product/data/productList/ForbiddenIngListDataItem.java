@@ -61,26 +61,43 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 	private List<NodeRef> regulatoryCountriesRef = new ArrayList<>();
 	private List<NodeRef> regulatoryUsagesRef = new ArrayList<>();
 	
+	/**
+	 * <p>Setter for the field <code>qtyPercMaxiUnit</code>.</p>
+	 *
+	 * @param qtyPercMaxiUnit a {@link java.lang.String} object
+	 */
 	public void setQtyPercMaxiUnit(String qtyPercMaxiUnit) {
 		this.qtyPercMaxiUnit = qtyPercMaxiUnit;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>regulatoryCountriesRef</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	@AlfMultiAssoc
 	@AlfQname(qname = "bcpg:regulatoryCountries")
 	public List<NodeRef> getRegulatoryCountriesRef() {
 		return regulatoryCountriesRef;
 	}
 
+	/** {@inheritDoc} */
 	public void setRegulatoryCountriesRef(List<NodeRef> regulatoryCountries) {
 		this.regulatoryCountriesRef = regulatoryCountries;
 	}
 
+	/**
+	 * <p>Getter for the field <code>regulatoryUsagesRef</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	@AlfMultiAssoc
 	@AlfQname(qname = "bcpg:regulatoryUsageRef")
 	public List<NodeRef> getRegulatoryUsagesRef() {
 		return regulatoryUsagesRef;
 	}
 
+	/** {@inheritDoc} */
 	public void setRegulatoryUsagesRef(List<NodeRef> regulatoryUsages) {
 		this.regulatoryUsagesRef = regulatoryUsages;
 	}
@@ -139,6 +156,11 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 		return qtyPercMaxi;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>qtyPercMaxiUnit</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:filQtyPercMaxiUnit")
 	public String getQtyPercMaxiUnit() {

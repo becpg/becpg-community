@@ -31,6 +31,7 @@ public class PhysicoRequirementScanner extends SimpleListRequirementScanner<Phys
 	/** Constant <code>MESSAGE_PHYSICO_NOT_IN_RANGE="message.formulate.physicoChem.notInRang"{trunked}</code> */
 	public static final String MESSAGE_PHYSICO_NOT_IN_RANGE = "message.formulate.physicoChem.notInRangeValue";
 	
+	/** Constant <code>MESSAGE_PHYSICO_NOT_IN_RANGE_INFO="message.formulate.info.physicoChem.notI"{trunked}</code> */
 	public static final String MESSAGE_PHYSICO_NOT_IN_RANGE_INFO = "message.formulate.info.physicoChem.notInRangeValue";
 	
 

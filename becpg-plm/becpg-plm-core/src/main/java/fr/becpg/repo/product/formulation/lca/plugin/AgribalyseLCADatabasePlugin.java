@@ -19,6 +19,12 @@ import fr.becpg.common.csv.CSVReader;
 import fr.becpg.repo.product.formulation.lca.LCAData;
 import fr.becpg.repo.product.formulation.lca.LCADatabasePlugin;
 
+/**
+ * <p>AgribalyseLCADatabasePlugin class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class AgribalyseLCADatabasePlugin implements LCADatabasePlugin {
 
@@ -27,16 +33,19 @@ public class AgribalyseLCADatabasePlugin implements LCADatabasePlugin {
 	@Autowired
 	private ContentService contentService;
 	
+	/** {@inheritDoc} */
 	@Override
 	public boolean acceptDatabaseFilename(String databaseName) {
 		return databaseName.contains("agribalyse");
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public String getMethod() {
 		return "Agribalyse";
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Map<String, LCAData> extractData(NodeRef databaseNodeRef) {
 		Map<String, LCAData> lcaData = new LinkedHashMap<>();

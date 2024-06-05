@@ -565,6 +565,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		return nodes;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isSearchFiltered(Map<String, String> criteria) {
 

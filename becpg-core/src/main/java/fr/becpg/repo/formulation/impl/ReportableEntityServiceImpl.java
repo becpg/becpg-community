@@ -19,6 +19,12 @@ import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.RepositoryEntityDefReader;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
+/**
+ * <p>ReportableEntityServiceImpl class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service("reportableEntityService")
 public class ReportableEntityServiceImpl implements ReportableEntityService {
 
@@ -33,6 +39,7 @@ public class ReportableEntityServiceImpl implements ReportableEntityService {
 	@Autowired
 	private NodeService nodeService;
 	
+	/** {@inheritDoc} */
 	@Override
 	public void postEntityErrors(NodeRef entityNodeRef, String formulationChainId, Set<ReportableError> errors) {
 

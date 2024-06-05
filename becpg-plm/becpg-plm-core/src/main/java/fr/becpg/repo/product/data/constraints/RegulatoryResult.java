@@ -1,5 +1,11 @@
 package fr.becpg.repo.product.data.constraints;
 
+/**
+ * <p>RegulatoryResult class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public enum RegulatoryResult {
 		ERROR(3),
 	    PROHIBITED(2),
@@ -12,6 +18,11 @@ public enum RegulatoryResult {
 	        this.severity = severity;
 	    }
 
+	    /**
+	     * <p>Getter for the field <code>severity</code>.</p>
+	     *
+	     * @return a int
+	     */
 	    public int getSeverity() {
 	        return severity;
 	    }

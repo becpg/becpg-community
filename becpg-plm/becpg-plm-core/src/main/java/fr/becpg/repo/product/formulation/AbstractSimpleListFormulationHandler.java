@@ -107,6 +107,11 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	
 	protected SystemConfigurationService systemConfigurationService;
 	
+	/**
+	 * <p>Setter for the field <code>systemConfigurationService</code>.</p>
+	 *
+	 * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
+	 */
 	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
 		this.systemConfigurationService = systemConfigurationService;
 	}
@@ -166,6 +171,11 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	}
 
 
+	/**
+	 * <p>Setter for the field <code>associationService</code>.</p>
+	 *
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object
+	 */
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
@@ -245,6 +255,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	 *
 	 * @param simpleListDataList a {@link java.util.List} object.
 	 * @param isFormulatedProduct a boolean.
+	 * @param toRemove a {@link java.util.List} object
 	 */
 	protected void cleanSimpleList(List<T> simpleListDataList, boolean isFormulatedProduct, List<T> toRemove) {
 
@@ -291,6 +302,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	 * @param simpleListDataList a {@link java.util.List} object.
 	 * @param isFormulatedProduct a boolean.
 	 * @throws fr.becpg.repo.formulation.FormulateException if any.
+	 * @param simpleListQtyProvider a {@link fr.becpg.repo.product.formulation.SimpleListQtyProvider} object
 	 */
 	protected void formulateSimpleList(ProductData formulatedProduct, List<T> simpleListDataList, SimpleListQtyProvider simpleListQtyProvider,
 			boolean isFormulatedProduct) {
@@ -317,6 +329,15 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 	}
 
+	/**
+	 * <p>visitComposition.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param simpleListDataList a {@link java.util.List} object
+	 * @param qtyProvider a {@link fr.becpg.repo.product.formulation.SimpleListQtyProvider} object
+	 * @param variant a {@link fr.becpg.repo.variant.model.VariantData} object
+	 * @param toRemove a {@link java.util.List} object
+	 */
 	protected void visitComposition(ProductData formulatedProduct, List<T> simpleListDataList, SimpleListQtyProvider qtyProvider,
 			VariantData variant,List<T> toRemove ) {
 		NodeRef variantNodeRef = variant != null ? variant.getNodeRef() : null;
@@ -391,6 +412,15 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		}
 	}
 
+	/**
+	 * <p>visitPackaging.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param simpleListDataList a {@link java.util.List} object
+	 * @param qtyProvider a {@link fr.becpg.repo.product.formulation.SimpleListQtyProvider} object
+	 * @param variant a {@link fr.becpg.repo.variant.model.VariantData} object
+	 * @param toRemove a {@link java.util.List} object
+	 */
 	protected void visitPackaging(ProductData formulatedProduct, List<T> simpleListDataList, SimpleListQtyProvider qtyProvider, VariantData variant, List<T> toRemove ) {
 
 		if (formulatedProduct.hasPackagingListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE),
@@ -425,6 +455,15 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 	}
 
+	/**
+	 * <p>visitProcess.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param simpleListDataList a {@link java.util.List} object
+	 * @param qtyProvider a {@link fr.becpg.repo.product.formulation.SimpleListQtyProvider} object
+	 * @param variant a {@link fr.becpg.repo.variant.model.VariantData} object
+	 * @param toRemove a {@link java.util.List} object
+	 */
 	protected void visitProcess(ProductData formulatedProduct, List<T> simpleListDataList, SimpleListQtyProvider qtyProvider, VariantData variant, List<T> toRemove ) {
 
 		if (formulatedProduct.hasProcessListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE),
@@ -645,8 +684,20 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		}
 	}
 
+	/**
+	 * <p>propagateModeEnable.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a boolean
+	 */
 	protected abstract boolean propagateModeEnable(ProductData formulatedProduct);
 
+	/**
+	 * <p>newSimpleListDataItem.</p>
+	 *
+	 * @param charactNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a T object
+	 */
 	protected abstract T newSimpleListDataItem(NodeRef charactNodeRef);
 
 	/**
@@ -654,12 +705,11 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	 *
 	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object.
 	 * @param partProduct a {@link fr.becpg.repo.product.data.ProductData} object.
-	 * @param newSimpleListDataItem a {@link fr.becpg.repo.repository.model.SimpleListDataItem} object.
-	 * @param slDataItem a {@link fr.becpg.repo.repository.model.SimpleListDataItem} object.
 	 * @param qtyUsed a {@link java.lang.Double} object.
 	 * @param netQty a {@link java.lang.Double} object.
-	 * @param isGenericRawMaterial a boolean.
 	 * @param variant a {@link fr.becpg.repo.variant.model.VariantData} object.
+	 * @param calculatedListItem a {@link fr.becpg.repo.repository.model.SimpleListDataItem} object
+	 * @param visitedListItem a {@link fr.becpg.repo.repository.model.SimpleListDataItem} object
 	 */
 	protected void calculate(ProductData formulatedProduct, ProductData partProduct, SimpleListDataItem calculatedListItem,
 			SimpleListDataItem visitedListItem, Double qtyUsed, Double netQty, VariantData variant) {
@@ -932,6 +982,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	 *
 	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object.
 	 * @param simpleListDataList a {@link java.util.List} object.
+	 * @param toRemove a {@link java.util.List} object
 	 */
 	@SuppressWarnings("unchecked")
 	protected void synchronizeTemplate(ProductData formulatedProduct, List<T> simpleListDataList, List<T> toRemove) {
@@ -1017,6 +1068,14 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	}
 	
 	
+	/**
+	 * <p>shouldPropagate.</p>
+	 *
+	 * @param compositionDataItem a {@link fr.becpg.repo.repository.model.CompositionDataItem} object
+	 * @param charactNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param defaultValue a boolean
+	 * @return a boolean
+	 */
 	protected boolean shouldPropagate(CompositionDataItem compositionDataItem, NodeRef charactNodeRef, boolean defaultValue) {
 		
 		if (compositionDataItem.getAspects().contains(PLMModel.ASPECT_PROPAGATE_UP) && (compositionDataItem.getNodeRef() != null)

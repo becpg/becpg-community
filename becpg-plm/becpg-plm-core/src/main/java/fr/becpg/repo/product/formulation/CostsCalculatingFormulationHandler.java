@@ -45,16 +45,19 @@ public class CostsCalculatingFormulationHandler extends AbstractCostCalculatingF
 		return partProduct.getCostList();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected List<CostListDataItem> getDataListVisited(ClientData client) {
 		return client.getCostList();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected List<CostListDataItem> getDataListVisited(SupplierData supplier) {
 		return supplier.getCostList();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void afterProcess(ProductData formulatedProduct) {
 		calculateProfitability(formulatedProduct);
@@ -79,6 +82,7 @@ public class CostsCalculatingFormulationHandler extends AbstractCostCalculatingF
 		return RequirementDataType.Cost;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	protected String getFormulationErrorMessage() {
 		return MESSAGE_FORMULATE_COST_LIST_ERROR;
@@ -216,27 +220,32 @@ public class CostsCalculatingFormulationHandler extends AbstractCostCalculatingF
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void setDataListVisited(ProductData formulatedProduct) {
 		formulatedProduct.setCostList(new LinkedList<>());
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected QName getCostFormulaPropName() {
 		return PLMModel.PROP_COST_FORMULA;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected QName getCostFixedPropName() {
 		return PLMModel.PROP_COSTFIXED;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected QName getCostUnitPropName() {
 		return PLMModel.PROP_COSTCURRENCY;
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	protected CostListDataItem newSimpleListDataItem(NodeRef charactNodeRef) {
 		CostListDataItem costListDataItem = new CostListDataItem();

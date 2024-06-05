@@ -7,8 +7,15 @@ import org.springframework.beans.factory.InitializingBean;
 
 import fr.becpg.repo.audit.model.AuditDataType;
 
+/**
+ * <p>Abstract AbstractAuditPlugin class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public abstract class AbstractAuditPlugin implements AuditPlugin, InitializingBean {
 	
+	/** Constant <code>KEY_MAP</code> */
 	protected static final Map<String, AuditDataType> KEY_MAP = new HashMap<>();
 
 	private boolean databaseEnable = false;
@@ -19,25 +26,34 @@ public abstract class AbstractAuditPlugin implements AuditPlugin, InitializingBe
 	
 	private String auditParameters;
 	
+	/**
+	 * <p>Setter for the field <code>auditParameters</code>.</p>
+	 *
+	 * @param auditParameters a {@link java.lang.String} object
+	 */
 	protected void setAuditParameters(String auditParameters) {
 		this.auditParameters = auditParameters;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public boolean isDatabaseEnable() {
 		return databaseEnable;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public boolean isStopWatchEnable() {
 		return stopWatchEnable;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public boolean isTracerEnable() {
 		return tracerEnable;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		if (auditParameters != null && !auditParameters.isBlank()) {
@@ -55,6 +71,11 @@ public abstract class AbstractAuditPlugin implements AuditPlugin, InitializingBe
 		}
 	}
 
+	/**
+	 * <p>getKeyMap.</p>
+	 *
+	 * @return a {@link java.util.Map} object
+	 */
 	public Map<String, AuditDataType> getKeyMap() {
 		return KEY_MAP;
 	}

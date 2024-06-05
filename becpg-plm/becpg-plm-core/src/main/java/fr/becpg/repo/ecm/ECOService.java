@@ -36,10 +36,20 @@ public interface ECOService {
 	 *
 	 * @param ecoNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param selectToApply a boolean.
-	 * @return 
+	 * @param notifyByMail a boolean
+	 * @return a {@link fr.becpg.repo.batch.BatchInfo} object
 	 */
 	BatchInfo calculateWUsedList(NodeRef ecoNodeRef, boolean selectToApply, boolean notifyByMail);
 	
+	/**
+	 * <p>apply.</p>
+	 *
+	 * @param ecoNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param deleteOnApply a boolean
+	 * @param calculateWUsed a boolean
+	 * @param notifyByMail a boolean
+	 * @return a {@link fr.becpg.repo.batch.BatchInfo} object
+	 */
 	BatchInfo apply(NodeRef ecoNodeRef, boolean deleteOnApply, boolean calculateWUsed, boolean notifyByMail);
 	
 	/**
@@ -47,9 +57,18 @@ public interface ECOService {
 	 *
 	 * @param ecoNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @return a boolean.
+	 * @param calculateWUsed a boolean
+	 * @param notifyByMail a boolean
 	 */
 	BatchInfo doSimulation(NodeRef ecoNodeRef, boolean calculateWUsed, boolean notifyByMail);
 	
+	/**
+	 * <p>closeECO.</p>
+	 *
+	 * @param ecoNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param impactedProducts a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.batch.BatchInfo} object
+	 */
 	BatchInfo closeECO(NodeRef ecoNodeRef, List<NodeRef> impactedProducts);
 
 }

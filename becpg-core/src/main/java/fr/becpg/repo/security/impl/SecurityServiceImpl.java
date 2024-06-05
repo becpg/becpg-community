@@ -173,6 +173,7 @@ public class SecurityServiceImpl implements SecurityService {
 		return accessMode;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public PermissionContext getPermissionContext(NodeRef nodeRef, QName nodeType, String propName) {
 		

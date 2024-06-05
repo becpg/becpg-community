@@ -17,14 +17,17 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 import fr.becpg.repo.survey.SurveyService;
 
 /**
+ * <p>SurveyWebScript class.</p>
  *
  * @author matthieu
- *
+ * @version $Id: $Id
  */
 public class SurveyWebScript extends AbstractWebScript {
 
+	/** Constant <code>PARAM_ENTITY_NODEREF="entityNodeRef"</code> */
 	protected static final String PARAM_ENTITY_NODEREF = "entityNodeRef";
 
+	/** Constant <code>PARAM_DATA_LIST_NAME="dataListName"</code> */
 	protected static final String PARAM_DATA_LIST_NAME = "dataListName";
 
 	private NodeService nodeService;
@@ -33,14 +36,29 @@ public class SurveyWebScript extends AbstractWebScript {
 
 	private PermissionService permissionService;
 
+	/**
+	 * <p>Setter for the field <code>permissionService</code>.</p>
+	 *
+	 * @param permissionService a {@link org.alfresco.service.cmr.security.PermissionService} object
+	 */
 	public void setPermissionService(PermissionService permissionService) {
 		this.permissionService = permissionService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>surveyService</code>.</p>
+	 *
+	 * @param surveyService a {@link fr.becpg.repo.survey.SurveyService} object
+	 */
 	public void setSurveyService(SurveyService surveyService) {
 		this.surveyService = surveyService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
@@ -76,6 +94,12 @@ public class SurveyWebScript extends AbstractWebScript {
 
 	}
 
+	/**
+	 * <p>findEntity.</p>
+	 *
+	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	protected NodeRef findEntity(WebScriptRequest req) {
 
 		String nodeRef = req.getParameter(PARAM_ENTITY_NODEREF);

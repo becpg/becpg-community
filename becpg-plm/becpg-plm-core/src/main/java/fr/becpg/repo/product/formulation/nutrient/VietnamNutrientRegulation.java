@@ -3,6 +3,12 @@ package fr.becpg.repo.product.formulation.nutrient;
 import java.math.RoundingMode;
 import java.util.Locale;
 
+/**
+ * <p>VietnamNutrientRegulation class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class VietnamNutrientRegulation extends EuropeanNutrientRegulation {
 
 	/**
@@ -22,11 +28,13 @@ public class VietnamNutrientRegulation extends EuropeanNutrientRegulation {
 		return ret.getRoundedValue();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected Locale getDisplayLocale(Locale locale) {
 		return new Locale("en");
 	}
 
+	/** {@inheritDoc} */
 	protected NutrientRoundedValue extractNutrientRoundedValue(Double value, String nutrientTypeCode) {
 
 		NutrientRoundedValue ret = new NutrientRoundedValue(nutrientTypeCode, value);

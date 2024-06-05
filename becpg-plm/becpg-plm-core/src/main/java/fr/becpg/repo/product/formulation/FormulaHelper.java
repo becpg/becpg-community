@@ -53,6 +53,12 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.model.CompositionDataItem;
 import fr.becpg.repo.security.BeCPGAccessDeniedException;
 
+/**
+ * <p>FormulaHelper class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Component
 public class FormulaHelper {
 	
@@ -60,6 +66,9 @@ public class FormulaHelper {
 	
 	private static FormulaHelper instance;
 	
+	/**
+	 * <p>Constructor for FormulaHelper.</p>
+	 */
 	public FormulaHelper() {
 		instance = this;
 	}
@@ -81,8 +90,15 @@ public class FormulaHelper {
 	/** Constant <code>DYN_COLUMN_NAME="bcpg:dynamicCharactColumn"</code> */
 	public static final String DYN_COLUMN_NAME = "bcpg:dynamicCharactColumn";
 
+	/** Constant <code>JSON_PATH_SEPARATOR="/"</code> */
 	public static final String JSON_PATH_SEPARATOR = "/";
 
+	/**
+	 * <p>copyTemplateDynamicCharactList.</p>
+	 *
+	 * @param sourceList a {@link java.util.List} object
+	 * @param targetList a {@link java.util.List} object
+	 */
 	public static void copyTemplateDynamicCharactList(List<DynamicCharactListItem> sourceList, List<DynamicCharactListItem> targetList) {
 
 		if ((sourceList != null) && (targetList != null)) {
@@ -147,6 +163,14 @@ public class FormulaHelper {
 		}
 	}
 	
+	/**
+	 * <p>computeFormula.</p>
+	 *
+	 * @param entity a {@link fr.becpg.repo.product.data.AbstractScorableEntity} object
+	 * @param context a {@link org.springframework.expression.EvaluationContext} object
+	 * @param view a {@link fr.becpg.repo.product.data.AbstractProductDataView} object
+	 * @param execOrder a {@link fr.becpg.repo.product.data.productList.DynamicCharactExecOrder} object
+	 */
 	public static void computeFormula(AbstractScorableEntity entity, EvaluationContext context, AbstractProductDataView view, DynamicCharactExecOrder execOrder) {
 
 		if (view.getDynamicCharactList() != null) {

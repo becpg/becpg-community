@@ -21,6 +21,12 @@ import fr.becpg.repo.product.formulation.lca.LCADatabaseService;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
 
+/**
+ * <p>LCADatabaseImportWebScript class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class LCADatabaseImportWebScript extends AbstractWebScript {
 
 	private static final Log logger = LogFactory.getLog(LCADatabaseImportWebScript.class);
@@ -32,6 +38,11 @@ public class LCADatabaseImportWebScript extends AbstractWebScript {
 
 	private LCADatabaseService lcaDatabaseService;
 
+	/**
+	 * <p>Setter for the field <code>lcaDatabaseService</code>.</p>
+	 *
+	 * @param lcaDatabaseService a {@link fr.becpg.repo.product.formulation.lca.LCADatabaseService} object
+	 */
 	public void setLcaDatabaseService(LCADatabaseService lcaDatabaseService) {
 		this.lcaDatabaseService = lcaDatabaseService;
 	}

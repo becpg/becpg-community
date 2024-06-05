@@ -401,6 +401,7 @@ public class ControlListDataItem extends BeCPGDataObject {
 	 * @param method a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param characts a {@link java.util.List} object.
 	 * @param controlPoint a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param timePeriod a {@link java.lang.String} object
 	 */
 	public ControlListDataItem(NodeRef nodeRef, String type, Double mini, Double maxi, Boolean required, String sampleId, Double value, Double target,
 			String unit, MLText textCriteria, QualityControlState state, String temperature, String timePeriod, NodeRef method,

@@ -1048,6 +1048,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		return extractPropName(type, v);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public String extractPropName(QName type, JSONObject v) {
 		AttributeExtractorPlugin plugin = getAttributeExtractorPlugin(type);
@@ -1136,6 +1137,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		return personAttributeExtractorPlugin.getPersonDisplayName(userId);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean matchCriteria(NodeRef nodeRef, Map<String, String> criteriaMap) {
 		

@@ -5,6 +5,12 @@ import java.util.Objects;
 import org.json.JSONObject;
 import org.springframework.extensions.surf.util.I18NUtil;
 
+/**
+ * <p>EcoScoreContext class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class EcoScoreContext {
 	
 	private int ecoScore;
@@ -15,63 +21,138 @@ public class EcoScoreContext {
 	private int politicalScore;
 	private int packagingMalus;
 
+	/**
+	 * <p>Getter for the field <code>ecoScore</code>.</p>
+	 *
+	 * @return a int
+	 */
 	public int getEcoScore() {
 		return ecoScore;
 	}
 
+	/**
+	 * <p>Setter for the field <code>ecoScore</code>.</p>
+	 *
+	 * @param ecoScore a int
+	 */
 	public void setEcoScore(int ecoScore) {
 		this.ecoScore = ecoScore;
 	}
 
+	/**
+	 * <p>Getter for the field <code>scoreClass</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	public String getScoreClass() {
 		return scoreClass;
 	}
 
+	/**
+	 * <p>Setter for the field <code>scoreClass</code>.</p>
+	 *
+	 * @param scoreClass a {@link java.lang.String} object
+	 */
 	public void setScoreClass(String scoreClass) {
 		this.scoreClass = scoreClass;
 	}
 
+	/**
+	 * <p>Getter for the field <code>acvScore</code>.</p>
+	 *
+	 * @return a int
+	 */
 	public int getAcvScore() {
 		return acvScore;
 	}
 
+	/**
+	 * <p>Setter for the field <code>acvScore</code>.</p>
+	 *
+	 * @param acvScore a int
+	 */
 	public void setAcvScore(int acvScore) {
 		this.acvScore = acvScore;
 	}
 
+	/**
+	 * <p>Getter for the field <code>claimBonus</code>.</p>
+	 *
+	 * @return a int
+	 */
 	public int getClaimBonus() {
 		return claimBonus;
 	}
 
+	/**
+	 * <p>Setter for the field <code>claimBonus</code>.</p>
+	 *
+	 * @param claimBonus a int
+	 */
 	public void setClaimBonus(int claimBonus) {
 		this.claimBonus = claimBonus;
 	}
 
+	/**
+	 * <p>Getter for the field <code>transportScore</code>.</p>
+	 *
+	 * @return a int
+	 */
 	public int getTransportScore() {
 		return transportScore;
 	}
 
+	/**
+	 * <p>Setter for the field <code>transportScore</code>.</p>
+	 *
+	 * @param transportScore a int
+	 */
 	public void setTransportScore(int transportScore) {
 		this.transportScore = transportScore;
 	}
 
 
+	/**
+	 * <p>Getter for the field <code>politicalScore</code>.</p>
+	 *
+	 * @return a int
+	 */
 	public int getPoliticalScore() {
 		return politicalScore;
 	}
 
+	/**
+	 * <p>Setter for the field <code>politicalScore</code>.</p>
+	 *
+	 * @param politicalScore a int
+	 */
 	public void setPoliticalScore(int politicalScore) {
 		this.politicalScore = politicalScore;
 	}
 
+	/**
+	 * <p>Getter for the field <code>packagingMalus</code>.</p>
+	 *
+	 * @return a int
+	 */
 	public int getPackagingMalus() {
 		return packagingMalus;
 	}
 
+	/**
+	 * <p>Setter for the field <code>packagingMalus</code>.</p>
+	 *
+	 * @param packagingMalus a int
+	 */
 	public void setPackagingMalus(int packagingMalus) {
 		this.packagingMalus = packagingMalus;
 	}
 
+	/**
+	 * <p>toJSON.</p>
+	 *
+	 * @return a {@link org.json.JSONObject} object
+	 */
 	public JSONObject toJSON() {
 		JSONObject json = new JSONObject();
 		
@@ -86,6 +167,11 @@ public class EcoScoreContext {
 		return json;
 	}
 	
+	/**
+	 * <p>toHtmlDisplayValue.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	public String toHtmlDisplayValue() {
 
 		StringBuilder sb = new StringBuilder();
@@ -124,6 +210,12 @@ public class EcoScoreContext {
 		
 	}
 	
+	/**
+	 * <p>parse.</p>
+	 *
+	 * @param nutriScoreDetails a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.product.formulation.score.EcoScoreContext} object
+	 */
 	public static EcoScoreContext parse(String nutriScoreDetails) {
 
 		JSONObject jsonValue = new JSONObject(nutriScoreDetails);
@@ -142,11 +234,13 @@ public class EcoScoreContext {
 
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		return Objects.hash(ecoScore, scoreClass, acvScore, claimBonus, transportScore, politicalScore, packagingMalus);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -161,6 +255,7 @@ public class EcoScoreContext {
 				&& Objects.equals(politicalScore, other.politicalScore) && Objects.equals(packagingMalus, other.packagingMalus);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "EcoScoreContext [ecoScore=" + ecoScore + ", scoreClass=" + scoreClass + ", acvScore=" + acvScore + ", claimBonus=" + claimBonus + ", transportScore="

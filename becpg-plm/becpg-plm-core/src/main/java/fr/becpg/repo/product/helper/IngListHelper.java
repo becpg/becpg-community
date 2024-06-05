@@ -14,12 +14,26 @@ import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 
+/**
+ * <p>IngListHelper class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class IngListHelper {
 
 	private IngListHelper() {
 		//Do Nothing
 	}
 
+	/**
+	 * <p>extractParentList.</p>
+	 *
+	 * @param ingList a {@link java.util.List} object
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 * @return a {@link java.util.List} object
+	 */
 	public static List<IngListDataItem> extractParentList(List<IngListDataItem> ingList, AssociationService associationService,
 			AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 

@@ -22,6 +22,12 @@ import fr.becpg.repo.repository.model.Synchronisable;
 import fr.becpg.repo.repository.model.UnitAwareDataItem;
 import fr.becpg.repo.repository.model.VariantAwareDataItem;
 
+/**
+ * <p>Abstract AbstractCostListDataItem class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public abstract class AbstractCostListDataItem<T extends AbstractCostListDataItem<T>> extends VariantAwareDataItem implements SimpleListDataItem,
 MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ForecastValueDataItem, CompositeDataItem<T> , Synchronisable {
 	
@@ -39,6 +45,16 @@ MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ForecastValue
 	protected NodeRef componentNodeRef;
 	protected Double simulatedValue;	
 
+	/**
+	 * <p>Constructor for AbstractCostListDataItem.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param value a {@link java.lang.Double} object
+	 * @param unit a {@link java.lang.String} object
+	 * @param maxi a {@link java.lang.Double} object
+	 * @param charact a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param isManual a {@link java.lang.Boolean} object
+	 */
 	protected AbstractCostListDataItem(NodeRef nodeRef, Double value, String unit, Double maxi, NodeRef charact, Boolean isManual){
 		super();
 		this.nodeRef = nodeRef;		
@@ -49,6 +65,17 @@ MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ForecastValue
 		this.isManual = isManual;
 	}
 	
+	/**
+	 * <p>Constructor for AbstractCostListDataItem.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param value a {@link java.lang.Double} object
+	 * @param unit a {@link java.lang.String} object
+	 * @param maxi a {@link java.lang.Double} object
+	 * @param charact a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param isManual a {@link java.lang.Boolean} object
+	 * @param plants a {@link java.util.List} object
+	 */
 	protected AbstractCostListDataItem(NodeRef nodeRef, Double value, String unit, Double maxi, NodeRef charact, Boolean isManual, List<NodeRef> plants){
 		super();
 		this.nodeRef = nodeRef;		
@@ -60,6 +87,11 @@ MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ForecastValue
 		this.plants = plants;
 	}
 	
+	/**
+	 * <p>Constructor for AbstractCostListDataItem.</p>
+	 *
+	 * @param c a T object
+	 */
 	protected AbstractCostListDataItem(T c){
 		super(c);	
 		this.value =c.value;	
@@ -75,64 +107,108 @@ MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ForecastValue
 		this.simulatedValue = c.simulatedValue;	
 	}
 	
+	/**
+	 * <p>Getter for the field <code>componentNodeRef</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public abstract NodeRef getComponentNodeRef();
 
+	/**
+	 * <p>Getter for the field <code>simulatedValue</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	public abstract Double getSimulatedValue();
 	
+	/**
+	 * <p>Getter for the field <code>valuePerProduct</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	public abstract Double getValuePerProduct();
 
+	/**
+	 * <p>copy.</p>
+	 *
+	 * @return a T object
+	 */
 	public abstract T copy();
 		
+	/** {@inheritDoc} */
 	public void setValue(Double value) {
 		this.value = value;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public Double getFormulatedValue() {
 		return getValue();
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void setFormulatedValue(Double formulatedValue) {
 		setValue(formulatedValue);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	@InternalField
 	public NodeRef getCharactNodeRef() {
 		return charact;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void setCharactNodeRef(NodeRef charact) {
 		this.charact = charact;
 	}
 
+	/** {@inheritDoc} */
 	public void setUnit(String unit) {
 		this.unit = unit;
 	}
 
+	/**
+	 * <p>Setter for the field <code>valuePerProduct</code>.</p>
+	 *
+	 * @param valuePerProduct a {@link java.lang.Double} object
+	 */
 	public void setValuePerProduct(Double valuePerProduct) {
 		this.valuePerProduct = valuePerProduct;
 	}
 
+	/** {@inheritDoc} */
 	public void setMaxi(Double maxi) {
 		this.maxi = maxi;
 	}
 	
+	/**
+	 * <p>getMini.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@InternalField
 	public Double getMini() {
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	public void setMini(Double value) {
 		
 	}
 	
+	/** {@inheritDoc} */
 	public void setIsFormulated(Boolean isFormulated) {
 		this.isFormulated = isFormulated;
 	}
 
+	/**
+	 * <p>Getter for the field <code>plants</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	@AlfMultiAssoc
 	@InternalField
 	@AlfQname(qname="bcpg:plants")
@@ -140,14 +216,23 @@ MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ForecastValue
 		return plants;
 	}
 
+	/**
+	 * <p>Setter for the field <code>plants</code>.</p>
+	 *
+	 * @param plants a {@link java.util.List} object
+	 */
 	public void setPlants(List<NodeRef> plants) {
 		this.plants = plants;
 	}
 	
+	/**
+	 * <p>Constructor for AbstractCostListDataItem.</p>
+	 */
 	protected AbstractCostListDataItem() {
 		super();
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	@AlfProp
 	@InternalField
@@ -156,11 +241,13 @@ MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ForecastValue
 		return parent;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public boolean isSynchronisable() {
 		return plants.isEmpty();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	@AlfProp
 	@InternalField
@@ -169,23 +256,40 @@ MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ForecastValue
 		return depthLevel;
 	}
 
+	/**
+	 * <p>Setter for the field <code>depthLevel</code>.</p>
+	 *
+	 * @param depthLevel a {@link java.lang.Integer} object
+	 */
 	public void setDepthLevel(Integer depthLevel) {
 		this.depthLevel = depthLevel;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void setParent(T parent) {
 		this.parent = parent;
 	}
 
+	/**
+	 * <p>Setter for the field <code>componentNodeRef</code>.</p>
+	 *
+	 * @param componentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public void setComponentNodeRef(NodeRef componentNodeRef) {
 		this.componentNodeRef = componentNodeRef;
 	}
 
+	/**
+	 * <p>Setter for the field <code>simulatedValue</code>.</p>
+	 *
+	 * @param simulatedValue a {@link java.lang.Double} object
+	 */
 	public void setSimulatedValue(Double simulatedValue) {
 		this.simulatedValue = simulatedValue;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -195,6 +299,7 @@ MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ForecastValue
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

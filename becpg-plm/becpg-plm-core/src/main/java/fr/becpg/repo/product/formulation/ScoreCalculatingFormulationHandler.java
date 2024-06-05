@@ -50,6 +50,11 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<S
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
+	/**
+	 * <p>Setter for the field <code>scorePlugins</code>.</p>
+	 *
+	 * @param scorePlugins an array of {@link fr.becpg.repo.product.formulation.score.ScoreCalculatingPlugin} objects
+	 */
 	public void setScorePlugins(ScoreCalculatingPlugin[] scorePlugins) {
 		this.scorePlugins = scorePlugins;
 	}
@@ -265,6 +270,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<S
 		return res;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void onError(ScorableEntity repositoryEntity) {
 		process(repositoryEntity);

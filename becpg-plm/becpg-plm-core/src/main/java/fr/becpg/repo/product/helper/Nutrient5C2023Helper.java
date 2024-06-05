@@ -74,11 +74,13 @@ public class Nutrient5C2023Helper implements InitializingBean, NutrientRegulator
 		
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		INSTANCE = this;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public String getVersion() {
 		return NutrientProfileVersion.VERSION_2023.toString();
@@ -110,21 +112,30 @@ public class Nutrient5C2023Helper implements InitializingBean, NutrientRegulator
 		}
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public NutriScoreContext buildContext(ProductData productData) {
 		return buildNutriScoreContext(productData);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public String extractClass(NutriScoreContext context) {
 		return extractNutrientClass(context);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public Double computeScore(NutriScoreContext context) {
 		return (double) compute5CScore(context);
 	}
 	
+	/**
+	 * <p>extractClass.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a {@link java.lang.String} object
+	 */
 	public static String extractClass(ProductData productData) {
 		NutriScoreContext context = buildNutriScoreContext(productData);
 		if (context != null) {
@@ -134,6 +145,12 @@ public class Nutrient5C2023Helper implements InitializingBean, NutrientRegulator
 		throw new IllegalStateException("Product is not applicable for nutriscore: " + productData.getName());
 	}
 	
+	/**
+	 * <p>computeScore.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a int
+	 */
 	public static int computeScore(ProductData productData) {
 		NutriScoreContext context = buildNutriScoreContext(productData);
 		if (context != null) {
@@ -142,6 +159,12 @@ public class Nutrient5C2023Helper implements InitializingBean, NutrientRegulator
 		throw new IllegalStateException("Product is not applicable for nutriscore: " + productData.getName());
 	}
 	
+	/**
+	 * <p>buildNutriScoreContext.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a {@link fr.becpg.repo.product.formulation.score.NutriScoreContext} object
+	 */
 	public static NutriScoreContext buildNutriScoreContext(ProductData productData) {
 		NutriScoreContext context = NutrientHelper.buildNutriScoreContext(productData, INSTANCE.alfrescoRepository, INSTANCE.nodeService);
 		if (context != null) {
@@ -168,6 +191,12 @@ public class Nutrient5C2023Helper implements InitializingBean, NutrientRegulator
 		return false;
 	}
 	
+	/**
+	 * <p>compute5CScore.</p>
+	 *
+	 * @param nutriScoreContext a {@link fr.becpg.repo.product.formulation.score.NutriScoreContext} object
+	 * @return a int
+	 */
 	public static int compute5CScore(NutriScoreContext nutriScoreContext) {
 
 		String category = nutriScoreContext.getCategory();
@@ -270,6 +299,12 @@ public class Nutrient5C2023Helper implements InitializingBean, NutrientRegulator
 		return nutriScoreContext.getNutriScore();
 	}
 
+	/**
+	 * <p>extractNutrientClass.</p>
+	 *
+	 * @param nutriScoreContext a {@link fr.becpg.repo.product.formulation.score.NutriScoreContext} object
+	 * @return a {@link java.lang.String} object
+	 */
 	public static String extractNutrientClass(NutriScoreContext nutriScoreContext) {
 
 		List<Double> ranges = new ArrayList<>();

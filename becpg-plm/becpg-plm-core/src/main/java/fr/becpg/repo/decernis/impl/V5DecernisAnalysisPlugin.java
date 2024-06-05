@@ -44,6 +44,12 @@ import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.system.SystemConfigurationService;
 
+/**
+ * <p>V5DecernisAnalysisPlugin class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 
@@ -57,6 +63,12 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 
 	private static final Log logger = LogFactory.getLog(V5DecernisAnalysisPlugin.class);
 
+	/**
+	 * <p>Constructor for V5DecernisAnalysisPlugin.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
+	 */
 	public V5DecernisAnalysisPlugin(@Qualifier("nodeService") NodeService nodeService, SystemConfigurationService systemConfigurationService) {
 		super(nodeService, systemConfigurationService);
 	}
@@ -78,16 +90,19 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 
 	private Map<Integer, List<String>> functionsMap = new ConcurrentHashMap<>();
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isEnabled() {
 		return analysisUrl() != null && !analysisUrl().isBlank() && !analysisUrl().equals(serverUrl());
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean needsRecipeId() {
 		return false;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void extractRequirements(RegulatoryContext productContext, RegulatoryContextItem contextItem) {
 	
@@ -119,6 +134,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 		}
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void ingredientAnalysis(RegulatoryContext productContext, RegulatoryContextItem contextItem) {
 		List<List<String>> countriesBatch = Lists.partition(new ArrayList<>(contextItem.getCountries().keySet()), DECERNIS_MAX_COUNTRIES);
