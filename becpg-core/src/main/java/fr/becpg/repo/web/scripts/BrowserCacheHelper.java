@@ -43,6 +43,12 @@ public abstract class BrowserCacheHelper   {
 		// Empty
 	}
 	
+	/**
+	 * <p>isBrowserHasInCache.</p>
+	 *
+	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object
+	 * @return a boolean
+	 */
 	public static boolean isBrowserHasInCache(WebScriptRequest req){
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.MONTH, -5);

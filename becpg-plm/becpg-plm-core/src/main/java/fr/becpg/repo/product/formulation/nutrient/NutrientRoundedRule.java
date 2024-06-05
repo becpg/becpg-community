@@ -4,6 +4,12 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 
+/**
+ * <p>NutrientRoundedRule class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class NutrientRoundedRule {
 
 	int precision = 3;
@@ -25,6 +31,12 @@ public class NutrientRoundedRule {
 	}
 
 
+	/**
+	 * <p>round.</p>
+	 *
+	 * @param val a {@link java.lang.Double} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	public Double round(Double val) {
 
 		if (val != null) {

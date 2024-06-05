@@ -83,7 +83,6 @@ public class NCWorkflowUtils {
 	 * @param task a {@link fr.becpg.repo.workflow.activiti.nc.NCWorkflowUtils.NCWorkflowUtilsTask} object.
 	 * @param serviceRegistry a {@link org.alfresco.service.ServiceRegistry} object.
 	 * @throws org.alfresco.service.cmr.model.FileExistsException if any.
-	 * @throws org.alfresco.service.cmr.model.FileNotFoundException if any.
 	 */
 	public static void updateNC(NodeRef ncNodeRef, NCWorkflowUtilsTask task, ServiceRegistry serviceRegistry) {
 

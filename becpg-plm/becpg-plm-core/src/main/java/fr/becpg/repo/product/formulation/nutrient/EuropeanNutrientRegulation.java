@@ -33,6 +33,7 @@ public class EuropeanNutrientRegulation extends AbstractNutrientRegulation {
 		return ret.getRoundedValue();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected Pair<Double, Double> tolerancesByCode(Double value, String nutrientTypeCode) {
 		NutrientRoundedValue ret = extractNutrientRoundedValue(value, nutrientTypeCode);
@@ -43,6 +44,13 @@ public class EuropeanNutrientRegulation extends AbstractNutrientRegulation {
 	}
 
 	
+	/**
+	 * <p>extractNutrientRoundedValue.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object
+	 * @param nutrientTypeCode a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.product.formulation.nutrient.NutrientRoundedValue} object
+	 */
 	protected NutrientRoundedValue extractNutrientRoundedValue(Double value, String nutrientTypeCode) {
 
 		NutrientRoundedValue ret = new NutrientRoundedValue(nutrientTypeCode, value);
@@ -111,6 +119,12 @@ public class EuropeanNutrientRegulation extends AbstractNutrientRegulation {
 		return ret;
 	}
 	
+	/**
+	 * <p>applyTolerance.</p>
+	 *
+	 * @param ret a {@link fr.becpg.repo.product.formulation.nutrient.NutrientRoundedValue} object
+	 * @param nutrientTypeCode a {@link java.lang.String} object
+	 */
 	protected void applyTolerance(NutrientRoundedValue ret, String nutrientTypeCode) {
 		if (nutrientTypeCode.equals(NutrientCode.CarbohydrateByDiff) || nutrientTypeCode.equals(NutrientCode.Sugar)
 				|| nutrientTypeCode.equals(NutrientCode.FiberDietary) || nutrientTypeCode.startsWith(NutrientCode.Protein)) {
@@ -182,6 +196,12 @@ public class EuropeanNutrientRegulation extends AbstractNutrientRegulation {
 		return formatDouble(roundedValue, locale);
 	}
 
+	/**
+	 * <p>getDisplayLocale.</p>
+	 *
+	 * @param locale a {@link java.util.Locale} object
+	 * @return a {@link java.util.Locale} object
+	 */
 	protected Locale getDisplayLocale(Locale locale) {
 		if ("MM".equals(locale.getCountry())) {
 			locale = new Locale("en");

@@ -50,15 +50,11 @@ import fr.becpg.common.csv.CSVReader;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
- * 
+ *
  * Action used to import text files.
  *
- * 
- * 
  * @author Quere
- * 
  * @version $Id: $Id
- * 
  */
 public class AppendHeaderActionExecuter extends ActionExecuterAbstractBase {
 
@@ -66,6 +62,7 @@ public class AppendHeaderActionExecuter extends ActionExecuterAbstractBase {
 
 	public static final String NAME = "append-header";
 	private static final String PARAM_MAPPING_FILE = "mapping-file";
+	/** Constant <code>XLSX_EXTENSION=".xlsx"</code> */
 	public static final String XLSX_EXTENSION = ".xlsx";
 	
 	private static final Log logger = LogFactory.getLog(AppendHeaderActionExecuter.class);
@@ -161,6 +158,15 @@ public class AppendHeaderActionExecuter extends ActionExecuterAbstractBase {
 		XLS, XLSX, CSV
 	}
 	
+	/**
+	 * <p>appendHeader.</p>
+	 *
+	 * @param mappingStream a {@link java.io.InputStream} object
+	 * @param dataCSVReader a {@link fr.becpg.common.csv.CSVReader} object
+	 * @param xlsOutput a {@link java.io.File} object
+	 * @param dataFormat a {@link fr.becpg.repo.action.executer.AppendHeaderActionExecuter.DataFormat} object
+	 * @throws java.io.IOException if any.
+	 */
 	public void appendHeader(InputStream mappingStream, CSVReader dataCSVReader, File xlsOutput, DataFormat dataFormat)
 		throws IOException {
 		if (!DataFormat.CSV.equals(dataFormat)) {

@@ -80,6 +80,11 @@ public class SpelFormulaService {
 	}
 
 	
+	/**
+	 * <p>getSpelParser.</p>
+	 *
+	 * @return a {@link org.springframework.expression.ExpressionParser} object
+	 */
 	public ExpressionParser getSpelParser() {
 		
 		//  https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#expressions-spel-compilation
@@ -92,6 +97,12 @@ public class SpelFormulaService {
 		return parser;
 	}
 
+	/**
+	 * <p>createSpelContext.</p>
+	 *
+	 * @param rootObject a {@link java.lang.Object} object
+	 * @return a {@link org.springframework.expression.spel.support.StandardEvaluationContext} object
+	 */
 	public StandardEvaluationContext createSpelContext(@Nullable Object rootObject) {
 		StandardEvaluationContext context = new StandardEvaluationContext(rootObject);
 		context.setTypeLocator(new BecpgSpelSecurityTypeLocator(systemConfigurationService.confValue("beCPG.spel.security.authorizedTypes")));
@@ -144,6 +155,7 @@ public class SpelFormulaService {
 	 * @param formulaContext a {@link fr.becpg.repo.formulation.spel.SpelFormulaContext} object.
 	 * @param <T> a T object.
 	 * @return a {@link org.springframework.expression.spel.support.StandardEvaluationContext} object.
+	 * @param applySecurity a boolean
 	 */
 	public <T extends RepositoryEntity> StandardEvaluationContext createCustomSpelContext(T entity, SpelFormulaContext<T> formulaContext, boolean applySecurity) {
 		StandardEvaluationContext context = createSpelContext(formulaContext);
@@ -157,6 +169,14 @@ public class SpelFormulaService {
 	}
 	
 	
+	/**
+	 * <p>createCustomSpelContext.</p>
+	 *
+	 * @param entity a T object
+	 * @param formulaContext a {@link fr.becpg.repo.formulation.spel.SpelFormulaContext} object
+	 * @param <T> a T class
+	 * @return a {@link org.springframework.expression.spel.support.StandardEvaluationContext} object
+	 */
 	public <T extends RepositoryEntity> StandardEvaluationContext createCustomSpelContext(T entity, SpelFormulaContext<T> formulaContext) {
 		return createCustomSpelContext(entity, formulaContext,true);
 	}

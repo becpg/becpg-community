@@ -11,6 +11,12 @@ import org.springframework.stereotype.Service;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.system.SystemConfigurationService;
 
+/**
+ * <p>SystemConfigurationServiceImpl class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service("systemConfigurationService")
 public class SystemConfigurationServiceImpl implements SystemConfigurationService {
 	
@@ -26,6 +32,7 @@ public class SystemConfigurationServiceImpl implements SystemConfigurationServic
 	private AttributeService attributeService;
 	
 
+	/** {@inheritDoc} */
 	@Override
 	public String confValue(String propKey) {
 		return beCPGCacheService.getFromCache(CACHE_KEY, propKey, () -> {
@@ -47,6 +54,7 @@ public class SystemConfigurationServiceImpl implements SystemConfigurationServic
 		});
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void updateConfValue(String propKey, String value) {
 		attributeService.setAttribute(value, propKey);
@@ -54,6 +62,7 @@ public class SystemConfigurationServiceImpl implements SystemConfigurationServic
 		
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void resetConfValue(String propKey) {
 		attributeService.removeAttribute(propKey);

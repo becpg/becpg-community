@@ -17,16 +17,28 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 import fr.becpg.common.BeCPGException;
 import fr.becpg.repo.entity.EntityIconService;
 
+/**
+ * <p>EntityIconWebScript class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class EntityIconWebScript extends AbstractWebScript {
 
 	private static Log logger = LogFactory.getLog(EntityIconWebScript.class);
 
 	private EntityIconService entityIconService;
 
+	/**
+	 * <p>Setter for the field <code>entityIconService</code>.</p>
+	 *
+	 * @param entityIconService a {@link fr.becpg.repo.entity.EntityIconService} object
+	 */
 	public void setEntityIconService(EntityIconService entityIconService) {
 		this.entityIconService = entityIconService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
 		try (OutputStream out = resp.getOutputStream()) {

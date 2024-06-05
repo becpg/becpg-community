@@ -41,7 +41,11 @@ public class SvhcCalculatingFormulationHandler extends AbstractSimpleListFormula
 
 	private static final Log logger = LogFactory.getLog(SvhcCalculatingFormulationHandler.class);
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @return a {@link java.lang.Class} object
+	 */
 	protected Class<SvhcListDataItem> getInstanceClass() {
 		return SvhcListDataItem.class;
 	}
@@ -139,6 +143,7 @@ public class SvhcCalculatingFormulationHandler extends AbstractSimpleListFormula
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected Double extractValue(ProductData formulatedProduct, ProductData partProduct, SimpleListDataItem slDataItem) {
 		if (partProduct.isPackaging() && slDataItem instanceof SvhcListDataItem svhcListDataItem) {
@@ -176,11 +181,13 @@ public class SvhcCalculatingFormulationHandler extends AbstractSimpleListFormula
 		return RequirementDataType.Formulation;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected boolean propagateModeEnable(ProductData formulatedProduct) {
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected SvhcListDataItem newSimpleListDataItem(NodeRef charactNodeRef) {
 		SvhcListDataItem ret = new SvhcListDataItem();

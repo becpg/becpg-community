@@ -206,22 +206,34 @@ public class PhysicoChemListDataItem extends VariantAwareDataItem implements Sim
 		 setValue(formulatedValue);
 	}
 
+	/**
+	 * <p>Getter for the field <code>regulatoryCountriesRef</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	@AlfMultiAssoc
 	@AlfQname(qname = "bcpg:regulatoryCountries")
 	public List<NodeRef> getRegulatoryCountriesRef() {
 		return regulatoryCountriesRef;
 	}
 
+	/** {@inheritDoc} */
 	public void setRegulatoryCountriesRef(List<NodeRef> regulatoryCountries) {
 		this.regulatoryCountriesRef = regulatoryCountries;
 	}
 
+	/**
+	 * <p>Getter for the field <code>regulatoryUsagesRef</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	@AlfMultiAssoc
 	@AlfQname(qname = "bcpg:regulatoryUsageRef")
 	public List<NodeRef> getRegulatoryUsagesRef() {
 		return regulatoryUsagesRef;
 	}
 
+	/** {@inheritDoc} */
 	public void setRegulatoryUsagesRef(List<NodeRef> regulatoryUsages) {
 		this.regulatoryUsagesRef = regulatoryUsages;
 	}

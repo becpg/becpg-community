@@ -30,9 +30,16 @@ import fr.becpg.repo.product.data.SupplierData;
 import fr.becpg.repo.product.data.productList.LCAListDataItem;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
+/**
+ * <p>LCACharactDetailsVisitor class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class LCACharactDetailsVisitor extends AbstractCostCharactDetailsVisitor<LCAListDataItem> {
 
+	/** {@inheritDoc} */
 	@Override
 	protected List<LCAListDataItem> getDataListVisited(BeCPGDataObject product) {
 		if (product instanceof ProductData) {
@@ -45,11 +52,13 @@ public class LCACharactDetailsVisitor extends AbstractCostCharactDetailsVisitor<
 		return new LinkedList<>();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected QName getCostFixedPropName() {
 		return PLMModel.PROP_LCAFIXED;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected QName getCostUnitPropName() {
 		return PLMModel.PROP_LCAUNIT;

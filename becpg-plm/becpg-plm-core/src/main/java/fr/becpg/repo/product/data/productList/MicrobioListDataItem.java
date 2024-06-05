@@ -208,6 +208,7 @@ public class MicrobioListDataItem extends BeCPGDataObject implements Controlable
 		this.textCriteria =  m.textCriteria;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public MicrobioListDataItem copy() {
 		MicrobioListDataItem ret = new MicrobioListDataItem(this);

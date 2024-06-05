@@ -45,16 +45,22 @@ public class RepoConsts
 	/** Constant <code>PATH_NOTIFICATIONS="Notifications"</code> */
 	public static final String PATH_NOTIFICATIONS = "Notifications";
 	
+	/** Constant <code>FORMULATION_ERRORS_NOTIFICATION="formulationErrorsNotification"</code> */
 	public static final String FORMULATION_ERRORS_NOTIFICATION = "formulationErrorsNotification";
 	
+	/** Constant <code>OBSOLETE_DOCUMENTS_NOTIFICATION="obsoleteDocumentsNotification"</code> */
 	public static final String OBSOLETE_DOCUMENTS_NOTIFICATION = "obsoleteDocumentsNotification";
 	
+	/** Constant <code>IN_PROGRESS_PROJECTS_NOTIFICATION="inProgressProjectsNotification"</code> */
 	public static final String IN_PROGRESS_PROJECTS_NOTIFICATION = "inProgressProjectsNotification";
 	
+	/** Constant <code>VALIDATED_PRODUCTS_NOTIFICATION="validatedProductsNotification"</code> */
 	public static final String VALIDATED_PRODUCTS_NOTIFICATION = "validatedProductsNotification";
 	
+	/** Constant <code>VALIDATED_AND_UPDATED_PRODUCTS_NOTIFICATION="validatedAndUpdatedProductsNotification"</code> */
 	public static final String VALIDATED_AND_UPDATED_PRODUCTS_NOTIFICATION = "validatedAndUpdatedProductsNotification";
 	
+	/** Constant <code>ARCHIVED_PRODUCTS_NOTIFICATION="archivedProductsNotification"</code> */
 	public static final String ARCHIVED_PRODUCTS_NOTIFICATION = "archivedProductsNotification";
 			
 	//Security
@@ -79,9 +85,11 @@ public class RepoConsts
 	public static final String PATH_DOCUMENTS = "Documents";
 	
 
+	/** Constant <code>PATH_SUPPLIER_DOCUMENTS="SupplierDocuments"</code> */
 	public static final String PATH_SUPPLIER_DOCUMENTS= "SupplierDocuments";
 	
 
+	/** Constant <code>PATH_SUPPLIER_ENTITIES="SupplierEntities"</code> */
 	public static final String PATH_SUPPLIER_ENTITIES = "SupplierEntities";
 	
 	/** Constant <code>PATH_BRIEF="Brief"</code> */
@@ -149,10 +157,12 @@ public class RepoConsts
 	/** Constant <code>MAX_RESULTS_5000</code> */
 	public static final Integer MAX_RESULTS_5000 = 5000;
 	
+	/** Constant <code>MAX_RESULTS_1000000</code> */
 	public static final Integer MAX_RESULTS_1000000 = 1000000;
 	
 
 	
+	/** Constant <code>DEFAULT_SORT</code> */
 	public static final Map<String, Boolean> DEFAULT_SORT = new LinkedHashMap<>();
 	
 	static {

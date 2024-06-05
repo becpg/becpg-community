@@ -95,12 +95,22 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	
 	private NodeRef subProject;
 	
+	/**
+	 * <p>Getter for the field <code>description</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:tlTaskDescription")
 	public String getDescription() {
 		return description;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>description</code>.</p>
+	 *
+	 * @param description a {@link java.lang.String} object
+	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}
@@ -234,12 +244,22 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 
 	
 	
+	/**
+	 * <p>Getter for the field <code>isCritical</code>.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:tlIsCritical")
 	public Boolean getIsCritical() {
 		return isCritical;
 	}
 
+	/**
+	 * <p>Setter for the field <code>isCritical</code>.</p>
+	 *
+	 * @param isCritical a {@link java.lang.Boolean} object
+	 */
 	public void setIsCritical(Boolean isCritical) {
 		this.isCritical = isCritical;
 	}
@@ -387,32 +407,62 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	
 	
 	
+	/**
+	 * <p>Getter for the field <code>due</code>.</p>
+	 *
+	 * @return a {@link java.util.Date} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:tlDue")
 	public Date getDue() {
 		return due;
 	}
 
+	/**
+	 * <p>Setter for the field <code>due</code>.</p>
+	 *
+	 * @param due a {@link java.util.Date} object
+	 */
 	public void setDue(Date due) {
 		this.due = due;
 	}
 
+	/**
+	 * <p>Getter for the field <code>targetStart</code>.</p>
+	 *
+	 * @return a {@link java.util.Date} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:tlTargetStart")
 	public Date getTargetStart() {
 		return targetStart;
 	}
 
+	/**
+	 * <p>Setter for the field <code>targetStart</code>.</p>
+	 *
+	 * @param targetStart a {@link java.util.Date} object
+	 */
 	public void setTargetStart(Date targetStart) {
 		this.targetStart = targetStart;
 	}
 
+	/**
+	 * <p>Getter for the field <code>targetEnd</code>.</p>
+	 *
+	 * @return a {@link java.util.Date} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:tlTargetEnd")
 	public Date getTargetEnd() {
 		return targetEnd;
 	}
 
+	/**
+	 * <p>Setter for the field <code>targetEnd</code>.</p>
+	 *
+	 * @param targetEnd a {@link java.util.Date} object
+	 */
 	public void setTargetEnd(Date targetEnd) {
 		this.targetEnd = targetEnd;
 	}
@@ -954,6 +1004,7 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 		this.expense = expense;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -965,6 +1016,7 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

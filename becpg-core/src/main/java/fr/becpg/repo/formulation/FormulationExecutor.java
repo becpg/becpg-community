@@ -42,6 +42,7 @@ public class FormulationExecutor {
 	 * @param async a boolean.
 	 * @return a {@link fr.becpg.repo.formulation.FormulationExecutor.FormulationExecutorState} object.
 	 * @throws fr.becpg.repo.formulation.FormulateException if any.
+	 * @param chainId a {@link java.lang.String} object
 	 */
 	public FormulationExecutorState execute(NodeRef  entityNodeRef, String chainId , boolean async)  {
 		FormulationPlugin plugin = retrievePlugin(entityNodeRef);
@@ -52,6 +53,12 @@ public class FormulationExecutor {
 		return FormulationExecutorState.SUCCESS;
 	}
 	
+	/**
+	 * <p>getDisabledFormulationChainIds.</p>
+	 *
+	 * @param entity a {@link fr.becpg.repo.formulation.ReportableEntity} object
+	 * @return a {@link java.util.List} object
+	 */
 	public List<String> getDisabledFormulationChainIds(ReportableEntity entity) {
 		List<String> disabledChainIds = new ArrayList<>();
 		if (formulationChainPlugins != null) {
@@ -64,6 +71,12 @@ public class FormulationExecutor {
 		return disabledChainIds;
 	}
 	
+	/**
+	 * <p>getState.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.repo.formulation.FormulationExecutor.FormulationExecutorState} object
+	 */
 	public FormulationExecutorState getState(NodeRef entityNodeRef) {
 		return FormulationExecutorState.INPROGRESS;
 	}

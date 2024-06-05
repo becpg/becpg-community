@@ -66,6 +66,7 @@ public abstract class FormulationBaseHandler<T> implements FormulationHandler<T>
         }
     }
     
+    /** {@inheritDoc} */
     @Override
     public void onError(T repositoryEntity) {
     	if (nextHandler != null) {

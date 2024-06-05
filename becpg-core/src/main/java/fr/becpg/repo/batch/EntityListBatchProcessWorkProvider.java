@@ -9,10 +9,12 @@ import org.alfresco.repo.batch.BatchProcessWorkProvider;
 import org.springframework.lang.NonNull;
 
 /**
- * 
+ * <p>EntityListBatchProcessWorkProvider class.</p>
+ *
  * @author matthieu
  * Split lists into several batch of batch size (processing order is not guaranted)
  * @param <T>
+ * @version $Id: $Id
  */
 public class EntityListBatchProcessWorkProvider<T> implements BatchProcessWorkProvider<T> {
 
@@ -21,6 +23,11 @@ public class EntityListBatchProcessWorkProvider<T> implements BatchProcessWorkPr
 
 	private final Iterator<T> iterator;
 
+	/**
+	 * <p>Constructor for EntityListBatchProcessWorkProvider.</p>
+	 *
+	 * @param entities a {@link java.util.List} object
+	 */
 	public EntityListBatchProcessWorkProvider(@NonNull List<T> entities) {
 		super();
 		this.size = entities.size();
@@ -28,6 +35,7 @@ public class EntityListBatchProcessWorkProvider<T> implements BatchProcessWorkPr
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public Collection<T> getNextWork() {
 		Collection<T> results = new ArrayList<>(BatchInfo.BATCH_SIZE);
@@ -37,11 +45,13 @@ public class EntityListBatchProcessWorkProvider<T> implements BatchProcessWorkPr
 		return results;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int getTotalEstimatedWorkSize() {
 		return size;
 	}
 	
+		/** {@inheritDoc} */
 	@Override
 		public long getTotalEstimatedWorkSizeLong() {
 			return getTotalEstimatedWorkSize();

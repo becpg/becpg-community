@@ -109,6 +109,11 @@ public class EntityVersionWebScript extends AbstractWebScript {
 		this.serviceRegistry = serviceRegistry;
 	}
 
+	/**
+	 * <p>Setter for the field <code>versionService</code>.</p>
+	 *
+	 * @param versionService a {@link org.alfresco.service.cmr.version.VersionService} object
+	 */
 	public void setVersionService(VersionService versionService) {
 		this.versionService = versionService;
 	}

@@ -6,6 +6,12 @@ import org.alfresco.service.cmr.repository.NodeService;
 
 import fr.becpg.repo.product.formulation.FormulationHelper;
 
+/**
+ * <p>FormulationScriptHelper class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class FormulationScriptHelper extends BaseScopableProcessorExtension {
 
 
@@ -20,6 +26,12 @@ public class FormulationScriptHelper extends BaseScopableProcessorExtension {
 		this.nodeService = nodeService;
 	}
 	
+	/**
+	 * <p>getNetWeight.</p>
+	 *
+	 * @param entity a {@link org.alfresco.repo.jscript.ScriptNode} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	public Double getNetWeight(final ScriptNode entity) {
 		return FormulationHelper.getNetWeight(entity.getNodeRef(), nodeService,
 				FormulationHelper.DEFAULT_NET_WEIGHT);

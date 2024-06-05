@@ -15,6 +15,12 @@ import fr.becpg.repo.audit.model.AuditQuery;
 import fr.becpg.repo.audit.model.AuditType;
 import fr.becpg.repo.audit.service.BeCPGAuditService;
 
+/**
+ * <p>GetStatisticsWebScript class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class GetStatisticsWebScript extends AbstractWebScript {
 
 	private static final String PARAM_TYPE = "type";
@@ -26,10 +32,16 @@ public class GetStatisticsWebScript extends AbstractWebScript {
 	
 	private BeCPGAuditService beCPGAuditService;
 	
+	/**
+	 * <p>Setter for the field <code>beCPGAuditService</code>.</p>
+	 *
+	 * @param beCPGAuditService a {@link fr.becpg.repo.audit.service.BeCPGAuditService} object
+	 */
 	public void setBeCPGAuditService(BeCPGAuditService beCPGAuditService) {
 		this.beCPGAuditService = beCPGAuditService;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
 		

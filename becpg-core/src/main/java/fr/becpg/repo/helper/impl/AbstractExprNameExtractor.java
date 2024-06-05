@@ -26,6 +26,13 @@ public abstract class AbstractExprNameExtractor implements AttributeExtractorPlu
 	protected ExpressionService expressionService;
 
 
+	/**
+	 * <p>extractExpr.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param exprFormat a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	public  String extractExpr(NodeRef nodeRef, String exprFormat) {
 		return expressionService.extractExpr(nodeRef,null, exprFormat);
 	}

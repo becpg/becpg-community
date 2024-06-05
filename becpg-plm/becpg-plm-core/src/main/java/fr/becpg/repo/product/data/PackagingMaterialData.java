@@ -66,36 +66,78 @@ public class PackagingMaterialData extends ProductData {
 		this.packagingMaterials = packagingMaterials;
 	}
 
+	/**
+	 * <p>build.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.PackagingMaterialData} object
+	 */
 	public static PackagingMaterialData build() {
 		return new PackagingMaterialData();
 	}
 
+	/**
+	 * <p>withName.</p>
+	 *
+	 * @param name a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.product.data.PackagingMaterialData} object
+	 */
 	public PackagingMaterialData withName(String name) {
 		setName(name);
 		return this;
 	}
 
+	/**
+	 * <p>withLegalName.</p>
+	 *
+	 * @param legalName a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.product.data.PackagingMaterialData} object
+	 */
 	public PackagingMaterialData withLegalName(String legalName) {
 		setLegalName(legalName);
 		return this;
 	}
 
+	/**
+	 * <p>withLegalName.</p>
+	 *
+	 * @param legalName a {@link org.alfresco.service.cmr.repository.MLText} object
+	 * @return a {@link fr.becpg.repo.product.data.PackagingMaterialData} object
+	 */
 	public PackagingMaterialData withLegalName(MLText legalName) {
 		setLegalName(legalName);
 		return this;
 	}
 
+	/**
+	 * <p>withUnit.</p>
+	 *
+	 * @param unit a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object
+	 * @return a {@link fr.becpg.repo.product.data.PackagingMaterialData} object
+	 */
 	public PackagingMaterialData withUnit(ProductUnit unit) {
 		setUnit(unit);
 		return this;
 	}
 
+	/**
+	 * <p>withQty.</p>
+	 *
+	 * @param qty a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.product.data.PackagingMaterialData} object
+	 */
 	public PackagingMaterialData withQty(Double qty) {
 		setQty(qty);
 		return this;
 	}
 
 
+	/**
+	 * <p>withTare.</p>
+	 *
+	 * @param tare a {@link java.lang.Double} object
+	 * @param tareUnit a {@link fr.becpg.repo.product.data.constraints.TareUnit} object
+	 * @return a {@link fr.becpg.repo.product.data.PackagingMaterialData} object
+	 */
 	public PackagingMaterialData withTare(Double tare, TareUnit tareUnit) {
 		setTare(tare);
 		setTareUnit(tareUnit);
@@ -103,6 +145,12 @@ public class PackagingMaterialData extends ProductData {
 	}
 	
 
+	/**
+	 * <p>withPackMaterialList.</p>
+	 *
+	 * @param packMaterialList a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.product.data.PackagingMaterialData} object
+	 */
 	public PackagingMaterialData withPackMaterialList(List<PackMaterialListDataItem> packMaterialList) {
 		setPackMaterialList(packMaterialList);
 		return this;

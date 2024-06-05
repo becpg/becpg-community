@@ -66,11 +66,13 @@ public class Nutrient5C2021Helper implements InitializingBean, NutrientRegulator
 		
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public String getVersion() {
 		return NutrientProfileVersion.VERSION_2017.toString();
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		INSTANCE = this;
@@ -103,21 +105,30 @@ public class Nutrient5C2021Helper implements InitializingBean, NutrientRegulator
 		}
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public NutriScoreContext buildContext(ProductData productData) {
 		return buildNutriScoreContext(productData);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public String extractClass(NutriScoreContext context) {
 		return extractNutrientClass(context);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public Double computeScore(NutriScoreContext context) {
 		return (double) compute5CScore(context);
 	}
 	
+	/**
+	 * <p>extractClass.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a {@link java.lang.String} object
+	 */
 	public static String extractClass(ProductData productData) {
 		NutriScoreContext context = buildNutriScoreContext(productData);
 		if (context != null) {
@@ -127,6 +138,12 @@ public class Nutrient5C2021Helper implements InitializingBean, NutrientRegulator
 		throw new IllegalStateException("Product is not applicable for nutriscore: " + productData.getName());
 	}
 	
+	/**
+	 * <p>computeScore.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a int
+	 */
 	public static int computeScore(ProductData productData) {
 		NutriScoreContext context = buildNutriScoreContext(productData);
 		if (context != null) {
@@ -135,10 +152,31 @@ public class Nutrient5C2021Helper implements InitializingBean, NutrientRegulator
 		throw new IllegalStateException("Product is not applicable for nutriscore: " + productData.getName());
 	}
 	
+	/**
+	 * <p>buildNutriScoreContext.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a {@link fr.becpg.repo.product.formulation.score.NutriScoreContext} object
+	 */
 	public static NutriScoreContext buildNutriScoreContext(ProductData productData) {
 		return NutrientHelper.buildNutriScoreContext(productData, INSTANCE.alfrescoRepository, INSTANCE.nodeService);
 	}
 
+	/**
+	 * <p>compute5CScore.</p>
+	 *
+	 * @param energyKj a {@link java.lang.Double} object
+	 * @param satFat a {@link java.lang.Double} object
+	 * @param totalFat a {@link java.lang.Double} object
+	 * @param totalSugar a {@link java.lang.Double} object
+	 * @param sodium a {@link java.lang.Double} object
+	 * @param percFruitsAndVetgs a {@link java.lang.Double} object
+	 * @param nspFibre a {@link java.lang.Double} object
+	 * @param aoacFibre a {@link java.lang.Double} object
+	 * @param protein a {@link java.lang.Double} object
+	 * @param category a {@link java.lang.String} object
+	 * @return a int
+	 */
 	public static int compute5CScore(Double energyKj, Double satFat, Double totalFat, Double totalSugar, Double sodium, Double percFruitsAndVetgs,
 			Double nspFibre, Double aoacFibre, Double protein, String category) {
 		
@@ -148,6 +186,12 @@ public class Nutrient5C2021Helper implements InitializingBean, NutrientRegulator
 		return compute5CScore(nutriScoreContext);
 	}
 	
+	/**
+	 * <p>compute5CScore.</p>
+	 *
+	 * @param nutriScoreContext a {@link fr.becpg.repo.product.formulation.score.NutriScoreContext} object
+	 * @return a int
+	 */
 	public static int compute5CScore(NutriScoreContext nutriScoreContext) {
 
 		String category = nutriScoreContext.getCategory();
@@ -221,6 +265,12 @@ public class Nutrient5C2021Helper implements InitializingBean, NutrientRegulator
 		return nutriScoreContext.getNutriScore();
 	}
 
+		/**
+		 * <p>extractNutrientClass.</p>
+		 *
+		 * @param nutriScoreContext a {@link fr.becpg.repo.product.formulation.score.NutriScoreContext} object
+		 * @return a {@link java.lang.String} object
+		 */
 		public static String extractNutrientClass(NutriScoreContext nutriScoreContext) {
 
 			List<Double> ranges = new ArrayList<>();

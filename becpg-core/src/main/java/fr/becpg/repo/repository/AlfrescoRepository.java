@@ -53,14 +53,21 @@ public interface AlfrescoRepository<T extends RepositoryEntity>  extends CrudRep
 	 * <p>loadDataList.</p>
 	 *
 	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param datalistContainerQname a {@link org.alfresco.service.namespace.QName} object.
 	 * @param datalistQname a {@link org.alfresco.service.namespace.QName} object.
 	 * @return a {@link java.util.List} object.
+	 * @param listName a {@link java.lang.String} object
 	 */
 	List<T> loadDataList(NodeRef entityNodeRef, String listName, QName datalistQname);
 	
 	
 
+	/**
+	 * <p>loadDataList.</p>
+	 *
+	 * @param dataListNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param datalistQname a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link java.util.List} object
+	 */
 	List<T> loadDataList(NodeRef dataListNodeRef, QName datalistQname);
 
 	/**
@@ -123,6 +130,11 @@ public interface AlfrescoRepository<T extends RepositoryEntity>  extends CrudRep
 	 */
 	<R extends RepositoryEntity> List<R> getList(RepositoryEntity entity, QName datalistContainerQname, QName datalistQname);
 	
+	/**
+	 * <p>clearCaches.</p>
+	 *
+	 * @param id a {@link java.lang.String} object
+	 */
 	void clearCaches(String id);
 
 	

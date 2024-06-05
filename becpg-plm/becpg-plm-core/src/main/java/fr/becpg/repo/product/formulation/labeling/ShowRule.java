@@ -22,6 +22,7 @@ class ShowRule {
 	 *
 	 * @param format a {@link java.lang.String} object.
 	 * @param locales a {@link java.util.List} object.
+	 * @param roundingMode a {@link java.math.RoundingMode} object
 	 */
 	public ShowRule(@Nonnull String format, RoundingMode roundingMode, List<String> locales) {
 		if(format.contains("|")) {

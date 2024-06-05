@@ -111,6 +111,7 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 	 * @param parameters an array of {@link java.lang.String} objects.
 	 * @param entityItems a {@link java.util.Map} object.
 	 * @return a int.
+	 * @param dynamicCharactColumnCache a {@link java.util.Map} object
 	 */
 	protected int appendNextLevel(MultiLevelListData listData, XSSFSheet sheet, QName itemType, List<AttributeExtractorStructure> metadataFields,
 			Map<NodeRef, Map<String, Object>> cache, int rownum, Serializable key, Double parentQty, String[] parameters,

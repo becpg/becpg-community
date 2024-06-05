@@ -91,6 +91,11 @@ public abstract class RuleParser {
 		this.defaultPercFormat = defaultPercFormat;
 	}
 
+	/**
+	 * <p>Setter for the field <code>computePercByParent</code>.</p>
+	 *
+	 * @param computePercByParent a boolean
+	 */
 	public void setComputePercByParent(boolean computePercByParent) {
 		this.computePercByParent = computePercByParent;
 	}
@@ -124,7 +129,7 @@ public abstract class RuleParser {
 	/**
 	 * <p>Setter for the field <code>showAllGeo</code>.</p>
 	 *
-	 * @param showAllGeo a boolean.
+	 * @param showAllBio a boolean
 	 */
 	public void setShowAllBio(boolean showAllBio) {
 		if (showAllBio) {
@@ -164,12 +169,22 @@ public abstract class RuleParser {
 	
 	
 	
+	/**
+	 * <p>Getter for the field <code>nodeFootNoteRules</code>.</p>
+	 *
+	 * @return a {@link java.util.Map} object
+	 */
 	public Map<NodeRef, List<FootNoteRule>> getNodeFootNoteRules() {
 		return nodeFootNoteRules;
 	}
 
 	
 	
+	/**
+	 * <p>Getter for the field <code>footNoteRules</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	public List<FootNoteRule> getFootNoteRules() {
 		return footNoteRules;
 	}
@@ -215,6 +230,7 @@ public abstract class RuleParser {
 	 * @param labeLabelingRuleType a {@link fr.becpg.repo.product.data.constraints.LabelingRuleType} object.
 	 * @param locales a {@link java.util.List} object.
 	 * @return a boolean.
+	 * @param sort a int
 	 */
 	public boolean addRule(NodeRef ruleNodeRef, String name, List<NodeRef> components, List<NodeRef> replacement, MLText label, String formula,
 			LabelingRuleType labeLabelingRuleType, List<String> locales, int sort) {

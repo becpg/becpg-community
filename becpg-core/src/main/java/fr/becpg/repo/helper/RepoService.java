@@ -59,6 +59,7 @@ public interface RepoService {
 	 *
 	 * @param nodeRefToMove a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param destionationNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a boolean
 	 */
 	boolean moveNode(NodeRef nodeRefToMove, NodeRef destionationNodeRef);
 	
@@ -72,9 +73,24 @@ public interface RepoService {
 	 */
 	String getAvailableName(NodeRef folderNodeRef, String name, boolean forceRename);
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @param folderNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param name a {@link java.lang.String} object
+	 * @param forceRename a boolean
+	 * @param keepExtension a boolean
+	 * @return a {@link java.lang.String} object
+	 */
 	String getAvailableName(NodeRef folderNodeRef, String name, boolean forceRename, boolean keepExtension);
 	
+	/**
+	 * <p>moveEntity.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param destinationFolder a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
 	boolean moveEntity(NodeRef entityNodeRef, NodeRef destinationFolder);
 	
 }
