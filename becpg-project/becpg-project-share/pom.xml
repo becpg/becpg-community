@@ -6,7 +6,7 @@
 		<version>3.2.4</version>
 		<relativePath>../../</relativePath>
 	</parent>
-    <version>3.2.4.24-SNAPSHOT</version>
+    <version>3.2.4.24</version>
     <modelVersion>4.0.0</modelVersion>
 	<artifactId>becpg-project-share</artifactId>
 	<packaging>jar</packaging>
@@ -38,4 +38,8 @@
             </plugin>
 		</plugins>
 	</build>
+
+  <scm>
+    <tag>3.2.4.24</tag>
+  </scm>
 </project>
