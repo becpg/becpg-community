@@ -89,21 +89,21 @@ public class PackagingHelper implements InitializingBean {
 			if (productData.getAspects().contains(GS1Model.ASPECT_MEASURES_ASPECT)) {
 				if (variantPackagingData.isManualPrimary()) {
 
-					variantPackagingData.setWidth((Float) nodeService.getProperty(productData.getNodeRef(), GS1Model.PROP_WIDTH));
-					variantPackagingData.setHeight((Float) nodeService.getProperty(productData.getNodeRef(), GS1Model.PROP_HEIGHT));
-					variantPackagingData.setDepth((Float) nodeService.getProperty(productData.getNodeRef(), GS1Model.PROP_DEPTH));
+					variantPackagingData.setWidth((Double) nodeService.getProperty(productData.getNodeRef(), GS1Model.PROP_WIDTH));
+					variantPackagingData.setHeight((Double) nodeService.getProperty(productData.getNodeRef(), GS1Model.PROP_HEIGHT));
+					variantPackagingData.setDepth((Double) nodeService.getProperty(productData.getNodeRef(), GS1Model.PROP_DEPTH));
 				}
 				if (variantPackagingData.isManualSecondary()) {
-					variantPackagingData.setSecondaryWidth((Float) nodeService.getProperty(productData.getNodeRef(), GS1Model.PROP_SECONDARY_WIDTH));
+					variantPackagingData.setSecondaryWidth((Double) nodeService.getProperty(productData.getNodeRef(), GS1Model.PROP_SECONDARY_WIDTH));
 					variantPackagingData
-							.setSecondaryHeight((Float) nodeService.getProperty(productData.getNodeRef(), GS1Model.PROP_SECONDARY_HEIGHT));
-					variantPackagingData.setSecondaryDepth((Float) nodeService.getProperty(productData.getNodeRef(), GS1Model.PROP_SECONDARY_DEPTH));
+							.setSecondaryHeight((Double) nodeService.getProperty(productData.getNodeRef(), GS1Model.PROP_SECONDARY_HEIGHT));
+					variantPackagingData.setSecondaryDepth((Double) nodeService.getProperty(productData.getNodeRef(), GS1Model.PROP_SECONDARY_DEPTH));
 				}
 
 			}
 			if (variantPackagingData.isManualTertiary()) {
-				variantPackagingData.setTertiaryWidth((Float) nodeService.getProperty(productData.getNodeRef(), GS1Model.PROP_TERTIARY_WIDTH));
-				variantPackagingData.setTertiaryDepth((Float) nodeService.getProperty(productData.getNodeRef(), GS1Model.PROP_TERTIARY_DEPTH));
+				variantPackagingData.setTertiaryWidth((Double) nodeService.getProperty(productData.getNodeRef(), GS1Model.PROP_TERTIARY_WIDTH));
+				variantPackagingData.setTertiaryDepth((Double) nodeService.getProperty(productData.getNodeRef(), GS1Model.PROP_TERTIARY_DEPTH));
 			}
 			
 			if(variantPackagingData.isManualPalletInformations()) {
@@ -155,9 +155,9 @@ public class PackagingHelper implements InitializingBean {
 					if (Boolean.TRUE.equals(dataItem.getIsMaster())) {
 
 						variantPackagingData.setManualPrimary(false);
-						variantPackagingData.setWidth(parseFloat((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_WIDTH)));
-						variantPackagingData.setHeight(parseFloat((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_HEIGHT)));
-						variantPackagingData.setDepth(parseFloat((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_LENGTH)));
+						variantPackagingData.setWidth((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_WIDTH));
+						variantPackagingData.setHeight((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_HEIGHT));
+						variantPackagingData.setDepth((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_LENGTH));
 						variantPackagingData.setPackagingTypeCode((String) nodeService.getProperty(dataItem.getProduct(), GS1Model.PROP_PACKAGING_TYPE_CODE));
 						variantPackagingData
 								.setPackagingTermsAndConditionsCode((String) nodeService.getProperty(dataItem.getProduct(), GS1Model.PROP_PACKAGINGTERMSANSCONDITION_CODE));
@@ -171,11 +171,11 @@ public class PackagingHelper implements InitializingBean {
 
 						variantPackagingData.setManualSecondary(false);
 						variantPackagingData
-								.setSecondaryWidth(parseFloat((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_WIDTH)));
+								.setSecondaryWidth((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_WIDTH));
 						variantPackagingData
-								.setSecondaryHeight(parseFloat((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_HEIGHT)));
+								.setSecondaryHeight((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_HEIGHT));
 						variantPackagingData
-								.setSecondaryDepth(parseFloat((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_LENGTH)));
+								.setSecondaryDepth((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_LENGTH));
 						variantPackagingData.setSecondaryPackagingTypeCode((String) nodeService.getProperty(dataItem.getProduct(), GS1Model.PROP_PACKAGING_TYPE_CODE));
 
 					}
@@ -184,8 +184,8 @@ public class PackagingHelper implements InitializingBean {
 					
 					if (Boolean.TRUE.equals(dataItem.getIsMaster())) {
 						variantPackagingData.setManualTertiary(false);
-						variantPackagingData.setTertiaryWidth(parseFloat((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_WIDTH)));
-						variantPackagingData.setTertiaryDepth(parseFloat((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_LENGTH)));
+						variantPackagingData.setTertiaryWidth((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_WIDTH));
+						variantPackagingData.setTertiaryDepth((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_LENGTH));
 					}
 				
 					variantPackagingData.addTareTertiary(tare);
@@ -209,8 +209,8 @@ public class PackagingHelper implements InitializingBean {
 				
 				if (Boolean.TRUE.equals(dataItem.getIsMaster())) {
 					variantPackagingData.setManualTertiary(false);
-					variantPackagingData.setTertiaryWidth((Float) nodeService.getProperty(dataItem.getProduct(), GS1Model.PROP_TERTIARY_WIDTH));
-					variantPackagingData.setTertiaryDepth((Float) nodeService.getProperty(dataItem.getProduct(), GS1Model.PROP_TERTIARY_DEPTH));
+					variantPackagingData.setTertiaryWidth((Double) nodeService.getProperty(dataItem.getProduct(), GS1Model.PROP_TERTIARY_WIDTH));
+					variantPackagingData.setTertiaryDepth((Double) nodeService.getProperty(dataItem.getProduct(), GS1Model.PROP_TERTIARY_DEPTH));
 				}
 
 			}
@@ -218,12 +218,6 @@ public class PackagingHelper implements InitializingBean {
 		}
 	}
 
-	private Float parseFloat(Double value) {
-		if (value != null) {
-			return value.floatValue();
-		}
-		return null;
-	}
 
 	private void extractPalletInformations(NodeRef product, VariantPackagingData variantPackagingData) {
 
