@@ -1,6 +1,8 @@
 package fr.becpg.repo.product.formulation.nutrient;
 
 import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
 import org.alfresco.util.Pair;
@@ -28,21 +30,27 @@ public class EuropeanNutrientRegulation extends AbstractNutrientRegulation {
 	@Override
 	protected Double roundByCode(Double value, String nutrientTypeCode) {
 		NutrientRoundedValue ret = extractNutrientRoundedValue(value, nutrientTypeCode);
-		
-		
+
 		return ret.getRoundedValue();
 	}
 
 	@Override
 	protected Pair<Double, Double> tolerancesByCode(Double value, String nutrientTypeCode) {
 		NutrientRoundedValue ret = extractNutrientRoundedValue(value, nutrientTypeCode);
-		
-		applyTolerance(ret,  nutrientTypeCode);
-		
+
+		applyTolerance(ret, nutrientTypeCode);
+
 		return new Pair<>(ret.getMaxToleratedValue(), ret.getMinToleratedValue());
 	}
 
-	
+
+	/**
+	 * <p>extractNutrientRoundedValue.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object
+	 * @param nutrientTypeCode a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.product.formulation.nutrient.NutrientRoundedValue} object
+	 */
 	protected NutrientRoundedValue extractNutrientRoundedValue(Double value, String nutrientTypeCode) {
 
 		NutrientRoundedValue ret = new NutrientRoundedValue(nutrientTypeCode, value);
@@ -63,10 +71,8 @@ public class EuropeanNutrientRegulation extends AbstractNutrientRegulation {
 						return new NutrientRoundedRule(true);
 					}
 				});
-			} else if (nutrientTypeCode.equals(NutrientCode.FatSaturated)
-					|| nutrientTypeCode.equals(NutrientCode.FatMonounsaturated)
-					|| nutrientTypeCode.equals(NutrientCode.FatPolyunsaturated)
-					) {
+			} else if (nutrientTypeCode.equals(NutrientCode.FatSaturated) || nutrientTypeCode.equals(NutrientCode.FatMonounsaturated)
+					|| nutrientTypeCode.equals(NutrientCode.FatPolyunsaturated)) {
 				ret.setRule(val -> {
 					if (val >= 10) {
 						return new NutrientRoundedRule(1d);
@@ -105,12 +111,18 @@ public class EuropeanNutrientRegulation extends AbstractNutrientRegulation {
 				ret.setRule(e -> new NutrientRoundedRule(2, RoundingMode.HALF_EVEN));
 			}
 
-		
 		}
 
 		return ret;
 	}
-	
+
+
+	/**
+	 * <p>applyTolerance.</p>
+	 *
+	 * @param ret a {@link fr.becpg.repo.product.formulation.nutrient.NutrientRoundedValue} object
+	 * @param nutrientTypeCode a {@link java.lang.String} object
+	 */
 	protected void applyTolerance(NutrientRoundedValue ret, String nutrientTypeCode) {
 		if (nutrientTypeCode.equals(NutrientCode.CarbohydrateByDiff) || nutrientTypeCode.equals(NutrientCode.Sugar)
 				|| nutrientTypeCode.equals(NutrientCode.FiberDietary) || nutrientTypeCode.startsWith(NutrientCode.Protein)) {
@@ -154,16 +166,15 @@ public class EuropeanNutrientRegulation extends AbstractNutrientRegulation {
 		} else if (isMineral(nutrientTypeCode)) {
 			ret.setTolerances(45d, -35d, true);
 		}
-		
-	}
 
+	}
 
 	/** {@inheritDoc} */
 	@Override
 	protected String displayValueByCode(Double value, Double roundedValue, String nutrientTypeCode, String measurementPrecision, Locale locale) {
-	    locale = getDisplayLocale(locale);
-		
-		if(measurementPrecision == null || NutMeasurementPrecision.LessThan.toString().equals(measurementPrecision)) {
+		locale = getDisplayLocale(locale);
+
+		if (measurementPrecision == null || NutMeasurementPrecision.LessThan.toString().equals(measurementPrecision)) {
 			if (value != null && roundedValue != null && nutrientTypeCode != null) {
 				if (nutrientTypeCode.equals(NutrientCode.FatSaturated) && value <= 0.1) {
 					return "< " + formatDouble(0.1, locale);
@@ -178,7 +189,15 @@ public class EuropeanNutrientRegulation extends AbstractNutrientRegulation {
 				}
 			}
 		}
-		
+
+		if (value != null && value < 10 && value >= 1 && roundedValue != null && nutrientTypeCode != null
+				&& !(nutrientTypeCode.equals(NutrientCode.Energykcal) || nutrientTypeCode.equals(NutrientCode.EnergykJ))) {
+			DecimalFormatSymbols symbols = new DecimalFormatSymbols(locale);
+			DecimalFormat df = new DecimalFormat("#,###.0#####", symbols);
+			return df.format(value);
+
+		}
+
 		return formatDouble(roundedValue, locale);
 	}
 
