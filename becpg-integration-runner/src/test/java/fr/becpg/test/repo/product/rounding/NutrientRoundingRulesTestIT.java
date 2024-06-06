@@ -199,6 +199,14 @@ public class NutrientRoundingRulesTestIT {
 				RegulationFormulationHelper.round(0.0122d, NutrientCode.Salt, Locale.FRENCH, "g/100g"), NutrientCode.Salt, Locale.FRENCH));
 		assertEquals("< 0.01", RegulationFormulationHelper.displayValue(0.0122d,
 				RegulationFormulationHelper.round(0.0122d, NutrientCode.Salt, Locale.FRENCH, "g/100g"), NutrientCode.Salt, Locale.ENGLISH));
+		
+		
+		assertEquals("9,0", RegulationFormulationHelper.displayValue(9d,
+				RegulationFormulationHelper.round(9d, NutrientCode.Sodium, Locale.FRENCH, "g/100g"), NutrientCode.Sodium, Locale.FRENCH));
+		assertEquals("9", RegulationFormulationHelper.displayValue(9d,
+				RegulationFormulationHelper.round(9d, NutrientCode.EnergykJ, Locale.FRENCH, "g/100g"), NutrientCode.EnergykJ, Locale.FRENCH));
+		assertEquals("11", RegulationFormulationHelper.displayValue(11d,
+				RegulationFormulationHelper.round(11d, NutrientCode.Sodium, Locale.FRENCH, "g/100g"), NutrientCode.Sodium, Locale.FRENCH));
 
 		String[] codes = { NutrientCode.CarbohydrateByDiff, NutrientCode.Sugar, NutrientCode.FiberDietary, NutrientCode.Protein };
 
