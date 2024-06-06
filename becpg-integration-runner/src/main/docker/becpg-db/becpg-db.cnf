@@ -7,5 +7,6 @@ max_connections = 275
 default_authentication_plugin=caching_sha2_password
 innodb_buffer_pool_size = 2G
 innodb_flush_log_at_trx_commit = 2
-innodb_log_file_size=256M
+innodb_flush_method=O_DIRECT
+innodb_redo_log_capacity = 512M
 transaction_isolation=READ-COMMITTED
