@@ -118,6 +118,11 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 	public boolean needsRecipeId() {
 		return true;
 	}
+	
+	@Override
+	public void ingredientAnalysis(RegulatoryContext productContext, RegulatoryContextItem contextItem) {
+		// implemented in extractRequirements()
+	}
 
 	/**
 	 * {"search_parameters": { "usage": "Breakfast foods", "country": [ "United
@@ -246,15 +251,16 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 			for (List<String> countries : countriesBatch) {
 
 				JSONObject analysisResults = null;
-				
+
 				try {
 					analysisResults = postRecipeAnalysis(productContext, countries, usageContext.getName(), usageContext.getModuleId());
 				} catch (HttpStatusCodeException e) {
 					logger.error("Error during Decernis analysis: " + e.getMessage(), e);
 					for (String country : countries) {
-						ReqCtrlListDataItem req = new ReqCtrlListDataItem(null, RequirementType.Forbidden,
-								MLTextHelper.getI18NMessage("message.decernis.error", "Error while creating Decernis recipe: " + e.getMessage()), null, new ArrayList<>(),
-								RequirementDataType.Formulation);
+						ReqCtrlListDataItem req = new ReqCtrlListDataItem();
+						req.setReqType(RequirementType.Forbidden);
+						req.setReqMlMessage(MLTextHelper.getI18NMessage("message.decernis.error", "Error while creating Decernis recipe: " + e.getMessage()));
+						req.setReqDataType(RequirementDataType.Formulation);
 						req.setFormulationChainId(DecernisService.DECERNIS_CHAIN_ID);
 						req.setRegulatoryCode(country + (!usageContext.getName().isEmpty() ? " - " + usageContext.getName() : ""));
 						productContext.getRequirements().add(req);
@@ -269,8 +275,8 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 						) {
 
 							JSONObject countryResults = analysisResults.getJSONObject(PARAM_ANALYSIS_RESULTS).getJSONObject(country);
-							
-							if(logger.isTraceEnabled()) {
+
+							if (logger.isTraceEnabled()) {
 								logger.trace(countryResults.toString(3));
 							}
 
@@ -296,7 +302,7 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 
 										if (contextItem.getCountries().get(country) != null && usageContext.getNodeRef() != null) {
 											IngRegulatoryListDataItem ingRegulatoryListDataItem = createIngRegulatoryListDataItem(ingItem.getIng(),
-													contextItem.getCountries().get(country), usageContext.getNodeRef());
+													contextItem.getCountries().get(country));
 											
 											ingRegulatoryListDataItem.setCitation(new MLText(result.getString(CITATION)));
 											ingRegulatoryListDataItem.setUsages(new MLText(result.getString(USAGE_NAME)));
@@ -418,18 +424,15 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 		reqCtrlItem.setFormulationChainId(DecernisService.DECERNIS_CHAIN_ID);
 		return reqCtrlItem;
 	}
-	
-	protected IngRegulatoryListDataItem createIngRegulatoryListDataItem(NodeRef ing, NodeRef country, NodeRef usage) {
-		
+
+	protected IngRegulatoryListDataItem createIngRegulatoryListDataItem(NodeRef ing, NodeRef country) {
+
 		IngRegulatoryListDataItem ingRegulatoryListDataItem = new IngRegulatoryListDataItem();
 		ingRegulatoryListDataItem.setIng(ing);
-		ingRegulatoryListDataItem
-				.setRegulatoryCountries(Arrays.asList(country));
-
-		ingRegulatoryListDataItem.setRegulatoryUsages(Arrays.asList(usage));
+		ingRegulatoryListDataItem.setRegulatoryCountries(Arrays.asList(country));
+		
 		return ingRegulatoryListDataItem;
 	}
-
 
 	protected HttpEntity<String> createEntity(String body) {
 		HttpHeaders headers = new HttpHeaders();
