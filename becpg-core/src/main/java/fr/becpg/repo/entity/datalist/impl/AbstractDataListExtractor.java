@@ -49,6 +49,7 @@ import fr.becpg.repo.helper.AuthorityHelper;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
+import fr.becpg.repo.license.BeCPGLicenseManager;
 import fr.becpg.repo.search.AdvSearchService;
 
 /**
@@ -74,7 +75,9 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 	protected EntityDictionaryService entityDictionaryService;
 	
 	protected RatingService ratingService;
-
+	
+	private BeCPGLicenseManager beCPGLicenseManager;
+	
 	private boolean isDefaultExtractor = false;
 	
 	private int priority = 0;
@@ -83,6 +86,10 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 	@Override
 	public boolean isDefaultExtractor() {
 		return isDefaultExtractor;
+	}
+	
+	public void setBeCPGLicenseManager(BeCPGLicenseManager beCPGLicenseManager) {
+		this.beCPGLicenseManager = beCPGLicenseManager;
 	}
 
 	/**
@@ -351,7 +358,7 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 	}
 
 	private boolean hasWriteAccess(NodeRef nodeRef) {
-		return (permissionService.hasPermission(nodeRef, "Write") == AccessStatus.ALLOWED);
+		return (permissionService.hasPermission(nodeRef, "Write") == AccessStatus.ALLOWED) && beCPGLicenseManager.hasWriteLicense();
 	}
 	
 	private boolean hasReadAccess(NodeRef nodeRef) {
