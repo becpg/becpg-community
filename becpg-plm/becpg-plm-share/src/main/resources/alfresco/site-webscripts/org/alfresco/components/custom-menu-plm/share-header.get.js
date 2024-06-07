@@ -70,6 +70,8 @@ if(isExternalUser(user)){
 				label = "NoLicenseWarning"
 			} else if (!isMemberOfLicenseGroup(user)) {
 				label = "UnauthorizedWarning"
+			} else if (floatingLicensesExceeded(user)) {
+				label = "FloatingLicensesExceeded"
 			} else {
 				label = "EcmWarning"
 			}

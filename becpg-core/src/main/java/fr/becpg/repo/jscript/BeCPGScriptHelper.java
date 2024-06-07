@@ -1741,5 +1741,13 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public String[] extractPeople(String[] authorities) {
 		return AuthorityHelper.extractPeople(Set.of(authorities)).toArray(new String[0]);
 	}
+	
+	public boolean floatingLicensesExceeded(String sessionId) {
+		return beCPGLicenseManager.floatingLicensesExceeded(sessionId);
+	}
+	
+	public boolean hasWriteLicense() {
+		return beCPGLicenseManager.hasWriteLicense();
+	}
 
 }
