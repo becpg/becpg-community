@@ -11,6 +11,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 
 import fr.becpg.model.PLMModel;
+import fr.becpg.repo.decernis.DecernisService;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RegulatoryEntity;
@@ -79,7 +80,9 @@ public class ProductRegulatoryFormulationHandler extends FormulationBaseHandler<
 				String countryCode = (String) nodeService.getProperty(country, PLMModel.PROP_REGULATORY_CODE);
 				for (NodeRef usage : regulatoryListItem.getRegulatoryUsagesRef()) {
 					String usageCode = (String) nodeService.getProperty(usage, PLMModel.PROP_REGULATORY_CODE);
-					regulatoryIds.add(countryCode + " - " + usageCode);
+					if (!usageCode.endsWith(DecernisService.MODULE_SUFFIX)) {
+						regulatoryIds.add(countryCode + " - " + usageCode);
+					}
 				}
 			}
 		}
