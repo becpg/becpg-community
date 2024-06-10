@@ -110,12 +110,12 @@ public class AuditScope implements AutoCloseable {
 	/**
 	 * <p>putAttribute.</p>
 	 *
-	 * @param string a {@link java.lang.String} object
+	 * @param key a {@link java.lang.String} object
 	 * @param attribute a {@link java.lang.Object} object
 	 */
-	public void putAttribute(String string, Object attribute) {
+	public void putAttribute(String key, Object attribute) {
 		if (databaseScope != null) {
-			databaseScope.putAttribute(string, attribute);
+			databaseScope.putAttribute(key, attribute);
 		}
 	}
 
@@ -127,6 +127,12 @@ public class AuditScope implements AutoCloseable {
 	public void addCheckpoint(String checkpointName) {
 		if (stopWatchScope != null) {
 			stopWatchScope.addCheckpoint(checkpointName);
+		}
+	}
+	
+	public void disable() {
+		if (databaseScope != null) {
+			databaseScope.disableAuditRecord();
 		}
 	}
 	
