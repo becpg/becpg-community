@@ -281,6 +281,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 		private BatchInfo batchInfo;
 		private List<BatchStep<T>> batchSteps;
 		private BatchClosingHook closingHook;
+		private AuditScope auditScope;
 		
 		public BatchCommand(BatchInfo batchInfo, List<BatchStep<T>> batchSteps, BatchClosingHook closingHook) {
 			super();
@@ -319,10 +320,12 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 				runningCommand.set(this);
 			}
 			
-			try (AuditScope auditScope = beCPGAuditService.startAudit(AuditType.BATCH)) {
+			try (AuditScope scope = beCPGAuditService.startAudit(AuditType.BATCH)) {
 				boolean hasError = false;
 
 				Date startTime = new Date();
+				
+				this.auditScope = scope;
 
 				int totalItems = 0;
 				int totalErrors = 0;
@@ -514,6 +517,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 							logger.debug("Skip entry '" + entry + "' as batch : '" + batchId + "' was cancelled");
 						}
 						BatchCommand.this.getBatchInfo().setCancelled(true);
+						auditScope.disable();
 						return;
 					}
 					checkPausedCommand();
