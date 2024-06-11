@@ -67,6 +67,12 @@
 		parent="webscript">
 		<property name="configPath" value="${beCPG.designer.configPath}" />
 	</bean>
+
+	<bean id="webscript.org.alfresco.components.model-designer.clean-config.get" class="fr.becpg.repo.designer.web.scripts.CleanConfigWebscript"
+		parent="webscript">
+		<property name="configPath" value="${beCPG.designer.configPath}" />
+	 	<property name="configService" ref="web.config" />
+	</bean>
 	
 	<bean id="webscript.org.alfresco.components.model-designer.share-unpublish.get" class="fr.becpg.repo.designer.web.scripts.ShareUnpublishWebscript"
 		parent="webscript">

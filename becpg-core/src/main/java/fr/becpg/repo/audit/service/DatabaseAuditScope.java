@@ -25,6 +25,8 @@ public class DatabaseAuditScope implements AutoCloseable {
 	
 	private Map<String, Serializable> auditValues = new HashMap<>();
 	
+	private boolean shouldRecordAudit = true;
+	
 	/**
 	 * <p>Constructor for DatabaseAuditScope.</p>
 	 *
@@ -34,6 +36,10 @@ public class DatabaseAuditScope implements AutoCloseable {
 	public DatabaseAuditScope(DatabaseAuditPlugin auditPlugin, DatabaseAuditService databaseAuditService) {
 		this.databaseAuditService = databaseAuditService;
 		this.auditPlugin = auditPlugin;
+	}
+	
+	public void disableAuditRecord() {
+		this.shouldRecordAudit = false;
 	}
 	
 	/** {@inheritDoc} */
@@ -49,8 +55,10 @@ public class DatabaseAuditScope implements AutoCloseable {
 			Date start = ISO8601DateFormat.parse(auditValues.get(AuditPlugin.STARTED_AT).toString());
 			auditValues.put(AuditPlugin.DURATION, end.getTime() - start.getTime());
 		}
-
-		databaseAuditService.recordAuditEntry(auditPlugin, auditValues, false);
+		
+		if (shouldRecordAudit) {
+			databaseAuditService.recordAuditEntry(auditPlugin, auditValues, false);
+		}
 	}
 
 	/**
