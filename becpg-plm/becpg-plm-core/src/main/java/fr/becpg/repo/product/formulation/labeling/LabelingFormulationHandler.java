@@ -1948,11 +1948,13 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 								: evaporatingQty.get() * (rate / totalRate); // Consider total rate for remaining items
 						Double evaporatedQty = Math.min(maxEvapQty, proportionalEvap);
 
+						
+						productLabelItem.setQtyWithYield(productLabelItem.getQtyWithYield() - evaporatedQty);
+						
 						if (logger.isDebugEnabled()) {
-							logger.debug("Apply evaporation qty " + evaporatedQty + " on " + productLabelItem.getName());
+							logger.debug("Apply evaporation qty " + evaporatedQty + " on " + productLabelItem.getName()+" after "+productLabelItem.getQtyWithYield());
 						}
 
-						productLabelItem.setQtyWithYield(productLabelItem.getQtyWithYield() - evaporatedQty);
 
 						evaporatingQty.set(evaporatingQty.get() - evaporatedQty);
 					}
@@ -1965,7 +1967,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						Double evaporatedVol = Math.min(maxEvapQty, proportionalEvap);
 
 						if (logger.isDebugEnabled()) {
-							logger.debug("Apply evaporation volume " + evaporatedVol + " on " + productLabelItem.getName());
+							logger.debug("Apply evaporation volume " + evaporatedVol + " on " + productLabelItem.getName()+" after "+productLabelItem.getVolumeWithYield());
 						}
 
 						productLabelItem.setVolumeWithYield(productLabelItem.getVolumeWithYield() - evaporatedVol);
