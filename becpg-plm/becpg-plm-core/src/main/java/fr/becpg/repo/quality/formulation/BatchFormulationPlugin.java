@@ -17,6 +17,12 @@ import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.repository.L2CacheSupport;
 
+/**
+ * <p>BatchFormulationPlugin class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class BatchFormulationPlugin implements FormulationPlugin {
 
@@ -38,6 +44,7 @@ public class BatchFormulationPlugin implements FormulationPlugin {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void runFormulation(NodeRef entityNodeRef, String chainId) {
 		try {

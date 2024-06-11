@@ -11,6 +11,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 
 import fr.becpg.model.PLMModel;
+import fr.becpg.repo.decernis.DecernisService;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RegulatoryEntity;
@@ -20,10 +21,21 @@ import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 
+/**
+ * <p>ProductRegulatoryFormulationHandler class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class ProductRegulatoryFormulationHandler extends FormulationBaseHandler<ProductData> {
 
 	private NodeService nodeService;
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
@@ -79,7 +91,9 @@ public class ProductRegulatoryFormulationHandler extends FormulationBaseHandler<
 				String countryCode = (String) nodeService.getProperty(country, PLMModel.PROP_REGULATORY_CODE);
 				for (NodeRef usage : regulatoryListItem.getRegulatoryUsagesRef()) {
 					String usageCode = (String) nodeService.getProperty(usage, PLMModel.PROP_REGULATORY_CODE);
-					regulatoryIds.add(countryCode + " - " + usageCode);
+					if (!usageCode.endsWith(DecernisService.MODULE_SUFFIX)) {
+						regulatoryIds.add(countryCode + " - " + usageCode);
+					}
 				}
 			}
 		}
@@ -107,7 +121,7 @@ public class ProductRegulatoryFormulationHandler extends FormulationBaseHandler<
 		}
 		
 		double finalMinValue = minValue;
-		return reqList.stream().filter(r -> r.getReqMaxQty() == finalMinValue).collect(Collectors.toList());
+		return reqList.stream().filter(r -> r.getReqMaxQty() != null && r.getReqMaxQty() == finalMinValue).collect(Collectors.toList());
 	}
 
 }

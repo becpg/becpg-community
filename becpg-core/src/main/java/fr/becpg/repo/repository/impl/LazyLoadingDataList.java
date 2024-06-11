@@ -22,7 +22,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Objects;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import fr.becpg.repo.repository.RepositoryEntity;
 
@@ -91,6 +93,9 @@ public class LazyLoadingDataList<E extends RepositoryEntity> implements List<E>,
 	}
 	
 	
+	/**
+	 * <p>refresh.</p>
+	 */
 	public void  refresh() {
 		backedList = null;
 		loaded = false;
@@ -215,6 +220,23 @@ public class LazyLoadingDataList<E extends RepositoryEntity> implements List<E>,
 		deletedNodes.addAll(getList());
 		getList().clear();
 	}
+	
+	/** {@inheritDoc} */
+	@Override
+	public boolean removeIf(Predicate<? super E> filter) {
+        Objects.requireNonNull(filter);
+        boolean removed = false;
+        final Iterator<E> each = iterator();
+        while (each.hasNext()) {
+            E next = each.next();
+			if (filter.test(next)) {
+            	deletedNodes.add(next);
+                each.remove();
+                removed = true;
+            }
+        }
+        return removed;
+    }
 
 
 	/** {@inheritDoc} */

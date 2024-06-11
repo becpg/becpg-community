@@ -11,12 +11,12 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.repo.batch.BatchInfo;
 import fr.becpg.repo.batch.BatchQueueService;
-import fr.becpg.repo.web.scripts.remote.AbstractEntityWebScript;
 
 /**
  * <p>BatchQueueServiceWebScript class.</p>
@@ -24,7 +24,7 @@ import fr.becpg.repo.web.scripts.remote.AbstractEntityWebScript;
  * @author matthieu
  * @version $Id: $Id
  */
-public class BatchQueueServiceWebScript extends AbstractEntityWebScript {
+public class BatchQueueServiceWebScript extends AbstractWebScript {
 
 	private static final Log logger = LogFactory.getLog(BatchQueueServiceWebScript.class);
 	

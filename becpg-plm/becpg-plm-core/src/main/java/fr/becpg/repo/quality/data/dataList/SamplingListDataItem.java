@@ -144,6 +144,7 @@ public class SamplingListDataItem extends AbstractSamplingListDataItem {
 	 * @param controlingGroup a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param fixingGroup a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param reaction a {@link java.lang.String} object.
+	 * @param timePeriod a {@link java.lang.String} object
 	 */
 	public SamplingListDataItem(Date dateTime, String timePeriod, QualityControlState sampleState, NodeRef controlPoint, NodeRef controlStep, NodeRef samplingGroup, NodeRef controlingGroup, NodeRef fixingGroup, String reaction) {
 		super();

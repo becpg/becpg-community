@@ -30,16 +30,33 @@ public class PackagingKitData extends ProductData  {
 	
 	
 
+	/**
+	 * <p>build.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.PackagingKitData} object
+	 */
 	public static PackagingKitData build() {
 		return new PackagingKitData();
 	}
 
+	/**
+	 * <p>withName.</p>
+	 *
+	 * @param name a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.product.data.PackagingKitData} object
+	 */
 	public PackagingKitData withName(String name) {
 		setName(name);
 		return this;
 	}
 
 
+	/**
+	 * <p>withPackagingList.</p>
+	 *
+	 * @param packagingList a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.product.data.PackagingKitData} object
+	 */
 	public PackagingKitData withPackagingList(List<PackagingListDataItem> packagingList) {
 		getPackagingListView().setPackagingList(packagingList);
 		return this;

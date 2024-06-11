@@ -10,6 +10,12 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.repo.helper.MLTextHelper;
 
+/**
+ * <p>FootNoteRule class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class FootNoteRule extends AbstractFormulaFilterRule implements Comparable<FootNoteRule>, Serializable {
 
 	private static final long serialVersionUID = 4589879904230809954L;
@@ -20,6 +26,15 @@ public class FootNoteRule extends AbstractFormulaFilterRule implements Comparabl
 
 	private final int sort;
 
+	/**
+	 * <p>Constructor for FootNoteRule.</p>
+	 *
+	 * @param ruleName a {@link java.lang.String} object
+	 * @param footNoteLabel a {@link org.alfresco.service.cmr.repository.MLText} object
+	 * @param formula a {@link java.lang.String} object
+	 * @param locales a {@link java.util.List} object
+	 * @param sort a int
+	 */
 	public FootNoteRule(String ruleName, MLText footNoteLabel, String formula, List<String> locales, int sort) {
 		super(ruleName, formula, locales);
 		String label = MLTextHelper.getClosestValue(footNoteLabel, I18NUtil.getLocale());
@@ -34,10 +49,21 @@ public class FootNoteRule extends AbstractFormulaFilterRule implements Comparabl
 
 	}
 
+	/**
+	 * <p>Getter for the field <code>footNoteMarker</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	public String getFootNoteMarker() {
 		return footNoteMarker;
 	}
 
+	/**
+	 * <p>Getter for the field <code>footNoteLabel</code>.</p>
+	 *
+	 * @param locale a {@link java.util.Locale} object
+	 * @return a {@link java.lang.String} object
+	 */
 	public String getFootNoteLabel(Locale locale) {
 		String label = MLTextHelper.getClosestValue(footNoteLabel, locale);
 		if(label!=null && label.contains("|")) {
@@ -46,11 +72,13 @@ public class FootNoteRule extends AbstractFormulaFilterRule implements Comparabl
 		return label;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int compareTo(FootNoteRule b) {
 		return Integer.compare(this.sort, b.sort);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -59,6 +87,7 @@ public class FootNoteRule extends AbstractFormulaFilterRule implements Comparabl
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {

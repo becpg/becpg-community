@@ -57,12 +57,22 @@ public class AllocationListDataItem extends BeCPGDataObject implements SortableD
 
 	
 	
+	/**
+	 * <p>Getter for the field <code>stockListItems</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	@AlfMultiAssoc
 	@AlfQname(qname = "qa:batchAllocationStockRefs")
 	public List<NodeRef> getStockListItems() {
 		return stockListItems;
 	}
 
+	/**
+	 * <p>Setter for the field <code>stockListItems</code>.</p>
+	 *
+	 * @param stockListItems a {@link java.util.List} object
+	 */
 	public void setStockListItems(List<NodeRef> stockListItems) {
 		this.stockListItems = stockListItems;
 	}
@@ -89,33 +99,63 @@ public class AllocationListDataItem extends BeCPGDataObject implements SortableD
 		this.product = product;
 	}
 
+	/**
+	 * <p>Getter for the field <code>batchQty</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "qa:batchQty")
 	public Double getBatchQty() {
 		return batchQty;
 	}
 
+	/**
+	 * <p>Setter for the field <code>batchQty</code>.</p>
+	 *
+	 * @param batchQty a {@link java.lang.Double} object
+	 */
 	public void setBatchQty(Double batchQty) {
 		this.batchQty = batchQty;
 	}
 
+	/**
+	 * <p>Getter for the field <code>state</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.model.SystemState} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "qa:batchState")
 	public SystemState getState() {
 		return state;
 	}
 
+	/**
+	 * <p>Setter for the field <code>state</code>.</p>
+	 *
+	 * @param state a {@link fr.becpg.model.SystemState} object
+	 */
 	public void setState(SystemState state) {
 		this.state = state;
 	}
 	
 	
+	/**
+	 * <p>Getter for the field <code>unit</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "qa:batchQtyUnit")
 	public ProductUnit getUnit() {
 		return unit;
 	}
 
+	/**
+	 * <p>Setter for the field <code>unit</code>.</p>
+	 *
+	 * @param unit a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object
+	 */
 	public void setUnit(ProductUnit unit) {
 		this.unit = unit;
 	}
@@ -138,12 +178,14 @@ public class AllocationListDataItem extends BeCPGDataObject implements SortableD
 		this.sort = sort;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "AllocationListDataItem [batchQty=" + batchQty + ", state=" + state + ", unit=" + unit + ", product=" + product + ", stockListItems="
 				+ stockListItems + ", sort=" + sort + "]";
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -152,6 +194,7 @@ public class AllocationListDataItem extends BeCPGDataObject implements SortableD
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

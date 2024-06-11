@@ -49,9 +49,9 @@ public class SpelEditorListAutoCompletePlugin extends TargetAssocAutoCompletePlu
 	private static final String SOURCE_TYPE_SPELEDITOR = "speleditor";
 
 	/**
-	 * <p>getHandleSourceTypes.</p>
+	 * {@inheritDoc}
 	 *
-	 * @return an array of {@link java.lang.String} objects.
+	 * <p>getHandleSourceTypes.</p>
 	 */
 	@Override
 	public String[] getHandleSourceTypes() {

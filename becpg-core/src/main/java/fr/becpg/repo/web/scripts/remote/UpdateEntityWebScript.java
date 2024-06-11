@@ -50,13 +50,18 @@ public class UpdateEntityWebScript extends AbstractEntityWebScript {
 
 	private EntityVersionService entityVersionService;
 
+	/**
+	 * <p>Setter for the field <code>entityVersionService</code>.</p>
+	 *
+	 * @param entityVersionService a {@link fr.becpg.repo.entity.version.EntityVersionService} object
+	 */
 	public void setEntityVersionService(EntityVersionService entityVersionService) {
 		this.entityVersionService = entityVersionService;
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
+	public void executeInternal(WebScriptRequest req, WebScriptResponse resp) throws IOException {
 		NodeRef entityNodeRef = findEntity(req);
 		
 		if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ARCHIVED_ENTITY)) {

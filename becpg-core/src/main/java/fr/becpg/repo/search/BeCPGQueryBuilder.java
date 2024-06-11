@@ -29,7 +29,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 import org.alfresco.model.ApplicationModel;
 import org.alfresco.model.ContentModel;
@@ -74,6 +73,7 @@ import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.search.impl.AbstractBeCPGQueryBuilder;
 import fr.becpg.repo.system.SystemConfigurationService;
+import jakarta.annotation.Nonnull;
 
 /**
  * <p>
@@ -87,18 +87,17 @@ import fr.becpg.repo.system.SystemConfigurationService;
 public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements InitializingBean {
 
 	private static final Log logger = LogFactory.getLog(BeCPGQueryBuilder.class);
-	
+
 	private static final String DEFAULT_FIELD_NAME = "keywords";
 
 	private static final String CANNED_QUERY_FILEFOLDER_LIST = "fileFolderGetChildrenCannedQueryFactory";
 
 	private static BeCPGQueryBuilder INSTANCE = null;
-	
+
 	@Autowired
 	@Qualifier("SearchService")
 	private SearchService searchService;
-	
-	
+
 	@Autowired
 	private NamespaceService namespaceService;
 
@@ -111,7 +110,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 	@Autowired
 	private TenantService tenantService;
-	
+
 	@Autowired
 	private SystemConfigurationService systemConfigurationService;
 
@@ -123,6 +122,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	private NodeService nodeService;
 
 	private Integer maxResults = RepoConsts.MAX_RESULTS_256;
+	private Integer page = -1;
 	private NodeRef parentNodeRef;
 	private final Set<NodeRef> parentNodeRefs = new HashSet<>();
 	private QName type = null;
@@ -159,7 +159,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	private String defaultSearchTemplate() {
 		return systemConfigurationService.confValue("beCPG.defaultSearchTemplate");
 	}
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -324,6 +324,27 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		this.maxResults = maxResults;
 		return this;
 	}
+
+	/**
+	 * <p>
+	 * skipCount.
+	 * </p>
+	 *
+	 * @param maxResults
+	 *            a int.
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
+	public BeCPGQueryBuilder page(int page) {
+		this.page = page;
+		return this;
+	}
+	
+	public BeCPGQueryBuilder page(PagingRequest pagingRequest) {
+		this.maxResults = pagingRequest.getMaxItems();
+		this.page = pagingRequest.getSkipCount()/pagingRequest.getMaxItems();
+		return this;
+	}
+
 
 	/**
 	 * <p>
@@ -498,8 +519,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	 */
 	public BeCPGQueryBuilder inSite(String siteId, String containerId) {
 
-		if (siteId!=null && !siteId.isBlank() 
-				&& ( (containerId == null) || containerId.isBlank() || "documentLibrary".equals(containerId))) {
+		if (siteId != null && !siteId.isBlank() && ((containerId == null) || containerId.isBlank() || "documentLibrary".equals(containerId))) {
 			if (this.inSite != null) {
 				logger.warn("Site is already set for this query.( old:" + this.inSite + " -  new: " + siteId + ")");
 			}
@@ -513,7 +533,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			} else {
 				sitePath += "*";
 			}
-	
+
 			if ((containerId != null) && (containerId.length() > 0)) {
 				sitePath += "/cm:" + ISO9075.encode(containerId);
 			}
@@ -755,7 +775,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		propBetweenQueriesMap.put(propQName, new Pair<>(start, end));
 		return this;
 	}
-	
+
 	public BeCPGQueryBuilder orBetween(QName propQName, String start, String end) {
 		propOrBetweenQueriesMap.put(propQName, new Pair<>(start, end));
 		return this;
@@ -791,7 +811,9 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
 	public BeCPGQueryBuilder excludeProp(QName propName, String query) {
-		List<String> queries = excludedPropQueriesMap.computeIfAbsent(propName, a  -> {return new ArrayList<>();});
+		List<String> queries = excludedPropQueriesMap.computeIfAbsent(propName, a -> {
+			return new ArrayList<>();
+		});
 		queries.add(query);
 		excludedPropQueriesMap.put(propName, queries);
 		return this;
@@ -854,6 +876,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	public BeCPGQueryBuilder excludeDefaults() {
 		excludeVersions();
 		excludeSystems();
+		excludeArchivedEntities();
 		return this;
 	}
 
@@ -898,7 +921,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		return this;
 	}
-	
+
 	public BeCPGQueryBuilder excludeArchivedEntities() {
 		excludeAspect(BeCPGModel.ASPECT_ARCHIVED_ENTITY);
 		return this;
@@ -962,32 +985,42 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	 * @return a {@link java.util.List} object.
 	 */
 	public List<NodeRef> list() {
+		PagingResults<NodeRef> ret = pagingResults();
+
+		return ret != null ? pagingResults().getPage() : new ArrayList<>();
+	}
+
+	/**
+	 * <p>
+	 * pagingResults.
+	 * </p>
+	 *
+	 */
+	public PagingResults<NodeRef> pagingResults() {
 
 		StopWatch watch = new StopWatch();
 		watch.start();
 
-		List<NodeRef> refs = new LinkedList<>();
+		PagingResults<NodeRef> ret = null;
 
 		String runnedQuery = buildQuery();
 
-		try   {
-			
+		try {
 
 			if (RepoConsts.MAX_RESULTS_UNLIMITED.equals(maxResults) && logger.isDebugEnabled()) {
 				logger.debug("Unlimited results ask");
-			} 
-			
-			refs = search(runnedQuery, sortProps, -1, maxResults);
-			
-			
+			}
+
+			ret = search(runnedQuery, sortProps, page, maxResults);
+
 		} finally {
+
+			int resultSize = ret != null ? ret.getTotalResultCount().getFirst() : 0;
 
 			watch.stop();
 			if (watch.getTotalTimeSeconds() > 1) {
-				logger.warn(
-						"Slow query [" + runnedQuery + "] executed in  " + watch.getTotalTimeSeconds() + " seconds - size results " + refs.size());
-				
-				
+				logger.warn("Slow query [" + runnedQuery + "] executed in  " + watch.getTotalTimeSeconds() + " seconds - size results " + resultSize);
+
 			}
 
 			if (logger.isDebugEnabled()) {
@@ -995,11 +1028,11 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 				logger.debug("[" + Thread.currentThread().getStackTrace()[tmpIndex].getClassName() + " "
 						+ Thread.currentThread().getStackTrace()[tmpIndex].getLineNumber() + "] " + runnedQuery + " executed in  "
-						+ watch.getTotalTimeSeconds() + " seconds - size results " + refs.size());
+						+ watch.getTotalTimeSeconds() + " seconds - size results " + resultSize);
 			}
 		}
 
-		return refs;
+		return ret;
 	}
 
 	/**
@@ -1018,24 +1051,13 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/*
-	 * 1) Lucene's QueryParser class does not parse boolean expressions -- it
-	 * might look like it, but it does not. 2) Lucene's BooleanQuery clause does
-	 * not model Boolean Queries ... it models aggregate queries. 3) the most
-	 * native way to represent the options available in a lucene "BooleanQuery"
-	 * as a string is with the +/- prefixes, where... +foo ... means foo is a
-	 * required clause and docs must match it -foo ... means foo is prohibited
-	 * clause and docs must not match it foo ... means foo is an optional clause
-	 * and docs that match it will get score benefits for doing so. 4) in an
-	 * attempt to make things easier for people who have simple needs,
-	 * QueryParser "fakes" that it parses boolean expressions by interpreting
-	 * "A AND B" as "+A +B"; "A OR B" as "A B" and "NOT A" as "-A" 5) if you
-	 * change the default operator on QueryParser to be AND then things get more
-	 * complicated, mainly because then QueryParser treats "A B" the same as
-	 * "+A +B" 6) you should avoid thinking in terms of AND, OR, and NOT ...
-	 * think in terms of OPTIONAL, REQUIRED, and PROHIBITED ... your life will
-	 * be much easier: documentation will make more sense, conversations on the
-	 * email list will be more synergistastic, wine will be sweeter, and food
-	 * will taste better.
+	 * 1) Lucene's QueryParser class does not parse boolean expressions -- it might look like it, but it does not. 2) Lucene's BooleanQuery clause does not model Boolean Queries ... it models
+	 * aggregate queries. 3) the most native way to represent the options available in a lucene "BooleanQuery" as a string is with the +/- prefixes, where... +foo ... means foo is a required clause
+	 * and docs must match it -foo ... means foo is prohibited clause and docs must not match it foo ... means foo is an optional clause and docs that match it will get score benefits for doing so. 4)
+	 * in an attempt to make things easier for people who have simple needs, QueryParser "fakes" that it parses boolean expressions by interpreting "A AND B" as "+A +B"; "A OR B" as "A B" and "NOT A"
+	 * as "-A" 5) if you change the default operator on QueryParser to be AND then things get more complicated, mainly because then QueryParser treats "A B" the same as "+A +B" 6) you should avoid
+	 * thinking in terms of AND, OR, and NOT ... think in terms of OPTIONAL, REQUIRED, and PROHIBITED ... your life will be much easier: documentation will make more sense, conversations on the email
+	 * list will be more synergistastic, wine will be sweeter, and food will taste better.
 	 */
 	private String buildQuery() {
 
@@ -1056,8 +1078,8 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		} else if (subPath != null) {
 			runnedQuery.append(mandatory(getCondSubPath(subPath)));
 		}
-		
-		if(inSite!=null) {
+
+		if (inSite != null) {
 			runnedQuery.append(mandatory(getCondSite(inSite)));
 		}
 
@@ -1178,7 +1200,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		if (!excludedPropQueriesMap.isEmpty()) {
 			for (Map.Entry<QName, List<String>> propQueryEntry : excludedPropQueriesMap.entrySet()) {
-				for(String query : propQueryEntry.getValue()) {
+				for (String query : propQueryEntry.getValue()) {
 					runnedQuery.append(prohibided(getCondContainsValue(propQueryEntry.getKey(), query)));
 				}
 			}
@@ -1188,12 +1210,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			runnedQuery.append(mandatory(getCondContainsValue(propQueryEntry.getKey(),
 					String.format("[%s TO %s]", propQueryEntry.getValue().getFirst(), propQueryEntry.getValue().getSecond()))));
 		}
-		
-		
+
 		if (!propOrBetweenQueriesMap.isEmpty()) {
 			StringBuilder orBetweenQuery = new StringBuilder();
 			for (Map.Entry<QName, Pair<String, String>> propQueryEntry : propOrBetweenQueriesMap.entrySet()) {
-				String propCond = getCondContainsValue(propQueryEntry.getKey(), String.format("[%s TO %s]", propQueryEntry.getValue().getFirst(), propQueryEntry.getValue().getSecond()));
+				String propCond = getCondContainsValue(propQueryEntry.getKey(),
+						String.format("[%s TO %s]", propQueryEntry.getValue().getFirst(), propQueryEntry.getValue().getSecond()));
 				if (orBetweenQuery.toString().isEmpty()) {
 					orBetweenQuery.append(startGroup()).append(propCond);
 				} else {
@@ -1215,13 +1237,13 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 				runnedQuery.append(ftsQuery);
 				runnedQuery.append(endGroup());
 			}
-			
+
 		}
 
 		String ret = runnedQuery.toString();
 
 		if (SearchService.LANGUAGE_FTS_ALFRESCO.equals(language) && ret.startsWith(" AND")) {
-				return ret.replaceFirst(" AND", "");
+			return ret.replaceFirst(" AND", "");
 		}
 
 		return ret;
@@ -1311,9 +1333,8 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		if (!excludedPropQueriesMap.isEmpty()) {
 			for (Map.Entry<QName, List<String>> propQueryEntry : excludedPropQueriesMap.entrySet()) {
-				for(String query : propQueryEntry.getValue()) {
-					whereClause.append(" AND ").append(getCmisPrefix(propQueryEntry.getKey())).append(" <> '").append(query)
-							.append("'");
+				for (String query : propQueryEntry.getValue()) {
+					whereClause.append(" AND ").append(getCmisPrefix(propQueryEntry.getKey())).append(" <> '").append(query).append("'");
 				}
 			}
 		}
@@ -1440,9 +1461,14 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		return this;
 	}
 
-	private List<NodeRef> search(String runnedQuery, Map<String, Boolean> sort, int page, int maxResults) {
+	private PagingResults<NodeRef> search(String runnedQuery, Map<String, Boolean> sort, int page, int maxResults) {
 
-		List<NodeRef> nodes = new LinkedList<>();
+		List<NodeRef> nodes = new ArrayList<>();
+
+		boolean hasMore = false;
+		int totalFirst = 0;
+		int totalSecond = 0;
+		int skipCount = 0;
 
 		SearchParameters sp = new SearchParameters();
 		sp.addStore(RepoConsts.SPACES_STORE);
@@ -1495,8 +1521,9 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			sp.setLimitBy(LimitBy.FINAL_SIZE);
 		}
 
-		if (page > 0) {
-			sp.setSkipCount((page - 1) * maxResults);
+		if (page > 0 && maxResults != RepoConsts.MAX_RESULTS_UNLIMITED) {
+			skipCount = (page - 1) * maxResults;
+			sp.setSkipCount(skipCount);
 			sp.setMaxPermissionChecks(page * RepoConsts.MAX_RESULTS_1000);
 		}
 
@@ -1513,18 +1540,21 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		try {
 			result = searchService.query(sp);
 			if (result != null) {
+				hasMore = result.hasMore();
+				totalFirst = (int) result.getNumberFound();
+
+				totalSecond = !hasMore ? (int) result.getNumberFound() : (int) (skipCount + result.getNumberFound() + 1);
 
 				if (AuthenticationUtil.isMtEnabled()) {
-					nodes = new LinkedList<>();
 					for (NodeRef node : result.getNodeRefs()) {
 						nodes.add(tenantService.getBaseName(node));
 					}
 				} else {
-					nodes = new LinkedList<>(result.getNodeRefs());
+					nodes = new ArrayList<>(result.getNodeRefs());
 				}
-				
-				if(maxResults == RepoConsts.MAX_RESULTS_UNLIMITED && result.hasMore()) {
-					logger.warn("Unlimited search has more results: "+nodes.size()+" "+ result.length());
+
+				if (maxResults == RepoConsts.MAX_RESULTS_UNLIMITED && hasMore) {
+					logger.warn("Unlimited search has more results: " + nodes.size() + " " + result.length());
 				}
 			}
 		} catch (FTSQueryException | QueryModelException e) {
@@ -1535,7 +1565,36 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			}
 		}
 
-		return nodes;
+		return asPagingResults(nodes, hasMore, new Pair<>(totalFirst, totalSecond));
+
+	}
+
+	private PagingResults<NodeRef> asPagingResults(List<NodeRef> nodes, boolean hasMore, Pair<Integer, Integer> total) {
+
+		return new PagingResults<NodeRef>() {
+
+			@Override
+			@Nonnull
+			public List<NodeRef> getPage() {
+				return nodes;
+			}
+
+			@Override
+			public boolean hasMoreItems() {
+				return hasMore;
+			}
+
+			@Override
+			public Pair<Integer, Integer> getTotalResultCount() {
+				return total;
+			}
+
+			@Override
+			public String getQueryExecutionId() {
+				return null;
+			}
+
+		};
 	}
 
 	/**
@@ -1567,15 +1626,15 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		sp.setMaxPermissionCheckTimeMillis(Integer.MAX_VALUE);
 		sp.setLimit(Integer.MAX_VALUE);
 		sp.setMaxItems(Integer.MAX_VALUE);
-		
+
 		ResultSet result = null;
 		try {
 			result = searchService.query(sp);
 			if (result != null) {
-				if(result.hasMore()) {
-					logger.warn("Count size was limited by: "+result.getResultSetMetaData().getLimitedBy());
+				if (result.hasMore()) {
+					logger.warn("Count size was limited by: " + result.getResultSetMetaData().getLimitedBy());
 				}
-				
+
 				ret = result.getNumberFound();
 			}
 		} finally {
@@ -1706,7 +1765,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			@Override
 			public List<NodeRef> getPage() {
 				if ((type != null) && !BeCPGModel.TYPE_ENTITYLIST_ITEM.equals(type)) {
-					return nodeRefs.stream().filter(n -> nodeService.getType(n).equals(type)).collect(Collectors.toList());
+					return nodeRefs.stream().filter(n -> nodeService.getType(n).equals(type)).toList();
 				}
 				return nodeRefs;
 			}
@@ -1781,4 +1840,5 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 	}
 
+	
 }

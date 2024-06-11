@@ -17,14 +17,15 @@
  ******************************************************************************/
 package fr.becpg.repo.web.scripts.publication;
 
-import java.util.List;
-
+import org.alfresco.query.PagingRequest;
+import org.alfresco.query.PagingResults;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.publication.PublicationChannelService;
 import fr.becpg.repo.web.scripts.remote.ListEntitiesWebScript;
 
@@ -38,41 +39,55 @@ public class ListEntitiesByChannelWebScript extends ListEntitiesWebScript {
 
 	private static final String PARAM_CHANNELID = "channelId";
 	private static final String PARAM_CHANNELNODEREF = "channelNodeRef";
-	
+
 	PublicationChannelService publicationChannelService;
-	
-	
+
+	/**
+	 * <p>Setter for the field <code>publicationChannelService</code>.</p>
+	 *
+	 * @param publicationChannelService a {@link fr.becpg.repo.publication.PublicationChannelService} object
+	 */
 	public void setPublicationChannelService(PublicationChannelService publicationChannelService) {
 		this.publicationChannelService = publicationChannelService;
 	}
 
-
+	/** {@inheritDoc} */
 	@Override
-	protected List<NodeRef> findEntities(WebScriptRequest req) {
-		
+	protected PagingResults<NodeRef> findEntities(WebScriptRequest req, Boolean limit) {
+
 		String channelId = req.getParameter(PARAM_CHANNELID);
 		String channelNodeRefStr = req.getParameter(PARAM_CHANNELNODEREF);
+
+		Integer maxResults = intParam(req, PARAM_MAX_RESULTS);
+		Integer page = intParam(req, PARAM_PAGE);
+
+		int skipCount = 0;
+
+		if (maxResults == null || Boolean.TRUE.equals(limit)) {
+			maxResults = RepoConsts.MAX_RESULTS_256;
+		}
+
+		if (page != null && page > 0 && !RepoConsts.MAX_RESULTS_UNLIMITED.equals(maxResults)) {
+			skipCount = (page - 1) * maxResults;
+		}
+
 		NodeRef channelNodeRef = null;
 		if ((channelNodeRefStr != null) && !channelNodeRefStr.isBlank()) {
-		   channelNodeRef = new NodeRef(channelNodeRefStr);
-			
-		} else if(channelId!=null && !channelId.isBlank()) {
+			channelNodeRef = new NodeRef(channelNodeRefStr);
+
+		} else if (channelId != null && !channelId.isBlank()) {
 			channelNodeRef = publicationChannelService.getChannelById(channelId);
 		}
-		
-		
-		if (channelNodeRef!=null && nodeService.exists(channelNodeRef)) {
+
+		if (channelNodeRef != null && nodeService.exists(channelNodeRef)) {
 			if (!AccessStatus.ALLOWED.equals(permissionService.hasReadPermission(channelNodeRef))) {
-			 throw new WebScriptException(Status.STATUS_UNAUTHORIZED, "You have no right to see this node");
+				throw new WebScriptException(Status.STATUS_UNAUTHORIZED, "You have no right to see this node");
 			}
-			return publicationChannelService.getEntitiesByChannel(channelNodeRef);
+			return publicationChannelService.getEntitiesByChannel(channelNodeRef, new PagingRequest(skipCount, maxResults));
 		}
-		
-		throw new WebScriptException(Status.STATUS_NOT_FOUND ,"Channel not found " + channelNodeRef );
-		
-		
+
+		throw new WebScriptException(Status.STATUS_NOT_FOUND, "Channel not found " + channelNodeRef);
+
 	}
-	
-	
-	
+
 }

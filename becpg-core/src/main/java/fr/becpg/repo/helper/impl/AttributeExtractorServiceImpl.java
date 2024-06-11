@@ -576,8 +576,11 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 			if ((value instanceof NodeRef) || (value instanceof String) || (value instanceof List)) {
 				if (DataTypeDefinition.ANY.toString().equals(propertyDef.getDataType().toString()) && (value instanceof String)) {
-					value = (Serializable) JsonFormulaHelper.cleanCompareJSON((String) value);
-					if (value == null) {
+					Object ret =  JsonFormulaHelper.cleanCompareJSON((String) value);
+
+					if(ret instanceof Serializable) {
+						value = (Serializable) ret;
+					} else {
 						return "";
 					}
 				}
@@ -1045,6 +1048,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		return extractPropName(type, v);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public String extractPropName(QName type, JSONObject v) {
 		AttributeExtractorPlugin plugin = getAttributeExtractorPlugin(type);
@@ -1133,6 +1137,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		return personAttributeExtractorPlugin.getPersonDisplayName(userId);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean matchCriteria(NodeRef nodeRef, Map<String, String> criteriaMap) {
 		
@@ -1240,6 +1245,10 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 					String displayValue = data.get("displayValue").toString().toLowerCase();
 					if (compValue.startsWith("\"") && compValue.endsWith("\"")) {
 						compValue = compValue.replace("\"", "");
+					}
+					
+					if ((compValue != null) && compValue.contains("\\ ")) {
+						compValue = compValue.replace("\\ ", " ");
 					}
 
 					if (logger.isTraceEnabled()) {

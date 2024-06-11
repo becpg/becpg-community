@@ -111,6 +111,8 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 
 		if (projectData.getPriority() != null) {
 			workflowProps.put(WorkflowModel.PROP_WORKFLOW_PRIORITY, projectData.getPriority());
+		} else {
+			workflowProps.put(WorkflowModel.PROP_WORKFLOW_PRIORITY, 2 ); //Default Normal
 		}
 		workflowProps.put(WorkflowModel.PROP_WORKFLOW_DESCRIPTION, workflowDescription);
 		List<NodeRef> assignees = getAssignees(taskListDataItem.getResources(), false);
@@ -344,9 +346,9 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 									workflowTask.getProperties(), properties);
 							properties = getWorkflowTaskNewProperties(WorkflowModel.PROP_DUE_DATE, taskListDataItem.getDue(),
 									workflowTask.getProperties(), properties);
-							properties = getWorkflowTaskNewProperties(WorkflowModel.PROP_WORKFLOW_PRIORITY, projectData.getPriority(),
+							properties = getWorkflowTaskNewProperties(WorkflowModel.PROP_WORKFLOW_PRIORITY, projectData.getPriority()!=null ?  projectData.getPriority() : 2,
 									workflowTask.getProperties(), properties);
-							properties = getWorkflowTaskNewProperties(WorkflowModel.PROP_PRIORITY, projectData.getPriority(),
+							properties = getWorkflowTaskNewProperties(WorkflowModel.PROP_PRIORITY, projectData.getPriority()!=null ?  projectData.getPriority() : 2,
 									workflowTask.getProperties(), properties);
 							properties = getWorkflowTaskNewProperties(WorkflowModel.PROP_STATUS, WorkflowConstants.TASK_STATUS_IN_PROGRESS,
 									workflowTask.getProperties(), properties);

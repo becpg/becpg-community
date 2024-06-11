@@ -795,18 +795,18 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 	/** {@inheritDoc} */
 	@Override
-	public NodeRef createActivityList(NodeRef entityNodeRef, QName typeActivityList) {
+	public NodeRef createOrUpdateList(NodeRef entityNodeRef, QName type) {
 		// entityLists
 		NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
 		if (listContainerNodeRef == null) {
 			listContainerNodeRef = entityListDAO.createListContainer(entityNodeRef);
 		}
-		NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, typeActivityList);
+		NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, type);
 		if (listNodeRef == null) {
-			listNodeRef = entityListDAO.createList(listContainerNodeRef, typeActivityList);
+			listNodeRef = entityListDAO.createList(listContainerNodeRef, type);
 		} else {
 
-			ClassDefinition classDef = entityDictionaryService.getClass(typeActivityList);
+			ClassDefinition classDef = entityDictionaryService.getClass(type);
 
 			MLText title = (MLText) mlNodeService.getProperty(listNodeRef, ContentModel.PROP_TITLE);
 			MLText description = (MLText) mlNodeService.getProperty(listNodeRef, ContentModel.PROP_DESCRIPTION);

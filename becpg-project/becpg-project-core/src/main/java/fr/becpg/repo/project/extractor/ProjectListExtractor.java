@@ -111,6 +111,11 @@ public class ProjectListExtractor extends SimpleExtractor {
 
 	private SystemConfigurationService systemConfigurationService;
 
+	/**
+	 * <p>Setter for the field <code>systemConfigurationService</code>.</p>
+	 *
+	 * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
+	 */
 	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
 		this.systemConfigurationService = systemConfigurationService;
 	}
@@ -119,6 +124,11 @@ public class ProjectListExtractor extends SimpleExtractor {
 	
 	private static final Log logger = LogFactory.getLog(ProjectListExtractor.class);
 	
+	/**
+	 * <p>Setter for the field <code>entityActivityExtractorService</code>.</p>
+	 *
+	 * @param entityActivityExtractorService a {@link fr.becpg.repo.activity.EntityActivityExtractorService} object
+	 */
 	public void setEntityActivityExtractorService(EntityActivityExtractorService entityActivityExtractorService) {
 		this.entityActivityExtractorService = entityActivityExtractorService;
 	}
@@ -141,6 +151,11 @@ public class ProjectListExtractor extends SimpleExtractor {
 		this.personService = personService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>securityService</code>.</p>
+	 *
+	 * @param securityService a {@link fr.becpg.repo.security.SecurityService} object
+	 */
 	public void setSecurityService(SecurityService securityService) {
 		this.securityService = securityService;
 	}

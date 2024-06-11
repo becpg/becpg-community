@@ -45,14 +45,29 @@ public class EntityCopyPolicy extends AbstractBeCPGPolicy implements CopyService
 	
 	private SystemConfigurationService systemConfigurationService;
 	
+	/**
+	 * <p>Setter for the field <code>systemConfigurationService</code>.</p>
+	 *
+	 * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
+	 */
 	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
 		this.systemConfigurationService = systemConfigurationService;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>dictionaryService</code>.</p>
+	 *
+	 * @param dictionaryService a {@link org.alfresco.service.cmr.dictionary.DictionaryService} object
+	 */
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>associationService</code>.</p>
+	 *
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object
+	 */
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
@@ -142,6 +157,7 @@ public class EntityCopyPolicy extends AbstractBeCPGPolicy implements CopyService
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void beforeCopy(QName classRef, NodeRef sourceNodeRef, NodeRef targetNodeRef) {
 		BeCPGStateHelper.onCopyEntity(targetNodeRef);

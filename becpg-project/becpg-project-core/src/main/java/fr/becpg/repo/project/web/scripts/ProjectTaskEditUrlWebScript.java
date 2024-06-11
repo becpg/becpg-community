@@ -25,10 +25,20 @@ public class ProjectTaskEditUrlWebScript extends AbstractWebScript {
 
 	private SysAdminParams sysAdminParams;
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>sysAdminParams</code>.</p>
+	 *
+	 * @param sysAdminParams a {@link org.alfresco.repo.admin.SysAdminParams} object
+	 */
 	public void setSysAdminParams(SysAdminParams sysAdminParams) {
 		this.sysAdminParams = sysAdminParams;
 	}

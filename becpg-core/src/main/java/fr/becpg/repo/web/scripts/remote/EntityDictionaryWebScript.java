@@ -34,6 +34,7 @@ import fr.becpg.common.BeCPGException;
 import fr.becpg.repo.entity.remote.RemoteParams;
 
 /**
+ * <p>EntityDictionaryWebScript class.</p>
  *
  * @author matthieu
  * @version $Id: $Id
@@ -44,7 +45,7 @@ public class EntityDictionaryWebScript extends AbstractEntityWebScript {
 
 	/** {@inheritDoc} */
 	@Override
-	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
+	public void executeInternal(WebScriptRequest req, WebScriptResponse resp) throws IOException {
 		String type = req.getParameter(PARAM_TYPE);
 		
 		if (type == null || type.isEmpty()) {

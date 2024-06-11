@@ -34,6 +34,12 @@ import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.PackMaterialListDataItem;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
+/**
+ * <p>FrenchEcoScore class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service("ecoScore")
 public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugin {
 
@@ -45,6 +51,7 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 	private String agribaliseDBPath;
 	private String countryScoreDBPath;
 
+	/** Constant <code>ECO_SCORE_SOURCE_TYPE="ecoscore"</code> */
 	public static final String ECO_SCORE_SOURCE_TYPE = "ecoscore";
 
 	/**
@@ -117,6 +124,7 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String[] getHandleSourceTypes() {
 		return new String[] { ECO_SCORE_SOURCE_TYPE };
@@ -213,11 +221,13 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean accept(ScorableEntity productData) {
 		return (productData instanceof ProductData) &&  ((BeCPGDataObject) productData).getAspects().contains(PLMModel.ASPECT_ECO_SCORE);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean formulateScore(ScorableEntity scorableEntity) {
 
@@ -508,6 +518,12 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 		return nodeService.hasAspect(ing, PLMModel.ASPECT_WATER);
 	}
 
+	/**
+	 * <p>computeScoreClass.</p>
+	 *
+	 * @param score a int
+	 * @return a {@link java.lang.String} object
+	 */
 	public String computeScoreClass(int score) {
 
 		if (score >= 80) {

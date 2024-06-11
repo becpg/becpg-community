@@ -37,6 +37,12 @@ import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.repository.RepositoryEntity;
 
+/**
+ * <p>ExpressionServiceImpl class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service("expressionService")
 public class ExpressionServiceImpl implements ExpressionService {
 
@@ -79,11 +85,13 @@ public class ExpressionServiceImpl implements ExpressionService {
 	@Autowired
 	private AttributeExtractorService attributeExtractorService;
 
+	/** {@inheritDoc} */
 	@Override
 	public  String extractExpr(NodeRef nodeRef, String exprFormat) {
 		return extractExpr(nodeRef,null, exprFormat);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public  String extractExpr(NodeRef nodeRef, NodeRef docNodeRef, String exprFormat) {
 		Matcher patternMatcher = Pattern.compile("\\{([^}]+)\\}").matcher(exprFormat);
@@ -152,6 +160,7 @@ public class ExpressionServiceImpl implements ExpressionService {
 		return ret;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public String extractExpr(JSONObject object, String exprFormat) {
 		Matcher patternMatcher = Pattern.compile("\\{([^}]+)\\}").matcher(exprFormat);
@@ -183,6 +192,7 @@ public class ExpressionServiceImpl implements ExpressionService {
 		return object.has(propQname) ? object.getString(propQname) : "";
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public <T extends RepositoryEntity> Object eval(String condition, T formulatedEntity) {
 
@@ -233,6 +243,7 @@ public class ExpressionServiceImpl implements ExpressionService {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Object eval(String condition, List<NodeRef> nodeRefs) {
 

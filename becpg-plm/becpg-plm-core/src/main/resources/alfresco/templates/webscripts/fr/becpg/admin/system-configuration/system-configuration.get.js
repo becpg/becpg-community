@@ -15,6 +15,9 @@ function main() {
 		"beCPG.copyOrBranch.propertiesToReset",
 		"mail.logo.url",
 		"beCPG.version.cleaner.maxProcessedNodes",
+		"beCPG.remote.rateLimiter.capacity",
+        "beCPG.remote.rateLimiter.refillRate",
+		"beCPG.security.supplierPermission",
 	].forEach(function(p) {
 				model.sysBeCPGAttributes[p] = { "type": "java.lang.String", "readonly": false, "qname": p, "name": p, "value": bSys.confValue(p), "set": "system" }
 			});
@@ -75,6 +78,7 @@ function main() {
 		"beCPG.formulation.ingsCalculatingWithYield",
 		"beCPG.formulation.costList.keepProductUnit",
 		"beCPG.formulation.score.nutriscore.regulatoryClass",
+		"beCPG.formulation.security.enforceACL",
 	].forEach(function(p) {
 				model.sysBeCPGAttributes[p] = { "type": "java.lang.String", "readonly": false, "qname": p, "name": p, "value": bSys.confValue(p), "set": "formulation"  }
 			});

@@ -4,8 +4,6 @@ services:
     environment:
       CATALINA_OPTS: "-Xmx4G   -Duser.language=fr -Duser.country=FR 
                       -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:8888 
-                      -XX:+UseG1GC	
-                      -DbeCPG.decernis.token=SNWrm4SIcZSLjADOeTAGsasJcDR4uP -DbeCPG.decernis.companyName=\"Group Rocher\" -DbeCPG.decernis.module=1
                       -Dcom.sun.management.jmxremote.rmi.port=9091
                       -Dcom.sun.management.jmxremote=true
                       -Dcom.sun.management.jmxremote.port=9091
@@ -13,23 +11,22 @@ services:
                       -Dcom.sun.management.jmxremote.authenticate=false
                       -Dcom.sun.management.jmxremote.local.only=false
                       -Djava.rmi.server.hostname=127.0.0.1
-                      -XX:HotswapAgent=external
-                      -XX:HotswapAgent=fatjar
-                       --add-opens=java.base/java.lang=ALL-UNNAMED
-                       --add-opens=java.base/java.lang.invoke=ALL-UNNAMED
-                       --add-opens=java.base/java.lang.reflect=ALL-UNNAMED
-                       --add-opens=java.base/java.io=ALL-UNNAMED
-                       --add-opens=java.base/java.net=ALL-UNNAMED
-                       --add-opens=java.base/java.nio=ALL-UNNAMED
-                       --add-opens=java.base/java.util=ALL-UNNAMED
-                       --add-opens=java.base/java.util.concurrent=ALL-UNNAMED
-                       --add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED
-                       --add-opens=java.base/sun.nio.ch=ALL-UNNAMED
-                       --add-opens=java.base/sun.nio.cs=ALL-UNNAMED
-                       --add-opens=java.base/sun.security.action=ALL-UNNAMED
-                       --add-opens=java.base/sun.util.calendar=ALL-UNNAMED
-                       --add-opens=java.security.jgss/sun.security.krb5=ALL-UNNAMED
-                       "
+#                      --XXaltjvm=dcevm -javaagent:/usr/java/jbr_jcef-17.0.10-linux-x64-b1207.14/lib/hotswap/hotswap-agent.jar
+#                      -XX:+AllowEnhancedClassRedefinition -XX:HotswapAgent=fatjar
+#                       --add-opens=java.base/java.lang=ALL-UNNAMED
+#                       --add-opens=java.base/java.lang.invoke=ALL-UNNAMED
+#                       --add-opens=java.base/java.lang.reflect=ALL-UNNAMED
+#                       --add-opens=java.base/java.io=ALL-UNNAMED
+#                       --add-opens=java.base/java.net=ALL-UNNAMED
+#                       --add-opens=java.base/java.nio=ALL-UNNAMED
+#                       --add-opens=java.base/java.util=ALL-UNNAMED
+#                       --add-opens=java.base/java.util.concurrent=ALL-UNNAMED
+#                       --add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED
+#                       --add-opens=java.base/sun.nio.ch=ALL-UNNAMED
+#                       --add-opens=java.base/sun.nio.cs=ALL-UNNAMED
+#                       --add-opens=java.base/sun.security.action=ALL-UNNAMED
+#                       --add-opens=java.base/sun.util.calendar=ALL-UNNAMED
+#                       --add-opens=java.security.jgss/sun.security.krb5=ALL-UNNAMED"
 #      JAVA_HOME : "/usr/lib/jvm/java"
 #      CATALINA_OPTS: "-Xmx4G -Duser.language=fr -Duser.country=FR 
 #                      -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:8888 
@@ -55,3 +52,10 @@ services:
 #      - becpg_data:/data2
 #      - becpg_share_data:/data1      
 #    command: sh -c "chown -R 33000:1000 /data1 && chown -R alfresco:alfresco /data2"   
+
+  becpg-report:
+    image:  europe-west1-docker.pkg.dev/becpg-314807/becpg-docker/becpg-report:4.4.0
+    user: root
+    ports:
+       - "8086:8080"
+

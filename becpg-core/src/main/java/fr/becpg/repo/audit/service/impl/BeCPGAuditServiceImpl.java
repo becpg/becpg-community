@@ -2,6 +2,7 @@ package fr.becpg.repo.audit.service.impl;
 
 import java.util.List;
 
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,12 @@ import fr.becpg.repo.audit.service.AuditScopeListener;
 import fr.becpg.repo.audit.service.BeCPGAuditService;
 import fr.becpg.repo.audit.service.DatabaseAuditService;
 
+/**
+ * <p>BeCPGAuditServiceImpl class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service("beCPGAuditService")
 public class BeCPGAuditServiceImpl implements BeCPGAuditService, AuditScopeListener {
 
@@ -29,6 +36,7 @@ public class BeCPGAuditServiceImpl implements BeCPGAuditService, AuditScopeListe
 	
 	private ThreadLocal<AuditScope> threadLocalScope = new ThreadLocal<>();
 	
+	/** {@inheritDoc} */
 	@SuppressWarnings("resource")
 	@Override
 	public AuditScope startAudit(AuditType auditType) {
@@ -38,6 +46,7 @@ public class BeCPGAuditServiceImpl implements BeCPGAuditService, AuditScopeListe
 		return new AuditScope(plugin, databaseAuditService, this, plugin.getAuditedClass(), plugin.getClass().getSimpleName()).start();
 	}
 	
+	/** {@inheritDoc} */
 	@SuppressWarnings("resource")
 	@Override
 	public AuditScope startAudit(AuditType auditType, Class<?> auditClass, String scopeName) {
@@ -47,19 +56,19 @@ public class BeCPGAuditServiceImpl implements BeCPGAuditService, AuditScopeListe
 		return new AuditScope(plugin, databaseAuditService, this, auditClass, scopeName).start();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<JSONObject> listAuditEntries(AuditType type, AuditQuery auditQuery) {
-		
-		AuditPlugin plugin = getPlugin(type);
-		
-		if (plugin.isDatabaseEnable()) {
-			return databaseAuditService.listAuditEntries((DatabaseAuditPlugin) plugin, auditQuery);
-		}
-		
-		throw new BeCPGAuditException(String.format(NOT_DATABASE_PLUGIN, type));
-		
+		return AuthenticationUtil.runAsSystem(() -> {
+			AuditPlugin plugin = getPlugin(type);
+			if (plugin.isDatabaseEnable()) {
+				return databaseAuditService.listAuditEntries((DatabaseAuditPlugin) plugin, auditQuery);
+			}
+			throw new BeCPGAuditException(String.format(NOT_DATABASE_PLUGIN, type));
+		});
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void deleteAuditEntries(AuditType type, Long fromId, Long toId) {
 		AuditPlugin plugin = getPlugin(type);
@@ -81,12 +90,14 @@ public class BeCPGAuditServiceImpl implements BeCPGAuditService, AuditScopeListe
 		throw new BeCPGAuditException("Audit plugin for type '" + type + "' is not implemented yet");
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void onStart(AuditScope auditScope) {
 		auditScope.setParentScope(threadLocalScope.get());
 		threadLocalScope.set(auditScope);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onClose(AuditScope auditScope) {
 		threadLocalScope.remove();

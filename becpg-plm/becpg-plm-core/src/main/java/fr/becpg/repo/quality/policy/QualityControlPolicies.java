@@ -89,6 +89,11 @@ NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnCreateNodePo
 	
 	
 
+	/**
+	 * <p>Setter for the field <code>entityListDAO</code>.</p>
+	 *
+	 * @param entityListDAO a {@link fr.becpg.repo.entity.EntityListDAO} object
+	 */
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
 	}
@@ -160,6 +165,7 @@ NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnCreateNodePo
 		}
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 		if (KEY_UPDATE_CONTROL_LIST_STATE.equals(key)) {
@@ -178,6 +184,7 @@ NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnCreateNodePo
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void doAfterAssocsCommit(String key, Set<AssociationRef> pendingAssocs) {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -217,12 +224,14 @@ NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnCreateNodePo
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void doAfterCheckout(NodeRef origNodeRef, NodeRef workingCopyNodeRef) {
 		// TODO Auto-generated method stub
 		
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void doBeforeCheckin(NodeRef origNodeRef, NodeRef workingCopyNodeRef) {
 		NodeRef listContainerNodeRef = entityListDAO.getListContainer(origNodeRef);
@@ -240,12 +249,14 @@ NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnCreateNodePo
 		
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void cancelCheckout(NodeRef origNodeRef, NodeRef workingCopyNodeRef) {
 		// TODO Auto-generated method stub
 		
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void impactWUsed(NodeRef entityNodeRef, VersionType versionType, String description, Date effetiveDate) {
 		// TODO Auto-generated method stub

@@ -21,6 +21,12 @@ import jakarta.websocket.OnOpen;
 import jakarta.websocket.Session;
 import jakarta.websocket.server.ServerEndpoint;
 
+/**
+ * <p>AIWSProxyHandler class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @ServerEndpoint(value = "/aiws", configurator = AIWSProxyConfigurator.class)
 public class AIWSProxyHandler {
 
@@ -32,6 +38,11 @@ public class AIWSProxyHandler {
 	private Session remoteSession;
 	private ConnectorService connectorService;
 
+	/**
+	 * <p>Setter for the field <code>connectorService</code>.</p>
+	 *
+	 * @param connectorService a {@link org.springframework.extensions.webscripts.connector.ConnectorService} object
+	 */
 	public void setConnectorService(ConnectorService connectorService) {
 		this.connectorService = connectorService;
 	}
@@ -76,6 +87,12 @@ public class AIWSProxyHandler {
 		}
 	}
 
+	/**
+	 * <p>onOpen.</p>
+	 *
+	 * @param session a {@link jakarta.websocket.Session} object
+	 * @param config a {@link jakarta.websocket.EndpointConfig} object
+	 */
 	@OnOpen
 	public void onOpen(Session session, EndpointConfig config) {
 		try {
@@ -94,11 +111,22 @@ public class AIWSProxyHandler {
 		}
 	}
 
+	/**
+	 * <p>onClose.</p>
+	 *
+	 * @param reason a {@link jakarta.websocket.CloseReason} object
+	 */
 	@OnClose
 	public void onClose(CloseReason reason) {
 		closeSession(remoteSession);
 	}
 
+	/**
+	 * <p>onMessage.</p>
+	 *
+	 * @param message a {@link java.lang.String} object
+	 * @param session a {@link jakarta.websocket.Session} object
+	 */
 	@OnMessage
 	public void onMessage(String message, Session session) {
 		try {
@@ -113,6 +141,12 @@ public class AIWSProxyHandler {
 		}
 	}
 
+	/**
+	 * <p>onError.</p>
+	 *
+	 * @param session a {@link jakarta.websocket.Session} object
+	 * @param throwable a {@link java.lang.Throwable} object
+	 */
 	@OnError
 	public void onError(Session session, Throwable throwable) {
 		handleError("Error in WebSocket connection: " + throwable.getMessage(), throwable, session);
@@ -121,7 +155,7 @@ public class AIWSProxyHandler {
 
 	private String createWSURL(String endpointUrl, String queryString) {
 		String protocol = endpointUrl.contains("443") ? WSS_PROTOCOL : WS_PROTOCOL;
-		return endpointUrl.replace("http", protocol).replace("/api", "/ws") + (queryString!=null  ? "?" + queryString : "");
+		return endpointUrl.replace("http", protocol) + "/ws" + (queryString!=null  ? "?" + queryString : "");
 	}
 
 	private void forwardMessage(Session session, String message) throws IOException {

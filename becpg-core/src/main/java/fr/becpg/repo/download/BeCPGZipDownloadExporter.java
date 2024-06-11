@@ -78,8 +78,9 @@ import fr.becpg.repo.entity.EntityService;
 
 /**
  * Handler for exporting node content to a ZIP file
- * 
+ *
  * @author Alex Miller
+ * @version $Id: $Id
  */
 public class BeCPGZipDownloadExporter extends BaseExporter
 {
@@ -123,6 +124,8 @@ public class BeCPGZipDownloadExporter extends BaseExporter
      * @param downloadNodeRef NodeRef
      * @param total long
      * @param totalFileCount long
+     * @param permissionService a {@link org.alfresco.service.cmr.security.PermissionService} object
+     * @param entityService a {@link fr.becpg.repo.entity.EntityService} object
      */
     public BeCPGZipDownloadExporter(PermissionService permissionService, EntityService entityService, File zipFile, CheckOutCheckInService checkOutCheckInService, NodeService nodeService, RetryingTransactionHelper transactionHelper, DownloadStatusUpdateService updateService, DownloadStorage downloadStorage, DictionaryService dictionaryService, NodeRef downloadNodeRef, long total, long totalFileCount)
     {
@@ -147,6 +150,7 @@ public class BeCPGZipDownloadExporter extends BaseExporter
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void start(final ExporterContext context)
     {
@@ -159,6 +163,7 @@ public class BeCPGZipDownloadExporter extends BaseExporter
         zipStream.setFallbackToUTF8(true);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void startNode(NodeRef nodeRef)
     {
@@ -262,6 +267,12 @@ public class BeCPGZipDownloadExporter extends BaseExporter
     	return nodeRef.getStoreRef().getProtocol().equals(VersionModel.STORE_PROTOCOL) || nodeRef.getStoreRef().getIdentifier().equals(Version2Model.STORE_ID);
     }
     
+    /**
+     * <p>convertVersionNodeRefToVersionedNodeRef.</p>
+     *
+     * @param versionNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+     * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+     */
     protected NodeRef convertVersionNodeRefToVersionedNodeRef(NodeRef versionNodeRef)
     {
         Map<QName, Serializable> properties = nodeService.getProperties(versionNodeRef);
@@ -285,6 +296,7 @@ public class BeCPGZipDownloadExporter extends BaseExporter
         return nodeRef;
     }
     
+    /** {@inheritDoc} */
     @Override
     public void contentImpl(NodeRef nodeRef, QName property, InputStream content, ContentData contentData, int index)
     {
@@ -316,6 +328,7 @@ public class BeCPGZipDownloadExporter extends BaseExporter
         }
     }
     
+    /** {@inheritDoc} */
     @Override
     public void endNode(NodeRef nodeRef)
     {
@@ -325,6 +338,7 @@ public class BeCPGZipDownloadExporter extends BaseExporter
         path.pop();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void end()
     {
@@ -424,26 +438,51 @@ public class BeCPGZipDownloadExporter extends BaseExporter
         }, false, true);
     }
 
+    /**
+     * <p>getNextSequenceNumber.</p>
+     *
+     * @return a int
+     */
     public int getNextSequenceNumber()
     {
         return sequenceNumber++;
     }
 
+    /**
+     * <p>Getter for the field <code>done</code>.</p>
+     *
+     * @return a long
+     */
     public long getDone()
     {
         return done;
     }
 
+    /**
+     * <p>Getter for the field <code>total</code>.</p>
+     *
+     * @return a long
+     */
     public long getTotal()
     {
         return total;
     }
 
+    /**
+     * <p>getFilesAdded.</p>
+     *
+     * @return a long
+     */
     public long getFilesAdded()
     {
         return filesAddedCount;
     }
 
+    /**
+     * <p>getTotalFiles.</p>
+     *
+     * @return a long
+     */
     public long getTotalFiles()
     {
         return totalFileCount;

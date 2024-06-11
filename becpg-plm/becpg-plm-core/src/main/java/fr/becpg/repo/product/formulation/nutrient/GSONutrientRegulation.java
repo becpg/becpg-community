@@ -19,6 +19,7 @@ public class GSONutrientRegulation extends EuropeanNutrientRegulation {
 		super(path);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected Locale getDisplayLocale(Locale locale) {
 		return new Locale("en");

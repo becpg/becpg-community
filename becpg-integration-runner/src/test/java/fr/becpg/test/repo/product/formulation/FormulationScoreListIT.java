@@ -267,8 +267,7 @@ public class FormulationScoreListIT extends PLMBaseTestCase {
 				checks++;
 			} else if (scoreListDataItem.getCriterion().equals("B")) {
 				// Calculate expected score for type B
-				assertEquals("The mean of the type B is incorrect", Integer.valueOf(50), scoreListDataItem.getScore());
-				checks++;
+				fail("B should not exists");
 			} else if (scoreListDataItem.getCriterion().equals("C")) {
 				// Calculate expected score for type C
 				assertEquals("The mean of the type C is incorrect", Integer.valueOf(80), scoreListDataItem.getScore());
@@ -277,8 +276,8 @@ public class FormulationScoreListIT extends PLMBaseTestCase {
 			}
 		}
 
-		// Ensure checks for type A, B and C are performed
-		assertEquals("Verify checks done", 3, checks);
+		// Ensure checks for type A, and C are performed
+		assertEquals("Verify checks done", 2, checks);
 	}
 
 }

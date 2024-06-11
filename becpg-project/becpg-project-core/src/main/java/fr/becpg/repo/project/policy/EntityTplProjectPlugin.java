@@ -1,8 +1,9 @@
 package fr.becpg.repo.project.policy;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Stack;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
@@ -42,16 +43,17 @@ public class EntityTplProjectPlugin implements EntityTplPlugin {
 	@Autowired
 	private BehaviourFilter policyBehaviourFilter;
 
-
 	/** {@inheritDoc} */
 	@Override
 	public void beforeSynchronizeEntity(NodeRef projectNodeRef, NodeRef entityTplNodeRef) {
-		if (ProjectModel.TYPE_PROJECT.equals(nodeService.getType(projectNodeRef)) && !nodeService.hasAspect(projectNodeRef, BeCPGModel.ASPECT_ENTITY_TPL) && policyBehaviourFilter.isEnabled(BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
+		if (ProjectModel.TYPE_PROJECT.equals(nodeService.getType(projectNodeRef))
+				&& !nodeService.hasAspect(projectNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)
+				&& policyBehaviourFilter.isEnabled(BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
 			NodeRef listContainerNodeRef = entityListDAO.getListContainer(projectNodeRef);
 			if (listContainerNodeRef != null) {
 				Integer completionPerc = (Integer) nodeService.getProperty(projectNodeRef, ProjectModel.PROP_COMPLETION_PERCENT);
-				logger.debug("beforeSynchronizeEntity check completion perc:"+ completionPerc);
-				if(completionPerc == null || completionPerc == 0) {
+				logger.debug("beforeSynchronizeEntity check completion perc:" + completionPerc);
+				if (completionPerc == null || completionPerc == 0) {
 					try {
 						policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 						policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_VERSIONABLE);
@@ -63,32 +65,28 @@ public class EntityTplProjectPlugin implements EntityTplPlugin {
 						policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_VERSIONABLE);
 						policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 					}
-				}	
+				}
 			}
 		}
 	}
 
-	
-	
 	/** {@inheritDoc} */
 	@Override
 	public void synchronizeEntity(NodeRef projectNodeRef, NodeRef projectTplNodeRef) {
 
-		
 		if (ProjectModel.TYPE_PROJECT.equals(nodeService.getType(projectNodeRef))) {
 
-			if(logger.isDebugEnabled()){
-				logger.debug("Copy project template datalist '"+ nodeService.getProperty(projectTplNodeRef, ContentModel.PROP_NAME)
-					+ "' for entity "+nodeService.getProperty(projectNodeRef, ContentModel.PROP_NAME));
+			if (logger.isDebugEnabled()) {
+				logger.debug("Copy project template datalist '" + nodeService.getProperty(projectTplNodeRef, ContentModel.PROP_NAME) + "' for entity "
+						+ nodeService.getProperty(projectNodeRef, ContentModel.PROP_NAME));
 			}
-			
+
 			initializeNodeRefsAfterCopy(projectNodeRef);
 
 		}
 
 	}
 
-	// TODO : do it in a generic way
 	/**
 	 * <p>initializeNodeRefsAfterCopy.</p>
 	 *
@@ -96,7 +94,6 @@ public class EntityTplProjectPlugin implements EntityTplPlugin {
 	 */
 	public void initializeNodeRefsAfterCopy(NodeRef projectNodeRef) {
 
-		
 		NodeRef listContainerNodeRef = entityListDAO.getListContainer(projectNodeRef);
 		if (listContainerNodeRef != null) {
 
@@ -108,13 +105,14 @@ public class EntityTplProjectPlugin implements EntityTplPlugin {
 					updateDelieverableDocument(projectNodeRef, listItem);
 				}
 			}
-			
+
 			// Tasks
 			listNodeRef = entityListDAO.getList(listContainerNodeRef, ProjectModel.TYPE_TASK_LIST);
 			if (listNodeRef != null && nodeService.exists(listNodeRef)) {
 				List<NodeRef> listItems = entityListDAO.getListItems(listNodeRef, ProjectModel.TYPE_TASK_LIST);
-				for (NodeRef listItem : listItems) {					
-					nodeService.setProperties(listItem, ProjectHelper.resetProperties(ProjectModel.TYPE_TASK_LIST, nodeService.getProperties(listItem)));
+				for (NodeRef listItem : listItems) {
+					nodeService.setProperties(listItem,
+							ProjectHelper.resetProperties(ProjectModel.TYPE_TASK_LIST, nodeService.getProperties(listItem)));
 				}
 			}
 		}
@@ -122,7 +120,7 @@ public class EntityTplProjectPlugin implements EntityTplPlugin {
 
 	private void updateDelieverableDocument(NodeRef projectNodeRef, NodeRef listItem) {
 
-		Stack<String> stack = new Stack<>();
+		Deque<String> stack = new ArrayDeque<>();
 		NodeRef documentNodeRef = associationService.getTargetAssoc(listItem, ProjectModel.ASSOC_DL_CONTENT);
 
 		if (documentNodeRef != null) {
@@ -135,7 +133,9 @@ public class EntityTplProjectPlugin implements EntityTplPlugin {
 				folderNodeRef = nodeService.getPrimaryParent(folderNodeRef).getParentRef();
 			}
 
-			logger.debug("stack: " + stack);
+			if (logger.isDebugEnabled()) {
+				logger.debug("stack: " + stack);
+			}
 
 			folderNodeRef = projectNodeRef;
 			Iterator<String> iterator = stack.iterator();
@@ -156,18 +156,14 @@ public class EntityTplProjectPlugin implements EntityTplPlugin {
 	/** {@inheritDoc} */
 	@Override
 	public boolean shouldSynchronizeDataList(RepositoryEntity entity, QName dataListQName) {
-		if (ProjectModel.TYPE_PROJECT.equals(nodeService.getType(entity.getNodeRef())) && ProjectModel.TYPE_TASK_LIST.equals(dataListQName)){
-			return true;
-		}
-				return false;
+		return ProjectModel.TYPE_PROJECT.equals(nodeService.getType(entity.getNodeRef())) && ProjectModel.TYPE_TASK_LIST.equals(dataListQName);
 	}
-
 
 	/** {@inheritDoc} */
 	@Override
-	public <T extends RepositoryEntity> void synchronizeDataList(RepositoryEntity entity, List<T> dataListItems,
-			List<T> tplDataListItems){
-		
+	public <T extends RepositoryEntity> void synchronizeDataList(RepositoryEntity entity, List<T> dataListItems, List<T> tplDataListItems) {
+		//Do Nothing
+
 	}
 
 }

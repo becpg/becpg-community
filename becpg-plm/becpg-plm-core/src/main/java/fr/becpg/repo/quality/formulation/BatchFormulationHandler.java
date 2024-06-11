@@ -33,6 +33,12 @@ import fr.becpg.repo.quality.data.dataList.StockListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 
+/**
+ * <p>BatchFormulationHandler class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class BatchFormulationHandler extends FormulationBaseHandler<BatchData> {
 
 	private static Log logger = LogFactory.getLog(BatchFormulationHandler.class);
@@ -41,10 +47,16 @@ public class BatchFormulationHandler extends FormulationBaseHandler<BatchData> {
 
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
+	/**
+	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 */
 	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean process(BatchData batchData) {
 

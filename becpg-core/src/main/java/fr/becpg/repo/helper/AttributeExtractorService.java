@@ -183,6 +183,13 @@ public interface AttributeExtractorService {
 	 */
 	String extractPropName(NodeRef v);
 	
+	/**
+	 * <p>extractPropName.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 * @param v a {@link org.json.JSONObject} object
+	 * @return a {@link java.lang.String} object
+	 */
 	String extractPropName(QName type, JSONObject v);
 
 	/**

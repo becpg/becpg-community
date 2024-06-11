@@ -1,18 +1,26 @@
 package fr.becpg.web.experimental;
 
 import java.text.MessageFormat;
-import java.util.Arrays;
 
 import org.springframework.extensions.webscripts.connector.ConnectorService;
 
-import jakarta.websocket.HandshakeResponse;
-import jakarta.websocket.server.HandshakeRequest;
 import jakarta.websocket.server.ServerEndpointConfig;
 
+/**
+ * <p>AIWSProxyConfigurator class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class AIWSProxyConfigurator extends ServerEndpointConfig.Configurator{
 
 	private static ConnectorService connectorService;
 
+	/**
+	 * <p>Setter for the field <code>connectorService</code>.</p>
+	 *
+	 * @param connectorService a {@link org.springframework.extensions.webscripts.connector.ConnectorService} object
+	 */
 	public  void setConnectorService(ConnectorService connectorService) {
 		AIWSProxyConfigurator.connectorService = connectorService;
 	}
@@ -27,6 +35,7 @@ public class AIWSProxyConfigurator extends ServerEndpointConfig.Configurator{
 //	        super.modifyHandshake(sec, request, response);
 //	    }
 	
+	/** {@inheritDoc} */
 	@Override
 	public <T> T getEndpointInstance(Class<T> endpointClass) throws InstantiationException {
 		T endpoint = super.getEndpointInstance(endpointClass);

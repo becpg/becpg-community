@@ -152,11 +152,14 @@ public interface RepositoryEntityDefReader<T> {
 	
 	
 	/**
-	 * isRegisteredQName
-	 * @param qname
-	 * @return
+	 * <p>isRegisteredQName.</p>
+	 *
+	 * @param qname a {@link org.alfresco.service.namespace.QName} object
+	 * @param entity a {@link fr.becpg.repo.repository.RepositoryEntity} object
+	 * @return a boolean
+	 * @param allowWrite a boolean
 	 */
-	boolean isRegisteredQName(RepositoryEntity entity, QName qname);
+	boolean isRegisteredQName(RepositoryEntity entity, QName qname, boolean allowWrite);
 	
 	
 	

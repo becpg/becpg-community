@@ -158,6 +158,13 @@ public class FormulationHelper {
 		return ((1 + (lossPerc / 100)) * qty) / (yieldPerc / 100);
 	}
 
+	/**
+	 * <p>getQtyWithLoss.</p>
+	 *
+	 * @param qty a double
+	 * @param lossPerc a double
+	 * @return a {@link java.lang.Double} object
+	 */
 	public static Double getQtyWithLoss(double qty, double lossPerc) {
 		return (1 + (lossPerc / 100)) * qty;
 	}
@@ -165,10 +172,10 @@ public class FormulationHelper {
 	/**
 	 * <p>getQtyForCost.</p>
 	 *
-	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object.
 	 * @param packagingListDataItem a {@link fr.becpg.repo.product.data.productList.PackagingListDataItem} object.
-	 * @param subProductData a {@link fr.becpg.repo.product.data.ProductData} object.
 	 * @return a {@link java.lang.Double} object.
+	 * @param parentLossRatio a {@link java.lang.Double} object
+	 * @param componentProduct a {@link fr.becpg.repo.product.data.ProductData} object
 	 */
 	public static Double getQtyForCost(PackagingListDataItem packagingListDataItem, Double parentLossRatio, ProductData componentProduct) {
 
@@ -182,7 +189,6 @@ public class FormulationHelper {
 	 * Gets the qty of a packaging item
 	 *
 	 * @param packagingListDataItem a {@link fr.becpg.repo.product.data.productList.PackagingListDataItem} object.
-	 * @param subProductData a {@link fr.becpg.repo.product.data.ProductData} object.
 	 * @return a {@link java.lang.Double} object.
 	 */
 	public static Double getQty(PackagingListDataItem packagingListDataItem) {
@@ -207,6 +213,14 @@ public class FormulationHelper {
 		return qty;
 	}
 
+	/**
+	 * <p>getQtyForCost.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param variant a {@link fr.becpg.repo.variant.model.VariantData} object
+	 * @param processListDataItem a {@link fr.becpg.repo.product.data.productList.ProcessListDataItem} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	public static Double getQtyForCost(ProductData formulatedProduct, VariantData variant, ProcessListDataItem processListDataItem) {
 		Double lossPerc = processListDataItem.getLossPerc() != null ? processListDataItem.getLossPerc() : 0d;
 		lossPerc = calculateLossPerc(formulatedProduct.getProductLossPerc(), lossPerc);
@@ -220,6 +234,7 @@ public class FormulationHelper {
 	 * @param processListDataItem a {@link fr.becpg.repo.product.data.productList.ProcessListDataItem} object.
 	 * @return a {@link java.lang.Double} object.
 	 * @throws fr.becpg.repo.formulation.FormulateException if any.
+	 * @param variant a {@link fr.becpg.repo.variant.model.VariantData} object
 	 */
 	public static Double getQty(ProductData formulatedProduct, VariantData variant, ProcessListDataItem processListDataItem) {
 
@@ -309,6 +324,13 @@ public class FormulationHelper {
 		return defaultValue;
 	}
 
+	/**
+	 * <p>getNetWeight.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param defaultValue a {@link java.lang.Double} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	public static Double getNetWeight(ProductData productData, Double defaultValue) {
 		return getNetWeight(productData, null, defaultValue);
 	}
@@ -319,6 +341,7 @@ public class FormulationHelper {
 	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object.
 	 * @param defaultValue a {@link java.lang.Double} object.
 	 * @return a {@link java.lang.Double} object.
+	 * @param variant a {@link fr.becpg.repo.variant.model.VariantData} object
 	 */
 	public static Double getNetWeight(ProductData productData, VariantData variant, Double defaultValue) {
 
@@ -349,6 +372,13 @@ public class FormulationHelper {
 		return defaultValue;
 	}
 
+	/**
+	 * <p>getNetQtyInLorKg.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param defaultValue a {@link java.lang.Double} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	public static Double getNetQtyInLorKg(ProductData formulatedProduct, Double defaultValue) {
 		return getNetQtyInLorKg(formulatedProduct, null, defaultValue);
 	}
@@ -359,6 +389,7 @@ public class FormulationHelper {
 	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object.
 	 * @param defaultValue a {@link java.lang.Double} object.
 	 * @return a {@link java.lang.Double} object.
+	 * @param variant a {@link fr.becpg.repo.variant.model.VariantData} object
 	 */
 	public static Double getNetQtyInLorKg(ProductData formulatedProduct, VariantData variant, Double defaultValue) {
 		ProductUnit productUnit = formulatedProduct.getUnit();
@@ -385,6 +416,7 @@ public class FormulationHelper {
 	 *
 	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object.
 	 * @return a {@link java.lang.Double} object.
+	 * @param variant a {@link fr.becpg.repo.variant.model.VariantData} object
 	 */
 	public static Double getNetQtyForNuts(ProductData formulatedProduct, VariantData variant) {
 		if (formulatedProduct.isLiquid()) {
@@ -415,6 +447,7 @@ public class FormulationHelper {
 	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object.
 	 * @param defaultValue a {@link java.lang.Double} object.
 	 * @return a {@link java.lang.Double} object.
+	 * @param variant a {@link fr.becpg.repo.variant.model.VariantData} object
 	 */
 	public static Double getQtyInKgFromComposition(ProductData formulatedProduct, VariantData variant, Double defaultValue) {
 		return getQtyFromComposition(formulatedProduct, variant, null, defaultValue);
@@ -437,6 +470,13 @@ public class FormulationHelper {
 		return qty;
 	}
 
+	/**
+	 * <p>getNetVolume.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param defaultValue a {@link java.lang.Double} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	public static Double getNetVolume(ProductData formulatedProduct, Double defaultValue) {
 		return getNetVolume(formulatedProduct, null, defaultValue);
 
@@ -448,6 +488,7 @@ public class FormulationHelper {
 	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object.
 	 * @param defaultValue a {@link java.lang.Double} object.
 	 * @return a {@link java.lang.Double} object.
+	 * @param variant a {@link fr.becpg.repo.variant.model.VariantData} object
 	 */
 	public static Double getNetVolume(ProductData formulatedProduct, VariantData variant, Double defaultValue) {
 		if ((formulatedProduct.getNetVolume() != null) && (formulatedProduct.getNetVolume() > 0)) {
@@ -518,8 +559,8 @@ public class FormulationHelper {
 	 * @param totalValue a {@link java.lang.Double} object.
 	 * @param qtyUsed a {@link java.lang.Double} object.
 	 * @param value a {@link java.lang.Double} object.
-	 * @param netWeight a {@link java.lang.Double} object.
 	 * @return a {@link java.lang.Double} object.
+	 * @param netQty a {@link java.lang.Double} object
 	 */
 	public static Double calculateValue(Double totalValue, Double qtyUsed, Double value, Double netQty) {
 		if ((totalValue == null) && (value == null)) {
@@ -560,6 +601,13 @@ public class FormulationHelper {
 		return BigDecimal.valueOf(0d);
 	}
 
+	/**
+	 * <p>getPackagingListQtyForProduct.</p>
+	 *
+	 * @param compoList a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object
+	 * @param subProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a {@link java.math.BigDecimal} object
+	 */
 	public static BigDecimal getPackagingListQtyForProduct(CompoListDataItem compoList, ProductData subProduct) {
 
 		ProductUnit compoListUnit = compoList.getCompoListUnit();
@@ -660,6 +708,12 @@ public class FormulationHelper {
 		}
 	}
 
+	/**
+	 * <p>getNetQtyForCost.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	public static Double getNetQtyForCost(ProductData formulatedProduct) {
 		return getNetQtyForCost(formulatedProduct, null);
 	}
@@ -669,6 +723,7 @@ public class FormulationHelper {
 	 *
 	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object.
 	 * @return a {@link java.lang.Double} object.
+	 * @param variant a {@link fr.becpg.repo.variant.model.VariantData} object
 	 */
 	public static Double getNetQtyForCost(ProductData formulatedProduct, VariantData variant) {
 		if (formulatedProduct.isPackagingKit()) {
@@ -687,6 +742,14 @@ public class FormulationHelper {
 		}
 	}
 
+	/**
+	 * <p>getQtyForProductByPackagingLevel.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param packagingListDataItem a {@link fr.becpg.repo.product.data.productList.PackagingListDataItem} object
+	 * @param subProductData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	public static Double getQtyForProductByPackagingLevel(ProductData formulatedProduct, PackagingListDataItem packagingListDataItem,
 			ProductData subProductData) {
 
@@ -701,8 +764,8 @@ public class FormulationHelper {
 	 *
 	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object.
 	 * @param packagingListDataItem a {@link fr.becpg.repo.product.data.productList.PackagingListDataItem} object.
-	 * @param subProductData a {@link fr.becpg.repo.product.data.ProductData} object.
 	 * @return a {@link java.lang.Double} object.
+	 * @param componentProduct a {@link fr.becpg.repo.product.data.ProductData} object
 	 */
 	public static Double getQtyForCostByPackagingLevel(ProductData formulatedProduct, PackagingListDataItem packagingListDataItem,
 			ProductData componentProduct) {
@@ -790,6 +853,13 @@ public class FormulationHelper {
 		return componentProduct.getComponentLossPerc() != null ? componentProduct.getComponentLossPerc() : 0d;
 	}
 
+	/**
+	 * <p>getComponentLossPerc.</p>
+	 *
+	 * @param componentProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param packagingListDataItem a {@link fr.becpg.repo.product.data.productList.PackagingListDataItem} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	public static Double getComponentLossPerc(ProductData componentProduct, PackagingListDataItem packagingListDataItem) {
 		if (packagingListDataItem.getLossPerc() != null) {
 			return packagingListDataItem.getLossPerc();

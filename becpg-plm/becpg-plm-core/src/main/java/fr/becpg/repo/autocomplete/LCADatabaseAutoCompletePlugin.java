@@ -11,6 +11,12 @@ import fr.becpg.repo.autocomplete.impl.extractors.FileInfoAutoCompleteExtractor;
 import fr.becpg.repo.autocomplete.impl.plugins.TargetAssocAutoCompletePlugin;
 import fr.becpg.repo.product.formulation.lca.LCADatabaseService;
 
+/**
+ * <p>LCADatabaseAutoCompletePlugin class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class LCADatabaseAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 

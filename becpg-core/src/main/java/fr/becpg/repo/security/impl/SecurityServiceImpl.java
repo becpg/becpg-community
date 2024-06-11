@@ -173,6 +173,7 @@ public class SecurityServiceImpl implements SecurityService {
 		return accessMode;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public PermissionContext getPermissionContext(NodeRef nodeRef, QName nodeType, String propName) {
 		
@@ -291,7 +292,7 @@ public class SecurityServiceImpl implements SecurityService {
 						for (ACLEntryDataItem aclEntry : aclEntries) {
 							if(aclEntry.getPropName()!=null) {
 								String key = computeNodeTypePropKey(nodeType, aclEntry.getPropName());
-								permissionMap.computeIfAbsent(key, k -> new ArrayList<>()).add(new PermissionModel(aclEntry.getAclPermission(), aclEntry.getGroupsAssignee()));
+								permissionMap.computeIfAbsent(key, k -> new ArrayList<>()).add(new PermissionModel(aclEntry.getAclPermission(), aclEntry.getGroupsAssignee(), aclEntry.getIsEnforceACL()));
 							} else {
 								logger.warn("Acl has no propName: "+aclEntry.toString());
 							}

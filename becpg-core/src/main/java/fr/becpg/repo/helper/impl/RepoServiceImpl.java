@@ -213,6 +213,7 @@ public class RepoServiceImpl implements RepoService {
 		return getAvailableName(folderNodeRef, name, forceRename, false);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public boolean moveEntity(NodeRef entityNodeRef, NodeRef destinationFolder) {
 		Rule classifyRule = null;

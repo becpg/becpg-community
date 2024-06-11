@@ -21,6 +21,12 @@ import fr.becpg.repo.helper.BeCPGQueryHelper;
 import fr.becpg.repo.product.data.productList.LCAListDataItem;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
+/**
+ * <p>LCADatabaseService class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service("lcaDatabaseService")
 public class LCADatabaseService {
 
@@ -48,6 +54,11 @@ public class LCADatabaseService {
 		throw new IllegalStateException("unknown LCA database: " + databaseFilename);
 	}
 	
+	/**
+	 * <p>getLCADatabases.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	public List<FileInfo> getLCADatabases() {
 		NodeRef dbFolderNR = BeCPGQueryBuilder.createQuery().inDB().selectNodeByPath(repositoryHelper.getCompanyHome(), DATABASES_FOLDER);
 		if (dbFolderNR != null) {
@@ -57,6 +68,15 @@ public class LCADatabaseService {
 		}
 	}
 	
+	/**
+	 * <p>suggest.</p>
+	 *
+	 * @param databaseNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param query a {@link java.lang.String} object
+	 * @param pageNum a {@link java.lang.Integer} object
+	 * @param pageSize a {@link java.lang.Integer} object
+	 * @return a {@link fr.becpg.repo.autocomplete.AutoCompletePage} object
+	 */
 	public AutoCompletePage suggest(NodeRef databaseNodeRef, String query, Integer pageNum, Integer pageSize) {
 
 		List<LCAData> matches = new ArrayList<>();
@@ -92,6 +112,13 @@ public class LCADatabaseService {
 		});
 	}
 
+	/**
+	 * <p>extractLCAList.</p>
+	 *
+	 * @param databaseNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param entity a {@link java.lang.String} object
+	 * @return a {@link java.util.List} object
+	 */
 	public List<LCAListDataItem> extractLCAList(NodeRef databaseNodeRef, String entity) {
 
 		List<LCAListDataItem> items = new ArrayList<>();
@@ -215,6 +242,13 @@ public class LCADatabaseService {
 		return null;
 	}
 
+	/**
+	 * <p>extractScore.</p>
+	 *
+	 * @param databaseNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param entity a {@link java.lang.String} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	public Double extractScore(NodeRef databaseNodeRef, String entity) {
 		LCADatabasePlugin plugin = getPlugin(databaseNodeRef);
 		Map<String, LCAData> lcaData = plugin.extractData(databaseNodeRef);
@@ -222,6 +256,12 @@ public class LCADatabaseService {
 		return data.getScore();
 	}
 
+	/**
+	 * <p>getMethod.</p>
+	 *
+	 * @param databaseNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.lang.String} object
+	 */
 	public String getMethod(NodeRef databaseNodeRef) {
 		LCADatabasePlugin plugin = getPlugin(databaseNodeRef);
 		return plugin.getMethod();

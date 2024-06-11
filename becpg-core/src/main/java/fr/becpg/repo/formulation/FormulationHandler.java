@@ -44,11 +44,16 @@ public interface FormulationHandler<T> {
  
     /**
      * Entry point to the handler chain
-     * 
+     *
      * @param context a T object.
      * @throws fr.becpg.repo.formulation.FormulateException
      */
     void start(T context);
 
+	/**
+	 * <p>onError.</p>
+	 *
+	 * @param repositoryEntity a T object
+	 */
 	void onError(T repositoryEntity);
 }

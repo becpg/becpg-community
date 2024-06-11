@@ -10,15 +10,27 @@ import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 
+/**
+ * <p>ProductCollectionFormulationHandler class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class ProductCollectionFormulationHandler extends FormulationBaseHandler<ProductCollectionData> {
 
 	private NodeService nodeService;
 	
 	
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean process(ProductCollectionData productCollection) {
 

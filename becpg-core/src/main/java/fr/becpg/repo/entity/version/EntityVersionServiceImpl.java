@@ -417,25 +417,30 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	public  NodeRef getVersionHistoryNodeRef(NodeRef nodeRef, boolean shouldCreate) {
 		NodeRef vhNodeRef = null;
 		if (nodeRef != null) {
-			final NodeRef entitiesHistoryFolder = getEntitiesHistoryFolder();
-
-			vhNodeRef = nodeService.getChildByName(entitiesHistoryFolder, ContentModel.ASSOC_CONTAINS, nodeRef.getId());
-
-			if (vhNodeRef == null) {
-				vhNodeRef = nodeService.getChildByName(entitiesHistoryFolder, ContentModel.ASSOC_CHILDREN, nodeRef.getId());
-			}
-
-			if (shouldCreate && vhNodeRef == null && AlfrescoTransactionSupport.getTransactionReadState() == TxnReadState.TXN_READ_WRITE) {
-				return AuthenticationUtil.runAsSystem(() -> {
-					Map<QName, Serializable> props = new HashMap<>();
-					props.put(ContentModel.PROP_NAME, nodeRef.getId());
-
-					return nodeService
-							.createNode(entitiesHistoryFolder, ContentModel.ASSOC_CONTAINS,
-									QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, nodeRef.getId()), ContentModel.TYPE_FOLDER, props)
-							.getChildRef();
-
-				});
+			
+			try {
+				final NodeRef entitiesHistoryFolder = getEntitiesHistoryFolder();
+				
+				vhNodeRef = nodeService.getChildByName(entitiesHistoryFolder, ContentModel.ASSOC_CONTAINS, nodeRef.getId());
+				
+				if (vhNodeRef == null) {
+					vhNodeRef = nodeService.getChildByName(entitiesHistoryFolder, ContentModel.ASSOC_CHILDREN, nodeRef.getId());
+				}
+				
+				if (shouldCreate && vhNodeRef == null && AlfrescoTransactionSupport.getTransactionReadState() == TxnReadState.TXN_READ_WRITE) {
+					return AuthenticationUtil.runAsSystem(() -> {
+						Map<QName, Serializable> props = new HashMap<>();
+						props.put(ContentModel.PROP_NAME, nodeRef.getId());
+						
+						return nodeService
+								.createNode(entitiesHistoryFolder, ContentModel.ASSOC_CONTAINS,
+										QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, nodeRef.getId()), ContentModel.TYPE_FOLDER, props)
+								.getChildRef();
+						
+					});
+				}
+			} catch (DuplicateChildNodeNameException e) {
+				throw new ConcurrencyFailureException(e.getMessage());
 			}
 
 		}

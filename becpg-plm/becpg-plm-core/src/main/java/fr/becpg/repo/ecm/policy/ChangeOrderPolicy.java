@@ -16,22 +16,35 @@ import fr.becpg.repo.ecm.ECOService;
 import fr.becpg.repo.ecm.ECOState;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
+/**
+ * <p>ChangeOrderPolicy class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class ChangeOrderPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy {
 
 	JavaBehaviour onUpdatePropertiesBehaviour;
 	
 	private ECOService ecoService;
 	
+	/**
+	 * <p>Setter for the field <code>ecoService</code>.</p>
+	 *
+	 * @param ecoService a {@link fr.becpg.repo.ecm.ECOService} object
+	 */
 	public void setEcoService(ECOService ecoService) {
 		this.ecoService = ecoService;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void doInit() {
 		onUpdatePropertiesBehaviour = new JavaBehaviour(this, "onUpdateProperties", Behaviour.NotificationFrequency.TRANSACTION_COMMIT);
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, ECMModel.TYPE_ECO, onUpdatePropertiesBehaviour);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 		if (before.containsKey(ECMModel.PROP_ECO_STATE) && after.containsKey(ECMModel.PROP_ECO_STATE)
@@ -44,6 +57,7 @@ public class ChangeOrderPolicy extends AbstractBeCPGPolicy implements NodeServic
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 

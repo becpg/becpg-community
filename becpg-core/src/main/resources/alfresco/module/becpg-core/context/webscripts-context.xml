@@ -52,7 +52,6 @@
 	<bean id="webscript.fr.becpg.admin.adminModule.get" class="fr.becpg.repo.web.scripts.admin.AdminModuleWebScript" parent="webscript">
 		<property name="repository" ref="repositoryHelper" />
 		<property name="beCPGCacheService" ref="beCPGCacheService" />
-		<property name="securityService" ref="securityService" />
 		<property name="dictionaryDAO" ref="dictionaryDAO" />
 		<property name="entitySystemService" ref="entitySystemService" />
 		<property name="authenticationService" ref="authenticationService" />
@@ -157,6 +156,11 @@
 		<property name="entityListDAO" ref="entityListDAO" />
 	</bean>
 	
+	
+	<!-- Entity Icon -->
+	<bean id="webscript.fr.becpg.entity.entityIcons.get" class="fr.becpg.repo.web.scripts.entity.EntityIconWebScript" parent="webscript">
+    	<property name="entityIconService" ref="entityIconService"/>
+	</bean>
 
 	<!-- Entity report -->
 	<bean id="webscript.fr.becpg.entity.entityReport.get" class="fr.becpg.repo.web.scripts.entity.ReportWebScript" parent="webscript">
@@ -250,6 +254,7 @@
 		<property name="remoteEntityService" ref="RemoteEntityService" />
 		<property name="mimetypeService" ref="MimetypeService" />
 		<property name="permissionService" ref="permissionService" />
+		<property name="remoteRateLimiter" ref="remoteRateLimiter" />
 	</bean>
 
 
@@ -259,11 +264,9 @@
 	<bean id="webscript.fr.becpg.remote.dictionary.get" class="fr.becpg.repo.web.scripts.remote.EntityDictionaryWebScript" parent="abstractEntityWebScript">
 	</bean>
 	
-	<bean id="webscript.fr.becpg.remote.activities.get" parent="webscript" class="fr.becpg.repo.web.scripts.remote.GetActivitiesWebScript">
+	<bean id="webscript.fr.becpg.remote.activities.get" class="fr.becpg.repo.web.scripts.remote.GetActivitiesWebScript"  parent="abstractEntityWebScript" >
 		<property name="activityService" ref="activityService" />
 		<property name="siteService" ref="SiteService" />
-		<property name="nodeService" ref="NodeService" />
-		<property name="namespaceService" ref="namespaceService" />
 		<property name="contentService" ref="ContentService" />	
 	</bean>
 	

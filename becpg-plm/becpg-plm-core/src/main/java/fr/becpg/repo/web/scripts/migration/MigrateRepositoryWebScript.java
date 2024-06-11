@@ -204,6 +204,11 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 		this.repoService = repoService;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>versionCleanerService</code>.</p>
+	 *
+	 * @param versionCleanerService a {@link fr.becpg.repo.entity.version.VersionCleanerService} object
+	 */
 	public void setVersionCleanerService(VersionCleanerService versionCleanerService) {
 		this.versionCleanerService = versionCleanerService;
 	}
