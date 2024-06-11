@@ -130,17 +130,19 @@ public class XmlActivityVisitor implements RemoteActivityVisitor {
 			} else if (summary.containsKey("entityNodeRef")) {
 				nodeRef = new NodeRef(toString(summary.get("entityNodeRef")));
 			}
-			if (nodeRef != null && (nodeService.exists(nodeRef))) {
-				if ((nodeRef != null) && nodeService.hasAspect(nodeRef, VirtualContentModel.ASPECT_VIRTUAL_DOCUMENT)) {
-					nodeRef = new NodeRef((String) nodeService.getProperty(nodeRef, VirtualContentModel.PROP_ACTUAL_NODE_REF));
-				}
-
+			if (nodeRef != null) {
 				xmlw.writeAttribute("nodeRef", nodeRef.toString());
 
-				xmlw.writeAttribute("nodeType", nodeService.getType(nodeRef).toPrefixString(namespaceService));
-				ContentReader contentReader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
-				if ((contentReader != null) && (contentReader.getMimetype() != null)) {
-					xmlw.writeAttribute("mimeType", contentReader.getMimetype());
+				if (nodeService.exists(nodeRef)) {
+					if (nodeService.hasAspect(nodeRef, VirtualContentModel.ASPECT_VIRTUAL_DOCUMENT)) {
+						nodeRef = new NodeRef((String) nodeService.getProperty(nodeRef, VirtualContentModel.PROP_ACTUAL_NODE_REF));
+					}
+
+					xmlw.writeAttribute("nodeType", nodeService.getType(nodeRef).toPrefixString(namespaceService));
+					ContentReader contentReader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
+					if ((contentReader != null) && (contentReader.getMimetype() != null)) {
+						xmlw.writeAttribute("mimeType", contentReader.getMimetype());
+					}
 				}
 			}
 

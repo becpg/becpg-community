@@ -91,10 +91,20 @@ public class DynListConstraint extends ListOfValuesConstraint {
 
 	private List<String> allowedValuesSuffix = null;
 
+	/**
+	 * <p>Setter for the field <code>allowedValuesSuffix</code>.</p>
+	 *
+	 * @param allowedValuesSuffix a {@link java.util.List} object
+	 */
 	public void setAllowedValuesSuffix(List<String> allowedValuesSuffix) {
 		this.allowedValuesSuffix = allowedValuesSuffix;
 	}
 
+	/**
+	 * <p>Getter for the field <code>paths</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	public List<String> getPaths() {
 		return paths;
 	}
@@ -167,10 +177,20 @@ public class DynListConstraint extends ListOfValuesConstraint {
 		this.constraintCode = constraintCode;
 	}
 
+	/**
+	 * <p>Setter for the field <code>constraintFilterProp</code>.</p>
+	 *
+	 * @param constraintFilterProp a {@link java.lang.String} object
+	 */
 	public void setConstraintFilterProp(String constraintFilterProp) {
 		this.constraintFilterProp = constraintFilterProp;
 	}
 
+	/**
+	 * <p>Setter for the field <code>constraintFilter</code>.</p>
+	 *
+	 * @param constraintFilter a {@link java.lang.String} object
+	 */
 	public void setConstraintFilter(String constraintFilter) {
 		this.constraintFilter = constraintFilter;
 	}
@@ -202,6 +222,11 @@ public class DynListConstraint extends ListOfValuesConstraint {
 		this.addEmptyValue = addEmptyValue;
 	}
 
+	/**
+	 * <p>Getter for the field <code>pathRegistry</code>.</p>
+	 *
+	 * @return a {@link java.util.Set} object
+	 */
 	public static Set<String> getPathRegistry() {
 		return pathRegistry;
 	}
@@ -225,6 +250,12 @@ public class DynListConstraint extends ListOfValuesConstraint {
 		return getAllowedValues(true);
 	}
 
+	/**
+	 * <p>getAllowedValues.</p>
+	 *
+	 * @param filter a boolean
+	 * @return a {@link java.util.List} object
+	 */
 	public List<String> getAllowedValues(boolean filter) {
 
 		Map<String, DynListEntry> values = getDynListEntries();
@@ -294,6 +325,12 @@ public class DynListConstraint extends ListOfValuesConstraint {
 		return getDisplayLabel(constraintAllowableValue, I18NUtil.getLocale());
 	}
 
+	/**
+	 * <p>getMLDisplayLabel.</p>
+	 *
+	 * @param constraintAllowableValue a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object
+	 */
 	public MLText getMLDisplayLabel(String constraintAllowableValue) {
 
 		DynListEntry entry = getDynListEntries().get(constraintAllowableValue);

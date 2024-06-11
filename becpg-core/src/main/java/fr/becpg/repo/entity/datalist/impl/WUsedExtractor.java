@@ -111,7 +111,7 @@ public class WUsedExtractor extends MultiLevelExtractor {
 
 		QName associationName = null;
 
-		if ((dataListFilter.getDataListName() != null) && (dataListFilter.getDataListName().indexOf(RepoConsts.WUSED_SEPARATOR) > 0)) {
+		if ((dataListFilter.getDataListName() != null) && (dataListFilter.getDataListName().indexOf(RepoConsts.WUSED_SEPARATOR) >= 0)) {
 			associationName = QName.createQName(dataListFilter.getDataListName().split(RepoConsts.WUSED_SEPARATOR)[1].replace("_", ":"),
 					namespaceService);
 		} else {
@@ -218,7 +218,7 @@ public class WUsedExtractor extends MultiLevelExtractor {
 
 									NodeRef nodeRef = entry.getKey();
 
-									List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, assocQName);
+									List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, assocQName);
 
 									for (AssociationRef assocRef : assocRefs) {
 										if (nestedAdvSearchPlugin.match(assocRef.getTargetRef(), criteriaMap)) {
@@ -269,7 +269,7 @@ public class WUsedExtractor extends MultiLevelExtractor {
 			if ((dataListFilter.getExtraParams() != null) && (dataListFilter.getExtraParams().length() > 0)) {
 				try {
 					JSONObject jsonObject = new JSONObject(dataListFilter.getExtraParams());
-					if ((jsonObject != null) && jsonObject.has("searchQuery")) {
+					if ( jsonObject.has("searchQuery")) {
 						JSONObject searchQuery = (JSONObject) jsonObject.get("searchQuery");
 						String searchTerm = (String) jsonObject.get("searchTerm");
 						if (searchQuery != null) {

@@ -48,6 +48,7 @@ import fr.becpg.repo.entity.version.EntityVersionService;
  *
  * @authors querephi, matthieu, kevin
  * @version $Id: $Id
+ * @author matthieu
  */
 public class CompareEntityDataSourceWebScript extends AbstractWebScript {
 
@@ -103,6 +104,11 @@ public class CompareEntityDataSourceWebScript extends AbstractWebScript {
 		this.entityVersionService = entityVersionService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}

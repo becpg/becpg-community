@@ -129,7 +129,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	@Autowired
 	private SystemConfigurationService systemConfigurationService;
-	
+
 	private Boolean extractInMultiLevel() {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.product.report.multiLevel"));
 	}
@@ -190,7 +190,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	 * @param isExtractedProduct
 	 *            extracted product (more info)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void loadDataLists(NodeRef entityNodeRef, Element dataListsElt, DefaultExtractorContext context, boolean isExtractedProduct, int level) {
 
 		RepositoryEntity entity = alfrescoRepository.findOne(entityNodeRef);
@@ -217,30 +217,32 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 				if (!DATALIST_SPECIFIC_EXTRACTOR.contains(dataListQName)) {
 
-					if ((datalists != null) && datalists.containsKey(dataListQName)) {
-						// use entityRepository for performances
-						@SuppressWarnings({ "rawtypes" })
+					if ((datalists != null) && datalists.containsKey(dataListQName)
+							&& shouldExtractList(isExtractedProduct, context, type, dataListQName)) {
+
+						String dataListName = (String) nodeService.getProperty(listNodeRef, ContentModel.PROP_NAME);
 						List<BeCPGDataObject> dataListItems = (List) datalists.get(dataListQName);
+						if (dataListName.contains("@")) {
+							dataListItems = alfrescoRepository.loadDataList(listNodeRef, dataListQName);
+						}
 
 						if ((dataListItems != null) && !dataListItems.isEmpty()) {
-							if (shouldExtractList(isExtractedProduct, context, type, dataListQName)) {
 
-								Element dataListElt = dataListsElt.addElement(dataListQName.getLocalName() + "s");
-								addDataListStateAndName(dataListElt, listNodeRef);
+							Element dataListElt = dataListsElt.addElement(dataListQName.getLocalName() + "s");
+							addDataListStateAndName(dataListElt, listNodeRef);
 
-								for (BeCPGDataObject dataListItem : dataListItems) {
-									Element nodeElt = dataListElt.addElement(dataListQName.getLocalName());
+							for (BeCPGDataObject dataListItem : dataListItems) {
+								Element nodeElt = dataListElt.addElement(dataListQName.getLocalName());
 
-									if (dataListItem instanceof CompositionDataItem) {
-										CompositionDataItem compositionDataItem = (CompositionDataItem) dataListItem;
-										loadProductData(entityNodeRef, compositionDataItem.getComponent(), nodeElt, context, null);
-									}
+								if (dataListItem instanceof CompositionDataItem) {
+									CompositionDataItem compositionDataItem = (CompositionDataItem) dataListItem;
+									loadProductData(entityNodeRef, compositionDataItem.getComponent(), nodeElt, context, null);
+								}
 
-									loadDataListItemAttributes(dataListItem, nodeElt, context);
+								loadDataListItemAttributes(dataListItem, nodeElt, context);
 
-									if (dataListItem instanceof AbstractManualVariantListDataItem) {
-										extractVariants(((AbstractManualVariantListDataItem) dataListItem).getVariants(), nodeElt);
-									}
+								if (dataListItem instanceof AbstractManualVariantListDataItem) {
+									extractVariants(((AbstractManualVariantListDataItem) dataListItem).getVariants(), nodeElt);
 								}
 							}
 						}
@@ -440,6 +442,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void loadDataListItemAttributes(BeCPGDataObject dataListItem, Element nodeElt, DefaultExtractorContext context,
 			List<QName> hiddentAttributes) {
@@ -763,6 +766,16 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		return false;
 	}
 
+	/**
+	 * <p>loadCompoListItem.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param parentDataItem a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object
+	 * @param compoListElt a {@link org.dom4j.Element} object
+	 * @param level a int
+	 * @param currentLevelQuantities a {@link fr.becpg.repo.product.data.CurrentLevelQuantities} object
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
+	 */
 	protected void loadCompoListItem(NodeRef entityNodeRef, CompoListDataItem parentDataItem, Element compoListElt, int level,
 			CurrentLevelQuantities currentLevelQuantities, DefaultExtractorContext context) {
 

@@ -44,6 +44,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 @Service
 public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 
+	/** Constant <code>SUPPLIER_PJT_TPL_NAME="plm.supplier.portal.project.tpl.name"</code> */
 	public static final String SUPPLIER_PJT_TPL_NAME = "plm.supplier.portal.project.tpl.name";
 	private static final String SUPPLIER_TASK_NAME = "plm.supplier.portal.task.supplier.name";
 	private static final String VALIDATION_TASK_NAME = "plm.supplier.portal.task.validation.name";

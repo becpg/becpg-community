@@ -9,6 +9,12 @@ import java.util.Set;
 
 import fr.becpg.repo.helper.MLTextHelper;
 
+/**
+ * <p>Abstract AbstractFormulaFilterRule class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public abstract class AbstractFormulaFilterRule implements Serializable {
 
 	private static final long serialVersionUID = -3030472014517241276L;
@@ -19,6 +25,13 @@ public abstract class AbstractFormulaFilterRule implements Serializable {
 
 	private final String ruleName;
 	
+	/**
+	 * <p>Constructor for AbstractFormulaFilterRule.</p>
+	 *
+	 * @param ruleName a {@link java.lang.String} object
+	 * @param formula a {@link java.lang.String} object
+	 * @param locales a {@link java.util.List} object
+	 */
 	protected AbstractFormulaFilterRule(String ruleName, String formula, List<String> locales) {
 
 		this.ruleName = ruleName;
@@ -58,11 +71,13 @@ public abstract class AbstractFormulaFilterRule implements Serializable {
 		return locales.isEmpty() || locales.contains(locale);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		return Objects.hash(formula, locales, ruleName);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {

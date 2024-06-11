@@ -77,7 +77,7 @@ public class AddActivityListPatch extends AbstractBeCPGPatch {
 					if (nodeService.exists(status.getNodeRef())) {
 						if (nodeService.hasAspect(status.getNodeRef(), BeCPGModel.ASPECT_ENTITY_TPL)) {
 							logger.debug("Add activity list to entity template " + status.getNodeRef());
-							entityTplService.createActivityList(status.getNodeRef(), BeCPGModel.TYPE_ACTIVITY_LIST);
+							entityTplService.createOrUpdateList(status.getNodeRef(), BeCPGModel.TYPE_ACTIVITY_LIST);
 						}
 					} else {
 						logger.warn("entityNodeRef doesn't exist : " + status.getNodeRef());

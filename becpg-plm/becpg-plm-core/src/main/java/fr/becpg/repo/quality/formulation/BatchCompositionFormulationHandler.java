@@ -24,6 +24,12 @@ import fr.becpg.repo.quality.data.BatchData;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
+/**
+ * <p>BatchCompositionFormulationHandler class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class BatchCompositionFormulationHandler extends FormulationBaseHandler<BatchData> {
 
 	private static Log logger = LogFactory.getLog(BatchCompositionFormulationHandler.class);
@@ -32,14 +38,25 @@ public class BatchCompositionFormulationHandler extends FormulationBaseHandler<B
 
 	private SpelFormulaService formulaService;
 
+	/**
+	 * <p>Setter for the field <code>formulaService</code>.</p>
+	 *
+	 * @param formulaService a {@link fr.becpg.repo.formulation.spel.SpelFormulaService} object
+	 */
 	public void setFormulaService(SpelFormulaService formulaService) {
 		this.formulaService = formulaService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 */
 	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean process(BatchData batchData) {
 

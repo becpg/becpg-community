@@ -45,7 +45,6 @@ public class BeCPGQueryHelper {
 	 *
 	 * @param query a {@link java.lang.String} object.
 	 * @param entityName a {@link java.lang.String} object.
-	 * @param dictionaryService a {@link org.alfresco.service.cmr.dictionary.DictionaryService} object.
 	 * @return a boolean.
 	 */
 	public static boolean isQueryMatch(String query, String entityName) {
@@ -98,6 +97,12 @@ public class BeCPGQueryHelper {
 		return tokens;
 	}
 	
+	/**
+	 * <p>prepareQueryForSorting.</p>
+	 *
+	 * @param query a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	public static String prepareQueryForSorting(String query) {
 
 		logger.debug("Query before prepare:" + query);
@@ -127,7 +132,6 @@ public class BeCPGQueryHelper {
 	/**
 	 * <p>prepareQuery.</p>
 	 *
-	 * @param dictionaryService a {@link org.alfresco.service.cmr.dictionary.DictionaryService} object.
 	 * @param query a {@link java.lang.String} object.
 	 * @return a {@link java.lang.String} object.
 	 */

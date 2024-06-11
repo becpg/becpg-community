@@ -34,8 +34,10 @@ public class PlmRepoConsts {
 	/** Constant <code>PATH_COSTS="Costs"</code> */
 	public static final String PATH_COSTS = "Costs";
 
+	/** Constant <code>PATH_LCA="LifeCycleAnalysis"</code> */
 	public static final String PATH_LCA = "LifeCycleAnalysis";
 
+	/** Constant <code>PATH_LCA_LIST_METHODS="LcaListMethods"</code> */
 	public static final String PATH_LCA_LIST_METHODS = "LcaListMethods";
 
 	/** Constant <code>PATH_PHYSICO_CHEM="PhysicoChems"</code> */
@@ -106,8 +108,6 @@ public class PlmRepoConsts {
 	public static final String PATH_QUALITY_TEMPLATES = "QualityTemplates";
 	/** Constant <code>PATH_PRODUCTS="Products"</code> */
 	public static final String PATH_PRODUCTS = "Products";
-	/** Constant <code>PATH_EXCHANGE="Exchange"</code> */
-	public static final String PATH_EXCHANGE = "Exchange";
 	/** Constant <code>PATH_IMPORT="Import"</code> */
 	public static final String PATH_IMPORT = "Import";
 	/** Constant <code>PATH_IMPORT_TO_TREAT="ImportToTreat"</code> */
@@ -175,6 +175,7 @@ public class PlmRepoConsts {
 	/** Constant <code>PATH_CONTROL_TEMPERATURES="clTemperatures"</code> */
 	public static final String PATH_CONTROL_TEMPERATURES = "clTemperatures";
 
+	/** Constant <code>PATH_CONTROL_TYPES="ControlTypes"</code> */
 	public static final String PATH_CONTROL_TYPES = "ControlTypes";
 
 	// GHS
@@ -205,10 +206,13 @@ public class PlmRepoConsts {
 	/** Constant <code>PATH_CLIENTS="Clients"</code> */
 	public static final String PATH_CLIENTS = "Clients";
 
+	/** Constant <code>PATH_CONTACTS="Contacts"</code> */
 	public static final String PATH_CONTACTS = "Contacts";
 
+	/** Constant <code>PATH_REGULATORY_USAGES="RegulatoryUsages"</code> */
 	public static final String PATH_REGULATORY_USAGES = "RegulatoryUsages";
 
+	/** Constant <code>PATH_CONTACT_TYPES="ContactTypes"</code> */
 	public static final String PATH_CONTACT_TYPES = "ContactTypes";
 
 	/** Constant <code>PATH_PRODUCT_REPORTTEMPLATES="ProductReportTemplates"</code> */
@@ -220,12 +224,16 @@ public class PlmRepoConsts {
 	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_RAWMATERIAL_INGLIST="ExportRawMaterialIngList"</code> */
 	public static final String PATH_REPORTS_EXPORT_SEARCH_INGLIST = "ExportIngList";
 
+	/** Constant <code>PATH_SIMPLIFIED_COMPARISON_REPORT="SimplifiedComparisonReport"</code> */
 	public static final String PATH_SIMPLIFIED_COMPARISON_REPORT = "SimplifiedComparisonReport";
 
+	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_LABELCLAIMLIST="ExportLabelClaimList"</code> */
 	public static final String PATH_REPORTS_EXPORT_SEARCH_LABELCLAIMLIST = "ExportLabelClaimList";
 
+	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_PHYSICOCHEMICALLIST="ExportPhysicoChemicalList"</code> */
 	public static final String PATH_REPORTS_EXPORT_SEARCH_PHYSICOCHEMICALLIST = "ExportPhysicoChemicalList";
 
+	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_COMPOSITIONPACKAGING="ExportCompositionPackaging"</code> */
 	public static final String PATH_REPORTS_EXPORT_SEARCH_COMPOSITIONPACKAGING = "ExportCompositionPackaging";
 
 	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_INGLABELING="ExportIngLabeling"</code> */
@@ -239,6 +247,7 @@ public class PlmRepoConsts {
 	/** Constant <code>PATH_REPORTS_ECO="ECOReports"</code> */
 	public static final String PATH_REPORTS_ECO = "ECOReports";
 
+	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_CITEO="ExportCiteo"</code> */
 	public static final String PATH_REPORTS_EXPORT_SEARCH_CITEO = "ExportCiteo";
 	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_ALLERGENS="ExportAllergens"</code> */
 	public static final String PATH_REPORTS_EXPORT_SEARCH_ALLERGENS = "ExportAllergens";
@@ -263,8 +272,10 @@ public class PlmRepoConsts {
 	/** Constant <code>PATH_MEAT_TYPES="MeatTypes"</code> */
 	public static final String PATH_MEAT_TYPES = "MeatTypes";
 
+	/** Constant <code>PATH_LCA_UNITS="LCAUnits"</code> */
 	public static final String PATH_LCA_UNITS = "LCAUnits";
 
+	/** Constant <code>PATH_LCA_DATABASES="LCADatabases"</code> */
 	public static final String PATH_LCA_DATABASES = "LCADatabases";
 
 	//GS1
@@ -284,19 +295,33 @@ public class PlmRepoConsts {
 	/** Constant <code>PATH_GS1_TARGET_MARKETS="PATH_GS1_DUTY_FEE_TAXES"</code> */
 	public static final String PATH_GS1_DUTY_FEE_TAXES = "DutyFeeTaxes";
 
+	/** Constant <code>PATH_GS1_DATA_CARRIER_TYPE_CODES="DataCarrierTypeCode"</code> */
 	public static final String PATH_GS1_DATA_CARRIER_TYPE_CODES = "DataCarrierTypeCode";
+	/** Constant <code>PATH_GS1_TRADE_ITEM_UNIT_DESCRIPTOR_CODES="TradeItemUnitDescriptorCode"</code> */
 	public static final String PATH_GS1_TRADE_ITEM_UNIT_DESCRIPTOR_CODES = "TradeItemUnitDescriptorCode";
+	/** Constant <code>PATH_GS1_PACKAGING_TERMS_AND_CONDITIONS_CODES="PackagingTermsAndConditionsCode"</code> */
 	public static final String PATH_GS1_PACKAGING_TERMS_AND_CONDITIONS_CODES = "PackagingTermsAndConditionsCode";
+	/** Constant <code>PATH_GS1_PACKAGING_RECYCLING_SCHEME_CODES="PackagingRecyclingSchemeCode"</code> */
 	public static final String PATH_GS1_PACKAGING_RECYCLING_SCHEME_CODES = "PackagingRecyclingSchemeCode";
+	/** Constant <code>PATH_GS1_TRADE_ITEM_TRADE_CHANNELS="TradeItemTradeChannel"</code> */
 	public static final String PATH_GS1_TRADE_ITEM_TRADE_CHANNELS = "TradeItemTradeChannel";
+	/** Constant <code>PATH_GS1_SELLING_UNITS="SellingUnitOfMeasure"</code> */
 	public static final String PATH_GS1_SELLING_UNITS = "SellingUnitOfMeasure";
+	/** Constant <code>PATH_GS1_HANDLING_INSTRUCTIONS="HandlingInstructions"</code> */
 	public static final String PATH_GS1_HANDLING_INSTRUCTIONS = "HandlingInstructions";
+	/** Constant <code>PATH_GS1_PREPARATION_TYPE="PreparationType"</code> */
 	public static final String PATH_GS1_PREPARATION_TYPE = "PreparationType";
+	/** Constant <code>PATH_GS1_SPECIES_FOR_FISHERY="SpeciesForFishery"</code> */
 	public static final String PATH_GS1_SPECIES_FOR_FISHERY = "SpeciesForFishery";
+	/** Constant <code>PATH_GS1_CATCH_METHID_CODES="CatchMethodCodes"</code> */
 	public static final String PATH_GS1_CATCH_METHID_CODES = "CatchMethodCodes";
+	/** Constant <code>PATH_GS1_CATCH_AREA_CODES="CatchAreaCodes"</code> */
 	public static final String PATH_GS1_CATCH_AREA_CODES = "CatchAreaCodes";
+	/** Constant <code>PATH_PUBCHANNELS="PubChannels"</code> */
 	public static final String PATH_PUBCHANNELS = "PubChannels";
+	/** Constant <code>PATH_MICROBIO_TYPES="MicrobioTypes"</code> */
 	public static final String PATH_MICROBIO_TYPES = "MicrobioTypes";
+	/** Constant <code>PATH_GS1_ALCOHOL_BEVERAGE_CONTAINERS="AlcoholBeverageContainers"</code> */
 	public static final String PATH_GS1_ALCOHOL_BEVERAGE_CONTAINERS = "AlcoholBeverageContainers";
 
 }

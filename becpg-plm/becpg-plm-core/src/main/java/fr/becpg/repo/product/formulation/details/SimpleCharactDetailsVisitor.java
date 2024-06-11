@@ -140,6 +140,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 	 * @param netQty a {@link java.lang.Double} object.
 	 * @return a {@link fr.becpg.repo.product.data.CharactDetails} object.
 	 * @throws fr.becpg.repo.formulation.FormulateException if any.
+	 * @param rootProductData a {@link fr.becpg.repo.product.data.ProductData} object
 	 */
 	public CharactDetails visitRecur(ProductData rootProductData, ProductData subProductData, CharactDetails ret, Integer currLevel, Integer maxLevel, Double subWeight,
 			Double subVol, Double netQty) throws FormulateException {
@@ -215,17 +216,15 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 	/**
 	 * <p>visitPart.</p>
 	 *
-	 * @param parent a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object.
 	 * @param componentDataList a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param charactDetails a {@link fr.becpg.repo.product.data.CharactDetails} object.
-	 * @param weightUsed a {@link java.lang.Double} object.
-	 * @param volUsed a {@link java.lang.Double} object.
-	 * @param netQtyInLorKg a {@link java.lang.Double} object.
-	 * @param netWeight a {@link java.lang.Double} object.
 	 * @param currLevel a {@link java.lang.Integer} object.
 	 * @param unitProvider a {@link fr.becpg.repo.product.formulation.details.SimpleCharactDetailsVisitor.SimpleCharactUnitProvider} object.
 	 * @throws fr.becpg.repo.formulation.FormulateException if any.
+	 * @param rootProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param partProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param qties a {@link fr.becpg.repo.product.formulation.FormulatedQties} object
 	 */
 	protected void visitPart(ProductData rootProduct, ProductData formulatedProduct, ProductData partProduct, NodeRef componentDataList, CharactDetails charactDetails,
 			FormulatedQties qties, Integer currLevel, SimpleCharactUnitProvider unitProvider) throws FormulateException {
@@ -348,14 +347,38 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 		}
 	}
 
+	/**
+	 * <p>provideUnit.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	protected String provideUnit() {
 		return null;
 	}
 
+	/**
+	 * <p>provideAdditionalValues.</p>
+	 *
+	 * @param rootProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param simpleCharact a {@link fr.becpg.repo.repository.model.SimpleCharactDataItem} object
+	 * @param unit a {@link java.lang.String} object
+	 * @param qtyUsed a {@link java.lang.Double} object
+	 * @param netQty a {@link java.lang.Double} object
+	 * @param currentCharactDetailsValue a {@link fr.becpg.repo.product.data.CharactDetailsValue} object
+	 */
 	protected void provideAdditionalValues(ProductData rootProduct, ProductData formulatedProduct, SimpleCharactDataItem simpleCharact, String unit, Double qtyUsed, Double netQty, CharactDetailsValue currentCharactDetailsValue) {
 		// nothing by default
 	}
 
+	/**
+	 * <p>extractValue.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param partProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param simpleCharact a {@link fr.becpg.repo.repository.model.SimpleCharactDataItem} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	protected Double extractValue(ProductData formulatedProduct, ProductData partProduct, SimpleCharactDataItem simpleCharact) {
 		return simpleCharact.getValue();
 	}

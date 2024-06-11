@@ -91,52 +91,94 @@ public class StockListDataItem extends BeCPGDataObject {
 		this.product = product;
 	}
 
+	/**
+	 * <p>Getter for the field <code>batchQty</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "qa:batchQty")
 	public Double getBatchQty() {
 		return batchQty;
 	}
 
+	/**
+	 * <p>Setter for the field <code>batchQty</code>.</p>
+	 *
+	 * @param batchQty a {@link java.lang.Double} object
+	 */
 	public void setBatchQty(Double batchQty) {
 		this.batchQty = batchQty;
 	}
 
+	/**
+	 * <p>Getter for the field <code>state</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.model.SystemState} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "qa:batchState")
 	public SystemState getState() {
 		return state;
 	}
 
+	/**
+	 * <p>Setter for the field <code>state</code>.</p>
+	 *
+	 * @param state a {@link fr.becpg.model.SystemState} object
+	 */
 	public void setState(SystemState state) {
 		this.state = state;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>useByDate</code>.</p>
+	 *
+	 * @return a {@link java.util.Date} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "qa:productUseByDate")
 	public Date getUseByDate() {
 		return useByDate;
 	}
 
+	/**
+	 * <p>Setter for the field <code>useByDate</code>.</p>
+	 *
+	 * @param useByDate a {@link java.util.Date} object
+	 */
 	public void setUseByDate(Date useByDate) {
 		this.useByDate = useByDate;
 	}
 
+	/**
+	 * <p>Getter for the field <code>unit</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "qa:batchQtyUnit")
 	public ProductUnit getUnit() {
 		return unit;
 	}
 
+	/**
+	 * <p>Setter for the field <code>unit</code>.</p>
+	 *
+	 * @param unit a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object
+	 */
 	public void setUnit(ProductUnit unit) {
 		this.unit = unit;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "BatchListDataItem [batchId=" + batchId + ", batchQty=" + batchQty + ", state=" + state + ", unit=" + unit + ", product=" + product
 				+ "]";
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -145,6 +187,7 @@ public class StockListDataItem extends BeCPGDataObject {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

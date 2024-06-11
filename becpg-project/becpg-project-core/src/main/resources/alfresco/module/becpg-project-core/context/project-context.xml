@@ -108,7 +108,9 @@
 				  <property name="nodeService" ref="nodeService"/>
 				  <property name="alfrescoRepository" ref="alfrescoRepository" />
 				</bean>
-				<bean class="fr.becpg.repo.project.formulation.ScoreListFormulationHandler" />
+				<bean class="fr.becpg.repo.project.formulation.ScoreListFormulationHandler" >
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+				</bean>
 				<bean class="fr.becpg.repo.project.formulation.TaskOverdueFormulationHandler">
 					<property name="beCPGMailService" ref="beCPGMailService"/>
 					<property name="workflowService" ref="WorkflowService"/>

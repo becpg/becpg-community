@@ -46,9 +46,10 @@ public class GTINHelper {
 	
 	/**
 	 * SPEL T(fr.becpg.repo.helper.GTINHelper).addDigitToEANPrefix("0360428025112")
-	 * @param prefix a {@link java.lang.String} object.
+	 *
 	 * @return a {@link java.lang.String} object.
 	 * @throws org.apache.commons.validator.routines.checkdigit.CheckDigitException if any.
+	 * @param eanCode a {@link java.lang.String} object
 	 */
 	public static String addDigitToEANPrefix(String eanCode) throws CheckDigitException {
 		EAN13CheckDigit validator = new EAN13CheckDigit();

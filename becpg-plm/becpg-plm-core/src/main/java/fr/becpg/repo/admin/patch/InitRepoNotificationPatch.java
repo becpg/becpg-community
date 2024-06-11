@@ -8,10 +8,17 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 
+/**
+ * <p>InitRepoNotificationPatch class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class InitRepoNotificationPatch extends AbstractBeCPGPatch {
 
 	private static final String MSG_SUCCESS = "patch.bcpg.plm.InitRepoNotificationPatch.result";
 
+	/** {@inheritDoc} */
 	@Override
 	protected String applyInternal() throws Exception {
 		

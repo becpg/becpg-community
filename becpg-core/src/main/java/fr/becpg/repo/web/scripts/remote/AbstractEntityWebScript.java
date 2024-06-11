@@ -29,6 +29,8 @@ import java.util.Set;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 
+import org.alfresco.query.EmptyPagingResults;
+import org.alfresco.query.PagingResults;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -51,6 +53,7 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.remote.EntityProviderCallBack;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
+import fr.becpg.repo.entity.remote.RemoteRateLimiter;
 import fr.becpg.repo.entity.remote.impl.HttpEntityProviderCallback;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
@@ -67,10 +70,13 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	
 
 
+	/** Constant <code>JSON_PARAM="jsonParam"</code> */
 	protected static final String JSON_PARAM = "jsonParam";
 	
+	/** Constant <code>PARAM_TYPE="type"</code> */
 	protected static final String PARAM_TYPE = "type";
 	
+	/** Constant <code>PARAM_PARAMS="params"</code> */
 	protected static final String PARAM_PARAMS = "params";
 	/** Constant <code>PARAM_QUERY="query"</code> */
 	protected static final String PARAM_QUERY = "query";
@@ -100,7 +106,11 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	/** Constant <code>PARAM_CALLBACK_PASSWORD="callbackPassword"</code> */
 	protected static final String PARAM_CALLBACK_PASSWORD = "callbackPassword";
 
-	private static final String PARAM_MAX_RESULTS = "maxResults";
+	/** Constant <code>PARAM_MAX_RESULTS="maxResults"</code> */
+	protected static final String PARAM_MAX_RESULTS = "maxResults";
+	
+	/** Constant <code>PARAM_PAGE="page"</code> */
+	protected static final String PARAM_PAGE = "page";
 
 	/** Services **/
 
@@ -114,7 +124,14 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	
 	protected NamespaceService namespaceService;
 	
+	protected RemoteRateLimiter remoteRateLimiter;
 	
+	
+	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object
+	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
@@ -156,26 +173,48 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	}
 
 	/**
+	 * <p>Setter for the field <code>remoteRateLimiter</code>.</p>
+	 *
+	 * @param remoteRateLimiter a {@link fr.becpg.repo.entity.remote.RemoteRateLimiter} object
+	 */
+	public void setRemoteRateLimiter(RemoteRateLimiter remoteRateLimiter) {
+		this.remoteRateLimiter = remoteRateLimiter;
+	}
+
+	
+	/** {@inheritDoc} */
+	@Override
+	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
+		 if (!remoteRateLimiter.allowRequest()) {
+			 throw new WebScriptException("beCPG Remote API Call RATE limit reached");
+	      }
+		 executeInternal(req,resp);
+	}
+	
+	/**
+	 * <p>executeInternal.</p>
+	 *
+	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object
+	 * @param resp a {@link org.springframework.extensions.webscripts.WebScriptResponse} object
+	 * @throws java.io.IOException if any.
+	 */
+	protected abstract void executeInternal(WebScriptRequest req, WebScriptResponse resp) throws IOException;
+
+	/**
 	 * <p>findEntities.</p>
 	 *
 	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object.
 	 * @return a {@link java.util.List} object.
+	 * @param limit a {@link java.lang.Boolean} object
 	 */
-	protected List<NodeRef> findEntities(WebScriptRequest req) {
+	protected PagingResults<NodeRef> findEntities(WebScriptRequest req, Boolean limit) {
 
 		String path = decodeParam(req.getParameter(PARAM_PATH));
 		String query = decodeParam(req.getParameter(PARAM_QUERY));
-		String maxResultsString = req.getParameter(PARAM_MAX_RESULTS);
 
-
-		Integer maxResults = null;
-		if (maxResultsString != null) {
-			try {
-				maxResults = Integer.parseInt(maxResultsString);
-			} catch (NumberFormatException e) {
-				logger.error("Cannot parse page argument", e);
-			}
-		}
+		Integer maxResults = intParam(req, PARAM_MAX_RESULTS);
+		Integer page = intParam(req, PARAM_PAGE);
+		
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery();
 
 		if ((query != null) && !query.toUpperCase().contains("TYPE")) {
@@ -194,12 +233,17 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 			}
 		}
 
-		if (maxResults == null) {
+		if (maxResults == null || Boolean.TRUE.equals(limit)) {
 			queryBuilder.maxResults(RepoConsts.MAX_RESULTS_256);
 		} else {
 			queryBuilder.maxResults(maxResults);
 		}
+		
+		if (page != null ) {
+			queryBuilder.page(page);
+		}
 
+		
 		if ((path != null) && (path.length() > 0)) {
 			queryBuilder.inPath(path);
 		}
@@ -209,11 +253,11 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 
 		}
 
-		List<NodeRef> refs = queryBuilder.inDBIfPossible().list();
+		PagingResults<NodeRef> refs = queryBuilder.inDBIfPossible().pagingResults();
 
-		if ((refs != null) && !refs.isEmpty()) {
+		if ((refs != null) ) {
 			if (logger.isDebugEnabled()) {
-				logger.debug("Returning " + refs.size() + " entities");
+				logger.debug("Returning " + refs.getTotalResultCount() + " entities");
 			}
 			return refs;
 		}
@@ -221,8 +265,30 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		if (logger.isDebugEnabled()) {
 			logger.debug("No entities found for query " + queryBuilder.toString());
 		}
-		return new ArrayList<>();
+		return new EmptyPagingResults<>();
 
+	}
+
+	/**
+	 * <p>intParam.</p>
+	 *
+	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object
+	 * @param paramName a {@link java.lang.String} object
+	 * @return a {@link java.lang.Integer} object
+	 */
+	protected Integer intParam(WebScriptRequest req,  String paramName) {
+		String paramString = req.getParameter(paramName);
+
+		Integer ret = null;
+		if (paramString != null) {
+			try {
+				ret = Integer.parseInt(paramString);
+			} catch (NumberFormatException e) {
+				logger.error("Cannot parse "+paramName+" argument", e);
+			}
+		}
+		
+		return ret;
 	}
 
 	/**
@@ -250,9 +316,9 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 				&& ((req.getParameter(PARAM_QUERY) == null) || req.getParameter(PARAM_QUERY).isEmpty())) {
 			throw new WebScriptException(Status.STATUS_NOT_IMPLEMENTED, "One of nodeRef query or path parameter is mandatory");
 		}
-		List<NodeRef> ret = findEntities(req);
-		if ((ret != null) && !ret.isEmpty()) {
-			return ret.get(0);
+		PagingResults<NodeRef> ret = findEntities(req, true);
+		if ((ret != null) && !ret.getPage().isEmpty()) {
+			return ret.getPage().get(0);
 		}
 
 		throw new WebScriptException(Status.STATUS_NOT_FOUND ,"No entity found for this parameters");
@@ -415,8 +481,6 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		return listName[0];
 	}
 
-
-	//TODO move that to CompressParamHelper in becpg-tools
 	private static final String BASE_64_PREFIX = "b64-";
 	
 	private static final Map<String,String> replacementMaps = new HashMap<>();
@@ -425,6 +489,12 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	}
 	
 	
+	/**
+	 * <p>decodeParam.</p>
+	 *
+	 * @param param a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	protected static  String decodeParam(String param)   {
 		if ((param != null) && param.startsWith(BASE_64_PREFIX) ) {
 		     try {
@@ -448,6 +518,12 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		return param;
 	}
 	
+	/**
+	 * <p>extractParams.</p>
+	 *
+	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object
+	 * @return a {@link org.json.JSONObject} object
+	 */
 	protected JSONObject extractParams(WebScriptRequest req) {
 
 		JSONObject jsonParams = null;
@@ -476,6 +552,12 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		return jsonParams;
 	}
 
+	/**
+	 * <p>extractJsonParamName.</p>
+	 *
+	 * @param parameterName a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	protected String extractJsonParamName(String parameterName) {
 		if (parameterName.startsWith(JSON_PARAM)) {
 			String[] split = parameterName.split(JSON_PARAM);

@@ -43,6 +43,9 @@ public class LabelingAttributeExtractorPlugin implements AttributeExtractorPlugi
 		NodeRef grp = associationService.getTargetAssoc(nodeRef, PLMModel.ASSOC_ILL_GRP);
 		
 		if(grp!=null){
+			if( nodeService.getProperty(grp, PLMModel.PROP_LABELINGRULELIST_LABEL) !=null) {
+				return (String) nodeService.getProperty(grp, PLMModel.PROP_LABELINGRULELIST_LABEL);
+			}
 			return (String) nodeService.getProperty(grp, ContentModel.PROP_NAME);
 		}
 		

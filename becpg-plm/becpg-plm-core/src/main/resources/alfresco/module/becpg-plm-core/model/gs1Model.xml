@@ -546,8 +546,96 @@
 			</parameter>
 		</constraint>
 
+		<constraint name="gs1:referencedTradeItemTypeCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
+				</list>
+			</parameter>
+			<parameter name="constraintFilter">
+				<value>ReferencedTradeItemTypeCode</value>
+			</parameter>
+		</constraint>
+		
+		<constraint name="gs1:seasonParameterCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
+				</list>
+			</parameter>
+			<parameter name="constraintFilter">
+				<value>SeasonParameterCode</value>
+			</parameter>
+		</constraint>
+		
+		<constraint name="gs1:pegHoleTypeCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
+				</list>
+			</parameter>
+			<parameter name="constraintFilter">
+				<value>PegHoleTypeCode</value>
+			</parameter>
+		</constraint>
+		
+		<constraint name="gs1:priceComparisonContentTypeCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
+				</list>
+			</parameter>
+			<parameter name="constraintFilter">
+				<value>PriceComparisonContentTypeCode</value>
+			</parameter>
+		</constraint>
+		
+		<constraint name="gs1:feedTypeCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
+				</list>
+			</parameter>
+			<parameter name="constraintFilter">
+				<value>FeedTypeCode</value>
+			</parameter>
+		</constraint>
+		
+		<constraint name="gs1:additionalTradeItemClassificationCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
+				</list>
+			</parameter>
+			<parameter name="constraintFilter">
+				<value>AdditionalTradeItemClassificationCodeListCode</value>
+			</parameter>
+		</constraint>
+		
+		<constraint name='gs1:text35' type='LENGTH'>
+	        <parameter name='maxLength'><value>35</value></parameter>
+	     </constraint>
+		
+		<constraint name='gs1:text70' type='LENGTH'>
+	        <parameter name='maxLength'><value>70</value></parameter>
+	     </constraint>
+		
+		 <constraint name='gs1:text200' type='LENGTH'>
+	        <parameter name='maxLength'><value>200</value></parameter>
+	     </constraint>
+	     
+	     <constraint name='gs1:text500' type='LENGTH'>
+	        <parameter name='maxLength'><value>500</value></parameter>
+	     </constraint>
 
-
+		<constraint name='gs1:text1000' type='LENGTH'>
+	        <parameter name='maxLength'><value>1000</value></parameter>
+	     </constraint>
+	     
+	     <constraint name='gs1:text5000' type='LENGTH'>
+	        <parameter name='maxLength'><value>5000</value></parameter>
+	     </constraint>
+	     
 	</constraints>
 	<types>
 
@@ -842,6 +930,9 @@
 						<constraint ref="gs1:organicProductPlaceOfFarmingCodes" />
 					</constraints>
 				</property>
+				
+				<!-- gs1:organicProductPlaceOfFarmingCode assoc vers geoOrigin ?-->
+				
 			</properties>
 		</aspect>
 
@@ -1236,6 +1327,46 @@
 					</index>
 				</property>
 
+				<!-- Additional trade item classification ? -->
+
+				<property name="gs1:additionalTradeItemClassification1">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="gs1:additionalTradeItemClassificationCodes" />
+					</constraints>
+				</property>
+				<property name="gs1:additionalTradeItemClassificationText1">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
+				<property name="gs1:additionalTradeItemClassification2">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="gs1:additionalTradeItemClassificationCodes" />
+					</constraints>
+				</property>
+				<property name="gs1:additionalTradeItemClassificationText2">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
 			</properties>
 			<associations />
 			<overrides />
@@ -1286,7 +1417,7 @@
 				</property>
 
 				<property name="gs1:innerPackHeight">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
 						<tokenised>false</tokenised>
@@ -1294,7 +1425,7 @@
 					</index>
 				</property>
 				<property name="gs1:innerPackWidth">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
 						<tokenised>false</tokenised>
@@ -1302,7 +1433,7 @@
 					</index>
 				</property>
 				<property name="gs1:innerPackDepth">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
 						<tokenised>false</tokenised>
@@ -1348,8 +1479,10 @@
 
 		<aspect name="gs1:packagingAspect">
 			<properties>
+
+			
 				<property name="gs1:height">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
 						<tokenised>false</tokenised>
@@ -1357,7 +1490,7 @@
 					</index>
 				</property>
 				<property name="gs1:width">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
 						<tokenised>false</tokenised>
@@ -1365,7 +1498,7 @@
 					</index>
 				</property>
 				<property name="gs1:depth">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
 						<tokenised>false</tokenised>
@@ -1373,7 +1506,7 @@
 					</index>
 				</property>
 				<property name="gs1:diameter">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
 						<tokenised>false</tokenised>
@@ -1381,7 +1514,7 @@
 					</index>
 				</property>
 				<property name="gs1:weight">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
 						<tokenised>false</tokenised>
@@ -1389,7 +1522,7 @@
 					</index>
 				</property>
 				<property name="gs1:secondaryHeight">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
 						<tokenised>false</tokenised>
@@ -1397,7 +1530,7 @@
 					</index>
 				</property>
 				<property name="gs1:secondaryWidth">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
 						<tokenised>false</tokenised>
@@ -1405,7 +1538,7 @@
 					</index>
 				</property>
 				<property name="gs1:secondaryDepth">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
 						<tokenised>false</tokenised>
@@ -1413,7 +1546,7 @@
 					</index>
 				</property>
 				<property name="gs1:secondaryDiameter">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
 						<tokenised>false</tokenised>
@@ -1429,7 +1562,7 @@
 					</index>
 				</property>
 				<property name="gs1:tertiaryWidth">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
 						<tokenised>false</tokenised>
@@ -1437,13 +1570,43 @@
 					</index>
 				</property>
 				<property name="gs1:tertiaryDepth">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
 						<tokenised>false</tokenised>
 						<facetable>true</facetable>
 					</index>
 				</property>
+				
+				<property name="gs1:stackingFactor">
+					<type>d:int</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
+				</property>
+				<property name="gs1:stackingMaxWeight">
+					<type>d:double</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
+				</property>
+				<property name="gs1:secondaryStackingFactor">
+					<type>d:int</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
+				</property>
+				<property name="gs1:secondaryStackingMaxWeight">
+					<type>d:double</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
+				</property>
+				
 				<property name="gs1:tertiaryWeight">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
@@ -1682,6 +1845,17 @@
 						<facetable>false</facetable>
 					</index>
 				</property>
+				<property name="gs1:consumerUsageInstructions">
+					<type>d:mltext</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
+					</index>
+					<constraints>
+						<constraint ref="gs1:text5000"/>
+					</constraints>
+				</property>
 				<property name="gs1:sortingBonusCriteria">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
@@ -1730,6 +1904,9 @@
 						<tokenised>both</tokenised>
 						<facetable>false</facetable>
 					</index>
+					<constraints>
+						<constraint ref="gs1:text35"/>
+					</constraints>
 				</property>
 				<property name="gs1:descriptionShort">
 					<type>d:mltext</type>
@@ -1738,7 +1915,23 @@
 						<tokenised>both</tokenised>
 						<facetable>false</facetable>
 					</index>
+					<constraints>
+						<constraint ref="gs1:text500"/>
+					</constraints>
 				</property>
+				
+				<property name="gs1:functionalName">
+					<type>d:mltext</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
+					</index>
+					<constraints>
+						<constraint ref="gs1:text200"/>
+					</constraints>
+				</property>
+				
 				<property name="gs1:tradeItemUnitDescriptorCode">
 					<type>d:text</type>
 					<index enabled="true">
@@ -1773,6 +1966,18 @@
 						<constraint ref="gs1:handlingInstructions" />
 					</constraints>
 				</property>
+				
+				
+				
+
+				<property name="gs1:healthClaimDescription">
+					<type>d:mltext</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
 				<property name="gs1:preparationType">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
@@ -1805,6 +2010,17 @@
 					</index>
 					<constraints>
 						<constraint ref="gs1:sellingUnitOfMeasureConstraint" />
+					</constraints>
+				</property>
+				<property name="gs1:priceComparisonContentTypeCode">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="gs1:priceComparisonContentTypeCodes" />
 					</constraints>
 				</property>
 				<property name="gs1:orderingLeadTime">
@@ -1850,9 +2066,31 @@
 						<constraint ref="gs1:dataCarrierTypeCodes" />
 					</constraints>
 				</property>
+				<property name="gs1:secondaryDataCarrierTypeCode">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="gs1:dataCarrierTypeCodes" />
+					</constraints>
+				</property>
+				<property name="gs1:tertiaryDataCarrierTypeCode">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="gs1:dataCarrierTypeCodes" />
+					</constraints>
+				</property>
 
 				<property name="gs1:freeQuantityOfProduct">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
 						<tokenised>false</tokenised>
@@ -1923,7 +2161,7 @@
 					</index>
 				</property>
 				<property name="gs1:numberOfServingsPerPackage">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
 						<tokenised>false</tokenised>
@@ -1931,7 +2169,7 @@
 					</index>
 				</property>
 				<property name="gs1:freeQuantityOfProductPercent">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
 						<tokenised>false</tokenised>
@@ -1990,6 +2228,14 @@
 					</index>
 				</property>
 				<property name="gs1:cancelledDateTime">
+					<type>d:date</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
+				<property name="gs1:discontinuedDateTime">
 					<type>d:date</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
@@ -2145,7 +2391,12 @@
 						<facetable>true</facetable>
 					</index>
 				</property>
-
+				
+				<property name="gs1:certificationCode">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 			</properties>
 			<associations>
 
@@ -2202,6 +2453,185 @@
 						<tokenised>false</tokenised>
 						<facetable>false</facetable>
 					</index>
+				</property>
+			</properties>
+		</aspect>
+		
+		<aspect name="gs1:referencedTradeItemAspect">
+			<properties>
+				<property name="gs1:referencedTradeItemEanCode">
+					<type>d:text</type>
+					<index enabled="true">
+					    <tokenised>false</tokenised>
+					    <facetable>false</facetable>
+					</index>
+				</property>
+				<property name="gs1:referencedTradeItemTypeCode">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+					<constraints>
+						<constraint ref="gs1:referencedTradeItemTypeCodes"/>
+					</constraints>
+				</property>
+			</properties>
+		</aspect>
+		
+		<aspect name="gs1:seasonalAspect">
+			<properties>
+				<property name="gs1:isTradeItemSeasonal">
+					<type>d:boolean</type>
+					<index enabled="false" />
+				</property>
+				<property name="gs1:seasonalAvailabilityStartDateTime">
+					<type>d:date</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
+				<property name="gs1:seasonalAvailabilityEndDateTime">
+					<type>d:date</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
+				<property name="gs1:seasonCalendarYear">
+					<type>d:int</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
+				<property name="gs1:seasonName">
+					<type>d:mltext</type>
+					<index enabled="true">
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
+					</index>
+					<constraints>
+						<constraint ref="gs1:text70"/>
+					</constraints>
+				</property>
+				<property name="gs1:seasonParameterCode">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+					<constraints>
+						<constraint ref="gs1:seasonParameterCodes"/>
+					</constraints>
+				</property>
+			</properties>
+		</aspect>
+		
+		<aspect name="gs1:pegHoleAspect">
+			<properties>
+				<property name="gs1:pegHoleNumber">
+					<type>d:int</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
+				<property name="gs1:pegHoleTypeCode">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+					<constraints>
+						<constraint ref="gs1:pegHoleTypeCodes"/>
+					</constraints>
+				</property>
+				<property name="gs1:pegHorizontal">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
+				<property name="gs1:pegVertical">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
+			</properties>
+		</aspect>
+		
+		<aspect name="gs1:animalFeedingAspect">
+			<properties>
+				<property name="gs1:animalNutritionalClaim">
+					<type>d:mltext</type>
+					<index enabled="true">
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
+					</index>
+					<constraints>
+						<constraint ref="gs1:text5000"/>
+					</constraints>
+				</property>
+				<property name="gs1:animalFeedAdditiveStatement">
+					<type>d:mltext</type>
+					<index enabled="true">
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
+					</index>
+					<constraints>
+						<constraint ref="gs1:text5000"/>
+					</constraints>
+				</property>
+				<property name="gs1:animalFeedAnalyticalConstituentsStatement">
+					<type>d:mltext</type>
+					<index enabled="true">
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
+					</index>
+					<constraints>
+						<constraint ref="gs1:text5000"/>
+					</constraints>
+				</property>
+				<property name="gs1:animalFeedCompositionStatement">
+					<type>d:mltext</type>
+					<index enabled="true">
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
+					</index>
+					<constraints>
+						<constraint ref="gs1:text5000"/>
+					</constraints>
+				</property>
+				<property name="gs1:animalFeedingInstructions">
+					<type>d:mltext</type>
+					<index enabled="true">
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
+					</index>
+					<constraints>
+						<constraint ref="gs1:text5000"/>
+					</constraints>
+				</property>
+				<property name="gs1:animalFeedType">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+					<constraints>
+						<constraint ref="gs1:feedTypeCodes"/>
+					</constraints>
 				</property>
 			</properties>
 		</aspect>

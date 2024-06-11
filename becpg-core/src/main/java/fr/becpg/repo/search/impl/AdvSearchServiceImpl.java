@@ -170,7 +170,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		BeCPGQueryBuilder beCPGQueryBuilder = BeCPGQueryBuilder.createQuery();
 		// Simple keyword search and tag specific search
 		if ((term != null) && (term.length() != 0)) {
-			beCPGQueryBuilder.andFTSQuery(cleanValue(term));
+			beCPGQueryBuilder.andFTSQuery(cleanValue(term, true));
 		} else if ((tag != null) && (tag.length() != 0)) {
 			beCPGQueryBuilder.andFTSQuery("TAG:\"" + tag + "\"");
 		}
@@ -299,6 +299,28 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 								}
 
+							} else if (propName.endsWith(":added")) {
+								
+								List<String> nodes = new ArrayList<>();
+								String[] results = propValue.split(",");
+								for (String result : results) {
+									result = result.replace("\"", "");
+									nodes.add(result);
+								}
+								
+								String propNameReplaced = propName.replace(":added", "");
+								
+								String nodesString = nodes.toString().replace(", ", "\" OR @" + propNameReplaced + ":\"")
+										.replaceAll(Pattern.quote("["), "\"").replaceAll(Pattern.quote("]"), "\"");
+								
+								StringBuilder query = new StringBuilder();
+								query.append("@");
+								query.append(propNameReplaced);
+								query.append(":");
+								query.append(nodesString);
+								
+								queryBuilder.andFTSQuery(query.toString());
+								
 							} else if (propName.endsWith("depthLevel")) {
 								Integer maxLevel = null;
 								try {
@@ -345,7 +367,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 								// sushi AND (saumon OR thon) AND -dorade
 								// formQuery += (first ? "" : " AND ") +
 
-								queryBuilder.andPropQuery(QName.createQName(propName, namespaceService), cleanValue(propValue));
+								queryBuilder.andPropQuery(QName.createQName(propName, namespaceService), cleanValue(propValue, false));
 							}
 						} else {
 
@@ -369,8 +391,8 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 	}
 
-	private String cleanValue(String propValue) {
-		String cleanQuery = propValue.replace(".", "").replace("#", "");
+	private String cleanValue(String propValue, boolean cleanFTS) {
+		String cleanQuery = cleanFTS ? propValue.replace(".", "").replace("#", "") : propValue;
 
 		if (cleanQuery.contains("\",\"")) {
 			cleanQuery = cleanQuery.replace("\",\"", "\" OR \"");
@@ -483,7 +505,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 				formQuery.append("(cm:content." + propName + ":\"" + multiValue[i] + "\")");
 			} else {
 				formQuery.append(  QName.createQName(propName, namespaceService) + ":("
-						+ cleanValue(multiValue[i]) + ")");
+						+ cleanValue(multiValue[i], false) + ")");
 			}
 		}
 

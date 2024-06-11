@@ -384,6 +384,14 @@ public class ImportHelper {
 	
 	private static final Pattern NUMBER_PATTERN = Pattern.compile("^-?[0-9\\s.,]+$");
 
+	/**
+	 * <p>parseNumber.</p>
+	 *
+	 * @param importContext a {@link fr.becpg.repo.importer.ImportContext} object
+	 * @param val a {@link java.lang.String} object
+	 * @return a {@link java.lang.Number} object
+	 * @throws java.text.ParseException if any.
+	 */
 	public static Number parseNumber(ImportContext importContext, String val) throws ParseException {
 		
 	    Matcher m = NUMBER_PATTERN.matcher(val);

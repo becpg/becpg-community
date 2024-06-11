@@ -50,6 +50,7 @@
 				<field-visibility>
 					<show id="sec:aclPermission" />
 					<show id="sec:propName" />
+					<show id="sec:isEnforceACL" />
 					<show id="sec:groupsAssignee" />
 				</field-visibility>
 				<appearance>
@@ -72,6 +73,7 @@
 				<field-visibility>
 					<show id="sec:aclPermission" />
 					<show id="sec:propName" />
+					<show id="sec:isEnforceACL" />
 					<show id="sec:groupsAssignee" />
 				</field-visibility>
 				<appearance>
@@ -93,6 +95,7 @@
 				<field-visibility>
 					<show id="sec:aclPermission" />
 					<show id="sec:propName" />
+					<show id="sec:isEnforceACL" />
 					<show id="sec:groupsAssignee" />
 				</field-visibility>
 			</form>

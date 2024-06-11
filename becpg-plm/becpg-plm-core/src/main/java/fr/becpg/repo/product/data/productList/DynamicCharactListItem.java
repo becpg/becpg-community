@@ -117,6 +117,11 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 		return mlTitle;
 	}
 
+	/**
+	 * <p>Setter for the field <code>mlTitle</code>.</p>
+	 *
+	 * @param mlTitle a {@link org.alfresco.service.cmr.repository.MLText} object
+	 */
 	public void setMlTitle(MLText mlTitle) {
 		this.mlTitle = mlTitle;
 	}
@@ -349,6 +354,11 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 	}
 	
 
+	/**
+	 * <p>isColumn.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object
+	 */
 	public Boolean isColumn() {
 		return columnName!=null && !columnName.isBlank();
 	}

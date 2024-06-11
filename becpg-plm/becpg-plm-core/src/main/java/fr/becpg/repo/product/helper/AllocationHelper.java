@@ -14,6 +14,12 @@ import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
+/**
+ * <p>AllocationHelper class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class AllocationHelper {
 	
 	private static Log logger = LogFactory.getLog(AllocationHelper.class);
@@ -22,6 +28,15 @@ public class AllocationHelper {
 		//Private
 	}
 
+	/**
+	 * <p>extractAllocations.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param allocations a {@link java.util.Map} object
+	 * @param parentQty a {@link java.lang.Double} object
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 * @return a {@link java.util.Map} object
+	 */
 	public static Map<NodeRef, Double> extractAllocations(ProductData productData, Map<NodeRef, Double> allocations, Double parentQty,
 			AlfrescoRepository<BeCPGDataObject> alfrescoRepository) {
 

@@ -41,13 +41,13 @@ import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * <p>ProductAutoCompletePlugin class.</p>
- * 
+ *
  * @author matthieu
  * @version $Id: $Id
- * 
- * Autocomplete plugin class that allows to find product 
+ *
+ * Autocomplete plugin class that allows to find product
  * Product are automatically boost by product state and query, Archived product are excluded : query^10 AND (Valid^4 OR ToValidate^2 OR Simulation)
- * 
+ *
  * Example:
  * <pre>
  * {@code
@@ -56,10 +56,10 @@ import fr.becpg.repo.system.SystemConfigurationService;
  *	</control>
  * }
  * </pre>
- *						
+ *
  *	Datasource:
  *
- * 
+ *
  * ds: /becpg/autocomplete/targetassoc/product/?classNames={classNames?}
  * param: {className} type of item to retrieve
  * param: {classNames} (optional)  comma separated lists of classNames, can be uses to filter by aspect or boost certain types (inc_ or ^)

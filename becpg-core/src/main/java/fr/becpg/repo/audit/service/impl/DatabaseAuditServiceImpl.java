@@ -42,6 +42,12 @@ import fr.becpg.repo.audit.plugin.AuditPlugin;
 import fr.becpg.repo.audit.plugin.DatabaseAuditPlugin;
 import fr.becpg.repo.audit.service.DatabaseAuditService;
 
+/**
+ * <p>DatabaseAuditServiceImpl class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 	
@@ -57,6 +63,7 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 	@Autowired
 	private AuditComponent auditComponent;
 	
+	/** {@inheritDoc} */
 	@Override
 	public int recordAuditEntry(DatabaseAuditPlugin auditPlugin, Map<String, Serializable> auditValues, boolean deleteOldEntry) {
 		return StopWatchSupport.build().logger(logger).run(() -> {
@@ -98,6 +105,7 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 		
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<JSONObject> listAuditEntries(DatabaseAuditPlugin plugin, AuditQuery auditFilter) {
 		
@@ -130,6 +138,7 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 		
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void deleteAuditEntries(DatabaseAuditPlugin plugin, Long fromId, Long toId) {
 		auditComponent.deleteAuditEntriesByIdRange(plugin.getAuditApplicationId(), fromId, toId);

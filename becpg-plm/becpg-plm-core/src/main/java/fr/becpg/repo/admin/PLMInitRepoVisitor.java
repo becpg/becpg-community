@@ -64,6 +64,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
@@ -77,6 +78,7 @@ import fr.becpg.model.NCGroup;
 import fr.becpg.model.PLMGroup;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
+import fr.becpg.model.ProjectModel;
 import fr.becpg.model.PublicationModel;
 import fr.becpg.model.QualityModel;
 import fr.becpg.model.ReportModel;
@@ -256,6 +258,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	@Autowired
 	private AssociationService associationService;
 
+	@Value("${becpg.olap.enabled}")
+	private Boolean isOlapEnabled;
+
 	/**
 	 * {@inheritDoc}
 	 *
@@ -291,7 +296,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		visitSystemSecurityListValuesEntity(systemNodeRef, PlmRepoConsts.PATH_SECURITY_LISTS);
 
 		// Exchange
-		NodeRef exchangeNodeRef = visitFolder(companyHome, PlmRepoConsts.PATH_EXCHANGE);
+		NodeRef exchangeNodeRef = visitFolder(companyHome, RepoConsts.PATH_EXCHANGE);
 		NodeRef importNodeRef = visitFolder(exchangeNodeRef, PlmRepoConsts.PATH_IMPORT);
 		visitFolder(importNodeRef, PlmRepoConsts.PATH_IMPORT_TO_TREAT);
 		visitFolder(importNodeRef, PlmRepoConsts.PATH_IMPORT_TO_DO);
@@ -341,15 +346,17 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		visitFolder(systemNodeRef, RepoConsts.PATH_AUTO_NUM);
 
 		// System exchange
-		NodeRef systemExchangeNodeRef = visitFolder(systemNodeRef, PlmRepoConsts.PATH_EXCHANGE);
+		NodeRef systemExchangeNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_EXCHANGE);
 		NodeRef systemImportNodeRef = visitFolder(systemExchangeNodeRef, PlmRepoConsts.PATH_IMPORT);
 		visitFolder(systemImportNodeRef, PlmRepoConsts.PATH_MAPPING);
 
 		visitFolder(systemImportNodeRef, PlmRepoConsts.PATH_IMPORT_SAMPLES);
 
 		// OLAP
-		visitFolder(systemNodeRef, RepoConsts.PATH_OLAP_QUERIES);
-
+		if(Boolean.TRUE.equals(isOlapEnabled)) {
+			visitFolder(systemNodeRef, RepoConsts.PATH_OLAP_QUERIES);
+		}
+		
 		// NutDatabases
 		visitFolder(systemNodeRef, PlmRepoConsts.PATH_NUT_DATABASES);
 
@@ -548,7 +555,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		if (Objects.equals(folderName, PlmRepoConsts.PATH_MAPPING)) {
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/import/mapping/*.xml");
 		}
-		if (Objects.equals(folderName, RepoConsts.PATH_OLAP_QUERIES) && !folderExists) {
+		if (Boolean.TRUE.equals(isOlapEnabled) && Objects.equals(folderName, RepoConsts.PATH_OLAP_QUERIES) && !folderExists) {
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/olap/*.saiku");
 		}
 		if (Objects.equals(folderName, PlmRepoConsts.PATH_NUT_DATABASES)) {
@@ -948,7 +955,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	@Override
 	protected void visitPermissions(NodeRef nodeRef, String folderName) {
 
-		if (Objects.equals(folderName, PlmRepoConsts.PATH_EXCHANGE)) {
+		if (Objects.equals(folderName, RepoConsts.PATH_EXCHANGE)) {
 			permissionService.setInheritParentPermissions(nodeRef, false);
 			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + SystemGroup.SystemMgr.toString(), PermissionService.COORDINATOR,
 					true);
@@ -1000,22 +1007,26 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		dataLists.add(PLMModel.TYPE_CONTACTLIST);
 		dataLists.add(PLMModel.TYPE_CERTIFICATION);
 		dataLists.add(PLMModel.TYPE_PLANT);
+	
 		subFolders.add(RepoConsts.PATH_SUPPLIER_DOCUMENTS);
 		NodeRef entityTplNodeRef = entityTplService.createEntityTpl(entityTplsNodeRef, PLMModel.TYPE_SUPPLIER, null, true, true, dataLists,
 				subFolders);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_DOCUMENTS);
-		entityTplService.createActivityList(entityTplNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
+		entityTplService.createOrUpdateList(entityTplNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
 
+		
 		subFolders.remove(RepoConsts.PATH_SUPPLIER_DOCUMENTS);
 		// visit client
 		dataLists = new LinkedHashSet<>();
 		dataLists.add(PLMModel.TYPE_CONTACTLIST);
+
 		entityTplNodeRef = entityTplService.createEntityTpl(entityTplsNodeRef, PLMModel.TYPE_CLIENT, null, true, true, dataLists, subFolders);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_DOCUMENTS);
-		entityTplService.createActivityList(entityTplNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
-
+		entityTplService.createOrUpdateList(entityTplNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
+		
+		
 		// visit ECO
 		dataLists = new LinkedHashSet<>();
 		dataLists.add(ECMModel.TYPE_REPLACEMENTLIST);
@@ -1028,6 +1039,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		// visit quality
 		visitQuality(entityTplsNodeRef);
 	}
+
+	
 
 	/**
 	 * Create system charact file
@@ -1266,6 +1279,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
 				dataLists.add(MPMModel.TYPE_RESOURCEPARAMLIST);
 				dataLists.add(PLMModel.TYPE_ALLERGENLIST);
+
 				wusedQName = MPMModel.TYPE_PROCESSLIST;
 
 			} else if (productType.equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT)) {
@@ -1282,6 +1296,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(PLMModel.TYPE_LABELCLAIMLIST);
 				dataLists.add(PLMModel.TYPE_SVHCLIST);
 				dataLists.add(PackModel.PACK_MATERIAL_LIST_TYPE);
+
 
 				wusedQName = PLMModel.TYPE_COMPOLIST;
 
@@ -1317,7 +1332,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
 				dataLists.add(PLMModel.TYPE_SVHCLIST);
 				dataLists.add(PackModel.PACK_MATERIAL_LIST_TYPE);
-
+	
 				wusedQName = PLMModel.TYPE_PACKAGINGLIST;
 
 			} else if (productType.equals(SecurityModel.TYPE_ACL_GROUP)) {
@@ -1329,7 +1344,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			NodeRef entityTplNodeRef = entityTplService.createEntityTpl(productTplsNodeRef, productType, null, true, true, dataLists, subFolders);
 
-			entityTplService.createActivityList(entityTplNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
+			entityTplService.createOrUpdateList(entityTplNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
 
 			if (productType.equals(PLMModel.TYPE_PACKAGINGKIT) && !nodeService.hasAspect(entityTplNodeRef, PackModel.ASPECT_PALLET)) {
 				nodeService.addAspect(entityTplNodeRef, PackModel.ASPECT_PALLET, new HashMap<>());
@@ -1575,7 +1590,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			// quality report templates
 			NodeRef qualityReportTplsNodeRef = visitFolder(reportsNodeRef, PlmRepoConsts.PATH_QUALITY_REPORTTEMPLATES);
 
-			supportedLocale = Arrays.asList("fr", "en", "es", "it", "nl", "sv_SE", "fi", "ru", "pt");
+			List<String> qualSupportedLocale = Arrays.asList("fr", "en", "es", "it", "nl", "sv_SE", "fi", "ru", "pt");
 
 			// nc
 			ClassDefinition classDef = dictionaryService.getClass(QualityModel.TYPE_NC);
@@ -1586,7 +1601,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			resources.addAll(commonResources);
 			resources.add(reportTplService.createTplRessource(qualityFolderNodeRef, NC_REPORT_RESOURCE, false));
 
-			for (String lang : supportedLocale) {
+			for (String lang : qualSupportedLocale) {
 				resources.add(reportTplService.createTplRessource(qualityFolderNodeRef, String.format(NC_REPORT_RESOURCE_BY_LOCALE, lang), false));
 			}
 
@@ -1597,7 +1612,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			reportTplInformation.setDefaultTpl(true);
 			reportTplInformation.setSystemTpl(true);
 			reportTplInformation.setResources(resources);
-			reportTplInformation.setSupportedLocale(supportedLocale);
+			reportTplInformation.setSupportedLocale(qualSupportedLocale);
 
 			reportTplService.createTplRptDesign(qualityFolderNodeRef, classDef.getTitle(dictionaryService), NC_REPORT_PATH, reportTplInformation,
 					false);
@@ -1610,7 +1625,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			resources.addAll(commonResources);
 			resources.add(reportTplService.createTplRessource(qualityFolderNodeRef, QUALITY_REPORT_RESOURCE, false));
 
-			for (String lang : supportedLocale) {
+			for (String lang : qualSupportedLocale) {
 				resources.add(
 						reportTplService.createTplRessource(qualityFolderNodeRef, String.format(QUALITY_REPORT_RESOURCE_BY_LOCALE, lang), false));
 			}
@@ -1622,7 +1637,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			reportTplInformation.setDefaultTpl(true);
 			reportTplInformation.setSystemTpl(true);
 			reportTplInformation.setResources(resources);
-			reportTplInformation.setSupportedLocale(supportedLocale);
+			reportTplInformation.setSupportedLocale(qualSupportedLocale);
 
 			reportTplService.createTplRptDesign(qualityFolderNodeRef, classDef.getTitle(dictionaryService), QUALITY_CONTROL_REPORT_PATH,
 					reportTplInformation, false);

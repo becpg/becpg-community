@@ -40,6 +40,12 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.signature.SignatureProjectPlugin;
 import fr.becpg.repo.supplier.SupplierPortalService;
 
+/**
+ * <p>SupplierSignatureProjectPlugin class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 
@@ -79,11 +85,13 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 	
 	private static final String SUPPLIER_REPORT_KIND = "SupplierSheet";
 	
+	/** {@inheritDoc} */
 	@Override
 	public boolean applyTo(String projectType) {
 		return SUPPLIER_REFERENCING_PROJECT_TYPE.equals(projectType);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef prepareEntitySignatureFolder(NodeRef projectNodeRef, NodeRef entityNodeRef) {
 		
@@ -107,6 +115,7 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 		return supplierDocumentsFolder;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getExternalSignatureFolder(NodeRef projectNodeRef, List<NodeRef> documents, List<NodeRef> recipients) {
 		
@@ -122,6 +131,7 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 		return signatureFolder;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void createOrUpdateClosingTask(ProjectData project, List<NodeRef> lastTasks) {
 		
@@ -149,6 +159,7 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 	
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> extractRecipients(NodeRef document) {
 		return supplierPortalService.extractSupplierAccountRefs(document);

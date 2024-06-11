@@ -40,6 +40,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.DataListModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.model.SecurityModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.formulation.FormulateException;
@@ -50,11 +51,14 @@ import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.security.SecurityService;
 import fr.becpg.repo.security.data.PermissionContext;
 import fr.becpg.repo.security.data.PermissionModel;
+import fr.becpg.repo.system.SystemConfigurationService;
 
 
 /**
  * <p>SecurityFormulationHandler class.</p>
+ *
  * @author Evelyne Ing
+ * @version $Id: $Id
  */
 public class SecurityFormulationHandler extends FormulationBaseHandler<ProductData> {
 
@@ -79,60 +83,136 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 	
 	private FileFolderService fileFolderService;
 	
+	private SystemConfigurationService systemConfigurationService;
+	
+	/**
+	 * <p>Setter for the field <code>systemConfigurationService</code>.</p>
+	 *
+	 * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
+	 */
+	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
+		this.systemConfigurationService = systemConfigurationService;
+	}
+	
+	/**
+	 * <p>Setter for the field <code>fileFolderService</code>.</p>
+	 *
+	 * @param fileFolderService a {@link org.alfresco.service.cmr.model.FileFolderService} object
+	 */
 	public void setFileFolderService(FileFolderService fileFolderService) {
 		this.fileFolderService = fileFolderService;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>associationService</code>.</p>
+	 *
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object
+	 */
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
 
+	/**
+	 * <p>Getter for the field <code>entityListDAO</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.entity.EntityListDAO} object
+	 */
 	public EntityListDAO getEntityListDAO() {
 		return entityListDAO;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityListDAO</code>.</p>
+	 *
+	 * @param entityListDAO a {@link fr.becpg.repo.entity.EntityListDAO} object
+	 */
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
 	}
 
+	/**
+	 * <p>Getter for the field <code>authorityDAO</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.repo.security.authority.AuthorityDAO} object
+	 */
 	public AuthorityDAO getAuthorityDAO() {
 		return authorityDAO;
 	}
 
+	/**
+	 * <p>Setter for the field <code>authorityDAO</code>.</p>
+	 *
+	 * @param authorityDAO a {@link org.alfresco.repo.security.authority.AuthorityDAO} object
+	 */
 	public void setAuthorityDAO(AuthorityDAO authorityDAO) {
 		this.authorityDAO = authorityDAO;
 	}
 
+	/**
+	 * <p>Getter for the field <code>securityService</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.security.SecurityService} object
+	 */
 	public SecurityService getSecurityService() {
 		return securityService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>securityService</code>.</p>
+	 *
+	 * @param securityService a {@link fr.becpg.repo.security.SecurityService} object
+	 */
 	public void setSecurityService(SecurityService securityService) {
 		this.securityService = securityService;
 	}
 
+	/**
+	 * <p>Getter for the field <code>nodeService</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 */
 	public NodeService getNodeService() {
 		return nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Getter for the field <code>permissionService</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.security.PermissionService} object
+	 */
 	public PermissionService getPermissionService() {
 		return permissionService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>permissionService</code>.</p>
+	 *
+	 * @param permissionService a {@link org.alfresco.service.cmr.security.PermissionService} object
+	 */
 	public void setPermissionService(PermissionService permissionService) {
 		this.permissionService = permissionService;
 	}
 
-	public SiteService getSiteService() {
-		return siteService;
-	}
-
+	/**
+	 * <p>Setter for the field <code>siteService</code>.</p>
+	 *
+	 * @param siteService a {@link org.alfresco.service.cmr.site.SiteService} object
+	 */
 	public void setSiteService(SiteService siteService) {
 		this.siteService = siteService;
+	}
+	
+	private boolean enforceACL() {
+		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.formulation.security.enforceACL"));
 	}
 
 	/** {@inheritDoc} */
@@ -153,7 +233,8 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 			for(NodeRef dataListNodeRef : datalists) {
 				String dataListQName = (String)nodeService.getProperty(dataListNodeRef, DataListModel.PROP_DATALISTITEMTYPE);
 				PermissionContext permissionContext = securityService.getPermissionContext(productDataNodeRef, nodeService.getType(productDataNodeRef), dataListQName);
-				updatePermissions(siteInfo, dataListNodeRef, permissionContext.getPermissions());
+				updateSupplierPortalPermissionContext(permissionContext, productDataNodeRef);
+				updatePermissions(siteInfo, dataListNodeRef, permissionContext.getPermissions(), false);
 			}
 
 			//Set document permissions
@@ -163,11 +244,25 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 					updatePermissionsFromTemplateFolder(folder.getNodeRef(), templateFolderWithSpecificPermissions);
 				} else {
 					PermissionContext permissionContext = securityService.getPermissionContext(productDataNodeRef, nodeService.getType(productDataNodeRef), VIEW_DOCUMENTS);
-					updatePermissions(siteInfo, folder.getNodeRef(), permissionContext.getPermissions());
+					updateSupplierPortalPermissionContext(permissionContext, productDataNodeRef);
+					updatePermissions(siteInfo, folder.getNodeRef(), permissionContext.getPermissions(), true);
 				}
 			}
 		}
 		return true;
+	}
+
+	private void updateSupplierPortalPermissionContext(PermissionContext permissionContext, NodeRef productDataNodeRef) {
+		List<NodeRef> supplierAccountNodeRefs = associationService.getTargetAssocs(productDataNodeRef, PLMModel.ASSOC_SUPPLIERS).stream()
+				.flatMap(s -> associationService.getTargetAssocs(s, PLMModel.ASSOC_SUPPLIER_ACCOUNTS).stream()).collect(Collectors.toList());
+		for (PermissionModel permissionModel : permissionContext.getPermissions()) {
+			NodeRef externalUserGroup = permissionModel.getGroups().stream()
+					.filter(n -> "GROUP_ExternalUser".equals(authorityDAO.getAuthorityName(n))).findFirst().orElse(null);
+			if (externalUserGroup != null) {
+				permissionModel.getGroups().remove(externalUserGroup);
+				permissionModel.getGroups().addAll(supplierAccountNodeRefs);
+			}
+		}
 	}
 
 	private NodeRef findTemplateFolderWithSpecificPermissions(NodeRef folderNodeRef, ProductData entityTpl) {
@@ -218,7 +313,7 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 	}
 
-	private void updatePermissions(SiteInfo siteInfo, NodeRef nodeRef, List<PermissionModel> permissionModels) {
+	private void updatePermissions(SiteInfo siteInfo, NodeRef nodeRef, List<PermissionModel> permissionModels, boolean areDocuments) {
 		
 		boolean hasParentPermissions = permissionService.getInheritParentPermissions(nodeRef);
 		Map<String, String> specificPermissions = new HashMap<>();
@@ -237,13 +332,13 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 		HashMap<String, String> toAdd = new HashMap<>();
 		Set<String> toRemove = new HashSet<>();
 		
-		if (permissionModels != null && !permissionModels.isEmpty()) {
+		if (permissionModels != null && !permissionModels.isEmpty() && (areDocuments || enforceACL())) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("specificPermissions: " + specificPermissions + " on node: " + nodeRef);
 				logger.debug("parentPermissions: " + parentPermissions + " on node: " + nodeRef);
 				logger.debug("permissionModels to be applied: " + permissionModels + " on node: " + nodeRef);
 			}
-			visitPermissions(siteInfo, parentPermissions, specificPermissions, permissionModels, toAdd, toRemove);
+			computePermissions(siteInfo, parentPermissions, specificPermissions, permissionModels, toAdd, toRemove);
 			for (Entry<String, String> entry : toAdd.entrySet()) {
 				String authority = entry.getKey();
 				String permission = entry.getValue();
@@ -277,17 +372,24 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 	}
 	
-	private void visitPermissions(SiteInfo siteInfo, Map<String, String> parentPermissions, Map<String, String> specificPermissions, List<PermissionModel> permissionModels, HashMap<String, String> toAdd, Set<String> toRemove) {
+	private void computePermissions(SiteInfo siteInfo, Map<String, String> parentPermissions, Map<String, String> specificPermissions, List<PermissionModel> permissionModels, HashMap<String, String> toAdd, Set<String> toRemove) {
 		for (PermissionModel permissionModel : permissionModels) {
-			String basePermission = PermissionModel.READ_ONLY.equals(permissionModel.getPermission()) ? PermissionService.CONSUMER : PermissionService.CONTRIBUTOR;
+			String targetPermission = PermissionModel.READ_ONLY.equals(permissionModel.getPermission()) ? PermissionService.CONSUMER : PermissionService.CONTRIBUTOR;
 			
 			List<String> permissionAuthorities = permissionModel.getGroups().stream()
 					.map(n -> authorityDAO.getAuthorityName(n))
 					.collect(Collectors.toList());
 			
 			for (String authority : permissionAuthorities) {
-				String permission = extractPermission(basePermission, siteInfo, authority);
-				addPermission(authority, permission, toAdd, toRemove);
+				boolean enforceACL = Boolean.TRUE.equals(permissionModel.getIsEnforceACL());
+				if (parentPermissions.containsKey(authority) && !enforceACL) {
+					String currentPermission = parentPermissions.get(authority);
+					if (currentPermission.equals(PermissionService.CONSUMER) || currentPermission.equals(PermissionService.READ)) {
+						targetPermission = PermissionService.CONSUMER;
+					}
+				}
+				targetPermission = adaptPermissionToSite(targetPermission, siteInfo, authority, enforceACL);
+				addPermission(authority, targetPermission, toAdd, toRemove);
 			}
 			
 			// set read to parent permissions as business logic is "read for others"
@@ -305,28 +407,28 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 	}
 	
-	private String extractPermission(String basePermission, SiteInfo siteInfo, String authorityName) {
+	private String adaptPermissionToSite(String targetPermission, SiteInfo siteInfo, String authorityName, boolean enforceACL) {
 		if (siteInfo != null) {
 			String sitePermission = siteService.getMembersRole(siteInfo.getShortName(), authorityName);
 			if (sitePermission != null) {		
-				if (PermissionService.CONSUMER.equals(basePermission) || sitePermission.contains(basePermission)) {
-					return basePermission;
+				if (PermissionService.CONSUMER.equals(targetPermission) || sitePermission.contains(targetPermission)) {
+					return targetPermission;
 				}
 				if (SiteModel.SITE_COLLABORATOR.equals(sitePermission) || SiteModel.SITE_MANAGER.equals(sitePermission)) {
 					return PermissionService.COORDINATOR;
 				} 
-				if(SiteModel.SITE_CONSUMER.equals(sitePermission)) {
+				if (SiteModel.SITE_CONSUMER.equals(sitePermission) && !enforceACL) {
 					return PermissionService.CONSUMER;
 				}
 			}
 		}
 		
-		return basePermission;
+		return targetPermission;
 	}
 
 
 	private void addPermission(String authority, String permission, HashMap<String, String> toAdd, Set<String> toRemove) {
-		if (PermissionService.READ.equals(permission) && toAdd.containsKey(authority)) {
+		if ((PermissionService.READ.equals(permission) || PermissionService.CONSUMER.equals(permission)) && toAdd.containsKey(authority)) {
 			return;
 		}
 		toAdd.put(authority, permission);

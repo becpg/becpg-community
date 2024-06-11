@@ -21,6 +21,12 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.authentication.BeCPGUserAccount;
 
+/**
+ * <p>IdentityServiceAccountProvider class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class IdentityServiceAccountProvider {
 
@@ -47,16 +53,32 @@ public class IdentityServiceAccountProvider {
 	@Value("${identity-service.auth-server-url}")
 	private String authServerUrl;
 
+	/**
+	 * <p>isEnabled.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object
+	 */
 	public Boolean isEnabled() {
 		return enabled;
 	}
 	
 
+	/**
+	 * <p>getZoneId.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	public String getZoneId() {
 		return AuthorityService.ZONE_AUTH_EXT_PREFIX+realm.toUpperCase();
 	}
 
 
+	/**
+	 * <p>registerAccount.</p>
+	 *
+	 * @param userAccount a {@link fr.becpg.repo.authentication.BeCPGUserAccount} object
+	 * @return a boolean
+	 */
 	public boolean registerAccount(BeCPGUserAccount userAccount) {
 		try {
 			HttpClientBuilder builder = HttpClientBuilder.create();
@@ -138,6 +160,7 @@ public class IdentityServiceAccountProvider {
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "IdentityServiceAccountProvider [enabled=" + enabled + ", identityServiceUserName=" + identityServiceUserName

@@ -10,14 +10,22 @@ import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 
+/**
+ * <p>LabelClaimCharactDetailsVisitor class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class LabelClaimCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 
+	/** {@inheritDoc} */
 	@Override
 	protected String provideUnit() {
 		return "%";
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	protected Double extractValue(ProductData formulatedProduct, ProductData partProduct, SimpleCharactDataItem simpleCharact) {
 		
@@ -59,6 +67,7 @@ public class LabelClaimCharactDetailsVisitor extends SimpleCharactDetailsVisitor
 		
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	protected void provideAdditionalValues(ProductData rootProduct, ProductData formulatedProduct, SimpleCharactDataItem simpleCharact, String unit, Double qtyUsed, Double netQty, CharactDetailsValue currentCharactDetailsValue) {
 		

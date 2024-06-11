@@ -78,9 +78,4 @@ services:
         timeout: 10s
         retries: 3
 
-  becpg-report:
-    image:  ${docker.becpg.url}/becpg-report:4.4.0
-    user: root
-    ports:
-       - "8086:8080"
 

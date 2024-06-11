@@ -49,6 +49,12 @@ import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.system.SystemConfigurationService;
 
+/**
+ * <p>DefaultDecernisAnalysisPlugin class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 
@@ -70,11 +76,15 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 	private static final String PARAM_RESULTS = "results";
 	private static final String PARAM_ANALYSIS_RESULTS = "analysis_results";
 	private static final String INGREDIENT_DATA_PDF = "INGREDIENT_DATA_PDF";
+	/** Constant <code>RESULT_INDICATOR="resultIndicator"</code> */
 	protected static final String RESULT_INDICATOR = "resultIndicator";
+	/** Constant <code>CITATION="citation"</code> */
 	protected static final String CITATION = "citation";
+	/** Constant <code>USAGE_NAME="usage_name"</code> */
 	protected static final String USAGE_NAME = "usage_name";
 	private static final String SEARCH_PARAMETERS = "search_parameters";
 	private static final String TABULAR = "tabular";
+	/** Constant <code>THRESHOLD="threshold"</code> */
 	protected static final String THRESHOLD = "threshold";
 
 	private static final Log logger = LogFactory.getLog(DefaultDecernisAnalysisPlugin.class);
@@ -83,42 +93,79 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 
 	protected final SystemConfigurationService systemConfigurationService;
 
-	private final RestTemplate restTemplate = new RestTemplate();
-
+	/**
+	 * <p>Constructor for DefaultDecernisAnalysisPlugin.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
+	 */
 	public DefaultDecernisAnalysisPlugin(@Qualifier("nodeService") NodeService nodeService, SystemConfigurationService systemConfigurationService) {
 		super();
 		this.nodeService = nodeService;
 		this.systemConfigurationService = systemConfigurationService;
 	}
 
+	/**
+	 * <p>serverUrl.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	public String serverUrl() {
 		return systemConfigurationService.confValue("beCPG.decernis.serverUrl");
 	}
 
+	/**
+	 * <p>analysisUrl.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	public String analysisUrl() {
 		return systemConfigurationService.confValue("beCPG.decernis.analysisUrl");
 	}
 
+	/**
+	 * <p>companyName.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	public String companyName() {
 		return systemConfigurationService.confValue("beCPG.decernis.companyName");
 	}
 
+	/**
+	 * <p>token.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	public String token() {
 		return systemConfigurationService.confValue("beCPG.decernis.token");
 	}
 
+	/**
+	 * <p>addInfoReqCtrl.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object
+	 */
 	public Boolean addInfoReqCtrl() {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.formulation.specification.addInfoReqCtrl"));
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isEnabled() {
 		return (analysisUrl() == null || analysisUrl().isBlank() || analysisUrl().equals(serverUrl()));
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean needsRecipeId() {
 		return true;
+	}
+	
+	/** {@inheritDoc} */
+	@Override
+	public void ingredientAnalysis(RegulatoryContext productContext, RegulatoryContextItem contextItem) {
+		// implemented in extractRequirements()
 	}
 
 	/**
@@ -176,6 +223,7 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 		if (logger.isTraceEnabled()) {
 			logger.trace("POST url: " + url + " params: " + params);
 		}
+		RestTemplate restTemplate = new RestTemplate();
 		JSONObject jsonObject = new JSONObject(restTemplate.postForObject(url, entity, String.class, params));
 		if (jsonObject.has(PARAM_ANALYSIS_RESULTS) && (jsonObject.getJSONObject(PARAM_ANALYSIS_RESULTS).length() > 0)) {
 			return jsonObject;
@@ -220,6 +268,7 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 		if (logger.isTraceEnabled()) {
 			logger.trace("GET url: " + url + " params: " + params);
 		}
+		RestTemplate restTemplate = new RestTemplate();
 		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, createEntity(null), String.class, params);
 
 		if (HttpStatus.OK.equals(response.getStatusCode()) && (response.getBody() != null)) {
@@ -236,6 +285,7 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void extractRequirements(RegulatoryContext productContext, RegulatoryContextItem contextItem) {
 
@@ -297,7 +347,7 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 
 										if (contextItem.getCountries().get(country) != null && usageContext.getNodeRef() != null) {
 											IngRegulatoryListDataItem ingRegulatoryListDataItem = createIngRegulatoryListDataItem(ingItem.getIng(),
-													contextItem.getCountries().get(country), usageContext.getNodeRef());
+													contextItem.getCountries().get(country));
 											
 											ingRegulatoryListDataItem.setCitation(new MLText(result.getString(CITATION)));
 											ingRegulatoryListDataItem.setUsages(new MLText(result.getString(USAGE_NAME)));
@@ -409,6 +459,14 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 		return null;
 	}
 
+	/**
+	 * <p>createReqCtrl.</p>
+	 *
+	 * @param ing a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param reqCtrlMessage a {@link org.alfresco.service.cmr.repository.MLText} object
+	 * @param reqType a {@link fr.becpg.repo.product.data.constraints.RequirementType} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.ReqCtrlListDataItem} object
+	 */
 	protected ReqCtrlListDataItem createReqCtrl(NodeRef ing, MLText reqCtrlMessage, RequirementType reqType) {
 		ReqCtrlListDataItem reqCtrlItem = new ReqCtrlListDataItem();
 		reqCtrlItem.setReqType(reqType);
@@ -420,16 +478,28 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 		return reqCtrlItem;
 	}
 
-	protected IngRegulatoryListDataItem createIngRegulatoryListDataItem(NodeRef ing, NodeRef country, NodeRef usage) {
+	/**
+	 * <p>createIngRegulatoryListDataItem.</p>
+	 *
+	 * @param ing a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param country a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem} object
+	 */
+	protected IngRegulatoryListDataItem createIngRegulatoryListDataItem(NodeRef ing, NodeRef country) {
 
 		IngRegulatoryListDataItem ingRegulatoryListDataItem = new IngRegulatoryListDataItem();
 		ingRegulatoryListDataItem.setIng(ing);
 		ingRegulatoryListDataItem.setRegulatoryCountries(Arrays.asList(country));
-
-		ingRegulatoryListDataItem.setRegulatoryUsages(Arrays.asList(usage));
+		
 		return ingRegulatoryListDataItem;
 	}
 
+	/**
+	 * <p>createEntity.</p>
+	 *
+	 * @param body a {@link java.lang.String} object
+	 * @return a {@link org.springframework.http.HttpEntity} object
+	 */
 	protected HttpEntity<String> createEntity(String body) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));

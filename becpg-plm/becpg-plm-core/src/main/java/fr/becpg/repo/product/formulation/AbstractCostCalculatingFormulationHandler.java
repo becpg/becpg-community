@@ -46,19 +46,33 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 	
 	private static AbstractCostCalculatingFormulationHandler<?> instance;
 	
+	/**
+	 * <p>Constructor for AbstractCostCalculatingFormulationHandler.</p>
+	 */
 	public AbstractCostCalculatingFormulationHandler() {
 		instance = this;
 	}
 
+	/**
+	 * <p>internalKeepProductUnit.</p>
+	 *
+	 * @return a boolean
+	 */
 	protected boolean internalKeepProductUnit() {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.formulation.costList.keepProductUnit"));
 	}
 	
+	/**
+	 * <p>keepProductUnit.</p>
+	 *
+	 * @return a boolean
+	 */
 	public static boolean keepProductUnit() {
 		return instance.internalKeepProductUnit();
 	}
 	
 
+	/** {@inheritDoc} */
 	@Override
 	protected boolean propagateModeEnable(ProductData formulatedProduct) {
 		return false;
@@ -93,18 +107,55 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 	}
 
 
+	/**
+	 * <p>setDataListVisited.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 */
 	protected abstract void setDataListVisited(ProductData formulatedProduct);
 
+	/**
+	 * <p>afterProcess.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 */
 	protected abstract void afterProcess(ProductData formulatedProduct);
 
+	/**
+	 * <p>getDataListVisited.</p>
+	 *
+	 * @param client a {@link fr.becpg.repo.product.data.ClientData} object
+	 * @return a {@link java.util.List} object
+	 */
 	protected abstract List<T> getDataListVisited(ClientData client);
 
+	/**
+	 * <p>getDataListVisited.</p>
+	 *
+	 * @param supplier a {@link fr.becpg.repo.product.data.SupplierData} object
+	 * @return a {@link java.util.List} object
+	 */
 	protected abstract List<T> getDataListVisited(SupplierData supplier);
 	
+	/**
+	 * <p>getCostFormulaPropName.</p>
+	 *
+	 * @return a {@link org.alfresco.service.namespace.QName} object
+	 */
 	protected abstract QName getCostFormulaPropName();
 	
+	/**
+	 * <p>getCostFixedPropName.</p>
+	 *
+	 * @return a {@link org.alfresco.service.namespace.QName} object
+	 */
 	protected abstract QName getCostFixedPropName();
 	
+	/**
+	 * <p>getCostUnitPropName.</p>
+	 *
+	 * @return a {@link org.alfresco.service.namespace.QName} object
+	 */
 	protected abstract QName getCostUnitPropName();
 
 	/** {@inheritDoc} */
@@ -182,6 +233,11 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 		return true;
 	}
 
+	/**
+	 * <p>getFormulationErrorMessage.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	protected abstract String getFormulationErrorMessage();
 
 	/**
@@ -258,6 +314,7 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 
 	}
 
+	/** {@inheritDoc} */
 	protected Map<NodeRef, List<NodeRef>> getMandatoryCharacts(ProductData formulatedProduct, QName componentType) {
 		
 		Map<NodeRef, List<NodeRef>> mandatoryCharacts = new HashMap<>();

@@ -56,6 +56,12 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.supplier.SupplierPortalService;
 import fr.becpg.repo.system.SystemConfigurationService;
 
+/**
+ * <p>SupplierPortalServiceImpl class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service("supplierPortalService")
 public class SupplierPortalServiceImpl implements SupplierPortalService {
 
@@ -111,16 +117,19 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 		return systemConfigurationService.confValue("beCPG.sendToSupplier.entityName.format");
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getProjectNameTpl() {
 		return projectNameTpl();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getEntityNameTpl() {
 		return entityNameTpl();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef createSupplierProject(NodeRef entityNodeRef, NodeRef projectTemplateNodeRef, List<NodeRef> supplierAccountNodeRefs) {
 
@@ -204,6 +213,7 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getOrCreateSupplierDocumentsFolder(NodeRef entityNodeRef) {
 		return getOrCreateDocumentFolder(entityNodeRef, RepoConsts.PATH_SUPPLIER_DOCUMENTS);
@@ -227,6 +237,7 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 		
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String createName(NodeRef entityNodeRef, NodeRef supplierNodeRef, String nameFormat, Date currentDate) {
 
@@ -284,6 +295,7 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 		return "";
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getSupplierNodeRef(NodeRef entityNodeRef) {
 		NodeRef supplierNodeRef = null;
@@ -324,6 +336,7 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 		return supplierNodeRef;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getOrCreateSupplierDestFolder(NodeRef supplierNodeRef, List<NodeRef> resources) {
 
@@ -351,12 +364,16 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 							repoService.moveNode(supplierNodeRef, documentLibraryNodeRef);
 						}
 
+						String supplierPermission = systemConfigurationService.confValue("beCPG.security.supplierPermission");
+						
 						for (NodeRef resourceRef : resources) {
 							permissionService.setPermission(supplierNodeRef,
-									(String) nodeService.getProperty(resourceRef, ContentModel.PROP_USERNAME), PermissionService.CONTRIBUTOR, true);
-							
-							permissionService.deletePermission(supplierNodeRef,
-									(String) nodeService.getProperty(resourceRef, ContentModel.PROP_USERNAME), PermissionService.COORDINATOR);
+									(String) nodeService.getProperty(resourceRef, ContentModel.PROP_USERNAME), supplierPermission, true);
+							if (!supplierPermission.equals(PermissionService.COORDINATOR)) {
+								// remove this permission for old versions
+								permissionService.deletePermission(supplierNodeRef,
+										(String) nodeService.getProperty(resourceRef, ContentModel.PROP_USERNAME), PermissionService.COORDINATOR);
+							}
 						}
 					} finally {
 						I18NUtil.setLocale(currentLocal);
@@ -437,6 +454,7 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 		
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef createExternalUser(String email, String firstName, String lastName, boolean notify, Map<QName, Serializable> extraProps) {
 
@@ -488,6 +506,7 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 		throw new IllegalAccessError("You should be member of ExternalUserMgr");
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> extractSupplierAccountRefs(NodeRef document) {
 		NodeRef entityNodeRef = entityService.getEntityNodeRef(document, nodeService.getType(document));

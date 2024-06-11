@@ -111,6 +111,7 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 	 * @param parameters an array of {@link java.lang.String} objects.
 	 * @param entityItems a {@link java.util.Map} object.
 	 * @return a int.
+	 * @param dynamicCharactColumnCache a {@link java.util.Map} object
 	 */
 	protected int appendNextLevel(MultiLevelListData listData, XSSFSheet sheet, QName itemType, List<AttributeExtractorStructure> metadataFields,
 			Map<NodeRef, Map<String, Object>> cache, int rownum, Serializable key, Double parentQty, String[] parameters,
@@ -128,19 +129,15 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 						String itemKey = itemEntry.getKey();
 						Object itemValue = itemEntry.getValue();
 						if (itemKey.startsWith("prop_bcpg_dynamicCharactColumn")) {
-							
-							if (itemValue instanceof String) {
+							if (dynamicCharactColumnCache.get(itemKey) == null && JsonFormulaHelper.isJsonString(itemValue)) {
 								dynamicCharactColumnCache.put(itemKey, (String) itemValue);
 								Object value = JsonFormulaHelper.cleanCompareJSON((String) itemValue);
 								item.put(itemKey, value);
-							} else if (itemValue == null) {
-								itemValue = dynamicCharactColumnCache.get(itemKey);
-								if (itemValue instanceof String) {
-									Object subValue = JsonFormulaHelper.extractComponentValue((String) itemValue, itemNodeRef.getId());
+							} else if (dynamicCharactColumnCache.get(itemKey) != null) {
+								Object subValue = JsonFormulaHelper.extractComponentValue(dynamicCharactColumnCache.get(itemKey), itemNodeRef.getId());
+								if (subValue != null) {
 									item.put(itemKey, subValue);
 								}
-							} else {
-								item.put(itemKey, itemValue);
 							}
 						}
 					}

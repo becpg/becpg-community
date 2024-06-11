@@ -6,12 +6,18 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.springframework.lang.NonNull;
 
 /**
- * 
- * @author matthieu
+ * <p>SourceableDataItem interface.</p>
  *
+ * @author matthieu
+ * @version $Id: $Id
  */
 public interface SourceableDataItem {
 
+	/**
+	 * <p>getSources.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	@NonNull
 	public List<NodeRef> getSources();
 }

@@ -128,6 +128,11 @@ public class CompareEntityReportWebScript extends AbstractWebScript {
 		this.reportTplService = reportTplService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}

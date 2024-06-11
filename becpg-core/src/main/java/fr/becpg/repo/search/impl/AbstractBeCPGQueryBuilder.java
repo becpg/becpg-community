@@ -247,7 +247,7 @@ public abstract class AbstractBeCPGQueryBuilder {
 	 * @return a {@link java.lang.String} object.
 	 */
 	protected String prohibided(String condType) {		
-		return (SearchService.LANGUAGE_LUCENE.equals(language) ? " -" : /*SearchService.LANGUAGE_FTS_ALFRESCO.equals(language) ? " AND NOT =" :*/ " AND -") + condType;
+		return (SearchService.LANGUAGE_LUCENE.equals(language) ? " -" : " AND -=") + condType;
 	}
 
 	/**

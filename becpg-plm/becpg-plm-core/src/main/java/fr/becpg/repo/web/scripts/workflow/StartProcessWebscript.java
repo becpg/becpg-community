@@ -45,7 +45,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  *
  * @author matthieu
  * @version $Id: $Id
- * 
+ *
  * Parse process.json and exec script
  *  <code>
  *  {
@@ -60,7 +60,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  *			}
  *		}
  *	<code>
-**/
+ */
 public class StartProcessWebscript extends AbstractWebScript {
 
 	private static final String IN_GROUP = "inGroup";
@@ -101,25 +101,42 @@ public class StartProcessWebscript extends AbstractWebScript {
 	
 	private PersonService personService;
 	
+	/**
+	 * <p>Setter for the field <code>personService</code>.</p>
+	 *
+	 * @param personService a {@link org.alfresco.service.cmr.security.PersonService} object
+	 */
 	public void setPersonService(PersonService personService) {
 		this.personService = personService;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>associationService</code>.</p>
+	 *
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object
+	 */
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>authorityDAO</code>.</p>
+	 *
+	 * @param authorityDAO a {@link org.alfresco.repo.security.authority.AuthorityDAO} object
+	 */
 	public void setAuthorityDAO(AuthorityDAO authorityDAO) {
 		this.authorityDAO = authorityDAO;
 	}
 
 
+	/**
+	 * <p>Setter for the field <code>expressionService</code>.</p>
+	 *
+	 * @param expressionService a {@link fr.becpg.repo.expressions.ExpressionService} object
+	 */
 	public void setExpressionService(ExpressionService expressionService) {
 		this.expressionService = expressionService;
 	}
-
-
-
 
 	/**
 	 * <p>
@@ -136,6 +153,11 @@ public class StartProcessWebscript extends AbstractWebScript {
 	
 	
 
+	/**
+	 * <p>Setter for the field <code>serviceRegistry</code>.</p>
+	 *
+	 * @param serviceRegistry a {@link org.alfresco.service.ServiceRegistry} object
+	 */
 	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
 		this.serviceRegistry = serviceRegistry;
 	}
@@ -193,6 +215,11 @@ public class StartProcessWebscript extends AbstractWebScript {
 		this.authorityService = authorityService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>workflowService</code>.</p>
+	 *
+	 * @param workflowService a {@link org.alfresco.service.cmr.workflow.WorkflowService} object
+	 */
 	public void setWorkflowService(WorkflowService workflowService) {
 		this.workflowService = workflowService;
 	}
@@ -327,7 +354,11 @@ public class StartProcessWebscript extends AbstractWebScript {
 				Map<String, Object> model = new HashMap<>();
 				model.put("items",  nodeRefs.stream().map(n -> new ActivitiScriptNode(n,serviceRegistry)).toArray(ScriptNode[]::new));
 				model.put("formData", json == null ? "" : json.toString());
-				model.put("currentUserNodeRef", personService.getPerson(AuthenticationUtil.getFullyAuthenticatedUser()).toString());
+				
+				NodeRef currentUserNodeRef = personService.getPerson(AuthenticationUtil.getFullyAuthenticatedUser());
+				if(currentUserNodeRef!=null) {
+					model.put("currentUserNodeRef", currentUserNodeRef.toString());
+				}
 				
 				ret.put("persistedObject", scriptService.executeScript(processScriptNodeRef, ContentModel.PROP_CONTENT, model));
 			}

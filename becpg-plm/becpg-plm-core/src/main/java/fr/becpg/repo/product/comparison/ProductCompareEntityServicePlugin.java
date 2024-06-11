@@ -25,6 +25,7 @@ import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 public class ProductCompareEntityServicePlugin extends DefaultCompareEntityServicePlugin {
 
 	
+	/** {@inheritDoc} */
 	@Override
 	protected void multiLevelComparison(QName dataListType, String charactName, String pivotKey, NodeRef entity1NodeRef,
 			NodeRef entity2NodeRef, int nbEntities, int comparisonPosition, Map<String, CompareResultDataItem> comparisonMap,
@@ -251,11 +252,13 @@ public class ProductCompareEntityServicePlugin extends DefaultCompareEntityServi
 		return !value.equals(firstValue);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isComparableProperty(QName qName, boolean isDataList) {
 		return super.isComparableProperty(qName, isDataList);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean applyTo(QName entityType) {
 		return entityType.equals(PLMModel.TYPE_FINISHEDPRODUCT) || entityType.equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT);

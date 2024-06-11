@@ -16,9 +16,9 @@
   You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 -->
 <webscript>
-	<shortname>Olap Schema</shortname>
-	<description>Olap Schema service - retrieve olap Schema</description>	
-	<url>/becpg/olap/v3/schema?instance={instanceId}</url>
-	<format default="xml">argument</format>
+	<shortname>EntityIcons</shortname>
+	<description>Retrieve CSS for custom entity icons</description>
+	<url>/becpg/entity/icons.css</url>
 	<authentication>user</authentication>
+	<transaction allow="readonly" >required</transaction>
 </webscript>

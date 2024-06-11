@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2021 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.entity.remote.extractor;
@@ -33,6 +33,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.query.PagingResults;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.AssociationRef;
@@ -64,8 +65,7 @@ import fr.becpg.repo.entity.remote.RemoteEntityService;
  * @author matthieu
  * @version $Id: $Id
  */
-public class ExcelXmlEntityVisitor  extends AbstractEntityVisitor{
-
+public class ExcelXmlEntityVisitor extends AbstractEntityVisitor {
 
 	/**
 	 * <p>Constructor for ExcelXmlEntityVisitor.</p>
@@ -85,21 +85,10 @@ public class ExcelXmlEntityVisitor  extends AbstractEntityVisitor{
 	private static final Log logger = LogFactory.getLog(ExcelXmlEntityVisitor.class);
 
 	/** {@inheritDoc} */
+	@Override
 	public void visit(NodeRef entityNodeRef, OutputStream result) throws XMLStreamException {
 
-		// Create an output factory
-		XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
-		xmlof.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, true);
-		// Create an XML stream writer
-		XMLStreamWriter xmlw = xmlof.createXMLStreamWriter(result);
-
-		if (logger.isDebugEnabled()) {
-			logger.debug("Indent xml formater ON");
-			xmlw = new IndentingXMLStreamWriter(xmlw);
-		}
-
-		// Write XML prologue
-		xmlw.writeStartDocument();
+		XMLStreamWriter xmlw = createWriter(result);
 		// Visit node
 		visitNode(entityNodeRef, null, xmlw, true, true, false);
 		// Write document end. This closes all open structures
@@ -110,24 +99,14 @@ public class ExcelXmlEntityVisitor  extends AbstractEntityVisitor{
 	}
 
 	/** {@inheritDoc} */
-	public void visit(List<NodeRef> entities, OutputStream result) throws XMLStreamException {
-		// Create an output factory
-		XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
-		xmlof.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, true);
-		// Create an XML stream writer
-		XMLStreamWriter xmlw = xmlof.createXMLStreamWriter(result);
+	@Override
+	public void visit(PagingResults<NodeRef> entities, OutputStream result) throws XMLStreamException {
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("Indent xml formater ON");
-			xmlw = new IndentingXMLStreamWriter(xmlw);
-		}
+		XMLStreamWriter xmlw = createWriter(result);
 
-		// Write XML prologue
-		xmlw.writeStartDocument();
-		// Visit node
 		xmlw.writeStartElement(RemoteEntityService.ELEM_ENTITIES);
 
-		for (NodeRef nodeRef : entities) {
+		for (NodeRef nodeRef : entities.getPage()) {
 			visitNode(nodeRef, null, xmlw, false, false, false);
 		}
 
@@ -140,8 +119,20 @@ public class ExcelXmlEntityVisitor  extends AbstractEntityVisitor{
 	}
 
 	/** {@inheritDoc} */
+	@Override
 	public void visitData(NodeRef entityNodeRef, OutputStream result) throws XMLStreamException {
 
+		XMLStreamWriter xmlw = createWriter(result);
+		// Visit node
+		visitNode(entityNodeRef, null, xmlw, false, false, true);
+		// Write document end. This closes all open structures
+		xmlw.writeEndDocument();
+		// Close the writer to flush the output
+		xmlw.close();
+
+	}
+
+	private XMLStreamWriter createWriter(OutputStream result) throws XMLStreamException {
 		// Create an output factory
 		XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
 		xmlof.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, true);
@@ -156,18 +147,14 @@ public class ExcelXmlEntityVisitor  extends AbstractEntityVisitor{
 		// Write XML prologue
 		xmlw.writeStartDocument();
 		// Visit node
-		visitNode(entityNodeRef, null, xmlw ,false, false, true);
-		// Write document end. This closes all open structures
-		xmlw.writeEndDocument();
-		// Close the writer to flush the output
-		xmlw.close();
-
+		return xmlw;
 	}
 
-	private void visitNode(NodeRef nodeRef, String name,  XMLStreamWriter xmlw, boolean assocs, boolean props, boolean content) throws XMLStreamException {
+	private void visitNode(NodeRef nodeRef, String name, XMLStreamWriter xmlw, boolean assocs, boolean props, boolean content)
+			throws XMLStreamException {
 
 		QName nodeType = nodeService.getType(nodeRef).getPrefixedQName(namespaceService);
-		xmlw.writeStartElement(name!=null? name : getXmlName( nodeType));
+		xmlw.writeStartElement(name != null ? name : getXmlName(nodeType));
 
 		NodeRef parentRef = nodeService.getPrimaryParent(nodeRef).getParentRef();
 
@@ -176,8 +163,8 @@ public class ExcelXmlEntityVisitor  extends AbstractEntityVisitor{
 		xmlw.writeAttribute(RemoteEntityService.ATTR_PATH, path.toPrefixString(namespaceService));
 		xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE, RemoteEntityService.NODE_TYPE);
 
-
-		xmlw.writeAttribute(RemoteEntityService.ATTR_NAME, (String) nodeService.getProperty(nodeRef, RemoteHelper.getPropName(nodeType,entityDictionaryService)));
+		xmlw.writeAttribute(RemoteEntityService.ATTR_NAME,
+				(String) nodeService.getProperty(nodeRef, RemoteHelper.getPropName(nodeType, entityDictionaryService)));
 		xmlw.writeAttribute(RemoteEntityService.ATTR_NODEREF, nodeRef.toString());
 
 		if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_CODE)) {
@@ -226,8 +213,7 @@ public class ExcelXmlEntityVisitor  extends AbstractEntityVisitor{
 
 	private void visitAssocs(NodeRef nodeRef, XMLStreamWriter xmlw) throws XMLStreamException {
 
-		Map<QName, AssociationDefinition> assocs = new HashMap<>(entityDictionaryService.getType(nodeService.getType(nodeRef))
-				.getAssociations());
+		Map<QName, AssociationDefinition> assocs = new HashMap<>(entityDictionaryService.getType(nodeService.getType(nodeRef)).getAssociations());
 		for (QName aspect : nodeService.getAspects(nodeRef)) {
 			assocs.putAll(entityDictionaryService.getAspect(aspect).getAssociations());
 		}
@@ -245,7 +231,7 @@ public class ExcelXmlEntityVisitor  extends AbstractEntityVisitor{
 				for (ChildAssociationRef assocRef : assocRefs) {
 					if (assocRef.getTypeQName().equals(assocDef.getName())) {
 						NodeRef childRef = assocRef.getChildRef();
-						visitNode(childRef,null, xmlw, true, true, false);
+						visitNode(childRef, null, xmlw, true, true, false);
 					}
 				}
 				xmlw.writeEndElement();
@@ -259,7 +245,7 @@ public class ExcelXmlEntityVisitor  extends AbstractEntityVisitor{
 					&& !assocDef.getName().getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
 					&& !assocDef.getName().equals(ContentModel.ASSOC_ORIGINAL) && !assocDef.isChild()) {
 				QName nodeType = assocDef.getName().getPrefixedQName(namespaceService);
-				xmlw.writeStartElement( getXmlName( nodeType));
+				xmlw.writeStartElement(getXmlName(nodeType));
 
 				xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE, RemoteEntityService.ASSOC_TYPE);
 				List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, assocDef.getName());
@@ -275,7 +261,7 @@ public class ExcelXmlEntityVisitor  extends AbstractEntityVisitor{
 	}
 
 	private String getXmlName(QName nodeType) {
-		return nodeType.toPrefixString(namespaceService).replace(":","_");
+		return nodeType.toPrefixString(namespaceService).replace(":", "_");
 	}
 
 	private void visitProps(NodeRef nodeRef, XMLStreamWriter xmlw) throws XMLStreamException {
@@ -284,15 +270,15 @@ public class ExcelXmlEntityVisitor  extends AbstractEntityVisitor{
 		if (props != null) {
 			for (Map.Entry<QName, Serializable> entry : props.entrySet()) {
 				QName propQName = entry.getKey();
-				if (entry.getValue() != null && !propQName.getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
+				if ((entry.getValue() != null) && !propQName.getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
 						&& !propQName.getNamespaceURI().equals(NamespaceService.RENDITION_MODEL_1_0_URI)
 						&& !propQName.getNamespaceURI().equals(ReportModel.REPORT_URI) && !propQName.equals(ContentModel.PROP_CONTENT)) {
 					PropertyDefinition propertyDefinition = entityDictionaryService.getProperty(entry.getKey());
 					if (propertyDefinition != null) {
 						QName propName = entry.getKey().getPrefixedQName(namespaceService);
-						xmlw.writeStartElement( getXmlName( propName));
-						xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE, propertyDefinition.getDataType().getName()
-								.toPrefixString(namespaceService));
+						xmlw.writeStartElement(getXmlName(propName));
+						xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE,
+								propertyDefinition.getDataType().getName().toPrefixString(namespaceService));
 						visitPropValue(entry.getValue(), xmlw);
 						xmlw.writeEndElement();
 					} else {
@@ -316,15 +302,13 @@ public class ExcelXmlEntityVisitor  extends AbstractEntityVisitor{
 				xmlw.writeEndElement();
 			}
 			xmlw.writeEndElement();
-		} else if (value instanceof NodeRef) {
-			visitNode((NodeRef) value, null, xmlw, false, false, false);
-		} else if (value instanceof Date) {
-			xmlw.writeCharacters(ISO8601DateFormat.format((Date) value));
+		} else if (value instanceof NodeRef node) {
+			visitNode(node, null, xmlw, false, false, false);
+		} else if (value instanceof Date date) {
+			xmlw.writeCharacters(ISO8601DateFormat.format(date));
 		} else {
 			xmlw.writeCData(value.toString());
 		}
 	}
-
-	
 
 }
