@@ -227,7 +227,13 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 												packMateriDataItem.getPmlRecycledPercentage() != null ? packMateriDataItem.getPmlRecycledPercentage()
 														: 0d)
 												.multiply(plmWeight).divide(BigDecimal.valueOf(100d), MathContext.DECIMAL64);
-										Pair<PackagingLevel, NodeRef> key = new Pair<>(packMateriDataItem.getPkgLevel(),
+										PackagingLevel pkgLevel = packMateriDataItem.getPkgLevel();
+										
+										if (pkgLevel == null && compoProduct.isRawMaterial()) {
+											pkgLevel = PackagingLevel.Primary;
+										}
+										
+										Pair<PackagingLevel, NodeRef> key = new Pair<>(pkgLevel,
 												packMateriDataItem.getPmlMaterial());
 
 										if (toUpdate.containsKey(key)) {
