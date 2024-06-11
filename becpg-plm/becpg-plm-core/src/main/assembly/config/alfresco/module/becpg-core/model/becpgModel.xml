@@ -3752,7 +3752,7 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>bcpg:ing</class>
+						<class>bcpg:charact</class>
 						<mandatory>false</mandatory>
 						<many>true</many>
 					</target>
@@ -3777,7 +3777,10 @@
 				</property>
 				<property name="bcpg:irlCitation">
 					<type>d:mltext</type>
-					<index enabled="false"></index>
+					<index enabled="true">
+						<tokenised>true</tokenised>
+						<facetable>false</facetable>
+					</index>
 				</property>
 				<property name="bcpg:irlResultIndicator">
 					<type>d:mltext</type>
@@ -3788,16 +3791,25 @@
 				</property>
 				<property name="bcpg:irlUsages">
 					<type>d:mltext</type>
-					<index enabled="false"></index>
+					<index enabled="true">
+						<tokenised>true</tokenised>
+						<facetable>false</facetable>
+					</index>
 				</property>
 				<property name="bcpg:irlRestrictionLevels">
 					<type>d:mltext</type>
-					<index enabled="false"></index>
+					<index enabled="true">
+						<tokenised>true</tokenised>
+						<facetable>false</facetable>
+					</index>
 				</property>
 				<property name="bcpg:irlSources">
 					<type>d:noderef</type>
 					<multiple>true</multiple>
-					<index enabled="false"></index>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
 				</property>
 			</properties>
 			<mandatory-aspects>
@@ -4236,6 +4248,15 @@
 		<aspect name="bcpg:diluentAspect"></aspect>
 
 		<aspect name="bcpg:waterAspect"></aspect>
+		
+		<aspect name="bcpg:evaporableAspect">
+			<properties>
+				<property name="bcpg:evaporatedRate">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+			</properties>
+		</aspect>
 		
 		<!-- Aspect used to store the entity type of the template (entityFolderTpl, entityTpl, etc...) -->
 		<aspect name="bcpg:entityTplAspect">
@@ -5463,6 +5484,11 @@
 					<constraints>
 						<constraint ref="bcpg:nutListUnit" />
 					</constraints>
+				</property>
+			    <property name="bcpg:nutListRoundedValuePrepared">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
 				</property>
 			</properties>
 		</aspect>

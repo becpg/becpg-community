@@ -1,6 +1,7 @@
 package fr.becpg.repo.product.extractor;
 
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
+import fr.becpg.repo.entity.datalist.impl.SimpleExtractor;
 
 /**
  * <p>
@@ -10,11 +11,12 @@ import fr.becpg.repo.entity.datalist.data.DataListFilter;
  * @author matthieu
  * @version $Id: $Id
  */
-public class IngRegulatoryListExtractor extends SimpleCharactListExtractor {
+public class IngRegulatoryListExtractor extends SimpleExtractor {
 
 	private static final String ING_REGULATORY_LIST = "ingRegulatoryList";
 
 	
+	/** {@inheritDoc} */
 	@Override
 	public boolean hasWriteAccess() {
 		return false;

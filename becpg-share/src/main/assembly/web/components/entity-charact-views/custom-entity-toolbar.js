@@ -58,7 +58,7 @@
 		  							 var column = response.json.columns[i], columnName = column.name.replace(":", "_"), columnLabel = (column.label!="hidden"? column.label :"");
 	                                 if (Object.keys(column).includes("label") && ["datasource"].indexOf(column.label) < 0) {
 		
-		                                 if (column.dataType == "nested" && column.columns) {
+		                                 if ((column.dataType == "nested" || column.dataType == "nested_column") && column.columns) {
 		                                    for ( var j = 0; j < column.columns.length; j++) { 
 										    var col = column.columns[j];                             
 			 								if (Object.keys(col).includes("label") && ["datasource"].indexOf(col.label) < 0) {                                            

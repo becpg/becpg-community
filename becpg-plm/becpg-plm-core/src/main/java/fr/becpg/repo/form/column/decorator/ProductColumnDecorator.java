@@ -37,6 +37,7 @@ public class ProductColumnDecorator implements ColumnDecorator, InitializingBean
 	@Autowired
 	private BecpgFormService becpgFormService;
 
+	/** {@inheritDoc} */
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		becpgFormService.registerDecorator(this);

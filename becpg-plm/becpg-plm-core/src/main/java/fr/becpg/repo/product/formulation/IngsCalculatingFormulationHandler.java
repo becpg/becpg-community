@@ -3,12 +3,10 @@
  */
 package fr.becpg.repo.product.formulation;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -16,6 +14,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import org.alfresco.service.cmr.repository.MLText;
@@ -32,6 +31,7 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
@@ -43,6 +43,7 @@ import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.product.helper.IngListHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.variant.filters.VariantFilters;
@@ -69,6 +70,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 	private NodeService nodeService;
 
+	private AssociationService associationService;
+
 	protected AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
 	/**
@@ -82,6 +85,15 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
+	}
+
+	/**
+	 * <p>Setter for the field <code>associationService</code>.</p>
+	 *
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object
+	 */
+	public void setAssociationService(AssociationService associationService) {
+		this.associationService = associationService;
 	}
 
 	/**
@@ -172,8 +184,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		}
 
 		Set<NodeRef> visited = new HashSet<>();
-		
-		boolean shouldSort = compoList!=null && compoList.size()> 1;
+
+		boolean shouldSort = compoList != null && compoList.size() > 1;
 
 		Double totalQtyUsedWithYield = 0d;
 		Double totalVolumeUsed = 0d;
@@ -221,14 +233,13 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				Double totalQtyIngWithYield = totalQtyIngMap.get(ingListDataItem.getName() + YIELD_SUFFIX);
 				if ((totalQtyIngWithYield != null) && !formulatedProduct.isGeneric()) {
 					Double x = (formulatedProduct.getYield() != null ? formulatedProduct.getYield() / 100d : 1d);
-					
-					Double qtyPercWithYield = (totalQtyIngWithYield)
-							/ (totalQtyUsedWithYield );
+
+					Double qtyPercWithYield = (totalQtyIngWithYield) / (totalQtyUsedWithYield);
 
 					if ((formulatedProduct.getYield() != null) && nodeService.hasAspect(ingListDataItem.getIng(), PLMModel.ASPECT_WATER)) {
-						qtyPercWithYield = qtyPercWithYield /x + (100d - 100d/x);
+						qtyPercWithYield = qtyPercWithYield / x + (100d - 100d / x);
 					} else {
-						qtyPercWithYield = qtyPercWithYield/x;
+						qtyPercWithYield = qtyPercWithYield / x;
 					}
 					ingListDataItem.setQtyPercWithYield(qtyPercWithYield);
 				} else {
@@ -240,11 +251,11 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 					Double qtyPercWithSecondaryYield = ingListDataItem.getQtyPercWithYield() != null ? ingListDataItem.getQtyPercWithYield()
 							: ingListDataItem.getQtyPerc();
-					 Double x= (formulatedProduct.getSecondaryYield() / 100d);
+					Double x = (formulatedProduct.getSecondaryYield() / 100d);
 					if (nodeService.hasAspect(ingListDataItem.getIng(), PLMModel.ASPECT_WATER)) {
-					
-						qtyPercWithSecondaryYield = qtyPercWithSecondaryYield /x + (100d - 100d/x);
-						
+
+						qtyPercWithSecondaryYield = qtyPercWithSecondaryYield / x + (100d - 100d / x);
+
 					} else {
 
 						if (qtyPercWithSecondaryYield != null) {
@@ -288,7 +299,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		}
 
 		// sort collection
-		if(shouldSort) {
+		if (shouldSort) {
 			sortIL(formulatedProduct.getIngList());
 		}
 	}
@@ -298,10 +309,9 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 		ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(reqNodeRef);
 		if (reqCtrl == null) {
-			reqCtrl = ReqCtrlListDataItem.build().ofType(requirementType)
-					.withMessage(message).ofDataType(requirementDataType);
-			
-			reqCtrlMap.put(reqNodeRef, reqCtrl	);
+			reqCtrl = ReqCtrlListDataItem.build().ofType(requirementType).withMessage(message).ofDataType(requirementDataType);
+
+			reqCtrlMap.put(reqNodeRef, reqCtrl);
 		} else {
 			reqCtrl.setReqDataType(requirementDataType);
 		}
@@ -374,8 +384,9 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 		// calculate ingList of formulated product
 		calculateILOfPart(formulatedProduct, componentProductData, compoListDataItem,
-				CompositeHelper.getHierarchicalCompoList(componentProductData.getIngList()), formulatedProduct.getIngList(), retainNodes,
-				totalQtyIngMap, totalQtyVolMap, null, formulatedProduct.isGeneric());
+				CompositeHelper.getHierarchicalCompoList(
+						IngListHelper.extractParentList(componentProductData.getIngList(), associationService, alfrescoRepository)),
+				formulatedProduct.getIngList(), retainNodes, totalQtyIngMap, totalQtyVolMap, null, formulatedProduct.isGeneric());
 	}
 
 	/**
@@ -418,7 +429,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				newIngListDataItem.setIsSupport(true);
 				ingList.add(newIngListDataItem);
 			}
-			
+
 			//Keep Sort
 			newIngListDataItem.setSort(ingListDataItem.getSort());
 
@@ -457,7 +468,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				}
 
 				if ((qtyIngWithYield != null)) {
-                              
+
 					double valueToAdd = qty * qtyIngWithYield;
 
 					if (totalQtyIngWithYield == null) {
@@ -466,7 +477,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 					if ((FormulationHelper.getYield(compoListDataItem) != null)
 							&& nodeService.hasAspect(ingListDataItem.getIng(), PLMModel.ASPECT_WATER)) {
-						 valueToAdd = qty *  (( qtyIngWithYield ) - (100d - FormulationHelper.getYield(compoListDataItem)) );	
+						valueToAdd = qty * ((qtyIngWithYield) - (100d - FormulationHelper.getYield(compoListDataItem)));
 					}
 
 					totalQtyIngWithYield += valueToAdd;
@@ -607,45 +618,39 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	}
 
 	/**
-	 * Sort ingList by qty perc in descending order.
+	 * Sort ingList by qty perc in descending order group by parent
 	 *
 	 */
 	private void sortIL(List<IngListDataItem> ingList) {
-
 		if (!ingList.isEmpty()) {
 			final IngListDataItem nullPlaceholder = new IngListDataItem();
 			Map<IngListDataItem, List<IngListDataItem>> byParent = ingList.stream()
-					.collect(Collectors.groupingBy(obj -> (obj.getParent() == null ? nullPlaceholder : obj.getParent()), Collectors.toList()));
+					.collect(Collectors.groupingBy(item -> item.getParent() == null ? nullPlaceholder : item.getParent()));
 
-			Deque<IngListDataItem> processor = new ArrayDeque<>();
+			List<IngListDataItem> sortedList = new ArrayList<>();
+			AtomicInteger index = new AtomicInteger(1);
 
-			int i = 1;
+			sorted(byParent.getOrDefault(nullPlaceholder, Collections.emptyList())).forEach(root -> processItem(root, byParent, sortedList));
 
-			byParent.getOrDefault(nullPlaceholder, Collections.emptyList()).stream().sorted(Comparator
-					.comparing(IngListDataItem::getQtyPerc, Comparator.nullsFirst(Comparator.naturalOrder())).thenComparing(this::getLegaleName))
-					.toList().forEach(processor::add);
-
-			while (!processor.isEmpty()) {
-				i++;
-				IngListDataItem il = processor.removeLast();
-				byParent.getOrDefault(il, Collections.emptyList()).stream()
-						.sorted(Comparator.comparing(IngListDataItem::getQtyPerc, Comparator.nullsFirst(Comparator.naturalOrder()))
-								.thenComparing(this::getLegaleName))
-						.toList().forEach(processor::add);
-
-				il.setSort(i);
-
-			}
-
+			sortedList.forEach(item -> item.setSort(index.getAndIncrement()));
 			ingList.sort(Comparator.comparing(IngListDataItem::getSort, Comparator.nullsLast(Comparator.naturalOrder())));
 		}
-
 	}
 
-	private String getLegaleName(IngListDataItem ingListDataItem) {
-		
-		if(ingListDataItem.getIng()!=null ) {
-			IngItem ingItem  = (IngItem) alfrescoRepository.findOne(ingListDataItem.getIng());
+	private void processItem(IngListDataItem item, Map<IngListDataItem, List<IngListDataItem>> byParent, List<IngListDataItem> sortedList) {
+		sortedList.add(item);
+		sorted(byParent.getOrDefault(item, Collections.emptyList())).forEach(child -> processItem(child, byParent, sortedList));
+	}
+
+	private List<IngListDataItem> sorted(List<IngListDataItem> items) {
+		return items.stream().sorted(Comparator.comparing(IngListDataItem::getQtyPerc, Comparator.nullsLast(Comparator.reverseOrder()))
+				.thenComparing(Comparator.comparing(this::getLegalName))).toList();
+	}
+
+	private String getLegalName(IngListDataItem ingListDataItem) {
+
+		if (ingListDataItem.getIng() != null) {
+			IngItem ingItem = (IngItem) alfrescoRepository.findOne(ingListDataItem.getIng());
 			return ingItem.getLegalName(Locale.getDefault());
 		}
 		return ingListDataItem.getName();

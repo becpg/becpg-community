@@ -39,10 +39,20 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 
 	private AlfrescoRepository<ProductData> alfrescoRepositoryProductData;
 
+	/**
+	 * <p>Setter for the field <code>entityTplService</code>.</p>
+	 *
+	 * @param entityTplService a {@link fr.becpg.repo.entity.EntityTplService} object
+	 */
 	public void setEntityTplService(EntityTplService entityTplService) {
 		this.entityTplService = entityTplService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>alfrescoRepositoryProductData</code>.</p>
+	 *
+	 * @param alfrescoRepositoryProductData a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 */
 	public void setAlfrescoRepositoryProductData(AlfrescoRepository<ProductData> alfrescoRepositoryProductData) {
 		this.alfrescoRepositoryProductData = alfrescoRepositoryProductData;
 	}
@@ -146,11 +156,13 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 		return RequirementDataType.Physicochem;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected boolean propagateModeEnable(ProductData formulatedProduct) {
 		return false;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected PhysicoChemListDataItem newSimpleListDataItem(NodeRef charactNodeRef) {
 		PhysicoChemListDataItem ret = new PhysicoChemListDataItem();

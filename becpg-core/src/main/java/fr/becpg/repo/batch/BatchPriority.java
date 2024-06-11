@@ -1,5 +1,11 @@
 package fr.becpg.repo.batch;
 
+/**
+ * <p>BatchPriority class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public enum BatchPriority {
 
 	VERY_LOW(4),
@@ -14,6 +20,11 @@ public enum BatchPriority {
 		this.priority = priority;
 	}
 	
+	/**
+	 * <p>priority.</p>
+	 *
+	 * @return a int
+	 */
 	public int priority() {
 		return priority;
 	}

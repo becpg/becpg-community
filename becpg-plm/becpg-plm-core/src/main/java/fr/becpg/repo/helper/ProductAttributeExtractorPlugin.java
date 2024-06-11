@@ -30,6 +30,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.MPMModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.RepoConsts;
@@ -51,17 +52,19 @@ public class ProductAttributeExtractorPlugin extends AbstractExprNameExtractor {
 
 	@Autowired
 	private WUsedListService wUsedListService;
-	
+
 	@Autowired
 	private SystemConfigurationService systemConfigurationService;
-	
+
+	@Autowired
+	private AssociationService associationService;
+
 	private String productNameFormat() {
 		return systemConfigurationService.confValue("beCPG.product.name.format");
 	}
 
 	@Autowired
 	private EntityDictionaryService entityDictionaryService;
-
 
 	/** {@inheritDoc} */
 	@Override
@@ -74,36 +77,46 @@ public class ProductAttributeExtractorPlugin extends AbstractExprNameExtractor {
 	public String extractPropName(QName type, NodeRef nodeRef) {
 		return extractExpr(nodeRef, productNameFormat());
 	}
-	
+
+	/** {@inheritDoc} */
 	@Override
 	public String extractPropName(JSONObject jsonEntity) {
 		return expressionService.extractExpr(jsonEntity, productNameFormat());
 	}
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public String extractMetadata(QName type, NodeRef nodeRef) {
-		String ret = type.toPrefixString(namespaceService).split(":")[1] + "-" + nodeService.getProperty(nodeRef, PLMModel.PROP_PRODUCT_STATE);
+		String typeCss =  type.toPrefixString(namespaceService).split(":")[1];
+		
+		String ret = typeCss+" "+typeCss + "-" + nodeService.getProperty(nodeRef, PLMModel.PROP_PRODUCT_STATE);
 		if (nodeService.hasAspect(nodeRef, PLMModel.ASPECT_NUTRIENT_PROFILING_SCORE)) {
 			String nutClass = (String) nodeService.getProperty(nodeRef, PLMModel.PROP_NUTRIENT_PROFILING_CLASS);
 			if (nutClass != null && !nutClass.isEmpty() && nutClass.length() < 5) {
 				ret += " nutrientClass-" + nutClass;
 			}
 		}
+
+		NodeRef entityTplRef = associationService.getTargetAssoc(nodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
+		if (entityTplRef != null) {
+			ret += " "+typeCss + "-" + entityTplRef.getId();
+		}
+
 		return ret;
 	}
-	
+
+	/** {@inheritDoc} */
 	@Override
 	public boolean matchCriteria(NodeRef nodeRef, Map<String, String> criteriaMap) {
 		return matchWUsedCriteria(nodeRef, criteriaMap, PLMModel.ASSOC_COMPOLIST_PRODUCT)
 				|| matchWUsedCriteria(nodeRef, criteriaMap, PLMModel.ASSOC_PACKAGINGLIST_PRODUCT)
 				|| matchWUsedCriteria(nodeRef, criteriaMap, MPMModel.ASSOC_PL_RESOURCE);
 	}
-	
+
 	private boolean matchWUsedCriteria(NodeRef node, Map<String, String> criteriaMap, QName criteriaAssoc) {
 
 		String assocString = criteriaAssoc.toPrefixString(namespaceService);
-		
+
 		if (criteriaMap != null && criteriaMap.containsKey(assocString)) {
 
 			String propValue = criteriaMap.get(assocString);

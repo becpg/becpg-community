@@ -43,12 +43,16 @@ public class GetEntityWebScript extends AbstractEntityWebScript {
 
 	/** {@inheritDoc} */
 	@Override
-	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
+	public void executeInternal(WebScriptRequest req, WebScriptResponse resp) throws IOException {
 		NodeRef entityNodeRef = findEntity(req);
 
-		logger.debug("Get entity: " + entityNodeRef);
-
 		try (OutputStream out = resp.getOutputStream()) {
+			
+			if(logger.isDebugEnabled()) {
+				logger.debug("Get entity: " + entityNodeRef);
+				logger.debug(" - with fields: " +  extractFields(req));
+				logger.debug(" - with datalists: " + extractLists(req));
+			}
 
 			RemoteParams params = new RemoteParams(getFormat(req));
 			params.setFilteredFields(extractFields(req), namespaceService);
@@ -56,7 +60,7 @@ public class GetEntityWebScript extends AbstractEntityWebScript {
 			params.setJsonParams(extractParams(req));
 			resp.setContentType(getContentType(req));
 			resp.setContentEncoding("UTF-8");
-
+		
 			remoteEntityService.getEntity(entityNodeRef, out, params);
 
 			resp.setStatus(Status.STATUS_OK);

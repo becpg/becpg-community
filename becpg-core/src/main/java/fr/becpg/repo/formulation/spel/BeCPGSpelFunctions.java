@@ -166,7 +166,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 */
 		public Serializable propValue(RepositoryEntity item, String qname) {
 			if (item != null) {
-				assertIsNotMappedQname(item, getQName(qname));
+				assertIsNotMappedQname(item, getQName(qname),false);
 				Serializable value = item.getExtraProperties().get(getQName(qname));
 				if (value == null) {
 					value = nodeService.getProperty(item.getNodeRef(), getQName(qname));
@@ -271,7 +271,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 */
 		public Serializable setValue(RepositoryEntity item, String qname, Serializable value) {
 			if (item != null) {
-				assertIsNotMappedQname(item, getQName(qname));
+				assertIsNotMappedQname(item, getQName(qname),true);
 				item.getExtraProperties().put(getQName(qname), value);
 				return value;
 			}
@@ -303,12 +303,12 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		public void setAssocs(RepositoryEntity entity, String qname, List<NodeRef> assocNodeRefs) {
-			assertIsNotMappedQname(entity, getQName(qname));
+			assertIsNotMappedQname(entity, getQName(qname),true);
 			setAssocs(entity.getNodeRef(), qname, assocNodeRefs);
 		}
 
 		public void setAssocs(String qname, List<NodeRef> assocNodeRefs) {
-			assertIsNotMappedQname(entity, getQName(qname));
+			assertIsNotMappedQname(entity, getQName(qname),true);
 			setAssocs(entity.getNodeRef(), qname, assocNodeRefs);
 		}
 
@@ -325,12 +325,12 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		public void setAssoc(String qname, NodeRef assocNodeRef) {
-			assertIsNotMappedQname(entity, getQName(qname));
+			assertIsNotMappedQname(entity, getQName(qname),true);
 			setAssoc(entity.getNodeRef(), qname, assocNodeRef);
 		}
 
 		public void setAssoc(RepositoryEntity entity, String qname, NodeRef assocNodeRef) {
-			assertIsNotMappedQname(entity, getQName(qname));
+			assertIsNotMappedQname(entity, getQName(qname),true);
 			setAssoc(entity.getNodeRef(), qname, assocNodeRef);
 		}
 
@@ -350,12 +350,12 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		public NodeRef assocValue(String qname) {
-			assertIsNotMappedQname(entity, getQName(qname));
+			assertIsNotMappedQname(entity, getQName(qname),false);
 			return assocValue(entity.getNodeRef(), qname);
 		}
 
 		public NodeRef assocValue(RepositoryEntity entity, String qname) {
-			assertIsNotMappedQname(entity, getQName(qname));
+			assertIsNotMappedQname(entity, getQName(qname),false);
 			return assocValue(entity.getNodeRef(), qname);
 		}
 
@@ -374,12 +374,12 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		public List<NodeRef> assocValues(RepositoryEntity entity, String qname) {
-			assertIsNotMappedQname(entity, getQName(qname));
+			assertIsNotMappedQname(entity, getQName(qname),false);
 			return assocValues(entity.getNodeRef(), qname);
 		}
 
 		public List<NodeRef> assocValues(String qname) {
-			assertIsNotMappedQname(entity, getQName(qname));
+			assertIsNotMappedQname(entity, getQName(qname),false);
 			return assocValues(entity.getNodeRef(), qname);
 		}
 
@@ -838,7 +838,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		/**
 		 * Helper @beCPG.formatNumber($number, $format )
 		 *
-		 *    Example: @beCPG.formatNumber(10,00005,
+		 *    Example: @beCPG.formatNumber(10.00005d,
 		 *                              "0.##")
 		 *
 		 * @param number
@@ -852,8 +852,8 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		/**
 		 * Helper  @beCPG.formatDate($date )
 		 *
-		 *  Example: @beCPG.formatNumber(10,00005,
-		 *                         "0.##")
+		 *  Example: @beCPG.formatDate(new
+		 *                          java.util.Date() )
 		 *
 		 * @param date
 		 * @return standard becpg date format
@@ -1099,10 +1099,10 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 
 	}
 
-	private void assertIsNotMappedQname(RepositoryEntity item, QName qName) {
-		if (item != null && repositoryEntityDefReader.isRegisteredQName(item, qName)) {
-			throw new FormulateException(String.format("QName is %s mapped in entity. Please use entity.%s to access it ",
-					qName.getPrefixedQName(namespaceService), qName.getLocalName()));
+	private void assertIsNotMappedQname(RepositoryEntity item, QName qName, boolean allowWrite) {
+		if (item != null && repositoryEntityDefReader.isRegisteredQName(item, qName, allowWrite)) {
+			throw new FormulateException(String.format("QName is %s mapped in entity %s. Please use entity.%s to access it ",
+					qName.getPrefixedQName(namespaceService), item.getClass().getName() , qName.getLocalName()));
 		}
 	}
 

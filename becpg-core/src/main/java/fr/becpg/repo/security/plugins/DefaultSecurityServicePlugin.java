@@ -8,12 +8,19 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.security.data.PermissionModel;
 
+/**
+ * <p>DefaultSecurityServicePlugin class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class DefaultSecurityServicePlugin implements SecurityServicePlugin {
 
 	@Autowired
 	private AuthorityService authorityService;
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean checkIsInSecurityGroup(NodeRef nodeRef, PermissionModel permissionModel) {
 
@@ -26,6 +33,7 @@ public class DefaultSecurityServicePlugin implements SecurityServicePlugin {
 		return false;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean accept(QName nodeType) {
 		return true;

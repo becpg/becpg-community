@@ -24,6 +24,12 @@ import org.springframework.stereotype.Service;
 import fr.becpg.repo.authentication.provider.IdentityServiceAccountProvider;
 import fr.becpg.repo.mail.BeCPGMailService;
 
+/**
+ * <p>BeCPGUserAccountService class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class BeCPGUserAccountService {
 
@@ -50,6 +56,12 @@ public class BeCPGUserAccountService {
 	@Autowired
 	private IdentityServiceAccountProvider identityServiceAccountProvider;
 
+	/**
+	 * <p>getOrCreateUser.</p>
+	 *
+	 * @param userAccount a {@link fr.becpg.repo.authentication.BeCPGUserAccount} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public NodeRef getOrCreateUser(BeCPGUserAccount userAccount) {
 		return AuthenticationUtil.runAsSystem(() -> {
 			String userName = createTenantAware(userAccount.getUserName());

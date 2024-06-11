@@ -44,9 +44,9 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  *
  * @author matthieu
  * @version $Id: $Id
- * 
- *  Autocomplete plugin that provide certification 
- * 
+ *
+ *  Autocomplete plugin that provide certification
+ *
  * Example:
  * <pre>
  * {@code
@@ -54,13 +54,12 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  *	  <control-param name="ds">becpg/autocomplete/certification
  * </control-param>
  * }
- * </pre>  
- * 
+ * </pre>
+ *
  *  Datasources:
- *  
+ *
  *  ds: becpg/autocomplete/certification
  *  param: {none} return certification list of all suppliers associated to product or if entity is not a product all the certifications in certification list.
- * 
  */
 @Service("certificationAutoCompletePlugin")
 @BeCPGPublicApi
@@ -74,9 +73,9 @@ public class CertificationAutoCompletePlugin extends TargetAssocAutoCompletePlug
 	private EntityListDAO entityListDAO;
 
 	/**
-	 * <p>getHandleSourceTypes.</p>
+	 * {@inheritDoc}
 	 *
-	 * @return an array of {@link java.lang.String} objects.
+	 * <p>getHandleSourceTypes.</p>
 	 */
 	@Override
 	public String[] getHandleSourceTypes() {

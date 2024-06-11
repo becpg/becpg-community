@@ -60,12 +60,22 @@ public class ReplacementListDataItem extends BeCPGDataObject {
 		return qtyPerc;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>loss</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "ecm:rlLoss")
 	public Double getLoss() {
 		return loss;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>loss</code>.</p>
+	 *
+	 * @param lossPerc a {@link java.lang.Double} object
+	 */
 	public void setLoss(Double lossPerc) {
 		this.loss = lossPerc;
 	}

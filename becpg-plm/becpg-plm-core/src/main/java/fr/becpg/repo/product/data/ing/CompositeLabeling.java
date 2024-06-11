@@ -3,19 +3,22 @@
  */
 package fr.becpg.repo.product.data.ing;
 
-import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
+import fr.becpg.repo.product.formulation.labeling.EvaporatedDataItem;
+import fr.becpg.repo.product.formulation.labeling.ReconstituableDataItem;
 
 /**
  * <p>CompositeLabeling class.</p>
@@ -34,14 +37,18 @@ public class CompositeLabeling extends LabelingComponent {
 
 	private Map<NodeRef, CompositeLabeling> ingListAtEnd = new LinkedHashMap<>();
 
-	private BigDecimal qtyTotal = BigDecimal.valueOf(0d);
-	private BigDecimal qtyTotalWithYield = BigDecimal.valueOf(0d);
+	private Double qtyTotal = 0d;
+	private Double qtyTotalWithYield = 0d;
 
 	private Double evaporatedQty = 0d;
 	private Double evaporatedVolume = 0d;
 
-	private BigDecimal volumeTotal = BigDecimal.valueOf(0d);
-	private BigDecimal volumeTotalWithYield = BigDecimal.valueOf(0d);
+	private transient Set<EvaporatedDataItem> evaporatedDataItems = new HashSet<>();
+
+	private transient Set<ReconstituableDataItem> reconstituableDataItems = new HashSet<>();
+
+	private Double volumeTotal = 0d;
+	private Double volumeTotalWithYield = 0d;
 
 	private IngTypeItem ingType;
 
@@ -102,6 +109,7 @@ public class CompositeLabeling extends LabelingComponent {
 	 *
 	 * @param list a {@link java.util.List} object.
 	 * @return a {@link java.util.List} object.
+	 * @param <T> a T class
 	 */
 	@SuppressWarnings("unchecked")
 	protected <T extends CompositeLabeling> List<T> clone(List<T> list) {
@@ -180,7 +188,7 @@ public class CompositeLabeling extends LabelingComponent {
 	 *
 	 * @return a {@link java.lang.Double} object.
 	 */
-	public BigDecimal getQtyTotal() {
+	public Double getQtyTotal() {
 		return qtyTotal;
 	}
 
@@ -189,30 +197,66 @@ public class CompositeLabeling extends LabelingComponent {
 	 *
 	 * @param qtyTotal a {@link java.lang.Double} object.
 	 */
-	public void setQtyTotal(BigDecimal qtyTotal) {
+	public void setQtyTotal(Double qtyTotal) {
 		this.qtyTotal = qtyTotal;
 	}
-	
 
-	public void setDoubleQtyTotal(Double qty) {
-		this.qtyTotal = qty!=null ? BigDecimal.valueOf(qty) : null;
-	}
-
-
+	/**
+	 * <p>Getter for the field <code>evaporatedQty</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	public Double getEvaporatedQty() {
 		return evaporatedQty;
 	}
 
+	/**
+	 * <p>Setter for the field <code>evaporatedQty</code>.</p>
+	 *
+	 * @param evaporatedQty a {@link java.lang.Double} object
+	 */
 	public void setEvaporatedQty(Double evaporatedQty) {
 		this.evaporatedQty = evaporatedQty;
 	}
 
+	/**
+	 * <p>Getter for the field <code>evaporatedVolume</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	public Double getEvaporatedVolume() {
 		return evaporatedVolume;
 	}
 
+	/**
+	 * <p>Setter for the field <code>evaporatedVolume</code>.</p>
+	 *
+	 * @param evaporatedVolume a {@link java.lang.Double} object
+	 */
 	public void setEvaporatedVolume(Double evaporatedVolume) {
 		this.evaporatedVolume = evaporatedVolume;
+	}
+
+	/**
+	 * <p>
+	 * Getter for the field <code>evaporatedDataItems</code>.
+	 * </p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
+	public Set<EvaporatedDataItem> getEvaporatedDataItems() {
+		return evaporatedDataItems;
+	}
+
+	/**
+	 * <p>
+	 * Getter for the field <code>reconstituableDataItems</code>.
+	 * </p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
+	public Set<ReconstituableDataItem> getReconstituableDataItems() {
+		return reconstituableDataItems;
 	}
 
 	/**
@@ -220,7 +264,7 @@ public class CompositeLabeling extends LabelingComponent {
 	 *
 	 * @return a {@link java.lang.Double} object.
 	 */
-	public BigDecimal getVolumeTotal() {
+	public Double getVolumeTotal() {
 		return volumeTotal;
 	}
 
@@ -229,14 +273,8 @@ public class CompositeLabeling extends LabelingComponent {
 	 *
 	 * @param volumeTotal a {@link java.lang.Double} object.
 	 */
-	public void setVolumeTotal(BigDecimal volumeTotal) {
+	public void setVolumeTotal(Double volumeTotal) {
 		this.volumeTotal = volumeTotal;
-	}
-
-	
-
-	public void setDoubleVolumeTotal(Double volumeTotal) {
-		this.volumeTotal = volumeTotal!=null ? BigDecimal.valueOf(volumeTotal) : null;
 	}
 
 	/**
@@ -338,6 +376,7 @@ public class CompositeLabeling extends LabelingComponent {
 		return new CompositeLabeling(this);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -347,6 +386,7 @@ public class CompositeLabeling extends LabelingComponent {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -375,8 +415,8 @@ public class CompositeLabeling extends LabelingComponent {
 	private void print(StringBuilder sb, String prefix, boolean isTail) {
 		sb.append(prefix).append(isTail ? "└──[" : "├──[")
 				.append(getLegalName(I18NUtil.getContentLocaleLang()) == null ? ROOT : getLegalName(I18NUtil.getContentLocaleLang()))
-				.append(" ( allergens:" + getAllergens() + ") ").append(" ( plural:" + isPlural() + ") ").append(" - ").append(getQty()).append("/").append(getQtyTotal()).append(" (")
-				.append(getQtyWithYield()).append("/").append(getQtyTotal()).append(") ")
+				.append(" (allergens:" + getAllergens() + ") ").append(" (plural:" + isPlural() + ") ").append(" - qty/qtyYield:(").append(getQty())
+				.append("/").append(getQtyWithYield()).append(") - total: ").append(getQtyTotal()).append(" - ")
 				.append(declarationType != null ? declarationType.toString() : "").append("]\n");
 		for (Iterator<CompositeLabeling> iterator = ingList.values().iterator(); iterator.hasNext();) {
 			CompositeLabeling labelingComponent = iterator.next();
@@ -385,8 +425,8 @@ public class CompositeLabeling extends LabelingComponent {
 			} else {
 				sb.append(prefix).append(isTail ? "    " : "│   ").append(!iterator.hasNext() ? "└──[" : "├──[")
 						.append(labelingComponent.getLegalName(I18NUtil.getContentLocaleLang()))
-						.append(" ( plural:" + labelingComponent.isPlural() + " ) ").append(" - ").append(labelingComponent.getQty())
-						.append(" (").append(labelingComponent.getQtyWithYield()+") ").append(" ]\n");
+						.append(" ( plural:" + labelingComponent.isPlural() + " ) ").append(" - ").append(labelingComponent.getQty()).append(" (")
+						.append(labelingComponent.getQtyWithYield() + ") ").append(" ]\n");
 			}
 
 		}

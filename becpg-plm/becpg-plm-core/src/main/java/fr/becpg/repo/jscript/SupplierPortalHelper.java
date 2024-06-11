@@ -96,48 +96,103 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 	
 	private EntityService entityService;
 	
+	/**
+	 * <p>Setter for the field <code>entityService</code>.</p>
+	 *
+	 * @param entityService a {@link fr.becpg.repo.entity.EntityService} object
+	 */
 	public void setEntityService(EntityService entityService) {
 		this.entityService = entityService;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object
+	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>entityDictionaryService</code>.</p>
+	 *
+	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object
+	 */
 	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
 		this.entityDictionaryService = entityDictionaryService;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>associationService</code>.</p>
+	 *
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object
+	 */
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>permissionService</code>.</p>
+	 *
+	 * @param permissionService a {@link org.alfresco.service.cmr.security.PermissionService} object
+	 */
 	public void setPermissionService(PermissionService permissionService) {
 		this.permissionService = permissionService;
 	}
 
 
+	/**
+	 * <p>Setter for the field <code>projectService</code>.</p>
+	 *
+	 * @param projectService a {@link fr.becpg.repo.project.ProjectService} object
+	 */
 	public void setProjectService(ProjectService projectService) {
 		this.projectService = projectService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>serviceRegistry</code>.</p>
+	 *
+	 * @param serviceRegistry a {@link org.alfresco.service.ServiceRegistry} object
+	 */
 	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
 		this.serviceRegistry = serviceRegistry;
 	}
 
+	/**
+	 * <p>Setter for the field <code>supplierPortalService</code>.</p>
+	 *
+	 * @param supplierPortalService a {@link fr.becpg.repo.supplier.SupplierPortalService} object
+	 */
 	public void setSupplierPortalService(SupplierPortalService supplierPortalService) {
 		this.supplierPortalService = supplierPortalService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>repoService</code>.</p>
+	 *
+	 * @param repoService a {@link fr.becpg.repo.helper.RepoService} object
+	 */
 	public void setRepoService(RepoService repoService) {
 		this.repoService = repoService;
 	}
 
 
+	/**
+	 * <p>Setter for the field <code>entityVersionService</code>.</p>
+	 *
+	 * @param entityVersionService a {@link fr.becpg.repo.entity.version.EntityVersionService} object
+	 */
 	public void setEntityVersionService(EntityVersionService entityVersionService) {
 		this.entityVersionService = entityVersionService;
 	}
@@ -151,8 +206,8 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 	 * @param task          a
 	 *                      {@link fr.becpg.repo.project.data.projectList.TaskListDataItem}
 	 *                      object.
-	 * @param entityNodeRef a {@link org.alfresco.repo.jscript.ScriptNode} object.
-	 * @param moveSupplier  a boolean.
+	 * @param entityNode a {@link org.alfresco.repo.jscript.ScriptNode} object
+	 * @return an array of {@link org.alfresco.repo.jscript.ScriptNode} objects
 	 */
 	public ScriptNode[] assignToSupplier(final ProjectData project, final TaskListDataItem task, final ScriptNode entityNode) {
 
@@ -275,7 +330,8 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 	 * validateProjectEntity.
 	 * </p>
 	 *
-	 * @param entityNodeRef a {@link org.alfresco.repo.jscript.ScriptNode} object.
+	 * @param entityNode a {@link org.alfresco.repo.jscript.ScriptNode} object
+	 * @return a {@link org.alfresco.repo.jscript.ScriptNode} object
 	 */
 	public ScriptNode validateProjectEntity(final ScriptNode entityNode) {
 
@@ -303,6 +359,12 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 		return entityNode;
 	}
 	
+	/**
+	 * <p>extractSupplierProjectName.</p>
+	 *
+	 * @param items an array of {@link org.alfresco.repo.jscript.ScriptNode} objects
+	 * @return a {@link java.lang.String} object
+	 */
 	public String extractSupplierProjectName(ScriptNode[] items) {
 		if (items != null) {
 			for (ScriptNode item : items) {
@@ -321,6 +383,12 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 		return "";
 	}
 
+	/**
+	 * <p>extractSupplierAccountRefs.</p>
+	 *
+	 * @param items an array of {@link org.alfresco.repo.jscript.ScriptNode} objects
+	 * @return an array of {@link org.alfresco.repo.jscript.ScriptNode} objects
+	 */
 	public ScriptNode[] extractSupplierAccountRefs(ScriptNode[] items) {
 		if (items != null) {
 			for (ScriptNode item : items) {
@@ -336,6 +404,14 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 		return new ScriptNode[0];
 	}
 
+	/**
+	 * <p>createSupplierProject.</p>
+	 *
+	 * @param items an array of {@link org.alfresco.repo.jscript.ScriptNode} objects
+	 * @param projectTemplate a {@link org.alfresco.repo.jscript.ScriptNode} object
+	 * @param supplierAccounts an array of {@link java.lang.String} objects
+	 * @return a {@link org.alfresco.repo.jscript.ScriptNode} object
+	 */
 	public ScriptNode createSupplierProject(ScriptNode[] items, ScriptNode projectTemplate, String[] supplierAccounts) {
 		if (items != null && items.length > 0) {
 			List<NodeRef> supplierAccountNodeRefs = new ArrayList<>();
@@ -373,6 +449,16 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 		return false;
 	}
 	
+	/**
+	 * <p>createExternalUser.</p>
+	 *
+	 * @param email a {@link java.lang.String} object
+	 * @param firstName a {@link java.lang.String} object
+	 * @param lastName a {@link java.lang.String} object
+	 * @param notify a boolean
+	 * @param extraProps a {@link java.util.Map} object
+	 * @return a {@link org.alfresco.repo.jscript.ScriptNode} object
+	 */
 	public ScriptNode createExternalUser(String email, String firstName, String lastName, boolean notify, Map<String, Serializable> extraProps) {
 		Map<QName, Serializable> convertedExtraProps = new HashMap<>();
 		if (extraProps != null) {

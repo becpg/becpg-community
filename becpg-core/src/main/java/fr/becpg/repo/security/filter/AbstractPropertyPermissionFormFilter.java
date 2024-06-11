@@ -55,6 +55,7 @@ public abstract class AbstractPropertyPermissionFormFilter<ItemType> extends Abs
 	 *
 	 * @param nodeType a {@link org.alfresco.service.namespace.QName} object.
 	 * @param form a {@link org.alfresco.repo.forms.Form} object.
+	 * @param item a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
 	protected void filterFormFields(NodeRef item, QName nodeType, Form form) {
 		if (form != null && form.getFieldDefinitions() != null) {

@@ -110,22 +110,42 @@ public class IngListDataItem extends AbstractManualDataItem
 		this.qtyPerc = qtyPerc;
 	}
 
+	/**
+	 * <p>Getter for the field <code>qtyPercWithYield</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:ingListQtyPercWithYield")
 	public Double getQtyPercWithYield() {
 		return qtyPercWithYield;
 	}
 
+	/**
+	 * <p>Setter for the field <code>qtyPercWithYield</code>.</p>
+	 *
+	 * @param qtyPercWithYield a {@link java.lang.Double} object
+	 */
 	public void setQtyPercWithYield(Double qtyPercWithYield) {
 		this.qtyPercWithYield = qtyPercWithYield;
 	}
 
+	/**
+	 * <p>Getter for the field <code>qtyPercWithSecondaryYield</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:ingListQtyPercWithSecondaryYield")
 	public Double getQtyPercWithSecondaryYield() {
 		return qtyPercWithSecondaryYield;
 	}
 
+	/**
+	 * <p>Setter for the field <code>qtyPercWithSecondaryYield</code>.</p>
+	 *
+	 * @param qtyPercWithSecondaryYield a {@link java.lang.Double} object
+	 */
 	public void setQtyPercWithSecondaryYield(Double qtyPercWithSecondaryYield) {
 		this.qtyPercWithSecondaryYield = qtyPercWithSecondaryYield;
 	}
@@ -250,12 +270,22 @@ public class IngListDataItem extends AbstractManualDataItem
 		this.bioOrigin = bioOrigin;
 	}
 
+	/**
+	 * <p>Getter for the field <code>claims</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	@AlfMultiAssoc
 	@AlfQname(qname = "bcpg:ingListClaims")
 	public List<NodeRef> getClaims() {
 		return claims;
 	}
 
+	/**
+	 * <p>Setter for the field <code>claims</code>.</p>
+	 *
+	 * @param claims a {@link java.util.List} object
+	 */
 	public void setClaims(List<NodeRef> claims) {
 		this.claims = claims;
 	}
@@ -463,15 +493,32 @@ public class IngListDataItem extends AbstractManualDataItem
 		super();
 	}
 	
+	/**
+	 * <p>build.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
+	 */
 	public static IngListDataItem build() {
 		return new IngListDataItem();
 	}
 
+	/**
+	 * <p>withIngredient.</p>
+	 *
+	 * @param ing a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
+	 */
 	public IngListDataItem withIngredient(NodeRef ing) {
 		this.ing = ing;
 		return this;
 	}
 
+	/**
+	 * <p>withQtyPerc.</p>
+	 *
+	 * @param qtyPerc a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
+	 */
 	public IngListDataItem withQtyPerc(Double qtyPerc) {
 		this.qtyPerc = qtyPerc;
 		return this;
@@ -565,6 +612,7 @@ public class IngListDataItem extends AbstractManualDataItem
 		this.declType = i.declType;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public IngListDataItem copy() {
 		IngListDataItem ret = new IngListDataItem(this);
@@ -574,6 +622,7 @@ public class IngListDataItem extends AbstractManualDataItem
 		return ret;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -583,6 +632,7 @@ public class IngListDataItem extends AbstractManualDataItem
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -601,6 +651,7 @@ public class IngListDataItem extends AbstractManualDataItem
 				&& Objects.equals(qtyPercWithSecondaryYield, other.qtyPercWithSecondaryYield) && Objects.equals(volumeQtyPerc, other.volumeQtyPerc);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "IngListDataItem [qtyPerc=" + qtyPerc + ", qtyPercWithYield=" + qtyPercWithYield + ", qtyPercWithSecondaryYield="

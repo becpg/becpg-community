@@ -61,6 +61,7 @@ public interface BeCPGMailService {
 	 * @param actionUrl a {@link java.lang.String} object.
 	 * @param runWithSuccess a boolean.
 	 * @param time a double.
+	 * @param bodyParams a {@link java.lang.Object} object
 	 */
 	void sendMailOnAsyncAction(String userName, String action, String actionUrl, boolean runWithSuccess, double time, Object ... bodyParams);
 	
@@ -94,8 +95,18 @@ public interface BeCPGMailService {
 	 */
 	NodeRef getEmailNotifyTemplatesFolder();
 	
+	/**
+	 * <p>getEmailActivitiesTemplatesFolder.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	NodeRef getEmailActivitiesTemplatesFolder();
 	
+	/**
+	 * <p>getEmailInviteTemplatesFolder.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	NodeRef getEmailInviteTemplatesFolder();
 	
 	/**
@@ -105,6 +116,16 @@ public interface BeCPGMailService {
 	 */
 	NodeRef getEmailProjectTemplatesFolder();
 
+	/**
+	 * <p>sendMLAwareMail.</p>
+	 *
+	 * @param authorities a {@link java.util.Set} object
+	 * @param fromEmail a {@link java.lang.String} object
+	 * @param subjectKey a {@link java.lang.String} object
+	 * @param subjectParams an array of {@link java.lang.Object} objects
+	 * @param mailTemplate a {@link java.lang.String} object
+	 * @param templateArgs a {@link java.util.Map} object
+	 */
 	void sendMLAwareMail(Set<String> authorities, String fromEmail, String subjectKey, Object[] subjectParams, String mailTemplate,
 			Map<String, Object> templateArgs);
 

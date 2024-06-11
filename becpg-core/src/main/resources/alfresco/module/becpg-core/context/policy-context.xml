@@ -100,7 +100,8 @@
 	<!-- Entity Datalist Policies -->
 	<bean id="initEntityListPolicy" class="fr.becpg.repo.entity.datalist.policy.InitEntityListPolicy" parent="abstractBeCPGPolicy">
 		<property name="namespaceService" ref="namespaceService" />
-		<property name="dictionaryService" ref="cachedDictionaryService" />
+		<property name="mlNodeService" ref="mlAwareNodeService"/>
+		<property name="entityDictionaryService" ref="entityDictionaryService"/>
 	</bean>
 	<bean id="auditEntityListItemPolicy" class="fr.becpg.repo.entity.datalist.policy.AuditEntityListItemPolicy" parent="abstractBeCPGPolicy">
 		<property name="authenticationService" ref="authenticationService" />
@@ -128,6 +129,7 @@
 	<bean id="permissionPolicy" class="fr.becpg.repo.security.policy.PermissionPolicy" parent="abstractBeCPGPolicy">
 		<property name="associationService" ref="associationService" />
 		<property name="permissionService" ref="permissionService" />
+		<property name="securityService" ref="securityService" />
 	</bean>
 
 </beans>

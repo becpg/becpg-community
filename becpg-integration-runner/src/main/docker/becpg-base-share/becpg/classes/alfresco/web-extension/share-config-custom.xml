@@ -62,7 +62,7 @@
          </action>
       </rule>
    -->
-   <config evaluator="string-compare" condition="CSRFPolicy" replace="false">
+   <config evaluator="string-compare" condition="CSRFPolicy" replace="true">
 
       <!--
          Properties that may be used inside the rest of the CSRFPolicy config to avoid repetition but
@@ -101,6 +101,20 @@
 
       <!-- The first rule with a matching request will get its action invoked, the remaining rules will be ignored. -->
       <filter>
+      
+      	
+          <rule>
+	         <request>
+	            <method>POST</method>
+	            <path>/proxy/ai/.*</path>
+	         </request>
+	         <action name="assertReferer">
+	            <param name='always'>false</param>
+	         </action>
+	         <action name="assertOrigin">
+	            <param name='always'>false</param>
+	         </action>
+	      </rule>
 
          <!--
             Certain webscripts shall not be allowed to be accessed directly form the browser.
@@ -264,6 +278,8 @@
                <param name="origin">{origin}</param>
             </action>
          </rule>
+         
+        
       </filter>
 
    </config>
@@ -571,12 +587,7 @@
    <config evaluator="string-compare" condition="Remote">
    
   	   <becpg-instance>BECPG_INSTANCE</becpg-instance>
-  	   <authenticator>
-  	   		
-  	   
-  	   </authenticator>
-  	   
-  	   
+
       <remote>
       
           <connector>
@@ -587,17 +598,7 @@
             <userHeader>X-Alfresco-Remote-User</userHeader>
          </connector>
          
-           <connector>
-            <id>becpgTicket</id>
-            <name>beCPG Ticket Connector</name>
-            <description>Connects to a beCPG Services instance using token</description>
-            <class>fr.becpg.web.connector.BecpgTicketConnector</class>
-            <authenticator-id>becpg-ticket</authenticator-id> 
-            <reconnect-timeout>0</reconnect-timeout>
-            <external-auth>BECPG_EXTERNAL_AUTH</external-auth>
-         </connector>
-         
-      
+         <!-- 
          <authenticator>
             <id>becpg-ticket</id>
             <name>beCPG Authenticator</name>
@@ -605,14 +606,23 @@
             <class>fr.becpg.web.connector.BecpgTicketAuthenticator</class>
          </authenticator>
          
+         
+         <connector>
+            <id>becpgTicket</id>
+            <name>beCPG Ticket Connector</name>
+            <description>Connects to a beCPG Services instance using token</description>
+            <class>fr.becpg.web.connector.BecpgTicketConnector</class>
+            <authenticator-id>becpg-ticket</authenticator-id> 
+         </connector>  -->
+         
+      
          <endpoint>
             <id>ai</id>
-            <parent-id>alfresco</parent-id>
             <name>beCPG AI - user access</name>
             <description>Access to beCPG AI</description>
-            <connector-id>becpgTicket</connector-id>
-            <endpoint-url>http://AI_HOST:AI_PORT/</endpoint-url>
-            <identity>user</identity>
+            <connector-id>http</connector-id>
+            <endpoint-url>http://AI_HOST:AI_PORT</endpoint-url>
+            <identity>none</identity>
          </endpoint>
       
          <endpoint>

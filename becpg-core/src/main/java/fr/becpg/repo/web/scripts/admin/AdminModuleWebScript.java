@@ -22,7 +22,6 @@ import fr.becpg.repo.admin.InitVisitorService;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.entity.EntitySystemService;
-import fr.becpg.repo.security.SecurityService;
 
 /**
  * The Class AdminModuleWebScript.
@@ -37,7 +36,6 @@ public class AdminModuleWebScript extends MonitorWebScript {
 	private static final String PARAM_ACTION = "action";
 	private static final String ACTION_INIT_REPO = "init-repo";
 	private static final String ACTION_RELOAD_CACHE = "reload-cache";
-	private static final String ACTION_RELOAD_ACL = "reload-acl";
 	private static final String ACTION_RELOAD_MODEL = "reload-model";
 	private static final String ACTION_GET_SYSTEM_ENTITIES = "system-entities";
 	private static final String ACTION_GET_CONNECTED_USERS = "show-users";
@@ -47,8 +45,6 @@ public class AdminModuleWebScript extends MonitorWebScript {
 	private Repository repository;
 
 	private BeCPGCacheService beCPGCacheService;
-
-	private SecurityService securityService;
 
 	private DictionaryDAO dictionaryDAO;
 
@@ -70,15 +66,6 @@ public class AdminModuleWebScript extends MonitorWebScript {
 	 */
 	public void setDictionaryDAO(DictionaryDAO dictionaryDAO) {
 		this.dictionaryDAO = dictionaryDAO;
-	}
-
-	/**
-	 * <p>Setter for the field <code>securityService</code>.</p>
-	 *
-	 * @param securityService a {@link fr.becpg.repo.security.SecurityService} object.
-	 */
-	public void setSecurityService(SecurityService securityService) {
-		this.securityService = securityService;
 	}
 
 	/**
@@ -139,10 +126,6 @@ public class AdminModuleWebScript extends MonitorWebScript {
 				beCPGCacheService.printCacheInfos();
 				logger.debug("Delete all cache");
 				beCPGCacheService.clearAllCaches();
-				break;
-			case ACTION_RELOAD_ACL:
-				logger.debug("Reload acls");
-				securityService.refreshAcls();
 				break;
 			case ACTION_RELOAD_MODEL:
 				logger.debug("Reload models");

@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
@@ -1231,7 +1232,11 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 		try {
 			Assert.assertEquals("Incorrect label :" + expectedStr + "\n   - compare to " + actualStr, expectedStr, actualStr);
 		} catch (Throwable e) {
-			logger.error(e);
+			
+			if (RetryingTransactionHelper.extractRetryCause(e) == null) {
+				logger.error(e,e);
+			}
+		
 			throw e;
 		}
 	}
@@ -1285,7 +1290,9 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 				}
 
 			} catch (Throwable e) {
-				logger.error(e, e);
+				if (RetryingTransactionHelper.extractRetryCause(e) == null) {
+					logger.error(e,e);
+				}
 				throw e;
 			}
 

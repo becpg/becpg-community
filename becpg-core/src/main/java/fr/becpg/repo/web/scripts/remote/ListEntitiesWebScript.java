@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import java.net.SocketException;
 import java.util.List;
 
+import org.alfresco.query.PagingResults;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
@@ -41,20 +42,26 @@ public class ListEntitiesWebScript extends AbstractEntityWebScript {
 
 	/** {@inheritDoc} */
 	@Override
-	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
+	public void executeInternal(WebScriptRequest req, WebScriptResponse resp) throws IOException {
 
-		List<NodeRef> entities = findEntities(req);
-
-		logger.debug("List entities");
 
 		try (OutputStream out = resp.getOutputStream()) {
 
 			RemoteParams params = new RemoteParams(getFormat(req));
-			params.setFilteredFields(extractFields(req), namespaceService);
-			params.setFilteredLists(extractLists(req));
+			
+			List<String>  fields = extractFields(req);
+			List<String> lists = extractLists(req);
+			params.setFilteredFields(fields, namespaceService);
+			params.setFilteredLists(lists);
+			
+			boolean shouldLimit =  fields !=null && !fields.isEmpty() || lists!=null && !lists.isEmpty();
 
 			resp.setContentType(getContentType(req));
 			resp.setContentEncoding("UTF-8");
+			
+			PagingResults<NodeRef> entities = findEntities(req,shouldLimit);
+
+			logger.debug("List entities");
 
 			remoteEntityService.listEntities(entities, out, params);
 
