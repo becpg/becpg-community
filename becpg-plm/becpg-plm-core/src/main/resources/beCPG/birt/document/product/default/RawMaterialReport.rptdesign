@@ -38,7 +38,7 @@
     </list-property>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="452">
-            <property name="FILELIST">becpg-plm/becpg-plm-core/src/main/resources/beCPG/birt/document/product/default/datasource_rawmaterial_test.xml</property>
+            <property name="FILELIST">datasource_rawmaterial_test.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -7980,6 +7980,230 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                 </ex-property>
             </list-property>
         </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="chemicalCode" id="12984">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">ecNumber</property>
+                    <text-property name="heading">ecNumber</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">casNumber</property>
+                    <text-property name="heading">casNumber</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">ceNumber</property>
+                    <text-property name="heading">ceNumber</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">fdaNumber</property>
+                    <text-property name="heading">fdaNumber</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">flNumber</property>
+                    <text-property name="heading">flNumber</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">femaNumber</property>
+                    <text-property name="heading">femaNumber</text-property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">ecNumber</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">casNumber</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">ceNumber</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">fdaNumber</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">flNumber</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">femaNumber</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">DataXml</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">ecNumber</property>
+                    <property name="nativeName">ecNumber</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">casNumber</property>
+                    <property name="nativeName">casNumber</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">ceNumber</property>
+                    <property name="nativeName">ceNumber</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">fdaNumber</property>
+                    <property name="nativeName">fdaNumber</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">flNumber</property>
+                    <property name="nativeName">flNumber</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">femaNumber</property>
+                    <property name="nativeName">femaNumber</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{ecNumber;STRING;/ecNumber},{casNumber;STRING;/casNumber},{ceNumber;STRING;/ceNumber},{fdaNumber;STRING;/fdaNumber},{flNumber;STRING;/flNumber},{femaNumber;STRING;/femaNumber}]]></xml-property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>2.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>ecNumber</design:name>
+              <design:position>1</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>ecNumber</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>casNumber</design:name>
+              <design:position>2</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>casNumber</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>ceNumber</design:name>
+              <design:position>3</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>ceNumber</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>fdaNumber</design:name>
+              <design:position>4</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>fdaNumber</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>flNumber</design:name>
+              <design:position>5</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>flNumber</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>femaNumber</design:name>
+              <design:position>6</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>femaNumber</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+      <design:criteria/>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>MAX_ROW</name>
+                    <value>-1</value>
+                </ex-property>
+                <ex-property>
+                    <name>XML_FILE</name>
+                </ex-property>
+            </list-property>
+        </oda-data-set>
     </data-sets>
     <styles>
         <style name="report" id="2">
@@ -8486,7 +8710,7 @@ dataSetRow["name"]
                                         <expression name="valueExpr" type="javascript">reportContext.getMessage("footer2", reportContext.getLocale()) == null || reportContext.getMessage("footer2", reportContext.getLocale())  == ""</expression>
                                     </structure>
                                 </list-property>
-                                <text-property name="text" key="footer2"></text-property>
+                                <text-property name="text">© 2024 beCPG</text-property>
                             </label>
                             <label id="10554">
                                 <property name="style">color-adress-website</property>
@@ -8861,7 +9085,7 @@ adress;</expression>
                         <row id="12235">
                             <cell id="12236">
                                 <label id="12238">
-                                    <text-property name="text">Référence produit fournisseur</text-property>
+                                    <text-property name="text" key="supplierRefCode">Référence produit fournisseur</text-property>
                                 </label>
                             </cell>
                             <cell id="12237">
@@ -8882,7 +9106,7 @@ adress;</expression>
                         <row id="12244">
                             <cell id="12245">
                                 <label id="12247">
-                                    <text-property name="text">Origines géographiques</text-property>
+                                    <text-property name="text" key="productGeoOrigin">Origines géographiques</text-property>
                                 </label>
                             </cell>
                             <cell id="12246">
@@ -9177,6 +9401,146 @@ adress;</expression>
                             </cell>
                         </row>
                     </grid>
+                    <grid id="12946">
+                        <column id="12947"/>
+                        <row id="12948">
+                            <cell id="12949">
+                                <label id="12950"/>
+                            </cell>
+                        </row>
+                        <row id="12951">
+                            <cell id="12952">
+                                <label id="12953">
+                                    <property name="style">UnderlinedSubTitle</property>
+                                    <text-property name="text" key="chemicalCode">Codes chimiques</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="12954">
+                            <cell id="12955"/>
+                        </row>
+                    </grid>
+                    <grid id="12956">
+                        <property name="width">7.208333333333333in</property>
+                        <property name="dataSet">chemicalCode</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">ecNumber</property>
+                                <text-property name="displayName">ecNumber</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["ecNumber"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">casNumber</property>
+                                <text-property name="displayName">casNumber</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["casNumber"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ceNumber</property>
+                                <text-property name="displayName">ceNumber</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["ceNumber"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">fdaNumber</property>
+                                <text-property name="displayName">fdaNumber</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["fdaNumber"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">flNumber</property>
+                                <text-property name="displayName">flNumber</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["flNumber"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">femaNumber</property>
+                                <text-property name="displayName">femaNumber</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["femaNumber"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <column id="12957">
+                            <property name="style">becpg-col-header</property>
+                            <property name="width">2.625in</property>
+                        </column>
+                        <column id="12958">
+                            <property name="width">4.583333333333333in</property>
+                        </column>
+                        <row id="12959">
+                            <cell id="12960">
+                                <label id="12961">
+                                    <text-property name="text" key="numberCAS">CAS</text-property>
+                                </label>
+                            </cell>
+                            <cell id="12962">
+                                <data id="12985">
+                                    <property name="resultSetColumn">casNumber</property>
+                                </data>
+                            </cell>
+                        </row>
+                        <row id="12976">
+                            <cell id="12977">
+                                <label id="12979">
+                                    <text-property name="text" key="einecsNumber">EINECS</text-property>
+                                </label>
+                            </cell>
+                            <cell id="12978">
+                                <data id="12986">
+                                    <property name="resultSetColumn">ceNumber</property>
+                                </data>
+                            </cell>
+                        </row>
+                        <row id="12973">
+                            <cell id="12974">
+                                <label id="12980">
+                                    <text-property name="text" key="ecNumber">No. EC</text-property>
+                                </label>
+                            </cell>
+                            <cell id="12975">
+                                <data id="12987">
+                                    <property name="resultSetColumn">ecNumber</property>
+                                </data>
+                            </cell>
+                        </row>
+                        <row id="12970">
+                            <cell id="12971">
+                                <label id="12981">
+                                    <text-property name="text" key="fdaCat">FDA Cat.</text-property>
+                                </label>
+                            </cell>
+                            <cell id="12972">
+                                <data id="12988">
+                                    <property name="resultSetColumn">fdaNumber</property>
+                                </data>
+                            </cell>
+                        </row>
+                        <row id="12967">
+                            <cell id="12968">
+                                <label id="12982">
+                                    <text-property name="text" key="femaNumber">No. FEMA</text-property>
+                                </label>
+                            </cell>
+                            <cell id="12969">
+                                <data id="12989">
+                                    <property name="resultSetColumn">femaNumber</property>
+                                </data>
+                            </cell>
+                        </row>
+                        <row id="12964">
+                            <cell id="12965">
+                                <label id="12983">
+                                    <text-property name="text" key="flNumber">No. FL</text-property>
+                                </label>
+                            </cell>
+                            <cell id="12966">
+                                <data id="12990">
+                                    <property name="resultSetColumn">flNumber</property>
+                                </data>
+                            </cell>
+                        </row>
+                    </grid>
                     <grid id="12249">
                         <property name="dataSet">CheeseData</property>
                         <list-property name="visibility">
@@ -9203,7 +9567,7 @@ adress;</expression>
                             <cell id="12255">
                                 <label id="12256">
                                     <property name="style">UnderlinedSubTitle</property>
-                                    <text-property name="text">Informations sur le fromage</text-property>
+                                    <text-property name="text" key="cheeseInformations">Informations sur le fromage</text-property>
                                 </label>
                             </cell>
                         </row>
@@ -9287,7 +9651,7 @@ adress;</expression>
                             <cell id="12313">
                                 <label id="12314">
                                     <structure name="toc"/>
-                                    <text-property name="text">Description de la période de maturation du fromage</text-property>
+                                    <text-property name="text" key="cheeseMaturationPeriodDescription">Description de la période de maturation du fromage</text-property>
                                 </label>
                             </cell>
                             <cell id="12315">
@@ -9305,7 +9669,7 @@ adress;</expression>
                             </list-property>
                             <cell id="12318">
                                 <label id="12319">
-                                    <text-property name="text">Type de conteneur pour la maturation du fromage</text-property>
+                                    <text-property name="text" key="cheeseMaturationProcessContainerTypeCode">Type de conteneur pour la maturation du fromage</text-property>
                                 </label>
                             </cell>
                             <cell id="12320">
@@ -9323,7 +9687,7 @@ adress;</expression>
                             </list-property>
                             <cell id="12323">
                                 <label id="12324">
-                                    <text-property name="text">Gras sur la matière sèche (%)</text-property>
+                                    <text-property name="text" key="fatPourcentageInDryMatter">Gras sur la matière sèche (%)</text-property>
                                 </label>
                             </cell>
                             <cell id="12325">
@@ -9341,7 +9705,7 @@ adress;</expression>
                             </list-property>
                             <cell id="12328">
                                 <label id="12329">
-                                    <text-property name="text">La croute est-elle comestible?</text-property>
+                                    <text-property name="text" key="rindEdible">La croute est-elle comestible?</text-property>
                                 </label>
                             </cell>
                             <cell id="12330">
@@ -9360,7 +9724,7 @@ adress;</expression>
                             </list-property>
                             <cell id="12333">
                                 <label id="12334">
-                                    <text-property name="text">Type de présure</text-property>
+                                    <text-property name="text" key="rennetTypeCode">Type de présure</text-property>
                                 </label>
                             </cell>
                             <cell id="12335">
@@ -9378,7 +9742,7 @@ adress;</expression>
                             </list-property>
                             <cell id="12338">
                                 <label id="12339">
-                                    <text-property name="text">Période de maturation</text-property>
+                                    <text-property name="text" key="ripeningTimePeriod">Période de maturation</text-property>
                                 </label>
                             </cell>
                             <cell id="12340">
@@ -9396,7 +9760,7 @@ adress;</expression>
                             </list-property>
                             <cell id="12343">
                                 <label id="12344">
-                                    <text-property name="text">Surface du fromage en fin de maturation</text-property>
+                                    <text-property name="text" key="surfaceOfCheeseAtEndOfRipeningCode">Surface du fromage en fin de maturation</text-property>
                                 </label>
                             </cell>
                             <cell id="12345">
@@ -9432,7 +9796,7 @@ adress;</expression>
                             <cell id="12305">
                                 <label id="12306">
                                     <property name="style">UnderlinedSubTitle</property>
-                                    <text-property name="text">Boisson alcoolisée</text-property>
+                                    <text-property name="text" key="alcoholBeverage">Boisson alcoolisée</text-property>
                                 </label>
                             </cell>
                         </row>
@@ -9624,7 +9988,7 @@ adress;</expression>
                             <cell id="6279">
                                 <label id="6334">
                                     <structure name="toc"/>
-                                    <text-property name="text">Pourcentage d'alcool par volume (%)</text-property>
+                                    <text-property name="text" key="percentageOfAlcoholByVolume">Pourcentage d'alcool par volume (%)</text-property>
                                 </label>
                             </cell>
                             <cell id="6280">
@@ -9642,7 +10006,7 @@ adress;</expression>
                             </list-property>
                             <cell id="12268">
                                 <label id="12270">
-                                    <text-property name="text">Précision de la mesure du pourcentage d'alcool par volume</text-property>
+                                    <text-property name="text" key="percentageOfAlcoholByVolumeMeasurement">Précision de la mesure du pourcentage d'alcool par volume</text-property>
                                 </label>
                             </cell>
                             <cell id="12269">
@@ -9660,7 +10024,7 @@ adress;</expression>
                             </list-property>
                             <cell id="12275">
                                 <label id="12277">
-                                    <text-property name="text">Preuve d'alcool</text-property>
+                                    <text-property name="text" key="alcoholProof">Preuve d'alcool</text-property>
                                 </label>
                             </cell>
                             <cell id="12276">
@@ -9678,7 +10042,7 @@ adress;</expression>
                             </list-property>
                             <cell id="12280">
                                 <label id="12295">
-                                    <text-property name="text">Unités d'alcool</text-property>
+                                    <text-property name="text" key="alcoholUnits">Unités d'alcool</text-property>
                                 </label>
                             </cell>
                             <cell id="12281">
@@ -9696,7 +10060,7 @@ adress;</expression>
                             </list-property>
                             <cell id="12286">
                                 <label id="12296">
-                                    <text-property name="text">Origine du vin</text-property>
+                                    <text-property name="text" key="originOfWine">Origine du vin</text-property>
                                 </label>
                             </cell>
                             <cell id="12287">
@@ -9714,7 +10078,7 @@ adress;</expression>
                             </list-property>
                             <cell id="12283">
                                 <label id="12297">
-                                    <text-property name="text">Région d'appellation</text-property>
+                                    <text-property name="text" key="alcoholSubRegion">Région d'appellation</text-property>
                                 </label>
                             </cell>
                             <cell id="12284">
@@ -9732,7 +10096,7 @@ adress;</expression>
                             </list-property>
                             <cell id="12292">
                                 <label id="12298">
-                                    <text-property name="text">Boisson millésimé</text-property>
+                                    <text-property name="text" key="vintageDrink">Boisson millésimée</text-property>
                                 </label>
                             </cell>
                             <cell id="12293">
@@ -9751,7 +10115,7 @@ adress;</expression>
                             </list-property>
                             <cell id="12349">
                                 <label id="12373">
-                                    <text-property name="text">Millésime (AAAA)</text-property>
+                                    <text-property name="text" key="vintage">Millésime (AAAA)</text-property>
                                 </label>
                             </cell>
                             <cell id="12350">
@@ -9769,7 +10133,7 @@ adress;</expression>
                             </list-property>
                             <cell id="12370">
                                 <label id="12374">
-                                    <text-property name="text">Âge de la boisson alcoolisée (M)</text-property>
+                                    <text-property name="text" key="alcoholBeverageAge">Âge de la boisson alcoolisée (M)</text-property>
                                 </label>
                             </cell>
                             <cell id="12371">
@@ -9787,7 +10151,7 @@ adress;</expression>
                             </list-property>
                             <cell id="12367">
                                 <label id="12375">
-                                    <text-property name="text">Vigneron</text-property>
+                                    <text-property name="text" key="vintner">Vigneron</text-property>
                                 </label>
                             </cell>
                             <cell id="12368">
@@ -9805,7 +10169,7 @@ adress;</expression>
                             </list-property>
                             <cell id="12364">
                                 <label id="12376">
-                                    <text-property name="text">Degré de moût d'origine</text-property>
+                                    <text-property name="text" key="degreeOfOriginalWort">Degré de moût d'origine</text-property>
                                 </label>
                             </cell>
                             <cell id="12365">
@@ -9823,7 +10187,7 @@ adress;</expression>
                             </list-property>
                             <cell id="12361">
                                 <label id="12377">
-                                    <text-property name="text">Teneur en sucre de la boisson alcoolisée (g/L)</text-property>
+                                    <text-property name="text" key="alcoholBeverageSugarContent">Teneur en sucre de la boisson alcoolisée (g/L)</text-property>
                                 </label>
                             </cell>
                             <cell id="12362">
@@ -9841,7 +10205,7 @@ adress;</expression>
                             </list-property>
                             <cell id="12358">
                                 <label id="12378">
-                                    <text-property name="text">Mesure de l'amertume de la bière (IBU)</text-property>
+                                    <text-property name="text" key="bitternessOfBeerMeasurement">Mesure de l'amertume de la bière (IBU)</text-property>
                                 </label>
                             </cell>
                             <cell id="12359">
@@ -9859,7 +10223,7 @@ adress;</expression>
                             </list-property>
                             <cell id="12355">
                                 <label id="12379">
-                                    <text-property name="text">Non diluée ?</text-property>
+                                    <text-property name="text" key="caskStrength">Non diluée ?</text-property>
                                 </label>
                             </cell>
                             <cell id="12356">
@@ -9895,7 +10259,7 @@ adress;</expression>
                             </list-property>
                             <cell id="12397">
                                 <label id="12399">
-                                    <text-property name="text">Niveau de douceur de la boisson alcoolisée</text-property>
+                                    <text-property name="text" key="sweetnessLevelOfAlcoholicBeverage">Niveau de douceur de la boisson alcoolisée</text-property>
                                 </label>
                             </cell>
                             <cell id="12398">
@@ -9913,7 +10277,7 @@ adress;</expression>
                             </list-property>
                             <cell id="12394">
                                 <label id="12400">
-                                    <text-property name="text">Saveur ajoutée principale</text-property>
+                                    <text-property name="text" key="primaryAddedFlavouring">Saveur ajoutée principale</text-property>
                                 </label>
                             </cell>
                             <cell id="12395">
@@ -9931,7 +10295,7 @@ adress;</expression>
                             </list-property>
                             <cell id="12391">
                                 <label id="12401">
-                                    <text-property name="text">Saveur ajoutée secondaire</text-property>
+                                    <text-property name="text" key="secondaryAddedFlavouring">Saveur ajoutée secondaire</text-property>
                                 </label>
                             </cell>
                             <cell id="12392">
@@ -9949,7 +10313,7 @@ adress;</expression>
                             </list-property>
                             <cell id="12388">
                                 <label id="12402">
-                                    <text-property name="text">Licence de débit de boissons nécessaire</text-property>
+                                    <text-property name="text" key="alcoholicPermissionLevel">Licence de débit de boissons nécessaire</text-property>
                                 </label>
                             </cell>
                             <cell id="12389">
@@ -9973,7 +10337,7 @@ adress;</expression>
                             </list-property>
                             <cell id="12385">
                                 <label id="12403">
-                                    <text-property name="text">Conteneurs de boisson alcoolisée</text-property>
+                                    <text-property name="text" key="alcoholBeverageContainer">Conteneurs de boisson alcoolisée</text-property>
                                 </label>
                             </cell>
                             <cell id="12386">
@@ -9991,7 +10355,7 @@ adress;</expression>
                             </list-property>
                             <cell id="12382">
                                 <label id="12404">
-                                    <text-property name="text">Type de boisson alcoolisée</text-property>
+                                    <text-property name="text" key="alcoholBeverageType">Type de boisson alcoolisée</text-property>
                                 </label>
                             </cell>
                             <cell id="12383">
@@ -10009,7 +10373,7 @@ adress;</expression>
                             </list-property>
                             <cell id="12406">
                                 <label id="12417">
-                                    <text-property name="text">Type de bière</text-property>
+                                    <text-property name="text" key="beerStyle">Type de bière</text-property>
                                 </label>
                             </cell>
                             <cell id="12407">
@@ -10027,7 +10391,7 @@ adress;</expression>
                             </list-property>
                             <cell id="12415">
                                 <label id="12418">
-                                    <text-property name="text">Méthode de filtration de la boisson alcoolisée</text-property>
+                                    <text-property name="text" key="alcoholBeverageFilteringMethodType">Méthode de filtration de la boisson alcoolisée</text-property>
                                 </label>
                             </cell>
                             <cell id="12416">
@@ -10045,7 +10409,7 @@ adress;</expression>
                             </list-property>
                             <cell id="12412">
                                 <label id="12419">
-                                    <text-property name="text">Boisson alcoolisée distillée à partir de </text-property>
+                                    <text-property name="text" key="alcoholBeverageDistilledFrom">Boisson alcoolisée distillée à partir de </text-property>
                                 </label>
                             </cell>
                             <cell id="12413">
@@ -10063,7 +10427,7 @@ adress;</expression>
                             </list-property>
                             <cell id="12409">
                                 <label id="12420">
-                                    <text-property name="text">Méthode de production</text-property>
+                                    <text-property name="text" key="alcoholBeverageProductionMethodType">Méthode de production</text-property>
                                 </label>
                             </cell>
                             <cell id="12410">
@@ -10249,7 +10613,7 @@ adress;</expression>
                             <cell id="12452">
                                 <label id="12453">
                                     <property name="style">UnderlinedSubTitle</property>
-                                    <text-property name="text">Tare</text-property>
+                                    <text-property name="text" key="tare2">Tare</text-property>
                                 </label>
                             </cell>
                         </row>
@@ -10303,7 +10667,7 @@ adress;</expression>
                             <cell id="12605">
                                 <label id="12606">
                                     <structure name="toc"/>
-                                    <text-property name="text">Tare</text-property>
+                                    <text-property name="text" key="tare2">Tare</text-property>
                                 </label>
                             </cell>
                             <cell id="12607">
@@ -10322,7 +10686,7 @@ adress;</expression>
                             <cell id="12610">
                                 <label id="12611">
                                     <structure name="toc"/>
-                                    <text-property name="text">Unité de tare</text-property>
+                                    <text-property name="text" key="tareUnit2">Unité de tare</text-property>
                                 </label>
                             </cell>
                             <cell id="12612">
@@ -10358,7 +10722,7 @@ adress;</expression>
                             <cell id="12597">
                                 <label id="12598">
                                     <property name="style">UnderlinedSubTitle</property>
-                                    <text-property name="text">Score et échelle nutritionnelle</text-property>
+                                    <text-property name="text" key="ScoreAndNutritionalScore">Score et échelle nutritionnelle</text-property>
                                 </label>
                             </cell>
                         </row>
@@ -10412,7 +10776,7 @@ adress;</expression>
                             <cell id="12631">
                                 <label id="12632">
                                     <structure name="toc"/>
-                                    <text-property name="text">Profil nutritionnel</text-property>
+                                    <text-property name="text" key="nutrientProfileCategory">Profil nutritionnel</text-property>
                                 </label>
                             </cell>
                             <cell id="12633">
@@ -10431,7 +10795,7 @@ adress;</expression>
                             <cell id="12636">
                                 <label id="12637">
                                     <structure name="toc"/>
-                                    <text-property name="text">Version du profil nutritionnel</text-property>
+                                    <text-property name="text" key="nutrientProfileCategory">Version du profil nutritionnel</text-property>
                                 </label>
                             </cell>
                             <cell id="12638">
@@ -10467,7 +10831,7 @@ adress;</expression>
                             <cell id="12623">
                                 <label id="12624">
                                     <property name="style">UnderlinedSubTitle</property>
-                                    <text-property name="text">Sécurité</text-property>
+                                    <text-property name="text" key="security">Sécurité</text-property>
                                 </label>
                             </cell>
                         </row>
@@ -10563,7 +10927,7 @@ adress;</expression>
                             <cell id="12460">
                                 <label id="12461">
                                     <structure name="toc"/>
-                                    <text-property name="text">Mention d'avertissement</text-property>
+                                    <text-property name="text" key="signalWord">Mention d'avertissement</text-property>
                                 </label>
                             </cell>
                             <cell id="12462">
@@ -10582,7 +10946,7 @@ adress;</expression>
                             <cell id="12585">
                                 <label id="12587">
                                     <structure name="toc"/>
-                                    <text-property name="text">Pictogrammes</text-property>
+                                    <text-property name="text" key="pictograms">Pictogrammes</text-property>
                                 </label>
                             </cell>
                             <cell id="12586">
@@ -10601,7 +10965,7 @@ adress;</expression>
                             <cell id="12641">
                                 <label id="12661">
                                     <structure name="toc"/>
-                                    <text-property name="text">Mentions de danger</text-property>
+                                    <text-property name="text" key="hazardStatements">Mentions de danger</text-property>
                                 </label>
                             </cell>
                             <cell id="12642">
@@ -10620,7 +10984,7 @@ adress;</expression>
                             <cell id="12659">
                                 <label id="12662">
                                     <structure name="toc"/>
-                                    <text-property name="text">Conseils de prudence</text-property>
+                                    <text-property name="text" key="precautionaryStatements">Conseils de prudence</text-property>
                                 </label>
                             </cell>
                             <cell id="12660">
@@ -10639,7 +11003,7 @@ adress;</expression>
                             <cell id="12656">
                                 <label id="12663">
                                     <structure name="toc"/>
-                                    <text-property name="text">Equipements de protection individuel</text-property>
+                                    <text-property name="text" key="personalProtections">Equipements de protection individuel</text-property>
                                 </label>
                             </cell>
                             <cell id="12657">
@@ -10658,7 +11022,7 @@ adress;</expression>
                             <cell id="12653">
                                 <label id="12664">
                                     <structure name="toc"/>
-                                    <text-property name="text">Consignes de sécurité</text-property>
+                                    <text-property name="text" key="safetyInstructions">Consignes de sécurité</text-property>
                                 </label>
                             </cell>
                             <cell id="12654">
@@ -10677,7 +11041,7 @@ adress;</expression>
                             <cell id="12650">
                                 <label id="12665">
                                     <structure name="toc"/>
-                                    <text-property name="text">Code ONU</text-property>
+                                    <text-property name="text" key="ONUCode">Code ONU</text-property>
                                 </label>
                             </cell>
                             <cell id="12651">
@@ -10696,7 +11060,7 @@ adress;</expression>
                             <cell id="12647">
                                 <label id="12666">
                                     <structure name="toc"/>
-                                    <text-property name="text">Code classe</text-property>
+                                    <text-property name="text" key="classCode">Code classe</text-property>
                                 </label>
                             </cell>
                             <cell id="12648">
@@ -10715,7 +11079,7 @@ adress;</expression>
                             <cell id="12644">
                                 <label id="12667">
                                     <structure name="toc"/>
-                                    <text-property name="text">Code groupe emballage</text-property>
+                                    <text-property name="text" key="packagingGroupCode">Code groupe emballage</text-property>
                                 </label>
                             </cell>
                             <cell id="12645">
@@ -10988,7 +11352,7 @@ adress;</expression>
                                 <cell id="12685">
                                     <property name="style">becpg-cell-header</property>
                                     <label id="12688">
-                                        <text-property name="text">Allégations</text-property>
+                                        <text-property name="text" key="labelClaims">Allégations</text-property>
                                     </label>
                                 </cell>
                             </row>
@@ -11891,7 +12255,7 @@ adress;</expression>
                                 <cell id="12728">
                                     <property name="style">becpg-cell-header</property>
                                     <label id="12731">
-                                        <text-property name="text">Valeur préparée</text-property>
+                                        <text-property name="text" key="valuePrepared">Valeur préparée</text-property>
                                     </label>
                                 </cell>
                             </row>
@@ -12292,12 +12656,40 @@ decisionTree
                         <column id="6717"/>
                         <column id="6718"/>
                         <column id="6719"/>
-                        <column id="6720"/>
+                        <column id="6720">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">true</expression>
+                                </structure>
+                            </list-property>
+                        </column>
                         <column id="6721"/>
                         <column id="6722"/>
-                        <column id="12702"/>
-                        <column id="12708"/>
-                        <column id="12696"/>
+                        <column id="12702">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">true</expression>
+                                </structure>
+                            </list-property>
+                        </column>
+                        <column id="12708">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">true</expression>
+                                </structure>
+                            </list-property>
+                        </column>
+                        <column id="12696">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">true</expression>
+                                </structure>
+                            </list-property>
+                        </column>
                         <header>
                             <row id="6724">
                                 <cell id="6725">
@@ -13004,13 +13396,13 @@ decisionTree
                                 <cell id="12752">
                                     <property name="style">becpg-cell-header</property>
                                     <label id="12755">
-                                        <text-property name="text">Critères texte</text-property>
+                                        <text-property name="text" key="textCriteria">Critères texte</text-property>
                                     </label>
                                 </cell>
                                 <cell id="12747">
                                     <property name="style">becpg-cell-header</property>
                                     <label id="12756">
-                                        <text-property name="text">Méthode</text-property>
+                                        <text-property name="text" key="method">Méthode</text-property>
                                     </label>
                                 </cell>
                             </row>
@@ -13461,19 +13853,19 @@ decisionTree
                                 <cell id="12765">
                                     <property name="style">becpg-cell-header</property>
                                     <label id="12768">
-                                        <text-property name="text">% revendiqué</text-property>
+                                        <text-property name="text" key="percentClaim">% revendiqué</text-property>
                                     </label>
                                 </cell>
                                 <cell id="12771">
                                     <property name="style">becpg-cell-header</property>
                                     <label id="12774">
-                                        <text-property name="text">% applicable</text-property>
+                                        <text-property name="text" key="percentApplicable">% applicable</text-property>
                                     </label>
                                 </cell>
                                 <cell id="12760">
                                     <property name="style">becpg-cell-header</property>
                                     <label id="12775">
-                                        <text-property name="text">Certification</text-property>
+                                        <text-property name="text" key="certification">Certification</text-property>
                                     </label>
                                 </cell>
                             </row>
@@ -13799,11 +14191,11 @@ decisionTree
                             <structure>
                                 <property name="name">mblValue</property>
                                 <text-property name="displayName">mblValue</text-property>
-                                <expression name="expression" type="javascript">if(dataSetRow["mblValue"] &lt;=0 ){
+                                <expression name="expression" type="javascript">if(dataSetRow["mblValue"] == -1 ){
 "Absence"
 }
 else if(dataSetRow["mblValue"] != null &amp;&amp; dataSetRow["mblValue"] != ""){
-BirtMath.round(dataSetRow["mblValue"],0) + " " + dataSetRow["mblUnit"]
+BirtMath.round(dataSetRow["mblValue"],0)
 }</expression>
                                 <property name="dataType">string</property>
                                 <property name="allowExport">true</property>
@@ -13821,7 +14213,7 @@ BirtMath.round(dataSetRow["mblValue"],0) + " " + dataSetRow["mblUnit"]
 "Absence"
 }
 else if(dataSetRow["mblMaxi"] != null &amp;&amp; dataSetRow["mblMaxi"] != ""){
-BirtMath.round(dataSetRow["mblMaxi"],0) + " " + dataSetRow["mblUnit"]
+BirtMath.round(dataSetRow["mblMaxi"],0)
 }</expression>
                                 <property name="dataType">string</property>
                                 <property name="allowExport">true</property>
@@ -13962,7 +14354,7 @@ BirtMath.round(dataSetRow["mblMaxi"],0) + " " + dataSetRow["mblUnit"]
                                 <cell id="12781">
                                     <property name="style">becpg-cell-header</property>
                                     <label id="12784">
-                                        <text-property name="text">Méthode</text-property>
+                                        <text-property name="text" key="method">Méthode</text-property>
                                     </label>
                                 </cell>
                             </row>
@@ -14440,6 +14832,12 @@ BirtMath.round(dataSetRow["mblMaxi"],0) + " " + dataSetRow["mblUnit"]
                             <property name="style">becpg-col-border</property>
                         </column>
                         <column id="12884">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">true</expression>
+                                </structure>
+                            </list-property>
                             <property name="style">becpg-col-border</property>
                         </column>
                         <header>
@@ -14458,7 +14856,7 @@ BirtMath.round(dataSetRow["mblMaxi"],0) + " " + dataSetRow["mblUnit"]
                                         <property name="marginBottom">0pt</property>
                                         <property name="textAlign">center</property>
                                         <property name="display">block</property>
-                                        <text-property name="text">ANALYSE DU CYCLE DE VIE</text-property>
+                                        <text-property name="text" key="lifeAssessment">ANALYSE DU CYCLE DE VIE</text-property>
                                     </label>
                                 </cell>
                             </row>
@@ -14477,7 +14875,7 @@ BirtMath.round(dataSetRow["mblMaxi"],0) + " " + dataSetRow["mblUnit"]
                                     <label id="12853">
                                         <property name="style">becpg-col-header</property>
                                         <property name="textAlign">center</property>
-                                        <text-property name="text">ACV</text-property>
+                                        <text-property name="text" key="acv">ACV</text-property>
                                     </label>
                                 </cell>
                                 <cell id="12854">
@@ -14485,7 +14883,7 @@ BirtMath.round(dataSetRow["mblMaxi"],0) + " " + dataSetRow["mblUnit"]
                                     <label id="12855">
                                         <property name="style">becpg-col-header</property>
                                         <property name="textAlign">center</property>
-                                        <text-property name="text">Valeur</text-property>
+                                        <text-property name="text" key="value">Valeur</text-property>
                                     </label>
                                 </cell>
                                 <cell id="12856">
@@ -14500,7 +14898,7 @@ BirtMath.round(dataSetRow["mblMaxi"],0) + " " + dataSetRow["mblUnit"]
                                         <property name="style">becpg-col-header</property>
                                         <property name="paddingLeft">5pt</property>
                                         <property name="textAlign">center</property>
-                                        <text-property name="text">Manuel</text-property>
+                                        <text-property name="text" key="manual">Manuel</text-property>
                                     </label>
                                 </cell>
                             </row>
@@ -14613,7 +15011,7 @@ BirtMath.round(dataSetRow["mblMaxi"],0) + " " + dataSetRow["mblUnit"]
                                         <property name="marginBottom">0pt</property>
                                         <property name="textAlign">center</property>
                                         <property name="display">block</property>
-                                        <text-property name="text">MATÉRIAUX</text-property>
+                                        <text-property name="text" key="materials">MATÉRIAUX</text-property>
                                     </label>
                                 </cell>
                             </row>
@@ -14632,7 +15030,7 @@ BirtMath.round(dataSetRow["mblMaxi"],0) + " " + dataSetRow["mblUnit"]
                                     <label id="12903">
                                         <property name="style">becpg-col-header</property>
                                         <property name="textAlign">center</property>
-                                        <text-property name="text">Matériau</text-property>
+                                        <text-property name="text" key="material2">Matériau</text-property>
                                     </label>
                                 </cell>
                                 <cell id="12904">
@@ -14646,7 +15044,7 @@ BirtMath.round(dataSetRow["mblMaxi"],0) + " " + dataSetRow["mblUnit"]
                                 <cell id="12906">
                                     <property name="style">becpg-cell-header</property>
                                     <label id="12907">
-                                        <text-property name="text">Poids (g)</text-property>
+                                        <text-property name="text" key="weightG">Poids (g)</text-property>
                                     </label>
                                 </cell>
                                 <cell id="12908">
@@ -14655,7 +15053,7 @@ BirtMath.round(dataSetRow["mblMaxi"],0) + " " + dataSetRow["mblUnit"]
                                         <property name="style">becpg-col-header</property>
                                         <property name="paddingLeft">5pt</property>
                                         <property name="textAlign">center</property>
-                                        <text-property name="text">Matière recyclée incorporée (%)</text-property>
+                                        <text-property name="text" key="recycledPercentage">Matière recyclée incorporée (%)</text-property>
                                     </label>
                                 </cell>
                             </row>
@@ -14737,10 +15135,14 @@ else{
                         </list-property>
                         <column id="5440">
                             <property name="style">becpg-col-header</property>
-                            <property name="width">1in</property>
+                            <property name="width">20%</property>
                         </column>
-                        <column id="5441"/>
-                        <column id="12742"/>
+                        <column id="5441">
+                            <property name="width">60%</property>
+                        </column>
+                        <column id="12742">
+                            <property name="width">20%</property>
+                        </column>
                         <header>
                             <row id="5518">
                                 <cell id="5519">
@@ -14776,7 +15178,7 @@ else{
                                     <property name="borderTopStyle">solid</property>
                                     <property name="borderTopWidth">thin</property>
                                     <label id="12737">
-                                        <text-property name="text">Valeur</text-property>
+                                        <text-property name="text" key="value">Valeur</text-property>
                                     </label>
                                 </cell>
                                 <cell id="12740">
@@ -14787,7 +15189,7 @@ else{
                                     <property name="borderTopStyle">solid</property>
                                     <property name="borderTopWidth">thin</property>
                                     <label id="12743">
-                                        <text-property name="text">Méthode</text-property>
+                                        <text-property name="text" key="method">Méthode</text-property>
                                     </label>
                                 </cell>
                             </row>
@@ -14945,7 +15347,7 @@ else{
                         <property name="fontWeight">bold</property>
                         <property name="fontStyle">italic</property>
                         <property name="marginTop">10pt</property>
-                        <text-property name="text">Signature:</text-property>
+                        <text-property name="text" key="sampleSignature">Signature:</text-property>
                     </label>
                 </cell>
             </row>

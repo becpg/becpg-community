@@ -1,0 +1,740 @@
+<entity>
+	<preferences />
+	<images>
+		<image
+			entityNodeRef="workspace://SpacesStore/a08fe12f-0234-47a8-a3ef-0d4895f6bde0"
+			entityType="person" entityName="a08fe12f-0234-47a8-a3ef-0d4895f6bde0"
+			id="avatar" name="philippe.JPG" title="" />
+	</images>
+	<site id="rd-food" />
+	<tare prefix="pack"><![CDATA[12.0]]></tare>
+	<servingSizeUnit prefix="bcpg" translation="g"><![CDATA[g]]></servingSizeUnit>
+	<alcoholBeverageProductionMethodTypeCode
+		prefix="gs1" code="RURAL_GAILLACOIS"><![CDATA[Rural/Gaillacois]]></alcoholBeverageProductionMethodTypeCode>
+	<alcoholicPermissionLevel prefix="gs1"><![CDATA[12]]></alcoholicPermissionLevel>
+	<sdsSafetyInstructions prefix="ghs"><![CDATA[Consignes de sécurité]]></sdsSafetyInstructions>
+	<futureUnitTotalCost prefix="bcpg"><![CDATA[0.0]]></futureUnitTotalCost>
+	<isCaskStrength prefix="gs1"><![CDATA[true]]></isCaskStrength>
+	<versionLabel prefix="cm"><![CDATA[2.0]]></versionLabel>
+	<autoVersion prefix="cm"><![CDATA[true]]></autoVersion>
+	<versionType prefix="cm"><![CDATA[MAJOR]]></versionType>
+	<startEffectivity prefix="bcpg"><![CDATA[2023-06-12T07:33:39.311Z]]></startEffectivity>
+	<nutrientProfilingClass prefix="bcpg"><![CDATA[A]]></nutrientProfilingClass>
+	<alcoholUnits prefix="gs1"><![CDATA[1.0]]></alcoholUnits>
+	<productComments prefix="bcpg"><![CDATA[Commentaires]]></productComments>
+	<productUnit prefix="bcpg" translation="kg"><![CDATA[kg]]></productUnit>
+	<productHierarchy2 prefix="bcpg"><![CDATA[Poudre]]></productHierarchy2>
+	<vintage prefix="gs1"><![CDATA[1234]]></vintage>
+	<reportEntityGenerated prefix="rep"><![CDATA[2023-11-23T09:17:00.657Z]]></reportEntityGenerated>
+	<contractDate prefix="bcpg"><![CDATA[12]]></contractDate>
+	<originOfWineCode prefix="gs1"
+		code="FR_ALSACE_ALSACE GRAND CRU"><![CDATA[France - Alsace - Alsace Grand Cru]]></originOfWineCode>
+	<rennetTypeCode prefix="gs1" code="ANIMAL_RENNET"><![CDATA[Présure animale]]></rennetTypeCode>
+	<beerStyleCode prefix="gs1"
+		code="AMERICAN_STYLE_AMBER_RED_ALE"><![CDATA[Bière ambrée/rouge de style américain]]></beerStyleCode>
+	<isRindEdible prefix="gs1"><![CDATA[true]]></isRindEdible>
+	<primaryAddedFlavouringCode prefix="gs1"
+		code="ACAI_BERRY"><![CDATA[Acai Berry]]></primaryAddedFlavouringCode>
+	<periodAfterOpening prefix="bcpg"><![CDATA[180]]></periodAfterOpening>
+	<alcoholicBeverageColourCode prefix="gs1"
+		code="BLACK"><![CDATA[Noir]]></alcoholicBeverageColourCode>
+	<name prefix="cm"><![CDATA[MP Philippe 4 - Sachet d'épice]]></name>
+	<vintner prefix="gs1"><![CDATA[Vigneron]]></vintner>
+	<alcoholicBeverageSubregion prefix="gs1"><![CDATA[Alsace]]></alcoholicBeverageSubregion>
+	<initialVersion prefix="cm"><![CDATA[true]]></initialVersion>
+	<ecNumber prefix="bcpg"><![CDATA[No. EC]]></ecNumber>
+	<nutrientProfilingDetails prefix="bcpg"><![CDATA[{"hasProteinScore":true,"aScore":0,"nonNutritiveSugars":[],"parts":{"FASAT":{"score":0,"upperValue":1,"lowerValue":"-Inf","value":0},"FRUIT_VEGETABLE":{"score":0,"upperValue":40,"lowerValue":"-Inf","value":0},"NA":{"score":0,"upperValue":0.2,"lowerValue":"-Inf","value":0},"PRO-":{"score":0,"upperValue":2.4,"lowerValue":"-Inf","value":0},"ENER-KJO":{"score":0,"upperValue":335,"lowerValue":"-Inf","value":0},"FAT":{"value":0},"PSACNS":{"score":0,"upperValue":0.7,"lowerValue":"-Inf","value":0},"FIBTG":{"score":0,"upperValue":3,"lowerValue":"-Inf","value":0},"SUGAR":{"score":0,"upperValue":3.4,"lowerValue":"-Inf","value":0}},"displaySaltScore":true,"category":"Others","nutrientClass":"A","isWater":false,"nutriScore":0,"cScore":0,"classLowerValue":"-Inf","classUpperValue":"0.0"}]]></nutrientProfilingDetails>
+	<percentageOfAlcoholByVolumeMeasurementPrecisionCode
+		prefix="gs1" code="ABOUT"><![CDATA[À propos]]></percentageOfAlcoholByVolumeMeasurementPrecisionCode>
+	<alcoholBeverageTypeCode prefix="gs1"
+		code="ALCOHOLIC_PRE_MIXED_DRINK_LIQUEUR_BASED"><![CDATA[Boisson alcoolisée pré-mélangée à base de liqueur]]></alcoholBeverageTypeCode>
+	<formulatedDate prefix="bcpg"><![CDATA[2023-12-12T14:43:05.189Z]]></formulatedDate>
+	<femaNumber prefix="bcpg"><![CDATA[No. FEMA]]></femaNumber>
+	<ripeningTimePeriod prefix="gs1"><![CDATA[12]]></ripeningTimePeriod>
+	<alcoholicBeverageSugarContent
+		prefix="gs1"><![CDATA[12.0]]></alcoholicBeverageSugarContent>
+	<alcoholBeverageDistilledFromCode
+		prefix="gs1" code="APPLE"><![CDATA[Pomme]]></alcoholBeverageDistilledFromCode>
+	<tareUnit prefix="pack" translation="g"><![CDATA[g]]></tareUnit>
+	<preparationTips prefix="bcpg"><![CDATA[Conseils de préparation et d'utilisation]]></preparationTips>
+	<ingCEECode prefix="bcpg"><![CDATA[E123]]></ingCEECode>
+	<modifier prefix="cm"><![CDATA[philippe.quere@becpg.fr]]></modifier>
+	<modified prefix="cm"><![CDATA[2023-12-12T14:43:03.742Z]]></modified>
+	<casNumber prefix="bcpg"><![CDATA[CAS]]></casNumber>
+	<certificateDate prefix="bcpg"><![CDATA[2023-10-31T23:00:00.000Z]]></certificateDate>
+	<legalName prefix="bcpg"><![CDATA[Libellé légal]]></legalName>
+	<productState prefix="bcpg" translation="Validé"><![CDATA[Valid]]></productState>
+	<supplierRefCode prefix="bcpg"><![CDATA[Ref four]]></supplierRefCode>
+	<percentageOfAlcoholByVolume prefix="gs1"><![CDATA[12.0]]></percentageOfAlcoholByVolume>
+	<bitternessOfBeerMeasurement prefix="gs1"><![CDATA[12.0]]></bitternessOfBeerMeasurement>
+	<isTradeItemAQualityVintageAlcoholProduct
+		prefix="gs1"><![CDATA[true]]></isTradeItemAQualityVintageAlcoholProduct>
+	<surfaceOfCheeseAtEndOfRipeningCode
+		prefix="gs1" code="NO_RIND"><![CDATA[Pas de croûte]]></surfaceOfCheeseAtEndOfRipeningCode>
+	<secondaryAddedFlavouringCode prefix="gs1"
+		code="ACAI_BERRY"><![CDATA[Acai Berry]]></secondaryAddedFlavouringCode>
+	<ceNumber prefix="bcpg"><![CDATA[EINECS]]></ceNumber>
+	<nutrientProfileVersion prefix="bcpg"
+		translation="2023"><![CDATA[2023]]></nutrientProfileVersion>
+	<creator prefix="cm"><![CDATA[philippe.quere@becpg.fr]]><userLocale
+		prefix="bcpg"><![CDATA[fr]]></userLocale>
+		<email prefix="cm"><![CDATA[philippe.quere@becpg.fr]]></email>
+		<homeFolder prefix="cm"><![CDATA[philippe.quere@becpg.fr]]></homeFolder>
+		<homeFolderProvider prefix="cm"><![CDATA[userHomesHomeFolderProvider]]></homeFolderProvider>
+		<sizeQuota prefix="cm"><![CDATA[-1]]></sizeQuota>
+		<lastName prefix="cm"><![CDATA[Quéré]]></lastName>
+		<emailFeedDisabled prefix="cm"><![CDATA[true]]></emailFeedDisabled>
+		<userContentLocale prefix="bcpg"><![CDATA[fr]]></userContentLocale>
+		<name prefix="cm"><![CDATA[a08fe12f-0234-47a8-a3ef-0d4895f6bde0]]></name>
+		<userName prefix="cm"><![CDATA[philippe.quere@becpg.fr]]></userName>
+		<owner prefix="cm"><![CDATA[philippe.quere@becpg.fr]]></owner>
+		<sizeCurrent prefix="cm"><![CDATA[0]]></sizeCurrent>
+		<emailFeedId prefix="cm"><![CDATA[304687]]></emailFeedId>
+		<firstName prefix="cm"><![CDATA[Philippe]]></firstName>
+		<avatar prefix="cm"><![CDATA[philippe.JPG]]></avatar>
+	</creator>
+	<alcoholBeverageAge prefix="gs1"><![CDATA[360.0]]></alcoholBeverageAge>
+	<nutrientPreparedUnit prefix="bcpg"
+		translation="g"><![CDATA[g]]></nutrientPreparedUnit>
+	<cheeseMaturationPeriodDescription
+		prefix="gs1"><![CDATA[Description de la période de maturation du fromage]]></cheeseMaturationPeriodDescription>
+	<fdaNumber prefix="bcpg"><![CDATA[FDA Cat]]></fdaNumber>
+	<code prefix="bcpg"><![CDATA[MP94901]]></code>
+	<autoVersionOnUpdateProps prefix="cm"><![CDATA[false]]></autoVersionOnUpdateProps>
+	<flNumber prefix="bcpg"><![CDATA[No. FL]]></flNumber>
+	<productDensity prefix="bcpg"><![CDATA[1.0]]></productDensity>
+	<previousUnitTotalCost prefix="bcpg"><![CDATA[0.0]]></previousUnitTotalCost>
+	<ingTypeV2 prefix="bcpg"><![CDATA[<b>Additifs</b>]]></ingTypeV2>
+	<useByDate prefix="bcpg"><![CDATA[12]]></useByDate>
+	<eanCode prefix="bcpg"><![CDATA[123456789012]]></eanCode>
+	<unitTotalCost prefix="bcpg"><![CDATA[0.0]]></unitTotalCost>
+	<alcoholProof prefix="gs1"><![CDATA[12.0]]></alcoholProof>
+	<created prefix="cm"><![CDATA[2023-06-12T07:30:10.893Z]]></created>
+	<packagingDescription prefix="bcpg"><![CDATA[Description du conditionnement]]></packagingDescription>
+	<description prefix="cm"><![CDATA[Description]]></description>
+	<bestBeforeDate prefix="bcpg"><![CDATA[360]]></bestBeforeDate>
+	<sweetnessLevelOfAlcoholicBeverageCode
+		prefix="gs1" code="BRUT"><![CDATA[Brut]]></sweetnessLevelOfAlcoholicBeverageCode>
+	<nutrientProfilingScore prefix="bcpg"><![CDATA[0.0]]></nutrientProfilingScore>
+	<erpCode prefix="bcpg"><![CDATA[Code ERP]]></erpCode>
+	<productHierarchy1 prefix="bcpg"><![CDATA[Puree]]></productHierarchy1>
+	<cheeseMaturationProcessContainerTypeCode
+		prefix="gs1" code="BRINE_SOLUTION"><![CDATA[Solution de saumure]]></cheeseMaturationProcessContainerTypeCode>
+	<fatPercentageInDryMatter prefix="gs1"><![CDATA[12.0]]></fatPercentageInDryMatter>
+	<title prefix="cm"><![CDATA[Libellé commercial]]></title>
+	<sdsSignalWord prefix="ghs" translation="Attention"><![CDATA[Warning]]></sdsSignalWord>
+	<degreeOfOriginalWort prefix="gs1"><![CDATA[12.0]]></degreeOfOriginalWort>
+	<nutrientProfileCategory prefix="bcpg"
+		translation="Autres"><![CDATA[Others]]></nutrientProfileCategory>
+	<alcoholBeverageFilteringMethodTypeCode
+		prefix="gs1" code="CHARCOAL"><![CDATA[charbon]]></alcoholBeverageFilteringMethodTypeCode>
+	<sdsHazardStatements prefix="ghs"><![CDATA[AUH001 - Explosive when dry]]></sdsHazardStatements>
+	<precautionOfUse prefix="bcpg">
+		<charactName prefix="bcpg"><![CDATA[Réfrigéré 0°C - +4°C]]></charactName>
+		<description prefix="cm"><![CDATA[Une fois ouvert, à consommer immédiatement]]></description>
+		<isDeleted prefix="bcpg"><![CDATA[false]]></isDeleted>
+		<name prefix="cm"><![CDATA[889aec62-0baf-4a9a-813c-adb8062bbca4]]></name>
+		<sort prefix="bcpg"><![CDATA[101]]></sort>
+	</precautionOfUse>
+	<alcoholBeverageContainerRef prefix="gs1"><![CDATA[Conteneur Alcool]]></alcoholBeverageContainerRef>
+	<sdsPackagingGroupCode prefix="ghs"><![CDATA[Test]]></sdsPackagingGroupCode>
+	<sdsPrecautionaryStatements prefix="ghs"><![CDATA[P101 - En cas de consultation d’un médecin, garder à disposition le récipient ou l’étiquette]]></sdsPrecautionaryStatements>
+	<sdsPersonalProtections prefix="ghs"><![CDATA[Chaussures de protection]]></sdsPersonalProtections>
+	<storageConditions prefix="bcpg">
+		<charactName prefix="bcpg"><![CDATA[Réfrigéré  0°C - +4°C]]></charactName>
+		<description prefix="cm"><![CDATA[Réfrigéré  0°C - +4°C]]></description>
+		<isDeleted prefix="bcpg"><![CDATA[false]]></isDeleted>
+		<name prefix="cm"><![CDATA[2d4890e6-3e98-4997-9ead-38572a17553f]]></name>
+		<sort prefix="bcpg"><![CDATA[109]]></sort>
+	</storageConditions>
+	<productGeoOrigin prefix="bcpg"><![CDATA[France]]></productGeoOrigin>
+	<plants prefix="bcpg">
+		<plant prefix="bcpg">
+			<created prefix="cm"><![CDATA[2019-03-12T10:03:09.023Z]]></created>
+			<plantTel prefix="bcpg"><![CDATA[0123456789]]></plantTel>
+			<locationCity prefix="bcpg"><![CDATA[MONTROUGE]]></locationCity>
+			<creator prefix="cm"><![CDATA[juliette.mendonca-dias@becpg.fr]]></creator>
+			<plantApprovalNumbers prefix="bcpg"><![CDATA[FR 10.375.003 CE]]></plantApprovalNumbers>
+			<name prefix="cm"><![CDATA[Montrouge]]></name>
+			<locationAddress1 prefix="bcpg"><![CDATA[2A, rue Danton]]></locationAddress1>
+			<erpCode prefix="bcpg"><![CDATA[CODE1]]></erpCode>
+			<title prefix="cm"><![CDATA[Montrouge]]></title>
+			<locationZip prefix="bcpg"><![CDATA[92210]]></locationZip>
+			<isDeleted prefix="bcpg"><![CDATA[false]]></isDeleted>
+			<plantPackerCode prefix="bcpg"><![CDATA[Emb25.123]]></plantPackerCode>
+			<modifier prefix="cm"><![CDATA[philippe.quere@becpg.fr]]></modifier>
+			<modified prefix="cm"><![CDATA[2023-11-23T17:09:46.495Z]]></modified>
+			<sort prefix="bcpg"><![CDATA[100]]></sort>
+			<plantCertifications prefix="bcpg"><![CDATA[Agriculture Biologique, IFS, BRC]]></plantCertifications>
+		</plant>
+	</plants>
+	<sdsClassCode prefix="ghs"><![CDATA[1 - Matières et objets explosifs]]></sdsClassCode>
+	<entityTplRef prefix="bcpg"><![CDATA[Matière première]]></entityTplRef>
+	<sdsOnuCode prefix="ghs"><![CDATA[1001 - Acétylène dissous]]></sdsOnuCode>
+	<reports prefix="rep"><![CDATA[MP Philippe 4 - Sachet d'épice - Fiche Technique - fr.pdf, MP Philippe 4 - Sachet d'épice - Copy of Fiche Technique - fr.pdf]]></reports>
+	<supplierPlants prefix="bcpg"><![CDATA[Usine 1]]></supplierPlants>
+	<sdsPictograms prefix="ghs"><![CDATA[GHS01 - Explosif, autoréactif]]></sdsPictograms>
+	<suppliers prefix="bcpg">
+		<supplier prefix="bcpg">
+			<supplierHierarchy1 prefix="bcpg"><![CDATA[Epiceire]]></supplierHierarchy1>
+			<stateActivityPreviousState prefix="bcpg"><![CDATA[Simulation]]></stateActivityPreviousState>
+			<creator prefix="cm"><![CDATA[philippe.quere@becpg.fr]]></creator>
+			<locationAddress1 prefix="bcpg"><![CDATA[2A, rue Danton]]></locationAddress1>
+			<startEffectivity prefix="bcpg"><![CDATA[2023-06-12T07:25:21.161Z]]></startEffectivity>
+			<code prefix="bcpg"><![CDATA[F136]]></code>
+			<reportEntityGenerated prefix="rep"><![CDATA[2023-11-20T08:09:40.389Z]]></reportEntityGenerated>
+			<supplierFax prefix="bcpg"><![CDATA[Fax]]></supplierFax>
+			<created prefix="cm"><![CDATA[2023-06-12T07:25:20.997Z]]></created>
+			<locationCity prefix="bcpg"><![CDATA[Montrouge]]></locationCity>
+			<stateActivityModifier prefix="bcpg"><![CDATA[philippe.quere@becpg.fr]]></stateActivityModifier>
+			<description prefix="cm"><![CDATA[Description]]></description>
+			<name prefix="cm"><![CDATA[Fournisseur Philippe 4 parent]]></name>
+			<stateActivityModified prefix="bcpg"><![CDATA[2023-06-12T07:25:24.714Z]]></stateActivityModified>
+			<supplierEmail prefix="bcpg"><![CDATA[contact@becpg.fr]]></supplierEmail>
+			<erpCode prefix="bcpg"><![CDATA[Code ERP]]></erpCode>
+			<title prefix="cm"><![CDATA[Fournisseur Philippe 4 parent]]></title>
+			<locationCountry prefix="bcpg"><![CDATA[France]]></locationCountry>
+			<locationZip prefix="bcpg"><![CDATA[92120]]></locationZip>
+			<supplierState prefix="bcpg" translation="Validé"><![CDATA[Valid]]></supplierState>
+			<modifier prefix="cm"><![CDATA[valentin.leblanc@becpg.fr]]></modifier>
+			<modified prefix="cm"><![CDATA[2023-12-12T13:18:03.303Z]]></modified>
+			<supplierTel prefix="bcpg"><![CDATA[Téléphone]]></supplierTel>
+			<entityTplRef prefix="bcpg"><![CDATA[Fournisseur]]></entityTplRef>
+			<reports prefix="rep"><![CDATA[Fournisseur Philippe 4 parent - SupplierReport - fr.pdf, Fournisseur Philippe 4 parent - Fiche Fournisseur - fr.pdf]]></reports>
+		</supplier>
+	</suppliers>
+	<aspects><![CDATA[ghs:sdsAspect, bcpg:formulatedEntityAspect, bcpg:consumerAspect, cm:versionable, bcpg:erpCodeAspect, pack:tareAspect, sys:referenceable, bcpg:contractDateAspect, bcpg:entityScoreAspect, bcpg:productGeoOriginAspect, cm:titled, cm:auditable, bcpg:productAspect, bcpg:meatAspect, bcpg:nutrientProfilingScoreAspect, bcpg:effectivityAspect, rep:reportLocalesAspect, bcpg:productMicrobioCriteriaAspect, bcpg:certificateDateAspect, bcpg:legalNameAspect, cm:taggable, sys:localized, bcpg:entityTplRefAspect, bcpg:entityListsAspect, bcpg:codeAspect, bcpg:chemicalCodeAspect, gs1:cheeseInformationAspect, rep:reportEntityAspect, bcpg:suppliersAspect, bcpg:ingTypeAspect, gs1:alcoholInformationAspect, bcpg:profitabilityAspect, sys:cascadeUpdate, bcpg:manufacturingAspect, bcpg:eanAspect]]></aspects>
+	<itemType><![CDATA[bcpg:rawMaterial]]></itemType>
+	<dataLists>
+		<costLists entityDataListState="ToValidate" title="Coûts"
+			name="costList">
+			<costList isManualListItem="true"
+				name="7c8c7f8a-cf0f-45b2-b2b2-83c355ba355d" sort="10100"
+				costListUnit="€/kg" costListUnitTranslation="€/kg" depthLevel="1"
+				costListIsFormulated="false" costListCost="Coût MP" legalName="" />
+		</costLists>
+		<physicoChemLists entityDataListState="ToValidate"
+			title="Physico-chimiques" name="physicoChemList">
+			<physicoChemList
+				name="7875ddce-c4db-48a1-ae20-f806ad0dd035" pclMaxi="" pclUnit="%"
+				pclUnitCode="%" pclMini="" physicoChemIsFormulated="false"
+				pclTextCriteria="Critères texte " pclValue="0.0"
+				isManualListItem="false" pclType="" pclTypeCode="" sort="1"
+				pclMethod="Balance de précision" pclPhysicoChem="Test CDC Physico"
+				legalName="Test CDC Physico" />
+			<physicoChemList pclUnit="%" pclUnitCode="%"
+				physicoChemIsFormulated="false" pclTextCriteria="" pclValue="0.0"
+				isManualListItem="false" name="3018e312-c729-4cbd-90e2-afd302645b3e"
+				sort="2" pclPhysicoChem="Degré alcoolique" legalName="" />
+			<physicoChemList pclUnit="%" pclUnitCode="%"
+				physicoChemIsFormulated="false" pclTextCriteria=""
+				isManualListItem="false" name="984e4e16-e26c-438b-ac40-2893b808f567"
+				pclType="" pclTypeCode="" sort="3"
+				pclPhysicoChem="Teneur en fruits et légumes"
+				legalName="Teneur en fruits et légumes">
+				<description prefix="cm"><![CDATA[fruits, légumes, légumineuses, fruits à coques, fruits secs, huile d'olive et de colza : 100% 
+les éléments secs : bananes séchés, figues : 200% (sauf si le % de fruits frais est connu)]]></description>
+			</physicoChemList>
+			<physicoChemList
+				name="d21df6cc-848b-48d3-8575-25b88739149d"
+				entityDataListState="Valid" entityDataListStateTranslation="Valid"
+				pclUnit="%" pclUnitCode="%" physicoChemIsFormulated="false"
+				pclTextCriteria="" isManualListItem="false" pclType=""
+				pclTypeCode="" sort="4" pclPhysicoChem="Humidité" legalName="" />
+		</physicoChemLists>
+		<lcaLists entityDataListState="ToValidate"
+			title="Analyse du cycle de vie" name="lcaList">
+			<lcaList lcaListValue="10.0" lcaListIsFormulated="false"
+				isManualListItem="true" name="3383ff03-e083-4c6d-93c9-394aaa938174"
+				sort="1" lcaListUnit="mol H+ eq/kg" lcaListUnitCode="mol H+ eq/kg"
+				depthLevel="1" lcaListLca="Acidification" legalName="" />
+			<lcaList lcaListIsFormulated="false" isManualListItem="true"
+				name="498444f0-3256-45b3-a18c-3af73a3044a0" sort="2"
+				lcaListUnit="kg CO2 eq/kg" lcaListUnitCode="kg CO2 eq/kg"
+				depthLevel="1" lcaListLca="Changement climatique" legalName="" />
+			<lcaList lcaListIsFormulated="false" isManualListItem="true"
+				name="0e113dbc-bfd2-4690-9cb3-8b3cf9efff32" sort="3"
+				lcaListUnit="kg CFC-11 eq/kg" lcaListUnitCode="kg CFC-11 eq/kg"
+				depthLevel="1" lcaListLca="Appauvrissement de la couche d’ozone"
+				legalName="" />
+		</lcaLists>
+		<controlDefLists entityDataListState="ToValidate" title="Plan de contrôles" name="controlDefList">
+			<controlDefList clType="Performance"
+				clTypeCode="performance" reportKinds="None" reportKindsCode="-"
+				clTextCriteriaLimit="aefaefeafaf"
+				name="49e3c4c8-6557-4b18-a3fa-4866ef362320" clTarget="2.0"
+				clUnit="UFC/25cm²" clUnitCode="UFC/25cm²" clMini="2.0" cdlFreq="23"
+				clTemperature="37°C" clTemperatureCode="37°C" clTextCriteria="aefaefaf"
+				clMaxi="2.0" clRequired="true" cdlFreqUnit="/day"
+				cdlFreqUnitTranslation="/jour" cdlQty="24" sort="100"
+				clCharacts="'Jaune d''oeuf'" clMethod="Analyses internes" legalName="" />
+		</controlDefLists>
+		<packMaterialLists entityDataListState="ToValidate"
+			title="Matériaux" name="packMaterialList">
+			<packMaterialList pmlPerc="100.0"
+				pmlRecycledPercentage="13.0"
+				name="b17735f5-3c9b-4b77-93c6-1b3d359329ca" pmlWeight="12.0"
+				sort="100" pmlMaterial="Plastique" />
+		</packMaterialLists>
+		<organoLists entityDataListState="ToValidate"
+			title="Organoleptique" name="organoList">
+			<organoList name="ec9ac784-296e-4633-b515-1b2e66de5f87"
+				organoListValue="" sort="100" organoListOrgano="Couleur"
+				organoListMethod="Analyses internes" legalName="Couleur" />
+		</organoLists>
+		<labelClaimLists entityDataListState="ToValidate"
+			title="Allégations" name="labelClaimList">
+			<labelClaimList lclType="Certification"
+				lclTypeCode="Certification" lclIsFormulated="true"
+				name="ec15c4db-c840-4f20-b380-f6ead6b58378" lclPercentApplicable="50.0"
+				lclComments="" isManualListItem="false" sort="1104"
+				lclClaimValue="false" lclClaimValueTranslation="Non"
+				lclPercentClaim="40.0" lclCertification="IFS"
+				lclLabelClaim="EU – Produits issus de l’agriculture biologique"
+				legalName="Produits issus de l’agriculture biologique"
+				regulDisplayMode="O" />
+			<labelClaimList lclType="Certification"
+				lclTypeCode="Certification" lclIsFormulated="false"
+				name="62513ee8-c814-4fcf-b486-d4be84e79b9f" lclComments=""
+				isManualListItem="false" sort="1112" lclClaimValue="true"
+				lclClaimValueTranslation="Oui" certificateDate=""
+				lclLabelClaim="Casher" legalName="Produit casher"
+				regulDisplayMode="O" />
+			<labelClaimList lclType="Certification"
+				lclTypeCode="Certification" lclIsFormulated="false"
+				name="fd95ed6c-697c-4deb-a420-b3521acddba5" lclComments=""
+				isManualListItem="false" sort="1112" lclClaimValue=""
+				lclClaimValueTranslation="" certificateDate=""
+				lclLabelClaim="Casher" legalName="Produit casher"
+				regulDisplayMode="O" />
+			<labelClaimList lclType="Certification"
+				lclTypeCode="Certification" lclIsFormulated="false"
+				isManualListItem="false" name="KOSHER" sort="1112" lclClaimValue=""
+				lclClaimValueTranslation="" lclLabelClaim="Casher"
+				legalName="Produit casher" regulDisplayMode="O" />
+			<labelClaimList lclType="Certification"
+				lclTypeCode="Certification" lclIsFormulated="false"
+				isManualListItem="false" name="ORGANIC" sort="1113" lclClaimValue=""
+				lclClaimValueTranslation="" lclLabelClaim="Produit bio"
+				legalName="Produit issu de l'agriculture biologique"
+				regulDisplayMode="" />
+			<labelClaimList lclType="Certification"
+				lclTypeCode="Certification" lclIsFormulated="false"
+				isManualListItem="false" name="HALAL" sort="1120" lclClaimValue=""
+				lclClaimValueTranslation="" lclLabelClaim="Halal"
+				legalName="Produit halal" regulDisplayMode="O" />
+			<labelClaimList lclType="Certification"
+				lclTypeCode="Certification" lclIsFormulated="false"
+				isManualListItem="false" name="VEGETARIAN" sort="1128"
+				lclClaimValue="" lclClaimValueTranslation=""
+				lclLabelClaim="Convient aux végétariens"
+				legalName="Convient aux végétariens" regulDisplayMode="O" />
+			<labelClaimList lclType="Certification"
+				lclTypeCode="Certification" lclIsFormulated="false"
+				isManualListItem="false" name="VEGAN" sort="1136" lclClaimValue=""
+				lclClaimValueTranslation="" lclLabelClaim="Convient aux végétaliens"
+				legalName="Convient aux végétaliens" regulDisplayMode="O" />
+			<labelClaimList lclType="Certification"
+				lclTypeCode="Certification" lclIsFormulated="false"
+				isManualListItem="false" name="US_ORGANIC" sort="1137"
+				lclClaimValue="" lclClaimValueTranslation=""
+				lclLabelClaim="US – Produits issus de l’agriculture biologique"
+				legalName="Produits issus de l’agriculture biologique"
+				regulDisplayMode="O" />
+		</labelClaimLists>
+		<ingLists entityDataListState="ToValidate" title="Ingrédients"
+			name="ingList">
+			<ingList ingCEECode="" parentLevel="" ingListQtyPerc="100.0"
+				ingListQtyMaxi="" ingListIsIonized="false" ingListDeclType="Detail"
+				ingListDeclTypeTranslation="Détailler"
+				name="25af4ed2-48be-4c1a-ac03-beb5586b32e1"
+				ingListIsProcessingAid="false" ingListIsGMO="false"
+				ingListIsSupport="false" ingListQtyMini="" sort="103" depthLevel="1"
+				ingListIng="Emmental" ingListClaims="BRC" legalName="emmental" />
+			<ingList ingCEECode="E509" parentLevel="" ingListQtyPerc=""
+				ingListQtyMaxi="1.0" ingListIsIonized="false"
+				ingListDeclType="Detail" ingListDeclTypeTranslation="Détailler"
+				name="72114d9d-51d5-4d01-bb41-76bb4e76b2eb"
+				ingListIsProcessingAid="true" ingListIsGMO="false"
+				ingListIsSupport="false" ingListQtyMini="" sort="104" depthLevel="1"
+				ingListIng="E509 - chlorure de calcium" ingListGeoOrigin="Chine"
+				legalName="chlorure de calcium" />
+		</ingLists>
+		<nutLists entityDataListState="ToValidate" title="Nutriments"
+			name="nutList">
+			<nutList nutListGroup="Groupe 1" nutListGroupCode="Groupe 1"
+				name="bbbe4859-cd02-49b7-95db-0316f6af5689"
+				nutListIsFormulated="true" nutListUnit="kcal/100g"
+				nutListUnitTranslation="kcal/100g" isManualListItem="false"
+				sort="10000" depthLevel="1" nutListNut="Energie kcal"
+				legalName="Energie" nutCode="ENER-E14" color="#ff9900" regulSort="2"
+				regulDepthLevel="1" regulDisplayMode="M" regulBold="false"
+				regulGDA="2000.0" regulUnit="kcal" regulShowGDAPerc="true" />
+			<nutList nutListGroup="Groupe 1" nutListGroupCode="Groupe 1"
+				name="618fce58-669c-4dbf-a28c-bbf3000ffd32"
+				nutListIsFormulated="true" nutListUnit="kJ/100g"
+				nutListUnitTranslation="kJ/100g" isManualListItem="false"
+				sort="10100" depthLevel="1" nutListNut="Energie kJ"
+				legalName="Energie" nutCode="ENER-KJO" color="#ff9900" regulSort="1"
+				regulDepthLevel="1" regulDisplayMode="M" regulBold="false"
+				regulGDA="8400.0" regulUnit="kJ" regulShowGDAPerc="true" />
+			<nutList nutListGroup="Groupe 1" nutListGroupCode="Groupe 1"
+				name="FAT" nutListIsFormulated="false" nutListUnit="g/100g"
+				nutListUnitTranslation="g/100g" isManualListItem="false"
+				sort="10200" depthLevel="1" nutListNut="Lipides"
+				legalName="Matières grasses" nutCode="FAT" color="#ffff00"
+				regulSort="3" regulDepthLevel="1" regulDisplayMode="M"
+				regulBold="false" regulGDA="70.0" regulUnit="g"
+				regulShowGDAPerc="true">
+				<description prefix="cm"><![CDATA[< 10 g ± 1,5 g;
+10 à 40 g ± 20 %
+> 40 g ± 8]]></description>
+			</nutList>
+			<nutList nutListGroup="Groupe 2" nutListGroupCode="Groupe 2"
+				parentLevel="FAT" name="FASAT" nutListIsFormulated="false"
+				nutListUnit="g/100g" nutListUnitTranslation="g/100g"
+				isManualListItem="false" sort="10300" depthLevel="2"
+				nutListNut="AG saturés" legalName="dont AG saturés" nutCode="FASAT"
+				color="#ffff00" regulSort="4" regulDepthLevel="2"
+				regulDisplayMode="M" regulBold="false" regulGDA="20.0" regulUnit="g"
+				regulShowGDAPerc="true">
+				<description prefix="cm"><![CDATA[< 4 g ± 0,8 g;
+>=  4 g ± 20 %]]></description>
+			</nutList>
+			<nutList nutListGroup="Autres nutriments"
+				nutListGroupCode="Autres nutriments" parentLevel="FAT" name="FATRN"
+				nutListIsFormulated="false" nutListUnit="g/100g"
+				nutListUnitTranslation="g/100g" isManualListItem="false"
+				sort="10301" depthLevel="2" nutListNut="AG trans"
+				legalName="dont AG trans" nutCode="FATRN" color="" regulSort="8"
+				regulDepthLevel="2" regulDisplayMode="O" regulBold="false"
+				regulUnit="" regulShowGDAPerc="false" />
+			<nutList nutListGroup="Autres nutriments"
+				nutListGroupCode="Autres nutriments"
+				name="27554ccb-d2be-49c2-a9ee-b74c9d9c120d"
+				nutListIsFormulated="false" nutListUnit="mg/100g"
+				nutListUnitTranslation="mg/100g" nutListMethod=""
+				nutListMethodCode="" isManualListItem="false" sort="10302"
+				depthLevel="1" nutListNut="Cholestérol" legalName="Cholestérol"
+				nutCode="CHOL-" color="" regulSort="23" regulDepthLevel="1"
+				regulDisplayMode="O" regulBold="false" regulUnit=""
+				regulShowGDAPerc="false" />
+			<nutList nutListGroup="Autres nutriments"
+				nutListGroupCode="Autres nutriments" name="CHOL-"
+				nutListIsFormulated="false" nutListUnit="mg/100g"
+				nutListUnitTranslation="mg/100g" isManualListItem="false"
+				sort="10303" depthLevel="1" nutListNut="Cholestérol"
+				legalName="Cholestérol" nutCode="CHOL-" color="" regulSort="23"
+				regulDepthLevel="1" regulDisplayMode="O" regulBold="false"
+				regulUnit="" regulShowGDAPerc="false" />
+			<nutList nutListGroup="Groupe 1" nutListGroupCode="Groupe 1"
+				name="8c21438c-8c73-4b1f-a49c-563b979af401"
+				nutListIsFormulated="false" nutListUnit="g/100g"
+				nutListUnitTranslation="g/100g" isManualListItem="false"
+				sort="10400" depthLevel="1" nutListNut="Glucides"
+				legalName="Glucides" nutCode="CHOAVL" color="#4A86E8" regulSort="9"
+				regulDepthLevel="1" regulDisplayMode="M" regulBold="false"
+				regulGDA="260.0" regulUnit="g" regulShowGDAPerc="true">
+				<description prefix="cm"><![CDATA[< 10 g ± 2 g;
+10 à 40 g ± 20 %
+> 40 g ± 8 g]]></description>
+			</nutList>
+			<nutList nutListGroup="Groupe 2" nutListGroupCode="Groupe 2"
+				parentLevel="8c21438c-8c73-4b1f-a49c-563b979af401" name="SUGAR"
+				nutListIsFormulated="false" nutListUnit="g/100g"
+				nutListUnitTranslation="g/100g" isManualListItem="false"
+				sort="10500" depthLevel="2" nutListNut="Sucres"
+				legalName="dont sucres" nutCode="SUGAR" color="#4A86E8"
+				regulSort="11" regulDepthLevel="2" regulDisplayMode="M"
+				regulBold="false" regulGDA="90.0" regulUnit="g"
+				regulShowGDAPerc="true">
+				<description prefix="cm"><![CDATA[< 10 g ± 2 g;
+10 à 40 g ± 20 %
+> 40 g ± 8 g]]></description>
+			</nutList>
+			<nutList nutListGroup="Autres nutriments"
+				nutListGroupCode="Autres nutriments" parentLevel="SUGAR"
+				name="SUGAD" nutListIsFormulated="false" nutListUnit="g/100g"
+				nutListUnitTranslation="g/100g" isManualListItem="false"
+				sort="10501" depthLevel="3" nutListNut="Sucres ajoutés"
+				legalName="Sucres ajoutés" nutCode="SUGAD" color="" regulSort="12"
+				regulDepthLevel="2" regulDisplayMode="O" regulBold="false"
+				regulUnit="" regulShowGDAPerc="false" />
+			<nutList nutListGroup="Groupe 1" nutListGroupCode="Groupe 1"
+				name="9f96dced-5d6a-4acf-84df-14c9b466ebf5"
+				nutListIsFormulated="false" nutListUnit="g/100g"
+				nutListUnitTranslation="g/100g" isManualListItem="false"
+				sort="10600" depthLevel="1" nutListNut="Protéines"
+				legalName="Protéines" nutCode="PRO-" color="#F6B26B" regulSort="19"
+				regulDepthLevel="1" regulDisplayMode="M" regulBold="false"
+				regulGDA="50.0" regulUnit="g" regulShowGDAPerc="true">
+				<description prefix="cm"><![CDATA[< 10 g ± 2 g;
+10 à 40 g ± 20 %
+> 40 g ± 8 g]]></description>
+			</nutList>
+			<nutList nutListGroup="Groupe 1" nutListGroupCode="Groupe 1"
+				name="PRO-" nutListIsFormulated="false" nutListUnit="g/100g"
+				nutListUnitTranslation="g/100g" isManualListItem="false"
+				sort="10600" depthLevel="1" nutListNut="Protéines"
+				legalName="Protéines" nutCode="PRO-" color="#F6B26B" regulSort="19"
+				regulDepthLevel="1" regulDisplayMode="M" regulBold="false"
+				regulGDA="50.0" regulUnit="g" regulShowGDAPerc="true">
+				<description prefix="cm"><![CDATA[< 10 g ± 2 g;
+10 à 40 g ± 20 %
+> 40 g ± 8 g]]></description>
+			</nutList>
+			<nutList nutListGroup="Autres nutriments"
+				nutListGroupCode="Autres nutriments"
+				name="9d83b10b-a4e0-41a2-b0d1-e4abc0d8491a"
+				nutListIsFormulated="false" nutListUnit="µg/100g"
+				nutListUnitTranslation="µg/100g" nutListMethod=""
+				nutListMethodCode="" isManualListItem="false" sort="10601"
+				depthLevel="1" nutListNut="Vitamine D" legalName="Vitamine D"
+				nutCode="VITD-" color="" regulSort="28" regulDepthLevel="1"
+				regulDisplayMode="O" regulBold="false" regulGDA="5.0" regulUnit="µg"
+				regulShowGDAPerc="true" />
+			<nutList nutListGroup="Autres nutriments"
+				nutListGroupCode="Autres nutriments" name="VITD-"
+				nutListIsFormulated="false" nutListUnit="µg/100g"
+				nutListUnitTranslation="µg/100g" isManualListItem="false"
+				sort="10602" depthLevel="1" nutListNut="Vitamine D"
+				legalName="Vitamine D" nutCode="VITD-" color="" regulSort="28"
+				regulDepthLevel="1" regulDisplayMode="O" regulBold="false"
+				regulGDA="5.0" regulUnit="µg" regulShowGDAPerc="true" />
+			<nutList nutListGroup="Autres nutriments"
+				nutListGroupCode="Autres nutriments"
+				name="958d90c4-5858-4334-8d71-996ab35e70d2"
+				nutListIsFormulated="false" nutListUnit="mg/100g"
+				nutListUnitTranslation="mg/100g" nutListMethod=""
+				nutListMethodCode="" isManualListItem="false" sort="10603"
+				depthLevel="1" nutListNut="Calcium" legalName="Calcium" nutCode="CA"
+				color="" regulSort="48" regulDepthLevel="1" regulDisplayMode="O"
+				regulBold="false" regulGDA="800.0" regulUnit="mg"
+				regulShowGDAPerc="true" />
+			<nutList nutListGroup="Autres nutriments"
+				nutListGroupCode="Autres nutriments" name="CA"
+				nutListIsFormulated="false" nutListUnit="mg/100g"
+				nutListUnitTranslation="mg/100g" isManualListItem="false"
+				sort="10604" depthLevel="1" nutListNut="Calcium" legalName="Calcium"
+				nutCode="CA" color="" regulSort="48" regulDepthLevel="1"
+				regulDisplayMode="O" regulBold="false" regulGDA="800.0"
+				regulUnit="mg" regulShowGDAPerc="true" />
+			<nutList nutListGroup="Autres nutriments"
+				nutListGroupCode="Autres nutriments"
+				name="9aa96ee3-98ad-419b-9589-8b0f73ef4037"
+				nutListIsFormulated="false" nutListUnit="mg/100g"
+				nutListUnitTranslation="mg/100g" nutListMethod=""
+				nutListMethodCode="" isManualListItem="false" sort="10605"
+				depthLevel="1" nutListNut="Potassium" legalName="Potassium"
+				nutCode="K" color="" regulSort="47" regulDepthLevel="1"
+				regulDisplayMode="O" regulBold="false" regulGDA="2000.0"
+				regulUnit="mg" regulShowGDAPerc="true" />
+			<nutList nutListGroup="Autres nutriments"
+				nutListGroupCode="Autres nutriments" name="K"
+				nutListIsFormulated="false" nutListUnit="mg/100g"
+				nutListUnitTranslation="mg/100g" isManualListItem="false"
+				sort="10606" depthLevel="1" nutListNut="Potassium"
+				legalName="Potassium" nutCode="K" color="" regulSort="47"
+				regulDepthLevel="1" regulDisplayMode="O" regulBold="false"
+				regulGDA="2000.0" regulUnit="mg" regulShowGDAPerc="true" />
+			<nutList nutListGroup="Autres nutriments"
+				nutListGroupCode="Autres nutriments"
+				name="1f211213-81d7-406c-8125-fe499796da04"
+				nutListIsFormulated="false" nutListUnit="mg/100g"
+				nutListUnitTranslation="mg/100g" nutListMethod=""
+				nutListMethodCode="" isManualListItem="false" sort="10607"
+				depthLevel="1" nutListNut="Fer" legalName="Fer" nutCode="FE"
+				color="" regulSort="51" regulDepthLevel="1" regulDisplayMode="O"
+				regulBold="false" regulGDA="14.0" regulUnit="mg"
+				regulShowGDAPerc="true" />
+			<nutList nutListGroup="Autres nutriments"
+				nutListGroupCode="Autres nutriments" name="FE"
+				nutListIsFormulated="false" nutListUnit="mg/100g"
+				nutListUnitTranslation="mg/100g" nutListMethod=""
+				nutListMethodCode="" isManualListItem="false" sort="10608"
+				depthLevel="1" nutListMeasurementPrecision="Approximatly"
+				nutListMeasurementPrecisionTranslation="Arrondi" nutListNut="Fer"
+				legalName="Fer" nutCode="FE" color="" regulSort="51"
+				regulDepthLevel="1" regulDisplayMode="O" regulBold="false"
+				regulGDA="14.0" regulUnit="mg" regulShowGDAPerc="true" />
+			<nutList nutListGroup="Groupe 2" nutListGroupCode="Groupe 2"
+				name="718aa171-119c-4fb9-9a6a-7a2463c426d3"
+				nutListIsFormulated="false" nutListUnit="g/100g"
+				nutListUnitTranslation="g/100g" isManualListItem="false"
+				sort="10700" depthLevel="1" nutListNut="Fibres alimentaires"
+				legalName="Fibres alimentaires" nutCode="FIBTG" color="#00ff00"
+				regulSort="15" regulDepthLevel="1" regulDisplayMode="O"
+				regulBold="false" regulUnit="g" regulShowGDAPerc="false">
+				<description prefix="cm"><![CDATA[< 10 g ± 2 g;
+10 à 40 g ± 20 %
+> 40 g ± 8 g]]></description>
+			</nutList>
+			<nutList nutListGroup="Groupe 2" nutListGroupCode="Groupe 2"
+				name="FIBTG" nutListIsFormulated="false" nutListUnit="g/100g"
+				nutListUnitTranslation="g/100g" isManualListItem="false"
+				sort="10700" depthLevel="1" nutListNut="Fibres alimentaires"
+				legalName="Fibres alimentaires" nutCode="FIBTG" color="#00ff00"
+				regulSort="15" regulDepthLevel="1" regulDisplayMode="O"
+				regulBold="false" regulUnit="g" regulShowGDAPerc="false">
+				<description prefix="cm"><![CDATA[< 10 g ± 2 g;
+10 à 40 g ± 20 %
+> 40 g ± 8 g]]></description>
+			</nutList>
+			<nutList nutListGroup="Groupe 2" nutListGroupCode="Groupe 2"
+				name="NA" nutListIsFormulated="false" nutListUnit="mg/100g"
+				nutListUnitTranslation="mg/100g" isManualListItem="false"
+				sort="10800" depthLevel="1" nutListNut="Sodium" legalName="Sodium"
+				nutCode="NA" color="#C27BA0" regulSort="22" regulDepthLevel="1"
+				regulDisplayMode="O" regulBold="false" regulUnit="g"
+				regulShowGDAPerc="false">
+				<description prefix="cm"><![CDATA[< 0,5 g ± 0,15;
+>= 0,5 g ± 20 %]]></description>
+			</nutList>
+			<nutList nutListGroup="Groupe 1" nutListGroupCode="Groupe 1"
+				name="42312a1d-d310-4b3a-adfb-cda381c9dda6"
+				nutListIsFormulated="true" nutListUnit="g/100g"
+				nutListUnitTranslation="g/100g" nutListMethod=""
+				nutListMethodCode="" isManualListItem="false" sort="10801"
+				depthLevel="1" nutListNut="Glucides (avec fibre)"
+				legalName="Glucides (with fiber)" nutCode="CHO-" color=""
+				regulSort="10" regulDepthLevel="1" regulBold="false" regulUnit=""
+				regulShowGDAPerc="false" />
+			<nutList nutListGroup="Groupe 1" nutListGroupCode="Groupe 1"
+				name="CHO-" nutListIsFormulated="true" nutListUnit="g/100g"
+				nutListUnitTranslation="g/100g" isManualListItem="false"
+				sort="10802" depthLevel="1" nutListNut="Glucides (avec fibre)"
+				legalName="Glucides (with fiber)" nutCode="CHO-" color=""
+				regulSort="10" regulDepthLevel="1" regulBold="false" regulUnit=""
+				regulShowGDAPerc="false" />
+			<nutList nutListGroup="Groupe 2" nutListGroupCode="Groupe 2"
+				name="dfd8a834-50d8-425a-9389-ba0ca0180e5d"
+				nutListIsFormulated="true" nutListUnit="g/100g"
+				nutListUnitTranslation="g/100g" isManualListItem="false"
+				sort="10900" depthLevel="1" nutListNut="Sel" legalName="Sel"
+				nutCode="NACL" color="#C27BA0" regulSort="21" regulDepthLevel="1"
+				regulDisplayMode="M" regulBold="false" regulGDA="6.0" regulUnit="g"
+				regulShowGDAPerc="true">
+				<description prefix="cm"><![CDATA[< 1,25 g ± 0,375;
+>=  1,25 g ± 20 %]]></description>
+			</nutList>
+			<nutList nutListGroup="Autres nutriments"
+				nutListGroupCode="Autres nutriments"
+				name="b7f6b073-008d-4618-afe7-3d6e58604ecc"
+				nutListValuePrepared="1.0" nutListIsFormulated="false"
+				 nutListUnit="g/100g"
+				nutListUnitTranslation="g/100g" nutListMethod=""
+				nutListMethodCode="" isManualListItem="false" sort="10901"
+				depthLevel="1" nutListNut="Collagène" legalName="Collagène"
+				nutCode="COLG" color="" />
+			<nutList nutListGroup="Autres nutriments"
+				nutListGroupCode="Autres nutriments"
+				name="19d8c8f8-2920-4737-8479-2a76fe610f7d"
+				nutListIsFormulated="false" nutListUnit="µg/100g"
+				nutListUnitTranslation="µg/100g" nutListMethod=""
+				nutListMethodCode="" isManualListItem="false" sort="10902"
+				depthLevel="1" nutListNut="Vitamine A" legalName="Vitamine A"
+				nutCode="VITA-" color="" regulSort="24" regulDepthLevel="1"
+				regulDisplayMode="O" regulBold="false" regulGDA="800.0"
+				regulUnit="µg" regulShowGDAPerc="true" />
+			<nutList nutListGroup="Groupe 1" nutListGroupCode="Groupe 1"
+				name="US_ENER-E14" nutListIsFormulated="true"
+				nutListUnit="kcal/100g" nutListUnitTranslation="kcal/100g"
+				isManualListItem="false" sort="10903" depthLevel="1"
+				nutListNut="Energie kcal Canada, USA" legalName="Energie"
+				nutCode="US_ENER-E14" color="#ff9900" />
+		</nutLists>
+		<microbioLists entityDataListState="ToValidate" title="Microbiologie" name="microbioList">
+			<microbioList mblType="" mblTypeCode=""
+				reportKinds="None" reportKindsCode="-"
+				name="9b4928d0-9069-400f-a339-fb3a7bb4f1b4" mblValue="12.0"
+				mblUnit="UFC/25cm²" mblUnitCode="UFC/25cm²" mblMaxi="1.0"
+				mblTextCriteria="1243" sort="100" mblControlStep="AUTRES"
+				mblControlStepCode="999" mblMicrobio="Autre flore 1"
+				mblMethod="Balance de précision" legalName="" />
+		</microbioLists>
+		<allergenLists entityDataListState="ToValidate"
+			title="Allergènes" name="allergenList" allergenListVoluntary=""
+			allergenListInVoluntary="" allergenListInVoluntaryFromProcess=""
+			allergenListInVoluntaryFromRawMaterial="">
+			<allergenList allergenListOnLine="true"
+				allergenListIsCleaned="true" allergenListVoluntary="false"
+				allergenListOnSite="true" name="Sulphur dioxide and sulphites"
+				allergenListQtyPerc="0.0" isManualListItem="false" sort="1"
+				allergenListAllergen="Anhydride sulfureux et sulfites"
+				legalName="sulfites" allergenType="Major" regulDisplayMode="M" />
+			<allergenList isManualListItem="false"
+				name="Peanuts and products containing peanut" sort="2"
+				allergenListAllergen="Arachides et produits à base d'arachide"
+				legalName="arachide" allergenType="Major" regulDisplayMode="M" />
+			<allergenList name="Crustaceans and crustacean products"
+				sort="3"
+				allergenListAllergen="Crustacés et produits à base de crustacés"
+				legalName="crustacé" allergenType="Major" regulDisplayMode="M" />
+			<allergenList isManualListItem="false"
+				name="Celery and celery products" sort="4"
+				allergenListAllergen="Céleri et produits à base de céleri"
+				legalName="céleri" allergenType="Major" regulDisplayMode="M" />
+			<allergenList isManualListItem="false"
+				name="29eba3a0-9e2c-4508-aadf-6b34c6a8ab83" sort="5"
+				allergenListAllergen="Céréales contenant du gluten et produits à base de ces céréales"
+				legalName="gluten" allergenType="Major" regulDisplayMode="M" />
+			<allergenList isManualListItem="false"
+				name="Cereals containing gluten and products made from these grains"
+				sort="6"
+				allergenListAllergen="Céréales contenant du gluten et produits à base de ces céréales"
+				legalName="gluten" allergenType="Major" regulDisplayMode="M" />
+			<allergenList isManualListItem="false"
+				name="Nuts (walnuts hazelnuts)" sort="7"
+				allergenListAllergen="Fruits à Coque et produits à base de ces fruits"
+				legalName="fruits à coque" allergenType="Major" regulDisplayMode="M" />
+			<allergenList isManualListItem="false"
+				name="Sesame seeds and products containing sesame seeds" sort="8"
+				allergenListAllergen="Graines de sésame et produits à base de graines de sésame"
+				legalName="sésame" allergenType="Major" regulDisplayMode="M" />
+			<allergenList isManualListItem="false"
+				name="Milk-based product (including lactose)" sort="9"
+				allergenListAllergen="Lait et produit à base de lait (dont lactose)"
+				legalName="lait" allergenType="Major" regulDisplayMode="M" />
+			<allergenList isManualListItem="false"
+				name="Lupine and lupine-based products" sort="10"
+				allergenListAllergen="Lupin  et produits à base de lupin"
+				legalName="lupin" allergenType="Major" regulDisplayMode="M" />
+			<allergenList isManualListItem="false"
+				name="Molluscs and Their Derivatives" sort="11"
+				allergenListAllergen="Mollusque  et produits à base de mollusque"
+				legalName="mollusque" allergenType="Major" regulDisplayMode="M" />
+			<allergenList isManualListItem="false"
+				name="Mustard and mustard products" sort="12"
+				allergenListAllergen="Moutarde et produits à base de moutarde"
+				legalName="moutarde" allergenType="Major" regulDisplayMode="M" />
+			<allergenList isManualListItem="false"
+				name="Egg and egg-based product" sort="13"
+				allergenListAllergen="Oeuf et produit à base d'oeuf"
+				legalName="oeuf" allergenType="Major" regulDisplayMode="M" />
+			<allergenList isManualListItem="false"
+				name="Fish and fish-based product" sort="14"
+				allergenListAllergen="Poisson et produit à base de poisson"
+				legalName="poisson" allergenType="Major" regulDisplayMode="M" />
+			<allergenList isManualListItem="false"
+				name="Soybeans and soy products" sort="15"
+				allergenListAllergen="Soja et produits à base de soja"
+				legalName="soja" allergenType="Major" regulDisplayMode="M" />
+		</allergenLists>
+	</dataLists>
+	<variants>
+		<variant name="" isDefaultVariant="true" />
+	</variants>
+	<versions>
+		<version versionLabel="2.0"
+			versionDescription="MP Philippe 4 - Fournisseur Philippe 4 parent - REFERENCING - 2023"
+			creator="Fournisseur Philippe supplier-F62"
+			created="2023-06-12T07:33:39.069Z" />
+		<version versionLabel="1.0" versionDescription=""
+			creator="Philippe Quéré" created="2023-06-12T07:33:33.895Z" />
+	</versions>
+	<reportParams>
+		<sampleParam1
+			nodeRef="workspace://SpacesStore/1f2e116e-2e04-4957-abca-e6c26ef64d2e"
+			prop="ext1:sampleParam" value="sampleValue" />
+	</reportParams>
+</entity>
