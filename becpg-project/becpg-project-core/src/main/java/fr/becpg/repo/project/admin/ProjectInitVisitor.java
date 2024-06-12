@@ -20,6 +20,7 @@ package fr.becpg.repo.project.admin;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -27,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.model.Repository;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
@@ -34,6 +36,7 @@ import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
@@ -46,9 +49,14 @@ import fr.becpg.repo.entity.EntitySystemService;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.ContentHelper;
 import fr.becpg.repo.helper.TranslateHelper;
+import fr.becpg.repo.project.data.ProjectData;
+import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
+import fr.becpg.repo.project.data.projectList.DeliverableScriptOrder;
+import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.report.template.ReportTplInformation;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
+import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.report.client.ReportFormat;
 
@@ -75,6 +83,14 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 	private static final String PROJECT_REPORT_EN_RESOURCE = "beCPG/birt/project/ProjectReport_en.properties";
 
 	private static final String PROJECT_REPORT_FR_RESOURCE = "beCPG/birt/project/ProjectReport_fr.properties";
+	
+	private static final String ARCHIVE_PJT_TPL_NAME = "plm.project.archive.tpl.name";
+	
+	private static final String ARCHIVE_PJT_TASK_NAME = "plm.project.archive.task.name";
+	
+	private static final String ARCHIVE_PJT_DELIVERABLE_NAME = "plm.project.archive.deliverable.name";
+
+	private static final String XPATH_DICTIONARY_SCRIPTS = "./app:dictionary/app:scripts";
 
 	@Autowired
 	private EntitySystemService entitySystemService;
@@ -90,6 +106,13 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 
 	@Autowired
 	private NamespaceService namespaceService;
+
+	@Autowired
+	private Repository repository;
+	
+	@Autowired
+	private AlfrescoRepository<ProjectData> alfrescoRepository;
+	
 
 	/** {@inheritDoc} */
 	@Override
@@ -127,6 +150,58 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 
 		NodeRef entityTplsNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_ENTITY_TEMPLATES);
 
+		createDefaultProjectTpl(entityTplsNodeRef);
+
+		createArchiveProjectTpl(entityTplsNodeRef);
+		
+		
+	}
+
+	private void createArchiveProjectTpl(NodeRef entityTplsNodeRef) {
+		
+		NodeRef entityTplNodeRef = nodeService.getChildByName(entityTplsNodeRef, ContentModel.ASSOC_CONTAINS,
+				I18NUtil.getMessage(ARCHIVE_PJT_TPL_NAME));
+
+		if (entityTplNodeRef == null) {
+			NodeRef scriptFolderNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(), XPATH_DICTIONARY_SCRIPTS);
+
+			List<NodeRef> scriptResources = contentHelper.addFilesResources(scriptFolderNodeRef, "classpath*:beCPG/scripts/project/*.js");
+			
+			Set<QName> dataLists = new LinkedHashSet<>();
+			dataLists.add(ProjectModel.TYPE_TASK_LIST);
+			dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
+			dataLists.add(BeCPGModel.TYPE_ACTIVITY_LIST);
+			entityTplNodeRef = entityTplService.createEntityTpl(entityTplsNodeRef, ProjectModel.TYPE_PROJECT,
+					I18NUtil.getMessage(ARCHIVE_PJT_TPL_NAME), true, false, dataLists, null);
+
+			entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
+			entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_DOCUMENTS);
+
+			ProjectData pjtTpl = alfrescoRepository.findOne(entityTplNodeRef);
+
+			TaskListDataItem task = new TaskListDataItem();
+			task.setTaskName(I18NUtil.getMessage(ARCHIVE_PJT_TASK_NAME));
+			pjtTpl.getTaskList().add(task);
+
+			alfrescoRepository.save(pjtTpl);
+
+			DeliverableListDataItem archiveScript = new DeliverableListDataItem();
+			archiveScript.setDescription(I18NUtil.getMessage(ARCHIVE_PJT_DELIVERABLE_NAME));
+			archiveScript.setTasks(Collections.singletonList(task.getNodeRef()));
+			archiveScript.setScriptOrder(DeliverableScriptOrder.Pre);
+
+			for (NodeRef scriptNodeRef : scriptResources) {
+				archiveScript.setContent(scriptNodeRef);
+			}
+
+			pjtTpl.getDeliverableList().add(archiveScript);
+
+			alfrescoRepository.save(pjtTpl);
+		}
+		
+	}
+
+	private void createDefaultProjectTpl(NodeRef entityTplsNodeRef) {
 		// visit supplier
 		Set<QName> dataLists = new LinkedHashSet<>();
 		dataLists.add(ProjectModel.TYPE_TASK_LIST);
@@ -142,7 +217,6 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_DOCUMENTS);
-
 	}
 
 	/**

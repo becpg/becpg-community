@@ -367,6 +367,7 @@
 								<exclude>**/signature/**</exclude>
 								<exclude>**/rules/**</exclude>
 								<exclude>**/script/**</exclude>
+								<exclude>**/project/**</exclude>
 								<exclude>**/site-webscripts/**</exclude>
 								<exclude>**/META-INF/**</exclude>
 								<exclude>**/*.lib.js</exclude>
@@ -393,6 +394,7 @@
 								<exclude>**/artworks-viewer/**</exclude>
 								<exclude>**/signature/**</exclude>
 								<exclude>**/script/**</exclude>
+								<exclude>**/project/**</exclude>
 								<exclude>**/site-webscripts/**</exclude>
 								<exclude>**/*.lib.js</exclude>
 								<exclude>**/*.css</exclude>
