@@ -31,7 +31,6 @@ services:
 #      CATALINA_OPTS: "-Xmx4G -Duser.language=fr -Duser.country=FR 
 #                      -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:8888 
 #                      -XX:+FlightRecorder
-#                      -XX:+UseG1GC
 #                      -Dcom.sun.management.jmxremote.rmi.port=9091
 #                      -Dcom.sun.management.jmxremote=true
 #                      -Dcom.sun.management.jmxremote.port=9091
