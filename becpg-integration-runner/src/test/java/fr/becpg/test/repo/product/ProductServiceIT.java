@@ -457,12 +457,26 @@ public class ProductServiceIT extends PLMBaseTestCase {
 			FinishedProductData finishedProduct = new FinishedProductData();
 			finishedProduct.setName("Finished Product");
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(
-					new CompoListDataItem(null, null, 1d, 1d, ProductUnit.P, 0d, DeclarationType.Declare, lSF1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), 1d, 4d, ProductUnit.P, 0d,
-					DeclarationType.Declare, lSF2NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(1), 3d, 0d, ProductUnit.kg, 0d,
-					DeclarationType.Omit, rawMaterialNodeRef));
+			/*
+			 * compoList.add( new CompoListDataItem(null, null, 1d, 1d, ProductUnit.P, 0d,
+			 * DeclarationType.Declare, lSF1NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQty(1d).withQtyUsed(1d).withUnit(ProductUnit.P).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(lSF1NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, compoList.get(0), 1d, 4d,
+			 * ProductUnit.P, 0d, DeclarationType.Declare, lSF2NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQty(1d).withQtyUsed(4d)
+					.withUnit(ProductUnit.P).withLossPerc(0d).withDeclarationType(DeclarationType.Declare)
+					.withProduct(lSF2NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, compoList.get(1), 3d, 0d,
+			 * ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterialNodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(1)).withQty(3d).withQtyUsed(0d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Omit)
+					.withProduct(rawMaterialNodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
@@ -552,8 +566,12 @@ public class ProductServiceIT extends PLMBaseTestCase {
 			FinishedProductData finishedProduct1 = new FinishedProductData();
 			finishedProduct1.setName("Finished Product 1");
 			List<PackagingListDataItem> packagingList1 = new ArrayList<>();
-			packagingList1.add(new PackagingListDataItem(null, 1d, ProductUnit.P, PackagingLevel.Primary, true,
-					packagingMaterialNodeRef));
+			/*
+			 * packagingList1.add(new PackagingListDataItem(null, 1d, ProductUnit.P,
+			 * PackagingLevel.Primary, true, packagingMaterialNodeRef));
+			 */
+			packagingList1.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.P)
+					.withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packagingMaterialNodeRef));
 			finishedProduct1.getPackagingListView().setPackagingList(packagingList1);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
 		});
@@ -562,8 +580,12 @@ public class ProductServiceIT extends PLMBaseTestCase {
 			FinishedProductData finishedProduct2 = new FinishedProductData();
 			finishedProduct2.setName("Finished Product");
 			List<PackagingListDataItem> packagingList2 = new ArrayList<>();
-			packagingList2.add(new PackagingListDataItem(null, 8d, ProductUnit.PP, PackagingLevel.Secondary, true,
-					packagingMaterialNodeRef));
+			/*
+			 * packagingList2.add(new PackagingListDataItem(null, 8d, ProductUnit.PP,
+			 * PackagingLevel.Secondary, true, packagingMaterialNodeRef));
+			 */
+			packagingList2.add(PackagingListDataItem.build().withQty(8d).withUnit(ProductUnit.PP)
+					.withPkgLevel(PackagingLevel.Secondary).withIsMaster(true).withProduct(packagingMaterialNodeRef));
 			finishedProduct2.getPackagingListView().setPackagingList(packagingList2);
 			alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct2).getNodeRef();
 

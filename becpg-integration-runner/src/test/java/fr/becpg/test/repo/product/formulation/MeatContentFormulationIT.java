@@ -213,9 +213,14 @@ public class MeatContentFormulationIT extends AbstractFinishedProductTest {
 			rawMaterial2.setNutList(nutList);
 
 			ingList = new ArrayList<>();
+
 			ingList.add(new IngListDataItem(null, 100d, new ArrayList<>(), new ArrayList<>(), false, false, false, porc,
 					false));
 
+			/*
+			 * ingList.add(new IngListDataItem(null, 100d, new ArrayList<>(), new
+			 * ArrayList<>(), false, false, false, porc, false));
+			 */
 			rawMaterial2.setIngList(ingList);
 
 			mpPorc2 = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial2).getNodeRef();
@@ -269,11 +274,10 @@ public class MeatContentFormulationIT extends AbstractFinishedProductTest {
 			 */
 
 			/*
-			 * compoList1.add(
-			 * CompoListDataItem.build().withQtyUsed(3d).withUnit(ProductUnit.kg).
-			 * withLossPerc(0d) .withDeclarationType(DeclarationType.Declare),
+			 * compoList1.add(CompoListDataItem.build().withQtyUsed(3d).withUnit(ProductUnit
+			 * .kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare),
 			 * alfrescoRepository.create(getTestFolderNodeRef(),
-			 * semifinishedProduct1).getNodeRef());
+			 * semifinishedProduct1).getNodeRef()));
 			 */
 
 			compoList1.add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare,
