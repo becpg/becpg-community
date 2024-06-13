@@ -966,6 +966,8 @@ public class ProjectData extends BeCPGDataObject
 	 *
 	 * <p>Getter for the field <code>surveyList</code>.</p>
 	 */
+	@DataList
+	@AlfQname(qname = "survey:surveyList")
 	@Override
 	public List<SurveyList> getSurveyList() {
 		return surveyList;
