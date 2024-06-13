@@ -35,6 +35,7 @@ import fr.becpg.repo.glop.model.GlopContext;
 import fr.becpg.repo.glop.model.GlopData;
 import fr.becpg.repo.glop.model.GlopTarget;
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.helper.RestTemplateHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -64,8 +65,6 @@ public class GlopServiceImpl implements GlopService {
 
 	@Autowired
 	private NodeService nodeService;
-
-	private RestTemplate restTemplate = new RestTemplate();
 	
 	private String serverUrl() {
 		return systemConfigurationService.confValue("beCPG.glop.serverUrl");
@@ -184,7 +183,7 @@ public class GlopServiceImpl implements GlopService {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Sending " + request + " to " + serverUrl());
 		}
-		String response = restTemplate.postForObject(uri, requestEntity, String.class);
+		String response = RestTemplateHelper.getRestTemplate().postForObject(uri, requestEntity, String.class);
 		
 		if (logger.isDebugEnabled()) {
 			logger.debug("Server returned " + response);
