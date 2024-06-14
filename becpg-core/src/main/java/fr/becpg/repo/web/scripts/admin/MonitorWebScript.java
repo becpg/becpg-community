@@ -121,7 +121,7 @@ public class MonitorWebScript extends DeclarativeWebScript {
 			Map<String, Object> ret = new HashMap<>();
 			
 			try {
-				List<NodeRef> result = BeCPGQueryBuilder.createQuery().inSite("valid", null).list();
+				List<NodeRef> result = BeCPGQueryBuilder.createQuery().inSite("valid", null).maxResults(1).list();
 				if (!result.isEmpty()) {
 					ret.put(SOLR_STATUS, "UP");
 				} else {
