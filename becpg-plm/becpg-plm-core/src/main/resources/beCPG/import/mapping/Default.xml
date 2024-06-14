@@ -42,16 +42,6 @@
 	</mapping>
 
 
-	<!-- Allergens -->
-	<mapping name="bcpg:allergen">
-		<nodeColumnKeys>
-			<nodeColumnKey attribute="bcpg:allergenCode" />
-			<nodeColumnKey attribute="bcpg:charactName" />
-		</nodeColumnKeys>
-		<columns>
-
-		</columns>
-	</mapping>
 	
 	<mapping name="cm:person">
 		<nodeColumnKeys>
