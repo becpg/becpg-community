@@ -50,7 +50,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StopWatch;
-import org.springframework.web.client.RestTemplate;
 
 import fr.becpg.common.diff.Diff;
 import fr.becpg.common.diff.DiffMatchPatch;
