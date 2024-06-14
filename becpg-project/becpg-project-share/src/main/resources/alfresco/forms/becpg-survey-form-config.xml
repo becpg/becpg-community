@@ -121,6 +121,10 @@
 					<show id="survey:responseCommentType" />
 					<show id="survey:responseCommentLabel" />
 					<show id="survey:nextQuestion" />
+					
+					<show id="survey:fsLinkedCharactRefs" force="true" />
+					<show id="survey:fsLinkedTypes" force="true" />
+					<show id="survey:fsLinkedHierarchy" force="true" />
 				</field-visibility>
 				<appearance>
 				  <field id="survey:responseCommentType">
@@ -144,7 +148,30 @@
 							<control-param name="urlParamsToPass">dataListsName,itemId</control-param>
 						</control>
 					</field>
-					
+					<field id="survey:fsLinkedCharactRefs">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pack:packMaterial</control-param>
+							<control-param name="showTooltip">false</control-param>
+							<control-param name="saveTitle">false</control-param>
+						</control>
+					</field>
+					<field id="survey:fsLinkedTypes">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/aclType</control-param>
+							<control-param name="showTooltip">false</control-param>
+							<control-param name="saveTitle">false</control-param>
+						</control>
+					</field>
+					<field id="survey:fsLinkedHierarchy">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">
+								becpg/autocomplete/allLinkedvalue/values/System/ProductHierarchy/bcpg:entityLists?extra.depthLevel=1&amp;extra.paths=finishedProduct_Hierarchy,semiFinishedProduct_Hierarchy,rawMaterialProduct_Hierarchy
+							</control-param>
+							<!--control-param name="extraPaths">survey_fsLinkedTypes</control-param-->
+							<control-param name="showTooltip">false</control-param>
+							<control-param name="saveTitle">false</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 			
@@ -171,6 +198,10 @@
 					<show id="survey:responseCommentType" />
 					<show id="survey:responseCommentLabel" />
 					<show id="survey:nextQuestion" />
+					
+					<show id="survey:fsLinkedCharactRefs" force="true" />
+					<show id="survey:fsLinkedTypes" force="true" />
+					<show id="survey:fsLinkedHierarchy" force="true" />
 				</field-visibility>
 				<appearance>
 				  <field id="survey:responseCommentType">
@@ -193,7 +224,30 @@
 							<control-param name="urlParamsToPass">dataListsName</control-param>
 						</control>
 					</field>
-					
+					<field id="survey:fsLinkedCharactRefs">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pack:packMaterial</control-param>
+							<control-param name="showTooltip">false</control-param>
+							<control-param name="saveTitle">false</control-param>
+						</control>
+					</field>
+					<field id="survey:fsLinkedTypes">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/aclType</control-param>
+							<control-param name="showTooltip">false</control-param>
+							<control-param name="saveTitle">false</control-param>
+						</control>
+					</field>
+					<field id="survey:fsLinkedHierarchy">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">
+								becpg/autocomplete/allLinkedvalue/values/System/ProductHierarchy/bcpg:entityLists?extra.depthLevel=1&amp;extra.paths=finishedProduct_Hierarchy,semiFinishedProduct_Hierarchy,rawMaterialProduct_Hierarchy
+							</control-param>
+							<!--control-param name="extraPaths">survey_fsLinkedTypes</control-param-->
+							<control-param name="showTooltip">false</control-param>
+							<control-param name="saveTitle">false</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 			<form id="filter">
