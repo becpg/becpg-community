@@ -21,6 +21,9 @@ public final class SurveyModel {
 	public static final QName PROP_SURVEY_QUESTION_SCORE = QName.createQName(SURVEY_URI, "questionScore");
 
 	public static final QName TYPE_SURVEY_LIST = QName.createQName(SURVEY_URI, "surveyList");
+	
+	public static final QName ASSOC_SURVEY_FS_LINKED_CHARACT_REFS = QName.createQName(SURVEY_URI, "fsLinkedCharactRefs");
 
-
+	public static final QName ASSOC_SURVEY_FS_LINKED_HIERARCHY = QName.createQName(SURVEY_URI, "fsLinkedHierarchy");
+	
 }

@@ -255,6 +255,11 @@
 					<property name="contentService" ref="contentService" />
 					<property name="associationService" ref="associationService" />
 				</bean>
+				<bean class="fr.becpg.repo.product.formulation.SurveyQuestionFormulationHandler">
+					<property name="nodeService" ref="nodeService" />
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+					<property name="associationService" ref="associationService" />
+				</bean>
 			</list>
 		</property>
 		<property name="formulationService" ref="formulationService" />
