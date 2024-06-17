@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
@@ -126,10 +127,11 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 			}
 			notification.setFrequencyStartDate(new Date());
 			alfrescoRepository.save(notification);
-
+			QName nodeType = QName.createQName(notification.getNodeType(), namespaceService);
+			
 			SearchRuleFilter filter = new SearchRuleFilter();
 			filter.fromJsonString(notification.getCondtions(),namespaceService);
-			filter.setNodeType(QName.createQName(notification.getNodeType(), namespaceService));
+			filter.setNodeType(nodeType);
 			filter.setDateField(QName.createQName(notification.getDateField(), namespaceService));
 			filter.setNodePath(nodeService.getPath(notification.getTarget()));
 
@@ -149,6 +151,10 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 				}
 				continue;
 			}
+
+
+			templateArgs.put(NODE_TYPE, Objects.toString(dictionaryService.getType(nodeType).getTitle(serviceRegistry.getDictionaryService()), nodeType.toPrefixString()));
+			templateArgs.put(DATE_FIELD, Objects.toString(dictionaryService.getProperty(filter.getDateField()).getTitle(serviceRegistry.getDictionaryService()), filter.getDateField().toPrefixString()));
 
 			templateArgs.put(NODE_TYPE, dictionaryService.getType(filter.getNodeType()).getTitle(serviceRegistry.getDictionaryService()));
 			templateArgs.put(DATE_FIELD, dictionaryService.getProperty(filter.getDateField()).getTitle(serviceRegistry.getDictionaryService()));
