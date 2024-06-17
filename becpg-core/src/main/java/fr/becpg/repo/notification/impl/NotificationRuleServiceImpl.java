@@ -157,8 +157,10 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 					continue;
 				}
 				
-				templateArgs.put(NODE_TYPE, dictionaryService.getType(filter.getNodeType()).getTitle(serviceRegistry.getDictionaryService()));
-				templateArgs.put(DATE_FIELD, dictionaryService.getProperty(filter.getDateField()).getTitle(serviceRegistry.getDictionaryService()));
+
+				templateArgs.put(NODE_TYPE, Objects.toString(dictionaryService.getType(nodeType).getTitle(serviceRegistry.getDictionaryService()), nodeType.toPrefixString()));
+				templateArgs.put(DATE_FIELD, Objects.toString(dictionaryService.getProperty(filter.getDateField()).getTitle(serviceRegistry.getDictionaryService()), filter.getDateField().toPrefixString()));
+
 				templateArgs.put(TARGET_PATH,
 						filter.getNodePath().subPath(2, filter.getNodePath().size() - 1).toDisplayPath(nodeService, permissionService) + "/"
 								+ nodeService.getProperty(notification.getTarget(), ContentModel.PROP_NAME));
