@@ -22,9 +22,15 @@ public class DefaultExtractorContext {
 
 	EntityReportData reportData = new EntityReportData();
 
+	private boolean isInfiniteLoop = false;
+
 	public DefaultExtractorContext(Map<String, String> preferences) {
 		super();
 		this.preferences = preferences;
+	}
+	
+	public void setInfiniteLoop(boolean isInfiniteLoop) {
+		this.isInfiniteLoop = isInfiniteLoop;
 	}
 
 	public Map<String, Boolean> getCache() {
@@ -100,6 +106,10 @@ public class DefaultExtractorContext {
 			isInDataListContext = false;
 		}
 
+	}
+
+	public boolean isInfiniteLoop() {
+		return isInfiniteLoop;
 	}
 
 }
