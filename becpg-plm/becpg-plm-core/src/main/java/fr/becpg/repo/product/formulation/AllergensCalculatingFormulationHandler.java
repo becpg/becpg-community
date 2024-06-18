@@ -158,7 +158,9 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 										sourceNodeRefs = error.getSources();
 									}
 
-									sourceNodeRefs.add(partProduct.getNodeRef());
+									if (!sourceNodeRefs.contains(partProduct.getNodeRef())) {
+										sourceNodeRefs.add(partProduct.getNodeRef());
+									}
 
 									rclCtrlMap.put(message, error);
 								}
@@ -523,8 +525,10 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 		} else {
 			sourceNodeRefs = error.getSources();
 		}
-
-		sourceNodeRefs.add(partProduct.getNodeRef());
+		
+		if (!sourceNodeRefs.contains(partProduct.getNodeRef())) {
+			sourceNodeRefs.add(partProduct.getNodeRef());
+		}
 
 		errors.put(message, error);
 
