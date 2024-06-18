@@ -32,6 +32,8 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.formulation.ReportableError;
+import fr.becpg.repo.formulation.ReportableError.ReportableErrorType;
 import fr.becpg.repo.helper.JsonFormulaHelper;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.CurrentLevelQuantities;
@@ -442,6 +444,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void loadDataListItemAttributes(BeCPGDataObject dataListItem, Element nodeElt, DefaultExtractorContext context,
 			List<QName> hiddentAttributes) {
@@ -616,7 +619,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			boolean dropPackagingOfComponents) {
 
 		if (level > 20) {
-			//Avoid infinite loop
+			addInfiniteLoopError(currentLevelQuantities, context);
 			return;
 		}
 
@@ -683,7 +686,6 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	}
 
-
 	private void addInfiniteLoopError(CurrentLevelQuantities currentLevelQuantities, DefaultExtractorContext context) {
 		context.setInfiniteLoop(true);
 		String message = I18NUtil.getMessage("message.datasource.infinite-loop");
@@ -695,7 +697,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			DefaultExtractorContext context) {
 
 		if (level > 20) {
-			//Avoid infinite loop
+			addInfiniteLoopError(currentLevelQuantities, context);
 			return;
 		}
 
@@ -773,11 +775,21 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		return false;
 	}
 
+	/**
+	 * <p>loadCompoListItem.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param parentDataItem a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object
+	 * @param compoListElt a {@link org.dom4j.Element} object
+	 * @param level a int
+	 * @param currentLevelQuantities a {@link fr.becpg.repo.product.data.CurrentLevelQuantities} object
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
+	 */
 	protected void loadCompoListItem(NodeRef entityNodeRef, CompoListDataItem parentDataItem, Element compoListElt, int level,
 			CurrentLevelQuantities currentLevelQuantities, DefaultExtractorContext context) {
 
 		if (level > 20) {
-			//Avoid infinite loop
+			addInfiniteLoopError(currentLevelQuantities, context);
 			return;
 		}
 
@@ -863,7 +875,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 								}
 							}
 
-							if (extractNextLevel) {
+							if (extractNextLevel && !context.isInfiniteLoop()) {
 								loadCompoListItem(entityNodeRef, currentLevelQuantities.getCompoListItem(), compoListElt, level + 1,
 										new CurrentLevelQuantities(alfrescoRepository, packagingHelper, subDataItem, currentLevelQuantities),
 										context);
@@ -1506,7 +1518,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			Element processListElt, int level, DefaultExtractorContext context) {
 
 		if (level > 20) {
-			//Avoid infinite loop
+			addInfiniteLoopError(currentLevelQuantities, context);
 			return;
 		}
 
