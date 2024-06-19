@@ -1093,6 +1093,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 		entityLists.put(HierarchyHelper.getHierarchyPathName(PLMModel.TYPE_RAWMATERIAL), BeCPGModel.TYPE_LINKED_VALUE);
 		entityLists.put(HierarchyHelper.getHierarchyPathName(PLMModel.TYPE_PACKAGINGMATERIAL), BeCPGModel.TYPE_LINKED_VALUE);
+		entityLists.put(HierarchyHelper.getHierarchyPathName(PLMModel.TYPE_LOGISTICUNIT), BeCPGModel.TYPE_LINKED_VALUE);
 		entityLists.put(HierarchyHelper.getHierarchyPathName(PLMModel.TYPE_SEMIFINISHEDPRODUCT), BeCPGModel.TYPE_LINKED_VALUE);
 		entityLists.put(HierarchyHelper.getHierarchyPathName(PLMModel.TYPE_FINISHEDPRODUCT), BeCPGModel.TYPE_LINKED_VALUE);
 		entityLists.put(HierarchyHelper.getHierarchyPathName(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT), BeCPGModel.TYPE_LINKED_VALUE);
@@ -1219,6 +1220,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 		Set<QName> productTypes = new HashSet<>();
 		productTypes.add(PLMModel.TYPE_RAWMATERIAL);
+		productTypes.add(PLMModel.TYPE_LOGISTICUNIT);
 		productTypes.add(PLMModel.TYPE_SEMIFINISHEDPRODUCT);
 		productTypes.add(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT);
 		productTypes.add(PLMModel.TYPE_FINISHEDPRODUCT);
@@ -1282,6 +1284,15 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 				wusedQName = MPMModel.TYPE_PROCESSLIST;
 
+			} else if (productType.equals(PLMModel.TYPE_LOGISTICUNIT)) {
+				
+				dataLists.add(PLMModel.TYPE_COMPOLIST);
+				dataLists.add(PLMModel.TYPE_COSTLIST);
+				dataLists.add(PLMModel.TYPE_PACKAGINGLIST);
+				dataLists.add(PackModel.PACK_MATERIAL_LIST_TYPE);
+				
+				wusedQName = PLMModel.TYPE_COMPOLIST;
+				
 			} else if (productType.equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT)) {
 
 				dataLists.add(PLMModel.TYPE_COMPOLIST);
@@ -1477,14 +1488,14 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			List<NodeRef> commonResources = new ArrayList<>();
 
 			QName[] productTypes = { PLMModel.TYPE_FINISHEDPRODUCT, PLMModel.TYPE_RAWMATERIAL, PLMModel.TYPE_SEMIFINISHEDPRODUCT,
-					PLMModel.TYPE_PACKAGINGMATERIAL, PLMModel.TYPE_SUPPLIER };
+					PLMModel.TYPE_PACKAGINGMATERIAL, PLMModel.TYPE_SUPPLIER, PLMModel.TYPE_LOGISTICUNIT };
 			String[] defaultReport = { PRODUCT_REPORT_CLIENT_PATH, PRODUCT_REPORT_RAWMATERIAL_PATH, PRODUCT_REPORT_PRODUCTION_PATH,
-					PRODUCT_REPORT_PACKAGING_PATH, PRODUCT_REPORT_SUPPLIER_PATH };
+					PRODUCT_REPORT_PACKAGING_PATH, PRODUCT_REPORT_SUPPLIER_PATH, PRODUCT_REPORT_CLIENT_PATH };
 			String[] defaultReportName = { productReportClientName, productReportTechnicalName, productReportProductionName,
-					productReportPackagingName, productReportSupplierName };
+					productReportPackagingName, productReportSupplierName, productReportClientName };
 
-			String[][] otherReport = { { PRODUCT_REPORT_PRODUCTION_PATH, PRODUCT_REPORT_COST_PATH, PRODUCT_REPORT_RD_PATH }, null, null, null, null };
-			String[][] otherReportName = { { productReportProductionName, productReportCostName, productReportRDName }, null, null, null, null };
+			String[][] otherReport = { { PRODUCT_REPORT_PRODUCTION_PATH, PRODUCT_REPORT_COST_PATH, PRODUCT_REPORT_RD_PATH }, null, null, null, null, { PRODUCT_REPORT_PRODUCTION_PATH, PRODUCT_REPORT_COST_PATH } };
+			String[][] otherReportName = { { productReportProductionName, productReportCostName, productReportRDName }, null, null, null, null, { productReportProductionName, productReportCostName } };
 
 			String[] productReportResource = { PRODUCT_REPORT_DE_RESOURCE, PRODUCT_REPORT_EN_US_RESOURCE, PRODUCT_REPORT_EN_RESOURCE,
 					PRODUCT_REPORT_ES_RESOURCE, PRODUCT_REPORT_FI_RESOURCE, PRODUCT_REPORT_FR_RESOURCE, PRODUCT_REPORT_IT_RESOURCE,

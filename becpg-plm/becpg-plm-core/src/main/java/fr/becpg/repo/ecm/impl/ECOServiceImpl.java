@@ -1486,7 +1486,7 @@ public class ECOServiceImpl implements ECOService {
 		QName nodeType = nodeService.getType(targetAssocNodeRef);
 
 		if (nodeType.isMatch(PLMModel.TYPE_RAWMATERIAL) || nodeType.isMatch(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT)
-				|| nodeType.isMatch(PLMModel.TYPE_SEMIFINISHEDPRODUCT) || nodeType.isMatch(PLMModel.TYPE_FINISHEDPRODUCT)) {
+				|| nodeType.isMatch(PLMModel.TYPE_SEMIFINISHEDPRODUCT) || nodeType.isMatch(PLMModel.TYPE_FINISHEDPRODUCT) || nodeType.isMatch(PLMModel.TYPE_LOGISTICUNIT)) {
 			wUsedAssociations.add(PLMModel.ASSOC_COMPOLIST_PRODUCT);
 		} else if (nodeType.isMatch(PLMModel.TYPE_PACKAGINGMATERIAL) || nodeType.isMatch(PLMModel.TYPE_PACKAGINGKIT)) {
 			wUsedAssociations.add(PLMModel.ASSOC_PACKAGINGLIST_PRODUCT);
