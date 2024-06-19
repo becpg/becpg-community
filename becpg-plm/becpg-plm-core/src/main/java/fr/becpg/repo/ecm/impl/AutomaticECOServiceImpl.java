@@ -585,7 +585,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 		QName nodeType = nodeService.getType(targetAssocNodeRef);
 
 		if (nodeType.isMatch(PLMModel.TYPE_RAWMATERIAL) || nodeType.isMatch(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT)
-				|| nodeType.isMatch(PLMModel.TYPE_SEMIFINISHEDPRODUCT) || nodeType.isMatch(PLMModel.TYPE_FINISHEDPRODUCT)) {
+				|| nodeType.isMatch(PLMModel.TYPE_SEMIFINISHEDPRODUCT) || nodeType.isMatch(PLMModel.TYPE_FINISHEDPRODUCT) || nodeType.isMatch(PLMModel.TYPE_LOGISTICUNIT)) {
 			return PLMModel.ASSOC_COMPOLIST_PRODUCT;
 		} else if (nodeType.isMatch(PLMModel.TYPE_PACKAGINGMATERIAL) || nodeType.isMatch(PLMModel.TYPE_PACKAGINGKIT)) {
 			return PLMModel.ASSOC_PACKAGINGLIST_PRODUCT;
