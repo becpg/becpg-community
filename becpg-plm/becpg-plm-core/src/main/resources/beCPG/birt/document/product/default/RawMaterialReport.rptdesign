@@ -15751,13 +15751,10 @@ BirtMath.round(dataSetRow["mblMaxi"],0)
                         <column id="13020">
                             <property name="style">becpg-col-border</property>
                         </column>
-                        <column id="13021">
-                            <property name="style">becpg-col-border</property>
-                        </column>
                         <header>
                             <row id="12994">
                                 <cell id="12995">
-                                    <property name="colSpan">4</property>
+                                    <property name="colSpan">3</property>
                                     <property name="rowSpan">1</property>
                                     <property name="style">becpg-chapter-header</property>
                                     <label id="12996">
@@ -15776,7 +15773,7 @@ BirtMath.round(dataSetRow["mblMaxi"],0)
                             </row>
                             <row id="12997">
                                 <cell id="12998">
-                                    <property name="colSpan">4</property>
+                                    <property name="colSpan">3</property>
                                     <property name="rowSpan">1</property>
                                     <label id="12999"/>
                                 </cell>
@@ -15806,15 +15803,6 @@ BirtMath.round(dataSetRow["mblMaxi"],0)
                                         <text-property name="text" key="typeSvhc">Type de SVHC</text-property>
                                     </label>
                                 </cell>
-                                <cell id="13007">
-                                    <property name="style">becpg-cell-header</property>
-                                    <label id="13008">
-                                        <property name="style">becpg-col-header</property>
-                                        <property name="paddingLeft">5pt</property>
-                                        <property name="textAlign">center</property>
-                                        <text-property name="text" key="manual">Manuel</text-property>
-                                    </label>
-                                </cell>
                             </row>
                         </header>
                         <detail>
@@ -15839,13 +15827,6 @@ BirtMath.round(dataSetRow["mblMaxi"],0)
                                     <data id="13026">
                                         <property name="resultSetColumn">svhcReasonsForInclusion</property>
                                     </data>
-                                </cell>
-                                <cell id="13016">
-                                    <property name="style">becpg-cell-data</property>
-                                    <text-data id="13027">
-                                        <expression name="valueExpr">row["isManualListItem"] ? "Yes" : "No"</expression>
-                                        <property name="contentType">html</property>
-                                    </text-data>
                                 </cell>
                             </row>
                         </detail>
