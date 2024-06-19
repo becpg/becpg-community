@@ -1,9 +1,10 @@
 package fr.becpg.repo.entity.remote;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.service.namespace.NamespaceException;
 import org.alfresco.service.namespace.NamespaceService;
@@ -51,15 +52,11 @@ public class RemoteParams {
 
 	private JSONObject jsonParams;
 
-	private List<QName> filteredProperties = new ArrayList<>();
-	private List<QName> ignoredFields = new ArrayList<>();
-	private List<String> filteredLists = new ArrayList<>();
-	private Map<QName, List<QName>> filteredAssocProperties = new HashMap<>();
-
-	public void setFilteredLists(List<String> filteredLists) {
-		this.filteredLists = filteredLists;
-	}
-
+	private Set<QName> filteredProperties = new HashSet<>();
+	private Set<QName> ignoredFields = new HashSet<>();
+	private Set<String> filteredLists = new HashSet<>();
+	private Map<QName, Set<QName>> filteredAssocProperties = new HashMap<>();
+	
 	public RemoteParams(RemoteEntityFormat format) {
 		this.format = format;
 	}
@@ -72,15 +69,8 @@ public class RemoteParams {
 		this.jsonParams = jsonParams;
 	}
 
-	public List<QName> getFilteredProperties() {
-		return filteredProperties;
-	}
 
-	public void setIgnoredFields(List<QName> ignoredFields) {
-		this.ignoredFields = ignoredFields;
-	}
-
-	public Map<QName, List<QName>> getFilteredAssocProperties() {
+	public Map<QName, Set<QName>> getFilteredAssocProperties() {
 		return filteredAssocProperties;
 	}
 
@@ -110,7 +100,7 @@ public class RemoteParams {
 								if (filteredAssocProperties.containsKey(propQname)) {
 									filteredAssocProperties.get(propQname).add(assocPropQName);
 								} else {
-									List<QName> tmp = new ArrayList<>();
+									Set<QName> tmp = new HashSet<>();
 									tmp.add(assocPropQName);
 									filteredAssocProperties.put(propQname, tmp);
 								}
