@@ -165,9 +165,9 @@
 					<field id="survey:fsLinkedHierarchy">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">
-								becpg/autocomplete/allLinkedvalue/values/System/ProductHierarchy/bcpg:entityLists?extra.depthLevel=1&amp;extra.paths=finishedProduct_Hierarchy,semiFinishedProduct_Hierarchy,rawMaterialProduct_Hierarchy
+								becpg/autocomplete/allLinkedvalue/values/System/ProductHierarchy/bcpg:entityLists?extra.depthLevel=1
 							</control-param>
-							<!--control-param name="extraPaths">survey_fsLinkedTypes</control-param-->
+							<control-param name="extraPaths">prop_survey_fsLinkedTypes</control-param>
 							<control-param name="showTooltip">false</control-param>
 							<control-param name="saveTitle">false</control-param>
 						</control>
@@ -241,9 +241,9 @@
 					<field id="survey:fsLinkedHierarchy">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">
-								becpg/autocomplete/allLinkedvalue/values/System/ProductHierarchy/bcpg:entityLists?extra.depthLevel=1&amp;extra.paths=finishedProduct_Hierarchy,semiFinishedProduct_Hierarchy,rawMaterialProduct_Hierarchy
+								becpg/autocomplete/allLinkedvalue/values/System/ProductHierarchy/bcpg:entityLists?extra.depthLevel=1
 							</control-param>
-							<!--control-param name="extraPaths">survey_fsLinkedTypes</control-param-->
+							<control-param name="extraPaths">prop_survey_fsLinkedTypes</control-param>
 							<control-param name="showTooltip">false</control-param>
 							<control-param name="saveTitle">false</control-param>
 						</control>
