@@ -222,6 +222,10 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 				if ((netWeight != 0d) && (subWeight != null)) {
 					weightUsed = (weightUsed / netWeight) * subWeight;
 				}
+				
+				if (compoListDataItem.getCompoListUnit().isP()) {
+					weightUsed = 1d;
+				}
 
 				Double volUsed = FormulationHelper.getNetVolume(compoListDataItem, subProductData);
 				Double netVol = FormulationHelper.getNetVolume(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT);

@@ -236,8 +236,17 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 					Double qtyPercWithYield = (totalQtyIngWithYield) / (totalQtyUsedWithYield);
 
-					if ((formulatedProduct.getYield() != null) && nodeService.hasAspect(ingListDataItem.getIng(), PLMModel.ASPECT_WATER)) {
-						qtyPercWithYield = qtyPercWithYield / x + (100d - 100d / x);
+					if ((formulatedProduct.getYield() != null) && (nodeService.hasAspect(ingListDataItem.getIng(), PLMModel.ASPECT_WATER)
+							|| (nodeService.hasAspect(ingListDataItem.getIng(), PLMModel.ASPECT_EVAPORABLE)
+									&& (Double )nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE) == 100d))) {
+
+//						Double evaporateRate = (Double) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE);
+//
+//						if (evaporateRate == null) {
+//							evaporateRate = 100d;
+//						}
+
+						qtyPercWithYield = qtyPercWithYield / x + ((100d - 100d / x));// * (evaporateRate/100d));
 					} else {
 						qtyPercWithYield = qtyPercWithYield / x;
 					}
@@ -252,9 +261,16 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 					Double qtyPercWithSecondaryYield = ingListDataItem.getQtyPercWithYield() != null ? ingListDataItem.getQtyPercWithYield()
 							: ingListDataItem.getQtyPerc();
 					Double x = (formulatedProduct.getSecondaryYield() / 100d);
-					if (nodeService.hasAspect(ingListDataItem.getIng(), PLMModel.ASPECT_WATER)) {
+					if (nodeService.hasAspect(ingListDataItem.getIng(), PLMModel.ASPECT_WATER) ||  (nodeService.hasAspect(ingListDataItem.getIng(), PLMModel.ASPECT_EVAPORABLE)
+							&& (Double)nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE)== 100d) ) {
 
-						qtyPercWithSecondaryYield = qtyPercWithSecondaryYield / x + (100d - 100d / x);
+//						Double evaporateRate = (Double) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE);
+//
+//						if (evaporateRate == null) {
+//							evaporateRate = 100d;
+//						}
+//						
+						qtyPercWithSecondaryYield = qtyPercWithSecondaryYield / x + ((100d - 100d / x)); /* * (evaporateRate/100d)) */
 
 					} else {
 
@@ -476,8 +492,16 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 					}
 
 					if ((FormulationHelper.getYield(compoListDataItem) != null)
-							&& nodeService.hasAspect(ingListDataItem.getIng(), PLMModel.ASPECT_WATER)) {
-						valueToAdd = qty * ((qtyIngWithYield) - (100d - FormulationHelper.getYield(compoListDataItem)));
+							&& (nodeService.hasAspect(ingListDataItem.getIng(), PLMModel.ASPECT_WATER) || (nodeService.hasAspect(ingListDataItem.getIng(), PLMModel.ASPECT_EVAPORABLE)
+									&& (Double) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE) == 100d))) {
+						
+//						Double evaporateRate = (Double) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE);
+//
+//						if (evaporateRate == null) {
+//							evaporateRate = 100d;
+//						}
+						
+						valueToAdd = qty * ((qtyIngWithYield) - ((100d  - FormulationHelper.getYield(compoListDataItem))));//* (evaporateRate/100d)));
 					}
 
 					totalQtyIngWithYield += valueToAdd;

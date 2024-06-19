@@ -1,3 +1,4 @@
+MAPPING;TestMapping.xml;;;;
 PATH;/System/Characts/bcpg:entityLists/Nuts;;;;
 TYPE;bcpg:nut;;;;
 COLUMNS;bcpg:charactName;bcpg:nutUnit;bcpg:nutType;bcpg:nutGroup;
