@@ -8204,6 +8204,410 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                 </ex-property>
             </list-property>
         </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="svhcList" id="13022">
+            <list-property name="computedColumns">
+                <structure>
+                    <property name="name">tableCheck</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">COUNT</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">svhcListIng</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">svhcListIng</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">svhcListQtyPerc</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="heading">svhcListQtyPerc</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">svhcReasonsForInclusion</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">svhcReasonsForInclusion</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">isManualListItem</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">isManualListItem</text-property>
+                </structure>
+            </list-property>
+            <list-property name="parameters"/>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">svhcListIng</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">svhcListQtyPerc</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">svhcReasonsForInclusion</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">isManualListItem</property>
+                        <property name="dataType">boolean</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">tableCheck</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">DataXml</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">svhcListIng</property>
+                    <property name="nativeName">svhcListIng</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">svhcListQtyPerc</property>
+                    <property name="nativeName">svhcListQtyPerc</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">svhcReasonsForInclusion</property>
+                    <property name="nativeName">svhcReasonsForInclusion</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">isManualListItem</property>
+                    <property name="nativeName">isManualListItem</property>
+                    <property name="dataType">boolean</property>
+                    <property name="nativeDataType">16</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/svhcLists/svhcList]#:#{svhcListIng;STRING;/@svhcListIng},{svhcListQtyPerc;DOUBLE;/@svhcListQtyPerc},{svhcReasonsForInclusion;STRING;/@svhcReasonsForInclusion},{isManualListItem;BOOLEAN;/@isManualListItem}]]></xml-property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>2.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>svhcListIng</design:name>
+              <design:position>1</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>svhcListIng</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>svhcListQtyPerc</design:name>
+              <design:position>2</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>8</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>svhcListQtyPerc</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>svhcReasonsForInclusion</design:name>
+              <design:position>3</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>svhcReasonsForInclusion</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>isManualListItem</design:name>
+              <design:position>4</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>16</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>isManualListItem</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+      <design:criteria/>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>MAX_ROW</name>
+                    <value>-1</value>
+                </ex-property>
+                <ex-property>
+                    <name>XML_FILE</name>
+                </ex-property>
+            </list-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="surveyList" id="13082">
+            <list-property name="computedColumns">
+                <structure>
+                    <property name="name">integer</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">RUNNINGCOUNT</property>
+                </structure>
+                <structure>
+                    <property name="name">array</property>
+                    <expression name="expression">if(row["slChoices"]!=null){&#13;
+row["slChoices"].replace(', ','\n- ')&#13;
+}</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">slChoices</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">slChoices</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">slQuestion</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">slQuestion</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">slComment</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">slComment</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">questionNote</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">questionNote</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">responseCommentLabel</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">responseCommentLabel</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">integer</property>
+                    <property name="alias">integer</property>
+                    <property name="analysis">measure</property>
+                </structure>
+            </list-property>
+            <list-property name="parameters"/>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">slChoices</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">slQuestion</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">slComment</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">questionNote</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">responseCommentLabel</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">integer</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">array</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">DataXml</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">slChoices</property>
+                    <property name="nativeName">slChoices</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">slQuestion</property>
+                    <property name="nativeName">slQuestion</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">slComment</property>
+                    <property name="nativeName">slComment</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">questionNote</property>
+                    <property name="nativeName">questionNote</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">responseCommentLabel</property>
+                    <property name="nativeName">responseCommentLabel</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/surveyLists/surveyList]#:#{slChoices;STRING;/@slChoices},{slQuestion;STRING;/@slQuestion},{slComment;STRING;/@slComment},{questionNote;STRING;slQuestion/surveyQuestion/questionNote/},{responseCommentLabel;STRING;slChoices/surveyQuestion/responseCommentLabel/}]]></xml-property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>2.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>name</design:name>
+              <design:position>1</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>name</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>sort</design:name>
+              <design:position>2</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>sort</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>comment</design:name>
+              <design:position>3</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>comment</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>choices</design:name>
+              <design:position>4</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>choices</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>question</design:name>
+              <design:position>5</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>question</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+      <design:criteria/>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>MAX_ROW</name>
+                    <value>-1</value>
+                </ex-property>
+                <ex-property>
+                    <name>XML_FILE</name>
+                </ex-property>
+            </list-property>
+        </oda-data-set>
     </data-sets>
     <styles>
         <style name="report" id="2">
@@ -15099,12 +15503,7 @@ BirtMath.round(dataSetRow["mblMaxi"],0)
                         <list-property name="visibility">
                             <structure>
                                 <property name="format">all</property>
-                                <expression name="valueExpr" type="javascript">if (row["tableCheck"] == null){
-	true
-}
-else{
-	false
-}</expression>
+                                <expression name="valueExpr" type="javascript">row["tableCheck"] == null</expression>
                             </structure>
                         </list-property>
                         <list-property name="boundDataColumns">
@@ -15291,6 +15690,417 @@ else{
                                         <property name="textAlign">center</property>
                                         <property name="resultSetColumn">organoListMethod</property>
                                     </data>
+                                </cell>
+                            </row>
+                        </detail>
+                    </table>
+                </cell>
+            </row>
+            <row id="12991">
+                <cell id="12992">
+                    <table id="12993">
+                        <property name="marginTop">8pt</property>
+                        <property name="marginBottom">8pt</property>
+                        <property name="width">100%</property>
+                        <property name="dataSet">svhcList</property>
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr" type="javascript">row["tableCheck"]==null</expression>
+                            </structure>
+                        </list-property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">svhcListIng</property>
+                                <text-property name="displayName">svhcListIng</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["svhcListIng"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">svhcListQtyPerc</property>
+                                <text-property name="displayName">svhcListQtyPerc</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["svhcListQtyPerc"]</expression>
+                                <property name="dataType">float</property>
+                            </structure>
+                            <structure>
+                                <property name="name">svhcReasonsForInclusion</property>
+                                <text-property name="displayName">svhcReasonsForInclusion</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["svhcReasonsForInclusion"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">isManualListItem</property>
+                                <text-property name="displayName">isManualListItem</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["isManualListItem"]</expression>
+                                <property name="dataType">boolean</property>
+                            </structure>
+                            <structure>
+                                <property name="name">tableCheck</property>
+                                <text-property name="displayName">tableCheck</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["tableCheck"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
+                        </list-property>
+                        <column id="13018">
+                            <property name="style">becpg-col-header</property>
+                            <property name="width">1.7in</property>
+                        </column>
+                        <column id="13019">
+                            <property name="style">becpg-col-border</property>
+                        </column>
+                        <column id="13020">
+                            <property name="style">becpg-col-border</property>
+                        </column>
+                        <column id="13021">
+                            <property name="style">becpg-col-border</property>
+                        </column>
+                        <header>
+                            <row id="12994">
+                                <cell id="12995">
+                                    <property name="colSpan">4</property>
+                                    <property name="rowSpan">1</property>
+                                    <property name="style">becpg-chapter-header</property>
+                                    <label id="12996">
+                                        <property name="style">becpg-chapter-header</property>
+                                        <property name="borderBottomStyle">none</property>
+                                        <property name="borderLeftStyle">none</property>
+                                        <property name="borderRightStyle">none</property>
+                                        <property name="borderTopStyle">none</property>
+                                        <property name="marginTop">0pt</property>
+                                        <property name="marginBottom">0pt</property>
+                                        <property name="textAlign">center</property>
+                                        <property name="display">block</property>
+                                        <text-property name="text" key="svhc">MATÉRIAUX</text-property>
+                                    </label>
+                                </cell>
+                            </row>
+                            <row id="12997">
+                                <cell id="12998">
+                                    <property name="colSpan">4</property>
+                                    <property name="rowSpan">1</property>
+                                    <label id="12999"/>
+                                </cell>
+                            </row>
+                            <row id="13000">
+                                <property name="style">becpg-row-header</property>
+                                <property name="fontSize">9pt</property>
+                                <cell id="13001">
+                                    <property name="style">becpg-cell-header</property>
+                                    <label id="13002">
+                                        <property name="style">becpg-col-header</property>
+                                        <property name="textAlign">center</property>
+                                        <text-property name="text" key="svhcListIng">Substance</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="13003">
+                                    <property name="style">becpg-cell-header</property>
+                                    <label id="13004">
+                                        <property name="style">becpg-col-header</property>
+                                        <property name="textAlign">center</property>
+                                        <text-property name="text" key="svhcListQty">Quantité (%)</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="13005">
+                                    <property name="style">becpg-cell-header</property>
+                                    <label id="13006">
+                                        <text-property name="text" key="typeSvhc">Type de SVHC</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="13007">
+                                    <property name="style">becpg-cell-header</property>
+                                    <label id="13008">
+                                        <property name="style">becpg-col-header</property>
+                                        <property name="paddingLeft">5pt</property>
+                                        <property name="textAlign">center</property>
+                                        <text-property name="text" key="manual">Manuel</text-property>
+                                    </label>
+                                </cell>
+                            </row>
+                        </header>
+                        <detail>
+                            <row id="13009">
+                                <property name="style">becpg-row-border</property>
+                                <cell id="13010">
+                                    <method name="onRender"><![CDATA[indent_docx (0, 1, this);]]></method>
+                                    <property name="style">becpg-cell-dynamic-header-left</property>
+                                    <property name="paddingLeft">2pt</property>
+                                    <data id="13023">
+                                        <property name="resultSetColumn">svhcListIng</property>
+                                    </data>
+                                </cell>
+                                <cell id="13012">
+                                    <property name="style">becpg-cell-data</property>
+                                    <data id="13024">
+                                        <property name="resultSetColumn">svhcListQtyPerc</property>
+                                    </data>
+                                </cell>
+                                <cell id="13014">
+                                    <property name="style">becpg-cell-data</property>
+                                    <data id="13026">
+                                        <property name="resultSetColumn">svhcReasonsForInclusion</property>
+                                    </data>
+                                </cell>
+                                <cell id="13016">
+                                    <property name="style">becpg-cell-data</property>
+                                    <text-data id="13027">
+                                        <expression name="valueExpr">row["isManualListItem"] ? "Yes" : "No"</expression>
+                                        <property name="contentType">html</property>
+                                    </text-data>
+                                </cell>
+                            </row>
+                        </detail>
+                    </table>
+                </cell>
+            </row>
+            <row id="13028">
+                <cell id="13029">
+                    <table id="13059">
+                        <property name="marginTop">8pt</property>
+                        <property name="marginBottom">8pt</property>
+                        <property name="textAlign">center</property>
+                        <property name="pageBreakInside">avoid</property>
+                        <property name="dataSet">surveyList</property>
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr" type="javascript">row["integer"]==null</expression>
+                            </structure>
+                        </list-property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">integer</property>
+                                <text-property name="displayName">integer</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["integer"]</expression>
+                                <property name="dataType">integer</property>
+                                <property name="allowExport">true</property>
+                            </structure>
+                            <structure>
+                                <property name="name">slQuestion</property>
+                                <text-property name="displayName">slQuestion</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["slQuestion"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">slComment</property>
+                                <text-property name="displayName">slComment</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["slComment"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">slChoices</property>
+                                <text-property name="displayName">slChoices</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["slChoices"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">array</property>
+                                <text-property name="displayName">array</text-property>
+                                <expression name="expression" type="javascript">if(dataSetRow["array"])&#13;
+"- " + dataSetRow["array"]</expression>
+                                <property name="dataType">string</property>
+                                <property name="allowExport">true</property>
+                            </structure>
+                            <structure>
+                                <property name="name">questionNote</property>
+                                <text-property name="displayName">questionNote</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["questionNote"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">IntegerString</property>
+                                <text-property name="displayName">integerString</text-property>
+                                <expression name="expression" type="javascript">var question = "Q"&#13;
+question += dataSetRow["integer"] + " -"</expression>
+                                <property name="dataType">string</property>
+                                <property name="allowExport">true</property>
+                            </structure>
+                        </list-property>
+                        <column id="12934"/>
+                        <column id="12935"/>
+                        <header>
+                            <row id="13064">
+                                <property name="style">becpg-chapter-header</property>
+                                <cell id="13065">
+                                    <property name="colSpan">2</property>
+                                    <property name="rowSpan">1</property>
+                                    <label id="13066">
+                                        <property name="style">becpg-chapter-header</property>
+                                        <text-property name="text" key="SurveyChapter"></text-property>
+                                    </label>
+                                </cell>
+                            </row>
+                            <row id="13067">
+                                <cell id="13068">
+                                    <label id="13069"/>
+                                </cell>
+                                <cell id="13070">
+                                    <property name="colSpan">1</property>
+                                    <property name="rowSpan">1</property>
+                                </cell>
+                            </row>
+                        </header>
+                        <detail>
+                            <row id="13071">
+                                <property name="fontSize">10pt</property>
+                                <property name="borderLeftStyle">none</property>
+                                <property name="borderRightStyle">none</property>
+                                <property name="borderTopStyle">none</property>
+                                <property name="verticalAlign">middle</property>
+                                <property name="pageBreakAfter">auto</property>
+                                <list-property name="visibility">
+                                    <structure>
+                                        <property name="format">all</property>
+                                        <expression name="valueExpr" type="javascript">row["slQuestion"]==null || row["slQuestion"] == ""</expression>
+                                    </structure>
+                                </list-property>
+                                <cell id="13072">
+                                    <property name="colSpan">2</property>
+                                    <property name="rowSpan">1</property>
+                                    <property name="style">becpg-col-border</property>
+                                    <property name="borderBottomStyle">none</property>
+                                    <property name="borderLeftStyle">none</property>
+                                    <property name="borderRightStyle">none</property>
+                                    <property name="borderTopStyle">none</property>
+                                    <property name="textAlign">left</property>
+                                    <text-data id="13073">
+                                        <property name="fontWeight">bold</property>
+                                        <property name="display">inline</property>
+                                        <expression name="valueExpr">row["IntegerString"]</expression>
+                                        <property name="contentType">html</property>
+                                    </text-data>
+                                    <label id="13074">
+                                        <property name="display">inline</property>
+                                    </label>
+                                    <data id="13075">
+                                        <property name="fontWeight">bold</property>
+                                        <property name="display">inline</property>
+                                        <property name="resultSetColumn">slQuestion</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="12914">
+                                <property name="borderBottomStyle">none</property>
+                                <property name="borderLeftStyle">none</property>
+                                <property name="borderRightStyle">none</property>
+                                <property name="borderTopStyle">none</property>
+                                <property name="verticalAlign">middle</property>
+                                <property name="pageBreakAfter">auto</property>
+                                <list-property name="visibility">
+                                    <structure>
+                                        <property name="format">all</property>
+                                        <expression name="valueExpr" type="javascript">row["questionNote"]==null || row["questionNote"] == ""</expression>
+                                    </structure>
+                                </list-property>
+                                <cell id="13076">
+                                    <property name="colSpan">2</property>
+                                    <property name="rowSpan">1</property>
+                                    <property name="borderBottomStyle">none</property>
+                                    <property name="borderLeftStyle">none</property>
+                                    <property name="borderRightStyle">none</property>
+                                    <property name="borderTopStyle">none</property>
+                                    <property name="paddingTop">1pt</property>
+                                    <property name="textAlign">left</property>
+                                    <data id="12916">
+                                        <property name="fontSize">10pt</property>
+                                        <property name="fontWeight">normal</property>
+                                        <property name="resultSetColumn">questionNote</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="13077">
+                                <property name="borderBottomStyle">none</property>
+                                <property name="borderLeftStyle">none</property>
+                                <property name="borderRightStyle">none</property>
+                                <property name="borderTopStyle">none</property>
+                                <property name="verticalAlign">middle</property>
+                                <property name="pageBreakAfter">auto</property>
+                                <list-property name="visibility">
+                                    <structure>
+                                        <property name="format">all</property>
+                                        <expression name="valueExpr" type="javascript">row["array"]==null || row["array"] == ""</expression>
+                                    </structure>
+                                </list-property>
+                                <cell id="13078">
+                                    <property name="colSpan">2</property>
+                                    <property name="rowSpan">1</property>
+                                    <property name="borderBottomStyle">none</property>
+                                    <property name="borderLeftStyle">none</property>
+                                    <property name="borderRightStyle">none</property>
+                                    <property name="borderTopStyle">none</property>
+                                    <property name="paddingTop">3pt</property>
+                                    <property name="textAlign">left</property>
+                                    <data id="13079">
+                                        <property name="fontSize">10pt</property>
+                                        <property name="fontWeight">normal</property>
+                                        <property name="fontStyle">normal</property>
+                                        <property name="color">#000000</property>
+                                        <property name="resultSetColumn">array</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="13080">
+                                <property name="backgroundColor">white</property>
+                                <property name="borderBottomStyle">none</property>
+                                <property name="borderLeftStyle">none</property>
+                                <property name="borderRightStyle">none</property>
+                                <property name="borderTopStyle">none</property>
+                                <property name="textAlign">left</property>
+                                <property name="verticalAlign">middle</property>
+                                <list-property name="visibility">
+                                    <structure>
+                                        <property name="format">all</property>
+                                        <expression name="valueExpr" type="javascript">row["slComment"]==null ||row["slComment"]==""</expression>
+                                    </structure>
+                                </list-property>
+                                <cell id="12928">
+                                    <property name="colSpan">2</property>
+                                    <property name="rowSpan">1</property>
+                                    <property name="borderBottomStyle">none</property>
+                                    <property name="borderLeftStyle">none</property>
+                                    <property name="borderRightStyle">none</property>
+                                    <property name="borderTopStyle">none</property>
+                                    <property name="paddingTop">1pt</property>
+                                    <property name="textAlign">left</property>
+                                    <label id="12929">
+                                        <property name="textUnderline">underline</property>
+                                        <property name="paddingTop">1pt</property>
+                                        <property name="paddingLeft">1pt</property>
+                                        <property name="paddingRight">1pt</property>
+                                        <property name="display">inline</property>
+                                        <text-property name="text" key="comment"></text-property>
+                                    </label>
+                                    <label id="13081">
+                                        <property name="paddingLeft">3pt</property>
+                                        <property name="paddingRight">3pt</property>
+                                        <property name="display">inline</property>
+                                        <text-property name="text">:</text-property>
+                                    </label>
+                                    <data id="12930">
+                                        <property name="fontWeight">normal</property>
+                                        <property name="fontStyle">italic</property>
+                                        <property name="paddingTop">1pt</property>
+                                        <property name="paddingLeft">1pt</property>
+                                        <property name="paddingBottom">1pt</property>
+                                        <property name="display">inline</property>
+                                        <property name="resultSetColumn">slComment</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="12931">
+                                <property name="borderBottomStyle">none</property>
+                                <property name="borderLeftStyle">none</property>
+                                <property name="borderRightStyle">none</property>
+                                <property name="borderTopStyle">none</property>
+                                <property name="verticalAlign">middle</property>
+                                <cell id="12932">
+                                    <property name="colSpan">2</property>
+                                    <property name="rowSpan">1</property>
+                                    <property name="borderBottomStyle">none</property>
+                                    <property name="borderLeftStyle">none</property>
+                                    <property name="borderRightStyle">none</property>
+                                    <property name="borderTopStyle">none</property>
+                                    <property name="textAlign">left</property>
+                                    <label id="12933"/>
                                 </cell>
                             </row>
                         </detail>
