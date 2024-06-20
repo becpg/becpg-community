@@ -521,9 +521,18 @@ public class ImportEntityJsonVisitor {
 
 		while (iterator.hasNext()) {
 			String key = iterator.next();
-			QName dataListQName = createQName(key);
+			String listName = key;
+			String typeName = key;
 			
-			String dataListName = getListName(key);
+			if (key.contains("@")) {
+				listName = key.split("@")[0];
+				typeName = key.split("@")[1];
+			}
+			
+			QName dataListQName = createQName(listName);
+			QName dataListTypeQName = createQName(typeName);
+			
+			String dataListName = getListName(listName);
 
 			NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, dataListName);
 			if (listNodeRef == null) {
@@ -549,7 +558,7 @@ public class ImportEntityJsonVisitor {
 				JSONObject listItem = items.getJSONObject(i);
 				listItem.put(RemoteEntityService.ATTR_PARENT_ID, listNodeRef.getId());
 				if (!listItem.has(RemoteEntityService.ATTR_TYPE)) {
-					listItem.put(RemoteEntityService.ATTR_TYPE, dataListQName.toPrefixString(namespaceService));
+					listItem.put(RemoteEntityService.ATTR_TYPE, dataListTypeQName.toPrefixString(namespaceService));
 				}
 				try {
 					listItemToKeep.add(visit(listItem, JsonVisitNodeType.DATALIST, null, context));
@@ -562,7 +571,7 @@ public class ImportEntityJsonVisitor {
 			}
 
 			if (replaceExisting || dataListsToReplace.contains(key)) {
-				for (NodeRef tmp : entityListDAO.getListItems(listNodeRef, dataListQName)) {
+				for (NodeRef tmp : entityListDAO.getListItems(listNodeRef, dataListTypeQName)) {
 					if (!listItemToKeep.contains(tmp)) {
 						nodeService.addAspect(tmp, ContentModel.ASPECT_TEMPORARY, null);
 						nodeService.deleteNode(tmp);
