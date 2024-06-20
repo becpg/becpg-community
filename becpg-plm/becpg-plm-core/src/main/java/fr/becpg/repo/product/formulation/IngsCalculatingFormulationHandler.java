@@ -492,7 +492,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 					}
 
 					if ((FormulationHelper.getYield(compoListDataItem) != null)
-							&& (nodeService.hasAspect(ingListDataItem.getIng(), PLMModel.ASPECT_WATER) || (nodeService.hasAspect(ingListDataItem.getIng(), PLMModel.ASPECT_EVAPORABLE)
+							&& (nodeService.hasAspect(ingListDataItem.getIng(), PLMModel.ASPECT_WATER) || (nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE) != null
 									&& (Double) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE) == 100d))) {
 						
 //						Double evaporateRate = (Double) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE);
