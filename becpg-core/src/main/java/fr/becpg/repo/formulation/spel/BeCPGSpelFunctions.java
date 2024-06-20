@@ -116,7 +116,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 	public class BeCPGSpelFunctionsWrapper {
 
 		private static final String SPEL_COPY_FORCE_INDICATOR = "|true";
-		
+
 		RepositoryEntity entity;
 
 		public BeCPGSpelFunctionsWrapper(RepositoryEntity entity) {
@@ -166,7 +166,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 */
 		public Serializable propValue(RepositoryEntity item, String qname) {
 			if (item != null) {
-				assertIsNotMappedQname(item, getQName(qname),false);
+				assertIsNotMappedQname(item, getQName(qname), false);
 				Serializable value = item.getExtraProperties().get(getQName(qname));
 				if (value == null) {
 					value = nodeService.getProperty(item.getNodeRef(), getQName(qname));
@@ -271,7 +271,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 */
 		public Serializable setValue(RepositoryEntity item, String qname, Serializable value) {
 			if (item != null) {
-				assertIsNotMappedQname(item, getQName(qname),true);
+				assertIsNotMappedQname(item, getQName(qname), true);
 				item.getExtraProperties().put(getQName(qname), value);
 				return value;
 			}
@@ -303,12 +303,12 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		public void setAssocs(RepositoryEntity entity, String qname, List<NodeRef> assocNodeRefs) {
-			assertIsNotMappedQname(entity, getQName(qname),true);
+			assertIsNotMappedQname(entity, getQName(qname), true);
 			setAssocs(entity.getNodeRef(), qname, assocNodeRefs);
 		}
 
 		public void setAssocs(String qname, List<NodeRef> assocNodeRefs) {
-			assertIsNotMappedQname(entity, getQName(qname),true);
+			assertIsNotMappedQname(entity, getQName(qname), true);
 			setAssocs(entity.getNodeRef(), qname, assocNodeRefs);
 		}
 
@@ -325,12 +325,12 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		public void setAssoc(String qname, NodeRef assocNodeRef) {
-			assertIsNotMappedQname(entity, getQName(qname),true);
+			assertIsNotMappedQname(entity, getQName(qname), true);
 			setAssoc(entity.getNodeRef(), qname, assocNodeRef);
 		}
 
 		public void setAssoc(RepositoryEntity entity, String qname, NodeRef assocNodeRef) {
-			assertIsNotMappedQname(entity, getQName(qname),true);
+			assertIsNotMappedQname(entity, getQName(qname), true);
 			setAssoc(entity.getNodeRef(), qname, assocNodeRef);
 		}
 
@@ -350,12 +350,12 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		public NodeRef assocValue(String qname) {
-			assertIsNotMappedQname(entity, getQName(qname),false);
+			assertIsNotMappedQname(entity, getQName(qname), false);
 			return assocValue(entity.getNodeRef(), qname);
 		}
 
 		public NodeRef assocValue(RepositoryEntity entity, String qname) {
-			assertIsNotMappedQname(entity, getQName(qname),false);
+			assertIsNotMappedQname(entity, getQName(qname), false);
 			return assocValue(entity.getNodeRef(), qname);
 		}
 
@@ -374,12 +374,12 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		public List<NodeRef> assocValues(RepositoryEntity entity, String qname) {
-			assertIsNotMappedQname(entity, getQName(qname),false);
+			assertIsNotMappedQname(entity, getQName(qname), false);
 			return assocValues(entity.getNodeRef(), qname);
 		}
 
 		public List<NodeRef> assocValues(String qname) {
-			assertIsNotMappedQname(entity, getQName(qname),false);
+			assertIsNotMappedQname(entity, getQName(qname), false);
 			return assocValues(entity.getNodeRef(), qname);
 		}
 
@@ -439,9 +439,11 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 */
 		public List<NodeRef> assocAssocValues(NodeRef nodeRef, String assocQname, String assocAssocQName) {
 			if (nodeRef != null) {
-				return associationService.getTargetAssocs(nodeRef, getQName(assocQname)).stream().map(o -> assocValue(o, assocAssocQName))
+				return associationService.getTargetAssocs(nodeRef, getQName(assocQname)).stream()
+						.flatMap(o -> assocValues(o, assocAssocQName).stream()) // Flatten the list of NodeRef
 						.filter(Objects::nonNull).collect(Collectors.toList());
 			}
+
 			return null;
 		}
 
@@ -936,18 +938,18 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 
 		private void copyLists(RepositoryEntity to, RepositoryEntity from, Collection<String> listQNames, Set<QName> treatedList, boolean force) {
 			if ((to.getNodeRef() != null) && (from.getNodeRef() != null)) {
-			
+
 				NodeRef listContainerNodeRef = entityListDAO.getListContainer(from.getNodeRef());
 
 				for (String listQName2 : listQNames) {
-					if(!force || listQName2.endsWith(SPEL_COPY_FORCE_INDICATOR)) {
-						
+					if (!force || listQName2.endsWith(SPEL_COPY_FORCE_INDICATOR)) {
+
 						QName listQName = QName.createQName(listQName2.replace("|true", ""), namespaceService);
-	
+
 						if (!treatedList.contains(listQName)) {
 							logger.debug("Copy list : " + listQName);
 							entityListDAO.copyDataList(entityListDAO.getList(listContainerNodeRef, listQName), to.getNodeRef(), true);
-	
+
 							treatedList.add(listQName);
 						}
 					}
@@ -980,132 +982,131 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 							}
 						}
 					} else if (readMethod.isAnnotationPresent(DataList.class)) {
-						  QName qname = repositoryEntityDefReader.readQName(readMethod);
-						    for (String listQName1 : listQNames) {
-						        QName listQName = QName.createQName(listQName1.replace(SPEL_COPY_FORCE_INDICATOR, ""), namespaceService);
-						        if (qname.equals(listQName)) {
-						            handleList(listQName, from, to, pd, treatedList);
-						        }
-						    }
-					} else if (readMethod.isAnnotationPresent(DataListView.class)) {
-						 for (String listQName1 : listQNames) {
-						        QName listQName = QName.createQName(listQName1.replace(SPEL_COPY_FORCE_INDICATOR, ""), namespaceService);
-						        BaseObject fromView = (BaseObject) PropertyUtils.getProperty(from, pd.getName());
-						        BaseObject toView = (BaseObject) PropertyUtils.getProperty(to, pd.getName());
-
-						        for (final PropertyDescriptor pdView : (new BeanWrapperImpl(toView)).getPropertyDescriptors()) {
-						            Method viewReadMethod = pdView.getReadMethod();
-						            if (viewReadMethod.isAnnotationPresent(DataList.class)) {
-						                QName viewQname = repositoryEntityDefReader.readQName(viewReadMethod);
-						                if (viewQname.equals(listQName)) {
-						                    handleList(listQName, fromView, toView, pdView, treatedList);
-						                }
-						            }
-						        }
-						    }
-					}
-				}
-		}
-	
-
-	}
-	
-	private void handleList(QName listQName, Object from, Object to, PropertyDescriptor pd, Set<QName> treatedList) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException  {
-	    if (!treatedList.contains(listQName)) {
-	        logger.debug("Setting list : " + listQName + " from repository entity");
-	        cloneDataList(PropertyUtils.getProperty(from, pd.getName()), PropertyUtils.getProperty(to, pd.getName()), to, pd);
-	        treatedList.add(listQName);
-	    } else {
-	        logger.debug("Reloading list : " + listQName + " from repository");
-	        Object oldData = PropertyUtils.getProperty(to, pd.getName());
-	        if (oldData instanceof LazyLoadingDataList) {
-	            ((LazyLoadingDataList<?>) oldData).refresh();
-	        }
-	    }
-	}
-
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private void cloneDataList(Object data, Object oldData, Object to, PropertyDescriptor pd) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-	    if (oldData instanceof LazyLoadingDataList) {
-	        LazyLoadingDataList lazyDataList = (LazyLoadingDataList) oldData;
-	        lazyDataList.clear();
-	        lazyDataList.addAll(clone((Collection) data));
-	    } else {
-	        PropertyUtils.setProperty(to, pd.getName(), clone((Collection) data));
-	    }
-	}
-
-	@SuppressWarnings({"unchecked", "rawtypes"} )
-	private <T extends RepositoryEntity> List<T> clone(Collection<T> data) {
-	    List<T> clonedList = new LinkedList<>();
-	    Map<NodeRef, T> origDataItemMap = new HashMap<>();
-
-	    for (T originalData : data) {
-	    	NodeRef origNodeRef = originalData.getNodeRef();
-	        T clonedItem = originalData instanceof CopiableDataItem ? (T) ((CopiableDataItem) originalData).copy() : originalData;
-	        clonedItem.setName(originalData.getName());
-	        clonedItem.setNodeRef(null);
-	        clonedItem.setParentNodeRef(null);
-	        origDataItemMap.put(origNodeRef, clonedItem);
-	        clonedList.add(clonedItem);
-	    }
-
-	    for (T item : clonedList) {
-	        if (item instanceof CompositeDataItem) {
-	            CompositeDataItem compositeItem = (CompositeDataItem) item;
-	            T parent = (T) compositeItem.getParent();
-	            if (parent != null) {
-	                if (parent.getNodeRef() != null) {
-	                    compositeItem.setParent(origDataItemMap.get(parent.getNodeRef()));
-	                } else {
-	                    parent.setParentNodeRef(null);
-	                }
-	            }
-	        }
-	    }
-
-	    return clonedList;
-	}
-
-	
-	private void copyExtraProperties(RepositoryEntity to, RepositoryEntity from, Collection<String> propQNames, Set<QName> treatedProp) {
-		if (to.getNodeRef() != null) {
-
-			Map<QName, Serializable> extraPropToCopy = nodeService.getProperties(from.getNodeRef());
-
-			for (String propQName2 : propQNames) {
-				QName propQName = QName.createQName(propQName2, namespaceService);
-				if (!treatedProp.contains(propQName)) {
-					PropertyDefinition propertyDef = entityDictionaryService.getProperty(propQName);
-					if (propertyDef != null) {
-						if (extraPropToCopy.containsKey(propQName)) {
-							logger.debug("Setting property : " + propQName + " from nodeRef");
-							nodeService.setProperty(to.getNodeRef(), propQName, extraPropToCopy.get(propQName));
-						} else {
-							logger.debug("Removing property : " + propQName);
-							nodeService.removeProperty(to.getNodeRef(), propQName);
+						QName qname = repositoryEntityDefReader.readQName(readMethod);
+						for (String listQName1 : listQNames) {
+							QName listQName = QName.createQName(listQName1.replace(SPEL_COPY_FORCE_INDICATOR, ""), namespaceService);
+							if (qname.equals(listQName)) {
+								handleList(listQName, from, to, pd, treatedList);
+							}
 						}
+					} else if (readMethod.isAnnotationPresent(DataListView.class)) {
+						for (String listQName1 : listQNames) {
+							QName listQName = QName.createQName(listQName1.replace(SPEL_COPY_FORCE_INDICATOR, ""), namespaceService);
+							BaseObject fromView = (BaseObject) PropertyUtils.getProperty(from, pd.getName());
+							BaseObject toView = (BaseObject) PropertyUtils.getProperty(to, pd.getName());
 
-					} else {
-						logger.debug("Setting association : " + propQName + " from nodeRef");
-						associationService.update(to.getNodeRef(), propQName, associationService.getTargetAssocs(from.getNodeRef(), propQName));
+							for (final PropertyDescriptor pdView : (new BeanWrapperImpl(toView)).getPropertyDescriptors()) {
+								Method viewReadMethod = pdView.getReadMethod();
+								if (viewReadMethod.isAnnotationPresent(DataList.class)) {
+									QName viewQname = repositoryEntityDefReader.readQName(viewReadMethod);
+									if (viewQname.equals(listQName)) {
+										handleList(listQName, fromView, toView, pdView, treatedList);
+									}
+								}
+							}
+						}
 					}
-					treatedProp.add(propQName);
+				}
+			}
+
+		}
+
+		private void handleList(QName listQName, Object from, Object to, PropertyDescriptor pd, Set<QName> treatedList)
+				throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+			if (!treatedList.contains(listQName)) {
+				logger.debug("Setting list : " + listQName + " from repository entity");
+				cloneDataList(PropertyUtils.getProperty(from, pd.getName()), PropertyUtils.getProperty(to, pd.getName()), to, pd);
+				treatedList.add(listQName);
+			} else {
+				logger.debug("Reloading list : " + listQName + " from repository");
+				Object oldData = PropertyUtils.getProperty(to, pd.getName());
+				if (oldData instanceof LazyLoadingDataList) {
+					((LazyLoadingDataList<?>) oldData).refresh();
+				}
+			}
+		}
+
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		private void cloneDataList(Object data, Object oldData, Object to, PropertyDescriptor pd)
+				throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+			if (oldData instanceof LazyLoadingDataList) {
+				LazyLoadingDataList lazyDataList = (LazyLoadingDataList) oldData;
+				lazyDataList.clear();
+				lazyDataList.addAll(clone((Collection) data));
+			} else {
+				PropertyUtils.setProperty(to, pd.getName(), clone((Collection) data));
+			}
+		}
+
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		private <T extends RepositoryEntity> List<T> clone(Collection<T> data) {
+			List<T> clonedList = new LinkedList<>();
+			Map<NodeRef, T> origDataItemMap = new HashMap<>();
+
+			for (T originalData : data) {
+				NodeRef origNodeRef = originalData.getNodeRef();
+				T clonedItem = originalData instanceof CopiableDataItem ? (T) ((CopiableDataItem) originalData).copy() : originalData;
+				clonedItem.setName(originalData.getName());
+				clonedItem.setNodeRef(null);
+				clonedItem.setParentNodeRef(null);
+				origDataItemMap.put(origNodeRef, clonedItem);
+				clonedList.add(clonedItem);
+			}
+
+			for (T item : clonedList) {
+				if (item instanceof CompositeDataItem) {
+					CompositeDataItem compositeItem = (CompositeDataItem) item;
+					T parent = (T) compositeItem.getParent();
+					if (parent != null) {
+						if (parent.getNodeRef() != null) {
+							compositeItem.setParent(origDataItemMap.get(parent.getNodeRef()));
+						} else {
+							parent.setParentNodeRef(null);
+						}
+					}
+				}
+			}
+
+			return clonedList;
+		}
+
+		private void copyExtraProperties(RepositoryEntity to, RepositoryEntity from, Collection<String> propQNames, Set<QName> treatedProp) {
+			if (to.getNodeRef() != null) {
+
+				Map<QName, Serializable> extraPropToCopy = nodeService.getProperties(from.getNodeRef());
+
+				for (String propQName2 : propQNames) {
+					QName propQName = QName.createQName(propQName2, namespaceService);
+					if (!treatedProp.contains(propQName)) {
+						PropertyDefinition propertyDef = entityDictionaryService.getProperty(propQName);
+						if (propertyDef != null) {
+							if (extraPropToCopy.containsKey(propQName)) {
+								logger.debug("Setting property : " + propQName + " from nodeRef");
+								nodeService.setProperty(to.getNodeRef(), propQName, extraPropToCopy.get(propQName));
+							} else {
+								logger.debug("Removing property : " + propQName);
+								nodeService.removeProperty(to.getNodeRef(), propQName);
+							}
+
+						} else {
+							logger.debug("Setting association : " + propQName + " from nodeRef");
+							associationService.update(to.getNodeRef(), propQName, associationService.getTargetAssocs(from.getNodeRef(), propQName));
+						}
+						treatedProp.add(propQName);
+
+					}
 
 				}
+			}
 
+		}
+
+		private void assertIsNotMappedQname(RepositoryEntity item, QName qName, boolean allowWrite) {
+			if (item != null && repositoryEntityDefReader.isRegisteredQName(item, qName, allowWrite)) {
+				throw new FormulateException(String.format("QName is %s mapped in entity %s. Please use entity.%s to access it ",
+						qName.getPrefixedQName(namespaceService), item.getClass().getName(), qName.getLocalName()));
 			}
 		}
 
 	}
-
-	private void assertIsNotMappedQname(RepositoryEntity item, QName qName, boolean allowWrite) {
-		if (item != null && repositoryEntityDefReader.isRegisteredQName(item, qName, allowWrite)) {
-			throw new FormulateException(String.format("QName is %s mapped in entity %s. Please use entity.%s to access it ",
-					qName.getPrefixedQName(namespaceService), item.getClass().getName() , qName.getLocalName()));
-		}
-	}
-
-}
-
 }
