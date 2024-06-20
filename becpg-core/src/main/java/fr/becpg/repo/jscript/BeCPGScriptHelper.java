@@ -177,7 +177,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	private SystemConfigurationService systemConfigurationService;
 
 	private BeCPGTicketService beCPGTicketService;
-	
+
 	private BehaviourFilter policyBehaviourFilter;
 
 	private boolean useBrowserLocale;
@@ -187,7 +187,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	private boolean showEntitiesInTree() {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("becpg.doclibtree.showEntities"));
 	}
-	
+
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
@@ -545,7 +545,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public String getMLProperty(ScriptNode sourceNode, String propQName, String locale) {
 		return getMLProperty(sourceNode, propQName, locale, false);
 	}
-	
+
 	public String getMLProperty(ScriptNode sourceNode, String propQName, String locale, Boolean exactLocale) {
 
 		MLText mlText = (MLText) mlNodeService.getProperty(sourceNode.getNodeRef(), getQName(propQName));
@@ -842,11 +842,13 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * @return a {@link java.lang.Object} object.
 	 */
 	public Object assocAssocValues(NodeRef nodeRef, String assocQname, String assocAssocsQname) {
-		NodeRef assocNodeRef = assocValue(nodeRef, assocQname);
-		if (assocNodeRef != null) {
-			return wrapValue(associationService.getTargetAssocs(assocNodeRef, getQName(assocAssocsQname)));
+		List<NodeRef> ret = new ArrayList<>();
+		for (NodeRef assocNodeRef : associationService.getTargetAssocs(nodeRef, getQName(assocQname))) {
+			if (assocNodeRef != null) {
+				ret.addAll(associationService.getTargetAssocs(assocNodeRef, getQName(assocAssocsQname)));
+			}
 		}
-		return wrapValue(new ArrayList<>());
+		return wrapValue(ret);
 	}
 
 	/**
