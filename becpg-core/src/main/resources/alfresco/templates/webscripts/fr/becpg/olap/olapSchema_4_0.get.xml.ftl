@@ -198,6 +198,8 @@
 				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_finishedProduct.title")}';
 				   				case 'bcpg:semiFinishedProduct' :
 				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_semiFinishedProduct.title")}';
+			    				case 'bcpg:logisticUnit' :
+			    					return  '${msg("bcpg_bcpgmodel.type.bcpg_logisticUnit.title")}';
 				    			case 'bcpg:packagingMaterial' :
 				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_packagingMaterial.title")}';
 				   				case 'bcpg:packagingKit' :
@@ -460,6 +462,8 @@
 				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_finishedProduct.title")}';
 				   				case 'bcpg:semiFinishedProduct' :
 				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_semiFinishedProduct.title")}';
+			    				case 'bcpg:logisticUnit' :
+			    					return  '${msg("bcpg_bcpgmodel.type.bcpg_logisticUnit.title")}';
 				    			case 'bcpg:packagingMaterial' :
 				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_packagingMaterial.title")}';
 				   				case 'bcpg:packagingKit' :
@@ -1238,6 +1242,8 @@
 				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_finishedProduct.title")}';
 				   				case 'bcpg:semiFinishedProduct' :
 				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_semiFinishedProduct.title")}';
+			    				case 'bcpg:logisticUnit' :
+			    					return  '${msg("bcpg_bcpgmodel.type.bcpg_logisticUnit.title")}';
 				    			case 'bcpg:packagingMaterial' :
 				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_packagingMaterial.title")}';
 				   				case 'bcpg:packagingKit' :
@@ -1375,6 +1381,8 @@
 				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_finishedProduct.title")}';
 				   				case 'bcpg:semiFinishedProduct' :
 				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_semiFinishedProduct.title")}';
+			    				case 'bcpg:logisticUnit' :
+			    					return  '${msg("bcpg_bcpgmodel.type.bcpg_logisticUnit.title")}';
 				    			case 'bcpg:packagingMaterial' :
 				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_packagingMaterial.title")}';
 				   				case 'bcpg:packagingKit' :
@@ -1605,6 +1613,8 @@
 				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_finishedProduct.title")}';
 				   				case 'bcpg:semiFinishedProduct' :
 				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_semiFinishedProduct.title")}';
+			    				case 'bcpg:logisticUnit' :
+			    					return  '${msg("bcpg_bcpgmodel.type.bcpg_logisticUnit.title")}';
 				    			case 'bcpg:packagingMaterial' :
 				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_packagingMaterial.title")}';
 				   				case 'bcpg:packagingKit' :
@@ -1770,6 +1780,8 @@
 				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_finishedProduct.title")}';
 				   				case 'bcpg:semiFinishedProduct' :
 				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_semiFinishedProduct.title")}';
+			    				case 'bcpg:logisticUnit' :
+			    					return  '${msg("bcpg_bcpgmodel.type.bcpg_logisticUnit.title")}';
 				    			case 'bcpg:packagingMaterial' :
 				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_packagingMaterial.title")}';
 				   				case 'bcpg:packagingKit' :
