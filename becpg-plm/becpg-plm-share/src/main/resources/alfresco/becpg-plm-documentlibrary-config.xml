@@ -193,7 +193,7 @@
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:semiFinishedProduct&amp;formId=create&amp;isEntity=true
 				</param>
 			</content>
-			<content id="logisticUnit" label="menu.create-content.logisticUnit" type="pagelink" index="80" icon="semiFinishedProduct">
+			<content id="logisticUnit" label="menu.create-content.logisticUnit" type="pagelink" index="80" icon="logisticUnit">
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:logisticUnit&amp;formId=create&amp;isEntity=true
 				</param>
 			</content>

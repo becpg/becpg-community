@@ -40,6 +40,12 @@
 		no-repeat 2px 50%;
 }
 
+.datalist-toolbar .rapidLink  span.logisticUnit {
+	background:
+		url(../images/filetypes/generic-logisticUnit-16.png)
+		no-repeat 2px 50%;
+}
+
 .datalist-toolbar .rapidLink  span.packagingMaterial {
 	background: url(../images/filetypes/generic-packagingMaterial-16.png)
 		no-repeat 2px 50%;
