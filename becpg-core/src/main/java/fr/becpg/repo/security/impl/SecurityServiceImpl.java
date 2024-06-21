@@ -72,7 +72,7 @@ public class SecurityServiceImpl implements SecurityService {
 
 	private static final String ACLS_CACHE_KEY = "ACLS_CACHE_KEY";
 	private static final String LOCAL_ACLS_CACHE_KEY = "LOCAL_ACLS_CACHE_KEY";
-	private static final String USER_ROLE_CACHE_KEY = "ACLS_CACHE_KEY";
+	private static final String USER_ROLE_CACHE_KEY = "USER_ROLE_CACHE_KEY";
 	private static final Log logger = LogFactory.getLog(SecurityServiceImpl.class);
 
 	@Autowired
@@ -380,12 +380,18 @@ public class SecurityServiceImpl implements SecurityService {
 	}
 
 	private List<NodeRef> findAllAclGroups() {
-		List<NodeRef> aclGroupsNull = BeCPGQueryBuilder.createQuery().ofType(SecurityModel.TYPE_ACL_GROUP)
-				.isNullOrUnset(SecurityModel.PROP_ACL_GROUP_IS_LOCAL_PERMISSION).inDB().list();
-		List<NodeRef> aclGroupsFalse = BeCPGQueryBuilder.createQuery().ofType(SecurityModel.TYPE_ACL_GROUP)
-				.andPropEquals(SecurityModel.PROP_ACL_GROUP_IS_LOCAL_PERMISSION, Boolean.FALSE.toString()).inDB().list();
-		aclGroupsNull.addAll(aclGroupsFalse);
-		return aclGroupsNull;
+		List<NodeRef>  ret = new ArrayList<>();
+		
+		for(NodeRef aclGroupNodeRef : BeCPGQueryBuilder.createQuery().ofType(SecurityModel.TYPE_ACL_GROUP).inDB().list()) {
+			Boolean isLocalPermission = (Boolean) nodeService.getProperty(aclGroupNodeRef, SecurityModel.PROP_ACL_GROUP_IS_LOCAL_PERMISSION);
+			if(!Boolean.TRUE.equals(isLocalPermission)) {
+				ret.add(aclGroupNodeRef);
+			}
+			
+		}
+		logger.info("findAllAclGroups"+ret.size() );
+		
+		return ret;
 	}
 
 	/** {@inheritDoc} */
@@ -393,9 +399,7 @@ public class SecurityServiceImpl implements SecurityService {
 	public List<String> getAvailablePropNames() {
 		List<String> ret = new ArrayList<>();
 
-		List<NodeRef> aclGroups = findAllAclGroups();
-		if (aclGroups != null) {
-			for (NodeRef aclGroupNodeRef : aclGroups) {
+			for (NodeRef aclGroupNodeRef : findAllAclGroups()) {
 
 				ACLGroupData aclGroup = alfrescoRepository.findOne(aclGroupNodeRef);
 
@@ -426,7 +430,6 @@ public class SecurityServiceImpl implements SecurityService {
 					}
 
 				}
-			}
 		}
 
 		return ret;
