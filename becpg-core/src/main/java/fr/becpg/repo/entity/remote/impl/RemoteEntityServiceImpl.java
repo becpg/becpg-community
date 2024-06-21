@@ -30,20 +30,12 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.query.PagingResults;
-import org.alfresco.repo.admin.SysAdminParams;
-import org.alfresco.repo.policy.BehaviourFilter;
-import org.alfresco.service.ServiceRegistry;
-import org.alfresco.service.cmr.lock.LockService;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.site.SiteService;
-import org.alfresco.service.cmr.version.VersionService;
-import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
@@ -54,13 +46,12 @@ import org.springframework.util.StopWatch;
 import org.xml.sax.SAXException;
 
 import fr.becpg.common.BeCPGException;
-import fr.becpg.repo.entity.EntityDictionaryService;
-import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.remote.EntityProviderCallBack;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.entity.remote.RemoteParams;
 import fr.becpg.repo.entity.remote.RemoteSchemaGenerator;
+import fr.becpg.repo.entity.remote.RemoteServiceRegisty;
 import fr.becpg.repo.entity.remote.extractor.ExcelXmlEntityVisitor;
 import fr.becpg.repo.entity.remote.extractor.ImportEntityJsonVisitor;
 import fr.becpg.repo.entity.remote.extractor.ImportEntityXmlVisitor;
@@ -68,8 +59,6 @@ import fr.becpg.repo.entity.remote.extractor.JsonEntityVisitor;
 import fr.becpg.repo.entity.remote.extractor.JsonSchemaEntityVisitor;
 import fr.becpg.repo.entity.remote.extractor.RemoteEntityVisitor;
 import fr.becpg.repo.entity.remote.extractor.XmlEntityVisitor;
-import fr.becpg.repo.helper.AssociationService;
-import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.repository.L2CacheSupport;
 
 /**
@@ -87,79 +76,29 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	private static final String CREATE_ERROR = "Cannot create or update entity: %s at format %s - %s";
 
 	@Autowired
-	@Qualifier("ServiceRegistry")
-	private ServiceRegistry serviceRegistry;
+	RemoteServiceRegisty remoteServiceRegisty;
+	
 
 	@Autowired
-	@Qualifier("SiteService")
-	private SiteService siteService;
+	private RemoteSchemaGenerator remoteSchemaGenerator;
+	
 
+	@Autowired
+	private MimetypeService mimetypeService;
+	
 	@Autowired
 	@Qualifier("NodeService")
 	private NodeService nodeService;
-
-	@Autowired
-	@Qualifier("mlAwareNodeService")
-	protected NodeService mlNodeService;
-
-	@Autowired
-	private NamespaceService namespaceService;
+	
 
 	@Autowired
 	@Qualifier("ContentService")
 	private ContentService contentService;
 
-	@Autowired
-	private AttributeExtractorService attributeExtractor;
-
-	@Autowired
-	private MimetypeService mimetypeService;
-
-	@Autowired
-	private TransactionService transactionService;
-
-	@Autowired
-	private BehaviourFilter policyBehaviourFilter;
-
-	@Autowired
-	private RemoteSchemaGenerator remoteSchemaGenerator;
-
-	@Autowired
-	private EntityDictionaryService entityDictionaryService;
-
-	@Autowired
-	private AssociationService associationService;
-
-	@Autowired
-	private EntityListDAO entityListDAO;
-
-	@Autowired
-	private VersionService versionService;
-
-	@Autowired
-	private SysAdminParams sysAdminParams;
-
-	@Autowired
-	private LockService lockService;
-
-	/**
-	 * <p>Getter for the field <code>transactionService</code>.</p>
-	 *
-	 * @return a {@link org.alfresco.service.transaction.TransactionService} object.
-	 */
+	
 	@Override
-	public TransactionService getTransactionService() {
-		return transactionService;
-	}
-
-	/**
-	 * <p>Getter for the field <code>policyBehaviourFilter</code>.</p>
-	 *
-	 * @return a {@link org.alfresco.repo.policy.BehaviourFilter} object.
-	 */
-	@Override
-	public BehaviourFilter getPolicyBehaviourFilter() {
-		return policyBehaviourFilter;
+	public RemoteServiceRegisty serviceRegistry() {
+		return remoteServiceRegisty;
 	}
 
 	/** {@inheritDoc} */
@@ -169,21 +108,16 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 		RemoteEntityVisitor remoteEntityVisitor = null;
 		switch (format) {
 		case xml, xml_all, xml_light:
-			remoteEntityVisitor = new XmlEntityVisitor(mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService,
-					siteService, associationService);
-
+			remoteEntityVisitor = new XmlEntityVisitor(remoteServiceRegisty);
 			break;
 		case xml_excel:
-			remoteEntityVisitor = new ExcelXmlEntityVisitor(mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService,
-					siteService);
+			remoteEntityVisitor = new ExcelXmlEntityVisitor(remoteServiceRegisty);
 			break;
 		case json, json_all:
-			remoteEntityVisitor = new JsonEntityVisitor(mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService,
-					siteService, attributeExtractor, versionService, lockService, associationService, entityListDAO);
+			remoteEntityVisitor = new JsonEntityVisitor(remoteServiceRegisty);
 			break;
 		case json_schema:
-			remoteEntityVisitor = new JsonSchemaEntityVisitor(sysAdminParams, mlNodeService, nodeService, namespaceService, entityDictionaryService,
-					contentService, siteService, attributeExtractor, versionService, lockService, associationService, entityListDAO);
+			remoteEntityVisitor = new JsonSchemaEntityVisitor(remoteServiceRegisty);
 			break;
 		case xsd, xsd_excel:
 
@@ -215,9 +149,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 			break;
 		case json_schema, json:
 			try {
-				JsonSchemaEntityVisitor jsonSchemaVisitor = new JsonSchemaEntityVisitor(sysAdminParams, mlNodeService, nodeService, namespaceService,
-						entityDictionaryService, contentService, siteService, attributeExtractor, versionService, lockService, associationService,
-						entityListDAO);
+				JsonSchemaEntityVisitor jsonSchemaVisitor = new JsonSchemaEntityVisitor(remoteServiceRegisty);
 				jsonSchemaVisitor.setParams(params);
 
 				jsonSchemaVisitor.visit(type, out);
@@ -276,13 +208,11 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 
 			try {
 				if (RemoteEntityFormat.json.equals(format)) {
-					ImportEntityJsonVisitor jsonEntityVisitor = new ImportEntityJsonVisitor(serviceRegistry, entityDictionaryService,
-							namespaceService, associationService, mlNodeService, entityListDAO);
+					ImportEntityJsonVisitor jsonEntityVisitor = new ImportEntityJsonVisitor(remoteServiceRegisty);
 
 					return jsonEntityVisitor.visit(entityNodeRef, in);
 				} else {
-					ImportEntityXmlVisitor xmlEntityVisitor = new ImportEntityXmlVisitor(serviceRegistry, entityDictionaryService,
-							associationService);
+					ImportEntityXmlVisitor xmlEntityVisitor = new ImportEntityXmlVisitor(remoteServiceRegisty);
 					xmlEntityVisitor.setEntityProviderCallBack(entityProviderCallBack);
 
 					return xmlEntityVisitor.visit(entityNodeRef, destNodeRef, in);
@@ -315,14 +245,12 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 		switch (format) {
 		case xml:
 
-			remoteEntityVisitor = new XmlEntityVisitor(mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService,
-					siteService, associationService);
+			remoteEntityVisitor = new XmlEntityVisitor(remoteServiceRegisty);
 
 			break;
 		case json:
 
-			remoteEntityVisitor = new JsonEntityVisitor(mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService,
-					siteService, attributeExtractor, versionService, lockService, associationService, entityListDAO);
+			remoteEntityVisitor = new JsonEntityVisitor(remoteServiceRegisty);
 			break;
 		default:
 			throw new BeCPGException(String.format(UNKNOW_FORMAT_ERROR, format.toString()));
@@ -347,14 +275,12 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 		switch (format) {
 		case xml:
 
-			remoteEntityVisitor = new XmlEntityVisitor(mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService,
-					siteService, associationService);
+			remoteEntityVisitor = new XmlEntityVisitor(remoteServiceRegisty);
 
 			break;
 		case json:
 
-			remoteEntityVisitor = new JsonEntityVisitor(mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService,
-					siteService, attributeExtractor, versionService, lockService, associationService, entityListDAO);
+			remoteEntityVisitor = new JsonEntityVisitor(remoteServiceRegisty);
 			break;
 		default:
 			throw new BeCPGException(String.format(UNKNOW_FORMAT_ERROR, format.toString()));
@@ -375,7 +301,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	public void addOrUpdateEntityData(NodeRef entityNodeRef, InputStream in, RemoteParams params) {
 		RemoteEntityFormat format = params.getFormat();
 		if (RemoteEntityFormat.xml.equals(format)) {
-			ImportEntityXmlVisitor xmlEntityVisitor = new ImportEntityXmlVisitor(serviceRegistry, entityDictionaryService, associationService);
+			ImportEntityXmlVisitor xmlEntityVisitor = new ImportEntityXmlVisitor(remoteServiceRegisty);
 
 			String fileName = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
 

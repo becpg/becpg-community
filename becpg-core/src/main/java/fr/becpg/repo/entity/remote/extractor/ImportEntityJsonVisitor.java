@@ -18,7 +18,6 @@ import java.util.UUID;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.rest.framework.core.exceptions.InvalidArgumentException;
-import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
@@ -51,6 +50,7 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.entity.remote.RemoteParams;
+import fr.becpg.repo.entity.remote.RemoteServiceRegisty;
 import fr.becpg.repo.entity.remote.extractor.RemoteJSONContext.JsonVisitNodeType;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
@@ -109,17 +109,16 @@ public class ImportEntityJsonVisitor {
 	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
 	 * @param entityListDAO a {@link fr.becpg.repo.entity.EntityListDAO} object.
 	 */
-	public ImportEntityJsonVisitor(ServiceRegistry serviceRegistry, EntityDictionaryService entityDictionaryService,
-			NamespaceService namespaceService, AssociationService associationService, NodeService nodeService, EntityListDAO entityListDAO) {
+	public ImportEntityJsonVisitor(RemoteServiceRegisty remoteRegisty) {
 		super();
-		this.entityDictionaryService = entityDictionaryService;
-		this.namespaceService = namespaceService;
-		this.associationService = associationService;
-		this.nodeService = nodeService;
-		this.entityListDAO = entityListDAO;
-		this.mimetypeService = serviceRegistry.getMimetypeService();
-		this.contentService = serviceRegistry.getContentService();
-		this.permissionService = serviceRegistry.getPermissionService();
+		this.entityDictionaryService = remoteRegisty.entityDictionaryService();
+		this.namespaceService = remoteRegisty.namespaceService();
+		this.associationService = remoteRegisty.associationService();
+		this.nodeService = remoteRegisty.nodeService();
+		this.entityListDAO = remoteRegisty.entityListDAO();
+		this.mimetypeService = remoteRegisty.mimetypeService();
+		this.contentService = remoteRegisty.contentService();
+		this.permissionService = remoteRegisty.permissionService();
 	}
 
 	/**
