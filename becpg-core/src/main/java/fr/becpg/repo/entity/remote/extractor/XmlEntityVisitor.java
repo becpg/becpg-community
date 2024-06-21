@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -46,13 +47,10 @@ import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentIOException;
 import org.alfresco.service.cmr.repository.ContentReader;
-import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.Path;
 import org.alfresco.service.cmr.site.SiteInfo;
-import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.codec.binary.Base64InputStream;
@@ -65,8 +63,8 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.dictionary.constraint.DynListConstraint;
-import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
+import fr.becpg.repo.entity.remote.RemoteServiceRegisty;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.SiteHelper;
@@ -93,11 +91,9 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 	 * @param siteService a {@link org.alfresco.service.cmr.site.SiteService} object.
 	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object.
 	 */
-	public XmlEntityVisitor(NodeService mlNodeService, NodeService nodeService, NamespaceService namespaceService,
-			EntityDictionaryService entityDictionaryService, ContentService contentService, SiteService siteService,
-			AssociationService associationService) {
-		super(mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService, siteService);
-		this.associationService = associationService;
+	public XmlEntityVisitor(RemoteServiceRegisty remoteServiceRegisty) {
+		super(remoteServiceRegisty);
+		this.associationService = remoteServiceRegisty.associationService();
 	}
 
 	private static final Log logger = LogFactory.getLog(XmlEntityVisitor.class);
@@ -426,7 +422,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 							continue;
 						}
 
-						Map<NodeRef, List<QName>> tmpCachedAssocRef = cachedAssocRef;
+						Map<NodeRef, Set<QName>> tmpCachedAssocRef = cachedAssocRef;
 
 						xmlw.writeStartElement(prefix, propName.getLocalName(), propName.getNamespaceURI());
 						xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE,
