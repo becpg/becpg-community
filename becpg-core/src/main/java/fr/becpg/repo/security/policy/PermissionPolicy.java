@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.NodeServicePolicies;
+
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.AssociationRef;
@@ -18,6 +19,7 @@ import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
 public class PermissionPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnDeleteAssociationPolicy, NodeServicePolicies.OnCreateAssociationPolicy {
+
 	
 	private static final String KEY_UPDATE_READ_PERMISSIONS = "KEY_UPDATE_READ_PERMISSIONS";
 
@@ -39,6 +41,7 @@ public class PermissionPolicy extends AbstractBeCPGPolicy implements NodeService
 				new JavaBehaviour(this, "onCreateAssociation"));
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM,
 				new JavaBehaviour(this, "onDeleteAssociation"));
+
 	}
 
 	@Override
@@ -102,5 +105,6 @@ public class PermissionPolicy extends AbstractBeCPGPolicy implements NodeService
 			return true;
 		});
 	}
+
 
 }
