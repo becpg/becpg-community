@@ -1,6 +1,7 @@
 package fr.becpg.repo.system.impl;
 
 import java.io.Serializable;
+import java.util.Optional;
 
 import org.alfresco.service.cmr.attributes.AttributeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,23 +29,25 @@ public class SystemConfigurationServiceImpl implements SystemConfigurationServic
 
 	@Override
 	public String confValue(String propKey) {
-		return beCPGCacheService.getFromCache(CACHE_KEY, propKey, () -> {
-			Serializable ret =  attributeService.getAttribute(propKey);
-			if(ret!=null) {
-				return (String)ret;
-			}
-			
-			for(PropertySourcesPlaceholderConfigurer source : resolvers) {
-				PropertySourcesPropertyResolver resolver = new PropertySourcesPropertyResolver(source.getAppliedPropertySources());
-				
-				String  val = resolver.getProperty(propKey);
-				if(val!=null) {
-					return val;
-				}
-			}
-			
-			return null;
-		});
+	    Optional<String> nullableString = beCPGCacheService.getFromCache(CACHE_KEY, propKey, () -> {
+	        Serializable ret = attributeService.getAttribute(propKey);
+	        if (ret != null) {
+	            return Optional.of((String) ret);
+	        }
+
+	        for (PropertySourcesPlaceholderConfigurer source : resolvers) {
+	            PropertySourcesPropertyResolver resolver = new PropertySourcesPropertyResolver(source.getAppliedPropertySources());
+	            
+	            String val = resolver.getProperty(propKey);
+	            if (val != null) {
+	                return Optional.of(val);
+	            }
+	        }
+
+	        return Optional.empty();
+	    });
+	    
+	    return nullableString.orElse(null);
 	}
 
 	@Override
