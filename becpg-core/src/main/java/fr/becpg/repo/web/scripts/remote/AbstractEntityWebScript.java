@@ -19,10 +19,8 @@ package fr.becpg.repo.web.scripts.remote;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -426,7 +424,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object.
 	 * @return a {@link java.util.List} object.
 	 */
-	public List<String> extractFields(WebScriptRequest req) {
+	public Set<String> extractFields(WebScriptRequest req) {
 		Set<String> fields = new HashSet<>();
 		String fieldsParams = req.getParameter(PARAM_FIELDS);
 		if ((fieldsParams != null) && (fieldsParams.length() > 0)) {
@@ -438,7 +436,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 				}
 			}
 		}
-		return new ArrayList<>(fields);
+		return fields;
 	}
 
 	/**
@@ -447,8 +445,8 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object.
 	 * @return a {@link java.util.List} object.
 	 */
-	public List<String> extractLists(WebScriptRequest req) {
-		List<String> lists = new ArrayList<>();
+	public Set<String> extractLists(WebScriptRequest req) {
+		Set<String> lists = new HashSet<>();
 		String listsParams = req.getParameter(PARAM_LISTS);
 		
 		if ((listsParams != null) && (!listsParams.isEmpty())) {

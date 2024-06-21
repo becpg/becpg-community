@@ -2,7 +2,6 @@ package fr.becpg.repo.entity.remote;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -74,12 +73,40 @@ public class RemoteParams {
 		return filteredAssocProperties;
 	}
 
+	public JSONObject getJsonParams() {
+		return jsonParams;
+	}
+
+	public Set<QName> getFilteredProperties() {
+		return filteredProperties;
+	}
+
+	public Set<QName> getIgnoredFields() {
+		return ignoredFields;
+	}
+
+	public Set<String> getFilteredLists() {
+		return filteredLists;
+	}
+	
+	public void setFilteredProperties(Set<QName> filteredProperties) {
+		this.filteredProperties = filteredProperties;
+	}
+
+	public void setFilteredLists(Set<String> filteredLists) {
+		this.filteredLists = filteredLists;
+	}
+
+	public void setFilteredAssocProperties(Map<QName, Set<QName>> filteredAssocProperties) {
+		this.filteredAssocProperties = filteredAssocProperties;
+	}
+
 	/**
 	 * <p>setFilteredFields.</p>
 	 *
 	 * @param fields a {@link java.util.List} object.
 	 */
-	public void setFilteredFields(List<String> fields, NamespaceService namespaceService) {
+	public void setFilteredFields(Set<String> fields, NamespaceService namespaceService) {
 
 		if ((fields != null) && !fields.isEmpty()) {
 			for (String el : fields) {
