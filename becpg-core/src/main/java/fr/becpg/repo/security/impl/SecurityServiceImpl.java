@@ -389,7 +389,6 @@ public class SecurityServiceImpl implements SecurityService {
 			}
 			
 		}
-		logger.info("findAllAclGroups"+ret.size() );
 		
 		return ret;
 	}
