@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
@@ -132,11 +133,13 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 				notification.setErrorLog(null);
 				alfrescoRepository.save(notification);
 				
+				QName nodeType = QName.createQName(notification.getNodeType(), namespaceService);
+				
 				SearchRuleFilter filter = new SearchRuleFilter();
 				if ((notification.getCondtions() != null) && !notification.getCondtions().isEmpty()) {
 					filter.fromJsonObject(new JSONObject(notification.getCondtions()),namespaceService);
 				}
-				filter.setNodeType(QName.createQName(notification.getNodeType(), namespaceService));
+				filter.setNodeType(nodeType);
 				filter.setDateField(QName.createQName(notification.getDateField(), namespaceService));
 				filter.setNodePath(nodeService.getPath(notification.getTarget()));
 				
