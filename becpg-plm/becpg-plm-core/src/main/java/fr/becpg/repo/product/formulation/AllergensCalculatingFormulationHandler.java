@@ -246,7 +246,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 								allergen.setQtyPerc(0d);
 								visitedAllergens.add(allergenNodeRef);
 							}
-							allergen.setQtyPerc(allergen.getQtyPerc() + (ing.getQtyPerc() * allergenRate / 100));
+							allergen.setQtyPerc(allergen.getQtyPerc() + ((ing.getQtyPerc() == null ? 0d : ing.getQtyPerc()) * allergenRate / 100));
 						}
 					}
 				}
