@@ -32,7 +32,6 @@ import fr.becpg.test.PLMBaseTestCase;
  */
 public class MultiLevelDataServiceIT extends PLMBaseTestCase {
 
-	
 	private static final Log logger = LogFactory.getLog(MultiLevelDataServiceIT.class);
 
 	@Autowired
@@ -54,7 +53,7 @@ public class MultiLevelDataServiceIT extends PLMBaseTestCase {
 
 		logger.debug("testGetMultiLevelCompoList");
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			/*-- Create raw material --*/
 			logger.debug("/*-- Create raw material --*/");
@@ -86,12 +85,46 @@ public class MultiLevelDataServiceIT extends PLMBaseTestCase {
 			finishedProduct.setName("Finished Product");
 
 			List<CompoListDataItem> compoList = new LinkedList<>();
-			CompoListDataItem parent1 = new CompoListDataItem(null, null, 1d, 1d, ProductUnit.P, 0d, DeclarationType.Declare, lSF1NodeRef);
-			CompoListDataItem child1 = new CompoListDataItem(null, parent1, 1d, 4d, ProductUnit.P, 0d, DeclarationType.Declare, lSF2NodeRef);
-			CompoListDataItem child12 = new CompoListDataItem(null, child1, 3d, 0d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial1NodeRef);
-			CompoListDataItem parent2 = new CompoListDataItem(null, null, 1d, 4d, ProductUnit.P, 0d, DeclarationType.Declare, lSF3NodeRef);
-			CompoListDataItem child2 = new CompoListDataItem(null, parent2, 3d, 0d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial2NodeRef);
-			CompoListDataItem child21 = new CompoListDataItem(null, parent2, 3d, 0d, ProductUnit.kg, 0d, DeclarationType.Omit, lSF4NodeRef);
+			/*
+			 * CompoListDataItem parent1 = new CompoListDataItem(null, null, 1d, 1d,
+			 * ProductUnit.P, 0d, DeclarationType.Declare, lSF1NodeRef);
+			 */
+			CompoListDataItem parent1 = CompoListDataItem.build().withQty(1d).withQtyUsed(1d).withUnit(ProductUnit.P)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(lSF1NodeRef);
+			/*
+			 * CompoListDataItem child1 = new CompoListDataItem(null, parent1, 1d, 4d,
+			 * ProductUnit.P, 0d, DeclarationType.Declare, lSF2NodeRef);
+			 */
+			CompoListDataItem child1 = CompoListDataItem.build().withParent(parent1).withQty(1d).withQtyUsed(4d)
+					.withUnit(ProductUnit.P).withLossPerc(0d).withDeclarationType(DeclarationType.Declare)
+					.withProduct(lSF2NodeRef);
+			/*
+			 * CompoListDataItem child12 = new CompoListDataItem(null, child1, 3d, 0d,
+			 * ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial1NodeRef);
+			 */
+			CompoListDataItem child12 = CompoListDataItem.build().withParent(child1).withQty(3d).withQtyUsed(0d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Omit)
+					.withProduct(rawMaterial1NodeRef);
+			/*
+			 * CompoListDataItem parent2 = new CompoListDataItem(null, null, 1d, 4d,
+			 * ProductUnit.P, 0d, DeclarationType.Declare, lSF3NodeRef);
+			 */
+			CompoListDataItem parent2 = CompoListDataItem.build().withQty(1d).withQtyUsed(4d).withUnit(ProductUnit.P)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(lSF3NodeRef);
+			/*
+			 * CompoListDataItem child2 = new CompoListDataItem(null, parent2, 3d, 0d,
+			 * ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial2NodeRef);
+			 */
+			CompoListDataItem child2 = CompoListDataItem.build().withParent(parent2).withQty(3d).withQtyUsed(0d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Omit)
+					.withProduct(rawMaterial2NodeRef);
+			/*
+			 * CompoListDataItem child21 = new CompoListDataItem(null, parent2, 3d, 0d,
+			 * ProductUnit.kg, 0d, DeclarationType.Omit, lSF4NodeRef);
+			 */
+			CompoListDataItem child21 = CompoListDataItem.build().withParent(parent2).withQty(3d).withQtyUsed(0d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Omit)
+					.withProduct(lSF4NodeRef);
 
 			compoList.add(parent1);
 			compoList.add(child1);
@@ -104,11 +137,11 @@ public class MultiLevelDataServiceIT extends PLMBaseTestCase {
 			finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
 			return null;
-		}, false, true);
+		});
 
 		waitForSolr();
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			final DataListFilter dataListFilter = new DataListFilter();
 			dataListFilter.setDataType(PLMModel.TYPE_COMPOLIST);
@@ -127,7 +160,7 @@ public class MultiLevelDataServiceIT extends PLMBaseTestCase {
 			assertEquals(6, checks);
 			return null;
 
-		}, false, true);
+		});
 	}
 
 	int doChecks(MultiLevelListData mlld2, int checks) {

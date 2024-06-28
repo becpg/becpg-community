@@ -28,7 +28,6 @@ import fr.becpg.test.PLMBaseTestCase;
  */
 public class ProductListAttributesPolicyIT extends PLMBaseTestCase {
 
-	
 	private static final Log logger = LogFactory.getLog(ProductListAttributesPolicyIT.class);
 
 	final Set<QName> dataLists = new HashSet<>();
@@ -52,7 +51,7 @@ public class ProductListAttributesPolicyIT extends PLMBaseTestCase {
 		dataLists.add(PLMModel.TYPE_COSTLIST);
 		dataLists.add(PLMModel.TYPE_NUTLIST);
 
-		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef rawMaterialNodeRef = inWriteTx(() -> {
 
 			cost1 = costs.get(0);
 			nodeService.setProperty(cost1, PLMModel.PROP_COSTCURRENCY, "€");
@@ -88,9 +87,9 @@ public class ProductListAttributesPolicyIT extends PLMBaseTestCase {
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterialData).getNodeRef();
 
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			RawMaterialData rawMaterialDBData = (RawMaterialData) alfrescoRepository.findOne(rawMaterialNodeRef);
 
@@ -126,9 +125,9 @@ public class ProductListAttributesPolicyIT extends PLMBaseTestCase {
 			nodeService.setProperty(rawMaterialNodeRef, PLMModel.PROP_PRODUCT_SERVING_SIZE_UNIT, null);
 
 			return null;
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			RawMaterialData rawMaterialDBData = (RawMaterialData) alfrescoRepository.findOne(rawMaterialNodeRef);
 
@@ -165,9 +164,9 @@ public class ProductListAttributesPolicyIT extends PLMBaseTestCase {
 			nodeService.setProperty(rawMaterialNodeRef, PLMModel.PROP_PRODUCT_SERVING_SIZE_UNIT, "mL");
 
 			return null;
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			RawMaterialData rawMaterialDBData = (RawMaterialData) alfrescoRepository.findOne(rawMaterialNodeRef);
 
@@ -202,9 +201,9 @@ public class ProductListAttributesPolicyIT extends PLMBaseTestCase {
 			nodeService.setProperty(rawMaterialNodeRef, PLMModel.PROP_PRODUCT_UNIT, ProductUnit.L);
 			nodeService.setProperty(rawMaterialNodeRef, PLMModel.PROP_PRODUCT_SERVING_SIZE_UNIT, "g");
 			return null;
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			RawMaterialData rawMaterialDBData = (RawMaterialData) alfrescoRepository.findOne(rawMaterialNodeRef);
 
@@ -240,13 +239,13 @@ public class ProductListAttributesPolicyIT extends PLMBaseTestCase {
 			nodeService.setProperty(rawMaterialNodeRef, PLMModel.PROP_PRODUCT_SERVING_SIZE_UNIT, null);
 
 			return null;
-		}, false, true);
+		});
 
 		/*
 		 * Change cost, nut
 		 */
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			RawMaterialData rawMaterialDBData = (RawMaterialData) alfrescoRepository.findOne(rawMaterialNodeRef);
 
@@ -295,9 +294,9 @@ public class ProductListAttributesPolicyIT extends PLMBaseTestCase {
 			nodeService.createAssociation(nutListItem2NodeRef, nut1, PLMModel.ASSOC_NUTLIST_NUT);
 
 			return null;
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			RawMaterialData rawMaterialDBData = (RawMaterialData) alfrescoRepository.findOne(rawMaterialNodeRef);
 
@@ -331,10 +330,10 @@ public class ProductListAttributesPolicyIT extends PLMBaseTestCase {
 
 			return null;
 
-		}, false, true);
+		});
 
 		// reset for other tests
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			cost1 = costs.get(0);
 			nodeService.setProperty(cost1, PLMModel.PROP_COSTCURRENCY, "€");
@@ -346,7 +345,7 @@ public class ProductListAttributesPolicyIT extends PLMBaseTestCase {
 
 			return null;
 
-		}, false, true);
+		});
 	}
 
 }

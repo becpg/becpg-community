@@ -99,110 +99,126 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 
 	private void initTasks() {
 
-		NodeRef listsFolder = entitySystemService.getSystemEntity(systemFolderNodeRef, ProjectRepoConsts.PATH_PROJECT_LISTS);
+		NodeRef listsFolder = entitySystemService.getSystemEntity(systemFolderNodeRef,
+				ProjectRepoConsts.PATH_PROJECT_LISTS);
 
 		// taskLegends
-		NodeRef taskLegendsFolder = entitySystemService.getSystemEntityDataList(listsFolder, ProjectRepoConsts.PATH_TASK_LEGENDS);
+		NodeRef taskLegendsFolder = entitySystemService.getSystemEntityDataList(listsFolder,
+				ProjectRepoConsts.PATH_TASK_LEGENDS);
 		String[] taskLegendNames = { "TaskLegend1", "TaskLegend2", "TaskLegend3" };
 		for (String taskLegendName : taskLegendNames) {
 			if (nodeService.getChildByName(taskLegendsFolder, ContentModel.ASSOC_CONTAINS, taskLegendName) == null) {
 				Map<QName, Serializable> properties = new HashMap<>();
 				properties.put(ContentModel.PROP_NAME, taskLegendName);
 				nodeService.createNode(taskLegendsFolder, ContentModel.ASSOC_CONTAINS,
-						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
+						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+								(String) properties.get(ContentModel.PROP_NAME)),
 						ProjectModel.TYPE_TASK_LEGEND, properties).getChildRef();
 			}
 		}
 
 		// score criteria
-		NodeRef criteriaFolder = entitySystemService.getSystemEntityDataList(listsFolder, ProjectRepoConsts.PATH_SCORE_CRITERIA);
+		NodeRef criteriaFolder = entitySystemService.getSystemEntityDataList(listsFolder,
+				ProjectRepoConsts.PATH_SCORE_CRITERIA);
 		for (int i = 0; i < 5; i++) {
 			if (nodeService.getChildByName(criteriaFolder, ContentModel.ASSOC_CONTAINS, "Criterion" + i) == null) {
 				Map<QName, Serializable> properties = new HashMap<>();
 				properties.put(BeCPGModel.PROP_LV_VALUE, "Criterion" + i);
 				properties.put(ContentModel.PROP_NAME, "Criterion" + i);
 				nodeService.createNode(criteriaFolder, ContentModel.ASSOC_CONTAINS,
-						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)),
+						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+								(String) properties.get(BeCPGModel.PROP_LV_VALUE)),
 						BeCPGModel.TYPE_LIST_VALUE, properties).getChildRef();
 			}
 		}
 
 		// resourceCost
-		NodeRef resourceCostsFolder = entitySystemService.getSystemEntityDataList(listsFolder, ProjectRepoConsts.PATH_RESOURCE_COSTS);
+		NodeRef resourceCostsFolder = entitySystemService.getSystemEntityDataList(listsFolder,
+				ProjectRepoConsts.PATH_RESOURCE_COSTS);
 		if (nodeService.getChildByName(resourceCostsFolder, ContentModel.ASSOC_CONTAINS, "ResourceCost") == null) {
 			Map<QName, Serializable> properties = new HashMap<>();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "ResourceCost");
 			properties.put(ProjectModel.PROP_RESOURCE_COST_VALUE, RESOURCE_COST_VALUE);
 			properties.put(ProjectModel.PROP_RESOURCE_COST_BILL_RATE, RESOURCE_COST_BILL_RATE);
 			nodeService.createNode(resourceCostsFolder, ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					ProjectModel.TYPE_RESOURCE_COST, properties).getChildRef();
 		}
 	}
 
 	@Override
 	protected boolean shouldInit() {
-		return super.shouldInit() || (hierarchyService.getHierarchyByPath(HIERARCHY_PROJECT_PATH, null, HIERARCHY1_SEA_FOOD) == null);
+		return super.shouldInit()
+				|| (hierarchyService.getHierarchyByPath(HIERARCHY_PROJECT_PATH, null, HIERARCHY1_SEA_FOOD) == null);
 	}
 
 	@Override
 	protected synchronized void doInitRepo(boolean shouldInit) {
 		if (shouldInit) {
-			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			inWriteTx(() -> {
 
 				// Project
-				NodeRef projectListsNodeRef = entitySystemService.getSystemEntity(systemFolderNodeRef, ProjectRepoConsts.PATH_PROJECT_LISTS);
+				NodeRef projectListsNodeRef = entitySystemService.getSystemEntity(systemFolderNodeRef,
+						ProjectRepoConsts.PATH_PROJECT_LISTS);
 
 				NodeRef projectHierarchyNodeRef = entitySystemService.getSystemEntityDataList(projectListsNodeRef,
 						ProjectRepoConsts.PATH_PROJECT_HIERARCHY);
 
-				PROJECT_HIERARCHY1_SEA_FOOD_REF = hierarchyService.createRootHierarchy(projectHierarchyNodeRef, HIERARCHY1_SEA_FOOD);
-				PROJECT_HIERARCHY2_FISH_REF = hierarchyService.createHierarchy(projectHierarchyNodeRef, PROJECT_HIERARCHY1_SEA_FOOD_REF,
-						HIERARCHY2_FISH);
-				PROJECT_HIERARCHY2_CRUSTACEAN_REF = hierarchyService.createHierarchy(projectHierarchyNodeRef, PROJECT_HIERARCHY1_SEA_FOOD_REF,
-						HIERARCHY2_CRUSTACEAN);
+				PROJECT_HIERARCHY1_SEA_FOOD_REF = hierarchyService.createRootHierarchy(projectHierarchyNodeRef,
+						HIERARCHY1_SEA_FOOD);
+				PROJECT_HIERARCHY2_FISH_REF = hierarchyService.createHierarchy(projectHierarchyNodeRef,
+						PROJECT_HIERARCHY1_SEA_FOOD_REF, HIERARCHY2_FISH);
+				PROJECT_HIERARCHY2_CRUSTACEAN_REF = hierarchyService.createHierarchy(projectHierarchyNodeRef,
+						PROJECT_HIERARCHY1_SEA_FOOD_REF, HIERARCHY2_CRUSTACEAN);
 
 				initTasks();
 				return false;
 
-			}, false, true);
+			});
 
-			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			inWriteTx(() -> {
 
 				dictionaryDAO.reset();
 				return null;
 
-			}, false, true);
+			});
 		} else {
-			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-				PROJECT_HIERARCHY1_SEA_FOOD_REF = hierarchyService.getHierarchyByPath(HIERARCHY_PROJECT_PATH, null, HIERARCHY1_SEA_FOOD);
-				PROJECT_HIERARCHY2_FISH_REF = hierarchyService.getHierarchyByPath(HIERARCHY_PROJECT_PATH, PROJECT_HIERARCHY1_SEA_FOOD_REF,
-						HIERARCHY2_FISH);
-				PROJECT_HIERARCHY2_CRUSTACEAN_REF = hierarchyService.getHierarchyByPath(HIERARCHY_PROJECT_PATH, PROJECT_HIERARCHY1_SEA_FOOD_REF,
-						HIERARCHY2_CRUSTACEAN);
+			inWriteTx(() -> {
+				PROJECT_HIERARCHY1_SEA_FOOD_REF = hierarchyService.getHierarchyByPath(HIERARCHY_PROJECT_PATH, null,
+						HIERARCHY1_SEA_FOOD);
+				PROJECT_HIERARCHY2_FISH_REF = hierarchyService.getHierarchyByPath(HIERARCHY_PROJECT_PATH,
+						PROJECT_HIERARCHY1_SEA_FOOD_REF, HIERARCHY2_FISH);
+				PROJECT_HIERARCHY2_CRUSTACEAN_REF = hierarchyService.getHierarchyByPath(HIERARCHY_PROJECT_PATH,
+						PROJECT_HIERARCHY1_SEA_FOOD_REF, HIERARCHY2_CRUSTACEAN);
 				return false;
-			}, false, true);
+			});
 
 		}
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			// taskLegends
-			NodeRef npdListsFolder = entitySystemService.getSystemEntity(systemFolderNodeRef, ProjectRepoConsts.PATH_PROJECT_LISTS);
-			NodeRef taskLegendFolder = entitySystemService.getSystemEntityDataList(npdListsFolder, ProjectRepoConsts.PATH_TASK_LEGENDS);
-			List<NodeRef> taskLegendsFileInfo = entityListDAO.getListItems(taskLegendFolder, ProjectModel.TYPE_TASK_LEGEND);
+			NodeRef npdListsFolder = entitySystemService.getSystemEntity(systemFolderNodeRef,
+					ProjectRepoConsts.PATH_PROJECT_LISTS);
+			NodeRef taskLegendFolder = entitySystemService.getSystemEntityDataList(npdListsFolder,
+					ProjectRepoConsts.PATH_TASK_LEGENDS);
+			List<NodeRef> taskLegendsFileInfo = entityListDAO.getListItems(taskLegendFolder,
+					ProjectModel.TYPE_TASK_LEGEND);
 			for (NodeRef fileInfo : taskLegendsFileInfo) {
 				taskLegends.add(fileInfo);
 			}
 
 			// resourceCost
-			NodeRef resourceCostFolder = entitySystemService.getSystemEntityDataList(npdListsFolder, ProjectRepoConsts.PATH_RESOURCE_COSTS);
-			List<NodeRef> resourceCostsFileInfo = entityListDAO.getListItems(resourceCostFolder, ProjectModel.TYPE_RESOURCE_COST);
+			NodeRef resourceCostFolder = entitySystemService.getSystemEntityDataList(npdListsFolder,
+					ProjectRepoConsts.PATH_RESOURCE_COSTS);
+			List<NodeRef> resourceCostsFileInfo = entityListDAO.getListItems(resourceCostFolder,
+					ProjectModel.TYPE_RESOURCE_COST);
 			resourceCost = (ResourceCost) alfrescoRepository.findOne(resourceCostsFileInfo.get(0));
 
-				userOne = BeCPGTestHelper.createUser(BeCPGTestHelper.USER_ONE);
-				userTwo = BeCPGTestHelper.createUser(BeCPGTestHelper.USER_TWO);
-				observerOne =  BeCPGTestHelper.createUser("ObserverOne");
+			userOne = BeCPGTestHelper.createUser(BeCPGTestHelper.USER_ONE);
+			userTwo = BeCPGTestHelper.createUser(BeCPGTestHelper.USER_TWO);
+			observerOne = BeCPGTestHelper.createUser("ObserverOne");
 
 			groupOne = BeCPGTestHelper.createGroup("groupOne", BeCPGTestHelper.USER_TWO);
 
@@ -214,19 +230,19 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 			assigneesTwo.add(groupOne);
 
 			return null;
-		}, false, true);
+		});
 	}
 
 	@Override
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			// As system user
 			AuthenticationUtil.setFullyAuthenticatedUser(AuthenticationUtil.getAdminUserName());
 			// create project Tpl
-			ProjectData projectTplData = new ProjectData(null, "Pjt Tpl", PROJECT_HIERARCHY1_SEA_FOOD_REF, PROJECT_HIERARCHY2_CRUSTACEAN_REF, null,
-					null, null, null, null, null, null, 0, null);
+			ProjectData projectTplData = new ProjectData(null, "Pjt Tpl", PROJECT_HIERARCHY1_SEA_FOOD_REF,
+					PROJECT_HIERARCHY2_CRUSTACEAN_REF, null, null, null, null, null, null, null, 0, null);
 
 			projectTplData.setParentNodeRef(getTestFolderNodeRef());
 			projectTplData = (ProjectData) alfrescoRepository.save(projectTplData);
@@ -242,10 +258,9 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 			if (subFolder == null) {
 				Map<QName, Serializable> properties1 = new HashMap<>();
 				properties1.put(ContentModel.PROP_NAME, "SubFolder");
-				subFolder = nodeService
-						.createNode(projectTplNodeRef, ContentModel.ASSOC_CONTAINS,
-								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "SubFolder"), ContentModel.TYPE_FOLDER, properties1)
-						.getChildRef();
+				subFolder = nodeService.createNode(projectTplNodeRef, ContentModel.ASSOC_CONTAINS,
+						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "SubFolder"),
+						ContentModel.TYPE_FOLDER, properties1).getChildRef();
 			}
 
 			NodeRef doc1NodeRef = nodeService.getChildByName(subFolder, ContentModel.ASSOC_CONTAINS, "Doc1");
@@ -253,7 +268,8 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 				Map<QName, Serializable> properties2 = new HashMap<>();
 				properties2.put(ContentModel.PROP_NAME, "Doc1");
 				doc1NodeRef = nodeService.createNode(subFolder, ContentModel.ASSOC_CONTAINS,
-						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "Doc1"), ContentModel.TYPE_CONTENT, properties2).getChildRef();
+						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "Doc1"), ContentModel.TYPE_CONTENT,
+						properties2).getChildRef();
 			}
 
 			NodeRef doc2NodeRef = nodeService.getChildByName(subFolder, ContentModel.ASSOC_CONTAINS, "Doc2");
@@ -261,18 +277,25 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 				Map<QName, Serializable> properties3 = new HashMap<>();
 				properties3.put(ContentModel.PROP_NAME, "Doc2");
 				doc2NodeRef = nodeService.createNode(subFolder, ContentModel.ASSOC_CONTAINS,
-						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "Doc2"), ContentModel.TYPE_CONTENT, properties3).getChildRef();
+						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "Doc2"), ContentModel.TYPE_CONTENT,
+						properties3).getChildRef();
 			}
 
 			// create datalists
 			List<TaskListDataItem> taskList = new LinkedList<>();
 
-			taskList.add(new TaskListDataItem(null, "task1", false, 2, null, assigneesOne, taskLegends.get(0), "activiti$projectAdhoc"));
-			taskList.add(new TaskListDataItem(null, "task2", false, 2, null, assigneesOne, taskLegends.get(0), "activiti$projectAdhoc"));
-			taskList.add(new TaskListDataItem(null, "task3", false, 2, null, assigneesOne, taskLegends.get(1), "activiti$projectAdhoc"));
-			taskList.add(new TaskListDataItem(null, "task4", false, 2, null, assigneesTwo, taskLegends.get(1), "activiti$projectAdhoc"));
-			taskList.add(new TaskListDataItem(null, "task5", false, 2, null, assigneesTwo, taskLegends.get(1), "activiti$projectAdhoc"));
-			taskList.add(new TaskListDataItem(null, "task6", false, 2, null, assigneesTwo, taskLegends.get(2), "activiti$projectAdhoc"));
+			taskList.add(new TaskListDataItem(null, "task1", false, 2, null, assigneesOne, taskLegends.get(0),
+					"activiti$projectAdhoc"));
+			taskList.add(new TaskListDataItem(null, "task2", false, 2, null, assigneesOne, taskLegends.get(0),
+					"activiti$projectAdhoc"));
+			taskList.add(new TaskListDataItem(null, "task3", false, 2, null, assigneesOne, taskLegends.get(1),
+					"activiti$projectAdhoc"));
+			taskList.add(new TaskListDataItem(null, "task4", false, 2, null, assigneesTwo, taskLegends.get(1),
+					"activiti$projectAdhoc"));
+			taskList.add(new TaskListDataItem(null, "task5", false, 2, null, assigneesTwo, taskLegends.get(1),
+					"activiti$projectAdhoc"));
+			taskList.add(new TaskListDataItem(null, "task6", false, 2, null, assigneesTwo, taskLegends.get(2),
+					"activiti$projectAdhoc"));
 			projectTplData.setTaskList(taskList);
 
 			// create scoreList
@@ -303,7 +326,6 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 			prevTasks = new ArrayList<>();
 			prevTasks.add(projectTplData.getTaskList().get(2).getNodeRef());
 			projectTplData.getTaskList().get(3).setPrevTasks(prevTasks);
-		
 
 			prevTasks = new ArrayList<>();
 			prevTasks.add(projectTplData.getTaskList().get(2).getNodeRef());
@@ -314,32 +336,39 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 			prevTasks.add(projectTplData.getTaskList().get(4).getNodeRef());
 			projectTplData.getTaskList().get(5).setPrevTasks(prevTasks);
 			projectTplData.getTaskList().get(5).setRefusedTask(projectTplData.getTaskList().get(2));
-			projectTplData.getTaskList().get(5).setRefusedTasksToReopen(Arrays.asList(projectTplData.getTaskList().get(4).getNodeRef()));
+			projectTplData.getTaskList().get(5)
+					.setRefusedTasksToReopen(Arrays.asList(projectTplData.getTaskList().get(4).getNodeRef()));
 
 			List<DeliverableListDataItem> deliverableList = new LinkedList<>();
-			deliverableList.add(new DeliverableListDataItem(null, Collections.singletonList(projectTplData.getTaskList().get(0).getNodeRef()), null,
+			deliverableList.add(new DeliverableListDataItem(null,
+					Collections.singletonList(projectTplData.getTaskList().get(0).getNodeRef()), null,
 					"Deliveray descr 1", 100, doc1NodeRef));
-			deliverableList.add(new DeliverableListDataItem(null, Collections.singletonList(projectTplData.getTaskList().get(1).getNodeRef()), null,
+			deliverableList.add(new DeliverableListDataItem(null,
+					Collections.singletonList(projectTplData.getTaskList().get(1).getNodeRef()), null,
 					"Deliveray descr 2.1", 30, doc2NodeRef));
-			deliverableList.add(new DeliverableListDataItem(null, Collections.singletonList(projectTplData.getTaskList().get(1).getNodeRef()), null,
+			deliverableList.add(new DeliverableListDataItem(null,
+					Collections.singletonList(projectTplData.getTaskList().get(1).getNodeRef()), null,
 					"Deliveray descr 2.2", 70, doc1NodeRef));
-			deliverableList.add(new DeliverableListDataItem(null, Collections.singletonList(projectTplData.getTaskList().get(2).getNodeRef()), null,
+			deliverableList.add(new DeliverableListDataItem(null,
+					Collections.singletonList(projectTplData.getTaskList().get(2).getNodeRef()), null,
 					"Deliveray descr 3", 100, null));
 			projectTplData.setDeliverableList(deliverableList);
 
 			alfrescoRepository.save(projectTplData);
 			return null;
 
-		}, false, true);
+		});
 	}
 
 	protected NodeRef createProject(final ProjectState projectState, final Date startDate, final Date endDate) {
-		return createProject(projectState, startDate, endDate, endDate != null ? PlanningMode.RetroPlanning : PlanningMode.Planning);
+		return createProject(projectState, startDate, endDate,
+				endDate != null ? PlanningMode.RetroPlanning : PlanningMode.Planning);
 	}
 
-	protected NodeRef createProject(final ProjectState projectState, final Date startDate, final Date endDate, final PlanningMode planningMode) {
+	protected NodeRef createProject(final ProjectState projectState, final Date startDate, final Date endDate,
+			final PlanningMode planningMode) {
 
-		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		return inWriteTx(() -> {
 
 			EntityTestData entityTestData = new EntityTestData();
 			entityTestData.setName("Entity 1");
@@ -349,15 +378,16 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 
 			List<NodeRef> productNodeRefs = new ArrayList<>(1);
 			productNodeRefs.add(entityTestData.getNodeRef());
-			ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_SEA_FOOD_REF, PROJECT_HIERARCHY2_CRUSTACEAN_REF, startDate,
-					endDate, null, planningMode, 2, projectState, projectTplNodeRef, 0, productNodeRefs);
+			ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_SEA_FOOD_REF,
+					PROJECT_HIERARCHY2_CRUSTACEAN_REF, startDate, endDate, null, planningMode, 2, projectState,
+					projectTplNodeRef, 0, productNodeRefs);
 
 			projectData.setParentNodeRef(getTestFolderNodeRef());
 
 			projectData = (ProjectData) alfrescoRepository.save(projectData);
 
 			return projectData.getNodeRef();
-		}, false, true);
+		});
 	}
 
 	protected NodeRef createMultiLevelProject(final ProjectState projectState, final Date startDate, final Date endDate,
@@ -365,25 +395,32 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 
 		logger.info("Create multiLevel project");
 
-		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		return inWriteTx(() -> {
 
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ENTITY_TPL_REF);
-			
-			ProjectData projectData = new ProjectData(null, "Pjt", PROJECT_HIERARCHY1_SEA_FOOD_REF, PROJECT_HIERARCHY2_CRUSTACEAN_REF, startDate,
-					endDate, null, planningMode, null, null, null, 0, null);
+
+			ProjectData projectData = new ProjectData(null, "Pjt", PROJECT_HIERARCHY1_SEA_FOOD_REF,
+					PROJECT_HIERARCHY2_CRUSTACEAN_REF, startDate, endDate, null, planningMode, null, null, null, 0,
+					null);
 			projectData.setParentNodeRef(getTestFolderNodeRef());
 
 			// multi level tasks
 			List<TaskListDataItem> taskList = new LinkedList<>();
-			taskList.add(new TaskListDataItem(null, "task1", false, 2, null, assigneesOne, taskLegends.get(0), "activiti$projectAdhoc"));
-			taskList.add(new TaskListDataItem(null, "task2", false, 2, null, assigneesOne, taskLegends.get(0), "activiti$projectAdhoc"));
+			taskList.add(new TaskListDataItem(null, "task1", false, 2, null, assigneesOne, taskLegends.get(0),
+					"activiti$projectAdhoc"));
+			taskList.add(new TaskListDataItem(null, "task2", false, 2, null, assigneesOne, taskLegends.get(0),
+					"activiti$projectAdhoc"));
 			taskList.get(1).setParent(taskList.get(0));
-			taskList.add(new TaskListDataItem(null, "task3", false, 2, null, assigneesOne, taskLegends.get(1), "activiti$projectAdhoc"));
+			taskList.add(new TaskListDataItem(null, "task3", false, 2, null, assigneesOne, taskLegends.get(1),
+					"activiti$projectAdhoc"));
 			taskList.get(2).setParent(taskList.get(0));
-			taskList.add(new TaskListDataItem(null, "task4", false, 2, null, assigneesTwo, taskLegends.get(1), "activiti$projectAdhoc"));
-			taskList.add(new TaskListDataItem(null, "task5", false, 2, null, assigneesTwo, taskLegends.get(1), "activiti$projectAdhoc"));
+			taskList.add(new TaskListDataItem(null, "task4", false, 2, null, assigneesTwo, taskLegends.get(1),
+					"activiti$projectAdhoc"));
+			taskList.add(new TaskListDataItem(null, "task5", false, 2, null, assigneesTwo, taskLegends.get(1),
+					"activiti$projectAdhoc"));
 			taskList.get(4).setParent(taskList.get(3));
-			taskList.add(new TaskListDataItem(null, "task6", false, 2, null, assigneesTwo, taskLegends.get(2), "activiti$projectAdhoc"));
+			taskList.add(new TaskListDataItem(null, "task6", false, 2, null, assigneesTwo, taskLegends.get(2),
+					"activiti$projectAdhoc"));
 			taskList.get(5).setParent(taskList.get(3));
 			projectData.setTaskList(taskList);
 
@@ -407,6 +444,6 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 			alfrescoRepository.save(projectData);
 
 			return projectData.getNodeRef();
-		}, false, true);
+		});
 	}
 }

@@ -50,7 +50,7 @@ public class CodePolicyIT extends PLMBaseTestCase {
 	@Test
 	public void testSupplierCode() {
 
-		final NodeRef supplier1NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef supplier1NodeRef = inWriteTx(() -> {
 
 			// delete autonum value
 			autoNumService.deleteAutoNumValue(PLMModel.TYPE_SUPPLIER, BeCPGModel.PROP_CODE);
@@ -59,11 +59,12 @@ public class CodePolicyIT extends PLMBaseTestCase {
 			String name = "Supplier 1";
 			properties.put(ContentModel.PROP_NAME, name);
 			return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name), PLMModel.TYPE_SUPPLIER, properties).getChildRef();
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name), PLMModel.TYPE_SUPPLIER, properties)
+					.getChildRef();
 
-		}, false, true);
+		});
 
-		final NodeRef supplier2NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef supplier2NodeRef = inWriteTx(() -> {
 
 			// Check
 			assertNotNull("Check supplier created", supplier1NodeRef);
@@ -73,11 +74,12 @@ public class CodePolicyIT extends PLMBaseTestCase {
 			String name = "Supplier 2";
 			properties.put(ContentModel.PROP_NAME, name);
 			return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name), PLMModel.TYPE_SUPPLIER, properties).getChildRef();
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name), PLMModel.TYPE_SUPPLIER, properties)
+					.getChildRef();
 
-		}, false, true);
+		});
 
-		final NodeRef supplier3NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef supplier3NodeRef = inWriteTx(() -> {
 
 			// check
 			assertNotNull("Check supplier created", supplier2NodeRef);
@@ -89,11 +91,12 @@ public class CodePolicyIT extends PLMBaseTestCase {
 			properties.put(ContentModel.PROP_NAME, name);
 			properties.put(BeCPGModel.PROP_CODE, "F3");
 			return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name), PLMModel.TYPE_SUPPLIER, properties).getChildRef();
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name), PLMModel.TYPE_SUPPLIER, properties)
+					.getChildRef();
 
-		}, false, true);
+		});
 
-		final NodeRef supplier4NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef supplier4NodeRef = inWriteTx(() -> {
 
 			// check
 			assertNotNull("Check supplier created", supplier3NodeRef);
@@ -105,16 +108,18 @@ public class CodePolicyIT extends PLMBaseTestCase {
 			properties.put(ContentModel.PROP_NAME, name);
 			properties.put(BeCPGModel.PROP_CODE, "F3");
 			return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name), PLMModel.TYPE_SUPPLIER, properties).getChildRef();
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name), PLMModel.TYPE_SUPPLIER, properties)
+					.getChildRef();
 
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			// check
 			assertNotNull("Check supplier created", supplier4NodeRef);
 			code4 = (String) nodeService.getProperty(supplier4NodeRef, BeCPGModel.PROP_CODE);
-			Pattern p = Pattern.compile(autoNumService.getAutoNumMatchPattern(PLMModel.TYPE_SUPPLIER, BeCPGModel.PROP_CODE));
+			Pattern p = Pattern
+					.compile(autoNumService.getAutoNumMatchPattern(PLMModel.TYPE_SUPPLIER, BeCPGModel.PROP_CODE));
 			Matcher m1 = p.matcher(code1);
 			logger.info(code1 + " " + p.toString() + " " + m1.matches());
 			assertTrue(m1.matches());
@@ -136,7 +141,7 @@ public class CodePolicyIT extends PLMBaseTestCase {
 
 			return null;
 
-		}, false, true);
+		});
 
 	}
 

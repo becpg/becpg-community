@@ -40,7 +40,7 @@ public class ProjectSubmitTaskIT extends AbstractProjectTestCase {
 
 		final NodeRef projectNodeRef = createProject(ProjectState.InProgress, new Date(), null);
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			ProjectData projectTplData = (ProjectData) alfrescoRepository.findOne(projectTplNodeRef);
 
@@ -73,9 +73,9 @@ public class ProjectSubmitTaskIT extends AbstractProjectTestCase {
 			alfrescoRepository.save(projectData);
 
 			return null;
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			// check
 			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
@@ -97,16 +97,16 @@ public class ProjectSubmitTaskIT extends AbstractProjectTestCase {
 			assertEquals(DeliverableState.Planned, projectData.getDeliverableList().get(3).getState());
 
 			// check completion percent of task 2
-			assertEquals(0,(int)projectData.getTaskList().get(1).getCompletionPercent());
+			assertEquals(0, (int) projectData.getTaskList().get(1).getCompletionPercent());
 
 			// submit deliverable 2
 			projectData.getDeliverableList().get(1).setState(DeliverableState.Completed);
 			alfrescoRepository.save(projectData);
 
 			return null;
-		}, false, true);
+		});
 
-		final Date task2EndDate = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final Date task2EndDate = inWriteTx(() -> {
 
 			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 
@@ -140,9 +140,9 @@ public class ProjectSubmitTaskIT extends AbstractProjectTestCase {
 			}
 
 			return date;
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 
@@ -163,12 +163,13 @@ public class ProjectSubmitTaskIT extends AbstractProjectTestCase {
 			assertEquals(DeliverableState.InProgress, projectData.getDeliverableList().get(3).getState());
 
 			// reopen deliverables
-			nodeService.setProperty(projectData.getDeliverableList().get(1).getNodeRef(), ProjectModel.PROP_DL_STATE, DeliverableState.InProgress);
+			nodeService.setProperty(projectData.getDeliverableList().get(1).getNodeRef(), ProjectModel.PROP_DL_STATE,
+					DeliverableState.InProgress);
 
 			return null;
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 
@@ -193,9 +194,9 @@ public class ProjectSubmitTaskIT extends AbstractProjectTestCase {
 			alfrescoRepository.save(projectData);
 
 			return null;
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 
@@ -213,9 +214,9 @@ public class ProjectSubmitTaskIT extends AbstractProjectTestCase {
 			alfrescoRepository.save(projectData);
 
 			return null;
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 
@@ -229,6 +230,6 @@ public class ProjectSubmitTaskIT extends AbstractProjectTestCase {
 			assertEquals(DeliverableState.InProgress, projectData.getDeliverableList().get(3).getState());
 
 			return null;
-		}, false, true);
+		});
 	}
 }

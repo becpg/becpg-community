@@ -49,7 +49,7 @@ public class OlapServiceIT extends RepoBaseTestCase {
 	public void testOlapService() {
 
 		if (Boolean.TRUE.equals(isOlapEnabled)) {
-			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			inWriteTx(() -> {
 
 				List<OlapChart> charts = olapService.retrieveOlapCharts();
 				for (OlapChart olapChart : charts) {
@@ -60,7 +60,7 @@ public class OlapServiceIT extends RepoBaseTestCase {
 				}
 				return null;
 
-			}, false, true);
+			});
 		}
 
 	}
@@ -68,11 +68,12 @@ public class OlapServiceIT extends RepoBaseTestCase {
 	@Test
 	public void testOlapInit() {
 		if (Boolean.TRUE.equals(isOlapEnabled)) {
-			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			inWriteTx(() -> {
 
 				// First initialization
 				initRepoVisitorService.run(repositoryHelper.getCompanyHome());
-				NodeRef systemNodeRef = repoService.getFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM);
+				NodeRef systemNodeRef = repoService.getFolderByPath(repositoryHelper.getCompanyHome(),
+						RepoConsts.PATH_SYSTEM);
 				NodeRef OLAPfolderNodeRef = repoService.getFolderByPath(systemNodeRef, RepoConsts.PATH_OLAP_QUERIES);
 
 				// Test every file is present (ie : nb of files == 17)
@@ -88,9 +89,10 @@ public class OlapServiceIT extends RepoBaseTestCase {
 				numberOfChilds = nodeService.getChildAssocs(OLAPfolderNodeRef).size();
 				assertEquals(numberOfChilds, 16);
 
-				// Test the new first file found is different from  the previous one
+				// Test the new first file found is different from the previous one
 				NodeRef newFirstChildNode = nodeService.getChildAssocs(OLAPfolderNodeRef).get(0).getChildRef();
-				String newfirstChildFileName = (String) nodeService.getProperty(newFirstChildNode, ContentModel.PROP_NAME);
+				String newfirstChildFileName = (String) nodeService.getProperty(newFirstChildNode,
+						ContentModel.PROP_NAME);
 				assertNotEquals(firstChildFileName, newfirstChildFileName);
 
 				// Second initialization
@@ -104,7 +106,8 @@ public class OlapServiceIT extends RepoBaseTestCase {
 
 				// Test the new first file found is the same as the previous one
 				NodeRef newNewFirstChildNode = nodeService.getChildAssocs(OLAPfolderNodeRef).get(0).getChildRef();
-				String newNewfirstChildFileName = (String) nodeService.getProperty(newNewFirstChildNode, ContentModel.PROP_NAME);
+				String newNewfirstChildFileName = (String) nodeService.getProperty(newNewFirstChildNode,
+						ContentModel.PROP_NAME);
 				assertEquals(newfirstChildFileName, newNewfirstChildFileName);
 
 				// Delete the OLAP requests folder
@@ -120,7 +123,7 @@ public class OlapServiceIT extends RepoBaseTestCase {
 				assertEquals(numberOfChilds, 17);
 				return true;
 
-			}, false, true);
+			});
 		}
 	}
 

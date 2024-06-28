@@ -642,8 +642,13 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			List<NodeRef> geoOrigins = new ArrayList<>();
 			geoOrigins.add(geoOrigin1);
 
-			IngListDataItem rawMaterial1Ing1 = new IngListDataItem(null, 100 / 3d, geoOrigins, bioOrigins, false, false,
-					false, ing1, false);
+			/*
+			 * IngListDataItem rawMaterial1Ing1 = new IngListDataItem(null, 100 / 3d,
+			 * geoOrigins, bioOrigins, false, false, false, ing1, false);
+			 */
+			IngListDataItem rawMaterial1Ing1 = IngListDataItem.build().withQtyPerc(100 / 3d).withgeoOrigin(geoOrigins)
+					.withbioOrigin(bioOrigins).withisGMO(false).withisIonized(false).withIngredient(ing1)
+					.withisManual(false).withprocessingAid(false);
 			rawMaterial1Ing1.setMini(25d);
 			rawMaterial1Ing1.setMaxi(90d);
 			ingList.add(rawMaterial1Ing1);
@@ -654,8 +659,16 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			List<NodeRef> geoTransfo = new ArrayList<>();
 			geoTransfo.add(geoOrigin2);
 
-			IngListDataItem rawMaterial1Ing2 = new IngListDataItem(null, null, 200 / 3d, geoOrigins, geoTransfo,
-					bioOrigins, false, false, false, false, ing2, false);
+			/*
+			 * IngListDataItem rawMaterial1Ing2 = new IngListDataItem(null, null, 200 / 3d,
+			 * geoOrigins, geoTransfo, bioOrigins, false, false, false, false, ing2, false);
+			 */
+
+			IngListDataItem rawMaterial1Ing2 = IngListDataItem.build().withQtyPerc(200 / 3d).withgeoOrigin(geoTransfo)
+					.withgeoOTransfo(geoTransfo).withbioOrigin(bioOrigins).withisGMO(false).withisManual(false)
+					.withisIonized(false).withIngredient(ing2).withisManual(false).withprocessingAid(false)
+					.withisSupport(false);
+
 			rawMaterial1Ing2.setMini(18d);
 			rawMaterial1Ing2.setMaxi(80d);
 			ingList.add(rawMaterial1Ing2);
@@ -711,8 +724,13 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			List<NodeRef> geoOrigins = new ArrayList<>();
 			geoOrigins.add(geoOrigin1);
 
-			IngListDataItem rawMaterial2Ing1 = new IngListDataItem(null, 100 / 4d, geoOrigins, bioOrigins, true, true,
-					false, ing1, false);
+			/*
+			 * IngListDataItem rawMaterial2Ing1 = new IngListDataItem(null, 100 / 4d,
+			 * geoOrigins, bioOrigins, true, true, false, ing1, false);
+			 */
+			IngListDataItem rawMaterial2Ing1 = IngListDataItem.build().withQtyPerc(100 / 4d).withgeoOrigin(geoOrigins)
+					.withbioOrigin(bioOrigins).withisGMO(true).withisIonized(true).withisManual(false)
+					.withIngredient(ing1).withprocessingAid(false);
 			rawMaterial2Ing1.setMini(15d);
 			rawMaterial2Ing1.setMaxi(75d);
 			ingList.add(rawMaterial2Ing1);
@@ -722,8 +740,14 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			geoOrigins = new ArrayList<>();
 			geoOrigins.add(geoOrigin2);
 
-			IngListDataItem rawMaterial2Ing2 = new IngListDataItem(null, 300 / 4d, geoOrigins, bioOrigins, false, false,
-					false, ing2, false);
+			/*
+			 * IngListDataItem rawMaterial2Ing2 = new IngListDataItem(null, 300 / 4d,
+			 * geoOrigins, bioOrigins, false, false, false, ing2, false);
+			 */
+			IngListDataItem rawMaterial2Ing2 = IngListDataItem.build().withQtyPerc(300 / 4d).withgeoOrigin(geoOrigins)
+					.withbioOrigin(bioOrigins).withisGMO(false).withisIonized(false).withisManual(false)
+					.withIngredient(ing2).withprocessingAid(false);
+
 			rawMaterial2Ing2.setMini(25d);
 			rawMaterial2Ing2.setMaxi(86d);
 			ingList.add(rawMaterial2Ing2);
@@ -777,7 +801,13 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			bioOrigins.add(bioOrigin2);
 			List<NodeRef> geoOrigins = new ArrayList<>();
 			geoOrigins.add(geoOrigin2);
-			ingList.add(new IngListDataItem(null, 100d, geoOrigins, bioOrigins, true, true, false, ing3, false));
+			/*
+			 * ingList.add(new IngListDataItem(null, 100d, geoOrigins, bioOrigins, true,
+			 * true, false, ing3, false));
+			 */
+			ingList.add(IngListDataItem.build().withQtyPerc(100d).withgeoOrigin(geoOrigins).withbioOrigin(bioOrigins)
+					.withisGMO(true).withisIonized(true).withisManual(false).withIngredient(ing3)
+					.withprocessingAid(false));
 			// physicoChem
 			List<PhysicoChemListDataItem> physicoChemList = new ArrayList<>();
 			physicoChemList.add(new PhysicoChemListDataItem(null, 1d, "-", null, null, physicoChem1));
@@ -808,7 +838,13 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			bioOrigins.add(bioOrigin2);
 			List<NodeRef> geoOrigins = new ArrayList<>();
 			geoOrigins.add(geoOrigin2);
-			ingList.add(new IngListDataItem(null, 100d, geoOrigins, bioOrigins, true, true, false, ing3, false));
+			/*
+			 * ingList.add(new IngListDataItem(null, 100d, geoOrigins, bioOrigins, true,
+			 * true, false, ing3, false));
+			 */
+			ingList.add(IngListDataItem.build().withQtyPerc(100d).withgeoOrigin(geoOrigins).withbioOrigin(bioOrigins)
+					.withisGMO(true).withisIonized(true).withIngredient(ing1).withisManual(false)
+					.withprocessingAid(false));
 			rawMaterial4.setIngList(ingList);
 			rawMaterial4.setCostList(new LinkedList<CostListDataItem>());
 			rawMaterial4.setNutList(new LinkedList<NutListDataItem>());
@@ -829,7 +865,13 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			List<NodeRef> geoOrigins = new ArrayList<>();
 			geoOrigins.add(geoOrigin2);
 
-			ingList.add(new IngListDataItem(null, 100d, geoOrigins, bioOrigins, true, true, false, ing3, false));
+			/*
+			 * ingList.add(new IngListDataItem(null, 100d, geoOrigins, bioOrigins, true,
+			 * true, false, ing3, false));
+			 */
+			ingList.add(IngListDataItem.build().withQtyPerc(100d).withgeoOrigin(geoOrigins).withbioOrigin(bioOrigins)
+					.withisGMO(true).withisIonized(true).withisManual(false).withIngredient(ing3)
+					.withprocessingAid(false));
 
 			RawMaterialData rawMaterial5 = new RawMaterialData();
 			rawMaterial5.setName("Raw material 5");
@@ -909,12 +951,24 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			bioOrigins.add(bioOrigin1);
 			List<NodeRef> geoOrigins = new ArrayList<>();
 			geoOrigins.add(geoOrigin1);
-			ingList.add(new IngListDataItem(null, 80d, geoOrigins, bioOrigins, true, true, false, ing1, false));
+			/*
+			 * ingList.add(new IngListDataItem(null, 80d, geoOrigins, bioOrigins, true,
+			 * true, false, ing1, false));
+			 */
+			ingList.add(IngListDataItem.build().withQtyPerc(80d).withgeoOrigin(geoOrigins).withbioOrigin(bioOrigins)
+					.withisGMO(true).withisIonized(true).withisManual(false).withIngredient(ing1)
+					.withprocessingAid(false));
 			bioOrigins = new ArrayList<>();
 			bioOrigins.add(bioOrigin2);
 			geoOrigins = new ArrayList<>();
 			geoOrigins.add(geoOrigin2);
-			ingList.add(new IngListDataItem(null, 20d, geoOrigins, bioOrigins, false, false, false, ing2, false));
+			/*
+			 * ingList.add(new IngListDataItem(null, 80d, geoOrigins, bioOrigins, false,
+			 * false, false, ing2, false));
+			 */
+			ingList.add(IngListDataItem.build().withQtyPerc(80d).withgeoOrigin(geoOrigins).withbioOrigin(bioOrigins)
+					.withisGMO(false).withisIonized(false).withisManual(false).withIngredient(ing2)
+					.withprocessingAid(false));
 			rawMaterial6.setIngList(ingList);
 			rawMaterial6NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial6).getNodeRef();
 
@@ -934,11 +988,28 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			// ingList : ing5
 
 			List<IngListDataItem> ingList = new ArrayList<>();
-			ingList.add(new IngListDataItem(null, 100d, null, null, false, false, false, ing5, false));
-			ingList.add(new IngListDataItem(null, ingList.get(0), 70d, null, null, null, false, false, true, false,
-					ing1, false));
-			ingList.add(new IngListDataItem(null, ingList.get(0), 30d, null, null, null, false, false, false, false,
-					ing4, false));
+			/*
+			 * ingList.add(new IngListDataItem(null, 100d, null, null, false, false, false,
+			 * ing5, false));
+			 */
+			ingList.add(
+					IngListDataItem.build().withQtyPerc(100d).withgeoOrigin(null).withbioOrigin(null).withisGMO(false)
+							.withisIonized(false).withisManual(false).withIngredient(ing5).withprocessingAid(false));
+			/*
+			 * ingList.add(new IngListDataItem(null, ingList.get(0), 70d, null, null, null,
+			 * false, false, true, false, ing1, false));
+			 */
+			ingList.add(IngListDataItem.build().withparent(ingList.get(0)).withQtyPerc(70d).withgeoOrigin(null)
+					.withgeoOTransfo(null).withbioOrigin(null).withisGMO(false).withisIonized(false).withisManual(true)
+					.withIngredient(ing5).withprocessingAid(false).withisSupport(false));
+			/*
+			 * ingList.add(new IngListDataItem(null, ingList.get(0), 30d, null, null, null,
+			 * false, false, false, false, ing4, false));
+			 */
+			ingList.add(IngListDataItem.build().withparent(ingList.get(0)).withQtyPerc(30d).withgeoOrigin(null)
+					.withgeoOTransfo(null).withbioOrigin(null).withisGMO(false).withisIonized(false).withisManual(false)
+					.withIngredient(ing4).withprocessingAid(false).withisSupport(false));
+
 			rawMaterial7.setIngList(ingList);
 			rawMaterial7NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial7).getNodeRef();
 
@@ -958,7 +1029,13 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			// ingList : ing5
 
 			List<IngListDataItem> ingList = new ArrayList<>();
-			ingList.add(new IngListDataItem(null, 100d, null, null, false, false, false, ingWater, false));
+			/*
+			 * ingList.add(new IngListDataItem(null, 100d, null, null, false, false, false,
+			 * ingWater, false));
+			 */
+			ingList.add(IngListDataItem.build().withQtyPerc(100d).withgeoOrigin(null).withbioOrigin(null)
+					.withisGMO(false).withisIonized(false).withisManual(false).withIngredient(ingWater)
+					.withprocessingAid(false));
 			waterRawMaterial.setIngList(ingList);
 			rawMaterialWaterNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), waterRawMaterial).getNodeRef();
 			nodeService.addAspect(rawMaterialWaterNodeRef, PLMModel.ASPECT_WATER, null);
@@ -1019,11 +1096,23 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			bioOrigins.add(bioOrigin1);
 			List<NodeRef> geoOrigins = new ArrayList<>();
 			geoOrigins.add(geoOrigin1);
-			ingList.add(new IngListDataItem(null, 100 / 3d, geoOrigins, bioOrigins, false, false, false, ing1, false));
+			/*
+			 * ingList.add(new IngListDataItem(null, 100 / 3d, geoOrigins, bioOrigins,
+			 * false, false, false, ing1, false));
+			 */
+			ingList.add(IngListDataItem.build().withQtyPerc(100 / 3d).withgeoOrigin(geoOrigins)
+					.withbioOrigin(bioOrigins).withisGMO(false).withisIonized(false).withisManual(false)
+					.withIngredient(ing1).withprocessingAid(false));
 			geoOrigins = new ArrayList<>();
 			geoOrigins.add(geoOrigin1);
 			geoOrigins.add(geoOrigin2);
-			ingList.add(new IngListDataItem(null, 200 / 3d, geoOrigins, bioOrigins, false, false, false, ing2, false));
+			/*
+			 * ingList.add(new IngListDataItem(null, 200 / 3d, geoOrigins, bioOrigins,
+			 * false, false, false, ing2, false));
+			 */
+			ingList.add(IngListDataItem.build().withQtyPerc(200 / 3d).withgeoOrigin(geoOrigins)
+					.withbioOrigin(bioOrigins).withisGMO(false).withisIonized(false).withisManual(false)
+					.withIngredient(ing2).withprocessingAid(false));
 			rawMaterial11.setIngList(ingList);
 			rawMaterial11NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial11).getNodeRef();
 
@@ -1045,12 +1134,24 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			bioOrigins.add(bioOrigin1);
 			List<NodeRef> geoOrigins = new ArrayList<>();
 			geoOrigins.add(geoOrigin1);
-			ingList.add(new IngListDataItem(null, 100 / 4d, geoOrigins, bioOrigins, true, true, false, ing1, false));
+			/*
+			 * ingList.add(new IngListDataItem(null, 100 / 4d, geoOrigins, bioOrigins, true,
+			 * true, false, ing1, false));
+			 */
+			ingList.add(IngListDataItem.build().withQtyPerc(100 / 4d).withgeoOrigin(geoOrigins)
+					.withbioOrigin(bioOrigins).withisGMO(true).withisIonized(true).withisManual(false)
+					.withIngredient(ing1).withprocessingAid(false));
 			bioOrigins = new ArrayList<>();
 			bioOrigins.add(bioOrigin2);
 			geoOrigins = new ArrayList<>();
 			geoOrigins.add(geoOrigin2);
-			ingList.add(new IngListDataItem(null, 300 / 4d, geoOrigins, bioOrigins, false, false, true, ing2, false));
+			/*
+			 * ingList.add(new IngListDataItem(null, 300 / 4d, geoOrigins, bioOrigins,
+			 * false, false, true, ing2, false));
+			 */
+			ingList.add(IngListDataItem.build().withQtyPerc(300 / 4d).withgeoOrigin(geoOrigins)
+					.withbioOrigin(bioOrigins).withisGMO(false).withisIonized(false).withisManual(true)
+					.withIngredient(ing2).withprocessingAid(false));
 			rawMaterial12.setIngList(ingList);
 			rawMaterial12NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial12).getNodeRef();
 
@@ -1073,7 +1174,13 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			bioOrigins.add(bioOrigin2);
 			List<NodeRef> geoOrigins = new ArrayList<>();
 			geoOrigins.add(geoOrigin2);
-			ingList.add(new IngListDataItem(null, 100d, geoOrigins, bioOrigins, true, true, false, ing3, false));
+			/*
+			 * ingList.add(new IngListDataItem(null, 100d, geoOrigins, bioOrigins, true,
+			 * true, false, ing3, false));
+			 */
+			ingList.add(IngListDataItem.build().withQtyPerc(100d).withgeoOrigin(geoOrigins).withbioOrigin(bioOrigins)
+					.withisGMO(true).withisIonized(true).withisManual(false).withIngredient(ing3)
+					.withprocessingAid(false));
 			rawMaterial13.setIngList(ingList);
 			rawMaterial13NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial13).getNodeRef();
 
@@ -1096,8 +1203,21 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			bioOrigins.add(bioOrigin2);
 			List<NodeRef> geoOrigins = new ArrayList<>();
 			geoOrigins.add(geoOrigin2);
-			ingList.add(new IngListDataItem(null, 200 / 3d, geoOrigins, bioOrigins, true, true, false, ing3, false));
-			ingList.add(new IngListDataItem(null, 100 / 3d, geoOrigins, bioOrigins, true, true, false, ing4, false));
+			/*
+			 * ingList.add(new IngListDataItem(null, 200 / 3d, geoOrigins, bioOrigins, true,
+			 * true, false, ing3, false));
+			 */
+			ingList.add(IngListDataItem.build().withQtyPerc(200 / 3d).withgeoOrigin(geoOrigins)
+					.withbioOrigin(bioOrigins).withisGMO(true).withisIonized(true).withisManual(false)
+					.withIngredient(ing3).withprocessingAid(false));
+
+			/*
+			 * ingList.add(new IngListDataItem(null, 100 / 3d, geoOrigins, bioOrigins, true,
+			 * true, false, ing4, false));
+			 */
+			ingList.add(IngListDataItem.build().withQtyPerc(100 / 3d).withgeoOrigin(geoOrigins)
+					.withbioOrigin(bioOrigins).withisGMO(true).withisIonized(true).withisManual(false)
+					.withIngredient(ing4).withprocessingAid(false));
 			rawMaterial14.setIngList(ingList);
 			rawMaterial14NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial14).getNodeRef();
 
@@ -1165,9 +1285,28 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			bioOrigins.add(bioOrigin2);
 			List<NodeRef> geoOrigins = new ArrayList<>();
 			geoOrigins.add(geoOrigin2);
-			ingList.add(new IngListDataItem(null, null, geoOrigins, bioOrigins, true, true, false, ing1, false));
-			ingList.add(new IngListDataItem(null, 55d, geoOrigins, bioOrigins, true, true, false, ing3, false));
-			ingList.add(new IngListDataItem(null, null, geoOrigins, bioOrigins, true, true, false, ing2, false));
+			/*
+			 * ingList.add(new IngListDataItem(null, null, geoOrigins, bioOrigins, true,
+			 * true, false, ing1, false));
+			 */
+			ingList.add(IngListDataItem.build().withQtyPerc(null).withgeoOrigin(geoOrigins).withbioOrigin(bioOrigins)
+					.withisGMO(true).withisIonized(true).withisManual(false).withIngredient(ing1)
+					.withprocessingAid(false));
+			/*
+			 * ingList.add(new IngListDataItem(null, 55d, geoOrigins, bioOrigins, true,
+			 * true, false, ing3, false));
+			 */
+			ingList.add(IngListDataItem.build().withQtyPerc(55d).withgeoOrigin(geoOrigins).withbioOrigin(bioOrigins)
+					.withisGMO(true).withisIonized(true).withisManual(false).withIngredient(ing3)
+					.withprocessingAid(false));
+			/*
+			 * ingList.add(new IngListDataItem(null, null, geoOrigins, bioOrigins, true,
+			 * true, false, ing2, false));
+			 */
+			ingList.add(IngListDataItem.build().withQtyPerc(null).withgeoOrigin(geoOrigins).withbioOrigin(bioOrigins)
+					.withisGMO(true).withisIonized(true).withisManual(false).withIngredient(ing2)
+					.withprocessingAid(false));
+
 			rawMaterial16.setIngList(ingList);
 			rawMaterial16NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial16).getNodeRef();
 
@@ -1290,11 +1429,11 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			Assert.assertEquals("Incorrect label :" + expectedStr + "\n   - compare to " + actualStr, expectedStr,
 					actualStr);
 		} catch (Throwable e) {
-			
+
 			if (RetryingTransactionHelper.extractRetryCause(e) == null) {
-				logger.error(e,e);
+				logger.error(e, e);
 			}
-		
+
 			throw e;
 		}
 	}
@@ -1354,7 +1493,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 
 			} catch (Throwable e) {
 				if (RetryingTransactionHelper.extractRetryCause(e) == null) {
-					logger.error(e,e);
+					logger.error(e, e);
 				}
 				throw e;
 			}

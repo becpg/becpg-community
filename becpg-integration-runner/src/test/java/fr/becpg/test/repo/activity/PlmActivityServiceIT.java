@@ -57,7 +57,7 @@ public class PlmActivityServiceIT extends AbstractFinishedProductTest {
 
 	@Autowired
 	private EntityVersionService entityVersionService;
-	
+
 	@Autowired
 	protected BeCPGAuditService beCPGAuditService;
 
@@ -75,28 +75,27 @@ public class PlmActivityServiceIT extends AbstractFinishedProductTest {
 		AuditQuery auditFilter = AuditQuery.createQuery().sortBy(ActivityAuditPlugin.PROP_CM_CREATED)
 				.filter(ActivityAuditPlugin.ENTITY_NODEREF, entityNodeRef.toString());
 
-		return transactionService.getRetryingTransactionHelper().doInTransaction(
-				() -> beCPGAuditService.listAuditEntries(AuditType.ACTIVITY, auditFilter).stream()
-						.map(json -> AuditActivityHelper.parseActivity(json)).collect(Collectors.toList()),
-				false, true);
+		return inWriteTx(() -> beCPGAuditService.listAuditEntries(AuditType.ACTIVITY, auditFilter).stream()
+				.map(json -> AuditActivityHelper.parseActivity(json)).collect(Collectors.toList()));
 
 	}
 
 	protected List<ActivityListDataItem> getActivityListDataItems(NodeRef entityNodeRef) {
-			
-		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			
+
+		return inWriteTx(() -> {
+
 			AuditQuery auditFilter = AuditQuery.createQuery().asc(false).dbAsc(false)
 					.sortBy(ActivityAuditPlugin.PROP_CM_CREATED).filter("entityNodeRef", entityNodeRef.toString());
 
-			return beCPGAuditService.listAuditEntries(AuditType.ACTIVITY, auditFilter).stream().map(json -> AuditActivityHelper.parseActivity(json)).collect(Collectors.toList());
-			
-		}, false,true);
+			return beCPGAuditService.listAuditEntries(AuditType.ACTIVITY, auditFilter).stream()
+					.map(json -> AuditActivityHelper.parseActivity(json)).collect(Collectors.toList());
+
+		});
 	}
 
 	private NodeRef createFinishedProduct() {
 		// Create finished composite product with ActivityList
-		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		return inWriteTx(() -> {
 			// Create product
 			FinishedProductData productData = new FinishedProductData();
 			productData.setParentNodeRef(getTestFolderNodeRef());
@@ -108,7 +107,7 @@ public class PlmActivityServiceIT extends AbstractFinishedProductTest {
 
 			return productData.getNodeRef();
 
-		}, false, true);
+		});
 	}
 
 	@Test
@@ -120,28 +119,29 @@ public class PlmActivityServiceIT extends AbstractFinishedProductTest {
 		assertEquals("Check if No Activity", 1, getActivities(finishedProductNodeRef, null).size());
 
 		// Add comment to finished product
-		NodeRef commentOnFinishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			NodeRef commentNodeRef = commentService.createComment(finishedProductNodeRef, COMMENT_TITLE_TEXT, COMMENT_DATA_TEXT, false);
+		NodeRef commentOnFinishedProductNodeRef = inWriteTx(() -> {
+			NodeRef commentNodeRef = commentService.createComment(finishedProductNodeRef, COMMENT_TITLE_TEXT,
+					COMMENT_DATA_TEXT, false);
 			return commentNodeRef;
-		}, false, true);
+		});
 
 		// Check if comment activity was created
 		assertEquals("Activity 3: comment creation", 2, getActivities(finishedProductNodeRef, null).size());
 
 		// Update comment on finished product
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			commentService.updateComment(commentOnFinishedProductNodeRef, COMMENT_TITLE_TEXT, COMMENT_DATA_TEXT);
 			return null;
-		}, false, true);
+		});
 
 		// Check if comment activity was updated
 		assertEquals("Activity 4: update comment", 3, getActivities(finishedProductNodeRef, null).size());
 
 		// Delete finished product comment
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			commentService.deleteComment(commentOnFinishedProductNodeRef);
 			return null;
-		}, false, true);
+		});
 
 		// Check if comment activity was deleted
 		Assert.assertEquals("Activity 5: delete comment", 4, getActivities(finishedProductNodeRef, null).size());
@@ -159,33 +159,34 @@ public class PlmActivityServiceIT extends AbstractFinishedProductTest {
 		assertEquals("Check create Activity", 1, getActivities(productNodeRef, null).size());
 
 		if (!nodeService.hasAspect(productNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
-			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			inWriteTx(() -> {
 				logger.debug("Add versionnable aspect");
 				Map<QName, Serializable> aspectProperties = new HashMap<>();
 				aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
 				nodeService.addAspect(productNodeRef, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
 				return productNodeRef;
-			}, false, true);
+			});
 
 		}
 
 		// Check update product
 		assertEquals("Check create Activity", 2, getActivities(productNodeRef, null).size());
 
-		final NodeRef workingCopyNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			
+		final NodeRef workingCopyNodeRef = inWriteTx(() -> {
+
 			NodeRef destNodeRef = nodeService.getPrimaryParent(productNodeRef).getParentRef();
 
 			return entityVersionService.createBranch(productNodeRef, destNodeRef);
 
-		}, false, true);
+		});
 
 		// No activity on working copy
 		assertEquals("Check if No Activity on working copy", 0, getActivities(workingCopyNodeRef, null).size());
 
-		final NodeRef newRawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			return entityVersionService.mergeBranch(workingCopyNodeRef, productNodeRef, VersionType.MAJOR, "This is a test version");
-		}, false, true);
+		final NodeRef newRawMaterialNodeRef = inWriteTx(() -> {
+			return entityVersionService.mergeBranch(workingCopyNodeRef, productNodeRef, VersionType.MAJOR,
+					"This is a test version");
+		});
 
 		// Version activity
 		assertEquals("Check version activity", 4, getActivities(newRawMaterialNodeRef, null).size());
@@ -199,26 +200,26 @@ public class PlmActivityServiceIT extends AbstractFinishedProductTest {
 
 		final NodeRef productNodeRef = createFinishedProduct();
 
-		final NodeRef branchNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef branchNodeRef = inWriteTx(() -> {
 
 			return entityVersionService.createBranch(productNodeRef, getTestFolderNodeRef());
 
-		}, false, true);
+		});
 
 		// No Activity on branch
 		assertEquals("Check if No Activity on branch", 0, getActivities(branchNodeRef, null).size());
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			nodeService.setProperty(branchNodeRef, PLMModel.PROP_PRODUCT_UNIT, ProductUnit.mL.toString());
 			return null;
-		}, false, true);
+		});
 
 		// Activity recorded on branch
 		assertEquals("Check update Activity", 1, getActivities(branchNodeRef, null).size());
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			return entityVersionService.mergeBranch(branchNodeRef, productNodeRef, VersionType.MAJOR, "Tests");
-		}, false, true);
+		});
 
 		// Merge activities
 		assertEquals("Check Merge Activities", 5, getActivities(productNodeRef, null).size());
@@ -235,10 +236,10 @@ public class PlmActivityServiceIT extends AbstractFinishedProductTest {
 		// Activity recorded on entity
 		assertEquals("Check if No Activity", 1, getActivities(productNodeRef, null).size());
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			nodeService.setProperty(productNodeRef, PLMModel.PROP_PRODUCT_STATE, SystemState.Valid);
 			return null;
-		}, false, true);
+		});
 
 		// Activity recorded on branch
 		assertEquals("Check update Activity", 1, (int) getActivityListDataItems(productNodeRef).stream()
@@ -249,26 +250,31 @@ public class PlmActivityServiceIT extends AbstractFinishedProductTest {
 	@Test
 	public void checkEntityDatalistActivity() {
 
-		final NodeRef lSF1NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef lSF1NodeRef = inWriteTx(() -> {
 			LocalSemiFinishedProductData lSF1 = new LocalSemiFinishedProductData();
 			lSF1.setName("Local semi finished 1");
 			return alfrescoRepository.create(getTestFolderNodeRef(), lSF1).getNodeRef();
 
-		}, false, true);
+		});
 
 		final NodeRef finishedProductNodeRef = createFinishedProduct();
 
 		assertEquals("Check create Activity", 1, getActivities(finishedProductNodeRef, null).size());
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, 1d, 1d, ProductUnit.P, 0d, DeclarationType.Declare, lSF1NodeRef));
+			/*
+			 * compoList.add( new CompoListDataItem(null, null, 1d, 1d, ProductUnit.P, 0d,
+			 * DeclarationType.Declare, lSF1NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQty(1d).withQtyUsed(1d).withUnit(ProductUnit.P).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(lSF1NodeRef));
 			FinishedProductData finishedProduct;
 			finishedProduct = ((FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			alfrescoRepository.save(finishedProduct);
 			return null;
-		}, false, true);
+		});
 
 		assertEquals("Check update Activity", 2, getActivities(finishedProductNodeRef, null).size());
 	}

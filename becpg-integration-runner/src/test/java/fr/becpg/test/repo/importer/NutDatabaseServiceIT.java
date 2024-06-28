@@ -31,7 +31,8 @@ public class NutDatabaseServiceIT extends PLMBaseTestCase {
 	private NutDatabaseService nutDatabaseService;
 
 	private NodeRef createEmptyRM() {
-		return BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test" + Calendar.getInstance().getTimeInMillis());
+		return BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(),
+				"MP test" + Calendar.getInstance().getTimeInMillis());
 	}
 
 	private String extractCharactName(NodeRef node) {
@@ -39,13 +40,13 @@ public class NutDatabaseServiceIT extends PLMBaseTestCase {
 	}
 
 	private NodeRef getTestCSVFile() {
-		return nutDatabaseService.getNutDatabases().stream().filter(info -> info.getName().equals("import.csv")).collect(Collectors.toList()).get(0)
-				.getNodeRef();
+		return nutDatabaseService.getNutDatabases().stream().filter(info -> info.getName().equals("import.csv"))
+				.collect(Collectors.toList()).get(0).getNodeRef();
 	}
 
 	@Test
 	public void testImportRM() {
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			NodeRef csvFile = getTestCSVFile();
 			NodeRef emptyRM = createEmptyRM();
 			NodeRef importedRM1 = nutDatabaseService.createProduct(csvFile, "5450", emptyRM);
@@ -68,7 +69,8 @@ public class NutDatabaseServiceIT extends PLMBaseTestCase {
 					assertEquals(564.1d, nut.getValue());
 					++checks;
 				} else {
-					logger.debug("Failed on nut: " + extractCharactName(nut.getCharactNodeRef()) + ", value: " + nut.getValue());
+					logger.debug("Failed on nut: " + extractCharactName(nut.getCharactNodeRef()) + ", value: "
+							+ nut.getValue());
 					fail();
 				}
 			}
@@ -90,7 +92,8 @@ public class NutDatabaseServiceIT extends PLMBaseTestCase {
 					assertEquals(1254.22d, nut.getValue());
 					++checks;
 				} else {
-					logger.debug("Failed on nut: " + extractCharactName(nut.getCharactNodeRef()) + ", value: " + nut.getValue());
+					logger.debug("Failed on nut: " + extractCharactName(nut.getCharactNodeRef()) + ", value: "
+							+ nut.getValue());
 					fail();
 				}
 			}
@@ -111,7 +114,8 @@ public class NutDatabaseServiceIT extends PLMBaseTestCase {
 					assertEquals(3d, nut.getValue());
 					++checks;
 				} else {
-					logger.debug("Failed on nut: " + extractCharactName(nut.getCharactNodeRef()) + ", value: " + nut.getValue());
+					logger.debug("Failed on nut: " + extractCharactName(nut.getCharactNodeRef()) + ", value: "
+							+ nut.getValue());
 					fail();
 				}
 			}
@@ -129,12 +133,12 @@ public class NutDatabaseServiceIT extends PLMBaseTestCase {
 			assertEquals(0, importedRMList.size());
 			assertEquals(3, checks);
 			return null;
-		}, false, true);
+		});
 	}
 
 	@Test
 	public void getNutsTest() {
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			NodeRef csvFile = getTestCSVFile();
 
@@ -155,19 +159,20 @@ public class NutDatabaseServiceIT extends PLMBaseTestCase {
 					assertEquals(null, nut.getValue());
 					++checks;
 				} else {
-					logger.debug("Failed on nut: " + extractCharactName(nut.getCharactNodeRef()) + ", value: " + nut.getValue());
+					logger.debug("Failed on nut: " + extractCharactName(nut.getCharactNodeRef()) + ", value: "
+							+ nut.getValue());
 					fail();
 				}
 			}
 			assertEquals(3, checks);
 
 			return null;
-		}, false, true);
+		});
 	}
 
 	@Test
 	public void getNutDatabasesTest() {
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			List<FileInfo> databases = nutDatabaseService.getNutDatabases();
 			int checks = 0;
@@ -183,12 +188,12 @@ public class NutDatabaseServiceIT extends PLMBaseTestCase {
 			assertEquals("import file is not in the system, try to clean and purge", 1, checks);
 
 			return null;
-		}, false, true);
+		});
 	}
 
 	@Test
 	public void suggestTest() {
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			AutoCompletePage suggestions = nutDatabaseService.suggest(getTestCSVFile().toString(), "orange", 0, 10);
 			assertEquals(2, suggestions.getResults().size());
 			// check orange, must be 2 results
@@ -209,7 +214,8 @@ public class NutDatabaseServiceIT extends PLMBaseTestCase {
 			for (AutoCompleteEntry suggestion : suggestions.getResults()) {
 				if ("544F - Chocolat, 85% de cacao, aux écorces d'orange".equals(suggestion.getName())) {
 					++checks;
-				} else if ("5451 - Chocolat au lait, 45% de cacao, enrichi en vitamine D".equals(suggestion.getName())) {
+				} else if ("5451 - Chocolat au lait, 45% de cacao, enrichi en vitamine D"
+						.equals(suggestion.getName())) {
 					++checks;
 				}
 			}
@@ -220,7 +226,7 @@ public class NutDatabaseServiceIT extends PLMBaseTestCase {
 			assertEquals(0, suggestions.getResults().size());
 
 			return null;
-		}, false, true);
+		});
 	}
 
 }

@@ -38,8 +38,8 @@ public class UnlimitedSearchIT extends RepoBaseTestCase {
 
 		final int searchSize = 1015;
 
-		//in DB test
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		// in DB test
+		inWriteTx(() -> {
 
 			for (int i = 0; i < searchSize; i++) {
 
@@ -47,17 +47,19 @@ public class UnlimitedSearchIT extends RepoBaseTestCase {
 				properties.put(ContentModel.PROP_NAME, "UnlimitedSearchTest" + i);
 				properties.put(ContentModel.PROP_TITLE, "UnlimitedSearchTest-" + date.getTime());
 				nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
+						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+								(String) properties.get(ContentModel.PROP_NAME)),
 						BeCPGModel.TYPE_LIST_VALUE, properties);
 
 			}
 			return true;
-		}, false, true);
+		});
 
-		//in DB test
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		// in DB test
+		inWriteTx(() -> {
 
-			BeCPGQueryBuilder query = BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_LIST_VALUE).inDB().ftsLanguage().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED)
+			BeCPGQueryBuilder query = BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_LIST_VALUE).inDB()
+					.ftsLanguage().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED)
 					.andPropEquals(ContentModel.PROP_TITLE, "UnlimitedSearchTest-" + date.getTime());
 
 			assertEquals(query.list().size(), searchSize);
@@ -65,21 +67,23 @@ public class UnlimitedSearchIT extends RepoBaseTestCase {
 					ISO8601DateFormat.format(Calendar.getInstance().getTime())).list().size(), searchSize);
 
 			return true;
-		}, false, true);
+		});
 
 		waitForSolr();
-		//solr  test
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		// solr test
+		inWriteTx(() -> {
 
-			BeCPGQueryBuilder query = BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_LIST_VALUE).andPropQuery(ContentModel.PROP_NAME, "UnlimitedSearchTest").andPropEquals(ContentModel.PROP_TITLE,
-					"UnlimitedSearchTest-" + date.getTime()).maxResults(RepoConsts.MAX_RESULTS_UNLIMITED);
+			BeCPGQueryBuilder query = BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_LIST_VALUE)
+					.andPropQuery(ContentModel.PROP_NAME, "UnlimitedSearchTest")
+					.andPropEquals(ContentModel.PROP_TITLE, "UnlimitedSearchTest-" + date.getTime())
+					.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED);
 
 			assertEquals(query.list().size(), searchSize);
 			assertEquals(query.andBetween(ContentModel.PROP_MODIFIED, ISO8601DateFormat.format(date),
 					ISO8601DateFormat.format(Calendar.getInstance().getTime())).list().size(), searchSize);
 
 			return true;
-		}, false, true);
+		});
 	}
 
 }

@@ -37,13 +37,12 @@ public class ProductWUsedWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 	/**
 	 * Testget product wused.
 	 *
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	@Test
 	public void testgetProductWused() throws Exception {
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			/*-- Create raw material --*/
 			logger.debug("/*-- Create raw material --*/");
@@ -59,8 +58,19 @@ public class ProductWUsedWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 			FinishedProductData finishedProduct = new FinishedProductData();
 			finishedProduct.setName("Finished Product");
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, 1d, 0d, ProductUnit.kg, 0d, DeclarationType.Omit, lSFNodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), 3d, 0d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterialNodeRef));
+			/*
+			 * compoList.add( new CompoListDataItem(null, null, 1d, 0d, ProductUnit.kg, 0d,
+			 * DeclarationType.Omit, lSFNodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQty(1d).withQtyUsed(0d).withUnit(ProductUnit.kg)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Omit).withProduct(lSFNodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, compoList.get(0), 3d, 0d,
+			 * ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterialNodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQty(3d).withQtyUsed(0d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Omit)
+					.withProduct(rawMaterialNodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
 			finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
@@ -70,7 +80,7 @@ public class ProductWUsedWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 
 			return null;
 
-		}, false, true);
+		});
 
 		// Call webscript on raw material
 		String url = "/becpg/entity/datalists/data/node?entityNodeRef=" + rawMaterialNodeRef.toString()
@@ -78,7 +88,8 @@ public class ProductWUsedWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 		String data = "{\"fields\":[\"bcpg_costListCost\",\"bcpg_costListValue\",\"bcpg_costListUnit\"],\"filter\":{\"filterId\":\"all\",\"filterData\":\"\"}}";
 		logger.debug("url : " + url);
 
-		Response response = TestWebscriptExecuters.sendRequest(new PostRequest(url, data, "application/json"), 200, "admin");
+		Response response = TestWebscriptExecuters.sendRequest(new PostRequest(url, data, "application/json"), 200,
+				"admin");
 		logger.debug("content : " + response.getContentAsString());
 		response = TestWebscriptExecuters.sendRequest(new PostRequest(url, data, "application/json"), 200, "admin");
 		logger.debug("content : " + response.getContentAsString());

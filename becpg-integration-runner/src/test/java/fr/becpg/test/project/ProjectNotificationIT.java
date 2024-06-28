@@ -43,13 +43,13 @@ import jakarta.mail.MessagingException;
 public class ProjectNotificationIT extends AbstractProjectTestCase {
 
 	private static Log logger = LogFactory.getLog(ProjectNotificationIT.class);
-	
+
 	@Autowired
 	CommentService commentService;
-	
+
 	@Autowired
 	protected BeCPGAuditService beCPGAuditService;
-	
+
 	/**
 	 * Test observers get notifications
 	 * 
@@ -63,7 +63,7 @@ public class ProjectNotificationIT extends AbstractProjectTestCase {
 
 		final NodeRef projectNodeRef = createProject(ProjectState.Planned, new Date(), null);
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 
@@ -77,7 +77,7 @@ public class ProjectNotificationIT extends AbstractProjectTestCase {
 			alfrescoRepository.save(projectData);
 
 			return null;
-		}, false, true);
+		});
 
 		waitForMail(1 + nbMail);
 
@@ -85,7 +85,7 @@ public class ProjectNotificationIT extends AbstractProjectTestCase {
 
 		logger.info("Nb mails before notification:" + nbMail);
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 
@@ -93,7 +93,7 @@ public class ProjectNotificationIT extends AbstractProjectTestCase {
 			alfrescoRepository.save(projectData);
 
 			return null;
-		}, false, true);
+		});
 
 		// 2 mails 1 activity
 
@@ -101,19 +101,19 @@ public class ProjectNotificationIT extends AbstractProjectTestCase {
 
 		checkActivity(projectNodeRef, 6);
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 
 			commentService.createComment(projectData.getTaskList().get(0).getNodeRef(), "", "Test comment", false);
 
 			return null;
-		}, false, true);
+		});
 
 		waitForMail(5 + nbMail);
 		checkActivity(projectNodeRef, 7);
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			try {
 				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
@@ -143,12 +143,12 @@ public class ProjectNotificationIT extends AbstractProjectTestCase {
 				throw e;
 			}
 
-		}, false, true);
+		});
 
 		waitForMail(8 + nbMail);
-		checkActivity(projectNodeRef,9);
+		checkActivity(projectNodeRef, 9);
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			try {
 				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
@@ -181,27 +181,27 @@ public class ProjectNotificationIT extends AbstractProjectTestCase {
 				throw e;
 			}
 
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 
 			List<NodeRef> observerNodeRefs = new ArrayList<>();
 			observerNodeRefs.add(observerOne);
 
-			assertEquals(TaskState.Refused.toString(), projectData.getTaskList().get(2).getState()); 
+			assertEquals(TaskState.Refused.toString(), projectData.getTaskList().get(2).getState());
 			assertEquals(TaskState.InProgress.toString(), projectData.getTaskList().get(1).getState());
 			alfrescoRepository.save(projectData);
 
 			return null;
-		}, false, true);
+		});
 
 		waitForMail(11 + nbMail);
-		checkActivity(projectNodeRef,11);
+		checkActivity(projectNodeRef, 11);
 
 		// Resubmit task
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			try {
 				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
@@ -231,9 +231,9 @@ public class ProjectNotificationIT extends AbstractProjectTestCase {
 				throw e;
 			}
 
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 
@@ -245,10 +245,10 @@ public class ProjectNotificationIT extends AbstractProjectTestCase {
 			alfrescoRepository.save(projectData);
 
 			return null;
-		}, false, true);
+		});
 
 		waitForMail(14 + nbMail);
-		
+
 		checkActivity(projectNodeRef, 13);
 
 	}
@@ -269,16 +269,16 @@ public class ProjectNotificationIT extends AbstractProjectTestCase {
 
 	protected void checkActivity(NodeRef entityNodeRef, int size) {
 
-		assertEquals(size, transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			
+		assertEquals(size, inWriteTx(() -> {
+
 			AuditQuery auditFilter = AuditQuery.createQuery().asc(false).dbAsc(false)
 					.sortBy(ActivityAuditPlugin.PROP_CM_CREATED)
 					.filter(ActivityAuditPlugin.ENTITY_NODEREF, entityNodeRef.toString());
 
-		return beCPGAuditService.listAuditEntries(AuditType.ACTIVITY, auditFilter).stream()
-						.map(json -> AuditActivityHelper.parseActivity(json)).collect(Collectors.toList());
+			return beCPGAuditService.listAuditEntries(AuditType.ACTIVITY, auditFilter).stream()
+					.map(json -> AuditActivityHelper.parseActivity(json)).collect(Collectors.toList());
 
-		}, false, true).size());
+		}).size());
 	}
 
 }

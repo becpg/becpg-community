@@ -25,7 +25,8 @@ import fr.becpg.test.project.AbstractProjectTestCase;
 public class ProjectOverdueIT extends AbstractProjectTestCase {
 
 	@Autowired
-	FormulationService<ProjectData> formulationService;	
+	FormulationService<ProjectData> formulationService;
+
 	/**
 	 * Test the calculation of the project overdue
 	 */
@@ -34,13 +35,12 @@ public class ProjectOverdueIT extends AbstractProjectTestCase {
 
 		final NodeRef projectNodeRef = createProject(ProjectState.Planned, new Date(), null);
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 
 			assertNotNull(projectData);
 			assertEquals(0, projectData.getOverdue().intValue());
-
 
 			projectData.getTaskList().get(0).setTaskState(TaskState.InProgress);
 			formulationService.formulate(projectData);
@@ -114,7 +114,7 @@ public class ProjectOverdueIT extends AbstractProjectTestCase {
 			assertEquals(4, projectData.getOverdue().intValue());
 
 			return null;
-		}, false, true);
+		});
 
 	}
 }
