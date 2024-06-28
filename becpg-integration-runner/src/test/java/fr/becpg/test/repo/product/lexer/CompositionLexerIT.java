@@ -57,7 +57,7 @@ public class CompositionLexerIT extends PLMBaseTestCase {
 		startTime = new Date();
 
 		// create RM and lSF
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			RawMaterialData rawMaterial1 = new RawMaterialData();
 			rawMaterial1.setName("lexer material 1" + startTime.getTime());
@@ -88,7 +88,7 @@ public class CompositionLexerIT extends PLMBaseTestCase {
 			rawMaterial5NodeRef = rawMaterial5.getNodeRef();
 
 			return true;
-		}, false, true);
+		});
 		// Wait for Solr
 
 		waitForSolr();
@@ -97,33 +97,34 @@ public class CompositionLexerIT extends PLMBaseTestCase {
 
 	@Test
 	public void testCompositionLexer() throws Exception {
-		
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-			String recipe = "5 P Lexer material 1" + startTime.getTime() + "\n 12,9 gr Lexer material 2" + startTime.getTime()
-					+ "\n 25.5005 g Lexer material 3" + startTime.getTime() + "\n50 Lexer material 5" + startTime.getTime() + "";
+		inWriteTx(() -> {
+
+			String recipe = "5 P Lexer material 1" + startTime.getTime() + "\n 12,9 gr Lexer material 2"
+					+ startTime.getTime() + "\n 25.5005 g Lexer material 3" + startTime.getTime()
+					+ "\n50 Lexer material 5" + startTime.getTime() + "";
 
 			ProductData productData = productService.formulateText(recipe);
 
 			org.junit.Assert.assertNotNull(productData);
 			return null;
 
-		}, false, true);
-		
-		
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			String recipe = "5 P Lexer material 1" + startTime.getTime() + "\n 12,9 gr Lexer material 2" + startTime.getTime()
-					+ "\n 25.5005 g Lexer material 3" + startTime.getTime() + "\n50 Lexer material 5" + startTime.getTime() + "";
+		});
 
-			logger.debug("Lex: "+recipe);
-			
+		inWriteTx(() -> {
+			String recipe = "5 P Lexer material 1" + startTime.getTime() + "\n 12,9 gr Lexer material 2"
+					+ startTime.getTime() + "\n 25.5005 g Lexer material 3" + startTime.getTime()
+					+ "\n50 Lexer material 5" + startTime.getTime() + "";
+
+			logger.debug("Lex: " + recipe);
+
 			List<CompoListDataItem> ret = CompositionLexer.lexMultiLine(recipe);
 
 			int check = 0;
 			for (CompoListDataItem item : ret) {
 
-				logger.debug("Item: "+item.toString());
-				
+				logger.debug("Item: " + item.toString());
+
 				if (item.getProduct().equals(rawMaterial1NodeRef) && item.getQtySubFormula().equals(5d)
 						&& item.getCompoListUnit().equals(ProductUnit.P)) {
 					check++;
@@ -144,8 +145,7 @@ public class CompositionLexerIT extends PLMBaseTestCase {
 
 			org.junit.Assert.assertEquals(4, check);
 			return true;
-		}, false, true);
+		});
 	}
-
 
 }

@@ -209,10 +209,9 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 	@Autowired
 	protected EntityListDAO entityListDAO;
-	
+
 	@Autowired
 	protected BeCPGAuditService beCPGAuditService;
-	
 
 	@Autowired
 	@Qualifier("qnameDAO")
@@ -238,12 +237,12 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 		}
 
-		systemFolderNodeRef = inWriteTx(() -> repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM,
-						TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM)));
+		systemFolderNodeRef = inWriteTx(() -> repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(),
+				RepoConsts.PATH_SYSTEM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM)));
 
 		doInitRepo(shouldInit);
 
-	} 
+	}
 
 	@Override
 	@Before
@@ -251,7 +250,8 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 		super.setUp();
 
 		inWriteTx(() -> {
-			List<org.alfresco.service.cmr.rule.Rule> rules = ruleService.getRules(repositoryHelper.getCompanyHome(), false);
+			List<org.alfresco.service.cmr.rule.Rule> rules = ruleService.getRules(repositoryHelper.getCompanyHome(),
+					false);
 			for (org.alfresco.service.cmr.rule.Rule rule : rules) {
 				if (!rule.getRuleDisabled()) {
 					if ("classifyEntityRule".equals(rule.getTitle())) {
@@ -268,7 +268,8 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 			String testFolderName = getTestFolderName();
 
-			NodeRef parentTestFolder = repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), "Junit Tests", "Junit Test");
+			NodeRef parentTestFolder = repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(),
+					"Junit Tests", "Junit Test");
 
 			NodeRef folderNodeRef = repoService.getFolderByPath(parentTestFolder, testFolderName);
 
@@ -277,7 +278,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 				try {
 					ruleService.disableRules();
 					policyBehaviourFilter.disableBehaviour();
-					
+
 					IntegrityChecker.setWarnInTransaction();
 					nodeService.addAspect(folderNodeRef, ContentModel.ASPECT_TEMPORARY, null);
 					logger.debug("Delete test folder");
@@ -289,29 +290,27 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 			}
 
-			folderNodeRef = RepoBaseTestCase.INSTANCE.fileFolderService.create(parentTestFolder, testFolderName, ContentModel.TYPE_FOLDER)
-					.getNodeRef();
+			folderNodeRef = RepoBaseTestCase.INSTANCE.fileFolderService
+					.create(parentTestFolder, testFolderName, ContentModel.TYPE_FOLDER).getNodeRef();
 			return folderNodeRef;
 
 		}));
 	}
 
-	
 	@Override
 	@After
 	public void tearDown() throws Exception {
 		super.tearDown();
 	}
-	
+
 	public void waitForSolr() {
 
 		Date startTime = new Date();
 
 		inWriteTx(() -> {
 
-			NodeRef nodeRef = nodeService
-					.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, ContentModel.TYPE_CONTENT)
-					.getChildRef();
+			NodeRef nodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					ContentModel.ASSOC_CONTAINS, ContentModel.TYPE_CONTENT).getChildRef();
 
 			nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, "" + startTime.getTime() + "1");
 			nodeService.setProperty(nodeRef, BeCPGModel.PROP_IS_MANUAL_LISTITEM, true);
@@ -322,15 +321,15 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 		inReadTx(() -> {
 			int j = 0;
 			while ((BeCPGQueryBuilder.createQuery().andPropQuery(ContentModel.PROP_NAME, "" + startTime.getTime() + "*")
-					.andPropEquals(BeCPGModel.PROP_IS_MANUAL_LISTITEM, "true").inParent(getTestFolderNodeRef()).ftsLanguage().singleValue() == null)
-					&& (j < 30)) {
+					.andPropEquals(BeCPGModel.PROP_IS_MANUAL_LISTITEM, "true").inParent(getTestFolderNodeRef())
+					.ftsLanguage().singleValue() == null) && (j < 30)) {
 
 				logger.info("Wait for solr (2s) : serverIdx retry *" + j);
 				Thread.sleep(2000);
 				j++;
 			}
-			
-			if(j == 30) {
+
+			if (j == 30) {
 				Assert.fail("Solr is taking too long!");
 			}
 
@@ -339,23 +338,22 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 		});
 
 	}
-	
 
 	public void waitForBatchEnd(BatchInfo batch) throws InterruptedException {
 		int j = 0;
-		
-		while(!Boolean.TRUE.equals(batch.getIsCompleted()) && (j < 60)) {
-			logger.info("Wait for batch: "+ batch.getBatchId());
+
+		while (!Boolean.TRUE.equals(batch.getIsCompleted()) && (j < 60)) {
+			logger.info("Wait for batch: " + batch.getBatchId());
 			Thread.sleep(5000);
 			j++;
 		}
-		
-		if(j == 60) {
+
+		if (j == 60) {
 			Assert.fail("Batch is taking too long!");
 		}
-		
+
 	}
-	
+
 	protected boolean shouldInit() {
 		return nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
 				TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM)) == null;
@@ -363,15 +361,13 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 	protected void doInitRepo(boolean shouldInit) {
 	}
-	
+
 	protected <R> R inReadTx(RetryingTransactionCallback<R> callBack) {
-		return transactionService.getRetryingTransactionHelper()
-		.doInTransaction(callBack , true, true);
+		return inReadTx(callBack);
 	}
-	
+
 	protected <R> R inWriteTx(RetryingTransactionCallback<R> callBack) {
-		return transactionService.getRetryingTransactionHelper()
-		.doInTransaction(callBack , false, true);
+		return inWriteTx(callBack);
 	}
-	
+
 }

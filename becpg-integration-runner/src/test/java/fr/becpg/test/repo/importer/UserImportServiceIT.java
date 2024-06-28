@@ -53,8 +53,8 @@ public class UserImportServiceIT extends PLMBaseTestCase {
 
 	private NodeRef createCSV() throws IOException {
 
-		ResultSet resultSet = searchService.query(new StoreRef(StoreRef.PROTOCOL_WORKSPACE, "SpacesStore"), SearchService.LANGUAGE_LUCENE,
-				COMPANY_HOME_PATH_QUERY);
+		ResultSet resultSet = searchService.query(new StoreRef(StoreRef.PROTOCOL_WORKSPACE, "SpacesStore"),
+				SearchService.LANGUAGE_LUCENE, COMPANY_HOME_PATH_QUERY);
 		NodeRef destNodeRef = resultSet.getNodeRef(0);
 
 		Date now = new Date();
@@ -87,28 +87,25 @@ public class UserImportServiceIT extends PLMBaseTestCase {
 
 	@Test
 	public void testImportUserCSV() {
-		
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+		inWriteTx(() -> {
 			NodeRef matthieuNodeRef = personService.getPerson("matthieu");
-			
-			
-			if(matthieuNodeRef!=null) {
+
+			if (matthieuNodeRef != null) {
 				personService.deletePerson(matthieuNodeRef);
 			}
-			
+
 			return null;
 
-		}, false, true);
-		
-		
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		});
+
+		inWriteTx(() -> {
 			NodeRef csv = createCSV();
 			userImporterService.importUser(csv);
 
 			return null;
 
-		}, false, true);
-
+		});
 
 	}
 

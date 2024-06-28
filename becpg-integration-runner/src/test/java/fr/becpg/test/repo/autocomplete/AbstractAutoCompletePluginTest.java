@@ -33,10 +33,10 @@ import fr.becpg.test.PLMBaseTestCase;
 public abstract class AbstractAutoCompletePluginTest extends PLMBaseTestCase {
 
 	protected NodeRef createFinishProductNodeRef() {
-		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			
+		return inWriteTx(() -> {
+
 			ruleService.disableRules();
-			
+
 			authenticationComponent.setSystemUserAsCurrentUser();
 
 			BeCPGPLMTestHelper.createUsers();
@@ -74,20 +74,48 @@ public abstract class AbstractAutoCompletePluginTest extends PLMBaseTestCase {
 			finishedProduct.setQty(2d);
 			finishedProduct.setUnitPrice(12.4d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			CompoListDataItem item = new CompoListDataItem(null, null, 1d, 0d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef);
+			/*
+			 * CompoListDataItem item = new CompoListDataItem(null, null, 1d, 0d,
+			 * ProductUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef);
+			 */
+			CompoListDataItem item = CompoListDataItem.build().withQty(1d).withQtyUsed(0d).withUnit(ProductUnit.kg)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(localSF1NodeRef);
 
 			compoList.add(item);
-			compoList.add(new CompoListDataItem(null, item, 1d, 0d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, item, 2d, 0d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-			item = new CompoListDataItem(null, null, 1d, 0d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef);
+			/*
+			 * compoList.add(new CompoListDataItem(null, item, 1d, 0d, ProductUnit.kg, 0d,
+			 * DeclarationType.Declare, rawMaterial1NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(item).withQty(1d).withQtyUsed(0d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare)
+					.withProduct(rawMaterial1NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, item, 2d, 0d, ProductUnit.kg, 0d,
+			 * DeclarationType.Detail, rawMaterial2NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(item).withQty(2d).withQtyUsed(0d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail)
+					.withProduct(rawMaterial2NodeRef));
+			/*
+			 * item = new CompoListDataItem(null, null, 1d, 0d, ProductUnit.kg, 0d,
+			 * DeclarationType.Detail, localSF2NodeRef);
+			 */
+			item = CompoListDataItem.build().withQty(1d).withQtyUsed(0d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF2NodeRef);
 
 			compoList.add(item);
-			compoList.add(new CompoListDataItem(null, item, 3d, 0d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, item, 3d, 0d, ProductUnit.kg, 0d,
+			 * DeclarationType.Declare, rawMaterial3NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(item).withQty(3d).withQtyUsed(0d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare)
+					.withProduct(rawMaterial3NodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
-		}, false, true);
+		});
 	}
 
 }

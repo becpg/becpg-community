@@ -36,7 +36,6 @@ public class ImporterActionExecuterIT extends PLMBaseTestCase {
 
 	private static final String FILENAME_IMPORT_CSV = "import.csv";
 
-	
 	private static final Log logger = LogFactory.getLog(ImporterActionExecuterIT.class);
 
 	@Autowired
@@ -45,16 +44,15 @@ public class ImporterActionExecuterIT extends PLMBaseTestCase {
 	/**
 	 * Test add content to import.
 	 *
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	@Test
 	public void testAddContentToImport() throws Exception {
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
-			NodeRef exchangeFolder = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
-					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_EXCHANGE));
+			NodeRef exchangeFolder = nodeService.getChildByName(repository.getCompanyHome(),
+					ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_EXCHANGE));
 			if (exchangeFolder == null) {
 				throw new Exception("Missing exchange folder.");
 			}
@@ -79,7 +77,8 @@ public class ImporterActionExecuterIT extends PLMBaseTestCase {
 				nodeService.deleteNode(importNodeRef);
 			}
 			NodeRef contentNodeRef = nodeService.createNode(importToTreatFolder, ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(ContentModel.PROP_NAME)),
 					ContentModel.TYPE_CONTENT, properties).getChildRef();
 
 			ContentWriter writer = contentService.getWriter(contentNodeRef, ContentModel.PROP_CONTENT, true);
@@ -96,7 +95,7 @@ public class ImporterActionExecuterIT extends PLMBaseTestCase {
 
 			return null;
 
-		}, false, true);
+		});
 
 	}
 
@@ -109,10 +108,10 @@ public class ImporterActionExecuterIT extends PLMBaseTestCase {
 	@Test
 	public void testAddContentToImportThatFailed() throws Exception {
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
-			NodeRef exchangeFolder = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
-					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_EXCHANGE));
+			NodeRef exchangeFolder = nodeService.getChildByName(repository.getCompanyHome(),
+					ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_EXCHANGE));
 			if (exchangeFolder == null) {
 				throw new Exception("Missing exchange folder.");
 			}
@@ -137,12 +136,14 @@ public class ImporterActionExecuterIT extends PLMBaseTestCase {
 				nodeService.deleteNode(importNodeRef);
 			}
 			NodeRef contentNodeRef = nodeService.createNode(importToTreatFolder, ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(ContentModel.PROP_NAME)),
 					ContentModel.TYPE_CONTENT, properties).getChildRef();
 
 			ContentWriter writer = contentService.getWriter(contentNodeRef, ContentModel.PROP_CONTENT, true);
 			logger.debug("Import-with-IntegrityException.csv");
-			InputStream in = (new ClassPathResource("beCPG/import/Import-with-IntegrityException.csv")).getInputStream();
+			InputStream in = (new ClassPathResource("beCPG/import/Import-with-IntegrityException.csv"))
+					.getInputStream();
 
 			String mimetype = mimetypeService.guessMimetype(FILENAME_IMPORT_CSV);
 			ContentCharsetFinder charsetFinder = mimetypeService.getContentCharsetFinder();
@@ -154,7 +155,7 @@ public class ImporterActionExecuterIT extends PLMBaseTestCase {
 
 			return null;
 
-		}, false, true);
+		});
 
 	}
 

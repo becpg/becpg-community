@@ -54,7 +54,6 @@ public class ClaimWorkflowIT extends AbstractWorkflowTest {
 	@Autowired
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
-	
 	private static final Log logger = LogFactory.getLog(ClaimWorkflowIT.class);
 
 	private NodeRef rawMaterial1NodeRef;
@@ -67,7 +66,7 @@ public class ClaimWorkflowIT extends AbstractWorkflowTest {
 	@Test
 	public void testWorkFlow() {
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			BeCPGPLMTestHelper.createUsers();
 
@@ -88,7 +87,7 @@ public class ClaimWorkflowIT extends AbstractWorkflowTest {
 			}
 			return null;
 
-		}, false, true);
+		});
 
 		executeClaimWF(true);
 
@@ -99,7 +98,7 @@ public class ClaimWorkflowIT extends AbstractWorkflowTest {
 	}
 
 	private void testDeleteNC() {
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			WorkflowDefinition wfDef = workflowService.getDefinitionByName("activiti$claimProcess");
 			logger.debug("wfDefId found : " + wfDef.getId());
@@ -133,13 +132,13 @@ public class ClaimWorkflowIT extends AbstractWorkflowTest {
 			assertEquals("ncwf:claimAnalysisTask", tasks.get(0).getName());
 
 			return tasks.get(0);
-		}, false, true);
+		});
 
-		final NodeRef ncNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef ncNodeRef = inWriteTx(() -> {
 
 			NodeRef pkgNodeRef = workflowService.getWorkflowById(workflowInstanceId).getWorkflowPackage();
-			List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(pkgNodeRef, WorkflowModel.ASSOC_PACKAGE_CONTAINS,
-					RegexQNamePattern.MATCH_ALL);
+			List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(pkgNodeRef,
+					WorkflowModel.ASSOC_PACKAGE_CONTAINS, RegexQNamePattern.MATCH_ALL);
 			for (ChildAssociationRef childAssoc : childAssocs) {
 				if (QualityModel.TYPE_NC.equals(nodeService.getType(childAssoc.getChildRef()))) {
 					return childAssoc.getChildRef();
@@ -147,22 +146,22 @@ public class ClaimWorkflowIT extends AbstractWorkflowTest {
 			}
 
 			return null;
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			nodeService.deleteNode(ncNodeRef);
 			return null;
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			Assert.assertNull(workflowService.getWorkflowById(workflowInstanceId));
 			return null;
-		}, false, true);
+		});
 	}
 
 	private void executeClaimWF(boolean shortWay) {
 
-		final WorkflowTask task1 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final WorkflowTask task1 = inWriteTx(() -> {
 			AuthenticationUtil.setFullyAuthenticatedUser(BeCPGPLMTestHelper.USER_ONE);
 
 			WorkflowDefinition wfDef = workflowService.getDefinitionByName("activiti$claimProcess");
@@ -194,17 +193,17 @@ public class ClaimWorkflowIT extends AbstractWorkflowTest {
 			List<WorkflowTask> tasks = workflowService.getTasksForWorkflowPath(path.getId());
 			assertEquals(1, tasks.size());
 			return tasks.get(0);
-		}, false, true);
+		});
 
 		assertEquals("ncwf:claimAnalysisTask", task1.getName());
 
 		// Assert NC of type Claim created
 
-		final NodeRef ncNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef ncNodeRef = inWriteTx(() -> {
 
 			NodeRef pkgNodeRef = workflowService.getWorkflowById(workflowInstanceId).getWorkflowPackage();
-			List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(pkgNodeRef, WorkflowModel.ASSOC_PACKAGE_CONTAINS,
-					RegexQNamePattern.MATCH_ALL);
+			List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(pkgNodeRef,
+					WorkflowModel.ASSOC_PACKAGE_CONTAINS, RegexQNamePattern.MATCH_ALL);
 			for (ChildAssociationRef childAssoc : childAssocs) {
 				if (QualityModel.TYPE_NC.equals(nodeService.getType(childAssoc.getChildRef()))) {
 					return childAssoc.getChildRef();
@@ -212,121 +211,120 @@ public class ClaimWorkflowIT extends AbstractWorkflowTest {
 			}
 
 			return null;
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			assertNotNull(ncNodeRef);
 
 			assertEquals("Claim", (String) nodeService.getProperty(ncNodeRef, QualityModel.PROP_NC_TYPE));
 
 			return null;
-		}, false, true);
+		});
 
-			// checkStorageFolder(ncNodeRef);
+		// checkStorageFolder(ncNodeRef);
 
-			// Back to saisie
-			Map<QName, Serializable> properties = new HashMap<>();
-			properties.put(ClaimWorkflowModel.PROP_REJECTED_STATE, "entry");
+		// Back to saisie
+		Map<QName, Serializable> properties = new HashMap<>();
+		properties.put(ClaimWorkflowModel.PROP_REJECTED_STATE, "entry");
 
-			WorkflowTask task = submitTask(workflowInstanceId, "ncwf:claimAnalysisTask", null, properties);
-			assertEquals("enteringClaimTask", task.getPath().getNode().getName());
+		WorkflowTask task = submitTask(workflowInstanceId, "ncwf:claimAnalysisTask", null, properties);
+		assertEquals("enteringClaimTask", task.getPath().getNode().getName());
+
+		properties = new HashMap<>();
+
+		task = submitTask(workflowInstanceId, "ncwf:claimStartTask", null, properties);
+
+		assertEquals("analysisTask", task.getPath().getNode().getName());
+
+		if (!shortWay) {
 
 			properties = new HashMap<>();
+			properties.put(WorkflowModel.PROP_COMMENT, "commentaire émetteur");
 
-			task = submitTask(workflowInstanceId, "ncwf:claimStartTask", null, properties);
-			
-			
-			assertEquals("analysisTask", task.getPath().getNode().getName());
+			java.util.Map<QName, List<NodeRef>> assocs = new HashMap<>();
+			List<NodeRef> assignees = new ArrayList<>();
+			assignees.add(personService.getPerson(BeCPGPLMTestHelper.USER_ONE));
+			assocs.put(QualityModel.ASSOC_CLAIM_TREATEMENT_ACTOR, assignees);
+			assignees = new ArrayList<>();
+			assignees.add(personService.getPerson(BeCPGPLMTestHelper.USER_TWO));
+			assocs.put(QualityModel.ASSOC_CLAIM_RESPONSE_ACTOR, assignees);
 
-			if (!shortWay) {
+			task = submitTask(workflowInstanceId, "ncwf:claimAnalysisTask", null, properties, assocs);
 
-				properties = new HashMap<>();
-				properties.put(WorkflowModel.PROP_COMMENT, "commentaire émetteur");
+			assertEquals("claimTreatmentTask", task.getPath().getNode().getName());
+			task = submitTask(workflowInstanceId, "ncwf:claimTreatmentTask", null, new HashMap<QName, Serializable>());
+			assertEquals("claimResponseTask", task.getPath().getNode().getName());
 
-				java.util.Map<QName, List<NodeRef>> assocs = new HashMap<>();
-				List<NodeRef> assignees = new ArrayList<>();
-				assignees.add(personService.getPerson(BeCPGPLMTestHelper.USER_ONE));
-				assocs.put(QualityModel.ASSOC_CLAIM_TREATEMENT_ACTOR, assignees);
-				assignees = new ArrayList<>();
-				assignees.add(personService.getPerson(BeCPGPLMTestHelper.USER_TWO));
-				assocs.put(QualityModel.ASSOC_CLAIM_RESPONSE_ACTOR, assignees);
+			properties = new HashMap<>();
+			properties.put(ClaimWorkflowModel.PROP_REJECTED_STATE, "treatment");
+			task = submitTask(workflowInstanceId, "ncwf:claimResponseTask", null, properties);
+			assertEquals("claimTreatmentTask", task.getPath().getNode().getName());
 
-				task = submitTask(workflowInstanceId, "ncwf:claimAnalysisTask", null, properties, assocs);
+			properties.put(ClaimWorkflowModel.PROP_REJECTED_STATE, "analysis");
+			task = submitTask(workflowInstanceId, "ncwf:claimTreatmentTask", null, properties);
+			// properties = new HashMap<QName, Serializable>();
+			// task = submitTask(workflowInstanceId,
+			// "ncwf:claimClassificationTask", null, properties);
 
-				assertEquals("claimTreatmentTask", task.getPath().getNode().getName());
-				task = submitTask(workflowInstanceId, "ncwf:claimTreatmentTask", null, new HashMap<QName, Serializable>());
-				assertEquals("claimResponseTask", task.getPath().getNode().getName());
+			assertNotTask(workflowInstanceId, "ncwf:claimClassificationTask");
+			// assertEquals("analysisTask",
+			// task.getPath().getNode().getName());
+			properties = new HashMap<>();
+			task = submitTask(workflowInstanceId, "ncwf:claimAnalysisTask", null, properties);
+			assertEquals("claimTreatmentTask", task.getPath().getNode().getName());
 
-				properties = new HashMap<>();
-				properties.put(ClaimWorkflowModel.PROP_REJECTED_STATE, "treatment");
-				task = submitTask(workflowInstanceId, "ncwf:claimResponseTask", null, properties);
-				assertEquals("claimTreatmentTask", task.getPath().getNode().getName());
+			properties = new HashMap<>();
+			task = submitTask(workflowInstanceId, "ncwf:claimTreatmentTask", null, properties);
+			assertEquals("claimResponseTask", task.getPath().getNode().getName());
 
-				properties.put(ClaimWorkflowModel.PROP_REJECTED_STATE, "analysis");
-				task = submitTask(workflowInstanceId, "ncwf:claimTreatmentTask", null, properties);
-				// properties = new HashMap<QName, Serializable>();
-				// task = submitTask(workflowInstanceId,
-				// "ncwf:claimClassificationTask", null, properties);
+			properties = new HashMap<>();
+			task = submitTask(workflowInstanceId, "ncwf:claimResponseTask", null, properties);
+			task = submitTask(workflowInstanceId, "ncwf:claimClassificationTask", null, properties);
+			// assertEquals("claimClosingTask",
+			// task.getPath().getNode().getName());
 
-				assertNotTask(workflowInstanceId, "ncwf:claimClassificationTask");
-				// assertEquals("analysisTask",
-				// task.getPath().getNode().getName());
-				properties = new HashMap<>();
-				task = submitTask(workflowInstanceId, "ncwf:claimAnalysisTask", null, properties);
-				assertEquals("claimTreatmentTask", task.getPath().getNode().getName());
+			properties.put(ClaimWorkflowModel.PROP_REJECTED_STATE, "classification");
+			task = submitTask(workflowInstanceId, "ncwf:claimClosingTask", null, properties);
+			assertEquals("classificationTask", task.getPath().getNode().getName());
+			properties = new HashMap<>();
+			task = submitTask(workflowInstanceId, "ncwf:claimClassificationTask", null, properties);
+			// assertEquals("claimClosingTask",
+			// task.getPath().getNode().getName());
 
-				properties = new HashMap<>();
-				task = submitTask(workflowInstanceId, "ncwf:claimTreatmentTask", null, properties);
-				assertEquals("claimResponseTask", task.getPath().getNode().getName());
+			properties.put(ClaimWorkflowModel.PROP_REJECTED_STATE, "response");
+			task = submitTask(workflowInstanceId, "ncwf:claimClosingTask", null, properties);
+			assertEquals("claimResponseTask", task.getPath().getNode().getName());
+			properties = new HashMap<>();
+			task = submitTask(workflowInstanceId, "ncwf:claimResponseTask", null, properties);
+			// assertEquals("claimClosingTask",
+			// task.getPath().getNode().getName());
 
-				properties = new HashMap<>();
-				task = submitTask(workflowInstanceId, "ncwf:claimResponseTask", null, properties);
-				task = submitTask(workflowInstanceId, "ncwf:claimClassificationTask", null, properties);
-				// assertEquals("claimClosingTask",
-				// task.getPath().getNode().getName());
-
-				properties.put(ClaimWorkflowModel.PROP_REJECTED_STATE, "classification");
-				task = submitTask(workflowInstanceId, "ncwf:claimClosingTask", null, properties);
-				assertEquals("classificationTask", task.getPath().getNode().getName());
-				properties = new HashMap<>();
-				task = submitTask(workflowInstanceId, "ncwf:claimClassificationTask", null, properties);
-				// assertEquals("claimClosingTask",
-				// task.getPath().getNode().getName());
-
-				properties.put(ClaimWorkflowModel.PROP_REJECTED_STATE, "response");
-				task = submitTask(workflowInstanceId, "ncwf:claimClosingTask", null, properties);
-				assertEquals("claimResponseTask", task.getPath().getNode().getName());
-				properties = new HashMap<>();
-				task = submitTask(workflowInstanceId, "ncwf:claimResponseTask", null, properties);
-				// assertEquals("claimClosingTask",
-				// task.getPath().getNode().getName());
-
-				properties = new HashMap<>();
-				task = submitTask(workflowInstanceId, "ncwf:claimClosingTask", null, properties);
-				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			properties = new HashMap<>();
+			task = submitTask(workflowInstanceId, "ncwf:claimClosingTask", null, properties);
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 				assertFalse(workflowService.getWorkflowById(workflowInstanceId).isActive());
 
 				return null;
 			}, false, true);
 
-			} else {
-				properties = new HashMap<>();
-				task = submitTask(workflowInstanceId, "ncwf:claimAnalysisTask", null, properties);
-				assertEquals("classificationTask", task.getPath().getNode().getName());
-				task = submitTask(workflowInstanceId, "ncwf:claimClassificationTask", null, properties);
-				// assertEquals("claimClosingTask",
-				// task.getPath().getNode().getName());
+		} else {
+			properties = new HashMap<>();
+			task = submitTask(workflowInstanceId, "ncwf:claimAnalysisTask", null, properties);
+			assertEquals("classificationTask", task.getPath().getNode().getName());
+			task = submitTask(workflowInstanceId, "ncwf:claimClassificationTask", null, properties);
+			// assertEquals("claimClosingTask",
+			// task.getPath().getNode().getName());
 
-				properties = new HashMap<>();
-				task = submitTask(workflowInstanceId, "ncwf:claimClosingTask", null, properties);
-				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			properties = new HashMap<>();
+			task = submitTask(workflowInstanceId, "ncwf:claimClosingTask", null, properties);
+			inWriteTx(() -> {
 				assertFalse(workflowService.getWorkflowById(workflowInstanceId).isActive());
 
 				return null;
-			}, false, true);
+			});
 
-			}
+		}
 
 	}
 

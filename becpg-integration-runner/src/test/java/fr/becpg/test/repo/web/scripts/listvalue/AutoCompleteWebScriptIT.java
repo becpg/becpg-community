@@ -38,8 +38,7 @@ public class AutoCompleteWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 	/**
 	 * Test suggest target assoc.
 	 *
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	@Test
 	public void testSuggestTargetAssoc() throws Exception {
@@ -59,8 +58,7 @@ public class AutoCompleteWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 	/**
 	 * Test suggest list value.
 	 *
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	@Test
 	public void testSuggestListValue() throws Exception {
@@ -79,8 +77,7 @@ public class AutoCompleteWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 	/**
 	 * Test suggest linked values.
 	 *
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	@Test
 	public void testSuggestLinkedValues() throws Exception {
@@ -95,19 +92,18 @@ public class AutoCompleteWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 	/**
 	 * Test suggest product.
 	 *
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	@Test
 	public void testSuggestProduct() throws Exception {
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "Test MP");
 
 			return null;
 
-		}, false, true);
+		});
 
 		String url = "/becpg/autocomplete/product?q=ra";
 		Response response = TestWebscriptExecuters.sendRequest(new GetRequest(url), 200, "admin");
@@ -125,8 +121,7 @@ public class AutoCompleteWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 	/**
 	 * Test product report tpls.
 	 *
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	@Test
 	public void testProductReportTpls() throws Exception {

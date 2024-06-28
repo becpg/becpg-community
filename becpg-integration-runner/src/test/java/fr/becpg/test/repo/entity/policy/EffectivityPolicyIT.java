@@ -32,7 +32,6 @@ import fr.becpg.test.PLMBaseTestCase;
  */
 public class EffectivityPolicyIT extends PLMBaseTestCase {
 
-	
 	private static final Log logger = LogFactory.getLog(EffectivityPolicyIT.class);
 
 	/** The sf node ref. */
@@ -52,7 +51,7 @@ public class EffectivityPolicyIT extends PLMBaseTestCase {
 		final Date nowplus1h = new Date(start.getTime() + (1000 * 60 * 60));
 		final Date nowplus2h = new Date(start.getTime() + (2000 * 60 * 60));
 
-		sfNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		sfNodeRef = inWriteTx(() -> {
 
 			/*-- Create raw material --*/
 			logger.debug("/*-- Create raw material --*/");
@@ -61,9 +60,12 @@ public class EffectivityPolicyIT extends PLMBaseTestCase {
 			// Costs
 			properties.put(ContentModel.PROP_NAME, "cost1");
 			properties.put(PLMModel.PROP_COSTCURRENCY, "€");
-			NodeRef cost = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST,
-					properties).getChildRef();
+			NodeRef cost = nodeService
+					.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+									(String) properties.get(ContentModel.PROP_NAME)),
+							PLMModel.TYPE_COST, properties)
+					.getChildRef();
 
 			PriceListDataItem priceListDataItem = new PriceListDataItem();
 			priceListDataItem.setStartEffectivity(start);
@@ -93,7 +95,7 @@ public class EffectivityPolicyIT extends PLMBaseTestCase {
 
 			return rawMaterialNodeRef;
 
-		}, false, true);
+		});
 
 		// Only if aspect present on compoList
 
@@ -136,10 +138,10 @@ public class EffectivityPolicyIT extends PLMBaseTestCase {
 		// }
 		// }, false, true);
 		//
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
-			NodeRef rawMaterialNodeRef = copyService.copyAndRename(sfNodeRef, getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					ContentModel.ASSOC_CHILDREN, true);
+			NodeRef rawMaterialNodeRef = copyService.copyAndRename(sfNodeRef, getTestFolderNodeRef(),
+					ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
 
 			RawMaterialData rawMaterial1 = (RawMaterialData) alfrescoRepository.findOne(rawMaterialNodeRef);
 			assertNotNull("check priceList", rawMaterial1.getPriceList());
@@ -151,7 +153,7 @@ public class EffectivityPolicyIT extends PLMBaseTestCase {
 			}
 
 			return rawMaterialNodeRef;
-		}, false, true);
+		});
 
 	}
 

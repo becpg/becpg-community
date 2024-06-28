@@ -23,7 +23,7 @@ public class ProjectRefusedTaskIT extends AbstractProjectTestCase {
 
 		final NodeRef projectNodeRef = createProject(ProjectState.InProgress, new Date(), null);
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 
@@ -36,9 +36,9 @@ public class ProjectRefusedTaskIT extends AbstractProjectTestCase {
 			alfrescoRepository.save(projectData);
 
 			return null;
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			// check
 			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
@@ -52,9 +52,9 @@ public class ProjectRefusedTaskIT extends AbstractProjectTestCase {
 			alfrescoRepository.save(projectData);
 
 			return null;
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			// check
 			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
@@ -67,9 +67,9 @@ public class ProjectRefusedTaskIT extends AbstractProjectTestCase {
 			alfrescoRepository.save(projectData);
 
 			return null;
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 
@@ -84,9 +84,9 @@ public class ProjectRefusedTaskIT extends AbstractProjectTestCase {
 			alfrescoRepository.save(projectData);
 
 			return null;
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			// check
 			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
@@ -98,16 +98,13 @@ public class ProjectRefusedTaskIT extends AbstractProjectTestCase {
 			assertEquals(TaskState.Completed, projectData.getTaskList().get(3).getTaskState());
 			assertEquals(TaskState.Refused, projectData.getTaskList().get(5).getTaskState());
 			projectData.getTaskList().get(2).setTaskState(TaskState.Completed);
-			
+
 			alfrescoRepository.save(projectData);
-			
-			
-			
-			
+
 			return null;
-		}, false, true);
-		
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		});
+
+		inWriteTx(() -> {
 
 			// check
 			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
@@ -121,13 +118,11 @@ public class ProjectRefusedTaskIT extends AbstractProjectTestCase {
 
 			projectData.getTaskList().get(4).setTaskState(TaskState.Completed);
 			alfrescoRepository.save(projectData);
-			
-			
-			
+
 			return null;
-		}, false, true);
-		
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		});
+
+		inWriteTx(() -> {
 
 			// check
 			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
@@ -138,10 +133,9 @@ public class ProjectRefusedTaskIT extends AbstractProjectTestCase {
 			assertEquals(TaskState.Completed, projectData.getTaskList().get(4).getTaskState());
 			assertEquals(TaskState.Completed, projectData.getTaskList().get(3).getTaskState());
 			assertEquals(TaskState.InProgress, projectData.getTaskList().get(5).getTaskState());
-			
-			
+
 			return null;
-		}, false, true);
+		});
 
 	}
 }

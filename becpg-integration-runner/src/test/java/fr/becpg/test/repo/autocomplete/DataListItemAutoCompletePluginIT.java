@@ -42,7 +42,7 @@ public class DataListItemAutoCompletePluginIT extends AbstractAutoCompletePlugin
 
 	private NodeRef createSupplierNodeRef() {
 
-		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		return inWriteTx(() -> {
 
 			ruleService.disableRules();
 
@@ -53,16 +53,16 @@ public class DataListItemAutoCompletePluginIT extends AbstractAutoCompletePlugin
 
 			ContactListDataItem contact = new ContactListDataItem();
 			contact.setName("contact 1");
-             List<ContactListDataItem> contacts = new ArrayList<>();
-             contacts.add(contact);
-			
+			List<ContactListDataItem> contacts = new ArrayList<>();
+			contacts.add(contact);
+
 			supplierData.setContactList(contacts);
 
 			alfrescoRepository.create(getTestFolderNodeRef(), supplierData);
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), supplierData).getNodeRef();
 
-		}, false, true);
+		});
 
 	}
 
@@ -76,17 +76,17 @@ public class DataListItemAutoCompletePluginIT extends AbstractAutoCompletePlugin
 		final NodeRef finishProductNodeRef = createFinishProductNodeRef();
 		final NodeRef supplierNodeRef = createSupplierNodeRef();
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			associationService.update(finishProductNodeRef, PLMModel.ASSOC_SUPPLIERS, supplierNodeRef);
 
 			return null;
 
-		}, false, true);
+		});
 
 		waitForSolr();
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			Map<String, Serializable> props = new HashMap<>();
 			props.put(AutoCompleteService.PROP_PATH, "bcpg:suppliers");
@@ -108,7 +108,7 @@ public class DataListItemAutoCompletePluginIT extends AbstractAutoCompletePlugin
 			assertTrue("check contact key", containsContact);
 
 			return null;
-		}, false, true);
+		});
 
 	}
 

@@ -73,14 +73,16 @@ public class QualityControlIT extends PLMBaseTestCase {
 		String name = "Method";
 		properties.put(BeCPGModel.PROP_CHARACT_NAME, name);
 		methodNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name), QualityModel.TYPE_CONTROL_METHOD, properties).getChildRef();
+				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name), QualityModel.TYPE_CONTROL_METHOD,
+				properties).getChildRef();
 
 		// create control step
 		properties.clear();
 		name = "Step";
 		properties.put(BeCPGModel.PROP_CHARACT_NAME, name);
 		controlStepNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name), QualityModel.TYPE_CONTROL_STEP, properties).getChildRef();
+				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name), QualityModel.TYPE_CONTROL_STEP,
+				properties).getChildRef();
 
 		// create control point
 		ControlPointData controlPointData = new ControlPointData();
@@ -89,7 +91,7 @@ public class QualityControlIT extends PLMBaseTestCase {
 		controlDefList.add(new ControlDefListDataItem(null, "bcpg_nutList", null, null, true, methodNodeRef, nuts));
 		controlPointData.setControlDefList(controlDefList);
 		controlPointNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), controlPointData).getNodeRef();
-		
+
 		ControlPointData controlPointData2 = new ControlPointData();
 		controlPointData.setName("Control point2");
 		List<ControlDefListDataItem> controlDefList2 = new ArrayList<>();
@@ -101,8 +103,10 @@ public class QualityControlIT extends PLMBaseTestCase {
 		ControlPlanData controlPlanData = new ControlPlanData();
 		controlPlanData.setName("Control plan");
 		List<SamplingDefListDataItem> samplingDefList = new ArrayList<>();
-		samplingDefList.add(new SamplingDefListDataItem(2, 1, "/4hours", controlPointNodeRef, controlStepNodeRef, null, null, null, "Reaction"));
-		SamplingDefListDataItem samplingDefListDataItem2 = new SamplingDefListDataItem(2, 1, "/4hours", controlPointNodeRef2, controlStepNodeRef, null, null, null, "Reaction");
+		samplingDefList.add(new SamplingDefListDataItem(2, 1, "/4hours", controlPointNodeRef, controlStepNodeRef, null,
+				null, null, "Reaction"));
+		SamplingDefListDataItem samplingDefListDataItem2 = new SamplingDefListDataItem(2, 1, "/4hours",
+				controlPointNodeRef2, controlStepNodeRef, null, null, null, "Reaction");
 		samplingDefListDataItem2.setFreqText("1M,3M,8M");
 		samplingDefListDataItem2.setQty(1);
 		samplingDefList.add(samplingDefListDataItem2);
@@ -129,7 +133,7 @@ public class QualityControlIT extends PLMBaseTestCase {
 	@Test
 	public void testCreateQualityControl() {
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			createControlPlan();
 			List<NodeRef> controlPlansNodeRef = new ArrayList<>();
@@ -141,12 +145,13 @@ public class QualityControlIT extends PLMBaseTestCase {
 
 			return null;
 
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			// check samples
-			QualityControlData qualityControlData = (QualityControlData) alfrescoRepository.findOne(qualityControlNodeRef);
+			QualityControlData qualityControlData = (QualityControlData) alfrescoRepository
+					.findOne(qualityControlNodeRef);
 			assertNotNull("Check QC exists", qualityControlData);
 			assertNotNull("Check Sample list", qualityControlData.getSamplingList());
 			assertEquals("9 samples", 9, qualityControlData.getSamplingList().size());
@@ -174,14 +179,16 @@ public class QualityControlIT extends PLMBaseTestCase {
 					assertEquals("check control point", controlPointNodeRef, sl.getControlPoint());
 					assertEquals("check control step", controlStepNodeRef, sl.getControlStep());
 					assertEquals("check state", null, sl.getSampleState());
-					assertEquals("check date", new Date(qualityControlData.getBatchStart().getTime() + (4 * HOUR)), sl.getDateTime());
+					assertEquals("check date", new Date(qualityControlData.getBatchStart().getTime() + (4 * HOUR)),
+							sl.getDateTime());
 					checks++;
 					break;
 				case "12247904/3":
 					assertEquals("check control point", controlPointNodeRef, sl.getControlPoint());
 					assertEquals("check control step", controlStepNodeRef, sl.getControlStep());
 					assertEquals("check state", null, sl.getSampleState());
-					assertEquals("check date", new Date(qualityControlData.getBatchStart().getTime() + (4 * HOUR)), sl.getDateTime());
+					assertEquals("check date", new Date(qualityControlData.getBatchStart().getTime() + (4 * HOUR)),
+							sl.getDateTime());
 					checks++;
 					break;
 				case "12247904/6":
@@ -189,7 +196,7 @@ public class QualityControlIT extends PLMBaseTestCase {
 					assertEquals("check control step", controlStepNodeRef, sl.getControlStep());
 					assertEquals("check state", null, sl.getSampleState());
 					cal.setTime(qualityControlData.getBatchStart());
-			        cal.add(Calendar.MONTH, 1);
+					cal.add(Calendar.MONTH, 1);
 					assertEquals("check date", cal.getTime(), sl.getDateTime());
 					checks++;
 					break;
@@ -198,7 +205,7 @@ public class QualityControlIT extends PLMBaseTestCase {
 					assertEquals("check control step", controlStepNodeRef, sl.getControlStep());
 					assertEquals("check state", null, sl.getSampleState());
 					cal.setTime(qualityControlData.getBatchStart());
-			        cal.add(Calendar.MONTH, 3);
+					cal.add(Calendar.MONTH, 3);
 					assertEquals("check date", cal.getTime(), sl.getDateTime());
 					checks++;
 					break;
@@ -207,12 +214,12 @@ public class QualityControlIT extends PLMBaseTestCase {
 					assertEquals("check control step", controlStepNodeRef, sl.getControlStep());
 					assertEquals("check state", null, sl.getSampleState());
 					cal.setTime(qualityControlData.getBatchStart());
-			        cal.add(Calendar.MONTH, 8);
+					cal.add(Calendar.MONTH, 8);
 					assertEquals("check date", cal.getTime(), sl.getDateTime());
 					checks++;
 					break;
 				}
-				
+
 			}
 
 			assertEquals(7, checks);
@@ -248,12 +255,13 @@ public class QualityControlIT extends PLMBaseTestCase {
 
 			return null;
 
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			// check samples
-			QualityControlData qualityControlData = (QualityControlData) alfrescoRepository.findOne(qualityControlNodeRef);
+			QualityControlData qualityControlData = (QualityControlData) alfrescoRepository
+					.findOne(qualityControlNodeRef);
 			int checks = 0;
 			Date nextAnalysisDate = null;
 
@@ -280,12 +288,12 @@ public class QualityControlIT extends PLMBaseTestCase {
 			}
 
 			assertEquals(4, checks);
-			
+
 			// check next analysis data
 			assertEquals("check next analysis date", nextAnalysisDate, qualityControlData.getNextAnalysisDate());
 			return null;
 
-		}, false, true);
+		});
 
 	}
 
@@ -294,11 +302,10 @@ public class QualityControlIT extends PLMBaseTestCase {
 
 		logger.info("testCreateQualityControl");
 
-		final NodeRef productNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-
+		final NodeRef productNodeRef = inWriteTx(() -> {
 
 			NodeRef rawMaterialNodeRef = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "Raw material");
-			RawMaterialData rawMaterialData = (RawMaterialData)alfrescoRepository.findOne(rawMaterialNodeRef);
+			RawMaterialData rawMaterialData = (RawMaterialData) alfrescoRepository.findOne(rawMaterialNodeRef);
 
 			// create control point
 			ControlPointData controlPointData = new ControlPointData();
@@ -306,7 +313,8 @@ public class QualityControlIT extends PLMBaseTestCase {
 			List<ControlDefListDataItem> controlDefList = new ArrayList<>();
 			controlDefList.add(new ControlDefListDataItem(null, "bcpg_nutList", null, null, true, methodNodeRef, nuts));
 			controlPointData.setControlDefList(controlDefList);
-			NodeRef controlPointNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), controlPointData).getNodeRef();
+			NodeRef controlPointNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), controlPointData)
+					.getNodeRef();
 
 			SamplingListDataItem sl = new SamplingListDataItem();
 			sl.setDateTime(new Date());
@@ -317,11 +325,9 @@ public class QualityControlIT extends PLMBaseTestCase {
 			alfrescoRepository.create(listNodeRef, sl);
 			return rawMaterialNodeRef;
 
-		}, false, true);
+		});
 
-
-
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			NodeRef listContainerNodeRef = entityListDAO.getListContainer(productNodeRef);
 			NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, QualityModel.TYPE_SAMPLING_LIST);
@@ -338,6 +344,6 @@ public class QualityControlIT extends PLMBaseTestCase {
 
 			return null;
 
-		}, false, true);
+		});
 	}
 }

@@ -60,7 +60,6 @@ public class NCWorkflowIT extends AbstractWorkflowTest {
 	@Autowired
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
-	
 	private static final Log logger = LogFactory.getLog(NCWorkflowIT.class);
 
 	private NodeRef rawMaterial1NodeRef;
@@ -73,7 +72,7 @@ public class NCWorkflowIT extends AbstractWorkflowTest {
 	@Test
 	public void testWorkFlow() {
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			BeCPGPLMTestHelper.createUsers();
 
@@ -89,7 +88,7 @@ public class NCWorkflowIT extends AbstractWorkflowTest {
 			}
 			return null;
 
-		}, false, true);
+		});
 
 		executeNonConformityWF(false);
 
@@ -100,7 +99,7 @@ public class NCWorkflowIT extends AbstractWorkflowTest {
 
 	private void executeNonConformityWF(final boolean needPrevAction) {
 
-		final WorkflowTask task1 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final WorkflowTask task1 = inWriteTx(() -> {
 			authenticationComponent.setCurrentUser(BeCPGPLMTestHelper.USER_ONE);
 
 			WorkflowDefinition wfDef = workflowService.getDefinitionByName("activiti$nonConformityProcess");
@@ -131,15 +130,15 @@ public class NCWorkflowIT extends AbstractWorkflowTest {
 			List<WorkflowTask> tasks = workflowService.getTasksForWorkflowPath(path.getId());
 			assertEquals(1, tasks.size());
 			return tasks.get(0);
-		}, false, true);
+		});
 
 		assertEquals("ncwf:analysisTask", task1.getName());
 
-		NodeRef ncNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef ncNodeRef = inWriteTx(() -> {
 
 			NodeRef pkgNodeRef = workflowService.getWorkflowById(workflowInstanceId).getWorkflowPackage();
-			List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(pkgNodeRef, WorkflowModel.ASSOC_PACKAGE_CONTAINS,
-					RegexQNamePattern.MATCH_ALL);
+			List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(pkgNodeRef,
+					WorkflowModel.ASSOC_PACKAGE_CONTAINS, RegexQNamePattern.MATCH_ALL);
 			for (ChildAssociationRef childAssoc : childAssocs) {
 				if (QualityModel.TYPE_NC.equals(nodeService.getType(childAssoc.getChildRef()))) {
 					return childAssoc.getChildRef();
@@ -147,14 +146,14 @@ public class NCWorkflowIT extends AbstractWorkflowTest {
 			}
 
 			return null;
-		}, false, true);
+		});
 
 		/*
 		 * Update analysisTask task
 		 */
 		assertNotNull(ncNodeRef);
 
-		final WorkflowTask task2 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final WorkflowTask task2 = inWriteTx(() -> {
 
 			logger.info("Set analysisTask information " + task1.getName());
 			Map<QName, Serializable> properties = new HashMap<>();
@@ -172,7 +171,7 @@ public class NCWorkflowIT extends AbstractWorkflowTest {
 
 			workflowService.updateTask(task1.getId(), properties, assocs, new HashMap<QName, List<NodeRef>>());
 			return workflowService.endTask(task1.getId(), null);
-		}, false, true);
+		});
 
 		if (needPrevAction) {
 			assertEquals("prevActionTask", task2.getPath().getNode().getName());
@@ -183,7 +182,8 @@ public class NCWorkflowIT extends AbstractWorkflowTest {
 		/*
 		 * do corrActionTask
 		 */
-		WorkflowTask task = submitTask(workflowInstanceId, "ncwf:corrActionTask", null, "analysis", "commentaire émetteur 2");
+		WorkflowTask task = submitTask(workflowInstanceId, "ncwf:corrActionTask", null, "analysis",
+				"commentaire émetteur 2");
 		assertEquals("checkTask", task.getPath().getNode().getName());
 
 		/*
@@ -203,21 +203,21 @@ public class NCWorkflowIT extends AbstractWorkflowTest {
 		 * do prevActionTask
 		 */
 		if (needPrevAction) {
-			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			inWriteTx(() -> {
 				assertTrue(workflowService.getWorkflowById(workflowInstanceId).isActive());
 				return null;
-			}, false, true);
+			});
 			task = submitTask(workflowInstanceId, "ncwf:prevActionTask", null, null, "commentaire émetteur");
 		}
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			assertFalse(workflowService.getWorkflowById(workflowInstanceId).isActive());
 			return null;
-		}, false, true);
+		});
 	}
 
 	private void executeNonConformityAdhoc() {
 
-		final WorkflowTask task1 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final WorkflowTask task1 = inWriteTx(() -> {
 
 			WorkflowDefinition wfDef = workflowService.getDefinitionByName("activiti$nonConformityAdhoc");
 			logger.debug("wfDefId found : " + wfDef.getId());
@@ -247,15 +247,15 @@ public class NCWorkflowIT extends AbstractWorkflowTest {
 			List<WorkflowTask> tasks = workflowService.getTasksForWorkflowPath(path.getId());
 			assertEquals(1, tasks.size());
 			return tasks.get(0);
-		}, false, true);
+		});
 
 		assertEquals("ncwf:workTask", task1.getName());
 
-		NodeRef ncNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef ncNodeRef = inWriteTx(() -> {
 
 			NodeRef pkgNodeRef = workflowService.getWorkflowById(workflowInstanceId).getWorkflowPackage();
-			List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(pkgNodeRef, WorkflowModel.ASSOC_PACKAGE_CONTAINS,
-					RegexQNamePattern.MATCH_ALL);
+			List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(pkgNodeRef,
+					WorkflowModel.ASSOC_PACKAGE_CONTAINS, RegexQNamePattern.MATCH_ALL);
 			for (ChildAssociationRef childAssoc : childAssocs) {
 
 				if (QualityModel.TYPE_NC.equals(nodeService.getType(childAssoc.getChildRef()))) {
@@ -264,7 +264,7 @@ public class NCWorkflowIT extends AbstractWorkflowTest {
 			}
 
 			return null;
-		}, false, true);
+		});
 
 		assertNotNull(ncNodeRef);
 
@@ -272,22 +272,22 @@ public class NCWorkflowIT extends AbstractWorkflowTest {
 		 * Update workTask (analysis)
 		 */
 
-		WorkflowTask task = submitTask(workflowInstanceId, "ncwf:workTask", personService.getPerson(BeCPGPLMTestHelper.USER_ONE), "new",
-				"commentaire émetteur");
+		WorkflowTask task = submitTask(workflowInstanceId, "ncwf:workTask",
+				personService.getPerson(BeCPGPLMTestHelper.USER_ONE), "new", "commentaire émetteur");
 		assertEquals("workTask", task.getPath().getNode().getName());
 
 		/*
 		 * do corrActionTask
 		 */
-		task = submitTask(workflowInstanceId, "ncwf:workTask", personService.getPerson(BeCPGPLMTestHelper.USER_ONE), "analysis",
-				"commentaire émetteur 2");
+		task = submitTask(workflowInstanceId, "ncwf:workTask", personService.getPerson(BeCPGPLMTestHelper.USER_ONE),
+				"analysis", "commentaire émetteur 2");
 		assertEquals("workTask", task.getPath().getNode().getName());
 
 		/*
 		 * do checkTask
 		 */
-		task = submitTask(workflowInstanceId, "ncwf:workTask", personService.getPerson(BeCPGPLMTestHelper.USER_TWO), "closing",
-				"commentaire émetteur 3");
+		task = submitTask(workflowInstanceId, "ncwf:workTask", personService.getPerson(BeCPGPLMTestHelper.USER_TWO),
+				"closing", "commentaire émetteur 3");
 		assertEquals("workTask", task.getPath().getNode().getName());
 
 		/*
@@ -299,10 +299,10 @@ public class NCWorkflowIT extends AbstractWorkflowTest {
 		// assertFalse(workflowService.getWorkflowById(workflowInstanceId).isActive());
 	}
 
-	private WorkflowTask submitTask(final String workflowInstanceId, final String taskName, final NodeRef assigneeNodeRef, final String state,
-			final String comment) {
+	private WorkflowTask submitTask(final String workflowInstanceId, final String taskName,
+			final NodeRef assigneeNodeRef, final String state, final String comment) {
 
-		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		return inWriteTx(() -> {
 
 			WorkflowTaskQuery taskQuery = new WorkflowTaskQuery();
 			taskQuery.setProcessId(workflowInstanceId);
@@ -336,7 +336,7 @@ public class NCWorkflowIT extends AbstractWorkflowTest {
 			}
 
 			return null;
-		}, false, true);
+		});
 	}
 
 }

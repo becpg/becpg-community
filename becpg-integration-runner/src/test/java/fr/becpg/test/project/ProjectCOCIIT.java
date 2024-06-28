@@ -53,34 +53,42 @@ public class ProjectCOCIIT extends AbstractProjectTestCase {
 	@Test
 	public void testCheckOutCheckIn() {
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			Map<QName, Serializable> aspectProperties = new HashMap<>();
 			aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
 			nodeService.addAspect(projectTplNodeRef, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
 
 			// Check out
-			logger.info("Check out project " + projectTplNodeRef + ruleService.getSavedRuleFolderAssoc(projectTplNodeRef));
-			
+			logger.info(
+					"Check out project " + projectTplNodeRef + ruleService.getSavedRuleFolderAssoc(projectTplNodeRef));
+
 			NodeRef destNodeRef = nodeService.getPrimaryParent(projectTplNodeRef).getParentRef();
 			NodeRef workingCopyNodeRef = entityVersionService.createBranch(projectTplNodeRef, destNodeRef);
 
 			ProjectData workingCopyData = (ProjectData) alfrescoRepository.findOne(workingCopyNodeRef);
-			assertTrue(workingCopyData.getDeliverableList().get(0).getTasks().get(0).equals(workingCopyData.getTaskList().get(0).getNodeRef()));
-			assertTrue(workingCopyData.getDeliverableList().get(1).getTasks().get(0).equals(workingCopyData.getTaskList().get(1).getNodeRef()));
-			assertTrue(workingCopyData.getDeliverableList().get(2).getTasks().get(0).equals(workingCopyData.getTaskList().get(1).getNodeRef()));
-			assertTrue(workingCopyData.getDeliverableList().get(3).getTasks().get(0).equals(workingCopyData.getTaskList().get(2).getNodeRef()));
+			assertTrue(workingCopyData.getDeliverableList().get(0).getTasks().get(0)
+					.equals(workingCopyData.getTaskList().get(0).getNodeRef()));
+			assertTrue(workingCopyData.getDeliverableList().get(1).getTasks().get(0)
+					.equals(workingCopyData.getTaskList().get(1).getNodeRef()));
+			assertTrue(workingCopyData.getDeliverableList().get(2).getTasks().get(0)
+					.equals(workingCopyData.getTaskList().get(1).getNodeRef()));
+			assertTrue(workingCopyData.getDeliverableList().get(3).getTasks().get(0)
+					.equals(workingCopyData.getTaskList().get(2).getNodeRef()));
 
 			// Check in
-			logger.info("Check in project " + workingCopyNodeRef + ruleService.getSavedRuleFolderAssoc(workingCopyNodeRef));
-			NodeRef newProjectNodeRef = entityVersionService.mergeBranch(workingCopyNodeRef, projectTplNodeRef, VersionType.MAJOR, "This is a test version");
+			logger.info(
+					"Check in project " + workingCopyNodeRef + ruleService.getSavedRuleFolderAssoc(workingCopyNodeRef));
+			NodeRef newProjectNodeRef = entityVersionService.mergeBranch(workingCopyNodeRef, projectTplNodeRef,
+					VersionType.MAJOR, "This is a test version");
 
-			logger.info("Check in project done " + newProjectNodeRef + ruleService.getSavedRuleFolderAssoc(newProjectNodeRef));
+			logger.info("Check in project done " + newProjectNodeRef
+					+ ruleService.getSavedRuleFolderAssoc(newProjectNodeRef));
 
 			assertNotNull(newProjectNodeRef);
 
 			return null;
-		}, false, true);
+		});
 	}
 
 }

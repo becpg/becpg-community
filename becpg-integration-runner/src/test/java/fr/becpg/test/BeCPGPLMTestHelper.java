@@ -64,12 +64,14 @@ public class BeCPGPLMTestHelper {
 
 	public static NodeRef createTestFolder(String folderName) {
 
-		NodeRef folderNodeRef = PLMBaseTestCase.INSTANCE2.nodeService.getChildByName(PLMBaseTestCase.INSTANCE2.repositoryHelper.getCompanyHome(),
-				ContentModel.ASSOC_CONTAINS, folderName);
+		NodeRef folderNodeRef = PLMBaseTestCase.INSTANCE2.nodeService.getChildByName(
+				PLMBaseTestCase.INSTANCE2.repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, folderName);
 
 		if (folderNodeRef == null) {
 			folderNodeRef = PLMBaseTestCase.INSTANCE2.fileFolderService
-					.create(PLMBaseTestCase.INSTANCE2.repositoryHelper.getCompanyHome(), folderName, ContentModel.TYPE_FOLDER).getNodeRef();
+					.create(PLMBaseTestCase.INSTANCE2.repositoryHelper.getCompanyHome(), folderName,
+							ContentModel.TYPE_FOLDER)
+					.getNodeRef();
 		}
 
 		return folderNodeRef;
@@ -95,7 +97,8 @@ public class BeCPGPLMTestHelper {
 		if (!PLMBaseTestCase.INSTANCE2.authorityService.getAuthoritiesForUser(USER_TWO)
 				.contains(PermissionService.GROUP_PREFIX + PLMGroup.QualityUser.toString())) {
 
-			PLMBaseTestCase.INSTANCE2.authorityService.addAuthority(PermissionService.GROUP_PREFIX + PLMGroup.QualityUser.toString(), USER_TWO);
+			PLMBaseTestCase.INSTANCE2.authorityService
+					.addAuthority(PermissionService.GROUP_PREFIX + PLMGroup.QualityUser.toString(), USER_TWO);
 		}
 
 		for (String s : PLMBaseTestCase.INSTANCE2.authorityService.getAuthoritiesForUser(USER_ONE)) {
@@ -133,10 +136,12 @@ public class BeCPGPLMTestHelper {
 		logger.debug("/*-- Create raw material --*/");
 		RawMaterialData rawMaterial1 = new RawMaterialData();
 		rawMaterial1.setName("Raw material 1");
-		NodeRef rawMaterial1NodeRef = PLMBaseTestCase.INSTANCE2.alfrescoRepository.create(testFolder, rawMaterial1).getNodeRef();
+		NodeRef rawMaterial1NodeRef = PLMBaseTestCase.INSTANCE2.alfrescoRepository.create(testFolder, rawMaterial1)
+				.getNodeRef();
 		RawMaterialData rawMaterial2 = new RawMaterialData();
 		rawMaterial2.setName("Raw material 2");
-		NodeRef rawMaterial2NodeRef = PLMBaseTestCase.INSTANCE2.alfrescoRepository.create(testFolder, rawMaterial2).getNodeRef();
+		NodeRef rawMaterial2NodeRef = PLMBaseTestCase.INSTANCE2.alfrescoRepository.create(testFolder, rawMaterial2)
+				.getNodeRef();
 		LocalSemiFinishedProductData lSF1 = new LocalSemiFinishedProductData();
 		lSF1.setName("Local semi finished 1");
 		NodeRef lSF1NodeRef = PLMBaseTestCase.INSTANCE2.alfrescoRepository.create(testFolder, lSF1).getNodeRef();
@@ -160,13 +165,52 @@ public class BeCPGPLMTestHelper {
 		finishedProduct.setHierarchy1(PLMBaseTestCase.INSTANCE2.HIERARCHY1_FROZEN_REF);
 		finishedProduct.setHierarchy2(PLMBaseTestCase.INSTANCE2.HIERARCHY2_PIZZA_REF);
 		List<CompoListDataItem> compoList = new LinkedList<>();
-		CompoListDataItem parent1 = new CompoListDataItem(null, null, 1d, 1d, ProductUnit.P, 0d, DeclarationType.Declare, lSF1NodeRef);
-		CompoListDataItem child1 = new CompoListDataItem(null, parent1, 1d, 4d, ProductUnit.P, 0d, DeclarationType.Declare, lSF2NodeRef);
-		CompoListDataItem child12 = new CompoListDataItem(null, child1, 3d, 0d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial1NodeRef);
-		CompoListDataItem parent2 = new CompoListDataItem(null, null, 1d, 4d, ProductUnit.P, 0d, DeclarationType.Declare, lSF3NodeRef);
-		CompoListDataItem child2 = new CompoListDataItem(null, parent2, 3d, 0d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial2NodeRef);
-		CompoListDataItem child21 = new CompoListDataItem(null, parent2, 3d, 0d, ProductUnit.kg, 0d, DeclarationType.Omit, lSF4NodeRef);
-		CompoListDataItem parent3 = new CompoListDataItem(null, null, 3d, 0d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial1NodeRef);
+		/*
+		 * CompoListDataItem parent1 = new CompoListDataItem(null, null, 1d, 1d,
+		 * ProductUnit.P, 0d, DeclarationType.Declare, lSF1NodeRef);
+		 */
+		CompoListDataItem parent1 = (CompoListDataItem.build().withQty(1d).withQtyUsed(1d).withUnit(ProductUnit.P)
+				.withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(lSF1NodeRef));
+		/*
+		 * CompoListDataItem child1 = new CompoListDataItem(null, parent1, 1d, 4d,
+		 * ProductUnit.P, 0d, DeclarationType.Declare, lSF2NodeRef);
+		 */
+		CompoListDataItem child1 = (CompoListDataItem.build().withParent(parent1).withQty(1d).withQtyUsed(4d)
+				.withUnit(ProductUnit.P).withLossPerc(0d).withDeclarationType(DeclarationType.Declare)
+				.withProduct(lSF2NodeRef));
+		/*
+		 * CompoListDataItem child12 = new CompoListDataItem(null, child1, 3d, 0d,
+		 * ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial1NodeRef);
+		 */
+		CompoListDataItem child12 = (CompoListDataItem.build().withParent(child1).withQty(3d).withQtyUsed(0d)
+				.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Omit)
+				.withProduct(rawMaterial1NodeRef));
+		/*
+		 * CompoListDataItem parent2 = new CompoListDataItem(null, null, 1d, 4d,
+		 * ProductUnit.P, 0d, DeclarationType.Declare, lSF3NodeRef);
+		 */
+		CompoListDataItem parent2 = (CompoListDataItem.build().withQty(1d).withQtyUsed(4d).withUnit(ProductUnit.P)
+				.withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(lSF3NodeRef));
+		/*
+		 * CompoListDataItem child2 = new CompoListDataItem(null, parent2, 3d, 0d,
+		 * ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial2NodeRef);
+		 */
+		CompoListDataItem child2 = (CompoListDataItem.build().withParent(parent2).withQty(3d).withQtyUsed(0d)
+				.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Omit)
+				.withProduct(rawMaterial2NodeRef));
+		/*
+		 * CompoListDataItem child21 = new CompoListDataItem(null, parent2, 3d, 0d,
+		 * ProductUnit.kg, 0d, DeclarationType.Omit, lSF4NodeRef);
+		 */
+		CompoListDataItem child21 = (CompoListDataItem.build().withParent(parent2).withQty(3d).withQtyUsed(0d)
+				.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Omit)
+				.withProduct(lSF4NodeRef));
+		/*
+		 * CompoListDataItem parent3 = new CompoListDataItem(null, null, 3d, 0d,
+		 * ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial1NodeRef);
+		 */
+		CompoListDataItem parent3 = (CompoListDataItem.build().withQty(3d).withQtyUsed(0d).withUnit(ProductUnit.kg)
+				.withLossPerc(0d).withDeclarationType(DeclarationType.Omit).withProduct(rawMaterial1NodeRef));
 
 		compoList.add(parent1);
 		compoList.add(child1);
@@ -184,10 +228,8 @@ public class BeCPGPLMTestHelper {
 	/**
 	 * Create a raw material.
 	 *
-	 * @param parentNodeRef
-	 *            the parent node ref
-	 * @param name
-	 *            the name
+	 * @param parentNodeRef the parent node ref
+	 * @param name          the name
 	 * @return the node ref
 	 */
 	public static NodeRef createRawMaterial(NodeRef parentNodeRef, String name) {
@@ -211,7 +253,8 @@ public class BeCPGPLMTestHelper {
 		// Costs
 		List<CostListDataItem> costList = new ArrayList<>();
 		for (int j = 0; j < PLMBaseTestCase.INSTANCE2.costs.size(); j++) {
-			CostListDataItem costListItemData = new CostListDataItem(null, 12.2d, "€/kg", null, PLMBaseTestCase.INSTANCE2.costs.get(j), false);
+			CostListDataItem costListItemData = new CostListDataItem(null, 12.2d, "€/kg", null,
+					PLMBaseTestCase.INSTANCE2.costs.get(j), false);
 			costList.add(costListItemData);
 		}
 		rawMaterial.setCostList(costList);
@@ -219,8 +262,13 @@ public class BeCPGPLMTestHelper {
 		// Ings
 		List<IngListDataItem> ingList = new ArrayList<>();
 		for (int j = 0; j < PLMBaseTestCase.INSTANCE2.ings.size(); j++) {
-			IngListDataItem ingListItemData = new IngListDataItem(null, 12.2d, null, null, false, false, false, PLMBaseTestCase.INSTANCE2.ings.get(j),
-					false);
+			/*
+			 * IngListDataItem ingListItemData = new IngListDataItem(null, 12.2d, null,
+			 * null, false, false, false, PLMBaseTestCase.INSTANCE2.ings.get(j), false);
+			 */
+			IngListDataItem ingListItemData = IngListDataItem.build().withQtyPerc(12.2d).withgeoOrigin(null)
+					.withbioOrigin(null).withisGMO(false).withisIonized(false).withisManual(false)
+					.withIngredient(PLMBaseTestCase.INSTANCE2.ings.get(j)).withprocessingAid(false);
 			ingList.add(ingListItemData);
 		}
 		rawMaterial.setIngList(ingList);
@@ -228,8 +276,8 @@ public class BeCPGPLMTestHelper {
 		// Nuts
 		List<NutListDataItem> nutList = new ArrayList<>();
 		for (int j = 0; j < PLMBaseTestCase.INSTANCE2.nuts.size(); j++) {
-			NutListDataItem nutListItemData = new NutListDataItem(null, 2d, "kJ/100g", 0d, 0d, "Groupe 1", PLMBaseTestCase.INSTANCE2.nuts.get(j),
-					false);
+			NutListDataItem nutListItemData = new NutListDataItem(null, 2d, "kJ/100g", 0d, 0d, "Groupe 1",
+					PLMBaseTestCase.INSTANCE2.nuts.get(j), false);
 			nutList.add(nutListItemData);
 		}
 		rawMaterial.setNutList(nutList);
@@ -240,8 +288,9 @@ public class BeCPGPLMTestHelper {
 
 			MLText title = new MLText();
 			title.addValue(Locale.getDefault(), "Descr organo....");
-			
-			OrganoListDataItem organoListItemData = new OrganoListDataItem(null, title, PLMBaseTestCase.INSTANCE2.organos.get(j));
+
+			OrganoListDataItem organoListItemData = new OrganoListDataItem(null, title,
+					PLMBaseTestCase.INSTANCE2.organos.get(j));
 			organoList.add(organoListItemData);
 		}
 		rawMaterial.setOrganoList(organoList);

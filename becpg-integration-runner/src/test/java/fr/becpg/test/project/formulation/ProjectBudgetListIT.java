@@ -36,9 +36,10 @@ public class ProjectBudgetListIT extends AbstractProjectTestCase {
 	@Test
 	public void testCalculateBudgetedExpense() throws ParseException {
 
-		final NodeRef projectNodeRef = createMultiLevelProject(ProjectState.OnHold, dateFormat.parse("15/11/2012"), null, PlanningMode.Planning);
+		final NodeRef projectNodeRef = createMultiLevelProject(ProjectState.OnHold, dateFormat.parse("15/11/2012"),
+				null, PlanningMode.Planning);
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 
@@ -49,23 +50,33 @@ public class ProjectBudgetListIT extends AbstractProjectTestCase {
 			projectData.getBudgetList().get(2).setParent(projectData.getBudgetList().get(1));
 			projectData.getBudgetList().get(3).setParent(projectData.getBudgetList().get(1));
 
-			projectData.getInvoiceList().add(new InvoiceListDataItem(projectData.getBudgetList().get(0), 1000d, projectData.getTaskList().get(0)));
-			projectData.getInvoiceList().add(new InvoiceListDataItem(projectData.getBudgetList().get(1), 2000d, projectData.getTaskList().get(1)));
-			projectData.getInvoiceList().add(new InvoiceListDataItem(projectData.getBudgetList().get(2), 3000d, projectData.getTaskList().get(2)));
-			projectData.getInvoiceList().add(new InvoiceListDataItem(projectData.getBudgetList().get(3), 4000d, projectData.getTaskList().get(3)));
+			projectData.getInvoiceList().add(new InvoiceListDataItem(projectData.getBudgetList().get(0), 1000d,
+					projectData.getTaskList().get(0)));
+			projectData.getInvoiceList().add(new InvoiceListDataItem(projectData.getBudgetList().get(1), 2000d,
+					projectData.getTaskList().get(1)));
+			projectData.getInvoiceList().add(new InvoiceListDataItem(projectData.getBudgetList().get(2), 3000d,
+					projectData.getTaskList().get(2)));
+			projectData.getInvoiceList().add(new InvoiceListDataItem(projectData.getBudgetList().get(3), 4000d,
+					projectData.getTaskList().get(3)));
 
-			projectData.getExpenseList().add(new ExpenseListDataItem(projectData.getBudgetList().get(0), 100d, projectData.getTaskList().get(0)));
-			projectData.getExpenseList().add(new ExpenseListDataItem(projectData.getBudgetList().get(1), 200d, projectData.getTaskList().get(1)));
-			projectData.getExpenseList().add(new ExpenseListDataItem(projectData.getBudgetList().get(2), 300d, projectData.getTaskList().get(2)));
-			projectData.getExpenseList().add(new ExpenseListDataItem(projectData.getBudgetList().get(3), 400d, projectData.getTaskList().get(3)));
+			projectData.getExpenseList().add(new ExpenseListDataItem(projectData.getBudgetList().get(0), 100d,
+					projectData.getTaskList().get(0)));
+			projectData.getExpenseList().add(new ExpenseListDataItem(projectData.getBudgetList().get(1), 200d,
+					projectData.getTaskList().get(1)));
+			projectData.getExpenseList().add(new ExpenseListDataItem(projectData.getBudgetList().get(2), 300d,
+					projectData.getTaskList().get(2)));
+			projectData.getExpenseList().add(new ExpenseListDataItem(projectData.getBudgetList().get(3), 400d,
+					projectData.getTaskList().get(3)));
 
 			alfrescoRepository.save(projectData);
 			projectService.formulate(projectNodeRef);
 
 			projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 
-			Composite<BudgetListDataItem> composite = CompositeHelper.getHierarchicalCompoList(projectData.getBudgetList());
-			Composite<TaskListDataItem> taskComposite = CompositeHelper.getHierarchicalCompoList(projectData.getTaskList());
+			Composite<BudgetListDataItem> composite = CompositeHelper
+					.getHierarchicalCompoList(projectData.getBudgetList());
+			Composite<TaskListDataItem> taskComposite = CompositeHelper
+					.getHierarchicalCompoList(projectData.getTaskList());
 			logger.info(composite.toString());
 			logger.info(taskComposite.toString());
 
@@ -76,7 +87,7 @@ public class ProjectBudgetListIT extends AbstractProjectTestCase {
 			assertEquals(900.0, projectData.getBudgetList().get(0).getProfit());
 
 			return null;
-		}, false, true);
+		});
 	}
 
 }

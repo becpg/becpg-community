@@ -37,7 +37,6 @@ import fr.becpg.test.PLMBaseTestCase;
  */
 public class EntityReportServiceIT extends PLMBaseTestCase {
 
-	
 	private static final Log logger = LogFactory.getLog(EntityReportServiceIT.class);
 
 	@Autowired
@@ -58,41 +57,41 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 	private void initReports() {
 
 		// Add report tpl
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
-			for (NodeRef n : reportTplService.getUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "*")) {
+			for (NodeRef n : reportTplService.getUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT,
+					"*")) {
 				nodeService.deleteNode(n);
 			}
 
 			/*-- Add report tpl --*/
-			NodeRef systemFolder = repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM,
-					TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
+			NodeRef systemFolder = repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(),
+					RepoConsts.PATH_SYSTEM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
 			NodeRef reportsFolder = repoService.getOrCreateFolderByPath(systemFolder, RepoConsts.PATH_REPORTS,
 					TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS));
-			productReportTplFolder = repoService.getOrCreateFolderByPath(reportsFolder, PlmRepoConsts.PATH_PRODUCT_REPORTTEMPLATES,
+			productReportTplFolder = repoService.getOrCreateFolderByPath(reportsFolder,
+					PlmRepoConsts.PATH_PRODUCT_REPORTTEMPLATES,
 					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_PRODUCT_REPORTTEMPLATES));
-			
+
 			ReportTplInformation reportTplInformation = new ReportTplInformation();
 			reportTplInformation.setReportType(ReportType.Document);
 			reportTplInformation.setReportFormat(ReportFormat.PDF);
-			reportTplInformation.setNodeType( PLMModel.TYPE_FINISHEDPRODUCT);
+			reportTplInformation.setNodeType(PLMModel.TYPE_FINISHEDPRODUCT);
 			reportTplInformation.setDefaultTpl(false);
 			reportTplInformation.setSystemTpl(true);
-			
 
-			reportTplService.createTplRptDesign(productReportTplFolder, "report PF 2", "beCPG/birt/document/product/default/ProductReport.rptdesign",
-					reportTplInformation, true);
+			reportTplService.createTplRptDesign(productReportTplFolder, "report PF 2",
+					"beCPG/birt/document/product/default/ProductReport.rptdesign", reportTplInformation, true);
 
 			return null;
 
-		}, false, true);
+		});
 	}
 
 	/**
 	 * Test report on product
 	 *
-	 * @throws InterruptedException
-	 *             the interrupted exception
+	 * @throws InterruptedException the interrupted exception
 	 */
 	@Test
 	public void testProductReport() {
@@ -101,17 +100,18 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 
 		initReports();
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			List<NodeRef> ret = reportTplService.getSystemReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT);
+		inWriteTx(() -> {
+			List<NodeRef> ret = reportTplService.getSystemReportTemplates(ReportType.Document,
+					PLMModel.TYPE_FINISHEDPRODUCT);
 			for (NodeRef ref : ret) {
 				logger.info(nodeService.getProperty(ref, ContentModel.PROP_NAME));
 			}
-			assertEquals("check system templates", 5,
-					reportTplService.getSystemReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT).size());
+			assertEquals("check system templates", 5, reportTplService
+					.getSystemReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT).size());
 			return null;
-		}, false, true);
+		});
 		// create product
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			// create PF
 			FinishedProductData pfData = new FinishedProductData();
@@ -126,26 +126,28 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 			pfNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), pfData).getNodeRef();
 
 			return null;
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			createdDate = new Date();
 			entityReportService.generateReports(pfNodeRef);
 
 			return null;
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			// check report Tpl
-			List<NodeRef> reportTplNodeRefs = reportTplService.getSystemReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT);
+			List<NodeRef> reportTplNodeRefs = reportTplService.getSystemReportTemplates(ReportType.Document,
+					PLMModel.TYPE_FINISHEDPRODUCT);
 			assertEquals("check system templates", 5, reportTplNodeRefs.size());
 
 			for (NodeRef reportTplNodeRef : reportTplNodeRefs) {
 				String name = (String) nodeService.getProperty(reportTplNodeRef, ContentModel.PROP_NAME);
 				logger.debug("Report name: " + name);
-				if (Boolean.TRUE.equals(nodeService.getProperty(reportTplNodeRef, ReportModel.PROP_REPORT_TPL_IS_DEFAULT))) {
+				if (Boolean.TRUE
+						.equals(nodeService.getProperty(reportTplNodeRef, ReportModel.PROP_REPORT_TPL_IS_DEFAULT))) {
 					defaultReportTplNodeRef = reportTplNodeRef;
 				} else if (name.contains("report PF 2")) {
 					otherReportTplNodeRef = reportTplNodeRef;
@@ -174,10 +176,10 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 
 			checkReportNames(defaultReportTplNodeRef, otherReportTplNodeRef, reportNodeRefs2);
 			return null;
-		}, false, true);
+		});
 
 		// Test datalist modified
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			FinishedProductData pfData = (FinishedProductData) alfrescoRepository.findOne(pfNodeRef);
 			NodeRef nodeRef = pfData.getAllergenList().get(0).getNodeRef();
@@ -186,12 +188,12 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 			nodeService.setProperty(nodeRef, PLMModel.PROP_ALLERGENLIST_VOLUNTARY, true);
 
 			return null;
-		}, false, true);
+		});
 
 		assertFalse(entityReportService.shouldGenerateReport(pfNodeRef, null));
 
 		// Test datalist modified
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			FinishedProductData pfData = (FinishedProductData) alfrescoRepository.findOne(pfNodeRef);
 			NodeRef nodeRef = pfData.getAllergenList().get(0).getNodeRef();
 			// change something
@@ -199,28 +201,29 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 
 			return null;
 
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			assertTrue(entityReportService.shouldGenerateReport(pfNodeRef, null));
 			return null;
 
-		}, false, true);
+		});
 		// Delete report tpl -> report should be deleted
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			logger.info("Delete report Tpl");
 			nodeService.setProperty(otherReportTplNodeRef, ReportModel.PROP_REPORT_TPL_IS_DISABLED, true);
 			return null;
 
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			entityReportService.generateReports(pfNodeRef);
 
 			// check report Tpl
-			List<NodeRef> reportTplNodeRefs = reportTplService.getSystemReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT);
+			List<NodeRef> reportTplNodeRefs = reportTplService.getSystemReportTemplates(ReportType.Document,
+					PLMModel.TYPE_FINISHEDPRODUCT);
 			assertEquals("check system templates", 4, reportTplNodeRefs.size());
 
 			// check other report is deleted
@@ -240,19 +243,26 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 
 			return null;
 
-		}, false, true);
+		});
 
 	}
 
-	private void checkReportNames(NodeRef defaultReportTplNodeRef, NodeRef otherReportTplNodeRef, List<NodeRef> reportNodeRefs) {
+	private void checkReportNames(NodeRef defaultReportTplNodeRef, NodeRef otherReportTplNodeRef,
+			List<NodeRef> reportNodeRefs) {
 
-		String defaultReportName = String.format("%s - %s", nodeService.getProperty(pfNodeRef, ContentModel.PROP_NAME),
-				nodeService.getProperty(defaultReportTplNodeRef, ContentModel.PROP_NAME)).replace(RepoConsts.REPORT_EXTENSION_BIRT,
-						((String) nodeService.getProperty(defaultReportTplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT)).toLowerCase());
+		String defaultReportName = String
+				.format("%s - %s", nodeService.getProperty(pfNodeRef, ContentModel.PROP_NAME),
+						nodeService.getProperty(defaultReportTplNodeRef, ContentModel.PROP_NAME))
+				.replace(RepoConsts.REPORT_EXTENSION_BIRT,
+						((String) nodeService.getProperty(defaultReportTplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT))
+								.toLowerCase());
 
-		String otherReportName = String.format("%s - %s", nodeService.getProperty(pfNodeRef, ContentModel.PROP_NAME),
-				nodeService.getProperty(otherReportTplNodeRef, ContentModel.PROP_NAME)).replace(RepoConsts.REPORT_EXTENSION_BIRT,
-						((String) nodeService.getProperty(otherReportTplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT)).toLowerCase());
+		String otherReportName = String
+				.format("%s - %s", nodeService.getProperty(pfNodeRef, ContentModel.PROP_NAME),
+						nodeService.getProperty(otherReportTplNodeRef, ContentModel.PROP_NAME))
+				.replace(RepoConsts.REPORT_EXTENSION_BIRT,
+						((String) nodeService.getProperty(otherReportTplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT))
+								.toLowerCase());
 
 		int checks = 0;
 		for (NodeRef reportNodeRef : reportNodeRefs) {
@@ -271,33 +281,34 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 	/**
 	 * Test get product system report templates.
 	 *
-	 * @throws InterruptedException
-	 *             the interrupted exception
+	 * @throws InterruptedException the interrupted exception
 	 */
 	@Test
 	public void testGetProductSystemReportTemplates() {
 
 		initReports();
-		
-		String userReportTpl = "user tpl "+(new Date().getTime());
-		String userReportTpl2 = "user tpl 2"+(new Date().getTime());
-		
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-			for(NodeRef tmpRef : reportTplService.getUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "user*")) {
+		String userReportTpl = "user tpl " + (new Date().getTime());
+		String userReportTpl2 = "user tpl 2" + (new Date().getTime());
+
+		inWriteTx(() -> {
+
+			for (NodeRef tmpRef : reportTplService.getUserReportTemplates(ReportType.Document,
+					PLMModel.TYPE_FINISHEDPRODUCT, "user*")) {
 				nodeService.setProperty(tmpRef, ReportModel.PROP_REPORT_TPL_IS_DISABLED, true);
 			}
 			return null;
 
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
-			NodeRef systemFolder = repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM,
-					TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
+			NodeRef systemFolder = repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(),
+					RepoConsts.PATH_SYSTEM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
 			NodeRef reportsFolder = repoService.getOrCreateFolderByPath(systemFolder, RepoConsts.PATH_REPORTS,
 					TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS));
-			productReportTplFolder = repoService.getOrCreateFolderByPath(reportsFolder, PlmRepoConsts.PATH_PRODUCT_REPORTTEMPLATES,
+			productReportTplFolder = repoService.getOrCreateFolderByPath(reportsFolder,
+					PlmRepoConsts.PATH_PRODUCT_REPORTTEMPLATES,
 					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_PRODUCT_REPORTTEMPLATES));
 
 			// create PF
@@ -313,67 +324,63 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 			pfNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), pfData).getNodeRef();
 
 			QName typeQName = nodeService.getType(pfNodeRef);
-			assertEquals("check system templates", 5, reportTplService.getSystemReportTemplates(ReportType.Document, typeQName).size());
+			assertEquals("check system templates", 5,
+					reportTplService.getSystemReportTemplates(ReportType.Document, typeQName).size());
 
-			
-			
 			ReportTplInformation reportTplInformation = new ReportTplInformation();
 			reportTplInformation.setReportType(ReportType.Document);
 			reportTplInformation.setReportFormat(ReportFormat.PDF);
-			reportTplInformation.setNodeType( PLMModel.TYPE_FINISHEDPRODUCT);
+			reportTplInformation.setNodeType(PLMModel.TYPE_FINISHEDPRODUCT);
 			reportTplInformation.setDefaultTpl(true);
 			reportTplInformation.setSystemTpl(false);
-			
+
 			// add a user template
-			reportTplService.createTplRptDesign(productReportTplFolder, userReportTpl, "beCPG/birt/document/product/default/ProductReport.rptdesign",
-					reportTplInformation, true);
+			reportTplService.createTplRptDesign(productReportTplFolder, userReportTpl,
+					"beCPG/birt/document/product/default/ProductReport.rptdesign", reportTplInformation, true);
 
 			return null;
 
-		}, false, true);
+		});
 
 		waitForSolr();
 
+		final NodeRef userTpl2NodeRef = inWriteTx(() -> {
 
-		final NodeRef userTpl2NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-
-			assertEquals("check user templates", 1,
-					reportTplService.getUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, userReportTpl).size());
+			assertEquals("check user templates", 1, reportTplService
+					.getUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, userReportTpl).size());
 
 			ReportTplInformation reportTplInformation = new ReportTplInformation();
 			reportTplInformation.setReportType(ReportType.Document);
 			reportTplInformation.setReportFormat(ReportFormat.PDF);
-			reportTplInformation.setNodeType( PLMModel.TYPE_FINISHEDPRODUCT);
+			reportTplInformation.setNodeType(PLMModel.TYPE_FINISHEDPRODUCT);
 			reportTplInformation.setDefaultTpl(false);
 			reportTplInformation.setSystemTpl(false);
-			
+
 			// add a user template
 			return reportTplService.createTplRptDesign(productReportTplFolder, userReportTpl2,
-					"beCPG/birt/document/product/default/ProductReport.rptdesign",reportTplInformation, true);
+					"beCPG/birt/document/product/default/ProductReport.rptdesign", reportTplInformation, true);
 
-		}, false, true);
+		});
 
 		waitForSolr();
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
-			assertEquals("check user templates",2,
-					reportTplService.getUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "u*").size());
-			assertEquals("check user templates",2,
-					reportTplService.getUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "user*").size());
-			assertEquals("check user templates",2,
-					reportTplService.getUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "user tpl 2").size());
-			
-			assertEquals("check user templates", 1,
-					reportTplService.getUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "\""+userReportTpl2+"\"").size());
-			assertEquals("check user templates", userTpl2NodeRef,
-					reportTplService.getUserReportTemplate(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, userReportTpl2));
+			assertEquals("check user templates", 2, reportTplService
+					.getUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "u*").size());
+			assertEquals("check user templates", 2, reportTplService
+					.getUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "user*").size());
+			assertEquals("check user templates", 2, reportTplService
+					.getUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "user tpl 2").size());
+
+			assertEquals("check user templates", 1, reportTplService.getUserReportTemplates(ReportType.Document,
+					PLMModel.TYPE_FINISHEDPRODUCT, "\"" + userReportTpl2 + "\"").size());
+			assertEquals("check user templates", userTpl2NodeRef, reportTplService
+					.getUserReportTemplate(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, userReportTpl2));
 
 			return null;
 
-		}, false, true);
-		
-		
+		});
 
 	}
 }

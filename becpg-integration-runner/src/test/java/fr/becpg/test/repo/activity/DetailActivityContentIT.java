@@ -38,10 +38,10 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 
 	@Autowired
 	protected AlfrescoRepository<RepositoryEntity> alfrescoRepository;
-	
+
 	@Autowired
 	protected BeCPGAuditService beCPGAuditService;
-	
+
 	@Autowired
 	protected AlfrescoRepository<ClientData> clientRepository;
 
@@ -57,18 +57,17 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 
 	protected List<ActivityListDataItem> getActivities(NodeRef entityNodeRef, Map<String, Boolean> sortMap) {
 		AuditQuery auditFilter = AuditQuery.createQuery().asc(false).dbAsc(false)
-				.sortBy(ActivityAuditPlugin.PROP_CM_CREATED).filter(ActivityAuditPlugin.ENTITY_NODEREF, entityNodeRef.toString());
+				.sortBy(ActivityAuditPlugin.PROP_CM_CREATED)
+				.filter(ActivityAuditPlugin.ENTITY_NODEREF, entityNodeRef.toString());
 
-		return transactionService.getRetryingTransactionHelper().doInTransaction(
-				() -> beCPGAuditService.listAuditEntries(AuditType.ACTIVITY, auditFilter).stream()
-						.map(json -> AuditActivityHelper.parseActivity(json)).collect(Collectors.toList()),
-				false, true);
+		return inWriteTx(() -> beCPGAuditService.listAuditEntries(AuditType.ACTIVITY, auditFilter).stream()
+				.map(json -> AuditActivityHelper.parseActivity(json)).collect(Collectors.toList()));
 
 	}
 
 	private NodeRef createFinishedProduct() {
 		// Create finished composite product with ActivityList
-		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		return inWriteTx(() -> {
 			// Create product
 			FinishedProductData productData = new FinishedProductData();
 			productData.setParentNodeRef(getTestFolderNodeRef());
@@ -83,7 +82,7 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 
 			return productData.getNodeRef();
 
-		}, false, true);
+		});
 	}
 
 	@Test
@@ -113,8 +112,10 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 			if (data.getJSONArray("properties") != null && data.getJSONArray("properties").length() > 0) {
 				JSONObject dataProp = data.getJSONArray("properties").getJSONObject(0);
 				if (dataProp != null) {
-					assertEquals("Check erpCode before modification", "[\"11111\"]", dataProp.getJSONArray("before").toString());
-					assertEquals("Check erpCode after modification", "[\"22222\"]", dataProp.getJSONArray("after").toString());
+					assertEquals("Check erpCode before modification", "[\"11111\"]",
+							dataProp.getJSONArray("before").toString());
+					assertEquals("Check erpCode after modification", "[\"22222\"]",
+							dataProp.getJSONArray("after").toString());
 				}
 			}
 
@@ -134,7 +135,7 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 		assertEquals("Check if No Activity", 1, getActivities(finishedProductNodeRef, null).size());
 
 		// Add Client to product
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			ClientData client1 = new ClientData();
 			client1.setName("Client1");
 			client1 = clientRepository.create(getTestFolderNodeRef(), client1);
@@ -142,28 +143,30 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 			clients.add(client1.getNodeRef());
 			nodeService.setAssociations(finishedProductNodeRef, PLMModel.ASSOC_CLIENTS, clients);
 			return client1.getNodeRef();
-		}, false, true);
+		});
 
 		// Check if an activity has been created
 		assertEquals("Activity 2: Create client association", 2, getActivities(finishedProductNodeRef, null).size());
 
 		// Change client of finished product
-		NodeRef client2NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef client2NodeRef = inWriteTx(() -> {
 			ClientData client2 = new ClientData();
 			client2.setName("Client2");
 			client2 = clientRepository.create(getTestFolderNodeRef(), client2);
 			List<NodeRef> clients2 = new ArrayList<NodeRef>();
 			clients2.add(client2.getNodeRef());
 
-			List<AssociationRef> clientAssocs = nodeService.getTargetAssocs(finishedProductNodeRef,  PLMModel.ASSOC_CLIENTS);
-			for(AssociationRef clientAssoc : clientAssocs) {
-				nodeService.removeAssociation(clientAssoc.getSourceRef(), clientAssoc.getTargetRef(), PLMModel.ASSOC_CLIENTS);
+			List<AssociationRef> clientAssocs = nodeService.getTargetAssocs(finishedProductNodeRef,
+					PLMModel.ASSOC_CLIENTS);
+			for (AssociationRef clientAssoc : clientAssocs) {
+				nodeService.removeAssociation(clientAssoc.getSourceRef(), clientAssoc.getTargetRef(),
+						PLMModel.ASSOC_CLIENTS);
 			}
 
 			nodeService.setAssociations(finishedProductNodeRef, PLMModel.ASSOC_CLIENTS, clients2);
 			return client2.getNodeRef();
-		}, false, true);
-		
+		});
+
 		assertEquals("Activity 2: Modify client association", 2, getActivities(finishedProductNodeRef, null).size());
 
 		// Check activity data
@@ -176,9 +179,11 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 			if (data.getJSONArray("properties") != null && data.getJSONArray("properties").length() > 0) {
 				JSONObject dataProp = data.getJSONArray("properties").getJSONObject(0);
 				if (dataProp != null) {
-					assertEquals("Check client title modification", PLMModel.ASSOC_CLIENTS.toString(), dataProp.getString("title"));
-					assertEquals("Check client before modification", "[]" ,dataProp.getJSONArray("before").toString());
-					assertEquals("Check client after modification", "[\"("+client2NodeRef+", Client2)\"]",dataProp.getJSONArray("after").toString());
+					assertEquals("Check client title modification", PLMModel.ASSOC_CLIENTS.toString(),
+							dataProp.getString("title"));
+					assertEquals("Check client before modification", "[]", dataProp.getJSONArray("before").toString());
+					assertEquals("Check client after modification", "[\"(" + client2NodeRef + ", Client2)\"]",
+							dataProp.getJSONArray("after").toString());
 				}
 			}
 
@@ -191,37 +196,44 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 	@Test
 	public void checkEntityDatalistActivityTest() {
 
-		final NodeRef lSF1NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef lSF1NodeRef = inWriteTx(() -> {
 			LocalSemiFinishedProductData lSF1 = new LocalSemiFinishedProductData();
-			lSF1.setName("Local semi finished 1"); 
+			lSF1.setName("Local semi finished 1");
 			return alfrescoRepository.create(getTestFolderNodeRef(), lSF1).getNodeRef();
-		}, false, true);
+		});
 
 		final NodeRef finishedProductNodeRef = createFinishedProduct();
 
 		assertEquals("Check create Activity", 1, getActivities(finishedProductNodeRef, null).size());
 
-		//Add composition to product
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			List<CompoListDataItem> compoList = new ArrayList<>(); 
-			compoList.add(new CompoListDataItem(null, null, 1d, 1d, ProductUnit.P, 0d, DeclarationType.Declare, lSF1NodeRef));
-			FinishedProductData finishedProduct = ((FinishedProductData)alfrescoRepository.findOne(finishedProductNodeRef));
+		// Add composition to product
+		inWriteTx(() -> {
+			List<CompoListDataItem> compoList = new ArrayList<>();
+			/*
+			 * compoList.add( new CompoListDataItem(null, null, 1d, 1d, ProductUnit.P, 0d,
+			 * DeclarationType.Declare, lSF1NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQty(1d).withQtyUsed(1d).withUnit(ProductUnit.P).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(lSF1NodeRef));
+			FinishedProductData finishedProduct = ((FinishedProductData) alfrescoRepository
+					.findOne(finishedProductNodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			alfrescoRepository.save(finishedProduct);
 			return null;
-		}, false, true);
+		});
 
-		assertEquals("Check add compoList item", 2, getActivities(finishedProductNodeRef, null).size()); 
+		assertEquals("Check add compoList item", 2, getActivities(finishedProductNodeRef, null).size());
 
-		//Change composition qty
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			FinishedProductData finishedProduct = ((FinishedProductData)alfrescoRepository.findOne(finishedProductNodeRef));
+		// Change composition qty
+		inWriteTx(() -> {
+			FinishedProductData finishedProduct = ((FinishedProductData) alfrescoRepository
+					.findOne(finishedProductNodeRef));
 			finishedProduct.getCompoListView().getCompoList().get(0).setQty(2d);
 			alfrescoRepository.save(finishedProduct);
 			return null;
-		}, false, true);
-		
-		assertEquals("Check update compoList item ", 3, getActivities(finishedProductNodeRef, null).size()); 
+		});
+
+		assertEquals("Check update compoList item ", 3, getActivities(finishedProductNodeRef, null).size());
 
 		// Check activity data
 		ActivityListDataItem activity = getActivities(finishedProductNodeRef, null).get(0);
@@ -233,7 +245,7 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 			if (data.getJSONArray("properties") != null && data.getJSONArray("properties").length() > 0) {
 				JSONObject dataProp = data.getJSONArray("properties").getJSONObject(0);
 				if (dataProp != null) {
-					assertEquals("Check compo qty modification", "[1]",dataProp.getJSONArray("before").toString());
+					assertEquals("Check compo qty modification", "[1]", dataProp.getJSONArray("before").toString());
 					assertEquals("Check compo qty modification", "[2]", dataProp.getJSONArray("after").toString());
 				}
 			}
@@ -243,6 +255,5 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 			fail("Error activity data for property change :" + err.getMessage());
 		}
 	}
-
 
 }

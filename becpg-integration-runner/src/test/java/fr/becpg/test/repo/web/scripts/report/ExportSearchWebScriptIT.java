@@ -99,7 +99,8 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 		assertNotNull("Check reports folder", reportsFolder);
 
 		// export search report
-		NodeRef exportSearchNodeRef = repoService.getOrCreateFolderByPath(reportsFolder, RepoConsts.PATH_REPORTS_EXPORT_SEARCH,
+		NodeRef exportSearchNodeRef = repoService.getOrCreateFolderByPath(reportsFolder,
+				RepoConsts.PATH_REPORTS_EXPORT_SEARCH,
 				TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_EXPORT_SEARCH));
 		NodeRef exportSearchProductsNodeRef = repoService.getOrCreateFolderByPath(exportSearchNodeRef,
 				PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_PRODUCTS,
@@ -113,8 +114,8 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 		reportTplInformation.setSystemTpl(false);
 
 		exportProductReportTpl = reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
-				TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_PRODUCTS), EXPORT_PRODUCTS_REPORT_RPTFILE_PATH,
-				reportTplInformation, true);
+				TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_PRODUCTS),
+				EXPORT_PRODUCTS_REPORT_RPTFILE_PATH, reportTplInformation, true);
 
 		reportTplService.createTplRessource(exportSearchProductsNodeRef, EXPORT_PRODUCTS_REPORT_XMLFILE_PATH, false);
 	}
@@ -122,8 +123,7 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 	/**
 	 * Adds the product image.
 	 *
-	 * @param parentNodeRef
-	 *            the parent node ref
+	 * @param parentNodeRef the parent node ref
 	 * @throws IOException
 	 * @throws ContentIOException
 	 */
@@ -138,9 +138,12 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 		logger.debug("image name: " + imageName);
 		Map<QName, Serializable> properties = new HashMap<>();
 		properties.put(ContentModel.PROP_NAME, imageName);
-		NodeRef imageNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
-				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_CONTENT,
-				properties).getChildRef();
+		NodeRef imageNodeRef = nodeService
+				.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
+						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+								(String) properties.get(ContentModel.PROP_NAME)),
+						ContentModel.TYPE_CONTENT, properties)
+				.getChildRef();
 
 		ContentWriter writer = contentService.getWriter(imageNodeRef, ContentModel.PROP_CONTENT, true);
 
@@ -168,15 +171,15 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 		// CompareProductServiceTest => beaucoup de code en commun !
 		// init objects
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			// Create comparison product report
 			initTests();
 			return null;
 
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			/*-- Create raw materials --*/
 			logger.debug("/*-- Create raw materials --*/");
@@ -224,11 +227,11 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 
 			return null;
 
-		}, false, true);
+		});
 
 		waitForSolr();
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			logger.debug("createRawMaterial 1");
 
@@ -246,7 +249,8 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 			// create an MP for the allergens
 			RawMaterialData allergenRawMaterial = new RawMaterialData();
 			allergenRawMaterial.setName("MP allergen");
-			NodeRef allergenRawMaterialNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), allergenRawMaterial).getNodeRef();
+			NodeRef allergenRawMaterialNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), allergenRawMaterial)
+					.getNodeRef();
 
 			// Allergens
 			List<AllergenListDataItem> allergenList = new ArrayList<>();
@@ -254,18 +258,46 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 				List<NodeRef> voluntarySources = new ArrayList<>();
 				voluntarySources.add(allergenRawMaterialNodeRef);
 
-				AllergenListDataItem allergenListItemData1 = new AllergenListDataItem(null, null, true, false, voluntarySources, null, allergen,
-						false);
+				AllergenListDataItem allergenListItemData1 = new AllergenListDataItem(null, null, true, false,
+						voluntarySources, null, allergen, false);
 				allergenList.add(allergenListItemData1);
 			}
 			fp1.setAllergenList(allergenList);
 
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, 1d, 0d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), 1d, 0d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), 2d, 0d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-			compoList.add(new CompoListDataItem(null, null, 1d, 0d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(3), 3d, 0d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, 1d, 0d, ProductUnit.kg, 0d,
+			 * DeclarationType.Detail, localSF1NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQty(1d).withQtyUsed(0d).withUnit(ProductUnit.kg)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(localSF1NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, compoList.get(0), 1d, 0d,
+			 * ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQty(1d).withQtyUsed(0d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare)
+					.withProduct(rawMaterial1NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, compoList.get(0), 2d, 0d,
+			 * ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQty(2d).withQtyUsed(0d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail)
+					.withProduct(rawMaterial2NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, 1d, 0d, ProductUnit.kg, 0d,
+			 * DeclarationType.Detail, localSF2NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQty(1d).withQtyUsed(0d).withUnit(ProductUnit.kg)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(localSF2NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, compoList.get(3), 3d, 0d,
+			 * ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQty(3d).withQtyUsed(0d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare)
+					.withProduct(rawMaterial3NodeRef));
 			fp1.getCompoListView().setCompoList(compoList);
 
 			alfrescoRepository.create(getTestFolderNodeRef(), fp1).getNodeRef();
@@ -291,9 +323,11 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 				AllergenListDataItem allergenListItemData2;
 
 				if (j < 5) {
-					allergenListItemData2 = new AllergenListDataItem(null, null, true, false, allSources, null, allergens.get(j), false);
+					allergenListItemData2 = new AllergenListDataItem(null, null, true, false, allSources, null,
+							allergens.get(j), false);
 				} else {
-					allergenListItemData2 = new AllergenListDataItem(null, null, false, true, null, allSources, allergens.get(j), false);
+					allergenListItemData2 = new AllergenListDataItem(null, null, false, true, null, allSources,
+							allergens.get(j), false);
 				}
 
 				allergenList.add(allergenListItemData2);
@@ -301,30 +335,66 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 			fp2.setAllergenList(allergenList);
 
 			compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, 1d, 0d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), 2d, 0d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), 2d, 0d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-			compoList.add(new CompoListDataItem(null, null, 1d, 0d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(3), 2d, 0d, ProductUnit.P, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(3), 3d, 0d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial4NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, 1d, 0d, ProductUnit.kg, 0d,
+			 * DeclarationType.Detail, localSF1NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQty(1d).withQtyUsed(0d).withUnit(ProductUnit.kg)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(localSF1NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, compoList.get(0), 2d, 0d,
+			 * ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQty(2d).withQtyUsed(0d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare)
+					.withProduct(rawMaterial1NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, compoList.get(0), 2d, 0d,
+			 * ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQty(2d).withQtyUsed(0d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail)
+					.withProduct(rawMaterial2NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, 1d, 0d, ProductUnit.kg, 0d,
+			 * DeclarationType.Detail, localSF2NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQty(1d).withQtyUsed(0d).withUnit(ProductUnit.kg)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(localSF2NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, compoList.get(3), 2d, 0d,
+			 * ProductUnit.P, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQty(2d).withQtyUsed(0d)
+					.withUnit(ProductUnit.P).withLossPerc(0d).withDeclarationType(DeclarationType.Declare)
+					.withProduct(rawMaterial3NodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, compoList.get(3), 3d, 0d,
+			 * ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial4NodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQty(3d).withQtyUsed(0d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail)
+					.withProduct(rawMaterial4NodeRef));
+
 			fp2.getCompoListView().setCompoList(compoList);
 
 			alfrescoRepository.create(getTestFolderNodeRef(), fp2).getNodeRef();
 
 			/*-- Create images folder --*/
-			NodeRef imagesNodeRef = fileFolderService
-					.create(getTestFolderNodeRef(), TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES), ContentModel.TYPE_FOLDER).getNodeRef();
+			NodeRef imagesNodeRef = fileFolderService.create(getTestFolderNodeRef(),
+					TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES), ContentModel.TYPE_FOLDER).getNodeRef();
 			addProductImage(imagesNodeRef);
 
 			return null;
 
-		}, false, true);
+		});
 
 		waitForSolr();
 		// search on date range
 		try {
 
-			String url = "/becpg/report/exportsearch/" + exportProductReportTpl.toString().replace("://", "/") + "/Excel.xlsx?repo=true&term=&query="
+			String url = "/becpg/report/exportsearch/" + exportProductReportTpl.toString().replace("://", "/")
+					+ "/Excel.xlsx?repo=true&term=&query="
 					+ URLEncoder.encode(
 							"{\"prop_cm_name\":\"\",\"prop_bcpg_legalName\":\"\",\"prop_bcpg_productHierarchy1\":\"\",\"prop_bcpg_productHierarchy2\":\"\",\"prop_bcpg_productState\":\"\",\"prop_bcpg_productCode\":\"\",\"prop_bcpg_eanCode\":\"\",\"assoc_bcpg_supplierAssoc\":\"\",\"assoc_bcpg_supplierAssoc_added\":\"\",\"assoc_bcpg_supplierAssoc_removed\":\"\",\"prop_cm_modified-date-range\":\"2011-04-17T00:00:00%2B02:00|2011-05-23T00:00:00%2B02:00\",\"prop_cm_modifier\":\"\",\"assoc_bcpg_ingListIng\":\"\",\"assoc_bcpg_ingListIng_added\":\"\",\"assoc_bcpg_ingListIng_removed\":\"\",\"assoc_bcpg_ingListGeoOrigin\":\"\",\"assoc_bcpg_ingListGeoOrigin_added\":\"\",\"assoc_bcpg_ingListGeoOrigin_removed\":\"\",\"assoc_bcpg_ingListBioOrigin\":\"\",\"assoc_bcpg_ingListBioOrigin_added\":\"\",\"assoc_bcpg_ingListBioOrigin_removed\":\"\",\"datatype\":\"bcpg:product\"}",
 							StandardCharsets.UTF_8.toString());
@@ -341,7 +411,8 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 		// search on cm:name
 		try {
 
-			String url = "/becpg/report/exportsearch/" + exportProductReportTpl.toString().replace("://", "/") + "/Excel.xlsx?repo=true&term=&query="
+			String url = "/becpg/report/exportsearch/" + exportProductReportTpl.toString().replace("://", "/")
+					+ "/Excel.xlsx?repo=true&term=&query="
 					+ URLEncoder.encode(
 							"{\"prop_cm_name\":\"FP\",\"prop_cm_title\":\"\",\"prop_cm_description\":\"\",\"prop_mimetype\":\"\",\"prop_cm_modified-date-range\":\"\",\"prop_cm_modifier\":\"\",\"datatype\":\"cm:content\"}",
 							StandardCharsets.UTF_8.toString());
@@ -362,22 +433,23 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 	@Test
 	public void testGetExportSearchTpls() {
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			// Create product report
 			initTests();
 
 			return null;
 
-		}, false, true);
+		});
 
 		waitForSolr();
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			// List<NodeRef> reportTpls =
 			// exportSearchService.getReportTpls();
-			List<NodeRef> reportTpls = reportTplService.getUserReportTemplates(ReportType.ExportSearch, PLMModel.TYPE_PRODUCT, "*");
+			List<NodeRef> reportTpls = reportTplService.getUserReportTemplates(ReportType.ExportSearch,
+					PLMModel.TYPE_PRODUCT, "*");
 
 			for (NodeRef n : reportTpls) {
 				logger.debug("report name: " + nodeService.getProperty(n, ContentModel.PROP_NAME));
@@ -388,7 +460,7 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 
 			return null;
 
-		}, false, true);
+		});
 
 		try {
 

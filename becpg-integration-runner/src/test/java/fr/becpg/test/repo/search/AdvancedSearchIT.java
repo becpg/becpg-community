@@ -42,7 +42,7 @@ public class AdvancedSearchIT extends PLMBaseTestCase {
 	@Test
 	public void testAdvancedSearch() {
 
-		NodeRef raw10 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef raw10 = inWriteTx(() -> {
 
 			NodeRef result = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP search test 1");
 
@@ -54,9 +54,9 @@ public class AdvancedSearchIT extends PLMBaseTestCase {
 
 			return result;
 
-		}, false, true);
+		});
 
-		NodeRef raw20 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef raw20 = inWriteTx(() -> {
 
 			NodeRef result = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP search test 2");
 
@@ -68,9 +68,9 @@ public class AdvancedSearchIT extends PLMBaseTestCase {
 
 			return result;
 
-		}, false, true);
+		});
 
-		NodeRef raw30 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef raw30 = inWriteTx(() -> {
 
 			NodeRef result = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP search test 3");
 
@@ -82,9 +82,9 @@ public class AdvancedSearchIT extends PLMBaseTestCase {
 
 			return result;
 
-		}, false, true);
+		});
 
-		NodeRef cost0NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef cost0NodeRef = inWriteTx(() -> {
 
 			NodeRef result = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP search test 4");
 
@@ -92,11 +92,11 @@ public class AdvancedSearchIT extends PLMBaseTestCase {
 
 			return rawMaterial.getCostList().get(0).getCost();
 
-		}, false, true);
+		});
 
 		waitForSolr();
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			String query = "{\"assoc_bcpg_costListCost_added\":\"" + cost0NodeRef.toString()
 					+ "\",\"prop_bcpg_costListValue-range\":\"9.1|11.2\",\"datatype\":\"bcpg:rawMaterial\"}";
@@ -144,11 +144,12 @@ public class AdvancedSearchIT extends PLMBaseTestCase {
 
 			return true;
 
-		}, false, true);
+		});
 
 	}
 
-	private List<NodeRef> queryAdvancedSearch(String query) throws InvalidQNameException, NamespaceException, JSONException {
+	private List<NodeRef> queryAdvancedSearch(String query)
+			throws InvalidQNameException, NamespaceException, JSONException {
 		QName datatype = null;
 		Map<String, String> criteriaMap = null;
 

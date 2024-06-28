@@ -45,7 +45,7 @@ public class RemoteEntityWebScriptIT extends RepoBaseTestCase {
 	@Test
 	public void testCRUDEntity() throws Exception {
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			NodeRef nodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(),
 					"/app:company_home/cm:Exchange/cm:Import/cm:ImportToDo/cm:Abricot_x002c__x0020_nectar_x002c__x0020_pasteurisé");
@@ -54,7 +54,7 @@ public class RemoteEntityWebScriptIT extends RepoBaseTestCase {
 			}
 
 			return null;
-		}, false, true);
+		});
 
 		// Call webscript on raw material
 		String url = "/becpg/remote/entity";
@@ -62,10 +62,10 @@ public class RemoteEntityWebScriptIT extends RepoBaseTestCase {
 		Resource res = new ClassPathResource("beCPG/remote/entity.xml");
 		Resource data = new ClassPathResource("beCPG/remote/data.xml");
 
-		final NodeRef nodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef nodeRef = inWriteTx(() -> {
 
-			Response response = TestWebscriptExecuters
-					.sendRequest(new PutRequest(url, convertStreamToString(res.getInputStream()), "application/xml"), 200, "admin");
+			Response response = TestWebscriptExecuters.sendRequest(
+					new PutRequest(url, convertStreamToString(res.getInputStream()), "application/xml"), 200, "admin");
 			logger.info("Resp : " + response.getContentAsString());
 
 			NodeRef ret = parseNodeRef(response.getContentAsString());
@@ -80,14 +80,13 @@ public class RemoteEntityWebScriptIT extends RepoBaseTestCase {
 			Assert.assertEquals(0, fileFolderService.list(imageNodeRef).size());
 
 			return ret;
-		}, false, true);
+		});
 		// create product
-		final NodeRef sfNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> entityService.createDefaultImage(nodeRef),
-				false, true);
+		final NodeRef sfNodeRef = inWriteTx(() -> entityService.createDefaultImage(nodeRef));
 
-		Response response = TestWebscriptExecuters.sendRequest(
-				new PostRequest(url + "/data?nodeRef=" + sfNodeRef.toString(), convertStreamToString(data.getInputStream()), "application/xml"), 200,
-				"admin");
+		Response response = TestWebscriptExecuters
+				.sendRequest(new PostRequest(url + "/data?nodeRef=" + sfNodeRef.toString(),
+						convertStreamToString(data.getInputStream()), "application/xml"), 200, "admin");
 		logger.info("Resp : " + response.getContentAsString());
 
 		for (FileInfo file : fileFolderService.list(nodeRef)) {
@@ -99,11 +98,11 @@ public class RemoteEntityWebScriptIT extends RepoBaseTestCase {
 
 		Assert.assertEquals(1, fileFolderService.list(entityService.getImageFolder(nodeRef)).size());
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			nodeService.deleteNode(nodeRef);
 			return null;
-		}, false, true);
+		});
 
 	}
 

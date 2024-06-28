@@ -205,7 +205,6 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 			return finishedProductData2.getNodeRef();
 
 		});
-		
 
 		NodeRef finishedProductData3NodeRef = inWriteTx(() -> {
 
@@ -214,7 +213,8 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 
 			List<DynamicCharactListItem> dynamicCharactListItems = new ArrayList<>();
 			// Product
-			dynamicCharactListItems.add(new DynamicCharactListItem("Sync method", "@beCPG.copy(@beCPG.findOne(\"" + finishedProductData1NodeRef
+			dynamicCharactListItems.add(new DynamicCharactListItem("Sync method", "@beCPG.copy(@beCPG.findOne(\""
+					+ finishedProductData1NodeRef
 					+ "\"),{\"bcpg:suppliers\",\"bcpg:legalName\",\"bcpg:clients\" },{\"bcpg:costList\",\"bcpg:compoList|true\"})"));
 
 			finishedProductData2.getCompoListView().setDynamicCharactList(dynamicCharactListItems);
@@ -224,19 +224,20 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 
 		});
 
-
 		inWriteTx(() -> {
 
-			FinishedProductData finishedProductData2 = (FinishedProductData) alfrescoRepository.findOne(finishedProductData2NodeRef);
-			FinishedProductData finishedProductData1 = (FinishedProductData) alfrescoRepository.findOne(finishedProductData1NodeRef);
-			FinishedProductData finishedProductData3 = (FinishedProductData) alfrescoRepository.findOne(finishedProductData3NodeRef);
-			
+			FinishedProductData finishedProductData2 = (FinishedProductData) alfrescoRepository
+					.findOne(finishedProductData2NodeRef);
+			FinishedProductData finishedProductData1 = (FinishedProductData) alfrescoRepository
+					.findOne(finishedProductData1NodeRef);
+			FinishedProductData finishedProductData3 = (FinishedProductData) alfrescoRepository
+					.findOne(finishedProductData3NodeRef);
 
 			assertEquals(2, finishedProductData1.getSuppliers().size());
 			assertEquals("Client 1", finishedProductData1.getClients().get(0).getName());
 
 			productService.formulate(finishedProductData2);
-			
+
 			productService.formulate(finishedProductData3);
 
 			logger.debug(finishedProductData2.toString());
@@ -246,10 +247,10 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 			assertEquals(1, finishedProductData2.getCostList().size());
 			assertEquals(2, finishedProductData2.getCompoList().size());
 			assertEquals(1, finishedProductData2.getCompoListView().getDynamicCharactList().size());
-			
+
 			assertEquals(2, finishedProductData3.getCompoList().size());
 			assertEquals(1, finishedProductData3.getCompoListView().getDynamicCharactList().size());
-			
+
 			assertEquals("Client 1", finishedProductData2.getClients().get(0).getName());
 			assertEquals(2, finishedProductData2.getSuppliers().size());
 			assertEquals(1, associationService

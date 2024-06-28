@@ -40,12 +40,11 @@ public class ProjectCalculatePlanningDatesIT extends AbstractProjectTestCase {
 		final Date today = ProjectHelper.removeTime(new Date());
 		final Date nextStartDate = ProjectHelper.calculateNextStartDate(today);
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			projectService.formulate(projectNodeRef);
 
 			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
-
 
 			// check initialization
 			assertNotNull(projectData);
@@ -80,18 +79,18 @@ public class ProjectCalculatePlanningDatesIT extends AbstractProjectTestCase {
 			assertEquals(dateFormat.parse("28/11/2012"), projectData.getTaskList().get(2).getEnd());
 
 			return null;
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
-		        	// start project
-				nodeService.setProperty(projectNodeRef, ProjectModel.PROP_PROJECT_STATE, ProjectState.Planned);
-				nodeService.setProperty(projectNodeRef, ProjectModel.PROP_PROJECT_STATE, ProjectState.InProgress);
+			// start project
+			nodeService.setProperty(projectNodeRef, ProjectModel.PROP_PROJECT_STATE, ProjectState.Planned);
+			nodeService.setProperty(projectNodeRef, ProjectModel.PROP_PROJECT_STATE, ProjectState.InProgress);
 
 			return null;
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 
@@ -101,9 +100,9 @@ public class ProjectCalculatePlanningDatesIT extends AbstractProjectTestCase {
 			projectService.submitTask(projectData.getTaskList().get(0).getNodeRef(), "test 1");
 
 			return null;
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			projectService.formulate(projectNodeRef);
 
@@ -118,9 +117,9 @@ public class ProjectCalculatePlanningDatesIT extends AbstractProjectTestCase {
 			projectService.submitTask(projectData.getTaskList().get(1).getNodeRef(), "test 2");
 
 			return null;
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			projectService.formulate(projectNodeRef);
 
@@ -136,9 +135,9 @@ public class ProjectCalculatePlanningDatesIT extends AbstractProjectTestCase {
 			projectService.submitTask(projectData.getTaskList().get(2).getNodeRef(), "test 3");
 
 			return null;
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			projectService.formulate(projectNodeRef);
 
@@ -154,9 +153,9 @@ public class ProjectCalculatePlanningDatesIT extends AbstractProjectTestCase {
 			projectService.submitTask(projectData.getTaskList().get(3).getNodeRef(), "test 4");
 
 			return null;
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			Collection<QName> dataLists = new ArrayList<>();
 			dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
@@ -172,6 +171,6 @@ public class ProjectCalculatePlanningDatesIT extends AbstractProjectTestCase {
 			assertEquals(nextStartDate, projectData.getTaskList().get(4).getStart());
 
 			return null;
-		}, false, true);
+		});
 	}
 }

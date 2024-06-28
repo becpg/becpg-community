@@ -35,9 +35,10 @@ public class ProjectBudgetTasksIT extends AbstractProjectTestCase {
 	@Test
 	public void testCalculatePlanningDates() throws ParseException {
 
-		final NodeRef projectNodeRef = createMultiLevelProject(ProjectState.OnHold, dateFormat.parse("15/11/2012"), null, PlanningMode.Planning);
+		final NodeRef projectNodeRef = createMultiLevelProject(ProjectState.OnHold, dateFormat.parse("15/11/2012"),
+				null, PlanningMode.Planning);
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 			projectData.setExpenseList(new ArrayList<ExpenseListDataItem>());
@@ -159,6 +160,6 @@ public class ProjectBudgetTasksIT extends AbstractProjectTestCase {
 			assertEquals(15d, projectData.getLoggedTime());
 
 			return null;
-		}, false, true);
+		});
 	}
 }
