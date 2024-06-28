@@ -29,7 +29,7 @@ FROM becpg-base-test-core
 
 
 ENV JAVA_HOME=/usr/java/default
-ENV PATH $JAVA_HOME/bin:$PATH
+ENV PATH=$JAVA_HOME/bin:$PATH
 
 
 #Debuging 
