@@ -810,7 +810,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 								policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 								policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ENTITY_BRANCH);
 								policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
-							policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_UNDELETABLE_ASPECT);
+								policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_UNDELETABLE_ASPECT);
 								policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 								policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_VERSIONABLE);
 								policyBehaviourFilter.disableBehaviour(ImapModel.ASPECT_IMAP_CONTENT);
@@ -988,11 +988,6 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 								nodeService.deleteNode(branchNodeRef);
 								
 								
-								/**
-								 * After working copy deletion
-								 */
-								//Fire rules once for entity
-								((RuleService) ruleService).enableRules();
 								
 								nodeService.setProperty(internalBranchToNodeRef, ContentModel.PROP_NAME, finalBranchName);
 								
@@ -1004,6 +999,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 								}
 								
 								nodeService.setProperty(internalBranchToNodeRef, ContentModel.PROP_MODIFIED, new Date());
+								
+								triggerRules(internalBranchToNodeRef);
 								
 								generateReportsAsync(internalBranchToNodeRef);
 								
@@ -1032,6 +1029,19 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 		}
 		return null;
+	}
+
+	private void triggerRules(NodeRef internalBranchToNodeRef) {
+	
+		((RuleService) ruleService).enableRules();
+		//cm:modified is protected so we have to change a non protected properties to trigger rules
+		
+		String code = (String) nodeService.getProperty(internalBranchToNodeRef, BeCPGModel.PROP_CODE);
+		nodeService.setProperty(internalBranchToNodeRef, BeCPGModel.PROP_CODE, "triggerRules");
+		nodeService.setProperty(internalBranchToNodeRef, BeCPGModel.PROP_CODE, code);
+		
+		((RuleService) ruleService).disableRules();
+		
 	}
 
 	private void generateReportsAsync(final NodeRef internalBranchToNodeRef) {
