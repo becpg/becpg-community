@@ -805,10 +805,6 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 							String manualVersionLabelFrom = (String) nodeService.getProperty(branchNodeRef, BeCPGModel.PROP_MANUAL_VERSION_LABEL);
 
-							/**
-							 *
-							  1 - Prepare branch
-							*/
 
 							String finalBranchName = rename ? (String) this.nodeService.getProperty(branchNodeRef, ContentModel.PROP_NAME)
 									: (String) this.nodeService.getProperty(internalBranchToNodeRef, ContentModel.PROP_NAME);
@@ -973,8 +969,6 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 							/**
 							 * After working copy deletion
 							 */
-							//Fire rules once for entity
-							((RuleService) ruleService).enableRules();
 
 							nodeService.setProperty(internalBranchToNodeRef, ContentModel.PROP_NAME, finalBranchName);
 
@@ -987,6 +981,9 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 							nodeService.setProperty(internalBranchToNodeRef, ContentModel.PROP_MODIFIED, new Date());
 
+
+							triggerRules(internalBranchToNodeRef);
+							
 							generateReportsAsync(internalBranchToNodeRef);
 
 							return internalBranchToNodeRef;
@@ -1018,6 +1015,19 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 		}
 		return null;
+	}
+
+	private void triggerRules(NodeRef internalBranchToNodeRef) {
+	
+		((RuleService) ruleService).enableRules();
+		//cm:modified is protected so we have to change a non protected properties to trigger rules
+		
+		String code = (String) nodeService.getProperty(internalBranchToNodeRef, BeCPGModel.PROP_CODE);
+		nodeService.setProperty(internalBranchToNodeRef, BeCPGModel.PROP_CODE, "triggerRules");
+		nodeService.setProperty(internalBranchToNodeRef, BeCPGModel.PROP_CODE, code);
+		
+		((RuleService) ruleService).disableRules();
+		
 	}
 
 	private void generateReportsAsync(final NodeRef internalBranchToNodeRef) {
