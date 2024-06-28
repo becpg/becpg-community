@@ -9,6 +9,7 @@ import org.alfresco.service.cmr.repository.MLText;
 
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
@@ -83,12 +84,12 @@ public class FinishedProductData extends ProductData {
 		setScoreList(scoreList);
 		return this;
 	}
-	
+
 	public FinishedProductData withLabelingRuleList(List<LabelingRuleListDataItem> labelingRuleList) {
 		getLabelingListView().setLabelingRuleList(labelingRuleList);
 		return this;
 	}
-	
+
 	public FinishedProductData addCostList(List<CostListDataItem> costList) {
 		setCostList(costList);
 		return this;

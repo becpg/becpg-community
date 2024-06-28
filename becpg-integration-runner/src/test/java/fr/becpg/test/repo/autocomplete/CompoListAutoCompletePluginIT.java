@@ -43,7 +43,7 @@ public class CompoListAutoCompletePluginIT extends AbstractAutoCompletePluginTes
 
 		waitForSolr();
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			Map<String, Serializable> props = new HashMap<>();
 			props.put(AutoCompleteService.PROP_LOCALE, Locale.FRENCH);
@@ -52,26 +52,30 @@ public class CompoListAutoCompletePluginIT extends AbstractAutoCompletePluginTes
 
 			authenticationComponent.setCurrentUser(BeCPGPLMTestHelper.USER_ONE);
 
-			AutoCompletePage AutoCompletePage = compoListValuePlugin.suggest("compoListParentLevel", "", null, AutoCompleteService.SUGGEST_PAGE_SIZE, props);
+			AutoCompletePage AutoCompletePage = compoListValuePlugin.suggest("compoListParentLevel", "", null,
+					AutoCompleteService.SUGGEST_PAGE_SIZE, props);
 
 			for (AutoCompleteEntry AutoCompleteEntry1 : AutoCompletePage.getResults()) {
-				logger.info("AutoCompleteEntry: " + AutoCompleteEntry1.getName() + " - " + AutoCompleteEntry1.getValue());
+				logger.info(
+						"AutoCompleteEntry: " + AutoCompleteEntry1.getName() + " - " + AutoCompleteEntry1.getValue());
 			}
 
 			assertEquals(1, AutoCompletePage.getResults().size());
 
 			authenticationComponent.setSystemUserAsCurrentUser();
 
-			AutoCompletePage = compoListValuePlugin.suggest("compoListParentLevel", "", null, AutoCompleteService.SUGGEST_PAGE_SIZE, props);
+			AutoCompletePage = compoListValuePlugin.suggest("compoListParentLevel", "", null,
+					AutoCompleteService.SUGGEST_PAGE_SIZE, props);
 
 			for (AutoCompleteEntry AutoCompleteEntry2 : AutoCompletePage.getResults()) {
-				logger.info("AutoCompleteEntry: " + AutoCompleteEntry2.getName() + " - " + AutoCompleteEntry2.getValue());
+				logger.info(
+						"AutoCompleteEntry: " + AutoCompleteEntry2.getName() + " - " + AutoCompleteEntry2.getValue());
 			}
 
 			assertEquals(3, AutoCompletePage.getResults().size());
 
-			AutoCompletePage = compoListValuePlugin.suggest("compoListParentLevel", "Local semi finished 2", null, AutoCompleteService.SUGGEST_PAGE_SIZE,
-					props);
+			AutoCompletePage = compoListValuePlugin.suggest("compoListParentLevel", "Local semi finished 2", null,
+					AutoCompleteService.SUGGEST_PAGE_SIZE, props);
 
 			assertEquals(2, AutoCompletePage.getResults().size());
 
@@ -82,22 +86,24 @@ public class CompoListAutoCompletePluginIT extends AbstractAutoCompletePluginTes
 			extras.put("itemId", finishedProduct.getCompoListView().getCompoList().get(0).getNodeRef().toString());
 			props.put(AutoCompleteService.EXTRA_PARAM, extras);
 
-			AutoCompletePage = compoListValuePlugin.suggest("compoListParentLevel", "", null, AutoCompleteService.SUGGEST_PAGE_SIZE, props);
+			AutoCompletePage = compoListValuePlugin.suggest("compoListParentLevel", "", null,
+					AutoCompleteService.SUGGEST_PAGE_SIZE, props);
 
 			for (AutoCompleteEntry AutoCompleteEntry2 : AutoCompletePage.getResults()) {
-				logger.debug("AutoCompleteEntry: " + AutoCompleteEntry2.getName() + " - " + AutoCompleteEntry2.getValue());
+				logger.debug(
+						"AutoCompleteEntry: " + AutoCompleteEntry2.getName() + " - " + AutoCompleteEntry2.getValue());
 			}
 
 			assertEquals(2, AutoCompletePage.getResults().size());
 
 			return null;
 
-		}, false, true);
+		});
 	}
 
 	@Test
 	public void testIsQueryMatch() {
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			assertTrue(compoListValuePlugin.isQueryMatch("*", "Pâte de riz"));
 			assertTrue(compoListValuePlugin.isQueryMatch("Pâte*", "Pâte de riz"));
 			assertTrue(compoListValuePlugin.isQueryMatch("Pâtes*", "Pâte de riz"));
@@ -111,7 +117,7 @@ public class CompoListAutoCompletePluginIT extends AbstractAutoCompletePluginTes
 			assertFalse(compoListValuePlugin.isQueryMatch("Pâto*", "Patisserie"));
 			assertFalse(compoListValuePlugin.isQueryMatch("Pâte*", "DesPates"));
 			return null;
-		}, false, true);
+		});
 
 	}
 }

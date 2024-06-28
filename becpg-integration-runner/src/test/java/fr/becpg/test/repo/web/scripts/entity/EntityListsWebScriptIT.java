@@ -44,14 +44,14 @@ public class EntityListsWebScriptIT extends PLMBaseTestCase {
 	@Test
 	public void testProductList() throws Exception {
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			rawMaterialNodeRef = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "Test MP");
 			finishedProductNodeRef = BeCPGPLMTestHelper.createMultiLevelProduct(getTestFolderNodeRef());
 
 			return null;
 
-		}, false, true);
+		});
 
 		// Call webscript on raw material
 		String url = "/becpg/entitylists/node/" + rawMaterialNodeRef.toString().replace(":/", "");

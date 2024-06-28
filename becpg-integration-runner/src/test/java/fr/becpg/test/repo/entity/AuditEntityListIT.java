@@ -47,7 +47,7 @@ public class AuditEntityListIT extends PLMBaseTestCase {
 		logger.debug("testHasDataListsModified()");
 
 		// create product
-		final NodeRef sfNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef sfNodeRef = inWriteTx(() -> {
 
 			// create SF
 			SemiFinishedProductData sfData = new SemiFinishedProductData();
@@ -61,14 +61,14 @@ public class AuditEntityListIT extends PLMBaseTestCase {
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), sfData).getNodeRef();
 
-		}, false, true);
+		});
 
 		// load SF and test it
 
-		Date modified = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		Date modified = inWriteTx(() -> {
 
 			return (Date) nodeService.getProperty(sfNodeRef, ContentModel.PROP_MODIFIED);
-		}, false, true);
+		});
 
 		logger.info("Compare : " + timestamps + " " + modified.getTime());
 		assertTrue(timestamps < modified.getTime());
@@ -80,36 +80,37 @@ public class AuditEntityListIT extends PLMBaseTestCase {
 		final SemiFinishedProductData sfData = (SemiFinishedProductData) alfrescoRepository.findOne(sfNodeRef);
 
 		// setProperty of allergen without changing anything => nothing changed
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			NodeRef nodeRef = sfData.getAllergenList().get(0).getAllergen();
 			nodeService.setProperty(nodeRef, PLMModel.PROP_ALLERGENLIST_VOLUNTARY, true);
 			return null;
 
-		}, false, true);
+		});
 
-		modified = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		modified = inWriteTx(() -> {
 
 			return (Date) nodeService.getProperty(sfNodeRef, ContentModel.PROP_MODIFIED);
-		}, false, true);
+		});
 
 		assertFalse(timestamps < modified.getTime());
 
 		// setProperty of allergen and change smth => modified
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			NodeRef nodeRef = sfData.getAllergenList().get(0).getNodeRef();
-			logger.info("allergen prev value " + nodeService.getProperty(nodeRef, PLMModel.PROP_ALLERGENLIST_VOLUNTARY));
+			logger.info(
+					"allergen prev value " + nodeService.getProperty(nodeRef, PLMModel.PROP_ALLERGENLIST_VOLUNTARY));
 			nodeService.setProperty(nodeRef, PLMModel.PROP_ALLERGENLIST_VOLUNTARY, false);
 
 			return null;
 
-		}, false, true);
+		});
 
-		modified = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		modified = inWriteTx(() -> {
 
 			return (Date) nodeService.getProperty(sfNodeRef, ContentModel.PROP_MODIFIED);
-		}, false, true);
+		});
 		logger.info("Compare : " + timestamps + " " + modified.getTime());
 
 		assertTrue(timestamps < modified.getTime());
@@ -119,7 +120,7 @@ public class AuditEntityListIT extends PLMBaseTestCase {
 		assertFalse(timestamps < modified.getTime());
 
 		// add an allergen
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			NodeRef listContainerNodeRef = entityListDAO.getListContainer(sfNodeRef);
 			NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, PLMModel.TYPE_ALLERGENLIST);
@@ -128,22 +129,24 @@ public class AuditEntityListIT extends PLMBaseTestCase {
 			properties.put(PLMModel.PROP_ALLERGENLIST_INVOLUNTARY, true);
 			properties.put(PLMModel.PROP_ALLERGENLIST_VOLUNTARY, false);
 			ChildAssociationRef childAssocRef = nodeService.createNode(listNodeRef, ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, allergen.getId()), PLMModel.TYPE_ALLERGENLIST, properties);
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, allergen.getId()),
+					PLMModel.TYPE_ALLERGENLIST, properties);
 			NodeRef linkNodeRef = childAssocRef.getChildRef();
 			nodeService.createAssociation(linkNodeRef, allergen, PLMModel.ASSOC_ALLERGENLIST_ALLERGEN);
 
 			logger.debug("listNodeRef: " + listNodeRef);
-			logger.debug("added allergen modified: " + nodeService.getProperty(linkNodeRef, ContentModel.PROP_MODIFIED));
+			logger.debug(
+					"added allergen modified: " + nodeService.getProperty(linkNodeRef, ContentModel.PROP_MODIFIED));
 			logger.debug("added allergen created: " + nodeService.getProperty(linkNodeRef, ContentModel.PROP_CREATED));
 
 			return null;
 
-		}, false, true);
+		});
 
-		modified = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		modified = inWriteTx(() -> {
 
 			return (Date) nodeService.getProperty(sfNodeRef, ContentModel.PROP_MODIFIED);
-		}, false, true);
+		});
 		logger.info("Compare : " + timestamps + " " + modified.getTime());
 		assertTrue(timestamps < modified.getTime());
 
@@ -152,19 +155,19 @@ public class AuditEntityListIT extends PLMBaseTestCase {
 		assertFalse(timestamps < modified.getTime());
 
 		// remove an allergen
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			NodeRef nodeRef = sfData.getAllergenList().get(1).getNodeRef();
 			nodeService.deleteNode(nodeRef);
 
 			return null;
 
-		}, false, true);
+		});
 
-		modified = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		modified = inWriteTx(() -> {
 
 			return (Date) nodeService.getProperty(sfNodeRef, ContentModel.PROP_MODIFIED);
-		}, false, true);
+		});
 
 		assertTrue(timestamps < modified.getTime());
 

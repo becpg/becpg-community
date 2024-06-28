@@ -77,7 +77,6 @@ public class EntityCatalogIT extends PLMBaseTestCase {
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 	@Autowired
 	private FormulationService<FormulatedEntity> formulationService;
-	
 
 	@Override
 	public void setUp() throws Exception {
@@ -98,7 +97,6 @@ public class EntityCatalogIT extends PLMBaseTestCase {
 		cacheService.clearCache(EntityCatalogService.class.getName());
 	}
 
-	
 	@Test
 	public void testMissingFields() {
 
@@ -117,16 +115,16 @@ public class EntityCatalogIT extends PLMBaseTestCase {
 
 		});
 
-		final SemiFinishedProductData sampleProduct = (SemiFinishedProductData) inReadTx(() -> alfrescoRepository.findOne(sfNodeRef));
+		final SemiFinishedProductData sampleProduct = (SemiFinishedProductData) inReadTx(
+				() -> alfrescoRepository.findOne(sfNodeRef));
 
-		
 		inWriteTx(() -> {
 			formulationService.formulate(sampleProduct);
-			
-			
+
 			JSONObject scoresObject = new JSONObject(sampleProduct.getEntityScore());
-			
-			JSONArray missingFieldsArray = scoresObject.getJSONArray("catalogs").getJSONObject(0).getJSONArray("missingFields");
+
+			JSONArray missingFieldsArray = scoresObject.getJSONArray("catalogs").getJSONObject(0)
+					.getJSONArray("missingFields");
 			assertNotNull(missingFieldsArray);
 
 			String missingFieldsString = missingFieldsArray.toString();
@@ -136,44 +134,44 @@ public class EntityCatalogIT extends PLMBaseTestCase {
 			assertTrue(missingFieldsString.contains("bcpg:storageConditionsRef|bcpg:preparationTips"));
 			assertTrue(missingFieldsString.contains("formula1"));
 			assertTrue(missingFieldsString.contains("formula2"));
-			assertTrue(missingFieldsString.contains("Conditions de conservation ou Conseils de préparation et d'utilisation"));
+			assertTrue(missingFieldsString
+					.contains("Conditions de conservation ou Conseils de préparation et d'utilisation"));
 			assertTrue(missingFieldsString.contains("formula2.missingKey"));
 
 			sampleProduct.setUnit(ProductUnit.L);
 			MLText title = new MLText();
 			title.addValue(Locale.getDefault(), "Sample");
-			
+
 			sampleProduct.setTitle(title);
 			sampleProduct.setLegalName("Test");
-			
+
 			alfrescoRepository.save(sampleProduct);
 			formulationService.formulate(sampleProduct);
-			
+
 			scoresObject = new JSONObject(sampleProduct.getEntityScore());
-			
-			 missingFieldsArray = scoresObject.getJSONArray("catalogs").getJSONObject(0).getJSONArray("missingFields");
+
+			missingFieldsArray = scoresObject.getJSONArray("catalogs").getJSONObject(0).getJSONArray("missingFields");
 			assertNotNull(missingFieldsArray);
 
-			 missingFieldsString = missingFieldsArray.toString();
+			missingFieldsString = missingFieldsArray.toString();
 			logger.info("Missing fields 2: " + missingFieldsString);
-			
+
 			assertFalse(missingFieldsString.contains("bcpg:legalName"));
 			assertFalse(missingFieldsString.contains("cm:titled"));
 			assertTrue(missingFieldsString.contains("bcpg:storageConditionsRef|bcpg:preparationTips"));
 			assertFalse(missingFieldsString.contains("formula1"));
 			assertTrue(missingFieldsString.contains("formula2"));
-			
+
 			return true;
 		});
-		
+
 	}
-	
-	
+
 	@Test
 	public void testAuditedFields() {
 
 		final NodeRef sfNodeRef = inWriteTx(() -> {
-			
+
 			RawMaterialData rawMaterial1 = new RawMaterialData();
 			rawMaterial1.setName("Raw material 1");
 			NodeRef rawMaterialNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial1).getNodeRef();
@@ -185,28 +183,31 @@ public class EntityCatalogIT extends PLMBaseTestCase {
 			allergenList.add(new AllergenListDataItem(null, null, false, true, null, null, allergens.get(1), true));
 			allergenList.add(new AllergenListDataItem(null, null, true, false, null, null, allergens.get(2), true));
 			allergenList.add(new AllergenListDataItem(null, null, false, false, null, null, allergens.get(3), true));
-				
+
 			List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
 			labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
 			List<CompoListDataItem> compoList1 = new ArrayList<>();
-			compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterialNodeRef));
-		
+			/*
+			 * compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg,
+			 * 0d, DeclarationType.Declare, rawMaterialNodeRef));
+			 */
+			compoList1.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterialNodeRef));
+
 			sfData.getCompoListView().setCompoList(compoList1);
 			sfData.getLabelingListView().setLabelingRuleList(labelingRuleList);
 			sfData.setAllergenList(allergenList);
-			
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), sfData).getNodeRef();
 
 		});
 
-		final SemiFinishedProductData sampleProduct = (SemiFinishedProductData) inReadTx(() -> alfrescoRepository.findOne(sfNodeRef));
-		
+		final SemiFinishedProductData sampleProduct = (SemiFinishedProductData) inReadTx(
+				() -> alfrescoRepository.findOne(sfNodeRef));
 
 		inWriteTx(() -> {
 			return formulationService.formulate(sfNodeRef);
 		});
-
 
 		long timestamps = Calendar.getInstance().getTimeInMillis();
 
@@ -247,7 +248,8 @@ public class EntityCatalogIT extends PLMBaseTestCase {
 			properties.put(PLMModel.PROP_ALLERGENLIST_INVOLUNTARY, true);
 			properties.put(PLMModel.PROP_ALLERGENLIST_VOLUNTARY, false);
 			ChildAssociationRef childAssocRef = nodeService.createNode(listNodeRef, ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, allergen.getId()), PLMModel.TYPE_ALLERGENLIST, properties);
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, allergen.getId()),
+					PLMModel.TYPE_ALLERGENLIST, properties);
 			NodeRef linkNodeRef = childAssocRef.getChildRef();
 			nodeService.createAssociation(linkNodeRef, allergen, PLMModel.ASSOC_ALLERGENLIST_ALLERGEN);
 
@@ -276,8 +278,8 @@ public class EntityCatalogIT extends PLMBaseTestCase {
 		inWriteTx(() -> {
 
 			MLText title = new MLText();
-			title.addValue(Locale.getDefault(),"Test new title");
-			
+			title.addValue(Locale.getDefault(), "Test new title");
+
 			sampleProduct.setTitle(title);
 
 			return alfrescoRepository.save(sampleProduct);
@@ -316,7 +318,8 @@ public class EntityCatalogIT extends PLMBaseTestCase {
 			client.setParentNodeRef(getTestFolderNodeRef());
 			alfrescoRepository.save(client);
 
-			associationService.update(sampleProduct.getNodeRef(), PLMModel.ASSOC_CLIENTS, Arrays.asList(client.getNodeRef()));
+			associationService.update(sampleProduct.getNodeRef(), PLMModel.ASSOC_CLIENTS,
+					Arrays.asList(client.getNodeRef()));
 			return null;
 
 		});
@@ -333,54 +336,52 @@ public class EntityCatalogIT extends PLMBaseTestCase {
 
 		});
 
-		timestamps =  checkIsAudited(sampleProduct.getNodeRef(), timestamps, true);
-		
-		
+		timestamps = checkIsAudited(sampleProduct.getNodeRef(), timestamps, true);
+
 		inWriteTx(() -> {
 			return formulationService.formulate(sfNodeRef);
 		});
-		
-		timestamps =  checkIsAudited(sampleProduct.getNodeRef(), timestamps, true);
-		
+
+		timestamps = checkIsAudited(sampleProduct.getNodeRef(), timestamps, true);
+
 		inWriteTx(() -> {
 			return formulationService.formulate(sfNodeRef);
 		});
-		
-		timestamps =  checkIsAudited(sampleProduct.getNodeRef(), timestamps, false);
-		
+
+		timestamps = checkIsAudited(sampleProduct.getNodeRef(), timestamps, false);
+
 		inWriteTx(() -> {
-			nodeService.setProperty(sampleProduct.getCompoList().get(0).getCharactNodeRef(), ContentModel.PROP_NAME, "Test update ingLabelling");
-			
+			nodeService.setProperty(sampleProduct.getCompoList().get(0).getCharactNodeRef(), ContentModel.PROP_NAME,
+					"Test update ingLabelling");
+
 			return null;
 		});
-		
-		timestamps =  checkIsAudited(sampleProduct.getNodeRef(), timestamps, false);
-		
+
+		timestamps = checkIsAudited(sampleProduct.getNodeRef(), timestamps, false);
+
 		inWriteTx(() -> {
 			try {
 				policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
 				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 
-					L2CacheSupport.doInCacheContext(() -> 
-						AuthenticationUtil.runAsSystem(() -> {
-							
-							return formulationService.formulate(sfNodeRef);
-						
-						}), false, true);
-					
-					return null;
+				L2CacheSupport.doInCacheContext(() -> AuthenticationUtil.runAsSystem(() -> {
+
+					return formulationService.formulate(sfNodeRef);
+
+				}), false, true);
+
+				return null;
 
 			} finally {
 				policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
 				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
 				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 			}
-			
-		
+
 		});
-		
-		timestamps =  checkIsAudited(sampleProduct.getNodeRef(), timestamps, true);
+
+		timestamps = checkIsAudited(sampleProduct.getNodeRef(), timestamps, true);
 	}
 
 	@Test
@@ -388,10 +389,13 @@ public class EntityCatalogIT extends PLMBaseTestCase {
 		JSONObject catalog;
 		try {
 			catalog = new JSONObject(CATALOG_STRING);
-			assertTrue(((EntityCatalogServiceImpl) entityCatalogService).isMatchEntityType(catalog, PLMModel.TYPE_FINISHEDPRODUCT, namespaceService));
-			assertFalse(((EntityCatalogServiceImpl)entityCatalogService).isMatchEntityType(catalog, PLMModel.TYPE_RAWMATERIAL, namespaceService));
-			assertEquals(new HashSet<>(Arrays.asList(new QName[] { ContentModel.PROP_NAME, QName.createQName("bcpg:compoList", namespaceService) })),
-					((EntityCatalogServiceImpl)entityCatalogService).getAuditedFields(catalog, namespaceService));
+			assertTrue(((EntityCatalogServiceImpl) entityCatalogService).isMatchEntityType(catalog,
+					PLMModel.TYPE_FINISHEDPRODUCT, namespaceService));
+			assertFalse(((EntityCatalogServiceImpl) entityCatalogService).isMatchEntityType(catalog,
+					PLMModel.TYPE_RAWMATERIAL, namespaceService));
+			assertEquals(new HashSet<>(Arrays.asList(
+					new QName[] { ContentModel.PROP_NAME, QName.createQName("bcpg:compoList", namespaceService) })),
+					((EntityCatalogServiceImpl) entityCatalogService).getAuditedFields(catalog, namespaceService));
 		} catch (JSONException e) {
 			logger.error("Unable to load catalog", e);
 		}

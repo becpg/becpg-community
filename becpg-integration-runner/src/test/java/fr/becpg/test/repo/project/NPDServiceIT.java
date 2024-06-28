@@ -40,23 +40,24 @@ public class NPDServiceIT extends AbstractProjectTestCase {
 
 	private static final Log logger = LogFactory.getLog(NPDServiceIT.class);
 
-
 	private static final String NPDWF_URI = "http://www.bcpg.fr/model/npd-workflow/1.0";
 
 	@Test
 	public void testNPDProjectTask() {
 
-		final NodeRef projectNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			
+		final NodeRef projectNodeRef = inWriteTx(() -> {
+
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ENTITY_TPL_REF);
 
 			// create project Tpl
-			ProjectData projectData = new ProjectData(null, "Pjt", PROJECT_HIERARCHY1_SEA_FOOD_REF, PROJECT_HIERARCHY2_CRUSTACEAN_REF, null, null,
-					null, PlanningMode.Planning, null, null, null, 0, null);
+			ProjectData projectData = new ProjectData(null, "Pjt", PROJECT_HIERARCHY1_SEA_FOOD_REF,
+					PROJECT_HIERARCHY2_CRUSTACEAN_REF, null, null, null, PlanningMode.Planning, null, null, null, 0,
+					null);
 
 			// create datalists
 			List<TaskListDataItem> taskList = new LinkedList<>();
-			taskList.add(new TaskListDataItem(null, "task1", false, 2, null, assigneesOne, taskLegends.get(0), "activiti$projectNewProduct"));
+			taskList.add(new TaskListDataItem(null, "task1", false, 2, null, assigneesOne, taskLegends.get(0),
+					"activiti$projectNewProduct"));
 			projectData.setTaskList(taskList);
 
 			projectData.setParentNodeRef(getTestFolderNodeRef());
@@ -67,9 +68,9 @@ public class NPDServiceIT extends AbstractProjectTestCase {
 			projectData = (ProjectData) alfrescoRepository.save(projectData);
 
 			return projectData.getNodeRef();
-		}, false, true);
+		});
 
-		String workflowInstance = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		String workflowInstance = inWriteTx(() -> {
 
 			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 			assertEquals(ProjectState.InProgress, projectData.getProjectState());
@@ -78,7 +79,7 @@ public class NPDServiceIT extends AbstractProjectTestCase {
 			assertNotNull(projectData.getTaskList().get(0).getWorkflowInstance());
 
 			return projectData.getTaskList().get(0).getWorkflowInstance();
-		}, false, true);
+		});
 
 		testNPDWorkflow(workflowInstance);
 
@@ -87,20 +88,20 @@ public class NPDServiceIT extends AbstractProjectTestCase {
 	private void testNPDWorkflow(final String workflowInstanceId) {
 		assertNotNull("The workflow instance is null!", workflowInstanceId);
 
-		List<WorkflowTask> tasks = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		List<WorkflowTask> tasks = inWriteTx(() -> {
 			List<WorkflowPath> paths = workflowService.getWorkflowPaths(workflowInstanceId);
 			assertEquals(1, paths.size());
 			WorkflowPath path = paths.get(0);
 
 			return workflowService.getTasksForWorkflowPath(path.getId());
-		}, false, true);
+		});
 		assertEquals(1, tasks.size());
 
 		final WorkflowTask task1 = tasks.get(0);
 
 		assertEquals("npdwf:newProductTask", task1.getName());
 
-		final WorkflowTask task2 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final WorkflowTask task2 = inWriteTx(() -> {
 
 			logger.info("Set npd task information " + task1.getName());
 			Map<QName, Serializable> properties = new HashMap<>();
@@ -132,28 +133,29 @@ public class NPDServiceIT extends AbstractProjectTestCase {
 			assertEquals(1, tasks1.size());
 
 			return tasks1.get(0);
-		}, false, true);
+		});
 
-		final NodeRef productNoderef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef productNoderef = inWriteTx(() -> {
 			int count = 0;
 			NodeRef ret = null;
 			NodeRef pkgNodeRef = workflowService.getWorkflowById(workflowInstanceId).getWorkflowPackage();
-			List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(pkgNodeRef, WorkflowModel.ASSOC_PACKAGE_CONTAINS,
-					RegexQNamePattern.MATCH_ALL);
+			List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(pkgNodeRef,
+					WorkflowModel.ASSOC_PACKAGE_CONTAINS, RegexQNamePattern.MATCH_ALL);
 			for (ChildAssociationRef childAssoc : childAssocs) {
 				if (PLMModel.TYPE_FINISHEDPRODUCT.equals(nodeService.getType(childAssoc.getChildRef()))) {
 					count++;
 					ret = childAssoc.getChildRef();
 					logger.info("NPD created product" + nodeService.getProperty(ret, ContentModel.PROP_NAME) + " "
 							+ nodeService.getProperty(ret, PLMModel.PROP_PRODUCT_STATE));
-					assertEquals(SystemState.Simulation.toString(), nodeService.getProperty(ret, PLMModel.PROP_PRODUCT_STATE));
+					assertEquals(SystemState.Simulation.toString(),
+							nodeService.getProperty(ret, PLMModel.PROP_PRODUCT_STATE));
 				}
 			}
 			assertEquals(2, count);
 			return ret;
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			logger.info("Set npd task information " + task2.getName());
 			Map<QName, Serializable> properties = new HashMap<>();
@@ -163,25 +165,26 @@ public class NPDServiceIT extends AbstractProjectTestCase {
 
 			workflowService.updateTask(task2.getId(), properties, assocs, new HashMap<QName, List<NodeRef>>());
 			return workflowService.endTask(task2.getId(), null);
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			int count = 0;
 			NodeRef ret = null;
 			NodeRef pkgNodeRef = workflowService.getWorkflowById(workflowInstanceId).getWorkflowPackage();
-			List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(pkgNodeRef, WorkflowModel.ASSOC_PACKAGE_CONTAINS,
-					RegexQNamePattern.MATCH_ALL);
+			List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(pkgNodeRef,
+					WorkflowModel.ASSOC_PACKAGE_CONTAINS, RegexQNamePattern.MATCH_ALL);
 			for (ChildAssociationRef childAssoc : childAssocs) {
 				if (PLMModel.TYPE_FINISHEDPRODUCT.equals(nodeService.getType(childAssoc.getChildRef()))) {
 					count++;
 					ret = childAssoc.getChildRef();
 					logger.info("NPD updated product" + nodeService.getProperty(ret, ContentModel.PROP_NAME) + " "
 							+ nodeService.getProperty(ret, PLMModel.PROP_PRODUCT_STATE));
-					assertEquals(SystemState.ToValidate.toString(), nodeService.getProperty(ret, PLMModel.PROP_PRODUCT_STATE));
+					assertEquals(SystemState.ToValidate.toString(),
+							nodeService.getProperty(ret, PLMModel.PROP_PRODUCT_STATE));
 				}
 			}
 			assertEquals(1, count);
 			return ret;
-		}, false, true);
+		});
 	}
 }

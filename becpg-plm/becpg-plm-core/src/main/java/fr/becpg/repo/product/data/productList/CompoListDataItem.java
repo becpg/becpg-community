@@ -347,21 +347,15 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem
 		return this;
 	}
 
-	public CompoListDataItem withQty(Double qty) {
-		this.qty = qty;
-		return this;
-	}
-
 	public CompoListDataItem withQtyUsed(Double qtySubFormula) {
 		this.qtySubFormula = qtySubFormula;
 		return this;
 	}
-	
+
 	public CompoListDataItem withQty(Double qty) {
 		this.qty = qty;
 		return this;
 	}
-
 
 	public CompoListDataItem withProduct(NodeRef product) {
 		this.product = product;
@@ -481,11 +475,14 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem
 		if (getClass() != obj.getClass())
 			return false;
 		CompoListDataItem other = (CompoListDataItem) obj;
-		return compoListUnit == other.compoListUnit && declType == other.declType && Objects.equals(depthLevel, other.depthLevel)
-				&& Objects.equals(lossPerc, other.lossPerc) && Objects.equals(overrunPerc, other.overrunPerc)
-				&& Objects.equals(parent != null ? parent.getNodeRef() : null, other.parent != null ? other.parent.getNodeRef() : null)
-				&& Objects.equals(product, other.product) && Objects.equals(qty, other.qty) && Objects.equals(qtySubFormula, other.qtySubFormula)
-				&& Objects.equals(volume, other.volume) && Objects.equals(yieldPerc, other.yieldPerc);
+		return compoListUnit == other.compoListUnit && declType == other.declType
+				&& Objects.equals(depthLevel, other.depthLevel) && Objects.equals(lossPerc, other.lossPerc)
+				&& Objects.equals(overrunPerc, other.overrunPerc)
+				&& Objects.equals(parent != null ? parent.getNodeRef() : null,
+						other.parent != null ? other.parent.getNodeRef() : null)
+				&& Objects.equals(product, other.product) && Objects.equals(qty, other.qty)
+				&& Objects.equals(qtySubFormula, other.qtySubFormula) && Objects.equals(volume, other.volume)
+				&& Objects.equals(yieldPerc, other.yieldPerc);
 	}
 
 	@Override

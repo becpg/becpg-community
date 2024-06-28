@@ -37,7 +37,7 @@ public class AssociationServiceIT extends PLMBaseTestCase {
 
 	@Autowired
 	private AssociationService associationService;
-	
+
 	@Autowired
 	private EntityVersionService entityVersionService;
 
@@ -47,36 +47,38 @@ public class AssociationServiceIT extends PLMBaseTestCase {
 	@Test
 	public void testCheckinAssocs() {
 
-		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef rawMaterialNodeRef = inWriteTx(() -> {
 
-			NodeRef rawMaterialNodeRef1 = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test report");
+			NodeRef rawMaterialNodeRef1 = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(),
+					"MP test report");
 			if (!nodeService.hasAspect(rawMaterialNodeRef1, ContentModel.ASPECT_VERSIONABLE)) {
 				Map<QName, Serializable> aspectProperties = new HashMap<>();
 				aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
 				nodeService.addAspect(rawMaterialNodeRef1, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
 			}
 			return rawMaterialNodeRef1;
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			// suppliers
 			String[] supplierNames = { "Supplier1", "Supplier2", "Supplier3" };
 			List<NodeRef> supplierNodeRefs = new LinkedList<>();
 			for (String supplierName : supplierNames) {
 				NodeRef supplierNodeRef = null;
-				NodeRef entityFolder = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, supplierName);
+				NodeRef entityFolder = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+						supplierName);
 				if (entityFolder != null) {
-					supplierNodeRef = nodeService.getChildByName(entityFolder, ContentModel.ASSOC_CONTAINS, supplierName);
+					supplierNodeRef = nodeService.getChildByName(entityFolder, ContentModel.ASSOC_CONTAINS,
+							supplierName);
 				}
 
 				if (supplierNodeRef == null) {
 					Map<QName, Serializable> properties = new HashMap<>();
 					properties.put(ContentModel.PROP_NAME, supplierName);
-					supplierNodeRef = nodeService
-							.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-									QName.createQName((String) properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_SUPPLIER, properties)
-							.getChildRef();
+					supplierNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+							QName.createQName((String) properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_SUPPLIER,
+							properties).getChildRef();
 				}
 
 				supplierNodeRefs.add(supplierNodeRef);
@@ -85,7 +87,8 @@ public class AssociationServiceIT extends PLMBaseTestCase {
 			associationService.update(rawMaterialNodeRef, PLMModel.ASSOC_SUPPLIERS, supplierNodeRefs.get(0));
 
 			// check
-			List<NodeRef> targetNodeRefs = associationService.getTargetAssocs(rawMaterialNodeRef, PLMModel.ASSOC_SUPPLIERS);
+			List<NodeRef> targetNodeRefs = associationService.getTargetAssocs(rawMaterialNodeRef,
+					PLMModel.ASSOC_SUPPLIERS);
 			assertEquals("", 1, targetNodeRefs.size());
 
 			// Check out
@@ -96,7 +99,8 @@ public class AssociationServiceIT extends PLMBaseTestCase {
 			associationService.update(workingCopyNodeRef, PLMModel.ASSOC_SUPPLIERS, supplierNodeRefs);
 
 			// check-in
-			entityVersionService.mergeBranch(workingCopyNodeRef, rawMaterialNodeRef, VersionType.MAJOR, "This is a test version");
+			entityVersionService.mergeBranch(workingCopyNodeRef, rawMaterialNodeRef, VersionType.MAJOR,
+					"This is a test version");
 
 			// check
 			targetNodeRefs = associationService.getTargetAssocs(rawMaterialNodeRef, PLMModel.ASSOC_SUPPLIERS);
@@ -117,7 +121,8 @@ public class AssociationServiceIT extends PLMBaseTestCase {
 			associationService.update(workingCopyNodeRef, PLMModel.ASSOC_SUPPLIERS, new ArrayList<NodeRef>());
 
 			// check-in
-			entityVersionService.mergeBranch(workingCopyNodeRef, rawMaterialNodeRef, VersionType.MAJOR, "This is a test version");
+			entityVersionService.mergeBranch(workingCopyNodeRef, rawMaterialNodeRef, VersionType.MAJOR,
+					"This is a test version");
 
 			// check
 			targetNodeRefs = associationService.getTargetAssocs(rawMaterialNodeRef, PLMModel.ASSOC_SUPPLIERS);
@@ -125,7 +130,7 @@ public class AssociationServiceIT extends PLMBaseTestCase {
 
 			return null;
 
-		}, false, true);
+		});
 	}
 
 	/**
@@ -133,44 +138,46 @@ public class AssociationServiceIT extends PLMBaseTestCase {
 	 */
 	@Test
 	public void testCRUDAssocs() {
-		NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef rawMaterialNodeRef = inWriteTx(() -> {
 			return BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test association");
-		}, false, true);
+		});
 
 		List<NodeRef> supplierNodeRefs = new LinkedList<>();
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			// suppliers
 			String[] supplierNames = { "assoc-test1", "assoc-test2", "assoc-test3", "assoc-test4", "assoc-test5" };
 
 			for (String supplierName : supplierNames) {
 				NodeRef supplierNodeRef = null;
-				NodeRef entityFolder = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, supplierName);
+				NodeRef entityFolder = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+						supplierName);
 				if (entityFolder != null) {
-					supplierNodeRef = nodeService.getChildByName(entityFolder, ContentModel.ASSOC_CONTAINS, supplierName);
+					supplierNodeRef = nodeService.getChildByName(entityFolder, ContentModel.ASSOC_CONTAINS,
+							supplierName);
 				}
 
 				if (supplierNodeRef == null) {
 					Map<QName, Serializable> properties = new HashMap<>();
 					properties.put(ContentModel.PROP_NAME, supplierName);
-					supplierNodeRef = nodeService
-							.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-									QName.createQName((String) properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_SUPPLIER, properties)
-							.getChildRef();
+					supplierNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+							QName.createQName((String) properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_SUPPLIER,
+							properties).getChildRef();
 				}
 
 				supplierNodeRefs.add(supplierNodeRef);
 			}
 			return true;
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			// add new Supplier
 			associationService.update(rawMaterialNodeRef, PLMModel.ASSOC_SUPPLIERS, supplierNodeRefs.subList(0, 2));
 
 			// check
-			List<NodeRef> targetNodeRefs = associationService.getTargetAssocs(rawMaterialNodeRef, PLMModel.ASSOC_SUPPLIERS);
+			List<NodeRef> targetNodeRefs = associationService.getTargetAssocs(rawMaterialNodeRef,
+					PLMModel.ASSOC_SUPPLIERS);
 
 			assertEquals("Assert 2", 2, targetNodeRefs.size());
 
@@ -205,16 +212,21 @@ public class AssociationServiceIT extends PLMBaseTestCase {
 			assertEquals("Assert 0", 0, targetNodeRefs.size());
 
 			return true;
-		}, false, true);
+		});
 
-		NodeRef finishProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef finishProductNodeRef = inWriteTx(() -> {
 
 			/*-- Create finished product --*/
 			FinishedProductData finishedProduct = new FinishedProductData();
 			finishedProduct.setName("Test child Assoc");
 
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterialNodeRef));
+			/*
+			 * compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d,
+			 * DeclarationType.Detail, rawMaterialNodeRef));
+			 */
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(rawMaterialNodeRef));
 
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
@@ -232,52 +244,61 @@ public class AssociationServiceIT extends PLMBaseTestCase {
 			dynamicCharactListItems.add(new DynamicCharactListItem("Property  1", "costList[0].value"));
 			dynamicCharactListItems.add(new DynamicCharactListItem("Property  1Bis", "costList[1].value"));
 			dynamicCharactListItems.add(new DynamicCharactListItem("Property  2", "costList[0].unit"));
-			dynamicCharactListItems.add(new DynamicCharactListItem("Property  3", "costList[0].value / costList[1].value"));
+			dynamicCharactListItems
+					.add(new DynamicCharactListItem("Property  3", "costList[0].value / costList[1].value"));
 			dynamicCharactListItems.add(new DynamicCharactListItem("Property  4", "profitability"));
-			dynamicCharactListItems.add(new DynamicCharactListItem("Collection Selection  1", "costList.?[value == 4.0][0].unit"));
-			dynamicCharactListItems.add(new DynamicCharactListItem("Collection Selection  2", "costList.?[value < 5.0][0].value"));
+			dynamicCharactListItems
+					.add(new DynamicCharactListItem("Collection Selection  1", "costList.?[value == 4.0][0].unit"));
+			dynamicCharactListItems
+					.add(new DynamicCharactListItem("Collection Selection  2", "costList.?[value < 5.0][0].value"));
 			dynamicCharactListItems.add(new DynamicCharactListItem("Collection Projection  1", "costList.![value]"));
 			// Variables
-			dynamicCharactListItems
-					.add(new DynamicCharactListItem("Variable  1", "compoListView.dynamicCharactList.?[title == 'Property  1' ][0].value"));
+			dynamicCharactListItems.add(new DynamicCharactListItem("Variable  1",
+					"compoListView.dynamicCharactList.?[title == 'Property  1' ][0].value"));
 
 			finishedProduct.getCompoListView().setDynamicCharactList(dynamicCharactListItems);
 
 			alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct);
 
 			return finishedProduct.getNodeRef();
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
-			NodeRef compoListNodeRef = entityListDAO.getList(entityListDAO.getListContainer(finishProductNodeRef), PLMModel.TYPE_COMPOLIST);
+			NodeRef compoListNodeRef = entityListDAO.getList(entityListDAO.getListContainer(finishProductNodeRef),
+					PLMModel.TYPE_COMPOLIST);
 
 			assertNotNull(compoListNodeRef);
 
-			List<NodeRef> childNodeRefs = associationService.getChildAssocs(compoListNodeRef, ContentModel.ASSOC_CONTAINS);
+			List<NodeRef> childNodeRefs = associationService.getChildAssocs(compoListNodeRef,
+					ContentModel.ASSOC_CONTAINS);
 			assertEquals("Assert 17", 17, childNodeRefs.size());
 
-			childNodeRefs = associationService.getChildAssocs(compoListNodeRef, ContentModel.ASSOC_CONTAINS, PLMModel.TYPE_COMPOLIST);
+			childNodeRefs = associationService.getChildAssocs(compoListNodeRef, ContentModel.ASSOC_CONTAINS,
+					PLMModel.TYPE_COMPOLIST);
 			assertEquals("Assert 1", 1, childNodeRefs.size());
 
-			childNodeRefs = associationService.getChildAssocs(compoListNodeRef, ContentModel.ASSOC_CONTAINS, PLMModel.TYPE_DYNAMICCHARACTLIST);
+			childNodeRefs = associationService.getChildAssocs(compoListNodeRef, ContentModel.ASSOC_CONTAINS,
+					PLMModel.TYPE_DYNAMICCHARACTLIST);
 			assertEquals("Assert 16", 16, childNodeRefs.size());
 
-			nodeService.deleteNode(
-					associationService.getChildAssocs(compoListNodeRef, ContentModel.ASSOC_CONTAINS, PLMModel.TYPE_DYNAMICCHARACTLIST).get(0));
+			nodeService.deleteNode(associationService
+					.getChildAssocs(compoListNodeRef, ContentModel.ASSOC_CONTAINS, PLMModel.TYPE_DYNAMICCHARACTLIST)
+					.get(0));
 
-			
 			childNodeRefs = associationService.getChildAssocs(compoListNodeRef, ContentModel.ASSOC_CONTAINS);
 			assertEquals("Assert 16", 16, childNodeRefs.size());
 
-			childNodeRefs = associationService.getChildAssocs(compoListNodeRef, ContentModel.ASSOC_CONTAINS, PLMModel.TYPE_COMPOLIST);
+			childNodeRefs = associationService.getChildAssocs(compoListNodeRef, ContentModel.ASSOC_CONTAINS,
+					PLMModel.TYPE_COMPOLIST);
 			assertEquals("Assert 1", 1, childNodeRefs.size());
 
-			childNodeRefs = associationService.getChildAssocs(compoListNodeRef, ContentModel.ASSOC_CONTAINS, PLMModel.TYPE_DYNAMICCHARACTLIST);
+			childNodeRefs = associationService.getChildAssocs(compoListNodeRef, ContentModel.ASSOC_CONTAINS,
+					PLMModel.TYPE_DYNAMICCHARACTLIST);
 			assertEquals("Assert 15", 15, childNodeRefs.size());
 
 			return true;
-		}, false, true);
+		});
 
 	}
 

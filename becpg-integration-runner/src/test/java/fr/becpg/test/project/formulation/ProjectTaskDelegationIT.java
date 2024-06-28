@@ -28,10 +28,11 @@ public class ProjectTaskDelegationIT extends AbstractProjectTestCase {
 	@Test
 	public void testDelegation() {
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			AuthenticationUtil.setFullyAuthenticatedUser(AuthenticationUtil.getAdminUserName());
-			ProjectData projectData = new ProjectData(null, "Deleg", null, null, null, null, null, null, null, null, null, 0, null);
+			ProjectData projectData = new ProjectData(null, "Deleg", null, null, null, null, null, null, null, null,
+					null, 0, null);
 
 			projectData.setParentNodeRef(getTestFolderNodeRef());
 
@@ -65,12 +66,14 @@ public class ProjectTaskDelegationIT extends AbstractProjectTestCase {
 			assigneesFour.add(userFour);
 
 			List<TaskListDataItem> taskList = new LinkedList<>();
-			
-			TaskListDataItem task5 = new TaskListDataItem(null, "task5", false, 2, null, assigneesThree, taskLegends.get(1), "activiti$projectAdhoc");
+
+			TaskListDataItem task5 = new TaskListDataItem(null, "task5", false, 2, null, assigneesThree,
+					taskLegends.get(1), "activiti$projectAdhoc");
 			task5.setNotificationAuthorities(assigneesThree);
 			taskList.add(task5);
-			
-			taskList.add(new TaskListDataItem(null, "task6", false, 2, null, assigneesFour, taskLegends.get(1), "activiti$projectAdhoc"));
+
+			taskList.add(new TaskListDataItem(null, "task6", false, 2, null, assigneesFour, taskLegends.get(1),
+					"activiti$projectAdhoc"));
 			projectData.setTaskList(taskList);
 
 			now = Calendar.getInstance();
@@ -94,17 +97,21 @@ public class ProjectTaskDelegationIT extends AbstractProjectTestCase {
 
 			assertEquals(projectData.getTaskList().get(0).getResources().get(0), userOne);
 			assertEquals(projectData.getTaskList().get(1).getResources().get(0), userOne);
-			
-			Optional<TaskListDataItem> t5 = projectData.getTaskList().stream().filter(t -> "task5".equals(t.getTaskName())).findFirst();
+
+			Optional<TaskListDataItem> t5 = projectData.getTaskList().stream()
+					.filter(t -> "task5".equals(t.getTaskName())).findFirst();
 			assertTrue(t5.isPresent());
-			assertTrue(t5.get().getNotificationAuthorities() != null && t5.get().getNotificationAuthorities().contains(userOne));
-			
-			Optional<TaskListDataItem> t6 = projectData.getTaskList().stream().filter(t -> "task6".equals(t.getTaskName())).findFirst();
+			assertTrue(t5.get().getNotificationAuthorities() != null
+					&& t5.get().getNotificationAuthorities().contains(userOne));
+
+			Optional<TaskListDataItem> t6 = projectData.getTaskList().stream()
+					.filter(t -> "task6".equals(t.getTaskName())).findFirst();
 			assertTrue(t6.isPresent());
-			assertTrue(t6.get().getNotificationAuthorities() == null || t6.get().getNotificationAuthorities().isEmpty());
+			assertTrue(
+					t6.get().getNotificationAuthorities() == null || t6.get().getNotificationAuthorities().isEmpty());
 
 			return null;
-		}, false, true);
+		});
 	}
 
 }

@@ -1,7 +1,6 @@
 package fr.becpg.test.repo.report;
 
 import java.util.Iterator;
-import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -30,20 +29,20 @@ public class EntityServiceIT extends RepoBaseTestCase {
 
 	@Autowired
 	EntityService entityService;
-	
+
 	@Autowired
 	EntityIconService entityIconService;
-	
+
 	@Autowired
 	FileFolderService fileFolderService;
-	
+
 	@Test
 	public void testEntityIcon() {
 		inWriteTx(() -> {
 
 			NodeRef tempRMNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					ContentModel.ASSOC_CONTAINS, PLMModel.TYPE_RAWMATERIAL).getChildRef();
-			
+
 			NodeRef tempFPNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					ContentModel.ASSOC_CONTAINS, PLMModel.TYPE_FINISHEDPRODUCT).getChildRef();
 
@@ -52,7 +51,7 @@ public class EntityServiceIT extends RepoBaseTestCase {
 
 			assertNull(entityService.getEntityDefaultIcon(tempRMNodeRef, "16"));
 			assertNull(entityService.getEntityDefaultIcon(tempFPNodeRef, "16"));
-			
+
 			return null;
 		});
 
@@ -61,9 +60,6 @@ public class EntityServiceIT extends RepoBaseTestCase {
 			return null;
 		});
 	}
-
-	
-	
 
 	@Test
 	public void testExtractImage() {
@@ -75,7 +71,7 @@ public class EntityServiceIT extends RepoBaseTestCase {
 
 	private boolean extractImage(final String path) {
 
-		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		return inWriteTx(() -> {
 
 			NodeRef tempImgNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					ContentModel.ASSOC_CONTAINS, ContentModel.TYPE_CONTENT).getChildRef();
@@ -105,16 +101,16 @@ public class EntityServiceIT extends RepoBaseTestCase {
 
 			return (image1Byte != null); // && (image2Byte == null);
 
-		}, false, true);
+		});
 
 	}
-			
+
 	@Test
 	public void testExecute() throws Exception {
 		Response response = TestWebscriptExecuters.sendRequest(new GetRequest("/becpg/entity/icons.css"), 200, "admin");
 		assertNotNull(response);
 	}
-	
+
 	// Assert twelve monkey is not used because to slow
 //	private byte[] twelveMonkeyExtractor(NodeRef nodeRef) {
 //		ContentReader reader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);

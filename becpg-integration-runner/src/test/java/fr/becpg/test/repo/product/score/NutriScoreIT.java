@@ -31,17 +31,18 @@ public class NutriScoreIT extends PLMBaseTestCase {
 
 	@Autowired
 	private ProductService productService;
-	
+
 	@Autowired
 	private SystemConfigurationService systemConfigurationService;
 
 	@Test
 	public void testNutriScore() {
-		
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			systemConfigurationService.updateConfValue("beCPG.formulation.score.nutriscore.regulatoryClass", "fr.becpg.repo.product.helper.Nutrient5C2021Helper");
+
+		inWriteTx(() -> {
+			systemConfigurationService.updateConfValue("beCPG.formulation.score.nutriscore.regulatoryClass",
+					"fr.becpg.repo.product.helper.Nutrient5C2021Helper");
 			return null;
-		}, false, true);
+		});
 
 		NodeRef energyKjNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "ENER-KJO");
 		NodeRef satFatNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "FASAT");
@@ -49,14 +50,15 @@ public class NutriScoreIT extends PLMBaseTestCase {
 		NodeRef totalSugarNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "SUGAR");
 		NodeRef sodiumNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "NA");
 		NodeRef saltNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "NACL");
-		NodeRef percFruitsAndVetgsNode = findOrCreateNode(PLMModel.TYPE_PHYSICO_CHEM, PLMModel.PROP_PHYSICO_CHEM_CODE, "FRUIT_VEGETABLE");
+		NodeRef percFruitsAndVetgsNode = findOrCreateNode(PLMModel.TYPE_PHYSICO_CHEM, PLMModel.PROP_PHYSICO_CHEM_CODE,
+				"FRUIT_VEGETABLE");
 		NodeRef nspFibreNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "PSACNS");
 		NodeRef aoacFibreNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "FIBTG");
 		NodeRef proteinNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "PRO-");
 
 		// 2084d, 2.8d, 22.9d, 4.73d, 672d, 0d, 0d, 4.13d, 5.81d, "Others"
 
-		NodeRef finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef finishedProductNodeRef1 = inWriteTx(() -> {
 			List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
 			nutList.add(new NutListDataItem(null, 2084d, null, null, null, null, energyKjNode, true));
 			nutList.add(new NutListDataItem(null, 2.8d, null, null, null, null, satFatNode, true));
@@ -76,17 +78,18 @@ public class NutriScoreIT extends PLMBaseTestCase {
 			finishedProductData.setNutList(nutList);
 			finishedProductData.setPhysicoChemList(physicoChemList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProductData).getNodeRef();
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			nodeService.setProperty(finishedProductNodeRef1, QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfileCategory"),
-					NutrientProfileCategory.Others);
+		inWriteTx(() -> {
+			nodeService.setProperty(finishedProductNodeRef1,
+					QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfileCategory"), NutrientProfileCategory.Others);
 			return null;
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
-			FinishedProductData finishedProduct = (FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef1);
+			FinishedProductData finishedProduct = (FinishedProductData) alfrescoRepository
+					.findOne(finishedProductNodeRef1);
 
 			productService.formulate(finishedProduct);
 
@@ -97,9 +100,9 @@ public class NutriScoreIT extends PLMBaseTestCase {
 			alfrescoRepository.save(finishedProduct);
 
 			return null;
-		}, false, true);
+		});
 
-		NodeRef finishedProductNodeRef2 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef finishedProductNodeRef2 = inWriteTx(() -> {
 			// 2596.0642d, 15.16d, 70.172d, 0.003d, 159d, 0d, 0d, 0d, 0.15d, "Fats"
 			List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
 			nutList.add(new NutListDataItem(null, 2596.0642d, null, null, null, null, energyKjNode, true));
@@ -120,17 +123,18 @@ public class NutriScoreIT extends PLMBaseTestCase {
 			finishedProductData.setNutList(nutList);
 			finishedProductData.setPhysicoChemList(physicoChemList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProductData).getNodeRef();
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			nodeService.setProperty(finishedProductNodeRef2, QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfileCategory"),
-					NutrientProfileCategory.Fats);
+		inWriteTx(() -> {
+			nodeService.setProperty(finishedProductNodeRef2,
+					QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfileCategory"), NutrientProfileCategory.Fats);
 			return null;
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
-			FinishedProductData finishedProduct = (FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef2);
+			FinishedProductData finishedProduct = (FinishedProductData) alfrescoRepository
+					.findOne(finishedProductNodeRef2);
 
 			productService.formulate(finishedProduct);
 
@@ -141,9 +145,9 @@ public class NutriScoreIT extends PLMBaseTestCase {
 			alfrescoRepository.save(finishedProduct);
 
 			return null;
-		}, false, true);
+		});
 
-		NodeRef finishedProductNodeRef3 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef finishedProductNodeRef3 = inWriteTx(() -> {
 			List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
 			nutList.add(new NutListDataItem(null, 797.0, null, null, null, null, energyKjNode, true));
 			nutList.add(new NutListDataItem(null, 4.6, null, null, null, null, satFatNode, true));
@@ -165,11 +169,12 @@ public class NutriScoreIT extends PLMBaseTestCase {
 			finishedProductData.setPhysicoChemList(physicoChemList);
 			finishedProductData.setNutrientProfileCategory(NutrientProfileCategory.Others.toString());
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProductData).getNodeRef();
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
-			FinishedProductData finishedProduct = (FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef3);
+			FinishedProductData finishedProduct = (FinishedProductData) alfrescoRepository
+					.findOne(finishedProductNodeRef3);
 
 			productService.formulate(finishedProduct);
 
@@ -180,12 +185,12 @@ public class NutriScoreIT extends PLMBaseTestCase {
 			alfrescoRepository.save(finishedProduct);
 
 			return null;
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			systemConfigurationService.resetConfValue("beCPG.formulation.score.nutriscore.regulatoryClass");
 			return null;
-		}, false, true);
+		});
 	}
 
 	private NodeRef findOrCreateNode(QName type, QName property, String value) {
@@ -222,9 +227,12 @@ public class NutriScoreIT extends PLMBaseTestCase {
 			NodeRef finalParentRef = parentRef;
 
 			node = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-				return nodeService.createNode(finalParentRef, ContentModel.ASSOC_CONTAINS,
-						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)), type,
-						properties).getChildRef();
+				return nodeService
+						.createNode(finalParentRef, ContentModel.ASSOC_CONTAINS,
+								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+										(String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+								type, properties)
+						.getChildRef();
 			}, false, true);
 		}
 

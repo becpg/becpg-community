@@ -35,15 +35,15 @@ public class ProductPoliciesIT extends PLMBaseTestCase {
 	@Test
 	public void testProductCode() {
 
-		final NodeRef rawMaterial1NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef rawMaterial1NodeRef = inWriteTx(() -> {
 
 			RawMaterialData rawMaterial1 = new RawMaterialData();
 			rawMaterial1.setName("Raw material 1");
 			return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial1).getNodeRef();
 
-		}, false, true);
+		});
 
-		final NodeRef rawMaterial2NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef rawMaterial2NodeRef = inWriteTx(() -> {
 
 			assertNotNull("Check product creaed", rawMaterial1NodeRef);
 			productCode1 = (String) nodeService.getProperty(rawMaterial1NodeRef, BeCPGModel.PROP_CODE);
@@ -52,14 +52,15 @@ public class ProductPoliciesIT extends PLMBaseTestCase {
 			rawMaterial2.setName("Raw material 2");
 			return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial2).getNodeRef();
 
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			productCode2 = (String) nodeService.getProperty(rawMaterial2NodeRef, BeCPGModel.PROP_CODE);
 			assertNotNull("Check product code 1", productCode1);
 			assertNotNull("Check product code 2", productCode2);
-			Pattern p = Pattern.compile(autoNumService.getAutoNumMatchPattern(PLMModel.TYPE_RAWMATERIAL, BeCPGModel.PROP_CODE));
+			Pattern p = Pattern
+					.compile(autoNumService.getAutoNumMatchPattern(PLMModel.TYPE_RAWMATERIAL, BeCPGModel.PROP_CODE));
 
 			Matcher ma1 = p.matcher(productCode1);
 			assertTrue(ma1.matches());
@@ -69,6 +70,6 @@ public class ProductPoliciesIT extends PLMBaseTestCase {
 
 			return null;
 
-		}, false, true);
+		});
 	}
 }

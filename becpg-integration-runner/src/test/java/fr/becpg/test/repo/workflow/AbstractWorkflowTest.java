@@ -45,7 +45,7 @@ public abstract class AbstractWorkflowTest extends PLMBaseTestCase {
 
 	protected WorkflowTask getNextTaskForWorkflow(String workflowInstanceId) {
 
-		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		return inWriteTx(() -> {
 			WorkflowTaskQuery taskQuery = new WorkflowTaskQuery();
 			taskQuery.setProcessId(workflowInstanceId);
 			taskQuery.setTaskState(WorkflowTaskState.IN_PROGRESS);
@@ -54,20 +54,22 @@ public abstract class AbstractWorkflowTest extends PLMBaseTestCase {
 			assertEquals(1, workflowTasks.size());
 			return workflowTasks.get(0);
 
-		}, false, true);
+		});
 	}
 
-	protected WorkflowTask submitTask(final String workflowInstanceId, final String taskName, final String transitionName,
-			final Map<QName, Serializable> properties) {
+	protected WorkflowTask submitTask(final String workflowInstanceId, final String taskName,
+			final String transitionName, final Map<QName, Serializable> properties) {
 
-		return submitTask(workflowInstanceId, taskName, transitionName, properties, new HashMap<QName, List<NodeRef>>());
+		return submitTask(workflowInstanceId, taskName, transitionName, properties,
+				new HashMap<QName, List<NodeRef>>());
 
 	}
 
-	protected WorkflowTask submitTask(final String workflowInstanceId, final String taskName, final String transitionName,
-			final Map<QName, Serializable> properties, final Map<QName, List<NodeRef>> assocs) {
+	protected WorkflowTask submitTask(final String workflowInstanceId, final String taskName,
+			final String transitionName, final Map<QName, Serializable> properties,
+			final Map<QName, List<NodeRef>> assocs) {
 
-		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		return inWriteTx(() -> {
 
 			WorkflowTaskQuery taskQuery = new WorkflowTaskQuery();
 			taskQuery.setProcessId(workflowInstanceId);
@@ -88,7 +90,7 @@ public abstract class AbstractWorkflowTest extends PLMBaseTestCase {
 			logger.error("No task " + taskName + " found");
 			return null;
 
-		}, false, true);
+		});
 
 	}
 

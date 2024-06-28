@@ -32,7 +32,7 @@ public class ProjectStartByStartingTaskIT extends AbstractProjectTestCase {
 
 		final NodeRef projectNodeRef = createProject(ProjectState.Planned, null, null);
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 
@@ -46,9 +46,9 @@ public class ProjectStartByStartingTaskIT extends AbstractProjectTestCase {
 			alfrescoRepository.save(projectData);
 
 			return null;
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 
@@ -60,6 +60,6 @@ public class ProjectStartByStartingTaskIT extends AbstractProjectTestCase {
 			assertEquals(ProjectState.InProgress, projectData.getProjectState());
 
 			return null;
-		}, false, true);
+		});
 	}
 }

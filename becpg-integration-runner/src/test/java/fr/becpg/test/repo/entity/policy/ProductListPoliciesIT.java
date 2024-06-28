@@ -40,32 +40,37 @@ public class ProductListPoliciesIT extends PLMBaseTestCase {
 	@Test
 	public void testGetList() {
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			RawMaterialData rawMaterialData = new RawMaterialData();
 			rawMaterialData.setName("RM");
-			NodeRef rawMaterialNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterialData).getNodeRef();
+			NodeRef rawMaterialNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterialData)
+					.getNodeRef();
 
 			NodeRef containerListNodeRef = entityListDAO.getListContainer(rawMaterialNodeRef);
 
 			Map<QName, Serializable> properties = new HashMap<>();
 			properties.put(ContentModel.PROP_NAME, GUID.generate());
-			properties.put(DataListModel.PROP_DATALISTITEMTYPE, BeCPGModel.BECPG_PREFIX + ":" + PLMModel.TYPE_COSTLIST.getLocalName());
+			properties.put(DataListModel.PROP_DATALISTITEMTYPE,
+					BeCPGModel.BECPG_PREFIX + ":" + PLMModel.TYPE_COSTLIST.getLocalName());
 			NodeRef costListCreatedNodeRef = nodeService.createNode(containerListNodeRef, ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+							(String) properties.get(ContentModel.PROP_NAME)),
 					DataListModel.TYPE_DATALIST, properties).getChildRef();
 
-			NodeRef costListNodeRef = entityListDAO.getList(entityListDAO.getListContainer(rawMaterialNodeRef), PLMModel.TYPE_COSTLIST);
+			NodeRef costListNodeRef = entityListDAO.getList(entityListDAO.getListContainer(rawMaterialNodeRef),
+					PLMModel.TYPE_COSTLIST);
 			assertNotNull("cost list should exist", costListNodeRef);
 			assertEquals("cost list should be the same", costListCreatedNodeRef, costListNodeRef);
 
-			costListNodeRef = entityListDAO.getList(entityListDAO.getListContainer(rawMaterialNodeRef), PLMModel.TYPE_COSTLIST);
+			costListNodeRef = entityListDAO.getList(entityListDAO.getListContainer(rawMaterialNodeRef),
+					PLMModel.TYPE_COSTLIST);
 			assertNotNull("cost list should exist", costListNodeRef);
 			assertEquals("cost list should be the same", costListCreatedNodeRef, costListNodeRef);
 
 			return null;
 
-		}, false, true);
+		});
 
 	}
 
