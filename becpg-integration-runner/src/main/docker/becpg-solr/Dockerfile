@@ -1,6 +1,6 @@
 FROM alfresco/alfresco-search-services:2.0.9.1
 
-ENV DIST_DIR /opt/alfresco-search-services
+ENV DIST_DIR=/opt/alfresco-search-services
 
 COPY rerank/solrcore.properties  $DIST_DIR/solrhome/templates/rerank/conf/
 COPY rerank/solrconfig.xml  $DIST_DIR/solrhome/templates/rerank/conf/
