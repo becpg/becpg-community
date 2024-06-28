@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.version.VersionType;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -19,6 +21,8 @@ import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
 public class LogisticUnitIT extends AbstractFinishedProductTest {
+	
+	protected static final Log logger = LogFactory.getLog(LogisticUnitIT.class);
 	
 	@Autowired
 	private EntityVersionService entityVersionService;
