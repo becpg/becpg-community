@@ -8,15 +8,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.QualityModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
@@ -153,7 +152,7 @@ public class BatchFormulationHandler extends FormulationBaseHandler<BatchData> {
 
 							if (reqCtrl == null) {
 								reqCtrl = ReqCtrlListDataItem.forbidden()
-										.withMessage(new MLText(I18NUtil.getMessage(MESSAGE_MISSING_STOCK)))
+										.withMessage(MLTextHelper.getI18NMessage(MESSAGE_MISSING_STOCK))
 										.ofDataType(RequirementDataType.Formulation);
 										
 								batchData.getReqCtrlList().add(reqCtrl);
