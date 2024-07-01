@@ -241,14 +241,14 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 					compoProductQty = 1d;
 				}
 
-				if (compoListProduct.getUnit().isP()) {
+				if (compoListDataItem.getCompoListUnit().isP()) {
 					if ((compoListProduct.getUnit() != null) && !compoListProduct.getUnit().isP()) {
 						compoProductQty = 1d;
 					}
 
-				} else if (compoListProduct.getUnit().isWeight() || compoListProduct.getUnit().isVolume()) {
+				} else if (compoListDataItem.getCompoListUnit().isWeight() || compoListDataItem.getCompoListUnit().isVolume()) {
 
-					compoProductQty = FormulationHelper.getNetQtyInLorKg(compoListProduct, 1d);
+					compoProductQty = FormulationHelper.getNetWeight(compoListProduct, 1d);
 				}
 				
 				FormulatedQties qties = new FormulatedQties(weightUsed, volUsed, compoProductQty, compoProductQty);

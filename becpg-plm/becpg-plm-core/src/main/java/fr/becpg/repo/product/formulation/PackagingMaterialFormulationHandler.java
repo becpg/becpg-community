@@ -210,8 +210,7 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 								}
 
 							} else if (compoListUnit.isWeight() || compoListUnit.isVolume()) {
-
-								compoProductQty = FormulationHelper.getNetQtyInLorKg(compoProduct, 1d);
+								compoProductQty = FormulationHelper.getNetWeight(compoProduct, 1d);
 								qtyUsed = FormulationHelper.getQtyInKg(compoList);
 							}
 
