@@ -358,7 +358,6 @@
 				<bean class="fr.becpg.repo.product.requirement.IngRequirementScanner">
 					<property name="mlNodeService" ref="mlAwareNodeService" />
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
-					<property name="nodeService" ref="nodeService" />
 					<property name="addInfoReqCtrl" value="${beCPG.formulation.specification.addInfoReqCtrl}" />
 				</bean>
 				<bean class="fr.becpg.repo.product.requirement.NutsRequirementScanner">

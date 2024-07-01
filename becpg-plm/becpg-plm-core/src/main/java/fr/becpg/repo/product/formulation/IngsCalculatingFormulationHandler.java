@@ -22,7 +22,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.extensions.webscripts.GUID;
 
 import fr.becpg.model.BeCPGModel;
@@ -30,8 +29,10 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
+import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
@@ -367,8 +368,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 					}
 
 					// req not respected
-					String message = I18NUtil.getMessage(MESSAGE_MISSING_INGLIST);
-					addReqCtrl(reqCtrlMap, new NodeRef(RepoConsts.SPACES_STORE, "missing-inglist"), RequirementType.Tolerated, new MLText(message),
+					addReqCtrl(reqCtrlMap, new NodeRef(RepoConsts.SPACES_STORE, "missing-inglist"), RequirementType.Tolerated, MLTextHelper.getI18NMessage(MESSAGE_MISSING_INGLIST),
 							componentProductData.getNodeRef(), RequirementDataType.Ingredient);
 				}
 
@@ -389,9 +389,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 					// Due to double precision
 					if (Math.abs(total - 100d) > 0.00001) {
-						String message = I18NUtil.getMessage(MESSAGE_INCORRECT_INGLIST_TOTAL);
 						addReqCtrl(reqCtrlMap, new NodeRef(RepoConsts.SPACES_STORE, "incorrect-inglist-total"), RequirementType.Tolerated,
-								new MLText(message), componentProductData.getNodeRef(), RequirementDataType.Ingredient);
+								MLTextHelper.getI18NMessage(MESSAGE_INCORRECT_INGLIST_TOTAL), componentProductData.getNodeRef(), RequirementDataType.Ingredient);
 					}
 
 				}
