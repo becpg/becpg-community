@@ -12,14 +12,18 @@ package fr.becpg.model;
  * @version $Id: $Id
  */
 public class DeliverableUrl {
+	
+	private DeliverableUrl(){
+		//Do Nothing
+	}
 
 	/** Constant <code>CONTENT_URL_PREFIX="content:"</code> */
-	public final static String CONTENT_URL_PREFIX = "content:";
+	public static final  String CONTENT_URL_PREFIX = "content:";
 	/** Constant <code>NODEREF_URL_PARAM="nodeRef"</code> */
-	public final static String NODEREF_URL_PARAM = "nodeRef";
+	public static final  String NODEREF_URL_PARAM = "nodeRef";
 	/** Constant <code>XPATH_URL_PREFIX="xpath:"</code> */
-	public final static String XPATH_URL_PREFIX = "xpath:";
+	public static final  String XPATH_URL_PREFIX = "xpath:";
 	
 	/** Constant <code>TASK_URL_PARAM="task"</code> */
-	public final static String TASK_URL_PARAM = "task";
+	public static final  String TASK_URL_PARAM = "task";
 }

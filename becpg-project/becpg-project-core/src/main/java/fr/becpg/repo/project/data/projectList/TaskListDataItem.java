@@ -930,6 +930,84 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 		super();
 	}
 
+
+	public static TaskListDataItem build() {
+		return new TaskListDataItem();
+	}
+
+    public TaskListDataItem withNodeRef(NodeRef nodeRef) {
+        this.nodeRef = nodeRef;
+        return this;
+    }
+
+    public TaskListDataItem withTaskName(String taskName) {
+        this.taskName = taskName;
+        return this;
+    }
+
+    public TaskListDataItem withIsMilestone(Boolean isMilestone) {
+        this.isMilestone = isMilestone;
+        return this;
+    }
+
+    public TaskListDataItem withDuration(Integer duration) {
+        this.duration = duration;
+        return this;
+    }
+
+    public TaskListDataItem withStart(Date start) {
+        this.start = start;
+        return this;
+    }
+
+    public TaskListDataItem withEnd(Date end) {
+        this.end = end;
+        return this;
+    }
+
+    public TaskListDataItem withTaskState(TaskState taskState) {
+        this.taskState = taskState;
+        return this;
+    }
+
+    public TaskListDataItem withCompletionPercent(Integer completionPercent) {
+        this.completionPercent = completionPercent;
+        return this;
+    }
+
+    public TaskListDataItem withPrevTasks(List<NodeRef> prevTasks) {
+        this.prevTasks = prevTasks;
+        return this;
+    }
+
+    public TaskListDataItem withResources(List<NodeRef> resources) {
+        this.resources = resources;
+        return this;
+    }
+
+    public TaskListDataItem withTaskLegend(NodeRef taskLegend) {
+        this.taskLegend = taskLegend;
+        return this;
+    }
+
+    public TaskListDataItem withWorkflowName(String workflowName) {
+        this.workflowName = workflowName;
+        return this;
+    }
+
+    public TaskListDataItem withWorkflowInstance(String workflowInstance) {
+        this.workflowInstance = workflowInstance;
+        return this;
+    }
+
+
+    public TaskListDataItem withExpense(Double expense) {
+        this.expense = expense;
+        return this;
+    }
+	
+	
+	
 	/**
 	 * <p>Constructor for TaskListDataItem.</p>
 	 *
@@ -952,6 +1030,7 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	 * @param taskLegend a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param workflowName a {@link java.lang.String} object.
 	 */
+	@Deprecated
 	public TaskListDataItem(NodeRef nodeRef, String taskName, Boolean isMilestone, Integer duration, List<NodeRef> prevTasks,
 			List<NodeRef> resources, NodeRef taskLegend, String workflowName) {
 		super();
@@ -984,9 +1063,10 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	 * @param plannedExpense a {@link java.lang.Double} object.
 	 * @param expense a {@link java.lang.Double} object.
 	 */
+	@Deprecated
 	public TaskListDataItem(NodeRef nodeRef, String taskName, Boolean isMilestone, Integer duration, Date start, Date end, TaskState state,
 			Integer completionPercent, List<NodeRef> prevTasks, List<NodeRef> resources, NodeRef taskLegend, String workflowName,
-			String workflowInstance, Double plannedExpense , Double expense) {
+			String workflowInstance , Double expense) {
 		super();
 		this.nodeRef = nodeRef;
 		this.taskName = taskName;
@@ -1074,6 +1154,6 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	public boolean isRefused() {
 		return  TaskState.Refused.equals(taskState) && !Boolean.TRUE.equals(isRefused);
 	}
-	
+
 
 }
