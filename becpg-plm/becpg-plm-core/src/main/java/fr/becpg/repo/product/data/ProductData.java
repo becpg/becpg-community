@@ -35,9 +35,9 @@ import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
+import fr.becpg.repo.product.data.productList.LCAListDataItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingListDataItem;
-import fr.becpg.repo.product.data.productList.LCAListDataItem;
 import fr.becpg.repo.product.data.productList.MicrobioListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.OrganoListDataItem;
@@ -46,6 +46,7 @@ import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.data.productList.PriceListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
+import fr.becpg.repo.product.data.productList.PubChannelListDataItem;
 import fr.becpg.repo.product.data.productList.ResourceParamListItem;
 import fr.becpg.repo.quality.data.dataList.ControlDefListDataItem;
 import fr.becpg.repo.quality.data.dataList.StockListDataItem;
@@ -237,6 +238,7 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	private List<ResourceParamListItem> resourceParamList;
 	private List<PackMaterialListDataItem> packMaterialList;
 	private List<StockListDataItem> stockList;
+	private List<PubChannelListDataItem> pubChannelList;
 
 	/*
 	 * View
@@ -1993,6 +1995,17 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 
 	public void setStockList(List<StockListDataItem> stockList) {
 		this.stockList = stockList;
+	}
+
+
+	@DataList
+	@AlfQname(qname = "bp:pubChannelList")
+	public List<PubChannelListDataItem> getPubChannelList() {
+		return pubChannelList;
+	}
+	
+	public void setPubChannelList(List<PubChannelListDataItem> pubChannelList) {
+		this.pubChannelList = pubChannelList;
 	}
 
 	/**
