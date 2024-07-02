@@ -48,6 +48,7 @@ import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.data.productList.PriceListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
+import fr.becpg.repo.product.data.productList.PubChannelListDataItem;
 import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.ResourceParamListItem;
 import fr.becpg.repo.product.data.productList.SvhcListDataItem;
@@ -251,6 +252,7 @@ public class ProductData extends AbstractScorableEntity
 	private List<RegulatoryListDataItem> regulatoryList;
 	private List<IngRegulatoryListDataItem> ingRegulatoryList;
 	private List<SvhcListDataItem> svhcList;
+	private List<PubChannelListDataItem> pubChannelList;
 
 	/*
 	 * View
@@ -2235,6 +2237,16 @@ public class ProductData extends AbstractScorableEntity
 	 */
 	public void setSvhcList(List<SvhcListDataItem> svhcList) {
 		this.svhcList = svhcList;
+	}
+	
+	@DataList
+	@AlfQname(qname = "bp:pubChannelList")
+	public List<PubChannelListDataItem> getPubChannelList() {
+		return pubChannelList;
+	}
+	
+	public void setPubChannelList(List<PubChannelListDataItem> pubChannelList) {
+		this.pubChannelList = pubChannelList;
 	}
 
 	/**
