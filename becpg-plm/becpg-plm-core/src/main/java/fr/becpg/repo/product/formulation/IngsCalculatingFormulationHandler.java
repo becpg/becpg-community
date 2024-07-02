@@ -238,7 +238,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 					Double qtyPercWithYield = (totalQtyIngWithYield) / (totalQtyUsedWithYield);
 
 					if ((formulatedProduct.getYield() != null) && (nodeService.hasAspect(ingListDataItem.getIng(), PLMModel.ASPECT_WATER)
-							|| (nodeService.hasAspect(ingListDataItem.getIng(), PLMModel.ASPECT_EVAPORABLE)
+							|| (nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE) != null
 									&& (Double )nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE) == 100d))) {
 
 //						Double evaporateRate = (Double) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE);
@@ -262,7 +262,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 					Double qtyPercWithSecondaryYield = ingListDataItem.getQtyPercWithYield() != null ? ingListDataItem.getQtyPercWithYield()
 							: ingListDataItem.getQtyPerc();
 					Double x = (formulatedProduct.getSecondaryYield() / 100d);
-					if (nodeService.hasAspect(ingListDataItem.getIng(), PLMModel.ASPECT_WATER) ||  (nodeService.hasAspect(ingListDataItem.getIng(), PLMModel.ASPECT_EVAPORABLE)
+					if (nodeService.hasAspect(ingListDataItem.getIng(), PLMModel.ASPECT_WATER) ||  (nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE) != null
 							&& (Double)nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE)== 100d) ) {
 
 //						Double evaporateRate = (Double) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE);
