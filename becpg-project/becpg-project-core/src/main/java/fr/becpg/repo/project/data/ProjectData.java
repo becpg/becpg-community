@@ -114,7 +114,30 @@ public class ProjectData extends BeCPGDataObject
 	public ProjectData() {
 		super();
 	}
+	
 
+	public static ProjectData build() {
+		return new ProjectData();
+	}
+
+	
+	public ProjectData withName(String name) {
+		setName(name);
+		return this;
+	}
+	
+
+	
+	public ProjectData withTaskList(List<TaskListDataItem> taskList) {
+		setTaskList(taskList);
+		return this;
+	}
+
+	public ProjectData withDeliverableList(List<DeliverableListDataItem> deliverableList) {
+		setDeliverableList(deliverableList);
+		return this;
+	}
+	
 	/**
 	 * <p>Constructor for ProjectData.</p>
 	 *
