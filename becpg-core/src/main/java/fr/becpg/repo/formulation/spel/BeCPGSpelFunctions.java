@@ -1082,10 +1082,11 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 						if (propertyDef != null) {
 							if (extraPropToCopy.containsKey(propQName)) {
 								logger.debug("Setting property : " + propQName + " from nodeRef");
-								nodeService.setProperty(to.getNodeRef(), propQName, extraPropToCopy.get(propQName));
+								to.getExtraProperties().put(propQName, extraPropToCopy.get(propQName));
 							} else {
 								logger.debug("Removing property : " + propQName);
 								nodeService.removeProperty(to.getNodeRef(), propQName);
+								to.getExtraProperties().remove(propQName);
 							}
 
 						} else {
