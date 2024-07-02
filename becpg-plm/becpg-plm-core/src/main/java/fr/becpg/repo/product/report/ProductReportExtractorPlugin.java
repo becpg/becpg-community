@@ -683,6 +683,14 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	}
 
+
+	private void addInfiniteLoopError(CurrentLevelQuantities currentLevelQuantities, DefaultExtractorContext context) {
+		context.setInfiniteLoop(true);
+		String message = I18NUtil.getMessage("message.datasource.infinite-loop");
+		context.getReportData().getLogs().add(new ReportableError(ReportableErrorType.ERROR, message, MLTextHelper.getI18NMessage("message.datasource.infinite-loop"), List.of(currentLevelQuantities.getCompoListItem().getNodeRef())));
+		logger.error("Infinite loop during datasource generation due to the following item: " + currentLevelQuantities.getCompoListItem().getNodeRef());
+	}
+
 	private void loadProcessListItemForCompo(NodeRef entityNodeRef, Element processListElt, int level, CurrentLevelQuantities currentLevelQuantities,
 			DefaultExtractorContext context) {
 
