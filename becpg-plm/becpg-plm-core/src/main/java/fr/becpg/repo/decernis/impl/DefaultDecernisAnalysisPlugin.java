@@ -28,7 +28,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 
 import com.google.common.collect.Lists;
 
@@ -367,7 +366,7 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 													RequirementType.Forbidden);
 											reqCtrlItem.setRegulatoryCode(regulatoryCode);
 											reqCtrlItem.setReqMaxQty(0d);
-											if (!threshold.isBlank() && ingItem != null && ingItem.getQtyPerc() != 0d) {
+											if (!threshold.isBlank() && ingItem != null && ingItem.getQtyPerc() != null && ingItem.getQtyPerc() != 0d) {
 												Double thresholdValue = DecernisHelper.extractThresholdValue(threshold);
 												if (thresholdValue != null) {
 													reqCtrlItem.setReqMaxQty((thresholdValue / ingItem.getQtyPerc()) * 100d);
