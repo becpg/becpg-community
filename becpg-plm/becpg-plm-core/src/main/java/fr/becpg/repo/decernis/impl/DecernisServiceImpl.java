@@ -31,7 +31,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.client.RestTemplate;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
@@ -393,10 +392,10 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 				}
 				try {
 					if ((rid != null) && !rid.isEmpty() && !rid.equals(MISSING_VALUE)
-							&& ((ingName != null) && !ingName.isEmpty()) && (ingQtyPerc != null)) {
+							&& ((ingName != null) && !ingName.isEmpty())) {
 						JSONObject ingredient = new JSONObject();
 						ingredient.put("name", ingName);
-						ingredient.put("percentage", ingQtyPerc);
+						ingredient.put("percentage", ingQtyPerc == null ? 0d : ingQtyPerc);
 						ingredient.put("ingredient_did", rid);
 						if (function != null) {
 							ingredient.put("function", function);
