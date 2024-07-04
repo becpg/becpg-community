@@ -92,7 +92,7 @@ public abstract class AbstractScorableEntity extends BeCPGDataObject implements 
 	public void addError(MLText msg, String formulationChainId, List<NodeRef> sources) {
 
 		reqCtrlList.add(ReqCtrlListDataItem.forbidden().withMessage(msg)
-				.ofDataType(RequirementDataType.Formulation).withFormulationChainId(formulationChainId));
+				.ofDataType(RequirementDataType.Formulation).withFormulationChainId(formulationChainId).withSources(sources));
 	}
 
 	/** {@inheritDoc} */
