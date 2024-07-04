@@ -24,7 +24,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.client.RestTemplate;
 
 import com.google.common.collect.Lists;
 
@@ -206,7 +205,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 				ingredient.put("spec", ingName);
 				ingredient.put("idType", "Decernis ID");
 				ingredient.put("idValue", rid);
-				ingredient.put("percentage", ingQtyPerc);
+				ingredient.put("percentage", ingQtyPerc == null ? 0d : ingQtyPerc);
 				if (function != null) {
 					ingredient.put("function", function);
 				}
@@ -430,7 +429,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 												RequirementType.Forbidden);
 										reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
 										reqCtrlItem.setReqMaxQty(0d);
-										if (!threshold.isBlank() && ingItem != null && ingItem.getQtyPerc() != 0d) {
+										if (!threshold.isBlank() && ingItem != null && ingItem.getQtyPerc() != null && ingItem.getQtyPerc() != 0d) {
 											Double thresholdValue = DecernisHelper.extractThresholdValue(threshold);
 											if (thresholdValue != null) {
 												reqCtrlItem.setReqMaxQty((thresholdValue / ingItem.getQtyPerc()) * 100d);
