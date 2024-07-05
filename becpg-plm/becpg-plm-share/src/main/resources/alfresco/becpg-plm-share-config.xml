@@ -70,6 +70,7 @@
 			<itemType name="bcpg:rawMaterial" editSelectedFormId="bulk-edit"/>
 			<itemType name="bcpg:packagingMaterial" editSelectedFormId="bulk-edit" />
 			<itemType name="bcpg:packagingKit" editSelectedFormId="bulk-edit" />
+			<itemType name="bcpg:logisticUnit" editSelectedFormId="bulk-edit" />
 			<itemType name="bcpg:productCollection" editSelectedFormId="bulk-edit"/>
 			<itemType name="bcpg:resourceProduct" />
 			<itemType name="qa:qualityControl" />
