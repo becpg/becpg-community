@@ -48,6 +48,7 @@
 				<form labelId="search.form.label.bcpg_semiFinishedProduct" descriptionId="search.form.desc.bcpg_semiFinishedProduct">bcpg:semiFinishedProduct</form>
 				<form labelId="search.form.label.bcpg_packagingMaterial" descriptionId="search.form.desc.bcpg_packagingMaterial">bcpg:packagingMaterial</form>
 				<form labelId="search.form.label.bcpg_packagingKit" descriptionId="search.form.desc.bcpg_packagingKit">bcpg:packagingKit</form>
+				<form labelId="search.form.label.bcpg_logisticUnit" descriptionId="search.form.desc.bcpg_logisticUnit">bcpg:logisticUnit</form>
 				<form labelId="search.form.label.bcpg_rawMaterial" descriptionId="search.form.desc.bcpg_rawMaterial">bcpg:rawMaterial</form>
 				<form labelId="search.form.label.bcpg_resourceProduct" descriptionId="search.form.desc.bcpg_resourceProduct">bcpg:resourceProduct</form>
 				<form labelId="search.form.label.bcpg_client" descriptionId="search.form.desc.bcpg_client">bcpg:client</form>

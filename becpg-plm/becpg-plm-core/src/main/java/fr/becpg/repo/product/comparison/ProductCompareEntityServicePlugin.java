@@ -74,7 +74,7 @@ public class ProductCompareEntityServicePlugin extends DefaultCompareEntityServi
 			}
 
 			if (qtyForProduct != null) {
-				if (entityType.equals(PLMModel.TYPE_FINISHEDPRODUCT)) {
+				if (entityType.equals(PLMModel.TYPE_FINISHEDPRODUCT) || entityType.equals(PLMModel.TYPE_LOGISTICUNIT)) {
 					extractProps(comparisonMap, dataListType, charactName, charactName, PLMModel.PROP_COMPOLIST_QTY_PERC_FOR_PRODUCT,
 							Double.toString(qtyForProduct / totalQty[position] * 100), nbEntities, comparisonPosition, swap);
 				} else if (entityType.equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT)) {
@@ -135,7 +135,7 @@ public class ProductCompareEntityServicePlugin extends DefaultCompareEntityServi
 			}
 
 			if (qtyForProduct != null) {
-				if (entityType.equals(PLMModel.TYPE_FINISHEDPRODUCT)) {
+				if (entityType.equals(PLMModel.TYPE_FINISHEDPRODUCT) || entityType.equals(PLMModel.TYPE_LOGISTICUNIT)) {
 					extractProps(comparisonMap, dataListType, charactName, charactName, PLMModel.PROP_PACKAGINGLIST_QTY_PERC_FOR_PRODUCT,
 							Double.toString(qtyForProduct / totalQty[position] * 100), nbEntities, comparisonPosition, swap);
 				} else if (entityType.equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT)) {
@@ -195,7 +195,7 @@ public class ProductCompareEntityServicePlugin extends DefaultCompareEntityServi
 				if (entityType.equals(PLMModel.TYPE_RESOURCEPRODUCT)) {
 					extractProps(comparisonMap, dataListType, charactName, charactName, MPMModel.PROP_PL_QTY_PERC_FOR_PRODUCT,
 							Double.toString(qtyForProduct / totalQty[position] * 100), nbEntities, comparisonPosition, swap);
-				} else if (entityType.equals(PLMModel.TYPE_FINISHEDPRODUCT)) {
+				} else if (entityType.equals(PLMModel.TYPE_FINISHEDPRODUCT) || entityType.equals(PLMModel.TYPE_LOGISTICUNIT)) {
 					extractProps(comparisonMap, dataListType, charactName, charactName, MPMModel.PROP_PL_QTY_PERC_FOR_PRODUCT,
 							Double.toString(qtyForProduct / totalQty[position] * 100), nbEntities, comparisonPosition, swap);
 				} else if (entityType.equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT)) {
@@ -261,7 +261,7 @@ public class ProductCompareEntityServicePlugin extends DefaultCompareEntityServi
 	/** {@inheritDoc} */
 	@Override
 	public boolean applyTo(QName entityType) {
-		return entityType.equals(PLMModel.TYPE_FINISHEDPRODUCT) || entityType.equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT);
+		return entityType.equals(PLMModel.TYPE_FINISHEDPRODUCT) || entityType.equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT) || entityType.equals(PLMModel.TYPE_LOGISTICUNIT);
 	}
 
 }
