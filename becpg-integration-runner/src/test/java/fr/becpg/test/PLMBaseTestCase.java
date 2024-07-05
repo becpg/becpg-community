@@ -134,7 +134,16 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 			return null;
 
 		}, false, true);
-
+		
+		if (shouldInit) {
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				Assert.assertNotNull(entityTplService.getEntityTpl(PLMModel.TYPE_LOGISTICUNIT));
+				
+				return false;
+				
+			}, false, true);
+		}
+		
 	}
 
 	private void initConstraints() {
