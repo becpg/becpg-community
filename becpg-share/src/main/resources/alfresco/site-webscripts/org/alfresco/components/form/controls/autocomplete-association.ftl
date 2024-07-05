@@ -90,49 +90,58 @@
    </#if>
 </div>
 <script type="text/javascript">//<![CDATA[
-  new beCPG.component.AutoCompletePicker('${controlId}', '${fieldHtmlId}', true).setOptions(
-		   {
-		 		currentValue: "${field.value}",
-		 		mode: "${form.mode}",
-		 		formId: "${formId}",
-		 		readOnly : ${(field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true"))?string},
-		        multipleSelectMode: ${multipleSelectMode?string}, 
-		        isMandatory : ${field.mandatory?string},
-		      <#if pageLinkTemplate?? && pageLinkTemplate !="null">
-		 		targetLinkTemplate: "${pageLinkTemplate}" ,
-		 		</#if>
-		 		dsStr:"${ds}"
-				<#if field.control.params.parent??>
-					<#assign parentFieldHtmlId=args.htmlid + "_prop_" + field.control.params.parent >
-		 		,parentFieldHtmlId:"${parentFieldHtmlId}"
-				<#elseif field.control.params.parentAssoc??>
-					<#assign parentFieldHtmlId=args.htmlid + "_assoc_" + field.control.params.parentAssoc >
-		 		,parentFieldHtmlId:"${parentFieldHtmlId}-cntrl"
-				</#if>
-				<#if field.control.params.showColor?exists>
-			 	,showColor:${field.control.params.showColor?string}
-				</#if>
-				<#if field.control.params.showTooltip??>
-				 ,showToolTip:${field.control.params.showTooltip?string}
-				</#if>
-				<#if field.control.params.urlParamsToPass??>
-				<#assign firstLabel=true>			
-				<#assign urlParamsToPass="">
-				,<#list field.control.params.urlParamsToPass?split(',') as urlParam>
-					<#assign arg="args." + urlParam >
-	                <#if !arg?eval?? >
-						<#assign arg="page.url.args." + urlParam >				
-					</#if>
-					<#if arg?eval?? >
-						<#if !firstLabel>
-				        	<#assign urlParamsToPass=urlParamsToPass+"&">
-				     	<#else>
-				        	<#assign firstLabel=false>
-				     	</#if>		
-			    	 	<#assign urlParamsToPass=urlParamsToPass + "extra." +urlParam + "=" + arg?eval!"">			
-					</#if>
-				</#list>
-				urlParamsToPass:"${urlParamsToPass}"
+	new beCPG.component.AutoCompletePicker('${controlId}', '${fieldHtmlId}', true).setOptions({
+ 		currentValue: "${field.value}",
+ 		mode: "${form.mode}",
+ 		formId: "${formId}",
+ 		readOnly : ${(field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true"))?string},
+        multipleSelectMode: ${multipleSelectMode?string}, 
+        isMandatory : ${field.mandatory?string},
+      <#if pageLinkTemplate?? && pageLinkTemplate !="null">
+ 		targetLinkTemplate: "${pageLinkTemplate}" ,
+ 		</#if>
+ 		dsStr:"${ds}"
+		<#if field.control.params.parent??>
+			<#assign parentFieldHtmlId=args.htmlid + "_prop_" + field.control.params.parent >
+ 		,parentFieldHtmlId:"${parentFieldHtmlId}"
+		<#elseif field.control.params.parentAssoc??>
+			<#assign parentFieldHtmlId=args.htmlid + "_assoc_" + field.control.params.parentAssoc >
+ 		,parentFieldHtmlId:"${parentFieldHtmlId}-cntrl"
+		</#if>
+		<#if field.control.params.showColor?exists>
+	 	,showColor:${field.control.params.showColor?string}
+		</#if>
+		<#if field.control.params.showTooltip??>
+		 ,showToolTip:${field.control.params.showTooltip?string}
+		</#if>
+		<#if field.control.params.urlParamsToPass??>
+		<#assign firstLabel=true>			
+		<#assign urlParamsToPass="">
+		,<#list field.control.params.urlParamsToPass?split(',') as urlParam>
+			<#assign arg="args." + urlParam >
+            <#if !arg?eval?? >
+				<#assign arg="page.url.args." + urlParam >				
 			</#if>
+			<#if arg?eval?? >
+				<#if !firstLabel>
+		        	<#assign urlParamsToPass=urlParamsToPass+"&">
+		     	<#else>
+		        	<#assign firstLabel=false>
+		     	</#if>		
+	    	 	<#assign urlParamsToPass=urlParamsToPass + "extra." +urlParam + "=" + arg?eval!"">			
+			</#if>
+		</#list>
+		urlParamsToPass: {
+ 			toString() {
+ 				return "${urlParamsToPass}<#if field.control.params.extraPaths??>&extra.paths=" + document.querySelector('[name="${field.control.params.extraPaths}"]').value?.split(',').map(str => str.split(':')[1] + "_Hierarchy")<#else>"</#if>;
+ 			}
+ 		}
+ 		<#elseif field.control.params.extraPaths??>
+ 		,urlParamsToPass: {
+ 			toString() {
+ 				return "extra.paths=" + document.querySelector('[name="${field.control.params.extraPaths}"]').value?.split(',').map(str => str.split(':')[1] + "_Hierarchy");
+ 			}
+ 		}
+		</#if>
   });
 //]]></script>
