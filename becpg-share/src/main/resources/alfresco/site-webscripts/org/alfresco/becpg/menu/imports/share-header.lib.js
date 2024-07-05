@@ -189,6 +189,10 @@ function isLicenseValid(user){
 	return user.capabilities["isLicenseValid"];
 }
 
+function floatingLicensesExceeded(user){
+	return user.capabilities["floatingLicensesExceeded"];
+}
+
 
 
 

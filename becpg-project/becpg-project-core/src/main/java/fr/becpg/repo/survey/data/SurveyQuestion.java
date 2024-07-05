@@ -436,4 +436,5 @@ public class SurveyQuestion extends BeCPGDataObject {
 				+ ", fsLinkedCharactRefs=" + fsLinkedCharactRefs + ", fsLinkedTypes=" + fsLinkedTypes
 				+ ", fsLinkedHierarchy=" + fsLinkedHierarchy + "]";
 	}
+	
 }

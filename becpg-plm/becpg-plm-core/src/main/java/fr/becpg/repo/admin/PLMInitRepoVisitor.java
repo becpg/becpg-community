@@ -1083,6 +1083,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 		entityLists.put(RepoConsts.PATH_NOTIFICATIONS, BeCPGModel.TYPE_NOTIFICATIONRULELIST);
 		entityLists.put(PlmRepoConsts.PATH_PUBCHANNELS, PublicationModel.TYPE_PUBLICATION_CHANNEL);
+		entityLists.put(PlmRepoConsts.PATH_ACTIVITY_LIST, BeCPGModel.TYPE_ACTIVITY_LIST);
 
 		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
 	}
@@ -1103,6 +1104,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(HierarchyHelper.getHierarchyPathName(PLMModel.TYPE_SUPPLIER), BeCPGModel.TYPE_LINKED_VALUE);
 		entityLists.put(HierarchyHelper.getHierarchyPathName(PLMModel.TYPE_PRODUCTCOLLECTION), BeCPGModel.TYPE_LINKED_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_GS1_HIERARCHY, BeCPGModel.TYPE_LINKED_VALUE);
+		entityLists.put(PlmRepoConsts.PATH_ACTIVITY_LIST, BeCPGModel.TYPE_ACTIVITY_LIST);
 
 		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
 	}
@@ -1173,6 +1175,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(RepoConsts.PATH_REPORT_PARAMS, BeCPGModel.TYPE_LIST_VALUE);
 
 		entityLists.put(RepoConsts.PATH_REPORT_KINDLIST, BeCPGModel.TYPE_LIST_VALUE);
+		
+		entityLists.put(PlmRepoConsts.PATH_ACTIVITY_LIST, BeCPGModel.TYPE_ACTIVITY_LIST);
 
 		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
 	}
@@ -1187,6 +1191,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_ONU_CODES, GHSModel.TYPE_ONU_CODE);
 		entityLists.put(PlmRepoConsts.PATH_CLASS_CODES, GHSModel.TYPE_CLASS_CODE);
 		entityLists.put(PlmRepoConsts.PATH_PACKAGING_GROUP_CODES, GHSModel.TYPE_PACKAGING_GROUP_CODE);
+		entityLists.put(PlmRepoConsts.PATH_ACTIVITY_LIST, BeCPGModel.TYPE_ACTIVITY_LIST);
 		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
 	}
 
@@ -1205,7 +1210,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_CONTROL_UNITS, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_CONTROL_TEMPERATURES, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_CONTROL_TYPES, BeCPGModel.TYPE_LIST_VALUE);
-
+		entityLists.put(PlmRepoConsts.PATH_ACTIVITY_LIST, BeCPGModel.TYPE_ACTIVITY_LIST);
+		
 		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
 	}
 
@@ -1381,6 +1387,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		// visit productMicrobioCriteria
 		Set<QName> dataLists = new LinkedHashSet<>();
 		dataLists.add(PLMModel.TYPE_MICROBIOLIST);
+		dataLists.add(BeCPGModel.TYPE_ACTIVITY_LIST);
 		NodeRef entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, PLMModel.TYPE_PRODUCT_MICROBIO_CRITERIA, null, true, true,
 				dataLists, null);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
@@ -1395,6 +1402,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
 		dataLists.add(PLMModel.TYPE_LABELCLAIMLIST);
 		dataLists.add(PLMModel.TYPE_SPEC_COMPATIBILTY_LIST);
+		dataLists.add(BeCPGModel.TYPE_ACTIVITY_LIST);
 		entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, PLMModel.TYPE_PRODUCT_SPECIFICATION, null, true, true, dataLists,
 				null);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
@@ -1404,6 +1412,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		Set<String> subFolders = new HashSet<>();
 		dataLists.clear();
 		dataLists.add(QualityModel.TYPE_SAMPLINGDEF_LIST);
+		dataLists.add(BeCPGModel.TYPE_ACTIVITY_LIST);
 		entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_CONTROL_PLAN, null, true, true, dataLists,
 				subFolders);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
@@ -1412,6 +1421,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		dataLists.clear();
 		dataLists.add(QualityModel.TYPE_SAMPLING_LIST);
 		dataLists.add(QualityModel.TYPE_CONTROL_LIST);
+		dataLists.add(BeCPGModel.TYPE_ACTIVITY_LIST);
 		entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_QUALITY_CONTROL, null, true, true, dataLists, null);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_REPORTS);
@@ -1421,6 +1431,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		dataLists.clear();
 		dataLists.add(PLMModel.TYPE_COMPOLIST);
 		dataLists.add(QualityModel.TYPE_BATCH_ALLOCATION_LIST);
+		dataLists.add(BeCPGModel.TYPE_ACTIVITY_LIST);
 		entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_BATCH, null, true, true, dataLists, null);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_REPORTS);
@@ -1429,12 +1440,14 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		// visit controlPoint
 		dataLists.clear();
 		dataLists.add(QualityModel.TYPE_CONTROLDEF_LIST);
+		dataLists.add(BeCPGModel.TYPE_ACTIVITY_LIST);
 		entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_CONTROL_POINT, null, true, true, dataLists, null);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 
 		// visit workItemAnalysis
 		dataLists.clear();
 		dataLists.add(QualityModel.TYPE_CONTROL_LIST);
+		dataLists.add(BeCPGModel.TYPE_ACTIVITY_LIST);
 		entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_WORK_ITEM_ANALYSIS, null, true, true, dataLists,
 				null);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);

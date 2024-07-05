@@ -401,6 +401,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					data.put(PROP_ACTIVITY_EVENT, activityEvent.toString());
 					data.put(PROP_ENTITY_NODEREF, entityNodeRef);
 					data.put(PROP_ENTITY_TYPE, nodeService.getType(entityNodeRef));
+					data.put(PROP_PARENT_NAME, nodeService.getProperty(nodeService.getPrimaryParent(datalistNodeRef).getParentRef(), ContentModel.PROP_NAME));
 
 					QName type = nodeService.getType(datalistNodeRef);
 

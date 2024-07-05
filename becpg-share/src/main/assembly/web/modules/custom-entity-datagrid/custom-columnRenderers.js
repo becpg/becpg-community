@@ -83,6 +83,8 @@ if (beCPG.module.EntityDataGridRenderers) {
 				} else if (activityType == "Datalist" ){
 					if (data.title == null || data.title.indexOf(className)>0){
 						title  = scope.msg("entity.activity.datalist.simple", scope.msg("data.list."+className));
+					} else if (className == "lvValue" || className == "lkvValue") {
+						title  = scope.msg("entity.activity.datalist."+data.activityEvent.toLowerCase(), title, scope.msg("data.list."+ data.parentName.toLowerCase()));
 					} else{
 						title  = scope.msg("entity.activity.datalist."+data.activityEvent.toLowerCase(), title, scope.msg("data.list."+className) );
 					}

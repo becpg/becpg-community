@@ -5,7 +5,7 @@
 	<groupId>fr.becpg</groupId>
 	<artifactId>becpg-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>23.2.0</version>
+	<version>23.2.1</version>
 	<name>beCPG</name>
 	
 	<description>BeCPG Parent Project</description>
@@ -154,7 +154,7 @@
 		<test.acs.endpoint.path />
 
 		<becpg.dockerbuild.name>test</becpg.dockerbuild.name>
-		<becpg.version>23.2.0</becpg.version>
+		<becpg.version>23.2.1</becpg.version>
 		<docker.becpg.url>becpg</docker.becpg.url>
 		<docker.becpg.version>${becpg.version}</docker.becpg.version>
 		<docker.becpg.tag>${project.version}</docker.becpg.tag>
@@ -367,6 +367,7 @@
 								<exclude>**/signature/**</exclude>
 								<exclude>**/rules/**</exclude>
 								<exclude>**/script/**</exclude>
+								<exclude>**/project/**</exclude>
 								<exclude>**/site-webscripts/**</exclude>
 								<exclude>**/META-INF/**</exclude>
 								<exclude>**/*.lib.js</exclude>
@@ -393,6 +394,7 @@
 								<exclude>**/artworks-viewer/**</exclude>
 								<exclude>**/signature/**</exclude>
 								<exclude>**/script/**</exclude>
+								<exclude>**/project/**</exclude>
 								<exclude>**/site-webscripts/**</exclude>
 								<exclude>**/*.lib.js</exclude>
 								<exclude>**/*.css</exclude>
