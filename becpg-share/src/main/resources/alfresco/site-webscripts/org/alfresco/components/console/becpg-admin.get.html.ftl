@@ -73,21 +73,39 @@
 									</#if>
 									<label>${msg("label.connectedUsers")}</label>
 									<span class="info">${systemInfo.connectedUsers}</span><br/>
+									<label>${msg("label.namedReadUsers")}</label>
+									<#if systemInfo.namedReadUsers gt systemInfo.license.allowedNamedRead>
+										<span class="error">${systemInfo.namedReadUsers} / ${systemInfo.license.allowedNamedRead}</span><br/>
+									<#else>
+										<span class="info">${systemInfo.namedReadUsers} / ${systemInfo.license.allowedNamedRead}</span><br/>
+									</#if>
+									<label>${msg("label.namedWriteUsers")}</label>
+									<#if systemInfo.namedWriteUsers gt systemInfo.license.allowedNamedWrite>
+										<span class="error">${systemInfo.namedWriteUsers} / ${systemInfo.license.allowedNamedWrite}</span><br/>
+									<#else>
+										<span class="info">${systemInfo.namedWriteUsers} / ${systemInfo.license.allowedNamedWrite}</span><br/>
+									</#if>
+									<label>${msg("label.concurrentReadUsers")}</label>
+									<#if systemInfo.concurrentReadUsers gt systemInfo.license.allowedConcurrentRead>
+										<span class="error">${systemInfo.concurrentReadUsers} / ${systemInfo.license.allowedConcurrentRead}</span><br/>
+									<#else>
+										<span class="info">${systemInfo.concurrentReadUsers} / ${systemInfo.license.allowedConcurrentRead}</span><br/>
+									</#if>
+									<label>${msg("label.concurrentWriteUsers")}</label>
+									<#if systemInfo.concurrentWriteUsers gt systemInfo.license.allowedConcurrentWrite>
+										<span class="error">${systemInfo.concurrentWriteUsers} / ${systemInfo.license.allowedConcurrentWrite}</span><br/>
+									<#else>
+										<span class="info">${systemInfo.concurrentWriteUsers} / ${systemInfo.license.allowedConcurrentWrite}</span><br/>
+									</#if>
+									<label>${msg("label.concurrentSupplierUsers")}</label>
+									<#if systemInfo.concurrentSupplierUsers gt systemInfo.license.allowedConcurrentSupplier>
+										<span class="error">${systemInfo.concurrentSupplierUsers} / ${systemInfo.license.allowedConcurrentSupplier}</span><br/>
+									<#else>
+										<span class="info">${systemInfo.concurrentSupplierUsers} / ${systemInfo.license.allowedConcurrentSupplier}</span><br/>
+									</#if>
 									<label>${msg("label.batchCounts")}</label>
 									<span class="info">${systemInfo.batchCounts}</span><br/>
 					 			</div>
-					 			 <div class="action">
-						    		<button type="button" name="${el}-empty-cache" id="${el}-empty-cache-button">${msg("button.empty-cache")}</button>
-						    		<label for="${el}-empty-cache-button">${msg("label.empty-cache")}</label>    		
-						  		  </div>
-						  		  <div class="action">
-						    		<button type="button" name="${el}-show-users" id="${el}-show-users-button">${msg("button.show-users")}</button>
-						    		<label for="${el}-show-users-button">${msg("label.show-users")}</label>    		
-						  		  </div>
-						  		  <div class="action">
-						    		<button type="button" name="${el}-show-batches" id="${el}-show-batches-button">${msg("button.show-batches")}</button>
-						    		<label for="${el}-show-batches-button">${msg("label.show-batches")}</label>    		
-						  		  </div>
 					 			 </td>
 					 			</tr>
 							</table>
@@ -95,7 +113,7 @@
 					</div>
 					<div class="yui-u system-action-container">
 				     	<div class="header-bar">
-				         <div class="title">${msg("label.repository")}</div>
+				         <div class="title">${msg("label.actions")}</div>
 				      </div>      
 				      <div class="section">
 				      <@markup id="actions">
@@ -103,6 +121,18 @@
 					    		<button type="button" name="${el}-init-repo-button" id="${el}-init-repo-button">${msg("button.init-repo")}</button>
 					    		<label for="${el}-init-repo-button">${msg("label.init-repo")}</label>   		
 					    	</div>
+					  		  <div class="action">
+					    		<button type="button" name="${el}-empty-cache" id="${el}-empty-cache-button">${msg("button.empty-cache")}</button>
+					    		<label for="${el}-empty-cache-button">${msg("label.empty-cache")}</label>    		
+					  		  </div>
+					  		  <div class="action">
+					    		<button type="button" name="${el}-show-users" id="${el}-show-users-button">${msg("button.show-users")}</button>
+					    		<label for="${el}-show-users-button">${msg("label.show-users")}</label>    		
+					  		  </div>
+					  		  <div class="action">
+					    		<button type="button" name="${el}-show-batches" id="${el}-show-batches-button">${msg("button.show-batches")}</button>
+					    		<label for="${el}-show-batches-button">${msg("label.show-batches")}</label>    		
+					  		  </div>
 						</div>
 					 </@markup>	
 				    </div>

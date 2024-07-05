@@ -69,6 +69,7 @@ import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AuthorityHelper;
 import fr.becpg.repo.helper.SiteHelper;
+import fr.becpg.repo.license.BeCPGLicenseManager;
 import fr.becpg.repo.report.jscript.ReportAssociationDecorator;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.security.SecurityService;
@@ -177,6 +178,12 @@ public class EntityListsWebScript extends AbstractWebScript {
 	private LockService lockService;
 
 	private ReportAssociationDecorator reportAssociationDecorator;
+	
+	private BeCPGLicenseManager becpgLicenseManager;
+	
+	public void setBecpgLicenseManager(BeCPGLicenseManager becpgLicenseManager) {
+		this.becpgLicenseManager = becpgLicenseManager;
+	}
 
 	/**
 	 * <p>Setter for the field <code>permissionService</code>.</p>
@@ -380,9 +387,10 @@ public class EntityListsWebScript extends AbstractWebScript {
 		JSONObject userAccess = new JSONObject();
 		boolean entityIsLocked = lockService.isLocked(entity);
 		boolean isArchived = nodeService.hasAspect(entity, BeCPGModel.ASPECT_ARCHIVED_ENTITY);
-		userAccess.put(KEY_NAME_CREATE, (permissionService.hasPermission(entity, "CreateChildren") == AccessStatus.ALLOWED) && !entityIsLocked && !isArchived);
-		userAccess.put(KEY_NAME_EDIT, (permissionService.hasPermission(entity, "Write") == AccessStatus.ALLOWED) && !entityIsLocked && !isArchived);
-		userAccess.put(KEY_NAME_DELETE, (permissionService.hasPermission(entity, "Delete") == AccessStatus.ALLOWED) && !entityIsLocked && !isArchived);
+		boolean hasWriteLicense = becpgLicenseManager.hasWriteLicense();
+		userAccess.put(KEY_NAME_CREATE, (permissionService.hasPermission(entity, "CreateChildren") == AccessStatus.ALLOWED) && hasWriteLicense && !entityIsLocked && !isArchived);
+		userAccess.put(KEY_NAME_EDIT, (permissionService.hasPermission(entity, "Write") == AccessStatus.ALLOWED) && hasWriteLicense && !entityIsLocked && !isArchived);
+		userAccess.put(KEY_NAME_DELETE, (permissionService.hasPermission(entity, "Delete") == AccessStatus.ALLOWED) && hasWriteLicense && !entityIsLocked && !isArchived);
 		result.put(KEY_NAME_USER_ACCESS, userAccess);
 
 		JSONArray userSecurityRoles = new JSONArray();
