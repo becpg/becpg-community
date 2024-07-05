@@ -323,7 +323,7 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 													RequirementType.Forbidden);
 											reqCtrlItem.setRegulatoryCode(regulatoryCode);
 											reqCtrlItem.setReqMaxQty(0d);
-											if (!threshold.isBlank() && ingItem != null && ingItem.getQtyPerc() != 0d) {
+											if (!threshold.isBlank() && ingItem != null && ingItem.getQtyPerc() != null && ingItem.getQtyPerc() != 0d) {
 												Double thresholdValue = DecernisHelper.extractThresholdValue(threshold);
 												if (thresholdValue != null) {
 													reqCtrlItem.setReqMaxQty((thresholdValue / ingItem.getQtyPerc()) * 100d);
