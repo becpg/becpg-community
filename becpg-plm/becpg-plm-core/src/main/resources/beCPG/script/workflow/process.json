@@ -99,7 +99,7 @@
 			"destination": "js(siteService.getSite(\"simulation\").getContainer(\"documentLibrary\").nodeRef)",
 			"formFields": {
 				"prop_pjt_projectState": "InProgress",
-				"prop_cm_name": "js(bcpg.getMessage(\"signatureWorkflow.project.name\"))",
+				"prop_cm_name": "js(bcpg.getMessage(\"signatureWorkflow.project.name\") + (items.length == 1 ? \" - \" + items[0].name : \"\"))",
 				"assoc_sign_recipients": "js(bSignProject.extractRecipients(items).map((n) =>  n.nodeRef ).join(\",\"))"
 				
 			},
