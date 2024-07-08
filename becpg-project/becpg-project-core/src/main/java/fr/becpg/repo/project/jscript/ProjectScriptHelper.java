@@ -308,7 +308,7 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 				}
 				
 				
-				return strRet.toString().replace("$", "\\$");
+				return strRet.toString();
 			}
 		} else {
 			ret = nodeRef;
