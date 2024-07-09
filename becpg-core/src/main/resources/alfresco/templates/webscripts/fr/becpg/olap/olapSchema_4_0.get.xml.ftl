@@ -861,7 +861,8 @@
 							COALESCE(p.doc->>"$.bcpg_productState", pjt.doc->>"$.pjt_projectState", c.doc->>"$.bcpg_clientState", s.doc->>"$.bcpg_supplierState") as entityState,
 							COALESCE(p.doc->>"$.metadata_siteId", pjt.doc->>"$.metadata_siteId", c.doc->>"$.metadata_siteId", s.doc->>"$.metadata_siteId") as siteId,
 							COALESCE(p.doc->>"$.metadata_siteName", pjt.doc->>"$.metadata_siteName", c.doc->>"$.metadata_siteName", s.doc->>"$.metadata_siteName") as siteName,
-							COALESCE(p.doc->>"$.type", pjt.doc->>"$.type", c.doc->>"$.type", s.doc->>"$.type") as entityType
+							COALESCE(p.doc->>"$.type", pjt.doc->>"$.type", c.doc->>"$.type", s.doc->>"$.type") as entityType,
+							COALESCE(p.doc->>"$.pjt_projectScore", pjt.doc->>"$.pjt_projectScore", c.doc->>"$.pjt_projectScore", s.doc->>"$.pjt_projectScore") as projectScore
 						from
 							scoreList a
 							LEFT JOIN bcpg_product p ON a.entityNodeRef = p.nodeRef
@@ -961,6 +962,7 @@
 		<DimensionUsage name="tags" caption="${msg("jsolap.tags.title")}" source="tagsDimension" foreignKey="scoreNodeRef" />
 		
 		
+		<Measure name="averageNote" caption="${msg("jsolap.averageNote.title")}" column="projectScore" datatype="Numeric" aggregator="avg" visible="true" />
 		<Measure name="slWeight" caption="${msg("jsolap.weighting.title")}" column="slWeight" datatype="Numeric" aggregator="avg" visible="true" />
 		<Measure name="slScore" caption="${msg("jsolap.note.title")}" column="slScore" datatype="Numeric" aggregator="avg" visible="true"  />
 		
