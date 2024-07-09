@@ -123,14 +123,14 @@ public class PluralLegalNamePatch extends AbstractBeCPGPatch {
 				if (nodeService.exists(dataListNodeRef)) {
 					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 					policyBehaviourFilter.disableBehaviour();
-					MLPropertyInterceptor.setMLAware(true);
+					boolean wasMLAware = MLPropertyInterceptor.setMLAware(true);
 					try {
 						MLText ingTypePluralLegalName = (MLText) nodeService.getProperty(dataListNodeRef, PROP_ING_TYPE_LEGAL_NAME_PLURAL);
 						nodeService.setProperty(dataListNodeRef, PLMModel.PROP_PLURAL_LEGAL_NAME, ingTypePluralLegalName);
 						nodeService.removeProperty(dataListNodeRef, PROP_ING_TYPE_LEGAL_NAME_PLURAL);
 					
 					} finally {
-						MLPropertyInterceptor.setMLAware(false);
+						MLPropertyInterceptor.setMLAware(wasMLAware);
 					}
 				} else {
 					logger.warn("dataListNodeRef doesn't exist : " + dataListNodeRef);
