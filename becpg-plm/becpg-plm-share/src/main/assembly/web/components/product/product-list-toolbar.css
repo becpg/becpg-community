@@ -1,0 +1,41 @@
+.product-list-toolbar {
+	margin: 0px -10px;
+	visibility: visible;
+}
+
+.product-list-toolbar .header-bar {
+	clear: both;
+	min-height: 1.7em;
+	padding: 4px 0.5em 9px;
+}
+
+.product-list-toolbar .hidden {
+	visibility: hidden;
+}
+
+.product-list-toolbar .left {
+	float: left;
+}
+
+.product-list-toolbar .right {
+	float: right;
+}
+
+.product-list-toolbar .right .separator {
+	float: left;
+}
+
+.product-list-toolbar .export-csv {
+	float: left;
+}
+
+.product-list-toolbar .export-csv span.first-child {
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	min-height: 16px;
+	padding: 0 2px;
+}
+
+.product-list-toolbar .export-csv span.first-child {
+	background-image: url(../../components/images/filetypes/xls-file-16.png);
+}
