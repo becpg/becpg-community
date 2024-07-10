@@ -349,6 +349,10 @@ img.icon16_11 {
 .dijitIcon.dijitMenuItemIcon.project-list-header {
     background-image: url("../../components/images/header/project-list.png") !important
 }
+.dijitIcon.dijitMenuItemIcon.product-list-header {
+    background-image: url("../../components/images/header/product-list.png") !important
+}
+
 .dijitIcon.dijitMenuItemIcon.nc-list-header {
     background-image: url("../../components/images/header/nc-list.png") !important
 }
