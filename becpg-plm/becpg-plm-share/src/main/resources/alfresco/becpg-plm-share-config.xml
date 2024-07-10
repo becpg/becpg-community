@@ -220,9 +220,9 @@
 				<step id="step6" labelId="becpg.wizard.supplier.labelClaimList.label"
 					titleId="becpg.wizard.supplier.labelClaimList.title" type="entityDataList"
 					listId="labelClaimList" itemId="bcpg:labelClaimList"></step>
-<!-- 				<step id="step7" labelId="becpg.wizard.supplier.microbioList.label" -->
-<!-- 					titleId="becpg.wizard.supplier.microbioList.title" type="entityDataList" -->
-<!-- 					listId="microbioList" itemId="bcpg:microbioList"></step> -->
+ 				<step id="step7" labelId="becpg.wizard.supplier.microbioList.label"
+ 					titleId="becpg.wizard.supplier.microbioList.title" type="entityDataList"
+ 					listId="microbioList" itemId="bcpg:microbioList"></step>
 				<step id="step8" labelId="becpg.wizard.supplier.organoList.label"
 					titleId="becpg.wizard.supplier.organoList.title" type="entityDataList"
 					listId="organoList" itemId="bcpg:organoList" 
@@ -249,9 +249,9 @@
 				<step id="step6" labelId="becpg.wizard.supplier.labelClaimList.label"
 					titleId="becpg.wizard.supplier.labelClaimList.title" type="entityDataList"
 					listId="labelClaimList" itemId="bcpg:labelClaimList"></step>
-<!-- 				<step id="step7" labelId="becpg.wizard.supplier.microbioList.label" -->
-<!-- 					titleId="becpg.wizard.supplier.microbioList.title" type="entityDataList" -->
-<!-- 					listId="microbioList" itemId="bcpg:microbioList"></step> -->
+ 				<step id="step7" labelId="becpg.wizard.supplier.microbioList.label"
+ 					titleId="becpg.wizard.supplier.microbioList.title" type="entityDataList"
+ 					listId="microbioList" itemId="bcpg:microbioList"></step>
 				<step id="step8" labelId="becpg.wizard.supplier.organoList.label"
 					titleId="becpg.wizard.supplier.organoList.title" type="entityDataList"
 					listId="organoList" itemId="bcpg:organoList"
@@ -278,9 +278,9 @@
 				<step id="step6" labelId="becpg.wizard.supplier.labelClaimList.label"
 					titleId="becpg.wizard.supplier.labelClaimList.title" type="entityDataList"
 					listId="labelClaimList" itemId="bcpg:labelClaimList"></step>
-<!-- 				<step id="step7" labelId="becpg.wizard.supplier.microbioList.label" -->
-<!-- 					titleId="becpg.wizard.supplier.microbioList.title" type="entityDataList" -->
-<!-- 					listId="microbioList" itemId="bcpg:microbioList"></step> -->
+ 				<step id="step7" labelId="becpg.wizard.supplier.microbioList.label"
+ 					titleId="becpg.wizard.supplier.microbioList.title" type="entityDataList"
+ 					listId="microbioList" itemId="bcpg:microbioList"></step>
 				<step id="step8" labelId="becpg.wizard.supplier.organoList.label"
 					titleId="becpg.wizard.supplier.organoList.title" type="entityDataList"
 					listId="organoList" itemId="bcpg:organoList"
@@ -317,9 +317,9 @@
 				<step id="step2" labelId="becpg.wizard.supplier.surveyList.label"
 					titleId="becpg.wizard.supplier.surveyList.title" type="survey"
 					listId="surveyList" itemId="survey:surveyList"></step>
-				<!-- <step id="step3" labelId="becpg.wizard.supplier.certification.label"
+				<step id="step3" labelId="becpg.wizard.supplier.certification.label"
 					titleId="becpg.wizard.supplier.certification.title" type="entityDataList"
-					listId="certification" itemId="bcpg:certification"></step> -->
+					listId="certification" itemId="bcpg:certification"></step>
 				<step id="step3" labelId="becpg.wizard.supplier.plant.label"
 					titleId="becpg.wizard.supplier.plant.title" type="entityDataList"
 					listId="plant" itemId="bcpg:plant"></step>
