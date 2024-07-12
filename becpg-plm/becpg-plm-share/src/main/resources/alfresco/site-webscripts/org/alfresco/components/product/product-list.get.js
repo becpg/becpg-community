@@ -10,6 +10,8 @@ function main()
 		
 	var preferences = AlfrescoUtil.getPreferences(prefs);
 	var currentType = preferences.type!=null ? preferences.type: "finishedProduct";
+	
+	model.pagination = true;
   
     parseActions(currentType);
     
@@ -27,6 +29,14 @@ function main()
     options : {
        siteId : (page.url.templateArgs.site != null) ? page.url.templateArgs.site : "",
        itemType: dataType,
+       list: currentType,
+       filterFormId: "search",
+       useFilter : true,
+       usePagination: true,
+       displayTopPagination : false,
+       forceLoad: true,
+       columnFormId : "bulk-edit",
+       formWidth : "65em",
        extraDataParams: page.url.templateArgs.site!=null ? "&repo=false&container=documentLibrary":"&repo=true",
        sortUrl :  page.url.context+"/proxy/alfresco/becpg/entity/datalists/sort/node",
        dataUrl : page.url.context+"/proxy/alfresco/becpg/entity/datalists/data/node",

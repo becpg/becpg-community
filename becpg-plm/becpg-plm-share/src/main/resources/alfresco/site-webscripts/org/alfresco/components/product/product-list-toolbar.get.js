@@ -37,10 +37,15 @@ function getFilters()
 function main()
 {
 
+   
+	
 	var site = page.url.templateArgs.site;
 	var prefsId = "org.alfresco.share.product.list."+(site!= null && site.length>0 ? site : "home");
 	
 	model.preferences = AlfrescoUtil.getPreferences(prefsId);
+	
+	model.selectedType = page.url.args.list ? page.url.args.list: (preferences.type!=null ? preferences.type: "finishedProduct");
+
 	
 	// Widget instantiation metadata...
 	var productListToolbar = {
@@ -48,7 +53,7 @@ function main()
 	   name : "beCPG.component.ProductListToolbar",
 	   options : {
 	      siteId : (page.url.templateArgs.site != null) ? page.url.templateArgs.site : "",
-	      selectedType: preferences.type!=null ? preferences.type: "finishedProduct",
+	      selectedType: model.selectedType,
 	      selectedFilter: preferences.filter!=null ? preferences.filter: "all" , 
 		  filters: getFilters(),
 		  types: getTypes(),

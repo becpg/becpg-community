@@ -4,7 +4,9 @@
 </@>
 
 <@markup id="js">
-     <#include "../../modules/entity-datagrid/include/entity-datagrid.js.ftl"/>
+    <#include "../../modules/entity-datagrid/include/entity-datagrid.js.ftl"/>
+    <@script src="${url.context}/res/modules/custom-entity-datagrid/product-columnRenderers.js" group="entity-datalists"/>
+    <@script src="${url.context}/res/modules/custom-entity-datagrid/product-entity-toolbar.js" group="entity-datalists"/>
 	<@script src="${url.context}/res/components/product/product-list.js" group="product-list" />
 </@>
 
