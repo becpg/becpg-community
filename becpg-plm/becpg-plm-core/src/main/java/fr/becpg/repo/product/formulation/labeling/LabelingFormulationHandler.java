@@ -1461,7 +1461,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 		for (Composite<CompoListDataItem> composite : parentComposite.getChildren()) {
 
-			Double calculatedYield = currYield != null ? currYield : 100d;
+			Double calculatedYield = currYield != null  && currYield != 0d ? currYield : 100d;
 			CompoListDataItem compoListDataItem = composite.getData();
 			DeclarationType declarationType = getDeclarationType(compoListDataItem, null, labelingFormulaContext);
 
@@ -1744,7 +1744,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 							if (!isLocalSemiFinished) {
 
-								recurYield = productData.getYield() != null ? BigDecimal.valueOf(productData.getYield()) : BigDecimal.valueOf(100d);
+								recurYield = productData.getYield() != null  && productData.getYield()!=0d ? BigDecimal.valueOf(productData.getYield()) : BigDecimal.valueOf(100d);
 
 								if ((calculatedYield != null) && (calculatedYield != 100d)) {
 									recurYield = recurYield.multiply(BigDecimal.valueOf(calculatedYield), LabelingFormulaContext.PRECISION)
