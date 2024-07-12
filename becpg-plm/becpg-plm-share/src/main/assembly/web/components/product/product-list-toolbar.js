@@ -176,6 +176,8 @@
 		onFilterChange: function BeCPGCatalog_onFilterChange(p_sType, p_aArgs) {
 			var menuItem = p_aArgs[1];
 			if (menuItem) {
+				this.queryExecutionId = null;
+
 				this.widgets.filter.set("label", menuItem.cfg.getProperty("text") + " " + Alfresco.constants.MENU_ARROW_SYMBOL);
 				this.widgets.filter.value = menuItem.value;
 
@@ -184,7 +186,32 @@
 
 				this.options.selectedFilter = this.widgets.filter.value;
 
-				this.reloadDataTable();
+				//this.reloadDataTable();
+
+
+				var dt = Alfresco.util.ComponentManager.find({
+					name: "beCPG.module.EntityDataGrid"
+				})[0];
+
+
+				var value = this.widgets.filter.value;
+
+				var filterObj = {
+					filterOwner: dt.name,
+					filterId: value.split("|")[0]
+				};
+
+				if ("all" != filterObj.filterId && value.split("|").length > 1) {
+					filterObj.filterData = value.split("|")[1];
+				} else {
+					filterObj.filterData = "";
+				}
+
+
+				dt.options.filter = filterObj;
+
+				YAHOO.Bubbling.fire("changeFilter", filterObj);
+
 			}
 		},
 
@@ -216,7 +243,7 @@
 			YAHOO.Bubbling.fire("activeDataListChanged", {
 				dataList: {
 					name: this.options.selectedType, itemType: dataType
-				},
+				}, force: true
 			});
 		},
 
