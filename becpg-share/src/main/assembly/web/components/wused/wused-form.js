@@ -274,7 +274,7 @@
 		},
 
 		_getNames : function WUsedForm__getNames() {
-			return this.widgets.entitiesPicker.getInnerText();
+			return this.widgets.entitiesPicker ? this.widgets.entitiesPicker.getInnerText() : "";
 		}
 
 	}, true);
