@@ -1,13 +1,28 @@
 <config>
-   <actionSetToolbar>
+	<actionSetToolbar>
       <!--  <action type="action-link" id="onActionDuplicate" permission="create" label="menu.selected-items.duplicate" />  -->
-      <action type="action-link" id="onActionDelete" permission="delete" label="menu.selected-items.delete" />
-      <action type="action-link" id="onActionBulkEdit"  permission="edit,allPages" label="actions.bulk-edit" />
-   </actionSetToolbar>
-   <actionSetDataGrid>
-      <action type="action-link" id="onActionEdit" permission="edit" label="actions.edit"  />
+		<action type="action-link" id="onActionDelete" permission="delete" label="menu.selected-items.delete" />
+		<action type="action-link" id="onActionBulkEdit" permission="edit,allPages" label="actions.bulk-edit" />
+	</actionSetToolbar>
+	<actionSetDataGrid>
+		<action type="action-link" id="onActionEdit" permission="edit" label="actions.edit" />
      <!--  < <action type="action-link" id="onActionDuplicate" permission="create" label="actions.duplicate-row"/> -->
-      <action type="action-link" id="onActionDelete" permission="delete" label="actions.delete-row" />
-      <action type="action-link" id="onActionShowComments" permission="edit" label="actions.comment" />
-   </actionSetDataGrid>
+		<action type="action-link" id="onActionDelete" permission="delete" label="actions.delete-row" />
+		<action type="action-link" id="onActionShowComments" permission="edit" label="actions.comment" />
+	</actionSetDataGrid>
+	<filters-parameters>
+		<filter id="finishedProduct" data="*" parameters="fts(+@bcpg\:productState:&quot;{data}&quot;)" />
+		<filter id="semiFinishedProduct" data="*" parameters="fts(+@bcpg\:productState:&quot;{data}&quot;)" />
+		<filter id="rawMaterial" data="*" parameters="fts(+@bcpg\:productState:&quot;{data}&quot;)" />
+		<filter id="finishedProduct" data="*" parameters="fts(+@bcpg\:productState:&quot;{data}&quot;)" />
+		<filter id="product" data="*" parameters="fts(+@bcpg\:productState:&quot;{data}&quot;)" />
+		<filter id="packagingMaterial" data="*" parameters="fts(+@bcpg\:productState:&quot;{data}&quot;)" />
+		<filter id="packagingKit" data="*" parameters="fts(+@bcpg\:productState:&quot;{data}&quot;)" />
+		<filter id="productCollection" data="*" parameters="fts(+@bcpg\:productCollectionState:&quot;{data}&quot;)" />
+		<filter id="supplier" data="*" parameters="fts(+@bcpg\:supplierState:&quot;{data}&quot;)" />
+		<filter id="client" data="*" parameters="fts(+@bcpg\:clientState:&quot;{data}&quot;)" />
+		<filter id="qa_nc" data="*" parameters="fts(+@qa\:ncState:&quot;{data}&quot;)" />
+		<filter id="qa_qualityControl" data="*" parameters="fts(+@qa\:qcState:&quot;{data}&quot;)" />
+		<filter id="qa_batch" data="*" parameters="fts(+@qa\:batchState:&quot;{data}&quot;)" />
+	</filters-parameters>
 </config>

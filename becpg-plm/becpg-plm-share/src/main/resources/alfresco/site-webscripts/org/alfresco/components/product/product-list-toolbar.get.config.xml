@@ -31,6 +31,7 @@
 		<filter type="classification" />
 		<filter type="closing" />
 		<filter type="closed" />
+		<filter type="favourites" />
 		<filter type="all" />
 	</filters>
 </config>

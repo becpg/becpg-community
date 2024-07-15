@@ -35,6 +35,7 @@
      * Augment prototype with main class implementation, ensuring overwrite is enabled
      */
     YAHOO.lang.augmentObject(beCPG.component.ProductList.prototype, {
+                
         /**
          * Data Item created event handler
          * 

@@ -29,7 +29,7 @@
 }
 
 .datagrid .datagrid-bar-bottom {
-	margin-top: 2em;
+	margin-top: 1em !important;
 	display: none;
 }
 
