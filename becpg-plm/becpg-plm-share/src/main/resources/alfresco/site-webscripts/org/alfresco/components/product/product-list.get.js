@@ -1,3 +1,4 @@
+<import resource="classpath:alfresco/site-webscripts/org/alfresco/components/workflow/filter/filter.lib.js">
 <import resource="classpath:alfresco/site-webscripts/org/alfresco/modules/entity-datagrid/include/actions.lib.js">
 <import resource="classpath:/alfresco/templates/org/alfresco/import/alfresco-util.js">
 
@@ -6,14 +7,16 @@ function main()
 {
 
     var site = page.url.templateArgs.site;
-	var prefs = "org.alfresco.share.product.list."+ (site!= null && site.length>0 ? site : "home")
+	var prefs = "org.alfresco.share.product.list."+ (site!= null && site.length > 0 ? site : "home")
 		
 	var preferences = AlfrescoUtil.getPreferences(prefs);
 	var currentType = preferences.type!=null ? preferences.type: "finishedProduct";
+	   var filterParameters =  getFilterParameters();
 	
 	model.pagination = true;
   
     parseActions(currentType);
+    
     
     var dataType = "bcpg:finishedProduct";
 
@@ -31,6 +34,7 @@ function main()
        itemType: dataType,
        list: currentType,
        filterFormId: "search",
+       filterParameters : filterParameters,
        useFilter : true,
        usePagination: true,
        displayTopPagination : false,
