@@ -1,0 +1,140 @@
+services:
+
+
+  becpg:
+    environment:
+      CATALINA_OPTS: "-Xmx4G   -Duser.language=fr -Duser.country=FR 
+                      -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:8888 
+                      -DbeCPG.decernis.token=SNWrm4SIcZSLjADOeTAGsasJcDR4uP
+                      -DbeCPG.annotationViewerLicenseKey=\"beCPG SARL (becpg.fr):OEM:beCPG Enterprise::B+:AMS(20230906):B4B5C7920467F60AF360B13AC9A2527860613F3E6CB35E4514420D1B97A7D982C1B235F5C7\"
+                      -DbeCPG.decernis.companyName=\"Group Rocher\" -DbeCPG.decernis.module=1
+                      -Dcom.sun.management.jmxremote.rmi.port=9091
+                      -Dcom.sun.management.jmxremote=true
+                      -Dcom.sun.management.jmxremote.port=9091
+                      -Dcom.sun.management.jmxremote.ssl=false
+                      -Dcom.sun.management.jmxremote.authenticate=false
+                      -Dcom.sun.management.jmxremote.local.only=false
+                      -Djava.rmi.server.hostname=127.0.0.1
+                      -Dbecpg.olap.enabled=true
+                      -Dbecpg.olap.url.internal=http://localhost:8085/saiku
+                      -Dbecpg.olap.url.public=http://localhost:8085/saiku-ui
+                      -Dauthentication.chain=identity-service1:identity-service,alfrescoNtlm1:alfrescoNtlm
+                      -Didentity-service.auth-server-url=http://becpg-auth:8084/auth
+                      -Didentity-service.realm=inst1
+                      -Didentity-service.resource=inst1-openid
+                      -Didentity-service.create-user.enabled=true
+                      -Didentity-service.client-admin.username=inst1-account-admin
+                      -Didentity-service.client-admin.password=becpg
+                      -Didentity-service.authentication.defaultAdministratorUserNames=admin
+                      -Dcreate.missing.people=true
+                      "
+#                      --XXaltjvm=dcevm -javaagent:/usr/java/jbr_jcef-17.0.10-linux-x64-b1207.14/lib/hotswap/hotswap-agent.jar
+#                      -XX:+AllowEnhancedClassRedefinition -XX:HotswapAgent=fatjar
+#                       --add-opens=java.base/java.lang=ALL-UNNAMED
+#                       --add-opens=java.base/java.lang.invoke=ALL-UNNAMED
+#                       --add-opens=java.base/java.lang.reflect=ALL-UNNAMED
+#                       --add-opens=java.base/java.io=ALL-UNNAMED
+#                       --add-opens=java.base/java.net=ALL-UNNAMED
+#                       --add-opens=java.base/java.nio=ALL-UNNAMED
+#                       --add-opens=java.base/java.util=ALL-UNNAMED
+#                       --add-opens=java.base/java.util.concurrent=ALL-UNNAMED
+#                       --add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED
+#                       --add-opens=java.base/sun.nio.ch=ALL-UNNAMED
+#                       --add-opens=java.base/sun.nio.cs=ALL-UNNAMED
+#                       --add-opens=java.base/sun.security.action=ALL-UNNAMED
+#                       --add-opens=java.base/sun.util.calendar=ALL-UNNAMED
+#                       --add-opens=java.security.jgss/sun.security.krb5=ALL-UNNAMED"
+#  HotReloading in Eclipse : http://hotswapagent.org/mydoc_setup_eclipse.html
+#      CATALINA_OPTS: "-Xmx4G -Duser.language=fr -Duser.country=FR 
+#                      -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:8888 
+#                      -XX:+FlightRecorder
+#                      -Dcom.sun.management.jmxremote.rmi.port=9091
+#                      -Dcom.sun.management.jmxremote=true
+#                      -Dcom.sun.management.jmxremote.port=9091
+#                      -Dcom.sun.management.jmxremote.ssl=false
+#                      -Dcom.sun.management.jmxremote.authenticate=false
+#                      -Dcom.sun.management.jmxremote.local.only=false
+#                      -Djava.rmi.server.hostname=127.0.0.1"     
+    volumes:
+      - becpg_data:/usr/local/tomcat/data
+      - ../../becpg-core/target/classes:/usr/local/tomcat/hotswap-agent/becpg-core/target/classes
+      - ../../becpg-plm/becpg-plm-core/target/classes:/usr/local/tomcat/hotswap-agent/becpg-plm-core/target/classes
+      - ../../becpg-project/becpg-project-core/target/classes:/usr/local/tomcat/hotswap-agent/becpg-project-core/target/classes
+      - ../../becpg-integration-runner/target/test-classes:/usr/local/tomcat/hotswap-agent/becpg-integration-runner/target/test-classes
+          
+  http:
+    image: europe-west1-docker.pkg.dev/becpg-314807/becpg-docker/becpg-http-shibd:23.2.0
+    mem_limit: 256m
+    restart: unless-stopped
+    networks:
+      - internal
+    volumes:
+      -  ../../becpg-enterprise/becpg-auth/000-default.conf:/etc/apache2/sites-available/000-default.conf
+    ports:
+       - "80:80"
+    environment : 
+      APACHE_SERVERADMIN: "beCPG"
+      APACHE_SERVERNAME: "localhost"
+    hostname:  "localhost" 
+    logging:
+      options:
+        max-size: 50m
+    healthcheck:
+      test: ["CMD", "curl", "-f",  "http://localhost:80/alfresco/service/becpg/check"]
+      timeout: 10s
+      interval: 1m30s
+      retries: 5
+                
+  becpg-auth:
+    image: eu.gcr.io/becpg.fr/api-project-243761268436/becpg/becpg-ids:1.0-7
+    environment:
+      DB_VENDOR: mysql
+      DB_ADDR: becpg-db
+      DB_PORT: "3306"
+      DB_DATABASE: auth
+      DB_USER: root
+      DB_PASSWORD: becpg
+      KEYCLOAK_USER: inst1-account-admin
+      KEYCLOAK_PASSWORD: becpg
+      KEYCLOAK_IMPORT: /realm/becpg-ids-realm.json
+    ports:
+      - "8084:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/auth/ || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    volumes:
+      - ../../becpg-enterprise/becpg-auth/keycloak.cli:/opt/jboss/startup-scripts/keycloak.cli:ro
+      - ../../becpg-enterprise/becpg-auth/becpg-ids-realm.json:/realm/becpg-ids-realm.json:ro
+    depends_on:
+      - becpg-db               
+                 
+#  busybox-chown:
+#    image: busybox
+#    volumes:
+#      - becpg_data:/data2
+#      - becpg_share_data:/data1      
+#    command: sh -c "chown -R 33000:1000 /data1 && chown -R alfresco:alfresco /data2"   
+
+
+  becpg-report:
+    image:  europe-west1-docker.pkg.dev/becpg-314807/becpg-docker/becpg-report:4.4.0
+    user: root
+    ports:
+       - "8086:8080"
+       
+#  becpg-olap-connector:
+#    environment:
+#      JAVA_OPTS: "-Dfile.encoding=UTF-8"
+#      BPL_JVM_THREAD_COUNT:  "10"  
+#      SPRING_PROFILES_ACTIVE: prod         
+#    image: europe-west1-docker.pkg.dev/becpg-314807/becpg-docker/becpg-olap-connector
+    
+    
+  becpg-share:
+    environment:
+      AI_HOST: 172.17.0.1
+      AI_PORT: 8087
+      BECPG_AUTH_EXTERNAL: true
+          
