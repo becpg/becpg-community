@@ -166,3 +166,10 @@
 	clear: both;
 	margin-bottom: 0.5em;
 }
+
+
+/* Data Table */
+.product-list .datagrid div.grid {
+	height: calc(100vh - 260px);
+}
+

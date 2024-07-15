@@ -32,6 +32,10 @@
 		url("../../components/images/filetypes/generic-project-16.png");
 }
 
+#bd {
+	padding-bottom: 0em;
+}
+
 .footer-becpg .copyright {
 	display: inline-block;
 	line-height: 22px;

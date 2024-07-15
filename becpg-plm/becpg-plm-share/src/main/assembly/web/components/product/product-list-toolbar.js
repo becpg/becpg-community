@@ -129,6 +129,8 @@
 		loadFilterMenu: function PTL_loadFilterMenu() {
 			var me = this;
 
+			var selectedFilter = this.options.selectedFilter.split("|").length > 1 ?  this.options.selectedFilter.split("|")[1] : this.options.selectedFilter;
+
 			this.widgets.filter.getMenu().clearContent();
 
 			var filter = "";
@@ -148,14 +150,20 @@
 
 			for (var i in this.options.filters) {
 				var filterId = this.options.filters[i].type;
-				if (this.options.selectedFilter == filterId) {
+				if (  selectedFilter == filterId) {
 					isSelected = true;
 				}
 
 				if (splitFilters.length == 0 || splitFilters.includes(filterId)) {
+					filterValue = filterId;
+					if(filterId!="all" && filterId!="favorite"){
+						filterValue = this.options.selectedType+"|"+filterId;
+					}
+					
+					
 					items.push({
 						text: this.msg("filter." + filterId),
-						value: filterId
+						value: filterValue
 					});
 				}
 			}
@@ -167,7 +175,9 @@
 			}
 
 			if (isSelected) {
-				this.widgets.filter.set("label", this.msg("filter." + this.options.selectedFilter) + " " + Alfresco.constants.MENU_ARROW_SYMBOL);
+				this.widgets.filter.set("label", this.msg("filter." + selectedFilter) + " " + Alfresco.constants.MENU_ARROW_SYMBOL);
+			} else {
+				this.widgets.filter.set("label", this.msg("filter.all") + Alfresco.constants.MENU_ARROW_SYMBOL);
 			}
 
 			this.widgets.filter._menu.render();
@@ -185,8 +195,6 @@
 					this.widgets.filter.value);
 
 				this.options.selectedFilter = this.widgets.filter.value;
-
-				//this.reloadDataTable();
 
 
 				var dt = Alfresco.util.ComponentManager.find({
@@ -223,8 +231,12 @@
 
 				this.services.preferences.set(this.options.prefsId + ".type",
 					this.widgets.type.value);
+					
+				this.services.preferences.set(this.options.prefsId + ".filter",
+					"all");
 
 				this.options.selectedType = this.widgets.type.value;
+				this.options.selectedFilter = "all";
 
 				this.loadFilterMenu();
 				this.loadExportMenu();
