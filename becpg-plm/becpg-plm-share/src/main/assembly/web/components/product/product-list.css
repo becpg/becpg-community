@@ -169,7 +169,13 @@
 
 
 /* Data Table */
-.product-list .datagrid div.grid {
-	height: calc(100vh - 260px);
+
+.sticky-footer, .sticky-push {
+	display:none;
 }
+
+.product-list .datagrid div.grid {
+	height: calc(100vh - 215px);
+}
+
 

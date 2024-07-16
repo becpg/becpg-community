@@ -35,8 +35,9 @@
 			<@dataGridToolbar  toolbarId=el filter=true />
 		</div>
 	
-		<@entityDataGrid showDataListTitle=false />		
-		
+		<div class="product-list">
+			<@entityDataGrid showDataListTitle=false />		
+		</div>	
 </@>
 </@>
 
