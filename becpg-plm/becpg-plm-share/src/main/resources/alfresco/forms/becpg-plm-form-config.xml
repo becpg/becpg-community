@@ -2618,7 +2618,6 @@
 			<form>
 				<field-visibility>
 					<show id="cm:name" />
-					<show id="bcpg:eanCode" force="true" />
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:plantTel" />
@@ -2633,6 +2632,7 @@
 					<show id="bcpg:plantPackerCode" />
 					<show id="bcpg:plantCertifications" />
 					<show id="bcpg:plantApprovalNumbers" />
+					<show id="bcpg:eanCode" force="true" />
 				</field-visibility>
 				<appearance>
 					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
@@ -2680,7 +2680,6 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="bcpg:erpCode" force="true" />
-					<show id="bcpg:eanCode" force="true" />
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:plantTel" />
@@ -2697,6 +2696,7 @@
 					<show id="bcpg:plantApprovalNumbers" />
 					<show id="sec:readGroups" force="true" />
 					<show id="bcpg:isDeleted" />
+					<show id="bcpg:eanCode" force="true" />
 				</field-visibility>
 				<appearance>
 					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
@@ -2755,7 +2755,6 @@
 
 				<field-visibility>
 					<show id="cm:name" />
-					<show id="bcpg:eanCode" force="true" />
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:plantTel" />
@@ -2770,11 +2769,11 @@
 					<show id="bcpg:plantPackerCode" />
 					<show id="bcpg:plantCertifications" />
 					<show id="bcpg:plantApprovalNumbers" />
+					<show id="bcpg:eanCode" force="true" />
 				</field-visibility>
 				<appearance>
 					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<field id="cm:name" set="2-col" />
-					<field id="bcpg:eanCode" set="2-col" />
 					<field id="cm:title" set="2-col" />
 					<field id="cm:description" set="2-col">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
@@ -2811,6 +2810,7 @@
 					<field id="bcpg:locationCountry" set="2-col">
 						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
 					</field>
+					<field id="bcpg:eanCode" set="2-col" />
 				</appearance>
 			</form>
 			<form id="create-systemEntity">
@@ -2818,7 +2818,6 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="bcpg:erpCode" force="true" />
-					<show id="bcpg:eanCode" force="true" />
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:plantTel" />
@@ -2835,6 +2834,7 @@
 					<show id="bcpg:plantApprovalNumbers" />
 					<show id="sec:readGroups" force="true" />
 					<show id="bcpg:isDeleted" />
+					<show id="bcpg:eanCode" force="true" />
 				</field-visibility>
 				<appearance>
 					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
@@ -2904,7 +2904,6 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="cm:title" force="true" />
-					<show id="bcpg:eanCode" force="true" />
 					<show id="bcpg:plantTel" />
 					<!-- bcpg:location type -->
 					<show id="bcpg:locationAddress1" />
@@ -2918,6 +2917,7 @@
 					<show id="bcpg:plantCertifications" />
 					<show id="bcpg:plantApprovalNumbers" />
 					<show id="fm:commentCount" />
+					<show id="bcpg:eanCode" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
@@ -8918,7 +8918,6 @@
 			<form>
 				<field-visibility>
 					<show id="bcpg:contactListType" />
-					<show force="true" id="bcpg:eanCode" />
 					<show id="bcpg:contactListFirstName" />
 					<show id="bcpg:contactListLastName" />
 					<show id="bcpg:contactListEmail" />
@@ -8934,11 +8933,11 @@
 					<show id="bcpg:locationZip" force="true" />
 					<show id="bcpg:locationState" force="true" />
 					<show id="bcpg:locationCountry" force="true" />
+					<show id="bcpg:eanCode" force="true" />
 				</field-visibility>
 				<appearance>
 					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<field id="bcpg:contactListType" set="2-col" />
-					<field id="bcpg:eanCode" set="2-col" />
 					<field id="bcpg:contactListFirstName" set="2-col" />
 					<field id="bcpg:contactListLastName" set="2-col" />
 					<field id="bcpg:contactListEmail" set="2-col" />
@@ -8970,12 +8969,12 @@
 					<field id="bcpg:contactListNotes" set="2-col">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" set="2-col" />
 					</field>
+					<field id="bcpg:eanCode" set="2-col" />
 				</appearance>
 			</form>
 			<form id="create-systemEntity">
 				<field-visibility>
 					<show id="bcpg:contactListType" />
-					<show force="true" id="bcpg:eanCode" />
 					<show id="bcpg:contactListFirstName" />
 					<show id="bcpg:contactListLastName" />
 					<show id="bcpg:contactListEmail" />
@@ -8994,6 +8993,7 @@
 					<show id="sec:readGroups" force="true" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted" />
+					<show id="bcpg:eanCode" force="true" />
 				</field-visibility>
 				<appearance>
 					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
@@ -9039,7 +9039,6 @@
 			<form id="filter">
 				<field-visibility>
 					<show id="bcpg:contactListType" />
-					<show force="true" id="bcpg:eanCode" />
 					<show id="bcpg:contactListFirstName" />
 					<show id="bcpg:contactListLastName" />
 					<show id="bcpg:contactListEmail" />
@@ -9055,6 +9054,7 @@
 					<show id="bcpg:locationZip" force="true" />
 					<show id="bcpg:locationState" force="true" />
 					<show id="bcpg:locationCountry" force="true" />
+					<show id="bcpg:eanCode" force="true" />
 				</field-visibility>
 				<appearance>
 					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
@@ -9089,7 +9089,6 @@
 			<form id="datagrid">
 				<field-visibility>
 					<show id="bcpg:entityDataListState" force="true" />
-					<show force="true" id="bcpg:eanCode" />
 					<show id="bcpg:contactListType" />
 					<show id="bcpg:contactListFirstName" />
 					<show id="bcpg:contactListLastName" />
@@ -9098,6 +9097,7 @@
 					<show id="bcpg:contactListPhoneMobile" />
 					<show id="bcpg:contactListNotes" />
 					<show id="fm:commentCount" force="true" />
+					<show id="bcpg:eanCode" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:entityDataListState" label="hidden" />
@@ -9110,7 +9110,6 @@
 			<form id="datagrid-systemEntity">
 				<field-visibility>
 					<show id="bcpg:entityDataListState" force="true" />
-					<show force="true" id="bcpg:eanCode" />
 					<show id="bcpg:contactListType" />
 					<show id="bcpg:contactListFirstName" />
 					<show id="bcpg:contactListLastName" />
@@ -9122,6 +9121,7 @@
 					<show id="sec:readGroups" force="true" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted" />
+					<show id="bcpg:eanCode" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:entityDataListState" label="hidden" />
@@ -9137,7 +9137,6 @@
 			<form>
 				<field-visibility>
 					<show id="bcpg:contactListType" />
-					<show force="true" id="bcpg:eanCode" />
 					<show id="bcpg:contactListFirstName" />
 					<show id="bcpg:contactListLastName" />
 					<show id="bcpg:contactListEmail" />
@@ -9153,6 +9152,7 @@
 					<show id="bcpg:locationZip" force="true" />
 					<show id="bcpg:locationState" force="true" />
 					<show id="bcpg:locationCountry" force="true" />
+					<show id="bcpg:eanCode" force="true" />
 				</field-visibility>
 
 				<appearance>
@@ -9195,7 +9195,6 @@
 			<form id="edit-systemEntity">
 				<field-visibility>
 					<show id="bcpg:contactListType" />
-					<show force="true" id="bcpg:eanCode" />
 					<show id="bcpg:contactListFirstName" />
 					<show id="bcpg:contactListLastName" />
 					<show id="bcpg:contactListEmail" />
@@ -9214,6 +9213,7 @@
 					<show id="sec:readGroups" force="true" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted" />
+					<show id="bcpg:eanCode" force="true" />
 				</field-visibility>
 
 				<appearance>
