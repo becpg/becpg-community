@@ -57,6 +57,15 @@ if(isExternalUser(user)){
                  targetUrl : "nc-list#filter=ncs|Claim"
               }
            });
+           
+           tools.config.widgets.push({
+              name : "alfresco/header/AlfMenuItem",
+              config : {
+                 label : "header.product-list.label",
+                 iconClass : "product-list-header",
+                 targetUrl : "product-list"
+              }
+           });
          }
           
        var warningBar =  widgetUtils.findObject(model.jsonModel, "id", "HEADER_LICENSE_WARNING");

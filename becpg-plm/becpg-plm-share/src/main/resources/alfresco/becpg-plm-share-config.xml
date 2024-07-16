@@ -15,6 +15,12 @@
 	 	<hideMyFiles>false</hideMyFiles>
 	</config>
 	
+   <config evaluator="string-compare" condition="SitePages">
+      <pages>
+         <page id="product-list">product-list?list=product#filter=all</page>
+      </pages>
+   </config>
+	
 	<!-- Deprecated -->
 	<config evaluator="string-compare" condition="Workflow">
 		<permission-workflows default="allow">

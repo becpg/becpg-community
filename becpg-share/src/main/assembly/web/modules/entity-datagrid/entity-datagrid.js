@@ -162,6 +162,12 @@
 					 */
 
 					displayBottomPagination: true,
+					
+					/**
+					 * Display top pagination
+					 */
+
+					displayTopPagination: true,
 
 					/**
 					 * Flag indicating whether filter is available or
@@ -1412,7 +1418,11 @@
 
 					if (this.options.usePagination) {
 
-						var paginationContainers = [this.id + "-paginator"];
+						var paginationContainers = [];
+						
+						if (this.options.displayTopPagination) {
+							paginationContainers.push(this.id + "-paginator");
+						}
 
 						if (this.options.displayBottomPagination) {
 							paginationContainers.push(this.id + "-paginatorBottom");
@@ -2495,8 +2505,6 @@
 							}
 
 							this.parentInputNodeRef = null;
-
-
 						}
 
 						if (obj.clearCache != null && obj.clearCache == true && obj.cacheTimeStamp) {
