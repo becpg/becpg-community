@@ -320,13 +320,13 @@
 				<step id="step3" labelId="becpg.wizard.supplier.certification.label"
 					titleId="becpg.wizard.supplier.certification.title" type="entityDataList"
 					listId="certification" itemId="bcpg:certification"></step>
-				<step id="step3" labelId="becpg.wizard.supplier.plant.label"
+				<step id="step4" labelId="becpg.wizard.supplier.plant.label"
 					titleId="becpg.wizard.supplier.plant.title" type="entityDataList"
 					listId="plant" itemId="bcpg:plant"></step>
-				<step id="step4" labelId="becpg.wizard.supplier.contactList.label"
+				<step id="step5" labelId="becpg.wizard.supplier.contactList.label"
 					titleId="becpg.wizard.supplier.contactList.title" type="entityDataList"
 					listId="contactList" itemId="bcpg:contactList" nextStepWebScript="becpg/project/path?nodeRef={nodeRef}&amp;path=SupplierDocuments" ></step>
-				<step id="step5" labelId="becpg.wizard.supplier.documents.label"
+				<step id="step6" labelId="becpg.wizard.supplier.documents.label"
 					titleId="becpg.wizard.supplier.documents.title" type="documents"></step>
 			</wizard>
 			<wizard id="supplier-content">
