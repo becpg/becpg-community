@@ -16,13 +16,11 @@ import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.extensions.surf.util.I18NUtil;
-import org.springframework.stereotype.Component;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.system.SystemConfigurationService;
+import fr.becpg.repo.system.SystemConfigurationRegistry;
 
 /**
  * <p>MLTextHelper class.</p>
@@ -30,69 +28,38 @@ import fr.becpg.repo.system.SystemConfigurationService;
  * @author matthieu
  * @version $Id: $Id
  */
-@Component
 public class MLTextHelper {
 
 	private static Map<String, MLText> mlTextCache = new ConcurrentHashMap<>();
-	
-	private static MLTextHelper instance;
-	
-	private String instanceSupportedLocales = null;
-	
+
+	private static List<Locale> supportedLocales = null;
+
+	private static String supportedLocalesText = null;
+
+	/**
+	 * <p>Constructor for MLTextHelper.</p>
+	 */
+	private MLTextHelper() {
+		//DO Nothing
+	}
+
+	public static void flushCache() {
+		mlTextCache = new ConcurrentHashMap<>();
+		supportedLocales = null;
+		supportedLocalesText = null;
+	}
+
 	/**
 	 * <p>setSupportedLocalesInstance.</p>
 	 *
 	 * @param supportedLocales a {@link java.lang.String} object
 	 */
-	public void setSupportedLocalesInstance(String supportedLocales) {
-		instanceSupportedLocales = supportedLocales;
+	public static void setSupportedLocales(String supportedLocalesText) {
+		MLTextHelper.supportedLocalesText = supportedLocalesText;
 	}
-	
-	/**
-	 * <p>Constructor for MLTextHelper.</p>
-	 */
-	public MLTextHelper() {
-		instance = this;
-	}
-	
-	@Autowired
-	private SystemConfigurationService systemConfigurationService;
-
 
 	private static boolean useBrowserLocale() {
-		return Boolean.parseBoolean(instance.systemConfigurationService.confValue("beCPG.multilinguale.useBrowserLocale"));
-	}
-	
-	/**
-	 * <p>Getter for the field <code>supportedLocales</code>.</p>
-	 *
-	 * @return a {@link java.util.List} object.
-	 */
-	public static List<Locale> getSupportedLocales() {
-		return instance.getSupportedLocalesInstance();
-	}
-	
-	/**
-	 * <p>getSupportedLocalesInstance.</p>
-	 *
-	 * @return a {@link java.util.List} object
-	 */
-	public List<Locale> getSupportedLocalesInstance() {
-		
-		List<Locale> ret = new LinkedList<>();
-		
-		if (supportedLocalesTextInstance() != null) {
-			String[] locales = supportedLocalesTextInstance().split(",");
-			for (String key : locales) {
-				ret.add(parseLocale(key));
-			}
-		}
-		
-		ret.sort((a, b) -> {
-			return localeLabel(a).compareTo(localeLabel(b));
-		});
-		
-		return ret;
+		return Boolean.parseBoolean(SystemConfigurationRegistry.instance().confValue("beCPG.multilinguale.useBrowserLocale"));
 	}
 
 	/**
@@ -101,7 +68,63 @@ public class MLTextHelper {
 	 * @return a boolean.
 	 */
 	public static boolean shouldExtractMLText() {
-		return Boolean.parseBoolean(instance.systemConfigurationService.confValue("beCPG.multilinguale.shouldExtractMLText"));
+		return Boolean.parseBoolean(SystemConfigurationRegistry.instance().confValue("beCPG.multilinguale.shouldExtractMLText"));
+	}
+
+	/**
+	 * <p>Getter for the field <code>supportedLocales</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
+	public static List<Locale> getSupportedLocales() {
+
+		if (supportedLocales == null) {
+			supportedLocales = new ArrayList<>();
+
+			if (supportedLocalesText() != null) {
+				String[] locales = supportedLocalesText().split(",");
+				for (String key : locales) {
+					supportedLocales.add(parseLocale(key));
+				}
+			}
+
+			// put default locale in first position and sort by name
+
+			supportedLocales.sort((a, b) -> {
+				if (MLTextHelper.isDefaultLocale(a)) {
+					return -1;
+				} else if (MLTextHelper.isDefaultLocale(b)) {
+					return 1;
+				} else {
+					return localeLabel(a).compareTo(localeLabel(b));
+				}
+			});
+
+		}
+
+		return supportedLocales;
+
+	}
+
+	/**
+	 * <p>getSupportedLocalesList.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
+	public static List<String> getSupportedLocalesList() {
+
+		if (supportedLocalesText() != null) {
+			return Arrays.asList(supportedLocalesText().split(","));
+		}
+
+		return new ArrayList<>();
+	}
+
+	private static String supportedLocalesText() {
+		if (supportedLocalesText != null) {
+			return supportedLocalesText;
+		}
+		return SystemConfigurationRegistry.instance().confValue("beCPG.multilinguale.supportedLocales");
 	}
 
 	/**
@@ -221,42 +244,7 @@ public class MLTextHelper {
 	 * @return a boolean.
 	 */
 	public static boolean isSupportedLocale(Locale contentLocale) {
-		return instance.isSupportedLocaleInstance(contentLocale);
-	}
-	
-	/**
-	 * <p>isSupportedLocaleInstance.</p>
-	 *
-	 * @param contentLocale a {@link java.util.Locale} object
-	 * @return a boolean
-	 */
-	public boolean isSupportedLocaleInstance(Locale contentLocale) {
-		return (contentLocale != null) && getSupportedLocalesInstance().contains(contentLocale);
-	}
-	
-	private static String supportedLocalesText() {
-		return instance.supportedLocalesTextInstance();
-	}
-	
-	private String supportedLocalesTextInstance() {
-		if (instanceSupportedLocales != null) {
-			return instanceSupportedLocales;
-		}
-		return systemConfigurationService.confValue("beCPG.multilinguale.supportedLocales");
-	}
-
-	/**
-	 * <p>getSupportedLocalesList.</p>
-	 *
-	 * @return a {@link java.util.List} object.
-	 */
-	public static List<String> getSupportedLocalesList() {
-
-		if (supportedLocalesText() != null) {
-			return Arrays.asList(supportedLocalesText().split(","));
-		}
-
-		return new ArrayList<>();
+		return (contentLocale != null) && getSupportedLocales().contains(contentLocale);
 	}
 
 	/**
@@ -364,39 +352,26 @@ public class MLTextHelper {
 	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object.
 	 */
 	public static MLText getI18NMessage(String messageKey, Object... variables) {
+
 		if (variables == null) {
 			return mlTextCache.computeIfAbsent(messageKey, MLTextHelper::internalI18NMessage);
 		}
-		return instance.getI18NMessageInstance(messageKey, variables);
-	}
-	
-	/**
-	 * <p>getI18NMessageInstance.</p>
-	 *
-	 * @param messageKey a {@link java.lang.String} object
-	 * @param variables a {@link java.lang.Object} object
-	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object
-	 */
-	public MLText getI18NMessageInstance(String messageKey, Object... variables) {
-		return internalI18NMessageInstance(messageKey, variables);
+
+		return internalI18NMessage(messageKey, variables);
 	}
 
 	private static MLText internalI18NMessage(String messageKey, Object... variables) {
-		return instance.internalI18NMessageInstance(messageKey, variables);
-	}
-	
-	private MLText internalI18NMessageInstance(String messageKey, Object... variables) {
 
 		MLText ret = new MLText();
 		for (String key : RepoConsts.SUPPORTED_UI_LOCALES.split(",")) {
 
-			if (supportedLocalesTextInstance().contains(key)) {
+			if (supportedLocalesText().contains(key)) {
 				Locale locale = parseLocale(key);
 				List<Object> parsedVariable = new LinkedList<>();
 				if (variables != null) {
 					for (Object tmp : variables) {
-						if (tmp instanceof MLText) {
-							parsedVariable.add(getClosestValue((MLText) tmp, locale));
+						if (tmp instanceof MLText mlText) {
+							parsedVariable.add(getClosestValue(mlText, locale));
 						} else {
 							parsedVariable.add(tmp);
 						}
@@ -471,7 +446,7 @@ public class MLTextHelper {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * <p>getUserLocale.</p>
 	 *
