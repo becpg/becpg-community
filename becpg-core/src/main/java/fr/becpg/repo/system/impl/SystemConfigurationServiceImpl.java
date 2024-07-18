@@ -10,6 +10,7 @@ import org.springframework.core.env.PropertySourcesPropertyResolver;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.cache.BeCPGCacheService;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.system.SystemConfigurationService;
 
 @Service("systemConfigurationService")
@@ -54,13 +55,14 @@ public class SystemConfigurationServiceImpl implements SystemConfigurationServic
 	public void updateConfValue(String propKey, String value) {
 		attributeService.setAttribute(value, propKey);
 		beCPGCacheService.clearCache(CACHE_KEY);
-		
+		MLTextHelper.flushCache();
 	}
 
 	@Override
 	public void resetConfValue(String propKey) {
 		attributeService.removeAttribute(propKey);
 		beCPGCacheService.clearCache(CACHE_KEY);
+		MLTextHelper.flushCache();
 	}
 
 }
