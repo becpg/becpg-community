@@ -2,7 +2,9 @@ package fr.becpg.repo.helper;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.concurrent.TimeUnit;
 
+import org.apache.hc.client5.http.config.ConnectionConfig;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
@@ -50,6 +52,7 @@ public class RestTemplateHelper {
 			PoolingHttpClientConnectionManagerBuilder connectionManagerBuilder = PoolingHttpClientConnectionManagerBuilder.create();
 			connectionManagerBuilder.setMaxConnTotal(50); // Set the maximum number of total connections
 			connectionManagerBuilder.setMaxConnPerRoute(20); // Set the maximum number of connections per route
+			connectionManagerBuilder.setDefaultConnectionConfig(ConnectionConfig.custom().setTimeToLive(5, TimeUnit.SECONDS).build());
 			builder.setConnectionManager(connectionManagerBuilder.build());
 		}
 	}
