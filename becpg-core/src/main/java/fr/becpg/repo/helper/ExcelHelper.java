@@ -277,7 +277,6 @@ public class ExcelHelper {
 
 						int groupFirstColumn = cellnum;
 
-
 						for (Locale locale : supportedLocales) {
 
 							Cell cell = headerRow.createCell(cellnum);
@@ -332,6 +331,12 @@ public class ExcelHelper {
 	}
 
 
+	
+	/**
+	 * <p>createGreenColor.</p>
+	 *
+	 * @return a {@link org.apache.poi.xssf.usermodel.XSSFColor} object
+	 */
 	public static XSSFColor createGreenColor() {
 		byte[] rgb = { (byte) 0, (byte) 255, (byte) 0 };
 		return new XSSFColor(rgb, new DefaultIndexedColorMap());
