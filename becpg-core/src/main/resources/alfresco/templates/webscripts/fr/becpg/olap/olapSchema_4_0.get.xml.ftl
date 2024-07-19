@@ -320,7 +320,7 @@
 		
 	</Cube>
 
-	<Cube name="requirements" caption="${msg("jsolap.requirements.title")}" cache="true" enabled="true" defaultMeasure="${msg("jsolap.requirementsNumber.title")}">
+	<Cube name="requirements" caption="${msg("jsolap.requirements.title")}" cache="true" enabled="true" defaultMeasure="requirementsNumber">
 		
 			<View name="requirements" alias="requirements">
 				<SQL dialect="generic">
@@ -503,7 +503,7 @@
     </Cube>
 
 
-	<Cube name="incidents" caption="${msg("jsolap.incidents.title")}" cache="true" enabled="true" defaultMeasure="${msg("jsolap.incidentsNumber.title")}">
+	<Cube name="incidents" caption="${msg("jsolap.incidents.title")}" cache="true" enabled="true" defaultMeasure="noderef">
 		
 		<View name="incidents" alias="incidents">
 				<SQL dialect="generic">
@@ -661,7 +661,7 @@
 		<Measure name="ncCost" caption="${msg("jsolap.nonConformityCost.title")}" column="ncCost" datatype="Numeric" aggregator="sum" visible="true"  />
 	</Cube>
 	
-	<Cube name="projectsSteps" caption="${msg("jsolap.projectsTasks.title")}" cache="true" enabled="true" defaultMeasure="${msg("jsolap.projectsTasks.title")}">
+	<Cube name="projectsSteps" caption="${msg("jsolap.projectsTasks.title")}" cache="true" enabled="true">
 			
 				<View name="taskList" alias="taskList">
 					<SQL dialect="generic">
@@ -848,7 +848,7 @@
 	</Cube>
 	
 	
-	<Cube name="evaluation" caption="${msg("jsolap.evaluation.title")}" cache="true" enabled="true" defaultMeasure="${msg("jsolap.note.title")}">
+	<Cube name="evaluation" caption="${msg("jsolap.evaluation.title")}" cache="true" enabled="true" defaultMeasure="slScore">
 
 				<View name="scoreList" alias="scoreList">
 					<SQL dialect="generic">
@@ -975,7 +975,7 @@
 		</CalculatedMember> 
 	</Cube>
 
-	<Cube name="projects" caption="${msg("jsolap.projects.title")}" cache="true" enabled="true" defaultMeasure="${msg("jsolap.projectsNumberDistinct.title")}">
+	<Cube name="projects" caption="${msg("jsolap.projects.title")}" cache="true" enabled="true" defaultMeasure="projectsNumber">
 			<View name="projects" alias="projects">
 				<SQL dialect="generic">
 					select
@@ -1461,7 +1461,7 @@
 		<Measure name="lcaFutureValue" caption="${msg("jsolap.lcaFutureValue.title")}" column="lcaFutureValue" datatype="Numeric" aggregator="avg" visible="true"></Measure>
 	</Cube>			
 	
-	<Cube name="products" caption="${msg("jsolap.products.title")}" cache="true" enabled="true" defaultMeasure="${msg("jsolap.productsNumber.title")}">
+	<Cube name="products" caption="${msg("jsolap.products.title")}" cache="true" enabled="true" defaultMeasure="productNumber">
 		
 			<View name="products" alias="products">
 				<SQL dialect="generic">
