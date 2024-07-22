@@ -397,7 +397,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 							for (int j = 0; j < tabularReports.length(); j++) {
 								JSONObject tabularReport = tabularReports.getJSONObject(j);
 
-								String usage = tabularReport.getString("usage");
+								String usage = usageContext.getName();
 
 								String decernisID = tabularReport.getString("did");
 								String function = tabularReport.getString("function");
