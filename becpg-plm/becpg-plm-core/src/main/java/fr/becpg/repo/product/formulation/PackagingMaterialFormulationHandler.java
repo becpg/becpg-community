@@ -107,16 +107,14 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 				List<PackMaterialListDataItem> toRemove = new ArrayList<>();
 				for (PackMaterialListDataItem packmaterial : formulatedProduct.getPackMaterialList()) {
 					Pair<PackagingLevel, NodeRef> key = new Pair<>(packmaterial.getPkgLevel(), packmaterial.getPmlMaterial());
-					if (!toUpdate.containsKey(key)) {
+					if (!toUpdate.containsKey(key) || toUpdate.get(key).getFirst().doubleValue() == 0d) {
 						toRemove.add(packmaterial);
 					} else {
-						if (toUpdate.get(key).getFirst().doubleValue() != 0d) {
-							packmaterial.setPmlWeight(toUpdate.get(key).getFirst().doubleValue());
-							packmaterial.setPmlPerc(calculatePerc(formulatedProduct, key.getFirst(), toUpdate.get(key).getFirst()));
-							packmaterial.setPmlRecycledPercentage(toUpdate.get(key).getSecond()
-									.divide(toUpdate.get(key).getFirst(), MathContext.DECIMAL64).multiply(BigDecimal.valueOf(100d)).doubleValue());
-							toUpdate.remove(key);
-						}
+						packmaterial.setPmlWeight(toUpdate.get(key).getFirst().doubleValue());
+						packmaterial.setPmlPerc(calculatePerc(formulatedProduct, key.getFirst(), toUpdate.get(key).getFirst()));
+						packmaterial.setPmlRecycledPercentage(toUpdate.get(key).getSecond()
+								.divide(toUpdate.get(key).getFirst(), MathContext.DECIMAL64).multiply(BigDecimal.valueOf(100d)).doubleValue());
+						toUpdate.remove(key);
 					}
 				}
 
