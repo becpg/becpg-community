@@ -2632,12 +2632,10 @@
 					<show id="bcpg:plantPackerCode" />
 					<show id="bcpg:plantCertifications" />
 					<show id="bcpg:plantApprovalNumbers" />
-					<show id="bcpg:eanCode" force="true" />
 				</field-visibility>
 				<appearance>
 					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<field id="cm:name" set="2-col" />
-					<field id="bcpg:eanCode" set="2-col" />
 					<field id="cm:title" set="2-col" />
 					<field id="cm:description" set="2-col">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
@@ -2696,13 +2694,11 @@
 					<show id="bcpg:plantApprovalNumbers" />
 					<show id="sec:readGroups" force="true" />
 					<show id="bcpg:isDeleted" />
-					<show id="bcpg:eanCode" force="true" />
 				</field-visibility>
 				<appearance>
 					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<field id="cm:name" set="2-col" />
 					<field id="bcpg:erpCode" set="2-col" />
-					<field id="bcpg:eanCode" set="2-col" />
 					<field id="cm:title" set="2-col" />
 					<field id="cm:description" set="2-col">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
@@ -2769,7 +2765,6 @@
 					<show id="bcpg:plantPackerCode" />
 					<show id="bcpg:plantCertifications" />
 					<show id="bcpg:plantApprovalNumbers" />
-					<show id="bcpg:eanCode" force="true" />
 				</field-visibility>
 				<appearance>
 					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
@@ -2810,7 +2805,6 @@
 					<field id="bcpg:locationCountry" set="2-col">
 						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
 					</field>
-					<field id="bcpg:eanCode" set="2-col" />
 				</appearance>
 			</form>
 			<form id="create-systemEntity">
@@ -2834,13 +2828,11 @@
 					<show id="bcpg:plantApprovalNumbers" />
 					<show id="sec:readGroups" force="true" />
 					<show id="bcpg:isDeleted" />
-					<show id="bcpg:eanCode" force="true" />
 				</field-visibility>
 				<appearance>
 					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<field id="cm:name" set="2-col" />
 					<field id="bcpg:erpCode" set="2-col" />
-					<field id="bcpg:eanCode" set="2-col" />
 					<field id="cm:title" set="2-col" />
 
 					<field id="cm:description" set="2-col">
@@ -2917,7 +2909,6 @@
 					<show id="bcpg:plantCertifications" />
 					<show id="bcpg:plantApprovalNumbers" />
 					<show id="fm:commentCount" />
-					<show id="bcpg:eanCode" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
@@ -2944,7 +2935,6 @@
 					<show id="fm:commentCount" />
 					<show id="sec:readGroups" force="true" />
 					<show id="bcpg:erpCode" force="true" />
-					<show id="bcpg:eanCode" force="true" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
 				<appearance>
@@ -8933,7 +8923,6 @@
 					<show id="bcpg:locationZip" force="true" />
 					<show id="bcpg:locationState" force="true" />
 					<show id="bcpg:locationCountry" force="true" />
-					<show id="bcpg:eanCode" force="true" />
 				</field-visibility>
 				<appearance>
 					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
@@ -8969,7 +8958,6 @@
 					<field id="bcpg:contactListNotes" set="2-col">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" set="2-col" />
 					</field>
-					<field id="bcpg:eanCode" set="2-col" />
 				</appearance>
 			</form>
 			<form id="create-systemEntity">
@@ -8993,12 +8981,10 @@
 					<show id="sec:readGroups" force="true" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted" />
-					<show id="bcpg:eanCode" force="true" />
 				</field-visibility>
 				<appearance>
 					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<field id="bcpg:contactListType" set="2-col" />
-					<field id="bcpg:eanCode" set="2-col" />
 					<field id="bcpg:contactListFirstName" set="2-col" />
 					<field id="bcpg:contactListLastName" set="2-col" />
 					<field id="bcpg:contactListEmail" set="2-col" />
@@ -9054,11 +9040,9 @@
 					<show id="bcpg:locationZip" force="true" />
 					<show id="bcpg:locationState" force="true" />
 					<show id="bcpg:locationCountry" force="true" />
-					<show id="bcpg:eanCode" force="true" />
 				</field-visibility>
 				<appearance>
 					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
-					<field id="bcpg:eanCode" set="2-col" />
 					<field id="bcpg:contactListFirstName" set="2-col" />
 					<field id="bcpg:contactListLastName" set="2-col" />
 					<field id="bcpg:contactListEmail" set="2-col" />
@@ -9097,7 +9081,6 @@
 					<show id="bcpg:contactListPhoneMobile" />
 					<show id="bcpg:contactListNotes" />
 					<show id="fm:commentCount" force="true" />
-					<show id="bcpg:eanCode" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:entityDataListState" label="hidden" />
@@ -9121,7 +9104,6 @@
 					<show id="sec:readGroups" force="true" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted" />
-					<show id="bcpg:eanCode" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:entityDataListState" label="hidden" />
@@ -9152,13 +9134,11 @@
 					<show id="bcpg:locationZip" force="true" />
 					<show id="bcpg:locationState" force="true" />
 					<show id="bcpg:locationCountry" force="true" />
-					<show id="bcpg:eanCode" force="true" />
 				</field-visibility>
 
 				<appearance>
 					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<field id="bcpg:contactListType" set="2-col" />
-					<field id="bcpg:eanCode" set="2-col" />
 					<field id="bcpg:contactListFirstName" set="2-col" />
 					<field id="bcpg:contactListLastName" set="2-col" />
 					<field id="bcpg:contactListEmail" set="2-col" />
@@ -9213,13 +9193,11 @@
 					<show id="sec:readGroups" force="true" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted" />
-					<show id="bcpg:eanCode" force="true" />
 				</field-visibility>
 
 				<appearance>
 					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<field id="bcpg:contactListType" set="2-col" />
-					<field id="bcpg:eanCode" set="2-col" />
 					<field id="bcpg:contactListFirstName" set="2-col" />
 					<field id="bcpg:contactListLastName" set="2-col" />
 					<field id="bcpg:contactListEmail" set="2-col" />
