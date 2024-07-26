@@ -300,6 +300,64 @@ public class ProductData extends AbstractScorableEntity
 	private List<SurveyList> surveyList;
 	private Integer productScore;
 
+	
+	private NodeRef glopTargetCharact;
+	private String glopTargetTask;
+	private Double glopTolerance;
+	private List<String> glopConstraintLists;
+	private Boolean glopApplyOptimization;
+	
+	@AlfSingleAssoc
+	@AlfQname(qname = "bcpg:glopTargetCharact")
+	public NodeRef getGlopTargetCharact() {
+		return glopTargetCharact;
+	}
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:glopTolerance")
+	public Double getGlopTolerance() {
+		return glopTolerance;
+	}
+	
+	public void setGlopTolerance(Double glopTolerance) {
+		this.glopTolerance = glopTolerance;
+	}
+	
+	public void setGlopTargetCharact(NodeRef glopTargetCharact) {
+		this.glopTargetCharact = glopTargetCharact;
+	}
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:glopTargetTask")
+	public String getGlopTargetTask() {
+		return glopTargetTask;
+	}
+	
+	public void setGlopTargetTask(String glopTargetTask) {
+		this.glopTargetTask = glopTargetTask;
+	}
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:glopConstraintLists")
+	public List<String> getGlopConstraintLists() {
+		return glopConstraintLists;
+	}
+	
+	public void setGlopConstraintLists(List<String> glopConstraintLists) {
+		this.glopConstraintLists = glopConstraintLists;
+	}
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:glopApplyOptimization")
+	public Boolean getGlopApplyOptimization() {
+		return glopApplyOptimization;
+	}
+
+	public void setGlopApplyOptimization(Boolean glopApplyOptimization) {
+		this.glopApplyOptimization = glopApplyOptimization;
+	}
+	
+	
 	/**
 	 * {@inheritDoc}
 	 *

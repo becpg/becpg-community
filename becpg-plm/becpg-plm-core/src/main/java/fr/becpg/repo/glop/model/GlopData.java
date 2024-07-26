@@ -97,7 +97,7 @@ public class GlopData extends JSONObject {
 	 * @throws org.json.JSONException if any.
 	 */
 	public void applyValues(ProductData product, boolean apply) throws JSONException {
-		if (apply) {
+		if (apply && has(COMPONENTS)) {
 			JSONArray comps = getJSONArray(COMPONENTS);
 			
 			for (int index = 0; index < comps.length(); index++) {

@@ -883,7 +883,15 @@
                 <value>true</value>
             </parameter>
 		</constraint>
-
+		
+		<constraint name="bcpg:glopTargetTasks" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>MIN</value>
+					<value>MAX</value>
+				</list>
+			</parameter>
+		</constraint>
 	</constraints>
 
 	<types>
@@ -5929,6 +5937,44 @@
 					<index enabled="false"></index>
 				</property>
 			</properties>
+		</aspect>
+		
+		<aspect name="bcpg:glopProductAspect">
+			<properties>
+				<property name="bcpg:glopTargetTask">
+					<type>d:text</type>
+					<index enabled="false"></index>
+					<constraints>
+						<constraint ref="bcpg:glopTargetTasks"></constraint>
+					</constraints>
+				</property>
+				<property name="bcpg:glopConstraintLists">
+					<type>d:text</type>
+					<multiple>true</multiple>
+					<index enabled="false"></index>
+				</property>
+				<property name="bcpg:glopTolerance">
+					<type>d:double</type>
+					<index enabled="false"></index>
+				</property>
+				<property name="bcpg:glopApplyOptimization">
+					<type>d:boolean</type>
+					<index enabled="false"></index>
+				</property>
+			</properties>
+			<associations>
+				<association name="bcpg:glopTargetCharact">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:charact</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
 		</aspect>
 
 		<aspect name="bcpg:propagateUpAspect">
