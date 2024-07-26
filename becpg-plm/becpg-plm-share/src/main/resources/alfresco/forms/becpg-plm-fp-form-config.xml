@@ -1102,6 +1102,11 @@
           <show force="false" id="bcpg:productSpecifications"/>
           <show force="true" id="bcpg:compareWithEntities"/>
           <show force="true" id="bcpg:entityTplRef"/>
+          <show force="false" id="bcpg:glopTargetCharact"/>
+          <show force="false" id="bcpg:glopTargetTask"/>
+          <show force="false" id="bcpg:glopConstraintLists"/>
+          <show force="false" id="bcpg:glopTolerance"/>
+          <show force="false" id="bcpg:glopApplyOptimization"/>
         </field-visibility>
         <appearance>
           <field id="cm:name" mandatory="false" read-only="false"/>
@@ -1131,6 +1136,12 @@
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
               <control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
               </control-param>
+            </control>
+          </field>
+          <field id="bcpg:glopConstraintLists" mandatory="false" read-only="false">
+            <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+              <control-param name="ds">becpg/autocomplete/qname?attributeName=entityLists</control-param>
+              <control-param name="urlParamsToPass">itemId</control-param>
             </control>
           </field>
           <field id="bcpg:compareWithEntities" mandatory="false" read-only="false">
@@ -1339,6 +1350,11 @@
           <show for-mode="view" force="true" id="bcpg:nutrientProfilingDetails"/>
           <show force="true" id="bcpg:nutrientProfileCategory"/>
           <show force="true" id="bcpg:nutrientProfileVersion"/>
+          <show force="false" id="bcpg:glopTargetCharact"/>
+          <show force="false" id="bcpg:glopTargetTask"/>
+          <show force="false" id="bcpg:glopConstraintLists"/>
+          <show force="false" id="bcpg:glopTolerance"/>
+          <show force="false" id="bcpg:glopApplyOptimization"/>
         </field-visibility>
         <appearance>
           <field help-id="becpg.forms.help.servingSize" id="bcpg:servingSize" mandatory="false" read-only="false"/>
@@ -1359,6 +1375,12 @@
           </field>
           <field id="bcpg:nutrientProfileVersion" mandatory="false" read-only="false">
             <control template="/org/alfresco/components/form/controls/selectone.ftl">
+            </control>
+          </field>
+          <field id="bcpg:glopConstraintLists" mandatory="false" read-only="false">
+            <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+              <control-param name="ds">becpg/autocomplete/qname?attributeName=entityLists</control-param>
+              <control-param name="urlParamsToPass">itemId</control-param>
             </control>
           </field>
         </appearance>
@@ -2058,6 +2080,11 @@
           <show force="true" id="bcpg:servingSize"/>
           <show force="true" id="bcpg:servingSizeUnit"/>
           <show force="true" id="bcpg:entityTplRef"/>
+          <show force="false" id="bcpg:glopTargetCharact"/>
+          <show force="false" id="bcpg:glopTargetTask"/>
+          <show force="false" id="bcpg:glopConstraintLists"/>
+          <show force="false" id="bcpg:glopTolerance"/>
+          <show force="false" id="bcpg:glopApplyOptimization"/>
         </field-visibility>
         <appearance>
           <field id="cm:name" mandatory="false" read-only="false"/>
