@@ -626,7 +626,7 @@
 					+ ("&noCache="+ timeStamp),
 				successCallback : {
 					fn : function (response) {
-						var prefs = "fr.becpg.formulation.dashlet.custom.datagrid-prefs"+"."+itemType.replace(":","_");
+						var prefs = "fr.becpg.formulation.dashlet.custom.datagrid-prefs." + (this.entity != null ? this.entity.type.replace(":", "_") + "." : "") + itemType.replace(":", "_");
 						var idx=0;
 						for (var i = 0; i < response.json.columns.length; i++) {
 							var column = response.json.columns[i];
