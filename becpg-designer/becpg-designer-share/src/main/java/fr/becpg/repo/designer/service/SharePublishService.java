@@ -65,7 +65,11 @@ public class SharePublishService implements ApplicationListener<ContextRefreshed
 			for (File configFile : configDir.listFiles()) {
 				if (configFile.isFile() && configFile.getName().endsWith(PROPERTIES)) {
 					try {
-						writeClassPathMessages(configFile.getName(), Files.readString(configFile.toPath()), new Date().getTime());
+						long bundleId = new Date().getTime();
+						writeClassPathMessages(configFile.getName(), Files.readString(configFile.toPath()), bundleId);
+						String fileBaseName = configFile.getName().split("_")[0].replace(PROPERTIES, "");
+						String bundleName = fileBaseName + "-" + bundleId;
+						I18NUtil.registerResourceBundle("alfresco.messages.custom." + bundleName);
 					} catch (IOException e) {
 						logger.error("Error while reading properties file: " + configFile.getName());
 					}
