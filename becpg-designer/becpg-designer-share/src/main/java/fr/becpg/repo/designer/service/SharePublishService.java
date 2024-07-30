@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -62,17 +64,42 @@ public class SharePublishService implements ApplicationListener<ContextRefreshed
 	private void loadDiskMessages() {
 		File configDir = new File(configPath + FILE_SEPARATOR + "messages");
 		if (configDir.exists()) {
-			for (File configFile : configDir.listFiles()) {
-				if (configFile.isFile() && configFile.getName().endsWith(PROPERTIES)) {
-					try {
-						long bundleId = new Date().getTime();
-						writeClassPathMessages(configFile.getName(), Files.readString(configFile.toPath()), bundleId);
-						String fileBaseName = configFile.getName().split("_")[0].replace(PROPERTIES, "");
-						String bundleName = fileBaseName + "-" + bundleId;
-						I18NUtil.registerResourceBundle("alfresco.messages.custom." + bundleName);
-					} catch (IOException e) {
-						logger.error("Error while reading properties file: " + configFile.getName());
+			List<File> files = new ArrayList<>(Arrays.asList(configDir.listFiles()));
+			List<File> rootFiles = files.stream().filter(f -> !f.getName().contains("_")).toList();
+			
+			for (File rootFile : rootFiles) {
+				try {
+					Long bundleId = new Date().getTime();
+					logger.info("Write classpath messages for " + rootFile.getName());
+					writeClassPathMessages(rootFile.getName(), Files.readString(rootFile.toPath()), bundleId);
+					files.remove(rootFile);
+					String baseName = rootFile.getName().replace(PROPERTIES, "");
+					String bundleName = baseName + "-" + bundleId;
+					String defaultLocaleFileName = baseName + "_" + Locale.getDefault().getCountry() + PROPERTIES;
+					File defaultLocaleFile = files.stream().filter(f -> f.getName().equalsIgnoreCase(defaultLocaleFileName)).findFirst().orElse(null);
+					if (defaultLocaleFile != null) {
+						logger.info("Write classpath messages for " + defaultLocaleFile.getName());
+						writeClassPathMessages(defaultLocaleFile.getName(), Files.readString(defaultLocaleFile.toPath()), bundleId);
+						files.remove(defaultLocaleFile);
 					}
+					List<File> otherFiles = files.stream().filter(f -> f.getName().contains("_") && f.getName().split("_")[0].equals(baseName)).toList();
+					for (File otherFile : otherFiles) {
+						logger.info("Write classpath messages for " + otherFile.getName());
+						writeClassPathMessages(otherFile.getName(), Files.readString(otherFile.toPath()), bundleId);
+						files.remove(otherFile);
+					}
+					I18NUtil.registerResourceBundle("alfresco.messages.custom." + bundleName);
+				} catch (IOException e) {
+					logger.error("Error while reading properties file: " + rootFile.getName());
+				}
+			}
+			for (File file : files) {
+				Long bundleId = new Date().getTime();
+				try {
+					logger.info("Write classpath messages for " + file.getName());
+					writeClassPathMessages(file.getName(), Files.readString(file.toPath()), bundleId);
+				} catch (IOException e) {
+					logger.error("Error while reading properties file: " + file.getName());
 				}
 			}
 		}
