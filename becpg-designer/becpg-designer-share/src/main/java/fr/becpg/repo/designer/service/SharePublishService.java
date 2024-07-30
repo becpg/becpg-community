@@ -65,7 +65,7 @@ public class SharePublishService implements ApplicationListener<ContextRefreshed
 			for (File configFile : configDir.listFiles()) {
 				if (configFile.isFile() && configFile.getName().endsWith(PROPERTIES)) {
 					try {
-						loadMessages(configFile.getName(), Files.readString(configFile.toPath()), new Date().getTime());
+						writeClassPathMessages(configFile.getName(), Files.readString(configFile.toPath()), new Date().getTime());
 					} catch (IOException e) {
 						logger.error("Error while reading properties file: " + configFile.getName());
 					}
@@ -88,6 +88,53 @@ public class SharePublishService implements ApplicationListener<ContextRefreshed
 	}
 
 	public void publishDocument(String nodeRef, String fileName, Boolean writeXml) {
+		if (fileName.endsWith(XML)) {
+			publishXml(nodeRef, fileName, writeXml);
+		} else if (fileName.endsWith(PROPERTIES)) {
+			String bundleClasspathName = publishProperties(nodeRef, fileName, null);
+			if (bundleClasspathName != null) {
+				I18NUtil.getAllMessages();
+				I18NUtil.getAllMessages(Locale.FRENCH);
+				I18NUtil.getAllMessages(Locale.ENGLISH);
+				if (logger.isDebugEnabled()) {
+					logger.debug("Register bundle: " + bundleClasspathName);
+				}
+				I18NUtil.registerResourceBundle(bundleClasspathName);
+				I18NUtil.getAllMessages();
+				I18NUtil.getAllMessages(Locale.FRENCH);
+				I18NUtil.getAllMessages(Locale.ENGLISH);
+			}
+		}
+	}
+
+	private String publishProperties(String nodeRef, String fileName, Long bundleId) {
+		JSONObject jsonResponse = alfrescoRequest(HttpMethod.POST, "/becpg/designer/model/publish?nodeRef=" + nodeRef + "&writeXml=false");
+		if (jsonResponse.has("type") && jsonResponse.getString("type").equals("config")) {
+			if (bundleId == null) {
+				bundleId = jsonResponse.getLong("modifiedDate");
+			}
+			JSONObject alfrescoConfigList = alfrescoRequest(HttpMethod.GET, "/becpg/designer/config/list");
+			JSONArray alfrescoConfigFiles = alfrescoConfigList.getJSONArray("items");
+			writeFileOnDisk(configPath + FILE_SEPARATOR + "messages", fileName, jsonResponse.getString("content"));
+			writeClassPathMessages(fileName, jsonResponse.getString("content"), bundleId);
+			String locale = fileName.contains("_") ? fileName.split("_")[1].replace(PROPERTIES, "") : "";
+			if (locale.isEmpty() || locale.equalsIgnoreCase(Locale.getDefault().getCountry())) {
+				for (int i = 0; i < alfrescoConfigFiles.length(); i++) {
+					JSONObject alfrescoConfigFile = alfrescoConfigFiles.getJSONObject(i);
+					String otherFileName = alfrescoConfigFile.getString("displayName");
+					if (otherFileName.contains("_") && (otherFileName.split("_")[0] + PROPERTIES).equals(fileName)) {
+						publishProperties(alfrescoConfigFile.getString("nodeRef"), otherFileName, bundleId);
+					}
+				}
+			}
+			String fileBaseName = fileName.split("_")[0].replace(PROPERTIES, "");
+			String bundleName = fileBaseName + "-" + bundleId;
+			return "alfresco.messages.custom." + bundleName;
+		}
+		return null;
+	}
+
+	private void publishXml(String nodeRef, String fileName, Boolean writeXml) {
 		JSONObject jsonResponse = alfrescoRequest(HttpMethod.POST, "/becpg/designer/model/publish?nodeRef=" + nodeRef + "&writeXml=" + writeXml);
 		if (jsonResponse.has("type") && jsonResponse.getString("type").equals("config")) {
 			if (fileName.endsWith(XML)) {
@@ -95,9 +142,6 @@ public class SharePublishService implements ApplicationListener<ContextRefreshed
 					deleteFileOnDisk(configPath, jsonResponse.getString(PUBLISHED_CONFIG_NAME));
 				}
 				writeFileOnDisk(configPath, fileName, jsonResponse.getString("content"));
-			} else if (fileName.endsWith(PROPERTIES)) {
-				writeFileOnDisk(configPath + FILE_SEPARATOR + "messages", fileName, jsonResponse.getString("content"));
-				loadMessages(fileName, jsonResponse.getString("content"), jsonResponse.getLong("modifiedDate"));
 			}
 		}
 	}
@@ -114,13 +158,13 @@ public class SharePublishService implements ApplicationListener<ContextRefreshed
 	}
 
 	public void cleanConfig() {
-		cleanConfigForPath(configPath);
-		cleanConfigForPath(configPath + FILE_SEPARATOR + "messages");
+		cleanConfigFromPath(configPath);
+		cleanConfigFromPath(configPath + FILE_SEPARATOR + "messages");
 		configService.reset();
 	}
 
 	@SuppressWarnings("unchecked")
-	private void cleanConfigForPath(String path) {
+	private void cleanConfigFromPath(String path) {
 		File configDir = new File(path);
 		if (configDir.exists()) {
 			File[] shareConfigFiles = configDir.listFiles();
@@ -144,7 +188,9 @@ public class SharePublishService implements ApplicationListener<ContextRefreshed
 		if (configDir.exists()) {
 			path = path + FILE_SEPARATOR + fileName;
 			File file = new File(path);
-			logger.debug("Deleting file at path " + path + ", exists ? " + file.exists());
+			if (logger.isDebugEnabled()) {
+				logger.debug("Deleting file at path " + path + ", exists ? " + file.exists());
+			}
 			if (file.exists() && !file.delete()) {
 				logger.error("Cannot delete file: " + file.getName());
 			}
@@ -174,7 +220,9 @@ public class SharePublishService implements ApplicationListener<ContextRefreshed
 			configDir.mkdirs();
 		}
 		path = path + FILE_SEPARATOR + fileName;
-		logger.debug("Publish config under " + path);
+		if (logger.isDebugEnabled()) {
+			logger.debug("Write designer file: " + path);
+		}
 		try {
 			File file = new File(path);
 			if (file.exists() || file.createNewFile()) {
@@ -188,42 +236,52 @@ public class SharePublishService implements ApplicationListener<ContextRefreshed
 		}
 	}
 
-	public void loadMessages(String fileName, String content, Long modifiedDate) {
+	public void writeClassPathMessages(String fileName, String content, Long modifiedDate) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Write classpath messages for " + fileName);
+		}
 		String fileBaseName = fileName.split("_")[0].replace(PROPERTIES, "");
 		String locale = fileName.contains("_") ? fileName.split("_")[1].replace(PROPERTIES, "") : "";
 		String bundleName = fileBaseName + "-" + modifiedDate;
 		try {
-			String bundleClasspathName = "alfresco.messages.custom." + bundleName;
 			if (locale.isEmpty() || locale.equalsIgnoreCase(Locale.getDefault().getCountry())) {
 				List<String> uiLocales = configService.getConfig("Languages").getConfigElement("ui-languages").getChildren().stream()
 						.map(c -> c.getAttribute("locale")).toList();
 				for (String uiLocale : uiLocales) {
-					writeMessageDiskFile("", bundleName, uiLocale);
+					if (locale.isEmpty()) {
+						writeClassPathFile(content, bundleName, uiLocale);
+					} else {
+						writeClassPathFile("", bundleName, uiLocale);
+					}
 				}
 			}
-			writeMessageDiskFile("", bundleName, "");
-			writeMessageDiskFile(content, bundleName, locale);
-			I18NUtil.getAllMessages();
-			I18NUtil.getAllMessages(Locale.FRENCH);
-			I18NUtil.getAllMessages(Locale.ENGLISH);
-			I18NUtil.registerResourceBundle(bundleClasspathName);
-			I18NUtil.getAllMessages();
-			I18NUtil.getAllMessages(Locale.FRENCH);
-			I18NUtil.getAllMessages(Locale.ENGLISH);
+			writeClassPathFile("", bundleName, "");
+			writeClassPathFile(content, bundleName, locale);
 		} catch (IOException e) {
 			logger.error(e, e);
 		}
 	}
 
-	private void writeMessageDiskFile(String contentString, String fileName, String locale) throws IOException {
+	private void writeClassPathFile(String contentString, String fileName, String locale) throws IOException {
 		String pathName = System.getProperty("catalina.base") + "/shared/classes/alfresco/messages/custom";
 		File messageDir = new File(pathName);
 		if (!messageDir.exists()) {
 			messageDir.mkdirs();
 		}
 		String localeSuffix = locale.isBlank() ? "" : "_" + locale;
-		File file = new File(pathName + FILE_SEPARATOR + fileName + localeSuffix + PROPERTIES);
+		String pathname = pathName + FILE_SEPARATOR + fileName + localeSuffix + PROPERTIES;
+		File file = new File(pathname);
+		if (file.exists() && contentString.isBlank()) {
+			return;
+		}
 		if (file.exists() || file.createNewFile()) {
+			if (logger.isDebugEnabled()) {
+				if (contentString.isBlank()) {
+					logger.debug("Write empty classpath file: " + pathname);
+				} else {
+					logger.debug("Write classpath file: " + pathname);
+				}
+			}
 			try (InputStream in = new ByteArrayInputStream(contentString.getBytes()); OutputStream out = new FileOutputStream(file)) {
 				IOUtils.copy(in, out);
 			}
