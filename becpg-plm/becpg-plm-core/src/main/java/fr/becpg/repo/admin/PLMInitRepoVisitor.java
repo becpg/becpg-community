@@ -108,6 +108,7 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.search.data.DateFilterType;
 import fr.becpg.repo.search.data.VersionFilterType;
+import fr.becpg.repo.survey.SurveyModel;
 import fr.becpg.report.client.ReportFormat;
 
 /**
@@ -1007,6 +1008,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		dataLists.add(PLMModel.TYPE_CONTACTLIST);
 		dataLists.add(PLMModel.TYPE_CERTIFICATION);
 		dataLists.add(PLMModel.TYPE_PLANT);
+		dataLists.add(ProjectModel.TYPE_SCORE_LIST);
+		dataLists.add(SurveyModel.TYPE_SURVEY_LIST);
 	
 		subFolders.add(RepoConsts.PATH_SUPPLIER_DOCUMENTS);
 		NodeRef entityTplNodeRef = entityTplService.createEntityTpl(entityTplsNodeRef, PLMModel.TYPE_SUPPLIER, null, true, true, dataLists,
