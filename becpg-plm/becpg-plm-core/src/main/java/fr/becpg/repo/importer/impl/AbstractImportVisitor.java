@@ -1007,7 +1007,8 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 				nodeRef = nodeService.getChildByName(importContext.getParentNodeRef(), ContentModel.ASSOC_CONTAINS, name);
 			} else if (!entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_LINKED_VALUE)
 					&& !entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_LIST_VALUE)
-					&& !entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_CHARACT)) {
+					&& !entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_CHARACT)
+					&& !entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
 
 				throw new ImporterException(I18NUtil.getMessage(ImportHelper.MSG_ERROR_GET_OR_CREATE_NODEREF));
 			}
