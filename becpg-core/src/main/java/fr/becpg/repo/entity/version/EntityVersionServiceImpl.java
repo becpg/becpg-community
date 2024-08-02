@@ -1719,9 +1719,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			NodeRef extractedVersion = findExtractedVersion(versionNodeRef);
 
 			if (extractedVersion == null || !nodeService.exists(extractedVersion)) {
-
-				extractedVersion = createExtractedVersion(versionNodeRef);
-
+				extractedVersion = AuthenticationUtil.runAsSystem(() -> createExtractedVersion(versionNodeRef));
 			}
 			return extractedVersion;
 		}, false, false);
