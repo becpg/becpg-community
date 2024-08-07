@@ -39,7 +39,7 @@ function main()
        usePagination: true,
        displayTopPagination : false,
        forceLoad: true,
-       columnFormId : "bulk-edit",
+       columnFormId : "product-list",
        formWidth : "65em",
        extraDataParams: page.url.templateArgs.site!=null ? "&repo=false&container=documentLibrary":"&repo=true",
        sortUrl :  page.url.context+"/proxy/alfresco/becpg/entity/datalists/sort/node",

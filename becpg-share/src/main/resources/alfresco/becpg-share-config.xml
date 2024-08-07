@@ -212,6 +212,12 @@
 		</itemTypes>
 	</config>
 	
+	<config evaluator="string-compare" condition="product-list">
+		<itemTypes>
+			<itemType name="cm:content" editSelectedFormId="product-list" />
+		</itemTypes>
+	</config>
+	
 	<config evaluator="string-compare" condition="wused-search">
 		<itemTypes>
 			<!-- Sample use case -->

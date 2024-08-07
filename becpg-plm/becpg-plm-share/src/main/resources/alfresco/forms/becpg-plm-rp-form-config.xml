@@ -258,6 +258,19 @@
           <set appearance="bordered-panel" id="audit" label-id="becpg.forms.set.audit.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
         </appearance>
       </form>
+      <form id="product-list">
+      	<field-visibility>
+          <show force="true" id="bcpg:legalName" />
+		  <show force="true" id="bcpg:productHierarchy1" />
+		  <show force="true" id="bcpg:productHierarchy2" />
+		  <show force="true" id="bcpg:productState" />
+		  <show force="true" id="bcpg:code" />
+		  <show force="true" id="bcpg:erpCode"/>
+		  <show force="true" id="bcpg:eanCode" />
+          <show force="true" id="cm:name"/>
+          <show force="true" id="cm:title"/>
+        </field-visibility>
+      </form>
       <form id="search">
         <field-visibility>
           <show force="false" id="cm:name"/>
