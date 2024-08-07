@@ -1370,6 +1370,64 @@
           <set appearance="bordered-panel" id="effectivity" label-id="becpg.forms.set.effectivity.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
         </appearance>
       </form>
+      
+      <form id="product-list">
+        <field-visibility>
+          <show force="true" id="bcpg:legalName" />
+		  <show force="true" id="bcpg:productHierarchy1" />
+		  <show force="true" id="bcpg:productHierarchy2" />
+		  <show force="true" id="bcpg:productState" />
+		  <show force="true" id="bcpg:code" />
+		  <show force="true" id="bcpg:erpCode"/>
+		  <show force="true" id="bcpg:eanCode" />
+		  <show force="true" id="bcpg:suppliers"  />
+          <show force="false" id="cm:name"/>
+          <show force="false" id="cm:title"/>
+          <show force="false" id="bcpg:productComments"/>
+          <show force="false" id="cm:description"/>
+          <show force="false" id="bcpg:packagingDescription"/>
+          <show force="false" id="bcpg:entityTplRef"/>
+          <show force="false" id="bcpg:parentEntityRef"/>
+          <show force="false" id="pjt:projectScore"/>
+          <show force="false" id="bcpg:plants"/>
+          <show force="false" id="bcpg:productGeoOrigin"/>
+          <show force="false" id="bcpg:productQty"/>
+          <show force="false" id="bcpg:productUnit"/>
+          <show force="false" id="bcpg:netWeight"/>
+          <show force="false" id="bcpg:productDensity"/>
+          <show force="false" id="bcpg:productLossPerc"/>
+          <show force="false" id="bcpg:servingSize"/>
+          <show force="false" id="bcpg:servingSizeUnit"/>
+          <show force="false" id="bcpg:productSpecifications"/>
+          <show force="false" id="bcpg:useByDate"/>
+          <show force="false" id="bcpg:bestBeforeDate"/>
+          <show force="false" id="bcpg:periodAfterOpening"/>
+          <show force="false" id="bcpg:contractDate"/>
+          <show force="false" id="bcpg:storageConditionsRef"/>
+          <show force="false" id="bcpg:precautionOfUseRef"/>
+          <show force="false" id="bcpg:preparationTips"/>
+          <show force="false" id="bcpg:productMicrobioCriteriaRef"/>
+          <show force="false" id="bcpg:meatType"/>
+          <show force="false" id="pack:length"/>
+          <show force="false" id="pack:width"/>
+          <show force="false" id="pack:height"/>
+          <show force="false" id="bcpg:nutrientProfileCategory"/>
+          <show force="false" id="bcpg:nutrientProfileVersion"/>
+          <show force="false" id="ghs:sdsStandardCode"/>
+          <show force="false" id="ghs:sdsSheetNumber"/>
+          <show force="false" id="ghs:sdsSheetEffectiveDate"/>           
+          <show force="false" id="ghs:sdsSignalWord"/>
+          <show force="false" id="ghs:sdsPictograms"/>
+          <show force="false" id="ghs:sdsHazardStatements"/>
+          <show force="false" id="ghs:sdsPrecautionaryStatements"/>
+          <show force="false" id="ghs:sdsPersonalProtections"/>
+          <show force="false" id="ghs:sdsSafetyInstructions"/>
+          <show force="false" id="ghs:sdsOnuCode"/>
+          <show force="false" id="ghs:sdsClassCode"/>
+          <show force="false" id="ghs:sdsPackagingGroupCode"/>
+        </field-visibility>
+      </form>
+      
       <form id="datagridWUsed">
           <field-visibility>
               <show id="bcpg:parentEntityRef" force="true" />
