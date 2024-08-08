@@ -9,7 +9,7 @@
          ],
          "claim2" :  [ 
            {"attribute": "bcpg:lclLabelClaim" , "htmlId":"assoc_bcpg_advLclClaimAnd_added", "operator": "AND",  "listType": "bcpg:labelClaimList"  },
-           {"attribute": "bcpg:lclClaimValue" , "value":"true" }
+           {"attribute": "bcpg:lclClaimValue" , "value":"true,certified" }
          ],
          
          "claim3" : [ 
@@ -114,5 +114,4 @@
 
 	}
 }
-
 
