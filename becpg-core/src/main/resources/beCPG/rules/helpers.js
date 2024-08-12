@@ -146,8 +146,7 @@ function isNullOrEmpty(value) {
 	var strValue;
 	return value == null || 
 		(value === (strValue = String(value)) || 
-		value instanceof String || 
-		value instanceof java.lang.String ? strValue.trim() : value).length === 0;
+		value instanceof String ? strValue.trim() : value).length === 0;
 }
 
 /**
