@@ -26,7 +26,6 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.glop.GlopException;
@@ -36,6 +35,7 @@ import fr.becpg.repo.glop.model.GlopContext;
 import fr.becpg.repo.glop.model.GlopData;
 import fr.becpg.repo.glop.model.GlopTarget;
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.helper.RestTemplateHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -70,7 +70,6 @@ public class GlopServiceImpl implements GlopService {
 	@Value("${beCPG.glop.serverUrl}")
 	private String serverUrl;
 
-	private RestTemplate restTemplate = new RestTemplate();
 
 	/**
 	 * {@inheritDoc}
@@ -185,7 +184,7 @@ public class GlopServiceImpl implements GlopService {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Sending " + request + " to " + serverUrl);
 		}
-		String response = restTemplate.postForObject(uri, requestEntity, String.class);
+		String response = RestTemplateHelper.getRestTemplate().postForObject(uri, requestEntity, String.class);
 		
 		if (logger.isDebugEnabled()) {
 			logger.debug("Server returned " + response);
