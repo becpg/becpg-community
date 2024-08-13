@@ -51,10 +51,10 @@ public class ExcelHelper {
 	
 	public static class ExcelCellStyles {
 		
-		CellStyle fullDateCellStyle;
-		CellStyle shortDateCellStyle;
-		CellStyle booleanCellStyle;
-	    CellStyle headerStyle;
+		XSSFCellStyle fullDateCellStyle;
+		XSSFCellStyle shortDateCellStyle;
+		XSSFCellStyle booleanCellStyle;
+		XSSFCellStyle headerStyle;
 		
 		public ExcelCellStyles(XSSFWorkbook workbook) {
 			fullDateCellStyle = createDateStyle(workbook, true);
@@ -70,7 +70,7 @@ public class ExcelHelper {
 			headerStyle.setFont(font);
 		}
 		
-		private CellStyle createDateStyle(XSSFWorkbook workbook, boolean full) {
+		private XSSFCellStyle createDateStyle(XSSFWorkbook workbook, boolean full) {
 
 			XSSFCellStyle style = workbook.createCellStyle();
 			if (full) {
@@ -81,7 +81,7 @@ public class ExcelHelper {
 			return style;
 		}
 
-		private CellStyle createBooleanStyle(XSSFWorkbook workbook) {
+		private XSSFCellStyle createBooleanStyle(XSSFWorkbook workbook) {
 			XSSFCellStyle style = workbook.createCellStyle();
 			style.setDataFormat(workbook.getCreationHelper().createDataFormat().getFormat("BOOLEAN"));
 			return style;
