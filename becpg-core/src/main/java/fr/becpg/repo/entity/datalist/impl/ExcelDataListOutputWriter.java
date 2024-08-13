@@ -37,12 +37,10 @@ import org.alfresco.service.transaction.TransactionService;
 import org.alfresco.util.TempFileProvider;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.JSONException;
@@ -64,6 +62,7 @@ import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.helper.AttachmentHelper;
 import fr.becpg.repo.helper.ExcelHelper;
+import fr.becpg.repo.helper.ExcelHelper.ExcelCellStyles;
 import fr.becpg.repo.helper.ExcelHelper.ExcelFieldTitleProvider;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
@@ -432,20 +431,14 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 				cell.setCellValue("#");
 				cell.setCellStyle(style);
 
-				XSSFCellStyle headerStyle = workbook.createCellStyle();
-
-				headerStyle.setFillForegroundColor(ExcelHelper.beCPGHeaderTextColor());
-				headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-				XSSFFont font = workbook.createFont();
-				font.setColor(HSSFColorPredefined.WHITE.getIndex());
-				headerStyle.setFont(font);
+			   ExcelCellStyles exeCellStyles = new ExcelCellStyles(workbook);
 
 				if (bcpgCode != null) {
 					cell = headerRow.createCell(cellnum);
 					cell.setCellValue("bcpg:code");
 					cell = labelRow.createCell(cellnum++);
 					cell.setCellValue(I18NUtil.getMessage("message.becpg.export.entity"));
-					cell.setCellStyle(headerStyle);
+					cell.setCellStyle(exeCellStyles.getHeaderStyle());
 				}
 
 				Row row = null;
@@ -454,7 +447,7 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 					List<AttributeExtractorStructure> fields = extractedItems.getComputedFields().stream().filter(titleProvider::isAllowed)
 							.collect(Collectors.toList());
 
-					ExcelHelper.appendExcelHeader(fields, null, null, headerRow, labelRow, headerStyle, sheet, cellnum, titleProvider,
+					ExcelHelper.appendExcelHeader(fields, null, null, headerRow, labelRow, exeCellStyles, sheet, cellnum, titleProvider,
 							MLTextHelper.shouldExtractMLText() ? MLTextHelper.getSupportedLocales() : null);
 
 					List<Map<String, Object>> items = null;
@@ -482,7 +475,7 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 							}
 
 							ExcelHelper.appendExcelField(fields, null, item, sheet, row, cellnum, rownum,
-									MLTextHelper.shouldExtractMLText() ? MLTextHelper.getSupportedLocales() : null);
+									MLTextHelper.shouldExtractMLText() ? MLTextHelper.getSupportedLocales() : null,exeCellStyles);
 
 							if (handler != null) {
 								handler.updateStatus();
@@ -505,7 +498,7 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 
 				// Extract extras sheets
 				if (extractedExtrasItems != null) {
-					ExcelHelper.appendExcelHeader(extractedExtrasItems.getComputedFields(), null, null, headerRow, labelRow, headerStyle, sheet,
+					ExcelHelper.appendExcelHeader(extractedExtrasItems.getComputedFields(), null, null, headerRow, labelRow, exeCellStyles, sheet,
 							cellnum, titleProvider, MLTextHelper.shouldExtractMLText() ? MLTextHelper.getSupportedLocales() : null);
 
 					for (Map<String, Object> item : extractedExtrasItems.getPageItems()) {
@@ -522,7 +515,7 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 						}
 
 						ExcelHelper.appendExcelField(extractedExtrasItems.getComputedFields(), null, item, sheet, row, cellnum, rownum,
-								MLTextHelper.shouldExtractMLText() ? MLTextHelper.getSupportedLocales() : null);
+								MLTextHelper.shouldExtractMLText() ? MLTextHelper.getSupportedLocales() : null,exeCellStyles);
 
 					}
 				}
