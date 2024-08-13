@@ -82,6 +82,7 @@
                    connectionTimeout="300000"
                    executor="tomcatThreadPool"
                    protocol="AJP/1.3" redirectPort="8443"
+                   maxHttpHeaderSize="65536"
                    Server=" "
                    secretRequired="false" 
                    address="0.0.0.0" 
