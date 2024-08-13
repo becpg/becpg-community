@@ -25,7 +25,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.client.RestTemplate;
 
 import com.google.common.collect.Lists;
 
@@ -38,6 +37,7 @@ import fr.becpg.repo.decernis.model.RegulatoryContext;
 import fr.becpg.repo.decernis.model.RegulatoryContextItem;
 import fr.becpg.repo.decernis.model.UsageContext;
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.helper.RestTemplateHelper;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
@@ -233,8 +233,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 			if (logger.isTraceEnabled()) {
 				logger.trace("POST url: " + url + " body: " + payload);
 			}
-			RestTemplate restTemplate = new RestTemplate();
-			recipeAnalysisResult = restTemplate.postForObject(url, entity, String.class, new HashMap<>());
+			recipeAnalysisResult = RestTemplateHelper.getRestTemplate().postForObject(url, entity, String.class, new HashMap<>());
 
 			return new JSONObject(recipeAnalysisResult);
 		}
@@ -315,8 +314,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 			if (logger.isTraceEnabled()) {
 				logger.trace("POST url: " + url + " body: " + payload);
 			}
-			RestTemplate restTemplate = new RestTemplate();
-			ingredientAnalysisResult = restTemplate.postForObject(url, entity, String.class, new HashMap<>());
+			ingredientAnalysisResult = RestTemplateHelper.getRestTemplate().postForObject(url, entity, String.class, new HashMap<>());
 			
 			return new JSONObject(ingredientAnalysisResult);
 		}
@@ -356,8 +354,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 		if (logger.isTraceEnabled()) {
 			logger.trace("GET url: " + url);
 		}
-		RestTemplate restTemplate = new RestTemplate();
-		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class, new HashMap<>());
+		ResponseEntity<String> response = RestTemplateHelper.getRestTemplate().exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class, new HashMap<>());
 
 		if (HttpStatus.OK.equals(response.getStatusCode()) && (response.getBody() != null)) {
 			JSONObject responseBody = new JSONObject(response.getBody());
@@ -602,8 +599,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 		if (logger.isTraceEnabled()) {
 			logger.trace("GET url: " + url);
 		}
-		RestTemplate restTemplate = new RestTemplate();
-		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class, new HashMap<>());
+		ResponseEntity<String> response = RestTemplateHelper.getRestTemplate().exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class, new HashMap<>());
 
 		if (HttpStatus.OK.equals(response.getStatusCode()) && (response.getBody() != null)) {
 			JSONObject responseBody = new JSONObject(response.getBody());
