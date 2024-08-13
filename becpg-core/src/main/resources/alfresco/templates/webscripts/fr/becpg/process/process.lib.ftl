@@ -6,7 +6,7 @@
    <#if processInstance.id??>
    "id": "${processInstance.id}"
    <#else>
-   "nodeRef": "${processInstance.nodeRef}"
+   "nodeRef": <#if processInstance.nodeRef??>"${processInstance.nodeRef?string}"<#else>null</#if>
    </#if>,
    "type": "${processInstance.type}",
    "title": "${processInstance.title!""}",
