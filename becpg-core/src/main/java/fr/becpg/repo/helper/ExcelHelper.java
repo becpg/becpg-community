@@ -18,7 +18,6 @@ import org.apache.poi.ss.formula.ptg.AreaPtgBase;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.RefPtgBase;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -50,61 +49,75 @@ public class ExcelHelper {
 	}
 	
 	public static class ExcelCellStyles {
-		
-		XSSFCellStyle fullDateCellStyle;
-		XSSFCellStyle shortDateCellStyle;
-		XSSFCellStyle booleanCellStyle;
-		XSSFCellStyle headerStyle;
-		
-		public ExcelCellStyles(XSSFWorkbook workbook) {
-			fullDateCellStyle = createDateStyle(workbook, true);
-			shortDateCellStyle = createDateStyle(workbook, false);
-			booleanCellStyle =  createBooleanStyle(workbook);
-			
-		    headerStyle = workbook.createCellStyle();
 
-			headerStyle.setFillForegroundColor(ExcelHelper.beCPGHeaderTextColor());
-			headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-			XSSFFont font = workbook.createFont();
-			font.setColor(HSSFColorPredefined.WHITE.getIndex());
-			headerStyle.setFont(font);
-		}
-		
-		private XSSFCellStyle createDateStyle(XSSFWorkbook workbook, boolean full) {
 
-			XSSFCellStyle style = workbook.createCellStyle();
-			if (full) {
-				style.setDataFormat((short) 14);
-			} else {
-				style.setDataFormat((short) 22);
-			}
-			return style;
-		}
+	    private XSSFWorkbook workbook;
 
-		private XSSFCellStyle createBooleanStyle(XSSFWorkbook workbook) {
-			XSSFCellStyle style = workbook.createCellStyle();
-			style.setDataFormat(workbook.getCreationHelper().createDataFormat().getFormat("BOOLEAN"));
-			return style;
-		}
+	    private XSSFCellStyle fullDateCellStyle;
+	    private XSSFCellStyle shortDateCellStyle;
+	    private XSSFCellStyle booleanCellStyle;
+	    private XSSFCellStyle headerStyle;
+	    private XSSFCellStyle headerTextStyle;
 
-		public CellStyle getFullDateCellStyle() {
-			return fullDateCellStyle;
-		}
 
-		public CellStyle getShortDateCellStyle() {
-			return shortDateCellStyle;
-		}
+	    public ExcelCellStyles(XSSFWorkbook workbook) {
+	        this.workbook = workbook;
+	    }
 
-		public CellStyle getBooleanCellStyle() {
-			return booleanCellStyle;
-		}
+	    private XSSFCellStyle createDateStyle(boolean full) {
+	        XSSFCellStyle style = workbook.createCellStyle();
+	        style.setDataFormat(full ? (short) 14 : (short) 22);
+	        return style;
+	    }
 
-		public CellStyle getHeaderStyle() {
-			return headerStyle;
-		}
-		
-		
-		
+	    private XSSFCellStyle createBooleanStyle() {
+	        XSSFCellStyle style = workbook.createCellStyle();
+	        style.setDataFormat(workbook.getCreationHelper().createDataFormat().getFormat("BOOLEAN"));
+	        return style;
+	    }
+
+	    public XSSFCellStyle getFullDateCellStyle() {
+	        if (fullDateCellStyle == null) {
+	            fullDateCellStyle = createDateStyle(true);
+	        }
+	        return fullDateCellStyle;
+	    }
+
+	    public XSSFCellStyle getShortDateCellStyle() {
+	        if (shortDateCellStyle == null) {
+	            shortDateCellStyle = createDateStyle(false);
+	        }
+	        return shortDateCellStyle;
+	    }
+
+	    public XSSFCellStyle getBooleanCellStyle() {
+	        if (booleanCellStyle == null) {
+	            booleanCellStyle = createBooleanStyle();
+	        }
+	        return booleanCellStyle;
+	    }
+
+	    public XSSFCellStyle getHeaderStyle() {
+	        if (headerStyle == null) {
+	            headerStyle = workbook.createCellStyle();
+	            headerStyle.setFillForegroundColor(ExcelHelper.beCPGHeaderColor());
+	            headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+	            XSSFFont font = workbook.createFont();
+	            font.setColor(HSSFColorPredefined.WHITE.getIndex());
+	            headerStyle.setFont(font);
+	        }
+	        return headerStyle;
+	    }
+
+	    public XSSFCellStyle getHeaderTextStyle() {
+	        if (headerTextStyle == null) {
+	            headerTextStyle = workbook.createCellStyle();
+	            headerTextStyle.setFillForegroundColor(ExcelHelper.beCPGHeaderTextColor());
+	            headerTextStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+	        }
+	        return headerTextStyle;
+	    }
 	}
 
 	/**
@@ -307,7 +320,7 @@ public class ExcelHelper {
 							} else {
 								cell.setCellValue(titleProvider.getTitle(field) + " - " + MLTextHelper.localeLabel(locale));
 							}
-							cell.setCellStyle(excelCellStyles.getHeaderStyle());
+							cell.setCellStyle(excelCellStyles.getHeaderTextStyle());
 
 						}
 
@@ -329,7 +342,7 @@ public class ExcelHelper {
 						} else {
 							cell.setCellValue(titleProvider.getTitle(field));
 						}
-						cell.setCellStyle(excelCellStyles.getHeaderStyle());
+						cell.setCellStyle(excelCellStyles.getHeaderTextStyle());
 
 					}
 				}
