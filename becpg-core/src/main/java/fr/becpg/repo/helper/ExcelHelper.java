@@ -50,61 +50,73 @@ public class ExcelHelper {
 	}
 	
 	public static class ExcelCellStyles {
-		
-		CellStyle fullDateCellStyle;
-		CellStyle shortDateCellStyle;
-		CellStyle booleanCellStyle;
-	    CellStyle headerStyle;
-		
-		public ExcelCellStyles(XSSFWorkbook workbook) {
-			fullDateCellStyle = createDateStyle(workbook, true);
-			shortDateCellStyle = createDateStyle(workbook, false);
-			booleanCellStyle =  createBooleanStyle(workbook);
-			
-		    headerStyle = workbook.createCellStyle();
 
-			headerStyle.setFillForegroundColor(ExcelHelper.beCPGHeaderTextColor());
-			headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-			XSSFFont font = workbook.createFont();
-			font.setColor(HSSFColorPredefined.WHITE.getIndex());
-			headerStyle.setFont(font);
-		}
-		
-		private CellStyle createDateStyle(XSSFWorkbook workbook, boolean full) {
+	    private XSSFWorkbook workbook;
 
-			XSSFCellStyle style = workbook.createCellStyle();
-			if (full) {
-				style.setDataFormat((short) 14);
-			} else {
-				style.setDataFormat((short) 22);
-			}
-			return style;
-		}
+	    private CellStyle fullDateCellStyle;
+	    private CellStyle shortDateCellStyle;
+	    private CellStyle booleanCellStyle;
+	    private CellStyle headerStyle;
+	    private CellStyle headerTextStyle;
 
-		private CellStyle createBooleanStyle(XSSFWorkbook workbook) {
-			XSSFCellStyle style = workbook.createCellStyle();
-			style.setDataFormat(workbook.getCreationHelper().createDataFormat().getFormat("BOOLEAN"));
-			return style;
-		}
+	    public ExcelCellStyles(XSSFWorkbook workbook) {
+	        this.workbook = workbook;
+	    }
 
-		public CellStyle getFullDateCellStyle() {
-			return fullDateCellStyle;
-		}
+	    private CellStyle createDateStyle(boolean full) {
+	        XSSFCellStyle style = workbook.createCellStyle();
+	        style.setDataFormat(full ? (short) 14 : (short) 22);
+	        return style;
+	    }
 
-		public CellStyle getShortDateCellStyle() {
-			return shortDateCellStyle;
-		}
+	    private CellStyle createBooleanStyle() {
+	        XSSFCellStyle style = workbook.createCellStyle();
+	        style.setDataFormat(workbook.getCreationHelper().createDataFormat().getFormat("BOOLEAN"));
+	        return style;
+	    }
 
-		public CellStyle getBooleanCellStyle() {
-			return booleanCellStyle;
-		}
+	    public CellStyle getFullDateCellStyle() {
+	        if (fullDateCellStyle == null) {
+	            fullDateCellStyle = createDateStyle(true);
+	        }
+	        return fullDateCellStyle;
+	    }
 
-		public CellStyle getHeaderStyle() {
-			return headerStyle;
-		}
-		
-		
-		
+	    public CellStyle getShortDateCellStyle() {
+	        if (shortDateCellStyle == null) {
+	            shortDateCellStyle = createDateStyle(false);
+	        }
+	        return shortDateCellStyle;
+	    }
+
+	    public CellStyle getBooleanCellStyle() {
+	        if (booleanCellStyle == null) {
+	            booleanCellStyle = createBooleanStyle();
+	        }
+	        return booleanCellStyle;
+	    }
+
+	    public CellStyle getHeaderStyle() {
+	        if (headerStyle == null) {
+	            headerStyle = workbook.createCellStyle();
+	            headerStyle.setFillForegroundColor(ExcelHelper.beCPGHeaderColor());
+	            headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+	            XSSFFont font = workbook.createFont();
+	            font.setColor(HSSFColorPredefined.WHITE.getIndex());
+	            headerStyle.setFont(font);
+	        }
+	        return headerStyle;
+	    }
+
+	    public CellStyle getHeaderTextStyle() {
+	        if (headerTextStyle == null) {
+	            headerTextStyle = workbook.createCellStyle();
+	            headerTextStyle.setFillForegroundColor(ExcelHelper.beCPGHeaderTextColor());
+	            headerTextStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+	        }
+	        return headerTextStyle;
+	    }
 	}
 
 	/**
@@ -299,7 +311,7 @@ public class ExcelHelper {
 							} else {
 								cell.setCellValue(titleProvider.getTitle(field) + " - " + MLTextHelper.localeLabel(locale));
 							}
-							cell.setCellStyle(excelCellStyles.getHeaderStyle());
+							cell.setCellStyle(excelCellStyles.getHeaderTextStyle());
 
 						}
 
@@ -321,7 +333,7 @@ public class ExcelHelper {
 						} else {
 							cell.setCellValue(titleProvider.getTitle(field));
 						}
-						cell.setCellStyle(excelCellStyles.getHeaderStyle());
+						cell.setCellStyle(excelCellStyles.getHeaderTextStyle());
 
 					}
 				}
