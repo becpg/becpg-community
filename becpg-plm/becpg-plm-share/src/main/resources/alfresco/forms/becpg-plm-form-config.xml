@@ -246,6 +246,19 @@
 					</field>
 				</appearance>
 			</form>
+			<form id="product-list">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:title" force="true" />
+					<show id="bcpg:regulatoryCode" force="true" />
+					<show id="cm:description" />
+					<show id="bcpg:productSpecifications" force="true" />
+					<show id="bcpg:specCompatibilityTpls" force="true" />
+					<show id="bcpg:specCompatibilityJobOn" force="true" />
+					<show id="bcpg:regulatoryCountries" force="true" />
+					<show id="bcpg:regulatoryUsageRef" force="true" />
+				</field-visibility>
+			</form>
 		</forms>
 	</config>
 	
@@ -1029,6 +1042,41 @@
 					<show id="bcpg:productUnit" />
 				</field-visibility>
 			</form>
+			
+			<form id="product-list">
+				<field-visibility>
+					
+					<!-- mainInfo -->
+					<show id="cm:name" force="true" />
+					<show id="cm:title" force="true" />
+					<show id="bcpg:legalName" force="true" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:productComments" force="true" />
+					<show id="bcpg:productHierarchy1" force="true" />
+					<show id="bcpg:productHierarchy2" force="true" />
+					<show id="bcpg:productState" force="true" />
+					<show id="bcpg:productUnit" force="true" />
+					<show id="bcpg:code" force="true" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:entityTplRef" force="true" />
+
+					<!-- pallet -->
+					<show id="pack:palletLayers" force="false" />
+					<show id="pack:palletBoxesPerLayer" force="false" />
+					<show id="pack:palletBoxesPerLastLayer" force="false" />
+					<show id="pack:palletBoxesPerPallet" force="false" />
+					<show id="pack:palletHeight" force="false" />
+					<show id="gs1:tertiaryWidth" force="false" />
+					<show id="gs1:tertiaryDepth" force="false" />
+
+					<show id="pack:palletNumberOnGround" force="false" />
+					<show id="pack:palletStackingMaxWeight" force="false" />
+					<show id="gs1:palletTypeCode" force="false" />
+					<show id="gs1:platformTermsAndConditionsCode" force="false" />
+					
+				</field-visibility>
+			</form>
+			
 			<form id="bulk-edit">
 				<field-visibility>
 
@@ -4337,6 +4385,37 @@
 				</appearance>
 
 			</form>
+			
+			<form id="product-list">
+				<field-visibility>
+					<show id="cm:name" force="true" />
+					<show id="cm:title" force="true" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:supplierHierarchy1" force="true" />
+					<show id="bcpg:supplierState" force="true" />
+					<show id="bcpg:code" force="true" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:eanCode" force="true" />
+					<show id="cm:modified" force="true" />
+					<show id="cm:modifier" force="true" />
+					<show id="cm:created" force="true" />
+					<show id="cm:creator" force="true" />
+					
+					<show id="bcpg:supplierAccountRef" force="false" />
+					<show id="bcpg:supplierTel" force="false" />
+					<show id="bcpg:supplierEmail" force="false" />
+					<show id="bcpg:supplierFax" force="false" />
+					<!-- bcpg:location type -->
+					<show id="bcpg:locationAddress1" force="false" />
+					<show id="bcpg:locationAddress2" force="false" />
+					<show id="bcpg:locationAddress3" force="false" />
+					<show id="bcpg:locationCity" force="false" />
+					<show id="bcpg:locationZip" force="false" />
+					<show id="bcpg:locationState" force="false" />
+					<show id="bcpg:locationCountry" force="false" />
+
+				</field-visibility>
+			</form>
 		</forms>
 	</config>
 
@@ -4842,6 +4921,32 @@
 				</appearance>
 
 			</form>
+			
+			<form id="product-list">
+				<field-visibility>
+				
+					<show id="cm:name" force="true" />
+					<show id="cm:title" force="true" />
+					<show id="bcpg:productCollectionHierarchy1" force="true" />
+					<show id="bcpg:productCollectionHierarchy2" force="true" />
+					<show id="bcpg:productCollectionState" force="true" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:code" force="true" />
+					<show id="bcpg:erpCode" force="true" />
+					<show force="true" id="bcpg:subsidiaryRef" />
+					<show force="true" id="bcpg:trademarkRef" />
+					<show force="true" id="bcpg:plants" />
+					<show id="cm:taggable" force="true" />
+					<show id="cm:categories" force="true" />
+
+					<show force="false" id="bcpg:clients" />
+					<show force="false" id="bcpg:suppliers" />
+					<show force="false" id="bcpg:supplierPlants" />
+					<show force="false" id="bcpg:supplierRefCode" />
+
+				</field-visibility>
+			</form>
+			
 			<form id="search">
 
 				<field-visibility>

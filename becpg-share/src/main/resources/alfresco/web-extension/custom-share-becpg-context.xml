@@ -53,6 +53,7 @@ http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 				<value>classpath:alfresco/forms/becpg-security-form-config.xml</value>
 				<value>classpath:alfresco/forms/becpg-report-form-config.xml</value>
 				<value>classpath:alfresco/forms/becpg-bulkedit-form-config.xml</value>
+				<value>classpath:alfresco/forms/becpg-productlist-form-config.xml</value>
 			</list>
 		</property>
 	</bean>
