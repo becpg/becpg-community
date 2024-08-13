@@ -2,6 +2,7 @@ package fr.becpg.repo.decernis.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -37,8 +38,6 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import com.ibm.icu.util.Calendar;
-
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.decernis.DecernisMode;
@@ -46,6 +45,7 @@ import fr.becpg.repo.decernis.DecernisService;
 import fr.becpg.repo.decernis.helper.DecernisHelper;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.helper.RestTemplateHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
@@ -401,9 +401,9 @@ public class DecernisServiceImpl implements DecernisService {
 		if (logger.isTraceEnabled()) {
 			logger.trace("DELETE url: " + url);
 		}
-		RestTemplate restTemplate = new RestTemplate();
-		restTemplate.exchange(url, HttpMethod.DELETE, createEntity(null), String.class,
+		RestTemplateHelper.getRestTemplate().exchange(url, HttpMethod.DELETE, createEntity(null), String.class,
 				params);
+
 
 	}
 
@@ -590,6 +590,7 @@ public class DecernisServiceImpl implements DecernisService {
 	public List<ReqCtrlListDataItem> extractDecernisRequirements(ProductData product, @Nonnull Set<String> countries, @Nonnull Set<String> usages) {
 		List<ReqCtrlListDataItem> ret = new LinkedList<>();
 		try {
+
 
 			if (!usages.isEmpty() && !countries.isEmpty()) {
 				JSONObject data = getIngredients(product, ret);
