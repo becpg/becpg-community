@@ -37,6 +37,7 @@ import fr.becpg.repo.formulation.spel.SpelHelper;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.ExcelHelper;
+import fr.becpg.repo.helper.ExcelHelper.ExcelCellStyles;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
@@ -79,6 +80,8 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 	public int fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum, String[] parameters,
 			AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache) {
 
+		ExcelCellStyles excelCellStyles = new ExcelCellStyles(sheet.getWorkbook());
+		
 		for (NodeRef entityNodeRef : searchResults) {
 			if (entityDictionaryService.isSubClass(nodeService.getType(entityNodeRef), mainType)) {
 				if (keyColumn != null) {
@@ -102,13 +105,13 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 						for (NodeRef itemNodeRef : results) {
 							if (actualType.equals(nodeService.getType(itemNodeRef))) {
 								if (permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED) {
-									rownum = fillRow(sheet, entityNodeRef, itemNodeRef, itemType, metadataFields, cache, rownum, key, entityItems);
+									rownum = fillRow(sheet, entityNodeRef, itemNodeRef, itemType, metadataFields, cache, rownum, key, entityItems,excelCellStyles);
 								}
 							}
 						}
 					}
 				} else {
-					rownum = fillRow(sheet, entityNodeRef, entityNodeRef, itemType, metadataFields, cache, rownum, null, null);
+					rownum = fillRow(sheet, entityNodeRef, entityNodeRef, itemType, metadataFields, cache, rownum, null, null, excelCellStyles);
 				}
 			}
 		}
@@ -150,7 +153,7 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 	 */
 	protected int fillRow(XSSFSheet sheet, NodeRef entityNodeRef, NodeRef itemNodeRef, QName itemType,
 			List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache, int rownum, Serializable key,
-			Map<String, Object> entityItems) {
+			Map<String, Object> entityItems, ExcelCellStyles excelCellStyles) {
 
 		Map<QName, Serializable> properties = nodeService.getProperties(itemNodeRef);
 		Map<String, Object> item = doExtract(itemNodeRef, itemType, metadataFields, properties, cache);
@@ -180,7 +183,7 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 
 		}
 
-		ExcelHelper.appendExcelField(metadataFields, null, item, sheet, row, cellNum, rownum, null);
+		ExcelHelper.appendExcelField(metadataFields, null, item, sheet, row, cellNum, rownum, null, excelCellStyles);
 
 		return rownum;
 	}
