@@ -1344,7 +1344,8 @@
 						return colDef;
 
 					}
-
+					
+					//only first column is sticky
 					var sticky = true;
 
 					for (var i = 0, ii = this.datalistColumns.length; i < ii; i++) {
@@ -1358,10 +1359,12 @@
 									if ( nestedColumn.label != "datasource") {
 										columnDefinitions.push(createColumnDef("nested_"+key+ "|" + (nestedColumn.type == "property" ? "prop"
 										: "assoc") + "_" + nestedColumn.name.replace(":", "_") , nestedColumn, sticky));
+										 if (sticky) sticky = false;
 									}
 								}
 							} else {
 								columnDefinitions.push(createColumnDef(key,column , sticky));
+								if (sticky) sticky = false;
 							}
 						}
 					}
@@ -1399,7 +1402,6 @@
 						groupBy: this.options.groupBy,
 						groupFormater: this.options.groupFormater,
 						formatRow: this.rowFormatter
-
 
 					};
 

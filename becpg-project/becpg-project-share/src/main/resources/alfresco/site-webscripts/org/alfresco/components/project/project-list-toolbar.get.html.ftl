@@ -41,7 +41,13 @@
 			            </span>
 			       </div>	  
 			   </#if>
-
+				  <div class="full-screen">
+		            <span id="${el}-full-screen-button" class="yui-button yui-checkbox-button">
+		               <span class="first-child">
+		                  <button name="fullScreen"></button>
+		               </span>
+		            </span>
+		         </div>
 		      </div>
 		      <div class="right">
 		         <div class="show-planning">
