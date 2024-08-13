@@ -10,6 +10,7 @@ import java.util.Map;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.MLText;
+import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaRenderer;
 import org.apache.poi.ss.formula.FormulaType;
@@ -18,6 +19,7 @@ import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.RefPtgBase;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
@@ -26,6 +28,7 @@ import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -45,6 +48,64 @@ public class ExcelHelper {
 
 		boolean isAllowed(AttributeExtractorStructure field);
 	}
+	
+	public static class ExcelCellStyles {
+		
+		CellStyle fullDateCellStyle;
+		CellStyle shortDateCellStyle;
+		CellStyle booleanCellStyle;
+	    CellStyle headerStyle;
+		
+		public ExcelCellStyles(XSSFWorkbook workbook) {
+			fullDateCellStyle = createDateStyle(workbook, true);
+			shortDateCellStyle = createDateStyle(workbook, false);
+			booleanCellStyle =  createBooleanStyle(workbook);
+			
+		    headerStyle = workbook.createCellStyle();
+
+			headerStyle.setFillForegroundColor(ExcelHelper.beCPGHeaderTextColor());
+			headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+			XSSFFont font = workbook.createFont();
+			font.setColor(HSSFColorPredefined.WHITE.getIndex());
+			headerStyle.setFont(font);
+		}
+		
+		private CellStyle createDateStyle(XSSFWorkbook workbook, boolean full) {
+
+			XSSFCellStyle style = workbook.createCellStyle();
+			if (full) {
+				style.setDataFormat((short) 14);
+			} else {
+				style.setDataFormat((short) 22);
+			}
+			return style;
+		}
+
+		private CellStyle createBooleanStyle(XSSFWorkbook workbook) {
+			XSSFCellStyle style = workbook.createCellStyle();
+			style.setDataFormat(workbook.getCreationHelper().createDataFormat().getFormat("BOOLEAN"));
+			return style;
+		}
+
+		public CellStyle getFullDateCellStyle() {
+			return fullDateCellStyle;
+		}
+
+		public CellStyle getShortDateCellStyle() {
+			return shortDateCellStyle;
+		}
+
+		public CellStyle getBooleanCellStyle() {
+			return booleanCellStyle;
+		}
+
+		public CellStyle getHeaderStyle() {
+			return headerStyle;
+		}
+		
+		
+		
+	}
 
 	/**
 	 * <p>appendExcelField.</p>
@@ -60,11 +121,11 @@ public class ExcelHelper {
 	 * @return a int.
 	 */
 	public static int appendExcelField(List<AttributeExtractorStructure> computedFields, String prefix, Map<String, Object> item, XSSFSheet sheet,
-			Row row, int cellnum, int rowNum, List<Locale> supportedLocales) {
+			Row row, int cellnum, int rowNum, List<Locale> supportedLocales, ExcelCellStyles excelCellStyles) {
 		for (AttributeExtractorStructure field : computedFields) {
 
 			if (field.isNested()) {
-				cellnum = appendExcelField(field.getChildrens(), field.getFieldName(), item, sheet, row, cellnum, rowNum, supportedLocales);
+				cellnum = appendExcelField(field.getChildrens(), field.getFieldName(), item, sheet, row, cellnum, rowNum, supportedLocales, excelCellStyles);
 			} else {
 
 				Object obj;
@@ -123,13 +184,13 @@ public class ExcelHelper {
 
 							cell.setCellValue((Date) obj);
 							if (DataTypeDefinition.DATETIME.toString().equals(((PropertyDefinition) field.getFieldDef()).getDataType().toString())) {
-								cell.setCellStyle(createDateStyle(sheet.getWorkbook(), true));
+								cell.setCellStyle(excelCellStyles.getFullDateCellStyle());
 							} else {
-								cell.setCellStyle(createDateStyle(sheet.getWorkbook(), false));
+								cell.setCellStyle(excelCellStyles.getShortDateCellStyle());
 							}
 						} else if (obj instanceof Boolean) {
 							cell.setCellValue((boolean) obj);
-							cell.setCellStyle(createBooleanStyle(sheet.getWorkbook()));
+							cell.setCellStyle(excelCellStyles.getBooleanCellStyle());
 						} else if (obj instanceof String) {
 							cell.setCellValue((String) obj);
 						} else if (obj instanceof Double) {
@@ -174,22 +235,7 @@ public class ExcelHelper {
 		return formula;
 	}
 
-	private static CellStyle createDateStyle(XSSFWorkbook workbook, boolean full) {
-
-		XSSFCellStyle style = workbook.createCellStyle();
-		if (full) {
-			style.setDataFormat((short) 14);
-		} else {
-			style.setDataFormat((short) 22);
-		}
-		return style;
-	}
-
-	private static CellStyle createBooleanStyle(XSSFWorkbook workbook) {
-		XSSFCellStyle style = workbook.createCellStyle();
-		style.setDataFormat(workbook.getCreationHelper().createDataFormat().getFormat("BOOLEAN"));
-		return style;
-	}
+	
 
 	/**
 	 * <p>isExcelType.</p>
@@ -217,13 +263,13 @@ public class ExcelHelper {
 	 * @return a int.
 	 */
 	public static int appendExcelHeader(List<AttributeExtractorStructure> fields, String prefix, String titlePrefix, Row headerRow, Row labelRow,
-			XSSFCellStyle style, XSSFSheet sheet, int cellnum, ExcelFieldTitleProvider titleProvider, List<Locale> supportedLocales) {
+			ExcelCellStyles excelCellStyles, XSSFSheet sheet, int cellnum, ExcelFieldTitleProvider titleProvider, List<Locale> supportedLocales) {
 
 		if (fields != null) {
 			for (AttributeExtractorStructure field : fields) {
 				if (field.isNested()) {
 
-					cellnum = appendExcelHeader(field.getChildrens(), field.getFieldName(), titleProvider.getTitle(field), headerRow, labelRow, style,
+					cellnum = appendExcelHeader(field.getChildrens(), field.getFieldName(), titleProvider.getTitle(field), headerRow, labelRow, excelCellStyles,
 							sheet, cellnum, titleProvider, supportedLocales);
 				} else {
 
@@ -261,7 +307,7 @@ public class ExcelHelper {
 							} else {
 								cell.setCellValue(titleProvider.getTitle(field) + " - " + MLTextHelper.localeLabel(locale));
 							}
-							cell.setCellStyle(style);
+							cell.setCellStyle(excelCellStyles.getHeaderStyle());
 
 						}
 
@@ -283,7 +329,7 @@ public class ExcelHelper {
 						} else {
 							cell.setCellValue(titleProvider.getTitle(field));
 						}
-						cell.setCellStyle(style);
+						cell.setCellStyle(excelCellStyles.getHeaderStyle());
 
 					}
 				}
@@ -322,5 +368,6 @@ public class ExcelHelper {
 		byte[] rgb = { (byte) 0, (byte) 66, (byte) 84 };
 		return new XSSFColor(rgb, new DefaultIndexedColorMap());
 	}
+
 
 }
