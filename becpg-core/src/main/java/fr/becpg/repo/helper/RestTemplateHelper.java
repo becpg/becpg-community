@@ -4,11 +4,12 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.hc.client5.http.config.ConnectionConfig;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
-import org.apache.hc.client5.http.impl.classic.HttpClients;
-import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
+import org.apache.http.config.ConnectionConfig;
+import org.apache.http.config.SocketConfig;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.client.ClientHttpRequest;
 import org.springframework.http.client.ClientHttpRequestFactory;
@@ -49,11 +50,18 @@ public class RestTemplateHelper {
 		}
 
 		private void applyConfiguration(HttpClientBuilder builder) {
-			PoolingHttpClientConnectionManagerBuilder connectionManagerBuilder = PoolingHttpClientConnectionManagerBuilder.create();
-			connectionManagerBuilder.setMaxConnTotal(50); // Set the maximum number of total connections
-			connectionManagerBuilder.setMaxConnPerRoute(20); // Set the maximum number of connections per route
-			connectionManagerBuilder.setDefaultConnectionConfig(ConnectionConfig.custom().setTimeToLive(5, TimeUnit.SECONDS).build());
-			builder.setConnectionManager(connectionManagerBuilder.build());
+			   PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
+	            connectionManager.setMaxTotal(50); // Set the maximum number of total connections
+	            connectionManager.setDefaultMaxPerRoute(20); // Set the maximum number of connections per route
+	            
+	            // Set the time after which an idle connection will be revalidated
+	            connectionManager.setValidateAfterInactivity(5000); // 5 seconds
+
+	            // Set up connection configuration (like TTL) and socket configuration
+	            builder.setConnectionManager(connectionManager);
+	            builder.setDefaultConnectionConfig(ConnectionConfig.custom().setBufferSize(8192).build());
+	            builder.setDefaultSocketConfig(SocketConfig.custom().setSoTimeout((int) TimeUnit.SECONDS.toMillis(5)).build());
+	  
 		}
 	}
 

@@ -54,6 +54,7 @@ import org.springframework.util.StopWatch;
 import fr.becpg.common.diff.Diff;
 import fr.becpg.common.diff.DiffMatchPatch;
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.helper.RestTemplateHelper;
 
 /**
  * Return or save MLText field
@@ -302,7 +303,6 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 
 			try {
 				String url = "https://api.deepl.com/v2/translate";
-				RestTemplate restTemplate = new RestTemplate();
 				HttpHeaders headers = new HttpHeaders();
 				headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 				MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
@@ -312,7 +312,7 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 				map.add("target_lang", target.split("_")[0]);
 
 				HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
-				ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
+				ResponseEntity<String> response = RestTemplateHelper.getRestTemplate().postForEntity(url, request, String.class);
 
 				JSONObject jsonObject = new JSONObject(response.getBody());
 				JSONArray translations = jsonObject.getJSONArray("translations");
@@ -336,9 +336,8 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 
 			String url = "https://www.googleapis.com/language/translate/v2?key={key}&source={source}&target={target}&q={q}";
 
-			RestTemplate restTemplate = new RestTemplate();
 
-			String ret = restTemplate.getForObject(url, String.class, vars);
+			String ret = RestTemplateHelper.getRestTemplate().getForObject(url, String.class, vars);
 
 			try {
 				JSONObject jsonObject = new JSONObject(ret);

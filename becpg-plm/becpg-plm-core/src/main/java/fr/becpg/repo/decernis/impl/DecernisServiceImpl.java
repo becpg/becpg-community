@@ -31,7 +31,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.client.RestTemplate;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
@@ -45,6 +44,7 @@ import fr.becpg.repo.decernis.model.UsageContext;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationChainPlugin;
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.helper.RestTemplateHelper;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RegulatoryEntity;
@@ -336,8 +336,7 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 				if (logger.isTraceEnabled()) {
 					logger.trace("POST url: " + url + " body: " + recipePayload);
 				}
-				RestTemplate restTemplate = new RestTemplate();
-				JSONObject jsonObject = new JSONObject(restTemplate.postForObject(url, request, String.class));
+				JSONObject jsonObject = new JSONObject(RestTemplateHelper.getRestTemplate().postForObject(url, request, String.class));
 				if (jsonObject.has("id")) {
 					recipeId = jsonObject.get("id").toString();
 				}
@@ -510,8 +509,7 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 		if (logger.isTraceEnabled()) {
 			logger.trace("GET url: " + url + " params: " + params);
 		}
-		RestTemplate restTemplate = new RestTemplate();
-		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, createEntity(null), String.class, params);
+		ResponseEntity<String> response = RestTemplateHelper.getRestTemplate().exchange(url, HttpMethod.GET, createEntity(null), String.class, params);
 
 		if ((response != null) && HttpStatus.OK.equals(response.getStatusCode()) && (response.getBody() != null)) {
 
@@ -601,8 +599,7 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 			if (logger.isTraceEnabled()) {
 				logger.trace("DELETE url: " + url);
 			}
-			RestTemplate restTemplate = new RestTemplate();
-			restTemplate.exchange(url, HttpMethod.DELETE, createEntity(null),
+			RestTemplateHelper.getRestTemplate().exchange(url, HttpMethod.DELETE, createEntity(null),
 					String.class, params);
 		} catch (Exception e) {
 			logger.error("failed to delete recipe: " + recipeId, e);
@@ -712,8 +709,7 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 		if (logger.isTraceEnabled()) {
 			logger.trace("GET url: " + url);
 		}
-		RestTemplate restTemplate = new RestTemplate();
-		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, createEntity(null),
+		ResponseEntity<String> response = RestTemplateHelper.getRestTemplate().exchange(url, HttpMethod.GET, createEntity(null),
 				String.class, new HashMap<>());
 
 		if (HttpStatus.OK.equals(response.getStatusCode()) && response.getBody() != null) {
