@@ -38,9 +38,7 @@ import org.alfresco.util.TempFileProvider;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.JSONException;
@@ -319,15 +317,12 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 				}
 				XSSFSheet sheet = workbook.createSheet(sheetName);
 
-				XSSFCellStyle style = workbook.createCellStyle();
-
-				style.setFillForegroundColor(ExcelHelper.beCPGHeaderColor());
-				style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-
+				ExcelCellStyles exeCellStyles = new ExcelCellStyles(workbook);
+				
 				int rownum = 0;
 
 				Row headerRow = sheet.createRow(rownum++);
-				headerRow.setRowStyle(style);
+				headerRow.setRowStyle(exeCellStyles.getHeaderStyle());
 				Cell cell = headerRow.createCell(0);
 				cell.setCellValue("MAPPING");
 				cell = headerRow.createCell(1);
@@ -336,7 +331,7 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 				if (type != null) {
 					headerRow = sheet.createRow(rownum++);
 					cell = headerRow.createCell(0);
-					headerRow.setRowStyle(style);
+					headerRow.setRowStyle(exeCellStyles.getHeaderStyle());
 					cell.setCellValue("TYPE");
 					cell = headerRow.createCell(1);
 					cell.setCellValue(type.toPrefixString());
@@ -367,7 +362,7 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 
 				if (nodePath != null) {
 					headerRow = sheet.createRow(rownum++);
-					headerRow.setRowStyle(style);
+					headerRow.setRowStyle(exeCellStyles.getHeaderStyle());
 					cell = headerRow.createCell(0);
 					cell.setCellValue("PATH");
 					cell = headerRow.createCell(1);
@@ -377,7 +372,7 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 				if (entityDictionaryService.isSubClass(dataListFilter.getDataType(), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
 					if ((nodePath != null) && !nodePath.startsWith("/System/")) {
 						headerRow = sheet.createRow(rownum++);
-						headerRow.setRowStyle(style);
+						headerRow.setRowStyle(exeCellStyles.getHeaderStyle());
 						cell = headerRow.createCell(0);
 						cell.setCellValue("IMPORT_TYPE");
 						cell = headerRow.createCell(1);
@@ -386,7 +381,7 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 
 					if (entityType != null) {
 						headerRow = sheet.createRow(rownum++);
-						headerRow.setRowStyle(style);
+						headerRow.setRowStyle(exeCellStyles.getHeaderStyle());
 						cell = headerRow.createCell(0);
 						cell.setCellValue("ENTITY_TYPE");
 						cell = headerRow.createCell(1);
@@ -394,7 +389,7 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 					}
 
 					headerRow = sheet.createRow(rownum++);
-					headerRow.setRowStyle(style);
+					headerRow.setRowStyle(exeCellStyles.getHeaderStyle());
 					cell = headerRow.createCell(0);
 					cell.setCellValue("DELETE_DATALIST");
 					cell = headerRow.createCell(1);
@@ -405,14 +400,14 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 				}
 
 				headerRow = sheet.createRow(rownum++);
-				headerRow.setRowStyle(style);
+				headerRow.setRowStyle(exeCellStyles.getHeaderStyle());
 				cell = headerRow.createCell(0);
 				cell.setCellValue("STOP_ON_FIRST_ERROR");
 				cell = headerRow.createCell(1);
 				cell.setCellValue("false");
 
 				headerRow = sheet.createRow(rownum++);
-				headerRow.setRowStyle(style);
+				headerRow.setRowStyle(exeCellStyles.getHeaderStyle());
 
 				sheet.groupRow(0, rownum);
 				sheet.setRowGroupCollapsed(0, true);
@@ -429,16 +424,15 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 				cell.setCellValue("COLUMNS");
 				cell = labelRow.createCell(cellnum++);
 				cell.setCellValue("#");
-				cell.setCellStyle(style);
+				cell.setCellStyle(exeCellStyles.getHeaderStyle());
 
-			   ExcelCellStyles exeCellStyles = new ExcelCellStyles(workbook);
 
 				if (bcpgCode != null) {
 					cell = headerRow.createCell(cellnum);
 					cell.setCellValue("bcpg:code");
 					cell = labelRow.createCell(cellnum++);
 					cell.setCellValue(I18NUtil.getMessage("message.becpg.export.entity"));
-					cell.setCellStyle(exeCellStyles.getHeaderStyle());
+					cell.setCellStyle(exeCellStyles.getHeaderTextStyle());
 				}
 
 				Row row = null;
@@ -467,7 +461,7 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 
 							cell = row.createCell(cellnum++);
 							cell.setCellValue("VALUES");
-							cell.setCellStyle(style);
+							cell.setCellStyle(exeCellStyles.getHeaderStyle());
 
 							if (bcpgCode != null) {
 								cell = row.createCell(cellnum++);
@@ -507,7 +501,7 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 
 						cell = row.createCell(cellnum++);
 						cell.setCellValue("VALUES");
-						cell.setCellStyle(style);
+						cell.setCellStyle(exeCellStyles.getHeaderStyle());
 
 						if (bcpgCode != null) {
 							cell = row.createCell(cellnum++);
