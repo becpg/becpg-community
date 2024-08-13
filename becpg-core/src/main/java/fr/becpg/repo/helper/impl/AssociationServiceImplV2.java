@@ -586,11 +586,17 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 
 							if (criteriaFilter.getValue() != null) {
 								
-									if(AssociationCriteriaFilterMode.NOT_EQUALS.equals(criteriaFilter.getMode())) {
-										exclude.append(" and ("+propertyName + "."+fieldName+" IS NULL or "+propertyName + "."+fieldName+" != "+wrap(fieldName, criteriaFilter.getValue())+")");
-									}else {
-										query.append(propertyName + "."+fieldName+" = "+wrap(fieldName, criteriaFilter.getValue())+"");
-									}
+								String[] criteriaFilterValues = criteriaFilter.getValue().split(",");
+								
+								String criteriaFilterJoinedValues = String.join(",", Arrays.stream(criteriaFilterValues)
+										.map(value -> wrap(fieldName, value))
+										.toArray(String[]::new));
+								
+								if(AssociationCriteriaFilterMode.NOT_EQUALS.equals(criteriaFilter.getMode())) {
+									exclude.append(" and (" + propertyName + "." + fieldName + " IS NULL or " + propertyName + "." + fieldName + " not in (" + criteriaFilterJoinedValues + "))");
+								} else {
+									query.append(propertyName + "." + fieldName + " in (" + criteriaFilterJoinedValues + ")");
+								}
 									
 							} else {
 								boolean isFirst = true;
