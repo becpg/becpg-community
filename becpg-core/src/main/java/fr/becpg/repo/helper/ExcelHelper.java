@@ -55,7 +55,6 @@ public class ExcelHelper {
 
 	    private CellStyle fullDateCellStyle;
 	    private CellStyle shortDateCellStyle;
-	    private CellStyle booleanCellStyle;
 	    private CellStyle headerStyle;
 	    private CellStyle headerTextStyle;
 
@@ -66,12 +65,6 @@ public class ExcelHelper {
 	    private CellStyle createDateStyle(boolean full) {
 	        XSSFCellStyle style = workbook.createCellStyle();
 	        style.setDataFormat(full ? (short) 14 : (short) 22);
-	        return style;
-	    }
-
-	    private CellStyle createBooleanStyle() {
-	        XSSFCellStyle style = workbook.createCellStyle();
-	        style.setDataFormat(workbook.getCreationHelper().createDataFormat().getFormat("BOOLEAN"));
 	        return style;
 	    }
 
@@ -87,13 +80,6 @@ public class ExcelHelper {
 	            shortDateCellStyle = createDateStyle(false);
 	        }
 	        return shortDateCellStyle;
-	    }
-
-	    public CellStyle getBooleanCellStyle() {
-	        if (booleanCellStyle == null) {
-	            booleanCellStyle = createBooleanStyle();
-	        }
-	        return booleanCellStyle;
 	    }
 
 	    public CellStyle getHeaderStyle() {
@@ -201,8 +187,7 @@ public class ExcelHelper {
 								cell.setCellStyle(excelCellStyles.getShortDateCellStyle());
 							}
 						} else if (obj instanceof Boolean) {
-							cell.setCellValue((boolean) obj);
-							cell.setCellStyle(excelCellStyles.getBooleanCellStyle());
+							cell.setCellValue(TranslateHelper.getTranslatedBoolean((Boolean)obj, true) );
 						} else if (obj instanceof String) {
 							cell.setCellValue((String) obj);
 						} else if (obj instanceof Double) {
