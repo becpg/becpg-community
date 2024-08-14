@@ -417,11 +417,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 						data.put(PROP_CHARACT_NODEREF, charactNodeRef);
 						data.put(PROP_TITLE, attributeExtractorService.extractPropName(charactNodeRef));
 					} else {
-						if (attributeExtractorService.hasAttributeExtractorPlugin(datalistNodeRef)) {
-							data.put(PROP_TITLE, attributeExtractorService.extractPropName(datalistNodeRef));
-						} else {
-							data.put(PROP_TITLE, nodeService.getProperty(datalistNodeRef, ContentModel.PROP_NAME));
-						}
+						data.put(PROP_TITLE, attributeExtractorService.extractPropName(datalistNodeRef));
 					}
 					if (activityEvent.equals(ActivityEvent.Update) && (updatedProperties != null)) {
 						List<JSONObject> properties = new ArrayList<>();
