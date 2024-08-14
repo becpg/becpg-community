@@ -376,7 +376,7 @@ public class IngListDataItem extends AbstractManualDataItem
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
 	@AlfSingleAssoc
-	@DataListIdentifierAttr(isDefaultPivotAssoc = false)
+	@DataListIdentifierAttr
 	@AlfQname(qname = "bcpg:ingListIng")
 	@InternalField
 	public NodeRef getIng() {
