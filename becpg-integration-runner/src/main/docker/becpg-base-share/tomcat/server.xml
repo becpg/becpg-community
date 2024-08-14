@@ -24,14 +24,13 @@
   <!-- Security listener. Documentation at /docs/config/listeners.html
   <Listener className="org.apache.catalina.security.SecurityListener" />
   -->
-  <!--APR library loader. Documentation at /docs/apr.html -->
-  <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="off" />
+  <!--APR library loader. Documentation at /docs/apr.html
+  <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="off" /> -->
   <!-- Prevent memory leaks due to use of particular java/javax APIs-->
   <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener" />
   <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener" />
   <Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener" />
   
-  <Valve className="org.apache.catalina.valves.RemoteIpValve" />
 
   <!-- Global JNDI resources
        Documentation at /docs/jndi-resources-howto.html
@@ -72,18 +71,19 @@
                    executor="tomcatThreadPool"
                    maxHttpHeaderSize="65536"
                    port="8080" protocol="HTTP/1.1"
-                   Server=" "
-              	   redirectPort="8443"  />
+                   serverRemoveAppProvidedValues="true"
+              	   redirectPort="8443"  >
+               <UpgradeProtocol className="org.apache.coyote.http2.Http2Protocol" />   
+   </Connector>           	   
   
 
     <!-- Define an AJP 1.3 Connector on port 8009 -->
     <Connector port="8009" URIEncoding="UTF-8"
                    acceptCount="300"
                    connectionTimeout="300000"
+                   packetSize="65536"
                    executor="tomcatThreadPool"
-                   maxHttpHeaderSize="65536"
                    protocol="AJP/1.3" redirectPort="8443"
-                   Server=" "
                    secretRequired="false" 
                    address="0.0.0.0" 
                     />
@@ -99,8 +99,9 @@
     <Engine name="Catalina" defaultHost="localhost" jvmRoute="jvm1">
     -->
     <Engine name="Catalina" defaultHost="localhost">
+    
+     <Valve className="org.apache.catalina.valves.RemoteIpValve" />
 
-     
       <!-- Use the LockOutRealm to prevent attempts to guess user passwords
            via a brute-force attack -->
       <Realm className="org.apache.catalina.realm.LockOutRealm">
