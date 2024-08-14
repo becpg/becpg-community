@@ -81,7 +81,6 @@
     <Connector port="8009" URIEncoding="UTF-8"
                    acceptCount="300"
                    connectionTimeout="300000"
-                   packetSize="65536"
                    executor="tomcatThreadPool"
                    protocol="AJP/1.3" redirectPort="8443"
                    secretRequired="false" 
