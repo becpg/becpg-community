@@ -431,7 +431,7 @@
 }
 
 .full-screen  .datagrid.project-list div.grid {
-	height: calc(100vh - 100px);
+	height: calc(100vh - 150px);
 }
 
 
