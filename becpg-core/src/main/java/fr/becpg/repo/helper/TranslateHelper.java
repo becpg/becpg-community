@@ -82,11 +82,15 @@ public class TranslateHelper {
 	public static String getTranslatedBoolean(Boolean b, boolean useDefaultLocale) {
 
 		String translation;
+		
+		if(b == null) {
+			return "";
+		}
 
 		if (useDefaultLocale) {
-			translation = b ? I18NUtil.getMessage(MESSAGE_TRUE, Locale.getDefault()) : I18NUtil.getMessage(MESSAGE_FALSE, Locale.getDefault());
+			translation = Boolean.TRUE.equals(b) ? I18NUtil.getMessage(MESSAGE_TRUE, Locale.getDefault()) : I18NUtil.getMessage(MESSAGE_FALSE, Locale.getDefault());
 		} else {
-			translation = b ? I18NUtil.getMessage(MESSAGE_TRUE) : I18NUtil.getMessage(MESSAGE_FALSE);
+			translation = Boolean.TRUE.equals(b)  ? I18NUtil.getMessage(MESSAGE_TRUE) : I18NUtil.getMessage(MESSAGE_FALSE);
 		}
 
 		return translation;
