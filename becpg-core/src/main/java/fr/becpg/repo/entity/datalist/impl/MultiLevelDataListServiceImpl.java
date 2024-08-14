@@ -251,7 +251,8 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 		QName pivotAssoc = entityDictionaryService.getDefaultPivotAssoc(nodeService.getType(listItemNodeRef));
 		if (pivotAssoc != null) {
 			NodeRef part = associationService.getTargetAssoc(listItemNodeRef, pivotAssoc);
-			if ((part != null) && (permissionService.hasPermission(part, PermissionService.READ) == AccessStatus.ALLOWED)) {
+			if ((part != null) && (permissionService.hasPermission(part, PermissionService.READ) == AccessStatus.ALLOWED) 
+					&& entityDictionaryService.isSubClass(nodeService.getType(part), BeCPGModel.TYPE_ENTITY_V2)) {
 				return part;
 			}
 		}
