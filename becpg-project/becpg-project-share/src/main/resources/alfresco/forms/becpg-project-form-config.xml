@@ -1878,9 +1878,11 @@
 					<show id="pjt:slWeight" />
 					<show id="pjt:slScore" />
 					<show id="pjt:slScreening" />
+					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="pjt:slScreening" read-only="true" />
+					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
 			</form>
 			<form id="filter">
