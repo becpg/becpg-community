@@ -2917,7 +2917,7 @@
 					<show id="bcpg:plantPackerCode" />
 					<show id="bcpg:plantCertifications" />
 					<show id="bcpg:plantApprovalNumbers" />
-					<show id="fm:commentCount" />
+					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
@@ -2941,7 +2941,7 @@
 					<show id="bcpg:plantPackerCode" />
 					<show id="bcpg:plantCertifications" />
 					<show id="bcpg:plantApprovalNumbers" />
-					<show id="fm:commentCount" />
+					<show id="fm:commentCount"  force="true"/>
 					<show id="sec:readGroups" force="true" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:eanCode" force="true" />
@@ -3510,7 +3510,11 @@
 					<show id="bcpg:certificationNote" force="true" />
 					<show id="cm:from" force="true" />
 					<show id="cm:to" force="true" />
+					<show id="fm:commentCount" force="true" />
 				</field-visibility>
+				<appearance>
+					<field id="fm:commentCount" label="hidden" read-only="true" />
+				</appearance>
 			</form>
 			<form id="datagrid-systemEntity">
 				<field-visibility>
@@ -3526,12 +3530,14 @@
 					<show id="cm:to" force="true" />
 					<show id="sec:readGroups" force="true" />
 					<show id="bcpg:erpCode" force="true" />
+					<show id="fm:commentCount" force="true" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:isDeleted">
 						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
 					</field>
+					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
 			</form>
 		</forms>
