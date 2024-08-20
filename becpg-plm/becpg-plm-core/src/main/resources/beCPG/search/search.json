@@ -110,8 +110,19 @@
            {"attribute": "pack:llLabel" ,  "listType": "pack:labelingList", "htmlId":"assoc_pack_llLabel_added" },
            {"attribute": "pack:llPosition" , "htmlId":"prop_pack_llPosition" }
          
-         ]
-
+         ],
+         
+         "lca1": [
+           {"attribute": "bcpg:lcaListLca" , "htmlId":"assoc_bcpg_advLca_added", "listType": "bcpg:lcaList" },
+       	   {"attribute": "bcpg:lcaListValue" , "htmlId":"prop_bcpg_lcaListValue-range" }
+       	 ],
+       	 
+		 "svhc1": [
+           {"attribute": "bcpg:svhcListIng" , "htmlId":"assoc_bcpg_advSvhcAnd_added", "listType": "bcpg:svhcList", "operator": "AND" }
+       	 ],
+	   	 "svhc2": [
+	       {"attribute": "bcpg:svhcListIng" , "htmlId":"assoc_bcpg_advSvhcNot_added", "listType": "bcpg:svhcList", "operator": "NOT" }
+	   	 ]
 	}
 }
 
