@@ -254,8 +254,6 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 							
 							if (nutrientProfileClass.contains(NutrientProfileVersion.VERSION_2023.toString())) {
 								nodeService.setProperty(sourceAssoc.getSourceRef(), PLMModel.PROP_NUTRIENT_PROFILE_VERSION, NutrientProfileVersion.VERSION_2023.toString());
-							} else {
-								nodeService.setProperty(sourceAssoc.getSourceRef(), PLMModel.PROP_NUTRIENT_PROFILE_VERSION, NutrientProfileVersion.VERSION_2017.toString());
 							}
 							
 							nodeService.removeAssociation(sourceAssoc.getSourceRef(), nutrientProfile, ASSOC_NUTRIENT_PROFILE_REF);
