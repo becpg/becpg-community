@@ -2988,11 +2988,7 @@
               <show id="bcpg:formulatedDate" force="true" />
           </field-visibility>
       </form>
-    </forms>
-  </config>
-  <config condition="bcpg:finishedProduct" evaluator="model-type" replace="true">
-  	<forms>
-  	  <form id="product-list">
+      <form id="product-list">
       	<field-visibility>
       	  <show force="true" id="bcpg:legalName" />
 		  <show force="true" id="bcpg:productHierarchy1" />
@@ -3222,6 +3218,6 @@
           <show force="false" id="gs1:animalFeedType"/>
       	</field-visibility>
       </form>
-  	</forms>
+    </forms>
   </config>
 </alfresco-config>
