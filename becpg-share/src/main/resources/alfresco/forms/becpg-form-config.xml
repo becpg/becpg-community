@@ -419,16 +419,30 @@
 					<show id="bcpg:isDeleted" force="true"/>
 				</field-visibility>
 			</form>
+			
+			<form id="bulk-edit">
+				<field-visibility>
+					<show id="bcpg:lvValue" />
+					<show id="sec:readGroups" force="true"/>
+					<show id="bcpg:isDeleted" force="true"/>
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:isDeleted">
+						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+					</field>
+				</appearance>
+			</form>
 
 			<!-- Data Grid view -->
 			<form id="filter">
 				<field-visibility>
 					<show id="bcpg:lvCode" />
 					<show id="bcpg:lvValue" />
-					<show id="bcpg:isDeleted" force="true"/>
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:isDeleted"  force="true"/>
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:isDeleted" >
+					<field id="bcpg:isDeleted">
 						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
 					</field>
 				</appearance>
