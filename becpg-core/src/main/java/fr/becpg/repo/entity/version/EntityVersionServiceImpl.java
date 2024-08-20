@@ -1758,6 +1758,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 			((RuleService) ruleService).disableRules();
 
+			IntegrityChecker.setWarnInTransaction();
+			
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ENTITY_BRANCH);
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
