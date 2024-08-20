@@ -32,7 +32,6 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
@@ -170,19 +169,11 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 				nodeService.setProperty(branchNodeRef, BeCPGModel.PROP_AUTO_MERGE_COMMENTS, projectName);
 				nodeService.setProperty(branchNodeRef, ContentModel.PROP_NAME, branchName);
 
-				getOrCreateSupplierDocumentsFolder(branchNodeRef);
+				NodeRef supplierDocumentsFolder = getOrCreateSupplierDocumentsFolder(branchNodeRef);
 				
-				Map<QName, Serializable> properties = new HashMap<>();
-				properties.put(ContentModel.PROP_NAME, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SUPPLIER_DOCUMENTS));
-				NodeRef documentsFolderNodeRef = nodeService.getChildByName(branchNodeRef, ContentModel.ASSOC_CONTAINS,
-						(String) properties.get(ContentModel.PROP_NAME));
-				if (documentsFolderNodeRef == null) {
-					nodeService
-							.createNode(branchNodeRef, ContentModel.ASSOC_CONTAINS,
-									QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
-											QName.createValidLocalName(RepoConsts.PATH_SUPPLIER_DOCUMENTS)),
-									ContentModel.TYPE_FOLDER, properties)
-							.getChildRef();
+				for (ChildAssociationRef childAssoc : nodeService.getChildAssocs(supplierDocumentsFolder)) {
+					NodeRef childNodeRef = childAssoc.getChildRef();
+					nodeService.setProperty(childNodeRef, ContentModel.PROP_OWNER, AuthenticationUtil.SYSTEM_USER_NAME);
 				}
 			} else {
 				branchNodeRef = supplierNodeRef;
