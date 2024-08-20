@@ -481,7 +481,7 @@ public class ProjectListExtractor extends SimpleExtractor {
 										String currentComment = (String) nodeService.getProperty(nodeRef, ProjectModel.PROP_PROJECT_CUR_COMMENT);
 										
 										if (currentComment != null && !currentComment.isBlank()) {
-											tmp.put(PROP_NODEDATA, entityActivityExtractorService.extractAuditActivityData(new JSONObject(currentComment), metadataFields));
+											tmp.put(PROP_NODEDATA, entityActivityExtractorService.extractAuditActivityData(new JSONObject(currentComment), metadataFields, FormatMode.JSON));
 										}
 									}
 									ret.add(tmp);
