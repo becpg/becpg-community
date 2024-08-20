@@ -76,7 +76,13 @@ public class MLTextHelper {
 		}
 		
 		ret.sort((a, b) -> {
-			return localeLabel(a).compareTo(localeLabel(b));
+			if (MLTextHelper.isDefaultLocale(a)) {
+				return -1;
+			} else if (MLTextHelper.isDefaultLocale(b)) {
+				return 1;
+			} else {
+				return localeLabel(a).compareTo(localeLabel(b));
+			}
 		});
 		
 		return ret;
