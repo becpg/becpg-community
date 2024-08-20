@@ -277,13 +277,6 @@ public class ExcelHelper {
 
 						int groupFirstColumn = cellnum;
 
-						// put default locale in first position
-						Locale defaultLocale = getDefaultLocale(supportedLocales);
-
-						if (defaultLocale != null) {
-							supportedLocales.remove(defaultLocale);
-							supportedLocales.add(0, defaultLocale);
-						}
 
 						for (Locale locale : supportedLocales) {
 
@@ -338,15 +331,6 @@ public class ExcelHelper {
 
 	}
 
-	private static Locale getDefaultLocale(List<Locale> locales) {
-		for (Locale locale : locales) {
-			if (MLTextHelper.isDefaultLocale(locale)) {
-				return locale;
-			}
-		}
-
-		return null;
-	}
 
 	public static XSSFColor createGreenColor() {
 		byte[] rgb = { (byte) 0, (byte) 255, (byte) 0 };
