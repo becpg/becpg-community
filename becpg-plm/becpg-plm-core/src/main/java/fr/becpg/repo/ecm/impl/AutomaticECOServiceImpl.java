@@ -326,7 +326,9 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 
 						NodeRef newEntityNodeRef = entityVersionService.mergeBranch(entityNodeRef, newEffectivity);
 
-						nodeService.removeAspect(newEntityNodeRef, BeCPGModel.ASPECT_AUTO_MERGE_ASPECT);
+						if(newEntityNodeRef!=null) {
+							nodeService.removeAspect(newEntityNodeRef, BeCPGModel.ASPECT_AUTO_MERGE_ASPECT);
+						} 
 
 						return true;
 					});
