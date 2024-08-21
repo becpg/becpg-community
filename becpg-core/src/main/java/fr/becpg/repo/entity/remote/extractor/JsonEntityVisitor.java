@@ -235,22 +235,24 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 				String lockInfo = lockService.getAdditionalInfo(nodeRef);
 
-				try {
-					JSONObject jsonInfo = new JSONObject(lockInfo);
-
-					if (jsonInfo.has("lockType") && jsonInfo.get("lockType").equals("versioning")) {
-						String currentVersion = (String) entity.get(RemoteEntityService.ATTR_VERSION);
-
-						if (currentVersion != null) {
-							Collection<Version> nodeRefVersions = versionService.getVersionHistory(nodeRef).getAllVersions();
-							Optional<Double> previousVersion = nodeRefVersions.stream().map(Version::getVersionLabel)
-									.filter(label -> !label.equals(currentVersion)).map(Double::parseDouble)
-									.max(Comparator.comparing(Double::valueOf));
-							previousVersion.ifPresent(version -> entity.put(RemoteEntityService.ATTR_VERSION, version.toString()));
+				if(lockInfo!=null) {
+					try {
+						JSONObject jsonInfo = new JSONObject(lockInfo);
+	
+						if (jsonInfo.has("lockType") && jsonInfo.get("lockType").equals("versioning")) {
+							String currentVersion = (String) entity.get(RemoteEntityService.ATTR_VERSION);
+	
+							if (currentVersion != null) {
+								Collection<Version> nodeRefVersions = versionService.getVersionHistory(nodeRef).getAllVersions();
+								Optional<Double> previousVersion = nodeRefVersions.stream().map(Version::getVersionLabel)
+										.filter(label -> !label.equals(currentVersion)).map(Double::parseDouble)
+										.max(Comparator.comparing(Double::valueOf));
+								previousVersion.ifPresent(version -> entity.put(RemoteEntityService.ATTR_VERSION, version.toString()));
+							}
 						}
+					} catch (JSONException e) {
+						logger.info("lock additional information cannot be parsed");
 					}
-				} catch (JSONException e) {
-					logger.info("lock additional information cannot be parsed");
 				}
 			}
 
