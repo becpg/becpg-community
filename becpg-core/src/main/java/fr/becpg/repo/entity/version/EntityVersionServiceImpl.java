@@ -1005,6 +1005,12 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				}
 			}
 
+		} else {
+			if(branchToNodeRef ==null) {
+				logger.info("Cannot AUTO merge "+ branchNodeRef+ " ASSOC_AUTO_MERGE_TO is empty ");
+			} else {
+				logger.info("Cannot merge "+ branchNodeRef+ " you don't have permission");
+			}
 		}
 		return null;
 	}
