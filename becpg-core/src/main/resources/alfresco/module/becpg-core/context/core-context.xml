@@ -369,6 +369,12 @@
       </property>
    </bean>
    
+  <!-- Bootstrap -->
+	<bean id="multiTenantWorkflowBootstrap" class="fr.becpg.repo.bootstrap.MultiTenantWorkflowBootstrap">
+		<property name="transactionService" ref="transactionService" />
+		<property name="tenantAdminService" ref="tenantAdminService" />
+		<property name="workflowService" ref="WorkflowService" />
+	</bean>
    
    <!-- 
     <bean id="search.fts.alfresco.db" class="org.alfresco.repo.search.impl.solr.DbAftsQueryLanguage" >
