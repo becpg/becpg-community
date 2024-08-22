@@ -1472,6 +1472,10 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public boolean isLicenseValid() {
 		return beCPGLicenseManager.isLicenseValid();
 	}
+	
+	public boolean isSpecialLicenceUser() {
+		return beCPGLicenseManager.isSpecialLicenceUser();
+	}
 
 	public String getTranslatedPath(String name) {
 
