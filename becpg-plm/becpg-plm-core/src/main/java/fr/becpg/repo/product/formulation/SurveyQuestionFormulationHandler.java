@@ -15,7 +15,6 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.becpg.model.PackModel;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.ProductData;
@@ -84,9 +83,10 @@ public class SurveyQuestionFormulationHandler extends FormulationBaseHandler<Pro
 	/** {@inheritDoc} */
 	@Override
 	public boolean process(ProductData formulatedProduct) {
-		final List<NodeRef> packMaterialListDataItemNodeRefs = CollectionUtils
-				.emptyIfNull(formulatedProduct.getPackMaterialList()).stream().map(PackMaterialListDataItem::getNodeRef)
-				.collect(Collectors.toList());
+		final List<NodeRef> packMaterialListCharactNodeRefs = CollectionUtils
+				.emptyIfNull(formulatedProduct.getPackMaterialList()).stream().map(PackMaterialListDataItem::getCharactNodeRef)
+				.distinct()
+				.toList();
 		final NodeRef hierarchyNodeRef = ObjectUtils.defaultIfNull(formulatedProduct.getHierarchy2(),
 				formulatedProduct.getHierarchy1());
 		final QName qName = nodeService.getType(formulatedProduct.getNodeRef());
@@ -95,8 +95,7 @@ public class SurveyQuestionFormulationHandler extends FormulationBaseHandler<Pro
 		final Set<SurveyQuestion> surveyQuestions = new HashSet<>();
 		final List<SurveyList> surveyLists = formulatedProduct.getSurveyList();
 		logger.debug("SurveyQuestionFormulationHandler::process() <- " +formulatedProduct.getNodeRef());
-		for (final NodeRef packMaterialListDataItemNodeRef : packMaterialListDataItemNodeRefs) { 
-			final NodeRef nodeRef = associationService.getTargetAssoc(packMaterialListDataItemNodeRef, PackModel.ASSOC_PACK_MATERIAL_LIST_MATERIAL);
+		for (final NodeRef nodeRef : packMaterialListCharactNodeRefs) {
 			associationService.getSourcesAssocs(nodeRef, SurveyModel.ASSOC_SURVEY_FS_LINKED_CHARACT_REFS).stream()
 					.map(alfrescoRepository::findOne).map(SurveyQuestion.class::cast).filter(qNameFilter)
 					.filter(surveyQuestion -> CollectionUtils.isEmpty(surveyQuestion.getFsLinkedHierarchy())
@@ -111,7 +110,7 @@ public class SurveyQuestionFormulationHandler extends FormulationBaseHandler<Pro
 					.map(alfrescoRepository::findOne).map(SurveyQuestion.class::cast).filter(qNameFilter)
 					.filter(surveyQuestion -> CollectionUtils.isEmpty(surveyQuestion.getFsLinkedCharactRefs())
 							|| surveyQuestion.getFsLinkedCharactRefs().stream()
-									.anyMatch(packMaterialListDataItemNodeRefs::contains))
+									.anyMatch(packMaterialListCharactNodeRefs::contains))
 					.peek(surveyQuestion -> logger.debug(String.format(
 							"Found SurveyQuestion %s matching Hierarchy criteria", surveyQuestion.getNodeRef())))
 					.forEach(surveyQuestions::add);

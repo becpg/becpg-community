@@ -39,7 +39,7 @@ public interface GlopService {
 	 * @param entity a {@link fr.becpg.repo.product.data.ProductData} object
 	 * @param buildGlopContext a {@link fr.becpg.repo.glop.model.GlopContext} object
 	 */
-	public GlopData optimize(ProductData entity, GlopContext buildGlopContext) throws GlopException, RestClientException, URISyntaxException, JSONException;
+	public GlopData optimize(ProductData entity, GlopContext buildGlopContext);
 
 	/**
 	 * Sends a request to the Glop server. Mostly for testing and may be deprecated in the future.
