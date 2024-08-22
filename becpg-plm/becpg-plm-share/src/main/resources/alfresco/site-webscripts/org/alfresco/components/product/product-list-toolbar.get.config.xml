@@ -1,0 +1,37 @@
+<config>
+	<types>
+		<type name="finishedProduct" filter="Simulation,ToValidate,Valid,Refused,Stopped,Archived,all,favourites" />
+		<type name="semiFinishedProduct" filter="Simulation,ToValidate,Valid,Refused,Stopped,Archived,all,favourites" />
+		<type name="rawMaterial" filter="Simulation,ToValidate,Valid,Refused,Stopped,Archived,all,favourites" />
+		<type name="packagingMaterial" filter="Simulation,ToValidate,Valid,Refused,Stopped,Archived,all,favourites" />
+		<type name="packagingKit" filter="Simulation,ToValidate,Valid,Refused,Stopped,Archived,all,favourites" />
+		<type name="resourceProduct" filter="Simulation,ToValidate,Valid,Refused,Stopped,Archived,all,favourites" />
+		<type name="productCollection" filter="Simulation,ToValidate,Valid,Refused,Stopped,Archived,all,favourites" />
+		<type name="supplier" filter="Simulation,ToValidate,Valid,Refused,Stopped,Archived,all,favourites" />
+		<type name="client" filter="Simulation,ToValidate,Valid,Refused,Stopped,Archived,all,favourites" />
+		<type name="qa_nc" filter="new,analysis,treatment,response,classification,closing,closed,all,favourites" />
+		<type name="qa_qualityControl" filter="Compliant,NonCompliant,all,favourites" />
+		<type name="qa_batch" filter="Simulation,Valid,all,favourites" />
+		<type name="productSpecification" filter="all,favourites" />
+		<type name="product" filter="Simulation,ToValidate,Valid,Refused,Stopped,Archived,all,favourites" />
+	</types>
+	<filters>
+		<filter type="Simulation" />
+		<filter type="ToValidate" />
+		<filter type="Valid" />
+		<filter type="Refused" />
+		<filter type="Stopped" />
+		<filter type="Archived" />
+		<filter type="Compliant" />
+		<filter type="NonCompliant" />
+		<filter type="new" />
+		<filter type="analysis" />
+		<filter type="treatment" />
+		<filter type="response" />
+		<filter type="classification" />
+		<filter type="closing" />
+		<filter type="closed" />
+		<filter type="favourites" />
+		<filter type="all" />
+	</filters>
+</config>

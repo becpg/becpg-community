@@ -206,6 +206,12 @@
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="nodeService" ref="nodeService" />
 				</bean>
+				<bean class="fr.becpg.repo.product.formulation.GlopFormulationHandler">
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+					<property name="glopService" ref="glopService" />
+					<property name="namespaceService" ref="namespaceService" />
+					<property name="nodeService" ref="nodeService" />
+				</bean>
 				<bean parent="abstractSimpleFormulationHandler" class="fr.becpg.repo.product.formulation.SvhcCalculatingFormulationHandler" />
 				<bean class="fr.becpg.repo.project.formulation.ScoreListFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />

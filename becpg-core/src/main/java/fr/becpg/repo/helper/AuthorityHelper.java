@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.security.authority.UnknownAuthorityException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AuthorityService;
@@ -15,6 +16,8 @@ import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +35,8 @@ import fr.becpg.model.SystemGroup;
  */
 @Service
 public class AuthorityHelper implements InitializingBean {
+	
+	private static final Log logger = LogFactory.getLog(AuthorityHelper.class);
 	
 	@Autowired
 	private AuthorityService authorityService;
@@ -79,9 +84,13 @@ public class AuthorityHelper implements InitializingBean {
 		
 		if (authType.equals(AuthorityType.GROUP) || authType.equals(AuthorityType.EVERYONE)) {
 			// Notify all members of the group
-			Set<String> users;
+			Set<String> users = Set.of();
 			if (authType.equals(AuthorityType.GROUP)) {
-				users = instance.authorityService.getContainedAuthorities(AuthorityType.USER, authority, false);
+				try {
+					users = instance.authorityService.getContainedAuthorities(AuthorityType.USER, authority, false);
+				} catch (UnknownAuthorityException e) {
+					logger.warn("unknown authority: " + authority);
+				}
 			} else {
 				users = instance.authorityService.getAllAuthorities(AuthorityType.USER);
 			}

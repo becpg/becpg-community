@@ -823,6 +823,8 @@ public interface PLMModel {
 	/** Constant <code>PROP_GLOP_VALUE</code> */
 	QName PROP_GLOP_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "glopValue");
 
+	QName ASPECT_GLOP_PRODUCT = QName.createQName(BeCPGModel.BECPG_URI, "glopProductAspect");
+	
 	/** Constant <code>PROP_IS_CHARACT_PROPAGATE_UP</code> */
 	QName PROP_IS_CHARACT_PROPAGATE_UP = QName.createQName(BeCPGModel.BECPG_URI, "isCharactPropagateUp");
 

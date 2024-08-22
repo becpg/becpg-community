@@ -12,6 +12,7 @@
 				<aspect name="bcpg:reconstitutableAspect" />
 				<aspect name="bcpg:evaporableAspect" />
 				<aspect name="bcpg:customsCodeAspect" />
+				<aspect name="bcpg:glopProductAspect" />
 				<aspect name="qa:batchAspect" />
 				<aspect name="qa:acAspect" />
 				<aspect name="gs1:gs1Aspect" />
@@ -41,6 +42,7 @@
 				<aspect name="gs1:referencedTradeItemAspect"/>
 				<aspect name="gs1:seasonalAspect"/>
 				<aspect name="gs1:pegHoleAspect"/>
+				<aspect name="gs1:animalFeedingAspect"/>
 				<aspect name="gs1:animalFeedingAspect"/>
 				
 			</visible>

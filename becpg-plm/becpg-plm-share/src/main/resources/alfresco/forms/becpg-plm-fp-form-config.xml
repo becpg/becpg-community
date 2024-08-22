@@ -1102,6 +1102,11 @@
           <show force="false" id="bcpg:productSpecifications"/>
           <show force="true" id="bcpg:compareWithEntities"/>
           <show force="true" id="bcpg:entityTplRef"/>
+          <show force="false" id="bcpg:glopTargetCharact"/>
+          <show force="false" id="bcpg:glopTargetTask"/>
+          <show force="false" id="bcpg:glopConstraintLists"/>
+          <show force="false" id="bcpg:glopTolerance"/>
+          <show force="false" id="bcpg:glopApplyOptimization"/>
         </field-visibility>
         <appearance>
           <field id="cm:name" mandatory="false" read-only="false"/>
@@ -1131,6 +1136,12 @@
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
               <control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
               </control-param>
+            </control>
+          </field>
+          <field id="bcpg:glopConstraintLists" mandatory="false" read-only="false">
+            <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+              <control-param name="ds">becpg/autocomplete/qname?attributeName=entityLists</control-param>
+              <control-param name="urlParamsToPass">itemId</control-param>
             </control>
           </field>
           <field id="bcpg:compareWithEntities" mandatory="false" read-only="false">
@@ -1339,6 +1350,11 @@
           <show for-mode="view" force="true" id="bcpg:nutrientProfilingDetails"/>
           <show force="true" id="bcpg:nutrientProfileCategory"/>
           <show force="true" id="bcpg:nutrientProfileVersion"/>
+          <show force="false" id="bcpg:glopTargetCharact"/>
+          <show force="false" id="bcpg:glopTargetTask"/>
+          <show force="false" id="bcpg:glopConstraintLists"/>
+          <show force="false" id="bcpg:glopTolerance"/>
+          <show force="false" id="bcpg:glopApplyOptimization"/>
         </field-visibility>
         <appearance>
           <field help-id="becpg.forms.help.servingSize" id="bcpg:servingSize" mandatory="false" read-only="false"/>
@@ -1359,6 +1375,12 @@
           </field>
           <field id="bcpg:nutrientProfileVersion" mandatory="false" read-only="false">
             <control template="/org/alfresco/components/form/controls/selectone.ftl">
+            </control>
+          </field>
+          <field id="bcpg:glopConstraintLists" mandatory="false" read-only="false">
+            <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+              <control-param name="ds">becpg/autocomplete/qname?attributeName=entityLists</control-param>
+              <control-param name="urlParamsToPass">itemId</control-param>
             </control>
           </field>
         </appearance>
@@ -2058,6 +2080,11 @@
           <show force="true" id="bcpg:servingSize"/>
           <show force="true" id="bcpg:servingSizeUnit"/>
           <show force="true" id="bcpg:entityTplRef"/>
+          <show force="false" id="bcpg:glopTargetCharact"/>
+          <show force="false" id="bcpg:glopTargetTask"/>
+          <show force="false" id="bcpg:glopConstraintLists"/>
+          <show force="false" id="bcpg:glopTolerance"/>
+          <show force="false" id="bcpg:glopApplyOptimization"/>
         </field-visibility>
         <appearance>
           <field id="cm:name" mandatory="false" read-only="false"/>
@@ -2960,6 +2987,236 @@
               <show id="cm:modified" force="true" />
               <show id="bcpg:formulatedDate" force="true" />
           </field-visibility>
+      </form>
+      <form id="product-list">
+      	<field-visibility>
+      	  <show force="true" id="bcpg:legalName" />
+		  <show force="true" id="bcpg:productHierarchy1" />
+		  <show force="true" id="bcpg:productHierarchy2" />
+		  <show force="true" id="bcpg:productState" />
+		  <show force="true" id="bcpg:code" />
+		  <show force="true" id="bcpg:erpCode"/>
+		  <show force="true" id="bcpg:eanCode" />
+		  <show force="true" id="bcpg:suppliers"  />
+      	  <show force="false" id="cm:name"/>
+		  <show force="false" id="bcpg:clients" />
+          <show force="false" id="gs1:descriptionShort"/>
+          <show force="false" id="gs1:functionalName"/>
+          <show force="false" id="cm:title"/>
+          <show force="false" id="gs1:variantDescription"/>
+          <show force="false" id="bcpg:productComments"/>
+          <show force="false" id="cm:description"/>
+          <show force="false" id="bcpg:packagingDescription"/>
+          <show force="false" id="bcpg:casNumber"/>
+          <show force="false" id="bcpg:ecNumber"/>
+          <show force="false" id="bcpg:ceNumber"/>
+          <show force="false" id="bcpg:fdaNumber"/>
+          <show force="false" id="bcpg:femaNumber"/>
+          <show force="false" id="bcpg:flNumber"/>
+          <show force="false" id="gs1:eanCodeInnerPack"/>
+          <show force="false" id="bcpg:eanCodeLevel2"/>
+          <show force="false" id="bcpg:eanCodeLevel3"/>
+          <show force="false" id="gs1:referencedTradeItemEanCode"/>
+          <show force="false" id="gs1:referencedTradeItemTypeCode"/>
+          <show force="false" id="bcpg:subsidiaryRef"/>
+          <show force="false" id="bcpg:trademarkRef"/>
+          <show force="false" id="bcpg:plants"/>
+          <show force="false" id="gs1:organicProductPlaceOfFarmingCode"/>
+          <show force="false" id="bcpg:productGeoOrigin"/>
+          <show force="false" id="gs1:targetMarkets"/>
+          <show force="false" id="bcpg:clients"/>
+          <show force="false" id="bcpg:supplierPlants"/>
+          <show force="false" id="bcpg:supplierRefCode"/>
+          <show force="false" id="bcpg:entityTplRef"/>
+          <show force="false" id="bcpg:parentEntityRef"/>
+          <show force="false" id="pjt:projectScore"/>
+          <show force="false" id="gs1:tradeItemMarketingMessage"/>
+          <show force="false" id="gs1:tradeItemFeatureBenefit"/>
+          <show force="false" id="gs1:specialItemCode"/>
+          <show force="false" id="gs1:tradeItemKeyWords"/>
+          <show force="false" id="bcpg:productQty"/>
+          <show force="false" id="bcpg:productUnit"/>
+          <show force="false" id="bcpg:netWeight"/>
+          <show force="false" id="bcpg:drainedWeight"/>
+          <show force="false" id="bcpg:productDensity"/>
+          <show force="false" id="bcpg:netVolume"/>
+          <show force="false" id="bcpg:productLossPerc"/>
+          <show force="false" id="bcpg:servingSize"/>
+          <show force="false" id="bcpg:servingSizeUnit"/>
+          <show force="false" id="bcpg:servingSizeText"/>
+          <show force="false" id="bcpg:numberOfServings"/>
+          <show force="false" id="bcpg:nutrientPreparationState"/>
+          <show force="false" id="bcpg:nutrientPreparedUnit"/>
+          <show force="false" id="bcpg:productSpecifications"/>
+          <show force="false" id="bcpg:ecoScore"/>
+          <show force="false" id="bcpg:ecoScoreDetails"/>
+          <show force="false" id="bcpg:ecoScoreCategory"/>
+          <show force="false" id="bcpg:nutrientProfileCategory"/>
+          <show force="false" id="bcpg:nutrientProfileVersion"/>
+          <show force="false" id="bcpg:nutrientProfilingDetails"/>
+          <show force="false" id="bcpg:nutrientProfilingScore"/>
+          <show force="false" id="bcpg:useByDate"/>
+          <show force="false" id="bcpg:bestBeforeDate"/>
+          <show force="false" id="bcpg:periodAfterOpening"/>
+          <show force="false" id="bcpg:contractDate"/>
+          <show force="false" id="bcpg:storageConditionsRef"/>
+          <show force="false" id="bcpg:precautionOfUseRef"/>
+          <show force="false" id="bcpg:preparationTips"/>
+          <show force="false" id="gs1:handlingInstructionsCodes"/>
+          <show force="false" id="gs1:healthClaimDescription"/>
+          <show force="false" id="gs1:preparationType"/>
+          <show force="false" id="bcpg:productMicrobioCriteriaRef"/>
+          <show force="false" id="bcpg:meatType"/>
+          <show force="false" id="bcpg:unitPrice"/>
+          <show force="false" id="bcpg:unitTotalCost"/>
+          <show force="false" id="bcpg:priceCurrency"/>
+          <show force="false" id="bcpg:breakEven"/>
+          <show force="false" id="bcpg:projectedQty"/>
+          <show force="false" id="bcpg:profitability"/>
+          <show force="false" id="pack:length"/>
+          <show force="false" id="pack:width"/>
+          <show force="false" id="pack:height"/>
+          <show force="false" id="ghs:sdsStandardCode"/>
+          <show force="false" id="ghs:sdsSheetNumber"/>
+          <show force="false" id="ghs:sdsSheetEffectiveDate"/>          
+          <show force="false" id="ghs:sdsSignalWord"/>
+          <show force="false" id="ghs:sdsPictograms"/>
+          <show force="false" id="ghs:sdsHazardStatements"/>
+          <show force="false" id="ghs:sdsPrecautionaryStatements"/>
+          <show force="false" id="ghs:sdsPersonalProtections"/>
+          <show force="false" id="ghs:sdsSafetyInstructions"/>
+          <show force="false" id="ghs:sdsOnuCode"/>
+          <show force="false" id="ghs:sdsClassCode"/>
+          <show force="false" id="ghs:sdsPackagingGroupCode"/>
+          <show force="false" id="cm:taggable"/>
+          <show force="false" id="cm:categories"/>
+          <show force="false" id="cm:creator"/>
+          <show force="false" id="cm:created"/>
+          <show force="false" id="cm:modifier"/>
+          <show force="false" id="cm:modified"/>
+          <show force="false" id="bcpg:startEffectivity"/>
+          <show force="false" id="bcpg:endEffectivity"/>
+          <show force="false" id="gs1:packagingTypeCode"/>
+          <show force="false" id="gs1:packagingTypeDescription"/>
+          <show force="false" id="gs1:height"/>
+          <show force="false" id="gs1:width"/>
+          <show force="false" id="gs1:depth"/>
+          <show force="false" id="gs1:diameter"/>
+          <show force="false" id="gs1:stackingFactor"/>
+          <show force="false" id="gs1:stackingMaxWeight"/>
+          <show force="false" id="pack:tare"/>
+          <show force="false" id="pack:tareUnit"/>
+          <show force="false" id="gs1:weight"/>
+          <show force="false" id="bcpg:dropPackagingOfComponents"/>
+          <show force="false" id="gs1:innerPackTypeCode"/>
+          <show force="false" id="gs1:productPerInnerPack"/>
+          <show force="false" id="gs1:innerPackPerBox"/>
+          <show force="false" id="gs1:innerPackNetWeight"/>
+          <show force="false" id="gs1:innerPackWeight"/>
+          <show force="false" id="gs1:innerPackHeight"/>
+          <show force="false" id="gs1:innerPackWidth"/>
+          <show force="false" id="gs1:innerPackDepth"/>
+          <show force="false" id="gs1:secondaryPackagingTypeCode"/>
+          <show force="false" id="pack:palletProductsPerBox"/>
+          <show force="false" id="gs1:isTradeItemPackedIrregularly"/>
+          <show force="false" id="gs1:tradeItemCompositionDepth"/>
+          <show force="false" id="gs1:tradeItemCompositionWidth"/>
+          <show force="false" id="gs1:secondaryHeight"/>
+          <show force="false" id="gs1:secondaryWidth"/>
+          <show force="false" id="gs1:secondaryDepth"/>
+          <show force="false" id="gs1:secondaryDiameter"/>
+          <show force="false" id="gs1:secondaryStackingFactor"/>
+          <show force="false" id="gs1:secondaryStackingMaxWeight"/>
+          <show force="false" id="gs1:secondaryNetWeight"/>
+          <show force="false" id="gs1:secondaryWeight"/>
+          <show force="false" id="gs1:secondaryDataCarrierTypeCode"/>
+          <show force="false" id="gs1:palletTypeCode"/>
+          <show force="false" id="pack:palletLayers"/>
+          <show force="false" id="pack:palletBoxesPerLayer"/>
+          <show force="false" id="pack:palletBoxesPerLastLayer"/>
+          <show force="false" id="pack:palletBoxesPerPallet"/>
+          <show force="false" id="pack:palletHeight"/>
+          <show force="false" id="gs1:tertiaryWidth"/>
+          <show force="false" id="gs1:tertiaryDepth"/>
+          <show force="false" id="pack:palletNumberOnGround"/>
+          <show force="false" id="pack:palletStackingMaxWeight"/>
+          <show force="false" id="gs1:tertiaryNetWeight"/>
+          <show force="false" id="gs1:tertiaryWeight"/>
+          <show force="false" id="gs1:tertiaryDataCarrierTypeCode"/>
+          <show force="false" id="gs1:isTradeItemMarkedAsRecyclable"/>
+          <show force="false" id="gs1:isPackagingMarkedReturnable"/>
+          <show force="false" id="gs1:packagingRecyclingProcessTypeCode" />
+          <show force="false" id="gs1:isPriceOnPack"/>
+          <show force="false" id="gs1:hasBatchNumber"/>
+          <show force="false" id="gs1:packagingTermsAndConditionsCode"/>
+          <show force="false" id="gs1:platformTermsAndConditionsCode"/>
+          <show force="false" id="gs1:packUnitNumber"/>
+          <show force="false" id="gs1:sortingInstructions"/>
+          <show force="false" id="gs1:consumerUsageInstructions"/>
+          <show force="false" id="gs1:sortingBonusCriteria"/>
+          <show force="false" id="gs1:sortingMalusCriteria"/>
+          <show force="false" id="gs1:productHierarcfalsehy1"/>
+          <show force="false" id="gs1:productHierarchy2"/>
+          <show force="false" id="gs1:productHierarchy3"/>
+          <show force="false" id="gs1:productHierarchy4"/>
+          <show force="false" id="gs1:productHierarchy5"/>
+          <show force="false" id="gs1:additionalTradeItemClassification1"/>
+          <show force="false" id="gs1:additionalTradeItemClassificationText1"/>
+          <show force="false" id="gs1:additionalTradeItemClassification2"/>
+          <show force="false" id="gs1:additionalTradeItemClassificationText2"/>
+          <show force="false" id="gs1:dataCarrierTypeCode"/>
+          <show force="false" id="bcpg:customsCodeRef"/>
+          <show force="false" id="gs1:isTradeItemAVariableUnit"/>
+          <show force="false" id="gs1:variableTradeItemType"/>
+          <show force="false" id="gs1:variableWeightAllowableDeviationPercentage"/>
+          <show force="false" id="gs1:variableWeightRangeMinimum"/>
+          <show force="false" id="gs1:variableWeightRangeMaximum"/>
+          <show force="false" id="gs1:eanCodeWeight"/>
+          <show force="false" id="gs1:isTradeItemADivisibleItem"/>
+          <show force="false" id="gs1:eanCodePrice"/>
+          <show force="false" id="gs1:isTradeItemAPromotionalItem"/>
+          <show force="false" id="gs1:offerOnPack"/>
+          <show force="false" id="gs1:promotionTypeCode"/>
+          <show force="false" id="gs1:promotionalArticleRef"/>
+          <show force="false" id="gs1:freeQuantityOfProduct"/>
+          <show force="false" id="gs1:freeQuantityOfProductUnit"/>
+          <show force="false" id="gs1:freeQuantityOfProductPercent"/>
+          <show force="false" id="gs1:tradeItemUnitDescriptorCode"/>
+          <show force="false" id="gs1:effectiveDate"/>
+          <show force="false" id="gs1:publicationDate"/>
+          <show force="false" id="gs1:cancelledDateTime"/>
+          <show force="false" id="gs1:discontinuedDateTime"/>
+          <show force="false" id="gs1:isTradeItemAnInvoiceUnit"/>
+          <show force="false" id="gs1:isTradeItemAnOrderableUnit"/>
+          <show force="false" id="gs1:firstShipDateTime"/>
+          <show force="false" id="gs1:startAvailabilityDateTime"/>
+          <show force="false" id="gs1:endAvailabilityDateTime"/>
+          <show force="false" id="gs1:lastShipDateTime"/>
+          <show force="false" id="gs1:isTradeItemReorderable"/>
+          <show force="false" id="gs1:orderQuantityMinimum"/>
+          <show force="false" id="gs1:orderQuantityMultiple"/>
+          <show force="false" id="gs1:orderingLeadTime"/>
+          <show force="false" id="gs1:sellingUnitOfMeasure"/>
+          <show force="false" id="gs1:priceComparisonContentTypeCode"/>
+          <show force="false" id="gs1:isTradeItemAFullDisplayStand"/>
+          <show force="false" id="gs1:hasDisplayReadyPackaging"/>
+          <show force="false" id="gs1:isTradeItemSeasonal"/>
+          <show force="false" id="gs1:seasonalAvailabilityStartDateTime"/>
+          <show force="false" id="gs1:seasonalAvailabilityEndDateTime"/>
+          <show force="false" id="gs1:seasonCalendarYear"/>
+          <show force="false" id="gs1:seasonName"/>
+          <show force="false" id="gs1:seasonParameterCode"/>
+          <show force="false" id="gs1:pegHoleNumber"/>
+          <show force="false" id="gs1:pegHoleTypeCode"/>
+          <show force="false" id="gs1:pegHorizontal"/>
+          <show force="false" id="gs1:pegVertical"/>
+          <show force="false" id="gs1:animalNutritionalClaim"/>
+          <show force="false" id="gs1:animalFeedAdditiveStatement"/>
+          <show force="false" id="gs1:animalFeedAnalyticalConstituentsStatement"/>
+          <show force="false" id="gs1:animalFeedCompositionStatement"/>
+          <show force="false" id="gs1:animalFeedingInstructions"/>
+          <show force="false" id="gs1:animalFeedType"/>
+      	</field-visibility>
       </form>
     </forms>
   </config>
