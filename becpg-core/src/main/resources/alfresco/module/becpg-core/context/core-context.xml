@@ -16,25 +16,23 @@
    
   You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 -->
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
            http://www.springframework.org/schema/context
            http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
-    <context:component-scan base-package="fr.becpg" />
+	<context:component-scan base-package="fr.becpg" />
 
 	<!-- beCPG configuration files -->
-	<bean name="beCPGPlaceholderConfigurer"
-		class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
+	<bean name="beCPGPlaceholderConfigurer" class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
 		<property name="ignoreUnresolvablePlaceholders" value="true" />
 		<property name="ignoreResourceNotFound" value="true"></property>
 		<property name="locations">
 			<list>
 				<value>classpath:alfresco/module/${pom.artifactId}/becpg-config-core.properties</value>
-				<value>classpath*:beCPG.properties</value>	
+				<value>classpath*:beCPG.properties</value>
 			</list>
 		</property>
 	</bean>
@@ -49,8 +47,8 @@
 		<property name="advSearchService" ref="AdvSearchService" />
 		<property name="services" ref="ServiceRegistry" />
 		<property name="permissionService" ref="permissionService" />
-		<property name="ratingService" ref="ratingService"/>
-		<property name="priority" value="1"/>
+		<property name="ratingService" ref="ratingService" />
+		<property name="priority" value="1" />
 	</bean>
 
 	<bean id="becpgCoreBootstrapMessages" class="org.alfresco.i18n.ResourceBundleBootstrapComponent">
@@ -69,14 +67,15 @@
 
 	<!-- cached dictionary -->
 
-    <bean id="entityDictionaryService" class="fr.becpg.repo.entity.impl.EntityDictionaryServiceImpl" parent="dictionaryService" depends-on="bcpg.dictionaryBootstrap" >   
-        <property name="beCPGCacheService" ref="beCPGCacheService"/>
-        <property name="registry" ref="asynchronouslyRefreshedCacheRegistry"/>
-        <property name="repositoryEntityDefReader" ref="repositoryEntityDefReader"/> 
-        <property name="namespaceService" ref="namespaceService" />	    
-    </bean>
-    
-    <alias alias="cachedDictionaryService" name="entityDictionaryService"></alias>
+	<bean id="entityDictionaryService" class="fr.becpg.repo.entity.impl.EntityDictionaryServiceImpl" parent="dictionaryService"
+		depends-on="bcpg.dictionaryBootstrap">
+		<property name="beCPGCacheService" ref="beCPGCacheService" />
+		<property name="registry" ref="asynchronouslyRefreshedCacheRegistry" />
+		<property name="repositoryEntityDefReader" ref="repositoryEntityDefReader" />
+		<property name="namespaceService" ref="namespaceService" />
+	</bean>
+
+	<alias alias="cachedDictionaryService" name="entityDictionaryService"></alias>
     
     
     
@@ -86,18 +85,18 @@
 		<property name="mimetypeService" ref="mimetypeService" />
 		<property name="nodeService" ref="nodeService" />
 	</bean>
-	
 
-	<bean id="associationService"  parent="abstractBeCPGPolicy" class="fr.becpg.repo.helper.impl.AssociationServiceImplV2">
-		<property name="entityDictionaryService" ref="entityDictionaryService"/>
-		<property name="namespaceService" ref="namespaceService" />		
-		<property name="tenantService" ref="tenantService" />	
-		<property name="dataSource" ref="dataSource" />	
+
+	<bean id="associationService" parent="abstractBeCPGPolicy" class="fr.becpg.repo.helper.impl.AssociationServiceImplV2">
+		<property name="entityDictionaryService" ref="entityDictionaryService" />
+		<property name="namespaceService" ref="namespaceService" />
+		<property name="tenantService" ref="tenantService" />
+		<property name="dataSource" ref="dataSource" />
 		<property name="qnameDAO" ref="qnameDAO" />
 		<!-- Caches -->
 		<property name="childsAssocsCache" ref="becpgChildAssocsCache" />
 		<property name="assocsCache" ref="becpgAssocsCache" />
-		<property name="registry" ref="asynchronouslyRefreshedCacheRegistry"/>
+		<property name="registry" ref="asynchronouslyRefreshedCacheRegistry" />
 	</bean>
 
 
@@ -106,12 +105,12 @@
 	<bean id="beCPGMailService" class="fr.becpg.repo.mail.impl.BeCPGMailServiceImpl">
 		<property name="nodeService" ref="nodeService" />
 		<property name="serviceRegistry" ref="ServiceRegistry" />
-		<property name="searchService" ref="searchService" />		
-		<property name="repository" ref="repositoryHelper" />			
+		<property name="searchService" ref="searchService" />
+		<property name="repository" ref="repositoryHelper" />
 		<property name="fileFolderService" ref="fileFolderService" />
-		<property name="namespaceService" ref="namespaceService" />			
-		<property name="actionService" ref="ActionService"/>
-		<property name="personService" ref="personService"/>
+		<property name="namespaceService" ref="namespaceService" />
+		<property name="actionService" ref="ActionService" />
+		<property name="personService" ref="personService" />
 		<property name="mailFrom" value="${mail.from.default}" />
 	</bean>
 
@@ -119,297 +118,305 @@
 	
 	<!-- Public API -->
 
-	<alias name="remoteEntityService" alias="RemoteEntityService"/>
+	<alias name="remoteEntityService" alias="RemoteEntityService" />
 
 	<!-- DataLists -->
-	
-	<bean id="dataListExtractorFactory"
-		class="fr.becpg.repo.entity.datalist.impl.DataListExtractorFactoryImpl"/>
-	
 
-	
+	<bean id="dataListExtractorFactory" class="fr.becpg.repo.entity.datalist.impl.DataListExtractorFactoryImpl" />
+
+
+
 	<bean id="abstractDataListExtractor" abstract="true" init-method="init" class="fr.becpg.repo.entity.datalist.impl.AbstractDataListExtractor">
 		<property name="advSearchService" ref="AdvSearchService" />
 		<property name="nodeService" ref="nodeService" />
 		<property name="services" ref="ServiceRegistry" />
 		<property name="attributeExtractorService" ref="attributeExtractorService" />
-		<property name="dataListExtractorFactory" ref="dataListExtractorFactory"/>
+		<property name="dataListExtractorFactory" ref="dataListExtractorFactory" />
 		<property name="permissionService" ref="permissionService" />
 		<property name="entityDictionaryService" ref="entityDictionaryService"/>
 		<property name="ratingService" ref="ratingService"/>
 	</bean>
 
-   <bean id="simpleExtractor" class="fr.becpg.repo.entity.datalist.impl.SimpleExtractor" parent="abstractDataListExtractor">
-		<property name="entityListDAO" ref="entityListDAO"/>
-		<property name="dataListSortRegistry" ref="dataListSortRegistry"/>		
-		<property name="associationService" ref="associationService"/>
-		<property name="paginatedSearchCache" ref="paginatedSearchCache"/>
-		<property name="defaultExtractor" value="true"/>
+	<bean id="simpleExtractor" class="fr.becpg.repo.entity.datalist.impl.SimpleExtractor" parent="abstractDataListExtractor">
+		<property name="entityListDAO" ref="entityListDAO" />
+		<property name="dataListSortRegistry" ref="dataListSortRegistry" />
+		<property name="associationService" ref="associationService" />
+		<property name="paginatedSearchCache" ref="paginatedSearchCache" />
+		<property name="defaultExtractor" value="true" />
 	</bean>
-	
-	 <bean id="smartContentExtractor" class="fr.becpg.repo.entity.datalist.impl.SmartContentExtractor" parent="simpleExtractor">
-	 	<property name="defaultExtractor" value="false"/>
-	 </bean>
+
+	<bean id="smartContentExtractor" class="fr.becpg.repo.entity.datalist.impl.SmartContentExtractor" parent="simpleExtractor">
+		<property name="defaultExtractor" value="false" />
+	</bean>
 
 	<bean id="multiLevelExtractor" class="fr.becpg.repo.entity.datalist.impl.MultiLevelExtractor" parent="simpleExtractor">
 		<property name="multiLevelDataListService" ref="multiLevelDataListService" />
-		<property name="preferenceService" ref="preferenceService"/>
-		<property name="defaultExtractor" value="false"/>
+		<property name="preferenceService" ref="preferenceService" />
+		<property name="defaultExtractor" value="false" />
 	</bean>
 
 	<bean id="wUsedExtractor" class="fr.becpg.repo.entity.datalist.impl.WUsedExtractor" parent="multiLevelExtractor">
 		<property name="wUsedListService" ref="wUsedListService" />
 		<property name="namespaceService" ref="namespaceService" />
-		<property name="nestedAdvSearchPlugin" ref="nestedAdvSearchPlugin"/>
+		<property name="nestedAdvSearchPlugin" ref="nestedAdvSearchPlugin" />
 	</bean>
 
 	<bean id="multiListExtractor" class="fr.becpg.repo.entity.datalist.impl.MultiListExtractor" parent="simpleExtractor">
 		<property name="namespaceService" ref="namespaceService" />
-		<property name="defaultExtractor" value="false"/>
+		<property name="defaultExtractor" value="false" />
 	</bean>
 
 
 	<bean id="bulkEditExtractor" class="fr.becpg.repo.entity.datalist.impl.BulkEditExtractor" parent="simpleExtractor">
-		<property name="defaultExtractor" value="false"/>
+		<property name="defaultExtractor" value="false" />
 		<property name="namespaceService" ref="namespaceService" />
 	</bean>
 	
 
 	<!-- Public API -->
-	
-	<alias name="advSearchService" alias="AdvSearchService"/>
-	
 
-	
-	<bean id="applicationContextHelper" class="fr.becpg.util.ApplicationContextHelper"/>
+	<alias name="advSearchService" alias="AdvSearchService" />
+
+
+
+	<bean id="applicationContextHelper" class="fr.becpg.util.ApplicationContextHelper" />
 
     
     <!-- Alfresco patch for country support under MLText -->
-    
-    <bean id="mlPropertyInterceptor" class="fr.becpg.repo.multilingual.BeCPGMLPropertyInterceptor">
-      <property name="nodeService">
-         <ref bean="mlAwareNodeService" />
-      </property>
-      <property name="multilingualContentService">
-         <ref bean="multilingualContentService" />
-      </property>
-      <property name="dictionaryService">
-         <ref bean="cachedDictionaryService" />
-      </property>
-      <property name="namespaceService" ref="namespaceService" />
-      <property name="systemConfigurationService" ref="systemConfigurationService" />
-   </bean>
+
+	<bean id="mlPropertyInterceptor" class="fr.becpg.repo.multilingual.BeCPGMLPropertyInterceptor">
+		<property name="nodeService">
+			<ref bean="mlAwareNodeService" />
+		</property>
+		<property name="multilingualContentService">
+			<ref bean="multilingualContentService" />
+		</property>
+		<property name="dictionaryService">
+			<ref bean="cachedDictionaryService" />
+		</property>
+		<property name="namespaceService" ref="namespaceService" />
+		<property name="systemConfigurationService" ref="systemConfigurationService" />
+	</bean>
 
 
 <!--  NotificationRule Job -->
 
-    <bean id="notificationRuleJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
-        <property name="jobClass">
-            <value>fr.becpg.repo.notification.NotificationRuleJob</value>
-        </property>
-        <property name="group" value="beCPG"/>
-        <property name="description" value="Run notification rules" />
-        <property name="jobDataAsMap">
-            <map>
-                <entry key="notificationRuleService">
-                    <ref bean="notificationRuleService" />
-                </entry>
-                <entry key="tenantAdminService">
-                    <ref bean="tenantAdminService" />
-                </entry>
-                <entry key="transactionService">
-                    <ref bean="transactionService" />
-                </entry>
-                <entry key="jobLockService">
-	               <ref bean="jobLockService" />
-	           </entry>
-            </map>
-        </property>
-    </bean>
-    
-    
-    <bean id="notificationRuleSchedulerAccessor" class="org.alfresco.schedule.AlfrescoSchedulerAccessorBean">
+	<bean id="notificationRuleJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass">
+			<value>fr.becpg.repo.notification.NotificationRuleJob</value>
+		</property>
+		<property name="group" value="beCPG" />
+		<property name="description" value="Run notification rules" />
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="notificationRuleService">
+					<ref bean="notificationRuleService" />
+				</entry>
+				<entry key="tenantAdminService">
+					<ref bean="tenantAdminService" />
+				</entry>
+				<entry key="transactionService">
+					<ref bean="transactionService" />
+				</entry>
+				<entry key="jobLockService">
+					<ref bean="jobLockService" />
+				</entry>
+			</map>
+		</property>
+	</bean>
+
+
+	<bean id="notificationRuleSchedulerAccessor" class="org.alfresco.schedule.AlfrescoSchedulerAccessorBean">
 		<property name="scheduler" ref="schedulerFactory" />
 		<property name="triggers">
 			<list>
-				<bean id="notificationRuleJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"  >
-			        <property name="jobDetail">
-			            <ref bean="notificationRuleJob"/>
-			        </property>
-			        <property name="cronExpression">
-			            <value>${beCPG.notification.notify.cronExpression}</value>
-			        </property>
-			    </bean>
+				<bean id="notificationRuleJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+					<property name="jobDetail">
+						<ref bean="notificationRuleJob" />
+					</property>
+					<property name="cronExpression">
+						<value>${beCPG.notification.notify.cronExpression}</value>
+					</property>
+				</bean>
 			</list>
 		</property>
 		<property name="enabled" value="${beCPG.notification.notify.enabled}" />
 	</bean>
     
     
-  	<!--  Overload of IntegrityChecker --> 
-    <bean id="integrityChecker" class="fr.becpg.repo.node.integrity.BeCPGIntegrityChecker" init-method="init">
-      <property name="policyComponent" ref="policyComponent"/>
-      <property name="dictionaryService" ref="cachedDictionaryService" />
-      <property name="nodeService" ref="nodeService" />
-      <property name="entityDictionaryService" ref="entityDictionaryService" />
-      <property name="entityListDAO" ref="entityListDAO" />
-      <property name="attributeExtractorService" ref="attributeExtractorService" />
-      <property name="tenantService" ref="tenantService" />
-      <property name="enabled" value="${system.integrity.enabled}" />
-      <property name="traceOn" value="${system.integrity.trace}" />
-      <property name="failOnViolation" value="${system.integrity.failOnViolation}" />
-      <property name="maxErrorsPerTransaction" value="5" />
-      <property name="storesToIgnore">
-         <list>
-            <value>${version.store.version2Store}</value>
-         </list>
-      </property>
-   </bean> 
+  	<!--  Overload of IntegrityChecker -->
+	<bean id="integrityChecker" class="fr.becpg.repo.node.integrity.BeCPGIntegrityChecker" init-method="init">
+		<property name="policyComponent" ref="policyComponent" />
+		<property name="dictionaryService" ref="cachedDictionaryService" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="entityDictionaryService" ref="entityDictionaryService" />
+		<property name="entityListDAO" ref="entityListDAO" />
+		<property name="attributeExtractorService" ref="attributeExtractorService" />
+		<property name="tenantService" ref="tenantService" />
+		<property name="enabled" value="${system.integrity.enabled}" />
+		<property name="traceOn" value="${system.integrity.trace}" />
+		<property name="failOnViolation" value="${system.integrity.failOnViolation}" />
+		<property name="maxErrorsPerTransaction" value="5" />
+		<property name="storesToIgnore">
+			<list>
+				<value>${version.store.version2Store}</value>
+			</list>
+		</property>
+	</bean> 
 
     <!-- Ovverride alfresco copy service -->
-    <bean id="copyService" class="fr.becpg.repo.copy.BecpgCopyServiceImpl" parent="abstractBaseCopyService" init-method="init">
-        <property name="cannedQueryRegistry" ref="copyServiceCannedQueryRegistry"/>
-        <property name="dictionaryService" ref="cachedDictionaryService" />
-        <property name="nodeService" ref="NodeService" />
-        <property name="policyComponent" ref="policyComponent" />
-        <property name="behaviourFilter" ref="policyBehaviourFilter" />
-        <property name="ruleService" ref="ruleService" />
-        <property name="permissionService" ref="permissionService" />
-        <property name="publicServiceAccessService" ref="publicServiceAccessService" />
-        <property name="internalNodeService" ref="mlAwareNodeService" />
-        <property name="contentPropertyRestrictionInterceptor" ref="contentPropertyRestrictionInterceptor" />
-    </bean>
+	<bean id="copyService" class="fr.becpg.repo.copy.BecpgCopyServiceImpl" parent="abstractBaseCopyService" init-method="init">
+		<property name="cannedQueryRegistry" ref="copyServiceCannedQueryRegistry" />
+		<property name="dictionaryService" ref="cachedDictionaryService" />
+		<property name="nodeService" ref="NodeService" />
+		<property name="policyComponent" ref="policyComponent" />
+		<property name="behaviourFilter" ref="policyBehaviourFilter" />
+		<property name="ruleService" ref="ruleService" />
+		<property name="permissionService" ref="permissionService" />
+		<property name="publicServiceAccessService" ref="publicServiceAccessService" />
+		<property name="internalNodeService" ref="mlAwareNodeService" />
+		<property name="contentPropertyRestrictionInterceptor" ref="contentPropertyRestrictionInterceptor" />
+	</bean>
     
     <!-- Ovveride alfresco rule service -->
-    
-     <bean id="ruleService" class="org.alfresco.repo.rule.RuleServiceImpl" init-method="init">
-        <property name="nodeService" ref="NodeService"/>
-        <property name="runtimeNodeService" ref="nodeService"/>
-        <property name="copyService" ref="copyService"/>
-        <property name="actionService" ref="ActionService"/>
-        <property name="runtimeActionService" ref="actionService"/>
-        <property name="dictionaryService" ref="cachedDictionaryService"/>
-        <property name="policyComponent" ref="policyComponent"/>
-        <property name="permissionService" ref="permissionService"/>
-	    <property name="nodeRulesCache" ref="nodeRulesCache"/>
-        <property name="rulesDisabled">
-            <value>false</value>
-        </property>
-   </bean>
 
- <!--  Site role precedence - higher number - more important role -->    
-    <bean id="siteRoleComparator" class="org.alfresco.repo.site.RoleComparatorImpl" init-method="init">
-       <property name="rolePrecedence">
-       		<map>
-       			<entry key="SiteManager" value="5" />
-       			<entry key="SiteCollaborator" value="4" />
-       			<entry key="SiteContributor" value="3" />
-       			<entry key="SiteBranchManager" value="2" />
-       			<entry key="SiteConsumer" value="1" />
-       		</map>
-       </property>
-    </bean>
-   
-   	<bean id="versionCleanerJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
-		<property name="jobClass">
-			<value>fr.becpg.repo.entity.version.VersionCleanerJob</value>
+	<bean id="ruleService" class="org.alfresco.repo.rule.RuleServiceImpl" init-method="init">
+		<property name="nodeService" ref="NodeService" />
+		<property name="runtimeNodeService" ref="nodeService" />
+		<property name="copyService" ref="copyService" />
+		<property name="actionService" ref="ActionService" />
+		<property name="runtimeActionService" ref="actionService" />
+		<property name="dictionaryService" ref="cachedDictionaryService" />
+		<property name="policyComponent" ref="policyComponent" />
+		<property name="permissionService" ref="permissionService" />
+		<property name="nodeRulesCache" ref="nodeRulesCache" />
+		<property name="rulesDisabled">
+			<value>false</value>
 		</property>
-		<property name="group" value="beCPG"/>
-        <property name="description" value="Run version cleanup" />
-       	<property name="jobDataAsMap">
+	</bean>
+
+ <!--  Site role precedence - higher number - more important role -->
+	<bean id="siteRoleComparator" class="org.alfresco.repo.site.RoleComparatorImpl" init-method="init">
+		<property name="rolePrecedence">
 			<map>
-	           <entry key="jobLockService">
-                    <ref bean="jobLockService" />
-               </entry>
-	           <entry key="versionCleanerService">
-                    <ref bean="versionCleanerService" />
-               </entry>
-	           <entry key="systemConfigurationService">
-                    <ref bean="systemConfigurationService" />
-               </entry>
+				<entry key="SiteManager" value="5" />
+				<entry key="SiteCollaborator" value="4" />
+				<entry key="SiteContributor" value="3" />
+				<entry key="SiteBranchManager" value="2" />
+				<entry key="SiteConsumer" value="1" />
 			</map>
 		</property>
 	</bean>
-	
+
+	<bean id="versionCleanerJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass">
+			<value>fr.becpg.repo.entity.version.VersionCleanerJob</value>
+		</property>
+		<property name="group" value="beCPG" />
+		<property name="description" value="Run version cleanup" />
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="jobLockService">
+					<ref bean="jobLockService" />
+				</entry>
+				<entry key="versionCleanerService">
+					<ref bean="versionCleanerService" />
+				</entry>
+				<entry key="systemConfigurationService">
+					<ref bean="systemConfigurationService" />
+				</entry>
+			</map>
+		</property>
+	</bean>
+
 	<bean id="versionCleanerSchedulerAccessor" class="org.alfresco.schedule.AlfrescoSchedulerAccessorBean">
 		<property name="scheduler" ref="schedulerFactory" />
 		<property name="triggers">
 			<list>
 				<bean id="versionCleanerJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
-					<property name="jobDetail" ref="versionCleanerJob"/>
-					<property name="cronExpression" value="${beCPG.version.cleaner.cronExpression}"/>
+					<property name="jobDetail" ref="versionCleanerJob" />
+					<property name="cronExpression" value="${beCPG.version.cleaner.cronExpression}" />
 				</bean>
 			</list>
 		</property>
 		<property name="enabled" value="${beCPG.version.cleaner.enabled}" />
 	</bean>
-  
-   <bean id="batchThreadPoolExecutor0" class="org.alfresco.util.ThreadPoolExecutorFactoryBean">
-        <property name="poolName" value="beCPGBatchThreadPoolExecutor0" />
-        <property name="corePoolSize" value="1" />
-        <property name="maximumPoolSize" value="1" />
-        <property name="threadPriority" value="4" />
-    </bean>
-  
-   <bean id="batchThreadPoolExecutor1" class="org.alfresco.util.ThreadPoolExecutorFactoryBean">
-        <property name="poolName" value="beCPGBatchThreadPoolExecutor0" />
-        <property name="corePoolSize" value="1" />
-        <property name="maximumPoolSize" value="1" />
-        <property name="threadPriority" value="4" />
-    </bean>
-  
-   <bean id="batchThreadPoolExecutor2" class="org.alfresco.util.ThreadPoolExecutorFactoryBean">
-        <property name="poolName" value="beCPGBatchThreadPoolExecutor0" />
-        <property name="corePoolSize" value="1" />
-        <property name="maximumPoolSize" value="1" />
-        <property name="threadPriority" value="4" />
-    </bean>
-  
-   <bean id="batchThreadPoolExecutor3" class="org.alfresco.util.ThreadPoolExecutorFactoryBean">
-        <property name="poolName" value="beCPGBatchThreadPoolExecutor0" />
-        <property name="corePoolSize" value="1" />
-        <property name="maximumPoolSize" value="1" />
-        <property name="threadPriority" value="4" />
-    </bean>
-  
-   <bean id="batchThreadPoolExecutor4" class="org.alfresco.util.ThreadPoolExecutorFactoryBean">
-        <property name="poolName" value="beCPGBatchThreadPoolExecutor0" />
-        <property name="corePoolSize" value="1" />
-        <property name="maximumPoolSize" value="1" />
-        <property name="threadPriority" value="4" />
-    </bean>
-    
-    <bean id="batchThreadPoolExecutorMap" class="java.util.HashMap">
-        <constructor-arg>
-            <map>
-                <entry key="0" value-ref="batchThreadPoolExecutor0"/>
-                <entry key="1" value-ref="batchThreadPoolExecutor1"/>
-                <entry key="2" value-ref="batchThreadPoolExecutor2"/>
-                <entry key="3" value-ref="batchThreadPoolExecutor3"/>
-                <entry key="4" value-ref="batchThreadPoolExecutor4"/>
-            </map>
-        </constructor-arg>
-    </bean>
-    
-    <bean id="repositoryNodeService" class="org.springframework.aop.framework.ProxyFactoryBean" >
-      <property name="targetName">
-         <value>mlAwareNodeService</value>
-      </property>
-      <property name="proxyInterfaces">
-         <list>
-            <value>org.alfresco.service.cmr.repository.NodeService</value>
-         </list>
-      </property>
-      <property name="interceptorNames">
-         <list>
-            <value>nodeRefPropertyInterceptor</value>
-         </list>
-      </property>
-   </bean>
 
-    <bean name="auditModel.extractor.stringExtractor" class="fr.becpg.repo.audit.extractor.StringExtractor">
-      <property name="registry" ref="auditModel.extractorRegistry" />
-    </bean>
+	<bean id="batchThreadPoolExecutor0" class="org.alfresco.util.ThreadPoolExecutorFactoryBean">
+		<property name="poolName" value="beCPGBatchThreadPoolExecutor0" />
+		<property name="corePoolSize" value="1" />
+		<property name="maximumPoolSize" value="1" />
+		<property name="threadPriority" value="4" />
+	</bean>
+
+	<bean id="batchThreadPoolExecutor1" class="org.alfresco.util.ThreadPoolExecutorFactoryBean">
+		<property name="poolName" value="beCPGBatchThreadPoolExecutor0" />
+		<property name="corePoolSize" value="1" />
+		<property name="maximumPoolSize" value="1" />
+		<property name="threadPriority" value="4" />
+	</bean>
+
+	<bean id="batchThreadPoolExecutor2" class="org.alfresco.util.ThreadPoolExecutorFactoryBean">
+		<property name="poolName" value="beCPGBatchThreadPoolExecutor0" />
+		<property name="corePoolSize" value="1" />
+		<property name="maximumPoolSize" value="1" />
+		<property name="threadPriority" value="4" />
+	</bean>
+
+	<bean id="batchThreadPoolExecutor3" class="org.alfresco.util.ThreadPoolExecutorFactoryBean">
+		<property name="poolName" value="beCPGBatchThreadPoolExecutor0" />
+		<property name="corePoolSize" value="1" />
+		<property name="maximumPoolSize" value="1" />
+		<property name="threadPriority" value="4" />
+	</bean>
+
+	<bean id="batchThreadPoolExecutor4" class="org.alfresco.util.ThreadPoolExecutorFactoryBean">
+		<property name="poolName" value="beCPGBatchThreadPoolExecutor0" />
+		<property name="corePoolSize" value="1" />
+		<property name="maximumPoolSize" value="1" />
+		<property name="threadPriority" value="4" />
+	</bean>
+
+	<bean id="batchThreadPoolExecutorMap" class="java.util.HashMap">
+		<constructor-arg>
+			<map>
+				<entry key="0" value-ref="batchThreadPoolExecutor0" />
+				<entry key="1" value-ref="batchThreadPoolExecutor1" />
+				<entry key="2" value-ref="batchThreadPoolExecutor2" />
+				<entry key="3" value-ref="batchThreadPoolExecutor3" />
+				<entry key="4" value-ref="batchThreadPoolExecutor4" />
+			</map>
+		</constructor-arg>
+	</bean>
+
+	<bean id="repositoryNodeService" class="org.springframework.aop.framework.ProxyFactoryBean">
+		<property name="targetName">
+			<value>mlAwareNodeService</value>
+		</property>
+		<property name="proxyInterfaces">
+			<list>
+				<value>org.alfresco.service.cmr.repository.NodeService</value>
+			</list>
+		</property>
+		<property name="interceptorNames">
+			<list>
+				<value>nodeRefPropertyInterceptor</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean name="auditModel.extractor.stringExtractor" class="fr.becpg.repo.audit.extractor.StringExtractor">
+		<property name="registry" ref="auditModel.extractorRegistry" />
+	</bean>
+    
+    
+    <!-- Bootstrap -->
+	<bean id="multiTenantWorkflowBootstrap" class="fr.becpg.repo.bootstrap.MultiTenantWorkflowBootstrap">
+		<property name="transactionService" ref="transactionService" />
+		<property name="tenantAdminService" ref="tenantAdminService" />
+		<property name="workflowService" ref="WorkflowService" />
+	</bean>
+    
     
    <!-- 
     <bean id="search.fts.alfresco.db" class="org.alfresco.repo.search.impl.solr.DbAftsQueryLanguage" >
@@ -493,5 +500,5 @@
     </bean>
     
     -->
-     
+
 </beans>
