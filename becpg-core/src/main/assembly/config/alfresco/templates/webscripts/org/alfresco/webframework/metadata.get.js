@@ -104,8 +104,8 @@ else if (args["user"] != null)
   }
 	
 	model.capabilities["isLicenseValid"] = !bcpg.isShowLicenceWarning()  || bcpg.isLicenseValid() || !isAdmin;
-	model.capabilities["isMemberOfLicenseGroup"] = !bcpg.isShowUnauthorizedWarning() || userId == "admin" || userId.startsWith("admin@") || userId.endsWith("@becpg.fr") || isMemberOfAllowedGroup;
-	model.capabilities["floatingLicensesExceeded"] = bcpg.isShowUnauthorizedWarning() && userId != "admin" && !userId.startsWith("admin@") && !userId.endsWith("@becpg.fr") && bcpg.floatingLicensesExceeded(session.getId());
+	model.capabilities["isMemberOfLicenseGroup"] = !bcpg.isShowUnauthorizedWarning() || bcpg.isSpecialLicenceUser() || isMemberOfAllowedGroup;
+	model.capabilities["floatingLicensesExceeded"] = bcpg.isShowUnauthorizedWarning() && !bcpg.isSpecialLicenceUser() && bcpg.floatingLicensesExceeded(session.getId());
 	
 	
   model.immutableProperties = people.getImmutableProperties(userId);
