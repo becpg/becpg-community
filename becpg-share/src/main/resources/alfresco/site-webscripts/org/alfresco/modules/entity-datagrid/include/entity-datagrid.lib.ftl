@@ -66,17 +66,12 @@
          <#if showToolBar><@dataGridToolbar  toolbarId=el /></#if>
       </div>
       <div class="yui-u align-right">
-		<#if pagination?? && pagination>
+		 <#if pagination?? && pagination>
         	 <div id="${el}-paginator" class="paginator hidden"></div>
-         </#if>
-         <div class="items-per-page" style="visibility: hidden;">
-            <button id="${el}-itemsPerPage-button" >${msg("menu.items-per-page")}</button>
-         </div>
+          </#if>
       </div>
    </div>
    
-  
-
    <div id="${el}-grid" class="grid"></div>
 
    <div id="${el}-selectListMessage" class="hidden select-list-message">${msg("message.select-list")}</div>

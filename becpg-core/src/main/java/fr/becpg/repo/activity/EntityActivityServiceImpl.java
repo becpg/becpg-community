@@ -20,10 +20,12 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.batch.BatchProcessWorkProvider;
 import org.alfresco.repo.batch.BatchProcessor;
 import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
+import org.alfresco.repo.dictionary.constraint.ListOfValuesConstraint;
 import org.alfresco.repo.forum.CommentService;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.activities.ActivityService;
+import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
@@ -418,11 +420,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 						data.put(PROP_CHARACT_NODEREF, charactNodeRef);
 						data.put(PROP_TITLE, attributeExtractorService.extractPropName(charactNodeRef));
 					} else {
-						if (attributeExtractorService.hasAttributeExtractorPlugin(datalistNodeRef)) {
-							data.put(PROP_TITLE, attributeExtractorService.extractPropName(datalistNodeRef));
-						} else {
-							data.put(PROP_TITLE, nodeService.getProperty(datalistNodeRef, ContentModel.PROP_NAME));
-						}
+						data.put(PROP_TITLE, attributeExtractorService.extractPropName(datalistNodeRef));
 					}
 					if (activityEvent.equals(ActivityEvent.Update) && (updatedProperties != null)) {
 						List<JSONObject> properties = new ArrayList<>();
@@ -918,6 +916,19 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 									} else if (ent instanceof Pair || ent instanceof NodeRef) {
 										beforeList.add(ent.toString());
 									} else {
+										PropertyDefinition propDef = entityDictionaryService.getProperty(entry.getKey());
+										if (propDef.getConstraints() != null) {
+											for (ConstraintDefinition constraint : propDef.getConstraints()) {
+												if (constraint.getConstraint() instanceof ListOfValuesConstraint lvc) {
+													if (ent instanceof List<?> entList) {
+														entList = entList.stream().map(o -> lvc.getDisplayLabel(o.toString(), dictionaryService)).toList();
+														ent = (Serializable) entList;
+													} else {
+														ent = lvc.getDisplayLabel(ent.toString(), dictionaryService);
+													}
+												}
+											}
+										}
 										beforeList.add(ent);
 									}
 								}
@@ -939,6 +950,19 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 										} else if (ent instanceof Pair || ent instanceof NodeRef) {
 											afterList.add(ent.toString());
 										} else {
+											PropertyDefinition propDef = entityDictionaryService.getProperty(entry.getKey());
+											if (propDef.getConstraints() != null) {
+												for (ConstraintDefinition constraint : propDef.getConstraints()) {
+													if (constraint.getConstraint() instanceof ListOfValuesConstraint lvc) {
+														if (ent instanceof List<?> entList) {
+															entList = entList.stream().map(o -> lvc.getDisplayLabel(o.toString(), dictionaryService)).toList();
+															ent = (Serializable) entList;
+														} else {
+															ent = lvc.getDisplayLabel(ent.toString(), dictionaryService);
+														}
+													}
+												}
+											}
 											afterList.add(ent);
 										}
 									}

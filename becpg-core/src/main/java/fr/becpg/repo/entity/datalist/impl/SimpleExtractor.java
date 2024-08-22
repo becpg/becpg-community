@@ -126,7 +126,7 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 		for (NodeRef nodeRef : results) {
 			// Right check not necessary
-			if (permissionService.hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED) {
+			if (nodeService.exists(nodeRef) && permissionService.hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED) {
 				if (ret.getComputedFields() == null) {
 					ret.setComputedFields(attributeExtractorService.readExtractStructure(nodeService.getType(nodeRef), metadataFields));
 				}

@@ -1719,9 +1719,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			NodeRef extractedVersion = findExtractedVersion(versionNodeRef);
 
 			if (extractedVersion == null || !nodeService.exists(extractedVersion)) {
-
-				extractedVersion = createExtractedVersion(versionNodeRef);
-
+				extractedVersion = AuthenticationUtil.runAsSystem(() -> createExtractedVersion(versionNodeRef));
 			}
 			return extractedVersion;
 		}, false, false);
@@ -1760,6 +1758,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 			((RuleService) ruleService).disableRules();
 
+			IntegrityChecker.setWarnInTransaction();
+			
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ENTITY_BRANCH);
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
