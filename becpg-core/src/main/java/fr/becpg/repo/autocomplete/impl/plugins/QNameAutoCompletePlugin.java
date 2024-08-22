@@ -19,21 +19,29 @@ import fr.becpg.repo.autocomplete.AutoCompleteService;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 
- @Service
+@Service
 public class QNameAutoCompletePlugin implements AutoCompletePlugin {
 
 	private static final String SOURCE_TYPE_QNAME = "qname";
-	
+
 	private NodeService nodeService;
 	private EntityListDAO entityListDAO;
 	private EntityDictionaryService entityDictionaryService;
 	private NamespaceService namespaceService;
-	
-	public QNameAutoCompletePlugin(NodeService nodeService, EntityListDAO entityListDAO, EntityDictionaryService entityDictionaryService,
-			NamespaceService namespaceService) {
+
+	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
+	}
+
+	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
+	}
+
+	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
 		this.entityDictionaryService = entityDictionaryService;
+	}
+
+	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
 
@@ -46,12 +54,12 @@ public class QNameAutoCompletePlugin implements AutoCompletePlugin {
 	public AutoCompletePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
 
 		String attribute = (String) props.get(AutoCompleteService.PROP_ATTRIBUTE_NAME);
-		
+
 		if ("entityLists".equals(attribute)) {
 			NodeRef entityNodeRef = new NodeRef((String) props.get(AutoCompleteService.PROP_NODEREF));
 			NodeRef listContainer = entityListDAO.getListContainer(entityNodeRef);
 			List<NodeRef> dataLists = nodeService.getChildAssocs(listContainer).stream().map(a -> a.getChildRef()).toList();
-			
+
 			return new AutoCompletePage(dataLists, pageNum, pageSize, dataLists1 -> {
 				List<AutoCompleteEntry> suggestions = new ArrayList<>();
 				if (dataLists1 != null) {
