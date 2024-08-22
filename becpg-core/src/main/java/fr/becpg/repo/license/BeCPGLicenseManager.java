@@ -270,10 +270,24 @@ public class BeCPGLicenseManager {
 		});
 	}
 
+	public boolean isSpecialLicenceUser() {
+		String runAsUser = AuthenticationUtil.getRunAsUser();
+		if(authenticationService.getDefaultAdministratorUserNames().contains(runAsUser)) {
+			return true;
+		}
+		if (runAsUser.equals("admin") || runAsUser.endsWith("@becpg.fr")
+				|| runAsUser.startsWith("admin@") ) {
+			return true;
+		}
+		
+		return false;
+	}
+	
 	public boolean hasWriteLicense() {
 		String runAsUser = AuthenticationUtil.getRunAsUser();
 		return beCPGCacheService.getFromCache(BeCPGLicenseManager.class.getName() + ".writeLicenses", runAsUser, () -> {
-			if (runAsUser.equals("admin") || runAsUser.endsWith("@becpg.fr")) {
+			
+			if(isSpecialLicenceUser()) {
 				return true;
 			}
 			if (AuthorityHelper.hasGroupAuthority(runAsUser, SystemGroup.LicenseWriteNamed.toString())) {
