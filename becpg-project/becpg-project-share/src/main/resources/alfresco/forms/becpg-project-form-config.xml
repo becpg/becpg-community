@@ -753,6 +753,26 @@
 					<show id="pjt:projectStartDate" />
 					<show id="pjt:projectCompletionDate" />
 					<show id="pjt:projectDueDate" />
+					<show id="survey:advSearchSurveyQuestion1" force="true" />
+					<show id="survey:advSearchSurveyAnswer1" force="true" />
+					<show id="survey:advSearchSurveyQuestion2" force="true" />
+					<show id="survey:advSearchSurveyAnswer2" force="true" />
+					<show id="survey:advSearchSurveyQuestion3" force="true" />
+					<show id="survey:advSearchSurveyAnswer3" force="true" />
+					<show id="survey:advSearchSurveyQuestion4" force="true" />
+					<show id="survey:advSearchSurveyAnswer4" force="true" />
+					<show id="survey:advSearchSurveyQuestion5" force="true" />
+					<show id="survey:advSearchSurveyAnswer5" force="true" />
+					<show id="survey:advSearchSurveyQuestion6" force="true" />
+					<show id="survey:advSearchSurveyAnswer6" force="true" />
+					<show id="survey:advSearchSurveyQuestion7" force="true" />
+					<show id="survey:advSearchSurveyAnswer7" force="true" />
+					<show id="survey:advSearchSurveyQuestion8" force="true" />
+					<show id="survey:advSearchSurveyAnswer8" force="true" />
+					<show id="survey:advSearchSurveyQuestion9" force="true" />
+					<show id="survey:advSearchSurveyAnswer9" force="true" />
+					<show id="survey:advSearchSurveyQuestion10" force="true" />
+					<show id="survey:advSearchSurveyAnswer10" force="true" />
 				</field-visibility>
 				<appearance>
 					<set id="main" />
@@ -834,6 +854,157 @@
 							<control-param name="forceEditable">true</control-param>
 						</control>
 					</field>
+					<set appearance="bordered-panel" id="survey" label-id="becpg.forms.set.survey-criteria.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
+         	 		<field id="survey:advSearchSurveyQuestion1" mandatory="false" read-only="false" set="survey">
+		  				<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+				  	  		<control-param name="ds">becpg/autocomplete/survey</control-param>
+				  	  		<control-param name="forceEditable">true</control-param>
+		              		<control-param name="isSearch">true</control-param>
+				  		</control>
+				  	</field>
+				    <field id="survey:advSearchSurveyAnswer1" mandatory="false" read-only="false" set="survey">
+				  		<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+					  		<control-param name="ds">becpg/autocomplete/survey</control-param>
+					  		<control-param name="parentAssoc">survey_advSearchSurveyQuestion1</control-param>
+					  		<control-param name="forceEditable">true</control-param>
+		              		<control-param name="isSearch">true</control-param>
+				  		</control>
+				  	</field>
+				  	<field id="survey:advSearchSurveyQuestion2" mandatory="false" read-only="false" set="survey">
+		  				<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+				  	  		<control-param name="ds">becpg/autocomplete/survey</control-param>
+				  	  		<control-param name="forceEditable">true</control-param>
+		              		<control-param name="isSearch">true</control-param>
+				  		</control>
+				  	</field>
+				    <field id="survey:advSearchSurveyAnswer2" mandatory="false" read-only="false" set="survey">
+				  		<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+					  		<control-param name="ds">becpg/autocomplete/survey</control-param>
+					  		<control-param name="parentAssoc">survey_advSearchSurveyQuestion2</control-param>
+					  		<control-param name="forceEditable">true</control-param>
+		              		<control-param name="isSearch">true</control-param>
+				  		</control>
+				  	</field>
+				  	<field id="survey:advSearchSurveyQuestion3" mandatory="false" read-only="false" set="survey">
+		  				<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+				  	  		<control-param name="ds">becpg/autocomplete/survey</control-param>
+				  	  		<control-param name="forceEditable">true</control-param>
+		              		<control-param name="isSearch">true</control-param>
+				  		</control>
+				  	</field>
+				    <field id="survey:advSearchSurveyAnswer3" mandatory="false" read-only="false" set="survey">
+				  		<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+					  		<control-param name="ds">becpg/autocomplete/survey</control-param>
+					  		<control-param name="parentAssoc">survey_advSearchSurveyQuestion3</control-param>
+					  		<control-param name="forceEditable">true</control-param>
+		              		<control-param name="isSearch">true</control-param>
+				  		</control>
+				  	</field>
+				  	<field id="survey:advSearchSurveyQuestion4" mandatory="false" read-only="false" set="survey">
+		  				<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+				  	  		<control-param name="ds">becpg/autocomplete/survey</control-param>
+				  	  		<control-param name="forceEditable">true</control-param>
+		              		<control-param name="isSearch">true</control-param>
+				  		</control>
+				  	</field>
+				    <field id="survey:advSearchSurveyAnswer4" mandatory="false" read-only="false" set="survey">
+				  		<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+					  		<control-param name="ds">becpg/autocomplete/survey</control-param>
+					  		<control-param name="parentAssoc">survey_advSearchSurveyQuestion4</control-param>
+					  		<control-param name="forceEditable">true</control-param>
+		              		<control-param name="isSearch">true</control-param>
+				  		</control>
+				  	</field>
+				  	<field id="survey:advSearchSurveyQuestion5" mandatory="false" read-only="false" set="survey">
+		  				<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+				  	  		<control-param name="ds">becpg/autocomplete/survey</control-param>
+				  	  		<control-param name="forceEditable">true</control-param>
+		              		<control-param name="isSearch">true</control-param>
+				  		</control>
+				  	</field>
+				    <field id="survey:advSearchSurveyAnswer5" mandatory="false" read-only="false" set="survey">
+				  		<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+					  		<control-param name="ds">becpg/autocomplete/survey</control-param>
+					  		<control-param name="parentAssoc">survey_advSearchSurveyQuestion5</control-param>
+					  		<control-param name="forceEditable">true</control-param>
+		              		<control-param name="isSearch">true</control-param>
+				  		</control>
+				  	</field>
+				  	<field id="survey:advSearchSurveyQuestion6" mandatory="false" read-only="false" set="survey">
+		  				<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+				  	  		<control-param name="ds">becpg/autocomplete/survey</control-param>
+				  	  		<control-param name="forceEditable">true</control-param>
+		              		<control-param name="isSearch">true</control-param>
+				  		</control>
+				  	</field>
+				    <field id="survey:advSearchSurveyAnswer6" mandatory="false" read-only="false" set="survey">
+				  		<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+					  		<control-param name="ds">becpg/autocomplete/survey</control-param>
+					  		<control-param name="parentAssoc">survey_advSearchSurveyQuestion6</control-param>
+					  		<control-param name="forceEditable">true</control-param>
+		              		<control-param name="isSearch">true</control-param>
+				  		</control>
+				  	</field>
+				  	<field id="survey:advSearchSurveyQuestion7" mandatory="false" read-only="false" set="survey">
+		  				<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+				  	  		<control-param name="ds">becpg/autocomplete/survey</control-param>
+				  	  		<control-param name="forceEditable">true</control-param>
+		              		<control-param name="isSearch">true</control-param>
+				  		</control>
+				  	</field>
+				    <field id="survey:advSearchSurveyAnswer7" mandatory="false" read-only="false" set="survey">
+				  		<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+					  		<control-param name="ds">becpg/autocomplete/survey</control-param>
+					  		<control-param name="parentAssoc">survey_advSearchSurveyQuestion7</control-param>
+					  		<control-param name="forceEditable">true</control-param>
+		              		<control-param name="isSearch">true</control-param>
+				  		</control>
+				  	</field>
+				  	<field id="survey:advSearchSurveyQuestion8" mandatory="false" read-only="false" set="survey">
+		  				<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+				  	  		<control-param name="ds">becpg/autocomplete/survey</control-param>
+				  	  		<control-param name="forceEditable">true</control-param>
+		              		<control-param name="isSearch">true</control-param>
+				  		</control>
+				  	</field>
+				    <field id="survey:advSearchSurveyAnswer8" mandatory="false" read-only="false" set="survey">
+				  		<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+					  		<control-param name="ds">becpg/autocomplete/survey</control-param>
+					  		<control-param name="parentAssoc">survey_advSearchSurveyQuestion8</control-param>
+					  		<control-param name="forceEditable">true</control-param>
+		              		<control-param name="isSearch">true</control-param>
+				  		</control>
+				  	</field>
+				  	<field id="survey:advSearchSurveyQuestion9" mandatory="false" read-only="false" set="survey">
+		  				<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+				  	  		<control-param name="ds">becpg/autocomplete/survey</control-param>
+				  	  		<control-param name="forceEditable">true</control-param>
+		              		<control-param name="isSearch">true</control-param>
+				  		</control>
+				  	</field>
+				    <field id="survey:advSearchSurveyAnswer9" mandatory="false" read-only="false" set="survey">
+				  		<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+					  		<control-param name="ds">becpg/autocomplete/survey</control-param>
+					  		<control-param name="parentAssoc">survey_advSearchSurveyQuestion9</control-param>
+					  		<control-param name="forceEditable">true</control-param>
+		              		<control-param name="isSearch">true</control-param>
+				  		</control>
+				  	</field>
+				  	<field id="survey:advSearchSurveyQuestion10" mandatory="false" read-only="false" set="survey">
+		  				<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+				  	  		<control-param name="ds">becpg/autocomplete/survey</control-param>
+				  	  		<control-param name="forceEditable">true</control-param>
+		              		<control-param name="isSearch">true</control-param>
+				  		</control>
+				  	</field>
+				    <field id="survey:advSearchSurveyAnswer10" mandatory="false" read-only="false" set="survey">
+				  		<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+					  		<control-param name="ds">becpg/autocomplete/survey</control-param>
+					  		<control-param name="parentAssoc">survey_advSearchSurveyQuestion10</control-param>
+					  		<control-param name="forceEditable">true</control-param>
+		              		<control-param name="isSearch">true</control-param>
+				  		</control>
+				  	</field>
 				</appearance>
 			</form>
 			
