@@ -73,7 +73,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 			var user = oRecord.getData("itemData")["prop_bcpg_alUserId"];
 			var dateCreated = oRecord.getData("itemData")["prop_cm_created"];			
 			var html = "";
-			if(data.title || activityType == "Datalist" ){
+			if(data.title || activityType == "Datalist"  || activityType == "DatalistCopy"){
 				var title = "";
 				var className = data.className!=null ? data.className : "entity";
 				var charactType = data.charactType!=null ? data.charactType : className;
@@ -89,6 +89,9 @@ if (beCPG.module.EntityDataGridRenderers) {
 						title  = scope.msg("entity.activity.datalist."+data.activityEvent.toLowerCase(), title, scope.msg("data.list."+className) );
 					}
 
+				} else if (activityType == "DatalistCopy" ){
+					title = "<span class=\""+data.entityType+"\">"+Alfresco.util.encodeHTML(data.title)+"</span>";
+					title  = scope.msg("entity.activity.datalist.copy." + data.activityEvent.toLowerCase(), scope.msg("data.list."+className), title);
 				} else if(activityType == "Entity"|| activityType == "Formulation" || activityType == "Report"){
 					title  = scope.msg("entity.activity."+activityType.toLowerCase(), title);
 				} else if(activityType == "Export"){

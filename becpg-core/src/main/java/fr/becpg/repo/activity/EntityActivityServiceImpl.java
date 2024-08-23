@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.model.DataListModel;
 import org.alfresco.repo.batch.BatchProcessWorkProvider;
 import org.alfresco.repo.batch.BatchProcessor;
 import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
@@ -543,6 +544,50 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 			}
 		}
 		return false;
+
+	}
+	
+	@Override
+	public void postDataListCopyActivity(NodeRef entityNodeRef, NodeRef sourceEntityNodeRef, NodeRef datalistNodeRef, String action) {
+		if ((datalistNodeRef != null)) {
+			try {
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+				NodeRef activityListNodeRef = getActivityList(entityNodeRef);
+
+				// No list no activity
+				if (activityListNodeRef != null) {
+					if (nodeService.hasAspect(activityListNodeRef, ContentModel.ASPECT_PENDING_DELETE)) {
+						logger.debug(NO_ACTIVITY_MESSAGE);
+						return;
+					}
+
+					// Project activity
+					ActivityListDataItem activityListDataItem = new ActivityListDataItem();
+					JSONObject data = new JSONObject();
+					data.put(PROP_DATALIST_NODEREF, datalistNodeRef);
+					data.put(PROP_ACTIVITY_EVENT, action);
+					data.put(PROP_ENTITY_NODEREF, entityNodeRef);
+					data.put(PROP_ENTITY_TYPE, nodeService.getType(sourceEntityNodeRef).toPrefixString(namespaceService).split(":")[1]);
+
+					String type = (String) nodeService.getProperty(datalistNodeRef, DataListModel.PROP_DATALIST_ITEM_TYPE);
+					data.put(PROP_CLASSNAME, type.split(":")[1]);
+
+					data.put(PROP_TITLE, nodeService.getProperty(sourceEntityNodeRef, BeCPGModel.PROP_CODE) + " - " + attributeExtractorService.extractPropName(sourceEntityNodeRef));
+					activityListDataItem.setActivityType(ActivityType.DatalistCopy);
+					activityListDataItem.setActivityData(data.toString());
+					activityListDataItem.setParentNodeRef(activityListNodeRef);
+
+					mergeWithLastActivity(activityListDataItem);
+					recordAuditActivity(entityNodeRef, activityListDataItem);
+					notifyListeners(entityNodeRef, activityListDataItem);
+
+				}
+			} catch (JSONException e) {
+				logger.error(e, e);
+			} finally {
+				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+			}
+		}
 
 	}
 	
