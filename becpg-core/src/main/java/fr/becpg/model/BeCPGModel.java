@@ -51,7 +51,7 @@ public final class BeCPGModel {
 	
 	public static final QName ASPECT_USER_AUTHENTICATION = QName.createQName(BECPG_URI, "userAuthenticationAspect");
 	
-	public static final QName PROP_USER_SYNCHRONIZE_SSO = QName.createQName(BECPG_URI, "userSynchronizeSso");
+	public static final QName PROP_IS_SSO_USER = QName.createQName(BECPG_URI, "isSsoUser");
 
 	public enum EntityFormat {
 		NODE, JSON, XML
