@@ -44,6 +44,10 @@
 		<property name="batchQueueService" ref="batchQueueService" />
 		<property name="formulationService" ref="formulationService" />
 	</bean>
+
+	<bean id="beCPGUserPolicy" class="fr.becpg.repo.authentication.BeCPGUserPolicy" parent="abstractBeCPGPolicy">
+		<property name="beCPGUserAccountService" ref="beCPGUserAccountService" />
+	</bean>
 	
 	<bean id="listValuePolicy" class="fr.becpg.repo.dictionary.constraint.ListValuePolicy" parent="abstractBeCPGPolicy">
 		<property name="beCPGCacheService" ref="beCPGCacheService" />
