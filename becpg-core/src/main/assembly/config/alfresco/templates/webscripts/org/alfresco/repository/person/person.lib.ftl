@@ -37,7 +37,7 @@
 	"isAdminAuthority": ${people.isAdmin(person)?string("true","false")},
 	"userLocale": <#if person.properties["bcpg:userLocale"]??>"${person.properties["bcpg:userLocale"]}"<#else>null</#if>,
 	"userContentLocale": <#if person.properties["bcpg:userContentLocale"]??>"${person.properties["bcpg:userContentLocale"]}"<#else>null</#if>,
-	"synchronizeSso": <#if person.properties["bcpg:userSynchronizeSso"]??>${person.properties["bcpg:userSynchronizeSso"]?string("true","false")}<#else>null</#if>
+	"isSsoUser": <#if person.properties["bcpg:isSsoUser"]??>${person.properties["bcpg:isSsoUser"]?string("true","false")}<#else>null</#if>
 </#escape>
 </#macro>
 
