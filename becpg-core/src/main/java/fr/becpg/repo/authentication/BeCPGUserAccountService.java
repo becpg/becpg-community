@@ -8,9 +8,12 @@ import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.security.authentication.BasicPasswordGenerator;
+import org.alfresco.repo.security.authentication.MutableAuthenticationDao;
 import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.MutableAuthenticationService;
@@ -55,7 +58,13 @@ public class BeCPGUserAccountService {
 
 	@Autowired
 	private IdentityServiceAccountProvider identityServiceAccountProvider;
+	
+	@Autowired
+	private MutableAuthenticationDao repositoryAuthenticationDao;
 
+	@Autowired
+	private NodeService nodeService;
+	
 	/**
 	 * <p>getOrCreateUser.</p>
 	 *
@@ -161,7 +170,7 @@ public class BeCPGUserAccountService {
 
 			if (!zones.contains(identityServiceAccountProvider.getZoneId())) {
 				zones.add(identityServiceAccountProvider.getZoneId());
-				authorityService.addAuthorityToZones(PATH_SEPARATOR, zones);
+				authorityService.addAuthorityToZones(userAccount.getUserName(), zones);
 			}
 
 		} else {
@@ -177,6 +186,43 @@ public class BeCPGUserAccountService {
 			userName += "@" + tenantAdminService.getCurrentUserDomain();
 		}
 		return userName;
+	}
+
+	public void synchronizeSso(String username) {
+		if (Boolean.TRUE.equals(identityServiceAccountProvider.isEnabled())) {
+			if (!personService.personExists(username)) {
+				throw new IllegalStateException("user does not exist: " + username);
+			}
+			NodeRef personNodeRef = personService.getPerson(username);
+			
+			BasicPasswordGenerator pwdGen = new BasicPasswordGenerator();
+			pwdGen.setPasswordLength(10);
+			BeCPGUserAccount userAccount = new BeCPGUserAccount();
+			userAccount.setEmail((String) nodeService.getProperty(personNodeRef, ContentModel.PROP_EMAIL));
+			userAccount.setUserName(username);
+			userAccount.setFirstName((String) nodeService.getProperty(personNodeRef, ContentModel.PROP_FIRSTNAME));
+			userAccount.setLastName((String) nodeService.getProperty(personNodeRef, ContentModel.PROP_LASTNAME));
+			userAccount.setPassword(pwdGen.generatePassword());
+			userAccount.setNotify(true);
+			userAccount.getAuthorities().addAll(authorityService.getAuthoritiesForUser(username).stream().map(s -> authorityService.getShortName(s)).toList());
+			Map<QName, Serializable> extraProps = new HashMap<>();
+			extraProps.put(ContentModel.PROP_EMAIL_FEED_DISABLED, true);
+			userAccount.getExtraProps().putAll(extraProps);
+			
+			if (identityServiceAccountProvider.registerAccount(userAccount)) {
+				logger.debug("user account successfully registered by identity service: " + userAccount.getUserName());
+				beCPGMailService.sendMailNewUser(personNodeRef, username, userAccount.getPassword(), false);
+			} else {
+				logger.debug("user account already registered by identity service: " + userAccount.getUserName());
+			}
+			
+			if (repositoryAuthenticationDao.userExists(username)) {
+				repositoryAuthenticationDao.deleteUser(username);
+				logger.debug("user account successfully deleted by authentication repository: " + userAccount.getUserName());
+			}
+		} else {
+			logger.warn("identity service is not enabled");
+		}
 	}
 
 }

@@ -990,6 +990,7 @@
             fnClearEl("-create-verifypassword");
             fnClearEl("-create-quota");
             Dom.get(parent.id + "-create-disableaccount").checked = false;
+            Dom.get(parent.id + "-create-synchronizesso").checked = true;
 
             // reset quota selection drop-down
             Dom.get(parent.id + "-create-quotatype").value = "gb";
@@ -1303,6 +1304,9 @@
                fnDisabler("-update-email", "email", person.immutability);
                fnSetter("-update-userlocale", person.userLocale);
                fnSetter("-update-usercontentlocale", person.userContentLocale);
+               if (person.synchronizeSso) {
+	               Dom.get(parent.id + "-update-synchronizesso").setAttribute("disabled", true);
+			   }
                if (!person.capabilities.isMutable)
                {
                   Dom.get(parent.id + "-update-old-password").setAttribute("disabled", true);
@@ -1345,6 +1349,7 @@
 
                // account enabled/disabled
                Dom.get(parent.id + "-update-disableaccount").checked = (person.enabled == false);
+               Dom.get(parent.id + "-update-synchronizesso").checked = (person.synchronizeSso == true);
 
                // add groups the user is already assigned to and maintain a copy of the original group list
                me.resetGroups();
@@ -2299,6 +2304,7 @@
             lastName: fnGetter("-create-lastname"),
             email: fnGetter("-create-email"),
             disableAccount: Dom.get(me.id + "-create-disableaccount").checked,
+            synchronizeSso: Dom.get(me.id + "-create-synchronizesso").checked,
             quota: quota,
             groups: groups
          };
@@ -2476,6 +2482,7 @@
             lastName: fnGetter("-update-lastname"),
             email: fnGetter("-update-email"),
             disableAccount: Dom.get(me.id + "-update-disableaccount").checked,
+            synchronizeSso: Dom.get(me.id + "-update-synchronizesso").checked,
             quota: quota,
             addGroups: addGroups,
             removeGroups: removeGroups,

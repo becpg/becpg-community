@@ -5630,6 +5630,16 @@
 				</property>
 			</properties>
 		</aspect>
+		
+		<aspect name="bcpg:userAuthenticationAspect">
+			<properties>
+				<property name="bcpg:userSynchronizeSso">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+			</properties>
+		</aspect>
 
 		<aspect name="bcpg:advSearchAspect">
 			<properties>
