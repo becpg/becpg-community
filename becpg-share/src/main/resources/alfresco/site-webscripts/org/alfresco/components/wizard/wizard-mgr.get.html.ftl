@@ -9,8 +9,6 @@
    <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/documentlibrary/custom-documentlist.css" group="documentlibrary"/>
    <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/documentlibrary/custom-toolbar.css" group="documentlibrary"/>
    <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/entity-charact-views/documents-view.css" group="documentlibrary"/>
-   <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/wizard/wizard-toolbar.css" group="wizard-toolbar" />
-   
 
 	<#include "../../modules/entity-datagrid/include/entity-datagrid.css.ftl"/>
     <@link href="${url.context}/res/components/wizard/wizard-mgr.css" group="wizard"/>
@@ -36,7 +34,6 @@
     <@script src="${url.context}/res/js/lib/jquery-1.12.4/jquery-1.12.4.min.js" group="wizard"/>
     <@script src="${url.context}/res/components/wizard/jquery-steps.js" group="wizard"/>
     <@script src="${url.context}/res/components/wizard/wizard-mgr.js" group="wizard"/>
-    <@script src="${url.context}/res/components/wizard/wizard-toolbar.js" group="wizard-toolbar"/>
 
 </@>
 
@@ -44,7 +41,7 @@
 
 <@markup id="widgets">
    <@inlineScript group="wizard">
-	Alfresco.constants.DASHLET_RESIZE = true && YAHOO.env.ua.mobile === null;
+		    Alfresco.constants.DASHLET_RESIZE = true && YAHOO.env.ua.mobile === null;
    </@>
  <@inlineScript group="comment">
   	Alfresco.CommentsList.prototype.onReady =  function CommentList_onReady()
@@ -75,67 +72,90 @@
 </@>
 
 <@markup id="html">
-  <@uniqueIdDiv>
-    <#assign el=args.htmlid?html>
-    <div class="wizard-container">
-      <div class="wizard-content">
-         <div class="datalist-toolbar toolbar">
-       		 <div class="header-bar flat-button theme-bg-2">
-       			 <div class="left"><h1 id="${el}-wizardTitle" class="hidden"></h1></div>
-       		     <div id="${el}-wizard-toolbar"  class="right"></div>
-       		</div>		 
-        </div>
-        <div class="clear"></div>
-        <div class="wizard-mgr">
-           <div id="${el}-wizard"></div>
-        </div>
-        <#if catalogId??>
-          <div class="wizard-catalog" class="hidden">
-             <div id="${el}-step-step1_cat">
-                 <div id="${el}-step-step1_cat-entity-catalog"></div>
-                </div>
-             </div>
-         </#if>
-        <#if comments>
-          <div  id="${el}-commentsList" class="wizard-comments hidden">
-            <div id="${el}-body" class="comments-list">
-              <div id="${el}-add-comment">
-                <div id="${el}-add-form-container" class="theme-bg-color-4 hidden"></div>
-              </div>
-              <div class="comments-list-actions">
-                <div class="left">
-                  <div id="${el}-actions" class="hidden">
-                    <button id="${el}-add-comment-button">${msg("button.addComment")}</button>
-                  </div>
-                </div>
-                <div class="right">
-                  <div id="${el}-paginator-top"></div>
-                </div>
-                <div class="clear"></div>
-              </div>
-              <hr class="hidden" />
-              <div id="${el}-comments-list"></div>
-              <hr class="hidden" />
-              <div class="comments-list-actions">
-                <div class="left"></div>
-                <div class="right">
-                  <div id="${el}-paginator-bottom"></div>
-                </div>
-                <div class="clear"></div>
-              </div>
-            </div>
-          </div>
-        </#if>
-        	<#-- template -->
-		    <div id="custom-toolBar-template-button" class="hidden" >
-			    <span class="yui-button yui-push-button">
-			       <span class="first-child">
-			             <button type="button" ></button>
-			       </span>
-			</span>
-		</div>
-      </div>
-    </div>
-  </@uniqueIdDiv>
-</@markup>
-
+   <@uniqueIdDiv>
+	   	<#assign el=args.htmlid?html>
+	   		  <div id="alf-filters" width="1000px"></div>
+	    	  <#if comments || catalogId??>
+	    	 	<div class="wizard-container">	    	 		
+			         <div  class="wizard-content">
+			  </#if>  
+			  			<div class="clear"></div>
+			   			<div class="wizard-mgr">     
+				          <h1 id="${el}-wizardTitle" class="hidden"></h1>
+				          <div id="${el}-wizard"></div>		
+						</div>          		          
+	         	<#if comments || catalogId??>
+	         		 </div>
+	         		 
+	         		 <#if comments && catalogId??>
+	         		 	 <div id="${el}-tabview" class="yui-navset wizard-comments">
+									<ul class="yui-nav" >
+								   		<li class="selected" ><a href="#${el}-comments" ><em>${msg("header.comments")}</em></a></li>
+								   		<li ><a href="#${el}-catalogs"><em>${msg("label.property_completion")}</em></a></li>
+								   	</ul>
+						   <div class="yui-content properties-tab">
+								 <div id="tab_${el}-comments">  	
+	         		 <#else>
+	         		   <#if comments >	 
+	         		 	 <div class="wizard-comments">
+	         			</#if>	 
+	         		 </#if>
+	         		 
+			        <#if comments >	 
+			        	 
+							         <div id="${el}-body" class="comments-list">
+							            <div id="${el}-add-comment">
+							               <div id="${el}-add-form-container" class="theme-bg-color-4 hidden"></div>
+							            </div>
+							            <div class="comments-list-actions">
+							               <div class="left">
+							                  <div id="${el}-actions" class="hidden">
+							                     <button id="${el}-add-comment-button">${msg("button.addComment")}</button>
+							                  </div>
+							               </div>
+							               <div class="right">
+							                  <div id="${el}-paginator-top"></div>
+							               </div>
+							               <div class="clear"></div>
+							            </div>
+							            <hr class="hidden"/>
+							            <div id="${el}-comments-list"></div>
+							            <hr class="hidden"/>
+							            <div class="comments-list-actions">
+							               <div class="left">
+							               </div>
+							               <div class="right">
+							                  <div id="${el}-paginator-bottom"></div>
+							               </div>
+							               <div class="clear"></div>
+							            </div>
+							         </div>
+							     
+	         		  </div>
+			         </#if> 
+	         		  
+		         		 <#if comments && catalogId??>
+		         		  <div id="tab_${el}-catlogs">
+		         		  <#else>
+		         		  <#if catalogId?? >	 
+		         		 	<div class="wizard-catalog"> 
+		         		 </#if>
+		         		 </#if>
+			         		 <#if catalogId??>
+				         	 		         	 	
+				         		 <div id="${el}-step-step1_cat">
+									  <div id="${el}-step-step1_cat-entity-catalog"></div> 
+								 </div>	
+								 </div>
+					  	 </#if>
+					  
+					  
+					   <#if comments && catalogId??>
+					  	</div></div>
+					   </#if>
+					  
+					</div>
+					
+			</#if>
+   </@>
+</@>

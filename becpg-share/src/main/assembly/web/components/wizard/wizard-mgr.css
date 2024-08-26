@@ -15,7 +15,7 @@
     float: none;
 }
 
-/* div.wizard-comments {
+div.wizard-comments {
 	  margin-top: 20px;
 	  width: 21%;
 	  overflow: hidden;
@@ -26,15 +26,16 @@ div.wizard-catalog {
 	  width: 21%;
 	  overflow: hidden;
 }
- */
+
 div.wizard-container{
+	float: left; 
 	clear: none;
 	width: 100%;
 }
 
 div.wizard-content {
-	  width: 100%;
-	  min-height:100%;
+	  float: left;
+	  width: 78%;
 	  overflow: hidden;
 }
 
@@ -321,7 +322,7 @@ div.wizard-content {
 
 * .wizard  .datagrid .scrollableList {
 	padding: 0;
-	height: calc(100vh - 350px);
+	height: 450px;
 }
 
 
@@ -347,6 +348,7 @@ div.wizard-content {
 .wizard .datagrid .yui-dt-col-actions {
 	border-right: none;
 }
+
 
 /**
  Bar
