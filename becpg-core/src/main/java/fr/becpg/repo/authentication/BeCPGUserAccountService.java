@@ -2,7 +2,6 @@ package fr.becpg.repo.authentication;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,6 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.authentication.provider.IdentityServiceAccountProvider;
 import fr.becpg.repo.mail.BeCPGMailService;
 
@@ -109,12 +109,11 @@ public class BeCPGUserAccountService {
 				if (propMap.containsKey(ContentModel.PROP_LASTNAME) && propMap.get(ContentModel.PROP_LASTNAME) == null) {
 					propMap.put(ContentModel.PROP_LASTNAME, "");
 				}
-
+				
 				personNodeRef = personService.createPerson(propMap);
 
-				createAuthentication(userAccount);
+				createAuthentication(userAccount, personNodeRef);
 
-				
 				for (String authority : userAccount.getAuthorities()) {
 
 					String[] grp = authority.split(PATH_SEPARATOR);
@@ -138,7 +137,9 @@ public class BeCPGUserAccountService {
 					}
 
 					if ((currGroup != null) && !currGroup.isEmpty()) {
-						logger.debug("Add user  " + userName + " to " + currGroup);
+						if (logger.isDebugEnabled()) {
+							logger.debug("Add user  " + userName + " to " + currGroup);
+						}
 
 						authorityService.addAuthority(currGroup, userName);
 					}
@@ -158,25 +159,31 @@ public class BeCPGUserAccountService {
 
 	}
 
-	private void createAuthentication(BeCPGUserAccount userAccount) {
+	private void createAuthentication(BeCPGUserAccount userAccount, NodeRef personNodeRef) {
 		if (Boolean.TRUE.equals(identityServiceAccountProvider.isEnabled())) {
-			logger.debug("Create user in Identity Service");
+			if (logger.isDebugEnabled()) {
+				logger.debug("Create user in Identity Service");
+			}
 			identityServiceAccountProvider.registerAccount(userAccount);
-			Set<String> zones = authorityService.getAuthorityZones(userAccount.getUserName());
-
-			if (zones == null) {
-				zones = new HashSet<>();
-			}
-
-			if (!zones.contains(identityServiceAccountProvider.getZoneId())) {
-				zones.add(identityServiceAccountProvider.getZoneId());
-				authorityService.addAuthorityToZones(userAccount.getUserName(), zones);
-			}
-
+			
+			addAuthorityToIdsZone(userAccount.getUserName());
+			
+			nodeService.setProperty(personNodeRef, BeCPGModel.PROP_IS_SSO_USER, true);
 		} else {
 			authenticationService.createAuthentication(userAccount.getUserName(), userAccount.getPassword().toCharArray());
 		}
 
+	}
+
+	private void addAuthorityToIdsZone(String authority) {
+		Set<String> zones = authorityService.getAuthorityZones(authority);
+		String zoneId = identityServiceAccountProvider.getZoneId();
+		if (zones == null || !zones.contains(zoneId)) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("add authority '" + authority + "' to zone '" + zoneId + "'");
+			}
+			authorityService.addAuthorityToZones(authority, Set.of(zoneId));
+		}
 	}
 
 	private String createTenantAware(String userName) {
@@ -188,7 +195,7 @@ public class BeCPGUserAccountService {
 		return userName;
 	}
 
-	public void synchronizeSso(String username) {
+	public void synchronizeSsoUser(String username) {
 		if (Boolean.TRUE.equals(identityServiceAccountProvider.isEnabled())) {
 			if (!personService.personExists(username)) {
 				throw new IllegalStateException("user does not exist: " + username);
@@ -210,15 +217,21 @@ public class BeCPGUserAccountService {
 			userAccount.getExtraProps().putAll(extraProps);
 			
 			if (identityServiceAccountProvider.registerAccount(userAccount)) {
-				logger.debug("user account successfully registered by identity service: " + userAccount.getUserName());
+				if (logger.isDebugEnabled()) {
+					logger.debug("user '" + username + "' was successfully registered by identity service");
+				}
 				beCPGMailService.sendMailNewUser(personNodeRef, username, userAccount.getPassword(), false);
-			} else {
-				logger.debug("user account already registered by identity service: " + userAccount.getUserName());
+			} else if (logger.isDebugEnabled()) {
+				logger.debug("user '" + username + "' already exists in identity service");
 			}
+			
+			addAuthorityToIdsZone(username);
 			
 			if (repositoryAuthenticationDao.userExists(username)) {
 				repositoryAuthenticationDao.deleteUser(username);
-				logger.debug("user account successfully deleted by authentication repository: " + userAccount.getUserName());
+				if (logger.isDebugEnabled()) {
+					logger.debug("user '" + username + "' successfully deleted in authentication repository");
+				}
 			}
 		} else {
 			logger.warn("identity service is not enabled");
