@@ -3,7 +3,7 @@
 	/**
 	 * YUI Library aliases
 	 */
-	var Dom = YAHOO.util.Dom, Bubbling = YAHOO.Bubbling;
+	const Dom = YAHOO.util.Dom, Bubbling = YAHOO.Bubbling;
 
 	/**
 	 * Alfresco Slingshot aliases
@@ -21,8 +21,17 @@
 	beCPG.component.WizardMgr = function WizardMgr_constructor(htmlId)
 	{
 		beCPG.component.WizardMgr.superclass.constructor.call(this, "beCPG.component.WizardMgr", htmlId);
+		
+		// Initialise prototype properties
+		this.toolbarButtonActions = {};
+
+		this.widgets.actionButtons = {};
 
 		Bubbling.on("beforeFormRuntimeInit", this.onBeforeFormRuntimeInit, this);
+		
+		Bubbling.on("registerWizardToolbarButtonAction", this.onRegisterToolbarButtonAction, this);
+		
+		   
 		return this;
 	};
 
@@ -52,6 +61,10 @@
 					 
 					 allSteps : false,
 					 
+					 comments : false,
+					 
+					 requirements : false,
+					
 					 wizardStruct : []
 				 },
 
@@ -232,6 +245,7 @@
 
 					 }
 
+					 
 				 },
 
 				 onBeforeFormRuntimeInit : function WizardMgr_onBeforeFormRuntimeInit(layer, args)
@@ -444,6 +458,8 @@
 									 });
 						 }
 					 }
+					 
+					 this.populateToolbar(step);
 				 },
 
 				 loadDataList :   function WizardMgr_loadDataList(step){
@@ -520,7 +536,77 @@
 					 }
 
 
-				 }
+				 },
+
+				/**
+					  * Register a toolbar button action via Bubbling event
+					  */
+				onRegisterToolbarButtonAction: function WizardMgr_onRegisterToolbarButtonAction(layer, args) {
+					var obj = args[1];
+					if (obj && obj.actionName) {
+						this.toolbarButtonActions[obj.actionName] = obj;
+					}
+				},
+
+				populateToolbar: function WizardMgr_populateToolbar(step) {
+
+					var container = Dom.get(this.id + "-wizard-toolbar")
+						, template = Dom.get("custom-toolBar-template-button");
+
+					//Reset
+					if (this.widgets.actionButtons != null) {
+						for (var actionName in this.widgets.actionButtons) {
+							var widget = this.widgets.actionButtons[actionName];
+							if (typeof widget.destroy === 'function') {
+								widget.destroy();
+							}
+							this.widgets.actionButtons[actionName] = null;
+						}
+					}
+
+					container.innerHTML = "";
+					this.widgets.actionButtons = {};
+
+					 for (var actionName in this.toolbarButtonActions) {
+					         var action = this.toolbarButtonActions[actionName];
+					         if (this.widgets.actionButtons[actionName] == null 
+					               && ( action.evaluate === null || action.evaluate(this))) {
+					            
+					            if(action.createWidget){
+					                  this.widgets.actionButtons[actionName] = action.createWidget(container, this, step); 
+					              
+					            } else {
+					               
+					               var templateInstance = template.cloneNode(true);
+					               
+					               Dom.setAttribute(templateInstance,"id", this.id + "-" + actionName + "ContainerDiv");
+
+					               Dom.addClass(templateInstance, actionName);
+
+					               container.appendChild(templateInstance);
+
+					               var spanEl = Dom.getFirstChild(templateInstance);
+					               
+					            
+					               Dom.setAttribute(spanEl, "id", this.id + "-" + actionName + "Button");
+
+					               this.widgets.actionButtons[actionName] = Alfresco.util.createYUIButton(this, actionName + "Button",
+					                     action.fn);
+
+					               if(action.hideLabel !== null && action.hideLabel === true){
+					             	  this.widgets.actionButtons[actionName].set("label", "");
+					               } else {
+					             	  this.widgets.actionButtons[actionName].set("label", this.msg("button." + actionName));
+					               }
+					               
+					               this.widgets.actionButtons[actionName].set("title", this.msg("button." + actionName + ".description"));
+	
+					               Dom.removeClass(templateInstance, "hidden");
+					            }
+
+					         }
+					      }
+				}
 
 
 			});
