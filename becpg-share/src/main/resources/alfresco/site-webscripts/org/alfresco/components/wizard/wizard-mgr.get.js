@@ -5,7 +5,6 @@
 doclibCommon();
 
 
-
 function getI18N(step,itemName){
     var label = step.attributes[itemName];
     if (label == null)
@@ -68,7 +67,9 @@ function main() {
          nodeRef :  (page.url.args.nodeRef != null) ? page.url.args.nodeRef : "",
          draft : model.draft, 
          allSteps : model.allSteps,
-         wizardStruct : wizardStruct
+         wizardStruct : wizardStruct,
+		 comments : model.comments,
+		 requirements : true
       }
    };
    model.widgets = [widget];
@@ -106,7 +107,6 @@ function main() {
 	      
 	    model.widgets.push(entityCatalog);  
    }
-   
    
 }
 main();
