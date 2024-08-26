@@ -76,6 +76,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.EntityListState;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.authentication.BeCPGTicketService;
+import fr.becpg.repo.authentication.BeCPGUserAccountService;
 import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.entity.EntityDictionaryService;
@@ -179,10 +180,16 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	private BeCPGTicketService beCPGTicketService;
 
 	private BehaviourFilter policyBehaviourFilter;
+	
+	private BeCPGUserAccountService beCPGUserAccountService;
 
 	private boolean useBrowserLocale;
 
 	private boolean showUnauthorizedWarning = true;
+	
+	public void setBeCPGUserAccountService(BeCPGUserAccountService beCPGUserAccountService) {
+		this.beCPGUserAccountService = beCPGUserAccountService;
+	}
 
 	private boolean showEntitiesInTree() {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("becpg.doclibtree.showEntities"));
@@ -1754,6 +1761,10 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	
 	public boolean hasWriteLicense() {
 		return beCPGLicenseManager.hasWriteLicense();
+	}
+	
+	public void synchronizeSso(String username) {
+		beCPGUserAccountService.synchronizeSso(username);
 	}
 
 }

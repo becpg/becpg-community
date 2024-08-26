@@ -48,6 +48,10 @@ public final class BeCPGModel {
 
 	// archived entity aspect
 	public static final QName ASPECT_ARCHIVED_ENTITY = QName.createQName(BECPG_URI, "archivedEntityAspect");
+	
+	public static final QName ASPECT_USER_AUTHENTICATION = QName.createQName(BECPG_URI, "userAuthenticationAspect");
+	
+	public static final QName PROP_USER_SYNCHRONIZE_SSO = QName.createQName(BECPG_URI, "userSynchronizeSso");
 
 	public enum EntityFormat {
 		NODE, JSON, XML
