@@ -18,12 +18,19 @@
 
 .entity-catalog .catalog-name {
 	margin-right: 1em;
-	float: left;
+	/*! float: right; */
+	font-weight: bold;
+	font-size: 13px;
+	color: rgba(0, 0, 0, 0.7);
+	text-wrap: balance;
+	/*! display: inline-block; */
+	/*! text-align: center; */
+	vertical-align: top;
 }
 
 .entity-catalog .catalog {
 	margin-top: 1em;
-	border: 1px solid #eee;
+	border: 1px solid #ccc;
 }
 
 .entity-catalog .catalog progress, .entity-catalog .catalog .progress-bar, .entity-catalog .catalog .score-info {
@@ -34,8 +41,13 @@
 	width: 100%
 }
 
+.entity-catalog td {
+	margin: 0px;
+	padding: 0px;
+}
+
 .entity-catalog .date-info {
-	float:left;
+	  float:left;
     color: #777;
     font-size: 11px;
     padding-left: 5px;
@@ -47,12 +59,14 @@
 	padding-left: 20px;
 	background-repeat: no-repeat;
 	background-position: 6px 4px;
+	font-weight: bold;
 }
 
 .entity-catalog .catalog-details h3 {
 	margin-left: 0.5em;
 	margin-right: 0.3em;
 	display: inline;
+	font-size: 13px;
 }
 
 .entity-catalog .catalog-header {
@@ -63,8 +77,8 @@
 	margin-left: 1em;
 	margin-right: 1em;
 	color: #777;
-    font-size: 11px;
-  	padding-left: 8px;
+  font-size: 11px;
+  padding-left: 8px;
 }
 
 .entity-catalog .catalog-details {
@@ -78,7 +92,7 @@
 
 
 .entity-catalog progress {
-  height: 16px;
+  height: 8px;
 }
 
 .entity-catalog ul {
@@ -123,10 +137,11 @@
 .catalog-color {
 	width: 11px;
 	height: 11px;
-	display: inline-block;
 	border-radius: 11px;
-	margin-left: 5px;
+	margin-top: 2px;
 	margin-right: 5px;
+	float: left;
+	vertical-align: top;
 }
 
 .no-missing-prop {
