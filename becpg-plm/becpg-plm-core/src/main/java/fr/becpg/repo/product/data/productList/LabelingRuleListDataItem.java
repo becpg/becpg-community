@@ -55,6 +55,7 @@ public class LabelingRuleListDataItem extends BeCPGDataObject implements Synchro
 	
 	private String formula;
 	private MLText label;
+	private MLText mlTitle;
 	private LabelingRuleType labelingRuleType;
 	private List<NodeRef> components = new ArrayList<>();
 	private List<NodeRef> replacements = new ArrayList<>();
@@ -64,6 +65,26 @@ public class LabelingRuleListDataItem extends BeCPGDataObject implements Synchro
 	private SynchronisableState synchronisableState = SynchronisableState.Synchronized;
 
 	
+	/**
+	 * <p>Getter for the field <code>title</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
+	@AlfMlText
+	@AlfProp
+	@AlfQname(qname = "cm:title")
+	public MLText getMlTitle() {
+		return mlTitle;
+	}
+
+	/**
+	 * <p>Setter for the field <code>mlTitle</code>.</p>
+	 *
+	 * @param mlTitle a {@link org.alfresco.service.cmr.repository.MLText} object
+	 */
+	public void setMlTitle(MLText mlTitle) {
+		this.mlTitle = mlTitle;
+	}
 
 	
 
