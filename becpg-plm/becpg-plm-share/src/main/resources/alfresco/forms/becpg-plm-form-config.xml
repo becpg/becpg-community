@@ -7766,6 +7766,7 @@
 				<field-visibility>
 					<show id="bcpg:lrType" />
 					<show id="cm:name" />
+					<show id="cm:title" force="true" />
 					<show id="bcpg:lrLabel" />
 					<show id="bcpg:lrFormula" />
 					<show id="bcpg:lrComponents" />
@@ -7790,6 +7791,7 @@
 						</constraint-handlers>
 					</field>
 					<field id="cm:name" />
+					<field id="cm:title" />
 					<field id="bcpg:lrLabel" />
 					<field id="bcpg:lrGroup" set="2-col" />
 					<field id="bcpg:lrIsActive" set="1-col-2" />
@@ -7823,6 +7825,7 @@
 					<show id="bcpg:entityDataListState" force="true" />
 					<show id="bcpg:lrIsActive" />
 					<show id="cm:name" />
+					<show id="cm:title" force="true" />
 					<show id="bcpg:lrComponents" />
 					<show id="bcpg:lrReplacements" />
 					<show id="bcpg:lrType" />
@@ -7831,6 +7834,7 @@
 				<appearance>
 					<field id="bcpg:entityDataListState" label="hidden" />
 					<field id="bcpg:lrIsActive" label="hidden" />
+					<field id="cm:title" label="hidden" />
 				</appearance>
 			</form>
 
@@ -7858,6 +7862,7 @@
 				<field-visibility>
 					<show id="bcpg:lrType" />
 					<show id="cm:name" />
+					<show id="cm:title" force="true" />
 					<show id="bcpg:lrLabel" />
 					<show id="bcpg:lrFormula" />
 					<show id="bcpg:lrComponents" />
@@ -7882,6 +7887,7 @@
 						</constraint-handlers>
 					</field>
 					<field id="cm:name" />
+					<field id="cm:title" />
 					<field id="bcpg:lrLabel" />
 					<field id="bcpg:lrGroup" set="2-col" />
 					<field id="bcpg:lrIsActive" set="1-col-2" />
