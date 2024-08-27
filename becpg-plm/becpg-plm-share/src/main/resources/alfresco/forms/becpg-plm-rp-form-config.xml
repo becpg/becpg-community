@@ -280,6 +280,10 @@
           <show force="true" id="bcpg:code"/>
           <show force="true" id="bcpg:erpCode"/>
           <show force="false" id="bcpg:eanCode"/>
+          <show force="true" id="bcpg:advLca"/>
+          <show force="true" id="bcpg:lcaListValue"/>
+          <show force="true" id="bcpg:advSvhcAnd"/>
+          <show force="true" id="bcpg:advSvhcNot"/>
         </field-visibility>
         <appearance>
           <set appearance="bordered-panel" id="product-criteria" label-id="becpg.forms.set.product-criteria.label"/>
@@ -324,6 +328,31 @@
           	<control>
           		<control-param name="forceEditable">true</control-param>
           	</control>
+          </field>
+          <set appearance="bordered-panel" id="lca" label-id="becpg.forms.set.lca-criteria.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
+          <field id="bcpg:advLca" mandatory="false" read-only="false" set="lca">
+            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+              <control-param name="forceEditable">true</control-param>
+              <control-param name="isSearch">true</control-param>
+            </control>
+          </field>
+          <field id="bcpg:lcaListValue" mandatory="false" read-only="false" set="lca">
+            <control template="/org/alfresco/components/form/controls/numberrange.ftl">
+              <control-param name="forceEditable">true</control-param>
+            </control>
+          </field>
+          <set appearance="bordered-panel" id="svhc" label-id="becpg.forms.set.svhc-criteria.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
+          <field id="bcpg:advSvhcAnd" mandatory="false" read-only="false" set="svhc">
+            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+              <control-param name="forceEditable">true</control-param>
+              <control-param name="isSearch">true</control-param>
+            </control>
+          </field>
+          <field id="bcpg:advSvhcNot" mandatory="false" read-only="false" set="svhc">
+            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+              <control-param name="forceEditable">true</control-param>
+              <control-param name="isSearch">true</control-param>
+            </control>
           </field>
         </appearance>
       </form>
