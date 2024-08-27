@@ -955,6 +955,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 								if ((labelingRuleListDataItem.getIsManual() == null)
 										|| !Boolean.TRUE.equals(labelingRuleListDataItem.getIsManual())) {
 									labelingRuleListDataItem.update(modelLabelingRuleListDataItem);
+								} else {
+									labelingRuleListDataItem.setMlTitle(modelLabelingRuleListDataItem.getMlTitle());
 								}
 								break;
 							}

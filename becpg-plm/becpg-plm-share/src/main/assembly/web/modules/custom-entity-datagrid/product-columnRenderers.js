@@ -269,6 +269,19 @@ if (beCPG.module.EntityDataGridRenderers) {
 
 			var type = oRecord.getData("itemType");
 
+			var title = null;
+			if (data && data.value) {
+			    var itemData = oRecord.getData("itemData");
+			    if (type == "bcpg:labelingRuleList" && itemData && itemData["prop_cm_title"] && itemData["prop_cm_title"].value != null) {
+			        title = itemData["prop_cm_title"].value;
+			    }
+
+			    if (!title || !title.trim()) {
+			        title = data.value;
+			    }
+			}
+
+
 			if (type && type.split(":").length > 1) {
 				var metadata = type.split(":")[1];
 
@@ -276,12 +289,12 @@ if (beCPG.module.EntityDataGridRenderers) {
 					var entityUrl = beCPG.util.entityURL(oRecord.getData("siteId"), oRecord.getData("nodeRef"), type, null, "View-properties");
 
 					if (entityUrl) {
-						return '<span class="' + metadata + '" ><a class="theme-color-1" href="' + entityUrl + '">' + Alfresco.util.encodeHTML(data.value) + '</a></span>';
+						return '<span class="' + metadata + '" ><a class="theme-color-1" href="' + entityUrl + '">' + Alfresco.util.encodeHTML(title) + '</a></span>';
 					}
 				}
 			}
 
-			return Alfresco.util.encodeHTML(data.value);
+			return Alfresco.util.encodeHTML(title);
 		}
 
 	});
@@ -488,7 +501,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 							var k = keys[i];
 							var value = jsonData.v[k];
 							if (k && value) {
-							    minimumFractionDigits = 0;
+								minimumFractionDigits = 0;
 								if (k == "EU" && jsonData.v[key] != null && value < 10 && value >= 1) {
 									minimumFractionDigits = 1;
 								}
@@ -502,7 +515,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 
 								ret += '<div>' +
 									'<h3>' + scope.msg("nutrient.details.header", k + ' <img  title="' + k + '" src="' + Alfresco.constants.URL_CONTEXT + 'res/components/images/flags/' + k.split("_")[0].toLowerCase() + '.png" />') + '</h3>' +
-									'<p>' + scope.msg("nutrient.details.value", value.toLocaleString(beCPG.util.getJSLocale(),{
+									'<p>' + scope.msg("nutrient.details.value", value.toLocaleString(beCPG.util.getJSLocale(), {
 										minimumFractionDigits: minimumFractionDigits,
 										maximumFractionDigits: 5,
 										useGrouping: true
