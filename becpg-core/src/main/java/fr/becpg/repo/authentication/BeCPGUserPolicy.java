@@ -30,18 +30,18 @@ public class BeCPGUserPolicy extends AbstractBeCPGPolicy implements OnAddAspectP
 
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
-		if (before.containsKey(BeCPGModel.PROP_USER_SYNCHRONIZE_SSO) && (boolean) before.get(BeCPGModel.PROP_USER_SYNCHRONIZE_SSO)) {
+		if (before.containsKey(BeCPGModel.PROP_IS_SSO_USER) && (boolean) before.get(BeCPGModel.PROP_IS_SSO_USER)) {
 			return;
 		}
-		if (after.containsKey(BeCPGModel.PROP_USER_SYNCHRONIZE_SSO)	&& (boolean) after.get(BeCPGModel.PROP_USER_SYNCHRONIZE_SSO)) {
+		if (after.containsKey(BeCPGModel.PROP_IS_SSO_USER)	&& (boolean) after.get(BeCPGModel.PROP_IS_SSO_USER)) {
 			queueNode(nodeRef);
 		}
 	}
 
 	@Override
 	public void onAddAspect(NodeRef nodeRef, QName aspectTypeQName) {
-		if (nodeService.getProperty(nodeRef, BeCPGModel.PROP_USER_SYNCHRONIZE_SSO) != null
-				&& (boolean) nodeService.getProperty(nodeRef, BeCPGModel.PROP_USER_SYNCHRONIZE_SSO)) {
+		if (nodeService.getProperty(nodeRef, BeCPGModel.PROP_IS_SSO_USER) != null
+				&& (boolean) nodeService.getProperty(nodeRef, BeCPGModel.PROP_IS_SSO_USER)) {
 			queueNode(nodeRef);
 		}
 	}
@@ -49,7 +49,7 @@ public class BeCPGUserPolicy extends AbstractBeCPGPolicy implements OnAddAspectP
 	@Override
 	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 		for (NodeRef pendingNode : pendingNodes) {
-			beCPGUserAccountService.synchronizeSso((String) nodeService.getProperty(pendingNode, ContentModel.PROP_USERNAME));
+			beCPGUserAccountService.synchronizeSsoUser((String) nodeService.getProperty(pendingNode, ContentModel.PROP_USERNAME));
 		}
 		return true;
 	}
