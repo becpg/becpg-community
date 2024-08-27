@@ -1,6 +1,8 @@
 package fr.becpg.repo.product.formulation.nutrient;
 
 import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
 import org.alfresco.util.Pair;
@@ -178,7 +180,14 @@ public class EuropeanNutrientRegulation extends AbstractNutrientRegulation {
 				}
 			}
 		}
-		
+
+		if (value != null && value < 10 && value >= 1 && roundedValue != null && nutrientTypeCode != null
+				&& !(nutrientTypeCode.equals(NutrientCode.Energykcal) || nutrientTypeCode.equals(NutrientCode.EnergykJ))) {
+			DecimalFormatSymbols symbols = new DecimalFormatSymbols(locale);
+			DecimalFormat df = new DecimalFormat("#,###.0#####", symbols);
+			return df.format(roundedValue);
+		}
+
 		return formatDouble(roundedValue, locale);
 	}
 
