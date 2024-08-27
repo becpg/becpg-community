@@ -5634,7 +5634,7 @@
 		
 		<aspect name="bcpg:userAuthenticationAspect">
 			<properties>
-				<property name="bcpg:userSynchronizeSso">
+				<property name="bcpg:isSsoUser">
 					<type>d:boolean</type>
 					<mandatory>false</mandatory>
 					<index enabled="false" />

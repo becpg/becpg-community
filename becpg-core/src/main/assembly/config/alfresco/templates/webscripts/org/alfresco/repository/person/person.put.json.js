@@ -94,9 +94,9 @@ function main()
    { 
       person.properties["bcpg:userContentLocale"] = json.get("userContentLocale"); 
    }
-   if (!json.isNull("synchronizeSso")) {
-		if (json.get("synchronizeSso")) {
-			person.properties["bcpg:userSynchronizeSso"] = true; 
+   if (!json.isNull("isSsoUser")) {
+		if (json.get("isSsoUser")) {
+			person.properties["bcpg:isSsoUser"] = true; 
 		}
 	}
    // Update the person node with the modified details
