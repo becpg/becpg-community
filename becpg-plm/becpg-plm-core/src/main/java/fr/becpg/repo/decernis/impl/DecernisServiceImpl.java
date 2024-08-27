@@ -26,6 +26,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.extensions.surf.util.AbstractLifecycleBean;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -59,7 +61,9 @@ import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
  * @version $Id: $Id
  */
 @Service("decernisService")
-public class DecernisServiceImpl implements DecernisService {
+public class DecernisServiceImpl  extends AbstractLifecycleBean implements DecernisService{
+
+
 
 	private static final Log logger = LogFactory.getLog(DecernisServiceImpl.class);
 
@@ -86,6 +90,19 @@ public class DecernisServiceImpl implements DecernisService {
 	 */
 	public DecernisServiceImpl() {
 		super();
+	}
+	
+
+	public boolean isEnabled() {
+		return serverUrl != null && !serverUrl.isBlank() && token != null && !token.isBlank();
+	}
+	
+	@Override
+	protected void onBootstrap(ApplicationEvent event) {
+		if(isEnabled()) {
+			logger.info("Starting Decernis Module, Set DNS Cache to 5s");
+			java.security.Security.setProperty("networkaddress.cache.ttl", "5");
+		}
 	}
 
 	// 1, Food Additives
@@ -683,5 +700,11 @@ public class DecernisServiceImpl implements DecernisService {
 		}
 
 		return key.toString();
+	}
+	
+	@Override
+	protected void onShutdown(ApplicationEvent event) {
+	//DO Nothing
+		
 	}
 }

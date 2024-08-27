@@ -20,7 +20,7 @@ public class RestTemplateHelper {
 	
 	// Static instance of RestTemplate to be reused across the application
     private static final RestTemplate restTemplate;
-
+    
     static {
         HttpClientProvider httpClientProvider = new HttpClientProvider();
         CloseableHttpClient httpClient = httpClientProvider.createHttpClient();
@@ -56,6 +56,7 @@ public class RestTemplateHelper {
 	            
 	            // Set the time after which an idle connection will be revalidated
 	            connectionManager.setValidateAfterInactivity(5000); // 5 seconds
+	            builder.setConnectionTimeToLive(5, TimeUnit.SECONDS);
 
 	            // Set up connection configuration (like TTL) and socket configuration
 	            builder.setConnectionManager(connectionManager);
