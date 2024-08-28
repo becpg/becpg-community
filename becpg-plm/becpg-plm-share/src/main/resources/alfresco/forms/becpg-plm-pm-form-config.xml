@@ -609,42 +609,42 @@
           <show force="true" id="bcpg:eanCode"/>
           <show force="true" id="bcpg:certificateDate"/>
           <show force="true" id="bcpg:suppliers"/>
-          <show force="true" id="bcpg:supplierPlants"/>
-          <show force="true" id="bcpg:supplierRefCode"/>
-          <show force="true" id="bcpg:plants"/>
-          <show force="true" id="bcpg:productGeoOrigin"/>
-          <show force="true" id="bcpg:entityTplRef"/>
-          <show force="true" id="pack:tare"/>
-          <show force="true" id="pack:tareUnit"/>
+          <show force="false" id="bcpg:supplierPlants"/>
+          <show force="false" id="bcpg:supplierRefCode"/>
+          <show force="false" id="bcpg:plants"/>
+          <show force="false" id="bcpg:productGeoOrigin"/>
+          <show force="false" id="bcpg:entityTplRef"/>
+          <show force="false" id="pack:tare"/>
+          <show force="false" id="pack:tareUnit"/>
           
-          <show force="true" id="gs1:packagingShapeCode"/>
-          <show force="true" id="pack:length"/>
-          <show force="true" id="pack:width"/>
-          <show force="true" id="pack:height"/>
-          <show force="true" id="pack:pmIntLength"/>
-          <show force="true" id="pack:pmIntWidth"/>
-          <show force="true" id="pack:pmIntHeight"/>
-          <show force="true" id="pack:pmThickness"/>
-          <show force="true" id="pack:pmPaperWeight"/>
-          <show force="true" id="pack:pmMaterialRefs"/>
-          <show force="true" id="pack:pmAdditionnalMaterial"/>
-          <show force="true" id="pack:pmCoreDiameter"/>
-          <show force="true" id="pack:pmCoilDiameter"/>
-          <show force="true" id="pack:pmPrintNbColors"/>
-          <show force="true" id="pack:pmPrintColor"/>
-          <show force="true" id="pack:pmPrintType"/>
-          <show force="true" id="pack:pmPrintVarnish"/>
+          <show force="false" id="gs1:packagingShapeCode"/>
+          <show force="false" id="pack:length"/>
+          <show force="false" id="pack:width"/>
+          <show force="false" id="pack:height"/>
+          <show force="false" id="pack:pmIntLength"/>
+          <show force="false" id="pack:pmIntWidth"/>
+          <show force="false" id="pack:pmIntHeight"/>
+          <show force="false" id="pack:pmThickness"/>
+          <show force="false" id="pack:pmPaperWeight"/>
+          <show force="false" id="pack:pmMaterialRefs"/>
+          <show force="false" id="pack:pmAdditionnalMaterial"/>
+          <show force="false" id="pack:pmCoreDiameter"/>
+          <show force="false" id="pack:pmCoilDiameter"/>
+          <show force="false" id="pack:pmPrintNbColors"/>
+          <show force="false" id="pack:pmPrintColor"/>
+          <show force="false" id="pack:pmPrintType"/>
+          <show force="false" id="pack:pmPrintVarnish"/>
        
-          <show force="true" id="gs1:isPackagingMarkedReturnable"/>
-          <show force="true" id="gs1:packagingTermsAndConditionsCode"/>
+          <show force="false" id="gs1:isPackagingMarkedReturnable"/>
+          <show force="false" id="gs1:packagingTermsAndConditionsCode"/>
         
-          <show force="true" id="gs1:packagingRecyclingProcessTypeCode"/>
-		  <show force="true" id="gs1:packagingRecyclingSchemeCode"/>
+          <show force="false" id="gs1:packagingRecyclingProcessTypeCode"/>
+		  <show force="false" id="gs1:packagingRecyclingSchemeCode"/>
 		  
-          <show force="true" id="gs1:sortingBonusCriteria"/>
-          <show force="true" id="gs1:sortingMalusCriteria"/>
-          <show force="true" id="gs1:sortingInstructions"/>
-          <show force="true" id="gs1:consumerUsageInstructions"/>
+          <show force="false" id="gs1:sortingBonusCriteria"/>
+          <show force="false" id="gs1:sortingMalusCriteria"/>
+          <show force="false" id="gs1:sortingInstructions"/>
+          <show force="false" id="gs1:consumerUsageInstructions"/>
       
         </field-visibility>
       </form>
