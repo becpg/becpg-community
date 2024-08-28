@@ -1573,16 +1573,15 @@
       
       <form id="product-list">
         <field-visibility>
-          <show force="true" id="bcpg:legalName" />
-		  <show force="true" id="bcpg:productHierarchy1" />
+          <show force="true" id="cm:name"/>
+          <show force="true" id="cm:title"/>
+          <show force="true" id="bcpg:productHierarchy1" />
 		  <show force="true" id="bcpg:productHierarchy2" />
+          <show force="true" id="bcpg:legalName" />
 		  <show force="true" id="bcpg:productState" />
 		  <show force="true" id="bcpg:code" />
 		  <show force="true" id="bcpg:erpCode"/>
-		  <show force="true" id="bcpg:eanCode" />
 		  <show force="true" id="bcpg:suppliers"  />
-          <show force="false" id="cm:name"/>
-          <show force="false" id="cm:title"/>
           <show force="false" id="bcpg:productComments"/>
           <show force="false" id="cm:description"/>
           <show force="false" id="bcpg:packagingDescription"/>
