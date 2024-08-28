@@ -8533,9 +8533,9 @@ if ( row["projectCompletionDate"] != null &amp;&amp; row["projectCompletionDate"
                 <structure>
                     <property name="name">projectCompletionDate</property>
                     <text-property name="displayName">projectCompletionDate</text-property>
-                    <expression name="expression" type="javascript">var projectStartDate = new Date(dataSetRow["projectCompletionDate"]);
-projectStartDate.setTime(projectStartDate.getTime() + (3 * 60 * 60 * 1000));
-projectStartDate;</expression>
+                    <expression name="expression" type="javascript">var projectCompletionDate = new Date(dataSetRow["projectCompletionDate"]);
+projectCompletionDate.setTime(projectCompletionDate.getTime() + (3 * 60 * 60 * 1000));
+projectCompletionDate;</expression>
                     <property name="dataType">date</property>
                     <property name="allowExport">true</property>
                 </structure>
