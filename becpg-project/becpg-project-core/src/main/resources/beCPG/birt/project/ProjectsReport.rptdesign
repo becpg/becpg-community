@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
-    <property name="createdBy">Eclipse BIRT Designer Version 4.4.2.v201410272105 Build &lt;4.4.2.v20150217-1805></property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.7.0.v201706222054</property>
     <list-property name="userProperties">
         <structure>
             <property name="name">Data Cube test.projects.x</property>
@@ -8533,7 +8533,9 @@ if ( row["projectCompletionDate"] != null &amp;&amp; row["projectCompletionDate"
                 <structure>
                     <property name="name">projectCompletionDate</property>
                     <text-property name="displayName">projectCompletionDate</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["projectCompletionDate"]</expression>
+                    <expression name="expression" type="javascript">var projectStartDate = new Date(dataSetRow["projectCompletionDate"]);
+projectStartDate.setTime(projectStartDate.getTime() + (3 * 60 * 60 * 1000));
+projectStartDate;</expression>
                     <property name="dataType">date</property>
                     <property name="allowExport">true</property>
                 </structure>
@@ -8599,7 +8601,9 @@ else{
                 <structure>
                     <property name="name">projectStartDate</property>
                     <text-property name="displayName">projectStartDate</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["projectStartDate"]</expression>
+                    <expression name="expression" type="javascript">var projectStartDate = new Date(dataSetRow["projectStartDate"]);
+projectStartDate.setTime(projectStartDate.getTime() + (3 * 60 * 60 * 1000));
+projectStartDate;</expression>
                     <property name="dataType">date</property>
                     <property name="allowExport">true</property>
                 </structure>
