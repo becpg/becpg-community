@@ -57,6 +57,7 @@
 				<form labelId="search.form.label.qa_qualityControl" descriptionId="search.form.desc.qa_qualityControl">qa:qualityControl</form>
 				<form labelId="search.form.label.qa_batch" descriptionId="search.form.desc.qa_batch">qa:batch</form>
 				<form labelId="search.form.label.bcpg_productCollection" descriptionId="search.form.desc.bcpg_productCollection">bcpg:productCollection</form>
+				<form labelId="search.form.label.bcpg_productSpecification" descriptionId="search.form.desc.bcpg_productSpecification">bcpg:productSpecification</form>
 			</forms>
 		</advanced-search>
 	</config>
