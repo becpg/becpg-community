@@ -46,30 +46,32 @@ else if (args["user"] != null)
    
    var groups = people.getContainerGroups(object);
    for (var i=0;i<groups.length;i++) {
-       if("GROUP_ExternalUser" == groups[i].properties["cm:authorityName"]){
+	   
+	   var groupName = groups[i].properties["cm:authorityName"];
+       if(groupName == "GROUP_ExternalUser"){
     	   model.capabilities["isbeCPGExternalUser"] = true;
        }
-       if("GROUP_LanguageMgr" == groups[i].properties["cm:authorityName"]){
+       if(groupName == "GROUP_LanguageMgr"){
     	   model.capabilities["isbeCPGLanguageMgr"] = true;
        }
-       if("GROUP_SystemMgr" == groups[i].properties["cm:authorityName"]){
+       if(groupName == "GROUP_SystemMgr"){
     	   model.capabilities["isbeCPGSystemManager"] = true;
        }
-       if("GROUP_OlapUser" == groups[i].properties["cm:authorityName"]){
+       if(groupName == "GROUP_OlapUser"){
     	   isOlapUser = true;
        }
-       if("GROUP_AiUser" == groups[i].properties["cm:authorityName"]){
+       if(groupName == "GROUP_AiUser"){
     	  model.capabilities["isAIUser"] = true;
        }
-       if("GROUP_ALFRESCO_ADMINISTRATORS" == groups[i].properties["cm:authorityName"]){
+       if(groupName == "GROUP_ALFRESCO_ADMINISTRATORS"){
     	   isAdmin = true;
        }
 
-       if("GROUP_LicenseWriteNamed" == groups[i].properties["cm:authorityName"]
-       	|| "GROUP_LicenseReadNamed" == groups[i].properties["cm:authorityName"]
-       	|| "GROUP_LicenseWriteConcurrent" == groups[i].properties["cm:authorityName"]
-       	|| "GROUP_LicenseReadConcurrent" == groups[i].properties["cm:authorityName"]
-       	|| "GROUP_LicenseSupplierConcurrent" == groups[i].properties["cm:authorityName"]){
+       if(groupName == "GROUP_LicenseWriteNamed"
+       	|| groupName == "GROUP_LicenseReadNamed"
+       	|| groupName == "GROUP_LicenseWriteConcurrent"
+       	|| groupName == "GROUP_LicenseReadConcurrent"
+       	|| groupName == "GROUP_LicenseSupplierConcurrent"){
     	   isMemberOfAllowedGroup = true;
        }
    }
@@ -102,8 +104,10 @@ else if (args["user"] != null)
   }
 	
 	model.capabilities["isLicenseValid"] = !bcpg.isShowLicenceWarning()  || bcpg.isLicenseValid() || !isAdmin;
-	model.capabilities["isMemberOfLicenseGroup"] = !bcpg.isShowUnauthorizedWarning() || userId == "admin"|| userId.endsWith("@becpg.fr") || isMemberOfAllowedGroup;
-
+	model.capabilities["isMemberOfLicenseGroup"] = !bcpg.isShowUnauthorizedWarning() || bcpg.isSpecialLicenceUser() || isMemberOfAllowedGroup;
+	model.capabilities["floatingLicensesExceeded"] = bcpg.isShowUnauthorizedWarning() && !bcpg.isSpecialLicenceUser() && bcpg.floatingLicensesExceeded(session.getId());
+	
+	
   model.immutableProperties = people.getImmutableProperties(userId);
 }
 

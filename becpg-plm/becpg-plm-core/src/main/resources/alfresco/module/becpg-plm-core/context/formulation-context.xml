@@ -206,6 +206,12 @@
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="nodeService" ref="nodeService" />
 				</bean>
+				<bean class="fr.becpg.repo.product.formulation.GlopFormulationHandler">
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+					<property name="glopService" ref="glopService" />
+					<property name="namespaceService" ref="namespaceService" />
+					<property name="nodeService" ref="nodeService" />
+				</bean>
 				<bean parent="abstractSimpleFormulationHandler" class="fr.becpg.repo.product.formulation.SvhcCalculatingFormulationHandler" />
 				<bean class="fr.becpg.repo.project.formulation.ScoreListFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
@@ -254,6 +260,11 @@
 					<property name="scriptService" ref="scriptService" />
 					<property name="formulaService" ref="formulaService" />
 					<property name="contentService" ref="contentService" />
+					<property name="associationService" ref="associationService" />
+				</bean>
+				<bean class="fr.becpg.repo.product.formulation.SurveyQuestionFormulationHandler">
+					<property name="nodeService" ref="nodeService" />
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="associationService" ref="associationService" />
 				</bean>
 			</list>
@@ -358,7 +369,6 @@
 				<bean class="fr.becpg.repo.product.requirement.IngRequirementScanner">
 					<property name="mlNodeService" ref="mlAwareNodeService" />
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
-					<property name="nodeService" ref="nodeService" />
 					<property name="addInfoReqCtrl" value="${beCPG.formulation.specification.addInfoReqCtrl}" />
 				</bean>
 				<bean class="fr.becpg.repo.product.requirement.NutsRequirementScanner">

@@ -3,6 +3,9 @@ package fr.becpg.repo.survey.data;
 import java.util.List;
 import java.util.Objects;
 
+import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
+
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -44,6 +47,11 @@ public class SurveyQuestion extends BeCPGDataObject {
 	private List<SurveyQuestion> nextQuestions;
 
 	private Integer sort;
+	
+
+	private List<NodeRef> fsLinkedCharactRefs;
+	private List<QName> fsLinkedTypes;
+	private List<NodeRef> fsLinkedHierarchy;
 
 	/**
 	 * <p>Getter for the field <code>sort</code>.</p>
@@ -346,13 +354,47 @@ public class SurveyQuestion extends BeCPGDataObject {
 		this.nextQuestions = nextQuestions;
 	}
 
-	/** {@inheritDoc} */
+	@AlfMultiAssoc
+	@AlfReadOnly
+	@AlfQname(qname = "survey:fsLinkedCharactRefs")
+	public List<NodeRef> getFsLinkedCharactRefs() {
+		return fsLinkedCharactRefs;
+	}
+
+	public void setFsLinkedCharactRefs(List<NodeRef> fsLinkedCharactRefs) {
+		this.fsLinkedCharactRefs = fsLinkedCharactRefs;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "survey:fsLinkedTypes")
+	public List<QName> getFsLinkedTypes() {
+		return fsLinkedTypes;
+	}
+
+	public void setFsLinkedTypes(List<QName> fsLinkedTypes) {
+		this.fsLinkedTypes = fsLinkedTypes;
+	}
+
+	@AlfMultiAssoc
+	@AlfReadOnly
+	@AlfQname(qname = "survey:fsLinkedHierarchy")
+	public List<NodeRef> getFsLinkedHierarchy() {
+		return fsLinkedHierarchy;
+	}
+
+	public void setFsLinkedHierarchy(List<NodeRef> fsLinkedHierarchy) {
+		this.fsLinkedHierarchy = fsLinkedHierarchy;
+	}
+
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(isMandatory, isVisible, label, nextQuestions, parent, questionLowerNote, questionNote, questionScore,
-				questionUpperNote, questionUrl, surveyCriterion, responseCommentLabel, responseCommentType, responseType, sort);
+		result = prime * result
+				+ Objects.hash(fsLinkedCharactRefs, fsLinkedHierarchy, fsLinkedTypes, isMandatory, isVisible, label,
+						nextQuestions, parent, questionLowerNote, questionNote, questionScore, questionUpperNote,
+						questionUrl, responseCommentLabel, responseCommentType, responseType, sort, surveyCriterion);
 		return result;
 	}
 
@@ -366,22 +408,33 @@ public class SurveyQuestion extends BeCPGDataObject {
 		if (getClass() != obj.getClass())
 			return false;
 		SurveyQuestion other = (SurveyQuestion) obj;
-		return Objects.equals(isMandatory, other.isMandatory) && Objects.equals(isVisible, other.isVisible) && Objects.equals(label, other.label)
+		return Objects.equals(fsLinkedCharactRefs, other.fsLinkedCharactRefs)
+				&& Objects.equals(fsLinkedHierarchy, other.fsLinkedHierarchy)
+				&& Objects.equals(fsLinkedTypes, other.fsLinkedTypes) && Objects.equals(isMandatory, other.isMandatory)
+				&& Objects.equals(isVisible, other.isVisible) && Objects.equals(label, other.label)
 				&& Objects.equals(nextQuestions, other.nextQuestions) && Objects.equals(parent, other.parent)
-				&& Objects.equals(questionLowerNote, other.questionLowerNote) && Objects.equals(questionNote, other.questionNote)
-				&& Objects.equals(questionScore, other.questionScore) && Objects.equals(questionUpperNote, other.questionUpperNote)
-				&& Objects.equals(questionUrl, other.questionUrl) && Objects.equals(surveyCriterion, other.surveyCriterion)
-				&& Objects.equals(responseCommentLabel, other.responseCommentLabel) && Objects.equals(responseCommentType, other.responseCommentType)
-				&& Objects.equals(responseType, other.responseType) && Objects.equals(sort, other.sort);
+				&& Objects.equals(questionLowerNote, other.questionLowerNote)
+				&& Objects.equals(questionNote, other.questionNote)
+				&& Objects.equals(questionScore, other.questionScore)
+				&& Objects.equals(questionUpperNote, other.questionUpperNote)
+				&& Objects.equals(questionUrl, other.questionUrl)
+				&& Objects.equals(responseCommentLabel, other.responseCommentLabel)
+				&& Objects.equals(responseCommentType, other.responseCommentType)
+				&& Objects.equals(responseType, other.responseType) && Objects.equals(sort, other.sort)
+				&& Objects.equals(surveyCriterion, other.surveyCriterion);
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return "SurveyQuestion [parent=" + parent + ", label=" + label + ", questionNote=" + questionNote + ", questionUpperNote=" + questionUpperNote
-				+ ", questionLowerNote=" + questionLowerNote + ", questionUrl=" + questionUrl + ", surveyCriterion=" + surveyCriterion
-				+ ", questionScore=" + questionScore + ", isMandatory=" + isMandatory + ", responseType=" + responseType + ", responseCommentType="
-				+ responseCommentType + ", responseCommentLabel=" + responseCommentLabel + ", nextQuestion=" + nextQuestions + ", sort=" + sort + "]";
+		return "SurveyQuestion [parent=" + parent + ", label=" + label + ", questionNote=" + questionNote
+				+ ", questionUpperNote=" + questionUpperNote + ", questionLowerNote=" + questionLowerNote
+				+ ", questionUrl=" + questionUrl + ", surveyCriterion=" + surveyCriterion + ", questionScore="
+				+ questionScore + ", isMandatory=" + isMandatory + ", isVisible=" + isVisible + ", responseType="
+				+ responseType + ", responseCommentType=" + responseCommentType + ", responseCommentLabel="
+				+ responseCommentLabel + ", nextQuestions=" + nextQuestions + ", sort=" + sort
+				+ ", fsLinkedCharactRefs=" + fsLinkedCharactRefs + ", fsLinkedTypes=" + fsLinkedTypes
+				+ ", fsLinkedHierarchy=" + fsLinkedHierarchy + "]";
 	}
-
+	
 }

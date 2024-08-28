@@ -884,7 +884,15 @@
                 <value>true</value>
             </parameter>
 		</constraint>
-
+		
+		<constraint name="bcpg:glopTargetTasks" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>MIN</value>
+					<value>MAX</value>
+				</list>
+			</parameter>
+		</constraint>
 	</constraints>
 
 	<types>
@@ -1127,6 +1135,14 @@
 				<aspect>bcpg:entityTplRefAspect</aspect>
 				<aspect>bcpg:entityListsAspect</aspect>
 				<aspect>rep:reportEntityAspect</aspect>
+			</mandatory-aspects>
+		</type>
+		<type name="bcpg:logisticUnit">
+			<parent>bcpg:product</parent>
+			<mandatory-aspects>
+				<aspect>bcpg:eanAspect</aspect>
+				<aspect>bcpg:clientsAspect</aspect>
+				<aspect>bcpg:formulatedEntityAspect</aspect>
 			</mandatory-aspects>
 		</type>
 		<type name="bcpg:finishedProduct">
@@ -5615,6 +5631,16 @@
 				</property>
 			</properties>
 		</aspect>
+		
+		<aspect name="bcpg:userAuthenticationAspect">
+			<properties>
+				<property name="bcpg:isSsoUser">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+			</properties>
+		</aspect>
 
 		<aspect name="bcpg:advSearchAspect">
 			<properties>
@@ -5955,6 +5981,44 @@
 					<index enabled="false"></index>
 				</property>
 			</properties>
+		</aspect>
+		
+		<aspect name="bcpg:glopProductAspect">
+			<properties>
+				<property name="bcpg:glopTargetTask">
+					<type>d:text</type>
+					<index enabled="false"></index>
+					<constraints>
+						<constraint ref="bcpg:glopTargetTasks"></constraint>
+					</constraints>
+				</property>
+				<property name="bcpg:glopConstraintLists">
+					<type>d:text</type>
+					<multiple>true</multiple>
+					<index enabled="false"></index>
+				</property>
+				<property name="bcpg:glopTolerance">
+					<type>d:double</type>
+					<index enabled="false"></index>
+				</property>
+				<property name="bcpg:glopApplyOptimization">
+					<type>d:boolean</type>
+					<index enabled="false"></index>
+				</property>
+			</properties>
+			<associations>
+				<association name="bcpg:glopTargetCharact">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:charact</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
 		</aspect>
 
 		<aspect name="bcpg:propagateUpAspect">

@@ -112,11 +112,11 @@ public class HttpEntityProviderCallback implements EntityProviderCallBack {
 					visitedNodes.put(nodeRef, null);
 
 					try (InputStream entityStream = responseEntity.getContent()) {
-						NodeRef res = remoteEntityService.getTransactionService().getRetryingTransactionHelper().doInTransaction(() -> {
+						NodeRef res = remoteEntityService.serviceRegistry().transactionService().getRetryingTransactionHelper().doInTransaction(() -> {
 
 							// Only for transaction do not reenable it
-							remoteEntityService.getPolicyBehaviourFilter().disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-							remoteEntityService.getPolicyBehaviourFilter().disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
+							remoteEntityService.serviceRegistry().policyBehaviourFilter().disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+							remoteEntityService.serviceRegistry().policyBehaviourFilter().disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
 
 							return remoteEntityService.internalCreateOrUpdateEntity(nodeRef, destNodeRef, entityStream,
 									new RemoteParams(RemoteEntityFormat.xml), this, cache);

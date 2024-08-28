@@ -349,6 +349,7 @@ public class PlmRepoConsts {
 	public static final String PATH_GS1_CATCH_AREA_CODES = "CatchAreaCodes";
 	/** Constant <code>PATH_PUBCHANNELS="PubChannels"</code> */
 	public static final String PATH_PUBCHANNELS = "PubChannels";
+	public static final String PATH_ACTIVITY_LIST = "activityList";
 	/** Constant <code>PATH_MICROBIO_TYPES="MicrobioTypes"</code> */
 	public static final String PATH_MICROBIO_TYPES = "MicrobioTypes";
 	/** Constant <code>PATH_GS1_ALCOHOL_BEVERAGE_CONTAINERS="AlcoholBeverageContainers"</code> */

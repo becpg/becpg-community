@@ -14,6 +14,7 @@ import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.version.VersionHistory;
 import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -250,11 +251,15 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 
 	private Map<String, NodeRef> getOnlyAssociatedVersions(NodeRef item, VersionFilterType versionType, Date from, Date to) {
 		Map<String, NodeRef> ret = new HashMap<>();
-		if ((from != null) && (to != null) && (versionService.getVersionHistory(item) != null)) {
-			versionService.getVersionHistory(item).getAllVersions().forEach(version -> {
+		final VersionHistory versionHistory;
+		if (from != null && to != null && (versionHistory = versionService.getVersionHistory(item)) != null) {
+			versionHistory.getAllVersions().forEach(version -> {
 				Date createDate = version.getFrozenModifiedDate();
-				if (((versionType != null) && versionType.match(version.getVersionType()))
-						&& !RepoConsts.INITIAL_VERSION.equals(version.getVersionLabel())
+				// if versionType is MINOR, versionLabel must not match an integer
+				// if versionType is MAJOR, versionLabel must match an integer
+				// versionType = MINOR XOR versionLabel matches INT
+				final boolean versionsMatch = versionType != null && (versionType == VersionFilterType.MINOR != (Double.parseDouble(version.getVersionLabel()) % 1 == 0));
+				if (versionsMatch && !RepoConsts.INITIAL_VERSION.equals(version.getVersionLabel())
 						&& (from.equals(to) ? formatter.get().format(createDate).equals(formatter.get().format(from))
 								: (createDate.after(from) && createDate.before(to)))) {
 					ret.put(version.getVersionLabel() + "|" + version.getDescription(), version.getFrozenStateNodeRef());

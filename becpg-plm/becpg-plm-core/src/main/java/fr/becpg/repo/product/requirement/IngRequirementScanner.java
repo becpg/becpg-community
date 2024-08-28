@@ -9,10 +9,8 @@ import java.util.Set;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
@@ -48,17 +46,6 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 
 	AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 	
-	private NodeService nodeService;
-	
-	/**
-	 * <p>Setter for the field <code>nodeService</code>.</p>
-	 *
-	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
-	 */
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
-
 	/**
 	 * <p>
 	 * Setter for the field <code>alfrescoRepository</code>.
@@ -207,8 +194,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 						}
 
 						if (!autorized) {
-							String message = I18NUtil.getMessage(MESSAGE_NOTAUTHORIZED_ING);
-							addReqCtrl(reqCtrlMap, RequirementType.Forbidden, new MLText(message), ingListDataItem.getIng(), specification, RequirementDataType.Specification);
+							addReqCtrl(reqCtrlMap, RequirementType.Forbidden, MLTextHelper.getI18NMessage(MESSAGE_NOTAUTHORIZED_ING), ingListDataItem.getIng(), specification, RequirementDataType.Specification);
 						}
 
 					}

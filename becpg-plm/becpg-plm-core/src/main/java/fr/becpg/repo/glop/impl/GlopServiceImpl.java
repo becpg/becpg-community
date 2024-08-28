@@ -25,9 +25,9 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 
 import fr.becpg.model.PLMModel;
+import fr.becpg.repo.authentication.BeCPGTicketService;
 import fr.becpg.repo.glop.GlopException;
 import fr.becpg.repo.glop.GlopService;
 import fr.becpg.repo.glop.model.GlopConstraint;
@@ -35,6 +35,7 @@ import fr.becpg.repo.glop.model.GlopContext;
 import fr.becpg.repo.glop.model.GlopData;
 import fr.becpg.repo.glop.model.GlopTarget;
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.helper.RestTemplateHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -53,6 +54,8 @@ public class GlopServiceImpl implements GlopService {
 
 	private static final Log logger = LogFactory.getLog(GlopServiceImpl.class);
 	
+	private static final String STATUS = "status";
+
 	@Autowired
 	private SystemConfigurationService systemConfigurationService;
 	
@@ -64,8 +67,10 @@ public class GlopServiceImpl implements GlopService {
 
 	@Autowired
 	private NodeService nodeService;
-
-	private RestTemplate restTemplate = new RestTemplate();
+	
+	@Autowired
+	private BeCPGTicketService beCPGTicketService;
+	
 	
 	private String serverUrl() {
 		return systemConfigurationService.confValue("beCPG.glop.serverUrl");
@@ -78,8 +83,38 @@ public class GlopServiceImpl implements GlopService {
 	 * list of constraints.
 	 */
 	@Override
-	public GlopData optimize(ProductData productData, GlopContext glopContext) throws GlopException, RestClientException, URISyntaxException, JSONException {
-		
+	public GlopData optimize(ProductData productData, GlopContext glopContext) {
+		try {
+			
+			return optimizeInternal(productData, glopContext);
+			
+		} catch (GlopException e) {
+			GlopData errorResult = new GlopData();
+			errorResult.put(STATUS, "Error : Linear program is unfeasible");
+			return errorResult;
+		} catch (JSONException e) {
+			GlopData errorResult = new GlopData();
+			errorResult.put(STATUS, "Error : Failed to build request to send to the Glop server : " + e.getMessage());
+			return errorResult;
+		} catch (URISyntaxException e) {
+			GlopData errorResult = new GlopData();
+			errorResult.put(STATUS, "Error : Glop server URI has a syntax error");
+			return errorResult;
+		} catch (RestClientException e) {
+			logger.error(e.getMessage(), e);
+			GlopData errorResult = new GlopData();
+			errorResult.put(STATUS, "Error : Failed to send request to the Glop server : " + e.getMessage());
+			return errorResult;
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			GlopData errorResult = new GlopData();
+			errorResult.put(STATUS, "Error : " + e.getMessage());
+			return errorResult;
+		}
+	}
+	
+	private GlopData optimizeInternal(ProductData productData, GlopContext glopContext) throws GlopException, RestClientException, URISyntaxException, JSONException {
+
 		StopWatch stopWatch = null;
 		if (logger.isDebugEnabled()) {
 			stopWatch = new StopWatch();
@@ -180,11 +215,11 @@ public class GlopServiceImpl implements GlopService {
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		HttpEntity<String> requestEntity = new HttpEntity<>(request.toString(), headers);
 	
-		URI uri = new URI(serverUrl());
+		URI uri = new URI(serverUrl() + "?ticket=" + beCPGTicketService.getCurrentAuthToken());
 		if (logger.isDebugEnabled()) {
 			logger.debug("Sending " + request + " to " + serverUrl());
 		}
-		String response = restTemplate.postForObject(uri, requestEntity, String.class);
+		String response = RestTemplateHelper.getRestTemplate().postForObject(uri, requestEntity, String.class);
 		
 		if (logger.isDebugEnabled()) {
 			logger.debug("Server returned " + response);

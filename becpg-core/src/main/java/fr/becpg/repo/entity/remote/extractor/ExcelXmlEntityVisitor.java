@@ -40,11 +40,8 @@ import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentIOException;
 import org.alfresco.service.cmr.repository.ContentReader;
-import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.Path;
-import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.codec.binary.Base64InputStream;
@@ -56,8 +53,8 @@ import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
-import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
+import fr.becpg.repo.entity.remote.RemoteServiceRegisty;
 
 /**
  * <p>ExcelXmlEntityVisitor class.</p>
@@ -77,9 +74,8 @@ public class ExcelXmlEntityVisitor extends AbstractEntityVisitor {
 	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object.
 	 * @param siteService a {@link org.alfresco.service.cmr.site.SiteService} object.
 	 */
-	public ExcelXmlEntityVisitor(NodeService mlNodeService, NodeService nodeService, NamespaceService namespaceService,
-			EntityDictionaryService entityDictionaryService, ContentService contentService, SiteService siteService) {
-		super(mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService, siteService);
+	public ExcelXmlEntityVisitor(RemoteServiceRegisty remoteServiceRegisty) {
+		super(remoteServiceRegisty);
 	}
 
 	private static final Log logger = LogFactory.getLog(ExcelXmlEntityVisitor.class);

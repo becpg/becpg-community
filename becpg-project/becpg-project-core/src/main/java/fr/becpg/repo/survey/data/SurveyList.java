@@ -34,6 +34,12 @@ public class SurveyList extends BeCPGDataObject {
 	private List<NodeRef> choices;
 
 	private Integer sort;
+	
+	public SurveyList() {}
+
+	public SurveyList(NodeRef question) {
+		this.question = question;
+	}
 
 	/**
 	 * <p>Getter for the field <code>sort</code>.</p>

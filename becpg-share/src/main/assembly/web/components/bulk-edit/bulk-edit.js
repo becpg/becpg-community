@@ -1583,11 +1583,8 @@
 							var CURRENT_PAGE = 1;
                             var MAX_RESULTS_UNLIMITED = 5000;
 							
- 					   		beCPG.util.launchAsyncDownload("export.xlsx", "export.xlsx",this.dataUrl + "/export?format=xlsx&" + this._buildDataParamsUrl(PAGE_SIZE, MAX_RESULTS_UNLIMITED)
-									+ "&metadata=" + encodeURIComponent(YAHOO.lang.JSON
-		                           .stringify(this._buildBulkEditParams(CURRENT_PAGE))));  
-
-
+ 					   		beCPG.util.launchAsyncDownload("export.xlsx", "export.xlsx",this.dataUrl + "/export?format=xlsx&" + this._buildDataParamsUrl(PAGE_SIZE, MAX_RESULTS_UNLIMITED),
+ 					   		this._buildBulkEditParams(CURRENT_PAGE));  
 							
 						},
 						onShowThumbnails : function BulkEdit_onShowThumbnails() {

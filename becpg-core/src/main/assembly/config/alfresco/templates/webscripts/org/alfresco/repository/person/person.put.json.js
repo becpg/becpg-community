@@ -94,6 +94,11 @@ function main()
    { 
       person.properties["bcpg:userContentLocale"] = json.get("userContentLocale"); 
    }
+   if (!json.isNull("isSsoUser")) {
+		if (json.get("isSsoUser") == true) {
+			person.properties["bcpg:isSsoUser"] = true; 
+		}
+	}
    // Update the person node with the modified details
    
    logger.log("update user");
@@ -103,13 +108,13 @@ function main()
    if (json.has("disableAccount"))
    {
       var disableAccount = (json.get("disableAccount") == true);
-      if (disableAccount && people.isAccountEnabled(userName))
+      if (disableAccount && bcpg.isAccountEnabled(userName))
       {
-         people.disableAccount(userName);
+         bcpg.disableAccount(userName);
       }
-      else if (!disableAccount && !people.isAccountEnabled(userName))
+      else if (!disableAccount && !bcpg.isAccountEnabled(userName))
       {
-         people.enableAccount(userName);
+         bcpg.enableAccount(userName);
       }
    }
    
