@@ -1461,7 +1461,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 		for (Composite<CompoListDataItem> composite : parentComposite.getChildren()) {
 
-			Double calculatedYield = currYield != null ? currYield : 100d;
+			Double calculatedYield = currYield != null  && currYield != 0d ? currYield : 100d;
 			CompoListDataItem compoListDataItem = composite.getData();
 			DeclarationType declarationType = getDeclarationType(compoListDataItem, null, labelingFormulaContext);
 
@@ -1744,7 +1744,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 							if (!isLocalSemiFinished) {
 
-								recurYield = productData.getYield() != null ? BigDecimal.valueOf(productData.getYield()) : BigDecimal.valueOf(100d);
+								recurYield = productData.getYield() != null  && productData.getYield()!=0d ? BigDecimal.valueOf(productData.getYield()) : BigDecimal.valueOf(100d);
 
 								if ((calculatedYield != null) && (calculatedYield != 100d)) {
 									recurYield = recurYield.multiply(BigDecimal.valueOf(calculatedYield), LabelingFormulaContext.PRECISION)
@@ -1924,8 +1924,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				EvaporatedDataItem evaporatedDataItem = fullEvaporationItems.iterator().next();
 				CompositeLabeling productLabelItem = parent.get(evaporatedDataItem.getProductNodeRef());
 				if (productLabelItem != null) {
-					productLabelItem.setQtyWithYield(productLabelItem.getQty() - parent.getEvaporatedQty());
-					productLabelItem.setVolumeWithYield(productLabelItem.getVolume() - parent.getEvaporatedVolume());
+					productLabelItem.setQtyWithYield(productLabelItem.getQtyWithYield() - parent.getEvaporatedQty());
+					productLabelItem.setVolumeWithYield(productLabelItem.getVolumeWithYield() - parent.getEvaporatedVolume());
 				}
 			}
 		}
@@ -1948,11 +1948,13 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 								: evaporatingQty.get() * (rate / totalRate); // Consider total rate for remaining items
 						Double evaporatedQty = Math.min(maxEvapQty, proportionalEvap);
 
+						
+						productLabelItem.setQtyWithYield(productLabelItem.getQtyWithYield() - evaporatedQty);
+						
 						if (logger.isDebugEnabled()) {
-							logger.debug("Apply evaporation qty " + evaporatedQty + " on " + productLabelItem.getName());
+							logger.debug("Apply evaporation qty " + evaporatedQty + " on " + productLabelItem.getName()+" after "+productLabelItem.getQtyWithYield());
 						}
 
-						productLabelItem.setQtyWithYield(productLabelItem.getQtyWithYield() - evaporatedQty);
 
 						evaporatingQty.set(evaporatingQty.get() - evaporatedQty);
 					}
@@ -1965,7 +1967,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						Double evaporatedVol = Math.min(maxEvapQty, proportionalEvap);
 
 						if (logger.isDebugEnabled()) {
-							logger.debug("Apply evaporation volume " + evaporatedVol + " on " + productLabelItem.getName());
+							logger.debug("Apply evaporation volume " + evaporatedVol + " on " + productLabelItem.getName()+" after "+productLabelItem.getVolumeWithYield());
 						}
 
 						productLabelItem.setVolumeWithYield(productLabelItem.getVolumeWithYield() - evaporatedVol);

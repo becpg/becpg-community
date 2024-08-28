@@ -444,10 +444,6 @@ public class RegulationFormulationHelper {
 			return "Mini";
 		case KEY_MAXI:
 			return "Maxi";
-		case KEY_TOLERANCE_MAX:
-			return "Tmax";
-		case KEY_TOLERANCE_MIN:
-			return "Tmin";
 		case KEY_VALUE_PER_SERVING:
 			return "ValuePerServing";
 		case KEY_GDA_PERC:
@@ -458,12 +454,19 @@ public class RegulationFormulationHelper {
 			return "GDAPercPerContainer";
 		case KEY_UNIT:
 			return "Unit";
+		case KEY_TOLERANCE_MAX:
+			return "ToleranceMax";	
+		case KEY_TOLERANCE_MIN:
+			return "ToleranceMax";	
+		case KEY_UL:
+			return "UpperLimit";		
 		default:
 			break;
 		}
 		return "Value";
 	}
 
+	
 	// {
 	// v : {
 	// eu: 5.0,

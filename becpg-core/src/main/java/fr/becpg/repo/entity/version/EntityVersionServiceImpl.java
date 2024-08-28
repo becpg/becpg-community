@@ -810,7 +810,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 								policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 								policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ENTITY_BRANCH);
 								policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
-							policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_UNDELETABLE_ASPECT);
+								policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_UNDELETABLE_ASPECT);
 								policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 								policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_VERSIONABLE);
 								policyBehaviourFilter.disableBehaviour(ImapModel.ASPECT_IMAP_CONTENT);
@@ -988,11 +988,6 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 								nodeService.deleteNode(branchNodeRef);
 								
 								
-								/**
-								 * After working copy deletion
-								 */
-								//Fire rules once for entity
-								((RuleService) ruleService).enableRules();
 								
 								nodeService.setProperty(internalBranchToNodeRef, ContentModel.PROP_NAME, finalBranchName);
 								
@@ -1005,6 +1000,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 								
 								nodeService.setProperty(internalBranchToNodeRef, ContentModel.PROP_MODIFIED, new Date());
 								
+								triggerRules(internalBranchToNodeRef);
+								
 								generateReportsAsync(internalBranchToNodeRef);
 								
 								StopWatchSupport.addCheckpoint("after internalCreateVersion");
@@ -1016,7 +1013,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 								policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 								policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_ENTITY_BRANCH);
 								policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
-							policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_UNDELETABLE_ASPECT);
+							    policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_UNDELETABLE_ASPECT);
 								policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
 								policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_VERSIONABLE);
 								policyBehaviourFilter.enableBehaviour(ImapModel.ASPECT_IMAP_CONTENT);
@@ -1032,6 +1029,19 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 		}
 		return null;
+	}
+
+	private void triggerRules(NodeRef internalBranchToNodeRef) {
+	
+		((RuleService) ruleService).enableRules();
+		//cm:modified is protected so we have to change a non protected properties to trigger rules
+		
+		String code = (String) nodeService.getProperty(internalBranchToNodeRef, BeCPGModel.PROP_CODE);
+		nodeService.setProperty(internalBranchToNodeRef, BeCPGModel.PROP_CODE, "triggerRules");
+		nodeService.setProperty(internalBranchToNodeRef, BeCPGModel.PROP_CODE, code);
+		
+		((RuleService) ruleService).disableRules();
+		
 	}
 
 	private void generateReportsAsync(final NodeRef internalBranchToNodeRef) {
@@ -1709,9 +1719,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			NodeRef extractedVersion = findExtractedVersion(versionNodeRef);
 
 			if (extractedVersion == null || !nodeService.exists(extractedVersion)) {
-
-				extractedVersion = createExtractedVersion(versionNodeRef);
-
+				extractedVersion = AuthenticationUtil.runAsSystem(() -> createExtractedVersion(versionNodeRef));
 			}
 			return extractedVersion;
 		}, false, false);
@@ -1750,6 +1758,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 			((RuleService) ruleService).disableRules();
 
+			IntegrityChecker.setWarnInTransaction();
+			
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ENTITY_BRANCH);
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);

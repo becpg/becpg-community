@@ -12,34 +12,35 @@ import fr.becpg.repo.helper.MLTextHelper;
 public class MLTextHelperTest {
 
 	@Test
-	public void test() {
-
+	public void testGetNearestLocale() {
 		Set<Locale> locales = new HashSet<>();
 
 		locales.add(Locale.FRENCH);
 		locales.add(Locale.CANADA_FRENCH);
-		Assert.assertTrue(Locale.FRENCH.equals(MLTextHelper.getNearestLocale(Locale.FRANCE, locales)));
-		Assert.assertTrue(Locale.CANADA_FRENCH.equals(MLTextHelper.getNearestLocale(Locale.CANADA_FRENCH, locales)));
-		Assert.assertTrue(Locale.FRENCH.equals(MLTextHelper.getNearestLocale(Locale.FRENCH, locales)));
+		Assert.assertEquals(Locale.FRENCH, MLTextHelper.getNearestLocale(Locale.FRANCE, locales));
+		Assert.assertEquals(Locale.CANADA_FRENCH, MLTextHelper.getNearestLocale(Locale.CANADA_FRENCH, locales));
+		Assert.assertEquals(Locale.FRENCH, MLTextHelper.getNearestLocale(Locale.FRENCH, locales));
 
 		locales.add(Locale.FRANCE);
 
-		Assert.assertTrue(Locale.FRANCE.equals(MLTextHelper.getNearestLocale(Locale.FRANCE, locales)));
-		Assert.assertTrue(Locale.FRANCE.equals(MLTextHelper.getNearestLocale(new Locale("fr", "FR", "BZH"), locales)));
+		Assert.assertEquals(Locale.FRANCE, MLTextHelper.getNearestLocale(Locale.FRANCE, locales));
+		Assert.assertEquals(Locale.FRANCE, MLTextHelper.getNearestLocale(new Locale("fr", "FR", "BZH"), locales));
 
 		Assert.assertNull(MLTextHelper.getNearestLocale(Locale.ENGLISH, locales));
 
 		locales = new HashSet<>();
 
 		locales.add(Locale.CANADA_FRENCH);
-		Assert.assertTrue(Locale.CANADA_FRENCH.equals(MLTextHelper.getNearestLocale(Locale.FRANCE, locales)));
-
-		MLTextHelper helper = new MLTextHelper();
-		helper.setSupportedLocalesInstance("fr,en_US,en");
-		
-		Assert.assertTrue(helper.isSupportedLocaleInstance(Locale.US));
-		Assert.assertFalse(helper.isSupportedLocaleInstance(Locale.UK));
-
+		Assert.assertEquals(Locale.CANADA_FRENCH, MLTextHelper.getNearestLocale(Locale.FRANCE, locales));
 	}
 
+	@Test
+	public void testIsSupportedLocale() {
+		MLTextHelper.setSupportedLocales("fr,en_US,en");
+
+		Assert.assertTrue(MLTextHelper.isSupportedLocale(Locale.US));
+		Assert.assertFalse(MLTextHelper.isSupportedLocale(Locale.UK));
+
+		MLTextHelper.flushCache();
+	}
 }

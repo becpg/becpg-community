@@ -1,4 +1,4 @@
-MAPPING;Default;;;;;
+MAPPING;TestMapping.xml;;;;;
 ;;;;;;
 PATH;/Temp/Products;;;;;
 TYPE;bcpg:rawMaterial;;;;;

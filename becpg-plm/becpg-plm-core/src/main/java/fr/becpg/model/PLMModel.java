@@ -16,6 +16,8 @@ public interface PLMModel {
 	// product
 	/** Constant <code>TYPE_PRODUCT</code> */
 	QName TYPE_PRODUCT = QName.createQName(BeCPGModel.BECPG_URI, "product");
+	/** Constant <code>TYPE_LOGISTICUNIT</code> */
+	QName TYPE_LOGISTICUNIT = QName.createQName(BeCPGModel.BECPG_URI, "logisticUnit");
 	/** Constant <code>TYPE_FINISHEDPRODUCT</code> */
 	QName TYPE_FINISHEDPRODUCT = QName.createQName(BeCPGModel.BECPG_URI, "finishedProduct");
 	/** Constant <code>TYPE_SEMIFINISHEDPRODUCT</code> */
@@ -821,6 +823,8 @@ public interface PLMModel {
 	/** Constant <code>PROP_GLOP_VALUE</code> */
 	QName PROP_GLOP_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "glopValue");
 
+	QName ASPECT_GLOP_PRODUCT = QName.createQName(BeCPGModel.BECPG_URI, "glopProductAspect");
+	
 	/** Constant <code>PROP_IS_CHARACT_PROPAGATE_UP</code> */
 	QName PROP_IS_CHARACT_PROPAGATE_UP = QName.createQName(BeCPGModel.BECPG_URI, "isCharactPropagateUp");
 

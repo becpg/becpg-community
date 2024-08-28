@@ -24,7 +24,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.client.RestTemplate;
 
 import com.google.common.collect.Lists;
 
@@ -37,6 +36,7 @@ import fr.becpg.repo.decernis.model.RegulatoryContext;
 import fr.becpg.repo.decernis.model.RegulatoryContextItem;
 import fr.becpg.repo.decernis.model.UsageContext;
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.helper.RestTemplateHelper;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
@@ -205,7 +205,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 				ingredient.put("spec", ingName);
 				ingredient.put("idType", "Decernis ID");
 				ingredient.put("idValue", rid);
-				ingredient.put("percentage", ingQtyPerc);
+				ingredient.put("percentage", ingQtyPerc == null ? 0d : ingQtyPerc);
 				if (function != null) {
 					ingredient.put("function", function);
 				}
@@ -245,8 +245,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 			if (logger.isTraceEnabled()) {
 				logger.trace("POST url: " + url + " body: " + payload);
 			}
-			RestTemplate restTemplate = new RestTemplate();
-			recipeAnalysisResult = restTemplate.postForObject(url, entity, String.class, new HashMap<>());
+			recipeAnalysisResult = RestTemplateHelper.getRestTemplate().postForObject(url, entity, String.class, new HashMap<>());
 
 			return new JSONObject(recipeAnalysisResult);
 		}
@@ -327,8 +326,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 			if (logger.isTraceEnabled()) {
 				logger.trace("POST url: " + url + " body: " + payload);
 			}
-			RestTemplate restTemplate = new RestTemplate();
-			ingredientAnalysisResult = restTemplate.postForObject(url, entity, String.class, new HashMap<>());
+			ingredientAnalysisResult = RestTemplateHelper.getRestTemplate().postForObject(url, entity, String.class, new HashMap<>());
 			
 			return new JSONObject(ingredientAnalysisResult);
 		}
@@ -368,8 +366,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 		if (logger.isTraceEnabled()) {
 			logger.trace("GET url: " + url);
 		}
-		RestTemplate restTemplate = new RestTemplate();
-		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class, new HashMap<>());
+		ResponseEntity<String> response = RestTemplateHelper.getRestTemplate().exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class, new HashMap<>());
 
 		if (HttpStatus.OK.equals(response.getStatusCode()) && (response.getBody() != null)) {
 			JSONObject responseBody = new JSONObject(response.getBody());
@@ -409,7 +406,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 							for (int j = 0; j < tabularReports.length(); j++) {
 								JSONObject tabularReport = tabularReports.getJSONObject(j);
 
-								String usage = tabularReport.getString("usage");
+								String usage = usageContext.getName();
 
 								String decernisID = tabularReport.getString("did");
 								String function = tabularReport.getString("function");
@@ -432,7 +429,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 												RequirementType.Forbidden);
 										reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
 										reqCtrlItem.setReqMaxQty(0d);
-										if (!threshold.isBlank() && ingItem != null && ingItem.getQtyPerc() != 0d) {
+										if (!threshold.isBlank() && ingItem != null && ingItem.getQtyPerc() != null && ingItem.getQtyPerc() != 0d) {
 											Double thresholdValue = DecernisHelper.extractThresholdValue(threshold);
 											if (thresholdValue != null) {
 												reqCtrlItem.setReqMaxQty((thresholdValue / ingItem.getQtyPerc()) * 100d);
@@ -614,8 +611,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 		if (logger.isTraceEnabled()) {
 			logger.trace("GET url: " + url);
 		}
-		RestTemplate restTemplate = new RestTemplate();
-		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class, new HashMap<>());
+		ResponseEntity<String> response = RestTemplateHelper.getRestTemplate().exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class, new HashMap<>());
 
 		if (HttpStatus.OK.equals(response.getStatusCode()) && (response.getBody() != null)) {
 			JSONObject responseBody = new JSONObject(response.getBody());

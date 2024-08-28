@@ -58,6 +58,8 @@ function main() {
 				
 				document.remove();
 				
+				bSign.disableSignaturePolicy();
+				
 				document = checkout.checkin();
 			}
 			

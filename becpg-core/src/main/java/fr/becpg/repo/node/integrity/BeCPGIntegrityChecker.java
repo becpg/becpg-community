@@ -94,12 +94,12 @@ public class BeCPGIntegrityChecker extends IntegrityChecker {
 
 			StringBuilder sb = new StringBuilder();
 			boolean isConstraint = false;
-			boolean isDelete = false;
+			boolean isMultiplicity = false;
 			for (IntegrityRecord integrityRecord : records) {
 				if (integrityRecord.getMessage().contains("Constraint:")) {
 					isConstraint = true;
 				} else if(integrityRecord.getMessage().contains("The association target multiplicity has been violated")) {
-					isDelete = true;
+					isMultiplicity = true;
 				}
 
 				String message = decorate(integrityRecord.getMessage());
@@ -110,7 +110,7 @@ public class BeCPGIntegrityChecker extends IntegrityChecker {
 
 			if (isConstraint) {
 				throw new IntegrityException(I18NUtil.getMessage(MSG_INTEGRITY_CONSTRAINT, sb.toString()), newRecords);
-			} else if(isDelete) {
+			} else if(isMultiplicity) {
 				throw new IntegrityException(I18NUtil.getMessage(MSG_INTEGRITY_MULTIPLICITY, sb.toString()), newRecords);
 			}
 

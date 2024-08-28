@@ -63,14 +63,24 @@
 	 	<property name="configService" ref="web.config" />
 	 </bean>
 
+	<bean id="sharePublishService" class="fr.becpg.repo.designer.service.SharePublishService">
+		<property name="configPath" value="${beCPG.designer.configPath}" />
+	 	<property name="configService" ref="web.config" />
+	</bean>
+
 	<bean id="webscript.org.alfresco.components.model-designer.share-publish.get" class="fr.becpg.repo.designer.web.scripts.SharePublishWebscript"
 		parent="webscript">
-		<property name="configPath" value="${beCPG.designer.configPath}" />
+		<property name="sharePublishService" ref="sharePublishService" />
+	</bean>
+
+	<bean id="webscript.org.alfresco.components.model-designer.clean-config.get" class="fr.becpg.repo.designer.web.scripts.CleanConfigWebscript"
+		parent="webscript">
+		<property name="sharePublishService" ref="sharePublishService" />
 	</bean>
 	
 	<bean id="webscript.org.alfresco.components.model-designer.share-unpublish.get" class="fr.becpg.repo.designer.web.scripts.ShareUnpublishWebscript"
 		parent="webscript">
-		<property name="configPath" value="${beCPG.designer.configPath}" />
+		<property name="sharePublishService" ref="sharePublishService" />
 	</bean>
 
 	<bean id="evaluator.becpg.doclib.action.hasAnyDesignerAspect" parent="evaluator.doclib.action.hasAnyAspect">
