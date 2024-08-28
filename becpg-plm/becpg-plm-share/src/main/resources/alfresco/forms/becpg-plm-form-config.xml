@@ -246,6 +246,40 @@
 					</field>
 				</appearance>
 			</form>
+			<form id="search">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:title" force="true" />
+					<show id="bcpg:regulatoryCode" force="true" />
+					<show id="cm:description" />
+					<show id="bcpg:productSpecifications" force="true" />
+					<show id="bcpg:specCompatibilityTpls" force="true" />
+					<show id="bcpg:specCompatibilityJobOn" force="true" />
+					<show id="bcpg:regulatoryCountries" force="true" />
+					<show id="bcpg:regulatoryUsageRef" force="true" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:productSpecifications" help-id="becpg.forms.help.productSpecifications">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
+							<control-param name="excludeSources">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:specCompatibilityTpls">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:entityV2?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
+							</control-param>
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
+						</control>
+					</field>
+					<field id="bcpg:regulatoryCountries">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:regulatoryUsageRef">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+				</appearance>
+			</form>
 			<form id="product-list">
 				<field-visibility>
 					<show id="cm:name" />
