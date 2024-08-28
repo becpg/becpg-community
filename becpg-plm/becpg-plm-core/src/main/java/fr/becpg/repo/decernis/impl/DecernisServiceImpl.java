@@ -22,8 +22,9 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.extensions.surf.util.AbstractLifecycleBean;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -67,7 +68,7 @@ import fr.becpg.repo.variant.filters.VariantFilters;
  * @version $Id: $Id
  */
 @Service("decernisService")
-public class DecernisServiceImpl implements DecernisService, FormulationChainPlugin, InitializingBean {
+public class DecernisServiceImpl  extends AbstractLifecycleBean implements DecernisService, FormulationChainPlugin{
 
 	private static final String FORMULATION_CHECK = "FORMULATION_CHECK";
 	private static final String COSMETICS = "COSMETICS";
@@ -156,12 +157,11 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 	}
 	
 	@Override
-	public void afterPropertiesSet() throws Exception {
+	protected void onBootstrap(ApplicationEvent event) {
 		if(isEnabled()) {
 			logger.info("Starting Decernis Module, Set DNS Cache to 5s");
 			java.security.Security.setProperty("networkaddress.cache.ttl", "5");
 		}
-		
 	}
 
 	/** {@inheritDoc} */
@@ -741,6 +741,12 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 				}
 			}
 		}
+	}
+
+	@Override
+	protected void onShutdown(ApplicationEvent event) {
+	//DO Nothing
+		
 	}
 
 
