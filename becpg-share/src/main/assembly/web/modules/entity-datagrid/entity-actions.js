@@ -620,9 +620,10 @@
 					
 				Alfresco.util.Ajax.jsonGet({
 				url : Alfresco.constants.URL_SERVICECONTEXT + "module/entity-datagrid/config/columns?mode=datagrid-prefs&itemType=" + encodeURIComponent(itemType) + "&clearCache=true" 
-					+ (this.options.siteId ? "&siteId=" + this.options.siteId : "")
+					+ (siteId ? "&siteId=" + siteId : "")
 					+ (this.entity!=null ? "&entityType="+encodeURIComponent(this.entity.type) : "")
 					+ (this.options.entityNodeRef != null ? "&entityNodeRef=" + encodeURIComponent(this.options.entityNodeRef) : "")
+					+ (this.options.columnFormId != null ? "&formId=" + this.options.columnFormId : "")
 					+ ("&noCache="+ timeStamp),
 				successCallback : {
 					fn : function (response) {

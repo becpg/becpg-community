@@ -537,7 +537,12 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 
 		private void checkPausedCommand() {
 			while (pausedCommands.contains(this) && !cancelledBatches.contains(this.getBatchId())) {
-				// do nothing: command is currently paused
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
+					logger.error("error while pausing command", e);
+				}
 			}
 		}
 		/*

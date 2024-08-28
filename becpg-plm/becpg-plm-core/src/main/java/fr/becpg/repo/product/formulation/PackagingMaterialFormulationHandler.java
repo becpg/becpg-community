@@ -107,16 +107,14 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 				List<PackMaterialListDataItem> toRemove = new ArrayList<>();
 				for (PackMaterialListDataItem packmaterial : formulatedProduct.getPackMaterialList()) {
 					Pair<PackagingLevel, NodeRef> key = new Pair<>(packmaterial.getPkgLevel(), packmaterial.getPmlMaterial());
-					if (!toUpdate.containsKey(key)) {
+					if (!toUpdate.containsKey(key) || toUpdate.get(key).getFirst().doubleValue() == 0d) {
 						toRemove.add(packmaterial);
 					} else {
-						if (toUpdate.get(key).getFirst().doubleValue() != 0d) {
-							packmaterial.setPmlWeight(toUpdate.get(key).getFirst().doubleValue());
-							packmaterial.setPmlPerc(calculatePerc(formulatedProduct, key.getFirst(), toUpdate.get(key).getFirst()));
-							packmaterial.setPmlRecycledPercentage(toUpdate.get(key).getSecond()
-									.divide(toUpdate.get(key).getFirst(), MathContext.DECIMAL64).multiply(BigDecimal.valueOf(100d)).doubleValue());
-							toUpdate.remove(key);
-						}
+						packmaterial.setPmlWeight(toUpdate.get(key).getFirst().doubleValue());
+						packmaterial.setPmlPerc(calculatePerc(formulatedProduct, key.getFirst(), toUpdate.get(key).getFirst()));
+						packmaterial.setPmlRecycledPercentage(toUpdate.get(key).getSecond()
+								.divide(toUpdate.get(key).getFirst(), MathContext.DECIMAL64).multiply(BigDecimal.valueOf(100d)).doubleValue());
+						toUpdate.remove(key);
 					}
 				}
 
@@ -210,8 +208,7 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 								}
 
 							} else if (compoListUnit.isWeight() || compoListUnit.isVolume()) {
-
-								compoProductQty = FormulationHelper.getNetQtyInLorKg(compoProduct, 1d);
+								compoProductQty = FormulationHelper.getNetWeight(compoProduct, 1d);
 								qtyUsed = FormulationHelper.getQtyInKg(compoList);
 							}
 
@@ -227,7 +224,13 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 												packMateriDataItem.getPmlRecycledPercentage() != null ? packMateriDataItem.getPmlRecycledPercentage()
 														: 0d)
 												.multiply(plmWeight).divide(BigDecimal.valueOf(100d), MathContext.DECIMAL64);
-										Pair<PackagingLevel, NodeRef> key = new Pair<>(packMateriDataItem.getPkgLevel(),
+										PackagingLevel pkgLevel = packMateriDataItem.getPkgLevel();
+										
+										if (pkgLevel == null && compoProduct.isRawMaterial()) {
+											pkgLevel = PackagingLevel.Primary;
+										}
+										
+										Pair<PackagingLevel, NodeRef> key = new Pair<>(pkgLevel,
 												packMateriDataItem.getPmlMaterial());
 
 										if (toUpdate.containsKey(key)) {

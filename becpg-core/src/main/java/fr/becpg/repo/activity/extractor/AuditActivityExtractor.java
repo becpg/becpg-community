@@ -10,7 +10,9 @@ import org.alfresco.service.ServiceRegistry;
 import org.alfresco.util.ISO8601DateFormat;
 import org.json.JSONObject;
 
+import fr.becpg.config.format.FormatMode;
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.activity.EntityActivityExtractorService;
 import fr.becpg.repo.audit.model.AuditQuery;
 import fr.becpg.repo.audit.model.AuditType;
@@ -96,31 +98,33 @@ public class AuditActivityExtractor implements DataListExtractor {
 		}
 		
 		List<JSONObject> results = dataListFilter.getPagination().paginate(listAuditEntries);
-
+		
+		
 		for (JSONObject result : results) {
-
-			Map<String, Object> item = new HashMap<>();
-
-			item.put(AbstractDataListExtractor.PROP_TYPE, BeCPGModel.TYPE_ACTIVITY_LIST.toPrefixString(serviceRegistry.getNamespaceService()));
-
-			Map<String, Map<String, Boolean>> permissions = new HashMap<>();
-			Map<String, Boolean> userAccess = new HashMap<>();
-
-			userAccess.put("delete", false);
-			userAccess.put("create", false);
-			userAccess.put("edit", false);
-			userAccess.put("sort", false);
-			userAccess.put("details", false);
-			userAccess.put("wused", false);
-			userAccess.put("content", false);
-
-			permissions.put(AbstractDataListExtractor.PROP_USERACCESS, userAccess);
-
-			item.put(AbstractDataListExtractor.PROP_PERMISSIONS, permissions);
-
-			item.put(AbstractDataListExtractor.PROP_NODEDATA, entityActivityExtractorService.extractAuditActivityData(result, ret.getComputedFields()));
-
-			ret.addItem(item);
+			if (RepoConsts.FORMAT_XLSX.equals(dataListFilter.getFormat())) {
+				Map<String, Object> extractAuditActivityData = entityActivityExtractorService.extractAuditActivityData(result, ret.getComputedFields(), FormatMode.XLSX);
+				ret.addItem(extractAuditActivityData);
+			} else if (RepoConsts.FORMAT_CSV.equals(dataListFilter.getFormat())) {
+				Map<String, Object> extractAuditActivityData = entityActivityExtractorService.extractAuditActivityData(result, ret.getComputedFields(), FormatMode.CSV);
+				ret.addItem(extractAuditActivityData);
+			} else {
+				Map<String, Object> item = new HashMap<>();
+				Map<String, Map<String, Boolean>> permissions = new HashMap<>();
+				Map<String, Boolean> userAccess = new HashMap<>();
+				userAccess.put("delete", false);
+				userAccess.put("create", false);
+				userAccess.put("edit", false);
+				userAccess.put("sort", false);
+				userAccess.put("details", false);
+				userAccess.put("wused", false);
+				userAccess.put("content", false);
+				item.put(AbstractDataListExtractor.PROP_TYPE, BeCPGModel.TYPE_ACTIVITY_LIST.toPrefixString(serviceRegistry.getNamespaceService()));
+				permissions.put(AbstractDataListExtractor.PROP_USERACCESS, userAccess);
+				item.put(AbstractDataListExtractor.PROP_PERMISSIONS, permissions);
+				Map<String, Object> extractAuditActivityData = entityActivityExtractorService.extractAuditActivityData(result, ret.getComputedFields(), FormatMode.JSON);
+				item.put(AbstractDataListExtractor.PROP_NODEDATA, extractAuditActivityData);
+				ret.addItem(item);
+			}
 		}
 
 		ret.setFullListSize(dataListFilter.getPagination().getFullListSize());

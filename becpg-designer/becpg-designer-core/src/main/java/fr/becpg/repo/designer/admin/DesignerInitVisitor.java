@@ -86,8 +86,9 @@ public class DesignerInitVisitor extends AbstractInitVisitorImpl  {
 	@Override
 	protected void visitRules(NodeRef nodeRef, String folderName) {
 		if (Objects.equals(folderName, PATH_CONFIGS)) {
-			addAspectRule(nodeRef, "Add config aspect", "Add model config to xml file", DesignerModel.ASPECT_CONFIG);
-			addAspectRule(getModelNodeRef(nodeRef), "Add model aspect", "Add model aspect to xml file", DesignerModel.ASPECT_MODEL);
+			addAspectRule(nodeRef, "Add config aspect", "Add config aspect to xml file", DesignerModel.ASPECT_CONFIG, MimetypeMap.MIMETYPE_XML, ".xml");
+			addAspectRule(nodeRef, "Add config aspect", "Add config aspect to properties file", DesignerModel.ASPECT_CONFIG, MimetypeMap.MIMETYPE_TEXT_PLAIN, ".properties");
+			addAspectRule(getModelNodeRef(nodeRef), "Add model aspect", "Add model aspect to xml file", DesignerModel.ASPECT_MODEL, MimetypeMap.MIMETYPE_XML, ".xml");
 		}
 	}
 	
@@ -110,7 +111,7 @@ public class DesignerInitVisitor extends AbstractInitVisitorImpl  {
 
 
 
-	private void addAspectRule(NodeRef nodeRef, String ruleName, String ruleDescription, QName aspectModel) {
+	private void addAspectRule(NodeRef nodeRef, String ruleName, String ruleDescription, QName aspectModel, String mimeType, String nameExtension) {
 
 		// action
 		CompositeAction compositeAction = actionService.createCompositeAction();
@@ -121,7 +122,7 @@ public class DesignerInitVisitor extends AbstractInitVisitorImpl  {
 
 		// compare-mime-type == text/xml
 		ActionCondition conditionOnMimeType = actionService.createActionCondition(CompareMimeTypeEvaluator.NAME);
-		conditionOnMimeType.setParameterValue(ComparePropertyValueEvaluator.PARAM_VALUE, MimetypeMap.MIMETYPE_XML);
+		conditionOnMimeType.setParameterValue(ComparePropertyValueEvaluator.PARAM_VALUE, mimeType);
 		conditionOnMimeType.setParameterValue(ComparePropertyValueEvaluator.PARAM_PROPERTY, ContentModel.PROP_CONTENT);
 		conditionOnMimeType.setInvertCondition(false);
 		compositeAction.addActionCondition(conditionOnMimeType);
@@ -129,7 +130,7 @@ public class DesignerInitVisitor extends AbstractInitVisitorImpl  {
 		// compare-name == *.xml
 		ActionCondition conditionOnName = actionService.createActionCondition(ComparePropertyValueEvaluator.NAME);
 		conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_OPERATION, ComparePropertyValueOperation.ENDS.toString());
-		conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_VALUE, ".xml");
+		conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_VALUE, nameExtension);
 		conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_PROPERTY, ContentModel.PROP_NAME);
 		conditionOnName.setInvertCondition(false);
 		compositeAction.addActionCondition(conditionOnName);

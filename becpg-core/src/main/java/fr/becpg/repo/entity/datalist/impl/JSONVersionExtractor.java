@@ -389,6 +389,22 @@ public class JSONVersionExtractor extends SimpleExtractor {
 
 			displayName = attributeExtractorService.getStringValue(attribute, cal.getTime(), attributeExtractorService.getPropertyFormats(mode, false));
 
+		} else if (metadata.equals("date")) {
+
+			String dateString = (String) value;
+
+			String yearMonthDay = dateString.split("T")[0];
+
+			int year = Integer.parseInt(yearMonthDay.split("-")[0]);
+			int month = Integer.parseInt(yearMonthDay.split("-")[1]);
+			int day = Integer.parseInt(yearMonthDay.split("-")[2]);
+
+			Calendar cal = Calendar.getInstance();
+
+			cal.set(year, month - 1, day, 0, 0, 0);
+
+			displayName = attributeExtractorService.getStringValue(attribute, cal.getTime(), attributeExtractorService.getPropertyFormats(mode, false));
+
 		} else if (metadata.equals("mltext")) {
 			if (properties.has(attribute.getName().toPrefixString(namespaceService) + "_" + I18NUtil.getLocale().toLanguageTag())) {
 				displayName = properties.getString(attribute.getName().toPrefixString(namespaceService) + "_" + I18NUtil.getLocale().toLanguageTag());

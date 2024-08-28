@@ -588,6 +588,66 @@
       
         </field-visibility>
       </form>
+      <form id="product-list">
+       <field-visibility>
+          <show force="true" id="cm:name"/>
+          <show force="true" id="cm:title"/>
+          <show force="true" id="bcpg:productHierarchy1"/>
+          <show force="true" id="bcpg:productHierarchy2"/>
+          <show force="true" id="bcpg:legalName"/>
+          <show force="true" id="bcpg:productComments"/>
+          <show force="true" id="cm:description"/>
+          
+          <show force="true" id="gs1:packagingTypeCode"/>
+          <show force="true" id="gs1:packagingTypeDescription"/>
+
+          <show force="true" id="bcpg:productState"/>
+          <show force="true" id="bcpg:productUnit"/>
+          <show force="true" id="bcpg:componentLossPerc"/>
+          <show force="true" id="bcpg:code"/>
+          <show force="true" id="bcpg:erpCode"/>
+          <show force="true" id="bcpg:eanCode"/>
+          <show force="true" id="bcpg:certificateDate"/>
+          <show force="true" id="bcpg:suppliers"/>
+          <show force="true" id="bcpg:supplierPlants"/>
+          <show force="true" id="bcpg:supplierRefCode"/>
+          <show force="true" id="bcpg:plants"/>
+          <show force="true" id="bcpg:productGeoOrigin"/>
+          <show force="true" id="bcpg:entityTplRef"/>
+          <show force="true" id="pack:tare"/>
+          <show force="true" id="pack:tareUnit"/>
+          
+          <show force="true" id="gs1:packagingShapeCode"/>
+          <show force="true" id="pack:length"/>
+          <show force="true" id="pack:width"/>
+          <show force="true" id="pack:height"/>
+          <show force="true" id="pack:pmIntLength"/>
+          <show force="true" id="pack:pmIntWidth"/>
+          <show force="true" id="pack:pmIntHeight"/>
+          <show force="true" id="pack:pmThickness"/>
+          <show force="true" id="pack:pmPaperWeight"/>
+          <show force="true" id="pack:pmMaterialRefs"/>
+          <show force="true" id="pack:pmAdditionnalMaterial"/>
+          <show force="true" id="pack:pmCoreDiameter"/>
+          <show force="true" id="pack:pmCoilDiameter"/>
+          <show force="true" id="pack:pmPrintNbColors"/>
+          <show force="true" id="pack:pmPrintColor"/>
+          <show force="true" id="pack:pmPrintType"/>
+          <show force="true" id="pack:pmPrintVarnish"/>
+       
+          <show force="true" id="gs1:isPackagingMarkedReturnable"/>
+          <show force="true" id="gs1:packagingTermsAndConditionsCode"/>
+        
+          <show force="true" id="gs1:packagingRecyclingProcessTypeCode"/>
+		  <show force="true" id="gs1:packagingRecyclingSchemeCode"/>
+		  
+          <show force="true" id="gs1:sortingBonusCriteria"/>
+          <show force="true" id="gs1:sortingMalusCriteria"/>
+          <show force="true" id="gs1:sortingInstructions"/>
+          <show force="true" id="gs1:consumerUsageInstructions"/>
+      
+        </field-visibility>
+      </form>
       <form id="create">
         <field-visibility>
           <show force="false" id="cm:name"/>

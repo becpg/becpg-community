@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.alfresco.repo.content.MimetypeMap;
 import org.alfresco.repo.model.Repository;
@@ -84,7 +85,7 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 		
 				RemoteParams remoteParams = new RemoteParams(RemoteEntityFormat.json_all);
 				
-				remoteParams.setFilteredLists(List.of("!" + BeCPGModel.TYPE_ACTIVITY_LIST.getLocalName()));
+				remoteParams.setFilteredLists(Set.of("!" + BeCPGModel.TYPE_ACTIVITY_LIST.getLocalName()));
 				
 				JSONObject jsonParams = new JSONObject();
 				jsonParams.put(RemoteParams.PARAM_APPEND_MLTEXT_CONSTRAINT, false);

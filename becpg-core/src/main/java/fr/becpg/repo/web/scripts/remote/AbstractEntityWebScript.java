@@ -19,10 +19,8 @@ package fr.becpg.repo.web.scripts.remote;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -56,6 +54,7 @@ import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.entity.remote.RemoteRateLimiter;
 import fr.becpg.repo.entity.remote.impl.HttpEntityProviderCallback;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
+import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * Abstract remote entity webscript
@@ -126,7 +125,12 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	
 	protected RemoteRateLimiter remoteRateLimiter;
 	
-	
+	protected SystemConfigurationService systemConfigurationService;
+
+	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
+		this.systemConfigurationService = systemConfigurationService;
+	}
+
 	/**
 	 * <p>Setter for the field <code>namespaceService</code>.</p>
 	 *
@@ -182,6 +186,12 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	}
 
 	
+
+	private  Integer maxResultsLimit() {
+		return Integer.parseInt(systemConfigurationService.confValue("beCPG.remote.maxResults.limit"));
+	}
+	
+	
 	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
@@ -234,7 +244,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		}
 
 		if (maxResults == null || Boolean.TRUE.equals(limit)) {
-			queryBuilder.maxResults(RepoConsts.MAX_RESULTS_256);
+			queryBuilder.maxResults(Boolean.TRUE.equals(limit) ?  maxResultsLimit() :  RepoConsts.MAX_RESULTS_256);
 		} else {
 			queryBuilder.maxResults(maxResults);
 		}
@@ -426,7 +436,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object.
 	 * @return a {@link java.util.List} object.
 	 */
-	public List<String> extractFields(WebScriptRequest req) {
+	public Set<String> extractFields(WebScriptRequest req) {
 		Set<String> fields = new HashSet<>();
 		String fieldsParams = req.getParameter(PARAM_FIELDS);
 		if ((fieldsParams != null) && (fieldsParams.length() > 0)) {
@@ -438,7 +448,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 				}
 			}
 		}
-		return new ArrayList<>(fields);
+		return fields;
 	}
 
 	/**
@@ -447,8 +457,8 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object.
 	 * @return a {@link java.util.List} object.
 	 */
-	public List<String> extractLists(WebScriptRequest req) {
-		List<String> lists = new ArrayList<>();
+	public Set<String> extractLists(WebScriptRequest req) {
+		Set<String> lists = new HashSet<>();
 		String listsParams = req.getParameter(PARAM_LISTS);
 		
 		if ((listsParams != null) && (!listsParams.isEmpty())) {

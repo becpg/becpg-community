@@ -28,7 +28,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 
 import com.google.common.collect.Lists;
 
@@ -42,6 +41,7 @@ import fr.becpg.repo.decernis.model.RegulatoryContextItem;
 import fr.becpg.repo.decernis.model.UsageContext;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.helper.RestTemplateHelper;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
@@ -223,8 +223,7 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 		if (logger.isTraceEnabled()) {
 			logger.trace("POST url: " + url + " params: " + params);
 		}
-		RestTemplate restTemplate = new RestTemplate();
-		JSONObject jsonObject = new JSONObject(restTemplate.postForObject(url, entity, String.class, params));
+		JSONObject jsonObject = new JSONObject(RestTemplateHelper.getRestTemplate().postForObject(url, entity, String.class, params));
 		if (jsonObject.has(PARAM_ANALYSIS_RESULTS) && (jsonObject.getJSONObject(PARAM_ANALYSIS_RESULTS).length() > 0)) {
 			return jsonObject;
 		}
@@ -268,8 +267,7 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 		if (logger.isTraceEnabled()) {
 			logger.trace("GET url: " + url + " params: " + params);
 		}
-		RestTemplate restTemplate = new RestTemplate();
-		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, createEntity(null), String.class, params);
+		ResponseEntity<String> response = RestTemplateHelper.getRestTemplate().exchange(url, HttpMethod.GET, createEntity(null), String.class, params);
 
 		if (HttpStatus.OK.equals(response.getStatusCode()) && (response.getBody() != null)) {
 
@@ -368,7 +366,7 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 													RequirementType.Forbidden);
 											reqCtrlItem.setRegulatoryCode(regulatoryCode);
 											reqCtrlItem.setReqMaxQty(0d);
-											if (!threshold.isBlank() && ingItem != null && ingItem.getQtyPerc() != 0d) {
+											if (!threshold.isBlank() && ingItem != null && ingItem.getQtyPerc() != null && ingItem.getQtyPerc() != 0d) {
 												Double thresholdValue = DecernisHelper.extractThresholdValue(threshold);
 												if (thresholdValue != null) {
 													reqCtrlItem.setReqMaxQty((thresholdValue / ingItem.getQtyPerc()) * 100d);

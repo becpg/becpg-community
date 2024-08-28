@@ -38,7 +38,7 @@
 				<list>
 					<value>none</value>
 					<value>text</value>
-					<value>textarea</value>			
+					<value>textarea</value>
 					<value>file</value>
 				</list>
 			</parameter>
@@ -139,9 +139,9 @@
 				<property name="survey:questionCriterion">
 					<type>d:text</type>
 					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>false</facetable>
-		            </index>
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
 					<constraints>
 						<constraint ref="pjt:scoreCriteria" />
 					</constraints>
@@ -175,6 +175,47 @@
 	</types>
 
 	<aspects>
+		<aspect name="survey:formulatedSurveyAspect">
+			<properties>
+				<property name="survey:fsLinkedTypes">
+					<type>d:text</type>
+					<multiple>true</multiple>
+				</property>
+				<!--property name="survey:fsLinkedHierarchy">
+					<type>d:noderef</type>
+					<multiple>true</multiple>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property-->
+				<!-- TODO SurveyList?(@[1-3]) -->
+			</properties>
+			<associations>
+				<association name="survey:fsLinkedCharactRefs">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:entityListItem</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="survey:fsLinkedHierarchy">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:linkedValue</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>
+		</aspect>
 		<aspect name="survey:advSurveySearchAspect">
 			<associations>
 				<association name="survey:advSearchSurveyQuestion1">

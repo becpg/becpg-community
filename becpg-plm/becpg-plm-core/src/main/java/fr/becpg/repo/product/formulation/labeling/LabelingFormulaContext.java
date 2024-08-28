@@ -2044,8 +2044,9 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 		try {
 			shouldBreakIngType = true;
-
-			tableContent.append("<table cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"" + styleCss + "\" rules=\"none\">");
+			
+			tableContent.append("<table class=\"labelingTable\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\""
+					+ ((styleCss == null) || (styleCss).isBlank() ? "border: solid 1px; border-collapse:collapse" : styleCss) + "\" rules=\"none\">");
 
 			List<HtmlTableStruct> flatList = flatCompositeLabeling(lblCompositeContext, DEFAULT_RATIO, 0);
 			if (!flatList.isEmpty()) {
@@ -2062,7 +2063,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 						}
 
 						ret.append(applyRoundingMode(new MessageFormat(htmlTableRowFormat, getContentLocale()), tmp.qtyPerc)
-								.format(new Object[] { indent(tmp.label, tmp.level), tmp.qtyPerc, tmp.geoOriginsLabel, tmp.bioOriginsLabel }));
+								.format(new Object[] { indent(decorate(tmp.label), tmp.level), tmp.qtyPerc, decorate(tmp.geoOriginsLabel), decorate(tmp.bioOriginsLabel),null,null }));
+						
 					}
 				}
 
@@ -2075,7 +2077,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 							+ roundedDouble(diffValue);
 
 					tableContent.append(applyTotalRoundingMode(new MessageFormat(htmlTableRowFormat, getContentLocale())).format(
-							new Object[] { flatList.get(0).label, qtyPerc, flatList.get(0).geoOriginsLabel, flatList.get(0).bioOriginsLabel }));
+							new Object[] { decorate(flatList.get(0).label), qtyPerc, decorate(flatList.get(0).geoOriginsLabel), decorate(flatList.get(0).bioOriginsLabel) ,null,null}));
 
 				}
 				tableContent.append(ret);
@@ -2088,7 +2090,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 			tableContent.append("</table>");
 
-			return decorate(tableContent.toString());
+			return tableContent.toString().replaceAll(" null| \\(null\\)| \\(\\)| \\[null\\]", "").replace(">null<", "><");
 		} finally {
 			shouldBreakIngType = false;
 		}

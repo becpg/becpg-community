@@ -56,7 +56,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.extensions.surf.util.I18NUtil;
 import org.xml.sax.SAXException;
 
 import fr.becpg.repo.designer.DesignerInitService;
@@ -64,6 +63,7 @@ import fr.becpg.repo.designer.DesignerModel;
 import fr.becpg.repo.designer.DesignerService;
 import fr.becpg.repo.designer.data.DesignerTree;
 import fr.becpg.repo.designer.data.FormControl;
+import fr.becpg.repo.helper.MLTextHelper;
 import freemarker.cache.ClassTemplateLoader;
 import freemarker.cache.TemplateLoader;
 import freemarker.template.Configuration;
@@ -337,7 +337,7 @@ public class DesignerServiceImpl implements DesignerService {
 		} else if (nodeService.hasAspect(nodeRef, DesignerModel.ASPECT_CONFIG)) {
 			String name = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
 			nodeService.setProperty(nodeRef, DesignerModel.PROP_PUBLISHED_CONFIG_NAME, name);
-			nodeService.setProperty(nodeRef, ContentModel.PROP_DESCRIPTION, I18NUtil.getMessage("designer.published"));
+			nodeService.setProperty(nodeRef, ContentModel.PROP_DESCRIPTION, MLTextHelper.getI18NMessage("designer.published"));
 		}
 	}
 
@@ -715,7 +715,7 @@ public class DesignerServiceImpl implements DesignerService {
 
 			writer.setMimetype(mimetypeService.guessMimetype(modelName));
 
-			Configuration cfg = new Configuration();
+			Configuration cfg = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
 			TemplateLoader templateLoader = new ClassTemplateLoader(DesignerServiceImpl.class, "/beCPG/designer/");
 			cfg.setTemplateLoader(templateLoader);
 			Template ftlTemplate = cfg.getTemplate(modelTemplate);
@@ -743,7 +743,7 @@ public class DesignerServiceImpl implements DesignerService {
 			}
 			dictionaryDAO.reset();
 		} else if (nodeService.hasAspect(nodeRef, DesignerModel.ASPECT_CONFIG)) {
-			nodeService.setProperty(nodeRef, ContentModel.PROP_DESCRIPTION, I18NUtil.getMessage("designer.not-published"));
+			nodeService.setProperty(nodeRef, ContentModel.PROP_DESCRIPTION, MLTextHelper.getI18NMessage("designer.not-published"));
 		}
 	}
 

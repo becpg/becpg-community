@@ -8,6 +8,8 @@
 		url("../../components/images/filetypes/generic-rawMaterial-16.png");
 	--icon-semiFinishedProduct-16:
 		url("../../components/images/filetypes/generic-semiFinishedProduct-16.png");
+	--icon-logisticUnit-16:
+		url("../../components/images/filetypes/generic-logisticUnit-16.png");
 	--icon-localSemiFinishedProduct-16:
 		url("../../components/images/filetypes/generic-localSemiFinishedProduct-16.png");
 	--icon-supplier-16:
@@ -28,6 +30,10 @@
 		url("../../components/images/filetypes/generic-entity-16.png");
 	--icon-project-16:
 		url("../../components/images/filetypes/generic-project-16.png");
+}
+
+#bd {
+	padding-bottom: 0em;
 }
 
 .footer-becpg .copyright {
@@ -347,6 +353,10 @@ img.icon16_11 {
 .dijitIcon.dijitMenuItemIcon.project-list-header {
     background-image: url("../../components/images/header/project-list.png") !important
 }
+.dijitIcon.dijitMenuItemIcon.product-list-header {
+    background-image: url("../../components/images/header/product-list.png") !important
+}
+
 .dijitIcon.dijitMenuItemIcon.nc-list-header {
     background-image: url("../../components/images/header/nc-list.png") !important
 }
@@ -614,6 +624,15 @@ span.semiFinishedProduct-ToValidate,
     background-repeat: no-repeat
 }
 
+span.logisticUnit,
+span.logisticUnit-ToValidate,
+.entity.bcpg-logisticUnit,
+.entity.logisticUnit {
+    background-image: var(--icon-logisticUnit-16) !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+
 span.resourceProduct,
 span.resourceProduct-ToValidate,
 .entity.bcpg-resourceProduct,
@@ -694,6 +713,9 @@ span.resourceProduct-ToValidate {
 span.semiFinishedProduct-ToValidate {
     background-image: url("../../components/images/states/tovalidate-10.png") , var(--icon-semiFinishedProduct-16) !important
 }
+span.logisticUnit-ToValidate {
+    background-image: url("../../components/images/states/tovalidate-10.png") , var(--icon-logisticUnit-16) !important
+}
 span.finishedProduct-Valid {
     background-image: url("../../components/images/states/valid-10.png") , var(--icon-finishedProduct-16) !important
 }
@@ -711,6 +733,9 @@ span.rawMaterial-Valid {
 }
 span.semiFinishedProduct-Valid {
     background-image: url("../../components/images/states/valid-10.png") , var(--icon-semiFinishedProduct-16) !important
+}
+span.logisticUnit-Valid {
+    background-image: url("../../components/images/states/valid-10.png") , var(--icon-logisticUnit-16) !important
 }
 span.resourceProduct-Valid {
     background-image: url("../../components/images/states/valid-10.png") , var(--icon-resourceProduct-16) !important
@@ -733,6 +758,9 @@ span.rawMaterial-Simulation {
 span.semiFinishedProduct-Simulation {
     background-image: url("../../components/images/states/simulation-10.png") , var(--icon-semiFinishedProduct-16) !important
 }
+span.logisticUnit-Simulation {
+    background-image: url("../../components/images/states/simulation-10.png") , var(--icon-logisticUnit-16) !important
+}
 span.resourceProduct-Simulation {
     background-image: url("../../components/images/states/simulation-10.png") , var(--icon-resourceProduct-16) !important
 }
@@ -753,6 +781,9 @@ span.rawMaterial-Archived {
 }
 span.semiFinishedProduct-Archived {
     background-image: url("../../components/images/states/archived-10.png") , var(--icon-semiFinishedProduct-16) !important
+}
+span.logisticUnit-Archived {
+    background-image: url("../../components/images/states/archived-10.png") , var(--icon-logisticUnit-16) !important
 }
 span.resourceProduct-Archived {
     background-image: url("../../components/images/states/archived-10.png") , var(--icon-resourceProduct-16) !important
@@ -775,6 +806,9 @@ span.rawMaterial-Refused {
 span.semiFinishedProduct-Refused {
     background-image: url("../../components/images/states/refused-10.png") , var(--icon-semiFinishedProduct-16) !important
 }
+span.logisticUnit-Refused {
+    background-image: url("../../components/images/states/refused-10.png") , var(--icon-logisticUnit-16) !important
+}
 span.resourceProduct-Refused {
     background-image: url("../../components/images/states/refused-10.png") , var(--icon-resourceProduct-16) !important
 }
@@ -796,6 +830,9 @@ span.rawMaterial-Stopped {
 }
 span.semiFinishedProduct-Stopped {
     background-image: url("../../components/images/states/stopped-10.png") , var(--icon-semiFinishedProduct-16) !important
+}
+span.logisticUnit-Stopped {
+    background-image: url("../../components/images/states/stopped-10.png") , var(--icon-logisticUnit-16) !important
 }
 span.resourceProduct-Stopped {
     background-image: url("../../components/images/states/stopped-10.png") , var(--icon-resourceProduct-16) !important

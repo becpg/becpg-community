@@ -393,7 +393,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			imgNodeRef = (NodeRef) nodeService.getProperty(imgNodeRef, ContentModel.PROP_LINK_DESTINATION);
 		}
 
-		if (imgNodeRef != null) {
+		if (imgNodeRef != null && contentService.getReader(imgNodeRef, ContentModel.PROP_CONTENT) != null) {
 			EntityImageInfo imgInfo = new EntityImageInfo(imgId, imgNodeRef);
 
 			imgInfo.setName((String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_NAME));

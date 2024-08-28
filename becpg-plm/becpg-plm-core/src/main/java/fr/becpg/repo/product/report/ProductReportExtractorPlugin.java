@@ -32,6 +32,8 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.formulation.ReportableError;
+import fr.becpg.repo.formulation.ReportableError.ReportableErrorType;
 import fr.becpg.repo.helper.JsonFormulaHelper;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.CurrentLevelQuantities;
@@ -617,7 +619,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			boolean dropPackagingOfComponents) {
 
 		if (level > 20) {
-			//Avoid infinite loop
+			addInfiniteLoopError(currentLevelQuantities, context);
 			return;
 		}
 
@@ -684,11 +686,18 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	}
 
+	private void addInfiniteLoopError(CurrentLevelQuantities currentLevelQuantities, DefaultExtractorContext context) {
+		context.setInfiniteLoop(true);
+		String message = I18NUtil.getMessage("message.datasource.infinite-loop");
+		context.getReportData().getLogs().add(new ReportableError(ReportableErrorType.ERROR, message, MLTextHelper.getI18NMessage("message.datasource.infinite-loop"), List.of(currentLevelQuantities.getCompoListItem().getNodeRef())));
+		logger.error("Infinite loop during datasource generation due to the following item: " + currentLevelQuantities.getCompoListItem().getNodeRef());
+	}
+
 	private void loadProcessListItemForCompo(NodeRef entityNodeRef, Element processListElt, int level, CurrentLevelQuantities currentLevelQuantities,
 			DefaultExtractorContext context) {
 
 		if (level > 20) {
-			//Avoid infinite loop
+			addInfiniteLoopError(currentLevelQuantities, context);
 			return;
 		}
 
@@ -780,7 +789,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			CurrentLevelQuantities currentLevelQuantities, DefaultExtractorContext context) {
 
 		if (level > 20) {
-			//Avoid infinite loop
+			addInfiniteLoopError(currentLevelQuantities, context);
 			return;
 		}
 
@@ -866,7 +875,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 								}
 							}
 
-							if (extractNextLevel) {
+							if (extractNextLevel && !context.isInfiniteLoop()) {
 								loadCompoListItem(entityNodeRef, currentLevelQuantities.getCompoListItem(), compoListElt, level + 1,
 										new CurrentLevelQuantities(alfrescoRepository, packagingHelper, subDataItem, currentLevelQuantities),
 										context);
@@ -1509,7 +1518,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			Element processListElt, int level, DefaultExtractorContext context) {
 
 		if (level > 20) {
-			//Avoid infinite loop
+			addInfiniteLoopError(currentLevelQuantities, context);
 			return;
 		}
 

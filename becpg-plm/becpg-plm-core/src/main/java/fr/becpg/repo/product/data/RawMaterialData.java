@@ -44,6 +44,11 @@ public class RawMaterialData extends ProductData {
 		setName(name);
 		return this;
 	}
+	
+	public RawMaterialData withNetWeight(Double netWeight) {
+		setNetWeight(netWeight);
+		return this;
+	}
 
 	/**
 	 * <p>withLegalName.</p>

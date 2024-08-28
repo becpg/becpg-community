@@ -34,6 +34,8 @@ public interface EntityActivityService {
 	static final String PROP_DATALIST_TYPE= "datalistType";
 	/** Constant <code>PROP_ENTITY_NODEREF="entityNodeRef"</code> */
 	static final String PROP_ENTITY_NODEREF = "entityNodeRef";
+	
+	static final String PROP_PARENT_NAME = "parentName";
 	/** Constant <code>PROP_ENTITY_TYPE="entityType"</code> */
 	static final String PROP_ENTITY_TYPE= "entityType";
 	/** Constant <code>PROP_CHARACT_NODEREF="charactNodeRef"</code> */
@@ -209,5 +211,7 @@ public interface EntityActivityService {
 	void postExportActivity(NodeRef entityNodeRef, QName dataType, String fileName);
 
 	boolean postChangeOrderActivity(NodeRef entityNodeRef, NodeRef changeOrderNodeRef);
+
+	void postDataListCopyActivity(NodeRef entityNodeRef, NodeRef sourceEntityNodeRef, NodeRef sourceListNodeRef, String action);
 
 }

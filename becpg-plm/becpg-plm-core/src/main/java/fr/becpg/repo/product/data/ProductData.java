@@ -48,6 +48,7 @@ import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.data.productList.PriceListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
+import fr.becpg.repo.product.data.productList.PubChannelListDataItem;
 import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.ResourceParamListItem;
 import fr.becpg.repo.product.data.productList.SvhcListDataItem;
@@ -251,6 +252,7 @@ public class ProductData extends AbstractScorableEntity
 	private List<RegulatoryListDataItem> regulatoryList;
 	private List<IngRegulatoryListDataItem> ingRegulatoryList;
 	private List<SvhcListDataItem> svhcList;
+	private List<PubChannelListDataItem> pubChannelList;
 
 	/*
 	 * View
@@ -298,6 +300,64 @@ public class ProductData extends AbstractScorableEntity
 	private List<SurveyList> surveyList;
 	private Integer productScore;
 
+	
+	private NodeRef glopTargetCharact;
+	private String glopTargetTask;
+	private Double glopTolerance;
+	private List<String> glopConstraintLists;
+	private Boolean glopApplyOptimization;
+	
+	@AlfSingleAssoc
+	@AlfQname(qname = "bcpg:glopTargetCharact")
+	public NodeRef getGlopTargetCharact() {
+		return glopTargetCharact;
+	}
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:glopTolerance")
+	public Double getGlopTolerance() {
+		return glopTolerance;
+	}
+	
+	public void setGlopTolerance(Double glopTolerance) {
+		this.glopTolerance = glopTolerance;
+	}
+	
+	public void setGlopTargetCharact(NodeRef glopTargetCharact) {
+		this.glopTargetCharact = glopTargetCharact;
+	}
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:glopTargetTask")
+	public String getGlopTargetTask() {
+		return glopTargetTask;
+	}
+	
+	public void setGlopTargetTask(String glopTargetTask) {
+		this.glopTargetTask = glopTargetTask;
+	}
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:glopConstraintLists")
+	public List<String> getGlopConstraintLists() {
+		return glopConstraintLists;
+	}
+	
+	public void setGlopConstraintLists(List<String> glopConstraintLists) {
+		this.glopConstraintLists = glopConstraintLists;
+	}
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:glopApplyOptimization")
+	public Boolean getGlopApplyOptimization() {
+		return glopApplyOptimization;
+	}
+
+	public void setGlopApplyOptimization(Boolean glopApplyOptimization) {
+		this.glopApplyOptimization = glopApplyOptimization;
+	}
+	
+	
 	/**
 	 * {@inheritDoc}
 	 *
@@ -2235,6 +2295,16 @@ public class ProductData extends AbstractScorableEntity
 	 */
 	public void setSvhcList(List<SvhcListDataItem> svhcList) {
 		this.svhcList = svhcList;
+	}
+	
+	@DataList
+	@AlfQname(qname = "bp:pubChannelList")
+	public List<PubChannelListDataItem> getPubChannelList() {
+		return pubChannelList;
+	}
+	
+	public void setPubChannelList(List<PubChannelListDataItem> pubChannelList) {
+		this.pubChannelList = pubChannelList;
 	}
 
 	/**

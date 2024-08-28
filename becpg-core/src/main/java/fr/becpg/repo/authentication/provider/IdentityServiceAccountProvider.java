@@ -141,6 +141,9 @@ public class IdentityServiceAccountProvider {
 								} else  if(logger.isDebugEnabled()){
 									logger.debug(EntityUtils.toString(createResp.getEntity()));
 								}
+								if (EntityUtils.toString(createResp.getEntity()).toLowerCase().contains("user exists")) {
+									return false;
+								}
 							}
 						} else {
 							logger.error(auth.toString());
