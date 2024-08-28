@@ -54,7 +54,7 @@ function main()
       person.properties["jobtitle"] = json.get("jobtitle");
    }
    if (!json.isNull("isSsoUser")) {
-		if (json.get("isSsoUser")) {
+		if (json.get("isSsoUser") == true) {
 			person.properties["bcpg:isSsoUser"] = true; 
 		}
 	}
