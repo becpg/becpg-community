@@ -18,8 +18,10 @@
 package fr.becpg.repo.policy;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -32,8 +34,8 @@ import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.policy.PolicyComponent;
 import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
-import org.alfresco.repo.transaction.TransactionalResourceHelper;
 import org.alfresco.repo.transaction.AlfrescoTransactionSupport.TxnReadState;
+import org.alfresco.repo.transaction.TransactionalResourceHelper;
 import org.alfresco.repo.version.Version2Model;
 import org.alfresco.service.cmr.lock.LockService;
 import org.alfresco.service.cmr.lock.LockStatus;
@@ -43,6 +45,7 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.GUID;
 import org.alfresco.util.PropertyCheck;
+import org.alfresco.util.transaction.TransactionListener;
 import org.alfresco.util.transaction.TransactionListenerAdapter;
 import org.alfresco.util.transaction.TransactionSupportUtil;
 import org.apache.commons.logging.Log;
@@ -70,6 +73,8 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 	protected BeCPGPolicyTransactionListener transactionListener = new BeCPGPolicyTransactionListener("pre");
 	
 	protected BeCPGPolicyTransactionListener postTransactionListener = new BeCPGPolicyTransactionListener("post");
+
+    private static final String RESOURCE_KEY_TXN_PRE_LISTENERS = "AlfrescoTransactionSupport.preListeners";
 
 	/** Constant <code>KEY_REGISTRY="key_registry"</code> */
 	protected static final String KEY_REGISTRY = "key_registry";
@@ -310,11 +315,19 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 		if (pendingNodes == null) {
 			pendingNodes = new LinkedHashSet<>();
 			TransactionSupportUtil.bindResource(key, pendingNodes);
-			AlfrescoTransactionSupport.bindListener(transactionListener);
+			bindTransactionListener(transactionListener);
 		}
-	
 		
 		pendingNodes.add(nodeRef);
+	}
+
+	private void bindTransactionListener(TransactionListener transactionListener) {
+		List<TransactionListener> preListeners = TransactionSupportUtil.getResource(RESOURCE_KEY_TXN_PRE_LISTENERS);
+		if (preListeners == null) {
+			preListeners = new ArrayList<>();
+		}
+		preListeners.add(transactionListener);
+		TransactionSupportUtil.bindResource(RESOURCE_KEY_TXN_PRE_LISTENERS, preListeners);
 	}
 	
 	private void addKeyRegistry(String registry, String key) {
@@ -366,7 +379,7 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 			pendingNodes = new LinkedHashSet<>();
 
 			TransactionSupportUtil.bindResource(key, pendingNodes);
-			AlfrescoTransactionSupport.bindListener(transactionListener);
+			bindTransactionListener(transactionListener);
 		}
 		pendingNodes.add(associationRef);
 		
@@ -517,7 +530,7 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 			
 			
 			if(setPostTransactionListener) {
-			   AlfrescoTransactionSupport.bindListener(postTransactionListener);
+			   bindTransactionListener(postTransactionListener);
 			}
 			
 		}
