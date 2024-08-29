@@ -5641,6 +5641,31 @@
 				</property>
 			</properties>
 		</aspect>
+		
+		<aspect name="bcpg:userNotificationAspect">
+			<properties>
+				<property name="bcpg:emailTaskResourceDisabled">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:emailTaskObserverDisabled">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:emailProjectNotificationDisabled">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:emailAdminNotificationDisabled">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+			</properties>
+		</aspect>
 
 		<aspect name="bcpg:advSearchAspect">
 			<properties>

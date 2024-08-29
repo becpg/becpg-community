@@ -1,5 +1,6 @@
 package fr.becpg.repo.notification.impl;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
+import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
@@ -133,6 +135,9 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 
 	@Autowired
 	private FileFolderService fileFolderService;
+	
+	@Autowired
+	private PersonService personService;
 
 	/** {@inheritDoc} */
 	@Override
@@ -213,6 +218,10 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 						for (String userName : extractAuthoritiesFromGroup(authorityRef)) {
 							
 							if (authorities.contains(userName)) {
+								continue;
+							}
+							
+							if (emailAdminNotificationDisabled(userName)) {
 								continue;
 							}
 							
@@ -337,6 +346,21 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 		}
 
 	}
+	
+	private boolean emailAdminNotificationDisabled(String username) {
+		NodeRef person = personService.getPerson(username);
+		if (person != null) {
+			Serializable emailAdminNotificationDisabled = nodeService.getProperty(person, BeCPGModel.PROP_EMAIL_ADMIN_NOTIFICATION_DISABLED);
+			if (Boolean.TRUE.equals(emailAdminNotificationDisabled)) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("emailAdminNotificationDisabled for " + username);
+				}
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	private void executeScript(NotificationRuleListDataItem notification, List<NodeRef> items, Map<String, Object> templateArgs) {
 		
 		Map<String, Object> model = new HashMap<>();
