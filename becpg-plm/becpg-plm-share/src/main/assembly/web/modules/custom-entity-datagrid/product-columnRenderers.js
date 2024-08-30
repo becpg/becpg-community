@@ -1530,9 +1530,14 @@ if (beCPG.module.EntityDataGridRenderers) {
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName: ["bcpg:lclComments"],
 		renderer: function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
-			if (data.value != null && data.value.length > 0) {
-				return data.displayValue;
+			if (data.value != null) {
+				if (data.displayValue == null || data.displayValue == "") {
+					return "<i>" + scope.msg("label.information.available") + "</i>";
+				} else {
+					return data.displayValue;
+				}
 			}
+
 			return "";
 		}
 	});
