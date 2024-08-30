@@ -968,7 +968,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 													if (ent instanceof List<?> entList) {
 														entList = entList.stream().map(o -> lvc.getDisplayLabel(o.toString(), dictionaryService)).toList();
 														ent = (Serializable) entList;
-													} else {
+													} else if (ent != null) {
 														ent = lvc.getDisplayLabel(ent.toString(), dictionaryService);
 													}
 												}
@@ -1002,7 +1002,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 														if (ent instanceof List<?> entList) {
 															entList = entList.stream().map(o -> lvc.getDisplayLabel(o.toString(), dictionaryService)).toList();
 															ent = (Serializable) entList;
-														} else {
+														} else if (ent != null) {
 															ent = lvc.getDisplayLabel(ent.toString(), dictionaryService);
 														}
 													}
