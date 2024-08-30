@@ -18,10 +18,8 @@
 package fr.becpg.repo.policy;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -322,9 +320,9 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 	}
 
 	private void bindTransactionListener(TransactionListener transactionListener) {
-		List<TransactionListener> preListeners = TransactionSupportUtil.getResource(RESOURCE_KEY_TXN_PRE_LISTENERS);
+		Set<TransactionListener> preListeners = TransactionSupportUtil.getResource(RESOURCE_KEY_TXN_PRE_LISTENERS);
 		if (preListeners == null) {
-			preListeners = new ArrayList<>();
+			preListeners = new HashSet<>();
 		}
 		preListeners.add(transactionListener);
 		TransactionSupportUtil.bindResource(RESOURCE_KEY_TXN_PRE_LISTENERS, preListeners);
