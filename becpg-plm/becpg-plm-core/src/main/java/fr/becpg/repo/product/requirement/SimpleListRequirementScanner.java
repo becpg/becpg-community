@@ -31,7 +31,7 @@ public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem>
 	private static final String MESSAGE_UNDEFINED_VALUE = "message.formulate.undefined.value";
 
 	private static Log logger = LogFactory.getLog(SimpleListRequirementScanner.class);
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public List<ReqCtrlListDataItem> checkRequirements(ProductData formulatedProduct, List<ProductSpecificationData> specifications) {
@@ -47,27 +47,28 @@ public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem>
 
 				requirements.forEach(specDataItem -> {
 					dataListVisited.forEach(listDataItem -> {
-						if (specDataItem instanceof MinMaxValueDataItem) {
+						if (specDataItem instanceof MinMaxValueDataItem minMaxSpecValueDataItem) {
 							if (specDataItem.getCharactNodeRef().equals(listDataItem.getCharactNodeRef())) {
 								boolean isCharactAllowed = true;
-								MinMaxValueDataItem minMaxSpecValueDataItem = (MinMaxValueDataItem) specDataItem;
-								if ((specDataItem.getValue() != null) && !specDataItem.getValue().equals(listDataItem.getValue())) {
+								if ((specDataItem.getValue() != null) && !specDataItem.getValue().equals(getValue(specDataItem, listDataItem))) {
 									isCharactAllowed = false;
 								}
 
 								if (minMaxSpecValueDataItem.getMini() != null) {
-									if ((listDataItem.getValue() == null) || (listDataItem.getValue() < minMaxSpecValueDataItem.getMini())) {
+									if ((getValue(specDataItem, listDataItem) == null)
+											|| (getValue(specDataItem, listDataItem) < minMaxSpecValueDataItem.getMini())) {
 										isCharactAllowed = false;
 									}
 								}
-								
+
 								Double reqCtrlMaxQty = null;
 
 								if (minMaxSpecValueDataItem.getMaxi() != null) {
-									if ((listDataItem.getValue() == null) || (listDataItem.getValue() > minMaxSpecValueDataItem.getMaxi())) {
+									if ((getValue(specDataItem, listDataItem) == null)
+											|| (getValue(specDataItem, listDataItem) > minMaxSpecValueDataItem.getMaxi())) {
 										isCharactAllowed = false;
-										if (listDataItem.getValue() != null && listDataItem.getValue() != 0) {
-											reqCtrlMaxQty = minMaxSpecValueDataItem.getMaxi() / listDataItem.getValue() * 100d;
+										if ((getValue(specDataItem, listDataItem) != null) && (getValue(specDataItem, listDataItem) != 0)) {
+											reqCtrlMaxQty = (minMaxSpecValueDataItem.getMaxi() / getValue(specDataItem, listDataItem)) * 100d;
 										}
 									}
 								}
@@ -79,7 +80,7 @@ public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem>
 									MLText message = MLTextHelper
 											.getI18NMessage(keyMessage,
 													mlNodeService.getProperty(listDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME),
-													(listDataItem.getValue() != null ? listDataItem.getValue()
+													(getValue(specDataItem, listDataItem) != null ? getValue(specDataItem, listDataItem)
 															: MLTextHelper.getI18NMessage(MESSAGE_UNDEFINED_VALUE)),
 													MLTextHelper.createMLTextI18N((l) -> {
 														return (minMaxSpecValueDataItem.getMini() != null
@@ -90,25 +91,23 @@ public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem>
 																? " <=" + NumberFormat.getInstance(l).format(minMaxSpecValueDataItem.getMaxi())
 																: "");
 													}));
-									
-									
+
 									String regulatoryId = null;
-									
+
 									if (minMaxSpecValueDataItem instanceof RegulatoryEntityItem regulatoryEntityItem) {
 										regulatoryId = extractRegulatoryId(regulatoryEntityItem, specification);
 									}
-									
-									if (regulatoryId == null || regulatoryId.isBlank()) {
-										if (specification.getRegulatoryCode() != null && !specification.getRegulatoryCode().isBlank()) {
+
+									if ((regulatoryId == null) || regulatoryId.isBlank()) {
+										if ((specification.getRegulatoryCode() != null) && !specification.getRegulatoryCode().isBlank()) {
 											regulatoryId = specification.getRegulatoryCode();
 										} else {
 											regulatoryId = specification.getName();
 										}
 									}
-									ret.add(ReqCtrlListDataItem.build()
-											.ofType(isCharactAllowed ? RequirementType.Info : RequirementType.Forbidden).withMessage(message)
-											.withCharact(listDataItem.getCharactNodeRef()).ofDataType(RequirementDataType.Specification)
-											.withReqMaxQty(reqCtrlMaxQty)
+									ret.add(ReqCtrlListDataItem.build().ofType(isCharactAllowed ? RequirementType.Info : RequirementType.Forbidden)
+											.withMessage(message).withCharact(listDataItem.getCharactNodeRef())
+											.ofDataType(RequirementDataType.Specification).withReqMaxQty(reqCtrlMaxQty)
 											.withRegulatoryCode(regulatoryId));
 								}
 							}
@@ -119,6 +118,10 @@ public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem>
 		}
 
 		return ret;
+	}
+
+	protected  Double getValue(T specListDataItem, T listDataItem) {
+		return listDataItem.getValue();
 	}
 
 	/**
@@ -141,12 +144,10 @@ public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem>
 		toAdd.forEach(item -> {
 			if (item.getCharactNodeRef() != null) {
 				boolean isFound = false;
-				for (SimpleListDataItem sl : ret) {
-					if (item.getCharactNodeRef().equals(sl.getCharactNodeRef())) {
+				for (T sl : ret) {
+					if (shouldMerge(item,sl)) {
 						isFound = true;
-						if ((sl instanceof MinMaxValueDataItem) && (item instanceof MinMaxValueDataItem)) {
-							MinMaxValueDataItem castSl = (MinMaxValueDataItem) sl;
-							MinMaxValueDataItem castItem = (MinMaxValueDataItem) item;
+						if ((sl instanceof MinMaxValueDataItem castSl) && (item instanceof MinMaxValueDataItem castItem)) {
 							if (logger.isTraceEnabled()) {
 								logger.trace("Merging minMax values: sl=[" + castSl.getMini() + " - " + castSl.getMaxi() + "], item=["
 										+ castItem.getMini() + " - " + castItem.getMaxi() + "]");
@@ -174,6 +175,10 @@ public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem>
 				}
 			}
 		});
+	}
+
+	protected boolean shouldMerge(T item, T sl) {
+		return item.getCharactNodeRef().equals(sl.getCharactNodeRef());
 	}
 
 }
