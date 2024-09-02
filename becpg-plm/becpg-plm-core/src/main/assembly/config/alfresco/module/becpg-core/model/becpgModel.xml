@@ -3820,6 +3820,13 @@
 						<facetable>false</facetable>
 					</index>
 				</property>
+				<property name="bcpg:irlPrecautions">
+					<type>d:mltext</type>
+					<index enabled="true">
+						<tokenised>true</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
 				<property name="bcpg:irlSources">
 					<type>d:noderef</type>
 					<multiple>true</multiple>
