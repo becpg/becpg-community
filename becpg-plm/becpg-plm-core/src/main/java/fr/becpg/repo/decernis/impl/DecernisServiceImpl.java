@@ -255,11 +255,13 @@ public class DecernisServiceImpl  extends AbstractLifecycleBean implements Decer
 		String usages = items.stream().map(item -> item.getUsages().getDefaultValue()).distinct().sorted().collect(Collectors.joining(";;"));
 		String restrictionLevels = items.stream().map(item -> item.getRestrictionLevels().getDefaultValue()).filter(r -> r != null && !r.isBlank() && !r.equals("-")).distinct().sorted().collect(Collectors.joining(";;"));
 		String resultIndicators = items.stream().map(item -> item.getResultIndicator().getDefaultValue()).distinct().sorted().collect(Collectors.joining(";;"));
+		String precautions = items.stream().map(item -> item.getPrecautions().getDefaultValue()).distinct().sorted().collect(Collectors.joining(";;"));
 
 		mergedItem.setResultIndicator(new MLText(resultIndicators));
 		mergedItem.setCitation(new MLText(citation));
 		mergedItem.setUsages(new MLText(usages));
 		mergedItem.setRestrictionLevels(new MLText(restrictionLevels));
+		mergedItem.setPrecautions(new MLText(precautions));
 		boolean mlAware = MLPropertyInterceptor.setMLAware(true);
 		try {
 			MLText comment =	(MLText) nodeService.getProperty(mergedItem.getIng(), PLMModel.PROP_REGULATORY_COMMENT);
