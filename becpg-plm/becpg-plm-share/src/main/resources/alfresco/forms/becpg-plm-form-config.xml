@@ -8512,16 +8512,9 @@
 			<form id="create-productSpecification">
 				<field-visibility>
 					<show id="bcpg:nutListNut" />
-					<show id="bcpg:nutListValue" />
-					<show id="bcpg:nutListValuePrepared" />
 					<show id="bcpg:nutListMini" />
 					<show id="bcpg:nutListMaxi" />
-					<show id="bcpg:nutListLossPerc" />
-					<show id="bcpg:nutListMethod" />
-					<show id="bcpg:nutListMeasurementPrecision" />
-					<show id="bcpg:parentLevel" />
-					<show id="rep:reportKinds" force="true" />
-					<show id="bcpg:glopTarget" force="true" />
+					<show id="bcpg:nutListRequirementType" force="true"/>
 					<show id="bcpg:regulatoryCountries" force="true" />
 					<show id="bcpg:regulatoryUsageRef" force="true" />
 				</field-visibility>
@@ -8532,17 +8525,7 @@
 							<control-param name="ds">becpg/autocomplete/nut</control-param>
 						</control>
 					</field>
-					<field id="bcpg:nutListValue">
-						<control template="/org/alfresco/components/form/controls/number-unit.ftl">
-							<control-param name="unit">-</control-param>
-						</control>
-					</field>
-					<field id="bcpg:parentLevel">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:nutList&#38;attributeName=bcpg:nutListNut
-							</control-param>
-						</control>
-					</field>
+
 					<field id="bcpg:regulatoryCountries">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
@@ -8618,67 +8601,16 @@
 			</form>
 			<form id="datagrid-productSpecification">
 				<field-visibility>
-					<show id="bcpg:entityDataListState" force="true" />
-					<show id="bcpg:variantIds" force="true" />
-					<show id="bcpg:depthLevel" />
 					<show id="bcpg:nutListNut" />
-					<show id="bcpg:nutListValue" />
-					<show id="bcpg:nutListFormulatedValue" />
-					<show id="bcpg:nutListUnit" />
-					<show id="bcpg:nutListValuePrepared" />
-					<show id="bcpg:nutListFormulatedValuePrepared" force="true" />
-					<show id="bcpg:nutListUnitPrepared" force="true" />
 					<show id="bcpg:nutListMini" />
 					<show id="bcpg:nutListMaxi" />
-					<show id="bcpg:nutListFormulatedMini" />
-					<show id="bcpg:nutListFormulatedMaxi" />
-					<show id="bcpg:nutListValuePerServing" force="true" />
-					<show id="bcpg:nutListFormulatedValuePerServing" force="true" />
-					<show id="bcpg:variantColumn1" force="true" />
-					<show id="bcpg:variantColumn2" force="true" />
-					<show id="bcpg:variantColumn3" force="true" />
-					<show id="bcpg:variantColumn4" force="true" />
-					<show id="bcpg:variantColumn5" force="true" />
-					<show id="bcpg:nutListRoundedValue" />
-					<show id="bcpg:nutListRoundedValuePrepared" />
-					<show id="bcpg:nutListGDAPerc" force="true" />
-					<show id="bcpg:nutListLossPerc" />
-					<show id="bcpg:nutListMethod" />
+					<show id="bcpg:nutListRequirementType" force="true"/>
 					<show id="fm:commentCount" force="true" />
-					<show id="bcpg:nutListIsFormulated" />
-					<show id="bcpg:nutListFormulaErrorLog" />
-					<show id="entity_bcpg:nutListNut_bcpg:nut" force="true" />
-					<show id="rep:reportKinds" />
-					<show id="bcpg:nutListSources" />
-					<show id="dataList_bcpg:reqCtrlList" />
-					<show id="bcpg:glopTarget" />
-					<show id="bcpg:glopValue" />
 					<show id="bcpg:regulatoryCountries" force="true" />
 					<show id="bcpg:regulatoryUsageRef" force="true" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:entityDataListState" label="hidden" />
-					<field id="bcpg:variantIds" label="hidden"></field>
-					<field id="bcpg:depthLevel" label="hidden"></field>
-					<field id="bcpg:nutListFormulatedValue" label="hidden" read-only="true" />
-					<field id="bcpg:nutListFormulatedMaxi" label="hidden" read-only="true" />
-					<field id="bcpg:nutListFormulatedMini" label="hidden" read-only="true" />
-					<field id="bcpg:nutListUnit" read-only="true" label="hidden"></field>
-					<field id="bcpg:nutListFormulatedValuePrepared" label="hidden" read-only="true" />
-					<field id="bcpg:nutListFormulatedValuePerServing" label="hidden" read-only="true" />
-					<field id="bcpg:nutListUnitPrepared" read-only="true" label="hidden"></field>
-					<field id="bcpg:nutListRoundedValue" read-only="true"></field>
-					<field id="bcpg:nutListRoundedValuePrepared" read-only="true"></field>
-					<field id="bcpg:variantColumn1" read-only="true" label="hidden"></field>
-					<field id="bcpg:variantColumn2" read-only="true" label="hidden"></field>
-					<field id="bcpg:variantColumn3" read-only="true" label="hidden"></field>
-					<field id="bcpg:variantColumn4" read-only="true" label="hidden"></field>
-					<field id="bcpg:variantColumn5" read-only="true" label="hidden"></field>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
-					<field id="bcpg:nutListIsFormulated" label="hidden" />
-					<field id="bcpg:nutListFormulaErrorLog" label="hidden" />
-					<field id="dataList_bcpg:reqCtrlList" label="hidden" />
-					<field id="bcpg:nutListSources" label="hidden" />
 				</appearance>
 			</form>
 			<form id="customListDatagrid">
@@ -8833,56 +8765,26 @@
 			<form id="edit-productSpecification">
 				<field-visibility>
 					<show id="bcpg:nutListNut" />
-					<show id="bcpg:nutListValue" />
-					<show id="bcpg:nutListValuePrepared" />
-					<show id="bcpg:nutListUnit" />
-					<show id="bcpg:nutListUnitPrepared" />
 					<show id="bcpg:nutListMini" />
 					<show id="bcpg:nutListMaxi" />
-					<show id="bcpg:parentLevel" />
-					<show id="bcpg:nutListLossPerc" />
-					<show id="bcpg:nutListMethod" />
-					<show id="bcpg:nutListMeasurementPrecision" />
-					<show id="rep:reportKinds" />
+					<show id="bcpg:nutListRequirementType" force="true"/>
 					<show id="bcpg:regulatoryCountries" force="true" />
 					<show id="bcpg:regulatoryUsageRef" force="true" />
 				</field-visibility>
 
 				<appearance>
-					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<field id="bcpg:nutListNut">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/nut</control-param>
 						</control>
 					</field>
-					<field id="bcpg:nutListValue">
-						<control template="/org/alfresco/components/form/controls/number-unit.ftl">
-							<control-param name="unit">-</control-param>
-						</control>
-					</field>
-					<field id="bcpg:nutListValuePrepared">
-						<control template="/org/alfresco/components/form/controls/number-unit.ftl">
-							<control-param name="unit">-</control-param>
-						</control>
-					</field>
-					<field id="bcpg:nutListUnit" read-only="true" set="2-col" />
-					<field id="bcpg:nutListUnitPrepared" read-only="true" set="2-col" />
-					<field id="bcpg:nutListMini" set="2-col" />
-					<field id="bcpg:nutListMaxi" set="2-col" />
-					<field id="bcpg:nutListLossPerc" set="2-col" />
-					<field id="bcpg:nutListMethod" set="2-col" />
-					<field id="bcpg:nutListMeasurementPrecision" set="2-col" />
-					<field id="bcpg:parentLevel" set="2-col">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:nutList&#38;attributeName=bcpg:nutListNut</control-param>
-							<control-param name="urlParamsToPass">itemId</control-param>
-						</control>
-					</field>
-					<field id="rep:reportKinds" set="2-col" />
-					<field id="bcpg:regulatoryCountries" set="2-col" >
+					<field id="bcpg:nutListMini"/>
+					<field id="bcpg:nutListMaxi" />
+					<field id="bcpg:nutListRequirementType"/>
+					<field id="bcpg:regulatoryCountries" >
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
-					<field id="bcpg:regulatoryUsageRef" set="2-col" >
+					<field id="bcpg:regulatoryUsageRef" >
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 				</appearance>
@@ -9035,13 +8937,8 @@
 			<form id="create-productSpecification">
 				<field-visibility>
 					<show id="bcpg:pclPhysicoChem" />
-					<show id="bcpg:pclValue" />
 					<show id="bcpg:pclMini" />
 					<show id="bcpg:pclMaxi" />
-					<show id="bcpg:pclTextCriteria" />
-					<show id="bcpg:pclMethod" />
-					<show id="rep:reportKinds" force="true" />
-					<show id="bcpg:glopTarget" force="true" />
 					<show id="bcpg:regulatoryCountries" force="true" />
 					<show id="bcpg:regulatoryUsageRef" force="true" />
 				</field-visibility>
@@ -9050,14 +8947,6 @@
 					<field id="bcpg:pclPhysicoChem">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/physicoChem</control-param>
-						</control>
-					</field>
-					<field id="bcpg:pclTextCriteria">
-						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
-					</field>
-					<field id="bcpg:pclMethod">
-						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/qa:controlMethod</control-param>
 						</control>
 					</field>
 					<field id="bcpg:regulatoryCountries">
@@ -9114,45 +9003,17 @@
 			</form>
 			<form id="datagrid-productSpecification">
 				<field-visibility>
-					<show id="bcpg:entityDataListState" force="true" />
-					<show id="bcpg:variantIds" force="true" />
 					<show id="bcpg:pclPhysicoChem" />
-					<show id="bcpg:pclValue" />
-					<show id="bcpg:pclUnit" />
-					<show id="bcpg:pclType" />
 					<show id="bcpg:pclMini" />
 					<show id="bcpg:pclMaxi" />
-					<show id="bcpg:variantColumn1" force="true" />
-					<show id="bcpg:variantColumn2" force="true" />
-					<show id="bcpg:variantColumn3" force="true" />
-					<show id="bcpg:variantColumn4" force="true" />
-					<show id="bcpg:variantColumn5" force="true" />
-					<show id="bcpg:pclTextCriteria" />
-					<show id="bcpg:pclMethod" />
 					<show id="fm:commentCount" force="true" />
-					<show id="bcpg:physicoChemIsFormulated" />
-					<show id="bcpg:physicoChemFormulaErrorLog" />
-					<show id="rep:reportKinds" />
-					<show id="dataList_bcpg:reqCtrlList" force="true" />
-					<show id="bcpg:glopTarget" />
-					<show id="bcpg:glopValue" />
 					<show id="bcpg:regulatoryCountries" force="true" />
 					<show id="bcpg:regulatoryUsageRef" force="true" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:entityDataListState" label="hidden" />
-					<field id="bcpg:variantIds" label="hidden"></field>
 					<field id="bcpg:pclUnit" read-only="true"></field>
 					<field id="bcpg:pclType" read-only="true"></field>
-					<field id="bcpg:variantColumn1" read-only="true" label="hidden"></field>
-					<field id="bcpg:variantColumn2" read-only="true" label="hidden"></field>
-					<field id="bcpg:variantColumn3" read-only="true" label="hidden"></field>
-					<field id="bcpg:variantColumn4" read-only="true" label="hidden"></field>
-					<field id="bcpg:variantColumn5" read-only="true" label="hidden"></field>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
-					<field id="dataList_bcpg:reqCtrlList" label-id="hidden" />
-					<field id="bcpg:physicoChemIsFormulated" label="hidden" />
-					<field id="bcpg:physicoChemFormulaErrorLog" label="hidden" />
 					<field id="bcpg:regulatoryCountries">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
@@ -9262,12 +9123,8 @@
 			<form id="edit-productSpecification">
 				<field-visibility>
 					<show id="bcpg:pclPhysicoChem" />
-					<show id="bcpg:pclValue" />
-					<show id="bcpg:pclMini" />
+				    <show id="bcpg:pclMini" />
 					<show id="bcpg:pclMaxi" />
-					<show id="bcpg:pclTextCriteria" />
-					<show id="bcpg:pclMethod" />
-					<show id="rep:reportKinds" />
 					<show id="bcpg:regulatoryCountries" force="true" />
 					<show id="bcpg:regulatoryUsageRef" force="true" />
 				</field-visibility>
@@ -9276,14 +9133,6 @@
 					<field id="bcpg:pclPhysicoChem">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/physicoChem</control-param>
-						</control>
-					</field>
-					<field id="bcpg:pclTextCriteria">
-						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
-					</field>
-					<field id="bcpg:pclMethod">
-						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/qa:controlMethod</control-param>
 						</control>
 					</field>
 					<field id="bcpg:regulatoryCountries">

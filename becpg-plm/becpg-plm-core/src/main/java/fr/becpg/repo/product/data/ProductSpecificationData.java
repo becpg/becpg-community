@@ -12,6 +12,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
+import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.ResourceParamDataItem;
 import fr.becpg.repo.product.data.productList.SpecCompatibilityDataItem;
 import fr.becpg.repo.repository.annotation.AlfCacheable;
@@ -52,6 +53,34 @@ public class ProductSpecificationData extends ProductData {
 
 	private List<NodeRef> specCompatibilityTpls = new ArrayList<>();
 	
+	
+	/**
+	 * <p>build.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.FinishedProductData} object
+	 */
+	public static ProductSpecificationData build() {
+		return new ProductSpecificationData();
+	}
+
+	/**
+	 * <p>withName.</p>
+	 *
+	 * @param name a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.product.data.FinishedProductData} object
+	 */
+	public ProductSpecificationData withName(String name) {
+		setName(name);
+		return this;
+	}
+
+	
+
+	public ProductSpecificationData withNutList(List<NutListDataItem> nutList) {
+		setNutList(nutList);
+		return this;
+	}
+
 	
 	/**
 	 * <p>Getter for the field <code>regulatoryCode</code>.</p>

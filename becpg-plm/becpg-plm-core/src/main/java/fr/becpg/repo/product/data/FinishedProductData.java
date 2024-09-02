@@ -10,6 +10,7 @@ import org.alfresco.service.cmr.repository.MLText;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
+import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -80,6 +81,13 @@ public class FinishedProductData extends ProductData {
 		setUnit(unit);
 		return this;
 	}
+	
+	
+	public FinishedProductData withUnitPrice(Double unitPrice) {
+		setUnitPrice(unitPrice);
+		return this;
+	}
+
 
 	/**
 	 * <p>withQty.</p>
@@ -102,6 +110,19 @@ public class FinishedProductData extends ProductData {
 		setDensity(density);
 		return this;
 	}
+	
+
+	public FinishedProductData withServingSize(Double servingSize) {
+		setServingSize(servingSize);
+		return this;
+	}
+	
+
+	public FinishedProductData withProjectedQty(Long projectedQty) {
+		setProjectedQty(projectedQty);
+		return this;
+	}
+
 
 	/**
 	 * <p>withCompoList.</p>
@@ -111,6 +132,12 @@ public class FinishedProductData extends ProductData {
 	 */
 	public FinishedProductData withCompoList(List<CompoListDataItem> compoList) {
 		getCompoListView().setCompoList(compoList);
+		return this;
+	}
+	
+
+	public FinishedProductData withNutList(List<NutListDataItem> nutList) {
+		setNutList(nutList);
 		return this;
 	}
 
@@ -157,5 +184,6 @@ public class FinishedProductData extends ProductData {
 		getLabelingListView().setLabelingRuleList(labelingRuleList);
 		return this;
 	}
+
 
 }

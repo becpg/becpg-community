@@ -401,6 +401,20 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem
 		this.product = product;
 		return this;
 	}
+	
+
+	/**
+	 * <p>withProduct.</p>
+	 *
+	 * @param product a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object
+	 */
+	public CompoListDataItem withParent(CompoListDataItem parent) {
+		this.parent = parent;
+		return this;
+	}
+
+	/**
 
 	/**
 	 * <p>withDeclarationType.</p>
