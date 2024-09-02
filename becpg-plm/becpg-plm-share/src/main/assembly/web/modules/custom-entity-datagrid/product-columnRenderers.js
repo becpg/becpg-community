@@ -415,11 +415,10 @@ if (beCPG.module.EntityDataGridRenderers) {
 				unit = oRecord._oData.itemData.prop_bcpg_nutListUnitPrepared.value;
 			}
 
-			if ((oColumn.label != null && oColumn.label.indexOf && oColumn.label.indexOf("100g") > 0)
+			if ((oColumn.label != null && oColumn.label.indexOf && (oColumn.label.indexOf("100g") > 0 || oColumn.label.indexOf("/") > 0 ))
 				|| (oColumn.field == "prop_bcpg_nutListValuePerServing")) {
 				unit = unit.replace("/100g", "").replace("/100ml", "");
 			}
-
 			if (data.value != null) {
 				ret += data.value.toLocaleString(beCPG.util.getJSLocale()) + " " + unit;
 			}
