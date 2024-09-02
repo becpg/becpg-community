@@ -525,6 +525,16 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 										.distinct()
 										.collect(Collectors.toList()));
 						ingRegulatoryListDataItem.setRestrictionLevels(new MLText(restrictionLevel));
+						
+						String precautions = String.join(";;",
+								countryDidReports.stream()
+								.filter(j -> j.getJSONObject("comments").get("comments") != null
+								&& !j.getJSONObject("comments").get("comments").toString().isBlank()
+								&& !j.getJSONObject("comments").get("comments").toString().equals("null"))
+								.map(j -> j.getJSONObject("comments").getString("comments"))
+								.distinct()
+								.toList());
+						ingRegulatoryListDataItem.setPrecautions(new MLText(precautions));
 
 						String resultIndicator = String.join(";;",
 								countryDidReports.stream()
