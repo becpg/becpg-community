@@ -39,6 +39,32 @@ public class NutsRequirementScanner extends SimpleListRequirementScanner<NutList
 		return MESSAGE_NUT_NOT_IN_RANGE_INFO;
 	}
 
+	
+	@Override
+	protected Double getValue(NutListDataItem specListDataItem, NutListDataItem listDataItem) {
+		if(specListDataItem.getRequirementType()!=null) {
+			switch(specListDataItem.getRequirementType()) {
+			  case Per100:
+				  return listDataItem.getValue();
+			  case Serving:
+				  return listDataItem.getValuePerServing();
+			  case GdaPerc:
+				  return listDataItem.getGdaPerc();
+			  case AsPrepared:
+				  return listDataItem.getPreparedValue();  
+			}
+		}
+		
+		return super.getValue(specListDataItem, listDataItem);
+	}
 
+	
+	@Override
+	protected boolean shouldMerge(NutListDataItem item, NutListDataItem sl) {
+		return item.getCharactNodeRef().equals(sl.getCharactNodeRef()) 
+				&& ((item.getRequirementType()!=null &&  item.getRequirementType().equals(sl.getRequirementType()))
+				|| (item.getRequirementType() == null && sl.getRequirementType() == null)
+				);
+	}
 	
 }

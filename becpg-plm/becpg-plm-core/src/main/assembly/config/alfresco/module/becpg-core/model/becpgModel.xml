@@ -322,6 +322,19 @@
 		</constraint>
 
 
+        <constraint name="bcpg:nutListRequirementType" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+				    <value></value>
+					<value>Per100</value>
+					<value>Serving</value>
+					<value>GdaPerc</value>
+					<value>AsPrepared</value>
+				</list>
+			</parameter>
+		</constraint>
+
+
 		<constraint name="bcpg:nutListMeasurementPrecisions" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -5510,7 +5523,18 @@
 			</properties>
 		</aspect>
 
-
+		<aspect name="bcpg:nutListRequirementAspect">
+			<properties>
+				<property name="bcpg:nutListRequirementType">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="bcpg:nutListRequirementType" />
+					</constraints>
+				</property>
+			</properties>
+		</aspect>
 
 		<aspect name="bcpg:nutrientProfilingScoreAspect">
 			<properties>
