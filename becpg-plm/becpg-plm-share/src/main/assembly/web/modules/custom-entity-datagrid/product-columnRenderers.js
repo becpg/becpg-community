@@ -1655,7 +1655,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 	});
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-		propertyName: ["bcpg:irlCitation", "bcpg:irlRestrictionLevels", "bcpg:irlResultIndicator", "bcpg:irlUsages"],
+		propertyName: ["bcpg:irlCitation", "bcpg:irlRestrictionLevels", "bcpg:irlResultIndicator", "bcpg:irlUsages", "bcpg:irlPrecautions"],
 		renderer: function(oRecord, data, label, scope) {
 
 			if (data.displayValue) {
@@ -1663,7 +1663,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 				var displayedData = "";
 				for (var i in parts) {
 					var part = parts[i];
-					if (label != "bcpg:irlUsages") {
+					if (label != "bcpg:irlUsages" && label != "bcpg:irlPrecautions") {
 						var subParts = part.split(" :: ");
 						part = "<b>" + Alfresco.util.encodeHTML(subParts[0]) + "</b>" + " : " + Alfresco.util.encodeHTML(subParts[1]);
 					}
