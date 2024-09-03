@@ -234,7 +234,7 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 							
 							for (NodeRef nodeRef : items) {
 								if (Boolean.TRUE.equals(AuthenticationUtil.runAs(
-										() -> permissionService.hasPermission(nodeRef, PermissionService.READ_PERMISSIONS).equals(AccessStatus.ALLOWED),
+										() -> permissionService.hasPermission(nodeRef, PermissionService.READ).equals(AccessStatus.ALLOWED),
 										userName))) {
 									
 									entitiesByUser.add(entities.get(nodeRef));
