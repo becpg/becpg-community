@@ -28,7 +28,7 @@ import fr.becpg.repo.repository.model.SimpleListDataItem;
  */
 public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem> extends AbstractRequirementScanner<T> {
 
-	private static final String MESSAGE_UNDEFINED_VALUE = "message.formulate.undefined.value";
+	public static final String MESSAGE_UNDEFINED_VALUE = "message.formulate.undefined.value";
 
 	private static Log logger = LogFactory.getLog(SimpleListRequirementScanner.class);
 
@@ -75,7 +75,7 @@ public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem>
 
 								if (!isCharactAllowed || Boolean.TRUE.equals(addInfoReqCtrl)) {
 
-									String keyMessage = isCharactAllowed ? getSpecInfoMessageKey() : getSpecErrorMessageKey();
+									String keyMessage = isCharactAllowed ? getSpecInfoMessageKey(specDataItem) : getSpecErrorMessageKey(specDataItem);
 
 									MLText message = MLTextHelper
 											.getI18NMessage(keyMessage,
@@ -120,23 +120,22 @@ public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem>
 		return ret;
 	}
 
-	protected  Double getValue(T specListDataItem, T listDataItem) {
-		return listDataItem.getValue();
-	}
+	protected abstract Double getValue(T specDataItem, T listDataItem);
 
 	/**
 	 * <p>getSpecErrorMessageKey.</p>
 	 *
 	 * @return a {@link java.lang.String} object.
 	 */
-	protected abstract String getSpecErrorMessageKey();
+	protected abstract String getSpecErrorMessageKey(T specDataItem);
 
 	/**
+	 * @param specDataItem 
 	 * <p>getSpecInfoMessageKey.</p>
 	 *
 	 * @return a {@link java.lang.String} object
 	 */
-	protected abstract String getSpecInfoMessageKey();
+	protected abstract String getSpecInfoMessageKey(T specDataItem);
 
 	/** {@inheritDoc} */
 	@Override

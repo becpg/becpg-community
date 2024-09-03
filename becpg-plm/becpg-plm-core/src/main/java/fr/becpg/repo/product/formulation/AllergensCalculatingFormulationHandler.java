@@ -267,7 +267,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 					}
 
 					if (!Boolean.TRUE.equals(allergenListDataItem.getVoluntary())) {
-						Double inVolRegulatoryThreshold = getInVolRegulatoryThreshold(formulatedProduct, allergenListDataItem.getAllergen());
+						Double inVolRegulatoryThreshold = getInVolRegulatoryThreshold( allergenListDataItem.getAllergen());
 						if (inVolRegulatoryThreshold != null && allergenListDataItem.getQtyPerc() != null) {
 							if (inVolRegulatoryThreshold > allergenListDataItem.getQtyPerc()) {
 								allergenListDataItem.setInVoluntary(false);
@@ -318,7 +318,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 		return ret != null ? ret : (Double) nodeService.getProperty(allergen, PLMModel.PROP_ALLERGEN_REGULATORY_THRESHOLD);
 	}
 
-	private Double getInVolRegulatoryThreshold(ProductData formulatedProduct, NodeRef allergen) {
+	private Double getInVolRegulatoryThreshold(NodeRef allergen) {
 		return (Double) nodeService.getProperty(allergen, PLMModel.PROP_ALLERGEN_INVOL_REGULATORY_THRESHOLD);
 	}
 

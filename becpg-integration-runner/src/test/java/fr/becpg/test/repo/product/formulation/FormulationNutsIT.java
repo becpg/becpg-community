@@ -32,6 +32,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulationChain;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
@@ -45,6 +46,7 @@ import fr.becpg.repo.product.formulation.NutsCalculatingFormulationHandler;
 import fr.becpg.repo.product.formulation.nutrient.NutrientCode;
 import fr.becpg.repo.product.formulation.nutrient.RegulationFormulationHelper;
 import fr.becpg.repo.product.requirement.NutsRequirementScanner;
+import fr.becpg.repo.product.requirement.SimpleListRequirementScanner;
 import fr.becpg.repo.system.SystemConfigurationService;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
@@ -141,6 +143,14 @@ public class FormulationNutsIT extends AbstractFinishedProductTest {
 		String message4 = I18NUtil.getMessage(NutsCalculatingFormulationHandler.MESSAGE_MAXIMAL_DAILY_VALUE,
 				nodeService.getProperty(nut3, BeCPGModel.PROP_CHARACT_NAME));
 
+		String message5 = I18NUtil.getMessage(NutsRequirementScanner.MESSAGE_NUT_NOT_IN_RANGE + ".AsPrepared",
+				nodeService.getProperty(nut4, BeCPGModel.PROP_CHARACT_NAME),
+				MLTextHelper.getI18NMessage(SimpleListRequirementScanner.MESSAGE_UNDEFINED_VALUE), "1,5<=", " <=10");
+		String message6 = I18NUtil.getMessage(NutsRequirementScanner.MESSAGE_NUT_NOT_IN_RANGE + ".Serving",
+				nodeService.getProperty(nut4, BeCPGModel.PROP_CHARACT_NAME), "14", "1,5<=", " <=10");
+		String message7 = I18NUtil.getMessage(NutsRequirementScanner.MESSAGE_NUT_NOT_IN_RANGE + ".GdaPerc",
+				nodeService.getProperty(nut4, BeCPGModel.PROP_CHARACT_NAME), "0.75", "1,5<=", " <=10");
+
 		logger.info("Formulation raised " + formulatedProduct.getReqCtrlList().size() + " rclDataItems");
 		for (ReqCtrlListDataItem r : formulatedProduct.getReqCtrlList()) {
 
@@ -157,7 +167,17 @@ public class FormulationNutsIT extends AbstractFinishedProductTest {
 			} else if (message4.equals(r.getReqMessage())) {
 				assertEquals(0, r.getSources().size());
 				checks++;
+			} else if (message5.equals(r.getReqMessage())) {
+				assertEquals(0, r.getSources().size());
+				checks++;
+			} else if (message6.equals(r.getReqMessage())) {
+				assertEquals(0, r.getSources().size());
+				checks++;
+			} else if (message7.equals(r.getReqMessage())) {
+				assertEquals(0, r.getSources().size());
+				checks++;
 			}
+
 		}
 
 		assertEquals(3, checks);
@@ -169,12 +189,12 @@ public class FormulationNutsIT extends AbstractFinishedProductTest {
 			ProductSpecificationData productSpecification = ProductSpecificationData.build().withName(name + " Spec Nut 1")
 					.withNutList(List.of(NutListDataItem.build().withMini(3d).withMaxi(4d).withNut(nut1),
 							NutListDataItem.build().withMini(7d).withNut(nut2), NutListDataItem.build().withMaxi(10d).withNut(nut3),
-							NutListDataItem.build().withMini(1.5d).withMaxi(10d).withNut(nut4).withNutRequirementType(NutRequirementType.Per100),
+							NutListDataItem.build().withMini(1.5d).withMaxi(10d).withNut(nut4),
 							NutListDataItem.build().withMini(1.5d).withMaxi(10d).withNutRequirementType(NutRequirementType.AsPrepared).withNut(nut4),
 							NutListDataItem.build().withMini(1.5d).withMaxi(10d).withNutRequirementType(NutRequirementType.Serving).withNut(nut4),
 							NutListDataItem.build().withMini(1.5d).withMaxi(10d).withNutRequirementType(NutRequirementType.GdaPerc).withNut(nut4)
-							
-							));
+
+					));
 
 			productSpecification = (ProductSpecificationData) alfrescoRepository.create(getTestFolderNodeRef(), productSpecification);
 

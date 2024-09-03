@@ -326,7 +326,6 @@
 			<parameter name="allowedValues">
 				<list>
 				    <value></value>
-					<value>Per100</value>
 					<value>Serving</value>
 					<value>GdaPerc</value>
 					<value>AsPrepared</value>
