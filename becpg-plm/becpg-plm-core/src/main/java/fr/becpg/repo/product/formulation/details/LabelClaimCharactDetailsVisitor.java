@@ -21,7 +21,7 @@ public class LabelClaimCharactDetailsVisitor extends SimpleCharactDetailsVisitor
 
 	/** {@inheritDoc} */
 	@Override
-	protected String provideUnit() {
+	protected String provideUnit(CharactDetailsVisitorContext context, SimpleCharactDataItem simpleCharact) {
 		return "%";
 	}
 	

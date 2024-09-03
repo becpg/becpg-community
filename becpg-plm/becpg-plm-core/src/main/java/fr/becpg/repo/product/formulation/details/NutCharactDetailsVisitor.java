@@ -29,6 +29,7 @@ import fr.becpg.repo.product.data.CharactDetailsValue;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.formulation.FormulationHelper;
+import fr.becpg.repo.product.formulation.NutsCalculatingFormulationHandler;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 
 /**
@@ -42,21 +43,54 @@ public class NutCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 
 	/** {@inheritDoc} */
 	@Override
-	public CharactDetails visit(ProductData formulatedProduct, List<NodeRef> dataListItems, Integer level)  {
-
-		CharactDetails ret = createCharactDetails(dataListItems);
-
-		if (level == null) {
-			level = 0;
-		}
+	public CharactDetails visit(ProductData formulatedProduct, List<NodeRef> dataListItems, Integer maxLevel)  {
 
 		Double netQty = FormulationHelper.getNetQtyForNuts(formulatedProduct,null);
 		Double netWeight = FormulationHelper.getNetWeight(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
 		Double netVol = FormulationHelper.getNetVolume(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
+		
+		CharactDetails ret = createCharactDetails(dataListItems);
 
-		visitRecur(formulatedProduct, formulatedProduct, ret, 0, level, netWeight, netVol, netQty);
+		if (maxLevel == null) {
+			maxLevel = 0;
+		}
+
+		CharactDetailsVisitorContext context = new CharactDetailsVisitorContext(formulatedProduct, maxLevel, ret);
+
+		visitRecur(context, formulatedProduct, 0, netWeight, netVol, netQty);
 
 		return ret;
+	}
+	
+	@Override
+	protected String provideUnit(CharactDetailsVisitorContext context, SimpleCharactDataItem simpleCharact) {
+		String unit = super.provideUnit(context, simpleCharact);
+		if (unit != null) {
+			unit = NutsCalculatingFormulationHandler.calculateUnit(context.getRootProductData().getUnit(), context.getRootProductData().getServingSizeUnit(), unit.split("/")[0]);
+		}
+		return unit;
+	}
+	
+	@Override
+	protected boolean shouldFormulateInVolume(CharactDetailsVisitorContext context, ProductData partProduct, SimpleCharactDataItem simpleCharact) {
+		boolean formulateInVol = super.shouldFormulateInVolume(context, partProduct, simpleCharact);
+		if (formulateInVol && (partProduct.getServingSizeUnit() != null) && partProduct.getServingSizeUnit().isWeight()
+				&& (context.getRootProductData().getServingSizeUnit() != null) && context.getRootProductData().getServingSizeUnit().isWeight()) {
+			return false;
+		}
+		return formulateInVol;
+	}
+	
+	@Override
+	protected boolean shouldForceWeight(CharactDetailsVisitorContext context, ProductData partProduct, SimpleCharactDataItem simpleCharact) {
+		boolean formulateInVol = super.shouldFormulateInVolume(context, partProduct, simpleCharact);
+		if (formulateInVol && (partProduct.getServingSizeUnit() != null) && partProduct.getServingSizeUnit().isWeight()) {
+			if (formulateInVol && (partProduct.getServingSizeUnit() != null) && partProduct.getServingSizeUnit().isWeight()
+					&& (context.getRootProductData().getServingSizeUnit() != null) && context.getRootProductData().getServingSizeUnit().isWeight()) {
+				return true;
+			}
+		}
+		return super.shouldForceWeight(context, partProduct, simpleCharact);
 	}
 	
 	/** {@inheritDoc} */
