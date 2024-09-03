@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.namespace.QName;
 
 
 /**
@@ -33,15 +32,4 @@ public interface CompareEntityService {
 										Map<String, List<StructCompareResultDataItem>> structCompareResults);
 	
 	
-	/**
-	 * <p>compareStructDatalist.</p>
-	 *
-	 * @param entity1 a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param entity2 a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param datalistType a {@link org.alfresco.service.namespace.QName} object.
-	 * @param structCompareResults a {@link java.util.Map} object.
-	 */
-	void compareStructDatalist(NodeRef entity1, NodeRef entity2, QName datalistType,
-							   Map<String, List<StructCompareResultDataItem>> structCompareResults);
-		
 }
