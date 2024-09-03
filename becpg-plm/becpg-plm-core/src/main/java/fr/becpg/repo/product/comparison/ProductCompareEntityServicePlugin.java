@@ -263,5 +263,10 @@ public class ProductCompareEntityServicePlugin extends DefaultCompareEntityServi
 	public boolean applyTo(QName entityType) {
 		return entityType.equals(PLMModel.TYPE_FINISHEDPRODUCT) || entityType.equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT) || entityType.equals(PLMModel.TYPE_LOGISTICUNIT);
 	}
+	
+	@Override
+	public boolean isDefault() {
+		return false;
+	}
 
 }
