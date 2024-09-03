@@ -16,6 +16,7 @@ import fr.becpg.repo.entity.comparison.CompareEntityService;
 import fr.becpg.repo.entity.comparison.CompareResultDataItem;
 import fr.becpg.repo.entity.comparison.StructCompareOperator;
 import fr.becpg.repo.entity.comparison.StructCompareResultDataItem;
+import fr.becpg.repo.product.comparison.DefaultCompareEntityServicePlugin;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.test.PLMBaseTestCase;
@@ -26,6 +27,9 @@ public abstract class AbstractCompareProductTest extends PLMBaseTestCase {
 
 	@Autowired
 	protected CompareEntityService compareEntityService;
+	
+	@Autowired
+	protected DefaultCompareEntityServicePlugin defaultCompareEntityServicePlugin;
 
 	@Autowired
 	protected EntityListDAO entityListDAO;
