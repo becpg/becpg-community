@@ -6776,13 +6776,7 @@
 					<show id="bcpg:allergenListAllergen" />
 					<show id="bcpg:allergenListQtyPerc" />
 					<show id="bcpg:allergenListVoluntary" />
-					<!--  <show id="bcpg:allergenListDecisionTree" /> -->
 					<show id="bcpg:allergenListInVoluntary" />
-					<show id="bcpg:allergenListOnLine" />
-					<show id="bcpg:allergenListOnSite" />
-					<show id="bcpg:allergenListIsCleaned" />
-					<show id="bcpg:allergenListVolSources" />
-					<show id="bcpg:allergenListInVolSources" />
 					<show id="bcpg:regulatoryCountries" force="true" />
 					<show id="bcpg:regulatoryUsageRef" force="true" />
 				</field-visibility>
@@ -6803,59 +6797,16 @@
 						<control template="/org/alfresco/components/form/controls/allergen-voluntary.ftl">
 						</control>
 					</field>
+					<field id="bcpg:allergenListInVoluntary" help-id="becpg.forms.help.allergenListInVoluntary" set="2-col">
+						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+					</field>
 					<field id="bcpg:regulatoryCountries" set="1-col-2">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 					<field id="bcpg:regulatoryUsageRef" set="1-col-2">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
-					<!--   <field id="bcpg:allergenListDecisionTree">
-						<control
-							template="/org/alfresco/components/form/controls/decision-tree.ftl">
-							<control-param name="prefix">allergenList</control-param>
-							<control-param name="data">
-								[{id:"q1",choices :
-								[{id : "yes" , cid : "q3" }, {id: "no" , cid : "q2"}, {id:"-", cid :
-								"q2"}]},
-								{id:"q2",choices :
-								[{id : "yes" , cid : "q3", comment : true}, {id:"no", cid : "r1"},
-								{id:"-", cid : "q3"}]},
-								{id:"q3",choices :
-								[{id : "yes" , cid : "q4"}, {id:"no", cid :"r1"}, {id:"-", cid :
-								"q4"}]},
-								{id:"q4",choices :
-								[{id : "yes", cid :"r1"}, {id:"no", cid:"r2"}, {id:"-"}]},
-								{id:"r1"}, {id:"r2"}
-								]
-							</control-param>
-						</control>
-					</field> -->
-
-					<field id="bcpg:allergenListInVoluntary" help-id="becpg.forms.help.allergenListInVoluntary" set="2-col">
-						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
-					</field>
-					<field id="bcpg:allergenListIsCleaned" help-id="becpg.forms.help.allergenListIsCleaned" set="2-col">
-						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
-					</field>
-					<field id="bcpg:allergenListOnLine" help-id="becpg.forms.help.allergenListOnLine" set="2-col">
-						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
-					</field>
-					<field id="bcpg:allergenListOnSite" help-id="becpg.forms.help.allergenListOnSite" set="2-col">
-						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
-					</field>
-					<field id="bcpg:allergenListVolSources" help-id="becpg.forms.help.allergenListVolSources" set="1-col-2">
-						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">
-								becpg/autocomplete/DataListCharact?className=bcpg:ingList&#38;attributeName=bcpg:ingListIng</control-param>
-						</control>
-					</field>
-					<field id="bcpg:allergenListInVolSources" help-id="becpg.forms.help.allergenListInVolSources" set="1-col-2">
-						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">
-								becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:product,bcpg:ing&#38;excludeClassNames=bcpg:entityTplAspect
-							</control-param>
-						</control>
-					</field>
+			
 				</appearance>
 			</form>
 
@@ -6907,32 +6858,16 @@
 			</form>
 			<form id="datagrid-productSpecification">
 				<field-visibility>
-					<show id="bcpg:entityDataListState" force="true" />
-					<show id="bcpg:variantIds" force="true" />
 					<show id="bcpg:allergenListAllergen" />
 					<show id="bcpg:allergenListQtyPerc" />
 					<show id="bcpg:allergenListVoluntary" />
 					<show id="bcpg:allergenListInVoluntary" />
-					<!--  <show id="bcpg:allergenListDecisionTree" /> -->
-
-					<show id="bcpg:allergenListOnLine" />
-					<show id="bcpg:allergenListOnSite" />
-					<show id="bcpg:allergenListIsCleaned" />
-					<show id="bcpg:allergenListVolSources" />
-					<show id="bcpg:allergenListInVolSources" />
 					<show id="fm:commentCount" force="true" />
-					<show id="dataList_bcpg:reqCtrlList" />
-					<show id="bcpg:glopTarget" />
-					<show id="bcpg:glopValue" />
 					<show id="bcpg:regulatoryCountries" force="true" />
 					<show id="bcpg:regulatoryUsageRef" force="true" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:entityDataListState" label="hidden" />
-					<field id="bcpg:variantIds" label="hidden"></field>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
-					<field id="bcpg:allergenListDecisionTree" read-only="true" />
-					<field id="dataList_bcpg:reqCtrlList" label-id="hidden" />
 				</appearance>
 			</form>
 			<form id="filter">
@@ -7055,14 +6990,8 @@
 					<show id="bcpg:allergenListAllergen" />
 					<show id="bcpg:allergenListQtyPerc" />
 					<show id="bcpg:allergenListVoluntary" />
-					<!--  <show id="bcpg:allergenListDecisionTree" /> -->
 					<show id="bcpg:allergenListInVoluntary" />
 
-					<show id="bcpg:allergenListOnLine" />
-					<show id="bcpg:allergenListOnSite" />
-					<show id="bcpg:allergenListIsCleaned" />
-					<show id="bcpg:allergenListVolSources" />
-					<show id="bcpg:allergenListInVolSources" />
 					<show id="bcpg:regulatoryCountries" force="true" />
 					<show id="bcpg:regulatoryUsageRef" force="true" />
 				</field-visibility>
@@ -7083,6 +7012,10 @@
 						<control template="/org/alfresco/components/form/controls/allergen-voluntary.ftl">
 						</control>
 					</field>
+
+					<field id="bcpg:allergenListInVoluntary" help-id="becpg.forms.help.allergenListInVoluntary" set="2-col">
+						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+					</field>
 					<field id="bcpg:regulatoryCountries" set="1-col-2">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
@@ -7090,53 +7023,6 @@
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 
-					<!-- <field id="bcpg:allergenListDecisionTree">
-						<control
-							template="/org/alfresco/components/form/controls/decision-tree.ftl">
-							<control-param name="prefix">allergenList</control-param>
-							<control-param name="data">
-								[{id:"q1",choices :
-								[{id : "yes" , cid : "q3" }, {id: "no" , cid : "q2"}, {id:"-", cid :
-								"q2"}]},
-								{id:"q2",choices :
-								[{id : "yes" , cid : "q3", comment : true}, {id:"no", cid : "r1"},
-								{id:"-", cid : "q3"}]},
-								{id:"q3",choices :
-								[{id : "yes" , cid : "q4"}, {id:"no", cid :"r1"}, {id:"-", cid :
-								"q4"}]},
-								{id:"q4",choices :
-								[{id : "yes", cid :"r1"}, {id:"no", cid:"r2"}, {id:"-"}]},
-								{id:"r1"}, {id:"r2"}
-								]
-							</control-param>
-						</control>
-					</field>   -->
-
-					<field id="bcpg:allergenListInVoluntary" help-id="becpg.forms.help.allergenListInVoluntary" set="2-col">
-						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
-					</field>
-					<field id="bcpg:allergenListIsCleaned" help-id="becpg.forms.help.allergenListIsCleaned" set="2-col">
-						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
-					</field>
-					<field id="bcpg:allergenListOnLine" help-id="becpg.forms.help.allergenListOnLine" set="2-col">
-						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
-					</field>
-					<field id="bcpg:allergenListOnSite" help-id="becpg.forms.help.allergenListOnSite" set="2-col">
-						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
-					</field>
-					<field id="bcpg:allergenListVolSources" help-id="becpg.forms.help.allergenListVolSources" set="1-col-2">
-						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">
-								becpg/autocomplete/DataListCharact?className=bcpg:ingList&#38;attributeName=bcpg:ingListIng</control-param>
-						</control>
-					</field>
-					<field id="bcpg:allergenListInVolSources" help-id="becpg.forms.help.allergenListInVolSources" set="1-col-2">
-						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">
-								becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:product,bcpg:ing&#38;excludeClassNames=bcpg:entityTplAspect
-							</control-param>
-						</control>
-					</field>
 				</appearance>
 			</form>
 		</forms>

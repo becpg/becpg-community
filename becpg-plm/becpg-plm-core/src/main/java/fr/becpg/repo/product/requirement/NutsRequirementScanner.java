@@ -24,7 +24,10 @@ public class NutsRequirementScanner extends SimpleListRequirementScanner<NutList
 
 	/** {@inheritDoc} */
 	@Override
-	protected String getSpecErrorMessageKey() {
+	protected String getSpecErrorMessageKey(NutListDataItem specDataItem) {
+		if(specDataItem.getRequirementType()!=null) {
+			return MESSAGE_NUT_NOT_IN_RANGE+"."+specDataItem.getRequirementType().toString();
+		}
 		return MESSAGE_NUT_NOT_IN_RANGE;
 	}
 
@@ -35,7 +38,7 @@ public class NutsRequirementScanner extends SimpleListRequirementScanner<NutList
 
 	/** {@inheritDoc} */
 	@Override
-	protected String getSpecInfoMessageKey() {
+	protected String getSpecInfoMessageKey(NutListDataItem specDataItem) {
 		return MESSAGE_NUT_NOT_IN_RANGE_INFO;
 	}
 
@@ -44,18 +47,18 @@ public class NutsRequirementScanner extends SimpleListRequirementScanner<NutList
 	protected Double getValue(NutListDataItem specListDataItem, NutListDataItem listDataItem) {
 		if(specListDataItem.getRequirementType()!=null) {
 			switch(specListDataItem.getRequirementType()) {
-			  case Per100:
-				  return listDataItem.getValue();
 			  case Serving:
 				  return listDataItem.getValuePerServing();
 			  case GdaPerc:
 				  return listDataItem.getGdaPerc();
 			  case AsPrepared:
 				  return listDataItem.getPreparedValue();  
+			  default:
+				  break;
 			}
 		}
 		
-		return super.getValue(specListDataItem, listDataItem);
+		return listDataItem.getValue();
 	}
 
 	
