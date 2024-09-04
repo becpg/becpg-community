@@ -141,10 +141,9 @@ public class SurveyQuestionFormulationHandler extends FormulationBaseHandler<Pro
 	}
 	
 	private QName getTypeQName(ProductData formulatedProduct) {
-		if (formulatedProduct.getClass().isAnnotationPresent(AlfType.class)
-				&& formulatedProduct.getClass().isAnnotationPresent(AlfQname.class)) {
-			return QName.createQName(formulatedProduct.getClass().getDeclaredAnnotation(AlfQname.class).qname(),
-					namespaceService);
+		final Class<?> clazz = formulatedProduct.getClass();
+		if (clazz.isAnnotationPresent(AlfType.class) && clazz.isAnnotationPresent(AlfQname.class)) {
+			return QName.createQName(clazz.getDeclaredAnnotation(AlfQname.class).qname(), namespaceService);
 		}
 		return null;
 	}
