@@ -28,7 +28,8 @@ function main() {
 			id: "Watson",
 			name: "beCPG.component.Watson",
 			options: {
-				ticket: getBeCPGAuthTocken(user)
+				ticket: getBeCPGAuthTocken(user),
+				locale: locale
 			}
 		};
 		model.widgets.push(watson);
