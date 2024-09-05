@@ -351,16 +351,21 @@
 
 								for (var subField in fieldArray) {
 
-									var fieldId = "";
+									var fieldId = id + "_assoc_" + curField + "-cntrl";
 									var curField = fieldArray[subField].replace(":", "_");
 
 
-									var found = YAHOO.util.Dom.get(id + "_assoc_" + curField);
-									fieldId = id + "_assoc_" + curField + "-cntrl";
-
+									var found = YAHOO.util.Dom.get(fieldId);
+									
 									if (found === undefined || found == null) {
-										found = YAHOO.util.Dom.get(id + "_prop_" + curField);
 										fieldId = id + "_prop_" + curField;
+										found = YAHOO.util.Dom.get(fieldId);
+									}
+									
+									if (found === undefined || found == null) {
+										fieldId = id + "_prop_" + curField+"-entry";
+										found = YAHOO.util.Dom.get(fieldId);
+										
 									}
 
 									if (found !== undefined && found != null) {
