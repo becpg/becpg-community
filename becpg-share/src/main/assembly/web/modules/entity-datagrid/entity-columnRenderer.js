@@ -736,6 +736,14 @@
 					field = column.fieldRef;
 				}
 
+				switch (dataType.toLowerCase()) {
+					case "datetime":
+					case "date":
+						validValue = Alfresco.util.formatDate(validValue, "yyyy-mm-dd");
+						break;
+					default:
+						break;
+				}
 
 
 				Alfresco.util.Ajax.jsonPost({
