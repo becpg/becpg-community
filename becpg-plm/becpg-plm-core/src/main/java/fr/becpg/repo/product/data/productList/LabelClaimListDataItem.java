@@ -21,9 +21,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.product.data.RegulatoryEntityItem;
+import fr.becpg.repo.product.data.constraints.RequirementType;
+import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -70,6 +73,8 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements Si
 	private Double percentApplicable;
 	private Boolean isFormulated;
 	private String errorLog;
+	private RequirementType regulatoryType;
+	private MLText regulatoryMessage;
 	private List<NodeRef> missingLabelClaims = new ArrayList<>();
 	private List<NodeRef> regulatoryCountriesRef = new ArrayList<>();
 	private List<NodeRef> regulatoryUsagesRef = new ArrayList<>();
@@ -104,6 +109,27 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements Si
 	/** {@inheritDoc} */
 	public void setRegulatoryUsagesRef(List<NodeRef> regulatoryUsages) {
 		this.regulatoryUsagesRef = regulatoryUsages;
+	}
+	
+	@AlfProp
+	@AlfQname(qname="bcpg:regulatoryType")
+	public RequirementType getRegulatoryType() {
+		return regulatoryType;
+	}
+
+	public void setRegulatoryType(RequirementType regulatoryType) {
+		this.regulatoryType = regulatoryType;
+	}
+
+	@AlfProp
+	@AlfMlText
+	@AlfQname(qname="bcpg:regulatoryText")
+	public MLText getRegulatoryMessage() {
+		return regulatoryMessage;
+	}
+
+	public void setRegulatoryMessage(MLText regulatoryMessage) {
+		this.regulatoryMessage = regulatoryMessage;
 	}
 
 	/**
@@ -319,6 +345,11 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements Si
 		this.type = labelClaimItem.type;
 		this.labelClaimValue = labelClaimItem.labelClaimValue;
 		this.isFormulated = labelClaimItem.isFormulated;
+		this.regulatoryCountriesRef = new ArrayList<>(labelClaimItem.regulatoryCountriesRef);
+		this.regulatoryUsagesRef = new ArrayList<>(labelClaimItem.regulatoryUsagesRef);
+		this.regulatoryMessage = labelClaimItem.regulatoryMessage;
+		this.regulatoryType = labelClaimItem.regulatoryType;
+	
 	}
 	
 	

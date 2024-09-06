@@ -6164,6 +6164,25 @@
 					<type>d:text</type>
 					<index enabled="false"></index>
 				</property>
+				<property name="bcpg:regulatoryType">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:reqTypes" />
+					</constraints>
+				</property>
+				<property name="bcpg:regulatoryText">
+					<type>d:mltext</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
 			</properties>
 			<associations>
 				<association name="bcpg:regulatoryUsageRef">
@@ -6188,5 +6207,7 @@
 				</association>
 			</associations>
 		</aspect>
+		
+		
 	</aspects>
 </model>
