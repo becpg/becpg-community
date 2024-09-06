@@ -1775,6 +1775,11 @@ if (beCPG.module.EntityDataGridRenderers) {
 
 				return html;
 			} else if (percentValue !== null && percentValue > 0) {
+				
+				if (oColumn.numberFormat) {
+					return beCPG.util.formatNumber(oColumn.numberFormat, percentValue) + " %";
+				}
+				
 				return Alfresco.util.encodeHTML(beCPG.util.sigFigs(percentValue, 1).toLocaleString(beCPG.util.getJSLocale()) + " %");
 			} else {
 				return "";
