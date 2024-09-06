@@ -13,6 +13,7 @@ import org.apache.commons.logging.LogFactory;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
+import fr.becpg.repo.product.data.RegulatoryEntityItem;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
@@ -72,19 +73,27 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 								}
 							}
 							if (isForbidden || Boolean.TRUE.equals(addInfoReqCtrl)) {
-								MLText message = MLTextHelper.getI18NMessage(MESSAGE_NOT_CLAIM, extractName(listDataItem.getLabelClaim()), extractClaimValue(specDataItem.getLabelClaimValue()));
-								
+								MLText message = MLTextHelper.getI18NMessage(MESSAGE_NOT_CLAIM, extractName(listDataItem.getLabelClaim()),
+										extractClaimValue(specDataItem.getLabelClaimValue()));
+
 								String regulatoryId = extractRegulatoryId(specDataItem, specification);
-								
-								ReqCtrlListDataItem reqCtrl = ReqCtrlListDataItem.build().ofType(isForbidden ? RequirementType.Forbidden : RequirementType.Info)
-										.withMessage(message).withCharact(listDataItem.getLabelClaim()).ofDataType(RequirementDataType.Specification)
+
+								RequirementType reqType = isForbidden ? RequirementType.Info : RequirementType.Forbidden;
+
+								if (!isForbidden && specDataItem.getRegulatoryType() != null) {
+									reqType = specDataItem.getRegulatoryType();
+								}
+								if (specDataItem.getRegulatoryMessage() != null) {
+									message = specDataItem.getRegulatoryMessage();
+								}
+
+								ReqCtrlListDataItem reqCtrl = ReqCtrlListDataItem.build().ofType(reqType).withMessage(message)
+										.withCharact(listDataItem.getLabelClaim()).ofDataType(RequirementDataType.Specification)
 										.withRegulatoryCode(regulatoryId);
-							
-								
+
 								ret.add(reqCtrl);
 							}
 						}
-
 
 					}
 				}));
@@ -111,10 +120,9 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 	private void addMissingLabelClaim(List<ReqCtrlListDataItem> ret, ProductSpecificationData specification, LabelClaimListDataItem labelClaim) {
 		MLText message = MLTextHelper.getI18NMessage(LabelClaimFormulationHandler.MESSAGE_MISSING_CLAIM, extractName(labelClaim.getLabelClaim()));
 
-		ret.add(ReqCtrlListDataItem.forbidden()
-				.withMessage(message).withCharact( labelClaim.getLabelClaim()).ofDataType(RequirementDataType.Specification)
-				.withRegulatoryCode(
-						(specification.getRegulatoryCode() != null) && !specification.getRegulatoryCode().isBlank()
+		ret.add(ReqCtrlListDataItem.forbidden().withMessage(message).withCharact(labelClaim.getLabelClaim())
+				.ofDataType(RequirementDataType.Specification)
+				.withRegulatoryCode((specification.getRegulatoryCode() != null) && !specification.getRegulatoryCode().isBlank()
 						? specification.getRegulatoryCode()
 						: specification.getName()));
 	}

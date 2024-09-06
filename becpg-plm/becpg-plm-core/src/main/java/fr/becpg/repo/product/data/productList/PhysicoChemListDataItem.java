@@ -10,6 +10,8 @@ import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.product.data.RegulatoryEntityItem;
+import fr.becpg.repo.product.data.constraints.RequirementType;
+import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -50,6 +52,9 @@ public class PhysicoChemListDataItem extends VariantAwareDataItem implements Sim
 	private Boolean isFormulated;
 	
 	private String type;
+	
+	private RequirementType regulatoryType;
+	private MLText regulatoryMessage;
 	
 	private List<NodeRef> regulatoryCountriesRef = new ArrayList<>();
 	
@@ -239,6 +244,29 @@ public class PhysicoChemListDataItem extends VariantAwareDataItem implements Sim
 	}
 	
 	
+	
+	
+	@AlfProp
+	@AlfQname(qname="bcpg:regulatoryType")
+	public RequirementType getRegulatoryType() {
+		return regulatoryType;
+	}
+
+	public void setRegulatoryType(RequirementType regulatoryType) {
+		this.regulatoryType = regulatoryType;
+	}
+
+	@AlfProp
+	@AlfMlText
+	@AlfQname(qname="bcpg:regulatoryText")
+	public MLText getRegulatoryMessage() {
+		return regulatoryMessage;
+	}
+
+	public void setRegulatoryMessage(MLText regulatoryMessage) {
+		this.regulatoryMessage = regulatoryMessage;
+	}
+	
 	/** {@inheritDoc} */
 	@Override
 	public MLText getTextCriteria() {
@@ -275,6 +303,10 @@ public class PhysicoChemListDataItem extends VariantAwareDataItem implements Sim
 		this.mini = p.mini;
 		this.maxi = p.maxi;
 		this.physicoChem = p.physicoChem;
+		this.regulatoryCountriesRef = new ArrayList<>(p.regulatoryCountriesRef);
+		this.regulatoryUsagesRef = new ArrayList<>(p.regulatoryUsagesRef);
+		this.regulatoryMessage = p.regulatoryMessage;
+		this.regulatoryType = p.regulatoryType;
 	}
 	
 	/**
