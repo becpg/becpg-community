@@ -94,8 +94,17 @@ public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem>
 
 									String regulatoryId = null;
 
+
+									RequirementType reqType= isCharactAllowed ? RequirementType.Info : RequirementType.Forbidden;
+									
 									if (minMaxSpecValueDataItem instanceof RegulatoryEntityItem regulatoryEntityItem) {
 										regulatoryId = extractRegulatoryId(regulatoryEntityItem, specification);
+										if(!isCharactAllowed && regulatoryEntityItem.getRegulatoryType()!=null) {
+											reqType = regulatoryEntityItem.getRegulatoryType();
+										}
+										if(regulatoryEntityItem.getRegulatoryMessage()!=null) {
+											message = regulatoryEntityItem.getRegulatoryMessage();
+										}
 									}
 
 									if ((regulatoryId == null) || regulatoryId.isBlank()) {
@@ -105,7 +114,10 @@ public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem>
 											regulatoryId = specification.getName();
 										}
 									}
-									ret.add(ReqCtrlListDataItem.build().ofType(isCharactAllowed ? RequirementType.Info : RequirementType.Forbidden)
+									
+								
+									
+									ret.add(ReqCtrlListDataItem.build().ofType(reqType)
 											.withMessage(message).withCharact(listDataItem.getCharactNodeRef())
 											.ofDataType(RequirementDataType.Specification).withReqMaxQty(reqCtrlMaxQty)
 											.withRegulatoryCode(regulatoryId));

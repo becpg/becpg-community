@@ -2,7 +2,10 @@ package fr.becpg.repo.product.data;
 
 import java.util.List;
 
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
+
+import fr.becpg.repo.product.data.constraints.RequirementType;
 
 /**
  * <p>RegulatoryEntityItem interface.</p>
@@ -39,5 +42,18 @@ public interface RegulatoryEntityItem {
 	 * @param regulatoryUsages a {@link java.util.List} object
 	 */
 	public void setRegulatoryUsagesRef(List<NodeRef> regulatoryUsages);
+	
+	
+	
+	public MLText getRegulatoryMessage();
+	
+	public RequirementType getRegulatoryType();
+	
+	public void setRegulatoryMessage(MLText regulatoryMessage);
+	
+	public void setRegulatoryType(RequirementType type);
+	
+	
+
 
 }

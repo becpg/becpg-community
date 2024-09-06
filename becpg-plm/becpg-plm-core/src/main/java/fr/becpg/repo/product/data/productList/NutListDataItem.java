@@ -13,7 +13,9 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
 import fr.becpg.repo.product.data.RegulatoryEntityItem;
 import fr.becpg.repo.product.data.constraints.NutRequirementType;
+import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.formulation.nutrient.RegulationFormulationHelper;
+import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -61,7 +63,7 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	private Double formulatedPreparedValue;
 
 	private String unit;
-	
+
 	private NutRequirementType requirementType;
 
 	private Double manualMini;
@@ -100,6 +102,9 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 
 	private List<NodeRef> sources = new ArrayList<>();
 
+	private RequirementType regulatoryType;
+	private MLText regulatoryMessage;
+
 	private List<NodeRef> regulatoryCountriesRef = new ArrayList<>();
 	private List<NodeRef> regulatoryUsagesRef = new ArrayList<>();
 
@@ -133,6 +138,27 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	/** {@inheritDoc} */
 	public void setRegulatoryUsagesRef(List<NodeRef> regulatoryUsages) {
 		this.regulatoryUsagesRef = regulatoryUsages;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "bcpg:regulatoryType")
+	public RequirementType getRegulatoryType() {
+		return regulatoryType;
+	}
+
+	public void setRegulatoryType(RequirementType regulatoryType) {
+		this.regulatoryType = regulatoryType;
+	}
+
+	@AlfProp
+	@AlfMlText
+	@AlfQname(qname = "bcpg:regulatoryText")
+	public MLText getRegulatoryMessage() {
+		return regulatoryMessage;
+	}
+
+	public void setRegulatoryMessage(MLText regulatoryMessage) {
+		this.regulatoryMessage = regulatoryMessage;
 	}
 
 	/** {@inheritDoc} */
@@ -356,7 +382,7 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	public void setUnit(String unit) {
 		this.unit = unit;
 	}
-	
+
 	@AlfProp
 	@AlfQname(qname = "bcpg:nutListRequirementType")
 	public NutRequirementType getRequirementType() {
@@ -829,13 +855,11 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 		return this;
 	}
 
-
 	public NutListDataItem withNutRequirementType(NutRequirementType requirementType) {
 		setRequirementType(requirementType);
 		return this;
 	}
-	
-	
+
 	/**
 	 * Copy constructor
 	 *
@@ -864,7 +888,10 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 		this.formulatedPreparedValue = n.formulatedPreparedValue;
 		this.measurementPrecision = n.measurementPrecision;
 		this.sources = n.sources;
-		this.requirementType = n.requirementType;
+		this.regulatoryCountriesRef = new ArrayList<>(n.regulatoryCountriesRef);
+		this.regulatoryUsagesRef = new ArrayList<>(n.regulatoryUsagesRef);
+		this.regulatoryMessage = n.regulatoryMessage;
+		this.regulatoryType = n.regulatoryType;
 	}
 
 	/** {@inheritDoc} */
@@ -929,6 +956,5 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 				+ ", isFormulated=" + isFormulated + ", depthLevel=" + depthLevel + ", parent=" + parent + ", roundedValue=" + roundedValue
 				+ ", roundedValuePrepared=" + roundedValuePrepared + ", sources=" + sources + "]";
 	}
-
 
 }

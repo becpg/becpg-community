@@ -8487,13 +8487,16 @@
 			</form>
 			<form id="datagrid-productSpecification">
 				<field-visibility>
+			    	<show id="bcpg:regulatoryType" force="true" />
+					<show id="bcpg:regulatoryText" force="true" />
 					<show id="bcpg:nutListNut" />
 					<show id="bcpg:nutListMini" />
 					<show id="bcpg:nutListMaxi" />
 					<show id="bcpg:nutListRequirementType" force="true"/>
-					<show id="fm:commentCount" force="true" />
+					
 					<show id="bcpg:regulatoryCountries" force="true" />
 					<show id="bcpg:regulatoryUsageRef" force="true" />
+					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
@@ -8650,10 +8653,13 @@
 			</form>
 			<form id="edit-productSpecification">
 				<field-visibility>
+				    <show id="bcpg:regulatoryType" force="true" />
+					<show id="bcpg:regulatoryText" force="true" />
 					<show id="bcpg:nutListNut" />
 					<show id="bcpg:nutListMini" />
 					<show id="bcpg:nutListMaxi" />
 					<show id="bcpg:nutListRequirementType" force="true"/>
+					
 					<show id="bcpg:regulatoryCountries" force="true" />
 					<show id="bcpg:regulatoryUsageRef" force="true" />
 				</field-visibility>
@@ -8822,6 +8828,8 @@
 			</form>
 			<form id="create-productSpecification">
 				<field-visibility>
+					<show id="bcpg:regulatoryType" force="true" />
+					<show id="bcpg:regulatoryText" force="true" />
 					<show id="bcpg:pclPhysicoChem" />
 					<show id="bcpg:pclMini" />
 					<show id="bcpg:pclMaxi" />
@@ -8889,10 +8897,13 @@
 			</form>
 			<form id="datagrid-productSpecification">
 				<field-visibility>
+					<show id="bcpg:regulatoryType" force="true" />
+					<show id="bcpg:regulatoryText" force="true" />
 					<show id="bcpg:pclPhysicoChem" />
 					<show id="bcpg:pclMini" />
 					<show id="bcpg:pclMaxi" />
 					<show id="fm:commentCount" force="true" />
+
 					<show id="bcpg:regulatoryCountries" force="true" />
 					<show id="bcpg:regulatoryUsageRef" force="true" />
 				</field-visibility>
@@ -9008,9 +9019,12 @@
 			</form>
 			<form id="edit-productSpecification">
 				<field-visibility>
+					<show id="bcpg:regulatoryType" force="true" />
+					<show id="bcpg:regulatoryText" force="true" />				
 					<show id="bcpg:pclPhysicoChem" />
 				    <show id="bcpg:pclMini" />
 					<show id="bcpg:pclMaxi" />
+
 					<show id="bcpg:regulatoryCountries" force="true" />
 					<show id="bcpg:regulatoryUsageRef" force="true" />
 				</field-visibility>
@@ -9700,15 +9714,11 @@
 			</form>
 			<form id="create-productSpecification">
 				<field-visibility>
+					<show id="bcpg:regulatoryType" force="true" />
+					<show id="bcpg:regulatoryText" force="true" />
 					<show id="bcpg:lclLabelClaim" />
-					<show id="bcpg:lclClaimValue" />
-					<show id="bcpg:lclPercentClaim" />
-					<show id="bcpg:lclPercentApplicable" />
-					<show id="bcpg:lclCertification" />
-				<!-- <show id="bcpg:certificateDate" force="true" />  -->
-					<show id="bcpg:lclComments" />
-					<show id="bcpg:isManualListItem" force="true" />
-					<show id="rep:reportKinds" force="true" />
+					<show id="bcpg:lclClaimValue" />	
+
 					<show id="bcpg:regulatoryCountries" force="true" />
 					<show id="bcpg:regulatoryUsageRef" force="true" />
 				</field-visibility>
@@ -9786,32 +9796,16 @@
 			</form>
 			<form id="datagrid-productSpecification">
 				<field-visibility>
-					<show id="bcpg:entityDataListState" force="true" />
+				    <show id="bcpg:regulatoryType" force="true" />
+					<show id="bcpg:regulatoryText" force="true" />
 					<show id="bcpg:lclLabelClaim" />
-					<show id="entity_bcpg:lclLabelClaim_bcpg:labelClaim" />
-					<show id="bcpg:lclType" />
 					<show id="bcpg:lclClaimValue" />
-					<show id="bcpg:lclPercentClaim" />
-					<show id="bcpg:lclPercentApplicable" />
-					<show id="bcpg:lclCertification" force="true" />
-					<show id="bcpg:lclMissingLabelClaims" force="true" />
-					<show id="bcpg:lclComments" force="true" />
-					<show id="fm:commentCount" force="true" />
-					<show id="bcpg:lclIsFormulated" />
-					<show id="bcpg:lclFormulaErrorLog" />
-					<show id="rep:reportKinds" />
-					<show id="dataList_bcpg:reqCtrlList" />
 					<show id="bcpg:regulatoryCountries" force="true" />
 					<show id="bcpg:regulatoryUsageRef" force="true" />
+					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:entityDataListState" label="hidden" />
-					<field id="bcpg:lclMissingLabelClaims" read-only="true" />
-					<field id="entity_bcpg:lclLabelClaim_bcpg:labelClaim" label="hidden" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
-					<field id="dataList_bcpg:reqCtrlList" label-id="hidden" />
-					<field id="bcpg:lclIsFormulated" label="hidden" />
-					<field id="bcpg:lclFormulaErrorLog" label="hidden" />
 				</appearance>
 			</form>
 			<form id="datagridWused">
@@ -9869,29 +9863,15 @@
 			</form>
 			<form id="edit-productSpecification">
 				<field-visibility>
+					<show id="bcpg:regulatoryType" force="true" />
+					<show id="bcpg:regulatoryText" force="true" />
 					<show id="bcpg:lclLabelClaim" />
 					<show id="bcpg:lclClaimValue" />
-					<show id="bcpg:lclPercentClaim" />
-					<show id="bcpg:lclPercentApplicable" />
-					<show id="bcpg:lclCertification" />
-				<!-- <show id="bcpg:certificateDate" force="true" />  -->
-					<show id="bcpg:lclComments" />
-					<show id="bcpg:isManualListItem" force="true" />
-					<show id="rep:reportKinds" />
+				
 					<show id="bcpg:regulatoryCountries" force="true" />
 					<show id="bcpg:regulatoryUsageRef" force="true" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:lclComments">
-						<control template="/org/alfresco/components/form/controls/richtext.ftl">
-							<control-param name="rows">10</control-param>
-						</control>
-					</field>
-					<field id="bcpg:lclCertification">
-						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/certification</control-param>
-						</control>
-					</field>
 					<field id="bcpg:regulatoryCountries">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>

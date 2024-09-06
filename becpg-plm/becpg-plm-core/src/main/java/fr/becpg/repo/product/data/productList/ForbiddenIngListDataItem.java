@@ -42,7 +42,6 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfQname(qname = "bcpg:forbiddenIngList")
 public class ForbiddenIngListDataItem extends BeCPGDataObject implements RegulatoryEntityItem {
 
-	
 	/**
 	 * 
 	 */
@@ -60,7 +59,7 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 	private List<NodeRef> bioOrigins = new ArrayList<>();
 	private List<NodeRef> regulatoryCountriesRef = new ArrayList<>();
 	private List<NodeRef> regulatoryUsagesRef = new ArrayList<>();
-	
+
 	/**
 	 * <p>Setter for the field <code>qtyPercMaxiUnit</code>.</p>
 	 *
@@ -69,7 +68,7 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 	public void setQtyPercMaxiUnit(String qtyPercMaxiUnit) {
 		this.qtyPercMaxiUnit = qtyPercMaxiUnit;
 	}
-	
+
 	/**
 	 * <p>Getter for the field <code>regulatoryCountriesRef</code>.</p>
 	 *
@@ -108,7 +107,7 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 	 * @return a {@link fr.becpg.repo.product.data.constraints.RequirementType} object.
 	 */
 	@AlfProp
-	@AlfQname(qname="bcpg:filReqType")
+	@AlfQname(qname = "bcpg:filReqType")
 	public RequirementType getReqType() {
 		return reqType;
 	}
@@ -121,8 +120,6 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 	public void setReqType(RequirementType reqType) {
 		this.reqType = reqType;
 	}
-	
-	
 
 	/**
 	 * <p>Getter for the field <code>reqMessage</code>.</p>
@@ -131,7 +128,7 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 	 */
 	@AlfProp
 	@AlfMlText
-	@AlfQname(qname="bcpg:filReqMessage")
+	@AlfQname(qname = "bcpg:filReqMessage")
 	public MLText getReqMessage() {
 		return reqMessage;
 	}
@@ -145,24 +142,40 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 		this.reqMessage = reqMessage;
 	}
 
+	public RequirementType getRegulatoryType() {
+		return getReqType();
+	}
+
+	public void setRegulatoryType(RequirementType regulatoryType) {
+		setReqType(regulatoryType);
+	}
+
+	public MLText getRegulatoryMessage() {
+		return getReqMessage();
+	}
+
+	public void setRegulatoryMessage(MLText regulatoryMessage) {
+		setReqMessage(regulatoryMessage);
+	}
+
 	/**
 	 * <p>Getter for the field <code>qtyPercMaxi</code>.</p>
 	 *
 	 * @return a {@link java.lang.Double} object.
 	 */
 	@AlfProp
-	@AlfQname(qname="bcpg:filQtyPercMaxi")
+	@AlfQname(qname = "bcpg:filQtyPercMaxi")
 	public Double getQtyPercMaxi() {
 		return qtyPercMaxi;
 	}
-	
+
 	/**
 	 * <p>Getter for the field <code>qtyPercMaxiUnit</code>.</p>
 	 *
 	 * @return a {@link java.lang.String} object
 	 */
 	@AlfProp
-	@AlfQname(qname="bcpg:filQtyPercMaxiUnit")
+	@AlfQname(qname = "bcpg:filQtyPercMaxiUnit")
 	public String getQtyPercMaxiUnit() {
 		return qtyPercMaxiUnit;
 	}
@@ -176,14 +189,13 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 		this.qtyPercMaxi = qtyPercMaxi;
 	}
 
-
 	/**
 	 * <p>Getter for the field <code>isGMO</code>.</p>
 	 *
 	 * @return a {@link java.lang.String} object.
 	 */
 	@AlfProp
-	@AlfQname(qname="bcpg:filIsGMO")
+	@AlfQname(qname = "bcpg:filIsGMO")
 	public String getIsGMO() {
 		return isGMO;
 	}
@@ -196,7 +208,6 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 	public void setIsGMO(String isGMO) {
 		this.isGMO = isGMO;
 	}
-	
 
 	/**
 	 * <p>Setter for the field <code>isGMO</code>.</p>
@@ -204,9 +215,8 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 	 * @param isGMO a {@link java.lang.Boolean} object.
 	 */
 	public void setIsGMO(Boolean isGMO) {
-		this.isGMO = isGMO!=null ? isGMO.toString() : null;
+		this.isGMO = isGMO != null ? isGMO.toString() : null;
 	}
-
 
 	/**
 	 * <p>Getter for the field <code>isIonized</code>.</p>
@@ -214,29 +224,28 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 	 * @return a {@link java.lang.String} object.
 	 */
 	@AlfProp
-	@AlfQname(qname="bcpg:filIsIonized")
+	@AlfQname(qname = "bcpg:filIsIonized")
 	public String getIsIonized() {
 		return isIonized;
 	}
-	
+
 	/**
 	 * <p>Setter for the field <code>isIonized</code>.</p>
 	 *
 	 * @param isIonized a {@link java.lang.Boolean} object.
 	 */
 	public void setIsIonized(Boolean isIonized) {
-		this.isIonized  = isIonized!=null ? isIonized.toString() : null;
+		this.isIonized = isIonized != null ? isIonized.toString() : null;
 	}
-	
+
 	/**
 	 * <p>Setter for the field <code>isIonized</code>.</p>
 	 *
 	 * @param isIonized a {@link java.lang.String} object.
 	 */
 	public void setIsIonized(String isIonized) {
-		this.isIonized  = isIonized;
+		this.isIonized = isIonized;
 	}
-	
 
 	/**
 	 * <p>Getter for the field <code>ings</code>.</p>
@@ -244,7 +253,7 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 	 * @return a {@link java.util.List} object.
 	 */
 	@AlfMultiAssoc
-	@AlfQname(qname="bcpg:filIngs")
+	@AlfQname(qname = "bcpg:filIngs")
 	public List<NodeRef> getIngs() {
 		return ings;
 	}
@@ -257,14 +266,14 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 	public void setIngs(List<NodeRef> ings) {
 		this.ings = ings;
 	}
-	
+
 	/**
 	 * <p>Getter for the field <code>geoOrigins</code>.</p>
 	 *
 	 * @return a {@link java.util.List} object.
 	 */
 	@AlfMultiAssoc
-	@AlfQname(qname="bcpg:filGeoOrigins")
+	@AlfQname(qname = "bcpg:filGeoOrigins")
 	public List<NodeRef> getGeoOrigins() {
 		return geoOrigins;
 	}
@@ -277,15 +286,14 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 	public void setGeoOrigins(List<NodeRef> geoOrigins) {
 		this.geoOrigins = geoOrigins;
 	}
-	
-	
+
 	/**
 	 * <p>Getter for the field <code>requiredGeoOrigins</code>.</p>
 	 *
 	 * @return a {@link java.util.List} object.
 	 */
 	@AlfMultiAssoc
-	@AlfQname(qname="bcpg:filRequiredGeoOrigins")
+	@AlfQname(qname = "bcpg:filRequiredGeoOrigins")
 	public List<NodeRef> getRequiredGeoOrigins() {
 		return requiredGeoOrigins;
 	}
@@ -305,7 +313,7 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 	 * @return a {@link java.util.List} object.
 	 */
 	@AlfMultiAssoc
-	@AlfQname(qname="bcpg:filGeoTransfo")
+	@AlfQname(qname = "bcpg:filGeoTransfo")
 	public List<NodeRef> getGeoTransfo() {
 		return geoTransfo;
 	}
@@ -318,14 +326,14 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 	public void setGeoTransfo(List<NodeRef> geoTransfo) {
 		this.geoTransfo = geoTransfo;
 	}
-	
+
 	/**
 	 * <p>Getter for the field <code>bioOrigins</code>.</p>
 	 *
 	 * @return a {@link java.util.List} object.
 	 */
 	@AlfMultiAssoc
-	@AlfQname(qname="bcpg:filBioOrigins")
+	@AlfQname(qname = "bcpg:filBioOrigins")
 	public List<NodeRef> getBioOrigins() {
 		return bioOrigins;
 	}
@@ -338,14 +346,14 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 	public void setBioOrigins(List<NodeRef> bioOrigins) {
 		this.bioOrigins = bioOrigins;
 	}
-		
+
 	/**
 	 * <p>Constructor for ForbiddenIngListDataItem.</p>
 	 */
 	public ForbiddenIngListDataItem() {
 		super();
 	}
-	
+
 	/**
 	 * <p>Constructor for ForbiddenIngListDataItem.</p>
 	 *
@@ -359,8 +367,8 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 	 * @param geoOrigins a {@link java.util.List} object.
 	 * @param bioOrigins a {@link java.util.List} object.
 	 */
-	public ForbiddenIngListDataItem(NodeRef nodeRef, RequirementType reqType, String reqMessage, Double qtyPercMaxi, Boolean isGMO, Boolean isIonized, List<NodeRef> ings, List<NodeRef> geoOrigins, List<NodeRef> bioOrigins)
-	{
+	public ForbiddenIngListDataItem(NodeRef nodeRef, RequirementType reqType, String reqMessage, Double qtyPercMaxi, Boolean isGMO, Boolean isIonized,
+			List<NodeRef> ings, List<NodeRef> geoOrigins, List<NodeRef> bioOrigins) {
 		this.nodeRef = nodeRef;
 		this.reqType = reqType;
 		this.reqMessage = new MLText(reqMessage);
@@ -368,7 +376,7 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 		this.geoOrigins = geoOrigins;
 		this.bioOrigins = bioOrigins;
 		setIsGMO(isGMO);
-		setIsIonized(isIonized);		
+		setIsIonized(isIonized);
 		this.ings = ings;
 	}
 
@@ -385,8 +393,8 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 	 * @param geoOrigins a {@link java.util.List} object.
 	 * @param bioOrigins a {@link java.util.List} object.
 	 */
-	public ForbiddenIngListDataItem(NodeRef nodeRef, RequirementType reqType, MLText reqMessage, Double qtyPercMaxi, Boolean isGMO, Boolean isIonized, List<NodeRef> ings, List<NodeRef> geoOrigins, List<NodeRef> bioOrigins)
-	{
+	public ForbiddenIngListDataItem(NodeRef nodeRef, RequirementType reqType, MLText reqMessage, Double qtyPercMaxi, Boolean isGMO, Boolean isIonized,
+			List<NodeRef> ings, List<NodeRef> geoOrigins, List<NodeRef> bioOrigins) {
 		this.nodeRef = nodeRef;
 		this.reqType = reqType;
 		this.reqMessage = reqMessage;
@@ -394,7 +402,7 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 		this.geoOrigins = geoOrigins;
 		this.bioOrigins = bioOrigins;
 		setIsGMO(isGMO);
-		setIsIonized(isIonized);		
+		setIsIonized(isIonized);
 		this.ings = ings;
 	}
 
@@ -482,8 +490,6 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 		return "ForbiddenIngListDataItem [reqType=" + reqType + ", reqMessage=" + reqMessage + ", qtyPercMaxi=" + qtyPercMaxi + ", isGMO=" + isGMO
 				+ ", isIonized=" + isIonized + ", ings=" + ings + ", geoOrigins=" + geoOrigins + ", requiredGeoOrigins=" + requiredGeoOrigins
 				+ ", geoTransfo=" + geoTransfo + ", bioOrigins=" + bioOrigins + "]";
-	}	
-	
-	
-	
+	}
+
 }
