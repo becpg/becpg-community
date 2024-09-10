@@ -1,4 +1,4 @@
-FROM ${docker.becpg.url}/becpg-base-core:${docker.becpg.tag} as becpg-base-test-core
+FROM ${docker.becpg.url}/becpg-base-core:${docker.becpg.tag} AS becpg-base-test-core
 
 ENV TOMCAT_DIR=/usr/local/tomcat
 
