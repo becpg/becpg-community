@@ -12,7 +12,6 @@ import java.util.regex.Pattern;
 import org.alfresco.error.AlfrescoRuntimeException;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
-import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.MalformedNodeRefException;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -48,9 +47,6 @@ import fr.becpg.repo.security.SecurityService;
 
 @Service("entityActivityExtractorService")
 public class EntityActivityExtractorServiceImpl implements EntityActivityExtractorService {
-
-	@Autowired
-	private DictionaryService dictionaryService;
 
 	@Autowired
 	private SecurityService securityService;
@@ -198,11 +194,11 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 						&& (securityService.computeAccessMode(entityNodeRef, entityType, propertyName) != SecurityService.NONE_ACCESS)
 						&& !isIgnoredTypes.contains(propertyName)) {
 					// Property Title
-					PropertyDefinition propertyDef = dictionaryService.getProperty(propertyName);
+					PropertyDefinition propertyDef = entityDictionaryService.getProperty(propertyName);
 					ClassAttributeDefinition propDef = entityDictionaryService.getPropDef(propertyName);
-					if ((propDef != null) && (propDef.getTitle(dictionaryService) != null)
-							&& (propDef.getTitle(dictionaryService).length() > 0)) {
-						postProperty.put(AbstractDataListExtractor.PROP_TITLE, propDef.getTitle(dictionaryService));
+					if ((propDef != null) && (entityDictionaryService.getTitle(propDef, entityType) != null)
+							&& (entityDictionaryService.getTitle(propDef, entityType).length() > 0)) {
+						postProperty.put(AbstractDataListExtractor.PROP_TITLE, entityDictionaryService.getTitle(propDef, entityType));
 					} else {
 						postProperty.put(AbstractDataListExtractor.PROP_TITLE, propertyName.toPrefixString());
 					}

@@ -157,7 +157,9 @@ public interface EntityDictionaryService extends DictionaryService {
 
 	void registerExtraAssocsDefMapping(QName orig, QName dest);
 
-
-
+	String getTitle(ClassAttributeDefinition attributeDefinition, QName nodeType);
+	
+	String getDescription(ClassAttributeDefinition attributeDefinition, QName nodeType);
+	
 
 }
