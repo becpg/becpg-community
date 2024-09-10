@@ -43,7 +43,7 @@
 				</list>
 			</parameter>
 		</constraint>
-
+		
 		<constraint name="survey:responseTypes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -51,6 +51,18 @@
 					<value>list</value>
 					<value>multiChoicelist</value>
 					<value>checkboxes</value>
+				</list>
+			</parameter>
+		</constraint>
+
+		<constraint name="survey:surveyListNames" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>surveyList</value>
+					<value>surveyList@1</value>
+					<value>surveyList@2</value>
+					<value>surveyList@3</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -67,6 +79,10 @@
 				</property>
 				<property name="survey:slResponse">
 					<type>d:any</type>
+				</property>
+				<property name="survey:generated">
+					<type>d:boolean</type>
+					<default>false</default>
 				</property>
 			</properties>
 			<associations>
@@ -181,15 +197,13 @@
 					<type>d:text</type>
 					<multiple>true</multiple>
 				</property>
-				<!--property name="survey:fsLinkedHierarchy">
-					<type>d:noderef</type>
-					<multiple>true</multiple>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>true</facetable>
-					</index>
-				</property-->
-				<!-- TODO SurveyList?(@[1-3]) -->
+				<property name="survey:fsSurveyListName">
+					<type>d:text</type>
+					<default>surveyList</default>
+					<constraints>
+						<constraint ref="survey:surveyListNames" />
+					</constraints>
+				</property>
 			</properties>
 			<associations>
 				<association name="survey:fsLinkedCharactRefs">
