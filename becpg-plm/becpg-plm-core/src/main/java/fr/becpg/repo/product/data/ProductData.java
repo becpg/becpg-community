@@ -67,7 +67,7 @@ import fr.becpg.repo.repository.filters.DataListFilter;
 import fr.becpg.repo.repository.model.AspectAwareDataItem;
 import fr.becpg.repo.repository.model.EffectiveDataItem;
 import fr.becpg.repo.repository.model.StateableEntity;
-import fr.becpg.repo.survey.data.SurveyList;
+import fr.becpg.repo.survey.data.SurveyListDataItem;
 import fr.becpg.repo.survey.data.SurveyableEntity;
 import fr.becpg.repo.variant.model.VariantData;
 import fr.becpg.repo.variant.model.VariantEntity;
@@ -295,7 +295,7 @@ public class ProductData extends AbstractScorableEntity
 	 * Survey score
 	 */
 	private List<ScoreListDataItem> scoreList;
-	private List<SurveyList> surveyList;
+	private List<SurveyListDataItem> surveyList;
 	private Integer productScore;
 
 	/** {@inheritDoc} */
@@ -2086,7 +2086,7 @@ public class ProductData extends AbstractScorableEntity
 	 */
 	@DataList
 	@AlfQname(qname = "survey:surveyList")
-	public List<SurveyList> getSurveyList() {
+	public List<SurveyListDataItem> getSurveyList() {
 		return surveyList;
 	}
 
@@ -2095,7 +2095,7 @@ public class ProductData extends AbstractScorableEntity
 	 *
 	 * @param scoreList a {@link java.util.List} object.
 	 */
-	public void setSurveyList(List<SurveyList> surveyList) {
+	public void setSurveyList(List<SurveyListDataItem> surveyList) {
 		this.surveyList = surveyList;
 	}
 

@@ -29,7 +29,7 @@ import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.survey.SurveyModel;
-import fr.becpg.repo.survey.data.SurveyList;
+import fr.becpg.repo.survey.data.SurveyListDataItem;
 import fr.becpg.repo.survey.data.SurveyQuestion;
 
 /**
@@ -102,8 +102,8 @@ public class SurveyQuestionFormulationHandler extends FormulationBaseHandler<Pro
 				|| surveyQuestion.getFsLinkedTypes().stream().map(typeName -> qNameCache.computeIfAbsent(typeName,
 						__ -> QName.createQName(typeName, namespaceService))).anyMatch(qName::equals);
 		final Set<SurveyQuestion> surveyQuestions = new HashSet<>();
-		final Map<String, List<SurveyList>> namesSurveyLists = new HashMap<>(4, 1);
-		final List<SurveyList> deletedSurveyLists = new ArrayList<>();
+		final Map<String, List<SurveyListDataItem>> namesSurveyLists = new HashMap<>(4, 1);
+		final List<SurveyListDataItem> deletedSurveyLists = new ArrayList<>();
 		final String surveyListBaseName = "surveyList";
 		final QName surveyListQName = QName.createQName("survey:" + surveyListBaseName, namespaceService);
 		final boolean cacheOnlyEnable = L2CacheSupport.isCacheOnlyEnable();
@@ -113,7 +113,7 @@ public class SurveyQuestionFormulationHandler extends FormulationBaseHandler<Pro
 					? formulatedProduct.getSurveyList()
 					: alfrescoRepository
 							.loadDataList(formulatedProduct.getNodeRef(), surveyListName, surveyListQName).stream()
-							.map(SurveyList.class::cast).collect(Collectors.toCollection(ArrayList::new))));
+							.map(SurveyListDataItem.class::cast).collect(Collectors.toCollection(ArrayList::new))));
 			if (cacheOnlyEnable) break;
 		}
 		logger.debug("SurveyQuestionFormulationHandler::process() <- " + formulatedProduct.getNodeRef());
@@ -145,10 +145,10 @@ public class SurveyQuestionFormulationHandler extends FormulationBaseHandler<Pro
 				}
 			}
 		}
-		for (final Entry<String, List<SurveyList>> nameSurveyLists : namesSurveyLists.entrySet()) {
+		for (final Entry<String, List<SurveyListDataItem>> nameSurveyLists : namesSurveyLists.entrySet()) {
 			final String fsSurveyListName = nameSurveyLists.getKey();
-			final List<SurveyList> surveyLists = nameSurveyLists.getValue();
-			for (final SurveyList surveyList : List.copyOf(surveyLists)) {
+			final List<SurveyListDataItem> surveyLists = nameSurveyLists.getValue();
+			for (final SurveyListDataItem surveyList : List.copyOf(surveyLists)) {
 				final SurveyQuestion surveyQuestion = (SurveyQuestion) alfrescoRepository
 						.findOne(surveyList.getQuestion());
 				if (surveyList.isGenerated() && (!surveyQuestions.contains(surveyQuestion)
@@ -167,11 +167,11 @@ public class SurveyQuestionFormulationHandler extends FormulationBaseHandler<Pro
 			final NodeRef surveyQuestionNodeRef = surveyQuestion.getNodeRef();
 			final String fsSurveyListName = surveyQuestion.getFsSurveyListName();
 			if (namesSurveyLists.containsKey(fsSurveyListName)) {
-				final List<SurveyList> surveyLists = namesSurveyLists.get(fsSurveyListName);
-				if (surveyLists.stream().map(SurveyList::getQuestion).noneMatch(surveyQuestionNodeRef::equals)) {
+				final List<SurveyListDataItem> surveyLists = namesSurveyLists.get(fsSurveyListName);
+				if (surveyLists.stream().map(SurveyListDataItem::getQuestion).noneMatch(surveyQuestionNodeRef::equals)) {
 					logger.debug(String.format("Creating SurveyList with SurveyQuestion %s into %s",
 							surveyQuestionNodeRef, fsSurveyListName));
-					surveyLists.add(new SurveyList(surveyQuestionNodeRef, true));
+					surveyLists.add(new SurveyListDataItem(surveyQuestionNodeRef, true));
 				}
 			}
 		}
@@ -181,7 +181,7 @@ public class SurveyQuestionFormulationHandler extends FormulationBaseHandler<Pro
 					.filter(nameSurveyLists -> !surveyListBaseName.equals(nameSurveyLists.getKey()))
 					.forEach(nameSurveyLists -> alfrescoRepository.saveDataList(dataListContainerNodeRef,
 							surveyListQName, nameSurveyLists.getKey(), nameSurveyLists.getValue()));
-			deletedSurveyLists.stream().map(SurveyList::getNodeRef).forEach(alfrescoRepository::delete);
+			deletedSurveyLists.stream().map(SurveyListDataItem::getNodeRef).forEach(alfrescoRepository::delete);
 		}
 		return true;
 	}
