@@ -322,13 +322,30 @@
 		</constraint>
 
 
-        <constraint name="bcpg:nutListRequirementType" type="LIST">
+        <constraint name="bcpg:nutListRequirementTypes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
 				    <value></value>
 					<value>Serving</value>
 					<value>GdaPerc</value>
 					<value>AsPrepared</value>
+				</list>
+			</parameter>
+		</constraint>
+
+
+      <constraint name="bcpg:filQtyPercTypes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+				    <value></value>
+				    <value>QtyPercWithYield</value>
+				    <value>QtyPercWithSecondaryYield</value>
+					<value>QtyPerc1</value>
+					<value>QtyPerc2</value>
+					<value>QtyPerc3</value>
+					<value>QtyPerc4</value>
+					<value>Mini</value>
+					<value>Maxi</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -2607,6 +2624,26 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
+				<property name="bcpg:ingListQtyPerc1">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:ingListQtyPerc2">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:ingListQtyPerc3">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:ingListQtyPerc4">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 				<property name="bcpg:ingListVolumeQtyPerc">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
@@ -3049,12 +3086,27 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
+				<property name="bcpg:filQtyPercMini">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 				<property name="bcpg:filQtyPercMaxiUnit">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
 					<index enabled="false" />
 					<constraints>
 						<constraint ref="bcpg:filQtyPercMaxiUnits" />
+					</constraints>
+				</property>
+				<property name="bcpg:filQtyPercType">
+				   <type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:filQtyPercTypes" />
 					</constraints>
 				</property>
 				<property name="bcpg:filIsGMO">
@@ -5536,7 +5588,7 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 					<constraints>
-						<constraint ref="bcpg:nutListRequirementType" />
+						<constraint ref="bcpg:nutListRequirementTypes" />
 					</constraints>
 				</property>
 			</properties>
