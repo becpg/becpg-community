@@ -37,7 +37,7 @@ import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.survey.SurveyModel;
 
-import fr.becpg.repo.survey.data.SurveyList;
+import fr.becpg.repo.survey.data.SurveyListDataItem;
 import fr.becpg.repo.survey.data.SurveyQuestion;
 import fr.becpg.repo.survey.data.SurveyableEntity;
 
@@ -130,7 +130,7 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 	 */
 	private void fillScoresAndNbQuestions(SurveyableEntity surveyableEntity, Map<String, Integer> scoresPerCriterion,
 			Map<String, Integer> nbOfQuestionsPerCriterion) {
-		for (SurveyList s : surveyableEntity.getSurveyList()) {
+		for (SurveyListDataItem s : surveyableEntity.getSurveyList()) {
 
 			SurveyQuestion question = (SurveyQuestion) alfrescoRepository.findOne(s.getQuestion());
 

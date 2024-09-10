@@ -15,7 +15,7 @@ import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
-import fr.becpg.repo.survey.data.SurveyList;
+import fr.becpg.repo.survey.data.SurveyListDataItem;
 
 /**
  * <p>FinishedProductData class.</p>
@@ -158,7 +158,8 @@ public class FinishedProductData extends ProductData {
 	 * @param surveyList a {@link java.util.List} object
 	 * @return a {@link fr.becpg.repo.product.data.FinishedProductData} object
 	 */
-	public FinishedProductData withSurveyList(List<SurveyList> surveyList) {
+	public FinishedProductData withSurveyList(List<SurveyListDataItem> surveyList) {
+
 		setSurveyList(surveyList);
 		return this;
 	}
