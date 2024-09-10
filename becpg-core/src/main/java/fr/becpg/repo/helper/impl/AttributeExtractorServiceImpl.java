@@ -36,7 +36,6 @@ import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
-import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.ModelDefinition;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.i18n.MessageLookup;
@@ -100,9 +99,6 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 	@Autowired
 	private EntityDictionaryService entityDictionaryService;
-
-	@Autowired
-	private DictionaryService dictionaryService;
 
 	@Autowired
 	private AssociationService associationService;
@@ -392,11 +388,11 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	/** {@inheritDoc} */
 	@Override
 	public String getStringValue(PropertyDefinition propertyDef, Serializable v, PropertyFormats propertyFormats) {
-		return getStringValue(propertyDef, v, propertyFormats, true);
+		return getStringValue(null, propertyDef, v, propertyFormats, true);
 	}
 
 	@SuppressWarnings("unchecked")
-	private String getStringValue(PropertyDefinition propertyDef, Serializable v, PropertyFormats propertyFormats, boolean formatData) {
+	private String getStringValue(QName nodeType, PropertyDefinition propertyDef, Serializable v, PropertyFormats propertyFormats, boolean formatData) {
 
 		StringBuilder value = null;
 
@@ -492,7 +488,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 					QName aclPropName = QName.createQName(v.toString(), namespaceService);
 					ClassAttributeDefinition aclDef = entityDictionaryService.getPropDef(aclPropName);
 					if (aclDef != null) {
-						return aclDef.getTitle(dictionaryService);
+						return entityDictionaryService.getTitle(aclDef, nodeType);
 					} else {
 						return v.toString();
 					}
@@ -586,7 +582,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				}
 				if (propertyDef.getConstraints().isEmpty() || (DataTypeDefinition.TEXT.toString().equals(propertyDef.getDataType().toString()))) {
 					if (formatData || (value instanceof NodeRef) || (value instanceof List)) {
-						return getStringValue(propertyDef, value, propertyFormats, formatData);
+						return getStringValue(null, propertyDef, value, propertyFormats, formatData);
 					} else {
 						return value.toString();
 					}
@@ -876,7 +872,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				}
 
 			} else {
-				displayName = getStringValue((PropertyDefinition) attribute, value, getPropertyFormats(mode, false));
+				displayName = getStringValue(nodeService.getType(nodeRef), (PropertyDefinition) attribute, value, getPropertyFormats(mode, false), true);
 			}
 
 			if (FormatMode.CSV.equals(mode)) {
@@ -896,7 +892,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				if (FormatMode.SEARCH.equals(mode)) {
 					tmp.put("order", order);
 					tmp.put("type", type);
-					tmp.put("label", attribute.getTitle(dictionaryService));
+					tmp.put("label", entityDictionaryService.getTitle(attribute, nodeService.getType(nodeRef)));
 				} else if (type != null) {
 					if ((value != null) && type.equals(DataTypeDefinition.NODE_REF)) {
 						String metadata = null;
@@ -972,7 +968,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 						nodeRefs += assocNodeRef.toString();
 					}
 					tmp.put("order", order);
-					tmp.put("label", attribute.getTitle(dictionaryService));
+					tmp.put("label", entityDictionaryService.getTitle(attribute, nodeService.getType(nodeRef)));
 					tmp.put("type", "subtype");
 					tmp.put("displayValue", displayName);
 					tmp.put("value", nodeRefs);
