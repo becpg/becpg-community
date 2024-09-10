@@ -19,7 +19,7 @@ import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.repository.model.StateableEntity;
-import fr.becpg.repo.survey.data.SurveyList;
+import fr.becpg.repo.survey.data.SurveyListDataItem;
 import fr.becpg.repo.survey.data.SurveyableEntity;
 
 /**
@@ -59,7 +59,7 @@ public class SupplierData extends BeCPGDataObject implements HierarchicalEntity,
 
 	// Survey Entity
 	private List<ScoreListDataItem> scoreList;
-	private List<SurveyList> surveyList;
+	private List<SurveyListDataItem> surveyList;
 	private Integer supplierScore;
 
 	/**
@@ -340,7 +340,7 @@ public class SupplierData extends BeCPGDataObject implements HierarchicalEntity,
 	@DataList
 	@AlfQname(qname = "survey:surveyList")
 	@Override
-	public List<SurveyList> getSurveyList() {
+	public List<SurveyListDataItem> getSurveyList() {
 		return surveyList;
 	}
 
@@ -350,7 +350,7 @@ public class SupplierData extends BeCPGDataObject implements HierarchicalEntity,
 	 * @param scoreList a {@link java.util.List} object.
 	 */
 	@Override
-	public void setSurveyList(List<SurveyList> surveyList) {
+	public void setSurveyList(List<SurveyListDataItem> surveyList) {
 		this.surveyList = surveyList;
 	}
 
