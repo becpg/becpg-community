@@ -29,10 +29,13 @@ public class SurveyList extends BeCPGDataObject {
 
 	private Integer sort;
 	
+	private boolean generated;
+	
 	public SurveyList() {}
 
-	public SurveyList(NodeRef question) {
+	public SurveyList(NodeRef question, boolean generated) {
 		this.question = question;
+		this.generated = generated;
 	}
 
 	@AlfProp
@@ -74,12 +77,22 @@ public class SurveyList extends BeCPGDataObject {
 	public void setChoices(List<NodeRef> choices) {
 		this.choices = choices;
 	}
+	
+	@AlfProp
+	@AlfQname(qname = "survey:generated")
+	public boolean isGenerated() {
+		return generated;
+	}
+
+	public void setGenerated(boolean generated) {
+		this.generated = generated;
+	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(choices, comment, question);
+		result = prime * result + Objects.hash(choices, comment, question, generated);
 		return result;
 	}
 
@@ -92,12 +105,13 @@ public class SurveyList extends BeCPGDataObject {
 		if (getClass() != obj.getClass())
 			return false;
 		SurveyList other = (SurveyList) obj;
-		return Objects.equals(choices, other.choices) && Objects.equals(comment, other.comment) && Objects.equals(question, other.question);
+		return Objects.equals(choices, other.choices) && Objects.equals(comment, other.comment)
+				&& Objects.equals(question, other.question) && Objects.equals(generated, other.generated);
 	}
 
 	@Override
 	public String toString() {
-		return "Survey [comment=" + comment + ", question=" + question + ", choices=" + choices + "]";
+		return "SurveyList [comment=" + comment + ", question=" + question + ", choices=" + choices + ", sort=" + sort
+				+ ", generated=" + generated + "]";
 	}
-
 }
