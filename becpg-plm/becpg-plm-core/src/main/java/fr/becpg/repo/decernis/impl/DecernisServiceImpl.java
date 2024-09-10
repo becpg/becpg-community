@@ -169,9 +169,14 @@ public class DecernisServiceImpl  extends AbstractLifecycleBean implements Decer
 	@Override
 	protected void onBootstrap(ApplicationEvent event) {
 		if(isEnabled()) {
-			logger.info("Starting Decernis Module, Set DNS Cache to 5s, Disable session tickets in TLS connections");
-			java.security.Security.setProperty("networkaddress.cache.ttl", "5");
-			System.setProperty("jdk.tls.client.enableSessionTicketExtension", "false");
+			String ttl = java.security.Security.getProperty("networkaddress.cache.ttl");
+			
+			if(ttl == null)
+			{
+				throw new IllegalStateException("To use decernis please set -Djava.security.properties=/usr/local/tomcat/decernis.security");
+			}
+			
+			logger.info("Starting Decernis Module, DNS Cache is set to "+ttl+"s");
 		}
 	}
 

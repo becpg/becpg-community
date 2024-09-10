@@ -271,14 +271,14 @@ if (beCPG.module.EntityDataGridRenderers) {
 
 			var title = null;
 			if (data && data.value) {
-			    var itemData = oRecord.getData("itemData");
-			    if (type == "bcpg:labelingRuleList" && itemData && itemData["prop_cm_title"] && itemData["prop_cm_title"].value != null) {
-			        title = itemData["prop_cm_title"].value;
-			    }
+				var itemData = oRecord.getData("itemData");
+				if (type == "bcpg:labelingRuleList" && itemData && itemData["prop_cm_title"] && itemData["prop_cm_title"].value != null) {
+					title = itemData["prop_cm_title"].value;
+				}
 
-			    if (!title || !title.trim()) {
-			        title = data.value;
-			    }
+				if (!title || !title.trim()) {
+					title = data.value;
+				}
 			}
 
 
@@ -410,17 +410,22 @@ if (beCPG.module.EntityDataGridRenderers) {
 			var ret = "";
 
 
-			var unit = oRecord._oData.itemData.prop_bcpg_nutListUnit.value;
+			var unit = oRecord._oData.itemData.prop_bcpg_nutListUnit ? oRecord._oData.itemData.prop_bcpg_nutListUnit.value : null
 			if (oColumn.field == "prop_bcpg_nutListValuePrepared" && oRecord._oData.itemData.prop_bcpg_nutListUnitPrepared.value != null) {
-				unit = oRecord._oData.itemData.prop_bcpg_nutListUnitPrepared.value;
+				unit = oRecord._oData.itemData.prop_bcpg_nutListUnitPrepared != null ? oRecord._oData.itemData.prop_bcpg_nutListUnitPrepared.value : null;
 			}
 
-			if ((oColumn.label != null && oColumn.label.indexOf && (oColumn.label.indexOf("100g") > 0 || oColumn.label.indexOf("/") > 0 ))
-				|| (oColumn.field == "prop_bcpg_nutListValuePerServing")) {
+			if (unit != null && ((oColumn.label != null && oColumn.label.indexOf && (oColumn.label.indexOf("100g") > 0 || oColumn.label.indexOf("/") > 0))
+				|| (oColumn.field == "prop_bcpg_nutListValuePerServing"))) {
 				unit = unit.replace("/100g", "").replace("/100ml", "");
 			}
+
 			if (data.value != null) {
-				ret += data.value.toLocaleString(beCPG.util.getJSLocale()) + " " + unit;
+				if (unit != null && unit.length > 0) {
+					ret += data.value.toLocaleString(beCPG.util.getJSLocale()) + " " + unit;
+				} else {
+					ret += data.value.toLocaleString(beCPG.util.getJSLocale());
+				}
 			}
 
 			var key = "prop_bcpg_nutListFormulatedValue";
@@ -441,7 +446,11 @@ if (beCPG.module.EntityDataGridRenderers) {
 				if (ret.length > 0) {
 					ret += '&nbsp;&nbsp;(' + beCPG.util.exp(formulatedValue.value) + ')';
 				} else {
-					ret += beCPG.util.exp(formulatedValue.value) + " " + unit;
+					if (unit != null && unit.length > 0) {
+						ret += beCPG.util.exp(formulatedValue.value) + " " + unit;
+					} else {
+						ret += beCPG.util.exp(formulatedValue.value);
+					}
 				}
 			}
 
@@ -1775,11 +1784,11 @@ if (beCPG.module.EntityDataGridRenderers) {
 
 				return html;
 			} else if (percentValue !== null && percentValue > 0) {
-				
+
 				if (oColumn.numberFormat) {
 					return beCPG.util.formatNumber(oColumn.numberFormat, percentValue) + " %";
 				}
-				
+
 				return Alfresco.util.encodeHTML(beCPG.util.sigFigs(percentValue, 1).toLocaleString(beCPG.util.getJSLocale()) + " %");
 			} else {
 				return "";
