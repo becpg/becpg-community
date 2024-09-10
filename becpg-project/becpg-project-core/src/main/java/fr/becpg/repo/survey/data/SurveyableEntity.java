@@ -11,9 +11,9 @@ import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
  */
 public interface SurveyableEntity extends FormulatedEntity {
 
-	List<SurveyList> getSurveyList();
+	List<SurveyListDataItem> getSurveyList();
 
-	void setSurveyList(List<SurveyList> surveyList);
+	void setSurveyList(List<SurveyListDataItem> surveyList);
 
 	List<ScoreListDataItem> getScoreList();
 

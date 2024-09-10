@@ -14,7 +14,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 @AlfType
 @AlfQname(qname = "survey:surveyList")
-public class SurveyList extends BeCPGDataObject {
+public class SurveyListDataItem extends BeCPGDataObject {
 
 	/**
 	 * 
@@ -31,9 +31,9 @@ public class SurveyList extends BeCPGDataObject {
 	
 	private boolean generated;
 	
-	public SurveyList() {}
+	public SurveyListDataItem() {}
 
-	public SurveyList(NodeRef question, boolean generated) {
+	public SurveyListDataItem(NodeRef question, boolean generated) {
 		this.question = question;
 		this.generated = generated;
 	}
@@ -104,14 +104,14 @@ public class SurveyList extends BeCPGDataObject {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		SurveyList other = (SurveyList) obj;
+		SurveyListDataItem other = (SurveyListDataItem) obj;
 		return Objects.equals(choices, other.choices) && Objects.equals(comment, other.comment)
 				&& Objects.equals(question, other.question) && Objects.equals(generated, other.generated);
 	}
 
 	@Override
 	public String toString() {
-		return "SurveyList [comment=" + comment + ", question=" + question + ", choices=" + choices + ", sort=" + sort
-				+ ", generated=" + generated + "]";
+		return "SurveyListDataItem [comment=" + comment + ", question=" + question + ", choices=" + choices + ", sort="
+				+ sort + ", generated=" + generated + "]";
 	}
 }

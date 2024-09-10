@@ -41,7 +41,7 @@ import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.model.AspectAwareDataItem;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.repository.model.StateableEntity;
-import fr.becpg.repo.survey.data.SurveyList;
+import fr.becpg.repo.survey.data.SurveyListDataItem;
 import fr.becpg.repo.survey.data.SurveyableEntity;
 
 /**
@@ -104,7 +104,7 @@ public class ProjectData extends BeCPGDataObject
 	private List<InvoiceListDataItem> invoiceList;
 	private List<ExpenseListDataItem> expenseList;
 	private List<ScoreListDataItem> scoreList;
-	private List<SurveyList> surveyList;
+	private List<SurveyListDataItem> surveyList;
 
 	private List<NodeRef> currTasks;
 
@@ -957,12 +957,12 @@ public class ProjectData extends BeCPGDataObject
 	 * @return a {@link java.util.List} object.
 	 */
 	@Override
-	public List<SurveyList> getSurveyList() {
+	public List<SurveyListDataItem> getSurveyList() {
 		return surveyList;
 	}
 
 	@Override
-	public void setSurveyList(List<SurveyList> surveyList) {
+	public void setSurveyList(List<SurveyListDataItem> surveyList) {
 		this.surveyList = surveyList;
 	}
 
