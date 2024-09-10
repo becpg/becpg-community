@@ -7845,6 +7845,10 @@
 				<field-visibility>
 					<show id="bcpg:ingListIng" />
 					<show id="bcpg:ingListQtyPerc" />
+					<show id="bcpg:ingListQtyPerc1" />
+					<show id="bcpg:ingListQtyPerc2" />
+					<show id="bcpg:ingListQtyPerc3" />
+					<show id="bcpg:ingListQtyPerc4" />
 					<show id="bcpg:ingListQtyMini" />
 					<show id="bcpg:ingListQtyMaxi" />
 
@@ -7877,10 +7881,14 @@
 							<control-param name="unit">perc</control-param>
 						</control>
 					</field>
+					<field id="bcpg:ingListQtyPerc1" set="2-col-1" />
+					<field id="bcpg:ingListQtyPerc2" set="2-col-1" />
+					<field id="bcpg:ingListQtyPerc3" set="2-col-1" />
+					<field id="bcpg:ingListQtyPerc4" set="2-col-1" />
+					
+					
 					<field id="bcpg:ingListQtyMini" set="2-col-1" />
 					<field id="bcpg:ingListQtyMaxi" set="2-col-1" />
-
-
 
 					<field id="bcpg:ingListGeoOrigin" set="2-col-1">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
@@ -8134,6 +8142,10 @@
 				<field-visibility>
 					<show id="bcpg:ingListIng" />
 					<show id="bcpg:ingListQtyPerc" />
+					<show id="bcpg:ingListQtyPerc1" />
+					<show id="bcpg:ingListQtyPerc2" />
+					<show id="bcpg:ingListQtyPerc3" />
+					<show id="bcpg:ingListQtyPerc4" />
 					<show id="bcpg:ingListQtyMini" />
 					<show id="bcpg:ingListQtyMaxi" />
 					<show id="bcpg:ingListIsGMO" />
@@ -8166,10 +8178,13 @@
 							<control-param name="unit">perc</control-param>
 						</control>
 					</field>
+					
+					<field id="bcpg:ingListQtyPerc1" set="2-col-1" />
+					<field id="bcpg:ingListQtyPerc2" set="2-col-1" />
+					<field id="bcpg:ingListQtyPerc3" set="2-col-1" />
+					<field id="bcpg:ingListQtyPerc4" set="2-col-1" />
 					<field id="bcpg:ingListQtyMini" set="2-col-1" />
 					<field id="bcpg:ingListQtyMaxi" set="2-col-1" />
-
-
 
 					<field id="bcpg:ingListGeoOrigin" set="2-col-1">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
@@ -9054,11 +9069,13 @@
 				<field-visibility>
 					<show id="bcpg:filReqType" />
 					<show id="bcpg:filReqMessage" />
+					<show id="bcpg:filIngs" />
 					<show id="bcpg:filQtyPercMaxi" />
+					<show id="bcpg:filQtyPercMini" />
 					<show id="bcpg:filQtyPercMaxiUnit" />
+					<show id="bcpg:filQtyPercType" />
 					<show id="bcpg:filIsGMO" />
 					<show id="bcpg:filIsIonized" />
-					<show id="bcpg:filIngs" />
 					<show id="bcpg:filGeoOrigins" />
 					<show id="bcpg:filRequiredGeoOrigins" />
 					<show id="bcpg:filBioOrigins" />
@@ -9114,10 +9131,6 @@
 				<field-visibility>
 					<show id="bcpg:filReqType" />
 					<show id="bcpg:filReqMessage" />
-					<show id="bcpg:filQtyPercMaxi" />
-					<show id="bcpg:filQtyPercMaxiUnit" />
-					<show id="bcpg:filIsGMO" />
-					<show id="bcpg:filIsIonized" />
 					<show id="entity_bcpg:filIngs_bcpg:ing" />
 					<show id="bcpg:filIngs" />
 					<show id="bcpg:filGeoOrigins" />
@@ -9166,11 +9179,13 @@
 					<show id="bcpg:entityDataListState" force="true" />
 					<show id="bcpg:filReqType" />
 					<show id="bcpg:filReqMessage" />
-					<show id="bcpg:filQtyPercMaxi" />
+				    <show id="bcpg:filIngs" />
+				    <show id="bcpg:filQtyPercMaxi" />
+					<show id="bcpg:filQtyPercMini" />
 					<show id="bcpg:filQtyPercMaxiUnit" />
+					<show id="bcpg:filQtyPercType" />
 					<show id="bcpg:filIsGMO" />
 					<show id="bcpg:filIsIonized" />
-					<show id="bcpg:filIngs" />
 					<show id="bcpg:filGeoOrigins" />
 					<show id="bcpg:filRequiredGeoOrigins" />
 					<show id="bcpg:filBioOrigins" />
@@ -9201,11 +9216,13 @@
 				<field-visibility>
 					<show id="bcpg:filReqType" />
 					<show id="bcpg:filReqMessage" />
-					<show id="bcpg:filQtyPercMaxi" />
+					<show id="bcpg:filIngs" />
+				    <show id="bcpg:filQtyPercMaxi" />
+					<show id="bcpg:filQtyPercMini" />
 					<show id="bcpg:filQtyPercMaxiUnit" />
+					<show id="bcpg:filQtyPercType" />
 					<show id="bcpg:filIsGMO" />
 					<show id="bcpg:filIsIonized" />
-					<show id="bcpg:filIngs" />
 					<show id="bcpg:filGeoOrigins" />
 					<show id="bcpg:filRequiredGeoOrigins" />
 					<show id="bcpg:filBioOrigins" />

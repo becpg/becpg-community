@@ -19,6 +19,7 @@ package fr.becpg.repo.product.data.productList;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -42,6 +43,19 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfQname(qname = "bcpg:forbiddenIngList")
 public class ForbiddenIngListDataItem extends BeCPGDataObject implements RegulatoryEntityItem {
 
+	enum ReqQtyPercType{
+		
+		 QtyPercWithYield,QtyPercWithSecondaryYield,QtyPerc1,QtyPerc2,QtyPerc3,QtyPerc4,Mini,Maxi;
+		
+		public static ReqQtyPercType fromString(String type) {
+			try {
+				return ReqQtyPercType.valueOf(type);
+			} catch (IllegalArgumentException | NullPointerException e) {
+				return null;
+			}
+		}
+	}
+	
 	/**
 	 * 
 	 */
@@ -49,6 +63,8 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 	private RequirementType reqType;
 	private MLText reqMessage;
 	private Double qtyPercMaxi;
+	private Double qtyPercMini;
+	private ReqQtyPercType qtyPercType;
 	private String qtyPercMaxiUnit;
 	private String isGMO;
 	private String isIonized;
@@ -168,6 +184,8 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 	public Double getQtyPercMaxi() {
 		return qtyPercMaxi;
 	}
+	
+	
 
 	/**
 	 * <p>Getter for the field <code>qtyPercMaxiUnit</code>.</p>
@@ -187,6 +205,27 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 	 */
 	public void setQtyPercMaxi(Double qtyPercMaxi) {
 		this.qtyPercMaxi = qtyPercMaxi;
+	}
+
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:filQtyPercMini")
+	public Double getQtyPercMini() {
+		return qtyPercMini;
+	}
+
+	public void setQtyPercMini(Double qtyPercMini) {
+		this.qtyPercMini = qtyPercMini;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "bcpg:bcpg:filQtyPercType")
+	public ReqQtyPercType getQtyPercType() {
+		return qtyPercType;
+	}
+
+	public void setQtyPercType(ReqQtyPercType qtyPercType) {
+		this.qtyPercType = qtyPercType;
 	}
 
 	/**
@@ -406,25 +445,15 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 		this.ings = ings;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + ((bioOrigins == null) ? 0 : bioOrigins.hashCode());
-		result = prime * result + ((geoOrigins == null) ? 0 : geoOrigins.hashCode());
-		result = prime * result + ((geoTransfo == null) ? 0 : geoTransfo.hashCode());
-		result = prime * result + ((ings == null) ? 0 : ings.hashCode());
-		result = prime * result + ((isGMO == null) ? 0 : isGMO.hashCode());
-		result = prime * result + ((isIonized == null) ? 0 : isIonized.hashCode());
-		result = prime * result + ((qtyPercMaxi == null) ? 0 : qtyPercMaxi.hashCode());
-		result = prime * result + ((reqMessage == null) ? 0 : reqMessage.hashCode());
-		result = prime * result + ((reqType == null) ? 0 : reqType.hashCode());
-		result = prime * result + ((requiredGeoOrigins == null) ? 0 : requiredGeoOrigins.hashCode());
+		result = prime * result + Objects.hash(bioOrigins, geoOrigins, geoTransfo, ings, isGMO, isIonized, qtyPercMaxi, qtyPercMaxiUnit, qtyPercMini,
+				qtyPercType, regulatoryCountriesRef, regulatoryUsagesRef, reqMessage, reqType, requiredGeoOrigins);
 		return result;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -434,62 +463,22 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 		if (getClass() != obj.getClass())
 			return false;
 		ForbiddenIngListDataItem other = (ForbiddenIngListDataItem) obj;
-		if (bioOrigins == null) {
-			if (other.bioOrigins != null)
-				return false;
-		} else if (!bioOrigins.equals(other.bioOrigins))
-			return false;
-		if (geoOrigins == null) {
-			if (other.geoOrigins != null)
-				return false;
-		} else if (!geoOrigins.equals(other.geoOrigins))
-			return false;
-		if (geoTransfo == null) {
-			if (other.geoTransfo != null)
-				return false;
-		} else if (!geoTransfo.equals(other.geoTransfo))
-			return false;
-		if (ings == null) {
-			if (other.ings != null)
-				return false;
-		} else if (!ings.equals(other.ings))
-			return false;
-		if (isGMO == null) {
-			if (other.isGMO != null)
-				return false;
-		} else if (!isGMO.equals(other.isGMO))
-			return false;
-		if (isIonized == null) {
-			if (other.isIonized != null)
-				return false;
-		} else if (!isIonized.equals(other.isIonized))
-			return false;
-		if (qtyPercMaxi == null) {
-			if (other.qtyPercMaxi != null)
-				return false;
-		} else if (!qtyPercMaxi.equals(other.qtyPercMaxi))
-			return false;
-		if (reqMessage == null) {
-			if (other.reqMessage != null)
-				return false;
-		} else if (!reqMessage.equals(other.reqMessage))
-			return false;
-		if (reqType != other.reqType)
-			return false;
-		if (requiredGeoOrigins == null) {
-			if (other.requiredGeoOrigins != null)
-				return false;
-		} else if (!requiredGeoOrigins.equals(other.requiredGeoOrigins))
-			return false;
-		return true;
+		return Objects.equals(bioOrigins, other.bioOrigins) && Objects.equals(geoOrigins, other.geoOrigins)
+				&& Objects.equals(geoTransfo, other.geoTransfo) && Objects.equals(ings, other.ings) && Objects.equals(isGMO, other.isGMO)
+				&& Objects.equals(isIonized, other.isIonized) && Objects.equals(qtyPercMaxi, other.qtyPercMaxi)
+				&& Objects.equals(qtyPercMaxiUnit, other.qtyPercMaxiUnit) && Objects.equals(qtyPercMini, other.qtyPercMini)
+				&& qtyPercType == other.qtyPercType && Objects.equals(regulatoryCountriesRef, other.regulatoryCountriesRef)
+				&& Objects.equals(regulatoryUsagesRef, other.regulatoryUsagesRef) && Objects.equals(reqMessage, other.reqMessage)
+				&& reqType == other.reqType && Objects.equals(requiredGeoOrigins, other.requiredGeoOrigins);
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return "ForbiddenIngListDataItem [reqType=" + reqType + ", reqMessage=" + reqMessage + ", qtyPercMaxi=" + qtyPercMaxi + ", isGMO=" + isGMO
-				+ ", isIonized=" + isIonized + ", ings=" + ings + ", geoOrigins=" + geoOrigins + ", requiredGeoOrigins=" + requiredGeoOrigins
-				+ ", geoTransfo=" + geoTransfo + ", bioOrigins=" + bioOrigins + "]";
+		return "ForbiddenIngListDataItem [reqType=" + reqType + ", reqMessage=" + reqMessage + ", qtyPercMaxi=" + qtyPercMaxi + ", qtyPercMini="
+				+ qtyPercMini + ", qtyPercType=" + qtyPercType + ", qtyPercMaxiUnit=" + qtyPercMaxiUnit + ", isGMO=" + isGMO + ", isIonized="
+				+ isIonized + ", ings=" + ings + ", geoOrigins=" + geoOrigins + ", requiredGeoOrigins=" + requiredGeoOrigins + ", geoTransfo="
+				+ geoTransfo + ", bioOrigins=" + bioOrigins + ", regulatoryCountriesRef=" + regulatoryCountriesRef + ", regulatoryUsagesRef="
+				+ regulatoryUsagesRef + "]";
 	}
 
 }
