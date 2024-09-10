@@ -73,6 +73,7 @@
 		<property name="registry" ref="asynchronouslyRefreshedCacheRegistry" />
 		<property name="repositoryEntityDefReader" ref="repositoryEntityDefReader" />
 		<property name="namespaceService" ref="namespaceService" />
+		<property name="messageService" ref="messageService" />
 	</bean>
 
 	<alias alias="cachedDictionaryService" name="entityDictionaryService"></alias>

@@ -129,7 +129,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 			Element entitiesCmpElt = document.addElement(TAG_ENTITIES_COMPARISON);
 			
 			entitiesCmpElt.add(renderComparisonAsXmlData(entity1, entities, compareResult));
-			entitiesCmpElt.add(renderStructComparisonAsXmlData(structCompareResults));
+			entitiesCmpElt.add(renderStructComparisonAsXmlData(nodeService.getType(entity1), structCompareResults));
 			
 			if (logger.isDebugEnabled()) {
 				logger.debug("comparison XML " + entitiesCmpElt.asXML());
@@ -187,7 +187,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 		Element entitiesCmpElt = document.addElement(TAG_ENTITIES_COMPARISON);
 		
 		entitiesCmpElt.add(renderComparisonAsXmlData(entity, entities, compareResult));
-		entitiesCmpElt.add(renderStructComparisonAsXmlData(structCompareResults));
+		entitiesCmpElt.add(renderStructComparisonAsXmlData(nodeService.getType(entity), structCompareResults));
 		
 		if (logger.isDebugEnabled()) {
 			logger.debug("comparison XML " + entitiesCmpElt.asXML());
@@ -236,7 +236,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 			}
 			
 			cmpRowElt.addAttribute(ATTR_CHARACTERISTIC, c.getCharactName());
-			cmpRowElt.addAttribute(ATTR_PROPERTY, getClassAttributeTitle(def, c.getProperty()));
+			cmpRowElt.addAttribute(ATTR_PROPERTY, getClassAttributeTitle(nodeService.getType(entity1NodeRef), def, c.getProperty()));
 			cmpRowElt.addAttribute(ATTR_PROPERTY_QNAME, c.getProperty().toPrefixString(namespaceService));
 			cmpRowElt.addAttribute(ATTR_IS_DIFFERENT, Boolean.toString(c.isDifferent()));
 
@@ -261,7 +261,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 	 * @param structCompareResults a {@link java.util.Map} object.
 	 * @return a {@link org.dom4j.Element} object.
 	 */
-	public  Element renderStructComparisonAsXmlData(Map<String, List<StructCompareResultDataItem>> structCompareResults) {
+	public  Element renderStructComparisonAsXmlData(QName nodeType, Map<String, List<StructCompareResultDataItem>> structCompareResults) {
 		Document document = DocumentHelper.createDocument();
 
 		// structCompareResult
@@ -307,7 +307,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 						}
 						
 						String value = c.getProperties1().get(property);
-						properties1 += getClassAttributeTitle(null, property) + PROPERTY_VALUE_SEPARATOR + value;
+						properties1 += getClassAttributeTitle(nodeType, null, property) + PROPERTY_VALUE_SEPARATOR + value;
 					}
 				}
 
@@ -335,7 +335,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 						}
 						
 						String value = c.getProperties2().get(property);
-						properties2 += getClassAttributeTitle(null, property) + PROPERTY_VALUE_SEPARATOR + value;
+						properties2 += getClassAttributeTitle(nodeType, null, property) + PROPERTY_VALUE_SEPARATOR + value;
 					}
 				}
 
@@ -360,7 +360,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 	}
 
 	
-	private String getClassAttributeTitle(BecpgFormDefinition definition, QName qName) {
+	private String getClassAttributeTitle(QName nodeType, BecpgFormDefinition definition, QName qName) {
 
 		String title = (definition != null) ? definition.getTitle(qName.toPrefixString(namespaceService)) : null;
 		

@@ -204,7 +204,7 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 
 						if (propertyDefinition.isMultiValued()) {
 							JSONObject arrayDef = addProperty(entity, entityDictionaryService.toPrefixString(propName), TYPE_ARRAY,
-									propertyDefinition.getTitle(entityDictionaryService), propertyDefinition.getDescription(entityDictionaryService));
+									entityDictionaryService.getTitle(propertyDefinition, entityType), entityDictionaryService.getDescription(propertyDefinition, entityType));
 							addProperty(arrayDef, entityDictionaryService.toPrefixString(propName), propertyDefinition);
 						} else {
 							addProperty(attributes, entityDictionaryService.toPrefixString(propName), propertyDefinition);
@@ -501,7 +501,7 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 							continue;
 						}
 
-						visitPropValue(propName, entity, entry.getValue(), context, propertyDefinition);
+						visitPropValue(nodeRef, propName, entity, entry.getValue(), context, propertyDefinition);
 					} else {
 						logger.debug("Properties not in dictionary: " + entry.getKey());
 					}
@@ -512,11 +512,11 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void visitPropValue(QName propType, JSONObject entity, Serializable value, RemoteJSONContext context,
+	private void visitPropValue(NodeRef entityNodeRef, QName propType, JSONObject entity, Serializable value, RemoteJSONContext context,
 			PropertyDefinition propertyDefinition) throws JSONException {
 		if (propertyDefinition.isMultiValued() && (value != null)) {
 			JSONObject arrayDef = addProperty(entity, entityDictionaryService.toPrefixString(propType), TYPE_ARRAY,
-					propertyDefinition.getTitle(entityDictionaryService), propertyDefinition.getDescription(entityDictionaryService));
+					entityDictionaryService.getTitle(propertyDefinition, nodeService.getType(entityNodeRef)), entityDictionaryService.getDescription(propertyDefinition, nodeService.getType(entityNodeRef)));
 			if (!((List<Serializable>) value).isEmpty()) {
 				JSONObject node = new JSONObject();
 				Serializable subEl = ((List<Serializable>) value).get(0);
@@ -538,12 +538,12 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 			}
 		} else if (value instanceof NodeRef) {
 			JSONObject node = addProperty(entity, entityDictionaryService.toPrefixString(propType), TYPE_OBJECT,
-					propertyDefinition.getTitle(entityDictionaryService), propertyDefinition.getDescription(entityDictionaryService));
+					entityDictionaryService.getTitle(propertyDefinition, nodeService.getType(entityNodeRef)), entityDictionaryService.getDescription(propertyDefinition, nodeService.getType(entityNodeRef)));
 			visitNode((NodeRef) value, node, JsonVisitNodeType.ASSOC, context);
 		} else {
 			if (RemoteHelper.isJSONValue(propType)) {
 				addProperty(entity, entityDictionaryService.toPrefixString(propType), TYPE_OBJECT,
-						propertyDefinition.getTitle(entityDictionaryService), propertyDefinition.getDescription(entityDictionaryService));
+						entityDictionaryService.getTitle(propertyDefinition, nodeService.getType(entityNodeRef)), entityDictionaryService.getDescription(propertyDefinition, nodeService.getType(entityNodeRef)));
 			} else {
 				addProperty(entity, entityDictionaryService.toPrefixString(propType), propertyDefinition);
 			}
@@ -621,13 +621,17 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 
 		}
 
-		object.put(PROP_TITLE, propertyDefinition.getTitle(entityDictionaryService));
-		if (propertyDefinition.getDescription(entityDictionaryService) != null) {
-			object.put(PROP_DESCRIPTION, propertyDefinition.getDescription(entityDictionaryService));
+		object.put(PROP_TITLE, entityDictionaryService.getTitle(propertyDefinition, getJsonEntityType(entity)));
+		if (entityDictionaryService.getDescription(propertyDefinition, getJsonEntityType(entity)) != null) {
+			object.put(PROP_DESCRIPTION, entityDictionaryService.getDescription(propertyDefinition, getJsonEntityType(entity)));
 		}
 		properties.put(attr, object);
 		return object;
 
+	}
+	
+	private QName getJsonEntityType(JSONObject entity) {
+		return QName.createQName(entity.getString(RemoteEntityService.ATTR_TYPE), namespaceService);
 	}
 
 	private JSONObject addProperty(JSONObject entity, String attr, String type, String title, String description, JSONObject object) {

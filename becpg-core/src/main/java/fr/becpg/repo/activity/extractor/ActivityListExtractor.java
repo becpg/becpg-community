@@ -28,7 +28,6 @@ import java.util.regex.Pattern;
 import org.alfresco.error.AlfrescoRuntimeException;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
-import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.MalformedNodeRefException;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -47,6 +46,7 @@ import fr.becpg.config.format.FormatMode;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.activity.data.ActivityType;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.DataListPagination;
 import fr.becpg.repo.entity.datalist.impl.SimpleExtractor;
@@ -65,7 +65,7 @@ public class ActivityListExtractor extends SimpleExtractor {
 
 	private EntityActivityService entityActivityService;
 
-	private DictionaryService dictionaryService;
+	private EntityDictionaryService dictionaryService;
 
 	private SecurityService securityService;
 
@@ -89,7 +89,7 @@ public class ActivityListExtractor extends SimpleExtractor {
 	 *
 	 * @param dictionaryService a {@link org.alfresco.service.cmr.dictionary.DictionaryService} object.
 	 */
-	public void setDictionaryService(DictionaryService dictionaryService) {
+	public void setDictionaryService(EntityDictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
 	}
 
@@ -198,9 +198,9 @@ public class ActivityListExtractor extends SimpleExtractor {
 									// Property Title
 									PropertyDefinition propertyDef = dictionaryService.getProperty(propertyName);
 									ClassAttributeDefinition propDef = entityDictionaryService.getPropDef(propertyName);
-									if ((propDef != null) && (propDef.getTitle(dictionaryService) != null)
-											&& (propDef.getTitle(dictionaryService).length() > 0)) {
-										postProperty.put(PROP_TITLE, propDef.getTitle(dictionaryService));
+									if ((propDef != null) && (dictionaryService.getTitle(propDef, entityType) != null)
+											&& (dictionaryService.getTitle(propDef, entityType).length() > 0)) {
+										postProperty.put(PROP_TITLE, dictionaryService.getTitle(propDef, entityType));
 									} else {
 										postProperty.put(PROP_TITLE, propertyName.toPrefixString());
 									}
