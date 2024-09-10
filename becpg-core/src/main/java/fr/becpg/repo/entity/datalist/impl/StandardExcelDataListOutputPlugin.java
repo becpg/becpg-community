@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ForumModel;
-import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.helper.ExcelHelper.ExcelFieldTitleProvider;
@@ -24,7 +24,7 @@ import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtracto
 public class StandardExcelDataListOutputPlugin implements ExcelDataListOutputPlugin {
 
 	@Autowired
-	protected DictionaryService dictionaryService;
+	protected EntityDictionaryService dictionaryService;
 	
 	/** {@inheritDoc} */
 	@Override
@@ -47,7 +47,7 @@ public class StandardExcelDataListOutputPlugin implements ExcelDataListOutputPlu
 			@Override
 			public String getTitle(AttributeExtractorStructure field) {
 				String label = field.getFieldLabel();
-				return (label != null && !label.isBlank()) ? label : field.getFieldDef().getTitle(dictionaryService);
+				return (label != null && !label.isBlank()) ? label : dictionaryService.getTitle(field.getFieldDef(), dataListFilter.getDataType());
 			}
 
 			@Override
