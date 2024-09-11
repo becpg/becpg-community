@@ -43,7 +43,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfQname(qname = "bcpg:forbiddenIngList")
 public class ForbiddenIngListDataItem extends BeCPGDataObject implements RegulatoryEntityItem {
 
-	enum ReqQtyPercType{
+	public enum ReqQtyPercType{
 		
 		 QtyPercWithYield,QtyPercWithSecondaryYield,QtyPerc1,QtyPerc2,QtyPerc3,QtyPerc4,Mini,Maxi;
 		
@@ -65,6 +65,7 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 	private Double qtyPercMaxi;
 	private Double qtyPercMini;
 	private ReqQtyPercType qtyPercType;
+	private Integer ingLevel;
 	private String qtyPercMaxiUnit;
 	private String isGMO;
 	private String isIonized;
@@ -135,6 +136,16 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 	 */
 	public void setReqType(RequirementType reqType) {
 		this.reqType = reqType;
+	}
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:filIngLevel")
+	public Integer getIngLevel() {
+		return ingLevel;
+	}
+
+	public void setIngLevel(Integer ingLevel) {
+		this.ingLevel = ingLevel;
 	}
 
 	/**
@@ -449,8 +460,8 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(bioOrigins, geoOrigins, geoTransfo, ings, isGMO, isIonized, qtyPercMaxi, qtyPercMaxiUnit, qtyPercMini,
-				qtyPercType, regulatoryCountriesRef, regulatoryUsagesRef, reqMessage, reqType, requiredGeoOrigins);
+		result = prime * result + Objects.hash(bioOrigins, geoOrigins, geoTransfo, ingLevel, ings, isGMO, isIonized, qtyPercMaxi, qtyPercMaxiUnit,
+				qtyPercMini, qtyPercType, regulatoryCountriesRef, regulatoryUsagesRef, reqMessage, reqType, requiredGeoOrigins);
 		return result;
 	}
 
@@ -464,8 +475,8 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 			return false;
 		ForbiddenIngListDataItem other = (ForbiddenIngListDataItem) obj;
 		return Objects.equals(bioOrigins, other.bioOrigins) && Objects.equals(geoOrigins, other.geoOrigins)
-				&& Objects.equals(geoTransfo, other.geoTransfo) && Objects.equals(ings, other.ings) && Objects.equals(isGMO, other.isGMO)
-				&& Objects.equals(isIonized, other.isIonized) && Objects.equals(qtyPercMaxi, other.qtyPercMaxi)
+				&& Objects.equals(geoTransfo, other.geoTransfo) && Objects.equals(ingLevel, other.ingLevel) && Objects.equals(ings, other.ings)
+				&& Objects.equals(isGMO, other.isGMO) && Objects.equals(isIonized, other.isIonized) && Objects.equals(qtyPercMaxi, other.qtyPercMaxi)
 				&& Objects.equals(qtyPercMaxiUnit, other.qtyPercMaxiUnit) && Objects.equals(qtyPercMini, other.qtyPercMini)
 				&& qtyPercType == other.qtyPercType && Objects.equals(regulatoryCountriesRef, other.regulatoryCountriesRef)
 				&& Objects.equals(regulatoryUsagesRef, other.regulatoryUsagesRef) && Objects.equals(reqMessage, other.reqMessage)
@@ -475,10 +486,10 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 	@Override
 	public String toString() {
 		return "ForbiddenIngListDataItem [reqType=" + reqType + ", reqMessage=" + reqMessage + ", qtyPercMaxi=" + qtyPercMaxi + ", qtyPercMini="
-				+ qtyPercMini + ", qtyPercType=" + qtyPercType + ", qtyPercMaxiUnit=" + qtyPercMaxiUnit + ", isGMO=" + isGMO + ", isIonized="
-				+ isIonized + ", ings=" + ings + ", geoOrigins=" + geoOrigins + ", requiredGeoOrigins=" + requiredGeoOrigins + ", geoTransfo="
-				+ geoTransfo + ", bioOrigins=" + bioOrigins + ", regulatoryCountriesRef=" + regulatoryCountriesRef + ", regulatoryUsagesRef="
-				+ regulatoryUsagesRef + "]";
+				+ qtyPercMini + ", qtyPercType=" + qtyPercType + ", ingLevel=" + ingLevel + ", qtyPercMaxiUnit=" + qtyPercMaxiUnit + ", isGMO="
+				+ isGMO + ", isIonized=" + isIonized + ", ings=" + ings + ", geoOrigins=" + geoOrigins + ", requiredGeoOrigins=" + requiredGeoOrigins
+				+ ", geoTransfo=" + geoTransfo + ", bioOrigins=" + bioOrigins + ", regulatoryCountriesRef=" + regulatoryCountriesRef
+				+ ", regulatoryUsagesRef=" + regulatoryUsagesRef + "]";
 	}
 
 }
