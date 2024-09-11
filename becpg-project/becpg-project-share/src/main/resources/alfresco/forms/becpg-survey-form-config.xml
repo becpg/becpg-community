@@ -123,6 +123,7 @@
 					<show id="survey:responseCommentLabel" />
 					<show id="survey:nextQuestion" />
 					
+					<show id="survey:fsSurveyListName" force="true" />
 					<show id="survey:fsLinkedCharactRefs" force="true" />
 					<show id="survey:fsLinkedTypes" force="true" />
 					<show id="survey:fsLinkedHierarchy" force="true" />
@@ -172,6 +173,7 @@
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
+					<field id="survey:fsSurveyListName" set="surveyAutogeneration" />
 					<field id="survey:fsLinkedCharactRefs" set="surveyAutogeneration">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pack:packMaterial</control-param>
@@ -224,6 +226,7 @@
 					<show id="survey:responseCommentLabel" />
 					<show id="survey:nextQuestion" />
 					
+					<show id="survey:fsSurveyListName" force="true" />
 					<show id="survey:fsLinkedCharactRefs" force="true" />
 					<show id="survey:fsLinkedTypes" force="true" />
 					<show id="survey:fsLinkedHierarchy" force="true" />
@@ -273,6 +276,7 @@
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
+					<field id="survey:fsSurveyListName" set="surveyAutogeneration" />
 					<field id="survey:fsLinkedCharactRefs" set="surveyAutogeneration">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pack:packMaterial</control-param>
