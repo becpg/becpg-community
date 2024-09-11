@@ -1680,7 +1680,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName: ["bcpg:nutListGDAPerc"],
-		renderer: function(oRecord, data, label, scope) {
+		renderer: function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
 
 			var percentValue = data.value;
 			var nutColor = null;
