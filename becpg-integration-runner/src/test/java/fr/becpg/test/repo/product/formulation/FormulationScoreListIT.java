@@ -42,7 +42,7 @@ import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
-import fr.becpg.repo.survey.data.SurveyList;
+import fr.becpg.repo.survey.data.SurveyListDataItem;
 import fr.becpg.repo.survey.data.SurveyQuestion;
 import fr.becpg.test.PLMBaseTestCase;
 
@@ -143,7 +143,7 @@ public class FormulationScoreListIT extends PLMBaseTestCase {
 				.withScoreList(createScoreList());
 	}
 
-	private List<SurveyList> createSurveyList() {
+	private List<SurveyListDataItem> createSurveyList() {
 
 		SurveyQuestion question1 = new SurveyQuestion();
 
@@ -153,7 +153,7 @@ public class FormulationScoreListIT extends PLMBaseTestCase {
 		NodeRef q1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), question1).getNodeRef();
 		nodesToDelete.add(q1NodeRef);
 
-		SurveyList survey1 = new SurveyList();
+		SurveyListDataItem survey1 = new SurveyListDataItem();
 		survey1.setQuestion(q1NodeRef);
 
 		SurveyQuestion question2 = new SurveyQuestion();
@@ -163,7 +163,7 @@ public class FormulationScoreListIT extends PLMBaseTestCase {
 		NodeRef q2NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), question2).getNodeRef();
 		nodesToDelete.add(q2NodeRef);
 
-		SurveyList survey2 = new SurveyList();
+		SurveyListDataItem survey2 = new SurveyListDataItem();
 		survey2.setQuestion(q2NodeRef);
 
 		SurveyQuestion question3 = new SurveyQuestion();
@@ -173,7 +173,7 @@ public class FormulationScoreListIT extends PLMBaseTestCase {
 		NodeRef q3NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), question3).getNodeRef();
 		nodesToDelete.add(q3NodeRef);
 
-		SurveyList survey3 = new SurveyList();
+		SurveyListDataItem survey3 = new SurveyListDataItem();
 		survey3.setQuestion(q3NodeRef);
 
 		SurveyQuestion question4 = new SurveyQuestion();
@@ -183,7 +183,7 @@ public class FormulationScoreListIT extends PLMBaseTestCase {
 		NodeRef q4NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), question4).getNodeRef();
 		nodesToDelete.add(q4NodeRef);
 
-		SurveyList survey4 = new SurveyList();
+		SurveyListDataItem survey4 = new SurveyListDataItem();
 		survey4.setQuestion(q4NodeRef);
 
 		return List.of(survey1, survey2, survey3, survey4);
