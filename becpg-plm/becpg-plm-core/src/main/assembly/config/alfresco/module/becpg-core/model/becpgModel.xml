@@ -185,6 +185,7 @@
 					<value>P</value>
 					<value>m</value>
 					<value>m2</value>
+					<value>m3</value>
 					<value>Perc</value>
 				</list>
 			</parameter>
@@ -199,6 +200,7 @@
 					<value>in</value>
 					<value>ft</value>
 					<value>m2</value>
+					<value>m3</value>
 					<value>kg</value>
 					<value>g</value>
 					<value>lb</value>
