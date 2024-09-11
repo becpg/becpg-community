@@ -15,6 +15,8 @@ export COMPOSE_FILE_PATH=${PWD}/becpg-integration-runner/target/docker-compose.y
 export MVN_EXEC="${PWD}/mvnw"
 export BECPG_VERSION_PROFILE=becpg_23_2_1
 
+. .env
+
 case "$2" in
   branch)
     BECPG_VERSION_PROFILE=$(echo "$BECPG_VERSION_PROFILE" | sed 's/\//_/g; s/\./-/g')

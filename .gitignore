@@ -38,3 +38,4 @@ build/
 
 #Hive local devs specifics files
 ^devs-*
+/.env
