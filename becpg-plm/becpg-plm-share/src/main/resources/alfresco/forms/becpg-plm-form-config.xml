@@ -9074,6 +9074,7 @@
 					<show id="bcpg:filQtyPercMini" />
 					<show id="bcpg:filQtyPercMaxiUnit" />
 					<show id="bcpg:filQtyPercType" />
+					<show id="bcpg:filIngLevel"/>
 					<show id="bcpg:filIsGMO" />
 					<show id="bcpg:filIsIonized" />
 					<show id="bcpg:filGeoOrigins" />
@@ -9162,6 +9163,12 @@
 					<field id="bcpg:filIngs">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
+					<field id="bcpg:filIngLevel">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">|data.level.all,1|1,2|2,3|3,4|4
+							</control-param>
+						</control>
+					</field>
 					<field id="bcpg:filGeoOrigins">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
@@ -9184,6 +9191,7 @@
 					<show id="bcpg:filQtyPercMini" />
 					<show id="bcpg:filQtyPercMaxiUnit" />
 					<show id="bcpg:filQtyPercType" />
+					<show id="bcpg:filIngLevel"/>
 					<show id="bcpg:filIsGMO" />
 					<show id="bcpg:filIsIonized" />
 					<show id="bcpg:filGeoOrigins" />
@@ -9221,6 +9229,7 @@
 					<show id="bcpg:filQtyPercMini" />
 					<show id="bcpg:filQtyPercMaxiUnit" />
 					<show id="bcpg:filQtyPercType" />
+					<show id="bcpg:filIngLevel"/>
 					<show id="bcpg:filIsGMO" />
 					<show id="bcpg:filIsIonized" />
 					<show id="bcpg:filGeoOrigins" />
@@ -9251,6 +9260,12 @@
 					<field id="bcpg:filIsIonized">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">,false|data.boolean.false,true|data.boolean.true
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:filIngLevel">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">|data.level.all,1|1,2|2,3|3,4|4
 							</control-param>
 						</control>
 					</field>
