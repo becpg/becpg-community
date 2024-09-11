@@ -3127,6 +3127,10 @@
 						<constraint ref="bcpg:nullableBoolean" />
 					</constraints>
 				</property>
+				<property name="bcpg:filIngLevel">
+					<type>d:int</type>
+					<index enabled="false"/>
+				</property>
 			</properties>
 			<associations>
 				<association name="bcpg:filIngs">
