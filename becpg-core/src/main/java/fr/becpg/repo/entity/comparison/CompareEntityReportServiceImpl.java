@@ -10,7 +10,6 @@ import java.util.Map;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.forms.FormNotFoundException;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
-import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.cmr.repository.AssociationRef;
@@ -30,6 +29,7 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.form.BecpgFormService;
 import fr.becpg.repo.form.impl.BecpgFormDefinition;
 import fr.becpg.repo.helper.AssociationService;
@@ -101,7 +101,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 	private NodeService nodeService;
 
 	@Autowired
-	private DictionaryService dictionaryService;
+	private EntityDictionaryService dictionaryService;
 
 	@Autowired
 	private NamespaceService namespaceService;
@@ -367,7 +367,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 		if (title == null) {
 			PropertyDefinition propertyDef = dictionaryService.getProperty(qName);
 			if (propertyDef != null) {
-				title = propertyDef.getTitle(dictionaryService);
+				title = dictionaryService.getTitle(propertyDef, nodeType);
 			} else {
 				AssociationDefinition assocDef = dictionaryService.getAssociation(qName);
 				if (assocDef != null) {
