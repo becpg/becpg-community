@@ -6,7 +6,7 @@
 		<version>23.2.0</version>
 		<relativePath>../../</relativePath>
 	</parent>
-	<version>23.2.0.43-SNAPSHOT</version>
+	<version>23.2.0.43</version>
     <modelVersion>4.0.0</modelVersion>    
 	<artifactId>becpg-project-core</artifactId>
 	<packaging>jar</packaging>
@@ -65,6 +65,6 @@
 	</build>
 
   <scm>
-    <tag>23.2.0.19</tag>
+    <tag>23.2.0.43</tag>
   </scm>
 </project>
