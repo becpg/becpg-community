@@ -1400,10 +1400,6 @@
 					<show id="cm:name" />
 					<show id="cm:title" />
 					<show id="cm:description" force="true"/>
-					<show id="bcpg:code" />
-					<show id="qa:qcSamplesCounter" />
-					<show id="qa:qcNextAnalysisDate" />
-					<show id="qa:qcState" />
 					<show id="qa:qcControlPlans" />
 
 					<!-- batch -->
@@ -1418,22 +1414,12 @@
 					<!-- Product -->
 					<show id="qa:product" />
 
-					<!-- auditable -->
-					<show id="cm:creator" for-mode="view" />
-					<show id="cm:created" for-mode="view" />
-					<show id="cm:modifier" for-mode="view" />
-					<show id="cm:modified" for-mode="view" />
-
 				</field-visibility>
 				<appearance>
 					<set id="mainInfo" appearance="bordered-panel" label-id="becpg.forms.set.designation.label" />
 					<field id="cm:name" set="mainInfo" />
 					<field id="cm:title" set="mainInfo" />
 					<field id="cm:description" set="mainInfo" />
-					<field id="bcpg:code" read-only="true" set="mainInfo" />
-					<field id="qa:qcState" read-only="true" set="mainInfo" />
-					<field id="qa:qcSamplesCounter" read-only="true" set="mainInfo" />
-					<field id="qa:qcNextAnalysisDate" read-only="true" set="mainInfo" />
 					<field id="qa:qcControlPlans" set="mainInfo" />
 
 					<set id="product-info" appearance="bordered-panel" label-id="becpg.forms.set.product-info.label" />
@@ -1452,12 +1438,6 @@
 						</control>
 					</field>
 
-					<!-- audit -->
-					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label" />
-					<field id="cm:creator" set="audit" />
-					<field id="cm:created" set="audit" />
-					<field id="cm:modifier" set="audit" />
-					<field id="cm:modified" set="audit" />
 				</appearance>
 			</form>
 			<form id="product-list">
@@ -1561,10 +1541,10 @@
 					<show id="cm:name" />
 					<show id="cm:title" />
 					<show id="cm:description" force="true"/>
-					<show id="bcpg:code" />
-					<show id="qa:qcSamplesCounter" />
-					<show id="qa:qcNextAnalysisDate" />
-					<show id="qa:qcState" />
+					<show id="bcpg:code" for-mode="view" />
+					<show id="qa:qcSamplesCounter" for-mode="view"/>
+					<show id="qa:qcNextAnalysisDate" for-mode="view"/>
+					<show id="qa:qcState" for-mode="view"/>
 					<show id="qa:qcControlPlans" />
 
 					<!-- batch -->
