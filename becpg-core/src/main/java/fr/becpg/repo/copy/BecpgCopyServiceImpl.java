@@ -1060,28 +1060,34 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	        CopyBehaviourCallback callback = null;
 	        if (sourceClassDef == null || isExcludeTypes(sourceClassQName))
 	        {
-	            // Do nothing as the type is not in the dictionary
-	            callback = DoNothingCopyBehaviourCallback.getInstance();
-	        }
-	        if (policies.isEmpty())
-	        {
-	            // Default behaviour
-	            callback = DefaultCopyBehaviourCallback.getInstance();
-	        }
-	        else if (policies.size() == 1)
-	        {
-	            callback = policies.iterator().next().getCopyCallback(sourceClassQName, copyDetails);
-	        }
-	        else
-	        {
-	            // There are multiple
-	            CompoundCopyBehaviourCallback compoundCallback = new CompoundCopyBehaviourCallback(sourceClassQName);
-	            for (CopyServicePolicies.OnCopyNodePolicy policy : policies)
-	            {
-	                CopyBehaviourCallback nestedCallback = policy.getCopyCallback(sourceClassQName, copyDetails);
-	                compoundCallback.addBehaviour(nestedCallback);
+	            if(isExcludeTypes(sourceClassQName)) {
+	            	 CompoundCopyBehaviourCallback compoundCallback = new CompoundCopyBehaviourCallback(sourceClassQName);
+	            	 compoundCallback.addBehaviour(DoNothingCopyBehaviourCallback.getInstance());
+	            	 callback = compoundCallback;
+	            } else {
+	            	 callback = DoNothingCopyBehaviourCallback.getInstance();
 	            }
-	            callback = compoundCallback;
+	        } else {
+		        if (policies.isEmpty())
+		        {
+		            // Default behaviour
+		            callback = DefaultCopyBehaviourCallback.getInstance();
+		        }
+		        else if (policies.size() == 1)
+		        {
+		            callback = policies.iterator().next().getCopyCallback(sourceClassQName, copyDetails);
+		        }
+		        else
+		        {
+		            // There are multiple
+		            CompoundCopyBehaviourCallback compoundCallback = new CompoundCopyBehaviourCallback(sourceClassQName);
+		            for (CopyServicePolicies.OnCopyNodePolicy policy : policies)
+		            {
+		                CopyBehaviourCallback nestedCallback = policy.getCopyCallback(sourceClassQName, copyDetails);
+		                compoundCallback.addBehaviour(nestedCallback);
+		            }
+		            callback = compoundCallback;
+		        }
 	        }
 	        // Done
 	        if (logger.isDebugEnabled())
@@ -1139,10 +1145,7 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	    
 	    
 	    private boolean isExcludeTypes(QName sourceClassQName) {
-	    	if(typesToReset().contains(dictionaryService.toPrefixString(sourceClassQName))) {
-	    		return true;
-	    	}
-	    	return false;
+	    	return typesToReset().contains(dictionaryService.toPrefixString(sourceClassQName));
 	    }
 	    
 	    /**
