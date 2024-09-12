@@ -1097,6 +1097,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_GS1_ALCOHOL_BEVERAGE_CONTAINERS, GS1Model.TYPE_ALCOHOL_BEVERAGE_CONTAINER);
 		entityLists.put(PlmRepoConsts.PATH_CONTACTS, PLMModel.TYPE_CONTACTLIST);
 		entityLists.put(PlmRepoConsts.PATH_REGULATORY_USAGES, PLMModel.TYPE_REGULATORY_USAGE);
+		entityLists.put(PlmRepoConsts.PATH_TOXICITIES, PLMModel.TYPE_TOX);
+		entityLists.put(PlmRepoConsts.PATH_TOX_ING, PLMModel.TYPE_TOX_ING);
 
 		entityLists.put(RepoConsts.PATH_NOTIFICATIONS, BeCPGModel.TYPE_NOTIFICATIONRULELIST);
 		entityLists.put(PlmRepoConsts.PATH_PUBCHANNELS, PublicationModel.TYPE_PUBLICATION_CHANNEL);
