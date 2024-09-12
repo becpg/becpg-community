@@ -29,7 +29,7 @@ public class SurveyListDataItem extends BeCPGDataObject {
 
 	private Integer sort;
 	
-	private boolean generated;
+	private Boolean generated;
 	
 	public SurveyListDataItem() {}
 
@@ -80,11 +80,11 @@ public class SurveyListDataItem extends BeCPGDataObject {
 	
 	@AlfProp
 	@AlfQname(qname = "survey:generated")
-	public boolean isGenerated() {
+	public Boolean isGenerated() {
 		return generated;
 	}
 
-	public void setGenerated(boolean generated) {
+	public void setGenerated(Boolean generated) {
 		this.generated = generated;
 	}
 
