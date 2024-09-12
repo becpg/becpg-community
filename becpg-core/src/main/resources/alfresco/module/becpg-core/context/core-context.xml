@@ -270,6 +270,7 @@
 	<bean id="copyService" class="fr.becpg.repo.copy.BecpgCopyServiceImpl" parent="abstractBaseCopyService" init-method="init">
 		<property name="cannedQueryRegistry" ref="copyServiceCannedQueryRegistry" />
 		<property name="dictionaryService" ref="cachedDictionaryService" />
+		<property name="systemConfigurationService" ref="systemConfigurationService" />
 		<property name="nodeService" ref="NodeService" />
 		<property name="policyComponent" ref="policyComponent" />
 		<property name="behaviourFilter" ref="policyBehaviourFilter" />
