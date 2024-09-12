@@ -70,6 +70,7 @@ import org.springframework.extensions.surf.util.ParameterCheck;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
+import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * <p>BecpgCopyServiceImpl class.</p>
@@ -100,6 +101,10 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 
 	    private ContentPropertyRestrictionInterceptor contentPropertyRestrictionInterceptor;
 	    
+
+		private SystemConfigurationService systemConfigurationService;
+		
+	    
 	    /* Policy delegates */
 	    private ClassPolicyDelegate<CopyServicePolicies.OnCopyNodePolicy> onCopyNodeDelegate;
 	    private ClassPolicyDelegate<CopyServicePolicies.OnCopyCompletePolicy> onCopyCompleteDelegate;
@@ -112,6 +117,12 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	    {
 	        super();
 	    }
+	    
+
+		private String typesToReset() {
+			return systemConfigurationService.confValue("beCPG.copyOrBranch.typesToReset");
+		}
+
 	    
 	    
 	    
@@ -128,9 +139,12 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 		}
 
 
+	    public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
+			this.systemConfigurationService = systemConfigurationService;
+		}
 
 
-	    /**
+		/**
 	     * <p>Setter for the field <code>nodeService</code>.</p>
 	     *
 	     * @param nodeService  the node service
@@ -1044,7 +1058,7 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	        Collection<CopyServicePolicies.OnCopyNodePolicy> policies = this.onCopyNodeDelegate.getList(sourceClassQName);
 	        ClassDefinition sourceClassDef = dictionaryService.getClass(sourceClassQName);
 	        CopyBehaviourCallback callback = null;
-	        if (sourceClassDef == null)
+	        if (sourceClassDef == null || isExcludeTypes(sourceClassQName))
 	        {
 	            // Do nothing as the type is not in the dictionary
 	            callback = DoNothingCopyBehaviourCallback.getInstance();
@@ -1121,6 +1135,14 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	        {
 	            internalNodeService.addProperties(targetNodeRef, classProperties);
 	        }
+	    }
+	    
+	    
+	    private boolean isExcludeTypes(QName sourceClassQName) {
+	    	if(typesToReset().contains(dictionaryService.toPrefixString(sourceClassQName))) {
+	    		return true;
+	    	}
+	    	return false;
 	    }
 	    
 	    /**

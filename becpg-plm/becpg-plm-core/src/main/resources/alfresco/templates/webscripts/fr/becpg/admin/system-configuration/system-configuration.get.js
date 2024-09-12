@@ -13,6 +13,7 @@ function main() {
 		"beCPG.datalist.effectiveFilterEnabled",
 		"beCPG.spel.security.authorizedTypes",
 		"beCPG.copyOrBranch.propertiesToReset",
+		"beCPG.copyOrBranch.typesToReset",
 		"mail.logo.url",
 		"beCPG.version.cleaner.maxProcessedNodes",
 		"beCPG.remote.rateLimiter.capacity",
