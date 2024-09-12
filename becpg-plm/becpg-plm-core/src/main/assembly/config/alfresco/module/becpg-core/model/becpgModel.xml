@@ -2626,26 +2626,6 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
-				<property name="bcpg:ingListQtyPerc1">
-					<type>d:double</type>
-					<mandatory>false</mandatory>
-					<index enabled="false" />
-				</property>
-				<property name="bcpg:ingListQtyPerc2">
-					<type>d:double</type>
-					<mandatory>false</mandatory>
-					<index enabled="false" />
-				</property>
-				<property name="bcpg:ingListQtyPerc3">
-					<type>d:double</type>
-					<mandatory>false</mandatory>
-					<index enabled="false" />
-				</property>
-				<property name="bcpg:ingListQtyPerc4">
-					<type>d:double</type>
-					<mandatory>false</mandatory>
-					<index enabled="false" />
-				</property>
 				<property name="bcpg:ingListVolumeQtyPerc">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
@@ -4071,6 +4051,32 @@
 		</aspect>
 
 		<aspect name="bcpg:hiddenFolder">
+		</aspect>
+
+		<aspect name="bcpg:ingListQtyPercAspect">
+			<properties>
+				<property name="bcpg:ingListQtyPerc1">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:ingListQtyPerc2">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:ingListQtyPerc3">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:ingListQtyPerc4">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+			</properties>
+	
 		</aspect>
 
 		<aspect name="bcpg:svhcAspect">

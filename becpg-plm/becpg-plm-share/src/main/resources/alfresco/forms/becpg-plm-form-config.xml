@@ -7845,10 +7845,10 @@
 				<field-visibility>
 					<show id="bcpg:ingListIng" />
 					<show id="bcpg:ingListQtyPerc" />
-					<show id="bcpg:ingListQtyPerc1" />
-					<show id="bcpg:ingListQtyPerc2" />
-					<show id="bcpg:ingListQtyPerc3" />
-					<show id="bcpg:ingListQtyPerc4" />
+					<show id="bcpg:ingListQtyPerc1" force="true" />
+					<show id="bcpg:ingListQtyPerc2" force="true"  />
+					<show id="bcpg:ingListQtyPerc3" force="true"  />
+					<show id="bcpg:ingListQtyPerc4" force="true"  />
 					<show id="bcpg:ingListQtyMini" />
 					<show id="bcpg:ingListQtyMaxi" />
 
@@ -7941,6 +7941,10 @@
 					<show id="bcpg:ingListQtyPerc" />
 					<show id="bcpg:ingListQtyPercWithYield" />
 					<show id="bcpg:ingListQtyPercWithSecondaryYield" />
+					<show id="bcpg:ingListQtyPerc1"/>
+					<show id="bcpg:ingListQtyPerc2"  />
+					<show id="bcpg:ingListQtyPerc3" />
+					<show id="bcpg:ingListQtyPerc4"  />
 					<show id="bcpg:ingListIsGMO" />
 					<show id="bcpg:ingListIsIonized" />
 					<show id="bcpg:ingListIsProcessingAid" />
@@ -8035,6 +8039,10 @@
 					<show id="bcpg:depthLevel" />
 					<show id="bcpg:ingListIng" />
 					<show id="bcpg:ingListQtyPerc" />
+					<show id="bcpg:ingListQtyPerc1" />
+					<show id="bcpg:ingListQtyPerc2"   />
+					<show id="bcpg:ingListQtyPerc3"/>
+					<show id="bcpg:ingListQtyPerc4"   />
 					<show id="bcpg:ingListIsGMO" />
 					<show id="bcpg:ingListIsIonized" />
 					<show id="bcpg:ingListIsProcessingAid" />
@@ -8142,10 +8150,10 @@
 				<field-visibility>
 					<show id="bcpg:ingListIng" />
 					<show id="bcpg:ingListQtyPerc" />
-					<show id="bcpg:ingListQtyPerc1" />
-					<show id="bcpg:ingListQtyPerc2" />
-					<show id="bcpg:ingListQtyPerc3" />
-					<show id="bcpg:ingListQtyPerc4" />
+					<show id="bcpg:ingListQtyPerc1" force="true" />
+					<show id="bcpg:ingListQtyPerc2" force="true"  />
+					<show id="bcpg:ingListQtyPerc3" force="true"  />
+					<show id="bcpg:ingListQtyPerc4" force="true"  />
 					<show id="bcpg:ingListQtyMini" />
 					<show id="bcpg:ingListQtyMaxi" />
 					<show id="bcpg:ingListIsGMO" />
