@@ -36,6 +36,7 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 			    <value>classpath:alfresco/forms/becpg-plm-rm-form-config.xml</value>
 			    <value>classpath:alfresco/forms/becpg-plm-pm-form-config.xml</value>
                 <value>classpath:alfresco/forms/becpg-plm-rp-form-config.xml</value>
+                <value>classpath:alfresco/forms/becpg-plm-lu-form-config.xml</value>
 
 				<value>classpath:alfresco/forms/becpg-share-form-config.xml</value>
 				<value>classpath:alfresco/forms/becpg-workflow-form-config.xml</value>

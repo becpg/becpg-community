@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.alfresco.repo.dictionary.DictionaryComponent;
 import org.alfresco.repo.dictionary.DictionaryDAO;
+import org.alfresco.repo.i18n.MessageService;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
@@ -48,10 +49,16 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent implements 
 	private RepositoryEntityDefReader<RepositoryEntity> repositoryEntityDefReader;
 	
 	protected NamespaceService namespaceService;
+	
+	private MessageService messageService;
 
 	private Map<QName, QName> propDefMapping = new HashMap<>();
 	
 	private Map<QName, Set<QName>> extraAssocsDefMapping = new HashMap<>();
+	
+	public void setMessageService(MessageService messageService) {
+		this.messageService = messageService;
+	}
 
 	public void setRepositoryEntityDefReader(RepositoryEntityDefReader<RepositoryEntity> repositoryEntityDefReader) {
 		this.repositoryEntityDefReader = repositoryEntityDefReader;
@@ -305,6 +312,32 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent implements 
 		registry.register(this);
 		
 	}
+	
+	@Override
+	public String getTitle(ClassAttributeDefinition attributeDefinition, QName nodeType) {
+		if (nodeType != null) {
+			String title = messageService.getMessage(computeOverrideKey(attributeDefinition, nodeType) + ".title");
+			if (title != null && !title.isBlank()) {
+				return title;
+			}
+		}
+		return attributeDefinition.getTitle(this);
+	}
+	
+	@Override
+	public String getDescription(ClassAttributeDefinition attributeDefinition, QName nodeType) {
+		if (nodeType != null) {
+			String description = messageService.getMessage(computeOverrideKey(attributeDefinition, nodeType) + ".description");
+			if (description != null && !description.isBlank()) {
+				return description;
+			}
+		}
+		return attributeDefinition.getDescription(this);
+	}
 
+	private String computeOverrideKey(ClassAttributeDefinition attributeDefinition, QName nodeType) {
+		return "model.override." + nodeType.toPrefixString(namespaceService).replace(":", "_") + "."
+				+ attributeDefinition.getName().toPrefixString(namespaceService).replace(":", "_");
+	}
 
 }

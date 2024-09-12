@@ -70,6 +70,11 @@ public class SupplierPortalWebScript extends AbstractWebScript {
 		this.paginatedSearchCache = paginatedSearchCache;
 	}
 
+	/**
+	 * <p>Setter for the field <code>supplierPortalService</code>.</p>
+	 *
+	 * @param supplierPortalService a {@link fr.becpg.repo.supplier.SupplierPortalService} object
+	 */
 	public void setSupplierPortalService(SupplierPortalService supplierPortalService) {
 		this.supplierPortalService = supplierPortalService;
 	}

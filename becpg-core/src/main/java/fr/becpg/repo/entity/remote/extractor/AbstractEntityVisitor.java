@@ -18,7 +18,6 @@
 package fr.becpg.repo.entity.remote.extractor;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,6 +32,7 @@ import org.alfresco.service.namespace.QName;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteParams;
+import fr.becpg.repo.entity.remote.RemoteServiceRegisty;
 
 /**
  * <p>Abstract AbstractEntityVisitor class.</p>
@@ -54,7 +54,7 @@ public abstract class AbstractEntityVisitor implements RemoteEntityVisitor {
 	protected boolean entityList = false;
 	protected int extractLevel = 0;
 
-	protected Map<NodeRef, List<QName>> cachedAssocRef = null;
+	protected Map<NodeRef, Set<QName>> cachedAssocRef = null;
 
 	protected final Set<NodeRef> cacheList = new HashSet<>();
 
@@ -85,15 +85,14 @@ public abstract class AbstractEntityVisitor implements RemoteEntityVisitor {
 	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object.
 	 * @param siteService a {@link org.alfresco.service.cmr.site.SiteService} object.
 	 */
-	protected AbstractEntityVisitor(NodeService mlNodeService, NodeService nodeService, NamespaceService namespaceService,
-			EntityDictionaryService entityDictionaryService, ContentService contentService, SiteService siteService) {
+	protected AbstractEntityVisitor(RemoteServiceRegisty remoteServiceRegisty) {
 		super();
-		this.mlNodeService = mlNodeService;
-		this.nodeService = nodeService;
-		this.namespaceService = namespaceService;
-		this.entityDictionaryService = entityDictionaryService;
-		this.contentService = contentService;
-		this.siteService = siteService;
+		this.mlNodeService = remoteServiceRegisty.mlNodeService();
+		this.nodeService = remoteServiceRegisty.nodeService();
+		this.namespaceService = remoteServiceRegisty.namespaceService();
+		this.entityDictionaryService = remoteServiceRegisty.entityDictionaryService();
+		this.contentService = remoteServiceRegisty.contentService();
+		this.siteService = remoteServiceRegisty.siteService();
 	}
 
 	/**

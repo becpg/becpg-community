@@ -54,6 +54,18 @@
 		<property name="nodeService" ref="nodeService" />
 		<property name="entityDictionaryService" ref="entityDictionaryService" />
 	</bean>
+
+	<bean id="ingCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.IngCharactDetailsVisitor">
+		<property name="alfrescoRepository" ref="alfrescoRepository" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="entityDictionaryService" ref="entityDictionaryService" />
+	</bean>
+
+	<bean id="physicoChemCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.PhysicoChemCharactDetailsVisitor">
+		<property name="alfrescoRepository" ref="alfrescoRepository" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="entityDictionaryService" ref="entityDictionaryService" />
+	</bean>
 	
 	<bean id="labelClaimCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.LabelClaimCharactDetailsVisitor">
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
@@ -68,7 +80,7 @@
 					<ref bean="nutCharactDetailsVisitor" />
 				</entry>
 				<entry key="bcpg:ingList">
-					<ref bean="simpleCharactDetailsVisitor" />
+					<ref bean="ingCharactDetailsVisitor" />
 				</entry>
 				<entry key="bcpg:costList">
 					<ref bean="costCharactDetailsVisitor" />
@@ -77,7 +89,7 @@
 					<ref bean="lcaCharactDetailsVisitor" />
 				</entry>
 				<entry key="bcpg:physicoChemList">
-					<ref bean="simpleCharactDetailsVisitor" />
+					<ref bean="physicoChemCharactDetailsVisitor" />
 				</entry>
 				<entry key="bcpg:allergenList">
 					<ref bean="simpleCharactDetailsVisitor" />
@@ -175,6 +187,7 @@
 				<bean class="fr.becpg.repo.product.formulation.IngsCalculatingFormulationHandler">
 					<property name="nodeService" ref="nodeService" />
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
+					<property name="associationService" ref="associationService" />
 				</bean>
 				
 				<bean class="fr.becpg.repo.product.formulation.MeatContentFormulationHandler">
@@ -203,6 +216,12 @@
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.PackagingMaterialFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
+					<property name="nodeService" ref="nodeService" />
+				</bean>
+				<bean class="fr.becpg.repo.product.formulation.GlopFormulationHandler">
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+					<property name="glopService" ref="glopService" />
+					<property name="namespaceService" ref="namespaceService" />
 					<property name="nodeService" ref="nodeService" />
 				</bean>
 				<bean parent="abstractSimpleFormulationHandler" class="fr.becpg.repo.product.formulation.SvhcCalculatingFormulationHandler" />
@@ -362,7 +381,6 @@
 				<bean class="fr.becpg.repo.product.requirement.IngRequirementScanner">
 					<property name="mlNodeService" ref="mlAwareNodeService" />
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
-					<property name="nodeService" ref="nodeService" />
 					<property name="addInfoReqCtrl" value="${beCPG.formulation.specification.addInfoReqCtrl}" />
 				</bean>
 				<bean class="fr.becpg.repo.product.requirement.NutsRequirementScanner">

@@ -25,6 +25,7 @@ import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.helper.ExcelHelper;
 import fr.becpg.repo.helper.JsonFormulaHelper;
+import fr.becpg.repo.helper.ExcelHelper.ExcelCellStyles;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.formulation.FormulationHelper;
@@ -65,6 +66,8 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 
 		String depthLevel = parameter != null ? parameter.replace("Level", "").replace("Max", "").replace("Only", "") : "All";
 
+		ExcelCellStyles excelCellStyles = new ExcelCellStyles(sheet.getWorkbook());
+
 		for (NodeRef entityNodeRef : searchResults) {
 			QName entityType = nodeService.getType(entityNodeRef);
 			if (mainType.equals(entityType) || entityDictionaryService.isSubClass(entityType, mainType)) {
@@ -86,18 +89,20 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 				MultiLevelListData listData = multiLevelDataListService.getMultiLevelListData(dataListFilter);
 
 				Map<String, Object> entityItems = getEntityProperties(entityNodeRef, mainType, metadataFields, cache);
-				
+
 				entityItems.putAll(getDynamicProperties(entityNodeRef, itemType));
 
-				rownum = appendNextLevel(listData, sheet, itemType, metadataFields, cache, rownum, key, null, parameters, entityItems, new HashMap<>());
+				rownum = appendNextLevel(listData, sheet, itemType, metadataFields, cache, rownum, key, null, parameters, entityItems,
+						new HashMap<>(), excelCellStyles);
 
 			}
 		}
-		
+
 		return rownum;
 	}
 
 	/**
+	 * @param excelCellStyles 
 	 * <p>appendNextLevel.</p>
 	 *
 	 * @param listData a {@link fr.becpg.repo.entity.datalist.data.MultiLevelListData} object.
@@ -111,10 +116,11 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 	 * @param parameters an array of {@link java.lang.String} objects.
 	 * @param entityItems a {@link java.util.Map} object.
 	 * @return a int.
+	 * @param dynamicCharactColumnCache a {@link java.util.Map} object
 	 */
 	protected int appendNextLevel(MultiLevelListData listData, XSSFSheet sheet, QName itemType, List<AttributeExtractorStructure> metadataFields,
 			Map<NodeRef, Map<String, Object>> cache, int rownum, Serializable key, Double parentQty, String[] parameters,
-			Map<String, Object> entityItems, Map<String, String> dynamicCharactColumnCache) {
+			Map<String, Object> entityItems, Map<String, String> dynamicCharactColumnCache, ExcelCellStyles excelCellStyles) {
 
 		for (Entry<NodeRef, MultiLevelListData> entry : listData.getTree().entrySet()) {
 			NodeRef itemNodeRef = entry.getKey();
@@ -133,14 +139,15 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 								Object value = JsonFormulaHelper.cleanCompareJSON((String) itemValue);
 								item.put(itemKey, value);
 							} else if (dynamicCharactColumnCache.get(itemKey) != null) {
-								Object subValue = JsonFormulaHelper.extractComponentValue(dynamicCharactColumnCache.get(itemKey), itemNodeRef.getId());
+								Object subValue = JsonFormulaHelper.extractComponentValue(dynamicCharactColumnCache.get(itemKey),
+										itemNodeRef.getId());
 								if (subValue != null) {
 									item.put(itemKey, subValue);
 								}
 							}
 						}
 					}
-					
+
 					if (entityItems != null) {
 						item.putAll(entityItems);
 					}
@@ -183,13 +190,14 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 							}
 						}
 					}
-					
+
 					for (AttributeExtractorStructure metadataField : metadataFields) {
 						if (metadataField.isFormulaField()) {
-							if(metadataField.getFieldName().startsWith("formula") || metadataField.getFieldName().startsWith("image")) {
-								item.put(metadataField.getFieldName(), eval(listData.getEntityNodeRef(), itemNodeRef, metadataField.getFormula(), item));
+							if (metadataField.getFieldName().startsWith("formula") || metadataField.getFieldName().startsWith("image")) {
+								item.put(metadataField.getFieldName(),
+										eval(listData.getEntityNodeRef(), itemNodeRef, metadataField.getFormula(), item));
 							} else {
-								item.put(metadataField.getFieldName(),metadataField.getFormula());
+								item.put(metadataField.getFieldName(), metadataField.getFormula());
 							}
 						}
 
@@ -209,10 +217,11 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 							cell.setCellValue(String.valueOf(key));
 						}
 
-						ExcelHelper.appendExcelField(metadataFields, null, item, sheet, row, cellNum, rownum, null);
+						ExcelHelper.appendExcelField(metadataFields, null, item, sheet, row, cellNum, rownum, null, excelCellStyles);
 
 					}
-					rownum = appendNextLevel(entry.getValue(), sheet, itemType, metadataFields, cache, rownum, key, qty, parameters, entityItems, dynamicCharactColumnCache);
+					rownum = appendNextLevel(entry.getValue(), sheet, itemType, metadataFields, cache, rownum, key, qty, parameters, entityItems,
+							dynamicCharactColumnCache, excelCellStyles);
 
 				}
 			}
@@ -220,7 +229,5 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 		}
 		return rownum;
 	}
-
-
 
 }

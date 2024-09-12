@@ -127,6 +127,11 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	
 	private SpelFormulaService formulaService;
 	
+	/**
+	 * <p>Setter for the field <code>formulaService</code>.</p>
+	 *
+	 * @param spelFormulaService a {@link fr.becpg.repo.formulation.spel.SpelFormulaService} object
+	 */
 	public void setFormulaService(SpelFormulaService spelFormulaService) {
 		this.formulaService = spelFormulaService;
 	}
@@ -245,6 +250,11 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		this.associationService = associationService;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>permissionService</code>.</p>
+	 *
+	 * @param permissionService a {@link org.alfresco.service.cmr.security.PermissionService} object
+	 */
 	public void setPermissionService(PermissionService permissionService) {
 		this.permissionService = permissionService;
 	}
@@ -1016,6 +1026,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	 * @param parentRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @throws fr.becpg.repo.importer.ImporterException if any.
+	 * @param useContextPath a boolean
 	 */
 	protected NodeRef findNodeByKeyOrCode(ImportContext importContext, PropertyDefinition propDef, QName type, Map<QName, Serializable> properties,
 			NodeRef parentRef, boolean useContextPath) throws ImporterException {

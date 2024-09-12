@@ -16,17 +16,25 @@ import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.helper.NutrientRegulatoryHelper;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
+/**
+ * <p>NutriScore class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service("nutriScore")
 public class NutriScore implements ScoreCalculatingPlugin {
 
 	private static final Log logger = LogFactory.getLog(NutriScore.class);
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean accept(ScorableEntity productData) {
 		return (productData instanceof ProductData)
 				&& ((BeCPGDataObject) productData).getAspects().contains(PLMModel.ASPECT_NUTRIENT_PROFILING_SCORE);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean formulateScore(ScorableEntity scorableEntity) {
 		ProductData productData = (ProductData) scorableEntity;

@@ -71,6 +71,7 @@ public interface ProjectModel {
 	/** Constant <code>ASSOC_PROJECT_CUR_COMMENTS</code> */
 	QName ASSOC_PROJECT_CUR_COMMENTS = QName.createQName(PROJECT_URI, "projectCurrentComments");
 
+	/** Constant <code>PROP_PROJECT_CUR_COMMENT</code> */
 	QName PROP_PROJECT_CUR_COMMENT = QName.createQName(PROJECT_URI, "projectCurrentComment");
 
 	/** Constant <code>TYPE_TASK_LIST</code> */
@@ -240,13 +241,18 @@ public interface ProjectModel {
 
 	//notification
 
+	/** Constant <code>PROP_NOTIFICATION_FREQUENCY_VALUE</code> */
 	QName PROP_NOTIFICATION_FREQUENCY_VALUE = QName.createQName(PROJECT_URI, "notificationFrequencyValue");
+	/** Constant <code>PROP_NOTIFICATION_INITIAL_VALUE</code> */
 	QName PROP_NOTIFICATION_INITIAL_VALUE = QName.createQName(PROJECT_URI, "notificationInitialValue");
+	/** Constant <code>ASSOC_NOTIFICATION_AUTHORITIES</code> */
 	QName ASSOC_NOTIFICATION_AUTHORITIES = QName.createQName(PROJECT_URI, "notificationAuthorities");
 
 
+	/** Constant <code>PROP_SL_CRITERION</code> */
 	QName PROP_SL_CRITERION = QName.createQName(PROJECT_URI, "slCriterion");
 
+	/** Constant <code>ASPECT_PROJECT_SCORE</code> */
 	QName ASPECT_PROJECT_SCORE = QName.createQName(PROJECT_URI, "projectScoreAspect");
 
 }

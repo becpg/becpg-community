@@ -8,6 +8,7 @@ package fr.becpg.repo.importer.annotation;
  */
 public class DataListKey extends Annotation {
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "DataListKey [id=" + id + ", attribute=" + attribute + ", targetClass=" + targetClass + ", targetKey=" + targetKey + ", type=" + type

@@ -118,10 +118,16 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		ignoredStoreRefs.add(new StoreRef(StoreRef.PROTOCOL_WORKSPACE, Version2Model.STORE_ID));
 	}
 
+	/**
+	 * <p>Setter for the field <code>registry</code>.</p>
+	 *
+	 * @param registry a {@link org.alfresco.util.cache.AsynchronouslyRefreshedCacheRegistry} object
+	 */
 	public void setRegistry(AsynchronouslyRefreshedCacheRegistry registry) {
 		this.registry = registry;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void setNodeService(NodeService nodeService) {
 		super.setNodeService(nodeService);
@@ -173,10 +179,20 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		this.qnameDAO = qnameDAO;
 	}
 
+	/**
+	 * <p>Setter for the field <code>childsAssocsCache</code>.</p>
+	 *
+	 * @param childsAssocsCache a {@link org.alfresco.repo.cache.SimpleCache} object
+	 */
 	public void setChildsAssocsCache(SimpleCache<AssociationCacheRegion, ChildAssocCacheEntry> childsAssocsCache) {
 		this.childsAssocsCache = childsAssocsCache;
 	}
 
+	/**
+	 * <p>Setter for the field <code>assocsCache</code>.</p>
+	 *
+	 * @param assocsCache a {@link org.alfresco.repo.cache.SimpleCache} object
+	 */
 	public void setAssocsCache(SimpleCache<AssociationCacheRegion, Set<NodeRef>> assocsCache) {
 		this.assocsCache = assocsCache;
 	}
@@ -310,6 +326,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		return cachedAssocs.get(childType);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public ChildAssocCacheEntry getChildAssocsByType(final NodeRef nodeRef, final QName qName) {
 		return getFromCache(childsAssocsCache, new AssociationCacheRegion(nodeRef, qName), () -> {
@@ -459,6 +476,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 
 	private static final String SQL_SELECT_SOURCE_ASSOC_ENTITY_FINAL_PART = " where  assoc.type_qname_id=? and q1.qname_id IS NULL and q2.qname_id IS NULL ";
 
+	/** {@inheritDoc} */
 	@Override
 	public List<EntitySourceAssoc> getEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocQName, QName listTypeQname,
 			boolean isOrOperator, List<AssociationCriteriaFilter> criteriaFilters) {
@@ -568,11 +586,17 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 
 							if (criteriaFilter.getValue() != null) {
 								
-									if(AssociationCriteriaFilterMode.NOT_EQUALS.equals(criteriaFilter.getMode())) {
-										exclude.append(" and ("+propertyName + "."+fieldName+" IS NULL or "+propertyName + "."+fieldName+" != "+wrap(fieldName, criteriaFilter.getValue())+")");
-									}else {
-										query.append(propertyName + "."+fieldName+" = "+wrap(fieldName, criteriaFilter.getValue())+"");
-									}
+								String[] criteriaFilterValues = criteriaFilter.getValue().split(",");
+								
+								String criteriaFilterJoinedValues = String.join(",", Arrays.stream(criteriaFilterValues)
+										.map(value -> wrap(fieldName, value))
+										.toArray(String[]::new));
+								
+								if(AssociationCriteriaFilterMode.NOT_EQUALS.equals(criteriaFilter.getMode())) {
+									exclude.append(" and (" + propertyName + "." + fieldName + " IS NULL or " + propertyName + "." + fieldName + " not in (" + criteriaFilterJoinedValues + "))");
+								} else {
+									query.append(propertyName + "." + fieldName + " in (" + criteriaFilterJoinedValues + ")");
+								}
 									
 							} else {
 								boolean isFirst = true;
@@ -786,6 +810,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onCopyComplete(QName classRef, NodeRef sourceNodeRef, NodeRef destinationRef, boolean copyToNewNode, Map<NodeRef, NodeRef> copyMap) {
 		
@@ -876,11 +901,13 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		assocsCache.remove(cacheKey);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void removeChildCachedAssoc(NodeRef nodeRef, QName qName) {
 		childsAssocsCache.remove(new AssociationCacheRegion(nodeRef, qName));
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void removeAllCacheAssocs(NodeRef nodeRef) {
 
@@ -904,6 +931,15 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 
 	}
 
+	/**
+	 * <p>getFromCache.</p>
+	 *
+	 * @param cache a {@link org.alfresco.repo.cache.SimpleCache} object
+	 * @param cacheKey a {@link fr.becpg.repo.helper.impl.AssociationCacheRegion} object
+	 * @param callback a {@link java.util.function.Supplier} object
+	 * @param <T> a T class
+	 * @return a T object
+	 */
 	public <T> T getFromCache(SimpleCache<AssociationCacheRegion, T> cache, AssociationCacheRegion cacheKey, Supplier<T> callback) {
 		if (ignoredAssocs.contains(cacheKey.getAssocQName()) || ignoredStoreRefs.contains(tenantService.getBaseName(cacheKey.getNodeRef().getStoreRef()))) {
 			return callback.get();
@@ -922,6 +958,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		return ret;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onRefreshableCacheEvent(RefreshableCacheEvent refreshableCacheEvent) {
 		if (BeCPGCacheServiceImpl.class.getName().equals(refreshableCacheEvent.getCacheId()) && "all".equals(refreshableCacheEvent.getKey())) {
@@ -934,11 +971,13 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getCacheId() {
 		return AssociationService.class.getName();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		registry.register(this);

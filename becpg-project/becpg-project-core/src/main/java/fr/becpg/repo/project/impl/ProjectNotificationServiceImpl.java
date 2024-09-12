@@ -1,5 +1,6 @@
 package fr.becpg.repo.project.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -174,6 +175,8 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 			}
 		}
 		
+		finalObserverList.removeIf(this::emailTaskObserverDisabled);
+		
 		if (!finalObserverList.isEmpty()) {
 			logger.debug("Notify "+finalObserverList.size()+" observers");	
 			finalObserverList = projectService.extractResources(projectNodeRef, finalObserverList);
@@ -183,7 +186,21 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 		}
 	}
 	
+	private boolean emailTaskObserverDisabled(NodeRef person) {
+		if (person != null) {
+			Serializable emailTaskObserverDisabled = nodeService.getProperty(person, BeCPGModel.PROP_EMAIL_TASK_OBSERVER_DISABLED);
+			if (Boolean.TRUE.equals(emailTaskObserverDisabled)) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("emailTaskObserverDisabled for " + nodeService.getProperty(person, ContentModel.PROP_USERNAME));
+				}
+				return true;
+			}
+		}
+		return false;
+	}
+	
 
+	/** {@inheritDoc} */
 	@Override
 	public void notifyAuditedFieldChange(String catalogId, NodeRef projectNodeRef) {
 		logger.debug("Notifying properties");
@@ -196,6 +213,7 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 		notifyObservers(projectNodeRef, null, subject, templateArgs, MAIL_TEMPLATE);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean acceptCatalogEvents(QName type, NodeRef entityNodeRef, Set<NodeRef> listNodeRefs) {
 		return ProjectModel.TYPE_PROJECT.equals(type);

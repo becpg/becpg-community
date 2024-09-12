@@ -87,6 +87,11 @@ public class L2CacheSupport {
 		return threadLocalCache.get().isThreadLockEnable();
 	}
 	
+	/**
+	 * <p>isSilentModeEnable.</p>
+	 *
+	 * @return a boolean
+	 */
 	public static boolean isSilentModeEnable() {
 		return threadLocalCache.get().isSilentModeEnable();
 	}
@@ -95,7 +100,6 @@ public class L2CacheSupport {
 	 * <p>doInCacheContext.</p>
 	 *
 	 * @param action a {@link fr.becpg.repo.repository.L2CacheSupport.Action} object.
-	 * @param isCacheOnlyEnable a boolean.
 	 */
 	public static void doInCacheOnly(Action action) {
 		L2CacheThreadInfo previousContext = threadLocalCache.get();
@@ -126,6 +130,14 @@ public class L2CacheSupport {
 		}
 	}
 	
+	/**
+	 * <p>doInCacheContext.</p>
+	 *
+	 * @param action a {@link fr.becpg.repo.repository.L2CacheSupport.Action} object
+	 * @param isCacheOnlyEnable a boolean
+	 * @param isThreadLockEnable a boolean
+	 * @param isSilentModeEnable a boolean
+	 */
 	public static void doInCacheContext(Action action, boolean isCacheOnlyEnable, boolean isThreadLockEnable, boolean isSilentModeEnable) {
 		L2CacheThreadInfo previousContext = threadLocalCache.get();
 		try {

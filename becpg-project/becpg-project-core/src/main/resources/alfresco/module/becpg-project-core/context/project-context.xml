@@ -116,6 +116,7 @@
 					<property name="workflowService" ref="WorkflowService"/>
 					<property name="projectNotificationService" ref="projectNotificationService"/>
 					<property name="projectService" ref="projectService" />
+					<property name="nodeService" ref="nodeService" />
 				</bean>
 				
 				<bean class="fr.becpg.repo.formulation.impl.ScriptsFormulationHandler">

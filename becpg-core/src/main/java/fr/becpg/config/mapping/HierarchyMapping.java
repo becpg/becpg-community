@@ -79,10 +79,20 @@ public class HierarchyMapping extends AbstractAttributeMapping {
 	
 	
 
+	/**
+	 * <p>Getter for the field <code>key</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	public String getKey() {
 		return key;
 	}
 
+	/**
+	 * <p>Setter for the field <code>key</code>.</p>
+	 *
+	 * @param key a {@link java.lang.String} object
+	 */
 	public void setKey(String key) {
 		this.key = key;
 	}
@@ -95,7 +105,7 @@ public class HierarchyMapping extends AbstractAttributeMapping {
 	 * @param attribute a {@link org.alfresco.service.cmr.dictionary.ClassAttributeDefinition} object.
 	 * @param parentLevelColumn a {@link java.lang.String} object.
 	 * @param path a {@link java.lang.String} object.
-	 * @param parentLevelAttribute a {@link org.alfresco.service.cmr.dictionary.ClassAttributeDefinition} object.
+	 * @param key a {@link java.lang.String} object
 	 */
 	public HierarchyMapping(String id, ClassAttributeDefinition attribute, String parentLevelColumn, String path,  String key) {
 		super(id, attribute);
@@ -104,6 +114,7 @@ public class HierarchyMapping extends AbstractAttributeMapping {
 		this.path = path;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -112,6 +123,7 @@ public class HierarchyMapping extends AbstractAttributeMapping {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -124,6 +136,7 @@ public class HierarchyMapping extends AbstractAttributeMapping {
 		return Objects.equals(key, other.key) && Objects.equals(parentLevelColumn, other.parentLevelColumn) && Objects.equals(path, other.path);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "HierarchyMapping [parentLevelColumn=" + parentLevelColumn + ", path=" + path + ", key=" + key + ", id=" + id + "]";

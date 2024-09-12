@@ -38,6 +38,7 @@ import fr.becpg.repo.repository.impl.LazyLoadingDataList;
  */
 public class DecernisRequirementsScanner implements RequirementScanner {
 
+	 /** Constant <code>DECERNIS_KEY="decernis"</code> */
 	 public static final String DECERNIS_KEY = "decernis";
 
 	private static final Log logger = LogFactory.getLog(DecernisRequirementsScanner.class);
@@ -48,6 +49,11 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 	
 	private NodeService nodeService;
 	
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}

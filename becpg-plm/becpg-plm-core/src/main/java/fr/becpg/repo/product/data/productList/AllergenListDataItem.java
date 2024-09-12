@@ -15,6 +15,9 @@ import javax.annotation.Nullable;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.product.data.RegulatoryEntityItem;
+import fr.becpg.repo.product.data.constraints.RequirementType;
+import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -36,7 +39,7 @@ import fr.becpg.repo.variant.model.VariantDataItem;
 @AlfType
 @AlfQname(qname = "bcpg:allergenList")
 public class AllergenListDataItem extends AbstractManualVariantListDataItem
-		implements SimpleCharactDataItem, AspectAwareDataItem, ControlableListDataItem {
+		implements SimpleCharactDataItem, AspectAwareDataItem, ControlableListDataItem, RegulatoryEntityItem {
 
 	private static final long serialVersionUID = -6746076643301742367L;
 	private Double qtyPerc;
@@ -50,9 +53,19 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem
 	private List<NodeRef> voluntarySources = new ArrayList<>();
 	private List<NodeRef> inVoluntarySources = new ArrayList<>();
 	private NodeRef allergen;
+	private List<NodeRef> regulatoryCountriesRef = new ArrayList<>();
+	private List<NodeRef> regulatoryUsagesRef = new ArrayList<>();
+	private RequirementType regulatoryType;
+	private MLText regulatoryMessage;
 
 	Map<NodeRef, Double> qtyByVariant = null;
 
+	/**
+	 * <p>addQtyPerc.</p>
+	 *
+	 * @param variantDataItem a {@link fr.becpg.repo.variant.model.VariantDataItem} object
+	 * @param toAdd a {@link java.lang.Double} object
+	 */
 	@InternalField
 	public void addQtyPerc(VariantDataItem variantDataItem, Double toAdd) {
 		if (variantDataItem != null && variantDataItem.getVariants()!=null &&  !variantDataItem.getVariants().isEmpty()) {
@@ -67,6 +80,60 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem
 	        qtyPerc = Math.min(qtyPerc + toAdd, 100d);
 	    }
 
+	}
+	
+	/**
+	 * <p>Getter for the field <code>regulatoryCountriesRef</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
+	@AlfMultiAssoc
+	@AlfQname(qname = "bcpg:regulatoryCountries")
+	public List<NodeRef> getRegulatoryCountriesRef() {
+		return regulatoryCountriesRef;
+	}
+
+	/** {@inheritDoc} */
+	public void setRegulatoryCountriesRef(List<NodeRef> regulatoryCountries) {
+		this.regulatoryCountriesRef = regulatoryCountries;
+	}
+
+	/**
+	 * <p>Getter for the field <code>regulatoryUsagesRef</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
+	@AlfMultiAssoc
+	@AlfQname(qname = "bcpg:regulatoryUsageRef")
+	public List<NodeRef> getRegulatoryUsagesRef() {
+		return regulatoryUsagesRef;
+	}
+
+	/** {@inheritDoc} */
+	public void setRegulatoryUsagesRef(List<NodeRef> regulatoryUsages) {
+		this.regulatoryUsagesRef = regulatoryUsages;
+	}
+	
+	
+	@AlfProp
+	@AlfQname(qname="bcpg:regulatoryType")
+	public RequirementType getRegulatoryType() {
+		return regulatoryType;
+	}
+
+	public void setRegulatoryType(RequirementType regulatoryType) {
+		this.regulatoryType = regulatoryType;
+	}
+
+	@AlfProp
+	@AlfMlText
+	@AlfQname(qname="bcpg:regulatoryText")
+	public MLText getRegulatoryMessage() {
+		return regulatoryMessage;
+	}
+
+	public void setRegulatoryMessage(MLText regulatoryMessage) {
+		this.regulatoryMessage = regulatoryMessage;
 	}
 
 	/** {@inheritDoc} */
@@ -164,6 +231,11 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem
 		this.inVoluntary = inVoluntary;
 	}
 
+	/**
+	 * <p>Getter for the field <code>onSite</code>.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:allergenListOnSite")
 	@Nullable
@@ -171,10 +243,20 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem
 		return onSite;
 	}
 
+	/**
+	 * <p>Setter for the field <code>onSite</code>.</p>
+	 *
+	 * @param onSite a {@link java.lang.Boolean} object
+	 */
 	public void setOnSite(Boolean onSite) {
 		this.onSite = onSite;
 	}
 
+	/**
+	 * <p>Getter for the field <code>onLine</code>.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:allergenListOnLine")
 	@Nullable
@@ -182,10 +264,20 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem
 		return onLine;
 	}
 
+	/**
+	 * <p>Setter for the field <code>onLine</code>.</p>
+	 *
+	 * @param onLine a {@link java.lang.Boolean} object
+	 */
 	public void setOnLine(Boolean onLine) {
 		this.onLine = onLine;
 	}
 
+	/**
+	 * <p>Getter for the field <code>isCleaned</code>.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:allergenListIsCleaned")
 	@Nullable
@@ -193,16 +285,31 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem
 		return isCleaned;
 	}
 
+	/**
+	 * <p>Setter for the field <code>isCleaned</code>.</p>
+	 *
+	 * @param isCleaned a {@link java.lang.Boolean} object
+	 */
 	public void setIsCleaned(Boolean isCleaned) {
 		this.isCleaned = isCleaned;
 	}
 
+	/**
+	 * <p>Getter for the field <code>allergenValue</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:allergenValue")
 	public String getAllergenValue() {
 		return allergenValue;
 	}
 
+	/**
+	 * <p>Setter for the field <code>allergenValue</code>.</p>
+	 *
+	 * @param allergenValue a {@link java.lang.String} object
+	 */
 	public void setAllergenValue(String allergenValue) {
 		this.allergenValue = allergenValue;
 	}
@@ -309,6 +416,11 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem
 		this.isManual = isManual;
 	}
 
+	/**
+	 * <p>Constructor for AllergenListDataItem.</p>
+	 *
+	 * @param allergenListDataItem a {@link fr.becpg.repo.product.data.productList.AllergenListDataItem} object
+	 */
 	public AllergenListDataItem(AllergenListDataItem allergenListDataItem) {
 		super(allergenListDataItem);
 
@@ -322,13 +434,19 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem
 		this.voluntarySources = new ArrayList<>(allergenListDataItem.voluntarySources);
 		this.inVoluntarySources = new ArrayList<>(allergenListDataItem.inVoluntarySources);
 		this.allergen = allergenListDataItem.allergen;
+		this.regulatoryCountriesRef = new ArrayList<>(allergenListDataItem.regulatoryCountriesRef);
+		this.regulatoryUsagesRef = new ArrayList<>(allergenListDataItem.regulatoryUsagesRef);
+		this.regulatoryMessage = allergenListDataItem.regulatoryMessage;
+		this.regulatoryType = allergenListDataItem.regulatoryType;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public AllergenListDataItem copy() {
 		return new AllergenListDataItem(this);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -338,6 +456,7 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -354,6 +473,7 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem
 				&& Objects.equals(voluntarySources, other.voluntarySources);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "AllergenListDataItem [qtyPerc=" + qtyPerc + ", voluntary=" + voluntary + ", inVoluntary=" + inVoluntary + ", allergenValue="

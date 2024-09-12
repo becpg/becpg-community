@@ -19,14 +19,11 @@ package fr.becpg.repo.entity.remote;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.List;
 import java.util.Map;
 
 import org.alfresco.query.PagingResults;
-import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.service.transaction.TransactionService;
 
 /**
  * <p>RemoteEntityService interface.</p>
@@ -189,21 +186,8 @@ public interface RemoteEntityService {
 	 */
 	void getEntitySchema(QName type, OutputStream out, RemoteParams params);
 
-	/**
-	 * Accessors
-	 *
-	 * @return a {@link org.alfresco.service.transaction.TransactionService} object.
-	 */
-	@Deprecated
-	TransactionService getTransactionService();
-
-	/**
-	 * <p>getPolicyBehaviourFilter.</p>
-	 *
-	 * @return a {@link org.alfresco.repo.policy.BehaviourFilter} object.
-	 */
-	@Deprecated
-	BehaviourFilter getPolicyBehaviourFilter();
+	
+	RemoteServiceRegisty serviceRegistry();
 
 
 }

@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.security.authority.UnknownAuthorityException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AuthorityService;
@@ -15,6 +16,8 @@ import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,8 +27,16 @@ import com.google.common.base.Objects;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemGroup;
 
+/**
+ * <p>AuthorityHelper class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class AuthorityHelper implements InitializingBean {
+	
+	private static final Log logger = LogFactory.getLog(AuthorityHelper.class);
 	
 	@Autowired
 	private AuthorityService authorityService;
@@ -45,53 +56,81 @@ public class AuthorityHelper implements InitializingBean {
 		//Singleton
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		instance = this;	
 	}
 
-	@SuppressWarnings("deprecation")
+	/**
+	 * <p>extractPeople.</p>
+	 *
+	 * @param authorities a {@link java.util.Set} object
+	 * @return a {@link java.util.Set} object
+	 */
 	public static Set<String> extractPeople(Set<String> authorities) {
 		Set<String> people = new HashSet<>();
-		
 		for (String authority : authorities) {
-			
-			AuthorityType authType = AuthorityType.getAuthorityType(authority);
-			
-			if (authType.equals(AuthorityType.GROUP) || authType.equals(AuthorityType.EVERYONE)) {
-				// Notify all members of the group
-				Set<String> users;
-				if (authType.equals(AuthorityType.GROUP)) {
-					users = instance.authorityService.getContainedAuthorities(AuthorityType.USER, authority, false);
-				} else {
-					users = instance.authorityService.getAllAuthorities(AuthorityType.USER);
-				}
-				
-				people.addAll(users);
-				
-			} else {
-				people.add(authority);
-			}
+			people.addAll(extractPeople(authority));
 		}
 		return people;
 	}
 	
-	public static List<NodeRef> extractPeople(List<NodeRef> viewRecipients) {
-		List<NodeRef> recipients = new ArrayList<>();
+	@SuppressWarnings("deprecation")
+	public static Set<String> extractPeople(String authority) {
+		Set<String> people = new HashSet<>();
+		
+		AuthorityType authType = AuthorityType.getAuthorityType(authority);
+		
+		if (authType.equals(AuthorityType.GROUP) || authType.equals(AuthorityType.EVERYONE)) {
+			// Notify all members of the group
+			Set<String> users = Set.of();
+			if (authType.equals(AuthorityType.GROUP)) {
+				try {
+					users = instance.authorityService.getContainedAuthorities(AuthorityType.USER, authority, false);
+				} catch (UnknownAuthorityException e) {
+					logger.warn("unknown authority: " + authority);
+				}
+			} else {
+				users = instance.authorityService.getAllAuthorities(AuthorityType.USER);
+			}
+			
+			people.addAll(users);
+			
+		} else {
+			people.add(authority);
+		}
+		return people;
+	}
+	
+	/**
+	 * <p>extractPeople.</p>
+	 *
+	 * @param nodeRefs a {@link java.util.List} object
+	 * @return a {@link java.util.List} object
+	 */
+	public static List<NodeRef> extractPeople(List<NodeRef> nodeRefs) {
+		List<NodeRef> people = new ArrayList<>();
 
-		for (NodeRef viewRecipient : viewRecipients) {
-			QName type = instance.nodeService.getType(viewRecipient);
+		for (NodeRef nodeRef : nodeRefs) {
+			QName type = instance.nodeService.getType(nodeRef);
 
 			if (ContentModel.TYPE_AUTHORITY_CONTAINER.equals(type)) {
-				List<NodeRef> members = instance.associationService.getChildAssocs(viewRecipient, ContentModel.ASSOC_MEMBER);
-				recipients.addAll(members);
+				List<NodeRef> members = instance.associationService.getChildAssocs(nodeRef, ContentModel.ASSOC_MEMBER);
+				people.addAll(members);
 			} else {
-				recipients.add(viewRecipient);
+				people.add(nodeRef);
 			}
 		}
-		return recipients;
+		return people;
 	}
 
+	/**
+	 * <p>getCommonLocale.</p>
+	 *
+	 * @param people a {@link java.util.Set} object
+	 * @return a {@link java.util.Locale} object
+	 */
 	public static Locale getCommonLocale(Set<String> people) {
 		
 		Locale commonLocale = null;
@@ -121,6 +160,13 @@ public class AuthorityHelper implements InitializingBean {
 		return commonLocale;
 	}
 	
+	/**
+	 * <p>extractAuthoritiesFromGroup.</p>
+	 *
+	 * @param group a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param includeCurrentUser a boolean
+	 * @return a {@link java.util.List} object
+	 */
 	public static List<String> extractAuthoritiesFromGroup(NodeRef group, boolean includeCurrentUser) {
 		List<String> ret = new ArrayList<>();
 		String authorityName = (String) instance.nodeService.getProperty(group, ContentModel.PROP_AUTHORITY_NAME);
@@ -133,6 +179,11 @@ public class AuthorityHelper implements InitializingBean {
 		return ret;
 	}
 	
+	/**
+	 * <p>isCurrentUserExternal.</p>
+	 *
+	 * @return a boolean
+	 */
 	public static boolean isCurrentUserExternal() {
 		for (String currAuth : instance.authorityService.getAuthorities()) {
 			if ((PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser.toString()).equals(currAuth)) {
@@ -142,9 +193,24 @@ public class AuthorityHelper implements InitializingBean {
 		return false;
 	}
 	
+	/**
+	 * <p>isExternalUser.</p>
+	 *
+	 * @param userName a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	public static boolean isExternalUser(String userName) {
 		for (String currAuth : instance.authorityService.getAuthoritiesForUser(userName)) {
 			if ((PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser.toString()).equals(currAuth)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static boolean hasGroupAuthority(String userName, String groupAuthority) {
+		for (String currAuth : instance.authorityService.getAuthoritiesForUser(userName)) {
+			if ((PermissionService.GROUP_PREFIX + groupAuthority).equals(currAuth)) {
 				return true;
 			}
 		}

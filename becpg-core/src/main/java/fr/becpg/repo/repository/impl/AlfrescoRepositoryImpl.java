@@ -135,6 +135,9 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		STANDARD, FORCE_SHARED_CACHE, NO_SHARED_CACHE
 	}
 
+	/**
+	 * <p>init.</p>
+	 */
 	@PostConstruct
 	public void init() {
 
@@ -178,6 +181,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		purgeCache(nodeRef);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onAddAspect(NodeRef nodeRef, QName aspectTypeQName) {
 		if (nodeService.exists(nodeRef) && entityDictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITY_V2)) {
@@ -186,6 +190,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onRemoveAspect(NodeRef nodeRef, QName aspectTypeQName) {
 		if (nodeService.exists(nodeRef) && entityDictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITY_V2)) {
@@ -193,11 +198,13 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onCreateAssociation(AssociationRef nodeAssocRef) {
 		purgeCache(nodeAssocRef.getSourceRef());
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onDeleteAssociation(AssociationRef nodeAssocRef) {
 		purgeCache(nodeAssocRef.getSourceRef());
@@ -914,6 +921,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		return new LinkedList<>();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<T> loadDataList(NodeRef dataListNodeRef, QName datalistQname) {
 		return loadDataList(dataListNodeRef, datalistQname, L2CacheSupport.getCurrentThreadCache());
@@ -1072,6 +1080,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onRefreshableCacheEvent(RefreshableCacheEvent refreshableCacheEvent) {
 		if (BeCPGCacheServiceImpl.class.getName().equals(refreshableCacheEvent.getCacheId()) && "all".equals(refreshableCacheEvent.getKey())) {
@@ -1079,16 +1088,19 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getCacheId() {
 		return AlfrescoRepository.class.getName();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		asynchronouslyRefreshedCacheRegistry.register(this);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void clearCaches(String id) {
 		logger.info("Clear repository caches: " + id);

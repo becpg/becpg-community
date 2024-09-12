@@ -21,8 +21,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.product.data.RegulatoryEntityItem;
+import fr.becpg.repo.product.data.constraints.RequirementType;
+import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -43,7 +47,7 @@ import fr.becpg.repo.repository.model.SimpleCharactDataItem;
  */
 @AlfType
 @AlfQname(qname = "bcpg:labelClaimList")
-public class LabelClaimListDataItem extends AbstractManualDataItem implements SimpleCharactDataItem, CopiableDataItem, AspectAwareDataItem {
+public class LabelClaimListDataItem extends AbstractManualDataItem implements SimpleCharactDataItem, CopiableDataItem, AspectAwareDataItem, RegulatoryEntityItem {
 
 	/**
 	 * 
@@ -69,8 +73,65 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements Si
 	private Double percentApplicable;
 	private Boolean isFormulated;
 	private String errorLog;
+	private RequirementType regulatoryType;
+	private MLText regulatoryMessage;
 	private List<NodeRef> missingLabelClaims = new ArrayList<>();
+	private List<NodeRef> regulatoryCountriesRef = new ArrayList<>();
+	private List<NodeRef> regulatoryUsagesRef = new ArrayList<>();
 	
+	/**
+	 * <p>Getter for the field <code>regulatoryCountriesRef</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
+	@AlfMultiAssoc
+	@AlfQname(qname = "bcpg:regulatoryCountries")
+	public List<NodeRef> getRegulatoryCountriesRef() {
+		return regulatoryCountriesRef;
+	}
+
+	/** {@inheritDoc} */
+	public void setRegulatoryCountriesRef(List<NodeRef> regulatoryCountries) {
+		this.regulatoryCountriesRef = regulatoryCountries;
+	}
+
+	/**
+	 * <p>Getter for the field <code>regulatoryUsagesRef</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
+	@AlfMultiAssoc
+	@AlfQname(qname = "bcpg:regulatoryUsageRef")
+	public List<NodeRef> getRegulatoryUsagesRef() {
+		return regulatoryUsagesRef;
+	}
+
+	/** {@inheritDoc} */
+	public void setRegulatoryUsagesRef(List<NodeRef> regulatoryUsages) {
+		this.regulatoryUsagesRef = regulatoryUsages;
+	}
+	
+	@AlfProp
+	@AlfQname(qname="bcpg:regulatoryType")
+	public RequirementType getRegulatoryType() {
+		return regulatoryType;
+	}
+
+	public void setRegulatoryType(RequirementType regulatoryType) {
+		this.regulatoryType = regulatoryType;
+	}
+
+	@AlfProp
+	@AlfMlText
+	@AlfQname(qname="bcpg:regulatoryText")
+	public MLText getRegulatoryMessage() {
+		return regulatoryMessage;
+	}
+
+	public void setRegulatoryMessage(MLText regulatoryMessage) {
+		this.regulatoryMessage = regulatoryMessage;
+	}
+
 	/**
 	 * <p>Getter for the field <code>labelClaim</code>.</p>
 	 *
@@ -132,20 +193,40 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements Si
 	
 	
 	
+	/**
+	 * <p>Getter for the field <code>percentClaim</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:lclPercentClaim")
 	public Double getPercentClaim() {
 		return percentClaim;
 	}
+	/**
+	 * <p>Setter for the field <code>percentClaim</code>.</p>
+	 *
+	 * @param percentClaim a {@link java.lang.Double} object
+	 */
 	public void setPercentClaim(Double percentClaim) {
 		this.percentClaim = percentClaim;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>percentApplicable</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:lclPercentApplicable")
 	public Double getPercentApplicable() {
 		return percentApplicable;
 	}
+	/**
+	 * <p>Setter for the field <code>percentApplicable</code>.</p>
+	 *
+	 * @param percentApplicable a {@link java.lang.Double} object
+	 */
 	public void setPercentApplicable(Double percentApplicable) {
 		this.percentApplicable = percentApplicable;
 	}
@@ -264,6 +345,11 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements Si
 		this.type = labelClaimItem.type;
 		this.labelClaimValue = labelClaimItem.labelClaimValue;
 		this.isFormulated = labelClaimItem.isFormulated;
+		this.regulatoryCountriesRef = new ArrayList<>(labelClaimItem.regulatoryCountriesRef);
+		this.regulatoryUsagesRef = new ArrayList<>(labelClaimItem.regulatoryUsagesRef);
+		this.regulatoryMessage = labelClaimItem.regulatoryMessage;
+		this.regulatoryType = labelClaimItem.regulatoryType;
+	
 	}
 	
 	
@@ -273,6 +359,7 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements Si
 		return new LabelClaimListDataItem(this);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -280,6 +367,7 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements Si
 		result = prime * result + Objects.hash(isFormulated, labelClaim, type);
 		return result;
 	}
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -292,6 +380,7 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements Si
 		return Objects.equals(isFormulated, other.isFormulated) && Objects.equals(labelClaim, other.labelClaim) && Objects.equals(type, other.type);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "LabelClaimListDataItem [labelClaim=" + labelClaim + ", type=" + type + ", labelClaimValue=" + labelClaimValue + ", percentClaim="
@@ -300,24 +389,29 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements Si
 				+ ", parentNodeRef=" + parentNodeRef + ", name=" + name + "]";
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void setCharactNodeRef(NodeRef nodeRef) {
 		setLabelClaim(nodeRef);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void setValue(Double value) {
 		setPercentClaim(value);
 	}
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getCharactNodeRef() {
 		return getLabelClaim();
 	}
+	/** {@inheritDoc} */
 	@Override
 	public Double getValue() {
 		return getPercentClaim();
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public Boolean shouldDetailIfZero() {
 		return true;

@@ -1,10 +1,16 @@
 package fr.becpg.repo.license;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.security.authentication.AbstractAuthenticationService;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.security.PermissionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
@@ -16,6 +22,7 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.SystemGroup;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.cache.BeCPGCacheService;
+import fr.becpg.repo.helper.AuthorityHelper;
 import fr.becpg.repo.helper.RepoService;
 
 /**
@@ -44,6 +51,9 @@ public class BeCPGLicenseManager {
 	@Autowired
 	private ContentService contentService;
 
+	@Autowired
+	private AbstractAuthenticationService authenticationService;
+	
 	/**
 	 * <p>getAllowedConcurrentRead.</p>
 	 *
@@ -149,10 +159,27 @@ public class BeCPGLicenseManager {
 		return getLicense().licenseName;
 	}
 	
+	/**
+	 * <p>isLicenseValid.</p>
+	 *
+	 * @return a boolean
+	 */
 	public boolean isLicenseValid() {
-		return getLicenseFile() != null && !INVALID_LICENSE_FILE.equals(getLicenseName());
+		return getLicenseFile() != null && !INVALID_LICENSE_FILE.equals(getLicenseName()) && !namedLicenseExceeded();
 	}
 
+
+	private boolean namedLicenseExceeded() {
+		int namedRead = AuthorityHelper.extractPeople(PermissionService.GROUP_PREFIX + SystemGroup.LicenseReadNamed.toString()).size();
+		if (namedRead > getLicense().allowedNamedRead) {
+			return true;
+		}
+		int namedWrite = AuthorityHelper.extractPeople(PermissionService.GROUP_PREFIX + SystemGroup.LicenseWriteNamed.toString()).size();
+		if (namedWrite > getLicense().allowedNamedWrite) {
+			return true;
+		}
+		return false;
+	}
 
 	/**
 	 * <p>isValid.</p>
@@ -219,6 +246,61 @@ public class BeCPGLicenseManager {
 
 		return null;
 
+	}
+
+	public boolean floatingLicensesExceeded(String sessionId) {
+		return beCPGCacheService.getFromCache(BeCPGLicenseManager.class.getName() + ".sessions", sessionId, () -> {
+			Set<String> users = new HashSet<>(authenticationService.getUsersWithTickets(true));
+			Set<String> concurrentReadUsers = AuthorityHelper.extractPeople(PermissionService.GROUP_PREFIX + SystemGroup.LicenseReadConcurrent.toString());
+			concurrentReadUsers.retainAll(users);
+			if (concurrentReadUsers.contains(AuthenticationUtil.getRunAsUser()) && concurrentReadUsers.size() > getLicense().allowedConcurrentRead) {
+				return true;
+			}
+			Set<String> concurrentWriteUsers = AuthorityHelper.extractPeople(PermissionService.GROUP_PREFIX + SystemGroup.LicenseWriteConcurrent.toString());
+			concurrentWriteUsers.retainAll(users);
+			if (concurrentWriteUsers.contains(AuthenticationUtil.getRunAsUser()) && concurrentWriteUsers.size() > getLicense().allowedConcurrentWrite) {
+				return true;
+			}
+			Set<String> concurrentSupplierUsers = AuthorityHelper.extractPeople(PermissionService.GROUP_PREFIX + SystemGroup.LicenseSupplierConcurrent.toString());
+			concurrentSupplierUsers.retainAll(users);
+			if (concurrentSupplierUsers.contains(AuthenticationUtil.getRunAsUser()) && concurrentSupplierUsers.size() > getLicense().allowedConcurrentSupplier) {
+				return true;
+			}
+			return false;
+		});
+	}
+
+	public boolean isSpecialLicenceUser() {
+		String runAsUser = AuthenticationUtil.getRunAsUser();
+		if(authenticationService.getDefaultAdministratorUserNames().contains(runAsUser)) {
+			return true;
+		}
+		if (runAsUser.equals("admin") || runAsUser.endsWith("@becpg.fr")
+				|| runAsUser.startsWith("admin@") ) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public boolean hasWriteLicense() {
+		String runAsUser = AuthenticationUtil.getRunAsUser();
+		return beCPGCacheService.getFromCache(BeCPGLicenseManager.class.getName() + ".writeLicenses", runAsUser, () -> {
+			
+			if(isSpecialLicenceUser()) {
+				return true;
+			}
+			if (AuthorityHelper.hasGroupAuthority(runAsUser, SystemGroup.LicenseWriteNamed.toString())) {
+				return true;
+			}
+			if (AuthorityHelper.hasGroupAuthority(runAsUser, SystemGroup.LicenseWriteConcurrent.toString())) {
+				return true;
+			}
+			if (AuthorityHelper.hasGroupAuthority(runAsUser, SystemGroup.LicenseSupplierConcurrent.toString())) {
+				return true;
+			}
+			return false;
+		});
 	}
 
 }

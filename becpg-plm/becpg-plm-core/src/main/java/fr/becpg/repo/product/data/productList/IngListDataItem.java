@@ -55,6 +55,14 @@ public class IngListDataItem extends AbstractManualDataItem
 	private static final long serialVersionUID = -2710240943326822672L;
 
 	private Double qtyPerc = 0d;
+	
+	private Double qtyPerc1 = null;
+
+	private Double qtyPerc2 = null;
+
+	private Double qtyPerc3 = null;
+	
+	private Double qtyPerc4 = null;
 
 	private Double qtyPercWithYield = null;
 
@@ -109,23 +117,85 @@ public class IngListDataItem extends AbstractManualDataItem
 	public void setQtyPerc(Double qtyPerc) {
 		this.qtyPerc = qtyPerc;
 	}
+	
+	
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:ingListQtyPerc1")
+	public Double getQtyPerc1() {
+		return qtyPerc1;
+	}
 
+	public void setQtyPerc1(Double qtyPerc1) {
+		this.qtyPerc1 = qtyPerc1;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "bcpg:ingListQtyPerc2")
+	public Double getQtyPerc2() {
+		return qtyPerc2;
+	}
+
+	public void setQtyPerc2(Double qtyPerc2) {
+		this.qtyPerc2 = qtyPerc2;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "bcpg:ingListQtyPerc3")
+	public Double getQtyPerc3() {
+		return qtyPerc3;
+	}
+
+	public void setQtyPerc3(Double qtyPerc3) {
+		this.qtyPerc3 = qtyPerc3;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "bcpg:ingListQtyPerc4")
+	public Double getQtyPerc4() {
+		return qtyPerc4;
+	}
+
+	public void setQtyPerc4(Double qtyPerc4) {
+		this.qtyPerc4 = qtyPerc4;
+	}
+
+	/**
+	 * <p>Getter for the field <code>qtyPercWithYield</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:ingListQtyPercWithYield")
 	public Double getQtyPercWithYield() {
 		return qtyPercWithYield;
 	}
 
+	/**
+	 * <p>Setter for the field <code>qtyPercWithYield</code>.</p>
+	 *
+	 * @param qtyPercWithYield a {@link java.lang.Double} object
+	 */
 	public void setQtyPercWithYield(Double qtyPercWithYield) {
 		this.qtyPercWithYield = qtyPercWithYield;
 	}
 
+	/**
+	 * <p>Getter for the field <code>qtyPercWithSecondaryYield</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:ingListQtyPercWithSecondaryYield")
 	public Double getQtyPercWithSecondaryYield() {
 		return qtyPercWithSecondaryYield;
 	}
 
+	/**
+	 * <p>Setter for the field <code>qtyPercWithSecondaryYield</code>.</p>
+	 *
+	 * @param qtyPercWithSecondaryYield a {@link java.lang.Double} object
+	 */
 	public void setQtyPercWithSecondaryYield(Double qtyPercWithSecondaryYield) {
 		this.qtyPercWithSecondaryYield = qtyPercWithSecondaryYield;
 	}
@@ -250,12 +320,22 @@ public class IngListDataItem extends AbstractManualDataItem
 		this.bioOrigin = bioOrigin;
 	}
 
+	/**
+	 * <p>Getter for the field <code>claims</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	@AlfMultiAssoc
 	@AlfQname(qname = "bcpg:ingListClaims")
 	public List<NodeRef> getClaims() {
 		return claims;
 	}
 
+	/**
+	 * <p>Setter for the field <code>claims</code>.</p>
+	 *
+	 * @param claims a {@link java.util.List} object
+	 */
 	public void setClaims(List<NodeRef> claims) {
 		this.claims = claims;
 	}
@@ -346,7 +426,7 @@ public class IngListDataItem extends AbstractManualDataItem
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
 	@AlfSingleAssoc
-	@DataListIdentifierAttr(isDefaultPivotAssoc = false)
+	@DataListIdentifierAttr
 	@AlfQname(qname = "bcpg:ingListIng")
 	@InternalField
 	public NodeRef getIng() {
@@ -463,15 +543,32 @@ public class IngListDataItem extends AbstractManualDataItem
 		super();
 	}
 	
+	/**
+	 * <p>build.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
+	 */
 	public static IngListDataItem build() {
 		return new IngListDataItem();
 	}
 
+	/**
+	 * <p>withIngredient.</p>
+	 *
+	 * @param ing a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
+	 */
 	public IngListDataItem withIngredient(NodeRef ing) {
 		this.ing = ing;
 		return this;
 	}
 
+	/**
+	 * <p>withQtyPerc.</p>
+	 *
+	 * @param qtyPerc a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
+	 */
 	public IngListDataItem withQtyPerc(Double qtyPerc) {
 		this.qtyPerc = qtyPerc;
 		return this;
@@ -546,6 +643,10 @@ public class IngListDataItem extends AbstractManualDataItem
 	public IngListDataItem(IngListDataItem i) {
 		super(i);
 		this.qtyPerc = i.qtyPerc;
+		this.qtyPerc1 = i.qtyPerc1;
+		this.qtyPerc2 = i.qtyPerc2;
+		this.qtyPerc3 = i.qtyPerc3;
+		this.qtyPerc4 = i.qtyPerc4;
 		this.qtyPercWithYield = i.qtyPercWithYield;
 		this.qtyPercWithSecondaryYield = i.qtyPercWithSecondaryYield;
 		this.volumeQtyPerc = i.volumeQtyPerc;
@@ -565,6 +666,7 @@ public class IngListDataItem extends AbstractManualDataItem
 		this.declType = i.declType;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public IngListDataItem copy() {
 		IngListDataItem ret = new IngListDataItem(this);
@@ -578,8 +680,9 @@ public class IngListDataItem extends AbstractManualDataItem
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(bioOrigin, claims, depthLevel, geoOrigin, geoTransfo, ing, isGMO, isIonized, isProcessingAid,
-				isSupport, maxi, mini, parent, qtyPerc, qtyPercWithYield, qtyPercWithSecondaryYield, volumeQtyPerc);
+		result = prime * result + Objects.hash(bioOrigin, claims, declType, depthLevel, geoOrigin, geoTransfo, ing, isGMO, isIonized, isProcessingAid,
+				isSupport, maxi, mini, parent, qtyPerc, qtyPerc1, qtyPerc2, qtyPerc3, qtyPerc4, qtyPercWithSecondaryYield, qtyPercWithYield,
+				volumeQtyPerc);
 		return result;
 	}
 
@@ -592,22 +695,25 @@ public class IngListDataItem extends AbstractManualDataItem
 		if (getClass() != obj.getClass())
 			return false;
 		IngListDataItem other = (IngListDataItem) obj;
-		return Objects.equals(bioOrigin, other.bioOrigin) && Objects.equals(claims, other.claims) && Objects.equals(depthLevel, other.depthLevel)
-				&& Objects.equals(geoOrigin, other.geoOrigin) && Objects.equals(geoTransfo, other.geoTransfo) && Objects.equals(ing, other.ing)
-				&& Objects.equals(isGMO, other.isGMO) && Objects.equals(isIonized, other.isIonized)
-				&& Objects.equals(isProcessingAid, other.isProcessingAid) && Objects.equals(isSupport, other.isSupport)
-				&& Objects.equals(maxi, other.maxi) && Objects.equals(mini, other.mini) && Objects.equals(parent, other.parent)
-				&& Objects.equals(qtyPerc, other.qtyPerc) && Objects.equals(qtyPercWithYield, other.qtyPercWithYield)
-				&& Objects.equals(qtyPercWithSecondaryYield, other.qtyPercWithSecondaryYield) && Objects.equals(volumeQtyPerc, other.volumeQtyPerc);
+		return Objects.equals(bioOrigin, other.bioOrigin) && Objects.equals(claims, other.claims) && declType == other.declType
+				&& Objects.equals(depthLevel, other.depthLevel) && Objects.equals(geoOrigin, other.geoOrigin)
+				&& Objects.equals(geoTransfo, other.geoTransfo) && Objects.equals(ing, other.ing) && Objects.equals(isGMO, other.isGMO)
+				&& Objects.equals(isIonized, other.isIonized) && Objects.equals(isProcessingAid, other.isProcessingAid)
+				&& Objects.equals(isSupport, other.isSupport) && Objects.equals(maxi, other.maxi) && Objects.equals(mini, other.mini)
+				&& Objects.equals(parent, other.parent) && Objects.equals(qtyPerc, other.qtyPerc) && Objects.equals(qtyPerc1, other.qtyPerc1)
+				&& Objects.equals(qtyPerc2, other.qtyPerc2) && Objects.equals(qtyPerc3, other.qtyPerc3) && Objects.equals(qtyPerc4, other.qtyPerc4)
+				&& Objects.equals(qtyPercWithSecondaryYield, other.qtyPercWithSecondaryYield)
+				&& Objects.equals(qtyPercWithYield, other.qtyPercWithYield) && Objects.equals(volumeQtyPerc, other.volumeQtyPerc);
 	}
 
 	@Override
 	public String toString() {
-		return "IngListDataItem [qtyPerc=" + qtyPerc + ", qtyPercWithYield=" + qtyPercWithYield + ", qtyPercWithSecondaryYield="
-				+ qtyPercWithSecondaryYield + ", volumeQtyPerc=" + volumeQtyPerc + ", geoOrigin=" + geoOrigin + ", geoTransfo=" + geoTransfo
-				+ ", bioOrigin=" + bioOrigin + ", claims=" + claims + ", isGMO=" + isGMO + ", isIonized=" + isIonized + ", ing=" + ing
-				+ ", isProcessingAid=" + isProcessingAid + ", isSupport=" + isSupport + ", depthLevel=" + depthLevel + ", parent=" + parent
-				+ ", mini=" + mini + ", maxi=" + maxi + "]";
+		return "IngListDataItem [qtyPerc=" + qtyPerc + ", qtyPerc1=" + qtyPerc1 + ", qtyPerc2=" + qtyPerc2 + ", qtyPerc3=" + qtyPerc3 + ", qtyPerc4="
+				+ qtyPerc4 + ", qtyPercWithYield=" + qtyPercWithYield + ", qtyPercWithSecondaryYield=" + qtyPercWithSecondaryYield
+				+ ", volumeQtyPerc=" + volumeQtyPerc + ", geoOrigin=" + geoOrigin + ", geoTransfo=" + geoTransfo + ", bioOrigin=" + bioOrigin
+				+ ", claims=" + claims + ", isGMO=" + isGMO + ", isIonized=" + isIonized + ", ing=" + ing + ", isProcessingAid=" + isProcessingAid
+				+ ", isSupport=" + isSupport + ", depthLevel=" + depthLevel + ", parent=" + parent + ", mini=" + mini + ", maxi=" + maxi
+				+ ", declType=" + declType + "]";
 	}
 
 	/** {@inheritDoc} */

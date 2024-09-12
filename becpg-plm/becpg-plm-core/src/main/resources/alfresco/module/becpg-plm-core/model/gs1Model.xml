@@ -1417,7 +1417,7 @@
 				</property>
 
 				<property name="gs1:innerPackHeight">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
 						<tokenised>false</tokenised>
@@ -1425,7 +1425,7 @@
 					</index>
 				</property>
 				<property name="gs1:innerPackWidth">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
 						<tokenised>false</tokenised>
@@ -1433,7 +1433,7 @@
 					</index>
 				</property>
 				<property name="gs1:innerPackDepth">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
 						<tokenised>false</tokenised>
@@ -1482,7 +1482,7 @@
 
 			
 				<property name="gs1:height">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
 						<tokenised>false</tokenised>
@@ -1490,7 +1490,7 @@
 					</index>
 				</property>
 				<property name="gs1:width">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
 						<tokenised>false</tokenised>
@@ -1498,7 +1498,7 @@
 					</index>
 				</property>
 				<property name="gs1:depth">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
 						<tokenised>false</tokenised>
@@ -1506,7 +1506,7 @@
 					</index>
 				</property>
 				<property name="gs1:diameter">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
 						<tokenised>false</tokenised>
@@ -1514,7 +1514,7 @@
 					</index>
 				</property>
 				<property name="gs1:weight">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
 						<tokenised>false</tokenised>
@@ -1522,7 +1522,7 @@
 					</index>
 				</property>
 				<property name="gs1:secondaryHeight">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
 						<tokenised>false</tokenised>
@@ -1530,7 +1530,7 @@
 					</index>
 				</property>
 				<property name="gs1:secondaryWidth">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
 						<tokenised>false</tokenised>
@@ -1538,7 +1538,7 @@
 					</index>
 				</property>
 				<property name="gs1:secondaryDepth">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
 						<tokenised>false</tokenised>
@@ -1546,7 +1546,7 @@
 					</index>
 				</property>
 				<property name="gs1:secondaryDiameter">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
 						<tokenised>false</tokenised>
@@ -1562,7 +1562,7 @@
 					</index>
 				</property>
 				<property name="gs1:tertiaryWidth">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
 						<tokenised>false</tokenised>
@@ -1570,7 +1570,7 @@
 					</index>
 				</property>
 				<property name="gs1:tertiaryDepth">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
 						<tokenised>false</tokenised>
@@ -2090,7 +2090,7 @@
 				</property>
 
 				<property name="gs1:freeQuantityOfProduct">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
 						<tokenised>false</tokenised>
@@ -2161,7 +2161,7 @@
 					</index>
 				</property>
 				<property name="gs1:numberOfServingsPerPackage">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
 						<tokenised>false</tokenised>
@@ -2169,7 +2169,7 @@
 					</index>
 				</property>
 				<property name="gs1:freeQuantityOfProductPercent">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
 						<tokenised>false</tokenised>
@@ -2391,6 +2391,12 @@
 						<facetable>true</facetable>
 					</index>
 				</property>
+				
+				<property name="gs1:certificationCode">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 			</properties>
 			<associations>
 
@@ -2547,7 +2553,7 @@
 					</constraints>
 				</property>
 				<property name="gs1:pegHorizontal">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
 						<tokenised>false</tokenised>
@@ -2555,7 +2561,7 @@
 					</index>
 				</property>
 				<property name="gs1:pegVertical">
-					<type>d:float</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
 						<tokenised>false</tokenised>

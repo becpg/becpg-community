@@ -47,6 +47,7 @@ import fr.becpg.repo.product.formulation.FormulatedQties;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.product.formulation.PackagingHelper;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
+import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
 /**
@@ -69,25 +70,28 @@ public abstract class AbstractCostCharactDetailsVisitor<T extends AbstractCostLi
 	public void setPackagingHelper(PackagingHelper packagingHelper) {
 		this.packagingHelper = packagingHelper;
 	}
+	
+	@Override
+	protected String provideUnit(CharactDetailsVisitorContext context, SimpleCharactDataItem simpleCharact) {
+		AbstractCostListDataItem<?> c = (AbstractCostListDataItem<?>) simpleCharact;
+		return CostsCalculatingFormulationHandler.calculateUnit(context.getRootProductData().getUnit(),
+				(String) nodeService.getProperty(c.getCharactNodeRef(), getCostUnitPropName()),
+				(Boolean) nodeService.getProperty(c.getCharactNodeRef(), getCostFixedPropName()));
+	}
 
 	/** {@inheritDoc} */
 	@Override
-	public CharactDetails visit(ProductData formulatedProduct, List<NodeRef> dataListItems, Integer level) throws FormulateException {
+	public CharactDetails visit(ProductData formulatedProduct, List<NodeRef> dataListItems, Integer maxLevel) throws FormulateException {
 
 		CharactDetails ret = createCharactDetails(dataListItems);
 
-		if (level == null) {
-			level = 0;
+		if (maxLevel == null) {
+			maxLevel = 0;
 		}
-
-		SimpleCharactUnitProvider unitProvider = item -> {
-			AbstractCostListDataItem<?> c = (AbstractCostListDataItem<?>) item;
-			return CostsCalculatingFormulationHandler.calculateUnit(formulatedProduct.getUnit(),
-					(String) nodeService.getProperty(c.getCharactNodeRef(), getCostUnitPropName()),
-					(Boolean) nodeService.getProperty(c.getCharactNodeRef(), getCostFixedPropName()));
-		};
-
-		visitRecurCost(formulatedProduct, formulatedProduct, ret, 0, level, 1d, unitProvider);
+		
+		CharactDetailsVisitorContext context = new CharactDetailsVisitorContext(formulatedProduct, maxLevel, ret);
+		
+		visitRecurCost(context, formulatedProduct, 0, 1d);
 
 		if ((formulatedProduct.getUnit() != null) && (formulatedProduct.getUnit().isLb() || formulatedProduct.getUnit().isGal())) {
 			for (NodeRef costItemNodeRef : dataListItems) {
@@ -134,8 +138,7 @@ public abstract class AbstractCostCharactDetailsVisitor<T extends AbstractCostLi
 	 * @return a {@link fr.becpg.repo.product.data.CharactDetails} object.
 	 * @throws fr.becpg.repo.formulation.FormulateException if any.
 	 */
-	private CharactDetails visitRecurCost(ProductData rootProduct, ProductData formulatedProduct, CharactDetails ret, Integer currLevel, Integer maxLevel, Double ratio,
-			SimpleCharactUnitProvider unitProvider) throws FormulateException {
+	private CharactDetails visitRecurCost(CharactDetailsVisitorContext context, ProductData formulatedProduct, Integer currLevel, Double ratio) throws FormulateException {
 
 		CostListQtyProvider qtyProvider = new CostListQtyProvider(formulatedProduct);
 
@@ -150,8 +153,7 @@ public abstract class AbstractCostCharactDetailsVisitor<T extends AbstractCostLi
 		if (formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 			Composite<CompoListDataItem> composite = CompositeHelper.getHierarchicalCompoList(
 					formulatedProduct.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())));
-			visitCompoListChildren(rootProduct, formulatedProduct, composite, ret, formulatedProduct.getProductLossPerc(), ratio, currLevel, maxLevel, qtyProvider,
-					unitProvider);
+			visitCompoListChildren(context, formulatedProduct, composite, formulatedProduct.getProductLossPerc(), ratio, currLevel, qtyProvider);
 		}
 
 		if (formulatedProduct.hasPackagingListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
@@ -174,12 +176,12 @@ public abstract class AbstractCostCharactDetailsVisitor<T extends AbstractCostLi
 
 					Double newRatio = qty / qtyProvider.getNetQty(null);
 
-					visitPart(rootProduct, formulatedProduct, partProduct, packagingListDataItem.getNodeRef(), ret, qties, currLevel, unitProvider);
+					visitPart(context, formulatedProduct, partProduct, packagingListDataItem.getNodeRef(), qties, currLevel);
 
-					if ((maxLevel < 0) || (currLevel < maxLevel)) {
+					if ((context.getMaxLevel() < 0) || (currLevel < context.getMaxLevel())) {
 						logger.debug("Finding one packaging with nr=" + packagingListDataItem.getProduct());
 
-						visitRecurCost(rootProduct, partProduct, ret, currLevel + 1, maxLevel, newRatio, unitProvider);
+						visitRecurCost(context, partProduct, currLevel + 1, newRatio);
 					}
 				}
 
@@ -208,11 +210,11 @@ public abstract class AbstractCostCharactDetailsVisitor<T extends AbstractCostLi
 					FormulatedQties qties = new FormulatedQties(qty, null, netQtyForCost, null);
 					Double newRatio = qty / qtyProvider.getNetQty(null);
 					
-					visitPart(rootProduct, formulatedProduct, partProduct, processListDataItem.getNodeRef(), ret, qties, currLevel, unitProvider);
+					visitPart(context, formulatedProduct, partProduct, processListDataItem.getNodeRef(), qties, currLevel);
 
-					if ((maxLevel < 0) || (currLevel < maxLevel)) {
+					if ((context.getMaxLevel() < 0) || (currLevel < context.getMaxLevel())) {
 
-						visitRecurCost(rootProduct, partProduct, ret, currLevel + 1, maxLevel, newRatio, unitProvider);
+						visitRecurCost(context, partProduct, currLevel + 1, newRatio);
 					}
 
 				}
@@ -220,9 +222,9 @@ public abstract class AbstractCostCharactDetailsVisitor<T extends AbstractCostLi
 
 		}
 
-		visiteTemplateCosts(formulatedProduct, ret);
+		visiteTemplateCosts(formulatedProduct, context.getCharactDetails());
 
-		return ret;
+		return context.getCharactDetails();
 	}
 
 	private void visiteTemplateCosts(ProductData formulatedProduct, CharactDetails ret) {
@@ -330,11 +332,11 @@ public abstract class AbstractCostCharactDetailsVisitor<T extends AbstractCostLi
 
 	}
 
-	private void visitCompoListChildren(ProductData rootProduct, ProductData productData, Composite<CompoListDataItem> composite, CharactDetails ret, Double parentLossRatio,
-			Double ratio, Integer currLevel, Integer maxLevel, CostListQtyProvider qtyProvider, SimpleCharactUnitProvider unitProvider)
+	private void visitCompoListChildren(CharactDetailsVisitorContext context, ProductData productData, Composite<CompoListDataItem> composite, Double parentLossRatio,
+			Double ratio, Integer currLevel, CostListQtyProvider qtyProvider)
 			throws FormulateException {
 
-		if (productData.isGeneric()) {
+		if (!areDetailsApplicable(productData)) {
 			return;
 		}
 
@@ -353,7 +355,7 @@ public abstract class AbstractCostCharactDetailsVisitor<T extends AbstractCostLi
 
 				// calculate children
 				Composite<CompoListDataItem> c = component;
-				visitCompoListChildren(rootProduct, productData, c, ret, newLossPerc, ratio, currLevel, maxLevel, qtyProvider, unitProvider);
+				visitCompoListChildren(context, productData, c, newLossPerc, ratio, currLevel, qtyProvider);
 			} else {
 
 				Double qty = qtyProvider.getQty(compoListDataItem, parentLossRatio, componentProduct) * ratio;
@@ -363,21 +365,36 @@ public abstract class AbstractCostCharactDetailsVisitor<T extends AbstractCostLi
 
 				Double newRatio = qty / qtyProvider.getNetQty(null);
 
-				visitPart(rootProduct, productData, componentProduct, component.getData().getNodeRef(), ret, qties, currLevel, unitProvider);
+				visitPart(context, productData, componentProduct, component.getData().getNodeRef(), qties, currLevel);
 
-				if (((maxLevel < 0) || (currLevel < maxLevel))
-						&& !entityDictionaryService.isMultiLevelLeaf(nodeService.getType(compoListDataItem.getProduct()))) {
-					visitRecurCost(rootProduct, componentProduct, ret, currLevel + 1, maxLevel, newRatio, unitProvider);
+				if (shouldVisitNextLevel(currLevel, context.getMaxLevel(), compoListDataItem)) {
+					visitRecurCost(context, componentProduct, currLevel + 1, newRatio);
 				}
 
 			}
 		}
 	}
 
+	/**
+	 * <p>getDataListVisited.</p>
+	 *
+	 * @param product a {@link fr.becpg.repo.repository.model.BeCPGDataObject} object
+	 * @return a {@link java.util.List} object
+	 */
 	protected abstract List<T> getDataListVisited(BeCPGDataObject product);
 
+	/**
+	 * <p>getCostFixedPropName.</p>
+	 *
+	 * @return a {@link org.alfresco.service.namespace.QName} object
+	 */
 	protected abstract QName getCostFixedPropName();
 	
+	/**
+	 * <p>getCostUnitPropName.</p>
+	 *
+	 * @return a {@link org.alfresco.service.namespace.QName} object
+	 */
 	protected abstract QName getCostUnitPropName();
 
 }

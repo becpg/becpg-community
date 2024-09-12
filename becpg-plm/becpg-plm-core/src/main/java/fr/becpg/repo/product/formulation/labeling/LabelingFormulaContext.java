@@ -94,11 +94,14 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 	private static final Log logger = LogFactory.getLog(LabelingFormulaContext.class);
 
+	/** Constant <code>DEFAULT_RATIO</code> */
 	public static final BigDecimal DEFAULT_RATIO = BigDecimal.valueOf(1d);
 
 	private static final int PRECISION_RATIO = 16;
+	/** Constant <code>PRECISION</code> */
 	public static final MathContext PRECISION = new MathContext(PRECISION_RATIO, RoundingMode.HALF_UP);
 
+	/** Constant <code>ALLERGEN_DETECTION_PATTERN</code> */
 	public static final Pattern ALLERGEN_DETECTION_PATTERN = Pattern.compile(
 			"(<\\s*up[^>]*>.*?<\\s*/\\s*up>|<\\s*b[^>]*>.*?<\\s*/\\s*b>|<\\s*u[^>]*>.*?<\\s*/\\s*u>|<\\s*i[^>]*>.*?<\\s*/\\s*i>|[A-Z]{4,}|\\p{Lu}{4,})");
 
@@ -158,11 +161,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * <p>
 	 * Getter for the field <code>entity</code>.
 	 * </p>
-	 *
-	 * @return a {@link fr.becpg.repo.product.data.ProductData} object.
 	 */
 	@Override
 	public ProductData getEntity() {
@@ -170,12 +173,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * <p>
 	 * Setter for the field <code>entity</code>.
 	 * </p>
-	 *
-	 * @param entity
-	 *            a {@link fr.becpg.repo.product.data.ProductData} object.
 	 */
 	@Override
 	public void setEntity(ProductData entity) {
@@ -261,6 +263,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return lblCompositeContext;
 	}
 
+	/**
+	 * <p>Getter for the field <code>footNotes</code>.</p>
+	 *
+	 * @return a {@link java.util.Set} object
+	 */
 	public Set<FootNoteRule> getFootNotes() {
 		return footNotes;
 	}
@@ -326,6 +333,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 *            a {@link fr.becpg.repo.helper.AssociationService} object.
 	 * @param alfrescoRepository
 	 *            a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
+	 * @param formulaService a {@link fr.becpg.repo.formulation.spel.SpelFormulaService} object
 	 */
 	public LabelingFormulaContext(NodeService mlNodeService, AssociationService associationService,
 			AlfrescoRepository<RepositoryEntity> alfrescoRepository, SpelFormulaService formulaService) {
@@ -413,6 +421,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 	private Double qtyPrecisionThreshold = 1d / Math.pow(10, (double) maxPrecision + (double) 2);
 
+	/**
+	 * <p>Getter for the field <code>qtyPrecisionThreshold</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	public Double getQtyPrecisionThreshold() {
 		return qtyPrecisionThreshold;
 	}
@@ -523,18 +536,38 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		this.ingsLabelingWithYield = true;
 	}
 
+	/**
+	 * <p>isUseSecondaryYield.</p>
+	 *
+	 * @return a boolean
+	 */
 	public boolean isUseSecondaryYield() {
 		return useSecondaryYield;
 	}
 
+	/**
+	 * <p>Setter for the field <code>useSecondaryYield</code>.</p>
+	 *
+	 * @param useSecondaryYield a boolean
+	 */
 	public void setUseSecondaryYield(boolean useSecondaryYield) {
 		this.useSecondaryYield = useSecondaryYield;
 	}
 
+	/**
+	 * <p>Setter for the field <code>geoPlaceOfActivityFormat</code>.</p>
+	 *
+	 * @param geoPlaceOfActivityFormat a {@link java.lang.String} object
+	 */
 	public void setGeoPlaceOfActivityFormat(String geoPlaceOfActivityFormat) {
 		this.geoPlaceOfActivityFormat = geoPlaceOfActivityFormat;
 	}
 
+	/**
+	 * <p>Setter for the field <code>geoPlaceOfActiviySeparator</code>.</p>
+	 *
+	 * @param geoPlaceOfActiviySeparator a {@link java.lang.String} object
+	 */
 	public void setGeoPlaceOfActiviySeparator(String geoPlaceOfActiviySeparator) {
 		this.geoPlaceOfActiviySeparator = geoPlaceOfActiviySeparator;
 	}
@@ -623,6 +656,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		this.ingTypeDefaultFormat = ingTypeDefaultFormat;
 	}
 
+	/**
+	 * <p>Setter for the field <code>ingTypeSingleValueFormat</code>.</p>
+	 *
+	 * @param ingTypeSingleValueFormat a {@link java.lang.String} object
+	 */
 	public void setIngTypeSingleValueFormat(String ingTypeSingleValueFormat) {
 		this.ingTypeSingleValueFormat = ingTypeSingleValueFormat;
 	}
@@ -651,10 +689,20 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		this.htmlTableRowFormat = htmlTableRowFormat;
 	}
 
+	/**
+	 * <p>Setter for the field <code>htmlTableHeaderFormat</code>.</p>
+	 *
+	 * @param htmlTableHeaderFormat a {@link java.lang.String} object
+	 */
 	public void setHtmlTableHeaderFormat(String htmlTableHeaderFormat) {
 		this.htmlTableHeaderFormat = htmlTableHeaderFormat;
 	}
 
+	/**
+	 * <p>Setter for the field <code>htmlTableFooterFormat</code>.</p>
+	 *
+	 * @param htmlTableFooterFormat a {@link java.lang.String} object
+	 */
 	public void setHtmlTableFooterFormat(String htmlTableFooterFormat) {
 		this.htmlTableFooterFormat = htmlTableFooterFormat;
 	}
@@ -767,6 +815,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		this.bioOriginsSeparator = bioOriginsSeparator;
 	}
 
+	/**
+	 * <p>Setter for the field <code>footNotesLabelSeparator</code>.</p>
+	 *
+	 * @param footNotesLabelSeparator a {@link java.lang.String} object
+	 */
 	public void setFootNotesLabelSeparator(String footNotesLabelSeparator) {
 		this.footNotesLabelSeparator = footNotesLabelSeparator;
 	}
@@ -842,6 +895,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		this.force100Perc = force100Perc;
 	}
 
+	/**
+	 * <p>Setter for the field <code>forceKeepOrder</code>.</p>
+	 *
+	 * @param forceKeepOrder a boolean
+	 */
 	public void setForceKeepOrder(boolean forceKeepOrder) {
 		this.forceKeepOrder = forceKeepOrder;
 	}
@@ -1372,6 +1430,12 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return decorate(ret.toString());
 	}
 
+	/**
+	 * <p>roundedDouble.</p>
+	 *
+	 * @param qtyPerc a {@link java.math.BigDecimal} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	public static Double roundedDouble(BigDecimal qtyPerc) {
 		if (qtyPerc != null) {
 			return qtyPerc.round(new MathContext(PRECISION_RATIO - 6, RoundingMode.HALF_UP)).stripTrailingZeros().doubleValue();
@@ -1434,6 +1498,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		}
 	}
 
+	/**
+	 * <p>renderFootNotes.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	public String renderFootNotes() {
 
 		return footNotes.stream().filter(f -> f.matchLocale(I18NUtil.getLocale())).sorted().map(f -> {
@@ -1653,9 +1722,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 *            a {@link java.lang.String} object.
 	 * @param showTotal
 	 *            a boolean.
-	 * @param force100Perc
-	 *            a boolean.
 	 * @return a {@link java.lang.String} object.
+	 * @param force100PercForTable a boolean
 	 */
 	public String renderAsHtmlTable(String styleCss, boolean showTotal, boolean force100PercForTable) {
 		StringBuilder ret = new StringBuilder();
@@ -1976,8 +2044,9 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 		try {
 			shouldBreakIngType = true;
-
-			tableContent.append("<table cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"" + styleCss + "\" rules=\"none\">");
+			
+			tableContent.append("<table class=\"labelingTable\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\""
+					+ ((styleCss == null) || (styleCss).isBlank() ? "border: solid 1px; border-collapse:collapse" : styleCss) + "\" rules=\"none\">");
 
 			List<HtmlTableStruct> flatList = flatCompositeLabeling(lblCompositeContext, DEFAULT_RATIO, 0);
 			if (!flatList.isEmpty()) {
@@ -1994,7 +2063,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 						}
 
 						ret.append(applyRoundingMode(new MessageFormat(htmlTableRowFormat, getContentLocale()), tmp.qtyPerc)
-								.format(new Object[] { indent(tmp.label, tmp.level), tmp.qtyPerc, tmp.geoOriginsLabel, tmp.bioOriginsLabel }));
+								.format(new Object[] { indent(decorate(tmp.label), tmp.level), tmp.qtyPerc, decorate(tmp.geoOriginsLabel), decorate(tmp.bioOriginsLabel),null,null }));
+						
 					}
 				}
 
@@ -2007,7 +2077,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 							+ roundedDouble(diffValue);
 
 					tableContent.append(applyTotalRoundingMode(new MessageFormat(htmlTableRowFormat, getContentLocale())).format(
-							new Object[] { flatList.get(0).label, qtyPerc, flatList.get(0).geoOriginsLabel, flatList.get(0).bioOriginsLabel }));
+							new Object[] { decorate(flatList.get(0).label), qtyPerc, decorate(flatList.get(0).geoOriginsLabel), decorate(flatList.get(0).bioOriginsLabel) ,null,null}));
 
 				}
 				tableContent.append(ret);
@@ -2020,7 +2090,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 			tableContent.append("</table>");
 
-			return decorate(tableContent.toString());
+			return tableContent.toString().replaceAll(" null| \\(null\\)| \\(\\)| \\[null\\]", "").replace(">null<", "><");
 		} finally {
 			shouldBreakIngType = false;
 		}
@@ -3027,14 +3097,9 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 * matchFormule.
 	 * </p>
 	 *
-	 * @param declarationFilter
-	 *            a {@link fr.becpg.repo.product.data.ing.DeclarationFilter}
-	 *            object.
-	 * @param declarationFilterContext
-	 *            a
-	 *            {@link fr.becpg.repo.product.data.spel.DeclarationFilterContext}
-	 *            object.
 	 * @return a boolean.
+	 * @param formulaFilter a {@link fr.becpg.repo.product.formulation.labeling.AbstractFormulaFilterRule} object
+	 * @param formulaFilterContext a {@link fr.becpg.repo.product.data.spel.LabelingFormulaFilterContext} object
 	 */
 	public boolean matchFormule(AbstractFormulaFilterRule formulaFilter, LabelingFormulaFilterContext formulaFilterContext) {
 		if ((formulaFilter.getFormula() != null) && !formulaFilter.getFormula().isEmpty()) {

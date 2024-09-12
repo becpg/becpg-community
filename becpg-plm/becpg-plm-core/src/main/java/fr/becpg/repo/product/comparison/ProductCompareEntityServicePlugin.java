@@ -25,6 +25,7 @@ import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 public class ProductCompareEntityServicePlugin extends DefaultCompareEntityServicePlugin {
 
 	
+	/** {@inheritDoc} */
 	@Override
 	protected void multiLevelComparison(QName dataListType, String charactName, String pivotKey, NodeRef entity1NodeRef,
 			NodeRef entity2NodeRef, int nbEntities, int comparisonPosition, Map<String, CompareResultDataItem> comparisonMap,
@@ -73,7 +74,7 @@ public class ProductCompareEntityServicePlugin extends DefaultCompareEntityServi
 			}
 
 			if (qtyForProduct != null) {
-				if (entityType.equals(PLMModel.TYPE_FINISHEDPRODUCT)) {
+				if (entityType.equals(PLMModel.TYPE_FINISHEDPRODUCT) || entityType.equals(PLMModel.TYPE_LOGISTICUNIT)) {
 					extractProps(comparisonMap, dataListType, charactName, charactName, PLMModel.PROP_COMPOLIST_QTY_PERC_FOR_PRODUCT,
 							Double.toString(qtyForProduct / totalQty[position] * 100), nbEntities, comparisonPosition, swap);
 				} else if (entityType.equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT)) {
@@ -134,7 +135,7 @@ public class ProductCompareEntityServicePlugin extends DefaultCompareEntityServi
 			}
 
 			if (qtyForProduct != null) {
-				if (entityType.equals(PLMModel.TYPE_FINISHEDPRODUCT)) {
+				if (entityType.equals(PLMModel.TYPE_FINISHEDPRODUCT) || entityType.equals(PLMModel.TYPE_LOGISTICUNIT)) {
 					extractProps(comparisonMap, dataListType, charactName, charactName, PLMModel.PROP_PACKAGINGLIST_QTY_PERC_FOR_PRODUCT,
 							Double.toString(qtyForProduct / totalQty[position] * 100), nbEntities, comparisonPosition, swap);
 				} else if (entityType.equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT)) {
@@ -194,7 +195,7 @@ public class ProductCompareEntityServicePlugin extends DefaultCompareEntityServi
 				if (entityType.equals(PLMModel.TYPE_RESOURCEPRODUCT)) {
 					extractProps(comparisonMap, dataListType, charactName, charactName, MPMModel.PROP_PL_QTY_PERC_FOR_PRODUCT,
 							Double.toString(qtyForProduct / totalQty[position] * 100), nbEntities, comparisonPosition, swap);
-				} else if (entityType.equals(PLMModel.TYPE_FINISHEDPRODUCT)) {
+				} else if (entityType.equals(PLMModel.TYPE_FINISHEDPRODUCT) || entityType.equals(PLMModel.TYPE_LOGISTICUNIT)) {
 					extractProps(comparisonMap, dataListType, charactName, charactName, MPMModel.PROP_PL_QTY_PERC_FOR_PRODUCT,
 							Double.toString(qtyForProduct / totalQty[position] * 100), nbEntities, comparisonPosition, swap);
 				} else if (entityType.equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT)) {
@@ -251,14 +252,21 @@ public class ProductCompareEntityServicePlugin extends DefaultCompareEntityServi
 		return !value.equals(firstValue);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isComparableProperty(QName qName, boolean isDataList) {
 		return super.isComparableProperty(qName, isDataList);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean applyTo(QName entityType) {
-		return entityType.equals(PLMModel.TYPE_FINISHEDPRODUCT) || entityType.equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT);
+		return entityType.equals(PLMModel.TYPE_FINISHEDPRODUCT) || entityType.equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT) || entityType.equals(PLMModel.TYPE_LOGISTICUNIT);
+	}
+	
+	@Override
+	public boolean isDefault() {
+		return false;
 	}
 
 }

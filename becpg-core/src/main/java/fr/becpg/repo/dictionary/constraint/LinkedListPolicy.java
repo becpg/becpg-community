@@ -25,6 +25,11 @@ public class LinkedListPolicy extends AbstractBeCPGPolicy implements NodeService
 
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 	
+	/**
+	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 */
 	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}

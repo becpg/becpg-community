@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='UTF-8'?>
 <!--
   Copyright (C) 2010-2021 beCPG. 
    
@@ -15,10 +16,11 @@
    
   You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 -->
-<webscript>
-	<shortname>Olap Mapping</shortname>
-	<description>Olap Mapping service - retrieve olap Mapping</description>	
-	<url>/becpg/olap/mapping</url>
-	<format default="xml"></format>
-	<authentication>none</authentication>
-</webscript>
+<page>
+   <title>Product List</title>
+   <title-id>header.product-list.label</title-id>
+   <description>Product list</description>
+   <description-id>header.product-list.description</description-id>
+   <template-instance>product-list</template-instance>
+   <authentication>user</authentication>
+</page>

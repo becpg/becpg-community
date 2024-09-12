@@ -68,6 +68,7 @@ import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.spel.LabelingFormulaFilterContext;
 import fr.becpg.repo.product.formulation.FormulationHelper;
+import fr.becpg.repo.product.helper.IngListHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.system.SystemConfigurationService;
@@ -99,6 +100,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	private SystemConfigurationService systemConfigurationService;
 
+	/**
+	 * <p>Setter for the field <code>systemConfigurationService</code>.</p>
+	 *
+	 * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
+	 */
 	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
 		this.systemConfigurationService = systemConfigurationService;
 	}
@@ -949,6 +955,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 								if ((labelingRuleListDataItem.getIsManual() == null)
 										|| !Boolean.TRUE.equals(labelingRuleListDataItem.getIsManual())) {
 									labelingRuleListDataItem.update(modelLabelingRuleListDataItem);
+								} else {
+									labelingRuleListDataItem.setMlTitle(modelLabelingRuleListDataItem.getMlTitle());
 								}
 								break;
 							}
@@ -1455,7 +1463,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 		for (Composite<CompoListDataItem> composite : parentComposite.getChildren()) {
 
-			Double calculatedYield = currYield != null ? currYield : 100d;
+			Double calculatedYield = currYield != null  && currYield != 0d ? currYield : 100d;
 			CompoListDataItem compoListDataItem = composite.getData();
 			DeclarationType declarationType = getDeclarationType(compoListDataItem, null, labelingFormulaContext);
 
@@ -1533,7 +1541,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 				//Water loss
 				if ((qty != null) && (calculatedYield != null) && (calculatedYield.doubleValue() != 100d)
-						&& nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_WATER)) {
+						&& (nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_WATER)  || nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_EVAPORABLE))) {
 
 					if (logger.isTraceEnabled()) {
 						logger.trace("Detected evaporated components (" + productData.getName() + " - " + productNodeRef + "), rate: "
@@ -1701,7 +1709,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 						if (!isMultiLevel && (productData.getIngList() != null) && !productData.getIngList().isEmpty()) {
 
-							visitIngList(compositeLabeling, productData, CompositeHelper.getHierarchicalCompoList(productData.getIngList()), null,
+							visitIngList(compositeLabeling, productData, CompositeHelper.getHierarchicalCompoList(IngListHelper.extractParentList(productData.getIngList(), associationService, alfrescoRepository)), null,
 									qty, volume, qtyWithYield, volumeWithYield, labelingFormulaContext, compoListDataItem, errors);
 						}
 
@@ -1738,7 +1746,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 							if (!isLocalSemiFinished) {
 
-								recurYield = productData.getYield() != null ? BigDecimal.valueOf(productData.getYield()) : BigDecimal.valueOf(100d);
+								recurYield = productData.getYield() != null  && productData.getYield()!=0d ? BigDecimal.valueOf(productData.getYield()) : BigDecimal.valueOf(100d);
 
 								if ((calculatedYield != null) && (calculatedYield != 100d)) {
 									recurYield = recurYield.multiply(BigDecimal.valueOf(calculatedYield), LabelingFormulaContext.PRECISION)
@@ -1918,8 +1926,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				EvaporatedDataItem evaporatedDataItem = fullEvaporationItems.iterator().next();
 				CompositeLabeling productLabelItem = parent.get(evaporatedDataItem.getProductNodeRef());
 				if (productLabelItem != null) {
-					productLabelItem.setQtyWithYield(productLabelItem.getQty() - parent.getEvaporatedQty());
-					productLabelItem.setVolumeWithYield(productLabelItem.getVolume() - parent.getEvaporatedVolume());
+					productLabelItem.setQtyWithYield(productLabelItem.getQtyWithYield() - parent.getEvaporatedQty());
+					productLabelItem.setVolumeWithYield(productLabelItem.getVolumeWithYield() - parent.getEvaporatedVolume());
 				}
 			}
 		}
@@ -1942,11 +1950,13 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 								: evaporatingQty.get() * (rate / totalRate); // Consider total rate for remaining items
 						Double evaporatedQty = Math.min(maxEvapQty, proportionalEvap);
 
+						
+						productLabelItem.setQtyWithYield(productLabelItem.getQtyWithYield() - evaporatedQty);
+						
 						if (logger.isDebugEnabled()) {
-							logger.debug("Apply evaporation qty " + evaporatedQty + " on " + productLabelItem.getName());
+							logger.debug("Apply evaporation qty " + evaporatedQty + " on " + productLabelItem.getName()+" after "+productLabelItem.getQtyWithYield());
 						}
 
-						productLabelItem.setQtyWithYield(productLabelItem.getQtyWithYield() - evaporatedQty);
 
 						evaporatingQty.set(evaporatingQty.get() - evaporatedQty);
 					}
@@ -1959,7 +1969,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						Double evaporatedVol = Math.min(maxEvapQty, proportionalEvap);
 
 						if (logger.isDebugEnabled()) {
-							logger.debug("Apply evaporation volume " + evaporatedVol + " on " + productLabelItem.getName());
+							logger.debug("Apply evaporation volume " + evaporatedVol + " on " + productLabelItem.getName()+" after "+productLabelItem.getVolumeWithYield());
 						}
 
 						productLabelItem.setVolumeWithYield(productLabelItem.getVolumeWithYield() - evaporatedVol);
@@ -2111,7 +2121,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			CompoListDataItem compoListDataItem, Map<String, ReqCtrlListDataItem> errors) {
 
 		boolean applyThreshold = false;
-		if (nodeService.hasAspect(product.getNodeRef(), PLMModel.ASPECT_WATER)) {
+		if (nodeService.hasAspect(product.getNodeRef(), PLMModel.ASPECT_WATER)  || nodeService.hasAspect(product.getNodeRef(), PLMModel.ASPECT_EVAPORABLE)) {
 			applyThreshold = true;
 		}
 
@@ -2180,7 +2190,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							logger.trace("- Add new ing " + getName(ingLabelItem) + " to current Label " + getName(parent));
 						}
 
-						if (nodeService.hasAspect(ingNodeRef, PLMModel.ASPECT_WATER)) {
+						if (nodeService.hasAspect(ingNodeRef, PLMModel.ASPECT_WATER) || nodeService.hasAspect(ingNodeRef, PLMModel.ASPECT_EVAPORABLE)) {
 
 							if (logger.isTraceEnabled()) {
 								logger.trace("Detected water lost");

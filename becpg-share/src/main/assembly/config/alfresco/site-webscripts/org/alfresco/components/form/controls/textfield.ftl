@@ -28,7 +28,7 @@
 	         </#if>
          </span>
          <#if field.control.params.activateLinks?? && field.control.params.activateLinks == "true">
-            <#assign fieldValue=field.value?html?replace("((http|ftp|https):\\/\\/[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.,@?\\^=%&:\\/~\\+#]*[\\w\\-\\@?\\^=%&\\/~\\+#])?)", "<a href=\"$1\" target=\"_blank\">$1</a>", "r")>
+            <#assign fieldValue=field.value?html?replace("&amp;","&")?replace("((http|ftp|https):\\/\\/[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.,@?\\^=%&:\\/~\\+#]*[\\w\\-\\@?\\^=%&\\/~\\+#])?)", "<a href=\"$1\" target=\"_blank\">$1</a>", "r")>
          <#else>
             <#if field.value?is_number>
                <#assign fieldValue=field.value?c>

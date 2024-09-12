@@ -1,4 +1,4 @@
-FROM ${docker.becpg.url}/becpg-base-core:${docker.becpg.tag} as becpg-base-test-core
+FROM ${docker.becpg.url}/becpg-base-core:${docker.becpg.tag} AS becpg-base-test-core
 
 ENV TOMCAT_DIR=/usr/local/tomcat
 
@@ -29,7 +29,7 @@ FROM becpg-base-test-core
 
 
 ENV JAVA_HOME=/usr/java/default
-ENV PATH $JAVA_HOME/bin:$PATH
+ENV PATH=$JAVA_HOME/bin:$PATH
 
 
 #Debuging 

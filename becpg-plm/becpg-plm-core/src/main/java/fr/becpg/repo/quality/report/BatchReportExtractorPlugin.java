@@ -47,6 +47,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @Service
 public class BatchReportExtractorPlugin extends ProductReportExtractorPlugin {
 
+	/** Constant <code>DATALIST_SPECIFIC_EXTRACTOR</code> */
 	protected static final List<QName> DATALIST_SPECIFIC_EXTRACTOR = Arrays.asList(PLMModel.TYPE_COMPOLIST, PLMModel.TYPE_REQCTRLLIST);
 
 	/**
