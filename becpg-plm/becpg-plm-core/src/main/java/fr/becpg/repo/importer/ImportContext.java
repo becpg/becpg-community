@@ -81,18 +81,38 @@ public class ImportContext {
 
 	private boolean isSiteDocLib = false;
 
+	/**
+	 * <p>Getter for the field <code>nodeRef</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public NodeRef getNodeRef() {
 		return nodeRef;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>nodeRef</code>.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public void setNodeRef(NodeRef nodeRef) {
 		this.nodeRef = nodeRef;
 	}
 	
+	/**
+	 * <p>getErrorLogs.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	public String getErrorLogs() {
 		return errorsLogs;
 	}
 	
+	/**
+	 * <p>setErrorLogs.</p>
+	 *
+	 * @param unhandledLog a {@link java.lang.String} object
+	 */
 	public void setErrorLogs(String unhandledLog) {
 		this.errorsLogs = unhandledLog;
 	}

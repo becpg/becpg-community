@@ -147,6 +147,9 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 			cal.add(Calendar.DAY_OF_YEAR, -1);
 			
 			if (initialList.size() < maxProcessedNodes) {
+				fillInitialListForType(QName.createQName(BeCPGModel.BECPG_URI, "logisticUnit"));
+			}
+			if (initialList.size() < maxProcessedNodes) {
 				fillInitialListForType(QName.createQName(BeCPGModel.BECPG_URI, "finishedProduct"));
 			}
 			if (initialList.size() < maxProcessedNodes) {

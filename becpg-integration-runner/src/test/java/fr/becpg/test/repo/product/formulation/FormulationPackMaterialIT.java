@@ -62,6 +62,7 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 	protected NodeRef SF1NodeRef;
 	protected NodeRef rawMaterial1NodeRef;
 	protected NodeRef rawMaterial2NodeRef;
+	protected NodeRef rawMaterial3NodeRef;
 	protected NodeRef packaging1NodeRef;
 	protected NodeRef packaging2NodeRef;
 	protected NodeRef packaging3NodeRef;
@@ -70,6 +71,7 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 	protected NodeRef packMaterial3NodeRef;
 	protected NodeRef packMaterial4NodeRef;
 	protected NodeRef packMaterial5NodeRef;
+	protected NodeRef packMaterial6NodeRef;
 
 	@Override
 	public void setUp() throws Exception {
@@ -93,21 +95,33 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 		});
 	}
 
-	private FinishedProductData createFinishedProduct() {
+	protected FinishedProductData createFinishedProduct() {
 		return FinishedProductData.build().withName("Produit fini 1").withUnit(ProductUnit.kg).withQty(1d).withDensity(1d).withCompoList(List.of(
 				CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare).withProduct(PF1NodeRef),
+				// Allu 20 / Carton 40
 				CompoListDataItem.build().withQtyUsed(500d).withUnit(ProductUnit.g).withDeclarationType(DeclarationType.Declare).withProduct(SF1NodeRef),
+				// Fer 60 / Plastique 80
 				CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.lb).withDeclarationType(DeclarationType.Declare)
 						.withProduct(rawMaterial1NodeRef),
+				// Verre 56.699
 				CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.oz).withDeclarationType(DeclarationType.Declare)
-						.withProduct(rawMaterial2NodeRef)))
+						.withProduct(rawMaterial2NodeRef),
+				// no material
+				CompoListDataItem.build().withQtyUsed(50d).withUnit(ProductUnit.g).withDeclarationType(DeclarationType.Declare)
+				.withProduct(rawMaterial3NodeRef))
+				// Papier 50 % 30 * 12 = 20g
+				)
 				.withPackagingList(List.of(
 						PackagingListDataItem.build().withQty(3d).withUnit(ProductUnit.g).withPkgLevel(PackagingLevel.Primary)
 								.withProduct(packaging1NodeRef),
+								// Allu 20 + 3g = 23
 						PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.oz).withPkgLevel(PackagingLevel.Primary)
 								.withProduct(packaging2NodeRef),
+								// Carton 40 + 28.349523125g = 68.35
 						PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.lb).withPkgLevel(PackagingLevel.Primary)
-								.withProduct(packaging3NodeRef)));
+								.withProduct(packaging3NodeRef))
+							// Fer 60 + 226,796 = 286.796 / Plastique = 80 + 226,796 = 306.796);
+						);
 	}
 
 	private void verifyFormulatedPackMaterial(NodeRef finishedProductNodeRef) {
@@ -137,8 +151,12 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 				assertEquals(df.format(56.699d), df.format(packMaterialListDataItem.getPmlWeight()));
 				checks++;
 			}
+			if (packMaterialListDataItem.getPmlMaterial().equals(packMaterial6NodeRef)) {
+				assertEquals(df.format(20d), df.format(packMaterialListDataItem.getPmlWeight()));
+				checks++;
+			}
 		}
-		assertEquals("Verify checks done", 5, checks);
+		assertEquals("Verify checks done", 6, checks);
 	}
 
 	private void initPart() {
@@ -157,6 +175,7 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 		packMaterial3NodeRef = createPackMaterialNode("Fer");
 		packMaterial4NodeRef = createPackMaterialNode("Plastique");
 		packMaterial5NodeRef = createPackMaterialNode("Verre");
+		packMaterial6NodeRef = createPackMaterialNode("Papier");
 	}
 
 	private NodeRef createPackMaterialNode(String materialName) {
@@ -201,6 +220,14 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 		RawMaterialData rawMaterial2 = RawMaterialData.build().withName("Raw material 2");
 
 		rawMaterial2NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial2).getNodeRef();
+		
+		/*-- Raw material 2 (no packMaterial list) --*/
+		RawMaterialData rawMaterial3 = RawMaterialData.build().withName("Raw material 3").withUnit(ProductUnit.P).withNetWeight(0.03);
+		
+		rawMaterial3.setPackMaterialList(
+				List.of(PackMaterialListDataItem.build().withMaterial(packMaterial6NodeRef).withWeight(12d).withPkgLevel(PackagingLevel.Primary)));
+
+		rawMaterial3NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial3).getNodeRef();
 
 	}
 

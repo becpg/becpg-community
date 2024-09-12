@@ -56,7 +56,9 @@ import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * <p>SecurityFormulationHandler class.</p>
+ *
  * @author Evelyne Ing
+ * @version $Id: $Id
  */
 public class SecurityFormulationHandler extends FormulationBaseHandler<ProductData> {
 
@@ -83,58 +85,128 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 	
 	private SystemConfigurationService systemConfigurationService;
 	
+	/**
+	 * <p>Setter for the field <code>systemConfigurationService</code>.</p>
+	 *
+	 * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
+	 */
 	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
 		this.systemConfigurationService = systemConfigurationService;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>fileFolderService</code>.</p>
+	 *
+	 * @param fileFolderService a {@link org.alfresco.service.cmr.model.FileFolderService} object
+	 */
 	public void setFileFolderService(FileFolderService fileFolderService) {
 		this.fileFolderService = fileFolderService;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>associationService</code>.</p>
+	 *
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object
+	 */
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
 
+	/**
+	 * <p>Getter for the field <code>entityListDAO</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.entity.EntityListDAO} object
+	 */
 	public EntityListDAO getEntityListDAO() {
 		return entityListDAO;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityListDAO</code>.</p>
+	 *
+	 * @param entityListDAO a {@link fr.becpg.repo.entity.EntityListDAO} object
+	 */
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
 	}
 
+	/**
+	 * <p>Getter for the field <code>authorityDAO</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.repo.security.authority.AuthorityDAO} object
+	 */
 	public AuthorityDAO getAuthorityDAO() {
 		return authorityDAO;
 	}
 
+	/**
+	 * <p>Setter for the field <code>authorityDAO</code>.</p>
+	 *
+	 * @param authorityDAO a {@link org.alfresco.repo.security.authority.AuthorityDAO} object
+	 */
 	public void setAuthorityDAO(AuthorityDAO authorityDAO) {
 		this.authorityDAO = authorityDAO;
 	}
 
+	/**
+	 * <p>Getter for the field <code>securityService</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.security.SecurityService} object
+	 */
 	public SecurityService getSecurityService() {
 		return securityService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>securityService</code>.</p>
+	 *
+	 * @param securityService a {@link fr.becpg.repo.security.SecurityService} object
+	 */
 	public void setSecurityService(SecurityService securityService) {
 		this.securityService = securityService;
 	}
 
+	/**
+	 * <p>Getter for the field <code>nodeService</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 */
 	public NodeService getNodeService() {
 		return nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Getter for the field <code>permissionService</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.security.PermissionService} object
+	 */
 	public PermissionService getPermissionService() {
 		return permissionService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>permissionService</code>.</p>
+	 *
+	 * @param permissionService a {@link org.alfresco.service.cmr.security.PermissionService} object
+	 */
 	public void setPermissionService(PermissionService permissionService) {
 		this.permissionService = permissionService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>siteService</code>.</p>
+	 *
+	 * @param siteService a {@link org.alfresco.service.cmr.site.SiteService} object
+	 */
 	public void setSiteService(SiteService siteService) {
 		this.siteService = siteService;
 	}

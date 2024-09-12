@@ -92,6 +92,24 @@ define(["dojo/_base/declare",
       },
       
       
+      createFloatingLicensesExceededWarningBar : function alfresco_header_FloatingLicensesExceededWarningBar__createBar()
+      {
+    	  this.messageBox.innerHTML = this.message("floatingLicensesExceeded.warning.bar.message");
+    	  this.stopRecording.style.display = "none";
+    	  domStyle.set(this.domNode, "display", "block");
+    	  domClass.add(this.warningsNode, "licence-warning");
+      },
+      
+      
+      createUnauthorizedWarningBar : function alfresco_header_UnauthorizedWarningBar__createBar()
+      {
+    	  this.messageBox.innerHTML = this.message("unauthorized.warning.bar.message");
+    	  this.stopRecording.style.display = "none";
+    	  domStyle.set(this.domNode, "display", "block");
+    	  domClass.add(this.warningsNode, "licence-warning");
+      },
+      
+      
       /**
        * @instance
        */
@@ -106,6 +124,11 @@ define(["dojo/_base/declare",
 
 			if(this.warningType == "UnauthorizedWarning"){
     	  		this.createUnauthorizedWarningBar();
+    	  		return;
+    	  	}
+
+			if(this.warningType == "FloatingLicensesExceeded"){
+    	  		this.createFloatingLicensesExceededWarningBar();
     	  		return;
     	  	}
         

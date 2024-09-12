@@ -20,6 +20,12 @@ import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
+/**
+ * <p>Abstract AbstractScorableEntity class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public abstract class AbstractScorableEntity extends BeCPGDataObject implements ScorableEntity {
 
 	/**
@@ -30,9 +36,9 @@ public abstract class AbstractScorableEntity extends BeCPGDataObject implements 
 	private List<ReqCtrlListDataItem> reqCtrlList;
 
 	/**
-	 * <p>Getter for the field <code>reqCtrlList</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @return a {@link java.util.List} object.
+	 * <p>Getter for the field <code>reqCtrlList</code>.</p>
 	 */
 	@Override
 	@DataList
@@ -52,21 +58,25 @@ public abstract class AbstractScorableEntity extends BeCPGDataObject implements 
 
 	// Formula helpers
 
+	/** {@inheritDoc} */
 	@Override
 	public void addWarning(String msg) {
 		addMessage(new MLText(msg), RequirementType.Tolerated);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void addError(String msg) {
 		addMessage(new MLText(msg), RequirementType.Forbidden);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void addError(MLText msg) {
 		addMessage(msg, RequirementType.Forbidden);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void addInfo(String msg) {
 		addMessage(new MLText(msg), RequirementType.Info);
@@ -77,18 +87,21 @@ public abstract class AbstractScorableEntity extends BeCPGDataObject implements 
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void addError(MLText msg, String formulationChainId, List<NodeRef> sources) {
 
 		reqCtrlList.add(ReqCtrlListDataItem.forbidden().withMessage(msg)
-				.ofDataType(RequirementDataType.Formulation).withFormulationChainId(formulationChainId));
+				.ofDataType(RequirementDataType.Formulation).withFormulationChainId(formulationChainId).withSources(sources));
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean merge() {
 		return merge(null);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean merge(List<String> disabledChainIds) {
 
@@ -211,6 +224,7 @@ public abstract class AbstractScorableEntity extends BeCPGDataObject implements 
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -219,6 +233,7 @@ public abstract class AbstractScorableEntity extends BeCPGDataObject implements 
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

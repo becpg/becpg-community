@@ -228,7 +228,7 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 
 		StopWatch watch = null;
 
-		boolean mlAware = MLPropertyInterceptor.isMLAware();
+		boolean mlAware = MLPropertyInterceptor.setMLAware(true);
 		try {
 
 			if (logger.isDebugEnabled()) {
@@ -236,7 +236,6 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 				watch.start();
 			}
 
-			MLPropertyInterceptor.setMLAware(true);
 			return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 				// Only for transaction do not reenable it

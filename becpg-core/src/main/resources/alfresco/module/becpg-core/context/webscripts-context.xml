@@ -119,6 +119,7 @@
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter"/>
 		<property name="lockService" ref="lockService" />
         <property name="reportAssociationDecorator" ref="reportAssociationDecorator"/>
+        <property name="becpgLicenseManager" ref="becpgLicenseManager"/>
 	</bean>
 
 	<bean id="webscript.fr.becpg.entity.entityDictionary.get" class="fr.becpg.repo.web.scripts.entity.EntityDictionaryWebScript" parent="webscript">
@@ -137,6 +138,7 @@
 		<property name="namespaceService" ref="NamespaceService" />
 		<property name="lockService" ref="lockService" />
 		<property name="systemConfigurationService" ref="systemConfigurationService" />
+		<property name="becpgLicenseManager" ref="becpgLicenseManager" />
 	</bean>
 
 	<bean id="webscript.fr.becpg.entity.datalist.sort.post" class="fr.becpg.repo.web.scripts.entity.datalist.SortDataListWebScript" parent="webscript">
@@ -154,6 +156,8 @@
 	
 	<bean id="webscript.fr.becpg.entity.datalist.copy.post" class="fr.becpg.repo.web.scripts.entity.datalist.CopyDataListWebScript" parent="webscript">
 		<property name="entityListDAO" ref="entityListDAO" />
+		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
+		<property name="entityActivityService" ref="entityActivityService" />
 	</bean>
 	
 	
@@ -255,6 +259,7 @@
 		<property name="mimetypeService" ref="MimetypeService" />
 		<property name="permissionService" ref="permissionService" />
 		<property name="remoteRateLimiter" ref="remoteRateLimiter" />
+		<property name="systemConfigurationService" ref="systemConfigurationService" />
 	</bean>
 
 

@@ -198,6 +198,8 @@
 				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_finishedProduct.title")}';
 				   				case 'bcpg:semiFinishedProduct' :
 				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_semiFinishedProduct.title")}';
+			    				case 'bcpg:logisticUnit' :
+			    					return  '${msg("bcpg_bcpgmodel.type.bcpg_logisticUnit.title")}';
 				    			case 'bcpg:packagingMaterial' :
 				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_packagingMaterial.title")}';
 				   				case 'bcpg:packagingKit' :
@@ -318,7 +320,7 @@
 		
 	</Cube>
 
-	<Cube name="requirements" caption="${msg("jsolap.requirements.title")}" cache="true" enabled="true" defaultMeasure="${msg("jsolap.requirementsNumber.title")}">
+	<Cube name="requirements" caption="${msg("jsolap.requirements.title")}" cache="true" enabled="true" defaultMeasure="requirementsNumber">
 		
 			<View name="requirements" alias="requirements">
 				<SQL dialect="generic">
@@ -460,6 +462,8 @@
 				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_finishedProduct.title")}';
 				   				case 'bcpg:semiFinishedProduct' :
 				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_semiFinishedProduct.title")}';
+			    				case 'bcpg:logisticUnit' :
+			    					return  '${msg("bcpg_bcpgmodel.type.bcpg_logisticUnit.title")}';
 				    			case 'bcpg:packagingMaterial' :
 				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_packagingMaterial.title")}';
 				   				case 'bcpg:packagingKit' :
@@ -499,7 +503,7 @@
     </Cube>
 
 
-	<Cube name="incidents" caption="${msg("jsolap.incidents.title")}" cache="true" enabled="true" defaultMeasure="${msg("jsolap.incidentsNumber.title")}">
+	<Cube name="incidents" caption="${msg("jsolap.incidents.title")}" cache="true" enabled="true" defaultMeasure="noderef">
 		
 		<View name="incidents" alias="incidents">
 				<SQL dialect="generic">
@@ -657,7 +661,7 @@
 		<Measure name="ncCost" caption="${msg("jsolap.nonConformityCost.title")}" column="ncCost" datatype="Numeric" aggregator="sum" visible="true"  />
 	</Cube>
 	
-	<Cube name="projectsSteps" caption="${msg("jsolap.projectsTasks.title")}" cache="true" enabled="true" defaultMeasure="${msg("jsolap.projectsTasks.title")}">
+	<Cube name="projectsSteps" caption="${msg("jsolap.projectsTasks.title")}" cache="true" enabled="true">
 			
 				<View name="taskList" alias="taskList">
 					<SQL dialect="generic">
@@ -844,26 +848,31 @@
 	</Cube>
 	
 	
-	<Cube name="projectsEvaluation" caption="${msg("jsolap.projectsEvaluation.title")}" cache="true" enabled="true" defaultMeasure="${msg("jsolap.note.title")}">
+	<Cube name="evaluation" caption="${msg("jsolap.evaluation.title")}" cache="true" enabled="true" defaultMeasure="slScore">
 
 				<View name="scoreList" alias="scoreList">
 					<SQL dialect="generic">
-						select  
-							a.entityNodeRef,
+						select
+							a.entityNodeRef as scoreNodeRef,
 							a.doc->>"$.pjt_slCriterion" as slCriterion,
 							a.doc->>"$.pjt_slWeight" as slWeight,
 							a.doc->>"$.pjt_slScore" as slScore,
-							b.nodeRef as projectNodeRef,
-							b.doc->>"$.cm_name" as projectName,
-							b.doc->>"$.pjt_projectHierarchy1[0]" as	projectHierarchy1,
-							b.doc->>"$.pjt_projectHierarchy2[0]" as	projectHierarchy2,
-							b.doc->>"$.pjt_projectManager[0]" as projectManager,
-							b.doc->>"$.pjt_projectState" as projectState,
-							b.doc->>"$.metadata_siteId" as siteId,
-							b.doc->>"$.metadata_siteName" as siteName	
+							COALESCE(p.nodeRef, pjt.nodeRef, c.nodeRef, s.nodeRef) as entityNodeRef,
+							COALESCE(p.doc->>"$.cm_name", pjt.doc->>"$.cm_name", c.doc->>"$.cm_name", s.doc->>"$.cm_name") as entityName,
+							COALESCE(p.doc->>"$.bcpg_productHierarchy1[0]", pjt.doc->>"$.pjt_projectHierarchy1[0]", c.doc->>"$.bcpg_clientHierarchy1[0]", s.doc->>"$.bcpg_supplierHierarchy1[0]") as entityHierarchy1,
+							COALESCE(p.doc->>"$.bcpg_productHierarchy2[0]", pjt.doc->>"$.pjt_projectHierarchy2[0]", c.doc->>"$.bcpg_clientHierarchy2[0]", s.doc->>"$.bcpg_supplierHierarchy2[0]") as entityHierarchy2,
+							COALESCE(p.doc->>"$.pjt_projectManager[0]", pjt.doc->>"$.pjt_projectManager[0]", c.doc->>"$.pjt_projectManager[0]", s.doc->>"$.pjt_projectManager[0]") as projectManager,
+							COALESCE(p.doc->>"$.bcpg_productState", pjt.doc->>"$.pjt_projectState", c.doc->>"$.bcpg_clientState", s.doc->>"$.bcpg_supplierState") as entityState,
+							COALESCE(p.doc->>"$.metadata_siteId", pjt.doc->>"$.metadata_siteId", c.doc->>"$.metadata_siteId", s.doc->>"$.metadata_siteId") as siteId,
+							COALESCE(p.doc->>"$.metadata_siteName", pjt.doc->>"$.metadata_siteName", c.doc->>"$.metadata_siteName", s.doc->>"$.metadata_siteName") as siteName,
+							COALESCE(p.doc->>"$.type", pjt.doc->>"$.type", c.doc->>"$.type", s.doc->>"$.type") as entityType,
+							COALESCE(p.doc->>"$.pjt_projectScore", pjt.doc->>"$.pjt_projectScore", c.doc->>"$.pjt_projectScore", s.doc->>"$.pjt_projectScore") as projectScore
 						from
-							scoreList a inner join pjt_project b on a.entityNodeRef = b.nodeRef 
-
+							scoreList a
+							LEFT JOIN bcpg_product p ON a.entityNodeRef = p.nodeRef
+							LEFT JOIN pjt_project pjt ON a.entityNodeRef = pjt.nodeRef
+							LEFT JOIN bcpg_client c ON a.entityNodeRef = c.nodeRef
+							LEFT JOIN bcpg_supplier s ON a.entityNodeRef = s.nodeRef
 					</SQL>
 				</View>
 		
@@ -885,17 +894,17 @@
 			</Hierarchy>
 		</Dimension>
 		
-		<Dimension name="project" caption="${msg("jsolap.project.title")}">
-			<Hierarchy name="project_dim" hasAll="true" allMemberCaption="${msg("jsolap.project.caption")}">
-				<Level name="entity_noderef" caption="${msg("jsolap.project.title")}" column="projectNodeRef" nameColumn="projectName" type="String" highCardinality="true"  />
-				<Level name="projectHierarchy1" caption="${msg("jsolap.projectFamily.title")}" column="projectHierarchy1" type="String"   />
-				<Level name="projectHierarchy2" caption="${msg("jsolap.projectSubFamily.title")}" column="projectHierarchy2" type="String"   />
+		<Dimension name="entity" caption="${msg("jsolap.entity.title")}">
+			<Hierarchy name="entity_dim" hasAll="true" allMemberCaption="${msg("jsolap.entity.caption")}">
+				<Level name="entity_noderef" caption="${msg("jsolap.entity.title")}" column="entityNodeRef" nameColumn="entityName" type="String" highCardinality="true"  />
+				<Level name="entityHierarchy1" caption="${msg("jsolap.entityFamily.title")}" column="entityHierarchy1" type="String"   />
+				<Level name="entityHierarchy2" caption="${msg("jsolap.entitySubFamily.title")}" column="entityHierarchy2" type="String"   />
 				</Hierarchy>
 		</Dimension>
 		
-		<Dimension  name="state" caption="${msg("jsolap.projectState.title")}" >
+		<Dimension  name="state" caption="${msg("jsolap.entityState.title")}" >
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.state.caption")}" >
-				<Level approxRowCount="5" name="projectState" caption="${msg("jsolap.projectState.title")}" column="projectState" type="String">
+				<Level approxRowCount="5" name="entityState" caption="${msg("jsolap.entityState.title")}" column="entityState" type="String">
 				  <MemberFormatter>
 						<Script language="JavaScript">
 							switch (member.getName()) {
@@ -917,11 +926,47 @@
 				</Level>
 			</Hierarchy>
 		</Dimension>
+		
+		<Dimension name="entityType" caption="${msg("jsolap.entityType.title")}">
+			<Hierarchy name="entityType" caption="${msg("jsolap.entityType.title")}" hasAll="true" allMemberCaption="${msg("jsolap.entityType.caption")}">
+				<Level approxRowCount="10" name="entity_type" caption="${msg("jsolap.entityType.title")}" column="entityType" nameColumn="entityType" type="String"   >
+					<MemberFormatter>
+						<Script language="JavaScript">
+							switch (member.getName()) {
+				   				case 'bcpg:rawMaterial' :
+				      				return  '${msg("bcpg_bcpgmodel.type.bcpg_rawMaterial.title")}';
+				   				case 'bcpg:finishedProduct' :
+				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_finishedProduct.title")}';
+				   				case 'bcpg:semiFinishedProduct' :
+				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_semiFinishedProduct.title")}';
+				    			case 'bcpg:packagingMaterial' :
+				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_packagingMaterial.title")}';
+				   				case 'bcpg:packagingKit' :
+				    				return  '${msg("jsolap.packagingKit.title")}';
+				   				case 'bcpg:localSemiFinishedProduct' :
+				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_localSemiFinishedProduct.title")}';
+				    			case 'bcpg:resourceProduct' :
+				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_resourceProduct.title")}';
+			    				case 'bcpg:client' :
+			    					return  '${msg("bcpg_bcpgmodel.type.bcpg_client.title")}';
+		    					case 'bcpg:supplier' :
+		    						return  '${msg("bcpg_bcpgmodel.type.bcpg_supplier.title")}';
+	    						case 'pjt:project' :
+	    							return  '${msg("pjt_pjtmodel.type.pjt_project.title")}';
+							   default:
+								    return member.getName();
+								}
+						</Script>
+					</MemberFormatter>
+				</Level>
+			</Hierarchy>
+		</Dimension>
 				
 		
-		<DimensionUsage name="tags" caption="${msg("jsolap.tags.title")}" source="tagsDimension" foreignKey="entityNodeRef" />
+		<DimensionUsage name="tags" caption="${msg("jsolap.tags.title")}" source="tagsDimension" foreignKey="scoreNodeRef" />
 		
 		
+		<Measure name="averageNote" caption="${msg("jsolap.averageNote.title")}" column="projectScore" datatype="Numeric" aggregator="avg" visible="true" />
 		<Measure name="slWeight" caption="${msg("jsolap.weighting.title")}" column="slWeight" datatype="Numeric" aggregator="avg" visible="true" />
 		<Measure name="slScore" caption="${msg("jsolap.note.title")}" column="slScore" datatype="Numeric" aggregator="avg" visible="true"  />
 		
@@ -930,7 +975,7 @@
 		</CalculatedMember> 
 	</Cube>
 
-	<Cube name="projects" caption="${msg("jsolap.projects.title")}" cache="true" enabled="true" defaultMeasure="${msg("jsolap.projectsNumberDistinct.title")}">
+	<Cube name="projects" caption="${msg("jsolap.projects.title")}" cache="true" enabled="true" defaultMeasure="projectsNumber">
 			<View name="projects" alias="projects">
 				<SQL dialect="generic">
 					select
@@ -1165,7 +1210,9 @@
 							b.doc->>"$.type" as productType,
 							b.doc->>"$.cm_versionLabel" as productVersionLabel,
 							b.doc->>"$.metadata_siteId" as siteId,
-							b.doc->>"$.metadata_siteName" as siteName	
+							b.doc->>"$.metadata_siteName" as siteName,
+							b.doc->>"$.bcpg_nutrientProfilingScore" as nutrientProfilingScore,
+							b.doc->>"$.bcpg_nutrientProfilingClass" as nutrientProfilingClass
 						from
 							nutList a inner join bcpg_product b on a.entityNodeRef = b.nodeRef 
 
@@ -1236,6 +1283,8 @@
 				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_finishedProduct.title")}';
 				   				case 'bcpg:semiFinishedProduct' :
 				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_semiFinishedProduct.title")}';
+			    				case 'bcpg:logisticUnit' :
+			    					return  '${msg("bcpg_bcpgmodel.type.bcpg_logisticUnit.title")}';
 				    			case 'bcpg:packagingMaterial' :
 				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_packagingMaterial.title")}';
 				   				case 'bcpg:packagingKit' :
@@ -1261,9 +1310,14 @@
 			</Hierarchy>	
 		</Dimension>
 		
-	
-		
 		<DimensionUsage name="tags" caption="${msg("jsolap.tags.title")}" source="tagsDimension" foreignKey="nodeRef" />
+		
+		<Dimension name="nutritionScale" caption="${msg("jsolap.nutrientScore.title")}">
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.nutrientScore.caption")}" >
+				<Level name="nutrientProfilingScore" caption="${msg("jsolap.nutrientScore.title")}" column="nutrientProfilingScore"  type="String"    />
+				<Level name="nutrientProfilingClass" caption="${msg("jsolap.nutritionClass.title")}" column="nutrientProfilingClass"  type="String"    />
+			</Hierarchy>
+		</Dimension>
 		
 
 		<Measure name="nutValue" caption="${msg("jsolap.nutritionalValues.title")}" column="nutValue" datatype="Numeric" aggregator="avg" visible="true"></Measure>	
@@ -1272,9 +1326,142 @@
 		<Measure name="nutFormulatedValue" caption="${msg("jsolap.nutritionalFormulatedValues.title")}" column="nutFormulatedValue" datatype="Numeric" aggregator="avg" visible="true"></Measure>	
 		<Measure name="nutListValuePerServing" caption="${msg("jsolap.nutListValuePerServing.title")}" column="nutListValuePerServing" datatype="Numeric" aggregator="avg" visible="true"></Measure>
 		<Measure name="nutListGDAPerc" caption="${msg("jsolap.nutListGDAPerc.title")}" column="nutListGDAPerc" datatype="Numeric" aggregator="avg" visible="true"></Measure>
-	</Cube>				
+	</Cube>
 	
-	<Cube name="products" caption="${msg("jsolap.products.title")}" cache="true" enabled="true" defaultMeasure="${msg("jsolap.productsNumber.title")}">
+	<Cube name="lca" caption="${msg("jsolap.lca.title")}" cache="true" enabled="true">
+	
+		<View name="lcaList" alias="lcaList">
+			<SQL dialect="generic">
+				select
+					a.entityNodeRef,
+					a.doc->>"$.bcpg_lcaListLca[0]" as name,
+					a.doc->>"$.bcpg_lcaListLca_bcpg_nodeRef[0]" as nodeRef,
+					a.doc->>"$.bcpg_lcaListValue" as lcaValue,
+					a.doc->>"$.bcpg_lcaListPreviousValue" as lcaPreviousValue,
+					a.doc->>"$.bcpg_lcaListFutureValue" as lcaFutureValue,
+					b.nodeRef as productNodeRef,
+					b.doc->>"$.cm_name" as productName,
+					b.doc->>"$.bcpg_productHierarchy1[0]" as productHierarchy1,
+					b.doc->>"$.bcpg_productHierarchy2[0]" as productHierarchy2,
+					b.doc->>"$.bcpg_code" as productCode,
+					b.doc->>"$.bcpg_erpCode" as productErpCode,
+					b.doc->>"$.bcpg_eanCode" as productEanCode,
+					b.doc->>"$.bcpg_legalName" as productLegalName,
+					b.doc->>"$.bcpg_productState" as productState,
+					b.doc->>"$.type" as productType,
+					b.doc->>"$.cm_versionLabel" as productVersionLabel,
+					b.doc->>"$.metadata_siteId" as siteId,
+					b.doc->>"$.metadata_siteName" as siteName,
+					b.doc->>"$.bcpg_lcaScore" as lcaScore,
+					b.doc->>"$.bcpg_ecoScore" as ecoScore
+				from
+					lcaList a inner join bcpg_product b on a.entityNodeRef = b.nodeRef 
+			</SQL>
+		</View>
+		
+		<Dimension name="site" caption="${msg("jsolap.site.title")}">
+			<Hierarchy name="site" caption="${msg("jsolap.site.title")}" hasAll="true" allMemberCaption="${msg("jsolap.site.caption")}">
+				<Level name="site" caption="${msg("jsolap.site.title")}" column="siteName"  type="String" />
+			</Hierarchy>
+		</Dimension>
+
+		<Dimension name="designation" caption="${msg("jsolap.product.title")}" >
+			<Hierarchy name="productPerFamily" caption="${msg("jsolap.productPerFamily.title")}" hasAll="true" allMemberCaption="${msg("jsolap.product.caption")}">
+				<Level approxRowCount="5" name="productState" caption="${msg("jsolap.productState.title")}" column="productState"  type="String"   >
+				  <MemberFormatter>
+						<Script language="JavaScript">
+							switch (member.getName()) {
+				   				case 'Simulation' :
+				      				return  '${msg("listconstraint.bcpg_systemState.Simulation")}';
+				   				case 'ToValidate' :
+				    				return  '${msg("listconstraint.bcpg_systemState.ToValidate")}';
+				   				case 'Valid' :
+				    				return   '${msg("listconstraint.bcpg_systemState.Valid")}';
+				   				case 'Refused' :
+				    				return   '${msg("listconstraint.bcpg_systemState.Refused")}';
+				   				case 'Archived' :
+				    				return   '${msg("listconstraint.bcpg_systemState.Archived")}'; 
+				    			case 'Stopped' :
+				    				return   '${msg("listconstraint.bcpg_systemState.Stopped")}';   
+							   default:
+								    return member.getName();
+								}
+						</Script>
+					</MemberFormatter>
+				</Level>
+				<Level name="productHierarchy1" caption="${msg("jsolap.productFamily.title")}" column="productHierarchy1"  type="String"    />
+				<Level name="productHierarchy2" caption="${msg("jsolap.productSubFamily.title")}" column="productHierarchy2"  type="String"    />
+				<Level name="code" caption="${msg("jsolap.productCode.title")}" column="productCode"  type="String" highCardinality="true" uniqueMembers="true"  />
+				<Level name="name" caption="${msg("jsolap.productName.title")}" column="productName"  type="String" highCardinality="true" />
+			    <Level name="erpCode" caption="${msg("jsolap.productErpCode.title")}" column="productErpCode"  type="String" />
+			    <Level name="eanCode" caption="${msg("jsolap.productEanCode.title")}" column="productEanCode"  type="String" />
+				<Level name="legalName" caption="${msg("jsolap.productLegalName.title")}" column="productLegalName"  type="String" />
+				<Level name="versionLabel" caption="${msg("jsolap.productVersionLabel.title")}" column="productVersionLabel" type="String" >
+				<MemberFormatter>
+					<Script language="JavaScript">
+							if (member.getName() == "#null") {
+					      		return  '1.0';
+							}else{
+								return member.getName();
+							}
+					</Script>
+				</MemberFormatter>
+				</Level>
+			</Hierarchy>
+		</Dimension>
+		
+		<Dimension name="productType" caption="${msg("jsolap.productType.title")}">
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.productType.caption")}"  >
+			<Level approxRowCount="10" name="entity_type" caption="${msg("jsolap.productType.title")}" column="productType" nameColumn="productType" type="String"   >
+				<MemberFormatter>
+						<Script language="JavaScript">
+							switch (member.getName()) {
+				   				case 'bcpg:rawMaterial' :
+				      				return  '${msg("bcpg_bcpgmodel.type.bcpg_rawMaterial.title")}';
+				   				case 'bcpg:finishedProduct' :
+				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_finishedProduct.title")}';
+				   				case 'bcpg:semiFinishedProduct' :
+				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_semiFinishedProduct.title")}';
+			    				case 'bcpg:logisticUnit' :
+			    					return  '${msg("bcpg_bcpgmodel.type.bcpg_logisticUnit.title")}';
+				    			case 'bcpg:packagingMaterial' :
+				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_packagingMaterial.title")}';
+				   				case 'bcpg:packagingKit' :
+				    				return  '${msg("jsolap.packagingKit.title")}';
+				   				case 'bcpg:localSemiFinishedProduct' :
+				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_localSemiFinishedProduct.title")}';
+				    			case 'bcpg:resourceProduct' :
+				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_resourceProduct.title")}';
+							   default:
+								    return member.getName();
+								}
+						</Script>
+					</MemberFormatter>
+				</Level>
+			</Hierarchy>
+		</Dimension>
+		
+		<Dimension type="StandardDimension"  name="lcaDimension" caption="${msg("jsolap.lca.title")}">
+			<Hierarchy name="lcaPerGroup" caption="${msg("jsolap.lcaPerGroup.title")}" hasAll="true" allMemberCaption="${msg("jsolap.lca.caption")}" >
+				<Level name="lcaNodeRef" caption="${msg("jsolap.lca.title")}" column="nodeRef"  nameColumn="name" type="String"   ></Level>
+			</Hierarchy>	
+		</Dimension>
+		
+		<DimensionUsage name="tags" caption="${msg("jsolap.tags.title")}" source="tagsDimension" foreignKey="nodeRef" />
+		
+		<Dimension name="lcaScale" caption="${msg("jsolap.lcaScore.title")}">
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.lcaScore.caption")}" >
+				<Level name="lcaScore" caption="${msg("jsolap.lcaScore.title")}" column="lcaScore"  type="String"    />
+				<Level name="ecoScore" caption="${msg("jsolap.ecoScore.title")}" column="ecoScore"  type="String"    />
+			</Hierarchy>
+		</Dimension>
+		
+		<Measure name="lcaValue" caption="${msg("jsolap.lcaValue.title")}" column="lcaValue" datatype="Numeric" aggregator="avg" visible="true"></Measure>
+		<Measure name="lcaPreviousValue" caption="${msg("jsolap.lcaPreviousValue.title")}" column="lcaPreviousValue" datatype="Numeric" aggregator="avg" visible="true"></Measure>
+		<Measure name="lcaFutureValue" caption="${msg("jsolap.lcaFutureValue.title")}" column="lcaFutureValue" datatype="Numeric" aggregator="avg" visible="true"></Measure>
+	</Cube>			
+	
+	<Cube name="products" caption="${msg("jsolap.products.title")}" cache="true" enabled="true" defaultMeasure="productNumber">
 		
 			<View name="products" alias="products">
 				<SQL dialect="generic">
@@ -1292,6 +1479,8 @@
 						doc->>"$.bcpg_legalName" as legalName,
 						doc->>"$.bcpg_nutrientProfilingScore" as nutrientProfilingScore,
 						doc->>"$.bcpg_nutrientProfilingClass" as nutrientProfilingClass,
+						doc->>"$.bcpg_lcaScore" as lcaScore,
+						doc->>"$.bcpg_ecoScore" as ecoScore,
 						doc->>"$.bcpg_storageConditionsRef" as storageConditions,
 						CAST( doc->>"$.cm_created" as DATE) as productDateCreated,
 						CAST( doc->>"$.cm_modified" as DATE) as productDateModified,
@@ -1465,6 +1654,8 @@
 				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_finishedProduct.title")}';
 				   				case 'bcpg:semiFinishedProduct' :
 				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_semiFinishedProduct.title")}';
+			    				case 'bcpg:logisticUnit' :
+			    					return  '${msg("bcpg_bcpgmodel.type.bcpg_logisticUnit.title")}';
 				    			case 'bcpg:packagingMaterial' :
 				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_packagingMaterial.title")}';
 				   				case 'bcpg:packagingKit' :
@@ -1490,6 +1681,13 @@
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.nutrientScore.caption")}" >
 				<Level name="nutrientProfilingScore" caption="${msg("jsolap.nutrientScore.title")}" column="nutrientProfilingScore"  type="String"    />
 				<Level name="nutrientProfilingClass" caption="${msg("jsolap.nutritionClass.title")}" column="nutrientProfilingClass"  type="String"    />
+			</Hierarchy>
+		</Dimension>
+		
+		<Dimension name="lcaScale" caption="${msg("jsolap.lcaScore.title")}">
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.lcaScore.caption")}" >
+				<Level name="lcaScore" caption="${msg("jsolap.lcaScore.title")}" column="lcaScore"  type="String"    />
+				<Level name="ecoScore" caption="${msg("jsolap.ecoScore.title")}" column="ecoScore"  type="String"    />
 			</Hierarchy>
 		</Dimension>
 
@@ -1623,6 +1821,8 @@
 				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_finishedProduct.title")}';
 				   				case 'bcpg:semiFinishedProduct' :
 				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_semiFinishedProduct.title")}';
+			    				case 'bcpg:logisticUnit' :
+			    					return  '${msg("bcpg_bcpgmodel.type.bcpg_logisticUnit.title")}';
 				    			case 'bcpg:packagingMaterial' :
 				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_packagingMaterial.title")}';
 				   				case 'bcpg:packagingKit' :

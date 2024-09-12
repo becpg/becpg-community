@@ -3,9 +3,16 @@
  */
 package fr.becpg.repo.product.data.productList;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.product.data.RegulatoryEntityItem;
+import fr.becpg.repo.product.data.constraints.RequirementType;
+import fr.becpg.repo.repository.annotation.AlfMlText;
+import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
@@ -27,7 +34,7 @@ import fr.becpg.repo.repository.model.VariantAwareDataItem;
  */
 @AlfType
 @AlfQname(qname = "bcpg:physicoChemList")
-public class PhysicoChemListDataItem extends VariantAwareDataItem implements SimpleListDataItem, MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ControlableListDataItem{
+public class PhysicoChemListDataItem extends VariantAwareDataItem implements SimpleListDataItem, MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ControlableListDataItem, RegulatoryEntityItem {
 			
 	
 	private static final long serialVersionUID = -3018711765028656339L;
@@ -45,6 +52,13 @@ public class PhysicoChemListDataItem extends VariantAwareDataItem implements Sim
 	private Boolean isFormulated;
 	
 	private String type;
+	
+	private RequirementType regulatoryType;
+	private MLText regulatoryMessage;
+	
+	private List<NodeRef> regulatoryCountriesRef = new ArrayList<>();
+	
+	private List<NodeRef> regulatoryUsagesRef = new ArrayList<>();
 	
 
 	/**
@@ -197,7 +211,61 @@ public class PhysicoChemListDataItem extends VariantAwareDataItem implements Sim
 		 setValue(formulatedValue);
 	}
 
+	/**
+	 * <p>Getter for the field <code>regulatoryCountriesRef</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
+	@AlfMultiAssoc
+	@AlfQname(qname = "bcpg:regulatoryCountries")
+	public List<NodeRef> getRegulatoryCountriesRef() {
+		return regulatoryCountriesRef;
+	}
+
+	/** {@inheritDoc} */
+	public void setRegulatoryCountriesRef(List<NodeRef> regulatoryCountries) {
+		this.regulatoryCountriesRef = regulatoryCountries;
+	}
+
+	/**
+	 * <p>Getter for the field <code>regulatoryUsagesRef</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
+	@AlfMultiAssoc
+	@AlfQname(qname = "bcpg:regulatoryUsageRef")
+	public List<NodeRef> getRegulatoryUsagesRef() {
+		return regulatoryUsagesRef;
+	}
+
+	/** {@inheritDoc} */
+	public void setRegulatoryUsagesRef(List<NodeRef> regulatoryUsages) {
+		this.regulatoryUsagesRef = regulatoryUsages;
+	}
 	
+	
+	
+	
+	@AlfProp
+	@AlfQname(qname="bcpg:regulatoryType")
+	public RequirementType getRegulatoryType() {
+		return regulatoryType;
+	}
+
+	public void setRegulatoryType(RequirementType regulatoryType) {
+		this.regulatoryType = regulatoryType;
+	}
+
+	@AlfProp
+	@AlfMlText
+	@AlfQname(qname="bcpg:regulatoryText")
+	public MLText getRegulatoryMessage() {
+		return regulatoryMessage;
+	}
+
+	public void setRegulatoryMessage(MLText regulatoryMessage) {
+		this.regulatoryMessage = regulatoryMessage;
+	}
 	
 	/** {@inheritDoc} */
 	@Override
@@ -235,6 +303,10 @@ public class PhysicoChemListDataItem extends VariantAwareDataItem implements Sim
 		this.mini = p.mini;
 		this.maxi = p.maxi;
 		this.physicoChem = p.physicoChem;
+		this.regulatoryCountriesRef = new ArrayList<>(p.regulatoryCountriesRef);
+		this.regulatoryUsagesRef = new ArrayList<>(p.regulatoryUsagesRef);
+		this.regulatoryMessage = p.regulatoryMessage;
+		this.regulatoryType = p.regulatoryType;
 	}
 	
 	/**

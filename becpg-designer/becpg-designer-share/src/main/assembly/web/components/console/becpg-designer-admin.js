@@ -54,6 +54,9 @@
 
                      this.widgets.reloadModelButton = Alfresco.util.createYUIButton(this, "reload-model-button",
                            this.onReloadModelClick);
+                     
+                     this.widgets.cleanConfigButton = Alfresco.util.createYUIButton(this, "clean-config-button",
+                           this.onCleanConfigClick);
                   },
 
                   /**
@@ -85,6 +88,25 @@
                         },
                         failureCallback : {
                            fn : this.onReloadModelFailure,
+                           scope : this
+                        }
+                     });
+                  },
+                  
+                  onCleanConfigClick : function DesignerAdminConsole_onCleanConfigClick(e, args) {
+                     // Disable the button temporarily
+                     this.widgets.cleanConfigButton.set("disabled", true);
+
+                     Alfresco.util.Ajax.request({
+                        url : Alfresco.constants.URL_SERVICECONTEXT + "modules/designer/clean-config",
+                        method : Alfresco.util.Ajax.GET,
+                        responseContentType : Alfresco.util.Ajax.JSON,
+                        successCallback : {
+                           fn : this.onCleanConfigSuccess,
+                           scope : this
+                        },
+                        failureCallback : {
+                           fn : this.onCleanConfigFailure,
                            scope : this
                         }
                      });
@@ -121,6 +143,25 @@
                         });
                      }
                      this.widgets.reloadModelButton.set("disabled", false);
+                  },
+
+                  onCleanConfigSuccess : function DesignerAdminConsole_onCleanConfigSuccess(response) {
+                     Alfresco.util.PopupManager.displayMessage({
+                        text : this.msg("message.clean-config.success")
+                     });
+                     this.widgets.cleanConfigButton.set("disabled", false);
+                  },
+                  onCleanConfigFailure : function DesignerAdminConsole_onCleanConfigFailure(response) {
+                     if (response.json.message !== null) {
+                        Alfresco.util.PopupManager.displayPrompt({
+                           text : response.json.message
+                        });
+                     } else {
+                        Alfresco.util.PopupManager.displayMessage({
+                           text : this.msg("message.clean-config.failure")
+                        });
+                     }
+                     this.widgets.cleanConfigButton.set("disabled", false);
                   },
 
                });

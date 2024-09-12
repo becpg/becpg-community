@@ -11,8 +11,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.lock.LockService;
 import org.alfresco.service.cmr.lock.LockStatus;
@@ -22,7 +20,6 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.poi.hemf.record.emfplus.HemfPlusMisc.EmfPlusSetPageTransform;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -47,10 +44,12 @@ import fr.becpg.repo.helper.AuthorityHelper;
 import fr.becpg.repo.helper.JsonHelper;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.impl.AttributeExtractorField;
+import fr.becpg.repo.license.BeCPGLicenseManager;
 import fr.becpg.repo.security.SecurityService;
 import fr.becpg.repo.system.SystemConfigurationService;
 import fr.becpg.repo.web.scripts.BrowserCacheHelper;
 import fr.becpg.repo.web.scripts.WebscriptHelper;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Webscript that send the result of a datalist
@@ -79,6 +78,7 @@ public class EntityDataListWebScript extends AbstractWebScript {
 	/** Constant <code>PARAM_DATA_LIST_NAME="dataListName"</code> */
 	protected static final String PARAM_DATA_LIST_NAME = "dataListName";
 	
+	/** Constant <code>PARAM_ASYNC="async"</code> */
 	protected static final String PARAM_ASYNC = "async";
 
 	/**
@@ -161,6 +161,22 @@ public class EntityDataListWebScript extends AbstractWebScript {
 
 	private SystemConfigurationService systemConfigurationService;
 	
+	/**
+	 * <p>Setter for the field <code>systemConfigurationService</code>.</p>
+	 *
+	 * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
+	 */
+	private BeCPGLicenseManager becpgLicenseManager;
+	
+	public void setBecpgLicenseManager(BeCPGLicenseManager becpgLicenseManager) {
+		this.becpgLicenseManager = becpgLicenseManager;
+	}
+	
+	/**
+	 * <p>Setter for the field <code>systemConfigurationService</code>.</p>
+	 *
+	 * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
+	 */
 	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
 		this.systemConfigurationService = systemConfigurationService;
 	}
@@ -427,6 +443,7 @@ public class EntityDataListWebScript extends AbstractWebScript {
 							&& !nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)
 							&& (lockService.getLockStatus(entityNodeRef) == LockStatus.NO_LOCK)
 							&& (accessMode == SecurityService.WRITE_ACCESS)
+							&& becpgLicenseManager.hasWriteLicense()
 							&& isExternalUserAllowed(dataListFilter);
 	
 					if (hasWriteAccess && (dataListFilter.getParentNodeRef() != null) && dataType!=null && !dataType.getLocalName().equals(dataListFilter.getDataListName())) {

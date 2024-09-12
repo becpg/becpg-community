@@ -48,6 +48,10 @@ public final class BeCPGModel {
 
 	// archived entity aspect
 	public static final QName ASPECT_ARCHIVED_ENTITY = QName.createQName(BECPG_URI, "archivedEntityAspect");
+	
+	public static final QName ASPECT_USER_AUTHENTICATION = QName.createQName(BECPG_URI, "userAuthenticationAspect");
+	
+	public static final QName PROP_IS_SSO_USER = QName.createQName(BECPG_URI, "isSsoUser");
 
 	public enum EntityFormat {
 		NODE, JSON, XML
@@ -294,6 +298,11 @@ public final class BeCPGModel {
 	public static final QName PROP_IS_DEFAULT_VARIANT = QName.createQName(BECPG_URI, "isDefaultVariant");
 	/** Constant <code>PROP_IS_DEFAULT_VARIANT</code> */
 	public static final QName PROP_VARIANT_COLUMN = QName.createQName(BECPG_URI, "variantColumn");
+	
+	public static final QName PROP_EMAIL_TASK_RESOURCE_DISABLED = QName.createQName(BECPG_URI, "emailTaskResourceDisabled");
+	public static final QName PROP_EMAIL_TASK_OBSERVER_DISABLED = QName.createQName(BECPG_URI, "emailTaskObserverDisabled");
+	public static final QName PROP_EMAIL_PROJECT_NOTIFICATION_DISABLED = QName.createQName(BECPG_URI, "emailProjectNotificationDisabled");
+	public static final QName PROP_EMAIL_ADMIN_NOTIFICATION_DISABLED = QName.createQName(BECPG_URI, "emailAdminNotificationDisabled");
 
 	//forms
 

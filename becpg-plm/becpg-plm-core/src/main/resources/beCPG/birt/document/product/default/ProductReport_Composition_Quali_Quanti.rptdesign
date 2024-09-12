@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
     <property name="author">beCPG</property>
-    <property name="createdBy">Eclipse BIRT Designer Version 4.8.0.v201805221921</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.8.0.v201806261756</property>
     <list-property name="userProperties">
         <structure>
             <property name="name">Data Cube.OrganoList.x</property>
@@ -32,7 +32,7 @@
     </list-property>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="452">
-            <property name="FILELIST">becpg/becpg-plm/becpg-plm-core/src/main/resources/beCPG/birt/document/product/default/ProductReport.xml</property>
+            <property name="FILELIST">becpg-plm/becpg-plm-core/src/main/resources/beCPG/birt/document/product/default/ProductReport.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -1049,19 +1049,6 @@
         </oda-data-set>
         <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="rawMaterialsIngList" id="3304">
             <property name="nullsOrdering">nulls lowest</property>
-            <list-property name="computedColumns">
-                <structure>
-                    <property name="name">runningCount</property>
-                    <property name="dataType">integer</property>
-                    <property name="aggregateFunction">RUNNINGCOUNT</property>
-                    <list-property name="arguments">
-                        <structure>
-                            <property name="name">Expression</property>
-                            <expression name="value">row["ingListIng"]</expression>
-                        </structure>
-                    </list-property>
-                </structure>
-            </list-property>
             <list-property name="columnHints">
                 <structure>
                     <property name="columnName">ingListIng</property>
@@ -1175,11 +1162,6 @@
                         <property name="position">10</property>
                         <property name="name">ceNumber</property>
                         <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">11</property>
-                        <property name="name">runningCount</property>
-                        <property name="dataType">integer</property>
                     </structure>
                 </list-property>
             </structure>
@@ -1716,14 +1698,19 @@
                 <property name="category">Unformatted</property>
             </structure>
         </style>
+        <style name="becpg-border-bottom" id="12496">
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+        </style>
     </styles>
     <page-setup>
         <simple-master-page name="Simple MasterPage" id="10">
+            <property name="type">a3</property>
             <property name="orientation">landscape</property>
             <property name="topMargin">1cm</property>
-            <property name="leftMargin">1.5cm</property>
+            <property name="leftMargin">1cm</property>
             <property name="bottomMargin">1cm</property>
-            <property name="rightMargin">1.5cm</property>
+            <property name="rightMargin">1cm</property>
             <property name="headerHeight">1.1in</property>
             <property name="footerHeight">0.3in</property>
             <page-header>
@@ -1876,7 +1863,7 @@
                             </label>
                             <data id="3333">
                                 <property name="style">becpg-header-title</property>
-                                <property name="fontSize">8pt</property>
+                                <property name="fontSize">10pt</property>
                                 <property name="dataSet">Product</property>
                                 <list-property name="boundDataColumns">
                                     <structure>
@@ -2175,21 +2162,22 @@ dataSetRow["versionLabel"]
         </simple-master-page>
     </page-setup>
     <body>
-        <label id="3251">
-            <property name="style">becpg-chapter-header</property>
-            <property name="marginTop">0pt</property>
-            <property name="marginBottom">0pt</property>
-            <property name="textAlign">center</property>
-            <property name="display">block</property>
-            <text-property name="text" key="juvaChapter"></text-property>
-        </label>
-        <label id="3638"/>
-        <table id="3640">
+        <table id="12252">
             <property name="style">becpg-table</property>
+            <property name="borderBottomStyle">none</property>
+            <property name="borderLeftStyle">none</property>
+            <property name="borderRightStyle">none</property>
+            <property name="borderTopStyle">none</property>
             <property name="textAlign">left</property>
             <property name="pageBreakInside">auto</property>
             <property name="width">100%</property>
             <property name="dataSet">rawMaterials</property>
+            <list-property name="visibility">
+                <structure>
+                    <property name="format">all</property>
+                    <expression name="valueExpr" type="javascript">row["run"]==null || row["run"]==0</expression>
+                </structure>
+            </list-property>
             <list-property name="boundDataColumns">
                 <structure>
                     <property name="name">legalName</property>
@@ -2250,154 +2238,211 @@ dataSetRow["versionLabel"]
                     <expression name="expression" type="javascript">dataSetRow["name"]</expression>
                     <property name="dataType">string</property>
                 </structure>
+                <structure>
+                    <property name="name">run</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">COUNT</property>
+                    <list-property name="arguments">
+                        <structure>
+                            <property name="name">Expression</property>
+                        </structure>
+                    </list-property>
+                    <property name="allowExport">true</property>
+                </structure>
             </list-property>
-            <column id="3700">
+            <column id="12329">
                 <property name="textAlign">center</property>
-                <property name="width">0.55in</property>
+                <property name="width">5%</property>
             </column>
-            <column id="3690">
+            <column id="12330">
                 <property name="style">becpg-col-border</property>
                 <property name="textAlign">center</property>
             </column>
-            <column id="7436">
+            <column id="12331">
                 <property name="style">becpg-col-border</property>
                 <property name="textAlign">center</property>
-                <property name="width">0.95in</property>
             </column>
-            <column id="3692">
+            <column id="12332">
                 <property name="style">becpg-col-border</property>
                 <property name="textAlign">center</property>
-                <property name="width">0.6in</property>
+                <property name="width">5%</property>
             </column>
-            <column id="3693">
+            <column id="12339">
                 <property name="style">becpg-col-border</property>
-                <property name="width">6.583333333333333in</property>
+                <property name="textAlign">center</property>
+            </column>
+            <column id="12345">
+                <property name="style">becpg-col-border</property>
+                <property name="textAlign">center</property>
+                <property name="width">10%</property>
+            </column>
+            <column id="12351">
+                <property name="style">becpg-col-border</property>
+                <property name="textAlign">center</property>
+                <property name="width">10%</property>
+            </column>
+            <column id="12357">
+                <property name="style">becpg-col-border</property>
+                <property name="textAlign">center</property>
+            </column>
+            <column id="12367">
+                <property name="style">becpg-col-border</property>
+                <property name="textAlign">center</property>
+                <property name="width">8%</property>
+            </column>
+            <column id="12373">
+                <property name="style">becpg-col-border</property>
+                <property name="textAlign">center</property>
+                <property name="width">8%</property>
             </column>
             <header>
-                <row id="3641">
+                <row id="12253">
+                    <property name="style">becpg-chapter-header</property>
+                    <property name="fontSize">9pt</property>
+                    <property name="borderBottomStyle">none</property>
+                    <property name="borderLeftStyle">none</property>
+                    <property name="borderRightStyle">none</property>
+                    <property name="borderTopStyle">none</property>
+                    <cell id="12254">
+                        <property name="colSpan">10</property>
+                        <property name="rowSpan">1</property>
+                        <label id="12255">
+                            <property name="fontSize">10pt</property>
+                            <property name="marginTop">0pt</property>
+                            <property name="marginBottom">0pt</property>
+                            <property name="textAlign">center</property>
+                            <property name="display">block</property>
+                            <text-property name="text" key="juvaChapter"></text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="12256">
                     <property name="style">becpg-row-header</property>
                     <property name="fontSize">9pt</property>
                     <property name="borderBottomStyle">none</property>
                     <property name="borderLeftStyle">none</property>
                     <property name="borderRightStyle">none</property>
                     <property name="borderTopStyle">none</property>
-                    <cell id="3698">
-                        <label id="3649">
-                            <property name="fontSize">6pt</property>
+                    <cell id="12257">
+                        <property name="colSpan">10</property>
+                        <property name="rowSpan">1</property>
+                        <label id="12258"/>
+                    </cell>
+                </row>
+                <row id="12259">
+                    <property name="style">becpg-row-header</property>
+                    <property name="fontSize">9pt</property>
+                    <property name="borderBottomStyle">none</property>
+                    <property name="borderLeftStyle">solid</property>
+                    <property name="borderLeftWidth">thin</property>
+                    <property name="borderRightStyle">solid</property>
+                    <property name="borderRightWidth">thin</property>
+                    <property name="borderTopStyle">solid</property>
+                    <property name="borderTopWidth">thin</property>
+                    <cell id="12260">
+                        <label id="12261">
+                            <property name="fontSize">9pt</property>
                             <property name="display">block</property>
                             <text-property name="text" key="hRMCode">Code MP</text-property>
                         </label>
                     </cell>
-                    <cell id="3642">
-                        <label id="3643">
-                            <property name="fontSize">6pt</property>
+                    <cell id="12262">
+                        <label id="12263">
+                            <property name="fontSize">9pt</property>
                             <text-property name="text" key="hEntitledMP">Nom de la matière première</text-property>
                         </label>
                     </cell>
-                    <cell id="7434">
-                        <label id="7437">
-                            <property name="fontSize">6pt</property>
+                    <cell id="12264">
+                        <label id="12265">
+                            <property name="fontSize">9pt</property>
                             <text-property name="text" key="supplier">Founisseur</text-property>
                         </label>
                     </cell>
-                    <cell id="3646">
-                        <label id="3645">
-                            <property name="fontSize">6pt</property>
+                    <cell id="12266">
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">thin</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">thin</property>
+                        <label id="12267">
+                            <property name="fontSize">9pt</property>
                             <text-property name="text" key="hCompoListQtyPerc">% MP dans la formule</text-property>
                         </label>
                     </cell>
-                    <cell id="3648">
-                        <property name="paddingTop">0pt</property>
-                        <property name="paddingLeft">0pt</property>
-                        <property name="paddingBottom">0pt</property>
-                        <property name="paddingRight">0pt</property>
-                        <property name="textAlign">left</property>
-                        <grid id="3655">
-                            <property name="borderBottomStyle">none</property>
-                            <property name="borderLeftStyle">none</property>
-                            <property name="borderRightStyle">none</property>
-                            <property name="borderTopStyle">none</property>
-                            <property name="textAlign">center</property>
-                            <property name="width">100%</property>
-                            <column id="7402"/>
-                            <column id="7408">
-                                <property name="width">0.883in</property>
-                            </column>
-                            <column id="7410">
-                                <property name="width">0.883in</property>
-                            </column>
-                            <column id="7427">
-                                <property name="width">1.6in</property>
-                            </column>
-                            <column id="3705">
-                                <property name="width">0.5in</property>
-                            </column>
-                            <column id="3731">
-                                <property name="width">0.5in</property>
-                            </column>
-                            <row id="3659">
-                                <property name="verticalAlign">middle</property>
-                                <cell id="7401">
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
-                                    <property name="verticalAlign">middle</property>
-                                    <label id="7403">
-                                        <property name="fontSize">6pt</property>
-                                        <text-property name="text" key="ingredient">Dénomination INCI (ingrédient)</text-property>
-                                    </label>
-                                </cell>
-                                <cell id="7407">
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
-                                    <label id="7417">
-                                        <property name="fontSize">6pt</property>
-                                        <text-property name="text" key="numCE">N° CE / EINECS</text-property>
-                                    </label>
-                                </cell>
-                                <cell id="7409">
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
-                                    <label id="7416">
-                                        <property name="fontSize">6pt</property>
-                                        <text-property name="text" key="numberCAS">n° CAS</text-property>
-                                    </label>
-                                </cell>
-                                <cell id="7426">
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
-                                    <label id="7430">
-                                        <property name="fontSize">6pt</property>
-                                        <text-property name="text" key="bioOrigin">Origine biologique</text-property>
-                                    </label>
-                                </cell>
-                                <cell id="3704">
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
-                                    <label id="3706">
-                                        <property name="fontSize">6pt</property>
-                                        <text-property name="text" key="ingPercInMP">% ing dans la MP</text-property>
-                                    </label>
-                                </cell>
-                                <cell id="3730">
-                                    <label id="3732">
-                                        <property name="fontSize">6pt</property>
-                                        <text-property name="text" key="ingPercInFormule">% ing dans la formule</text-property>
-                                    </label>
-                                </cell>
-                            </row>
-                        </grid>
+                    <cell id="12336">
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">thin</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">thin</property>
+                        <label id="12358">
+                            <property name="fontSize">9pt</property>
+                            <text-property name="text" key="ingredient">Dénomination INCI (ingrédient)</text-property>
+                        </label>
+                    </cell>
+                    <cell id="12342">
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">thin</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">thin</property>
+                        <label id="12359">
+                            <property name="fontSize">9pt</property>
+                            <text-property name="text" key="numCE">N° CE / EINECS</text-property>
+                        </label>
+                    </cell>
+                    <cell id="12348">
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">thin</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">thin</property>
+                        <label id="12360">
+                            <property name="fontSize">9pt</property>
+                            <text-property name="text" key="numberCAS">n° CAS</text-property>
+                        </label>
+                    </cell>
+                    <cell id="12354">
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">thin</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">thin</property>
+                        <label id="12361">
+                            <property name="fontSize">9pt</property>
+                            <text-property name="text" key="bioOrigin">Origine biologique</text-property>
+                        </label>
+                    </cell>
+                    <cell id="12364">
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">thin</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">thin</property>
+                        <label id="12374">
+                            <property name="fontSize">9pt</property>
+                            <text-property name="text" key="ingPercInMP">% ing dans la MP</text-property>
+                        </label>
+                    </cell>
+                    <cell id="12370">
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">thin</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">thin</property>
+                        <label id="12375">
+                            <property name="fontSize">9pt</property>
+                            <text-property name="text" key="ingPercInFormule">% ing dans la formule</text-property>
+                        </label>
                     </cell>
                 </row>
             </header>
             <detail>
-                <row id="3666">
+                <row id="12289">
                     <property name="style">becpg-row-border</property>
                     <property name="fontSize">9pt</property>
-                    <property name="borderBottomStyle">none</property>
-                    <property name="borderLeftStyle">none</property>
-                    <property name="borderRightStyle">none</property>
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">thin</property>
+                    <property name="borderLeftStyle">solid</property>
+                    <property name="borderLeftWidth">thin</property>
+                    <property name="borderRightStyle">solid</property>
+                    <property name="borderRightWidth">thin</property>
                     <property name="borderTopStyle">none</property>
                     <property name="verticalAlign">middle</property>
+                    <property name="height">100%</property>
                     <list-property name="highlightRules">
                         <structure>
                             <property name="operator">ne</property>
@@ -2408,32 +2453,32 @@ dataSetRow["versionLabel"]
                             </simple-property-list>
                         </structure>
                     </list-property>
-                    <cell id="3699">
+                    <cell id="12290">
                         <property name="borderTopStyle">solid</property>
                         <property name="borderTopWidth">thin</property>
-                        <data id="3674">
-                            <property name="fontSize">6pt</property>
+                        <data id="12291">
+                            <property name="fontSize">8pt</property>
                             <property name="textAlign">center</property>
                             <property name="resultSetColumn">rawMaterialCode</property>
                         </data>
                     </cell>
-                    <cell id="3667">
+                    <cell id="12292">
                         <property name="borderTopStyle">solid</property>
                         <property name="borderTopWidth">thin</property>
-                        <text-data id="12233">
-                            <property name="fontSize">6pt</property>
+                        <text-data id="12293">
+                            <property name="fontSize">8pt</property>
                             <expression name="valueExpr">row["legalName"]</expression>
                             <property name="contentType">html</property>
                         </text-data>
                     </cell>
-                    <cell id="7435">
+                    <cell id="12294">
                         <property name="borderTopStyle">solid</property>
                         <property name="borderTopWidth">thin</property>
                         <property name="paddingTop">0pt</property>
                         <property name="paddingLeft">0pt</property>
                         <property name="paddingBottom">0pt</property>
                         <property name="paddingRight">0pt</property>
-                        <table id="7128">
+                        <table id="12295">
                             <property name="dataSet">SuppliersRawMaterials</property>
                             <list-property name="visibility">
                                 <structure>
@@ -2493,16 +2538,16 @@ dataSetRow["versionLabel"]
                                     <property name="updateAggregation">true</property>
                                 </structure>
                             </list-property>
-                            <column id="7142"/>
+                            <column id="12299"/>
                             <footer>
-                                <row id="7145">
-                                    <cell id="7146">
+                                <row id="12296">
+                                    <cell id="12297">
                                         <property name="paddingTop">0pt</property>
                                         <property name="paddingLeft">0pt</property>
                                         <property name="paddingBottom">0pt</property>
                                         <property name="paddingRight">0pt</property>
-                                        <data id="7144">
-                                            <property name="fontSize">6pt</property>
+                                        <data id="12298">
+                                            <property name="fontSize">8pt</property>
                                             <property name="resultSetColumn">supplierName</property>
                                         </data>
                                     </cell>
@@ -2510,11 +2555,11 @@ dataSetRow["versionLabel"]
                             </footer>
                         </table>
                     </cell>
-                    <cell id="3671">
+                    <cell id="12300">
                         <property name="borderTopStyle">solid</property>
                         <property name="borderTopWidth">thin</property>
-                        <data id="3670">
-                            <property name="fontSize">6pt</property>
+                        <data id="12301">
+                            <property name="fontSize">8pt</property>
                             <structure name="numberFormat">
                                 <property name="category">Fixed</property>
                                 <property name="pattern">###0.00{RoundingMode=HALF_UP}</property>
@@ -2523,37 +2568,22 @@ dataSetRow["versionLabel"]
                             <property name="resultSetColumn">compoListQty</property>
                         </data>
                     </cell>
-                    <cell id="3673">
+                    <cell id="12337">
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
                         <property name="paddingTop">0pt</property>
                         <property name="paddingLeft">0pt</property>
                         <property name="paddingBottom">0pt</property>
                         <property name="paddingRight">0pt</property>
-                        <list-property name="highlightRules">
-                            <structure>
-                                <property name="operator">eq</property>
-                                <property name="backgroundColor">#C0C0C0</property>
-                                <expression name="testExpr" type="javascript">row["rawMaterialCode"]%1</expression>
-                                <simple-property-list name="value1">
-                                    <value type="javascript">0</value>
-                                </simple-property-list>
-                            </structure>
-                        </list-property>
-                        <table id="3679">
+                        <table id="12376">
                             <property name="borderBottomStyle">none</property>
                             <property name="borderLeftStyle">none</property>
                             <property name="borderRightStyle">none</property>
+                            <property name="borderTopStyle">none</property>
                             <property name="textAlign">center</property>
-                            <property name="width">100%</property>
-                            <list-property name="highlightRules">
-                                <structure>
-                                    <property name="operator">gt</property>
-                                    <expression name="testExpr" type="javascript">row.__rownum</expression>
-                                    <simple-property-list name="value1">
-                                        <value type="javascript">1</value>
-                                    </simple-property-list>
-                                    <property name="style">becpg-row-border</property>
-                                </structure>
-                            </list-property>
+                            <property name="verticalAlign">top</property>
+                            <property name="display">block</property>
+                            <property name="height">100%</property>
                             <property name="dataSet">rawMaterialsIngList</property>
                             <list-property name="boundDataColumns">
                                 <structure>
@@ -2625,6 +2655,28 @@ dataSetRow["ingListQtyPerc"]*row._outer["compoListQty"]/100
                                     <expression name="expression" type="javascript">dataSetRow["ceNumber"]</expression>
                                     <property name="dataType">string</property>
                                 </structure>
+                                <structure>
+                                    <property name="name">run</property>
+                                    <property name="dataType">integer</property>
+                                    <property name="aggregateFunction">RUNNINGCOUNT</property>
+                                    <list-property name="arguments">
+                                        <structure>
+                                            <property name="name">Expression</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="allowExport">true</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">count</property>
+                                    <property name="dataType">integer</property>
+                                    <property name="aggregateFunction">COUNT</property>
+                                    <list-property name="arguments">
+                                        <structure>
+                                            <property name="name">Expression</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="allowExport">true</property>
+                                </structure>
                             </list-property>
                             <structure name="toc"/>
                             <list-property name="filter">
@@ -2637,95 +2689,682 @@ dataSetRow["ingListQtyPerc"]*row._outer["compoListQty"]/100
                                     <property name="updateAggregation">true</property>
                                 </structure>
                             </list-property>
-                            <column id="7400"/>
-                            <column id="7414">
-                                <property name="width">0.883in</property>
-                            </column>
-                            <column id="7412">
-                                <property name="width">0.883in</property>
-                            </column>
-                            <column id="7429">
-                                <property name="width">1.6in</property>
-                            </column>
-                            <column id="3734">
-                                <property name="width">0.5in</property>
-                            </column>
-                            <column id="3689">
-                                <property name="width">0.5in</property>
-                            </column>
+                            <column id="12390"/>
                             <detail>
-                                <row id="3680">
-                                    <property name="borderTopStyle">solid</property>
-                                    <property name="borderTopWidth">thin</property>
+                                <row id="12377">
+                                    <property name="borderBottomStyle">none</property>
+                                    <property name="borderLeftStyle">none</property>
+                                    <property name="borderRightStyle">none</property>
+                                    <property name="borderTopStyle">none</property>
                                     <property name="verticalAlign">middle</property>
-                                    <cell id="7399">
+                                    <property name="height">100%</property>
+                                    <list-property name="highlightRules">
+                                        <structure>
+                                            <property name="operator">is-true</property>
+                                            <expression name="testExpr" type="javascript">row["run"] &lt; row["count"]</expression>
+                                            <property name="style">becpg-border-bottom</property>
+                                        </structure>
+                                    </list-property>
+                                    <cell id="12378">
                                         <property name="borderBottomStyle">none</property>
                                         <property name="borderLeftStyle">none</property>
-                                        <property name="borderRightStyle">solid</property>
-                                        <property name="borderRightWidth">thin</property>
+                                        <property name="borderRightStyle">none</property>
                                         <property name="borderTopStyle">none</property>
-                                        <property name="paddingTop">0pt</property>
-                                        <property name="paddingLeft">0pt</property>
-                                        <property name="paddingBottom">0pt</property>
-                                        <property name="paddingRight">0pt</property>
-                                        <text-data id="12232">
-                                            <property name="fontSize">6pt</property>
+                                        <property name="paddingTop">1pt</property>
+                                        <property name="paddingLeft">1pt</property>
+                                        <property name="paddingBottom">1pt</property>
+                                        <property name="paddingRight">1pt</property>
+                                        <property name="height">100%</property>
+                                        <text-data id="12379">
+                                            <property name="fontSize">8pt</property>
+                                            <property name="paddingTop">2pt</property>
+                                            <property name="paddingBottom">2pt</property>
+                                            <property name="display">block</property>
                                             <expression name="valueExpr">row["legalName"]</expression>
                                             <property name="contentType">html</property>
                                         </text-data>
                                     </cell>
-                                    <cell id="7413">
-                                        <property name="borderRightStyle">solid</property>
-                                        <property name="borderRightWidth">thin</property>
+                                </row>
+                            </detail>
+                        </table>
+                    </cell>
+                    <cell id="12343">
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <property name="paddingTop">0pt</property>
+                        <property name="paddingLeft">0pt</property>
+                        <property name="paddingBottom">0pt</property>
+                        <property name="paddingRight">0pt</property>
+                        <table id="12497">
+                            <property name="borderBottomStyle">none</property>
+                            <property name="borderLeftStyle">none</property>
+                            <property name="borderRightStyle">none</property>
+                            <property name="borderTopStyle">none</property>
+                            <property name="textAlign">center</property>
+                            <property name="verticalAlign">top</property>
+                            <property name="display">block</property>
+                            <property name="height">100%</property>
+                            <property name="dataSet">rawMaterialsIngList</property>
+                            <list-property name="boundDataColumns">
+                                <structure>
+                                    <property name="name">ingListIng</property>
+                                    <text-property name="displayName">ingListIng</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["ingListIng"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">ingListGeoOrigin</property>
+                                    <text-property name="displayName">ingListGeoOrigin</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["ingListGeoOrigin"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">ingListBioOrigin</property>
+                                    <text-property name="displayName">ingListBioOrigin</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["ingListBioOrigin"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">rawMaterialCode</property>
+                                    <text-property name="displayName">rawMaterialCode</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["rawMaterialCode"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">ingListGeoTransfo</property>
+                                    <text-property name="displayName">ingListGeoTransfo</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["ingListGeoTransfo"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">ingListQtyPerc</property>
+                                    <text-property name="displayName">ingListQtyPerc</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["ingListQtyPerc"]</expression>
+                                    <property name="dataType">float</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">ingInFormula</property>
+                                    <text-property name="displayName">ingListQtyPerc</text-property>
+                                    <expression name="expression" type="javascript">if(dataSetRow["ingListQtyPerc"]!=null){
+dataSetRow["ingListQtyPerc"]*row._outer["compoListQty"]/100
+}</expression>
+                                    <property name="dataType">float</property>
+                                    <property name="allowExport">true</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">legalName</property>
+                                    <text-property name="displayName">legalName</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["legalName"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">ingCEECode</property>
+                                    <text-property name="displayName">ingCEECode</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["ingCEECode"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">casNumber</property>
+                                    <text-property name="displayName">casNumber</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["casNumber"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">ceNumber</property>
+                                    <text-property name="displayName">ceNumber</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["ceNumber"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">run</property>
+                                    <property name="dataType">integer</property>
+                                    <property name="aggregateFunction">RUNNINGCOUNT</property>
+                                    <list-property name="arguments">
+                                        <structure>
+                                            <property name="name">Expression</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="allowExport">true</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">count</property>
+                                    <property name="dataType">integer</property>
+                                    <property name="aggregateFunction">COUNT</property>
+                                    <list-property name="arguments">
+                                        <structure>
+                                            <property name="name">Expression</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="allowExport">true</property>
+                                </structure>
+                            </list-property>
+                            <structure name="toc"/>
+                            <list-property name="filter">
+                                <structure>
+                                    <property name="operator">eq</property>
+                                    <expression name="expr" type="javascript">row["rawMaterialCode"]</expression>
+                                    <simple-property-list name="value1">
+                                        <value>row._outer["rawMaterialCode"]</value>
+                                    </simple-property-list>
+                                    <property name="updateAggregation">true</property>
+                                </structure>
+                            </list-property>
+                            <column id="12501"/>
+                            <detail>
+                                <row id="12498">
+                                    <property name="borderBottomStyle">none</property>
+                                    <property name="borderLeftStyle">none</property>
+                                    <property name="borderRightStyle">none</property>
+                                    <property name="borderTopStyle">none</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <property name="height">100%</property>
+                                    <list-property name="highlightRules">
+                                        <structure>
+                                            <property name="operator">is-true</property>
+                                            <expression name="testExpr" type="javascript">row["run"] &lt; row["count"]</expression>
+                                            <property name="style">becpg-border-bottom</property>
+                                        </structure>
+                                    </list-property>
+                                    <cell id="12499">
+                                        <property name="borderBottomStyle">none</property>
+                                        <property name="borderLeftStyle">none</property>
+                                        <property name="borderRightStyle">none</property>
+                                        <property name="borderTopStyle">none</property>
+                                        <property name="paddingTop">1pt</property>
+                                        <property name="paddingLeft">1pt</property>
+                                        <property name="paddingBottom">1pt</property>
+                                        <property name="paddingRight">1pt</property>
+                                        <property name="height">100%</property>
                                         <data id="7433">
-                                            <property name="fontSize">6pt</property>
+                                            <property name="fontSize">8pt</property>
                                             <property name="borderBottomStyle">none</property>
                                             <property name="borderLeftStyle">none</property>
                                             <property name="borderRightStyle">none</property>
                                             <property name="borderTopStyle">none</property>
-                                            <property name="paddingTop">0pt</property>
-                                            <property name="paddingLeft">0pt</property>
-                                            <property name="paddingBottom">0pt</property>
-                                            <property name="paddingRight">0pt</property>
+                                            <property name="paddingTop">2pt</property>
+                                            <property name="paddingLeft">1pt</property>
+                                            <property name="paddingBottom">2pt</property>
+                                            <property name="paddingRight">1pt</property>
                                             <property name="resultSetColumn">ceNumber</property>
                                         </data>
                                     </cell>
-                                    <cell id="7411">
+                                </row>
+                            </detail>
+                        </table>
+                    </cell>
+                    <cell id="12349">
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <property name="paddingTop">0pt</property>
+                        <property name="paddingLeft">0pt</property>
+                        <property name="paddingBottom">0pt</property>
+                        <property name="paddingRight">0pt</property>
+                        <table id="12502">
+                            <property name="borderBottomStyle">none</property>
+                            <property name="borderLeftStyle">none</property>
+                            <property name="borderRightStyle">none</property>
+                            <property name="borderTopStyle">none</property>
+                            <property name="textAlign">center</property>
+                            <property name="verticalAlign">top</property>
+                            <property name="display">block</property>
+                            <property name="height">100%</property>
+                            <property name="dataSet">rawMaterialsIngList</property>
+                            <list-property name="boundDataColumns">
+                                <structure>
+                                    <property name="name">ingListIng</property>
+                                    <text-property name="displayName">ingListIng</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["ingListIng"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">ingListGeoOrigin</property>
+                                    <text-property name="displayName">ingListGeoOrigin</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["ingListGeoOrigin"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">ingListBioOrigin</property>
+                                    <text-property name="displayName">ingListBioOrigin</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["ingListBioOrigin"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">rawMaterialCode</property>
+                                    <text-property name="displayName">rawMaterialCode</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["rawMaterialCode"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">ingListGeoTransfo</property>
+                                    <text-property name="displayName">ingListGeoTransfo</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["ingListGeoTransfo"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">ingListQtyPerc</property>
+                                    <text-property name="displayName">ingListQtyPerc</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["ingListQtyPerc"]</expression>
+                                    <property name="dataType">float</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">ingInFormula</property>
+                                    <text-property name="displayName">ingListQtyPerc</text-property>
+                                    <expression name="expression" type="javascript">if(dataSetRow["ingListQtyPerc"]!=null){
+dataSetRow["ingListQtyPerc"]*row._outer["compoListQty"]/100
+}</expression>
+                                    <property name="dataType">float</property>
+                                    <property name="allowExport">true</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">legalName</property>
+                                    <text-property name="displayName">legalName</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["legalName"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">ingCEECode</property>
+                                    <text-property name="displayName">ingCEECode</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["ingCEECode"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">casNumber</property>
+                                    <text-property name="displayName">casNumber</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["casNumber"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">ceNumber</property>
+                                    <text-property name="displayName">ceNumber</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["ceNumber"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">run</property>
+                                    <property name="dataType">integer</property>
+                                    <property name="aggregateFunction">RUNNINGCOUNT</property>
+                                    <list-property name="arguments">
+                                        <structure>
+                                            <property name="name">Expression</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="allowExport">true</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">count</property>
+                                    <property name="dataType">integer</property>
+                                    <property name="aggregateFunction">COUNT</property>
+                                    <list-property name="arguments">
+                                        <structure>
+                                            <property name="name">Expression</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="allowExport">true</property>
+                                </structure>
+                            </list-property>
+                            <structure name="toc"/>
+                            <list-property name="filter">
+                                <structure>
+                                    <property name="operator">eq</property>
+                                    <expression name="expr" type="javascript">row["rawMaterialCode"]</expression>
+                                    <simple-property-list name="value1">
+                                        <value>row._outer["rawMaterialCode"]</value>
+                                    </simple-property-list>
+                                    <property name="updateAggregation">true</property>
+                                </structure>
+                            </list-property>
+                            <column id="12506"/>
+                            <detail>
+                                <row id="12503">
+                                    <property name="borderBottomStyle">none</property>
+                                    <property name="borderLeftStyle">none</property>
+                                    <property name="borderRightStyle">none</property>
+                                    <property name="borderTopStyle">none</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <property name="height">100%</property>
+                                    <list-property name="highlightRules">
+                                        <structure>
+                                            <property name="operator">is-true</property>
+                                            <expression name="testExpr" type="javascript">row["run"] &lt; row["count"]</expression>
+                                            <property name="style">becpg-border-bottom</property>
+                                        </structure>
+                                    </list-property>
+                                    <cell id="12504">
                                         <property name="borderBottomStyle">none</property>
                                         <property name="borderLeftStyle">none</property>
-                                        <property name="borderRightStyle">solid</property>
-                                        <property name="borderRightWidth">thin</property>
+                                        <property name="borderRightStyle">none</property>
                                         <property name="borderTopStyle">none</property>
+                                        <property name="paddingTop">1pt</property>
+                                        <property name="paddingLeft">1pt</property>
+                                        <property name="paddingBottom">1pt</property>
+                                        <property name="paddingRight">1pt</property>
+                                        <property name="height">100%</property>
                                         <data id="7432">
-                                            <property name="fontSize">6pt</property>
-                                            <property name="paddingTop">0pt</property>
-                                            <property name="paddingLeft">0pt</property>
-                                            <property name="paddingBottom">0pt</property>
-                                            <property name="paddingRight">0pt</property>
+                                            <property name="fontSize">8pt</property>
+                                            <property name="paddingTop">2pt</property>
+                                            <property name="paddingLeft">1pt</property>
+                                            <property name="paddingBottom">2pt</property>
+                                            <property name="paddingRight">1pt</property>
                                             <property name="resultSetColumn">casNumber</property>
                                         </data>
                                     </cell>
-                                    <cell id="7428">
+                                </row>
+                            </detail>
+                        </table>
+                    </cell>
+                    <cell id="12355">
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <property name="paddingTop">0pt</property>
+                        <property name="paddingLeft">0pt</property>
+                        <property name="paddingBottom">0pt</property>
+                        <property name="paddingRight">0pt</property>
+                        <table id="12507">
+                            <property name="borderBottomStyle">none</property>
+                            <property name="borderLeftStyle">none</property>
+                            <property name="borderRightStyle">none</property>
+                            <property name="borderTopStyle">none</property>
+                            <property name="textAlign">center</property>
+                            <property name="verticalAlign">top</property>
+                            <property name="display">block</property>
+                            <property name="height">100%</property>
+                            <property name="dataSet">rawMaterialsIngList</property>
+                            <list-property name="boundDataColumns">
+                                <structure>
+                                    <property name="name">ingListIng</property>
+                                    <text-property name="displayName">ingListIng</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["ingListIng"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">ingListGeoOrigin</property>
+                                    <text-property name="displayName">ingListGeoOrigin</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["ingListGeoOrigin"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">ingListBioOrigin</property>
+                                    <text-property name="displayName">ingListBioOrigin</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["ingListBioOrigin"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">rawMaterialCode</property>
+                                    <text-property name="displayName">rawMaterialCode</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["rawMaterialCode"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">ingListGeoTransfo</property>
+                                    <text-property name="displayName">ingListGeoTransfo</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["ingListGeoTransfo"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">ingListQtyPerc</property>
+                                    <text-property name="displayName">ingListQtyPerc</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["ingListQtyPerc"]</expression>
+                                    <property name="dataType">float</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">ingInFormula</property>
+                                    <text-property name="displayName">ingListQtyPerc</text-property>
+                                    <expression name="expression" type="javascript">if(dataSetRow["ingListQtyPerc"]!=null){
+dataSetRow["ingListQtyPerc"]*row._outer["compoListQty"]/100
+}</expression>
+                                    <property name="dataType">float</property>
+                                    <property name="allowExport">true</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">legalName</property>
+                                    <text-property name="displayName">legalName</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["legalName"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">ingCEECode</property>
+                                    <text-property name="displayName">ingCEECode</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["ingCEECode"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">casNumber</property>
+                                    <text-property name="displayName">casNumber</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["casNumber"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">ceNumber</property>
+                                    <text-property name="displayName">ceNumber</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["ceNumber"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">run</property>
+                                    <property name="dataType">integer</property>
+                                    <property name="aggregateFunction">RUNNINGCOUNT</property>
+                                    <list-property name="arguments">
+                                        <structure>
+                                            <property name="name">Expression</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="allowExport">true</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">count</property>
+                                    <property name="dataType">integer</property>
+                                    <property name="aggregateFunction">COUNT</property>
+                                    <list-property name="arguments">
+                                        <structure>
+                                            <property name="name">Expression</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="allowExport">true</property>
+                                </structure>
+                            </list-property>
+                            <structure name="toc"/>
+                            <list-property name="filter">
+                                <structure>
+                                    <property name="operator">eq</property>
+                                    <expression name="expr" type="javascript">row["rawMaterialCode"]</expression>
+                                    <simple-property-list name="value1">
+                                        <value>row._outer["rawMaterialCode"]</value>
+                                    </simple-property-list>
+                                    <property name="updateAggregation">true</property>
+                                </structure>
+                            </list-property>
+                            <column id="12511"/>
+                            <detail>
+                                <row id="12508">
+                                    <property name="borderBottomStyle">none</property>
+                                    <property name="borderLeftStyle">none</property>
+                                    <property name="borderRightStyle">none</property>
+                                    <property name="borderTopStyle">none</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <property name="height">100%</property>
+                                    <list-property name="highlightRules">
+                                        <structure>
+                                            <property name="operator">is-true</property>
+                                            <expression name="testExpr" type="javascript">row["run"] &lt; row["count"]</expression>
+                                            <property name="style">becpg-border-bottom</property>
+                                        </structure>
+                                    </list-property>
+                                    <cell id="12509">
                                         <property name="borderBottomStyle">none</property>
-                                        <property name="borderRightStyle">solid</property>
-                                        <property name="borderRightWidth">thin</property>
+                                        <property name="borderLeftStyle">none</property>
+                                        <property name="borderRightStyle">none</property>
                                         <property name="borderTopStyle">none</property>
+                                        <property name="paddingTop">1pt</property>
+                                        <property name="paddingLeft">1pt</property>
+                                        <property name="paddingBottom">1pt</property>
+                                        <property name="paddingRight">1pt</property>
+                                        <property name="height">100%</property>
                                         <data id="7431">
-                                            <property name="fontSize">6pt</property>
-                                            <property name="paddingTop">0pt</property>
-                                            <property name="paddingLeft">0pt</property>
-                                            <property name="paddingBottom">0pt</property>
-                                            <property name="paddingRight">0pt</property>
+                                            <property name="fontSize">8pt</property>
+                                            <property name="paddingTop">2pt</property>
+                                            <property name="paddingLeft">1pt</property>
+                                            <property name="paddingBottom">2pt</property>
+                                            <property name="paddingRight">1pt</property>
                                             <property name="resultSetColumn">ingListBioOrigin</property>
                                         </data>
                                     </cell>
-                                    <cell id="3733">
+                                </row>
+                            </detail>
+                        </table>
+                    </cell>
+                    <cell id="12365">
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <property name="paddingTop">0pt</property>
+                        <property name="paddingLeft">0pt</property>
+                        <property name="paddingBottom">0pt</property>
+                        <property name="paddingRight">0pt</property>
+                        <table id="12512">
+                            <property name="borderBottomStyle">none</property>
+                            <property name="borderLeftStyle">none</property>
+                            <property name="borderRightStyle">none</property>
+                            <property name="borderTopStyle">none</property>
+                            <property name="textAlign">center</property>
+                            <property name="verticalAlign">top</property>
+                            <property name="display">block</property>
+                            <property name="height">100%</property>
+                            <property name="dataSet">rawMaterialsIngList</property>
+                            <list-property name="boundDataColumns">
+                                <structure>
+                                    <property name="name">ingListIng</property>
+                                    <text-property name="displayName">ingListIng</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["ingListIng"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">ingListGeoOrigin</property>
+                                    <text-property name="displayName">ingListGeoOrigin</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["ingListGeoOrigin"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">ingListBioOrigin</property>
+                                    <text-property name="displayName">ingListBioOrigin</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["ingListBioOrigin"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">rawMaterialCode</property>
+                                    <text-property name="displayName">rawMaterialCode</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["rawMaterialCode"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">ingListGeoTransfo</property>
+                                    <text-property name="displayName">ingListGeoTransfo</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["ingListGeoTransfo"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">ingListQtyPerc</property>
+                                    <text-property name="displayName">ingListQtyPerc</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["ingListQtyPerc"]</expression>
+                                    <property name="dataType">float</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">ingInFormula</property>
+                                    <text-property name="displayName">ingListQtyPerc</text-property>
+                                    <expression name="expression" type="javascript">if(dataSetRow["ingListQtyPerc"]!=null){
+dataSetRow["ingListQtyPerc"]*row._outer["compoListQty"]/100
+}</expression>
+                                    <property name="dataType">float</property>
+                                    <property name="allowExport">true</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">legalName</property>
+                                    <text-property name="displayName">legalName</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["legalName"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">ingCEECode</property>
+                                    <text-property name="displayName">ingCEECode</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["ingCEECode"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">casNumber</property>
+                                    <text-property name="displayName">casNumber</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["casNumber"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">ceNumber</property>
+                                    <text-property name="displayName">ceNumber</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["ceNumber"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">run</property>
+                                    <property name="dataType">integer</property>
+                                    <property name="aggregateFunction">RUNNINGCOUNT</property>
+                                    <list-property name="arguments">
+                                        <structure>
+                                            <property name="name">Expression</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="allowExport">true</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">count</property>
+                                    <property name="dataType">integer</property>
+                                    <property name="aggregateFunction">COUNT</property>
+                                    <list-property name="arguments">
+                                        <structure>
+                                            <property name="name">Expression</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="allowExport">true</property>
+                                </structure>
+                            </list-property>
+                            <structure name="toc"/>
+                            <list-property name="filter">
+                                <structure>
+                                    <property name="operator">eq</property>
+                                    <expression name="expr" type="javascript">row["rawMaterialCode"]</expression>
+                                    <simple-property-list name="value1">
+                                        <value>row._outer["rawMaterialCode"]</value>
+                                    </simple-property-list>
+                                    <property name="updateAggregation">true</property>
+                                </structure>
+                            </list-property>
+                            <column id="12516"/>
+                            <detail>
+                                <row id="12513">
+                                    <property name="borderBottomStyle">none</property>
+                                    <property name="borderLeftStyle">none</property>
+                                    <property name="borderRightStyle">none</property>
+                                    <property name="borderTopStyle">none</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <property name="height">100%</property>
+                                    <list-property name="highlightRules">
+                                        <structure>
+                                            <property name="operator">is-true</property>
+                                            <expression name="testExpr" type="javascript">row["run"] &lt; row["count"]</expression>
+                                            <property name="style">becpg-border-bottom</property>
+                                        </structure>
+                                    </list-property>
+                                    <cell id="12514">
                                         <property name="borderBottomStyle">none</property>
-                                        <property name="borderRightStyle">solid</property>
-                                        <property name="borderRightWidth">thin</property>
+                                        <property name="borderLeftStyle">none</property>
+                                        <property name="borderRightStyle">none</property>
                                         <property name="borderTopStyle">none</property>
+                                        <property name="paddingTop">1pt</property>
+                                        <property name="paddingLeft">1pt</property>
+                                        <property name="paddingBottom">1pt</property>
+                                        <property name="paddingRight">1pt</property>
+                                        <property name="height">100%</property>
                                         <data id="3735">
-                                            <property name="fontSize">6pt</property>
+                                            <property name="fontSize">8pt</property>
+                                            <property name="paddingTop">2pt</property>
+                                            <property name="paddingLeft">1pt</property>
+                                            <property name="paddingBottom">2pt</property>
+                                            <property name="paddingRight">1pt</property>
                                             <structure name="numberFormat">
                                                 <property name="category">Fixed</property>
                                                 <property name="pattern">###0.00{RoundingMode=HALF_UP}</property>
@@ -2734,9 +3373,163 @@ dataSetRow["ingListQtyPerc"]*row._outer["compoListQty"]/100
                                             <property name="resultSetColumn">ingListQtyPerc</property>
                                         </data>
                                     </cell>
-                                    <cell id="3685">
+                                </row>
+                            </detail>
+                        </table>
+                    </cell>
+                    <cell id="12371">
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <property name="paddingTop">0pt</property>
+                        <property name="paddingLeft">0pt</property>
+                        <property name="paddingBottom">0pt</property>
+                        <property name="paddingRight">0pt</property>
+                        <table id="12517">
+                            <property name="borderBottomStyle">none</property>
+                            <property name="borderLeftStyle">none</property>
+                            <property name="borderRightStyle">none</property>
+                            <property name="borderTopStyle">none</property>
+                            <property name="textAlign">center</property>
+                            <property name="verticalAlign">top</property>
+                            <property name="display">block</property>
+                            <property name="height">100%</property>
+                            <property name="dataSet">rawMaterialsIngList</property>
+                            <list-property name="boundDataColumns">
+                                <structure>
+                                    <property name="name">ingListIng</property>
+                                    <text-property name="displayName">ingListIng</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["ingListIng"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">ingListGeoOrigin</property>
+                                    <text-property name="displayName">ingListGeoOrigin</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["ingListGeoOrigin"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">ingListBioOrigin</property>
+                                    <text-property name="displayName">ingListBioOrigin</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["ingListBioOrigin"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">rawMaterialCode</property>
+                                    <text-property name="displayName">rawMaterialCode</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["rawMaterialCode"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">ingListGeoTransfo</property>
+                                    <text-property name="displayName">ingListGeoTransfo</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["ingListGeoTransfo"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">ingListQtyPerc</property>
+                                    <text-property name="displayName">ingListQtyPerc</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["ingListQtyPerc"]</expression>
+                                    <property name="dataType">float</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">ingInFormula</property>
+                                    <text-property name="displayName">ingListQtyPerc</text-property>
+                                    <expression name="expression" type="javascript">if(dataSetRow["ingListQtyPerc"]!=null){
+dataSetRow["ingListQtyPerc"]*row._outer["compoListQty"]/100
+}</expression>
+                                    <property name="dataType">float</property>
+                                    <property name="allowExport">true</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">legalName</property>
+                                    <text-property name="displayName">legalName</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["legalName"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">ingCEECode</property>
+                                    <text-property name="displayName">ingCEECode</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["ingCEECode"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">casNumber</property>
+                                    <text-property name="displayName">casNumber</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["casNumber"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">ceNumber</property>
+                                    <text-property name="displayName">ceNumber</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["ceNumber"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">run</property>
+                                    <property name="dataType">integer</property>
+                                    <property name="aggregateFunction">RUNNINGCOUNT</property>
+                                    <list-property name="arguments">
+                                        <structure>
+                                            <property name="name">Expression</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="allowExport">true</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">count</property>
+                                    <property name="dataType">integer</property>
+                                    <property name="aggregateFunction">COUNT</property>
+                                    <list-property name="arguments">
+                                        <structure>
+                                            <property name="name">Expression</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="allowExport">true</property>
+                                </structure>
+                            </list-property>
+                            <structure name="toc"/>
+                            <list-property name="filter">
+                                <structure>
+                                    <property name="operator">eq</property>
+                                    <expression name="expr" type="javascript">row["rawMaterialCode"]</expression>
+                                    <simple-property-list name="value1">
+                                        <value>row._outer["rawMaterialCode"]</value>
+                                    </simple-property-list>
+                                    <property name="updateAggregation">true</property>
+                                </structure>
+                            </list-property>
+                            <column id="12521"/>
+                            <detail>
+                                <row id="12518">
+                                    <property name="borderBottomStyle">none</property>
+                                    <property name="borderLeftStyle">none</property>
+                                    <property name="borderRightStyle">none</property>
+                                    <property name="borderTopStyle">none</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <property name="height">100%</property>
+                                    <list-property name="highlightRules">
+                                        <structure>
+                                            <property name="operator">is-true</property>
+                                            <expression name="testExpr" type="javascript">row["run"] &lt; row["count"]</expression>
+                                            <property name="style">becpg-border-bottom</property>
+                                        </structure>
+                                    </list-property>
+                                    <cell id="12519">
+                                        <property name="borderBottomStyle">none</property>
+                                        <property name="borderLeftStyle">none</property>
+                                        <property name="borderRightStyle">none</property>
+                                        <property name="borderTopStyle">none</property>
+                                        <property name="paddingTop">1pt</property>
+                                        <property name="paddingLeft">1pt</property>
+                                        <property name="paddingBottom">1pt</property>
+                                        <property name="paddingRight">1pt</property>
+                                        <property name="height">100%</property>
                                         <data id="3746">
-                                            <property name="fontSize">6pt</property>
+                                            <property name="fontSize">8pt</property>
+                                            <property name="paddingTop">2pt</property>
+                                            <property name="paddingLeft">1pt</property>
+                                            <property name="paddingBottom">2pt</property>
+                                            <property name="paddingRight">1pt</property>
                                             <structure name="numberFormat">
                                                 <property name="category">Fixed</property>
                                                 <property name="pattern">###0.00{RoundingMode=HALF_UP}</property>
@@ -2751,6 +3544,65 @@ dataSetRow["ingListQtyPerc"]*row._outer["compoListQty"]/100
                     </cell>
                 </row>
             </detail>
+            <footer>
+                <row id="12323">
+                    <cell id="12324"/>
+                    <cell id="12325">
+                        <property name="borderBottomStyle">none</property>
+                        <property name="borderLeftStyle">none</property>
+                        <property name="borderRightStyle">none</property>
+                        <property name="borderTopStyle">none</property>
+                    </cell>
+                    <cell id="12326">
+                        <property name="borderBottomStyle">none</property>
+                        <property name="borderLeftStyle">none</property>
+                        <property name="borderRightStyle">none</property>
+                        <property name="borderTopStyle">none</property>
+                    </cell>
+                    <cell id="12327">
+                        <property name="borderBottomStyle">none</property>
+                        <property name="borderLeftStyle">none</property>
+                        <property name="borderRightStyle">none</property>
+                        <property name="borderTopStyle">none</property>
+                    </cell>
+                    <cell id="12338">
+                        <property name="borderBottomStyle">none</property>
+                        <property name="borderLeftStyle">none</property>
+                        <property name="borderRightStyle">none</property>
+                        <property name="borderTopStyle">none</property>
+                    </cell>
+                    <cell id="12344">
+                        <property name="borderBottomStyle">none</property>
+                        <property name="borderLeftStyle">none</property>
+                        <property name="borderRightStyle">none</property>
+                        <property name="borderTopStyle">none</property>
+                    </cell>
+                    <cell id="12350">
+                        <property name="borderBottomStyle">none</property>
+                        <property name="borderLeftStyle">none</property>
+                        <property name="borderRightStyle">none</property>
+                        <property name="borderTopStyle">none</property>
+                    </cell>
+                    <cell id="12356">
+                        <property name="borderBottomStyle">none</property>
+                        <property name="borderLeftStyle">none</property>
+                        <property name="borderRightStyle">none</property>
+                        <property name="borderTopStyle">none</property>
+                    </cell>
+                    <cell id="12366">
+                        <property name="borderBottomStyle">none</property>
+                        <property name="borderLeftStyle">none</property>
+                        <property name="borderRightStyle">none</property>
+                        <property name="borderTopStyle">none</property>
+                    </cell>
+                    <cell id="12372">
+                        <property name="borderBottomStyle">none</property>
+                        <property name="borderLeftStyle">none</property>
+                        <property name="borderRightStyle">none</property>
+                        <property name="borderTopStyle">none</property>
+                    </cell>
+                </row>
+            </footer>
         </table>
     </body>
     <list-property name="images">

@@ -65,6 +65,11 @@ public class GetContentWebScript extends AbstractEntityWebScript {
 		this.contentService = contentService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>quickShareService</code>.</p>
+	 *
+	 * @param quickShareService a {@link org.alfresco.service.cmr.quickshare.QuickShareService} object
+	 */
 	public void setQuickShareService(QuickShareService quickShareService) {
 		this.quickShareService = quickShareService;
 	}

@@ -23,6 +23,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.extensions.surf.util.AbstractLifecycleBean;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -31,7 +33,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.client.RestTemplate;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
@@ -45,6 +46,7 @@ import fr.becpg.repo.decernis.model.UsageContext;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationChainPlugin;
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.helper.RestTemplateHelper;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RegulatoryEntity;
@@ -66,7 +68,7 @@ import fr.becpg.repo.variant.filters.VariantFilters;
  * @version $Id: $Id
  */
 @Service("decernisService")
-public class DecernisServiceImpl implements DecernisService, FormulationChainPlugin {
+public class DecernisServiceImpl  extends AbstractLifecycleBean implements DecernisService, FormulationChainPlugin{
 
 	private static final String FORMULATION_CHECK = "FORMULATION_CHECK";
 	private static final String COSMETICS = "COSMETICS";
@@ -113,6 +115,14 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 		moduleIdMap.put(FORMULATION_CHECK, 100);
 	}
 
+	/**
+	 * <p>Constructor for DecernisServiceImpl.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @param decernisPlugins an array of {@link fr.becpg.repo.decernis.DecernisAnalysisPlugin} objects
+	 * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 */
 	public DecernisServiceImpl(@Qualifier("nodeService") NodeService nodeService,
 			DecernisAnalysisPlugin[] decernisPlugins, SystemConfigurationService systemConfigurationService, AlfrescoRepository<ProductData> alfrescoRepository) {
 		super();
@@ -138,19 +148,36 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.decernis.ingredient.analysis.enabled"));
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getChainId() {
 		return DECERNIS_CHAIN_ID;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isChainActiveOnEntity(NodeRef entityNodeRef) {
 		return isEnabled();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isEnabled() {
 		return serverUrl() != null && !serverUrl().isBlank() && token() != null && !token().isBlank();
+	}
+	
+	@Override
+	protected void onBootstrap(ApplicationEvent event) {
+		if(isEnabled()) {
+			String ttl = java.security.Security.getProperty("networkaddress.cache.ttl");
+			
+			if(ttl == null)
+			{
+				throw new IllegalStateException("To use decernis please set -Djava.security.properties=/usr/local/tomcat/decernis.security");
+			}
+			
+			logger.info("Starting Decernis Module, DNS Cache is set to "+ttl+"s");
+		}
 	}
 
 	/** {@inheritDoc} */
@@ -201,6 +228,11 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 		}
 	}
 
+	/**
+	 * <p>processRegulatoryList.</p>
+	 *
+	 * @param context a {@link fr.becpg.repo.decernis.model.RegulatoryContext} object
+	 */
 	public void processRegulatoryList(RegulatoryContext context) {
 		Map<NodeRef, Map<NodeRef, List<IngRegulatoryListDataItem>>> groupedByIngAndCountry = context.getIngRegulatoryList().stream().collect(
 				Collectors.groupingBy(IngRegulatoryListDataItem::getIng, Collectors.groupingBy(item -> item.getRegulatoryCountries().get(0))));
@@ -244,11 +276,13 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 		String usages = items.stream().map(item -> item.getUsages().getDefaultValue()).distinct().sorted().collect(Collectors.joining(";;"));
 		String restrictionLevels = items.stream().map(item -> item.getRestrictionLevels().getDefaultValue()).filter(r -> r != null && !r.isBlank() && !r.equals("-")).distinct().sorted().collect(Collectors.joining(";;"));
 		String resultIndicators = items.stream().map(item -> item.getResultIndicator().getDefaultValue()).distinct().sorted().collect(Collectors.joining(";;"));
+		String precautions = items.stream().map(item -> item.getPrecautions().getDefaultValue()).distinct().sorted().collect(Collectors.joining(";;"));
 
 		mergedItem.setResultIndicator(new MLText(resultIndicators));
 		mergedItem.setCitation(new MLText(citation));
 		mergedItem.setUsages(new MLText(usages));
 		mergedItem.setRestrictionLevels(new MLText(restrictionLevels));
+		mergedItem.setPrecautions(new MLText(precautions));
 		boolean mlAware = MLPropertyInterceptor.setMLAware(true);
 		try {
 			MLText comment =	(MLText) nodeService.getProperty(mergedItem.getIng(), PLMModel.PROP_REGULATORY_COMMENT);
@@ -336,8 +370,7 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 				if (logger.isTraceEnabled()) {
 					logger.trace("POST url: " + url + " body: " + recipePayload);
 				}
-				RestTemplate restTemplate = new RestTemplate();
-				JSONObject jsonObject = new JSONObject(restTemplate.postForObject(url, request, String.class));
+				JSONObject jsonObject = new JSONObject(RestTemplateHelper.getRestTemplate().postForObject(url, request, String.class));
 				if (jsonObject.has("id")) {
 					recipeId = jsonObject.get("id").toString();
 				}
@@ -392,10 +425,10 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 				}
 				try {
 					if ((rid != null) && !rid.isEmpty() && !rid.equals(MISSING_VALUE)
-							&& ((ingName != null) && !ingName.isEmpty()) && (ingQtyPerc != null)) {
+							&& ((ingName != null) && !ingName.isEmpty())) {
 						JSONObject ingredient = new JSONObject();
 						ingredient.put("name", ingName);
-						ingredient.put("percentage", ingQtyPerc);
+						ingredient.put("percentage", ingQtyPerc == null ? 0d : ingQtyPerc);
 						ingredient.put("ingredient_did", rid);
 						if (function != null) {
 							ingredient.put("function", function);
@@ -509,8 +542,7 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 		if (logger.isTraceEnabled()) {
 			logger.trace("GET url: " + url + " params: " + params);
 		}
-		RestTemplate restTemplate = new RestTemplate();
-		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, createEntity(null), String.class, params);
+		ResponseEntity<String> response = RestTemplateHelper.getRestTemplate().exchange(url, HttpMethod.GET, createEntity(null), String.class, params);
 
 		if ((response != null) && HttpStatus.OK.equals(response.getStatusCode()) && (response.getBody() != null)) {
 
@@ -600,8 +632,8 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 			if (logger.isTraceEnabled()) {
 				logger.trace("DELETE url: " + url);
 			}
-			RestTemplate restTemplate = new RestTemplate();
-			restTemplate.exchange(url, HttpMethod.DELETE, createEntity(null),
+			
+			RestTemplateHelper.getRestTemplate().exchange(url, HttpMethod.DELETE, createEntity(null),
 					String.class, params);
 		} catch (Exception e) {
 			logger.error("failed to delete recipe: " + recipeId, e);
@@ -711,8 +743,7 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 		if (logger.isTraceEnabled()) {
 			logger.trace("GET url: " + url);
 		}
-		RestTemplate restTemplate = new RestTemplate();
-		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, createEntity(null),
+		ResponseEntity<String> response = RestTemplateHelper.getRestTemplate().exchange(url, HttpMethod.GET, createEntity(null),
 				String.class, new HashMap<>());
 
 		if (HttpStatus.OK.equals(response.getStatusCode()) && response.getBody() != null) {
@@ -734,5 +765,13 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 			}
 		}
 	}
+
+	@Override
+	protected void onShutdown(ApplicationEvent event) {
+	//DO Nothing
+		
+	}
+
+
 
 }

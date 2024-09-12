@@ -1,5 +1,6 @@
 package fr.becpg.repo.activity.extractor;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,7 +12,6 @@ import java.util.regex.Pattern;
 import org.alfresco.error.AlfrescoRuntimeException;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
-import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.MalformedNodeRefException;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -40,15 +40,13 @@ import fr.becpg.repo.audit.plugin.impl.ActivityAuditPlugin;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.datalist.impl.AbstractDataListExtractor;
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.helper.ExcelHelper;
 import fr.becpg.repo.helper.JsonHelper;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.security.SecurityService;
 
 @Service("entityActivityExtractorService")
 public class EntityActivityExtractorServiceImpl implements EntityActivityExtractorService {
-
-	@Autowired
-	private DictionaryService dictionaryService;
 
 	@Autowired
 	private SecurityService securityService;
@@ -85,7 +83,7 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 	}
 	
 	@Override
-	public Object extractAuditActivityData(JSONObject auditActivityData, List<AttributeExtractorStructure> metadataFields) {
+	public Map<String, Object> extractAuditActivityData(JSONObject auditActivityData, List<AttributeExtractorStructure> metadataFields, FormatMode mode) {
 
 		Map<String, Object> ret = new HashMap<>(metadataFields.size());
 
@@ -93,33 +91,41 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 			ClassAttributeDefinition attributeDef = getFieldDef(BeCPGModel.TYPE_ACTIVITY_LIST, metadataField);
 
 			if (auditActivityData.has(metadataField.getFieldName())) {
-				Object value = auditActivityData.get(metadataField.getFieldName());
+				Serializable value = (Serializable) auditActivityData.get(metadataField.getFieldName());
 				
-				HashMap<String, Object> tmp = new HashMap<>();
-				
-				if (attributeDef instanceof PropertyDefinition) {
+				if (attributeDef instanceof PropertyDefinition propDef) {
 					
-					if (DataTypeDefinition.DATETIME.equals(((PropertyDefinition) attributeDef).getDataType().getName())) {
-						
+					String displayName = null;
+					
+					if (DataTypeDefinition.DATETIME.equals(propDef.getDataType().getName())) {
 						Date date = ISO8601DateFormat.parse(value.toString());
-						String displayName = attributeExtractorService.getStringValue((PropertyDefinition) attributeDef, date, propertyFormatService.getPropertyFormats(FormatMode.JSON, false));
-						tmp.put("displayValue", displayName);
+						displayName = attributeExtractorService.getStringValue((PropertyDefinition) attributeDef, date, propertyFormatService.getPropertyFormats(mode, false));
 						value = date;
 						
 					} else {
-						String displayName = attributeExtractorService.getStringValue((PropertyDefinition) attributeDef, value.toString(), propertyFormatService.getPropertyFormats(FormatMode.JSON, false));
-						tmp.put("displayValue", displayName);
+						displayName = attributeExtractorService.getStringValue((PropertyDefinition) attributeDef, value.toString(), propertyFormatService.getPropertyFormats(mode, false));
 					}
 					
-					QName type = ((PropertyDefinition) attributeDef).getDataType().getName().getPrefixedQName(namespaceService);
+					QName type = propDef.getDataType().getName().getPrefixedQName(namespaceService);
 					
 					String metadata = entityDictionaryService.toPrefixString(type).split(":")[1];
 					
-					tmp.put("metadata", metadata);
-					tmp.put("value", JsonHelper.formatValue(value));
 					
-					ret.put(metadataField.getFieldName(), tmp);
-					
+					if (FormatMode.CSV.equals(mode)) {
+						ret.put(metadataField.getFieldName(), displayName);
+					} else if (FormatMode.XLSX.equals(mode)) {
+						if (ExcelHelper.isExcelType(value)) {
+							ret.put(metadataField.getFieldName(), value);
+						} else {
+							ret.put(metadataField.getFieldName(), displayName);
+						}
+					} else {
+						HashMap<String, Object> tmp = new HashMap<>();
+						tmp.put("metadata", metadata);
+						tmp.put("value", JsonHelper.formatValue(value));
+						tmp.put("displayValue", displayName);
+						ret.put(metadataField.getFieldName(), tmp);
+					}
 				}
 			}
 		}
@@ -188,11 +194,11 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 						&& (securityService.computeAccessMode(entityNodeRef, entityType, propertyName) != SecurityService.NONE_ACCESS)
 						&& !isIgnoredTypes.contains(propertyName)) {
 					// Property Title
-					PropertyDefinition propertyDef = dictionaryService.getProperty(propertyName);
+					PropertyDefinition propertyDef = entityDictionaryService.getProperty(propertyName);
 					ClassAttributeDefinition propDef = entityDictionaryService.getPropDef(propertyName);
-					if ((propDef != null) && (propDef.getTitle(dictionaryService) != null)
-							&& (propDef.getTitle(dictionaryService).length() > 0)) {
-						postProperty.put(AbstractDataListExtractor.PROP_TITLE, propDef.getTitle(dictionaryService));
+					if ((propDef != null) && (entityDictionaryService.getTitle(propDef, entityType) != null)
+							&& (entityDictionaryService.getTitle(propDef, entityType).length() > 0)) {
+						postProperty.put(AbstractDataListExtractor.PROP_TITLE, entityDictionaryService.getTitle(propDef, entityType));
 					} else {
 						postProperty.put(AbstractDataListExtractor.PROP_TITLE, propertyName.toPrefixString());
 					}

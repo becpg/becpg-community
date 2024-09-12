@@ -42,6 +42,11 @@ public class GlopTarget {
 		return target;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>task</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	public String getTask() {
 		return task;
 	}

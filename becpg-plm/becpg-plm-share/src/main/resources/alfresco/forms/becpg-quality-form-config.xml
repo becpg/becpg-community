@@ -68,13 +68,36 @@
 					<field id="cm:name" label-id="becpg.forms.field.claim.client" />
 				</appearance>
 			</form>
+			<form id="product-list">
+			  <field-visibility>
+
+				<!-- mainInfo -->
+				<show id="cm:name" />
+				<show id="bcpg:erpCode" force="true" />
+				<show id="bcpg:clientTel" />
+				<show id="bcpg:clientEmail" />
+				<show id="bcpg:clientFax" />
+				<!-- bcpg:location type -->
+				<show id="bcpg:locationAddress1" />
+				<show id="bcpg:locationAddress2" />
+				<show id="bcpg:locationAddress3" />
+				<show id="bcpg:locationZip" />
+				<show id="bcpg:locationCity" />
+				<show id="bcpg:locationState" />
+				<show id="bcpg:locationCountry" />
+
+			  </field-visibility>
+			  <appearance>
+				<field id="cm:name" label-id="becpg.forms.field.claim.client" />
+			  </appearance>
+			</form>
 		</forms>
 	</config>
 	
 	<!-- ______________________________________________ batch _________________________________________ -->
 
 
-<config evaluator="model-type" condition="qa:batch" >
+	<config evaluator="model-type" condition="qa:batch" >
 		<forms>
 			<form id="create">
 				<field-visibility>
@@ -176,6 +199,31 @@
 					<field id="cm:modified" set="audit" />
 				</appearance>
 			</form>
+			
+			<form id="product-list">
+				<field-visibility>
+					<!-- mainInfo -->
+					<show id="cm:name" />
+					<show id="bcpg:code" />
+					<show id="bcpg:entityTplRef" force="true" />
+					<show id="qa:batchId"  />
+					<show id="cm:description" force="true" />
+					<show id="qa:batchState"/>
+					
+					<!-- product-info -->
+					<show id="qa:product" />
+					<show id="qa:batchQty"/>
+					<show id="qa:batchQtyUnit"/>
+					
+					<!-- auditable -->
+					<show id="cm:creator" force="true" />
+					<show id="cm:created" force="true" />
+					<show id="cm:modifier" force="true" />
+					<show id="cm:modified" force="true" />
+
+				</field-visibility>
+			</form>
+			
 			<form id="search">
 				<field-visibility>
 					<!-- mainInfo -->
@@ -632,6 +680,38 @@
 	<!-- qa:nc type (creating nodes nodes) -->
 	<config evaluator="model-type" condition="qa:nc">
 		<forms>
+			<form id="product-list">
+				<field-visibility>
+
+					<!-- mainInfo -->
+					<show id="cm:name" />
+					<show id="bcpg:code" />
+					<show id="qa:ncType" />
+					<show id="qa:ncPriority" />
+					<show id="qa:ncQuantityNc" />
+					<show id="qa:ncQuantityNcUnit" />
+					<show id="qa:ncCreationStep" />
+					<show id="qa:ncDetectionStep" />
+					<show id="qa:ncState" />
+
+					<!-- batch -->
+					<show id="qa:batchId" force="true" />
+					<show id="qa:orderId" force="true" />
+					<show id="bcpg:clients" force="true" />
+					<show id="bcpg:suppliers" force="true" />
+
+					<!-- Product -->
+				
+					<show id="qa:product" force="true" />
+					<show id="bcpg:plants" force="true" />
+				
+
+					<!-- auditable -->
+					<show id="cm:created" />
+					<show id="cm:modified" />
+
+				</field-visibility>
+			</form>
 			<form id="search">
 				<field-visibility>
 
@@ -1380,6 +1460,23 @@
 					<field id="cm:modified" set="audit" />
 				</appearance>
 			</form>
+			<form id="product-list">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:title" />
+					<show id="cm:description" force="true"/>
+					<show id="qa:qcState" />
+					<show id="qa:qcControlPlans" />
+
+					<!-- batch -->
+					<show id="qa:batchId" />
+					<show id="qa:orderId" />
+				
+					<!-- Product -->
+					<show id="qa:product" />
+
+				</field-visibility>
+			</form>
 			<form id="search">
 				<field-visibility>
 					<show id="cm:name" />
@@ -1460,6 +1557,82 @@
 	<config evaluator="node-type" condition="qa:qualityControl">
 		<forms>
 			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:title" />
+					<show id="cm:description" force="true"/>
+					<show id="bcpg:code" />
+					<show id="qa:qcSamplesCounter" />
+					<show id="qa:qcNextAnalysisDate" />
+					<show id="qa:qcState" />
+					<show id="qa:qcControlPlans" />
+
+					<!-- batch -->
+					<show id="qa:batchId" />
+					<show id="qa:orderId" />
+					<show id="qa:batchStart" />
+					<show id="qa:batchDuration" />
+					<show id="bcpg:clients" />
+					<show id="bcpg:suppliers" />
+					<show id="qa:batchComment" />
+
+					<!-- Product -->
+					<show id="qa:product" />
+					
+					<!-- local security rule -->
+					<show id="sec:securityRef" />	
+
+					<!-- auditable -->
+					<show id="cm:creator" for-mode="view" />
+					<show id="cm:created" for-mode="view" />
+					<show id="cm:modifier" for-mode="view" />
+					<show id="cm:modified" for-mode="view" />
+
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="bordered-panel" label-id="becpg.forms.set.designation.label" />
+					<field id="cm:name" set="mainInfo" />
+					<field id="cm:title" set="mainInfo" />
+					<field id="cm:description" set="mainInfo" />
+					<field id="bcpg:code" read-only="true" set="mainInfo" />
+					<field id="qa:qcState" read-only="true" set="mainInfo" />
+					<field id="qa:qcSamplesCounter" read-only="true" set="mainInfo" />
+					<field id="qa:qcNextAnalysisDate" read-only="true" set="mainInfo" />
+					<field id="qa:qcControlPlans" set="mainInfo" />
+
+					<set id="product-info" appearance="bordered-panel" label-id="becpg.forms.set.product-info.label" />
+					<field id="qa:product" set="product-info" />
+
+					<set id="batch-info" appearance="bordered-panel" label-id="becpg.forms.set.batch-info.label" />
+					<field id="qa:batchId" set="batch-info" />
+					<field id="qa:orderId" set="batch-info" />
+					<field id="qa:batchStart" set="batch-info" />
+					<field id="qa:batchDuration" set="batch-info" />
+					<field id="bcpg:clients" set="batch-info" />
+					<field id="bcpg:suppliers" set="batch-info" />
+					<field id="qa:batchComment" set="batch-info">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">3</control-param>
+						</control>
+					</field>
+					
+					 <set id="securityRule" appearance="bordered-panel" label-id="becpg.forms.set.securityRule.label" />
+			          <field id="sec:securityRef" set="securityRule" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/sec:aclGroup?&amp;excludeProps=sec:isLocalPermission%7Cfalse
+							</control-param>
+						</control>
+					  </field>
+
+					<!-- audit -->
+					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label" />
+					<field id="cm:creator" set="audit" />
+					<field id="cm:created" set="audit" />
+					<field id="cm:modifier" set="audit" />
+					<field id="cm:modified" set="audit" />
+				</appearance>
+			</form>
+			<form id="product-list">
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="cm:title" />

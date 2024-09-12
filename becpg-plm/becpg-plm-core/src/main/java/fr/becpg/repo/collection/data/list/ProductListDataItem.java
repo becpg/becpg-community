@@ -42,13 +42,11 @@ public class ProductListDataItem extends AbstractEffectiveDataItem implements Co
 	private ProductListDataItem parent;
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * <p>
 	 * Getter for the field <code>parent</code>.
 	 * </p>
-	 *
-	 * @return a
-	 *         {@link fr.becpg.repo.product.data.productList.CompoListDataItem}
-	 *         object.
 	 */
 	@Override
 	@AlfProp
@@ -59,14 +57,11 @@ public class ProductListDataItem extends AbstractEffectiveDataItem implements Co
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * <p>
 	 * Setter for the field <code>parent</code>.
 	 * </p>
-	 *
-	 * @param parent
-	 *            a
-	 *            {@link fr.becpg.repo.product.data.productList.CompoListDataItem}
-	 *            object.
 	 */
 	@Override
 	public void setParent(ProductListDataItem parent) {
@@ -74,11 +69,11 @@ public class ProductListDataItem extends AbstractEffectiveDataItem implements Co
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * <p>
 	 * Getter for the field <code>depthLevel</code>.
 	 * </p>
-	 *
-	 * @return a {@link java.lang.Integer} object.
 	 */
 	@Override
 	@AlfProp
@@ -127,6 +122,7 @@ public class ProductListDataItem extends AbstractEffectiveDataItem implements Co
 		this.product = product;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -135,6 +131,7 @@ public class ProductListDataItem extends AbstractEffectiveDataItem implements Co
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -147,6 +144,7 @@ public class ProductListDataItem extends AbstractEffectiveDataItem implements Co
 		return Objects.equals(depthLevel, other.depthLevel) && Objects.equals(parent, other.parent) && Objects.equals(product, other.product);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "ProductListDataItem [depthLevel=" + depthLevel + ", product=" + product + ", parent=" + parent + "]";

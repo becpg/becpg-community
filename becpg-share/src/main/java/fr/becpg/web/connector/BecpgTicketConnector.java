@@ -6,12 +6,25 @@ import org.springframework.extensions.webscripts.connector.ConnectorContext;
 import org.springframework.extensions.webscripts.connector.HttpConnector;
 import org.springframework.extensions.webscripts.connector.RemoteClient;
 
+/**
+ * <p>BecpgTicketConnector class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class BecpgTicketConnector extends HttpConnector {
 
+	/**
+	 * <p>Constructor for BecpgTicketConnector.</p>
+	 *
+	 * @param descriptor a {@link org.springframework.extensions.config.RemoteConfigElement.ConnectorDescriptor} object
+	 * @param endpoint a {@link java.lang.String} object
+	 */
 	public BecpgTicketConnector(ConnectorDescriptor descriptor, String endpoint) {
 		super(descriptor, endpoint);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void applyRequestAuthentication(RemoteClient remoteClient, ConnectorContext context) {
 		String currentAuthToken = getCurrentAuthToken(context);
@@ -22,6 +35,12 @@ public class BecpgTicketConnector extends HttpConnector {
 		}
 	}
 
+	/**
+	 * <p>getCurrentAuthToken.</p>
+	 *
+	 * @param context a {@link org.springframework.extensions.webscripts.connector.ConnectorContext} object
+	 * @return a {@link java.lang.String} object
+	 */
 	public String getCurrentAuthToken(ConnectorContext context) {
 		String ticket = null;
 

@@ -31,6 +31,12 @@ import org.springframework.stereotype.Service;
 import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorPlugin;
 import fr.becpg.repo.survey.SurveyModel;
 
+/**
+ * <p>SurveyAttributeExtractorPlugin class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class SurveyAttributeExtractorPlugin implements AttributeExtractorPlugin {
 

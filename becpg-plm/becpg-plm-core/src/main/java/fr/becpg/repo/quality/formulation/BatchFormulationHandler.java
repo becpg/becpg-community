@@ -8,15 +8,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.QualityModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
@@ -33,6 +32,12 @@ import fr.becpg.repo.quality.data.dataList.StockListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 
+/**
+ * <p>BatchFormulationHandler class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class BatchFormulationHandler extends FormulationBaseHandler<BatchData> {
 
 	private static Log logger = LogFactory.getLog(BatchFormulationHandler.class);
@@ -41,10 +46,16 @@ public class BatchFormulationHandler extends FormulationBaseHandler<BatchData> {
 
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
+	/**
+	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 */
 	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean process(BatchData batchData) {
 
@@ -141,7 +152,7 @@ public class BatchFormulationHandler extends FormulationBaseHandler<BatchData> {
 
 							if (reqCtrl == null) {
 								reqCtrl = ReqCtrlListDataItem.forbidden()
-										.withMessage(new MLText(I18NUtil.getMessage(MESSAGE_MISSING_STOCK)))
+										.withMessage(MLTextHelper.getI18NMessage(MESSAGE_MISSING_STOCK))
 										.ofDataType(RequirementDataType.Formulation);
 										
 								batchData.getReqCtrlList().add(reqCtrl);

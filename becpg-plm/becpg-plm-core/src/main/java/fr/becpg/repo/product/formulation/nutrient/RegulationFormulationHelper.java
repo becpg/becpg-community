@@ -152,6 +152,13 @@ public class RegulationFormulationHelper {
 		return extractValueByKey(roundedValue, KEY_VALUE_PER_SERVING, key);
 	}
 
+	/**
+	 * <p>extractPreparedValuePerServing.</p>
+	 *
+	 * @param roundedValue a {@link java.lang.String} object
+	 * @param key a {@link java.lang.String} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	public static Double extractPreparedValuePerServing(String roundedValue, String key) {
 		return extractValueByKey(roundedValue, KEY_SECONDARY_VALUE_PER_SERVING, key);
 	}
@@ -200,6 +207,13 @@ public class RegulationFormulationHelper {
 		return extractValueByKey(roundedValue, KEY_VALUE, key);
 	}
 
+	/**
+	 * <p>extractPreparedValue.</p>
+	 *
+	 * @param roundedValue a {@link java.lang.String} object
+	 * @param key a {@link java.lang.String} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	public static Double extractPreparedValue(String roundedValue, String key) {
 		return extractValueByKey(roundedValue, KEY_SECONDARY_VALUE, key);
 	}
@@ -210,6 +224,7 @@ public class RegulationFormulationHelper {
 	 * @param roundedValue a {@link java.lang.String} object.
 	 * @param key a {@link java.lang.String} object.
 	 * @return a {@link java.lang.Double} object.
+	 * @param variantKey a {@link java.lang.String} object
 	 */
 	public static Double extractVariantValue(String roundedValue, String variantKey, String key) {
 		return extractValueByKey(roundedValue, variantKey, key);
@@ -294,6 +309,7 @@ public class RegulationFormulationHelper {
 	 * @param roundedValue a {@link java.lang.String} object.
 	 * @param locale a {@link java.util.Locale} object.
 	 * @param isDisplayed a boolean.
+	 * @param localesToDisplay a {@link java.lang.String} object
 	 */
 	public static void extractXMLAttribute(Element nutListElt, String roundedValue, Locale locale, boolean isDisplayed, String localesToDisplay) {
 		if (roundedValue != null) {
@@ -428,10 +444,6 @@ public class RegulationFormulationHelper {
 			return "Mini";
 		case KEY_MAXI:
 			return "Maxi";
-		case KEY_TOLERANCE_MAX:
-			return "Tmax";
-		case KEY_TOLERANCE_MIN:
-			return "Tmin";
 		case KEY_VALUE_PER_SERVING:
 			return "ValuePerServing";
 		case KEY_GDA_PERC:
@@ -442,12 +454,19 @@ public class RegulationFormulationHelper {
 			return "GDAPercPerContainer";
 		case KEY_UNIT:
 			return "Unit";
+		case KEY_TOLERANCE_MAX:
+			return "ToleranceMax";	
+		case KEY_TOLERANCE_MIN:
+			return "ToleranceMax";	
+		case KEY_UL:
+			return "UpperLimit";		
 		default:
 			break;
 		}
 		return "Value";
 	}
 
+	
 	// {
 	// v : {
 	// eu: 5.0,
@@ -783,6 +802,15 @@ public class RegulationFormulationHelper {
 		return getRegulation(key).round(value, nutCode, nutUnit);
 	}
 
+	/**
+	 * <p>tolerances.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object
+	 * @param nutCode a {@link java.lang.String} object
+	 * @param locale a {@link java.util.Locale} object
+	 * @param nutUnit a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.util.Pair} object
+	 */
 	public static Pair<Double, Double> tolerances(Double value, String nutCode, Locale locale, String nutUnit) {
 		return tolerances(value, nutCode, getLocalKey(locale), nutUnit);
 	}
@@ -818,6 +846,7 @@ public class RegulationFormulationHelper {
 	 * @param nutCode a {@link java.lang.String} object.
 	 * @param locale a {@link java.util.Locale} object.
 	 * @return a {@link java.lang.String} object.
+	 * @param measurementPrecision a {@link java.lang.String} object
 	 */
 	public static String displayValue(Double value, Double roundedValue, String nutCode, String measurementPrecision, Locale locale) {
 		if (value == null) {
@@ -835,6 +864,7 @@ public class RegulationFormulationHelper {
 	 * @param locale a {@link java.util.Locale} object.
 	 * @param regulation a {@link java.lang.String} object.
 	 * @return a {@link java.lang.String} object.
+	 * @param measurementPrecision a {@link java.lang.String} object
 	 */
 	public static String displayValue(Double value, Double roundedValue, String nutCode, String measurementPrecision, Locale locale,
 			String regulation) {

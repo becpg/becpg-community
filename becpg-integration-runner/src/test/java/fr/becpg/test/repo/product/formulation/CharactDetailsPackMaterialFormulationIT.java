@@ -22,11 +22,6 @@ import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.product.data.CharactDetails;
 import fr.becpg.repo.product.data.CharactDetailsValue;
 import fr.becpg.repo.product.data.FinishedProductData;
-import fr.becpg.repo.product.data.constraints.DeclarationType;
-import fr.becpg.repo.product.data.constraints.PackagingLevel;
-import fr.becpg.repo.product.data.constraints.ProductUnit;
-import fr.becpg.repo.product.data.productList.CompoListDataItem;
-import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.web.scripts.product.CharactDetailsHelper;
 
 /**
@@ -58,58 +53,7 @@ public class CharactDetailsPackMaterialFormulationIT extends  FormulationPackMat
 
 		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-			logger.info("/*-- Create finished product --*/");
-			FinishedProductData finishedProduct = new FinishedProductData();
-			finishedProduct.setName("Produit fini 1");
-			finishedProduct.setLegalName("Legal Produit fini 1");
-			finishedProduct.setUnit(ProductUnit.kg);
-			finishedProduct.setQty(1d);
-			finishedProduct.setDensity(1d);
-			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, PF1NodeRef));// Allu
-																																// 20
-																																// /
-																																// Carton
-																																// 40
-			compoList.add(new CompoListDataItem(null, null, null, 500d, ProductUnit.g, 0d, DeclarationType.Declare, SF1NodeRef));// Fer
-																																	// 60
-																																	// /
-																																	// Plastique
-																																	// 80
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.lb, 0d, DeclarationType.Declare, rawMaterial1NodeRef));// Verre
-																																			// 56.699
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.oz, 0d, DeclarationType.Declare, rawMaterial2NodeRef));// no
-																																			// material
-			finishedProduct.getCompoListView().setCompoList(compoList);
-
-			List<PackagingListDataItem> packList = new ArrayList<>();
-			packList.add(new PackagingListDataItem(null, 3d, ProductUnit.g, PackagingLevel.Primary, true, packaging1NodeRef));// Allu
-																																// 20
-																																// +
-																																// 3g
-																																// =
-																																// 23
-			packList.add(new PackagingListDataItem(null, 1d, ProductUnit.oz, PackagingLevel.Primary, true, packaging2NodeRef));// Carton
-																																// 40
-																																// +
-																																// 28.349523125g
-																																// =
-																																// 68.35
-			packList.add(new PackagingListDataItem(null, 1d, ProductUnit.lb, PackagingLevel.Primary, true, packaging3NodeRef));// Fer
-																																// 60
-																																// +
-																																// 226,796
-																																// =
-																																// 286.796
-																																// /
-																																// Plastique
-																																// =
-																																// 80
-																																// +
-																																// 226,796
-																																// =
-																																// 306.796
-			finishedProduct.getPackagingListView().setPackagingList(packList);
+			FinishedProductData finishedProduct = createFinishedProduct();
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
 		}, false, true);
@@ -196,12 +140,20 @@ public class CharactDetailsPackMaterialFormulationIT extends  FormulationPackMat
 							assertEquals(df.format(56.699d), df.format(kv2.getValue()));
 						}
 					}
+					// material 6 (Papier)
+					else if (kv.getKey().equals(packMaterial6NodeRef)) {
+						
+						if (kv2.getKeyNodeRef().equals(rawMaterial3NodeRef)) {
+							checks++;
+							assertEquals(df.format(20d), df.format(kv2.getValue()));
+						}
+					}
 
 				}
 
 			}
 
-			assertEquals("Verify checks done", 9, checks);
+			assertEquals("Verify checks done", 10, checks);
 
 			return null;
 

@@ -17,13 +17,16 @@ import java.util.stream.Collectors;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.model.DataListModel;
 import org.alfresco.repo.batch.BatchProcessWorkProvider;
 import org.alfresco.repo.batch.BatchProcessor;
 import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
+import org.alfresco.repo.dictionary.constraint.ListOfValuesConstraint;
 import org.alfresco.repo.forum.CommentService;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.activities.ActivityService;
+import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
@@ -401,6 +404,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					data.put(PROP_ACTIVITY_EVENT, activityEvent.toString());
 					data.put(PROP_ENTITY_NODEREF, entityNodeRef);
 					data.put(PROP_ENTITY_TYPE, nodeService.getType(entityNodeRef));
+					data.put(PROP_PARENT_NAME, nodeService.getProperty(nodeService.getPrimaryParent(datalistNodeRef).getParentRef(), ContentModel.PROP_NAME));
 
 					QName type = nodeService.getType(datalistNodeRef);
 
@@ -417,11 +421,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 						data.put(PROP_CHARACT_NODEREF, charactNodeRef);
 						data.put(PROP_TITLE, attributeExtractorService.extractPropName(charactNodeRef));
 					} else {
-						if (attributeExtractorService.hasAttributeExtractorPlugin(datalistNodeRef)) {
-							data.put(PROP_TITLE, attributeExtractorService.extractPropName(datalistNodeRef));
-						} else {
-							data.put(PROP_TITLE, nodeService.getProperty(datalistNodeRef, ContentModel.PROP_NAME));
-						}
+						data.put(PROP_TITLE, attributeExtractorService.extractPropName(datalistNodeRef));
 					}
 					if (activityEvent.equals(ActivityEvent.Update) && (updatedProperties != null)) {
 						List<JSONObject> properties = new ArrayList<>();
@@ -544,6 +544,50 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 			}
 		}
 		return false;
+
+	}
+	
+	@Override
+	public void postDataListCopyActivity(NodeRef entityNodeRef, NodeRef sourceEntityNodeRef, NodeRef datalistNodeRef, String action) {
+		if ((datalistNodeRef != null)) {
+			try {
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+				NodeRef activityListNodeRef = getActivityList(entityNodeRef);
+
+				// No list no activity
+				if (activityListNodeRef != null) {
+					if (nodeService.hasAspect(activityListNodeRef, ContentModel.ASPECT_PENDING_DELETE)) {
+						logger.debug(NO_ACTIVITY_MESSAGE);
+						return;
+					}
+
+					// Project activity
+					ActivityListDataItem activityListDataItem = new ActivityListDataItem();
+					JSONObject data = new JSONObject();
+					data.put(PROP_DATALIST_NODEREF, datalistNodeRef);
+					data.put(PROP_ACTIVITY_EVENT, action);
+					data.put(PROP_ENTITY_NODEREF, entityNodeRef);
+					data.put(PROP_ENTITY_TYPE, nodeService.getType(sourceEntityNodeRef).toPrefixString(namespaceService).split(":")[1]);
+
+					String type = (String) nodeService.getProperty(datalistNodeRef, DataListModel.PROP_DATALIST_ITEM_TYPE);
+					data.put(PROP_CLASSNAME, type.split(":")[1]);
+
+					data.put(PROP_TITLE, nodeService.getProperty(sourceEntityNodeRef, BeCPGModel.PROP_CODE) + " - " + attributeExtractorService.extractPropName(sourceEntityNodeRef));
+					activityListDataItem.setActivityType(ActivityType.DatalistCopy);
+					activityListDataItem.setActivityData(data.toString());
+					activityListDataItem.setParentNodeRef(activityListNodeRef);
+
+					mergeWithLastActivity(activityListDataItem);
+					recordAuditActivity(entityNodeRef, activityListDataItem);
+					notifyListeners(entityNodeRef, activityListDataItem);
+
+				}
+			} catch (JSONException e) {
+				logger.error(e, e);
+			} finally {
+				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+			}
+		}
 
 	}
 	
@@ -917,6 +961,19 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 									} else if (ent instanceof Pair || ent instanceof NodeRef) {
 										beforeList.add(ent.toString());
 									} else {
+										PropertyDefinition propDef = entityDictionaryService.getProperty(entry.getKey());
+										if (propDef.getConstraints() != null) {
+											for (ConstraintDefinition constraint : propDef.getConstraints()) {
+												if (constraint.getConstraint() instanceof ListOfValuesConstraint lvc) {
+													if (ent instanceof List<?> entList) {
+														entList = entList.stream().map(o -> lvc.getDisplayLabel(o.toString(), dictionaryService)).toList();
+														ent = (Serializable) entList;
+													} else if (ent != null) {
+														ent = lvc.getDisplayLabel(ent.toString(), dictionaryService);
+													}
+												}
+											}
+										}
 										beforeList.add(ent);
 									}
 								}
@@ -938,6 +995,19 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 										} else if (ent instanceof Pair || ent instanceof NodeRef) {
 											afterList.add(ent.toString());
 										} else {
+											PropertyDefinition propDef = entityDictionaryService.getProperty(entry.getKey());
+											if (propDef.getConstraints() != null) {
+												for (ConstraintDefinition constraint : propDef.getConstraints()) {
+													if (constraint.getConstraint() instanceof ListOfValuesConstraint lvc) {
+														if (ent instanceof List<?> entList) {
+															entList = entList.stream().map(o -> lvc.getDisplayLabel(o.toString(), dictionaryService)).toList();
+															ent = (Serializable) entList;
+														} else if (ent != null) {
+															ent = lvc.getDisplayLabel(ent.toString(), dictionaryService);
+														}
+													}
+												}
+											}
 											afterList.add(ent);
 										}
 									}

@@ -182,20 +182,30 @@ public class SupplierData extends BeCPGDataObject implements HierarchicalEntity,
 		this.contactList = contactList;
 	}
 
+	/**
+	 * <p>Getter for the field <code>lcaList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	@DataList
 	@AlfQname(qname = "bcpg:lcaList")
 	public List<LCAListDataItem> getLcaList() {
 		return lcaList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>lcaList</code>.</p>
+	 *
+	 * @param lcaList a {@link java.util.List} object
+	 */
 	public void setLcaList(List<LCAListDataItem> lcaList) {
 		this.lcaList = lcaList;
 	}
 
 	/**
-	 * <p>Getter for the field <code>reformulateCount</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @return a {@link java.lang.Integer} object.
+	 * <p>Getter for the field <code>reformulateCount</code>.</p>
 	 */
 	@Override
 	public Integer getReformulateCount() {
@@ -209,9 +219,9 @@ public class SupplierData extends BeCPGDataObject implements HierarchicalEntity,
 	}
 
 	/**
-	 * <p>Getter for the field <code>currentReformulateCount</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @return a {@link java.lang.Integer} object.
+	 * <p>Getter for the field <code>currentReformulateCount</code>.</p>
 	 */
 	@Override
 	public Integer getCurrentReformulateCount() {
@@ -225,9 +235,9 @@ public class SupplierData extends BeCPGDataObject implements HierarchicalEntity,
 	}
 
 	/**
-	 * <p>Getter for the field <code>formulationChainId</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @return a {@link java.lang.String} object.
+	 * <p>Getter for the field <code>formulationChainId</code>.</p>
 	 */
 	@Override
 	public String getFormulationChainId() {
@@ -253,9 +263,9 @@ public class SupplierData extends BeCPGDataObject implements HierarchicalEntity,
 	}
 
 	/**
-	 * <p>getFormulatedEntityTpl.</p>
+	 * {@inheritDoc}
 	 *
-	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * <p>getFormulatedEntityTpl.</p>
 	 */
 	@Override
 	public NodeRef getFormulatedEntityTpl() {
@@ -265,16 +275,16 @@ public class SupplierData extends BeCPGDataObject implements HierarchicalEntity,
 	/**
 	 * <p>Setter for the field <code>projectTpl</code>.</p>
 	 *
-	 * @param projectTpl a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param entityTpl a {@link fr.becpg.repo.product.data.SupplierData} object
 	 */
 	public void setEntityTpl(SupplierData entityTpl) {
 		this.entityTpl = entityTpl;
 	}
 
 	/**
-	 * <p>Getter for the field <code>requirementChecksum</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @return a {@link java.lang.String} object.
+	 * <p>Getter for the field <code>requirementChecksum</code>.</p>
 	 */
 	@Override
 	@AlfProp
@@ -293,9 +303,9 @@ public class SupplierData extends BeCPGDataObject implements HierarchicalEntity,
 	}
 
 	/**
-	 * <p>Getter for the field <code>formulatedDate</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @return a {@link java.util.Date} object.
+	 * <p>Getter for the field <code>formulatedDate</code>.</p>
 	 */
 	@Override
 	@AlfProp
@@ -311,9 +321,9 @@ public class SupplierData extends BeCPGDataObject implements HierarchicalEntity,
 	}
 
 	/**
-	 * <p>Getter for the field <code>scoreList</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @return a {@link java.util.List} object.
+	 * <p>Getter for the field <code>scoreList</code>.</p>
 	 */
 	@DataList
 	@AlfQname(qname = "pjt:scoreList")
@@ -323,9 +333,9 @@ public class SupplierData extends BeCPGDataObject implements HierarchicalEntity,
 	}
 
 	/**
-	 * <p>Setter for the field <code>scoreList</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @param scoreList a {@link java.util.List} object.
+	 * <p>Setter for the field <code>scoreList</code>.</p>
 	 */
 	@Override
 	public void setScoreList(List<ScoreListDataItem> scoreList) {
@@ -333,9 +343,9 @@ public class SupplierData extends BeCPGDataObject implements HierarchicalEntity,
 	}
 
 	/**
-	 * <p>Getter for the field <code>surveyList</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @return a {@link java.util.List} object.
+	 * <p>Getter for the field <code>surveyList</code>.</p>
 	 */
 	@DataList
 	@AlfQname(qname = "survey:surveyList")
@@ -345,18 +355,16 @@ public class SupplierData extends BeCPGDataObject implements HierarchicalEntity,
 	}
 
 	/**
-	 * <p>Setter for the field <code>surveyList</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @param scoreList a {@link java.util.List} object.
+	 * <p>Setter for the field <code>surveyList</code>.</p>
 	 */
 	@Override
 	public void setSurveyList(List<SurveyListDataItem> surveyList) {
 		this.surveyList = surveyList;
 	}
 
-	/**
-	 * @return the supplierScore
-	 */
+	/** {@inheritDoc} */
 	@AlfProp
 	@AlfQname(qname = "pjt:projectScore")
 	@Override
@@ -364,9 +372,7 @@ public class SupplierData extends BeCPGDataObject implements HierarchicalEntity,
 		return supplierScore;
 	}
 
-	/**
-	 * @param supplierScore the supplierScore to set
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void setScore(Integer supplierScore) {
 		this.supplierScore = supplierScore;

@@ -100,6 +100,11 @@ public class UserImporterServiceImpl implements UserImporterService {
 	
 	
 	
+	/**
+	 * <p>Setter for the field <code>sysAdminParams</code>.</p>
+	 *
+	 * @param sysAdminParams a {@link org.alfresco.repo.admin.SysAdminParams} object
+	 */
 	public void setSysAdminParams(SysAdminParams sysAdminParams) {
 		this.sysAdminParams = sysAdminParams;
 	}
@@ -140,12 +145,22 @@ public class UserImporterServiceImpl implements UserImporterService {
 		this.siteService = siteService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>beCPGUserAccountService</code>.</p>
+	 *
+	 * @param beCPGUserAccountService a {@link fr.becpg.repo.authentication.BeCPGUserAccountService} object
+	 */
 	public void setBeCPGUserAccountService(BeCPGUserAccountService beCPGUserAccountService) {
 		this.beCPGUserAccountService = beCPGUserAccountService;
 	}
 
 
 
+	/**
+	 * <p>Setter for the field <code>authenticationService</code>.</p>
+	 *
+	 * @param authenticationService a {@link org.alfresco.service.cmr.security.MutableAuthenticationService} object
+	 */
 	public void setAuthenticationService(MutableAuthenticationService authenticationService) {
 		this.authenticationService = authenticationService;
 	}

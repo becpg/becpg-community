@@ -7,9 +7,7 @@ import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.NodeServicePolicies;
-import org.alfresco.repo.node.NodeServicePolicies.OnCreateChildAssociationPolicy;
 import org.alfresco.repo.node.NodeServicePolicies.OnCreateNodePolicy;
-import org.alfresco.repo.node.NodeServicePolicies.OnDeleteChildAssociationPolicy;
 import org.alfresco.repo.node.NodeServicePolicies.OnDeleteNodePolicy;
 import org.alfresco.repo.node.NodeServicePolicies.OnUpdatePropertiesPolicy;
 import org.alfresco.repo.policy.JavaBehaviour;
@@ -27,9 +25,15 @@ import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.security.SecurityService;
 
+/**
+ * <p>PermissionPolicy class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class PermissionPolicy extends AbstractBeCPGPolicy
 		implements NodeServicePolicies.OnDeleteAssociationPolicy, NodeServicePolicies.OnCreateAssociationPolicy,
-		OnCreateNodePolicy, OnDeleteNodePolicy, OnUpdatePropertiesPolicy, OnCreateChildAssociationPolicy, OnDeleteChildAssociationPolicy {
+		OnCreateNodePolicy, OnDeleteNodePolicy, OnUpdatePropertiesPolicy {
 	
 	private static final String KEY_UPDATE_READ_PERMISSIONS = "KEY_UPDATE_READ_PERMISSIONS";
 
@@ -39,18 +43,34 @@ public class PermissionPolicy extends AbstractBeCPGPolicy
 	
 	private SecurityService securityService;
 	
+	/**
+	 * <p>Setter for the field <code>securityService</code>.</p>
+	 *
+	 * @param securityService a {@link fr.becpg.repo.security.SecurityService} object
+	 */
 	public void setSecurityService(SecurityService securityService) {
 		this.securityService = securityService;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>associationService</code>.</p>
+	 *
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object
+	 */
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>permissionService</code>.</p>
+	 *
+	 * @param permissionService a {@link org.alfresco.service.cmr.security.PermissionService} object
+	 */
 	public void setPermissionService(PermissionService permissionService) {
 		this.permissionService = permissionService;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void doInit() {
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM,
@@ -64,36 +84,29 @@ public class PermissionPolicy extends AbstractBeCPGPolicy
 				new JavaBehaviour(this, "onDeleteNode"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, SecurityModel.TYPE_ACL_GROUP,
 				new JavaBehaviour(this, "onUpdateProperties"));
-		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, SecurityModel.TYPE_ACL_GROUP,
-				new JavaBehaviour(this, "onCreateAssociation"));
-		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME, SecurityModel.TYPE_ACL_GROUP,
-				new JavaBehaviour(this, "onDeleteAssociation"));
-		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateChildAssociationPolicy.QNAME, SecurityModel.TYPE_ACL_GROUP,
-				new JavaBehaviour(this, "onCreateChildAssociation"));
-		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteChildAssociationPolicy.QNAME, SecurityModel.TYPE_ACL_GROUP,
-				new JavaBehaviour(this, "onDeleteChildAssociation"));
 		
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, SecurityModel.TYPE_ACL_ENTRY,
 				new JavaBehaviour(this, "onUpdateProperties"));
 		
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onCreateAssociation(AssociationRef nodeAssocRef) {
 		if (SecurityModel.ASSOC_READ_GROUPS.equals(nodeAssocRef.getTypeQName())) {
 			queueNode(KEY_UPDATE_READ_PERMISSIONS, nodeAssocRef.getSourceRef());
 		}
-		securityService.refreshAcls();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onDeleteAssociation(AssociationRef nodeAssocRef) {
 		if (SecurityModel.ASSOC_READ_GROUPS.equals(nodeAssocRef.getTypeQName())) {
 			queueNode(KEY_UPDATE_READ_PERMISSIONS, nodeAssocRef.getSourceRef());
 		}
-		securityService.refreshAcls();
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 		if (KEY_UPDATE_READ_PERMISSIONS.equals(key)) {
@@ -144,26 +157,19 @@ public class PermissionPolicy extends AbstractBeCPGPolicy
 		});
 	}
 
-	@Override
-	public void onDeleteChildAssociation(ChildAssociationRef childAssocRef) {
-		securityService.refreshAcls();
-	}
-
-	@Override
-	public void onCreateChildAssociation(ChildAssociationRef childAssocRef, boolean isNewNode) {
-		securityService.refreshAcls();
-	}
-
+	/** {@inheritDoc} */
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 		securityService.refreshAcls();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onDeleteNode(ChildAssociationRef childAssocRef, boolean isNodeArchived) {
 		securityService.refreshAcls();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onCreateNode(ChildAssociationRef childAssocRef) {
 		securityService.refreshAcls();

@@ -38,6 +38,7 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO8601DateFormat;
+import org.springframework.extensions.surf.util.URLEncoder;
 
 import fr.becpg.model.DeliverableUrl;
 import fr.becpg.model.ProjectModel;
@@ -76,14 +77,29 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 	
 	private EntityService entityService;
 	
+	/**
+	 * <p>Setter for the field <code>entityService</code>.</p>
+	 *
+	 * @param entityService a {@link fr.becpg.repo.entity.EntityService} object
+	 */
 	public void setEntityService(EntityService entityService) {
 		this.entityService = entityService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>serviceRegistry</code>.</p>
+	 *
+	 * @param serviceRegistry a {@link org.alfresco.service.ServiceRegistry} object
+	 */
 	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
 		this.serviceRegistry = serviceRegistry;
 	}
 
+	/**
+	 * <p>Setter for the field <code>projectService</code>.</p>
+	 *
+	 * @param projectService a {@link fr.becpg.repo.project.ProjectService} object
+	 */
 	public void setProjectService(ProjectService projectService) {
 		this.projectService = projectService;
 	}
@@ -191,6 +207,12 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 	// {assocName|@type} --> replace with association property
 	// {assocName|xpath:./path} --> replace with nodeRef found in relative assoc path
 
+	/**
+	 * <p>getDeliverableUrl.</p>
+	 *
+	 * @param deliverable a {@link org.alfresco.repo.jscript.ScriptNode} object
+	 * @return a {@link java.lang.String} object
+	 */
 	public String getDeliverableUrl(ScriptNode deliverable) {
 
 		return AuthenticationUtil.runAsSystem(() -> {
@@ -244,7 +266,7 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 							}
 						}
 
-						patternMatcher.appendReplacement(sb, replacement != null ? replacement.toString() : "");
+						patternMatcher.appendReplacement(sb, replacement != null ? URLEncoder.encodeUriComponent(replacement.toString()) : "");
 
 					}
 					patternMatcher.appendTail(sb);
@@ -257,6 +279,7 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 		});
 
 	}
+
 
 	@SuppressWarnings("unchecked")
 	private String extractDeliverableProp(NodeRef nodeRef, String[] splitted) {
@@ -285,7 +308,7 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 				}
 				
 				
-				return strRet.toString().replace("$", "\\$");
+				return strRet.toString();
 			}
 		} else {
 			ret = nodeRef;
@@ -293,10 +316,23 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 		return ret != null ? ret.toString() : "";
 	}
 	
+	/**
+	 * <p>updateTaskState.</p>
+	 *
+	 * @param task a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object
+	 * @param taskState a {@link java.lang.String} object
+	 */
 	public void updateTaskState(TaskListDataItem task, String taskState) {
 		task.setTaskState(TaskState.valueOf(taskState));
 	}
 	
+	/**
+	 * <p>extractResources.</p>
+	 *
+	 * @param project a {@link org.alfresco.repo.jscript.ScriptNode} object
+	 * @param resources an array of {@link org.alfresco.repo.jscript.ScriptNode} objects
+	 * @return an array of {@link org.alfresco.repo.jscript.ScriptNode} objects
+	 */
 	public ScriptNode[] extractResources(ScriptNode project, ScriptNode[] resources) {
 		
 		List<NodeRef> resourceList = new ArrayList<>();
@@ -308,6 +344,13 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 		return projectService.extractResources(project.getNodeRef(), resourceList).stream().map(e -> new ScriptNode(e, serviceRegistry, getScope())).collect(Collectors.toList()).toArray(new ScriptNode[0]);
 	}
 
+	/**
+	 * <p>calculateTaskDuration.</p>
+	 *
+	 * @param startDate a {@link java.lang.String} object
+	 * @param endDate a {@link java.lang.String} object
+	 * @return a int
+	 */
 	public int calculateTaskDuration(String startDate, String endDate) {
 		return ProjectHelper.calculateTaskDuration(parseDate(startDate), parseDate(endDate));
 	}

@@ -205,6 +205,19 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 		}
 	}
 	
+	/**
+	 * <p>multiLevelComparison.</p>
+	 *
+	 * @param dataListType a {@link org.alfresco.service.namespace.QName} object
+	 * @param charactName a {@link java.lang.String} object
+	 * @param pivotKey a {@link java.lang.String} object
+	 * @param entity1NodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param entity2NodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param nbEntities a int
+	 * @param comparisonPosition a int
+	 * @param comparisonMap a {@link java.util.Map} object
+	 * @param totalQty an array of {@link double} objects
+	 */
 	protected void multiLevelComparison(QName dataListType, String charactName, String pivotKey, NodeRef entity1NodeRef, NodeRef entity2NodeRef, 
 			int nbEntities, int comparisonPosition, Map<String, CompareResultDataItem> comparisonMap, double[] totalQty) {}
 
@@ -890,6 +903,19 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 
 	}
 
+	/**
+	 * <p>compareNode.</p>
+	 *
+	 * @param dataListType a {@link org.alfresco.service.namespace.QName} object
+	 * @param charactName a {@link java.lang.String} object
+	 * @param privotKey a {@link java.lang.String} object
+	 * @param nodeRef1 a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param nodeRef2 a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param nbEntities a int
+	 * @param comparisonPosition a int
+	 * @param isDataList a boolean
+	 * @param comparisonMap a {@link java.util.Map} object
+	 */
 	protected void compareNode(QName dataListType, String charactName, String privotKey, NodeRef nodeRef1, NodeRef nodeRef2, int nbEntities,
 			int comparisonPosition, boolean isDataList, Map<String, CompareResultDataItem> comparisonMap) {
 
@@ -1084,6 +1110,20 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 				comparisonPosition, isDifferent);
 	}
 
+	/**
+	 * <p>addComparisonDataItem.</p>
+	 *
+	 * @param comparisonMap a {@link java.util.Map} object
+	 * @param dataListType a {@link org.alfresco.service.namespace.QName} object
+	 * @param charactName a {@link java.lang.String} object
+	 * @param pivotKey a {@link java.lang.String} object
+	 * @param propertyQName a {@link org.alfresco.service.namespace.QName} object
+	 * @param strValue1 a {@link java.lang.String} object
+	 * @param strValue2 a {@link java.lang.String} object
+	 * @param nbEntities a int
+	 * @param comparisonPosition a int
+	 * @param isDifferent a boolean
+	 */
 	protected void addComparisonDataItem(Map<String, CompareResultDataItem> comparisonMap, QName dataListType,
 			String charactName, String pivotKey, QName propertyQName, String strValue1, String strValue2, int nbEntities, int comparisonPosition,
 			boolean isDifferent) {
@@ -1218,6 +1258,7 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 		return isComparable;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean applyTo(QName entityType) {
 		return false;

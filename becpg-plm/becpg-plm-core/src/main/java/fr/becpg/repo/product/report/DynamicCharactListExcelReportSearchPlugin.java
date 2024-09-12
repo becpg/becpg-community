@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.MPMModel;
 import fr.becpg.model.PLMModel;
+import fr.becpg.repo.helper.ExcelHelper.ExcelCellStyles;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.report.search.impl.DefaultExcelReportSearchPlugin;
 
@@ -31,6 +32,8 @@ public class DynamicCharactListExcelReportSearchPlugin extends DefaultExcelRepor
 	@Override
 	public int fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum, String[] parameters,
 			AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache) {
+
+		ExcelCellStyles excelCellStyles = new ExcelCellStyles(sheet.getWorkbook());
 
 		for (NodeRef entityNodeRef : searchResults) {
 			if (entityDictionaryService.isSubClass(nodeService.getType(entityNodeRef), mainType)) {
@@ -62,13 +65,14 @@ public class DynamicCharactListExcelReportSearchPlugin extends DefaultExcelRepor
 					for (NodeRef itemNodeRef : results) {
 						if (itemType.equals(nodeService.getType(itemNodeRef))) {
 							if (permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED) {
-								rownum = fillRow(sheet, entityNodeRef, itemNodeRef, itemType, metadataFields, cache, rownum, key, entityItems);
+								rownum = fillRow(sheet, entityNodeRef, itemNodeRef, itemType, metadataFields, cache, rownum, key, entityItems,
+										excelCellStyles);
 							}
 						}
 					}
 
 				} else {
-					rownum = fillRow(sheet, entityNodeRef, entityNodeRef, itemType, metadataFields, cache, rownum, null, null);
+					rownum = fillRow(sheet, entityNodeRef, entityNodeRef, itemType, metadataFields, cache, rownum, null, null, excelCellStyles);
 				}
 			}
 		}

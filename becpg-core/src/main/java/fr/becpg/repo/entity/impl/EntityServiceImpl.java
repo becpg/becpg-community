@@ -149,26 +149,23 @@ public class EntityServiceImpl implements EntityService {
 		Map<String, NodeRef> icons = getEntityIcons();
 		QName type = nodeService.getType(entityNodeRef);
 
-		if(nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)) {
-			String iconName = String.format(ICON_NAME_TEMPLATE, type.getLocalName(), entityNodeRef.getId(),
-					imageResolution);
+		if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)) {
+			String iconName = String.format(ICON_NAME_TEMPLATE, type.getLocalName(), entityNodeRef.getId(), imageResolution);
 			if (icons.containsKey(iconName)) {
 				return icons.get(iconName);
 			}
 		}
-		
+
 		// Try to find a logo for the specific type
-		List<AssociationRef> entityTplAssocs = nodeService.getTargetAssocs(entityNodeRef,
-				BeCPGModel.ASSOC_ENTITY_TPL_REF);
-		
+		List<AssociationRef> entityTplAssocs = nodeService.getTargetAssocs(entityNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
+
 		if (!entityTplAssocs.isEmpty()) {
 			NodeRef entityTplNodeRef = entityTplAssocs.get(0).getTargetRef();
-			String iconName = String.format(ICON_NAME_TEMPLATE, type.getLocalName(), entityTplNodeRef.getId(),
-					imageResolution);
+			String iconName = String.format(ICON_NAME_TEMPLATE, type.getLocalName(), entityTplNodeRef.getId(), imageResolution);
 			if (icons.containsKey(iconName)) {
 				return icons.get(iconName);
 			}
-		} 
+		}
 
 		String iconName = String.format(ICON_NAME, type.getLocalName(), imageResolution);
 
@@ -190,24 +187,23 @@ public class EntityServiceImpl implements EntityService {
 		return beCPGCacheService.getFromCache(EntityServiceImpl.class.getName(), ENTITY_ICONS_CACHE_KEY, () -> {
 			return AuthenticationUtil.runAsSystem(() -> {
 
-				NodeRef iconsSystemFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath(
-						nodeService.getRootNode(RepoConsts.SPACES_STORE),
-						"/app:company_home" + RepoConsts.FULL_PATH_THUMBNAIL);
-				if (iconsSystemFolder == null) {
-					throw new BeCPGException("Folder doesn't exist.");
-				}
-
 				Map<String, NodeRef> ret = new HashMap<>();
+				NodeRef iconsSystemFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath(nodeService.getRootNode(RepoConsts.SPACES_STORE),
+						"/app:company_home" + RepoConsts.FULL_PATH_THUMBNAIL);
+				if (iconsSystemFolder != null) {
 
-				List<FileInfo> files = fileFolderService.listFiles(iconsSystemFolder);
-				for (FileInfo file : files) {
+					List<FileInfo> files = fileFolderService.listFiles(iconsSystemFolder);
+					for (FileInfo file : files) {
 
-					// Check if the input matches either pattern
-					Matcher matcher1 = ENTITY_ICONS_PATTERN.matcher(file.getName());
+						// Check if the input matches either pattern
+						Matcher matcher1 = ENTITY_ICONS_PATTERN.matcher(file.getName());
 
-					if (matcher1.matches()) {
-						ret.put(file.getName(), file.getNodeRef());
+						if (matcher1.matches()) {
+							ret.put(file.getName(), file.getNodeRef());
+						}
 					}
+				} else {
+					logger.warn(" Icon Folder doesn't exist.");
 				}
 				return ret;
 			});
@@ -248,8 +244,8 @@ public class EntityServiceImpl implements EntityService {
 		NodeRef imagesFolderNodeRef = nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS,
 				TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
 		if (imagesFolderNodeRef == null) {
-			imagesFolderNodeRef = fileFolderService.create(entityNodeRef,
-					TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES), ContentModel.TYPE_FOLDER).getNodeRef();
+			imagesFolderNodeRef = fileFolderService
+					.create(entityNodeRef, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES), ContentModel.TYPE_FOLDER).getNodeRef();
 		}
 		return imagesFolderNodeRef;
 	}
@@ -287,14 +283,13 @@ public class EntityServiceImpl implements EntityService {
 			String filename = image.getKey();
 
 			// create file if it doesn't exist
-			NodeRef fileNodeRef = nodeService.getChildByName(imagesFolderNodeRef, ContentModel.ASSOC_CONTAINS,
-					filename);
+			NodeRef fileNodeRef = nodeService.getChildByName(imagesFolderNodeRef, ContentModel.ASSOC_CONTAINS, filename);
 			if (fileNodeRef == null) {
 				Map<QName, Serializable> fileProperties = new HashMap<>();
 				fileProperties.put(ContentModel.PROP_NAME, filename);
 				fileNodeRef = nodeService.createNode(imagesFolderNodeRef, ContentModel.ASSOC_CONTAINS,
-						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(filename)),
-						ContentModel.TYPE_CONTENT, fileProperties).getChildRef();
+						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(filename)), ContentModel.TYPE_CONTENT,
+						fileProperties).getChildRef();
 			}
 
 			String mimetype = mimetypeService.guessMimetype(filename);
@@ -325,7 +320,7 @@ public class EntityServiceImpl implements EntityService {
 
 		// manage workingCopy
 		String wcLabel = CheckOutCheckInServiceImpl.getWorkingCopyLabel();
-		if (imgName.endsWith(wcLabel)) {
+		if (wcLabel!=null && imgName.endsWith(wcLabel)) {
 			imgName = getNameFromWorkingCopyName(imgName, wcLabel);
 		}
 
@@ -341,8 +336,7 @@ public class EntityServiceImpl implements EntityService {
 	/** {@inheritDoc} */
 	@Override
 	public String getDefaultImageName(QName entityTypeQName) {
-		String imgName = TranslateHelper
-				.getTranslatedPath(RepoConsts.PATH_LOGO_IMAGE + "." + entityTypeQName.getLocalName());
+		String imgName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_LOGO_IMAGE + "." + entityTypeQName.getLocalName());
 		if ((imgName == null) || imgName.isEmpty()) {
 			imgName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_LOGO_IMAGE);
 		}
@@ -363,9 +357,10 @@ public class EntityServiceImpl implements EntityService {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Create new Image node: " + name + " under " + imagesFolderNodeRef);
 		}
-		return nodeService.createNode(imagesFolderNodeRef, ContentModel.ASSOC_CONTAINS,
-				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name)),
-				ContentModel.TYPE_CONTENT, props).getChildRef();
+		return nodeService
+				.createNode(imagesFolderNodeRef, ContentModel.ASSOC_CONTAINS,
+						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name)), ContentModel.TYPE_CONTENT, props)
+				.getChildRef();
 	}
 
 	/** {@inheritDoc} */
@@ -384,19 +379,16 @@ public class EntityServiceImpl implements EntityService {
 	@Override
 	public NodeRef getDocumentsFolder(NodeRef entityNodeRef, boolean create) {
 		String documentsFolderName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_DOCUMENTS);
-		NodeRef documentsFolderNodeRef = nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS,
-				documentsFolderName);
+		NodeRef documentsFolderNodeRef = nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS, documentsFolderName);
 		if ((documentsFolderNodeRef == null) && create) {
-			documentsFolderNodeRef = fileFolderService
-					.create(entityNodeRef, documentsFolderName, ContentModel.TYPE_FOLDER).getNodeRef();
+			documentsFolderNodeRef = fileFolderService.create(entityNodeRef, documentsFolderName, ContentModel.TYPE_FOLDER).getNodeRef();
 		}
 		return documentsFolderNodeRef;
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public NodeRef createOrCopyFrom(final NodeRef sourceNodeRef, final NodeRef parentNodeRef, final QName entityType,
-			final String entityName) {
+	public NodeRef createOrCopyFrom(final NodeRef sourceNodeRef, final NodeRef parentNodeRef, final QName entityType, final String entityName) {
 		NodeRef ret;
 		Map<QName, Serializable> props = new HashMap<>();
 		props.put(ContentModel.PROP_NAME, entityName);
@@ -405,17 +397,18 @@ public class EntityServiceImpl implements EntityService {
 			logger.debug("Copy existing entity");
 
 			ret = AuthenticationUtil.runAsSystem(() -> {
-				NodeRef ret1 = copyService.copyAndRename(sourceNodeRef, parentNodeRef, ContentModel.ASSOC_CONTAINS,
-						ContentModel.ASSOC_CHILDREN, true);
+				NodeRef ret1 = copyService.copyAndRename(sourceNodeRef, parentNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN,
+						true);
 				nodeService.setProperty(ret1, ContentModel.PROP_NAME, entityName);
 				return ret1;
 			});
 
 		} else {
 			logger.debug("Create new entity with name " + entityName);
-			ret = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(entityName)),
-					entityType, props).getChildRef();
+			ret = nodeService
+					.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(entityName)), entityType, props)
+					.getChildRef();
 		}
 
 		if (nodeService.hasAspect(ret, ContentModel.ASPECT_VERSIONABLE)) {
@@ -457,8 +450,7 @@ public class EntityServiceImpl implements EntityService {
 
 	private void copyOrMoveFiles(NodeRef sourceNodeRef, NodeRef targetNodeRef, boolean isCopy) {
 
-		if ((targetNodeRef != null) && (sourceNodeRef != null)
-				&& !nodeService.hasAspect(sourceNodeRef, VirtualContentModel.ASPECT_VIRTUAL)) {
+		if ((targetNodeRef != null) && (sourceNodeRef != null) && !nodeService.hasAspect(sourceNodeRef, VirtualContentModel.ASPECT_VIRTUAL)) {
 
 			for (FileInfo file : fileFolderService.list(sourceNodeRef)) {
 
@@ -466,11 +458,9 @@ public class EntityServiceImpl implements EntityService {
 
 					// create Documents folder if needed
 					String documentsFolderName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_DOCUMENTS);
-					NodeRef documentsFolderNodeRef = nodeService.getChildByName(targetNodeRef,
-							ContentModel.ASSOC_CONTAINS, documentsFolderName);
+					NodeRef documentsFolderNodeRef = nodeService.getChildByName(targetNodeRef, ContentModel.ASSOC_CONTAINS, documentsFolderName);
 					if (documentsFolderNodeRef == null) {
-						documentsFolderNodeRef = fileFolderService
-								.create(targetNodeRef, documentsFolderName, ContentModel.TYPE_FOLDER).getNodeRef();
+						documentsFolderNodeRef = fileFolderService.create(targetNodeRef, documentsFolderName, ContentModel.TYPE_FOLDER).getNodeRef();
 					}
 
 					for (FileInfo file2 : fileFolderService.list(file.getNodeRef())) {
@@ -491,8 +481,7 @@ public class EntityServiceImpl implements EntityService {
 
 	private void copyOrMoveFile(FileInfo file, NodeRef parentNodeRef, boolean isCopy) {
 
-		NodeRef documentNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS,
-				file.getName());
+		NodeRef documentNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, file.getName());
 		if (documentNodeRef == null) {
 
 			logger.debug("copy or move file in Documents: " + file.getName() + " parentNodeRef: " + parentNodeRef);
@@ -500,8 +489,8 @@ public class EntityServiceImpl implements EntityService {
 			if (isCopy) {
 				ChildAssociationRef primaryAssocRef = nodeService.getPrimaryParent(file.getNodeRef());
 
-				NodeRef subFolderNodeRef = copyService.copy(file.getNodeRef(), parentNodeRef,
-						ContentModel.ASSOC_CONTAINS, primaryAssocRef.getQName(), true);
+				NodeRef subFolderNodeRef = copyService.copy(file.getNodeRef(), parentNodeRef, ContentModel.ASSOC_CONTAINS, primaryAssocRef.getQName(),
+						true);
 				nodeService.setProperty(subFolderNodeRef, ContentModel.PROP_NAME, file.getName());
 			} else {
 
@@ -511,8 +500,7 @@ public class EntityServiceImpl implements EntityService {
 			}
 
 		} else {
-			logger.debug("file already exists so no copy, neither move file: " + file.getName() + " in parentNodeRef: "
-					+ parentNodeRef);
+			logger.debug("file already exists so no copy, neither move file: " + file.getName() + " in parentNodeRef: " + parentNodeRef);
 		}
 	}
 
@@ -588,8 +576,7 @@ public class EntityServiceImpl implements EntityService {
 						continue;
 					}
 
-					NodeRef entityNodeRef = getEntityNodeRef(parent.getParentRef(),
-							nodeService.getType(parent.getParentRef()), visitedNodeRefs);
+					NodeRef entityNodeRef = getEntityNodeRef(parent.getParentRef(), nodeService.getType(parent.getParentRef()), visitedNodeRefs);
 					if (entityNodeRef != null) {
 						return entityNodeRef;
 					}

@@ -79,6 +79,7 @@ public class ControlDefListDataItem extends ControlListDataItem {
 	}
 
 	
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "ControlDefListDataItem [getType()=" + getType() + ", getMini()=" + getMini() + ", getMaxi()=" + getMaxi() + ", getRequired()="

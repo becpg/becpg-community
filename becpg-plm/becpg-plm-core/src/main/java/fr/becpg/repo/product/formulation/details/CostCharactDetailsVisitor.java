@@ -32,9 +32,16 @@ import fr.becpg.repo.product.formulation.CostCalculatingHelper;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 
+/**
+ * <p>CostCharactDetailsVisitor class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service
 public class CostCharactDetailsVisitor extends AbstractCostCharactDetailsVisitor<CostListDataItem> {
 
+	/** {@inheritDoc} */
 	@Override
 	protected List<CostListDataItem> getDataListVisited(BeCPGDataObject product) {
 		if (product instanceof ProductData) {
@@ -47,16 +54,19 @@ public class CostCharactDetailsVisitor extends AbstractCostCharactDetailsVisitor
 		return new LinkedList<>();
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	protected Double extractValue(ProductData formulatedProduct, ProductData partProduct, SimpleCharactDataItem simpleCharact) {
 		return CostCalculatingHelper.extractValue(formulatedProduct, partProduct, simpleCharact);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected QName getCostFixedPropName() {
 		return PLMModel.PROP_COSTFIXED;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected QName getCostUnitPropName() {
 		return PLMModel.PROP_COSTCURRENCY;

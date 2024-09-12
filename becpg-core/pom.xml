@@ -3,10 +3,10 @@
 	<parent>
 		<artifactId>becpg-parent</artifactId>
 		<groupId>fr.becpg</groupId>
-		<version>23.2.0</version>
+		<version>23.2.1</version>
 		<relativePath>../</relativePath>
 	</parent>
-    <version>23.2.0.21-SNAPSHOT</version>
+    <version>23.2.1.17-SNAPSHOT</version>
     <modelVersion>4.0.0</modelVersion>    
 	<artifactId>becpg-core</artifactId>
 	<packaging>jar</packaging>
@@ -63,6 +63,8 @@
 			<version>2.0.29</version>
 			<scope>provided</scope>
 		</dependency>
+		
+		
 
 
 		<!-- Common -->
@@ -115,6 +117,6 @@
 	</build>
 
   <scm>
-    <tag>23.2.0.19</tag>
+    <tag>23.2.1.15</tag>
   </scm>
 </project>

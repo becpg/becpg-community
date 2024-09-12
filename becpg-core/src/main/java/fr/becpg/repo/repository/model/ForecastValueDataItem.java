@@ -27,12 +27,35 @@ import java.util.List;
  */
 public interface ForecastValueDataItem extends ManualDataItem, SimpleCharactDataItem, AspectAwareDataItem {
 	
+	/**
+	 * <p>getForecastColumns.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	List<String> getForecastColumns();
 	
+	/**
+	 * <p>setForecastValue.</p>
+	 *
+	 * @param forecastColumn a {@link java.lang.String} object
+	 * @param value a {@link java.lang.Double} object
+	 */
 	void setForecastValue(String forecastColumn, Double value);
 	
+	/**
+	 * <p>getForecastValue.</p>
+	 *
+	 * @param forecastColumn a {@link java.lang.String} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	Double getForecastValue(String forecastColumn);
 	
+	/**
+	 * <p>getForecastAccessor.</p>
+	 *
+	 * @param forecastColumn a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	String getForecastAccessor(String forecastColumn);
 
 	public static class ForecastContext<T> {

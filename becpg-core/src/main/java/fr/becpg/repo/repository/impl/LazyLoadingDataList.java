@@ -93,6 +93,9 @@ public class LazyLoadingDataList<E extends RepositoryEntity> implements List<E>,
 	}
 	
 	
+	/**
+	 * <p>refresh.</p>
+	 */
 	public void  refresh() {
 		backedList = null;
 		loaded = false;
@@ -218,6 +221,7 @@ public class LazyLoadingDataList<E extends RepositoryEntity> implements List<E>,
 		getList().clear();
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public boolean removeIf(Predicate<? super E> filter) {
         Objects.requireNonNull(filter);

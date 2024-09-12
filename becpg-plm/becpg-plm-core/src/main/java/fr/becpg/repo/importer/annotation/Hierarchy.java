@@ -70,6 +70,7 @@ public class Hierarchy extends Annotation {
 
 	
 	
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -78,6 +79,7 @@ public class Hierarchy extends Annotation {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -91,6 +93,7 @@ public class Hierarchy extends Annotation {
 				&& Objects.equals(path, other.path);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "Hierarchy [path=" + path + ", parentLevelColumn=" + parentLevelColumn + ", parentLevelAttribute=" + parentLevelAttribute + ", id="

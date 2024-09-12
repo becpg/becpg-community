@@ -17,7 +17,6 @@ import org.alfresco.repo.model.Repository;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
-import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
@@ -44,6 +43,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.cache.BeCPGCacheService;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.expressions.ExpressionService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
@@ -78,7 +78,7 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 	@Autowired
 	private Repository repository;
 	@Autowired
-	private DictionaryService dictionaryService;
+	private EntityDictionaryService dictionaryService;
 
 	@Autowired
 	@Qualifier("mlAwareNodeService")
@@ -460,7 +460,7 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 								properties = nodeService.getProperties(entityNodeRef);
 							}
 
-							JSONArray missingFields = extractMissingFields(formulatedEntity, properties, reqFields, i18nMessages,
+							JSONArray missingFields = extractMissingFields(formulatedEntity, entityType, properties, reqFields, i18nMessages,
 									defaultLocale.equals(lang) ? null : lang, isFirst);
 							if ((missingFields.length() > 0) || (nonUniqueFields.length() > 0)) {
 
@@ -525,20 +525,20 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 					if (!(propDuplicates.isEmpty())) {
 
 						ClassAttributeDefinition classDef = formatQnameString(field);
-						String propTitle = getFieldDisplayName(classDef, i18nMessages.has(field) ? i18nMessages.getString(field) : null);
+						String propTitle = getFieldDisplayName(entityType, classDef, i18nMessages.has(field) ? i18nMessages.getString(field) : null);
 
 						JSONObject nonUniqueField = new JSONObject();
 						nonUniqueField.put(EntityCatalogService.PROP_ID, field);
 						nonUniqueField.put(EntityCatalogService.PROP_DISPLAY_NAME, propTitle);
 						nonUniqueField.put(EntityCatalogService.PROP_VALUE, propValue);
 						nonUniqueField.put(EntityCatalogService.PROP_ENTITIES, toJsonArray(propDuplicates));
-
+						final QName finalEntityType = entityType;
 						MLText displayMLName = MLTextHelper.createMLTextI18N(loc -> {
 							Locale old = I18NUtil.getLocale();
 							String ret = "";
 							try {
 								I18NUtil.setLocale(loc);
-								return getFieldDisplayName(classDef, i18nMessages.has(field) ? i18nMessages.getString(field) : null);
+								return getFieldDisplayName(finalEntityType, classDef, i18nMessages.has(field) ? i18nMessages.getString(field) : null);
 
 							} catch (JSONException e) {
 								logger.error(e, e);
@@ -604,7 +604,7 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 		return queryResults;
 	}
 
-	private JSONArray extractMissingFields(RepositoryEntity formulatedEntity, Map<QName, Serializable> properties, JSONArray reqFields,
+	private JSONArray extractMissingFields(RepositoryEntity formulatedEntity, QName entityType, Map<QName, Serializable> properties, JSONArray reqFields,
 			JSONObject i18nMessages, String lang, boolean isFirstLang) throws JSONException {
 		JSONArray ret = new JSONArray();
 		
@@ -703,7 +703,7 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 								if (!label.isBlank()) {
 									label += " " + I18NUtil.getMessage(MESSAGE_OR) + " ";
 								}
-								label += getFieldDisplayName(propDef, i18nKey);
+								label += getFieldDisplayName(entityType, propDef, i18nKey);
 
 								displayName.addValue(loc, label);
 							} finally {
@@ -790,8 +790,8 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 	 *            a {@link java.lang.String} object.
 	 * @return a {@link java.lang.String} object.
 	 */
-	public String getFieldDisplayName(ClassAttributeDefinition classDef, String messageKey) {
-		String displayName = messageKey != null ? I18NUtil.getMessage(messageKey) : classDef.getTitle(dictionaryService);
+	private String getFieldDisplayName(QName nodeType, ClassAttributeDefinition classDef, String messageKey) {
+		String displayName = messageKey != null ? I18NUtil.getMessage(messageKey) : dictionaryService.getTitle(classDef, nodeType);
 		return displayName != null ? displayName : messageKey;
 	}
 

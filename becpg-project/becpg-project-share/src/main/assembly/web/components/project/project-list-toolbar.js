@@ -63,8 +63,11 @@
 	                           this.widgets.simpleDetailed, this);
 	                      }
                       }
-                	  
-
+                      
+                      
+                     this.widgets.fullScreenButton = Alfresco.util.createYUIButton(this, "full-screen-button",
+                           this.onFullScreen);
+                      
                      this.widgets.showGanttButton = Alfresco.util.createYUIButton(this, "show-gantt-button",
                            this.onGanttButtonClick);
                      this.widgets.showTasksButton = Alfresco.util.createYUIButton(this, "show-tasks-button",
@@ -179,6 +182,23 @@
                 	  }
                      YAHOO.Bubbling.fire("simpleDetailedChanged", {simpleView :simpleView});
                   },
+                  
+                  onFullScreen : function PTL_onFullScreen(e, p_obj) {
+					if (Dom.hasClass("alf-hd", "hidden")) {
+						Dom.removeClass("alf-hd", "hidden");
+						Dom.removeClass("alf-filters", "hidden");
+						Dom.removeClass("alf-ft", "hidden");
+						Dom.removeClass("Share", "full-screen");
+					}
+					else {
+						Dom.addClass("alf-hd", "hidden");
+						Dom.addClass("alf-ft", "hidden");
+						Dom.addClass("Share", "full-screen");
+						Dom.addClass("alf-ft", "hidden");
+						Dom.addClass("alf-filters", "hidden");
+					}
+
+				  },
              
                   onGanttButtonClick : function PTL_onGanttButtonClick(e, p_obj) {
                      document.location.href = Alfresco.util
@@ -231,9 +251,7 @@
 
                               var MAX_RESULTS_UNLIMITED = -1;
 							
- 							 beCPG.util.launchAsyncDownload("export.xlsx", "export.xlsx", dt._getDataUrl(MAX_RESULTS_UNLIMITED) + "&format=xlsx&metadata=" + encodeURIComponent(YAHOO.lang.JSON
-                                    .stringify(requestParams)));  
-                 
+ 							 beCPG.util.launchAsyncDownload("export.xlsx", "export.xlsx", dt._getDataUrl(MAX_RESULTS_UNLIMITED) + "&format=xlsx", requestParams);  
 
                            },
                            scope : this

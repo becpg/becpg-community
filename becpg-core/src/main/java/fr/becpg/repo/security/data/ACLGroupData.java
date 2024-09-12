@@ -104,18 +104,28 @@ public class ACLGroupData extends BeCPGDataObject {
 	/**
 	 * <p>Setter for the field <code>isLocalPermission</code>.</p>
 	 *
-	 * @param nodeType a {@link java.lang.Boolean} object.
+	 * @param isLocalPermission a {@link java.lang.Boolean} object
 	 */
 	public void setIsLocalPermission(Boolean isLocalPermission) {
 		this.isLocalPermission = isLocalPermission;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>isDefaultReadOnly</code>.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "sec:isDefaultReadOnly")
 	public Boolean getIsDefaultReadOnly() {
 		return isDefaultReadOnly;
 	}
 
+	/**
+	 * <p>Setter for the field <code>isDefaultReadOnly</code>.</p>
+	 *
+	 * @param isDefaultReadOnly a {@link java.lang.Boolean} object
+	 */
 	public void setIsDefaultReadOnly(Boolean isDefaultReadOnly) {
 		this.isDefaultReadOnly = isDefaultReadOnly;
 	}

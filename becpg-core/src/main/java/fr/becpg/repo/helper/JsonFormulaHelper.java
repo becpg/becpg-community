@@ -52,6 +52,12 @@ public class JsonFormulaHelper {
 		//Singleton
 	}
 	
+	/**
+	 * <p>isJsonString.</p>
+	 *
+	 * @param value a {@link java.lang.Object} object
+	 * @return a boolean
+	 */
 	public static boolean isJsonString(Object value) {
 		try {
 			return value instanceof String && new JSONObject((String) value) != null;
@@ -98,6 +104,13 @@ public class JsonFormulaHelper {
 		return value;
 	}
 	
+	/**
+	 * <p>extractComponentValue.</p>
+	 *
+	 * @param value a {@link java.lang.String} object
+	 * @param componentId a {@link java.lang.String} object
+	 * @return a {@link java.lang.Object} object
+	 */
 	public static Object extractComponentValue(String value, String componentId) {
 		if (value != null) {
 			if (value.contains(JSON_SUB_VALUES) && value.contains("{")) {

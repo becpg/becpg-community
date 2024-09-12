@@ -1,5 +1,6 @@
 package fr.becpg.repo.notification.impl;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -9,14 +10,18 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.batch.BatchProcessor;
 import org.alfresco.repo.jscript.ScriptNode;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.ServiceRegistry;
-import org.alfresco.service.cmr.dictionary.DictionaryService;
+import org.alfresco.service.cmr.download.DownloadService;
+import org.alfresco.service.cmr.download.DownloadStatus;
+import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.ScriptService;
@@ -24,8 +29,12 @@ import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
+import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.service.transaction.TransactionService;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
@@ -40,11 +49,15 @@ import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.batch.BatchStep;
 import fr.becpg.repo.batch.BatchStepAdapter;
 import fr.becpg.repo.batch.EntityListBatchProcessWorkProvider;
+import fr.becpg.repo.entity.EntityDictionaryService;
+import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.mail.BeCPGMailService;
 import fr.becpg.repo.notification.NotificationRuleService;
 import fr.becpg.repo.notification.data.NotificationRuleListDataItem;
 import fr.becpg.repo.notification.data.ScriptMode;
+import fr.becpg.repo.report.search.ExportSearchService;
+import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.search.SearchRuleService;
@@ -91,7 +104,7 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 	private PermissionService permissionService;
 
 	@Autowired
-	private DictionaryService dictionaryService;
+	private EntityDictionaryService dictionaryService;
 	
 	@Autowired
 	private SearchRuleService searchRuleService;
@@ -104,23 +117,45 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 
 	@Autowired
 	private AlfrescoRepository<NotificationRuleListDataItem> alfrescoRepository;
+	
+	@Autowired
+	private ReportTplService reportTplService;
+	
+	@Autowired
+	private ExportSearchService exportSearchService;
+	
+	@Autowired
+	private DownloadService downloadService;
+	
+	@Autowired
+	private RepoService repoService;
 
+	@Autowired
+	private TransactionService transactionService;
+
+	@Autowired
+	private FileFolderService fileFolderService;
+	
+	@Autowired
+	private PersonService personService;
 
 	/** {@inheritDoc} */
 	@Override
 	public void sendNotifications() {
 
-		NotificationRuleListDataItem notification;
-		Map<String, Object> templateArgs;
-		List<Object> entitiesByUser;
-		Map<NodeRef, Object> entities;
-
 		for (NodeRef notificationNodeRef : getAllNotificationRule()) {
-			templateArgs = new HashMap<>();
-			entities = new HashMap<>();
 
-			notification = alfrescoRepository.findOne(notificationNodeRef);
+			final Map<String, Object> templateArgs = new HashMap<>();
+			final Map<NodeRef, Object> entities = new HashMap<>();
+
+			final NotificationRuleListDataItem notification;
 			
+			try {
+				notification = alfrescoRepository.findOne(notificationNodeRef);
+			} catch (final Exception e) {
+				logger.warn("Error while retrieving notification data: " + e.getMessage());
+				continue;
+			}
 			try {
 				if (notification.getNodeType() == null || notification.getTarget() == null || !nodeService.exists(notification.getTarget())
 						|| notification.getAuthorities() == null || !isAllowed(notification)) {
@@ -136,7 +171,8 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 				if ((notification.getCondtions() != null) && !notification.getCondtions().isEmpty()) {
 					filter.fromJsonObject(new JSONObject(notification.getCondtions()),namespaceService);
 				}
-				filter.setNodeType(QName.createQName(notification.getNodeType(), namespaceService));
+				final QName nodeType = QName.createQName(notification.getNodeType(), namespaceService);
+				filter.setNodeType(nodeType);
 				filter.setDateField(QName.createQName(notification.getDateField(), namespaceService));
 				filter.setNodePath(nodeService.getPath(notification.getTarget()));
 				
@@ -157,8 +193,8 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 					continue;
 				}
 				
-				templateArgs.put(NODE_TYPE, dictionaryService.getType(filter.getNodeType()).getTitle(serviceRegistry.getDictionaryService()));
-				templateArgs.put(DATE_FIELD, dictionaryService.getProperty(filter.getDateField()).getTitle(serviceRegistry.getDictionaryService()));
+				templateArgs.put(NODE_TYPE, Objects.toString(dictionaryService.getType(nodeType).getTitle(dictionaryService), nodeType.toPrefixString()));
+				templateArgs.put(DATE_FIELD, Objects.toString(dictionaryService.getTitle(dictionaryService.getProperty(filter.getDateField()), nodeType), filter.getDateField().toPrefixString()));
 				templateArgs.put(TARGET_PATH,
 						filter.getNodePath().subPath(2, filter.getNodePath().size() - 1).toDisplayPath(nodeService, permissionService) + "/"
 								+ nodeService.getProperty(notification.getTarget(), ContentModel.PROP_NAME));
@@ -175,43 +211,130 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 					item.put(ENTITYV2_SUBTYPE, dictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITY_V2));
 					entities.put(nodeRef, item);
 				}
-				
-				Set<String> authorities = new HashSet<>();
-				for (NodeRef authorityRef : notification.getAuthorities()) {
-					
-					for (String userName : extractAuthoritiesFromGroup(authorityRef)) {
+				final Consumer<NodeRef> mailSender = downloadNode -> {
+					Set<String> authorities = new HashSet<>();
+					for (NodeRef authorityRef : notification.getAuthorities()) {
 						
-						if (authorities.contains(userName)) {
-							continue;
-						}
-						
-						authorities.add(userName);
-						entitiesByUser = new ArrayList<>();
-						
-						for (NodeRef nodeRef : items) {
-							if (Boolean.TRUE.equals(AuthenticationUtil.runAs(
-									() -> permissionService.hasPermission(nodeRef, PermissionService.READ_PERMISSIONS).equals(AccessStatus.ALLOWED),
-									userName))) {
-								
-								entitiesByUser.add(entities.get(nodeRef));
-								
-							}
-						}
-						if (!entitiesByUser.isEmpty() || notification.isEnforced()) {
-							Map<String, Object> templateModel = new HashMap<>();
-							HashMap<String, Object> userTemplateArgs = new HashMap<>(templateArgs);
-							userTemplateArgs.put("entities", entitiesByUser);
-							if (!VersionFilterType.NONE.equals(filter.getVersionFilterType())) {
-								userTemplateArgs.put("versions", itemVersions);
-							}
-							templateModel.put("args", userTemplateArgs);
+						for (String userName : extractAuthoritiesFromGroup(authorityRef)) {
 							
-							mailService.sendMail(Arrays.asList(authorityService.getAuthorityNodeRef(userName)), notification.getSubject(), emailTemplate,
-									templateModel, false);
+							if (authorities.contains(userName)) {
+								continue;
+							}
+							
+							if (emailAdminNotificationDisabled(userName)) {
+								continue;
+							}
+							
+							authorities.add(userName);
+							final List<Object> entitiesByUser = new ArrayList<>();
+							
+							for (NodeRef nodeRef : items) {
+								if (Boolean.TRUE.equals(AuthenticationUtil.runAs(
+										() -> permissionService.hasPermission(nodeRef, PermissionService.READ).equals(AccessStatus.ALLOWED),
+										userName))) {
+									
+									entitiesByUser.add(entities.get(nodeRef));
+									
+								}
+							}
+							if (!entitiesByUser.isEmpty() || notification.isEnforced()) {
+								Map<String, Object> templateModel = new HashMap<>();
+								HashMap<String, Object> userTemplateArgs = new HashMap<>(templateArgs);
+								userTemplateArgs.put("entities", entitiesByUser);
+								if (!VersionFilterType.NONE.equals(filter.getVersionFilterType())) {
+									userTemplateArgs.put("versions", itemVersions);
+								}
+								templateModel.put("args", userTemplateArgs);
+								if (downloadNode != null) {
+									permissionService.setPermission(downloadNode, userName, PermissionService.READ, true);
+									templateModel.put("exportNodeRef", downloadNode.toString());
+								}
+								logger.debug("sendMail");
+								mailService.sendMail(Arrays.asList(authorityService.getAuthorityNodeRef(userName)), notification.getSubject(), emailTemplate,
+										templateModel, false);
+							}
 						}
 					}
-				}
-				
+				};
+				if (CollectionUtils.isNotEmpty(notification.getReportTpls())) {
+					final var exchangeExportNotificationsPath = String.join(RepoConsts.PATH_SEPARATOR, RepoConsts.PATH_SYSTEM,
+							RepoConsts.PATH_EXCHANGE, RepoConsts.PATH_EXPORT, RepoConsts.PATH_NOTIFICATIONS);
+					final var exchangeExportNotificationsNodeRef = repoService
+							.getFolderByPath(exchangeExportNotificationsPath);
+					var i = 0;
+					for (final var reportTplNodeRef : notification.getReportTpls()) {
+						final var downloadNode = exportSearchService.createReport(nodeType, reportTplNodeRef, items,
+								reportTplService.getReportFormat(reportTplNodeRef));
+						final var batchId = "notificationReportDownload" + (i++);
+						final var batchInfo = new BatchInfo(batchId, "becpg.batch." + batchId);
+						final var batchStep = new BatchStep<NodeRef>();
+						batchStep.setWorkProvider(new EntityListBatchProcessWorkProvider<>(List.of(downloadNode)));
+						batchStep.setProcessWorker(new BatchProcessor.BatchProcessWorkerAdaptor<NodeRef>() {
+							@Override
+							public void process(NodeRef downloadNode) throws Throwable {
+								logger.debug("waiting for download to complete");
+								DownloadStatus downloadStatus;
+								final var startTime = new Date().getTime();
+								statusChecking: while ((downloadStatus = transactionService
+										.getRetryingTransactionHelper().doInTransaction(
+												() -> downloadService.getDownloadStatus(downloadNode), true, true))
+										.getStatus() != DownloadStatus.Status.DONE) {
+									final var currentTime = new Date().getTime();
+									switch (downloadStatus.getStatus()) {
+									case CANCELLED:
+									case MAX_CONTENT_SIZE_EXCEEDED:
+										batchInfo.setCancelled(true);
+										break statusChecking;
+									case PENDING:
+										if (currentTime - startTime > 30_000) {
+											notification.setErrorLog("Export still pending after 30 seconds");
+											logger.debug(notification.getErrorLog());
+											return;
+										}
+										break;
+									case IN_PROGRESS:
+										if (batchInfo.getTotalItems() == null)
+											batchInfo.setTotalItems((int) downloadStatus.getTotal());
+										batchInfo.setCurrentItem((int) downloadStatus.getDone());
+										if (currentTime - startTime > 5 * 60_000) {
+											notification.setErrorLog("Export download exceeded 5 minutes");
+											logger.debug(notification.getErrorLog());
+											return;
+										}
+										break;
+									default:
+										logger.debug(StringUtils.capitalize(downloadStatus.getStatus().name()));
+									}
+									Thread.sleep(5_000);
+								}
+								logger.debug("download completed");
+								batchInfo.setIsCompleted(true);
+								final var name = notification.getSubject() + "_"
+										+ nodeService.getProperty(reportTplNodeRef, ContentModel.PROP_NAME);
+								var exportNodeRef = nodeService.getChildByName(exchangeExportNotificationsNodeRef,
+										ContentModel.ASSOC_CONTAINS, name);
+								if (exportNodeRef == null) {
+									exportNodeRef = fileFolderService
+											.create(exchangeExportNotificationsNodeRef, name, ContentModel.TYPE_CONTENT)
+											.getNodeRef();
+								}
+								nodeService.setProperty(exportNodeRef, ContentModel.PROP_NAME, name);
+								fileFolderService.getWriter(exportNodeRef)
+										.putContent(fileFolderService.getReader(downloadNode));
+								mailSender.accept(exportNodeRef);
+							}
+						});
+						batchStep.setBatchStepListener(new BatchStepAdapter() {
+							@Override
+							public void onError(String lastErrorEntryId, String lastError) {
+								notification.setErrorLog(lastError);
+								alfrescoRepository.save(notification);
+							}
+						});
+						batchQueueService.queueBatch(batchInfo, List.of(batchStep));
+					}
+				} else 
+					mailSender.accept(null);
 				if (notification.getScript() != null && nodeService.exists(notification.getScript())) {
 					executeScript(notification, items, templateArgs);
 				}
@@ -223,6 +346,21 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 		}
 
 	}
+	
+	private boolean emailAdminNotificationDisabled(String username) {
+		NodeRef person = personService.getPerson(username);
+		if (person != null) {
+			Serializable emailAdminNotificationDisabled = nodeService.getProperty(person, BeCPGModel.PROP_EMAIL_ADMIN_NOTIFICATION_DISABLED);
+			if (Boolean.TRUE.equals(emailAdminNotificationDisabled)) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("emailAdminNotificationDisabled for " + username);
+				}
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	private void executeScript(NotificationRuleListDataItem notification, List<NodeRef> items, Map<String, Object> templateArgs) {
 		
 		Map<String, Object> model = new HashMap<>();

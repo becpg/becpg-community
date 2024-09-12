@@ -48,6 +48,7 @@
 				<form labelId="search.form.label.bcpg_semiFinishedProduct" descriptionId="search.form.desc.bcpg_semiFinishedProduct">bcpg:semiFinishedProduct</form>
 				<form labelId="search.form.label.bcpg_packagingMaterial" descriptionId="search.form.desc.bcpg_packagingMaterial">bcpg:packagingMaterial</form>
 				<form labelId="search.form.label.bcpg_packagingKit" descriptionId="search.form.desc.bcpg_packagingKit">bcpg:packagingKit</form>
+				<form labelId="search.form.label.bcpg_logisticUnit" descriptionId="search.form.desc.bcpg_logisticUnit">bcpg:logisticUnit</form>
 				<form labelId="search.form.label.bcpg_rawMaterial" descriptionId="search.form.desc.bcpg_rawMaterial">bcpg:rawMaterial</form>
 				<form labelId="search.form.label.bcpg_resourceProduct" descriptionId="search.form.desc.bcpg_resourceProduct">bcpg:resourceProduct</form>
 				<form labelId="search.form.label.bcpg_client" descriptionId="search.form.desc.bcpg_client">bcpg:client</form>
@@ -56,6 +57,7 @@
 				<form labelId="search.form.label.qa_qualityControl" descriptionId="search.form.desc.qa_qualityControl">qa:qualityControl</form>
 				<form labelId="search.form.label.qa_batch" descriptionId="search.form.desc.qa_batch">qa:batch</form>
 				<form labelId="search.form.label.bcpg_productCollection" descriptionId="search.form.desc.bcpg_productCollection">bcpg:productCollection</form>
+				<form labelId="search.form.label.bcpg_productSpecification" descriptionId="search.form.desc.bcpg_productSpecification">bcpg:productSpecification</form>
 			</forms>
 		</advanced-search>
 	</config>

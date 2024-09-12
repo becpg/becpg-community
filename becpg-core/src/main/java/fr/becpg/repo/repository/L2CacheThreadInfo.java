@@ -23,6 +23,7 @@ class L2CacheThreadInfo implements Serializable{
 	 * @param isCacheOnlyEnable a boolean.
 	 * @param isThreadCacheEnable a boolean.
 	 * @param isThreadLockEnable a boolean.
+	 * @param isSilentModeEnable a boolean
 	 */
 	public L2CacheThreadInfo(boolean isCacheOnlyEnable, boolean isThreadCacheEnable, boolean isThreadLockEnable, boolean isSilentModeEnable) {
 		super();
@@ -33,24 +34,49 @@ class L2CacheThreadInfo implements Serializable{
 	}
 
 	
+	/**
+	 * <p>Getter for the field <code>cache</code>.</p>
+	 *
+	 * @return a {@link java.util.Map} object
+	 */
 	public Map<NodeRef, RepositoryEntity> getCache() {
 		return cache;
 	}
 
 	
+	/**
+	 * <p>isCacheOnlyEnable.</p>
+	 *
+	 * @return a boolean
+	 */
 	public boolean isCacheOnlyEnable() {
 		return isCacheOnlyEnable;
 	}
 
 
+	/**
+	 * <p>isThreadCacheEnable.</p>
+	 *
+	 * @return a boolean
+	 */
 	public boolean isThreadCacheEnable() {
 		return isThreadCacheEnable;
 	}
 
+	/**
+	 * <p>isThreadLockEnable.</p>
+	 *
+	 * @return a boolean
+	 */
 	public boolean isThreadLockEnable() {
 		return isThreadLockEnable;
 	}
 	
+	/**
+	 * <p>isSilentModeEnable.</p>
+	 *
+	 * @return a boolean
+	 */
 	public boolean isSilentModeEnable() {
 		return isSilentModeEnable;
 	}
@@ -69,11 +95,13 @@ class L2CacheThreadInfo implements Serializable{
 		return "L2CacheThreadInfo [isCacheOnlyEnable=" + isCacheOnlyEnable + ", isThreadCacheEnable=" + isThreadCacheEnable + ", isThreadLockEnable=" + isThreadLockEnable + ", isSilentModeEnable=" + isSilentModeEnable + "]";
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		return Objects.hash(cache, isCacheOnlyEnable, isThreadCacheEnable, isThreadLockEnable, isSilentModeEnable);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

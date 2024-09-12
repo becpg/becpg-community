@@ -43,7 +43,24 @@
 						 responseContentType: Alfresco.util.Ajax.JSON,
 						 successCallback: {
 							 fn: function() {
-								 location.reload();
+								  Alfresco.util.Ajax.request({
+									 url: Alfresco.constants.URL_SERVICECONTEXT + "messages?reset=true&d=" + new Date().getTime(),
+									 method: Alfresco.util.Ajax.GET,
+									 successCallback: {
+										 fn: function() {
+											 location.reload();
+										 },
+										 scope: this
+									 },
+									 failureCallback: {
+										 fn: function() {
+											 Alfresco.util.PopupManager.displayMessage({
+												 text: this.msg("message.publish.failure")
+											 });
+										 },
+										 scope: this
+									 }
+								 });
 							 },
 							 scope: this
 						 },
