@@ -20,7 +20,7 @@ package fr.becpg.repo.web.scripts.remote;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.SocketException;
-import java.util.List;
+import java.util.Set;
 
 import org.alfresco.query.PagingResults;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -49,8 +49,8 @@ public class ListEntitiesWebScript extends AbstractEntityWebScript {
 
 			RemoteParams params = new RemoteParams(getFormat(req));
 			
-			List<String>  fields = extractFields(req);
-			List<String> lists = extractLists(req);
+			Set<String>  fields = extractFields(req);
+			Set<String> lists = extractLists(req);
 			params.setFilteredFields(fields, namespaceService);
 			params.setFilteredLists(lists);
 			

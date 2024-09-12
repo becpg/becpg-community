@@ -35,6 +35,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.jscript.BaseScopableProcessorExtension;
 import org.alfresco.repo.jscript.ScriptNode;
 import org.alfresco.repo.model.Repository;
+import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.repo.tenant.TenantService;
@@ -55,7 +56,10 @@ import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AccessPermission;
+import org.alfresco.service.cmr.security.AuthorityService;
+import org.alfresco.service.cmr.security.MutableAuthenticationService;
 import org.alfresco.service.cmr.security.PermissionService;
+import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.cmr.version.Version;
 import org.alfresco.service.cmr.version.VersionHistory;
@@ -73,6 +77,7 @@ import org.springframework.extensions.webscripts.ScriptValueConverter;
 import fr.becpg.api.BeCPGPublicApi;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.EntityListState;
+import fr.becpg.model.ReportModel;
 import fr.becpg.repo.authentication.BeCPGTicketService;
 import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.entity.AutoNumService;
@@ -96,6 +101,7 @@ import fr.becpg.repo.mail.BeCPGMailService;
 import fr.becpg.repo.olap.OlapService;
 import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.search.PaginatedSearchCache;
@@ -175,12 +181,36 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 	private BeCPGTicketService beCPGTicketService;
 
+	private BehaviourFilter policyBehaviourFilter;
+	
+	private AuthorityService authorityService;
+	
+	private PersonService personService;
+	
+	public void setPersonService(PersonService personService) {
+		this.personService = personService;
+	}
+	
+	public void setAuthorityService(AuthorityService authorityService) {
+		this.authorityService = authorityService;
+	}
+	
+	private MutableAuthenticationService authenticationService;
+	
+	public void setAuthenticationService(MutableAuthenticationService authenticationService) {
+		this.authenticationService = authenticationService;
+	}
+	
 	private boolean useBrowserLocale;
 
 	private boolean showUnauthorizedWarning = true;
 
 	private boolean showEntitiesInTree() {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("becpg.doclibtree.showEntities"));
+	}
+
+	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
+		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
 
 	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
@@ -536,7 +566,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public String getMLProperty(ScriptNode sourceNode, String propQName, String locale) {
 		return getMLProperty(sourceNode, propQName, locale, false);
 	}
-	
+
 	public String getMLProperty(ScriptNode sourceNode, String propQName, String locale, Boolean exactLocale) {
 
 		MLText mlText = (MLText) mlNodeService.getProperty(sourceNode.getNodeRef(), getQName(propQName));
@@ -833,11 +863,13 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * @return a {@link java.lang.Object} object.
 	 */
 	public Object assocAssocValues(NodeRef nodeRef, String assocQname, String assocAssocsQname) {
-		NodeRef assocNodeRef = assocValue(nodeRef, assocQname);
-		if (assocNodeRef != null) {
-			return wrapValue(associationService.getTargetAssocs(assocNodeRef, getQName(assocAssocsQname)));
+		List<NodeRef> ret = new ArrayList<>();
+		for (NodeRef assocNodeRef : associationService.getTargetAssocs(nodeRef, getQName(assocQname))) {
+			if (assocNodeRef != null) {
+				ret.addAll(associationService.getTargetAssocs(assocNodeRef, getQName(assocAssocsQname)));
+			}
 		}
-		return wrapValue(new ArrayList<>());
+		return wrapValue(ret);
 	}
 
 	/**
@@ -1461,6 +1493,10 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public boolean isLicenseValid() {
 		return beCPGLicenseManager.isLicenseValid();
 	}
+	
+	public boolean isSpecialLicenceUser() {
+		return beCPGLicenseManager.isSpecialLicenceUser();
+	}
 
 	public String getTranslatedPath(String name) {
 
@@ -1712,11 +1748,60 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	}
 
 	public void formulate(ScriptNode productNode) {
-		formulationService.formulate(productNode.getNodeRef());
+		try {
+			policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+
+			L2CacheSupport.doInCacheContext(() -> AuthenticationUtil.runAsSystem(() -> {
+				formulationService.formulate(productNode.getNodeRef());
+				return true;
+			}), false, true);
+
+		} finally {
+			policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+			policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+		}
 	}
 
 	public String[] extractPeople(String[] authorities) {
 		return AuthorityHelper.extractPeople(Set.of(authorities)).toArray(new String[0]);
+	}
+	
+	public boolean floatingLicensesExceeded(String sessionId) {
+		return beCPGLicenseManager.floatingLicensesExceeded(sessionId);
+	}
+	
+	public boolean hasWriteLicense() {
+		return beCPGLicenseManager.hasWriteLicense();
+	}
+
+	public boolean isAccountEnabled(String userName) {
+		if (!authenticationService.isAuthenticationMutable(userName) && nodeService.hasAspect(personService.getPerson(userName), ContentModel.ASPECT_PERSON_DISABLED)) {
+			return false;
+		}
+		return this.authenticationService.getAuthenticationEnabled(userName);
+	}
+	
+	public void enableAccount(String userName) {
+		if (this.authorityService.isAdminAuthority(AuthenticationUtil.getFullyAuthenticatedUser())) {
+			if (!authenticationService.isAuthenticationMutable(userName)) {
+				nodeService.removeAspect(personService.getPerson(userName), ContentModel.ASPECT_PERSON_DISABLED);
+				return;
+			}
+			this.authenticationService.setAuthenticationEnabled(userName, true);
+		}
+	}
+
+	public void disableAccount(String userName) {
+		if (this.authorityService.isAdminAuthority(AuthenticationUtil.getFullyAuthenticatedUser())) {
+			if (!authenticationService.isAuthenticationMutable(userName)) {
+				nodeService.addAspect(personService.getPerson(userName), ContentModel.ASPECT_PERSON_DISABLED, null);
+				return;
+			}
+			this.authenticationService.setAuthenticationEnabled(userName, false);
+		}
 	}
 
 }

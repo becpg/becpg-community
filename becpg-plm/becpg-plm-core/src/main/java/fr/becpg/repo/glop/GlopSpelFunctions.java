@@ -1,18 +1,13 @@
 package fr.becpg.repo.glop;
 
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeService;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClientException;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.spel.CustomSpelFunctions;
@@ -93,8 +88,6 @@ import fr.becpg.repo.repository.model.SimpleListDataItem;
 @Service
 public class GlopSpelFunctions implements CustomSpelFunctions {
 
-	private static final Log logger = LogFactory.getLog(GlopSpelFunctions.class);
-
 	@Autowired
 	private GlopService glopService;
 	
@@ -117,8 +110,6 @@ public class GlopSpelFunctions implements CustomSpelFunctions {
 
 		private static final String RECIPE_QTY_USED = "recipeQtyUsed";
 
-		private static final String STATUS = "status";
-		
 		RepositoryEntity entity;
 
 		public GlopSpelFunctionsWrapper(RepositoryEntity entity) {
@@ -126,35 +117,8 @@ public class GlopSpelFunctions implements CustomSpelFunctions {
 			this.entity = entity;
 		}
 
-		public GlopData optimize(Map<String, ?> problem) throws JSONException {
-			
-			try {
-				
-				return glopService.optimize((ProductData) entity, buildGlopContext(problem));
-				
-			} catch (GlopException e) {
-				GlopData errorResult = new GlopData();
-				errorResult.put(STATUS, "Error : Linear program is unfeasible");
-				return errorResult;
-			} catch (JSONException e) {
-				GlopData errorResult = new GlopData();
-				errorResult.put(STATUS, "Error : Failed to build request to send to the Glop server : " + e.getMessage());
-				return errorResult;
-			} catch (URISyntaxException e) {
-				GlopData errorResult = new GlopData();
-				errorResult.put(STATUS, "Error : Glop server URI has a syntax error");
-				return errorResult;
-			} catch (RestClientException e) {
-				logger.error(e.getMessage(), e);
-				GlopData errorResult = new GlopData();
-				errorResult.put(STATUS, "Error : Failed to send request to the Glop server : " + e.getMessage());
-				return errorResult;
-			} catch (Exception e) {
-				logger.error(e.getMessage(), e);
-				GlopData errorResult = new GlopData();
-				errorResult.put(STATUS, "Error : " + e.getMessage());
-				return errorResult;
-			}
+		public GlopData optimize(Map<String, ?> problem) {
+			return glopService.optimize((ProductData) entity, buildGlopContext(problem));
 		}
 
 		private GlopContext buildGlopContext(Map<String, ?> problem) throws IllegalArgumentException {

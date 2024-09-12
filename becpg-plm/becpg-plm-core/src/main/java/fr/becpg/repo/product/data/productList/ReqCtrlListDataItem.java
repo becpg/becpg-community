@@ -236,6 +236,11 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 		return sources;
 	}
 
+	/**
+	 * <p>addSource.</p>
+	 *
+	 * @param sourceNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public void addSource(NodeRef sourceNodeRef) {
 		if (sources == null) {
 			sources = new ArrayList<>();
@@ -301,49 +306,105 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 		super();
 	}
 
+	/**
+	 * <p>build.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.productList.ReqCtrlListDataItem} object
+	 */
 	public static ReqCtrlListDataItem build() {
 		return new ReqCtrlListDataItem();
 	}
 	
 
+	/**
+	 * <p>forbidden.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.productList.ReqCtrlListDataItem} object
+	 */
 	public static  ReqCtrlListDataItem forbidden() {
 		return build().ofType(RequirementType.Forbidden);
 	}
 
+	/**
+	 * <p>tolerated.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.productList.ReqCtrlListDataItem} object
+	 */
 	public static  ReqCtrlListDataItem tolerated() {
 		return build().ofType(RequirementType.Tolerated);
 	}
 
+	/**
+	 * <p>info.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.productList.ReqCtrlListDataItem} object
+	 */
 	public static  ReqCtrlListDataItem info() {
 		return build().ofType(RequirementType.Info);
 	}
 
+	/**
+	 * <p>ofType.</p>
+	 *
+	 * @param reqType a {@link fr.becpg.repo.product.data.constraints.RequirementType} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.ReqCtrlListDataItem} object
+	 */
 	public ReqCtrlListDataItem ofType(RequirementType reqType) {
 		this.reqType = reqType;
 		return this;
 	}
 
 
+	/**
+	 * <p>withMessage.</p>
+	 *
+	 * @param reqMlMessage a {@link org.alfresco.service.cmr.repository.MLText} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.ReqCtrlListDataItem} object
+	 */
 	public ReqCtrlListDataItem withMessage(MLText reqMlMessage) {
 		this.reqMlMessage = reqMlMessage;
 		return this;
 	}
 
+	/**
+	 * <p>withCharact.</p>
+	 *
+	 * @param charact a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.ReqCtrlListDataItem} object
+	 */
 	public ReqCtrlListDataItem withCharact(NodeRef charact) {
 		this.charact = charact;
 		return this;
 	}
 
+	/**
+	 * <p>withRegulatoryCode.</p>
+	 *
+	 * @param regulatoryCode a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.ReqCtrlListDataItem} object
+	 */
 	public ReqCtrlListDataItem withRegulatoryCode(String regulatoryCode) {
 		this.regulatoryCode = regulatoryCode;
 		return this;
 	}
 
+	/**
+	 * <p>withFormulationChainId.</p>
+	 *
+	 * @param formulationChainId a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.ReqCtrlListDataItem} object
+	 */
 	public ReqCtrlListDataItem withFormulationChainId(String formulationChainId) {
 		this.formulationChainId = formulationChainId;
 		return this;
 	}
 
+	/**
+	 * <p>withSources.</p>
+	 *
+	 * @param sources a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.ReqCtrlListDataItem} object
+	 */
 	public ReqCtrlListDataItem withSources(List<NodeRef> sources) {
 		if (sources != null) {
 			for (NodeRef sourceNodeRef : sources) {
@@ -353,7 +414,24 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 		}
 		return this;
 	}
+	
+	/**
+	 * <p>withReqMaxQty.</p>
+	 *
+	 * @param reqMaxQty a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.ReqCtrlListDataItem} object
+	 */
+	public ReqCtrlListDataItem withReqMaxQty(Double reqMaxQty) {
+		this.reqMaxQty = reqMaxQty;
+		return this;
+	}
 
+	/**
+	 * <p>ofDataType.</p>
+	 *
+	 * @param reqDataType a {@link fr.becpg.repo.product.data.constraints.RequirementDataType} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.ReqCtrlListDataItem} object
+	 */
 	public ReqCtrlListDataItem ofDataType(RequirementDataType reqDataType) {
 		this.reqDataType = reqDataType != null ? reqDataType : RequirementDataType.Nutrient;
 		return this;

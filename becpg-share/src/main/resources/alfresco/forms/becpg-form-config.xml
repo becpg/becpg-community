@@ -419,16 +419,30 @@
 					<show id="bcpg:isDeleted" force="true"/>
 				</field-visibility>
 			</form>
+			
+			<form id="bulk-edit">
+				<field-visibility>
+					<show id="bcpg:lvValue" />
+					<show id="sec:readGroups" force="true"/>
+					<show id="bcpg:isDeleted" force="true"/>
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:isDeleted">
+						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+					</field>
+				</appearance>
+			</form>
 
 			<!-- Data Grid view -->
 			<form id="filter">
 				<field-visibility>
 					<show id="bcpg:lvCode" />
 					<show id="bcpg:lvValue" />
-					<show id="bcpg:isDeleted" force="true"/>
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:isDeleted"  force="true"/>
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:isDeleted" >
+					<field id="bcpg:isDeleted">
 						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
 					</field>
 				</appearance>
@@ -519,6 +533,7 @@
 		<forms>
 			<!-- Create item form -->
 			<form>
+				<edit-form template="tab-edit" />
 				<field-visibility>
 					<show id="bcpg:nrNotificationAuthorities" />
 					<show id="bcpg:nrTimeType" />
@@ -540,12 +555,15 @@
 					<show id="bcpg:nrRecurringDay" />
 					<show id="bcpg:nrFrequencyStartDate" />
 					<show id="bcpg:nrForceNotification" />
+				
+					<show id="rep:reportTpls" force="true" />
 				</field-visibility>
 				<appearance>
 					<set id="notificationRule" appearance="bordered-panel" label-id="becpg.forms.set.notification-rule.label" />
 					<set id="notificationFilter" appearance="bordered-panel" label-id="becpg.forms.set.notification-filter.label" />
 					<set id="notificationEMail" appearance="bordered-panel" label-id="becpg.forms.set.notification-email.label" />
 					<set id="notificationRecurring" appearance="bordered-panel" label-id="becpg.forms.set.notification-recurring.label" />
+					<set id="notificationReport" appearance="bordered-panel" label-id="becpg.forms.set.notification-report.label" />
 					
 					<field id="bcpg:nrNodeType" set="notificationFilter">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
@@ -581,7 +599,7 @@
 							<control-param name="saveTitle">false</control-param>
 						</control>
 					</field>
-					<field id="bcpg:nrTimeNumber" set="notificationRule">
+					<field id="bcpg:nrTimeNumber" set="notificationRule" mandatory="true">
 						<control template="/org/alfresco/components/form/controls/number.ftl" />
 					</field>
 					<field id="bcpg:nrTimeType" set="notificationRule" help-id="becpg.forms.help.notificationTimeType" />
@@ -606,7 +624,13 @@
 					<field id="bcpg:nrForceNotification" set="notificationRecurring" />
 					<field id="bcpg:nrRecurringTimeType" set="notificationRecurring" help-id="becpg.forms.help.notificationFrequency" />
 					<field id="bcpg:nrRecurringDay" set="notificationRecurring" />
-					
+					<field id="rep:reportTpls" set="notificationReport">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">
+								becpg/autocomplete/targetassoc/associations/rep:reportTpl?excludeProps=rep%3AreportTplIsSystem%7Ctrue%2Crep%3AreportTplIsDisabled%7Ctrue&amp;filter=rep%3AreportTplType%7CExportSearch
+							</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 			
@@ -665,6 +689,7 @@
 		<forms>
 			<!-- Popup update existing node form -->
 			<form>
+				<edit-form template="tab-edit" />
 				<field-visibility>
 					<show id="bcpg:nrNotificationAuthorities" />
 					<show id="bcpg:nrTimeType" />
@@ -685,12 +710,15 @@
 					<show id="bcpg:nrRecurringTimeType" />
 					<show id="bcpg:nrRecurringDay" />
 					<show id="bcpg:nrForceNotification" />
+					
+					<show id="rep:reportTpls" force="true" />
 				</field-visibility>
 				<appearance>
 					<set id="notificationRule" appearance="bordered-panel" label-id="becpg.forms.set.notification-rule.label" />
 					<set id="notificationFilter" appearance="bordered-panel" label-id="becpg.forms.set.notification-filter.label" />
 					<set id="notificationEMail" appearance="bordered-panel" label-id="becpg.forms.set.notification-email.label" />
 					<set id="notificationRecurring" appearance="bordered-panel" label-id="becpg.forms.set.notification-recurring.label" />
+					<set id="notificationReport" appearance="bordered-panel" label-id="becpg.forms.set.notification-report.label" />	
 					
 					<field id="bcpg:nrNodeType" set="notificationFilter">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
@@ -726,7 +754,7 @@
 							<control-param name="saveTitle">false</control-param>
 						</control>
 					</field>
-					<field id="bcpg:nrTimeNumber" set="notificationRule">
+					<field id="bcpg:nrTimeNumber" set="notificationRule" mandatory="true">
 						<control template="/org/alfresco/components/form/controls/number.ftl" />
 					</field>
 					<field id="bcpg:nrTimeType" set="notificationRule" help-id="becpg.forms.help.notificationTimeType" />
@@ -751,7 +779,13 @@
 					<field id="bcpg:nrForceNotification" set="notificationRecurring" />
 					<field id="bcpg:nrRecurringTimeType" set="notificationRecurring" help-id="becpg.forms.help.notificationFrequency"/>
 					<field id="bcpg:nrRecurringDay" set="notificationRecurring" />
-					
+					<field id="rep:reportTpls" set="notificationReport">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">
+								becpg/autocomplete/targetassoc/associations/rep:reportTpl?excludeProps=rep%3AreportTplIsSystem%7Ctrue%2Crep%3AreportTplIsDisabled%7Ctrue&amp;filter=rep%3AreportTplType%7CExportSearch
+							</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 		</forms>

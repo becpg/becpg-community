@@ -44,6 +44,12 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.signature.SignatureProjectPlugin;
 import fr.becpg.repo.signature.SignatureProjectService;
 
+/**
+ * <p>SignatureProjectServiceImpl class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 @Service("signatureProjectService")
 public class SignatureProjectServiceImpl implements SignatureProjectService {
 
@@ -83,6 +89,7 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 	@Autowired
 	private SignatureProjectPlugin[] signatureProjectPlugins;
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef prepareSignatureProject(NodeRef projectNodeRef, List<NodeRef> originalDocuments) {
 
@@ -111,6 +118,7 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 		return projectNodeRef;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef createEntitySignatureTasks(NodeRef projectNodeRef, NodeRef previousTask, String projectType) {
 	
@@ -162,6 +170,7 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 		return project.getNodeRef();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> extractRecipients(NodeRef document) {
 		

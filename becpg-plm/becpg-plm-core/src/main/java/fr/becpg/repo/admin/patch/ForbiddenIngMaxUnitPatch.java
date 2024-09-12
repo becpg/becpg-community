@@ -22,6 +22,12 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.PLMModel;
 
+/**
+ * <p>ForbiddenIngMaxUnitPatch class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class ForbiddenIngMaxUnitPatch extends AbstractBeCPGPatch {
 
 	private static final Log logger = LogFactory.getLog(ForbiddenIngMaxUnitPatch.class);

@@ -6,12 +6,27 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.PriceListDataItem;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 
+/**
+ * <p>CostCalculatingHelper class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class CostCalculatingHelper {
 
 	private CostCalculatingHelper() {
 		// None
 	}
 
+	/**
+	 * <p>extractValue.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param partProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param simpleCharact a {@link fr.becpg.repo.repository.model.SimpleCharactDataItem} object
+	 * @param effectiveDate a {@link java.util.Date} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	public static Double extractValue(ProductData formulatedProduct, ProductData partProduct, SimpleCharactDataItem simpleCharact,
 			Date effectiveDate) {
 
@@ -51,6 +66,14 @@ public class CostCalculatingHelper {
 		return simpleCharact.getValue();
 	}
 
+	/**
+	 * <p>extractValue.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param partProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param simpleCharact a {@link fr.becpg.repo.repository.model.SimpleCharactDataItem} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	public static Double extractValue(ProductData formulatedProduct, ProductData partProduct, SimpleCharactDataItem simpleCharact) {
 		return extractValue(formulatedProduct, partProduct, simpleCharact, new Date());
 	}

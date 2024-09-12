@@ -13,10 +13,10 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.repo.designer.DesignerModel;
 import fr.becpg.repo.designer.DesignerService;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
 /**
@@ -83,7 +83,7 @@ public class DesignerContentUpdatePolicy extends AbstractBeCPGPolicy implements 
 				if (nodeService.exists(pendingNode)) {
 					designerService.createAndPublishConfig(pendingNode);
 					if (nodeService.hasAspect(pendingNode, DesignerModel.ASPECT_CONFIG)) {
-						nodeService.setProperty(pendingNode, ContentModel.PROP_DESCRIPTION, I18NUtil.getMessage("designer.not-published"));
+						nodeService.setProperty(pendingNode, ContentModel.PROP_DESCRIPTION, MLTextHelper.getI18NMessage("designer.not-published"));
 					}
 				}
 
@@ -108,7 +108,7 @@ public class DesignerContentUpdatePolicy extends AbstractBeCPGPolicy implements 
 			if (nodeService.hasAspect(nodeRef, DesignerModel.ASPECT_MODEL)) {
 				queueNode(nodeRef);
 			} else if (nodeService.hasAspect(nodeRef, DesignerModel.ASPECT_CONFIG)) {
-				nodeService.setProperty(nodeRef, ContentModel.PROP_DESCRIPTION, I18NUtil.getMessage("designer.to-republish"));
+				nodeService.setProperty(nodeRef, ContentModel.PROP_DESCRIPTION, MLTextHelper.getI18NMessage("designer.to-republish"));
 			}
 		}
 		

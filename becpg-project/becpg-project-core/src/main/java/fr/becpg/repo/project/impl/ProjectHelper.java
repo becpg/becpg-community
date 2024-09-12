@@ -594,10 +594,26 @@ public class ProjectHelper {
 	
 	
 
+	/**
+	 * <p>isRoleAuhtority.</p>
+	 *
+	 * @param authorityName a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	public static  boolean isRoleAuhtority(String authorityName) {
 		return (authorityName != null) && authorityName.startsWith(PermissionService.GROUP_PREFIX + ProjectRepoConsts.PROJECT_GROUP_PREFIX);
 	}
 
+	/**
+	 * <p>createDeliverable.</p>
+	 *
+	 * @param name a {@link java.lang.String} object
+	 * @param description a {@link java.lang.String} object
+	 * @param order a {@link fr.becpg.repo.project.data.projectList.DeliverableScriptOrder} object
+	 * @param task a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object
+	 * @param content a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.repo.project.data.projectList.DeliverableListDataItem} object
+	 */
 	public static DeliverableListDataItem createDeliverable(String name, String description, DeliverableScriptOrder order, TaskListDataItem task, NodeRef content) {
 		
 		DeliverableListDataItem del = new DeliverableListDataItem();

@@ -51,13 +51,13 @@ public class PropertyFormats {
 	}
 
 	/**
-	* <p>Constructor for PropertyFormats.</p>
-	*
-	* @param useDefaultLocal a boolean.
-	* @param dateFormat a {@link java.lang.String} object.
-	* @param datetimeFormat a {@link java.lang.String} object.
-	* @param decimalFormat a {@link java.lang.String} object.
-	*/
+	 * <p>Constructor for PropertyFormats.</p>
+	 *
+	 * @param useDefaultLocal a boolean.
+	 * @param dateFormat a {@link java.lang.String} object.
+	 * @param datetimeFormat a {@link java.lang.String} object.
+	 * @param decimalFormat a {@link java.lang.String} object.
+	 */
 	public PropertyFormats(boolean useDefaultLocal, String dateFormat, String datetimeFormat, String decimalFormat) {
 		this.useDefaultLocale = useDefaultLocal;
 		this.dateFormat = dateFormat;
@@ -215,6 +215,13 @@ public class PropertyFormats {
 		return localDateFormat.get().parse(dateString);
 	}
 	
+	/**
+	 * <p>parseDateTime.</p>
+	 *
+	 * @param dateString a {@link java.lang.String} object
+	 * @return a {@link java.util.Date} object
+	 * @throws java.text.ParseException if any.
+	 */
 	public Date parseDateTime(String dateString) throws ParseException {
 		return localDateTimeFormat.get().parse(dateString);
 	}

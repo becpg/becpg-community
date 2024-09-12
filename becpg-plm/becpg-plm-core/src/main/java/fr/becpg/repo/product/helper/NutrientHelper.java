@@ -174,6 +174,14 @@ public class NutrientHelper {
 
 	}
 	
+	/**
+	 * <p>buildNutriScoreContext.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @return a {@link fr.becpg.repo.product.formulation.score.NutriScoreContext} object
+	 */
 	public static NutriScoreContext buildNutriScoreContext(ProductData productData, AlfrescoRepository<RepositoryEntity> alfrescoRepository, NodeService nodeService) {
 		
 		String nutrientProfileCategory = productData.getNutrientProfileCategory();
@@ -315,10 +323,23 @@ public class NutrientHelper {
 		return null;
 	}
 	
+	/**
+	 * <p>buildNutriScorePart.</p>
+	 *
+	 * @param part a {@link org.json.JSONObject} object
+	 * @param categories an array of {@link double} objects
+	 */
 	public static void buildNutriScorePart(JSONObject part, double[] categories) {
 		buildNutriScorePart(part, categories, false);
 	}
 	
+	/**
+	 * <p>buildNutriScorePart.</p>
+	 *
+	 * @param part a {@link org.json.JSONObject} object
+	 * @param categories an array of {@link double} objects
+	 * @param includeLower a boolean
+	 */
 	public static void buildNutriScorePart(JSONObject part, double[] categories, boolean includeLower) {
 		
 		int score = categories.length;

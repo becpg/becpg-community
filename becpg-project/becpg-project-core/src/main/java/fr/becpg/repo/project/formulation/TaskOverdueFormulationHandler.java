@@ -1,5 +1,6 @@
 package fr.becpg.repo.project.formulation;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -7,7 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.workflow.WorkflowService;
 import org.alfresco.service.cmr.workflow.WorkflowTask;
 import org.alfresco.service.cmr.workflow.WorkflowTaskQuery;
@@ -46,6 +49,11 @@ public class TaskOverdueFormulationHandler extends FormulationBaseHandler<Projec
 	private WorkflowService workflowService;
 	private ProjectNotificationService projectNotificationService;
 	private ProjectService projectService;
+	private NodeService nodeService;
+	
+	public void setNodeService(NodeService nodeService) {
+		this.nodeService = nodeService;
+	}
 
 	/**
 	 * <p>Setter for the field <code>beCPGMailService</code>.</p>
@@ -202,9 +210,25 @@ public class TaskOverdueFormulationHandler extends FormulationBaseHandler<Projec
 		authorities = projectService.extractResources(project.getNodeRef(), authorities);
 		Map<String, Object> argsMap = new HashMap<>();
 		argsMap.put("args", templateArgs);
+		
+		authorities.removeIf(this::emailProjectNotificationDisabled);
+		
 		beCPGMailService.sendMail(authorities,
 				projectNotificationService.createSubject(project.getNodeRef(), task.getNodeRef(), I18NUtil.getMessage(MAIL_SUBJECT)), MAIL_TEMPLATE,
 				argsMap, true);
+	}
+	
+	private boolean emailProjectNotificationDisabled(NodeRef person) {
+		if (person != null) {
+			Serializable emailProjectNotificationDisabled = nodeService.getProperty(person, BeCPGModel.PROP_EMAIL_PROJECT_NOTIFICATION_DISABLED);
+			if (Boolean.TRUE.equals(emailProjectNotificationDisabled)) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("emailProjectNotificationDisabled for " + nodeService.getProperty(person, ContentModel.PROP_USERNAME));
+				}
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**

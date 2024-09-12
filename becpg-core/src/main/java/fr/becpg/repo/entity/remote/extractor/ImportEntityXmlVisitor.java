@@ -46,6 +46,9 @@ import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.security.AuthorityService;
+import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.namespace.NamespaceException;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -63,6 +66,7 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.remote.EntityProviderCallBack;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
+import fr.becpg.repo.entity.remote.RemoteServiceRegisty;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.PropertiesHelper;
@@ -86,9 +90,16 @@ public class ImportEntityXmlVisitor {
 
 	private final EntityDictionaryService entityDictionaryService;
 
-	private final ServiceRegistry serviceRegistry;
-
 	private final AssociationService associationService;
+	
+	private final NodeService nodeService;
+	
+	private final NamespaceService namespaceService;
+	
+	private final PersonService personService;
+	
+	private final AuthorityService authorityService;
+
 
 	private boolean forceCreateInPath;
 
@@ -131,12 +142,14 @@ public class ImportEntityXmlVisitor {
 	 * @param associationService
 	 *            a {@link fr.becpg.repo.helper.AssociationService} object.
 	 */
-	public ImportEntityXmlVisitor(ServiceRegistry serviceRegistry, EntityDictionaryService entityDictionaryService,
-			AssociationService associationService) {
+	public ImportEntityXmlVisitor(RemoteServiceRegisty remoteServiceRegisty) {
 		super();
-		this.serviceRegistry = serviceRegistry;
-		this.entityDictionaryService = entityDictionaryService;
-		this.associationService = associationService;
+		this.nodeService = remoteServiceRegisty.nodeService();
+		this.entityDictionaryService = remoteServiceRegisty.entityDictionaryService();
+		this.associationService = remoteServiceRegisty.associationService();
+		this.namespaceService = remoteServiceRegisty.namespaceService();
+		this.personService = remoteServiceRegisty.personService();
+		this.authorityService = remoteServiceRegisty.authorityService();
 	}
 
 	/**
@@ -382,7 +395,7 @@ public class ImportEntityXmlVisitor {
 								}
 							}
 
-							if (node == null || !serviceRegistry.getNodeService().exists(node)) {
+							if (node == null || !nodeService.exists(node)) {
 								throw new SAXException("Cannot add node to assoc, node not found : " + name);
 							}
 
@@ -392,23 +405,23 @@ public class ImportEntityXmlVisitor {
 									if (multipleValues != null) {
 										if (logger.isDebugEnabled()) {
 											logger.debug("Add multiple value for "
-													+ currAssoc.peek().toPrefixString(serviceRegistry.getNamespaceService()) + " value " + node);
+													+ currAssoc.peek().toPrefixString(namespaceService) + " value " + node);
 										}
 										multipleValues.add(node);
 									} else {
 										if (logger.isDebugEnabled()) {
-											logger.debug("Set property to : " + currAssoc.peek().toPrefixString(serviceRegistry.getNamespaceService())
+											logger.debug("Set property to : " + currAssoc.peek().toPrefixString(namespaceService)
 													+ " value " + node + " for type " + type);
 										}
-										serviceRegistry.getNodeService().setProperty(curNodeRef.peek(), currAssoc.peek(), node);
+										nodeService.setProperty(curNodeRef.peek(), currAssoc.peek(), node);
 									}
 								} else {
 									if(logger.isDebugEnabled()) {
-										logger.debug("Create association : " + currAssoc.peek().toPrefixString(serviceRegistry.getNamespaceService())
-												+ " value " + node + " for type " + serviceRegistry.getNodeService().getType(node).toPrefixString(serviceRegistry.getNamespaceService()));
+										logger.debug("Create association : " + currAssoc.peek().toPrefixString(namespaceService)
+												+ " value " + node + " for type " + nodeService.getType(node).toPrefixString(namespaceService));
 									}
 									try {
-										serviceRegistry.getNodeService().createAssociation(curNodeRef.peek(), node, currAssoc.peek());
+										nodeService.createAssociation(curNodeRef.peek(), node, currAssoc.peek());
 									} catch (AssociationExistsException e) {
 										// association already exists
 										//TODO doesn't handle yet association update
@@ -467,7 +480,7 @@ public class ImportEntityXmlVisitor {
 
 		private QName parseQName(String qName) {
 			try {
-				return QName.createQName(qName, serviceRegistry.getNamespaceService());
+				return QName.createQName(qName, namespaceService);
 			} catch (NamespaceException e) {
 				logger.warn("Wrong qname " + qName + " ignoring");
 			}
@@ -476,8 +489,8 @@ public class ImportEntityXmlVisitor {
 
 		private void retrieveNodeContent(NodeRef origNodeRef, NodeRef destNodeRef) throws BeCPGException {
 			if ((entityProviderCallBack != null)
-					&& !entityDictionaryService.isSubClass(serviceRegistry.getNodeService().getType(destNodeRef), BeCPGModel.TYPE_ENTITY_V2)
-					&& !entityDictionaryService.isSubClass(serviceRegistry.getNodeService().getType(destNodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
+					&& !entityDictionaryService.isSubClass(nodeService.getType(destNodeRef), BeCPGModel.TYPE_ENTITY_V2)
+					&& !entityDictionaryService.isSubClass(nodeService.getType(destNodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
 				entityProviderCallBack.provideContent(origNodeRef, destNodeRef);
 			}
 		}
@@ -531,7 +544,7 @@ public class ImportEntityXmlVisitor {
 						|| type.equals(RemoteEntityService.NODEREF_TYPE) || type.equals(RemoteEntityService.CATEGORY_TYPE))) {
 
 					if (multipleValues != null) {
-						serviceRegistry.getNodeService().setProperty(curNodeRef.peek(), currAssoc.peek(), multipleValues);
+						nodeService.setProperty(curNodeRef.peek(), currAssoc.peek(), multipleValues);
 						multipleValues = null;
 					}
 
@@ -548,14 +561,14 @@ public class ImportEntityXmlVisitor {
 						if ((curNodeRef.size() == 1) && (properties != null) && properties.containsKey(currProp)) {
 
 							if (ContentModel.PROP_NAME.equals(currProp)) {
-								serviceRegistry.getNodeService().setProperty(curNodeRef.peek(), currProp,
+								nodeService.setProperty(curNodeRef.peek(), currProp,
 										PropertiesHelper.cleanName((String) properties.get(currProp)));
 							} else {
-								serviceRegistry.getNodeService().setProperty(curNodeRef.peek(), currProp, properties.get(currProp));
+								nodeService.setProperty(curNodeRef.peek(), currProp, properties.get(currProp));
 							}
 						} else {
 							if (multipleValues != null) {
-								serviceRegistry.getNodeService().setProperty(curNodeRef.peek(), currProp, multipleValues);
+								nodeService.setProperty(curNodeRef.peek(), currProp, multipleValues);
 								multipleValues = null;
 							} else {
 								if (currValue.length() > 0) {
@@ -566,11 +579,11 @@ public class ImportEntityXmlVisitor {
 										queueProperties(curNodeRef.peek(), currProp, currValue.toString());
 									} else {
 										if (ContentModel.PROP_NAME.equals(currProp)) {
-											if (serviceRegistry.getNodeService().getChildByName(
-													serviceRegistry.getNodeService().getPrimaryParent(curNodeRef.peek()).getParentRef(),
+											if (nodeService.getChildByName(
+													nodeService.getPrimaryParent(curNodeRef.peek()).getParentRef(),
 													ContentModel.ASSOC_CONTAINS, PropertiesHelper.cleanName(currValue.toString())) == null) {
 
-												serviceRegistry.getNodeService().setProperty(curNodeRef.peek(), currProp,
+												nodeService.setProperty(curNodeRef.peek(), currProp,
 														PropertiesHelper.cleanName(currValue.toString()));
 											}
 										} else {
@@ -578,16 +591,16 @@ public class ImportEntityXmlVisitor {
 												MLText mltext = new MLText();
 												mltext.addValue(Locale.getDefault(), currValue.toString());
 												mltextAttributes.forEach(mltext::addValue);
-												serviceRegistry.getNodeService().setProperty(curNodeRef.peek(), currProp, mltext);
+												nodeService.setProperty(curNodeRef.peek(), currProp, mltext);
 												mltextAttributes.clear();
 											} else {
-												serviceRegistry.getNodeService().setProperty(curNodeRef.peek(), currProp, currValue.toString());
+												nodeService.setProperty(curNodeRef.peek(), currProp, currValue.toString());
 											}
 
 										}
 									}
 								} else {
-									serviceRegistry.getNodeService().setProperty(curNodeRef.peek(), currProp, null);
+									nodeService.setProperty(curNodeRef.peek(), currProp, null);
 								}
 							}
 						}
@@ -631,7 +644,7 @@ public class ImportEntityXmlVisitor {
 						String replacement = nodeRefMatcher.group(1);
 						NodeRef origNodeRef = new NodeRef(replacement);
 
-						if (!serviceRegistry.getNodeService().exists(origNodeRef)) {
+						if (!nodeService.exists(origNodeRef)) {
 							NodeRef replacementNode = null;
 
 							if (cache.containsKey(origNodeRef)) {
@@ -648,7 +661,7 @@ public class ImportEntityXmlVisitor {
 								}
 							}
 
-							if (replacementNode == null || !serviceRegistry.getNodeService().exists(replacementNode)) {
+							if (replacementNode == null || !nodeService.exists(replacementNode)) {
 								logger.error("Cannot find replacement node for : " + value.getValue());
 
 							} else {
@@ -661,8 +674,8 @@ public class ImportEntityXmlVisitor {
 
 					}
 					nodeRefMatcher.appendTail(sb);
-					if(serviceRegistry.getNodeService().exists(entry.getKey())) {
-						serviceRegistry.getNodeService().setProperty(entry.getKey(), value.getKey(), sb.toString());
+					if(nodeService.exists(entry.getKey())) {
+						nodeService.setProperty(entry.getKey(), value.getKey(), sb.toString());
 					}
 					
 				}
@@ -674,14 +687,14 @@ public class ImportEntityXmlVisitor {
 
 			if (assocName != null) {
 				if (type.equals(RemoteEntityService.CHILD_ASSOC_TYPE)) {
-					for (ChildAssociationRef assoc : serviceRegistry.getNodeService().getChildAssocs(nodeRef)) {
+					for (ChildAssociationRef assoc : nodeService.getChildAssocs(nodeRef)) {
 						if (assoc.getQName().equals(assocName)) {
 							toRemoveChildAssocsQueue.add(assoc);
 						}
 					}
 				} else {
-					for (AssociationRef assoc : serviceRegistry.getNodeService().getTargetAssocs(nodeRef, assocName)) {
-						serviceRegistry.getNodeService().removeAssociation(nodeRef, assoc.getTargetRef(), assoc.getTypeQName());
+					for (AssociationRef assoc : nodeService.getTargetAssocs(nodeRef, assocName)) {
+						nodeService.removeAssociation(nodeRef, assoc.getTargetRef(), assoc.getTypeQName());
 					}
 				}
 			}
@@ -690,12 +703,12 @@ public class ImportEntityXmlVisitor {
 		public void removeExistingAssociations() {
 
 			for (ChildAssociationRef assoc : toRemoveChildAssocsQueue) {
-				if (serviceRegistry.getNodeService().exists(assoc.getChildRef())) {
+				if (nodeService.exists(assoc.getChildRef())) {
 					if (logger.isDebugEnabled()) {
 						logger.debug("Delete childAssoc :" + assoc.toString());
 					}
 
-					serviceRegistry.getNodeService().deleteNode(assoc.getChildRef());
+					nodeService.deleteNode(assoc.getChildRef());
 				}
 			}
 
@@ -721,7 +734,7 @@ public class ImportEntityXmlVisitor {
 		}
 
 		private NodeRef createNode(NodeRef parentNodeRef, QName type, String name, String erpCode) {
-			NodeRef ret = serviceRegistry.getNodeService().getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, name);
+			NodeRef ret = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, name);
 
 			if (ret == null) {
 				if (ContentModel.TYPE_AUTHORITY_CONTAINER.equals(type) || ContentModel.TYPE_PERSON.equals(type)) {
@@ -743,15 +756,15 @@ public class ImportEntityXmlVisitor {
 						assocName = ContentModel.ASSOC_SUBCATEGORIES;
 					}
 	
-					ret = serviceRegistry.getNodeService()
+					ret = nodeService
 							.createNode(parentNodeRef, assocName,
 									QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name)), type, props)
 							.getChildRef();
 				}
 
 			} else {
-				if (!serviceRegistry.getNodeService().getType(ret).equals(type)) {
-					logger.error("Found node with same name: " + name + " but incorrect type :" + serviceRegistry.getNodeService().getType(ret) + "/"
+				if (!nodeService.getType(ret).equals(type)) {
+					logger.error("Found node with same name: " + name + " but incorrect type :" + nodeService.getType(ret) + "/"
 							+ type + " under: " + parentNodeRef);
 					return null;
 				}
@@ -771,14 +784,14 @@ public class ImportEntityXmlVisitor {
 			}
 
 			// Translate
-			if ((existingNodeRef == null) || !serviceRegistry.getNodeService().exists(existingNodeRef)
-					|| type.equals(serviceRegistry.getNodeService().getType(existingNodeRef))) {
+			if ((existingNodeRef == null) || !nodeService.exists(existingNodeRef)
+					|| type.equals(nodeService.getType(existingNodeRef))) {
 
-				NodeRef ret = serviceRegistry.getNodeService().getChildByName(parentNodeRef, assocName, name);
+				NodeRef ret = nodeService.getChildByName(parentNodeRef, assocName, name);
 
 				// rendre générique ?
 				if (ForumModel.ASSOC_DISCUSSION.equals(assocName)) {
-					List<ChildAssociationRef> childAssocs = serviceRegistry.getNodeService().getChildAssocs(parentNodeRef);
+					List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(parentNodeRef);
 					for (ChildAssociationRef childAssoc : childAssocs) {
 						if (childAssoc.getTypeQName().equals(assocName)) {
 							ret = childAssoc.getChildRef();
@@ -819,7 +832,7 @@ public class ImportEntityXmlVisitor {
 						logger.debug("Creating child assoc: " + assocName + " add type :" + type + " name :" + name);
 						Map<QName, Serializable> properties = new HashMap<>();
 						properties.put(ContentModel.PROP_NAME, name);
-						return serviceRegistry.getNodeService()
+						return nodeService
 								.createNode(parentNodeRef, assocName,
 										QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name)), type, properties)
 								.getChildRef();
@@ -830,21 +843,21 @@ public class ImportEntityXmlVisitor {
 
 					logger.debug("Find child assoc: " + assocName + " add type :" + type + " with same name :" + name);
 
-					if (toRemoveChildAssocsQueue.remove(serviceRegistry.getNodeService().getPrimaryParent(ret)) && logger.isDebugEnabled()) {
-						logger.debug("Removing from childQueue :" + serviceRegistry.getNodeService().getPrimaryParent(ret).toString());
+					if (toRemoveChildAssocsQueue.remove(nodeService.getPrimaryParent(ret)) && logger.isDebugEnabled()) {
+						logger.debug("Removing from childQueue :" + nodeService.getPrimaryParent(ret).toString());
 					}
 					return ret;
 				}
 			} else {
-				if (!serviceRegistry.getNodeService().getPrimaryParent(existingNodeRef).getParentRef().equals(parentNodeRef)) {
-					serviceRegistry.getNodeService().moveNode(existingNodeRef, parentNodeRef, assocName,
+				if (!nodeService.getPrimaryParent(existingNodeRef).getParentRef().equals(parentNodeRef)) {
+					nodeService.moveNode(existingNodeRef, parentNodeRef, assocName,
 							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name)));
 				}
 
 				logger.debug("Using existing child assoc: " + assocName + " add type :" + type + " name :" + name);
 
-				if (toRemoveChildAssocsQueue.remove(serviceRegistry.getNodeService().getPrimaryParent(existingNodeRef)) && logger.isDebugEnabled()) {
-					logger.debug("Removing from childQueue :" + serviceRegistry.getNodeService().getPrimaryParent(existingNodeRef).toString());
+				if (toRemoveChildAssocsQueue.remove(nodeService.getPrimaryParent(existingNodeRef)) && logger.isDebugEnabled()) {
+					logger.debug("Removing from childQueue :" + nodeService.getPrimaryParent(existingNodeRef).toString());
 				}
 				return existingNodeRef;
 			}
@@ -866,7 +879,7 @@ public class ImportEntityXmlVisitor {
 		private NodeRef findNodeByPath(String parentPath) {
 			NodeRef ret = null;
 
-			NodeRef rootNode = serviceRegistry.getNodeService().getRootNode(RepoConsts.SPACES_STORE);
+			NodeRef rootNode = nodeService.getRootNode(RepoConsts.SPACES_STORE);
 			if ((parentPath != null) && !parentPath.isEmpty()) {
 				ret = BeCPGQueryBuilder.createQuery().selectNodeByPath(rootNode, parentPath);
 			}
@@ -878,20 +891,18 @@ public class ImportEntityXmlVisitor {
 				
 					NodeRef parentNodeRef = findNodeByPath(path);
 
-					ret = serviceRegistry.getNodeService().getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, PropertiesHelper.cleanFolderName(name));
+					ret = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, PropertiesHelper.cleanFolderName(name));
 					if (ret == null) {
 						
 						Map<QName, Serializable> properties = new HashMap<>();
 						properties.put(ContentModel.PROP_NAME, PropertiesHelper.cleanFolderName(name));
 						
 						
-						 ret =  serviceRegistry
-								.getNodeService().createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
-										QName.resolveToQName(serviceRegistry.getNamespaceService(), name.replaceAll("_x0020_", " ")), ContentModel.TYPE_FOLDER, properties)
+						 ret =  nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
+										QName.resolveToQName(namespaceService, name.replaceAll("_x0020_", " ")), ContentModel.TYPE_FOLDER, properties)
 								.getChildRef();
 						if(logger.isDebugEnabled()) {
-							logger.debug("Creating path " + parentPath + "  "+ serviceRegistry
-									.getNodeService().getPath(ret).toPrefixString(serviceRegistry.getNamespaceService()) + " "+ PropertiesHelper.cleanFolderName(name));
+							logger.debug("Creating path " + parentPath + "  "+ nodeService.getPath(ret).toPrefixString(namespaceService) + " "+ PropertiesHelper.cleanFolderName(name));
 						}
 					}
 					return ret;
@@ -911,7 +922,7 @@ public class ImportEntityXmlVisitor {
 		 */
 		private NodeRef findNode(String nodeRef, String code, String erpCode, String name, NodeRef parentNodeRef, String path, QName type,
 				QName currProp, Map<NodeRef, NodeRef> cache) {
-			if ((nodeRef != null) && serviceRegistry.getNodeService().exists(new NodeRef(nodeRef))) {
+			if ((nodeRef != null) && nodeService.exists(new NodeRef(nodeRef))) {
 				return new NodeRef(nodeRef);
 			}
 
@@ -921,12 +932,12 @@ public class ImportEntityXmlVisitor {
 
 			if (ContentModel.TYPE_PERSON.equals(type)) {
 				logger.debug("try to get person : " + name);
-				return serviceRegistry.getPersonService().getPersonOrNull(name);
+				return personService.getPersonOrNull(name);
 			}
 
 			if (ContentModel.TYPE_AUTHORITY_CONTAINER.equals(type)) {
 				logger.debug("try to get authority : " + name);
-				return serviceRegistry.getAuthorityService().getAuthorityNodeRef(name);
+				return authorityService.getAuthorityNodeRef(name);
 			}
 
 			BeCPGQueryBuilder beCPGQueryBuilder = BeCPGQueryBuilder.createQuery();
@@ -963,8 +974,8 @@ public class ImportEntityXmlVisitor {
 			List<NodeRef> ret = beCPGQueryBuilder.list();
 			if (!ret.isEmpty()) {
 				for (NodeRef node : ret) {
-					if (serviceRegistry.getNodeService().exists(node) && ((name == null) || name.startsWith(RemoteEntityService.EMPTY_NAME_PREFIX)
-							|| name.equals(PropertiesHelper.cleanName((String) serviceRegistry.getNodeService().getProperty(node,
+					if (nodeService.exists(node) && ((name == null) || name.startsWith(RemoteEntityService.EMPTY_NAME_PREFIX)
+							|| name.equals(PropertiesHelper.cleanName((String) nodeService.getProperty(node,
 									RemoteHelper.getPropName(type, entityDictionaryService)))))) {
 						logger.debug("Found node for query :" + beCPGQueryBuilder.toString());
 						return node;

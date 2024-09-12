@@ -20,7 +20,6 @@ public class EvaporatedDataItem {
 	 *
 	 * @param productNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param rate a {@link java.lang.Double} object.
-	 * @param qty a {@link java.lang.Double} object.
 	 */
 	public EvaporatedDataItem(NodeRef productNodeRef, Double rate) {
 		super();
@@ -50,11 +49,13 @@ public class EvaporatedDataItem {
 		return rate;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		return Objects.hash(productNodeRef, rate);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

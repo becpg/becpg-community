@@ -11,7 +11,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -179,8 +178,8 @@ public class RemoteEntityServiceIT extends PLMBaseTestCase {
 	public void testRemoteEntityFilteredListsAndFields() {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			// Get Filtered Entity
-			List<String> filteredLists = Arrays.asList(new String[] { "compoList" });
-			List<String> filteredFields = Arrays.asList(new String[] { "bcpg:legalName", "bcpg:compoListProduct|cm:name" });
+			Set<String> filteredLists = Set.of( "compoList" );
+			Set<String> filteredFields = Set.of( "bcpg:legalName", "bcpg:compoListProduct|cm:name" );
 			NodeRef nodeRef = createFinishedProduct();
 			OutputStream out = new ByteArrayOutputStream();
 			RemoteParams params = new RemoteParams(RemoteEntityFormat.xml);

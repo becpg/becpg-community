@@ -48,6 +48,7 @@ import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.data.productList.PriceListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
+import fr.becpg.repo.product.data.productList.PubChannelListDataItem;
 import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.ResourceParamListItem;
 import fr.becpg.repo.product.data.productList.SvhcListDataItem;
@@ -251,6 +252,7 @@ public class ProductData extends AbstractScorableEntity
 	private List<RegulatoryListDataItem> regulatoryList;
 	private List<IngRegulatoryListDataItem> ingRegulatoryList;
 	private List<SvhcListDataItem> svhcList;
+	private List<PubChannelListDataItem> pubChannelList;
 
 	/*
 	 * View
@@ -298,30 +300,116 @@ public class ProductData extends AbstractScorableEntity
 	private List<SurveyListDataItem> surveyList;
 	private Integer productScore;
 
-	/** {@inheritDoc} */
+	
+	private NodeRef glopTargetCharact;
+	private String glopTargetTask;
+	private Double glopTolerance;
+	private List<String> glopConstraintLists;
+	private Boolean glopApplyOptimization;
+	
+	@AlfSingleAssoc
+	@AlfQname(qname = "bcpg:glopTargetCharact")
+	public NodeRef getGlopTargetCharact() {
+		return glopTargetCharact;
+	}
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:glopTolerance")
+	public Double getGlopTolerance() {
+		return glopTolerance;
+	}
+	
+	public void setGlopTolerance(Double glopTolerance) {
+		this.glopTolerance = glopTolerance;
+	}
+	
+	public void setGlopTargetCharact(NodeRef glopTargetCharact) {
+		this.glopTargetCharact = glopTargetCharact;
+	}
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:glopTargetTask")
+	public String getGlopTargetTask() {
+		return glopTargetTask;
+	}
+	
+	public void setGlopTargetTask(String glopTargetTask) {
+		this.glopTargetTask = glopTargetTask;
+	}
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:glopConstraintLists")
+	public List<String> getGlopConstraintLists() {
+		return glopConstraintLists;
+	}
+	
+	public void setGlopConstraintLists(List<String> glopConstraintLists) {
+		this.glopConstraintLists = glopConstraintLists;
+	}
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:glopApplyOptimization")
+	public Boolean getGlopApplyOptimization() {
+		return glopApplyOptimization;
+	}
+
+	public void setGlopApplyOptimization(Boolean glopApplyOptimization) {
+		this.glopApplyOptimization = glopApplyOptimization;
+	}
+	
+	
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @return a {@link fr.becpg.repo.glop.model.GlopData} object
+	 */
 	public GlopData getGlopData() {
 		return glopData;
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @param glopData a {@link fr.becpg.repo.glop.model.GlopData} object
+	 */
 	public void setGlopData(GlopData glopData) {
 		this.glopData = glopData;
 	}
 
+	/**
+	 * <p>Setter for the field <code>lcaScore</code>.</p>
+	 *
+	 * @param lcaScore a {@link java.lang.Double} object
+	 */
 	public void setLcaScore(Double lcaScore) {
 		this.lcaScore = lcaScore;
 	}
 
+	/**
+	 * <p>Setter for the field <code>lcaScoreMethod</code>.</p>
+	 *
+	 * @param lcaScoreMethod a {@link java.lang.String} object
+	 */
 	public void setLcaScoreMethod(String lcaScoreMethod) {
 		this.lcaScoreMethod = lcaScoreMethod;
 	}
 
+	/**
+	 * <p>Getter for the field <code>lcaScore</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:lcaScore")
 	public Double getLcaScore() {
 		return lcaScore;
 	}
 
+	/**
+	 * <p>Getter for the field <code>lcaScoreMethod</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:lcaScoreMethod")
 	public String getLcaScoreMethod() {
@@ -476,7 +564,7 @@ public class ProductData extends AbstractScorableEntity
 	/**
 	 * <p>Setter for the field <code>variants</code>.</p>
 	 *
-	 * @param variants a {@link java.util.List} object.
+	 * @param localVariants a {@link java.util.List} object
 	 */
 	public void setLocalVariants(List<VariantData> localVariants) {
 		this.localVariants = localVariants;
@@ -776,12 +864,22 @@ public class ProductData extends AbstractScorableEntity
 		this.entityTpl = entityTpl;
 	}
 
+	/**
+	 * <p>Getter for the field <code>parentEntity</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.ProductData} object
+	 */
 	@AlfSingleAssoc(isEntity = true)
 	@AlfQname(qname = "bcpg:parentEntityRef")
 	public ProductData getParentEntity() {
 		return parentEntity;
 	}
 
+	/**
+	 * <p>Setter for the field <code>parentEntity</code>.</p>
+	 *
+	 * @param parentEntity a {@link fr.becpg.repo.product.data.ProductData} object
+	 */
 	public void setParentEntity(ProductData parentEntity) {
 		this.parentEntity = parentEntity;
 	}
@@ -806,6 +904,11 @@ public class ProductData extends AbstractScorableEntity
 		this.plants = plants;
 	}
 
+	/**
+	 * <p>getAllPlants.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	public List<NodeRef> getAllPlants() {
 		List<NodeRef> ret = new ArrayList<>();
 		if (plants != null) {
@@ -817,12 +920,22 @@ public class ProductData extends AbstractScorableEntity
 		return ret;
 	}
 
+	/**
+	 * <p>Getter for the field <code>isIngListManual</code>.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:isIngListManual")
 	public Boolean getIsIngListManual() {
 		return isIngListManual;
 	}
 
+	/**
+	 * <p>Setter for the field <code>isIngListManual</code>.</p>
+	 *
+	 * @param isIngListManual a {@link java.lang.Boolean} object
+	 */
 	public void setIsIngListManual(Boolean isIngListManual) {
 		this.isIngListManual = isIngListManual;
 	}
@@ -1448,56 +1561,111 @@ public class ProductData extends AbstractScorableEntity
 		this.profitability = profitability;
 	}
 
+	/**
+	 * <p>Getter for the field <code>preparationStates</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:nutrientPreparationState")
 	public List<String> getPreparationStates() {
 		return preparationStates;
 	}
 
+	/**
+	 * <p>Setter for the field <code>preparationStates</code>.</p>
+	 *
+	 * @param preparationStates a {@link java.util.List} object
+	 */
 	public void setPreparationStates(List<String> preparationStates) {
 		this.preparationStates = preparationStates;
 	}
 
+	/**
+	 * <p>isPrepared.</p>
+	 *
+	 * @return a boolean
+	 */
 	public boolean isPrepared() {
 		return preparationStates != null && preparationStates.contains("Prepared");
 	}
 
+	/**
+	 * <p>Getter for the field <code>ecoScore</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:ecoScore")
 	public Double getEcoScore() {
 		return ecoScore;
 	}
 
+	/**
+	 * <p>Setter for the field <code>ecoScore</code>.</p>
+	 *
+	 * @param ecoScore a {@link java.lang.Double} object
+	 */
 	public void setEcoScore(Double ecoScore) {
 		this.ecoScore = ecoScore;
 	}
 
+	/**
+	 * <p>Getter for the field <code>ecoScoreClass</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:ecoScoreClass")
 	public String getEcoScoreClass() {
 		return ecoScoreClass;
 	}
 
+	/**
+	 * <p>Setter for the field <code>ecoScoreClass</code>.</p>
+	 *
+	 * @param ecoScoreClass a {@link java.lang.String} object
+	 */
 	public void setEcoScoreClass(String ecoScoreClass) {
 		this.ecoScoreClass = ecoScoreClass;
 	}
 
+	/**
+	 * <p>Getter for the field <code>ecoScoreCategory</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:ecoScoreCategory")
 	public String getEcoScoreCategory() {
 		return ecoScoreCategory;
 	}
 
+	/**
+	 * <p>Setter for the field <code>ecoScoreCategory</code>.</p>
+	 *
+	 * @param ecoScoreCategory a {@link java.lang.String} object
+	 */
 	public void setEcoScoreCategory(String ecoScoreCategory) {
 		this.ecoScoreCategory = ecoScoreCategory;
 	}
 
+	/**
+	 * <p>Getter for the field <code>ecoScoreDetails</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:ecoScoreDetails")
 	public String getEcoScoreDetails() {
 		return ecoScoreDetails;
 	}
 
+	/**
+	 * <p>Setter for the field <code>ecoScoreDetails</code>.</p>
+	 *
+	 * @param ecoScoreDetails a {@link java.lang.String} object
+	 */
 	public void setEcoScoreDetails(String ecoScoreDetails) {
 		this.ecoScoreDetails = ecoScoreDetails;
 	}
@@ -1542,12 +1710,22 @@ public class ProductData extends AbstractScorableEntity
 		this.nutrientClass = nutrientClass;
 	}
 
+	/**
+	 * <p>Getter for the field <code>nutrientDetails</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:nutrientProfilingDetails")
 	public String getNutrientDetails() {
 		return nutrientDetails;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nutrientDetails</code>.</p>
+	 *
+	 * @param nutrientDetails a {@link java.lang.String} object
+	 */
 	public void setNutrientDetails(String nutrientDetails) {
 		this.nutrientDetails = nutrientDetails;
 	}
@@ -1572,22 +1750,42 @@ public class ProductData extends AbstractScorableEntity
 		this.nutrientProfile = nutrientProfile;
 	}
 
+	/**
+	 * <p>Getter for the field <code>nutrientProfileCategory</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:nutrientProfileCategory")
 	public String getNutrientProfileCategory() {
 		return nutrientProfileCategory;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nutrientProfileCategory</code>.</p>
+	 *
+	 * @param nutrientProfileCategory a {@link java.lang.String} object
+	 */
 	public void setNutrientProfileCategory(String nutrientProfileCategory) {
 		this.nutrientProfileCategory = nutrientProfileCategory;
 	}
 
+	/**
+	 * <p>Getter for the field <code>nutrientProfileVersion</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:nutrientProfileVersion")
 	public String getNutrientProfileVersion() {
 		return nutrientProfileVersion;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nutrientProfileVersion</code>.</p>
+	 *
+	 * @param nutrientProfileVersion a {@link java.lang.String} object
+	 */
 	public void setNutrientProfileVersion(String nutrientProfileVersion) {
 		this.nutrientProfileVersion = nutrientProfileVersion;
 	}
@@ -1759,12 +1957,22 @@ public class ProductData extends AbstractScorableEntity
 		this.costList = costList;
 	}
 
+	/**
+	 * <p>Getter for the field <code>lcaList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	@DataList
 	@AlfQname(qname = "bcpg:lcaList")
 	public List<LCAListDataItem> getLcaList() {
 		return lcaList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>lcaList</code>.</p>
+	 *
+	 * @param lcaList a {@link java.util.List} object
+	 */
 	public void setLcaList(List<LCAListDataItem> lcaList) {
 		this.lcaList = lcaList;
 	}
@@ -2009,32 +2217,62 @@ public class ProductData extends AbstractScorableEntity
 		this.packMaterialList = packMaterialList;
 	}
 
+	/**
+	 * <p>Getter for the field <code>stockList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	@DataList
 	@AlfQname(qname = "qa:stockList")
 	public List<StockListDataItem> getStockList() {
 		return stockList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>stockList</code>.</p>
+	 *
+	 * @param stockList a {@link java.util.List} object
+	 */
 	public void setStockList(List<StockListDataItem> stockList) {
 		this.stockList = stockList;
 	}
 
+	/**
+	 * <p>Getter for the field <code>regulatoryList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	@DataList
 	@AlfQname(qname = "bcpg:regulatoryList")
 	public List<RegulatoryListDataItem> getRegulatoryList() {
 		return regulatoryList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>regulatoryList</code>.</p>
+	 *
+	 * @param regulatoryList a {@link java.util.List} object
+	 */
 	public void setRegulatoryList(List<RegulatoryListDataItem> regulatoryList) {
 		this.regulatoryList = regulatoryList;
 	}
 
+	/**
+	 * <p>Getter for the field <code>ingRegulatoryList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	@DataList
 	@AlfQname(qname = "bcpg:ingRegulatoryList")
 	public List<IngRegulatoryListDataItem> getIngRegulatoryList() {
 		return ingRegulatoryList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>ingRegulatoryList</code>.</p>
+	 *
+	 * @param ingRegulatoryList a {@link java.util.List} object
+	 */
 	public void setIngRegulatoryList(List<IngRegulatoryListDataItem> ingRegulatoryList) {
 		this.ingRegulatoryList = ingRegulatoryList;
 	}
@@ -2058,6 +2296,16 @@ public class ProductData extends AbstractScorableEntity
 	public void setSvhcList(List<SvhcListDataItem> svhcList) {
 		this.svhcList = svhcList;
 	}
+	
+	@DataList
+	@AlfQname(qname = "bp:pubChannelList")
+	public List<PubChannelListDataItem> getPubChannelList() {
+		return pubChannelList;
+	}
+	
+	public void setPubChannelList(List<PubChannelListDataItem> pubChannelList) {
+		this.pubChannelList = pubChannelList;
+	}
 
 	/**
 	 * <p>Getter for the field <code>scoreList</code>.</p>
@@ -2071,9 +2319,9 @@ public class ProductData extends AbstractScorableEntity
 	}
 
 	/**
-	 * <p>Setter for the field <code>scoreList</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @param scoreList a {@link java.util.List} object.
+	 * <p>Setter for the field <code>scoreList</code>.</p>
 	 */
 	public void setScoreList(List<ScoreListDataItem> scoreList) {
 		this.scoreList = scoreList;
@@ -2091,9 +2339,9 @@ public class ProductData extends AbstractScorableEntity
 	}
 
 	/**
-	 * <p>Setter for the field <code>surveyList</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @param scoreList a {@link java.util.List} object.
+	 * <p>Setter for the field <code>surveyList</code>.</p>
 	 */
 	public void setSurveyList(List<SurveyListDataItem> surveyList) {
 		this.surveyList = surveyList;
@@ -2122,9 +2370,9 @@ public class ProductData extends AbstractScorableEntity
 	}
 
 	/**
-	 * <p>Setter for the field <code>entityScore</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @param string a {@link java.lang.String} object.
+	 * <p>Setter for the field <code>entityScore</code>.</p>
 	 */
 	public void setEntityScore(String string) {
 		this.entityScore = string;
@@ -2150,32 +2398,58 @@ public class ProductData extends AbstractScorableEntity
 		this.reportLocales = reportLocales;
 	}
 
+	/**
+	 * <p>Getter for the field <code>regulatoryMode</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.decernis.DecernisMode} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:regulatoryMode")
 	public DecernisMode getRegulatoryMode() {
 		return regulatoryMode;
 	}
 
+	/**
+	 * <p>Setter for the field <code>regulatoryMode</code>.</p>
+	 *
+	 * @param regulatoryMode a {@link fr.becpg.repo.decernis.DecernisMode} object
+	 */
 	public void setRegulatoryMode(DecernisMode regulatoryMode) {
 		this.regulatoryMode = regulatoryMode;
 	}
 
+	/**
+	 * <p>Getter for the field <code>regulatoryUrl</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:regulatoryUrl")
 	public String getRegulatoryUrl() {
 		return regulatoryUrl;
 	}
 
+	/**
+	 * <p>Setter for the field <code>regulatoryUrl</code>.</p>
+	 *
+	 * @param regulatoryUrl a {@link java.lang.String} object
+	 */
 	public void setRegulatoryUrl(String regulatoryUrl) {
 		this.regulatoryUrl = regulatoryUrl;
 	}
 
+	/**
+	 * <p>Getter for the field <code>regulatoryResult</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.constraints.RegulatoryResult} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:regulatoryResult")
 	public RegulatoryResult getRegulatoryResult() {
 		return regulatoryResult;
 	}
 
+	/** {@inheritDoc} */
 	public void setRegulatoryResult(RegulatoryResult regulatoryResult) {
 		this.regulatoryResult = regulatoryResult;
 	}
@@ -2192,9 +2466,9 @@ public class ProductData extends AbstractScorableEntity
 	}
 
 	/**
-	 * <p>Setter for the field <code>regulatoryRecipeId</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @param regulatoryRecipeId a {@link java.lang.String} object.
+	 * <p>Setter for the field <code>regulatoryRecipeId</code>.</p>
 	 */
 	public void setRegulatoryRecipeId(String regulatoryRecipeId) {
 		this.regulatoryRecipeId = regulatoryRecipeId;
@@ -2213,26 +2487,46 @@ public class ProductData extends AbstractScorableEntity
 	}
 
 	/**
-	 * <p>Setter for the field <code>regulatoryCountries</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @param regulatoryCountries a {@link java.util.List} object.
+	 * <p>Setter for the field <code>regulatoryCountries</code>.</p>
 	 */
 	public void setRegulatoryCountriesRef(List<NodeRef> regulatoryCountries) {
 		this.regulatoryCountriesRef = regulatoryCountries;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>regulatoryCountries</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	public List<String> getRegulatoryCountries() {
 		return regulatoryCountries;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>regulatoryCountries</code>.</p>
+	 *
+	 * @param regulatoryCountries a {@link java.util.List} object
+	 */
 	public void setRegulatoryCountries(List<String> regulatoryCountries) {
 		this.regulatoryCountries = regulatoryCountries;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>regulatoryUsages</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	public List<String> getRegulatoryUsages() {
 		return regulatoryUsages;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>regulatoryUsages</code>.</p>
+	 *
+	 * @param regulatoryUsages a {@link java.util.List} object
+	 */
 	public void setRegulatoryUsages(List<String> regulatoryUsages) {
 		this.regulatoryUsages = regulatoryUsages;
 	}
@@ -2250,9 +2544,9 @@ public class ProductData extends AbstractScorableEntity
 	}
 
 	/**
-	 * <p>Setter for the field <code>regulatoryUsages</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @param regulatoryUsages a {@link java.util.List} object.
+	 * <p>Setter for the field <code>regulatoryUsages</code>.</p>
 	 */
 	public void setRegulatoryUsagesRef(List<NodeRef> regulatoryUsages) {
 		this.regulatoryUsagesRef = regulatoryUsages;
@@ -2578,10 +2872,20 @@ public class ProductData extends AbstractScorableEntity
 		return this instanceof RawMaterialData;
 	}
 
+	/**
+	 * <p>isGeneric.</p>
+	 *
+	 * @return a boolean
+	 */
 	public boolean isGeneric() {
 		return isRawMaterial() || Boolean.TRUE.equals(isGeneric);
 	}
 
+	/**
+	 * <p>Setter for the field <code>isGeneric</code>.</p>
+	 *
+	 * @param isGeneric a {@link java.lang.Boolean} object
+	 */
 	public void setIsGeneric(Boolean isGeneric) {
 		this.isGeneric = isGeneric;
 	}
@@ -2631,6 +2935,11 @@ public class ProductData extends AbstractScorableEntity
 		return this instanceof FinishedProductData;
 	}
 
+	/**
+	 * <p>isEntityTemplate.</p>
+	 *
+	 * @return a boolean
+	 */
 	public boolean isEntityTemplate() {
 		return getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL);
 	}
@@ -2673,9 +2982,7 @@ public class ProductData extends AbstractScorableEntity
 		this.formulationChainId = formulationChainId;
 	}
 
-	/**
-	 * @return the productScore
-	 */
+	/** {@inheritDoc} */
 	@AlfProp
 	@AlfQname(qname = "pjt:projectScore")
 	@Override
@@ -2683,9 +2990,7 @@ public class ProductData extends AbstractScorableEntity
 		return productScore;
 	}
 
-	/**
-	 * @param productScore the productScore to set
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void setScore(Integer productScore) {
 		this.productScore = productScore;

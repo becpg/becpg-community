@@ -6,7 +6,7 @@
    <#if processInstance.id??>
    "id": "${processInstance.id}"
    <#else>
-   "nodeRef": "${processInstance.nodeRef}"
+   "nodeRef": <#if processInstance.nodeRef??>"${processInstance.nodeRef?string}"<#else>null</#if>
    </#if>,
    "type": "${processInstance.type}",
    "title": "${processInstance.title!""}",
@@ -18,7 +18,7 @@
    "initiator": 
    <#if processInstance.initiator??>
    {
-      "userName": "${processInstance.initiator.userName}"<#if processInstance.initiator.firstName??>,
+      "userName": "${processInstance.initiator.userName!"unknown"}"<#if processInstance.initiator.firstName??>,
       "firstName": "${processInstance.initiator.firstName}"</#if><#if processInstance.initiator.lastName??>,
       "lastName": "${processInstance.initiator.lastName}"</#if><#if processInstance.initiator.avatarUrl??>,
       "avatarUrl": "${processInstance.initiator.avatarUrl}"</#if>

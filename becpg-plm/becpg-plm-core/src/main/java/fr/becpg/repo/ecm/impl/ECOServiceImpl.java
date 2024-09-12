@@ -899,6 +899,7 @@ public class ECOServiceImpl implements ECOService {
 		return null;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public BatchInfo closeECO(NodeRef ecoNodeRef, List<NodeRef> impactedProducts) {
 		
@@ -1485,7 +1486,7 @@ public class ECOServiceImpl implements ECOService {
 		QName nodeType = nodeService.getType(targetAssocNodeRef);
 
 		if (nodeType.isMatch(PLMModel.TYPE_RAWMATERIAL) || nodeType.isMatch(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT)
-				|| nodeType.isMatch(PLMModel.TYPE_SEMIFINISHEDPRODUCT) || nodeType.isMatch(PLMModel.TYPE_FINISHEDPRODUCT)) {
+				|| nodeType.isMatch(PLMModel.TYPE_SEMIFINISHEDPRODUCT) || nodeType.isMatch(PLMModel.TYPE_FINISHEDPRODUCT) || nodeType.isMatch(PLMModel.TYPE_LOGISTICUNIT)) {
 			wUsedAssociations.add(PLMModel.ASSOC_COMPOLIST_PRODUCT);
 		} else if (nodeType.isMatch(PLMModel.TYPE_PACKAGINGMATERIAL) || nodeType.isMatch(PLMModel.TYPE_PACKAGINGKIT)) {
 			wUsedAssociations.add(PLMModel.ASSOC_PACKAGINGLIST_PRODUCT);
@@ -1563,6 +1564,12 @@ public class ECOServiceImpl implements ECOService {
 		return null;
 	}
 
+	/**
+	 * <p>setInProgress.</p>
+	 *
+	 * @param ecoNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.lang.Boolean} object
+	 */
 	public Boolean setInProgress(NodeRef ecoNodeRef) {
 		ChangeOrderData om = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
 		if (!ECOState.InProgress.equals(om.getEcoState())) {

@@ -34,34 +34,74 @@ public class GlopConstraint implements Serializable {
 
 	private Double tolerance;
 
+	/**
+	 * <p>Getter for the field <code>minTolerance</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	public Double getMinTolerance() {
 		return minTolerance;
 	}
 
+	/**
+	 * <p>Setter for the field <code>minTolerance</code>.</p>
+	 *
+	 * @param minTolerance a {@link java.lang.Double} object
+	 */
 	public void setMinTolerance(Double minTolerance) {
 		this.minTolerance = minTolerance;
 	}
 
+	/**
+	 * <p>Getter for the field <code>maxTolerance</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	public Double getMaxTolerance() {
 		return maxTolerance;
 	}
 
+	/**
+	 * <p>Setter for the field <code>maxTolerance</code>.</p>
+	 *
+	 * @param maxTolerance a {@link java.lang.Double} object
+	 */
 	public void setMaxTolerance(Double maxTolerance) {
 		this.maxTolerance = maxTolerance;
 	}
 
+	/**
+	 * <p>Getter for the field <code>minValue</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	public Double getMinValue() {
 		return minValue;
 	}
 
+	/**
+	 * <p>Setter for the field <code>minValue</code>.</p>
+	 *
+	 * @param minValue a {@link java.lang.Double} object
+	 */
 	public void setMinValue(Double minValue) {
 		this.minValue = minValue;
 	}
 
+	/**
+	 * <p>Getter for the field <code>maxValue</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	public Double getMaxValue() {
 		return maxValue;
 	}
 
+	/**
+	 * <p>Setter for the field <code>maxValue</code>.</p>
+	 *
+	 * @param maxValue a {@link java.lang.Double} object
+	 */
 	public void setMaxValue(Double maxValue) {
 		this.maxValue = maxValue;
 	}
@@ -97,10 +137,20 @@ public class GlopConstraint implements Serializable {
 		return data;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>tolerance</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	public Double getTolerance() {
 		return tolerance;
 	}
 
+	/**
+	 * <p>Setter for the field <code>tolerance</code>.</p>
+	 *
+	 * @param tolerance a {@link java.lang.Double} object
+	 */
 	public void setTolerance(Double tolerance) {
 		this.tolerance = tolerance;
 	}

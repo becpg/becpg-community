@@ -95,12 +95,22 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	
 	private NodeRef subProject;
 	
+	/**
+	 * <p>Getter for the field <code>description</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:tlTaskDescription")
 	public String getDescription() {
 		return description;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>description</code>.</p>
+	 *
+	 * @param description a {@link java.lang.String} object
+	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}
@@ -234,12 +244,22 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 
 	
 	
+	/**
+	 * <p>Getter for the field <code>isCritical</code>.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:tlIsCritical")
 	public Boolean getIsCritical() {
 		return isCritical;
 	}
 
+	/**
+	 * <p>Setter for the field <code>isCritical</code>.</p>
+	 *
+	 * @param isCritical a {@link java.lang.Boolean} object
+	 */
 	public void setIsCritical(Boolean isCritical) {
 		this.isCritical = isCritical;
 	}
@@ -387,32 +407,62 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	
 	
 	
+	/**
+	 * <p>Getter for the field <code>due</code>.</p>
+	 *
+	 * @return a {@link java.util.Date} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:tlDue")
 	public Date getDue() {
 		return due;
 	}
 
+	/**
+	 * <p>Setter for the field <code>due</code>.</p>
+	 *
+	 * @param due a {@link java.util.Date} object
+	 */
 	public void setDue(Date due) {
 		this.due = due;
 	}
 
+	/**
+	 * <p>Getter for the field <code>targetStart</code>.</p>
+	 *
+	 * @return a {@link java.util.Date} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:tlTargetStart")
 	public Date getTargetStart() {
 		return targetStart;
 	}
 
+	/**
+	 * <p>Setter for the field <code>targetStart</code>.</p>
+	 *
+	 * @param targetStart a {@link java.util.Date} object
+	 */
 	public void setTargetStart(Date targetStart) {
 		this.targetStart = targetStart;
 	}
 
+	/**
+	 * <p>Getter for the field <code>targetEnd</code>.</p>
+	 *
+	 * @return a {@link java.util.Date} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:tlTargetEnd")
 	public Date getTargetEnd() {
 		return targetEnd;
 	}
 
+	/**
+	 * <p>Setter for the field <code>targetEnd</code>.</p>
+	 *
+	 * @param targetEnd a {@link java.util.Date} object
+	 */
 	public void setTargetEnd(Date targetEnd) {
 		this.targetEnd = targetEnd;
 	}
@@ -880,6 +930,84 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 		super();
 	}
 
+
+	public static TaskListDataItem build() {
+		return new TaskListDataItem();
+	}
+
+    public TaskListDataItem withNodeRef(NodeRef nodeRef) {
+        this.nodeRef = nodeRef;
+        return this;
+    }
+
+    public TaskListDataItem withTaskName(String taskName) {
+        this.taskName = taskName;
+        return this;
+    }
+
+    public TaskListDataItem withIsMilestone(Boolean isMilestone) {
+        this.isMilestone = isMilestone;
+        return this;
+    }
+
+    public TaskListDataItem withDuration(Integer duration) {
+        this.duration = duration;
+        return this;
+    }
+
+    public TaskListDataItem withStart(Date start) {
+        this.start = start;
+        return this;
+    }
+
+    public TaskListDataItem withEnd(Date end) {
+        this.end = end;
+        return this;
+    }
+
+    public TaskListDataItem withTaskState(TaskState taskState) {
+        this.taskState = taskState;
+        return this;
+    }
+
+    public TaskListDataItem withCompletionPercent(Integer completionPercent) {
+        this.completionPercent = completionPercent;
+        return this;
+    }
+
+    public TaskListDataItem withPrevTasks(List<NodeRef> prevTasks) {
+        this.prevTasks = prevTasks;
+        return this;
+    }
+
+    public TaskListDataItem withResources(List<NodeRef> resources) {
+        this.resources = resources;
+        return this;
+    }
+
+    public TaskListDataItem withTaskLegend(NodeRef taskLegend) {
+        this.taskLegend = taskLegend;
+        return this;
+    }
+
+    public TaskListDataItem withWorkflowName(String workflowName) {
+        this.workflowName = workflowName;
+        return this;
+    }
+
+    public TaskListDataItem withWorkflowInstance(String workflowInstance) {
+        this.workflowInstance = workflowInstance;
+        return this;
+    }
+
+
+    public TaskListDataItem withExpense(Double expense) {
+        this.expense = expense;
+        return this;
+    }
+	
+	
+	
 	/**
 	 * <p>Constructor for TaskListDataItem.</p>
 	 *
@@ -902,6 +1030,7 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	 * @param taskLegend a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param workflowName a {@link java.lang.String} object.
 	 */
+	@Deprecated
 	public TaskListDataItem(NodeRef nodeRef, String taskName, Boolean isMilestone, Integer duration, List<NodeRef> prevTasks,
 			List<NodeRef> resources, NodeRef taskLegend, String workflowName) {
 		super();
@@ -934,9 +1063,10 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	 * @param plannedExpense a {@link java.lang.Double} object.
 	 * @param expense a {@link java.lang.Double} object.
 	 */
+	@Deprecated
 	public TaskListDataItem(NodeRef nodeRef, String taskName, Boolean isMilestone, Integer duration, Date start, Date end, TaskState state,
 			Integer completionPercent, List<NodeRef> prevTasks, List<NodeRef> resources, NodeRef taskLegend, String workflowName,
-			String workflowInstance, Double plannedExpense , Double expense) {
+			String workflowInstance , Double expense) {
 		super();
 		this.nodeRef = nodeRef;
 		this.taskName = taskName;
@@ -954,6 +1084,7 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 		this.expense = expense;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -965,6 +1096,7 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -1022,6 +1154,6 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	public boolean isRefused() {
 		return  TaskState.Refused.equals(taskState) && !Boolean.TRUE.equals(isRefused);
 	}
-	
+
 
 }

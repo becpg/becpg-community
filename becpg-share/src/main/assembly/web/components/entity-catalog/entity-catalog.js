@@ -153,12 +153,12 @@
 									}
 
 
-									var field,displayName;
+									var field, displayName;
 									//display missing props, if any
 									if (catalogs[key].missingFields !== undefined) {
 										html += "<h3 >" + instance.msg("label.missing_properties") + "</h3>";
 										html += "<ul class=\"catalog-missing-propList\">";
-										for ( field in catalogs[key].missingFields) {
+										for (field in catalogs[key].missingFields) {
 
 											var flag = null;
 											if (catalogs[key].missingFields[field].locale != null) {
@@ -168,7 +168,7 @@
 												}
 											}
 
-										    displayName = catalogs[key].missingFields[field].displayName;
+											displayName = catalogs[key].missingFields[field].displayName;
 											if (catalogs[key].missingFields[field]["displayName_" + Alfresco.constants.JS_LOCALE]) {
 												displayName = catalogs[key].missingFields[field]["displayName_" + Alfresco.constants.JS_LOCALE];
 											}
@@ -190,9 +190,9 @@
 										html += "<h3>" + instance.msg("label.non-unique-properties") + "</h3>";
 
 										html += "<ul class=\"catalog-missing-propList\">";
-										for ( field in catalogs[key].nonUniqueFields) {
+										for (field in catalogs[key].nonUniqueFields) {
 
-											 displayName = catalogs[key].nonUniqueFields[field].displayName;
+											displayName = catalogs[key].nonUniqueFields[field].displayName;
 											if (catalogs[key].nonUniqueFields[field]["displayName_" + Alfresco.constants.JS_LOCALE]) {
 												displayName = catalogs[key].nonUniqueFields[field]["displayName_" + Alfresco.constants.JS_LOCALE];
 											}
@@ -200,7 +200,7 @@
 											html += "<li class=\"non-unique-field\" >"
 												+ displayName
 												+ "</li>";
-											
+
 
 											alerts.push(displayName);
 										}
@@ -229,35 +229,35 @@
 
 
 							YAHOO.util.Event.onAvailable(insertId + "-form", function() {
-								
+
 								if (instance.id.indexOf("wizard-mgr") < 1) {
 									var form = YAHOO.util.Dom.get(insertId + "-form");
-	
+
 									if (form !== undefined && form != null) {
-	
+
 										var pageContent = YAHOO.util.Dom.get(insertId);
 										YAHOO.util.Dom.addClass(pageContent, "inline-block");
 										YAHOO.util.Dom.addClass(catalogsDiv, "inline-block");
 										YAHOO.util.Dom.addClass(catalogsDiv, "catalogs");
 										YAHOO.util.Dom.insertAfter(catalogsDiv, pageContent);
 										YAHOO.util.Dom.removeClass(instance.id + "-entity-catalog", "hidden");
-	
+
 									}
-									
-									
+
+
 								}
 								instance.colorizeMissingFields(response.json, insertId);
-								
+
 							}, this);
 
 
-							if(alerts.length>0){
+							if (alerts.length > 0) {
 								var uniqueAlerts = alerts.filter(function(item, pos) {
-								    return alerts.indexOf(item) == pos;
+									return alerts.indexOf(item) == pos;
 								})
-								
+
 								//YAHOO.util.Dom.insertAfter(insertId, '<span class="error">'+  instance.msg("label.non-unique-properties",uniqueAlerts.join(", ") ) +'</span>');
-								
+
 								Alfresco.util.PopupManager.displayPrompt({
 									title: instance.msg("label.non-unique-properties"),
 									text: uniqueAlerts.join(", ")
@@ -309,12 +309,12 @@
 
 						//put a color tip for this catalog
 						var catalogId = catalogs[key].id;
-						
-					
+
+
 						if (instance.options.catalogId == null || instance.options.catalogId == catalogId) {
 
 							var color = catalogs[key].color;
-	
+
 							var colorTipElement = document.createElement("SPAN");
 							colorTipElement.style.backgroundColor = color;
 							colorTipElement.className += "catalog-color";
@@ -326,7 +326,7 @@
 							if (locale !== undefined && locale != null) {
 								catalogId = catalogId + "_" + locale;
 							}
-							
+
 
 							if (catalogs[key].missingFields.length > 0) {
 								var label = YAHOO.util.Dom.get(instance.id + "_" + catalogId + "_missingPropLabel");
@@ -351,16 +351,21 @@
 
 								for (var subField in fieldArray) {
 
-									var fieldId = "";
+									var fieldId = id + "_assoc_" + curField + "-cntrl";
 									var curField = fieldArray[subField].replace(":", "_");
 
 
-									var found = YAHOO.util.Dom.get(id + "_assoc_" + curField);
-									fieldId = id + "_assoc_" + curField + "-cntrl";
+									var found = YAHOO.util.Dom.get(fieldId);
 
 									if (found === undefined || found == null) {
-										found = YAHOO.util.Dom.get(id + "_prop_" + curField);
+										fieldId = id + "_prop_" + curField + "-entry";
+										found = YAHOO.util.Dom.get(fieldId);
+
+									}
+
+									if (found === undefined || found == null) {
 										fieldId = id + "_prop_" + curField;
+										found = YAHOO.util.Dom.get(fieldId);
 									}
 
 									if (found !== undefined && found != null) {
@@ -376,9 +381,9 @@
 											var currentLabel = labels[labelIndex];
 
 											//checks if we're on the right label, and the catalog is not already labelled
-											if(currentLabel.htmlFor == fieldId ){
+											if (currentLabel.htmlFor == fieldId) {
 												var hasLocaleIcon = false;
-												if ( currentLabel.parentNode.innerHTML.indexOf(colorTipElement.style.backgroundColor) == -1) {
+												if (currentLabel.parentNode.innerHTML.indexOf(colorTipElement.style.backgroundColor) == -1) {
 													if (currentLabel.childNodes) {
 														for (var child in currentLabel.childNodes) {
 															var currentChildNode = currentLabel.childNodes[child];
@@ -388,7 +393,7 @@
 															}
 														}
 													}
-	
+
 													if (hasLocaleIcon) {
 														currentLabel.appendChild(colorTipElement.cloneNode(false));
 													} else {
@@ -396,7 +401,7 @@
 													}
 													break;
 												}
-									
+
 											}
 										}
 									} else {

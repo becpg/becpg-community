@@ -36,7 +36,6 @@ import fr.becpg.repo.report.template.ReportType;
  *
  *  ds:/becpg/autocomplete/productreport/reports/{productType}
  *  param: {productType} Get the report templates of the product
- *
  */
 @Service("productReportAutoCompletePlugin")
 public class ProductReportAutoCompletePlugin extends TargetAssocAutoCompletePlugin {

@@ -61,22 +61,42 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 		return getPmlWeight();
 	}
 
+	/**
+	 * <p>Getter for the field <code>pmlRecycledPercentage</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "pack:pmlRecycledPercentage")
 	public Double getPmlRecycledPercentage() {
 		return pmlRecycledPercentage;
 	}
 
+	/**
+	 * <p>Setter for the field <code>pmlRecycledPercentage</code>.</p>
+	 *
+	 * @param pmlRecycledPercentage a {@link java.lang.Double} object
+	 */
 	public void setPmlRecycledPercentage(Double pmlRecycledPercentage) {
 		this.pmlRecycledPercentage = pmlRecycledPercentage;
 	}
 
+	/**
+	 * <p>Getter for the field <code>pkgLevel</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.constraints.PackagingLevel} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "pack:pmlLevel")
 	public PackagingLevel getPkgLevel() {
 		return pkgLevel;
 	}
 
+	/**
+	 * <p>Setter for the field <code>pkgLevel</code>.</p>
+	 *
+	 * @param pkgLevel a {@link fr.becpg.repo.product.data.constraints.PackagingLevel} object
+	 */
 	public void setPkgLevel(PackagingLevel pkgLevel) {
 		this.pkgLevel = pkgLevel;
 	}
@@ -102,12 +122,22 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 		this.pmlWeight = pmlWeight;
 	}
 
+	/**
+	 * <p>Getter for the field <code>pmlPerc</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "pack:pmlPerc")
 	public Double getPmlPerc() {
 		return pmlPerc;
 	}
 
+	/**
+	 * <p>Setter for the field <code>pmlPerc</code>.</p>
+	 *
+	 * @param pmlPerc a {@link java.lang.Double} object
+	 */
 	public void setPmlPerc(Double pmlPerc) {
 		this.pmlPerc = pmlPerc;
 	}
@@ -141,30 +171,65 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 		super();
 	}
 
+	/**
+	 * <p>build.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.productList.PackMaterialListDataItem} object
+	 */
 	public static PackMaterialListDataItem build() {
 		return new PackMaterialListDataItem();
 	}
 
+	/**
+	 * <p>withMaterial.</p>
+	 *
+	 * @param pmlMaterial a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.PackMaterialListDataItem} object
+	 */
 	public PackMaterialListDataItem withMaterial(NodeRef pmlMaterial) {
 		this.pmlMaterial = pmlMaterial;
 		return this;
 	}
 
+	/**
+	 * <p>withWeight.</p>
+	 *
+	 * @param pmlWeight a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.PackMaterialListDataItem} object
+	 */
 	public PackMaterialListDataItem withWeight(Double pmlWeight) {
 		this.pmlWeight = pmlWeight;
 		return this;
 	}
 
+	/**
+	 * <p>withPerc.</p>
+	 *
+	 * @param pmlPerc a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.PackMaterialListDataItem} object
+	 */
 	public PackMaterialListDataItem withPerc(Double pmlPerc) {
 		this.pmlPerc = pmlPerc;
 		return this;
 	}
 
+	/**
+	 * <p>withRecycledPerc.</p>
+	 *
+	 * @param pmlRecycledPercentage a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.PackMaterialListDataItem} object
+	 */
 	public PackMaterialListDataItem withRecycledPerc(Double pmlRecycledPercentage) {
 		this.pmlRecycledPercentage = pmlRecycledPercentage;
 		return this;
 	}
 
+	/**
+	 * <p>withPkgLevel.</p>
+	 *
+	 * @param pkgLevel a {@link fr.becpg.repo.product.data.constraints.PackagingLevel} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.PackMaterialListDataItem} object
+	 */
 	public PackMaterialListDataItem withPkgLevel(PackagingLevel pkgLevel) {
 		this.pkgLevel = pkgLevel;
 		return this;
@@ -175,6 +240,9 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 	 *
 	 * @param pmlMaterial a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param pmlWeight a {@link java.lang.Double} object.
+	 * @param pmlPerc a {@link java.lang.Double} object
+	 * @param pmlRecycledPercentage a {@link java.lang.Double} object
+	 * @param pkgLevel a {@link fr.becpg.repo.product.data.constraints.PackagingLevel} object
 	 */
 	@Deprecated
 	public PackMaterialListDataItem(NodeRef pmlMaterial, Double pmlWeight, Double pmlPerc, Double pmlRecycledPercentage, PackagingLevel pkgLevel) {
@@ -186,6 +254,11 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 		this.pmlRecycledPercentage = pmlRecycledPercentage;
 	}
 
+	/**
+	 * <p>Constructor for PackMaterialListDataItem.</p>
+	 *
+	 * @param o a {@link fr.becpg.repo.product.data.productList.PackMaterialListDataItem} object
+	 */
 	public PackMaterialListDataItem(PackMaterialListDataItem o) {
 		super(o);
 		this.pmlMaterial = o.pmlMaterial;
@@ -195,6 +268,7 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 		this.pmlRecycledPercentage = o.pmlRecycledPercentage;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public PackMaterialListDataItem copy() {
 		PackMaterialListDataItem ret = new PackMaterialListDataItem(this);
@@ -204,6 +278,7 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 		return ret;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -212,6 +287,7 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

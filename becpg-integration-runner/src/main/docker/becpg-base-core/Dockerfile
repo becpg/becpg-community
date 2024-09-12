@@ -44,4 +44,4 @@ COPY becpg/classes $TOMCAT_DIR/shared/classes
 RUN rm -rf  $TOMCAT_DIR/amps/*
 RUN mkdir -p ${TOMCAT_DIR}/data && rm -rf  $TOMCAT_DIR/alf_data
 
-ENV JAVA_OPTS "-Ddir.root=/usr/local/tomcat/data"
+ENV JAVA_OPTS "-Ddir.root=/usr/local/tomcat/data -XX:+ExitOnOutOfMemoryError -XX:+UseG1GC -XX:MaxGCPauseMillis=200  -XX:+ParallelRefProcEnabled -Xss512k -XX:+UseStringDeduplication"

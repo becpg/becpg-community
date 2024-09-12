@@ -33,6 +33,12 @@ import fr.becpg.repo.audit.service.BeCPGAuditService;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AssociationService;
 
+/**
+ * <p>AuditActivityPatch class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class AuditActivityPatch extends AbstractBeCPGPatch {
 
 	private static final Log logger = LogFactory.getLog(AuditActivityPatch.class);
@@ -49,22 +55,47 @@ public class AuditActivityPatch extends AbstractBeCPGPatch {
 	private AssociationService associationService;
 	private BehaviourFilter policyBehaviourFilter;
 	
+	/**
+	 * <p>Setter for the field <code>policyBehaviourFilter</code>.</p>
+	 *
+	 * @param policyBehaviourFilter a {@link org.alfresco.repo.policy.BehaviourFilter} object
+	 */
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>associationService</code>.</p>
+	 *
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object
+	 */
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>entityService</code>.</p>
+	 *
+	 * @param entityService a {@link fr.becpg.repo.entity.EntityService} object
+	 */
 	public void setEntityService(EntityService entityService) {
 		this.entityService = entityService;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>beCPGAuditService</code>.</p>
+	 *
+	 * @param beCPGAuditService a {@link fr.becpg.repo.audit.service.BeCPGAuditService} object
+	 */
 	public void setBeCPGAuditService(BeCPGAuditService beCPGAuditService) {
 		this.beCPGAuditService = beCPGAuditService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>integrityChecker</code>.</p>
+	 *
+	 * @param integrityChecker a {@link org.alfresco.repo.node.integrity.IntegrityChecker} object
+	 */
 	public void setIntegrityChecker(IntegrityChecker integrityChecker) {
 		this.integrityChecker = integrityChecker;
 	}
@@ -141,6 +172,11 @@ public class AuditActivityPatch extends AbstractBeCPGPatch {
 		this.ruleService = ruleService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>lockService</code>.</p>
+	 *
+	 * @param lockService a {@link org.alfresco.service.cmr.lock.LockService} object
+	 */
 	public void setLockService(LockService lockService) {
 		this.lockService = lockService;
 	}

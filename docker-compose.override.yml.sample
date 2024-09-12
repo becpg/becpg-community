@@ -1,4 +1,3 @@
-version: '3'
 services:
   becpg:
     environment:
@@ -31,7 +30,6 @@ services:
 #      CATALINA_OPTS: "-Xmx4G -Duser.language=fr -Duser.country=FR 
 #                      -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:8888 
 #                      -XX:+FlightRecorder
-#                      -XX:+UseG1GC
 #                      -Dcom.sun.management.jmxremote.rmi.port=9091
 #                      -Dcom.sun.management.jmxremote=true
 #                      -Dcom.sun.management.jmxremote.port=9091
@@ -42,7 +40,7 @@ services:
     volumes:
       - becpg_data:/usr/local/tomcat/data
       - ../../becpg-core/target/classes:/usr/local/tomcat/hotswap-agent/becpg-core/target/classes
-      - ../../becpg-plm/becpg-plm-core/target/classes:/usr/local/tomcat/hotswap-agent/becpg-plm-core/target/classes
+      - ../../becpg-plm/becpg-plm-core/targeta/classes:/usr/local/tomcat/hotswap-agent/becpg-plm-core/target/classes
       - ../../becpg-project/becpg-project-core/target/classes:/usr/local/tomcat/hotswap-agent/becpg-project-core/target/classes
       - ../../becpg-integration-runner/target/test-classes:/usr/local/tomcat/hotswap-agent/becpg-integration-runner/target/test-classes
                  

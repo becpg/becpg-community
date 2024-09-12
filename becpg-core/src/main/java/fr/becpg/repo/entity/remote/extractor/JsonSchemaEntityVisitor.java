@@ -42,14 +42,9 @@ import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.dictionary.TypeDefinition;
-import org.alfresco.service.cmr.lock.LockService;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
-import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.site.SiteService;
-import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -63,13 +58,10 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.entity.EntityDictionaryService;
-import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.entity.remote.RemoteParams;
+import fr.becpg.repo.entity.remote.RemoteServiceRegisty;
 import fr.becpg.repo.entity.remote.extractor.RemoteJSONContext.JsonVisitNodeType;
-import fr.becpg.repo.helper.AssociationService;
-import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.JsonHelper;
 import fr.becpg.repo.helper.MLTextHelper;
 
@@ -102,13 +94,9 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 
 	private SysAdminParams sysAdminParams;
 
-	public JsonSchemaEntityVisitor(SysAdminParams sysAdminParams, NodeService mlNodeService, NodeService nodeService,
-			NamespaceService namespaceService, EntityDictionaryService entityDictionaryService, ContentService contentService,
-			SiteService siteService, AttributeExtractorService attributeExtractor, VersionService versionService, LockService lockService,
-			AssociationService associationService, EntityListDAO entityListDAO) {
-		super(mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService, siteService, attributeExtractor, versionService,
-				lockService, associationService, entityListDAO);
-		this.sysAdminParams = sysAdminParams;
+	public JsonSchemaEntityVisitor(RemoteServiceRegisty remoteServiceRegisty) {
+		super( remoteServiceRegisty);
+		this.sysAdminParams = remoteServiceRegisty.sysAdminParams();
 	}
 
 	/** {@inheritDoc} */
@@ -216,7 +204,7 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 
 						if (propertyDefinition.isMultiValued()) {
 							JSONObject arrayDef = addProperty(entity, entityDictionaryService.toPrefixString(propName), TYPE_ARRAY,
-									propertyDefinition.getTitle(entityDictionaryService), propertyDefinition.getDescription(entityDictionaryService));
+									entityDictionaryService.getTitle(propertyDefinition, entityType), entityDictionaryService.getDescription(propertyDefinition, entityType));
 							addProperty(arrayDef, entityDictionaryService.toPrefixString(propName), propertyDefinition);
 						} else {
 							addProperty(attributes, entityDictionaryService.toPrefixString(propName), propertyDefinition);
@@ -513,7 +501,7 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 							continue;
 						}
 
-						visitPropValue(propName, entity, entry.getValue(), context, propertyDefinition);
+						visitPropValue(nodeRef, propName, entity, entry.getValue(), context, propertyDefinition);
 					} else {
 						logger.debug("Properties not in dictionary: " + entry.getKey());
 					}
@@ -524,11 +512,11 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void visitPropValue(QName propType, JSONObject entity, Serializable value, RemoteJSONContext context,
+	private void visitPropValue(NodeRef entityNodeRef, QName propType, JSONObject entity, Serializable value, RemoteJSONContext context,
 			PropertyDefinition propertyDefinition) throws JSONException {
 		if (propertyDefinition.isMultiValued() && (value != null)) {
 			JSONObject arrayDef = addProperty(entity, entityDictionaryService.toPrefixString(propType), TYPE_ARRAY,
-					propertyDefinition.getTitle(entityDictionaryService), propertyDefinition.getDescription(entityDictionaryService));
+					entityDictionaryService.getTitle(propertyDefinition, nodeService.getType(entityNodeRef)), entityDictionaryService.getDescription(propertyDefinition, nodeService.getType(entityNodeRef)));
 			if (!((List<Serializable>) value).isEmpty()) {
 				JSONObject node = new JSONObject();
 				Serializable subEl = ((List<Serializable>) value).get(0);
@@ -550,12 +538,12 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 			}
 		} else if (value instanceof NodeRef) {
 			JSONObject node = addProperty(entity, entityDictionaryService.toPrefixString(propType), TYPE_OBJECT,
-					propertyDefinition.getTitle(entityDictionaryService), propertyDefinition.getDescription(entityDictionaryService));
+					entityDictionaryService.getTitle(propertyDefinition, nodeService.getType(entityNodeRef)), entityDictionaryService.getDescription(propertyDefinition, nodeService.getType(entityNodeRef)));
 			visitNode((NodeRef) value, node, JsonVisitNodeType.ASSOC, context);
 		} else {
 			if (RemoteHelper.isJSONValue(propType)) {
 				addProperty(entity, entityDictionaryService.toPrefixString(propType), TYPE_OBJECT,
-						propertyDefinition.getTitle(entityDictionaryService), propertyDefinition.getDescription(entityDictionaryService));
+						entityDictionaryService.getTitle(propertyDefinition, nodeService.getType(entityNodeRef)), entityDictionaryService.getDescription(propertyDefinition, nodeService.getType(entityNodeRef)));
 			} else {
 				addProperty(entity, entityDictionaryService.toPrefixString(propType), propertyDefinition);
 			}
@@ -633,13 +621,17 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 
 		}
 
-		object.put(PROP_TITLE, propertyDefinition.getTitle(entityDictionaryService));
-		if (propertyDefinition.getDescription(entityDictionaryService) != null) {
-			object.put(PROP_DESCRIPTION, propertyDefinition.getDescription(entityDictionaryService));
+		object.put(PROP_TITLE, entityDictionaryService.getTitle(propertyDefinition, getJsonEntityType(entity)));
+		if (entityDictionaryService.getDescription(propertyDefinition, getJsonEntityType(entity)) != null) {
+			object.put(PROP_DESCRIPTION, entityDictionaryService.getDescription(propertyDefinition, getJsonEntityType(entity)));
 		}
 		properties.put(attr, object);
 		return object;
 
+	}
+	
+	private QName getJsonEntityType(JSONObject entity) {
+		return QName.createQName(entity.getString(RemoteEntityService.ATTR_TYPE), namespaceService);
 	}
 
 	private JSONObject addProperty(JSONObject entity, String attr, String type, String title, String description, JSONObject object) {

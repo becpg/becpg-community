@@ -17,13 +17,13 @@ public class PhysicoRequirementScanner extends SimpleListRequirementScanner<Phys
 
 	/** {@inheritDoc} */
 	@Override
-	protected String getSpecErrorMessageKey() {
+	protected String getSpecErrorMessageKey(PhysicoChemListDataItem specDataItem) {
 		return MESSAGE_PHYSICO_NOT_IN_RANGE;
 	}
 	
 	/** {@inheritDoc} */
 	@Override
-	protected String getSpecInfoMessageKey() {
+	protected String getSpecInfoMessageKey(PhysicoChemListDataItem specDataItem) {
 		return MESSAGE_PHYSICO_NOT_IN_RANGE_INFO;
 	}
 	
@@ -31,12 +31,18 @@ public class PhysicoRequirementScanner extends SimpleListRequirementScanner<Phys
 	/** Constant <code>MESSAGE_PHYSICO_NOT_IN_RANGE="message.formulate.physicoChem.notInRang"{trunked}</code> */
 	public static final String MESSAGE_PHYSICO_NOT_IN_RANGE = "message.formulate.physicoChem.notInRangeValue";
 	
+	/** Constant <code>MESSAGE_PHYSICO_NOT_IN_RANGE_INFO="message.formulate.info.physicoChem.notI"{trunked}</code> */
 	public static final String MESSAGE_PHYSICO_NOT_IN_RANGE_INFO = "message.formulate.info.physicoChem.notInRangeValue";
 	
 
 	/** {@inheritDoc} */
 	protected List<PhysicoChemListDataItem> getDataListVisited(ProductData partProduct) {
 		return partProduct.getPhysicoChemList()!=null ? partProduct.getPhysicoChemList() : new ArrayList<>();
+	}
+
+	@Override
+	protected Double getValue(PhysicoChemListDataItem specDataItem, PhysicoChemListDataItem listDataItem) {
+		return listDataItem.getValue();
 	}
 
 

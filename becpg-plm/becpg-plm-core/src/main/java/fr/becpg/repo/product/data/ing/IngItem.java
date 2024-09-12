@@ -167,16 +167,31 @@ public class IngItem extends CompositeLabeling {
 		this.ingRID = ingRID;
 	}
 
+	/**
+	 * <p>Getter for the field <code>ingAllergensQtyPerc</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:ingAllergensQtyPerc")
 	public String getIngAllergensQtyPerc() {
 		return ingAllergensQtyPerc;
 	}
 
+	/**
+	 * <p>Setter for the field <code>ingAllergensQtyPerc</code>.</p>
+	 *
+	 * @param ingAllergensQtyPerc a {@link java.lang.String} object
+	 */
 	public void setIngAllergensQtyPerc(String ingAllergensQtyPerc) {
 		this.ingAllergensQtyPerc = ingAllergensQtyPerc;
 	}
 
+	/**
+	 * <p>getAllergensQtyMap.</p>
+	 *
+	 * @return a {@link java.util.Map} object
+	 */
 	public Map<String, Double> getAllergensQtyMap() {
 		Map<String, Double> allergenMap = new HashMap<>();
 
@@ -200,9 +215,9 @@ public class IngItem extends CompositeLabeling {
 	}
 
 	/**
-	 * <p>Getter for the field <code>ingType</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @return a {@link fr.becpg.repo.product.data.ing.IngTypeItem} object.
+	 * <p>Getter for the field <code>ingType</code>.</p>
 	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:ingTypeV2")
@@ -231,7 +246,7 @@ public class IngItem extends CompositeLabeling {
 	/**
 	 * <p>Setter for the field <code>isSubstanceOfVeryHighConcern</code>.</p>
 	 *
-	 * @param ingCEECode a {@link java.lang.String} object.
+	 * @param isSubstanceOfVeryHighConcern a {@link java.lang.Boolean} object
 	 */
 	public void setIsSubstanceOfVeryHighConcern(Boolean isSubstanceOfVeryHighConcern) {
 		this.isSubstanceOfVeryHighConcern = isSubstanceOfVeryHighConcern;
@@ -246,6 +261,11 @@ public class IngItem extends CompositeLabeling {
 		return pluralParents;
 	}
 
+	/**
+	 * <p>Getter for the field <code>allergenList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	@AlfMultiAssoc
 	@AlfQname(qname = "bcpg:ingAllergens")
 	public List<NodeRef> getAllergenList() {
@@ -255,7 +275,7 @@ public class IngItem extends CompositeLabeling {
 	/**
 	 * <p>Setter for the field <code>bioOrigin</code>.</p>
 	 *
-	 * @param bioOrigin a {@link java.util.List} object.
+	 * @param allergenList a {@link java.util.List} object
 	 */
 	public void setAllergenList(List<NodeRef> allergenList) {
 		this.allergenList = allergenList;

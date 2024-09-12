@@ -181,6 +181,7 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 		return roundValue(value, 1d);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public Pair<Double,Double> tolerances(Double value, String nutrientTypeCode, String nutUnit) {
 	
@@ -371,12 +372,20 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 	 * @param nutrientTypeCode a {@link java.lang.String} object.
 	 * @param locale a {@link java.util.Locale} object.
 	 * @return a {@link java.lang.String} object.
+	 * @param measurementPrecision a {@link java.lang.String} object
 	 */
 	protected String displayValueByCode(Double value, Double roundedValue, String nutrientTypeCode, String measurementPrecision, Locale locale) {
 		return formatDouble(roundedValue, locale);
 	}
 	
 
+	/**
+	 * <p>tolerancesByCode.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object
+	 * @param nutrientTypeCode a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.util.Pair} object
+	 */
 	protected Pair<Double, Double> tolerancesByCode(Double value, String nutrientTypeCode) {
 		return null;
 	}

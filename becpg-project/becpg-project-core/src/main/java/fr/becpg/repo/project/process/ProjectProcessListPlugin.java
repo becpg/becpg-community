@@ -89,7 +89,7 @@ public class ProjectProcessListPlugin implements EntityProcessListPlugin {
 				personRef = personService.getPerson(data.getCreator());
 			}
 			
-			temp.put(PROCESS_INSTANCE_INITIATOR, getPersonModel(personRef));
+			temp.put(PROCESS_INSTANCE_INITIATOR, getPersonModel(personRef, data.getCreator()));
 			
 			ret.add(temp);
 				
@@ -101,7 +101,7 @@ public class ProjectProcessListPlugin implements EntityProcessListPlugin {
 	}
 
 	  
-	private Map<String, Object> getPersonModel(NodeRef person){
+	private Map<String, Object> getPersonModel(NodeRef person, String creator){
 
 		Map<String, Object> model = new HashMap<>();
 		if(person != null){
@@ -110,6 +110,8 @@ public class ProjectProcessListPlugin implements EntityProcessListPlugin {
 			if (avatarRef != null ){
 				model.put(PERSON_AVATAR, "api/node/" + avatarRef.toString().replace("://", "/") + "/content/thumbnails/avatar");
 			}
+		} else {
+			model.put(PERSON_USER_NAME, creator);
 		}
 
 		return model;

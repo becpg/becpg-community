@@ -397,7 +397,7 @@ public class CompareProductServiceIT extends AbstractCompareProductTest {
 			inReadTx(() -> {
 
 				Map<String, List<StructCompareResultDataItem>> structCompareResults = new HashMap<>();
-				compareEntityService.compareStructDatalist(fp1NodeRef, fp2NodeRef, PLMModel.TYPE_COMPOLIST, structCompareResults);
+				defaultCompareEntityServicePlugin.compareStructDatalist(fp1NodeRef, fp2NodeRef, PLMModel.TYPE_COMPOLIST, structCompareResults);
 				List<StructCompareResultDataItem> structCompareResult = structCompareResults.get("FP 1 - FP 2 - Composition");
 
 				for (StructCompareResultDataItem c : structCompareResult) {

@@ -251,7 +251,8 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 		QName pivotAssoc = entityDictionaryService.getDefaultPivotAssoc(nodeService.getType(listItemNodeRef));
 		if (pivotAssoc != null) {
 			NodeRef part = associationService.getTargetAssoc(listItemNodeRef, pivotAssoc);
-			if ((part != null) && (permissionService.hasPermission(part, PermissionService.READ) == AccessStatus.ALLOWED)) {
+			if ((part != null) && (permissionService.hasPermission(part, PermissionService.READ) == AccessStatus.ALLOWED) 
+					&& entityDictionaryService.isSubClass(nodeService.getType(part), BeCPGModel.TYPE_ENTITY_V2)) {
 				return part;
 			}
 		}
@@ -272,7 +273,7 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 	@Override
 	public boolean isExpandedNode(NodeRef entityFolder, boolean condition, boolean resetTree) {
 		if (entityFolder != null) {
-			Map<NodeRef, Boolean> expandedNodes = beCPGCacheService.getFromCache(CACHE_KEY, AuthenticationUtil.getFullyAuthenticatedUser());
+			Map<NodeRef, Boolean> expandedNodes = beCPGCacheService.getFromCache(CACHE_KEY, AuthenticationUtil.getFullyAuthenticatedUser(), () -> new LRUCache(100));
 			if ((expandedNodes != null) && expandedNodes.containsKey(entityFolder)) {
 				if (resetTree) {
 					expandedNodes.remove(entityFolder);
@@ -337,11 +338,9 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 	/** {@inheritDoc} */
 	@Override
 	public void expandOrColapseNode(NodeRef nodeToExpand, boolean expand) {
-		Map<NodeRef, Boolean> expandedNodes = beCPGCacheService.getFromCache(CACHE_KEY, AuthenticationUtil.getFullyAuthenticatedUser());
-		if (expandedNodes == null) {
-			expandedNodes = new LRUCache(100);
-		}
-
+		Map<NodeRef, Boolean> expandedNodes = beCPGCacheService.getFromCache(CACHE_KEY, AuthenticationUtil.getFullyAuthenticatedUser(),
+				 () -> new LRUCache(100)
+				);
 		expandedNodes.put(nodeToExpand, expand);
 
 		beCPGCacheService.storeInCache(CACHE_KEY, AuthenticationUtil.getFullyAuthenticatedUser(), expandedNodes);

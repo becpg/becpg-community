@@ -49,6 +49,7 @@ public class CollectionPriceListDataItem extends AbstractEffectiveDataItem imple
 
 	private CollectionPriceListDataItem parent;
 
+	/** {@inheritDoc} */
 	@Override
 	@AlfProp
 	@AlfQname(qname = "bcpg:parentLevel")
@@ -57,11 +58,13 @@ public class CollectionPriceListDataItem extends AbstractEffectiveDataItem imple
 		return parent;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void setParent(CollectionPriceListDataItem parent) {
 		this.parent = parent;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	@AlfProp
 	@AlfQname(qname = "bcpg:depthLevel")
@@ -70,40 +73,80 @@ public class CollectionPriceListDataItem extends AbstractEffectiveDataItem imple
 		return depthLevel;
 	}
 
+	/**
+	 * <p>Setter for the field <code>depthLevel</code>.</p>
+	 *
+	 * @param depthLevel a {@link java.lang.Integer} object
+	 */
 	public void setDepthLevel(Integer depthLevel) {
 		this.depthLevel = depthLevel;
 	}
 
+	/**
+	 * <p>Getter for the field <code>price</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "gs1:tradeItemPrice")
 	public Double getPrice() {
 		return price;
 	}
 
+	/**
+	 * <p>Setter for the field <code>price</code>.</p>
+	 *
+	 * @param price a {@link java.lang.Double} object
+	 */
 	public void setPrice(Double price) {
 		this.price = price;
 	}
 
+	/**
+	 * <p>Getter for the field <code>priceTaxIncl</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "gs1:cplPriceTaxIncl")
 	public Double getPriceTaxIncl() {
 		return priceTaxIncl;
 	}
 
+	/**
+	 * <p>Setter for the field <code>priceTaxIncl</code>.</p>
+	 *
+	 * @param priceTaxIncl a {@link java.lang.Double} object
+	 */
 	public void setPriceTaxIncl(Double priceTaxIncl) {
 		this.priceTaxIncl = priceTaxIncl;
 	}
 
+	/**
+	 * <p>Getter for the field <code>priceUnit</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "gs1:tradeItemPriceUnit")
 	public String getPriceUnit() {
 		return priceUnit;
 	}
 
+	/**
+	 * <p>Setter for the field <code>priceUnit</code>.</p>
+	 *
+	 * @param priceUnit a {@link java.lang.String} object
+	 */
 	public void setPriceUnit(String priceUnit) {
 		this.priceUnit = priceUnit;
 	}
 
+	/**
+	 * <p>Getter for the field <code>product</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	@AlfSingleAssoc
 	@AlfQname(qname = "gs1:cplProduct")
 	@DataListIdentifierAttr
@@ -112,81 +155,157 @@ public class CollectionPriceListDataItem extends AbstractEffectiveDataItem imple
 		return product;
 	}
 
+	/**
+	 * <p>Setter for the field <code>product</code>.</p>
+	 *
+	 * @param product a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public void setProduct(NodeRef product) {
 		this.product = product;
 	}
 
+	/**
+	 * <p>Getter for the field <code>priceBasisQuantity</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "gs1:priceBasisQuantity")
 	public Double getPriceBasisQuantity() {
 		return priceBasisQuantity;
 	}
 
+	/**
+	 * <p>Setter for the field <code>priceBasisQuantity</code>.</p>
+	 *
+	 * @param priceBasisQuantity a {@link java.lang.Double} object
+	 */
 	public void setPriceBasisQuantity(Double priceBasisQuantity) {
 		this.priceBasisQuantity = priceBasisQuantity;
 	}
 
+	/**
+	 * <p>Getter for the field <code>priceBasisQuantityUnit</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "gs1:priceBasisQuantityUnit")
 	public String getPriceBasisQuantityUnit() {
 		return priceBasisQuantityUnit;
 	}
 
+	/**
+	 * <p>Setter for the field <code>priceBasisQuantityUnit</code>.</p>
+	 *
+	 * @param priceBasisQuantityUnit a {@link java.lang.String} object
+	 */
 	public void setPriceBasisQuantityUnit(String priceBasisQuantityUnit) {
 		this.priceBasisQuantityUnit = priceBasisQuantityUnit;
 	}
 
 	
+	/**
+	 * <p>Getter for the field <code>turnover</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "gs1:cplProductTurnover")
 	public Double getTurnover() {
 		return turnover;
 	}
 
+	/**
+	 * <p>Setter for the field <code>turnover</code>.</p>
+	 *
+	 * @param turnover a {@link java.lang.Double} object
+	 */
 	public void setTurnover(Double turnover) {
 		this.turnover = turnover;
 	}
 
+	/**
+	 * <p>Getter for the field <code>dutyFeeTax</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	@AlfSingleAssoc
 	@AlfQname(qname = "gs1:dutyFeeTaxRef")
 	public NodeRef getDutyFeeTax() {
 		return dutyFeeTax;
 	}
 
+	/**
+	 * <p>Setter for the field <code>dutyFeeTax</code>.</p>
+	 *
+	 * @param dutyFeeTax a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public void setDutyFeeTax(NodeRef dutyFeeTax) {
 		this.dutyFeeTax = dutyFeeTax;
 	}
 
+	/**
+	 * <p>Getter for the field <code>dutyFeeTaxAmount</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "gs1:dutyFeeTaxAmount")
 	public Double getDutyFeeTaxAmount() {
 		return dutyFeeTaxAmount;
 	}
 
+	/**
+	 * <p>Setter for the field <code>dutyFeeTaxAmount</code>.</p>
+	 *
+	 * @param dutyFeeTaxAmount a {@link java.lang.Double} object
+	 */
 	public void setDutyFeeTaxAmount(Double dutyFeeTaxAmount) {
 		this.dutyFeeTaxAmount = dutyFeeTaxAmount;
 	}
 
+	/**
+	 * <p>Getter for the field <code>unitTotalCost</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "gs1:cplUnitTotalCost")
 	public Double getUnitTotalCost() {
 		return unitTotalCost;
 	}
 
+	/**
+	 * <p>Setter for the field <code>unitTotalCost</code>.</p>
+	 *
+	 * @param unitTotalCost a {@link java.lang.Double} object
+	 */
 	public void setUnitTotalCost(Double unitTotalCost) {
 		this.unitTotalCost = unitTotalCost;
 	}
 
+	/**
+	 * <p>Getter for the field <code>profitabilityRatio</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "gs1:cplProfitabilityRatio")
 	public Double getProfitabilityRatio() {
 		return profitabilityRatio;
 	}
 
+	/**
+	 * <p>Setter for the field <code>profitabilityRatio</code>.</p>
+	 *
+	 * @param profitabilityRatio a {@link java.lang.Double} object
+	 */
 	public void setProfitabilityRatio(Double profitabilityRatio) {
 		this.profitabilityRatio = profitabilityRatio;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -196,6 +315,7 @@ public class CollectionPriceListDataItem extends AbstractEffectiveDataItem imple
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -213,6 +333,7 @@ public class CollectionPriceListDataItem extends AbstractEffectiveDataItem imple
 				&& Objects.equals(profitabilityRatio, other.profitabilityRatio) && Objects.equals(unitTotalCost, other.unitTotalCost);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "CollectionPriceListDataItem [product=" + product + ", price=" + price + ", priceTaxIncl=" + priceTaxIncl + ", priceUnit=" + priceUnit

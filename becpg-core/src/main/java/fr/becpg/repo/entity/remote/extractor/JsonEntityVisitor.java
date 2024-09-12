@@ -45,14 +45,11 @@ import org.alfresco.service.cmr.lock.LockService;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentIOException;
 import org.alfresco.service.cmr.repository.ContentReader;
-import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.Path;
 import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.cmr.site.SiteInfo;
-import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.cmr.version.Version;
 import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -70,10 +67,10 @@ import fr.becpg.model.DataListModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.dictionary.constraint.DynListConstraint;
-import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.entity.remote.RemoteParams;
+import fr.becpg.repo.entity.remote.RemoteServiceRegisty;
 import fr.becpg.repo.entity.remote.extractor.RemoteJSONContext.JsonVisitNodeType;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
@@ -97,17 +94,14 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	private AssociationService associationService;
 	private EntityListDAO entityListDAO;
 
-	public JsonEntityVisitor(NodeService mlNodeService, NodeService nodeService, NamespaceService namespaceService,
-			EntityDictionaryService entityDictionaryService, ContentService contentService, SiteService siteService,
-			AttributeExtractorService attributeExtractor, VersionService versionService, LockService lockService,
-			AssociationService associationService, EntityListDAO entityListDAO) {
-		super(mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService, siteService);
+	public JsonEntityVisitor(RemoteServiceRegisty remoteServiceRegisty) {
+		super(remoteServiceRegisty);
 
-		this.attributeExtractor = attributeExtractor;
-		this.versionService = versionService;
-		this.lockService = lockService;
-		this.associationService = associationService;
-		this.entityListDAO = entityListDAO;
+		this.attributeExtractor = remoteServiceRegisty.attributeExtractor();
+		this.versionService = remoteServiceRegisty.versionService();
+		this.lockService = remoteServiceRegisty.lockService();
+		this.associationService = remoteServiceRegisty.associationService();
+		this.entityListDAO = remoteServiceRegisty.entityListDAO();
 	}
 
 	private static final Log logger = LogFactory.getLog(JsonEntityVisitor.class);

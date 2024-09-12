@@ -49,10 +49,21 @@ public class CharactDetailsValue {
 		this.unit = unit;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>forecastColumns</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	public List<String> getForecastColumns() {
 		return forecastColumns;
 	}
 	
+	/**
+	 * <p>setForecastValue.</p>
+	 *
+	 * @param forecastColumn a {@link java.lang.String} object
+	 * @param value a {@link java.lang.Double} object
+	 */
 	public void setForecastValue(String forecastColumn, Double value) {
 		if (!forecastColumns.contains(forecastColumn)) {
 			forecastColumns.add(forecastColumn);
@@ -60,10 +71,21 @@ public class CharactDetailsValue {
 		this.forecastValues.put(forecastColumn, value);
 	}
 	
+	/**
+	 * <p>getForecastValue.</p>
+	 *
+	 * @param forecastColumn a {@link java.lang.String} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	public Double getForecastValue(String forecastColumn) {
 		return forecastValues.get(forecastColumn);
 	}
 	
+	/**
+	 * <p>Getter for the field <code>additionalValues</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	public List<CharactDetailAdditionalValue> getAdditionalValues() {
 		return additionalValues;
 	}
@@ -227,6 +249,12 @@ public class CharactDetailsValue {
 		}
 	}
 	
+	/**
+	 * <p>getAdditionalValue.</p>
+	 *
+	 * @param columnName a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.product.data.CharactDetailAdditionalValue} object
+	 */
 	public CharactDetailAdditionalValue getAdditionalValue(String columnName) {
 		for (CharactDetailAdditionalValue additionalValue : additionalValues) {
 			if (columnName.equals(additionalValue.getColumnName())) {

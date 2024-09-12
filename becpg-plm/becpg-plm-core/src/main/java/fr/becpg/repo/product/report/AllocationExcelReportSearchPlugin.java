@@ -24,6 +24,7 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.collection.data.ProductCollectionData;
 import fr.becpg.repo.collection.data.list.ProductListDataItem;
 import fr.becpg.repo.helper.ExcelHelper;
+import fr.becpg.repo.helper.ExcelHelper.ExcelCellStyles;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.formulation.FormulationHelper;
@@ -63,6 +64,8 @@ public class AllocationExcelReportSearchPlugin extends DynamicCharactExcelReport
 	public int fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum, String[] parameters,
 			AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache) {
 
+		ExcelCellStyles excelCellStyles = new ExcelCellStyles(sheet.getWorkbook());
+		
 		for (NodeRef entityNodeRef : searchResults) {
 			QName entityType = nodeService.getType(entityNodeRef);
 			if (mainType.equals(entityType) || entityDictionaryService.isSubClass(entityType, mainType)) {
@@ -79,7 +82,7 @@ public class AllocationExcelReportSearchPlugin extends DynamicCharactExcelReport
 
 				entityItems.putAll(getDynamicProperties(entityNodeRef, itemType));
 
-				rownum  = extractAllocations(entityNodeRef, sheet, metadataFields, cache, rownum, key, entityItems);
+				rownum  = extractAllocations(entityNodeRef, sheet, metadataFields, cache, rownum, key, entityItems,excelCellStyles);
 
 			}
 		}
@@ -88,7 +91,7 @@ public class AllocationExcelReportSearchPlugin extends DynamicCharactExcelReport
 	}
 
 	private int extractAllocations(NodeRef productNodeRef, XSSFSheet sheet, List<AttributeExtractorStructure> metadataFields,
-			Map<NodeRef, Map<String, Object>> cache, int rownum, Serializable key, Map<String, Object> entityItems) {
+			Map<NodeRef, Map<String, Object>> cache, int rownum, Serializable key, Map<String, Object> entityItems, ExcelCellStyles excelCellStyles) {
 
 		if (permissionService.hasPermission(productNodeRef, "Read") == AccessStatus.ALLOWED) {
 
@@ -97,7 +100,7 @@ public class AllocationExcelReportSearchPlugin extends DynamicCharactExcelReport
 			if (PLMModel.TYPE_PRODUCTCOLLECTION.equals(entityType)) {
 				ProductCollectionData productCollectionData = (ProductCollectionData) alfrescoRepository.findOne(productNodeRef);
 				for (ProductListDataItem product : productCollectionData.getProductList()) {
-					rownum = extractAllocations(product.getProduct(), sheet, metadataFields, cache, rownum, key, entityItems);
+					rownum = extractAllocations(product.getProduct(), sheet, metadataFields, cache, rownum, key, entityItems,excelCellStyles);
 				}
 
 			} else {
@@ -135,7 +138,7 @@ public class AllocationExcelReportSearchPlugin extends DynamicCharactExcelReport
 						cell.setCellValue(String.valueOf(key));
 					}
 
-					ExcelHelper.appendExcelField(metadataFields, null, item, sheet, row, cellNum, rownum, null);
+					ExcelHelper.appendExcelField(metadataFields, null, item, sheet, row, cellNum, rownum, null,excelCellStyles);
 					
 					
 				} else if(!productData.isLocalSemiFinished()) {
@@ -199,7 +202,7 @@ public class AllocationExcelReportSearchPlugin extends DynamicCharactExcelReport
 							cell.setCellValue(String.valueOf(key));
 						}
 	
-						ExcelHelper.appendExcelField(metadataFields, null, item, sheet, row, cellNum, rownum, null);
+						ExcelHelper.appendExcelField(metadataFields, null, item, sheet, row, cellNum, rownum, null,excelCellStyles);
 						
 					}
 				

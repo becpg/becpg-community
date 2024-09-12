@@ -31,12 +31,17 @@
 	"quota": <#if p.sizeQuota??>${p.sizeQuota?c}<#else>-1</#if>,
 	"sizeCurrent": <#if p.sizeCurrent??>${p.sizeCurrent?c}<#else>0</#if>,
 	"emailFeedDisabled": <#if p.emailFeedDisabled??>${p.emailFeedDisabled?string("true","false")}<#else>false</#if>,
+	"emailTaskResourceDisabled": <#if person.properties["bcpg:emailTaskResourceDisabled"]??>${person.properties["bcpg:emailTaskResourceDisabled"]?string("true","false")}<#else>false</#if>,
+	"emailTaskObserverDisabled": <#if person.properties["bcpg:emailTaskObserverDisabled"]??>${person.properties["bcpg:emailTaskObserverDisabled"]?string("true","false")}<#else>false</#if>,
+	"emailProjectNotificationDisabled": <#if person.properties["bcpg:emailProjectNotificationDisabled"]??>${person.properties["bcpg:emailProjectNotificationDisabled"]?string("true","false")}<#else>false</#if>,
+	"emailAdminNotificationDisabled": <#if person.properties["bcpg:emailAdminNotificationDisabled"]??>${person.properties["bcpg:emailAdminNotificationDisabled"]?string("true","false")}<#else>false</#if>,
 	"persondescription": <#if p.persondescription??>"${stringUtils.stripUnsafeHTML(p.persondescription.content)}"<#else>null</#if>,
 	"authorizationStatus": <#if p.authorizationStatus??>"${p.authorizationStatus}"<#else>null</#if>,
 	"isDeleted": <#if p.isDeleted??>"${p.isDeleted?string("true","false")}"<#else>false</#if>,
 	"isAdminAuthority": ${people.isAdmin(person)?string("true","false")},
 	"userLocale": <#if person.properties["bcpg:userLocale"]??>"${person.properties["bcpg:userLocale"]}"<#else>null</#if>,
-	"userContentLocale": <#if person.properties["bcpg:userContentLocale"]??>"${person.properties["bcpg:userContentLocale"]}"<#else>null</#if>
+	"userContentLocale": <#if person.properties["bcpg:userContentLocale"]??>"${person.properties["bcpg:userContentLocale"]}"<#else>null</#if>,
+	"isSsoUser": <#if person.properties["bcpg:isSsoUser"]??>${person.properties["bcpg:isSsoUser"]?string("true","false")}<#else>null</#if>
 </#escape>
 </#macro>
 

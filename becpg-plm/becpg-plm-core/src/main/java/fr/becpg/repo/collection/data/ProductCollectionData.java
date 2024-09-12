@@ -107,41 +107,73 @@ public class ProductCollectionData extends BeCPGDataObject implements Hierarchic
 		this.hierarchy2 = hierarchy2;
 	}
 
+	/**
+	 * <p>Getter for the field <code>priceList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	@DataList
 	@AlfQname(qname = "gs1:collectionPriceList")
 	public List<CollectionPriceListDataItem> getPriceList() {
 		return priceList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>priceList</code>.</p>
+	 *
+	 * @param priceList a {@link java.util.List} object
+	 */
 	public void setPriceList(List<CollectionPriceListDataItem> priceList) {
 		this.priceList = priceList;
 	}
 
+	/**
+	 * <p>Getter for the field <code>productList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	@DataList
 	@AlfQname(qname = "bcpg:productList")
 	public List<ProductListDataItem> getProductList() {
 		return productList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>productList</code>.</p>
+	 *
+	 * @param productList a {@link java.util.List} object
+	 */
 	public void setProductList(List<ProductListDataItem> productList) {
 		this.productList = productList;
 	}
 
+	/**
+	 * <p>Getter for the field <code>entityTpl</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.collection.data.ProductCollectionData} object
+	 */
 	@AlfSingleAssoc(isEntity = true, isCacheable = true)
 	@AlfQname(qname = "bcpg:entityTplRef")
 	public ProductCollectionData getEntityTpl() {
 		return entityTpl;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getFormulatedEntityTpl() {
 		return entityTpl != null ? entityTpl.getNodeRef() : null;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityTpl</code>.</p>
+	 *
+	 * @param entityTpl a {@link fr.becpg.repo.collection.data.ProductCollectionData} object
+	 */
 	public void setEntityTpl(ProductCollectionData entityTpl) {
 		this.entityTpl = entityTpl;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	@AlfProp
 	@AlfQname(qname = "bcpg:formulatedDate")
@@ -156,9 +188,9 @@ public class ProductCollectionData extends BeCPGDataObject implements Hierarchic
 	}
 
 	/**
-	 * <p>Getter for the field <code>requirementChecksum</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @return a {@link java.lang.String} object.
+	 * <p>Getter for the field <code>requirementChecksum</code>.</p>
 	 */
 	@Override
 	@AlfProp
@@ -189,9 +221,9 @@ public class ProductCollectionData extends BeCPGDataObject implements Hierarchic
 	}
 
 	/**
-	 * <p>Getter for the field <code>reformulateCount</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @return a {@link java.lang.Integer} object.
+	 * <p>Getter for the field <code>reformulateCount</code>.</p>
 	 */
 	@Override
 	public Integer getReformulateCount() {
@@ -205,9 +237,9 @@ public class ProductCollectionData extends BeCPGDataObject implements Hierarchic
 	}
 
 	/**
-	 * <p>Getter for the field <code>currentReformulateCount</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @return a {@link java.lang.Integer} object.
+	 * <p>Getter for the field <code>currentReformulateCount</code>.</p>
 	 */
 	@Override
 	public Integer getCurrentReformulateCount() {
@@ -221,9 +253,9 @@ public class ProductCollectionData extends BeCPGDataObject implements Hierarchic
 	}
 
 	/**
-	 * <p>Getter for the field <code>formulationChainId</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @return a {@link java.lang.String} object.
+	 * <p>Getter for the field <code>formulationChainId</code>.</p>
 	 */
 	@Override
 	public String getFormulationChainId() {
@@ -239,15 +271,26 @@ public class ProductCollectionData extends BeCPGDataObject implements Hierarchic
 	
 	//Javascript helpers do not remove
 	
+	/**
+	 * <p>createCollectionPriceListDataItem.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.collection.data.list.CollectionPriceListDataItem} object
+	 */
 	public CollectionPriceListDataItem createCollectionPriceListDataItem() {
 		return new CollectionPriceListDataItem();
 	}
 	
+	/**
+	 * <p>createProductListDataItemDataItem.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.collection.data.list.ProductListDataItem} object
+	 */
 	public ProductListDataItem createProductListDataItemDataItem() {
 		return new ProductListDataItem();
 	}
 	
 	
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -257,6 +300,7 @@ public class ProductCollectionData extends BeCPGDataObject implements Hierarchic
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -274,6 +318,7 @@ public class ProductCollectionData extends BeCPGDataObject implements Hierarchic
 				&& Objects.equals(updateFormulatedDate, other.updateFormulatedDate);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "ProductCollectionData [hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", state=" + state + "]";

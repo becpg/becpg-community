@@ -6,6 +6,12 @@ import org.alfresco.util.Pair;
 
 import fr.becpg.repo.product.data.constraints.NutMeasurementPrecision;
 
+/**
+ * <p>TaiwanNutrientRegulation class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class TaiwanNutrientRegulation extends AbstractNutrientRegulation {
 
 	/**
@@ -25,6 +31,7 @@ public class TaiwanNutrientRegulation extends AbstractNutrientRegulation {
 		return ret.getRoundedValue();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected Pair<Double, Double> tolerancesByCode(Double value, String nutrientTypeCode) {
 		NutrientRoundedValue ret = extractNutrientRoundedValue(value, nutrientTypeCode);
@@ -54,6 +61,13 @@ public class TaiwanNutrientRegulation extends AbstractNutrientRegulation {
 		return formatDouble(roundedValue, locale);
 	}
 
+	/**
+	 * <p>extractNutrientRoundedValue.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object
+	 * @param nutrientTypeCode a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.product.formulation.nutrient.NutrientRoundedValue} object
+	 */
 	protected NutrientRoundedValue extractNutrientRoundedValue(Double value, String nutrientTypeCode) {
 
 		NutrientRoundedValue ret = new NutrientRoundedValue(nutrientTypeCode, value);
@@ -107,6 +121,12 @@ public class TaiwanNutrientRegulation extends AbstractNutrientRegulation {
 
 	}
 
+	/**
+	 * <p>applyTolerance.</p>
+	 *
+	 * @param ret a {@link fr.becpg.repo.product.formulation.nutrient.NutrientRoundedValue} object
+	 * @param nutrientTypeCode a {@link java.lang.String} object
+	 */
 	protected void applyTolerance(NutrientRoundedValue ret, String nutrientTypeCode) {
 		if (nutrientTypeCode.equals(NutrientCode.CarbohydrateByDiff) || nutrientTypeCode.startsWith(NutrientCode.Protein)) {
 			ret.setTolerances(120d, 80d, true);

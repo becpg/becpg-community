@@ -70,7 +70,6 @@ public class DeliverableListDataItem extends BeCPGDataObject {
 		this.tasks = tasks;
 	}
 
-	
 	/**
 	 * <p>Getter for the field <code>url</code>.</p>
 	 *
@@ -91,7 +90,6 @@ public class DeliverableListDataItem extends BeCPGDataObject {
 		this.url = url;
 	}
 
-	
 	/**
 	 * <p>Getter for the field <code>scriptOrder</code>.</p>
 	 *
@@ -112,7 +110,6 @@ public class DeliverableListDataItem extends BeCPGDataObject {
 		this.scriptOrder = scriptOrder;
 	}
 
-
 	/**
 	 * <p>Getter for the field <code>state</code>.</p>
 	 *
@@ -123,8 +120,7 @@ public class DeliverableListDataItem extends BeCPGDataObject {
 	public DeliverableState getState() {
 		return state;
 	}
-	
-	
+
 	/**
 	 * <p>Setter for the field <code>state</code>.</p>
 	 *
@@ -133,7 +129,6 @@ public class DeliverableListDataItem extends BeCPGDataObject {
 	public void setState(DeliverableState state) {
 		this.state = state;
 	}
-	
 
 	/**
 	 * <p>Getter for the field <code>description</code>.</p>
@@ -212,6 +207,40 @@ public class DeliverableListDataItem extends BeCPGDataObject {
 		super(nodeRef, name);
 	}
 
+	public static DeliverableListDataItem build() {
+		return new DeliverableListDataItem();
+	}
+
+	public DeliverableListDataItem withTasks(List<NodeRef> tasks) {
+		this.tasks = tasks;
+		return this;
+	}
+
+	public DeliverableListDataItem withState(DeliverableState state) {
+		this.state = state;
+		return this;
+	}
+
+	public DeliverableListDataItem withDescription(String description) {
+		this.description = description;
+		return this;
+	}
+
+	public DeliverableListDataItem withUrl(String url) {
+		this.url = url;
+		return this;
+	}
+
+	public DeliverableListDataItem withCompletionPercent(Integer completionPercent) {
+		this.completionPercent = completionPercent;
+		return this;
+	}
+
+	public DeliverableListDataItem withContent(NodeRef content) {
+		this.content = content;
+		return this;
+	}
+
 	/**
 	 * <p>Constructor for DeliverableListDataItem.</p>
 	 *
@@ -222,10 +251,11 @@ public class DeliverableListDataItem extends BeCPGDataObject {
 	 * @param completionPercent a {@link java.lang.Integer} object.
 	 * @param content a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
-	public DeliverableListDataItem(NodeRef nodeRef, List<NodeRef> tasks, DeliverableState state, String description, Integer completionPercent, NodeRef content) {
+	public DeliverableListDataItem(NodeRef nodeRef, List<NodeRef> tasks, DeliverableState state, String description, Integer completionPercent,
+			NodeRef content) {
 		this.nodeRef = nodeRef;
 		this.tasks = tasks;
-		this.state = state!=null ? state : DeliverableState.Planned;
+		this.state = state != null ? state : DeliverableState.Planned;
 		this.description = description;
 		this.completionPercent = completionPercent;
 		this.content = content;
