@@ -21,25 +21,28 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.IntStream;
 
+import org.alfresco.service.cmr.repository.NodeRef;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
-
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
-
 import fr.becpg.repo.repository.model.BeCPGDataObject;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.survey.SurveyModel;
-
 import fr.becpg.repo.survey.data.SurveyListDataItem;
 import fr.becpg.repo.survey.data.SurveyQuestion;
 import fr.becpg.repo.survey.data.SurveyableEntity;
+import fr.becpg.repo.survey.impl.SurveyServiceImpl.ResponseType;
 
 /**
  * Project visitor to calculate project score
@@ -74,21 +77,21 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 					&& alfrescoRepository.hasDataList(surveyableEntity, SurveyModel.TYPE_SURVEY_LIST)) {
 
 				// If surveyList is empty, we do nothing
-				if ((surveyableEntity.getSurveyList() != null) && !surveyableEntity.getSurveyList().isEmpty()) {
+				if (CollectionUtils.isNotEmpty(surveyableEntity.getSurveyList())) {
 
 					Map<String, Integer> scoresPerCriterion = new HashMap<>();
-					Map<String, Integer> nbOfQuestionsPerCriterion = new HashMap<>();
+					Map<String, Integer> maxScoresPerCriterion = new HashMap<>();
 
-					fillScoresAndNbQuestions(surveyableEntity, scoresPerCriterion, nbOfQuestionsPerCriterion);
+					fillScores(surveyableEntity, scoresPerCriterion, maxScoresPerCriterion);
 
 					// For each criterion present in the surveyList, we calculate the score for each criterion in the scoreList. For the criterion that are not
 					// in the surveyList, we do nothing
-					calculateAndFillScoreList(scoreList, scoresPerCriterion, nbOfQuestionsPerCriterion);
+					calculateAndFillScoreList(scoreList, scoresPerCriterion, maxScoresPerCriterion);
 				}
 			}
 
 			// Score can be set manually
-			if ((surveyableEntity.getScoreList() != null) && !surveyableEntity.getScoreList().isEmpty()) {
+			if (CollectionUtils.isNotEmpty(surveyableEntity.getScoreList())) {
 
 				int totalScore = 0;
 				int totalWeight = 0;
@@ -126,23 +129,47 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 	/**
 	 * @param surveyableEntity
 	 * @param scoresPerCriterion
-	 * @param nbOfQuestionsPerCriterion
+	 * @param maxScoresPerCriterion
 	 */
-	private void fillScoresAndNbQuestions(SurveyableEntity surveyableEntity, Map<String, Integer> scoresPerCriterion,
-			Map<String, Integer> nbOfQuestionsPerCriterion) {
+	private void fillScores(SurveyableEntity surveyableEntity, Map<String, Integer> scoresPerCriterion,
+			Map<String, Integer> maxScoresPerCriterion) {
 		for (SurveyListDataItem s : surveyableEntity.getSurveyList()) {
 
 			SurveyQuestion question = (SurveyQuestion) alfrescoRepository.findOne(s.getQuestion());
 
 			String criterion = question.getSurveyCriterion() == null ? "" : question.getSurveyCriterion();
-
-			if (!scoresPerCriterion.containsKey(criterion)) {
-				scoresPerCriterion.computeIfAbsent(criterion, value -> question.getQuestionScore() == null ? 0 : question.getQuestionScore());
-				nbOfQuestionsPerCriterion.computeIfAbsent(criterion, value -> 1);
+			
+			final int maxScore;
+			
+			if (question.getQuestionScore() != null) {
+				maxScore = question.getQuestionScore();
 			} else {
-				scoresPerCriterion.computeIfPresent(criterion,
-						(key, value) -> value + (question.getQuestionScore() == null ? 0 : question.getQuestionScore()));
-				nbOfQuestionsPerCriterion.computeIfPresent(criterion, (key, value) -> value + 1);
+				// Find all children (answers) of the current question with a positive score
+				final List<NodeRef> answers = BeCPGQueryBuilder.createQuery().ofType(SurveyModel.TYPE_SURVEY_QUESTION)
+						.excludeDefaults().andPropEquals(BeCPGModel.PROP_PARENT_LEVEL, question.getNodeRef().toString())
+						.andBetween(SurveyModel.PROP_SURVEY_QUESTION_SCORE, "1", "MAX").list();
+
+				final IntStream scoreStream = answers.stream().map(alfrescoRepository::findOne)
+						.map(SurveyQuestion.class::cast).map(SurveyQuestion::getQuestionScore).filter(Objects::nonNull)
+						.mapToInt(Integer::intValue);
+
+				maxScore = ResponseType.list.name().equals(question.getResponseType()) ? scoreStream.max().orElse(0)
+						: scoreStream.sum();
+			}
+			
+			if (maxScore != 0) {
+				final int questionScore = CollectionUtils.emptyIfNull(s.getChoices()).stream()
+						.map(alfrescoRepository::findOne).map(SurveyQuestion.class::cast)
+						.map(SurveyQuestion::getQuestionScore).filter(Objects::nonNull).mapToInt(Integer::intValue).sum();
+				
+				if (!scoresPerCriterion.containsKey(criterion)) {
+					scoresPerCriterion.computeIfAbsent(criterion, value -> questionScore);
+					maxScoresPerCriterion.computeIfAbsent(criterion, __ -> maxScore);
+				} else {
+					scoresPerCriterion.computeIfPresent(criterion,
+							(key, value) -> value + questionScore);
+					maxScoresPerCriterion.computeIfPresent(criterion, (__, value) -> value + maxScore);
+				}
 			}
 		}
 	}
@@ -150,19 +177,18 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 	/**
 	 * @param scoreList
 	 * @param scoresPerCriterion
-	 * @param nbOfQuestionsPerCriterion
+	 * @param maxScoresPerCriterion
 	 */
 	private void calculateAndFillScoreList(List<ScoreListDataItem> scoreList, Map<String, Integer> scoresPerCriterion,
-			Map<String, Integer> nbOfQuestionsPerCriterion) {
+			Map<String, Integer> maxScoresPerCriterion) {
 		for (Entry<String, Integer> criterionScore : scoresPerCriterion.entrySet()) {
 
-			Integer score = (int) (criterionScore.getValue() / nbOfQuestionsPerCriterion.get(criterionScore.getKey()));
+			Integer score = (int) (100 * ((float) criterionScore.getValue() / maxScoresPerCriterion.get(criterionScore.getKey())));
 
 			Optional<ScoreListDataItem> scoreForCriterion = scoreList.stream().filter(sl -> criterionScore.getKey().equals(sl.getCriterion()))
 					.findFirst();
 			if (scoreForCriterion.isPresent()) {
 				scoreForCriterion.get().setScore(score);
-
 			}
 		}
 	}
