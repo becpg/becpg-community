@@ -218,7 +218,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 		
 		// compareResult
 		for (CompareResultDataItem c : compareResult) {
-			Element cmpRowElt = cmpRowsElt.addElement(TAG_COMPARISON_ROW);
+			
 			BecpgFormDefinition def = null;
 			
 			if (c.getEntityList() != null) {
@@ -231,24 +231,37 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 					def = getFormDef(defs, c.getProperty(), entityListName, entityListTitle, entity1NodeRef);
 				} catch (FormNotFoundException e) {}
 				
-				cmpRowElt.addAttribute(ATTR_ENTITYLIST, entityListTitle);
-				cmpRowElt.addAttribute(ATTR_ENTITYLIST_QNAME, c.getEntityList().toPrefixString(namespaceService));
 			}
 			
-			cmpRowElt.addAttribute(ATTR_CHARACTERISTIC, c.getCharactName());
-			cmpRowElt.addAttribute(ATTR_PROPERTY, getClassAttributeTitle(nodeService.getType(entity1NodeRef), def, c.getProperty()));
-			cmpRowElt.addAttribute(ATTR_PROPERTY_QNAME, c.getProperty().toPrefixString(namespaceService));
-			cmpRowElt.addAttribute(ATTR_IS_DIFFERENT, Boolean.toString(c.isDifferent()));
-
-			i = 1;
-			for (String value : c.getValues()) {
-				// Escaping text to replace invalid chars in rendered XML output (e.g: 'property="Name "value""')
-				value = StringEscapeUtils.escapeXml11(value);
-				if (logger.isDebugEnabled()) {
-					logger.debug("compare prop: " + c.getProperty() + " - " + ATTR_VALUE + i + " " + value);
+			String title =  getClassAttributeTitle(nodeService.getType(entity1NodeRef), def, c.getProperty());
+			if(title!=null) {
+				Element cmpRowElt = cmpRowsElt.addElement(TAG_COMPARISON_ROW);
+				
+				if (c.getEntityList() != null) {
+					TypeDefinition typeDef = dictionaryService.getType(c.getEntityList());
+					String entityListTitle = typeDef.getTitle(dictionaryService);
+					
+				
+					cmpRowElt.addAttribute(ATTR_ENTITYLIST, entityListTitle);
+					cmpRowElt.addAttribute(ATTR_ENTITYLIST_QNAME, c.getEntityList().toPrefixString(namespaceService));
 				}
-				cmpRowElt.addAttribute(ATTR_VALUE + i, value);
-				i++;
+		
+			
+				cmpRowElt.addAttribute(ATTR_CHARACTERISTIC, c.getCharactName());
+				cmpRowElt.addAttribute(ATTR_PROPERTY,title);
+				cmpRowElt.addAttribute(ATTR_PROPERTY_QNAME, c.getProperty().toPrefixString(namespaceService));
+				cmpRowElt.addAttribute(ATTR_IS_DIFFERENT, Boolean.toString(c.isDifferent()));
+	
+				i = 1;
+				for (String value : c.getValues()) {
+					// Escaping text to replace invalid chars in rendered XML output (e.g: 'property="Name "value""')
+					value = StringEscapeUtils.escapeXml11(value);
+					if (logger.isDebugEnabled()) {
+						logger.debug("compare prop: " + c.getProperty() + " - " + ATTR_VALUE + i + " " + value);
+					}
+					cmpRowElt.addAttribute(ATTR_VALUE + i, value);
+					i++;
+				}
 			}
 		}
 
@@ -377,7 +390,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 		}
 
 		// Escaping text to replace invalid chars in rendered XML output (e.g: 'property="Name "value""')
-		return (title != null && !title.isBlank()) ? StringEscapeUtils.escapeXml11(title) :  StringEscapeUtils.escapeXml11(qName.toPrefixString(namespaceService));
+		return (title != null && !title.isBlank()) ? StringEscapeUtils.escapeXml11(title) :  null;
 	}
 
 	private BecpgFormDefinition getFormDef(Map<String, BecpgFormDefinition> defs, QName property, 
