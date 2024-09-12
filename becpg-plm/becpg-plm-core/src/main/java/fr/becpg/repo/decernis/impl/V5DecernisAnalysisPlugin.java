@@ -533,7 +533,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 								&& !j.getJSONObject("comments").get("comments").toString().equals("null"))
 								.map(j -> j.getJSONObject("comments").getString("comments"))
 								.distinct()
-								.toList());
+								.collect(Collectors.toList()));
 						ingRegulatoryListDataItem.setPrecautions(new MLText(precautions));
 
 						String resultIndicator = String.join(";;",

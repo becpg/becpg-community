@@ -902,9 +902,11 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 										PropertyDefinition propDef = entityDictionaryService.getProperty(entry.getKey());
 										if (propDef.getConstraints() != null) {
 											for (ConstraintDefinition constraint : propDef.getConstraints()) {
-												if (constraint.getConstraint() instanceof ListOfValuesConstraint lvc) {
-													if (ent instanceof List<?> entList) {
-														entList = entList.stream().map(o -> lvc.getDisplayLabel(o.toString(), dictionaryService)).toList();
+												if (constraint.getConstraint() instanceof ListOfValuesConstraint) {
+													ListOfValuesConstraint lvc = (ListOfValuesConstraint) constraint.getConstraint();
+													if (ent instanceof List<?>) {
+														List<?> entList = (List<?>)ent;
+														entList = entList.stream().map(o -> lvc.getDisplayLabel(o.toString(), dictionaryService)).collect(Collectors.toList());
 														ent = (Serializable) entList;
 													} else if (ent != null) {
 														ent = lvc.getDisplayLabel(ent.toString(), dictionaryService);
@@ -936,9 +938,11 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 											PropertyDefinition propDef = entityDictionaryService.getProperty(entry.getKey());
 											if (propDef.getConstraints() != null) {
 												for (ConstraintDefinition constraint : propDef.getConstraints()) {
-													if (constraint.getConstraint() instanceof ListOfValuesConstraint lvc) {
-														if (ent instanceof List<?> entList) {
-															entList = entList.stream().map(o -> lvc.getDisplayLabel(o.toString(), dictionaryService)).toList();
+													if (constraint.getConstraint() instanceof ListOfValuesConstraint) {
+														ListOfValuesConstraint lvc = (ListOfValuesConstraint) constraint.getConstraint();
+														if (ent instanceof List<?>) {
+															List<?> entList = (List<?>)ent;
+															entList = entList.stream().map(o -> lvc.getDisplayLabel(o.toString(), dictionaryService)).collect(Collectors.toList());
 															ent = (Serializable) entList;
 														} else if (ent != null) {
 															ent = lvc.getDisplayLabel(ent.toString(), dictionaryService);
