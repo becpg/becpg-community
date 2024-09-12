@@ -377,7 +377,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 		}
 
 		// Escaping text to replace invalid chars in rendered XML output (e.g: 'property="Name "value""')
-		return (title != null) ? StringEscapeUtils.escapeXml11(title) : "";
+		return (title != null && !title.isBlank()) ? StringEscapeUtils.escapeXml11(title) :  StringEscapeUtils.escapeXml11(qName.toPrefixString(namespaceService));
 	}
 
 	private BecpgFormDefinition getFormDef(Map<String, BecpgFormDefinition> defs, QName property, 
