@@ -73,6 +73,13 @@
 		<property name="entityDictionaryService" ref="entityDictionaryService" />
 	</bean>
 	
+	<bean id="toxCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.ToxCharactDetailsVisitor">
+		<property name="alfrescoRepository" ref="alfrescoRepository" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="entityDictionaryService" ref="entityDictionaryService" />
+		<property name="toxicologyService" ref="toxicologyService" />
+	</bean>
+	
 	<bean id="charactDetailsVisitorFactory" class="fr.becpg.repo.product.CharactDetailsVisitorFactoryImpl">
 		<property name="visitorRegistry">
 			<map>
@@ -99,6 +106,9 @@
 				</entry>
 				<entry key="bcpg:labelClaimList">
 					<ref bean="labelClaimCharactDetailsVisitor" />
+				</entry>
+				<entry key="bcpg:toxList">
+					<ref bean="toxCharactDetailsVisitor" />
 				</entry>
 			</map>
 		</property>
@@ -225,6 +235,9 @@
 					<property name="nodeService" ref="nodeService" />
 				</bean>
 				<bean parent="abstractSimpleFormulationHandler" class="fr.becpg.repo.product.formulation.SvhcCalculatingFormulationHandler" />
+				<bean class="fr.becpg.repo.product.formulation.ToxFormulationHandler">
+					<property name="toxicologyService" ref="toxicologyService" />
+				</bean>
 				<bean class="fr.becpg.repo.project.formulation.ScoreListFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 				</bean>

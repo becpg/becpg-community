@@ -1699,6 +1699,300 @@
 		</forms>
 	</config>
 
+	<config evaluator="model-type" condition="bcpg:tox">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="bcpg:charactName" />
+					<show id="bcpg:toxTypes" />
+					<show id="bcpg:toxValue" />
+					<show id="bcpg:toxCalculateSystemic" />
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:isDeleted" />
+				</field-visibility>
+			</form>
+
+			<form id="filter">
+				<field-visibility>
+					<show id="bcpg:charactName" />
+					<show id="bcpg:toxTypes" />
+					<show id="bcpg:toxValue" />
+					<show id="bcpg:toxCalculateSystemic" />
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:isDeleted" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:charactName">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:isDeleted">
+						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+					</field>
+				</appearance>
+			</form>
+
+			<form id="datagrid">
+				<field-visibility>
+					<show id="bcpg:charactName" />
+					<show id="bcpg:toxTypes" />
+					<show id="bcpg:toxValue" />
+					<show id="bcpg:toxCalculateSystemic" />
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:isDeleted" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	
+	<config evaluator="node-type" condition="bcpg:tox">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="bcpg:charactName" />
+					<show id="bcpg:toxTypes" />
+					<show id="bcpg:toxValue" />
+					<show id="bcpg:toxCalculateSystemic" />
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:isDeleted" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	
+	<config evaluator="model-type" condition="bcpg:toxIng">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="bcpg:toxIngIng" />
+					<show id="bcpg:toxIngTox" />
+					<show id="bcpg:toxIngSystemicValue" />
+					<show id="bcpg:toxIngMaxValue" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:toxIngIng" read-only="true">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl"/>
+					</field>
+					<field id="bcpg:toxIngTox" read-only="true">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl"/>
+					</field>
+					<field id="bcpg:toxIngSystemicValue" />
+					<field id="bcpg:toxIngMaxValue" read-only="true"/>
+				</appearance>
+			</form>
+
+			<form id="filter">
+				<field-visibility>
+					<show id="bcpg:toxIngIng" />
+					<show id="bcpg:toxIngTox" />
+					<show id="bcpg:toxIngSystemicValue" />
+					<show id="bcpg:toxIngMaxValue" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:toxIngIng" read-only="true">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl"/>
+					</field>
+					<field id="bcpg:toxIngTox" read-only="true">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl"/>
+					</field>
+				</appearance>				
+			</form>
+
+			<form id="datagrid">
+				<field-visibility>
+					<show id="bcpg:toxIngIng" />
+					<show id="bcpg:toxIngTox" />
+					<show id="bcpg:toxIngSystemicValue" />
+					<show id="bcpg:toxIngMaxValue" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:toxIngIng" read-only="true">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl"/>
+					</field>
+					<field id="bcpg:toxIngTox" read-only="true">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl"/>
+					</field>
+					<field id="bcpg:toxIngSystemicValue" />
+					<field id="bcpg:toxIngMaxValue" read-only="true"/>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	<config evaluator="node-type" condition="bcpg:toxIng">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="bcpg:toxIngIng" />
+					<show id="bcpg:toxIngTox" />
+					<show id="bcpg:toxIngSystemicValue" />
+					<show id="bcpg:toxIngMaxValue" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:toxIngIng" read-only="true">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl"/>
+					</field>
+					<field id="bcpg:toxIngTox" read-only="true">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl"/>
+					</field>
+					<field id="bcpg:toxIngSystemicValue" />
+					<field id="bcpg:toxIngMaxValue" read-only="true"/>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	
+	<config evaluator="model-type" condition="bcpg:tox">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="bcpg:charactName" />
+					<show id="bcpg:toxTypes" />
+					<show id="bcpg:toxValue" />
+					<show id="bcpg:toxCalculateSystemic" />
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:isDeleted" />
+				</field-visibility>
+			</form>
+
+			<form id="filter">
+				<field-visibility>
+					<show id="bcpg:charactName" />
+					<show id="bcpg:toxTypes" />
+					<show id="bcpg:toxValue" />
+					<show id="bcpg:toxCalculateSystemic" />
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:isDeleted" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:charactName">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:isDeleted">
+						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+					</field>
+				</appearance>
+			</form>
+
+			<form id="datagrid">
+				<field-visibility>
+					<show id="bcpg:charactName" />
+					<show id="bcpg:toxTypes" />
+					<show id="bcpg:toxValue" />
+					<show id="bcpg:toxCalculateSystemic" />
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:isDeleted" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	
+	<config evaluator="node-type" condition="bcpg:tox">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="bcpg:charactName" />
+					<show id="bcpg:toxTypes" />
+					<show id="bcpg:toxValue" />
+					<show id="bcpg:toxCalculateSystemic" />
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:isDeleted" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	
+	<config evaluator="model-type" condition="bcpg:toxIng">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="bcpg:toxIngIng" />
+					<show id="bcpg:toxIngTox" />
+					<show id="bcpg:toxIngSystemicValue" />
+					<show id="bcpg:toxIngMaxValue" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:toxIngIng" read-only="true">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl"/>
+					</field>
+					<field id="bcpg:toxIngTox" read-only="true">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl"/>
+					</field>
+					<field id="bcpg:toxIngSystemicValue" />
+					<field id="bcpg:toxIngMaxValue" read-only="true"/>
+				</appearance>
+			</form>
+
+			<form id="filter">
+				<field-visibility>
+					<show id="bcpg:toxIngIng" />
+					<show id="bcpg:toxIngTox" />
+					<show id="bcpg:toxIngSystemicValue" />
+					<show id="bcpg:toxIngMaxValue" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:toxIngIng" read-only="true">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl"/>
+					</field>
+					<field id="bcpg:toxIngTox" read-only="true">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl"/>
+					</field>
+				</appearance>				
+			</form>
+
+			<form id="datagrid">
+				<field-visibility>
+					<show id="bcpg:toxIngIng" />
+					<show id="bcpg:toxIngTox" />
+					<show id="bcpg:toxIngSystemicValue" />
+					<show id="bcpg:toxIngMaxValue" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:toxIngIng" read-only="true">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl"/>
+					</field>
+					<field id="bcpg:toxIngTox" read-only="true">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl"/>
+					</field>
+					<field id="bcpg:toxIngSystemicValue" />
+					<field id="bcpg:toxIngMaxValue" read-only="true"/>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	<config evaluator="node-type" condition="bcpg:toxIng">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="bcpg:toxIngIng" />
+					<show id="bcpg:toxIngTox" />
+					<show id="bcpg:toxIngSystemicValue" />
+					<show id="bcpg:toxIngMaxValue" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:toxIngIng" read-only="true">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl"/>
+					</field>
+					<field id="bcpg:toxIngTox" read-only="true">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl"/>
+					</field>
+					<field id="bcpg:toxIngSystemicValue" />
+					<field id="bcpg:toxIngMaxValue" read-only="true"/>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	
     <!-- bcpg:ing type (existing nodes) -->
 	<config evaluator="node-type" condition="bcpg:ing">
 		<forms>
@@ -1727,6 +2021,14 @@
 					<show id="bcpg:linkedSearchAssociation" force="true" />
 					<show id="bcpg:isSubstanceOfVeryHighConcern" force="true" />
 					<show id="bcpg:svhcReasonsForInclusion" force="true" />
+					<show id="bcpg:ingToxPodSystemic" force="true" />
+					<show id="bcpg:ingToxDermalAbsorption" force="true" />
+					<show id="bcpg:ingToxMosMoe" force="true" />
+					<show id="bcpg:ingToxMaxSkinIrritation" force="true" />
+					<show id="bcpg:ingToxMaxSensitization" force="true" />
+					<show id="bcpg:ingToxMaxOcularIrritation" force="true" />
+					<show id="bcpg:ingToxMaxPhototoxic" force="true" />
+					<show id="bcpg:ingToxData" force="true" />
 					<show id="bcpg:parentEntityRef" force="true" />
 					<show id="sec:readGroups" force="true" />
 					<show id="bcpg:isDeleted" />
@@ -1832,6 +2134,7 @@
 					<set appearance="bordered-panel" label-id="becpg.forms.set.formulation.label" id="formulationTab" />
 					<set appearance="bordered-panel" label-id="becpg.forms.set.designation.label" id="designation" template="/org/alfresco/components/form/2-column-set.ftl" set="designationTab" />
 					<set appearance="bordered-panel" label-id="becpg.forms.set.formulation.label" id="formulation" template="/org/alfresco/components/form/2-column-set.ftl" set="formulationTab" />
+					<set label-id="becpg.forms.set.toxicology.label" id="toxTab" template="/org/alfresco/components/form/2-column-set.ftl" />
 
 					<field id="bcpg:charactName" set="designation" />
 					<field id="bcpg:pluralLegalName" set="designation" />
@@ -1884,6 +2187,132 @@
 					<field id="bcpg:evaporatedRate"  set="formulation" />
 					<field id="bcpg:isSubstanceOfVeryHighConcern" set="formulation" />
 					<field id="bcpg:svhcReasonsForInclusion" set="formulation" />
+					<field id="bcpg:ingToxPodSystemic" set="toxTab" />
+					<field id="bcpg:ingToxDermalAbsorption" set="toxTab" />
+					<field id="bcpg:ingToxMosMoe" set="toxTab" />
+					<field id="bcpg:ingToxMaxSkinIrritation" set="toxTab" />
+					<field id="bcpg:ingToxMaxSensitization" set="toxTab" />
+					<field id="bcpg:ingToxMaxOcularIrritation" set="toxTab" />
+					<field id="bcpg:ingToxMaxPhototoxic" set="toxTab" />
+					<field id="bcpg:ingToxData" set="toxTab" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<config evaluator="model-type" condition="bcpg:ing" >
+		<forms>
+            <!-- Create item form -->
+			<form>
+				<edit-form template="tab-edit" />
+				<field-visibility>
+					<show id="bcpg:charactName" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:legalName" />
+					<show id="bcpg:pluralLegalName" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:ingCEECode" force="true" />
+					<show id="bcpg:casNumber" force="true" />
+					<show id="bcpg:ceNumber" force="true" />
+					<show id="bcpg:ecNumber" force="true" />
+					<show id="bcpg:fdaNumber" force="true" />
+					<show id="bcpg:femaNumber" force="true" />
+					<show id="bcpg:flNumber" force="true" />
+					<show id="bcpg:regulatoryCode" force="true" />
+					<show id="bcpg:regulatoryComment" force="true" />
+					<show id="bcpg:ingTypeV2" force="true" />
+					<show id="bcpg:evaporatedRate" force="true" />
+					<show id="bcpg:ingAllergens" />
+					<show id="bcpg:ingAllergensQtyPerc" />
+					<show id="gs1:productActivityTypeCode" force="true" />
+					<show id="bcpg:linkedSearchAssociation" force="true" />
+					<show id="bcpg:isSubstanceOfVeryHighConcern" force="true" />
+					<show id="bcpg:svhcReasonsForInclusion" force="true" />
+					<show id="bcpg:ingToxPodSystemic" force="true" />
+					<show id="bcpg:ingToxDermalAbsorption" force="true" />
+					<show id="bcpg:ingToxMosMoe" force="true" />
+					<show id="bcpg:ingToxMaxSkinIrritation" force="true" />
+					<show id="bcpg:ingToxMaxSensitization" force="true" />
+					<show id="bcpg:ingToxMaxOcularIrritation" force="true" />
+					<show id="bcpg:ingToxMaxPhototoxic" force="true" />
+					<show id="bcpg:ingToxData" force="true" />
+					<show id="bcpg:parentEntityRef" force="true" />
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:isDeleted" />
+				</field-visibility>
+
+				<appearance>
+					<set label-id="becpg.forms.set.designation.label" id="designation" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set label-id="becpg.forms.set.formulation.label" id="formulation" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set label-id="becpg.forms.set.toxicology.label" id="toxTab" template="/org/alfresco/components/form/2-column-set.ftl" />
+					
+					<field id="bcpg:charactName" set="designation" />
+					<field id="bcpg:pluralLegalName" set="designation" />
+					<field id="bcpg:legalName" set="designation" />
+					<field id="cm:description" set="designation">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:parentEntityRef" set="designation" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:rawMaterial
+							</control-param>
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
+							</control-param>
+							<control-param name="excludeSources">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:erpCode" set="designation" />
+					<field id="bcpg:ingCEECode" set="designation" />
+					<field id="bcpg:casNumber" set="designation" />
+					<field id="bcpg:ceNumber" set="designation" />
+					<field id="bcpg:ecNumber" set="designation" />
+					<field id="bcpg:fdaNumber" set="designation" />
+					<field id="bcpg:femaNumber" set="designation" />
+					<field id="bcpg:flNumber" set="designation" />
+					<field id="bcpg:linkedSearchAssociation" set="designation">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:ing
+							</control-param>
+						</control>
+					</field>
+					<field id="sec:readGroups" set="designation" />
+					<field id="bcpg:isDeleted" set="designation" />
+					
+					<field id="bcpg:regulatoryCode" set="formulation" />
+					<field id="bcpg:regulatoryComment" set="formulation" />
+					<field id="bcpg:ingTypeV2" set="formulation">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ingTypeItem
+							</control-param>
+						</control>
+					</field>
+					<field id="gs1:productActivityTypeCode" set="formulation" />
+					<field id="bcpg:ingAllergens" set="formulation">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+						</control>
+					</field>
+					<field id="bcpg:ingAllergensQtyPerc" help-id="becpg.forms.help.ingAllergensQtyPerc" set="formulation" />
+					<field id="bcpg:evaporatedRate"  set="formulation" />
+					<field id="bcpg:isSubstanceOfVeryHighConcern" set="formulation" />
+					<field id="bcpg:svhcReasonsForInclusion" set="formulation" />
+					<field id="bcpg:ingToxPodSystemic" set="toxTab" />
+					<field id="bcpg:ingToxDermalAbsorption" set="toxTab" />
+					<field id="bcpg:ingToxMosMoe" set="toxTab" />
+					<field id="bcpg:ingToxMaxSkinIrritation" set="toxTab" />
+					<field id="bcpg:ingToxMaxSensitization" set="toxTab" />
+					<field id="bcpg:ingToxMaxOcularIrritation" set="toxTab" />
+					<field id="bcpg:ingToxMaxPhototoxic" set="toxTab" />
+					<field id="bcpg:ingToxData" set="toxTab" />
+					<field id="bcpg:ingToxPodSystemic" set="toxTab" />
+					<field id="bcpg:ingToxDermalAbsorption" set="toxTab" />
+					<field id="bcpg:ingToxMosMoe" set="toxTab" />
+					<field id="bcpg:ingToxMaxSkinIrritation" set="toxTab" />
+					<field id="bcpg:ingToxMaxSensitization" set="toxTab" />
+					<field id="bcpg:ingToxMaxOcularIrritation" set="toxTab" />
+					<field id="bcpg:ingToxMaxPhototoxic" set="toxTab" />
+					<field id="bcpg:ingToxData" set="toxTab" />
 				</appearance>
 			</form>
 
@@ -7947,6 +8376,44 @@
 					</field>
 
 
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	<config evaluator="model-type" condition="bcpg:toxList">
+		<forms>
+			<!-- Create item form -->
+			<form>
+				<field-visibility>
+					<show id="bcpg:toxListTox" />
+					<show id="bcpg:toxListValue" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:toxListTox" >
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+						</control>
+					</field>
+					<field id="bcpg:toxListValue" read-only="true"/>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	<config evaluator="node-type" condition="bcpg:toxList">
+		<forms>
+			<!-- Create item form -->
+			<form>
+				<field-visibility>
+					<show id="bcpg:toxListTox" />
+					<show id="bcpg:toxListValue" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:toxListTox" >
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+						</control>
+					</field>
+					<field id="bcpg:toxListValue" read-only="true"/>
 				</appearance>
 			</form>
 		</forms>

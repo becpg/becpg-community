@@ -211,6 +211,10 @@ public class PlmRepoConsts {
 
 	/** Constant <code>PATH_REGULATORY_USAGES="RegulatoryUsages"</code> */
 	public static final String PATH_REGULATORY_USAGES = "RegulatoryUsages";
+	
+	public static final String PATH_TOXICITIES = "Toxicities";
+	
+	public static final String PATH_TOX_ING = "ToxIng";
 
 	/** Constant <code>PATH_CONTACT_TYPES="ContactTypes"</code> */
 	public static final String PATH_CONTACT_TYPES = "ContactTypes";
