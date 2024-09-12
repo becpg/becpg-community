@@ -124,7 +124,11 @@ public class CharactDetailsHelper {
 		totals.add(I18NUtil.getMessage("entity.datalist.item.details.totals"));
 
 		for (int i = 0; i < indexMap.size(); ++i) {
-			totals.add(0d);
+			if ("MIN".equals(charactDetails.getTotalOperation())) {
+				totals.add(Double.MAX_VALUE);
+			} else {
+				totals.add(0d);
+			}
 		}
 
 		Map<NodeRef, List<Object>> tmpMap = new LinkedHashMap<>();
@@ -155,12 +159,20 @@ public class CharactDetailsHelper {
 							.filter(elt -> elt.keyEquals(charactDetailsValue) && elt.getName().equals(currentDetailsName)).findFirst();
 					if (matchingCharact.isPresent()) {
 						
-						int entryIndex = entry.getValue().indexOf(matchingCharact.get());
+						List<CharactDetailsValue> charactDetailValues = entry.getValue();
+						int entryIndex = charactDetailValues.indexOf(matchingCharact.get());
 						if (entryIndex != -1) {
-							Double value = entry.getValue().get(entryIndex).getValue();
+							CharactDetailsValue currentCharactDetailsValue = charactDetailValues.get(entryIndex);
+							Double value = currentCharactDetailsValue.getValue();
 							tmp.set(currentIndex, value);
-							if (entry.getValue().get(entryIndex).getLevel() == 0) {
-								total += value != null ? value : 0d;
+							if (currentCharactDetailsValue.getLevel() == 0) {
+								if ("SUM".equals(charactDetails.getTotalOperation())) {
+									total += value != null ? value : 0d;
+								} else if ("MAX".equals(charactDetails.getTotalOperation())) {
+									total = value != null ? Math.max(total, value) : total;
+								} else if ("MIN".equals(charactDetails.getTotalOperation())) {
+									total = value != null ? Math.min(total, value) : total;
+								}
 							}
 						}
 					}

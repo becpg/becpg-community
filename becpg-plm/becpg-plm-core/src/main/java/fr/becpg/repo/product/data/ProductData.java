@@ -52,6 +52,7 @@ import fr.becpg.repo.product.data.productList.PubChannelListDataItem;
 import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.ResourceParamListItem;
 import fr.becpg.repo.product.data.productList.SvhcListDataItem;
+import fr.becpg.repo.product.data.productList.ToxListDataItem;
 import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.quality.data.dataList.ControlDefListDataItem;
 import fr.becpg.repo.quality.data.dataList.StockListDataItem;
@@ -256,6 +257,7 @@ public class ProductData extends AbstractScorableEntity
 	private List<IngRegulatoryListDataItem> ingRegulatoryList;
 	private List<SvhcListDataItem> svhcList;
 	private List<PubChannelListDataItem> pubChannelList;
+	private List<ToxListDataItem> toxList;
 
 	/*
 	 * View
@@ -2304,6 +2306,16 @@ public class ProductData extends AbstractScorableEntity
 	 */
 	public void setRegulatoryList(List<RegulatoryListDataItem> regulatoryList) {
 		this.regulatoryList = regulatoryList;
+	}
+	
+	@DataList
+	@AlfQname(qname = "bcpg:toxList")
+	public List<ToxListDataItem> getToxList() {
+		return toxList;
+	}
+	
+	public void setToxList(List<ToxListDataItem> toxList) {
+		this.toxList = toxList;
 	}
 
 	/**
