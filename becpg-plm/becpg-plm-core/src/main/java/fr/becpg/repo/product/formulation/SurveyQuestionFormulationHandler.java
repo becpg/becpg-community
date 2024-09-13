@@ -151,7 +151,7 @@ public class SurveyQuestionFormulationHandler extends FormulationBaseHandler<Pro
 			for (final SurveyListDataItem surveyList : List.copyOf(surveyLists)) {
 				final SurveyQuestion surveyQuestion = (SurveyQuestion) alfrescoRepository
 						.findOne(surveyList.getQuestion());
-				if (surveyList.isGenerated() && (!surveyQuestions.contains(surveyQuestion)
+				if (Boolean.TRUE.equals(surveyList.isGenerated()) && (!surveyQuestions.contains(surveyQuestion)
 						|| !Objects.equals(surveyQuestion.getFsSurveyListName(), fsSurveyListName))) {
 					logger.debug(String.format("Deleting SurveyList %s from %s with SurveyQuestion %s",
 							surveyList.getNodeRef(), fsSurveyListName, surveyList.getQuestion()));
