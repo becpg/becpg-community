@@ -12,6 +12,7 @@
 	<config evaluator="string-compare" condition="BecpgMenu">
 	 	<hideSharedFiles>true</hideSharedFiles>
 	 	<hidePeople>true</hidePeople>
+	 	<hideSiteMembers>supplier-portal,co-contractor-portal</hideSiteMembers>
 	 	<hideMyFiles>false</hideMyFiles>
 	</config>
 	

@@ -22,10 +22,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
-import org.alfresco.repo.copy.CopyBehaviourCallback;
-import org.alfresco.repo.copy.CopyDetails;
 import org.alfresco.repo.copy.CopyServicePolicies;
-import org.alfresco.repo.copy.DoNothingCopyBehaviourCallback;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.Behaviour.NotificationFrequency;
 import org.alfresco.repo.policy.JavaBehaviour;
@@ -33,7 +30,6 @@ import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.version.VersionType;
-import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
@@ -122,15 +118,6 @@ NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnCreateNodePo
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, QualityModel.TYPE_SAMPLING_LIST,
 				new JavaBehaviour(this, "onCreateNode", NotificationFrequency.TRANSACTION_COMMIT));
 
-		policyComponent.bindClassBehaviour(QName.createQName(NamespaceService.ALFRESCO_URI, "getCopyCallback"), QualityModel.TYPE_CONTROL_LIST,
-				new JavaBehaviour(this, "getCopyCallback"));
-		
-		policyComponent.bindClassBehaviour(QName.createQName(NamespaceService.ALFRESCO_URI, "getCopyCallback"), QualityModel.TYPE_SAMPLING_LIST,
-				new JavaBehaviour(this, "getCopyCallback"));
-		
-		policyComponent.bindClassBehaviour(QName.createQName(NamespaceService.ALFRESCO_URI, "getCopyCallback"), QualityModel.TYPE_STOCK_LIST,
-				new JavaBehaviour(this, "getCopyCallback"));
-
 		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME, QualityModel.TYPE_SAMPLING_LIST,
 				new JavaBehaviour(this, "beforeDeleteNode"));
 
@@ -207,11 +194,6 @@ NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnCreateNodePo
 		qualityControlService.createSamplingListId(childAssocRef.getChildRef());
 	}
 
-	/** {@inheritDoc} */
-	@Override
-	public CopyBehaviourCallback getCopyCallback(QName classRef, CopyDetails copyDetails) {
-		return DoNothingCopyBehaviourCallback.getInstance();
-	}
 
 	/** {@inheritDoc} */
 	@Override
