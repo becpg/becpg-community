@@ -314,6 +314,8 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 
 								transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 									
+									IntegrityChecker.setWarnInTransaction();
+									
 									moveToImportToDoFolder(entityNodeRef);
 									
 									nodeService.removeAspect(entityNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION);
