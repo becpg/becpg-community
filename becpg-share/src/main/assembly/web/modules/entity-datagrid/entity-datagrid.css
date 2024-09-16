@@ -742,9 +742,10 @@ div.filterButtonsBar {
 
 /* Tooltip */
 
-div.dt-tooltip {
-  position: relative;
+
+div.dt-tooltip:hover {
   display: inline-block;
+	 position: relative;
 }
 
 div.dt-tooltip span.dt-tooltip-content {
