@@ -15,6 +15,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.batch.BatchProcessWorkProvider;
 import org.alfresco.repo.batch.BatchProcessor;
 import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
+import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.Tenant;
 import org.alfresco.repo.tenant.TenantAdminService;
@@ -300,6 +301,8 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 			@Override
 			public void process(NodeRef entityNodeRef) throws Throwable {
 
+				IntegrityChecker.setWarnInTransaction();
+				
 				if (nodeService.exists(entityNodeRef)) {
 					if (nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_TEMPORARY)) {
 						deleteTemporaryNode(entityNodeRef);
@@ -310,6 +313,8 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 							if (RetryingTransactionHelper.extractRetryCause(t) == null) {
 
 								transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+									
+									IntegrityChecker.setWarnInTransaction();
 									
 									moveToImportToDoFolder(entityNodeRef);
 									
