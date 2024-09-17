@@ -76,10 +76,12 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 
 				if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 					for (CompoListDataItem compoListDataItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-						if ((compoListDataItem.getQtySubFormula() != null) && (compoListDataItem.getQtySubFormula() > 0)) {
-							ProductData componentProductData = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());
-							checkILOfPart(compoListDataItem.getProduct(), compoListDataItem.getDeclType(), componentProductData, requirements,
-									specification, reqCtrlMap, visited);
+						if(compoListDataItem.getProduct()!=null) {
+							if ((compoListDataItem.getQtySubFormula() != null) && (compoListDataItem.getQtySubFormula() > 0)) {
+								ProductData componentProductData = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());
+								checkILOfPart(compoListDataItem.getProduct(), compoListDataItem.getDeclType(), componentProductData, requirements,
+										specification, reqCtrlMap, visited);
+							}
 						}
 
 					}

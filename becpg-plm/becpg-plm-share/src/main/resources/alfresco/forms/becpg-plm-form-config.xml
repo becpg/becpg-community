@@ -9116,6 +9116,13 @@
 							</control-param>
 						</control>
 					</field>
+					
+					<field id="bcpg:filIngLevel">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">|data.level.all,1|1,2|2,3|3,4|4
+							</control-param>
+						</control>
+					</field>
 					<field id="bcpg:filIngs">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
