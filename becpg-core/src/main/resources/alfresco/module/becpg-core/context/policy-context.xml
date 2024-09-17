@@ -43,6 +43,7 @@
 		<property name="entityReportService" ref="entityReportService" />
 		<property name="batchQueueService" ref="batchQueueService" />
 		<property name="formulationService" ref="formulationService" />
+		<property name="alfrescoRepository" ref="alfrescoRepository" />
 	</bean>
 
 	<bean id="beCPGUserPolicy" class="fr.becpg.repo.authentication.BeCPGUserPolicy" parent="abstractBeCPGPolicy">
