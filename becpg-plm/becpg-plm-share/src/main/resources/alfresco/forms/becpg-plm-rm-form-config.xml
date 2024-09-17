@@ -138,20 +138,6 @@
               <control-param name="startLocation">{doclib}</control-param>
             </control>
           </field>
-          <set appearance="bordered-panel" id="branch" label-id="becpg.forms.set.branch.label"
-            template="/org/alfresco/components/form/2-column-set.ftl"/>
-          <field id="bcpg:autoMergeDate" mandatory="false" read-only="false" set="branch"/>
-          <field id="bcpg:autoMergeTo" mandatory="false" read-only="false" set="branch">
-            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-              <control-param name="ds">becpg/autocomplete/branches</control-param>
-              <control-param name="urlParamsToPass">itemId</control-param>
-            </control>
-          </field>
-          <field id="bcpg:autoMergeVersionType" mandatory="false" read-only="false" set="branch"/>
-          <field id="bcpg:autoMergeComments" mandatory="false" read-only="false" set="branch">
-            <control template="/org/alfresco/components/form/controls/textarea.ftl"/>
-          </field>
-          <field id="bcpg:autoMergeImpactWUsed" mandatory="false" read-only="false" set="branch"/>
           <set appearance="bordered-panel" id="mainInfo" label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field id="cm:name" mandatory="false" read-only="false" set="mainInfo"/>
           <field id="cm:title" label-id="becpg.forms.field.tradeName" description-id="becpg.forms.field.tradeName" mandatory="false" read-only="false" set="mainInfo">
@@ -473,6 +459,20 @@
           <field id="cm:created" mandatory="false" read-only="false" set="audit"/>
           <field id="cm:modifier" mandatory="false" read-only="false" set="audit"/>
           <field id="cm:modified" mandatory="false" read-only="false" set="audit"/>
+           <set appearance="bordered-panel" id="branch" label-id="becpg.forms.set.branch.label"
+            template="/org/alfresco/components/form/2-column-set.ftl"/>
+          <field id="bcpg:autoMergeDate" mandatory="false" read-only="false" set="branch"/>
+          <field id="bcpg:autoMergeTo" mandatory="false" read-only="false" set="branch">
+            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+              <control-param name="ds">becpg/autocomplete/branches</control-param>
+              <control-param name="urlParamsToPass">itemId</control-param>
+            </control>
+          </field>
+          <field id="bcpg:autoMergeVersionType" mandatory="false" read-only="false" set="branch"/>
+          <field id="bcpg:autoMergeComments" mandatory="false" read-only="false" set="branch">
+            <control template="/org/alfresco/components/form/controls/textarea.ftl"/>
+          </field>
+          <field id="bcpg:autoMergeImpactWUsed" mandatory="false" read-only="false" set="branch"/>
         </appearance>
       </form>
       <form id="reports-parameters">
