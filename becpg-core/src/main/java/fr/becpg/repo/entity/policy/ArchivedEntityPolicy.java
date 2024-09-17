@@ -23,6 +23,8 @@ import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.report.entity.EntityReportService;
+import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.RepositoryEntity;
 
 public class ArchivedEntityPolicy extends AbstractBeCPGPolicy implements OnAddAspectPolicy, OnRemoveAspectPolicy {
 
@@ -34,9 +36,15 @@ public class ArchivedEntityPolicy extends AbstractBeCPGPolicy implements OnAddAs
 
 	private FormulationService<FormulatedEntity> formulationService;
 
+	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
+	
 	private static final String KEY_ASPECT_ADDED = "aspectAdded";
 
 	private static final String KEY_ASPECT_REMOVED = "aspectRemoved";
+	
+	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
+		this.alfrescoRepository = alfrescoRepository;
+	}
 
 	public void setFormulationService(FormulationService<FormulatedEntity> formulationService) {
 		this.formulationService = formulationService;
@@ -88,7 +96,9 @@ public class ArchivedEntityPolicy extends AbstractBeCPGPolicy implements OnAddAs
 				formulationStep.setProcessWorker(new BatchProcessor.BatchProcessWorkerAdaptor<NodeRef>() {
 					@Override
 					public void process(NodeRef entry) throws Throwable {
-						formulationService.formulate(nodeRef);
+						if (alfrescoRepository.findOne(nodeRef) instanceof FormulatedEntity) {
+							formulationService.formulate(nodeRef);
+						}
 					}
 				});
 
