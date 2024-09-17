@@ -16,6 +16,7 @@ import fr.becpg.repo.product.data.PackagingMaterialData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PriceListDataItem;
 import fr.becpg.repo.product.formulation.FormulationHelper;
@@ -230,7 +231,7 @@ public class SimulationCostHelper implements InitializingBean {
 
 	private static double getCompoListQty(ProductData productData, NodeRef componentNodeRef, Double parentQty) {
 		double totalQty = 0d;
-		if (productData.hasCompoListEl()) {
+		if (productData.hasCompoListEl() && !hasSimulatedCostForComponent(productData, componentNodeRef)) {
 
 			Double netQty = FormulationHelper.getNetQtyForCost(productData);
 
@@ -258,9 +259,18 @@ public class SimulationCostHelper implements InitializingBean {
 		return totalQty;
 	}
 
+	private static boolean hasSimulatedCostForComponent(ProductData productData, NodeRef componentNodeRef) {
+		for (CostListDataItem simulatedCost : productData.getCostList()) {
+			if ((simulatedCost.getComponentNodeRef() != null) && (simulatedCost.getParent() != null) && simulatedCost.getComponentNodeRef().equals(componentNodeRef)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private static double getPackagingListQty(ProductData productData, NodeRef componentNodeRef, Double parentQty) {
 		double totalQty = 0d;
-		if (productData.hasPackagingListEl()) {
+		if (productData.hasPackagingListEl()  && !hasSimulatedCostForComponent(productData, componentNodeRef)) {
 
 			Double netQty = FormulationHelper.getNetQtyForCost(productData);
 
