@@ -12,6 +12,9 @@
    	    <customList id="packMaterialList" type="pack:packMaterialList" selected="true" filter="!qa:batch" />
    	    <customList id="batchAllocationList" type="qa:batchAllocationList" selected="true" filter="qa:batch" />
    	    <customList id="svhcList" type="bcpg:svhcList" filter="!qa:batch" />
+   	    <customList id="controlDefList" type="qa:controlDefList" filter="!qa:batch" />
+   	    <customList id="regulatoryList" type="bcpg:regulatoryList" filter="!qa:batch" />
+   	    <customList id="ingRegulatoryList" type="bcpg:ingRegulatoryList" filter="!qa:batch" />
    </customLists>
  
    <actionSetToolbar>
