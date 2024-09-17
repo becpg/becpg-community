@@ -205,9 +205,9 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 						if (propertyDefinition.isMultiValued()) {
 							JSONObject arrayDef = addProperty(entity, entityDictionaryService.toPrefixString(propName), TYPE_ARRAY,
 									entityDictionaryService.getTitle(propertyDefinition, entityType), entityDictionaryService.getDescription(propertyDefinition, entityType));
-							addProperty(arrayDef, entityDictionaryService.toPrefixString(propName), propertyDefinition);
+							addProperty(entityType, arrayDef, entityDictionaryService.toPrefixString(propName), propertyDefinition);
 						} else {
-							addProperty(attributes, entityDictionaryService.toPrefixString(propName), propertyDefinition);
+							addProperty(entityType, attributes, entityDictionaryService.toPrefixString(propName), propertyDefinition);
 						}
 
 					} else {
@@ -545,12 +545,12 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 				addProperty(entity, entityDictionaryService.toPrefixString(propType), TYPE_OBJECT,
 						entityDictionaryService.getTitle(propertyDefinition, nodeService.getType(entityNodeRef)), entityDictionaryService.getDescription(propertyDefinition, nodeService.getType(entityNodeRef)));
 			} else {
-				addProperty(entity, entityDictionaryService.toPrefixString(propType), propertyDefinition);
+				addProperty(nodeService.getType(entityNodeRef), entity, entityDictionaryService.toPrefixString(propType), propertyDefinition);
 			}
 		}
 	}
 
-	private JSONObject addProperty(JSONObject entity, String attr, PropertyDefinition propertyDefinition) {
+	private JSONObject addProperty(QName entityType, JSONObject entity, String attr, PropertyDefinition propertyDefinition) {
 
 		JSONObject properties = new JSONObject();
 		if (entity.has(PROP_PROPERTIES)) {
@@ -621,8 +621,8 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 
 		}
 
-		object.put(PROP_TITLE, entityDictionaryService.getTitle(propertyDefinition, getJsonEntityType(entity)));
-		if (entityDictionaryService.getDescription(propertyDefinition, getJsonEntityType(entity)) != null) {
+		object.put(PROP_TITLE, entityDictionaryService.getTitle(propertyDefinition, entityType));
+		if (entityDictionaryService.getDescription(propertyDefinition, entityType) != null) {
 			object.put(PROP_DESCRIPTION, entityDictionaryService.getDescription(propertyDefinition, getJsonEntityType(entity)));
 		}
 		properties.put(attr, object);
