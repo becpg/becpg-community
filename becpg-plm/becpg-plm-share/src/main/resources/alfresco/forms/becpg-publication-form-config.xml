@@ -93,6 +93,7 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="bp:pubChannelId" />
+					<show id="bp:pubChannelStatus" />
 				</field-visibility>
 			</form>
 
@@ -195,12 +196,30 @@
 			<form id="filter">
 				<field-visibility>
 					<show id="bp:pubChannelListChannel" />
+					<show id="bp:pubChannelListStatus" force="true" />
+					<show id="bp:pubChannelListAction" force="true" />
 				</field-visibility>
+				<appearance>
+					<field id="bp:pubChannelListChannel">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+						</control>
+					</field>
+					<field id="bp:pubChannelListStatus" >
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+					<field id="bp:pubChannelListAction" >
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+				</appearance>
 			</form>
 
 			<form id="datagrid">
 				<field-visibility>
-					 <show id="bp:pubChannelListAction" />
+					<show id="bp:pubChannelListAction" />
 					<show id="bp:pubChannelListChannel" />
 					<show id="bp:pubChannelListBatchId" />
 					<show id="bp:pubChannelListModifiedDate" />
