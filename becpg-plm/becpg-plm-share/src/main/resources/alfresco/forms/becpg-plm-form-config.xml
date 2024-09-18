@@ -4844,52 +4844,65 @@
 					<show id="sec:securityRef" />	
 					
 					<!-- audit -->
-					<show id="cm:creator" />
-					<show id="cm:created" />
-					<show id="cm:modifier" />
-					<show id="cm:modified" />
+					<show id="cm:creator" for-mode="view" />
+					<show id="cm:created" for-mode="view" />
+					<show id="cm:modifier" for-mode="view" />
+					<show id="cm:modified" for-mode="view" />
 
 				</field-visibility>
 				<appearance>
-					<set id="securityRule" appearance="bordered-panel" label-id="becpg.forms.set.securityRule.label" />
-					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set appearance="bordered-panel" id="mainInfo" label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
+	                <field id="cm:name" mandatory="false" read-only="false" set="mainInfo"/>
+	                <field id="cm:title" mandatory="false" read-only="false" set="mainInfo"/>
+	                <field id="bcpg:clientHierarchy1" set="mainInfo">
+	                    <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+	                        <control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/client_Hierarchy
+	                        </control-param>
+	                    </control>
+	                </field>
+	                <field id="bcpg:clientHierarchy2" set="mainInfo">
+	                    <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+	                        <control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/client_Hierarchy
+	                        </control-param>
+	                        <control-param name="parent">bcpg_clientHierarchy1
+	                        </control-param>
+	                    </control>
+	                </field>
+	                <field id="bcpg:clientState" read-only="false"  set="mainInfo" />                                
+	                <field id="cm:description" set="mainInfo" >
+	                    <control>
+	                        <control-param name="activateLinks">true</control-param>
+	                    </control>
+	                </field>
+	                <field id="bcpg:code" read-only="true"  set="mainInfo" />
+	                <field id="bcpg:erpCode" set="mainInfo" />
+	                <field id="gs1:tradeItemTradeChannel" mandatory="false" read-only="false" set="mainInfo"/>                                                             
+	                <field id="bcpg:clientTel" set="mainInfo" />
+	                <field id="bcpg:clientEmail" set="mainInfo" />
+	                <field id="bcpg:clientFax" set="mainInfo" />                                                                                                                                                                                        
+	                <field id="bcpg:locationAddress1" help-id="becpg.forms.help.locationAddress1"  set="mainInfo" />
+	                <field id="bcpg:locationAddress2" help-id="becpg.forms.help.locationAddress2"  set="mainInfo"  />
+	                <field id="bcpg:locationAddress3" set="mainInfo"  />
+	                <field id="bcpg:locationCity" set="mainInfo"  />
+	                <field id="bcpg:locationZip" set="mainInfo"  />    
+	                <field id="bcpg:locationState" set="mainInfo"  />
+	                <field id="bcpg:locationCountry" set="mainInfo"  />                                                                                                                                                                            
+	                <field id="pjt:projectScore" mandatory="false" read-only="false"  set="mainInfo" />
+	
+	                <set id="securityRule" appearance="bordered-panel" label-id="becpg.forms.set.securityRule.label" />                
+	                <field id="sec:securityRef" set="securityRule" mandatory="false" read-only="false" >
+	                    <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+	                        <control-param name="ds">becpg/autocomplete/targetassoc/associations/sec:aclGroup?&amp;excludeProps=sec:isLocalPermission%7Cfalse
+	                        </control-param>
+	                    </control>
+	                </field>
 
-					<field id="bcpg:clientHierarchy1">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/client_Hierarchy
-							</control-param>
-						</control>
-					</field>
-					<field id="bcpg:clientHierarchy2">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/client_Hierarchy
-							</control-param>
-							<control-param name="parent">bcpg_clientHierarchy1
-							</control-param>
-						</control>
-					</field>
-					<field id="cm:description">
-						<control>
-							<control-param name="activateLinks">true</control-param>
-						</control>
-					</field>
-					<field id="bcpg:code" read-only="true" />
-					<field id="bcpg:locationAddress1" help-id="becpg.forms.help.locationAddress1" />
-					<field id="bcpg:locationAddress2" help-id="becpg.forms.help.locationAddress2" />
-					<field id="pjt:projectScore" mandatory="false" read-only="false"/>
-
-					<field id="sec:securityRef" set="securityRule" mandatory="false" read-only="false">
-						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/sec:aclGroup?&amp;excludeProps=sec:isLocalPermission%7Cfalse
-							</control-param>
-						</control>
-					</field>
-					
 						<!-- audit -->
-					<field id="cm:creator" set="audit" />
-					<field id="cm:created" set="audit" />
-					<field id="cm:modifier" set="audit" />
-					<field id="cm:modified" set="audit" />
+                	<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+                    <field id="cm:creator" set="audit" />
+                    <field id="cm:created" set="audit" />
+                    <field id="cm:modifier" set="audit" />
+                    <field id="cm:modified" set="audit" />
 				</appearance>
 			</form>
 		</forms>
