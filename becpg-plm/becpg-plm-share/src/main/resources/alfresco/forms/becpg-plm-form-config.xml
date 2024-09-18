@@ -4827,6 +4827,7 @@
 					<show id="cm:description" />
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
+					<show  id="gs1:tradeItemTradeChannel" force="true"/>   
 					<show id="bcpg:clientTel" />
 					<show id="bcpg:clientEmail" />
 					<show id="bcpg:clientFax" />
