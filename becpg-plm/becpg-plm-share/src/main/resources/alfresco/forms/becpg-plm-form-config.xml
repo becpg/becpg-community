@@ -7600,6 +7600,7 @@
 							<control-param name="editorParameters">
 								toolbar: "bold italic underline",
 								menu: {},
+								contextmenu: {},
 								entity_encoding : "raw",
 								forced_root_blocks : false,
 								forced_root_block: '',
@@ -7677,6 +7678,7 @@
 							<control-param name="editorParameters">
 								toolbar: "bold italic underline",
 								menu: {},
+								contextmenu: {},
 								entity_encoding : "raw",
 								forced_root_blocks : false,
 								forced_root_block: '',
