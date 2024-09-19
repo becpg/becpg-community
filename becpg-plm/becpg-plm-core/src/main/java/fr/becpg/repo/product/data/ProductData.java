@@ -167,6 +167,9 @@ public class ProductData extends AbstractScorableEntity
 	 * Nutlist formulation
 	 */
 	private List<String> preparationStates;
+	private NodeRef reconstituant;
+	private Double reconstituantQty;
+	private Double preparationQuantity;
 
 	/*
 	 * Labeling formulation
@@ -1589,6 +1592,40 @@ public class ProductData extends AbstractScorableEntity
 	public boolean isPrepared() {
 		return preparationStates != null && preparationStates.contains("Prepared");
 	}
+	
+	
+	
+	@AlfSingleAssoc
+	@AlfQname(qname = "bcpg:nutrientPreparationReconstituantRef")
+	public NodeRef getReconstituant() {
+		return reconstituant;
+	}
+
+	public void setReconstituant(NodeRef reconstituant) {
+		this.reconstituant = reconstituant;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "bcpg:nutrientPreparationReconstituantQty")
+	public Double getReconstituantQty() {
+		return reconstituantQty;
+	}
+
+	public void setReconstituantQty(Double reconstituantQty) {
+		this.reconstituantQty = reconstituantQty;
+	}
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:nutrientPreparationQty")
+	public Double getPreparationQuantity() {
+		return preparationQuantity;
+	}
+
+	public void setPreparationQuantity(Double preparationQuantity) {
+		this.preparationQuantity = preparationQuantity;
+	}
+
+	
 
 	/**
 	 * <p>Getter for the field <code>ecoScore</code>.</p>
