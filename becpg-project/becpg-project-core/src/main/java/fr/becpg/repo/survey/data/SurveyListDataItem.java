@@ -80,7 +80,7 @@ public class SurveyListDataItem extends BeCPGDataObject {
 	
 	@AlfProp
 	@AlfQname(qname = "survey:generated")
-	public Boolean isGenerated() {
+	public Boolean getGenerated() {
 		return generated;
 	}
 
