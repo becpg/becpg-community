@@ -101,19 +101,36 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 			}, formulatedProduct.hasCompoListEl(new VariantFilters<>()));
 
 			if (formulatedProduct.getNutList() != null) {
+				ProductData reconstituant = null;
+				if (formulatedProduct.getReconstituant() != null && formulatedProduct.getReconstituantQty() != null) {
+					reconstituant = (ProductData) alfrescoRepository.findOne(formulatedProduct.getReconstituant());
+					if (formulatedProduct.getPreparationQuantity() != null) {
+						if (formulatedProduct.isPrepared()) {
+							Double servingSizeOfPreparation = null;
+							if (formulatedProduct.getServingSizeUnit() != null && formulatedProduct.getServingSizeUnit().isVolume()) {
+								servingSizeOfPreparation = formulatedProduct.getPreparationQuantity() + formulatedProduct.getReconstituantQty();
+							} else {
+								servingSizeOfPreparation = formulatedProduct.getPreparationQuantity()
+										+ FormulationHelper.getDensity(reconstituant) * formulatedProduct.getReconstituantQty();
+							}
+							formulatedProduct.setServingSize(servingSizeOfPreparation);
+						} else {
+							formulatedProduct.setServingSize(formulatedProduct.getPreparationQuantity());
+						}
+					}
+				}
 
-				calculateNutListDataItem(formulatedProduct, false, formulatedProduct.hasCompoListEl(new VariantFilters<>()));
+				calculateNutListDataItem(formulatedProduct, reconstituant, false, formulatedProduct.hasCompoListEl(new VariantFilters<>()));
 				computeFormulatedList(formulatedProduct, formulatedProduct.getNutList(), PLMModel.PROP_NUT_FORMULA,
 						"message.formulate.nutList.error");
-				calculateNutListDataItem(formulatedProduct, true, formulatedProduct.hasCompoListEl(new VariantFilters<>()));
-
+				calculateNutListDataItem(formulatedProduct, reconstituant, true, formulatedProduct.hasCompoListEl(new VariantFilters<>()));
 			}
 		}
 
 		return true;
 	}
 
-	private void calculateNutListDataItem(ProductData formulatedProduct, boolean onlyFormulaNutrient, boolean hasCompo) {
+	private void calculateNutListDataItem(ProductData formulatedProduct, ProductData reconstituant, boolean onlyFormulaNutrient, boolean hasCompo) {
 		formulatedProduct.getNutList().forEach(n -> {
 			if (n.getNut() != null) {
 				NutDataItem nut = (NutDataItem) alfrescoRepository.findOne(n.getNut());
@@ -143,16 +160,34 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 							}
 						}
 					}
+					Double preparedValue = null;
+
+					if (reconstituant != null) {
+						preparedValue = n.getValue();
+
+						if (preparedValue != null) {
+							NutListDataItem reconstituantNutListDataItem = reconstituant.getNutList().stream()
+									.filter(s -> n.getCharactNodeRef().equals(s.getCharactNodeRef())).findFirst().orElse(null);
+
+							if (reconstituantNutListDataItem != null && reconstituantNutListDataItem.getValue() != null) {
+								preparedValue += reconstituantNutListDataItem.getValue()
+										* (FormulationHelper.getDensity(reconstituant) * (formulatedProduct.getReconstituantQty()/100));
+							}
+						}
+
+					}
 
 					if ((formulatedProduct.getSecondaryYield() != null) && (formulatedProduct.getSecondaryYield() != 0d)) {
-						Double preparedValue = n.getValue();
-						if (preparedValue != null) {
-							preparedValue = preparedValue / (formulatedProduct.getSecondaryYield() / 100d);
-							n.setPreparedValue(preparedValue);
+						if (preparedValue == null) {
+							preparedValue = n.getValue();
 						}
-					} else {
-						n.setPreparedValue(null);
+
+						if (preparedValue != null) {
+							preparedValue /= (formulatedProduct.getSecondaryYield() / 100d);
+						}
+
 					}
+					n.setPreparedValue(preparedValue);
 
 					Double servingSize = FormulationHelper.getServingSizeInLorKg(formulatedProduct);
 					Double valueForServing = formulatedProduct.isPrepared() && n.getPreparedValue() != null ? n.getPreparedValue() : n.getValue();
