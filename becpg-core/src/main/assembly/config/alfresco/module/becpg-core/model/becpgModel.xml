@@ -590,14 +590,14 @@
 		<aspect name="bcpg:userLanguageAspect">
 			<properties>
 				<property name="bcpg:userContentLocale">
-					<type>d:locale</type>
+					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:userLocale">
-					<type>d:locale</type>
+					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 			</properties>
 		</aspect>
