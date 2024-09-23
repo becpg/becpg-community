@@ -11,6 +11,8 @@ import java.util.function.Predicate;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.version.Version2Model;
+import org.alfresco.repo.version.VersionBaseModel;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
@@ -185,7 +187,7 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 	
 			if ((sourceSupplierAccountAssocs != null) && !sourceSupplierAccountAssocs.isEmpty()) {
 				for (NodeRef sourceSupplierAccountAssoc : sourceSupplierAccountAssocs) {
-					if (PLMModel.TYPE_SUPPLIER.equals(nodeService.getType(sourceSupplierAccountAssoc))) {
+					if (!isVersion(sourceSupplierAccountAssoc) && PLMModel.TYPE_SUPPLIER.equals(nodeService.getType(sourceSupplierAccountAssoc))) {
 						return sourceSupplierAccountAssoc;
 					}
 				}
@@ -193,6 +195,11 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 		}
 	
 		return null;
+	}
+	
+	private boolean isVersion(NodeRef nodeRef) {
+		return nodeRef.getStoreRef().getProtocol().contains(VersionBaseModel.STORE_PROTOCOL)
+				|| nodeRef.getStoreRef().getIdentifier().contains(Version2Model.STORE_ID);
 	}
 
 	private NodeRef copyReport(NodeRef parentFolder, NodeRef reportNodeRef) {
