@@ -397,6 +397,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	private String bioOriginsSeparator = RepoConsts.LABEL_SEPARATOR;
 	private String subIngsSeparator = RepoConsts.LABEL_SEPARATOR;
 	private String footNotesLabelSeparator = HTML_BREAK_LINE;
+	private String sortWithSpecificLocale = null;
 
 	private boolean showIngCEECode = false;
 	private boolean useVolume = false;
@@ -911,9 +912,18 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		formatsByName.put("detailsDefaultFormat", textFormatRule);
 
 	}
+	
+
+	public String getSortWithSpecificLocale() {
+		return sortWithSpecificLocale;
+	}
+
+	public void setSortWithSpecificLocale(String sortWithSpecificLocale) {
+		this.sortWithSpecificLocale = sortWithSpecificLocale;
+	}
+	
 
 	/* formaters */
-
 	private MessageFormat getIngTextFormat(LabelingComponent lblComponent, Double qty, boolean multiple) {
 
 		if (textFormaters.containsKey(lblComponent.getNodeRef())) {
@@ -1587,13 +1597,23 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	private void sort(List<LabelingComponent> toSort) {
-		Collections.sort(toSort, (a, b) -> {
-			int result = compareLabelingComponents(a, b);
-			if (result == 0) {
-				result = compareIngredientNames(a, b);
+		Locale currentLocal = I18NUtil.getLocale();
+		try {	
+			if(sortWithSpecificLocale!=null) {
+				I18NUtil.setLocale(MLTextHelper.parseLocale(sortWithSpecificLocale));
 			}
-			return result;
-		});
+		
+			Collections.sort(toSort, (a, b) -> {
+				int result = compareLabelingComponents(a, b);
+				if (result == 0) {
+					result = compareIngredientNames(a, b);
+				}
+				return result;
+			});
+		
+		} finally {
+			I18NUtil.setLocale(currentLocal);
+		}
 	}
 
 	private int compareLabelingComponents(LabelingComponent a, LabelingComponent b) {
