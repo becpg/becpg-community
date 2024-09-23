@@ -4868,6 +4868,15 @@
 					<index enabled="false"/>
 				</property>				
 								
+								
+				<property name="bcpg:nutrientReferenceProducts">
+					<type>d:mltext</type>
+					<index enabled="true">
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>			
+								
 				<property name="bcpg:nutrientPreparedUnit">
 					<type>d:text</type>
 					<default>g</default>
@@ -5591,6 +5600,27 @@
 			</properties>
 		</aspect>
 
+
+		<aspect name="bcpg:nutListReferenceAspect">
+			<properties>
+				<property name="bcpg:nutListReductionFormulatedValue">
+					<type>d:mltext</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:nutListReductionValue">
+					<type>d:mltext</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:nutListReferenceValue">
+					<type>d:mltext</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+			</properties>
+		</aspect>
+		
 
 		<aspect name="bcpg:nutListPreparedAspect">
 			<properties>
