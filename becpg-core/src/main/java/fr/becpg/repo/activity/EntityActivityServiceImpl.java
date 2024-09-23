@@ -483,6 +483,19 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 									} else if (ent instanceof List) {
 										beforeList.add(((List<?>) ent).stream().map(o -> o.toString()).collect(Collectors.toList()));
 									} else {
+										PropertyDefinition propDef = entityDictionaryService.getProperty(entry.getKey());
+										if (propDef.getConstraints() != null) {
+											for (ConstraintDefinition constraint : propDef.getConstraints()) {
+												if (constraint.getConstraint() instanceof ListOfValuesConstraint lvc) {
+													if (ent instanceof List<?> entList) {
+														entList = entList.stream().map(o -> lvc.getDisplayLabel(o.toString(), dictionaryService)).toList();
+														ent = (Serializable) entList;
+													} else if (ent != null) {
+														ent = lvc.getDisplayLabel(ent.toString(), dictionaryService);
+													}
+												}
+											}
+										}
 										beforeList.add(ent);
 									}
 								}
@@ -506,6 +519,19 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 										} else if (ent instanceof List) {
 											afterList.add(((List<?>) ent).stream().map(o -> o.toString()).collect(Collectors.toList()));
 										} else {
+											PropertyDefinition propDef = entityDictionaryService.getProperty(entry.getKey());
+											if (propDef.getConstraints() != null) {
+												for (ConstraintDefinition constraint : propDef.getConstraints()) {
+													if (constraint.getConstraint() instanceof ListOfValuesConstraint lvc) {
+														if (ent instanceof List<?> entList) {
+															entList = entList.stream().map(o -> lvc.getDisplayLabel(o.toString(), dictionaryService)).toList();
+															ent = (Serializable) entList;
+														} else if (ent != null) {
+															ent = lvc.getDisplayLabel(ent.toString(), dictionaryService);
+														}
+													}
+												}
+											}
 											afterList.add(ent);
 										}
 									}
