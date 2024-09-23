@@ -170,7 +170,7 @@ public class ProductData extends AbstractScorableEntity
 	private NodeRef reconstituant;
 	private Double reconstituantQty;
 	private Double preparationQuantity;
-
+	private MLText referenceProducts;
 	/*
 	 * Labeling formulation
 	 */
@@ -1624,8 +1624,20 @@ public class ProductData extends AbstractScorableEntity
 	public void setPreparationQuantity(Double preparationQuantity) {
 		this.preparationQuantity = preparationQuantity;
 	}
+	
+	
 
 	
+	@AlfProp
+	@AlfMlText
+	@AlfQname(qname = "bcpg:nutrientReferenceProducts")
+	public MLText getReferenceProducts() {
+		return referenceProducts;
+	}
+
+	public void setReferenceProducts(MLText referenceProducts) {
+		this.referenceProducts = referenceProducts;
+	}
 
 	/**
 	 * <p>Getter for the field <code>ecoScore</code>.</p>
