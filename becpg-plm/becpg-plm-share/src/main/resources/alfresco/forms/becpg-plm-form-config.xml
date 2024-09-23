@@ -1800,6 +1800,7 @@
 	<config evaluator="node-type" condition="bcpg:ing">
 		<forms>
 			<form>
+				<edit-form template="tab-edit" />
 				<field-visibility>
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
@@ -1829,53 +1830,20 @@
 
 				</field-visibility>
 				<appearance>
-					<set id="1-col-1" />
-					<set id="2-col-1" template="/org/alfresco/components/form/2-column-set.ftl" />
-					<set id="1-col-2" />
-					<set id="2-col-2" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set appearance="bordered-panel" label-id="becpg.forms.set.designation.label" id="designationTab" />
+					<set appearance="bordered-panel" label-id="becpg.forms.set.formulation.label" id="formulationTab" />
+					<set appearance="bordered-panel" label-id="becpg.forms.set.designation.label" id="designation" template="/org/alfresco/components/form/2-column-set.ftl" set="designationTab" />
+					<set appearance="bordered-panel" label-id="becpg.forms.set.formulation.label" id="formulation" template="/org/alfresco/components/form/2-column-set.ftl" set="formulationTab" />
 
-					<field id="bcpg:charactName" set="1-col-1" />
-					<field id="cm:description" set="1-col-1">
+					<field id="bcpg:charactName" set="designation" />
+					<field id="bcpg:pluralLegalName" set="designation" />
+					<field id="bcpg:legalName" set="designation" />
+					<field id="cm:description" set="designation">
 						<control>
 							<control-param name="activateLinks">true</control-param>
 						</control>
 					</field>
-					<field id="bcpg:pluralLegalName" set="2-col-1" />
-					<field id="bcpg:legalName" set="2-col-1" />
-					<field id="bcpg:ingCEECode" set="2-col-1" />
-					<field id="bcpg:casNumber" set="2-col-1" />
-					<field id="bcpg:ceNumber" set="2-col-1" />
-					<field id="bcpg:ecNumber" set="2-col-1" />
-					<field id="bcpg:fdaNumber" set="2-col-1" />
-					<field id="bcpg:femaNumber" set="2-col-1" />
-					<field id="bcpg:flNumber" set="2-col-1" />
-					<field id="bcpg:regulatoryCode" set="2-col-1" />
-					<field id="bcpg:regulatoryComment" set="2-col-1" />
-					<field id="bcpg:erpCode" set="1-col-2" />
-					<field id="bcpg:ingTypeV2" set="1-col-2">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ingTypeItem
-							</control-param>
-						</control>
-					</field>
-				    <field id="bcpg:evaporatedRate"  set="1-col-2" />
-					<field id="bcpg:linkedSearchAssociation" set="1-col-2">
-						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:ing
-							</control-param>
-						</control>
-					</field>
-					<field id="bcpg:ingAllergens" set="1-col-2">
-						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-						</control>
-					</field>
-					<field id="bcpg:ingAllergensQtyPerc" help-id="becpg.forms.help.ingAllergensQtyPerc" set="1-col-2" />
-
-
-					<field id="gs1:productActivityTypeCode" set="1-col-2" />
-					<field id="bcpg:isSubstanceOfVeryHighConcern" set="1-col-2" />
-					<field id="bcpg:svhcReasonsForInclusion" set="1-col-2" />
-					<field id="bcpg:parentEntityRef"  set="1-col-2" mandatory="false" read-only="false">
+					<field id="bcpg:parentEntityRef" set="designation" mandatory="false" read-only="false">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:rawMaterial
 							</control-param>
@@ -1884,18 +1852,50 @@
 							<control-param name="excludeSources">true</control-param>
 						</control>
 					</field>
-					<field id="bcpg:isDeleted" set="2-col-2" />
-					<field id="sec:readGroups" set="2-col-2" />
+					<field id="bcpg:erpCode" set="designation" />
+					<field id="bcpg:ingCEECode" set="designation" />
+					<field id="bcpg:casNumber" set="designation" />
+					<field id="bcpg:ceNumber" set="designation" />
+					<field id="bcpg:ecNumber" set="designation" />
+					<field id="bcpg:fdaNumber" set="designation" />
+					<field id="bcpg:femaNumber" set="designation" />
+					<field id="bcpg:flNumber" set="designation" />
+					<field id="bcpg:linkedSearchAssociation" set="designation">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:ing
+							</control-param>
+						</control>
+					</field>
+					<field id="sec:readGroups" set="designation" />
+					<field id="bcpg:isDeleted" set="designation" />
+					
+					<field id="bcpg:regulatoryCode" set="formulation" />
+					<field id="bcpg:regulatoryComment" set="formulation" />
+					<field id="bcpg:ingTypeV2" set="formulation">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ingTypeItem
+							</control-param>
+						</control>
+					</field>
+					<field id="gs1:productActivityTypeCode" set="formulation" />
+					<field id="bcpg:ingAllergens" set="formulation">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+						</control>
+					</field>
+					<field id="bcpg:ingAllergensQtyPerc" help-id="becpg.forms.help.ingAllergensQtyPerc" set="formulation" />
+					<field id="bcpg:evaporatedRate"  set="formulation" />
+					<field id="bcpg:isSubstanceOfVeryHighConcern" set="formulation" />
+					<field id="bcpg:svhcReasonsForInclusion" set="formulation" />
 				</appearance>
 			</form>
 		</forms>
 	</config>
 
-	<config evaluator="model-type" condition="bcpg:ing" replace="false">
+	<config evaluator="model-type" condition="bcpg:ing">
 		<forms>
             <!-- Create item form -->
 			<form>
-				<edit-form template="/org/alfresco/components/form/tab-edit-form.ftl" />
+				<edit-form template="tab-edit" />
 				<field-visibility>
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
@@ -1925,8 +1925,10 @@
 				</field-visibility>
 
 				<appearance>
-					<set appearance="bordered-panel" label-id="becpg.forms.set.designation.label" id="designation" template="/org/alfresco/components/form/2-column-set.ftl" />
-					<set appearance="bordered-panel" label-id="becpg.forms.set.formulation.label" id="formulation" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set appearance="bordered-panel" label-id="becpg.forms.set.designation.label" id="designationTab" />
+					<set appearance="bordered-panel" label-id="becpg.forms.set.formulation.label" id="formulationTab" />
+					<set appearance="bordered-panel" label-id="becpg.forms.set.designation.label" id="designation" template="/org/alfresco/components/form/2-column-set.ftl" set="designationTab" />
+					<set appearance="bordered-panel" label-id="becpg.forms.set.formulation.label" id="formulation" template="/org/alfresco/components/form/2-column-set.ftl" set="formulationTab" />
 
 					<field id="bcpg:charactName" set="designation" />
 					<field id="bcpg:pluralLegalName" set="designation" />
