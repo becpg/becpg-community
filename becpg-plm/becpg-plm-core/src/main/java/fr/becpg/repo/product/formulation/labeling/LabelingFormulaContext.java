@@ -217,6 +217,12 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	public Map<NodeRef, Double> getAllergens() {
 		return allergens;
 	}
+	
+	public void addAllergens(List<NodeRef> toAdd) {
+		if(toAdd!=null) {
+			toAdd.forEach(a ->allergens.putIfAbsent(a, null));
+		}
+	}
 
 	/**
 	 * <p>
@@ -227,6 +233,12 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 */
 	public Map<NodeRef, Double> getInVolAllergens() {
 		return inVolAllergens;
+	}
+	
+	public void addInVolAllergens(List<NodeRef> toAdd) {
+		if(toAdd!=null) {
+			toAdd.forEach(a ->inVolAllergens.putIfAbsent(a, null));
+		}
 	}
 
 	/**
@@ -240,6 +252,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return inVolAllergensProcess;
 	}
 
+	public void addInVolAllergensProcess(List<NodeRef> toAdd) {
+		if(toAdd!=null) {
+			toAdd.forEach(a ->inVolAllergensProcess.putIfAbsent(a, null));
+		}
+	}
 	/**
 	 * <p>
 	 * Getter for the field <code>inVolAllergensRawMaterial</code>.
@@ -251,6 +268,12 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return inVolAllergensRawMaterial;
 	}
 
+	public void addInVolAllergensRawMaterial(List<NodeRef> toAdd) {
+		if(toAdd!=null) {
+			toAdd.forEach(a ->inVolAllergensRawMaterial.putIfAbsent(a, null));
+		}
+	}
+	
 	/**
 	 * <p>
 	 * getCompositeLabeling.
