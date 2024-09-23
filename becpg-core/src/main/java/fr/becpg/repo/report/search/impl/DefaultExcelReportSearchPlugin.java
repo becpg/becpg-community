@@ -37,6 +37,7 @@ import fr.becpg.repo.formulation.spel.SpelHelper;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.ExcelHelper;
+import fr.becpg.repo.helper.JsonFormulaHelper;
 import fr.becpg.repo.helper.ExcelHelper.ExcelCellStyles;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -157,6 +158,14 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 
 		Map<QName, Serializable> properties = nodeService.getProperties(itemNodeRef);
 		Map<String, Object> item = doExtract(itemNodeRef, itemType, metadataFields, properties, cache);
+		for (Entry<String, Object> itemEntry : item.entrySet()) {
+			String itemKey = itemEntry.getKey();
+			Object itemValue = itemEntry.getValue();
+			if (itemKey.startsWith("prop_bcpg_dynamicCharactColumn") && JsonFormulaHelper.isJsonString(itemValue)) {
+				Object value = JsonFormulaHelper.cleanCompareJSON((String) itemValue);
+				item.put(itemKey, value);
+			}
+		}
 		if (entityItems != null) {
 			item.putAll(entityItems);
 		}
