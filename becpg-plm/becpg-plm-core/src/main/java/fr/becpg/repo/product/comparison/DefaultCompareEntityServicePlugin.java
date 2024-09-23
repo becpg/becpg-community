@@ -552,7 +552,7 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 			}
 
 			// Store total qty for before multiLevelComparison
-			double[] totalQty = new double[] {0,0};
+			double[] totalQty = new double[nbEntities];
 
 			// compare properties of characteristics
 			for (CharacteristicToCompare c : characteristicsToCmp) {
