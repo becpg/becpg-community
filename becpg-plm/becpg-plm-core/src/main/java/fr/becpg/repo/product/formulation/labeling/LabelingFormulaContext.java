@@ -2433,7 +2433,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 						if (geoOrigins.containsKey(entry.getKey())) {
 							geoOrigins.get(entry.getKey()).addAll(entry.getValue());
 						} else {
-							geoOrigins.put(entry.getKey(), entry.getValue());
+							geoOrigins.put(entry.getKey(),new HashSet<>(entry.getValue()));
 						}
 
 					}
