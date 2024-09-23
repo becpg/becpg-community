@@ -61,9 +61,6 @@
           <show force="true" id="bcpg:numberOfServings"/>
           <show force="true" id="bcpg:nutrientPreparationState"/>
           <show force="true" id="bcpg:nutrientPreparedUnit"/>
-          <show force="false" id="bcpg:nutrientPreparationQty" />
-          <show force="false" id="bcpg:nutrientPreparationReconstituantRef"/>
-          <show force="false" id="bcpg:nutrientPreparationReconstituantQty"/>
           <show force="false" id="bcpg:productSpecifications"/>
           <show for-mode="view" force="false" id="bcpg:ecoScore"/>
           <show for-mode="view" force="false" id="bcpg:ecoScoreDetails"/>
@@ -498,17 +495,6 @@
           </field>   
           <field  help-id="becpg.forms.help.nutrientPreparationState" id="bcpg:nutrientPreparationState" mandatory="false" read-only="false" set="formulation"> </field>
           <field  id="bcpg:nutrientPreparedUnit" mandatory="false" read-only="false" set="formulation"> </field>
-          <field  id="bcpg:nutrientPreparationQty" mandatory="false" read-only="false" set="formulation"> </field>
-          <field  id="bcpg:nutrientPreparationReconstituantRef" mandatory="false" read-only="false" set="formulation">
-         		 <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial%5E4,bcpg:finishedProduct,bcpg:localSemiFinishedProduct%5E2,bcpg:semiFinishedProduct%5E2
-							</control-param>
-						</control>
-          </field>
-          <field  id="bcpg:nutrientPreparationReconstituantQty" mandatory="false" read-only="false" set="formulation"> </field>
-       
-          
-          
           <field help-id="becpg.forms.help.productSpecifications" id="bcpg:productSpecifications" mandatory="false" read-only="false" set="formulation">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
               <control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
@@ -1360,6 +1346,7 @@
           <show force="false" id="bcpg:nutrientPreparationQty" />
           <show force="false" id="bcpg:nutrientPreparationReconstituantRef"/>
           <show force="false" id="bcpg:nutrientPreparationReconstituantQty"/>
+          <show for-mode="view" force="false" id="bcpg:nutrientReferenceProducts" />
           <show for-mode="view" force="true" id="bcpg:nutrientProfilingScore"/>
           <show for-mode="view" force="true" id="bcpg:nutrientProfilingDetails"/>
           <show force="true" id="bcpg:nutrientProfileCategory"/>
@@ -2071,8 +2058,6 @@
           <show force="true" id="bcpg:numberOfServings"/>
           <show force="true" id="bcpg:nutrientPreparationState"/>
           <show force="true" id="bcpg:nutrientPreparedUnit"/>
-          <show force="true" id="bcpg:nutrientPreparationReconstituantRef"/>
-		  <show force="true" id="bcpg:nutrientPreparationReconstituantQty"/>
           <show force="false" id="bcpg:productSpecifications"/>
           <show force="true" id="bcpg:useByDate"/>
           <show force="true" id="bcpg:bestBeforeDate"/>
@@ -2213,15 +2198,6 @@
           </field>
            <field  id="bcpg:nutrientPreparationState" mandatory="false" read-only="false" set="formulation"> </field>
            <field  id="bcpg:nutrientPreparedUnit" mandatory="false" read-only="false" set="formulation"> </field>
-           <field  id="bcpg:nutrientPreparationReconstituantRef" mandatory="false" read-only="false" set="formulation">
-           <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial%5E4,bcpg:finishedProduct,bcpg:localSemiFinishedProduct%5E2,bcpg:semiFinishedProduct%5E2
-							</control-param>
-						</control>
-           </field>
-          <field  id="bcpg:nutrientPreparationReconstituantQty" mandatory="false" read-only="false" set="formulation"> </field>
-          
-          
           <field id="bcpg:productSpecifications" mandatory="false" read-only="false" set="formulation">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
               <control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
@@ -2401,6 +2377,7 @@
           <show force="true" id="bcpg:numberOfServings"/>
           <show force="true" id="bcpg:nutrientPreparationState"/>
           <show force="true" id="bcpg:nutrientPreparedUnit"/>
+          <show force="true" id="bcpg:nutrientPreparationQty" />
           <show force="true" id="bcpg:nutrientPreparationReconstituantRef" />
 		  <show force="true" id="bcpg:nutrientPreparationReconstituantQty"/>
           <show force="true" id="bcpg:productSpecifications"/>
@@ -2757,6 +2734,8 @@
           </field>
           <field help-id="becpg.forms.help.nutrientPreparationState" id="bcpg:nutrientPreparationState" mandatory="false" read-only="false" set="formulation"> </field>
           <field  id="bcpg:nutrientPreparedUnit" mandatory="false" read-only="false" set="formulation"> </field>
+          
+         <field  id="bcpg:nutrientPreparationQty" mandatory="false" read-only="false" set="formulation"> </field>
           <field  id="bcpg:nutrientPreparationReconstituantRef" mandatory="false" read-only="false" set="formulation">
           <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial%5E4,bcpg:finishedProduct,bcpg:localSemiFinishedProduct%5E2,bcpg:semiFinishedProduct%5E2

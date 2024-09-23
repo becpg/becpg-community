@@ -62,4 +62,5 @@ public interface NutDatabaseService {
 	 * @return e.g. CIQUAL3200 - Broccoli, cru
 	 */
 	String getProductName(NodeRef file, String id);
+
 }
