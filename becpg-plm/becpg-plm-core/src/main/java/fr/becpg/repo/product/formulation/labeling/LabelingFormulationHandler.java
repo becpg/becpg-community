@@ -1229,7 +1229,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				}
 				current.setQties(0d);
 				if (logger.isTraceEnabled()) {
-					logger.trace(" - Add new ing to aggregate  :" + getName(current));
+					logger.trace(" - Add new ing to aggregate  :" + getName(current)+ " to "+ getName(compositeLabeling));
 				}
 
 				if (DeclarationType.Group.equals(current.getDeclarationType())) {
@@ -1287,20 +1287,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			copyAttributes(compositeLabeling, component);
 		}
 
-		if ((qty != null) && (compositeLabeling.getQtyTotal() != null) && qtyWithYield != null) {
-			compositeLabeling.setQty(qty + compositeLabeling.getQtyTotal().doubleValue());
-			compositeLabeling.setQtyWithYield(qtyWithYield + compositeLabeling.getQtyTotal().doubleValue());
-			compositeLabeling.setQtyTotal(compositeLabeling.getQty());
-
-		}
-
-		if ((volume != null) && (compositeLabeling.getVolumeTotal() != null) && volumeWithYield != null) {
-			compositeLabeling.setVolume(volume + compositeLabeling.getVolumeTotal().doubleValue());
-			compositeLabeling.setVolumeWithYield(volumeWithYield + compositeLabeling.getVolumeTotal().doubleValue());
-			compositeLabeling.setVolumeTotal(compositeLabeling.getVolume());
-
-		}
-
+		appendQtiesToLabeling(compositeLabeling, qty, qtyWithYield, volume, volumeWithYield, true, true);
+		
 		if ((qty == null) && (current != null)) {
 			return ReqCtrlListDataItem.forbidden().withMessage(MLTextHelper.getI18NMessage(NULL_ING_ERROR, getName(current)))
 					.ofDataType(RequirementDataType.Labelling);
@@ -1349,18 +1337,26 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				for (CompositeLabeling childGroup : ret) {
 					// Reset qty
 
-					qtyTotalToremove += childGroup.getQty();
-					childGroup.setQty((childGroup.getQty() * current.getQty()) / current.getQtyTotal().doubleValue());
+					if(childGroup.getQty()!=null) {
+						qtyTotalToremove += childGroup.getQty();
+						childGroup.setQty((childGroup.getQty() * current.getQty()) / current.getQtyTotal().doubleValue());
+					}
+					
+					if(childGroup.getVolume()!=null) {
+						volumeTotalToremove += childGroup.getVolume();
+						childGroup.setVolume((childGroup.getVolume() * current.getVolume()) / current.getVolumeTotal().doubleValue());
+					}
 
-					volumeTotalToremove += childGroup.getVolume();
-					childGroup.setVolume((childGroup.getVolume() * current.getVolume()) / current.getVolumeTotal().doubleValue());
+					if(childGroup.getQtyWithYield()!=null) {
+						qtyTotalToremoveWithYield += childGroup.getQtyWithYield();
+						childGroup.setQtyWithYield((childGroup.getQtyWithYield() * current.getQtyWithYield()) / current.getQtyTotal().doubleValue());
+					}
 
-					qtyTotalToremoveWithYield += childGroup.getQtyWithYield();
-					childGroup.setQtyWithYield((childGroup.getQtyWithYield() * current.getQtyWithYield()) / current.getQtyTotal().doubleValue());
-
-					volumeTotalToremoveWithYield += childGroup.getVolumeWithYield();
-					childGroup.setVolumeWithYield(
-							(childGroup.getVolumeWithYield() * current.getVolumeWithYield()) / current.getVolumeTotal().doubleValue());
+					if(childGroup.getVolumeWithYield()!=null) {
+						volumeTotalToremoveWithYield += childGroup.getVolumeWithYield();
+						childGroup.setVolumeWithYield(
+								(childGroup.getVolumeWithYield() * current.getVolumeWithYield()) / current.getVolumeTotal().doubleValue());
+					}
 
 					if (logger.isTraceEnabled()) {
 						logger.trace(" - Move child group to level n-1 :" + getName(childGroup) + " new qty " + childGroup.getQty() + " new vol "
