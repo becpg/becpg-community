@@ -10,6 +10,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.autocomplete.AutoCompleteEntry;
@@ -24,26 +25,17 @@ public class QNameAutoCompletePlugin implements AutoCompletePlugin {
 
 	private static final String SOURCE_TYPE_QNAME = "qname";
 
+	@Autowired
 	private NodeService nodeService;
+	
+	@Autowired
 	private EntityListDAO entityListDAO;
+	
+	@Autowired
 	private EntityDictionaryService entityDictionaryService;
+	
+	@Autowired
 	private NamespaceService namespaceService;
-
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
-
-	public void setEntityListDAO(EntityListDAO entityListDAO) {
-		this.entityListDAO = entityListDAO;
-	}
-
-	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
-		this.entityDictionaryService = entityDictionaryService;
-	}
-
-	public void setNamespaceService(NamespaceService namespaceService) {
-		this.namespaceService = namespaceService;
-	}
 
 	@Override
 	public String[] getHandleSourceTypes() {
