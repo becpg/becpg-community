@@ -98,7 +98,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	private static final Log logger = LogFactory.getLog(LabelingFormulaContext.class);
 
 	public static final BigDecimal DEFAULT_RATIO = BigDecimal.valueOf(1d);
-	
+
 	private static final int PRECISION_RATIO = 16;
 	public static final MathContext PRECISION = new MathContext(PRECISION_RATIO, RoundingMode.HALF_UP);
 
@@ -223,6 +223,12 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return allergens;
 	}
 
+	public void addAllergens(List<NodeRef> toAdd) {
+		if (toAdd != null) {
+			toAdd.forEach(a -> allergens.putIfAbsent(a, null));
+		}
+	}
+
 	/**
 	 * <p>
 	 * Getter for the field <code>inVolAllergens</code>.
@@ -232,6 +238,12 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 */
 	public Map<NodeRef, Double> getInVolAllergens() {
 		return inVolAllergens;
+	}
+
+	public void addInVolAllergens(List<NodeRef> toAdd) {
+		if (toAdd != null) {
+			toAdd.forEach(a -> inVolAllergens.putIfAbsent(a, null));
+		}
 	}
 
 	/**
@@ -245,6 +257,12 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return inVolAllergensProcess;
 	}
 
+	public void addInVolAllergensProcess(List<NodeRef> toAdd) {
+		if (toAdd != null) {
+			toAdd.forEach(a -> inVolAllergensProcess.putIfAbsent(a, null));
+		}
+	}
+
 	/**
 	 * <p>
 	 * Getter for the field <code>inVolAllergensRawMaterial</code>.
@@ -254,6 +272,12 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 */
 	public Map<NodeRef, Double> getInVolAllergensRawMaterial() {
 		return inVolAllergensRawMaterial;
+	}
+
+	public void addInVolAllergensRawMaterial(List<NodeRef> toAdd) {
+		if (toAdd != null) {
+			toAdd.forEach(a -> inVolAllergensRawMaterial.putIfAbsent(a, null));
+		}
 	}
 
 	/**
@@ -441,10 +465,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	private Integer maxPrecision = 4;
 
 	private Double qtyPrecisionThreshold = 1d / Math.pow(10, (double) maxPrecision + (double) 2);
-	
 
-	
-	
 	public Double getQtyPrecisionThreshold() {
 		return qtyPrecisionThreshold;
 	}
@@ -884,7 +905,19 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		formatsByName.put("ingDefaultFormat", textFormatRule);
 		formatsByName.put("detailsDefaultFormat", textFormatRule);
 
+	}<<<<<<<3.2.4=======
+
+	public String getSortWithSpecificLocale() {
+		return sortWithSpecificLocale;
 	}
+
+	public void setSortWithSpecificLocale(String sortWithSpecificLocale) {
+		this.sortWithSpecificLocale = sortWithSpecificLocale;
+	}>>>>>>>24540
+
+	c6 Fix#24192-[Bug]
+	Add addAllergens methods for
+	SPEL formula
 
 	/* formaters */
 
@@ -1144,7 +1177,6 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 						if (isShowRuleMatch(selectedRule, showRule, qty)) {
 							selectedRule = showRule;
 						}
-
 					}
 				}
 			}
@@ -1393,10 +1425,10 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	public static Double roundedDouble(BigDecimal qtyPerc) {
-		if(qtyPerc != null) {
-			return qtyPerc.round(new MathContext(PRECISION_RATIO-6, RoundingMode.HALF_UP)).stripTrailingZeros().doubleValue();
+		if (qtyPerc != null) {
+			return qtyPerc.round(new MathContext(PRECISION_RATIO - 6, RoundingMode.HALF_UP)).stripTrailingZeros().doubleValue();
 		}
-		return  null;
+		return null;
 	}
 
 	/**
@@ -1538,13 +1570,35 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	private void sort(List<LabelingComponent> toSort) {
+<<<<<<< 3.2.4
 		Collections.sort(toSort, (a, b) -> {
 			int result = compareLabelingComponents(a, b);
 			if (result == 0) {
 				result = compareIngredientNames(a, b);
+=======
+		Locale currentLocal = I18NUtil.getLocale();
+		try {
+			if (sortWithSpecificLocale != null) {
+				I18NUtil.setLocale(MLTextHelper.parseLocale(sortWithSpecificLocale));
+>>>>>>> 24540c6 Fix #24192 - [Bug] Add addAllergens methods for SPEL formula
 			}
+<<<<<<< 3.2.4
 			return result;
 		});
+=======
+
+			Collections.sort(toSort, (a, b) -> {
+				int result = compareLabelingComponents(a, b);
+				if (result == 0) {
+					result = compareIngredientNames(a, b);
+				}
+				return result;
+			});
+
+		} finally {
+			I18NUtil.setLocale(currentLocal);
+		}
+>>>>>>> 24540c6 Fix #24192 - [Bug] Add addAllergens methods for SPEL formula
 	}
 
 	private int compareLabelingComponents(LabelingComponent a, LabelingComponent b) {
@@ -1578,11 +1632,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				return -1; // a is considered greater if b is null
 			}
 			if (Math.abs(volumeB - volumeA) < qtyPrecisionThreshold) {
-	            return 0; // Consider them equal if within the threshold
-	        } else {
-	        	return Double.compare(volumeB, volumeA); 
-	        }
-			
+				return 0; // Consider them equal if within the threshold
+			} else {
+				return Double.compare(volumeB, volumeA);
+			}
+
 		}
 
 		Double qtyA = a.getQty(ingsLabelingWithYield);
@@ -1596,10 +1650,10 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			return -1; // a is considered greater if b is null
 		}
 		if (Math.abs(qtyB - qtyA) < qtyPrecisionThreshold) {
-            return 0; // Consider them equal if within the threshold
-        } else {
-        	return Double.compare(qtyB, qtyA); 
-        }
+			return 0; // Consider them equal if within the threshold
+		} else {
+			return Double.compare(qtyB, qtyA);
+		}
 
 	}
 
@@ -1739,8 +1793,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				if ((subLabel != null) && !subLabel.isEmpty()) {
 
 					if (force100Perc && totalWithYield != null && qtyPercWithYield != null) {
-						qtyPercWithYield = roundedDouble(BigDecimal.valueOf(qtyPercWithYield).divide(totalWithYield, PRECISION)
-								.multiply(BigDecimal.valueOf(1d),PRECISION));
+						qtyPercWithYield = roundedDouble(
+								BigDecimal.valueOf(qtyPercWithYield).divide(totalWithYield, PRECISION).multiply(BigDecimal.valueOf(1d), PRECISION));
 					}
 
 					if (first) {
@@ -1798,8 +1852,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 							}
 
 							subLabel = getIngTextFormat(component, qtyPerc, ((CompositeLabeling) component).getIngList().size() > 1)
-									.format(new Object[] { ingName, qtyPerc,
-											renderCompositeIng((CompositeLabeling) component, subRatio, ingsLabelingWithYield && force100Perc ? totalWithYield : null, true, true), null, null });
+									.format(new Object[] { ingName, qtyPerc, renderCompositeIng((CompositeLabeling) component, subRatio,
+											ingsLabelingWithYield && force100Perc ? totalWithYield : null, true, true), null, null });
 
 						} else {
 							logger.error(String.format(UNSUPPORTED_ING_TYPE, component.getName()));
@@ -1809,7 +1863,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 							if (force100Perc && totalWithYield != null && qtyPercWithYield != null) {
 								qtyPercWithYield = roundedDouble(BigDecimal.valueOf(qtyPercWithYield).divide(totalWithYield, PRECISION)
-										.multiply(BigDecimal.valueOf(1d),PRECISION));
+										.multiply(BigDecimal.valueOf(1d), PRECISION));
 							}
 
 							if (first) {
@@ -1846,7 +1900,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 			BigDecimal diffValue = BigDecimal.valueOf(1d).subtract(total);
 			total = total.add(diffValue);
-			firstQtyPerc = roundeedValue(firstLabelingComponent, firstQtyPerc , new MessageFormat(htmlTableRowFormat, getContentLocale())) + roundedDouble(diffValue);
+			firstQtyPerc = roundeedValue(firstLabelingComponent, firstQtyPerc, new MessageFormat(htmlTableRowFormat, getContentLocale()))
+					+ roundedDouble(diffValue);
 
 		}
 
@@ -1985,7 +2040,12 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		try {
 			shouldBreakIngType = true;
 
+<<<<<<< 3.2.4
 			tableContent.append("<table cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"" + styleCss + "\" rules=\"none\">");
+=======
+			tableContent.append("<table class=\"labelingTable\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\""
+					+ ((styleCss == null) || (styleCss).isBlank() ? "border: solid 1px; border-collapse:collapse" : styleCss) + "\" rules=\"none\">");
+>>>>>>> 24540c6 Fix #24192 - [Bug] Add addAllergens methods for SPEL formula
 
 			List<HtmlTableStruct> flatList = flatCompositeLabeling(lblCompositeContext, DEFAULT_RATIO, 0);
 			if (!flatList.isEmpty()) {
@@ -2002,7 +2062,13 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 						}
 
 						ret.append(applyRoundingMode(new MessageFormat(htmlTableRowFormat, getContentLocale()), tmp.qtyPerc)
+<<<<<<< 3.2.4
 								.format(new Object[] { indent(tmp.label, tmp.level), tmp.qtyPerc, tmp.geoOriginsLabel, tmp.bioOriginsLabel }));
+=======
+								.format(new Object[] { indent(decorate(tmp.label), tmp.level), tmp.qtyPerc, decorate(tmp.geoOriginsLabel),
+										decorate(tmp.bioOriginsLabel), null, null }));
+
+>>>>>>> 24540c6 Fix #24192 - [Bug] Add addAllergens methods for SPEL formula
 					}
 				}
 
@@ -2013,8 +2079,14 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 					Double qtyPerc = roundeedValue(null, flatList.get(0).qtyPerc, new MessageFormat(htmlTableRowFormat, getContentLocale())) + roundedDouble(diffValue);
 
+<<<<<<< 3.2.4
 					tableContent.append(applyTotalRoundingMode(new MessageFormat(htmlTableRowFormat, getContentLocale())).format(
 							new Object[] { flatList.get(0).label, qtyPerc, flatList.get(0).geoOriginsLabel, flatList.get(0).bioOriginsLabel }));
+=======
+					tableContent.append(applyTotalRoundingMode(new MessageFormat(htmlTableRowFormat, getContentLocale()))
+							.format(new Object[] { decorate(flatList.get(0).label), qtyPerc, decorate(flatList.get(0).geoOriginsLabel),
+									decorate(flatList.get(0).bioOriginsLabel), null, null }));
+>>>>>>> 24540c6 Fix #24192 - [Bug] Add addAllergens methods for SPEL formula
 
 				}
 				tableContent.append(ret);
@@ -2148,7 +2220,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			try {
 				decimalFormat.setParseBigDecimal(true);
 				return decimalFormat.parse(roundedQty).doubleValue();
-			
+
 			} catch (ParseException e) {
 				logger.error(e, e);
 			}
@@ -2335,8 +2407,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			qtyPerc = (useVolume ? volumePerc : qtyPerc);
 			if (ingsLabelingWithYield && total != null && qtyPerc != null) {
 				qtyPerc = roundeedValue(
-						roundedDouble(BigDecimal.valueOf(qtyPerc).divide(total, PRECISION).multiply(BigDecimal.valueOf(1d),PRECISION)), component)
-								;
+						roundedDouble(BigDecimal.valueOf(qtyPerc).divide(total, PRECISION).multiply(BigDecimal.valueOf(1d), PRECISION)), component);
 			} else {
 				if (first && (total != null)) {
 					BigDecimal diffValue = BigDecimal.valueOf(1d).subtract(total);
@@ -2431,7 +2502,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 						if (geoOrigins.containsKey(entry.getKey())) {
 							geoOrigins.get(entry.getKey()).addAll(entry.getValue());
 						} else {
+<<<<<<< 3.2.4
 							geoOrigins.put(entry.getKey(), entry.getValue());
+=======
+							geoOrigins.put(entry.getKey(), new HashSet<>(entry.getValue()));
+>>>>>>> 24540c6 Fix #24192 - [Bug] Add addAllergens methods for SPEL formula
 						}
 
 					}
@@ -2813,7 +2888,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 		Double volume = component.getVolume(withYield);
 		if ((parent.getVolumeTotal() != null) && (parent.getVolumeTotal() != 0d) && (volume != null)) {
-			return BigDecimal.valueOf(volume).multiply(ratio, PRECISION).divide(BigDecimal.valueOf(parent.getVolumeTotal()),PRECISION );
+			return BigDecimal.valueOf(volume).multiply(ratio, PRECISION).divide(BigDecimal.valueOf(parent.getVolumeTotal()), PRECISION);
 		}
 		return volume != null ? BigDecimal.valueOf(volume) : null;
 	}
@@ -2959,24 +3034,33 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				sort(entry.getValue());
 			}
 
-			Collections.sort(entries, (a, b) -> {
-				int result = compareLabelingComponents(a.getKey(), b.getKey());
-				if (result == 0) {
-					String nameA = getLegalIngName(a.getKey());
-					if (nameA == null && !a.getValue().isEmpty()) {
-						nameA = getLegalIngName(a.getValue().get(0));
-					}
-
-					String nameB = getLegalIngName(b.getKey());
-					if (nameB == null && !b.getValue().isEmpty()) {
-						nameB = getLegalIngName(b.getValue().get(0));
-					}
-
-					result = Comparator.nullsLast(String::compareTo).compare(nameA, nameB);
+			Locale currentLocal = I18NUtil.getLocale();
+			try {
+				if (sortWithSpecificLocale != null) {
+					I18NUtil.setLocale(MLTextHelper.parseLocale(sortWithSpecificLocale));
 				}
-				return result;
-			});
 
+				Collections.sort(entries, (a, b) -> {
+					int result = compareLabelingComponents(a.getKey(), b.getKey());
+					if (result == 0) {
+						String nameA = getLegalIngName(a.getKey());
+						if (nameA == null && !a.getValue().isEmpty()) {
+							nameA = getLegalIngName(a.getValue().get(0));
+						}
+
+						String nameB = getLegalIngName(b.getKey());
+						if (nameB == null && !b.getValue().isEmpty()) {
+							nameB = getLegalIngName(b.getValue().get(0));
+						}
+
+						result = Comparator.nullsLast(String::compareTo).compare(nameA, nameB);
+					}
+					return result;
+				});
+
+			} finally {
+				I18NUtil.setLocale(currentLocal);
+			}
 		}
 
 		Map<IngTypeItem, List<LabelingComponent>> sortedIngListByType = new LinkedHashMap<>();
