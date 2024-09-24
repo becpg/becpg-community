@@ -1232,11 +1232,11 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 		try {
 			Assert.assertEquals("Incorrect label :" + expectedStr + "\n   - compare to " + actualStr, expectedStr, actualStr);
 		} catch (Throwable e) {
-			
+
 			if (RetryingTransactionHelper.extractRetryCause(e) == null) {
-				logger.error(e,e);
+				logger.error(e, e);
 			}
-		
+
 			throw e;
 		}
 	}
@@ -1251,54 +1251,49 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 
 		logger.info("checkILL : " + ill + (ruleName != null ? " " + ruleName : ""));
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef grpNodeRef = null;
 
-			try {
-				ProductData formulatedProduct = alfrescoRepository.findOne(productNodeRef);
-				labelingRuleList.add(new LabelingRuleListDataItem("Pref7", "uncapitalizeLegalName = true", LabelingRuleType.Prefs));
-
-				NodeRef grpNodeRef = null;
-
-				for (LabelingRuleListDataItem rule : labelingRuleList) {
-					if (rule.getLabelingRuleType().equals(LabelingRuleType.Render)) {
-						rule.setNodeRef(new NodeRef("test", "becpg", UUID.randomUUID().toString()));
-						if ((ruleName != null) && ruleName.equals(rule.getName())) {
-							grpNodeRef = rule.getNodeRef();
-						}
-					}
+		for (LabelingRuleListDataItem rule : labelingRuleList) {
+			if (rule.getLabelingRuleType().equals(LabelingRuleType.Render)) {
+				rule.setNodeRef(new NodeRef("test", "becpg", UUID.randomUUID().toString()));
+				if ((ruleName != null) && ruleName.equals(rule.getName())) {
+					grpNodeRef = rule.getNodeRef();
 				}
-
-				formulatedProduct.getLabelingListView().setLabelingRuleList(labelingRuleList);
-
-				productService.formulate(formulatedProduct);
-
-				Assert.assertTrue(formulatedProduct.getLabelingListView().getLabelingRuleList().size() > 0);
-				// verify IngLabelingList
-
-				Assert.assertNotNull("IngLabelingList is null", formulatedProduct.getLabelingListView().getIngLabelingList());
-				Assert.assertTrue(formulatedProduct.getLabelingListView().getIngLabelingList().size() > 0);
-
-				for (IngLabelingListDataItem illDataItem : formulatedProduct.getLabelingListView().getIngLabelingList()) {
-					if ((grpNodeRef == null) || grpNodeRef.equals(illDataItem.getGrp())) {
-
-						String formulatedIll = illDataItem.getValue().getValue(locale);
-						Assert.assertTrue(illDataItem.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM));
-
-						Assert.assertEquals("Incorrect label. Formulated :" + formulatedIll + "\n   - junit ref " + ill, ill, formulatedIll);
-						Assert.assertNotNull(illDataItem.getLogValue());
-					}
-				}
-
-			} catch (Throwable e) {
-				if (RetryingTransactionHelper.extractRetryCause(e) == null) {
-					logger.error(e,e);
-				}
-				throw e;
 			}
+		}
 
-			return null;
+		ProductData formulatedProduct = inWriteTx(() -> {
+			ProductData ret = alfrescoRepository.findOne(productNodeRef);
+			if (labelingRuleList.stream().noneMatch(item -> "Pref 7".equals(item.getName()))) {
+				labelingRuleList.add(LabelingRuleListDataItem.build().withName("Pref 7").withFormula("uncapitalizeLegalName = true")
+						.withLabelingRuleType(LabelingRuleType.Prefs));
+			}
+			ret.getLabelingListView().getLabelingRuleList().clear();
+			ret.getLabelingListView().getLabelingRuleList().addAll(labelingRuleList);
 
-		}, false, true);
+			productService.formulate(ret);
+
+			alfrescoRepository.save(ret);
+
+			return ret;
+		});
+
+		Assert.assertTrue(formulatedProduct.getLabelingListView().getLabelingRuleList().size() > 0);
+		// verify IngLabelingList
+
+		Assert.assertNotNull("IngLabelingList is null", formulatedProduct.getLabelingListView().getIngLabelingList());
+		Assert.assertTrue(formulatedProduct.getLabelingListView().getIngLabelingList().size() > 0);
+
+		for (IngLabelingListDataItem illDataItem : formulatedProduct.getLabelingListView().getIngLabelingList()) {
+			if ((grpNodeRef == null) || grpNodeRef.equals(illDataItem.getGrp())) {
+
+				String formulatedIll = illDataItem.getValue().getValue(locale);
+				Assert.assertTrue(illDataItem.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM));
+
+				Assert.assertEquals("Incorrect label. Formulated :" + formulatedIll + "\n   - junit ref " + ill, ill, formulatedIll);
+				Assert.assertNotNull(illDataItem.getLogValue());
+			}
+		}
 
 	}
 
