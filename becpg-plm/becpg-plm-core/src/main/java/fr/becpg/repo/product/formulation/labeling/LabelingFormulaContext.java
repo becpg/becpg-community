@@ -905,7 +905,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		formatsByName.put("ingDefaultFormat", textFormatRule);
 		formatsByName.put("detailsDefaultFormat", textFormatRule);
 
-	}<<<<<<<3.2.4=======
+	}
 
 	public String getSortWithSpecificLocale() {
 		return sortWithSpecificLocale;
@@ -913,12 +913,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 	public void setSortWithSpecificLocale(String sortWithSpecificLocale) {
 		this.sortWithSpecificLocale = sortWithSpecificLocale;
-	}>>>>>>>24540
-
-	c6 Fix#24192-[Bug]
-	Add addAllergens methods for
-	SPEL formula
-
+	}
+	
 	/* formaters */
 
 	private MessageFormat getIngTextFormat(LabelingComponent lblComponent, Double qty, boolean multiple) {
