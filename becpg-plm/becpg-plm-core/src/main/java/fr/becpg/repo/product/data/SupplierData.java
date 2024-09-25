@@ -19,6 +19,7 @@ import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.repository.model.StateableEntity;
+import fr.becpg.repo.repository.model.WithErpCodeEntity;
 import fr.becpg.repo.survey.data.SurveyListDataItem;
 import fr.becpg.repo.survey.data.SurveyableEntity;
 
@@ -30,7 +31,8 @@ import fr.becpg.repo.survey.data.SurveyableEntity;
  */
 @AlfType
 @AlfQname(qname = "bcpg:supplier")
-public class SupplierData extends BeCPGDataObject implements HierarchicalEntity, StateableEntity, SurveyableEntity {
+public class SupplierData extends BeCPGDataObject
+		implements HierarchicalEntity, StateableEntity, SurveyableEntity, WithErpCodeEntity {
 
 	private static final long serialVersionUID = -2554133542406623412L;
 	private NodeRef hierarchy1;
@@ -61,6 +63,8 @@ public class SupplierData extends BeCPGDataObject implements HierarchicalEntity,
 	private List<ScoreListDataItem> scoreList;
 	private List<SurveyListDataItem> surveyList;
 	private Integer supplierScore;
+	
+	private String erpCode;
 
 	/**
 	 * <p>Getter for the field <code>state</code>.</p>
@@ -377,13 +381,26 @@ public class SupplierData extends BeCPGDataObject implements HierarchicalEntity,
 	public void setScore(Integer supplierScore) {
 		this.supplierScore = supplierScore;
 	}
+	
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:erpCode")
+	@Override
+	public String getErpCode() {
+		return erpCode;
+	}
+	
+	@Override
+	public void setErpCode(String erpCode) {
+		this.erpCode = erpCode;
+	}
 
 	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(costList, hierarchy1, hierarchy2, plantList, state);
+		result = prime * result + Objects.hash(costList, hierarchy1, hierarchy2, plantList, state, erpCode);
 		return result;
 	}
 
@@ -397,14 +414,21 @@ public class SupplierData extends BeCPGDataObject implements HierarchicalEntity,
 		if (getClass() != obj.getClass())
 			return false;
 		SupplierData other = (SupplierData) obj;
-		return Objects.equals(costList, other.costList) && Objects.equals(lcaList, other.lcaList) && Objects.equals(hierarchy1, other.hierarchy1)
-				&& Objects.equals(hierarchy2, other.hierarchy2) && Objects.equals(plantList, other.plantList) && state == other.state;
+		return Objects.equals(costList, other.costList) && Objects.equals(lcaList, other.lcaList)
+				&& Objects.equals(hierarchy1, other.hierarchy1) && Objects.equals(hierarchy2, other.hierarchy2)
+				&& Objects.equals(plantList, other.plantList) && state == other.state
+				&& Objects.equals(erpCode, other.erpCode);
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return "SupplierData [name=" + name + ", hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", state=" + state + "]";
+		return "SupplierData [hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", state=" + state
+				+ ", costList=" + costList + ", plantList=" + plantList + ", contactList=" + contactList + ", lcaList="
+				+ lcaList + ", entityTpl=" + entityTpl + ", formulatedDate=" + formulatedDate + ", reformulateCount="
+				+ reformulateCount + ", currentReformulateCount=" + currentReformulateCount + ", formulationChainId="
+				+ formulationChainId + ", updateFormulatedDate=" + updateFormulatedDate + ", requirementChecksum="
+				+ requirementChecksum + ", scoreList=" + scoreList + ", surveyList=" + surveyList + ", supplierScore="
+				+ supplierScore + ", erpCode=" + erpCode + "]";
 	}
 
 }

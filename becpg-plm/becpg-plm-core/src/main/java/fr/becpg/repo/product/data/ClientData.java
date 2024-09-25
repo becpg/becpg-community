@@ -17,6 +17,7 @@ import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.repository.model.StateableEntity;
+import fr.becpg.repo.repository.model.WithErpCodeEntity;
 import fr.becpg.repo.survey.data.SurveyListDataItem;
 import fr.becpg.repo.survey.data.SurveyableEntity;
 
@@ -28,7 +29,7 @@ import fr.becpg.repo.survey.data.SurveyableEntity;
  */
 @AlfType
 @AlfQname(qname = "bcpg:client")
-public class ClientData extends BeCPGDataObject implements HierarchicalEntity, StateableEntity, SurveyableEntity {
+public class ClientData extends BeCPGDataObject implements HierarchicalEntity, StateableEntity, SurveyableEntity, WithErpCodeEntity {
 
 	private static final long serialVersionUID = 5302327031354625757L;
 	private NodeRef hierarchy1;
@@ -51,6 +52,8 @@ public class ClientData extends BeCPGDataObject implements HierarchicalEntity, S
 	 * Survey Score
 	 */
 	private Integer clientScore;
+	
+	private String erpCode;
 
 	private List<CostListDataItem> costList;
 	private List<LCAListDataItem> lcaList;
@@ -279,6 +282,19 @@ public class ClientData extends BeCPGDataObject implements HierarchicalEntity, S
 	public NodeRef getFormulatedEntityTpl() {
 		return clientTpl;
 	}
+	
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:erpCode")
+	@Override
+	public String getErpCode() {
+		return erpCode;
+	}
+
+	@Override
+	public void setErpCode(String erpCode) {
+		this.erpCode = erpCode;
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -323,7 +339,12 @@ public class ClientData extends BeCPGDataObject implements HierarchicalEntity, S
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return "ClientData [name=" + name + ", hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", state=" + state + "]";
+		return "ClientData [hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", state=" + state
+				+ ", clientTpl=" + clientTpl + ", formulatedDate=" + formulatedDate + ", reformulateCount="
+				+ reformulateCount + ", currentReformulateCount=" + currentReformulateCount + ", formulationChainId="
+				+ formulationChainId + ", updateFormulatedDate=" + updateFormulatedDate + ", requirementChecksum="
+				+ requirementChecksum + ", clientScore=" + clientScore + ", erpCode=" + erpCode + ", costList="
+				+ costList + ", lcaList=" + lcaList + ", scoreList=" + scoreList + ", surveyList=" + surveyList + "]";
 	}
 
 	/** {@inheritDoc} */
@@ -331,8 +352,9 @@ public class ClientData extends BeCPGDataObject implements HierarchicalEntity, S
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(clientScore, clientTpl, costList, currentReformulateCount, formulatedDate, formulationChainId,
-				hierarchy1, hierarchy2, lcaList, reformulateCount, requirementChecksum, scoreList, state, surveyList, updateFormulatedDate);
+		result = prime * result + Objects.hash(clientScore, clientTpl, costList, currentReformulateCount,
+				formulatedDate, formulationChainId, hierarchy1, hierarchy2, lcaList, reformulateCount,
+				requirementChecksum, scoreList, state, surveyList, updateFormulatedDate, erpCode);
 		return result;
 	}
 
@@ -347,12 +369,16 @@ public class ClientData extends BeCPGDataObject implements HierarchicalEntity, S
 			return false;
 		ClientData other = (ClientData) obj;
 		return Objects.equals(clientScore, other.clientScore) && Objects.equals(clientTpl, other.clientTpl)
-				&& Objects.equals(costList, other.costList) && Objects.equals(currentReformulateCount, other.currentReformulateCount)
-				&& Objects.equals(formulatedDate, other.formulatedDate) && Objects.equals(formulationChainId, other.formulationChainId)
+				&& Objects.equals(costList, other.costList)
+				&& Objects.equals(currentReformulateCount, other.currentReformulateCount)
+				&& Objects.equals(formulatedDate, other.formulatedDate)
+				&& Objects.equals(formulationChainId, other.formulationChainId)
 				&& Objects.equals(hierarchy1, other.hierarchy1) && Objects.equals(hierarchy2, other.hierarchy2)
 				&& Objects.equals(lcaList, other.lcaList) && Objects.equals(reformulateCount, other.reformulateCount)
-				&& Objects.equals(requirementChecksum, other.requirementChecksum) && Objects.equals(scoreList, other.scoreList)
-				&& state == other.state && Objects.equals(surveyList, other.surveyList)
-				&& Objects.equals(updateFormulatedDate, other.updateFormulatedDate);
+				&& Objects.equals(requirementChecksum, other.requirementChecksum)
+				&& Objects.equals(scoreList, other.scoreList) && state == other.state
+				&& Objects.equals(surveyList, other.surveyList)
+				&& Objects.equals(updateFormulatedDate, other.updateFormulatedDate)
+				&& Objects.equals(erpCode, other.erpCode);
 	}
 }
