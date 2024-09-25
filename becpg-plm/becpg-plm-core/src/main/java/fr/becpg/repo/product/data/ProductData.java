@@ -68,6 +68,7 @@ import fr.becpg.repo.repository.filters.DataListFilter;
 import fr.becpg.repo.repository.model.AspectAwareDataItem;
 import fr.becpg.repo.repository.model.EffectiveDataItem;
 import fr.becpg.repo.repository.model.StateableEntity;
+import fr.becpg.repo.repository.model.WithErpCodeEntity;
 import fr.becpg.repo.survey.data.SurveyListDataItem;
 import fr.becpg.repo.survey.data.SurveyableEntity;
 import fr.becpg.repo.variant.model.VariantData;
@@ -80,8 +81,8 @@ import fr.becpg.repo.variant.model.VariantEntity;
  * @version $Id: $Id
  */
 @BeCPGPublicApi
-public class ProductData extends AbstractScorableEntity
-		implements EffectiveDataItem, HierarchicalEntity, StateableEntity, AspectAwareDataItem, VariantEntity, RegulatoryEntity, SurveyableEntity {
+public class ProductData extends AbstractScorableEntity implements EffectiveDataItem, HierarchicalEntity,
+		StateableEntity, AspectAwareDataItem, VariantEntity, RegulatoryEntity, SurveyableEntity, WithErpCodeEntity {
 
 	private static final long serialVersionUID = 764534088277737617L;
 	private static final Log logger = LogFactory.getLog(ProductData.class);
@@ -783,6 +784,7 @@ public class ProductData extends AbstractScorableEntity
 	 *
 	 * @return a {@link java.lang.String} object.
 	 */
+	@Override
 	@AlfProp
 	@AlfQname(qname = "bcpg:erpCode")
 	public String getErpCode() {
@@ -794,6 +796,7 @@ public class ProductData extends AbstractScorableEntity
 	 *
 	 * @param erpCode a {@link java.lang.String} object.
 	 */
+	@Override
 	public void setErpCode(String erpCode) {
 		this.erpCode = erpCode;
 	}
