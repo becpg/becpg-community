@@ -235,6 +235,9 @@ public class PlmRepoConsts {
 
 	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_COMPOSITIONPACKAGING="ExportCompositionPackaging"</code> */
 	public static final String PATH_REPORTS_EXPORT_SEARCH_COMPOSITIONPACKAGING = "ExportCompositionPackaging";
+	
+	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_SCORELIST="ExportScoreList"</code> */
+	public static final String PATH_REPORTS_EXPORT_SEARCH_SCORELIST = "ExportScoreList";
 
 	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_INGLABELING="ExportIngLabeling"</code> */
 	public static final String PATH_REPORTS_EXPORT_SEARCH_LABELLING = "ExportLabelling";
@@ -277,12 +280,18 @@ public class PlmRepoConsts {
 	
 	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_CLIENTSURVEY="ExportClientSurvey"</code> */
 	public static final String PATH_REPORTS_EXPORT_SEARCH_CLIENTSURVEY = "ExportClientSurvey";
+	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_CLIENTSCORELIST="ExportClientScoreList"</code> */
+	public static final String PATH_REPORTS_EXPORT_SEARCH_CLIENTSCORELIST = "ExportClientScoreList";
 	
 	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_SUPPLIERSURVEY="ExportSupplierSurvey"</code> */
 	public static final String PATH_REPORTS_EXPORT_SEARCH_SUPPLIERSURVEY = "ExportSupplierSurvey";
+	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_SUPPLIERSCORELIST="ExportSupplierScoreList"</code> */
+	public static final String PATH_REPORTS_EXPORT_SEARCH_SUPPLIERSCORELIST = "ExportSupplierScoreList";
 	
 	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_PROJECTSURVEY="ExportProjectSurvey"</code> */
 	public static final String PATH_REPORTS_EXPORT_SEARCH_PROJECTSURVEY = "ExportProjectSurvey";
+	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_PROJECTSCORELIST="ExportProjectScoreList"</code> */
+	public static final String PATH_REPORTS_EXPORT_SEARCH_PROJECTSCORELIST= "ExportProjectScoreList";
 
 	// ECO
 	/** Constant <code>PATH_ECO="ECO"</code> */
