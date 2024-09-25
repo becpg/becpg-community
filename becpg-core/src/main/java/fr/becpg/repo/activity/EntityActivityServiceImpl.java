@@ -3,6 +3,7 @@ package fr.becpg.repo.activity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.EnumMap;
@@ -283,7 +284,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					alfrescoRepository.save(activityListDataItem);
 
 					notifyListeners(entityNodeRef, activityListDataItem);
-					
+
 					return true;
 				}
 			} catch (JSONException e) {
@@ -296,7 +297,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		return false;
 
 	}
-	
+
 	@Override
 	public boolean postChangeOrderActivity(NodeRef entityNodeRef, NodeRef changeOrderNodeRef) {
 		try {
@@ -308,7 +309,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 			if (activityListNodeRef != null) {
 
 				ActivityListDataItem activityListDataItem = new ActivityListDataItem();
-				
+
 				JSONObject data = new JSONObject();
 
 				data.put(PROP_TITLE, nodeService.getProperty(changeOrderNodeRef, ContentModel.PROP_NAME));
@@ -473,34 +474,9 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 							property.put(PROP_TITLE, entry.getKey());
 
 							if (entry.getValue().getFirst() instanceof List) {
-								ArrayList<Object> beforeList = new ArrayList<>();
-
-								for (Object ent : (List<?>) entry.getValue().getFirst()) {
-									if (ent instanceof Date) {
-										beforeList.add(ISO8601DateFormat.format((Date) ent));
-									} else if (ent instanceof Pair || ent instanceof NodeRef) {
-										beforeList.add(ent.toString());
-									} else if (ent instanceof List) {
-										beforeList.add(((List<?>) ent).stream().map(o -> o.toString()).collect(Collectors.toList()));
-									} else {
-										PropertyDefinition propDef = entityDictionaryService.getProperty(entry.getKey());
-										if (propDef.getConstraints() != null) {
-											for (ConstraintDefinition constraint : propDef.getConstraints()) {
-												if (constraint.getConstraint() instanceof ListOfValuesConstraint lvc) {
-													if (ent instanceof List<?> entList) {
-														entList = entList.stream().map(o -> lvc.getDisplayLabel(o.toString(), dictionaryService)).toList();
-														ent = (Serializable) entList;
-													} else if (ent != null) {
-														ent = lvc.getDisplayLabel(ent.toString(), dictionaryService);
-													}
-												}
-											}
-										}
-										beforeList.add(ent);
-									}
-								}
-
+								List<Object> beforeList = processEntries((List<?>) entry.getValue().getFirst(), entry.getKey());
 								property.put(BEFORE, beforeList);
+
 							} else {
 								property.put(BEFORE, entry.getValue().getFirst());
 							}
@@ -509,33 +485,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 								property.put(AFTER, data.get(PROP_TITLE));
 							} else {
 								if (entry.getValue().getSecond() instanceof List) {
-									ArrayList<Object> afterList = new ArrayList<>();
-
-									for (Object ent : (List<?>) entry.getValue().getSecond()) {
-										if (ent instanceof Date) {
-											afterList.add(ISO8601DateFormat.format((Date) ent));
-										} else if (ent instanceof Pair || ent instanceof NodeRef) {
-											afterList.add(ent.toString());
-										} else if (ent instanceof List) {
-											afterList.add(((List<?>) ent).stream().map(o -> o.toString()).collect(Collectors.toList()));
-										} else {
-											PropertyDefinition propDef = entityDictionaryService.getProperty(entry.getKey());
-											if (propDef.getConstraints() != null) {
-												for (ConstraintDefinition constraint : propDef.getConstraints()) {
-													if (constraint.getConstraint() instanceof ListOfValuesConstraint lvc) {
-														if (ent instanceof List<?> entList) {
-															entList = entList.stream().map(o -> lvc.getDisplayLabel(o.toString(), dictionaryService)).toList();
-															ent = (Serializable) entList;
-														} else if (ent != null) {
-															ent = lvc.getDisplayLabel(ent.toString(), dictionaryService);
-														}
-													}
-												}
-											}
-											afterList.add(ent);
-										}
-									}
-
+									List<Object> afterList = processEntries((List<?>) entry.getValue().getSecond(), entry.getKey());
 									property.put(AFTER, afterList);
 								} else {
 									property.put(AFTER, entry.getValue().getSecond());
@@ -567,6 +517,43 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		}
 		return false;
 
+	}
+
+	private List<Object> processEntries(List<?> entries, QName key) {
+		List<Object> processedList = new ArrayList<>();
+		PropertyDefinition propDef = entityDictionaryService.getProperty(key);
+
+		for (Object ent : entries) {
+			if (ent instanceof Date) {
+				processedList.add(ISO8601DateFormat.format((Date) ent));
+			} else if (ent instanceof Pair || ent instanceof NodeRef) {
+				processedList.add(ent.toString());
+			} else if (ent instanceof List) {
+				processedList.add(((List<?>) ent).stream().map(Object::toString).collect(Collectors.toList()));
+			} else {
+				ent = processWithConstraints(ent, propDef);
+				processedList.add(ent);
+			}
+		}
+		return processedList;
+
+	}
+
+	private Object processWithConstraints(Object ent, PropertyDefinition propDef) {
+		if (propDef != null && propDef.getConstraints() != null) {
+			for (ConstraintDefinition constraint : propDef.getConstraints()) {
+				if (constraint.getConstraint() instanceof ListOfValuesConstraint) {
+					ListOfValuesConstraint lvc = (ListOfValuesConstraint) constraint.getConstraint();
+					if (ent instanceof List<?>) {
+						ent = ((List<?>) ent).stream().map(o -> lvc.getDisplayLabel(o.toString(), dictionaryService))
+								.collect(Collectors.toList());
+					} else if (ent != null) {
+						ent = lvc.getDisplayLabel(ent.toString(), dictionaryService);
+					}
+				}
+			}
+		}
+		return ent;
 	}
 
 	private MLText compareMLTexts(MLText mlText, MLText otherMlText) {
@@ -613,22 +600,23 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 			sortedActivityList = BeCPGQueryBuilder.createQuery().parent(activityListNodeRef).ofType(BeCPGModel.TYPE_ACTIVITY_LIST)
 					.addSort(ContentModel.PROP_CREATED, false).maxResults(1).inDB().list();
 		}
-		
+
 		for (NodeRef activityListItemNodeRef : sortedActivityList) {
 
 			ActivityListDataItem lastActivity = alfrescoRepository.findOne(activityListItemNodeRef);
 
 			JSONObject lastActivityData = null;
-			
+
 			JSONObject newActivityData = null;
 			try {
 				lastActivityData = new JSONObject(lastActivity.getActivityData());
 				newActivityData = new JSONObject(newActivity.getActivityData());
-				if (((lastActivity.getActivityData().equals(newActivity.getActivityData()))
-						|| (!newActivityData.has(PROP_TITLE) && !lastActivityData.has(PROP_TITLE) && newActivity.getActivityType().equals(ActivityType.Datalist)
-								&& lastActivityData.get(PROP_CLASSNAME).equals(newActivityData.get(PROP_CLASSNAME))
-								&& lastActivityData.get(PROP_ACTIVITY_EVENT).equals(newActivityData.get(PROP_ACTIVITY_EVENT))))
-						&& lastActivity.getUserId().equals(newActivity.getUserId()) && lastActivity.getActivityType().equals(newActivity.getActivityType())) {
+				if (((lastActivity.getActivityData().equals(newActivity.getActivityData())) || (!newActivityData.has(PROP_TITLE)
+						&& !lastActivityData.has(PROP_TITLE) && newActivity.getActivityType().equals(ActivityType.Datalist)
+						&& lastActivityData.get(PROP_CLASSNAME).equals(newActivityData.get(PROP_CLASSNAME))
+						&& lastActivityData.get(PROP_ACTIVITY_EVENT).equals(newActivityData.get(PROP_ACTIVITY_EVENT))))
+						&& lastActivity.getUserId().equals(newActivity.getUserId())
+						&& lastActivity.getActivityType().equals(newActivity.getActivityType())) {
 					nodeService.addAspect(activityListItemNodeRef, ContentModel.ASPECT_TEMPORARY, null);
 					nodeService.deleteNode(activityListItemNodeRef);
 
@@ -640,22 +628,23 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					// Add previous updated properties in the data of the last activity
 				} else if (newActivityData.has(PROP_PROPERTIES) && lastActivityData.has(PROP_PROPERTIES)
 						&& newActivityData.get(PROP_ACTIVITY_EVENT).equals(lastActivityData.get(PROP_ACTIVITY_EVENT))
-						&& newActivity.getUserId().equals(lastActivity.getUserId()) && newActivity.getActivityType().equals(lastActivity.getActivityType())
-						&& newActivityData.has(PROP_TITLE) && lastActivityData.has(PROP_TITLE) && newActivityData.get(PROP_TITLE).equals(lastActivityData.get(PROP_TITLE))
-						&& ((!newActivityData.has(PROP_CLASSNAME) && !lastActivityData.has(PROP_CLASSNAME)) || (newActivityData.has(PROP_CLASSNAME)
-								&& lastActivityData.has(PROP_CLASSNAME) && newActivityData.get(PROP_CLASSNAME).equals(lastActivityData.get(PROP_CLASSNAME))))) {
-					
-					
+						&& newActivity.getUserId().equals(lastActivity.getUserId())
+						&& newActivity.getActivityType().equals(lastActivity.getActivityType()) && newActivityData.has(PROP_TITLE)
+						&& lastActivityData.has(PROP_TITLE) && newActivityData.get(PROP_TITLE).equals(lastActivityData.get(PROP_TITLE))
+						&& ((!newActivityData.has(PROP_CLASSNAME) && !lastActivityData.has(PROP_CLASSNAME))
+								|| (newActivityData.has(PROP_CLASSNAME) && lastActivityData.has(PROP_CLASSNAME)
+										&& newActivityData.get(PROP_CLASSNAME).equals(lastActivityData.get(PROP_CLASSNAME))))) {
+
 					// Check if the last activity is less than 4 hours old, otherwise do not merge it
 					if (sortedActivityList.size() == 1) {
 						cal.add(Calendar.HOUR, -3);
 						Date createdDate = (Date) nodeService.getProperty(activityListItemNodeRef, ContentModel.PROP_CREATED);
-						
+
 						if (createdDate != null && createdDate.compareTo(cal.getTime()) < 0) {
 							continue;
 						}
 					}
-					
+
 					JSONArray activityProperties = lastActivityData.getJSONArray(PROP_PROPERTIES);
 					JSONArray itemProperties = newActivityData.getJSONArray(PROP_PROPERTIES);
 					for (int i = 0; i < activityProperties.length(); i++) {
@@ -667,7 +656,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 								isSameProperty = true;
 								PropertyDefinition property = dictionaryService
 										.getProperty(QName.createQName((String) activityProperty.get(PROP_TITLE)));
-								
+
 								if ((property == null) || (property.getDataType() == null)
 										|| (!DataTypeDefinition.TEXT.equals(property.getDataType().getName())
 												&& !DataTypeDefinition.MLTEXT.equals(property.getDataType().getName()))) {
@@ -677,7 +666,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 										itemProperty.put(BEFORE, "");
 									}
 								}
-								
+
 							}
 						}
 						if (!isSameProperty) {
@@ -687,10 +676,9 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					newActivityData.put(PROP_PROPERTIES, itemProperties);
 					newActivity.setActivityData(newActivityData.toString());
 					alfrescoRepository.save(newActivity);
-					
+
 					nodeService.addAspect(activityListItemNodeRef, ContentModel.ASPECT_TEMPORARY, null);
 					nodeService.deleteNode(activityListItemNodeRef);
-					
 
 				}
 
@@ -804,7 +792,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 			} finally {
 				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 			}
-		} 
+		}
 
 		return false;
 	}
@@ -820,8 +808,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 				NodeRef activityListNodeRef = getActivityList(fromNodeRef);
 				if (activityListNodeRef != null) {
 
-					for (NodeRef listItem : entityListDAO.getListItems(activityListNodeRef,BeCPGModel.TYPE_ACTIVITY_LIST)) {
-						
+					for (NodeRef listItem : entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST)) {
+
 						String activityName = (String) nodeService.getProperty(listItem, ContentModel.PROP_NAME);
 						if (nodeService.getChildByName(toActivityListNodeRef, ContentModel.ASSOC_CONTAINS, activityName) == null) {
 							nodeService.moveNode(listItem, toActivityListNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
@@ -917,32 +905,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 							}
 
 							if (entry.getValue().getFirst() != null) {
-								ArrayList<Object> beforeList = new ArrayList<>();
-
-								for (Serializable ent : entry.getValue().getFirst()) {
-									if (ent instanceof Date) {
-										beforeList.add(ISO8601DateFormat.format((Date) ent));
-									} else if (ent instanceof Pair || ent instanceof NodeRef) {
-										beforeList.add(ent.toString());
-									} else {
-										PropertyDefinition propDef = entityDictionaryService.getProperty(entry.getKey());
-										if (propDef.getConstraints() != null) {
-											for (ConstraintDefinition constraint : propDef.getConstraints()) {
-												if (constraint.getConstraint() instanceof ListOfValuesConstraint) {
-													ListOfValuesConstraint lvc = (ListOfValuesConstraint) constraint.getConstraint();
-													if (ent instanceof List<?>) {
-														List<?> entList = (List<?>)ent;
-														entList = entList.stream().map(o -> lvc.getDisplayLabel(o.toString(), dictionaryService)).collect(Collectors.toList());
-														ent = (Serializable) entList;
-													} else if (ent != null) {
-														ent = lvc.getDisplayLabel(ent.toString(), dictionaryService);
-													}
-												}
-											}
-										}
-										beforeList.add(ent);
-									}
-								}
+								
+								List<Object> beforeList = processEntries(entry.getValue().getFirst(), entry.getKey());
 								property.put(BEFORE, beforeList);
 							} else {
 								property.put(BEFORE, entry.getValue().getFirst());
@@ -953,32 +917,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 							} else {
 
 								if (entry.getValue().getSecond() != null) {
-									ArrayList<Object> afterList = new ArrayList<>();
-
-									for (Serializable ent : entry.getValue().getSecond()) {
-										if (ent instanceof Date) {
-											afterList.add(ISO8601DateFormat.format((Date) ent));
-										} else if (ent instanceof Pair || ent instanceof NodeRef) {
-											afterList.add(ent.toString());
-										} else {
-											PropertyDefinition propDef = entityDictionaryService.getProperty(entry.getKey());
-											if (propDef.getConstraints() != null) {
-												for (ConstraintDefinition constraint : propDef.getConstraints()) {
-													if (constraint.getConstraint() instanceof ListOfValuesConstraint) {
-														ListOfValuesConstraint lvc = (ListOfValuesConstraint) constraint.getConstraint();
-														if (ent instanceof List<?>) {
-															List<?> entList = (List<?>)ent;
-															entList = entList.stream().map(o -> lvc.getDisplayLabel(o.toString(), dictionaryService)).collect(Collectors.toList());
-															ent = (Serializable) entList;
-														} else if (ent != null) {
-															ent = lvc.getDisplayLabel(ent.toString(), dictionaryService);
-														}
-													}
-												}
-											}
-											afterList.add(ent);
-										}
-									}
+									List<Object> afterList = processEntries(entry.getValue().getSecond(), entry.getKey());
 									property.put(AFTER, afterList);
 								} else {
 									property.put(AFTER, entry.getValue().getSecond());
@@ -1211,7 +1150,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 		return batchInfo;
 	}
-	
+
 	private String extractContentNode(String alData) {
 		JSONObject data = new JSONObject(alData);
 		if (data.has("contentNodeRef")) {
