@@ -161,7 +161,8 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Scora
 	private Set<ReqCtrlListDataItem> reqCtrlToAdd(ProductData componentProductData) {
 		Set<ReqCtrlListDataItem> toAdd = new HashSet<>();
 		for (ReqCtrlListDataItem tmp : componentProductData.getReqCtrlList()) {
-			if (tmp.getReqDataType() != RequirementDataType.Completion) {
+			if (tmp.getReqDataType() != RequirementDataType.Completion  && tmp.getReqDataType() !=  RequirementDataType.Specification) {
+
 				ReqCtrlListDataItem reqCtl = ReqCtrlListDataItem.build().ofType(tmp.getReqType())
 						.withMessage(tmp.getReqMlMessage()).withCharact(tmp.getCharact())
 						.withSources((addChildRclSources() == null || Boolean.TRUE.equals(addChildRclSources())) ? tmp.getSources() : new ArrayList<>())
