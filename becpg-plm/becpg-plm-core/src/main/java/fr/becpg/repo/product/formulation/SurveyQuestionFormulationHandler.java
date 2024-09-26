@@ -157,24 +157,6 @@ public class SurveyQuestionFormulationHandler extends FormulationBaseHandler<Pro
 				}
 			}
 		}
-		for (final Entry<String, List<SurveyListDataItem>> nameSurveyLists : namesSurveyLists.entrySet()) {
-			final String fsSurveyListName = nameSurveyLists.getKey();
-			final List<SurveyListDataItem> surveyLists = nameSurveyLists.getValue();
-			for (final SurveyListDataItem surveyList : List.copyOf(surveyLists)) {
-				final SurveyQuestion surveyQuestion = (SurveyQuestion) alfrescoRepository
-						.findOne(surveyList.getQuestion());
-				if (Boolean.TRUE.equals(surveyList.getGenerated()) && (!surveyQuestions.contains(surveyQuestion)
-						|| !Objects.equals(surveyQuestion.getFsSurveyListName(), fsSurveyListName))) {
-					logger.debug(String.format("Deleting SurveyList %s from %s with SurveyQuestion %s",
-							surveyList.getNodeRef(), fsSurveyListName, surveyList.getQuestion()));
-					if (SURVEY_LIST_BASE_NAME.equals(fsSurveyListName)) {
-						surveyLists.remove(surveyList);
-					} else {
-						deletedSurveyLists.add(surveyList);
-					}
-				}
-			}
-		}
 		for (final SurveyQuestion surveyQuestion : surveyQuestions) {
 			final NodeRef surveyQuestionNodeRef = surveyQuestion.getNodeRef();
 			final String fsSurveyListName = surveyQuestion.getFsSurveyListName();
@@ -193,7 +175,6 @@ public class SurveyQuestionFormulationHandler extends FormulationBaseHandler<Pro
 					.filter(nameSurveyLists -> !SURVEY_LIST_BASE_NAME.equals(nameSurveyLists.getKey()))
 					.forEach(nameSurveyLists -> alfrescoRepository.saveDataList(dataListContainerNodeRef,
 							SurveyModel.TYPE_SURVEY_LIST, nameSurveyLists.getKey(), nameSurveyLists.getValue()));
-			deletedSurveyLists.stream().map(SurveyListDataItem::getNodeRef).forEach(alfrescoRepository::delete);
 		}
 		return true;
 	}
