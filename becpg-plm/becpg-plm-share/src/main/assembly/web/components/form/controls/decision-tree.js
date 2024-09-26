@@ -3,7 +3,7 @@
     * YUI Library aliases
     */
    var Dom = YAHOO.util.Dom, 
-   			Bubbling = YAHOO.Bubbling ;
+            Bubbling = YAHOO.Bubbling ;
    /**
     * DecisionTree constructor.
     * 
@@ -78,21 +78,21 @@
                                     + (question.label ? question.label: this.msg("form.control.decision-tree."+this.options.prefix+"."+question.id+".label"))
                                     +'</legend>';
                            if(question.note){
-                        	   htmlForm += '<span class="decision-tree-note">'+question.note+'</span>';
+                               htmlForm += '<span class="decision-tree-note">'+question.note+'</span>';
                            }
                            
                            if(question.upperNote){
-                        	   htmlForm += '<span class="decision-tree-note">'+question.upperNote+'</span>';
+                               htmlForm += '<span class="decision-tree-note">'+question.upperNote+'</span>';
                            }
                            
                            
                            if(question.url){
-                        	   if(question.url instanceof Array){
+                               if(question.url instanceof Array){
                                    for(var z=0 ; z<question.url.length ; z++){
-                                	   htmlForm += '<span class="decision-tree-url"><a title="' + this.msg("link.title.open-link") + '" href="' + question.url[z]  + '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/link-16.png" />'+question.url[z]+'</a></span>';
+                                       htmlForm += '<span class="decision-tree-url"><a title="' + this.msg("link.title.open-link") + '" href="' + question.url[z]  + '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/link-16.png" />'+question.url[z]+'</a></span>';
                                    }
                                } else {
-                            	   htmlForm += '<span class="decision-tree-url"><a title="' + this.msg("link.title.open-link") + '" href="' + question.url  + '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/link-16.png" />'+question.url+'</a></span>';
+                                   htmlForm += '<span class="decision-tree-url"><a title="' + this.msg("link.title.open-link") + '" href="' + question.url  + '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/link-16.png" />'+question.url+'</a></span>';
                                }
                               }
                           
@@ -103,19 +103,19 @@
                               if(choice.list!=null){
                                   var listOption = this.getCurrentListOptions(question.id, choice.id );
                                  if(!choice.checkboxes){
-                                	 htmlForm +="<p>";
+                                     htmlForm +="<p>";
                                  }
                                   var msgKey  =  choice.id == "-" ? "form.control.decision-tree.empty" : "form.control.decision-tree."+this.options.prefix+"."+question.id+"."+choice.id;           
 
                                   if(choice.multiple && choice.checkboxes){
-                                	  for(var z = 0; z< choice.list.length; z++){
+                                      for(var z = 0; z< choice.list.length; z++){
                                           var selected = false;
                                           var lbl = choice.list[z];
                                           var val = z;
                                           if(lbl.indexOf('|')>0){
-											  lbl = choice.list[z].split('|')[1];
-											  val = choice.list[z].split('|')[0];
-										  }
+                                              lbl = choice.list[z].split('|')[1];
+                                              val = choice.list[z].split('|')[0];
+                                          }
                                           if(listOption!=null && listOption!=""){
                                             var values = listOption.split(",");
                                               for(var zz = 0; zz< values.length; zz++){
@@ -127,43 +127,43 @@
                                           }
                                           htmlForm +='<p><input type="checkbox" id="checkbox-'+this.id+question.id+'_'+choice.id+'_'+z+'" name="--group_'+this.id+question.id+'_'+choice.id+'" '+(this.options.disabled?'disabled':'')+' tabindex="0"  class="'+QUESTION_EVENTCLASS+'"  value="'+val+'" '+( selected ? 'checked="checked"':"")+'>';
                                           htmlForm +='<label for="checkbox-'+this.id+question.id+'_'+choice.id+'_'+z+'" >'+lbl+'</label></p>';
-                                	  
-                                	  }	  
-                                	  
+                                      
+                                      }   
+                                      
                                   } else {
-									  if(choice.label != "hidden"){
-                                		  htmlForm +='<label for="'+this.id+'-choice_'+question.id+'_'+choice.id+'">'+(choice.label ? choice.label:  this.msg(msgKey))+'</label>';
-                                	  }
-	                                  htmlForm +='<select '+(choice.multiple ? 'multiple="true"':"")+' '+(this.options.disabled?'disabled':'')+' tabindex="0" id="'+this.id+'-select_'+question.id+'_'+choice.id+'" class="'+LIST_EVENTCLASS+'" name="--group_'+this.id+question.id+'_'+choice.id+'"  >';
-	                                  for(var z = 0; z< choice.list.length; z++){
-	                                      var selected = false;
+                                      if(choice.label != "hidden"){
+                                          htmlForm +='<label for="'+this.id+'-choice_'+question.id+'_'+choice.id+'">'+(choice.label ? choice.label:  this.msg(msgKey))+'</label>';
+                                      }
+                                      htmlForm +='<select '+(choice.multiple ? 'multiple="true"':"")+' '+(this.options.disabled?'disabled':'')+' tabindex="0" id="'+this.id+'-select_'+question.id+'_'+choice.id+'" class="'+LIST_EVENTCLASS+'" name="--group_'+this.id+question.id+'_'+choice.id+'"  >';
+                                      for(var z = 0; z< choice.list.length; z++){
+                                          var selected = false;
                                       
                                           var lbl = choice.list[z];
                                           var val = choice.list[z];
                                           if(lbl.indexOf('|')>0){
-											  lbl = choice.list[z].split('|')[1];
-											  val = choice.list[z].split('|')[0];
-										  }
-	                                      
-	                                      
-	                                      if(choice.multiple){
-	                                          var values = listOption.split(",");
-	                                          for(var zz = 0; zz< values.length; zz++){
-	                                              if(values[zz] == val){
-	                                                  selected = true;
-	                                                  break;
-	                                              }
-	                                          }
-	                                      } else {
-	                                          selected = listOption == val;
-	                                      }
-	                                      htmlForm +='<option value="'+val+'" '+( selected ? "selected":"")+'>'+lbl+'</option>';
-	                                  }
-	                                  htmlForm +='</select>';
-	                                  
+                                              lbl = choice.list[z].split('|')[1];
+                                              val = choice.list[z].split('|')[0];
+                                          }
+                                          
+                                          
+                                          if(choice.multiple){
+                                              var values = listOption.split(",");
+                                              for(var zz = 0; zz< values.length; zz++){
+                                                  if(values[zz] == val){
+                                                      selected = true;
+                                                      break;
+                                                  }
+                                              }
+                                          } else {
+                                              selected = listOption == val;
+                                          }
+                                          htmlForm +='<option value="'+val+'" '+( selected ? "selected":"")+'>'+lbl+'</option>';
+                                      }
+                                      htmlForm +='</select>';
+                                      
                                   }
                                   if(! choice.checkboxes){
-                                	  htmlForm +="</p>";   
+                                      htmlForm +="</p>";   
                                   }
                                   
                                   YAHOO.util.Event.addListener(this.id+'-select_'+question.id+'_'+choice.id, "change", function(){
@@ -173,12 +173,12 @@
                               } else {
                               
                                   if(choice.label != "hidden"){
-                                	  var checked = this.getCurrentValueChecked(question.id, choice.id );
-	                                  htmlForm +="<p>";
-	                                  htmlForm +='<input '+(this.options.disabled?'disabled':'')+' tabindex="0" id="'+this.id+'-choice_'+question.id+'_'+choice.id+'" class="'+QUESTION_EVENTCLASS+'" name="--group_'+this.id+question.id+'" type="radio"  '+(checked?'checked="checked"':"")+' />';
-	                                  var msgKey  =  choice.id == "-" ? "form.control.decision-tree.empty" : "form.control.decision-tree."+this.options.prefix+"."+question.id+"."+choice.id;
-	                                  htmlForm +='<label for="'+this.id+'-choice_'+question.id+'_'+choice.id+'">'+(choice.label ? choice.label:  this.msg(msgKey))+'</label>';
-	                                  htmlForm +="</p>";   
+                                      var checked = this.getCurrentValueChecked(question.id, choice.id );
+                                      htmlForm +="<p>";
+                                      htmlForm +='<input '+(this.options.disabled?'disabled':'')+' tabindex="0" id="'+this.id+'-choice_'+question.id+'_'+choice.id+'" class="'+QUESTION_EVENTCLASS+'" name="--group_'+this.id+question.id+'" type="radio"  '+(checked?'checked="checked"':"")+' />';
+                                      var msgKey  =  choice.id == "-" ? "form.control.decision-tree.empty" : "form.control.decision-tree."+this.options.prefix+"."+question.id+"."+choice.id;
+                                      htmlForm +='<label for="'+this.id+'-choice_'+question.id+'_'+choice.id+'">'+(choice.label ? choice.label:  this.msg(msgKey))+'</label>';
+                                      htmlForm +="</p>";   
                                   }
                                  
                                 
@@ -196,7 +196,7 @@
                            if(showComment){
                               htmlForm +='<div id="'+this.id+'-comment_'+question.id+'" class="decision-tree-comments hidden" >';
                               if(choice.label!="hidden") {
-                            	  htmlForm +='<label id="'+this.id+'-comment_'+question.id+'-label" for="'+this.id+'-comment_'+question.id+'-input">'+this.msg("form.control.decision-tree."+this.options.prefix+"."+question.id+".comment")+':</label>';
+                                  htmlForm +='<label id="'+this.id+'-comment_'+question.id+'-label" for="'+this.id+'-comment_'+question.id+'-input">'+this.msg("form.control.decision-tree."+this.options.prefix+"."+question.id+".comment")+':</label>';
                               }
                               if(this.options.disabled){
                                   htmlForm +='<span id="'+this.id+'-comment_'+question.id+'-input" >'+this.getCurrentValueComment(question.id)+'</span>';
@@ -211,7 +211,7 @@
                            }
                            
                            if(question.lowerNote){
-                        	   htmlForm += '<span class="decision-tree-note">'+question.lowerNote+'</span>';
+                               htmlForm += '<span class="decision-tree-note">'+question.lowerNote+'</span>';
                            }
                           
                           htmlForm += '</fieldset>';
@@ -232,19 +232,19 @@
                      var fnOnSelectChoice = function DT__fnOnSelectChoice(layer, args) {
                         var owner = Bubbling.getOwnerByTagName(args[1].input, "input");
                         if (owner !== null) {
-	                        if(owner.type != "checkbox"){
-		                           var previousState = owner.previousState;
-		                           if(previousState == true){
-		                        	   owner.checked = false;
-		                        	   owner.previousState = false;
-		                           } else {
-		                        	   owner.checked = true;
-		                        	   owner.previousState = true
-		                           }
-	                        }
-	                       me.toogleVisible();
-	                       return false;
-	                        
+                            if(owner.type != "checkbox"){
+                                   var previousState = owner.previousState;
+                                   if(previousState == true){
+                                       owner.checked = false;
+                                       owner.previousState = false;
+                                   } else {
+                                       owner.checked = true;
+                                       owner.previousState = true
+                                   }
+                            }
+                           me.toogleVisible();
+                           return false;
+                            
                         }
                      };
 
@@ -271,7 +271,7 @@
                          var question_id = this.options.currentValue[i].qid;
                          var choice_id = this.options.currentValue[i].cid;
                            if(qid  == question_id  && cid == choice_id ){
-                            return this.options.currentValue[i].listOptions;
+                            return this.options.currentValue[i].listOptions || "";
                            }
                       }
                       return "";
@@ -329,75 +329,75 @@
                              
                              if(this.formRuntime!=null && question.mandatory){
                                  if(choice.list!=null && !choice.checkboxes){
-									if(!choice.hasValidation){
-	                                	 choice.hasValidation = true;
-	                                     this.formRuntime.addValidation(this.id+'-select_'+question.id+'_'+choice.id, Alfresco.forms.validation.mandatory, null, "keyup");
-									}
-									
+                                    if(!choice.hasValidation){
+                                         choice.hasValidation = true;
+                                         this.formRuntime.addValidation(this.id+'-select_'+question.id+'_'+choice.id, Alfresco.forms.validation.mandatory, null, "keyup");
+                                    }
+                                    
                                  } else {
-                                	 if(choice.label != "hidden" && !choice.checkboxes && !choice.hasValidation){
-                                		 choice.hasValidation = true;
-	                                     this.formRuntime.addValidation(this.id+'-choice_'+question.id+'_'+choice.id, Alfresco.forms.validation.mandatory, null, "keyup");
-                                	 }
-	                                 if(choice.comment){
-	                                      if(choice.label == "hidden" || (choice.list!=null && choice.checkboxes )  || Dom.get(this.id+"-choice_"+question.id+'_'+choice.id).checked){
-	                                         if( !choice.hasCommentValidation){
-	                                        	 choice.hasCommentValidation = true;
-	                                        	 this.formRuntime.addValidation(this.id+"-comment_"+question.id+"-input", Alfresco.forms.validation.mandatory, null, "keyup");
-	                                         }
-	                                    
-	                                         
-	                                      } else {
-	                                    	  if( choice.hasCommentValidation){
-	                                    		  choice.hasCommentValidation = false;
-	                                    		  this.formRuntime.removeValidation(this.id+"-comment_"+question.id+"-input");
-	                                    	  }
-	                                      }
-	                                  }
-                                	                                      
+                                     if(choice.label != "hidden" && !choice.checkboxes && !choice.hasValidation){
+                                         choice.hasValidation = true;
+                                         this.formRuntime.addValidation(this.id+'-choice_'+question.id+'_'+choice.id, Alfresco.forms.validation.mandatory, null, "keyup");
+                                     }
+                                     if(choice.comment){
+                                          if(choice.label == "hidden" || (choice.list!=null && choice.checkboxes )  || Dom.get(this.id+"-choice_"+question.id+'_'+choice.id).checked){
+                                             if( !choice.hasCommentValidation){
+                                                 choice.hasCommentValidation = true;
+                                                 this.formRuntime.addValidation(this.id+"-comment_"+question.id+"-input", Alfresco.forms.validation.mandatory, null, "keyup");
+                                             }
+                                        
+                                             
+                                          } else {
+                                              if( choice.hasCommentValidation){
+                                                  choice.hasCommentValidation = false;
+                                                  this.formRuntime.removeValidation(this.id+"-comment_"+question.id+"-input");
+                                              }
+                                          }
+                                      }
+                                                                          
                                  }
                              }
 
                              if((choice.list!=null && !choice.checkboxes && Dom.get(this.id+"-select_"+question.id+'_'+choice.id).value!=null)
                                      || (choice.list!=null && choice.checkboxes )  || choice.label == "hidden" ||  Dom.get(this.id+"-choice_"+question.id+'_'+choice.id).checked ){
                              
-                            	 var showVisible = false;
+                                 var showVisible = false;
                                  if(choice.list!=null){
                                      var value = "";
                                      
                                      if(choice.multiple){
-                                    	 
-                                    	 if(choice.checkboxes){
-                                    	 
-	                                    	 var checkboxes = document.getElementsByName('--group_'+this.id+question.id+'_'+choice.id);  
-	                                    	 
-	                                    	 for(var k = 0; k < checkboxes.length; k++)  
-	                                    	    {  
-	                                    	        if(checkboxes[k].checked) {
-	                                    	        	
-	                                    	        	 if(value.length>0){
-	                                                         value+=",";
-	                                                     }
-	                                                     value += ""+checkboxes[k].value;
-	                                                     showVisible = true;
-	                                    	        } 
-	                                    	    }  
-                                    	 } else {
-                                    		 showVisible = true
-                                    		 var selectElem = Dom.get(this.id+"-select_"+question.id+'_'+choice.id);
-	                                         for (var j = 0, jj = selectElem.options.length; j < jj; j++)
-	                                         {
-	                                            if (selectElem.options[j].selected)
-	                                            {
-	                                               if(value.length>0){
-	                                                   value+=",";
-	                                               }
-	                                               value += selectElem.options[j].value;
-	                                            }
-	                                         }
-                                    	 }
+                                         
+                                         if(choice.checkboxes){
+                                         
+                                             var checkboxes = document.getElementsByName('--group_'+this.id+question.id+'_'+choice.id);  
+                                             
+                                             for(var k = 0; k < checkboxes.length; k++)  
+                                                {  
+                                                    if(checkboxes[k].checked) {
+                                                        
+                                                         if(value.length>0){
+                                                             value+=",";
+                                                         }
+                                                         value += ""+checkboxes[k].value;
+                                                         showVisible = true;
+                                                    } 
+                                                }  
+                                         } else {
+                                             showVisible = true
+                                             var selectElem = Dom.get(this.id+"-select_"+question.id+'_'+choice.id);
+                                             for (var j = 0, jj = selectElem.options.length; j < jj; j++)
+                                             {
+                                                if (selectElem.options[j].selected)
+                                                {
+                                                   if(value.length>0){
+                                                       value+=",";
+                                                   }
+                                                   value += selectElem.options[j].value;
+                                                }
+                                             }
+                                         }
                                      } else {
-                                    	 var selectElem = Dom.get(this.id+"-select_"+question.id+'_'+choice.id);
+                                         var selectElem = Dom.get(this.id+"-select_"+question.id+'_'+choice.id);
                                           value = selectElem.value;
                                         
                                      }
@@ -405,8 +405,8 @@
                                          value });
                                      
                                  } else {
-                                	 showVisible = true;
-                                	 
+                                     showVisible = true;
+                                     
                                      ret.push({ qid : question.id, cid : choice.id});
                                  }
                                  
@@ -424,21 +424,21 @@
                                 if(choice.comment){
                                    showComment = true; 
                                    if( choice.commentLabel && choice.commentLabel.length > 0 &&  Dom.get(this.id+'-comment_'+question.id+'-label')!=null) {
-									  Dom.get(this.id+'-comment_'+question.id+'-label').innerHTML = choice.commentLabel == "hidden" ? "" : choice.commentLabel ;
-								   }
+                                      Dom.get(this.id+'-comment_'+question.id+'-label').innerHTML = choice.commentLabel == "hidden" ? "" : choice.commentLabel ;
+                                   }
                                 } 
                              }
                            }
                            
                             if(Dom.get(this.id+"-comment_"+question.id)) {
-							    YAHOO.util.Event.purgeElement(this.id+"-comment_"+question.id+"-input");
-	                           if(showComment){
-	                              Dom.removeClass(this.id+"-comment_"+question.id,"hidden");
-	                              ret[ret.length-1].comment = Dom.get(this.id+"-comment_"+question.id+"-input").value;
-	                              YAHOO.util.Event.addListener(this.id+"-comment_"+question.id+"-input", "blur", function() {me.toogleVisible();} );                           
-	                           } else {
-	                              Dom.addClass(this.id+"-comment_"+question.id,"hidden");
-	                           }
+                                YAHOO.util.Event.purgeElement(this.id+"-comment_"+question.id+"-input");
+                               if(showComment){
+                                  Dom.removeClass(this.id+"-comment_"+question.id,"hidden");
+                                  ret[ret.length-1].comment = Dom.get(this.id+"-comment_"+question.id+"-input").value;
+                                  YAHOO.util.Event.addListener(this.id+"-comment_"+question.id+"-input", "blur", function() {me.toogleVisible();} );                           
+                               } else {
+                                  Dom.addClass(this.id+"-comment_"+question.id,"hidden");
+                               }
                            }
                            
                         }  else if(question.choices && this.formRuntime!=null && question.mandatory){
@@ -447,15 +447,15 @@
                                 
                                 if(this.formRuntime!=null && question.mandatory){
                                     if(choice.list!=null  && !choice.checkboxes && choice.hasValidation){
-                                    	choice.hasValidation = false;
+                                        choice.hasValidation = false;
                                         this.formRuntime.removeValidation(this.id+'-select_'+question.id+'_'+choice.id);
                                     } else {
-                                    	if(choice.label!="hidden" && choice.hasValidation){
-                                    		choice.hasValidation = false;
-                                    		this.formRuntime.removeValidation(this.id+'-choice_'+question.id+'_'+choice.id);
-                                    	}
+                                        if(choice.label!="hidden" && choice.hasValidation){
+                                            choice.hasValidation = false;
+                                            this.formRuntime.removeValidation(this.id+'-choice_'+question.id+'_'+choice.id);
+                                        }
                                         if(choice.comment && choice.hasCommentValidation){
-                                  		    choice.hasCommentValidation = false;
+                                            choice.hasCommentValidation = false;
                                             this.formRuntime.removeValidation(this.id+"-comment_"+question.id+"-input");
                                         }
                                     }
