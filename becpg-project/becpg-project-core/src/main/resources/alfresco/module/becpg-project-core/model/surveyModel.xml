@@ -66,6 +66,24 @@
 				</list>
 			</parameter>
 		</constraint>
+		
+		<constraint name="survey:scoreCriteria"
+			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/ProjectLists/bcpg:entityLists/ScoreCriteria</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>bcpg:lvValue</value>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
+		</constraint>
 
 	</constraints>
 
@@ -159,7 +177,7 @@
 						<facetable>false</facetable>
 					</index>
 					<constraints>
-						<constraint ref="pjt:scoreCriteria" />
+						<constraint ref="survey:scoreCriteria"/>
 					</constraints>
 				</property>
 				<property name="survey:responseCommentLabel">
