@@ -195,6 +195,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	private static final String EXPORT_LABELCLAIMLIST_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportLabelClaimList.xlsx";
 	private static final String EXPORT_PHYSICOCHEMICALLIST_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportPhysicoChemicalList.xlsx";
 	private static final String EXPORT_COMPOSITIONPACKAGING_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportCompositionPackaging.xlsx";
+	private static final String EXPORT_SCORELIST_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportScoreList.xlsx";
 	
 	private static final String EXPORT_SPEC_ALLERGENS_XLSX_PATH = "beCPG/birt/exportsearch/spec/%s/ExportSpecAllergens.xlsx";
 	private static final String EXPORT_SPEC_NUTRIENTS_XLSX_PATH = "beCPG/birt/exportsearch/spec/%s/ExportSpecNutrients.xlsx";
@@ -206,10 +207,13 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	
 	private static final String EXPORT_SUPPLIERS_XLSX_PATH = "beCPG/birt/exportsearch/supplier/%s/ExportSuppliers.xlsx";
 	private static final String EXPORT_SUPPLIER_SURVEY_XLSX_PATH = "beCPG/birt/exportsearch/supplier/%s/ExportSupplierSurvey.xlsx";
+	private static final String EXPORT_SUPPLIER_SCORELIST_XLSX_PATH = "beCPG/birt/exportsearch/supplier/%s/ExportSupplierScoreList.xlsx";
 	
 	private static final String EXPORT_CLIENT_SURVEY_XLSX_PATH = "beCPG/birt/exportsearch/client/%s/ExportClientSurvey.xlsx";
+	private static final String EXPORT_CLIENT_SCORELIST_XLSX_PATH = "beCPG/birt/exportsearch/client/%s/ExportClientScoreList.xlsx";
 	
 	private static final String EXPORT_PROJECT_SURVEY_XLSX_PATH = "beCPG/birt/exportsearch/project/%s/ExportProjectSurvey.xlsx";
+	private static final String EXPORT_PROJECT_SCORELIST_XLSX_PATH = "beCPG/birt/exportsearch/project/%s/ExportProjectScoreList.xlsx";
 
 	private static final String PRODUCT_REPORT_DE_RESOURCE = "beCPG/birt/document/product/default/ProductReport_de.properties";
 	private static final String PRODUCT_REPORT_EN_US_RESOURCE = "beCPG/birt/document/product/default/ProductReport_en_US.properties";
@@ -1767,6 +1771,10 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
 					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_COMPOSITIONPACKAGING),
 					TranslateHelper.getLocaleAwarePath(EXPORT_COMPOSITIONPACKAGING_XLSX_PATH), reportTplInformation, false);
+			
+			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
+					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_SCORELIST),
+					TranslateHelper.getLocaleAwarePath(EXPORT_SCORELIST_XLSX_PATH), reportTplInformation, false);
 
 			reportTplInformation.setNodeType(PLMModel.TYPE_SUPPLIER);
 
@@ -1776,12 +1784,18 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
 					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_SUPPLIERSURVEY),
 					TranslateHelper.getLocaleAwarePath(EXPORT_SUPPLIER_SURVEY_XLSX_PATH), reportTplInformation, false);
+			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
+					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_SUPPLIERSCORELIST),
+					TranslateHelper.getLocaleAwarePath(EXPORT_SUPPLIER_SCORELIST_XLSX_PATH), reportTplInformation, false);
 			
 			reportTplInformation.setNodeType(PLMModel.TYPE_CLIENT);
 			
 			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
 					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_CLIENTSURVEY),
 					TranslateHelper.getLocaleAwarePath(EXPORT_CLIENT_SURVEY_XLSX_PATH), reportTplInformation, false);
+			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
+					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_CLIENTSCORELIST),
+					TranslateHelper.getLocaleAwarePath(EXPORT_CLIENT_SCORELIST_XLSX_PATH), reportTplInformation, false);
 			
 			reportTplInformation.setNodeType(QualityModel.TYPE_QUALITY_CONTROL);
 
@@ -1818,6 +1832,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
 					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_PROJECTSURVEY),
 					TranslateHelper.getLocaleAwarePath(EXPORT_PROJECT_SURVEY_XLSX_PATH), reportTplInformation, false);
+			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
+					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_PROJECTSCORELIST),
+					TranslateHelper.getLocaleAwarePath(EXPORT_PROJECT_SCORELIST_XLSX_PATH), reportTplInformation, false);
 			
 			// export search NC
 
