@@ -244,16 +244,18 @@ public class BeCPGZipDownloadExporter extends BaseExporter
 		
 		String firstPartToMatch = subPathToMatch.size() == 1 ? subPathToMatch.toString() : subPathToMatch.subPath(0, 0).toString();
 		
-		int parentPath = nodeService.getPath(parentRef).size();
-		for (ChildAssociationRef childAssoc : nodeService.getChildAssocs(parentRef)) {
-    		NodeRef childRef = childAssoc.getChildRef();
-    		Path currentPath = nodeService.getPath(childRef);
-    		Path subPath = currentPath.subPath(parentPath, currentPath.size() - 1);
-    		String firstPart = subPath.size() == 1 ? subPath.toString() : subPath.subPath(0, 0).toString();
-    		if (firstPart.equals(firstPartToMatch)) {
-    			return childRef;
-    		}
-    	}
+		if (nodeService.exists(parentRef)) {
+			int parentPath = nodeService.getPath(parentRef).size();
+			for (ChildAssociationRef childAssoc : nodeService.getChildAssocs(parentRef)) {
+				NodeRef childRef = childAssoc.getChildRef();
+				Path currentPath = nodeService.getPath(childRef);
+				Path subPath = currentPath.subPath(parentPath, currentPath.size() - 1);
+				String firstPart = subPath.size() == 1 ? subPath.toString() : subPath.subPath(0, 0).toString();
+				if (firstPart.equals(firstPartToMatch)) {
+					return childRef;
+				}
+			}
+		}
 		return null;
 	}
 
