@@ -1,4 +1,4 @@
-MAPPING;TestMapping.xml;;;;;
+MAPPING;TestMapping;;;;;
 PATH;/System/Characts/bcpg:entityLists/LabelClaims;;;;;
 TYPE;bcpg:labelClaim;;;;;
 MAPPING;Default;;;;;
