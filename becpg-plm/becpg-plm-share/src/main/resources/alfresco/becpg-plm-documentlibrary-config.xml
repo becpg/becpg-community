@@ -106,6 +106,7 @@
 				<subtype name="bcpg:physicoChemList" />
 				<subtype name="bcpg:regulatoryList" />
 				<subtype name="bcpg:ingRegulatoryList" />
+				<subtype name="bcpg:toxList" />
 			</type>
 			<type name="trx:transferTarget">
 				<subtype name="trx:fileTransferTarget" />
