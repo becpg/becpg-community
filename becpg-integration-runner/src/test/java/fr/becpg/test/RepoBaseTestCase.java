@@ -100,6 +100,11 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 	private String getTestFolderName() {
 		return getClassName().replaceAll("\\.", "_") + "_" + name.getMethodName();
 	}
+	
+	protected String toTestName(String product) {
+		return  name.getMethodName()+" -  "+ product;
+	}
+
 
 	protected NodeRef systemFolderNodeRef;
 
