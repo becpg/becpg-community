@@ -375,15 +375,13 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-			// List<NodeRef> reportTpls =
-			// exportSearchService.getReportTpls();
 			List<NodeRef> reportTpls = reportTplService.getUserReportTemplates(ReportType.ExportSearch, PLMModel.TYPE_PRODUCT, "*");
 
 			for (NodeRef n : reportTpls) {
 				logger.debug("report name: " + nodeService.getProperty(n, ContentModel.PROP_NAME));
 			}
 
-			assertEquals("There is 9 report", 9, reportTpls.size());
+			assertEquals("There is 13 report", 13, reportTpls.size());
 			assertEquals("Check report nodeRef", exportProductReportTpl, reportTpls.get(0));
 
 			return null;

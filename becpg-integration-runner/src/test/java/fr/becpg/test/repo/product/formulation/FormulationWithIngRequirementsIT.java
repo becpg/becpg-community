@@ -313,10 +313,12 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 				} else if (RequirementDataType.Specification.equals(reqCtrlList.getReqDataType())) {
 					logger.error("Unexpected rclDataItem: " + reqCtrlList.getReqMessage());
 					fail();
+				} else {
+					logger.warn("Not checked rclDataItem: " + reqCtrlList.getReqMessage());
 				}
 			}
 
-			logger.info("/*-- Done checking, checks=" + checks + " (should be 14) --*/");
+			logger.info("/*-- Done checking, checks=" + checks + " (should be 11) --*/");
 			assertEquals(11, checks);
 
 			/*
