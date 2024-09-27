@@ -13,7 +13,6 @@ import org.apache.commons.logging.LogFactory;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
-import fr.becpg.repo.product.data.RegulatoryEntityItem;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
@@ -78,7 +77,7 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 
 								String regulatoryId = extractRegulatoryId(specDataItem, specification);
 
-								RequirementType reqType = isForbidden ? RequirementType.Info : RequirementType.Forbidden;
+								RequirementType reqType = isForbidden ? RequirementType.Forbidden : RequirementType.Info;
 
 								if (!isForbidden && specDataItem.getRegulatoryType() != null) {
 									reqType = specDataItem.getRegulatoryType();
