@@ -58,14 +58,22 @@ public class NutriScoreIT extends PLMBaseTestCase {
 
 		NodeRef finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
-			nutList.add(new NutListDataItem(null, 2084d, null, null, null, null, energyKjNode, true));
-			nutList.add(new NutListDataItem(null, 2.8d, null, null, null, null, satFatNode, true));
-			nutList.add(new NutListDataItem(null, 22.9d, null, null, null, null, totalFatNode, true));
-			nutList.add(new NutListDataItem(null, 4.73d, null, null, null, null, totalSugarNode, true));
-			nutList.add(new NutListDataItem(null, 672d, null, null, null, null, sodiumNode, true));
-			nutList.add(new NutListDataItem(null, 0d, null, null, null, null, nspFibreNode, true));
-			nutList.add(new NutListDataItem(null, 4.13d, null, null, null, null, aoacFibreNode, true));
-			nutList.add(new NutListDataItem(null, 5.81d, null, null, null, null, proteinNode, true));
+			nutList.add(NutListDataItem.build().withValue(2084d).withUnit(null).withMini(null).withMaxi(null).withGroup(null).withNut(energyKjNode).withIsManual(true)
+);
+			nutList.add(NutListDataItem.build().withValue(2.8d).withUnit(null).withMini(null).withMaxi(null).withGroup(null).withNut(satFatNode).withIsManual(true)
+);
+			nutList.add(NutListDataItem.build().withValue(22.9d).withUnit(null).withMini(null).withMaxi(null).withGroup(null).withNut(totalFatNode).withIsManual(true)
+);
+			nutList.add(NutListDataItem.build().withValue(4.73d).withUnit(null).withMini(null).withMaxi(null).withGroup(null).withNut(totalSugarNode).withIsManual(true)
+);
+			nutList.add(NutListDataItem.build().withValue(672d).withUnit(null).withMini(null).withMaxi(null).withGroup(null).withNut(sodiumNode).withIsManual(true)
+);
+			nutList.add(NutListDataItem.build().withValue(0d).withUnit(null).withMini(null).withMaxi(null).withGroup(null).withNut(nspFibreNode).withIsManual(true)
+);
+			nutList.add(NutListDataItem.build().withValue(4.13d).withUnit(null).withMini(null).withMaxi(null).withGroup(null).withNut(aoacFibreNode).withIsManual(true)
+);
+			nutList.add(NutListDataItem.build().withValue(5.81d).withUnit(null).withMini(null).withMaxi(null).withGroup(null).withNut(proteinNode).withIsManual(true)
+);
 
 			List<PhysicoChemListDataItem> physicoChemList = new ArrayList<PhysicoChemListDataItem>();
 			physicoChemList.add(new PhysicoChemListDataItem(null, 0d, null, null, null, percFruitsAndVetgsNode));
@@ -102,14 +110,22 @@ public class NutriScoreIT extends PLMBaseTestCase {
 		NodeRef finishedProductNodeRef2 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			// 2596.0642d, 15.16d, 70.172d, 0.003d, 159d, 0d, 0d, 0d, 0.15d, "Fats"
 			List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
-			nutList.add(new NutListDataItem(null, 2596.0642d, null, null, null, null, energyKjNode, true));
-			nutList.add(new NutListDataItem(null, 15.16d, null, null, null, null, satFatNode, true));
-			nutList.add(new NutListDataItem(null, 70.172d, null, null, null, null, totalFatNode, true));
-			nutList.add(new NutListDataItem(null, 0.003d, null, null, null, null, totalSugarNode, true));
-			nutList.add(new NutListDataItem(null, 159d, null, null, null, null, sodiumNode, true));
-			nutList.add(new NutListDataItem(null, 0d, null, null, null, null, nspFibreNode, true));
-			nutList.add(new NutListDataItem(null, 0d, null, null, null, null, aoacFibreNode, true));
-			nutList.add(new NutListDataItem(null, 0.15d, null, null, null, null, proteinNode, true));
+			nutList.add(NutListDataItem.build().withValue(2596.0642d).withUnit(null).withMini(null).withMaxi(null).withGroup(null).withNut(energyKjNode).withIsManual(true)
+);
+			nutList.add(NutListDataItem.build().withValue(15.16d).withUnit(null).withMini(null).withMaxi(null).withGroup(null).withNut(satFatNode).withIsManual(true)
+);
+			nutList.add(NutListDataItem.build().withValue(70.172d).withUnit(null).withMini(null).withMaxi(null).withGroup(null).withNut(totalFatNode).withIsManual(true)
+);
+			nutList.add(NutListDataItem.build().withValue(0.003d).withUnit(null).withMini(null).withMaxi(null).withGroup(null).withNut(totalSugarNode).withIsManual(true)
+);
+			nutList.add(NutListDataItem.build().withValue(159d).withUnit(null).withMini(null).withMaxi(null).withGroup(null).withNut(sodiumNode).withIsManual(true)
+);
+			nutList.add(NutListDataItem.build().withValue(0d).withUnit(null).withMini(null).withMaxi(null).withGroup(null).withNut(nspFibreNode).withIsManual(true)
+);
+			nutList.add(NutListDataItem.build().withValue(0d).withUnit(null).withMini(null).withMaxi(null).withGroup(null).withNut(aoacFibreNode).withIsManual(true)
+);
+			nutList.add(NutListDataItem.build().withValue(0.15d).withUnit(null).withMini(null).withMaxi(null).withGroup(null).withNut(proteinNode).withIsManual(true)
+);
 
 			ArrayList<PhysicoChemListDataItem> physicoChemList = new ArrayList<PhysicoChemListDataItem>();
 			physicoChemList.add(new PhysicoChemListDataItem(null, 0d, null, null, null, percFruitsAndVetgsNode));
@@ -145,15 +161,24 @@ public class NutriScoreIT extends PLMBaseTestCase {
 
 		NodeRef finishedProductNodeRef3 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
-			nutList.add(new NutListDataItem(null, 797.0, null, null, null, null, energyKjNode, true));
-			nutList.add(new NutListDataItem(null, 4.6, null, null, null, null, satFatNode, true));
-			nutList.add(new NutListDataItem(null, 7.1, null, null, null, null, totalFatNode, true));
-			nutList.add(new NutListDataItem(null, 19.0, null, null, null, null, totalSugarNode, true));
-			nutList.add(new NutListDataItem(null, 92.0, null, null, null, null, sodiumNode, true));
-			nutList.add(new NutListDataItem(null, 0.23, null, null, null, null, saltNode, true));
-			nutList.add(new NutListDataItem(null, 0.2, null, null, null, null, nspFibreNode, true));
-			nutList.add(new NutListDataItem(null, 0.0, null, null, null, null, aoacFibreNode, true));
-			nutList.add(new NutListDataItem(null, 3.3, null, null, null, null, proteinNode, true));
+			nutList.add(NutListDataItem.build().withValue(797.0).withUnit(null).withMini(null).withMaxi(null).withGroup(null).withNut(energyKjNode).withIsManual(true)
+);
+			nutList.add(NutListDataItem.build().withValue(4.6).withUnit(null).withMini(null).withMaxi(null).withGroup(null).withNut(satFatNode).withIsManual(true)
+);
+			nutList.add(NutListDataItem.build().withValue(7.1).withUnit(null).withMini(null).withMaxi(null).withGroup(null).withNut(totalFatNode).withIsManual(true)
+);
+			nutList.add(NutListDataItem.build().withValue(19.0).withUnit(null).withMini(null).withMaxi(null).withGroup(null).withNut(totalSugarNode).withIsManual(true)
+);
+			nutList.add(NutListDataItem.build().withValue(92.0).withUnit(null).withMini(null).withMaxi(null).withGroup(null).withNut(sodiumNode).withIsManual(true)
+);
+			nutList.add(NutListDataItem.build().withValue(0.23).withUnit(null).withMini(null).withMaxi(null).withGroup(null).withNut(saltNode).withIsManual(true)
+);
+			nutList.add(NutListDataItem.build().withValue(0.2).withUnit(null).withMini(null).withMaxi(null).withGroup(null).withNut(nspFibreNode).withIsManual(true)
+);
+			nutList.add(NutListDataItem.build().withValue(0.0).withUnit(null).withMini(null).withMaxi(null).withGroup(null).withNut(aoacFibreNode).withIsManual(true)
+);
+			nutList.add(NutListDataItem.build().withValue(3.3).withUnit(null).withMini(null).withMaxi(null).withGroup(null).withNut(proteinNode).withIsManual(true)
+);
 
 			ArrayList<PhysicoChemListDataItem> physicoChemList = new ArrayList<PhysicoChemListDataItem>();
 			physicoChemList.add(new PhysicoChemListDataItem(null, 0d, null, null, null, percFruitsAndVetgsNode));

@@ -576,10 +576,14 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			rawMaterial1.setCostList(costList);
 			// nutList
 			List<NutListDataItem> nutList = new ArrayList<>();
-			nutList.add(new NutListDataItem(null, 1d, "g/100g", 0.8d, 2.1d, "Groupe 1", nut1, false));
-			nutList.add(new NutListDataItem(null, 2d, "g/100g", 1.5d, 2.2d, "Groupe 1", nut2, false));
-			nutList.add(new NutListDataItem(null, 4d, "g/100g", 0.8d, 2.1d, "Groupe 1", nut3, false));
-			nutList.add(new NutListDataItem(null, 3d, "g/100g", 0.8d, 2.1d, "Groupe 1", nut4, false));
+			nutList.add(NutListDataItem.build().withNodeRef(null).withValue(1d).withUnit("g/100g").withMini(0.8d).withMaxi(2.1d).withGroup("Groupe 1").withNut(nut1).withIsManual(false)
+);
+			nutList.add(NutListDataItem.build().withNodeRef(null).withValue(2d).withUnit("g/100g").withMini(1.5d).withMaxi(2.2d).withGroup("Groupe 1").withNut(nut2).withIsManual(false)
+);
+			nutList.add(NutListDataItem.build().withNodeRef(null).withValue(4d).withUnit("g/100g").withMini(0.8d).withMaxi(2.1d).withGroup("Groupe 1").withNut(nut3).withIsManual(false)
+);
+			nutList.add(NutListDataItem.build().withNodeRef(null).withValue(3d).withUnit("g/100g").withMini(0.8d).withMaxi(2.1d).withGroup("Groupe 1").withNut(nut4).withIsManual(false)
+);
 
 			rawMaterial1.setNutList(nutList);
 			// allergenList
@@ -646,9 +650,12 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			rawMaterial2.setCostList(costList);
 			// nutList
 			List<NutListDataItem> nutList = new ArrayList<>();
-			nutList.add(new NutListDataItem(null, 1d, "g/100g", 0.8d, 1.1d, "Groupe 1", nut1, false));
-			nutList.add(new NutListDataItem(null, 2d, "g/100g", 0.8d, 2.1d, "Groupe 1", nut2, false));
-			nutList.add(new NutListDataItem(null, 6d, "g/100g", 0.8d, 2.1d, "Groupe 1", nut3, false));
+			nutList.add(NutListDataItem.build().withNodeRef(null).withValue(1d).withUnit("g/100g").withMini(0.8d).withMaxi(1.1d).withGroup("Groupe 1").withNut(nut1).withIsManual(false)
+);
+			nutList.add(NutListDataItem.build().withNodeRef(null).withValue(2d).withUnit("g/100g").withMini(0.8d).withMaxi(2.1d).withGroup("Groupe 1").withNut(nut2).withIsManual(false)
+);
+			nutList.add(NutListDataItem.build().withNodeRef(null).withValue(6d).withUnit("g/100g").withMini(0.8d).withMaxi(2.1d).withGroup("Groupe 1").withNut(nut3).withIsManual(false)
+);
 			rawMaterial2.setNutList(nutList);
 			// allergenList
 			List<AllergenListDataItem> allergenList = new ArrayList<>();
@@ -710,9 +717,12 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			rawMaterial3.setCostList(costList);
 			// nutList
 			List<NutListDataItem> nutList = new ArrayList<>();
-			nutList.add(new NutListDataItem(null, 1d, "g/100g", null, null, "Groupe 1", nut1, false));
-			nutList.add(new NutListDataItem(null, 2d, "g/100g", null, null, "Groupe 1", nut2, false));
-			nutList.add(new NutListDataItem(null, 4d, "g/100g", 0.8d, 2.1d, "Groupe 1", nut3, false));
+			nutList.add(NutListDataItem.build().withNodeRef(null).withValue(1d).withUnit("g/100g").withMini(null).withMaxi(null).withGroup("Groupe 1").withNut(nut1).withIsManual(false)
+);
+			nutList.add(NutListDataItem.build().withNodeRef(null).withValue(2d).withUnit("g/100g").withMini(null).withMaxi(null).withGroup("Groupe 1").withNut(nut2).withIsManual(false)
+);
+			nutList.add(NutListDataItem.build().withNodeRef(null).withValue(4d).withUnit("g/100g").withMini(0.8d).withMaxi(2.1d).withGroup("Groupe 1").withNut(nut3).withIsManual(false)
+);
 			rawMaterial3.setNutList(nutList);
 			// allergenList
 			List<AllergenListDataItem> allergenList = new ArrayList<>();
@@ -764,8 +774,10 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			rawMaterial4.setCostList(new LinkedList<CostListDataItem>());
 			rawMaterial4.setNutList(new LinkedList<NutListDataItem>());
 			List<NutListDataItem> nutList = new ArrayList<>();
-			nutList.add(new NutListDataItem(null, 0d, "g/100g", 0d, 0d, "Groupe 1", nut1, false));
-			nutList.add(new NutListDataItem(null, 0d, "g/100g", 0d, 0d, "Groupe 1", nut2, false));
+			nutList.add(NutListDataItem.build().withNodeRef(null).withValue(0d).withUnit("g/100g").withMini(0d).withMaxi(0d).withGroup("Groupe 1").withNut(nut1).withIsManual(false)
+);
+			nutList.add(NutListDataItem.build().withNodeRef(null).withValue(0d).withUnit("g/100g").withMini(0d).withMaxi(0d).withGroup("Groupe 1").withNut(nut2).withIsManual(false)
+);
 			rawMaterial4.setNutList(nutList);
 			rawMaterial4NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial4).getNodeRef();
 			return null;
@@ -801,8 +813,10 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			rawMaterial5.setCostList(costList);
 			// nutList
 			List<NutListDataItem> nutList = new ArrayList<>();
-			nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d, 0d, "Groupe 1", nut1, false));
-			nutList.add(new NutListDataItem(null, 3d, "g/100g", 0d, 0d, "Groupe 1", nut2, false));
+			nutList.add(NutListDataItem.build().withNodeRef(null).withValue(1d).withUnit("g/100g").withMini(0d).withMaxi(0d).withGroup("Groupe 1").withNut(nut1).withIsManual(false)
+);
+			nutList.add(NutListDataItem.build().withNodeRef(null).withValue(3d).withUnit("g/100g").withMini(0d).withMaxi(0d).withGroup("Groupe 1").withNut(nut2).withIsManual(false)
+);
 			rawMaterial5.setNutList(nutList);
 			rawMaterial5.setIngList(ingList);
 			rawMaterial5NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial5).getNodeRef();
@@ -844,8 +858,10 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			rawMaterial6.setCostList(costList);
 			// nutList
 			List<NutListDataItem> nutList = new ArrayList<>();
-			nutList.add(new NutListDataItem(null, 1d, "g/100mL", 0.8d, 1.1d, "Groupe 1", nut1, false));
-			nutList.add(new NutListDataItem(null, 2d, "g/100mL", 0.8d, 2.1d, "Groupe 1", nut2, false));
+			nutList.add(NutListDataItem.build().withNodeRef(null).withValue(1d).withUnit("g/100mL").withMini(0.8d).withMaxi(1.1d).withGroup("Groupe 1").withNut(nut1).withIsManual(false)
+);
+			nutList.add(NutListDataItem.build().withNodeRef(null).withValue(2d).withUnit("g/100mL").withMini(0.8d).withMaxi(2.1d).withGroup("Groupe 1").withNut(nut2).withIsManual(false)
+);
 			rawMaterial6.setNutList(nutList);
 			// allergenList
 			List<AllergenListDataItem> allergenList = new ArrayList<>();

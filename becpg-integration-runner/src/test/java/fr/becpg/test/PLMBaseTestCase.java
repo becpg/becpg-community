@@ -454,8 +454,10 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 		NodeRef rawMaterialTplNodeRef = entityTplService.getEntityTpl(PLMModel.TYPE_RAWMATERIAL);
 		ProductData rawMaterialData = alfrescoRepository.findOne(rawMaterialTplNodeRef);
 		rawMaterialData.getCostList().add(new CostListDataItem(null, null, null, null, costs.get(0), null));
-		rawMaterialData.getNutList().add(new NutListDataItem(null, null, null, null, null, null, nuts.get(0), null));
-		rawMaterialData.getNutList().add(new NutListDataItem(null, null, null, null, null, null, nuts.get(0), null));
+		rawMaterialData.getNutList().add(NutListDataItem.build().withNut(nuts.get(0)).withIsManual(null)
+);
+		rawMaterialData.getNutList().add(NutListDataItem.build().withNut(nuts.get(0)).withIsManual(null)
+);
 
 		alfrescoRepository.save(rawMaterialData);
 

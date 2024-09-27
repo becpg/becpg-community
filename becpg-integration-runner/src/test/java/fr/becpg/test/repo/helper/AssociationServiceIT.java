@@ -214,7 +214,7 @@ public class AssociationServiceIT extends PLMBaseTestCase {
 			finishedProduct.setName("Test child Assoc");
 
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterialNodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterialNodeRef));
 
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
