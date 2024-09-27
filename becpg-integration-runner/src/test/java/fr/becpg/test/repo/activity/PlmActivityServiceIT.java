@@ -262,7 +262,7 @@ public class PlmActivityServiceIT extends AbstractFinishedProductTest {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, 1d, 1d, ProductUnit.P, 0d, DeclarationType.Declare, lSF1NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(null).withQty(1d).withQtyUsed(1d).withUnit(ProductUnit.P).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(lSF1NodeRef));
 			FinishedProductData finishedProduct;
 			finishedProduct = ((FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);

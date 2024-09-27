@@ -79,22 +79,27 @@ public class DefaultProductReportExtractorIT extends AbstractFinishedProductTest
 			finishedProduct.setQty(2d);
 			finishedProduct.setNetWeight(2d);
 			List<PackagingListDataItem> packagingList = new ArrayList<>();
-			packagingList.add(new PackagingListDataItem(null, 1d, ProductUnit.P, PackagingLevel.Primary, true, packagingMaterial1NodeRef));
-			packagingList.add(new PackagingListDataItem(null, 3d, ProductUnit.m, PackagingLevel.Primary, true, packagingMaterial2NodeRef));
-			packagingList.add(new PackagingListDataItem(null, 8d, ProductUnit.PP, PackagingLevel.Tertiary, true, packagingMaterial3NodeRef));
+			packagingList.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.P).withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packagingMaterial1NodeRef)
+);
+			packagingList.add(PackagingListDataItem.build().withQty(3d).withUnit(ProductUnit.m).withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packagingMaterial2NodeRef)
+);
+			packagingList.add(PackagingListDataItem.build().withQty(8d).withUnit(ProductUnit.PP).withPkgLevel(PackagingLevel.Tertiary).withIsMaster(true).withProduct(packagingMaterial3NodeRef)
+);
 			finishedProduct.getPackagingListView().setPackagingList(packagingList);
 			List<CostListDataItem> costList = new ArrayList<>();
 			costList.add(new CostListDataItem(null, 1d, "€/P", null, pkgCost1, false));
 			costList.add(new CostListDataItem(null, 2d, "€/P", null, pkgCost2, false));
 			finishedProduct.setCostList(costList);
 			List<NutListDataItem> nutList = new ArrayList<>();
-			nutList.add(new NutListDataItem(null, 12d, "g/100g", 0d, 0d, "Group1", nut1, false));
-			nutList.add(new NutListDataItem(null, null, "g/100g", null, null, "Group1", nut2, false));
+			nutList.add(NutListDataItem.build().withValue(12d).withUnit("g/100g").withMini(0d).withMaxi(0d).withGroup("Group1").withNut(nut1).withIsManual(false)
+);
+			nutList.add(NutListDataItem.build().withValue(null).withUnit("g/100g").withMini(null).withMaxi(null).withGroup("Group1").withNut(nut2).withIsManual(false)
+);
 			finishedProduct.setNutList(nutList);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, 1d, 1d, ProductUnit.kg, 3d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, null, 0.5d, 0.5d, ProductUnit.kg, 3d, DeclarationType.Declare, rawMaterial2NodeRef));
-			compoList.add(new CompoListDataItem(null, null, 0.5d, 0.5d, ProductUnit.kg, 3d, DeclarationType.Declare, rawMaterial3NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(null).withQty(1d).withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(3d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(null).withQty(0.5d).withQtyUsed(0.5d).withUnit(ProductUnit.kg).withLossPerc(3d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial2NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(null).withQty(0.5d).withQtyUsed(0.5d).withUnit(ProductUnit.kg).withLossPerc(3d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial3NodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			NodeRef finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 

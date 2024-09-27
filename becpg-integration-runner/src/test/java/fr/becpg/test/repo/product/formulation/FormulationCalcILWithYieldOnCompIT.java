@@ -65,9 +65,9 @@ public class FormulationCalcILWithYieldOnCompIT extends AbstractFinishedProductT
 			finishedProduct.setQty(4d);
 			finishedProduct.setDensity(1d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 10d, DeclarationType.Declare, rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(10d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
 
-			CompoListDataItem temp = new CompoListDataItem(null, null, null, 3d, ProductUnit.kg, 10d, DeclarationType.Declare, rawMaterial2NodeRef);
+			CompoListDataItem temp = CompoListDataItem.build().withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(10d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial2NodeRef);
 			temp.setYieldPerc(200d);
 			compoList.add(temp);
 
@@ -125,15 +125,14 @@ public class FormulationCalcILWithYieldOnCompIT extends AbstractFinishedProductT
 			finishedProduct.setQty(2d);
 			finishedProduct.setDensity(1d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 65d, ProductUnit.g, null, DeclarationType.Declare, localSF1NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(65d).withUnit(ProductUnit.g).withDeclarationType(DeclarationType.Declare).withProduct(localSF1NodeRef));
 			compoList.add(
-					new CompoListDataItem(null, compoList.get(0), null, 80d, ProductUnit.Perc, null, DeclarationType.Declare, rawMaterial1NodeRef));
-			CompoListDataItem temp = new CompoListDataItem(null, compoList.get(0), null, 10d, ProductUnit.Perc, null, DeclarationType.Declare,
-					rawMaterial2NodeRef);
+					CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(80d).withUnit(ProductUnit.Perc).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			CompoListDataItem temp = CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(10d).withUnit(ProductUnit.Perc).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial2NodeRef);
 			temp.setYieldPerc(200d);
 			compoList.add(temp);
 			compoList.add(
-					new CompoListDataItem(null, compoList.get(0), null, 10d, ProductUnit.Perc, null, DeclarationType.Declare, rawMaterial3NodeRef));
+					CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(10d).withUnit(ProductUnit.Perc).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial3NodeRef));
 
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();

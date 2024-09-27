@@ -438,7 +438,7 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 				// Add SF to finished product (data-list activity)
 				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 					List<CompoListDataItem> compoList = new ArrayList<>();
-					compoList.add(new CompoListDataItem(null, null, 1d, 1d, ProductUnit.P, 0d, DeclarationType.Declare, lSF1NodeRef));
+					compoList.add(CompoListDataItem.build().withParent(null).withQty(1d).withQtyUsed(1d).withUnit(ProductUnit.P).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(lSF1NodeRef));
 					FinishedProductData finishedProduct;
 					finishedProduct = ((FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef));
 					finishedProduct.getCompoListView().setCompoList(compoList);
@@ -526,7 +526,7 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 			productData.setParentNodeRef(getTestFolderNodeRef());
 			productData.setName("activity-test-product");
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, 1d, 1d, ProductUnit.P, 0d, DeclarationType.Declare, semiFinishedProductNodeRef));
+			compoList.add(CompoListDataItem.build().withParent(null).withQty(1d).withQtyUsed(1d).withUnit(ProductUnit.P).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(semiFinishedProductNodeRef));
 			productData.getCompoListView().setCompoList(compoList);
 			alfrescoRepository.save(productData);
 

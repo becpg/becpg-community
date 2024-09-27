@@ -160,13 +160,13 @@ public class BeCPGPLMTestHelper {
 		finishedProduct.setHierarchy1(PLMBaseTestCase.INSTANCE2.HIERARCHY1_FROZEN_REF);
 		finishedProduct.setHierarchy2(PLMBaseTestCase.INSTANCE2.HIERARCHY2_PIZZA_REF);
 		List<CompoListDataItem> compoList = new LinkedList<>();
-		CompoListDataItem parent1 = new CompoListDataItem(null, null, 1d, 1d, ProductUnit.P, 0d, DeclarationType.Declare, lSF1NodeRef);
-		CompoListDataItem child1 = new CompoListDataItem(null, parent1, 1d, 4d, ProductUnit.P, 0d, DeclarationType.Declare, lSF2NodeRef);
-		CompoListDataItem child12 = new CompoListDataItem(null, child1, 3d, 0d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial1NodeRef);
-		CompoListDataItem parent2 = new CompoListDataItem(null, null, 1d, 4d, ProductUnit.P, 0d, DeclarationType.Declare, lSF3NodeRef);
-		CompoListDataItem child2 = new CompoListDataItem(null, parent2, 3d, 0d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial2NodeRef);
-		CompoListDataItem child21 = new CompoListDataItem(null, parent2, 3d, 0d, ProductUnit.kg, 0d, DeclarationType.Omit, lSF4NodeRef);
-		CompoListDataItem parent3 = new CompoListDataItem(null, null, 3d, 0d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial1NodeRef);
+		CompoListDataItem parent1 = CompoListDataItem.build().withParent(null).withQty(1d).withQtyUsed(1d).withUnit(ProductUnit.P).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(lSF1NodeRef);
+		CompoListDataItem child1 = CompoListDataItem.build().withParent(parent1).withQty(1d).withQtyUsed(4d).withUnit(ProductUnit.P).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(lSF2NodeRef);
+		CompoListDataItem child12 = CompoListDataItem.build().withParent(child1).withQty(3d).withQtyUsed(0d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Omit).withProduct(rawMaterial1NodeRef);
+		CompoListDataItem parent2 = CompoListDataItem.build().withParent(null).withQty(1d).withQtyUsed(4d).withUnit(ProductUnit.P).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(lSF3NodeRef);
+		CompoListDataItem child2 = CompoListDataItem.build().withParent(parent2).withQty(3d).withQtyUsed(0d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Omit).withProduct(rawMaterial2NodeRef);
+		CompoListDataItem child21 = CompoListDataItem.build().withParent(parent2).withQty(3d).withQtyUsed(0d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Omit).withProduct(lSF4NodeRef);
+		CompoListDataItem parent3 = CompoListDataItem.build().withParent(null).withQty(3d).withQtyUsed(0d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Omit).withProduct(rawMaterial1NodeRef);
 
 		compoList.add(parent1);
 		compoList.add(child1);
@@ -228,8 +228,8 @@ public class BeCPGPLMTestHelper {
 		// Nuts
 		List<NutListDataItem> nutList = new ArrayList<>();
 		for (int j = 0; j < PLMBaseTestCase.INSTANCE2.nuts.size(); j++) {
-			NutListDataItem nutListItemData = new NutListDataItem(null, 2d, "kJ/100g", 0d, 0d, "Groupe 1", PLMBaseTestCase.INSTANCE2.nuts.get(j),
-					false);
+			NutListDataItem nutListItemData = NutListDataItem.build().withNodeRef(null).withValue(2d).withUnit("kJ/100g").withMini(0d).withMaxi(0d).withGroup("Groupe 1").withNut(PLMBaseTestCase.INSTANCE2.nuts.get(j)).withIsManual(false)
+;
 			nutList.add(nutListItemData);
 		}
 		rawMaterial.setNutList(nutList);

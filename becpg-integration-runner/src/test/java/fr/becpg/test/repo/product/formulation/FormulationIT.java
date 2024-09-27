@@ -1517,9 +1517,12 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			finishedProduct.setQty(2d);
 			finishedProduct.setDensity(1d);
 			List<PackagingListDataItem> packagingList = new ArrayList<>();
-			packagingList.add(new PackagingListDataItem(null, 1d, ProductUnit.P, PackagingLevel.Primary, true, packagingMaterial1NodeRef));
-			packagingList.add(new PackagingListDataItem(null, 3d, ProductUnit.m, PackagingLevel.Primary, true, packagingMaterial2NodeRef));
-			packagingList.add(new PackagingListDataItem(null, 8d, ProductUnit.PP, PackagingLevel.Tertiary, true, packagingMaterial3NodeRef));
+			packagingList.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.P).withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packagingMaterial1NodeRef)
+);
+			packagingList.add(PackagingListDataItem.build().withQty(3d).withUnit(ProductUnit.m).withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packagingMaterial2NodeRef)
+);
+			packagingList.add(PackagingListDataItem.build().withQty(8d).withUnit(ProductUnit.PP).withPkgLevel(PackagingLevel.Tertiary).withIsMaster(true).withProduct(packagingMaterial3NodeRef)
+);
 			finishedProduct.getPackagingListView().setPackagingList(packagingList);
 			List<CostListDataItem> costList = new ArrayList<>();
 			costList.add(new CostListDataItem(null, null, null, null, pkgCost1, false));
@@ -1559,7 +1562,8 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 			// add packaging kit
 			formulatedProduct.getPackagingList()
-					.add(new PackagingListDataItem(null, 25d, ProductUnit.PP, PackagingLevel.Secondary, true, packagingKit1NodeRef));
+					.add(PackagingListDataItem.build().withQty(25d).withUnit(ProductUnit.PP).withPkgLevel(PackagingLevel.Secondary).withIsMaster(true).withProduct(packagingKit1NodeRef)
+);
 			alfrescoRepository.save(formulatedProduct);
 			productService.formulate(finishedProductNodeRef);
 			formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
@@ -2262,7 +2266,8 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			finishedProduct.setCostList(costList);
 
 			List<PackagingListDataItem> packList = new ArrayList<>();
-			packList.add(new PackagingListDataItem(null, 25d, ProductUnit.PP, PackagingLevel.Secondary, true, packagingKit1NodeRef));
+			packList.add(PackagingListDataItem.build().withQty(25d).withUnit(ProductUnit.PP).withPkgLevel(PackagingLevel.Secondary).withIsMaster(true).withProduct(packagingKit1NodeRef)
+);
 			finishedProduct.getPackagingListView().setPackagingList(packList);
 
 			NodeRef finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();

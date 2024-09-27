@@ -66,7 +66,7 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 			/*-- Create finished product --*/
 			logger.info("/*-- Create finished product --*/");
 			FinishedProductData finishedProduct = new FinishedProductData();
-			finishedProduct.setName(name);
+			finishedProduct.setName(toTestName(name));
 			finishedProduct.setLegalName("Legal " + name);
 			finishedProduct.setUnit(ProductUnit.kg);
 			finishedProduct.setQty(2d);
@@ -75,12 +75,18 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 			finishedProduct.setServingSize(50d);// 50g
 			finishedProduct.setProjectedQty(10000l);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF1NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(2d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial2NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF2NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial3NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Omit).withProduct(rawMaterial4NodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
 			List<CostListDataItem> costList = new ArrayList<>();
@@ -90,9 +96,9 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 			finishedProduct.setCostList(costList);
 
 			List<NutListDataItem> nutList = new ArrayList<>();
-			nutList.add(new NutListDataItem(null, null, null, null, null, null, nut1, null));
-			nutList.add(new NutListDataItem(null, null, null, null, null, null, nut2, null));
-			nutList.add(new NutListDataItem(null, null, null, null, null, null, nut3, null));
+			nutList.add(NutListDataItem.build().withNut(nut1));
+			nutList.add(NutListDataItem.build().withNut(nut2));
+			nutList.add(NutListDataItem.build().withNut(nut3));
 			finishedProduct.setNutList(nutList);
 
 			List<DynamicCharactListItem> dynamicCharactListItems = new ArrayList<>();
@@ -164,14 +170,6 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 			dynCol = new DynamicCharactListItem("Col Dyn 2",
 					"dataListItem.parent!=null ? entity.costList[0].value + dataListItem.qty : sum(entity.compoListView.compoList.?[parent == #root.dataListItem],\"entity.costList[0].value + dataListItem.qty\" )");
 
-			// "dataListItem.parent!=null ? entity.costList[0].value +
-			// dataListItem.qty :
-			// sum(children(dataListItem),\"entity.costList[0].value +
-			// dataListItem.qty\" )"
-			// "dataListItem.parent!=null ? entity.costList[0].value +
-			// dataListItem.qty : sum(entity.compoListView.compoList.?[parent ==
-			// #root.dataListItem],\"entity.costList[0].value +
-			// dataListItem.qty\" )"
 
 			dynCol.setColumnName("bcpg_dynamicCharactColumn2");
 			dynamicCharactListItems.add(dynCol);
@@ -202,15 +200,18 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 
 			List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
 
-			labelingRuleList.add(new LabelingRuleListDataItem("Test", "render()", LabelingRuleType.Render));
+			labelingRuleList
+					.add(LabelingRuleListDataItem.build().withName("Test").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render));
 
-			LabelingRuleListDataItem percRule = new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format);
+			LabelingRuleListDataItem percRule = LabelingRuleListDataItem.build().withName("%").withFormula("{0} {1,number,0.#%}")
+					.withLabelingRuleType(LabelingRuleType.Format);
 			percRule.setComponents(Arrays.asList(ing2, ing3, ing4));
 			labelingRuleList.add(percRule);
-			labelingRuleList.add(new LabelingRuleListDataItem("Param1", "detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"",
-					LabelingRuleType.Prefs, null, null));
+			labelingRuleList.add(LabelingRuleListDataItem.build().withName("Param1")
+					.withFormula("detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"").withLabelingRuleType(LabelingRuleType.Prefs));
 
-			labelingRuleList.add(new LabelingRuleListDataItem("Langue", "fr,en", LabelingRuleType.Locale));
+			labelingRuleList
+					.add(LabelingRuleListDataItem.build().withName("Langue").withFormula("fr,en").withLabelingRuleType(LabelingRuleType.Locale));
 
 			finishedProduct.getLabelingListView().setLabelingRuleList(labelingRuleList);
 
@@ -286,7 +287,7 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 
 			if ("MTLine1".equals(dynamicCharactListItem.getTitle())) {
 				if (dynamicCharactListItem.getValue() instanceof Integer) {
-					assertTrue((Integer) dynamicCharactListItem.getValue() == 45);
+					assertEquals(((Integer) dynamicCharactListItem.getValue()).intValue(),45);
 				}
 			}
 
