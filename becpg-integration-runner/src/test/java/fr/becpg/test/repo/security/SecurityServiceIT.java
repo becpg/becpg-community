@@ -650,7 +650,8 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 				productData.setParentNodeRef(getTestFolderNodeRef());
 				productData.setName("FP testDataListPermissions");
 				List<NutListDataItem> nutList = new LinkedList<>();
-				nutList.add(new NutListDataItem(null, 1d, null, null, null, null, nut1, null));
+				nutList.add(NutListDataItem.build().withValue(1d).withUnit(null).withMini(null).withMaxi(null).withGroup(null).withNut(nut1)
+);
 				productData.setNutList(nutList);
 				return alfrescoRepository.save(productData).getNodeRef();
 			}, false, true);
@@ -931,7 +932,8 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 				productData.setParentNodeRef(getTestFolderNodeRef());
 				productData.setName("FP testDataListPermissions");
 				List<NutListDataItem> nutList = new LinkedList<>();
-				nutList.add(new NutListDataItem(null, 1d, null, null, null, null, nut1, null));
+				nutList.add(NutListDataItem.build().withValue(1d).withUnit(null).withMini(null).withMaxi(null).withGroup(null).withNut(nut1)
+);
 				productData.setNutList(nutList);
 				return alfrescoRepository.save(productData).getNodeRef();
 			});
