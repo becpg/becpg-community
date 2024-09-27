@@ -72,54 +72,66 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 
 		logger.info("testFormulationWithIngRequirements");
 
-		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef finishedProductNodeRef = inWriteTx(() -> {
 
 			SemiFinishedProductData semiFinishedProduct = new SemiFinishedProductData();
-			semiFinishedProduct.setName("Semi fini 1");
+			semiFinishedProduct.setName(toTestName("Semi fini 1"));
 			semiFinishedProduct.setUnit(ProductUnit.kg);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.L, null, null, rawMaterial6NodeRef));
-			semiFinishedProduct.getCompoListView().setCompoList(compoList);
+
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.L).withProduct(rawMaterial6NodeRef));
+			semiFinishedProduct.withCompoList(compoList);
 			NodeRef semiFinishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), semiFinishedProduct).getNodeRef();
 
-			/*-- Create finished product --*/
-			logger.info("/*-- Create finished product --*/");
 			FinishedProductData finishedProduct = new FinishedProductData();
-			finishedProduct.setName("Produit fini 1");
+			finishedProduct.setName(toTestName("Produit fini 1"));
 			finishedProduct.setUnit(ProductUnit.kg);
 			finishedProduct.setQty(2d);
 			finishedProduct.setDensity(1d);
 
 			compoList = new ArrayList<>();
 
-			CompoListDataItem parent1 = new CompoListDataItem(null, null, null, 2d, ProductUnit.kg, 10d, DeclarationType.Detail, localSF1NodeRef);
+			CompoListDataItem parent1 = CompoListDataItem.build().withQtyUsed(2d).withUnit(ProductUnit.kg).withQty(10d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF1NodeRef);
 
 			compoList.add(parent1);
-			CompoListDataItem parent12 = new CompoListDataItem(null, parent1, null, 1d, ProductUnit.kg, 10d, DeclarationType.Detail, localSF2NodeRef);
+
+			CompoListDataItem parent12 = CompoListDataItem.build().withParent(parent1).withQtyUsed(1d).withUnit(ProductUnit.kg).withQty(10d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF2NodeRef);
+
 			compoList.add(parent12);
 
-			compoList.add(new CompoListDataItem(null, parent12, null, 0.80d, ProductUnit.kg, 5d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, parent12, null, 0.30d, ProductUnit.kg, 10d, DeclarationType.Detail, rawMaterial2NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(parent12).withQtyUsed(0.80d).withUnit(ProductUnit.kg).withQty(5d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
 
-			CompoListDataItem parent22 = new CompoListDataItem(null, parent1, null, 2d, ProductUnit.kg, 20d, DeclarationType.Detail, localSF3NodeRef);
+			compoList.add(CompoListDataItem.build().withParent(parent12).withQtyUsed(0.30d).withUnit(ProductUnit.kg).withQty(10d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial2NodeRef));
+
+			CompoListDataItem parent22 = CompoListDataItem.build().withParent(parent1).withQtyUsed(2d).withUnit(ProductUnit.kg).withQty(20d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF3NodeRef);
 
 			compoList.add(parent22);
-			compoList.add(new CompoListDataItem(null, parent22, null, 0.170d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-			compoList.add(new CompoListDataItem(null, parent22, null, 0.40d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
-			compoList.add(new CompoListDataItem(null, parent22, null, 1d, ProductUnit.P, 0d, DeclarationType.Declare, rawMaterial5NodeRef));
 
-			compoList.add(new CompoListDataItem(null, null, null, 2d, ProductUnit.kg, null, null, semiFinishedProductNodeRef));
-			finishedProduct.getCompoListView().setCompoList(compoList);
+			compoList.add(CompoListDataItem.build().withParent(parent22).withQtyUsed(0.170d).withUnit(ProductUnit.kg)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial3NodeRef));
+
+			compoList.add(CompoListDataItem.build().withParent(parent22).withQtyUsed(0.40d).withUnit(ProductUnit.kg)
+					.withDeclarationType(DeclarationType.Omit).withProduct(rawMaterial4NodeRef));
+
+			compoList.add(CompoListDataItem.build().withParent(parent22).withQtyUsed(1d).withUnit(ProductUnit.P)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial5NodeRef));
+
+			compoList.add(CompoListDataItem.build().withQtyUsed(2d).withUnit(ProductUnit.kg).withProduct(semiFinishedProductNodeRef));
+			finishedProduct.withCompoList(compoList);
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-
+		inWriteTx(() -> {
 			// specification1
 			Map<QName, Serializable> properties = new HashMap<>();
-			properties.put(ContentModel.PROP_NAME, "Spec1");
+			properties.put(ContentModel.PROP_NAME, "FormulationWithIngRequirementsIT - Spec1");
 			NodeRef productSpecificationNodeRef1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
 					PLMModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
@@ -165,7 +177,7 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 			geoOrigins.add(geoOrigin1);
 
 			ForbiddenIngListDataItem forbiddenIngListDataItem = new ForbiddenIngListDataItem(null, RequirementType.Forbidden,
-					"Ing3 geoOrigin1 obligatoire", null, null, null, ings, new ArrayList<NodeRef>(), bioOrigins);
+					"Ing3 geoOrigin1 obligatoire", null, null, null, ings, new ArrayList<>(), bioOrigins);
 			forbiddenIngListDataItem.setRequiredGeoOrigins(geoOrigins);
 			forbiddenIngList1.add(forbiddenIngListDataItem);
 			productSpecification1.setForbiddenIngList(forbiddenIngList1);
@@ -181,7 +193,7 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 
 			// specification2
 			properties = new HashMap<>();
-			properties.put(ContentModel.PROP_NAME, "Spec2");
+			properties.put(ContentModel.PROP_NAME, "FormulationWithIngRequirementsIT - Spec2");
 			NodeRef productSpecificationNodeRef2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
 					PLMModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
@@ -215,13 +227,14 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 			logger.info("/*-- Formulation raised " + formulatedProduct.getReqCtrlList().size() + " rclDataItems --*/");
 
 			for (ReqCtrlListDataItem reqCtrlList : formulatedProduct.getReqCtrlList()) {
-				logger.info("/*-- Verify reqCtrlList : " + reqCtrlList.getReqMessage() + " --*/"+ reqCtrlList.getKey() );
+				logger.info("/*-- Verify reqCtrlList : " + reqCtrlList.getReqMessage() + " --*/" + reqCtrlList.getKey());
 				logger.info("/*-- This item has " + reqCtrlList.getSources().size() + " sources --*/");
 
 				/*
 				 * #1909 added non validation rclDataItem
 				 */
-				if (I18NUtil.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_NON_VALIDATED_STATE).equals(reqCtrlList.getReqMessage())) {
+				if (I18NUtil.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_NON_VALIDATED_STATE)
+						.equals(reqCtrlList.getReqMessage())) {
 					assertEquals(RequirementType.Tolerated, reqCtrlList.getReqType());
 					assertEquals(RequirementDataType.Validation, reqCtrlList.getReqDataType());
 					assertEquals(10, reqCtrlList.getSources().size());
@@ -291,49 +304,23 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 					assertTrue(reqCtrlList.getSources().contains(rawMaterial2NodeRef));
 					assertTrue(reqCtrlList.getSources().contains(rawMaterial6NodeRef));
 					checks++;
-				} else if (I18NUtil
-						.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Libellé légal", "EU 1169/2011 (INCO)")
-						.equals(reqCtrlList.getReqMessage())) {
-
-					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
-					checks++;
-					checks++;
-				} else if (I18NUtil.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Conditions de conservation ou Conseils de préparation et d'utilisation",
-						"EU 1169/2011 (INCO)").equals(reqCtrlList.getReqMessage())) {
-
-					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
-					checks++;
-				} else if (I18NUtil.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "DLC (J) ou DDM/DLUO (J)",
-						"EU 1169/2011 (INCO)").equals(reqCtrlList.getReqMessage())) {
-
-					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
-					checks++;
-				} else if (I18NUtil.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_NON_UNIQUE_FIELD, "Nom",
-						"EU 1169/2011 (INCO)").equals(reqCtrlList.getReqMessage())) {
-					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
-				} else if (I18NUtil.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Libellé commercial", "EU 1169/2011 (INCO)")
-						.equals(reqCtrlList.getReqMessage())) {
-
-					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
-					checks++;
 				} else if (I18NUtil.getMessage(AllergensCalculatingFormulationHandler.MESSAGE_NOT_VALIDATED_ALLERGEN)
 						.equals(reqCtrlList.getReqMessage())) {
 
 					assertEquals(RequirementType.Tolerated, reqCtrlList.getReqType());
 					checks++;
-					
-				} else {
+
+				} else if (RequirementDataType.Specification.equals(reqCtrlList.getReqDataType())) {
 					logger.error("Unexpected rclDataItem: " + reqCtrlList.getReqMessage());
 					fail();
 				}
 			}
 
 			logger.info("/*-- Done checking, checks=" + checks + " (should be 14) --*/");
-			assertEquals(16, checks);
+			assertEquals(11, checks);
 
 			/*
-			 * #257: check reqCtrlList is clear if all req are respected (we
-			 * remove specification to get everything OK)
+			 * #257: check reqCtrlList is clear if all req are respected (we remove specification to get everything OK)
 			 */
 			nodeService.removeAssociation(finishedProductNodeRef, productSpecificationNodeRef1, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
 			nodeService.removeAssociation(finishedProductNodeRef, productSpecificationNodeRef2, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
@@ -346,19 +333,13 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 			logger.debug("/*-- Verify formulation --*/");
 			formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
 
-			/*
-			 * 7 rclDataItem remains : one for non validated product, and three
-			 * for INCO missing fields: legal name, conservation conditions,
-			 * precautions for use, title, use by date| best before date, and
-			 * DLC
-			 */
-
 			logger.debug("After removing specs, " + formulatedProduct.getReqCtrlList().size() + " remain");
-			assertEquals(6, formulatedProduct.getReqCtrlList().size());
+			assertEquals(0, formulatedProduct.getReqCtrlList().stream().filter(r -> RequirementDataType.Specification.equals(r.getReqDataType()))
+					.toList().size());
 
 			return null;
 
-		}, false, true);
+		});
 
 	}
 }

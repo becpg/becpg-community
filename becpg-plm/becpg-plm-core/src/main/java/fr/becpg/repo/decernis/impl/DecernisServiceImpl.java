@@ -600,22 +600,24 @@ public class DecernisServiceImpl  extends AbstractLifecycleBean implements Decer
 						logger.debug("Several RIDs for ingredient " + params.get(PARAM_QUERY)+ " "+results.toString());
 					}
 					requirements.add(
-							createReqCtrl(ingListDataItem.getIng(), MLTextHelper.getI18NMessage(MESSAGE_SEVERAL_RID_ING), RequirementType.Tolerated));
+							createReqCtrl(ingListDataItem, MLTextHelper.getI18NMessage(MESSAGE_SEVERAL_RID_ING), RequirementType.Tolerated));
 				}
 			} else if (jsonObject.has(PARAM_COUNT) && (jsonObject.getInt(PARAM_COUNT) == 0)) {
-				requirements.add(createReqCtrl(ingListDataItem.getIng(), MLTextHelper.getI18NMessage(MESSAGE_NO_RID_ING), RequirementType.Tolerated));
+				requirements.add(createReqCtrl(ingListDataItem, MLTextHelper.getI18NMessage(MESSAGE_NO_RID_ING), RequirementType.Tolerated));
 			}
 		} else {
-			requirements.add(createReqCtrl(ingListDataItem.getIng(), MLTextHelper.getI18NMessage(MESSAGE_NO_RID_ING), RequirementType.Forbidden));
+			requirements.add(createReqCtrl(ingListDataItem, MLTextHelper.getI18NMessage(MESSAGE_NO_RID_ING), RequirementType.Forbidden));
 		}
 		return ingredientId;
 	}
 
-	private ReqCtrlListDataItem createReqCtrl(NodeRef ing, MLText reqCtrlMessage, RequirementType reqType) {
+	private ReqCtrlListDataItem createReqCtrl(IngListDataItem ingListDataItem, MLText reqCtrlMessage, RequirementType reqType) {
 		ReqCtrlListDataItem reqCtrlItem = new ReqCtrlListDataItem();
 		reqCtrlItem.setReqType(reqType);
-		reqCtrlItem.setCharact(ing);
-		reqCtrlItem.addSource(ing);
+		if(ingListDataItem!=null) {
+			reqCtrlItem.setCharact(ingListDataItem.getNodeRef()!=null ? ingListDataItem.getNodeRef() : ingListDataItem.getIng());
+			reqCtrlItem.addSource(ingListDataItem.getIng());
+		}
 		reqCtrlItem.setReqDataType(RequirementDataType.Specification);
 		reqCtrlItem.setReqMlMessage(reqCtrlMessage);
 		reqCtrlItem.setFormulationChainId(DecernisService.DECERNIS_CHAIN_ID);

@@ -24,9 +24,9 @@ import fr.becpg.repo.product.data.RegulatoryEntityItem;
 public abstract class AbstractRequirementScanner<T> implements RequirementScanner {
 
 	protected NodeService mlNodeService;
-	
+
 	protected Boolean addInfoReqCtrl;
-	
+
 	/**
 	 * <p>Setter for the field <code>addInfoReqCtrl</code>.</p>
 	 *
@@ -35,7 +35,6 @@ public abstract class AbstractRequirementScanner<T> implements RequirementScanne
 	public void setAddInfoReqCtrl(Boolean addInfoReqCtrl) {
 		this.addInfoReqCtrl = addInfoReqCtrl;
 	}
-
 
 	/**
 	 * <p>Setter for the field <code>mlNodeService</code>.</p>
@@ -85,7 +84,7 @@ public abstract class AbstractRequirementScanner<T> implements RequirementScanne
 		}
 		return ret;
 	}
-	
+
 	/**
 	 * <p>extractRegulatoryId.</p>
 	 *
@@ -94,16 +93,21 @@ public abstract class AbstractRequirementScanner<T> implements RequirementScanne
 	 * @return a {@link java.lang.String} object
 	 */
 	protected String extractRegulatoryId(RegulatoryEntityItem regulatoryEntityItem, ProductSpecificationData specification) {
-		if (regulatoryEntityItem.getRegulatoryCountriesRef() != null && !regulatoryEntityItem.getRegulatoryCountriesRef().isEmpty()) {
-			String countryCode = (String) mlNodeService.getProperty(regulatoryEntityItem.getRegulatoryCountriesRef().get(0), PLMModel.PROP_REGULATORY_CODE);
-			if (regulatoryEntityItem.getRegulatoryUsagesRef() != null && !regulatoryEntityItem.getRegulatoryUsagesRef().isEmpty()) {
-				return countryCode + " - " + (String) mlNodeService.getProperty(regulatoryEntityItem.getRegulatoryUsagesRef().get(0), PLMModel.PROP_REGULATORY_CODE);
+		if(regulatoryEntityItem!=null) {
+			if (regulatoryEntityItem.getRegulatoryCountriesRef() != null && !regulatoryEntityItem.getRegulatoryCountriesRef().isEmpty()) {
+				String countryCode = (String) mlNodeService.getProperty(regulatoryEntityItem.getRegulatoryCountriesRef().get(0),
+						PLMModel.PROP_REGULATORY_CODE);
+				if (regulatoryEntityItem.getRegulatoryUsagesRef() != null && !regulatoryEntityItem.getRegulatoryUsagesRef().isEmpty()) {
+					return (countryCode != null ? countryCode : "") + " - "
+							+ (String) mlNodeService.getProperty(regulatoryEntityItem.getRegulatoryUsagesRef().get(0), PLMModel.PROP_REGULATORY_CODE);
+				}
 			}
 		}
 		if (specification.getRegulatoryCountriesRef() != null && !specification.getRegulatoryCountriesRef().isEmpty()) {
 			String countryCode = (String) mlNodeService.getProperty(specification.getRegulatoryCountriesRef().get(0), PLMModel.PROP_REGULATORY_CODE);
 			if (specification.getRegulatoryUsagesRef() != null && !specification.getRegulatoryUsagesRef().isEmpty()) {
-				return countryCode + " - " + (String) mlNodeService.getProperty(specification.getRegulatoryUsagesRef().get(0), PLMModel.PROP_REGULATORY_CODE);
+				return (countryCode != null ? countryCode : "")
+						+ (String) mlNodeService.getProperty(specification.getRegulatoryUsagesRef().get(0), PLMModel.PROP_REGULATORY_CODE);
 			}
 		}
 		if (specification.getRegulatoryCode() != null && !specification.getRegulatoryCode().isBlank()) {

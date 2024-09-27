@@ -13,6 +13,7 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.datalist.DataListItemExtractor;
 import fr.becpg.repo.entity.datalist.impl.SimpleExtractor;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -91,7 +92,9 @@ public class ReqCtrlListItemExtractor implements DataListItemExtractor {
 
 				RepositoryEntity item = alfrescoRepository.findOne(nodeRef);
 
-				if (item instanceof SimpleCharactDataItem simpleItem) {
+				if (item instanceof IngListDataItem simpleItem) {
+					charact = simpleItem.getNodeRef();
+				} else if (item instanceof SimpleCharactDataItem simpleItem) {
 					charact = simpleItem.getCharactNodeRef();
 				} else if (item instanceof LabelClaimListDataItem labelClaimItem) {
 					charact = labelClaimItem.getLabelClaim();
