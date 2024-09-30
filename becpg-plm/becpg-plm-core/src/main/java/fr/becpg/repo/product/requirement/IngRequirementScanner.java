@@ -73,7 +73,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 				ProductSpecificationData specification = entry.getKey();
 
 				Set<NodeRef> visited = new HashSet<>();
-				Map<ForbiddenIngListDataItem, List<NodeRef>> sources = new HashMap<>();
+				Map<String, List<NodeRef>> sources = new HashMap<>();
 
 				if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 					for (CompoListDataItem compoListDataItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
@@ -120,7 +120,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 	 */
 	private void checkILOfPart(NodeRef productNodeRef, DeclarationType declType, ProductData componentProductData,
 			List<ForbiddenIngListDataItem> forbiddenIngredientsList, ProductSpecificationData specification,
-			Map<ForbiddenIngListDataItem, List<NodeRef>> sources, Set<NodeRef> visited) {
+			Map<String, List<NodeRef>> sources, Set<NodeRef> visited) {
 
 		if (!PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.equals(mlNodeService.getType(productNodeRef)) && !visited.contains(productNodeRef)) {
 
@@ -147,9 +147,11 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 							}
 
 						} else {
-							List<NodeRef> sourceList = sources.computeIfAbsent(fil, (f) -> new ArrayList<>());
+							String key = createReqSourceKey(fil, ingListDataItem);
+							
+							List<NodeRef> sourceList = sources.computeIfAbsent(key, (f) -> new ArrayList<>());
 							sourceList.add(productNodeRef);
-							sources.put(fil, sourceList);
+							sources.put(key, sourceList);
 						}
 
 					}
@@ -161,7 +163,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 	}
 
 	private void processForbiddenRequirements(ProductSpecificationData specification, ProductData productData, ForbiddenIngListDataItem fil,
-			List<ReqCtrlListDataItem> reqCtrlMap, Map<ForbiddenIngListDataItem, List<NodeRef>> sources) {
+			List<ReqCtrlListDataItem> reqCtrlMap, Map<String, List<NodeRef>> sources) {
 
 		Double qtyPerc = calculateQtyPerc(fil, productData);
 
@@ -243,7 +245,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 	}
 
 	private ReqCtrlListDataItem createForbiddenReq(ProductSpecificationData specification, ForbiddenIngListDataItem fil,
-			IngListDataItem ingListDataItem, Map<ForbiddenIngListDataItem, List<NodeRef>> sources) {
+			IngListDataItem ingListDataItem, Map<String, List<NodeRef>> sources) {
 
 		MLText curMessage = fil.getReqMessage();
 		if ((curMessage == null) || curMessage.values().stream().noneMatch(mes -> (mes != null) && !mes.isEmpty())) {
@@ -254,8 +256,9 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 		if (logger.isDebugEnabled()) {
 			logger.debug("Adding not respected for: " + curMessage);
 		}
-
-		List<NodeRef> sourceList = sources.computeIfAbsent(fil, f -> new ArrayList<>());
+		
+		String key = createReqSourceKey(fil, ingListDataItem);
+		List<NodeRef> sourceList = sources.computeIfAbsent(key, f -> new ArrayList<>());
 		if (!fil.getIngs().isEmpty() && sourceList.isEmpty()) {
 			sourceList.add(ingListDataItem.getIng());
 		}
@@ -264,6 +267,10 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 				.withCharact(ingListDataItem.getNodeRef() != null ? ingListDataItem.getNodeRef() : ingListDataItem.getIng())
 				.ofDataType(RequirementDataType.Specification).withRegulatoryCode(extractRegulatoryId(fil, specification)).withSources(sourceList);
 
+	}
+
+	private String createReqSourceKey(ForbiddenIngListDataItem fil, IngListDataItem ingListDataItem) {
+		return ingListDataItem.getIng()+""+fil.hashCode();
 	}
 
 	private Double calculateQtyPerc(ForbiddenIngListDataItem fil, ProductData productData) {

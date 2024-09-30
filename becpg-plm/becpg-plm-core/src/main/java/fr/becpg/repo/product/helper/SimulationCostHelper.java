@@ -231,7 +231,7 @@ public class SimulationCostHelper implements InitializingBean {
 
 	private static double getCompoListQty(ProductData productData, NodeRef componentNodeRef, Double parentQty) {
 		double totalQty = 0d;
-		if (productData.hasCompoListEl() && !hasSimulatedCostForComponent(productData, componentNodeRef)) {
+		if (productData.hasCompoListEl()) {
 
 			Double netQty = FormulationHelper.getNetQtyForCost(productData);
 
@@ -250,7 +250,7 @@ public class SimulationCostHelper implements InitializingBean {
 
 					if (productNodeRef.equals(componentNodeRef)) {
 						totalQty += qty;
-					} else {
+					} else if(!hasSimulatedCostForComponent(componentProduct, componentNodeRef)){
 						totalQty += getCompoListQty(componentProduct, componentNodeRef, qty);
 					}
 				}
@@ -270,20 +270,17 @@ public class SimulationCostHelper implements InitializingBean {
 
 	private static double getPackagingListQty(ProductData productData, NodeRef componentNodeRef, Double parentQty) {
 		double totalQty = 0d;
-		if (productData.hasPackagingListEl()  && !hasSimulatedCostForComponent(productData, componentNodeRef)) {
+		if (productData.hasPackagingListEl() ) {
 
 			Double netQty = FormulationHelper.getNetQtyForCost(productData);
 
 			for (PackagingListDataItem packList : productData
 					.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
-				
-				
 
 				ProductData subProductData = INSTANCE.alfrescoRepository.findOne(packList.getProduct());
 
 				Double qty = FormulationHelper.getQtyForCostByPackagingLevel(productData, packList, subProductData);
 
-				
 				if (qty != null) {
 					if ((netQty != null) && (netQty != 0d) && parentQty != null) {
 						qty = (parentQty * qty) / netQty;
@@ -293,7 +290,7 @@ public class SimulationCostHelper implements InitializingBean {
 					}
 					if (subProductData.getNodeRef().equals(componentNodeRef)) {
 						totalQty += qty;
-					} else if (subProductData.isPackagingKit()) {
+					} else if (subProductData.isPackagingKit() && ! hasSimulatedCostForComponent(subProductData, componentNodeRef)) {
 						totalQty += qty * getPackagingListQty(subProductData, componentNodeRef, null);
 
 					}
