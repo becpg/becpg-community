@@ -11,6 +11,7 @@ import org.alfresco.repo.model.Repository;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -19,18 +20,20 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.model.ToxType;
 import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.FinishedProductData;
-import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.ToxListDataItem;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
-import fr.becpg.test.repo.product.AbstractFinishedProductTest;
+import fr.becpg.test.PLMBaseTestCase;
 
-public class ToxicologyServiceIT extends AbstractFinishedProductTest {
+public class ToxicologyServiceIT extends PLMBaseTestCase {
 
-	
 	@Autowired
 	private Repository repository;
+	
+	@Autowired
+	private ProductService productService;
 	
 	private NodeRef adultROHairNodeRef;
 	
@@ -47,7 +50,6 @@ public class ToxicologyServiceIT extends AbstractFinishedProductTest {
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
-		initParts();
 		
 		NodeRef companyHomeNodeRef = repository.getCompanyHome();
 		NodeRef systemNodeRef = repoService.getFolderByPath(companyHomeNodeRef, RepoConsts.PATH_SYSTEM);
@@ -132,7 +134,7 @@ public class ToxicologyServiceIT extends AbstractFinishedProductTest {
 		
 		alpiniaNodeRef = inWriteTx(() -> {
 			Map<QName, Serializable> properties = new HashMap<>();
-			properties.put(BeCPGModel.PROP_CHARACT_NAME, "Citric acid");
+			properties.put(BeCPGModel.PROP_CHARACT_NAME, "Alpania");
 			properties.put(PLMModel.PROP_ING_TOX_DERMAL_ABSORPTIION, 50);
 			properties.put(PLMModel.PROP_ING_TOX_MAX_SKIN_IRRITATION, 5);
 			properties.put(PLMModel.PROP_ING_TOX_MAX_SENSITIZATION, 1);
@@ -142,15 +144,9 @@ public class ToxicologyServiceIT extends AbstractFinishedProductTest {
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_ING, properties).getChildRef();
 		});
-		waitForSolr();
-	}
-	
-	private NodeRef createFinishedProduct(final String finishedProductName) throws Exception {
-		return inWriteTx(() -> {
-			FinishedProductData finishedProduct = new FinishedProductData();
-			finishedProduct.setName(finishedProductName);
-			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
-		});
+		waitForIndex(adultROHairNodeRef);
+		waitForIndex(adultROBodyNodeRef);
+		waitForIndex(adultROFaceNodeRef);
 	}
 	
 	@Test
@@ -191,11 +187,33 @@ public class ToxicologyServiceIT extends AbstractFinishedProductTest {
 		});
 	}
 	
+	private void waitForIndex(NodeRef nodeRef) {
+
+		inReadTx(() -> {
+			int j = 0;
+			while ((BeCPGQueryBuilder.createQuery().andPropEquals(BeCPGModel.PROP_CHARACT_NAME, (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_CHARACT_NAME)).singleValue() == null)
+					&& (j < 30)) {
+
+				Thread.sleep(2000);
+				j++;
+			}
+			
+			if(j == 30) {
+				Assert.fail("Solr is taking too long!");
+			}
+
+			return null;
+
+		});
+
+	}
+	
 	@Test
 	public void testToxListFormulation() throws Exception {
-		NodeRef fpNodeRef = createFinishedProduct("Tox FP");
 		
-		ProductData product = alfrescoRepository.findOne(fpNodeRef);
+		FinishedProductData product = new FinishedProductData();
+		product.setToxList(new ArrayList<>());
+		product.setIngList(new ArrayList<>());
 		
 		List<ToxListDataItem> toxList = product.getToxList();
 		
