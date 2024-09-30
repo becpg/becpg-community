@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -105,76 +103,77 @@ public class SurveyQuestionFormulationHandler extends FormulationBaseHandler<Pro
 	/** {@inheritDoc} */
 	@Override
 	public boolean process(ProductData formulatedProduct) {
-		final List<NodeRef> packMaterialListCharactNodeRefs = CollectionUtils
-				.emptyIfNull(formulatedProduct.getPackMaterialList()).stream()
-				.map(PackMaterialListDataItem::getCharactNodeRef).distinct().toList();
-		final NodeRef hierarchyNodeRef = ObjectUtils.defaultIfNull(formulatedProduct.getHierarchy2(),
-				formulatedProduct.getHierarchy1());
-		final QName qName = getTypeQName(formulatedProduct);
-		final Map<String, QName> qNameCache = new HashMap<>();
-		final Predicate<SurveyQuestion> qNameFilter = surveyQuestion -> CollectionUtils
-				.isEmpty(surveyQuestion.getFsLinkedTypes())
-				|| surveyQuestion.getFsLinkedTypes().stream().map(typeName -> qNameCache.computeIfAbsent(typeName,
-						__ -> QName.createQName(typeName, namespaceService))).anyMatch(qName::equals);
-		final Set<SurveyQuestion> surveyQuestions = new HashSet<>();
-		final Map<String, List<SurveyListDataItem>> namesSurveyLists = new HashMap<>(NB_OF_SURVEY_LISTS, 1);
-		final List<SurveyListDataItem> deletedSurveyLists = new ArrayList<>();
-		final boolean cacheOnlyEnable = L2CacheSupport.isCacheOnlyEnable();
-		for (final String surveyListName : SURVEY_LIST_NAMES) {
-			namesSurveyLists.put(surveyListName, (SURVEY_LIST_BASE_NAME.equals(surveyListName)
-					? formulatedProduct.getSurveyList()
-					: alfrescoRepository.loadDataList(formulatedProduct.getNodeRef(), surveyListName, SurveyModel.TYPE_SURVEY_LIST)
-							.stream().map(SurveyListDataItem.class::cast)
-							.collect(Collectors.toCollection(ArrayList::new))));
-			if (cacheOnlyEnable) break;
-		}
-		logger.debug("SurveyQuestionFormulationHandler::process() <- " + formulatedProduct.getNodeRef());
-		for (final NodeRef nodeRef : packMaterialListCharactNodeRefs) {
-			for (final NodeRef surveyQuestionNodeRef : associationService.getSourcesAssocs(nodeRef,
-					SurveyModel.ASSOC_SURVEY_FS_LINKED_CHARACT_REFS)) {
-				final SurveyQuestion surveyQuestion = (SurveyQuestion) alfrescoRepository
-						.findOne(surveyQuestionNodeRef);
-				if (qNameFilter.test(surveyQuestion) && (CollectionUtils.isEmpty(surveyQuestion.getFsLinkedHierarchy())
-						|| surveyQuestion.getFsLinkedHierarchy().contains(hierarchyNodeRef))) {
-					logger.debug(String.format("Found SurveyQuestion %s matching PackMaterialListDataItem criteria",
-							surveyQuestion.getNodeRef()));
-					surveyQuestions.add(surveyQuestion);
+		if (formulatedProduct.getNodeRef() != null) {
+			final List<NodeRef> packMaterialListCharactNodeRefs = CollectionUtils
+					.emptyIfNull(formulatedProduct.getPackMaterialList()).stream()
+					.map(PackMaterialListDataItem::getCharactNodeRef).distinct().toList();
+			final NodeRef hierarchyNodeRef = ObjectUtils.defaultIfNull(formulatedProduct.getHierarchy2(),
+					formulatedProduct.getHierarchy1());
+			final QName qName = getTypeQName(formulatedProduct);
+			final Map<String, QName> qNameCache = new HashMap<>();
+			final Predicate<SurveyQuestion> qNameFilter = surveyQuestion -> CollectionUtils
+					.isEmpty(surveyQuestion.getFsLinkedTypes())
+					|| surveyQuestion.getFsLinkedTypes().stream().map(typeName -> qNameCache.computeIfAbsent(typeName,
+							__ -> QName.createQName(typeName, namespaceService))).anyMatch(qName::equals);
+			final Set<SurveyQuestion> surveyQuestions = new HashSet<>();
+			final Map<String, List<SurveyListDataItem>> namesSurveyLists = new HashMap<>(NB_OF_SURVEY_LISTS, 1);
+			final boolean cacheOnlyEnable = L2CacheSupport.isCacheOnlyEnable();
+			for (final String surveyListName : SURVEY_LIST_NAMES) {
+				namesSurveyLists.put(surveyListName, (SURVEY_LIST_BASE_NAME.equals(surveyListName)
+						? formulatedProduct.getSurveyList()
+								: alfrescoRepository.loadDataList(formulatedProduct.getNodeRef(), surveyListName, SurveyModel.TYPE_SURVEY_LIST)
+								.stream().map(SurveyListDataItem.class::cast)
+								.collect(Collectors.toCollection(ArrayList::new))));
+				if (cacheOnlyEnable) break;
+			}
+			logger.debug("SurveyQuestionFormulationHandler::process() <- " + formulatedProduct.getNodeRef());
+			for (final NodeRef nodeRef : packMaterialListCharactNodeRefs) {
+				for (final NodeRef surveyQuestionNodeRef : associationService.getSourcesAssocs(nodeRef,
+						SurveyModel.ASSOC_SURVEY_FS_LINKED_CHARACT_REFS)) {
+					final SurveyQuestion surveyQuestion = (SurveyQuestion) alfrescoRepository
+							.findOne(surveyQuestionNodeRef);
+					if (qNameFilter.test(surveyQuestion) && (CollectionUtils.isEmpty(surveyQuestion.getFsLinkedHierarchy())
+							|| surveyQuestion.getFsLinkedHierarchy().contains(hierarchyNodeRef))) {
+						logger.debug(String.format("Found SurveyQuestion %s matching PackMaterialListDataItem criteria",
+								surveyQuestion.getNodeRef()));
+						surveyQuestions.add(surveyQuestion);
+					}
 				}
 			}
-		}
-		if (hierarchyNodeRef != null) {
-			for (final NodeRef surveyQuestionNodeRef : associationService.getSourcesAssocs(hierarchyNodeRef,
-					SurveyModel.ASSOC_SURVEY_FS_LINKED_HIERARCHY)) {
-				final SurveyQuestion surveyQuestion = (SurveyQuestion) alfrescoRepository
-						.findOne(surveyQuestionNodeRef);
-				if (qNameFilter.test(surveyQuestion)
-						&& (CollectionUtils.isEmpty(surveyQuestion.getFsLinkedCharactRefs())
-								|| surveyQuestion.getFsLinkedCharactRefs().stream()
-										.anyMatch(packMaterialListCharactNodeRefs::contains))) {
-					logger.debug(String.format("Found SurveyQuestion %s matching Hierarchy criteria",
-							surveyQuestion.getNodeRef()));
-					surveyQuestions.add(surveyQuestion);
+			if (hierarchyNodeRef != null) {
+				for (final NodeRef surveyQuestionNodeRef : associationService.getSourcesAssocs(hierarchyNodeRef,
+						SurveyModel.ASSOC_SURVEY_FS_LINKED_HIERARCHY)) {
+					final SurveyQuestion surveyQuestion = (SurveyQuestion) alfrescoRepository
+							.findOne(surveyQuestionNodeRef);
+					if (qNameFilter.test(surveyQuestion)
+							&& (CollectionUtils.isEmpty(surveyQuestion.getFsLinkedCharactRefs())
+									|| surveyQuestion.getFsLinkedCharactRefs().stream()
+									.anyMatch(packMaterialListCharactNodeRefs::contains))) {
+						logger.debug(String.format("Found SurveyQuestion %s matching Hierarchy criteria",
+								surveyQuestion.getNodeRef()));
+						surveyQuestions.add(surveyQuestion);
+					}
 				}
 			}
-		}
-		for (final SurveyQuestion surveyQuestion : surveyQuestions) {
-			final NodeRef surveyQuestionNodeRef = surveyQuestion.getNodeRef();
-			final String fsSurveyListName = surveyQuestion.getFsSurveyListName();
-			if (namesSurveyLists.containsKey(fsSurveyListName)) {
-				final List<SurveyListDataItem> surveyLists = namesSurveyLists.get(fsSurveyListName);
-				if (surveyLists.stream().map(SurveyListDataItem::getQuestion).noneMatch(surveyQuestionNodeRef::equals)) {
-					logger.debug(String.format("Creating SurveyList with SurveyQuestion %s into %s",
-							surveyQuestionNodeRef, fsSurveyListName));
-					surveyLists.add(new SurveyListDataItem(surveyQuestionNodeRef, true));
+			for (final SurveyQuestion surveyQuestion : surveyQuestions) {
+				final NodeRef surveyQuestionNodeRef = surveyQuestion.getNodeRef();
+				final String fsSurveyListName = surveyQuestion.getFsSurveyListName();
+				if (namesSurveyLists.containsKey(fsSurveyListName)) {
+					final List<SurveyListDataItem> surveyLists = namesSurveyLists.get(fsSurveyListName);
+					if (surveyLists.stream().map(SurveyListDataItem::getQuestion).noneMatch(surveyQuestionNodeRef::equals)) {
+						logger.debug(String.format("Creating SurveyList with SurveyQuestion %s into %s",
+								surveyQuestionNodeRef, fsSurveyListName));
+						surveyLists.add(new SurveyListDataItem(surveyQuestionNodeRef, true));
+					}
 				}
 			}
-		}
-		if (!cacheOnlyEnable) {
-			final NodeRef dataListContainerNodeRef = alfrescoRepository.getOrCreateDataListContainer(formulatedProduct);
-			namesSurveyLists.entrySet().stream()
-					.filter(nameSurveyLists -> !SURVEY_LIST_BASE_NAME.equals(nameSurveyLists.getKey()))
-					.forEach(nameSurveyLists -> alfrescoRepository.saveDataList(dataListContainerNodeRef,
-							SurveyModel.TYPE_SURVEY_LIST, nameSurveyLists.getKey(), nameSurveyLists.getValue()));
+			if (!cacheOnlyEnable) {
+				final NodeRef dataListContainerNodeRef = alfrescoRepository.getOrCreateDataListContainer(formulatedProduct);
+				namesSurveyLists.entrySet().stream()
+				.filter(nameSurveyLists -> !SURVEY_LIST_BASE_NAME.equals(nameSurveyLists.getKey()))
+				.forEach(nameSurveyLists -> alfrescoRepository.saveDataList(dataListContainerNodeRef,
+						SurveyModel.TYPE_SURVEY_LIST, nameSurveyLists.getKey(), nameSurveyLists.getValue()));
+			}
 		}
 		return true;
 	}
