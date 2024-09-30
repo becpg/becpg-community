@@ -291,7 +291,7 @@
 			})[0];
 
 			Alfresco.util.Ajax.jsonGet({
-				url: dt._getColumnUrl("export"),
+				url: dt._getColumnUrl("product-list"),
 				successCallback: {
 					fn: function(response) {
 						var requestParams = {
