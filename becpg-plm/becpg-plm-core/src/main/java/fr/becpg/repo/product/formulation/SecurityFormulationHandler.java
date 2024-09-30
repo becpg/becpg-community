@@ -295,7 +295,7 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 	}
 
 	private boolean isSecurityApplicable(ProductData productData) {
-		return !productData.isEntityTemplate();
+		return productData.getNodeRef() != null && !productData.isEntityTemplate();
 	}
 
 	private void updateSecurityRuleFromTemplate(ProductData productData) {
