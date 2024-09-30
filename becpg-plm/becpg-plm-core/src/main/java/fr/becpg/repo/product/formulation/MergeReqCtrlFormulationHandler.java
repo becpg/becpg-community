@@ -122,37 +122,43 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Scora
 	}
 
 	private void appendChildReq(ProductData productData, List<ReqCtrlListDataItem> reqCtrlList) {
-		for (CompoListDataItem compoListDataItem : productData.getCompoListView().getCompoList()) {
-			NodeRef componentProductNodeRef = compoListDataItem.getProduct();
-			if (componentProductNodeRef != null) {
-				ProductData componentProductData = (ProductData) alfrescoRepository.findOne(componentProductNodeRef);
-				if (((!componentProductNodeRef.equals(productData.getNodeRef()) && (componentProductData instanceof SemiFinishedProductData))
-						|| (componentProductData instanceof FinishedProductData) || (componentProductData instanceof RawMaterialData))
-						&& ((componentProductData.getCompoListView() != null) && (componentProductData.getReqCtrlList() != null))) {
-					reqCtrlList.addAll(reqCtrlToAdd(componentProductData));
+		if (productData.getCompoListView().getCompoList() != null) {
+			for (CompoListDataItem compoListDataItem : productData.getCompoListView().getCompoList()) {
+				NodeRef componentProductNodeRef = compoListDataItem.getProduct();
+				if (componentProductNodeRef != null) {
+					ProductData componentProductData = (ProductData) alfrescoRepository.findOne(componentProductNodeRef);
+					if (((!componentProductNodeRef.equals(productData.getNodeRef()) && (componentProductData instanceof SemiFinishedProductData))
+							|| (componentProductData instanceof FinishedProductData) || (componentProductData instanceof RawMaterialData))
+							&& ((componentProductData.getCompoListView() != null) && (componentProductData.getReqCtrlList() != null))) {
+						reqCtrlList.addAll(reqCtrlToAdd(componentProductData));
+					}
 				}
 			}
 		}
 
-		for (PackagingListDataItem packagingListDataItem : productData.getPackagingListView().getPackagingList()) {
-			NodeRef componentProductNodeRef = packagingListDataItem.getProduct();
-			if (componentProductNodeRef != null) {
-				ProductData componentProductData = (ProductData) alfrescoRepository.findOne(componentProductNodeRef);
-				if (((!componentProductNodeRef.equals(productData.getNodeRef()) && (componentProductData instanceof PackagingKitData))
-						|| (componentProductData instanceof PackagingMaterialData))
-						&& ((componentProductData.getPackagingListView() != null) && (componentProductData.getReqCtrlList() != null))) {
-					reqCtrlList.addAll(reqCtrlToAdd(componentProductData));
+		if (productData.getPackagingListView().getPackagingList() != null) {
+			for (PackagingListDataItem packagingListDataItem : productData.getPackagingListView().getPackagingList()) {
+				NodeRef componentProductNodeRef = packagingListDataItem.getProduct();
+				if (componentProductNodeRef != null) {
+					ProductData componentProductData = (ProductData) alfrescoRepository.findOne(componentProductNodeRef);
+					if (((!componentProductNodeRef.equals(productData.getNodeRef()) && (componentProductData instanceof PackagingKitData))
+							|| (componentProductData instanceof PackagingMaterialData))
+							&& ((componentProductData.getPackagingListView() != null) && (componentProductData.getReqCtrlList() != null))) {
+						reqCtrlList.addAll(reqCtrlToAdd(componentProductData));
+					}
 				}
 			}
 		}
-
-		for (ProcessListDataItem processListDataItem : productData.getProcessListView().getProcessList()) {
-			NodeRef componentProductNodeRef = processListDataItem.getResource();
-			if (componentProductNodeRef != null) {
-				ProductData componentProductData = (ProductData) alfrescoRepository.findOne(componentProductNodeRef);
-				if (componentProductData instanceof ResourceProductData
-						&& ((componentProductData.getProcessList() != null) && (componentProductData.getReqCtrlList() != null))) {
-					reqCtrlList.addAll(reqCtrlToAdd(componentProductData));
+		
+		if (productData.getProcessListView().getProcessList() != null) {
+			for (ProcessListDataItem processListDataItem : productData.getProcessListView().getProcessList()) {
+				NodeRef componentProductNodeRef = processListDataItem.getResource();
+				if (componentProductNodeRef != null) {
+					ProductData componentProductData = (ProductData) alfrescoRepository.findOne(componentProductNodeRef);
+					if (componentProductData instanceof ResourceProductData
+							&& ((componentProductData.getProcessList() != null) && (componentProductData.getReqCtrlList() != null))) {
+						reqCtrlList.addAll(reqCtrlToAdd(componentProductData));
+					}
 				}
 			}
 		}
