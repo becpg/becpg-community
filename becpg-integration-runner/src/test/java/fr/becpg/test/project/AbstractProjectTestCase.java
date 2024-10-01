@@ -67,9 +67,9 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 	protected static final Double RESOURCE_COST_VALUE = 100d;
 	protected static final Double RESOURCE_COST_BILL_RATE = 200d;
 
-	protected NodeRef PROJECT_HIERARCHY1_SEA_FOOD_REF;
-	protected NodeRef PROJECT_HIERARCHY2_FISH_REF;
-	protected NodeRef PROJECT_HIERARCHY2_CRUSTACEAN_REF;
+	protected  NodeRef PROJECT_HIERARCHY1_SEA_FOOD_REF;
+	protected  NodeRef PROJECT_HIERARCHY2_FISH_REF;
+	protected  NodeRef PROJECT_HIERARCHY2_CRUSTACEAN_REF;
 
 	protected final List<NodeRef> taskLegends = new ArrayList<>();
 

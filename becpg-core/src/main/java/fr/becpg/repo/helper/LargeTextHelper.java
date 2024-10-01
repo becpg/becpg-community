@@ -1,7 +1,6 @@
 package fr.becpg.repo.helper;
 
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map.Entry;

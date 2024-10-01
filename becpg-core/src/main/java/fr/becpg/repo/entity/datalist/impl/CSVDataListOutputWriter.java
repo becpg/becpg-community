@@ -38,21 +38,19 @@ public class CSVDataListOutputWriter implements DataListOutputWriter {
 			throws IOException {
 		res.setContentType("application/vnd.ms-excel");
 		res.setContentEncoding("ISO-8859-1");
-		
-		CSVFormat format = CSVFormat.EXCEL.withQuoteMode(QuoteMode.ALL).withDelimiter(';');
 
+		CSVFormat format = CSVFormat.EXCEL.builder().setQuoteMode(QuoteMode.ALL).setDelimiter(';').build();
 
 		appendCSVField(format, extractedItems.getComputedFields(), null);
 
 		try (CSVPrinter printer = new CSVPrinter(res.getWriter(), format)) {
-			
-		
+
 			Map<String, String> headers = new HashMap<>();
 			appendCSVHeader(headers, extractedItems.getComputedFields(), null, null);
 			printer.printRecord(headers);
-	
+
 			writeToCSV(extractedItems, printer);
-			
+
 		}
 
 		AttachmentHelper.setAttachment(req, res, "export.csv");
@@ -72,9 +70,9 @@ public class CSVDataListOutputWriter implements DataListOutputWriter {
 					appendCSVField(csvConfig, field.getChildrens(), field.getFieldName());
 				} else {
 					if (prefix != null) {
-						csvConfig.withHeader(prefix + "_" + field.getFieldName());
+						csvConfig.builder().setHeader(prefix + "_" + field.getFieldName()).build();
 					} else {
-						csvConfig.withHeader(field.getFieldName());
+						csvConfig.builder().setHeader(field.getFieldName()).build();
 					}
 				}
 			}
