@@ -142,6 +142,7 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 								MLTextHelper.getI18NMessage("message.decernis.error", e.getMessage()), null, new ArrayList<>(),
 								RequirementDataType.Specification);
 						req.setFormulationChainId(DecernisService.DECERNIS_CHAIN_ID);
+						formulatedProduct.setRequirementChecksum(null);
 						return Arrays.asList(req);
 
 					} finally {
