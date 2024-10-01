@@ -22,6 +22,8 @@ import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.CheckSumHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
+import fr.becpg.repo.product.data.constraints.RequirementDataType;
+import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
@@ -112,8 +114,12 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 				formulatedProduct.setFormulationChainId(DecernisService.DECERNIS_CHAIN_ID);
 				
 				List<ReqCtrlListDataItem> requirements = decernisService.extractRequirements(formulatedProduct);
-				updateChecksums(formulatedProduct);
-				formulatedProduct.setRegulatoryFormulatedDate(new Date());
+				if (!hasError(requirements)) {
+					updateChecksums(formulatedProduct);
+					formulatedProduct.setRegulatoryFormulatedDate(new Date());
+				} else {
+					formulatedProduct.setRequirementChecksum(null);
+				}
 				
 				return requirements;
 			} finally {
@@ -128,6 +134,16 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 		}
 
 		return Collections.emptyList();
+	}
+	
+	private boolean hasError(List<ReqCtrlListDataItem> reqList) {
+		for (ReqCtrlListDataItem req : reqList) {
+			if (RequirementType.Forbidden.equals(req.getReqType())
+					&& RequirementDataType.Formulation.equals(req.getReqDataType())) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	private boolean isSameRequirementChecksum(ProductData product) {
