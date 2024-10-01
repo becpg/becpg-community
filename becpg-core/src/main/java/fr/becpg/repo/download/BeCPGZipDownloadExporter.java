@@ -104,7 +104,7 @@ public class BeCPGZipDownloadExporter extends BaseExporter
     private EntityService entityService;
     private PermissionService permissionService;
 
-    private Deque<Pair<String, NodeRef>> path = new LinkedList<Pair<String, NodeRef>>();
+    private Deque<Pair<String, NodeRef>> path = new LinkedList<>();
     private String currentName;
 
     private OutputStream outputStream;
@@ -174,7 +174,7 @@ public class BeCPGZipDownloadExporter extends BaseExporter
     	}
     	
         this.currentName = (String)nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
-        path.push(new Pair<String, NodeRef>(currentName, nodeRef));
+        path.push(new Pair<>(currentName, nodeRef));
         if (dictionaryService.isSubClass(nodeService.getType(nodeRef), ContentModel.TYPE_FOLDER))
         {
             String path = getPath() + PATH_SEPARATOR;
@@ -275,7 +275,8 @@ public class BeCPGZipDownloadExporter extends BaseExporter
      * @param versionNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
      * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
      */
-    protected NodeRef convertVersionNodeRefToVersionedNodeRef(NodeRef versionNodeRef)
+    @SuppressWarnings("deprecation")
+	protected NodeRef convertVersionNodeRefToVersionedNodeRef(NodeRef versionNodeRef)
     {
         Map<QName, Serializable> properties = nodeService.getProperties(versionNodeRef);
         

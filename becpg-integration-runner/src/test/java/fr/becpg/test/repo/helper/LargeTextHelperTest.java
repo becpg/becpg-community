@@ -9,7 +9,6 @@ import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.util.Pair;
 import org.junit.Test;
 
-import fr.becpg.common.diff.DiffMatchPatch;
 import fr.becpg.repo.helper.LargeTextHelper;
 
 public class LargeTextHelperTest {

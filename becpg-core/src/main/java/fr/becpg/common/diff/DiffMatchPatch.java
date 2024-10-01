@@ -684,8 +684,10 @@ public class DiffMatchPatch {
 		String seed = longtext.substring(i, i + (longtext.length() / 4));
 		int j = -1;
 		String bestcommon = "";
-		String bestlongtexta = "", bestlongtextb = "";
-		String bestshorttexta = "", bestshorttextb = "";
+		String bestlongtexta = "";
+		String bestlongtextb = "";
+		String bestshorttexta = "";
+		String bestshorttextb = "";
 		while ((j = shorttext.indexOf(seed, j + 1)) != -1) {
 			int prefixLength = diffCommonPrefix(longtext.substring(i), shorttext.substring(j));
 			int suffixLength = diffCommonSuffix(longtext.substring(0, i), shorttext.substring(0, j));
