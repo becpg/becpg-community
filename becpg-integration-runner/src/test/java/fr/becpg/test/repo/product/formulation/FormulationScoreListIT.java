@@ -44,6 +44,7 @@ import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.survey.data.SurveyListDataItem;
 import fr.becpg.repo.survey.data.SurveyQuestion;
+import fr.becpg.repo.survey.impl.SurveyServiceImpl.ResponseType;
 import fr.becpg.test.PLMBaseTestCase;
 
 /**
@@ -68,7 +69,7 @@ public class FormulationScoreListIT extends PLMBaseTestCase {
 	protected Repository repositoryHelper;
 
 	@Test
-	public void testFormulationScore()  {
+	public void testFormulationScore() throws Exception {
 		logger.info("Starting testFormulationScore");
 
 		inWriteTx(() -> {
@@ -145,58 +146,105 @@ public class FormulationScoreListIT extends PLMBaseTestCase {
 
 	private List<SurveyListDataItem> createSurveyList() {
 
-		SurveyQuestion question1 = new SurveyQuestion();
+		final SurveyQuestion question1 = new SurveyQuestion();
 
 		question1.setLabel("Q1");
 		question1.setSurveyCriterion("A");
-		question1.setQuestionScore(20);
-		NodeRef q1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), question1).getNodeRef();
+		question1.setResponseType(ResponseType.multiChoicelist.name());
+		final NodeRef q1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), question1).getNodeRef();
 		nodesToDelete.add(q1NodeRef);
 
-		SurveyListDataItem survey1 = new SurveyListDataItem();
-		survey1.setQuestion(q1NodeRef);
+		final SurveyQuestion q1Answer1 = new SurveyQuestion();
+		q1Answer1.setParent(question1);	
+		q1Answer1.setLabel("A1");
+		q1Answer1.setQuestionScore(20);
+		final NodeRef q1A1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), q1Answer1).getNodeRef();
+		nodesToDelete.add(q1A1NodeRef);
+		
+		final SurveyQuestion q1Answer2 = new SurveyQuestion();
+		q1Answer2.setParent(question1);
+		q1Answer2.setLabel("A2");
+		q1Answer2.setQuestionScore(40);
+		final NodeRef q1A2NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), q1Answer2).getNodeRef();
+		nodesToDelete.add(q1A2NodeRef);
+		
+		final SurveyQuestion q1Answer3 = new SurveyQuestion();
+		q1Answer3.setParent(question1);
+		q1Answer3.setLabel("A3");
+		q1Answer3.setQuestionScore(-10);
+		final NodeRef q1A3NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), q1Answer3).getNodeRef();
+		nodesToDelete.add(q1A3NodeRef);
 
-		SurveyQuestion question2 = new SurveyQuestion();
+		final SurveyListDataItem survey1 = new SurveyListDataItem();
+		survey1.setQuestion(q1NodeRef);
+		survey1.setChoices(List.of(q1A1NodeRef, q1A3NodeRef));
+
+		final SurveyQuestion question2 = new SurveyQuestion();
 		question2.setQuestionNote("Q2");
 		question2.setSurveyCriterion("A");
 		question2.setQuestionScore(40);
-		NodeRef q2NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), question2).getNodeRef();
+		final NodeRef q2NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), question2).getNodeRef();
 		nodesToDelete.add(q2NodeRef);
+		
+		final SurveyQuestion q2Answer1 = new SurveyQuestion();
+		q2Answer1.setParent(question2);
+		q2Answer1.setQuestionNote("A1");
+		q2Answer1.setQuestionScore(40);
+		final NodeRef q2A1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), q2Answer1).getNodeRef();
+		nodesToDelete.add(q2A1NodeRef);
+		
+		final SurveyQuestion q2Answer2 = new SurveyQuestion();
+		q2Answer2.setParent(question2);
+		q2Answer2.setQuestionNote("A2");
+		q2Answer2.setQuestionScore(20);
+		final NodeRef q2A2NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), q2Answer2).getNodeRef();
+		nodesToDelete.add(q2A2NodeRef);
+		
+		final SurveyQuestion q2Answer3 = new SurveyQuestion();
+		q2Answer3.setParent(question2);
+		q2Answer3.setQuestionNote("A3");
+		q2Answer3.setQuestionScore(0);
+		final NodeRef q2A3NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), q2Answer3).getNodeRef();
+		nodesToDelete.add(q2A3NodeRef);
 
-		SurveyListDataItem survey2 = new SurveyListDataItem();
+		final SurveyListDataItem survey2 = new SurveyListDataItem();
 		survey2.setQuestion(q2NodeRef);
-
-		SurveyQuestion question3 = new SurveyQuestion();
+		survey2.setChoices(List.of(q2A2NodeRef));
+		
+		final SurveyQuestion question3 = new SurveyQuestion();
 		question3.setQuestionNote("Q3");
-		question3.setSurveyCriterion("B");
-		question3.setQuestionScore(0);
-		NodeRef q3NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), question3).getNodeRef();
+		question3.setSurveyCriterion("C");
+		question3.setQuestionScore(100);
+		final NodeRef q3NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), question3).getNodeRef();
 		nodesToDelete.add(q3NodeRef);
+		
+		final SurveyQuestion q3Answer1 = new SurveyQuestion();
+		q3Answer1.setParent(question3);
+		q3Answer1.setQuestionNote("A1");
+		q3Answer1.setQuestionScore(100);
+		final NodeRef q3A1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), q3Answer1).getNodeRef();
+		nodesToDelete.add(q3A1NodeRef);
+		
+		final SurveyQuestion q3Answer2 = new SurveyQuestion();
+		q3Answer2.setParent(question2);
+		q3Answer2.setQuestionNote("A2");
+		q3Answer2.setQuestionScore(50);
+		final NodeRef q3A2NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), q3Answer2).getNodeRef();
+		nodesToDelete.add(q3A2NodeRef);
 
-		SurveyListDataItem survey3 = new SurveyListDataItem();
+		final SurveyListDataItem survey3 = new SurveyListDataItem();
 		survey3.setQuestion(q3NodeRef);
-
-		SurveyQuestion question4 = new SurveyQuestion();
-		question4.setQuestionNote("Q4");
-		question4.setSurveyCriterion("B");
-		question4.setQuestionScore(100);
-		NodeRef q4NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), question4).getNodeRef();
-		nodesToDelete.add(q4NodeRef);
-
-		SurveyListDataItem survey4 = new SurveyListDataItem();
-		survey4.setQuestion(q4NodeRef);
-
-		return List.of(survey1, survey2, survey3, survey4);
+		survey3.setChoices(List.of(q3A2NodeRef));
+		
+		return List.of(survey1, survey2, survey3);
 	}
 
 	private List<ScoreListDataItem> createScoreList() {
 
 		ScoreListDataItem scoreItem1 = new ScoreListDataItem();
-		scoreItem1.setScore(66);
 		scoreItem1.setCriterion("A");
 
 		ScoreListDataItem scoreItem2 = new ScoreListDataItem();
-		scoreItem2.setScore(80);
 		scoreItem2.setCriterion("C");
 
 		return List.of(scoreItem1, scoreItem2);
@@ -264,16 +312,14 @@ public class FormulationScoreListIT extends PLMBaseTestCase {
 			if (scoreListDataItem.getCriterion().equals("A")) {
 				// Calculate expected score for type A
 				assertEquals("The mean of the type A is incorrect", Integer.valueOf(30), scoreListDataItem.getScore());
-				checks++;
 			} else if (scoreListDataItem.getCriterion().equals("B")) {
 				// Calculate expected score for type B
 				fail("B should not exists");
 			} else if (scoreListDataItem.getCriterion().equals("C")) {
 				// Calculate expected score for type C
-				assertEquals("The mean of the type C is incorrect", Integer.valueOf(80), scoreListDataItem.getScore());
-				checks++;
-
+				assertEquals("The mean of the type C is incorrect", Integer.valueOf(50), scoreListDataItem.getScore());
 			}
+			checks++;
 		}
 
 		// Ensure checks for type A, and C are performed
