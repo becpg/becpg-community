@@ -23,7 +23,6 @@ import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.PackMaterialListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
-import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
@@ -118,7 +117,7 @@ public class SurveyQuestionFormulationHandler extends FormulationBaseHandler<Pro
 		final Set<SurveyQuestion> surveyQuestions = new HashSet<>();
 		final Map<String, List<SurveyListDataItem>> namesSurveyLists = new HashMap<>(NB_OF_SURVEY_LISTS, 1);
 		// is the formulation launched from a unit test ?
-		final boolean cacheOnlyEnable = L2CacheSupport.isCacheOnlyEnable();
+		final boolean transientEntity = formulatedProduct.getNodeRef() == null;
 		for (final String surveyListName : SURVEY_LIST_NAMES) {
 			namesSurveyLists.put(surveyListName, (SURVEY_LIST_BASE_NAME.equals(surveyListName)
 					? formulatedProduct.getSurveyList()
@@ -126,7 +125,7 @@ public class SurveyQuestionFormulationHandler extends FormulationBaseHandler<Pro
 							.stream().map(SurveyListDataItem.class::cast)
 							.collect(Collectors.toCollection(ArrayList::new))));
 			// if we're in a test context we only add the default survey list to the map
-			if (cacheOnlyEnable) break;
+			if (transientEntity) break;
 		}
 		logger.debug("SurveyQuestionFormulationHandler::process() <- " + formulatedProduct.getNodeRef());
 		for (final NodeRef nodeRef : packMaterialListCharactNodeRefs) {
@@ -170,7 +169,7 @@ public class SurveyQuestionFormulationHandler extends FormulationBaseHandler<Pro
 			}
 		}
 		// if we're not in a test context we apply the update of the additional survey lists to the repository
-		if (!cacheOnlyEnable) {
+		if (!transientEntity) {
 			final NodeRef dataListContainerNodeRef = alfrescoRepository.getOrCreateDataListContainer(formulatedProduct);
 			namesSurveyLists.entrySet().stream()
 					.filter(nameSurveyLists -> !SURVEY_LIST_BASE_NAME.equals(nameSurveyLists.getKey()))
