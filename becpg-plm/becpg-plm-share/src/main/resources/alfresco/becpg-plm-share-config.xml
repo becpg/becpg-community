@@ -144,6 +144,7 @@
 			<list id="plant" index="210"/>
 			<list id="regulatoryList" index="213"/>
 			<list id="ingRegulatoryList" index="214"/>
+			<list id="toxList" index="215"/>
 
 			<list id="wUsedList" index="220" />
 			<list id="calculatedCharactList" index="230" />

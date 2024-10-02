@@ -169,7 +169,8 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 								nutValue = decimalFormat.parse(nutValueToken);
 							}
 
-							NutListDataItem nut = new NutListDataItem(null, null, null, null, null, null, nutNodeRef, false);
+							NutListDataItem nut = NutListDataItem.build().withNut(nutNodeRef).withIsManual(false)
+;
 
 							String newMethod = extractNutMethod(databaseFile);
 							PropertyDefinition methodDef = dictionaryService.getProperty(PLMModel.PROP_NUTLIST_METHOD);

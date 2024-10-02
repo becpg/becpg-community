@@ -110,12 +110,14 @@ public class SurveyQuestionFormulationHandler extends FormulationBaseHandler<Pro
 				formulatedProduct.getHierarchy1());
 		final QName qName = getTypeQName(formulatedProduct);
 		final Map<String, QName> qNameCache = new HashMap<>();
+		// NO type criterion OR type criteria INCLUDES formulated product's type
 		final Predicate<SurveyQuestion> qNameFilter = surveyQuestion -> CollectionUtils
 				.isEmpty(surveyQuestion.getFsLinkedTypes())
 				|| surveyQuestion.getFsLinkedTypes().stream().map(typeName -> qNameCache.computeIfAbsent(typeName,
 						__ -> QName.createQName(typeName, namespaceService))).anyMatch(qName::equals);
 		final Set<SurveyQuestion> surveyQuestions = new HashSet<>();
 		final Map<String, List<SurveyListDataItem>> namesSurveyLists = new HashMap<>(NB_OF_SURVEY_LISTS, 1);
+		// is the formulation launched from a unit test ?
 		final boolean cacheOnlyEnable = L2CacheSupport.isCacheOnlyEnable();
 		for (final String surveyListName : SURVEY_LIST_NAMES) {
 			namesSurveyLists.put(surveyListName, (SURVEY_LIST_BASE_NAME.equals(surveyListName)
@@ -123,6 +125,7 @@ public class SurveyQuestionFormulationHandler extends FormulationBaseHandler<Pro
 					: alfrescoRepository.loadDataList(formulatedProduct.getNodeRef(), surveyListName, SurveyModel.TYPE_SURVEY_LIST)
 							.stream().map(SurveyListDataItem.class::cast)
 							.collect(Collectors.toCollection(ArrayList::new))));
+			// if we're in a test context we only add the default survey list to the map
 			if (cacheOnlyEnable) break;
 		}
 		logger.debug("SurveyQuestionFormulationHandler::process() <- " + formulatedProduct.getNodeRef());
@@ -166,6 +169,7 @@ public class SurveyQuestionFormulationHandler extends FormulationBaseHandler<Pro
 				}
 			}
 		}
+		// if we're not in a test context we apply the update of the additional survey lists to the repository
 		if (!cacheOnlyEnable) {
 			final NodeRef dataListContainerNodeRef = alfrescoRepository.getOrCreateDataListContainer(formulatedProduct);
 			namesSurveyLists.entrySet().stream()

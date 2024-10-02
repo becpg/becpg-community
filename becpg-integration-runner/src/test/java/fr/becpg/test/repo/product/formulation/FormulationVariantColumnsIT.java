@@ -117,11 +117,11 @@ public class FormulationVariantColumnsIT extends AbstractFinishedProductTest {
 			//CompoList
 
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 2d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial4NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial5NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(2d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial2NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial3NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial4NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial5NodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
 			// CostList
@@ -133,10 +133,14 @@ public class FormulationVariantColumnsIT extends AbstractFinishedProductTest {
 
 			// NutList
 			List<NutListDataItem> nutList = new LinkedList<>();
-			nutList.add(new NutListDataItem(null, null, null, null, null, null, nut1, null));
-			nutList.add(new NutListDataItem(null, null, null, null, null, null, nut2, null));
-			nutList.add(new NutListDataItem(null, null, null, null, null, null, nut3, null));
-			nutList.add(new NutListDataItem(null, null, null, null, null, null, nut4, null));
+			nutList.add(NutListDataItem.build().withNut(nut1)
+);
+			nutList.add(NutListDataItem.build().withNut(nut2)
+);
+			nutList.add(NutListDataItem.build().withNut(nut3)
+);
+			nutList.add(NutListDataItem.build().withNut(nut4)
+);
 			finishedProduct.setNutList(nutList);
 			assertNotNull("NutList is null", finishedProduct.getNutList());
 

@@ -283,6 +283,7 @@
           <show force="true" id="bcpg:advLca"/>
           <show force="true" id="bcpg:lcaListValue"/>
           <show force="true" id="bcpg:advSvhcAnd"/>
+          <show force="true" id="bcpg:svhcListQtyPerc"/>
           <show force="true" id="bcpg:advSvhcNot"/>
         </field-visibility>
         <appearance>
@@ -347,6 +348,11 @@
               <control-param name="forceEditable">true</control-param>
               <control-param name="isSearch">true</control-param>
             </control>
+          </field>
+          <field id="bcpg:svhcListQtyPerc" mandatory="false" read-only="false" set="svhc" >
+           	<control template="/org/alfresco/components/form/controls/numberrange.ftl">
+           	  <control-param name="forceEditable">true</control-param>
+           	</control>
           </field>
           <field id="bcpg:advSvhcNot" mandatory="false" read-only="false" set="svhc">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">

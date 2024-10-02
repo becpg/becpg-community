@@ -22,6 +22,7 @@ import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.download.DownloadService;
 import org.alfresco.service.cmr.download.DownloadStatus;
 import org.alfresco.service.cmr.model.FileFolderService;
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.ScriptService;
@@ -50,6 +51,7 @@ import fr.becpg.repo.batch.BatchStep;
 import fr.becpg.repo.batch.BatchStepAdapter;
 import fr.becpg.repo.batch.EntityListBatchProcessWorkProvider;
 import fr.becpg.repo.entity.EntityDictionaryService;
+import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.mail.BeCPGMailService;
@@ -83,6 +85,7 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 	private static final String TARGET_PATH = "targetPath";
 	private static final String ENTITYV2_SUBTYPE = "isEntityV2SubType";
 	private static final String DISPLAY_PATH = "displayPath";
+	private static final String DISPLAY_NAME = "displayName";
 
 	@Autowired
 	private NodeService nodeService;
@@ -138,6 +141,9 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 	
 	@Autowired
 	private PersonService personService;
+	
+	@Autowired
+	private AttributeExtractorService attributeExtractorService;
 
 	/** {@inheritDoc} */
 	@Override
@@ -202,12 +208,19 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 				
 				String emailTemplate = notification.getEmail() != null ? nodeService.getPath(notification.getEmail()).toPrefixString(namespaceService)
 						: RepoConsts.EMAIL_NOTIF_RULE_LIST_TEMPLATE;
-				
+				final QName pivotAssoc = dictionaryService.isSubClass(nodeType, BeCPGModel.TYPE_ENTITYLIST_ITEM)
+						? dictionaryService.getDefaultPivotAssoc(nodeType)
+						: null;
 				for (NodeRef nodeRef : items) {
 					Map<String, Object> item = new HashMap<>();
 					item.put(NODE, nodeRef);
 					item.put(DISPLAY_PATH,
 							SiteHelper.extractSiteDisplayPath(nodeService.getPath(nodeRef), permissionService, nodeService, namespaceService));
+					if (pivotAssoc != null)
+						item.put(DISPLAY_NAME,
+								nodeService.getTargetAssocs(nodeRef, pivotAssoc).stream().findFirst()
+										.map(AssociationRef::getTargetRef)
+										.map(attributeExtractorService::extractPropName).orElse(StringUtils.EMPTY));
 					item.put(ENTITYV2_SUBTYPE, dictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITY_V2));
 					entities.put(nodeRef, item);
 				}

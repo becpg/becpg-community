@@ -32,7 +32,6 @@ import org.apache.http.util.EntityUtils;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.repo.olap.data.OlapContext;
-import fr.becpg.repo.olap.impl.OlapServiceImpl;
 
 /**
  * <p>OlapUtils class.</p>

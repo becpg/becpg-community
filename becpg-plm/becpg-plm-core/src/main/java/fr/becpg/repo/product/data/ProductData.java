@@ -52,6 +52,7 @@ import fr.becpg.repo.product.data.productList.PubChannelListDataItem;
 import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.ResourceParamListItem;
 import fr.becpg.repo.product.data.productList.SvhcListDataItem;
+import fr.becpg.repo.product.data.productList.ToxListDataItem;
 import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.quality.data.dataList.ControlDefListDataItem;
 import fr.becpg.repo.quality.data.dataList.StockListDataItem;
@@ -167,7 +168,10 @@ public class ProductData extends AbstractScorableEntity
 	 * Nutlist formulation
 	 */
 	private List<String> preparationStates;
-
+	private NodeRef reconstituant;
+	private Double reconstituantQty;
+	private Double preparationQuantity;
+	private MLText referenceProducts;
 	/*
 	 * Labeling formulation
 	 */
@@ -253,6 +257,7 @@ public class ProductData extends AbstractScorableEntity
 	private List<IngRegulatoryListDataItem> ingRegulatoryList;
 	private List<SvhcListDataItem> svhcList;
 	private List<PubChannelListDataItem> pubChannelList;
+	private List<ToxListDataItem> toxList;
 
 	/*
 	 * View
@@ -1589,6 +1594,52 @@ public class ProductData extends AbstractScorableEntity
 	public boolean isPrepared() {
 		return preparationStates != null && preparationStates.contains("Prepared");
 	}
+	
+	
+	
+	@AlfSingleAssoc
+	@AlfQname(qname = "bcpg:nutrientPreparationReconstituantRef")
+	public NodeRef getReconstituant() {
+		return reconstituant;
+	}
+
+	public void setReconstituant(NodeRef reconstituant) {
+		this.reconstituant = reconstituant;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "bcpg:nutrientPreparationReconstituantQty")
+	public Double getReconstituantQty() {
+		return reconstituantQty;
+	}
+
+	public void setReconstituantQty(Double reconstituantQty) {
+		this.reconstituantQty = reconstituantQty;
+	}
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:nutrientPreparationQty")
+	public Double getPreparationQuantity() {
+		return preparationQuantity;
+	}
+
+	public void setPreparationQuantity(Double preparationQuantity) {
+		this.preparationQuantity = preparationQuantity;
+	}
+	
+	
+
+	
+	@AlfProp
+	@AlfMlText
+	@AlfQname(qname = "bcpg:nutrientReferenceProducts")
+	public MLText getReferenceProducts() {
+		return referenceProducts;
+	}
+
+	public void setReferenceProducts(MLText referenceProducts) {
+		this.referenceProducts = referenceProducts;
+	}
 
 	/**
 	 * <p>Getter for the field <code>ecoScore</code>.</p>
@@ -2255,6 +2306,16 @@ public class ProductData extends AbstractScorableEntity
 	 */
 	public void setRegulatoryList(List<RegulatoryListDataItem> regulatoryList) {
 		this.regulatoryList = regulatoryList;
+	}
+	
+	@DataList
+	@AlfQname(qname = "bcpg:toxList")
+	public List<ToxListDataItem> getToxList() {
+		return toxList;
+	}
+	
+	public void setToxList(List<ToxListDataItem> toxList) {
+		this.toxList = toxList;
 	}
 
 	/**

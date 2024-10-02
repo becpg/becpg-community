@@ -634,6 +634,19 @@
 				</list>
 			</parameter>
 		</constraint>
+		
+		<constraint name="bcpg:toxTypesConstraint" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>SkinIrritation</value>
+					<value>Sensitization</value>
+					<value>OcularIrritation</value>
+					<value>SystemicIngredient</value>
+					<value>PhototoxicalPotential</value>
+				</list>
+			</parameter>
+		</constraint>
 
 
 		<constraint name="bcpg:labelClaimTypes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
@@ -1503,6 +1516,76 @@
 			<mandatory-aspects>
 				<aspect>bcpg:ingTypeAspect</aspect>
 			</mandatory-aspects>
+		</type>
+		<type name="bcpg:tox">
+			<parent>bcpg:charact</parent>
+			<properties>
+				<property name="bcpg:toxTypes">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<multiple>true</multiple>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:toxTypesConstraint" />
+					</constraints>
+				</property>
+				<property name="bcpg:toxValue">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+				<property name="bcpg:toxCalculateSystemic">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
+			</properties>
+		</type>
+		<type name="bcpg:toxIng">
+			<parent>bcpg:charact</parent>
+			<properties>
+				<property name="bcpg:toxIngIng">
+					<type>d:noderef</type>
+					<mandatory>true</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+				<property name="bcpg:toxIngTox">
+					<type>d:noderef</type>
+					<mandatory>true</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+				<property name="bcpg:toxIngMaxValue">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+				<property name="bcpg:toxIngSystemicValue">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+			</properties>
 		</type>
 
 		<type name="bcpg:microbio">
@@ -3891,6 +3974,29 @@
 				<aspect>bcpg:regulatoryAspect</aspect>
 			</mandatory-aspects>
 		</type>
+		
+		<type name="bcpg:toxList">
+			<parent>bcpg:entityListItem</parent>
+			<properties>
+				<property name="bcpg:toxListValue">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+			</properties>
+			<associations>
+				<association name="bcpg:toxListTox">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:tox</class>
+						<mandatory>true</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+		</type>
 
 
 	</types>
@@ -4818,6 +4924,8 @@
 						<facetable>true</facetable>
 					</index>
 				</property>
+				
+				
 				<property name="bcpg:servingSizeByCountry">
 					<type>d:mltext</type>
 					<index enabled="false" />
@@ -4855,7 +4963,26 @@
 						<constraint ref="bcpg:nutrientPreparationStates" />
 					</constraints>
 				</property>
-
+				
+				<property name="bcpg:nutrientPreparationReconstituantQty">
+					<type>d:double</type>
+					<index enabled="false"/>
+				</property>
+								
+				<property name="bcpg:nutrientPreparationQty">
+					<type>d:double</type>
+					<index enabled="false"/>
+				</property>				
+								
+								
+				<property name="bcpg:nutrientReferenceProducts">
+					<type>d:mltext</type>
+					<index enabled="true">
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>			
+								
 				<property name="bcpg:nutrientPreparedUnit">
 					<type>d:text</type>
 					<default>g</default>
@@ -4898,6 +5025,17 @@
 					</source>
 					<target>
 						<class>bcpg:precautionOfUse</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="bcpg:nutrientPreparationReconstituantRef">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:product</class>
 						<mandatory>false</mandatory>
 						<many>false</many>
 					</target>
@@ -5567,6 +5705,28 @@
 				</property>
 			</properties>
 		</aspect>
+
+
+		<aspect name="bcpg:nutListReferenceAspect">
+			<properties>
+				<property name="bcpg:nutListReductionFormulatedValue">
+					<type>d:mltext</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:nutListReductionValue">
+					<type>d:mltext</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:nutListReferenceValue">
+					<type>d:mltext</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+			</properties>
+		</aspect>
+		
 
 		<aspect name="bcpg:nutListPreparedAspect">
 			<properties>
@@ -6273,6 +6433,50 @@
 			</associations>
 		</aspect>
 		
+		<aspect name="bcpg:ingToxAspect">
+			<properties>
+				<property name="bcpg:ingToxData">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:ingToxPodSystemic">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false"/>
+				</property>
+				<property name="bcpg:ingToxDermalAbsorption">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false"/>
+				</property>
+				<property name="bcpg:ingToxMosMoe">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false"/>
+				</property>
+				<property name="bcpg:ingToxMaxSkinIrritation">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false"/>
+				</property>
+				<property name="bcpg:ingToxMaxSensitization">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false"/>
+				</property>
+				<property name="bcpg:ingToxMaxOcularIrritation">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false"/>
+				</property>
+				<property name="bcpg:ingToxMaxPhototoxic">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false"/>
+				</property>
+			</properties>
+		</aspect>
 		
 	</aspects>
 </model>

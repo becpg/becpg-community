@@ -291,7 +291,7 @@
 			})[0];
 
 			Alfresco.util.Ajax.jsonGet({
-				url: dt._getColumnUrl("export"),
+				url: dt._getColumnUrl("product-list"),
 				successCallback: {
 					fn: function(response) {
 						var requestParams = {
@@ -317,7 +317,7 @@
 
 						var MAX_RESULTS_UNLIMITED = -1;
 
-						beCPG.util.launchAsyncDownload("export.xlsx", "export.xlsx", dt._getDataUrl(MAX_RESULTS_UNLIMITED) + "&format=xls", requestParams);
+						beCPG.util.launchAsyncDownload("export.xlsx", "export.xlsx", dt._getDataUrl(MAX_RESULTS_UNLIMITED) + "&format=xlsx", requestParams);
 					},
 					scope: this
 				}

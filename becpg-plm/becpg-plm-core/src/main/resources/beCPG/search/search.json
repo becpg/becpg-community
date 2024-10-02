@@ -117,10 +117,15 @@
        	   {"attribute": "bcpg:lcaListValue" , "htmlId":"prop_bcpg_lcaListValue-range" }
        	 ],
        	 
-		 "svhc1": [
-           {"attribute": "bcpg:svhcListIng" , "htmlId":"assoc_bcpg_advSvhcAnd_added", "listType": "bcpg:svhcList", "operator": "AND" }
+		 "svhc1" : [ 
+           {"attribute": "bcpg:svhcListIng" , "htmlId":"assoc_bcpg_svhcListIng_added", "listType": "bcpg:svhcList" },
+           {"attribute": "bcpg:svhcListQtyPerc" , "htmlId":"prop_bcpg_svhcListQtyPerc-range" }
+         ],
+		 "svhc2": [
+           {"attribute": "bcpg:svhcListIng" , "htmlId":"assoc_bcpg_advSvhcAnd_added", "listType": "bcpg:svhcList", "operator": "AND" },
+           {"attribute": "bcpg:svhcListQtyPerc" , "htmlId":"prop_bcpg_svhcListQtyPerc-range" }
        	 ],
-	   	 "svhc2": [
+	   	 "svhc3": [
 	       {"attribute": "bcpg:svhcListIng" , "htmlId":"assoc_bcpg_advSvhcNot_added", "listType": "bcpg:svhcList", "operator": "NOT" }
 	   	 ],
 	   	 
@@ -139,30 +144,6 @@
 		 "survey4": [ 
 		   {"attribute": "survey:slQuestion" , "listType": "survey:surveyList", "htmlId":"assoc_survey_advSearchSurveyQuestion4_added"},
 		   {"attribute": "survey:slChoices" , "listType": "survey:surveyList", "htmlId":"assoc_survey_advSearchSurveyAnswer4_added"}
-		 ],
-		 "survey5": [ 
-		   {"attribute": "survey:slQuestion" , "listType": "survey:surveyList", "htmlId":"assoc_survey_advSearchSurveyQuestion5_added"},
-		   {"attribute": "survey:slChoices" , "listType": "survey:surveyList", "htmlId":"assoc_survey_advSearchSurveyAnswer5_added"}
-		 ],
-		 "survey6": [ 
-		   {"attribute": "survey:slQuestion" , "listType": "survey:surveyList", "htmlId":"assoc_survey_advSearchSurveyQuestion6_added"},
-		   {"attribute": "survey:slChoices" , "listType": "survey:surveyList", "htmlId":"assoc_survey_advSearchSurveyAnswer6_added"}
-		 ],
-		 "survey7": [ 
-		   {"attribute": "survey:slQuestion" , "listType": "survey:surveyList", "htmlId":"assoc_survey_advSearchSurveyQuestion7_added"},
-		   {"attribute": "survey:slChoices" , "listType": "survey:surveyList", "htmlId":"assoc_survey_advSearchSurveyAnswer7_added"}
-		 ],
-		 "survey8": [ 
-		   {"attribute": "survey:slQuestion" , "listType": "survey:surveyList", "htmlId":"assoc_survey_advSearchSurveyQuestion8_added"},
-		   {"attribute": "survey:slChoices" , "listType": "survey:surveyList", "htmlId":"assoc_survey_advSearchSurveyAnswer8_added"}
-		 ],
-		 "survey9": [ 
-		   {"attribute": "survey:slQuestion" , "listType": "survey:surveyList", "htmlId":"assoc_survey_advSearchSurveyQuestion9_added"},
-		   {"attribute": "survey:slChoices" , "listType": "survey:surveyList", "htmlId":"assoc_survey_advSearchSurveyAnswer9_added"}
-		 ],
-		 "survey10": [ 
-		   {"attribute": "survey:slQuestion" , "listType": "survey:surveyList", "htmlId":"assoc_survey_advSearchSurveyQuestion10_added"},
-		   {"attribute": "survey:slChoices" , "listType": "survey:surveyList", "htmlId":"assoc_survey_advSearchSurveyAnswer10_added"}
 		 ]
 	}
 }

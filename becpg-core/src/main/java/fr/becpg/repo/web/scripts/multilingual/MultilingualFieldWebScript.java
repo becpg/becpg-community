@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Map;
 
@@ -51,8 +50,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StopWatch;
 
-import fr.becpg.common.diff.Diff;
-import fr.becpg.common.diff.DiffMatchPatch;
+import fr.becpg.repo.helper.LargeTextHelper;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.RestTemplateHelper;
 
@@ -249,9 +247,7 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 							item.put("name", fieldQname.toPrefixString(serviceRegistry.getNamespaceService()));
 
 							if ((diffMlText != null) && diffMlText.containsKey(mlEntry.getKey())) {
-								DiffMatchPatch dmp = new DiffMatchPatch();
-								LinkedList<Diff> diffs = dmp.diff_main(diffMlText.get(mlEntry.getKey()), mlEntry.getValue());
-								item.put("value", dmp.diffPrettyHtml(diffs));
+								item.put("value",LargeTextHelper.htmlDiff(diffMlText.get(mlEntry.getKey()), mlEntry.getValue()));
 							} else {
 								item.put("value", mlEntry.getValue());
 							}

@@ -55,14 +55,12 @@
           <show force="false" id="bcpg:productDensity"/>
           <show force="true" id="bcpg:netVolume"/>
           <show force="false" id="bcpg:productLossPerc"/>
-          
           <show force="true" id="bcpg:servingSize"/>
           <show force="true" id="bcpg:servingSizeUnit"/>
           <show force="true" id="bcpg:servingSizeText"/>
           <show force="true" id="bcpg:numberOfServings"/>
           <show force="true" id="bcpg:nutrientPreparationState"/>
           <show force="true" id="bcpg:nutrientPreparedUnit"/>
-          
           <show force="false" id="bcpg:productSpecifications"/>
           <show for-mode="view" force="false" id="bcpg:ecoScore"/>
           <show for-mode="view" force="false" id="bcpg:ecoScoreDetails"/>
@@ -487,8 +485,7 @@
           </field>
           
           <field id="bcpg:productLossPerc" mandatory="false" read-only="false" set="formulation"/>
-          
-          <field help-id="becpg.forms.help.servingSize" id="bcpg:servingSize" mandatory="false" read-only="false" set="formulation"/>
+          <field help-id="becpg.forms.help.servingSize" id="bcpg:servingSize" mandatory="false" read-only="false" set="formulation"/>          
           <field id="bcpg:servingSizeUnit" mandatory="false" read-only="false" set="formulation"/>
           <field id="bcpg:servingSizeText" mandatory="false" read-only="false" set="formulation">
             <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
@@ -1345,7 +1342,11 @@
           <show force="true" id="bcpg:servingSizeText"/>
           <show force="true" id="bcpg:numberOfServings"/>
           <show force="true" id="bcpg:nutrientPreparationState"/>
-          <show force="true" id="bcpg:nutrientPreparedUnit"/>
+          <show force="false" id="bcpg:nutrientPreparedUnit"/>
+          <show force="false" id="bcpg:nutrientPreparationQty" />
+          <show force="false" id="bcpg:nutrientPreparationReconstituantRef"/>
+          <show force="false" id="bcpg:nutrientPreparationReconstituantQty"/>
+          <show for-mode="view" force="false" id="bcpg:nutrientReferenceProducts" />
           <show for-mode="view" force="true" id="bcpg:nutrientProfilingScore"/>
           <show for-mode="view" force="true" id="bcpg:nutrientProfilingDetails"/>
           <show force="true" id="bcpg:nutrientProfileCategory"/>
@@ -1494,6 +1495,7 @@
           <show force="true" id="bcpg:advLca"/>
           <show force="true" id="bcpg:lcaListValue"/>
           <show force="true" id="bcpg:advSvhcAnd"/>
+          <show force="true" id="bcpg:svhcListQtyPerc"/>
           <show force="true" id="bcpg:advSvhcNot"/>
           <show id="survey:advSearchSurveyQuestion1" force="true" />
 		  <show id="survey:advSearchSurveyAnswer1" force="true" />
@@ -1503,18 +1505,6 @@
 		  <show id="survey:advSearchSurveyAnswer3" force="true" />
 		  <show id="survey:advSearchSurveyQuestion4" force="true" />
 		  <show id="survey:advSearchSurveyAnswer4" force="true" />
-		  <show id="survey:advSearchSurveyQuestion5" force="true" />
-		  <show id="survey:advSearchSurveyAnswer5" force="true" />
-		  <show id="survey:advSearchSurveyQuestion6" force="true" />
-		  <show id="survey:advSearchSurveyAnswer6" force="true" />
-		  <show id="survey:advSearchSurveyQuestion7" force="true" />
-		  <show id="survey:advSearchSurveyAnswer7" force="true" />
-		  <show id="survey:advSearchSurveyQuestion8" force="true" />
-		  <show id="survey:advSearchSurveyAnswer8" force="true" />
-		  <show id="survey:advSearchSurveyQuestion9" force="true" />
-		  <show id="survey:advSearchSurveyAnswer9" force="true" />
-		  <show id="survey:advSearchSurveyQuestion10" force="true" />
-		  <show id="survey:advSearchSurveyAnswer10" force="true" />
         </field-visibility>
         <appearance>
           <set appearance="bordered-panel" id="product-criteria" label-id="becpg.forms.set.product-criteria.label"/>
@@ -1862,6 +1852,11 @@
               <control-param name="isSearch">true</control-param>
             </control>
           </field>
+          <field id="bcpg:svhcListQtyPerc" mandatory="false" read-only="false" set="svhc" >
+         	<control template="/org/alfresco/components/form/controls/numberrange.ftl">
+         	  <control-param name="forceEditable">true</control-param>
+         	</control>
+       	  </field>
           <field id="bcpg:advSvhcNot" mandatory="false" read-only="false" set="svhc">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
               <control-param name="forceEditable">true</control-param>
@@ -1925,96 +1920,6 @@
 		  	<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 			  <control-param name="ds">becpg/autocomplete/survey</control-param>
 			  <control-param name="parentAssoc">survey_advSearchSurveyQuestion4</control-param>
-			  <control-param name="forceEditable">true</control-param>
-              <control-param name="isSearch">true</control-param>
-		  	</control>
-		  </field>
-		  <field id="survey:advSearchSurveyQuestion5" mandatory="false" read-only="false" set="survey">
-		  	<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-		  	  <control-param name="ds">becpg/autocomplete/survey</control-param>
-		  	  <control-param name="forceEditable">true</control-param>
-              <control-param name="isSearch">true</control-param>
-		  	</control>
-		  </field>
-		  <field id="survey:advSearchSurveyAnswer5" mandatory="false" read-only="false" set="survey">
-		  	<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-			  <control-param name="ds">becpg/autocomplete/survey</control-param>
-			  <control-param name="parentAssoc">survey_advSearchSurveyQuestion5</control-param>
-			  <control-param name="forceEditable">true</control-param>
-              <control-param name="isSearch">true</control-param>
-		  	</control>
-		  </field>
-		  <field id="survey:advSearchSurveyQuestion6" mandatory="false" read-only="false" set="survey">
-		  	<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-		  	  <control-param name="ds">becpg/autocomplete/survey</control-param>
-		  	  <control-param name="forceEditable">true</control-param>
-              <control-param name="isSearch">true</control-param>
-		  	</control>
-		  </field>
-		  <field id="survey:advSearchSurveyAnswer6" mandatory="false" read-only="false" set="survey">
-		  	<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-			  <control-param name="ds">becpg/autocomplete/survey</control-param>
-			  <control-param name="parentAssoc">survey_advSearchSurveyQuestion6</control-param>
-			  <control-param name="forceEditable">true</control-param>
-              <control-param name="isSearch">true</control-param>
-		  	</control>
-		  </field>
-		  <field id="survey:advSearchSurveyQuestion7" mandatory="false" read-only="false" set="survey">
-		  	<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-		  	  <control-param name="ds">becpg/autocomplete/survey</control-param>
-		  	  <control-param name="forceEditable">true</control-param>
-              <control-param name="isSearch">true</control-param>
-		  	</control>
-		  </field>
-		  <field id="survey:advSearchSurveyAnswer7" mandatory="false" read-only="false" set="survey">
-		  	<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-			  <control-param name="ds">becpg/autocomplete/survey</control-param>
-			  <control-param name="parentAssoc">survey_advSearchSurveyQuestion7</control-param>
-			  <control-param name="forceEditable">true</control-param>
-              <control-param name="isSearch">true</control-param>
-		  	</control>
-		  </field>
-		  <field id="survey:advSearchSurveyQuestion8" mandatory="false" read-only="false" set="survey">
-		  	<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-		  	  <control-param name="ds">becpg/autocomplete/survey</control-param>
-		  	  <control-param name="forceEditable">true</control-param>
-              <control-param name="isSearch">true</control-param>
-		  	</control>
-		  </field>
-		  <field id="survey:advSearchSurveyAnswer8" mandatory="false" read-only="false" set="survey">
-		  	<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-			  <control-param name="ds">becpg/autocomplete/survey</control-param>
-			  <control-param name="parentAssoc">survey_advSearchSurveyQuestion8</control-param>
-			  <control-param name="forceEditable">true</control-param>
-              <control-param name="isSearch">true</control-param>
-		  	</control>
-		  </field>
-		  <field id="survey:advSearchSurveyQuestion9" mandatory="false" read-only="false" set="survey">
-		  	<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-		  	  <control-param name="ds">becpg/autocomplete/survey</control-param>
-		  	  <control-param name="forceEditable">true</control-param>
-              <control-param name="isSearch">true</control-param>
-		  	</control>
-		  </field>
-		  <field id="survey:advSearchSurveyAnswer9" mandatory="false" read-only="false" set="survey">
-		  	<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-			  <control-param name="ds">becpg/autocomplete/survey</control-param>
-			  <control-param name="parentAssoc">survey_advSearchSurveyQuestion9</control-param>
-			  <control-param name="forceEditable">true</control-param>
-              <control-param name="isSearch">true</control-param>
-		  	</control>
-		  </field>
-		  <field id="survey:advSearchSurveyQuestion10" mandatory="false" read-only="false" set="survey">
-		  	<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-		  	  <control-param name="ds">becpg/autocomplete/survey</control-param>
-		  	  <control-param name="forceEditable">true</control-param>
-              <control-param name="isSearch">true</control-param>
-		  	</control>
-		  </field>
-		  <field id="survey:advSearchSurveyAnswer10" mandatory="false" read-only="false" set="survey">
-		  	<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-			  <control-param name="ds">becpg/autocomplete/survey</control-param>
-			  <control-param name="parentAssoc">survey_advSearchSurveyQuestion10</control-param>
 			  <control-param name="forceEditable">true</control-param>
               <control-param name="isSearch">true</control-param>
 		  	</control>
@@ -2197,7 +2102,6 @@
           </field>
            <field  id="bcpg:nutrientPreparationState" mandatory="false" read-only="false" set="formulation"> </field>
            <field  id="bcpg:nutrientPreparedUnit" mandatory="false" read-only="false" set="formulation"> </field>
-          
           <field id="bcpg:productSpecifications" mandatory="false" read-only="false" set="formulation">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
               <control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
@@ -2377,6 +2281,9 @@
           <show force="true" id="bcpg:numberOfServings"/>
           <show force="true" id="bcpg:nutrientPreparationState"/>
           <show force="true" id="bcpg:nutrientPreparedUnit"/>
+          <show force="true" id="bcpg:nutrientPreparationQty" />
+          <show force="true" id="bcpg:nutrientPreparationReconstituantRef" />
+		  <show force="true" id="bcpg:nutrientPreparationReconstituantQty"/>
           <show force="true" id="bcpg:productSpecifications"/>
           <show for-mode="view" force="true" id="bcpg:ecoScore"/>
           <show for-mode="view" force="true" id="bcpg:ecoScoreDetails"/>
@@ -2731,6 +2638,17 @@
           </field>
           <field help-id="becpg.forms.help.nutrientPreparationState" id="bcpg:nutrientPreparationState" mandatory="false" read-only="false" set="formulation"> </field>
           <field  id="bcpg:nutrientPreparedUnit" mandatory="false" read-only="false" set="formulation"> </field>
+          
+         <field  id="bcpg:nutrientPreparationQty" mandatory="false" read-only="false" set="formulation"> </field>
+          <field  id="bcpg:nutrientPreparationReconstituantRef" mandatory="false" read-only="false" set="formulation">
+          <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial%5E4,bcpg:finishedProduct,bcpg:localSemiFinishedProduct%5E2,bcpg:semiFinishedProduct%5E2
+							</control-param>
+						</control>
+		 </field>
+          <field  id="bcpg:nutrientPreparationReconstituantQty" mandatory="false" read-only="false" set="formulation"> </field>
+          
+          
           <field help-id="becpg.forms.help.productSpecifications" id="bcpg:productSpecifications" mandatory="false" read-only="false" set="formulation">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
               <control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
@@ -3247,6 +3165,9 @@
           <show force="false" id="bcpg:numberOfServings"/>
           <show force="false" id="bcpg:nutrientPreparationState"/>
           <show force="false" id="bcpg:nutrientPreparedUnit"/>
+          <show force="false" id="bcpg:nutrientPreparationQty" />
+          <show force="false" id="bcpg:nutrientPreparationReconstituantRef"/>
+          <show force="false" id="bcpg:nutrientPreparationReconstituantQty"/>
           <show force="false" id="bcpg:productSpecifications"/>
           <show force="false" id="bcpg:ecoScore"/>
           <show force="false" id="bcpg:ecoScoreDetails"/>

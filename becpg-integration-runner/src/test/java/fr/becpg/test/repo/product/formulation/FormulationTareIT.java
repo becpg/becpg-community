@@ -68,20 +68,27 @@ public class FormulationTareIT extends AbstractFinishedProductTest {
 				finishedProduct.setQty(1d);
 				finishedProduct.setDensity(1d);
 				List<CompoListDataItem> compoList = new ArrayList<>();
-				compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial5NodeRef));// 90g
-				compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.P, 0d, DeclarationType.Detail, rawMaterial5NodeRef));// 9g
-				compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.lb, 0d, DeclarationType.Declare, rawMaterial5NodeRef));// 9 * 0.453592 / 0.1 = 40.8233
-				compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.oz, 0d, DeclarationType.Detail, rawMaterial5NodeRef));// 2.5514 g
+				compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial5NodeRef));// 90g
+				compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.P).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial5NodeRef));// 9g
+				compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.lb).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial5NodeRef));// 9 * 0.453592 / 0.1 = 40.8233
+				compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.oz).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial5NodeRef));// 2.5514 g
 				finishedProduct.getCompoListView().setCompoList(compoList);
 
 				List<PackagingListDataItem> packList = new ArrayList<>();
-				packList.add(new PackagingListDataItem(null, 1d, ProductUnit.P, PackagingLevel.Primary, true, packagingMaterial1NodeRef));// 15g
-				packList.add(new PackagingListDataItem(null, 2d, ProductUnit.P, PackagingLevel.Primary, true, packagingMaterial2NodeRef));// 2*5g
-				packList.add(new PackagingListDataItem(null, 3d, ProductUnit.g, PackagingLevel.Primary, true, packagingMaterial3NodeRef));// 3g
-				packList.add(new PackagingListDataItem(null, 1d, ProductUnit.P, PackagingLevel.Primary, true, packagingMaterial4NodeRef));// 50g
-				packList.add(new PackagingListDataItem(null, 1d, ProductUnit.oz, PackagingLevel.Primary, true, packagingMaterial5NodeRef));// 28.349523125g
-				packList.add(new PackagingListDataItem(null, 10d, ProductUnit.mL, PackagingLevel.Primary, true, packagingMaterial4NodeRef));// 0.5
-				packList.add(new PackagingListDataItem(null, 0.2d, ProductUnit.L, PackagingLevel.Primary, true, packagingMaterial6NodeRef));// 0.2 but was 0
+				packList.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.P).withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packagingMaterial1NodeRef)
+);// 15g
+				packList.add(PackagingListDataItem.build().withQty(2d).withUnit(ProductUnit.P).withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packagingMaterial2NodeRef)
+);// 2*5g
+				packList.add(PackagingListDataItem.build().withQty(3d).withUnit(ProductUnit.g).withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packagingMaterial3NodeRef)
+);// 3g
+				packList.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.P).withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packagingMaterial4NodeRef)
+);// 50g
+				packList.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.oz).withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packagingMaterial5NodeRef)
+);// 28.349523125g
+				packList.add(PackagingListDataItem.build().withQty(10d).withUnit(ProductUnit.mL).withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packagingMaterial4NodeRef)
+);// 0.5
+				packList.add(PackagingListDataItem.build().withQty(0.2d).withUnit(ProductUnit.L).withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packagingMaterial6NodeRef)
+);// 0.2 but was 0
 				
 				finishedProduct.getPackagingListView().setPackagingList(packList);
 				
@@ -114,7 +121,7 @@ public class FormulationTareIT extends AbstractFinishedProductTest {
 			finishedProduct.setQty(1d);
 			finishedProduct.setDensity(1d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.P, 0d, DeclarationType.Declare, finishedProductNodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.P).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(finishedProductNodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
@@ -144,17 +151,24 @@ public class FormulationTareIT extends AbstractFinishedProductTest {
 			finishedProduct.setDensity(1d);
 			finishedProduct.setDropPackagingOfComponents(true);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.P, 0d, DeclarationType.Declare, finishedProductNodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.P).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(finishedProductNodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			
 			List<PackagingListDataItem> packList = new ArrayList<>();
-			packList.add(new PackagingListDataItem(null, 1d, ProductUnit.P, PackagingLevel.Primary, true, packagingMaterial1NodeRef));// 15g
-			packList.add(new PackagingListDataItem(null, 2d, ProductUnit.P, PackagingLevel.Primary, true, packagingMaterial2NodeRef));// 2*5g
-			packList.add(new PackagingListDataItem(null, 3d, ProductUnit.g, PackagingLevel.Primary, true, packagingMaterial3NodeRef));// 3g
-			packList.add(new PackagingListDataItem(null, 1d, ProductUnit.P, PackagingLevel.Primary, true, packagingMaterial4NodeRef));// 50g
-			packList.add(new PackagingListDataItem(null, 1d, ProductUnit.oz, PackagingLevel.Primary, true, packagingMaterial5NodeRef));// 28.349523125g
-			packList.add(new PackagingListDataItem(null, 10d, ProductUnit.mL, PackagingLevel.Primary, true, packagingMaterial4NodeRef));// 0.5
-			packList.add(new PackagingListDataItem(null, 0.2d, ProductUnit.L, PackagingLevel.Primary, true, packagingMaterial6NodeRef));// 0.2 but was 0
+			packList.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.P).withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packagingMaterial1NodeRef)
+);// 15g
+			packList.add(PackagingListDataItem.build().withQty(2d).withUnit(ProductUnit.P).withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packagingMaterial2NodeRef)
+);// 2*5g
+			packList.add(PackagingListDataItem.build().withQty(3d).withUnit(ProductUnit.g).withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packagingMaterial3NodeRef)
+);// 3g
+			packList.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.P).withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packagingMaterial4NodeRef)
+);// 50g
+			packList.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.oz).withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packagingMaterial5NodeRef)
+);// 28.349523125g
+			packList.add(PackagingListDataItem.build().withQty(10d).withUnit(ProductUnit.mL).withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packagingMaterial4NodeRef)
+);// 0.5
+			packList.add(PackagingListDataItem.build().withQty(0.2d).withUnit(ProductUnit.L).withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packagingMaterial6NodeRef)
+);// 0.2 but was 0
 			
 
 			finishedProduct.getPackagingListView().setPackagingList(packList);
@@ -187,7 +201,8 @@ public class FormulationTareIT extends AbstractFinishedProductTest {
 			finishedProduct.setDensity(1d);
 			
 			List<PackagingListDataItem> packList = new ArrayList<>();
-			PackagingListDataItem p = new PackagingListDataItem(null, 1d, ProductUnit.P, PackagingLevel.Primary, true, packagingMaterial1NodeRef);
+			PackagingListDataItem p = PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.P).withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packagingMaterial1NodeRef)
+;
 			p.setIsRecycle(true);
 			packList.add(p);// 15g
 			

@@ -40,7 +40,6 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.model.ForumModel;
-import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.repository.AssociationExistsException;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
@@ -424,7 +423,7 @@ public class ImportEntityXmlVisitor {
 										nodeService.createAssociation(curNodeRef.peek(), node, currAssoc.peek());
 									} catch (AssociationExistsException e) {
 										// association already exists
-										//TODO doesn't handle yet association update
+									  logger.debug("Association Already exist", e);
 									}
 
 								}

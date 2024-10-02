@@ -68,7 +68,7 @@ public class FormulationScoreListIT extends PLMBaseTestCase {
 	protected Repository repositoryHelper;
 
 	@Test
-	public void testFormulationScore() throws Exception {
+	public void testFormulationScore()  {
 		logger.info("Starting testFormulationScore");
 
 		inWriteTx(() -> {

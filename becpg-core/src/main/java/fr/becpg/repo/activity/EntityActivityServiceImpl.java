@@ -303,7 +303,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		return false;
 
 	}
-	
+
 	@Override
 	public boolean postChangeOrderActivity(NodeRef entityNodeRef, NodeRef changeOrderNodeRef) {
 		try {
@@ -315,7 +315,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 			if (activityListNodeRef != null) {
 
 				ActivityListDataItem activityListDataItem = new ActivityListDataItem();
-				
+
 				JSONObject data = new JSONObject();
 
 				data.put(PROP_TITLE, nodeService.getProperty(changeOrderNodeRef, ContentModel.PROP_NAME));
@@ -477,20 +477,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 							property.put(PROP_TITLE, entry.getKey());
 
 							if (entry.getValue().getFirst() instanceof List) {
-								ArrayList<Object> beforeList = new ArrayList<>();
-
-								for (Object ent : (List<?>) entry.getValue().getFirst()) {
-									if (ent instanceof Date) {
-										beforeList.add(ISO8601DateFormat.format((Date) ent));
-									} else if (ent instanceof Pair || ent instanceof NodeRef) {
-										beforeList.add(ent.toString());
-									} else if (ent instanceof List) {
-										beforeList.add(((List<?>) ent).stream().map(o -> o.toString()).collect(Collectors.toList()));
-									} else {
-										beforeList.add(ent);
-									}
-								}
-
+								List<Object> beforeList = processEntries((List<?>) entry.getValue().getFirst(), entry.getKey());
 								property.put(BEFORE, beforeList);
 							} else {
 								property.put(BEFORE, entry.getValue().getFirst());
@@ -500,20 +487,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 								property.put(AFTER, data.get(PROP_TITLE));
 							} else {
 								if (entry.getValue().getSecond() instanceof List) {
-									ArrayList<Object> afterList = new ArrayList<>();
-
-									for (Object ent : (List<?>) entry.getValue().getSecond()) {
-										if (ent instanceof Date) {
-											afterList.add(ISO8601DateFormat.format((Date) ent));
-										} else if (ent instanceof Pair || ent instanceof NodeRef) {
-											afterList.add(ent.toString());
-										} else if (ent instanceof List) {
-											afterList.add(((List<?>) ent).stream().map(o -> o.toString()).collect(Collectors.toList()));
-										} else {
-											afterList.add(ent);
-										}
-									}
-
+									List<Object> afterList = processEntries((List<?>) entry.getValue().getSecond(), entry.getKey());
 									property.put(AFTER, afterList);
 								} else {
 									property.put(AFTER, entry.getValue().getSecond());
@@ -589,6 +563,41 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 			}
 		}
 
+	}
+	
+	private List<Object> processEntries(List<?> entries, QName key) {
+		List<Object> processedList = new ArrayList<>();
+		PropertyDefinition propDef = entityDictionaryService.getProperty(key);
+
+		for (Object ent : entries) {
+			if (ent instanceof Date date) {
+				processedList.add(ISO8601DateFormat.format(date));
+			} else if (ent instanceof Pair || ent instanceof NodeRef) {
+				processedList.add(ent.toString());
+			} else if (ent instanceof List) {
+				processedList.add(((List<?>) ent).stream().map(Object::toString).collect(Collectors.toList()));
+			} else {
+				ent = processWithConstraints(ent, propDef);
+				processedList.add(ent);
+			}
+		}
+		return processedList;
+
+	}
+
+	private Object processWithConstraints(Object ent, PropertyDefinition propDef) {
+		if (propDef != null && propDef.getConstraints() != null) {
+			for (ConstraintDefinition constraint : propDef.getConstraints()) {
+				if (constraint.getConstraint() instanceof ListOfValuesConstraint lvc) {
+					if (ent instanceof List<?> list) {
+						ent = list.stream().map(o -> lvc.getDisplayLabel(o.toString(), dictionaryService)).toList();
+					} else if (ent != null) {
+						ent = lvc.getDisplayLabel(ent.toString(), dictionaryService);
+					}
+				}
+			}
+		}
+		return ent;
 	}
 	
 	private MLText compareMLTexts(MLText mlText, MLText otherMlText) {
@@ -667,7 +676,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		for (ActivityListDataItem lastActivity : sortedActivityList) {
 
 			JSONObject lastActivityData = null;
-			
+
 			JSONObject newActivityData = null;
 			try {
 				lastActivityData = new JSONObject(lastActivity.getActivityData());
@@ -688,12 +697,13 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					// Add previous updated properties in the data of the last activity
 				} else if (newActivityData.has(PROP_PROPERTIES) && lastActivityData.has(PROP_PROPERTIES)
 						&& newActivityData.get(PROP_ACTIVITY_EVENT).equals(lastActivityData.get(PROP_ACTIVITY_EVENT))
-						&& newActivity.getUserId().equals(lastActivity.getUserId()) && newActivity.getActivityType().equals(lastActivity.getActivityType())
-						&& newActivityData.has(PROP_TITLE) && lastActivityData.has(PROP_TITLE) && newActivityData.get(PROP_TITLE).equals(lastActivityData.get(PROP_TITLE))
-						&& ((!newActivityData.has(PROP_CLASSNAME) && !lastActivityData.has(PROP_CLASSNAME)) || (newActivityData.has(PROP_CLASSNAME)
-								&& lastActivityData.has(PROP_CLASSNAME) && newActivityData.get(PROP_CLASSNAME).equals(lastActivityData.get(PROP_CLASSNAME))))) {
-					
-					
+						&& newActivity.getUserId().equals(lastActivity.getUserId())
+						&& newActivity.getActivityType().equals(lastActivity.getActivityType()) && newActivityData.has(PROP_TITLE)
+						&& lastActivityData.has(PROP_TITLE) && newActivityData.get(PROP_TITLE).equals(lastActivityData.get(PROP_TITLE))
+						&& ((!newActivityData.has(PROP_CLASSNAME) && !lastActivityData.has(PROP_CLASSNAME))
+								|| (newActivityData.has(PROP_CLASSNAME) && lastActivityData.has(PROP_CLASSNAME)
+										&& newActivityData.get(PROP_CLASSNAME).equals(lastActivityData.get(PROP_CLASSNAME))))) {
+
 					// Check if the last activity is less than 4 hours old, otherwise do not merge it
 					if (sortedActivityList.size() == 1) {
 						cal.add(Calendar.HOUR, -3);
@@ -703,7 +713,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 							continue;
 						}
 					}
-					
+
 					JSONArray activityProperties = lastActivityData.getJSONArray(PROP_PROPERTIES);
 					JSONArray itemProperties = newActivityData.getJSONArray(PROP_PROPERTIES);
 					for (int i = 0; i < activityProperties.length(); i++) {
@@ -715,7 +725,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 								isSameProperty = true;
 								PropertyDefinition property = dictionaryService
 										.getProperty(QName.createQName((String) activityProperty.get(PROP_TITLE)));
-								
+
 								if ((property == null) || (property.getDataType() == null)
 										|| (!DataTypeDefinition.TEXT.equals(property.getDataType().getName())
 												&& !DataTypeDefinition.MLTEXT.equals(property.getDataType().getName()))) {
@@ -725,7 +735,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 										itemProperty.put(BEFORE, "");
 									}
 								}
-								
+
 							}
 						}
 						if (!isSameProperty) {
@@ -850,7 +860,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 			} finally {
 				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 			}
-		} 
+		}
 
 		return false;
 	}
@@ -953,30 +963,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 							}
 
 							if (entry.getValue().getFirst() != null) {
-								ArrayList<Object> beforeList = new ArrayList<>();
-
-								for (Serializable ent : entry.getValue().getFirst()) {
-									if (ent instanceof Date) {
-										beforeList.add(ISO8601DateFormat.format((Date) ent));
-									} else if (ent instanceof Pair || ent instanceof NodeRef) {
-										beforeList.add(ent.toString());
-									} else {
-										PropertyDefinition propDef = entityDictionaryService.getProperty(entry.getKey());
-										if (propDef.getConstraints() != null) {
-											for (ConstraintDefinition constraint : propDef.getConstraints()) {
-												if (constraint.getConstraint() instanceof ListOfValuesConstraint lvc) {
-													if (ent instanceof List<?> entList) {
-														entList = entList.stream().map(o -> lvc.getDisplayLabel(o.toString(), dictionaryService)).toList();
-														ent = (Serializable) entList;
-													} else if (ent != null) {
-														ent = lvc.getDisplayLabel(ent.toString(), dictionaryService);
-													}
-												}
-											}
-										}
-										beforeList.add(ent);
-									}
-								}
+								List<Object> beforeList = processEntries(entry.getValue().getFirst(), entry.getKey());
 								property.put(BEFORE, beforeList);
 							} else {
 								property.put(BEFORE, entry.getValue().getFirst());
@@ -987,30 +974,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 							} else {
 
 								if (entry.getValue().getSecond() != null) {
-									ArrayList<Object> afterList = new ArrayList<>();
-
-									for (Serializable ent : entry.getValue().getSecond()) {
-										if (ent instanceof Date) {
-											afterList.add(ISO8601DateFormat.format((Date) ent));
-										} else if (ent instanceof Pair || ent instanceof NodeRef) {
-											afterList.add(ent.toString());
-										} else {
-											PropertyDefinition propDef = entityDictionaryService.getProperty(entry.getKey());
-											if (propDef.getConstraints() != null) {
-												for (ConstraintDefinition constraint : propDef.getConstraints()) {
-													if (constraint.getConstraint() instanceof ListOfValuesConstraint lvc) {
-														if (ent instanceof List<?> entList) {
-															entList = entList.stream().map(o -> lvc.getDisplayLabel(o.toString(), dictionaryService)).toList();
-															ent = (Serializable) entList;
-														} else if (ent != null) {
-															ent = lvc.getDisplayLabel(ent.toString(), dictionaryService);
-														}
-													}
-												}
-											}
-											afterList.add(ent);
-										}
-									}
+									List<Object> afterList = processEntries(entry.getValue().getSecond(), entry.getKey());
 									property.put(AFTER, afterList);
 								} else {
 									property.put(AFTER, entry.getValue().getSecond());

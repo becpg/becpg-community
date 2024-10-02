@@ -57,11 +57,7 @@ import fr.becpg.repo.variant.filters.VariantFilters;
  * @version $Id: $Id
  */
 public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<ProductData> {
-
-	//	private static final String MINI_SUFFIX = "-mini";
-	//	private static final String MAXI_SUFFIX = "-maxi";
-	//	private static final String YIELD_SUFFIX = "-yield";
-
+	
 	/** The Constant NO_GRP. */
 	public static final String NO_GRP = "-";
 
@@ -249,22 +245,26 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				if (totalQty1 != null) {
 					ingListDataItem.setQtyPerc1(totalQty1 / totalQtyUsedWithYield);
 				} else {
-					ingListDataItem.setQtyPerc(null);
+					ingListDataItem.setQtyPerc1(null);
 				}
 				if (totalQty2 != null) {
 					ingListDataItem.setQtyPerc2(totalQty2 / totalQtyUsedWithYield);
 				} else {
-					ingListDataItem.setQtyPerc(null);
+					ingListDataItem.setQtyPerc2(null);
 				}
 				if (totalQty3 != null) {
-					ingListDataItem.setQtyPerc3(totalQty3 / totalQtyUsedWithYield);
-				} else {
-					ingListDataItem.setQtyPerc(null);
-				}
+					if (formulatedProduct.isGeneric()) {
+						ingListDataItem.setQtyPerc3(totalQty3);
+					} else {
+						ingListDataItem.setQtyPerc3(totalQty3 / totalQtyUsedWithYield);
+					}
+				} 
 				if (totalQty4 != null) {
-					ingListDataItem.setQtyPerc4(totalQty4 / totalQtyUsedWithYield);
-				} else {
-					ingListDataItem.setQtyPerc(null);
+					if (formulatedProduct.isGeneric()) {
+						ingListDataItem.setQtyPerc4(totalQty4);
+					} else {
+					  ingListDataItem.setQtyPerc4(totalQty4 / totalQtyUsedWithYield);
+					}
 				}
 
 				if (totalVol != null) {
@@ -469,10 +469,9 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 			// Calculate qty
 			Double qty = FormulationHelper.getQtyInKg(compoListDataItem);
-			Double qtyIng = ingListDataItem.getQtyPerc();
 			Double qtyIngWithYield = ingListDataItem.getQtyPercWithYield();
 			if ((qtyIngWithYield == null) || componentProductData.isGeneric()) {
-				qtyIngWithYield = qtyIng;
+				qtyIngWithYield = ingListDataItem.getQtyPerc();
 			}
 
 			if (qty != null) {
@@ -481,8 +480,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				updateQty(qty, ingListDataItem.getQtyPerc(), totalIng::getQtyPerc, totalIng::setQtyPerc, yieldFactor);
 				updateQty(qty, ingListDataItem.getQtyPerc1(), totalIng::getQtyPerc1, totalIng::setQtyPerc1, yieldFactor);
 				updateQty(qty, ingListDataItem.getQtyPerc2(), totalIng::getQtyPerc2, totalIng::setQtyPerc2, yieldFactor);
-				updateQty(qty, ingListDataItem.getQtyPerc3(), totalIng::getQtyPerc3, totalIng::setQtyPerc3, yieldFactor);
-				updateQty(qty, ingListDataItem.getQtyPerc4(), totalIng::getQtyPerc4, totalIng::setQtyPerc4, yieldFactor);
+				updateMinMaxQty(qty, ingListDataItem.getQtyPerc3(), totalIng::getQtyPerc3, totalIng::setQtyPerc3, isGeneric,true);
+				updateMinMaxQty(qty, ingListDataItem.getQtyPerc4(), totalIng::getQtyPerc4, totalIng::setQtyPerc4, isGeneric,true);
 
 				if ((qtyIngWithYield != null)) {
 

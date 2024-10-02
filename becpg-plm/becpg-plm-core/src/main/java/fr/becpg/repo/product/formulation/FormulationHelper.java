@@ -526,19 +526,24 @@ public class FormulationHelper {
 					|| compoListDataItem.getYieldPerc().isInfinite()) {
 				yield = FormulationHelper.DEFAULT_YIELD;
 			}
-			Double density = subProductData.getDensity();
-			if ((density == null) || density.equals(0d) || density.isNaN() || density.isInfinite()) {
-				if (logger.isDebugEnabled()) {
-					logger.debug("Use default density");
-				}
-				density = DEFAULT_DENSITY;
-			}
+			Double density = getDensity(subProductData);
 			return ((100 + overrun) * (yield / 100) * qty) / (density * 100);
 		}
 
 		return null;
 	}
 
+	public static Double getDensity(ProductData productData) {
+		Double density = productData.getDensity();
+		if ((density == null) || density.equals(0d) || density.isNaN() || density.isInfinite()) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Use default density");
+			}
+			density = DEFAULT_DENSITY;
+		}
+		return density;
+	}
+	
 	/**
 	 * <p>getNetVolume.</p>
 	 *

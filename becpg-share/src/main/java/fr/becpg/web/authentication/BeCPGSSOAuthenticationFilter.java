@@ -1547,7 +1547,7 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
     }
 
     /** Constant <code>SESSION_ATTRIBUTE_KEY_USER_GROUPS="_alf_USER_GROUPS"</code> */
-    public static String SESSION_ATTRIBUTE_KEY_USER_GROUPS = "_alf_USER_GROUPS";
+    private static final String SESSION_ATTRIBUTE_KEY_USER_GROUPS = "_alf_USER_GROUPS";
 
     /** Constant <code>PARAM_USERNAME="username"</code> */
     protected static final String PARAM_USERNAME = "username";
