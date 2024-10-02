@@ -218,6 +218,12 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return allergens;
 	}
 
+	public void addAllergens(List<NodeRef> toAdd) {
+		if (toAdd != null) {
+			toAdd.forEach(a -> allergens.putIfAbsent(a, null));
+		}
+	}
+
 	/**
 	 * <p>
 	 * Getter for the field <code>inVolAllergens</code>.
@@ -227,6 +233,12 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 */
 	public Map<NodeRef, Double> getInVolAllergens() {
 		return inVolAllergens;
+	}
+
+	public void addInVolAllergens(List<NodeRef> toAdd) {
+		if (toAdd != null) {
+			toAdd.forEach(a -> inVolAllergens.putIfAbsent(a, null));
+		}
 	}
 
 	/**
@@ -240,6 +252,12 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return inVolAllergensProcess;
 	}
 
+	public void addInVolAllergensProcess(List<NodeRef> toAdd) {
+		if (toAdd != null) {
+			toAdd.forEach(a -> inVolAllergensProcess.putIfAbsent(a, null));
+		}
+	}
+
 	/**
 	 * <p>
 	 * Getter for the field <code>inVolAllergensRawMaterial</code>.
@@ -249,6 +267,12 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 */
 	public Map<NodeRef, Double> getInVolAllergensRawMaterial() {
 		return inVolAllergensRawMaterial;
+	}
+
+	public void addInVolAllergensRawMaterial(List<NodeRef> toAdd) {
+		if (toAdd != null) {
+			toAdd.forEach(a -> inVolAllergensRawMaterial.putIfAbsent(a, null));
+		}
 	}
 
 	/**
@@ -397,6 +421,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	private String bioOriginsSeparator = RepoConsts.LABEL_SEPARATOR;
 	private String subIngsSeparator = RepoConsts.LABEL_SEPARATOR;
 	private String footNotesLabelSeparator = HTML_BREAK_LINE;
+	private String sortWithSpecificLocale = null;
 
 	private boolean showIngCEECode = false;
 	private boolean useVolume = false;
@@ -912,8 +937,15 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 	}
 
-	/* formaters */
+	public String getSortWithSpecificLocale() {
+		return sortWithSpecificLocale;
+	}
 
+	public void setSortWithSpecificLocale(String sortWithSpecificLocale) {
+		this.sortWithSpecificLocale = sortWithSpecificLocale;
+	}
+
+	/* formaters */
 	private MessageFormat getIngTextFormat(LabelingComponent lblComponent, Double qty, boolean multiple) {
 
 		if (textFormaters.containsKey(lblComponent.getNodeRef())) {
@@ -1182,7 +1214,6 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 						if (isShowRuleMatch(selectedRule, showRule, qty)) {
 							selectedRule = showRule;
 						}
-
 					}
 				}
 			}
@@ -1587,13 +1618,23 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	private void sort(List<LabelingComponent> toSort) {
-		Collections.sort(toSort, (a, b) -> {
-			int result = compareLabelingComponents(a, b);
-			if (result == 0) {
-				result = compareIngredientNames(a, b);
+		Locale currentLocal = I18NUtil.getLocale();
+		try {
+			if (sortWithSpecificLocale != null) {
+				I18NUtil.setLocale(MLTextHelper.parseLocale(sortWithSpecificLocale));
 			}
-			return result;
-		});
+
+			Collections.sort(toSort, (a, b) -> {
+				int result = compareLabelingComponents(a, b);
+				if (result == 0) {
+					result = compareIngredientNames(a, b);
+				}
+				return result;
+			});
+
+		} finally {
+			I18NUtil.setLocale(currentLocal);
+		}
 	}
 
 	private int compareLabelingComponents(LabelingComponent a, LabelingComponent b) {
@@ -2044,7 +2085,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 		try {
 			shouldBreakIngType = true;
-			
+
 			tableContent.append("<table class=\"labelingTable\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\""
 					+ ((styleCss == null) || (styleCss).isBlank() ? "border: solid 1px; border-collapse:collapse" : styleCss) + "\" rules=\"none\">");
 
@@ -2063,8 +2104,9 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 						}
 
 						ret.append(applyRoundingMode(new MessageFormat(htmlTableRowFormat, getContentLocale()), tmp.qtyPerc)
-								.format(new Object[] { indent(decorate(tmp.label), tmp.level), tmp.qtyPerc, decorate(tmp.geoOriginsLabel), decorate(tmp.bioOriginsLabel),null,null }));
-						
+								.format(new Object[] { indent(decorate(tmp.label), tmp.level), tmp.qtyPerc, decorate(tmp.geoOriginsLabel),
+										decorate(tmp.bioOriginsLabel), null, null }));
+
 					}
 				}
 
@@ -2076,8 +2118,9 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 					Double qtyPerc = roundeedValue(null, flatList.get(0).qtyPerc, new MessageFormat(htmlTableRowFormat, getContentLocale()))
 							+ roundedDouble(diffValue);
 
-					tableContent.append(applyTotalRoundingMode(new MessageFormat(htmlTableRowFormat, getContentLocale())).format(
-							new Object[] { decorate(flatList.get(0).label), qtyPerc, decorate(flatList.get(0).geoOriginsLabel), decorate(flatList.get(0).bioOriginsLabel) ,null,null}));
+					tableContent.append(applyTotalRoundingMode(new MessageFormat(htmlTableRowFormat, getContentLocale()))
+							.format(new Object[] { decorate(flatList.get(0).label), qtyPerc, decorate(flatList.get(0).geoOriginsLabel),
+									decorate(flatList.get(0).bioOriginsLabel), null, null }));
 
 				}
 				tableContent.append(ret);
@@ -2473,7 +2516,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 						if (geoOrigins.containsKey(entry.getKey())) {
 							geoOrigins.get(entry.getKey()).addAll(entry.getValue());
 						} else {
-							geoOrigins.put(entry.getKey(), entry.getValue());
+							geoOrigins.put(entry.getKey(), new HashSet<>(entry.getValue()));
 						}
 
 					}
@@ -3001,24 +3044,33 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				sort(entry.getValue());
 			}
 
-			Collections.sort(entries, (a, b) -> {
-				int result = compareLabelingComponents(a.getKey(), b.getKey());
-				if (result == 0) {
-					String nameA = getLegalIngName(a.getKey());
-					if (nameA == null && !a.getValue().isEmpty()) {
-						nameA = getLegalIngName(a.getValue().get(0));
-					}
-
-					String nameB = getLegalIngName(b.getKey());
-					if (nameB == null && !b.getValue().isEmpty()) {
-						nameB = getLegalIngName(b.getValue().get(0));
-					}
-
-					result = Comparator.nullsLast(String::compareTo).compare(nameA, nameB);
+			Locale currentLocal = I18NUtil.getLocale();
+			try {
+				if (sortWithSpecificLocale != null) {
+					I18NUtil.setLocale(MLTextHelper.parseLocale(sortWithSpecificLocale));
 				}
-				return result;
-			});
 
+				Collections.sort(entries, (a, b) -> {
+					int result = compareLabelingComponents(a.getKey(), b.getKey());
+					if (result == 0) {
+						String nameA = getLegalIngName(a.getKey());
+						if (nameA == null && !a.getValue().isEmpty()) {
+							nameA = getLegalIngName(a.getValue().get(0));
+						}
+
+						String nameB = getLegalIngName(b.getKey());
+						if (nameB == null && !b.getValue().isEmpty()) {
+							nameB = getLegalIngName(b.getValue().get(0));
+						}
+
+						result = Comparator.nullsLast(String::compareTo).compare(nameA, nameB);
+					}
+					return result;
+				});
+
+			} finally {
+				I18NUtil.setLocale(currentLocal);
+			}
 		}
 
 		Map<IngTypeItem, List<LabelingComponent>> sortedIngListByType = new LinkedHashMap<>();

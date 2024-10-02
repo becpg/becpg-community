@@ -134,12 +134,12 @@ public class ECOIT extends AbstractFinishedProductTest {
 			finishedProduct.setQty(2d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
 
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial4NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(localSF1NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(2d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial2NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(localSF2NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial3NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial4NodeRef));
 
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
@@ -149,12 +149,15 @@ public class ECOIT extends AbstractFinishedProductTest {
 			finishedProduct.setCostList(costList);
 
 			List<NutListDataItem> nutList = new ArrayList<>();
-			nutList.add(new NutListDataItem(null, null, null, null, null, null, nut1, null));
-			nutList.add(new NutListDataItem(null, null, null, null, null, null, nut2, null));
+			nutList.add(NutListDataItem.build().withNut(nut1)
+);
+			nutList.add(NutListDataItem.build().withNut(nut2)
+);
 			finishedProduct.setNutList(nutList);
 
 			List<PackagingListDataItem> packList = new ArrayList<>();
-			packList.add(new PackagingListDataItem(null, 25d, ProductUnit.PP, PackagingLevel.Secondary, true, packagingKit1NodeRef));
+			packList.add(PackagingListDataItem.build().withQty(25d).withUnit(ProductUnit.PP).withPkgLevel(PackagingLevel.Secondary).withIsMaster(true).withProduct(packagingKit1NodeRef)
+);
 			finishedProduct.getPackagingListView().setPackagingList(packList);
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
@@ -1003,8 +1006,8 @@ public class ECOIT extends AbstractFinishedProductTest {
 			finishedProduct3.setHierarchy1(HIERARCHY1_SEA_FOOD_REF);
 			finishedProduct3.setHierarchy2(HIERARCHY2_CRUSTACEAN_REF);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, 1d, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, finishedProduct1NodeRef));
-			compoList.add(new CompoListDataItem(null, null, 2d, 2d, ProductUnit.kg, 0d, DeclarationType.Declare, finishedProduct2NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(null).withQty(1d).withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(finishedProduct1NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(null).withQty(2d).withQtyUsed(2d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(finishedProduct2NodeRef));
 			finishedProduct3.getCompoListView().setCompoList(compoList);
 
 			List<CostListDataItem> costList = new ArrayList<>();
@@ -1013,8 +1016,10 @@ public class ECOIT extends AbstractFinishedProductTest {
 			finishedProduct3.setCostList(costList);
 
 			List<NutListDataItem> nutList = new ArrayList<>();
-			nutList.add(new NutListDataItem(null, null, null, null, null, null, nut1, null));
-			nutList.add(new NutListDataItem(null, null, null, null, null, null, nut2, null));
+			nutList.add(NutListDataItem.build().withNut(nut1)
+);
+			nutList.add(NutListDataItem.build().withNut(nut2)
+);
 			finishedProduct3.setNutList(nutList);
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct3).getNodeRef();
@@ -1249,8 +1254,8 @@ public class ECOIT extends AbstractFinishedProductTest {
 			finishedProduct3.setHierarchy1(HIERARCHY1_SEA_FOOD_REF);
 			finishedProduct3.setHierarchy2(HIERARCHY2_CRUSTACEAN_REF);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, 1d, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, finishedProduct1NodeRef));
-			compoList.add(new CompoListDataItem(null, null, 2d, 2d, ProductUnit.kg, 0d, DeclarationType.Declare, finishedProduct2NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(null).withQty(1d).withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(finishedProduct1NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(null).withQty(2d).withQtyUsed(2d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(finishedProduct2NodeRef));
 			finishedProduct3.getCompoListView().setCompoList(compoList);
 			
 			List<CostListDataItem> costList = new ArrayList<>();
@@ -1259,8 +1264,10 @@ public class ECOIT extends AbstractFinishedProductTest {
 			finishedProduct3.setCostList(costList);
 			
 			List<NutListDataItem> nutList = new ArrayList<>();
-			nutList.add(new NutListDataItem(null, null, null, null, null, null, nut1, null));
-			nutList.add(new NutListDataItem(null, null, null, null, null, null, nut2, null));
+			nutList.add(NutListDataItem.build().withNut(nut1)
+);
+			nutList.add(NutListDataItem.build().withNut(nut2)
+);
 			finishedProduct3.setNutList(nutList);
 			
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct3).getNodeRef();
@@ -1717,7 +1724,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 			finishedProduct.setQty(2d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
 
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial1NodeRef));
 
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
@@ -1732,7 +1739,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 			finishedProduct.setQty(2d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
 			
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial1NodeRef));
 			
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			
@@ -1747,7 +1754,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 			finishedProduct.setQty(2d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
 			
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial1NodeRef));
 			
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			
@@ -1760,7 +1767,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 			FinishedProductData finishedProduct = (FinishedProductData) alfrescoRepository.findOne(FP1);
 			
 			List<CompoListDataItem> compoList = finishedProduct.getCompoList();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial1NodeRef));
 			return alfrescoRepository.save(finishedProduct);
 		});
 		
@@ -1769,7 +1776,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 			FinishedProductData finishedProduct = (FinishedProductData) alfrescoRepository.findOne(FP2);
 			
 			List<CompoListDataItem> compoList = finishedProduct.getCompoList();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial1NodeRef));
 			return alfrescoRepository.save(finishedProduct);
 		});
 		
@@ -1778,7 +1785,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 			FinishedProductData finishedProduct = (FinishedProductData) alfrescoRepository.findOne(FP3);
 			
 			List<CompoListDataItem> compoList = finishedProduct.getCompoList();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial1NodeRef));
 			return alfrescoRepository.save(finishedProduct);
 		});
 		
@@ -1787,7 +1794,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 			FinishedProductData finishedProduct = (FinishedProductData) alfrescoRepository.findOne(FP1);
 			
 			List<CompoListDataItem> compoList = finishedProduct.getCompoList();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial1NodeRef));
 			return alfrescoRepository.save(finishedProduct);
 		});
 		
@@ -1855,7 +1862,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 			product.setQty(2d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
 
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial1NodeRef));
 
 			product.getCompoListView().setCompoList(compoList);
 
@@ -1870,7 +1877,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 			product.setQty(2d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
 			
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, semiFinishedProductNodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(semiFinishedProductNodeRef));
 			
 			product.getCompoListView().setCompoList(compoList);
 			
@@ -1885,7 +1892,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 			product.setQty(2d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
 
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial1NodeRef));
 
 			product.getCompoListView().setCompoList(compoList);
 
@@ -1900,7 +1907,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 			product.setQty(2d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
 			
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, semiFinishedProduct2NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(semiFinishedProduct2NodeRef));
 			
 			product.getCompoListView().setCompoList(compoList);
 			
@@ -1964,7 +1971,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 			product.setQty(2d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
 
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial1NodeRef));
 
 			product.getCompoListView().setCompoList(compoList);
 

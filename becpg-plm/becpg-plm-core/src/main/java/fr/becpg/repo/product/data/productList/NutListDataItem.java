@@ -5,12 +5,14 @@ package fr.becpg.repo.product.data.productList;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.RegulatoryEntityItem;
 import fr.becpg.repo.product.data.constraints.NutRequirementType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
@@ -99,6 +101,12 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	private String roundedValue;
 
 	private String roundedValuePrepared;
+	
+	private MLText formulatedReductionValue;
+	
+	private MLText manualReductionValue;
+
+	private MLText referenceValue;
 
 	private List<NodeRef> sources = new ArrayList<>();
 
@@ -160,6 +168,8 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	public void setRegulatoryMessage(MLText regulatoryMessage) {
 		this.regulatoryMessage = regulatoryMessage;
 	}
+	
+	
 
 	/** {@inheritDoc} */
 	@Override
@@ -247,7 +257,61 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	public void setManualValue(Double manualValue) {
 		this.manualValue = manualValue;
 	}
+	
 
+	public Double reductionValue(String key) {
+		Locale locale = MLTextHelper.parseLocale(key);
+		
+		String ret = null;
+		if(manualReductionValue!=null && manualReductionValue.containsKey(locale)) {
+			ret =  manualReductionValue.get(locale);
+		} else if(formulatedReductionValue!=null) {
+			ret = formulatedReductionValue.get(locale);
+		}
+		
+		if(ret!=null ) {
+			try {
+				return Double.parseDouble(ret);
+			} catch (NumberFormatException e) {
+				//Do Nothing
+			}
+		}
+		return null;
+	}
+
+	@AlfProp
+	@AlfMlText
+	@AlfQname(qname = "bcpg:nutListReductionFormulatedValue")
+	public MLText getFormulatedReductionValue() {
+		return formulatedReductionValue;
+	}
+
+	public void setFormulatedReductionValue(MLText formulatedReductionValue) {
+		this.formulatedReductionValue = formulatedReductionValue;
+	}
+
+	@AlfProp
+	@AlfMlText
+	@AlfQname(qname = "bcpg:nutListReductionValue")
+	public MLText getManualReductionValue() {
+		return manualReductionValue;
+	}
+
+	public void setManualReductionValue(MLText manualReductionValue) {
+		this.manualReductionValue = manualReductionValue;
+	}
+
+	@AlfProp
+	@AlfMlText
+	@AlfQname(qname = "bcpg:nutListReferenceValue")
+	public MLText getReferenceValue() {
+		return referenceValue;
+	}
+
+	public void setReferenceValue(MLText referenceValue) {
+		this.referenceValue = referenceValue;
+	}
+	
 	/** {@inheritDoc} */
 	@AlfMultiAssoc
 	@InternalField
@@ -887,6 +951,9 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 		this.manualPreparedValue = n.manualPreparedValue;
 		this.formulatedPreparedValue = n.formulatedPreparedValue;
 		this.measurementPrecision = n.measurementPrecision;
+		this.formulatedReductionValue = n.formulatedReductionValue;
+		this.manualReductionValue = n.manualReductionValue;
+		this.referenceValue = n.referenceValue;
 		this.sources = n.sources;
 		this.regulatoryCountriesRef = new ArrayList<>(n.regulatoryCountriesRef);
 		this.regulatoryUsagesRef = new ArrayList<>(n.regulatoryUsagesRef);

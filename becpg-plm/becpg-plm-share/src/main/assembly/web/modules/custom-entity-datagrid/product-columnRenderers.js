@@ -405,10 +405,10 @@ if (beCPG.module.EntityDataGridRenderers) {
 
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-		propertyName: ["bcpg:nutListValue", "bcpg:nutListMini", "bcpg:nutListMaxi", "bcpg:nutListValuePrepared", "bcpg:nutListValuePerServing"],
+		propertyName: ["bcpg:nutListValue", "bcpg:nutListMini", "bcpg:nutListMaxi", "bcpg:nutListValuePrepared", "bcpg:nutListValuePerServing"
+			, "bcpg:nutListReductionValue", "bcpg:nutListReferenceValue"],
 		renderer: function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
 			var ret = "";
-
 
 			var unit = oRecord._oData.itemData.prop_bcpg_nutListUnit ? oRecord._oData.itemData.prop_bcpg_nutListUnit.value : null
 			if (oColumn.field == "prop_bcpg_nutListValuePrepared" && oRecord._oData.itemData.prop_bcpg_nutListUnitPrepared.value != null) {
@@ -418,14 +418,6 @@ if (beCPG.module.EntityDataGridRenderers) {
 			if (unit != null && ((oColumn.label != null && oColumn.label.indexOf && (oColumn.label.indexOf("100g") > 0 || oColumn.label.indexOf("/") > 0))
 				|| (oColumn.field == "prop_bcpg_nutListValuePerServing"))) {
 				unit = unit.replace("/100g", "").replace("/100ml", "");
-			}
-
-			if (data.value != null) {
-				if (unit != null && unit.length > 0) {
-					ret += data.value.toLocaleString(beCPG.util.getJSLocale()) + " " + unit;
-				} else {
-					ret += data.value.toLocaleString(beCPG.util.getJSLocale());
-				}
 			}
 
 			var key = "prop_bcpg_nutListFormulatedValue";
@@ -438,10 +430,24 @@ if (beCPG.module.EntityDataGridRenderers) {
 				key = "prop_bcpg_nutListFormulatedValuePrepared";
 			} else if (oColumn.field == "prop_bcpg_nutListValuePerServing") {
 				key = "prop_bcpg_nutListFormulatedValuePerServing";
+			} else if (oColumn.field == "prop_bcpg_nutListReductionValue") {
+				key = "prop_bcpg_nutListReductionFormulatedValue";
+				unit = "%";
+			} else if (oColumn.field == "prop_bcpg_nutListReferenceValue") {
+				key = null;
+			}
+
+			if (data.value != null) {
+				if (unit != null && unit.length > 0) {
+					ret += data.value.toLocaleString(beCPG.util.getJSLocale()) + " " + unit;
+				} else {
+					ret += data.value.toLocaleString(beCPG.util.getJSLocale());
+				}
 			}
 
 
-			var formulatedValue = oRecord.getData("itemData")[key];
+
+			var formulatedValue = key == null ? null : oRecord.getData("itemData")[key];
 			if (formulatedValue != null && formulatedValue.value != null) {
 				if (ret.length > 0) {
 					ret += '&nbsp;&nbsp;(' + beCPG.util.exp(formulatedValue.value) + ')';
@@ -453,7 +459,6 @@ if (beCPG.module.EntityDataGridRenderers) {
 					}
 				}
 			}
-
 			return ret;
 		}
 

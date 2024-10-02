@@ -576,10 +576,14 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			rawMaterial1.setCostList(costList);
 			// nutList
 			List<NutListDataItem> nutList = new ArrayList<>();
-			nutList.add(new NutListDataItem(null, 1d, "g/100g", 0.8d, 2.1d, "Groupe 1", nut1, false));
-			nutList.add(new NutListDataItem(null, 2d, "g/100g", 1.5d, 2.2d, "Groupe 1", nut2, false));
-			nutList.add(new NutListDataItem(null, 4d, "g/100g", 0.8d, 2.1d, "Groupe 1", nut3, false));
-			nutList.add(new NutListDataItem(null, 3d, "g/100g", 0.8d, 2.1d, "Groupe 1", nut4, false));
+			nutList.add(NutListDataItem.build().withNodeRef(null).withValue(1d).withUnit("g/100g").withMini(0.8d).withMaxi(2.1d).withGroup("Groupe 1").withNut(nut1).withIsManual(false)
+);
+			nutList.add(NutListDataItem.build().withNodeRef(null).withValue(2d).withUnit("g/100g").withMini(1.5d).withMaxi(2.2d).withGroup("Groupe 1").withNut(nut2).withIsManual(false)
+);
+			nutList.add(NutListDataItem.build().withNodeRef(null).withValue(4d).withUnit("g/100g").withMini(0.8d).withMaxi(2.1d).withGroup("Groupe 1").withNut(nut3).withIsManual(false)
+);
+			nutList.add(NutListDataItem.build().withNodeRef(null).withValue(3d).withUnit("g/100g").withMini(0.8d).withMaxi(2.1d).withGroup("Groupe 1").withNut(nut4).withIsManual(false)
+);
 
 			rawMaterial1.setNutList(nutList);
 			// allergenList
@@ -646,9 +650,12 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			rawMaterial2.setCostList(costList);
 			// nutList
 			List<NutListDataItem> nutList = new ArrayList<>();
-			nutList.add(new NutListDataItem(null, 1d, "g/100g", 0.8d, 1.1d, "Groupe 1", nut1, false));
-			nutList.add(new NutListDataItem(null, 2d, "g/100g", 0.8d, 2.1d, "Groupe 1", nut2, false));
-			nutList.add(new NutListDataItem(null, 6d, "g/100g", 0.8d, 2.1d, "Groupe 1", nut3, false));
+			nutList.add(NutListDataItem.build().withNodeRef(null).withValue(1d).withUnit("g/100g").withMini(0.8d).withMaxi(1.1d).withGroup("Groupe 1").withNut(nut1).withIsManual(false)
+);
+			nutList.add(NutListDataItem.build().withNodeRef(null).withValue(2d).withUnit("g/100g").withMini(0.8d).withMaxi(2.1d).withGroup("Groupe 1").withNut(nut2).withIsManual(false)
+);
+			nutList.add(NutListDataItem.build().withNodeRef(null).withValue(6d).withUnit("g/100g").withMini(0.8d).withMaxi(2.1d).withGroup("Groupe 1").withNut(nut3).withIsManual(false)
+);
 			rawMaterial2.setNutList(nutList);
 			// allergenList
 			List<AllergenListDataItem> allergenList = new ArrayList<>();
@@ -710,9 +717,12 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			rawMaterial3.setCostList(costList);
 			// nutList
 			List<NutListDataItem> nutList = new ArrayList<>();
-			nutList.add(new NutListDataItem(null, 1d, "g/100g", null, null, "Groupe 1", nut1, false));
-			nutList.add(new NutListDataItem(null, 2d, "g/100g", null, null, "Groupe 1", nut2, false));
-			nutList.add(new NutListDataItem(null, 4d, "g/100g", 0.8d, 2.1d, "Groupe 1", nut3, false));
+			nutList.add(NutListDataItem.build().withNodeRef(null).withValue(1d).withUnit("g/100g").withMini(null).withMaxi(null).withGroup("Groupe 1").withNut(nut1).withIsManual(false)
+);
+			nutList.add(NutListDataItem.build().withNodeRef(null).withValue(2d).withUnit("g/100g").withMini(null).withMaxi(null).withGroup("Groupe 1").withNut(nut2).withIsManual(false)
+);
+			nutList.add(NutListDataItem.build().withNodeRef(null).withValue(4d).withUnit("g/100g").withMini(0.8d).withMaxi(2.1d).withGroup("Groupe 1").withNut(nut3).withIsManual(false)
+);
 			rawMaterial3.setNutList(nutList);
 			// allergenList
 			List<AllergenListDataItem> allergenList = new ArrayList<>();
@@ -764,8 +774,10 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			rawMaterial4.setCostList(new LinkedList<CostListDataItem>());
 			rawMaterial4.setNutList(new LinkedList<NutListDataItem>());
 			List<NutListDataItem> nutList = new ArrayList<>();
-			nutList.add(new NutListDataItem(null, 0d, "g/100g", 0d, 0d, "Groupe 1", nut1, false));
-			nutList.add(new NutListDataItem(null, 0d, "g/100g", 0d, 0d, "Groupe 1", nut2, false));
+			nutList.add(NutListDataItem.build().withNodeRef(null).withValue(0d).withUnit("g/100g").withMini(0d).withMaxi(0d).withGroup("Groupe 1").withNut(nut1).withIsManual(false)
+);
+			nutList.add(NutListDataItem.build().withNodeRef(null).withValue(0d).withUnit("g/100g").withMini(0d).withMaxi(0d).withGroup("Groupe 1").withNut(nut2).withIsManual(false)
+);
 			rawMaterial4.setNutList(nutList);
 			rawMaterial4NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial4).getNodeRef();
 			return null;
@@ -801,8 +813,10 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			rawMaterial5.setCostList(costList);
 			// nutList
 			List<NutListDataItem> nutList = new ArrayList<>();
-			nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d, 0d, "Groupe 1", nut1, false));
-			nutList.add(new NutListDataItem(null, 3d, "g/100g", 0d, 0d, "Groupe 1", nut2, false));
+			nutList.add(NutListDataItem.build().withNodeRef(null).withValue(1d).withUnit("g/100g").withMini(0d).withMaxi(0d).withGroup("Groupe 1").withNut(nut1).withIsManual(false)
+);
+			nutList.add(NutListDataItem.build().withNodeRef(null).withValue(3d).withUnit("g/100g").withMini(0d).withMaxi(0d).withGroup("Groupe 1").withNut(nut2).withIsManual(false)
+);
 			rawMaterial5.setNutList(nutList);
 			rawMaterial5.setIngList(ingList);
 			rawMaterial5NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial5).getNodeRef();
@@ -844,8 +858,10 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			rawMaterial6.setCostList(costList);
 			// nutList
 			List<NutListDataItem> nutList = new ArrayList<>();
-			nutList.add(new NutListDataItem(null, 1d, "g/100mL", 0.8d, 1.1d, "Groupe 1", nut1, false));
-			nutList.add(new NutListDataItem(null, 2d, "g/100mL", 0.8d, 2.1d, "Groupe 1", nut2, false));
+			nutList.add(NutListDataItem.build().withNodeRef(null).withValue(1d).withUnit("g/100mL").withMini(0.8d).withMaxi(1.1d).withGroup("Groupe 1").withNut(nut1).withIsManual(false)
+);
+			nutList.add(NutListDataItem.build().withNodeRef(null).withValue(2d).withUnit("g/100mL").withMini(0.8d).withMaxi(2.1d).withGroup("Groupe 1").withNut(nut2).withIsManual(false)
+);
 			rawMaterial6.setNutList(nutList);
 			// allergenList
 			List<AllergenListDataItem> allergenList = new ArrayList<>();
@@ -1232,11 +1248,11 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 		try {
 			Assert.assertEquals("Incorrect label :" + expectedStr + "\n   - compare to " + actualStr, expectedStr, actualStr);
 		} catch (Throwable e) {
-			
+
 			if (RetryingTransactionHelper.extractRetryCause(e) == null) {
-				logger.error(e,e);
+				logger.error(e, e);
 			}
-		
+
 			throw e;
 		}
 	}
@@ -1251,54 +1267,49 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 
 		logger.info("checkILL : " + ill + (ruleName != null ? " " + ruleName : ""));
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef grpNodeRef = null;
 
-			try {
-				ProductData formulatedProduct = alfrescoRepository.findOne(productNodeRef);
-				labelingRuleList.add(new LabelingRuleListDataItem("Pref7", "uncapitalizeLegalName = true", LabelingRuleType.Prefs));
-
-				NodeRef grpNodeRef = null;
-
-				for (LabelingRuleListDataItem rule : labelingRuleList) {
-					if (rule.getLabelingRuleType().equals(LabelingRuleType.Render)) {
-						rule.setNodeRef(new NodeRef("test", "becpg", UUID.randomUUID().toString()));
-						if ((ruleName != null) && ruleName.equals(rule.getName())) {
-							grpNodeRef = rule.getNodeRef();
-						}
-					}
+		for (LabelingRuleListDataItem rule : labelingRuleList) {
+			if (rule.getLabelingRuleType().equals(LabelingRuleType.Render)) {
+				rule.setNodeRef(new NodeRef("test", "becpg", UUID.randomUUID().toString()));
+				if ((ruleName != null) && ruleName.equals(rule.getName())) {
+					grpNodeRef = rule.getNodeRef();
 				}
-
-				formulatedProduct.getLabelingListView().setLabelingRuleList(labelingRuleList);
-
-				productService.formulate(formulatedProduct);
-
-				Assert.assertTrue(formulatedProduct.getLabelingListView().getLabelingRuleList().size() > 0);
-				// verify IngLabelingList
-
-				Assert.assertNotNull("IngLabelingList is null", formulatedProduct.getLabelingListView().getIngLabelingList());
-				Assert.assertTrue(formulatedProduct.getLabelingListView().getIngLabelingList().size() > 0);
-
-				for (IngLabelingListDataItem illDataItem : formulatedProduct.getLabelingListView().getIngLabelingList()) {
-					if ((grpNodeRef == null) || grpNodeRef.equals(illDataItem.getGrp())) {
-
-						String formulatedIll = illDataItem.getValue().getValue(locale);
-						Assert.assertTrue(illDataItem.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM));
-
-						Assert.assertEquals("Incorrect label. Formulated :" + formulatedIll + "\n   - junit ref " + ill, ill, formulatedIll);
-						Assert.assertNotNull(illDataItem.getLogValue());
-					}
-				}
-
-			} catch (Throwable e) {
-				if (RetryingTransactionHelper.extractRetryCause(e) == null) {
-					logger.error(e,e);
-				}
-				throw e;
 			}
+		}
 
-			return null;
+		ProductData formulatedProduct = inWriteTx(() -> {
+			ProductData ret = alfrescoRepository.findOne(productNodeRef);
+			if (labelingRuleList.stream().noneMatch(item -> "Pref 7".equals(item.getName()))) {
+				labelingRuleList.add(LabelingRuleListDataItem.build().withName("Pref 7").withFormula("uncapitalizeLegalName = true")
+						.withLabelingRuleType(LabelingRuleType.Prefs));
+			}
+			ret.getLabelingListView().getLabelingRuleList().clear();
+			ret.getLabelingListView().getLabelingRuleList().addAll(labelingRuleList);
 
-		}, false, true);
+			productService.formulate(ret);
+
+			alfrescoRepository.save(ret);
+
+			return ret;
+		});
+
+		Assert.assertTrue(formulatedProduct.getLabelingListView().getLabelingRuleList().size() > 0);
+		// verify IngLabelingList
+
+		Assert.assertNotNull("IngLabelingList is null", formulatedProduct.getLabelingListView().getIngLabelingList());
+		Assert.assertTrue(formulatedProduct.getLabelingListView().getIngLabelingList().size() > 0);
+
+		for (IngLabelingListDataItem illDataItem : formulatedProduct.getLabelingListView().getIngLabelingList()) {
+			if ((grpNodeRef == null) || grpNodeRef.equals(illDataItem.getGrp())) {
+
+				String formulatedIll = illDataItem.getValue().getValue(locale);
+				Assert.assertTrue(illDataItem.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM));
+
+				Assert.assertEquals("Incorrect label. Formulated :" + formulatedIll + "\n   - junit ref " + ill, ill, formulatedIll);
+				Assert.assertNotNull(illDataItem.getLogValue());
+			}
+		}
 
 	}
 

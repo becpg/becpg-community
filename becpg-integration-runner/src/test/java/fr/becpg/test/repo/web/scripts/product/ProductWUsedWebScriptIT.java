@@ -59,8 +59,8 @@ public class ProductWUsedWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 			FinishedProductData finishedProduct = new FinishedProductData();
 			finishedProduct.setName("Finished Product");
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, 1d, 0d, ProductUnit.kg, 0d, DeclarationType.Omit, lSFNodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), 3d, 0d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterialNodeRef));
+			compoList.add(CompoListDataItem.build().withParent(null).withQty(1d).withQtyUsed(0d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Omit).withProduct(lSFNodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQty(3d).withQtyUsed(0d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Omit).withProduct(rawMaterialNodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
 			finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();

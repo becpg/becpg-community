@@ -84,7 +84,6 @@ public class HttpEntityProviderCallback implements EntityProviderCallBack {
 	}
 
 	/** {@inheritDoc} */
-	@SuppressWarnings("deprecation")
 	@Override
 	public NodeRef provideNode(NodeRef nodeRef, NodeRef destNodeRef, Map<NodeRef, NodeRef> cache) {
 		try {

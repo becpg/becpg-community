@@ -141,8 +141,8 @@ public class GlopIT extends AbstractFinishedProductTest {
 			finishedProduct.setDensity(1d);
 			
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial2NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial6NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial2NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial6NodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
@@ -225,8 +225,8 @@ public class GlopIT extends AbstractFinishedProductTest {
 			finishedProduct2.setDensity(1d);
 			
 			List<CompoListDataItem> compoList2 = new ArrayList<>();
-			compoList2.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList2.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial2NodeRef));
+			compoList2.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			compoList2.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial2NodeRef));
 			finishedProduct2.getCompoListView().setCompoList(compoList2);
 			
 			List<CostListDataItem> costList2 = new ArrayList<>();
@@ -234,10 +234,14 @@ public class GlopIT extends AbstractFinishedProductTest {
 			finishedProduct2.setCostList(costList2);
 			
 			List<NutListDataItem> nutList2 = new ArrayList<>();
-			nutList2.add(new NutListDataItem(null, null, null, null, null, null, nut1, null));
-			nutList2.add(new NutListDataItem(null, null, null, null, null, null, nut2, null));
-			nutList2.add(new NutListDataItem(null, null, null, null, null, null, nut3, null));
-			nutList2.add(new NutListDataItem(null, null, null, null, null, null, nut4, null));
+			nutList2.add(NutListDataItem.build().withNut(nut1)
+);
+			nutList2.add(NutListDataItem.build().withNut(nut2)
+);
+			nutList2.add(NutListDataItem.build().withNut(nut3)
+);
+			nutList2.add(NutListDataItem.build().withNut(nut4)
+);
 			finishedProduct2.setNutList(nutList2);
 			
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct2).getNodeRef();
@@ -335,7 +339,7 @@ public class GlopIT extends AbstractFinishedProductTest {
 			finishedProduct.setDensity(1d);
 			
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 2d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial2NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(2d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial2NodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
@@ -404,8 +408,8 @@ public class GlopIT extends AbstractFinishedProductTest {
 			finishedProduct.setDensity(1d);
 			
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial2NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial2NodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			
 			List<CostListDataItem> costList = new ArrayList<>();
@@ -413,10 +417,14 @@ public class GlopIT extends AbstractFinishedProductTest {
 			finishedProduct.setCostList(costList);
 			
 			List<NutListDataItem> nutList = new ArrayList<>();
-			nutList.add(new NutListDataItem(null, null, null, null, null, null, nut1, null));
-			nutList.add(new NutListDataItem(null, null, null, null, null, null, nut2, null));
-			nutList.add(new NutListDataItem(null, null, null, null, null, null, nut3, null));
-			nutList.add(new NutListDataItem(null, null, null, null, null, null, nut4, null));
+			nutList.add(NutListDataItem.build().withNut(nut1)
+);
+			nutList.add(NutListDataItem.build().withNut(nut2)
+);
+			nutList.add(NutListDataItem.build().withNut(nut3)
+);
+			nutList.add(NutListDataItem.build().withNut(nut4)
+);
 			finishedProduct.setNutList(nutList);
 			
 			List<DynamicCharactListItem> dynamicCharactList = new ArrayList<>();
@@ -480,8 +488,8 @@ public class GlopIT extends AbstractFinishedProductTest {
 			finishedProduct.setDensity(1d);
 			
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial2NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial2NodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			
 			List<CostListDataItem> costList = new ArrayList<>();
@@ -489,9 +497,12 @@ public class GlopIT extends AbstractFinishedProductTest {
 			finishedProduct.setCostList(costList);
 			
 			List<NutListDataItem> nutList = new ArrayList<>();
-			nutList.add(new NutListDataItem(null, null, null, null, null, null, nut1, null));
-			nutList.add(new NutListDataItem(null, null, null, null, null, null, nut2, null));
-			nutList.add(new NutListDataItem(null, null, null, null, null, null, nut3, null));
+			nutList.add(NutListDataItem.build().withNut(nut1)
+);
+			nutList.add(NutListDataItem.build().withNut(nut2)
+);
+			nutList.add(NutListDataItem.build().withNut(nut3)
+);
 			finishedProduct.setNutList(nutList);
 			
 			List<DynamicCharactListItem> dynamicCharactList = new ArrayList<>();

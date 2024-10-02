@@ -332,8 +332,8 @@ public class ActivityListExtractor extends SimpleExtractor {
 	public JSONArray checkProperty(JSONArray propertyArray, PropertyDefinition propertyDef) {
 		JSONArray postproperty = new JSONArray();
 		for (int i = 0; i < propertyArray.length(); i++) {
+			String stringVal = propertyArray.get(i).toString();
 			try {
-				String stringVal = propertyArray.get(i).toString();
 				if (((propertyDef == null) && stringVal.contains("workspace"))
 						|| ((propertyDef != null) && DataTypeDefinition.NODE_REF.equals(propertyDef.getDataType().getName()) && (stringVal != null)
 								&& !stringVal.isBlank() && !"null".equals(stringVal)  && !"[\"\"]".equals(stringVal))) {
@@ -388,7 +388,7 @@ public class ActivityListExtractor extends SimpleExtractor {
 
 				}
 			} catch (JSONException | MalformedNodeRefException e) {
-				logger.error(e, e);
+				logger.error("Cannot parse activity value: "+stringVal, e);
 			}
 		}
 

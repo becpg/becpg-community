@@ -167,7 +167,7 @@ public class BecpgFormServiceImpl implements BecpgFormService, ApplicationContex
 		reloadConfig();
 
 	}
-	
+
 	@Override
 	public void registerDecorator(ColumnDecorator columnDecorator) {
 		this.decorators.add(columnDecorator);
@@ -189,8 +189,6 @@ public class BecpgFormServiceImpl implements BecpgFormService, ApplicationContex
 
 		}
 	}
-	
-	
 
 	/** {@inheritDoc} */
 	@Override
@@ -231,11 +229,11 @@ public class BecpgFormServiceImpl implements BecpgFormService, ApplicationContex
 		Form form = formService.getForm(new Item(itemKind, itemId), definition.getFields(), definition.getForcedFields());
 
 		BecpgFormDefinition def = definition.merge(form, resolver);
-		
+
 		JSONObject mergeDef = def.getMergeDef();
 		mergeDef.put("override", override);
 		def.setMergeDef(mergeDef);
-		
+
 		return def;
 	}
 
@@ -266,7 +264,7 @@ public class BecpgFormServiceImpl implements BecpgFormService, ApplicationContex
 					return forms.get("datagrid");
 				}
 			}
-			
+
 			if ((siteId != null) && forms.containsKey(formId + "-" + siteId)) {
 				return forms.get(formId + "-" + siteId);
 			}
@@ -302,7 +300,8 @@ public class BecpgFormServiceImpl implements BecpgFormService, ApplicationContex
 			logger.debug("processWildCards: " + sourceString);
 			File dir = new File(sourceString.substring(PREFIX_FILE.length(), sourceString.lastIndexOf(separator)));
 			if (dir.exists()) {
-				FileFilter fileFilter = new WildcardFileFilter(sourceString.substring(sourceString.lastIndexOf(separator) + 1));
+				FileFilter fileFilter = WildcardFileFilter.builder().setWildcards(sourceString.substring(sourceString.lastIndexOf(separator) + 1))
+						.get();
 				File[] files = dir.listFiles(fileFilter);
 				if (files != null) {
 					for (File file : files) {
