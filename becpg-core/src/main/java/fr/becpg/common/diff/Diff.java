@@ -29,11 +29,11 @@ public class Diff {
     /**
      * One of: INSERT, DELETE or EQUAL.
      */
-    public Operation operation;
+    private Operation operation;
     /**
      * The dmp associated with this diff operation.
      */
-    public String text;
+    private String text;
 
     /**
      * Constructor.  Initializes the diff with the provided values.
@@ -47,7 +47,33 @@ public class Diff {
         this.text = text;
     }
 
-    /**
+    
+    
+    public Operation getOperation() {
+		return operation;
+	}
+
+
+
+	public void setOperation(Operation operation) {
+		this.operation = operation;
+	}
+
+
+
+	public String getText() {
+		return text;
+	}
+
+
+
+	public void setText(String text) {
+		this.text = text;
+	}
+
+
+
+	/**
      * Display a human-readable version of this Diff.
      *
      * @return dmp version.
@@ -57,6 +83,8 @@ public class Diff {
         return "Diff(" + this.operation + ",\"" + prettyText + "\")";
     }
 
+    
+    
     /**
      * Create a numeric hash value for a Diff.
      * This function is not used by DMP.

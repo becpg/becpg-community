@@ -427,6 +427,12 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem
 		return this;
 	}
 
+
+	public CompoListDataItem withLossPerc(Double lossPerc) {
+		this.lossPerc = lossPerc;
+		return this;
+	}
+	
 	/**
 	 * <p>
 	 * Constructor for CompoListDataItem.
@@ -600,5 +606,6 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem
 	public Double getValue() {
 		return getQty();
 	}
+
 
 }

@@ -1210,7 +1210,7 @@ public class ECOServiceImpl implements ECOService {
 				if (filter.createPredicate(productData).test(item)) {
 
 					
-					List<ReplacementListDataItem> itemReplacements = ecoData.getReplacementList().stream().filter(remp -> getSourceItems(ecoData, remp).contains(item.getComponent())).collect(Collectors.toList());
+					List<ReplacementListDataItem> itemReplacements = ecoData.getReplacementList().stream().filter(remp -> getSourceItems(ecoData, remp).contains(item.getComponent())).toList();
 					
 					if (!itemReplacements.isEmpty()) {
 						

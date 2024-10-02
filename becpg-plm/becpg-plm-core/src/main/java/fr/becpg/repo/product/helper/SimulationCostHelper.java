@@ -16,6 +16,7 @@ import fr.becpg.repo.product.data.PackagingMaterialData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PriceListDataItem;
 import fr.becpg.repo.product.formulation.FormulationHelper;
@@ -249,7 +250,7 @@ public class SimulationCostHelper implements InitializingBean {
 
 					if (productNodeRef.equals(componentNodeRef)) {
 						totalQty += qty;
-					} else {
+					} else if(!hasSimulatedCostForComponent(componentProduct, componentNodeRef)){
 						totalQty += getCompoListQty(componentProduct, componentNodeRef, qty);
 					}
 				}
@@ -258,22 +259,28 @@ public class SimulationCostHelper implements InitializingBean {
 		return totalQty;
 	}
 
+	private static boolean hasSimulatedCostForComponent(ProductData productData, NodeRef componentNodeRef) {
+		for (CostListDataItem simulatedCost : productData.getCostList()) {
+			if ((simulatedCost.getComponentNodeRef() != null) && (simulatedCost.getParent() != null) && simulatedCost.getComponentNodeRef().equals(componentNodeRef)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private static double getPackagingListQty(ProductData productData, NodeRef componentNodeRef, Double parentQty) {
 		double totalQty = 0d;
-		if (productData.hasPackagingListEl()) {
+		if (productData.hasPackagingListEl() ) {
 
 			Double netQty = FormulationHelper.getNetQtyForCost(productData);
 
 			for (PackagingListDataItem packList : productData
 					.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
-				
-				
 
 				ProductData subProductData = INSTANCE.alfrescoRepository.findOne(packList.getProduct());
 
 				Double qty = FormulationHelper.getQtyForCostByPackagingLevel(productData, packList, subProductData);
 
-				
 				if (qty != null) {
 					if ((netQty != null) && (netQty != 0d) && parentQty != null) {
 						qty = (parentQty * qty) / netQty;
@@ -283,7 +290,7 @@ public class SimulationCostHelper implements InitializingBean {
 					}
 					if (subProductData.getNodeRef().equals(componentNodeRef)) {
 						totalQty += qty;
-					} else if (subProductData.isPackagingKit()) {
+					} else if (subProductData.isPackagingKit() && ! hasSimulatedCostForComponent(subProductData, componentNodeRef)) {
 						totalQty += qty * getPackagingListQty(subProductData, componentNodeRef, null);
 
 					}

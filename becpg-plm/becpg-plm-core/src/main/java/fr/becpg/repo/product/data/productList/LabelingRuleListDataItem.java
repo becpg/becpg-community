@@ -24,6 +24,7 @@ import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.product.data.constraints.LabelingRuleType;
+import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
@@ -305,6 +306,37 @@ public class LabelingRuleListDataItem extends BeCPGDataObject implements Synchro
 	public LabelingRuleListDataItem() {
 		super();
 	}
+	
+	public static LabelingRuleListDataItem build() {
+		return new LabelingRuleListDataItem();
+	}
+
+	
+	public LabelingRuleListDataItem withName(String name) {
+		this.name = name;
+		return this;
+	}
+	
+	public LabelingRuleListDataItem withFormula(String formula) {
+		this.formula = formula;
+		return this;
+	}
+	
+	public LabelingRuleListDataItem withLabelingRuleType(LabelingRuleType labelingRuleType) {
+		this.labelingRuleType = labelingRuleType;
+		return this;
+	}
+
+	public LabelingRuleListDataItem withComponents( List<NodeRef> components) {
+		this.components = components;
+		return this;
+	}
+	
+
+	public LabelingRuleListDataItem withReplacements( List<NodeRef> replacements) {
+		this.replacements = replacements;
+		return this;
+	}
 
 	/**
 	 * <p>Constructor for LabelingRuleListDataItem.</p>
@@ -313,6 +345,7 @@ public class LabelingRuleListDataItem extends BeCPGDataObject implements Synchro
 	 * @param formula a {@link java.lang.String} object.
 	 * @param labelingRuleType a {@link fr.becpg.repo.product.data.constraints.LabelingRuleType} object.
 	 */
+	@Deprecated
 	public LabelingRuleListDataItem(String name, String formula, LabelingRuleType labelingRuleType) {
 		super();
 		this.name = name;
@@ -333,6 +366,7 @@ public class LabelingRuleListDataItem extends BeCPGDataObject implements Synchro
 	 * @param components a {@link java.util.List} object.
 	 * @param replacements a {@link java.util.List} object.
 	 */
+	@Deprecated
 	public LabelingRuleListDataItem(String name, String formula, LabelingRuleType labelingRuleType, List<NodeRef> components, List<NodeRef> replacements) {
 		super();
 		this.name = name;

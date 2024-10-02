@@ -113,11 +113,11 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 			alfrescoRepository.save(rawMaterial12);
 
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial5NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial6NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial11NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial12NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial5NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial6NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial11NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial12NodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
 			/**
@@ -136,9 +136,12 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 			alfrescoRepository.save(packagingKit);
 
 			List<PackagingListDataItem> packagingList = new ArrayList<>();
-			packagingList.add(new PackagingListDataItem(null, 1d, ProductUnit.kg, PackagingLevel.Primary, false, packagingMaterial1NodeRef));
-			packagingList.add(new PackagingListDataItem(null, 1d, ProductUnit.kg, PackagingLevel.Primary, false, packagingMaterial2NodeRef));
-			packagingList.add(new PackagingListDataItem(null, 1d, ProductUnit.kg, PackagingLevel.Secondary, true, packagingKit1NodeRef));
+			packagingList.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.kg).withPkgLevel(PackagingLevel.Primary).withIsMaster(false).withProduct(packagingMaterial1NodeRef)
+);
+			packagingList.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.kg).withPkgLevel(PackagingLevel.Primary).withIsMaster(false).withProduct(packagingMaterial2NodeRef)
+);
+			packagingList.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.kg).withPkgLevel(PackagingLevel.Secondary).withIsMaster(true).withProduct(packagingKit1NodeRef)
+);
 			finishedProduct.getPackagingListView().setPackagingList(packagingList);
 
 			finishedProduct.setLegalName(new MLText(Locale.FRENCH, "Produit fini 1"));
