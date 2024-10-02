@@ -117,40 +117,40 @@ public class FormulationVariantColumnsIT extends AbstractFinishedProductTest {
 			//CompoList
 
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
-			compoList.add(CompoListDataItem.build().withQtyUsed(2d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial2NodeRef));
-			compoList.add(CompoListDataItem.build().withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial3NodeRef));
-			compoList.add(CompoListDataItem.build().withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial4NodeRef));
-			compoList.add(CompoListDataItem.build().withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial5NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(getRawMaterial1NodeRef()));
+			compoList.add(CompoListDataItem.build().withQtyUsed(2d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(getRawMaterial2NodeRef()));
+			compoList.add(CompoListDataItem.build().withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(getRawMaterial3NodeRef()));
+			compoList.add(CompoListDataItem.build().withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(getRawMaterial4NodeRef()));
+			compoList.add(CompoListDataItem.build().withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(getRawMaterial5NodeRef()));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
 			// CostList
 			List<CostListDataItem> costList = new LinkedList<>();
-			costList.add(new CostListDataItem(null, null, null, null, cost1, null));
-			costList.add(new CostListDataItem(null, null, null, null, cost2, null));
+			costList.add(new CostListDataItem(null, null, null, null, getCost1(), null));
+			costList.add(new CostListDataItem(null, null, null, null, getCost2(), null));
 			finishedProduct.setCostList(costList);
 			assertNotNull("CostList is null", finishedProduct.getCostList());
 
 			// NutList
 			List<NutListDataItem> nutList = new LinkedList<>();
-			nutList.add(NutListDataItem.build().withNut(nut1)
+			nutList.add(NutListDataItem.build().withNut(getNut1())
 );
-			nutList.add(NutListDataItem.build().withNut(nut2)
+			nutList.add(NutListDataItem.build().withNut(getNut2())
 );
-			nutList.add(NutListDataItem.build().withNut(nut3)
+			nutList.add(NutListDataItem.build().withNut(getNut3())
 );
-			nutList.add(NutListDataItem.build().withNut(nut4)
+			nutList.add(NutListDataItem.build().withNut(getNut4())
 );
 			finishedProduct.setNutList(nutList);
 			assertNotNull("NutList is null", finishedProduct.getNutList());
 
 			// PhysicoChemList
 			List<PhysicoChemListDataItem> physicoChemList = new LinkedList<>();
-			physicoChemList.add(new PhysicoChemListDataItem(null, null, null, null, null, physicoChem1));
-			physicoChemList.add(new PhysicoChemListDataItem(null, null, null, null, null, physicoChem2));
-			physicoChemList.add(new PhysicoChemListDataItem(null, null, null, null, null, physicoChem3));
-			physicoChemList.add(new PhysicoChemListDataItem(null, null, null, null, null, physicoChem4));
-			physicoChemList.add(new PhysicoChemListDataItem(null, null, null, null, null, physicoChem5));
+			physicoChemList.add(new PhysicoChemListDataItem(null, null, null, null, null, getPhysicoChem1()));
+			physicoChemList.add(new PhysicoChemListDataItem(null, null, null, null, null, getPhysicoChem2()));
+			physicoChemList.add(new PhysicoChemListDataItem(null, null, null, null, null, getPhysicoChem3()));
+			physicoChemList.add(new PhysicoChemListDataItem(null, null, null, null, null, getPhysicoChem4()));
+			physicoChemList.add(new PhysicoChemListDataItem(null, null, null, null, null, getPhysicoChem5()));
 			finishedProduct.setPhysicoChemList(physicoChemList);
 			assertNotNull("PhysicoChemList is null", finishedProduct.getPhysicoChemList());
 
@@ -184,7 +184,7 @@ public class FormulationVariantColumnsIT extends AbstractFinishedProductTest {
 						+ costListDataItem.getValue() + " - previous value: " + costListDataItem.getPreviousValue() + " - future value: "
 						+ costListDataItem.getFutureValue() + " - unit: " + costListDataItem.getUnit();
 				logger.info(trace);
-				if (costListDataItem.getCost().equals(cost1)) {
+				if (costListDataItem.getCost().equals(getCost1())) {
 					assertEquals(5d, costListDataItem.getValue());
 					assertEquals(2.5d, costListDataItem.getPreviousValue());
 					assertEquals(10d, costListDataItem.getFutureValue());
@@ -197,7 +197,7 @@ public class FormulationVariantColumnsIT extends AbstractFinishedProductTest {
 
 					checks++;
 				}
-				if (costListDataItem.getCost().equals(cost2)) {
+				if (costListDataItem.getCost().equals(getCost2())) {
 					assertEquals(6.0d, costListDataItem.getValue());
 					assertEquals(3d, costListDataItem.getPreviousValue());
 					assertEquals(12d, costListDataItem.getFutureValue());
@@ -219,21 +219,21 @@ public class FormulationVariantColumnsIT extends AbstractFinishedProductTest {
 						+ nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
 				logger.info(trace);
 
-				if (nutListDataItem.getNut().equals(nut1)) {
+				if (nutListDataItem.getNut().equals(getNut1())) {
 					assertEquals(3d, nutListDataItem.getValue());
 					assertEquals(3d, nodeService.getProperty(nutListDataItem.getNodeRef(),QName.createQName(BeCPGModel.BECPG_URI, "variantColumn1")));
 					assertEquals(3d, nodeService.getProperty(nutListDataItem.getNodeRef(),QName.createQName(BeCPGModel.BECPG_URI, "variantColumn2")));
 					assertEquals(null, nodeService.getProperty(nutListDataItem.getNodeRef(),QName.createQName(BeCPGModel.BECPG_URI, "variantColumn4")));
 					checks++;
 				}
-				if (nutListDataItem.getNut().equals(nut2)) {
+				if (nutListDataItem.getNut().equals(getNut2())) {
 					assertEquals(6d, nutListDataItem.getValue());
 					assertEquals(6d, nodeService.getProperty(nutListDataItem.getNodeRef(),QName.createQName(BeCPGModel.BECPG_URI, "variantColumn1")));
 					assertEquals(6d, nodeService.getProperty(nutListDataItem.getNodeRef(),QName.createQName(BeCPGModel.BECPG_URI, "variantColumn2")));
 					assertEquals(null, nodeService.getProperty(nutListDataItem.getNodeRef(),QName.createQName(BeCPGModel.BECPG_URI, "variantColumn4")));
 					checks++;
 				}
-				if (nutListDataItem.getNut().equals(nut3)) {
+				if (nutListDataItem.getNut().equals(getNut3())) {
 					assertEquals(16d, nutListDataItem.getValue());
 					assertEquals(16d, nodeService.getProperty(nutListDataItem.getNodeRef(),QName.createQName(BeCPGModel.BECPG_URI, "variantColumn1")));
 					assertEquals(12d, nodeService.getProperty(nutListDataItem.getNodeRef(),QName.createQName(BeCPGModel.BECPG_URI, "variantColumn2")));
@@ -241,7 +241,7 @@ public class FormulationVariantColumnsIT extends AbstractFinishedProductTest {
 					assertEquals(null, nodeService.getProperty(nutListDataItem.getNodeRef(),QName.createQName(BeCPGModel.BECPG_URI, "variantColumn5")));
 					checks++;
 				}
-				if (nutListDataItem.getNut().equals(nut4)) {
+				if (nutListDataItem.getNut().equals(getNut4())) {
 					assertEquals(3d, nutListDataItem.getValue());
 					assertEquals(3d, nodeService.getProperty(nutListDataItem.getNodeRef(),QName.createQName(BeCPGModel.BECPG_URI, "variantColumn1")));
 					assertEquals(null, nodeService.getProperty(nutListDataItem.getNodeRef(),QName.createQName(BeCPGModel.BECPG_URI, "variantColumn2")));
@@ -256,7 +256,7 @@ public class FormulationVariantColumnsIT extends AbstractFinishedProductTest {
 			checks = 0;
 			for (PhysicoChemListDataItem physicoChemListDataItem : finishedProduct.getPhysicoChemList()) {
 
-				if (physicoChemListDataItem.getPhysicoChem().equals(physicoChem3)) {
+				if (physicoChemListDataItem.getPhysicoChem().equals(getPhysicoChem3())) {
 					assertEquals(3d, physicoChemListDataItem.getValue());
 					assertEquals(3d, nodeService.getProperty(physicoChemListDataItem.getNodeRef(),QName.createQName(BeCPGModel.BECPG_URI, "variantColumn1")));
 					assertEquals(3d, nodeService.getProperty(physicoChemListDataItem.getNodeRef(),QName.createQName(BeCPGModel.BECPG_URI, "variantColumn2")));

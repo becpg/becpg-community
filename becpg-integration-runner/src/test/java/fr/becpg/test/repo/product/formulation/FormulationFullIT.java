@@ -76,29 +76,29 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 			finishedProduct.setProjectedQty(10000l);
 			List<CompoListDataItem> compoList = new ArrayList<>();
 			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
-					.withDeclarationType(DeclarationType.Detail).withProduct(localSF1NodeRef));
+					.withDeclarationType(DeclarationType.Detail).withProduct(getLocalSF1NodeRef()));
 			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
-					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+					.withDeclarationType(DeclarationType.Declare).withProduct(getRawMaterial1NodeRef()));
 			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(2d).withUnit(ProductUnit.kg).withLossPerc(0d)
-					.withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial2NodeRef));
+					.withDeclarationType(DeclarationType.Detail).withProduct(getRawMaterial2NodeRef()));
 			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
-					.withDeclarationType(DeclarationType.Detail).withProduct(localSF2NodeRef));
+					.withDeclarationType(DeclarationType.Detail).withProduct(getLocalSF2NodeRef()));
 			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d)
-					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial3NodeRef));
+					.withDeclarationType(DeclarationType.Declare).withProduct(getRawMaterial3NodeRef()));
 			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d)
-					.withDeclarationType(DeclarationType.Omit).withProduct(rawMaterial4NodeRef));
+					.withDeclarationType(DeclarationType.Omit).withProduct(getRawMaterial4NodeRef()));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
 			List<CostListDataItem> costList = new ArrayList<>();
-			costList.add(new CostListDataItem(null, 4000d, "€", null, fixedCost, true));
-			costList.add(new CostListDataItem(null, null, null, null, cost1, null));
-			costList.add(new CostListDataItem(null, null, null, null, cost2, null));
+			costList.add(new CostListDataItem(null, 4000d, "€", null, getFixedCost(), true));
+			costList.add(new CostListDataItem(null, null, null, null, getCost1(), null));
+			costList.add(new CostListDataItem(null, null, null, null, getCost2(), null));
 			finishedProduct.setCostList(costList);
 
 			List<NutListDataItem> nutList = new ArrayList<>();
-			nutList.add(NutListDataItem.build().withNut(nut1));
-			nutList.add(NutListDataItem.build().withNut(nut2));
-			nutList.add(NutListDataItem.build().withNut(nut3));
+			nutList.add(NutListDataItem.build().withNut(getNut1()));
+			nutList.add(NutListDataItem.build().withNut(getNut2()));
+			nutList.add(NutListDataItem.build().withNut(getNut3()));
 			finishedProduct.setNutList(nutList);
 
 			List<DynamicCharactListItem> dynamicCharactListItems = new ArrayList<>();
@@ -134,7 +134,7 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 			// Boolean
 			dynamicCharactListItems.add(new DynamicCharactListItem("Boolean  1", "costList[1].value > 1"));
 			// Assignment
-			dynamicCharactListItems.add(new DynamicCharactListItem("Assignement  1", "nutList.?[nut.toString() == '" + nut1 + "' ][0].value = 4d"));
+			dynamicCharactListItems.add(new DynamicCharactListItem("Assignement  1", "nutList.?[nut.toString() == '" + getNut1() + "' ][0].value = 4d"));
 
 			// Spel method
 			dynamicCharactListItems.add(new DynamicCharactListItem(" beCPG findOne", "@beCPG.findOne(nodeRef).qty"));
@@ -185,13 +185,13 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 
 			List<LabelClaimListDataItem> labelClaimListDataItems = new ArrayList<>();
 
-			nodeService.setProperty(labelClaims.get(0), PLMModel.PROP_LABEL_CLAIM_FORMULA, "((nutList.?[nut.toString() == '" + nut1
+			nodeService.setProperty(labelClaims.get(0), PLMModel.PROP_LABEL_CLAIM_FORMULA, "((nutList.?[nut.toString() == '" + getNut1()
 					+ "'][0].value < 40 and unit != T(fr.becpg.repo.product.data.constraints.ProductUnit).L and unit != T(fr.becpg.repo.product.data.constraints.ProductUnit).mL )"
-					+ " or (nutList.?[nut.toString() == '" + nut1
+					+ " or (nutList.?[nut.toString() == '" + getNut1()
 					+ "'][0].value < 20 and (unit == T(fr.becpg.repo.product.data.constraints.ProductUnit).L or unit== T(fr.becpg.repo.product.data.constraints.ProductUnit).mL )))"
-					+ " and (nutList.?[nut.toString() == '" + nut1 + "'][0].value > 4 )");
+					+ " and (nutList.?[nut.toString() == '" + getNut1() + "'][0].value > 4 )");
 			nodeService.setProperty(labelClaims.get(1), PLMModel.PROP_LABEL_CLAIM_FORMULA,
-					"nutList.?[nut.toString() == '" + nut1 + "'][0].value <= 4");
+					"nutList.?[nut.toString() == '" + getNut1() + "'][0].value <= 4");
 
 			labelClaimListDataItems.add(new LabelClaimListDataItem(labelClaims.get(0), "Nutritionnelle", false));
 			labelClaimListDataItems.add(new LabelClaimListDataItem(labelClaims.get(1), "Nutritionnelle", false));
@@ -205,7 +205,7 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 
 			LabelingRuleListDataItem percRule = LabelingRuleListDataItem.build().withName("%").withFormula("{0} {1,number,0.#%}")
 					.withLabelingRuleType(LabelingRuleType.Format);
-			percRule.setComponents(Arrays.asList(ing2, ing3, ing4));
+			percRule.setComponents(Arrays.asList(getIng2(), getIng3(), getIng4()));
 			labelingRuleList.add(percRule);
 			labelingRuleList.add(LabelingRuleListDataItem.build().withName("Param1")
 					.withFormula("detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"").withLabelingRuleType(LabelingRuleType.Prefs));
@@ -259,17 +259,17 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 			String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: "
 					+ costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
 			logger.info(trace);
-			if (costListDataItem.getCost().equals(cost1)) {
+			if (costListDataItem.getCost().equals(getCost1())) {
 				assertEquals("cost1.getValue() == 4.0, actual values: " + trace, 4.0d, costListDataItem.getValue());
 				assertEquals("cost1.getUnit() == €/kg, actual values: " + trace, "€/kg", costListDataItem.getUnit());
 				checks++;
 			}
-			if (costListDataItem.getCost().equals(cost2)) {
+			if (costListDataItem.getCost().equals(getCost2())) {
 				assertEquals("cost1.getValue() == 6.0, actual values: " + trace, 6.0d, costListDataItem.getValue());
 				assertEquals("cost1.getUnit() == €/kg, actual values: " + trace, "€/kg", costListDataItem.getUnit());
 				checks++;
 			}
-			if (costListDataItem.getCost().equals(fixedCost)) {
+			if (costListDataItem.getCost().equals(getFixedCost())) {
 				assertEquals("fixedCost.getValue() == 4000d, actual values: " + trace, 4000d, costListDataItem.getValue());
 				assertEquals("fixedCost.getUnit() == €/kg, actual values: " + trace, "€", costListDataItem.getUnit());
 				checks++;
@@ -307,14 +307,14 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 			String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME) + " - value: "
 					+ nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
 			logger.info(trace);
-			if (nutListDataItem.getNut().equals(nut1)) {
+			if (nutListDataItem.getNut().equals(getNut1())) {
 				assertNotSame("nut1.getValue() == 3, actual values: " + trace, 3d, nutListDataItem.getValue());
 				assertEquals("nut1.getValue() == 4 (Formula), actual values: " + trace, 4d, nutListDataItem.getValue());
 				assertEquals("nut1.getUnit() == kJ/100g, actual values: " + trace, "kJ/100g", nutListDataItem.getUnit());
 				assertEquals("must be group1", GROUP1, nutListDataItem.getGroup());
 				checks++;
 			}
-			if (nutListDataItem.getNut().equals(nut2)) {
+			if (nutListDataItem.getNut().equals(getNut2())) {
 				assertEquals("nut2.getValue() == 6, actual values: " + trace, 6d, nutListDataItem.getValue());
 				assertEquals("nut2.getUnit() == kcal/100g, actual values: " + trace, "kcal/100g", nutListDataItem.getUnit());
 				assertEquals("must be group2", GROUP2, nutListDataItem.getGroup());
@@ -322,7 +322,7 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 				assertEquals((100 * nutListDataItem.getValuePerServing()) / 2000d, nutListDataItem.getGdaPerc());
 				checks++;
 			}
-			if (nutListDataItem.getNut().equals(nut3)) {
+			if (nutListDataItem.getNut().equals(getNut3())) {
 				assertEquals("nut3.getValue() == 14, actual values: " + trace, 14d, nutListDataItem.getValue());
 
 				checks++;
@@ -354,15 +354,15 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 			// allergen1 - voluntary: true - involuntary: false -
 			// voluntary sources:Raw material 1, Raw material 2 -
 			// involuntary sources:
-			if (allergenListDataItem.getAllergen().equals(allergen1)) {
+			if (allergenListDataItem.getAllergen().equals(getAllergen1())) {
 				assertEquals("allergen1.getVoluntary().booleanValue() == true, actual values: " + trace, true,
 						allergenListDataItem.getVoluntary().booleanValue());
 				assertEquals("allergen1.getInVoluntary().booleanValue() == false, actual values: " + trace, false,
 						allergenListDataItem.getInVoluntary().booleanValue());
 				assertEquals("allergen1.getVoluntarySources() contains Raw material 1, actual values: " + trace, true,
-						allergenListDataItem.getVoluntarySources().contains(rawMaterial1NodeRef));
+						allergenListDataItem.getVoluntarySources().contains(getRawMaterial1NodeRef()));
 				assertEquals("allergen1.getVoluntarySources() contains Raw material 2, actual values: " + trace, true,
-						allergenListDataItem.getVoluntarySources().contains(rawMaterial2NodeRef));
+						allergenListDataItem.getVoluntarySources().contains(getRawMaterial2NodeRef()));
 				assertEquals("allergen1.getInVoluntarySources() is empty, actual values: " + trace, 0,
 						allergenListDataItem.getInVoluntarySources().size());
 				// (1×20+2×10+3×15)÷2
@@ -371,13 +371,13 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 			}
 			// allergen2 - voluntary: false - involuntary: true -
 			// voluntary sources: - involuntary sources:Raw material 2,
-			if (allergenListDataItem.getAllergen().equals(allergen2)) {
+			if (allergenListDataItem.getAllergen().equals(getAllergen2())) {
 				assertEquals("allergen2.getVoluntary().booleanValue() == false, actual values: " + trace, false,
 						allergenListDataItem.getVoluntary().booleanValue());
 				assertEquals("allergen2.getInVoluntary().booleanValue() == true, actual values: " + trace, true,
 						allergenListDataItem.getInVoluntary().booleanValue());
 				assertEquals("allergen2.getInVoluntarySources() contains Raw material 2, actual values: " + trace, true,
-						allergenListDataItem.getInVoluntarySources().contains(rawMaterial2NodeRef));
+						allergenListDataItem.getInVoluntarySources().contains(getRawMaterial2NodeRef()));
 				assertEquals("allergen2.getVoluntarySources() is empty, actual values: " + trace, 0,
 						allergenListDataItem.getVoluntarySources().size());
 				// (1×5+2×50+3×15)÷2
@@ -387,21 +387,21 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 			// allergen: allergen3 - voluntary: true - involuntary: true
 			// - voluntary sources:Raw material 3, - involuntary
 			// sources:Raw material 3,
-			if (allergenListDataItem.getAllergen().equals(allergen3)) {
+			if (allergenListDataItem.getAllergen().equals(getAllergen3())) {
 				assertEquals("allergen3.getVoluntary().booleanValue() == true, actual values: " + trace, true,
 						allergenListDataItem.getVoluntary().booleanValue());
 				assertEquals("allergen3.getInVoluntary().booleanValue() == true, actual values: " + trace, true,
 						allergenListDataItem.getInVoluntary().booleanValue());
 				assertEquals("allergen3.getVoluntarySources() contains Raw material 3, actual values: " + trace, true,
-						allergenListDataItem.getVoluntarySources().contains(rawMaterial3NodeRef));
+						allergenListDataItem.getVoluntarySources().contains(getRawMaterial3NodeRef()));
 				assertEquals("allergen3.getInVoluntarySources() contains Raw material 3, actual values: " + trace, true,
-						allergenListDataItem.getInVoluntarySources().contains(rawMaterial3NodeRef));
+						allergenListDataItem.getInVoluntarySources().contains(getRawMaterial3NodeRef()));
 				assertEquals(null, allergenListDataItem.getQtyPerc());
 				checks++;
 			}
 			// allergen4 - voluntary: false - involuntary: false -
 			// voluntary sources: - involuntary sources:
-			if (allergenListDataItem.getAllergen().equals(allergen4)) {
+			if (allergenListDataItem.getAllergen().equals(getAllergen4())) {
 				assertEquals("allergen4.getVoluntary().booleanValue() == false, actual values: " + trace, false,
 						allergenListDataItem.getVoluntary().booleanValue());
 				assertEquals("allergen4.getInVoluntary().booleanValue() == false, actual values: " + trace, false,
@@ -446,15 +446,15 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 
 			// ing: ing1 - qty: 13.88888888888889 - geo origins:
 			// geoOrigin1, - bio origins: bioOrigin1, is gmo: true
-			if (ingListDataItem.getIng().equals(ing1)) {
+			if (ingListDataItem.getIng().equals(getIng1())) {
 				assertEquals("ing1.getQtyPerc() == 13.88888888888889, actual values: " + trace, df.format(13.88888888888889),
 						df.format(ingListDataItem.getQtyPerc()));
-				assertEquals("ing1.getGeoOrigin() contains geo1, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(geoOrigin1));
+				assertEquals("ing1.getGeoOrigin() contains geo1, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(getGeoOrigin1()));
 				assertEquals("ing1.getGeoOrigin() doesn't contain geo2, actual values: " + trace, false,
-						ingListDataItem.getGeoOrigin().contains(geoOrigin2));
-				assertEquals("ing1.getBioOrigin() contains bio1, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(bioOrigin1));
+						ingListDataItem.getGeoOrigin().contains(getGeoOrigin2()));
+				assertEquals("ing1.getBioOrigin() contains bio1, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(getBioOrigin1()));
 				assertEquals("ing1.getBioOrigin() doesn't contain bio2, actual values: " + trace, false,
-						ingListDataItem.getBioOrigin().contains(bioOrigin2));
+						ingListDataItem.getBioOrigin().contains(getBioOrigin2()));
 				assertEquals("ing1.getIsGMO() is false, actual values: " + trace, true, ingListDataItem.getIsGMO().booleanValue());
 				assertEquals("ing1.getIsIonized().booleanValue() is false, actual values: " + trace, true,
 						ingListDataItem.getIsIonized().booleanValue());
@@ -463,15 +463,15 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 			// ing2 - qty: 36.111111111111114 - geo origins: geoOrigin1,
 			// geoOrigin2, - bio origins: bioOrigin1, bioOrigin2, is
 			// gmo: false
-			if (ingListDataItem.getIng().equals(ing2)) {
+			if (ingListDataItem.getIng().equals(getIng2())) {
 				assertEquals("ing2.getQtyPerc() == 36.111111111111114, actual values: " + trace, df.format(36.111111111111114),
 						df.format(ingListDataItem.getQtyPerc()));
-				assertEquals("ing2.getGeoOrigin() contains geo1, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(geoOrigin1));
-				assertEquals("ing2.getGeoOrigin() contains geo2, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(geoOrigin2));
-				assertEquals("ing2.getBioOrigin() contains bio1, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(bioOrigin1));
-				assertEquals("ing2.getBioOrigin() contains bio2, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(bioOrigin2));
+				assertEquals("ing2.getGeoOrigin() contains geo1, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(getGeoOrigin1()));
+				assertEquals("ing2.getGeoOrigin() contains geo2, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(getGeoOrigin2()));
+				assertEquals("ing2.getBioOrigin() contains bio1, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(getBioOrigin1()));
+				assertEquals("ing2.getBioOrigin() contains bio2, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(getBioOrigin2()));
 				assertEquals(1, ingListDataItem.getGeoTransfo().size());
-				assertTrue(ingListDataItem.getGeoTransfo().contains(geoOrigin2));
+				assertTrue(ingListDataItem.getGeoTransfo().contains(getGeoOrigin2()));
 				assertEquals("ing2.getIsGMO() is false, actual values: " + trace, false, ingListDataItem.getIsGMO().booleanValue());
 				assertEquals("ing2.getIsIonized().booleanValue() is false, actual values: " + trace, false,
 						ingListDataItem.getIsIonized().booleanValue());
@@ -479,13 +479,13 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 			}
 			// ing3 - qty: 50 - geo origins: geoOrigin2, - bio origins:
 			// bioOrigin1, bioOrigin2, is gmo: true
-			if (ingListDataItem.getIng().equals(ing3)) {
+			if (ingListDataItem.getIng().equals(getIng3())) {
 				assertEquals("ing3.getQtyPerc() == 50, actual values: " + trace, df.format(50), df.format(ingListDataItem.getQtyPerc()));
 				assertEquals("ing3.getGeoOrigin() doesn't contain geo1, actual values: " + trace, false,
-						ingListDataItem.getGeoOrigin().contains(geoOrigin1));
-				assertEquals("ing3.getGeoOrigin() contains geo2, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(geoOrigin2));
-				assertEquals("ing3.getBioOrigin() contains bio1, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(bioOrigin1));
-				assertEquals("ing3.getBioOrigin() contains bio2, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(bioOrigin2));
+						ingListDataItem.getGeoOrigin().contains(getGeoOrigin1()));
+				assertEquals("ing3.getGeoOrigin() contains geo2, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(getGeoOrigin2()));
+				assertEquals("ing3.getBioOrigin() contains bio1, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(getBioOrigin1()));
+				assertEquals("ing3.getBioOrigin() contains bio2, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(getBioOrigin2()));
 				assertEquals("ing3.getIsGMO() is false, actual values: " + trace, true, ingListDataItem.getIsGMO().booleanValue());
 				assertEquals("ing3.getIsIonized().booleanValue() is false, actual values: " + trace, true,
 						ingListDataItem.getIsIonized().booleanValue());
@@ -523,7 +523,7 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 		// ReqCtrlList
 		checks = 0;
 		String message2 = I18NUtil.getMessage(NutsCalculatingFormulationHandler.MESSAGE_MAXIMAL_DAILY_VALUE,
-				nodeService.getProperty(nut3, BeCPGModel.PROP_CHARACT_NAME));
+				nodeService.getProperty(getNut3(), BeCPGModel.PROP_CHARACT_NAME));
 		logger.info(formulatedProduct.getReqCtrlList().size());
 		for (ReqCtrlListDataItem r : formulatedProduct.getReqCtrlList()) {
 
@@ -536,7 +536,7 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 		}
 		assertEquals(1, checks);
 
-		assertEquals(nut3, formulatedProduct.getNutList().get(2).getNut());
+		assertEquals(getNut3(), formulatedProduct.getNutList().get(2).getNut());
 
 		// Claim label list
 		checks = 0;
@@ -586,14 +586,14 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 				String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME) + " - value: "
 						+ nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
 				logger.info(trace);
-				if (nutListDataItem.getNut().equals(nut1)) {
+				if (nutListDataItem.getNut().equals(getNut1())) {
 					assertNotSame("nut1.getValue() == 2.4, actual values: " + trace, df.format(2.4), df.format(nutListDataItem.getValue()));
 					assertEquals("nut1.getValue() == 4 (Formula), actual values: ", df.format(4.0), df.format(nutListDataItem.getValue()));
 					assertEquals("nut1.getUnit() == kJ/100mL, actual values: " + trace, "kJ/100mL", nutListDataItem.getUnit());
 					assertEquals("must be group1", GROUP1, nutListDataItem.getGroup());
 					checks++;
 				}
-				if (nutListDataItem.getNut().equals(nut2)) {
+				if (nutListDataItem.getNut().equals(getNut2())) {
 					assertEquals("nut2.getValue() == 4.8, actual values: ", df.format(4.8), df.format(nutListDataItem.getValue()));
 					assertEquals("nut2.getUnit() == kcal/100mL, actual values: " + trace, "kcal/100mL", nutListDataItem.getUnit());
 					assertEquals("must be group2", GROUP2, nutListDataItem.getGroup());
@@ -601,7 +601,7 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 					assertEquals(df.format((100 * nutListDataItem.getValuePerServing()) / 2000d), df.format(nutListDataItem.getGdaPerc()));
 					checks++;
 				}
-				if (nutListDataItem.getNut().equals(nut3)) {
+				if (nutListDataItem.getNut().equals(getNut3())) {
 					assertEquals("nut3.getValue() == 11.2, actual values: " + trace, df.format(11.2), df.format(nutListDataItem.getValue()));
 
 					checks++;

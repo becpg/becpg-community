@@ -73,23 +73,23 @@ public class FormulationProductWithoutQtyIT extends AbstractFinishedProductTest 
 			finishedProduct.setLegalName("Legal Produit fini 1");
 			finishedProduct.setUnit(ProductUnit.kg);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(localSF1NodeRef));
-			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
-			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(2d).withUnit(ProductUnit.g).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial2NodeRef));
-			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(localSF2NodeRef));
-			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial3NodeRef));
-			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Omit).withProduct(rawMaterial4NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(getLocalSF1NodeRef()));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(getRawMaterial1NodeRef()));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(2d).withUnit(ProductUnit.g).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(getRawMaterial2NodeRef()));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(getLocalSF2NodeRef()));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(getRawMaterial3NodeRef()));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Omit).withProduct(getRawMaterial4NodeRef()));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
 			List<CostListDataItem> costList = new ArrayList<>();
-			costList.add(new CostListDataItem(null, null, null, null, cost1, null));
-			costList.add(new CostListDataItem(null, null, null, null, cost2, null));
+			costList.add(new CostListDataItem(null, null, null, null, getCost1(), null));
+			costList.add(new CostListDataItem(null, null, null, null, getCost2(), null));
 			finishedProduct.setCostList(costList);
 
 			List<NutListDataItem> nutList = new ArrayList<>();
-			nutList.add(NutListDataItem.build().withNut(nut1)
+			nutList.add(NutListDataItem.build().withNut(getNut1())
 );
-			nutList.add(NutListDataItem.build().withNut(nut2)
+			nutList.add(NutListDataItem.build().withNut(getNut2())
 );
 			finishedProduct.setNutList(nutList);
 
@@ -111,12 +111,12 @@ public class FormulationProductWithoutQtyIT extends AbstractFinishedProductTest 
 				String trace1 = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: "
 						+ costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
 				logger.debug(trace1);
-				if (costListDataItem.getCost().equals(cost1)) {
+				if (costListDataItem.getCost().equals(getCost1())) {
 					assertEquals(df.format(1.499750125), df.format(costListDataItem.getValue()));
 					assertEquals("€/kg", costListDataItem.getUnit());
 					checks++;
 				}
-				if (costListDataItem.getCost().equals(cost2)) {
+				if (costListDataItem.getCost().equals(getCost2())) {
 					assertEquals(df.format(2), df.format(costListDataItem.getValue()));
 					assertEquals("€/kg", costListDataItem.getUnit());
 					checks++;
@@ -130,13 +130,13 @@ public class FormulationProductWithoutQtyIT extends AbstractFinishedProductTest 
 				String trace2 = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME) + " - value: "
 						+ nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
 				logger.info(trace2);
-				if (nutListDataItem.getNut().equals(nut1)) {
+				if (nutListDataItem.getNut().equals(getNut1())) {
 					assertEquals(df.format(1d), df.format(nutListDataItem.getValue()));
 					assertEquals("kJ/100g", nutListDataItem.getUnit());
 					assertEquals(GROUP1, nutListDataItem.getGroup());
 					checks++;
 				}
-				if (nutListDataItem.getNut().equals(nut2)) {
+				if (nutListDataItem.getNut().equals(getNut2())) {
 					assertEquals(df.format(2d), df.format(nutListDataItem.getValue()));
 					assertEquals("kcal/100g", nutListDataItem.getUnit());
 					assertEquals(GROUP2, nutListDataItem.getGroup());
@@ -170,23 +170,23 @@ public class FormulationProductWithoutQtyIT extends AbstractFinishedProductTest 
 			finishedProduct.setLegalName("Legal Produit fini 1");
 			finishedProduct.setUnit(ProductUnit.P);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(CompoListDataItem.build().withQtyUsed(42d).withUnit(ProductUnit.g).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(localSF1NodeRef));
-			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(40d).withUnit(ProductUnit.g).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
-			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(2d).withUnit(ProductUnit.mL).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial2NodeRef));
-			compoList.add(CompoListDataItem.build().withQtyUsed(30d).withUnit(ProductUnit.g).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(localSF2NodeRef));
-			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQtyUsed(30d).withUnit(ProductUnit.g).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial3NodeRef));
-			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQtyUsed(0.05d).withUnit(ProductUnit.P).withLossPerc(0d).withDeclarationType(DeclarationType.Omit).withProduct(rawMaterial5NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(42d).withUnit(ProductUnit.g).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(getLocalSF1NodeRef()));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(40d).withUnit(ProductUnit.g).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(getRawMaterial1NodeRef()));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(2d).withUnit(ProductUnit.mL).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(getRawMaterial2NodeRef()));
+			compoList.add(CompoListDataItem.build().withQtyUsed(30d).withUnit(ProductUnit.g).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(getLocalSF2NodeRef()));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQtyUsed(30d).withUnit(ProductUnit.g).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(getRawMaterial3NodeRef()));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQtyUsed(0.05d).withUnit(ProductUnit.P).withLossPerc(0d).withDeclarationType(DeclarationType.Omit).withProduct(getRawMaterial5NodeRef()));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
 			List<CostListDataItem> costList = new ArrayList<>();
-			costList.add(new CostListDataItem(null, null, null, null, cost1, null));
-			costList.add(new CostListDataItem(null, null, null, null, cost2, null));
+			costList.add(new CostListDataItem(null, null, null, null, getCost1(), null));
+			costList.add(new CostListDataItem(null, null, null, null, getCost2(), null));
 			finishedProduct.setCostList(costList);
 
 			List<NutListDataItem> nutList = new ArrayList<>();
-			nutList.add(NutListDataItem.build().withNut(nut1)
+			nutList.add(NutListDataItem.build().withNut(getNut1())
 );
-			nutList.add(NutListDataItem.build().withNut(nut2)
+			nutList.add(NutListDataItem.build().withNut(getNut2())
 );
 			finishedProduct.setNutList(nutList);
 
@@ -210,12 +210,12 @@ public class FormulationProductWithoutQtyIT extends AbstractFinishedProductTest 
 						+ costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
 				logger.info(trace1);
 
-				if (costListDataItem.getCost().equals(cost1)) {
+				if (costListDataItem.getCost().equals(getCost1())) {
 					assertEquals("check cost", df.format(0.177d), df.format(costListDataItem.getValue()));
 					assertEquals("check cost unit", "€/P", costListDataItem.getUnit());
 					checks++;
 				}
-				if (costListDataItem.getCost().equals(cost2)) {
+				if (costListDataItem.getCost().equals(getCost2())) {
 					assertEquals("check cost", df.format(0.174d), df.format(costListDataItem.getValue()));
 					assertEquals("check cost unit", "€/P", costListDataItem.getUnit());
 					checks++;
@@ -229,13 +229,13 @@ public class FormulationProductWithoutQtyIT extends AbstractFinishedProductTest 
 				String trace2 = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME) + " - value: "
 						+ nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
 				logger.info(trace2);
-				if (nutListDataItem.getNut().equals(nut1)) {
+				if (nutListDataItem.getNut().equals(getNut1())) {
 					assertEquals("check nut", df.format(1.0004444444444444d), df.format(nutListDataItem.getValue()));
 					assertEquals("check nut unit", "kJ/100g", nutListDataItem.getUnit());
 					assertEquals("must be group1", GROUP1, nutListDataItem.getGroup());
 					checks++;
 				}
-				if (nutListDataItem.getNut().equals(nut2)) {
+				if (nutListDataItem.getNut().equals(getNut2())) {
 					assertEquals("check nut", df.format(2.000333333333333d), df.format(nutListDataItem.getValue()));
 					assertEquals("check nut unit", "kcal/100g", nutListDataItem.getUnit());
 					assertEquals("must be group2", GROUP2, nutListDataItem.getGroup());

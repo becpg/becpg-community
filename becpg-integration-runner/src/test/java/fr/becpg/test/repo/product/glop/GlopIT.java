@@ -120,8 +120,8 @@ public class GlopIT extends AbstractFinishedProductTest {
 	@Test
 	public void testGlopService() {
 
-		mockWebServer.enqueue(new MockResponse().setBody(String.format("{\"coefficients\":{\"%s\":0.05,\"%s\":0.0},\"status\":\"optimal\",\"value\":4.0}", rawMaterial6NodeRef, rawMaterial2NodeRef)));
-		mockWebServer.enqueue(new MockResponse().setBody(String.format("{\"coefficients\":{\"%s\":1.3333333333333333,\"%s\":0.7777777777777778},\"status\":\"optimal\",\"value\":4.777777777777778}", rawMaterial1NodeRef, rawMaterial2NodeRef)));
+		mockWebServer.enqueue(new MockResponse().setBody(String.format("{\"coefficients\":{\"%s\":0.05,\"%s\":0.0},\"status\":\"optimal\",\"value\":4.0}", getRawMaterial6NodeRef(), getRawMaterial2NodeRef())));
+		mockWebServer.enqueue(new MockResponse().setBody(String.format("{\"coefficients\":{\"%s\":1.3333333333333333,\"%s\":0.7777777777777778},\"status\":\"optimal\",\"value\":4.777777777777778}", getRawMaterial1NodeRef(), getRawMaterial2NodeRef())));
 
 		logger.info("testGlopService");
 		
@@ -141,8 +141,8 @@ public class GlopIT extends AbstractFinishedProductTest {
 			finishedProduct.setDensity(1d);
 			
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial2NodeRef));
-			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial6NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(getRawMaterial2NodeRef()));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(getRawMaterial6NodeRef()));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
@@ -172,10 +172,10 @@ public class GlopIT extends AbstractFinishedProductTest {
 			GlopTarget target = null;
 			List<GlopConstraint> characts = new ArrayList<>();
 			for (IngListDataItem ing: ingList1) {
-				if (ing.getIng().equals(ing1)) {
+				if (ing.getIng().equals(getIng1())) {
 					target = new GlopTarget(ing, "max");
 					logger.debug("Added " + target.toString());
-				} else if (ing.getIng().equals(ing2)) {
+				} else if (ing.getIng().equals(getIng2())) {
 					characts.add(new GlopConstraint(ing, 0d, 1d));
 				}
 			}
@@ -192,12 +192,12 @@ public class GlopIT extends AbstractFinishedProductTest {
 			
 			for (CompoListDataItem compoItem: compoList1) {
 				double value = result1.getComponentValue(compoItem.getProduct());
-				if (rawMaterial6NodeRef.equals(compoItem.getProduct())) {
-					assertEquals(compoItem.getProduct().toString() + "not found in composition list", rawMaterial6NodeRef, compoItem.getProduct());
+				if (getRawMaterial6NodeRef().equals(compoItem.getProduct())) {
+					assertEquals(compoItem.getProduct().toString() + "not found in composition list", getRawMaterial6NodeRef(), compoItem.getProduct());
 					assertEpsilon(0.05d, value, 1e-6);
 					checks++;
-				} else if (rawMaterial2NodeRef.equals(compoItem.getProduct())) {
-					assertEquals(compoItem.getProduct().toString() + "not found in composition list", rawMaterial2NodeRef, compoItem.getProduct());
+				} else if (getRawMaterial2NodeRef().equals(compoItem.getProduct())) {
+					assertEquals(compoItem.getProduct().toString() + "not found in composition list", getRawMaterial2NodeRef(), compoItem.getProduct());
 					assertEpsilon(0d, value, 1e-6);
 					checks++;
 				}
@@ -225,22 +225,22 @@ public class GlopIT extends AbstractFinishedProductTest {
 			finishedProduct2.setDensity(1d);
 			
 			List<CompoListDataItem> compoList2 = new ArrayList<>();
-			compoList2.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
-			compoList2.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial2NodeRef));
+			compoList2.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(getRawMaterial1NodeRef()));
+			compoList2.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(getRawMaterial2NodeRef()));
 			finishedProduct2.getCompoListView().setCompoList(compoList2);
 			
 			List<CostListDataItem> costList2 = new ArrayList<>();
-			costList2.add(new CostListDataItem(null, null, "€/kg", null, cost1, null));
+			costList2.add(new CostListDataItem(null, null, "€/kg", null, getCost1(), null));
 			finishedProduct2.setCostList(costList2);
 			
 			List<NutListDataItem> nutList2 = new ArrayList<>();
-			nutList2.add(NutListDataItem.build().withNut(nut1)
+			nutList2.add(NutListDataItem.build().withNut(getNut1())
 );
-			nutList2.add(NutListDataItem.build().withNut(nut2)
+			nutList2.add(NutListDataItem.build().withNut(getNut2())
 );
-			nutList2.add(NutListDataItem.build().withNut(nut3)
+			nutList2.add(NutListDataItem.build().withNut(getNut3())
 );
-			nutList2.add(NutListDataItem.build().withNut(nut4)
+			nutList2.add(NutListDataItem.build().withNut(getNut4())
 );
 			finishedProduct2.setNutList(nutList2);
 			
@@ -275,14 +275,14 @@ public class GlopIT extends AbstractFinishedProductTest {
 			GlopTarget target = null;
 			List<GlopConstraint> characts2 = new ArrayList<>();
 			for (CostListDataItem cost: costList2) {
-				if (cost.getCost().equals(cost1)) {
+				if (cost.getCost().equals(getCost1())) {
 					target = new GlopTarget(cost, "min");
 				}
 			}
 			for (NutListDataItem nut: nutList2) {
-				if (nut.getNut().equals(nut3)) {
+				if (nut.getNut().equals(getNut3())) {
 					characts2.add(new GlopConstraint(nut, 10d, Double.POSITIVE_INFINITY));
-				} else if (nut.getNut().equals(nut4)) {
+				} else if (nut.getNut().equals(getNut4())) {
 					characts2.add(new GlopConstraint(nut, 4d, 4d));
 				}
 			}
@@ -298,9 +298,9 @@ public class GlopIT extends AbstractFinishedProductTest {
 			assertEquals(2, compoList2.size());
 			for (CompoListDataItem compoItem: compoList2) {
 				double value = result2.getComponentValue(compoItem.getProduct());
-				if (compoItem.getProduct().equals(rawMaterial1NodeRef)) {
+				if (compoItem.getProduct().equals(getRawMaterial1NodeRef())) {
 					assertEpsilon(4d/3d, value, 1e-6);
-				} else if (compoItem.getProduct().equals(rawMaterial2NodeRef)) {
+				} else if (compoItem.getProduct().equals(getRawMaterial2NodeRef())) {
 					assertEpsilon(7d/9d, value, 1e-6);
 				} else {
 					fail(compoItem.getProduct().toString() + " not found in composition list");
@@ -319,7 +319,7 @@ public class GlopIT extends AbstractFinishedProductTest {
 	@Test
 	public void testCompoList() {
 		
-		mockWebServer.enqueue(new MockResponse().setBody(String.format("{\"coefficients\":{\"%s\":1.0},\"status\":\"optimal\",\"value\":1.0}", rawMaterial2NodeRef)));
+		mockWebServer.enqueue(new MockResponse().setBody(String.format("{\"coefficients\":{\"%s\":1.0},\"status\":\"optimal\",\"value\":1.0}", getRawMaterial2NodeRef())));
 
 		logger.info("testGlopService");
 		
@@ -339,7 +339,7 @@ public class GlopIT extends AbstractFinishedProductTest {
 			finishedProduct.setDensity(1d);
 			
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(CompoListDataItem.build().withQtyUsed(2d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial2NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(2d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(getRawMaterial2NodeRef()));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
@@ -369,7 +369,7 @@ public class GlopIT extends AbstractFinishedProductTest {
 			GlopTarget target = null;
 			List<GlopConstraint> characts = new ArrayList<>();
 			CompoListDataItem compo = compoList.get(0);
-			assertEquals(rawMaterial2NodeRef, compo.getProduct());
+			assertEquals(getRawMaterial2NodeRef(), compo.getProduct());
 			target = new GlopTarget(compo, "max");
 			logger.debug("Added " + target.toString());
 			characts.add(new GlopConstraint(compo, 0d, 1d));
@@ -390,7 +390,7 @@ public class GlopIT extends AbstractFinishedProductTest {
 	@Test
 	public void testSpelFunctions() {
 		
-		mockWebServer.enqueue(new MockResponse().setBody(String.format("{\"coefficients\":{\"%s\":0.7777777777777778,\"%s\":1.3333333333333333},\"status\":\"optimal\",\"value\":4.777777777777778}", rawMaterial2NodeRef, rawMaterial1NodeRef)));
+		mockWebServer.enqueue(new MockResponse().setBody(String.format("{\"coefficients\":{\"%s\":0.7777777777777778,\"%s\":1.3333333333333333},\"status\":\"optimal\",\"value\":4.777777777777778}", getRawMaterial2NodeRef(), getRawMaterial1NodeRef())));
 
 		NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -408,27 +408,27 @@ public class GlopIT extends AbstractFinishedProductTest {
 			finishedProduct.setDensity(1d);
 			
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
-			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial2NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(getRawMaterial1NodeRef()));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(getRawMaterial2NodeRef()));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			
 			List<CostListDataItem> costList = new ArrayList<>();
-			costList.add(new CostListDataItem(null, null, "€/kg", null, cost1, null));
+			costList.add(new CostListDataItem(null, null, "€/kg", null, getCost1(), null));
 			finishedProduct.setCostList(costList);
 			
 			List<NutListDataItem> nutList = new ArrayList<>();
-			nutList.add(NutListDataItem.build().withNut(nut1)
+			nutList.add(NutListDataItem.build().withNut(getNut1())
 );
-			nutList.add(NutListDataItem.build().withNut(nut2)
+			nutList.add(NutListDataItem.build().withNut(getNut2())
 );
-			nutList.add(NutListDataItem.build().withNut(nut3)
+			nutList.add(NutListDataItem.build().withNut(getNut3())
 );
-			nutList.add(NutListDataItem.build().withNut(nut4)
+			nutList.add(NutListDataItem.build().withNut(getNut4())
 );
 			finishedProduct.setNutList(nutList);
 			
 			List<DynamicCharactListItem> dynamicCharactList = new ArrayList<>();
-			dynamicCharactList.add(new DynamicCharactListItem("test1", "var glopData = @glop.optimize({target: {var: cost['" + cost1 + "'], task: \"min\"}, constraints: {{var: nut['" + nut3 + "'], min: 10, max: \"inf\"}, {var: nut['" + nut4 + "'], min: 4, max: 4},{var:\"recipeQtyUsed\", min:\"-inf\", max:\"inf\"}}}); #glopData.toString();"));
+			dynamicCharactList.add(new DynamicCharactListItem("test1", "var glopData = @glop.optimize({target: {var: cost['" + getCost1() + "'], task: \"min\"}, constraints: {{var: nut['" + getNut3() + "'], min: 10, max: \"inf\"}, {var: nut['" + getNut4() + "'], min: 4, max: 4},{var:\"recipeQtyUsed\", min:\"-inf\", max:\"inf\"}}}); #glopData.toString();"));
 			finishedProduct.getCompoListView().setDynamicCharactList(dynamicCharactList);
 			
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
@@ -477,7 +477,7 @@ public class GlopIT extends AbstractFinishedProductTest {
 	public void testToleranceApplication() {
 		
 		mockWebServer.enqueue(new MockResponse().setBody(""));
-		mockWebServer.enqueue(new MockResponse().setBody(String.format("{\"coefficients\":{\"%s\":-0.0,\"%s\":2.0},\"status\":\"optimal\",\"value\":2.0}", rawMaterial1NodeRef, rawMaterial2NodeRef)));
+		mockWebServer.enqueue(new MockResponse().setBody(String.format("{\"coefficients\":{\"%s\":-0.0,\"%s\":2.0},\"status\":\"optimal\",\"value\":2.0}", getRawMaterial1NodeRef(), getRawMaterial2NodeRef())));
 		
 		NodeRef fpNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -488,25 +488,25 @@ public class GlopIT extends AbstractFinishedProductTest {
 			finishedProduct.setDensity(1d);
 			
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
-			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial2NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(getRawMaterial1NodeRef()));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(getRawMaterial2NodeRef()));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			
 			List<CostListDataItem> costList = new ArrayList<>();
-			costList.add(new CostListDataItem(null, null, "€/kg", null, cost1, null));
+			costList.add(new CostListDataItem(null, null, "€/kg", null, getCost1(), null));
 			finishedProduct.setCostList(costList);
 			
 			List<NutListDataItem> nutList = new ArrayList<>();
-			nutList.add(NutListDataItem.build().withNut(nut1)
+			nutList.add(NutListDataItem.build().withNut(getNut1())
 );
-			nutList.add(NutListDataItem.build().withNut(nut2)
+			nutList.add(NutListDataItem.build().withNut(getNut2())
 );
-			nutList.add(NutListDataItem.build().withNut(nut3)
+			nutList.add(NutListDataItem.build().withNut(getNut3())
 );
 			finishedProduct.setNutList(nutList);
 			
 			List<DynamicCharactListItem> dynamicCharactList = new ArrayList<>();
-			dynamicCharactList.add(new DynamicCharactListItem("test1", "var glopData = @glop.optimize({target: {var: cost['" + cost1 + "'], task: \"min\"}, constraints: {{var: nut['" + nut1 + "'], min: 2, max: 2, tol:50}, {var: nut['" + nut2 + "'], min: 3, max: 3, tol:50}, {var: nut['" + nut3 + "'], min: 8, max: 8, tol:50}}}); #glopData.toString();"));
+			dynamicCharactList.add(new DynamicCharactListItem("test1", "var glopData = @glop.optimize({target: {var: cost['" + getCost1() + "'], task: \"min\"}, constraints: {{var: nut['" + getNut1() + "'], min: 2, max: 2, tol:50}, {var: nut['" + getNut2() + "'], min: 3, max: 3, tol:50}, {var: nut['" + getNut3() + "'], min: 8, max: 8, tol:50}}}); #glopData.toString();"));
 			finishedProduct.getCompoListView().setDynamicCharactList(dynamicCharactList);
 			
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();

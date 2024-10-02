@@ -92,55 +92,55 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 			/**
 			 * Raw Material part
 			 */
-			ProductData rawMaterial1 = alfrescoRepository.findOne(rawMaterial1NodeRef);
+			ProductData rawMaterial1 = alfrescoRepository.findOne(getRawMaterial1NodeRef());
 			rawMaterial1.setState(SystemState.Valid);
 			alfrescoRepository.save(rawMaterial1);
 
-			ProductData rawMaterial5 = alfrescoRepository.findOne(rawMaterial5NodeRef);
+			ProductData rawMaterial5 = alfrescoRepository.findOne(getRawMaterial5NodeRef());
 			rawMaterial5.setState(SystemState.ToValidate);
 			alfrescoRepository.save(rawMaterial5);
 
-			ProductData rawMaterial6 = alfrescoRepository.findOne(rawMaterial6NodeRef);
+			ProductData rawMaterial6 = alfrescoRepository.findOne(getRawMaterial6NodeRef());
 			rawMaterial6.setState(SystemState.Refused);
 			alfrescoRepository.save(rawMaterial6);
 
-			ProductData rawMaterial11 = alfrescoRepository.findOne(rawMaterial11NodeRef);
+			ProductData rawMaterial11 = alfrescoRepository.findOne(getRawMaterial11NodeRef());
 			rawMaterial11.setState(SystemState.Archived);
 			alfrescoRepository.save(rawMaterial11);
 
-			ProductData rawMaterial12 = alfrescoRepository.findOne(rawMaterial12NodeRef);
+			ProductData rawMaterial12 = alfrescoRepository.findOne(getRawMaterial12NodeRef());
 			rawMaterial12.setState(SystemState.Valid);
 			alfrescoRepository.save(rawMaterial12);
 
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
-			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial5NodeRef));
-			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial6NodeRef));
-			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial11NodeRef));
-			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial12NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(getRawMaterial1NodeRef()));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(getRawMaterial5NodeRef()));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(getRawMaterial6NodeRef()));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(getRawMaterial11NodeRef()));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(getRawMaterial12NodeRef()));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
 			/**
 			 * Packaging part
 			 */
-			ProductData packaging1 = alfrescoRepository.findOne(packagingMaterial1NodeRef);
+			ProductData packaging1 = alfrescoRepository.findOne(getPackagingMaterial1NodeRef());
 			packaging1.setState(SystemState.Valid);
 			alfrescoRepository.save(packaging1);
 
-			ProductData packaging2 = alfrescoRepository.findOne(packagingMaterial2NodeRef);
+			ProductData packaging2 = alfrescoRepository.findOne(getPackagingMaterial2NodeRef());
 			packaging2.setState(SystemState.ToValidate);
 			alfrescoRepository.save(packaging2);
 
-			ProductData packagingKit = alfrescoRepository.findOne(packagingKit1NodeRef);
+			ProductData packagingKit = alfrescoRepository.findOne(getPackagingKit1NodeRef());
 			packagingKit.setState(SystemState.Simulation);
 			alfrescoRepository.save(packagingKit);
 
 			List<PackagingListDataItem> packagingList = new ArrayList<>();
-			packagingList.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.kg).withPkgLevel(PackagingLevel.Primary).withIsMaster(false).withProduct(packagingMaterial1NodeRef)
+			packagingList.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.kg).withPkgLevel(PackagingLevel.Primary).withIsMaster(false).withProduct(getPackagingMaterial1NodeRef())
 );
-			packagingList.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.kg).withPkgLevel(PackagingLevel.Primary).withIsMaster(false).withProduct(packagingMaterial2NodeRef)
+			packagingList.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.kg).withPkgLevel(PackagingLevel.Primary).withIsMaster(false).withProduct(getPackagingMaterial2NodeRef())
 );
-			packagingList.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.kg).withPkgLevel(PackagingLevel.Secondary).withIsMaster(true).withProduct(packagingKit1NodeRef)
+			packagingList.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.kg).withPkgLevel(PackagingLevel.Secondary).withIsMaster(true).withProduct(getPackagingKit1NodeRef())
 );
 			finishedProduct.getPackagingListView().setPackagingList(packagingList);
 
@@ -167,8 +167,8 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 
 			ings = new ArrayList<>();
 			List<NodeRef> geoOrigins = new ArrayList<>();
-			ings.add(ing2);
-			geoOrigins.add(geoOrigin2);
+			ings.add(getIng2());
+			geoOrigins.add(getGeoOrigin2());
 			forbiddenIngList2.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "Ing2 geoOrigin2 interdit sur charcuterie", null,
 					null, null, ings, geoOrigins, new ArrayList<>()));
 

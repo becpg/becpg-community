@@ -176,17 +176,17 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 		});
 		
 		inWriteTx(() -> {
-			nodeService.setProperty(ing1, PLMModel.PROP_REGULATORY_CODE, 6327);
-			nodeService.setProperty(ing1, PLMModel.PROP_ING_TYPE_V2, nutrientNodeRef);
+			nodeService.setProperty(getIng1(), PLMModel.PROP_REGULATORY_CODE, 6327);
+			nodeService.setProperty(getIng1(), PLMModel.PROP_ING_TYPE_V2, nutrientNodeRef);
 			
-			nodeService.setProperty(ing2, PLMModel.PROP_REGULATORY_CODE, 80018299);
-			nodeService.setProperty(ing2, PLMModel.PROP_ING_TYPE_V2, flavorNodeRef);
+			nodeService.setProperty(getIng2(), PLMModel.PROP_REGULATORY_CODE, 80018299);
+			nodeService.setProperty(getIng2(), PLMModel.PROP_ING_TYPE_V2, flavorNodeRef);
 			
-			nodeService.setProperty(ing3, PLMModel.PROP_REGULATORY_CODE, 4476);
-			nodeService.setProperty(ing3, PLMModel.PROP_ING_TYPE_V2, antioxidantNodeRef);
+			nodeService.setProperty(getIng3(), PLMModel.PROP_REGULATORY_CODE, 4476);
+			nodeService.setProperty(getIng3(), PLMModel.PROP_ING_TYPE_V2, antioxidantNodeRef);
 			
-			nodeService.setProperty(ing4, PLMModel.PROP_REGULATORY_CODE, 4476);
-			nodeService.setProperty(ing4, PLMModel.PROP_ING_TYPE_V2, preservativeNodeRef);
+			nodeService.setProperty(getIng4(), PLMModel.PROP_REGULATORY_CODE, 4476);
+			nodeService.setProperty(getIng4(), PLMModel.PROP_ING_TYPE_V2, preservativeNodeRef);
 			
 			return null;
 		});
@@ -377,7 +377,7 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 				
 				List<IngListDataItem> ingList = product.getIngList();
 				
-				ingList.add(new IngListDataItem(null, 1d, null, null, null, null, null, ing1, null));
+				ingList.add(new IngListDataItem(null, 1d, null, null, null, null, null, getIng1(), null));
 				
 				List<RegulatoryListDataItem> regulatoryList = product.getRegulatoryList();
 				
@@ -394,7 +394,7 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 				
 				assertEquals(RequirementType.Tolerated, requirements.get(0).getReqType());
 				assertEquals(RequirementDataType.Specification, requirements.get(0).getReqDataType());
-				assertEquals(ing1, requirements.get(0).getCharact());
+				assertEquals(getIng1(), requirements.get(0).getCharact());
 				
 				return null;
 			});
@@ -502,7 +502,7 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 				
 				List<IngListDataItem> ingList = product.getIngList();
 				
-				ingList.add(new IngListDataItem(null, 1d, null, null, null, null, null, ing1, null));
+				ingList.add(new IngListDataItem(null, 1d, null, null, null, null, null, getIng1(), null));
 				
 				List<RegulatoryListDataItem> regulatoryList = product.getRegulatoryList();
 				
@@ -519,7 +519,7 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 				
 				assertEquals(RequirementType.Tolerated, requirements.get(0).getReqType());
 				assertEquals(RequirementDataType.Specification, requirements.get(0).getReqDataType());
-				assertEquals(ing1, requirements.get(0).getCharact());
+				assertEquals(getIng1(), requirements.get(0).getCharact());
 				
 				return null;
 			});
@@ -726,8 +726,8 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 				
 				List<IngListDataItem> ingList = product.getIngList();
 				
-				ingList.add(new IngListDataItem(null, 2d, null, null, null, null, null, ing3, null));
-				ingList.add(new IngListDataItem(null, 2d, null, null, null, null, null, ing4, null));
+				ingList.add(new IngListDataItem(null, 2d, null, null, null, null, null, getIng3(), null));
+				ingList.add(new IngListDataItem(null, 2d, null, null, null, null, null, getIng4(), null));
 				
 				List<RegulatoryListDataItem> regulatoryList = product.getRegulatoryList();
 				
@@ -753,9 +753,9 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 				int checks = 0;
 				
 				for (ReqCtrlListDataItem req : requirements) {
-					if (ing3.equals(req.getCharact())) {
+					if (getIng3().equals(req.getCharact())) {
 						checks++;
-					} else if (ing4.equals(req.getCharact())) {
+					} else if (getIng4().equals(req.getCharact())) {
 						checks++;
 					}
 				}
@@ -930,8 +930,8 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 				
 				List<IngListDataItem> ingList = product.getIngList();
 				
-				ingList.add(new IngListDataItem(null, 2d, null, null, null, null, null, ing3, null));
-				ingList.add(new IngListDataItem(null, 2d, null, null, null, null, null, ing4, null));
+				ingList.add(new IngListDataItem(null, 2d, null, null, null, null, null, getIng3(), null));
+				ingList.add(new IngListDataItem(null, 2d, null, null, null, null, null, getIng4(), null));
 				
 				List<RegulatoryListDataItem> regulatoryList = product.getRegulatoryList();
 				
@@ -957,9 +957,9 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 				int checks = 0;
 				
 				for (ReqCtrlListDataItem req : requirements) {
-					if (ing3.equals(req.getCharact())) {
+					if (getIng3().equals(req.getCharact())) {
 						checks++;
-					} else if (ing4.equals(req.getCharact())) {
+					} else if (getIng4().equals(req.getCharact())) {
 						checks++;
 					}
 				}

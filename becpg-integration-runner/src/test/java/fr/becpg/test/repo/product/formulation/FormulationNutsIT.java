@@ -85,13 +85,13 @@ public class FormulationNutsIT extends AbstractFinishedProductTest {
 					+ nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
 			logger.info(trace);
 
-			if (nutListDataItem.getNut().equals(nut1)) {
+			if (nutListDataItem.getNut().equals(getNut1())) {
 				assertNotSame("nut1.getValue() == 3, actual values: " + trace, 3d, nutListDataItem.getValue());
 				assertEquals("nut1.getUnit() == kJ/100g, actual values: " + trace, "kJ/100g", nutListDataItem.getUnit());
 				assertEquals("must be group1", GROUP1, nutListDataItem.getGroup());
 				checks++;
 			}
-			if (nutListDataItem.getNut().equals(nut2)) {
+			if (nutListDataItem.getNut().equals(getNut2())) {
 				assertEquals("nut2.getValue() == 6, actual values: " + trace, 6d, nutListDataItem.getValue());
 				assertEquals("nut2.getUnit() == kcal/100g, actual values: " + trace, "kcal/100g", nutListDataItem.getUnit());
 				assertEquals("must be group2", GROUP2, nutListDataItem.getGroup());
@@ -107,11 +107,11 @@ public class FormulationNutsIT extends AbstractFinishedProductTest {
 
 				checks++;
 			}
-			if (nutListDataItem.getNut().equals(nut3)) {
+			if (nutListDataItem.getNut().equals(getNut3())) {
 				assertEquals("nut3.getValue() == 14, actual values: " + trace, 14d, nutListDataItem.getValue());
 				checks++;
 			}
-			if (nutListDataItem.getNut().equals(nut4)) {
+			if (nutListDataItem.getNut().equals(getNut4())) {
 				assertEquals("nut4.getValue() == 1.5d, actual values: " + trace, 1.5d, nutListDataItem.getValue());
 
 				assertEquals(RegulationFormulationHelper.extractValue(nutListDataItem.getRoundedValue(), Locale.FRENCH).doubleValue(), 2d);
@@ -135,21 +135,21 @@ public class FormulationNutsIT extends AbstractFinishedProductTest {
 		checks = 0;
 
 		String message0 = I18NUtil.getMessage(NutsRequirementScanner.MESSAGE_NUT_NOT_IN_RANGE,
-				nodeService.getProperty(nut1, BeCPGModel.PROP_CHARACT_NAME), "3", "7<= ", "");
+				nodeService.getProperty(getNut1(), BeCPGModel.PROP_CHARACT_NAME), "3", "7<= ", "");
 		String message1 = I18NUtil.getMessage(NutsRequirementScanner.MESSAGE_NUT_NOT_IN_RANGE,
-				nodeService.getProperty(nut2, BeCPGModel.PROP_CHARACT_NAME), "6", "7<= ", "");
+				nodeService.getProperty(getNut2(), BeCPGModel.PROP_CHARACT_NAME), "6", "7<= ", "");
 		String message2 = I18NUtil.getMessage(NutsRequirementScanner.MESSAGE_NUT_NOT_IN_RANGE,
-				nodeService.getProperty(nut3, BeCPGModel.PROP_CHARACT_NAME), "14", "", " <=10");
+				nodeService.getProperty(getNut3(), BeCPGModel.PROP_CHARACT_NAME), "14", "", " <=10");
 		String message4 = I18NUtil.getMessage(NutsCalculatingFormulationHandler.MESSAGE_MAXIMAL_DAILY_VALUE,
-				nodeService.getProperty(nut3, BeCPGModel.PROP_CHARACT_NAME));
+				nodeService.getProperty(getNut3(), BeCPGModel.PROP_CHARACT_NAME));
 
 		String message5 = I18NUtil.getMessage(NutsRequirementScanner.MESSAGE_NUT_NOT_IN_RANGE + ".AsPrepared",
-				nodeService.getProperty(nut4, BeCPGModel.PROP_CHARACT_NAME),
+				nodeService.getProperty(getNut4(), BeCPGModel.PROP_CHARACT_NAME),
 				MLTextHelper.getI18NMessage(SimpleListRequirementScanner.MESSAGE_UNDEFINED_VALUE), "1,5<=", " <=10");
 		String message6 = I18NUtil.getMessage(NutsRequirementScanner.MESSAGE_NUT_NOT_IN_RANGE + ".Serving",
-				nodeService.getProperty(nut4, BeCPGModel.PROP_CHARACT_NAME), "14", "1,5<=", " <=10");
+				nodeService.getProperty(getNut4(), BeCPGModel.PROP_CHARACT_NAME), "14", "1,5<=", " <=10");
 		String message7 = I18NUtil.getMessage(NutsRequirementScanner.MESSAGE_NUT_NOT_IN_RANGE + ".GdaPerc",
-				nodeService.getProperty(nut4, BeCPGModel.PROP_CHARACT_NAME), "0.75", "1,5<=", " <=10");
+				nodeService.getProperty(getNut4(), BeCPGModel.PROP_CHARACT_NAME), "0.75", "1,5<=", " <=10");
 
 		logger.info("Formulation raised " + formulatedProduct.getReqCtrlList().size() + " rclDataItems");
 		for (ReqCtrlListDataItem r : formulatedProduct.getReqCtrlList()) {
@@ -187,12 +187,12 @@ public class FormulationNutsIT extends AbstractFinishedProductTest {
 		return inWriteTx(() -> {
 
 			ProductSpecificationData productSpecification = ProductSpecificationData.build().withName(name + " Spec Nut 1")
-					.withNutList(List.of(NutListDataItem.build().withMini(3d).withMaxi(4d).withNut(nut1),
-							NutListDataItem.build().withMini(7d).withNut(nut2), NutListDataItem.build().withMaxi(10d).withNut(nut3),
-							NutListDataItem.build().withMini(1.5d).withMaxi(10d).withNut(nut4),
-							NutListDataItem.build().withMini(1.5d).withMaxi(10d).withNutRequirementType(NutRequirementType.AsPrepared).withNut(nut4),
-							NutListDataItem.build().withMini(1.5d).withMaxi(10d).withNutRequirementType(NutRequirementType.Serving).withNut(nut4),
-							NutListDataItem.build().withMini(1.5d).withMaxi(10d).withNutRequirementType(NutRequirementType.GdaPerc).withNut(nut4)
+					.withNutList(List.of(NutListDataItem.build().withMini(3d).withMaxi(4d).withNut(getNut1()),
+							NutListDataItem.build().withMini(7d).withNut(getNut2()), NutListDataItem.build().withMaxi(10d).withNut(getNut3()),
+							NutListDataItem.build().withMini(1.5d).withMaxi(10d).withNut(getNut4()),
+							NutListDataItem.build().withMini(1.5d).withMaxi(10d).withNutRequirementType(NutRequirementType.AsPrepared).withNut(getNut4()),
+							NutListDataItem.build().withMini(1.5d).withMaxi(10d).withNutRequirementType(NutRequirementType.Serving).withNut(getNut4()),
+							NutListDataItem.build().withMini(1.5d).withMaxi(10d).withNutRequirementType(NutRequirementType.GdaPerc).withNut(getNut4())
 
 					));
 
@@ -201,22 +201,22 @@ public class FormulationNutsIT extends AbstractFinishedProductTest {
 			List<CompoListDataItem> compoList = new ArrayList<>();
 
 			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Detail)
-					.withProduct(localSF1NodeRef));
+					.withProduct(getLocalSF1NodeRef()));
 			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
-					.withProduct(rawMaterial1NodeRef).withParent(compoList.get(0)));
+					.withProduct(getRawMaterial1NodeRef()).withParent(compoList.get(0)));
 			compoList.add(CompoListDataItem.build().withQtyUsed(2d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Detail)
-					.withProduct(rawMaterial2NodeRef).withParent(compoList.get(0)));
+					.withProduct(getRawMaterial2NodeRef()).withParent(compoList.get(0)));
 			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Detail)
-					.withProduct(localSF2NodeRef));
+					.withProduct(getLocalSF2NodeRef()));
 			compoList.add(CompoListDataItem.build().withQtyUsed(3d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
-					.withProduct(rawMaterial3NodeRef).withParent(compoList.get(3)));
+					.withProduct(getRawMaterial3NodeRef()).withParent(compoList.get(3)));
 			compoList.add(CompoListDataItem.build().withQtyUsed(3d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Omit)
-					.withProduct(rawMaterial4NodeRef).withParent(compoList.get(3)));
+					.withProduct(getRawMaterial4NodeRef()).withParent(compoList.get(3)));
 
 			FinishedProductData finishedProduct = FinishedProductData.build().withName(name).withLegalName("Legal " + name).withUnit(ProductUnit.kg)
 					.withQty(2d).withUnitPrice(22.4d).withDensity(1d).withServingSize(50d).withProjectedQty(10000L).withCompoList(compoList)
-					.withNutList(List.of(NutListDataItem.build().withNut(nut1), NutListDataItem.build().withNut(nut2),
-							NutListDataItem.build().withNut(nut3)));
+					.withNutList(List.of(NutListDataItem.build().withNut(getNut1()), NutListDataItem.build().withNut(getNut2()),
+							NutListDataItem.build().withNut(getNut3())));
 
 			finishedProduct = (FinishedProductData) alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct);
 

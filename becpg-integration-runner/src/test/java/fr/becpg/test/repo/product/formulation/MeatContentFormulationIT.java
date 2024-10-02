@@ -179,9 +179,9 @@ public class MeatContentFormulationIT extends AbstractFinishedProductTest {
 
 			List<IngListDataItem> ingList = new ArrayList<>();
 			List<NodeRef> bioOrigins = new ArrayList<>();
-			bioOrigins.add(bioOrigin1);
+			bioOrigins.add(getBioOrigin1());
 			List<NodeRef> geoOrigins = new ArrayList<>();
-			geoOrigins.add(geoOrigin1);
+			geoOrigins.add(getGeoOrigin1());
 			ingList.add(new IngListDataItem(null, 100d, geoOrigins, bioOrigins, false, false, false, beef, false));
 
 			rawMaterial1.setIngList(ingList);

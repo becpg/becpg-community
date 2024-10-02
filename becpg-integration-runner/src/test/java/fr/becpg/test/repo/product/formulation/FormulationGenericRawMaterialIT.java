@@ -68,16 +68,16 @@ public class FormulationGenericRawMaterialIT extends AbstractFinishedProductTest
 			genRawMaterial.setUnit(ProductUnit.kg);
 			genRawMaterial.setQty(1d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
-			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial2NodeRef));
-			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial7NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(getRawMaterial1NodeRef()));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(getRawMaterial2NodeRef()));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(getRawMaterial7NodeRef()));
 			genRawMaterial.getCompoListView().setCompoList(compoList);
 			List<CostListDataItem> costList = new LinkedList<>();
-			costList.add(new CostListDataItem(null, null, null, null, cost1, null));
-			costList.add(new CostListDataItem(null, null, null, null, cost2, null));
+			costList.add(new CostListDataItem(null, null, null, null, getCost1(), null));
+			costList.add(new CostListDataItem(null, null, null, null, getCost2(), null));
 			genRawMaterial.setCostList(costList);
 			List<PhysicoChemListDataItem> physicoChemList = new LinkedList<>();
-			physicoChemList.add(new PhysicoChemListDataItem(null, null, null, null, null, physicoChem3));
+			physicoChemList.add(new PhysicoChemListDataItem(null, null, null, null, null, getPhysicoChem3()));
 			genRawMaterial.setPhysicoChemList(physicoChemList);
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), genRawMaterial).getNodeRef();
@@ -99,7 +99,7 @@ public class FormulationGenericRawMaterialIT extends AbstractFinishedProductTest
 
 			assertAllergenList(formulatedProduct);
 
-			NodeRef listContainerNodeRef = entityListDAO.getListContainer(rawMaterial1NodeRef);
+			NodeRef listContainerNodeRef = entityListDAO.getListContainer(getRawMaterial1NodeRef());
 			Assert.assertNotNull(listContainerNodeRef);
 			Assert.assertNotNull(entityListDAO.getList(listContainerNodeRef, PLMModel.TYPE_COSTLIST));
 
@@ -120,11 +120,11 @@ public class FormulationGenericRawMaterialIT extends AbstractFinishedProductTest
 			genRawMaterial.setUnit(ProductUnit.kg);
 			genRawMaterial.setQty(1d);
 			List<CostListDataItem> costList = new LinkedList<>();
-			costList.add(new CostListDataItem(null, null, null, null, cost1, null));
-			costList.add(new CostListDataItem(null, null, null, null, cost2, null));
+			costList.add(new CostListDataItem(null, null, null, null, getCost1(), null));
+			costList.add(new CostListDataItem(null, null, null, null, getCost2(), null));
 			genRawMaterial.setCostList(costList);
 			List<PhysicoChemListDataItem> physicoChemList = new LinkedList<>();
-			physicoChemList.add(new PhysicoChemListDataItem(null, null, null, null, null, physicoChem3));
+			physicoChemList.add(new PhysicoChemListDataItem(null, null, null, null, null, getPhysicoChem3()));
 			genRawMaterial.setPhysicoChemList(physicoChemList);
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), genRawMaterial).getNodeRef();
@@ -174,15 +174,15 @@ public class FormulationGenericRawMaterialIT extends AbstractFinishedProductTest
 			// allergen1 - voluntary: true - involuntary: false -
 			// voluntary sources:Raw material 1, Raw material 2 -
 			// involuntary sources:
-			if (allergenListDataItem.getAllergen().equals(allergen1)) {
+			if (allergenListDataItem.getAllergen().equals(getAllergen1())) {
 				assertEquals("allergen1.getVoluntary().booleanValue() == true, actual values: " + trace, true,
 						allergenListDataItem.getVoluntary().booleanValue());
 				assertEquals("allergen1.getInVoluntary().booleanValue() == false, actual values: " + trace, false,
 						allergenListDataItem.getInVoluntary().booleanValue());
 				assertEquals("allergen1.getVoluntarySources() contains Raw material 1, actual values: " + trace, true,
-						allergenListDataItem.getVoluntarySources().contains(rawMaterial1NodeRef));
+						allergenListDataItem.getVoluntarySources().contains(getRawMaterial1NodeRef()));
 				assertEquals("allergen1.getVoluntarySources() contains Raw material 2, actual values: " + trace, true,
-						allergenListDataItem.getVoluntarySources().contains(rawMaterial2NodeRef));
+						allergenListDataItem.getVoluntarySources().contains(getRawMaterial2NodeRef()));
 				assertEquals("allergen1.getInVoluntarySources() is empty, actual values: " + trace, 0,
 						allergenListDataItem.getInVoluntarySources().size());
 				//Max(20,10)
@@ -191,13 +191,13 @@ public class FormulationGenericRawMaterialIT extends AbstractFinishedProductTest
 			}
 			// allergen2 - voluntary: false - involuntary: true -
 			// voluntary sources: - involuntary sources:Raw material 2,
-			if (allergenListDataItem.getAllergen().equals(allergen2)) {
+			if (allergenListDataItem.getAllergen().equals(getAllergen2())) {
 				assertEquals("allergen2.getVoluntary().booleanValue() == false, actual values: " + trace, false,
 						allergenListDataItem.getVoluntary().booleanValue());
 				assertEquals("allergen2.getInVoluntary().booleanValue() == true, actual values: " + trace, true,
 						allergenListDataItem.getInVoluntary().booleanValue());
 				assertEquals("allergen2.getInVoluntarySources() contains Raw material 2, actual values: " + trace, true,
-						allergenListDataItem.getInVoluntarySources().contains(rawMaterial2NodeRef));
+						allergenListDataItem.getInVoluntarySources().contains(getRawMaterial2NodeRef()));
 				assertEquals("allergen2.getVoluntarySources() is empty, actual values: " + trace, 0,
 						allergenListDataItem.getVoluntarySources().size());
 				//Max(5,50)
@@ -207,7 +207,7 @@ public class FormulationGenericRawMaterialIT extends AbstractFinishedProductTest
 			// allergen: allergen3 - voluntary: true - involuntary: true
 			// - voluntary sources:Raw material 3, - involuntary
 			// sources:Raw material 3,
-			if (allergenListDataItem.getAllergen().equals(allergen3)) {
+			if (allergenListDataItem.getAllergen().equals(getAllergen3())) {
 				assertEquals("allergen3.getVoluntary().booleanValue() == true, actual values: " + trace, false,
 						allergenListDataItem.getVoluntary().booleanValue());
 				assertEquals("allergen3.getInVoluntary().booleanValue() == true, actual values: " + trace, false,
@@ -221,7 +221,7 @@ public class FormulationGenericRawMaterialIT extends AbstractFinishedProductTest
 			}
 			// allergen4 - voluntary: false - involuntary: false -
 			// voluntary sources: - involuntary sources:
-			if (allergenListDataItem.getAllergen().equals(allergen4)) {
+			if (allergenListDataItem.getAllergen().equals(getAllergen4())) {
 				assertEquals("allergen4.getVoluntary().booleanValue() == false, actual values: " + trace, false,
 						allergenListDataItem.getVoluntary().booleanValue());
 				assertEquals("allergen4.getInVoluntary().booleanValue() == false, actual values: " + trace, false,
@@ -244,7 +244,7 @@ public class FormulationGenericRawMaterialIT extends AbstractFinishedProductTest
 		for (PhysicoChemListDataItem p : formulatedProduct.getPhysicoChemList()) {
 			logger.info("p " + nodeService.getProperty(p.getPhysicoChem(), BeCPGModel.PROP_CHARACT_NAME) + " value: " + p.getValue() + " mini: "
 					+ p.getMini() + " maxi: " + p.getMaxi());
-			if (p.getPhysicoChem().equals(physicoChem3)) {
+			if (p.getPhysicoChem().equals(getPhysicoChem3())) {
 				assertEquals(1d, p.getValue());
 				assertEquals(0.8d, p.getMini());
 				assertEquals(2.1d, p.getMaxi());
@@ -258,12 +258,12 @@ public class FormulationGenericRawMaterialIT extends AbstractFinishedProductTest
 	private void assertIngList(RawMaterialData formulatedProduct) {
 		int checks = 0;
 		for (IngListDataItem ing : formulatedProduct.getIngList()) {
-			if (ing.getIng().equals(ing1) && (ing.getMini() != null) && (ing.getMaxi() != null)) {
+			if (ing.getIng().equals(getIng1()) && (ing.getMini() != null) && (ing.getMaxi() != null)) {
 				logger.info("ing1 mini: " + ing.getMini() + " maxi: " + ing.getMaxi());
 				assertEquals(ing.getMini(), 15.0);
 				assertEquals(ing.getMaxi(), 90.0);
 				checks++;
-			} else if (ing.getIng().equals(ing2) && (ing.getMini() != null) && (ing.getMaxi() != null)) {
+			} else if (ing.getIng().equals(getIng2()) && (ing.getMini() != null) && (ing.getMaxi() != null)) {
 				logger.info("ing2 mini: " + ing.getMini() + " maxi: " + ing.getMaxi());
 				assertEquals(ing.getMini(), 18.0);
 				assertEquals(ing.getMaxi(), 86.0);
@@ -279,10 +279,10 @@ public class FormulationGenericRawMaterialIT extends AbstractFinishedProductTest
 		int checks = 0;
 		for (CostListDataItem c : formulatedProduct.getCostList()) {
 			logger.info("c " + nodeService.getProperty(c.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " " + c.getValue());
-			if (c.getCost().equals(cost1)) {
+			if (c.getCost().equals(getCost1())) {
 				assertEquals(2d, c.getValue());
 				checks++;
-			} else if (c.getCost().equals(cost2)) {
+			} else if (c.getCost().equals(getCost2())) {
 				assertEquals(2d, c.getValue());
 				checks++;
 			}
@@ -293,8 +293,8 @@ public class FormulationGenericRawMaterialIT extends AbstractFinishedProductTest
 	private void assertSuppliers(RawMaterialData formulatedProduct) {
 
 		assertEquals(2, formulatedProduct.getSuppliers().size());
-		assertTrue(formulatedProduct.getSuppliers().contains(supplier1));
-		assertTrue(formulatedProduct.getSuppliers().contains(supplier2));
+		assertTrue(formulatedProduct.getSuppliers().contains(getSupplier1()));
+		assertTrue(formulatedProduct.getSuppliers().contains(getSupplier2()));
 
 	}
 

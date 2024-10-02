@@ -147,23 +147,23 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 
 			List<CompoListDataItem> compoList = new ArrayList<>();
 			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
-					.withDeclarationType(DeclarationType.Detail).withProduct(localSF1NodeRef));
+					.withDeclarationType(DeclarationType.Detail).withProduct(getLocalSF1NodeRef()));
 			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(1d).withUnit(ProductUnit.kg)
-					.withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(getRawMaterial1NodeRef()));
 			finishedProductData1.getCompoListView().setCompoList(compoList);
 
 			List<CostListDataItem> costList = new ArrayList<>();
-			costList.add(new CostListDataItem(null, null, null, null, cost1, null));
+			costList.add(new CostListDataItem(null, null, null, null, getCost1(), null));
 			finishedProductData1.setCostList(costList);
 
 			List<NutListDataItem> nutList = new ArrayList<>();
-			nutList.add(NutListDataItem.build().withNut(nut1));
+			nutList.add(NutListDataItem.build().withNut(getNut1()));
 			finishedProductData1.setNutList(nutList);
 
 			alfrescoRepository.create(getTestFolderNodeRef(), finishedProductData1);
 
-			nodeService.createAssociation(finishedProductData1.getNodeRef(), supplier1, PLMModel.ASSOC_SUPPLIERS);
-			nodeService.createAssociation(finishedProductData1.getNodeRef(), supplier2, PLMModel.ASSOC_SUPPLIERS);
+			nodeService.createAssociation(finishedProductData1.getNodeRef(), getSupplier1(), PLMModel.ASSOC_SUPPLIERS);
+			nodeService.createAssociation(finishedProductData1.getNodeRef(), getSupplier2(), PLMModel.ASSOC_SUPPLIERS);
 			nodeService.createAssociation(finishedProductData1.getNodeRef(), client1.getNodeRef(), PLMModel.ASSOC_CLIENTS);
 
 			return finishedProductData1.getNodeRef();
