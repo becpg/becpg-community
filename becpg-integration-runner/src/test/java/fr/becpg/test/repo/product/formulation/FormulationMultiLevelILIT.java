@@ -57,8 +57,8 @@ public class FormulationMultiLevelILIT extends AbstractFinishedProductTest {
 			finishedProduct.setQty(4d);
 			finishedProduct.setDensity(1d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(CompoListDataItem.build().withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(3d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial7NodeRef));
-			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(1d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial6NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(3d).withDeclarationType(DeclarationType.Declare).withProduct(getRawMaterial7NodeRef()));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(1d).withDeclarationType(DeclarationType.Declare).withProduct(getRawMaterial6NodeRef()));
 
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
@@ -78,15 +78,15 @@ public class FormulationMultiLevelILIT extends AbstractFinishedProductTest {
 			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
 
 			assertEquals(5, formulatedProduct.getIngList().size());
-			assertEquals(ing5, formulatedProduct.getIngList().get(0).getIng());
+			assertEquals(getIng5(), formulatedProduct.getIngList().get(0).getIng());
 			assertEquals(75d, formulatedProduct.getIngList().get(0).getQtyPerc());
-			assertEquals(ing1, formulatedProduct.getIngList().get(1).getIng());
+			assertEquals(getIng1(), formulatedProduct.getIngList().get(1).getIng());
 			assertEquals(52.5d, formulatedProduct.getIngList().get(1).getQtyPerc());
-			assertEquals(ing4, formulatedProduct.getIngList().get(2).getIng());
+			assertEquals(getIng4(), formulatedProduct.getIngList().get(2).getIng());
 			assertEquals(22, 5d, formulatedProduct.getIngList().get(2).getQtyPerc());
-			assertEquals(ing1, formulatedProduct.getIngList().get(3).getIng());
+			assertEquals(getIng1(), formulatedProduct.getIngList().get(3).getIng());
 			assertEquals(20d, formulatedProduct.getIngList().get(3).getQtyPerc());
-			assertEquals(ing2, formulatedProduct.getIngList().get(4).getIng());
+			assertEquals(getIng2(), formulatedProduct.getIngList().get(4).getIng());
 			assertEquals(5d, formulatedProduct.getIngList().get(4).getQtyPerc());
 
 			return null;

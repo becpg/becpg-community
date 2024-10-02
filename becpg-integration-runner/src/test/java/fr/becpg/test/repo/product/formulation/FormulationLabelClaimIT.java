@@ -59,24 +59,24 @@ public class FormulationLabelClaimIT extends AbstractFinishedProductTest {
 			finishedProduct1.setDensity(1d);
 			List<CompoListDataItem> compoList1 = new ArrayList<>();
 			compoList1.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
-					.withDeclarationType(DeclarationType.Detail).withProduct(localSF11NodeRef));
+					.withDeclarationType(DeclarationType.Detail).withProduct(getLocalSF11NodeRef()));
 			compoList1.add(CompoListDataItem.build().withParent(compoList1.get(0)).withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
-					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial11NodeRef));
+					.withDeclarationType(DeclarationType.Declare).withProduct(getRawMaterial11NodeRef()));
 			compoList1.add(CompoListDataItem.build().withParent(compoList1.get(0)).withQtyUsed(2d).withUnit(ProductUnit.kg).withLossPerc(0d)
-					.withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial12NodeRef));
+					.withDeclarationType(DeclarationType.Detail).withProduct(getRawMaterial12NodeRef()));
 			compoList1.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
-					.withDeclarationType(DeclarationType.Detail).withProduct(localSF12NodeRef));
+					.withDeclarationType(DeclarationType.Detail).withProduct(getLocalSF12NodeRef()));
 			compoList1.add(CompoListDataItem.build().withParent(compoList1.get(3)).withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d)
-					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial13NodeRef));
+					.withDeclarationType(DeclarationType.Declare).withProduct(getRawMaterial13NodeRef()));
 			compoList1.add(CompoListDataItem.build().withParent(compoList1.get(3)).withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d)
-					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial14NodeRef));
+					.withDeclarationType(DeclarationType.Declare).withProduct(getRawMaterial14NodeRef()));
 
 			List<PackagingListDataItem> packagingList = new ArrayList<>();
 
 			packagingList.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.kg).withPkgLevel(PackagingLevel.Primary)
-					.withIsMaster(true).withProduct(packagingMaterial1NodeRef));
+					.withIsMaster(true).withProduct(getPackagingMaterial1NodeRef()));
 			packagingList.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.kg).withPkgLevel(PackagingLevel.Primary)
-					.withIsMaster(true).withProduct(packagingMaterial2NodeRef));
+					.withIsMaster(true).withProduct(getPackagingMaterial2NodeRef()));
 
 			finishedProduct1.getCompoListView().setCompoList(compoList1);
 			finishedProduct1.getPackagingListView().setPackagingList(packagingList);
@@ -207,14 +207,14 @@ public class FormulationLabelClaimIT extends AbstractFinishedProductTest {
 			subProductLabelClaim6.setIsManual(Boolean.TRUE);
 			subProductLabelClaim7.setIsManual(Boolean.TRUE);
 
-			ProductData rm12 = alfrescoRepository.findOne(rawMaterial12NodeRef);
+			ProductData rm12 = alfrescoRepository.findOne(getRawMaterial12NodeRef());
 			if ((rm12 != null) && (rm12.getLabelClaimList() != null)) {
 				rm12.getLabelClaimList().add(subProductLabelClaim6);
 				rm12.getLabelClaimList().add(subProductLabelClaim7);
 				alfrescoRepository.save(rm12);
 			}
 
-			ProductData packaging1 = alfrescoRepository.findOne(packagingMaterial1NodeRef);
+			ProductData packaging1 = alfrescoRepository.findOne(getPackagingMaterial1NodeRef());
 			if ((packaging1 != null) && (packaging1.getLabelClaimList() != null)) {
 
 				LabelClaimListDataItem subPackagingProductLabelClaim6 = new LabelClaimListDataItem(labelClaimNodeRef6, LABEL_CLAIM_TYPE,
@@ -285,14 +285,14 @@ public class FormulationLabelClaimIT extends AbstractFinishedProductTest {
 				} else if ("Allégation 'labelClaim6' non renseignée".equals(rclDataItem.getReqMessage())) {
 					assertEquals(RequirementDataType.Labelclaim, rclDataItem.getReqDataType());
 					assertEquals(RequirementType.Info, rclDataItem.getReqType());
-					assertTrue(rclDataItem.getSources().contains(packagingMaterial1NodeRef));
-					assertTrue(rclDataItem.getSources().contains(rawMaterial12NodeRef));
+					assertTrue(rclDataItem.getSources().contains(getPackagingMaterial1NodeRef()));
+					assertTrue(rclDataItem.getSources().contains(getRawMaterial12NodeRef()));
 					checks++;
 				} else if ("Allégation 'labelClaim7' non renseignée".equals(rclDataItem.getReqMessage())) {
 					assertEquals(RequirementDataType.Labelclaim, rclDataItem.getReqDataType());
 					assertEquals(RequirementType.Info, rclDataItem.getReqType());
-					assertFalse(rclDataItem.getSources().contains(packagingMaterial1NodeRef));
-					assertTrue(rclDataItem.getSources().contains(rawMaterial12NodeRef));
+					assertFalse(rclDataItem.getSources().contains(getPackagingMaterial1NodeRef()));
+					assertTrue(rclDataItem.getSources().contains(getRawMaterial12NodeRef()));
 					checks++;
 				}
 
