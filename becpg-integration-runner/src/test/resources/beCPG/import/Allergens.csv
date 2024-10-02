@@ -1,4 +1,4 @@
-MAPPING;TestMapping.xml;
+MAPPING;TestMapping;
 PATH;/System/Characts/bcpg:entityLists/Allergens;
 TYPE;bcpg:allergen;
 COLUMNS;bcpg:charactName;bcpg:allergenType

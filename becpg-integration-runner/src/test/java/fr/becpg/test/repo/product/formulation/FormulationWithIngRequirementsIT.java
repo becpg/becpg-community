@@ -354,7 +354,7 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 			 */
 
 			logger.debug("After removing specs, " + formulatedProduct.getReqCtrlList().size() + " remain");
-			assertEquals(6, formulatedProduct.getReqCtrlList().size());
+			assertEquals(7, formulatedProduct.getReqCtrlList().size());
 
 			return null;
 
