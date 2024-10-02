@@ -79,7 +79,7 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 			semiFinishedProduct.setUnit(ProductUnit.kg);
 			List<CompoListDataItem> compoList = new ArrayList<>();
 
-			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.L).withProduct(rawMaterial6NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.L).withProduct(getRawMaterial6NodeRef()));
 			semiFinishedProduct.withCompoList(compoList);
 			NodeRef semiFinishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), semiFinishedProduct).getNodeRef();
 
@@ -92,34 +92,34 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 			compoList = new ArrayList<>();
 
 			CompoListDataItem parent1 = CompoListDataItem.build().withQtyUsed(2d).withUnit(ProductUnit.kg).withQty(10d)
-					.withDeclarationType(DeclarationType.Detail).withProduct(localSF1NodeRef);
+					.withDeclarationType(DeclarationType.Detail).withProduct(getLocalSF1NodeRef());
 
 			compoList.add(parent1);
 
 			CompoListDataItem parent12 = CompoListDataItem.build().withParent(parent1).withQtyUsed(1d).withUnit(ProductUnit.kg).withQty(10d)
-					.withDeclarationType(DeclarationType.Detail).withProduct(localSF2NodeRef);
+					.withDeclarationType(DeclarationType.Detail).withProduct(getLocalSF2NodeRef());
 
 			compoList.add(parent12);
 
 			compoList.add(CompoListDataItem.build().withParent(parent12).withQtyUsed(0.80d).withUnit(ProductUnit.kg).withQty(5d)
-					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+					.withDeclarationType(DeclarationType.Declare).withProduct(getRawMaterial1NodeRef()));
 
 			compoList.add(CompoListDataItem.build().withParent(parent12).withQtyUsed(0.30d).withUnit(ProductUnit.kg).withQty(10d)
-					.withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial2NodeRef));
+					.withDeclarationType(DeclarationType.Detail).withProduct(getRawMaterial2NodeRef()));
 
 			CompoListDataItem parent22 = CompoListDataItem.build().withParent(parent1).withQtyUsed(2d).withUnit(ProductUnit.kg).withQty(20d)
-					.withDeclarationType(DeclarationType.Detail).withProduct(localSF3NodeRef);
+					.withDeclarationType(DeclarationType.Detail).withProduct(getLocalSF3NodeRef());
 
 			compoList.add(parent22);
 
 			compoList.add(CompoListDataItem.build().withParent(parent22).withQtyUsed(0.170d).withUnit(ProductUnit.kg)
-					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial3NodeRef));
+					.withDeclarationType(DeclarationType.Declare).withProduct(getRawMaterial3NodeRef()));
 
 			compoList.add(CompoListDataItem.build().withParent(parent22).withQtyUsed(0.40d).withUnit(ProductUnit.kg)
-					.withDeclarationType(DeclarationType.Omit).withProduct(rawMaterial4NodeRef));
+					.withDeclarationType(DeclarationType.Omit).withProduct(getRawMaterial4NodeRef()));
 
 			compoList.add(CompoListDataItem.build().withParent(parent22).withQtyUsed(1d).withUnit(ProductUnit.P)
-					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial5NodeRef));
+					.withDeclarationType(DeclarationType.Declare).withProduct(getRawMaterial5NodeRef()));
 
 			compoList.add(CompoListDataItem.build().withQtyUsed(2d).withUnit(ProductUnit.kg).withProduct(semiFinishedProductNodeRef));
 			finishedProduct.withCompoList(compoList);
@@ -152,29 +152,29 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 
 			ings = new ArrayList<>();
 			geoOrigins = new ArrayList<>();
-			ings.add(ing3);
-			geoOrigins.add(geoOrigin1);
+			ings.add(getIng3());
+			geoOrigins.add(getGeoOrigin1());
 			forbiddenIngList1.add(new ForbiddenIngListDataItem(null, RequirementType.Tolerated, "Ing3 geoOrigin1 toléré", null, null, null, ings,
 					geoOrigins, bioOrigins));
 
 			ings = new ArrayList<>();
 			geoOrigins = new ArrayList<>();
-			ings.add(ing3);
+			ings.add(getIng3());
 			forbiddenIngList1
 					.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "Ing3 < 40%", 0.4d, null, null, ings, geoOrigins, bioOrigins));
 
 			ings = new ArrayList<>();
 			geoOrigins = new ArrayList<>();
-			ings.add(ing1);
-			ings.add(ing4);
+			ings.add(getIng1());
+			ings.add(getIng4());
 			geoOrigins.clear();
 			forbiddenIngList1.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "Ing1 et ing4 interdits", null, null, null, ings,
 					geoOrigins, bioOrigins));
 
 			ings = new ArrayList<>();
 			geoOrigins = new ArrayList<>();
-			ings.add(ing3);
-			geoOrigins.add(geoOrigin1);
+			ings.add(getIng3());
+			geoOrigins.add(getGeoOrigin1());
 
 			ForbiddenIngListDataItem forbiddenIngListDataItem = new ForbiddenIngListDataItem(null, RequirementType.Forbidden,
 					"Ing3 geoOrigin1 obligatoire", null, null, null, ings, new ArrayList<>(), bioOrigins);
@@ -184,9 +184,9 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 
 			// allergens
 			ArrayList<AllergenListDataItem> allergenList = new ArrayList<>();
-			voluntary.add(rawMaterial5NodeRef);
-			inVoluntary.add(rawMaterial2NodeRef);
-			allergenList.add(new AllergenListDataItem(null, null, false, false, voluntary, inVoluntary, allergen1, false));
+			voluntary.add(getRawMaterial5NodeRef());
+			inVoluntary.add(getRawMaterial2NodeRef());
+			allergenList.add(new AllergenListDataItem(null, null, false, false, voluntary, inVoluntary, getAllergen1(), false));
 			productSpecification1.setAllergenList(allergenList);
 
 			alfrescoRepository.save(productSpecification1);
@@ -203,8 +203,8 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 
 			ings = new ArrayList<>();
 			geoOrigins = new ArrayList<>();
-			ings.add(ing2);
-			geoOrigins.add(geoOrigin2);
+			ings.add(getIng2());
+			geoOrigins.add(getGeoOrigin2());
 			forbiddenIngList2.add(new ForbiddenIngListDataItem(null, RequirementType.Info, "Ing2 geoOrigin2 interdit sur charcuterie", null, null,
 					null, ings, geoOrigins, bioOrigins));
 
@@ -243,25 +243,25 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 				} else if (reqCtrlList.getReqMessage().equals("OGM interdit")) {
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
 					if (reqCtrlList.getSources().size() == 2) {
-						assertTrue(reqCtrlList.getSources().contains(rawMaterial2NodeRef));
-						assertTrue(reqCtrlList.getSources().contains(rawMaterial6NodeRef));
+						assertTrue(reqCtrlList.getSources().contains(getRawMaterial2NodeRef()));
+						assertTrue(reqCtrlList.getSources().contains(getRawMaterial6NodeRef()));
 						checks++;
 					} else if (reqCtrlList.getSources().size() == 3) {
-						assertTrue(reqCtrlList.getSources().contains(rawMaterial3NodeRef));
-						assertTrue(reqCtrlList.getSources().contains(rawMaterial4NodeRef));
-						assertTrue(reqCtrlList.getSources().contains(rawMaterial5NodeRef));
+						assertTrue(reqCtrlList.getSources().contains(getRawMaterial3NodeRef()));
+						assertTrue(reqCtrlList.getSources().contains(getRawMaterial4NodeRef()));
+						assertTrue(reqCtrlList.getSources().contains(getRawMaterial5NodeRef()));
 						checks++;
 					}
 				} else if (reqCtrlList.getReqMessage().equals("Ionisation interdite")) {
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
 					if (reqCtrlList.getSources().size() == 2) {
-						assertTrue(reqCtrlList.getSources().contains(rawMaterial2NodeRef));
-						assertTrue(reqCtrlList.getSources().contains(rawMaterial6NodeRef));
+						assertTrue(reqCtrlList.getSources().contains(getRawMaterial2NodeRef()));
+						assertTrue(reqCtrlList.getSources().contains(getRawMaterial6NodeRef()));
 						checks++;
 					} else if (reqCtrlList.getSources().size() == 3) {
-						assertTrue(reqCtrlList.getSources().contains(rawMaterial3NodeRef));
-						assertTrue(reqCtrlList.getSources().contains(rawMaterial4NodeRef));
-						assertTrue(reqCtrlList.getSources().contains(rawMaterial5NodeRef));
+						assertTrue(reqCtrlList.getSources().contains(getRawMaterial3NodeRef()));
+						assertTrue(reqCtrlList.getSources().contains(getRawMaterial4NodeRef()));
+						assertTrue(reqCtrlList.getSources().contains(getRawMaterial5NodeRef()));
 						checks++;
 					}
 				} else if (reqCtrlList.getReqMessage().equals("Ing3 geoOrigin1 toléré")) {
@@ -283,26 +283,26 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
 					assertEquals(3, reqCtrlList.getSources().size());
-					assertTrue(reqCtrlList.getSources().contains(rawMaterial1NodeRef));
-					assertTrue(reqCtrlList.getSources().contains(rawMaterial2NodeRef));
-					assertTrue(reqCtrlList.getSources().contains(rawMaterial6NodeRef));
+					assertTrue(reqCtrlList.getSources().contains(getRawMaterial1NodeRef()));
+					assertTrue(reqCtrlList.getSources().contains(getRawMaterial2NodeRef()));
+					assertTrue(reqCtrlList.getSources().contains(getRawMaterial6NodeRef()));
 					checks++;
 				} else if (reqCtrlList.getReqMessage().equals("Ing2 geoOrigin2 interdit sur charcuterie")) {
 
 					assertEquals(RequirementType.Info, reqCtrlList.getReqType());
 					assertEquals(3, reqCtrlList.getSources().size());
-					assertTrue(reqCtrlList.getSources().contains(rawMaterial1NodeRef));
-					assertTrue(reqCtrlList.getSources().contains(rawMaterial2NodeRef));
-					assertTrue(reqCtrlList.getSources().contains(rawMaterial6NodeRef));
+					assertTrue(reqCtrlList.getSources().contains(getRawMaterial1NodeRef()));
+					assertTrue(reqCtrlList.getSources().contains(getRawMaterial2NodeRef()));
+					assertTrue(reqCtrlList.getSources().contains(getRawMaterial6NodeRef()));
 					checks++;
 				} else if (reqCtrlList.getReqMessage().equals(I18NUtil.getMessage(AllergensCalculatingFormulationHandler.MESSAGE_FORBIDDEN_ALLERGEN,
-						nodeService.getProperty(allergen1, BeCPGModel.PROP_CHARACT_NAME)))) {
+						nodeService.getProperty(getAllergen1(), BeCPGModel.PROP_CHARACT_NAME)))) {
 
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
 					assertEquals(3, reqCtrlList.getSources().size());
-					assertTrue(reqCtrlList.getSources().contains(rawMaterial1NodeRef));
-					assertTrue(reqCtrlList.getSources().contains(rawMaterial2NodeRef));
-					assertTrue(reqCtrlList.getSources().contains(rawMaterial6NodeRef));
+					assertTrue(reqCtrlList.getSources().contains(getRawMaterial1NodeRef()));
+					assertTrue(reqCtrlList.getSources().contains(getRawMaterial2NodeRef()));
+					assertTrue(reqCtrlList.getSources().contains(getRawMaterial6NodeRef()));
 					checks++;
 				} else if (I18NUtil.getMessage(AllergensCalculatingFormulationHandler.MESSAGE_NOT_VALIDATED_ALLERGEN)
 						.equals(reqCtrlList.getReqMessage())) {

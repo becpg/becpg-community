@@ -64,10 +64,10 @@ public class FormulationCheckPropsOfCompIT extends AbstractFinishedProductTest {
 			finishedProduct.setNetWeight(0d);
 			finishedProduct.setState(SystemState.Valid);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(CompoListDataItem.build().withQtyUsed(100d).withUnit(ProductUnit.P).withLossPerc(10d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial1NodeRef));
-			compoList.add(CompoListDataItem.build().withQtyUsed(10d).withUnit(ProductUnit.mL).withLossPerc(10d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial5NodeRef));
-			compoList.add(CompoListDataItem.build().withQtyUsed(10d).withUnit(ProductUnit.g).withLossPerc(10d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial6NodeRef));
-			compoList.add(CompoListDataItem.build().withQtyUsed(10d).withUnit(ProductUnit.g).withLossPerc(10d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial7NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(100d).withUnit(ProductUnit.P).withLossPerc(10d).withDeclarationType(DeclarationType.Detail).withProduct(getRawMaterial1NodeRef()));
+			compoList.add(CompoListDataItem.build().withQtyUsed(10d).withUnit(ProductUnit.mL).withLossPerc(10d).withDeclarationType(DeclarationType.Detail).withProduct(getRawMaterial5NodeRef()));
+			compoList.add(CompoListDataItem.build().withQtyUsed(10d).withUnit(ProductUnit.g).withLossPerc(10d).withDeclarationType(DeclarationType.Detail).withProduct(getRawMaterial6NodeRef()));
+			compoList.add(CompoListDataItem.build().withQtyUsed(10d).withUnit(ProductUnit.g).withLossPerc(10d).withDeclarationType(DeclarationType.Detail).withProduct(getRawMaterial7NodeRef()));
 
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			NodeRef finishedProductNodeRef1 = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
@@ -90,8 +90,8 @@ public class FormulationCheckPropsOfCompIT extends AbstractFinishedProductTest {
 						if (r.getReqMessage().equals("Composant non validé")) {
 							// no compo is valid
 							assertEquals(4, r.getSources().size());
-							assertTrue(r.getSources().contains(rawMaterial1NodeRef) && r.getSources().contains(rawMaterial5NodeRef)
-									&& r.getSources().contains(rawMaterial6NodeRef) && r.getSources().contains(rawMaterial7NodeRef));
+							assertTrue(r.getSources().contains(getRawMaterial1NodeRef()) && r.getSources().contains(getRawMaterial5NodeRef())
+									&& r.getSources().contains(getRawMaterial6NodeRef()) && r.getSources().contains(getRawMaterial7NodeRef()));
 						} else if (source.equals(finishedProductNodeRef1)) {
 							// only legal name is filled
 							assertTrue(r.getReqMessage().equals("Champ obligatoire 'Conditions de conservation ou Conseils de préparation et d'utilisation' manquant (catalogue 'EU 1169/2011 (INCO)')")
@@ -101,10 +101,10 @@ public class FormulationCheckPropsOfCompIT extends AbstractFinishedProductTest {
 											.equals("Champ obligatoire 'DLC (J) ou DDM/DLUO (J)' manquant (catalogue 'EU 1169/2011 (INCO)')")
 									|| r.getReqMessage().equals("Champ obligatoire 'Titre' manquant (catalogue 'EU 1169/2011 (INCO)')")
 									);
-						} else if (source.equals(rawMaterial5NodeRef)) {
+						} else if (source.equals(getRawMaterial5NodeRef())) {
 							assertEquals("L'unité utilisée n'est pas la bonne.", r.getReqMessage());
 							checks++;
-						} else if (source.equals(rawMaterial6NodeRef)) {
+						} else if (source.equals(getRawMaterial6NodeRef())) {
 							assertEquals("L'unité utilisée n'est pas la bonne.", r.getReqMessage());
 							checks++;
 						} else if(!r.getReqMessage().equals("L'unicité du champ 'Nom' n'est pas respectée")){

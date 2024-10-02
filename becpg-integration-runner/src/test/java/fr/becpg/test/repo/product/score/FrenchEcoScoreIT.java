@@ -59,7 +59,7 @@ public class FrenchEcoScoreIT extends AbstractFinishedProductTest {
 		properties.put(PackModel.PROP_PM_ISNOTRECYCLABLE, false);
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> fillMaterial(packMaterial1, properties, 1d), false, true);
 		
-		final NodeRef finishedProduct1 = createFinishedProduct("Biscuit sec chocolaté, préemballé", "24036", "Prince goût chocolat", geoOrigin1, 48d, ing1, packMaterial1, null);
+		final NodeRef finishedProduct1 = createFinishedProduct("Biscuit sec chocolaté, préemballé", "24036", "Prince goût chocolat", getGeoOrigin1(), 48d, getIng1(), packMaterial1, null);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			
@@ -94,11 +94,11 @@ public class FrenchEcoScoreIT extends AbstractFinishedProductTest {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> fillMaterial(packMaterial2, properties, 1d), false, true);
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			nodeService.setProperty(geoOrigin2, PLMModel.PROP_GEO_ORIGIN_ISOCODE, "GB");
+			nodeService.setProperty(getGeoOrigin2(), PLMModel.PROP_GEO_ORIGIN_ISOCODE, "GB");
 			return null;
 		}, false, true);
 
-		final NodeRef finishedProduct2 = createFinishedProduct("Muesli croustillant au chocolat (non enrichi en vitamines et minéraux)", "32109", "Cruesli Chocolat noir", geoOrigin2, 37d, ing2, packMaterial2, null);
+		final NodeRef finishedProduct2 = createFinishedProduct("Muesli croustillant au chocolat (non enrichi en vitamines et minéraux)", "32109", "Cruesli Chocolat noir", getGeoOrigin2(), 37d, getIng2(), packMaterial2, null);
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			
@@ -132,11 +132,11 @@ public class FrenchEcoScoreIT extends AbstractFinishedProductTest {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> fillLabelClaim(labelClaimList, properties), false, true);
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			nodeService.setProperty(geoOrigin2, PLMModel.PROP_GEO_ORIGIN_ISOCODE, "FAO 27");
+			nodeService.setProperty(getGeoOrigin2(), PLMModel.PROP_GEO_ORIGIN_ISOCODE, "FAO 27");
 			return null;
 		}, false, true);
 
-		final NodeRef finishedProduct3 = createFinishedProduct("Sardine, filets sans arêtes à l'huile d'olive, appertisés, égouttés", "26231", "Sardines de Bretagne", geoOrigin2, 100d, ing2, packMaterial3, labelClaimList);
+		final NodeRef finishedProduct3 = createFinishedProduct("Sardine, filets sans arêtes à l'huile d'olive, appertisés, égouttés", "26231", "Sardines de Bretagne", getGeoOrigin2(), 100d, getIng2(), packMaterial3, labelClaimList);
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			

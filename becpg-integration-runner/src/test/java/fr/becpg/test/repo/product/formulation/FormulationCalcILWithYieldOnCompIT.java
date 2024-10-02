@@ -65,9 +65,9 @@ public class FormulationCalcILWithYieldOnCompIT extends AbstractFinishedProductT
 			finishedProduct.setQty(4d);
 			finishedProduct.setDensity(1d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(10d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(10d).withDeclarationType(DeclarationType.Declare).withProduct(getRawMaterial1NodeRef()));
 
-			CompoListDataItem temp = CompoListDataItem.build().withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(10d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial2NodeRef);
+			CompoListDataItem temp = CompoListDataItem.build().withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(10d).withDeclarationType(DeclarationType.Declare).withProduct(getRawMaterial2NodeRef());
 			temp.setYieldPerc(200d);
 			compoList.add(temp);
 
@@ -97,8 +97,8 @@ public class FormulationCalcILWithYieldOnCompIT extends AbstractFinishedProductT
 
 			assertEquals(100d, formulatedProduct.getYield());
 			assertEquals(2, formulatedProduct.getIngList().size());
-			assertEquals(ing2, formulatedProduct.getIngList().get(0).getIng());
-			assertEquals(ing1, formulatedProduct.getIngList().get(1).getIng());
+			assertEquals(getIng2(), formulatedProduct.getIngList().get(0).getIng());
+			assertEquals(getIng1(), formulatedProduct.getIngList().get(1).getIng());
 
 			logger.info("###df.format(formulatedProduct.getIngList().get(0).getQtyPerc()) "
 					+ df.format(formulatedProduct.getIngList().get(0).getQtyPerc()));
@@ -125,14 +125,14 @@ public class FormulationCalcILWithYieldOnCompIT extends AbstractFinishedProductT
 			finishedProduct.setQty(2d);
 			finishedProduct.setDensity(1d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(CompoListDataItem.build().withQtyUsed(65d).withUnit(ProductUnit.g).withDeclarationType(DeclarationType.Declare).withProduct(localSF1NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(65d).withUnit(ProductUnit.g).withDeclarationType(DeclarationType.Declare).withProduct(getLocalSF1NodeRef()));
 			compoList.add(
-					CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(80d).withUnit(ProductUnit.Perc).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
-			CompoListDataItem temp = CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(10d).withUnit(ProductUnit.Perc).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial2NodeRef);
+					CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(80d).withUnit(ProductUnit.Perc).withDeclarationType(DeclarationType.Declare).withProduct(getRawMaterial1NodeRef()));
+			CompoListDataItem temp = CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(10d).withUnit(ProductUnit.Perc).withDeclarationType(DeclarationType.Declare).withProduct(getRawMaterial2NodeRef());
 			temp.setYieldPerc(200d);
 			compoList.add(temp);
 			compoList.add(
-					CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(10d).withUnit(ProductUnit.Perc).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial3NodeRef));
+					CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(10d).withUnit(ProductUnit.Perc).withDeclarationType(DeclarationType.Declare).withProduct(getRawMaterial3NodeRef()));
 
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
@@ -172,9 +172,9 @@ public class FormulationCalcILWithYieldOnCompIT extends AbstractFinishedProductT
 			// ing3 : 10
 
 			assertEquals(3, formulatedProduct.getIngList().size());
-			assertEquals(ing2, formulatedProduct.getIngList().get(0).getIng());
-			assertEquals(ing1, formulatedProduct.getIngList().get(1).getIng());
-			assertEquals(ing3, formulatedProduct.getIngList().get(2).getIng());
+			assertEquals(getIng2(), formulatedProduct.getIngList().get(0).getIng());
+			assertEquals(getIng1(), formulatedProduct.getIngList().get(1).getIng());
+			assertEquals(getIng3(), formulatedProduct.getIngList().get(2).getIng());
 
 			assertEquals(df.format(60.833333333d), df.format(formulatedProduct.getIngList().get(0).getQtyPerc()));
 			assertEquals(df.format(29.166666667d), df.format(formulatedProduct.getIngList().get(1).getQtyPerc()));

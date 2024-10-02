@@ -134,29 +134,29 @@ public class ECOIT extends AbstractFinishedProductTest {
 			finishedProduct.setQty(2d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
 
-			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(localSF1NodeRef));
-			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
-			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(2d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial2NodeRef));
-			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(localSF2NodeRef));
-			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial3NodeRef));
-			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial4NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(getLocalSF1NodeRef()));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(getRawMaterial1NodeRef()));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(2d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(getRawMaterial2NodeRef()));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(getLocalSF2NodeRef()));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(getRawMaterial3NodeRef()));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(getRawMaterial4NodeRef()));
 
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
 			List<CostListDataItem> costList = new ArrayList<>();
-			costList.add(new CostListDataItem(null, null, null, null, cost1, null));
-			costList.add(new CostListDataItem(null, null, null, null, cost2, null));
+			costList.add(new CostListDataItem(null, null, null, null, getCost1(), null));
+			costList.add(new CostListDataItem(null, null, null, null, getCost2(), null));
 			finishedProduct.setCostList(costList);
 
 			List<NutListDataItem> nutList = new ArrayList<>();
-			nutList.add(NutListDataItem.build().withNut(nut1)
+			nutList.add(NutListDataItem.build().withNut(getNut1())
 );
-			nutList.add(NutListDataItem.build().withNut(nut2)
+			nutList.add(NutListDataItem.build().withNut(getNut2())
 );
 			finishedProduct.setNutList(nutList);
 
 			List<PackagingListDataItem> packList = new ArrayList<>();
-			packList.add(PackagingListDataItem.build().withQty(25d).withUnit(ProductUnit.PP).withPkgLevel(PackagingLevel.Secondary).withIsMaster(true).withProduct(packagingKit1NodeRef)
+			packList.add(PackagingListDataItem.build().withQty(25d).withUnit(ProductUnit.PP).withPkgLevel(PackagingLevel.Secondary).withIsMaster(true).withProduct(getPackagingKit1NodeRef())
 );
 			finishedProduct.getPackagingListView().setPackagingList(packList);
 
@@ -188,11 +188,11 @@ public class ECOIT extends AbstractFinishedProductTest {
 				String trace1 = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: "
 						+ costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
 				logger.info(trace1);
-				if (costListDataItem.getCost().equals(cost1)) {
+				if (costListDataItem.getCost().equals(getCost1())) {
 					assertEquals("cost1.getValue() == 4.0, actual values: " + trace1, 4.0d, costListDataItem.getValue());
 					assertEquals("cost1.getUnit() == €/kg, actual values: " + trace1, "€/kg", costListDataItem.getUnit());
 				}
-				if (costListDataItem.getCost().equals(cost2)) {
+				if (costListDataItem.getCost().equals(getCost2())) {
 					assertEquals("cost1.getValue() == 6.0, actual values: " + trace1, 6.0d, costListDataItem.getValue());
 					assertEquals("cost1.getUnit() == €/kg, actual values: " + trace1, "€/kg", costListDataItem.getUnit());
 				}
@@ -203,10 +203,10 @@ public class ECOIT extends AbstractFinishedProductTest {
 				String trace2 = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME) + " - value: "
 						+ nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
 				logger.info(trace2);
-				if (nutListDataItem.getNut().equals(nut1)) {
+				if (nutListDataItem.getNut().equals(getNut1())) {
 					assertEquals("nut1.getValue() == 3, actual values: " + trace2, 3d, nutListDataItem.getValue());
 				}
-				if (nutListDataItem.getNut().equals(nut2)) {
+				if (nutListDataItem.getNut().equals(getNut2())) {
 					assertEquals("nut2.getValue() == 6, actual values: " + trace2, 6d, nutListDataItem.getValue());
 				}
 			}
@@ -235,19 +235,19 @@ public class ECOIT extends AbstractFinishedProductTest {
 			 * create a change order to replace RM4 by RM5
 			 */
 
-			logger.debug("create Change order to replace RM4: " + rawMaterial4NodeRef + " by RM5: " + rawMaterial5NodeRef);
+			logger.debug("create Change order to replace RM4: " + getRawMaterial4NodeRef() + " by RM5: " + getRawMaterial5NodeRef());
 
 			List<NodeRef> calculatedCharacts = new ArrayList<>();
-			calculatedCharacts.add(cost1);
-			calculatedCharacts.add(cost2);
-			calculatedCharacts.add(nut1);
-			calculatedCharacts.add(nut2);
+			calculatedCharacts.add(getCost1());
+			calculatedCharacts.add(getCost2());
+			calculatedCharacts.add(getNut1());
+			calculatedCharacts.add(getNut2());
 			ChangeOrderData changeOrderData = new ChangeOrderData("ECO", ECOState.ToCalculateWUsed, ChangeOrderType.Replacement, calculatedCharacts);
 
 			List<ReplacementListDataItem> replacementList = new ArrayList<>();
 
 			replacementList
-					.add(new ReplacementListDataItem(RevisionType.Minor, Collections.singletonList(rawMaterial4NodeRef), rawMaterial5NodeRef, 100));
+					.add(new ReplacementListDataItem(RevisionType.Minor, Collections.singletonList(getRawMaterial4NodeRef()), getRawMaterial5NodeRef(), 100));
 			changeOrderData.setReplacementList(replacementList);
 
 			NodeRef ecoNodeRef1 = alfrescoRepository.create(getTestFolderNodeRef(), changeOrderData).getNodeRef();
@@ -324,22 +324,22 @@ public class ECOIT extends AbstractFinishedProductTest {
 				
 				if (sim.getSourceItem().equals(finishedProduct1NodeRef)) {
 					
-					if (sim.getCharact().equals(cost1)) {
+					if (sim.getCharact().equals(getCost1())) {
 						
 						checks++;
 						assertEquals("check cost1 PF1", 4.0d, sim.getSourceValue());
 						assertEquals("check cost1 PF1", 11.5d, sim.getTargetValue());
-					} else if (sim.getCharact().equals(cost2)) {
+					} else if (sim.getCharact().equals(getCost2())) {
 						
 						checks++;
 						assertEquals("check cost2 PF1", 6.0d, sim.getSourceValue());
 						assertEquals("check cost2 PF1", 15d, sim.getTargetValue());
-					} else if (sim.getCharact().equals(nut1)) {
+					} else if (sim.getCharact().equals(getNut1())) {
 						
 						checks++;
 						assertEquals("check nut1 PF1", 3.0d, sim.getSourceValue());
 						assertEquals("check nut1 PF1", 4.5d, sim.getTargetValue());
-					} else if (sim.getCharact().equals(nut2)) {
+					} else if (sim.getCharact().equals(getNut2())) {
 						
 						checks++;
 						assertEquals("check nut2 PF1", 6.0d, sim.getSourceValue());
@@ -347,22 +347,22 @@ public class ECOIT extends AbstractFinishedProductTest {
 					}
 				} else if (sim.getSourceItem().equals(finishedProduct2NodeRef)) {
 					
-					if (sim.getCharact().equals(cost1)) {
+					if (sim.getCharact().equals(getCost1())) {
 						
 						checks++;
 						assertEquals("check cost1 PF2", 4.0d, sim.getSourceValue());
 						assertEquals("check cost1 PF2", 11.5d, sim.getTargetValue());
-					} else if (sim.getCharact().equals(cost2)) {
+					} else if (sim.getCharact().equals(getCost2())) {
 						
 						checks++;
 						assertEquals("check cost2 PF2", 6.0d, sim.getSourceValue());
 						assertEquals("check cost2 PF2", 15d, sim.getTargetValue());
-					} else if (sim.getCharact().equals(nut1)) {
+					} else if (sim.getCharact().equals(getNut1())) {
 						
 						checks++;
 						assertEquals("check nut1 PF2", 3.0d, sim.getSourceValue());
 						assertEquals("check nut1 PF2", 4.5d, sim.getTargetValue());
-					} else if (sim.getCharact().equals(nut2)) {
+					} else if (sim.getCharact().equals(getNut2())) {
 						
 						checks++;
 						assertEquals("check nut2 PF2", 6.0d, sim.getSourceValue());
@@ -392,9 +392,9 @@ public class ECOIT extends AbstractFinishedProductTest {
 			boolean hasRM5 = false;
 			
 			for (CompoListDataItem compoList : FP1.getCompoList()) {
-				if (rawMaterial5NodeRef.equals(compoList.getCharactNodeRef())) {
+				if (getRawMaterial5NodeRef().equals(compoList.getCharactNodeRef())) {
 					hasRM5 = true;
-				} else if (rawMaterial4NodeRef.equals(compoList.getCharactNodeRef())) {
+				} else if (getRawMaterial4NodeRef().equals(compoList.getCharactNodeRef())) {
 					hasRM4 = true;
 				}
 			}
@@ -406,10 +406,10 @@ public class ECOIT extends AbstractFinishedProductTest {
 			hasRM5 = false;
 			
 			for (CompoListDataItem compoList : FP2.getCompoList()) {
-				if (rawMaterial5NodeRef.equals(compoList.getCharactNodeRef())) {
+				if (getRawMaterial5NodeRef().equals(compoList.getCharactNodeRef())) {
 					hasRM5 = true;
 					break;
-				} else if (rawMaterial4NodeRef.equals(compoList.getCharactNodeRef())) {
+				} else if (getRawMaterial4NodeRef().equals(compoList.getCharactNodeRef())) {
 					hasRM4 = true;
 				}
 			}
@@ -435,19 +435,19 @@ public class ECOIT extends AbstractFinishedProductTest {
 			 * create a change order to replace RM4 by RM5
 			 */
 			
-			logger.debug("create Change order to replace RM4: " + rawMaterial4NodeRef + " by RM5: " + rawMaterial5NodeRef);
+			logger.debug("create Change order to replace RM4: " + getRawMaterial4NodeRef() + " by RM5: " + getRawMaterial5NodeRef());
 			
 			List<NodeRef> calculatedCharacts = new ArrayList<>();
-			calculatedCharacts.add(cost1);
-			calculatedCharacts.add(cost2);
-			calculatedCharacts.add(nut1);
-			calculatedCharacts.add(nut2);
+			calculatedCharacts.add(getCost1());
+			calculatedCharacts.add(getCost2());
+			calculatedCharacts.add(getNut1());
+			calculatedCharacts.add(getNut2());
 			ChangeOrderData changeOrderData = new ChangeOrderData("ECO", ECOState.ToCalculateWUsed, ChangeOrderType.Replacement, calculatedCharacts);
 			
 			List<ReplacementListDataItem> replacementList = new ArrayList<>();
 			
 			replacementList
-			.add(new ReplacementListDataItem(RevisionType.Minor, Collections.singletonList(rawMaterial4NodeRef), rawMaterial5NodeRef, 100));
+			.add(new ReplacementListDataItem(RevisionType.Minor, Collections.singletonList(getRawMaterial4NodeRef()), getRawMaterial5NodeRef(), 100));
 			changeOrderData.setReplacementList(replacementList);
 			
 			NodeRef ecoNodeRef1 = alfrescoRepository.create(getTestFolderNodeRef(), changeOrderData).getNodeRef();
@@ -516,9 +516,9 @@ public class ECOIT extends AbstractFinishedProductTest {
 			boolean hasRM5 = false;
 			
 			for (CompoListDataItem compoList : FP1.getCompoList()) {
-				if (rawMaterial5NodeRef.equals(compoList.getCharactNodeRef())) {
+				if (getRawMaterial5NodeRef().equals(compoList.getCharactNodeRef())) {
 					hasRM5 = true;
-				} else if (rawMaterial4NodeRef.equals(compoList.getCharactNodeRef())) {
+				} else if (getRawMaterial4NodeRef().equals(compoList.getCharactNodeRef())) {
 					hasRM4 = true;
 				}
 			}
@@ -530,10 +530,10 @@ public class ECOIT extends AbstractFinishedProductTest {
 			hasRM5 = false;
 			
 			for (CompoListDataItem compoList : FP2.getCompoList()) {
-				if (rawMaterial5NodeRef.equals(compoList.getCharactNodeRef())) {
+				if (getRawMaterial5NodeRef().equals(compoList.getCharactNodeRef())) {
 					hasRM5 = true;
 					break;
-				} else if (rawMaterial4NodeRef.equals(compoList.getCharactNodeRef())) {
+				} else if (getRawMaterial4NodeRef().equals(compoList.getCharactNodeRef())) {
 					hasRM4 = true;
 				}
 			}
@@ -544,39 +544,39 @@ public class ECOIT extends AbstractFinishedProductTest {
 			int checks = 0;
 			
 			for (CostListDataItem cost : FP1.getCostList()) {
-				if (cost1.equals(cost.getCharactNodeRef())) {
+				if (getCost1().equals(cost.getCharactNodeRef())) {
 					assertEquals(11.5d, cost.getValue());
 					checks++;
-				} else if (cost2.equals(cost.getCharactNodeRef())) {
+				} else if (getCost2().equals(cost.getCharactNodeRef())) {
 					assertEquals(15d, cost.getValue());
 					checks++;
 				}
 			}
 			for (CostListDataItem cost : FP2.getCostList()) {
-				if (cost1.equals(cost.getCharactNodeRef())) {
+				if (getCost1().equals(cost.getCharactNodeRef())) {
 					assertEquals(11.5d, cost.getValue());
 					checks++;
-				} else if (cost2.equals(cost.getCharactNodeRef())) {
+				} else if (getCost2().equals(cost.getCharactNodeRef())) {
 					assertEquals(15d, cost.getValue());
 					checks++;
 				}
 			}
 			
 			for (NutListDataItem nut : FP1.getNutList()) {
-				if (nut1.equals(nut.getCharactNodeRef())) {
+				if (getNut1().equals(nut.getCharactNodeRef())) {
 					assertEquals(4.5d, nut.getValue());
 					checks++;
-				} else if (nut2.equals(nut.getCharactNodeRef())) {
+				} else if (getNut2().equals(nut.getCharactNodeRef())) {
 					assertEquals(10.5d, nut.getValue());
 					checks++;
 				}
 			}
 			
 			for (NutListDataItem nut : FP2.getNutList()) {
-				if (nut1.equals(nut.getCharactNodeRef())) {
+				if (getNut1().equals(nut.getCharactNodeRef())) {
 					assertEquals(4.5d, nut.getValue());
 					checks++;
-				} else if (nut2.equals(nut.getCharactNodeRef())) {
+				} else if (getNut2().equals(nut.getCharactNodeRef())) {
 					assertEquals(10.5d, nut.getValue());
 					checks++;
 				}
@@ -609,14 +609,14 @@ public class ECOIT extends AbstractFinishedProductTest {
 			 * create a change order to replace RM4 by null
 			 */
 
-			logger.debug("create Change order to replace RM4: " + rawMaterial4NodeRef + " by null: " + rawMaterial5NodeRef);
+			logger.debug("create Change order to replace RM4: " + getRawMaterial4NodeRef() + " by null: " + getRawMaterial5NodeRef());
 
 			List<NodeRef> calculatedCharacts = new ArrayList<>();
 			ChangeOrderData changeOrderData = new ChangeOrderData("ECO", ECOState.ToCalculateWUsed, ChangeOrderType.Replacement, calculatedCharacts);
 
 			List<ReplacementListDataItem> replacementList = new ArrayList<>();
 
-			replacementList.add(new ReplacementListDataItem(RevisionType.Minor, Collections.singletonList(rawMaterial4NodeRef), null, 100));
+			replacementList.add(new ReplacementListDataItem(RevisionType.Minor, Collections.singletonList(getRawMaterial4NodeRef()), null, 100));
 			changeOrderData.setReplacementList(replacementList);
 
 			NodeRef ecoNodeRef1 = alfrescoRepository.create(getTestFolderNodeRef(), changeOrderData).getNodeRef();
@@ -678,15 +678,15 @@ public class ECOIT extends AbstractFinishedProductTest {
 			 * create a change order to replace RM4 by null
 			 */
 
-			logger.debug("create Change order to replace RM4: " + rawMaterial4NodeRef + " by null: " + rawMaterial5NodeRef);
+			logger.debug("create Change order to replace RM4: " + getRawMaterial4NodeRef() + " by null: " + getRawMaterial5NodeRef());
 
 			List<NodeRef> calculatedCharacts = new ArrayList<>();
 			ChangeOrderData changeOrderData = new ChangeOrderData("ECO", ECOState.ToCalculateWUsed, ChangeOrderType.Replacement, calculatedCharacts);
 
 			List<ReplacementListDataItem> replacementList = new ArrayList<>();
 
-			replacementList.add(new ReplacementListDataItem(RevisionType.Minor, Arrays.asList(rawMaterial4NodeRef, rawMaterial3NodeRef),
-					rawMaterial5NodeRef, 100));
+			replacementList.add(new ReplacementListDataItem(RevisionType.Minor, Arrays.asList(getRawMaterial4NodeRef(), getRawMaterial3NodeRef()),
+					getRawMaterial5NodeRef(), 100));
 			changeOrderData.setReplacementList(replacementList);
 
 			NodeRef ecoNodeRef1 = alfrescoRepository.create(getTestFolderNodeRef(), changeOrderData).getNodeRef();
@@ -748,7 +748,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 			 * create a change order to replace RM4 by null
 			 */
 
-			logger.debug("create Change order to replace RM4: " + rawMaterial4NodeRef + " by RM5: " + rawMaterial5NodeRef);
+			logger.debug("create Change order to replace RM4: " + getRawMaterial4NodeRef() + " by RM5: " + getRawMaterial5NodeRef());
 
 			List<NodeRef> calculatedCharacts = new ArrayList<>();
 			ChangeOrderData changeOrderData = new ChangeOrderData("ECO1", ECOState.ToCalculateWUsed, ChangeOrderType.Replacement, calculatedCharacts);
@@ -760,7 +760,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 
 			List<ReplacementListDataItem> replacementList = new ArrayList<>();
 
-			replacementList.add(new ReplacementListDataItem(RevisionType.Minor, Arrays.asList(rawMaterial4NodeRef), rawMaterial5NodeRef, 100));
+			replacementList.add(new ReplacementListDataItem(RevisionType.Minor, Arrays.asList(getRawMaterial4NodeRef()), getRawMaterial5NodeRef(), 100));
 			changeOrderData.setReplacementList(replacementList);
 
 			NodeRef ecoNodeRef1 = alfrescoRepository.create(getTestFolderNodeRef(), changeOrderData).getNodeRef();
@@ -841,7 +841,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 			 * create a change order to replace RM4 by null
 			 */
 
-			logger.debug("create Change order to replace RM4: " + rawMaterial5NodeRef + " by RM5: " + rawMaterial4NodeRef);
+			logger.debug("create Change order to replace RM4: " + getRawMaterial5NodeRef() + " by RM5: " + getRawMaterial4NodeRef());
 
 			List<NodeRef> calculatedCharacts = new ArrayList<>();
 			ChangeOrderData changeOrderData = new ChangeOrderData("ECO2", ECOState.ToCalculateWUsed, ChangeOrderType.Replacement, calculatedCharacts);
@@ -853,7 +853,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 
 			List<ReplacementListDataItem> replacementList = new ArrayList<>();
 
-			replacementList.add(new ReplacementListDataItem(RevisionType.Minor, Arrays.asList(rawMaterial5NodeRef), rawMaterial4NodeRef, 100));
+			replacementList.add(new ReplacementListDataItem(RevisionType.Minor, Arrays.asList(getRawMaterial5NodeRef()), getRawMaterial4NodeRef(), 100));
 			changeOrderData.setReplacementList(replacementList);
 
 			NodeRef ecoNodeRef1 = alfrescoRepository.create(getTestFolderNodeRef(), changeOrderData).getNodeRef();
@@ -914,14 +914,14 @@ public class ECOIT extends AbstractFinishedProductTest {
 			 * create a change order to replace RM4 by null
 			 */
 
-			logger.debug("create Change order to replace RM4: " + rawMaterial4NodeRef + " by RM5: " + rawMaterial5NodeRef);
+			logger.debug("create Change order to replace RM4: " + getRawMaterial4NodeRef() + " by RM5: " + getRawMaterial5NodeRef());
 
 			List<NodeRef> calculatedCharacts = new ArrayList<>();
 			ChangeOrderData changeOrderData = new ChangeOrderData("ECO3", ECOState.ToCalculateWUsed, ChangeOrderType.Replacement, calculatedCharacts);
 
 			List<ReplacementListDataItem> replacementList = new ArrayList<>();
 
-			replacementList.add(new ReplacementListDataItem(RevisionType.Minor, Arrays.asList(rawMaterial4NodeRef), rawMaterial5NodeRef, 100));
+			replacementList.add(new ReplacementListDataItem(RevisionType.Minor, Arrays.asList(getRawMaterial4NodeRef()), getRawMaterial5NodeRef(), 100));
 			changeOrderData.setReplacementList(replacementList);
 
 			NodeRef ecoNodeRef1 = alfrescoRepository.create(getTestFolderNodeRef(), changeOrderData).getNodeRef();
@@ -1011,14 +1011,14 @@ public class ECOIT extends AbstractFinishedProductTest {
 			finishedProduct3.getCompoListView().setCompoList(compoList);
 
 			List<CostListDataItem> costList = new ArrayList<>();
-			costList.add(new CostListDataItem(null, null, null, null, cost1, null));
-			costList.add(new CostListDataItem(null, null, null, null, cost2, null));
+			costList.add(new CostListDataItem(null, null, null, null, getCost1(), null));
+			costList.add(new CostListDataItem(null, null, null, null, getCost2(), null));
 			finishedProduct3.setCostList(costList);
 
 			List<NutListDataItem> nutList = new ArrayList<>();
-			nutList.add(NutListDataItem.build().withNut(nut1)
+			nutList.add(NutListDataItem.build().withNut(getNut1())
 );
-			nutList.add(NutListDataItem.build().withNut(nut2)
+			nutList.add(NutListDataItem.build().withNut(getNut2())
 );
 			finishedProduct3.setNutList(nutList);
 
@@ -1044,11 +1044,11 @@ public class ECOIT extends AbstractFinishedProductTest {
 				String trace1 = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: "
 						+ costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
 				logger.debug(trace1);
-				if (costListDataItem.getCost().equals(cost1)) {
+				if (costListDataItem.getCost().equals(getCost1())) {
 					assertEquals("cost1.getValue() == 6.0, actual values: " + trace1, 6.0d, costListDataItem.getValue());
 					assertEquals("cost1.getUnit() == €/kg, actual values: " + trace1, "€/kg", costListDataItem.getUnit());
 				}
-				if (costListDataItem.getCost().equals(cost2)) {
+				if (costListDataItem.getCost().equals(getCost2())) {
 					assertEquals("cost1.getValue() == 9.0, actual values: " + trace1, 9.0d, costListDataItem.getValue());
 					assertEquals("cost1.getUnit() == €/kg, actual values: " + trace1, "€/kg", costListDataItem.getUnit());
 				}
@@ -1059,10 +1059,10 @@ public class ECOIT extends AbstractFinishedProductTest {
 				String trace2 = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME) + " - value: "
 						+ nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
 				logger.debug(trace2);
-				if (nutListDataItem.getNut().equals(nut1)) {
+				if (nutListDataItem.getNut().equals(getNut1())) {
 					assertEquals("nut1.getValue() == 4.5, actual values: " + trace2, 4.5d, nutListDataItem.getValue());
 				}
-				if (nutListDataItem.getNut().equals(nut2)) {
+				if (nutListDataItem.getNut().equals(getNut2())) {
 					assertEquals("nut2.getValue() == 9, actual values: " + trace2, 9d, nutListDataItem.getValue());
 				}
 			}
@@ -1077,18 +1077,18 @@ public class ECOIT extends AbstractFinishedProductTest {
 			 * create a change order to replace RM4 by RM5
 			 */
 
-			logger.debug("create Change order to replace RM4: " + rawMaterial4NodeRef + " by RM5: " + rawMaterial5NodeRef);
+			logger.debug("create Change order to replace RM4: " + getRawMaterial4NodeRef() + " by RM5: " + getRawMaterial5NodeRef());
 
 			List<NodeRef> calculatedCharacts = new ArrayList<>();
-			calculatedCharacts.add(cost1);
-			calculatedCharacts.add(cost2);
-			calculatedCharacts.add(nut1);
-			calculatedCharacts.add(nut2);
+			calculatedCharacts.add(getCost1());
+			calculatedCharacts.add(getCost2());
+			calculatedCharacts.add(getNut1());
+			calculatedCharacts.add(getNut2());
 			ChangeOrderData changeOrderData = new ChangeOrderData("ECO", ECOState.ToCalculateWUsed, ChangeOrderType.Replacement, calculatedCharacts);
 
 			List<ReplacementListDataItem> replacementList = new ArrayList<>();
 			replacementList
-					.add(new ReplacementListDataItem(RevisionType.Major, Collections.singletonList(rawMaterial4NodeRef), rawMaterial5NodeRef, 100));
+					.add(new ReplacementListDataItem(RevisionType.Major, Collections.singletonList(getRawMaterial4NodeRef()), getRawMaterial5NodeRef(), 100));
 			changeOrderData.setReplacementList(replacementList);
 
 			NodeRef ecoNodeRef1 = alfrescoRepository.create(getTestFolderNodeRef(), changeOrderData).getNodeRef();
@@ -1158,22 +1158,22 @@ public class ECOIT extends AbstractFinishedProductTest {
 
 				if (sim2.getSourceItem().equals(finishedProduct1NodeRef)) {
 
-					if (sim2.getCharact().equals(cost1)) {
+					if (sim2.getCharact().equals(getCost1())) {
 
 						checks++;
 						assertEquals("check cost1 PF1", 4.0d, sim2.getSourceValue());
 						assertEquals("check cost1 PF1", 11.5d, sim2.getTargetValue());
-					} else if (sim2.getCharact().equals(cost2)) {
+					} else if (sim2.getCharact().equals(getCost2())) {
 
 						checks++;
 						assertEquals("check cost2 PF1", 6.0d, sim2.getSourceValue());
 						assertEquals("check cost2 PF1", 15d, sim2.getTargetValue());
-					} else if (sim2.getCharact().equals(nut1)) {
+					} else if (sim2.getCharact().equals(getNut1())) {
 
 						checks++;
 						assertEquals("check nut1 PF1", 3.0d, sim2.getSourceValue());
 						assertEquals("check nut1 PF1", 4.5d, sim2.getTargetValue());
-					} else if (sim2.getCharact().equals(nut2)) {
+					} else if (sim2.getCharact().equals(getNut2())) {
 
 						checks++;
 						assertEquals("check nut2 PF1", 6.0d, sim2.getSourceValue());
@@ -1181,22 +1181,22 @@ public class ECOIT extends AbstractFinishedProductTest {
 					}
 				} else if (sim2.getSourceItem().equals(finishedProduct2NodeRef)) {
 
-					if (sim2.getCharact().equals(cost1)) {
+					if (sim2.getCharact().equals(getCost1())) {
 
 						checks++;
 						assertEquals("check cost1 PF2", 4.0d, sim2.getSourceValue());
 						assertEquals("check cost1 PF2", 11.5d, sim2.getTargetValue());
-					} else if (sim2.getCharact().equals(cost2)) {
+					} else if (sim2.getCharact().equals(getCost2())) {
 
 						checks++;
 						assertEquals("check cost2 PF2", 6.0d, sim2.getSourceValue());
 						assertEquals("check cost2 PF2", 15d, sim2.getTargetValue());
-					} else if (sim2.getCharact().equals(nut1)) {
+					} else if (sim2.getCharact().equals(getNut1())) {
 
 						checks++;
 						assertEquals("check nut1 PF2", 3.0d, sim2.getSourceValue());
 						assertEquals("check nut1 PF2", 4.5d, sim2.getTargetValue());
-					} else if (sim2.getCharact().equals(nut2)) {
+					} else if (sim2.getCharact().equals(getNut2())) {
 
 						checks++;
 						assertEquals("check nut2 PF2", 6.0d, sim2.getSourceValue());
@@ -1204,22 +1204,22 @@ public class ECOIT extends AbstractFinishedProductTest {
 					}
 				} else if (sim2.getSourceItem().equals(finishedProduct3NodeRef)) {
 
-					if (sim2.getCharact().equals(cost1)) {
+					if (sim2.getCharact().equals(getCost1())) {
 
 						checks++;
 						assertEquals("check cost1 PF3", 6.0d, sim2.getSourceValue());
 						assertEquals("check cost1 PF3", 17.25d, sim2.getTargetValue());
-					} else if (sim2.getCharact().equals(cost2)) {
+					} else if (sim2.getCharact().equals(getCost2())) {
 
 						checks++;
 						assertEquals("check cost2 PF3", 9.0d, sim2.getSourceValue());
 						assertEquals("check cost2 PF3", 22.5d, sim2.getTargetValue());
-					} else if (sim2.getCharact().equals(nut1)) {
+					} else if (sim2.getCharact().equals(getNut1())) {
 
 						checks++;
 						assertEquals("check nut1 PF3", 4.5d, sim2.getSourceValue());
 						assertEquals("check nut1 PF3", 6.75d, sim2.getTargetValue());
-					} else if (sim2.getCharact().equals(nut2)) {
+					} else if (sim2.getCharact().equals(getNut2())) {
 
 						checks++;
 						assertEquals("check nut2 PF3", 9.0d, sim2.getSourceValue());
@@ -1259,14 +1259,14 @@ public class ECOIT extends AbstractFinishedProductTest {
 			finishedProduct3.getCompoListView().setCompoList(compoList);
 			
 			List<CostListDataItem> costList = new ArrayList<>();
-			costList.add(new CostListDataItem(null, null, null, null, cost1, null));
-			costList.add(new CostListDataItem(null, null, null, null, cost2, null));
+			costList.add(new CostListDataItem(null, null, null, null, getCost1(), null));
+			costList.add(new CostListDataItem(null, null, null, null, getCost2(), null));
 			finishedProduct3.setCostList(costList);
 			
 			List<NutListDataItem> nutList = new ArrayList<>();
-			nutList.add(NutListDataItem.build().withNut(nut1)
+			nutList.add(NutListDataItem.build().withNut(getNut1())
 );
-			nutList.add(NutListDataItem.build().withNut(nut2)
+			nutList.add(NutListDataItem.build().withNut(getNut2())
 );
 			finishedProduct3.setNutList(nutList);
 			
@@ -1292,11 +1292,11 @@ public class ECOIT extends AbstractFinishedProductTest {
 				String trace1 = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: "
 						+ costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
 				logger.debug(trace1);
-				if (costListDataItem.getCost().equals(cost1)) {
+				if (costListDataItem.getCost().equals(getCost1())) {
 					assertEquals("cost1.getValue() == 6.0, actual values: " + trace1, 6.0d, costListDataItem.getValue());
 					assertEquals("cost1.getUnit() == €/kg, actual values: " + trace1, "€/kg", costListDataItem.getUnit());
 				}
-				if (costListDataItem.getCost().equals(cost2)) {
+				if (costListDataItem.getCost().equals(getCost2())) {
 					assertEquals("cost1.getValue() == 9.0, actual values: " + trace1, 9.0d, costListDataItem.getValue());
 					assertEquals("cost1.getUnit() == €/kg, actual values: " + trace1, "€/kg", costListDataItem.getUnit());
 				}
@@ -1307,10 +1307,10 @@ public class ECOIT extends AbstractFinishedProductTest {
 				String trace2 = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME) + " - value: "
 						+ nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
 				logger.debug(trace2);
-				if (nutListDataItem.getNut().equals(nut1)) {
+				if (nutListDataItem.getNut().equals(getNut1())) {
 					assertEquals("nut1.getValue() == 4.5, actual values: " + trace2, 4.5d, nutListDataItem.getValue());
 				}
-				if (nutListDataItem.getNut().equals(nut2)) {
+				if (nutListDataItem.getNut().equals(getNut2())) {
 					assertEquals("nut2.getValue() == 9, actual values: " + trace2, 9d, nutListDataItem.getValue());
 				}
 			}
@@ -1325,18 +1325,18 @@ public class ECOIT extends AbstractFinishedProductTest {
 			 * create a change order to replace RM4 by RM5
 			 */
 			
-			logger.debug("create Change order to replace RM4: " + rawMaterial4NodeRef + " by RM5: " + rawMaterial5NodeRef);
+			logger.debug("create Change order to replace RM4: " + getRawMaterial4NodeRef() + " by RM5: " + getRawMaterial5NodeRef());
 			
 			List<NodeRef> calculatedCharacts = new ArrayList<>();
-			calculatedCharacts.add(cost1);
-			calculatedCharacts.add(cost2);
-			calculatedCharacts.add(nut1);
-			calculatedCharacts.add(nut2);
+			calculatedCharacts.add(getCost1());
+			calculatedCharacts.add(getCost2());
+			calculatedCharacts.add(getNut1());
+			calculatedCharacts.add(getNut2());
 			ChangeOrderData changeOrderData = new ChangeOrderData("ECO", ECOState.ToCalculateWUsed, ChangeOrderType.Replacement, calculatedCharacts);
 			
 			List<ReplacementListDataItem> replacementList = new ArrayList<>();
 			replacementList
-			.add(new ReplacementListDataItem(RevisionType.Major, Collections.singletonList(rawMaterial4NodeRef), rawMaterial5NodeRef, 100));
+			.add(new ReplacementListDataItem(RevisionType.Major, Collections.singletonList(getRawMaterial4NodeRef()), getRawMaterial5NodeRef(), 100));
 			changeOrderData.setReplacementList(replacementList);
 			
 			NodeRef ecoNodeRef1 = alfrescoRepository.create(getTestFolderNodeRef(), changeOrderData).getNodeRef();
@@ -1399,9 +1399,9 @@ public class ECOIT extends AbstractFinishedProductTest {
 			boolean hasRM5 = false;
 			
 			for (CompoListDataItem compoList : FP1.getCompoList()) {
-				if (rawMaterial5NodeRef.equals(compoList.getCharactNodeRef())) {
+				if (getRawMaterial5NodeRef().equals(compoList.getCharactNodeRef())) {
 					hasRM5 = true;
-				} else if (rawMaterial4NodeRef.equals(compoList.getCharactNodeRef())) {
+				} else if (getRawMaterial4NodeRef().equals(compoList.getCharactNodeRef())) {
 					hasRM4 = true;
 				}
 			}
@@ -1413,10 +1413,10 @@ public class ECOIT extends AbstractFinishedProductTest {
 			hasRM5 = false;
 			
 			for (CompoListDataItem compoList : FP2.getCompoList()) {
-				if (rawMaterial5NodeRef.equals(compoList.getCharactNodeRef())) {
+				if (getRawMaterial5NodeRef().equals(compoList.getCharactNodeRef())) {
 					hasRM5 = true;
 					break;
-				} else if (rawMaterial4NodeRef.equals(compoList.getCharactNodeRef())) {
+				} else if (getRawMaterial4NodeRef().equals(compoList.getCharactNodeRef())) {
 					hasRM4 = true;
 				}
 			}
@@ -1427,56 +1427,56 @@ public class ECOIT extends AbstractFinishedProductTest {
 			int checks = 0;
 			
 			for (CostListDataItem cost : FP1.getCostList()) {
-				if (cost1.equals(cost.getCharactNodeRef())) {
+				if (getCost1().equals(cost.getCharactNodeRef())) {
 					assertEquals(11.5d, cost.getValue());
 					checks++;
-				} else if (cost2.equals(cost.getCharactNodeRef())) {
+				} else if (getCost2().equals(cost.getCharactNodeRef())) {
 					assertEquals(15d, cost.getValue());
 					checks++;
 				}
 			}
 			for (CostListDataItem cost : FP2.getCostList()) {
-				if (cost1.equals(cost.getCharactNodeRef())) {
+				if (getCost1().equals(cost.getCharactNodeRef())) {
 					assertEquals(11.5d, cost.getValue());
 					checks++;
-				} else if (cost2.equals(cost.getCharactNodeRef())) {
+				} else if (getCost2().equals(cost.getCharactNodeRef())) {
 					assertEquals(15d, cost.getValue());
 					checks++;
 				}
 			}
 			for (CostListDataItem cost : FP3.getCostList()) {
-				if (cost1.equals(cost.getCharactNodeRef())) {
+				if (getCost1().equals(cost.getCharactNodeRef())) {
 					assertEquals(17.25d, cost.getValue());
 					checks++;
-				} else if (cost2.equals(cost.getCharactNodeRef())) {
+				} else if (getCost2().equals(cost.getCharactNodeRef())) {
 					assertEquals(22.5d, cost.getValue());
 					checks++;
 				}
 			}
 			
 			for (NutListDataItem nut : FP1.getNutList()) {
-				if (nut1.equals(nut.getCharactNodeRef())) {
+				if (getNut1().equals(nut.getCharactNodeRef())) {
 					assertEquals(4.5d, nut.getValue());
 					checks++;
-				} else if (nut2.equals(nut.getCharactNodeRef())) {
+				} else if (getNut2().equals(nut.getCharactNodeRef())) {
 					assertEquals(10.5d, nut.getValue());
 					checks++;
 				}
 			}
 			for (NutListDataItem nut : FP2.getNutList()) {
-				if (nut1.equals(nut.getCharactNodeRef())) {
+				if (getNut1().equals(nut.getCharactNodeRef())) {
 					assertEquals(4.5d, nut.getValue());
 					checks++;
-				} else if (nut2.equals(nut.getCharactNodeRef())) {
+				} else if (getNut2().equals(nut.getCharactNodeRef())) {
 					assertEquals(10.5d, nut.getValue());
 					checks++;
 				}
 			}
 			for (NutListDataItem nut : FP3.getNutList()) {
-				if (nut1.equals(nut.getCharactNodeRef())) {
+				if (getNut1().equals(nut.getCharactNodeRef())) {
 					assertEquals(6.75d, nut.getValue());
 					checks++;
-				} else if (nut2.equals(nut.getCharactNodeRef())) {
+				} else if (getNut2().equals(nut.getCharactNodeRef())) {
 					assertEquals(15.75d, nut.getValue());
 					checks++;
 				}
@@ -1518,23 +1518,23 @@ public class ECOIT extends AbstractFinishedProductTest {
 					 * create a change order to replace RM4 by RM5
 					 */
 
-					logger.debug("create Change order to replace RM4: " + rawMaterial4NodeRef + " by RM5: " + rawMaterial5NodeRef);
+					logger.debug("create Change order to replace RM4: " + getRawMaterial4NodeRef() + " by RM5: " + getRawMaterial5NodeRef());
 
 					ChangeOrderData changeOrderData = new ChangeOrderData("ECO " + threadName + " " + adder.doubleValue(), ECOState.ToCalculateWUsed,
 							ChangeOrderType.Replacement, new ArrayList<>());
 
 					List<ReplacementListDataItem> replacementList = new ArrayList<>();
 
-					replacementList.add(new ReplacementListDataItem(RevisionType.NoRevision, Collections.singletonList(rawMaterial4NodeRef),
-							rawMaterial4NodeRef, 100));
-					replacementList.add(new ReplacementListDataItem(RevisionType.NoRevision, Collections.singletonList(rawMaterial2NodeRef),
-							rawMaterial2NodeRef, 100));
-					replacementList.add(new ReplacementListDataItem(RevisionType.NoRevision, Collections.singletonList(rawMaterial4NodeRef),
-							rawMaterial4NodeRef, 100));
-					replacementList.add(new ReplacementListDataItem(RevisionType.NoRevision, Collections.singletonList(packagingKit1NodeRef),
-							packagingKit1NodeRef, 100));
-					replacementList.add(new ReplacementListDataItem(RevisionType.NoRevision, Collections.singletonList(rawMaterial2NodeRef),
-							rawMaterial2NodeRef, 100));
+					replacementList.add(new ReplacementListDataItem(RevisionType.NoRevision, Collections.singletonList(getRawMaterial4NodeRef()),
+							getRawMaterial4NodeRef(), 100));
+					replacementList.add(new ReplacementListDataItem(RevisionType.NoRevision, Collections.singletonList(getRawMaterial2NodeRef()),
+							getRawMaterial2NodeRef(), 100));
+					replacementList.add(new ReplacementListDataItem(RevisionType.NoRevision, Collections.singletonList(getRawMaterial4NodeRef()),
+							getRawMaterial4NodeRef(), 100));
+					replacementList.add(new ReplacementListDataItem(RevisionType.NoRevision, Collections.singletonList(getPackagingKit1NodeRef()),
+							getPackagingKit1NodeRef(), 100));
+					replacementList.add(new ReplacementListDataItem(RevisionType.NoRevision, Collections.singletonList(getRawMaterial2NodeRef()),
+							getRawMaterial2NodeRef(), 100));
 					changeOrderData.setReplacementList(replacementList);
 
 					NodeRef ecoNodeRef1 = alfrescoRepository.create(testNodeRef, changeOrderData).getNodeRef();
@@ -1623,7 +1623,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 
 			List<ReplacementListDataItem> replacementList = new ArrayList<>();
 
-			ReplacementListDataItem replacement = new ReplacementListDataItem(RevisionType.Minor, Arrays.asList(rawMaterial1NodeRef), rawMaterial5NodeRef, 75);
+			ReplacementListDataItem replacement = new ReplacementListDataItem(RevisionType.Minor, Arrays.asList(getRawMaterial1NodeRef()), getRawMaterial5NodeRef(), 75);
 			replacement.setLoss(10.0);
 			replacementList.add(replacement);
 			changeOrderData.setReplacementList(replacementList);
@@ -1677,7 +1677,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 			boolean check = false;
 			
 			for (CompoListDataItem compoItem : productData.getCompoList()) {
-				if (compoItem.getComponent().equals(rawMaterial5NodeRef)) {
+				if (compoItem.getComponent().equals(getRawMaterial5NodeRef())) {
 					assertEquals(10.0, compoItem.getLossPerc());
 					assertEquals(0.75, compoItem.getQtySubFormula());
 					check = true;
@@ -1699,7 +1699,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 			boolean check = false;
 			
 			for (CompoListDataItem compoItem : productData.getCompoList()) {
-				if (compoItem.getComponent().equals(rawMaterial5NodeRef)) {
+				if (compoItem.getComponent().equals(getRawMaterial5NodeRef())) {
 					assertEquals(20.0, compoItem.getLossPerc());
 					assertEquals(50.0, compoItem.getQtySubFormula());
 					check = true;
@@ -1724,7 +1724,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 			finishedProduct.setQty(2d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
 
-			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(getRawMaterial1NodeRef()));
 
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
@@ -1739,7 +1739,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 			finishedProduct.setQty(2d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
 			
-			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(getRawMaterial1NodeRef()));
 			
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			
@@ -1754,7 +1754,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 			finishedProduct.setQty(2d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
 			
-			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(getRawMaterial1NodeRef()));
 			
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			
@@ -1767,7 +1767,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 			FinishedProductData finishedProduct = (FinishedProductData) alfrescoRepository.findOne(FP1);
 			
 			List<CompoListDataItem> compoList = finishedProduct.getCompoList();
-			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(getRawMaterial1NodeRef()));
 			return alfrescoRepository.save(finishedProduct);
 		});
 		
@@ -1776,7 +1776,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 			FinishedProductData finishedProduct = (FinishedProductData) alfrescoRepository.findOne(FP2);
 			
 			List<CompoListDataItem> compoList = finishedProduct.getCompoList();
-			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(getRawMaterial1NodeRef()));
 			return alfrescoRepository.save(finishedProduct);
 		});
 		
@@ -1785,7 +1785,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 			FinishedProductData finishedProduct = (FinishedProductData) alfrescoRepository.findOne(FP3);
 			
 			List<CompoListDataItem> compoList = finishedProduct.getCompoList();
-			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(getRawMaterial1NodeRef()));
 			return alfrescoRepository.save(finishedProduct);
 		});
 		
@@ -1794,7 +1794,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 			FinishedProductData finishedProduct = (FinishedProductData) alfrescoRepository.findOne(FP1);
 			
 			List<CompoListDataItem> compoList = finishedProduct.getCompoList();
-			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(getRawMaterial1NodeRef()));
 			return alfrescoRepository.save(finishedProduct);
 		});
 		
@@ -1804,7 +1804,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 
 			List<ReplacementListDataItem> replacementList = new ArrayList<>();
 
-			ReplacementListDataItem replacement = new ReplacementListDataItem(RevisionType.Minor, Arrays.asList(rawMaterial1NodeRef), rawMaterial5NodeRef, 100);
+			ReplacementListDataItem replacement = new ReplacementListDataItem(RevisionType.Minor, Arrays.asList(getRawMaterial1NodeRef()), getRawMaterial5NodeRef(), 100);
 			replacementList.add(replacement);
 			changeOrderData.setReplacementList(replacementList);
 
@@ -1862,7 +1862,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 			product.setQty(2d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
 
-			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(getRawMaterial1NodeRef()));
 
 			product.getCompoListView().setCompoList(compoList);
 
@@ -1892,7 +1892,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 			product.setQty(2d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
 
-			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(getRawMaterial1NodeRef()));
 
 			product.getCompoListView().setCompoList(compoList);
 
@@ -1924,7 +1924,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 			
 			List<ReplacementListDataItem> replacementList = new ArrayList<>();
 
-			ReplacementListDataItem replacement = new ReplacementListDataItem(RevisionType.Minor, Arrays.asList(rawMaterial1NodeRef), rawMaterial12NodeRef, 100);
+			ReplacementListDataItem replacement = new ReplacementListDataItem(RevisionType.Minor, Arrays.asList(getRawMaterial1NodeRef()), getRawMaterial12NodeRef(), 100);
 			replacementList.add(replacement);
 			changeOrderData.setReplacementList(replacementList);
 
@@ -1952,7 +1952,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 		waitForBatchEnd(ecoService.apply(ecoNodeRef, false, false, false));
 		
 		inReadTx(() -> {
-			assertNotEquals(descriptionToCopy, nodeService.getProperty(rawMaterial1NodeRef, ContentModel.PROP_DESCRIPTION));
+			assertNotEquals(descriptionToCopy, nodeService.getProperty(getRawMaterial1NodeRef(), ContentModel.PROP_DESCRIPTION));
 			assertEquals(descriptionToCopy, nodeService.getProperty(semiFinishedProductNodeRef, ContentModel.PROP_DESCRIPTION));
 			assertEquals(descriptionToCopy, nodeService.getProperty(finishedProductNodeRef, ContentModel.PROP_DESCRIPTION));
 			assertNotEquals(descriptionToCopy, nodeService.getProperty(semiFinishedProduct2NodeRef, ContentModel.PROP_DESCRIPTION));
@@ -1971,7 +1971,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 			product.setQty(2d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
 
-			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(getRawMaterial1NodeRef()));
 
 			product.getCompoListView().setCompoList(compoList);
 
@@ -1979,7 +1979,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 
 		});
 		
-		NodeRef originalCompoListItem = findCompoListItemNodeRef(semiFinishedProductNodeRef, rawMaterial1NodeRef);
+		NodeRef originalCompoListItem = findCompoListItemNodeRef(semiFinishedProductNodeRef, getRawMaterial1NodeRef());
 		
 		NodeRef ecoNodeRef1 = inWriteTx(() -> {
 
@@ -1987,7 +1987,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 			
 			List<ReplacementListDataItem> replacementList = new ArrayList<>();
 
-			ReplacementListDataItem replacement = new ReplacementListDataItem(RevisionType.Minor, Arrays.asList(rawMaterial1NodeRef), rawMaterial2NodeRef, 100);
+			ReplacementListDataItem replacement = new ReplacementListDataItem(RevisionType.Minor, Arrays.asList(getRawMaterial1NodeRef()), getRawMaterial2NodeRef(), 100);
 			replacementList.add(replacement);
 			changeOrderData.setReplacementList(replacementList);
 
@@ -1997,7 +1997,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 		
 		waitForBatchEnd(ecoService.apply(ecoNodeRef1, false, true, false));
 		
-		NodeRef newCompoListItem = findCompoListItemNodeRef(semiFinishedProductNodeRef, rawMaterial2NodeRef);
+		NodeRef newCompoListItem = findCompoListItemNodeRef(semiFinishedProductNodeRef, getRawMaterial2NodeRef());
 		
 		assertEquals(originalCompoListItem, newCompoListItem);
 		
@@ -2007,7 +2007,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 			
 			List<ReplacementListDataItem> replacementList = new ArrayList<>();
 
-			ReplacementListDataItem replacement = new ReplacementListDataItem(RevisionType.Minor, Arrays.asList(rawMaterial2NodeRef), rawMaterial2NodeRef, 75);
+			ReplacementListDataItem replacement = new ReplacementListDataItem(RevisionType.Minor, Arrays.asList(getRawMaterial2NodeRef()), getRawMaterial2NodeRef(), 75);
 			replacementList.add(replacement);
 			changeOrderData.setReplacementList(replacementList);
 
@@ -2017,7 +2017,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 		
 		waitForBatchEnd(ecoService.apply(ecoNodeRef2, false, true, false));
 		
-		newCompoListItem = findCompoListItemNodeRef(semiFinishedProductNodeRef, rawMaterial2NodeRef);
+		newCompoListItem = findCompoListItemNodeRef(semiFinishedProductNodeRef, getRawMaterial2NodeRef());
 		
 		assertEquals(originalCompoListItem, newCompoListItem);
 		
