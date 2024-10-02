@@ -32,15 +32,15 @@ import fr.becpg.repo.survey.data.SurveyQuestion;
 
 /**
  * <p>
- * SurveyQuestionFormulationHandler class.
+ * SurveyListFormulationHandler class.
  * </p>
  *
  * @author Alexandre Masanes
  * @version $Id: $Id
  */
-public class SurveyQuestionFormulationHandler extends FormulationBaseHandler<ProductData> {
+public class SurveyListFormulationHandler extends FormulationBaseHandler<ProductData> {
 
-	private static final Log logger = LogFactory.getLog(SurveyQuestionFormulationHandler.class);
+	private static final Log logger = LogFactory.getLog(SurveyListFormulationHandler.class);
 
 	private static final byte NB_OF_SURVEY_LISTS = 4;
 	
