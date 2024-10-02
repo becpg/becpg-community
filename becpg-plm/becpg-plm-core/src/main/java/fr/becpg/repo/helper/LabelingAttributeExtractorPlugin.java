@@ -23,32 +23,35 @@ import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorPlugin;
 @Service
 public class LabelingAttributeExtractorPlugin implements AttributeExtractorPlugin {
 
-	
 	@Autowired
-	private  NamespaceService namespaceService;	
-	
-	
+	private NamespaceService namespaceService;
+
 	@Autowired
 	private AssociationService associationService;
-	
 
 	@Autowired
 	private NodeService nodeService;
-	
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public String extractPropName(QName type, NodeRef nodeRef) {
-		
+
 		NodeRef grp = associationService.getTargetAssoc(nodeRef, PLMModel.ASSOC_ILL_GRP);
-		
-		if(grp!=null){
-			if( nodeService.getProperty(grp, PLMModel.PROP_LABELINGRULELIST_LABEL) !=null) {
-				return (String) nodeService.getProperty(grp, PLMModel.PROP_LABELINGRULELIST_LABEL);
+
+		if (grp != null) {
+			String title = (String) nodeService.getProperty(grp, PLMModel.PROP_LABELINGRULELIST_LABEL);
+
+			if (title == null || title.isBlank()) {
+				title = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_TITLE);
 			}
-			return (String) nodeService.getProperty(grp, ContentModel.PROP_NAME);
+
+			if (title == null || title.isBlank()) {
+				title = (String) nodeService.getProperty(grp, ContentModel.PROP_NAME);
+			}
+
+			return title;
 		}
-		
+
 		return type.toPrefixString();
 	}
 
