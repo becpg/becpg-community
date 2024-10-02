@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -118,7 +116,6 @@ public class SurveyQuestionFormulationHandler extends FormulationBaseHandler<Pro
 						__ -> QName.createQName(typeName, namespaceService))).anyMatch(qName::equals);
 		final Set<SurveyQuestion> surveyQuestions = new HashSet<>();
 		final Map<String, List<SurveyListDataItem>> namesSurveyLists = new HashMap<>(NB_OF_SURVEY_LISTS, 1);
-		final List<SurveyListDataItem> deletedSurveyLists = new ArrayList<>();
 		final boolean cacheOnlyEnable = L2CacheSupport.isCacheOnlyEnable();
 		for (final String surveyListName : SURVEY_LIST_NAMES) {
 			namesSurveyLists.put(surveyListName, (SURVEY_LIST_BASE_NAME.equals(surveyListName)
