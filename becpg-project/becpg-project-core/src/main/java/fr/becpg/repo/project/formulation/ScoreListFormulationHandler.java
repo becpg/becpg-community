@@ -146,8 +146,8 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 			} else {
 				// Find all children (answers) of the current question with a positive score
 				final List<NodeRef> answers = BeCPGQueryBuilder.createQuery().ofType(SurveyModel.TYPE_SURVEY_QUESTION)
-						.excludeDefaults().andPropEquals(BeCPGModel.PROP_PARENT_LEVEL, question.getNodeRef().toString())
-						.andBetween(SurveyModel.PROP_SURVEY_QUESTION_SCORE, "1", "MAX").list();
+						.andPropEquals(BeCPGModel.PROP_PARENT_LEVEL, question.getNodeRef().toString())
+						.andBetween(SurveyModel.PROP_SURVEY_QUESTION_SCORE, "1", "MAX").inDB().list();
 
 				final IntStream scoreStream = answers.stream().map(alfrescoRepository::findOne)
 						.map(SurveyQuestion.class::cast).map(SurveyQuestion::getQuestionScore).filter(Objects::nonNull)
