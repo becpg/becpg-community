@@ -279,10 +279,9 @@ public class DOMUtils {
 	 * @throws javax.xml.transform.TransformerException if any.
 	 */
 	public static void serialise(Document doc, OutputStream out, boolean keepXmlDecl) throws TransformerException {
-		TransformerFactory factory = TransformerFactory.newInstance();
+		TransformerFactory factory = TransformerFactory.newInstance("com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl", DOMUtils.class.getClassLoader());
 		factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
 		factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-		factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
 		factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
 		Transformer tf = factory.newTransformer();
 		tf.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
