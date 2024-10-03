@@ -27,7 +27,6 @@ import org.apache.commons.logging.LogFactory;
  *
  * Chain of responsibility executor.
  *
- * @param <T>
  *            Any type passed as context information.
  * @author matthieu
  * @version $Id: $Id

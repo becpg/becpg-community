@@ -46,9 +46,8 @@ import fr.becpg.repo.entity.version.EntityVersionService;
 /**
  * The Class CompareEntityDataSourceWebscript.
  *
- * @authors querephi, matthieu, kevin
+ * @author querephi, matthieu, kevin
  * @version $Id: $Id
- * @author matthieu
  */
 public class CompareEntityDataSourceWebScript extends AbstractWebScript {
 

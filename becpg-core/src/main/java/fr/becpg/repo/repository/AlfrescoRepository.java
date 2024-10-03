@@ -27,7 +27,6 @@ import org.alfresco.service.namespace.QName;
  * Used to retrieve entity from repository
  *
  * @author matthieu
- * @param <T>
  * @since 1.5
  * @version $Id: $Id
  */
@@ -59,8 +58,6 @@ public interface AlfrescoRepository<T extends RepositoryEntity>  extends CrudRep
 	 */
 	List<T> loadDataList(NodeRef entityNodeRef, String listName, QName datalistQname);
 	
-	
-
 	/**
 	 * <p>loadDataList.</p>
 	 *

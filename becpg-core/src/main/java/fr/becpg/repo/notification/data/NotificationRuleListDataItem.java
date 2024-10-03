@@ -181,7 +181,6 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 	/**
 	 * <p>Getter for the field <code>timeType</code>.</p>
 	 *
-	 * @return a {@link fr.becpg.repo.notification.data.NotificationRuleTimeType} object.
 	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:nrTimeType")
@@ -192,7 +191,6 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 	/**
 	 * <p>Setter for the field <code>timeType</code>.</p>
 	 *
-	 * @param timeType a {@link fr.becpg.repo.notification.data.NotificationRuleTimeType} object.
 	 */
 	public void setTimeType(DateFilterType timeType) {
 		this.timeType = timeType;
@@ -282,7 +280,7 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 	/**
 	 * <p>Getter for the field <code>versionFilterType</code>.</p>
 	 *
-	 * @return a {@link fr.becpg.repo.notification.data.VersionFilterType} object.
+	 * @return a {@link fr.becpg.repo.search.data.VersionFilterType} object.
 	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:nrVersionFilter")
@@ -293,7 +291,7 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 	/**
 	 * <p>Setter for the field <code>versionFilterType</code>.</p>
 	 *
-	 * @param versionFilterType a {@link fr.becpg.repo.notification.data.VersionFilterType} object.
+	 * @param versionFilterType a {@link fr.becpg.repo.search.data.VersionFilterType} object.
 	 */
 	public void setVersionFilterType(VersionFilterType versionFilterType) {
 		this.versionFilterType = versionFilterType;

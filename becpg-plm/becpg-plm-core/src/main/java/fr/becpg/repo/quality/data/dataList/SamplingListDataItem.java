@@ -68,7 +68,7 @@ public class SamplingListDataItem extends AbstractSamplingListDataItem {
 	/**
 	 * <p>Getter for the field <code>timePeriod</code>.</p>
 	 *
-	 * @return a {@link java.util.String} object.
+	 * @return a {@link java.lang.String} object.
 	 */
 	@AlfProp
 	@AlfQname(qname = "qa:slTimePeriod")
@@ -79,7 +79,7 @@ public class SamplingListDataItem extends AbstractSamplingListDataItem {
 	/**
 	 * <p>Setter for the field <code>timePeriod</code>.</p>
 	 *
-	 * @param timePeriod a {@link java.util.String} object.
+	 * @param timePeriod a {@link java.lang.String} object.
 	 */
 	public void setTimePeriod(String timePeriod) {
 		this.timePeriod = timePeriod;

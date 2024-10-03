@@ -42,7 +42,6 @@ public class L2CacheSupport {
 	/**
 	 * <p>getCurrentThreadCache.</p>
 	 *
-	 * @param <T> a T object.
 	 * @return a {@link java.util.Map} object.
 	 */
 	public static <T> Map<NodeRef, RepositoryEntity> getCurrentThreadCache() {

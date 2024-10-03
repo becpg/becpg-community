@@ -12,8 +12,12 @@ import org.alfresco.service.namespace.QName;
 /**
  * Class that represent the mapping for importing a characteristic
  *
+ *<pre>
+ * {@code
  * <column id="coutMP" path="bcpg:productLists/bcpg:costList" charactQName="bcpg:costListCost" valueQName="bcpg:costListValue"
  * charactNodeRef="" charactName="Coût emballage" />.
+ * }
+ * </pre>
  *
  * @author querephi
  * @version $Id: $Id

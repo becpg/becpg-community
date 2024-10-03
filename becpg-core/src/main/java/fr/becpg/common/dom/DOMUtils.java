@@ -60,6 +60,10 @@ public class DOMUtils {
 
 	private static final Log logger = LogFactory.getLog(DOMUtils.class);
 
+	private DOMUtils() {
+		//Do Nothing
+	}
+	
 	/**
 	 * <p>getElementText.</p>
 	 *
@@ -114,16 +118,20 @@ public class DOMUtils {
 	 * Renvoie sous la forme d'un tableau la valeur des attributs donnés pour
 	 * toutes les occurences d'un élément donnée dans le dom
 	 *
-	 * <code>
+	 * <pre>
+	 * {@code
 	 *  <toto>
 	 *   <titi id="a" val="ba"/>
 	 *   <titi id="b" val="bb"/>
 	 *  </toto>
-	 * </code>
+	 *  }
+	 * </pre>
 	 *
+	 *<pre>
 	 * et getAttributes(&lt;toto&gt;, "titi", { "id", "val" }) renvoie
 	 *
 	 * { { "a", "ba" } { "b", "bb" } }
+	 * </pre>
 	 *
 	 * @param root a {@link org.w3c.dom.Element} object.
 	 * @param elementName a {@link java.lang.String} object.
@@ -296,11 +304,10 @@ public class DOMUtils {
 	/**
 	 * <p>logDom.</p>
 	 *
-	 * @param logSource a {@link java.lang.Object} object.
 	 * @param doc a {@link org.w3c.dom.Document} object.
 	 * @throws javax.xml.transform.TransformerException if any.
 	 */
-	public static void logDom(Object logSource, Document doc) throws TransformerException {
+	public static void logDom( Document doc) throws TransformerException {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		serialise(doc, out);
 		logger.info(new String(out.toByteArray()));

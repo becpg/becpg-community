@@ -109,7 +109,6 @@ public class CompositeLabeling extends LabelingComponent {
 	 *
 	 * @param list a {@link java.util.List} object.
 	 * @return a {@link java.util.List} object.
-	 * @param <T> a T class
 	 */
 	@SuppressWarnings("unchecked")
 	protected <T extends CompositeLabeling> List<T> clone(List<T> list) {

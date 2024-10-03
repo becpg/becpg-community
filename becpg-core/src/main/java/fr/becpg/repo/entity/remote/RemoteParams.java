@@ -243,7 +243,6 @@ public class RemoteParams {
 	 *
 	 * @param paramKey a {@link java.lang.String} object
 	 * @param defaultValue a T object
-	 * @param <T> a T class
 	 * @return a T object
 	 * @throws org.json.JSONException if any.
 	 */

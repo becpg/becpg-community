@@ -62,7 +62,7 @@ import fr.becpg.repo.designer.DesignerService;
  *		<control-param name="saveTitle">false</control-param>
  *   </control>
  * }
- * <pre>
+ * </pre>
  *
  *  Datasources available:
  *

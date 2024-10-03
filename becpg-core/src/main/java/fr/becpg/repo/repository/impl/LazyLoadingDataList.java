@@ -32,7 +32,6 @@ import fr.becpg.repo.repository.RepositoryEntity;
  * <p>LazyLoadingDataList class.</p>
  *
  * @author matthieu
- * @param <E>
  * @version $Id: $Id
  */
 public class LazyLoadingDataList<E extends RepositoryEntity> implements List<E>, Collection<E>  {

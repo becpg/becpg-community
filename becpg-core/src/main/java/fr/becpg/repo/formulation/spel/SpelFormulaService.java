@@ -68,7 +68,6 @@ public class SpelFormulaService {
 	 * <p>createSecurityProxy.</p>
 	 *
 	 * @param entity a T object.
-	 * @param <T> a T object.
 	 * @return a T object.
 	 */
 	@SuppressWarnings("unchecked")
@@ -113,7 +112,6 @@ public class SpelFormulaService {
 	 * <p>createEntitySpelContext.</p>
 	 *
 	 * @param entity a T object.
-	 * @param <T> a T object.
 	 * @return a {@link org.springframework.expression.spel.support.StandardEvaluationContext} object.
 	 */
 	public <T extends RepositoryEntity> StandardEvaluationContext createEntitySpelContext(T entity) {
@@ -141,7 +139,6 @@ public class SpelFormulaService {
 	 *
 	 * @param entity a T object.
 	 * @param dataListItem a {@link fr.becpg.repo.repository.RepositoryEntity} object.
-	 * @param <T> a T object.
 	 * @return a {@link org.springframework.expression.spel.support.StandardEvaluationContext} object.
 	 */
 	public <T extends RepositoryEntity> StandardEvaluationContext createDataListItemSpelContext(T entity, RepositoryEntity dataListItem) {
@@ -153,7 +150,6 @@ public class SpelFormulaService {
 	 *
 	 * @param entity a T object.
 	 * @param formulaContext a {@link fr.becpg.repo.formulation.spel.SpelFormulaContext} object.
-	 * @param <T> a T object.
 	 * @return a {@link org.springframework.expression.spel.support.StandardEvaluationContext} object.
 	 * @param applySecurity a boolean
 	 */
@@ -174,7 +170,6 @@ public class SpelFormulaService {
 	 *
 	 * @param entity a T object
 	 * @param formulaContext a {@link fr.becpg.repo.formulation.spel.SpelFormulaContext} object
-	 * @param <T> a T class
 	 * @return a {@link org.springframework.expression.spel.support.StandardEvaluationContext} object
 	 */
 	public <T extends RepositoryEntity> StandardEvaluationContext createCustomSpelContext(T entity, SpelFormulaContext<T> formulaContext) {
@@ -186,7 +181,6 @@ public class SpelFormulaService {
 	 *
 	 * @param entity a {@link fr.becpg.repo.repository.RepositoryEntity} object.
 	 * @param item a T object.
-	 * @param <T> a T object.
 	 * @return a {@link org.springframework.expression.spel.support.StandardEvaluationContext} object.
 	 */
 	public <T> StandardEvaluationContext createItemSpelContext(RepositoryEntity entity, T item) {
