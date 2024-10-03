@@ -94,8 +94,10 @@ public class EntityCatalogPolicy extends AbstractBeCPGPolicy
 		for (NodeRef nodeRef : pendingNodes) {
 			String diffKey = CHANGED_CATALOG_ENTRIES + nodeRef;
 			Set<QName> pendingDiff = TransactionSupportUtil.getResource(diffKey);
-			Set<NodeRef> updatedLists = TransactionSupportUtil.getResource(AuditEntityListItemPolicy.UPDATED_LISTS + nodeRef);
+			String updatedListsKey = AuditEntityListItemPolicy.UPDATED_LISTS + nodeRef;
+			Set<NodeRef> updatedLists = TransactionSupportUtil.getResource(updatedListsKey);
 			entityCatalogService.updateAuditedField(nodeRef, pendingDiff, updatedLists);
+			TransactionSupportUtil.bindResource(updatedListsKey, null);
 		}
 		return true;
 	}
