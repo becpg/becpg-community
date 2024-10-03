@@ -120,25 +120,24 @@ public class MonitorWebScript extends DeclarativeWebScript {
 			
 			Map<String, Object> ret = new HashMap<>();
 			
-			try {
-				List<NodeRef> result = BeCPGQueryBuilder.createQuery().inSite("valid", null).maxResults(1).list();
-				if (!result.isEmpty()) {
-					ret.put(SOLR_STATUS, "UP");
-				} else {
-					ret.put(SOLR_STATUS, "DOWN");
-				}
-			} catch (Exception e) {
-				ret.put(SOLR_STATUS, "DOWN");
-			}
-			
 			fillMonitoringInformation(ret, true);
-			
-			if ("true".equals(req.getParameter("volumetry"))) {
-				fillVolumetry(ret);
-			}
 			
 			if ("beCPG Monitors".equals(req.getHeader(HttpHeaders.USER_AGENT))) {
 				ret.put("authenticated", true);
+				try {
+					List<NodeRef> result = BeCPGQueryBuilder.createQuery().inSite("valid", null).maxResults(1).list();
+					if (!result.isEmpty()) {
+						ret.put(SOLR_STATUS, "UP");
+					} else {
+						ret.put(SOLR_STATUS, "DOWN");
+					}
+				} catch (Exception e) {
+					ret.put(SOLR_STATUS, "DOWN");
+				}
+				
+				if ("true".equals(req.getParameter("volumetry"))) {
+					fillVolumetry(ret);
+				}
 			} else {
 				ret.clear();
 			}
