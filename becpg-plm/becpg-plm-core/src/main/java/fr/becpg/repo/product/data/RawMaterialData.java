@@ -45,6 +45,12 @@ public class RawMaterialData extends ProductData {
 		return this;
 	}
 	
+	/**
+	 * <p>withNetWeight.</p>
+	 *
+	 * @param netWeight a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.product.data.RawMaterialData} object
+	 */
 	public RawMaterialData withNetWeight(Double netWeight) {
 		setNetWeight(netWeight);
 		return this;

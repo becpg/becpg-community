@@ -151,6 +151,8 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 	 * @param key a {@link java.io.Serializable} object.
 	 * @param entityItems a {@link java.util.Map} object.
 	 * @return a int.
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param excelCellStyles a {@link fr.becpg.repo.helper.ExcelHelper.ExcelCellStyles} object
 	 */
 	protected int fillRow(XSSFSheet sheet, NodeRef entityNodeRef, NodeRef itemNodeRef, QName itemType,
 			List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache, int rownum, Serializable key,
@@ -321,6 +323,8 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 	 * @param formula a {@link java.lang.String} object.
 	 * @param values a {@link java.util.Map} object.
 	 * @return a {@link java.lang.Object} object.
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param itemNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
 	protected Object eval(NodeRef entityNodeRef, NodeRef itemNodeRef, String formula, Map<String, Object> values) {
 

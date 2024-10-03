@@ -74,7 +74,7 @@ public class AutoCompleteWebScript extends DeclarativeWebScript {
 	/**
 	 * <p>Setter for the field <code>AutoCompleteService</code>.</p>
 	 *
-	 * @param AutoCompleteService a {@link fr.becpg.repo.autocomplete.AutoCompleteService} object.
+	 * @param autoCompleteService a {@link fr.becpg.repo.autocomplete.AutoCompleteService} object
 	 */
 	public void setAutoCompleteService(AutoCompleteService autoCompleteService) {
 		this.autoCompleteService = autoCompleteService;

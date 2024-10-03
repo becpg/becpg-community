@@ -75,6 +75,7 @@ public class HierarchyServiceImpl implements HierarchyService {
 	@Autowired
 	private Repository repositoryHelper;
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getHierarchyByPath(String path, NodeRef parentNodeRef, QName key, String value) {
 		if (key == null) {
@@ -117,6 +118,7 @@ public class HierarchyServiceImpl implements HierarchyService {
 		return getLuceneQuery(path, null, BeCPGModel.PROP_LKV_VALUE, value, true).list();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> getAllHierarchiesByDepthLevel(String parentPath, String query, String depthLevel) {
 

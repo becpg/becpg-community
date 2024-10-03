@@ -23,6 +23,11 @@ import fr.becpg.repo.entity.catalog.EntityCatalogService;
 import fr.becpg.repo.entity.datalist.policy.AuditEntityListItemPolicy;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
+/**
+ * <p>EntityCatalogPolicy class.</p>
+ *
+ * @author matthieu
+ */
 public class EntityCatalogPolicy extends AbstractBeCPGPolicy
 		implements NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnDeleteAssociationPolicy, NodeServicePolicies.OnUpdatePropertiesPolicy {
 
@@ -30,11 +35,18 @@ public class EntityCatalogPolicy extends AbstractBeCPGPolicy
 
 	private EntityCatalogService entityCatalogService;
 	
+	/**
+	 * <p>Setter for the field <code>entityCatalogService</code>.</p>
+	 *
+	 * @param entityCatalogService a {@link fr.becpg.repo.entity.catalog.EntityCatalogService} object
+	 */
 	public void setEntityCatalogService(EntityCatalogService entityCatalogService) {
 		this.entityCatalogService = entityCatalogService;
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * <p>
 	 * doInit.
 	 * </p>
@@ -89,6 +101,7 @@ public class EntityCatalogPolicy extends AbstractBeCPGPolicy
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 		for (NodeRef nodeRef : pendingNodes) {
@@ -100,6 +113,7 @@ public class EntityCatalogPolicy extends AbstractBeCPGPolicy
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 		if (!isVersionNode(nodeRef) && isNotLocked(nodeRef) && before != null && after != null) {

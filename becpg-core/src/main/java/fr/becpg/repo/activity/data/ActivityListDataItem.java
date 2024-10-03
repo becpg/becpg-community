@@ -51,18 +51,38 @@ public class ActivityListDataItem extends BeCPGDataObject {
 	private Date createdDate;
 	private Long id;
 	
+	/**
+	 * <p>Setter for the field <code>id</code>.</p>
+	 *
+	 * @param id a {@link java.lang.Long} object
+	 */
 	public void setId(Long id) {
 		this.id = id;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>id</code>.</p>
+	 *
+	 * @return a {@link java.lang.Long} object
+	 */
 	public Long getId() {
 		return id;
 	}
 
+	/**
+	 * <p>setCreated.</p>
+	 *
+	 * @param created a {@link java.util.Date} object
+	 */
 	public void setCreated(Date created) {
 		this.createdDate = created;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>createdDate</code>.</p>
+	 *
+	 * @return a {@link java.util.Date} object
+	 */
 	public Date getCreatedDate() {
 		return createdDate;
 	}

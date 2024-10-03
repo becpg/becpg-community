@@ -76,6 +76,12 @@ public class ProductSpecificationData extends ProductData {
 
 	
 
+	/**
+	 * <p>withNutList.</p>
+	 *
+	 * @param nutList a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.product.data.ProductSpecificationData} object
+	 */
 	public ProductSpecificationData withNutList(List<NutListDataItem> nutList) {
 		setNutList(nutList);
 		return this;

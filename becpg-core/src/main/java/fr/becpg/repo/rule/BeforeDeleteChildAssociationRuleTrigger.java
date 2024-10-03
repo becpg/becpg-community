@@ -48,7 +48,7 @@ import fr.becpg.model.BeCPGModel;
  * <ul>
  *   <li>{@link org.alfresco.repo.node.NodeServicePolicies.BeforeDeleteChildAssociationPolicy}</li>
  * </ul>
- * 
+ *
  * @author Roy Wetherall
  */
 public class BeforeDeleteChildAssociationRuleTrigger
@@ -70,6 +70,11 @@ public class BeforeDeleteChildAssociationRuleTrigger
 	private boolean ignoreEntityDataList = true;
 
 	
+	/**
+	 * <p>Setter for the field <code>isClassBehaviour</code>.</p>
+	 *
+	 * @param isClassBehaviour a boolean
+	 */
 	public void setIsClassBehaviour(boolean isClassBehaviour)
 	{
 		this.isClassBehaviour = isClassBehaviour;
@@ -77,12 +82,22 @@ public class BeforeDeleteChildAssociationRuleTrigger
 	
 	
 	
+	/**
+	 * <p>setClassBehaviour.</p>
+	 *
+	 * @param isClassBehaviour a boolean
+	 */
 	public void setClassBehaviour(boolean isClassBehaviour) {
 		this.isClassBehaviour = isClassBehaviour;
 	}
 
 
 
+	/**
+	 * <p>Setter for the field <code>ignoreEntityDataList</code>.</p>
+	 *
+	 * @param ignoreEntityDataList a boolean
+	 */
 	public void setIgnoreEntityDataList(boolean ignoreEntityDataList) {
 		this.ignoreEntityDataList = ignoreEntityDataList;
 	}
@@ -90,6 +105,8 @@ public class BeforeDeleteChildAssociationRuleTrigger
 
 
 	/**
+	 * <p>registerRuleTrigger.</p>
+	 *
 	 * @see org.alfresco.repo.rule.ruletrigger.RuleTrigger#registerRuleTrigger()
 	 */
 	public void registerRuleTrigger()
@@ -115,6 +132,7 @@ public class BeforeDeleteChildAssociationRuleTrigger
                 new JavaBehaviour(this, NodeServicePolicies.BeforeMoveNodePolicy.QNAME.getLocalName()));
 	}
 
+    /** {@inheritDoc} */
     public void beforeDeleteChildAssociation(ChildAssociationRef childAssocRef)
     {
         // Break out early if rules are not enabled
@@ -147,6 +165,7 @@ public class BeforeDeleteChildAssociationRuleTrigger
         triggerRules(childAssocRef.getParentRef(), childNodeRef);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void beforeMoveNode(ChildAssociationRef oldChildAssocRef, NodeRef newParentRef)
     {

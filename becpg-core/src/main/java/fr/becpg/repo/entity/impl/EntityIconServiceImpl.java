@@ -19,6 +19,11 @@ import fr.becpg.common.BeCPGException;
 import fr.becpg.repo.entity.EntityIconService;
 import fr.becpg.repo.entity.EntityService;
 
+/**
+ * <p>EntityIconServiceImpl class.</p>
+ *
+ * @author matthieu
+ */
 @Service("entityIconService")
 public class EntityIconServiceImpl implements EntityIconService {
 
@@ -38,6 +43,7 @@ public class EntityIconServiceImpl implements EntityIconService {
 	private static final String COLON = ":";
 	private static final String DOT = ".";
 
+	/** {@inheritDoc} */
 	@Override
 	public void writeIconCSS(OutputStream out) {
 
@@ -78,11 +84,24 @@ public class EntityIconServiceImpl implements EntityIconService {
 	}
 	
 
+	/**
+	 * <p>extractCSSClassName.</p>
+	 *
+	 * @param fileName a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	public String extractCSSClassName(String fileName) {
 		String withoutPrefix = fileName.replace("generic-", "");
 		return withoutPrefix.lastIndexOf('-') != -1 ? withoutPrefix.substring(0, withoutPrefix.lastIndexOf('-')): withoutPrefix;
 	}
 
+	/**
+	 * <p>encodeImage.</p>
+	 *
+	 * @param inputStream a {@link java.io.InputStream} object
+	 * @return a {@link java.lang.String} object
+	 * @throws java.io.IOException if any.
+	 */
 	public static String encodeImage(InputStream inputStream) throws IOException {
 
 		try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
@@ -100,6 +119,13 @@ public class EntityIconServiceImpl implements EntityIconService {
 		}
 	}
 
+	/**
+	 * <p>beCPGException.</p>
+	 *
+	 * @param message a {@link java.lang.String} object
+	 * @param cause a {@link java.lang.Exception} object
+	 * @return a {@link fr.becpg.common.BeCPGException} object
+	 */
 	public BeCPGException beCPGException(String message, Exception cause) {
 		return cause != null ? new BeCPGException(message, cause) : new BeCPGException(message);
 	}

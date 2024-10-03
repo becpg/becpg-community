@@ -13,15 +13,26 @@ import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.ToxListDataItem;
 import fr.becpg.repo.toxicology.ToxicologyService;
 
+/**
+ * <p>ToxCharactDetailsVisitor class.</p>
+ *
+ * @author matthieu
+ */
 @Service
 public class ToxCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 
 	private ToxicologyService toxicologyService;
 	
+	/**
+	 * <p>Setter for the field <code>toxicologyService</code>.</p>
+	 *
+	 * @param toxicologyService a {@link fr.becpg.repo.toxicology.ToxicologyService} object
+	 */
 	public void setToxicologyService(ToxicologyService toxicologyService) {
 		this.toxicologyService = toxicologyService;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public CharactDetails visit(ProductData productData, List<NodeRef> dataListItems, Integer maxLevel) throws FormulateException {
 		

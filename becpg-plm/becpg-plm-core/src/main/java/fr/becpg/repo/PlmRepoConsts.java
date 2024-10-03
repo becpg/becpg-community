@@ -212,8 +212,10 @@ public class PlmRepoConsts {
 	/** Constant <code>PATH_REGULATORY_USAGES="RegulatoryUsages"</code> */
 	public static final String PATH_REGULATORY_USAGES = "RegulatoryUsages";
 	
+	/** Constant <code>PATH_TOXICITIES="Toxicities"</code> */
 	public static final String PATH_TOXICITIES = "Toxicities";
 	
+	/** Constant <code>PATH_TOX_ING="ToxIng"</code> */
 	public static final String PATH_TOX_ING = "ToxIng";
 
 	/** Constant <code>PATH_CONTACT_TYPES="ContactTypes"</code> */
@@ -362,6 +364,7 @@ public class PlmRepoConsts {
 	public static final String PATH_GS1_CATCH_AREA_CODES = "CatchAreaCodes";
 	/** Constant <code>PATH_PUBCHANNELS="PubChannels"</code> */
 	public static final String PATH_PUBCHANNELS = "PubChannels";
+	/** Constant <code>PATH_ACTIVITY_LIST="activityList"</code> */
 	public static final String PATH_ACTIVITY_LIST = "activityList";
 	/** Constant <code>PATH_MICROBIO_TYPES="MicrobioTypes"</code> */
 	public static final String PATH_MICROBIO_TYPES = "MicrobioTypes";

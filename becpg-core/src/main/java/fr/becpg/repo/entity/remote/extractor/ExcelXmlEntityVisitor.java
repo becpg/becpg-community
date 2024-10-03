@@ -67,12 +67,7 @@ public class ExcelXmlEntityVisitor extends AbstractEntityVisitor {
 	/**
 	 * <p>Constructor for ExcelXmlEntityVisitor.</p>
 	 *
-	 * @param mlNodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
-	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
-	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
-	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object.
-	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object.
-	 * @param siteService a {@link org.alfresco.service.cmr.site.SiteService} object.
+	 * @param remoteServiceRegisty a {@link fr.becpg.repo.entity.remote.RemoteServiceRegisty} object
 	 */
 	public ExcelXmlEntityVisitor(RemoteServiceRegisty remoteServiceRegisty) {
 		super(remoteServiceRegisty);

@@ -221,11 +221,13 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	@Autowired
 	private BeCPGAuditService beCPGAuditService;
 	
+	/** {@inheritDoc} */
 	@Override
 	public String getChainId() {
 		return REPORT_FORMULATION_CHAIN_ID;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public boolean isChainActiveOnEntity(NodeRef entityNodeRef) {
 		NodeRef reportList = entityListDAO.getList(entityListDAO.getListContainer(entityNodeRef), "View-reports");
@@ -238,11 +240,13 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 		generateReports(null, entityNodeRef);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void generateReports(final NodeRef entityNodeRef, boolean generateAllReports) {
 		generateReports(null, entityNodeRef, generateAllReports);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void generateReports(final NodeRef nodeRefFrom, final NodeRef nodeRefTo) {
 		generateReports(nodeRefFrom, nodeRefTo, false);
@@ -1596,6 +1600,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 		return ret;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> getReportsOfKind(NodeRef entityNodeRef, String reportKind) {
 
@@ -1665,6 +1670,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 		return documentNodeRef;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> getOrRefreshReportsOfKind(NodeRef entityNodeRef, String reportKind) {
 		if (shouldGenerateReport(entityNodeRef, null)) {

@@ -168,6 +168,7 @@ public class BecpgFormServiceImpl implements BecpgFormService, ApplicationContex
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void registerDecorator(ColumnDecorator columnDecorator) {
 		this.decorators.add(columnDecorator);

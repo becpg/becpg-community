@@ -40,10 +40,12 @@ public interface AutoNumService {
 	String getAutoNumValue(QName className, QName propertyName);
 
 	/**
-	 * @param className
-	 * @param propertyName
-	 * @param counter
-	 * @return
+	 * <p>setAutoNumValue.</p>
+	 *
+	 * @param className a {@link org.alfresco.service.namespace.QName} object
+	 * @param propertyName a {@link org.alfresco.service.namespace.QName} object
+	 * @param counter a {@link java.lang.Long} object
+	 * @return a boolean
 	 */
 	boolean setAutoNumValue(QName className, QName propertyName, Long counter);
 
@@ -78,9 +80,9 @@ public interface AutoNumService {
 
 	/**
 	 * <p>getAutoNumNodeRef.</p>
-	 * 
-	 * @param className
-	 * @param propertyName
+	 *
+	 * @param className a {@link org.alfresco.service.namespace.QName} object
+	 * @param propertyName a {@link org.alfresco.service.namespace.QName} object
 	 * @return the NodeRef of the AutoNum value
 	 */
 	NodeRef getAutoNumNodeRef(final QName className, final QName propertyName);

@@ -24,6 +24,11 @@ public class LinkedValueAutoCompleteExtractor implements AutoCompleteExtractor<N
 
 	private NodeService nodeService;
 
+	/**
+	 * <p>Constructor for LinkedValueAutoCompleteExtractor.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 */
 	public LinkedValueAutoCompleteExtractor(NodeService nodeService) {
 		super();
 		this.nodeService = nodeService;

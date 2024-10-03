@@ -89,6 +89,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 	private static final int MAX_PAGE = 50;
 
+	/** Constant <code>ML_TEXT_SIZE_LIMIT=200</code> */
 	public static final int ML_TEXT_SIZE_LIMIT = 200;
 
 	private static final String EXPORT_ACTIVITY = "fr.becpg.export";
@@ -304,6 +305,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean postChangeOrderActivity(NodeRef entityNodeRef, NodeRef changeOrderNodeRef) {
 		try {
@@ -521,6 +523,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void postDataListCopyActivity(NodeRef entityNodeRef, NodeRef sourceEntityNodeRef, NodeRef datalistNodeRef, String action) {
 		if ((datalistNodeRef != null)) {
@@ -1358,6 +1361,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void postExportActivity(NodeRef entityNodeRef, QName dataType, String fileName) {
 		logger.info("Exporting:" + fileName + " " + dataType + " " + entityNodeRef + " " + AuthenticationUtil.getFullyAuthenticatedUser());

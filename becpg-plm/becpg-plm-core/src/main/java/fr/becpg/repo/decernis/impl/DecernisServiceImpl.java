@@ -166,6 +166,7 @@ public class DecernisServiceImpl  extends AbstractLifecycleBean implements Decer
 		return serverUrl() != null && !serverUrl().isBlank() && token() != null && !token().isBlank();
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	protected void onBootstrap(ApplicationEvent event) {
 		if(isEnabled()) {
@@ -768,6 +769,7 @@ public class DecernisServiceImpl  extends AbstractLifecycleBean implements Decer
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void onShutdown(ApplicationEvent event) {
 	//DO Nothing

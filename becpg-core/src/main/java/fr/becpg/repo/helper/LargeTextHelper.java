@@ -103,6 +103,13 @@ public class LargeTextHelper {
 		}
 	}
 
+	/**
+	 * <p>htmlDiff.</p>
+	 *
+	 * @param text1 a {@link java.lang.String} object
+	 * @param text2 a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	public static String htmlDiff(String text1, String text2) {
 		DiffMatchPatch dmp = new DiffMatchPatch();
 		return dmp.diffPrettyHtml( dmp.diffMain(text1,text2 ));

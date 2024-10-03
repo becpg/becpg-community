@@ -330,15 +330,20 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	 * skipCount.
 	 * </p>
 	 *
-	 * @param maxResults
-	 *            a int.
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 * @param page a int
 	 */
 	public BeCPGQueryBuilder page(int page) {
 		this.page = page;
 		return this;
 	}
 	
+	/**
+	 * <p>page.</p>
+	 *
+	 * @param pagingRequest a {@link org.alfresco.query.PagingRequest} object
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object
+	 */
 	public BeCPGQueryBuilder page(PagingRequest pagingRequest) {
 		this.maxResults = pagingRequest.getMaxItems();
 		this.page = pagingRequest.getSkipCount()/pagingRequest.getMaxItems();
@@ -776,6 +781,14 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		return this;
 	}
 
+	/**
+	 * <p>orBetween.</p>
+	 *
+	 * @param propQName a {@link org.alfresco.service.namespace.QName} object
+	 * @param start a {@link java.lang.String} object
+	 * @param end a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object
+	 */
 	public BeCPGQueryBuilder orBetween(QName propQName, String start, String end) {
 		propOrBetweenQueriesMap.put(propQName, new Pair<>(start, end));
 		return this;
@@ -922,6 +935,11 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		return this;
 	}
 
+	/**
+	 * <p>excludeArchivedEntities.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object
+	 */
 	public BeCPGQueryBuilder excludeArchivedEntities() {
 		excludeAspect(BeCPGModel.ASPECT_ARCHIVED_ENTITY);
 		return this;
@@ -995,6 +1013,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	 * pagingResults.
 	 * </p>
 	 *
+	 * @return a {@link org.alfresco.query.PagingResults} object
 	 */
 	public PagingResults<NodeRef> pagingResults() {
 
@@ -1601,7 +1620,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	 * <p>
 	 * count.
 	 * </p>
-	 * 
+	 *
 	 * This method can be very slow for high result counts and saturate nodeDao cache
 	 *
 	 * @return a {@link java.lang.Long} object.

@@ -94,6 +94,11 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 
 	private SysAdminParams sysAdminParams;
 
+	/**
+	 * <p>Constructor for JsonSchemaEntityVisitor.</p>
+	 *
+	 * @param remoteServiceRegisty a {@link fr.becpg.repo.entity.remote.RemoteServiceRegisty} object
+	 */
 	public JsonSchemaEntityVisitor(RemoteServiceRegisty remoteServiceRegisty) {
 		super( remoteServiceRegisty);
 		this.sysAdminParams = remoteServiceRegisty.sysAdminParams();
@@ -117,6 +122,7 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 
 	}
 
+	/** {@inheritDoc} */
 	public void visit(QName entityType, OutputStream result) throws IOException {
 		JSONObject root = new JSONObject();
 
@@ -255,6 +261,7 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void visitNode(NodeRef nodeRef, JSONObject entity, JsonVisitNodeType type, QName assocName, RemoteJSONContext context)
 			throws JSONException {
@@ -324,6 +331,7 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void visitLists(NodeRef nodeRef, JSONObject entity, RemoteJSONContext context) throws JSONException {
 
@@ -371,6 +379,7 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void visitContent(NodeRef nodeRef, JSONObject entity) throws JSONException {
 		JSONObject object = addProperty(entity, RemoteEntityService.ELEM_CONTENT, TYPE_STRING, "Base64 Content", null);
@@ -378,6 +387,7 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 		//"contentMediaType": "image/png"
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void visitAssocs(NodeRef nodeRef, JSONObject entity, QName assocName, RemoteJSONContext context) throws JSONException {
 
@@ -482,6 +492,7 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void visitProps(NodeRef nodeRef, JSONObject entity, QName assocName, Map<QName, Serializable> props, RemoteJSONContext context)
 			throws JSONException {

@@ -76,6 +76,12 @@ public class AuthorityHelper implements InitializingBean {
 		return people;
 	}
 	
+	/**
+	 * <p>extractPeople.</p>
+	 *
+	 * @param authority a {@link java.lang.String} object
+	 * @return a {@link java.util.Set} object
+	 */
 	@SuppressWarnings("deprecation")
 	public static Set<String> extractPeople(String authority) {
 		Set<String> people = new HashSet<>();
@@ -208,6 +214,13 @@ public class AuthorityHelper implements InitializingBean {
 		return false;
 	}
 	
+	/**
+	 * <p>hasGroupAuthority.</p>
+	 *
+	 * @param userName a {@link java.lang.String} object
+	 * @param groupAuthority a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	public static boolean hasGroupAuthority(String userName, String groupAuthority) {
 		for (String currAuth : instance.authorityService.getAuthoritiesForUser(userName)) {
 			if ((PermissionService.GROUP_PREFIX + groupAuthority).equals(currAuth)) {

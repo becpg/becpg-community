@@ -58,18 +58,34 @@ public abstract class AbstractEntityVisitor implements RemoteEntityVisitor {
 
 	protected final Set<NodeRef> cacheList = new HashSet<>();
 
+	/**
+	 * <p>isLight.</p>
+	 *
+	 * @return a boolean
+	 */
 	protected boolean isLight() {
 		return RemoteEntityFormat.xml_light.equals(params.getFormat());
 	}
 
+	/**
+	 * <p>isAll.</p>
+	 *
+	 * @return a boolean
+	 */
 	protected boolean isAll() {
 		return RemoteEntityFormat.xml_all.equals(params.getFormat()) || RemoteEntityFormat.json_all.equals(params.getFormat());
 	}
 
+	/**
+	 * <p>Getter for the field <code>params</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.entity.remote.RemoteParams} object
+	 */
 	public RemoteParams getParams() {
 		return params;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void setParams(RemoteParams params) {
 		this.params = params;
@@ -78,12 +94,7 @@ public abstract class AbstractEntityVisitor implements RemoteEntityVisitor {
 	/**
 	 * <p>Constructor for AbstractEntityVisitor.</p>
 	 *
-	 * @param mlNodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
-	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
-	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
-	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object.
-	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object.
-	 * @param siteService a {@link org.alfresco.service.cmr.site.SiteService} object.
+	 * @param remoteServiceRegisty a {@link fr.becpg.repo.entity.remote.RemoteServiceRegisty} object
 	 */
 	protected AbstractEntityVisitor(RemoteServiceRegisty remoteServiceRegisty) {
 		super();

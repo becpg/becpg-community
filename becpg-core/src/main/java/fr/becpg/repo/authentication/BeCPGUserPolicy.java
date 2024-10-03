@@ -14,20 +14,32 @@ import org.alfresco.service.namespace.QName;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
+/**
+ * <p>BeCPGUserPolicy class.</p>
+ *
+ * @author matthieu
+ */
 public class BeCPGUserPolicy extends AbstractBeCPGPolicy implements OnAddAspectPolicy, OnUpdatePropertiesPolicy {
 
 	private BeCPGUserAccountService beCPGUserAccountService;
 
+	/**
+	 * <p>Setter for the field <code>beCPGUserAccountService</code>.</p>
+	 *
+	 * @param beCPGUserAccountService a {@link fr.becpg.repo.authentication.BeCPGUserAccountService} object
+	 */
 	public void setBeCPGUserAccountService(BeCPGUserAccountService beCPGUserAccountService) {
 		this.beCPGUserAccountService = beCPGUserAccountService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void doInit() {
 		policyComponent.bindClassBehaviour(OnUpdatePropertiesPolicy.QNAME, ContentModel.TYPE_PERSON, new JavaBehaviour(this, "onUpdateProperties"));
 		policyComponent.bindClassBehaviour(OnAddAspectPolicy.QNAME, BeCPGModel.ASPECT_USER_AUTHENTICATION, new JavaBehaviour(this, "onAddAspect"));
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 		if (before.containsKey(BeCPGModel.PROP_IS_SSO_USER) && (boolean) before.get(BeCPGModel.PROP_IS_SSO_USER)) {
@@ -38,6 +50,7 @@ public class BeCPGUserPolicy extends AbstractBeCPGPolicy implements OnAddAspectP
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onAddAspect(NodeRef nodeRef, QName aspectTypeQName) {
 		if (nodeService.getProperty(nodeRef, BeCPGModel.PROP_IS_SSO_USER) != null
@@ -46,6 +59,7 @@ public class BeCPGUserPolicy extends AbstractBeCPGPolicy implements OnAddAspectP
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 		for (NodeRef pendingNode : pendingNodes) {

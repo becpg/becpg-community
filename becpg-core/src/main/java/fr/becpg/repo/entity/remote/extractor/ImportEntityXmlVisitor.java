@@ -134,12 +134,7 @@ public class ImportEntityXmlVisitor {
 	 * Constructor for ImportEntityXmlVisitor.
 	 * </p>
 	 *
-	 * @param serviceRegistry
-	 *            a {@link org.alfresco.service.ServiceRegistry} object.
-	 * @param entityDictionaryService
-	 *            a {@link fr.becpg.repo.entity.EntityDictionaryService} object.
-	 * @param associationService
-	 *            a {@link fr.becpg.repo.helper.AssociationService} object.
+	 * @param remoteServiceRegisty a {@link fr.becpg.repo.entity.remote.RemoteServiceRegisty} object
 	 */
 	public ImportEntityXmlVisitor(RemoteServiceRegisty remoteServiceRegisty) {
 		super();

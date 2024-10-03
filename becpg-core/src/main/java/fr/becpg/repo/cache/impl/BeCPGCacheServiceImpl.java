@@ -99,6 +99,11 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 		this.cacheSizes = cacheSizes;
 	}
 
+	/**
+	 * <p>Setter for the field <code>registry</code>.</p>
+	 *
+	 * @param registry a {@link org.alfresco.util.cache.AsynchronouslyRefreshedCacheRegistry} object
+	 */
 	public void setRegistry(AsynchronouslyRefreshedCacheRegistry registry) {
 		this.registry = registry;
 	}
@@ -248,6 +253,7 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onRefreshableCacheEvent(RefreshableCacheEvent refreshableCacheEvent) {
 		if (getCacheId().equals(refreshableCacheEvent.getCacheId())) {
@@ -265,6 +271,7 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getCacheId() {
 		return BeCPGCacheServiceImpl.class.getName();

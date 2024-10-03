@@ -33,8 +33,15 @@ import fr.becpg.report.client.ReportFormat;
  */
 public interface EntityReportService {
 
+	/** Constant <code>REPORT_FORMULATION_CHAIN_ID="ReportFormulationChainId"</code> */
 	public static final String REPORT_FORMULATION_CHAIN_ID = "ReportFormulationChainId";
 
+	/**
+	 * <p>generateReports.</p>
+	 *
+	 * @param nodeRefFrom a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param nodeRefTo a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	void generateReports(NodeRef nodeRefFrom, NodeRef nodeRefTo);
 	
 	/**
@@ -85,6 +92,13 @@ public interface EntityReportService {
 	 */
 	NodeRef getOrRefreshReport(NodeRef entityNodeRef, NodeRef documentNodeRef);
 	
+	/**
+	 * <p>getOrRefreshReportsOfKind.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param reportType a {@link java.lang.String} object
+	 * @return a {@link java.util.List} object
+	 */
 	List<NodeRef> getOrRefreshReportsOfKind(NodeRef entityNodeRef, String reportType);
 	
 	/**
@@ -122,6 +136,13 @@ public interface EntityReportService {
 	 */
 	NodeRef getSelectedReport(NodeRef entityNodeRef);
 	
+	/**
+	 * <p>getReportsOfKind.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param reportType a {@link java.lang.String} object
+	 * @return a {@link java.util.List} object
+	 */
 	List<NodeRef> getReportsOfKind(NodeRef entityNodeRef, String reportType);
 
 	/**
@@ -160,6 +181,12 @@ public interface EntityReportService {
 	 */
 	NodeRef getAssociatedDocumentNodeRef(NodeRef entityNodeRef, NodeRef tplNodeRef, EntityReportParameters reportParameters, Locale locale, ReportFormat reportFormat);
 
+	/**
+	 * <p>generateReports.</p>
+	 *
+	 * @param nodeRefFrom a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param generateAllReports a boolean
+	 */
 	void generateReports(NodeRef nodeRefFrom, boolean generateAllReports);
 
 

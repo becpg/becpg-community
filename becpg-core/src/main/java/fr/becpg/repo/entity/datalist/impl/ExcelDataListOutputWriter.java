@@ -282,6 +282,16 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 
 	}
 
+	/**
+	 * <p>createExcelFile.</p>
+	 *
+	 * @param extractedItems a {@link fr.becpg.repo.entity.datalist.PaginatedExtractedItems} object
+	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object
+	 * @param handler a {@link fr.becpg.repo.entity.datalist.impl.ExcelDataListDownloadExporter} object
+	 * @param outputStream a {@link java.io.OutputStream} object
+	 * @return a boolean
+	 * @throws java.io.IOException if any.
+	 */
 	public boolean createExcelFile(PaginatedExtractedItems extractedItems, DataListFilter dataListFilter,
 			@Nullable ExcelDataListDownloadExporter handler, OutputStream outputStream) throws IOException {
 

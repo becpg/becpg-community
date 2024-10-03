@@ -94,11 +94,11 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	public static final String SEARCH_CONFIG_CACHE_KEY = "SEARCH_CONFIG";
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * <p>
 	 * getSearchConfig.
 	 * </p>
-	 *
-	 * @return a {@link fr.becpg.repo.search.impl.SearchConfig} object.
 	 */
 	@Override
 	public SearchConfig getSearchConfig() {

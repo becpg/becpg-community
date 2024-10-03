@@ -143,18 +143,11 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * <p>
 	 * updateAuditedField.
 	 * </p>
-	 *
-	 * @param entityNodeRef
-	 *            a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param before
-	 *            a {@link java.util.Map} object.
-	 * @param after
-	 *            a {@link java.util.Map} object.
-	 * @param listNodeRefs
-	 *            a {@link java.util.Set} object.
 	 */
 	@Override
 	public void updateAuditedField(NodeRef entityNodeRef, Set<QName> diffQnames, Set<NodeRef> listNodeRefs) {
@@ -358,50 +351,29 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * <p>
 	 * formulateCatalogs.
 	 * </p>
-	 *
-	 * @param entityNodeRef
-	 *            a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param locales
-	 *            a {@link java.util.List} object.
-	 * @param entityCatalogMatcher
-	 *            a
-	 *            {@link fr.becpg.repo.entity.catalog.EntityCatalogService.EntityCatalogMatcher}
-	 *            object.
-	 * @return a {@link org.json.JSONArray} object.
-	 * @throws org.json.JSONException
-	 *             if any.
 	 */
 	@Override
 	public JSONArray formulateCatalogs(RepositoryEntity formulatedEntity, List<String> locales) throws JSONException {
 		return formulateCatalog(null, formulatedEntity, locales);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public JSONArray formulateCatalog(String catalogId, NodeRef entityNodeRef, List<String> locales) throws JSONException {
 		return formulateCatalog(catalogId, alfrescoRepository.findOne(entityNodeRef), locales);
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * <p>
 	 * formulateCatalog.
 	 * </p>
-	 *
-	 * @param catalogId
-	 *            a {@link java.lang.String} object.
-	 * @param entityNodeRef
-	 *            a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param locales
-	 *            a {@link java.util.List} object.
-	 * @param entityCatalogMatcher
-	 *            a
-	 *            {@link fr.becpg.repo.entity.catalog.EntityCatalogService.EntityCatalogMatcher}
-	 *            object.
-	 * @return a {@link org.json.JSONArray} object.
-	 * @throws org.json.JSONException
-	 *             if any.
 	 */
 	public JSONArray formulateCatalog(String catalogId, RepositoryEntity formulatedEntity, List<String> locales) throws JSONException {
 		JSONArray ret = new JSONArray();

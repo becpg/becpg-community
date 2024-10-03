@@ -20,6 +20,11 @@ import fr.becpg.common.BeCPGException;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
 
+/**
+ * <p>VersionExporter class.</p>
+ *
+ * @author matthieu
+ */
 public class VersionExporter extends AbstractExporter {
 
 	private NodeService dbNodeService;
@@ -30,6 +35,14 @@ public class VersionExporter extends AbstractExporter {
 	private NodeRef originalNodeRef = null;
 	private NodeRef targetNode = null;
 
+	/**
+	 * <p>Constructor for VersionExporter.</p>
+	 *
+	 * @param originalNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param targetNode a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param dbNodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object
+	 */
 	public VersionExporter(NodeRef originalNodeRef, NodeRef targetNode, NodeService dbNodeService, EntityDictionaryService entityDictionaryService) {
 		this.originalNodeRef = originalNodeRef;
 		this.targetNode = targetNode;
@@ -37,6 +50,7 @@ public class VersionExporter extends AbstractExporter {
 		this.entityDictionaryService = entityDictionaryService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void startNode(NodeRef nodeRef) {
 		QName nodeType = dbNodeService.getType(nodeRef);
@@ -89,6 +103,7 @@ public class VersionExporter extends AbstractExporter {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void endNode(NodeRef nodeRef) {
 		
@@ -100,6 +115,7 @@ public class VersionExporter extends AbstractExporter {
 		
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void end() {
 		

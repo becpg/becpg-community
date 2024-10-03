@@ -45,6 +45,11 @@ import fr.becpg.repo.helper.JsonHelper;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.security.SecurityService;
 
+/**
+ * <p>EntityActivityExtractorServiceImpl class.</p>
+ *
+ * @author matthieu
+ */
 @Service("entityActivityExtractorService")
 public class EntityActivityExtractorServiceImpl implements EntityActivityExtractorService {
 
@@ -78,10 +83,16 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 	
 	private static final Set<QName> isIgnoredTypes = new HashSet<>();
 	
+	/**
+	 * <p>registerIgnoredType.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 */
 	public static void registerIgnoredType(QName type) {
 		isIgnoredTypes.add(type);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public Map<String, Object> extractAuditActivityData(JSONObject auditActivityData, List<AttributeExtractorStructure> metadataFields, FormatMode mode) {
 
@@ -146,6 +157,7 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 		return ret;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void formatPostLookup(JSONObject postLookup) {
 		NodeRef entityNodeRef = null;

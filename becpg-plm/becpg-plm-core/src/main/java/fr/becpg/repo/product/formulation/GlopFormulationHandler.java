@@ -26,6 +26,11 @@ import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
 
 
+/**
+ * <p>GlopFormulationHandler class.</p>
+ *
+ * @author matthieu
+ */
 public class GlopFormulationHandler extends FormulationBaseHandler<ProductData> {
 
 	private static final Log logger = LogFactory.getLog(GlopFormulationHandler.class);
@@ -38,22 +43,43 @@ public class GlopFormulationHandler extends FormulationBaseHandler<ProductData> 
 	
 	private NodeService nodeService;
 	
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object
+	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 */
 	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>glopService</code>.</p>
+	 *
+	 * @param glopService a {@link fr.becpg.repo.glop.GlopService} object
+	 */
 	public void setGlopService(GlopService glopService) {
 		this.glopService = glopService;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public boolean process(ProductData productData) throws FormulateException {
 		if (!L2CacheSupport.isCacheOnlyEnable() && isGlopApplicable(productData)) {

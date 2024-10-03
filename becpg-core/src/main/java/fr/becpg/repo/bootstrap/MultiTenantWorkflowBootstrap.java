@@ -38,6 +38,11 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.extensions.surf.util.AbstractLifecycleBean;
 
+/**
+ * <p>MultiTenantWorkflowBootstrap class.</p>
+ *
+ * @author matthieu
+ */
 public class MultiTenantWorkflowBootstrap extends AbstractLifecycleBean {
 
 	private TenantAdminService tenantAdminService;
@@ -46,18 +51,34 @@ public class MultiTenantWorkflowBootstrap extends AbstractLifecycleBean {
 
 	private static Log logger = LogFactory.getLog(MultiTenantWorkflowBootstrap.class);
 
+	/**
+	 * <p>Setter for the field <code>tenantAdminService</code>.</p>
+	 *
+	 * @param tenantAdminService a {@link org.alfresco.repo.tenant.TenantAdminService} object
+	 */
 	public void setTenantAdminService(TenantAdminService tenantAdminService) {
 		this.tenantAdminService = tenantAdminService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>workflowService</code>.</p>
+	 *
+	 * @param workflowService a {@link org.alfresco.service.cmr.workflow.WorkflowService} object
+	 */
 	public void setWorkflowService(WorkflowService workflowService) {
 		this.workflowService = workflowService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>transactionService</code>.</p>
+	 *
+	 * @param transactionService a {@link org.alfresco.service.transaction.TransactionService} object
+	 */
 	public void setTransactionService(TransactionService transactionService) {
 		this.transactionService = transactionService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void onBootstrap(ApplicationEvent event)
 
@@ -88,6 +109,7 @@ public class MultiTenantWorkflowBootstrap extends AbstractLifecycleBean {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void onShutdown(ApplicationEvent event) {
 		//Do Nothing

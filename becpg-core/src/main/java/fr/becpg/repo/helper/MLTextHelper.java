@@ -43,6 +43,9 @@ public class MLTextHelper {
 		//DO Nothing
 	}
 
+	/**
+	 * <p>flushCache.</p>
+	 */
 	public static void flushCache() {
 		mlTextCache = new ConcurrentHashMap<>();
 		supportedLocales = null;
@@ -52,7 +55,7 @@ public class MLTextHelper {
 	/**
 	 * <p>setSupportedLocalesInstance.</p>
 	 *
-	 * @param supportedLocales a {@link java.lang.String} object
+	 * @param supportedLocalesText a {@link java.lang.String} object
 	 */
 	public static void setSupportedLocales(String supportedLocalesText) {
 		MLTextHelper.supportedLocalesText = supportedLocalesText;

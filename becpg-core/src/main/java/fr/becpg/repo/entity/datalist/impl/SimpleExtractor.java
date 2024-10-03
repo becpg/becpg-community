@@ -71,6 +71,12 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 	private static final Log logger = LogFactory.getLog(SimpleExtractor.class);
 
+	/**
+	 * <p>registerDataListItemExtractor.</p>
+	 *
+	 * @param key a {@link org.alfresco.service.namespace.QName} object
+	 * @param dataListItemExtractor a {@link fr.becpg.repo.entity.datalist.DataListItemExtractor} object
+	 */
 	public static void registerDataListItemExtractor(QName key, DataListItemExtractor dataListItemExtractor) {
 		dataListItemExtractors.put(key, dataListItemExtractor);
 	}

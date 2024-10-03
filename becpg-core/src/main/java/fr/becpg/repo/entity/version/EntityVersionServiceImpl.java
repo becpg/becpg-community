@@ -355,6 +355,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		createInitialVersion(entityNodeRef, null);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void createInitialVersion(NodeRef entityNodeRef, Date effectiveDate) {
 		internalCreateInitialVersion(entityNodeRef, effectiveDate);
@@ -393,6 +394,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void createInitialVersionWithProps(NodeRef entityNodeRef, Map<QName, Serializable> before) {
 
@@ -1128,6 +1130,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef convertVersion(NodeRef nodeRef) {
 		
@@ -1198,11 +1201,13 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		repoService.moveEntity(toMove, newParent);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public Set<NodeRef> findOldVersionWUsed(NodeRef sourceEntity) {
 		return findOldVersionWUsed(sourceEntity, new HashSet<>(), null, -1, new AtomicInteger(0), null);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public Set<NodeRef> findOldVersionWUsed(NodeRef sourceEntity, Set<NodeRef> visited,
 			final List<NodeRef> ignoredItems, final int maxProcessedNodes, AtomicInteger currentCount, String path) {
@@ -1379,6 +1384,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		
 		return links;
 	}
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef revertVersion(NodeRef versionNodeRef) throws IllegalAccessException {
 
@@ -1431,6 +1437,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		return createVersion(entityNodeRef, versionProperties, null);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef createVersion(final NodeRef entityNodeRef, Map<String, Serializable> versionProperties, Date effectiveDate) {
 		NodeRef versionNodeRef = internalCreateVersion(entityNodeRef, versionProperties, effectiveDate, null, false);
@@ -1711,12 +1718,14 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isVersion(NodeRef nodeRef) {
 		return nodeRef.getStoreRef().getProtocol().contains(VersionBaseModel.STORE_PROTOCOL)
 				|| nodeRef.getStoreRef().getIdentifier().contains(Version2Model.STORE_ID);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef extractVersion(NodeRef versionNodeRef) {
 

@@ -88,6 +88,11 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 		return isDefaultExtractor;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>beCPGLicenseManager</code>.</p>
+	 *
+	 * @param beCPGLicenseManager a {@link fr.becpg.repo.license.BeCPGLicenseManager} object
+	 */
 	public void setBeCPGLicenseManager(BeCPGLicenseManager beCPGLicenseManager) {
 		this.beCPGLicenseManager = beCPGLicenseManager;
 	}
@@ -475,11 +480,17 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 		return nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public int getPriority() {
 		return priority;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>priority</code>.</p>
+	 *
+	 * @param priority a int
+	 */
 	public void setPriority(int priority) {
 		this.priority = priority;
 	}

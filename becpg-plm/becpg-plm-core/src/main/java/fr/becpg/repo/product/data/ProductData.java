@@ -312,52 +312,102 @@ public class ProductData extends AbstractScorableEntity
 	private List<String> glopConstraintLists;
 	private Boolean glopApplyOptimization;
 	
+	/**
+	 * <p>Getter for the field <code>glopTargetCharact</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	@AlfSingleAssoc
 	@AlfQname(qname = "bcpg:glopTargetCharact")
 	public NodeRef getGlopTargetCharact() {
 		return glopTargetCharact;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>glopTolerance</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:glopTolerance")
 	public Double getGlopTolerance() {
 		return glopTolerance;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>glopTolerance</code>.</p>
+	 *
+	 * @param glopTolerance a {@link java.lang.Double} object
+	 */
 	public void setGlopTolerance(Double glopTolerance) {
 		this.glopTolerance = glopTolerance;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>glopTargetCharact</code>.</p>
+	 *
+	 * @param glopTargetCharact a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public void setGlopTargetCharact(NodeRef glopTargetCharact) {
 		this.glopTargetCharact = glopTargetCharact;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>glopTargetTask</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:glopTargetTask")
 	public String getGlopTargetTask() {
 		return glopTargetTask;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>glopTargetTask</code>.</p>
+	 *
+	 * @param glopTargetTask a {@link java.lang.String} object
+	 */
 	public void setGlopTargetTask(String glopTargetTask) {
 		this.glopTargetTask = glopTargetTask;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>glopConstraintLists</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:glopConstraintLists")
 	public List<String> getGlopConstraintLists() {
 		return glopConstraintLists;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>glopConstraintLists</code>.</p>
+	 *
+	 * @param glopConstraintLists a {@link java.util.List} object
+	 */
 	public void setGlopConstraintLists(List<String> glopConstraintLists) {
 		this.glopConstraintLists = glopConstraintLists;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>glopApplyOptimization</code>.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:glopApplyOptimization")
 	public Boolean getGlopApplyOptimization() {
 		return glopApplyOptimization;
 	}
 
+	/**
+	 * <p>Setter for the field <code>glopApplyOptimization</code>.</p>
+	 *
+	 * @param glopApplyOptimization a {@link java.lang.Boolean} object
+	 */
 	public void setGlopApplyOptimization(Boolean glopApplyOptimization) {
 		this.glopApplyOptimization = glopApplyOptimization;
 	}
@@ -1597,32 +1647,62 @@ public class ProductData extends AbstractScorableEntity
 	
 	
 	
+	/**
+	 * <p>Getter for the field <code>reconstituant</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	@AlfSingleAssoc
 	@AlfQname(qname = "bcpg:nutrientPreparationReconstituantRef")
 	public NodeRef getReconstituant() {
 		return reconstituant;
 	}
 
+	/**
+	 * <p>Setter for the field <code>reconstituant</code>.</p>
+	 *
+	 * @param reconstituant a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public void setReconstituant(NodeRef reconstituant) {
 		this.reconstituant = reconstituant;
 	}
 
+	/**
+	 * <p>Getter for the field <code>reconstituantQty</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:nutrientPreparationReconstituantQty")
 	public Double getReconstituantQty() {
 		return reconstituantQty;
 	}
 
+	/**
+	 * <p>Setter for the field <code>reconstituantQty</code>.</p>
+	 *
+	 * @param reconstituantQty a {@link java.lang.Double} object
+	 */
 	public void setReconstituantQty(Double reconstituantQty) {
 		this.reconstituantQty = reconstituantQty;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>preparationQuantity</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:nutrientPreparationQty")
 	public Double getPreparationQuantity() {
 		return preparationQuantity;
 	}
 
+	/**
+	 * <p>Setter for the field <code>preparationQuantity</code>.</p>
+	 *
+	 * @param preparationQuantity a {@link java.lang.Double} object
+	 */
 	public void setPreparationQuantity(Double preparationQuantity) {
 		this.preparationQuantity = preparationQuantity;
 	}
@@ -1630,6 +1710,11 @@ public class ProductData extends AbstractScorableEntity
 	
 
 	
+	/**
+	 * <p>Getter for the field <code>referenceProducts</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object
+	 */
 	@AlfProp
 	@AlfMlText
 	@AlfQname(qname = "bcpg:nutrientReferenceProducts")
@@ -1637,6 +1722,11 @@ public class ProductData extends AbstractScorableEntity
 		return referenceProducts;
 	}
 
+	/**
+	 * <p>Setter for the field <code>referenceProducts</code>.</p>
+	 *
+	 * @param referenceProducts a {@link org.alfresco.service.cmr.repository.MLText} object
+	 */
 	public void setReferenceProducts(MLText referenceProducts) {
 		this.referenceProducts = referenceProducts;
 	}
@@ -2308,12 +2398,22 @@ public class ProductData extends AbstractScorableEntity
 		this.regulatoryList = regulatoryList;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>toxList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	@DataList
 	@AlfQname(qname = "bcpg:toxList")
 	public List<ToxListDataItem> getToxList() {
 		return toxList;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>toxList</code>.</p>
+	 *
+	 * @param toxList a {@link java.util.List} object
+	 */
 	public void setToxList(List<ToxListDataItem> toxList) {
 		this.toxList = toxList;
 	}
@@ -2358,12 +2458,22 @@ public class ProductData extends AbstractScorableEntity
 		this.svhcList = svhcList;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>pubChannelList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	@DataList
 	@AlfQname(qname = "bp:pubChannelList")
 	public List<PubChannelListDataItem> getPubChannelList() {
 		return pubChannelList;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>pubChannelList</code>.</p>
+	 *
+	 * @param pubChannelList a {@link java.util.List} object
+	 */
 	public void setPubChannelList(List<PubChannelListDataItem> pubChannelList) {
 		this.pubChannelList = pubChannelList;
 	}

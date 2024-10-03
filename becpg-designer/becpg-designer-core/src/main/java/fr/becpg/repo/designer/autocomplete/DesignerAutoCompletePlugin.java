@@ -49,11 +49,11 @@ import fr.becpg.repo.designer.DesignerService;
  *
  * @author "Matthieu Laborie"
  * @version $Id: $Id
- * 
+ *
  * Autocomplete plugin that allows to get current model informations
- * 
+ *
  * Example:
- * 
+ *
  * <pre>
  * {@code
  * 	<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
@@ -63,14 +63,14 @@ import fr.becpg.repo.designer.DesignerService;
  *   </control>
  * }
  * <pre>
- *   
+ *
  *  Datasources available:
- *  
+ *
  *   Return current model available types :
- *   becpg/autocomplete/targetClassName 
+ *   becpg/autocomplete/targetClassName
  *   becpg/autocomplete/parentName (alias)
- *   
- *   becpg/autocomplete/mandatoryAspects  return current model available aspects 
+ *
+ *   becpg/autocomplete/mandatoryAspects  return current model available aspects
  *   becpg/autocomplete/propertyType return current model property types
  *   becpg/autocomplete/constraintRef return current model constraint
  */

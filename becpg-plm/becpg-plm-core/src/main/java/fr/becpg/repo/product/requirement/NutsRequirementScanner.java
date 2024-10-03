@@ -43,6 +43,7 @@ public class NutsRequirementScanner extends SimpleListRequirementScanner<NutList
 	}
 
 	
+	/** {@inheritDoc} */
 	@Override
 	protected Double getValue(NutListDataItem specListDataItem, NutListDataItem listDataItem) {
 		if(specListDataItem.getRequirementType()!=null) {
@@ -62,6 +63,7 @@ public class NutsRequirementScanner extends SimpleListRequirementScanner<NutList
 	}
 
 	
+	/** {@inheritDoc} */
 	@Override
 	protected boolean shouldMerge(NutListDataItem item, NutListDataItem sl) {
 		return item.getCharactNodeRef().equals(sl.getCharactNodeRef()) 
