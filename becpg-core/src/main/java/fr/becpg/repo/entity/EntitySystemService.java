@@ -55,8 +55,7 @@ public interface EntitySystemService {
 	 *
 	 * @param systemEntityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param dataListPath a {@link java.lang.String} object.
-	 * @returns system entity datalist
-	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} system entity datalist.
 	 */
 	NodeRef getSystemEntityDataList(NodeRef systemEntityNodeRef, String dataListPath);
 
@@ -76,8 +75,7 @@ public interface EntitySystemService {
 	 * @return entities of type TYPE_SYSTEM_ENTITY
 	 */
 	List<NodeRef> getSystemEntities();
-	
-	
+
 	/**
 	 * <p>getSystemFolders.</p>
 	 *

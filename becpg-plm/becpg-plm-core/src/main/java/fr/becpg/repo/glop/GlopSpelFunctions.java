@@ -24,7 +24,7 @@ import fr.becpg.repo.repository.model.SimpleListDataItem;
 /**
  * Register custom Glop SPEL helper accessible with @glop.
  *
- * <h1>Usage</h1> In the composition list, add a dynamic formula making a call
+ * Usage: In the composition list, add a dynamic formula making a call
  * to {@code @glop.optimize()}. The parameter should be an object of the following structure:
  * <ul>
  * <li>{@code target} is an object describing the target function and is
@@ -59,7 +59,7 @@ import fr.becpg.repo.repository.model.SimpleListDataItem;
  * satisfies the constraints but isn't guaranteed optimal</li>
  * </ul>
  *
- * <h1>Types of constraint</h1> Data constraints are calculated from instances
+ * Types of constraint: Data constraints are calculated from instances
  * of sub-classes of {@link fr.becpg.repo.repository.model.BeCPGDataObject} that
  * are referenced in the product data. The types currently supported are:
  * <ul>
@@ -141,8 +141,7 @@ public class GlopSpelFunctions implements CustomSpelFunctions {
 			
 			if (ret instanceof Map<?, ?>) {
 				targetMap = (Map<String, ?>) ret;
-			} else if (ret instanceof Collection<?>) {
-				Collection<?> c = (Collection<?>) ret;
+			} else if (ret instanceof Collection<?> c) {
 				if (c.size() == 1) {
 					targetMap = (Map<String, ?>) c.iterator().next();
 				} else {
@@ -255,12 +254,11 @@ public class GlopSpelFunctions implements CustomSpelFunctions {
 				throw new IllegalArgumentException("Constraint '" + constraintName + "' has no '" + key + "' value");
 			}
 			
-			if (obj instanceof Double) {
-				return (Double) obj;
-			} else if (obj instanceof Integer) {
-				return (Integer) obj;
-			} else if (obj instanceof String) {
-				String str = (String) obj;
+			if (obj instanceof Double d) {
+				return d;
+			} else if (obj instanceof Integer i) {
+				return i;
+			} else if (obj instanceof String str) {
 				if (str.equals("inf")) {
 					return Double.POSITIVE_INFINITY;
 				} else if (str.equals("-inf")) {

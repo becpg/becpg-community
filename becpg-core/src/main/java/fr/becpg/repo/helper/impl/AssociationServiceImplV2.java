@@ -937,7 +937,6 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 	 * @param cache a {@link org.alfresco.repo.cache.SimpleCache} object
 	 * @param cacheKey a {@link fr.becpg.repo.helper.impl.AssociationCacheRegion} object
 	 * @param callback a {@link java.util.function.Supplier} object
-	 * @param <T> a T class
 	 * @return a T object
 	 */
 	public <T> T getFromCache(SimpleCache<AssociationCacheRegion, T> cache, AssociationCacheRegion cacheKey, Supplier<T> callback) {

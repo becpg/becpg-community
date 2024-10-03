@@ -118,10 +118,10 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
     /**
      * <p>isMLAware.</p>
      *
-     * @return Returns <tt>true</tt> if the current thread has marked itself
+     * @return Returns true if the current thread has marked itself
      *      as being able to handle {@link MLText d:mltext} types properly.
      */
-    static public boolean isMLAware()
+	public static boolean isMLAware()
     {
        return MLPropertyInterceptor.isMLAware();
     }
@@ -199,7 +199,7 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
             NodeRef pivotNodeRef = getPivotNodeRef(nodeRef);
             
             Map<QName, Serializable> properties = (Map<QName, Serializable>) invocation.proceed();
-            Map<QName, Serializable> convertedProperties = new HashMap<QName, Serializable>(properties.size() * 2);
+            Map<QName, Serializable> convertedProperties = new HashMap<>(properties.size() * 2);
             // Check each return value type
             for (Map.Entry<QName, Serializable> entry : properties.entrySet())
             {
@@ -362,20 +362,15 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
             Serializable outboundValue)
     {
         Serializable ret = null;
-        if (outboundValue == null)
-        {
-           ret = null;
-        }
-        if (outboundValue instanceof MLText)
+        if (outboundValue instanceof MLText mlText)
         {
             // It is MLText
-            MLText mlText = (MLText) outboundValue;
             ret = MLTextHelper.getClosestValue(mlText, getLocale(propertyQName));
         }
         else if(isCollectionOfMLText(outboundValue))
         {
             Collection<?> col = (Collection<?>)outboundValue; 
-            ArrayList<String> answer = new ArrayList<String>(col.size());
+            ArrayList<String> answer = new ArrayList<>(col.size());
             Locale closestLocale = getClosestLocale(col);
             for(Object o : col)
             {
@@ -442,12 +437,12 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
      */
     public Locale getClosestLocale(Collection<?> collection)
     {
-        if (collection.size() == 0)
+        if (collection.isEmpty())
         {
             return null;
         }
         // Use the available keys as options
-        HashSet<Locale> locales = new HashSet<Locale>();
+        HashSet<Locale> locales = new HashSet<>();
         for(Object o : collection)
         {
             MLText mlText = (MLText)o;
@@ -507,7 +502,7 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
             NodeRef nodeRef,
             NodeRef pivotNodeRef)
     {
-        Map<QName, Serializable> convertedProperties = new HashMap<QName, Serializable>(newProperties.size() * 2);
+        Map<QName, Serializable> convertedProperties = new HashMap<>(newProperties.size() * 2);
         for (Map.Entry<QName, Serializable> entry : newProperties.entrySet())
         {
              QName propertyQName = entry.getKey();
@@ -563,7 +558,7 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
                     {
                         currentValue = nodeService.getProperty(nodeRef, propertyQName);
                     }
-                    ArrayList<MLText> returnMLList = new ArrayList<MLText>();
+                    ArrayList<MLText> returnMLList = new ArrayList<>();
                     if (currentValue != null)
                     {
                         Collection<MLText> currentCollection = DefaultTypeConverter.INSTANCE.getCollection(MLText.class, currentValue);  
@@ -611,10 +606,10 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
                         returnMLList.set(i, newMLValue);
                     }
                     // tidy up empty locales
-                    ArrayList<MLText> tidy = new ArrayList<MLText>();
+                    ArrayList<MLText> tidy = new ArrayList<>();
                     for(MLText mlText : returnMLList)
                     {
-                        if(mlText.keySet().size() > 0)
+                        if(!mlText.keySet().isEmpty())
                         {
                             tidy.add(mlText);
                         }
@@ -655,7 +650,7 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
            if (EqualsHelper.nullSafeEquals(pivotContentUrl, emptyContentUrl))
            {
               // They are a match.  So the empty translation must be reset to it's original value
-              ret = (ContentData) nodeService.getProperty(nodeRef, ContentModel.PROP_CONTENT);
+              ret = nodeService.getProperty(nodeRef, ContentModel.PROP_CONTENT);
            }
            else
            {

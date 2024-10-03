@@ -30,7 +30,7 @@ public interface NutDatabaseService {
 	 * @param query - string to match the name of the product
 	 * @param pageNum a int.
 	 * @param pageSize a int.
-	 * @return a {@link fr.becpg.repo.listvalue.AutoCompletePage} object.
+	 * @return a {@link fr.becpg.repo.autocomplete.AutoCompletePage} object.
 	 */
 	AutoCompletePage suggest(String databaseName, String query, int pageNum, int pageSize);
 	

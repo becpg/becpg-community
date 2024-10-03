@@ -21,9 +21,15 @@ import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 
 
 /**
- * Class that represent the mapping for importing a property formula or an association of a node
+ * This class represents the mapping for importing either a property formula
+ * or a node association.
  *
+ * Example usage:
+ * <pre>
+ * {@code
  * <column id="labelClaimFormula" type="Formula" attribute="bcpg:labelClaimFormula" />
+ * }
+ * </pre>
  *
  * @author querephi
  * @version $Id: $Id

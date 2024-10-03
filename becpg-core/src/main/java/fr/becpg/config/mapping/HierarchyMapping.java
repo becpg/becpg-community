@@ -24,8 +24,12 @@ import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 /**
  * Class that represent the mapping for importing a hierarchy
  *
+ *<pre>
+ * {@code
  * <column id="lkvValue2" type="Hierarchy" attribute="bcpg:lkvValue"
  * parentLevel="lkvValue1" parentLevelAttribute="bcpg:parentLevel" />
+ * }
+ * </pre>
  *
  * @author matthieu
  * @version $Id: $Id
