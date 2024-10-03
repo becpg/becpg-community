@@ -34,6 +34,7 @@ import org.dom4j.io.SAXReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
+import org.xml.sax.SAXException;
 
 import fr.becpg.config.mapping.AttributeMapping;
 import fr.becpg.config.mapping.CharacteristicMapping;
@@ -323,6 +324,11 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 
 		try {
 			SAXReader saxReader = new SAXReader();
+			try {
+				saxReader.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+			} catch (SAXException e) {
+				logger.error(e.getMessage(), e);
+			}
 			Document doc = saxReader.read(reader.getContentInputStream());
 			Element queryElt = doc.getRootElement();
 
