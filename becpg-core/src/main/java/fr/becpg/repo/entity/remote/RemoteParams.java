@@ -245,6 +245,7 @@ public class RemoteParams {
 	 * @param defaultValue a T object
 	 * @return a T object
 	 * @throws org.json.JSONException if any.
+	 * @param <T> a T class
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> T extractParams(String paramKey, T defaultValue) throws JSONException {

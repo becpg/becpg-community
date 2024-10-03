@@ -92,6 +92,7 @@ public class DiffMatchPatch {
 	 * @param text1 Old string to be diffed.
 	 * @param text2 New string to be diffed.
 	 * @return Linked List of Diff objects.
+	 * @since 23.2.1.26
 	 */
 	public List<Diff> diffMain(String text1, String text2) {
 		return diffMain(text1, text2, true);
@@ -328,6 +329,7 @@ public class DiffMatchPatch {
 	 * @param text2    New string to be diffed.
 	 * @param deadline Time at which to bail if not yet complete.
 	 * @return List of Diff objects.
+	 * @since 23.2.1.26
 	 */
 	protected List<Diff> diffBisect(String text1, String text2, long deadline) {
 		// Cache the dmp lengths to prevent multiple calls.
@@ -587,6 +589,7 @@ public class DiffMatchPatch {
 	 * @param text2 Second string.
 	 * @return The number of characters common to the end of the first
 	 * string and the start of the second string.
+	 * @since 23.2.1.26
 	 */
 	protected int diffCommonOverlap(String text1, String text2) {
 		// Cache the dmp lengths to prevent multiple calls.
@@ -637,6 +640,7 @@ public class DiffMatchPatch {
 	 * @return Five element String array, containing the prefix of text1, the
 	 * suffix of text1, the prefix of text2, the suffix of text2 and the
 	 * common middle.  Or null if there was no match.
+	 * @since 23.2.1.26
 	 */
 	protected String[] diffHalfMatch(String text1, String text2) {
 		String longtext = text1.length() > text2.length() ? text1 : text2;
@@ -1163,6 +1167,7 @@ public class DiffMatchPatch {
 	 * @param pattern The pattern to search for.
 	 * @param loc     The location to search around.
 	 * @return Best match index or -1.
+	 * @since 23.2.1.26
 	 */
 	protected int matchbitap(String text, String pattern, int loc) {
 		assert ((MATCHMAXBITS == 0) || (pattern.length() <= MATCHMAXBITS)) : "Pattern too long for this application.";
@@ -1275,6 +1280,7 @@ public class DiffMatchPatch {
 	 *
 	 * @param pattern The dmp to encode.
 	 * @return Hash of character locations.
+	 * @since 23.2.1.26
 	 */
 	protected Map<Character, Integer> matchAlphabet(String pattern) {
 		Map<Character, Integer> s = new HashMap<>();

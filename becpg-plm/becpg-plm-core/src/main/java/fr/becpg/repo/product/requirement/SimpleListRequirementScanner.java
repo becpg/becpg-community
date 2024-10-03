@@ -154,6 +154,7 @@ public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem>
 	 * <p>getSpecInfoMessageKey.</p>
 	 *
 	 * @return a {@link java.lang.String} object
+	 * @param specDataItem a T object
 	 */
 	protected abstract String getSpecInfoMessageKey(T specDataItem);
 

@@ -115,12 +115,12 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
 		this.namespaceService = namespaceService;
 	}
 
-    /**
-     * <p>isMLAware.</p>
-     *
-     * @return Returns true if the current thread has marked itself
-     *      as being able to handle {@link MLText d:mltext} types properly.
-     */
+	/**
+	 * <p>isMLAware.</p>
+	 *
+	 * @return Returns true if the current thread has marked itself
+	 *      as being able to handle {@link MLText d:mltext} types properly.
+	 */
 	public static boolean isMLAware()
     {
        return MLPropertyInterceptor.isMLAware();
