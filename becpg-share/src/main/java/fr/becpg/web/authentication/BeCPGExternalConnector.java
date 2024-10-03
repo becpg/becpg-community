@@ -158,8 +158,8 @@ public class BeCPGExternalConnector extends RequestCachingConnector
      * {@inheritDoc}
      *
      * Overrides super method to set the CS_PARAM_USER_HEADER. This method is
-     * always called at the end of {@link ConnectorService#getConnector} when
-     * it constructs a {@link Connector}.
+     * always called at the end of ConnectorService#getConnector when
+     * it constructs a connector
      */
     @Override
     public void setConnectorSession(ConnectorSession connectorSession)

@@ -324,7 +324,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	 *
 	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param entityElt a {@link org.dom4j.Element} object.
-	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor.DefaultExtractorContext} object.
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object.
 	 */
 	public void extractEntity(NodeRef entityNodeRef, Element entityElt, DefaultExtractorContext context) {
 
@@ -365,7 +365,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	 *
 	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param imgsElt a {@link org.dom4j.Element} object.
-	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor.DefaultExtractorContext} object.
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object.
 	 * @param extratAttributes a {@link java.util.Map} object
 	 */
 	protected void extractEntityImages(NodeRef entityNodeRef, Element imgsElt, DefaultExtractorContext context, Map<String, String> extratAttributes) {
@@ -412,7 +412,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	 * @param imgNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param imgId a {@link java.lang.String} object.
 	 * @param imgsElt a {@link org.dom4j.Element} object.
-	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor.DefaultExtractorContext} object.
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object.
 	 * @param extratAttributes a {@link java.util.Map} object
 	 */
 	protected void extractImage(NodeRef entityNodeRef, NodeRef imgNodeRef, String imgId, Element imgsElt, DefaultExtractorContext context,
@@ -462,7 +462,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param assocDef a {@link org.alfresco.service.cmr.dictionary.AssociationDefinition} object.
 	 * @param entityElt a {@link org.dom4j.Element} object.
-	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor.DefaultExtractorContext} object.
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object.
 	 * @return a boolean.
 	 */
 	protected boolean loadTargetAssoc(NodeRef entityNodeRef, AssociationDefinition assocDef, Element entityElt, DefaultExtractorContext context) {
@@ -517,7 +517,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	 * <p>isMultiLinesAttribute.</p>
 	 *
 	 * @param attribute a {@link org.alfresco.service.namespace.QName} object.
-	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor.DefaultExtractorContext} object.
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object.
 	 * @return a boolean.
 	 */
 	protected boolean isMultiLinesAttribute(QName attribute, DefaultExtractorContext context) {
@@ -529,7 +529,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	 *
 	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param dataListsElt a {@link org.dom4j.Element} object.
-	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor.DefaultExtractorContext} object.
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object.
 	 */
 	protected void loadDataLists(NodeRef entityNodeRef, Element dataListsElt, DefaultExtractorContext context) {
 
@@ -597,7 +597,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	 * @param dataListsElt a {@link org.dom4j.Element} object.
 	 * @param listNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param dataListQName a {@link org.alfresco.service.namespace.QName} object.
-	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor.DefaultExtractorContext} object.
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object.
 	 */
 	protected void loadDataList(Element dataListsElt, NodeRef listNodeRef, QName dataListQName, DefaultExtractorContext context) {
 		List<NodeRef> dataListItems = entityListDAO.getListItems(listNodeRef, dataListQName);
@@ -617,7 +617,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	 *
 	 * @param dataListItem a {@link fr.becpg.repo.repository.model.BeCPGDataObject} object.
 	 * @param nodeElt a {@link org.dom4j.Element} object.
-	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor.DefaultExtractorContext} object.
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object.
 	 */
 	protected void loadDataListItemAttributes(BeCPGDataObject dataListItem, Element nodeElt, DefaultExtractorContext context) {
 		loadDataListItemAttributes(dataListItem, nodeElt, context, new ArrayList<>());
@@ -629,7 +629,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param nodeElt a {@link org.dom4j.Element} object.
 	 * @param useCData a boolean.
-	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor.DefaultExtractorContext} object.
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object.
 	 */
 	protected void loadNodeAttributes(NodeRef nodeRef, Element nodeElt, boolean useCData, DefaultExtractorContext context) {
 		if ((nodeRef != null) && nodeService.exists(nodeRef)) {
@@ -643,7 +643,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	 *
 	 * @param dataListItem a {@link fr.becpg.repo.repository.model.BeCPGDataObject} object.
 	 * @param nodeElt a {@link org.dom4j.Element} object.
-	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor.DefaultExtractorContext} object.
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object.
 	 * @param hiddentAttributes a {@link java.util.List} object.
 	 */
 	protected void loadDataListItemAttributes(BeCPGDataObject dataListItem, Element nodeElt, DefaultExtractorContext context,
@@ -692,7 +692,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	 *
 	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param nodeElt a {@link org.dom4j.Element} object.
-	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor.DefaultExtractorContext} object.
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object.
 	 */
 	protected void loadDataListItemAttributes(NodeRef nodeRef, Element nodeElt, DefaultExtractorContext context) {
 		List<QName> hiddentAttributes = new ArrayList<>();
@@ -712,7 +712,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	 * @param nodeElt a {@link org.dom4j.Element} object.
 	 * @param useCData a boolean.
 	 * @param hiddenAttributes a {@link java.util.List} object.
-	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor.DefaultExtractorContext} object.
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object.
 	 */
 	protected void loadAttributes(NodeRef nodeRef, Element nodeElt, boolean useCData, List<QName> hiddenAttributes, DefaultExtractorContext context) {
 
@@ -965,7 +965,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	 * @param propertyQName a {@link org.alfresco.service.namespace.QName} object.
 	 * @param value a {@link java.lang.String} object.
 	 * @param suffix a {@link java.lang.String} object.
-	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor.DefaultExtractorContext} object.
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object.
 	 * @return a {@link org.dom4j.Element} object.
 	 */
 	protected Element addData(Element nodeElt, boolean useCData, QName propertyQName, String value, String suffix, DefaultExtractorContext context) {
@@ -1074,7 +1074,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param assocDef a {@link org.alfresco.service.cmr.dictionary.AssociationDefinition} object.
 	 * @param assocElt a {@link org.dom4j.Element} object.
-	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor.DefaultExtractorContext} object.
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object.
 	 * @param extractDataList a boolean.
 	 */
 	protected void extractTargetAssoc(NodeRef entityNodeRef, AssociationDefinition assocDef, Element assocElt, DefaultExtractorContext context,

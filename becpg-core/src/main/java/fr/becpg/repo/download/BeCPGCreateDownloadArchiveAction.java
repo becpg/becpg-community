@@ -68,7 +68,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityService;
 
 /**
- * {@link ActionExecuter} for creating an archive (ie. zip) file containing
+ * {@link org.alfresco.repo.action.executer.ActionExecuterAbstractBase} for creating an archive (ie. zip) file containing
  * content from the repository.
  *
  * The maximum total size of the content which can be downloaded is controlled

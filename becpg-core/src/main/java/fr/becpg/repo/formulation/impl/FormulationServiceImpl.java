@@ -60,7 +60,6 @@ import fr.becpg.repo.repository.L2CacheSupport;
  *
  * @author matthieu
  * @since 1.5
- * @param <T>
  * @version $Id: $Id
  */
 public class FormulationServiceImpl<T extends FormulatedEntity> implements FormulationService<T>, FormulationPlugin {

@@ -61,81 +61,92 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 /**
  * <p>TargetAssocAutoCompletePlugin class.</p>
  *
- * @author matthieu
- * @version $Id: $Id
+ * <p>
+ * Default autocomplete used to suggest target associations.
+ * </p>
  *
- * Default autocomplete used to suggest targetAssociation
- *
- * Example:
- *
+ * <p>Example:</p>
  * <pre>
  * {@code
  * <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
  *     <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:product?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse</control-param>
  *     <control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
- *  </control>
+ * </control>
  * }
  * </pre>
  *
- *  Datasources:
+ * <p>Datasources:</p>
+ * <pre>
+ * ds: /becpg/autocomplete/targetassoc/associations/{className}?classNames={classNames?}&amp;excludeProps={excludeProps?}&amp;path={path?}&amp;filter={}
+ * 
+ * param: {className} type of item to retrieve.
+ * param: {classNames} (optional) comma-separated list of classNames; can be used to filter by aspect or boost certain types (e.g., inc_ or ^).
+ * param: {extra.searchTemplate} (optional) allows defining a custom search template.
+ * </pre>
  *
- * ds: /becpg/autocomplete/targetassoc/associations/{className}?classNames={classNames?}&amp;excludeProps={excludeProps?)&amp;path={path?}&amp;filter={}&
- * param: {className} type of item to retrieve
- * param: {classNames} (optional)  comma separated lists of classNames, can be uses to filter by aspect or boost certain types (inc_ or ^)
- * param: {extra.searchTemplate} (optional) Allow to define a custom search template
- *
- * Examples:
- *
- *   With aspect
- *    classNames=bcpg:entityTplAspect
- *   Includes aspect (OR)
- *    classNames=inc_bcpg:entityTplAspect,inc_gs1:gs1Aspect
- *   Boost specific types
+ * <p>Examples:</p>
+ * <pre>
+ *   With aspect:
+ *   classNames=bcpg:entityTplAspect
+ *   Includes aspect (OR):
+ *   classNames=inc_bcpg:entityTplAspect,inc_gs1:gs1Aspect
+ *   Boost specific types:
  *   classNames=bcpg:rawMaterial^2
  *
- * param: {andProps} (optional/deprecated) comma separated of property|value pair that item should have  (filter=prop_to_filter|value)
- * param: {filter} (optional) same as andProps
+ * param: {andProps} (optional/deprecated) comma-separated property|value pairs that items should have (filter=prop_to_filter|value).
+ * param: {filter} (optional) same as andProps.
+ * </pre>
  *
- * Examples:
- *
+ * <p>Filter Examples:</p>
+ * <pre>
  *  filter=prop_to_filter|value
  *	filter=cm:name|samplename
  *	filter=cm:name|{cm:title}
  *  filter=bcpg:code|{bcpg:code},cm:name|MP*
  *  filter=au:market|{au:market}
- *  filter=gs1:sortingBonusCriteria_or|{gs1:sortingBonusCriteria}  (when field is multiple default operator is and _or allow to change that)
- *  filter=bcpg:ingTypeV2|{htmlPropValue} use the value of parent or parentAssoc control-param (@Since 4.2)
+ *  filter=gs1:sortingBonusCriteria_or|{gs1:sortingBonusCriteria}  (when field is multiple; the default operator is AND; _or allows changing that).
+ *  filter=bcpg:ingTypeV2|{htmlPropValue} (use the value of parent or parentAssoc control-param; @Since 4.2)
+ * </pre>
  *
- * param: {excludeProps} (optional) comma separated of property|value pair that item should not have
- * param: {excludeClassNames} (optional) comma separated lists of classNames that will be excluded
- * param: {path} (optional) retrieve item in specific path if path doesn't contains / path is relative to current entity
+ * <p>Parameters:</p>
+ * <pre>
+ * param: {excludeProps} (optional) comma-separated property|value pairs that items should not have.
+ * param: {excludeClassNames} (optional) comma-separated lists of classNames to exclude.
+ * param: {path} (optional) retrieve items in a specific path; if the path doesn't contain /, it is relative to the current entity.
+ * </pre>
  *
- * Example:
+ * <p>Example Path:</p>
+ * <pre>
  *  path=System/Characts/bcpg:entityLists/Contacts
+ * </pre>
  *
- * param: {extra.filterByAssoc} return item that has same assoc that is in the current entity
+ * <p>Additional Parameters:</p>
+ * <pre>
+ * param: {extra.filterByAssoc} return items that have the same association as the current entity.
+ * </pre>
  *
- * If parent is provided use parent as the targetAssoc
+ * <p>If a parent is provided, use it as the target association.</p>
  *
- * Example:
+ * <p>If itemId is provided, use itemId as the entity; otherwise, use currentEntity.</p>
  *
- * If itemId is provides use itemId as entity
- * Else use currentEntity
- *
- * Examples:
- *
+ * <p>Examples:</p>
+ * <pre>
  * becpg/autocomplete/product?extra.filterByAssoc=bcpg:plant
  * becpg/autocomplete/product?extra.filterByAssoc=bcpg:plant_or
+ * </pre>
  *
+ * <p>Example Control:</p>
  * <pre>
  * {@code
- *    <control
- *       template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+ *    <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
  *       <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:entityV2?extra.filterByAssoc=bcpg:trademarkRef</control-param>
  *       <control-param name="parentAssoc">sample_plTrademark</control-param>
- *   </control>
- *  }
+ *    </control>
+ * }
  * </pre>
+ *
+ * @author matthieu
+ * @version $Id: $Id
  */
 @Service("targetAssocAutoCompletePlugin")
 @BeCPGPublicApi
@@ -478,7 +489,7 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 	/**
 	 * <p>Getter for the field <code>targetAssocValueExtractor</code>.</p>
 	 *
-	 * @return a {@link fr.becpg.repo.listvalue.ListValueExtractor} object.
+	 * @return a {@link fr.becpg.repo.autocomplete.AutoCompleteExtractor} object.
 	 */
 	protected AutoCompleteExtractor<NodeRef> getTargetAssocValueExtractor() {
 		return targetAssocValueExtractor;
@@ -677,7 +688,7 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 	 * @param query a {@link java.lang.String} object.
 	 * @param pageNum a {@link java.lang.Integer} object.
 	 * @param pageSize a {@link java.lang.Integer} object.
-	 * @return a {@link fr.becpg.repo.listvalue.AutoCompletePage} object.
+	 * @return a {@link fr.becpg.repo.autocomplete.AutoCompletePage} object.
 	 */
 	protected AutoCompletePage suggestDatalistItem(NodeRef entityNodeRef, QName datalistType, QName propertyQName, String query, Integer pageNum,
 			Integer pageSize) {

@@ -34,7 +34,7 @@ public enum NutRequirementType {
 	 * <p>fromString.</p>
 	 *
 	 * @param type a {@link java.lang.String} object.
-	 * @return a {@link fr.becpg.repo.product.data.constraints.NutListRequirementType} object.
+	 * @return a {@link fr.becpg.repo.product.data.constraints.NutRequirementType} object.
 	 */
 	public static NutRequirementType fromString(String type) {
 		try {

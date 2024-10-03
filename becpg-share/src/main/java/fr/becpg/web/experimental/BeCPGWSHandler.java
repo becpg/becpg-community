@@ -32,7 +32,7 @@ public class BeCPGWSHandler {
 	/**
 	 * <p>onOpen.</p>
 	 *
-	 * @param session a {@link javax.websocket.Session} object.
+	 * @param session a {@link jakarta.websocket.Session} object.
 	 * @param room a {@link java.lang.String} object.
 	 * @param user a {@link java.lang.String} object.
 	 */
@@ -62,7 +62,7 @@ public class BeCPGWSHandler {
 	 * <p>onMessage.</p>
 	 *
 	 * @param message a {@link java.lang.String} object.
-	 * @param session a {@link javax.websocket.Session} object.
+	 * @param session a {@link jakarta.websocket.Session} object.
 	 */
 	@OnMessage
 	public void onMessage(String message, Session session) {
@@ -85,8 +85,8 @@ public class BeCPGWSHandler {
 	/**
 	 * <p>onClose.</p>
 	 *
-	 * @param session a {@link javax.websocket.Session} object.
-	 * @param closeReason a {@link javax.websocket.CloseReason} object.
+	 * @param session a {@link jakarta.websocket.Session} object.
+	 * @param closeReason a {@link jakarta.websocket.CloseReason} object.
 	 */
 	@OnClose
 	public void onClose(Session session, CloseReason closeReason) {
@@ -111,7 +111,7 @@ public class BeCPGWSHandler {
 	/**
 	 * <p>onError.</p>
 	 *
-	 * @param session a {@link javax.websocket.Session} object.
+	 * @param session a {@link jakarta.websocket.Session} object.
 	 * @param thr a {@link java.lang.Throwable} object.
 	 */
 	@OnError

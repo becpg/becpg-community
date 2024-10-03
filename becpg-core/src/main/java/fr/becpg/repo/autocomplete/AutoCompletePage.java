@@ -43,8 +43,7 @@ import fr.becpg.repo.RepoConsts;
 		 * @param fullList a {@link java.util.List} object.
 		 * @param pageNum a {@link java.lang.Integer} object.
 		 * @param pageSize a {@link java.lang.Integer} object.
-		 * @param listValueExtractor a {@link fr.becpg.repo.listvalue.ListValueExtractor} object.
-		 * @param <T> a T object.
+		 * @param listValueExtractor a {@link fr.becpg.repo.autocomplete.AutoCompleteExtractor} object.
 		 */
 		public <T> AutoCompletePage(List<T> fullList, Integer pageNum, Integer pageSize, AutoCompleteExtractor<T> listValueExtractor) {
         	if(pageNum==null || pageNum <1){
