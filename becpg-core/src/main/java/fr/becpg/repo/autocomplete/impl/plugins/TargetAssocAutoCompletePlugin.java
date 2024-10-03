@@ -78,7 +78,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * <p>Datasources:</p>
  * <pre>
  * ds: /becpg/autocomplete/targetassoc/associations/{className}?classNames={classNames?}&amp;excludeProps={excludeProps?}&amp;path={path?}&amp;filter={}
- * 
+ *
  * param: {className} type of item to retrieve.
  * param: {classNames} (optional) comma-separated list of classNames; can be used to filter by aspect or boost certain types (e.g., inc_ or ^).
  * param: {extra.searchTemplate} (optional) allows defining a custom search template.

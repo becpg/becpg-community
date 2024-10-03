@@ -55,6 +55,7 @@ public class Diff {
      * <p>Getter for the field <code>operation</code>.</p>
      *
      * @return a {@link fr.becpg.common.diff.Operation} object
+     * @since 23.2.1.26
      */
     public Operation getOperation() {
 		return operation;
@@ -66,6 +67,7 @@ public class Diff {
 	 * <p>Setter for the field <code>operation</code>.</p>
 	 *
 	 * @param operation a {@link fr.becpg.common.diff.Operation} object
+	 * @since 23.2.1.26
 	 */
 	public void setOperation(Operation operation) {
 		this.operation = operation;
@@ -77,6 +79,7 @@ public class Diff {
 	 * <p>Getter for the field <code>text</code>.</p>
 	 *
 	 * @return a {@link java.lang.String} object
+	 * @since 23.2.1.26
 	 */
 	public String getText() {
 		return text;
@@ -88,6 +91,7 @@ public class Diff {
 	 * <p>Setter for the field <code>text</code>.</p>
 	 *
 	 * @param text a {@link java.lang.String} object
+	 * @since 23.2.1.26
 	 */
 	public void setText(String text) {
 		this.text = text;

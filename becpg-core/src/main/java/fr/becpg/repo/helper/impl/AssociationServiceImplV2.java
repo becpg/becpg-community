@@ -938,6 +938,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 	 * @param cacheKey a {@link fr.becpg.repo.helper.impl.AssociationCacheRegion} object
 	 * @param callback a {@link java.util.function.Supplier} object
 	 * @return a T object
+	 * @param <T> a T class
 	 */
 	public <T> T getFromCache(SimpleCache<AssociationCacheRegion, T> cache, AssociationCacheRegion cacheKey, Supplier<T> callback) {
 		if (ignoredAssocs.contains(cacheKey.getAssocQName()) || ignoredStoreRefs.contains(tenantService.getBaseName(cacheKey.getNodeRef().getStoreRef()))) {
