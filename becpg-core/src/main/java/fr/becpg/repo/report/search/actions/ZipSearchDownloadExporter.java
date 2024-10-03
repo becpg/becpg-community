@@ -44,6 +44,7 @@ import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.expressions.ExpressionService;
@@ -199,6 +200,11 @@ public class ZipSearchDownloadExporter implements Exporter {
 		ContentReader reader = contentService.getReader(templateNodeRef, ContentModel.PROP_CONTENT);
 
 		SAXReader saxReader = new SAXReader();
+		try {
+			saxReader.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+		} catch (SAXException e) {
+			log.error(e.getMessage(), e);
+		}
 
 		Document doc = saxReader.read(reader.getContentInputStream());
 		Element queryElt = doc.getRootElement();
