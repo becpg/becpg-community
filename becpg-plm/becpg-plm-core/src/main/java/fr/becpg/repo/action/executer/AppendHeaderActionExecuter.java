@@ -117,8 +117,8 @@ public class AppendHeaderActionExecuter extends ActionExecuterAbstractBase {
 			try (InputStream mappingStream = reader.getContentInputStream()) {
 				reader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
 				File output = TempFileProvider.createTempFile("output_", ".xlsx");
-				try (InputStream dataStream = reader.getContentInputStream();
-					 InputStreamReader dataISR = new InputStreamReader(new BOMInputStream(dataStream, false), reader.getEncoding());
+				try (InputStream dataStream = reader.getContentInputStream();BOMInputStream bomInputStream = BOMInputStream.builder().setInputStream(dataStream).get();
+					 InputStreamReader dataISR = new InputStreamReader(bomInputStream, reader.getEncoding());
 					 CSVReader dataCSVReader = new CSVReader(dataISR, SEPARATOR);) {
 					// Output file generation
 				
