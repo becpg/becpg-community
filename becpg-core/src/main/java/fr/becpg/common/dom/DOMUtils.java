@@ -289,6 +289,9 @@ public class DOMUtils {
 	public static void serialise(Document doc, OutputStream out, boolean keepXmlDecl) throws TransformerException {
 		TransformerFactory factory = TransformerFactory.newInstance();
 		factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+		factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+		factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+		factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
 		Transformer tf = factory.newTransformer();
 		tf.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 		tf.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -325,6 +328,7 @@ public class DOMUtils {
 	 */
 	public static Document parse(InputStream is) throws SAXException, IOException, ParserConfigurationException, FactoryConfigurationError {
 		DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+		domFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
 		domFactory.setNamespaceAware(true);
 		domFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
 		DocumentBuilder builder = domFactory.newDocumentBuilder();
