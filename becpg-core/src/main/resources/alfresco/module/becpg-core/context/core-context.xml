@@ -112,6 +112,7 @@
 		<property name="namespaceService" ref="namespaceService" />
 		<property name="actionService" ref="ActionService" />
 		<property name="personService" ref="personService" />
+		<property name="sysAdminParams" ref="sysAdminParams" />
 		<property name="mailFrom" value="${mail.from.default}" />
 	</bean>
 

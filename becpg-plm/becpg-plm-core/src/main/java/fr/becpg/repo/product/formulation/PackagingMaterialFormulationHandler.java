@@ -120,11 +120,14 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 
 				for (Map.Entry<Pair<PackagingLevel, NodeRef>, Pair<BigDecimal, BigDecimal>> entry : toUpdate.entrySet()) {
 					if (entry.getValue().getFirst().doubleValue() != 0d) {
-						formulatedProduct.getPackMaterialList().add(new PackMaterialListDataItem(entry.getKey().getSecond(),
-								entry.getValue().getFirst().doubleValue(),
-								calculatePerc(formulatedProduct, entry.getKey().getFirst(), entry.getValue().getFirst()), entry.getValue().getSecond()
-										.divide(entry.getValue().getFirst(), MathContext.DECIMAL64).multiply(BigDecimal.valueOf(100d)).doubleValue(),
-								entry.getKey().getFirst()));
+
+						formulatedProduct.getPackMaterialList()
+								.add(PackMaterialListDataItem.build().withMaterial(entry.getKey().getSecond())
+										.withWeight(entry.getValue().getFirst().doubleValue())
+										.withPerc(calculatePerc(formulatedProduct, entry.getKey().getFirst(), entry.getValue().getFirst()))
+										.withRecycledPerc(entry.getValue().getSecond().divide(entry.getValue().getFirst(), MathContext.DECIMAL64)
+												.multiply(BigDecimal.valueOf(100d)).doubleValue())
+										.withPkgLevel(entry.getKey().getFirst()));
 					}
 				}
 
@@ -155,8 +158,7 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 		}
 
 		if (tare != null && tare.doubleValue() != 0d && weight != null) {
-			return weight.divide(tare, MathContext.DECIMAL64).multiply(BigDecimal.valueOf(0.1d),
-					MathContext.DECIMAL64).doubleValue();
+			return weight.divide(tare, MathContext.DECIMAL64).multiply(BigDecimal.valueOf(0.1d), MathContext.DECIMAL64).doubleValue();
 		}
 		return null;
 	}
@@ -225,13 +227,12 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 														: 0d)
 												.multiply(plmWeight).divide(BigDecimal.valueOf(100d), MathContext.DECIMAL64);
 										PackagingLevel pkgLevel = packMateriDataItem.getPkgLevel();
-										
+
 										if (pkgLevel == null && compoProduct.isRawMaterial()) {
 											pkgLevel = PackagingLevel.Primary;
 										}
-										
-										Pair<PackagingLevel, NodeRef> key = new Pair<>(pkgLevel,
-												packMateriDataItem.getPmlMaterial());
+
+										Pair<PackagingLevel, NodeRef> key = new Pair<>(pkgLevel, packMateriDataItem.getPmlMaterial());
 
 										if (toUpdate.containsKey(key)) {
 											BigDecimal newPlmWeight = toUpdate.get(key).getFirst().add(plmWeight);

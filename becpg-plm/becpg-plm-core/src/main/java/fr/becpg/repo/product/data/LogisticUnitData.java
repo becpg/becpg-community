@@ -1,9 +1,9 @@
 package fr.becpg.repo.product.data;
 
 import java.util.List;
+import java.util.Objects;
 
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
-import fr.becpg.repo.product.data.productList.PackMaterialListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -18,6 +18,7 @@ import fr.becpg.repo.repository.annotation.AlfType;
 @AlfQname(qname = "bcpg:logisticUnit")
 public class LogisticUnitData extends ProductData {
 	
+	private static final long serialVersionUID = -3248594783115350751L;
 	private Double secondaryWidth;
 	private Double tertiaryWidth;
 	
@@ -124,4 +125,26 @@ public class LogisticUnitData extends ProductData {
 	public void setSecondaryWidth(Double secondaryWidth) {
 		this.secondaryWidth = secondaryWidth;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Objects.hash(secondaryWidth, tertiaryWidth);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		LogisticUnitData other = (LogisticUnitData) obj;
+		return Objects.equals(secondaryWidth, other.secondaryWidth) && Objects.equals(tertiaryWidth, other.tertiaryWidth);
+	}
+	
+	
 }
