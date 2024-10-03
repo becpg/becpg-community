@@ -43,6 +43,7 @@ public class StopWatchSupport {
 	 *
 	 * @param action a {@link fr.becpg.repo.audit.helper.StopWatchSupport.Action} object
 	 * @return a T object
+	 * @param <T> a T class
 	 */
 	public <T> T run(Action<T> action) {
 		if (logger == null) {

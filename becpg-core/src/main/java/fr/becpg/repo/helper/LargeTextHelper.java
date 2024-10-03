@@ -109,6 +109,7 @@ public class LargeTextHelper {
 	 * @param text1 a {@link java.lang.String} object
 	 * @param text2 a {@link java.lang.String} object
 	 * @return a {@link java.lang.String} object
+	 * @since 23.2.1.26
 	 */
 	public static String htmlDiff(String text1, String text2) {
 		DiffMatchPatch dmp = new DiffMatchPatch();

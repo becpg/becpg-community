@@ -21,6 +21,7 @@ package fr.becpg.repo.formulation;
  * A handler in the chain of responsibility scheme.
  *
  * T Any type passed as context information.
+ *
  * @author matthieu
  * @version $Id: $Id
  */

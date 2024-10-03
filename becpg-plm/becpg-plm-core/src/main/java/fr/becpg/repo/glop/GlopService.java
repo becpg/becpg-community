@@ -13,7 +13,7 @@ import fr.becpg.repo.product.data.ProductData;
 /**
  * Recipe optimization using a Glop server.
  *
- * 
+ *
  * Requirements
  * <ul>
  * <li>In {@code becpg-plm/becpg-plm-core/src/main/resources/alfresco/module/becpg-plm-core/becpg-config-plm.properties},

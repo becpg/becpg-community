@@ -34,6 +34,7 @@ public interface BeCPGCacheService {
 	 * @param cacheKey a {@link java.lang.String} object.
 	 * @param cacheDataProviderCallBack a Supplier object.
 	 * @return a T object.
+	 * @param <T> a T class
 	 */
 	<T> T getFromCache(String cacheName, String cacheKey, Supplier<T> cacheDataProviderCallBack);
 	
@@ -65,6 +66,7 @@ public interface BeCPGCacheService {
 	 * @param cacheDataProviderCallBack a Supplier object.
 	 * @param deleteOnTxRollback a boolean.
 	 * @return a T object.
+	 * @param <T> a T class
 	 */
 	<T> T getFromCache(String cacheName, String cacheKey, Supplier<T> cacheDataProviderCallBack, boolean deleteOnTxRollback);
 
@@ -81,6 +83,7 @@ public interface BeCPGCacheService {
 	 * @param cacheName a {@link java.lang.String} object.
 	 * @param cacheKey a {@link java.lang.String} object..
 	 * @return a T object.
+	 * @param <T> a T class
 	 */
 	<T> T getFromCache(String cacheName, String cacheKey);
 
@@ -90,6 +93,7 @@ public interface BeCPGCacheService {
 	 * @param cacheName a {@link java.lang.String} object.
 	 * @param cacheKey a {@link java.lang.String} object.
 	 * @param data a T object.
+	 * @param <T> a T class
 	 */
 	<T> void storeInCache(String cacheName, String cacheKey, T data);
 

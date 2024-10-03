@@ -181,6 +181,7 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 	/**
 	 * <p>Getter for the field <code>timeType</code>.</p>
 	 *
+	 * @return a {@link fr.becpg.repo.search.data.DateFilterType} object
 	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:nrTimeType")
@@ -191,6 +192,7 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 	/**
 	 * <p>Setter for the field <code>timeType</code>.</p>
 	 *
+	 * @param timeType a {@link fr.becpg.repo.search.data.DateFilterType} object
 	 */
 	public void setTimeType(DateFilterType timeType) {
 		this.timeType = timeType;

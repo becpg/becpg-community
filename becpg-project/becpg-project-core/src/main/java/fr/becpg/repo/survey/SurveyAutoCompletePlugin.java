@@ -25,13 +25,13 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * Autocomplete plugin that allows to get survey questions
  *
  * Example:
- *<pre> 
+ *<pre>
  * {@code
  * 	<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
  *		<control-param name="ds">becpg/autocomplete/survey</control-param>
  *		<control-param name="parentAssoc">survey_slQuestion</control-param>
  *	</control>
- *} 
+ *}
  *</pre>
  *
  *  Datasources available:

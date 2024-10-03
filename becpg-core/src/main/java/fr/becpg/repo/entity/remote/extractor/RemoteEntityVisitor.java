@@ -37,6 +37,20 @@ public interface RemoteEntityVisitor {
 	 * @param result a {@link java.io.OutputStream} object.
 	 * @throws java.lang.Exception if any.
 	 * @throws java.lang.Exception if any.
+	 * @throws java.lang.Exception if any.
+	 * @throws java.lang.Exception if any.
+	 * @throws java.lang.Exception if any.
+	 * @throws java.lang.Exception if any.
+	 * @throws java.lang.Exception if any.
+	 * @throws java.lang.Exception if any.
+	 * @throws java.lang.Exception if any.
+	 * @throws java.lang.Exception if any.
+	 * @throws java.lang.Exception if any.
+	 * @throws java.lang.Exception if any.
+	 * @throws java.lang.Exception if any.
+	 * @throws java.lang.Exception if any.
+	 * @throws java.lang.Exception if any.
+	 * @throws java.lang.Exception if any.
 	 */
 	public void visit(PagingResults<NodeRef> entities, OutputStream result) throws Exception;
 
