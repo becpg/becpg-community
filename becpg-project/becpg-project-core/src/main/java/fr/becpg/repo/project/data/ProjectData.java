@@ -116,11 +116,22 @@ public class ProjectData extends BeCPGDataObject
 	}
 	
 
+	/**
+	 * <p>build.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.project.data.ProjectData} object
+	 */
 	public static ProjectData build() {
 		return new ProjectData();
 	}
 
 	
+	/**
+	 * <p>withName.</p>
+	 *
+	 * @param name a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.project.data.ProjectData} object
+	 */
 	public ProjectData withName(String name) {
 		setName(name);
 		return this;
@@ -128,11 +139,23 @@ public class ProjectData extends BeCPGDataObject
 	
 
 	
+	/**
+	 * <p>withTaskList.</p>
+	 *
+	 * @param taskList a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.project.data.ProjectData} object
+	 */
 	public ProjectData withTaskList(List<TaskListDataItem> taskList) {
 		setTaskList(taskList);
 		return this;
 	}
 
+	/**
+	 * <p>withDeliverableList.</p>
+	 *
+	 * @param deliverableList a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.project.data.ProjectData} object
+	 */
 	public ProjectData withDeliverableList(List<DeliverableListDataItem> deliverableList) {
 		setDeliverableList(deliverableList);
 		return this;

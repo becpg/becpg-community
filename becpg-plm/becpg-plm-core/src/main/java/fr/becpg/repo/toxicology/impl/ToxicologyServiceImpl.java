@@ -19,6 +19,11 @@ import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.toxicology.ToxicologyService;
 
+/**
+ * <p>ToxicologyServiceImpl class.</p>
+ *
+ * @author matthieu
+ */
 @Service("toxicologyService")
 public class ToxicologyServiceImpl implements ToxicologyService {
 	
@@ -31,6 +36,7 @@ public class ToxicologyServiceImpl implements ToxicologyService {
 	@Autowired
 	private RepoService repoService;
 	
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef createOrUpdateToxIngNodeRef(NodeRef ingNodeRef, NodeRef toxNodeRef) {
 		NodeRef companyHomeNodeRef = repository.getCompanyHome();
@@ -63,6 +69,7 @@ public class ToxicologyServiceImpl implements ToxicologyService {
 		return toxIngNodeRef;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	@SuppressWarnings("unchecked")
 	public Double computeMaxValue(NodeRef ingNodeRef, NodeRef toxNodeRef) {

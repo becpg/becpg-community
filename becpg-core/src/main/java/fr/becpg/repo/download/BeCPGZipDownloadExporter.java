@@ -269,12 +269,12 @@ public class BeCPGZipDownloadExporter extends BaseExporter
     	return nodeRef.getStoreRef().getProtocol().equals(VersionModel.STORE_PROTOCOL) || nodeRef.getStoreRef().getIdentifier().equals(Version2Model.STORE_ID);
     }
     
-    /**
-     * <p>convertVersionNodeRefToVersionedNodeRef.</p>
-     *
-     * @param versionNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
-     * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
-     */
+	/**
+	 * <p>convertVersionNodeRefToVersionedNodeRef.</p>
+	 *
+	 * @param versionNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
     @SuppressWarnings("deprecation")
 	protected NodeRef convertVersionNodeRefToVersionedNodeRef(NodeRef versionNodeRef)
     {

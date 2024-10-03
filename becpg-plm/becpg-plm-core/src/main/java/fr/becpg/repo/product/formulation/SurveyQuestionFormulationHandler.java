@@ -47,6 +47,7 @@ public class SurveyQuestionFormulationHandler extends FormulationBaseHandler<Pro
 	
 	private static final String SURVEY_LIST_BASE_NAME = SurveyModel.TYPE_SURVEY_LIST.getLocalName();
 	
+	/** Constant <code>SURVEY_LIST_NAMES</code> */
 	public static final List<String> SURVEY_LIST_NAMES;
 	
 	static {

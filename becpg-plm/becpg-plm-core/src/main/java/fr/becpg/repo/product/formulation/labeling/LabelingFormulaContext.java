@@ -218,6 +218,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return allergens;
 	}
 
+	/**
+	 * <p>addAllergens.</p>
+	 *
+	 * @param toAdd a {@link java.util.List} object
+	 */
 	public void addAllergens(List<NodeRef> toAdd) {
 		if (toAdd != null) {
 			toAdd.forEach(a -> allergens.putIfAbsent(a, null));
@@ -235,6 +240,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return inVolAllergens;
 	}
 
+	/**
+	 * <p>addInVolAllergens.</p>
+	 *
+	 * @param toAdd a {@link java.util.List} object
+	 */
 	public void addInVolAllergens(List<NodeRef> toAdd) {
 		if (toAdd != null) {
 			toAdd.forEach(a -> inVolAllergens.putIfAbsent(a, null));
@@ -252,6 +262,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return inVolAllergensProcess;
 	}
 
+	/**
+	 * <p>addInVolAllergensProcess.</p>
+	 *
+	 * @param toAdd a {@link java.util.List} object
+	 */
 	public void addInVolAllergensProcess(List<NodeRef> toAdd) {
 		if (toAdd != null) {
 			toAdd.forEach(a -> inVolAllergensProcess.putIfAbsent(a, null));
@@ -269,6 +284,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return inVolAllergensRawMaterial;
 	}
 
+	/**
+	 * <p>addInVolAllergensRawMaterial.</p>
+	 *
+	 * @param toAdd a {@link java.util.List} object
+	 */
 	public void addInVolAllergensRawMaterial(List<NodeRef> toAdd) {
 		if (toAdd != null) {
 			toAdd.forEach(a -> inVolAllergensRawMaterial.putIfAbsent(a, null));
@@ -937,10 +957,20 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 	}
 
+	/**
+	 * <p>Getter for the field <code>sortWithSpecificLocale</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	public String getSortWithSpecificLocale() {
 		return sortWithSpecificLocale;
 	}
 
+	/**
+	 * <p>Setter for the field <code>sortWithSpecificLocale</code>.</p>
+	 *
+	 * @param sortWithSpecificLocale a {@link java.lang.String} object
+	 */
 	public void setSortWithSpecificLocale(String sortWithSpecificLocale) {
 		this.sortWithSpecificLocale = sortWithSpecificLocale;
 	}

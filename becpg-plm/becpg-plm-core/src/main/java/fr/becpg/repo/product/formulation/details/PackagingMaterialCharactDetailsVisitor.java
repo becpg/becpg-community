@@ -194,11 +194,7 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 	 *
 	 * @param subProductData
 	 *            a {@link fr.becpg.repo.product.data.ProductData} object.
-	 * @param ret
-	 *            a {@link fr.becpg.repo.product.data.CharactDetails} object.
 	 * @param currLevel
-	 *            a {@link java.lang.Integer} object.
-	 * @param maxLevel
 	 *            a {@link java.lang.Integer} object.
 	 * @param subWeight
 	 *            a {@link java.lang.Double} object.
@@ -209,6 +205,7 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 	 * @return a {@link fr.becpg.repo.product.data.CharactDetails} object.
 	 * @throws fr.becpg.repo.formulation.FormulateException
 	 *             if any.
+	 * @param context a {@link fr.becpg.repo.product.formulation.details.CharactDetailsVisitorContext} object
 	 */
 	public CharactDetails visitRecurPMaterial(CharactDetailsVisitorContext context, ProductData subProductData, Integer currLevel, Double subWeight,
 			Double subVol, Double netQty)  {

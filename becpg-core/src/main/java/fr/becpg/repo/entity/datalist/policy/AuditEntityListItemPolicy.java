@@ -44,6 +44,7 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 		implements NodeServicePolicies.OnDeleteNodePolicy, NodeServicePolicies.OnCreateNodePolicy,
 		NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnDeleteAssociationPolicy, NodeServicePolicies.OnUpdatePropertiesPolicy {
 
+	/** Constant <code>UPDATED_LISTS="AuditEntityListItemPolicy.UpdatedLists"</code> */
 	public static final String UPDATED_LISTS = "AuditEntityListItemPolicy.UpdatedLists";
 	private static final String CATALOG_ONLY = "AuditEntityListItemPolicy.CatalogOnly";
 
@@ -51,6 +52,11 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 
 	private static final List<QName> ignoredTypes = new ArrayList<>();
 	
+	/**
+	 * <p>registerIgnoredType.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 */
 	public static void registerIgnoredType(QName type) {
 		ignoredTypes.add(type);
 	}
@@ -87,6 +93,8 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * <p>
 	 * doInit.
 	 * </p>
@@ -109,6 +117,7 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onCopyComplete(QName classRef, NodeRef sourceNodeRef, NodeRef destinationRef, boolean copyToNewNode, Map<NodeRef, NodeRef> copyMap) {
 		queueListNodeRef(nodeService.getPrimaryParent(destinationRef).getParentRef());

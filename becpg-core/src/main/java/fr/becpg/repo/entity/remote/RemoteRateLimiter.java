@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
+ * <p>RemoteRateLimiter class.</p>
+ *
  * @author Matthieu
  */
 @Service("remoteRateLimiter")
@@ -28,6 +30,11 @@ public class RemoteRateLimiter {
 		return Double.valueOf(systemConfigurationService.confValue("beCPG.remote.rateLimiter.refillRate"));
 	}
 
+    /**
+     * <p>allowRequest.</p>
+     *
+     * @return a boolean
+     */
     public synchronized boolean allowRequest() {
         refillTokens();
         if (tokens >= 1.0) {

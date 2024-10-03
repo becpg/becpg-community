@@ -102,7 +102,6 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 	}
 
 	/**
-	 * @param excelCellStyles 
 	 * <p>appendNextLevel.</p>
 	 *
 	 * @param listData a {@link fr.becpg.repo.entity.datalist.data.MultiLevelListData} object.

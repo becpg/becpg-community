@@ -41,10 +41,16 @@ import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.helper.impl.AttributeExtractorField;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 
+/**
+ * <p>JSONVersionExtractor class.</p>
+ *
+ * @author matthieu
+ */
 public class JSONVersionExtractor extends SimpleExtractor {
 
 	private static final Log logger = LogFactory.getLog(JSONVersionExtractor.class);
 	
+	/** Constant <code>PROP_ACCESSRIGHT="accessRight"</code> */
 	public static final String PROP_ACCESSRIGHT = "accessRight";
 
 	private static final String PROP_NODE = "nodeRef";
@@ -98,11 +104,17 @@ public class JSONVersionExtractor extends SimpleExtractor {
 	
 	private boolean isDefaultExtractor = false;
 	
+	/** {@inheritDoc} */
 	@Override
 	public boolean isDefaultExtractor() {
 		return isDefaultExtractor;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>entityFormatService</code>.</p>
+	 *
+	 * @param entityJsonService a {@link fr.becpg.repo.entity.EntityFormatService} object
+	 */
 	public void setEntityFormatService(EntityFormatService entityJsonService) {
 		this.entityFormatService = entityJsonService;
 	}
@@ -638,6 +650,7 @@ public class JSONVersionExtractor extends SimpleExtractor {
 		return entityFormatService.getEntityData(dataListFilter.getEntityNodeRef());
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public PaginatedExtractedItems extract(DataListFilter dataListFilter, List<AttributeExtractorField> metadataFields) {
 
@@ -721,6 +734,7 @@ public class JSONVersionExtractor extends SimpleExtractor {
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean applyTo(DataListFilter dataListFilter) {
 		
@@ -743,11 +757,13 @@ public class JSONVersionExtractor extends SimpleExtractor {
 		return EntityFormat.JSON.toString().equals(entityFormatService.getEntityFormat(targetNodeRef));
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Date computeLastModified(DataListFilter dataListFilter) {
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean hasWriteAccess() {
 		return false;

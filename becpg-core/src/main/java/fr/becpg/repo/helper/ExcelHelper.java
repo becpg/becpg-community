@@ -117,6 +117,7 @@ public class ExcelHelper {
 	 * @param rowNum a int.
 	 * @param supportedLocales a {@link java.util.List} object.
 	 * @return a int.
+	 * @param excelCellStyles a {@link fr.becpg.repo.helper.ExcelHelper.ExcelCellStyles} object
 	 */
 	public static int appendExcelField(List<AttributeExtractorStructure> computedFields, String prefix, Map<String, Object> item, XSSFSheet sheet,
 			Row row, int cellnum, int rowNum, List<Locale> supportedLocales, ExcelCellStyles excelCellStyles) {
@@ -252,12 +253,12 @@ public class ExcelHelper {
 	 * @param titlePrefix a {@link java.lang.String} object.
 	 * @param headerRow a {@link org.apache.poi.ss.usermodel.Row} object.
 	 * @param labelRow a {@link org.apache.poi.ss.usermodel.Row} object.
-	 * @param style a {@link org.apache.poi.xssf.usermodel.XSSFCellStyle} object.
 	 * @param sheet a {@link org.apache.poi.xssf.usermodel.XSSFSheet} object.
 	 * @param cellnum a int.
 	 * @param titleProvider a {@link fr.becpg.repo.helper.ExcelHelper.ExcelFieldTitleProvider} object.
 	 * @param supportedLocales a {@link java.util.List} object.
 	 * @return a int.
+	 * @param excelCellStyles a {@link fr.becpg.repo.helper.ExcelHelper.ExcelCellStyles} object
 	 */
 	public static int appendExcelHeader(List<AttributeExtractorStructure> fields, String prefix, String titlePrefix, Row headerRow, Row labelRow,
 			ExcelCellStyles excelCellStyles, XSSFSheet sheet, int cellnum, ExcelFieldTitleProvider titleProvider, List<Locale> supportedLocales) {

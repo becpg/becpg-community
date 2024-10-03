@@ -31,6 +31,15 @@ import org.alfresco.service.namespace.QName;
  */
 public interface HierarchyService {
 	
+	/**
+	 * <p>getHierarchyByPath.</p>
+	 *
+	 * @param path a {@link java.lang.String} object
+	 * @param parentHierachyNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param key a {@link org.alfresco.service.namespace.QName} object
+	 * @param value a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	NodeRef getHierarchyByPath(String path, NodeRef parentHierachyNodeRef, QName key, String value);
 
 	/**
@@ -49,6 +58,7 @@ public interface HierarchyService {
 	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param value a {@link java.lang.String} object.
 	 * @return a {@link java.util.List} object.
+	 * @param includeDeleted a boolean
 	 */
 	List<NodeRef> getHierarchiesByPath(String path, NodeRef parentNodeRef, String value, boolean includeDeleted);
 	/**
@@ -62,14 +72,21 @@ public interface HierarchyService {
 	/**
 	 * <p>createRootHierarchy.</p>
 	 *
-	 * @param dataListNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param value a {@link java.lang.String} object.
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param path a {@link java.lang.String} object
+	 * @param query a {@link java.lang.String} object
+	 * @param depthLevel a {@link java.lang.String} object
 	 */
-	
 	List<NodeRef> getAllHierarchiesByDepthLevel(String path, String query, String depthLevel);
 	
 	
+	/**
+	 * <p>createRootHierarchy.</p>
+	 *
+	 * @param dataListNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param value a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	NodeRef createRootHierarchy(NodeRef dataListNodeRef, String value);
 	/**
 	 * <p>createHierarchy.</p>
@@ -94,6 +111,7 @@ public interface HierarchyService {
 	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param hierarchyQname a {@link org.alfresco.service.namespace.QName} object.
 	 * @param locale a {@link java.util.Locale} object.
+	 * @return a boolean
 	 */
 	boolean classifyByHierarchy(NodeRef containerNodeRef, NodeRef entityNodeRef, QName hierarchyQname, Locale locale);
 	/**

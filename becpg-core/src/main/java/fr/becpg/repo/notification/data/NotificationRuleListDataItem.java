@@ -350,22 +350,42 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 		return recurringDay;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>script</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	@AlfSingleAssoc
 	@AlfQname(qname = "bcpg:nrScript")
 	public NodeRef getScript() {
 		return script;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>script</code>.</p>
+	 *
+	 * @param script a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public void setScript(NodeRef script) {
 		this.script = script;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>scriptMode</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.notification.data.ScriptMode} object
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:nrScriptMode")
 	public ScriptMode getScriptMode() {
 		return scriptMode;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>scriptMode</code>.</p>
+	 *
+	 * @param scriptMode a {@link fr.becpg.repo.notification.data.ScriptMode} object
+	 */
 	public void setScriptMode(ScriptMode scriptMode) {
 		this.scriptMode = scriptMode;
 	}
@@ -379,12 +399,22 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 		this.recurringDay = recurringDay;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>errorLog</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:nrErrorLog")
 	public String getErrorLog() {
 		return errorLog;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>errorLog</code>.</p>
+	 *
+	 * @param errorLog a {@link java.lang.String} object
+	 */
 	public void setErrorLog(String errorLog) {
 		this.errorLog = errorLog;
 	}
@@ -403,7 +433,7 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 	/**
 	 * <p>Setter for the field <code>reportTpls</code>.</p>
 	 *
-	 * @param email a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param reportTpls a {@link java.util.List} object
 	 */
 	public void setReportTpls(List<NodeRef> reportTpls) {
 		this.reportTpls = reportTpls;

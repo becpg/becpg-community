@@ -29,7 +29,9 @@ import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 import fr.becpg.common.BeCPGException;
 
 /**
- * 
+ * <p>XmlActivityVisitor class.</p>
+ *
+ * @author matthieu
  */
 public class XmlActivityVisitor implements RemoteActivityVisitor {
 
@@ -44,10 +46,12 @@ public class XmlActivityVisitor implements RemoteActivityVisitor {
 	private ContentService contentService;
 
 	/**
-	 * @param siteService
-	 * @param nodeService
-	 * @param namespaceService
-	 * @param contentService
+	 * <p>Constructor for XmlActivityVisitor.</p>
+	 *
+	 * @param siteService a {@link org.alfresco.service.cmr.site.SiteService} object
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object
+	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object
 	 */
 	public XmlActivityVisitor(SiteService siteService, NodeService nodeService, NamespaceService namespaceService, ContentService contentService) {
 		this.siteService = siteService;
@@ -57,11 +61,9 @@ public class XmlActivityVisitor implements RemoteActivityVisitor {
 	}
 
 	/**
-	 * <p>visit.</p>
+	 * {@inheritDoc}
 	 *
-	 * @param feedEntries a {@link org.alfresco.query.PagingResults} object.
-	 * @param result a {@link java.io.OutputStream} object.
-	 * @throws javax.xml.stream.XMLStreamException if any.
+	 * <p>visit.</p>
 	 */
 	@Override
 	public void visit(List<ActivityFeedEntity> feedEntries, OutputStream result) throws BeCPGException {
@@ -173,6 +175,7 @@ public class XmlActivityVisitor implements RemoteActivityVisitor {
 		return "";
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getContentType() {
 		return "application/xml";

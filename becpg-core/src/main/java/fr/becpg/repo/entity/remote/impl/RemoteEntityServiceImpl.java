@@ -96,6 +96,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	private ContentService contentService;
 
 	
+	/** {@inheritDoc} */
 	@Override
 	public RemoteServiceRegisty serviceRegistry() {
 		return remoteServiceRegisty;
@@ -140,6 +141,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void getEntitySchema(QName type, OutputStream out, RemoteParams params) {
 		RemoteEntityFormat format = params.getFormat();

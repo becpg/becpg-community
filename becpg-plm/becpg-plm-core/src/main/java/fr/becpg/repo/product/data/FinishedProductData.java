@@ -83,6 +83,12 @@ public class FinishedProductData extends ProductData {
 	}
 	
 	
+	/**
+	 * <p>withUnitPrice.</p>
+	 *
+	 * @param unitPrice a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.product.data.FinishedProductData} object
+	 */
 	public FinishedProductData withUnitPrice(Double unitPrice) {
 		setUnitPrice(unitPrice);
 		return this;
@@ -112,12 +118,24 @@ public class FinishedProductData extends ProductData {
 	}
 	
 
+	/**
+	 * <p>withServingSize.</p>
+	 *
+	 * @param servingSize a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.product.data.FinishedProductData} object
+	 */
 	public FinishedProductData withServingSize(Double servingSize) {
 		setServingSize(servingSize);
 		return this;
 	}
 	
 
+	/**
+	 * <p>withProjectedQty.</p>
+	 *
+	 * @param projectedQty a {@link java.lang.Long} object
+	 * @return a {@link fr.becpg.repo.product.data.FinishedProductData} object
+	 */
 	public FinishedProductData withProjectedQty(Long projectedQty) {
 		setProjectedQty(projectedQty);
 		return this;
@@ -136,6 +154,12 @@ public class FinishedProductData extends ProductData {
 	}
 	
 
+	/**
+	 * <p>withNutList.</p>
+	 *
+	 * @param nutList a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.product.data.FinishedProductData} object
+	 */
 	public FinishedProductData withNutList(List<NutListDataItem> nutList) {
 		setNutList(nutList);
 		return this;

@@ -406,8 +406,8 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem
 	/**
 	 * <p>withProduct.</p>
 	 *
-	 * @param product a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @return a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object
+	 * @param parent a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object
 	 */
 	public CompoListDataItem withParent(CompoListDataItem parent) {
 		this.parent = parent;
@@ -428,6 +428,12 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem
 	}
 
 
+	/**
+	 * <p>withLossPerc.</p>
+	 *
+	 * @param lossPerc a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object
+	 */
 	public CompoListDataItem withLossPerc(Double lossPerc) {
 		this.lossPerc = lossPerc;
 		return this;

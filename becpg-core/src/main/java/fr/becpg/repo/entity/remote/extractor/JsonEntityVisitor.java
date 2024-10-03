@@ -94,6 +94,11 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	private AssociationService associationService;
 	private EntityListDAO entityListDAO;
 
+	/**
+	 * <p>Constructor for JsonEntityVisitor.</p>
+	 *
+	 * @param remoteServiceRegisty a {@link fr.becpg.repo.entity.remote.RemoteServiceRegisty} object
+	 */
 	public JsonEntityVisitor(RemoteServiceRegisty remoteServiceRegisty) {
 		super(remoteServiceRegisty);
 
@@ -171,6 +176,15 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 	}
 
+	/**
+	 * <p>visitNode.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param entity a {@link org.json.JSONObject} object
+	 * @param type a {@link fr.becpg.repo.entity.remote.extractor.RemoteJSONContext.JsonVisitNodeType} object
+	 * @param context a {@link fr.becpg.repo.entity.remote.extractor.RemoteJSONContext} object
+	 * @throws org.json.JSONException if any.
+	 */
 	protected void visitNode(NodeRef entityNodeRef, JSONObject entity, JsonVisitNodeType type, RemoteJSONContext context) throws JSONException {
 		try {
 			visitNode(entityNodeRef, entity, type, null, context);
@@ -179,6 +193,17 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 		}
 	}
 
+	/**
+	 * <p>visitNode.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param entity a {@link org.json.JSONObject} object
+	 * @param type a {@link fr.becpg.repo.entity.remote.extractor.RemoteJSONContext.JsonVisitNodeType} object
+	 * @param assocName a {@link org.alfresco.service.namespace.QName} object
+	 * @param context a {@link fr.becpg.repo.entity.remote.extractor.RemoteJSONContext} object
+	 * @throws org.json.JSONException if any.
+	 * @throws fr.becpg.repo.entity.remote.extractor.RemoteException if any.
+	 */
 	protected void visitNode(NodeRef nodeRef, JSONObject entity, JsonVisitNodeType type, QName assocName, RemoteJSONContext context)
 			throws JSONException, RemoteException {
 		cacheList.add(nodeRef);
@@ -327,6 +352,14 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 	}
 
+	/**
+	 * <p>visitLists.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param entity a {@link org.json.JSONObject} object
+	 * @param context a {@link fr.becpg.repo.entity.remote.extractor.RemoteJSONContext} object
+	 * @throws org.json.JSONException if any.
+	 */
 	protected void visitLists(NodeRef nodeRef, JSONObject entity, RemoteJSONContext context) throws JSONException {
 
 		NodeRef listContainerNodeRef = nodeService.getChildByName(nodeRef, BeCPGModel.ASSOC_ENTITYLISTS, RepoConsts.CONTAINER_DATALISTS);
@@ -397,6 +430,13 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 	}
 
+	/**
+	 * <p>visitContent.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param entity a {@link org.json.JSONObject} object
+	 * @throws org.json.JSONException if any.
+	 */
 	protected void visitContent(NodeRef nodeRef, JSONObject entity) throws JSONException {
 
 		ContentReader contentReader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
@@ -422,6 +462,16 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 	}
 
+	/**
+	 * <p>visitAssocs.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param entity a {@link org.json.JSONObject} object
+	 * @param assocName a {@link org.alfresco.service.namespace.QName} object
+	 * @param context a {@link fr.becpg.repo.entity.remote.extractor.RemoteJSONContext} object
+	 * @throws org.json.JSONException if any.
+	 * @throws fr.becpg.repo.entity.remote.extractor.RemoteException if any.
+	 */
 	protected void visitAssocs(NodeRef nodeRef, JSONObject entity, QName assocName, RemoteJSONContext context) throws JSONException, RemoteException {
 
 		TypeDefinition typeDef = entityDictionaryService.getType(nodeService.getType(nodeRef));
@@ -520,6 +570,14 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 	}
 
+	/**
+	 * <p>matchProp.</p>
+	 *
+	 * @param assocName a {@link org.alfresco.service.namespace.QName} object
+	 * @param propName a {@link org.alfresco.service.namespace.QName} object
+	 * @param checkFilter a boolean
+	 * @return a boolean
+	 */
 	protected boolean matchProp(QName assocName, QName propName, boolean checkFilter) {
 
 		if (assocName == null) {
@@ -540,6 +598,17 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 	}
 
+	/**
+	 * <p>visitProps.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param entity a {@link org.json.JSONObject} object
+	 * @param assocName a {@link org.alfresco.service.namespace.QName} object
+	 * @param props a {@link java.util.Map} object
+	 * @param context a {@link fr.becpg.repo.entity.remote.extractor.RemoteJSONContext} object
+	 * @throws org.json.JSONException if any.
+	 * @throws fr.becpg.repo.entity.remote.extractor.RemoteException if any.
+	 */
 	protected void visitProps(NodeRef nodeRef, JSONObject entity, QName assocName, Map<QName, Serializable> props, RemoteJSONContext context)
 			throws JSONException, RemoteException {
 

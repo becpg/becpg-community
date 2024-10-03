@@ -248,6 +248,12 @@ public class BeCPGLicenseManager {
 
 	}
 
+	/**
+	 * <p>floatingLicensesExceeded.</p>
+	 *
+	 * @param sessionId a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	public boolean floatingLicensesExceeded(String sessionId) {
 		return beCPGCacheService.getFromCache(BeCPGLicenseManager.class.getName() + ".sessions", sessionId, () -> {
 			Set<String> users = new HashSet<>(authenticationService.getUsersWithTickets(true));
@@ -270,6 +276,11 @@ public class BeCPGLicenseManager {
 		});
 	}
 
+	/**
+	 * <p>isSpecialLicenceUser.</p>
+	 *
+	 * @return a boolean
+	 */
 	public boolean isSpecialLicenceUser() {
 		String runAsUser = AuthenticationUtil.getRunAsUser();
 		if(authenticationService.getDefaultAdministratorUserNames().contains(runAsUser)) {
@@ -283,6 +294,11 @@ public class BeCPGLicenseManager {
 		return false;
 	}
 	
+	/**
+	 * <p>hasWriteLicense.</p>
+	 *
+	 * @return a boolean
+	 */
 	public boolean hasWriteLicense() {
 		String runAsUser = AuthenticationUtil.getRunAsUser();
 		return beCPGCacheService.getFromCache(BeCPGLicenseManager.class.getName() + ".writeLicenses", runAsUser, () -> {

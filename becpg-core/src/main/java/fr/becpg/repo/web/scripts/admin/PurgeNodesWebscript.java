@@ -39,7 +39,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * @version $Id: $Id
  * TODO use batch Service
  */
-@Deprecated 
+@Deprecated
 public class PurgeNodesWebscript extends AbstractWebScript {
 
 	private static  final  Log logger = LogFactory.getLog(PurgeNodesWebscript.class);

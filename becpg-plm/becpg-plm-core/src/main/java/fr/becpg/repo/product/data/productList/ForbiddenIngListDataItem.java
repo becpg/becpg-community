@@ -138,12 +138,22 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 		this.reqType = reqType;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>ingLevel</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:filIngLevel")
 	public Integer getIngLevel() {
 		return ingLevel;
 	}
 
+	/**
+	 * <p>Setter for the field <code>ingLevel</code>.</p>
+	 *
+	 * @param ingLevel a {@link java.lang.Integer} object
+	 */
 	public void setIngLevel(Integer ingLevel) {
 		this.ingLevel = ingLevel;
 	}
@@ -169,18 +179,30 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 		this.reqMessage = reqMessage;
 	}
 
+	/**
+	 * <p>getRegulatoryType.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.constraints.RequirementType} object
+	 */
 	public RequirementType getRegulatoryType() {
 		return getReqType();
 	}
 
+	/** {@inheritDoc} */
 	public void setRegulatoryType(RequirementType regulatoryType) {
 		setReqType(regulatoryType);
 	}
 
+	/**
+	 * <p>getRegulatoryMessage.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object
+	 */
 	public MLText getRegulatoryMessage() {
 		return getReqMessage();
 	}
 
+	/** {@inheritDoc} */
 	public void setRegulatoryMessage(MLText regulatoryMessage) {
 		setReqMessage(regulatoryMessage);
 	}
@@ -219,22 +241,42 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 	}
 
 	
+	/**
+	 * <p>Getter for the field <code>qtyPercMini</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:filQtyPercMini")
 	public Double getQtyPercMini() {
 		return qtyPercMini;
 	}
 
+	/**
+	 * <p>Setter for the field <code>qtyPercMini</code>.</p>
+	 *
+	 * @param qtyPercMini a {@link java.lang.Double} object
+	 */
 	public void setQtyPercMini(Double qtyPercMini) {
 		this.qtyPercMini = qtyPercMini;
 	}
 
+	/**
+	 * <p>Getter for the field <code>qtyPercType</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem.ReqQtyPercType} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:bcpg:filQtyPercType")
 	public ReqQtyPercType getQtyPercType() {
 		return qtyPercType;
 	}
 
+	/**
+	 * <p>Setter for the field <code>qtyPercType</code>.</p>
+	 *
+	 * @param qtyPercType a {@link fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem.ReqQtyPercType} object
+	 */
 	public void setQtyPercType(ReqQtyPercType qtyPercType) {
 		this.qtyPercType = qtyPercType;
 	}
@@ -456,6 +498,7 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 		this.ings = ings;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -465,6 +508,7 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -483,6 +527,7 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 				&& reqType == other.reqType && Objects.equals(requiredGeoOrigins, other.requiredGeoOrigins);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "ForbiddenIngListDataItem [reqType=" + reqType + ", reqMessage=" + reqMessage + ", qtyPercMaxi=" + qtyPercMaxi + ", qtyPercMini="

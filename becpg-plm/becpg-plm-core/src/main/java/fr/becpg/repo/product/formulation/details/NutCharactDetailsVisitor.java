@@ -62,6 +62,7 @@ public class NutCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 		return ret;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	protected String provideUnit(CharactDetailsVisitorContext context, SimpleCharactDataItem simpleCharact) {
 		String unit = super.provideUnit(context, simpleCharact);
@@ -71,6 +72,7 @@ public class NutCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 		return unit;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	protected boolean shouldFormulateInVolume(CharactDetailsVisitorContext context, ProductData partProduct, SimpleCharactDataItem simpleCharact) {
 		boolean formulateInVol = super.shouldFormulateInVolume(context, partProduct, simpleCharact);
@@ -81,6 +83,7 @@ public class NutCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 		return formulateInVol;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	protected boolean shouldForceWeight(CharactDetailsVisitorContext context, ProductData partProduct, SimpleCharactDataItem simpleCharact) {
 		boolean formulateInVol = super.shouldFormulateInVolume(context, partProduct, simpleCharact);

@@ -48,6 +48,11 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 
 	private RepoService repoService;
 
+	/**
+	 * <p>Setter for the field <code>repoService</code>.</p>
+	 *
+	 * @param repoService a {@link fr.becpg.repo.helper.RepoService} object
+	 */
 	public void setRepoService(RepoService repoService) {
 		this.repoService = repoService;
 	}

@@ -264,6 +264,7 @@ public class ProductCompareEntityServicePlugin extends DefaultCompareEntityServi
 		return entityType.equals(PLMModel.TYPE_FINISHEDPRODUCT) || entityType.equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT) || entityType.equals(PLMModel.TYPE_LOGISTICUNIT);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public boolean isDefault() {
 		return false;

@@ -332,6 +332,7 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void beforeDeleteNode(NodeRef nodeRef) {
 		if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_UNDELETABLE_ASPECT)) {

@@ -41,6 +41,7 @@ public class NoXmlEntityReportExtractor extends DefaultEntityReportExtractor{
 	}
 	
 	
+	/** {@inheritDoc} */
 	@Override
 	public EntityReportExtractorPriority getMatchPriority(QName type) {
 		return EntityReportExtractorPriority.NONE;

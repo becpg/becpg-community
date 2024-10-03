@@ -533,6 +533,12 @@ public class FormulationHelper {
 		return null;
 	}
 
+	/**
+	 * <p>getDensity.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	public static Double getDensity(ProductData productData) {
 		Double density = productData.getDensity();
 		if ((density == null) || density.equals(0d) || density.isNaN() || density.isInfinite()) {

@@ -51,6 +51,11 @@ public class TaskOverdueFormulationHandler extends FormulationBaseHandler<Projec
 	private ProjectService projectService;
 	private NodeService nodeService;
 	
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}

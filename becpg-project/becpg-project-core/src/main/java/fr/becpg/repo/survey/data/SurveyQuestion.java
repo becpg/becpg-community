@@ -354,6 +354,11 @@ public class SurveyQuestion extends BeCPGDataObject {
 		this.nextQuestions = nextQuestions;
 	}
 
+	/**
+	 * <p>Getter for the field <code>fsLinkedCharactRefs</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	@AlfMultiAssoc
 	@AlfReadOnly
 	@AlfQname(qname = "survey:fsLinkedCharactRefs")
@@ -361,20 +366,40 @@ public class SurveyQuestion extends BeCPGDataObject {
 		return fsLinkedCharactRefs;
 	}
 
+	/**
+	 * <p>Setter for the field <code>fsLinkedCharactRefs</code>.</p>
+	 *
+	 * @param fsLinkedCharactRefs a {@link java.util.List} object
+	 */
 	public void setFsLinkedCharactRefs(List<NodeRef> fsLinkedCharactRefs) {
 		this.fsLinkedCharactRefs = fsLinkedCharactRefs;
 	}
 
+	/**
+	 * <p>Getter for the field <code>fsLinkedTypes</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "survey:fsLinkedTypes")
 	public List<String> getFsLinkedTypes() {
 		return fsLinkedTypes;
 	}
 
+	/**
+	 * <p>Setter for the field <code>fsLinkedTypes</code>.</p>
+	 *
+	 * @param fsLinkedTypes a {@link java.util.List} object
+	 */
 	public void setFsLinkedTypes(List<String> fsLinkedTypes) {
 		this.fsLinkedTypes = fsLinkedTypes;
 	}
 
+	/**
+	 * <p>Getter for the field <code>fsLinkedHierarchy</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	@AlfMultiAssoc
 	@AlfReadOnly
 	@AlfQname(qname = "survey:fsLinkedHierarchy")
@@ -382,21 +407,37 @@ public class SurveyQuestion extends BeCPGDataObject {
 		return fsLinkedHierarchy;
 	}
 
+	/**
+	 * <p>Setter for the field <code>fsLinkedHierarchy</code>.</p>
+	 *
+	 * @param fsLinkedHierarchy a {@link java.util.List} object
+	 */
 	public void setFsLinkedHierarchy(List<NodeRef> fsLinkedHierarchy) {
 		this.fsLinkedHierarchy = fsLinkedHierarchy;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>fsSurveyListName</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "survey:fsSurveyListName")
 	public String getFsSurveyListName() {
 		return fsSurveyListName;
 	}
 
+	/**
+	 * <p>Setter for the field <code>fsSurveyListName</code>.</p>
+	 *
+	 * @param fsSurveyListName a {@link java.lang.String} object
+	 */
 	public void setFsSurveyListName(String fsSurveyListName) {
 		this.fsSurveyListName = fsSurveyListName;
 	}
 
 	
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;

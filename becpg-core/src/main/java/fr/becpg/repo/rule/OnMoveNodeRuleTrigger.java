@@ -38,8 +38,9 @@ import fr.becpg.model.BeCPGModel;
 
 /**
  * A rule trigger for when nodes are moved.
- * 
+ *
  * @since 3.4.6
+ * @author matthieu
  */
 public class OnMoveNodeRuleTrigger extends RuleTriggerAbstractBase implements NodeServicePolicies.OnMoveNodePolicy {
 	private static final String POLICY_NAME = NodeServicePolicies.OnMoveNodePolicy.QNAME.getLocalName();
@@ -48,15 +49,27 @@ public class OnMoveNodeRuleTrigger extends RuleTriggerAbstractBase implements No
 
 	private boolean ignoreEntityDataList = true;
 
+	/**
+	 * <p>Setter for the field <code>ignoreEntityDataList</code>.</p>
+	 *
+	 * @param ignoreEntityDataList a boolean
+	 */
 	public void setIgnoreEntityDataList(boolean ignoreEntityDataList) {
 		this.ignoreEntityDataList = ignoreEntityDataList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>isClassBehaviour</code>.</p>
+	 *
+	 * @param isClassBehaviour a boolean
+	 */
 	public void setIsClassBehaviour(boolean isClassBehaviour) {
 		this.isClassBehaviour = isClassBehaviour;
 	}
 
 	/**
+	 * <p>registerRuleTrigger.</p>
+	 *
 	 * @see org.alfresco.repo.rule.ruletrigger.RuleTrigger#registerRuleTrigger()
 	 */
 	public void registerRuleTrigger() {
@@ -69,6 +82,7 @@ public class OnMoveNodeRuleTrigger extends RuleTriggerAbstractBase implements No
 		}
 	}
 
+	/** {@inheritDoc} */
 	public void onMoveNode(ChildAssociationRef oldChildAssocRef, ChildAssociationRef newChildAssocRef) {
 		// Break out early if rules are not enabled
 		if (!areRulesEnabled()) {

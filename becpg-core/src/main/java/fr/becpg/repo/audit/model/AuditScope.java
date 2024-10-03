@@ -130,6 +130,9 @@ public class AuditScope implements AutoCloseable {
 		}
 	}
 	
+	/**
+	 * <p>disable.</p>
+	 */
 	public void disable() {
 		if (databaseScope != null) {
 			databaseScope.disableAuditRecord();

@@ -38,6 +38,18 @@ public class ReportSearchDownloadExporter extends AbstractSearchDownloadExporter
 	ReportFormat format;
 	
 	
+	/**
+	 * <p>Constructor for ReportSearchDownloadExporter.</p>
+	 *
+	 * @param transactionHelper a {@link org.alfresco.repo.transaction.RetryingTransactionHelper} object
+	 * @param updateService a {@link org.alfresco.repo.download.DownloadStatusUpdateService} object
+	 * @param downloadStorage a {@link org.alfresco.repo.download.DownloadStorage} object
+	 * @param reportServerSearchRenderer a {@link fr.becpg.repo.report.search.impl.ReportServerSearchRenderer} object
+	 * @param downloadNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param templateNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param nbOfLines a {@link java.lang.Long} object
+	 * @param format a {@link fr.becpg.report.client.ReportFormat} object
+	 */
 	public ReportSearchDownloadExporter(RetryingTransactionHelper transactionHelper, DownloadStatusUpdateService updateService,
 			DownloadStorage downloadStorage, ReportServerSearchRenderer reportServerSearchRenderer,
 			NodeRef downloadNodeRef, NodeRef templateNodeRef, Long nbOfLines, ReportFormat format) {

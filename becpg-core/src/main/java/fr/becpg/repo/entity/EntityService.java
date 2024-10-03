@@ -74,6 +74,12 @@ public interface EntityService {
 	 */
 	NodeRef getImageFolder(NodeRef entityNodeRef) ;
 	
+	/**
+	 * <p>getOrCreateImageFolder.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	NodeRef getOrCreateImageFolder(NodeRef entityNodeRef) ;
 
 	/**
@@ -186,8 +192,20 @@ public interface EntityService {
 	 */
 	NodeRef getDocumentsFolder(NodeRef entityNodeRef, boolean create);
 
+	/**
+	 * <p>getEntityDefaultIcon.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param resolution a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	NodeRef getEntityDefaultIcon(NodeRef nodeRef, String resolution);
 
+	/**
+	 * <p>getEntityIcons.</p>
+	 *
+	 * @return a {@link java.util.Map} object
+	 */
 	Map<String, NodeRef> getEntityIcons();
 
 }

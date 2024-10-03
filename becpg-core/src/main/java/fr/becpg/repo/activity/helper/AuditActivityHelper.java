@@ -8,12 +8,23 @@ import fr.becpg.repo.activity.data.ActivityType;
 import fr.becpg.repo.audit.plugin.AuditPlugin;
 import fr.becpg.repo.audit.plugin.impl.ActivityAuditPlugin;
 
+/**
+ * <p>AuditActivityHelper class.</p>
+ *
+ * @author matthieu
+ */
 public class AuditActivityHelper {
 	
 	private AuditActivityHelper() {
 		
 	}
 
+	/**
+	 * <p>parseActivity.</p>
+	 *
+	 * @param result a {@link org.json.JSONObject} object
+	 * @return a {@link fr.becpg.repo.activity.data.ActivityListDataItem} object
+	 */
 	public static ActivityListDataItem parseActivity(JSONObject result) {
 		
 		ActivityListDataItem activityListDataItem = new ActivityListDataItem();
@@ -27,6 +38,12 @@ public class AuditActivityHelper {
 		return activityListDataItem;
 	}
 	
+	/**
+	 * <p>serializeActivity.</p>
+	 *
+	 * @param activityListDataItem a {@link fr.becpg.repo.activity.data.ActivityListDataItem} object
+	 * @return a {@link java.lang.String} object
+	 */
 	public static String serializeActivity(ActivityListDataItem activityListDataItem) {
 
 		JSONObject result = new JSONObject();

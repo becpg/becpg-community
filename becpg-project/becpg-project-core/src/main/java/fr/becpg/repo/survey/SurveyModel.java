@@ -35,8 +35,10 @@ public final class SurveyModel {
 	/** Constant <code>TYPE_SURVEY_LIST</code> */
 	public static final QName TYPE_SURVEY_LIST = QName.createQName(SURVEY_URI, "surveyList");
 	
+	/** Constant <code>ASSOC_SURVEY_FS_LINKED_CHARACT_REFS</code> */
 	public static final QName ASSOC_SURVEY_FS_LINKED_CHARACT_REFS = QName.createQName(SURVEY_URI, "fsLinkedCharactRefs");
 
+	/** Constant <code>ASSOC_SURVEY_FS_LINKED_HIERARCHY</code> */
 	public static final QName ASSOC_SURVEY_FS_LINKED_HIERARCHY = QName.createQName(SURVEY_URI, "fsLinkedHierarchy");
 	
 }

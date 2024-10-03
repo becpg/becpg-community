@@ -90,10 +90,15 @@ XML :
  */
 public class EntityReportParameters {
 
+	/** Constant <code>PARAM_COMPONENT_DATALISTS_TO_EXTRACT="componentDatalistsToExtract"</code> */
 	public static final String PARAM_COMPONENT_DATALISTS_TO_EXTRACT = "componentDatalistsToExtract";
+	/** Constant <code>PARAM_ENTITY_DATALISTS_TO_EXTRACT="entityDatalistsToExtract"</code> */
 	public static final String PARAM_ENTITY_DATALISTS_TO_EXTRACT = "entityDatalistsToExtract";
+	/** Constant <code>PARAM_EXTRACT_IN_MULTILEVEL="extractInMultiLevel"</code> */
 	public static final String PARAM_EXTRACT_IN_MULTILEVEL = "extractInMultiLevel";
+	/** Constant <code>PARAM_EXTRACT_NON_EFFECTIVE_COMPONENT="extractNonEffectiveComponent"</code> */
 	public static final String PARAM_EXTRACT_NON_EFFECTIVE_COMPONENT = "extractNonEffectiveComponent";
+	/** Constant <code>PARAM_MAX_COMPOLIST_LEVEL_TO_EXTRACT="maxCompoListLevelToExtract"</code> */
 	public static final String PARAM_MAX_COMPOLIST_LEVEL_TO_EXTRACT = "maxCompoListLevelToExtract";
 
 	private static final String JSON_PARAM_PARAMS = "params";

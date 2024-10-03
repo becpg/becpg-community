@@ -104,6 +104,11 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 		this.entityDictionaryService = entityDictionaryService;
 	}
 
+	/**
+	 * <p>registerIngoredType.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 */
 	public static void registerIngoredType(QName type) {
 		isIgnoredTypes.add(type);
 	}

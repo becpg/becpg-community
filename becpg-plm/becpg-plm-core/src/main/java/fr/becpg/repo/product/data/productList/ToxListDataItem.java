@@ -15,6 +15,11 @@ import fr.becpg.repo.repository.model.CopiableDataItem;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 
 
+/**
+ * <p>ToxListDataItem class.</p>
+ *
+ * @author matthieu
+ */
 @AlfType
 @AlfQname(qname = "bcpg:toxList")
 public class ToxListDataItem extends BeCPGDataObject implements SimpleCharactDataItem, AspectAwareDataItem {
@@ -25,34 +30,59 @@ public class ToxListDataItem extends BeCPGDataObject implements SimpleCharactDat
 
 	private Double value;
 
+	/**
+	 * <p>Constructor for ToxListDataItem.</p>
+	 */
 	public ToxListDataItem() {
 	}
 	
+	/**
+	 * <p>Constructor for ToxListDataItem.</p>
+	 *
+	 * @param other a {@link fr.becpg.repo.product.data.productList.ToxListDataItem} object
+	 */
 	public ToxListDataItem(ToxListDataItem other) {
 		this.tox = other.tox;
 		this.value = other.value;
 	}
 
+	/**
+	 * <p>Getter for the field <code>tox</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	@AlfSingleAssoc
 	@AlfQname(qname = "bcpg:toxListTox")
 	public NodeRef getTox() {
 		return tox;
 	}
 
+	/**
+	 * <p>Setter for the field <code>tox</code>.</p>
+	 *
+	 * @param tox a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public void setTox(NodeRef tox) {
 		this.tox = tox;
 	}
 
+	/**
+	 * <p>Getter for the field <code>value</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:toxListValue")
 	public Double getValue() {
 		return value;
 	}
 
+	/** {@inheritDoc} */
 	public void setValue(Double value) {
 		this.value = value;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public CopiableDataItem copy() {
 		ToxListDataItem ret = new ToxListDataItem(this);
@@ -62,11 +92,13 @@ public class ToxListDataItem extends BeCPGDataObject implements SimpleCharactDat
 		return ret;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void setCharactNodeRef(NodeRef tox) {
 		setTox(tox);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getCharactNodeRef() {
 		return getTox();

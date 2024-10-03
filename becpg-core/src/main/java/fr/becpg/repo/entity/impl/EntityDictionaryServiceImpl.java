@@ -56,32 +56,57 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent implements 
 	
 	private Map<QName, Set<QName>> extraAssocsDefMapping = new HashMap<>();
 	
+	/**
+	 * <p>Setter for the field <code>messageService</code>.</p>
+	 *
+	 * @param messageService a {@link org.alfresco.repo.i18n.MessageService} object
+	 */
 	public void setMessageService(MessageService messageService) {
 		this.messageService = messageService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>repositoryEntityDefReader</code>.</p>
+	 *
+	 * @param repositoryEntityDefReader a {@link fr.becpg.repo.repository.RepositoryEntityDefReader} object
+	 */
 	public void setRepositoryEntityDefReader(RepositoryEntityDefReader<RepositoryEntity> repositoryEntityDefReader) {
 		this.repositoryEntityDefReader = repositoryEntityDefReader;
 	}
 
+	/**
+	 * <p>Setter for the field <code>registry</code>.</p>
+	 *
+	 * @param registry a {@link org.alfresco.util.cache.AsynchronouslyRefreshedCacheRegistry} object
+	 */
 	public void setRegistry(AsynchronouslyRefreshedCacheRegistry registry) {
 		this.registry = registry;
 	}
 
+	/**
+	 * <p>Setter for the field <code>beCPGCacheService</code>.</p>
+	 *
+	 * @param beCPGCacheService a {@link fr.becpg.repo.cache.BeCPGCacheService} object
+	 */
 	public void setBeCPGCacheService(BeCPGCacheService beCPGCacheService) {
 		this.beCPGCacheService = beCPGCacheService;
 	}
 	
 	
 
+	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object
+	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
 
 	/**
-	 * Sets the Meta Model DAO
+	 * {@inheritDoc}
 	 *
-	 * @param dictionaryDAO  dictionary DAO
+	 * Sets the Meta Model DAO
 	 */
 	@Override
 	public void setDictionaryDAO(DictionaryDAO dictionaryDAO) {
@@ -208,6 +233,7 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent implements 
 	}
 
 	
+	/** {@inheritDoc} */
 	@Override
 	public Collection<QName> getSubTypes(QName typeQname) {
 		return getSubTypes(typeQname, true);
@@ -218,6 +244,7 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent implements 
 	 *
 	 * @see org.alfresco.service.cmr.dictionary.DictionaryService#getSubTypes(org.alfresco.service.namespace.QName, boolean)
 	 */
+	/** {@inheritDoc} */
 	@Override
 	public Collection<QName> getSubTypes(QName superType, boolean follow) {
 
@@ -232,6 +259,7 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent implements 
 	 *
 	 * @see org.alfresco.service.cmr.dictionary.DictionaryService#getSubAspects(org.alfresco.service.namespace.QName, boolean)
 	 */
+	/** {@inheritDoc} */
 	@Override
 	public Collection<QName> getSubAspects(QName superAspect, boolean follow) {
 
@@ -241,6 +269,7 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent implements 
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public String toPrefixString(QName propertyQName) {
 		return beCPGCacheService.getFromCache(EntityDictionaryServiceImpl.class.getName(), propertyQName.toString() + ".toPrefixString" ,
@@ -253,6 +282,7 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent implements 
 	 *
 	 * @see org.alfresco.repo.dictionary.DictionaryService#isSubClass(org.alfresco.repo.ref.QName, org.alfresco.repo.ref.QName)
 	 */
+	/** {@inheritDoc} */
 	@Override
 	public boolean isSubClass(QName className, QName ofClassName) {
 
@@ -292,6 +322,7 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent implements 
 
 
 
+	/** {@inheritDoc} */
 	@Override
 	public void onRefreshableCacheEvent(RefreshableCacheEvent refreshableCacheEvent) {
 		if("compiledModelsCache".equals(refreshableCacheEvent.getCacheId())){
@@ -302,17 +333,20 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent implements 
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getCacheId() {
 		return EntityDictionaryServiceImpl.class.getName();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		registry.register(this);
 		
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public String getTitle(ClassAttributeDefinition attributeDefinition, QName nodeType) {
 		if (nodeType != null) {
@@ -324,6 +358,7 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent implements 
 		return attributeDefinition.getTitle(this);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public String getDescription(ClassAttributeDefinition attributeDefinition, QName nodeType) {
 		if (nodeType != null) {

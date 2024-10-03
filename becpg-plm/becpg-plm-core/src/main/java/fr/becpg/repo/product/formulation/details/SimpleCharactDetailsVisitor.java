@@ -121,10 +121,28 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 		return ret;
 	}
 	
+	/**
+	 * <p>areDetailsApplicable.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a boolean
+	 */
 	protected boolean areDetailsApplicable(ProductData productData) {
 		return productData.isRawMaterial() || !productData.isGeneric();
 	}
 
+	/**
+	 * <p>visitRecur.</p>
+	 *
+	 * @param context a {@link fr.becpg.repo.product.formulation.details.CharactDetailsVisitorContext} object
+	 * @param subProductData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param currLevel a {@link java.lang.Integer} object
+	 * @param parentNetWeight a {@link java.lang.Double} object
+	 * @param parentVoume a {@link java.lang.Double} object
+	 * @param parentQuantity a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.product.data.CharactDetails} object
+	 * @throws fr.becpg.repo.formulation.FormulateException if any.
+	 */
 	public CharactDetails visitRecur(CharactDetailsVisitorContext context, ProductData subProductData, Integer currLevel, Double parentNetWeight,
 			Double parentVoume, Double parentQuantity) throws FormulateException {
 		
@@ -153,6 +171,14 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 		return context.getCharactDetails();
 	}
 
+	/**
+	 * <p>shouldVisitNextLevel.</p>
+	 *
+	 * @param currLevel a {@link java.lang.Integer} object
+	 * @param maxLevel a {@link java.lang.Integer} object
+	 * @param compoListDataItem a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object
+	 * @return a boolean
+	 */
 	protected boolean shouldVisitNextLevel(Integer currLevel, Integer maxLevel, CompoListDataItem compoListDataItem) {
 		return ((maxLevel < 0) || (currLevel < maxLevel))
 				&& !entityDictionaryService.isMultiLevelLeaf(nodeService.getType(compoListDataItem.getProduct()));
@@ -214,14 +240,12 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 	 * <p>visitPart.</p>
 	 *
 	 * @param componentDataList a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param charactDetails a {@link fr.becpg.repo.product.data.CharactDetails} object.
 	 * @param currLevel a {@link java.lang.Integer} object.
-	 * @param unitProvider a {@link fr.becpg.repo.product.formulation.details.SimpleCharactDetailsVisitor.SimpleCharactUnitProvider} object.
 	 * @throws fr.becpg.repo.formulation.FormulateException if any.
-	 * @param rootProduct a {@link fr.becpg.repo.product.data.ProductData} object
 	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
 	 * @param partProduct a {@link fr.becpg.repo.product.data.ProductData} object
 	 * @param qties a {@link fr.becpg.repo.product.formulation.FormulatedQties} object
+	 * @param context a {@link fr.becpg.repo.product.formulation.details.CharactDetailsVisitorContext} object
 	 */
 	protected void visitPart(CharactDetailsVisitorContext context, ProductData formulatedProduct, ProductData partProduct, NodeRef componentDataList, FormulatedQties qties,
 			Integer currLevel) throws FormulateException {
@@ -310,14 +334,37 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 		}
 	}
 
+	/**
+	 * <p>shouldForceWeight.</p>
+	 *
+	 * @param context a {@link fr.becpg.repo.product.formulation.details.CharactDetailsVisitorContext} object
+	 * @param partProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param simpleCharact a {@link fr.becpg.repo.repository.model.SimpleCharactDataItem} object
+	 * @return a boolean
+	 */
 	protected boolean shouldForceWeight(CharactDetailsVisitorContext context, ProductData partProduct, SimpleCharactDataItem simpleCharact) {
 		return false;
 	}
 
+	/**
+	 * <p>shouldFormulateInVolume.</p>
+	 *
+	 * @param context a {@link fr.becpg.repo.product.formulation.details.CharactDetailsVisitorContext} object
+	 * @param partProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param simpleCharact a {@link fr.becpg.repo.repository.model.SimpleCharactDataItem} object
+	 * @return a boolean
+	 */
 	protected boolean shouldFormulateInVolume(CharactDetailsVisitorContext context, ProductData partProduct, SimpleCharactDataItem simpleCharact) {
 		return (partProduct.getUnit() != null) && partProduct.getUnit().isVolume();
 	}
 
+	/**
+	 * <p>provideUnit.</p>
+	 *
+	 * @param context a {@link fr.becpg.repo.product.formulation.details.CharactDetailsVisitorContext} object
+	 * @param simpleCharact a {@link fr.becpg.repo.repository.model.SimpleCharactDataItem} object
+	 * @return a {@link java.lang.String} object
+	 */
 	protected String provideUnit(CharactDetailsVisitorContext context, SimpleCharactDataItem simpleCharact) {
 		if (simpleCharact instanceof UnitAwareDataItem unitAwareDataItem) {
 			return unitAwareDataItem.getUnit();
