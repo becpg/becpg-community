@@ -14,10 +14,25 @@ import org.alfresco.service.namespace.QName;
 
 import fr.becpg.repo.download.AbstractDownloadExporter;
 
+/**
+ * <p>Abstract AbstractSearchDownloadExporter class.</p>
+ *
+ * @author matthieu
+ */
 public abstract class AbstractSearchDownloadExporter extends AbstractDownloadExporter implements Exporter {
 
 	protected NodeRef templateNodeRef;
 
+	/**
+	 * <p>Constructor for AbstractSearchDownloadExporter.</p>
+	 *
+	 * @param transactionHelper a {@link org.alfresco.repo.transaction.RetryingTransactionHelper} object
+	 * @param updateService a {@link org.alfresco.repo.download.DownloadStatusUpdateService} object
+	 * @param downloadStorage a {@link org.alfresco.repo.download.DownloadStorage} object
+	 * @param downloadNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param templateNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param nbOfLines a {@link java.lang.Long} object
+	 */
 	protected AbstractSearchDownloadExporter(RetryingTransactionHelper transactionHelper, DownloadStatusUpdateService updateService,
 			DownloadStorage downloadStorage,
 			NodeRef downloadNodeRef, NodeRef templateNodeRef, Long nbOfLines) {

@@ -102,6 +102,11 @@ public class ActivityListExtractor extends SimpleExtractor {
 		this.securityService = securityService;
 	}
 
+	/**
+	 * <p>registerIgnoredType.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 */
 	public static void registerIgnoredType(QName type) {
 		isIgnoredTypes.add(type);
 	}
@@ -325,9 +330,9 @@ public class ActivityListExtractor extends SimpleExtractor {
 	/**
 	 * <p>checkProperty.</p>
 	 *
-	 * @param property a {@link java.lang.Object} object.
 	 * @param propertyDef a {@link org.alfresco.service.cmr.dictionary.PropertyDefinition} object.
 	 * @return a {@link org.json.JSONArray} object.
+	 * @param propertyArray a {@link org.json.JSONArray} object
 	 */
 	public JSONArray checkProperty(JSONArray propertyArray, PropertyDefinition propertyDef) {
 		JSONArray postproperty = new JSONArray();

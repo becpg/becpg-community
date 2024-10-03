@@ -115,6 +115,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	/** Constant <code>TAG_VERSION="version"</code> */
 	protected static final String TAG_VERSION = "version";
 	
+	/** Constant <code>TAG_REPORT_PARAMS="reportParams"</code> */
 	public static final String TAG_REPORT_PARAMS= "reportParams";
 	/** Constant <code>ATTR_SET="set"</code> */
 	protected static final String ATTR_SET = "set";
@@ -139,6 +140,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	
 	
 
+	/** Constant <code>EXTRA_IMG_ID="Extra%d"</code> */
 	protected static final String EXTRA_IMG_ID = "Extra%d";
 	/** Constant <code>ATTR_IMAGE_ID="id"</code> */
 	protected static final String ATTR_IMAGE_ID = "id";
@@ -179,10 +181,20 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		return systemConfigurationService.confValue("beCPG.entity.report.mltext.locales");
 	}
 
+	/**
+	 * <p>assocsToExtractWithDataList.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	protected String assocsToExtractWithDataList() {
 		return systemConfigurationService.confValue("beCPG.product.report.assocsToExtractWithDataList");
 	}
 
+	/**
+	 * <p>assocsToExtractWithImage.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	protected String assocsToExtractWithImage() {
 		return systemConfigurationService.confValue("beCPG.product.report.assocsToExtractWithImage");
 	}
@@ -191,14 +203,29 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		return systemConfigurationService.confValue("beCPG.product.report.extraImagePaths");
 	}
 
+	/**
+	 * <p>assocsToExtract.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	protected String assocsToExtract() {
 		return systemConfigurationService.confValue("beCPG.product.report.assocsToExtract");
 	}
 
+	/**
+	 * <p>assocsToExtractInDataList.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	protected String assocsToExtractInDataList() {
 		return systemConfigurationService.confValue("beCPG.product.report.assocsToExtractInDataList");
 	}
 
+	/**
+	 * <p>multilineProperties.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	protected String multilineProperties() {
 		return systemConfigurationService.confValue("beCPG.product.report.multilineProperties");
 	}
@@ -339,6 +366,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param imgsElt a {@link org.dom4j.Element} object.
 	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor.DefaultExtractorContext} object.
+	 * @param extratAttributes a {@link java.util.Map} object
 	 */
 	protected void extractEntityImages(NodeRef entityNodeRef, Element imgsElt, DefaultExtractorContext context, Map<String, String> extratAttributes) {
 
@@ -385,6 +413,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	 * @param imgId a {@link java.lang.String} object.
 	 * @param imgsElt a {@link org.dom4j.Element} object.
 	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor.DefaultExtractorContext} object.
+	 * @param extratAttributes a {@link java.util.Map} object
 	 */
 	protected void extractImage(NodeRef entityNodeRef, NodeRef imgNodeRef, String imgId, Element imgsElt, DefaultExtractorContext context,
 			Map<String, String> extratAttributes) {
@@ -622,6 +651,15 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		loadDataListItemAttributes(dataListItem, nodeElt, context, hiddentAttributes, true);
 	}
 
+	/**
+	 * <p>loadDataListItemAttributes.</p>
+	 *
+	 * @param dataListItem a {@link fr.becpg.repo.repository.model.BeCPGDataObject} object
+	 * @param nodeElt a {@link org.dom4j.Element} object
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
+	 * @param hiddentAttributes a {@link java.util.List} object
+	 * @param addDescription a boolean
+	 */
 	protected void loadDataListItemAttributes(BeCPGDataObject dataListItem, Element nodeElt, DefaultExtractorContext context,
 			List<QName> hiddentAttributes, boolean addDescription) {
 		hiddentAttributes.addAll(hiddenNodeAttributes);

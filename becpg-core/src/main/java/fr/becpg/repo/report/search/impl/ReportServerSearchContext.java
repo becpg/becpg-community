@@ -52,15 +52,25 @@ public class ReportServerSearchContext {
 	private Element nodesElt;
 	private Element filesElt;
 
+	/** Constant <code>TAG_EXPORT="export"</code> */
 	public static final String TAG_EXPORT = "export";
+	/** Constant <code>TAG_NODES="nodes"</code> */
 	public static final String TAG_NODES = "nodes";
+	/** Constant <code>TAG_FILES="files"</code> */
 	public static final String TAG_FILES = "files";
+	/** Constant <code>TAG_NODE="node"</code> */
 	public static final String TAG_NODE = "node";
+	/** Constant <code>TAG_FILE="file"</code> */
 	public static final String TAG_FILE = "file";
+	/** Constant <code>ATTR_ID="id"</code> */
 	public static final String ATTR_ID = "id";
 
+	/** Constant <code>TAG_SITE="siteId"</code> */
 	public static final String TAG_SITE = "siteId";
 
+	/**
+	 * <p>Constructor for ReportServerSearchContext.</p>
+	 */
 	public ReportServerSearchContext() {
 		super();
 
@@ -72,14 +82,30 @@ public class ReportServerSearchContext {
 		reportData.setXmlDataSource(exportElt);
 	}
 
+	/**
+	 * <p>Getter for the field <code>reportData</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.report.entity.EntityReportData} object
+	 */
 	public EntityReportData getReportData() {
 		return reportData;
 	}
 
+	/**
+	 * <p>createFileElt.</p>
+	 *
+	 * @return a {@link org.dom4j.Element} object
+	 */
 	public Element createFileElt() {
 		return filesElt.addElement(TAG_FILE);
 	}
 
+	/**
+	 * <p>createNodeElt.</p>
+	 *
+	 * @param idx a {@link java.lang.Long} object
+	 * @return a {@link org.dom4j.Element} object
+	 */
 	public Element createNodeElt(Long idx) {
 		Element nodeElt = nodesElt.addElement(TAG_NODE);
 		nodeElt.addAttribute(ATTR_ID, idx.toString());

@@ -89,13 +89,8 @@ public class ImportEntityJsonVisitor {
 
 	/**
 	 * <p>Constructor for ImportEntityJsonVisitor.</p>
-	 * @param serviceRegistry
 	 *
-	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object.
-	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
-	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object.
-	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
-	 * @param entityListDAO a {@link fr.becpg.repo.entity.EntityListDAO} object.
+	 * @param remoteRegisty a {@link fr.becpg.repo.entity.remote.RemoteServiceRegisty} object
 	 */
 	public ImportEntityJsonVisitor(RemoteServiceRegisty remoteRegisty) {
 		super();

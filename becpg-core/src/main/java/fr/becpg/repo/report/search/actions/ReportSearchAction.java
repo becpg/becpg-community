@@ -19,17 +19,24 @@ import fr.becpg.report.client.ReportFormat;
  */
 public class ReportSearchAction extends AbstractExportSearchAction {
 
+	/** Constant <code>NAME="reportSearchAction"</code> */
 	public static final String NAME = "reportSearchAction";
 	
 	
 	private ReportServerSearchRenderer reportServerSearchRenderer;
 	
 	
+	/**
+	 * <p>Setter for the field <code>reportServerSearchRenderer</code>.</p>
+	 *
+	 * @param reportServerSearchRenderer a {@link fr.becpg.repo.report.search.impl.ReportServerSearchRenderer} object
+	 */
 	public void setReportServerSearchRenderer(ReportServerSearchRenderer reportServerSearchRenderer) {
 		this.reportServerSearchRenderer = reportServerSearchRenderer;
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	protected AbstractSearchDownloadExporter createHandler(NodeRef actionedUponNodeRef, NodeRef templateNodeRef, DownloadRequest downloadRequest,
 			ReportFormat format) {

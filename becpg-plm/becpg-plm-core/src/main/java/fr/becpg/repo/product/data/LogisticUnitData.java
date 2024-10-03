@@ -9,6 +9,11 @@ import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
 
+/**
+ * <p>LogisticUnitData class.</p>
+ *
+ * @author matthieu
+ */
 @AlfType
 @AlfQname(qname = "bcpg:logisticUnit")
 public class LogisticUnitData extends ProductData {
@@ -36,11 +41,23 @@ public class LogisticUnitData extends ProductData {
 		return this;
 	}
 	
+	/**
+	 * <p>withSecondaryWidth.</p>
+	 *
+	 * @param secondaryWidth a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.product.data.LogisticUnitData} object
+	 */
 	public LogisticUnitData withSecondaryWidth(Double secondaryWidth) {
 		setSecondaryWidth(secondaryWidth);
 		return this;
 	}
 	
+	/**
+	 * <p>withTertiaryWidth.</p>
+	 *
+	 * @param tertiaryWidth a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.product.data.LogisticUnitData} object
+	 */
 	public LogisticUnitData withTertiaryWidth(Double tertiaryWidth) {
 		setTertiaryWidth(tertiaryWidth);
 		return this;

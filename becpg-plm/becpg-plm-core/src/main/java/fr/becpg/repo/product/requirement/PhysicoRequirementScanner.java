@@ -40,6 +40,7 @@ public class PhysicoRequirementScanner extends SimpleListRequirementScanner<Phys
 		return partProduct.getPhysicoChemList()!=null ? partProduct.getPhysicoChemList() : new ArrayList<>();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected Double getValue(PhysicoChemListDataItem specDataItem, PhysicoChemListDataItem listDataItem) {
 		return listDataItem.getValue();

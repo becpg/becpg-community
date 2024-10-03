@@ -26,6 +26,11 @@ import fr.becpg.repo.entity.datalist.impl.AbstractDataListExtractor;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.impl.AttributeExtractorField;
 
+/**
+ * <p>AuditActivityExtractor class.</p>
+ *
+ * @author matthieu
+ */
 public class AuditActivityExtractor implements DataListExtractor {
 
 	private BeCPGAuditService beCPGAuditService;
@@ -38,30 +43,59 @@ public class AuditActivityExtractor implements DataListExtractor {
 
 	private EntityActivityExtractorService entityActivityExtractorService;
 
+	/**
+	 * <p>Setter for the field <code>entityActivityExtractorService</code>.</p>
+	 *
+	 * @param entityActivityExtractorService a {@link fr.becpg.repo.activity.EntityActivityExtractorService} object
+	 */
 	public void setEntityActivityExtractorService(EntityActivityExtractorService entityActivityExtractorService) {
 		this.entityActivityExtractorService = entityActivityExtractorService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>attributeExtractorService</code>.</p>
+	 *
+	 * @param attributeExtractorService a {@link fr.becpg.repo.helper.AttributeExtractorService} object
+	 */
 	public void setAttributeExtractorService(AttributeExtractorService attributeExtractorService) {
 		this.attributeExtractorService = attributeExtractorService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>serviceRegistry</code>.</p>
+	 *
+	 * @param serviceRegistry a {@link org.alfresco.service.ServiceRegistry} object
+	 */
 	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
 		this.serviceRegistry = serviceRegistry;
 	}
 
+	/**
+	 * <p>Setter for the field <code>dataListExtractorFactory</code>.</p>
+	 *
+	 * @param dataListExtractorFactory a {@link fr.becpg.repo.entity.datalist.DataListExtractorFactory} object
+	 */
 	public void setDataListExtractorFactory(DataListExtractorFactory dataListExtractorFactory) {
 		this.dataListExtractorFactory = dataListExtractorFactory;
 	}
 
+	/**
+	 * <p>Setter for the field <code>beCPGAuditService</code>.</p>
+	 *
+	 * @param beCPGAuditService a {@link fr.becpg.repo.audit.service.BeCPGAuditService} object
+	 */
 	public void setBeCPGAuditService(BeCPGAuditService beCPGAuditService) {
 		this.beCPGAuditService = beCPGAuditService;
 	}
 
+	/**
+	 * <p>init.</p>
+	 */
 	public void init() {
 		dataListExtractorFactory.registerExtractor(this);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public PaginatedExtractedItems extract(DataListFilter dataListFilter, List<AttributeExtractorField> metadataFields) {
 
@@ -132,26 +166,31 @@ public class AuditActivityExtractor implements DataListExtractor {
 		return ret;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean applyTo(DataListFilter dataListFilter) {
 		return BeCPGModel.TYPE_ACTIVITY_LIST.equals(dataListFilter.getDataType());
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isDefaultExtractor() {
 		return false;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Date computeLastModified(DataListFilter dataListFilter) {
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean hasWriteAccess() {
 		return false;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int getPriority() {
 		return 0;

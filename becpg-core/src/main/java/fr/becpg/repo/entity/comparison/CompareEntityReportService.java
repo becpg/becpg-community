@@ -26,9 +26,9 @@ public interface CompareEntityReportService {
 	/**
 	 * <p>getXmlReportDataSource.</p>
 	 *
-	 * @param entity1 a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param entities a {@link java.util.List} object.
 	 * @return a {@link java.lang.String} object.
+	 * @param entity a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
 	String getXmlReportDataSource(NodeRef entity, List<NodeRef> entities);
 

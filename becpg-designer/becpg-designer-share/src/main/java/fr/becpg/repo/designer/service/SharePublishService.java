@@ -34,6 +34,11 @@ import org.springframework.extensions.webscripts.connector.ConnectorContext;
 import org.springframework.extensions.webscripts.connector.HttpMethod;
 import org.springframework.extensions.webscripts.connector.Response;
 
+/**
+ * <p>SharePublishService class.</p>
+ *
+ * @author matthieu
+ */
 public class SharePublishService implements ApplicationListener<ContextRefreshedEvent>  {
 
 	private static final String XML = ".xml";
@@ -47,14 +52,25 @@ public class SharePublishService implements ApplicationListener<ContextRefreshed
 
 	private ConfigService configService;
 	
+	/**
+	 * <p>Setter for the field <code>configPath</code>.</p>
+	 *
+	 * @param configPath a {@link java.lang.String} object
+	 */
 	public void setConfigPath(String configPath) {
 		this.configPath = configPath;
 	}
 
+	/**
+	 * <p>Setter for the field <code>configService</code>.</p>
+	 *
+	 * @param configService a {@link org.springframework.extensions.config.ConfigService} object
+	 */
 	public void setConfigService(ConfigService configService) {
 		this.configService = configService;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
 		deleteClasspathMessages();
@@ -118,6 +134,13 @@ public class SharePublishService implements ApplicationListener<ContextRefreshed
 		}
 	}
 
+	/**
+	 * <p>publishDocument.</p>
+	 *
+	 * @param nodeRef a {@link java.lang.String} object
+	 * @param fileName a {@link java.lang.String} object
+	 * @param writeXml a {@link java.lang.Boolean} object
+	 */
 	public void publishDocument(String nodeRef, String fileName, Boolean writeXml) {
 		if (fileName.endsWith(XML)) {
 			publishXml(nodeRef, fileName, writeXml);
@@ -177,6 +200,12 @@ public class SharePublishService implements ApplicationListener<ContextRefreshed
 		}
 	}
 
+	/**
+	 * <p>unpublishDocument.</p>
+	 *
+	 * @param nodeRef a {@link java.lang.String} object
+	 * @param fileName a {@link java.lang.String} object
+	 */
 	public void unpublishDocument(String nodeRef, String fileName) {
 		JSONObject jsonResponse = alfrescoRequest(HttpMethod.POST, "/becpg/designer/model/unpublish?nodeRef=" + nodeRef);
 		if (jsonResponse.has("type") && jsonResponse.getString("type").equals("config")) {
@@ -188,6 +217,9 @@ public class SharePublishService implements ApplicationListener<ContextRefreshed
 		}
 	}
 
+	/**
+	 * <p>cleanConfig.</p>
+	 */
 	public void cleanConfig() {
 		cleanConfigFromPath(configPath);
 		cleanConfigFromPath(configPath + FILE_SEPARATOR + "messages");
@@ -267,6 +299,13 @@ public class SharePublishService implements ApplicationListener<ContextRefreshed
 		}
 	}
 
+	/**
+	 * <p>writeClassPathMessages.</p>
+	 *
+	 * @param fileName a {@link java.lang.String} object
+	 * @param content a {@link java.lang.String} object
+	 * @param modifiedDate a {@link java.lang.Long} object
+	 */
 	public void writeClassPathMessages(String fileName, String content, Long modifiedDate) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Write classpath messages for " + fileName);

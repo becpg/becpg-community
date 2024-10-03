@@ -49,6 +49,18 @@ public class ExcelSearchDownloadExporter extends AbstractSearchDownloadExporter 
 
 	Map<String, ExcelSheetExportContext> context = new HashMap<>();
 
+	/**
+	 * <p>Constructor for ExcelSearchDownloadExporter.</p>
+	 *
+	 * @param transactionHelper a {@link org.alfresco.repo.transaction.RetryingTransactionHelper} object
+	 * @param updateService a {@link org.alfresco.repo.download.DownloadStatusUpdateService} object
+	 * @param downloadStorage a {@link org.alfresco.repo.download.DownloadStorage} object
+	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object
+	 * @param excelReportSearchRenderer a {@link fr.becpg.repo.report.search.impl.ExcelReportSearchRenderer} object
+	 * @param downloadNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param templateNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param nbOfLines a {@link java.lang.Long} object
+	 */
 	public ExcelSearchDownloadExporter(RetryingTransactionHelper transactionHelper, DownloadStatusUpdateService updateService,
 			DownloadStorage downloadStorage, ContentService contentService, ExcelReportSearchRenderer excelReportSearchRenderer,
 			NodeRef downloadNodeRef, NodeRef templateNodeRef, Long nbOfLines) {

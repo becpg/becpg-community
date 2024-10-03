@@ -768,38 +768,55 @@ public interface PLMModel {
 	/** Constant <code>TYPE_REGULATORY_USAGE</code> */
 	QName TYPE_REGULATORY_USAGE = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryUsage");
 	
+	/** Constant <code>TYPE_TOX</code> */
 	QName TYPE_TOX = QName.createQName(BeCPGModel.BECPG_URI, "tox");
 	
+	/** Constant <code>TYPE_TOX_ING</code> */
 	QName TYPE_TOX_ING = QName.createQName(BeCPGModel.BECPG_URI, "toxIng");
 	
+	/** Constant <code>PROP_TOX_TYPES</code> */
 	QName PROP_TOX_TYPES = QName.createQName(BeCPGModel.BECPG_URI, "toxTypes");
 	
+	/** Constant <code>PROP_TOX_VALUE</code> */
 	QName PROP_TOX_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "toxValue");
 	
+	/** Constant <code>PROP_TOX_ING_ING</code> */
 	QName PROP_TOX_ING_ING = QName.createQName(BeCPGModel.BECPG_URI, "toxIngIng");
 	
+	/** Constant <code>PROP_TOX_ING_TOX</code> */
 	QName PROP_TOX_ING_TOX = QName.createQName(BeCPGModel.BECPG_URI, "toxIngTox");
 	
+	/** Constant <code>PROP_TOX_ING_MAX_VALUE</code> */
 	QName PROP_TOX_ING_MAX_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "toxIngMaxValue");
 	
+	/** Constant <code>PROP_TOX_ING_SYSTEMIC_VALUE</code> */
 	QName PROP_TOX_ING_SYSTEMIC_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "toxIngSystemicValue");
 	
+	/** Constant <code>PROP_TOX_CALCULATE_SYSTEMIC</code> */
 	QName PROP_TOX_CALCULATE_SYSTEMIC = QName.createQName(BeCPGModel.BECPG_URI, "toxCalculateSystemic");
 	
+	/** Constant <code>PROP_ING_TOX_DATA</code> */
 	QName PROP_ING_TOX_DATA = QName.createQName(BeCPGModel.BECPG_URI, "ingToxData");
 	
+	/** Constant <code>PROP_ING_TOX_POD_SYSTEMIC</code> */
 	QName PROP_ING_TOX_POD_SYSTEMIC = QName.createQName(BeCPGModel.BECPG_URI, "ingToxPodSystemic");
 	
+	/** Constant <code>PROP_ING_TOX_DERMAL_ABSORPTIION</code> */
 	QName PROP_ING_TOX_DERMAL_ABSORPTIION = QName.createQName(BeCPGModel.BECPG_URI, "ingToxDermalAbsorption");
 	
+	/** Constant <code>PROP_ING_TOX_MOS_MOE</code> */
 	QName PROP_ING_TOX_MOS_MOE = QName.createQName(BeCPGModel.BECPG_URI, "ingToxMosMoe");
 	
+	/** Constant <code>PROP_ING_TOX_MAX_SKIN_IRRITATION</code> */
 	QName PROP_ING_TOX_MAX_SKIN_IRRITATION = QName.createQName(BeCPGModel.BECPG_URI, "ingToxMaxSkinIrritation");
 	
+	/** Constant <code>PROP_ING_TOX_MAX_SENSITIZATION</code> */
 	QName PROP_ING_TOX_MAX_SENSITIZATION = QName.createQName(BeCPGModel.BECPG_URI, "ingToxMaxSensitization");
 	
+	/** Constant <code>PROP_ING_TOX_MAX_OCULAR_IRRITATION</code> */
 	QName PROP_ING_TOX_MAX_OCULAR_IRRITATION = QName.createQName(BeCPGModel.BECPG_URI, "ingToxMaxOcularIrritation");
 	
+	/** Constant <code>PROP_ING_TOX_MAX_PHOTOTOXIC</code> */
 	QName PROP_ING_TOX_MAX_PHOTOTOXIC = QName.createQName(BeCPGModel.BECPG_URI, "ingToxMaxPhototoxic");
 
 	/** Constant <code>PROP_REGULATORY_COMMENT</code> */
@@ -857,6 +874,7 @@ public interface PLMModel {
 	/** Constant <code>PROP_GLOP_VALUE</code> */
 	QName PROP_GLOP_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "glopValue");
 
+	/** Constant <code>ASPECT_GLOP_PRODUCT</code> */
 	QName ASPECT_GLOP_PRODUCT = QName.createQName(BeCPGModel.BECPG_URI, "glopProductAspect");
 	
 	/** Constant <code>PROP_IS_CHARACT_PROPAGATE_UP</code> */

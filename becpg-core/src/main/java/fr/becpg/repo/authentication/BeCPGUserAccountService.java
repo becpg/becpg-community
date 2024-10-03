@@ -195,6 +195,11 @@ public class BeCPGUserAccountService {
 		return userName;
 	}
 
+	/**
+	 * <p>synchronizeSsoUser.</p>
+	 *
+	 * @param username a {@link java.lang.String} object
+	 */
 	public void synchronizeSsoUser(String username) {
 		if (Boolean.TRUE.equals(identityServiceAccountProvider.isEnabled())) {
 			if (!personService.personExists(username)) {

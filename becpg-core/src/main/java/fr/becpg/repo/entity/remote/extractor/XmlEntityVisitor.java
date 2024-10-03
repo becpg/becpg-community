@@ -83,13 +83,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 	/**
 	 * <p>Constructor for XmlEntityVisitor.</p>
 	 *
-	 * @param mlNodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
-	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
-	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
-	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object.
-	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object.
-	 * @param siteService a {@link org.alfresco.service.cmr.site.SiteService} object.
-	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object.
+	 * @param remoteServiceRegisty a {@link fr.becpg.repo.entity.remote.RemoteServiceRegisty} object
 	 */
 	public XmlEntityVisitor(RemoteServiceRegisty remoteServiceRegisty) {
 		super(remoteServiceRegisty);
@@ -138,7 +132,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 
 	}
 
-	/** {@inheritDoc} **/
+	/** {@inheritDoc} */
 	@Override
 	public void visitData(NodeRef entityNodeRef, OutputStream result) throws XMLStreamException {
 

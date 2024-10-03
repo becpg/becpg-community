@@ -50,6 +50,11 @@ import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
+/**
+ * <p>VersionCleanerServiceImpl class.</p>
+ *
+ * @author matthieu
+ */
 @Service("versionCleanerService")
 public class VersionCleanerServiceImpl implements VersionCleanerService {
 
@@ -87,6 +92,7 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 	@Autowired
 	private RepoService repoService;
 	
+	/** {@inheritDoc} */
 	@Override
 	public boolean cleanVersions(int maxProcessedNodes, String path) {
 		while (maxProcessedNodes > 0) {
@@ -366,6 +372,7 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 		repoService.moveEntity(toMove, newParent);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void cleanVersionStore() {
 		

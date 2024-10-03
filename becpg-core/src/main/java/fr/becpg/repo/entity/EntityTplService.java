@@ -70,6 +70,7 @@ public interface EntityTplService {
 	 * <p>synchronizeEntities.</p>
 	 *
 	 * @param tplNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link fr.becpg.repo.batch.BatchInfo} object
 	 */
 	BatchInfo synchronizeEntities(NodeRef tplNodeRef);
 	
@@ -78,6 +79,7 @@ public interface EntityTplService {
 	 *
 	 * @param tplNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @throws fr.becpg.repo.formulation.FormulateException if any.
+	 * @return a {@link fr.becpg.repo.batch.BatchInfo} object
 	 */
 	BatchInfo formulateEntities(NodeRef tplNodeRef) throws FormulateException;
 
@@ -111,8 +113,8 @@ public interface EntityTplService {
 	 * <p>createOrUpdateList.</p>
 	 *
 	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param typeActivityList a {@link org.alfresco.service.namespace.QName} object.
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
 	 */
 	NodeRef createOrUpdateList(NodeRef entityNodeRef, QName type);
 	

@@ -103,10 +103,20 @@ public class MonitorWebScript extends DeclarativeWebScript {
 	
 	private NamespaceService namespaceService;
 	
+	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object
+	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>dataSource</code>.</p>
+	 *
+	 * @param dataSource a {@link javax.sql.DataSource} object
+	 */
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
 	}
@@ -182,6 +192,13 @@ public class MonitorWebScript extends DeclarativeWebScript {
 		}
 	}
 	
+	/**
+	 * <p>fillMonitoringInformation.</p>
+	 *
+	 * @param ret a {@link java.util.Map} object
+	 * @param includeTenantUsers a boolean
+	 * @return a {@link java.util.Set} object
+	 */
 	protected Set<String> fillMonitoringInformation(Map<String, Object> ret, boolean includeTenantUsers) {
 		
 		long concurrentReadUsers = 0;
@@ -277,22 +294,47 @@ public class MonitorWebScript extends DeclarativeWebScript {
 		this.contentService = contentService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>tenantAdminService</code>.</p>
+	 *
+	 * @param tenantAdminService a {@link org.alfresco.repo.tenant.TenantAdminService} object
+	 */
 	public void setTenantAdminService(TenantAdminService tenantAdminService) {
 		this.tenantAdminService = tenantAdminService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>becpgSchema</code>.</p>
+	 *
+	 * @param becpgSchema a {@link java.lang.String} object
+	 */
 	public void setBecpgSchema(String becpgSchema) {
 		this.becpgSchema = becpgSchema;
 	}
 
+	/**
+	 * <p>Setter for the field <code>authorityService</code>.</p>
+	 *
+	 * @param authorityService a {@link org.alfresco.service.cmr.security.AuthorityService} object
+	 */
 	public void setAuthorityService(AuthorityService authorityService) {
 		this.authorityService = authorityService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>batchQueueService</code>.</p>
+	 *
+	 * @param batchQueueService a {@link fr.becpg.repo.batch.BatchQueueService} object
+	 */
 	public void setBatchQueueService(BatchQueueService batchQueueService) {
 		this.batchQueueService = batchQueueService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>licenseManager</code>.</p>
+	 *
+	 * @param licenseManager a {@link fr.becpg.repo.license.BeCPGLicenseManager} object
+	 */
 	public void setLicenseManager(BeCPGLicenseManager licenseManager) {
 		this.licenseManager = licenseManager;
 	}

@@ -28,35 +28,33 @@ import fr.becpg.repo.hierarchy.HierarchyService;
  * @version $Id: $Id
  *
  * Autocomplete plugin to retrieve linked values ( hierachy)
- * 
+ *
  * Example:
  * <pre>
- * {@code 
+ * {@code
  *	<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
  *		<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/QualityLists/bcpg:entityLists/claimOrigin_Hierarchy</control-param>
  *		<control-param name="parent">qa_claimOriginHierarchy1</control-param>
  *	</control>
- *						
+ *
  *	<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
  *		<control-param name="ds">becpg/autocomplete/allLinkedvalue/values/System/ProductHierarchy/bcpg:entityLists?extra.depthLevel=1&amp;extra.paths=finishedProduct_Hierarchy,semiFinishedProduct_Hierarchy,rawMaterialProduct_Hierarchy
  *		</control-param>
  *	</control>
  * }
- * </pre> 
- *   
+ * </pre>
+ *
  *  Datasources:
- * 
- *  ds: becpg/autocomplete/linkedvalue/values/{path} 
+ *
+ *  ds: becpg/autocomplete/linkedvalue/values/{path}
  *  param : {path} return hierarchy at depth level 0
- *  control-param: {parent} return hierarchy with parent 
- *   
+ *  control-param: {parent} return hierarchy with parent
+ *
  *  ds: becpg/autocomplete/allLinkedvalue/values/{path}?extra.depthLevel={depthLevel?}&amp;extra.paths={paths?}&amp;extra.list={lists?}
  *  param : {path} return all hierarchy starting at depth level path
- *  url-param: {paths} look hierachy in coma separated paths 
+ *  url-param: {paths} look hierachy in coma separated paths
  *  url-param: {depthLevel} specify start depth-level
  *  url-param: {list}  look hierachy in spefic list in the current entity
- *  
- * 
  */
 @Service("linkedValueAutoCompletePlugin")
 @BeCPGPublicApi

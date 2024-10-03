@@ -54,9 +54,19 @@ public class BecpgFormDefinition {
 	static final String PROP_TYPE = "type";
 	static final String PROP_MANDATORY = "mandatory";
 
+	/**
+	 * <p>Constructor for BecpgFormDefinition.</p>
+	 */
 	public BecpgFormDefinition() {
 	}
 
+	/**
+	 * <p>Constructor for BecpgFormDefinition.</p>
+	 *
+	 * @param fields a {@link java.util.List} object
+	 * @param forcedFields a {@link java.util.List} object
+	 * @throws org.json.JSONException if any.
+	 */
 	public BecpgFormDefinition(List<String> fields, List<String> forcedFields) throws JSONException {
 
 		if (fields != null) {
@@ -504,6 +514,7 @@ public class BecpgFormDefinition {
 	 * </p>
 	 *
 	 * @return a {@link java.lang.String} object.
+	 * @param attName a {@link java.lang.String} object
 	 */
 	public String getTitle(String attName) {
 		

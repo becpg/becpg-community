@@ -94,10 +94,20 @@ public class EntityVersionPolicy extends AbstractBeCPGPolicy
 
 	
 
+	/**
+	 * <p>Setter for the field <code>entityReportService</code>.</p>
+	 *
+	 * @param entityReportService a {@link fr.becpg.repo.report.entity.EntityReportService} object
+	 */
 	public void setEntityReportService(EntityReportService entityReportService) {
 		this.entityReportService = entityReportService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>batchQueueService</code>.</p>
+	 *
+	 * @param batchQueueService a {@link fr.becpg.repo.batch.BatchQueueService} object
+	 */
 	public void setBatchQueueService(BatchQueueService batchQueueService) {
 		this.batchQueueService = batchQueueService;
 	}
@@ -270,6 +280,7 @@ public class EntityVersionPolicy extends AbstractBeCPGPolicy
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void afterCreateVersion(NodeRef versionableNode, Version version) {
 		queueNode(VersionUtil.convertNodeRef(version.getFrozenStateNodeRef()));

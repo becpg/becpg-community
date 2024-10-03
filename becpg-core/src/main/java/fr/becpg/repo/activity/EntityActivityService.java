@@ -35,6 +35,7 @@ public interface EntityActivityService {
 	/** Constant <code>PROP_ENTITY_NODEREF="entityNodeRef"</code> */
 	static final String PROP_ENTITY_NODEREF = "entityNodeRef";
 	
+	/** Constant <code>PROP_PARENT_NAME="parentName"</code> */
 	static final String PROP_PARENT_NAME = "parentName";
 	/** Constant <code>PROP_ENTITY_TYPE="entityType"</code> */
 	static final String PROP_ENTITY_TYPE= "entityType";
@@ -174,6 +175,8 @@ public interface EntityActivityService {
 
 	/**
 	 * <p>cleanActivities.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.batch.BatchInfo} object
 	 */
 	BatchInfo cleanActivities();
 
@@ -208,10 +211,32 @@ public interface EntityActivityService {
 	 */
 	boolean isIgnoreStateProperty(QName propName);
 
+	/**
+	 * <p>postExportActivity.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param dataType a {@link org.alfresco.service.namespace.QName} object
+	 * @param fileName a {@link java.lang.String} object
+	 */
 	void postExportActivity(NodeRef entityNodeRef, QName dataType, String fileName);
 
+	/**
+	 * <p>postChangeOrderActivity.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param changeOrderNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
 	boolean postChangeOrderActivity(NodeRef entityNodeRef, NodeRef changeOrderNodeRef);
 
+	/**
+	 * <p>postDataListCopyActivity.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param sourceEntityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param sourceListNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param action a {@link java.lang.String} object
+	 */
 	void postDataListCopyActivity(NodeRef entityNodeRef, NodeRef sourceEntityNodeRef, NodeRef sourceListNodeRef, String action);
 
 }

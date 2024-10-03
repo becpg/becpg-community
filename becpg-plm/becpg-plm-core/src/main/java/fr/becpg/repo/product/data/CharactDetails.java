@@ -48,10 +48,20 @@ public class CharactDetails {
 		this.computedCharacts = computedCharacts;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>totalOperation</code>.</p>
+	 *
+	 * @param totalOperation a {@link java.lang.String} object
+	 */
 	public void setTotalOperation(String totalOperation) {
 		this.totalOperation = totalOperation;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>totalOperation</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	public String getTotalOperation() {
 		return totalOperation;
 	}

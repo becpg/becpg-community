@@ -148,16 +148,27 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 		this.regulatoryUsagesRef = regulatoryUsages;
 	}
 
+	/**
+	 * <p>Getter for the field <code>regulatoryType</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.constraints.RequirementType} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:regulatoryType")
 	public RequirementType getRegulatoryType() {
 		return regulatoryType;
 	}
 
+	/** {@inheritDoc} */
 	public void setRegulatoryType(RequirementType regulatoryType) {
 		this.regulatoryType = regulatoryType;
 	}
 
+	/**
+	 * <p>Getter for the field <code>regulatoryMessage</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object
+	 */
 	@AlfProp
 	@AlfMlText
 	@AlfQname(qname = "bcpg:regulatoryText")
@@ -165,6 +176,7 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 		return regulatoryMessage;
 	}
 
+	/** {@inheritDoc} */
 	public void setRegulatoryMessage(MLText regulatoryMessage) {
 		this.regulatoryMessage = regulatoryMessage;
 	}
@@ -259,6 +271,12 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	}
 	
 
+	/**
+	 * <p>reductionValue.</p>
+	 *
+	 * @param key a {@link java.lang.String} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	public Double reductionValue(String key) {
 		Locale locale = MLTextHelper.parseLocale(key);
 		
@@ -279,6 +297,11 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 		return null;
 	}
 
+	/**
+	 * <p>Getter for the field <code>formulatedReductionValue</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object
+	 */
 	@AlfProp
 	@AlfMlText
 	@AlfQname(qname = "bcpg:nutListReductionFormulatedValue")
@@ -286,10 +309,20 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 		return formulatedReductionValue;
 	}
 
+	/**
+	 * <p>Setter for the field <code>formulatedReductionValue</code>.</p>
+	 *
+	 * @param formulatedReductionValue a {@link org.alfresco.service.cmr.repository.MLText} object
+	 */
 	public void setFormulatedReductionValue(MLText formulatedReductionValue) {
 		this.formulatedReductionValue = formulatedReductionValue;
 	}
 
+	/**
+	 * <p>Getter for the field <code>manualReductionValue</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object
+	 */
 	@AlfProp
 	@AlfMlText
 	@AlfQname(qname = "bcpg:nutListReductionValue")
@@ -297,10 +330,20 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 		return manualReductionValue;
 	}
 
+	/**
+	 * <p>Setter for the field <code>manualReductionValue</code>.</p>
+	 *
+	 * @param manualReductionValue a {@link org.alfresco.service.cmr.repository.MLText} object
+	 */
 	public void setManualReductionValue(MLText manualReductionValue) {
 		this.manualReductionValue = manualReductionValue;
 	}
 
+	/**
+	 * <p>Getter for the field <code>referenceValue</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object
+	 */
 	@AlfProp
 	@AlfMlText
 	@AlfQname(qname = "bcpg:nutListReferenceValue")
@@ -308,6 +351,11 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 		return referenceValue;
 	}
 
+	/**
+	 * <p>Setter for the field <code>referenceValue</code>.</p>
+	 *
+	 * @param referenceValue a {@link org.alfresco.service.cmr.repository.MLText} object
+	 */
 	public void setReferenceValue(MLText referenceValue) {
 		this.referenceValue = referenceValue;
 	}
@@ -447,12 +495,22 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 		this.unit = unit;
 	}
 
+	/**
+	 * <p>Getter for the field <code>requirementType</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.constraints.NutRequirementType} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:nutListRequirementType")
 	public NutRequirementType getRequirementType() {
 		return requirementType;
 	}
 
+	/**
+	 * <p>Setter for the field <code>requirementType</code>.</p>
+	 *
+	 * @param requirementType a {@link fr.becpg.repo.product.data.constraints.NutRequirementType} object
+	 */
 	public void setRequirementType(NutRequirementType requirementType) {
 		this.requirementType = requirementType;
 	}
@@ -875,50 +933,109 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 		setIsManual(isManual);
 	}
 
+	/**
+	 * <p>build.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.productList.NutListDataItem} object
+	 */
 	public static NutListDataItem build() {
 		return new NutListDataItem();
 	}
 
+	/**
+	 * <p>withNodeRef.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.NutListDataItem} object
+	 */
 	public NutListDataItem withNodeRef(NodeRef nodeRef) {
 		setNodeRef(nodeRef);
 		return this;
 	}
 
+	/**
+	 * <p>withValue.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.NutListDataItem} object
+	 */
 	public NutListDataItem withValue(Double value) {
 		setValue(value);
 		return this;
 	}
 
+	/**
+	 * <p>withUnit.</p>
+	 *
+	 * @param unit a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.NutListDataItem} object
+	 */
 	public NutListDataItem withUnit(String unit) {
 		setUnit(unit);
 		return this;
 	}
 
+	/**
+	 * <p>withMini.</p>
+	 *
+	 * @param mini a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.NutListDataItem} object
+	 */
 	public NutListDataItem withMini(Double mini) {
 		setMini(mini);
 		return this;
 	}
 
+	/**
+	 * <p>withMaxi.</p>
+	 *
+	 * @param maxi a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.NutListDataItem} object
+	 */
 	public NutListDataItem withMaxi(Double maxi) {
 		setMaxi(maxi);
 		return this;
 	}
 
+	/**
+	 * <p>withGroup.</p>
+	 *
+	 * @param group a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.NutListDataItem} object
+	 */
 	public NutListDataItem withGroup(String group) {
 		setGroup(group);
 		return this;
 	}
 
+	/**
+	 * <p>withNut.</p>
+	 *
+	 * @param nut a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.NutListDataItem} object
+	 */
 	public NutListDataItem withNut(NodeRef nut) {
 		setNut(nut);
 		return this;
 	}
 
+	/**
+	 * <p>withIsManual.</p>
+	 *
+	 * @param isManual a {@link java.lang.Boolean} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.NutListDataItem} object
+	 */
 	public NutListDataItem withIsManual(Boolean isManual) {
 		setIsManual(isManual);
 		return this;
 	}
 
+	/**
+	 * <p>withNutRequirementType.</p>
+	 *
+	 * @param requirementType a {@link fr.becpg.repo.product.data.constraints.NutRequirementType} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.NutListDataItem} object
+	 */
 	public NutListDataItem withNutRequirementType(NutRequirementType requirementType) {
 		setRequirementType(requirementType);
 		return this;

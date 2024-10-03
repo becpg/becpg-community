@@ -7,14 +7,25 @@ import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.ToxListDataItem;
 import fr.becpg.repo.toxicology.ToxicologyService;
 
+/**
+ * <p>ToxFormulationHandler class.</p>
+ *
+ * @author matthieu
+ */
 public class ToxFormulationHandler extends FormulationBaseHandler<ProductData> {
 
 	private ToxicologyService toxicologyService;
 	
+	/**
+	 * <p>Setter for the field <code>toxicologyService</code>.</p>
+	 *
+	 * @param toxicologyService a {@link fr.becpg.repo.toxicology.ToxicologyService} object
+	 */
 	public void setToxicologyService(ToxicologyService toxicologyService) {
 		this.toxicologyService = toxicologyService;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public boolean process(ProductData formulatedProduct) {
 		if (formulatedProduct.getToxList() != null && formulatedProduct.getIngList() != null) {

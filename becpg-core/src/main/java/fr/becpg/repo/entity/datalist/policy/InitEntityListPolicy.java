@@ -56,10 +56,20 @@ public class InitEntityListPolicy extends AbstractBeCPGPolicy implements NodeSer
 		this.namespaceService = namespaceService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityDictionaryService</code>.</p>
+	 *
+	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object
+	 */
 	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
 		this.entityDictionaryService = entityDictionaryService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>mlNodeService</code>.</p>
+	 *
+	 * @param mlNodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 */
 	public void setMlNodeService(NodeService mlNodeService) {
 		this.mlNodeService = mlNodeService;
 	}

@@ -62,6 +62,7 @@ public abstract class AbstractExportSearchAction extends ActionExecuterAbstractB
 
 	/** Constant <code>PARAM_TPL_NODEREF="templateNodeRef"</code> */
 	public static final String PARAM_TPL_NODEREF = "templateNodeRef";
+	/** Constant <code>PARAM_FORMAT="format"</code> */
 	public static final String PARAM_FORMAT = "format";
 
 	private static final Log logger = LogFactory.getLog(AbstractExportSearchAction.class);
@@ -77,6 +78,11 @@ public abstract class AbstractExportSearchAction extends ActionExecuterAbstractB
 	protected EntityActivityService entityActivityService;
 	private PersonService personService;
 	
+	/**
+	 * <p>Setter for the field <code>personService</code>.</p>
+	 *
+	 * @param personService a {@link org.alfresco.service.cmr.security.PersonService} object
+	 */
 	public void setPersonService(PersonService personService) {
 		this.personService = personService;
 	}
@@ -173,10 +179,20 @@ public abstract class AbstractExportSearchAction extends ActionExecuterAbstractB
 		this.contentService = contentService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>mimetypeService</code>.</p>
+	 *
+	 * @param mimetypeService a {@link org.alfresco.service.cmr.repository.MimetypeService} object
+	 */
 	public void setMimetypeService(MimetypeService mimetypeService) {
 		this.mimetypeService = mimetypeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityActivityService</code>.</p>
+	 *
+	 * @param entityActivityService a {@link fr.becpg.repo.activity.EntityActivityService} object
+	 */
 	public void setEntityActivityService(EntityActivityService entityActivityService) {
 		this.entityActivityService = entityActivityService;
 	}
@@ -267,6 +283,15 @@ public abstract class AbstractExportSearchAction extends ActionExecuterAbstractB
 
 	}
 
+	/**
+	 * <p>createHandler.</p>
+	 *
+	 * @param actionedUponNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param templateNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param downloadRequest a {@link org.alfresco.service.cmr.download.DownloadRequest} object
+	 * @param format a {@link fr.becpg.report.client.ReportFormat} object
+	 * @return a {@link fr.becpg.repo.report.search.actions.AbstractSearchDownloadExporter} object
+	 */
 	protected abstract AbstractSearchDownloadExporter createHandler(NodeRef actionedUponNodeRef, NodeRef templateNodeRef,
 			DownloadRequest downloadRequest, ReportFormat format);
 

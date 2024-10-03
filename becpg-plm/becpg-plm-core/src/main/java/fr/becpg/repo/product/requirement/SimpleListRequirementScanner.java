@@ -28,6 +28,7 @@ import fr.becpg.repo.repository.model.SimpleListDataItem;
  */
 public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem> extends AbstractRequirementScanner<T> {
 
+	/** Constant <code>MESSAGE_UNDEFINED_VALUE="message.formulate.undefined.value"</code> */
 	public static final String MESSAGE_UNDEFINED_VALUE = "message.formulate.undefined.value";
 
 	private static Log logger = LogFactory.getLog(SimpleListRequirementScanner.class);
@@ -132,17 +133,24 @@ public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem>
 		return ret;
 	}
 
+	/**
+	 * <p>getValue.</p>
+	 *
+	 * @param specDataItem a T object
+	 * @param listDataItem a T object
+	 * @return a {@link java.lang.Double} object
+	 */
 	protected abstract Double getValue(T specDataItem, T listDataItem);
 
 	/**
 	 * <p>getSpecErrorMessageKey.</p>
 	 *
 	 * @return a {@link java.lang.String} object.
+	 * @param specDataItem a T object
 	 */
 	protected abstract String getSpecErrorMessageKey(T specDataItem);
 
 	/**
-	 * @param specDataItem 
 	 * <p>getSpecInfoMessageKey.</p>
 	 *
 	 * @return a {@link java.lang.String} object
@@ -188,6 +196,13 @@ public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem>
 		});
 	}
 
+	/**
+	 * <p>shouldMerge.</p>
+	 *
+	 * @param item a T object
+	 * @param sl a T object
+	 * @return a boolean
+	 */
 	protected boolean shouldMerge(T item, T sl) {
 		return item.getCharactNodeRef().equals(sl.getCharactNodeRef());
 	}

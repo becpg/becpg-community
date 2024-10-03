@@ -273,6 +273,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 	 *
 	 * @param structCompareResults a {@link java.util.Map} object.
 	 * @return a {@link org.dom4j.Element} object.
+	 * @param nodeType a {@link org.alfresco.service.namespace.QName} object
 	 */
 	public  Element renderStructComparisonAsXmlData(QName nodeType, Map<String, List<StructCompareResultDataItem>> structCompareResults) {
 		Document document = DocumentHelper.createDocument();

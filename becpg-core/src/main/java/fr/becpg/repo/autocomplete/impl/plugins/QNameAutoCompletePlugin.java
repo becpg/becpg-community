@@ -20,6 +20,11 @@ import fr.becpg.repo.autocomplete.AutoCompleteService;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 
+/**
+ * <p>QNameAutoCompletePlugin class.</p>
+ *
+ * @author matthieu
+ */
 @Service
 public class QNameAutoCompletePlugin implements AutoCompletePlugin {
 
@@ -37,11 +42,13 @@ public class QNameAutoCompletePlugin implements AutoCompletePlugin {
 	@Autowired
 	private NamespaceService namespaceService;
 
+	/** {@inheritDoc} */
 	@Override
 	public String[] getHandleSourceTypes() {
 		return new String[] { SOURCE_TYPE_QNAME };
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public AutoCompletePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
 

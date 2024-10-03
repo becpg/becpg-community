@@ -55,7 +55,7 @@ import fr.becpg.model.BeCPGModel;
  *   <li>{@linkplain org.alfresco.repo.node.NodeServicePolicies.BeforeDeleteChildAssociationPolicy}</li>
  *   <li>{@linkplain org.alfresco.repo.node.NodeServicePolicies.OnCreateNodePolicy}</li>
  * </ul>
- * 
+ *
  * @author Roy Wetherall
  */
 public class CreateNodeRuleTrigger extends RuleTriggerAbstractBase implements NodeServicePolicies.OnCreateNodePolicy {
@@ -73,6 +73,8 @@ public class CreateNodeRuleTrigger extends RuleTriggerAbstractBase implements No
 
 	/**
 	 * Set whether this is a class behaviour or not
+	 *
+	 * @param isClassBehaviour a boolean
 	 */
 	public void setIsClassBehaviour(boolean isClassBehaviour) {
 		this.isClassBehaviour = isClassBehaviour;
@@ -80,11 +82,18 @@ public class CreateNodeRuleTrigger extends RuleTriggerAbstractBase implements No
 
 	/**
 	 * Set the rule service
+	 *
+	 * @param runtimeRuleService a {@link org.alfresco.repo.rule.RuntimeRuleService} object
 	 */
 	public void setRuntimeRuleService(RuntimeRuleService runtimeRuleService) {
 		this.runtimeRuleService = runtimeRuleService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>ignoreEntityDataList</code>.</p>
+	 *
+	 * @param ignoreEntityDataList a boolean
+	 */
 	public void setIgnoreEntityDataList(boolean ignoreEntityDataList) {
 		this.ignoreEntityDataList = ignoreEntityDataList;
 	}
@@ -109,9 +118,7 @@ public class CreateNodeRuleTrigger extends RuleTriggerAbstractBase implements No
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	public void onCreateNode(ChildAssociationRef childAssocRef) {
 		// Break out early if rules are not enabled
 		if (!areRulesEnabled()) {
@@ -146,6 +153,9 @@ public class CreateNodeRuleTrigger extends RuleTriggerAbstractBase implements No
 
 	/**
 	 * On add aspect behaviour
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param aspectTypeQName a {@link org.alfresco.service.namespace.QName} object
 	 */
 	public void onAddAspect(NodeRef nodeRef, QName aspectTypeQName) {
 		if (!nodeService.exists(nodeRef)) {
@@ -161,6 +171,9 @@ public class CreateNodeRuleTrigger extends RuleTriggerAbstractBase implements No
 
 	/**
 	 * On remove aspect behaviour
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param aspectTypeQName a {@link org.alfresco.service.namespace.QName} object
 	 */
 	public void onRemoveAspect(NodeRef nodeRef, QName aspectTypeQName) {
 		if (!nodeService.exists(nodeRef)) {

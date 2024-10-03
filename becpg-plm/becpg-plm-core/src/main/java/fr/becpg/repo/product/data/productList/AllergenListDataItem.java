@@ -115,16 +115,27 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem
 	}
 	
 	
+	/**
+	 * <p>Getter for the field <code>regulatoryType</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.constraints.RequirementType} object
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:regulatoryType")
 	public RequirementType getRegulatoryType() {
 		return regulatoryType;
 	}
 
+	/** {@inheritDoc} */
 	public void setRegulatoryType(RequirementType regulatoryType) {
 		this.regulatoryType = regulatoryType;
 	}
 
+	/**
+	 * <p>Getter for the field <code>regulatoryMessage</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object
+	 */
 	@AlfProp
 	@AlfMlText
 	@AlfQname(qname="bcpg:regulatoryText")
@@ -132,6 +143,7 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem
 		return regulatoryMessage;
 	}
 
+	/** {@inheritDoc} */
 	public void setRegulatoryMessage(MLText regulatoryMessage) {
 		this.regulatoryMessage = regulatoryMessage;
 	}

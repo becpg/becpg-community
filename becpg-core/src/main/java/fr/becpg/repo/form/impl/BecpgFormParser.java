@@ -15,9 +15,16 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.repo.form.FormParser;
 
+/**
+ * <p>BecpgFormParser class.</p>
+ *
+ * @author matthieu
+ */
 public class BecpgFormParser implements FormParser {
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 *
 	 * {
 	 *  forms : [ {
@@ -37,8 +44,6 @@ public class BecpgFormParser implements FormParser {
 	 *  }]
 	 *
 	 * }
-	 *
-	 *
 	 */
 
 	@Override
@@ -48,6 +53,7 @@ public class BecpgFormParser implements FormParser {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void visitConfig(Map<String, Map<String, BecpgFormDefinition>> definitions, String inputString) throws JSONException {
 		JSONObject defs = new JSONObject(inputString);

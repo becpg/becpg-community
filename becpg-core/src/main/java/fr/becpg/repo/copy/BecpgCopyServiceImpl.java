@@ -139,12 +139,17 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 		}
 
 
+	    /**
+	     * <p>Setter for the field <code>systemConfigurationService</code>.</p>
+	     *
+	     * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
+	     */
 	    public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
 			this.systemConfigurationService = systemConfigurationService;
 		}
 
 
-		/**
+	    /**
 	     * <p>Setter for the field <code>nodeService</code>.</p>
 	     *
 	     * @param nodeService  the node service

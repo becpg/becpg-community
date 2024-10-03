@@ -25,14 +25,25 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.repo.designer.service.SharePublishService;
 
+/**
+ * <p>CleanConfigWebscript class.</p>
+ *
+ * @author matthieu
+ */
 public class CleanConfigWebscript extends AbstractWebScript {
 
 	private SharePublishService sharePublishService;
 	
+	/**
+	 * <p>Setter for the field <code>sharePublishService</code>.</p>
+	 *
+	 * @param sharePublishService a {@link fr.becpg.repo.designer.service.SharePublishService} object
+	 */
 	public void setSharePublishService(SharePublishService sharePublishService) {
 		this.sharePublishService = sharePublishService;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
 		sharePublishService.cleanConfig();

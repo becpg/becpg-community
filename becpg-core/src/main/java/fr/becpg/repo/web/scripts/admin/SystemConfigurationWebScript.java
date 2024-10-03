@@ -9,14 +9,25 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.repo.system.SystemConfigurationService;
 
+/**
+ * <p>SystemConfigurationWebScript class.</p>
+ *
+ * @author matthieu
+ */
 public class SystemConfigurationWebScript extends AbstractWebScript {
 
 	private SystemConfigurationService systemConfigurationService;
 	
+	/**
+	 * <p>Setter for the field <code>systemConfigurationService</code>.</p>
+	 *
+	 * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
+	 */
 	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
 		this.systemConfigurationService = systemConfigurationService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
 		

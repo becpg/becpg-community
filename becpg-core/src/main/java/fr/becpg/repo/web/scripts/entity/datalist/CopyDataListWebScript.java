@@ -41,10 +41,20 @@ public class CopyDataListWebScript extends AbstractWebScript {
 	
 	private BehaviourFilter policyBehaviourFilter;
 	
+	/**
+	 * <p>Setter for the field <code>entityActivityService</code>.</p>
+	 *
+	 * @param entityActivityService a {@link fr.becpg.repo.activity.EntityActivityService} object
+	 */
 	public void setEntityActivityService(EntityActivityService entityActivityService) {
 		this.entityActivityService = entityActivityService;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>policyBehaviourFilter</code>.</p>
+	 *
+	 * @param policyBehaviourFilter a {@link org.alfresco.repo.policy.BehaviourFilter} object
+	 */
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 		this.policyBehaviourFilter = policyBehaviourFilter;
 	}

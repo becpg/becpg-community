@@ -163,22 +163,26 @@ public class ReportContentServiceWrapper implements ContentService {
 		return contentService.getTempWriter();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isContentDirectUrlEnabled() {
 		return contentService.isContentDirectUrlEnabled();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isContentDirectUrlEnabled(NodeRef nodeRef, QName propertyQName) {
 		return contentService.isContentDirectUrlEnabled(nodeRef, propertyQName);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public DirectAccessUrl requestContentDirectUrl(NodeRef nodeRef, QName propertyQName, boolean attachment,
 			Long validFor) {
 		return contentService.requestContentDirectUrl(nodeRef, propertyQName, attachment, validFor);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public DirectAccessUrl requestContentDirectUrl(NodeRef nodeRef, QName propertyQName, boolean attachment, Long validFor, String fileName) {
 		return contentService.requestContentDirectUrl(nodeRef, propertyQName, attachment, validFor,fileName);

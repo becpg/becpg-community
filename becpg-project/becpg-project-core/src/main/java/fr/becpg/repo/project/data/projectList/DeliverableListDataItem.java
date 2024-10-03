@@ -207,35 +207,76 @@ public class DeliverableListDataItem extends BeCPGDataObject {
 		super(nodeRef, name);
 	}
 
+	/**
+	 * <p>build.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.project.data.projectList.DeliverableListDataItem} object
+	 */
 	public static DeliverableListDataItem build() {
 		return new DeliverableListDataItem();
 	}
 
+	/**
+	 * <p>withTasks.</p>
+	 *
+	 * @param tasks a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.project.data.projectList.DeliverableListDataItem} object
+	 */
 	public DeliverableListDataItem withTasks(List<NodeRef> tasks) {
 		this.tasks = tasks;
 		return this;
 	}
 
+	/**
+	 * <p>withState.</p>
+	 *
+	 * @param state a {@link fr.becpg.repo.project.data.projectList.DeliverableState} object
+	 * @return a {@link fr.becpg.repo.project.data.projectList.DeliverableListDataItem} object
+	 */
 	public DeliverableListDataItem withState(DeliverableState state) {
 		this.state = state;
 		return this;
 	}
 
+	/**
+	 * <p>withDescription.</p>
+	 *
+	 * @param description a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.project.data.projectList.DeliverableListDataItem} object
+	 */
 	public DeliverableListDataItem withDescription(String description) {
 		this.description = description;
 		return this;
 	}
 
+	/**
+	 * <p>withUrl.</p>
+	 *
+	 * @param url a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.project.data.projectList.DeliverableListDataItem} object
+	 */
 	public DeliverableListDataItem withUrl(String url) {
 		this.url = url;
 		return this;
 	}
 
+	/**
+	 * <p>withCompletionPercent.</p>
+	 *
+	 * @param completionPercent a {@link java.lang.Integer} object
+	 * @return a {@link fr.becpg.repo.project.data.projectList.DeliverableListDataItem} object
+	 */
 	public DeliverableListDataItem withCompletionPercent(Integer completionPercent) {
 		this.completionPercent = completionPercent;
 		return this;
 	}
 
+	/**
+	 * <p>withContent.</p>
+	 *
+	 * @param content a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.repo.project.data.projectList.DeliverableListDataItem} object
+	 */
 	public DeliverableListDataItem withContent(NodeRef content) {
 		this.content = content;
 		return this;

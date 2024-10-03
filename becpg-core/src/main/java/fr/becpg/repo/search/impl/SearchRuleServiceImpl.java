@@ -37,6 +37,11 @@ import fr.becpg.repo.search.data.SearchRuleFilter;
 import fr.becpg.repo.search.data.SearchRuleResult;
 import fr.becpg.repo.search.data.VersionFilterType;
 
+/**
+ * <p>SearchRuleServiceImpl class.</p>
+ *
+ * @author matthieu
+ */
 @Service("searchRuleService")
 public class SearchRuleServiceImpl implements SearchRuleService {
 
@@ -70,6 +75,7 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 	@Autowired
 	private DictionaryService dictionaryService;
 
+	/** {@inheritDoc} */
 	@Override
 	public SearchRuleResult search(SearchRuleFilter filter) {
 		StopWatch watch = new StopWatch();

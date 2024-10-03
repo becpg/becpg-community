@@ -15,6 +15,11 @@ import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * <p>RestTemplateHelper class.</p>
+ *
+ * @author matthieu
+ */
 public class RestTemplateHelper {
 	
 	// Static instance of RestTemplate to be reused across the application
@@ -27,6 +32,11 @@ public class RestTemplateHelper {
         restTemplate = new RestTemplate(httpRequestFactory);
     }
 
+    /**
+     * <p>Getter for the field <code>restTemplate</code>.</p>
+     *
+     * @return a {@link org.springframework.web.client.RestTemplate} object
+     */
     public static RestTemplate getRestTemplate() {
         return restTemplate;
     }

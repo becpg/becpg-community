@@ -131,9 +131,6 @@ public class ZipSearchDownloadExporter implements Exporter {
 	 * Constructor for ZipSearchDownloadExporter.
 	 * </p>
 	 *
-	 * @param namespaceService
-	 *            a {@link org.alfresco.service.namespace.NamespaceService}
-	 *            object.
 	 * @param checkOutCheckInService
 	 *            a {@link org.alfresco.service.cmr.coci.CheckOutCheckInService}
 	 *            object.
@@ -157,6 +154,8 @@ public class ZipSearchDownloadExporter implements Exporter {
 	 *            a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param templateNodeRef
 	 *            a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param expressionService a {@link fr.becpg.repo.expressions.ExpressionService} object
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
 	 */
 	public ZipSearchDownloadExporter( CheckOutCheckInService checkOutCheckInService, NodeService nodeService,
 			RetryingTransactionHelper transactionHelper, DownloadStatusUpdateService updateService, DownloadStorage downloadStorage,

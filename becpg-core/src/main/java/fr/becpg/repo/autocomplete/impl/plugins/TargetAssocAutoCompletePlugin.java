@@ -67,7 +67,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * Default autocomplete used to suggest targetAssociation
  *
  * Example:
- * 
+ *
  * <pre>
  * {@code
  * <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -83,7 +83,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * param: {className} type of item to retrieve
  * param: {classNames} (optional)  comma separated lists of classNames, can be uses to filter by aspect or boost certain types (inc_ or ^)
  * param: {extra.searchTemplate} (optional) Allow to define a custom search template
-
+ *
  * Examples:
  *
  *   With aspect
@@ -101,7 +101,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  *  filter=prop_to_filter|value
  *	filter=cm:name|samplename
  *	filter=cm:name|{cm:title}
- *  filter=bcpg:code|{bcpg:code},cm:name|MP* 
+ *  filter=bcpg:code|{bcpg:code},cm:name|MP*
  *  filter=au:market|{au:market}
  *  filter=gs1:sortingBonusCriteria_or|{gs1:sortingBonusCriteria}  (when field is multiple default operator is and _or allow to change that)
  *  filter=bcpg:ingTypeV2|{htmlPropValue} use the value of parent or parentAssoc control-param (@Since 4.2)
@@ -143,6 +143,7 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 
 	private static final Log logger = LogFactory.getLog(TargetAssocAutoCompletePlugin.class);
 
+	/** Constant <code>PROP_FILTER_BY_ASSOC="filterByAssoc"</code> */
 	protected static final String PROP_FILTER_BY_ASSOC = "filterByAssoc";
 	/** Constant <code>SOURCE_TYPE_TARGET_ASSOC="targetassoc"</code> */
 	protected static final String SOURCE_TYPE_TARGET_ASSOC = "targetassoc";
@@ -293,6 +294,16 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 
 	}
 
+	/**
+	 * <p>filter.</p>
+	 *
+	 * @param queryBuilder a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object
+	 * @param path a {@link java.lang.String} object
+	 * @param arrClassNames an array of {@link java.lang.String} objects
+	 * @param pageSize a {@link java.lang.Integer} object
+	 * @param props a {@link java.util.Map} object
+	 * @return a {@link java.util.List} object
+	 */
 	@SuppressWarnings("unchecked")
 	protected List<NodeRef> filter(BeCPGQueryBuilder queryBuilder, String path, String[] arrClassNames, Integer pageSize,
 			Map<String, Serializable> props) {
@@ -520,6 +531,15 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 		return queryBuilder;
 	}
 
+	/**
+	 * <p>filterByQueryFilter.</p>
+	 *
+	 * @param queryBuilder a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object
+	 * @param queryFilters a {@link java.lang.String} object
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param propParent a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object
+	 */
 	protected BeCPGQueryBuilder filterByQueryFilter(BeCPGQueryBuilder queryBuilder, String queryFilters, NodeRef entityNodeRef, String propParent) {
 
 		if ((queryFilters != null) && (!queryFilters.isEmpty())) {
@@ -569,6 +589,13 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 
 	}
 
+	/**
+	 * <p>excludeByProp.</p>
+	 *
+	 * @param queryBuilder a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object
+	 * @param arrExcluseProps an array of {@link java.lang.String} objects
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object
+	 */
 	protected BeCPGQueryBuilder excludeByProp(BeCPGQueryBuilder queryBuilder, String[] arrExcluseProps) {
 		if (arrExcluseProps != null) {
 			for (String excludeProp : arrExcluseProps) {
@@ -582,6 +609,13 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 		return queryBuilder;
 	}
 
+	/**
+	 * <p>excludeByClass.</p>
+	 *
+	 * @param queryBuilder a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object
+	 * @param arrClassNames an array of {@link java.lang.String} objects
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object
+	 */
 	protected BeCPGQueryBuilder excludeByClass(BeCPGQueryBuilder queryBuilder, String[] arrClassNames) {
 
 		if (arrClassNames != null) {

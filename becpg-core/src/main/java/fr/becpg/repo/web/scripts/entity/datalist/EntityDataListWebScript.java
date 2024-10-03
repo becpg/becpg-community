@@ -168,6 +168,11 @@ public class EntityDataListWebScript extends AbstractWebScript {
 	 */
 	private BeCPGLicenseManager becpgLicenseManager;
 	
+	/**
+	 * <p>Setter for the field <code>becpgLicenseManager</code>.</p>
+	 *
+	 * @param becpgLicenseManager a {@link fr.becpg.repo.license.BeCPGLicenseManager} object
+	 */
 	public void setBecpgLicenseManager(BeCPGLicenseManager becpgLicenseManager) {
 		this.becpgLicenseManager = becpgLicenseManager;
 	}

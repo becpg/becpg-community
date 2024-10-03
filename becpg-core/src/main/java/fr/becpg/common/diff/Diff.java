@@ -24,6 +24,8 @@ package fr.becpg.common.diff;
 
 /**
  * Class representing one diff operation.
+ *
+ * @author matthieu
  */
 public class Diff {
     /**
@@ -49,31 +51,51 @@ public class Diff {
 
     
     
+    /**
+     * <p>Getter for the field <code>operation</code>.</p>
+     *
+     * @return a {@link fr.becpg.common.diff.Operation} object
+     */
     public Operation getOperation() {
 		return operation;
 	}
 
 
 
+	/**
+	 * <p>Setter for the field <code>operation</code>.</p>
+	 *
+	 * @param operation a {@link fr.becpg.common.diff.Operation} object
+	 */
 	public void setOperation(Operation operation) {
 		this.operation = operation;
 	}
 
 
 
+	/**
+	 * <p>Getter for the field <code>text</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	public String getText() {
 		return text;
 	}
 
 
 
+	/**
+	 * <p>Setter for the field <code>text</code>.</p>
+	 *
+	 * @param text a {@link java.lang.String} object
+	 */
 	public void setText(String text) {
 		this.text = text;
 	}
 
 
 
-	/**
+    /**
      * Display a human-readable version of this Diff.
      *
      * @return dmp version.
@@ -86,10 +108,10 @@ public class Diff {
     
     
     /**
+     * {@inheritDoc}
+     *
      * Create a numeric hash value for a Diff.
      * This function is not used by DMP.
-     *
-     * @return Hash value.
      */
     @Override
     public int hashCode() {
@@ -100,10 +122,9 @@ public class Diff {
     }
 
     /**
-     * Is this Diff equivalent to another Diff?
+     * {@inheritDoc}
      *
-     * @param obj Another Diff to compare against.
-     * @return true or false.
+     * Is this Diff equivalent to another Diff?
      */
     @Override
     public boolean equals(Object obj) {

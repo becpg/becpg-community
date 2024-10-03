@@ -71,6 +71,7 @@ public abstract class AbstractCostCharactDetailsVisitor<T extends AbstractCostLi
 		this.packagingHelper = packagingHelper;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	protected String provideUnit(CharactDetailsVisitorContext context, SimpleCharactDataItem simpleCharact) {
 		AbstractCostListDataItem<?> c = (AbstractCostListDataItem<?>) simpleCharact;

@@ -120,42 +120,82 @@ public class IngListDataItem extends AbstractManualDataItem
 	
 	
 	
+	/**
+	 * <p>Getter for the field <code>qtyPerc1</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:ingListQtyPerc1")
 	public Double getQtyPerc1() {
 		return qtyPerc1;
 	}
 
+	/**
+	 * <p>Setter for the field <code>qtyPerc1</code>.</p>
+	 *
+	 * @param qtyPerc1 a {@link java.lang.Double} object
+	 */
 	public void setQtyPerc1(Double qtyPerc1) {
 		this.qtyPerc1 = qtyPerc1;
 	}
 
+	/**
+	 * <p>Getter for the field <code>qtyPerc2</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:ingListQtyPerc2")
 	public Double getQtyPerc2() {
 		return qtyPerc2;
 	}
 
+	/**
+	 * <p>Setter for the field <code>qtyPerc2</code>.</p>
+	 *
+	 * @param qtyPerc2 a {@link java.lang.Double} object
+	 */
 	public void setQtyPerc2(Double qtyPerc2) {
 		this.qtyPerc2 = qtyPerc2;
 	}
 
+	/**
+	 * <p>Getter for the field <code>qtyPerc3</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:ingListQtyPerc3")
 	public Double getQtyPerc3() {
 		return qtyPerc3;
 	}
 
+	/**
+	 * <p>Setter for the field <code>qtyPerc3</code>.</p>
+	 *
+	 * @param qtyPerc3 a {@link java.lang.Double} object
+	 */
 	public void setQtyPerc3(Double qtyPerc3) {
 		this.qtyPerc3 = qtyPerc3;
 	}
 
+	/**
+	 * <p>Getter for the field <code>qtyPerc4</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:ingListQtyPerc4")
 	public Double getQtyPerc4() {
 		return qtyPerc4;
 	}
 
+	/**
+	 * <p>Setter for the field <code>qtyPerc4</code>.</p>
+	 *
+	 * @param qtyPerc4 a {@link java.lang.Double} object
+	 */
 	public void setQtyPerc4(Double qtyPerc4) {
 		this.qtyPerc4 = qtyPerc4;
 	}
@@ -676,6 +716,7 @@ public class IngListDataItem extends AbstractManualDataItem
 		return ret;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -686,6 +727,7 @@ public class IngListDataItem extends AbstractManualDataItem
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -706,6 +748,7 @@ public class IngListDataItem extends AbstractManualDataItem
 				&& Objects.equals(qtyPercWithYield, other.qtyPercWithYield) && Objects.equals(volumeQtyPerc, other.volumeQtyPerc);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "IngListDataItem [qtyPerc=" + qtyPerc + ", qtyPerc1=" + qtyPerc1 + ", qtyPerc2=" + qtyPerc2 + ", qtyPerc3=" + qtyPerc3 + ", qtyPerc4="
