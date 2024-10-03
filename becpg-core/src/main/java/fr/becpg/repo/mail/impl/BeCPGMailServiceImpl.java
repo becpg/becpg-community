@@ -30,6 +30,7 @@ import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.action.executer.MailActionExecuter;
+import org.alfresco.repo.admin.SysAdminParams;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.template.TemplateNode;
@@ -75,6 +76,13 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 	private ActionService actionService;
 	private PersonService personService;
 	private String mailFrom;
+	private SysAdminParams sysAdminParams;
+
+	
+	
+	public void setSysAdminParams(SysAdminParams sysAdminParams) {
+		this.sysAdminParams = sysAdminParams;
+	}
 
 	/**
 	 * <p>Setter for the field <code>nodeService</code>.</p>
@@ -166,7 +174,7 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 		templateModel.put("person", new TemplateNode(personNodeRef, serviceRegistry, null));
 		templateModel.put("username", userName);
 		templateModel.put("password", password);
-		templateModel.put(TemplateService.KEY_SHARE_URL, UrlUtil.getShareUrl(this.serviceRegistry.getSysAdminParams()));
+		templateModel.put(TemplateService.KEY_SHARE_URL, UrlUtil.getShareUrl(sysAdminParams));
 		// current date/time is useful to have and isn't supplied by FreeMarker
 		// by default
 		templateModel.put("date", new Date());
