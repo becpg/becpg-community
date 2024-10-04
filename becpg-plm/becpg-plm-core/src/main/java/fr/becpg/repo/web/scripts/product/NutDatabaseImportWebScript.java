@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
@@ -17,12 +18,14 @@ import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.formulation.nutrient.NutDatabaseService;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
+import fr.becpg.repo.security.SecurityService;
 
 /**
  * <p>NutDatabaseImportWebScript class.</p>
@@ -37,6 +40,8 @@ public class NutDatabaseImportWebScript extends AbstractWebScript {
 	private AlfrescoRepository<ProductData> alfrescoRepository;
 
 	private NutDatabaseService nutDatabaseService;
+	private SecurityService securityService;
+	private NodeService nodeService;
 
 	// Define static final variables for parameter names
 	private static final String SUPPLIER_PARAM = "supplier";
@@ -53,6 +58,24 @@ public class NutDatabaseImportWebScript extends AbstractWebScript {
 	 */
 	public void setNutDatabaseService(NutDatabaseService nutDatabaseService) {
 		this.nutDatabaseService = nutDatabaseService;
+	}
+	
+	/**
+	 * <p>Setter for the field <code>securityService</code>.</p>
+	 *
+	 * @param securityService a {@link fr.becpg.repo.security.SecurityService} object.
+	 */
+	public void setSecurityService(SecurityService securityService) {
+		this.securityService = securityService;
+	}
+	
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
+	public void setNodeService(NodeService nodeService) {
+		this.nodeService = nodeService;
 	}
 
 	/** {@inheritDoc} */
@@ -76,6 +99,10 @@ public class NutDatabaseImportWebScript extends AbstractWebScript {
 			String destination = req.getParameter(DEST_PARAM);
 			if (destination != null) {
 				destNodeRef = new NodeRef(destination);
+				
+				if (securityService.computeAccessMode(destNodeRef, nodeService.getType(destNodeRef), PLMModel.TYPE_NUTLIST) != SecurityService.WRITE_ACCESS) {
+					throw new IllegalStateException("You do not have permission for this action.");
+				}
 
 				Boolean onlyNutsBool = Boolean.valueOf(req.getParameter(ONLY_NUTS_PARAM));
 
