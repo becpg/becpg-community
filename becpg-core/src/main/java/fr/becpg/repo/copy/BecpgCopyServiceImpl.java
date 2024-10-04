@@ -327,7 +327,7 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	    {
 	    	try {
 	    		
-	    		behaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
+	    		behaviourFilter.disableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
 	    		
 	    		// To fix ETWOONE-224 issue it is necessary to change a QName of the new node accordingly to its name.
 	    		NodeRef result = null;
@@ -364,7 +364,7 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	    		// Return new NodeRef
 	    		return result;    
 	    	} finally {
-	    		behaviourFilter.enableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
+	    		behaviourFilter.enableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
 	    	}
 	    	
 	    }
