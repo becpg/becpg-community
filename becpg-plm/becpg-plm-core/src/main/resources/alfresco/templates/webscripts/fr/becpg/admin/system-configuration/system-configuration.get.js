@@ -32,6 +32,7 @@ function main() {
 		"beCPG.sendToSupplier.entityName.format",
 		"beCPG.sendToSupplier.projectName.format",
 		"beCPG.report.name.format",
+		"beCPG.connector.channel.register.activity",
 	].forEach(function(p) {
 				model.sysBeCPGAttributes[p] = { "type": "java.lang.String", "readonly": false, "qname": p, "name": p, "value": bSys.confValue(p), "set": "format"  }
 			});
