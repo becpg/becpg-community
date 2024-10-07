@@ -4,12 +4,10 @@
 package fr.becpg.repo.entity.datalist.policy;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,6 +27,7 @@ import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.behaviour.BehaviourRegistry;
 import fr.becpg.repo.entity.catalog.EntityCatalogService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
@@ -48,12 +47,6 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 	private static final String CATALOG_ONLY = "AuditEntityListItemPolicy.CatalogOnly";
 
 	private static final Log logger = LogFactory.getLog(AuditEntityListItemPolicy.class);
-
-	private static final List<QName> ignoredTypes = new ArrayList<>();
-	
-	public static void registerIgnoredType(QName type) {
-		ignoredTypes.add(type);
-	}
 	
 	private AuthenticationService authenticationService;
 
@@ -221,9 +214,9 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 				changedEntries.addAll(diff.entriesOnlyOnLeft().keySet());
 				changedEntries.addAll(diff.entriesOnlyOnRight().keySet());
 				
-				boolean isIgnoredTypePresent = ignoredTypes.stream().anyMatch(changedEntries::contains);
+				boolean shouldIgnoreAudit = changedEntries.stream().anyMatch(BehaviourRegistry::shouldIgnoreAuditField);
 				
-				if (!isIgnoredTypePresent) {
+				if (!shouldIgnoreAudit) {
 					queueListNodeRef(nodeService.getPrimaryParent(nodeRef).getParentRef());
 				}
 			}
