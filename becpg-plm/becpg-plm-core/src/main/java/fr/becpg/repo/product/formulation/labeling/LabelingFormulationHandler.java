@@ -1460,7 +1460,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 		for (Composite<CompoListDataItem> composite : parentComposite.getChildren()) {
 
-			Double calculatedYield = (currYield != null) && (currYield != 0d) ? currYield : 100d;
+			Double calculatedYield = currYield != null && currYield != 0d ? currYield : 100d;
 			CompoListDataItem compoListDataItem = composite.getData();
 			DeclarationType declarationType = getDeclarationType(compoListDataItem, null, labelingFormulaContext);
 
@@ -1487,32 +1487,32 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 				Double componentYield = FormulationHelper.getYield(compoListDataItem);
 
-				if ((qty != null) && (ratio != null)) {
+				if (qty != null && ratio != null) {
 					qty = BigDecimal.valueOf(qty).multiply(ratio, LabelingFormulaContext.PRECISION).doubleValue();
 
 				}
 
-				if ((volume != null) && (ratio != null)) {
+				if (volume != null && ratio != null) {
 					volume = BigDecimal.valueOf(volume).multiply(ratio, LabelingFormulaContext.PRECISION).doubleValue();
 
 				}
 
-				Double qtyWithYield = (qty != null) && !DeclarationType.Group.equals(declarationType)
+				Double qtyWithYield = qty != null && !DeclarationType.Group.equals(declarationType)
 						? BigDecimal.valueOf(qty).multiply(BigDecimal.valueOf(100d), LabelingFormulaContext.PRECISION)
 								.divide(BigDecimal.valueOf(calculatedYield), LabelingFormulaContext.PRECISION).doubleValue()
 						: qty;
-				Double volumeWithYield = (volume != null) && !DeclarationType.Group.equals(declarationType)
+				Double volumeWithYield = volume != null && !DeclarationType.Group.equals(declarationType)
 						? BigDecimal.valueOf(volume).multiply(BigDecimal.valueOf(100d), LabelingFormulaContext.PRECISION)
 								.divide(BigDecimal.valueOf(calculatedYield), LabelingFormulaContext.PRECISION).doubleValue()
 						: volume;
 
 				if (!isLocalSemiFinished) {
-					if ((qty != null) && (componentYield != null)) {
+					if (qty != null && componentYield != null) {
 						qty = BigDecimal.valueOf(qty).multiply(BigDecimal.valueOf(componentYield), LabelingFormulaContext.PRECISION)
 								.divide(BigDecimal.valueOf(100d), LabelingFormulaContext.PRECISION).doubleValue();
 					}
 
-					if ((volume != null) && (componentYield != null)) {
+					if (volume != null && componentYield != null) {
 						volume = BigDecimal.valueOf(volume).multiply(BigDecimal.valueOf(componentYield), LabelingFormulaContext.PRECISION)
 								.divide(BigDecimal.valueOf(100d), LabelingFormulaContext.PRECISION).doubleValue();
 					}
@@ -1539,8 +1539,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				//Water loss
 				if ((qty != null) && (calculatedYield != null) && (calculatedYield.doubleValue() != 100d)
 						&& (nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_WATER)
-								|| (nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_EVAPORABLE)
-										&& (nodeService.getProperty(productNodeRef, PLMModel.PROP_EVAPORATED_RATE) != null)))) {
+								|| (nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_EVAPORABLE) 
+										&& nodeService.getProperty(productNodeRef, PLMModel.PROP_EVAPORATED_RATE)!=null) )) {
 
 					if (logger.isTraceEnabled()) {
 						logger.trace("Detected evaporated components (" + productData.getName() + " - " + productNodeRef + "), rate: "
@@ -1556,8 +1556,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						evaporateRate = 100d;
 					}
 
-					qtyWithYield = qty + (((qty * (1d - (evaporateRate / 100d))) * 100d) / calculatedYield);
-					volumeWithYield = volume + (((volume * (1d - (evaporateRate / 100d))) * 100d) / calculatedYield);
+					qtyWithYield = qty + ((qty * (1d - (evaporateRate / 100d))) * 100d / calculatedYield);
+					volumeWithYield = volume + ((volume * (1d - (evaporateRate / 100d))) * 100d / calculatedYield);
 
 					parent.getEvaporatedDataItems().add(new EvaporatedDataItem(productNodeRef, evaporateRate));
 
@@ -1676,11 +1676,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 									compositeLabeling.setQtyTotal(qty);
 									compositeLabeling.setVolumeTotal(volume);
 
-									if ((qty != null) && (qtyWithYield != null) && !qty.equals(qtyWithYield)) {
+									if (qty != null && qtyWithYield != null && !qty.equals(qtyWithYield)) {
 										compositeLabeling.setEvaporatedQty(qtyWithYield - qty);
 									}
 
-									if ((volumeWithYield != null) && (volume != null) && !volume.equals(volumeWithYield)) {
+									if (volumeWithYield != null && volume != null && !volume.equals(volumeWithYield)) {
 										compositeLabeling.setEvaporatedVolume(volumeWithYield - volume);
 									}
 
@@ -1747,7 +1747,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 							if (!isLocalSemiFinished) {
 
-								recurYield = (productData.getYield() != null) && (productData.getYield() != 0d)
+								recurYield = productData.getYield() != null && productData.getYield() != 0d
 										? BigDecimal.valueOf(productData.getYield())
 										: BigDecimal.valueOf(100d);
 
@@ -1841,7 +1841,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				compositeLabeling.setVolumeTotal(compositeLabeling.getVolumeTotal() + qty);
 			}
 
-			if ((qty != null) && (qtyWithYield != null) && !qty.equals(qtyWithYield) && (compositeLabeling.getEvaporatedQty() != null)) {
+			if (qty != null && qtyWithYield != null && !qty.equals(qtyWithYield) && compositeLabeling.getEvaporatedQty() != null) {
 
 				BigDecimal evaporatedQty = BigDecimal.valueOf(qtyWithYield).subtract(BigDecimal.valueOf(qty));
 				if (logger.isTraceEnabled()) {
@@ -1850,8 +1850,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				compositeLabeling.setEvaporatedQty(evaporatedQty.add(BigDecimal.valueOf(compositeLabeling.getEvaporatedQty())).doubleValue());
 			}
 
-			if ((volumeWithYield != null) && (volume != null) && !volume.equals(volumeWithYield)
-					&& (compositeLabeling.getEvaporatedVolume() != null)) {
+			if (volumeWithYield != null && volume != null && !volume.equals(volumeWithYield) && compositeLabeling.getEvaporatedVolume() != null) {
 
 				BigDecimal evaporatedVolume = BigDecimal.valueOf(volumeWithYield).subtract(BigDecimal.valueOf(volume));
 
@@ -1903,7 +1902,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 			// 1. Evaporate ingredients with 100% rate first
 			Set<EvaporatedDataItem> fullEvaporationItems = parent.getEvaporatedDataItems().stream()
-					.filter(item -> (item.getRate() != null) && (item.getRate() == 100d)).collect(Collectors.toSet());
+					.filter(item -> item.getRate() != null && item.getRate() == 100d).collect(Collectors.toSet());
 
 			processEvaporation(parent, fullEvaporationItems, null);
 
@@ -1921,7 +1920,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			processEvaporation(parent, remainingItems, totalRate);
 
 			// 3 - If not all has been evaporated remove from first
-			if ((parent.getEvaporatedQty() > 0) && !fullEvaporationItems.isEmpty()) {
+			if (parent.getEvaporatedQty() > 0 && !fullEvaporationItems.isEmpty()) {
 
 				if (logger.isTraceEnabled()) {
 					logger.trace("- STILL REMAINING evaporation: " + parent.getEvaporatedQty());
@@ -1947,10 +1946,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				if (productLabelItem != null) {
 					Double rate = evaporatedDataItem.getRate() != null ? evaporatedDataItem.getRate() : 100d;
 
-					if ((productLabelItem.getQtyWithYield() != null) && (parent.getEvaporatedQty() != null) && (parent.getEvaporatedQty() > 0d)) {
-						Double maxEvapQty = (productLabelItem.getQtyWithYield() * rate) / 100d;
+					if (productLabelItem.getQtyWithYield() != null && parent.getEvaporatedQty() != null && parent.getEvaporatedQty() > 0d) {
+						Double maxEvapQty = productLabelItem.getQtyWithYield() * rate / 100d;
 
-						Double proportionalEvap = (totalRate == null) || (totalRate == 0d) ? evaporatingQty.get()
+						Double proportionalEvap = totalRate == null || totalRate == 0d ? evaporatingQty.get()
 								: evaporatingQty.get() * (rate / totalRate); // Consider total rate for remaining items
 						Double evaporatedQty = Math.min(maxEvapQty, proportionalEvap);
 
@@ -1964,11 +1963,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						evaporatingQty.set(evaporatingQty.get() - evaporatedQty);
 					}
 
-					if ((productLabelItem.getVolumeWithYield() != null) && (parent.getEvaporatedVolume() != null)
-							&& (parent.getEvaporatedVolume() > 0d)) {
-						Double maxEvapQty = (productLabelItem.getVolumeWithYield() * rate) / 100d;
+					if (productLabelItem.getVolumeWithYield() != null && parent.getEvaporatedVolume() != null && parent.getEvaporatedVolume() > 0d) {
+						Double maxEvapQty = productLabelItem.getVolumeWithYield() * rate / 100d;
 
-						Double proportionalEvap = (totalRate == null) || (totalRate == 0d) ? evaporatingVolume.get()
+						Double proportionalEvap = totalRate == null || totalRate == 0d ? evaporatingVolume.get()
 								: evaporatingVolume.get() * (rate / totalRate); // Consider total rate for remaining items
 						Double evaporatedVol = Math.min(maxEvapQty, proportionalEvap);
 
@@ -2127,8 +2125,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 		boolean applyThreshold = false;
 		if (nodeService.hasAspect(product.getNodeRef(), PLMModel.ASPECT_WATER)
-				|| (nodeService.hasAspect(product.getNodeRef(), PLMModel.ASPECT_EVAPORABLE)
-						&& (nodeService.getProperty(product.getNodeRef(), PLMModel.PROP_EVAPORATED_RATE) != null))) {
+				|| (nodeService.hasAspect(product.getNodeRef(), PLMModel.ASPECT_EVAPORABLE) 
+						&& nodeService.getProperty(product.getNodeRef(), PLMModel.PROP_EVAPORATED_RATE)!=null )) {
 			applyThreshold = true;
 		}
 
@@ -2351,7 +2349,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	}
 
 	private void updateIfNotNull(Double oldValue, Double newValue, Double qtyPerc, DoubleConsumer updateFunction, String name) {
-		if ((oldValue != null) && (newValue != null)) {
+		if (oldValue != null && newValue != null) {
 			BigDecimal valueToAdd = BigDecimal.valueOf(newValue).multiply(BigDecimal.valueOf(qtyPerc), LabelingFormulaContext.PRECISION)
 					.divide(BigDecimal.valueOf(100d), LabelingFormulaContext.PRECISION);
 			if (logger.isTraceEnabled()) {
