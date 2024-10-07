@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
@@ -426,96 +425,18 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 						for (Map.Entry<QName, Pair<Serializable, Serializable>> entry : updatedProperties.entrySet()) {
 							JSONObject property = new JSONObject();
 
-							MLText mlTextBefore = null;
-							MLText mlTextAfter = null;
-							MLText newMlTextBefore = null;
-							MLText newMlTextAfter = null;
-
-							if (entry.getValue().getFirst() instanceof List) {
-								for (Object obj : (List<?>) entry.getValue().getFirst()) {
-									if (obj instanceof MLText) {
-										mlTextBefore = (MLText) obj;
-									}
-								}
-							}
-							if (entry.getValue().getSecond() instanceof List) {
-								for (Object obj : (List<?>) entry.getValue().getSecond()) {
-									if (obj instanceof MLText) {
-										mlTextAfter = (MLText) obj;
-									}
-								}
-							}
-
-							if (mlTextBefore != null) {
-								newMlTextBefore = compareMLTexts(mlTextBefore, mlTextAfter);
-							}
-
-							if (mlTextAfter != null) {
-								newMlTextAfter = compareMLTexts(mlTextAfter, mlTextBefore);
-							}
-
-							if (newMlTextBefore != null) {
-								Iterator<Entry<Locale, String>> it = mlTextBefore.entrySet().iterator();
-
-								while (it.hasNext()) {
-									Locale locale = it.next().getKey();
-									mlTextBefore.put(locale, newMlTextBefore.get(locale));
-								}
-							}
-
-							if (newMlTextAfter != null) {
-								Iterator<Entry<Locale, String>> it = mlTextAfter.entrySet().iterator();
-
-								while (it.hasNext()) {
-									Locale locale = it.next().getKey();
-									mlTextAfter.put(locale, newMlTextAfter.get(locale));
-								}
-							}
-
+							processMLTexts(entry);
+							
 							property.put(PROP_TITLE, entry.getKey());
 
-							if (entry.getValue().getFirst() instanceof List) {
-								ArrayList<Object> beforeList = new ArrayList<>();
-
-								for (Object ent : (List<?>) entry.getValue().getFirst()) {
-									if (ent instanceof Date) {
-										beforeList.add(ISO8601DateFormat.format((Date) ent));
-									} else if (ent instanceof Pair || ent instanceof NodeRef) {
-										beforeList.add(ent.toString());
-									} else if (ent instanceof List) {
-										beforeList.add(((List<?>) ent).stream().map(o -> o.toString()).collect(Collectors.toList()));
-									} else {
-										beforeList.add(ent);
-									}
-								}
-
-								property.put(BEFORE, beforeList);
-							} else {
-								property.put(BEFORE, entry.getValue().getFirst());
-							}
+							Serializable before = processEntry(entry.getValue().getFirst(), entry.getKey());
+							property.put(BEFORE, before);
 
 							if (entry.getKey().equals(ContentModel.PROP_NAME)) {
 								property.put(AFTER, data.get(PROP_TITLE));
 							} else {
-								if (entry.getValue().getSecond() instanceof List) {
-									ArrayList<Object> afterList = new ArrayList<>();
-
-									for (Object ent : (List<?>) entry.getValue().getSecond()) {
-										if (ent instanceof Date) {
-											afterList.add(ISO8601DateFormat.format((Date) ent));
-										} else if (ent instanceof Pair || ent instanceof NodeRef) {
-											afterList.add(ent.toString());
-										} else if (ent instanceof List) {
-											afterList.add(((List<?>) ent).stream().map(o -> o.toString()).collect(Collectors.toList()));
-										} else {
-											afterList.add(ent);
-										}
-									}
-
-									property.put(AFTER, afterList);
-								} else {
-									property.put(AFTER, entry.getValue().getSecond());
-								}
+								Serializable after = processEntry(entry.getValue().getSecond(), entry.getKey());
+								property.put(AFTER, after);
 							}
 							properties.add(property);
 						}
@@ -543,6 +464,70 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		}
 		return false;
 
+	}
+	
+	private void processMLTexts(Map.Entry<QName, Pair<Serializable, Serializable>> entry) {
+		MLText mlTextBefore = null;
+		MLText mlTextAfter = null;
+		MLText newMlTextBefore = null;
+		MLText newMlTextAfter = null;
+		if (entry.getValue().getFirst() instanceof MLText mlText) {
+			mlTextBefore = mlText;
+		}
+		if (entry.getValue().getSecond() instanceof MLText mlText) {
+			mlTextAfter = mlText;
+		}
+		if (mlTextBefore != null) {
+			newMlTextBefore = compareMLTexts(mlTextBefore, mlTextAfter);
+		}
+		if (mlTextAfter != null) {
+			newMlTextAfter = compareMLTexts(mlTextAfter, mlTextBefore);
+		}
+		if (newMlTextBefore != null) {
+			Iterator<Entry<Locale, String>> it = mlTextBefore.entrySet().iterator();
+
+			while (it.hasNext()) {
+				Locale locale = it.next().getKey();
+				mlTextBefore.put(locale, newMlTextBefore.get(locale));
+			}
+		}
+		if (newMlTextAfter != null) {
+			Iterator<Entry<Locale, String>> it = mlTextAfter.entrySet().iterator();
+
+			while (it.hasNext()) {
+				Locale locale = it.next().getKey();
+				mlTextAfter.put(locale, newMlTextAfter.get(locale));
+			}
+		}
+	}
+	
+	private Serializable processEntry(Serializable ent, QName key) {
+		PropertyDefinition propDef = entityDictionaryService.getProperty(key);
+
+		if (ent instanceof Date date) {
+			return ISO8601DateFormat.format(date);
+		} else if (ent instanceof Pair || ent instanceof NodeRef) {
+			return ent.toString();
+		} else if (ent instanceof List) {
+			return new ArrayList<>(((List<?>) ent).stream().map(Object::toString).toList());
+		}
+		return processWithConstraints(ent, propDef);
+
+	}
+
+	private Serializable processWithConstraints(Serializable ent, PropertyDefinition propDef) {
+		if (propDef != null && propDef.getConstraints() != null) {
+			for (ConstraintDefinition constraint : propDef.getConstraints()) {
+				if (constraint.getConstraint() instanceof ListOfValuesConstraint lvc) {
+					if (ent instanceof List<?> list) {
+						return new ArrayList<>(list.stream().map(o -> lvc.getDisplayLabel(o.toString(), dictionaryService)).toList());
+					} else if (ent != null) {
+						ent = lvc.getDisplayLabel(ent.toString(), dictionaryService);
+					}
+				}
+			}
+		}
+		return ent;
 	}
 	
 	private MLText compareMLTexts(MLText mlText, MLText otherMlText) {
@@ -828,7 +813,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	/** {@inheritDoc} */
 	@Override
 	public boolean postEntityActivity(NodeRef entityNodeRef, ActivityType activityType, ActivityEvent activityEvent,
-			Map<QName, Pair<List<Serializable>, List<Serializable>>> updatedProperties) {
+			Map<QName, Pair<Serializable, Serializable>> updatedProperties) {
 		try {
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 
@@ -855,121 +840,21 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					data.put(PROP_TITLE, nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
 					if (activityEvent.equals(ActivityEvent.Update) && (updatedProperties != null)) {
 						List<JSONObject> properties = new ArrayList<>();
-						for (Map.Entry<QName, Pair<List<Serializable>, List<Serializable>>> entry : updatedProperties.entrySet()) {
+						for (Map.Entry<QName, Pair<Serializable, Serializable>> entry : updatedProperties.entrySet()) {
 							JSONObject property = new JSONObject();
 
 							property.put(PROP_TITLE, entry.getKey());
 
-							MLText mlTextBefore = null;
-							MLText mlTextAfter = null;
-							MLText newMlTextBefore = null;
-							MLText newMlTextAfter = null;
-
-							if (entry.getValue().getFirst() instanceof List) {
-								for (Object obj : (List<?>) entry.getValue().getFirst()) {
-									if (obj instanceof MLText) {
-										mlTextBefore = (MLText) obj;
-									}
-								}
-							}
-							if (entry.getValue().getSecond() instanceof List) {
-								for (Object obj : (List<?>) entry.getValue().getSecond()) {
-									if (obj instanceof MLText) {
-										mlTextAfter = (MLText) obj;
-									}
-								}
-							}
-
-							if (mlTextBefore != null) {
-								newMlTextBefore = compareMLTexts(mlTextBefore, mlTextAfter);
-							}
-
-							if (mlTextAfter != null) {
-								newMlTextAfter = compareMLTexts(mlTextAfter, mlTextBefore);
-							}
-
-							if (newMlTextBefore != null) {
-								Iterator<Entry<Locale, String>> it = mlTextBefore.entrySet().iterator();
-
-								while (it.hasNext()) {
-									Locale locale = it.next().getKey();
-									mlTextBefore.put(locale, newMlTextBefore.get(locale));
-								}
-							}
-
-							if (newMlTextAfter != null) {
-								Iterator<Entry<Locale, String>> it = mlTextAfter.entrySet().iterator();
-
-								while (it.hasNext()) {
-									Locale locale = it.next().getKey();
-									mlTextAfter.put(locale, newMlTextAfter.get(locale));
-								}
-							}
-
-							if (entry.getValue().getFirst() != null) {
-								ArrayList<Object> beforeList = new ArrayList<>();
-
-								for (Serializable ent : entry.getValue().getFirst()) {
-									if (ent instanceof Date) {
-										beforeList.add(ISO8601DateFormat.format((Date) ent));
-									} else if (ent instanceof Pair || ent instanceof NodeRef) {
-										beforeList.add(ent.toString());
-									} else {
-										PropertyDefinition propDef = entityDictionaryService.getProperty(entry.getKey());
-										if (propDef.getConstraints() != null) {
-											for (ConstraintDefinition constraint : propDef.getConstraints()) {
-												if (constraint.getConstraint() instanceof ListOfValuesConstraint lvc) {
-													if (ent instanceof List<?> entList) {
-														entList = entList.stream().map(o -> lvc.getDisplayLabel(o.toString(), dictionaryService)).toList();
-														ent = (Serializable) entList;
-													} else if (ent != null) {
-														ent = lvc.getDisplayLabel(ent.toString(), dictionaryService);
-													}
-												}
-											}
-										}
-										beforeList.add(ent);
-									}
-								}
-								property.put(BEFORE, beforeList);
-							} else {
-								property.put(BEFORE, entry.getValue().getFirst());
-							}
+							processMLTexts(entry);
+							
+							Serializable before = processEntry(entry.getValue().getFirst(), entry.getKey());
+							property.put(BEFORE, before);
 
 							if (data.has(PROP_TITLE) && (data.get(PROP_TITLE) != null) && entry.getKey().equals(ContentModel.PROP_NAME)) {
 								property.put(AFTER, data.get(PROP_TITLE));
 							} else {
-
-								if (entry.getValue().getSecond() != null) {
-									ArrayList<Object> afterList = new ArrayList<>();
-
-									for (Serializable ent : entry.getValue().getSecond()) {
-										if (ent instanceof Date) {
-											afterList.add(ISO8601DateFormat.format((Date) ent));
-										} else if (ent instanceof Pair || ent instanceof NodeRef) {
-											afterList.add(ent.toString());
-										} else {
-											PropertyDefinition propDef = entityDictionaryService.getProperty(entry.getKey());
-											if (propDef.getConstraints() != null) {
-												for (ConstraintDefinition constraint : propDef.getConstraints()) {
-													if (constraint.getConstraint() instanceof ListOfValuesConstraint lvc) {
-														if (ent instanceof List<?> entList) {
-															entList = entList.stream().map(o -> lvc.getDisplayLabel(o.toString(), dictionaryService)).toList();
-															ent = (Serializable) entList;
-														} else if (ent != null) {
-															ent = lvc.getDisplayLabel(ent.toString(), dictionaryService);
-														}
-													}
-												}
-											}
-											afterList.add(ent);
-										}
-									}
-									property.put(AFTER, afterList);
-								} else {
-									property.put(AFTER, entry.getValue().getSecond());
-								}
-
+								Serializable after = processEntry(entry.getValue().getSecond(), entry.getKey());
+								property.put(AFTER, after);
 							}
 							properties.add(property);
 						}

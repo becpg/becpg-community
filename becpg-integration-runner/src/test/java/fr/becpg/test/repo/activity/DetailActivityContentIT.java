@@ -113,8 +113,8 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 			if (data.getJSONArray("properties") != null && data.getJSONArray("properties").length() > 0) {
 				JSONObject dataProp = data.getJSONArray("properties").getJSONObject(0);
 				if (dataProp != null) {
-					assertEquals("Check erpCode before modification", "[\"11111\"]", dataProp.getJSONArray("before").toString());
-					assertEquals("Check erpCode after modification", "[\"22222\"]", dataProp.getJSONArray("after").toString());
+					assertEquals("Check erpCode before modification", "11111", dataProp.get("before").toString());
+					assertEquals("Check erpCode after modification", "22222", dataProp.get("after").toString());
 				}
 			}
 
@@ -233,8 +233,8 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 			if (data.getJSONArray("properties") != null && data.getJSONArray("properties").length() > 0) {
 				JSONObject dataProp = data.getJSONArray("properties").getJSONObject(0);
 				if (dataProp != null) {
-					assertEquals("Check compo qty modification", "[1]",dataProp.getJSONArray("before").toString());
-					assertEquals("Check compo qty modification", "[2]", dataProp.getJSONArray("after").toString());
+					assertEquals("Check compo qty modification", "1",dataProp.get("before").toString());
+					assertEquals("Check compo qty modification", "2", dataProp.get("after").toString());
 				}
 			}
 
