@@ -351,9 +351,8 @@
 
 								for (var subField in fieldArray) {
 
-									var fieldId = id + "_assoc_" + curField + "-cntrl";
 									var curField = fieldArray[subField].replace(":", "_");
-
+									var fieldId = id + "_assoc_" + curField + "-cntrl";
 
 									var found = YAHOO.util.Dom.get(fieldId);
 
