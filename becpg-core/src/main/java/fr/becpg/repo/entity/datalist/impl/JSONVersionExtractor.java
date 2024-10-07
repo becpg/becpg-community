@@ -781,31 +781,36 @@ public class JSONVersionExtractor extends SimpleExtractor {
 		
 		@Override
 		public int compare(JSONObject a, JSONObject b) {
-			Integer sortA = 0;
-			Integer sortB = 0;
 
 			try {
+				Object sortA = 0;
+				Object sortB = 0;
 				if (a.getJSONObject(ATTRIBUTES).has(sortString)) {
-					sortA = (Integer) a.getJSONObject(ATTRIBUTES).get(sortString);
+					sortA = a.getJSONObject(ATTRIBUTES).get(sortString);
 				} else {
 					return -order;
 				}
 				if (b.getJSONObject(ATTRIBUTES).has(sortString)) {
-					sortB = (Integer) b.getJSONObject(ATTRIBUTES).get(sortString);
+					sortB = b.getJSONObject(ATTRIBUTES).get(sortString);
 				} else {
 					return order;
 				}
+				
+				if (sortA instanceof Double compA && sortB instanceof Double compB) {
+					return order * compA.compareTo(compB);
+				}
+				
+				if (sortA instanceof Integer compA && sortB instanceof Integer compB) {
+					return order * compA.compareTo(compB);
+				}
+				
+				return order * sortA.toString().compareTo(sortB.toString());
+				
 			} catch (JSONException e) {
 				logger.warn("comparison error", e);
 			}
-			
-			try {
-				return order * sortA.compareTo(sortB);
-			} catch (NumberFormatException e) {
-				// do nothing : let the String comparator do the work
-			}
 
-			return order * sortA.compareTo(sortB);
+			return order * a.toString().compareTo(b.toString());
 		}
 		
 	}
