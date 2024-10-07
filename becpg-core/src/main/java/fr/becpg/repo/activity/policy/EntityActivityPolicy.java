@@ -38,6 +38,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.activity.data.ActivityEvent;
 import fr.becpg.repo.activity.data.ActivityType;
+import fr.becpg.repo.behaviour.FieldBehaviourRegistry;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.jscript.BeCPGStateHelper;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
@@ -72,14 +73,9 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 	private static final Pattern pattern = Pattern.compile(Pattern.quote(DELIMITER));
 
 	static {
-		isIgnoredTypes.add(ContentModel.PROP_MODIFIED);
-		isIgnoredTypes.add(ContentModel.PROP_MODIFIER);
-		isIgnoredTypes.add(ForumModel.PROP_COMMENT_COUNT);
-		isIgnoredTypes.add(BeCPGModel.PROP_SORT);
-		isIgnoredTypes.add(BeCPGModel.PROP_ENTITY_SCORE);
-		isIgnoredTypes.add(BeCPGModel.PROP_STATE_ACTIVITY_PREVIOUSSTATE);
-		isIgnoredTypes.add(BeCPGModel.PROP_STATE_ACTIVITY_MODIFIED);
-		isIgnoredTypes.add(BeCPGModel.PROP_STATE_ACTIVITY_MODIFIER);
+		FieldBehaviourRegistry.registerIgnoredActivityFields(ContentModel.PROP_MODIFIED, ContentModel.PROP_MODIFIER, ForumModel.PROP_COMMENT_COUNT,
+				BeCPGModel.PROP_SORT, BeCPGModel.PROP_ENTITY_SCORE, BeCPGModel.PROP_STATE_ACTIVITY_PREVIOUSSTATE,
+				BeCPGModel.PROP_STATE_ACTIVITY_MODIFIED, BeCPGModel.PROP_STATE_ACTIVITY_MODIFIER);
 	}
 
 	private EntityActivityService entityActivityService;
@@ -233,7 +229,7 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 				if ((before != null) && (after != null) && (before.size() < after.size())) {
 					MapDifference<QName, Serializable> diff = Maps.difference(before, after);
 					for (QName afterType : diff.entriesOnlyOnRight().keySet()) {
-						if (!isIgnoredTypes.contains(afterType) && (after.get(afterType) != null) && (after.get(afterType) != "")
+						if (!FieldBehaviourRegistry.shouldIgnoreActivity(nodeRef, type, afterType) && (after.get(afterType) != null) && (after.get(afterType) != "")
 								&& !ignoreType(afterType, before, after)) {
 							isDifferent = true;
 
@@ -247,7 +243,7 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 
 				if ((before != null) && (after != null)) {
 					for (QName beforeType : before.keySet()) {
-						if (!isIgnoredTypes.contains(beforeType) && !ignoreType(beforeType, before, after)) {
+						if (!FieldBehaviourRegistry.shouldIgnoreActivity(nodeRef, type, beforeType) && !ignoreType(beforeType, before, after)) {
 
 							if (((before.get(beforeType) == null) && (after.get(beforeType) == null)) || ((before.get(beforeType) != null)
 									&& (after.get(beforeType) != null) && before.get(beforeType).equals(after.get(beforeType)))) {
