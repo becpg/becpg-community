@@ -78,11 +78,11 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 		Label Rouge	10 / LABEL_ROUGE
 		ASC	10 / AQUACULTURE_STEWARDSHIP_COUNCIL
 		MSC	10 / MARINE_STEWARDSHIP_COUNCIL_LABEL
-
+	
 	 */
 
 	private static final List<String> GROUP1_CLAIM = Arrays.asList("NATURE_ET_PROGRES", "BIO_COHERANCE", "DEMETER_LABEL");
-	private static final List<String> GROUP2_CLAIM = Arrays.asList("EU_ORGANIC","ORGANIC");
+	private static final List<String> GROUP2_CLAIM = Arrays.asList("EU_ORGANIC", "ORGANIC");
 	private static final List<String> GROUP3_CLAIM = Arrays.asList("HAUTE_VALEUR_ENVIRONNEMENTALE", "UTZ_CERTIFIED", "RAINFOREST_ALLIANCE",
 			"FAIR_TRADE_MARK", "BLEU_BLANC_COEUR", "LABEL_ROUGE", "AQUACULTURE_STEWARDSHIP_COUNCIL", "MARINE_STEWARDSHIP_COUNCIL_LABEL");
 
@@ -140,10 +140,10 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 			loadEFs();
 		}
 
-		String preparedQuery = BeCPGQueryHelper.prepareQuery( query).replace("*", "");
+		String preparedQuery = BeCPGQueryHelper.prepareQuery(query).replace("*", "");
 
-		matches.addAll(environmentalFootprints.values().stream()
-				.filter(res -> BeCPGQueryHelper.isQueryMatch(query, res.value)).limit(100).collect(Collectors.toList()));
+		matches.addAll(environmentalFootprints.values().stream().filter(res -> BeCPGQueryHelper.isQueryMatch(query, res.value)).limit(100)
+				.collect(Collectors.toList()));
 
 		matches.sort((o1, o2) -> {
 
@@ -151,7 +151,7 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 				return o1.getValue().compareTo(o2.getValue());
 			}
 
-			String value = BeCPGQueryHelper.prepareQueryForSorting( o1.getValue()).replace("*", "").replace(preparedQuery, "A");
+			String value = BeCPGQueryHelper.prepareQueryForSorting(o1.getValue()).replace("*", "").replace(preparedQuery, "A");
 			String value2 = BeCPGQueryHelper.prepareQueryForSorting(o2.getValue()).replace("*", "").replace(preparedQuery, "A");
 
 			return value.compareTo(value2);
@@ -224,15 +224,15 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 	/** {@inheritDoc} */
 	@Override
 	public boolean accept(ScorableEntity productData) {
-		return (productData instanceof ProductData) &&  ((BeCPGDataObject) productData).getAspects().contains(PLMModel.ASPECT_ECO_SCORE);
+		return (productData instanceof ProductData) && ((BeCPGDataObject) productData).getAspects().contains(PLMModel.ASPECT_ECO_SCORE);
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public boolean formulateScore(ScorableEntity scorableEntity) {
 
-		ProductData productData  = (ProductData) scorableEntity;
-		
+		ProductData productData = (ProductData) scorableEntity;
+
 		if ((productData.getEcoScoreCategory() != null) && !productData.getEcoScoreCategory().isEmpty()) {
 			Boolean hasThreatenedSpecies = false;
 			Boolean notRecyclable = false;
@@ -244,23 +244,23 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 			int transportScore = 0;
 			int politicalScore = 0;
 			int ecoScore = 0;
-			
+
 			List<LabelClaimListDataItem> labelClaimList = productData.getLabelClaimList();
-			
+
 			claimBonus = computeClaimBonus(labelClaimList);
-			
+
 			hasThreatenedSpecies = hasThreatenedSpecies(labelClaimList);
 
 			if (Boolean.TRUE.equals(hasThreatenedSpecies)) {
 				ecoScore = 19;
 			} else {
 
-				 List<PackMaterialListDataItem> packMaterialList = productData.getPackMaterialList();
-				
+				List<PackMaterialListDataItem> packMaterialList = productData.getPackMaterialList();
+
 				packagingMalus = computePackagingMalus(packMaterialList);
-				
+
 				notRecyclable = isNotRecyclable(packMaterialList);
-				
+
 				if (Boolean.TRUE.equals(notRecyclable)) {
 					ecoScore = 79;
 				} else {
@@ -270,7 +270,7 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 				acvScore = computeEFScore(productData.getEcoScoreCategory(), isDrink);
 
 				int[] result = computeTransportAndPoliticalScore(productData);
-				
+
 				transportScore = result[0];
 				politicalScore = result[1];
 
@@ -289,13 +289,13 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 			}
 
 			productData.setEcoScore(ecoScore * 1d);
-			
+
 			String scoreClass = computeScoreClass(ecoScore);
-			
+
 			productData.setEcoScoreClass(scoreClass);
-			
+
 			EcoScoreContext ecoScoreContext = new EcoScoreContext();
-			
+
 			ecoScoreContext.setEcoScore(ecoScore);
 			ecoScoreContext.setScoreClass(scoreClass);
 			ecoScoreContext.setAcvScore(acvScore);
@@ -303,9 +303,9 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 			ecoScoreContext.setTransportScore(transportScore);
 			ecoScoreContext.setPoliticalScore(politicalScore);
 			ecoScoreContext.setPackagingMalus(packagingMalus);
-			
+
 			productData.setEcoScoreDetails(ecoScoreContext.toJSON().toString());
-			
+
 		} else {
 			productData.setEcoScore(null);
 			productData.setEcoScoreClass(null);
@@ -317,9 +317,9 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 	}
 
 	private Boolean hasThreatenedSpecies(List<LabelClaimListDataItem> labelClaimList) {
-		
+
 		Boolean hasThreatenedSpecies = false;
-		
+
 		if (labelClaimList != null) {
 			for (LabelClaimListDataItem claim : labelClaimList) {
 				if (Boolean.TRUE.equals(claim.getIsClaimed())) {
@@ -332,14 +332,14 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 				}
 			}
 		}
-		
+
 		return hasThreatenedSpecies;
 	}
 
 	private Boolean isNotRecyclable(List<PackMaterialListDataItem> packMaterialList) {
-		
+
 		Boolean notRecyclable = false;
-		
+
 		if (packMaterialList != null) {
 			for (PackMaterialListDataItem material : packMaterialList) {
 				if (!Boolean.TRUE.equals(notRecyclable)) {
@@ -352,9 +352,9 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 	}
 
 	private int computeClaimBonus(List<LabelClaimListDataItem> labelClaimList) {
-		
+
 		int claimBonus = 0;
-		
+
 		if (labelClaimList != null) {
 			boolean isASCorMSC = true;
 			for (LabelClaimListDataItem claim : labelClaimList) {
@@ -385,27 +385,27 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 
 		if (claimBonus > 20) {
 			claimBonus = 20;
-		} 
-		
+		}
+
 		return claimBonus;
 	}
 
 	private int computePackagingMalus(List<PackMaterialListDataItem> packMaterialList) {
-		
+
 		int packagingMalus = 0;
-		
+
 		if (packMaterialList != null) {
 
 			Double totalWeight = 0d;
-			
+
 			for (PackMaterialListDataItem material : packMaterialList) {
 				totalWeight += material.getPmlWeight();
 			}
-			
+
 			if (totalWeight == 0d) {
 				totalWeight = 1d;
 			}
-			
+
 			Double score = 100d;
 			for (PackMaterialListDataItem material : packMaterialList) {
 
@@ -424,7 +424,7 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 
 			packagingMalus = (int) Math.round((score / 10) - 10);
 		}
-		
+
 		return packagingMalus;
 	}
 
@@ -457,7 +457,7 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 	private int[] computeTransportAndPoliticalScore(ProductData productData) {
 
 		int[] result = new int[2];
-		
+
 		//Defers loading
 		if (countryScores == null) {
 			loadCountryScores();
@@ -509,13 +509,13 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 
 		result[0] = (int) Math.round((transportScore * 0.15d));
 		result[1] = (int) Math.round(((politicalScore / 10d) - 5));
-		
+
 		return result;
 	}
 
 	private boolean isWater(NodeRef ing) {
-
-		return nodeService.hasAspect(ing, PLMModel.ASPECT_WATER);
+		return nodeService.hasAspect(ing, PLMModel.ASPECT_WATER) || (nodeService.hasAspect(ing, PLMModel.ASPECT_EVAPORABLE)
+				&& (Double) nodeService.getProperty(ing, PLMModel.PROP_EVAPORATED_RATE) == 100d);
 	}
 
 	/**
