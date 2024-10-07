@@ -3,10 +3,8 @@ package fr.becpg.repo.activity.extractor;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.alfresco.error.AlfrescoRuntimeException;
@@ -37,6 +35,7 @@ import fr.becpg.repo.activity.EntityActivityExtractorService;
 import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.activity.data.ActivityType;
 import fr.becpg.repo.audit.plugin.impl.ActivityAuditPlugin;
+import fr.becpg.repo.behaviour.FieldBehaviourRegistry;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.datalist.impl.AbstractDataListExtractor;
 import fr.becpg.repo.helper.AttributeExtractorService;
@@ -80,17 +79,6 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 	private static final String ACTIVITYEVENT_UPDATE = "Update";
 	
 	private static final Log logger = LogFactory.getLog(EntityActivityExtractorServiceImpl.class);
-	
-	private static final Set<QName> isIgnoredTypes = new HashSet<>();
-	
-	/**
-	 * <p>registerIgnoredType.</p>
-	 *
-	 * @param type a {@link org.alfresco.service.namespace.QName} object
-	 */
-	public static void registerIgnoredType(QName type) {
-		isIgnoredTypes.add(type);
-	}
 	
 	/** {@inheritDoc} */
 	@Override
@@ -204,7 +192,7 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 
 				if ((entityType != null)
 						&& (securityService.computeAccessMode(entityNodeRef, entityType, propertyName) != SecurityService.NONE_ACCESS)
-						&& !isIgnoredTypes.contains(propertyName)) {
+						&& !FieldBehaviourRegistry.shouldIgnoreActivity(entityNodeRef, entityType, propertyName)) {
 					// Property Title
 					PropertyDefinition propertyDef = entityDictionaryService.getProperty(propertyName);
 					ClassAttributeDefinition propDef = entityDictionaryService.getPropDef(propertyName);
