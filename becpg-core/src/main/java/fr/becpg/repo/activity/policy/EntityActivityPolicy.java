@@ -2,9 +2,7 @@ package fr.becpg.repo.activity.policy;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -38,6 +36,8 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.activity.data.ActivityEvent;
 import fr.becpg.repo.activity.data.ActivityType;
+import fr.becpg.repo.behaviour.BehaviourRegistry;
+import fr.becpg.repo.behaviour.BehaviourRegistry.ActivityBehaviour;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.jscript.BeCPGStateHelper;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
@@ -66,20 +66,13 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 	/** Constant <code>KEY_QUEUE_ADDED_TPL_ASPECT="EntityActivity_AddedTplAspect"</code> */
 	public static final String KEY_QUEUE_ADDED_TPL_ASPECT = "EntityActivity_AddedTplAspect";
 
-	private static final Set<QName> isIgnoredTypes = new HashSet<>();
-
 	private static final String DELIMITER = "###";
 	private static final Pattern pattern = Pattern.compile(Pattern.quote(DELIMITER));
 
 	static {
-		isIgnoredTypes.add(ContentModel.PROP_MODIFIED);
-		isIgnoredTypes.add(ContentModel.PROP_MODIFIER);
-		isIgnoredTypes.add(ForumModel.PROP_COMMENT_COUNT);
-		isIgnoredTypes.add(BeCPGModel.PROP_SORT);
-		isIgnoredTypes.add(BeCPGModel.PROP_ENTITY_SCORE);
-		isIgnoredTypes.add(BeCPGModel.PROP_STATE_ACTIVITY_PREVIOUSSTATE);
-		isIgnoredTypes.add(BeCPGModel.PROP_STATE_ACTIVITY_MODIFIED);
-		isIgnoredTypes.add(BeCPGModel.PROP_STATE_ACTIVITY_MODIFIER);
+		BehaviourRegistry.registerActivityBehaviour(new ActivityBehaviour(ContentModel.PROP_MODIFIED, ContentModel.PROP_MODIFIER, ForumModel.PROP_COMMENT_COUNT,
+				BeCPGModel.PROP_SORT, BeCPGModel.PROP_ENTITY_SCORE, BeCPGModel.PROP_STATE_ACTIVITY_PREVIOUSSTATE,
+				BeCPGModel.PROP_STATE_ACTIVITY_MODIFIED, BeCPGModel.PROP_STATE_ACTIVITY_MODIFIER));
 	}
 
 	private EntityActivityService entityActivityService;
@@ -104,15 +97,6 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 		this.entityDictionaryService = entityDictionaryService;
 	}
 
-	/**
-	 * <p>registerIngoredType.</p>
-	 *
-	 * @param type a {@link org.alfresco.service.namespace.QName} object
-	 */
-	public static void registerIngoredType(QName type) {
-		isIgnoredTypes.add(type);
-	}
-	
 	/**
 	 * {@inheritDoc}
 	 *
@@ -227,18 +211,16 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 			boolean isDifferent = false;
 			boolean isIgnoreState = false;
 			QName type = nodeService.getType(nodeRef);
-			Map<QName, Pair<List<Serializable>, List<Serializable>>> updatedProperties = new HashMap<>();
+			Map<QName, Pair<Serializable, Serializable>> updatedProperties = new HashMap<>();
 			if (accept(type)) {
 
 				if ((before != null) && (after != null) && (before.size() < after.size())) {
 					MapDifference<QName, Serializable> diff = Maps.difference(before, after);
 					for (QName afterType : diff.entriesOnlyOnRight().keySet()) {
-						if (!isIgnoredTypes.contains(afterType) && (after.get(afterType) != null) && (after.get(afterType) != "")
-								&& !ignoreType(afterType, before, after)) {
+						if (!BehaviourRegistry.shouldIgnoreActivityField(afterType) && (after.get(afterType) != null) && (after.get(afterType) != "") && !ignoreType(afterType, before, after)) {
 							isDifferent = true;
 
-							Pair<List<Serializable>, List<Serializable>> beforeAfterProperties = new Pair<>(null,
-									Arrays.asList(after.get(afterType)));
+							Pair<Serializable, Serializable> beforeAfterProperties = new Pair<>(null, after.get(afterType));
 							updatedProperties.put(afterType, beforeAfterProperties);
 						}
 					}
@@ -247,7 +229,7 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 
 				if ((before != null) && (after != null)) {
 					for (QName beforeType : before.keySet()) {
-						if (!isIgnoredTypes.contains(beforeType) && !ignoreType(beforeType, before, after)) {
+						if (!BehaviourRegistry.shouldIgnoreActivityField(beforeType) && !ignoreType(beforeType, before, after)) {
 
 							if (((before.get(beforeType) == null) && (after.get(beforeType) == null)) || ((before.get(beforeType) != null)
 									&& (after.get(beforeType) != null) && before.get(beforeType).equals(after.get(beforeType)))) {
@@ -272,8 +254,7 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 
 												isDifferent = true;
 												if (!entityActivityService.isMatchingStateProperty(beforeType)) {
-													Pair<List<Serializable>, List<Serializable>> beforeAfterProperties = new Pair<>(
-															Arrays.asList(before.get(beforeType)), Arrays.asList(after.get(beforeType)));
+													Pair<Serializable, Serializable> beforeAfterProperties = new Pair<>(before.get(beforeType), after.get(beforeType));
 													updatedProperties.put(beforeType, beforeAfterProperties);
 												}
 											}
@@ -285,8 +266,7 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 
 												isDifferent = true;
 												if (!entityActivityService.isMatchingStateProperty(beforeType)) {
-													Pair<List<Serializable>, List<Serializable>> beforeAfterProperties = new Pair<>(
-															Arrays.asList(before.get(beforeType)), Arrays.asList(after.get(beforeType)));
+													Pair<Serializable, Serializable> beforeAfterProperties = new Pair<>(before.get(beforeType), after.get(beforeType));
 													updatedProperties.put(beforeType, beforeAfterProperties);
 												}
 											}
@@ -295,8 +275,7 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 								} else {
 									isDifferent = true;
 									if (!entityActivityService.isMatchingStateProperty(beforeType)) {
-										Pair<List<Serializable>, List<Serializable>> beforeAfterProperties = new Pair<>(
-												Arrays.asList(before.get(beforeType)), Arrays.asList(after.get(beforeType)));
+										Pair<Serializable, Serializable> beforeAfterProperties = new Pair<>(before.get(beforeType), after.get(beforeType));
 										updatedProperties.put(beforeType, beforeAfterProperties);
 									}
 								}
@@ -327,11 +306,11 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 					if ((TransactionSupportUtil.getResource(KEY_QUEUE_UPDATED_STATUS + nodeRef.toString()) == null)) {
 						TransactionSupportUtil.bindResource(KEY_QUEUE_UPDATED_STATUS + nodeRef.toString(), updatedProperties);
 					} else {
-						Map<QName, Pair<List<Serializable>, List<Serializable>>> beforeUpdatedProperties = TransactionSupportUtil.getResource(KEY_QUEUE_UPDATED_STATUS + nodeRef.toString());
+						Map<QName, Pair<Serializable, Serializable>> beforeUpdatedProperties = TransactionSupportUtil.getResource(KEY_QUEUE_UPDATED_STATUS + nodeRef.toString());
 						
 						boolean changed = false;
 						
-						for (Entry<QName, Pair<List<Serializable>, List<Serializable>>> entry : beforeUpdatedProperties.entrySet()) {
+						for (Entry<QName, Pair<Serializable, Serializable>> entry : beforeUpdatedProperties.entrySet()) {
 							if (!updatedProperties.containsKey(entry.getKey())) {
 								updatedProperties.put(entry.getKey(), entry.getValue());
 								changed = true;
@@ -583,18 +562,21 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 							logger.debug("Action upon content, post activity for: "+nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
 						}
 						entityActivityService.postContentActivity(entityNodeRef, actionedUponNodeRef, activityEvent);
-					} else if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
-						if(logger.isDebugEnabled()) {
-							logger.debug("Action upon datalist, post activity for: "+nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME)+ " ("+nodeService.getType(actionedUponNodeRef)+")");
+					} else {
+						Map<QName, Pair<Serializable, Serializable>> updatedFields = TransactionSupportUtil.getResource(KEY_QUEUE_UPDATED_STATUS + actionedUponNodeRef.toString());
+						if (!BehaviourRegistry.shouldIgnoreActivity(actionedUponNodeRef, type, updatedFields)) {
+							if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
+								if(logger.isDebugEnabled()) {
+									logger.debug("Action upon datalist, post activity for: "+nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME)+ " ("+nodeService.getType(actionedUponNodeRef)+")");
+								}
+								entityActivityService.postDatalistActivity(entityNodeRef, actionedUponNodeRef, activityEvent, updatedFields);
+							} else if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITY_V2)) {
+								if(logger.isDebugEnabled()) {
+									logger.debug("Action upon entity, post activity for: "+nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
+								}
+								entityActivityService.postEntityActivity(actionedUponNodeRef, ActivityType.Entity, activityEvent, updatedFields);
+							}
 						}
-						entityActivityService.postDatalistActivity(entityNodeRef, actionedUponNodeRef, activityEvent,
-								TransactionSupportUtil.getResource(KEY_QUEUE_UPDATED_STATUS + actionedUponNodeRef.toString()));
-					} else if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITY_V2)) {
-						if(logger.isDebugEnabled()) {
-							logger.debug("Action upon entity, post activity for: "+nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
-						}
-						entityActivityService.postEntityActivity(actionedUponNodeRef, ActivityType.Entity, activityEvent,
-								TransactionSupportUtil.getResource(KEY_QUEUE_UPDATED_STATUS + actionedUponNodeRef.toString()));
 					}
 				} else if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITY_V2)) {
 					entityActivityService.clearAllActivities(entityNodeRef);
