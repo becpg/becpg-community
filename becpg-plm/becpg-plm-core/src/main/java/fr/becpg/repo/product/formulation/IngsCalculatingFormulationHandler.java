@@ -297,7 +297,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 							|| (nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE) != null
 									&& (Double) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE) == 100d))) {
 
-						qtyPercWithYield = qtyPercWithYield / x + ((100d - 100d / x));
+						qtyPercWithYield = qtyPercWithYield / x + (100d - 100d / x);
 					} else {
 						qtyPercWithYield = qtyPercWithYield / x;
 					}
@@ -312,15 +312,12 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 					Double qtyPercWithSecondaryYield = ingListDataItem.getQtyPercWithYield() != null ? ingListDataItem.getQtyPercWithYield()
 							: ingListDataItem.getQtyPerc();
 					Double x = (formulatedProduct.getSecondaryYield() / 100d);
-					if (nodeService.hasAspect(ingListDataItem.getIng(), PLMModel.ASPECT_WATER)
-							|| (nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE) != null
-									&& (Double) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE) == 100d)) {
-
-						qtyPercWithSecondaryYield = qtyPercWithSecondaryYield / x + ((100d - 100d / x));
-
-					} else {
-
-						if (qtyPercWithSecondaryYield != null) {
+					if(qtyPercWithSecondaryYield!=null) {
+						if (nodeService.hasAspect(ingListDataItem.getIng(), PLMModel.ASPECT_WATER)
+								|| (nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE) != null
+										&& (Double) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE) == 100d)) {
+							qtyPercWithSecondaryYield = qtyPercWithSecondaryYield / x + (100d - 100d / x);
+						} else {
 							qtyPercWithSecondaryYield = qtyPercWithSecondaryYield / x;
 						}
 					}
@@ -496,7 +493,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 									|| (nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE) != null
 											&& (Double) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE) == 100d))) {
 
-						valueToAdd = qty * ((qtyIngWithYield) - ((100d - FormulationHelper.getYield(compoListDataItem))));
+						valueToAdd = qty * ((qtyIngWithYield) - (100d - FormulationHelper.getYield(compoListDataItem)));
 					}
 
 					totalQtyIngWithYield += valueToAdd;
