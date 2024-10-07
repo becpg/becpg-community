@@ -7,8 +7,7 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.QualityModel;
-import fr.becpg.repo.activity.extractor.EntityActivityExtractorServiceImpl;
-import fr.becpg.repo.activity.policy.EntityActivityPolicy;
+import fr.becpg.repo.behaviour.FieldBehaviourRegistry;
 import fr.becpg.repo.entity.EntityDictionaryService;
 
 /**
@@ -40,8 +39,7 @@ public class PlmEntityActivityPlugin extends DefaultEntityActivityPlugin impleme
 	/** {@inheritDoc} */
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		EntityActivityExtractorServiceImpl.registerIgnoredType(PLMModel.PROP_ILL_LOG_VALUE);
-		EntityActivityPolicy.registerIngoredType(PLMModel.PROP_ILL_LOG_VALUE);
+		FieldBehaviourRegistry.registerIgnoredActivityFields(PLMModel.PROP_ILL_LOG_VALUE);
 	}
 
 
