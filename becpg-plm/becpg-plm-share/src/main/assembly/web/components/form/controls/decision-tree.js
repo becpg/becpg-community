@@ -76,6 +76,7 @@
                            htmlForm += '<legend title="'+this.msg("form.control.decision-tree."+this.options.prefix+"."+question.id+".description")+'">'
                                     + ( question.id.length < 10 ? question.id.toUpperCase()+' - ' : "")
                                     + (question.label ? question.label: this.msg("form.control.decision-tree."+this.options.prefix+"."+question.id+".label"))
+                                    + (question.mandatory ? '<span style="color:red; font-weight:bold">&nbsp;&ast;</span>' : '')
                                     +'</legend>';
                            if(question.note){
                         	   htmlForm += '<span class="decision-tree-note">'+question.note+'</span>';
@@ -312,172 +313,173 @@
                   
                   
                   toogleVisible : function (){
-                     
-                     var ret = [],me = this;
-                     
-                     var visible = [];
-                     
-                     for(var i = 0; i< this.options.data.length; i++){
-                        var question = this.options.data[i];
-                        if((i == 0 || question.start == true) && (!this.options.disabled || this.options.currentValue.length>0)){
-                           visible.push(question.id);
-                        }
-                        if(beCPG.util.contains(visible,question.id) && question.choices){
-                           
-                           var showComment = false;
-                           for(var j = 0; j< question.choices.length; j++){
-                             var choice = question.choices[j];
-                             
-                             if(this.formRuntime!=null && question.mandatory){
-                                 if(choice.list!=null && !choice.checkboxes){
-									if(!choice.hasValidation){
-	                                	 choice.hasValidation = true;
-	                                     this.formRuntime.addValidation(this.id+'-select_'+question.id+'_'+choice.id, Alfresco.forms.validation.mandatory, null, "keyup");
-									}
-									
-                                 } else {
-                                	 if(choice.label != "hidden" && !choice.checkboxes && !choice.hasValidation){
-                                		 choice.hasValidation = true;
-	                                     this.formRuntime.addValidation(this.id+'-choice_'+question.id+'_'+choice.id, Alfresco.forms.validation.mandatory, null, "keyup");
-                                	 }
-	                                 if(choice.comment){
-	                                      if(choice.label == "hidden" || (choice.list!=null && choice.checkboxes )  || Dom.get(this.id+"-choice_"+question.id+'_'+choice.id).checked){
-	                                         if( !choice.hasCommentValidation){
-	                                        	 choice.hasCommentValidation = true;
-	                                        	 this.formRuntime.addValidation(this.id+"-comment_"+question.id+"-input", Alfresco.forms.validation.mandatory, null, "keyup");
-	                                         }
-	                                    
-	                                         
-	                                      } else {
-	                                    	  if( choice.hasCommentValidation){
-	                                    		  choice.hasCommentValidation = false;
-	                                    		  this.formRuntime.removeValidation(this.id+"-comment_"+question.id+"-input");
-	                                    	  }
-	                                      }
-	                                  }
-                                	                                      
-                                 }
-                             }
-
-                             if((choice.list!=null && !choice.checkboxes && Dom.get(this.id+"-select_"+question.id+'_'+choice.id).value!=null)
-                                     || (choice.list!=null && choice.checkboxes )  || choice.label == "hidden" ||  Dom.get(this.id+"-choice_"+question.id+'_'+choice.id).checked ){
-                             
-                            	 var showVisible = false;
-                                 if(choice.list!=null){
-                                     var value = "";
-                                     
-                                     if(choice.multiple){
-                                    	 
-                                    	 if(choice.checkboxes){
-                                    	 
-	                                    	 var checkboxes = document.getElementsByName('--group_'+this.id+question.id+'_'+choice.id);  
+                     setTimeout(function() {
+	                     var ret = [],me = this;
+	                     
+	                     var visible = [];
+	                     
+	                     for(var i = 0; i< this.options.data.length; i++){
+	                        var question = this.options.data[i];
+	                        if((i == 0 || question.start == true) && (!this.options.disabled || this.options.currentValue.length>0)){
+	                           visible.push(question.id);
+	                        }
+	                        if(beCPG.util.contains(visible,question.id) && question.choices){
+	                           
+	                           var showComment = false;
+	                           for(var j = 0; j< question.choices.length; j++){
+	                             var choice = question.choices[j];
+	                             
+	                             if(this.formRuntime!=null && question.mandatory){
+	                                 if(choice.list!=null && !choice.checkboxes){
+										if(!choice.hasValidation){
+		                                	 choice.hasValidation = true;
+		                                     this.formRuntime.addValidation(this.id+'-select_'+question.id+'_'+choice.id, Alfresco.forms.validation.mandatory, null, "keyup");
+										}
+										
+	                                 } else {
+	                                	 if(choice.label != "hidden" && !choice.checkboxes && !choice.hasValidation){
+	                                		 choice.hasValidation = true;
+		                                     this.formRuntime.addValidation(this.id+'-choice_'+question.id+'_'+choice.id, Alfresco.forms.validation.mandatory, null, "keyup");
+	                                	 }
+		                                 if(choice.comment){
+		                                      if(choice.label == "hidden" || (choice.list!=null && choice.checkboxes )  || Dom.get(this.id+"-choice_"+question.id+'_'+choice.id).checked){
+		                                         if( !choice.hasCommentValidation){
+		                                        	 choice.hasCommentValidation = true;
+		                                        	 this.formRuntime.addValidation(this.id+"-comment_"+question.id+"-input", Alfresco.forms.validation.mandatory, null, "keyup");
+		                                         }
+		                                    
+		                                         
+		                                      } else {
+		                                    	  if( choice.hasCommentValidation){
+		                                    		  choice.hasCommentValidation = false;
+		                                    		  this.formRuntime.removeValidation(this.id+"-comment_"+question.id+"-input");
+		                                    	  }
+		                                      }
+		                                  }
+	                                	                                      
+	                                 }
+	                             }
+	
+	                             if((choice.list!=null && !choice.checkboxes && Dom.get(this.id+"-select_"+question.id+'_'+choice.id).value!=null)
+	                                     || (choice.list!=null && choice.checkboxes )  || choice.label == "hidden" ||  Dom.get(this.id+"-choice_"+question.id+'_'+choice.id).checked ){
+	                             
+	                            	 var showVisible = false;
+	                                 if(choice.list!=null){
+	                                     var value = "";
+	                                     
+	                                     if(choice.multiple){
 	                                    	 
-	                                    	 for(var k = 0; k < checkboxes.length; k++)  
-	                                    	    {  
-	                                    	        if(checkboxes[k].checked) {
-	                                    	        	
-	                                    	        	 if(value.length>0){
-	                                                         value+=",";
-	                                                     }
-	                                                     value += ""+checkboxes[k].value;
-	                                                     showVisible = true;
-	                                    	        } 
-	                                    	    }  
-                                    	 } else {
-                                    		 showVisible = true
-                                    		 var selectElem = Dom.get(this.id+"-select_"+question.id+'_'+choice.id);
-	                                         for (var j = 0, jj = selectElem.options.length; j < jj; j++)
-	                                         {
-	                                            if (selectElem.options[j].selected)
-	                                            {
-	                                               if(value.length>0){
-	                                                   value+=",";
-	                                               }
-	                                               value += selectElem.options[j].value;
-	                                            }
-	                                         }
-                                    	 }
-                                     } else {
-                                    	 var selectElem = Dom.get(this.id+"-select_"+question.id+'_'+choice.id);
-                                          value = selectElem.value;
-                                        
-                                     }
-                                     ret.push({ qid : question.id, cid : choice.id, listOptions :
-                                         value });
-                                     
-                                 } else {
-                                	 showVisible = true;
-                                	 
-                                     ret.push({ qid : question.id, cid : choice.id});
-                                 }
-                                 
-                                 
-                                if(choice.cid && showVisible){
-                                    if(choice.cid instanceof Array){
-                                        for(var z=0 ; z<choice.cid.length ; z++){
-                                            visible.push(choice.cid[z]);
-                                        }
-                                    } else {
-                                        visible.push(choice.cid);
-                                    }
-                                }
-                                
-                                if(choice.comment){
-                                   showComment = true; 
-                                   if( choice.commentLabel && choice.commentLabel.length > 0 &&  Dom.get(this.id+'-comment_'+question.id+'-label')!=null) {
-									  Dom.get(this.id+'-comment_'+question.id+'-label').innerHTML = choice.commentLabel == "hidden" ? "" : choice.commentLabel ;
-								   }
-                                } 
-                             }
-                           }
-                           
-                            if(Dom.get(this.id+"-comment_"+question.id)) {
-							    YAHOO.util.Event.purgeElement(this.id+"-comment_"+question.id+"-input");
-	                           if(showComment){
-	                              Dom.removeClass(this.id+"-comment_"+question.id,"hidden");
-	                              ret[ret.length-1].comment = Dom.get(this.id+"-comment_"+question.id+"-input").value;
-	                              YAHOO.util.Event.addListener(this.id+"-comment_"+question.id+"-input", "blur", function() {me.toogleVisible();} );                           
-	                           } else {
-	                              Dom.addClass(this.id+"-comment_"+question.id,"hidden");
+	                                    	 if(choice.checkboxes){
+	                                    	 
+		                                    	 var checkboxes = document.getElementsByName('--group_'+this.id+question.id+'_'+choice.id);  
+		                                    	 
+		                                    	 for(var k = 0; k < checkboxes.length; k++)  
+		                                    	    {  
+		                                    	        if(checkboxes[k].checked) {
+		                                    	        	
+		                                    	        	 if(value.length>0){
+		                                                         value+=",";
+		                                                     }
+		                                                     value += ""+checkboxes[k].value;
+		                                                     showVisible = true;
+		                                    	        } 
+		                                    	    }  
+	                                    	 } else {
+	                                    		 showVisible = true
+	                                    		 var selectElem = Dom.get(this.id+"-select_"+question.id+'_'+choice.id);
+		                                         for (var j = 0, jj = selectElem.options.length; j < jj; j++)
+		                                         {
+		                                            if (selectElem.options[j].selected)
+		                                            {
+		                                               if(value.length>0){
+		                                                   value+=",";
+		                                               }
+		                                               value += selectElem.options[j].value;
+		                                            }
+		                                         }
+	                                    	 }
+	                                     } else {
+	                                    	 var selectElem = Dom.get(this.id+"-select_"+question.id+'_'+choice.id);
+	                                          value = selectElem.value;
+	                                        
+	                                     }
+	                                     ret.push({ qid : question.id, cid : choice.id, listOptions :
+	                                         value });
+	                                     
+	                                 } else {
+	                                	 showVisible = true;
+	                                	 
+	                                     ret.push({ qid : question.id, cid : choice.id});
+	                                 }
+	                                 
+	                                 
+	                                if(choice.cid && showVisible){
+	                                    if(choice.cid instanceof Array){
+	                                        for(var z=0 ; z<choice.cid.length ; z++){
+	                                            visible.push(choice.cid[z]);
+	                                        }
+	                                    } else {
+	                                        visible.push(choice.cid);
+	                                    }
+	                                }
+	                                
+	                                if(choice.comment){
+	                                   showComment = true; 
+	                                   if( choice.commentLabel && choice.commentLabel.length > 0 &&  Dom.get(this.id+'-comment_'+question.id+'-label')!=null) {
+										  Dom.get(this.id+'-comment_'+question.id+'-label').innerHTML = choice.commentLabel == "hidden" ? "" : choice.commentLabel ;
+									   }
+	                                } 
+	                             }
 	                           }
-                           }
-                           
-                        }  else if(question.choices && this.formRuntime!=null && question.mandatory){
-                            for(var j = 0; j< question.choices.length; j++){
-                                var choice = question.choices[j];
-                                
-                                if(this.formRuntime!=null && question.mandatory){
-                                    if(choice.list!=null  && !choice.checkboxes && choice.hasValidation){
-                                    	choice.hasValidation = false;
-                                        this.formRuntime.removeValidation(this.id+'-select_'+question.id+'_'+choice.id);
-                                    } else {
-                                    	if(choice.label!="hidden" && choice.hasValidation){
-                                    		choice.hasValidation = false;
-                                    		this.formRuntime.removeValidation(this.id+'-choice_'+question.id+'_'+choice.id);
-                                    	}
-                                        if(choice.comment && choice.hasCommentValidation){
-                                  		    choice.hasCommentValidation = false;
-                                            this.formRuntime.removeValidation(this.id+"-comment_"+question.id+"-input");
-                                        }
-                                    }
-                                }
-                            }
-                           
-                       }
-                        
-                        
-                        if(beCPG.util.contains(visible,question.id)){
-                           Dom.removeClass(this.id+"-question_"+question.id,"hidden");
-                        } else {
-                           Dom.addClass(this.id+"-question_"+question.id,"hidden");
-                        }
-                     }
-                     
-                     if(!this.options.disabled){
-                         var hiddenInput = Dom.get(this.fieldId);
-                         hiddenInput.value = JSON.stringify(ret);
-                         YAHOO.Bubbling.fire("mandatoryControlValueUpdated");
-                     }
+	                           
+	                            if(Dom.get(this.id+"-comment_"+question.id)) {
+								    YAHOO.util.Event.purgeElement(this.id+"-comment_"+question.id+"-input");
+		                           if(showComment){
+		                              Dom.removeClass(this.id+"-comment_"+question.id,"hidden");
+		                              ret[ret.length-1].comment = Dom.get(this.id+"-comment_"+question.id+"-input").value;
+		                              YAHOO.util.Event.addListener(this.id+"-comment_"+question.id+"-input", "blur", function() {me.toogleVisible();} );                           
+		                           } else {
+		                              Dom.addClass(this.id+"-comment_"+question.id,"hidden");
+		                           }
+	                           }
+	                           
+	                        }  else if(question.choices && this.formRuntime!=null && question.mandatory){
+	                            for(var j = 0; j< question.choices.length; j++){
+	                                var choice = question.choices[j];
+	                                
+	                                if(this.formRuntime!=null && question.mandatory){
+	                                    if(choice.list!=null  && !choice.checkboxes && choice.hasValidation){
+	                                    	choice.hasValidation = false;
+	                                        this.formRuntime.removeValidation(this.id+'-select_'+question.id+'_'+choice.id);
+	                                    } else {
+	                                    	if(choice.label!="hidden" && choice.hasValidation){
+	                                    		choice.hasValidation = false;
+	                                    		this.formRuntime.removeValidation(this.id+'-choice_'+question.id+'_'+choice.id);
+	                                    	}
+	                                        if(choice.comment && choice.hasCommentValidation){
+	                                  		    choice.hasCommentValidation = false;
+	                                            this.formRuntime.removeValidation(this.id+"-comment_"+question.id+"-input");
+	                                        }
+	                                    }
+	                                }
+	                            }
+	                           
+	                       }
+	                        
+	                        
+	                        if(beCPG.util.contains(visible,question.id)){
+	                           Dom.removeClass(this.id+"-question_"+question.id,"hidden");
+	                        } else {
+	                           Dom.addClass(this.id+"-question_"+question.id,"hidden");
+	                        }
+	                     }
+	                     
+	                     if(!this.options.disabled){
+	                         var hiddenInput = Dom.get(this.fieldId);
+	                         hiddenInput.value = JSON.stringify(ret);
+	                         YAHOO.Bubbling.fire("mandatoryControlValueUpdated");
+	                     }
+	              	});
                   }
                     
 
