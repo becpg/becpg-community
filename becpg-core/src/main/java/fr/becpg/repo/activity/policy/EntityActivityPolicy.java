@@ -229,7 +229,7 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 				if ((before != null) && (after != null) && (before.size() < after.size())) {
 					MapDifference<QName, Serializable> diff = Maps.difference(before, after);
 					for (QName afterType : diff.entriesOnlyOnRight().keySet()) {
-						if (!FieldBehaviourRegistry.shouldIgnoreActivity(nodeRef, type, afterType) && (after.get(afterType) != null) && (after.get(afterType) != "")
+						if (!FieldBehaviourRegistry.shouldIgnoreActivity(nodeRef, type, afterType, before, after) && (after.get(afterType) != null) && (after.get(afterType) != "")
 								&& !ignoreType(afterType, before, after)) {
 							isDifferent = true;
 
@@ -243,7 +243,7 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 
 				if ((before != null) && (after != null)) {
 					for (QName beforeType : before.keySet()) {
-						if (!FieldBehaviourRegistry.shouldIgnoreActivity(nodeRef, type, beforeType) && !ignoreType(beforeType, before, after)) {
+						if (!FieldBehaviourRegistry.shouldIgnoreActivity(nodeRef, type, beforeType, before, after) && !ignoreType(beforeType, before, after)) {
 
 							if (((before.get(beforeType) == null) && (after.get(beforeType) == null)) || ((before.get(beforeType) != null)
 									&& (after.get(beforeType) != null) && before.get(beforeType).equals(after.get(beforeType)))) {
