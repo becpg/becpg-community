@@ -42,6 +42,7 @@ import fr.becpg.repo.survey.SurveyModel;
 import fr.becpg.repo.survey.data.SurveyListDataItem;
 import fr.becpg.repo.survey.data.SurveyQuestion;
 import fr.becpg.repo.survey.data.SurveyableEntity;
+import fr.becpg.repo.survey.helper.SurveyableEntityHelper;
 import fr.becpg.repo.survey.impl.SurveyServiceImpl.ResponseType;
 
 /**
@@ -72,17 +73,20 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 		if (accept(surveyableEntity)) {
 
 			List<ScoreListDataItem> scoreList = surveyableEntity.getScoreList();
+			
+			final List<SurveyListDataItem> surveyList = SurveyableEntityHelper
+					.getNamesSurveyLists(alfrescoRepository, surveyableEntity).values().stream().flatMap(List::stream)
+					.toList();
 
-			if (alfrescoRepository.hasDataList(surveyableEntity, ProjectModel.TYPE_SCORE_LIST)
-					&& alfrescoRepository.hasDataList(surveyableEntity, SurveyModel.TYPE_SURVEY_LIST)) {
+			if (alfrescoRepository.hasDataList(surveyableEntity, ProjectModel.TYPE_SCORE_LIST)) {
 
 				// If surveyList is empty, we do nothing
-				if (CollectionUtils.isNotEmpty(surveyableEntity.getSurveyList())) {
+				if (CollectionUtils.isNotEmpty(surveyList)) {
 
 					Map<String, Integer> scoresPerCriterion = new HashMap<>();
 					Map<String, Integer> maxScoresPerCriterion = new HashMap<>();
 
-					fillScores(surveyableEntity, scoresPerCriterion, maxScoresPerCriterion);
+					fillScores(surveyList, scoresPerCriterion, maxScoresPerCriterion);
 
 					// For each criterion present in the surveyList, we calculate the score for each criterion in the scoreList. For the criterion that are not
 					// in the surveyList, we do nothing
@@ -127,13 +131,13 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 	}
 
 	/**
-	 * @param surveyableEntity
+	 * @param surveyList
 	 * @param scoresPerCriterion
 	 * @param maxScoresPerCriterion
 	 */
-	private void fillScores(SurveyableEntity surveyableEntity, Map<String, Integer> scoresPerCriterion,
+	private void fillScores(List<SurveyListDataItem> surveyList, Map<String, Integer> scoresPerCriterion,
 			Map<String, Integer> maxScoresPerCriterion) {
-		for (SurveyListDataItem s : surveyableEntity.getSurveyList()) {
+		for (SurveyListDataItem s : surveyList) {
 
 			SurveyQuestion question = (SurveyQuestion) alfrescoRepository.findOne(s.getQuestion());
 
