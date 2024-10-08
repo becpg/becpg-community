@@ -28,6 +28,7 @@ import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.ResourceProductData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.AllergenType;
+import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.ing.IngItem;
@@ -120,60 +121,60 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 			Map<String, ReqCtrlListDataItem> errors = new HashMap<>();
 			Map<String, ReqCtrlListDataItem> rclCtrlMap = new HashMap<>();
 
-			
 			// compoList
 			Double netQty = FormulationHelper.getNetWeight(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
 			if (formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-				
+
 				for (CompoListDataItem compoItem : formulatedProduct.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 
-					NodeRef part = compoItem.getProduct();
+					if (!DeclarationType.Omit.equals(compoItem.getDeclType())) {
 
-					ProductData partProduct = (ProductData) alfrescoRepository.findOne(part);
+						NodeRef part = compoItem.getProduct();
 
-					Double qtyUsed = FormulationHelper.getQtyInKg(compoItem);
+						ProductData partProduct = (ProductData) alfrescoRepository.findOne(part);
 
-					if ((qtyUsed != null) && (qtyUsed > 0)) {
-						if (!(partProduct instanceof LocalSemiFinishedProductData)) {
-							visitPart(compoItem, partProduct, formulatedProduct, retainNodes, qtyUsed, netQty, errors).forEach(error -> {
-								if (!rclCtrlMap.containsKey(error.getKey())) {
-									rclCtrlMap.put(error.getKey(), error);
-								}
-							});
+						Double qtyUsed = FormulationHelper.getQtyInKg(compoItem);
 
-							if ((partProduct.isRawMaterial()) && !SystemState.Valid.equals(partProduct.getState())) {
+						if ((qtyUsed != null) && (qtyUsed > 0)) {
+							if (!(partProduct instanceof LocalSemiFinishedProductData)) {
+								visitPart(compoItem, partProduct, formulatedProduct, retainNodes, qtyUsed, netQty, errors).forEach(error -> {
+									if (!rclCtrlMap.containsKey(error.getKey())) {
+										rclCtrlMap.put(error.getKey(), error);
+									}
+								});
 
-								if ((partProduct.getAllergenList() == null) || partProduct.getAllergenList().isEmpty()
-										|| (partProduct.getAllergenList().get(0).getParentNodeRef() == null)
-										|| !SystemState.Valid.toString().equals(nodeService.getProperty(
-												partProduct.getAllergenList().get(0).getParentNodeRef(), BeCPGModel.PROP_ENTITYLIST_STATE))) {
+								if ((partProduct.isRawMaterial()) && !SystemState.Valid.equals(partProduct.getState())) {
+
+									if ((partProduct.getAllergenList() == null) || partProduct.getAllergenList().isEmpty()
+											|| (partProduct.getAllergenList().get(0).getParentNodeRef() == null)
+											|| !SystemState.Valid.toString().equals(nodeService.getProperty(
+													partProduct.getAllergenList().get(0).getParentNodeRef(), BeCPGModel.PROP_ENTITYLIST_STATE))) {
 
 									String message = I18NUtil.getMessage(MESSAGE_NOT_VALIDATED_ALLERGEN);
 									ReqCtrlListDataItem error = rclCtrlMap.get(message);
 
-									List<NodeRef> sourceNodeRefs = new ArrayList<>();
-									if (error == null) {
-										error = new ReqCtrlListDataItem(null, RequirementType.Tolerated,
-												MLTextHelper.getI18NMessage(MESSAGE_NOT_VALIDATED_ALLERGEN), null, sourceNodeRefs,
-												RequirementDataType.Allergen);
-									} else {
-										sourceNodeRefs = error.getSources();
-									}
+										List<NodeRef> sourceNodeRefs = new ArrayList<>();
+										if (error == null) {
+											error = new ReqCtrlListDataItem(null, RequirementType.Tolerated,
+													MLTextHelper.getI18NMessage(MESSAGE_NOT_VALIDATED_ALLERGEN), null, sourceNodeRefs,
+													RequirementDataType.Allergen);
+										} else {
+											sourceNodeRefs = error.getSources();
+										}
 
 									sourceNodeRefs.add(partProduct.getNodeRef());
 
 									rclCtrlMap.put(message, error);
+									}
+
 								}
-
 							}
-
 						}
 					}
 				}
 
-			} 
-			
-			
+			}
+
 			// process
 			if (formulatedProduct.hasProcessListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 				formulatedProduct.getProcessList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)).forEach(processItem -> {
@@ -184,28 +185,26 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 					}
 				});
 			}
-			
-			
+
 			if (!formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))
 					&& !formulatedProduct.hasProcessListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 				retainNodes.addAll(formulatedProduct.getAllergenList());
-				
+
 				if (!(formulatedProduct instanceof ResourceProductData)) {
 					for (AllergenListDataItem allergenListDataItem : formulatedProduct.getAllergenList()) {
 						allergenListDataItem.setInVoluntary(false);
 						allergenListDataItem.getInVoluntarySources().clear();
 					}
 				}
-				
+
 			} else {
 				for (AllergenListDataItem allergenListDataItem : formulatedProduct.getAllergenList()) {
-					if(Boolean.TRUE.equals(allergenListDataItem.getIsManual())) {
+					if (Boolean.TRUE.equals(allergenListDataItem.getIsManual())) {
 						retainNodes.add(allergenListDataItem);
 					}
 				}
 			}
-			
-		
+
 			formulatedProduct.getAllergenList().retainAll(retainNodes);
 			formulatedProduct.getReqCtrlList().addAll(rclCtrlMap.values());
 
