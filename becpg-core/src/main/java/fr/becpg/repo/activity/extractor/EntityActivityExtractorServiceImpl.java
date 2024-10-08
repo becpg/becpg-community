@@ -192,7 +192,7 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 
 				if ((entityType != null)
 						&& (securityService.computeAccessMode(entityNodeRef, entityType, propertyName) != SecurityService.NONE_ACCESS)
-						&& !FieldBehaviourRegistry.shouldIgnoreActivity(entityNodeRef, entityType, propertyName)) {
+						&& !FieldBehaviourRegistry.shouldIgnoreActivity(entityNodeRef, entityType, propertyName, null, null)) {
 					// Property Title
 					PropertyDefinition propertyDef = entityDictionaryService.getProperty(propertyName);
 					ClassAttributeDefinition propDef = entityDictionaryService.getPropDef(propertyName);
