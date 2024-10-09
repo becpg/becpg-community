@@ -485,6 +485,39 @@
 		</forms>
 	</config>
 	
+	<config evaluator="aspect" condition="bcpg:httpLinkAspect">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="bcpg:httpLink1" />
+					<show id="bcpg:httpLink2" />
+					<show id="bcpg:httpLink3" />
+					<show id="bcpg:httpLink4" />
+					<show id="bcpg:httpLink5" />
+
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:httpLink1"  mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+					</field>
+					<field id="bcpg:httpLink2"  mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+					</field>
+					<field id="bcpg:httpLink3"  mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+					</field>
+					<field id="bcpg:httpLink4"  mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+					</field>
+					<field id="bcpg:httpLink5"  mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	
 	
 	<config evaluator="aspect" condition="bcpg:autoMergeAspect">
 		<forms>

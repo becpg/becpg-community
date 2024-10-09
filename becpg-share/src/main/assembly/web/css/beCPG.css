@@ -409,6 +409,12 @@ img.icon16_11 {
 	  padding: 0px !important;
 }
 
+span.link {
+    background-image: url("../../components/images/link-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+
 span.dynaAccessDenied,
 span.reqTypeForbidden {
     background-image: url("../../components/images/states/error-16.png") !important;
