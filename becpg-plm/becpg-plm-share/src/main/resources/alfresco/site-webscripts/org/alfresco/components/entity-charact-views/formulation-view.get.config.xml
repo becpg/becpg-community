@@ -40,5 +40,7 @@
       <action type="action-link" id="onAddLabelingAspect" permission="edit" label="actions.add-labelingAspect" />
       <action type="action-link" id="onActionSelectColor"  permission="edit" label="actions.select-color" />
       <action type="action-link" id="onActionUploadContent"  permission="content" label="actions.upload-content" />
+      <action type="action-link" id="onActionDeleteContent"  permission="content" label="actions.delete-content" />
+      
    </actionSetDataGrid>
 </formulation-view>
