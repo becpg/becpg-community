@@ -19,6 +19,15 @@
 	</namespaces>
 
 	<constraints>
+		<constraint name="bcpg:httpLink" type="REGEX">
+			<parameter name="expression">
+				<value><![CDATA["([^"]+)":(https?:\/\/[^\s]+)|(?:https?:\/\/[^\s]+)]]></value>
+			</parameter>
+			<parameter name="requiresMatch">
+				<value>true</value>
+			</parameter>
+		</constraint>
+	
 		<constraint name="bcpg:autoNumPrefix" type="REGEX">
 			<parameter name="expression">
 				<value>[A-Z]*</value>
@@ -1289,6 +1298,47 @@
 		
 		<aspect name="bcpg:archivedEntityAspect">
 		</aspect>
+		
+			<aspect name="bcpg:httpLinkAspect">
+			<properties>
+				<property name="bcpg:httpLink1">
+					<type>d:text</type>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="bcpg:httpLink" />
+					</constraints>
+				</property>
+				<property name="bcpg:httpLink2">
+					<type>d:text</type>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="bcpg:httpLink" />
+					</constraints>
+				</property>
+				<property name="bcpg:httpLink3">
+					<type>d:text</type>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="bcpg:httpLink" />
+					</constraints>
+				</property>
+				<property name="bcpg:httpLink4">
+					<type>d:text</type>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="bcpg:httpLink" />
+					</constraints>
+				</property>
+				<property name="bcpg:httpLink5">
+					<type>d:text</type>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="bcpg:httpLink" />
+					</constraints>
+				</property>
+			</properties>
+		</aspect>
+		
 		
 	</aspects>
 </model>

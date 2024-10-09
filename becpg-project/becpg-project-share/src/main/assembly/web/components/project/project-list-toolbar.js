@@ -199,7 +199,6 @@
 					}
 
 				  },
-             
                   onGanttButtonClick : function PTL_onGanttButtonClick(e, p_obj) {
                      document.location.href = Alfresco.util
                            .siteURL("project-list?view=gantt");

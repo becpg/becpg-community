@@ -288,7 +288,7 @@
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:entityV2&amp;formId=create-entity&amp;isEntity=true</param>
 			</content>
 			
-			<content id="externalLink" label="menu.create-content.externalLink" type="pagelink" index="210" icon="link">
+			<content id="externalLink" label="menu.create-content.externalLink" type="pagelink" index="210" icon="externalLink">
                <param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:externalLink</param>
          	</content>
 		</create-content>

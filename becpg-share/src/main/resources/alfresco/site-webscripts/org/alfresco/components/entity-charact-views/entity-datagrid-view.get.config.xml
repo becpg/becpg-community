@@ -21,6 +21,7 @@
       <action type="action-link" id="onActionShowWused" permission="wused" list="!activityList" label="actions.wused" />
       <action type="action-link" id="onActionSelectColor"  permission="edit" label="actions.select-color" />
       <action type="action-link" id="onActionUploadContent"  permission="content" label="actions.upload-content" />
+      <action type="action-link" id="onActionDeleteContent"  permission="content" label="actions.delete-content" />
       <action type="action-link" id="onActionLock"  permission="lock" label="actions.lock" />
    </actionSetDataGrid>
 </datagrid-view>

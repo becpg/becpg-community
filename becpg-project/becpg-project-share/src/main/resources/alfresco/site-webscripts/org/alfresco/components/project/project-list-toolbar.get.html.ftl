@@ -27,6 +27,13 @@
 		   <div id="${el}-headerBar" class="header-bar flat-button theme-bg-2">
 		      <div class="left">   
 		      	 <div id="toolbar-contribs" class="hidden" ></div>
+		      	 <div class="full-screen">
+		            <span id="${el}-full-screen-button" class="yui-button yui-checkbox-button">
+		               <span class="first-child">
+		                  <button name="fullScreen"></button>
+		               </span>
+		            </span>
+		         </div>
 		      	 <#if view == "dataTable">
 		      	 <div id="${el}-simpleDetailed" class="align-right simple-detailed yui-buttongroup inline">
 			            <span class="yui-button yui-radio-button simple-view<#if prefSimpleView> yui-button-checked yui-radio-button-checked</#if>">
@@ -41,13 +48,6 @@
 			            </span>
 			       </div>	  
 			   </#if>
-				  <div class="full-screen">
-		            <span id="${el}-full-screen-button" class="yui-button yui-checkbox-button">
-		               <span class="first-child">
-		                  <button name="fullScreen"></button>
-		               </span>
-		            </span>
-		         </div>
 		      </div>
 		      <div class="right">
 		         <div class="show-planning">
