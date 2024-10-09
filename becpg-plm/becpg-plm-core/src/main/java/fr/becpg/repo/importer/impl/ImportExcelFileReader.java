@@ -35,6 +35,7 @@ public class ImportExcelFileReader implements ImportFileReader {
 
 	private XSSFWorkbook workbook;
 	private XSSFSheet sheet;
+	private XSSFCellStyle errorCellStyle;
 
 	private PropertyFormats propertyFormats;
 
@@ -51,6 +52,10 @@ public class ImportExcelFileReader implements ImportFileReader {
 			sheet = workbook.getSheetAt(workbook.getNumberOfSheets() - 1);
 		}
 		this.propertyFormats = propertyFormats;
+		
+		errorCellStyle = workbook.createCellStyle();
+		errorCellStyle.setFillForegroundColor(ExcelHelper.createRedColor());
+		errorCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 	}
 
 	/** {@inheritDoc} */
@@ -144,19 +149,13 @@ public class ImportExcelFileReader implements ImportFileReader {
 		if (sheet != null && importIndex < sheet.getLastRowNum() + 1) {
 			Row row = sheet.getRow(importIndex);
 			if (row != null) {
-				XSSFCellStyle style = workbook.createCellStyle();
-			
-
-				style.setFillForegroundColor(ExcelHelper.createRedColor());
-				style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-
 				Cell cell = row.createCell(columnIdx + 1);
 				cell.setCellValue(errorMsg);
 
 				for (int i = 0; i < row.getLastCellNum(); i++) {
 					cell = row.getCell(i);
 					if (cell != null) {
-						cell.setCellStyle(style);
+						cell.setCellStyle(errorCellStyle);
 					}
 				}
 			}
