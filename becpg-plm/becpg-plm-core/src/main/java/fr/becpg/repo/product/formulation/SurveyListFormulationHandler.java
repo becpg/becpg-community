@@ -1,14 +1,11 @@
 package fr.becpg.repo.product.formulation;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
@@ -29,6 +26,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.survey.SurveyModel;
 import fr.becpg.repo.survey.data.SurveyListDataItem;
 import fr.becpg.repo.survey.data.SurveyQuestion;
+import fr.becpg.repo.survey.helper.SurveyableEntityHelper;
 
 /**
  * <p>
@@ -41,20 +39,6 @@ import fr.becpg.repo.survey.data.SurveyQuestion;
 public class SurveyListFormulationHandler extends FormulationBaseHandler<ProductData> {
 
 	private static final Log logger = LogFactory.getLog(SurveyListFormulationHandler.class);
-
-	private static final byte NB_OF_SURVEY_LISTS = 4;
-	
-	private static final String SURVEY_LIST_BASE_NAME = SurveyModel.TYPE_SURVEY_LIST.getLocalName();
-	
-	public static final List<String> SURVEY_LIST_NAMES;
-	
-	static {
-		final List<String> surveyListNames = new ArrayList<>(NB_OF_SURVEY_LISTS);
-		for (byte i = 0; i < NB_OF_SURVEY_LISTS; ++i) {
-			surveyListNames.add(SURVEY_LIST_BASE_NAME + (i == 0 ? "" : "@" + i));
-		}
-		SURVEY_LIST_NAMES = Collections.unmodifiableList(surveyListNames);
-	}
 
 	private NamespaceService namespaceService;
 
@@ -115,18 +99,6 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Product
 				|| surveyQuestion.getFsLinkedTypes().stream().map(typeName -> qNameCache.computeIfAbsent(typeName,
 						__ -> QName.createQName(typeName, namespaceService))).anyMatch(qName::equals);
 		final Set<SurveyQuestion> surveyQuestions = new HashSet<>();
-		final Map<String, List<SurveyListDataItem>> namesSurveyLists = new HashMap<>(NB_OF_SURVEY_LISTS, 1);
-		// is the formulation launched from a unit test ?
-		final boolean transientEntity = formulatedProduct.getNodeRef() == null;
-		for (final String surveyListName : SURVEY_LIST_NAMES) {
-			namesSurveyLists.put(surveyListName, (SURVEY_LIST_BASE_NAME.equals(surveyListName)
-					? formulatedProduct.getSurveyList()
-					: alfrescoRepository.loadDataList(formulatedProduct.getNodeRef(), surveyListName, SurveyModel.TYPE_SURVEY_LIST)
-							.stream().map(SurveyListDataItem.class::cast)
-							.collect(Collectors.toCollection(ArrayList::new))));
-			// if we're in a test context we only add the default survey list to the map
-			if (transientEntity) break;
-		}
 		logger.debug("SurveyQuestionFormulationHandler::process() <- " + formulatedProduct.getNodeRef());
 		for (final NodeRef nodeRef : packMaterialListCharactNodeRefs) {
 			for (final NodeRef surveyQuestionNodeRef : associationService.getSourcesAssocs(nodeRef,
@@ -156,6 +128,7 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Product
 				}
 			}
 		}
+		final Map<String, List<SurveyListDataItem>> namesSurveyLists = SurveyableEntityHelper.getNamesSurveyLists(alfrescoRepository, formulatedProduct);
 		for (final SurveyQuestion surveyQuestion : surveyQuestions) {
 			final NodeRef surveyQuestionNodeRef = surveyQuestion.getNodeRef();
 			final String fsSurveyListName = surveyQuestion.getFsSurveyListName();
@@ -169,10 +142,10 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Product
 			}
 		}
 		// if we're not in a test context we apply the update of the additional survey lists to the repository
-		if (!transientEntity) {
+		if (!SurveyableEntityHelper.isTransient(formulatedProduct)) {
 			final NodeRef dataListContainerNodeRef = alfrescoRepository.getOrCreateDataListContainer(formulatedProduct);
 			namesSurveyLists.entrySet().stream()
-					.filter(nameSurveyLists -> !SURVEY_LIST_BASE_NAME.equals(nameSurveyLists.getKey()))
+					.filter(nameSurveyLists -> !SurveyableEntityHelper.isDefault(nameSurveyLists.getKey()))
 					.forEach(nameSurveyLists -> alfrescoRepository.saveDataList(dataListContainerNodeRef,
 							SurveyModel.TYPE_SURVEY_LIST, nameSurveyLists.getKey(), nameSurveyLists.getValue()));
 		}
