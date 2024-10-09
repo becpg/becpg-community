@@ -1,6 +1,6 @@
 package fr.becpg.test.repo.product.formulation;
 
-import static fr.becpg.repo.product.formulation.SurveyListFormulationHandler.SURVEY_LIST_NAMES;
+import static fr.becpg.repo.survey.helper.SurveyableEntityHelper.SURVEY_LIST_NAMES;
 
 import java.io.Serializable;
 import java.util.Arrays;
