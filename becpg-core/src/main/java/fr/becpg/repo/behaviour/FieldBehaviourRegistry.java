@@ -1,8 +1,10 @@
 package fr.becpg.repo.behaviour;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
@@ -11,9 +13,9 @@ public class FieldBehaviourRegistry {
 	
 	private static final List<FieldBehaviour> behaviours = new ArrayList<>();
 	
-	public static boolean shouldIgnoreActivity(NodeRef nodeRef, QName type, QName field) {
+	public static boolean shouldIgnoreActivity(NodeRef nodeRef, QName type, QName field, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 		for (FieldBehaviour behaviour : behaviours) {
-			if (behaviour.shouldIgnoreActivity(nodeRef, type, field)) {
+			if (behaviour.shouldIgnoreActivity(nodeRef, type, field, before, after)) {
 				return true;
 			}
 		}
@@ -37,7 +39,7 @@ public class FieldBehaviourRegistry {
 		List<QName> fieldsList = Arrays.asList(fields);
 		registerFieldBehaviour(new FieldBehaviour() {
 			@Override
-			public boolean shouldIgnoreActivity(NodeRef nodeRef, QName type, QName field) {
+			public boolean shouldIgnoreActivity(NodeRef nodeRef, QName type, QName field, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 				return fieldsList.contains(field);
 			}
 		});
@@ -54,7 +56,7 @@ public class FieldBehaviourRegistry {
 	}
 	
 	public interface FieldBehaviour {
-		default boolean shouldIgnoreActivity(NodeRef nodeRef, QName type, QName field) {
+		default boolean shouldIgnoreActivity(NodeRef nodeRef, QName type, QName field, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 			return false;
 		}
 		default boolean shouldIgnoreAudit(NodeRef nodeRef, QName field) {
