@@ -12,7 +12,7 @@
 		<!-- Import Alfresco Content Domain Model Definitions -->
 		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
 		<import uri="http://www.bcpg.fr/model/report/1.0" prefix="rep" />
-		
+
 	</imports>
 	<!-- Introduction of new namespaces defined by this model -->
 	<namespaces>
@@ -20,6 +20,16 @@
 	</namespaces>
 
 	<constraints>
+
+		<constraint name="bcpg:httpLink" type="REGEX">
+			<parameter name="expression">
+				<value><![CDATA["([^"]+)":(https?:\/\/[^\s]+)|(?:https?:\/\/[^\s]+)]]></value>
+			</parameter>
+			<parameter name="requiresMatch">
+				<value>true</value>
+			</parameter>
+		</constraint>
+
 		<constraint name="bcpg:autoNumPrefix" type="REGEX">
 			<parameter name="expression">
 				<value>[A-Z]*</value>
@@ -324,10 +334,10 @@
 		</constraint>
 
 
-        <constraint name="bcpg:nutListRequirementTypes" type="LIST">
+		<constraint name="bcpg:nutListRequirementTypes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
-				    <value></value>
+					<value></value>
 					<value>Serving</value>
 					<value>GdaPerc</value>
 					<value>AsPrepared</value>
@@ -336,12 +346,12 @@
 		</constraint>
 
 
-      <constraint name="bcpg:filQtyPercTypes" type="LIST">
+		<constraint name="bcpg:filQtyPercTypes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
-				    <value></value>
-				    <value>QtyPercWithYield</value>
-				    <value>QtyPercWithSecondaryYield</value>
+					<value></value>
+					<value>QtyPercWithYield</value>
+					<value>QtyPercWithSecondaryYield</value>
 					<value>QtyPerc1</value>
 					<value>QtyPerc2</value>
 					<value>QtyPerc3</value>
@@ -634,7 +644,7 @@
 				</list>
 			</parameter>
 		</constraint>
-		
+
 		<constraint name="bcpg:toxTypesConstraint" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -926,10 +936,10 @@
 				<value>bcpg:lvValue</value>
 			</parameter>
 			<parameter name="addEmptyValue">
-                <value>true</value>
-            </parameter>
+				<value>true</value>
+			</parameter>
 		</constraint>
-		
+
 		<constraint name="bcpg:glopTargetTasks" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -3166,7 +3176,7 @@
 					</constraints>
 				</property>
 				<property name="bcpg:filQtyPercType">
-				   <type>d:text</type>
+					<type>d:text</type>
 					<index enabled="true">
 						<tokenised>false</tokenised>
 						<facetable>false</facetable>
@@ -3193,7 +3203,7 @@
 				</property>
 				<property name="bcpg:filIngLevel">
 					<type>d:int</type>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 			</properties>
 			<associations>
@@ -3551,8 +3561,8 @@
 
 			</properties>
 		</type>
-		
-		
+
+
 		<type name="bcpg:svhcList">
 			<parent>bcpg:productListItem</parent>
 			<properties>
@@ -3974,7 +3984,7 @@
 				<aspect>bcpg:regulatoryAspect</aspect>
 			</mandatory-aspects>
 		</type>
-		
+
 		<type name="bcpg:toxList">
 			<parent>bcpg:entityListItem</parent>
 			<properties>
@@ -4183,7 +4193,7 @@
 					<index enabled="false" />
 				</property>
 			</properties>
-	
+
 		</aspect>
 
 		<aspect name="bcpg:svhcAspect">
@@ -4455,7 +4465,7 @@
 		<aspect name="bcpg:diluentAspect"></aspect>
 
 		<aspect name="bcpg:waterAspect"></aspect>
-		
+
 		<aspect name="bcpg:evaporableAspect">
 			<properties>
 				<property name="bcpg:evaporatedRate">
@@ -4924,8 +4934,8 @@
 						<facetable>true</facetable>
 					</index>
 				</property>
-				
-				
+
+
 				<property name="bcpg:servingSizeByCountry">
 					<type>d:mltext</type>
 					<index enabled="false" />
@@ -4963,26 +4973,26 @@
 						<constraint ref="bcpg:nutrientPreparationStates" />
 					</constraints>
 				</property>
-				
+
 				<property name="bcpg:nutrientPreparationReconstituantQty">
 					<type>d:double</type>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
-								
+
 				<property name="bcpg:nutrientPreparationQty">
 					<type>d:double</type>
-					<index enabled="false"/>
-				</property>				
-								
-								
+					<index enabled="false" />
+				</property>
+
+
 				<property name="bcpg:nutrientReferenceProducts">
 					<type>d:mltext</type>
 					<index enabled="true">
 						<tokenised>both</tokenised>
 						<facetable>false</facetable>
 					</index>
-				</property>			
-								
+				</property>
+
 				<property name="bcpg:nutrientPreparedUnit">
 					<type>d:text</type>
 					<default>g</default>
@@ -5726,7 +5736,7 @@
 				</property>
 			</properties>
 		</aspect>
-		
+
 
 		<aspect name="bcpg:nutListPreparedAspect">
 			<properties>
@@ -5746,7 +5756,7 @@
 						<constraint ref="bcpg:nutListUnit" />
 					</constraints>
 				</property>
-			    <property name="bcpg:nutListRoundedValuePrepared">
+				<property name="bcpg:nutListRoundedValuePrepared">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="false" />
@@ -5886,7 +5896,7 @@
 				</property>
 			</properties>
 		</aspect>
-		
+
 		<aspect name="bcpg:userAuthenticationAspect">
 			<properties>
 				<property name="bcpg:isSsoUser">
@@ -5896,7 +5906,7 @@
 				</property>
 			</properties>
 		</aspect>
-		
+
 		<aspect name="bcpg:userNotificationAspect">
 			<properties>
 				<property name="bcpg:emailTaskResourceDisabled">
@@ -6262,7 +6272,7 @@
 				</property>
 			</properties>
 		</aspect>
-		
+
 		<aspect name="bcpg:glopProductAspect">
 			<properties>
 				<property name="bcpg:glopTargetTask">
@@ -6432,7 +6442,7 @@
 				</association>
 			</associations>
 		</aspect>
-		
+
 		<aspect name="bcpg:ingToxAspect">
 			<properties>
 				<property name="bcpg:ingToxData">
@@ -6443,40 +6453,80 @@
 				<property name="bcpg:ingToxPodSystemic">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:ingToxDermalAbsorption">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:ingToxMosMoe">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:ingToxMaxSkinIrritation">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:ingToxMaxSensitization">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:ingToxMaxOcularIrritation">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:ingToxMaxPhototoxic">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 			</properties>
 		</aspect>
-		
+
+		<aspect name="bcpg:httpLinkAspect">
+			<properties>
+				<property name="bcpg:httpLink1">
+					<type>d:text</type>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="bcpg:httpLink" />
+					</constraints>
+				</property>
+				<property name="bcpg:httpLink2">
+					<type>d:text</type>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="bcpg:httpLink" />
+					</constraints>
+				</property>
+				<property name="bcpg:httpLink3">
+					<type>d:text</type>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="bcpg:httpLink" />
+					</constraints>
+				</property>
+				<property name="bcpg:httpLink4">
+					<type>d:text</type>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="bcpg:httpLink" />
+					</constraints>
+				</property>
+				<property name="bcpg:httpLink5">
+					<type>d:text</type>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="bcpg:httpLink" />
+					</constraints>
+				</property>
+			</properties>
+		</aspect>
+
 	</aspects>
 </model>
