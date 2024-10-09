@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
@@ -58,7 +59,7 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 	@Override
 	public void doInit() {
 		
-		List<QName> ignoredAuditFields = List.of(PublicationModel.PROP_PUBCHANNEL_BATCHSTARTTIME, PublicationModel.PROP_PUBCHANNEL_BATCHENDTIME,
+		FieldBehaviourRegistry.registerIgnoredAuditFields(PublicationModel.PROP_PUBCHANNEL_BATCHSTARTTIME, PublicationModel.PROP_PUBCHANNEL_BATCHENDTIME,
 				PublicationModel.PROP_PUBCHANNEL_BATCHDURATION, PublicationModel.PROP_PUBCHANNEL_BATCHID, PublicationModel.PROP_PUBCHANNEL_FAILCOUNT,
 				PublicationModel.PROP_PUBCHANNEL_READCOUNT, PublicationModel.PROP_PUBCHANNEL_ERROR,
 				PublicationModel.PROP_PUBCHANNEL_LASTSUCCESSBATCHID, PublicationModel.PROP_PUBCHANNEL_STATUS,
@@ -67,33 +68,45 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 		
 		FieldBehaviourRegistry.registerFieldBehaviour(new FieldBehaviour() {
 			@Override
-			public boolean shouldIgnoreActivity(NodeRef nodeRef, QName type, QName field) {
-				if (PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST.equals(type)) {
-					if (!shouldIgnoreAudit(nodeRef, field)) {
-						return false;
-					}
-					NodeRef channelNodeRef = associationService.getTargetAssoc(nodeRef, PublicationModel.ASSOC_PUBCHANNELLIST_CHANNEL);
-					Boolean registerChannelListActivity = beCPGCacheService.getFromCache(CACHE_KEY, channelNodeRef.toString(), () -> {
-						String config = (String) nodeService.getProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_CONFIG);
-						if (config != null && !config.isBlank()) {
-							JSONObject configJson = new JSONObject(config);
-							if (configJson.has("registerChannelListActivity")) {
-								return Boolean.TRUE.toString().equals(configJson.get("registerChannelListActivity").toString());
+			public boolean shouldIgnoreActivity(NodeRef nodeRef, QName type, QName field, Map<QName, Serializable> before,
+					Map<QName, Serializable> after) {
+				if (before != null && after != null) {
+					if (PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST.equals(type)) {
+						if (after.get(PublicationModel.PROP_PUBCHANNELLIST_BATCHID) != null
+								&& (before.get(PublicationModel.PROP_PUBCHANNELLIST_BATCHID) == null
+								|| !before.get(PublicationModel.PROP_PUBCHANNELLIST_BATCHID)
+								.equals(after.get(PublicationModel.PROP_PUBCHANNELLIST_BATCHID)))) {
+							NodeRef channelNodeRef = associationService.getTargetAssoc(nodeRef, PublicationModel.ASSOC_PUBCHANNELLIST_CHANNEL);
+							Boolean registerChannelListActivity = getRegisterConnectorChannelActivity(channelNodeRef);
+							if (registerChannelListActivity != null) {
+								return !registerChannelListActivity;
 							}
+							return !Boolean.TRUE.toString().equals(systemConfigurationService.confValue("beCPG.connector.channel.register.activity"));
 						}
-						return null;
-					});
-					if (registerChannelListActivity != null) {
-						return !registerChannelListActivity;
+					} else if (PublicationModel.TYPE_PUBLICATION_CHANNEL.equals(type) && (after.get(PublicationModel.PROP_PUBCHANNEL_BATCHID) != null
+							&& (before.get(PublicationModel.PROP_PUBCHANNEL_BATCHID) == null || !before.get(PublicationModel.PROP_PUBCHANNEL_BATCHID)
+							.equals(after.get(PublicationModel.PROP_PUBCHANNEL_BATCHID))))) {
+						Boolean registerChannelListActivity = getRegisterConnectorChannelActivity(nodeRef);
+						if (registerChannelListActivity != null) {
+							return !registerChannelListActivity;
+						}
+						return !Boolean.TRUE.toString().equals(systemConfigurationService.confValue("beCPG.connector.channel.register.activity"));
 					}
-					return !Boolean.TRUE.toString().equals(systemConfigurationService.confValue("beCPG.channel.list.register.activity"));
 				}
 				return false;
 			}
-			
-			@Override
-			public boolean shouldIgnoreAudit(NodeRef nodeRef, QName field) {
-				return ignoredAuditFields.contains(field);
+
+			private Boolean getRegisterConnectorChannelActivity(NodeRef channelNodeRef) {
+				return beCPGCacheService.getFromCache(CACHE_KEY, channelNodeRef.toString(), () -> {
+					String config = (String) nodeService.getProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_CONFIG);
+					if (config != null && !config.isBlank()) {
+						JSONObject configJson = new JSONObject(config);
+						if (configJson.has("registerConnectorChannelActivity")) {
+							return Boolean.TRUE.toString().equals(configJson.get("registerConnectorChannelActivity").toString());
+						}
+					}
+					return null;
+				});
 			}
 		});
 		
