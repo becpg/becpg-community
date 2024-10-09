@@ -165,7 +165,7 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 		if (entityTplNodeRef == null) {
 			NodeRef scriptFolderNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(), XPATH_DICTIONARY_SCRIPTS);
 
-			List<NodeRef> scriptResources = contentHelper.addFilesResources(scriptFolderNodeRef, "classpath*:beCPG/scripts/project/*.js");
+			List<NodeRef> scriptResources = contentHelper.addFilesResources(scriptFolderNodeRef, "classpath*:beCPG/script/project/*.js");
 			
 			Set<QName> dataLists = new LinkedHashSet<>();
 			dataLists.add(ProjectModel.TYPE_TASK_LIST);
