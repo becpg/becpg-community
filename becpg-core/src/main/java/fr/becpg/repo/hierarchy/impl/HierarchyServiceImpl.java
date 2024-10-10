@@ -251,7 +251,7 @@ public class HierarchyServiceImpl implements HierarchyService {
 						logger.warn("Failed to classify entity. entityNodeRef: " + entityNodeRef + " cannot classify into itselfs");
 					}
 				} else {
-					logger.warn("Failed to classify entity. entityNodeRef: " + entityNodeRef);
+					logger.warn("Failed to classify entity. entityNodeRef: " + entityNodeRef +", destinationNodeRef: "+destinationNodeRef+", hierarchyQname: "+hierarchyQname);
 				}
 
 				return false;
