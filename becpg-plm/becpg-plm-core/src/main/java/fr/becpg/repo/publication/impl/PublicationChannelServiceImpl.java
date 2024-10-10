@@ -18,12 +18,14 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO8601DateFormat;
+import org.alfresco.util.Pair;
 import org.json.JSONObject;
 
 import fr.becpg.model.DataListModel;
 import fr.becpg.model.PublicationModel;
-import fr.becpg.repo.behaviour.FieldBehaviourRegistry;
-import fr.becpg.repo.behaviour.FieldBehaviourRegistry.FieldBehaviour;
+import fr.becpg.repo.behaviour.BehaviourRegistry;
+import fr.becpg.repo.behaviour.BehaviourRegistry.ActivityBehaviour;
+import fr.becpg.repo.behaviour.BehaviourRegistry.AuditBehaviour;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.catalog.EntityCatalogObserver;
@@ -33,6 +35,7 @@ import fr.becpg.repo.publication.PublicationChannelService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.search.data.SearchRuleFilter;
 import fr.becpg.repo.system.SystemConfigurationService;
+import jakarta.annotation.Nullable;
 
 /**
  * <p>PublicationChannelServiceImpl class.</p>
@@ -59,23 +62,22 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 	@Override
 	public void doInit() {
 		
-		FieldBehaviourRegistry.registerIgnoredAuditFields(PublicationModel.PROP_PUBCHANNEL_BATCHSTARTTIME, PublicationModel.PROP_PUBCHANNEL_BATCHENDTIME,
+		BehaviourRegistry.registerAuditBehaviour(new AuditBehaviour(PublicationModel.PROP_PUBCHANNEL_BATCHSTARTTIME, PublicationModel.PROP_PUBCHANNEL_BATCHENDTIME,
 				PublicationModel.PROP_PUBCHANNEL_BATCHDURATION, PublicationModel.PROP_PUBCHANNEL_BATCHID, PublicationModel.PROP_PUBCHANNEL_FAILCOUNT,
 				PublicationModel.PROP_PUBCHANNEL_READCOUNT, PublicationModel.PROP_PUBCHANNEL_ERROR,
 				PublicationModel.PROP_PUBCHANNEL_LASTSUCCESSBATCHID, PublicationModel.PROP_PUBCHANNEL_STATUS,
 				PublicationModel.PROP_PUBCHANNELLIST_PUBLISHEDDATE, PublicationModel.PROP_PUBCHANNELLIST_BATCHID,
-				PublicationModel.PROP_PUBCHANNELLIST_STATUS, PublicationModel.PROP_PUBCHANNELLIST_ERROR);
+				PublicationModel.PROP_PUBCHANNELLIST_STATUS, PublicationModel.PROP_PUBCHANNELLIST_ERROR));
 		
-		FieldBehaviourRegistry.registerFieldBehaviour(new FieldBehaviour() {
+		BehaviourRegistry.registerActivityBehaviour(new ActivityBehaviour() {
 			@Override
-			public boolean shouldIgnoreActivity(NodeRef nodeRef, QName type, QName field, Map<QName, Serializable> before,
-					Map<QName, Serializable> after) {
-				if (before != null && after != null) {
+			public boolean shouldIgnoreActivity(NodeRef nodeRef, QName type, Map<QName, Pair<Serializable, Serializable>> updatedFields) {
+				if (updatedFields != null) {
 					if (PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST.equals(type)) {
-						if (after.get(PublicationModel.PROP_PUBCHANNELLIST_BATCHID) != null
-								&& (before.get(PublicationModel.PROP_PUBCHANNELLIST_BATCHID) == null
-								|| !before.get(PublicationModel.PROP_PUBCHANNELLIST_BATCHID)
-								.equals(after.get(PublicationModel.PROP_PUBCHANNELLIST_BATCHID)))) {
+						if (updatedFields.get(PublicationModel.PROP_PUBCHANNELLIST_BATCHID) != null
+								&& (updatedFields.get(PublicationModel.PROP_PUBCHANNELLIST_BATCHID).getFirst() == null
+								|| !updatedFields.get(PublicationModel.PROP_PUBCHANNELLIST_BATCHID).getFirst()
+								.equals(updatedFields.get(PublicationModel.PROP_PUBCHANNELLIST_BATCHID).getSecond()))) {
 							NodeRef channelNodeRef = associationService.getTargetAssoc(nodeRef, PublicationModel.ASSOC_PUBCHANNELLIST_CHANNEL);
 							Boolean registerChannelListActivity = getRegisterConnectorChannelActivity(channelNodeRef);
 							if (registerChannelListActivity != null) {
@@ -83,9 +85,10 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 							}
 							return !Boolean.TRUE.toString().equals(systemConfigurationService.confValue("beCPG.connector.channel.register.activity"));
 						}
-					} else if (PublicationModel.TYPE_PUBLICATION_CHANNEL.equals(type) && (after.get(PublicationModel.PROP_PUBCHANNEL_BATCHID) != null
-							&& (before.get(PublicationModel.PROP_PUBCHANNEL_BATCHID) == null || !before.get(PublicationModel.PROP_PUBCHANNEL_BATCHID)
-							.equals(after.get(PublicationModel.PROP_PUBCHANNEL_BATCHID))))) {
+					} else if (PublicationModel.TYPE_PUBLICATION_CHANNEL.equals(type) && (updatedFields.get(PublicationModel.PROP_PUBCHANNEL_BATCHID) != null
+							&& (updatedFields.get(PublicationModel.PROP_PUBCHANNEL_BATCHID).getFirst() == null
+							|| !updatedFields.get(PublicationModel.PROP_PUBCHANNEL_BATCHID).getFirst()
+							.equals(updatedFields.get(PublicationModel.PROP_PUBCHANNEL_BATCHID).getSecond())))) {
 						Boolean registerChannelListActivity = getRegisterConnectorChannelActivity(nodeRef);
 						if (registerChannelListActivity != null) {
 							return !registerChannelListActivity;
@@ -95,18 +98,22 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 				}
 				return false;
 			}
-
+			
+			@Nullable
 			private Boolean getRegisterConnectorChannelActivity(NodeRef channelNodeRef) {
-				return beCPGCacheService.getFromCache(CACHE_KEY, channelNodeRef.toString(), () -> {
-					String config = (String) nodeService.getProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_CONFIG);
-					if (config != null && !config.isBlank()) {
-						JSONObject configJson = new JSONObject(config);
-						if (configJson.has("registerConnectorChannelActivity")) {
-							return Boolean.TRUE.toString().equals(configJson.get("registerConnectorChannelActivity").toString());
+				if (channelNodeRef != null) {
+					return beCPGCacheService.getFromCache(CACHE_KEY, channelNodeRef.toString(), () -> {
+						String config = (String) nodeService.getProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_CONFIG);
+						if (config != null && !config.isBlank()) {
+							JSONObject configJson = new JSONObject(config);
+							if (configJson.has("registerConnectorChannelActivity")) {
+								return Boolean.TRUE.toString().equals(configJson.get("registerConnectorChannelActivity").toString());
+							}
 						}
-					}
-					return null;
-				});
+						return null;
+					});
+				}
+				return null;
 			}
 		});
 		

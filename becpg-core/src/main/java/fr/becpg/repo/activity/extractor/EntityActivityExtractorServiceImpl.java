@@ -35,7 +35,7 @@ import fr.becpg.repo.activity.EntityActivityExtractorService;
 import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.activity.data.ActivityType;
 import fr.becpg.repo.audit.plugin.impl.ActivityAuditPlugin;
-import fr.becpg.repo.behaviour.FieldBehaviourRegistry;
+import fr.becpg.repo.behaviour.BehaviourRegistry;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.datalist.impl.AbstractDataListExtractor;
 import fr.becpg.repo.helper.AttributeExtractorService;
@@ -192,7 +192,7 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 
 				if ((entityType != null)
 						&& (securityService.computeAccessMode(entityNodeRef, entityType, propertyName) != SecurityService.NONE_ACCESS)
-						&& !FieldBehaviourRegistry.shouldIgnoreActivity(entityNodeRef, entityType, propertyName, null, null)) {
+						&& !BehaviourRegistry.shouldIgnoreActivityField(propertyName)) {
 					// Property Title
 					PropertyDefinition propertyDef = entityDictionaryService.getProperty(propertyName);
 					ClassAttributeDefinition propDef = entityDictionaryService.getPropDef(propertyName);

@@ -27,7 +27,7 @@ import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.behaviour.FieldBehaviourRegistry;
+import fr.becpg.repo.behaviour.BehaviourRegistry;
 import fr.becpg.repo.entity.catalog.EntityCatalogService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
@@ -218,7 +218,7 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 				changedEntries.addAll(diff.entriesOnlyOnLeft().keySet());
 				changedEntries.addAll(diff.entriesOnlyOnRight().keySet());
 				
-				boolean shouldIgnoreAudit = changedEntries.stream().anyMatch(f -> FieldBehaviourRegistry.shouldIgnoreAudit(nodeRef, f));
+				boolean shouldIgnoreAudit = changedEntries.stream().anyMatch(BehaviourRegistry::shouldIgnoreAuditField);
 				
 				if (!shouldIgnoreAudit) {
 					queueListNodeRef(nodeService.getPrimaryParent(nodeRef).getParentRef());
