@@ -619,22 +619,28 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 		
 		if (dataListType.equals(PLMModel.TYPE_COMPOLIST)) {
 			var compoListItem = (CompoListDataItem) alfrescoRepository.findOne(nodeRef);
-			item = compoListItem;
-			productData = (ProductData) alfrescoRepository.findOne(compoListItem.getComponent());
-			levelQuantities1 = new CurrentLevelQuantities(alfrescoRepository, packagingHelper, productData, compoListItem);
-			totalQty[position] += levelQuantities1.getQtyForProduct() * 1000;
+			if (compoListItem != null && compoListItem.getComponent() != null) {
+				item = compoListItem;
+				productData = (ProductData) alfrescoRepository.findOne(compoListItem.getComponent());
+				levelQuantities1 = new CurrentLevelQuantities(alfrescoRepository, packagingHelper, productData, compoListItem);
+				totalQty[position] += levelQuantities1.getQtyForProduct() * 1000;
+			}
 		} else if (dataListType.equals(PLMModel.TYPE_PACKAGINGLIST)) {
 			var pakagingListItem = (PackagingListDataItem) alfrescoRepository.findOne(nodeRef);
-			item = pakagingListItem;
-			productData = (ProductData) alfrescoRepository.findOne(pakagingListItem.getComponent());
-			levelQuantities1 = new CurrentLevelQuantities(alfrescoRepository, productData, pakagingListItem);
-			totalQty[position] += levelQuantities1.getQtyForProduct();
+			if (pakagingListItem != null && pakagingListItem.getComponent() != null) {
+				item = pakagingListItem;
+				productData = (ProductData) alfrescoRepository.findOne(pakagingListItem.getComponent());
+				levelQuantities1 = new CurrentLevelQuantities(alfrescoRepository, productData, pakagingListItem);
+				totalQty[position] += levelQuantities1.getQtyForProduct();
+			}
 		} else if (dataListType.equals(MPMModel.TYPE_PROCESSLIST)) {
 			var processListItem = (ProcessListDataItem) alfrescoRepository.findOne(nodeRef);
-			item = processListItem;
-			productData = (ProductData) alfrescoRepository.findOne(processListItem.getComponent());
-			levelQuantities1 = new CurrentLevelQuantities(nodeService, alfrescoRepository, productData, processListItem);
-			totalQty[position] += levelQuantities1.getQtyForProduct();
+			if (processListItem != null && processListItem.getComponent() != null) {
+				item = processListItem;
+				productData = (ProductData) alfrescoRepository.findOne(processListItem.getComponent());
+				levelQuantities1 = new CurrentLevelQuantities(nodeService, alfrescoRepository, productData, processListItem);
+				totalQty[position] += levelQuantities1.getQtyForProduct();
+			}
 		}
 
 		if ((item != null) && (productData != null)) {
