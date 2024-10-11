@@ -51,6 +51,7 @@ import org.springframework.stereotype.Service;
 import fr.becpg.config.mapping.MappingException;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.batch.BatchClosingHook;
 import fr.becpg.repo.batch.BatchInfo;
 import fr.becpg.repo.batch.BatchPriority;
 import fr.becpg.repo.batch.BatchQueueService;
@@ -262,21 +263,24 @@ public class ImportServiceImpl implements ImportService {
 		
 		batchStep.setWorkProvider(new EntityListBatchProcessWorkProvider<>(indexEntries));
 		
-		batchQueueService.queueBatch(batchInfo, List.of(batchStep));
+		BatchClosingHook closingHook = () -> {
+			if ((!importContext.getLog().isEmpty()) && (importContext.getImportFileReader() instanceof ImportExcelFileReader)) {
+				
+				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+					ruleService.disableRules();
+					try {
+						
+						importContext.getImportFileReader().writeErrorInFile(contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true));
+						return importContext;
+					} finally {
+						ruleService.enableRules();
+					}
+				}, false, requiresNewTransaction);
+			}
+		};
 		
-		if ((!importContext.getLog().isEmpty()) && (importContext.getImportFileReader() instanceof ImportExcelFileReader)) {
-
-			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-				ruleService.disableRules();
-				try {
-
-					importContext.getImportFileReader().writeErrorInFile(contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true));
-					return importContext;
-				} finally {
-					ruleService.enableRules();
-				}
-			}, false, requiresNewTransaction);
-		}
+		batchQueueService.queueBatch(batchInfo, List.of(batchStep), closingHook);
+		
 		
 		return batchInfo;
 	}
