@@ -170,7 +170,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		BeCPGQueryBuilder beCPGQueryBuilder = BeCPGQueryBuilder.createQuery();
 		// Simple keyword search and tag specific search
 		if ((term != null) && (term.length() != 0)) {
-			beCPGQueryBuilder.andFTSQuery(cleanValue(term));
+			beCPGQueryBuilder.andFTSQuery(cleanFTSQuery(term));
 		} else if ((tag != null) && (tag.length() != 0)) {
 			beCPGQueryBuilder.andFTSQuery("TAG:\"" + tag + "\"");
 		}
@@ -369,13 +369,18 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 	}
 
+
+	private String cleanFTSQuery(String query) {
+		return query.replace("#", "");
+	}
+	
 	private String cleanValue(String propValue) {
 		String cleanQuery = propValue.replace(".", "").replace("#", "");
-
+		
 		if (cleanQuery.contains("\",\"")) {
 			cleanQuery = cleanQuery.replace("\",\"", "\" OR \"");
 		}
-
+		
 		return escapeValue(cleanQuery);
 	}
 
