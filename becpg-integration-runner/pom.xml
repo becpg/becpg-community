@@ -14,7 +14,7 @@
 		<version>23.2.0</version>
 		<relativePath>../</relativePath>
 	</parent>
-    <version>23.2.0.48-SNAPSHOT</version>
+    <version>23.2.0.48</version>
 	<dependencies>
 		<dependency>
 			<groupId>fr.becpg</groupId>
@@ -442,6 +442,6 @@
 	</profiles>
 
   <scm>
-    <tag>23.2.0.19</tag>
+    <tag>23.2.0.48</tag>
   </scm>
 </project>
