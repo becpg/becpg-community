@@ -46,6 +46,8 @@ import fr.becpg.repo.security.SecurityService;
  */
 public class BeCPGJSONConversionComponent extends JSONConversionComponent {
 
+	private static final String CREATE_CHILDREN = "CreateChildren";
+
 	private AssociationService associationService;
 
 	private SecurityService securityService;
@@ -204,6 +206,9 @@ public class BeCPGJSONConversionComponent extends JSONConversionComponent {
 	protected JSONObject userPermissionsToJSON(final NodeRef nodeRef) {
 
 		final JSONObject userPermissionJSON = super.userPermissionsToJSON(nodeRef);
+		if (userPermissionJSON.containsKey(CREATE_CHILDREN) && "true".equals(userPermissionJSON.get(CREATE_CHILDREN).toString())) {
+			userPermissionJSON.put(CREATE_CHILDREN, securityService.computeAccessMode(nodeRef, nodeService.getType(nodeRef), "View-documents") == SecurityService.WRITE_ACCESS);
+		}
 		for (String userPermission : securityService.getUserSecurityRoles()) {
 			userPermissionJSON.put(userPermission, true);
 		}
