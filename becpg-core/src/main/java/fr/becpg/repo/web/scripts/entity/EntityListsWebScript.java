@@ -118,6 +118,8 @@ public class EntityListsWebScript extends AbstractWebScript {
 	private static final String KEY_NAME_EDIT = "edit";
 
 	private static final String KEY_NAME_DELETE = "delete";
+	
+	private static final String KEY_NAME_EDIT_CHILDREN = "editChildren";
 
 	private static final String KEY_NAME_CREATE = "create";
 
@@ -364,6 +366,10 @@ public class EntityListsWebScript extends AbstractWebScript {
 			JSONObject permissions = new JSONObject();
 			permissions.put(KEY_NAME_EDIT, hasWritePermission && !entityIsLocked);
 			permissions.put(KEY_NAME_DELETE, hasWritePermission && !entityIsLocked);
+			
+			String dataListQName = (String)nodeService.getProperty(list, DataListModel.PROP_DATALISTITEMTYPE);
+			permissions.put(KEY_NAME_EDIT_CHILDREN, !entityIsLocked && securityService.computeAccessMode(entity, nodeService.getType(entity), dataListQName) == SecurityService.WRITE_ACCESS);
+			
 			Boolean accessMapListNodeRef = accessMap.get(list);
 			if (accessMapListNodeRef == null) {
 				accessMapListNodeRef = false;
