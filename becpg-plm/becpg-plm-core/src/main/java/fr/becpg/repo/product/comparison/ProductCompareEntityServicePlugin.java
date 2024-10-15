@@ -162,7 +162,7 @@ public class ProductCompareEntityServicePlugin extends DefaultCompareEntityServi
 	}
 
 	private void addProcessListProps(Map<String, CompareResultDataItem> comparisonMap, QName dataListType, String charactName, 
-			String pivotKey, NodeRef entist l"indexation alorstyNodeRef, int nbEntities, int comparisonPosition, double[] totalQty, 
+			String pivotKey, NodeRef entityNodeRef, int nbEntities, int comparisonPosition, double[] totalQty, 
 			ProductData baseProduct, boolean swap, int position, int level) {
 
 		if (level > 20) {
