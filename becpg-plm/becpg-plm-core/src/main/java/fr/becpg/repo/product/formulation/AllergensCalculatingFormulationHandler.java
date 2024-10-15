@@ -378,12 +378,15 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 				if (!retainNodes.contains(newAllergenListDataItem)) {
 					// Reset existing variants
 					if (!Boolean.TRUE.equals(newAllergenListDataItem.getIsManual())) {
+						
 						newAllergenListDataItem.setVariants(null);
 
-						newAllergenListDataItem.setQtyPerc(null);
-						newAllergenListDataItem.setVoluntary(false);
-						newAllergenListDataItem.getVoluntarySources().clear();
-
+						if (!(partProduct instanceof ResourceProductData)) {
+							newAllergenListDataItem.setQtyPerc(null);
+							newAllergenListDataItem.setVoluntary(false);
+							newAllergenListDataItem.getVoluntarySources().clear();
+						}
+						
 						newAllergenListDataItem.setInVoluntary(false);
 						newAllergenListDataItem.getInVoluntarySources().clear();
 
