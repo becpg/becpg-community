@@ -162,7 +162,7 @@ public class ProductCompareEntityServicePlugin extends DefaultCompareEntityServi
 	}
 
 	private void addProcessListProps(Map<String, CompareResultDataItem> comparisonMap, QName dataListType, String charactName, 
-			String pivotKey, NodeRef entityNodeRef, int nbEntities, int comparisonPosition, double[] totalQty, 
+			String pivotKey, NodeRef entist l"indexation alorstyNodeRef, int nbEntities, int comparisonPosition, double[] totalQty, 
 			ProductData baseProduct, boolean swap, int position, int level) {
 
 		if (level > 20) {
@@ -172,51 +172,52 @@ public class ProductCompareEntityServicePlugin extends DefaultCompareEntityServi
 
 		if (entityNodeRef != null) {
 			ProcessListDataItem item = (ProcessListDataItem) alfrescoRepository.findOne(entityNodeRef);
-			QName entityType = nodeService.getType(item.getResource());
-			ProductData product = (ProductData) alfrescoRepository.findOne(item.getResource());
-			Double qtyForProduct = null;
-			String value = "";
-
-			if ((level == 1) && (baseProduct == null)) {
-				NodeRef processListNodeRef = nodeService.getPrimaryParent(entityNodeRef).getParentRef();
-				NodeRef entityListsNodeRef = nodeService.getPrimaryParent(processListNodeRef).getParentRef();
-				NodeRef productNodeRef = nodeService.getPrimaryParent(entityListsNodeRef).getParentRef();
-				baseProduct = (ProductData) alfrescoRepository.findOne(productNodeRef);
-			}
-
-			String previousQtyForProductStr =
-				getCurrentValue(comparisonMap, dataListType, charactName, MPMModel.PROP_PL_QTY_FOR_PRODUCT, position);
-			
-			if (previousQtyForProductStr != null) {
-				qtyForProduct = Double.parseDouble(previousQtyForProductStr);
-			}
-
-			if (qtyForProduct != null) {
-				if (entityType.equals(PLMModel.TYPE_RESOURCEPRODUCT)) {
-					extractProps(comparisonMap, dataListType, charactName, charactName, MPMModel.PROP_PL_QTY_PERC_FOR_PRODUCT,
-							Double.toString(qtyForProduct / totalQty[position] * 100), nbEntities, comparisonPosition, swap);
-				} else if (entityType.equals(PLMModel.TYPE_FINISHEDPRODUCT) || entityType.equals(PLMModel.TYPE_LOGISTICUNIT)) {
-					extractProps(comparisonMap, dataListType, charactName, charactName, MPMModel.PROP_PL_QTY_PERC_FOR_PRODUCT,
-							Double.toString(qtyForProduct / totalQty[position] * 100), nbEntities, comparisonPosition, swap);
-				} else if (entityType.equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT)) {
-					extractProps(comparisonMap, dataListType, charactName, charactName, MPMModel.PROP_PL_QTY_PERC_FOR_SF,
-							Double.toString(qtyForProduct / totalQty[position] * 100), nbEntities, comparisonPosition, swap);
+			if (item.getResource() != null) {
+				QName entityType = nodeService.getType(item.getResource());
+				ProductData product = (ProductData) alfrescoRepository.findOne(item.getResource());
+				Double qtyForProduct = null;
+				String value = "";
+				
+				if ((level == 1) && (baseProduct == null)) {
+					NodeRef processListNodeRef = nodeService.getPrimaryParent(entityNodeRef).getParentRef();
+					NodeRef entityListsNodeRef = nodeService.getPrimaryParent(processListNodeRef).getParentRef();
+					NodeRef productNodeRef = nodeService.getPrimaryParent(entityListsNodeRef).getParentRef();
+					baseProduct = (ProductData) alfrescoRepository.findOne(productNodeRef);
 				}
-			}
-
-			value = String.valueOf(level);
-			extractProps(comparisonMap, dataListType, charactName, pivotKey, BeCPGModel.PROP_DEPTH_LEVEL,
-					value, nbEntities, comparisonPosition, swap);
-
-			value = item.getUnit().toString();
-			extractProps(comparisonMap, dataListType, charactName, pivotKey, MPMModel.PROP_PL_UNIT,
-					value, nbEntities, comparisonPosition, swap);
-
-			// Extract props from datalist items
-			for (ProcessListDataItem processItem : product.getProcessList()) {
-				ProductData itemProduct = (ProductData) alfrescoRepository.findOne(processItem.getProduct());
-				addProcessListProps(comparisonMap, dataListType, itemProduct.getName(), processItem.getNodeRef().toString(),
-						processItem.getNodeRef(), nbEntities, comparisonPosition, totalQty, baseProduct, swap, position, level + 1);
+				
+				String previousQtyForProductStr =
+						getCurrentValue(comparisonMap, dataListType, charactName, MPMModel.PROP_PL_QTY_FOR_PRODUCT, position);
+				
+				if (previousQtyForProductStr != null) {
+					qtyForProduct = Double.parseDouble(previousQtyForProductStr);
+				}
+				
+				if (qtyForProduct != null) {
+					if (entityType.equals(PLMModel.TYPE_RESOURCEPRODUCT)) {
+						extractProps(comparisonMap, dataListType, charactName, charactName, MPMModel.PROP_PL_QTY_PERC_FOR_PRODUCT,
+								Double.toString(qtyForProduct / totalQty[position] * 100), nbEntities, comparisonPosition, swap);
+					} else if (entityType.equals(PLMModel.TYPE_FINISHEDPRODUCT) || entityType.equals(PLMModel.TYPE_LOGISTICUNIT)) {
+						extractProps(comparisonMap, dataListType, charactName, charactName, MPMModel.PROP_PL_QTY_PERC_FOR_PRODUCT,
+								Double.toString(qtyForProduct / totalQty[position] * 100), nbEntities, comparisonPosition, swap);
+					} else if (entityType.equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT)) {
+						extractProps(comparisonMap, dataListType, charactName, charactName, MPMModel.PROP_PL_QTY_PERC_FOR_SF,
+								Double.toString(qtyForProduct / totalQty[position] * 100), nbEntities, comparisonPosition, swap);
+					}
+				}
+				value = String.valueOf(level);
+				extractProps(comparisonMap, dataListType, charactName, pivotKey, BeCPGModel.PROP_DEPTH_LEVEL,
+						value, nbEntities, comparisonPosition, swap);
+				
+				value = item.getUnit() == null ? "" : item.getUnit().toString();
+				extractProps(comparisonMap, dataListType, charactName, pivotKey, MPMModel.PROP_PL_UNIT,
+						value, nbEntities, comparisonPosition, swap);
+				
+				// Extract props from datalist items
+				for (ProcessListDataItem processItem : product.getProcessList()) {
+					ProductData itemProduct = (ProductData) alfrescoRepository.findOne(processItem.getProduct());
+					addProcessListProps(comparisonMap, dataListType, itemProduct.getName(), processItem.getNodeRef().toString(),
+							processItem.getNodeRef(), nbEntities, comparisonPosition, totalQty, baseProduct, swap, position, level + 1);
+				}
 			}
 		}
 	}
