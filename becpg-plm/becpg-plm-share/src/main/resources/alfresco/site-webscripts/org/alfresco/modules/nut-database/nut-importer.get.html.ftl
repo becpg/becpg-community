@@ -69,7 +69,9 @@
          			</span>
          		</span>
          	</#if>
-         	<input type="button" id="${el}-ok" value="<#if args.nutsCompare??>${msg("button.load")}<#else>${msg("button.ok")}</#if>" tabindex="0" />
+         	<#if args.writePermission?boolean>
+         		<input type="button" id="${el}-ok" value="<#if args.nutsCompare??>${msg("button.load")}<#else>${msg("button.ok")}</#if>" tabindex="0" />
+     		</#if>
             <input type="button" id="${el}-cancel" value="${msg("button.cancel")}" tabindex="0" />
          </div>
       </form>

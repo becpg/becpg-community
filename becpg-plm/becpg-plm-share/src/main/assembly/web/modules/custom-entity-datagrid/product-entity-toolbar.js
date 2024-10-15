@@ -544,7 +544,7 @@
 					}
 				});
 
-
+		var assetRef;
 		YAHOO.Bubbling
 			.fire(
 				"registerToolbarButtonAction",
@@ -552,6 +552,7 @@
 					actionName: "import-nuts",
 					right: false,
 					evaluate: function(asset, entity) {
+						assetRef = asset;
 						return (entity != null && entity.userAccess.edit && asset.name != null && asset.name === "nutList" && beCPG.util.contains(entity.aspects,
 							"bcpg:productAspect"));
 
@@ -561,7 +562,7 @@
 
 						nutImporter.setOptions({
 							width: this.options.formWidth,
-							templateUrl: Alfresco.constants.URL_SERVICECONTEXT + "modules/nut-database/nut-importer?entityNodeRef=" + this.options.entityNodeRef + "&nutsCompare=true",
+							templateUrl: Alfresco.constants.URL_SERVICECONTEXT + "modules/nut-database/nut-importer?entityNodeRef=" + this.options.entityNodeRef + "&nutsCompare=true&writePermission=" + assetRef.permissions.editChildren,
 							actionUrl: Alfresco.constants.PROXY_URI + "becpg/product/nutdatabaseimport?dest=" + this.options.entityNodeRef + "&onlyNuts=true",
 							validateOnSubmit: false,
 							firstFocus: this.id + "-nutImporter-supplier-field",
