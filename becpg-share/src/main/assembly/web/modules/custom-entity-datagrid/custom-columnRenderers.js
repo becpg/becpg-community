@@ -148,21 +148,24 @@ if (beCPG.module.EntityDataGridRenderers) {
 
 						if (hasBefore){
 							Object.keys(before).forEach(function(key){
-								if (before[key] != after[key]) {
+								var beforeValue = before[key] ? before[key] : "";
+								var afterValue = after[key] ? after[key] : "";
+								if (beforeValue != afterValue) {
 									locale = key;
 									if (key.indexOf("_") > -1){
 										locale = key.substring(3,5).toLowerCase();
 									}
 									html += '      <tr '+(count%2 == 0 ? '':'class="grey"')+'><td>' + prop.title +
 									' <img class="icon16_11" src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/flags/' + locale + '.png" /></td>';
-									html += '      <td>' + before[key] + '</td>';
-									html += '      <td>' + after[key] + '</td></tr>';		
+									html += '      <td>' + beforeValue + '</td>';
+									html += '      <td>' + afterValue + '</td></tr>';		
 									count++;
 								}
 							});
 							if (hasAfter){
 								Object.keys(after).forEach(function(key){
 									if (!before.hasOwnProperty(key)) {
+										var afterValue = after[key] ? after[key] : "";
 										locale = key;
 										if (key.indexOf("_") > -1){
 											locale = key.substring(3,5).toLowerCase();
@@ -170,7 +173,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 										html += '      <tr '+(count%2 == 0 ? '':'class="grey"')+'><td>' + prop.title +
 										' <img class="icon16_11" src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/flags/' + locale + '.png" /></td>';
 										html += '      <td> </td>';
-										html += '      <td>' + after[key] + '</td></tr>';
+										html += '      <td>' + afterValue + '</td></tr>';
 										count++;
 									}
 								});
