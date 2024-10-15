@@ -1983,6 +1983,9 @@
 						<tokenised>both</tokenised>
 						<facetable>false</facetable>
 					</index>
+					<constraints>
+						<constraint ref="gs1:text1000"/>
+					</constraints>
 				</property>
 				<property name="gs1:handlingInstructionsCodes">
 					<type>d:text</type>
