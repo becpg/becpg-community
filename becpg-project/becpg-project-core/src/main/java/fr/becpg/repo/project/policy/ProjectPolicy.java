@@ -100,6 +100,14 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 		// disable otherwise, impossible to copy project that has a template
 		super.disableOnCopyBehaviour(ProjectModel.TYPE_PROJECT);
 	}
+	
+	@Override
+	public void onCopyComplete(QName classRef, NodeRef sourceNodeRef, NodeRef destinationRef, boolean copyToNewNode, Map<NodeRef, NodeRef> copyMap) {
+		if (ProjectModel.TYPE_PROJECT.equals(classRef)) {
+			nodeService.removeProperty(destinationRef, ProjectModel.PROP_PROJECT_CUR_COMMENT);
+		}
+		super.onCopyComplete(classRef, sourceNodeRef, destinationRef, copyToNewNode, copyMap);
+	}
 
 	/** {@inheritDoc} */
 	@Override
