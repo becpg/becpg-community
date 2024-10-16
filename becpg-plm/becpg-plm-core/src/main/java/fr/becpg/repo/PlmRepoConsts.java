@@ -258,6 +258,8 @@ public class PlmRepoConsts {
 
 	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_CITEO="ExportCiteo"</code> */
 	public static final String PATH_REPORTS_EXPORT_SEARCH_CITEO = "ExportCiteo";
+	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_CITEO_PRO="ExportCiteoPro"</code> */
+	public static final String PATH_REPORTS_EXPORT_SEARCH_CITEO_PRO = "ExportCiteoPro";
 	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_ALLERGENS="ExportAllergens"</code> */
 	public static final String PATH_REPORTS_EXPORT_SEARCH_ALLERGENS = "ExportAllergens";
 	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_LCA="ExportLCA"</code> */
