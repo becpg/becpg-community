@@ -693,35 +693,34 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 						}
 					}
 
-					JSONArray activityProperties = lastActivityData.getJSONArray(PROP_PROPERTIES);
-					JSONArray itemProperties = newActivityData.getJSONArray(PROP_PROPERTIES);
-					for (int i = 0; i < activityProperties.length(); i++) {
-						JSONObject activityProperty = activityProperties.getJSONObject(i);
+					JSONArray lastActivityProperties = lastActivityData.getJSONArray(PROP_PROPERTIES);
+					JSONArray newActivityProperties = newActivityData.getJSONArray(PROP_PROPERTIES);
+					for (int i = 0; i < lastActivityProperties.length(); i++) {
+						JSONObject lastProperty = lastActivityProperties.getJSONObject(i);
 						boolean isSameProperty = false;
-						for (int j = 0; j < itemProperties.length(); j++) {
-							JSONObject itemProperty = itemProperties.getJSONObject(j);
-							if (itemProperty.get(PROP_TITLE).equals(activityProperty.get(PROP_TITLE))) {
+						for (int j = 0; j < newActivityProperties.length(); j++) {
+							JSONObject newProperty = newActivityProperties.getJSONObject(j);
+							if (newProperty.get(PROP_TITLE).equals(lastProperty.get(PROP_TITLE))) {
 								isSameProperty = true;
 								PropertyDefinition property = dictionaryService
-										.getProperty(QName.createQName((String) activityProperty.get(PROP_TITLE)));
+										.getProperty(QName.createQName((String) lastProperty.get(PROP_TITLE)));
 
 								if ((property == null) || (property.getDataType() == null)
-										|| (!DataTypeDefinition.TEXT.equals(property.getDataType().getName())
-												&& !DataTypeDefinition.MLTEXT.equals(property.getDataType().getName()))) {
-									if (activityProperty.has(BEFORE)) {
-										itemProperty.put(BEFORE, activityProperty.get(BEFORE));
+										|| (!DataTypeDefinition.TEXT.equals(property.getDataType().getName()))) {
+									if (lastProperty.has(BEFORE)) {
+										newProperty.put(BEFORE, lastProperty.get(BEFORE));
 									} else {
-										itemProperty.put(BEFORE, "");
+										newProperty.put(BEFORE, "");
 									}
 								}
 
 							}
 						}
 						if (!isSameProperty) {
-							itemProperties.put(activityProperty);
+							newActivityProperties.put(lastProperty);
 						}
 					}
-					newActivityData.put(PROP_PROPERTIES, itemProperties);
+					newActivityData.put(PROP_PROPERTIES, newActivityProperties);
 					newActivity.setActivityData(newActivityData.toString());
 					
 					deleteAuditActivity(lastActivity);
