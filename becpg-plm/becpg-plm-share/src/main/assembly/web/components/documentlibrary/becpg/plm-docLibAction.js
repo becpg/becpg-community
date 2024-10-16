@@ -90,7 +90,7 @@
 							commonList = entityList + versionList;
 						}
 						
-						window.location.href = actionUrl + fileName + "?entities=" + commonList + "&tplNodeRef=" + reportSelect.value;
+						window.location.href = actionUrl + fileName + "?entities=" + commonList + "&tplNodeRef=" + reportSelect.value + "&noCache=" + new Date().getTime();
 					},
 					scope: this
 				}
