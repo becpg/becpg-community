@@ -771,7 +771,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			branchToNodeRef = associationService.getTargetAssoc(branchNodeRef, BeCPGModel.ASSOC_AUTO_MERGE_TO);
 		}
 
-		if ((permissionService.hasPermission(branchToNodeRef, BeCPGPermissions.MERGE_ENTITY) == AccessStatus.ALLOWED) && (branchToNodeRef != null)) {
+		if ((permissionService.hasPermission(branchToNodeRef, BeCPGPermissions.MERGE_ENTITY) == AccessStatus.ALLOWED) && (branchToNodeRef != null) && (!branchToNodeRef.equals(branchNodeRef))) {
 
 			StopWatch watch = null;
 
@@ -1016,6 +1016,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		} else {
 			if(branchToNodeRef ==null) {
 				logger.info("Cannot AUTO merge "+ branchNodeRef+ " ASSOC_AUTO_MERGE_TO is empty ");
+			} else if(branchToNodeRef.equals(branchNodeRef)) {
+				logger.info("Cannot merge "+ branchNodeRef+ " to itself");
 			} else {
 				logger.info("Cannot merge "+ branchNodeRef+ " you don't have permission");
 			}
