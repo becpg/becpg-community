@@ -78,6 +78,7 @@
           <show force="true" id="bcpg:storageConditionsRef"/>
           <show force="true" id="bcpg:precautionOfUseRef"/>
           <show force="true" id="bcpg:preparationTips"/>
+          <show force="true" id="gs1:servingSuggestion"/>
           <show force="true" id="gs1:handlingInstructionsCodes"/>
           <show force="true" id="gs1:healthClaimDescription"/>
           <show force="true" id="gs1:preparationType"/>
@@ -554,6 +555,11 @@
           <field help-id="becpg.forms.help.storageConditionsRef" id="bcpg:storageConditionsRef" mandatory="false" read-only="false" set="consumer"/>
           <field help-id="becpg.forms.help.precautionOfUseRef" id="bcpg:precautionOfUseRef" mandatory="false" read-only="false" set="consumer"/>
           <field help-id="becpg.forms.help.preparationTips" id="bcpg:preparationTips" mandatory="false" read-only="false" set="consumer">
+            <control template="/org/alfresco/components/form/controls/textarea.ftl">
+              <control-param name="rows">2</control-param>
+            </control>
+          </field>
+          <field id="gs1:servingSuggestion" mandatory="false" read-only="false" set="consumer">
             <control template="/org/alfresco/components/form/controls/textarea.ftl">
               <control-param name="rows">2</control-param>
             </control>
