@@ -42,7 +42,7 @@ public class LabelingAttributeExtractorPlugin implements AttributeExtractorPlugi
 			String title = (String) nodeService.getProperty(grp, PLMModel.PROP_LABELINGRULELIST_LABEL);
 
 			if (title == null || title.isBlank()) {
-				title = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_TITLE);
+				title = (String) nodeService.getProperty(grp, ContentModel.PROP_TITLE);
 			}
 
 			if (title == null || title.isBlank()) {
