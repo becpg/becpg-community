@@ -1928,8 +1928,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				EvaporatedDataItem evaporatedDataItem = fullEvaporationItems.iterator().next();
 				CompositeLabeling productLabelItem = parent.get(evaporatedDataItem.getProductNodeRef());
 				if (productLabelItem != null) {
-					productLabelItem.setQtyWithYield(productLabelItem.getQtyWithYield() - parent.getEvaporatedQty());
-					productLabelItem.setVolumeWithYield(productLabelItem.getVolumeWithYield() - parent.getEvaporatedVolume());
+					if (productLabelItem.getQtyWithYield() != null && parent.getEvaporatedQty() != null) {
+						productLabelItem.setQtyWithYield(productLabelItem.getQtyWithYield() - parent.getEvaporatedQty());
+					}
+					if (productLabelItem.getVolumeWithYield() != null && parent.getEvaporatedVolume() != null) {
+						productLabelItem.setVolumeWithYield(productLabelItem.getVolumeWithYield() - parent.getEvaporatedVolume());
+					}
 				}
 			}
 		}
