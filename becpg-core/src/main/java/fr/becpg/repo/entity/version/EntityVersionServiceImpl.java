@@ -791,7 +791,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			branchToNodeRef = associationService.getTargetAssoc(branchNodeRef, BeCPGModel.ASSOC_AUTO_MERGE_TO);
 		}
 
-		if ((permissionService.hasPermission(branchToNodeRef, BeCPGPermissions.MERGE_ENTITY) == AccessStatus.ALLOWED) && (branchToNodeRef != null)) {
+		if ((permissionService.hasPermission(branchToNodeRef, BeCPGPermissions.MERGE_ENTITY) == AccessStatus.ALLOWED) && (branchToNodeRef != null) && (!branchToNodeRef.equals(branchNodeRef))) {
 
 			boolean mlAware = 	MLPropertyInterceptor.setMLAware(true);
 			try(ActionStateContext state = BeCPGStateHelper.onMergeEntity(branchToNodeRef, versionType) ){
