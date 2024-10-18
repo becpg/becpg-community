@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
-    <property name="createdBy">Eclipse BIRT Designer Version 4.4.2.v201410272105 Build &lt;4.4.2.v20150217-1805></property>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.24" id="1">
+    <property name="createdBy">Eclipse BIRT Designer version 4.14.0.true révision &lt;@BUILD@></property>
     <list-property name="userProperties">
         <structure>
             <property name="name">Data Cube.controlList.x</property>
@@ -706,6 +706,34 @@
             </list-property>
         </oda-data-set>
         <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="samplingList" id="712">
+            <list-property name="computedColumns">
+                <structure>
+                    <property name="name">days</property>
+                    <expression name="expression">BirtDateTime.diffDay(row["created"],row["slDateTime"])</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">period</property>
+                    <expression name="expression">var days = BirtDateTime.diffDay(row["created"],row["slDateTime"]);
+var reportLocale = reportContext.getLocale().toString();
+var locale = reportLocale.substr(0,2);
+
+if(days &lt; 2){
+	days + (locale == "fr" ?  " jour": " day");
+}
+else if(days &lt; 30){
+	days + (locale == "fr" ?  " jours": " days");
+}
+else{
+	if(BirtDateTime.diffMonth(row["created"],row["slDateTime"]) == 1){
+		BirtDateTime.diffMonth(row["created"],row["slDateTime"]) + (locale == "fr" ?  " mois": " month");
+	}else{
+		BirtDateTime.diffMonth(row["created"],row["slDateTime"]) + (locale == "fr" ?  " mois": " months");
+	}
+}</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
             <list-property name="columnHints">
                 <structure>
                     <property name="columnName">slDateTime</property>
@@ -716,6 +744,11 @@
                     <property name="columnName">slSampleId</property>
                     <property name="analysis">dimension</property>
                     <text-property name="heading">slSampleId</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">created</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">created</text-property>
                 </structure>
             </list-property>
             <list-property name="parameters"/>
@@ -729,6 +762,21 @@
                     <structure>
                         <property name="position">2</property>
                         <property name="name">slSampleId</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">created</property>
+                        <property name="dataType">date</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">days</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">period</property>
                         <property name="dataType">string</property>
                     </structure>
                 </list-property>
@@ -749,8 +797,15 @@
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">created</property>
+                    <property name="nativeName">created</property>
+                    <property name="dataType">date</property>
+                    <property name="nativeDataType">91</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/samplingLists/samplingList]#:#{slDateTime;TIMESTAMP;/@slDateTime},{slSampleId;STRING;/@slSampleId}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/samplingLists/samplingList]#:#{slDateTime;TIMESTAMP;/@slDateTime},{slSampleId;STRING;/@slSampleId},{created;DATE;../../../created}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -851,6 +906,14 @@
                                 <tabular-level name="slSampleId" id="760">
                                     <property name="dataType">string</property>
                                     <property name="columnName">slSampleId</property>
+                                </tabular-level>
+                                <tabular-level name="period" id="12251">
+                                    <property name="dataType">string</property>
+                                    <property name="columnName">period</property>
+                                </tabular-level>
+                                <tabular-level name="days" id="12235">
+                                    <property name="dataType">integer</property>
+                                    <property name="columnName">days</property>
                                 </tabular-level>
                                 <tabular-level name="slDateTime" id="763">
                                     <property name="dataType">string</property>
@@ -1687,7 +1750,7 @@
                     <property name="detail">
                         <extended-item extensionName="AggregationCell" id="98">
                             <property name="aggregationOnRow">Group/clCharacts</property>
-                            <property name="aggregationOnColumn">Group2/slDateTime</property>
+                            <property name="aggregationOnColumn">Group2/period</property>
                             <property name="borderTopStyle">solid</property>
                             <property name="borderTopWidth">thin</property>
                             <property name="borderTopColor">#000000</property>
@@ -1722,7 +1785,7 @@
                                 <data id="141">
                                     <property name="textAlign">center</property>
                                     <structure name="toc"/>
-                                    <property name="resultSetColumn">clState_Group/clCharacts_Group2/slDateTime</property>
+                                    <property name="resultSetColumn">clState_Group/clCharacts_Group2/period</property>
                                 </data>
                             </property>
                         </extended-item>
@@ -1751,30 +1814,6 @@
                         <extended-item extensionName="DimensionView" id="127">
                             <property name="dimension">Group</property>
                             <property name="levels">
-                                <extended-item extensionName="LevelView" name="NewLevel View" id="128">
-                                    <property name="level">Group/clMethod</property>
-                                    <property name="member">
-                                        <extended-item extensionName="CrosstabCell" id="129">
-                                            <property name="content">
-                                                <data name="clMethod" id="130">
-                                                    <property name="resultSetColumn">clMethod</property>
-                                                </data>
-                                            </property>
-                                            <property name="borderTopStyle">solid</property>
-                                            <property name="borderTopWidth">thin</property>
-                                            <property name="borderTopColor">#000000</property>
-                                            <property name="borderLeftStyle">solid</property>
-                                            <property name="borderLeftWidth">thin</property>
-                                            <property name="borderLeftColor">#000000</property>
-                                            <property name="borderBottomStyle">solid</property>
-                                            <property name="borderBottomWidth">thin</property>
-                                            <property name="borderBottomColor">#000000</property>
-                                            <property name="borderRightStyle">solid</property>
-                                            <property name="borderRightWidth">thin</property>
-                                            <property name="borderRightColor">#000000</property>
-                                        </extended-item>
-                                    </property>
-                                </extended-item>
                                 <extended-item extensionName="LevelView" name="NewLevel View4" id="786">
                                     <property name="level">Group/clTemperature</property>
                                     <property name="member">
@@ -1796,6 +1835,7 @@
                                             <property name="borderRightStyle">solid</property>
                                             <property name="borderRightWidth">thin</property>
                                             <property name="borderRightColor">#000000</property>
+                                            <property name="width">1.2in</property>
                                         </extended-item>
                                     </property>
                                 </extended-item>
@@ -1820,6 +1860,7 @@
                                             <property name="borderRightStyle">solid</property>
                                             <property name="borderRightWidth">thin</property>
                                             <property name="borderRightColor">#000000</property>
+                                            <property name="width">1.2in</property>
                                         </extended-item>
                                     </property>
                                 </extended-item>
@@ -1865,27 +1906,15 @@
                         <extended-item extensionName="DimensionView" id="778">
                             <property name="dimension">Group2</property>
                             <property name="levels">
-                                <extended-item extensionName="LevelView" name="NewLevel View3" id="779">
-                                    <property name="level">Group2/slDateTime</property>
+                                <extended-item extensionName="LevelView" name="NouveauAffichage de niveau" id="12252">
+                                    <property name="level">Group2/period</property>
                                     <property name="member">
-                                        <extended-item extensionName="CrosstabCell" id="780">
+                                        <extended-item extensionName="CrosstabCell" id="12253">
                                             <property name="content">
-                                                <data name="slDateTime" id="783">
-                                                    <property name="resultSetColumn">slDateTime</property>
+                                                <data name="period" id="12257">
+                                                    <property name="resultSetColumn">period</property>
                                                 </data>
                                             </property>
-                                            <property name="borderTopStyle">solid</property>
-                                            <property name="borderTopWidth">thin</property>
-                                            <property name="borderTopColor">#000000</property>
-                                            <property name="borderLeftStyle">solid</property>
-                                            <property name="borderLeftWidth">thin</property>
-                                            <property name="borderLeftColor">#000000</property>
-                                            <property name="borderBottomStyle">solid</property>
-                                            <property name="borderBottomWidth">thin</property>
-                                            <property name="borderBottomColor">#000000</property>
-                                            <property name="borderRightStyle">solid</property>
-                                            <property name="borderRightWidth">thin</property>
-                                            <property name="borderRightColor">#000000</property>
                                         </extended-item>
                                     </property>
                                 </extended-item>
@@ -1895,12 +1924,6 @@
                 </extended-item>
             </property>
             <property name="header">
-                <extended-item extensionName="CrosstabCell" id="135">
-                    <property name="borderTopStyle">none</property>
-                    <property name="borderLeftStyle">none</property>
-                    <property name="borderBottomStyle">none</property>
-                    <property name="borderRightStyle">none</property>
-                </extended-item>
                 <extended-item extensionName="CrosstabCell" id="790">
                     <property name="borderTopStyle">none</property>
                     <property name="borderLeftStyle">none</property>
@@ -1915,54 +1938,8 @@
                     <property name="borderRightWidth">thin</property>
                     <property name="borderRightColor">#000000</property>
                 </extended-item>
-                <extended-item extensionName="CrosstabCell" id="781">
-                    <property name="borderTopStyle">none</property>
-                    <property name="borderLeftStyle">none</property>
-                    <property name="borderBottomStyle">solid</property>
-                    <property name="borderBottomWidth">thin</property>
-                    <property name="borderBottomColor">#000000</property>
-                    <property name="borderRightStyle">none</property>
-                </extended-item>
-                <extended-item extensionName="CrosstabCell" id="789">
-                    <property name="borderTopStyle">none</property>
-                    <property name="borderLeftStyle">none</property>
-                    <property name="borderBottomStyle">solid</property>
-                    <property name="borderBottomWidth">thin</property>
-                    <property name="borderBottomColor">#000000</property>
-                    <property name="borderRightStyle">none</property>
-                </extended-item>
-                <extended-item extensionName="CrosstabCell" id="782">
-                    <property name="borderTopStyle">none</property>
-                    <property name="borderLeftStyle">none</property>
-                    <property name="borderBottomStyle">solid</property>
-                    <property name="borderBottomWidth">thin</property>
-                    <property name="borderBottomColor">#000000</property>
-                    <property name="borderRightStyle">solid</property>
-                    <property name="borderRightWidth">thin</property>
-                    <property name="borderRightColor">#000000</property>
-                </extended-item>
-                <extended-item extensionName="CrosstabCell" id="117">
-                    <property name="content">
-                        <label id="131">
-                            <property name="fontWeight">bold</property>
-                            <property name="color">white</property>
-                            <text-property name="text" key="method1">Méthode</text-property>
-                        </label>
-                    </property>
-                    <property name="backgroundColor">#004254</property>
-                    <property name="borderTopStyle">solid</property>
-                    <property name="borderTopWidth">thin</property>
-                    <property name="borderTopColor">#000000</property>
-                    <property name="borderLeftStyle">solid</property>
-                    <property name="borderLeftWidth">thin</property>
-                    <property name="borderLeftColor">#000000</property>
-                    <property name="borderBottomStyle">solid</property>
-                    <property name="borderBottomWidth">thin</property>
-                    <property name="borderBottomColor">#000000</property>
-                    <property name="borderRightStyle">solid</property>
-                    <property name="borderRightWidth">thin</property>
-                    <property name="borderRightColor">#000000</property>
-                </extended-item>
+                <extended-item extensionName="CrosstabCell" id="12255"/>
+                <extended-item extensionName="CrosstabCell" id="12256"/>
                 <extended-item extensionName="CrosstabCell" id="788">
                     <property name="content">
                         <label id="792">
@@ -2030,21 +2007,6 @@
                     <property name="aggregateFunction">FIRST</property>
                 </structure>
                 <structure>
-                    <property name="name">clMethod</property>
-                    <expression name="expression">dimension["Group"]["clMethod"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">clState_Group/clMethod_Group1/clSampleId</property>
-                    <expression name="expression">measure["clState"]</expression>
-                    <property name="dataType">string</property>
-                    <simple-property-list name="aggregateOn">
-                        <value>Group/clMethod</value>
-                        <value>Group1/clSampleId</value>
-                    </simple-property-list>
-                    <property name="aggregateFunction">FIRST</property>
-                </structure>
-                <structure>
                     <property name="name">clCharacts</property>
                     <expression name="expression">dimension["Group"]["clCharacts"]</expression>
                     <property name="dataType">string</property>
@@ -2070,30 +2032,6 @@
                     <property name="aggregateFunction">FIRST</property>
                 </structure>
                 <structure>
-                    <property name="name">slDateTime</property>
-                    <expression name="expression" type="javascript">var nbOfDays = BirtDateTime.diffDay(BirtDateTime.today(),dimension["Group2"]["slDateTime"]);
-var reportLocale = reportContext.getLocale().toString();
-var locale = reportLocale.substr(0,2);
-
-
-var months, days; 
-if (nbOfDays / 30 == 1 || nbOfDays == 1 ){
-	months = (locale == "fr" ?  "mois": "month");
-	days =  (locale == "fr" ?  "jour": "day");
-}else {
-	months = (locale == "fr" ?  "mois": "months");
-	days =  (locale == "fr" ?  "jours": "days");
-}
-
-if (nbOfDays % 30 == 0)  {
-	(nbOfDays != null &amp;&amp; nbOfDays != "") ? ( nbOfDays / 30 ) +" "+ months: "";
-
-} else {
-	(nbOfDays != null &amp;&amp; nbOfDays != "") ? nbOfDays  + " " + days   : "";
-}</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
                     <property name="name">clState_Group/clCharacts_Group2/slDateTime</property>
                     <property name="dataType">string</property>
                     <simple-property-list name="aggregateOn">
@@ -2112,6 +2050,21 @@ if (nbOfDays % 30 == 0)  {
                     <property name="name">clTemperature</property>
                     <expression name="expression">dimension["Group"]["clTemperature"]</expression>
                     <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">period</property>
+                    <expression name="expression">dimension["Group2"]["period"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">clState_Group/clCharacts_Group2/period</property>
+                    <expression name="expression">measure["clState"]</expression>
+                    <property name="dataType">string</property>
+                    <simple-property-list name="aggregateOn">
+                        <value>Group/clCharacts</value>
+                        <value>Group2/period</value>
+                    </simple-property-list>
+                    <property name="aggregateFunction">FIRST</property>
                 </structure>
             </list-property>
         </extended-item>
