@@ -1658,7 +1658,7 @@ else{
                 <cell id="800">
                     <label id="163">
                         <property name="fontWeight">normal</property>
-                        <text-property name="text" key="manufacturingDate">Date fabrication : </text-property>
+                        <text-property name="text" key="created">Date de création :</text-property>
                     </label>
                 </cell>
                 <cell id="801">

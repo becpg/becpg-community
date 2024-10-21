@@ -1493,7 +1493,7 @@
                                 <label id="163">
                                     <property name="style">becpg-cell-bold</property>
                                     <property name="fontWeight">normal</property>
-                                    <text-property name="text" key="manufacturingDate">Date fabrication : </text-property>
+                                    <text-property name="text" key="created">Date fabrication : </text-property>
                                 </label>
                             </cell>
                             <cell id="605">
