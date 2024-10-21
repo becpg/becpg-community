@@ -706,29 +706,24 @@
             </list-property>
         </oda-data-set>
         <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="samplingList" id="712">
+            <property name="nullsOrdering">nulls lowest</property>
             <list-property name="computedColumns">
                 <structure>
-                    <property name="name">days</property>
-                    <expression name="expression">BirtDateTime.diffDay(row["created"],row["slDateTime"])</expression>
-                    <property name="dataType">integer</property>
-                </structure>
-                <structure>
                     <property name="name">period</property>
-                    <expression name="expression">var days = BirtDateTime.diffDay(row["created"],row["slDateTime"]);
-var reportLocale = reportContext.getLocale().toString();
-var locale = reportLocale.substr(0,2);
+                    <expression name="expression">var days = BirtDateTime.diffDay(row["batchStart"] != null ? row["batchStart"] : row["created"],row["slDateTime"]);
 
 if(days &lt; 2){
-	days + (locale == "fr" ?  " jour": " day");
+	days + " " + reportContext.getMessage("day", reportContext.getLocale());
 }
 else if(days &lt; 30){
-	days + (locale == "fr" ?  " jours": " days");
+	days + " " + reportContext.getMessage("days", reportContext.getLocale());
 }
 else{
-	if(BirtDateTime.diffMonth(row["created"],row["slDateTime"]) == 1){
-		BirtDateTime.diffMonth(row["created"],row["slDateTime"]) + (locale == "fr" ?  " mois": " month");
+	var months = BirtDateTime.diffMonth(row["created"],row["slDateTime"]);
+	if(months == 1){
+		months + " " + reportContext.getMessage("month", reportContext.getLocale());
 	}else{
-		BirtDateTime.diffMonth(row["created"],row["slDateTime"]) + (locale == "fr" ?  " mois": " months");
+		months + " " + reportContext.getMessage("months", reportContext.getLocale());
 	}
 }</expression>
                     <property name="dataType">string</property>
@@ -749,6 +744,11 @@ else{
                     <property name="columnName">created</property>
                     <property name="analysis">dimension</property>
                     <text-property name="heading">created</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">batchStart</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">batchStart</text-property>
                 </structure>
             </list-property>
             <list-property name="parameters"/>
@@ -771,8 +771,8 @@ else{
                     </structure>
                     <structure>
                         <property name="position">4</property>
-                        <property name="name">days</property>
-                        <property name="dataType">integer</property>
+                        <property name="name">batchStart</property>
+                        <property name="dataType">date</property>
                     </structure>
                     <structure>
                         <property name="position">5</property>
@@ -804,8 +804,15 @@ else{
                     <property name="dataType">date</property>
                     <property name="nativeDataType">91</property>
                 </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">batchStart</property>
+                    <property name="nativeName">batchStart</property>
+                    <property name="dataType">date</property>
+                    <property name="nativeDataType">91</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/samplingLists/samplingList]#:#{slDateTime;TIMESTAMP;/@slDateTime},{slSampleId;STRING;/@slSampleId},{created;DATE;../../../created}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/samplingLists/samplingList]#:#{slDateTime;TIMESTAMP;/@slDateTime},{slSampleId;STRING;/@slSampleId},{created;DATE;../../../created},{batchStart;DATE;../../../batchStart}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -910,10 +917,6 @@ else{
                                 <tabular-level name="period" id="12251">
                                     <property name="dataType">string</property>
                                     <property name="columnName">period</property>
-                                </tabular-level>
-                                <tabular-level name="days" id="12235">
-                                    <property name="dataType">integer</property>
-                                    <property name="columnName">days</property>
                                 </tabular-level>
                                 <tabular-level name="slDateTime" id="763">
                                     <property name="dataType">string</property>
@@ -1662,8 +1665,8 @@ else{
                     <data id="606">
                         <property name="fontWeight">bold</property>
                         <structure name="dateTimeFormat">
-                            <property name="category">Long Date</property>
-                            <property name="pattern">Long Date</property>
+                            <property name="category">Medium Date</property>
+                            <property name="pattern">Medium Date</property>
                         </structure>
                         <property name="dataSet">qualityControl</property>
                         <list-property name="boundDataColumns">
@@ -1671,7 +1674,7 @@ else{
                                 <property name="name">created</property>
                                 <text-property name="displayName">created</text-property>
                                 <expression name="expression" type="javascript">dataSetRow["created"]</expression>
-                                <property name="dataType">string</property>
+                                <property name="dataType">date</property>
                                 <property name="allowExport">true</property>
                             </structure>
                         </list-property>
@@ -1689,6 +1692,7 @@ else{
                 <cell id="794">
                     <property name="fontFamily">"Arial"</property>
                     <label id="164">
+                        <property name="fontFamily">sans-serif</property>
                         <property name="fontWeight">normal</property>
                         <text-property name="text" key="analysisDate">Date d'analyse : </text-property>
                     </label>
@@ -1696,13 +1700,17 @@ else{
                 <cell id="795">
                     <data id="702">
                         <property name="fontWeight">bold</property>
+                        <structure name="dateTimeFormat">
+                            <property name="category">Medium Date</property>
+                            <property name="pattern">Medium Date</property>
+                        </structure>
                         <property name="dataSet">qualityControl</property>
                         <list-property name="boundDataColumns">
                             <structure>
                                 <property name="name">batchStart</property>
                                 <text-property name="displayName">batchStart</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["batchStart"]</expression>
-                                <property name="dataType">string</property>
+                                <expression name="expression" type="javascript">dataSetRow["batchStart"] != null ? dataSetRow["batchStart"] : dataSetRow["created"]</expression>
+                                <property name="dataType">date</property>
                                 <property name="allowExport">true</property>
                             </structure>
                         </list-property>
@@ -1820,6 +1828,7 @@ else{
                                         <extended-item extensionName="CrosstabCell" id="787">
                                             <property name="content">
                                                 <data name="clTemperature" id="791">
+                                                    <property name="textAlign">center</property>
                                                     <property name="resultSetColumn">clTemperature</property>
                                                 </data>
                                             </property>
@@ -1845,6 +1854,7 @@ else{
                                         <extended-item extensionName="CrosstabCell" id="133">
                                             <property name="content">
                                                 <data name="clCharacts" id="136">
+                                                    <property name="textAlign">center</property>
                                                     <property name="resultSetColumn">clCharacts</property>
                                                 </data>
                                             </property>
@@ -1882,6 +1892,7 @@ else{
                                             <property name="content">
                                                 <data name="clSampleId" id="69">
                                                     <property name="color">white</property>
+                                                    <property name="textAlign">center</property>
                                                     <property name="resultSetColumn">clSampleId</property>
                                                 </data>
                                             </property>
@@ -1912,9 +1923,22 @@ else{
                                         <extended-item extensionName="CrosstabCell" id="12253">
                                             <property name="content">
                                                 <data name="period" id="12257">
+                                                    <property name="textAlign">center</property>
                                                     <property name="resultSetColumn">period</property>
                                                 </data>
                                             </property>
+                                            <property name="borderTopStyle">solid</property>
+                                            <property name="borderTopWidth">thin</property>
+                                            <property name="borderTopColor">#000000</property>
+                                            <property name="borderLeftStyle">solid</property>
+                                            <property name="borderLeftWidth">thin</property>
+                                            <property name="borderLeftColor">#000000</property>
+                                            <property name="borderBottomStyle">solid</property>
+                                            <property name="borderBottomWidth">thin</property>
+                                            <property name="borderBottomColor">#000000</property>
+                                            <property name="borderRightStyle">solid</property>
+                                            <property name="borderRightWidth">thin</property>
+                                            <property name="borderRightColor">#000000</property>
                                         </extended-item>
                                     </property>
                                 </extended-item>
@@ -1938,13 +1962,24 @@ else{
                     <property name="borderRightWidth">thin</property>
                     <property name="borderRightColor">#000000</property>
                 </extended-item>
-                <extended-item extensionName="CrosstabCell" id="12255"/>
-                <extended-item extensionName="CrosstabCell" id="12256"/>
+                <extended-item extensionName="CrosstabCell" id="12255">
+                    <property name="borderTopStyle">none</property>
+                    <property name="borderLeftStyle">none</property>
+                    <property name="borderBottomStyle">none</property>
+                    <property name="borderRightStyle">none</property>
+                </extended-item>
+                <extended-item extensionName="CrosstabCell" id="12256">
+                    <property name="borderTopStyle">none</property>
+                    <property name="borderLeftStyle">none</property>
+                    <property name="borderBottomStyle">none</property>
+                    <property name="borderRightStyle">none</property>
+                </extended-item>
                 <extended-item extensionName="CrosstabCell" id="788">
                     <property name="content">
                         <label id="792">
                             <property name="fontWeight">bold</property>
                             <property name="color">white</property>
+                            <property name="textAlign">center</property>
                             <text-property name="text" key="temperature">clTemperature</text-property>
                         </label>
                     </property>
@@ -1967,6 +2002,7 @@ else{
                         <label id="137">
                             <property name="fontWeight">bold</property>
                             <property name="color">white</property>
+                            <property name="textAlign">center</property>
                             <text-property name="text" key="criteria">Critère</text-property>
                         </label>
                     </property>
@@ -2058,13 +2094,18 @@ else{
                 </structure>
                 <structure>
                     <property name="name">clState_Group/clCharacts_Group2/period</property>
-                    <expression name="expression">measure["clState"]</expression>
-                    <property name="dataType">string</property>
+                    <property name="dataType">float</property>
                     <simple-property-list name="aggregateOn">
                         <value>Group/clCharacts</value>
                         <value>Group2/period</value>
                     </simple-property-list>
                     <property name="aggregateFunction">FIRST</property>
+                    <list-property name="arguments">
+                        <structure>
+                            <property name="name">Expression</property>
+                            <expression name="value" type="javascript">measure["clValue"]</expression>
+                        </structure>
+                    </list-property>
                 </structure>
             </list-property>
         </extended-item>
