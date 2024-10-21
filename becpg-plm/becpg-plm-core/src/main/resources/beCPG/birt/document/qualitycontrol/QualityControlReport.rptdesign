@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
-    <property name="createdBy">Eclipse BIRT Designer Version 4.4.2.v201410272105 Build &lt;4.4.2.v20150217-1805></property>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.24" id="1">
+    <property name="createdBy">Eclipse BIRT Designer version 4.14.0.true révision &lt;@BUILD@></property>
     <simple-property-list name="includeResource">
         <value>./QualityControlReport</value>
         <value>./settings</value>
@@ -1500,8 +1500,8 @@
                                 <data id="606">
                                     <property name="fontWeight">bold</property>
                                     <structure name="dateTimeFormat">
-                                        <property name="category">Long Date</property>
-                                        <property name="pattern">Long Date</property>
+                                        <property name="category">Medium Date</property>
+                                        <property name="pattern">Medium Date</property>
                                     </structure>
                                     <property name="dataSet">qualityControl</property>
                                     <list-property name="boundDataColumns">
@@ -1535,8 +1535,8 @@
                                 <data id="615">
                                     <property name="fontWeight">bold</property>
                                     <structure name="dateTimeFormat">
-                                        <property name="category">Long Date</property>
-                                        <property name="pattern">Long Date</property>
+                                        <property name="category">Medium Date</property>
+                                        <property name="pattern">Medium Date</property>
                                     </structure>
                                     <property name="dataSet">qualityControl</property>
                                     <list-property name="boundDataColumns">
