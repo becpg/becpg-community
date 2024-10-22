@@ -314,10 +314,30 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			Composite<CompoListDataItem> compositeDefaultVariant = CompositeHelper.getHierarchicalCompoList(compoList);
 
 			CompositeLabeling compositeLabeling = new CompositeLabeling(CompositeLabeling.ROOT);
+			
+			
+			Double nextYield = labelingFormulaContext.getYield(); // Get the yield from the context
 
-			visitCompoList(compositeLabeling, compositeDefaultVariant, labelingFormulaContext, BigDecimal.valueOf(1d),
-					labelingFormulaContext.getYield() != null ? labelingFormulaContext.getYield()
-							: (labelingFormulaContext.isUseSecondaryYield() ? formulatedProduct.getSecondaryYield() : formulatedProduct.getYield()),
+			// If nextYield is null, use the formulated product's yield
+			if (nextYield == null) {
+			    nextYield = formulatedProduct.getYield();
+
+			    // If we need to use the secondary yield
+			    if (labelingFormulaContext.isUseSecondaryYield()) {
+			        Double secondaryYield = formulatedProduct.getSecondaryYield();
+			        
+			        // If nextYield (primary yield) is not null, multiply it with secondary yield if available
+			        if (nextYield != null && secondaryYield != null) {
+			            nextYield *= secondaryYield;
+			        } 
+			        // Otherwise, use secondaryYield directly if nextYield is null
+			        else if (nextYield == null && secondaryYield != null) {
+			            nextYield = secondaryYield;
+			        }
+			    }
+			}
+
+			visitCompoList(compositeLabeling, compositeDefaultVariant, labelingFormulaContext, BigDecimal.valueOf(1d),nextYield,
 					true);
 
 			if (logger.isTraceEnabled()) {
