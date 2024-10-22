@@ -228,7 +228,6 @@
                      
                      
                      var me = this;
-                     me.toogleVisible();
                      
                      var fnOnSelectChoice = function DT__fnOnSelectChoice(layer, args) {
                         var owner = Bubbling.getOwnerByTagName(args[1].input, "input");
@@ -307,7 +306,7 @@
                               }
                           };
                       }
-                      
+                      this.toogleVisible();
                   },
                   
                   
