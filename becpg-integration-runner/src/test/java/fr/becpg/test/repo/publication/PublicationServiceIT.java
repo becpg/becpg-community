@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.query.PagingRequest;
@@ -28,6 +29,13 @@ import org.springframework.core.io.ClassPathResource;
 
 import fr.becpg.model.PublicationModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.activity.data.ActivityListDataItem;
+import fr.becpg.repo.activity.data.ActivityType;
+import fr.becpg.repo.activity.helper.AuditActivityHelper;
+import fr.becpg.repo.audit.model.AuditQuery;
+import fr.becpg.repo.audit.model.AuditType;
+import fr.becpg.repo.audit.plugin.impl.ActivityAuditPlugin;
+import fr.becpg.repo.audit.service.BeCPGAuditService;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.catalog.EntityCatalogService;
@@ -35,6 +43,7 @@ import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.publication.PublicationChannelService;
 import fr.becpg.repo.publication.PublicationChannelService.PublicationChannelAction;
 import fr.becpg.repo.publication.PublicationChannelService.PublicationChannelStatus;
+import fr.becpg.repo.system.SystemConfigurationService;
 import fr.becpg.test.PLMBaseTestCase;
 
 /**
@@ -47,6 +56,7 @@ public class PublicationServiceIT extends PLMBaseTestCase {
 	private static final String CHANNEL_ID = "test-channel";
 	private static final String CHANNEL_ID1 = "test-channel-1";
 	private static final String CHANNEL_ID2 = "test-channel-2";
+	private static final String CHANNEL_ID3 = "test-channel-3";
 
 	@Autowired
 	private PublicationChannelService publicationChannelService;
@@ -56,6 +66,12 @@ public class PublicationServiceIT extends PLMBaseTestCase {
 
 	@Autowired
 	private EntityListDAO entityListDAO;
+	
+	@Autowired
+	private BeCPGAuditService beCPGAuditService;
+	
+	@Autowired
+	private SystemConfigurationService systemConfigurationService;
 
 	@Override
 	public void setUp() throws Exception {
@@ -490,7 +506,34 @@ public class PublicationServiceIT extends PLMBaseTestCase {
 			return true;
 		});
 
-		// test audit
+	}
+	
+	@Test
+	public void testAuditAndActivity() {
+		
+		final NodeRef channelNodeRef = inWriteTx(() -> {
+
+			JSONObject channelConfig = new JSONObject();
+			channelConfig.put("query", "=@bcpg\\:erpCode:\"" + CHANNEL_ID3 + "01\" AND (@cm\\:created:[%s TO MAX] OR @cm\\:modified:[%s TO MAX])");
+
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(ContentModel.PROP_NAME, CHANNEL_ID3);
+			properties.put(PublicationModel.PROP_PUBCHANNEL_ID, CHANNEL_ID3);
+			properties.put(PublicationModel.PROP_PUBCHANNEL_CONFIG, channelConfig.toString());
+			properties.put(PublicationModel.PROP_PUBCHANNEL_LASTDATE, new Date());
+			return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(PublicationModel.PROP_PUBCHANNEL_ID)),
+					PublicationModel.TYPE_PUBLICATION_CHANNEL, properties).getChildRef();
+
+		});
+
+		final NodeRef pfNodeRef = createFinishedProductNode("finished-product 3", CHANNEL_ID3 + "01");
+		
+		final NodeRef channelListItemNodeRef = createChannelListItemNode(channelNodeRef, pfNodeRef);
+		
+		List<ActivityListDataItem> channelActivities = getChannelListActivityNumber(pfNodeRef);
+		assertEquals(1, channelActivities.size());
+		
 		Date beforeModifiedDate = (Date) inReadTx(() -> {
 			return nodeService.getProperty(pfNodeRef, ContentModel.PROP_MODIFIED);
 		});
@@ -499,13 +542,16 @@ public class PublicationServiceIT extends PLMBaseTestCase {
 			nodeService.setProperty(channelListItemNodeRef, PublicationModel.PROP_PUBCHANNELLIST_PUBLISHEDDATE, new Date());
 			return true;
 		});
-
+		
 		Date currentModifiedDate = (Date) inReadTx(() -> {
 			return nodeService.getProperty(pfNodeRef, ContentModel.PROP_MODIFIED);
 		});
 
 		assertEquals(currentModifiedDate, beforeModifiedDate);
-
+		
+		channelActivities = getChannelListActivityNumber(pfNodeRef);
+		assertEquals(2, channelActivities.size());
+		
 		Date beforeChannelModifiedDate = (Date) inReadTx(() -> {
 			return nodeService.getProperty(channelListItemNodeRef, PublicationModel.PROP_PUBCHANNELLIST_MODIFIED_DATE);
 		});
@@ -515,7 +561,11 @@ public class PublicationServiceIT extends PLMBaseTestCase {
 			nodeService.setProperty(channelListItemNodeRef, PublicationModel.PROP_PUBCHANNELLIST_ACTION, PublicationChannelAction.RETRY);
 			return true;
 		});
-
+		
+		channelActivities = getChannelListActivityNumber(pfNodeRef);
+		assertEquals(2, channelActivities.size());
+		assertTrue(channelActivities.stream().anyMatch(a -> a.getActivityData().contains(PublicationModel.PROP_PUBCHANNELLIST_ACTION.getLocalName())));
+		
 		currentModifiedDate = (Date) inReadTx(() -> {
 			return nodeService.getProperty(pfNodeRef, ContentModel.PROP_MODIFIED);
 		});
@@ -527,7 +577,67 @@ public class PublicationServiceIT extends PLMBaseTestCase {
 		});
 
 		assertEquals(beforeChannelModifiedDate, currentChannelModifiedDate);
+		
+		inWriteTx(() -> {
+			nodeService.setProperty(channelListItemNodeRef, PublicationModel.PROP_PUBCHANNELLIST_ACTION, PublicationChannelAction.RESET);
+			nodeService.setProperty(channelListItemNodeRef, PublicationModel.PROP_PUBCHANNELLIST_BATCHID, "1");
+			return true;
+		});
+		
+		channelActivities = getChannelListActivityNumber(pfNodeRef);
+		assertEquals(2, channelActivities.size());
+		assertTrue(channelActivities.stream().anyMatch(a -> a.getActivityData().contains(PublicationModel.PROP_PUBCHANNELLIST_ACTION.getLocalName())));
+		assertFalse(channelActivities.stream().anyMatch(a -> a.getActivityData().contains(PublicationModel.PROP_PUBCHANNELLIST_BATCHID.getLocalName())));
+				
+		inWriteTx(() -> {
+			systemConfigurationService.updateConfValue("beCPG.connector.channel.register.activity", "true");
+			nodeService.setProperty(channelListItemNodeRef, PublicationModel.PROP_PUBCHANNELLIST_STATUS, "UNKNOWN");
+			nodeService.setProperty(channelListItemNodeRef, PublicationModel.PROP_PUBCHANNELLIST_BATCHID, "2");
+			return true;
+		});
+		
+		channelActivities = getChannelListActivityNumber(pfNodeRef);
+		assertEquals(2, channelActivities.size());
+		assertTrue(channelActivities.stream().anyMatch(a -> a.getActivityData().contains(PublicationModel.PROP_PUBCHANNELLIST_STATUS.getLocalName())));
+		assertTrue(channelActivities.stream().anyMatch(a -> a.getActivityData().contains(PublicationModel.PROP_PUBCHANNELLIST_BATCHID.getLocalName())));
+		
+		inWriteTx(() -> {
+			systemConfigurationService.resetConfValue("beCPG.connector.channel.register.activity");
+			nodeService.setProperty(channelListItemNodeRef, PublicationModel.PROP_PUBCHANNELLIST_ERROR, "error1");
+			nodeService.setProperty(channelListItemNodeRef, PublicationModel.PROP_PUBCHANNELLIST_BATCHID, "3");
+			return true;
+		});
+		
+		channelActivities = getChannelListActivityNumber(pfNodeRef);
+		assertEquals(2, channelActivities.size());
+		assertFalse(channelActivities.stream().allMatch(a -> a.getActivityData().contains(PublicationModel.PROP_PUBCHANNELLIST_ERROR.getLocalName())));
 
+		inWriteTx(() -> {
+			JSONObject config = new JSONObject();
+			config.put("registerConnectorChannelActivity", true);
+			nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_CONFIG, config.toString());
+			cacheService.clearAllCaches();
+			nodeService.setProperty(channelListItemNodeRef, PublicationModel.PROP_PUBCHANNELLIST_BATCHID, "4");
+			nodeService.setProperty(channelListItemNodeRef, PublicationModel.PROP_PUBCHANNELLIST_ERROR, "error2");
+			return true;
+		});
+		
+		channelActivities = getChannelListActivityNumber(pfNodeRef);
+		assertEquals(2, channelActivities.size());
+		assertTrue(channelActivities.stream().anyMatch(a -> a.getActivityData().contains(PublicationModel.PROP_PUBCHANNELLIST_ERROR.getLocalName())));
+		
+	}
+	
+	private List<ActivityListDataItem> getChannelListActivityNumber(NodeRef pfNodeRef) {
+		return inWriteTx(() -> {
+			AuditQuery auditFilter = AuditQuery.createQuery().asc(false).dbAsc(false)
+					.sortBy(ActivityAuditPlugin.PROP_CM_CREATED).filter("entityNodeRef", pfNodeRef.toString());
+			
+			List<ActivityListDataItem> activities = beCPGAuditService.listAuditEntries(AuditType.ACTIVITY, auditFilter).stream().map(json -> AuditActivityHelper.parseActivity(json)).collect(Collectors.toList());
+			activities.removeIf(a -> !a.getActivityType().equals(ActivityType.Datalist) || !a.getActivityData().contains("pubChannelList"));
+			
+			return activities;
+		});
 	}
 
 	private List<NodeRef> getEntities(NodeRef channelNodeRef) {
