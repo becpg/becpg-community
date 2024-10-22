@@ -316,21 +316,16 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			CompositeLabeling compositeLabeling = new CompositeLabeling(CompositeLabeling.ROOT);
 			
 			
-			Double nextYield = labelingFormulaContext.getYield(); // Get the yield from the context
-
-			// If nextYield is null, use the formulated product's yield
+			Double nextYield = labelingFormulaContext.getYield();
 			if (nextYield == null) {
 			    nextYield = formulatedProduct.getYield();
 
-			    // If we need to use the secondary yield
 			    if (labelingFormulaContext.isUseSecondaryYield()) {
 			        Double secondaryYield = formulatedProduct.getSecondaryYield();
 			        
-			        // If nextYield (primary yield) is not null, multiply it with secondary yield if available
 			        if (nextYield != null && secondaryYield != null) {
-			            nextYield *= secondaryYield;
+			            nextYield *= secondaryYield / 100d;
 			        } 
-			        // Otherwise, use secondaryYield directly if nextYield is null
 			        else if (nextYield == null && secondaryYield != null) {
 			            nextYield = secondaryYield;
 			        }
