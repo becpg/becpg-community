@@ -554,11 +554,11 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		PropertyDefinition propDef = entityDictionaryService.getProperty(key);
 
 		if (ent instanceof Date date) {
-			return ISO8601DateFormat.format(date);
+			ent = ISO8601DateFormat.format(date);
 		} else if (ent instanceof Pair || ent instanceof NodeRef) {
-			return ent.toString();
+			ent = ent.toString();
 		} else if (ent instanceof List) {
-			return new ArrayList<>(((List<?>) ent).stream().map(Object::toString).toList());
+			ent = new ArrayList<>(((List<?>) ent).stream().map(Object::toString).toList());
 		}
 		return processWithConstraints(ent, propDef);
 
@@ -571,7 +571,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					if (ent instanceof List<?> list) {
 						return new ArrayList<>(list.stream().map(o -> lvc.getDisplayLabel(o.toString(), dictionaryService)).toList());
 					} else if (ent != null) {
-						ent = lvc.getDisplayLabel(ent.toString(), dictionaryService);
+						return lvc.getDisplayLabel(ent.toString(), dictionaryService);
 					}
 				}
 			}
