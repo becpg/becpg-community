@@ -322,7 +322,7 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 	private void bindTransactionListener(TransactionListener transactionListener) {
 		Set<TransactionListener> preListeners = TransactionSupportUtil.getResource(RESOURCE_KEY_TXN_PRE_LISTENERS);
 		if (preListeners == null) {
-			preListeners = new HashSet<>();
+			preListeners = new LinkedHashSet<>();
 		}
 		preListeners.add(transactionListener);
 		TransactionSupportUtil.bindResource(RESOURCE_KEY_TXN_PRE_LISTENERS, preListeners);
@@ -467,6 +467,10 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 		@Override
 		public void beforeCommit(boolean readOnly) {
 
+			if (logger.isDebugEnabled()) {
+				logger.debug("Execution of policy beforeCommit: " + AbstractBeCPGPolicy.this.getClass().getSimpleName());
+			}
+			
 			StopWatch watch = null;
 
 			boolean setPostTransactionListener = false;
