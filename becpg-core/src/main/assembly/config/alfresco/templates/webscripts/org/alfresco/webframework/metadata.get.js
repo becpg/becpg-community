@@ -106,6 +106,7 @@ else if (args["user"] != null)
 	model.capabilities["isLicenseValid"] = !bcpg.isShowLicenceWarning()  || bcpg.isLicenseValid() || !isAdmin;
 	model.capabilities["isMemberOfLicenseGroup"] = !bcpg.isShowUnauthorizedWarning() || bcpg.isSpecialLicenceUser() || isMemberOfAllowedGroup;
 	model.capabilities["floatingLicensesExceeded"] = bcpg.isShowUnauthorizedWarning() && !bcpg.isSpecialLicenceUser() && bcpg.floatingLicensesExceeded(session.getId());
+	model.capabilities["isSsoEnabled"] = bcpg.isSsoEnabled();
 	
 	
   model.immutableProperties = people.getImmutableProperties(userId);
