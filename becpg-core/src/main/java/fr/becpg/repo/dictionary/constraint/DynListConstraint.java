@@ -418,7 +418,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 					MLText mlText = new MLText();
 
 					if (csvRecord.get(constraintProp) != null) {
-						mlText.addValue(Locale.getDefault(), csvRecord.get(constraintProp));
+						mlText.addValue(MLTextHelper.getNearestLocale(Locale.getDefault()), csvRecord.get(constraintProp));
 					}
 
 					for (String locale : locales) {

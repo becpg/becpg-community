@@ -25,7 +25,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 
@@ -582,7 +581,7 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
                         {
                             newMLValue = new MLText();
                         }
-                        replaceTextForLanguage(getLocale(propertyQName ), current, newMLValue);
+                        MLTextHelper.replaceTextForLanguage(getLocale(propertyQName ), current, newMLValue);
                         if(count < returnMLList.size())
                         {
                             returnMLList.set(count, newMLValue);
@@ -634,7 +633,7 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
                 // Force the inbound value to be a String (it isn't MLText)
                 String inboundValueStr = DefaultTypeConverter.INSTANCE.convert(String.class, inboundValue);
                 // Update the text for the appropriate language.
-                replaceTextForLanguage(getLocale(propertyQName ), inboundValueStr, returnMLValue);
+                MLTextHelper.replaceTextForLanguage(getLocale(propertyQName ), inboundValueStr, returnMLValue);
                 // Done
                 ret = returnMLValue;
             }
@@ -682,33 +681,5 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
 		return I18NUtil.getContentLocale();
 	}
 
-	/**
-     * Replace any text in mlText having the same language (but any variant) as contentLocale
-     * with updatedText keyed by the language of contentLocale. This ensures that the mlText
-     * will have no more than one entry for the particular language.
-     * 
-     * @param contentLocale Locale
-     * @param updatedText String
-     * @param mlText MLText
-     */
-    private void replaceTextForLanguage(Locale contentLocale, String updatedText, MLText mlText)
-    {
-    	
-    	Locale  toSaveUnderLocale = MLTextHelper.getSupportedLocale(contentLocale);
-    	
-    	
-    	 Iterator<Locale> locales = mlText.getLocales().iterator();
-	        while (locales.hasNext())
-	        {
-	            Locale locale = locales.next();
-	            if (locale.getLanguage().equals(toSaveUnderLocale.getLanguage()) && (!MLTextHelper.isSupportedLocale(locale) ) )
-	            {
-	                locales.remove();
-	            }
-	        }
-	        
-	     // Add the new value for the specific language
-	       mlText.addValue(toSaveUnderLocale, updatedText);
-	              
-    }
+	
 }
