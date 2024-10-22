@@ -854,6 +854,19 @@
                failureMessage: "Could not load Group Finder component",
                execScripts: true
             });
+            
+            Alfresco.util.Ajax.request(
+            {
+               url: Alfresco.constants.PROXY_URI + "webframework/content/metadata?user=" + parent.options.userId,
+               successCallback:
+               {
+                  fn: this.onMetadataLoaded,
+                  scope: this
+               },
+               failureMessage: "Could not load Metadata",
+               execScripts: true
+            });
+            
          },
 
          onGroupFinderLoaded: function onGroupFinderLoaded(res)
@@ -994,7 +1007,6 @@
             fnClearEl("-create-verifypassword");
             fnClearEl("-create-quota");
             Dom.get(parent.id + "-create-disableaccount").checked = false;
-            Dom.get(parent.id + "-create-ssouser").checked = true;
 
             // reset quota selection drop-down
             Dom.get(parent.id + "-create-quotatype").value = "gb";
@@ -1033,6 +1045,21 @@
          onHide: function onHide()
          {
             this._visible = false;
+         },
+         
+         onMetadataLoaded: function onMetadataLoaded(res)
+         {
+            var metadata = res.serverResponse.responseText;
+            var isSsoEnabled = metadata && JSON.parse(metadata).data.capabilities.isSsoEnabled;
+            var createSsoUserCheckBox = Dom.get(parent.id + "-create-ssouser");
+            if (createSsoUserCheckBox) {
+	            createSsoUserCheckBox.checked = isSsoEnabled;
+	            createSsoUserCheckBox.disabled = !isSsoEnabled;
+			}
+            var updateSsoUserCheckBox = Dom.get(parent.id + "-update-ssouser");
+			if (updateSsoUserCheckBox) {
+	            updateSsoUserCheckBox.disabled = !isSsoEnabled;
+			}
          }
       });
       new CreatePanelHandler();
@@ -1093,6 +1120,18 @@
                   scope: this
                },
                failureMessage: "Could not load Group Finder component",
+               execScripts: true
+            });
+            
+            Alfresco.util.Ajax.request(
+            {
+               url: Alfresco.constants.PROXY_URI + "webframework/content/metadata?user=" + parent.options.userId,
+               successCallback:
+               {
+                  fn: this.onMetadataLoaded,
+                  scope: this
+               },
+               failureMessage: "Could not load Metadata",
                execScripts: true
             });
          },
