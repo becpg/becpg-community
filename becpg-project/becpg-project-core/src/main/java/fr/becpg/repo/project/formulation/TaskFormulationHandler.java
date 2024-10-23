@@ -163,6 +163,11 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 		visitParents(projectData, tasks, !isOnHold && !isTpl);
 
 		visitProject(projectData, tasks, isTpl);
+		
+		// exclude project template tasks from search
+		if (isTpl) {
+			projectData.getTaskList().forEach(t -> t.setIsExcludeFromSearch(true));
+		}
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("After formulate tasks:" + TaskWrapper.print(projectData));
