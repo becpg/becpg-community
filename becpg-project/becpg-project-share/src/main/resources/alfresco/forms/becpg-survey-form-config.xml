@@ -191,7 +191,7 @@
 					<field id="survey:fsLinkedHierarchy" set="surveyAutogeneration">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">
-								becpg/autocomplete/allLinkedvalue/values/System/ProductHierarchy/bcpg:entityLists?extra.depthLevel=1
+								becpg/autocomplete/allLinkedvalue/values/System/ProductHierarchy/bcpg:entityLists
 							</control-param>
 							<control-param name="extraPaths">prop_survey_fsLinkedTypes</control-param>
 							<control-param name="showTooltip">false</control-param>
@@ -294,7 +294,7 @@
 					<field id="survey:fsLinkedHierarchy" set="surveyAutogeneration">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">
-								becpg/autocomplete/allLinkedvalue/values/System/ProductHierarchy/bcpg:entityLists?extra.depthLevel=1
+								becpg/autocomplete/allLinkedvalue/values/System/ProductHierarchy/bcpg:entityLists
 							</control-param>
 							<control-param name="extraPaths">prop_survey_fsLinkedTypes</control-param>
 							<control-param name="showTooltip">false</control-param>
