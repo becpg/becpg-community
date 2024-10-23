@@ -273,7 +273,8 @@ public class MeatContentFormulationIT extends AbstractFinishedProductTest {
 		// Declare
 		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
 
-		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render)
+);
 		labelingRuleList.add(new LabelingRuleListDataItem("%", "", LabelingRuleType.ShowPerc, null, null));
 
 		checkILL(finishedProductNodeRef1, labelingRuleList, "porc french 60%, beef french 40%", Locale.FRENCH);
@@ -296,7 +297,8 @@ public class MeatContentFormulationIT extends AbstractFinishedProductTest {
 
 		labelingRuleList = new ArrayList<>();
 
-		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render)
+);
 		labelingRuleList.add(new LabelingRuleListDataItem("%", "", LabelingRuleType.ShowPerc, null, null));
 		labelingRuleList.add(new LabelingRuleListDataItem("QUID Boeuf", MeatType.Mammals.toString(), LabelingRuleType.Group, Arrays.asList(beef),
 				Arrays.asList(beefFat)));
