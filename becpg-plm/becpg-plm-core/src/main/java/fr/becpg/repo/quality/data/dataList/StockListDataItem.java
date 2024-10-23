@@ -17,13 +17,16 @@ private * Copyright (C) 2010-2021 beCPG.
  ******************************************************************************/
 package fr.becpg.repo.quality.data.dataList;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
+import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
@@ -50,6 +53,10 @@ public class StockListDataItem extends BeCPGDataObject {
 	private ProductUnit unit = ProductUnit.kg;
 	private NodeRef product;
 	private Date useByDate;
+
+	private List<NodeRef> plants = new ArrayList<>();
+	private List<NodeRef> laboratories = new ArrayList<>();
+	
 
 	/**
 	 * <p>Getter for the field <code>batchId</code>.</p>
@@ -171,6 +178,27 @@ public class StockListDataItem extends BeCPGDataObject {
 		this.unit = unit;
 	}
 
+
+	@AlfMultiAssoc
+	@AlfQname(qname = "bcpg:plants")
+	public List<NodeRef> getPlants() {
+		return plants;
+	}
+
+	public void setPlants(List<NodeRef> plants) {
+		this.plants = plants;
+	}
+	@AlfMultiAssoc
+	@AlfQname(qname = "bcpg:laboratories")
+	public List<NodeRef> getLaboratories() {
+		return laboratories;
+	}
+
+	public void setLaboratories(List<NodeRef> laboratories) {
+		this.laboratories = laboratories;
+	}
+
+	
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
@@ -178,16 +206,14 @@ public class StockListDataItem extends BeCPGDataObject {
 				+ "]";
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(batchId, batchQty, product, state, unit, useByDate);
+		result = prime * result + Objects.hash(batchId, batchQty, laboratories, plants, product, state, unit, useByDate);
 		return result;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -197,8 +223,9 @@ public class StockListDataItem extends BeCPGDataObject {
 		if (getClass() != obj.getClass())
 			return false;
 		StockListDataItem other = (StockListDataItem) obj;
-		return Objects.equals(batchId, other.batchId) && Objects.equals(batchQty, other.batchQty) && Objects.equals(product, other.product)
-				&& state == other.state && unit == other.unit && Objects.equals(useByDate, other.useByDate);
+		return Objects.equals(batchId, other.batchId) && Objects.equals(batchQty, other.batchQty) && Objects.equals(laboratories, other.laboratories)
+				&& Objects.equals(plants, other.plants) && Objects.equals(product, other.product) && state == other.state && unit == other.unit
+				&& Objects.equals(useByDate, other.useByDate);
 	}
 
 }
