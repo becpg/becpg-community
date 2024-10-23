@@ -187,7 +187,8 @@ public class EntityCatalogIT extends PLMBaseTestCase {
 			allergenList.add(new AllergenListDataItem(null, null, false, false, null, null, allergens.get(3), true));
 				
 			List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
-			labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
+			labelingRuleList.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render)
+);
 			List<CompoListDataItem> compoList1 = new ArrayList<>();
 			compoList1.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterialNodeRef));
 		

@@ -43,4 +43,10 @@ public class MLTextHelperTest {
 
 		MLTextHelper.flushCache();
 	}
+	@Test
+	public void testDecimalFormat() {
+		System.out.printf(Locale.UK, "%.2f", 10.5d);
+		System.out.printf(MLTextHelper.parseLocale("en_ZA"), "%.2f", 10.5d);
+	}
+	
 }
