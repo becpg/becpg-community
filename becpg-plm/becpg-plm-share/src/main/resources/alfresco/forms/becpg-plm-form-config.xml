@@ -3627,6 +3627,151 @@
 		</forms>
 	</config>
 
+    <!-- bcpg:laboratory type (existing nodes) -->
+    <config evaluator="node-type" condition="bcpg:laboratory">
+        <forms>
+            <form>
+                <field-visibility>
+                    <show id="cm:name" />
+                    <show id="bcpg:erpCode" force="true" />
+                    <show force="true" id="bcpg:eanCode" />
+                    <show id="cm:title" force="true" />
+                    <show id="cm:description" force="true" />
+                    <show id="bcpg:locationAddress1" force="true" />
+                    <show id="bcpg:locationAddress2" force="true" />
+                    <show id="bcpg:locationAddress3" force="true" />
+                    <show id="bcpg:locationCity" force="true" />
+                    <show id="bcpg:locationZip" force="true" />
+                    <show id="bcpg:locationState" force="true" />
+                    <show id="bcpg:locationCountry" force="true" />
+
+                    <show id="sec:readGroups" force="true" />
+                    <show id="bcpg:isDeleted" />
+
+                </field-visibility>
+                <appearance>
+                    <field id="cm:description">
+                        <control>
+                            <control-param name="activateLinks">true</control-param>
+                        </control>
+                    </field>
+                    <field id="bcpg:locationAddress1" help-id="becpg.forms.help.locationAddress1">
+                        <control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+                    </field>
+                    <field id="bcpg:locationAddress2" help-id="becpg.forms.help.locationAddress2">
+                        <control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+                    </field>
+                    <field id="bcpg:locationAddress3">
+                        <control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+                    </field>
+                    <field id="bcpg:locationCity">
+                        <control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+                    </field>
+                    <field id="bcpg:locationZip">
+                        <control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+                    </field>
+                    <field id="bcpg:locationState">
+                        <control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+                    </field>
+                    <field id="bcpg:locationCountry">
+                        <control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+                    </field>
+                </appearance>
+            </form>
+        </forms>
+    </config>
+
+    <config evaluator="model-type" condition="bcpg:laboratory">
+        <forms>
+            <!-- Create item form -->
+            <form>
+
+                <field-visibility>
+                    <show id="cm:name" />
+                    <show id="bcpg:erpCode" force="true" />
+                    <show force="true" id="bcpg:eanCode" />
+                    <show id="cm:title" force="true" />
+                    <show id="cm:description" force="true" />
+                    <show id="bcpg:locationAddress1" force="true" />
+                    <show id="bcpg:locationAddress2" force="true" />
+                    <show id="bcpg:locationAddress3" force="true" />
+                    <show id="bcpg:locationCity" force="true" />
+                    <show id="bcpg:locationZip" force="true" />
+                    <show id="bcpg:locationState" force="true" />
+                    <show id="bcpg:locationCountry" force="true" />
+                    <show id="sec:readGroups" force="true" />
+                    <show id="bcpg:isDeleted" />
+
+                </field-visibility>
+
+                <appearance>
+                    <field id="cm:description">
+                        <control>
+                            <control-param name="activateLinks">true</control-param>
+                        </control>
+                    </field>
+                    <field id="bcpg:locationAddress1" help-id="becpg.forms.help.locationAddress1">
+                        <control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+                    </field>
+                    <field id="bcpg:locationAddress2" help-id="becpg.forms.help.locationAddress2">
+                        <control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+                    </field>
+                    <field id="bcpg:locationAddress3">
+                        <control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+                    </field>
+                    <field id="bcpg:locationCity">
+                        <control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+                    </field>
+                    <field id="bcpg:locationZip">
+                        <control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+                    </field>
+                    <field id="bcpg:locationState">
+                        <control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+                    </field>
+                    <field id="bcpg:locationCountry">
+                        <control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+                    </field>
+                </appearance>
+            </form>
+
+            <!-- Data Grid view -->
+            <form id="filter">
+                <field-visibility>
+                    <show id="cm:name" />
+                </field-visibility>
+            </form>
+
+            <form id="datagrid">
+                <field-visibility>
+                    <show id="cm:name" />
+                    <show id="bcpg:erpCode" force="true" />
+                    <show force="true" id="bcpg:eanCode" />
+                    <show id="cm:title" />
+                    <show id="cm:description" />
+                    <show id="bcpg:locationAddress1" force="true" />
+                    <show id="bcpg:locationAddress2" force="true" />
+                    <show id="bcpg:locationAddress3" force="true" />
+                    <show id="bcpg:locationCity" force="true" />
+                    <show id="bcpg:locationZip" force="true" />
+                    <show id="bcpg:locationState" force="true" />
+                    <show id="bcpg:locationCountry" force="true" />
+
+                    <show id="sec:readGroups" force="true" />
+                    <show id="bcpg:isDeleted" />
+
+                </field-visibility>
+                <appearance>
+                    <field id="bcpg:isDeleted">
+                        <control template="/org/alfresco/components/form/controls/boolean.ftl" />
+                    </field>
+                </appearance>
+            </form>
+        </forms>
+    </config>
+
+
+
+
 	<!-- bcpg:trademark type (existing nodes) -->
 	<config evaluator="node-type" condition="bcpg:trademark">
 		<forms>
