@@ -17,12 +17,12 @@
  ******************************************************************************/
 package fr.becpg.repo.quality.data;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -35,6 +35,7 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.quality.data.dataList.AllocationListDataItem;
+import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
@@ -66,6 +67,10 @@ public class BatchData extends AbstractScorableEntity {
 	private BatchData entityTpl;
 
 	private String entityScore;
+	
+
+	private List<NodeRef> plants = new ArrayList<>();
+	private List<NodeRef> laboratories = new ArrayList<>();
 
 	/*
 	 * Formulation
@@ -239,6 +244,26 @@ public class BatchData extends AbstractScorableEntity {
 	public CompoListView getCompoListView() {
 		return compoListView;
 	}
+	
+
+	@AlfMultiAssoc
+	@AlfQname(qname = "bcpg:plants")
+	public List<NodeRef> getPlants() {
+		return plants;
+	}
+
+	public void setPlants(List<NodeRef> plants) {
+		this.plants = plants;
+	}
+	@AlfMultiAssoc
+	@AlfQname(qname = "bcpg:laboratories")
+	public List<NodeRef> getLaboratories() {
+		return laboratories;
+	}
+
+	public void setLaboratories(List<NodeRef> laboratories) {
+		this.laboratories = laboratories;
+	}
 
 	private <T> List<T> filterList(List<T> list, List<DataListFilter<BatchData, T>> filters) {
 		if ((filters != null) && !filters.isEmpty()) {
@@ -246,7 +271,7 @@ public class BatchData extends AbstractScorableEntity {
 			for (DataListFilter<BatchData, T> filter : filters) {
 				stream = stream.filter(filter.createPredicate(this));
 			}
-			return stream.collect(Collectors.toList());
+			return stream.toList();
 		}
 		return list;
 	}
@@ -460,36 +485,33 @@ public class BatchData extends AbstractScorableEntity {
 				+ allocationList + ", compoListView=" + compoListView + "]";
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = (prime * result) + Objects.hash(allocationList, batchId, batchQty, compoListView, currentReformulateCount, entityScore, entityTpl,
-				formulatedDate, formulationChainId, product, reformulateCount, requirementChecksum, state, unit, updateFormulatedDate);
+		result = prime * result
+				+ Objects.hash(allocationList, batchId, batchQty, compoListView, currentReformulateCount, entityScore, entityTpl, formulatedDate,
+						formulationChainId, laboratories, plants, product, reformulateCount, requirementChecksum, state, unit, updateFormulatedDate);
 		return result;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
+		if (this == obj)
 			return true;
-		}
-		if (!super.equals(obj)) {
+		if (!super.equals(obj))
 			return false;
-		}
-		if (getClass() != obj.getClass()) {
+		if (getClass() != obj.getClass())
 			return false;
-		}
 		BatchData other = (BatchData) obj;
 		return Objects.equals(allocationList, other.allocationList) && Objects.equals(batchId, other.batchId)
 				&& Objects.equals(batchQty, other.batchQty) && Objects.equals(compoListView, other.compoListView)
 				&& Objects.equals(currentReformulateCount, other.currentReformulateCount) && Objects.equals(entityScore, other.entityScore)
 				&& Objects.equals(entityTpl, other.entityTpl) && Objects.equals(formulatedDate, other.formulatedDate)
-				&& Objects.equals(formulationChainId, other.formulationChainId) && Objects.equals(product, other.product)
+				&& Objects.equals(formulationChainId, other.formulationChainId) && Objects.equals(laboratories, other.laboratories)
+				&& Objects.equals(plants, other.plants) && Objects.equals(product, other.product)
 				&& Objects.equals(reformulateCount, other.reformulateCount) && Objects.equals(requirementChecksum, other.requirementChecksum)
-				&& (state == other.state) && (unit == other.unit) && Objects.equals(updateFormulatedDate, other.updateFormulatedDate);
+				&& state == other.state && unit == other.unit && Objects.equals(updateFormulatedDate, other.updateFormulatedDate);
 	}
 
 }
