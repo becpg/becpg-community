@@ -2,7 +2,7 @@
  * @namespace beCPG
  * @class beCPG.component.ProductList
  */
- 
+
 (function() {
 
     /**
@@ -22,5 +22,5 @@
      */
     YAHOO.extend(beCPG.component.ProductList, beCPG.module.EntityDataGrid);
 
- 
+
 })();

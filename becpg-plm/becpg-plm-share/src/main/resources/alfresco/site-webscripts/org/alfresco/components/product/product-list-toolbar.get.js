@@ -57,6 +57,7 @@ function main()
 		  filters: getFilters(),
 		  types: getTypes(),
 	      prefsId : prefsId
+          
 	   }
 	};
 	
