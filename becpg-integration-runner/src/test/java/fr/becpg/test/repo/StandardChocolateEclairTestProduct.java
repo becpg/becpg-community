@@ -1,6 +1,7 @@
 package fr.becpg.test.repo;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -49,8 +50,8 @@ public class StandardChocolateEclairTestProduct {
 	public static final String SUPPLIER_1 = "Fournisseur 1";
 	public static final String SUPPLIER_2 = "Fournisseur 2";
 	public static final String SUPPLIER_3 = "Fournisseur 3";
-	public static final String LABORATORY_1 = "Laboratory 1";
-	public static final String LABORATORY_2 = "Laboratory 2";
+	public static final String LABORATORY_1 = "Laboratoire 1";
+	public static final String LABORATORY_2 = "Laboratoire 2";
 	public static final String PLANT_USINE_1 = "Usine 1";
 	public static final String PLANT_USINE_2 = "Usine 2";
 
@@ -182,7 +183,7 @@ public class StandardChocolateEclairTestProduct {
 		return finishedProduct;
 
 	}
-	
+
 	public LogisticUnitData createCaseLogisticUnit() {
 		FinishedProductData eclairAuChocolat = createTestProduct();
 
@@ -219,23 +220,37 @@ public class StandardChocolateEclairTestProduct {
 	private void initCompoProduct() {
 		// Creating raw materials
 		RawMaterialData water = RawMaterialData.build().withName(WATER_NAME).withQty(100d).withUnit(ProductUnit.kg);
+
+		if (isWithStocks) {
+			addStocks(water, 1000d, new ArrayList<>());
+		}
+
 		waterNodeRef = alfrescoRepository.create(destFolder, water).getNodeRef();
 		nodeService.addAspect(waterNodeRef, PLMModel.ASPECT_WATER, new HashMap<>());
 
 		RawMaterialData milk = RawMaterialData.build().withName(MILK_NAME).withQty(20d).withUnit(ProductUnit.kg);
+
+		if (isWithStocks) {
+			addStocks(milk, 1000d, new ArrayList<>());
+		}
+
 		milkNodeRef = alfrescoRepository.create(destFolder, milk).getNodeRef();
+
 		nodeService.setProperty(milkNodeRef, PLMModel.PROP_EVAPORATED_RATE, 90d);
 
 		RawMaterialData sugar = RawMaterialData.build().withName(SUGAR_NAME).withQty(20d).withUnit(ProductUnit.kg);
 
 		if (isWithGenericRawMaterial) {
-			RawMaterialData sugarSupplier1 = RawMaterialData.build().withName(SUGAR_SUPPLIER_1_NAME).withUnit(ProductUnit.kg);
+			RawMaterialData sugarSupplier1 = RawMaterialData.build().withName(SUGAR_SUPPLIER_1_NAME).withUnit(ProductUnit.kg)
+					.withPlants(List.of(getOrCreateCharact(PLANT_USINE_1, PLMModel.TYPE_PLANT)));
 			sugarSupplier1.setSuppliers(List.of(getOrCreateCharact(SUPPLIER_1, PLMModel.TYPE_SUPPLIER)));
 
-			RawMaterialData sugarSupplier2 = RawMaterialData.build().withName(SUGAR_SUPPLIER_2_NAME).withUnit(ProductUnit.kg);
+			RawMaterialData sugarSupplier2 = RawMaterialData.build().withName(SUGAR_SUPPLIER_2_NAME).withUnit(ProductUnit.kg).withPlants(
+					List.of(getOrCreateCharact(PLANT_USINE_1, PLMModel.TYPE_PLANT), getOrCreateCharact(PLANT_USINE_2, PLMModel.TYPE_PLANT)));
 			sugarSupplier2.setSuppliers(List.of(getOrCreateCharact(SUPPLIER_2, PLMModel.TYPE_SUPPLIER)));
 
-			RawMaterialData sugarSupplier3 = RawMaterialData.build().withName(SUGAR_SUPPLIER_3_NAME).withUnit(ProductUnit.kg);
+			RawMaterialData sugarSupplier3 = RawMaterialData.build().withName(SUGAR_SUPPLIER_3_NAME).withUnit(ProductUnit.kg)
+					.withPlants(List.of(getOrCreateCharact(PLANT_USINE_2, PLMModel.TYPE_PLANT)));
 			sugarSupplier3.setSuppliers(List.of(getOrCreateCharact(SUPPLIER_3, PLMModel.TYPE_SUPPLIER)));
 
 			if (isWithStocks) {
@@ -252,24 +267,21 @@ public class StandardChocolateEclairTestProduct {
 			RawMaterialData sugarGen1 = RawMaterialData.build().withName(SUGAR_GEN_USINE_1_NAME).withUnit(ProductUnit.kg)
 					.withPlants(List.of(getOrCreateCharact(PLANT_USINE_1, PLMModel.TYPE_PLANT)));
 
-			sugarGen1.getCompoList()
-					.addAll(List.of(CompoListDataItem.build().withQtyUsed(50d).withUnit(ProductUnit.Perc).withProduct(sugarSupplier1NodeRef),
-							CompoListDataItem.build().withQtyUsed(50d).withUnit(ProductUnit.Perc).withProduct(sugarSupplier2NodeRef)));
+			sugarGen1.withCompoList(List.of(CompoListDataItem.build().withQtyUsed(50d).withUnit(ProductUnit.Perc).withProduct(sugarSupplier1NodeRef),
+					CompoListDataItem.build().withQtyUsed(50d).withUnit(ProductUnit.Perc).withProduct(sugarSupplier2NodeRef)));
 
 			sugarPlants1NodeRef = alfrescoRepository.create(destFolder, sugarGen1).getNodeRef();
 
 			RawMaterialData sugarGen2 = RawMaterialData.build().withName(SUGAR_GEN_USINE_2_NAME).withUnit(ProductUnit.kg)
 					.withPlants(List.of(getOrCreateCharact(PLANT_USINE_2, PLMModel.TYPE_PLANT)));
 
-			sugarGen2.getCompoList()
-					.addAll(List.of(CompoListDataItem.build().withQtyUsed(50d).withUnit(ProductUnit.Perc).withProduct(sugarSupplier1NodeRef),
-							CompoListDataItem.build().withQtyUsed(50d).withUnit(ProductUnit.Perc).withProduct(sugarSupplier2NodeRef)));
+			sugarGen2.withCompoList(List.of(CompoListDataItem.build().withQtyUsed(50d).withUnit(ProductUnit.Perc).withProduct(sugarSupplier2NodeRef),
+					CompoListDataItem.build().withQtyUsed(50d).withUnit(ProductUnit.Perc).withProduct(sugarSupplier3NodeRef)));
 
 			sugarPlants2NodeRef = alfrescoRepository.create(destFolder, sugarGen2).getNodeRef();
 
-			sugar.getCompoList()
-					.addAll(List.of(CompoListDataItem.build().withQtyUsed(50d).withUnit(ProductUnit.Perc).withProduct(sugarPlants1NodeRef),
-							CompoListDataItem.build().withQtyUsed(50d).withUnit(ProductUnit.Perc).withProduct(sugarPlants2NodeRef)));
+			sugar.withCompoList(List.of(CompoListDataItem.build().withQtyUsed(50d).withUnit(ProductUnit.Perc).withProduct(sugarPlants1NodeRef),
+					CompoListDataItem.build().withQtyUsed(50d).withUnit(ProductUnit.Perc).withProduct(sugarPlants2NodeRef)));
 		}
 
 		sugarNodeRef = alfrescoRepository.create(destFolder, sugar).getNodeRef();
@@ -355,11 +367,31 @@ public class StandardChocolateEclairTestProduct {
 	}
 
 	private void addStocks(RawMaterialData rawMaterial, Double qty, List<NodeRef> laboratories) {
+
+		Calendar now = Calendar.getInstance();
+		now.add(Calendar.DAY_OF_WEEK, 10);
+
+		List<StockListDataItem> stocks = new ArrayList<>();
+
+		for (NodeRef laboratory : laboratories) {
+			StockListDataItem stockListDataItem = new StockListDataItem();
+			stockListDataItem.setBatchId(rawMaterial.getName() + " - " + nodeService.getProperty(laboratory, ContentModel.PROP_NAME) + "-"
+					+ now.get(Calendar.DAY_OF_WEEK));
+			stockListDataItem.setLaboratories(List.of(laboratory));
+			stockListDataItem.setUseByDate(now.getTime());
+			stockListDataItem.setBatchQty(qty);
+			stocks.add(stockListDataItem);
+		}
+
+		now.add(Calendar.DAY_OF_WEEK, 5);
+
 		StockListDataItem stockListDataItem = new StockListDataItem();
-		stockListDataItem.setBatchId("batch - " + Calendar.getInstance().toInstant().toEpochMilli());
-		stockListDataItem.setLaboratories(laboratories);
-		stockListDataItem.setBatchQty(qty);
-		rawMaterial.getStockList().add(stockListDataItem);
+		stockListDataItem.setBatchId(rawMaterial.getName() + " - " + now.get(Calendar.DAY_OF_WEEK));
+		stockListDataItem.setUseByDate(now.getTime());
+		stockListDataItem.setBatchQty(qty / 10);
+		stocks.add(stockListDataItem);
+
+		rawMaterial.setStockList(stocks);
 
 	}
 
