@@ -2,6 +2,7 @@ package fr.becpg.test.repo.quality;
 
 import java.util.List;
 
+import org.alfresco.service.cmr.repository.NodeRef;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ public class BatchOrderIT extends AbstractFinishedProductTest {
 	@Test
 	public void testBatchOrder() {
 
-		inWriteTx(() -> {
+		NodeRef batchNodeRef = inWriteTx(() -> {
 
 			StandardChocolateEclairTestProduct testProduct = new StandardChocolateEclairTestProduct.Builder()
 					.withAlfrescoRepository(alfrescoRepository).withNodeService(nodeService).withDestFolder(getTestFolderNodeRef()).withCompo(true)
@@ -39,18 +40,29 @@ public class BatchOrderIT extends AbstractFinishedProductTest {
 
 			batchData.setProduct(testProduct.createTestProduct());
 
-			batchRepository.save(batchData);
+			batchData = batchRepository.create(getTestFolderNodeRef(), batchData);
 
-			formulationService.formulate(batchData);
+			formulationService.formulate(batchData.getProduct().getNodeRef());
+
+			return batchData.getNodeRef();
+
+		});
+
+		inWriteTx(() -> {
+
+			BatchData batchData = batchRepository.findOne(batchNodeRef);
+
+			formulationService.formulate(batchData.getProduct().getNodeRef());
+			formulationService.formulate(batchNodeRef);
+			
+			Assert.assertEquals(batchData.getCompoList().size(),3);
 
 			return batchData;
 
 		});
 
-		
-		Assert.assertTrue(true);
-		
-		
+	
+
 	}
 
 }
