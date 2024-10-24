@@ -253,14 +253,14 @@ public class BatchFormulationHandler extends FormulationBaseHandler<BatchData> {
 
 		// Filter the list based on stockListItems
 		return tmp.stream().filter(
-				item -> (stockListItems == null) || stockListItems.isEmpty() || stockListItems.contains(item.getNodeRef()) && accept(batchData, item))
+				item -> ((stockListItems != null && !stockListItems.isEmpty() && stockListItems.contains(item.getNodeRef())) || accept(batchData, item)))
 				.toList();
 	}
 
 	private List<StockListDataItem> extractStockList(BatchData batchData, ProductData rawMaterialData) {
 		List<StockListDataItem> ret = new ArrayList<>();
 
-		if (rawMaterialData.isGeneric()) {
+		if (rawMaterialData.isGeneric() && rawMaterialData.hasCompoListEl()) {
 			for (CompoListDataItem compoList : rawMaterialData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 				NodeRef productNodeRef = compoList.getProduct();
 				if ((productNodeRef != null) && !DeclarationType.Omit.equals(compoList.getDeclType())) {
