@@ -24,7 +24,6 @@ import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.impl.AbstractDataListExtractor;
 import fr.becpg.repo.helper.AttributeExtractorService;
-import fr.becpg.repo.helper.impl.AttributeExtractorField;
 
 /**
  * <p>AuditActivityExtractor class.</p>
@@ -97,12 +96,12 @@ public class AuditActivityExtractor implements DataListExtractor {
 
 	/** {@inheritDoc} */
 	@Override
-	public PaginatedExtractedItems extract(DataListFilter dataListFilter, List<AttributeExtractorField> metadataFields) {
+	public PaginatedExtractedItems extract(DataListFilter dataListFilter) {
 
 		PaginatedExtractedItems ret = new PaginatedExtractedItems(dataListFilter.getPagination().getPageSize());
 
 		if (ret.getComputedFields() == null) {
-			ret.setComputedFields(attributeExtractorService.readExtractStructure(BeCPGModel.TYPE_ACTIVITY_LIST, metadataFields));
+			ret.setComputedFields(attributeExtractorService.readExtractStructure(BeCPGModel.TYPE_ACTIVITY_LIST, dataListFilter.getMetadataFields()));
 		}
 		
 		AuditQuery auditQuery = AuditQuery.createQuery().dbAsc(false).asc(false)

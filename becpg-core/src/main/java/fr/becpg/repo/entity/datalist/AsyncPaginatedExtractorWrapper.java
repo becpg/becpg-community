@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
-import fr.becpg.repo.helper.impl.AttributeExtractorField;
 
 /**
  * <p>AsyncPaginatedExtractorWrapper class.</p>
@@ -16,8 +15,6 @@ public class AsyncPaginatedExtractorWrapper extends PaginatedExtractedItems  {
 
 	private DataListExtractor extractor;
 	private DataListFilter dataListFilter;
-	private List<AttributeExtractorField> metadataFields;
-
 	private int curPage = 1;
 
 	/** Constant <code>PAGE_SIZE=100</code> */
@@ -30,11 +27,10 @@ public class AsyncPaginatedExtractorWrapper extends PaginatedExtractedItems  {
 	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object
 	 * @param metadataFields a {@link java.util.List} object
 	 */
-	public AsyncPaginatedExtractorWrapper(DataListExtractor extractor, DataListFilter dataListFilter, List<AttributeExtractorField> metadataFields) {
+	public AsyncPaginatedExtractorWrapper(DataListExtractor extractor, DataListFilter dataListFilter) {
 
 		this.extractor = extractor;
 		this.dataListFilter = dataListFilter;
-		this.metadataFields = metadataFields;
 		getNextWork();
 	}
 
@@ -53,7 +49,7 @@ public class AsyncPaginatedExtractorWrapper extends PaginatedExtractedItems  {
 			if( curPage  <=  pages ) {
 				dataListFilter.getPagination().setPage(curPage++);
 				dataListFilter.getPagination().setPageSize(PAGE_SIZE);			
-				clone(extractor.extract(dataListFilter, metadataFields));
+				clone(extractor.extract(dataListFilter));
 			} else {
 				this.items = null;
 			}
@@ -63,7 +59,6 @@ public class AsyncPaginatedExtractorWrapper extends PaginatedExtractedItems  {
 
 	private void clone(PaginatedExtractedItems extract) {
 		this.fullListSize = extract.getFullListSize();
-		this.computedFields = extract.getComputedFields();
 		this.items = extract.getPageItems();
 	}
 
@@ -82,7 +77,7 @@ public class AsyncPaginatedExtractorWrapper extends PaginatedExtractedItems  {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(curPage, dataListFilter, extractor, metadataFields);
+		result = prime * result + Objects.hash(curPage, dataListFilter, extractor);
 		return result;
 	}
 
@@ -98,7 +93,7 @@ public class AsyncPaginatedExtractorWrapper extends PaginatedExtractedItems  {
 			return false;
 		AsyncPaginatedExtractorWrapper other = (AsyncPaginatedExtractorWrapper) obj;
 		return curPage == other.curPage && Objects.equals(dataListFilter, other.dataListFilter) && Objects.equals(extractor, other.extractor)
-				&& Objects.equals(metadataFields, other.metadataFields);
+				;
 	}
 
 

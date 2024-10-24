@@ -469,6 +469,11 @@
 				 * @default null
 				 */
 				deferredActionsMenu: null,
+                
+                /**
+                 * Show thumbnails
+                 */
+                showThumbnails: false,
 
 				/**
 				 * Deferred function calls for after a data grid update
@@ -587,7 +592,43 @@
 								'<label class="dt-check" for="checkbox-' + oRecord.getId() + '"></label>';
 						}
 					};
-				},
+                },
+
+                fnRenderCellThumbnail: function EntityDataGrid_fnRenderCellThumbnail() {
+
+                    /**
+                     * Selector custom datacell formatter
+                     * 
+                     * @method renderCellSelected
+                     * @param elCell
+                     *            {object}
+                     * @param oRecord
+                     *            {object}
+                     * @param oColumn
+                     *            {object}
+                     * @param oData
+                     *            {object|string}
+                     */
+                    return function  EntityDataGrid_function_renderCellThumbnail(elCell, oRecord, oColumn, oData) {
+                        var columnWidth = 100, record = oRecord.getData(), desc = "";
+
+                        record.jsNode = {};
+                        record.jsNode.type = record.nodeType;
+
+                        var thumbName = record.itemData["prop_cm_name"].value, nodeRef = new Alfresco.util.NodeRef(record.nodeRef), extn = thumbName
+                            .substring(thumbName.lastIndexOf("."));
+
+                        desc = '<span class="thumbnail"><img src="' + Alfresco.constants.PROXY_URI + 'api/node/' + nodeRef.uri
+                            + '/content/thumbnails/doclib?c=queue&ph=true" alt="' + extn + '" title="' + $html(thumbName) + '" /></span>';
+
+                        oColumn.width = columnWidth;
+
+                        Dom.setStyle(elCell, "width", oColumn.width + "px");
+                        Dom.setStyle(elCell.parentNode, "width", oColumn.width + "px");
+
+                        elCell.innerHTML = desc;
+                    };
+                },
 
 				fnRenderCellSelectedHeader: function EntityDataGrid_fnRenderCellSelectedHeader() {
 
@@ -1299,6 +1340,19 @@
 							className: "sticky",
 							width: 16
 						}];
+
+                    if (this.options.showThumbnails) {
+                        columnDefinitions.push({
+                            key: "thumbnail",
+                            label: "",
+                            sortable: false,
+                            formatter: this.fnRenderCellThumbnail(),
+                            width: 100
+                        }
+
+                        );
+                    }
+
 
 					delete me.widgets.itemSelect;
 					
@@ -2505,6 +2559,10 @@
 							if (obj.dataList.itemType != null && obj.force == true) {
 								this.options.itemType = obj.dataList.itemType;
 							}
+                            
+                            if (obj.dataList.showThumbnails != null) {
+                                  this.options.showThumbnails = obj.dataList.showThumbnails;
+                            }
 
 							this.parentInputNodeRef = null;
 						}
