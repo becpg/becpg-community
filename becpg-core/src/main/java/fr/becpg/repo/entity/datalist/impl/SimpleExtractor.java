@@ -46,7 +46,6 @@ import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.DataListPagination;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
-import fr.becpg.repo.helper.impl.AttributeExtractorField;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.search.PaginatedSearchCache;
@@ -119,7 +118,7 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 	/** {@inheritDoc} */
 	@Override
-	public PaginatedExtractedItems extract(DataListFilter dataListFilter, List<AttributeExtractorField> metadataFields) {
+	public PaginatedExtractedItems extract(DataListFilter dataListFilter) {
 
 		PaginatedExtractedItems ret = new PaginatedExtractedItems(dataListFilter.getPagination().getPageSize());
 
@@ -134,7 +133,7 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 			// Right check not necessary
 			if (nodeService.exists(nodeRef) && permissionService.hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED) {
 				if (ret.getComputedFields() == null) {
-					ret.setComputedFields(attributeExtractorService.readExtractStructure(nodeService.getType(nodeRef), metadataFields));
+					ret.setComputedFields(attributeExtractorService.readExtractStructure(nodeService.getType(nodeRef), dataListFilter.getMetadataFields()));
 				}
 				if (RepoConsts.FORMAT_CSV.equals(dataListFilter.getFormat()) || RepoConsts.FORMAT_XLSX.equals(dataListFilter.getFormat())) {
 					ret.addItem(extractExport(

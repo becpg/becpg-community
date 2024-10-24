@@ -2,9 +2,6 @@ package fr.becpg.repo.product.extractor;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.springframework.extensions.surf.util.I18NUtil;
 
@@ -15,15 +12,10 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.impl.MultiLevelExtractor;
-import fr.becpg.repo.helper.impl.AttributeExtractorField;
 
 /**
  * <p>
- * IngListExtractor class.
- * </p>
- *
- * @author matthieu
- * @version $Id: $Id
+ * IngListn $Id: $Id
  */
 public class IngListExtractor extends MultiLevelExtractor {
 
@@ -37,9 +29,9 @@ public class IngListExtractor extends MultiLevelExtractor {
 
 	/** {@inheritDoc} */
 	@Override
-	public PaginatedExtractedItems extract(DataListFilter dataListFilter, List<AttributeExtractorField> metadataFields) {
+	public PaginatedExtractedItems extract(DataListFilter dataListFilter) {
 		
-		PaginatedExtractedItems ret = super.extract(dataListFilter, metadataFields);
+		PaginatedExtractedItems ret = super.extract(dataListFilter);
 
 		if (!(RepoConsts.FORMAT_CSV.equals(dataListFilter.getFormat()) || RepoConsts.FORMAT_XLSX.equals(dataListFilter.getFormat()))) {
 

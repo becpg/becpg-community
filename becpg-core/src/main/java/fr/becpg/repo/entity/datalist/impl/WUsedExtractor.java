@@ -41,7 +41,6 @@ import fr.becpg.repo.entity.datalist.WUsedListService.WUsedOperator;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.helper.JsonHelper;
-import fr.becpg.repo.helper.impl.AttributeExtractorField;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.search.impl.NestedAdvSearchPlugin;
@@ -105,7 +104,7 @@ public class WUsedExtractor extends MultiLevelExtractor {
 
 	/** {@inheritDoc} */
 	@Override
-	public PaginatedExtractedItems extract(DataListFilter dataListFilter, List<AttributeExtractorField> metadataFields) {
+	public PaginatedExtractedItems extract(DataListFilter dataListFilter) {
 
 		PaginatedExtractedItems ret = new PaginatedExtractedItems(dataListFilter.getPagination().getPageSize());
 
@@ -146,7 +145,7 @@ public class WUsedExtractor extends MultiLevelExtractor {
 
 		}
 
-		appendNextLevel(ret, metadataFields, wUsedData, 0, startIndex, pageSize, props, dataListFilter);
+		appendNextLevel(ret, dataListFilter.getMetadataFields(), wUsedData, 0, startIndex, pageSize, props, dataListFilter);
 
 		ret.setFullListSize(wUsedData.getSize());
 
