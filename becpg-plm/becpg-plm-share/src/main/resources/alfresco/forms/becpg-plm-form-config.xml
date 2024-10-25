@@ -10297,6 +10297,36 @@
 			</form>
 		</forms>
 	</config>
+	
+	
+	
+    <config evaluator="node-type" condition="bcpg:savedSearch">
+        <forms>
+            <form>
+                <field-visibility>
+                    <show id="cm:name" />
+                    <show id="bcpg:isGlobalSavedSearch" />
+                </field-visibility>
+            </form>
+        </forms>
+    </config>
+
+    <config evaluator="model-type" condition="bcpg:savedSearch">
+        <forms>
+            <form>
+                <field-visibility>
+                    <show id="cm:name" />
+                    <show id="bcpg:isGlobalSavedSearch" />
+                </field-visibility>
+            </form>
+            <form id="duplicate">
+                <field-visibility>
+                    <show id="cm:name" />
+                    <show id="bcpg:isGlobalSavedSearch" />
+                </field-visibility>
+            </form>
+        </forms>
+    </config>
 
 	<config evaluator="aspect" condition="bcpg:productTypeAspect">
 		<forms>

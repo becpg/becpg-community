@@ -18,8 +18,10 @@
 package fr.becpg.repo.entity.datalist;
 
 import java.util.Date;
+import java.util.List;
 
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
+import fr.becpg.repo.helper.impl.AttributeExtractorField;
 
 /**
  * Used to extract datalist datas
@@ -36,7 +38,7 @@ public interface DataListExtractor {
 	 * @param metadataFields a {@link java.util.List} object.
 	 * @return a {@link fr.becpg.repo.entity.datalist.PaginatedExtractedItems} object.
 	 */
-	PaginatedExtractedItems extract(DataListFilter dataListFilter);
+	PaginatedExtractedItems extract(DataListFilter dataListFilter, List<AttributeExtractorField> metadataFields);
 
 	/**
 	 * <p>applyTo.</p>

@@ -65,6 +65,7 @@ import fr.becpg.repo.mail.BeCPGMailService;
 import fr.becpg.repo.report.template.ReportTplInformation;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.report.client.ReportFormat;
 
 /**
@@ -152,9 +153,16 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 
 		// version
 		visitVersionFolder(entityVersionService.getEntitiesHistoryFolder());
-		
+
 		// exchange/export/notifications
-		 visitFolder(visitFolder(visitFolder(systemNodeRef, RepoConsts.PATH_EXCHANGE), RepoConsts.PATH_EXPORT), RepoConsts.PATH_NOTIFICATIONS);
+		visitFolder(visitFolder(visitFolder(systemNodeRef, RepoConsts.PATH_EXCHANGE), RepoConsts.PATH_EXPORT), RepoConsts.PATH_NOTIFICATIONS);
+
+		//Saved searchs
+		NodeRef savedSearchFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath(companyHome, "./app:dictionary/app:saved_searches");
+		if (savedSearchFolder != null) {
+			permissionService.setPermission(savedSearchFolder, PermissionService.GROUP_PREFIX + SystemGroup.SavedSearchMgr.toString(),
+					PermissionService.COORDINATOR, true);
+		}
 
 		return new ArrayList<>();
 	}
@@ -198,7 +206,7 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 
 		createGroups(new String[] { SystemGroup.SystemMgr.toString(), SystemGroup.OlapUser.toString(), SystemGroup.AiUser.toString(),
 				SystemGroup.ExternalUserMgr.toString(), SystemGroup.ExternalUser.toString(), SystemGroup.SecurityRole.toString(),
-				SystemGroup.LanguageMgr.toString() });
+				SystemGroup.LanguageMgr.toString(), SystemGroup.SavedSearchMgr.toString() });
 
 		createGroups(new String[] { SystemGroup.LicenseReadConcurrent.toString(), SystemGroup.LicenseWriteConcurrent.toString(),
 				SystemGroup.LicenseReadNamed.toString(), SystemGroup.LicenseWriteNamed.toString(),
@@ -349,6 +357,7 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + SystemGroup.SystemMgr.toString(), PermissionService.COORDINATOR,
 					true);
 		}
+
 	}
 
 	/** {@inheritDoc} */
