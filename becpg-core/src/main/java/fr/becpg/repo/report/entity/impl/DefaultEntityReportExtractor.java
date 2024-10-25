@@ -81,6 +81,7 @@ import fr.becpg.repo.helper.XMLTextHelper;
 import fr.becpg.repo.report.entity.EntityImageInfo;
 import fr.becpg.repo.report.entity.EntityReportData;
 import fr.becpg.repo.report.entity.EntityReportExtractorPlugin;
+import fr.becpg.repo.report.entity.EntityReportParameters;
 import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -137,6 +138,8 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	protected static final String ATTR_ENTITY_TYPE = "entityType";
 	/** Constant <code>PRODUCT_IMG_ID="Img%d"</code> */
 	protected static final String PRODUCT_IMG_ID = "Img%d";
+	
+	protected static final String DATALIST_IMG_ID = "Datalist_Img_%s";
 	
 	
 
@@ -454,6 +457,21 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			context.getReportData().getImages().add(imgInfo);
 		}
 	}
+	
+	protected void extractImage(NodeRef imgNodeRef, String imgId, Element imgsElt, DefaultExtractorContext context) {
+		if (ApplicationModel.TYPE_FILELINK.equals(nodeService.getType(imgNodeRef))) {
+			imgNodeRef = (NodeRef) nodeService.getProperty(imgNodeRef, ContentModel.PROP_LINK_DESTINATION);
+		}
+		if (imgNodeRef != null && contentService.getReader(imgNodeRef, ContentModel.PROP_CONTENT) != null) {
+			EntityImageInfo imgInfo = new EntityImageInfo(imgId, imgNodeRef);
+			imgInfo.setName((String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_NAME));
+			imgInfo.setTitle((String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_TITLE));
+			imgInfo.setDescription((String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_DESCRIPTION));
+			Element imgElt = imgsElt.addElement(TAG_IMAGE);
+			imgElt.addAttribute(ATTR_IMAGE_ID, imgId);
+			context.getReportData().getImages().add(imgInfo);
+		}
+	}
 
 	// render target assocs (plants...special cases)
 	/**
@@ -742,6 +760,13 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		}
 
 		for (Map.Entry<QName, Serializable> property : properties.entrySet()) {
+			
+			if (ContentModel.PROP_CONTENT.equals(property.getKey())
+					&& entityDictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)
+					&& context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_DATALIST_IMAGE, Boolean.FALSE)) {
+				String imgId = String.format(DATALIST_IMG_ID, nodeRef.getId());
+				extractImage(nodeRef, imgId, nodeElt, context);
+			}
 
 			// do not display system properties
 			if ((hiddenAttributes == null) || (!hiddenAttributes.contains(property.getKey())
