@@ -21,13 +21,14 @@
 	float: right;
 }
 
+.product-list-toolbar .right > div  {
+  float: left;
+}
+
 .product-list-toolbar .right .separator {
 	float: left;
 }
 
-.product-list-toolbar .export-csv {
-	float: left;
-}
 
 .product-list-toolbar .export-csv span.first-child,
 .product-list-toolbar .show-thumbnails span.first-child {
@@ -41,7 +42,7 @@
 	background-image: url(../../components/images/filetypes/xls-file-16.png);
 }
 
-.product-list-toolbar.show-thumbnails span.first-child
+.product-list-toolbar .show-thumbnails span.first-child
 {
-   background: url(../images/filetypes/img-file-16.png);
+   background-image: url(../../components/images/filetypes/img-file-16.png);
 }

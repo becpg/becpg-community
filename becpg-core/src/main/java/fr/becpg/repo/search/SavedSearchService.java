@@ -1,21 +1,22 @@
 package fr.becpg.repo.search;
 
+import java.util.List;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.search.data.SavedSearch;
+
+/**
+ * author Matthieu
+ */
 public interface SavedSearchService {
 
-	String getSavedSearchContent(NodeRef nodeRef);
+	String getSavedSearchContent(SavedSearch savedSearch);
 
-	NodeRef createOrUpdate(NodeRef savedSearchNodeRef, String searchType, String siteId, String jsonString, boolean isGlobalSavedSearch);
+	NodeRef createOrUpdate(SavedSearch savedSearch, String jsonString);
 
-//	NodeRef saveSearch(String searchType, String siteId, String content, Boolean isUserSavedSearch);
-//	
-//	
-//	SavedSearch getSavedSearch(NodeRef nodeRef);
-//	
-//	
-//	List<SavedSearch> listSavedSearchByType(String type);
-//	
-//	
-//	
+	List<SavedSearch> findSavedSearch(SavedSearch filter);
+
+	NodeRef getSaveSearchFolder(SavedSearch savedSearch);
+
 }
