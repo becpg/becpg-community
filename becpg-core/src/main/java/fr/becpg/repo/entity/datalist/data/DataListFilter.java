@@ -17,7 +17,6 @@
  ******************************************************************************/
 package fr.becpg.repo.entity.datalist.data;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -35,7 +34,6 @@ import org.alfresco.util.ISO9075;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.helper.impl.AttributeExtractorField;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
@@ -105,14 +103,12 @@ public class DataListFilter {
 
 	private boolean effectiveFilterOn = false;
 
-	private DataListPagination pagination = new DataListPagination();
+	DataListPagination pagination = new DataListPagination();
 
 	private boolean hasWriteAccess = false;
 
 	private boolean isDefaultSort = true;
 
-	private List<AttributeExtractorField> metadataFields = new ArrayList<>();
-	
 	/**
 	 * <p>Constructor for DataListFilter.</p>
 	 */
@@ -547,14 +543,6 @@ public class DataListFilter {
 		this.hasWriteAccess = hasWriteAccess;
 	}
 
-	public List<AttributeExtractorField> getMetadataFields() {
-		return metadataFields;
-	}
-
-	public void setMetadataFields(List<AttributeExtractorField> metadataFields) {
-		this.metadataFields = metadataFields;
-	}
-
 	/**
 	 * <p>getSearchQuery.</p>
 	 *
@@ -848,16 +836,5 @@ public class DataListFilter {
 		}
 		return true;
 	}
-
-	public static DataListFilter fromJsonString(String savedSearchContent) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String toJsonString() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 
 }

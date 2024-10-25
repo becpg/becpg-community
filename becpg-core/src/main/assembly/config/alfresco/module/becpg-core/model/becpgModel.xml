@@ -541,6 +541,34 @@
 			</properties>
 		</type>
 		
+		
+		  <type name="bcpg:savedSearch">
+            <parent>cm:content</parent>
+            <properties>
+                <property name="bcpg:isGlobalSavedSearch">
+                    <type>d:boolean</type>
+                    <index enabled="true">
+                          <tokenised>false</tokenised>
+                          <facetable>true</facetable>
+                    </index>
+                </property>
+                 <property name="bcpg:savedSearchSiteId">
+                    <type>d:text</type>
+                    <index enabled="true">
+                          <tokenised>false</tokenised>
+                          <facetable>true</facetable>
+                    </index>
+                </property>
+                  <property name="bcpg:savedSearchType">
+                    <type>d:text</type>
+                    <index enabled="true">
+                          <tokenised>false</tokenised>
+                          <facetable>true</facetable>
+                    </index>
+                </property>
+            </properties>
+        </type>
+		
 	</types>
 	
 	<aspects>

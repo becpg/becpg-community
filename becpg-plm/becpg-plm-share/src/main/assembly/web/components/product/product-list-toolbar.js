@@ -74,11 +74,9 @@
             });
 
 
-            this.widgets.savedViewPickerWidget = new beCPG.component.SavedViewPicker(this.id + "-savedViewPicker").setOptions({
-                destNodeRef: null,
-                containerDiv: Dom.get(this.id + "-savedViewPicker"),
-                toolBarInstance: this,
-                edit: true
+            this.widgets.savedSearchPickerWidget = new beCPG.component.SavedSearchPicker(this.id + "-savedSearchPicker").setOptions({
+                searchType:  "product-list",
+                siteId : this.options.siteId
              });
 
             this.widgets.exportProductList = Alfresco.util.createYUIButton(this, "export-csv-button", this.onExportProductList);

@@ -3,7 +3,7 @@
    <#-- CSS Dependencies -->
    <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/data-lists/toolbar.css" group="product-toolbar" />
     <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/data-lists/toolbar.css" group="product-toolbar" />
-	<@link rel="stylesheet" type="text/css" href="${url.context}/res/components/product/savedview-picker.css"  group="product-toolbar"/>
+	<@link rel="stylesheet" type="text/css" href="${url.context}/res/components/search/savedsearch-picker.css"  group="product-toolbar"/>
 	<@link rel="stylesheet" type="text/css" href="${url.context}/res/components/product/product-list-toolbar.css" group="product-toolbar" />
 </@>
 
@@ -11,7 +11,7 @@
    <#-- JavaScript Dependencies -->
 	<@script type="text/javascript" src="${url.context}/res/components/entity-data-lists/entity-toolbar.js" group="product-toolbar"></@script>
 	<@script type="text/javascript" src="${url.context}/res/js/async-download.js" group="product-toolbar"/>
-	<@script type="text/javascript" src="${url.context}/res/components/product/savedview-picker.js" group="product-toolbar"></@script>
+	<@script type="text/javascript" src="${url.context}/res/components/search/savedsearch-picker.js" group="product-toolbar"></@script>
 	<@script type="text/javascript" src="${url.context}/res/components/product/product-list-toolbar.js" group="product-toolbar"></@script>
    
 </@>
@@ -49,9 +49,7 @@
 				 </div>
 		      </div>
 		      <div class="right">
-		         <div id="${el}-savedViewPicker" class="savedViewPicker">
-		            
-		         </div>
+		         <div id="${el}-savedSearchPicker" class="savedSearchPicker"></div>
 		         <div class="export-csv">
 		            <span id="${el}-export-csv-button" class="yui-button yui-checkbox-button">
 		               <span class="first-child">
@@ -62,7 +60,7 @@
 		         <div class="show-thumbnails"> 
                     <span id="${el}-show-thumbnails" class="yui-button yui-checkbox-button">
                           <span class="first-child">
-                              <button type="button" >${msg("button.show-thumbnails")}</button>
+                              <button type="button" ></button>
                           </span>
                       </span>
                   </div>
@@ -79,5 +77,13 @@
 		      </div>
 		   </div>
 		</div>
+		<#-- template -->
+        <div id="custom-toolBar-template-button" class="hidden" >
+                <span class="yui-button yui-push-button">
+                   <span class="first-child">
+                         <button type="button" ></button>
+                   </span>
+                </span>
+        </div>
 	</@>
 </@>

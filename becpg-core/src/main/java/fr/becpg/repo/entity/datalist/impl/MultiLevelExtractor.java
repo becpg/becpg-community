@@ -103,7 +103,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 
 	/** {@inheritDoc} */
 	@Override
-	public PaginatedExtractedItems extract(DataListFilter dataListFilter) {
+	public PaginatedExtractedItems extract(DataListFilter dataListFilter,List<AttributeExtractorField> metadataFields) {
 
 		boolean resetTree = false;
 
@@ -129,7 +129,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 		props.put(PROP_ROOT_ENTITYNODEREF, dataListFilter.getEntityNodeRef());
 		props.put(PROP_PATH, "");
 
-		appendNextLevel(ret, dataListFilter.getMetadataFields(), listData, 0, startIndex, pageSize, props, dataListFilter);
+		appendNextLevel(ret, metadataFields, listData, 0, startIndex, pageSize, props, dataListFilter);
 
 		ret.setFullListSize(listData.getSize());
 

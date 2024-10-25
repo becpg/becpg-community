@@ -19,6 +19,7 @@ public enum SystemGroup {
     LicenseReadNamed,
     LicenseWriteConcurrent,
     LicenseReadConcurrent,
-    LicenseSupplierConcurrent
+    LicenseSupplierConcurrent,
+    SavedSearchMgr
    
 }
