@@ -583,7 +583,7 @@ public class ImportEntityXmlVisitor {
 										} else {
 											if (RemoteEntityService.MLTEXT_TYPE.equals(type)) {
 												MLText mltext = new MLText();
-												mltext.addValue(MLTextHelper.getNearestLocale(Locale.getDefault()), currValue.toString());
+												mltext.addValue(Locale.getDefault(), currValue.toString());
 												mltextAttributes.forEach(mltext::addValue);
 												nodeService.setProperty(curNodeRef.peek(), currProp, mltext);
 												mltextAttributes.clear();

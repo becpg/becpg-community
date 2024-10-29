@@ -370,5 +370,6 @@ public class PlmRepoConsts {
 	public static final String PATH_MICROBIO_TYPES = "MicrobioTypes";
 	/** Constant <code>PATH_GS1_ALCOHOL_BEVERAGE_CONTAINERS="AlcoholBeverageContainers"</code> */
 	public static final String PATH_GS1_ALCOHOL_BEVERAGE_CONTAINERS = "AlcoholBeverageContainers";
+	public static final String PATH_LABORATORIES = "Laboratories";
 
 }

@@ -92,7 +92,13 @@ if (beCPG.module.EntityDataGridRenderers) {
 				} else if (activityType == "DatalistCopy" ){
 					title = "<span class=\""+data.entityType+"\">"+Alfresco.util.encodeHTML(data.title)+"</span>";
 					title  = scope.msg("entity.activity.datalist.copy." + data.activityEvent.toLowerCase(), scope.msg("data.list."+className), title);
-				} else if(activityType == "Entity"|| activityType == "Formulation" || activityType == "Report"){
+				} else if(activityType == "Entity"){
+					if (data.activityEvent == "Create") {
+						title  = scope.msg("entity.activity.entity.create", title);
+					} else {
+						title  = scope.msg("entity.activity.entity", title);
+					}
+				} else if(activityType == "Formulation" || activityType == "Report"){
 					title  = scope.msg("entity.activity."+activityType.toLowerCase(), title);
 				} else if(activityType == "Export"){
 					title  = scope.msg("entity.activity.export", scope.msg("data.list."+className), data.title);
