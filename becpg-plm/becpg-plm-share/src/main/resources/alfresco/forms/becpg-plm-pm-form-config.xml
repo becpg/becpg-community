@@ -77,6 +77,8 @@
           <show id="bcpg:entityTplEnabled" force="false" />
           <show id="bcpg:entityTplIsDefault" force="false" />
           <show id="bcpg:entityTplScript" force="false" />
+          
+          <show id="pjt:projectScore" force="true" />
         </field-visibility>
         <appearance>
           <set id="template" appearance="bordered-panel" label-id="becpg.forms.set.template.label" />
@@ -294,6 +296,7 @@
             <control template="/org/alfresco/components/form/controls/textarea.ftl"/>
           </field>
           <field id="bcpg:autoMergeImpactWUsed" mandatory="false" read-only="false" set="branch"/>
+          <field id="pjt:projectScore" mandatory="false" read-only="true" set="mainInfo"/>
         </appearance>
       </form>
       <form id="doclib-simple-metadata">
