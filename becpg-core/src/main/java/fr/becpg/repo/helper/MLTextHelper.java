@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -87,7 +88,7 @@ public class MLTextHelper {
 			if (supportedLocalesText() != null) {
 				String[] locales = supportedLocalesText().split(",");
 				for (String key : locales) {
-					supportedLocales.add(parseLocale(key));
+					supportedLocales.add(parseLocale(key.trim()));
 				}
 			}
 
@@ -147,7 +148,7 @@ public class MLTextHelper {
 				Locale match = getNearestLocale(locale, mltext.getLocales());
 
 				// Try with system local
-				if (match == null) {
+				if (match == null  || locale ==null) {
 					match = getNearestLocale(Locale.getDefault(), mltext.getLocales());
 				}
 
@@ -250,6 +251,34 @@ public class MLTextHelper {
 		return (contentLocale != null) && getSupportedLocales().contains(contentLocale);
 	}
 
+	
+
+	/**
+	 * Replace any text in mlText having the same language (but any variant) as contentLocale
+	 * with updatedText keyed by the language of contentLocale. This ensures that the mlText
+	 * will have no more than one entry for the particular language.
+	 * 
+	 * @param contentLocale Locale
+	 * @param updatedText String
+	 * @param mlText MLText
+	 */
+	public static void replaceTextForLanguage(Locale contentLocale, String updatedText, MLText mlText) {
+
+		Locale toSaveUnderLocale = MLTextHelper.getSupportedLocale(contentLocale);
+
+		Iterator<Locale> locales = mlText.getLocales().iterator();
+		while (locales.hasNext()) {
+			Locale locale = locales.next();
+			if (locale.getLanguage().equals(toSaveUnderLocale.getLanguage()) && (!MLTextHelper.isSupportedLocale(locale))) {
+				locales.remove();
+			}
+		}
+
+		// Add the new value for the specific language
+		mlText.addValue(toSaveUnderLocale, updatedText);
+
+	}
+	
 	/**
 	 * <p>parseLocale.</p>
 	 *
