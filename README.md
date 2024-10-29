@@ -71,7 +71,7 @@ $ ./run.sh test
 If you wish to run a specific test, employ the following command:
 
 ```shell
-$ mvn test -Dtest=MyTest.java -DfailIfNoTests=false
+$ mvn test -Dtest=MyTest.java -Dsurefire.failIfNoSpecifiedTests=false
 ```
 
 Keep in mind that integration tests require the beCPG server to be launched first using the `./run.sh build_start` command.
