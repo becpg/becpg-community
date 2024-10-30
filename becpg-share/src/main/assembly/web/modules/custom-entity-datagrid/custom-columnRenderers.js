@@ -83,6 +83,8 @@ if (beCPG.module.EntityDataGridRenderers) {
 				} else if (activityType == "Datalist" ){
 					if (data.title == null || data.title.indexOf(className)>0){
 						title  = scope.msg("entity.activity.datalist.simple", scope.msg("data.list."+className));
+					} else if (className == "lvValue" || className == "lkvValue") {
+						title  = scope.msg("entity.activity.datalist."+data.activityEvent.toLowerCase(), title, scope.msg("data.list."+ data.parentName.toLowerCase()));
 					} else{
 						title  = scope.msg("entity.activity.datalist."+data.activityEvent.toLowerCase(), title, scope.msg("data.list."+className) );
 					}
@@ -129,33 +131,34 @@ if (beCPG.module.EntityDataGridRenderers) {
 
 					var count = 0;
 					data.properties.forEach(function(prop){
-						var property="";
 						var before = prop.before;
 						var after = prop.after;
 						var locale = "";
-	
-						var hasBefore = before != null && before.length > 0 && before[0] != null && Object.prototype.toString.call(before[0]).slice(8, -1) == 'Object';
-						var hasAfter = after != null && after.length > 0 && after[0] != null && Object.prototype.toString.call(after[0]).slice(8, -1) == 'Object';
 						
+						var hasBefore = before != null && Object.prototype.toString.call(before).slice(8, -1) == 'Object';
+						var hasAfter = after != null && Object.prototype.toString.call(after).slice(8, -1) == 'Object';
+
+
 						if (hasBefore){
-							var beforePerLocale = before[0];
-							var afterPerLocale = after[0];
-							Object.keys(beforePerLocale).forEach(function(key){
-								if (beforePerLocale[key] != afterPerLocale[key]) {
+							Object.keys(before).forEach(function(key){
+								var beforeValue = before[key] ? before[key] : "";
+								var afterValue = after[key] ? after[key] : "";
+								if (beforeValue != afterValue) {
 									locale = key;
 									if (key.indexOf("_") > -1){
 										locale = key.substring(3,5).toLowerCase();
 									}
 									html += '      <tr '+(count%2 == 0 ? '':'class="grey"')+'><td>' + prop.title +
 									' <img class="icon16_11" src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/flags/' + locale + '.png" /></td>';
-									html += '      <td>' + beforePerLocale[key] + '</td>';
-									html += '      <td>' + afterPerLocale[key] + '</td></tr>';		
+									html += '      <td>' + beforeValue + '</td>';
+									html += '      <td>' + afterValue + '</td></tr>';		
 									count++;
 								}
 							});
-							if (after != null && after.length > 0 && after[0] != null && typeof after[0] == 'object'){
-								Object.keys(afterPerLocale).forEach(function(key){
-									if (!beforePerLocale.hasOwnProperty(key)) {
+							if (hasAfter){
+								Object.keys(after).forEach(function(key){
+									if (!before.hasOwnProperty(key)) {
+										var afterValue = after[key] ? after[key] : "";
 										locale = key;
 										if (key.indexOf("_") > -1){
 											locale = key.substring(3,5).toLowerCase();
@@ -163,24 +166,25 @@ if (beCPG.module.EntityDataGridRenderers) {
 										html += '      <tr '+(count%2 == 0 ? '':'class="grey"')+'><td>' + prop.title +
 										' <img class="icon16_11" src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/flags/' + locale + '.png" /></td>';
 										html += '      <td> </td>';
-										html += '      <td>' + afterPerLocale[key] + '</td></tr>';
+										html += '      <td>' + afterValue + '</td></tr>';
 										count++;
 									}
 								});
 							}
 						} else if (hasAfter) {
-							var afterPerLocale = after[0];
 							html += '      <td> </td>';
-							Object.keys(afterPerLocale).forEach(function(key){
-								locale = key;
-								if (key.indexOf("_") > -1){
-									locale = key.substring(3,5).toLowerCase();
+							Object.keys(after).forEach(function(key){
+								if (after[key]) {
+									locale = key;
+									if (key.indexOf("_") > -1){
+										locale = key.substring(3,5).toLowerCase();
+									}
+									html += '      <tr '+(count%2 == 0 ? '':'class="grey"')+'><td>' + prop.title +
+									' <img class="icon16_11" src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/flags/' + locale + '.png" /></td>';
+									html += '      <td> </td>';
+									html += '      <td>' + after[key] + '</td></tr>';
+									count++;
 								}
-								html += '      <tr '+(count%2 == 0 ? '':'class="grey"')+'><td>' + prop.title +
-								' <img class="icon16_11" src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/flags/' + locale + '.png" /></td>';
-								html += '      <td> </td>';
-								html += '      <td>' + afterPerLocale[key] + '</td></tr>';
-								count++;
 							});
 						} else {
 							html += '      <tr '+(count%2 == 0 ? '':'class="grey"')+'><td>' + prop.title + '</td>';
