@@ -22,6 +22,7 @@ import fr.becpg.repo.batch.BatchInfo;
  */
 public interface EntityActivityService {
 
+	static final String PROP_PARENT_NAME = "parentName";
 	/** Constant <code>PROP_COMMENT_NODEREF="commentNodeRef"</code> */
 	static final String PROP_COMMENT_NODEREF = "commentNodeRef";
 	/** Constant <code>PROP_CONTENT_NODEREF="contentNodeRef"</code> */

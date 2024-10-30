@@ -402,6 +402,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					data.put(PROP_ACTIVITY_EVENT, activityEvent.toString());
 					data.put(PROP_ENTITY_NODEREF, entityNodeRef);
 					data.put(PROP_ENTITY_TYPE, nodeService.getType(entityNodeRef));
+					data.put(PROP_PARENT_NAME, nodeService.getProperty(nodeService.getPrimaryParent(datalistNodeRef).getParentRef(), ContentModel.PROP_NAME));
 
 					QName type = nodeService.getType(datalistNodeRef);
 
@@ -505,11 +506,11 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		PropertyDefinition propDef = entityDictionaryService.getProperty(key);
 
 		if (ent instanceof Date date) {
-			return ISO8601DateFormat.format(date);
+			ent = ISO8601DateFormat.format(date);
 		} else if (ent instanceof Pair || ent instanceof NodeRef) {
-			return ent.toString();
+			ent = ent.toString();
 		} else if (ent instanceof List) {
-			return new ArrayList<>(((List<?>) ent).stream().map(Object::toString).toList());
+			ent = new ArrayList<>(((List<?>) ent).stream().map(Object::toString).toList());
 		}
 		return processWithConstraints(ent, propDef);
 
@@ -522,7 +523,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					if (ent instanceof List<?> list) {
 						return new ArrayList<>(list.stream().map(o -> lvc.getDisplayLabel(o.toString(), dictionaryService)).toList());
 					} else if (ent != null) {
-						ent = lvc.getDisplayLabel(ent.toString(), dictionaryService);
+						return lvc.getDisplayLabel(ent.toString(), dictionaryService);
 					}
 				}
 			}
@@ -627,12 +628,13 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					// Add previous updated properties in the data of the last activity
 				} else if (newActivityData.has(PROP_PROPERTIES) && lastActivityData.has(PROP_PROPERTIES)
 						&& newActivityData.get(PROP_ACTIVITY_EVENT).equals(lastActivityData.get(PROP_ACTIVITY_EVENT))
-						&& newActivity.getUserId().equals(lastActivity.getUserId()) && newActivity.getActivityType().equals(lastActivity.getActivityType())
-						&& newActivityData.has(PROP_TITLE) && lastActivityData.has(PROP_TITLE) && newActivityData.get(PROP_TITLE).equals(lastActivityData.get(PROP_TITLE))
-						&& ((!newActivityData.has(PROP_CLASSNAME) && !lastActivityData.has(PROP_CLASSNAME)) || (newActivityData.has(PROP_CLASSNAME)
-								&& lastActivityData.has(PROP_CLASSNAME) && newActivityData.get(PROP_CLASSNAME).equals(lastActivityData.get(PROP_CLASSNAME))))) {
-					
-					
+						&& newActivity.getUserId().equals(lastActivity.getUserId())
+						&& newActivity.getActivityType().equals(lastActivity.getActivityType()) && newActivityData.has(PROP_TITLE)
+						&& lastActivityData.has(PROP_TITLE) && newActivityData.get(PROP_TITLE).equals(lastActivityData.get(PROP_TITLE))
+						&& ((!newActivityData.has(PROP_CLASSNAME) && !lastActivityData.has(PROP_CLASSNAME))
+								|| (newActivityData.has(PROP_CLASSNAME) && lastActivityData.has(PROP_CLASSNAME)
+										&& newActivityData.get(PROP_CLASSNAME).equals(lastActivityData.get(PROP_CLASSNAME))))) {
+
 					// Check if the last activity is less than 4 hours old, otherwise do not merge it
 					if (sortedActivityList.size() == 1) {
 						cal.add(Calendar.HOUR, -3);
@@ -642,36 +644,35 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 							continue;
 						}
 					}
-					
-					JSONArray activityProperties = lastActivityData.getJSONArray(PROP_PROPERTIES);
-					JSONArray itemProperties = newActivityData.getJSONArray(PROP_PROPERTIES);
-					for (int i = 0; i < activityProperties.length(); i++) {
-						JSONObject activityProperty = activityProperties.getJSONObject(i);
+
+					JSONArray lastActivityProperties = lastActivityData.getJSONArray(PROP_PROPERTIES);
+					JSONArray newActivityProperties = newActivityData.getJSONArray(PROP_PROPERTIES);
+					for (int i = 0; i < lastActivityProperties.length(); i++) {
+						JSONObject lastProperty = lastActivityProperties.getJSONObject(i);
 						boolean isSameProperty = false;
-						for (int j = 0; j < itemProperties.length(); j++) {
-							JSONObject itemProperty = itemProperties.getJSONObject(j);
-							if (itemProperty.get(PROP_TITLE).equals(activityProperty.get(PROP_TITLE))) {
+						for (int j = 0; j < newActivityProperties.length(); j++) {
+							JSONObject newProperty = newActivityProperties.getJSONObject(j);
+							if (newProperty.get(PROP_TITLE).equals(lastProperty.get(PROP_TITLE))) {
 								isSameProperty = true;
 								PropertyDefinition property = dictionaryService
-										.getProperty(QName.createQName((String) activityProperty.get(PROP_TITLE)));
-								
+										.getProperty(QName.createQName((String) lastProperty.get(PROP_TITLE)));
+
 								if ((property == null) || (property.getDataType() == null)
-										|| (!DataTypeDefinition.TEXT.equals(property.getDataType().getName())
-												&& !DataTypeDefinition.MLTEXT.equals(property.getDataType().getName()))) {
-									if (activityProperty.has(BEFORE)) {
-										itemProperty.put(BEFORE, activityProperty.get(BEFORE));
+										|| (!DataTypeDefinition.TEXT.equals(property.getDataType().getName()))) {
+									if (lastProperty.has(BEFORE)) {
+										newProperty.put(BEFORE, lastProperty.get(BEFORE));
 									} else {
-										itemProperty.put(BEFORE, "");
+										newProperty.put(BEFORE, "");
 									}
 								}
-								
+
 							}
 						}
 						if (!isSameProperty) {
-							itemProperties.put(activityProperty);
+							newActivityProperties.put(lastProperty);
 						}
 					}
-					newActivityData.put(PROP_PROPERTIES, itemProperties);
+					newActivityData.put(PROP_PROPERTIES, newActivityProperties);
 					newActivity.setActivityData(newActivityData.toString());
 					
 					deleteAuditActivity(lastActivity);
@@ -789,7 +790,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 			} finally {
 				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 			}
-		} 
+		}
 
 		return false;
 	}
