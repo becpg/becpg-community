@@ -3,7 +3,6 @@ package fr.becpg.repo.activity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.EnumMap;
@@ -15,8 +14,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.batch.BatchProcessWorkProvider;
@@ -235,7 +234,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					activityListDataItem.setActivityData(data.toString());
 					activityListDataItem.setParentNodeRef(activityListNodeRef);
 					alfrescoRepository.save(activityListDataItem);
-
+					
 					if (notifyObservers) {
 						notifyListeners(entityNodeRef, activityListDataItem);
 					}
@@ -297,7 +296,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		return false;
 
 	}
-
+	
 	@Override
 	public boolean postChangeOrderActivity(NodeRef entityNodeRef, NodeRef changeOrderNodeRef) {
 		try {
@@ -309,7 +308,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 			if (activityListNodeRef != null) {
 
 				ActivityListDataItem activityListDataItem = new ActivityListDataItem();
-
+				
 				JSONObject data = new JSONObject();
 
 				data.put(PROP_TITLE, nodeService.getProperty(changeOrderNodeRef, ContentModel.PROP_NAME));
@@ -398,6 +397,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					data.put(PROP_ACTIVITY_EVENT, activityEvent.toString());
 					data.put(PROP_ENTITY_NODEREF, entityNodeRef);
 					data.put(PROP_ENTITY_TYPE, nodeService.getType(entityNodeRef));
+					data.put(PROP_PARENT_NAME, nodeService.getProperty(nodeService.getPrimaryParent(datalistNodeRef).getParentRef(), ContentModel.PROP_NAME));
 
 					QName type = nodeService.getType(datalistNodeRef);
 
@@ -415,81 +415,28 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 						data.put(PROP_TITLE, attributeExtractorService.extractPropName(charactNodeRef));
 					} else {
 						if (attributeExtractorService.hasAttributeExtractorPlugin(datalistNodeRef)) {
-							data.put(PROP_TITLE, attributeExtractorService.extractPropName(datalistNodeRef));
+						data.put(PROP_TITLE, attributeExtractorService.extractPropName(datalistNodeRef));
 						} else {
 							data.put(PROP_TITLE, nodeService.getProperty(datalistNodeRef, ContentModel.PROP_NAME));
-						}
+					}
 					}
 					if (activityEvent.equals(ActivityEvent.Update) && (updatedProperties != null)) {
 						List<JSONObject> properties = new ArrayList<>();
 						for (Map.Entry<QName, Pair<Serializable, Serializable>> entry : updatedProperties.entrySet()) {
 							JSONObject property = new JSONObject();
 
-							MLText mlTextBefore = null;
-							MLText mlTextAfter = null;
-							MLText newMlTextBefore = null;
-							MLText newMlTextAfter = null;
-
-							if (entry.getValue().getFirst() instanceof List) {
-								for (Object obj : (List<?>) entry.getValue().getFirst()) {
-									if (obj instanceof MLText) {
-										mlTextBefore = (MLText) obj;
-									}
-								}
-							}
-							if (entry.getValue().getSecond() instanceof List) {
-								for (Object obj : (List<?>) entry.getValue().getSecond()) {
-									if (obj instanceof MLText) {
-										mlTextAfter = (MLText) obj;
-									}
-								}
-							}
-
-							if (mlTextBefore != null) {
-								newMlTextBefore = compareMLTexts(mlTextBefore, mlTextAfter);
-							}
-
-							if (mlTextAfter != null) {
-								newMlTextAfter = compareMLTexts(mlTextAfter, mlTextBefore);
-							}
-
-							if (newMlTextBefore != null) {
-								Iterator<Entry<Locale, String>> it = mlTextBefore.entrySet().iterator();
-
-								while (it.hasNext()) {
-									Locale locale = it.next().getKey();
-									mlTextBefore.put(locale, newMlTextBefore.get(locale));
-								}
-							}
-
-							if (newMlTextAfter != null) {
-								Iterator<Entry<Locale, String>> it = mlTextAfter.entrySet().iterator();
-
-								while (it.hasNext()) {
-									Locale locale = it.next().getKey();
-									mlTextAfter.put(locale, newMlTextAfter.get(locale));
-								}
-							}
-
+							processMLTexts(entry);
+							
 							property.put(PROP_TITLE, entry.getKey());
 
-							if (entry.getValue().getFirst() instanceof List) {
-								List<Object> beforeList = processEntries((List<?>) entry.getValue().getFirst(), entry.getKey());
-								property.put(BEFORE, beforeList);
-
-							} else {
-								property.put(BEFORE, entry.getValue().getFirst());
-							}
+							Serializable before = processEntry(entry.getValue().getFirst(), entry.getKey());
+							property.put(BEFORE, before);
 
 							if (entry.getKey().equals(ContentModel.PROP_NAME)) {
 								property.put(AFTER, data.get(PROP_TITLE));
 							} else {
-								if (entry.getValue().getSecond() instanceof List) {
-									List<Object> afterList = processEntries((List<?>) entry.getValue().getSecond(), entry.getKey());
-									property.put(AFTER, afterList);
-								} else {
-									property.put(AFTER, entry.getValue().getSecond());
-								}
+								Serializable after = processEntry(entry.getValue().getSecond(), entry.getKey());
+								property.put(AFTER, after);
 							}
 							properties.add(property);
 						}
@@ -503,7 +450,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 						mergeWithLastActivity(activityListDataItem);
 
 						alfrescoRepository.save(activityListDataItem);
-
+						
 						notifyListeners(entityNodeRef, activityListDataItem);
 					}
 
@@ -518,44 +465,71 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		return false;
 
 	}
+	
+	private void processMLTexts(Map.Entry<QName, Pair<Serializable, Serializable>> entry) {
+		MLText mlTextBefore = null;
+		MLText mlTextAfter = null;
+		MLText newMlTextBefore = null;
+		MLText newMlTextAfter = null;
+		if (entry.getValue().getFirst() instanceof MLText) {
+			mlTextBefore = (MLText) entry.getValue().getFirst();
+		}
+		if (entry.getValue().getSecond() instanceof MLText) {
+			mlTextAfter = (MLText) entry.getValue().getSecond();
+		}
+		if (mlTextBefore != null) {
+			newMlTextBefore = compareMLTexts(mlTextBefore, mlTextAfter);
+		}
+		if (mlTextAfter != null) {
+			newMlTextAfter = compareMLTexts(mlTextAfter, mlTextBefore);
+		}
+		if (newMlTextBefore != null) {
+			Iterator<Entry<Locale, String>> it = mlTextBefore.entrySet().iterator();
 
-	private List<Object> processEntries(List<?> entries, QName key) {
-		List<Object> processedList = new ArrayList<>();
-		PropertyDefinition propDef = entityDictionaryService.getProperty(key);
-
-		for (Object ent : entries) {
-			if (ent instanceof Date) {
-				processedList.add(ISO8601DateFormat.format((Date) ent));
-			} else if (ent instanceof Pair || ent instanceof NodeRef) {
-				processedList.add(ent.toString());
-			} else if (ent instanceof List) {
-				processedList.add(((List<?>) ent).stream().map(Object::toString).collect(Collectors.toList()));
-			} else {
-				ent = processWithConstraints(ent, propDef);
-				processedList.add(ent);
+			while (it.hasNext()) {
+				Locale locale = it.next().getKey();
+				mlTextBefore.put(locale, newMlTextBefore.get(locale));
 			}
 		}
-		return processedList;
+		if (newMlTextAfter != null) {
+			Iterator<Entry<Locale, String>> it = mlTextAfter.entrySet().iterator();
+
+			while (it.hasNext()) {
+				Locale locale = it.next().getKey();
+				mlTextAfter.put(locale, newMlTextAfter.get(locale));
+			}
+		}
+	}
+	
+	private Serializable processEntry(Serializable ent, QName key) {
+		PropertyDefinition propDef = entityDictionaryService.getProperty(key);
+
+		if (ent instanceof Date) {
+			ent = ISO8601DateFormat.format((Date) ent);
+		} else if (ent instanceof Pair || ent instanceof NodeRef) {
+			ent = ent.toString();
+		} else if (ent instanceof List) {
+			ent = new ArrayList<>(((List<?>) ent).stream().map(Object::toString).collect(Collectors.toList()));
+		}
+		return processWithConstraints(ent, propDef);
 
 	}
 
-	private Object processWithConstraints(Object ent, PropertyDefinition propDef) {
+	private Serializable processWithConstraints(Serializable ent, PropertyDefinition propDef) {
 		if (propDef != null && propDef.getConstraints() != null) {
 			for (ConstraintDefinition constraint : propDef.getConstraints()) {
 				if (constraint.getConstraint() instanceof ListOfValuesConstraint) {
-					ListOfValuesConstraint lvc = (ListOfValuesConstraint) constraint.getConstraint();
 					if (ent instanceof List<?>) {
-						ent = ((List<?>) ent).stream().map(o -> lvc.getDisplayLabel(o.toString(), dictionaryService))
-								.collect(Collectors.toList());
+						return new ArrayList<>(((List<?>) ent).stream().map(o -> ((ListOfValuesConstraint) constraint.getConstraint()).getDisplayLabel(o.toString(), dictionaryService)).collect(Collectors.toList()));
 					} else if (ent != null) {
-						ent = lvc.getDisplayLabel(ent.toString(), dictionaryService);
+						return ((ListOfValuesConstraint) constraint.getConstraint()).getDisplayLabel(ent.toString(), dictionaryService);
 					}
 				}
 			}
 		}
 		return ent;
 	}
-
+	
 	private MLText compareMLTexts(MLText mlText, MLText otherMlText) {
 		LargeTextHelper.elipse(mlText);
 		MLText newMlText = new MLText();
@@ -592,34 +566,34 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 				.createQuery().parent(activityListNodeRef).ofType(BeCPGModel.TYPE_ACTIVITY_LIST).andBetween(ContentModel.PROP_CREATED,
 						"'" + ISO8601DateFormat.format(cal.getTime()) + "'", "'" + ISO8601DateFormat.format(new Date(Long.MAX_VALUE)) + "'")
 				.addSort(ContentModel.PROP_CREATED, false).inDB();
-
+		
 		List<NodeRef> sortedActivityList = query.list();
-
+		
 		// The last created activity
 		if (sortedActivityList.isEmpty()) {
 			sortedActivityList = BeCPGQueryBuilder.createQuery().parent(activityListNodeRef).ofType(BeCPGModel.TYPE_ACTIVITY_LIST)
 					.addSort(ContentModel.PROP_CREATED, false).maxResults(1).inDB().list();
-		}
-
+			}
+		
 		for (NodeRef activityListItemNodeRef : sortedActivityList) {
 
 			ActivityListDataItem lastActivity = alfrescoRepository.findOne(activityListItemNodeRef);
 
 			JSONObject lastActivityData = null;
-
+			
 			JSONObject newActivityData = null;
 			try {
 				lastActivityData = new JSONObject(lastActivity.getActivityData());
 				newActivityData = new JSONObject(newActivity.getActivityData());
 				if (((lastActivity.getActivityData().equals(newActivity.getActivityData())) || (!newActivityData.has(PROP_TITLE)
 						&& !lastActivityData.has(PROP_TITLE) && newActivity.getActivityType().equals(ActivityType.Datalist)
-						&& lastActivityData.get(PROP_CLASSNAME).equals(newActivityData.get(PROP_CLASSNAME))
-						&& lastActivityData.get(PROP_ACTIVITY_EVENT).equals(newActivityData.get(PROP_ACTIVITY_EVENT))))
+								&& lastActivityData.get(PROP_CLASSNAME).equals(newActivityData.get(PROP_CLASSNAME))
+								&& lastActivityData.get(PROP_ACTIVITY_EVENT).equals(newActivityData.get(PROP_ACTIVITY_EVENT))))
 						&& lastActivity.getUserId().equals(newActivity.getUserId())
 						&& lastActivity.getActivityType().equals(newActivity.getActivityType())) {
 					nodeService.addAspect(activityListItemNodeRef, ContentModel.ASPECT_TEMPORARY, null);
 					nodeService.deleteNode(activityListItemNodeRef);
-
+					
 					if (logger.isDebugEnabled()) {
 						logger.debug("Merge with the last activity " + lastActivity.getActivityType());
 					}
@@ -639,47 +613,46 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					if (sortedActivityList.size() == 1) {
 						cal.add(Calendar.HOUR, -3);
 						Date createdDate = (Date) nodeService.getProperty(activityListItemNodeRef, ContentModel.PROP_CREATED);
-
+						
 						if (createdDate != null && createdDate.compareTo(cal.getTime()) < 0) {
 							continue;
 						}
 					}
 
-					JSONArray activityProperties = lastActivityData.getJSONArray(PROP_PROPERTIES);
-					JSONArray itemProperties = newActivityData.getJSONArray(PROP_PROPERTIES);
-					for (int i = 0; i < activityProperties.length(); i++) {
-						JSONObject activityProperty = activityProperties.getJSONObject(i);
+					JSONArray lastActivityProperties = lastActivityData.getJSONArray(PROP_PROPERTIES);
+					JSONArray newActivityProperties = newActivityData.getJSONArray(PROP_PROPERTIES);
+					for (int i = 0; i < lastActivityProperties.length(); i++) {
+						JSONObject lastProperty = lastActivityProperties.getJSONObject(i);
 						boolean isSameProperty = false;
-						for (int j = 0; j < itemProperties.length(); j++) {
-							JSONObject itemProperty = itemProperties.getJSONObject(j);
-							if (itemProperty.get(PROP_TITLE).equals(activityProperty.get(PROP_TITLE))) {
+						for (int j = 0; j < newActivityProperties.length(); j++) {
+							JSONObject newProperty = newActivityProperties.getJSONObject(j);
+							if (newProperty.get(PROP_TITLE).equals(lastProperty.get(PROP_TITLE))) {
 								isSameProperty = true;
 								PropertyDefinition property = dictionaryService
-										.getProperty(QName.createQName((String) activityProperty.get(PROP_TITLE)));
+										.getProperty(QName.createQName((String) lastProperty.get(PROP_TITLE)));
 
 								if ((property == null) || (property.getDataType() == null)
-										|| (!DataTypeDefinition.TEXT.equals(property.getDataType().getName())
-												&& !DataTypeDefinition.MLTEXT.equals(property.getDataType().getName()))) {
-									if (activityProperty.has(BEFORE)) {
-										itemProperty.put(BEFORE, activityProperty.get(BEFORE));
+										|| (!DataTypeDefinition.TEXT.equals(property.getDataType().getName()))) {
+									if (lastProperty.has(BEFORE)) {
+										newProperty.put(BEFORE, lastProperty.get(BEFORE));
 									} else {
-										itemProperty.put(BEFORE, "");
+										newProperty.put(BEFORE, "");
 									}
 								}
 
 							}
 						}
 						if (!isSameProperty) {
-							itemProperties.put(activityProperty);
+							newActivityProperties.put(lastProperty);
 						}
 					}
-					newActivityData.put(PROP_PROPERTIES, itemProperties);
+					newActivityData.put(PROP_PROPERTIES, newActivityProperties);
 					newActivity.setActivityData(newActivityData.toString());
 					alfrescoRepository.save(newActivity);
-
+					
 					nodeService.addAspect(activityListItemNodeRef, ContentModel.ASPECT_TEMPORARY, null);
 					nodeService.deleteNode(activityListItemNodeRef);
-
+					
 				}
 
 			} catch (JSONException e) {
@@ -736,7 +709,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					activityListDataItem.setActivityData(data.toString());
 					activityListDataItem.setParentNodeRef(activityListNodeRef);
 					alfrescoRepository.save(activityListDataItem);
-
+					
 					notifyListeners(entityNodeRef, activityListDataItem);
 
 					return true;
@@ -807,9 +780,9 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 			if (toActivityListNodeRef != null) {
 				NodeRef activityListNodeRef = getActivityList(fromNodeRef);
 				if (activityListNodeRef != null) {
-
+		
 					for (NodeRef listItem : entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST)) {
-
+		
 						String activityName = (String) nodeService.getProperty(listItem, ContentModel.PROP_NAME);
 						if (nodeService.getChildByName(toActivityListNodeRef, ContentModel.ASSOC_CONTAINS, activityName) == null) {
 							nodeService.moveNode(listItem, toActivityListNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
@@ -826,7 +799,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	/** {@inheritDoc} */
 	@Override
 	public boolean postEntityActivity(NodeRef entityNodeRef, ActivityType activityType, ActivityEvent activityEvent,
-			Map<QName, Pair<List<Serializable>, List<Serializable>>> updatedProperties) {
+			Map<QName, Pair<Serializable, Serializable>> updatedProperties) {
 		try {
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 
@@ -853,76 +826,21 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					data.put(PROP_TITLE, nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
 					if (activityEvent.equals(ActivityEvent.Update) && (updatedProperties != null)) {
 						List<JSONObject> properties = new ArrayList<>();
-						for (Map.Entry<QName, Pair<List<Serializable>, List<Serializable>>> entry : updatedProperties.entrySet()) {
+						for (Map.Entry<QName, Pair<Serializable, Serializable>> entry : updatedProperties.entrySet()) {
 							JSONObject property = new JSONObject();
 
 							property.put(PROP_TITLE, entry.getKey());
 
-							MLText mlTextBefore = null;
-							MLText mlTextAfter = null;
-							MLText newMlTextBefore = null;
-							MLText newMlTextAfter = null;
-
-							if (entry.getValue().getFirst() instanceof List) {
-								for (Object obj : (List<?>) entry.getValue().getFirst()) {
-									if (obj instanceof MLText) {
-										mlTextBefore = (MLText) obj;
-									}
-								}
-							}
-							if (entry.getValue().getSecond() instanceof List) {
-								for (Object obj : (List<?>) entry.getValue().getSecond()) {
-									if (obj instanceof MLText) {
-										mlTextAfter = (MLText) obj;
-									}
-								}
-							}
-
-							if (mlTextBefore != null) {
-								newMlTextBefore = compareMLTexts(mlTextBefore, mlTextAfter);
-							}
-
-							if (mlTextAfter != null) {
-								newMlTextAfter = compareMLTexts(mlTextAfter, mlTextBefore);
-							}
-
-							if (newMlTextBefore != null) {
-								Iterator<Entry<Locale, String>> it = mlTextBefore.entrySet().iterator();
-
-								while (it.hasNext()) {
-									Locale locale = it.next().getKey();
-									mlTextBefore.put(locale, newMlTextBefore.get(locale));
-								}
-							}
-
-							if (newMlTextAfter != null) {
-								Iterator<Entry<Locale, String>> it = mlTextAfter.entrySet().iterator();
-
-								while (it.hasNext()) {
-									Locale locale = it.next().getKey();
-									mlTextAfter.put(locale, newMlTextAfter.get(locale));
-								}
-							}
-
-							if (entry.getValue().getFirst() != null) {
-								
-								List<Object> beforeList = processEntries(entry.getValue().getFirst(), entry.getKey());
-								property.put(BEFORE, beforeList);
-							} else {
-								property.put(BEFORE, entry.getValue().getFirst());
-							}
+							processMLTexts(entry);
+							
+							Serializable before = processEntry(entry.getValue().getFirst(), entry.getKey());
+							property.put(BEFORE, before);
 
 							if (data.has(PROP_TITLE) && (data.get(PROP_TITLE) != null) && entry.getKey().equals(ContentModel.PROP_NAME)) {
 								property.put(AFTER, data.get(PROP_TITLE));
 							} else {
-
-								if (entry.getValue().getSecond() != null) {
-									List<Object> afterList = processEntries(entry.getValue().getSecond(), entry.getKey());
-									property.put(AFTER, afterList);
-								} else {
-									property.put(AFTER, entry.getValue().getSecond());
-								}
-
+								Serializable after = processEntry(entry.getValue().getSecond(), entry.getKey());
+								property.put(AFTER, after);
 							}
 							properties.add(property);
 						}
@@ -1062,7 +980,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 						List<NodeRef> activityListDataItemNodeRefs = entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST,
 								SORT_MAP);
 						Collections.reverse(activityListDataItemNodeRefs);
-
+						
 						int nbrActivity = activityListDataItemNodeRefs.size();
 						// Keep the first 50 activities
 						activityListDataItemNodeRefs = activityListDataItemNodeRefs.subList(nbrActivity > MAX_PAGE ? MAX_PAGE : 0,
@@ -1171,6 +1089,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					nodeService.addAspect(activityItemNodeRef, ContentModel.ASPECT_TEMPORARY, null);
 					nodeService.deleteNode(activityItemNodeRef);
 				}
+
 			}
 		} finally {
 			policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
@@ -1239,7 +1158,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 							if (activitiesByEntity.containsKey(activityParentNodeRef)
 									&& activitiesByEntity.get(activityParentNodeRef).contains(datalistClassName)) {
 								removedNodes.add(activityNodeRef);
-
+								
 								nodeService.addAspect(activityNodeRef, ContentModel.ASPECT_TEMPORARY, null);
 								nodeService.deleteNode(activityNodeRef);
 							} else {
@@ -1329,7 +1248,9 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					JSONObject data = new JSONObject();
 
 					data.put(PROP_TITLE, fileName);
-					data.put(PROP_CLASSNAME, attributeExtractorService.extractMetadata(dataType, datalistNodeRef));
+					if (datalistNodeRef != null) {
+						data.put(PROP_CLASSNAME, attributeExtractorService.extractMetadata(dataType, datalistNodeRef));
+					}
 
 					activityListDataItem.setActivityType(ActivityType.Export);
 					activityListDataItem.setActivityData(data.toString());
@@ -1349,3 +1270,4 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	}
 
 }
+
