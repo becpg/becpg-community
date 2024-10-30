@@ -15,6 +15,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -41,10 +42,12 @@ import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
+import fr.becpg.repo.product.data.ing.CompositeLabeling;
 import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.product.formulation.labeling.EvaporatedDataItem;
 import fr.becpg.repo.product.helper.IngListHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -223,6 +226,9 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		formulatedProduct.getIngList().retainAll(retainNodes);
 
 		if (totalQtyUsedWithYield != 0d) {
+			
+			List<EvaporatedDataItem> evaporatedDataItems = new ArrayList<>();
+			
 			for (IngListDataItem ingListDataItem : formulatedProduct.getIngList()) {
 
 				IngListDataItem totalQtyIng = totalQtyIngMap.get(ingListDataItem.getName());
@@ -294,10 +300,16 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 					Double qtyPercWithYield = (totalQtyIngWithYield) / (totalQtyUsedWithYield);
 
 					if ((formulatedProduct.getYield() != null) && (nodeService.hasAspect(ingListDataItem.getIng(), PLMModel.ASPECT_WATER)
-							|| (nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE) != null
-									&& (Double) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE) == 100d))) {
+							|| nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE) != null)) {
+						
+						Double evaporateRate = (Double) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE);
 
-						qtyPercWithYield = qtyPercWithYield / x + (100d - 100d / x);
+						if (evaporateRate == null) {
+							evaporateRate = 100d;
+						}
+						evaporatedDataItems.add(new EvaporatedDataItem(ingListDataItem.getIng(), evaporateRate));
+
+						qtyPercWithYield = ingListDataItem.getQtyPerc();
 					} else {
 						qtyPercWithYield = qtyPercWithYield / x;
 					}
@@ -314,9 +326,16 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 					Double x = (formulatedProduct.getSecondaryYield() / 100d);
 					if(qtyPercWithSecondaryYield!=null) {
 						if (nodeService.hasAspect(ingListDataItem.getIng(), PLMModel.ASPECT_WATER)
-								|| (nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE) != null
-										&& (Double) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE) == 100d)) {
-							qtyPercWithSecondaryYield = qtyPercWithSecondaryYield / x + (100d - 100d / x);
+								|| (nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE) != null)) {
+
+							Double evaporateRate = (Double) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE);
+
+							if (evaporateRate == null) {
+								evaporateRate = 100d;
+							}
+
+							qtyPercWithSecondaryYield = qtyPercWithSecondaryYield / x + (evaporateRate - evaporateRate / x);
+							
 						} else {
 							qtyPercWithSecondaryYield = qtyPercWithSecondaryYield / x;
 						}
@@ -332,11 +351,81 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 					ingListDataItem.getAspects().add(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
 				}
 			}
+			
+			applyEvaporation(formulatedProduct, evaporatedDataItems);
 		}
 
 		// sort collection
 		if (shouldSort) {
 			sortIL(formulatedProduct.getIngList());
+		}
+	}
+
+	private void applyEvaporation(ProductData formulatedProduct, List<EvaporatedDataItem> evaporatedDataItems) {
+		
+		Double evaporatingQty = (formulatedProduct.getYield() != null ? formulatedProduct.getYield() / 100d : 1d);
+		
+		if (!evaporatedDataItems.isEmpty()) {
+
+			// 1. Evaporate ingredients with 100% rate first
+			Set<EvaporatedDataItem> fullEvaporationItems = evaporatedDataItems.stream()
+					.filter(item -> item.getRate() != null && item.getRate() == 100d).collect(Collectors.toSet());
+
+			processEvaporation(formulatedProduct.getIngList(), evaporatingQty, fullEvaporationItems, null);
+
+			// 2. Distribute remaining evaporation proportionally
+			Set<EvaporatedDataItem> remainingItems = evaporatedDataItems.stream().filter(item -> !fullEvaporationItems.contains(item))
+					.collect(Collectors.toSet());
+
+			Double totalRate = remainingItems.stream().mapToDouble(item -> item.getRate()).sum();
+
+			processEvaporation(formulatedProduct.getIngList(), evaporatingQty, remainingItems, totalRate);
+
+			// 3 - If not all has been evaporated remove from first
+			if (evaporatingQty > 0 && !fullEvaporationItems.isEmpty()) {
+
+
+				EvaporatedDataItem evaporatedDataItem = fullEvaporationItems.iterator().next();
+				IngListDataItem ingListDataItem = formulatedProduct.getIngList().stream().filter(i -> i.getIng().equals(evaporatedDataItem.getProductNodeRef())).findFirst().get();
+				if (ingListDataItem != null) {
+					if (ingListDataItem.getQtyPercWithYield() != null && evaporatingQty != null) {
+						ingListDataItem.setQtyPercWithYield(ingListDataItem.getQtyPercWithYield() -evaporatingQty);
+					}
+				}
+			}
+		}
+		
+	}
+	
+	
+	private void processEvaporation(List<IngListDataItem> ingList, Double evaporatingQty, Set<EvaporatedDataItem> items, Double totalRate) {
+		if (evaporatingQty > 0d) {
+			for (EvaporatedDataItem evaporatedDataItem : items  ){
+				IngListDataItem ingListDataItem = ingList.stream().filter(i -> i.getIng().equals(evaporatedDataItem.getProductNodeRef())).findFirst().get();
+				if (ingListDataItem != null) {
+					Double rate = evaporatedDataItem.getRate() != null ? evaporatedDataItem.getRate() : 100d;
+
+					if (ingListDataItem.getQtyPercWithYield() != null && evaporatingQty != null && evaporatingQty > 0d) {
+						Double maxEvapQty = ingListDataItem.getQtyPercWithYield() * rate / 100d;
+
+						Double proportionalEvap = totalRate == null || totalRate == 0d ? evaporatingQty
+								:evaporatingQty * (rate / totalRate); // Consider total rate for remaining items
+						Double evaporatedQty = Math.min(maxEvapQty, proportionalEvap);
+
+						ingListDataItem.setQtyPercWithYield(ingListDataItem.getQtyPercWithYield() - evaporatedQty);
+
+						if (logger.isDebugEnabled()) {
+							logger.debug("Apply evaporation qty " + evaporatedQty + " on " + ingListDataItem.getName() + " after "
+									+ ingListDataItem.getQtyPercWithYield());
+						}
+
+						evaporatingQty-= evaporatedQty;
+					}
+
+
+				}
+			}
+
 		}
 	}
 
