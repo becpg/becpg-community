@@ -3,10 +3,8 @@ package fr.becpg.repo.activity.extractor;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.alfresco.error.AlfrescoRuntimeException;
@@ -37,6 +35,7 @@ import fr.becpg.repo.activity.EntityActivityExtractorService;
 import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.activity.data.ActivityType;
 import fr.becpg.repo.audit.plugin.impl.ActivityAuditPlugin;
+import fr.becpg.repo.behaviour.BehaviourRegistry;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.datalist.impl.AbstractDataListExtractor;
 import fr.becpg.repo.helper.AttributeExtractorService;
@@ -80,17 +79,6 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 	private static final String ACTIVITYEVENT_UPDATE = "Update";
 	
 	private static final Log logger = LogFactory.getLog(EntityActivityExtractorServiceImpl.class);
-	
-	private static final Set<QName> isIgnoredTypes = new HashSet<>();
-	
-	/**
-	 * <p>registerIgnoredType.</p>
-	 *
-	 * @param type a {@link org.alfresco.service.namespace.QName} object
-	 */
-	public static void registerIgnoredType(QName type) {
-		isIgnoredTypes.add(type);
-	}
 	
 	/** {@inheritDoc} */
 	@Override
@@ -204,7 +192,7 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 
 				if ((entityType != null)
 						&& (securityService.computeAccessMode(entityNodeRef, entityType, propertyName) != SecurityService.NONE_ACCESS)
-						&& !isIgnoredTypes.contains(propertyName)) {
+						&& !BehaviourRegistry.shouldIgnoreActivityField(propertyName)) {
 					// Property Title
 					PropertyDefinition propertyDef = entityDictionaryService.getProperty(propertyName);
 					ClassAttributeDefinition propDef = entityDictionaryService.getPropDef(propertyName);
@@ -229,13 +217,7 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 
 							postProperty.put(EntityActivityService.BEFORE, checkProperty((JSONArray) beforeProperty, propertyDef));
 						} else {
-							if ((beforeProperty instanceof String) && (propertyDef != null)
-									&& (DataTypeDefinition.DATE.equals(propertyDef.getDataType().getName())
-											|| DataTypeDefinition.DATETIME.equals(propertyDef.getDataType().getName()))) {
-								postProperty.put(EntityActivityService.BEFORE, extractDate((String) beforeProperty));
-							} else {
-								postProperty.put(EntityActivityService.BEFORE, beforeProperty);
-							}
+							postProperty.put(EntityActivityService.BEFORE, toDisplayValue(beforeProperty, propertyDef));
 						}
 					}
 
@@ -254,14 +236,7 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 
 							postProperty.put(EntityActivityService.AFTER, checkProperty((JSONArray) afterProperty, propertyDef));
 						} else {
-
-							if ((afterProperty instanceof String) && (propertyDef != null)
-									&& (DataTypeDefinition.DATE.equals(propertyDef.getDataType().getName())
-											|| DataTypeDefinition.DATETIME.equals(propertyDef.getDataType().getName()))) {
-								postProperty.put(EntityActivityService.AFTER, extractDate((String) afterProperty));
-							} else {
-								postProperty.put(EntityActivityService.AFTER, afterProperty);
-							}
+							postProperty.put(EntityActivityService.AFTER, toDisplayValue(afterProperty, propertyDef));
 						}
 					}
 
@@ -337,64 +312,62 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 	private JSONArray checkProperty(JSONArray propertyArray, PropertyDefinition propertyDef) {
 		JSONArray postproperty = new JSONArray();
 		for (int i = 0; i < propertyArray.length(); i++) {
-			try {
-				String stringVal = propertyArray.get(i).toString();
-				if (((propertyDef == null) && stringVal.contains("workspace"))
-						|| ((propertyDef != null) && DataTypeDefinition.NODE_REF.equals(propertyDef.getDataType().getName()) && (stringVal != null)
-								&& !stringVal.isBlank() && !"null".equals(stringVal)  && !"[\"\"]".equals(stringVal))) {
-					NodeRef nodeRef = null;
-					String name = null;
-					if (Pattern.matches("\\(.*,.*\\)", stringVal)) {
-						String nodeRefString = stringVal.substring(stringVal.indexOf("(") + 1, stringVal.indexOf(","));
-						nodeRef = new NodeRef(nodeRefString);
-						name = stringVal.substring(stringVal.indexOf(",") + 1, stringVal.indexOf(")"));
-
+			postproperty.put(toDisplayValue(propertyArray.get(i), propertyDef));
+		}
+		return postproperty;
+	}
+	
+	private Object toDisplayValue(Object prop, PropertyDefinition propertyDef) {
+		try {
+			String stringVal = prop.toString();
+			if (((propertyDef == null) && stringVal.contains("workspace"))
+					|| ((propertyDef != null) && DataTypeDefinition.NODE_REF.equals(propertyDef.getDataType().getName()) && (stringVal != null)
+							&& !stringVal.isBlank() && !"null".equals(stringVal)  && !"[\"\"]".equals(stringVal))) {
+				NodeRef nodeRef = null;
+				String name = null;
+				if (Pattern.matches("\\(.*,.*\\)", stringVal)) {
+					String nodeRefString = stringVal.substring(stringVal.indexOf("(") + 1, stringVal.indexOf(","));
+					nodeRef = new NodeRef(nodeRefString);
+					name = stringVal.substring(stringVal.indexOf(",") + 1, stringVal.indexOf(")"));
+					
+				} else {
+					
+					int lastForwardSlash = stringVal.lastIndexOf('/');
+					
+					// case of malformed activities
+					if (lastForwardSlash == -1) {
+						JSONObject jsonNodeRef = new JSONObject(stringVal);
+						nodeRef = new NodeRef(jsonNodeRef.getJSONObject("storeRef").getString("protocol") + "://"
+								+ jsonNodeRef.getJSONObject("storeRef").getString("identifier") + "/" + jsonNodeRef.getString("id"));
 					} else {
-						
-						int lastForwardSlash = stringVal.lastIndexOf('/');
-
-						// case of malformed activities
-						if (lastForwardSlash == -1) {
-							JSONObject jsonNodeRef = new JSONObject(stringVal);
-							nodeRef = new NodeRef(jsonNodeRef.getJSONObject("storeRef").getString("protocol") + "://"
-									+ jsonNodeRef.getJSONObject("storeRef").getString("identifier") + "/" + jsonNodeRef.getString("id"));
-						} else {
-							nodeRef = new NodeRef(stringVal);
-						}
+						nodeRef = new NodeRef(stringVal);
 					}
-					if (nodeService.exists(nodeRef)) {
-						if (permissionService.hasPermission(nodeRef, PermissionService.READ) == AccessStatus.ALLOWED) {
-							if (propertyDef != null) {
-								postproperty.put(attributeExtractorService.getStringValue(propertyDef, nodeRef,
-										attributeExtractorService.getPropertyFormats(FormatMode.JSON, true)));
-							} else {
-								postproperty.put(attributeExtractorService.extractPropName(nodeRef));
-							}
+				}
+				if (nodeService.exists(nodeRef)) {
+					if (permissionService.hasPermission(nodeRef, PermissionService.READ) == AccessStatus.ALLOWED) {
+						if (propertyDef != null) {
+							return attributeExtractorService.getStringValue(propertyDef, nodeRef, attributeExtractorService.getPropertyFormats(FormatMode.JSON, true));
 						} else {
-							postproperty.put(I18NUtil.getMessage("message.becpg.access.denied"));
+							return attributeExtractorService.extractPropName(nodeRef);
 						}
 					} else {
-						if (name != null) {
-							postproperty.put(name);
-						}
+						return I18NUtil.getMessage("message.becpg.access.denied");
 					}
 				} else {
-					Object prop = propertyArray.get(i);
-
-					if ((prop instanceof String) && (propertyDef != null) && (DataTypeDefinition.DATE.equals(propertyDef.getDataType().getName())
-							|| DataTypeDefinition.DATETIME.equals(propertyDef.getDataType().getName()))) {
-						postproperty.put(extractDate((String) prop));
-					} else {
-						postproperty.put(prop);
+					if (name != null) {
+						return name;
 					}
-
 				}
-			} catch (JSONException | MalformedNodeRefException e) {
-				logger.error(e, e);
+			} else {
+				if ((prop instanceof String) && (propertyDef != null) && (DataTypeDefinition.DATE.equals(propertyDef.getDataType().getName())
+						|| DataTypeDefinition.DATETIME.equals(propertyDef.getDataType().getName()))) {
+					return extractDate((String) prop);
+				}
 			}
+		} catch (JSONException | MalformedNodeRefException e) {
+			logger.error(e, e);
 		}
-
-		return postproperty;
+		return prop;
 	}
 	
 
