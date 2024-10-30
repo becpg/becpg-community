@@ -1554,8 +1554,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				//Water loss
 				if ((qty != null) && (calculatedYield != null) && (calculatedYield.doubleValue() != 100d)
 						&& (nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_WATER)
-								|| (nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_EVAPORABLE)
-										&& nodeService.getProperty(productNodeRef, PLMModel.PROP_EVAPORATED_RATE) != null))) {
+								||  nodeService.getProperty(productNodeRef, PLMModel.PROP_EVAPORATED_RATE) != null)) {
 
 					if (logger.isTraceEnabled()) {
 						logger.trace("Detected evaporated components (" + productData.getName() + " - " + productNodeRef + "), rate: "
