@@ -1,7 +1,6 @@
 package fr.becpg.repo.activity;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -9,7 +8,6 @@ import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.Pair;
 import org.json.JSONObject;
-
 
 import fr.becpg.repo.activity.data.ActivityEvent;
 import fr.becpg.repo.activity.data.ActivityType;
@@ -33,6 +31,9 @@ public interface EntityActivityService {
 	static final String PROP_DATALIST_TYPE= "datalistType";
 	/** Constant <code>PROP_ENTITY_NODEREF="entityNodeRef"</code> */
 	static final String PROP_ENTITY_NODEREF = "entityNodeRef";
+	
+	/** Constant <code>PROP_PARENT_NAME="parentName"</code> */
+	static final String PROP_PARENT_NAME = "parentName";
 	/** Constant <code>PROP_ENTITY_TYPE="entityType"</code> */
 	static final String PROP_ENTITY_TYPE= "entityType";
 	/** Constant <code>PROP_CHARACT_NODEREF="charactNodeRef"</code> */
@@ -138,7 +139,7 @@ public interface EntityActivityService {
 	 * @param updatedProperties a {@link java.util.Map} object.
 	 * @return a boolean.
 	 */
-	boolean postEntityActivity(NodeRef entityNodeRef, ActivityType activityType, ActivityEvent activityEvent, Map<QName,Pair<List<Serializable>,List<Serializable>>> updatedProperties);
+	boolean postEntityActivity(NodeRef entityNodeRef, ActivityType activityType, ActivityEvent activityEvent, Map<QName,Pair<Serializable,Serializable>> updatedProperties);
 
 	/**
 	 * <p>postStateChangeActivity.</p>
