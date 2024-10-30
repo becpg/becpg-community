@@ -166,6 +166,8 @@
 		<property name="namespaceService" ref="namespaceService"/>
 		<property name="entityListDAO" ref="entityListDAO"/>
 		<property name="associationService" ref="associationService"/>
+		<property name="systemConfigurationService" ref="systemConfigurationService"/>
+		<property name="beCPGCacheService" ref="beCPGCacheService"/>
 	</bean>
 	
 	<bean id="webscript.fr.becpg.publication.channelList.get" class="fr.becpg.repo.web.scripts.publication.ListEntitiesByChannelWebScript" parent="webscript.fr.becpg.remote.entities.get">
