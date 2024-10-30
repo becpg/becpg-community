@@ -221,7 +221,7 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 			boolean isDifferent = false;
 			boolean isIgnoreState = false;
 			QName type = nodeService.getType(nodeRef);
-			Map<QName, Pair<List<Serializable>, List<Serializable>>> updatedProperties = new HashMap<>();
+			Map<QName, Pair<Serializable, Serializable>> updatedProperties = new HashMap<>();
 			if (accept(type)) {
 
 				if ((before != null) && (after != null) && (before.size() < after.size())) {
@@ -231,8 +231,7 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 								&& !ignoreType(afterType, before, after)) {
 							isDifferent = true;
 
-							Pair<List<Serializable>, List<Serializable>> beforeAfterProperties = new Pair<>(null,
-									Arrays.asList(after.get(afterType)));
+							Pair<Serializable, Serializable> beforeAfterProperties = new Pair<>(null, after.get(afterType));
 							updatedProperties.put(afterType, beforeAfterProperties);
 						}
 					}
@@ -266,8 +265,7 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 
 												isDifferent = true;
 												if (!entityActivityService.isMatchingStateProperty(beforeType)) {
-													Pair<List<Serializable>, List<Serializable>> beforeAfterProperties = new Pair<>(
-															Arrays.asList(before.get(beforeType)), Arrays.asList(after.get(beforeType)));
+													Pair<Serializable, Serializable> beforeAfterProperties = new Pair<>(before.get(beforeType), after.get(beforeType));
 													updatedProperties.put(beforeType, beforeAfterProperties);
 												}
 											}
@@ -279,8 +277,7 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 
 												isDifferent = true;
 												if (!entityActivityService.isMatchingStateProperty(beforeType)) {
-													Pair<List<Serializable>, List<Serializable>> beforeAfterProperties = new Pair<>(
-															Arrays.asList(before.get(beforeType)), Arrays.asList(after.get(beforeType)));
+													Pair<Serializable, Serializable> beforeAfterProperties = new Pair<>(before.get(beforeType), after.get(beforeType));
 													updatedProperties.put(beforeType, beforeAfterProperties);
 												}
 											}
@@ -289,8 +286,7 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 								} else {
 									isDifferent = true;
 									if (!entityActivityService.isMatchingStateProperty(beforeType)) {
-										Pair<List<Serializable>, List<Serializable>> beforeAfterProperties = new Pair<>(
-												Arrays.asList(before.get(beforeType)), Arrays.asList(after.get(beforeType)));
+										Pair<Serializable, Serializable> beforeAfterProperties = new Pair<>(before.get(beforeType), after.get(beforeType));
 										updatedProperties.put(beforeType, beforeAfterProperties);
 									}
 								}
@@ -321,11 +317,11 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 					if ((TransactionSupportUtil.getResource(KEY_QUEUE_UPDATED_STATUS + nodeRef.toString()) == null)) {
 						TransactionSupportUtil.bindResource(KEY_QUEUE_UPDATED_STATUS + nodeRef.toString(), updatedProperties);
 					} else {
-						Map<QName, Pair<List<Serializable>, List<Serializable>>> beforeUpdatedProperties = TransactionSupportUtil.getResource(KEY_QUEUE_UPDATED_STATUS + nodeRef.toString());
+						Map<QName, Pair<Serializable, Serializable>> beforeUpdatedProperties = TransactionSupportUtil.getResource(KEY_QUEUE_UPDATED_STATUS + nodeRef.toString());
 						
 						boolean changed = false;
 						
-						for (Entry<QName, Pair<List<Serializable>, List<Serializable>>> entry : beforeUpdatedProperties.entrySet()) {
+						for (Entry<QName, Pair<Serializable, Serializable>> entry : beforeUpdatedProperties.entrySet()) {
 							if (!updatedProperties.containsKey(entry.getKey())) {
 								updatedProperties.put(entry.getKey(), entry.getValue());
 								changed = true;
