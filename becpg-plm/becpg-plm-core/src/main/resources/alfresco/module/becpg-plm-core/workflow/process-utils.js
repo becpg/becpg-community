@@ -85,7 +85,8 @@ function getDelegate(user) {
 			.getTime()) : null);
 
 	if (user != null && user.properties["pjt:delegationActivated"] && (startDate == null || startDate <= curDate)
-			&& (endDate == null || curDate <= endDate) && user.assocs["pjt:reassignTo"][0] != null) {
+			&& (endDate == null || curDate <= endDate) && user.assocs["pjt:reassignTo"]!=null 
+           && user.assocs["pjt:reassignTo"].lenght > 0 && user.assocs["pjt:reassignTo"][0] != null) {
 		var reassignResource = getDelegate(user.assocs["pjt:reassignTo"][0]);
 		if (reassignResource != null) {
 			return reassignResource;
