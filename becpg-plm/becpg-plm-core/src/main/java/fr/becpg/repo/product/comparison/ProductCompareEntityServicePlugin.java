@@ -97,8 +97,7 @@ public class ProductCompareEntityServicePlugin extends DefaultCompareEntityServi
 
 			// Extract props from datalist items
 			for (CompoListDataItem compoItem : product.getCompoList()) {
-				ProductData itemProduct = (ProductData) alfrescoRepository.findOne(compoItem.getProduct());
-				addCompoListProps(comparisonMap, dataListType, itemProduct.getName(), compoItem.getNodeRef().toString(),
+				addCompoListProps(comparisonMap, dataListType, attributeExtractorService.extractPropName(compoItem.getProduct()), compoItem.getNodeRef().toString(),
 						compoItem.getNodeRef(), nbEntities, comparisonPosition, totalQty, baseProduct, swap, position, level + 1);
 			}
 		}
@@ -154,8 +153,7 @@ public class ProductCompareEntityServicePlugin extends DefaultCompareEntityServi
 
 			// Extract props from datalist items
 			for (PackagingListDataItem packagingItem : product.getPackagingList()) {
-				ProductData itemProduct = (ProductData) alfrescoRepository.findOne(packagingItem.getProduct());
-				addPackagingListProps(comparisonMap, dataListType, itemProduct.getName(), packagingItem.getNodeRef().toString(),
+				addPackagingListProps(comparisonMap, dataListType, attributeExtractorService.extractPropName(packagingItem.getProduct()), packagingItem.getNodeRef().toString(),
 						packagingItem.getNodeRef(), nbEntities, comparisonPosition, totalQty, baseProduct, swap, position, level + 1);
 			}
 		}
@@ -184,40 +182,39 @@ public class ProductCompareEntityServicePlugin extends DefaultCompareEntityServi
 				baseProduct = (ProductData) alfrescoRepository.findOne(productNodeRef);
 			}
 
-			String previousQtyForProductStr =
-				getCurrentValue(comparisonMap, dataListType, charactName, MPMModel.PROP_PL_QTY_FOR_PRODUCT, position);
-			
-			if (previousQtyForProductStr != null) {
-				qtyForProduct = Double.parseDouble(previousQtyForProductStr);
-			}
-
-			if (qtyForProduct != null) {
-				if (entityType.equals(PLMModel.TYPE_RESOURCEPRODUCT)) {
-					extractProps(comparisonMap, dataListType, charactName, charactName, MPMModel.PROP_PL_QTY_PERC_FOR_PRODUCT,
-							Double.toString(qtyForProduct / totalQty[position] * 100), nbEntities, comparisonPosition, swap);
-				} else if (entityType.equals(PLMModel.TYPE_FINISHEDPRODUCT) || entityType.equals(PLMModel.TYPE_LOGISTICUNIT)) {
-					extractProps(comparisonMap, dataListType, charactName, charactName, MPMModel.PROP_PL_QTY_PERC_FOR_PRODUCT,
-							Double.toString(qtyForProduct / totalQty[position] * 100), nbEntities, comparisonPosition, swap);
-				} else if (entityType.equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT)) {
-					extractProps(comparisonMap, dataListType, charactName, charactName, MPMModel.PROP_PL_QTY_PERC_FOR_SF,
-							Double.toString(qtyForProduct / totalQty[position] * 100), nbEntities, comparisonPosition, swap);
+				
+				String previousQtyForProductStr =
+						getCurrentValue(comparisonMap, dataListType, charactName, MPMModel.PROP_PL_QTY_FOR_PRODUCT, position);
+				
+				if (previousQtyForProductStr != null) {
+					qtyForProduct = Double.parseDouble(previousQtyForProductStr);
 				}
-			}
-
-			value = String.valueOf(level);
-			extractProps(comparisonMap, dataListType, charactName, pivotKey, BeCPGModel.PROP_DEPTH_LEVEL,
-					value, nbEntities, comparisonPosition, swap);
-
-			value = item.getUnit().toString();
-			extractProps(comparisonMap, dataListType, charactName, pivotKey, MPMModel.PROP_PL_UNIT,
-					value, nbEntities, comparisonPosition, swap);
-
-			// Extract props from datalist items
-			for (ProcessListDataItem processItem : product.getProcessList()) {
-				ProductData itemProduct = (ProductData) alfrescoRepository.findOne(processItem.getProduct());
-				addProcessListProps(comparisonMap, dataListType, itemProduct.getName(), processItem.getNodeRef().toString(),
-						processItem.getNodeRef(), nbEntities, comparisonPosition, totalQty, baseProduct, swap, position, level + 1);
-			}
+				
+				if (qtyForProduct != null) {
+					if (entityType.equals(PLMModel.TYPE_RESOURCEPRODUCT)) {
+						extractProps(comparisonMap, dataListType, charactName, charactName, MPMModel.PROP_PL_QTY_PERC_FOR_PRODUCT,
+								Double.toString(qtyForProduct / totalQty[position] * 100), nbEntities, comparisonPosition, swap);
+					} else if (entityType.equals(PLMModel.TYPE_FINISHEDPRODUCT) || entityType.equals(PLMModel.TYPE_LOGISTICUNIT)) {
+						extractProps(comparisonMap, dataListType, charactName, charactName, MPMModel.PROP_PL_QTY_PERC_FOR_PRODUCT,
+								Double.toString(qtyForProduct / totalQty[position] * 100), nbEntities, comparisonPosition, swap);
+					} else if (entityType.equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT)) {
+						extractProps(comparisonMap, dataListType, charactName, charactName, MPMModel.PROP_PL_QTY_PERC_FOR_SF,
+								Double.toString(qtyForProduct / totalQty[position] * 100), nbEntities, comparisonPosition, swap);
+					}
+				}
+				value = String.valueOf(level);
+				extractProps(comparisonMap, dataListType, charactName, pivotKey, BeCPGModel.PROP_DEPTH_LEVEL,
+						value, nbEntities, comparisonPosition, swap);
+				
+				value = item.getUnit() == null ? "" : item.getUnit().toString();
+				extractProps(comparisonMap, dataListType, charactName, pivotKey, MPMModel.PROP_PL_UNIT,
+						value, nbEntities, comparisonPosition, swap);
+				
+				// Extract props from datalist items
+				for (ProcessListDataItem processItem : product.getProcessList()) {
+					addProcessListProps(comparisonMap, dataListType, attributeExtractorService.extractPropName(processItem.getProduct()), processItem.getNodeRef().toString(),
+							processItem.getNodeRef(), nbEntities, comparisonPosition, totalQty, baseProduct, swap, position, level + 1);
+				}
 		}
 	}
 	
