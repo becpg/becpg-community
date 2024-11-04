@@ -101,7 +101,7 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 	protected AssociationService associationService;
 
 	@Autowired
-	private AttributeExtractorService attributeExtractorService;
+	protected AttributeExtractorService attributeExtractorService;
 
 	@Autowired
 	private EntityDictionaryService entityDictionaryService;
@@ -696,19 +696,19 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 				if (dataListType.equals(PLMModel.TYPE_COMPOLIST)) {
 					for (CompoListDataItem compoItem: productData.getCompoList()) {
 						ProductData itemProduct = (ProductData) alfrescoRepository.findOne(compoItem.getProduct());
-						charactName = itemProduct.getName();
+						charactName = attributeExtractorService.extractPropName(compoItem.getProduct());
 						calculateDataListQty(itemProduct, compoItem, comparisonMap, charactName, dataListType, charactName, nbEntities, comparisonPosition);
 					}
 				} else if (dataListType.equals(PLMModel.TYPE_PACKAGINGLIST)) {
 					for (PackagingListDataItem packagingItem: productData.getPackagingList()) {
 						ProductData itemProduct = (ProductData) alfrescoRepository.findOne(packagingItem.getProduct());
-						charactName = itemProduct.getName();
+						charactName = attributeExtractorService.extractPropName(packagingItem.getProduct());
 						calculateDataListQty(itemProduct, packagingItem, comparisonMap, charactName, dataListType, charactName, nbEntities, comparisonPosition);
 					}
 				} else if (dataListType.equals(MPMModel.TYPE_PROCESSLIST)) {
 					for (ProcessListDataItem processItem: productData.getProcessList()) {
 						ProductData itemProduct = (ProductData) alfrescoRepository.findOne(processItem.getProduct());
-						charactName = itemProduct.getName();
+						charactName = attributeExtractorService.extractPropName(processItem.getProduct());
 						calculateDataListQty(itemProduct, processItem, comparisonMap, charactName, dataListType, charactName, nbEntities, comparisonPosition);
 					}
 				}
