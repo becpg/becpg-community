@@ -138,7 +138,7 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 	/** {@inheritDoc} */
 	@Override
 	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
-
+		boolean isEnabledBehaviour = policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE);
 		try {
 			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 
@@ -146,7 +146,9 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 				updateProducts(pendingNodes);
 			}
 		} finally {
-			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+			if(isEnabledBehaviour) {
+				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+			}
 		}
 
 		return true;
