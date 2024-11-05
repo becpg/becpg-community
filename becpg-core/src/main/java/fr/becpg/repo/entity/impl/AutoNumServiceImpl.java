@@ -190,6 +190,7 @@ public class AutoNumServiceImpl implements AutoNumService {
 	@Override
 	public synchronized String getOrCreateCode(NodeRef nodeRef, QName codeQName) {
 
+		boolean isEnabledBehaviour = policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE);
 		try {
 
 			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
@@ -217,7 +218,9 @@ public class AutoNumServiceImpl implements AutoNumService {
 			}
 			return code;
 		} finally {
-			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+			if(isEnabledBehaviour) {
+				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+			}
 		}
 
 	}
