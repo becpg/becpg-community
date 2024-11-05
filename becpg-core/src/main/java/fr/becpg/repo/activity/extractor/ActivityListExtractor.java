@@ -330,7 +330,7 @@ public class ActivityListExtractor extends SimpleExtractor {
 			String stringVal = prop.toString();
 			if (((propertyDef == null) && stringVal.contains("workspace"))
 					|| ((propertyDef != null) && DataTypeDefinition.NODE_REF.equals(propertyDef.getDataType().getName()) && (stringVal != null)
-							&& !stringVal.isBlank() && !"null".equals(stringVal)  && !"[\"\"]".equals(stringVal))) {
+							&& !stringVal.isBlank() && !"null".equals(stringVal)  && !"[\"\"]".equals(stringVal) && !"[]".equals(stringVal))) {
 				NodeRef nodeRef = null;
 				String name = null;
 				if (Pattern.matches("\\(.*,.*\\)", stringVal)) {
