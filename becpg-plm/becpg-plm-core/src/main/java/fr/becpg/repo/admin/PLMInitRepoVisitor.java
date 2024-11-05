@@ -1173,6 +1173,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_LCA_UNITS, BeCPGModel.TYPE_LIST_VALUE);
 
 		entityLists.put(PlmRepoConsts.PATH_GS1_PACKAGING_TYPE_CODES, BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(PlmRepoConsts.PATH_GS1_PACKAGING_FUNCTION_CODES, BeCPGModel.TYPE_LIST_VALUE);
 
 		entityLists.put(PlmRepoConsts.PATH_GS1_PACKAGING_RECYCLING_SCHEME_CODES, BeCPGModel.TYPE_LIST_VALUE);
 
