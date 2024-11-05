@@ -735,6 +735,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * @param value a {@link java.lang.String} object.
 	 */
 	public void setMLProperty(ScriptNode sourceNode, String propQName, String locale, String value) {
+		Locale parsedLocale = MLTextHelper.parseLocale(locale);
 
 		MLText mlText = (MLText) mlNodeService.getProperty(sourceNode.getNodeRef(), getQName(propQName));
 		if (mlText == null) {
@@ -742,12 +743,17 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		}
 
 		if ((value != null) && !value.isEmpty()) {
-			mlText.addValue(MLTextHelper.parseLocale(locale), value);
+			if (value.equals(mlText.get(parsedLocale))) {
+				return;
+			}
+			mlText.addValue(parsedLocale, value);
 		} else {
-			mlText.removeValue(MLTextHelper.parseLocale(locale));
+			if (!mlText.containsKey(parsedLocale)) {
+				return;
+			}
+			mlText.removeValue(parsedLocale);
 		}
 		mlNodeService.setProperty(sourceNode.getNodeRef(), getQName(propQName), mlText);
-
 	}
 
 	/**
