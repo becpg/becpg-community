@@ -204,6 +204,7 @@
 			<list id="SortingMalusCriteria" index="220"/> 
 			<list id="LCAUnits" index="230"/>
 			<list id="LcaListMethods" index="240"/>
+			<list id="PackagingFunctionCodes" index="250"/>
 		</lists>
 	</config>
 	
