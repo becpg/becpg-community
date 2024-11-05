@@ -97,8 +97,7 @@ public class ProductCompareEntityServicePlugin extends DefaultCompareEntityServi
 
 			// Extract props from datalist items
 			for (CompoListDataItem compoItem : product.getCompoList()) {
-				ProductData itemProduct = (ProductData) alfrescoRepository.findOne(compoItem.getProduct());
-				addCompoListProps(comparisonMap, dataListType, itemProduct.getName(), compoItem.getNodeRef().toString(),
+				addCompoListProps(comparisonMap, dataListType, attributeExtractorService.extractPropName(compoItem.getProduct()), compoItem.getNodeRef().toString(),
 						compoItem.getNodeRef(), nbEntities, comparisonPosition, totalQty, baseProduct, swap, position, level + 1);
 			}
 		}
@@ -154,8 +153,7 @@ public class ProductCompareEntityServicePlugin extends DefaultCompareEntityServi
 
 			// Extract props from datalist items
 			for (PackagingListDataItem packagingItem : product.getPackagingList()) {
-				ProductData itemProduct = (ProductData) alfrescoRepository.findOne(packagingItem.getProduct());
-				addPackagingListProps(comparisonMap, dataListType, itemProduct.getName(), packagingItem.getNodeRef().toString(),
+				addPackagingListProps(comparisonMap, dataListType, attributeExtractorService.extractPropName(packagingItem.getProduct()), packagingItem.getNodeRef().toString(),
 						packagingItem.getNodeRef(), nbEntities, comparisonPosition, totalQty, baseProduct, swap, position, level + 1);
 			}
 		}
@@ -214,8 +212,7 @@ public class ProductCompareEntityServicePlugin extends DefaultCompareEntityServi
 				
 				// Extract props from datalist items
 				for (ProcessListDataItem processItem : product.getProcessList()) {
-					ProductData itemProduct = (ProductData) alfrescoRepository.findOne(processItem.getProduct());
-					addProcessListProps(comparisonMap, dataListType, itemProduct.getName(), processItem.getNodeRef().toString(),
+					addProcessListProps(comparisonMap, dataListType, attributeExtractorService.extractPropName(processItem.getProduct()), processItem.getNodeRef().toString(),
 							processItem.getNodeRef(), nbEntities, comparisonPosition, totalQty, baseProduct, swap, position, level + 1);
 				}
 			}
