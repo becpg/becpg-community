@@ -122,86 +122,85 @@ if (beCPG.module.EntityDataGridRenderers) {
 				html += '      </span>';
 				html += '      <div class="activity-title">' + title + '</div>';
 
-				if (data.properties){
-					html += '      <div class="before-after-prop">';
-					html += '      <table><thead><tr>';
-					html += '      <th class="prop-col">' + scope.msg("entity.activity.property") + '</th>';
-					html += '      <th class="before-after-col">' + scope.msg("entity.activity.before") + '</th>';
-					html += '      <th class="before-after-col">' + scope.msg("entity.activity.after") + '</th></tr></thead><tbody>';
-
-					var count = 0;
-					data.properties.forEach(function(prop){
-						var before = prop.before;
-						var after = prop.after;
-						var locale = "";
-						
-						var hasBefore = before != null && Object.prototype.toString.call(before).slice(8, -1) == 'Object';
-						var hasAfter = after != null && Object.prototype.toString.call(after).slice(8, -1) == 'Object';
-
-
-						if (hasBefore){
-							Object.keys(before).forEach(function(key){
-								var beforeValue = before[key] ? before[key] : "";
-								var afterValue = after[key] ? after[key] : "";
-								if (beforeValue != afterValue) {
-									locale = key;
-									if (key.indexOf("_") > -1){
-										locale = key.substring(3,5).toLowerCase();
-									}
-									html += '      <tr '+(count%2 == 0 ? '':'class="grey"')+'><td>' + prop.title +
-									' <img class="icon16_11" src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/flags/' + locale + '.png" /></td>';
-									html += '      <td>' + beforeValue + '</td>';
-									html += '      <td>' + afterValue + '</td></tr>';		
-									count++;
-								}
-							});
-							if (hasAfter){
-								Object.keys(after).forEach(function(key){
-									if (!before.hasOwnProperty(key)) {
-										var afterValue = after[key] ? after[key] : "";
-										locale = key;
-										if (key.indexOf("_") > -1){
-											locale = key.substring(3,5).toLowerCase();
-										}
-										html += '      <tr '+(count%2 == 0 ? '':'class="grey"')+'><td>' + prop.title +
-										' <img class="icon16_11" src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/flags/' + locale + '.png" /></td>';
-										html += '      <td> </td>';
-										html += '      <td>' + afterValue + '</td></tr>';
-										count++;
-									}
-								});
-							}
-						} else if (hasAfter) {
-							html += '      <td> </td>';
-							Object.keys(after).forEach(function(key){
-								if (after[key]) {
-									locale = key;
-									if (key.indexOf("_") > -1){
-										locale = key.substring(3,5).toLowerCase();
-									}
-									html += '      <tr '+(count%2 == 0 ? '':'class="grey"')+'><td>' + prop.title +
-									' <img class="icon16_11" src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/flags/' + locale + '.png" /></td>';
-									html += '      <td> </td>';
-									html += '      <td>' + after[key] + '</td></tr>';
-									count++;
-								}
-							});
-						} else {
-							html += '      <tr '+(count%2 == 0 ? '':'class="grey"')+'><td>' + prop.title + '</td>';
-							if (before != null){
-								html += '      <td>' + before + '</td>';
-							} else {
-								html += '      <td> </td>';
-							} 
-							if (after != null){
-								html += '      <td>' + after + '</td></tr>';
-							} else {
-								html += '      <td> </td></tr>';
-							}
-							count++;
-						}
-					});
-					html += '    </tbody></table></div>'
+				if (data.properties) {
+				    html += '      <div class="before-after-prop">';
+				    html += '      <table><thead><tr>';
+				    html += '      <th class="prop-col">' + scope.msg("entity.activity.property") + '</th>';
+				    html += '      <th class="before-after-col">' + scope.msg("entity.activity.before") + '</th>';
+				    html += '      <th class="before-after-col">' + scope.msg("entity.activity.after") + '</th></tr></thead><tbody>';
+				
+				    var count = 0;
+				    data.properties.forEach(function(prop) {
+				        var before = prop.before;
+				        var after = prop.after;
+				        var locale = "";
+				
+				        var isBeforeArray = Array.isArray(before);
+				        var isAfterArray = Array.isArray(after);
+				
+				        var hasBefore = before != null && (isBeforeArray ? before.length > 0 && before[0] != null && typeof before[0] === 'object' : typeof before === 'object');
+				        var hasAfter = after != null && (isAfterArray ? after.length > 0 && after[0] != null && typeof after[0] === 'object' : typeof after === 'object');
+				
+				        if (hasBefore) {
+				            var beforeObj = isBeforeArray ? before[0] : before;
+				            var afterObj = isAfterArray ? (after.length > 0 ? after[0] : {}) : after;
+				
+				            Object.keys(beforeObj).forEach(function(key) {
+				                var beforeValue = beforeObj[key] ? beforeObj[key] : "";
+				                var afterValue = afterObj[key] ? afterObj[key] : "";
+				                if (beforeValue != afterValue) {
+				                    locale = key;
+				                    if (key.indexOf("_") > -1) {
+				                        locale = key.substring(3,5).toLowerCase();
+				                    }
+				                    html += '      <tr '+(count%2 == 0 ? '' : 'class="grey"')+'><td>' + prop.title +
+				                    ' <img class="icon16_11" src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/flags/' + locale + '.png" /></td>';
+				                    html += '      <td>' + beforeValue + '</td>';
+				                    html += '      <td>' + afterValue + '</td></tr>';
+				                    count++;
+				                }
+				            });
+				
+				            if (hasAfter) {
+				                Object.keys(afterObj).forEach(function(key) {
+				                    if (!beforeObj.hasOwnProperty(key)) {
+				                        var afterValue = afterObj[key] ? afterObj[key] : "";
+				                        locale = key;
+				                        if (key.indexOf("_") > -1) {
+				                            locale = key.substring(3,5).toLowerCase();
+				                        }
+				                        html += '      <tr '+(count%2 == 0 ? '' : 'class="grey"')+'><td>' + prop.title +
+				                        ' <img class="icon16_11" src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/flags/' + locale + '.png" /></td>';
+				                        html += '      <td> </td>';
+				                        html += '      <td>' + afterValue + '</td></tr>';
+				                        count++;
+				                    }
+				                });
+				            }
+				        } else if (hasAfter) {
+				            var afterObj = isAfterArray ? (after.length > 0 ? after[0] : {}) : after;
+				            html += '      <td> </td>';
+				            Object.keys(afterObj).forEach(function(key) {
+				                if (afterObj[key]) {
+				                    locale = key;
+				                    if (key.indexOf("_") > -1) {
+				                        locale = key.substring(3,5).toLowerCase();
+				                    }
+				                    html += '      <tr '+(count%2 == 0 ? '' : 'class="grey"')+'><td>' + prop.title +
+				                    ' <img class="icon16_11" src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/flags/' + locale + '.png" /></td>';
+				                    html += '      <td> </td>';
+				                    html += '      <td>' + afterObj[key] + '</td></tr>';
+				                    count++;
+				                }
+				            });
+				        } else {
+				            html += '      <tr '+(count%2 == 0 ? '' : 'class="grey"')+'><td>' + prop.title + '</td>';
+				            html += '      <td>' + (before != null ? before : ' ') + '</td>';
+				            html += '      <td>' + (after != null ? after : ' ') + '</td></tr>';
+				            count++;
+				        }
+				    });
+				    html += '    </tbody></table></div>';
 				}
 
 				if(data.content){
