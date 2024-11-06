@@ -297,7 +297,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 							|| (nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE) != null
 									&& (Double) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE) == 100d))) {
 
-						qtyPercWithYield = qtyPercWithYield / x + (100d - 100d / x);
+						qtyPercWithYield =  qtyPercWithYield + (100d - 100d / x);
 					} else {
 						qtyPercWithYield = qtyPercWithYield / x;
 					}
