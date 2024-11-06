@@ -45,6 +45,7 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 
 	/** Constant <code>UPDATED_LISTS="AuditEntityListItemPolicy.UpdatedLists"</code> */
 	public static final String UPDATED_LISTS = "AuditEntityListItemPolicy.UpdatedLists";
+	private static final String IGNORED_LISTS = "AuditEntityListItemPolicy.IgnoredLists";
 	private static final String CATALOG_ONLY = "AuditEntityListItemPolicy.CatalogOnly";
 
 	private static final Log logger = LogFactory.getLog(AuditEntityListItemPolicy.class);
@@ -157,22 +158,22 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 		Set<NodeRef> listContainerNodeRefs = new HashSet<>();
 		Map<NodeRef, Set<NodeRef>> listNodeRefByContainer = new HashMap<>();
 		for (NodeRef listNodeRef : pendingNodes) {
-			if (nodeService.exists(listNodeRef)) {
+			
+			Set<NodeRef> ignoredLists = TransactionSupportUtil.getResource(IGNORED_LISTS);
+			if ((ignoredLists == null || !ignoredLists.contains(listNodeRef)) && !listNodeRefs.contains(listNodeRef)
+					&& nodeService.exists(listNodeRef)) {
+				listNodeRefs.add(listNodeRef);
+				NodeRef listContainerNodeRef = nodeService.getPrimaryParent(listNodeRef).getParentRef();
 				
-				if (!listNodeRefs.contains(listNodeRef)) {
-					listNodeRefs.add(listNodeRef);
-					NodeRef listContainerNodeRef = nodeService.getPrimaryParent(listNodeRef).getParentRef();
-					
-					if (listNodeRefByContainer.get(listContainerNodeRef) != null) {
-						listNodeRefByContainer.get(listContainerNodeRef).add(listNodeRef);
-					} else {
-						listNodeRefByContainer.put(listContainerNodeRef, new HashSet<>(Arrays.asList(listNodeRef)));
-					}
-					
-					if ((listContainerNodeRef != null) && !listContainerNodeRefs.contains(listContainerNodeRef)
-							&& nodeService.exists(listContainerNodeRef)) {
-						listContainerNodeRefs.add(listContainerNodeRef);
-					}
+				if (listNodeRefByContainer.get(listContainerNodeRef) != null) {
+					listNodeRefByContainer.get(listContainerNodeRef).add(listNodeRef);
+				} else {
+					listNodeRefByContainer.put(listContainerNodeRef, new HashSet<>(Arrays.asList(listNodeRef)));
+				}
+				
+				if ((listContainerNodeRef != null) && !listContainerNodeRefs.contains(listContainerNodeRef)
+						&& nodeService.exists(listContainerNodeRef)) {
+					listContainerNodeRefs.add(listContainerNodeRef);
 				}
 			}
 		}
@@ -222,6 +223,13 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 				
 				if (!shouldIgnoreAudit) {
 					queueListNodeRef(nodeService.getPrimaryParent(nodeRef).getParentRef());
+				} else {
+					Set<NodeRef> ignoredLists = TransactionSupportUtil.getResource(IGNORED_LISTS);
+					if (ignoredLists == null) {
+						ignoredLists = new HashSet<>();
+					}
+					ignoredLists.add(nodeService.getPrimaryParent(nodeRef).getParentRef());
+					TransactionSupportUtil.bindResource(IGNORED_LISTS, ignoredLists);
 				}
 			}
 		}
