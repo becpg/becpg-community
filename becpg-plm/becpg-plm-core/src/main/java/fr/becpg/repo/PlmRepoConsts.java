@@ -326,6 +326,8 @@ public class PlmRepoConsts {
 	//GS1
 	/** Constant <code>PATH_GS1_PACKAGING_TYPE_CODES="PackagingTypeCodes"</code> */
 	public static final String PATH_GS1_PACKAGING_TYPE_CODES = "PackagingTypeCodes";
+	/** Constant <code>PATH_GS1_PACKAGING_FUNCTION_CODES="PackagingFunctionCodes"</code> */
+	public static final String PATH_GS1_PACKAGING_FUNCTION_CODES = "PackagingFunctionCodes";
 	/** Constant <code>PATH_GS1_PALLET_TYPE_CODES="PalletTypeCodes"</code> */
 	public static final String PATH_GS1_PALLET_TYPE_CODES = "PalletTypeCodes";
 	/** Constant <code>PATH_GS1_PLATFORM_TERM_AND_CONDITIONS_CODES="PlatformTermsAndConditionsCodes"</code> */
