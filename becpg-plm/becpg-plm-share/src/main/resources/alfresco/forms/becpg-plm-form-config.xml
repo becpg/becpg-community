@@ -2111,6 +2111,117 @@
 					<field id="bcpg:ingToxData" set="toxTab" />
 				</appearance>
 			</form>
+			<form id="create">
+				<field-visibility>
+					<show id="bcpg:charactName" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:legalName" />
+					<show id="bcpg:pluralLegalName" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:ingCEECode" force="true" />
+					<show id="bcpg:casNumber" force="true" />
+					<show id="bcpg:ceNumber" force="true" />
+					<show id="bcpg:ecNumber" force="true" />
+					<show id="bcpg:fdaNumber" force="true" />
+					<show id="bcpg:femaNumber" force="true" />
+					<show id="bcpg:flNumber" force="true" />
+					<show id="bcpg:regulatoryCode" force="true" />
+					<show id="bcpg:regulatoryComment" force="true" />
+					<show id="bcpg:ingTypeV2" force="true" />
+					<show id="bcpg:evaporatedRate" force="true" />
+					<show id="bcpg:ingAllergens" force="true" />
+					<show id="bcpg:ingAllergensQtyPerc" force="true" />
+					<show id="gs1:productActivityTypeCode" force="true" />
+					<show id="bcpg:linkedSearchAssociation" force="true" />
+					<show id="bcpg:isSubstanceOfVeryHighConcern" force="true" />
+					<show id="bcpg:svhcReasonsForInclusion" force="true" />
+					<show id="bcpg:ingToxPodSystemic" force="true" />
+					<show id="bcpg:ingToxDermalAbsorption" force="true" />
+					<show id="bcpg:ingToxMosMoe" force="true" />
+					<show id="bcpg:ingToxMaxSkinIrritation" force="true" />
+					<show id="bcpg:ingToxMaxSensitization" force="true" />
+					<show id="bcpg:ingToxMaxOcularIrritation" force="true" />
+					<show id="bcpg:ingToxMaxPhototoxic" force="true" />
+					<show id="bcpg:ingToxData" force="true" />
+					<show id="bcpg:parentEntityRef" force="true" />
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:isDeleted" />
+
+				</field-visibility>
+				<appearance>
+					<set label-id="becpg.forms.set.designation.label" id="designation" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set label-id="becpg.forms.set.formulation.label" id="formulation" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set label-id="becpg.forms.set.toxicology.label" id="toxTab" template="/org/alfresco/components/form/2-column-set.ftl" />
+
+					<field id="bcpg:charactName" set="designation" />
+					<field id="bcpg:pluralLegalName" set="designation" />
+					<field id="bcpg:legalName" set="designation" />
+					<field id="cm:description" set="designation">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:parentEntityRef" set="designation" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:rawMaterial
+							</control-param>
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
+							</control-param>
+							<control-param name="excludeSources">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:erpCode" set="designation" />
+					<field id="bcpg:ingCEECode" set="designation" />
+					<field id="bcpg:casNumber" set="designation" />
+					<field id="bcpg:ceNumber" set="designation" />
+					<field id="bcpg:ecNumber" set="designation" />
+					<field id="bcpg:fdaNumber" set="designation" />
+					<field id="bcpg:femaNumber" set="designation" />
+					<field id="bcpg:flNumber" set="designation" />
+					<field id="bcpg:linkedSearchAssociation" set="designation">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:ing
+							</control-param>
+						</control>
+					</field>
+					<field id="sec:readGroups" set="designation" />
+					<field id="bcpg:isDeleted" set="designation" />
+
+					<field id="bcpg:regulatoryCode" set="formulation" />
+					<field id="bcpg:regulatoryComment" set="formulation" />
+					<field id="bcpg:ingTypeV2" set="formulation">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ingTypeItem
+							</control-param>
+						</control>
+					</field>
+					<field id="gs1:productActivityTypeCode" set="formulation" />
+					<field id="bcpg:ingAllergens" set="formulation">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+						</control>
+					</field>
+					<field id="bcpg:ingAllergensQtyPerc" help-id="becpg.forms.help.ingAllergensQtyPerc" set="formulation" />
+					<field id="bcpg:evaporatedRate" set="formulation" />
+					<field id="bcpg:isSubstanceOfVeryHighConcern" set="formulation" />
+					<field id="bcpg:svhcReasonsForInclusion" set="formulation" />
+					<field id="bcpg:ingToxPodSystemic" set="toxTab" />
+					<field id="bcpg:ingToxDermalAbsorption" set="toxTab" />
+					<field id="bcpg:ingToxMosMoe" set="toxTab" />
+					<field id="bcpg:ingToxMaxSkinIrritation" set="toxTab" />
+					<field id="bcpg:ingToxMaxSensitization" set="toxTab" />
+					<field id="bcpg:ingToxMaxOcularIrritation" set="toxTab" />
+					<field id="bcpg:ingToxMaxPhototoxic" set="toxTab" />
+					<field id="bcpg:ingToxData" set="toxTab" />
+					<field id="bcpg:ingToxPodSystemic" set="toxTab" />
+					<field id="bcpg:ingToxDermalAbsorption" set="toxTab" />
+					<field id="bcpg:ingToxMosMoe" set="toxTab" />
+					<field id="bcpg:ingToxMaxSkinIrritation" set="toxTab" />
+					<field id="bcpg:ingToxMaxSensitization" set="toxTab" />
+					<field id="bcpg:ingToxMaxOcularIrritation" set="toxTab" />
+					<field id="bcpg:ingToxMaxPhototoxic" set="toxTab" />
+					<field id="bcpg:ingToxData" set="toxTab" />
+				</appearance>
+			</form>
 		</forms>
 	</config>
 
@@ -2230,6 +2341,118 @@
 				</appearance>
 			</form>
 
+			<form id="create">
+				<field-visibility>
+					<show id="bcpg:charactName" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:legalName" />
+					<show id="bcpg:pluralLegalName" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:ingCEECode" force="true" />
+					<show id="bcpg:casNumber" force="true" />
+					<show id="bcpg:ceNumber" force="true" />
+					<show id="bcpg:ecNumber" force="true" />
+					<show id="bcpg:fdaNumber" force="true" />
+					<show id="bcpg:femaNumber" force="true" />
+					<show id="bcpg:flNumber" force="true" />
+					<show id="bcpg:regulatoryCode" force="true" />
+					<show id="bcpg:regulatoryComment" force="true" />
+					<show id="bcpg:ingTypeV2" force="true" />
+					<show id="bcpg:evaporatedRate" force="true" />
+					<show id="bcpg:ingAllergens" />
+					<show id="bcpg:ingAllergensQtyPerc" />
+					<show id="gs1:productActivityTypeCode" force="true" />
+					<show id="bcpg:linkedSearchAssociation" force="true" />
+					<show id="bcpg:isSubstanceOfVeryHighConcern" force="true" />
+					<show id="bcpg:svhcReasonsForInclusion" force="true" />
+					<show id="bcpg:ingToxPodSystemic" force="true" />
+					<show id="bcpg:ingToxDermalAbsorption" force="true" />
+					<show id="bcpg:ingToxMosMoe" force="true" />
+					<show id="bcpg:ingToxMaxSkinIrritation" force="true" />
+					<show id="bcpg:ingToxMaxSensitization" force="true" />
+					<show id="bcpg:ingToxMaxOcularIrritation" force="true" />
+					<show id="bcpg:ingToxMaxPhototoxic" force="true" />
+					<show id="bcpg:ingToxData" force="true" />
+					<show id="bcpg:parentEntityRef" force="true" />
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:isDeleted" />
+				</field-visibility>
+
+				<appearance>
+					<set label-id="becpg.forms.set.designation.label" id="designation" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set label-id="becpg.forms.set.formulation.label" id="formulation" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set label-id="becpg.forms.set.toxicology.label" id="toxTab" template="/org/alfresco/components/form/2-column-set.ftl" />
+
+					<field id="bcpg:charactName" set="designation" />
+					<field id="bcpg:pluralLegalName" set="designation" />
+					<field id="bcpg:legalName" set="designation" />
+					<field id="cm:description" set="designation">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:parentEntityRef" set="designation" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:rawMaterial
+							</control-param>
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
+							</control-param>
+							<control-param name="excludeSources">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:erpCode" set="designation" />
+					<field id="bcpg:ingCEECode" set="designation" />
+					<field id="bcpg:casNumber" set="designation" />
+					<field id="bcpg:ceNumber" set="designation" />
+					<field id="bcpg:ecNumber" set="designation" />
+					<field id="bcpg:fdaNumber" set="designation" />
+					<field id="bcpg:femaNumber" set="designation" />
+					<field id="bcpg:flNumber" set="designation" />
+					<field id="bcpg:linkedSearchAssociation" set="designation">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:ing
+							</control-param>
+						</control>
+					</field>
+					<field id="sec:readGroups" set="designation" />
+					<field id="bcpg:isDeleted" set="designation" />
+
+					<field id="bcpg:regulatoryCode" set="formulation" />
+					<field id="bcpg:regulatoryComment" set="formulation" />
+					<field id="bcpg:ingTypeV2" set="formulation">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ingTypeItem
+							</control-param>
+						</control>
+					</field>
+					<field id="gs1:productActivityTypeCode" set="formulation" />
+					<field id="bcpg:ingAllergens" set="formulation">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+						</control>
+					</field>
+					<field id="bcpg:ingAllergensQtyPerc" help-id="becpg.forms.help.ingAllergensQtyPerc" set="formulation" />
+					<field id="bcpg:evaporatedRate" set="formulation" />
+					<field id="bcpg:isSubstanceOfVeryHighConcern" set="formulation" />
+					<field id="bcpg:svhcReasonsForInclusion" set="formulation" />
+					<field id="bcpg:ingToxPodSystemic" set="toxTab" />
+					<field id="bcpg:ingToxDermalAbsorption" set="toxTab" />
+					<field id="bcpg:ingToxMosMoe" set="toxTab" />
+					<field id="bcpg:ingToxMaxSkinIrritation" set="toxTab" />
+					<field id="bcpg:ingToxMaxSensitization" set="toxTab" />
+					<field id="bcpg:ingToxMaxOcularIrritation" set="toxTab" />
+					<field id="bcpg:ingToxMaxPhototoxic" set="toxTab" />
+					<field id="bcpg:ingToxData" set="toxTab" />
+					<field id="bcpg:ingToxPodSystemic" set="toxTab" />
+					<field id="bcpg:ingToxDermalAbsorption" set="toxTab" />
+					<field id="bcpg:ingToxMosMoe" set="toxTab" />
+					<field id="bcpg:ingToxMaxSkinIrritation" set="toxTab" />
+					<field id="bcpg:ingToxMaxSensitization" set="toxTab" />
+					<field id="bcpg:ingToxMaxOcularIrritation" set="toxTab" />
+					<field id="bcpg:ingToxMaxPhototoxic" set="toxTab" />
+					<field id="bcpg:ingToxData" set="toxTab" />
+				</appearance>
+			</form>
+			
             <!-- Data Grid view -->
 			<form id="filter">
 				<field-visibility>
