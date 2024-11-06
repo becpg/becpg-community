@@ -38,8 +38,8 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
+import fr.becpg.repo.product.formulation.AbstractCostCalculatingFormulationHandler;
 import fr.becpg.repo.product.formulation.AbstractSimpleListFormulationHandler;
-import fr.becpg.repo.product.formulation.CostsCalculatingFormulationHandler;
 import fr.becpg.repo.product.formulation.NutsCalculatingFormulationHandler;
 
 /**
@@ -208,9 +208,9 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 										String costListUnit = (String) nodeService.getProperty(productListItemNodeRef, PLMModel.PROP_COSTLIST_UNIT);
 
 										if (!((costListUnit != null) && !costListUnit.isEmpty()
-												&& costListUnit.endsWith(CostsCalculatingFormulationHandler.calculateSuffixUnit(productUnit)))) {
+												&& costListUnit.endsWith(AbstractCostCalculatingFormulationHandler.calculateSuffixUnit(productUnit)))) {
 											nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_COSTLIST_UNIT,
-													CostsCalculatingFormulationHandler.calculateUnit(productUnit, costCurrency, costFixed));
+													AbstractCostCalculatingFormulationHandler.calculateUnit(productUnit, costCurrency, costFixed));
 										}
 									}
 								}
@@ -309,7 +309,7 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 
 								if (unit != null) {
 									nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_COSTLIST_UNIT,
-											CostsCalculatingFormulationHandler.calculateUnit(unit, costCurrency, costFixed));
+											AbstractCostCalculatingFormulationHandler.calculateUnit(unit, costCurrency, costFixed));
 								}
 
 							}
@@ -393,7 +393,7 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 
 								if (unit != null) {
 									nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_LCALIST_UNIT,
-											CostsCalculatingFormulationHandler.calculateUnit(unit, lcaUnit, lcaFixed));
+											AbstractCostCalculatingFormulationHandler.calculateUnit(unit, lcaUnit, lcaFixed));
 								}
 
 							}
