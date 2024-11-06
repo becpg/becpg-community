@@ -309,7 +309,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 						}
 						evaporatedDataItems.add(new EvaporatedDataItem(ingListDataItem.getIng(), evaporateRate));
 
-						qtyPercWithYield = ingListDataItem.getQtyPerc();
+						qtyPercWithYield =  qtyPercWithYield + (100d - 100d / x);
 					} else {
 						qtyPercWithYield = qtyPercWithYield / x;
 					}
