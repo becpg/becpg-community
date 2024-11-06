@@ -228,6 +228,8 @@ public interface PLMModel {
 	/** Constant <code>PROP_NUTLIST_ROUNDED_VALUE</code> */
 	QName PROP_NUTLIST_ROUNDED_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "nutListRoundedValue");
 	/** Constant <code>PROP_NUTLIST_FORMULA_ERROR</code> */
+	
+	QName PROP_NUTLIST_PREPARED_ROUNDED_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "nutListRoundedValuePrepared");
 	@Deprecated
 	QName PROP_NUTLIST_FORMULA_ERROR = QName.createQName(BeCPGModel.BECPG_URI, "nutListFormulaErrorLog");
 	/** Constant <code>PROP_NUTLIST_METHOD</code> */
