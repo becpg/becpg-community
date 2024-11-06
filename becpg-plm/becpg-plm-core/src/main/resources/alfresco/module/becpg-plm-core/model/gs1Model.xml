@@ -43,6 +43,17 @@
 				<value>true</value>
 			</parameter>
 		</constraint>
+		
+		<constraint name="gs1:packagingFunctionCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/Lists/bcpg:entityLists/PackagingFunctionCodes</value>
+				</list>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
+		</constraint>
 
 		<constraint name="gs1:palletTypeCodeConstraint" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
@@ -609,6 +620,17 @@
 			</parameter>
 			<parameter name="constraintFilter">
 				<value>AdditionalTradeItemClassificationCodeListCode</value>
+			</parameter>
+		</constraint>
+		
+		<constraint name="gs1:growingMethodCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
+				</list>
+			</parameter>
+			<parameter name="constraintFilter">
+				<value>GrowingMethodCode</value>
 			</parameter>
 		</constraint>
 		
@@ -1662,7 +1684,7 @@
 					<constraints>
 						<constraint ref="gs1:packagingFeatureCodes" />
 					</constraints>
-				</property>
+				</property> -->
 				
 				<property name="gs1:packagingFunctionCode">
 					<type>d:text</type>
@@ -1674,7 +1696,7 @@
 					<constraints>
 						<constraint ref="gs1:packagingFunctionCodes" />
 					</constraints>
-				</property> -->
+				</property>
 
 				<property name="gs1:packagingShapeCode">
 					<type>d:text</type>
@@ -2407,6 +2429,29 @@
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="false" />
+				</property>
+				
+				<property name="gs1:provenanceStatement">
+					<type>d:mltext</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
+					</index>
+					<constraints>
+						<constraint ref="gs1:text500"/>
+					</constraints>
+				</property>
+				<property name="gs1:growingMethodCode">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="gs1:growingMethodCodes"/>
+					</constraints>
 				</property>
 			</properties>
 			<associations>
