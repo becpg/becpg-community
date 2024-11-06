@@ -172,6 +172,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		hiddenDataListItemAttributes.add(PLMModel.PROP_PHYSICOCHEMFORMULA_ERROR);
 		hiddenDataListItemAttributes.add(PLMModel.PROP_NUTLIST_FORMULA_ERROR);
 		hiddenDataListItemAttributes.add(PLMModel.PROP_NUTLIST_ROUNDED_VALUE);
+		hiddenDataListItemAttributes.add(PLMModel.PROP_NUTLIST_PREPARED_ROUNDED_VALUE);
 	}
 
 	/**
