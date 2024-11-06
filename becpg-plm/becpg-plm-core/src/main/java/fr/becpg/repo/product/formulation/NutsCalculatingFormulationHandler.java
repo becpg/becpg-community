@@ -172,6 +172,11 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 							if ((reconstituantNutListDataItem != null) && (reconstituantNutListDataItem.getValue() != null)) {
 								preparedValue += reconstituantNutListDataItem.getValue()
 										* (FormulationHelper.getDensity(reconstituant) * (formulatedProduct.getReconstituantQty() / 100));
+								
+								if(formulatedProduct.getServingSize()!=null && preparedValue!=null) {
+									preparedValue*= 100d/formulatedProduct.getServingSize();
+								}
+
 							}
 						}
 					}
