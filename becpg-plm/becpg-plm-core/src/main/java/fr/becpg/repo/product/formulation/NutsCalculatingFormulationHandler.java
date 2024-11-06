@@ -124,21 +124,23 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 					n.setUnit(calculateUnit(formulatedProduct.getUnit(), formulatedProduct.getServingSizeUnit(), nut.getNutUnit()));
 
 					if (n.getLossPerc() != null) {
-						if (n.getValue() != null) {
+						if (n.getValue() != null && n.getManualValue() == null) {
 							n.setValue((n.getValue() * (100 - n.getLossPerc())) / 100);
 						}
-						if (n.getMini() != null) {
+						if (n.getMini() != null && n.getManualMini() == null) {
 							n.setMini((n.getMini() * (100 - n.getLossPerc())) / 100);
 						}
-						if (n.getMaxi() != null) {
+						if (n.getMaxi() != null && n.getManualMaxi() == null) {
 							n.setMaxi((n.getMaxi() * (100 - n.getLossPerc())) / 100);
 						}
+						
 						if (n instanceof VariantAwareDataItem) {
 							for (int i = 1; i <= VariantAwareDataItem.VARIANT_COLUMN_SIZE; i++) {
 								if (((VariantAwareDataItem) n).getValue(VariantAwareDataItem.VARIANT_COLUMN_NAME + i) != null) {
 									((VariantAwareDataItem) n)
 											.setValue(((((VariantAwareDataItem) n).getValue(VariantAwareDataItem.VARIANT_COLUMN_NAME + i)
 													* (100 - n.getLossPerc())) / 100), VariantAwareDataItem.VARIANT_COLUMN_NAME + i);
+
 								}
 							}
 						}
