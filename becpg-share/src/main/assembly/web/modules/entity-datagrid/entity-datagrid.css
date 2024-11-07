@@ -524,6 +524,7 @@ div.filterButtonsBar {
 	background: url(../../components/images/search-16.png) no-repeat 12px
 		4px;
 	padding-left: 24px;
+	cursor: pointer;
 }
 
 
