@@ -496,30 +496,38 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 	@Override
 	protected void visitProps(NodeRef nodeRef, JSONObject entity, QName assocName, Map<QName, Serializable> props, RemoteJSONContext context)
 			throws JSONException {
-
 		if (props != null) {
 			for (Map.Entry<QName, Serializable> entry : props.entrySet()) {
-				QName propQName = entry.getKey();
 				QName propName = entry.getKey().getPrefixedQName(namespaceService);
-				if (!propQName.getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
-						&& !propQName.getNamespaceURI().equals(NamespaceService.RENDITION_MODEL_1_0_URI)
-						&& (!propQName.getNamespaceURI().equals(ReportModel.REPORT_URI) || matchProp(assocName, propName, true))
-						&& !propQName.equals(ContentModel.PROP_CONTENT) && params.shouldExtractField(propQName)) {
-					PropertyDefinition propertyDefinition = entityDictionaryService.getProperty(entry.getKey());
-					if (propertyDefinition != null) {
-						// Assoc properties filter
-						if (!matchProp(assocName, propName, false)) {
-							continue;
-						}
-
-						visitPropValue(nodeRef, propName, entity, entry.getValue(), context, propertyDefinition);
-					} else {
-						logger.debug("Properties not in dictionary: " + entry.getKey());
-					}
+				visitProp(nodeRef, entity, assocName, context, propName, entry.getValue());
+			}
+		}
+		if (params.getFilteredProperties() != null) {
+			for (QName propQName : params.getFilteredProperties()) {
+				if (props == null || !props.containsKey(propQName)) {
+					QName propName = propQName.getPrefixedQName(namespaceService);
+					visitProp(nodeRef, entity, assocName, context, propName, null);
 				}
 			}
 		}
+	}
 
+	private void visitProp(NodeRef nodeRef, JSONObject entity, QName assocName, RemoteJSONContext context, QName propQName, Serializable propValue) {
+		if (!propQName.getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
+				&& !propQName.getNamespaceURI().equals(NamespaceService.RENDITION_MODEL_1_0_URI)
+				&& (!propQName.getNamespaceURI().equals(ReportModel.REPORT_URI) || matchProp(assocName, propQName, true))
+				&& !propQName.equals(ContentModel.PROP_CONTENT) && params.shouldExtractField(propQName)) {
+			PropertyDefinition propertyDefinition = entityDictionaryService.getProperty(propQName);
+			if (propertyDefinition != null) {
+				// Assoc properties filter
+				if (!matchProp(assocName, propQName, false)) {
+					return;
+				}
+				visitPropValue(nodeRef, propQName, entity, propValue, context, propertyDefinition);
+			} else {
+				logger.debug("Properties not in dictionary: " + propQName);
+			}
+		}
 	}
 
 	@SuppressWarnings("unchecked")
