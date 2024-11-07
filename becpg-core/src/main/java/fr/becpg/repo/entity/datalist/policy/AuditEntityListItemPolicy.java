@@ -12,10 +12,16 @@ import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.query.PagingRequest;
+import org.alfresco.query.PagingResults;
+import org.alfresco.repo.forum.CommentService;
+import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
+import org.alfresco.service.cmr.repository.ContentReader;
+import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AuthenticationService;
 import org.alfresco.service.namespace.QName;
@@ -28,6 +34,7 @@ import com.google.common.collect.Maps;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.behaviour.BehaviourRegistry;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.catalog.EntityCatalogService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
@@ -53,6 +60,24 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 	private AuthenticationService authenticationService;
 
 	private EntityCatalogService entityCatalogService;
+	
+	private CommentService commentService;
+	
+	private ContentService contentService;
+	
+	private EntityDictionaryService entityDictionaryService;
+	
+	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
+		this.entityDictionaryService = entityDictionaryService;
+	}
+	
+	public void setContentService(ContentService contentService) {
+		this.contentService = contentService;
+	}
+	
+	public void setCommentService(CommentService commentService) {
+		this.commentService = commentService;
+	}
 	
 	/**
 	 * <p>
@@ -111,6 +136,36 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 	public void onCopyComplete(QName classRef, NodeRef sourceNodeRef, NodeRef destinationRef, boolean copyToNewNode, Map<NodeRef, NodeRef> copyMap) {
 		queueListNodeRef(nodeService.getPrimaryParent(destinationRef).getParentRef());
 		super.onCopyComplete(classRef, sourceNodeRef, destinationRef, copyToNewNode, copyMap);
+		if (entityDictionaryService.isSubClass(classRef, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
+			copyComments(sourceNodeRef, destinationRef);
+		}
+	}
+
+	private void copyComments(NodeRef sourceNodeRef, NodeRef destinationRef) {
+		PagingResults<NodeRef> comments = commentService.listComments(sourceNodeRef, new PagingRequest(5000, null));
+		if (comments != null) {
+			for (NodeRef commentNodeRef : comments.getPage()) {
+				NodeRef newComment = null;
+				boolean mlAware = MLPropertyInterceptor.setMLAware(false);
+				try {
+					MLPropertyInterceptor.setMLAware(false);
+					ContentReader reader = contentService.getReader(commentNodeRef, ContentModel.PROP_CONTENT);
+					if (reader != null) {
+						String comment = reader.getContentString();
+						newComment = commentService.createComment(destinationRef,
+								(String) nodeService.getProperty(commentNodeRef, ContentModel.PROP_TITLE), comment, false);
+						nodeService.setProperty(newComment, ContentModel.PROP_CREATED,
+								nodeService.getProperty(commentNodeRef, ContentModel.PROP_CREATED));
+						nodeService.setProperty(newComment, ContentModel.PROP_CREATOR,
+								nodeService.getProperty(commentNodeRef, ContentModel.PROP_CREATOR));
+						nodeService.setProperty(newComment, ContentModel.PROP_MODIFIED,
+								nodeService.getProperty(commentNodeRef, ContentModel.PROP_MODIFIED));
+					}
+				} finally {
+					MLPropertyInterceptor.setMLAware(mlAware);
+				}
+			}
+		}
 	}
 
 	/** {@inheritDoc} */
