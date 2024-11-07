@@ -75,7 +75,9 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 			List<ScoreListDataItem> scoreList = surveyableEntity.getScoreList();
 			
 			final List<SurveyListDataItem> surveyList = SurveyableEntityHelper
-					.getNamesSurveyLists(alfrescoRepository, surveyableEntity).values().stream().flatMap(List::stream)
+					.getNamesSurveyLists(alfrescoRepository, surveyableEntity).values().stream()
+					.filter(Objects::nonNull)
+					.flatMap(List::stream)
 					.toList();
 
 			if (alfrescoRepository.hasDataList(surveyableEntity, ProjectModel.TYPE_SCORE_LIST)) {
