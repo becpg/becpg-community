@@ -47,11 +47,11 @@
 		<constraint name="gs1:packagingFunctionCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>/System/Lists/bcpg:entityLists/PackagingFunctionCodes</value>
+					<value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
 				</list>
 			</parameter>
-			<parameter name="addEmptyValue">
-				<value>true</value>
+			<parameter name="constraintFilter">
+				<value>PackagingFunctionCode</value>
 			</parameter>
 		</constraint>
 
