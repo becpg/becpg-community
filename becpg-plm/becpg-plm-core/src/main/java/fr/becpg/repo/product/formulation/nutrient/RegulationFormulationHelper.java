@@ -567,10 +567,9 @@ public class RegulationFormulationHelper {
 
 				if ((n.getPreparedValue() != null) && (servingSize != null)) {
 					Double valuePerserving = (n.getPreparedValue() * (servingSize * 1000d)) / 100;
-					secondaryValuePerServing.put(key, regulation.round(valuePerserving, nutCode, nutUnit));
 					
 					Double vps = regulation.round(valuePerserving, nutCode, nutUnit);
-					valuePerServing.put(key, vps);
+					secondaryValuePerServing.put(key, vps);
 					if ((def != null) && (def.getGda() != null) && (def.getGda() != 0)) {
 						secondaryGda.put(key, regulation.roundGDA((100 * vps) / def.getGda(), nutCode));
 					}
@@ -618,9 +617,10 @@ public class RegulationFormulationHelper {
 				jsonPreparedRound.put(KEY_GDA_PERC_PER_CONTAINER, secondaryGdaPerContainer);
 				
 
-				for (String variantKey : variants.keySet()) {
-					jsonRound.put(variantKey, variants.get(variantKey));
+				for (Map.Entry<String, JSONObject> entry : variants.entrySet()) {
+				    jsonRound.put(entry.getKey(), entry.getValue());
 				}
+
 			}
 
 		} catch (JSONException e) {
