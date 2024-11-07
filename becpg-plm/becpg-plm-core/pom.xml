@@ -6,7 +6,7 @@
 	    <version>23.2.2</version>
 		<relativePath>../../</relativePath>
 	</parent>
-	<version>23.2.2.9-SNAPSHOT</version>
+	<version>23.2.2.9</version>
     <modelVersion>4.0.0</modelVersion>    
 	<artifactId>becpg-plm-core</artifactId>
 	<packaging>jar</packaging>
@@ -171,6 +171,6 @@
 
 
   <scm>
-    <tag>23.2.2.6</tag>
+    <tag>23.2.2.9</tag>
   </scm>
 </project>
