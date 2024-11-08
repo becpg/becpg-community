@@ -114,9 +114,15 @@
 					<show id="qa:batchQty"/>
 					<show id="qa:batchQtyUnit"/>
 					
+					 <!-- Location -->
+                    <show id="bcpg:plants" force="true" />
+                    <show id="bcpg:laboratories" force="true" />
+					
 					<!-- tags and categories -->
 					<show id="cm:taggable" />
 					<show id="cm:categories" />
+					
+				
 					
 					<!-- auditable -->
 					<show id="cm:creator" for-mode="view" />
@@ -129,7 +135,7 @@
 					<set id="mainInfo" template="/org/alfresco/components/form/2-column-set.ftl" appearance="bordered-panel" 
 						label-id="becpg.forms.set.batch-info.label" />
 					<set id="product-info" template="/org/alfresco/components/form/3-column-set.ftl" appearance="bordered-panel" 
-						label-id="becpg.forms.set.product-info.label" />
+						label-id="becpg.forms.set.product-info.label" />	
 					<set id="categories" appearance="bordered-panel"
 						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label" 
@@ -175,6 +181,9 @@
 						</control>
 					</field>
 					
+					<field id="bcpg:plants" mandatory="false" read-only="false" set="product-info" />
+					<field id="bcpg:laboratories" mandatory="false" read-only="false" set="product-info" />
+					
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
 						<control>
@@ -214,6 +223,9 @@
 					<show id="qa:product" />
 					<show id="qa:batchQty"/>
 					<show id="qa:batchQtyUnit"/>
+					 <!-- Location -->
+                    <show id="bcpg:plants" force="true" />
+                    <show id="bcpg:laboratories" force="true" />
 					
 					<!-- auditable -->
 					<show id="cm:creator" force="true" />
@@ -238,6 +250,9 @@
 					<show id="qa:product" />
 					<show id="qa:batchQty"/>
 					<show id="qa:batchQtyUnit"/>
+					 <!-- Location -->
+                    <show id="bcpg:plants" force="true" />
+                    <show id="bcpg:laboratories" force="true" />
 					
 					<!-- auditable -->
 					<show id="cm:creator" force="true" />
@@ -304,6 +319,9 @@
 						</control>
 					</field>
 					
+                    <field id="bcpg:plants" mandatory="false" read-only="false" set="product-info" />
+                    <field id="bcpg:laboratories" mandatory="false" read-only="false" set="product-info" />
+					
 					<!-- audit -->
 					<field id="cm:creator" set="audit" >
 						<control>
@@ -345,6 +363,9 @@
 					<show id="qa:product" />
 					<show id="qa:batchQty"/>
 					<show id="qa:batchQtyUnit"/>
+					 <!-- Location -->
+                    <show id="bcpg:plants" force="true" />
+                    <show id="bcpg:laboratories" force="true" />
 					
 					<!-- tags and categories -->
 					<show id="cm:taggable" />
@@ -406,6 +427,10 @@
 							</control-param>
 						</control>
 					</field>
+					
+					
+                    <field id="bcpg:plants" mandatory="false" read-only="false" set="product-info" />
+                    <field id="bcpg:laboratories" mandatory="false" read-only="false" set="product-info" />
 					
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
@@ -534,7 +559,7 @@
 					<field id="qa:batchState" read-only="true"/>
 					<field id="qa:batchAllocationStockRefs" >
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
-						   <control-param name="ds">becpg/autocomplete/DataListCharact?path=qa:product&amp;className=qa:stockList&amp;attributeName=qa:batchId&amp;filter=itemAsEntity</control-param>
+						   <control-param name="ds">becpg/autocomplete/stocks</control-param>
 		  				   <control-param name="urlParamsToPass">itemId</control-param>
 	  				   </control>
 					</field>
@@ -606,6 +631,8 @@
 					<show id="qa:batchState"/>
 					<show id="qa:productUseByDate" />
 					<show id="bcpg:suppliers" force="true"/>
+					<show id="bcpg:plants" force="true" />
+                    <show id="bcpg:laboratories" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="qa:batchQtyUnit"  >
@@ -636,6 +663,8 @@
 					<show id="bcpg:suppliers"/>
 					<show id="qa:productUseByDate" />
 					<show id="bcpg:suppliers" force="true"/>
+					<show id="bcpg:plants" force="true" />
+                    <show id="bcpg:laboratories" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="qa:batchQtyUnit" >
@@ -660,6 +689,8 @@
 					<show id="qa:batchState"/>
 					<show id="qa:productUseByDate" />
 					<show id="bcpg:suppliers" force="true"/>
+					<show id="bcpg:plants" force="true" />
+                    <show id="bcpg:laboratories" force="true" />
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>

@@ -100,6 +100,7 @@ public class EntityReportParameters {
 	public static final String PARAM_EXTRACT_NON_EFFECTIVE_COMPONENT = "extractNonEffectiveComponent";
 	/** Constant <code>PARAM_MAX_COMPOLIST_LEVEL_TO_EXTRACT="maxCompoListLevelToExtract"</code> */
 	public static final String PARAM_MAX_COMPOLIST_LEVEL_TO_EXTRACT = "maxCompoListLevelToExtract";
+	public static final String PARAM_EXTRACT_DATALIST_IMAGE = "extractDatalistImage";
 
 	private static final String JSON_PARAM_PARAMS = "params";
 	private static final String JSON_PARAM_PROP = "prop";

@@ -1481,6 +1481,17 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 			
 			if (entityNodeRef.getStoreRef().getProtocol().equals(VersionBaseModel.STORE_PROTOCOL)
 					|| entityNodeRef.getStoreRef().getIdentifier().equals(Version2Model.STORE_ID)) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Skip report generation because entity is a version");
+				}
+				return false;
+			}
+			
+			if (documentNodeRef != null && (documentNodeRef.getStoreRef().getProtocol().equals(VersionBaseModel.STORE_PROTOCOL)
+					|| documentNodeRef.getStoreRef().getIdentifier().equals(Version2Model.STORE_ID))) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Skip report generation because the report is a version");
+				}
 				return false;
 			}
 			

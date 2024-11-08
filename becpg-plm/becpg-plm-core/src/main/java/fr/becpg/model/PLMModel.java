@@ -228,6 +228,8 @@ public interface PLMModel {
 	/** Constant <code>PROP_NUTLIST_ROUNDED_VALUE</code> */
 	QName PROP_NUTLIST_ROUNDED_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "nutListRoundedValue");
 	/** Constant <code>PROP_NUTLIST_FORMULA_ERROR</code> */
+	
+	QName PROP_NUTLIST_PREPARED_ROUNDED_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "nutListRoundedValuePrepared");
 	@Deprecated
 	QName PROP_NUTLIST_FORMULA_ERROR = QName.createQName(BeCPGModel.BECPG_URI, "nutListFormulaErrorLog");
 	/** Constant <code>PROP_NUTLIST_METHOD</code> */
@@ -892,6 +894,8 @@ public interface PLMModel {
 	QName PROP_USE_BY_DATE = QName.createQName(BeCPGModel.BECPG_URI, "useByDate");
 	/** Constant <code>PROP_PERIOD_AFTER_OPENING</code> */
 	QName PROP_PERIOD_AFTER_OPENING = QName.createQName(BeCPGModel.BECPG_URI, "periodAfterOpening");
+	
+	QName TYPE_LABORATORY = QName.createQName(BeCPGModel.BECPG_URI, "laboratory");
 	
 	
 
