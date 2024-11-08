@@ -267,7 +267,7 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 	 * @return a {@link fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem.ReqQtyPercType} object
 	 */
 	@AlfProp
-	@AlfQname(qname = "bcpg:bcpg:filQtyPercType")
+	@AlfQname(qname = "bcpg:filQtyPercType")
 	public ReqQtyPercType getQtyPercType() {
 		return qtyPercType;
 	}

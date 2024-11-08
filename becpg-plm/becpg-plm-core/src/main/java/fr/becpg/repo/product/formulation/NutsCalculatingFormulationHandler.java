@@ -143,13 +143,13 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 					n.setUnit(calculateUnit(formulatedProduct.getUnit(), formulatedProduct.getServingSizeUnit(), nut.getNutUnit()));
 
 					if (n.getLossPerc() != null) {
-						if (n.getValue() != null) {
+						if (n.getValue() != null && n.getManualValue() == null) {
 							n.setValue((n.getValue() * (100 - n.getLossPerc())) / 100);
 						}
-						if (n.getMini() != null) {
+						if (n.getMini() != null && n.getManualMini() == null) {
 							n.setMini((n.getMini() * (100 - n.getLossPerc())) / 100);
 						}
-						if (n.getMaxi() != null) {
+						if (n.getMaxi() != null && n.getManualMaxi() == null) {
 							n.setMaxi((n.getMaxi() * (100 - n.getLossPerc())) / 100);
 						}
 						for (int i = 1; i <= VariantAwareDataItem.VARIANT_COLUMN_SIZE; i++) {
@@ -172,6 +172,11 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 							if ((reconstituantNutListDataItem != null) && (reconstituantNutListDataItem.getValue() != null)) {
 								preparedValue += reconstituantNutListDataItem.getValue()
 										* (FormulationHelper.getDensity(reconstituant) * (formulatedProduct.getReconstituantQty() / 100));
+
+								if (formulatedProduct.getServingSize() != null && preparedValue != null) {
+									preparedValue *= 100d / formulatedProduct.getServingSize();
+								}
+
 							}
 						}
 					}

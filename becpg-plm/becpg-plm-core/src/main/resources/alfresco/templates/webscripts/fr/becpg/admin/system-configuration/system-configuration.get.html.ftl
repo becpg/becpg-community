@@ -2,7 +2,7 @@
 
 <#macro sysField id>
 	  <p class="info">${msg(id+".description")?html}</p>
-	  <@attrtextarea id=id attribute=sysBeCPGAttributes[id] />
+	  <@attrtextarea id=id attribute=sysBeCPGAttributes[id] maxlength=5000/>
       <@button label=msg("system-configuration.save") onclick="updateConf('${id?html}');" />
       <@button label=msg("system-configuration.reset") onclick="resetConf('${id?html}');" />
 </#macro>

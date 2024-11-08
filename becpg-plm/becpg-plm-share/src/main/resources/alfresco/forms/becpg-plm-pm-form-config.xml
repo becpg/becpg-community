@@ -13,8 +13,8 @@
           
           <show force="true" id="gs1:packagingTypeCode"/>
           <show force="true" id="gs1:packagingTypeDescription"/>
-<!-- 		  <show force="true" id="gs1:packagingFeatureCode"/>
-		  <show force="true" id="gs1:packagingFunctionCode"/> -->
+<!-- 		  <show force="true" id="gs1:packagingFeatureCode"/> -->
+		  <show force="true" id="gs1:packagingFunctionCode"/>
 		 
 		  
           <show force="false" id="bcpg:productState"/>
@@ -77,6 +77,8 @@
           <show id="bcpg:entityTplEnabled" force="false" />
           <show id="bcpg:entityTplIsDefault" force="false" />
           <show id="bcpg:entityTplScript" force="false" />
+          
+          <show id="pjt:projectScore" force="true" />
         </field-visibility>
         <appearance>
           <set id="template" appearance="bordered-panel" label-id="becpg.forms.set.template.label" />
@@ -119,6 +121,7 @@
           </field>
           
           <field id="gs1:packagingTypeCode" mandatory="false" read-only="false" set="mainInfo"/>
+          <field id="gs1:packagingFunctionCode" mandatory="false" read-only="false" set="mainInfo"/>
           <field id="gs1:packagingTypeDescription" mandatory="false" read-only="false" set="mainInfo">
             <control template="/org/alfresco/components/form/controls/textarea.ftl">
               <control-param name="rows">2</control-param>
@@ -294,6 +297,7 @@
             <control template="/org/alfresco/components/form/controls/textarea.ftl"/>
           </field>
           <field id="bcpg:autoMergeImpactWUsed" mandatory="false" read-only="false" set="branch"/>
+          <field id="pjt:projectScore" mandatory="false" read-only="true" set="mainInfo"/>
         </appearance>
       </form>
       <form id="doclib-simple-metadata">
@@ -539,6 +543,7 @@
           <show force="true" id="cm:description"/>
           
           <show force="true" id="gs1:packagingTypeCode"/>
+          <show force="true" id="gs1:packagingFunctionCode"/>
           <show force="true" id="gs1:packagingTypeDescription"/>
 
           <show force="true" id="bcpg:productState"/>
@@ -599,6 +604,7 @@
           <show force="true" id="cm:description"/>
           
           <show force="true" id="gs1:packagingTypeCode"/>
+          <show force="true" id="gs1:packagingFunctionCode"/>
           <show force="true" id="gs1:packagingTypeDescription"/>
 
           <show force="true" id="bcpg:productState"/>
