@@ -1553,9 +1553,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 				//Water loss
 				if ((qty != null) && (calculatedYield != null) && (calculatedYield.doubleValue() != 100d)
-						&& (nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_WATER)
-								|| (nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_EVAPORABLE)
-										&& nodeService.getProperty(productNodeRef, PLMModel.PROP_EVAPORATED_RATE) != null))) {
+						&& hasEvaporationData(productNodeRef)) {
 
 					if (logger.isTraceEnabled()) {
 						logger.trace("Detected evaporated components (" + productData.getName() + " - " + productNodeRef + "), rate: "
@@ -1814,6 +1812,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 		}
 	}
+	
+	private boolean hasEvaporationData(NodeRef productNodeRef) {
+		return nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_WATER)
+				|| nodeService.getProperty(productNodeRef, PLMModel.PROP_EVAPORATED_RATE) != null;
+	}
 
 	private void appendQtiesToLabeling(CompositeLabeling compositeLabeling, Double qty, Double qtyWithYield, Double volume, Double volumeWithYield,
 			boolean addToQty, boolean addToTotal) {
@@ -1968,8 +1971,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					if (productLabelItem.getQtyWithYield() != null && parent.getEvaporatedQty() != null && parent.getEvaporatedQty() > 0d) {
 						Double maxEvapQty = productLabelItem.getQtyWithYield() * rate / 100d;
 
-						Double proportionalEvap = totalRate == null || totalRate == 0d ? evaporatingQty.get()
-								: evaporatingQty.get() * (rate / totalRate); // Consider total rate for remaining items
+						Double proportionalEvap = totalRate == null || totalRate == 0d ? parent.getEvaporatedQty()
+								: parent.getEvaporatedQty() * (rate / totalRate); // Consider total rate for remaining items
 						Double evaporatedQty = Math.min(maxEvapQty, proportionalEvap);
 
 						productLabelItem.setQtyWithYield(productLabelItem.getQtyWithYield() - evaporatedQty);
@@ -1985,8 +1988,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					if (productLabelItem.getVolumeWithYield() != null && parent.getEvaporatedVolume() != null && parent.getEvaporatedVolume() > 0d) {
 						Double maxEvapQty = productLabelItem.getVolumeWithYield() * rate / 100d;
 
-						Double proportionalEvap = totalRate == null || totalRate == 0d ? evaporatingVolume.get()
-								: evaporatingVolume.get() * (rate / totalRate); // Consider total rate for remaining items
+						Double proportionalEvap = totalRate == null || totalRate == 0d ? parent.getEvaporatedVolume()
+								: parent.getEvaporatedVolume() * (rate / totalRate); // Consider total rate for remaining items
 						Double evaporatedVol = Math.min(maxEvapQty, proportionalEvap);
 
 						if (logger.isDebugEnabled()) {
@@ -2214,8 +2217,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							logger.trace("- Add new ing " + getName(ingLabelItem) + " to current Label " + getName(parent));
 						}
 
-						if (nodeService.hasAspect(ingNodeRef, PLMModel.ASPECT_WATER) || (nodeService.hasAspect(ingNodeRef, PLMModel.ASPECT_EVAPORABLE)
-								&& nodeService.getProperty(ingNodeRef, PLMModel.PROP_EVAPORATED_RATE) != null)) {
+						if (hasEvaporationData(ingNodeRef)) {
 
 							if (logger.isTraceEnabled()) {
 								logger.trace("Detected water lost");

@@ -125,6 +125,7 @@
           <show for-mode="view" force="false" id="bcpg:startEffectivity"/>
           <show for-mode="view" force="false" id="bcpg:endEffectivity"/>
           <show force="true" id="gs1:packagingTypeCode"/>
+          <show force="true" id="gs1:packagingFunctionCode"/>
           <show force="true" id="gs1:height"/>
           <show force="true" id="gs1:width"/>
           <show force="true" id="gs1:depth"/>
@@ -514,6 +515,7 @@
           <set id="conditioningTab" label-id="becpg.forms.set.conditioning.label"/>
           <set appearance="bordered-panel" id="primaryPackaging" label-id="becpg.forms.set.primaryPackaging.label" parent="conditioningTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field help-id="becpg.forms.help.gs1.packagingTypeCode" id="gs1:packagingTypeCode" mandatory="false" read-only="false" set="primaryPackaging"/>
+          <field help-id="becpg.forms.help.gs1.packagingFunctionCode" id="gs1:packagingFunctionCode" mandatory="false" read-only="false" set="primaryPackaging"/>
           <field help-id="becpg.forms.help.gs1.height" id="gs1:height" mandatory="false" read-only="false" set="primaryPackaging">
             <control template="/org/alfresco/components/form/controls/number-unit.ftl">
               <control-param name="unit">mm</control-param>
@@ -1469,6 +1471,7 @@
           <show for-mode="view" force="false" id="bcpg:startEffectivity"/>
           <show for-mode="view" force="false" id="bcpg:endEffectivity"/>
           <show force="true" id="gs1:packagingTypeCode"/>
+          <show force="true" id="gs1:packagingFunctionCode"/>
           <show force="true" id="gs1:height"/>
           <show force="true" id="gs1:width"/>
           <show force="true" id="gs1:depth"/>
@@ -1858,6 +1861,7 @@
           <set id="conditioningTab" label-id="becpg.forms.set.conditioning.label"/>
           <set appearance="bordered-panel" id="primaryPackaging" label-id="becpg.forms.set.primaryPackaging.label" parent="conditioningTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field help-id="becpg.forms.help.gs1.packagingTypeCode" id="gs1:packagingTypeCode" mandatory="false" read-only="false" set="primaryPackaging"/>
+          <field help-id="becpg.forms.help.gs1.packagingFunctionCode" id="gs1:packagingFunctionCode" mandatory="false" read-only="false" set="primaryPackaging"/>
           <field help-id="becpg.forms.help.gs1.height" id="gs1:height" mandatory="false" read-only="false" set="primaryPackaging">
             <control template="/org/alfresco/components/form/controls/number-unit.ftl">
               <control-param name="unit">mm</control-param>

@@ -1088,6 +1088,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_SUBSIDIARIES, PLMModel.TYPE_SUBSIDIARY);
 		entityLists.put(PlmRepoConsts.PATH_TRADEMARKS, PLMModel.TYPE_TRADEMARK);
 		entityLists.put(PlmRepoConsts.PATH_PLANTS, PLMModel.TYPE_PLANT);
+		entityLists.put(PlmRepoConsts.PATH_LABORATORIES, PLMModel.TYPE_LABORATORY);
 		entityLists.put(PlmRepoConsts.PATH_CUSTOMSCODES, PLMModel.TYPE_CUSTOMSCODE);
 		entityLists.put(PlmRepoConsts.PATH_CERTIFICATIONS, PLMModel.TYPE_CERTIFICATION);
 		entityLists.put(PlmRepoConsts.PATH_LABELCLAIMS, PLMModel.TYPE_LABEL_CLAIM);
@@ -1173,6 +1174,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_LCA_UNITS, BeCPGModel.TYPE_LIST_VALUE);
 
 		entityLists.put(PlmRepoConsts.PATH_GS1_PACKAGING_TYPE_CODES, BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(PlmRepoConsts.PATH_GS1_PACKAGING_FUNCTION_CODES, BeCPGModel.TYPE_LIST_VALUE);
 
 		entityLists.put(PlmRepoConsts.PATH_GS1_PACKAGING_RECYCLING_SCHEME_CODES, BeCPGModel.TYPE_LIST_VALUE);
 

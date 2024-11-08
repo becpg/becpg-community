@@ -53,22 +53,22 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 	private AssociationService associationService;
 
 	private NamespaceService namespaceService;
-	
+
 	private BeCPGCacheService beCPGCacheService;
-	
+
 	private SystemConfigurationService systemConfigurationService;
 
 	/** {@inheritDoc} */
 	@Override
 	public void doInit() {
-		
-		BehaviourRegistry.registerAuditBehaviour(new AuditBehaviour(PublicationModel.PROP_PUBCHANNEL_BATCHSTARTTIME, PublicationModel.PROP_PUBCHANNEL_BATCHENDTIME,
-				PublicationModel.PROP_PUBCHANNEL_BATCHDURATION, PublicationModel.PROP_PUBCHANNEL_BATCHID, PublicationModel.PROP_PUBCHANNEL_FAILCOUNT,
-				PublicationModel.PROP_PUBCHANNEL_READCOUNT, PublicationModel.PROP_PUBCHANNEL_ERROR,
-				PublicationModel.PROP_PUBCHANNEL_LASTSUCCESSBATCHID, PublicationModel.PROP_PUBCHANNEL_STATUS,
+
+		BehaviourRegistry.registerAuditBehaviour(new AuditBehaviour(PublicationModel.PROP_PUBCHANNEL_BATCHSTARTTIME,
+				PublicationModel.PROP_PUBCHANNEL_BATCHENDTIME, PublicationModel.PROP_PUBCHANNEL_BATCHDURATION,
+				PublicationModel.PROP_PUBCHANNEL_BATCHID, PublicationModel.PROP_PUBCHANNEL_FAILCOUNT, PublicationModel.PROP_PUBCHANNEL_READCOUNT,
+				PublicationModel.PROP_PUBCHANNEL_ERROR, PublicationModel.PROP_PUBCHANNEL_LASTSUCCESSBATCHID, PublicationModel.PROP_PUBCHANNEL_STATUS,
 				PublicationModel.PROP_PUBCHANNELLIST_PUBLISHEDDATE, PublicationModel.PROP_PUBCHANNELLIST_BATCHID,
 				PublicationModel.PROP_PUBCHANNELLIST_STATUS, PublicationModel.PROP_PUBCHANNELLIST_ERROR));
-		
+
 		BehaviourRegistry.registerActivityBehaviour(new ActivityBehaviour() {
 			@Override
 			public boolean shouldIgnoreActivity(NodeRef nodeRef, QName type, Map<QName, Pair<Serializable, Serializable>> updatedFields) {
@@ -76,8 +76,8 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 					if (PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST.equals(type)) {
 						if (updatedFields.get(PublicationModel.PROP_PUBCHANNELLIST_BATCHID) != null
 								&& (updatedFields.get(PublicationModel.PROP_PUBCHANNELLIST_BATCHID).getFirst() == null
-								|| !updatedFields.get(PublicationModel.PROP_PUBCHANNELLIST_BATCHID).getFirst()
-								.equals(updatedFields.get(PublicationModel.PROP_PUBCHANNELLIST_BATCHID).getSecond()))) {
+										|| !updatedFields.get(PublicationModel.PROP_PUBCHANNELLIST_BATCHID).getFirst()
+												.equals(updatedFields.get(PublicationModel.PROP_PUBCHANNELLIST_BATCHID).getSecond()))) {
 							NodeRef channelNodeRef = associationService.getTargetAssoc(nodeRef, PublicationModel.ASSOC_PUBCHANNELLIST_CHANNEL);
 							Boolean registerChannelListActivity = getRegisterConnectorChannelActivity(channelNodeRef);
 							if (registerChannelListActivity != null) {
@@ -85,10 +85,11 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 							}
 							return !Boolean.TRUE.toString().equals(systemConfigurationService.confValue("beCPG.connector.channel.register.activity"));
 						}
-					} else if (PublicationModel.TYPE_PUBLICATION_CHANNEL.equals(type) && (updatedFields.get(PublicationModel.PROP_PUBCHANNEL_BATCHID) != null
-							&& (updatedFields.get(PublicationModel.PROP_PUBCHANNEL_BATCHID).getFirst() == null
-							|| !updatedFields.get(PublicationModel.PROP_PUBCHANNEL_BATCHID).getFirst()
-							.equals(updatedFields.get(PublicationModel.PROP_PUBCHANNEL_BATCHID).getSecond())))) {
+					} else if (PublicationModel.TYPE_PUBLICATION_CHANNEL.equals(type)
+							&& (updatedFields.get(PublicationModel.PROP_PUBCHANNEL_BATCHID) != null
+									&& (updatedFields.get(PublicationModel.PROP_PUBCHANNEL_BATCHID).getFirst() == null
+											|| !updatedFields.get(PublicationModel.PROP_PUBCHANNEL_BATCHID).getFirst()
+													.equals(updatedFields.get(PublicationModel.PROP_PUBCHANNEL_BATCHID).getSecond())))) {
 						Boolean registerChannelListActivity = getRegisterConnectorChannelActivity(nodeRef);
 						if (registerChannelListActivity != null) {
 							return !registerChannelListActivity;
@@ -98,7 +99,7 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 				}
 				return false;
 			}
-			
+
 			@Nullable
 			private Boolean getRegisterConnectorChannelActivity(NodeRef channelNodeRef) {
 				if (channelNodeRef != null) {
@@ -116,7 +117,7 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 				return null;
 			}
 		});
-		
+
 		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME, PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST,
 				new JavaBehaviour(this, "beforeDeleteNode"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST,
@@ -124,7 +125,7 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdateNodePolicy.QNAME, PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST,
 				new JavaBehaviour(this, "onUpdateNode"));
 	}
-	
+
 	public void setBeCPGCacheService(BeCPGCacheService beCPGCacheService) {
 		this.beCPGCacheService = beCPGCacheService;
 	}
@@ -132,7 +133,7 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
 		this.systemConfigurationService = systemConfigurationService;
 	}
-	
+
 	/**
 	 * <p>Setter for the field <code>entityListDAO</code>.</p>
 	 *
@@ -167,7 +168,9 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 		if (listContainer != null) {
 			NodeRef listNodeRef = entityListDAO.getList(listContainer, PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST);
 			if (listNodeRef != null) {
+				boolean isEnabledBehaviour = policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE);
 				try {
+
 					policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 					for (NodeRef channelListItemNodeRef : entityListDAO.getListItems(listNodeRef, PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST)) {
 						NodeRef channelNodeRef = associationService.getTargetAssoc(channelListItemNodeRef,
@@ -179,7 +182,9 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 						}
 					}
 				} finally {
-					policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+					if (isEnabledBehaviour) {
+						policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+					}
 				}
 			}
 		}
