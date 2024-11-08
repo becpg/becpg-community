@@ -113,17 +113,14 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 		boolean isOnHold = ProjectHelper.isOnHold(projectData);
 
 		if (logger.isDebugEnabled()) {
-
 			logger.debug("Formulate tasks for project: " + projectData.getName());
 			logger.debug(" - mode :" + projectData.getPlanningMode());
 			logger.debug(" - startDate :" + projectData.getStartDate());
 			logger.debug(" - onHold :" + isOnHold);
 			logger.debug("before formulate tasks:" + TaskWrapper.print(projectData));
-
 		}
 
 		if (isOnHold) {
-
 			tasks.forEach(t -> {
 
 				if (t.getTask() != null) {

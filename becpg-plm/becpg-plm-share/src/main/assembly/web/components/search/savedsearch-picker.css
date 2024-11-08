@@ -21,16 +21,15 @@
 
 .datalist-toolbar .create-saved-search span.first-child
 {
-   background: url(../images/add-icon-16.png) no-repeat 6px 4px;
+   background: url(./images/floppy-16.png) no-repeat 4px 6px;
    padding: inherit 4px inherit 4px;
 }
 
 
 .datalist-toolbar .savedSearchPicker .yui-push-button button {
-	padding-right: 9px !important;
-	padding-left: 9px !important;
+    padding-right: 10px !important;
+    padding-left: 10px !important;
 }
-
 
 /* .datalist-toolbar  span.saved-search-global {
 	background: url(../../components/images/enabled-indicator-off-16.png) no-repeat;
