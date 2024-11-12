@@ -2382,6 +2382,21 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
+				<property name="bcpg:costListFutureValuePerProduct2">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:costListFutureValuePerProduct3">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:costListFutureValuePerProduct4">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 				<property name="bcpg:costListMaxi">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
