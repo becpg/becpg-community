@@ -1,6 +1,6 @@
 <#assign isTrue=false>
 <#assign isFalse=false>
-<#if field.value??>
+<#if field.value?? && !(field.control.params.isSearch??)>
  <#if field.value?is_boolean>
     <#assign isTrue=field.value>
     <#assign isFalse=!field.value>
@@ -20,9 +20,9 @@
    <#else>
         <label for="${fieldHtmlId}">${field.label?html}:</label>
         <div class="form-field-boolean"  >
-             <input id="${fieldHtmlId}" type="hidden" name="${field.name}" value="<#if isTrue>true<#elseif isFalse>false<#else></#if>" />
+             <input id="${fieldHtmlId}" type="hidden" name="${field.name}" value="<#if isTrue><#if field.control.params.isSearch??>=</#if>true<#elseif isFalse><#if field.control.params.isSearch??>=</#if>false<#else></#if>" />
              
-		    <input type="radio" id="true-${fieldHtmlId}" name="${field.name}-entry" tabindex="0" value="true" 
+		    <input type="radio" id="true-${fieldHtmlId}" name="${field.name}-entry" tabindex="0" value="<#if field.control.params.isSearch??>=</#if>true" 
 		        <#if field.description??>title="${field.description}"</#if>
 		        <#if field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true")>disabled="true"</#if>
 		        <#if isTrue>checked="checked"</#if>
@@ -32,7 +32,7 @@
 		   
 	
 	
-		    <input type="radio" id="false-${fieldHtmlId}"  name="${field.name}-entry" tabindex="0"  value="false" 
+		    <input type="radio" id="false-${fieldHtmlId}"  name="${field.name}-entry" tabindex="0"  value="<#if field.control.params.isSearch??>=</#if>false" 
 		    <#if field.description??>title="${field.description}"</#if>
 		    <#if field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true")>disabled="true"</#if> 
 		    <#if isFalse> checked="checked"</#if> 
