@@ -472,9 +472,6 @@
 		</type>
 		<type name="qa:qualityListItem">
 			<parent>bcpg:entityListItem</parent>
-			<properties />
-			<associations />
-			<overrides />
 			<mandatory-aspects>
 				<aspect>bcpg:sortableListAspect</aspect>
 			</mandatory-aspects>
@@ -489,7 +486,7 @@
 		</type>
 		
 		<type name="qa:stockList">
-			<parent>bcpg:entityListItem</parent>
+			<parent>qa:qualityListItem</parent>
 			<mandatory-aspects>
 			    <aspect>qa:batchAspect</aspect>
 				<aspect>bcpg:sortableListAspect</aspect>
@@ -497,7 +494,7 @@
 		</type>
 		
 		<type name="qa:batchAllocationList">
-			<parent>bcpg:entityListItem</parent>
+			<parent>qa:qualityListItem</parent>
 			<associations>
 					<association name="qa:batchAllocationStockRefs">
 					<source>
@@ -528,10 +525,7 @@
 				<property name="qa:sdlFreq">
 					<type>d:int</type>
 					<mandatory>false</mandatory>
-					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>false</facetable>
-		            </index>			
+				    <index enabled="false" />	
 				</property>
 				<property name="qa:sdlFreqUnit">
 					<type>d:text</type>
@@ -544,10 +538,7 @@
 				<property name="qa:sdlFreqText">
 					<type>d:text</type>
 					<mandatory>false</mandatory>	
-					<index enabled="true">
-		                  <tokenised>both</tokenised>
-		                  <facetable>false</facetable>
-		            </index>				
+					 <index enabled="false" />		
 				</property>
 			</properties>			
 			<overrides />
@@ -576,10 +567,7 @@
 				<property name="qa:slSampleState">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>false</facetable>
-		            </index>		
+					<index enabled="false" />
 					<constraints>
 						<constraint ref="qa:states" />
 					</constraints>
@@ -599,10 +587,7 @@
 				</property>
 				<property name="qa:cdlFreq">
 					<type>d:int</type>	
-					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>false</facetable>
-		            </index>	
+					 <index enabled="false" />
 				</property>
 				<property name="qa:cdlFreqUnit">
 					<type>d:text</type>
@@ -624,10 +609,7 @@
 				<property name="qa:clSampleId">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
-					<index enabled="true">
-		                  <tokenised>both</tokenised>
-		                  <facetable>false</facetable>
-		            </index>
+					<index enabled="false" />
 				</property>
 				<property name="qa:clValue">
 					<type>d:double</type>
@@ -637,10 +619,7 @@
 				<property name="qa:clState">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>false</facetable>
-		            </index>		
+					<index enabled="false" />	
 					<constraints>
 						<constraint ref="qa:states" />
 					</constraints>

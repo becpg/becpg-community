@@ -2064,6 +2064,12 @@
 		<type name="bcpg:approvalNumber">
 			<parent>bcpg:entityListItem</parent>
 		</type>
+		
+		
+        <type name="bcpg:productListItem">
+            <parent>bcpg:entityListItem</parent>
+        </type>
+		
 
 		<type name="bcpg:compoList">
 			<parent>bcpg:productListItem</parent>
@@ -2121,17 +2127,11 @@
 				</property>
 				<property name="bcpg:compoListOverrunPerc">
 					<type>d:double</type>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>true</facetable>
-					</index>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:compoListVolume">
 					<type>d:double</type>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>true</facetable>
-					</index>
+					<index enabled="false" />
 				</property>
 			</properties>
 			<associations>
@@ -2191,10 +2191,7 @@
 				</property>
 				<property name="bcpg:packagingListPkgLevel">
 					<type>d:text</type>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>true</facetable>
-					</index>
+					<index enabled="false" />
 					<constraints>
 						<constraint ref="bcpg:packagingLevel" />
 					</constraints>
@@ -2203,18 +2200,12 @@
 					<type>d:boolean</type>
 					<mandatory enforced="true">true</mandatory>
 					<default>false</default>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>true</facetable>
-					</index>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:packagingListIsRecycle">
 					<type>d:boolean</type>
 					<default>false</default>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>true</facetable>
-					</index>
+					<index enabled="false" />
 				</property>
 			</properties>
 			<associations>
@@ -2235,10 +2226,6 @@
 			</mandatory-aspects>
 		</type>
 
-		<type name="bcpg:productListItem">
-			<parent>bcpg:entityListItem</parent>
-		</type>
-
 		<type name="bcpg:allergenList">
 			<parent>bcpg:productListItem</parent>
 			<properties>
@@ -2249,38 +2236,23 @@
 				</property>
 				<property name="bcpg:allergenListVoluntary">
 					<type>d:boolean</type>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>true</facetable>
-					</index>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:allergenListInVoluntary">
 					<type>d:boolean</type>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>true</facetable>
-					</index>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:allergenListOnSite">
 					<type>d:boolean</type>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>true</facetable>
-					</index>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:allergenListOnLine">
 					<type>d:boolean</type>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>true</facetable>
-					</index>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:allergenListIsCleaned">
 					<type>d:boolean</type>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>true</facetable>
-					</index>
+				    <index enabled="false" />
 				</property>
 				<property name="bcpg:allergenListDecisionTree">
 					<type>d:text</type>
@@ -2475,10 +2447,7 @@
 				<property name="bcpg:lcaListMethod">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>false</facetable>
-					</index>
+					<index enabled="false" />
 					<constraints>
 						<constraint ref="bcpg:lcaListMethods" />
 					</constraints>
@@ -2620,18 +2589,12 @@
 			<properties>
 				<property name="bcpg:lrLabel">
 					<type>d:mltext</type>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>false</facetable>
-					</index>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:lrGroup">
 					<type>d:text</type>
 					<multiple>true</multiple>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>false</facetable>
-					</index>
+					<index enabled="false" />
 					<constraints>
 						<constraint ref="bcpg:lrGroups" />
 					</constraints>
@@ -2642,10 +2605,7 @@
 				</property>
 				<property name="bcpg:lrType">
 					<type>d:text</type>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>false</facetable>
-					</index>
+				    <index enabled="false" />
 					<constraints>
 						<constraint ref="bcpg:lrTypes" />
 					</constraints>
@@ -2654,18 +2614,12 @@
 					<type>d:boolean</type>
 					<mandatory enforced="true">true</mandatory>
 					<default>true</default>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>false</facetable>
-					</index>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:lrSyncState">
 					<type>d:text</type>
 					<default>Manual</default>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>false</facetable>
-					</index>
+					<index enabled="false" />
 					<constraints>
 						<constraint ref="bcpg:synchronisableStates" />
 					</constraints>
@@ -2737,19 +2691,13 @@
 					<type>d:boolean</type>
 					<mandatory enforced="true">true</mandatory>
 					<default>false</default>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>false</facetable>
-					</index>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:ingListIsSupport">
 					<type>d:boolean</type>
 					<mandatory enforced="true">true</mandatory>
 					<default>false</default>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>false</facetable>
-					</index>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:ingListDeclType">
 					<type>d:text</type>
@@ -2765,19 +2713,13 @@
 					<type>d:boolean</type>
 					<mandatory enforced="true">true</mandatory>
 					<default>false</default>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>false</facetable>
-					</index>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:ingListIsIonized">
 					<type>d:boolean</type>
 					<mandatory enforced="true">true</mandatory>
 					<default>false</default>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>false</facetable>
-					</index>
+					<index enabled="false" />
 				</property>
 			</properties>
 			<associations>
@@ -2860,10 +2802,7 @@
 				<property name="bcpg:mblType">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>true</facetable>
-					</index>
+					<index enabled="false" />
 					<constraints>
 						<constraint ref="bcpg:microbioTypes" />
 					</constraints>
@@ -2879,10 +2818,7 @@
 				</property>
 				<property name="bcpg:mblControlStep">
 					<type>d:text</type>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>false</facetable>
-					</index>
+					<index enabled="false" />
 					<constraints>
 						<constraint ref="bcpg:microbioControlSteps" />
 					</constraints>
@@ -2968,10 +2904,7 @@
 				<property name="bcpg:nutListGroup">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>false</facetable>
-					</index>
+					<index enabled="false" />
 					<constraints>
 						<constraint ref="bcpg:nutGroup" />
 					</constraints>
@@ -2979,10 +2912,7 @@
 				<property name="bcpg:nutListMethod">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>false</facetable>
-					</index>
+					<index enabled="false" />
 					<constraints>
 						<constraint ref="bcpg:nutListMethods" />
 					</constraints>
@@ -2998,13 +2928,11 @@
 						<constraint ref="bcpg:nutListMeasurementPrecisions" />
 					</constraints>
 				</property>
-
 				<property name="bcpg:nutListIsFormulated">
 					<type>d:boolean</type>
 					<default>false</default>
 					<index enabled="false" />
 				</property>
-
 			</properties>
 			<associations>
 				<association name="bcpg:nutListNut">
@@ -3149,10 +3077,7 @@
 				<property name="bcpg:filReqType">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>false</facetable>
-					</index>
+					<index enabled="false" />
 					<constraints>
 						<constraint ref="bcpg:reqTypes" />
 					</constraints>
@@ -3160,10 +3085,7 @@
 				<property name="bcpg:filReqMessage">
 					<type>d:mltext</type>
 					<mandatory>false</mandatory>
-					<index enabled="true">
-						<tokenised>both</tokenised>
-						<facetable>false</facetable>
-					</index>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:filQtyPercMaxi">
 					<type>d:double</type>
@@ -3280,10 +3202,7 @@
 				<property name="bcpg:rclReqType">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>true</facetable>
-					</index>
+					<index enabled="false" />
 					<constraints>
 						<constraint ref="bcpg:reqTypes" />
 					</constraints>
@@ -3306,10 +3225,7 @@
 				<property name="bcpg:rclDataType">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>true</facetable>
-					</index>
+					<index enabled="false" />
 					<constraints>
 						<constraint ref="bcpg:reqDataTypes" />
 					</constraints>
@@ -3354,10 +3270,7 @@
 					<title>Contact type</title>
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>false</facetable>
-					</index>
+				    <index enabled="false" />
 					<constraints>
 						<constraint ref="bcpg:contactTypes" />
 					</constraints>
@@ -3428,10 +3341,7 @@
 			<properties>
 				<property name="bcpg:lclType">
 					<type>d:text</type>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>false</facetable>
-					</index>
+					<index enabled="false" />
 					<constraints>
 						<constraint ref="bcpg:labelClaimTypes" />
 					</constraints>
@@ -3512,10 +3422,7 @@
 				<property name="bcpg:dynamicCharactTitle">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
-					<index enabled="true">
-						<tokenised>both</tokenised>
-						<facetable>false</facetable>
-					</index>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:dynamicCharactFormula">
 					<type>d:text</type>
@@ -3531,28 +3438,19 @@
 				</property>
 				<property name="bcpg:dynamicCharactColumn">
 					<type>d:text</type>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>false</facetable>
-					</index>
+					<index enabled="false" />
 					<constraints>
 						<constraint ref="bcpg:dynamicCharactColumns" />
 					</constraints>
 				</property>
 				<property name="bcpg:dynamicCharactGroupColor">
 					<type>d:text</type>
-					<index enabled="true">
-						<tokenised>both</tokenised>
-						<facetable>false</facetable>
-					</index>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:dynamicCharactSynchronisableState">
 					<type>d:text</type>
 					<default>Template</default>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>false</facetable>
-					</index>
+					<index enabled="false" />
 					<constraints>
 						<constraint ref="bcpg:synchronisableStates" />
 					</constraints>
@@ -3561,10 +3459,7 @@
 					<type>d:text</type>
 					<mandatory>true</mandatory>
 					<default>Post</default>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>false</facetable>
-					</index>
+					<index enabled="false" />
 					<constraints>
 						<constraint ref="bcpg:dynamicCharactExecOrders" />
 					</constraints>
@@ -3572,10 +3467,7 @@
 				<property name="bcpg:dynamicCharactMultiLevel">
 					<type>d:boolean</type>
 					<default>false</default>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>true</facetable>
-					</index>
+					<index enabled="false" />
 				</property>
 
 			</properties>
@@ -3915,7 +3807,7 @@
 		</type>
 
 		<type name="bcpg:regulatoryList">
-			<parent>bcpg:entityListItem</parent>
+			<parent>bcpg:productListItem</parent>
 			<properties>
 				<property name="bcpg:regulatoryMaximumDosage">
 					<type>d:double</type>
@@ -3945,58 +3837,37 @@
 
 
 		<type name="bcpg:ingRegulatoryList">
-			<parent>bcpg:entityListItem</parent>
+			<parent>bcpg:productListItem</parent>
 			<properties>
 				<property name="bcpg:irlIng">
 					<type>d:noderef</type>
 					<mandatory>true</mandatory>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>false</facetable>
-					</index>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:irlCitation">
 					<type>d:mltext</type>
-					<index enabled="true">
-						<tokenised>true</tokenised>
-						<facetable>false</facetable>
-					</index>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:irlResultIndicator">
 					<type>d:mltext</type>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>true</facetable>
-					</index>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:irlUsages">
 					<type>d:mltext</type>
-					<index enabled="true">
-						<tokenised>true</tokenised>
-						<facetable>false</facetable>
-					</index>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:irlRestrictionLevels">
 					<type>d:mltext</type>
-					<index enabled="true">
-						<tokenised>true</tokenised>
-						<facetable>false</facetable>
-					</index>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:irlPrecautions">
 					<type>d:mltext</type>
-					<index enabled="true">
-						<tokenised>true</tokenised>
-						<facetable>false</facetable>
-					</index>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:irlSources">
 					<type>d:noderef</type>
 					<multiple>true</multiple>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>true</facetable>
-					</index>
+                    <index enabled="false" />
 				</property>
 			</properties>
 			<mandatory-aspects>
@@ -4005,7 +3876,7 @@
 		</type>
 
 		<type name="bcpg:toxList">
-			<parent>bcpg:entityListItem</parent>
+			<parent>bcpg:productListItem</parent>
 			<properties>
 				<property name="bcpg:toxListValue">
 					<type>d:double</type>

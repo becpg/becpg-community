@@ -119,9 +119,13 @@
 			</mandatory-aspects>
 		</type>
 				
+		 <type name="ecm:changeOrderListItem">
+            <parent>bcpg:entityListItem</parent>
+        </type>		
+				
 		<!-- replacementList -->
 		<type name="ecm:replacementList">
-			<parent>bcpg:entityListItem</parent>
+			<parent>ecm:changeOrderListItem</parent>
 			<properties>
 				<property name="ecm:rlRevisionType">
 					<type>d:text</type>
@@ -170,7 +174,7 @@
 	
 		<!-- wUsedList -->
 		<type name="ecm:wUsedList">
-			<parent>bcpg:entityListItem</parent>			
+			<parent>ecm:changeOrderListItem</parent>			
 			<properties>
 				<property name="ecm:impactedDataList">
 					<type>d:qname</type>				
@@ -179,31 +183,19 @@
 				<property name="ecm:isWUsedImpacted">
 					<type>d:boolean</type>
 					<default>false</default>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>true</facetable>
-					 </index>
+					<index enabled="false"/>
 				</property>	
 				<property name="ecm:wulEffectiveDate">
 					<type>d:date</type>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>true</facetable>
-					 </index>
+					<index enabled="false"/>
 				</property>	
 				<property name="ecm:wulQty">
 					<type>d:double</type>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>true</facetable>
-					 </index>
+					<index enabled="false"/>
 				</property>	
 				<property name="ecm:wulLoss">
 					<type>d:double</type>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>true</facetable>
-					 </index>
+					<index enabled="false"/>
 				</property>	
 			</properties>
 			<associations>
@@ -249,15 +241,12 @@
 		
 		<!-- changeUnitList -->
 		<type name="ecm:changeUnitList">
-			<parent>bcpg:entityListItem</parent>
+			<parent>ecm:changeOrderListItem</parent>
 			<properties>														
 				<property name="ecm:culRevision">
 					<type>d:text</type>
 					<multiple>false</multiple>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>true</facetable>
-					 </index>
+				    <index enabled="false"/>
 					<constraints>
 						<constraint ref="ecm:revisionTypes" />
 					</constraints>
@@ -265,10 +254,7 @@
 				<property name="ecm:culReqType">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>true</facetable>
-					 </index>		
+					<index enabled="false"/>
 					<constraints>
 						<constraint ref="bcpg:reqTypes" />
 					</constraints>			
@@ -284,10 +270,7 @@
 				<property name="ecm:culTreated">
 					<type>d:boolean</type>
 					<default>false</default>		
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>true</facetable>
-					 </index>
+					<index enabled="false"/>
 				</property>	
 			</properties>		
 			<associations>
@@ -320,7 +303,7 @@
 		
 		
 		<type name="ecm:calculatedCharactList">
-			<parent>bcpg:entityListItem</parent>			
+			<parent>ecm:changeOrderListItem</parent>			
 			<properties>
 				<property name="ecm:cclSourceValue">
 					<type>d:any</type>					
