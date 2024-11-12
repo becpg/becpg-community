@@ -188,7 +188,7 @@ public class ExcelHelper {
 								cell.setCellStyle(excelCellStyles.getShortDateCellStyle());
 							}
 						} else if (obj instanceof Boolean) {
-							cell.setCellValue(TranslateHelper.getTranslatedBoolean((Boolean)obj, true) );
+							cell.setCellValue(TranslateHelper.getTranslatedBoolean((Boolean)obj, false) );
 						} else if (obj instanceof String) {
 							cell.setCellValue((String) obj);
 						} else if (obj instanceof Double) {
