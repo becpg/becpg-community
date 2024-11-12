@@ -569,6 +569,7 @@ public class DataListFilter {
 			}
 
 			queryBuilder.addSort(sortMap);
+			queryBuilder.inDBIfPossible();
 		} else {
 			// Force DB Mode
 			queryBuilder.inDB();
