@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
@@ -259,7 +260,19 @@ public class JSONVersionExtractor extends SimpleExtractor {
 		}
 		
 		if (object.has(BeCPGModel.PROP_CHARACT_NAME.toPrefixString(namespaceService))) {
-			displayValue = object.getString(BeCPGModel.PROP_CHARACT_NAME.toPrefixString(namespaceService));
+			if (object.get(BeCPGModel.PROP_CHARACT_NAME.toPrefixString(namespaceService)) instanceof JSONObject) {
+				JSONObject json = (JSONObject) object.get(BeCPGModel.PROP_CHARACT_NAME.toPrefixString(namespaceService));
+				if (json.has(I18NUtil.getLocale().toLanguageTag())) {
+					displayValue = json.getString(I18NUtil.getLocale().toLanguageTag());
+				} else if (json.has(Locale.getDefault().toLanguageTag())) {
+					displayValue = json.getString(Locale.getDefault().toLanguageTag());
+				} else if (json.has(Locale.ENGLISH.toLanguageTag())) {
+					displayValue = json.getString(Locale.ENGLISH.toLanguageTag());
+				}
+			}
+			if (displayValue == null) {
+				displayValue = object.getString(BeCPGModel.PROP_CHARACT_NAME.toPrefixString(namespaceService));
+			}
 		} else if (object.has(ContentModel.PROP_NAME.toPrefixString(namespaceService))) {
 			if (type != null) {
 				String entityName = object.getString(ContentModel.PROP_NAME.toPrefixString(namespaceService));
