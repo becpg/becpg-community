@@ -800,7 +800,7 @@
 
 
 		<type name="gs1:dutyFeeTaxList">
-			<parent>bcpg:entityListItem</parent>
+			<parent>bcpg:productListItem</parent>
 			<mandatory-aspects>
 				<aspect>bcpg:effectivityAspect</aspect>
 				<aspect>gs1:dutyFeeTaxAspect</aspect>
@@ -809,15 +809,12 @@
 
 
 		<type name="gs1:tradeItemPriceList">
-			<parent>bcpg:entityListItem</parent>
+			<parent>bcpg:productListItem</parent>
 			<properties>
 				<property name="gs1:tradeItemPrice">
 					<type>d:double</type>
 					<mandatory>true</mandatory>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>false</facetable>
-					</index>
+					<index enabled="false" />
 				</property>
 				<property name="gs1:tradeItemPriceUnit">
 					<type>d:text</type>
@@ -828,10 +825,7 @@
 				</property>
 				<property name="gs1:priceBasisQuantity">
 					<type>d:double</type>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>false</facetable>
-					</index>
+					<index enabled="false" />
 				</property>
 				<property name="gs1:priceBasisQuantityUnit">
 					<type>d:text</type>
@@ -842,10 +836,7 @@
 				</property>
 				<property name="gs1:tradeItemPriceType">
 					<type>d:text</type>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>false</facetable>
-					</index>
+					<index enabled="false" />
 					<constraints>
 						<constraint ref="gs1:tradeItemPriceTypes" />
 					</constraints>
@@ -862,34 +853,22 @@
 			<properties>
 				<property name="gs1:cplPriceTaxIncl">
 					<type>d:double</type>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>false</facetable>
-					</index>
+				<index enabled="false" />
 				</property>
 				<property name="gs1:cplProfitabilityRatio">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>false</facetable>
-					</index>
+					<index enabled="false" />
 				</property>
 				<property name="gs1:cplTurnover">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>false</facetable>
-					</index>
+					<index enabled="false" />
 				</property>
 				<property name="gs1:cplUnitTotalCost">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>false</facetable>
-					</index>
+					<index enabled="false" />
 				</property>
 			</properties>
 			<associations>
@@ -914,24 +893,18 @@
 
 
 		<type name="gs1:fishReportingInformationList">
-			<parent>bcpg:entityListItem</parent>
+			<parent>bcpg:productListItem</parent>
 			<properties>
 				<property name="gs1:speciesForFisheryStatisticsPurposesCode">
 					<type>d:text</type>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>false</facetable>
-					</index>
+					<index enabled="false" />
 					<constraints>
 						<constraint ref="gs1:speciesForFisheryStatisticsPurposesCodes" />
 					</constraints>
 				</property>
 				<property name="gs1:speciesForFisheryStatisticsPurposesName">
 					<type>d:text</type>
-					<index enabled="true">
-						<tokenised>both</tokenised>
-						<facetable>false</facetable>
-					</index>
+					<index enabled="false" />
 				</property>
 			</properties>
 			<mandatory-aspects>
