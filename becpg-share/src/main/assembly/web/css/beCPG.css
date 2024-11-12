@@ -60,8 +60,13 @@
 
 
 .form-container .yui-ac .ac-body,
+.form-container .yui-g.number-range,
 .form-container .form-field input.number {
 	width: 28em;
+}
+
+.form-container .form-field input.number-range {
+    width: 10em;
 }
 
 .form-container .form-field input.number-unit {
@@ -126,7 +131,9 @@
 
 .filter-form .form-fields {
 	width: 58em;
+    border-bottom: 0px !important;
 }
+
 
 
 /* 1-2 Column Tabbed Set */
@@ -137,7 +144,7 @@
 	 :not(.bd) > .form-container .yui-navset .form-field input[type="text"]:not(.date-entry,.number-range,.date-range,.number-unit,.yui-ac-input),
 	 :not(.bd) > .form-container .yui-navset .form-field input[type="file"],
 	 :not(.bd) > .form-container .yui-navset .form-field input[type="password"],
-	 :not(.bd) > .form-container .yui-navset .form-field input:not(.number-range,.date-entry,.date-range,.number-unit,.yui-ac-input,.formsCheckBox), 
+	 :not(.bd) > .form-container .yui-navset .form-field input:not(.number-range,.date-entry,.number-range,.date-range,.number-unit,.yui-ac-input,.formsCheckBox), 
 	 :not(.bd) > .form-container .yui-navset .form-field select,
 	 :not(.bd) > .form-container .yui-navset .form-field textarea, .form-container .yui-navset .yui-ac .ac-body
 	{
@@ -193,6 +200,7 @@
 	.form-container .yui-gb .form-field input[type="checkbox"] {
 	width: auto !important;
 }
+
 
 .form-container .yui-gb .yui-g.date-range,.form-container .yui-gb .yui-g.number-range {
 	
