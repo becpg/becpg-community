@@ -1435,6 +1435,9 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 					branchNodeRef = entityService.createOrCopyFrom(entityNodeRef, parentRef, nodeService.getType(entityNodeRef), newEntityName);
 					state.addToState(branchNodeRef);
 				} catch (AssociationExistsException e) {
+					if (logger.isDebugEnabled()) {
+						logger.debug(e.getMessage(), e);
+					}
 					// This will be rare, but it's not impossible.
 					// We have to retry the operation.
 					throw new ConcurrencyFailureException("Association already exists for this noderef : " + entityNodeRef);
