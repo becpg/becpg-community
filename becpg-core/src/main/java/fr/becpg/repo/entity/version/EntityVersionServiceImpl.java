@@ -1419,10 +1419,13 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 					branchNodeRef = entityService.createOrCopyFrom(entityNodeRef, parentRef, nodeService.getType(entityNodeRef), newEntityName);
 					state.addToState(branchNodeRef);
         		} catch (AssociationExistsException e) {
-                    // This will be rare, but it's not impossible.
-                    // We have to retry the operation.
-        			throw new ConcurrencyFailureException("Association already exists for this noderef : " + entityNodeRef);
-        		}
+					if (logger.isDebugEnabled()) {
+						logger.debug(e.getMessage(), e);
+					}
+					// This will be rare, but it's not impossible.
+					// We have to retry the operation.
+					throw new ConcurrencyFailureException("Association already exists for this noderef : " + entityNodeRef);
+				}
 				
 				if (nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
 					nodeService.setProperty(branchNodeRef, BeCPGModel.PROP_BRANCH_FROM_VERSION_LABEL,
