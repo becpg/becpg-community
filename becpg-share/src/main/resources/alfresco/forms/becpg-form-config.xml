@@ -667,6 +667,107 @@
 				</appearance>
 			</form>
 			
+			<form id="create">
+				<field-visibility>
+					<show id="bcpg:nrNotificationAuthorities" />
+					<show id="bcpg:nrTimeType" />
+					<show id="bcpg:nrTimeNumber" />
+					<show id="bcpg:nrDateField" />
+					<show id="bcpg:nrScript" />
+					<show id="bcpg:nrScriptMode" />
+					
+					<show id="bcpg:nrNodeType" />
+					<show id="bcpg:nrTarget" />
+					<show id="bcpg:nrVersionFilter" />
+					<show id="bcpg:nrConditions" />
+					
+					<show id="bcpg:nrSubject" />
+					<show id="bcpg:nrEmail" />
+					
+					<show id="bcpg:nrFrequency" />
+					<show id="bcpg:nrRecurringTimeType" />
+					<show id="bcpg:nrRecurringDay" />
+					<show id="bcpg:nrFrequencyStartDate" />
+					<show id="bcpg:nrForceNotification" />
+				
+					<show id="rep:reportTpls" force="true" />
+				</field-visibility>
+				<appearance>
+					<set id="notificationRule" appearance="bordered-panel" label-id="becpg.forms.set.notification-rule.label" />
+					<set id="notificationFilter" appearance="bordered-panel" label-id="becpg.forms.set.notification-filter.label" />
+					<set id="notificationEMail" appearance="bordered-panel" label-id="becpg.forms.set.notification-email.label" />
+					<set id="notificationRecurring" appearance="bordered-panel" label-id="becpg.forms.set.notification-recurring.label" />
+					<set id="notificationReport" appearance="bordered-panel" label-id="becpg.forms.set.notification-report.label" />
+					
+					<field id="bcpg:nrNodeType" set="notificationFilter">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/entityTypeValue</control-param>
+							<control-param name="saveTitle">false</control-param>
+						</control>
+					</field>
+					<field id="bcpg:nrTarget" set="notificationFilter">
+						<control template="/org/alfresco/components/form/controls/association.ftl">
+							<control-param name="startLocation">{ancestor}</control-param>
+							<control-param name="startLocationParams">aspect=bcpg:entityListsAspect
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:nrConditions" set="notificationFilter" help-id="becpg.forms.help.nrConditions" >
+						<control template="/org/alfresco/components/form/controls/config-editor.ftl">
+							<control-param name="syntax">channel</control-param>
+						</control>
+					</field>
+					<field id="bcpg:nrScript" set="notificationRule" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/association.ftl">
+							<control-param name="startLocation">{ancestor}</control-param>
+							<control-param name="startLocationParams">aspect=bcpg:entityListsAspect
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:nrScriptMode" set="notificationRule" >
+						<control template="/org/alfresco/components/form/controls/selectone.ftl" />
+					</field>
+					<field id="bcpg:nrDateField" set="notificationRule">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/propertyDateValue</control-param>
+							<control-param name="saveTitle">false</control-param>
+						</control>
+					</field>
+					<field id="bcpg:nrTimeNumber" set="notificationRule" mandatory="true">
+						<control template="/org/alfresco/components/form/controls/number.ftl" />
+					</field>
+					<field id="bcpg:nrTimeType" set="notificationRule" help-id="becpg.forms.help.notificationTimeType" />
+					<field id="bcpg:nrSubject" set="notificationEMail">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:nrNotificationAuthorities" set="notificationRule">
+						<control template="/org/alfresco/components/form/controls/authority.ftl" />
+					</field>
+					<field id="bcpg:nrFrequencyStartDate" set="notificationRecurring">
+						<control template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
+					<field id="bcpg:nrFrequency" set="notificationRecurring" />
+					<field id="bcpg:nrEmail" set="notificationEMail">
+						<control template="/org/alfresco/components/form/controls/association.ftl">
+							<control-param name="startLocation">/app:company_home/app:dictionary/app:email_templates</control-param>
+						</control>
+					</field>
+					<field id="bcpg:nrVersionFilter" set="notificationFilter" />
+					<field id="bcpg:nrForceNotification" set="notificationRecurring" />
+					<field id="bcpg:nrRecurringTimeType" set="notificationRecurring" help-id="becpg.forms.help.notificationFrequency" />
+					<field id="bcpg:nrRecurringDay" set="notificationRecurring" />
+					<field id="rep:reportTpls" set="notificationReport">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">
+								becpg/autocomplete/targetassoc/associations/rep:reportTpl?excludeProps=rep%3AreportTplIsSystem%7Ctrue%2Crep%3AreportTplIsDisabled%7Ctrue&amp;filter=rep%3AreportTplType%7CExportSearch
+							</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+			
 			<!-- Filter items form -->
 			<form id="filter">
 				<field-visibility>
@@ -723,6 +824,106 @@
 			<!-- Popup update existing node form -->
 			<form>
 				<edit-form template="tab-edit" />
+				<field-visibility>
+					<show id="bcpg:nrNotificationAuthorities" />
+					<show id="bcpg:nrTimeType" />
+					<show id="bcpg:nrTimeNumber" />
+					<show id="bcpg:nrDateField" />
+					<show id="bcpg:nrScript" />
+					<show id="bcpg:nrScriptMode" />
+					
+					<show id="bcpg:nrNodeType" />
+					<show id="bcpg:nrTarget" />
+					<show id="bcpg:nrVersionFilter" />
+					<show id="bcpg:nrConditions" />
+					
+					<show id="bcpg:nrSubject" />
+					<show id="bcpg:nrEmail" />
+					
+					<show id="bcpg:nrFrequency" />
+					<show id="bcpg:nrRecurringTimeType" />
+					<show id="bcpg:nrRecurringDay" />
+					<show id="bcpg:nrForceNotification" />
+					
+					<show id="rep:reportTpls" force="true" />
+				</field-visibility>
+				<appearance>
+					<set id="notificationRule" appearance="bordered-panel" label-id="becpg.forms.set.notification-rule.label" />
+					<set id="notificationFilter" appearance="bordered-panel" label-id="becpg.forms.set.notification-filter.label" />
+					<set id="notificationEMail" appearance="bordered-panel" label-id="becpg.forms.set.notification-email.label" />
+					<set id="notificationRecurring" appearance="bordered-panel" label-id="becpg.forms.set.notification-recurring.label" />
+					<set id="notificationReport" appearance="bordered-panel" label-id="becpg.forms.set.notification-report.label" />	
+					
+					<field id="bcpg:nrNodeType" set="notificationFilter">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/entityTypeValue</control-param>
+							<control-param name="saveTitle">false</control-param>
+						</control>
+					</field>
+					<field id="bcpg:nrTarget" set="notificationFilter">
+						<control template="/org/alfresco/components/form/controls/association.ftl">
+							<control-param name="startLocation">{ancestor}</control-param>
+							<control-param name="startLocationParams">aspect=bcpg:entityListsAspect
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:nrConditions" set="notificationFilter" help-id="becpg.forms.help.nrConditions" >
+						<control template="/org/alfresco/components/form/controls/config-editor.ftl">
+							<control-param name="syntax">channel</control-param>
+						</control>
+					</field>
+					<field id="bcpg:nrScript" set="notificationRule" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/association.ftl">
+							<control-param name="startLocation">{ancestor}</control-param>
+							<control-param name="startLocationParams">aspect=bcpg:entityListsAspect
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:nrScriptMode" set="notificationRule" >
+						<control template="/org/alfresco/components/form/controls/selectone.ftl" />
+					</field>
+					<field id="bcpg:nrDateField" set="notificationRule">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/propertyDateValue</control-param>
+							<control-param name="saveTitle">false</control-param>
+						</control>
+					</field>
+					<field id="bcpg:nrTimeNumber" set="notificationRule" mandatory="true">
+						<control template="/org/alfresco/components/form/controls/number.ftl" />
+					</field>
+					<field id="bcpg:nrTimeType" set="notificationRule" help-id="becpg.forms.help.notificationTimeType" />
+					<field id="bcpg:nrSubject" set="notificationEMail">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:nrNotificationAuthorities" set="notificationRule">
+						<control template="/org/alfresco/components/form/controls/authority.ftl" />
+					</field>
+					<field id="bcpg:nrFrequencyStartDate" set="notificationRecurring">
+						<control template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
+					<field id="bcpg:nrFrequency" set="notificationRecurring" />
+					<field id="bcpg:nrEmail" set="notificationEMail">
+						<control template="/org/alfresco/components/form/controls/association.ftl">
+							<control-param name="startLocation">/app:company_home/app:dictionary/app:email_templates</control-param>
+						</control>
+					</field>
+					<field id="bcpg:nrVersionFilter" set="notificationFilter" />
+					<field id="bcpg:nrForceNotification" set="notificationRecurring" />
+					<field id="bcpg:nrRecurringTimeType" set="notificationRecurring" help-id="becpg.forms.help.notificationFrequency"/>
+					<field id="bcpg:nrRecurringDay" set="notificationRecurring" />
+					<field id="rep:reportTpls" set="notificationReport">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">
+								becpg/autocomplete/targetassoc/associations/rep:reportTpl?excludeProps=rep%3AreportTplIsSystem%7Ctrue%2Crep%3AreportTplIsDisabled%7Ctrue&amp;filter=rep%3AreportTplType%7CExportSearch
+							</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+			
+			<form id="create">
 				<field-visibility>
 					<show id="bcpg:nrNotificationAuthorities" />
 					<show id="bcpg:nrTimeType" />
