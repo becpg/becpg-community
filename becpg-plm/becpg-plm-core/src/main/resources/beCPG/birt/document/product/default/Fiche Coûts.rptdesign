@@ -2029,7 +2029,7 @@ row["conditionalCostListValuePerProduct"] * row["nbProductsPkgLevel3"]
 
 if(BirtStr.indexOf("previousCost", row["reportParametersCode"]) != -1){
 	res = row["costListPreviousValue"]
-} else if(row["reportParametersCode"].indexOf("futureCost2") != -1){
+} else if(BirtStr.indexOf("futureCost2", row["reportParametersCode"]) != -1){
 	res = row["costListFutureValue2"]
 } else if(BirtStr.indexOf("futureCost3", row["reportParametersCode"]) != -1){
 	res = row["costListFutureValue3"]
