@@ -7,6 +7,8 @@ if (args.nodeRefs) {
 		var node = search.findNode(nodeRef);
 		if(node.getContent()!=null) {
 			node.properties["cm:content"].delete();
+			delete node.properties["cm:content"];
+			node.save();
 			items.push(nodeRef);
 		}
 	}
