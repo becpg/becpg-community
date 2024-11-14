@@ -2412,10 +2412,6 @@
 					<field id="gs1:productActivityTypeCode" set="formulation" />
 					<field id="bcpg:ingAllergens" set="formulation">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
-<<<<<<< HEAD
-
-=======
->>>>>>> refs/heads/master
 					</field>
 					<field id="bcpg:ingAllergensQtyPerc" help-id="becpg.forms.help.ingAllergensQtyPerc" set="formulation" />
 					<field id="bcpg:evaporatedRate" set="formulation" />
@@ -3826,14 +3822,14 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="bcpg:erpCode" force="true" />
-					 <show id="bcpg:isDeleted" />
+					<show id="bcpg:isDeleted" />
 				</field-visibility>
 				<appearance>
-				<field id="bcpg:isDeleted">
-                        <control template="/org/alfresco/components/form/controls/boolean.ftl">
-                            <control-param name="isSearch">true</control-param>
-                        </control>
-                    </field>
+					<field id="bcpg:isDeleted">
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 
@@ -4168,11 +4164,11 @@
 						</control>
 					</field>
 					<field id="bcpg:isDeleted">
-                        <control template="/org/alfresco/components/form/controls/boolean.ftl">
-                            <control-param name="isSearch">true</control-param>
-                        </control>
-                    </field>
-					
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+
 				</appearance>
 			</form>
 
@@ -8825,50 +8821,50 @@
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
 			</form>
-			
+
 			<form id="filter">
-                <field-visibility>
-                    <show id="bcpg:mblMicrobio" />
-                    <show id="bcpg:mblValue" />
-                     <show id="bcpg:mblMaxi" />
-                    <show id="bcpg:mblType" />
-                    <show id="bcpg:mblMaxi" />
-                    <show id="bcpg:mblControlStep" />
-                    <show id="bcpg:mblMethod" />
-                </field-visibility>
-                <appearance>
-                    <field id="bcpg:mblMicrobio">
-                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-                            <control-param name="ds">becpg/autocomplete/microbio</control-param>
-                        </control>
-                    </field>
-                  <field  id="bcpg:mblValue">
-                         <control template="/org/alfresco/components/form/controls/numberrange.ftl">
-                            <control-param name="isSearch">true</control-param>
-                        </control>
-                    </field>
-                    <field id="bcpg:mblType">
-                        <control template="/org/alfresco/components/form/controls/selectmany.ftl">
-                            <control-param name="isSearch">true</control-param>
-                        </control>
-                    </field>
-                     <field id="bcpg:mblControlStep">
-                        <control template="/org/alfresco/components/form/controls/selectmany.ftl">
-                            <control-param name="isSearch">true</control-param>
-                        </control>
-                    </field>
-                      <field  id="bcpg:mblMaxi">
-                         <control template="/org/alfresco/components/form/controls/numberrange.ftl">
-                            <control-param name="isSearch">true</control-param>
-                        </control>
-                    </field>
-                    <field id="bcpg:mblMethod">
-                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/qa:controlMethod</control-param>
-                        </control>
-                    </field>
-                </appearance>
-            </form>
+				<field-visibility>
+					<show id="bcpg:mblMicrobio" />
+					<show id="bcpg:mblValue" />
+					<show id="bcpg:mblMaxi" />
+					<show id="bcpg:mblType" />
+					<show id="bcpg:mblMaxi" />
+					<show id="bcpg:mblControlStep" />
+					<show id="bcpg:mblMethod" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:mblMicrobio">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/microbio</control-param>
+						</control>
+					</field>
+					<field id="bcpg:mblValue">
+						<control template="/org/alfresco/components/form/controls/numberrange.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:mblType">
+						<control template="/org/alfresco/components/form/controls/selectmany.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:mblControlStep">
+						<control template="/org/alfresco/components/form/controls/selectmany.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:mblMaxi">
+						<control template="/org/alfresco/components/form/controls/numberrange.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:mblMethod">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/qa:controlMethod</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
 		</forms>
 	</config>
 	<!-- bcpg:microbioList type (existing nodes) -->
@@ -9335,6 +9331,23 @@
 					<field id="bcpg:entityDataListState" label="hidden" />
 					<field id="bcpg:variantIds" label="hidden" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
+				</appearance>
+			</form>
+
+			<form id="filter">
+				<field-visibility>
+					<show id="bcpg:organoListOrgano" />
+					<show id="bcpg:organoListMethod" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:organoListOrgano">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:organoListMethod">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/qa:controlMethod</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 		</forms>
@@ -11241,20 +11254,20 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="gs1:targetMarketCountries" />
-					   <show id="bcpg:erpCode" force="true" />
-                     <show id="bcpg:isDeleted" />
-                </field-visibility>
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:isDeleted" />
+				</field-visibility>
 				<appearance>
 					<field id="gs1:targetMarketCountries">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="showLink">false</control-param>
 						</control>
 					</field>
-					  <field id="bcpg:isDeleted">
-                        <control template="/org/alfresco/components/form/controls/boolean.ftl">
-                            <control-param name="isSearch">true</control-param>
-                        </control>
-                    </field>
+					<field id="bcpg:isDeleted">
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 			<form id="datagrid">
