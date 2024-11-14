@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
-    <property name="createdBy">Eclipse BIRT Designer Version 4.4.2.v201410272105 Build &lt;4.4.2.v20150217-1805></property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.7.0.v201706222054</property>
     <list-property name="userProperties">
         <structure>
             <property name="name">Data Cube.OrganoList.x</property>
@@ -141,7 +141,7 @@ function getConvertedCapacityInUsUnit (qty, unit, isVolume) {
     </list-property>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="452">
-            <property name="FILELIST">src/main/resources/beCPG/birt/document/product/default/ProductReport.xml</property>
+            <property name="FILELIST">becpg-plm/becpg-plm-core/src/main/resources/beCPG/birt/document/product/default/datasource-variant-prod.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
