@@ -2065,11 +2065,11 @@
             <parent>bcpg:entityListItem</parent>
         </type>
 
-		
+        
         <type name="bcpg:productListItem">
             <parent>bcpg:entityListItem</parent>
         </type>
-		
+        
 
         <type name="bcpg:compoList">
             <parent>bcpg:productListItem</parent>
@@ -2380,6 +2380,21 @@
                     <index enabled="false" />
                 </property>
                 <property name="bcpg:costListFutureValuePerProduct">
+                    <type>d:double</type>
+                    <mandatory>false</mandatory>
+                    <index enabled="false" />
+                </property>
+                <property name="bcpg:costListFutureValuePerProduct2">
+                    <type>d:double</type>
+                    <mandatory>false</mandatory>
+                    <index enabled="false" />
+                </property>
+                <property name="bcpg:costListFutureValuePerProduct3">
+                    <type>d:double</type>
+                    <mandatory>false</mandatory>
+                    <index enabled="false" />
+                </property>
+                <property name="bcpg:costListFutureValuePerProduct4">
                     <type>d:double</type>
                     <mandatory>false</mandatory>
                     <index enabled="false" />
@@ -3948,7 +3963,7 @@
 
 
         <type name="bcpg:ingRegulatoryList">
-			<parent>bcpg:productListItem</parent>
+            <parent>bcpg:productListItem</parent>
             <properties>
                 <property name="bcpg:irlIng">
                     <type>d:noderef</type>
@@ -4008,7 +4023,7 @@
         </type>
 
         <type name="bcpg:toxList">
-			<parent>bcpg:productListItem</parent>
+            <parent>bcpg:productListItem</parent>
             <properties>
                 <property name="bcpg:toxListValue">
                     <type>d:double</type>
@@ -4223,18 +4238,18 @@
                 <property name="bcpg:isSubstanceOfVeryHighConcern">
                     <type>d:boolean</type>
                    <index enabled="true">
-					    <tokenised>false</tokenised>
-					    <facetable>false</facetable>
-					</index>
+                        <tokenised>false</tokenised>
+                        <facetable>false</facetable>
+                    </index>
                 </property>
                 <property name="bcpg:svhcReasonsForInclusion">
                     <type>d:text</type>
                     <mandatory>false</mandatory>
                     <multiple>true</multiple>
                    <index enabled="true">
-					    <tokenised>false</tokenised>
-					    <facetable>false</facetable>
-					</index>
+                        <tokenised>false</tokenised>
+                        <facetable>false</facetable>
+                    </index>
                     <constraints>
                         <constraint ref="bcpg:svhcReasonsForInclusions" />
                     </constraints>
