@@ -2029,12 +2029,6 @@
 							<control-param name="rows">3</control-param>
 						</control>
 					</field>
-					<field id="qa:sdlFreqText" help="eg: 1D,2W,3M,0.5BBD,2UBD,0.75PAO (1D: 1 day, 2W: 2 weeks, 3M: 3 months, 0.5BBD: 0.5 * bestBeforeDate, 2UBD: 2 * useByDate, 0.75PAO: 0.75 * periodAfterOpening)"  set="2-col"/>
-					<field id="qa:slReaction"  set="2-col">
-						<control template="/org/alfresco/components/form/controls/textarea.ftl">
-							<control-param name="rows">3</control-param>
-						</control>
-					</field>
 					<field id="qa:sdlFreqUnit"  set="2-col">
 						<control
 							template="/org/alfresco/components/form/controls/selectone.ftl">
@@ -2363,17 +2357,12 @@
 					<show id="qa:clTemperature" />
 					<show id="qa:clMethod" />
 					<show id="qa:clCharacts" />
-					<show id="qa:clTarget" />
-					<show id="qa:clUnit" />
-					<show id="qa:clMini" />
-					<show id="qa:clMaxi" />
-					<show id="qa:clValue" />
 					<show id="qa:clState" />
 					<show id="qa:clRequired" />
 				</field-visibility>
 
 				<appearance>
-					<set id="reqInfo" appearance="bordered-panel" label-id="becpg.forms.set.exigences.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
+					<set id="reqInfo" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<field id="qa:clControlPoint" set="reqInfo" />
 					<field id="qa:clSampleId" set="reqInfo" />
 					<field id="qa:clTimePeriod" set="reqInfo" />
@@ -2386,10 +2375,6 @@
 						</control>
 					</field>
 					<field id="qa:clMethod" set="reqInfo" />
-					<field id="qa:clTarget" set="reqInfo" />
-					<field id="qa:clUnit" set="reqInfo" />
-					<field id="qa:clMini" set="reqInfo" />
-					<field id="qa:clMaxi" set="reqInfo" />
 					<field id="qa:clCharacts" set="reqInfo" />
 					<field id="qa:clRequired" set="reqInfo" >
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
@@ -2400,9 +2385,7 @@
 						</control>
 					</field>
 					
-					<set id="fillInfo" appearance="bordered-panel" label-id="becpg.forms.set.fill-info.label" />
-					<field id="qa:clValue" set="fillInfo" />
-					<field id="qa:clState" set="fillInfo" />
+					<field id="qa:clState" set="reqInfo" />
 				</appearance>
 			</form>
 			<!-- Data Grid view -->
