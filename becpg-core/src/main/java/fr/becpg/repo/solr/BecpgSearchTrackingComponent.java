@@ -73,15 +73,20 @@ public class BecpgSearchTrackingComponent extends SOLRTrackingComponentImpl {
 
 	@Override
 	public void getNodes(NodeParameters nodeParameters, NodeQueryCallback callback) {
-		if(nodeParameters.getExcludeNodeTypes()!=null) {
-		nodeParameters.getExcludeNodeTypes().addAll(BeCPGQueryBuilder.getTypesExcludedFromIndex());
-		} else {
-			nodeParameters.setExcludeNodeTypes(BeCPGQueryBuilder.getTypesExcludedFromIndex());
+		Set<QName> exludesTypes =  BeCPGQueryBuilder.getTypesExcludedFromIndex();
+		
+		if(exludesTypes!=null && !exludesTypes.isEmpty()) {
+			if(nodeParameters.getExcludeNodeTypes()!=null) {
+				nodeParameters.getExcludeNodeTypes().addAll(exludesTypes);
+			} else {
+				nodeParameters.setExcludeNodeTypes(exludesTypes);
+			}
+
+			if(logger.isDebugEnabled()) {
+				logger.debug("Exclude types : "+nodeParameters.getExcludeNodeTypes());
+			}
 		}
 		
-		if(logger.isDebugEnabled()) {
-			logger.debug("Exclude types : "+nodeParameters.getExcludeNodeTypes());
-		}
 
 		super.getNodes(nodeParameters, callback);
 	}
