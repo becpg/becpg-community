@@ -165,6 +165,8 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 		checkILL(finishedProductNodeRef1, labelingRuleList, "ing3 french 55%, ing1 french, ing2 french", Locale.FRENCH);
 
+		labelingRuleList = new ArrayList<>();
+		
 		labelingRuleList
 				.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render));
 		labelingRuleList
@@ -469,6 +471,8 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 		checkILL(finishedProductNodeRef1, labelingRuleList, "ing2 french 137,5%, ing1 french 50%", Locale.FRENCH);
 
+		labelingRuleList = new ArrayList<>();
+		
 		labelingRuleList
 				.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render));
 		labelingRuleList.add(LabelingRuleListDataItem.build().withName("%").withFormula("{0} {1,number,0.#%} ({2})")

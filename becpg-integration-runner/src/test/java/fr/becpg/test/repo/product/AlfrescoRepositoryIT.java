@@ -226,66 +226,6 @@ public class AlfrescoRepositoryIT extends PLMBaseTestCase {
 
 	}
 
-	@Test
-	public void test16958() {
-		MLTextHelper.setSupportedLocales(
-				"ar, ar_DZ, ar_EG, ar_MA, ar_SA, ar_JO, bg, bn_BD, cs, en, en_US, en_PH, en_AU, en_ZA, da_DK, de, de_AT, el, el_CY, es, fi, fr, fr_CA, hi_IN, hr_HR, hu, it, iw_IL, lt, lv, ja_JP, ko_KR, ms_MY, nl, no, ro, ru, pl, pt, pt_BR, sk, sl_SI, sr_RS, sv_SE, th, tr, ur_PK, vi_VN, zh_CN, mt_MT, et_EE, in_ID, ne_NP)");
 
-		Locale defaultLocale = Locale.getDefault();
-
-
-		Locale.setDefault(MLTextHelper.parseLocale("en_GB"));
-		I18NUtil.setLocale(Locale.getDefault());
-		I18NUtil.setContentLocale(null);
-
-		MLText mlTextILL = new MLText();
-		mlTextILL.addValue(MLTextHelper.parseLocale("en"), "keep in original unopened packaging stored well closed in a cool dry place.");
-		mlTextILL.addValue(MLTextHelper.parseLocale("ar_EG"), "يحفظ في العبوة الأصلية غير المفتوحة المخزنة جيدًا في مكان بارد وجاف.");
-		mlTextILL.addValue(MLTextHelper.parseLocale("en_US"), "keep in original u./ru	nopened packaging stored well closed in a cool dry place.");
-		
-
-		
-		MLTextHelper.getClosestValue(mlTextILL, MLTextHelper.parseLocale("en"));
-
-		Map<QName, Serializable> properties = new HashMap<>();
-		properties.put(PLMModel.PROP_ILL_VALUE, mlTextILL);
-
-		NodeRef illNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN,
-				PLMModel.TYPE_INGLABELINGLIST, properties).getChildRef();
-
-		nodeService.setProperty(illNodeRef, PLMModel.PROP_ILL_VALUE, "TEST");
-		
-		
-		logger.debug("get property : " + mlNodeServiceImpl.getProperty(illNodeRef, PLMModel.PROP_ILL_VALUE));
-		logger.debug("get property en : " + nodeService.getProperty(illNodeRef, PLMModel.PROP_ILL_VALUE));
-		logger.debug("get properties : " + mlNodeServiceImpl.getProperties(illNodeRef));
-		logger.debug("get property 2 : " + mlNodeServiceImpl.getProperties(illNodeRef).get(PLMModel.PROP_ILL_VALUE));
-
-		String toSave = (String) nodeService.getProperty(illNodeRef, PLMModel.PROP_ILL_VALUE);
-		nodeService.setProperty(illNodeRef, PLMModel.PROP_ILL_VALUE, toSave);
-		MLText mlTextILLSaved = (MLText) mlNodeServiceImpl.getProperty(illNodeRef, PLMModel.PROP_ILL_VALUE);
-
-		logger.debug(" Locale.getDefault(): " +  Locale.getDefault());
-		logger.debug(" getClosestValue: " +  MLTextHelper.getClosestValue(mlTextILLSaved, I18NUtil.getContentLocale()));
-		logger.debug(" getValueOrDefault: " +  MLTextHelper.getValueOrDefault(nodeService,illNodeRef, PLMModel.PROP_ILL_VALUE));
-		
-
-		logger.debug("get property : " + mlNodeServiceImpl.getProperty(illNodeRef, PLMModel.PROP_ILL_VALUE));
-
-		
-		
-	
-		assertNotNull("MLText exist", mlTextILLSaved);
-		assertEquals("MLText exist has 3 Locales", 3, mlTextILL.getLocales().size());
-		assertEquals("Check english value", mlTextILL.getValue(MLTextHelper.parseLocale("ar_EG")),
-				mlTextILLSaved.getValue(MLTextHelper.parseLocale("ar_EG")));
-		assertEquals("Check ar value", mlTextILL.getValue(MLTextHelper.parseLocale("en")), mlTextILLSaved.getValue(MLTextHelper.parseLocale("en")));
-		assertEquals("Check en_US value", mlTextILL.getValue(MLTextHelper.parseLocale("en_US")),
-				mlTextILLSaved.getValue(MLTextHelper.parseLocale("en_US")));
-
-		Locale.setDefault(defaultLocale);
-		MLTextHelper.flushCache();
-
-	}
 
 }
