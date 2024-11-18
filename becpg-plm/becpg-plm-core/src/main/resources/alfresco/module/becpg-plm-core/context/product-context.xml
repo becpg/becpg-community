@@ -51,8 +51,6 @@
 	
 	<bean id="ingToxPolicy" class="fr.becpg.repo.toxicology.IngToxPolicy"
 		parent="abstractBeCPGPolicy" depends-on="bcpg.plm.dictionaryBootstrap">
-		<property name="repoService" ref="repoService"/>
-		<property name="repository" ref="repositoryHelper"/>
 		<property name="toxicologyService" ref="toxicologyService"/>
 	</bean>
 	

@@ -32,7 +32,7 @@ public class ToxFormulationHandler extends FormulationBaseHandler<ProductData> {
 			for (ToxListDataItem toxListDataItem : formulatedProduct.getToxList()) {
 				Double toxMaxQuantity = null;
 				for (IngListDataItem ingListDataItem : formulatedProduct.getIngList()) {
-					Double qtyPerc = ingListDataItem.getQtyPerc();
+					Double qtyPerc = ingListDataItem.getMaxi() != null ? ingListDataItem.getMaxi() : ingListDataItem.getQtyPerc();
 					if (qtyPerc != null && qtyPerc != 0d) {
 						Double maxQuantity = toxicologyService.computeMaxValue(ingListDataItem.getIng(), toxListDataItem.getTox());
 						if (maxQuantity != null) {
