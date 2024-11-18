@@ -649,7 +649,8 @@
 			<parameter name="allowedValues">
 				<list>
 					<value></value>
-					<value>SkinIrritation</value>
+					<value>SkinIrritationRinseOff</value>
+					<value>SkinIrritationLeaveOn</value>
 					<value>Sensitization</value>
 					<value>OcularIrritation</value>
 					<value>SystemicIngredient</value>
@@ -2377,21 +2378,6 @@
 					<index enabled="false" />
 				</property>
 				<property name="bcpg:costListFutureValuePerProduct">
-					<type>d:double</type>
-					<mandatory>false</mandatory>
-					<index enabled="false" />
-				</property>
-				<property name="bcpg:costListFutureValuePerProduct2">
-					<type>d:double</type>
-					<mandatory>false</mandatory>
-					<index enabled="false" />
-				</property>
-				<property name="bcpg:costListFutureValuePerProduct3">
-					<type>d:double</type>
-					<mandatory>false</mandatory>
-					<index enabled="false" />
-				</property>
-				<property name="bcpg:costListFutureValuePerProduct4">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="false" />
@@ -6510,7 +6496,12 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
-				<property name="bcpg:ingToxMaxSkinIrritation">
+				<property name="bcpg:ingToxMaxSkinIrritationRinseOff">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:ingToxMaxSkinIrritationLeaveOn">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="false" />
