@@ -645,18 +645,19 @@
             </parameter>
         </constraint>
 
-        <constraint name="bcpg:toxTypesConstraint" type="LIST">
-            <parameter name="allowedValues">
-                <list>
-                    <value></value>
-                    <value>SkinIrritation</value>
-                    <value>Sensitization</value>
-                    <value>OcularIrritation</value>
-                    <value>SystemicIngredient</value>
-                    <value>PhototoxicalPotential</value>
-                </list>
-            </parameter>
-        </constraint>
+		<constraint name="bcpg:toxTypesConstraint" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>SkinIrritationRinseOff</value>
+					<value>SkinIrritationLeaveOn</value>
+					<value>Sensitization</value>
+					<value>OcularIrritation</value>
+					<value>SystemicIngredient</value>
+					<value>PhototoxicalPotential</value>
+				</list>
+			</parameter>
+		</constraint>
 
 
         <constraint name="bcpg:labelClaimTypes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
@@ -2327,7 +2328,6 @@
                 </association>
             </associations>
         </type>
-
         <type name="bcpg:costList">
             <parent>bcpg:productListItem</parent>
             <properties>
@@ -6491,50 +6491,55 @@
             </associations>
         </aspect>
 
-        <aspect name="bcpg:ingToxAspect">
-            <properties>
-                <property name="bcpg:ingToxData">
-                    <type>d:boolean</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="false" />
-                </property>
-                <property name="bcpg:ingToxPodSystemic">
-                    <type>d:double</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="false" />
-                </property>
-                <property name="bcpg:ingToxDermalAbsorption">
-                    <type>d:double</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="false" />
-                </property>
-                <property name="bcpg:ingToxMosMoe">
-                    <type>d:double</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="false" />
-                </property>
-                <property name="bcpg:ingToxMaxSkinIrritation">
-                    <type>d:double</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="false" />
-                </property>
-                <property name="bcpg:ingToxMaxSensitization">
-                    <type>d:double</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="false" />
-                </property>
-                <property name="bcpg:ingToxMaxOcularIrritation">
-                    <type>d:double</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="false" />
-                </property>
-                <property name="bcpg:ingToxMaxPhototoxic">
-                    <type>d:double</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="false" />
-                </property>
-            </properties>
-        </aspect>
+		<aspect name="bcpg:ingToxAspect">
+			<properties>
+				<property name="bcpg:ingToxData">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:ingToxPodSystemic">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:ingToxDermalAbsorption">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:ingToxMosMoe">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:ingToxMaxSkinIrritationRinseOff">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:ingToxMaxSkinIrritationLeaveOn">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:ingToxMaxSensitization">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:ingToxMaxOcularIrritation">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:ingToxMaxPhototoxic">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+			</properties>
+		</aspect>
 
         <aspect name="bcpg:httpLinkAspect">
             <properties>
