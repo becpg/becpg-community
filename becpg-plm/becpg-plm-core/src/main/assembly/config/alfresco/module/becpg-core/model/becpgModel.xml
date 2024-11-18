@@ -649,7 +649,8 @@
 			<parameter name="allowedValues">
 				<list>
 					<value></value>
-					<value>SkinIrritation</value>
+					<value>SkinIrritationRinseOff</value>
+					<value>SkinIrritationLeaveOn</value>
 					<value>Sensitization</value>
 					<value>OcularIrritation</value>
 					<value>SystemicIngredient</value>
@@ -6484,7 +6485,12 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
-				<property name="bcpg:ingToxMaxSkinIrritation">
+				<property name="bcpg:ingToxMaxSkinIrritationRinseOff">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:ingToxMaxSkinIrritationLeaveOn">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="false" />
