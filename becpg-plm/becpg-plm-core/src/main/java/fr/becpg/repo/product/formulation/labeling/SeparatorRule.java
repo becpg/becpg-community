@@ -94,13 +94,7 @@ public class SeparatorRule {
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String getClosestValue(Locale locale) {
-		String ret = null;
-
-		if ((ret == null) || ret.isEmpty()) {
-			ret = MLTextHelper.getClosestValue(mlText, locale);
-		}
-
-		return ret;
+		return MLTextHelper.getClosestValue(mlText, locale);
 	}
 
 
