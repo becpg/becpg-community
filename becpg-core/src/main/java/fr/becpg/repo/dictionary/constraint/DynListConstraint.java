@@ -471,7 +471,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 
 						}
 						if ((key == null) || key.isEmpty()) {
-							key = mlText.getClosestValue(Locale.getDefault());
+							key = MLTextHelper.getClosestValue(mlText, Locale.getDefault());
 						}
 
 						if (key != null) {
