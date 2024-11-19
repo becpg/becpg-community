@@ -85,7 +85,7 @@ public class SpelJXLSExpressionEvaluator implements ExpressionEvaluator {
 			} else if (data.containsKey("entity")) {
 				context = formulaService.createEntitySpelContext((RepositoryEntity) data.get("entity"));
 			} else {
-				context = new StandardEvaluationContext(data);
+				context = formulaService.createSpelContext(data);
 			}
 			ExpressionParser parser = formulaService.getSpelParser();
 
