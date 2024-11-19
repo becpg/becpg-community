@@ -139,11 +139,11 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 	public void reopenTask(NodeRef taskNodeRef) {
 
 		logger.debug("open Task " + taskNodeRef);
-		List<AssociationRef> sourceAssocs = nodeService.getSourceAssocs(taskNodeRef, ProjectModel.ASSOC_DL_TASK);
-		for (AssociationRef sourceAssoc : sourceAssocs) {
-			String dlState = (String) nodeService.getProperty(sourceAssoc.getSourceRef(), ProjectModel.PROP_DL_STATE);
+		List<NodeRef> sourceAssocs = associationService.getSourcesAssocs(taskNodeRef, ProjectModel.ASSOC_DL_TASK);
+		for (NodeRef sourceAssoc : sourceAssocs) {
+			String dlState = (String) nodeService.getProperty(sourceAssoc, ProjectModel.PROP_DL_STATE);
 			if (DeliverableState.Completed.toString().equals(dlState)) {
-				nodeService.setProperty(sourceAssoc.getSourceRef(), ProjectModel.PROP_DL_STATE, DeliverableState.InProgress.toString());
+				nodeService.setProperty(sourceAssoc, ProjectModel.PROP_DL_STATE, DeliverableState.InProgress.toString());
 			}
 		}
 
