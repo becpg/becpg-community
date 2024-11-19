@@ -73,6 +73,7 @@ import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.remote.extractor.RemoteHelper;
+import fr.becpg.repo.formulation.spel.SpelFormulaService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.PropertiesHelper;
 import fr.becpg.repo.helper.RepoService;
@@ -123,6 +124,12 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	protected AssociationService associationService;
 	
 	protected PermissionService permissionService;
+	
+	private SpelFormulaService formulaService;
+	
+	public void setFormulaService(SpelFormulaService spelFormulaService) {
+		this.formulaService = spelFormulaService;
+	}
 
 	/**
 	 * <p>Setter for the field <code>entityListDAO</code>.</p>
@@ -453,7 +460,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	private String parseFormula(String formula) throws ImporterException {
 		try {
 			ExpressionParser parser = new SpelExpressionParser();
-			StandardEvaluationContext context = new StandardEvaluationContext(this);
+			StandardEvaluationContext context = formulaService.createSpelContext(this);
 
 			return parser.parseExpression(formula, new ParserContext() {
 
