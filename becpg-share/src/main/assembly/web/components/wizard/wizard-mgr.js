@@ -181,7 +181,7 @@
                                         title: me.msg("message.confirm.cancel.title"),
                                         text: me.msg("message.confirm.cancel.description"),
                                         buttons: [{
-                                            text: instance.msg("wizard.ok.button"),
+                                            text: me.msg("wizard.ok.button"),
                                             handler: function() {
                                                 this.destroy();
                                                 //If first step is a creation delete project
