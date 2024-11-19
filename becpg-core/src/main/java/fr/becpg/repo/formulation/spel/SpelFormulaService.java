@@ -10,6 +10,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.expression.EvaluationException;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
@@ -24,7 +27,6 @@ import org.springframework.stereotype.Service;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.security.aop.SecurityMethodBeforeAdvice;
-import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * <p>SpelFormulaService class.</p>
@@ -36,9 +38,6 @@ import fr.becpg.repo.system.SystemConfigurationService;
 public class SpelFormulaService {
 
 	private static final Log logger = LogFactory.getLog(SpelFormulaService.class);
-
-	@Autowired
-	private SystemConfigurationService systemConfigurationService;
 	
 	@Autowired
 	private SecurityMethodBeforeAdvice securityMethodBeforeAdvice;
@@ -48,6 +47,9 @@ public class SpelFormulaService {
 
 	@Autowired
 	private CustomSpelFunctions[] customSpelFunctions;
+	
+	@Value("${beCPG.spel.security.authorizedTypes}")
+	private String authorizedTypes;
 	
 	private ExpressionParser parser;
 
@@ -94,7 +96,7 @@ public class SpelFormulaService {
 
 	public StandardEvaluationContext createSpelContext(@Nullable Object rootObject) {
 		StandardEvaluationContext context = new StandardEvaluationContext(rootObject);
-		context.setTypeLocator(new BecpgSpelSecurityTypeLocator(systemConfigurationService.confValue("beCPG.spel.security.authorizedTypes")));
+		context.setTypeLocator(new BecpgSpelSecurityTypeLocator(authorizedTypes));
 		return context;
 	}
 	
