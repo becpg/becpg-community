@@ -1703,6 +1703,11 @@ depth + "x" + width + "x" +  height;</expression>
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">itemType</text-property>
                 </structure>
+                <structure>
+                    <property name="columnName">variantIds</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">variantIds</text-property>
+                </structure>
             </list-property>
             <list-property name="parameters"/>
             <structure name="cachedMetaData">
@@ -1764,16 +1769,21 @@ depth + "x" + width + "x" +  height;</expression>
                     </structure>
                     <structure>
                         <property name="position">12</property>
+                        <property name="name">variantIds</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
                         <property name="name">tableCheck</property>
                         <property name="dataType">integer</property>
                     </structure>
                     <structure>
-                        <property name="position">13</property>
+                        <property name="position">14</property>
                         <property name="name">count variant</property>
                         <property name="dataType">integer</property>
                     </structure>
                     <structure>
-                        <property name="position">14</property>
+                        <property name="position">15</property>
                         <property name="name">runningCount</property>
                         <property name="dataType">integer</property>
                     </structure>
@@ -1858,8 +1868,15 @@ depth + "x" + width + "x" +  height;</expression>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">variantIds</property>
+                    <property name="nativeName">variantIds</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/compoLists/compoList]#:#{depthLevel;INT;/@depthLevel},{compoListProduct;STRING;/@compoListProduct},{compoListQtySubFormula;DOUBLE;/@compoListQtySubFormula},{compoListQty;DOUBLE;/@compoListQty},{compoListUnit;STRING;/@compoListUnit},{erpCode;STRING;/@erpCode},{suppliers;STRING;/@suppliers},{variants;STRING;/@variants},{isDefaultVariant;STRING;/@isDefaultVariant},{instruction;STRING;/instruction},{itemType;STRING;/@itemType}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/compoLists/compoList]#:#{depthLevel;INT;/@depthLevel},{compoListProduct;STRING;/@compoListProduct},{compoListQtySubFormula;DOUBLE;/@compoListQtySubFormula},{compoListQty;DOUBLE;/@compoListQty},{compoListUnit;STRING;/@compoListUnit},{erpCode;STRING;/@erpCode},{suppliers;STRING;/@suppliers},{variants;STRING;/@variants},{isDefaultVariant;STRING;/@isDefaultVariant},{instruction;STRING;/instruction},{itemType;STRING;/@itemType},{variantIds;STRING;/@variantIds}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -5820,9 +5837,14 @@ else{
                                 <property name="dataType">string</property>
                             </structure>
                             <structure>
-                                <property name="name">isDefaultVariant</property>
-                                <text-property name="displayName">isDefaultVariant</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["isDefaultVariant"] != "true"</expression>
+                                <property name="name">variantIds</property>
+                                <text-property name="displayName">variantIds</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["variantIds"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">Column Binding</property>
+                                <expression name="expression" type="javascript">dataSetRow["variantIds"]</expression>
                                 <property name="dataType">string</property>
                                 <property name="allowExport">true</property>
                             </structure>
@@ -5902,7 +5924,7 @@ else{
                                 <list-property name="visibility">
                                     <structure>
                                         <property name="format">all</property>
-                                        <expression name="valueExpr" type="javascript">row["isDefaultVariant"] == "true"</expression>
+                                        <expression name="valueExpr" type="javascript">row["variantIds"] != "" &amp;&amp; row["variantIds"] != null</expression>
                                     </structure>
                                 </list-property>
                                 <cell id="2908">
