@@ -69,7 +69,7 @@
 					<show id="pjt:projectCompletionDate" for-mode="view" />
 					<show id="pjt:completionPercent" for-mode="view" />
 					<show id="pjt:projectOverdue" for-mode="view" />
-					<show id="pjt:projectScore" for-mode="view" />
+					<show id="pjt:projectScore" force="true" for-mode="view" />
 					<show id="pjt:projectWork" for-mode="view" />
 					<show id="pjt:projectBudgetedCost" for-mode="view" />
 					<show id="pjt:projectLoggedTime" for-mode="view" />
@@ -450,7 +450,7 @@
 					<show id="pjt:projectHierarchy2" />
 				    <!-- <show id="pjt:projectPriority" /> -->
 					<show id="pjt:completionPercent" />
-					<show id="pjt:projectScore" />
+					<show id="pjt:projectScore" force="true" />
 					<show id="pjt:projectManager" />
 					<show id="dataList_pjt:taskList" />
 					<show id="dataList_bcpg:activityList" />
@@ -521,7 +521,7 @@
 					<show id="pjt:projectHierarchy1" />
 					<show id="pjt:projectHierarchy2" />
 					<show id="pjt:completionPercent" />
-					<show id="pjt:projectScore" />
+					<show id="pjt:projectScore"  force="true" />
 					<show id="pjt:projectManager" />
 					<show id="pjt:projectEntity" />
 					<show id="pjt:projectCompletionDate" />		
@@ -604,7 +604,7 @@
 					<show id="pjt:projectHierarchy1" />
 					<show id="pjt:projectHierarchy2" />
 					<show id="pjt:completionPercent" />
-					<show id="pjt:projectScore" />
+					<show id="pjt:projectScore"  force="true" />
 					<show id="pjt:projectManager" />
 					<show id="pjt:projectEntity" />
 					<show id="pjt:projectCompletionDate" />		
