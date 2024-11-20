@@ -308,8 +308,13 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 				for (NodeRef initialNode : initialList) {
 					if (nodeService.exists(initialNode)) {
 						if (VersionHelper.isVersion(initialNode)) {
-							if (nextWork.size() < BatchInfo.BATCH_SIZE) {
-								nextWork.add(initialNode);
+							if (treated.size() + toTreat.size() < maxProcessedNodes && !toTreat.contains(initialNode) && !treated.contains(initialNode)) {
+								if (nextWork.size() < BatchInfo.BATCH_SIZE) {
+									nextWork.add(initialNode);
+									treated.add(initialNode);
+								} else {
+									toTreat.add(initialNode);
+								}
 							}
 						} else {
 							if (logger.isTraceEnabled()) {
@@ -385,6 +390,9 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 				if (nodeService.exists(entityNodeRef)) {
 					
 					if (VersionHelper.isVersion(entityNodeRef)) {
+						if (logger.isDebugEnabled()) {
+							logger.debug("Delete version store node: " + entityNodeRef);
+						}
 						nodeService.addAspect(entityNodeRef, ContentModel.ASPECT_TEMPORARY, null);
 						nodeService.deleteNode(entityNodeRef);
 					} else {
