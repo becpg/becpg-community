@@ -49,6 +49,7 @@ import fr.becpg.repo.batch.BatchInfo;
 import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.batch.EntityListBatchProcessWorkProvider;
 import fr.becpg.repo.entity.version.EntityVersionService;
+import fr.becpg.repo.entity.version.VersionHelper;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.report.entity.EntityReportService;
@@ -259,7 +260,7 @@ public class EntityVersionPolicy extends AbstractBeCPGPolicy
 			public void process(NodeRef entityNodeRef) throws Throwable {
 
 				NodeRef extractedNode = entityNodeRef;
-				if (entityVersionService.isVersion(entityNodeRef)
+				if (VersionHelper.isVersion(entityNodeRef)
 						&& (nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_ENTITY_FORMAT) != null)) {
 					extractedNode = entityVersionService.extractVersion(entityNodeRef);
 				}
