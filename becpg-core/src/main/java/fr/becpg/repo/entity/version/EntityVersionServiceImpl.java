@@ -694,10 +694,10 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 		List<NodeRef> ret = new LinkedList<>();
 		// Look for childs
-		for (AssociationRef associationRef : nodeService.getSourceAssocs(entityNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY)) {
-			if (!isVersion(associationRef.getSourceRef())
-					&& !nodeService.hasAspect(associationRef.getSourceRef(), BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
-				NodeRef tmpNodeRef = associationRef.getSourceRef();
+		for (NodeRef associationRef : associationService.getSourcesAssocs(entityNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY)) {
+			if (!VersionHelper.isVersion(associationRef)
+					&& !nodeService.hasAspect(associationRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
+				NodeRef tmpNodeRef = associationRef;
 				if (!ret.contains(tmpNodeRef)) {
 					ret.add(tmpNodeRef);
 					if (!entityNodeRef.equals(tmpNodeRef)) {
@@ -972,7 +972,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 									
 									for (Version version : versionHistory.getAllVersions()) {
 										NodeRef entityVersionNodeRef = getEntityVersion(versionAssocs, version);
-										if (entityVersionNodeRef != null && !isVersion(entityVersionNodeRef)) {
+										if (entityVersionNodeRef != null && !VersionHelper.isVersion(entityVersionNodeRef)) {
 											updateBranchAssoc(entityVersionNodeRef, internalBranchToNodeRef);
 										}
 									}
@@ -1219,11 +1219,11 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		}
 		visited.add(sourceEntity);
 		Set<NodeRef> refs = new HashSet<>();
-		List<AssociationRef> assocRefs = nodeService.getSourceAssocs(sourceEntity, RegexQNamePattern.MATCH_ALL);
+		List<NodeRef> assocRefs = associationService.getSourcesAssocs(sourceEntity, RegexQNamePattern.MATCH_ALL);
 		List<ChildAssociationRef> parentRefs = nodeService.getParentAssocs(sourceEntity);
 		
-		for (AssociationRef assocRef : assocRefs) {
-			refs.add(assocRef.getSourceRef());
+		for (NodeRef assocRef : assocRefs) {
+			refs.add(assocRef);
 		}
 		for (ChildAssociationRef parentRef : parentRefs) {
 			refs.add(parentRef.getParentRef());
@@ -1721,13 +1721,6 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			}
 		}
 
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public boolean isVersion(NodeRef nodeRef) {
-		return nodeRef.getStoreRef().getProtocol().contains(VersionBaseModel.STORE_PROTOCOL)
-				|| nodeRef.getStoreRef().getIdentifier().contains(Version2Model.STORE_ID);
 	}
 
 	/** {@inheritDoc} */
