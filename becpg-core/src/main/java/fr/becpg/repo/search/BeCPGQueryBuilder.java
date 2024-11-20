@@ -48,6 +48,7 @@ import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.cmr.search.LimitBy;
 import org.alfresco.service.cmr.search.QueryConsistency;
 import org.alfresco.service.cmr.search.ResultSet;
@@ -155,6 +156,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	private String searchTemplate = null;
 	private SearchParameters.Operator operator = null;
 	private Locale locale = Locale.getDefault();
+	private StoreRef store = RepoConsts.SPACES_STORE;
 
 	private String defaultSearchTemplate() {
 		return systemConfigurationService.confValue("beCPG.defaultSearchTemplate");
@@ -204,6 +206,11 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		return builder;
 	}
 
+	public BeCPGQueryBuilder inStore(StoreRef store) {
+		this.store = store;
+		return this;
+	}
+	
 	/**
 	 * <p>
 	 * ofType.
@@ -1490,7 +1497,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		int skipCount = 0;
 
 		SearchParameters sp = new SearchParameters();
-		sp.addStore(RepoConsts.SPACES_STORE);
+		sp.addStore(store);
 
 		sp.setQuery(runnedQuery);
 		sp.addLocale(locale);
@@ -1632,7 +1639,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		Long ret = 0L;
 
 		SearchParameters sp = new SearchParameters();
-		sp.addStore(RepoConsts.SPACES_STORE);
+		sp.addStore(store);
 
 		sp.setQuery(runnedQuery);
 		sp.addLocale(locale);
