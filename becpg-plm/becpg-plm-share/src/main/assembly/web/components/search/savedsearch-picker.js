@@ -159,15 +159,16 @@
         },
 
         findSearchType: function findSearchType() {
-            var dt = Alfresco.util.ComponentManager.find({
-                name: "beCPG.module.EntityDataGrid"
-            })[0];
+            var selectedType = this.options.selectedType;
+            var dataType = selectedType 
+                ? selectedType.indexOf("_") > 0 
+                    ? selectedType.replace("_", ":") 
+                    : "bcpg:" + selectedType
+                : "bcpg:product";
 
-            var itemType = dt.options.itemType !== null ? dt.options.itemType : dt.datalistMeta.itemType;
-
-            return this.options.searchType + "-" + itemType;
+            return this.options.searchType + "-" + dataType;
         },
-        findCurrentFilter: function findSearchType() {
+        findCurrentFilter: function findCurrentFilter() {
             var dt = Alfresco.util.ComponentManager.find({
                 name: "beCPG.module.EntityDataGrid"
             })[0];
@@ -272,7 +273,14 @@
                 hiddenInput2.value = this.findSearchType();
 
                 form.appendChild(hiddenInput2);
-
+                if(this.options.siteId){
+                    var hiddenInput3 = document.createElement("input");
+                        hiddenInput3.type = "hidden";
+                        hiddenInput3.name = "prop_bcpg_savedSearchSiteId";
+                        hiddenInput3.value = this.options.siteId;
+                        form.appendChild(hiddenInput3);
+                 }
+                    
                 var isGlobalSavedSearchElement = Dom.get(p_dialog.id + "_prop_bcpg_isGlobalSavedSearch-entry");
 
                 if (this.globalDestNodeRef != null) {

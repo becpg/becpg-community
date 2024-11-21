@@ -3352,6 +3352,9 @@
           <show force="false" id="gs1:animalFeedingInstructions"/>
           <show force="false" id="gs1:animalFeedType"/>
       	</field-visibility>
+      	<appearance>
+      	  <field id="cm:name" read-only="true"></field>
+      	</appearance>
       </form>
     </forms>
   </config>

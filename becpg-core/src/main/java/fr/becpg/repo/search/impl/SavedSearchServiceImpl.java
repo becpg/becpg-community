@@ -73,29 +73,32 @@ public class SavedSearchServiceImpl implements SavedSearchService {
 
 		NodeRef destNodeRef = getSaveSearchFolder(savedSearch);
 
-		NodeRef savedSearchNodeRef = savedSearch.getNodeRef() != null ? savedSearch.getNodeRef()
-				: nodeService.getChildByName(destNodeRef, ContentModel.ASSOC_CONTAINS, savedSearch.getName());
+		if (destNodeRef != null) {
+			NodeRef savedSearchNodeRef = savedSearch.getNodeRef() != null ? savedSearch.getNodeRef()
+					: nodeService.getChildByName(destNodeRef, ContentModel.ASSOC_CONTAINS, savedSearch.getName());
 
-		if (savedSearchNodeRef != null) {
+			if (savedSearchNodeRef != null) {
 
-			savedSearch.setNodeRef(savedSearchNodeRef);
-			alfrescoRepository.save(savedSearch);
+				savedSearch.setNodeRef(savedSearchNodeRef);
+				alfrescoRepository.save(savedSearch);
 
-			if (!savedSearch.getParentNodeRef().equals(destNodeRef)) {
-				savedSearch.setParentNodeRef(destNodeRef);
-				repoService.moveNode(savedSearch.getNodeRef(), destNodeRef);
+				if (!savedSearch.getParentNodeRef().equals(destNodeRef)) {
+					savedSearch.setParentNodeRef(destNodeRef);
+					repoService.moveNode(savedSearch.getNodeRef(), destNodeRef);
+				}
+			} else {
+
+				savedSearch = alfrescoRepository.create(destNodeRef, savedSearch);
 			}
-		} else {
 
-			savedSearch = alfrescoRepository.create(destNodeRef, savedSearch);
+			ContentWriter writer = contentService.getWriter(savedSearch.getNodeRef(), ContentModel.PROP_CONTENT, true);
+			if (writer != null) {
+				writer.putContent(jsonString);
+			}
+
+			return savedSearch.getNodeRef();
 		}
-
-		ContentWriter writer = contentService.getWriter(savedSearch.getNodeRef(), ContentModel.PROP_CONTENT, true);
-		if (writer != null) {
-			writer.putContent(jsonString);
-		}
-
-		return savedSearch.getNodeRef();
+		throw new IllegalStateException("Cannot create savedSearch");
 	}
 
 	@Override
@@ -137,21 +140,18 @@ public class SavedSearchServiceImpl implements SavedSearchService {
 		if (savedSearch.getSiteId() != null) {
 			if (Boolean.TRUE.equals(savedSearch.getIsGlobal())) {
 				String role = siteService.getMembersRole(savedSearch.getSiteId(), AuthenticationUtil.getFullyAuthenticatedUser());
-				if (!(SiteModel.SITE_MANAGER.equals(role) || SiteModel.SITE_COLLABORATOR.equals(role))) {
+				if (!(AuthenticationUtil.isRunAsUserTheSystemUser() || SiteModel.SITE_MANAGER.equals(role) || SiteModel.SITE_COLLABORATOR.equals(role))) {
 					return null;
 				}
 			}
 
-			String title = siteService.getSite(savedSearch.getSiteId()) != null ? siteService.getSite(savedSearch.getSiteId()).getTitle()
-					: savedSearch.getSiteId();
-
-			containerNodeRef = repoService.getOrCreateFolderByPath(containerNodeRef, savedSearch.getSiteId(), title);
+			containerNodeRef = repoService.getOrCreateFolderByPath(containerNodeRef, savedSearch.getSiteId(), savedSearch.getSiteId());
 		}
-		
+
 		if (savedSearch.getSearchType() != null) {
-			String folderName = savedSearch.getSearchType().replaceAll(":", "_");
-			containerNodeRef = repoService.getOrCreateFolderByPath(containerNodeRef,folderName, folderName);
-			
+			String folderName = savedSearch.getSearchType().replace(":", "_");
+			containerNodeRef = repoService.getOrCreateFolderByPath(containerNodeRef, folderName, folderName);
+
 		}
 
 		return containerNodeRef;
@@ -164,13 +164,13 @@ public class SavedSearchServiceImpl implements SavedSearchService {
 				.andPropQuery(BeCPGModel.PROP_SAVED_SEARCH_TYPE, filter.getSearchType()).inDB();
 
 		//I asume that there is few results
-		return query.list().stream().map(id -> alfrescoRepository.findOne(id))
-				.filter(s -> (s.getSiteId() == null && filter.getSiteId() == null) || ((filter.getSiteId() != null) && filter.getSiteId().equals(s.getSiteId()))).toList();
+		return query.list().stream().map(id -> alfrescoRepository.findOne(id)).filter(s -> (s.getSiteId() == null)
+				|| ((filter.getSiteId() != null) && filter.getSiteId().equals(s.getSiteId()))).toList();
 	}
 
 	public boolean isSearchManagerUser() {
-		if(AuthenticationUtil.isRunAsUserTheSystemUser()) {
-		   return true;
+		if (AuthenticationUtil.isRunAsUserTheSystemUser()) {
+			return true;
 		}
 		for (String currAuth : authorityService.getAuthoritiesForUser(AuthenticationUtil.getFullyAuthenticatedUser())) {
 			if ((PermissionService.GROUP_PREFIX + SystemGroup.SavedSearchMgr.toString()).equals(currAuth)) {
