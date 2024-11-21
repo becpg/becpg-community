@@ -558,7 +558,7 @@ public class DataListFilter {
 				queryBuilder.parent(parentNodeRef);
 				if (isAllFilter()) {
 					queryBuilder.inDB();
-				}
+				} 
 			} else {
 				if (!isRepo && !DataListFilter.NODE_PATH_FILTER.equals(filterId) && !DataListFilter.PATH_FILTER.equals(filterId)) {
 					queryBuilder.inSite(siteId, containerId);
@@ -569,6 +569,10 @@ public class DataListFilter {
 			}
 
 			queryBuilder.addSort(sortMap);
+
+			if (dataType != null && BeCPGQueryBuilder.isExcludedFromIndex(dataType)) {
+				queryBuilder.inDBIfPossible();
+			} 
 		} else {
 			// Force DB Mode
 			queryBuilder.inDB();

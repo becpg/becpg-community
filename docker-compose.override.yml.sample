@@ -9,7 +9,7 @@ services:
                       -Dcom.sun.management.jmxremote.ssl=false
                       -Dcom.sun.management.jmxremote.authenticate=false
                       -Dcom.sun.management.jmxremote.local.only=false
-                      -Djava.rmi.server.hostname=127.0.0.1
+                      -Djava.rmi.server.hostname=127.0.0.1"
 #                      --XXaltjvm=dcevm -javaagent:/usr/java/jbr_jcef-17.0.10-linux-x64-b1207.14/lib/hotswap/hotswap-agent.jar
 #                      -XX:+AllowEnhancedClassRedefinition -XX:HotswapAgent=fatjar
 #                       --add-opens=java.base/java.lang=ALL-UNNAMED
@@ -40,7 +40,7 @@ services:
     volumes:
       - becpg_data:/usr/local/tomcat/data
       - ../../becpg-core/target/classes:/usr/local/tomcat/hotswap-agent/becpg-core/target/classes
-      - ../../becpg-plm/becpg-plm-core/targeta/classes:/usr/local/tomcat/hotswap-agent/becpg-plm-core/target/classes
+      - ../../becpg-plm/becpg-plm-core/target/classes:/usr/local/tomcat/hotswap-agent/becpg-plm-core/target/classes
       - ../../becpg-project/becpg-project-core/target/classes:/usr/local/tomcat/hotswap-agent/becpg-project-core/target/classes
       - ../../becpg-integration-runner/target/test-classes:/usr/local/tomcat/hotswap-agent/becpg-integration-runner/target/test-classes
                  
