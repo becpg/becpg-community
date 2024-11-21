@@ -1,1049 +1,1087 @@
-<?xml version="1.0" encoding="UTF-8"?><alfresco-config>
-  <config condition="bcpg:packagingMaterial" evaluator="node-type" replace="false">
-    <forms>
-      <form>
-        <field-visibility>
-          <show force="false" id="cm:name"/>
-          <show force="true" id="cm:title"/>
-          <show force="false" id="bcpg:productHierarchy1"/>
-          <show force="false" id="bcpg:productHierarchy2"/>
-          <show force="false" id="bcpg:legalName"/>
-          <show force="false" id="bcpg:productComments"/>
-          <show force="true" id="cm:description"/>
-          
-          <show force="true" id="gs1:packagingTypeCode"/>
-          <show force="true" id="gs1:packagingTypeDescription"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<alfresco-config>
+	<config condition="bcpg:packagingMaterial" evaluator="node-type" replace="false">
+		<forms>
+			<form>
+				<field-visibility>
+					<show force="false" id="cm:name" />
+					<show force="true" id="cm:title" />
+					<show force="false" id="bcpg:productHierarchy1" />
+					<show force="false" id="bcpg:productHierarchy2" />
+					<show force="false" id="bcpg:legalName" />
+					<show force="false" id="bcpg:productComments" />
+					<show force="true" id="cm:description" />
+
+					<show force="true" id="gs1:packagingTypeCode" />
+					<show force="true" id="gs1:packagingTypeDescription" />
 <!-- 		  <show force="true" id="gs1:packagingFeatureCode"/> -->
-		  <show force="true" id="gs1:packagingFunctionCode"/>
-		 
-		  
-          <show force="false" id="bcpg:productState"/>
-          <show force="false" id="bcpg:productUnit"/>
-          <show force="true" id="bcpg:componentLossPerc"/>
-          <show force="false" id="bcpg:code"/>
-          <show force="true" id="bcpg:erpCode"/>
-          <show force="false" id="bcpg:eanCode"/>
-          <show force="true" id="bcpg:certificateDate"/>
-          <show force="true" id="bcpg:suppliers"/>
-          <show force="true" id="bcpg:supplierPlants"/>
-          <show force="true" id="bcpg:supplierRefCode"/>
-          <show force="true" id="bcpg:plants"/>
-          <show force="true" id="bcpg:productGeoOrigin"/>
-          <show force="true" id="bcpg:entityTplRef"/>
-          <show force="true" id="pack:tare"/>
-          <show force="true" id="pack:tareUnit"/>
-          
-          <show force="true" id="gs1:packagingShapeCode"/>
-          <show force="true" id="pack:length"/>
-          <show force="true" id="pack:width"/>
-          <show force="true" id="pack:height"/>
-          <show force="false" id="pack:pmIntLength"/>
-          <show force="false" id="pack:pmIntWidth"/>
-          <show force="false" id="pack:pmIntHeight"/>
-          <show force="false" id="pack:pmThickness"/>
-          <show force="false" id="pack:pmPaperWeight"/>
-          <show force="false" id="pack:pmMaterialRefs"/>
-          <show force="false" id="pack:pmAdditionnalMaterial"/>
-          <show force="false" id="pack:pmCoreDiameter"/>
-          <show force="false" id="pack:pmCoilDiameter"/>
-          <show force="false" id="pack:pmPrintNbColors"/>
-          <show force="false" id="pack:pmPrintColor"/>
-          <show force="false" id="pack:pmPrintType"/>
-          <show force="false" id="pack:pmPrintVarnish"/>
-       
-          <show force="true" id="gs1:isPackagingMarkedReturnable"/>
-          <show force="true" id="gs1:packagingTermsAndConditionsCode"/>
-        
-          <show force="true" id="gs1:packagingRecyclingProcessTypeCode"/>
-		  <show force="true" id="gs1:packagingRecyclingSchemeCode"/>
-		  
-          <show force="true" id="gs1:sortingBonusCriteria"/>
-          <show force="true" id="gs1:sortingMalusCriteria"/>
-          <show force="true" id="gs1:sortingInstructions"/>
-          <show force="true" id="gs1:consumerUsageInstructions"/>
-          
-          <show force="false" id="sec:securityRef" />
-          <show force="false" id="cm:taggable"/>
-          <show force="false" id="cm:categories"/>
-          <show for-mode="view" force="false" id="cm:creator"/>
-          <show for-mode="view" force="false" id="cm:created"/>
-          <show for-mode="view" force="false" id="cm:modifier"/>
-          <show for-mode="view" force="false" id="cm:modified"/>
-          <show force="false" id="bcpg:autoMergeDate"/>
-          <show force="false" id="bcpg:autoMergeTo"/>
-          <show force="false" id="bcpg:autoMergeVersionType"/>
-          <show force="false" id="bcpg:autoMergeComments"/>
-          <show force="false" id="bcpg:autoMergeImpactWUsed"/>
-          <show id="bcpg:entityTplEnabled" force="false" />
-          <show id="bcpg:entityTplIsDefault" force="false" />
-          <show id="bcpg:entityTplScript" force="false" />
-          
-          <show id="pjt:projectScore" force="true" />
-        </field-visibility>
-        <appearance>
-          <set id="template" appearance="bordered-panel" label-id="becpg.forms.set.template.label" />
-          <field id="bcpg:entityTplEnabled" set="template" />
-          <field id="bcpg:entityTplIsDefault" set="template" />
-          <field id="bcpg:entityTplScript" set="template" mandatory="false" read-only="false">
-            <control template="/org/alfresco/components/form/controls/association.ftl">
-              <control-param name="startLocation">{doclib}</control-param>
-            </control>
-          </field>
-          <set appearance="bordered-panel" id="mainInfo" label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
-          <field id="cm:name" mandatory="false" read-only="false" set="mainInfo"/>
-          <field id="cm:title" label-id="becpg.forms.field.tradeName" description-id="becpg.forms.field.tradeName" mandatory="false" read-only="false" set="mainInfo">
-            <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
-          </field>
-          <field help-id="becpg.forms.help.productHierarchy1" id="bcpg:productHierarchy1" mandatory="false" read-only="false" set="mainInfo">
-            <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-              <control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy
+					<show force="true" id="gs1:packagingFunctionCode" />
+
+
+					<show force="false" id="bcpg:productState" />
+					<show force="false" id="bcpg:productUnit" />
+					<show force="true" id="bcpg:componentLossPerc" />
+					<show force="false" id="bcpg:code" />
+					<show force="true" id="bcpg:erpCode" />
+					<show force="false" id="bcpg:eanCode" />
+					<show force="true" id="bcpg:certificateDate" />
+					<show force="true" id="bcpg:suppliers" />
+					<show force="true" id="bcpg:supplierPlants" />
+					<show force="true" id="bcpg:supplierRefCode" />
+					<show force="true" id="bcpg:plants" />
+					<show force="true" id="bcpg:productGeoOrigin" />
+					<show force="true" id="bcpg:entityTplRef" />
+					<show force="true" id="pack:tare" />
+					<show force="true" id="pack:tareUnit" />
+
+					<show force="true" id="gs1:packagingShapeCode" />
+					<show force="true" id="pack:length" />
+					<show force="true" id="pack:width" />
+					<show force="true" id="pack:height" />
+					<show force="false" id="pack:pmIntLength" />
+					<show force="false" id="pack:pmIntWidth" />
+					<show force="false" id="pack:pmIntHeight" />
+					<show force="false" id="pack:pmThickness" />
+					<show force="false" id="pack:pmPaperWeight" />
+					<show force="false" id="pack:pmMaterialRefs" />
+					<show force="false" id="pack:pmAdditionnalMaterial" />
+					<show force="false" id="pack:pmCoreDiameter" />
+					<show force="false" id="pack:pmCoilDiameter" />
+					<show force="false" id="pack:pmPrintNbColors" />
+					<show force="false" id="pack:pmPrintColor" />
+					<show force="false" id="pack:pmPrintType" />
+					<show force="false" id="pack:pmPrintVarnish" />
+
+					<show force="true" id="gs1:isPackagingMarkedReturnable" />
+					<show force="true" id="gs1:packagingTermsAndConditionsCode" />
+
+					<show force="true" id="gs1:packagingRecyclingProcessTypeCode" />
+					<show force="true" id="gs1:packagingRecyclingSchemeCode" />
+
+					<show force="true" id="gs1:sortingBonusCriteria" />
+					<show force="true" id="gs1:sortingMalusCriteria" />
+					<show force="true" id="gs1:sortingInstructions" />
+					<show force="true" id="gs1:consumerUsageInstructions" />
+
+					<show force="false" id="sec:securityRef" />
+					<show force="false" id="cm:taggable" />
+					<show force="false" id="cm:categories" />
+					<show for-mode="view" force="false" id="cm:creator" />
+					<show for-mode="view" force="false" id="cm:created" />
+					<show for-mode="view" force="false" id="cm:modifier" />
+					<show for-mode="view" force="false" id="cm:modified" />
+					<show force="false" id="bcpg:autoMergeDate" />
+					<show force="false" id="bcpg:autoMergeTo" />
+					<show force="false" id="bcpg:autoMergeVersionType" />
+					<show force="false" id="bcpg:autoMergeComments" />
+					<show force="false" id="bcpg:autoMergeImpactWUsed" />
+					<show id="bcpg:entityTplEnabled" force="false" />
+					<show id="bcpg:entityTplIsDefault" force="false" />
+					<show id="bcpg:entityTplScript" force="false" />
+
+					<show id="pjt:projectScore" force="true" />
+				</field-visibility>
+				<appearance>
+					<set id="template" appearance="bordered-panel" label-id="becpg.forms.set.template.label" />
+					<field id="bcpg:entityTplEnabled" set="template" />
+					<field id="bcpg:entityTplIsDefault" set="template" />
+					<field id="bcpg:entityTplScript" set="template" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/association.ftl">
+							<control-param name="startLocation">{doclib}</control-param>
+						</control>
+					</field>
+					<set appearance="bordered-panel" id="mainInfo" label-id="becpg.forms.set.designation.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="cm:name" mandatory="false" read-only="false" set="mainInfo" />
+					<field id="cm:title" label-id="becpg.forms.field.tradeName" description-id="becpg.forms.field.tradeName" mandatory="false"
+						read-only="false" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field help-id="becpg.forms.help.productHierarchy1" id="bcpg:productHierarchy1" mandatory="false" read-only="false" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy
 							</control-param>
-            </control>
-          </field>
-          <field help-id="becpg.forms.help.productHierarchy2" id="bcpg:productHierarchy2" mandatory="false" read-only="false" set="mainInfo">
-            <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-              <control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy
+						</control>
+					</field>
+					<field help-id="becpg.forms.help.productHierarchy2" id="bcpg:productHierarchy2" mandatory="false" read-only="false" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy
 							</control-param>
-              <control-param name="parent">bcpg_productHierarchy1
+							<control-param name="parent">bcpg_productHierarchy1
 							</control-param>
-            </control>
-          </field>
-          <field help-id="becpg.forms.help.legalName" id="bcpg:legalName" mandatory="false" read-only="false" set="mainInfo"/>
-          <field id="bcpg:productComments" mandatory="false" read-only="false" set="mainInfo">
-            <control template="/org/alfresco/components/form/controls/textarea.ftl">
-              <control-param name="rows">2</control-param>
-            </control>
-          </field>
-          <field id="cm:description" mandatory="false" read-only="false" set="mainInfo">
-            <control>
-              <control-param name="activateLinks">true</control-param>
-            </control>
-          </field>
-          
-          <field id="gs1:packagingTypeCode" mandatory="false" read-only="false" set="mainInfo"/>
-          <field id="gs1:packagingFunctionCode" mandatory="false" read-only="false" set="mainInfo"/>
-          <field id="gs1:packagingTypeDescription" mandatory="false" read-only="false" set="mainInfo">
-            <control template="/org/alfresco/components/form/controls/textarea.ftl">
-              <control-param name="rows">2</control-param>
-              <control-param name="maxLength">200</control-param>
-            </control>
-          </field>
+						</control>
+					</field>
+					<field help-id="becpg.forms.help.legalName" id="bcpg:legalName" mandatory="false" read-only="false" set="mainInfo" />
+					<field id="bcpg:productComments" mandatory="false" read-only="false" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
+						</control>
+					</field>
+					<field id="cm:description" mandatory="false" read-only="false" set="mainInfo">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+
+					<field id="gs1:packagingTypeCode" mandatory="false" read-only="false" set="mainInfo" />
+					<field id="gs1:packagingFunctionCode" mandatory="false" read-only="false" set="mainInfo" />
+					<field id="gs1:packagingTypeDescription" mandatory="false" read-only="false" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
+							<control-param name="maxLength">200</control-param>
+						</control>
+					</field>
 <!-- 	  <field id="gs1:packagingFeatureCode" mandatory="false" read-only="false" set="mainInfo"/>
 		  <field id="gs1:packagingFunctionCode" mandatory="false" read-only="false" set="mainInfo"/> -->
-          
-          <field id="bcpg:productState" mandatory="false" read-only="false" set="mainInfo"/>
-          <field id="bcpg:productUnit" mandatory="false" read-only="false" set="mainInfo">
-            <control template="/org/alfresco/components/form/controls/product-unit.ftl">
-              <control-param name="options">P|becpg.forms.field.productUnit,m,m2,m3,in,ft,g,kg,mL,cp,fl_oz</control-param>
-            </control>
-          </field>
-          <field id="bcpg:componentLossPerc" mandatory="false" read-only="false" set="mainInfo"/>
-          <field id="bcpg:code" mandatory="false" read-only="true" set="mainInfo"/>
-          <field id="bcpg:erpCode" mandatory="false" read-only="false" set="mainInfo"/>
-          <field help-id="becpg.forms.help.eanCode" id="bcpg:eanCode" mandatory="false" read-only="false" set="mainInfo">
-            <constraint-handlers>
-              <constraint event="keyup,change" type="MANDATORY" validation-handler="beCPG.forms.validation.GTIN"/>
-            </constraint-handlers>
-          </field>
-          <field id="bcpg:certificateDate" mandatory="false" read-only="false" set="mainInfo"/>
-          <field id="bcpg:suppliers" mandatory="false" read-only="false" set="mainInfo"/>
-          <field id="bcpg:supplierPlants" mandatory="false" read-only="false" set="mainInfo">
-            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-              <control-param name="ds">becpg/autocomplete/DataListCharact?className=bcpg:plant&amp;attributeName=cm:name&amp;filter=parentAsEntity</control-param>
-              <control-param name="parentAssoc">bcpg_suppliers</control-param>
-            </control>
-          </field>
-          <field id="bcpg:supplierRefCode" mandatory="false" read-only="false" set="mainInfo"/>
-          <field id="bcpg:plants" mandatory="false" read-only="false" set="mainInfo"/>
-          <field id="bcpg:productGeoOrigin" mandatory="false" read-only="false" set="mainInfo"/>
-          <field id="bcpg:entityTplRef" mandatory="false" read-only="false" set="mainInfo">
-            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:packagingMaterial?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
-							</control-param>
-              <control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
-							</control-param>
-            </control>
-          </field>
-          <set appearance="bordered-panel" id="tare" label-id="becpg.forms.set.tare.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
-          <field id="pack:tare" mandatory="false" read-only="false" set="tare"/>
-          <field id="pack:tareUnit" mandatory="false" read-only="false" set="tare"/>
-          <set appearance="bordered-panel" id="dimension" label-id="becpg.forms.set.pack.size.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
-           <field id="gs1:packagingShapeCode" mandatory="false" read-only="false" set="dimension"/>
-          
-          <field id="pack:length" mandatory="false" read-only="false" set="dimension">
-            <control template="/org/alfresco/components/form/controls/number-unit.ftl">
-              <control-param name="unit">mm</control-param>
-            </control>
-          </field>
-          <field id="pack:width" mandatory="false" read-only="false" set="dimension">
-            <control template="/org/alfresco/components/form/controls/number-unit.ftl">
-              <control-param name="unit">mm</control-param>
-            </control>
-          </field>
-          <field id="pack:height" mandatory="false" read-only="false" set="dimension">
-            <control template="/org/alfresco/components/form/controls/number-unit.ftl">
-              <control-param name="unit">mm</control-param>
-            </control>
-          </field>
-          <set appearance="bordered-panel" id="internalDimension" label-id="becpg.forms.set.pack.intSize.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
-          <field id="pack:pmIntLength" mandatory="false" read-only="false" set="internalDimension">
-            <control template="/org/alfresco/components/form/controls/number-unit.ftl">
-              <control-param name="unit">mm</control-param>
-            </control>
-          </field>
-          <field id="pack:pmIntWidth" mandatory="false" read-only="false" set="internalDimension">
-            <control template="/org/alfresco/components/form/controls/number-unit.ftl">
-              <control-param name="unit">mm</control-param>
-            </control>
-          </field>
-          <field id="pack:pmIntHeight" mandatory="false" read-only="false" set="internalDimension">
-            <control template="/org/alfresco/components/form/controls/number-unit.ftl">
-              <control-param name="unit">mm</control-param>
-            </control>
-          </field>
-          <set appearance="bordered-panel" id="thickness" label-id="becpg.forms.set.pack.thickness.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
-          <field id="pack:pmThickness" mandatory="false" read-only="false" set="thickness">
-            <control template="/org/alfresco/components/form/controls/number-unit.ftl">
-              <control-param name="unit">mm</control-param>
-            </control>
-          </field>
-          <field id="pack:pmPaperWeight" mandatory="false" read-only="false" set="thickness"/>
-          <set appearance="bordered-panel" id="material" label-id="becpg.forms.set.pack.material.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
-          <field id="pack:pmMaterialRefs" mandatory="false" read-only="false" set="material">
-            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-              <control-param name="ds">becpg/autocomplete/targetassoc/associations/pack:packMaterial
-							</control-param>
-              <control-param name="showLink">false</control-param>
-            </control>
-          </field>
-          <field id="pack:pmAdditionnalMaterial" mandatory="false" read-only="false" set="material"/>
-          <set appearance="bordered-panel" id="coil" label-id="becpg.forms.set.pack.coil.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
-          <field id="pack:pmCoreDiameter" mandatory="false" read-only="false" set="coil">
-            <control template="/org/alfresco/components/form/controls/number-unit.ftl">
-              <control-param name="unit">mm</control-param>
-            </control>
-          </field>
-          <field id="pack:pmCoilDiameter" mandatory="false" read-only="false" set="coil">
-            <control template="/org/alfresco/components/form/controls/number-unit.ftl">
-              <control-param name="unit">mm</control-param>
-            </control>
-          </field>
-          <set appearance="bordered-panel" id="print" label-id="becpg.forms.set.pack.print.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
-          <field id="pack:pmPrintNbColors" mandatory="false" read-only="false" set="print"/>
-          <field id="pack:pmPrintColor" mandatory="false" read-only="false" set="print"/>
-          <field id="pack:pmPrintType" mandatory="false" read-only="false" set="print"/>
-          <field id="pack:pmPrintVarnish" mandatory="false" read-only="false" set="print"/>
-          
-          <set appearance="bordered-panel" id="packSorting" label-id="becpg.forms.set.packSorting.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
-          <field id="gs1:isPackagingMarkedReturnable" mandatory="false" read-only="false" set="packSorting">
-            <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
-          </field>
-          <field help-id="becpg.forms.help.gs1.packagingTermsAndConditionsCode" id="gs1:packagingTermsAndConditionsCode" mandatory="false" read-only="false" set="packSorting"/>
-         
-          <field id="gs1:packagingRecyclingProcessTypeCode" mandatory="false" read-only="false" set="packSorting"/>
-          <field id="gs1:packagingRecyclingSchemeCode" mandatory="false" read-only="false" set="packSorting"/>
-           <field id="gs1:sortingBonusCriteria" mandatory="false" read-only="false" set="packSorting"/>
-          <field id="gs1:sortingMalusCriteria" mandatory="false" read-only="false" set="packSorting"/>
-          <field id="gs1:sortingInstructions" mandatory="false" read-only="false" set="packSorting">
-            <control template="/org/alfresco/components/form/controls/textarea.ftl">
-              <control-param name="rows">2</control-param>
-            </control>
-          </field>
-          <field id="gs1:consumerUsageInstructions" mandatory="false" read-only="false" set="packSorting">
-            <control template="/org/alfresco/components/form/controls/textarea.ftl">
-              <control-param name="rows">2</control-param>
-            </control>
-          </field>
-          
-          <set id="securityRule" appearance="bordered-panel" label-id="becpg.forms.set.securityRule.label" />
-          <field id="sec:securityRef" set="securityRule" mandatory="false" read-only="false">
-			 <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-				<control-param name="ds">becpg/autocomplete/targetassoc/associations/sec:aclGroup?&amp;excludeProps=sec:isLocalPermission%7Cfalse
-				</control-param>
-			 </control>
-          </field>
-					
-          <set appearance="bordered-panel" id="categories" label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
-          <field id="cm:taggable" mandatory="false" read-only="false" set="categories">
-            <control>
-              <control-param name="compactMode">true</control-param>
-              <control-param name="params">aspect=cm:taggable
-							</control-param>
-              <control-param name="createNewItemUri">/api/tag/workspace/SpacesStore
-							</control-param>
-              <control-param name="createNewItemIcon">tag</control-param>
-            </control>
-          </field>
-          <field id="cm:categories" mandatory="false" read-only="false" set="categories">
-            <control>
-              <control-param name="compactMode">true</control-param>
-            </control>
-          </field>
-          <set appearance="bordered-panel" id="audit" label-id="becpg.forms.set.audit.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
-          <field id="cm:creator" mandatory="false" read-only="false" set="audit"/>
-          <field id="cm:created" mandatory="false" read-only="false" set="audit"/>
-          <field id="cm:modifier" mandatory="false" read-only="false" set="audit"/>
-          <field id="cm:modified" mandatory="false" read-only="false" set="audit"/>
-          <set appearance="bordered-panel" id="branch" label-id="becpg.forms.set.branch.label"/>
-          <field id="bcpg:autoMergeDate" mandatory="false" read-only="false" set="branch"/>
-          <field id="bcpg:autoMergeTo" mandatory="false" read-only="false" set="branch">
-            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-              <control-param name="ds">becpg/autocomplete/branches</control-param>
-              <control-param name="urlParamsToPass">itemId</control-param>
-            </control>
-          </field>
-          <field id="bcpg:autoMergeVersionType" mandatory="false" read-only="false" set="branch"/>
-          <field id="bcpg:autoMergeComments" mandatory="false" read-only="false" set="branch">
-            <control template="/org/alfresco/components/form/controls/textarea.ftl"/>
-          </field>
-          <field id="bcpg:autoMergeImpactWUsed" mandatory="false" read-only="false" set="branch"/>
-          <field id="pjt:projectScore" mandatory="false" read-only="true" set="mainInfo"/>
-        </appearance>
-      </form>
-      <form id="doclib-simple-metadata">
-        <field-visibility>
-          <show force="false" id="cm:name"/>
-          <show force="true" id="cm:title"/>
-          <show force="true" id="cm:description"/>
-          <show for-mode="edit" force="true" id="cm:taggable"/>
-          <show force="false" id="cm:categories"/>
-        </field-visibility>
-        <appearance>
-          <field id="cm:name" mandatory="false" read-only="false">
-            <control>
-              <control-param name="maxLength">255</control-param>
-            </control>
-          </field>
-          <field id="cm:title" mandatory="false" read-only="false">
-            <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
-          </field>
-          <field id="cm:description" mandatory="false" read-only="false">
-            <control>
-              <control-param name="activateLinks">true</control-param>
-            </control>
-          </field>
-          <field id="cm:taggable" mandatory="false" read-only="false">
-            <control>
-              <control-param name="compactMode">true</control-param>
-              <control-param name="params">aspect=cm:taggable
-							</control-param>
-              <control-param name="createNewItemUri">/api/tag/workspace/SpacesStore
-							</control-param>
-              <control-param name="createNewItemIcon">tag</control-param>
-            </control>
-          </field>
-          <field id="cm:categories" mandatory="false" read-only="false">
-            <control>
-              <control-param name="compactMode">true</control-param>
-            </control>
-          </field>
-        </appearance>
-        <edit-form template="../documentlibrary/forms/doclib-simple-metadata.ftl"/>
-      </form>
-      <form id="reports-parameters">
-        <field-visibility>
-          <show force="true" id="rep:reportLocales"/>
-          <show force="true" id="rep:reportParameters"/>
-          <show force="true" id="rep:reportTpls"/>
-        </field-visibility>
-        <appearance>
-          <field id="rep:reportLocales" mandatory="false" read-only="false">
-            <control template="/org/alfresco/components/form/controls/mtlangue.ftl"/>
-          </field>
-          <field id="rep:reportParameters" mandatory="false" read-only="false">
-            <control template="/org/alfresco/components/form/controls/checkboxmany.ftl"/>
-          </field>
-          <field id="rep:reportTpls" mandatory="false" read-only="false">
-            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-              <control-param name="ds">becpg/autocomplete/targetassoc/associations/rep:reportTpl?excludeProps=rep%3AreportTplIsSystem%7Ctrue%2Crep%3AreportTplIsDisabled%7Ctrue%2Crep%3AreportTplType%7CExportSearch%2Crep%3AreportTplType%7CCompare%2Crep%3AreportTplType%7CSystem</control-param>
-            </control>
-          </field>
-        </appearance>
-      </form>
-      <form id="supplier">
-        <field-visibility>
-          <show force="false" id="cm:name"/>
-          <show force="true" id="cm:title"/>
-          <show force="false" id="bcpg:legalName"/>
-          <show force="false" id="bcpg:productComments"/>
-          <show force="true" id="cm:description"/>
-          <show force="false" id="bcpg:eanCode"/>
-          <show force="true" id="bcpg:certificateDate"/>
-          <show force="true" id="bcpg:plants"/>
-          <show force="true" id="bcpg:productGeoOrigin"/>
-          <show force="true" id="bcpg:supplierPlants"/>
-          <show force="true" id="bcpg:supplierRefCode"/>
-          <show force="true" id="pack:tare"/>
-          <show force="true" id="pack:tareUnit"/>
-          
-           <show force="true" id="gs1:packagingShapeCode"/>
-          <show force="false" id="pack:length"/>
-          <show force="false" id="pack:width"/>
-          <show force="false" id="pack:height"/>
-          <show force="false" id="pack:pmIntLength"/>
-          <show force="false" id="pack:pmIntWidth"/>
-          <show force="false" id="pack:pmIntHeight"/>
-          <show force="false" id="pack:pmThickness"/>
-          <show force="false" id="pack:pmPaperWeight"/>
-          <show force="false" id="pack:pmMaterialRefs"/>
-          <show force="false" id="pack:pmAdditionnalMaterial"/>
-          <show force="false" id="pack:pmCoreDiameter"/>
-          <show force="false" id="pack:pmCoilDiameter"/>
-          <show force="false" id="pack:pmPrintNbColors"/>
-          <show force="false" id="pack:pmPrintColor"/>
-          <show force="false" id="pack:pmPrintType"/>
-          <show force="false" id="pack:pmPrintVarnish"/>
-          
-          <show force="true" id="gs1:isPackagingMarkedReturnable"/>
-          <show force="true" id="gs1:packagingTermsAndConditionsCode"/>
-        
-          <show force="true" id="gs1:packagingRecyclingProcessTypeCode"/>
-		  <show force="true" id="gs1:packagingRecyclingSchemeCode"/>
-		  
-          <show force="true" id="gs1:sortingBonusCriteria"/>
-          <show force="true" id="gs1:sortingMalusCriteria"/>
-          <show force="true" id="gs1:sortingInstructions"/>
-          <show force="true" id="gs1:consumerUsageInstructions"/>
-          
-        </field-visibility>
-        <appearance>
-          <set appearance="bordered-panel" id="mainInfo" label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
-          <field id="cm:name" mandatory="false" read-only="false" set="mainInfo"/>
-          <field id="cm:title" label-id="becpg.forms.field.tradeName" description-id="becpg.forms.field.tradeName" mandatory="false" read-only="false" set="mainInfo">
-            <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
-          </field>
-          <field help-id="becpg.forms.help.legalName" id="bcpg:legalName" mandatory="false" read-only="false" set="mainInfo"/>
-          <field id="bcpg:productComments" mandatory="false" read-only="false" set="mainInfo">
-            <control template="/org/alfresco/components/form/controls/textarea.ftl">
-              <control-param name="rows">2</control-param>
-            </control>
-          </field>
-          <field id="cm:description" mandatory="false" read-only="false" set="mainInfo">
-            <control>
-              <control-param name="activateLinks">true</control-param>
-            </control>
-          </field>
-          <field help-id="becpg.forms.help.eanCode" id="bcpg:eanCode" mandatory="false" read-only="false" set="mainInfo">
-            <constraint-handlers>
-              <constraint event="keyup,change" type="MANDATORY" validation-handler="beCPG.forms.validation.GTIN"/>
-            </constraint-handlers>
-          </field>
-          <field id="bcpg:certificateDate" mandatory="false" read-only="false" set="mainInfo"/>
-          <field id="bcpg:plants" mandatory="false" read-only="false" set="mainInfo"/>
-          <field id="bcpg:productGeoOrigin" mandatory="false" read-only="false" set="mainInfo"/>
-          <field id="bcpg:supplierPlants" mandatory="false" read-only="false" set="mainInfo">
-            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-              <control-param name="ds">becpg/autocomplete/supplierPlants</control-param>
-            </control>
-          </field>
-          <field id="bcpg:supplierRefCode" mandatory="false" read-only="false" set="mainInfo"/>
-          <set appearance="bordered-panel" id="tare" label-id="becpg.forms.set.tare.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
-          <field id="pack:tare" mandatory="false" read-only="false" set="tare"/>
-          <field id="pack:tareUnit" mandatory="false" read-only="false" set="tare"/>
-          <set appearance="bordered-panel" id="dimension" label-id="becpg.forms.set.pack.size.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
-          <field id="gs1:packagingShapeCode" mandatory="false" read-only="false" set="dimension"/>
-          <field id="pack:length" mandatory="false" read-only="false" set="dimension">
-            <control template="/org/alfresco/components/form/controls/number-unit.ftl">
-              <control-param name="unit">mm</control-param>
-            </control>
-          </field>
-          <field id="pack:width" mandatory="false" read-only="false" set="dimension">
-            <control template="/org/alfresco/components/form/controls/number-unit.ftl">
-              <control-param name="unit">mm</control-param>
-            </control>
-          </field>
-          <field id="pack:height" mandatory="false" read-only="false" set="dimension">
-            <control template="/org/alfresco/components/form/controls/number-unit.ftl">
-              <control-param name="unit">mm</control-param>
-            </control>
-          </field>
-          <set appearance="bordered-panel" id="internalDimension" label-id="becpg.forms.set.pack.intSize.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
-          <field id="pack:pmIntLength" mandatory="false" read-only="false" set="internalDimension">
-            <control template="/org/alfresco/components/form/controls/number-unit.ftl">
-              <control-param name="unit">mm</control-param>
-            </control>
-          </field>
-          <field id="pack:pmIntWidth" mandatory="false" read-only="false" set="internalDimension">
-            <control template="/org/alfresco/components/form/controls/number-unit.ftl">
-              <control-param name="unit">mm</control-param>
-            </control>
-          </field>
-          <field id="pack:pmIntHeight" mandatory="false" read-only="false" set="internalDimension">
-            <control template="/org/alfresco/components/form/controls/number-unit.ftl">
-              <control-param name="unit">mm</control-param>
-            </control>
-          </field>
-          <set appearance="bordered-panel" id="thickness" label-id="becpg.forms.set.pack.thickness.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
-          <field id="pack:pmThickness" mandatory="false" read-only="false" set="thickness">
-            <control template="/org/alfresco/components/form/controls/number-unit.ftl">
-              <control-param name="unit">mm</control-param>
-            </control>
-          </field>
-          <field id="pack:pmPaperWeight" mandatory="false" read-only="false" set="thickness"/>
-          <set appearance="bordered-panel" id="material" label-id="becpg.forms.set.pack.material.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
-          <field id="pack:pmMaterialRefs" mandatory="false" read-only="false" set="material">
-            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-              <control-param name="ds">becpg/autocomplete/targetassoc/associations/pack:packMaterial
-							</control-param>
-              <control-param name="showLink">false</control-param>
-            </control>
-          </field>
-          <field id="pack:pmAdditionnalMaterial" mandatory="false" read-only="false" set="material"/>
-          <set appearance="bordered-panel" id="coil" label-id="becpg.forms.set.pack.coil.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
-          <field id="pack:pmCoreDiameter" mandatory="false" read-only="false" set="coil">
-            <control template="/org/alfresco/components/form/controls/number-unit.ftl">
-              <control-param name="unit">mm</control-param>
-            </control>
-          </field>
-          <field id="pack:pmCoilDiameter" mandatory="false" read-only="false" set="coil">
-            <control template="/org/alfresco/components/form/controls/number-unit.ftl">
-              <control-param name="unit">mm</control-param>
-            </control>
-          </field>
-          <set appearance="bordered-panel" id="print" label-id="becpg.forms.set.pack.print.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
-          <field id="pack:pmPrintNbColors" mandatory="false" read-only="false" set="print"/>
-          <field id="pack:pmPrintColor" mandatory="false" read-only="false" set="print"/>
-          <field id="pack:pmPrintType" mandatory="false" read-only="false" set="print"/>
-          <field id="pack:pmPrintVarnish" mandatory="false" read-only="false" set="print"/>
-          
-           <set appearance="bordered-panel" id="packSorting" label-id="becpg.forms.set.packSorting.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
-          <field id="gs1:isPackagingMarkedReturnable" mandatory="false" read-only="false" set="packSorting">
-            <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
-          </field>
-          <field help-id="becpg.forms.help.gs1.packagingTermsAndConditionsCode" id="gs1:packagingTermsAndConditionsCode" mandatory="false" read-only="false" set="packSorting"/>
-         
-          <field id="gs1:packagingRecyclingProcessTypeCode" mandatory="false" read-only="false" set="packSorting"/>
-          <field id="gs1:packagingRecyclingSchemeCode" mandatory="false" read-only="false" set="packSorting"/>
-           <field id="gs1:sortingBonusCriteria" mandatory="false" read-only="false" set="packSorting"/>
-          <field id="gs1:sortingMalusCriteria" mandatory="false" read-only="false" set="packSorting"/>
-          <field id="gs1:sortingInstructions" mandatory="false" read-only="false" set="packSorting">
-            <control template="/org/alfresco/components/form/controls/textarea.ftl">
-              <control-param name="rows">2</control-param>
-            </control>
-          </field>
-          <field id="gs1:consumerUsageInstructions" mandatory="false" read-only="false" set="packSorting">
-            <control template="/org/alfresco/components/form/controls/textarea.ftl">
-              <control-param name="rows">2</control-param>
-            </control>
-          </field>
-        </appearance>
-      </form>
-    </forms>
-  </config>
-  <config condition="bcpg:packagingMaterial" evaluator="model-type" replace="false">
-    <forms>
-      <form id="bulk-edit">
-       <field-visibility>
-          <show force="true" id="cm:name"/>
-          <show force="true" id="cm:title"/>
-          <show force="true" id="bcpg:productHierarchy1"/>
-          <show force="true" id="bcpg:productHierarchy2"/>
-          <show force="true" id="bcpg:legalName"/>
-          <show force="true" id="bcpg:productComments"/>
-          <show force="true" id="cm:description"/>
-          
-          <show force="true" id="gs1:packagingTypeCode"/>
-          <show force="true" id="gs1:packagingFunctionCode"/>
-          <show force="true" id="gs1:packagingTypeDescription"/>
 
-          <show force="true" id="bcpg:productState"/>
-          <show force="true" id="bcpg:productUnit"/>
-          <show force="true" id="bcpg:componentLossPerc"/>
-          <show force="true" id="bcpg:code"/>
-          <show force="true" id="bcpg:erpCode"/>
-          <show force="true" id="bcpg:eanCode"/>
-          <show force="true" id="bcpg:certificateDate"/>
-          <show force="true" id="bcpg:suppliers"/>
-          <show force="true" id="bcpg:supplierPlants"/>
-          <show force="true" id="bcpg:supplierRefCode"/>
-          <show force="true" id="bcpg:plants"/>
-          <show force="true" id="bcpg:productGeoOrigin"/>
-          <show force="true" id="bcpg:entityTplRef"/>
-          <show force="true" id="pack:tare"/>
-          <show force="true" id="pack:tareUnit"/>
-          
-          <show force="true" id="gs1:packagingShapeCode"/>
-          <show force="true" id="pack:length"/>
-          <show force="true" id="pack:width"/>
-          <show force="true" id="pack:height"/>
-          <show force="true" id="pack:pmIntLength"/>
-          <show force="true" id="pack:pmIntWidth"/>
-          <show force="true" id="pack:pmIntHeight"/>
-          <show force="true" id="pack:pmThickness"/>
-          <show force="true" id="pack:pmPaperWeight"/>
-          <show force="true" id="pack:pmMaterialRefs"/>
-          <show force="true" id="pack:pmAdditionnalMaterial"/>
-          <show force="true" id="pack:pmCoreDiameter"/>
-          <show force="true" id="pack:pmCoilDiameter"/>
-          <show force="true" id="pack:pmPrintNbColors"/>
-          <show force="true" id="pack:pmPrintColor"/>
-          <show force="true" id="pack:pmPrintType"/>
-          <show force="true" id="pack:pmPrintVarnish"/>
-       
-          <show force="true" id="gs1:isPackagingMarkedReturnable"/>
-          <show force="true" id="gs1:packagingTermsAndConditionsCode"/>
-        
-          <show force="true" id="gs1:packagingRecyclingProcessTypeCode"/>
-		  <show force="true" id="gs1:packagingRecyclingSchemeCode"/>
-		  
-          <show force="true" id="gs1:sortingBonusCriteria"/>
-          <show force="true" id="gs1:sortingMalusCriteria"/>
-          <show force="true" id="gs1:sortingInstructions"/>
-          <show force="true" id="gs1:consumerUsageInstructions"/>
-      
-        </field-visibility>
-      </form>
-      <form id="product-list">
-       <field-visibility>
-          <show force="true" id="cm:name"/>
-          <show force="true" id="cm:title"/>
-          <show force="true" id="bcpg:productHierarchy1"/>
-          <show force="true" id="bcpg:productHierarchy2"/>
-          <show force="true" id="bcpg:legalName"/>
-          <show force="true" id="bcpg:productComments"/>
-          <show force="true" id="cm:description"/>
-          
-          <show force="true" id="gs1:packagingTypeCode"/>
-          <show force="true" id="gs1:packagingFunctionCode"/>
-          <show force="true" id="gs1:packagingTypeDescription"/>
+					<field id="bcpg:productState" mandatory="false" read-only="false" set="mainInfo" />
+					<field id="bcpg:productUnit" mandatory="false" read-only="false" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
+							<control-param name="options">P|becpg.forms.field.productUnit,m,m2,m3,in,ft,g,kg,mL,cp,fl_oz</control-param>
+						</control>
+					</field>
+					<field id="bcpg:componentLossPerc" mandatory="false" read-only="false" set="mainInfo" />
+					<field id="bcpg:code" mandatory="false" read-only="true" set="mainInfo" />
+					<field id="bcpg:erpCode" mandatory="false" read-only="false" set="mainInfo" />
+					<field help-id="becpg.forms.help.eanCode" id="bcpg:eanCode" mandatory="false" read-only="false" set="mainInfo">
+						<constraint-handlers>
+							<constraint event="keyup,change" type="MANDATORY" validation-handler="beCPG.forms.validation.GTIN" />
+						</constraint-handlers>
+					</field>
+					<field id="bcpg:certificateDate" mandatory="false" read-only="false" set="mainInfo" />
+					<field id="bcpg:suppliers" mandatory="false" read-only="false" set="mainInfo" />
+					<field id="bcpg:supplierPlants" mandatory="false" read-only="false" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/DataListCharact?className=bcpg:plant&amp;attributeName=cm:name&amp;filter=parentAsEntity
+							</control-param>
+							<control-param name="parentAssoc">bcpg_suppliers</control-param>
+						</control>
+					</field>
+					<field id="bcpg:supplierRefCode" mandatory="false" read-only="false" set="mainInfo" />
+					<field id="bcpg:plants" mandatory="false" read-only="false" set="mainInfo" />
+					<field id="bcpg:productGeoOrigin" mandatory="false" read-only="false" set="mainInfo" />
+					<field id="bcpg:entityTplRef" mandatory="false" read-only="false" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:packagingMaterial?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
+							</control-param>
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
+							</control-param>
+						</control>
+					</field>
+					<set appearance="bordered-panel" id="tare" label-id="becpg.forms.set.tare.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="pack:tare" mandatory="false" read-only="false" set="tare" />
+					<field id="pack:tareUnit" mandatory="false" read-only="false" set="tare" />
+					<set appearance="bordered-panel" id="dimension" label-id="becpg.forms.set.pack.size.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="gs1:packagingShapeCode" mandatory="false" read-only="false" set="dimension" />
 
-          <show force="true" id="bcpg:productState"/>
-          <show force="true" id="bcpg:productUnit"/>
-          <show force="true" id="bcpg:componentLossPerc"/>
-          <show force="true" id="bcpg:code"/>
-          <show force="true" id="bcpg:erpCode"/>
-          <show force="true" id="bcpg:eanCode"/>
-          <show force="true" id="bcpg:certificateDate"/>
-          <show force="true" id="bcpg:suppliers"/>
-          <show force="false" id="bcpg:supplierPlants"/>
-          <show force="false" id="bcpg:supplierRefCode"/>
-          <show force="false" id="bcpg:plants"/>
-          <show force="false" id="bcpg:productGeoOrigin"/>
-          <show force="false" id="bcpg:entityTplRef"/>
-          <show force="false" id="pack:tare"/>
-          <show force="false" id="pack:tareUnit"/>
-          
-          <show force="false" id="gs1:packagingShapeCode"/>
-          <show force="false" id="pack:length"/>
-          <show force="false" id="pack:width"/>
-          <show force="false" id="pack:height"/>
-          <show force="false" id="pack:pmIntLength"/>
-          <show force="false" id="pack:pmIntWidth"/>
-          <show force="false" id="pack:pmIntHeight"/>
-          <show force="false" id="pack:pmThickness"/>
-          <show force="false" id="pack:pmPaperWeight"/>
-          <show force="false" id="pack:pmMaterialRefs"/>
-          <show force="false" id="pack:pmAdditionnalMaterial"/>
-          <show force="false" id="pack:pmCoreDiameter"/>
-          <show force="false" id="pack:pmCoilDiameter"/>
-          <show force="false" id="pack:pmPrintNbColors"/>
-          <show force="false" id="pack:pmPrintColor"/>
-          <show force="false" id="pack:pmPrintType"/>
-          <show force="false" id="pack:pmPrintVarnish"/>
-       
-          <show force="false" id="gs1:isPackagingMarkedReturnable"/>
-          <show force="false" id="gs1:packagingTermsAndConditionsCode"/>
-        
-          <show force="false" id="gs1:packagingRecyclingProcessTypeCode"/>
-		  <show force="false" id="gs1:packagingRecyclingSchemeCode"/>
-		  
-          <show force="false" id="gs1:sortingBonusCriteria"/>
-          <show force="false" id="gs1:sortingMalusCriteria"/>
-          <show force="false" id="gs1:sortingInstructions"/>
-          <show force="false" id="gs1:consumerUsageInstructions"/>
-      
-        </field-visibility>
-      </form>
-      <form id="create">
-        <field-visibility>
-          <show force="false" id="cm:name"/>
-          <show force="true" id="cm:title"/>
-          <show force="false" id="bcpg:productHierarchy1"/>
-          <show force="false" id="bcpg:productHierarchy2"/>
-          <show force="false" id="bcpg:legalName"/>
-          <show force="false" id="bcpg:productComments"/>
-          <show force="true" id="cm:description"/>
-          <show force="true" id="bcpg:entityTplRef"/>
-          <show force="false" id="bcpg:productState"/>
-          <show force="false" id="bcpg:productUnit"/>
-          <show force="false" id="bcpg:componentLossPerc"/>
-          <show force="true" id="bcpg:code"/>
-          <show force="true" id="bcpg:erpCode"/>
-          <show force="false" id="bcpg:eanCode"/>
-          <show force="true" id="bcpg:suppliers"/>
-          <show force="true" id="bcpg:supplierPlants"/>
-          <show force="true" id="bcpg:supplierRefCode"/>
-          <show force="true" id="bcpg:plants"/>
-          <show force="true" id="bcpg:productGeoOrigin"/>
-          <show force="true" id="bcpg:certificateDate"/>
-          <show force="true" id="pack:tare"/>
-          <show force="true" id="pack:tareUnit"/>
-          <show force="true" id="gs1:packagingShapeCode"/>
-          <show force="true" id="pack:length"/>
-          <show force="true" id="pack:width"/>
-          <show force="true" id="pack:height"/>
-           
-          <show force="true" id="gs1:isPackagingMarkedReturnable"/>
-          <show force="true" id="gs1:packagingTermsAndConditionsCode"/>
-        
-          <show force="true" id="gs1:packagingRecyclingProcessTypeCode"/>
-		  <show force="true" id="gs1:packagingRecyclingSchemeCode"/>
-		  
-          <show force="true" id="gs1:sortingBonusCriteria"/>
-          <show force="true" id="gs1:sortingMalusCriteria"/>
-          <show force="true" id="gs1:sortingInstructions"/>
-          <show force="true" id="gs1:consumerUsageInstructions"/>
-          <show force="false" id="cm:taggable"/>
-          <show force="false" id="cm:categories"/>
-        </field-visibility>
-        <appearance>
-          <set appearance="bordered-panel" id="mainInfo" label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
-          <field id="cm:name" mandatory="false" read-only="false" set="mainInfo"/>
-          <field id="cm:title" label-id="becpg.forms.field.tradeName" description-id="becpg.forms.field.tradeName" mandatory="false" read-only="false" set="mainInfo">
-            <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
-          </field>
-          <field help-id="becpg.forms.help.productHierarchy1" id="bcpg:productHierarchy1" mandatory="false" read-only="false" set="mainInfo">
-            <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-              <control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy
-              </control-param>
-            </control>
-          </field>
-          <field help-id="becpg.forms.help.productHierarchy2" id="bcpg:productHierarchy2" mandatory="false" read-only="false" set="mainInfo">
-            <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-              <control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy
-              </control-param>
-              <control-param name="parent">bcpg_productHierarchy1
-              </control-param>
-            </control>
-          </field>
-          <field help-id="becpg.forms.help.legalName" id="bcpg:legalName" mandatory="false" read-only="false" set="mainInfo"/>
-          <field id="bcpg:productComments" mandatory="false" read-only="false" set="mainInfo">
-            <control template="/org/alfresco/components/form/controls/textarea.ftl">
-              <control-param name="rows">2</control-param>
-            </control>
-          </field>
-          <field id="cm:description" mandatory="false" read-only="false" set="mainInfo">
-            <control>
-              <control-param name="activateLinks">true</control-param>
-            </control>
-          </field>
-          <field id="bcpg:entityTplRef" mandatory="false" read-only="false" set="mainInfo">
-            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:packagingMaterial?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
-              </control-param>
-              <control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
-              </control-param>
-            </control>
-          </field>
-          <field id="bcpg:productState" mandatory="false" read-only="false" set="mainInfo"/>
-          <field id="bcpg:productUnit" mandatory="false" read-only="false" set="mainInfo">
-            <control template="/org/alfresco/components/form/controls/product-unit.ftl">
-              <control-param name="options">P|becpg.forms.field.productUnit,m,m2,m3,in,ft,g,kg,mL,cp,fl_oz
+					<field id="pack:length" mandatory="false" read-only="false" set="dimension">
+						<control template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">mm</control-param>
+						</control>
+					</field>
+					<field id="pack:width" mandatory="false" read-only="false" set="dimension">
+						<control template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">mm</control-param>
+						</control>
+					</field>
+					<field id="pack:height" mandatory="false" read-only="false" set="dimension">
+						<control template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">mm</control-param>
+						</control>
+					</field>
+					<set appearance="bordered-panel" id="internalDimension" label-id="becpg.forms.set.pack.intSize.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="pack:pmIntLength" mandatory="false" read-only="false" set="internalDimension">
+						<control template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">mm</control-param>
+						</control>
+					</field>
+					<field id="pack:pmIntWidth" mandatory="false" read-only="false" set="internalDimension">
+						<control template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">mm</control-param>
+						</control>
+					</field>
+					<field id="pack:pmIntHeight" mandatory="false" read-only="false" set="internalDimension">
+						<control template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">mm</control-param>
+						</control>
+					</field>
+					<set appearance="bordered-panel" id="thickness" label-id="becpg.forms.set.pack.thickness.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="pack:pmThickness" mandatory="false" read-only="false" set="thickness">
+						<control template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">mm</control-param>
+						</control>
+					</field>
+					<field id="pack:pmPaperWeight" mandatory="false" read-only="false" set="thickness" />
+					<set appearance="bordered-panel" id="material" label-id="becpg.forms.set.pack.material.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="pack:pmMaterialRefs" mandatory="false" read-only="false" set="material">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pack:packMaterial
 							</control-param>
-            </control>
-          </field>
-          <field id="bcpg:componentLossPerc" mandatory="false" read-only="false" set="mainInfo"/>
-          <field id="bcpg:code" mandatory="false" read-only="true" set="mainInfo"/>
-          <field id="bcpg:erpCode" mandatory="false" read-only="false" set="mainInfo"/>
-          <field help-id="becpg.forms.help.eanCode" id="bcpg:eanCode" mandatory="false" read-only="false" set="mainInfo">
-            <constraint-handlers>
-              <constraint event="keyup,change" type="MANDATORY" validation-handler="beCPG.forms.validation.GTIN"/>
-            </constraint-handlers>
-          </field>
-          <field id="bcpg:suppliers" mandatory="false" read-only="false" set="mainInfo"/>
-          <field id="bcpg:supplierPlants" mandatory="false" read-only="false" set="mainInfo">
-            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-              <control-param name="ds">becpg/autocomplete/DataListCharact?className=bcpg:plant&amp;attributeName=cm:name&amp;filter=parentAsEntity</control-param>
-              <control-param name="parentAssoc">bcpg_suppliers</control-param>
-            </control>
-          </field>
-          <field id="bcpg:supplierRefCode" mandatory="false" read-only="false" set="mainInfo"/>
-          <field id="bcpg:plants" mandatory="false" read-only="false" set="mainInfo"/>
-          <field id="bcpg:productGeoOrigin" mandatory="false" read-only="false" set="mainInfo"/>
-          <field id="bcpg:certificateDate" mandatory="false" read-only="false" set="mainInfo"/>
-          <set appearance="bordered-panel" id="tare" label-id="becpg.forms.set.tare.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
-          <field id="pack:tare" mandatory="false" read-only="false" set="tare"/>
-          <field id="pack:tareUnit" mandatory="false" read-only="false" set="tare"/>
-          
-            <set appearance="bordered-panel" id="dimension" label-id="becpg.forms.set.pack.size.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
-           <field id="gs1:packagingShapeCode" mandatory="false" read-only="false" set="dimension"/>
-          
-          <field id="pack:length" mandatory="false" read-only="false" set="dimension">
-            <control template="/org/alfresco/components/form/controls/number-unit.ftl">
-              <control-param name="unit">mm</control-param>
-            </control>
-          </field>
-          <field id="pack:width" mandatory="false" read-only="false" set="dimension">
-            <control template="/org/alfresco/components/form/controls/number-unit.ftl">
-              <control-param name="unit">mm</control-param>
-            </control>
-          </field>
-          <field id="pack:height" mandatory="false" read-only="false" set="dimension">
-            <control template="/org/alfresco/components/form/controls/number-unit.ftl">
-              <control-param name="unit">mm</control-param>
-            </control>
-          </field>
-          
-           <set appearance="bordered-panel" id="packSorting" label-id="becpg.forms.set.packSorting.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
-          <field id="gs1:isPackagingMarkedReturnable" mandatory="false" read-only="false" set="packSorting">
-            <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
-          </field>
-          <field help-id="becpg.forms.help.gs1.packagingTermsAndConditionsCode" id="gs1:packagingTermsAndConditionsCode" mandatory="false" read-only="false" set="packSorting"/>
-         
-          <field id="gs1:packagingRecyclingProcessTypeCode" mandatory="false" read-only="false" set="packSorting"/>
-          <field id="gs1:packagingRecyclingSchemeCode" mandatory="false" read-only="false" set="packSorting"/>
-           <field id="gs1:sortingBonusCriteria" mandatory="false" read-only="false" set="packSorting"/>
-          <field id="gs1:sortingMalusCriteria" mandatory="false" read-only="false" set="packSorting"/>
-          <field id="gs1:sortingInstructions" mandatory="false" read-only="false" set="packSorting">
-            <control template="/org/alfresco/components/form/controls/textarea.ftl">
-              <control-param name="rows">2</control-param>
-            </control>
-          </field>
-          <field id="gs1:consumerUsageInstructions" mandatory="false" read-only="false" set="packSorting">
-            <control template="/org/alfresco/components/form/controls/textarea.ftl">
-              <control-param name="rows">2</control-param>
-            </control>
-          </field>
-          <set appearance="bordered-panel" id="categories" label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
-          
-          <field id="cm:taggable" mandatory="false" read-only="false" set="categories">
-            <control>
-              <control-param name="compactMode">true</control-param>
-              <control-param name="params">aspect=cm:taggable
+							<control-param name="showLink">false</control-param>
+						</control>
+					</field>
+					<field id="pack:pmAdditionnalMaterial" mandatory="false" read-only="false" set="material" />
+					<set appearance="bordered-panel" id="coil" label-id="becpg.forms.set.pack.coil.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="pack:pmCoreDiameter" mandatory="false" read-only="false" set="coil">
+						<control template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">mm</control-param>
+						</control>
+					</field>
+					<field id="pack:pmCoilDiameter" mandatory="false" read-only="false" set="coil">
+						<control template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">mm</control-param>
+						</control>
+					</field>
+					<set appearance="bordered-panel" id="print" label-id="becpg.forms.set.pack.print.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="pack:pmPrintNbColors" mandatory="false" read-only="false" set="print" />
+					<field id="pack:pmPrintColor" mandatory="false" read-only="false" set="print" />
+					<field id="pack:pmPrintType" mandatory="false" read-only="false" set="print" />
+					<field id="pack:pmPrintVarnish" mandatory="false" read-only="false" set="print" />
+
+					<set appearance="bordered-panel" id="packSorting" label-id="becpg.forms.set.packSorting.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="gs1:isPackagingMarkedReturnable" mandatory="false" read-only="false" set="packSorting">
+						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+					</field>
+					<field help-id="becpg.forms.help.gs1.packagingTermsAndConditionsCode" id="gs1:packagingTermsAndConditionsCode" mandatory="false"
+						read-only="false" set="packSorting" />
+
+					<field id="gs1:packagingRecyclingProcessTypeCode" mandatory="false" read-only="false" set="packSorting" />
+					<field id="gs1:packagingRecyclingSchemeCode" mandatory="false" read-only="false" set="packSorting" />
+					<field id="gs1:sortingBonusCriteria" mandatory="false" read-only="false" set="packSorting" />
+					<field id="gs1:sortingMalusCriteria" mandatory="false" read-only="false" set="packSorting" />
+					<field id="gs1:sortingInstructions" mandatory="false" read-only="false" set="packSorting">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
+						</control>
+					</field>
+					<field id="gs1:consumerUsageInstructions" mandatory="false" read-only="false" set="packSorting">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
+						</control>
+					</field>
+
+					<set id="securityRule" appearance="bordered-panel" label-id="becpg.forms.set.securityRule.label" />
+					<field id="sec:securityRef" set="securityRule" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/sec:aclGroup?&amp;excludeProps=sec:isLocalPermission%7Cfalse
 							</control-param>
-              <control-param name="createNewItemUri">/api/tag/workspace/SpacesStore
+						</control>
+					</field>
+
+					<set appearance="bordered-panel" id="categories" label-id="becpg.forms.set.category.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="cm:taggable" mandatory="false" read-only="false" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+							<control-param name="params">aspect=cm:taggable
 							</control-param>
-              <control-param name="createNewItemIcon">tag</control-param>
-            </control>
-          </field>
-          <field id="cm:categories" mandatory="false" read-only="false" set="categories">
-            <control>
-              <control-param name="compactMode">true</control-param>
-            </control>
-          </field>
-        </appearance>
-      </form>
-      <form id="formulation">
-        <field-visibility>
-          <show force="false" id="cm:name"/>
-          <show force="true" id="bcpg:legalName"/>
-          <show force="true" id="bcpg:erpCode"/>
-          <show force="false" id="bcpg:productUnit"/>
-        </field-visibility>
-        <appearance>
-          <field id="cm:name" mandatory="false" read-only="false"/>
-          <field id="bcpg:legalName" mandatory="false" read-only="false"/>
-          <field id="bcpg:erpCode" mandatory="false" read-only="false"/>
-          <field id="bcpg:productUnit" mandatory="false" read-only="false"/>
-        </appearance>
-      </form>
-      <form id="search">
-        <field-visibility>
-          <show id="cm:name" force="true" />
-          <show id="cm:title" force="true" />
-          <show force="false" id="bcpg:productHierarchy1"/>
-          <show force="false" id="bcpg:productState"/>
-          <show force="false" id="bcpg:code"/>
-          <show force="true" id="bcpg:erpCode"/>
-          <show force="false" id="bcpg:eanCode"/>
-          <show force="true" id="bcpg:certificateDate"/>
-          <show force="false" id="bcpg:suppliers"/>
-          <show force="false" id="bcpg:supplierPlants"/>
-          <show force="false" id="bcpg:supplierRefCode"/>
-          <show force="true" id="bcpg:plants"/>
-          <show force="true" id="bcpg:productGeoOrigin"/>
-          <show force="false" id="bcpg:entityTplRef"/>
-          <show force="true" id="pack:llLabel"/>
-          <show force="true" id="pack:llPosition"/>
-          <show force="true" id="bcpg:lclLabelClaim"/>
-          <show force="false" id="cm:creator"/>
-          <show force="false" id="cm:created"/>
-          <show force="false" id="cm:modifier"/>
-          <show force="false" id="cm:modified"/>
-          <show force="true" id="bcpg:advLca"/>
-          <show force="true" id="bcpg:lcaListValue"/>
-          <show force="true" id="bcpg:advSvhcAnd"/>
-          <show force="true" id="bcpg:svhcListQtyPerc"/>
-          <show force="true" id="bcpg:advSvhcNot"/>
-          <show id="survey:advSearchSurveyQuestion1" force="true" />
-		  <show id="survey:advSearchSurveyAnswer1" force="true" />
-		  <show id="survey:advSearchSurveyQuestion2" force="true" />
-		  <show id="survey:advSearchSurveyAnswer2" force="true" />
-		  <show id="survey:advSearchSurveyQuestion3" force="true" />
-		  <show id="survey:advSearchSurveyAnswer3" force="true" />
-		  <show id="survey:advSearchSurveyQuestion4" force="true" />
-		  <show id="survey:advSearchSurveyAnswer4" force="true" />
-        </field-visibility>
-        <appearance>
-          <set appearance="bordered-panel" id="2-col-product-criteria" label-id="becpg.forms.set.product-criteria.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
-          <field id="cm:name" mandatory="false" read-only="false" set="2-col-product-criteria" />
-          <field id="cm:title" label-id="becpg.forms.field.tradeName" mandatory="false" read-only="false" set="2-col-product-criteria" >
-            <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
-          </field>
-          <field id="bcpg:productHierarchy1" mandatory="false" read-only="false" set="2-col-product-criteria">
-            <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-              <control-param name="ds">becpg/autocomplete/allLinkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy
+							<control-param name="createNewItemUri">/api/tag/workspace/SpacesStore
 							</control-param>
-              <control-param name="multiple">true</control-param>
-              <control-param name="forceEditable">true</control-param>
-              <control-param name="isSearch">true</control-param>
-            </control>
-          </field>
-          <field id="bcpg:productState" mandatory="false" read-only="false" set="2-col-product-criteria">
-            <control template="/org/alfresco/components/form/controls/selectmany.ftl">
-              <control-param name="isSearch">true</control-param>
-              <control-param name="forceEditable">true</control-param>
-            </control>
-          </field>
-          <field id="bcpg:entityTplRef" mandatory="false" read-only="false" set="2-col-product-criteria">
-            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:packagingMaterial?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
-              </control-param>
-              <control-param name="isSearch">true</control-param>
-            </control>
-          </field>
-          <field id="bcpg:code" mandatory="false" read-only="false" set="2-col-product-criteria"/>
-          <field id="bcpg:supplierRefCode" mandatory="false" read-only="false" set="2-col-product-criteria"/>
-          <field id="bcpg:erpCode" mandatory="false" read-only="false" set="2-col-product-criteria"/>
-          <field id="bcpg:eanCode" mandatory="false" read-only="false" set="2-col-product-criteria"/>
-          <field id="bcpg:certificateDate" mandatory="false" read-only="false" set="2-col-product-criteria"/>
-          <field id="bcpg:suppliers" mandatory="false" read-only="false" set="2-col-product-criteria"/>
-          <field id="bcpg:plants" mandatory="false" read-only="false" set="2-col-product-criteria"/>
-          <field id="bcpg:productGeoOrigin" mandatory="false" read-only="false" set="2-col-product-criteria"/>
-          <field id="bcpg:supplierPlants" mandatory="false" read-only="false" set="2-col-product-criteria"/>
-		  
-          <set appearance="bordered-panel" id="labeling-criteria" label-id="becpg.forms.set.mentions.label"/>
-          <field id="pack:llLabel" mandatory="false" read-only="false" set="labeling-criteria">
-            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-          		<control-param name="forceEditable">true</control-param>
-          		<control-param name="isSearch">true</control-param>
-          	</control>
-          </field>
-          <field id="pack:llPosition" mandatory="false" read-only="false" set="labeling-criteria">
-            <control template="/org/alfresco/components/form/controls/selectone.ftl">
-              <control-param name="isSearch">true</control-param>
-              <control-param name="insertBlank">true</control-param>
-              <control-param name="forceEditable">true</control-param>
-            </control>
-          </field>
-          <set appearance="bordered-panel" id="labelClaim-criteria" label-id="becpg.forms.set.claim.label"/>
-          <field id="bcpg:lclLabelClaim" mandatory="false" read-only="false" set="labelClaim-criteria">
-            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-          		<control-param name="forceEditable">true</control-param>
-          		<control-param name="isSearch">true</control-param>
-          	</control>
-          </field>
-          
-          <set id="1-col-product-criteria" />
-          <field id="cm:modified" mandatory="false" read-only="false" set="2-col-product-criteria">
-            <control template="/org/alfresco/components/form/controls/daterange.ftl"/>
-          </field>
-          <field id="cm:modifier" mandatory="false" read-only="false" set="2-col-product-criteria">
-            <control>
-              <control-param name="forceEditable">true</control-param>
-            </control>
-          </field>
-          <field id="cm:created" mandatory="false" read-only="false" set="2-col-product-criteria">
-            <control template="/org/alfresco/components/form/controls/daterange.ftl"/>
-          </field>
-          <field id="cm:creator" mandatory="false" read-only="false" set="2-col-product-criteria">
-            <control>
-              <control-param name="forceEditable">true</control-param>
-            </control>
-          </field>
-          <set appearance="bordered-panel" id="lca" label-id="becpg.forms.set.lca-criteria.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
-          <field id="bcpg:advLca" mandatory="false" read-only="false" set="lca">
-            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-              <control-param name="forceEditable">true</control-param>
-              <control-param name="isSearch">true</control-param>
-            </control>
-          </field>
-          <field id="bcpg:lcaListValue" mandatory="false" read-only="false" set="lca">
-            <control template="/org/alfresco/components/form/controls/numberrange.ftl">
-              <control-param name="forceEditable">true</control-param>
-            </control>
-          </field>
-          <set appearance="bordered-panel" id="svhc" label-id="becpg.forms.set.svhc-criteria.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
-          <field id="bcpg:advSvhcAnd" mandatory="false" read-only="false" set="svhc">
-            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-              <control-param name="forceEditable">true</control-param>
-              <control-param name="isSearch">true</control-param>
-            </control>
-          </field>
-          <field id="bcpg:svhcListQtyPerc" mandatory="false" read-only="false" set="svhc" >
-           	<control template="/org/alfresco/components/form/controls/numberrange.ftl">
-           	  <control-param name="forceEditable">true</control-param>
-           	</control>
-          </field>
-          <field id="bcpg:advSvhcNot" mandatory="false" read-only="false" set="svhc">
-            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-              <control-param name="forceEditable">true</control-param>
-              <control-param name="isSearch">true</control-param>
-            </control>
-          </field>
-          <set appearance="bordered-panel" id="survey" label-id="becpg.forms.set.survey-criteria.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
-          <field id="survey:advSearchSurveyQuestion1" mandatory="false" read-only="false" set="survey">
-		  	<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-		  	  <control-param name="ds">becpg/autocomplete/survey</control-param>
-		  	  <control-param name="forceEditable">true</control-param>
-              <control-param name="isSearch">true</control-param>
-		  	</control>
-		  </field>
-		  <field id="survey:advSearchSurveyAnswer1" mandatory="false" read-only="false" set="survey">
-		  	<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-			  <control-param name="ds">becpg/autocomplete/survey</control-param>
-			  <control-param name="parentAssoc">survey_advSearchSurveyQuestion1</control-param>
-			  <control-param name="forceEditable">true</control-param>
-              <control-param name="isSearch">true</control-param>
-		  	</control>
-		  </field>
-		  <field id="survey:advSearchSurveyQuestion2" mandatory="false" read-only="false" set="survey">
-		  	<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-		  	  <control-param name="ds">becpg/autocomplete/survey</control-param>
-		  	  <control-param name="forceEditable">true</control-param>
-              <control-param name="isSearch">true</control-param>
-		  	</control>
-		  </field>
-		  <field id="survey:advSearchSurveyAnswer2" mandatory="false" read-only="false" set="survey">
-		  	<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-			  <control-param name="ds">becpg/autocomplete/survey</control-param>
-			  <control-param name="parentAssoc">survey_advSearchSurveyQuestion2</control-param>
-			  <control-param name="forceEditable">true</control-param>
-              <control-param name="isSearch">true</control-param>
-		  	</control>
-		  </field>
-		  <field id="survey:advSearchSurveyQuestion3" mandatory="false" read-only="false" set="survey">
-		  	<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-		  	  <control-param name="ds">becpg/autocomplete/survey</control-param>
-		  	  <control-param name="forceEditable">true</control-param>
-              <control-param name="isSearch">true</control-param>
-		  	</control>
-		  </field>
-		  <field id="survey:advSearchSurveyAnswer3" mandatory="false" read-only="false" set="survey">
-		  	<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-			  <control-param name="ds">becpg/autocomplete/survey</control-param>
-			  <control-param name="parentAssoc">survey_advSearchSurveyQuestion3</control-param>
-			  <control-param name="forceEditable">true</control-param>
-              <control-param name="isSearch">true</control-param>
-		  	</control>
-		  </field>
-		  <field id="survey:advSearchSurveyQuestion4" mandatory="false" read-only="false" set="survey">
-		  	<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-		  	  <control-param name="ds">becpg/autocomplete/survey</control-param>
-		  	  <control-param name="forceEditable">true</control-param>
-              <control-param name="isSearch">true</control-param>
-		  	</control>
-		  </field>
-		  <field id="survey:advSearchSurveyAnswer4" mandatory="false" read-only="false" set="survey">
-		  	<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-			  <control-param name="ds">becpg/autocomplete/survey</control-param>
-			  <control-param name="parentAssoc">survey_advSearchSurveyQuestion4</control-param>
-			  <control-param name="forceEditable">true</control-param>
-              <control-param name="isSearch">true</control-param>
-		  	</control>
-		  </field>
-        </appearance>
-      </form>
-    </forms>
-  </config>
+							<control-param name="createNewItemIcon">tag</control-param>
+						</control>
+					</field>
+					<field id="cm:categories" mandatory="false" read-only="false" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+						</control>
+					</field>
+					<set appearance="bordered-panel" id="audit" label-id="becpg.forms.set.audit.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="cm:creator" mandatory="false" read-only="false" set="audit" />
+					<field id="cm:created" mandatory="false" read-only="false" set="audit" />
+					<field id="cm:modifier" mandatory="false" read-only="false" set="audit" />
+					<field id="cm:modified" mandatory="false" read-only="false" set="audit" />
+					<set appearance="bordered-panel" id="branch" label-id="becpg.forms.set.branch.label" />
+					<field id="bcpg:autoMergeDate" mandatory="false" read-only="false" set="branch" />
+					<field id="bcpg:autoMergeTo" mandatory="false" read-only="false" set="branch">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/branches</control-param>
+							<control-param name="urlParamsToPass">itemId</control-param>
+						</control>
+					</field>
+					<field id="bcpg:autoMergeVersionType" mandatory="false" read-only="false" set="branch" />
+					<field id="bcpg:autoMergeComments" mandatory="false" read-only="false" set="branch">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="bcpg:autoMergeImpactWUsed" mandatory="false" read-only="false" set="branch" />
+					<field id="pjt:projectScore" mandatory="false" read-only="true" set="mainInfo" />
+				</appearance>
+			</form>
+			<form id="doclib-simple-metadata">
+				<field-visibility>
+					<show force="false" id="cm:name" />
+					<show force="true" id="cm:title" />
+					<show force="true" id="cm:description" />
+					<show for-mode="edit" force="true" id="cm:taggable" />
+					<show force="false" id="cm:categories" />
+				</field-visibility>
+				<appearance>
+					<field id="cm:name" mandatory="false" read-only="false">
+						<control>
+							<control-param name="maxLength">255</control-param>
+						</control>
+					</field>
+					<field id="cm:title" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="cm:description" mandatory="false" read-only="false">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="cm:taggable" mandatory="false" read-only="false">
+						<control>
+							<control-param name="compactMode">true</control-param>
+							<control-param name="params">aspect=cm:taggable
+							</control-param>
+							<control-param name="createNewItemUri">/api/tag/workspace/SpacesStore
+							</control-param>
+							<control-param name="createNewItemIcon">tag</control-param>
+						</control>
+					</field>
+					<field id="cm:categories" mandatory="false" read-only="false">
+						<control>
+							<control-param name="compactMode">true</control-param>
+						</control>
+					</field>
+				</appearance>
+				<edit-form template="../documentlibrary/forms/doclib-simple-metadata.ftl" />
+			</form>
+			<form id="reports-parameters">
+				<field-visibility>
+					<show force="true" id="rep:reportLocales" />
+					<show force="true" id="rep:reportParameters" />
+					<show force="true" id="rep:reportTpls" />
+				</field-visibility>
+				<appearance>
+					<field id="rep:reportLocales" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/mtlangue.ftl" />
+					</field>
+					<field id="rep:reportParameters" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/checkboxmany.ftl" />
+					</field>
+					<field id="rep:reportTpls" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/rep:reportTpl?excludeProps=rep%3AreportTplIsSystem%7Ctrue%2Crep%3AreportTplIsDisabled%7Ctrue%2Crep%3AreportTplType%7CExportSearch%2Crep%3AreportTplType%7CCompare%2Crep%3AreportTplType%7CSystem
+							</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+			<form id="supplier">
+				<field-visibility>
+					<show force="false" id="cm:name" />
+					<show force="true" id="cm:title" />
+					<show force="false" id="bcpg:legalName" />
+					<show force="false" id="bcpg:productComments" />
+					<show force="true" id="cm:description" />
+					<show force="false" id="bcpg:eanCode" />
+					<show force="true" id="bcpg:certificateDate" />
+					<show force="true" id="bcpg:plants" />
+					<show force="true" id="bcpg:productGeoOrigin" />
+					<show force="true" id="bcpg:supplierPlants" />
+					<show force="true" id="bcpg:supplierRefCode" />
+					<show force="true" id="pack:tare" />
+					<show force="true" id="pack:tareUnit" />
+
+					<show force="true" id="gs1:packagingShapeCode" />
+					<show force="false" id="pack:length" />
+					<show force="false" id="pack:width" />
+					<show force="false" id="pack:height" />
+					<show force="false" id="pack:pmIntLength" />
+					<show force="false" id="pack:pmIntWidth" />
+					<show force="false" id="pack:pmIntHeight" />
+					<show force="false" id="pack:pmThickness" />
+					<show force="false" id="pack:pmPaperWeight" />
+					<show force="false" id="pack:pmMaterialRefs" />
+					<show force="false" id="pack:pmAdditionnalMaterial" />
+					<show force="false" id="pack:pmCoreDiameter" />
+					<show force="false" id="pack:pmCoilDiameter" />
+					<show force="false" id="pack:pmPrintNbColors" />
+					<show force="false" id="pack:pmPrintColor" />
+					<show force="false" id="pack:pmPrintType" />
+					<show force="false" id="pack:pmPrintVarnish" />
+
+					<show force="true" id="gs1:isPackagingMarkedReturnable" />
+					<show force="true" id="gs1:packagingTermsAndConditionsCode" />
+
+					<show force="true" id="gs1:packagingRecyclingProcessTypeCode" />
+					<show force="true" id="gs1:packagingRecyclingSchemeCode" />
+
+					<show force="true" id="gs1:sortingBonusCriteria" />
+					<show force="true" id="gs1:sortingMalusCriteria" />
+					<show force="true" id="gs1:sortingInstructions" />
+					<show force="true" id="gs1:consumerUsageInstructions" />
+
+				</field-visibility>
+				<appearance>
+					<set appearance="bordered-panel" id="mainInfo" label-id="becpg.forms.set.designation.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="cm:name" mandatory="false" read-only="false" set="mainInfo" />
+					<field id="cm:title" label-id="becpg.forms.field.tradeName" description-id="becpg.forms.field.tradeName" mandatory="false"
+						read-only="false" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field help-id="becpg.forms.help.legalName" id="bcpg:legalName" mandatory="false" read-only="false" set="mainInfo" />
+					<field id="bcpg:productComments" mandatory="false" read-only="false" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
+						</control>
+					</field>
+					<field id="cm:description" mandatory="false" read-only="false" set="mainInfo">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field help-id="becpg.forms.help.eanCode" id="bcpg:eanCode" mandatory="false" read-only="false" set="mainInfo">
+						<constraint-handlers>
+							<constraint event="keyup,change" type="MANDATORY" validation-handler="beCPG.forms.validation.GTIN" />
+						</constraint-handlers>
+					</field>
+					<field id="bcpg:certificateDate" mandatory="false" read-only="false" set="mainInfo" />
+					<field id="bcpg:plants" mandatory="false" read-only="false" set="mainInfo" />
+					<field id="bcpg:productGeoOrigin" mandatory="false" read-only="false" set="mainInfo" />
+					<field id="bcpg:supplierPlants" mandatory="false" read-only="false" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/supplierPlants</control-param>
+						</control>
+					</field>
+					<field id="bcpg:supplierRefCode" mandatory="false" read-only="false" set="mainInfo" />
+					<set appearance="bordered-panel" id="tare" label-id="becpg.forms.set.tare.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="pack:tare" mandatory="false" read-only="false" set="tare" />
+					<field id="pack:tareUnit" mandatory="false" read-only="false" set="tare" />
+					<set appearance="bordered-panel" id="dimension" label-id="becpg.forms.set.pack.size.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="gs1:packagingShapeCode" mandatory="false" read-only="false" set="dimension" />
+					<field id="pack:length" mandatory="false" read-only="false" set="dimension">
+						<control template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">mm</control-param>
+						</control>
+					</field>
+					<field id="pack:width" mandatory="false" read-only="false" set="dimension">
+						<control template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">mm</control-param>
+						</control>
+					</field>
+					<field id="pack:height" mandatory="false" read-only="false" set="dimension">
+						<control template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">mm</control-param>
+						</control>
+					</field>
+					<set appearance="bordered-panel" id="internalDimension" label-id="becpg.forms.set.pack.intSize.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="pack:pmIntLength" mandatory="false" read-only="false" set="internalDimension">
+						<control template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">mm</control-param>
+						</control>
+					</field>
+					<field id="pack:pmIntWidth" mandatory="false" read-only="false" set="internalDimension">
+						<control template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">mm</control-param>
+						</control>
+					</field>
+					<field id="pack:pmIntHeight" mandatory="false" read-only="false" set="internalDimension">
+						<control template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">mm</control-param>
+						</control>
+					</field>
+					<set appearance="bordered-panel" id="thickness" label-id="becpg.forms.set.pack.thickness.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="pack:pmThickness" mandatory="false" read-only="false" set="thickness">
+						<control template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">mm</control-param>
+						</control>
+					</field>
+					<field id="pack:pmPaperWeight" mandatory="false" read-only="false" set="thickness" />
+					<set appearance="bordered-panel" id="material" label-id="becpg.forms.set.pack.material.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="pack:pmMaterialRefs" mandatory="false" read-only="false" set="material">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pack:packMaterial
+							</control-param>
+							<control-param name="showLink">false</control-param>
+						</control>
+					</field>
+					<field id="pack:pmAdditionnalMaterial" mandatory="false" read-only="false" set="material" />
+					<set appearance="bordered-panel" id="coil" label-id="becpg.forms.set.pack.coil.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="pack:pmCoreDiameter" mandatory="false" read-only="false" set="coil">
+						<control template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">mm</control-param>
+						</control>
+					</field>
+					<field id="pack:pmCoilDiameter" mandatory="false" read-only="false" set="coil">
+						<control template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">mm</control-param>
+						</control>
+					</field>
+					<set appearance="bordered-panel" id="print" label-id="becpg.forms.set.pack.print.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="pack:pmPrintNbColors" mandatory="false" read-only="false" set="print" />
+					<field id="pack:pmPrintColor" mandatory="false" read-only="false" set="print" />
+					<field id="pack:pmPrintType" mandatory="false" read-only="false" set="print" />
+					<field id="pack:pmPrintVarnish" mandatory="false" read-only="false" set="print" />
+
+					<set appearance="bordered-panel" id="packSorting" label-id="becpg.forms.set.packSorting.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="gs1:isPackagingMarkedReturnable" mandatory="false" read-only="false" set="packSorting">
+						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+					</field>
+					<field help-id="becpg.forms.help.gs1.packagingTermsAndConditionsCode" id="gs1:packagingTermsAndConditionsCode" mandatory="false"
+						read-only="false" set="packSorting" />
+
+					<field id="gs1:packagingRecyclingProcessTypeCode" mandatory="false" read-only="false" set="packSorting" />
+					<field id="gs1:packagingRecyclingSchemeCode" mandatory="false" read-only="false" set="packSorting" />
+					<field id="gs1:sortingBonusCriteria" mandatory="false" read-only="false" set="packSorting" />
+					<field id="gs1:sortingMalusCriteria" mandatory="false" read-only="false" set="packSorting" />
+					<field id="gs1:sortingInstructions" mandatory="false" read-only="false" set="packSorting">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
+						</control>
+					</field>
+					<field id="gs1:consumerUsageInstructions" mandatory="false" read-only="false" set="packSorting">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<config condition="bcpg:packagingMaterial" evaluator="model-type" replace="false">
+		<forms>
+			<form id="bulk-edit">
+				<field-visibility>
+					<show force="true" id="cm:name" />
+					<show force="true" id="cm:title" />
+					<show force="true" id="bcpg:productHierarchy1" />
+					<show force="true" id="bcpg:productHierarchy2" />
+					<show force="true" id="bcpg:legalName" />
+					<show force="true" id="bcpg:productComments" />
+					<show force="true" id="cm:description" />
+
+					<show force="true" id="gs1:packagingTypeCode" />
+					<show force="true" id="gs1:packagingFunctionCode" />
+					<show force="true" id="gs1:packagingTypeDescription" />
+
+					<show force="true" id="bcpg:productState" />
+					<show force="true" id="bcpg:productUnit" />
+					<show force="true" id="bcpg:componentLossPerc" />
+					<show force="true" id="bcpg:code" />
+					<show force="true" id="bcpg:erpCode" />
+					<show force="true" id="bcpg:eanCode" />
+					<show force="true" id="bcpg:certificateDate" />
+					<show force="true" id="bcpg:suppliers" />
+					<show force="true" id="bcpg:supplierPlants" />
+					<show force="true" id="bcpg:supplierRefCode" />
+					<show force="true" id="bcpg:plants" />
+					<show force="true" id="bcpg:productGeoOrigin" />
+					<show force="true" id="bcpg:entityTplRef" />
+					<show force="true" id="pack:tare" />
+					<show force="true" id="pack:tareUnit" />
+
+					<show force="true" id="gs1:packagingShapeCode" />
+					<show force="true" id="pack:length" />
+					<show force="true" id="pack:width" />
+					<show force="true" id="pack:height" />
+					<show force="true" id="pack:pmIntLength" />
+					<show force="true" id="pack:pmIntWidth" />
+					<show force="true" id="pack:pmIntHeight" />
+					<show force="true" id="pack:pmThickness" />
+					<show force="true" id="pack:pmPaperWeight" />
+					<show force="true" id="pack:pmMaterialRefs" />
+					<show force="true" id="pack:pmAdditionnalMaterial" />
+					<show force="true" id="pack:pmCoreDiameter" />
+					<show force="true" id="pack:pmCoilDiameter" />
+					<show force="true" id="pack:pmPrintNbColors" />
+					<show force="true" id="pack:pmPrintColor" />
+					<show force="true" id="pack:pmPrintType" />
+					<show force="true" id="pack:pmPrintVarnish" />
+
+					<show force="true" id="gs1:isPackagingMarkedReturnable" />
+					<show force="true" id="gs1:packagingTermsAndConditionsCode" />
+
+					<show force="true" id="gs1:packagingRecyclingProcessTypeCode" />
+					<show force="true" id="gs1:packagingRecyclingSchemeCode" />
+
+					<show force="true" id="gs1:sortingBonusCriteria" />
+					<show force="true" id="gs1:sortingMalusCriteria" />
+					<show force="true" id="gs1:sortingInstructions" />
+					<show force="true" id="gs1:consumerUsageInstructions" />
+
+				</field-visibility>
+			</form>
+			<form id="product-list">
+				<field-visibility>
+					<show force="true" id="cm:name" />
+					<show force="true" id="cm:title" />
+					<show force="true" id="bcpg:productHierarchy1" />
+					<show force="true" id="bcpg:productHierarchy2" />
+					<show force="true" id="bcpg:legalName" />
+					<show force="true" id="bcpg:productComments" />
+					<show force="true" id="cm:description" />
+
+					<show force="true" id="gs1:packagingTypeCode" />
+					<show force="true" id="gs1:packagingFunctionCode" />
+					<show force="true" id="gs1:packagingTypeDescription" />
+
+					<show force="true" id="bcpg:productState" />
+					<show force="true" id="bcpg:productUnit" />
+					<show force="true" id="bcpg:componentLossPerc" />
+					<show force="true" id="bcpg:code" />
+					<show force="true" id="bcpg:erpCode" />
+					<show force="true" id="bcpg:eanCode" />
+					<show force="true" id="bcpg:certificateDate" />
+					<show force="true" id="bcpg:suppliers" />
+					<show force="false" id="bcpg:supplierPlants" />
+					<show force="false" id="bcpg:supplierRefCode" />
+					<show force="false" id="bcpg:plants" />
+					<show force="false" id="bcpg:productGeoOrigin" />
+					<show force="false" id="bcpg:entityTplRef" />
+					<show force="false" id="pack:tare" />
+					<show force="false" id="pack:tareUnit" />
+
+					<show force="false" id="gs1:packagingShapeCode" />
+					<show force="false" id="pack:length" />
+					<show force="false" id="pack:width" />
+					<show force="false" id="pack:height" />
+					<show force="false" id="pack:pmIntLength" />
+					<show force="false" id="pack:pmIntWidth" />
+					<show force="false" id="pack:pmIntHeight" />
+					<show force="false" id="pack:pmThickness" />
+					<show force="false" id="pack:pmPaperWeight" />
+					<show force="false" id="pack:pmMaterialRefs" />
+					<show force="false" id="pack:pmAdditionnalMaterial" />
+					<show force="false" id="pack:pmCoreDiameter" />
+					<show force="false" id="pack:pmCoilDiameter" />
+					<show force="false" id="pack:pmPrintNbColors" />
+					<show force="false" id="pack:pmPrintColor" />
+					<show force="false" id="pack:pmPrintType" />
+					<show force="false" id="pack:pmPrintVarnish" />
+
+					<show force="false" id="gs1:isPackagingMarkedReturnable" />
+					<show force="false" id="gs1:packagingTermsAndConditionsCode" />
+
+					<show force="false" id="gs1:packagingRecyclingProcessTypeCode" />
+					<show force="false" id="gs1:packagingRecyclingSchemeCode" />
+
+					<show force="false" id="gs1:sortingBonusCriteria" />
+					<show force="false" id="gs1:sortingMalusCriteria" />
+					<show force="false" id="gs1:sortingInstructions" />
+					<show force="false" id="gs1:consumerUsageInstructions" />
+
+				</field-visibility>
+				<appearance>
+					<field id="cm:name" read-only="true"></field>
+				</appearance>
+			</form>
+			<form id="create">
+				<field-visibility>
+					<show force="false" id="cm:name" />
+					<show force="true" id="cm:title" />
+					<show force="false" id="bcpg:productHierarchy1" />
+					<show force="false" id="bcpg:productHierarchy2" />
+					<show force="false" id="bcpg:legalName" />
+					<show force="false" id="bcpg:productComments" />
+					<show force="true" id="cm:description" />
+					<show force="true" id="bcpg:entityTplRef" />
+					<show force="false" id="bcpg:productState" />
+					<show force="false" id="bcpg:productUnit" />
+					<show force="false" id="bcpg:componentLossPerc" />
+					<show force="true" id="bcpg:code" />
+					<show force="true" id="bcpg:erpCode" />
+					<show force="false" id="bcpg:eanCode" />
+					<show force="true" id="bcpg:suppliers" />
+					<show force="true" id="bcpg:supplierPlants" />
+					<show force="true" id="bcpg:supplierRefCode" />
+					<show force="true" id="bcpg:plants" />
+					<show force="true" id="bcpg:productGeoOrigin" />
+					<show force="true" id="bcpg:certificateDate" />
+					<show force="true" id="pack:tare" />
+					<show force="true" id="pack:tareUnit" />
+					<show force="true" id="gs1:packagingShapeCode" />
+					<show force="true" id="pack:length" />
+					<show force="true" id="pack:width" />
+					<show force="true" id="pack:height" />
+
+					<show force="true" id="gs1:isPackagingMarkedReturnable" />
+					<show force="true" id="gs1:packagingTermsAndConditionsCode" />
+
+					<show force="true" id="gs1:packagingRecyclingProcessTypeCode" />
+					<show force="true" id="gs1:packagingRecyclingSchemeCode" />
+
+					<show force="true" id="gs1:sortingBonusCriteria" />
+					<show force="true" id="gs1:sortingMalusCriteria" />
+					<show force="true" id="gs1:sortingInstructions" />
+					<show force="true" id="gs1:consumerUsageInstructions" />
+					<show force="false" id="cm:taggable" />
+					<show force="false" id="cm:categories" />
+				</field-visibility>
+				<appearance>
+					<set appearance="bordered-panel" id="mainInfo" label-id="becpg.forms.set.designation.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="cm:name" mandatory="false" read-only="false" set="mainInfo" />
+					<field id="cm:title" label-id="becpg.forms.field.tradeName" description-id="becpg.forms.field.tradeName" mandatory="false"
+						read-only="false" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field help-id="becpg.forms.help.productHierarchy1" id="bcpg:productHierarchy1" mandatory="false" read-only="false" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy
+							</control-param>
+						</control>
+					</field>
+					<field help-id="becpg.forms.help.productHierarchy2" id="bcpg:productHierarchy2" mandatory="false" read-only="false" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy
+							</control-param>
+							<control-param name="parent">bcpg_productHierarchy1
+							</control-param>
+						</control>
+					</field>
+					<field help-id="becpg.forms.help.legalName" id="bcpg:legalName" mandatory="false" read-only="false" set="mainInfo" />
+					<field id="bcpg:productComments" mandatory="false" read-only="false" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
+						</control>
+					</field>
+					<field id="cm:description" mandatory="false" read-only="false" set="mainInfo">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:entityTplRef" mandatory="false" read-only="false" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:packagingMaterial?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
+							</control-param>
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productState" mandatory="false" read-only="false" set="mainInfo" />
+					<field id="bcpg:productUnit" mandatory="false" read-only="false" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
+							<control-param name="options">P|becpg.forms.field.productUnit,m,m2,m3,in,ft,g,kg,mL,cp,fl_oz
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:componentLossPerc" mandatory="false" read-only="false" set="mainInfo" />
+					<field id="bcpg:code" mandatory="false" read-only="true" set="mainInfo" />
+					<field id="bcpg:erpCode" mandatory="false" read-only="false" set="mainInfo" />
+					<field help-id="becpg.forms.help.eanCode" id="bcpg:eanCode" mandatory="false" read-only="false" set="mainInfo">
+						<constraint-handlers>
+							<constraint event="keyup,change" type="MANDATORY" validation-handler="beCPG.forms.validation.GTIN" />
+						</constraint-handlers>
+					</field>
+					<field id="bcpg:suppliers" mandatory="false" read-only="false" set="mainInfo" />
+					<field id="bcpg:supplierPlants" mandatory="false" read-only="false" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/DataListCharact?className=bcpg:plant&amp;attributeName=cm:name&amp;filter=parentAsEntity
+							</control-param>
+							<control-param name="parentAssoc">bcpg_suppliers</control-param>
+						</control>
+					</field>
+					<field id="bcpg:supplierRefCode" mandatory="false" read-only="false" set="mainInfo" />
+					<field id="bcpg:plants" mandatory="false" read-only="false" set="mainInfo" />
+					<field id="bcpg:productGeoOrigin" mandatory="false" read-only="false" set="mainInfo" />
+					<field id="bcpg:certificateDate" mandatory="false" read-only="false" set="mainInfo" />
+					<set appearance="bordered-panel" id="tare" label-id="becpg.forms.set.tare.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="pack:tare" mandatory="false" read-only="false" set="tare" />
+					<field id="pack:tareUnit" mandatory="false" read-only="false" set="tare" />
+
+					<set appearance="bordered-panel" id="dimension" label-id="becpg.forms.set.pack.size.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="gs1:packagingShapeCode" mandatory="false" read-only="false" set="dimension" />
+
+					<field id="pack:length" mandatory="false" read-only="false" set="dimension">
+						<control template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">mm</control-param>
+						</control>
+					</field>
+					<field id="pack:width" mandatory="false" read-only="false" set="dimension">
+						<control template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">mm</control-param>
+						</control>
+					</field>
+					<field id="pack:height" mandatory="false" read-only="false" set="dimension">
+						<control template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">mm</control-param>
+						</control>
+					</field>
+
+					<set appearance="bordered-panel" id="packSorting" label-id="becpg.forms.set.packSorting.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="gs1:isPackagingMarkedReturnable" mandatory="false" read-only="false" set="packSorting">
+						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+					</field>
+					<field help-id="becpg.forms.help.gs1.packagingTermsAndConditionsCode" id="gs1:packagingTermsAndConditionsCode" mandatory="false"
+						read-only="false" set="packSorting" />
+
+					<field id="gs1:packagingRecyclingProcessTypeCode" mandatory="false" read-only="false" set="packSorting" />
+					<field id="gs1:packagingRecyclingSchemeCode" mandatory="false" read-only="false" set="packSorting" />
+					<field id="gs1:sortingBonusCriteria" mandatory="false" read-only="false" set="packSorting" />
+					<field id="gs1:sortingMalusCriteria" mandatory="false" read-only="false" set="packSorting" />
+					<field id="gs1:sortingInstructions" mandatory="false" read-only="false" set="packSorting">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
+						</control>
+					</field>
+					<field id="gs1:consumerUsageInstructions" mandatory="false" read-only="false" set="packSorting">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
+						</control>
+					</field>
+					<set appearance="bordered-panel" id="categories" label-id="becpg.forms.set.category.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+
+					<field id="cm:taggable" mandatory="false" read-only="false" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+							<control-param name="params">aspect=cm:taggable
+							</control-param>
+							<control-param name="createNewItemUri">/api/tag/workspace/SpacesStore
+							</control-param>
+							<control-param name="createNewItemIcon">tag</control-param>
+						</control>
+					</field>
+					<field id="cm:categories" mandatory="false" read-only="false" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+			<form id="formulation">
+				<field-visibility>
+					<show force="false" id="cm:name" />
+					<show force="true" id="bcpg:legalName" />
+					<show force="true" id="bcpg:erpCode" />
+					<show force="false" id="bcpg:productUnit" />
+				</field-visibility>
+				<appearance>
+					<field id="cm:name" mandatory="false" read-only="false" />
+					<field id="bcpg:legalName" mandatory="false" read-only="false" />
+					<field id="bcpg:erpCode" mandatory="false" read-only="false" />
+					<field id="bcpg:productUnit" mandatory="false" read-only="false" />
+				</appearance>
+			</form>
+			<form id="search">
+				<field-visibility>
+					<show id="cm:name" force="true" />
+					<show id="cm:title" force="true" />
+					<show force="false" id="bcpg:productHierarchy1" />
+					<show force="false" id="bcpg:productState" />
+					<show force="false" id="bcpg:code" />
+					<show force="true" id="bcpg:erpCode" />
+					<show force="false" id="bcpg:eanCode" />
+					<show force="true" id="bcpg:certificateDate" />
+					<show force="false" id="bcpg:suppliers" />
+					<show force="false" id="bcpg:supplierPlants" />
+					<show force="false" id="bcpg:supplierRefCode" />
+					<show force="true" id="bcpg:plants" />
+					<show force="true" id="bcpg:productGeoOrigin" />
+					<show force="false" id="bcpg:entityTplRef" />
+					<show force="true" id="pack:llLabel" />
+					<show force="true" id="pack:llPosition" />
+					<show force="true" id="bcpg:lclLabelClaim" />
+					<show force="false" id="cm:creator" />
+					<show force="false" id="cm:created" />
+					<show force="false" id="cm:modifier" />
+					<show force="false" id="cm:modified" />
+					<show force="true" id="bcpg:advLca" />
+					<show force="true" id="bcpg:lcaListValue" />
+					<show force="true" id="bcpg:advSvhcAnd" />
+					<show force="true" id="bcpg:svhcListQtyPerc" />
+					<show force="true" id="bcpg:advSvhcNot" />
+					<show id="survey:advSearchSurveyQuestion1" force="true" />
+					<show id="survey:advSearchSurveyAnswer1" force="true" />
+					<show id="survey:advSearchSurveyQuestion2" force="true" />
+					<show id="survey:advSearchSurveyAnswer2" force="true" />
+					<show id="survey:advSearchSurveyQuestion3" force="true" />
+					<show id="survey:advSearchSurveyAnswer3" force="true" />
+					<show id="survey:advSearchSurveyQuestion4" force="true" />
+					<show id="survey:advSearchSurveyAnswer4" force="true" />
+				</field-visibility>
+				<appearance>
+					<set appearance="bordered-panel" id="2-col-product-criteria" label-id="becpg.forms.set.product-criteria.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="cm:name" mandatory="false" read-only="false" set="2-col-product-criteria" />
+					<field id="cm:title" label-id="becpg.forms.field.tradeName" mandatory="false" read-only="false" set="2-col-product-criteria">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:productHierarchy1" mandatory="false" read-only="false" set="2-col-product-criteria">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/allLinkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy
+							</control-param>
+							<control-param name="multiple">true</control-param>
+							<control-param name="forceEditable">true</control-param>
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productState" mandatory="false" read-only="false" set="2-col-product-criteria">
+						<control template="/org/alfresco/components/form/controls/selectmany.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:entityTplRef" mandatory="false" read-only="false" set="2-col-product-criteria">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:packagingMaterial?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
+							</control-param>
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:code" mandatory="false" read-only="false" set="2-col-product-criteria" />
+					<field id="bcpg:supplierRefCode" mandatory="false" read-only="false" set="2-col-product-criteria" />
+					<field id="bcpg:erpCode" mandatory="false" read-only="false" set="2-col-product-criteria" />
+					<field id="bcpg:eanCode" mandatory="false" read-only="false" set="2-col-product-criteria" />
+					<field id="bcpg:certificateDate" mandatory="false" read-only="false" set="2-col-product-criteria" />
+					<field id="bcpg:suppliers" mandatory="false" read-only="false" set="2-col-product-criteria" />
+					<field id="bcpg:plants" mandatory="false" read-only="false" set="2-col-product-criteria" />
+					<field id="bcpg:productGeoOrigin" mandatory="false" read-only="false" set="2-col-product-criteria" />
+					<field id="bcpg:supplierPlants" mandatory="false" read-only="false" set="2-col-product-criteria" />
+
+					<set appearance="bordered-panel" id="labeling-criteria" label-id="becpg.forms.set.mentions.label" />
+					<field id="pack:llLabel" mandatory="false" read-only="false" set="labeling-criteria">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="forceEditable">true</control-param>
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+					<field id="pack:llPosition" mandatory="false" read-only="false" set="labeling-criteria">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="insertBlank">true</control-param>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<set appearance="bordered-panel" id="labelClaim-criteria" label-id="becpg.forms.set.claim.label" />
+					<field id="bcpg:lclLabelClaim" mandatory="false" read-only="false" set="labelClaim-criteria">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="forceEditable">true</control-param>
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+
+					<set id="1-col-product-criteria" />
+					<field id="cm:modified" mandatory="false" read-only="false" set="2-col-product-criteria">
+						<control template="/org/alfresco/components/form/controls/daterange.ftl" />
+					</field>
+					<field id="cm:modifier" mandatory="false" read-only="false" set="2-col-product-criteria">
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="cm:created" mandatory="false" read-only="false" set="2-col-product-criteria">
+						<control template="/org/alfresco/components/form/controls/daterange.ftl" />
+					</field>
+					<field id="cm:creator" mandatory="false" read-only="false" set="2-col-product-criteria">
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<set appearance="bordered-panel" id="lca" label-id="becpg.forms.set.lca-criteria.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="bcpg:advLca" mandatory="false" read-only="false" set="lca">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="forceEditable">true</control-param>
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:lcaListValue" mandatory="false" read-only="false" set="lca">
+						<control template="/org/alfresco/components/form/controls/numberrange.ftl">
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<set appearance="bordered-panel" id="svhc" label-id="becpg.forms.set.svhc-criteria.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="bcpg:advSvhcAnd" mandatory="false" read-only="false" set="svhc">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="forceEditable">true</control-param>
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:svhcListQtyPerc" mandatory="false" read-only="false" set="svhc">
+						<control template="/org/alfresco/components/form/controls/numberrange.ftl">
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:advSvhcNot" mandatory="false" read-only="false" set="svhc">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="forceEditable">true</control-param>
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+					<set appearance="bordered-panel" id="survey" label-id="becpg.forms.set.survey-criteria.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="survey:advSearchSurveyQuestion1" mandatory="false" read-only="false" set="survey">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/survey</control-param>
+							<control-param name="forceEditable">true</control-param>
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+					<field id="survey:advSearchSurveyAnswer1" mandatory="false" read-only="false" set="survey">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/survey</control-param>
+							<control-param name="parentAssoc">survey_advSearchSurveyQuestion1</control-param>
+							<control-param name="forceEditable">true</control-param>
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+					<field id="survey:advSearchSurveyQuestion2" mandatory="false" read-only="false" set="survey">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/survey</control-param>
+							<control-param name="forceEditable">true</control-param>
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+					<field id="survey:advSearchSurveyAnswer2" mandatory="false" read-only="false" set="survey">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/survey</control-param>
+							<control-param name="parentAssoc">survey_advSearchSurveyQuestion2</control-param>
+							<control-param name="forceEditable">true</control-param>
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+					<field id="survey:advSearchSurveyQuestion3" mandatory="false" read-only="false" set="survey">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/survey</control-param>
+							<control-param name="forceEditable">true</control-param>
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+					<field id="survey:advSearchSurveyAnswer3" mandatory="false" read-only="false" set="survey">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/survey</control-param>
+							<control-param name="parentAssoc">survey_advSearchSurveyQuestion3</control-param>
+							<control-param name="forceEditable">true</control-param>
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+					<field id="survey:advSearchSurveyQuestion4" mandatory="false" read-only="false" set="survey">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/survey</control-param>
+							<control-param name="forceEditable">true</control-param>
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+					<field id="survey:advSearchSurveyAnswer4" mandatory="false" read-only="false" set="survey">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/survey</control-param>
+							<control-param name="parentAssoc">survey_advSearchSurveyQuestion4</control-param>
+							<control-param name="forceEditable">true</control-param>
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
 </alfresco-config>

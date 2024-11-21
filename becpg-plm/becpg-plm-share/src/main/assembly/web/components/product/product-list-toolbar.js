@@ -52,7 +52,8 @@
                 selectedFilter: "all",
                 showThumbnails: false,
                 filters: [],
-                types: []
+                types: [],
+                searchType : "product-list"
             },
 
             /**
@@ -121,41 +122,74 @@
             loadExportMenu: function PTL_loadExportMenu() {
                 var me = this;
 
+                // Efface le contenu existant du menu
                 this.widgets.reportingMenu.getMenu().clearContent();
 
-                var dataType = "bcpg:product";
+                // Déterminer le type de données
+                var selectedType = this.options.selectedType;
+                var dataType = selectedType 
+                    ? (selectedType.indexOf("_") > 0 
+                        ? selectedType.replace("_", ":") 
+                        : "bcpg:" + selectedType)
+                    : "bcpg:product";
 
-                if (this.options.selectedType != null) {
-                    dataType = this.options.selectedType.indexOf("_") > 0 ? this.options.selectedType.replace("_", ":") : "bcpg:" + this.options.selectedType;
-                }
-
+                // Définir le libellé du menu
                 this.widgets.reportingMenu.set("label", this.msg("button.download-report") + " " + Alfresco.constants.MENU_ARROW_SYMBOL);
 
-                Alfresco.util.Ajax.request({
-                    url: Alfresco.constants.PROXY_URI + "becpg/report/exportsearch/templates/" + dataType,
-                    successCallback: {
-                        fn: function(response) {
-                            var json = response.json, items = [];
+                // Fonction pour vérifier si un élément est déjà présent dans le menu
+                var isReportAlreadyInMenu = function (reportValue) {
+                    var existingItems = me.widgets.reportingMenu.getMenu().getItems();
+                    for (var i = 0; i < existingItems.length; i++) {
+                        if (existingItems[i].value === reportValue) {
+                            return true; // Report already exists
+                        }
+                    }
+                    return false; // Report is not present
+                };
 
-                            if (json !== null) {
-                                for (var i in json.reportTpls) {
-                                    items.push({
-                                        text: json.reportTpls[i].name,
-                                        value: json.reportTpls[i].nodeRef + "#" + json.reportTpls[i].name + "." + json.reportTpls[i].format.toString().toLowerCase() + "#" + json.reportTpls[i].reportTplName
-                                    });
+                // Fonction pour récupérer et ajouter les rapports
+                var fetchAndAddReports = function (dataType) {
+                    Alfresco.util.Ajax.request({
+                        url: Alfresco.constants.PROXY_URI + "becpg/report/exportsearch/templates/" + dataType,
+                        successCallback: {
+                            fn: function (response) {
+                                var json = response.json;
+                                if (json && json.reportTpls) {
+                                    var items = [];
+                                    for (var i = 0; i < json.reportTpls.length; i++) {
+                                        var template = json.reportTpls[i];
+                                        var reportValue = template.nodeRef + "#" + template.name + "." + template.format.toLowerCase() + "#" + template.reportTplName;
+
+                                        // Vérifier si le rapport est déjà dans le menu
+                                        if (!isReportAlreadyInMenu(reportValue)) {
+                                            items.push({
+                                                text: template.name,
+                                                value: reportValue
+                                            });
+                                        }
+                                    }
+                                    if (items.length > 0) {
+                                        me.widgets.reportingMenu.getMenu().addItems(items);
+                                        me.widgets.reportingMenu.getMenu().render(document.body);
+                                        me.widgets.reportingMenu.set("disabled", false);
+                                    }
                                 }
-                                if (items.length > 0) {
-                                    me.widgets.reportingMenu.getMenu().addItems(items);
-                                    me.widgets.reportingMenu.getMenu().render(document.body);
-                                    me.widgets.reportingMenu.set("disabled", false);
-                                }
-                            }
+                            },
+                            scope: me
                         },
-                        scope: this
-                    },
-                    failureMessage: "Could not get reports '" + Alfresco.constants.PROXY_URI + "becpg/report/exportsearch/templates/" + dataType + "'."
-                });
+                        failureMessage: "Could not get reports from '" + Alfresco.constants.PROXY_URI + "becpg/report/exportsearch/templates/" + dataType + "'."
+                    });
+                };
+
+                // Récupérer les rapports pour le type de données initial
+                fetchAndAddReports(dataType);
+
+                // Logique supplémentaire pour des types de données spécifiques
+                if (dataType && (dataType.indexOf("Product") > 0 || dataType.indexOf("Material") > 0)) {
+                    fetchAndAddReports("bcpg:product");
+                }
             },
+
 
             loadFilterMenu: function PTL_loadFilterMenu() {
                 var me = this;
@@ -283,9 +317,8 @@
                     this.loadFilterMenu();
                     this.loadExportMenu();
 
-                    //TO remove
                     this.currentSavedSearchNodeRef = null;
-                    this.loadSavedSearchMenu();
+                    this.loadExportMenu();
 
                     this.reloadDataTable();
                 }
