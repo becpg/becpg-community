@@ -95,7 +95,8 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 				Map<Pair<PackagingLevel, NodeRef>, Pair<BigDecimal, BigDecimal>> toUpdate = calculateMaterialOfComposition(formulatedProduct);
 
 				// PackagingList
-				for (PackagingListDataItem packagingItem : formulatedProduct.getPackagingList()) {
+				for (PackagingListDataItem packagingItem : formulatedProduct
+						.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 					calculateTareByMaterialItem(packagingItem, toUpdate, 1);
 				}
 
@@ -264,7 +265,7 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 			}
 			ProductData packagingKitData = alfrescoRepository.findOne(dataItem.getProduct());
 			if (packagingKitData.hasPackagingListEl()) {
-				for (PackagingListDataItem p : packagingKitData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+				for (PackagingListDataItem p : packagingKitData.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 					calculateTareByMaterialItem(p, toUpdate, subQty);
 				}
 			}
