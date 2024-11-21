@@ -30,6 +30,22 @@
 }
 
 
+#toolbar-contribs .yui-menu-button button,
+.datagrid-bar  .yui-menu-button button
+ {
+ padding-right: 10px;
+}
+
+#toolbar-contribs .filter-form .yui-menu-button button,
+.datagrid-bar .filter-form  .yui-menu-button button{
+ padding-right: 0px;
+}
+
+.datalist-toolbar .new-row span.first-child {
+    padding-left: 0px ! important;
+}
+
+
 .product-list-toolbar .export-csv span.first-child,
 .product-list-toolbar .show-thumbnails span.first-child {
 	background-position: 50% 50%;

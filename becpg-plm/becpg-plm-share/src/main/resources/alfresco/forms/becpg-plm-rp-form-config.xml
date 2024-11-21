@@ -1,377 +1,387 @@
-<?xml version="1.0" encoding="UTF-8"?><alfresco-config>
-  <config condition="bcpg:resourceProduct" evaluator="node-type" replace="false">
-    <forms>
-      <form>
-        <field-visibility>
-          <show force="false" id="cm:name"/>
-          <show force="true" id="cm:title"/>
-          <show force="false" id="bcpg:legalName"/>
-          <show force="true" id="cm:description"/>
-          <show force="false" id="bcpg:productComments"/>
-          <show force="false" id="bcpg:productHierarchy1"/>
-          <show force="false" id="bcpg:productHierarchy2"/>
-          <show force="false" id="bcpg:productState"/>
-          <show force="false" id="bcpg:productUnit"/>
-          <show force="false" id="bcpg:code"/>
-          <show force="true" id="bcpg:erpCode"/>
-          <show force="false" id="bcpg:eanCode"/>
-          <show force="true" id="bcpg:entityTplRef"/>
-          <show id="sec:securityRef" />	
-          <show force="false" id="cm:taggable"/>
-          <show force="false" id="cm:categories"/>
-          <show for-mode="view" force="false" id="cm:creator"/>
-          <show for-mode="view" force="false" id="cm:created"/>
-          <show for-mode="view" force="false" id="cm:modifier"/>
-          <show for-mode="view" force="false" id="cm:modified"/>
-          <show force="false" id="bcpg:autoMergeDate"/>
-          <show force="false" id="bcpg:autoMergeTo"/>
-          <show force="false" id="bcpg:autoMergeVersionType"/>
-          <show force="false" id="bcpg:autoMergeComments"/>
-          <show force="false" id="bcpg:autoMergeImpactWUsed"/>
-        </field-visibility>
-        <appearance>
-          <set appearance="bordered-panel" id="mainInfo" label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
-          <field id="cm:name" mandatory="false" read-only="false" set="mainInfo"/>
-          <field id="cm:title" mandatory="false" read-only="false" set="mainInfo">
-            <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
-          </field>
-          <field help-id="becpg.forms.help.legalName" id="bcpg:legalName" mandatory="false" read-only="false" set="mainInfo"/>
-          <field id="cm:description" mandatory="false" read-only="false" set="mainInfo">
-            <control>
-              <control-param name="activateLinks">true</control-param>
-            </control>
-          </field>
-          <field id="bcpg:productComments" mandatory="false" read-only="false" set="mainInfo">
-            <control template="/org/alfresco/components/form/controls/textarea.ftl">
-              <control-param name="rows">2</control-param>
-            </control>
-          </field>
-          <field help-id="becpg.forms.help.productHierarchy1" id="bcpg:productHierarchy1" mandatory="false" read-only="false" set="mainInfo">
-            <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-              <control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/resourceProduct_Hierarchy
+<?xml version="1.0" encoding="UTF-8"?>
+<alfresco-config>
+	<config condition="bcpg:resourceProduct" evaluator="node-type" replace="false">
+		<forms>
+			<form>
+				<field-visibility>
+					<show force="false" id="cm:name" />
+					<show force="true" id="cm:title" />
+					<show force="false" id="bcpg:legalName" />
+					<show force="true" id="cm:description" />
+					<show force="false" id="bcpg:productComments" />
+					<show force="false" id="bcpg:productHierarchy1" />
+					<show force="false" id="bcpg:productHierarchy2" />
+					<show force="false" id="bcpg:productState" />
+					<show force="false" id="bcpg:productUnit" />
+					<show force="false" id="bcpg:code" />
+					<show force="true" id="bcpg:erpCode" />
+					<show force="false" id="bcpg:eanCode" />
+					<show force="true" id="bcpg:entityTplRef" />
+					<show id="sec:securityRef" />
+					<show force="false" id="cm:taggable" />
+					<show force="false" id="cm:categories" />
+					<show for-mode="view" force="false" id="cm:creator" />
+					<show for-mode="view" force="false" id="cm:created" />
+					<show for-mode="view" force="false" id="cm:modifier" />
+					<show for-mode="view" force="false" id="cm:modified" />
+					<show force="false" id="bcpg:autoMergeDate" />
+					<show force="false" id="bcpg:autoMergeTo" />
+					<show force="false" id="bcpg:autoMergeVersionType" />
+					<show force="false" id="bcpg:autoMergeComments" />
+					<show force="false" id="bcpg:autoMergeImpactWUsed" />
+				</field-visibility>
+				<appearance>
+					<set appearance="bordered-panel" id="mainInfo" label-id="becpg.forms.set.designation.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="cm:name" mandatory="false" read-only="false" set="mainInfo" />
+					<field id="cm:title" mandatory="false" read-only="false" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field help-id="becpg.forms.help.legalName" id="bcpg:legalName" mandatory="false" read-only="false" set="mainInfo" />
+					<field id="cm:description" mandatory="false" read-only="false" set="mainInfo">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productComments" mandatory="false" read-only="false" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
+						</control>
+					</field>
+					<field help-id="becpg.forms.help.productHierarchy1" id="bcpg:productHierarchy1" mandatory="false" read-only="false" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/resourceProduct_Hierarchy
 							</control-param>
-            </control>
-          </field>
-          <field help-id="becpg.forms.help.productHierarchy2" id="bcpg:productHierarchy2" mandatory="false" read-only="false" set="mainInfo">
-            <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-              <control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/resourceProduct_Hierarchy
+						</control>
+					</field>
+					<field help-id="becpg.forms.help.productHierarchy2" id="bcpg:productHierarchy2" mandatory="false" read-only="false" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/resourceProduct_Hierarchy
 							</control-param>
-              <control-param name="parent">bcpg_productHierarchy1
+							<control-param name="parent">bcpg_productHierarchy1
 							</control-param>
-            </control>
-          </field>
-          <field id="bcpg:productState" mandatory="false" read-only="false" set="mainInfo"/>
-          <field id="bcpg:productUnit" mandatory="false" read-only="false" set="mainInfo">
-            <control template="/org/alfresco/components/form/controls/selectone.ftl">
-              <control-param name="options">h,P</control-param>
-            </control>
-          </field>
-          <field id="bcpg:code" mandatory="false" read-only="true" set="mainInfo"/>
-          <field id="bcpg:erpCode" mandatory="false" read-only="false" set="mainInfo"/>
-          <field help-id="becpg.forms.help.eanCode" id="bcpg:eanCode" mandatory="false" read-only="false" set="mainInfo">
-            <constraint-handlers>
-              <constraint event="keyup,change" type="MANDATORY" validation-handler="beCPG.forms.validation.GTIN"/>
-            </constraint-handlers>
-          </field>
-          <field id="bcpg:entityTplRef" mandatory="false" read-only="false" set="mainInfo">
-            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:resourceProduct?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
+						</control>
+					</field>
+					<field id="bcpg:productState" mandatory="false" read-only="false" set="mainInfo" />
+					<field id="bcpg:productUnit" mandatory="false" read-only="false" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">h,P</control-param>
+						</control>
+					</field>
+					<field id="bcpg:code" mandatory="false" read-only="true" set="mainInfo" />
+					<field id="bcpg:erpCode" mandatory="false" read-only="false" set="mainInfo" />
+					<field help-id="becpg.forms.help.eanCode" id="bcpg:eanCode" mandatory="false" read-only="false" set="mainInfo">
+						<constraint-handlers>
+							<constraint event="keyup,change" type="MANDATORY" validation-handler="beCPG.forms.validation.GTIN" />
+						</constraint-handlers>
+					</field>
+					<field id="bcpg:entityTplRef" mandatory="false" read-only="false" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:resourceProduct?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
 							</control-param>
-              <control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
-            </control>
-          </field>
-          <set id="securityRule" appearance="bordered-panel" label-id="becpg.forms.set.securityRule.label" />
-          <field id="sec:securityRef" set="securityRule" mandatory="false" read-only="false">
-			<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-				<control-param name="ds">becpg/autocomplete/targetassoc/associations/sec:aclGroup?&amp;excludeProps=sec:isLocalPermission%7Cfalse
-				</control-param>
-			</control>
-		  </field>
-          <set appearance="bordered-panel" id="template" label-id="becpg.forms.set.template.label"/>
-          <set appearance="bordered-panel" id="categories" label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
-          <field id="cm:taggable" mandatory="false" read-only="false" set="categories">
-            <control>
-              <control-param name="compactMode">true</control-param>
-              <control-param name="params">aspect=cm:taggable
+						</control>
+					</field>
+					<set id="securityRule" appearance="bordered-panel" label-id="becpg.forms.set.securityRule.label" />
+					<field id="sec:securityRef" set="securityRule" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/sec:aclGroup?&amp;excludeProps=sec:isLocalPermission%7Cfalse
 							</control-param>
-              <control-param name="createNewItemUri">/api/tag/workspace/SpacesStore
+						</control>
+					</field>
+					<set appearance="bordered-panel" id="template" label-id="becpg.forms.set.template.label" />
+					<set appearance="bordered-panel" id="categories" label-id="becpg.forms.set.category.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="cm:taggable" mandatory="false" read-only="false" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+							<control-param name="params">aspect=cm:taggable
 							</control-param>
-              <control-param name="createNewItemIcon">tag</control-param>
-            </control>
-          </field>
-          <field id="cm:categories" mandatory="false" read-only="false" set="categories">
-            <control>
-              <control-param name="compactMode">true</control-param>
-            </control>
-          </field>
-          <set appearance="bordered-panel" id="audit" label-id="becpg.forms.set.audit.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
-          <field id="cm:creator" mandatory="false" read-only="false" set="audit"/>
-          <field id="cm:created" mandatory="false" read-only="false" set="audit"/>
-          <field id="cm:modifier" mandatory="false" read-only="false" set="audit"/>
-          <field id="cm:modified" mandatory="false" read-only="false" set="audit"/>
-          <set appearance="bordered-panel" id="branch" label-id="becpg.forms.set.branch.label"/>
-          <field id="bcpg:autoMergeDate" mandatory="false" read-only="false" set="branch"/>
-          <field id="bcpg:autoMergeTo" mandatory="false" read-only="false" set="branch">
-            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-              <control-param name="ds">becpg/autocomplete/branches</control-param>
-              <control-param name="urlParamsToPass">itemId</control-param>
-            </control>
-          </field>
-          <field id="bcpg:autoMergeVersionType" mandatory="false" read-only="false" set="branch"/>
-          <field id="bcpg:autoMergeComments" mandatory="false" read-only="false" set="branch">
-            <control template="/org/alfresco/components/form/controls/textarea.ftl"/>
-          </field>
-          <field id="bcpg:autoMergeImpactWUsed" mandatory="false" read-only="false" set="branch"/>
-        </appearance>
-      </form>
-      <form id="doclib-simple-metadata">
-        <field-visibility>
-          <show force="false" id="cm:name"/>
-          <show force="true" id="cm:title"/>
-          <show force="true" id="cm:description"/>
-          <show for-mode="edit" force="true" id="cm:taggable"/>
-          <show force="false" id="cm:categories"/>
-        </field-visibility>
-        <appearance>
-          <field id="cm:name" mandatory="false" read-only="false">
-            <control>
-              <control-param name="maxLength">255</control-param>
-            </control>
-          </field>
-          <field id="cm:title" mandatory="false" read-only="false">
-            <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
-          </field>
-          <field id="cm:description" mandatory="false" read-only="false">
-            <control>
-              <control-param name="activateLinks">true</control-param>
-            </control>
-          </field>
-          <field id="cm:taggable" mandatory="false" read-only="false">
-            <control>
-              <control-param name="compactMode">true</control-param>
-              <control-param name="params">aspect=cm:taggable
+							<control-param name="createNewItemUri">/api/tag/workspace/SpacesStore
 							</control-param>
-              <control-param name="createNewItemUri">/api/tag/workspace/SpacesStore
+							<control-param name="createNewItemIcon">tag</control-param>
+						</control>
+					</field>
+					<field id="cm:categories" mandatory="false" read-only="false" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+						</control>
+					</field>
+					<set appearance="bordered-panel" id="audit" label-id="becpg.forms.set.audit.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="cm:creator" mandatory="false" read-only="false" set="audit" />
+					<field id="cm:created" mandatory="false" read-only="false" set="audit" />
+					<field id="cm:modifier" mandatory="false" read-only="false" set="audit" />
+					<field id="cm:modified" mandatory="false" read-only="false" set="audit" />
+					<set appearance="bordered-panel" id="branch" label-id="becpg.forms.set.branch.label" />
+					<field id="bcpg:autoMergeDate" mandatory="false" read-only="false" set="branch" />
+					<field id="bcpg:autoMergeTo" mandatory="false" read-only="false" set="branch">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/branches</control-param>
+							<control-param name="urlParamsToPass">itemId</control-param>
+						</control>
+					</field>
+					<field id="bcpg:autoMergeVersionType" mandatory="false" read-only="false" set="branch" />
+					<field id="bcpg:autoMergeComments" mandatory="false" read-only="false" set="branch">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="bcpg:autoMergeImpactWUsed" mandatory="false" read-only="false" set="branch" />
+				</appearance>
+			</form>
+			<form id="doclib-simple-metadata">
+				<field-visibility>
+					<show force="false" id="cm:name" />
+					<show force="true" id="cm:title" />
+					<show force="true" id="cm:description" />
+					<show for-mode="edit" force="true" id="cm:taggable" />
+					<show force="false" id="cm:categories" />
+				</field-visibility>
+				<appearance>
+					<field id="cm:name" mandatory="false" read-only="false">
+						<control>
+							<control-param name="maxLength">255</control-param>
+						</control>
+					</field>
+					<field id="cm:title" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="cm:description" mandatory="false" read-only="false">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="cm:taggable" mandatory="false" read-only="false">
+						<control>
+							<control-param name="compactMode">true</control-param>
+							<control-param name="params">aspect=cm:taggable
 							</control-param>
-              <control-param name="createNewItemIcon">tag</control-param>
-            </control>
-          </field>
-          <field id="cm:categories" mandatory="false" read-only="false">
-            <control>
-              <control-param name="compactMode">true</control-param>
-            </control>
-          </field>
-        </appearance>
-        <edit-form template="../documentlibrary/forms/doclib-simple-metadata.ftl"/>
-      </form>
-    </forms>
-  </config>
-  <config condition="bcpg:resourceProduct" evaluator="model-type" replace="false">
-    <forms>
-      <form id="create">
-        <field-visibility>
-          <show force="false" id="cm:name"/>
-          <show force="true" id="cm:title"/>
-          <show force="false" id="bcpg:legalName"/>
-          <show force="true" id="cm:description"/>
-          <show force="false" id="bcpg:productComments"/>
-          <show force="false" id="bcpg:productHierarchy1"/>
-          <show force="false" id="bcpg:productHierarchy2"/>
-          <show force="false" id="bcpg:productState"/>
-          <show force="false" id="bcpg:productUnit"/>
-          <show force="true" id="bcpg:code"/>
-          <show force="true" id="bcpg:erpCode"/>
-          <show force="false" id="bcpg:eanCode"/>
-          <show force="true" id="bcpg:entityTplRef"/>
-          <show force="false" id="cm:taggable"/>
-          <show force="false" id="cm:categories"/>
-        </field-visibility>
-        <appearance>
-          <set appearance="bordered-panel" id="mainInfo" label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
-          <field id="cm:name" mandatory="false" read-only="false" set="mainInfo"/>
-          <field id="cm:title" mandatory="false" read-only="false" set="mainInfo">
-            <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
-          </field>
-          <field help-id="becpg.forms.help.legalName" id="bcpg:legalName" mandatory="false" read-only="false" set="mainInfo"/>
-          <field id="cm:description" mandatory="false" read-only="false" set="mainInfo">
-            <control>
-              <control-param name="activateLinks">true</control-param>
-            </control>
-          </field>
-          <field id="bcpg:productComments" mandatory="false" read-only="false" set="mainInfo">
-            <control template="/org/alfresco/components/form/controls/textarea.ftl">
-              <control-param name="rows">2</control-param>
-            </control>
-          </field>
-          <field help-id="becpg.forms.help.productHierarchy1" id="bcpg:productHierarchy1" mandatory="false" read-only="false" set="mainInfo">
-            <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-              <control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/resourceProduct_Hierarchy
+							<control-param name="createNewItemUri">/api/tag/workspace/SpacesStore
 							</control-param>
-            </control>
-          </field>
-          <field help-id="becpg.forms.help.productHierarchy2" id="bcpg:productHierarchy2" mandatory="false" read-only="false" set="mainInfo">
-            <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-              <control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/resourceProduct_Hierarchy
+							<control-param name="createNewItemIcon">tag</control-param>
+						</control>
+					</field>
+					<field id="cm:categories" mandatory="false" read-only="false">
+						<control>
+							<control-param name="compactMode">true</control-param>
+						</control>
+					</field>
+				</appearance>
+				<edit-form template="../documentlibrary/forms/doclib-simple-metadata.ftl" />
+			</form>
+		</forms>
+	</config>
+	<config condition="bcpg:resourceProduct" evaluator="model-type" replace="false">
+		<forms>
+			<form id="create">
+				<field-visibility>
+					<show force="false" id="cm:name" />
+					<show force="true" id="cm:title" />
+					<show force="false" id="bcpg:legalName" />
+					<show force="true" id="cm:description" />
+					<show force="false" id="bcpg:productComments" />
+					<show force="false" id="bcpg:productHierarchy1" />
+					<show force="false" id="bcpg:productHierarchy2" />
+					<show force="false" id="bcpg:productState" />
+					<show force="false" id="bcpg:productUnit" />
+					<show force="true" id="bcpg:code" />
+					<show force="true" id="bcpg:erpCode" />
+					<show force="false" id="bcpg:eanCode" />
+					<show force="true" id="bcpg:entityTplRef" />
+					<show force="false" id="cm:taggable" />
+					<show force="false" id="cm:categories" />
+				</field-visibility>
+				<appearance>
+					<set appearance="bordered-panel" id="mainInfo" label-id="becpg.forms.set.designation.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="cm:name" mandatory="false" read-only="false" set="mainInfo" />
+					<field id="cm:title" mandatory="false" read-only="false" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field help-id="becpg.forms.help.legalName" id="bcpg:legalName" mandatory="false" read-only="false" set="mainInfo" />
+					<field id="cm:description" mandatory="false" read-only="false" set="mainInfo">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productComments" mandatory="false" read-only="false" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
+						</control>
+					</field>
+					<field help-id="becpg.forms.help.productHierarchy1" id="bcpg:productHierarchy1" mandatory="false" read-only="false" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/resourceProduct_Hierarchy
 							</control-param>
-              <control-param name="parent">bcpg_productHierarchy1
+						</control>
+					</field>
+					<field help-id="becpg.forms.help.productHierarchy2" id="bcpg:productHierarchy2" mandatory="false" read-only="false" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/resourceProduct_Hierarchy
 							</control-param>
-            </control>
-          </field>
-          <field id="bcpg:productState" mandatory="false" read-only="false" set="mainInfo"/>
-          <field id="bcpg:productUnit" mandatory="false" read-only="false" set="mainInfo">
-            <control template="/org/alfresco/components/form/controls/selectone.ftl">
-              <control-param name="options">h,P</control-param>
-            </control>
-          </field>
-          <field id="bcpg:code" mandatory="false" read-only="true" set="mainInfo"/>
-          <field id="bcpg:erpCode" mandatory="false" read-only="false" set="mainInfo"/>
-          <field help-id="becpg.forms.help.eanCode" id="bcpg:eanCode" mandatory="false" read-only="false" set="mainInfo">
-            <constraint-handlers>
-              <constraint event="keyup,change" type="MANDATORY" validation-handler="beCPG.forms.validation.GTIN"/>
-            </constraint-handlers>
-          </field>
-          <field id="bcpg:entityTplRef" mandatory="false" read-only="false" set="mainInfo">
-            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:resourceProduct?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
+							<control-param name="parent">bcpg_productHierarchy1
 							</control-param>
-              <control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
+						</control>
+					</field>
+					<field id="bcpg:productState" mandatory="false" read-only="false" set="mainInfo" />
+					<field id="bcpg:productUnit" mandatory="false" read-only="false" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">h,P</control-param>
+						</control>
+					</field>
+					<field id="bcpg:code" mandatory="false" read-only="true" set="mainInfo" />
+					<field id="bcpg:erpCode" mandatory="false" read-only="false" set="mainInfo" />
+					<field help-id="becpg.forms.help.eanCode" id="bcpg:eanCode" mandatory="false" read-only="false" set="mainInfo">
+						<constraint-handlers>
+							<constraint event="keyup,change" type="MANDATORY" validation-handler="beCPG.forms.validation.GTIN" />
+						</constraint-handlers>
+					</field>
+					<field id="bcpg:entityTplRef" mandatory="false" read-only="false" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:resourceProduct?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
 							</control-param>
-            </control>
-          </field>
-          <set appearance="bordered-panel" id="categories" label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
-          <field id="cm:taggable" mandatory="false" read-only="false" set="categories">
-            <control>
-              <control-param name="compactMode">true</control-param>
-              <control-param name="params">aspect=cm:taggable
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
-              <control-param name="createNewItemUri">/api/tag/workspace/SpacesStore
+						</control>
+					</field>
+					<set appearance="bordered-panel" id="categories" label-id="becpg.forms.set.category.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="cm:taggable" mandatory="false" read-only="false" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+							<control-param name="params">aspect=cm:taggable
 							</control-param>
-              <control-param name="createNewItemIcon">tag</control-param>
-            </control>
-          </field>
-          <field id="cm:categories" mandatory="false" read-only="false" set="categories">
-            <control>
-              <control-param name="compactMode">true</control-param>
-            </control>
-          </field>
-          <set appearance="bordered-panel" id="audit" label-id="becpg.forms.set.audit.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
-        </appearance>
-      </form>
-      <form id="product-list">
-      	<field-visibility>
-      	  <show force="true" id="cm:name"/>
-          <show force="true" id="cm:title"/>
-          <show force="true" id="bcpg:legalName" />
-		  <show force="true" id="bcpg:productHierarchy1" />
-		  <show force="true" id="bcpg:productHierarchy2" />
-		  <show force="true" id="bcpg:productState" />
-		  <show force="true" id="bcpg:code" />
-		  <show force="true" id="bcpg:erpCode"/>
-		  <show force="true" id="bcpg:eanCode" />
-        </field-visibility>
-      </form>
-      <form id="search">
-        <field-visibility>
-          <show force="false" id="cm:name"/>
-          <show force="false" id="bcpg:productHierarchy1"/>
-          <show force="false" id="bcpg:productState"/>
-          <show force="false" id="bcpg:entityTplRef"/>
-          <show force="true" id="bcpg:code"/>
-          <show force="true" id="bcpg:erpCode"/>
-          <show force="false" id="bcpg:eanCode"/>
-          <show force="true" id="bcpg:advLca"/>
-          <show force="true" id="bcpg:lcaListValue"/>
-          <show force="true" id="bcpg:advSvhcAnd"/>
-          <show force="true" id="bcpg:svhcListQtyPerc"/>
-          <show force="true" id="bcpg:advSvhcNot"/>
-        </field-visibility>
-        <appearance>
-          <set appearance="bordered-panel" id="product-criteria" label-id="becpg.forms.set.product-criteria.label"/>
-          <field id="cm:name" mandatory="false" read-only="false" set="product-criteria">
-          	<control>
-          		<control-param name="forceEditable">true</control-param>
-          	</control>
-          </field>
-          <field help-id="becpg.forms.help.productHierarchy1" id="bcpg:productHierarchy1" mandatory="false" read-only="false" set="product-criteria">
-            <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-              <control-param name="ds">becpg/autocomplete/allLinkedvalue/values/System/ProductHierarchy/bcpg:entityLists/resourceProduct_Hierarchy
+							<control-param name="createNewItemUri">/api/tag/workspace/SpacesStore
 							</control-param>
-              <control-param name="multiple">true</control-param>
-       		  <control-param name="forceEditable">true</control-param>
-       		  <control-param name="isSearch">true</control-param>
-            </control>
-          </field>
-          <field id="bcpg:productState" mandatory="false" read-only="false" set="product-criteria">
-            <control template="/org/alfresco/components/form/controls/selectmany.ftl">
-              <control-param name="isSearch">true</control-param>
-              <control-param name="forceEditable">true</control-param>
-            </control>
-          </field>
-          <field id="bcpg:entityTplRef" mandatory="false" read-only="false" set="product-criteria">
-            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:resourceProduct?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
+							<control-param name="createNewItemIcon">tag</control-param>
+						</control>
+					</field>
+					<field id="cm:categories" mandatory="false" read-only="false" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+						</control>
+					</field>
+					<set appearance="bordered-panel" id="audit" label-id="becpg.forms.set.audit.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+				</appearance>
+			</form>
+			<form id="product-list">
+				<field-visibility>
+					<show force="true" id="cm:name" />
+					<show force="true" id="cm:title" />
+					<show force="true" id="bcpg:legalName" />
+					<show force="true" id="bcpg:productHierarchy1" />
+					<show force="true" id="bcpg:productHierarchy2" />
+					<show force="true" id="bcpg:productState" />
+					<show force="true" id="bcpg:code" />
+					<show force="true" id="bcpg:erpCode" />
+					<show force="true" id="bcpg:eanCode" />
+				</field-visibility>
+				<appearance>
+					<field id="cm:name" read-only="true"></field>
+				</appearance>
+			</form>
+			<form id="search">
+				<field-visibility>
+					<show force="false" id="cm:name" />
+					<show force="false" id="bcpg:productHierarchy1" />
+					<show force="false" id="bcpg:productState" />
+					<show force="false" id="bcpg:entityTplRef" />
+					<show force="true" id="bcpg:code" />
+					<show force="true" id="bcpg:erpCode" />
+					<show force="false" id="bcpg:eanCode" />
+					<show force="true" id="bcpg:advLca" />
+					<show force="true" id="bcpg:lcaListValue" />
+					<show force="true" id="bcpg:advSvhcAnd" />
+					<show force="true" id="bcpg:svhcListQtyPerc" />
+					<show force="true" id="bcpg:advSvhcNot" />
+				</field-visibility>
+				<appearance>
+					<set appearance="bordered-panel" id="product-criteria" label-id="becpg.forms.set.product-criteria.label" />
+					<field id="cm:name" mandatory="false" read-only="false" set="product-criteria">
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field help-id="becpg.forms.help.productHierarchy1" id="bcpg:productHierarchy1" mandatory="false" read-only="false" set="product-criteria">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/allLinkedvalue/values/System/ProductHierarchy/bcpg:entityLists/resourceProduct_Hierarchy
+							</control-param>
+							<control-param name="multiple">true</control-param>
+							<control-param name="forceEditable">true</control-param>
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productState" mandatory="false" read-only="false" set="product-criteria">
+						<control template="/org/alfresco/components/form/controls/selectmany.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:entityTplRef" mandatory="false" read-only="false" set="product-criteria">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:resourceProduct?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
 							</control-param>
 							<control-param name="isSearch">true</control-param>
-            </control>
-          </field>
-          <field id="bcpg:code" mandatory="false" read-only="true" set="product-criteria">
-          	<control>
-          		<control-param name="forceEditable">true</control-param>
-          	</control>
-          </field>
-          <field id="bcpg:erpCode" mandatory="false" read-only="false" set="product-criteria">
-          	<control>
-          		<control-param name="forceEditable">true</control-param>
-          	</control>
-          </field>
-          <field help-id="becpg.forms.help.eanCode" id="bcpg:eanCode" mandatory="false" read-only="false" set="product-criteria">
-          	<control>
-          		<control-param name="forceEditable">true</control-param>
-          	</control>
-          </field>
-          <set appearance="bordered-panel" id="lca" label-id="becpg.forms.set.lca-criteria.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
-          <field id="bcpg:advLca" mandatory="false" read-only="false" set="lca">
-            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-              <control-param name="forceEditable">true</control-param>
-              <control-param name="isSearch">true</control-param>
-            </control>
-          </field>
-          <field id="bcpg:lcaListValue" mandatory="false" read-only="false" set="lca">
-            <control template="/org/alfresco/components/form/controls/numberrange.ftl">
-              <control-param name="forceEditable">true</control-param>
-            </control>
-          </field>
-          <set appearance="bordered-panel" id="svhc" label-id="becpg.forms.set.svhc-criteria.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
-          <field id="bcpg:advSvhcAnd" mandatory="false" read-only="false" set="svhc">
-            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-              <control-param name="forceEditable">true</control-param>
-              <control-param name="isSearch">true</control-param>
-            </control>
-          </field>
-          <field id="bcpg:svhcListQtyPerc" mandatory="false" read-only="false" set="svhc" >
-           	<control template="/org/alfresco/components/form/controls/numberrange.ftl">
-           	  <control-param name="forceEditable">true</control-param>
-           	</control>
-          </field>
-          <field id="bcpg:advSvhcNot" mandatory="false" read-only="false" set="svhc">
-            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-              <control-param name="forceEditable">true</control-param>
-              <control-param name="isSearch">true</control-param>
-            </control>
-          </field>
-        </appearance>
-      </form>
-      <form id="formulation">
-        <field-visibility>
-          <show force="false" id="cm:name"/>
-          <show force="false" id="cm:description"/>
-        </field-visibility>
-        <appearance>
-          <field id="cm:name" mandatory="false" read-only="false"/>
-          <field id="cm:description" mandatory="false" read-only="false"/>
-        </appearance>
-      </form>
-    </forms>
-  </config>
+						</control>
+					</field>
+					<field id="bcpg:code" mandatory="false" read-only="true" set="product-criteria">
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:erpCode" mandatory="false" read-only="false" set="product-criteria">
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field help-id="becpg.forms.help.eanCode" id="bcpg:eanCode" mandatory="false" read-only="false" set="product-criteria">
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<set appearance="bordered-panel" id="lca" label-id="becpg.forms.set.lca-criteria.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="bcpg:advLca" mandatory="false" read-only="false" set="lca">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="forceEditable">true</control-param>
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:lcaListValue" mandatory="false" read-only="false" set="lca">
+						<control template="/org/alfresco/components/form/controls/numberrange.ftl">
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<set appearance="bordered-panel" id="svhc" label-id="becpg.forms.set.svhc-criteria.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="bcpg:advSvhcAnd" mandatory="false" read-only="false" set="svhc">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="forceEditable">true</control-param>
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:svhcListQtyPerc" mandatory="false" read-only="false" set="svhc">
+						<control template="/org/alfresco/components/form/controls/numberrange.ftl">
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:advSvhcNot" mandatory="false" read-only="false" set="svhc">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="forceEditable">true</control-param>
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+			<form id="formulation">
+				<field-visibility>
+					<show force="false" id="cm:name" />
+					<show force="false" id="cm:description" />
+				</field-visibility>
+				<appearance>
+					<field id="cm:name" mandatory="false" read-only="false" />
+					<field id="cm:description" mandatory="false" read-only="false" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
 </alfresco-config>

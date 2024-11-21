@@ -2,6 +2,7 @@ package fr.becpg.test.repo.search;
 
 import java.util.List;
 
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +16,8 @@ public class SavedSearchIT extends RepoBaseTestCase {
 	@Autowired
 	private SavedSearchService savedSearchService;
 
-	private static final String SEARCH_TYPE = "productList_bcpg:product";
-	private static final String SITE_ID = "test";
+	private static final String SEARCH_TYPE = "product-list_bcpg:product";
+	private static final String SITE_ID = "simulation";
 	private static final String JSON_CONTENT = "{\"key\":\"value\"}";
 	private static final String NAME_PREFIX = "TestSearch_";
 
@@ -24,17 +25,20 @@ public class SavedSearchIT extends RepoBaseTestCase {
 	public void testCreateRetrieveListSavedSearch() {
 
 		inWriteTx(() -> {
-
-			SavedSearch globalSavedSearch = createSavedSearch(NAME_PREFIX + System.currentTimeMillis(), SEARCH_TYPE, SITE_ID, true);
-			NodeRef savedNodeRef = savedSearchService.createOrUpdate(globalSavedSearch, JSON_CONTENT);
-
-			assertNotNull(savedNodeRef);
-			globalSavedSearch.setNodeRef(savedNodeRef);
-
-			String retrievedContent = savedSearchService.getSavedSearchContent(globalSavedSearch);
-			assertNotNull(retrievedContent);
-			assertEquals(JSON_CONTENT, retrievedContent);
-
+			
+			AuthenticationUtil.runAsSystem(() ->{
+				SavedSearch globalSavedSearch = createSavedSearch(NAME_PREFIX + System.currentTimeMillis(), SEARCH_TYPE, SITE_ID, true);
+				NodeRef savedNodeRef = savedSearchService.createOrUpdate(globalSavedSearch, JSON_CONTENT);
+	
+				assertNotNull(savedNodeRef);
+				globalSavedSearch.setNodeRef(savedNodeRef);
+	
+				String retrievedContent = savedSearchService.getSavedSearchContent(globalSavedSearch);
+				assertNotNull(retrievedContent);
+				assertEquals(JSON_CONTENT, retrievedContent);
+				return globalSavedSearch;
+			});
+			
 			SavedSearch nonGlobalSavedSearch = createSavedSearch(NAME_PREFIX + System.currentTimeMillis(), SEARCH_TYPE, null, false);
 			savedSearchService.createOrUpdate(nonGlobalSavedSearch, JSON_CONTENT);
 
