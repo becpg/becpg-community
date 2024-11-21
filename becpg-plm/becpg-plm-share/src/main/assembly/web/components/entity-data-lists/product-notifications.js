@@ -143,12 +143,12 @@
 									instance.filterId = (type === "all" && dataType === "All" ? "all" : "filterform");
 									
 									if(dataType == "Regulatorycodes" && type!=null) {
-										instance.filterData =  "{\"prop_bcpg_regulatoryCode\":\"'" + type.replace(/@/gi," ").replace(/\$/gi,"-") +"'\"}";
+										instance.filterData =  "{\"prop_bcpg_regulatoryCode\":\"'=" + type.replace(/@/gi," ").replace(/\$/gi,"-") +"'\"}";
 									} else {
 									
 										instance.filterData = (type === "all" && dataType === "All" ? undefined : "{"
-												+ (type !== undefined ? ("\"prop_bcpg_rclReqType\":\"" + type+"\"") : "")
-												+ (dataType != null ? (type !== undefined ? "," : "") + ("\"prop_bcpg_rclDataType\":\"" + dataType+"\"") : "")
+												+ (type !== undefined ? ("\"prop_bcpg_rclReqType\":\"=" + type+"\"") : "")
+												+ (dataType != null ? (type !== undefined ? "," : "") + ("\"prop_bcpg_rclDataType\":\"=" + dataType+"\"") : "")
 												+ "}");
 									}
 									

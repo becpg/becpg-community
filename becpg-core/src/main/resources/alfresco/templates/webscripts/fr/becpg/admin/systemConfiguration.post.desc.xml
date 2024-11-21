@@ -21,5 +21,6 @@
 	<url>/becpg/admin/system/config/{action}</url>
 	<format default="json">argument</format>
 	<authentication>admin</authentication>
+	<family>AdminConsoleHelper</family>
 	<transaction allow="readwrite" >required</transaction>
 </webscript>

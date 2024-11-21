@@ -163,22 +163,31 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 					Double preparedValue = null;
 
 					if (reconstituant != null) {
-						preparedValue = n.getValue();
+					    preparedValue = n.getValue();
 
-						if (preparedValue != null) {
-							NutListDataItem reconstituantNutListDataItem = reconstituant.getNutList().stream()
-									.filter(s -> n.getCharactNodeRef().equals(s.getCharactNodeRef())).findFirst().orElse(null);
+					    if (preparedValue != null && formulatedProduct.getReconstituantQty() != null) {
+					        // Find the corresponding NutListDataItem in the reconstituant's NutList
+					        NutListDataItem reconstituantNutListDataItem = reconstituant.getNutList().stream()
+					                .filter(s -> n.getCharactNodeRef().equals(s.getCharactNodeRef()))
+					                .findFirst()
+					                .orElse(null);
 
-							if ((reconstituantNutListDataItem != null) && (reconstituantNutListDataItem.getValue() != null)) {
-								preparedValue += reconstituantNutListDataItem.getValue()
-										* (FormulationHelper.getDensity(reconstituant) * (formulatedProduct.getReconstituantQty() / 100));
+					        if (reconstituantNutListDataItem != null && reconstituantNutListDataItem.getValue() != null) {
+					            // Calculate product and reconstituant quantities
+					            Double preparationQuantity = formulatedProduct.getPreparationQuantity() != null
+					                    ? formulatedProduct.getPreparationQuantity()
+					                    : 100d;
+					            Double reconstituantQty = FormulationHelper.getDensity(reconstituant) 
+					                    * formulatedProduct.getReconstituantQty();
+					            
+					            // Calculate total reconstituted quantity
+					            Double totalReconstitutedQty = reconstituantQty + preparationQuantity;
 
-								if (formulatedProduct.getServingSize() != null && preparedValue != null) {
-									preparedValue *= 100d / formulatedProduct.getServingSize();
-								}
-
-							}
-						}
+					            // Compute the prepared value
+					            preparedValue = (preparedValue * preparationQuantity / totalReconstitutedQty)
+					                    + (reconstituantNutListDataItem.getValue() * reconstituantQty / totalReconstitutedQty);
+					        }
+					    }
 					}
 
 					if ((formulatedProduct.getSecondaryYield() != null) && (formulatedProduct.getSecondaryYield() != 0d)) {

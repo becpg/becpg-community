@@ -1,22 +1,16 @@
 package fr.becpg.repo.toxicology;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.alfresco.model.ContentModel;
-import org.alfresco.repo.model.Repository;
+import org.alfresco.repo.node.NodeServicePolicies.BeforeDeleteNodePolicy;
 import org.alfresco.repo.node.NodeServicePolicies.OnUpdatePropertiesPolicy;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
-import fr.becpg.repo.PlmRepoConsts;
-import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
 /**
@@ -24,14 +18,13 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
  *
  * @author matthieu
  */
-public class IngToxPolicy extends AbstractBeCPGPolicy implements OnUpdatePropertiesPolicy {
+public class IngToxPolicy extends AbstractBeCPGPolicy implements OnUpdatePropertiesPolicy, BeforeDeleteNodePolicy {
 
-	private Repository repository;
-	
-	private RepoService repoService;
-	
+	private static final String ING_UPDATED_KEY = "IngToxPolicy.ingUpdated";
+	private static final String TOX_UPDATED_KEY = "IngToxPolicy.toxUpdated";
+
 	private ToxicologyService toxicologyService;
-	
+
 	/**
 	 * <p>Setter for the field <code>toxicologyService</code>.</p>
 	 *
@@ -40,62 +33,58 @@ public class IngToxPolicy extends AbstractBeCPGPolicy implements OnUpdatePropert
 	public void setToxicologyService(ToxicologyService toxicologyService) {
 		this.toxicologyService = toxicologyService;
 	}
-	
-	/**
-	 * <p>Setter for the field <code>repository</code>.</p>
-	 *
-	 * @param repository a {@link org.alfresco.repo.model.Repository} object
-	 */
-	public void setRepository(Repository repository) {
-		this.repository = repository;
-	}
-	
-	/**
-	 * <p>Setter for the field <code>repoService</code>.</p>
-	 *
-	 * @param repoService a {@link fr.becpg.repo.helper.RepoService} object
-	 */
-	public void setRepoService(RepoService repoService) {
-		this.repoService = repoService;
-	}
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public void doInit() {
-		policyComponent.bindClassBehaviour(OnUpdatePropertiesPolicy.QNAME, PLMModel.TYPE_ING,
-				new JavaBehaviour(this, "onUpdateProperties"));
+		policyComponent.bindClassBehaviour(OnUpdatePropertiesPolicy.QNAME, PLMModel.TYPE_ING, new JavaBehaviour(this, "onUpdateProperties"));
+		policyComponent.bindClassBehaviour(OnUpdatePropertiesPolicy.QNAME, PLMModel.TYPE_TOX, new JavaBehaviour(this, "onUpdateProperties"));
+		policyComponent.bindClassBehaviour(BeforeDeleteNodePolicy.QNAME, PLMModel.TYPE_ING, new JavaBehaviour(this, "beforeDeleteNode"));
+		policyComponent.bindClassBehaviour(BeforeDeleteNodePolicy.QNAME, PLMModel.TYPE_TOX, new JavaBehaviour(this, "beforeDeleteNode"));
 	}
-
-	/** {@inheritDoc} */
+	
 	@Override
-	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
-		if (before.containsKey(PLMModel.PROP_ING_TOX_DATA) && (boolean) before.get(PLMModel.PROP_ING_TOX_DATA)) {
-			return;
-		}
-		if (after.containsKey(PLMModel.PROP_ING_TOX_DATA)	&& (boolean) after.get(PLMModel.PROP_ING_TOX_DATA)) {
-			queueNode(nodeRef);
+	public void beforeDeleteNode(NodeRef nodeRef) {
+		QName type = nodeService.getType(nodeRef);
+		if (PLMModel.TYPE_ING.equals(type)) {
+			toxicologyService.deleteToxIngBeforeIngDelete(nodeRef);
+		} else if (PLMModel.TYPE_TOX.equals(type)) {
+			toxicologyService.deleteToxIngBeforeToxDelete(nodeRef);
 		}
 	}
 	
 	/** {@inheritDoc} */
 	@Override
-	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
-		NodeRef companyHomeNodeRef = repository.getCompanyHome();
-		NodeRef systemNodeRef = repoService.getFolderByPath(companyHomeNodeRef, RepoConsts.PATH_SYSTEM);
-		NodeRef charactsNodeRef = repoService.getFolderByPath(systemNodeRef, RepoConsts.PATH_CHARACTS);
-		NodeRef listContainer = nodeService.getChildByName(charactsNodeRef, BeCPGModel.ASSOC_ENTITYLISTS, RepoConsts.CONTAINER_DATALISTS);
-		NodeRef toxFolder = nodeService.getChildByName(listContainer, ContentModel.ASSOC_CONTAINS, PlmRepoConsts.PATH_TOXICITIES);
-		List<NodeRef> toxList = nodeService.getChildAssocs(toxFolder).stream().map(c -> c.getChildRef()).toList();
-		
-		for (NodeRef ingNodeRef : pendingNodes) {
-			for (NodeRef toxNodeRef : toxList) {
-				toxicologyService.createOrUpdateToxIngNodeRef(ingNodeRef, toxNodeRef);
+	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
+		QName type = nodeService.getType(nodeRef);
+		if (PLMModel.TYPE_ING.equals(type)) {
+			if (before.containsKey(PLMModel.PROP_ING_TOX_DATA) && (boolean) before.get(PLMModel.PROP_ING_TOX_DATA)) {
+				return;
 			}
-			nodeService.setProperty(ingNodeRef, PLMModel.PROP_ING_TOX_DATA, false);
+			if (after.containsKey(PLMModel.PROP_ING_TOX_DATA) && (boolean) after.get(PLMModel.PROP_ING_TOX_DATA)) {
+				queueNode(ING_UPDATED_KEY, nodeRef);
+			}
+		} else if (PLMModel.TYPE_TOX.equals(type)) {
+			queueNode(TOX_UPDATED_KEY, nodeRef);
 		}
-		
-		return true;
 	}
 
+	/** {@inheritDoc} */
+	@Override
+	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
+		if (ING_UPDATED_KEY.equals(key)) {
+			for (NodeRef ingNodeRef : pendingNodes) {
+				toxicologyService.updateToxIngAfterIngUpdate(ingNodeRef);
+				nodeService.setProperty(ingNodeRef, PLMModel.PROP_ING_TOX_DATA, false);
+			}
+		} else if (TOX_UPDATED_KEY.equals(key)) {
+			for (NodeRef toxNodeRef : pendingNodes) {
+				if (nodeService.exists(toxNodeRef)) {
+					toxicologyService.updateToxIngAfterToxUpdate(toxNodeRef);
+				}
+			}
+		}
+		return true;
+	}
 
 }

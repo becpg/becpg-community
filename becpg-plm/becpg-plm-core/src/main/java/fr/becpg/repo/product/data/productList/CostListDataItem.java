@@ -36,6 +36,9 @@ public class CostListDataItem extends AbstractCostListDataItem<CostListDataItem>
 	private Double futureValue4 = 0d;
 	private Double previousValuePerProduct;
 	private Double futureValuePerProduct;
+	private Double futureValuePerProduct2;
+	private Double futureValuePerProduct3;
+	private Double futureValuePerProduct4;
 		
 	private static final List<ForecastContext<CostListDataItem>> FORECAST_CONTEXTS = List.of(
 			new ForecastContext<>("bcpg:costListPreviousValue", "previousValue",
@@ -236,6 +239,33 @@ public class CostListDataItem extends AbstractCostListDataItem<CostListDataItem>
 	}
 	
 	/**
+	 * <p>Setter for the field <code>futureValuePerProduct2</code>.</p>
+	 *
+	 * @param futureValuePerProduct2 a {@link java.lang.Double} object
+	 */
+	public void setFutureValuePerProduct2(Double futureValuePerProduct2) {
+		this.futureValuePerProduct2 = futureValuePerProduct2;
+	}
+	
+	/**
+	 * <p>Setter for the field <code>futureValuePerProduct3</code>.</p>
+	 *
+	 * @param futureValuePerProduct3 a {@link java.lang.Double} object
+	 */
+	public void setFutureValuePerProduct3(Double futureValuePerProduct3) {
+		this.futureValuePerProduct3 = futureValuePerProduct3;
+	}
+	
+	/**
+	 * <p>Setter for the field <code>futureValuePerProduct4</code>.</p>
+	 *
+	 * @param futureValuePerProduct4 a {@link java.lang.Double} object
+	 */
+	public void setFutureValuePerProduct4(Double futureValuePerProduct4) {
+		this.futureValuePerProduct4 = futureValuePerProduct4;
+	}
+	
+	/**
 	 * <p>Setter for the field <code>previousValuePerProduct</code>.</p>
 	 *
 	 * @param previousValuePerProduct a {@link java.lang.Double} object
@@ -253,6 +283,39 @@ public class CostListDataItem extends AbstractCostListDataItem<CostListDataItem>
 	@AlfQname(qname="bcpg:costListFutureValuePerProduct")
 	public Double getFutureValuePerProduct() {
 		return futureValuePerProduct;
+	}
+	
+	/**
+	 * <p>Getter for the field <code>futureValuePerProduct2</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
+	@AlfProp
+	@AlfQname(qname="bcpg:costListFutureValuePerProduct2")
+	public Double getFutureValuePerProduct2() {
+		return futureValuePerProduct2;
+	}
+	
+	/**
+	 * <p>Getter for the field <code>futureValuePerProduct3</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
+	@AlfProp
+	@AlfQname(qname="bcpg:costListFutureValuePerProduct3")
+	public Double getFutureValuePerProduct3() {
+		return futureValuePerProduct3;
+	}
+	
+	/**
+	 * <p>Getter for the field <code>futureValuePerProduct4</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
+	@AlfProp
+	@AlfQname(qname="bcpg:costListFutureValuePerProduct4")
+	public Double getFutureValuePerProduct4() {
+		return futureValuePerProduct4;
 	}
 
 
@@ -377,6 +440,9 @@ public class CostListDataItem extends AbstractCostListDataItem<CostListDataItem>
 		this.futureValue = c.futureValue;
 		this.previousValuePerProduct = c.previousValuePerProduct;
 		this.futureValuePerProduct = c.futureValuePerProduct;
+		this.futureValuePerProduct2 = c.futureValuePerProduct2;
+		this.futureValuePerProduct3 = c.futureValuePerProduct3;
+		this.futureValuePerProduct4 = c.futureValuePerProduct4;
 	}
 	
 	/** {@inheritDoc} */
@@ -394,8 +460,9 @@ public class CostListDataItem extends AbstractCostListDataItem<CostListDataItem>
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result
-				+ Objects.hash(futureValue, futureValue2, futureValue3, futureValue4, futureValuePerProduct, previousValue, previousValuePerProduct);
+		result = prime * result + Objects.hash(futureValue, futureValue2, futureValue3, futureValue4,
+				futureValuePerProduct, futureValuePerProduct2, futureValuePerProduct3, futureValuePerProduct4,
+				previousValue, previousValuePerProduct);
 		return result;
 	}
 
@@ -411,16 +478,23 @@ public class CostListDataItem extends AbstractCostListDataItem<CostListDataItem>
 		CostListDataItem other = (CostListDataItem) obj;
 		return Objects.equals(futureValue, other.futureValue) && Objects.equals(futureValue2, other.futureValue2)
 				&& Objects.equals(futureValue3, other.futureValue3) && Objects.equals(futureValue4, other.futureValue4)
-				&& Objects.equals(futureValuePerProduct, other.futureValuePerProduct) && Objects.equals(previousValue, other.previousValue)
+				&& Objects.equals(futureValuePerProduct, other.futureValuePerProduct)
+				&& Objects.equals(futureValuePerProduct2, other.futureValuePerProduct2)
+				&& Objects.equals(futureValuePerProduct3, other.futureValuePerProduct3)
+				&& Objects.equals(futureValuePerProduct4, other.futureValuePerProduct4)
+				&& Objects.equals(previousValue, other.previousValue)
 				&& Objects.equals(previousValuePerProduct, other.previousValuePerProduct);
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return "CostListDataItem [previousValue=" + previousValue + ", futureValue=" + futureValue + ", futureValue2=" + futureValue2
-				+ ", futureValue3=" + futureValue3 + ", futureValue4=" + futureValue4 + ", previousValuePerProduct=" + previousValuePerProduct
-				+ ", futureValuePerProduct=" + futureValuePerProduct + "]";
+		return "CostListDataItem [previousValue=" + previousValue + ", futureValue=" + futureValue + ", futureValue2="
+				+ futureValue2 + ", futureValue3=" + futureValue3 + ", futureValue4=" + futureValue4
+				+ ", previousValuePerProduct=" + previousValuePerProduct + ", futureValuePerProduct="
+				+ futureValuePerProduct + ", futureValuePerProduct2=" + futureValuePerProduct2
+				+ ", futureValuePerProduct3=" + futureValuePerProduct3 + ", futureValuePerProduct4="
+				+ futureValuePerProduct4 + "]";
 	}
 
 }
