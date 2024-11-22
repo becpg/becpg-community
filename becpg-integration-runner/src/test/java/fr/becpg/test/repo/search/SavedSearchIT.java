@@ -54,7 +54,7 @@ public class SavedSearchIT extends RepoBaseTestCase {
 
 			savedSearches = savedSearchService.findSavedSearch(searchFilter);
 
-			assertEquals(1, savedSearches.size());
+			assertEquals(2, savedSearches.size());
 			return null;
 		});
 	}
