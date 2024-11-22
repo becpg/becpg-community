@@ -49,6 +49,7 @@ import org.alfresco.service.cmr.tagging.TaggingService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO8601DateFormat;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
@@ -279,6 +280,10 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		public AttributeExtractorStructure(AttributeExtractorField field, String formula) {
 			this.field = field;
 			this.formula = formula;
+		}
+		
+		public AttributeExtractorField getField() {
+			return field;
 		}
 
 		public String getFieldName() {
@@ -635,16 +640,19 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 			if (field.isNested()) {
 				AttributeExtractorField dlField = field.nextToken();
-				if ("entity".equals(dlField.getFieldName()) || "product".equals(dlField.getFieldName())) {
+				if (StringUtils.equalsAny(dlField.getFieldName(), "entity", "product", "wUsedEntity")) {
 					field = field.nextToken();
 					QName fieldQname = QName.createQName(field.getFieldName(), namespaceService);
-					if (hasReadAccess(itemType, field.getFieldName())) {
+					final QName mainType = "wUsedEntity".equals(dlField.getFieldName()) ? entityDictionaryService.getTargetType(entityDictionaryService.getDefaultPivotAssoc(itemType)) : itemType;
+					if (hasReadAccess(mainType, field.getFieldName())) {
 						ClassAttributeDefinition prodDef = entityDictionaryService.getPropDef(fieldQname);
 						if (prodDef != null) {
 							if("product".equals(dlField.getFieldName())) {
 								ret.add(new AttributeExtractorStructure(field.prefixed("product_"), prodDef, itemType));
-							} else {
+							} else if("entity".equals(dlField.getFieldName())) {
 								ret.add(new AttributeExtractorStructure(field.prefixed("entity_"), prodDef, itemType));
+							} else {
+								ret.add(new AttributeExtractorStructure(field.prefixed("wUsedEntity_"), prodDef, mainType));
 							}
 						}
 					}
