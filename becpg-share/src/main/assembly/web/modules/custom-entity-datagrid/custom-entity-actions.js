@@ -623,7 +623,16 @@
 
 		},
 
-		onActionSimulate: function EntityDataGrid_onActionSimulate(p_items) {
+        onActionSimulate: function EntityDataGrid_onActionSimulate(p_items) {
+            doSimulate(p_items, true);
+        },
+
+
+        onActionCopyProducts: function EntityDataGrid_onActionCopyProducts(p_items) {
+            doSimulate(p_items, false);
+        },
+
+		doSimulate: function EntityDataGrid_onActionSimulate(p_items,isBranch) {
 			var items = YAHOO.lang.isArray(p_items) ? p_items : [p_items], me = this, nodeRefs = "";
 
 			for (var i = 0, ii = items.length; i < ii; i++) {
@@ -643,7 +652,7 @@
 				method: Alfresco.util.Ajax.POST,
 				responseContentType: Alfresco.util.Ajax.JSON,
 				url: Alfresco.constants.PROXY_URI + "becpg/entity/simulation/create?dataListItems=" + nodeRefs
-					+ (this.options.entityNodeRef ? "&entityNodeRef=" + this.options.entityNodeRef : ""),
+					+ (this.options.entityNodeRef ? "&entityNodeRef=" + this.options.entityNodeRef : "")+(!isBranch?"&branch=false":""),
 				successCallback: {
 					fn: function(resp) {
 						if (resp.json) {
@@ -678,7 +687,7 @@
 			});
 
 		},
-
+        
 		onActionUploadContent: function EntityDataGrid_onActionUploadContent(item) {
 			var fileUpload = Alfresco.getFileUploadInstance();
 

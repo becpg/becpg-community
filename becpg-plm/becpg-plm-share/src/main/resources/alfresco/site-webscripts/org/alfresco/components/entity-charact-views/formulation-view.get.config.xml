@@ -22,6 +22,7 @@
 	   	<action type="action-link" id="onActionBulkEdit"  permission="edit,allPages" label="actions.bulk-edit" />
 	   	<action type="action-link" id="onActionDelete" permission="delete" label="menu.selected-items.delete" />
 	   	<action type="action-link" id="onActionSimulate" list="compoList" permission="edit" label="actions.selected-items.simulate" />
+	   	<action type="action-link" id="onActionCopyProducts" list="compoList" permission="edit" label="actions.selected-items.copy-product" />
 	    <action type="action-link" id="onActionDuplicate" permission="create" label="menu.selected-items.duplicate" />
 	    <action type="action-link" id="onActionDuplicateChilds" list="compoList" permission="create" label="actions.selected-items.duplicate-childs" />
 	    <action type="action-link" id="onActionGroup" list="compoList" permission="edit,allPages" label="actions.selected-items.group" />
@@ -36,6 +37,7 @@
       <action type="action-link" id="onActionDuplicate" permission="create" label="actions.duplicate-row" />
       <action type="action-link" id="onActionDuplicateChilds" list="compoList" permission="edit" label="actions.duplicate-childs" />
       <action type="action-link" id="onActionSimulate" list="compoList" permission="edit" label="actions.simulate" />
+      <action type="action-link" id="onActionCopyProducts" list="compoList" permission="edit" label="actions.copy-product" />
       <action type="action-link" id="onActionShowComments" permission="edit" label="actions.comment" />
       <action type="action-link" id="onAddLabelingAspect" permission="edit" label="actions.add-labelingAspect" />
       <action type="action-link" id="onActionSelectColor"  permission="edit" label="actions.select-color" />
