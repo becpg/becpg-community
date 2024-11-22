@@ -119,8 +119,8 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 	 *            the total qty ing map
 	 */
 	private void checkILOfPart(NodeRef productNodeRef, DeclarationType declType, ProductData componentProductData,
-			List<ForbiddenIngListDataItem> forbiddenIngredientsList, ProductSpecificationData specification,
-			Map<String, List<NodeRef>> sources, Set<NodeRef> visited) {
+			List<ForbiddenIngListDataItem> forbiddenIngredientsList, ProductSpecificationData specification, Map<String, List<NodeRef>> sources,
+			Set<NodeRef> visited) {
 
 		if (!PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.equals(mlNodeService.getType(productNodeRef)) && !visited.contains(productNodeRef)) {
 
@@ -148,7 +148,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 
 						} else {
 							String key = createReqSourceKey(fil, ingListDataItem);
-							
+
 							List<NodeRef> sourceList = sources.computeIfAbsent(key, (f) -> new ArrayList<>());
 							sourceList.add(productNodeRef);
 							sources.put(key, sourceList);
@@ -165,7 +165,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 	private void processForbiddenRequirements(ProductSpecificationData specification, ProductData productData, ForbiddenIngListDataItem fil,
 			List<ReqCtrlListDataItem> reqCtrlMap, Map<String, List<NodeRef>> sources) {
 
-		Double qtyPerc = calculateQtyPerc(fil, productData);
+		Double totalQtyPerc = calculateQtyPerc(fil, productData);
 
 		for (IngListDataItem ingListDataItem : productData.getIngList()) {
 			if (checkRuleMatchIng(ingListDataItem, fil)) {
@@ -177,8 +177,11 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 					Double filMaxQtyPerc = getFilMaxQtyPerc(productData, fil);
 					Double filMinQtyPerc = getFilMinQtyPerc(productData, fil);
 
-					boolean dontMatchQty = (qtyPerc == null) || ((filMaxQtyPerc != null) && (filMaxQtyPerc <= qtyPerc))
-							|| ((filMinQtyPerc != null) && (filMinQtyPerc >= qtyPerc));
+					Double qtyPerc = getQtyPerc(ingListDataItem, fil);
+
+					boolean dontMatchQty = (totalQtyPerc == null) || qtyPerc == null || totalQtyPerc == 0 || qtyPerc == 0
+							|| ((filMaxQtyPerc != null) && (filMaxQtyPerc <= totalQtyPerc))
+							|| ((filMinQtyPerc != null) && (filMinQtyPerc >= totalQtyPerc));
 
 					boolean isInfo = !dontMatchQty && Boolean.TRUE.equals(addInfoReqCtrl) && (fil.getReqMessage() != null)
 							&& !fil.getReqMessage().isEmpty();
@@ -189,10 +192,10 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 							reqCtrl.setReqType(RequirementType.Info);
 						} else {
 
-							if ((qtyPerc != null) && (filMaxQtyPerc != null) && (qtyPerc != 0)) {
-								reqCtrl.setReqMaxQty((filMaxQtyPerc / qtyPerc) * 100d);
-							} else if ((qtyPerc != null) && (filMinQtyPerc != null) && (qtyPerc != 0)) {
-								reqCtrl.setReqMaxQty((filMinQtyPerc / qtyPerc) * 100d);
+							if ((totalQtyPerc != null) && (filMaxQtyPerc != null) && (totalQtyPerc != 0)) {
+								reqCtrl.setReqMaxQty((filMaxQtyPerc / totalQtyPerc) * 100d);
+							} else if ((totalQtyPerc != null) && (filMinQtyPerc != null) && (totalQtyPerc != 0)) {
+								reqCtrl.setReqMaxQty((filMinQtyPerc / totalQtyPerc) * 100d);
 							}
 						}
 						reqCtrlMap.add(reqCtrl);
@@ -256,7 +259,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 		if (logger.isDebugEnabled()) {
 			logger.debug("Adding not respected for: " + curMessage);
 		}
-		
+
 		String key = createReqSourceKey(fil, ingListDataItem);
 		List<NodeRef> sourceList = sources.computeIfAbsent(key, f -> new ArrayList<>());
 		if (!fil.getIngs().isEmpty() && sourceList.isEmpty()) {
@@ -270,7 +273,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 	}
 
 	private String createReqSourceKey(ForbiddenIngListDataItem fil, IngListDataItem ingListDataItem) {
-		return ingListDataItem.getIng()+""+fil.hashCode();
+		return ingListDataItem.getIng() + "" + fil.hashCode();
 	}
 
 	private Double calculateQtyPerc(ForbiddenIngListDataItem fil, ProductData productData) {
