@@ -1,11 +1,13 @@
 package fr.becpg.repo.product.report;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -21,11 +23,12 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
 import fr.becpg.repo.entity.datalist.MultiLevelDataListService;
+import fr.becpg.repo.entity.datalist.WUsedListService;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.helper.ExcelHelper;
-import fr.becpg.repo.helper.JsonFormulaHelper;
 import fr.becpg.repo.helper.ExcelHelper.ExcelCellStyles;
+import fr.becpg.repo.helper.JsonFormulaHelper;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.formulation.FormulationHelper;
@@ -43,6 +46,11 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 
 	@Autowired
 	MultiLevelDataListService multiLevelDataListService;
+	
+	// Allowed Parameter1 WUsedAllLevel WUsedMaxLevel2 WUsedOnlyLevel2
+	
+	@Autowired
+	private WUsedListService wUsedListService;
 
 	/** {@inheritDoc} */
 	@Override
@@ -64,37 +72,59 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 			AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache) {
 		String parameter = (parameters != null) && (parameters.length > 0) ? parameters[0] : null;
 
-		String depthLevel = parameter != null ? parameter.replace("Level", "").replace("Max", "").replace("Only", "") : "All";
+		boolean wUsed = false;
+		QName pivotAssoc = null;
+		
+		String depthLevel;
+		
+		if (parameter != null) {
+			wUsed = parameter.contains("wUsed");
+			if (wUsed) {
+				parameter = parameter.replace("wUsed", "");
+				pivotAssoc = entityDictionaryService.getDefaultPivotAssoc(itemType);
+				mainType = entityDictionaryService.getTargetType(pivotAssoc);
+			} 
+			depthLevel = parameter.replace("Level", "").replace("Max", "").replace("Only", "");
+		} else {
+			depthLevel = "All";
+		}
 
 		ExcelCellStyles excelCellStyles = new ExcelCellStyles(sheet.getWorkbook());
+		
+		final int depthLevelNum = "All".equals(depthLevel) ? -1 : Integer.parseInt(depthLevel);
+		
+		final Map<NodeRef, Map<QName, Serializable>> wUsedAssocCache = wUsed ? new HashMap<>() : null;
 
 		for (NodeRef entityNodeRef : searchResults) {
 			QName entityType = nodeService.getType(entityNodeRef);
 			if (mainType.equals(entityType) || entityDictionaryService.isSubClass(entityType, mainType)) {
-				Serializable key = nodeService.getProperty(entityNodeRef, keyColumn.getFieldDef().getName());
+				Serializable key = keyColumn != null ? nodeService.getProperty(entityNodeRef, keyColumn.getFieldDef().getName()) : null;
 				if (key == null) {
 					key = nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_CODE);
 				}
 				if (key == null) {
 					key = nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
 				}
-
-				DataListFilter dataListFilter = new DataListFilter();
-				dataListFilter.setDataType(itemType);
-				Map<String, String> criteriaMap = new HashMap<>();
-				criteriaMap.put(DataListFilter.PROP_DEPTH_LEVEL, depthLevel);
-				dataListFilter.setCriteriaMap(criteriaMap);
-				dataListFilter.setEntityNodeRefs(Collections.singletonList(entityNodeRef));
-
-				MultiLevelListData listData = multiLevelDataListService.getMultiLevelListData(dataListFilter);
+				final MultiLevelListData listData;
+				if (!wUsed) {
+					DataListFilter dataListFilter = new DataListFilter();
+					dataListFilter.setDataType(itemType);
+					Map<String, String> criteriaMap = new HashMap<>();
+					criteriaMap.put(DataListFilter.PROP_DEPTH_LEVEL, depthLevel);
+					dataListFilter.setCriteriaMap(criteriaMap);
+					dataListFilter.setEntityNodeRefs(Collections.singletonList(entityNodeRef));
+	
+					listData = multiLevelDataListService.getMultiLevelListData(dataListFilter);
+				} else {
+					listData = wUsedListService.getWUsedEntity(entityNodeRef, pivotAssoc, depthLevelNum);
+				}
 
 				Map<String, Object> entityItems = getEntityProperties(entityNodeRef, mainType, metadataFields, cache);
 
 				entityItems.putAll(getDynamicProperties(entityNodeRef, itemType));
 
 				rownum = appendNextLevel(listData, sheet, itemType, metadataFields, cache, rownum, key, null, parameters, entityItems,
-						new HashMap<>(), excelCellStyles);
-
+						new HashMap<>(), excelCellStyles, mainType, wUsedAssocCache);
 			}
 		}
 
@@ -105,23 +135,24 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 	 * <p>appendNextLevel.</p>
 	 *
 	 * @param listData a {@link fr.becpg.repo.entity.datalist.data.MultiLevelListData} object.
-	 * @param sheet a {@link org.apache.poi.xssf.usermodel.XSSFSheet} object.
+	 * @param sheet an {@link org.apache.poi.xssf.usermodel.XSSFSheet} object.
 	 * @param itemType a {@link org.alfresco.service.namespace.QName} object.
 	 * @param metadataFields a {@link java.util.List} object.
 	 * @param cache a {@link java.util.Map} object.
-	 * @param rownum a int.
+	 * @param rownum an int.
 	 * @param key a {@link java.io.Serializable} object.
 	 * @param parentQty a {@link java.lang.Double} object.
 	 * @param parameters an array of {@link java.lang.String} objects.
 	 * @param entityItems a {@link java.util.Map} object.
-	 * @return a int.
 	 * @param dynamicCharactColumnCache a {@link java.util.Map} object
 	 * @param excelCellStyles a {@link fr.becpg.repo.helper.ExcelHelper.ExcelCellStyles} object
+	 * @param wUsedAssoc a {org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return an int.
 	 */
-	protected int appendNextLevel(MultiLevelListData listData, XSSFSheet sheet, QName itemType, List<AttributeExtractorStructure> metadataFields,
-			Map<NodeRef, Map<String, Object>> cache, int rownum, Serializable key, Double parentQty, String[] parameters,
-			Map<String, Object> entityItems, Map<String, String> dynamicCharactColumnCache, ExcelCellStyles excelCellStyles) {
-
+	protected int appendNextLevel(MultiLevelListData listData, XSSFSheet sheet, QName itemType,
+			List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache, int rownum,
+			Serializable key, Double parentQty, String[] parameters, Map<String, Object> entityItems,
+			Map<String, String> dynamicCharactColumnCache, ExcelCellStyles excelCellStyles, QName wUsedEntityType, Map<NodeRef, Map<QName, Serializable>> wUsedAssocCache) {
 		for (Entry<NodeRef, MultiLevelListData> entry : listData.getTree().entrySet()) {
 			NodeRef itemNodeRef = entry.getKey();
 			if (itemType.equals(nodeService.getType(itemNodeRef))) {
@@ -191,7 +222,7 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 						}
 					}
 
-					for (AttributeExtractorStructure metadataField : metadataFields) {
+					for (AttributeExtractorStructure metadataField : new ArrayList<>(metadataFields)) {
 						if (metadataField.isFormulaField()) {
 							if (metadataField.getFieldName().startsWith("formula") || metadataField.getFieldName().startsWith("image")) {
 								item.put(metadataField.getFieldName(),
@@ -200,11 +231,23 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 								item.put(metadataField.getFieldName(), metadataField.getFormula());
 							}
 						}
-
+					}
+					
+					if (wUsedAssocCache != null) {
+						item.putAll(
+								wUsedAssocCache
+										.computeIfAbsent(itemNodeRef,
+												unused -> nodeService
+														.getProperties(entityListDAO.getEntity(itemNodeRef)))
+										.entrySet().stream().filter(property -> property.getValue() != null)
+										.collect(Collectors.toMap(
+												property -> "wUsedEntity_" + property.getKey()
+														.toPrefixString(namespaceService).replaceFirst(":", "_"),
+												Entry::getValue)));
 					}
 
 					String parameter = (parameters != null) && (parameters.length > 0) ? parameters[0] : null;
-
+					
 					if ((parameter == null) || !parameter.contains("OnlyLevel") || parameter.equals("OnlyLevel" + entry.getValue().getDepth())) {
 						Row row = sheet.createRow(rownum++);
 
@@ -221,7 +264,7 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 
 					}
 					rownum = appendNextLevel(entry.getValue(), sheet, itemType, metadataFields, cache, rownum, key, qty, parameters, entityItems,
-							dynamicCharactColumnCache, excelCellStyles);
+							dynamicCharactColumnCache, excelCellStyles, wUsedEntityType, wUsedAssocCache);
 
 				}
 			}
