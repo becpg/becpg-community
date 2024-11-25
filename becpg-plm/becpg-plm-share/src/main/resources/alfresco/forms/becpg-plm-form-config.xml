@@ -8013,15 +8013,24 @@
 						<control template="/org/alfresco/components/form/controls/richtext.ftl">
 							<control-param name="editorAppearance">custom</control-param>
 							<control-param name="editorParameters">
-								toolbar: "bold italic underline",
-								menu: {},
-								contextmenu: {},
-								entity_encoding : "raw",
-								forced_root_blocks : false,
-								forced_root_block: '',
-								force_p_newlines: false,
-								force_br_newlines : true
-							</control-param>
+                                   toolbar: "bold italic underline",
+								   contextmenu: false,
+								   menu: {},
+								   formats: {
+								        bold: { inline: "b" },
+								        underline: { inline: "u", exact: true },
+								        italic: { inline: "i" }
+								    },
+								    extended_valid_elements: "u,b,i",
+								    invalid_elements: "em strong",
+								    entity_encoding: "raw",
+								    forced_root_blocks: false,
+								    force_br_newlines: true,
+					                forced_root_block: '',
+                                    force_p_newlines: false, 
+                                    newline_behavior: "linebreak",
+                                    paste_as_text: true
+                            </control-param>
 						</control>
 					</field>
 				</appearance>
@@ -8091,15 +8100,24 @@
 						<control template="/org/alfresco/components/form/controls/richtext.ftl">
 							<control-param name="editorAppearance">custom</control-param>
 							<control-param name="editorParameters">
-								toolbar: "bold italic underline",
-								menu: {},
-								contextmenu: {},
-								entity_encoding : "raw",
-								forced_root_blocks : false,
-								forced_root_block: '',
-								force_p_newlines: false,
-								force_br_newlines : true
-							</control-param>
+                                   toolbar: "bold italic underline",
+                                   contextmenu: false,
+                                   menu: {},
+                                   formats: {
+                                      bold: { inline: "b" },
+                                      underline: { inline: "u", exact: true },
+                                      italic: { inline: "i" }
+                                    },
+                                    extended_valid_elements: "u,b,i",
+                                    invalid_elements: "em strong",
+                                    entity_encoding: "raw",
+                                    forced_root_blocks: false,
+                                    force_br_newlines: true,
+                                    forced_root_block: '',
+                                    force_p_newlines: false, 
+                                    newline_behavior: "linebreak",
+                                    paste_as_text: true
+                            </control-param>
 						</control>
 					</field>
 				</appearance>
