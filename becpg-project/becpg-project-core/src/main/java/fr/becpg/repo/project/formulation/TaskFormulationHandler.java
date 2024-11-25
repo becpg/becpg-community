@@ -152,10 +152,8 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 
 			if (projectData.getReformulateCount() == null) {
 				projectData.setReformulateCount(1);
-			} else {
-				if (projectData.getReformulateCount() < 3) {
-					projectData.setReformulateCount(projectData.getReformulateCount() + 1);
-				}
+			} else if (projectData.getReformulateCount() < 3) {
+				projectData.setReformulateCount(projectData.getReformulateCount() + 1);
 			}
 
 		}
@@ -544,14 +542,10 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 					logger.debug("Start first task.");
 					task.getTask().setTaskState(TaskState.InProgress);
 				}
-			} else {
-
-				// previous task are done
-				if (previousDone(task) && ((task.getTask().getManualDate() == null)
-						|| ((task.getTask().getStart() != null) && task.getTask().getStart().before(new Date())))) {
-					task.getTask().setTaskState(TaskState.InProgress);
-				}
-
+			} else // previous task are done
+			if (previousDone(task) && ((task.getTask().getManualDate() == null)
+					|| ((task.getTask().getStart() != null) && task.getTask().getStart().before(new Date())))) {
+				task.getTask().setTaskState(TaskState.InProgress);
 			}
 
 		} else if (task.getTask().isRefused() && (task.getTask().getRefusedTask() != null)) {
@@ -671,13 +665,9 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 						// reassign new tasks
 						toAdd = reassignResource;
 					}
-				}
-
-				else {
-					if ((boolean) nodeService.getProperty(resource, ProjectModel.PROP_QNAME_REASSIGN_TASK)) {
-						// reassign current tasks
-						toAdd = reassignResource;
-					}
+				} else if ((boolean) nodeService.getProperty(resource, ProjectModel.PROP_QNAME_REASSIGN_TASK)) {
+					// reassign current tasks
+					toAdd = reassignResource;
 				}
 			}
 
@@ -692,14 +682,16 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 	}
 
 	private void calculatePlanning(ProjectData projectData, TaskWrapper task) {
-		// all dependencies calculated, critical cost is max
-		// dependency
-		// critical cost, plus our cost
+		// all dependencies calculated, critical cost is max dependency critical cost, plus our cost
 		int maxDuration = 0;
 		int maxRealDuration = 0;
 
 		Date startDate = null;
 		Date targetStart = null;
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("Calculate planning of: " + task.getTask().getTaskName());
+		}
 
 		if (task.isRoot()) {
 
@@ -726,7 +718,7 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 				Date endDate = t.getTask().getEnd() != null ? t.getTask().getEnd() : t.getTask().getStart();
 				Date targetEnd = t.getTask().getTargetEnd() != null ? t.getTask().getTargetEnd() : t.getTask().getTargetStart();
 
-				if (TaskState.Cancelled.equals(t.getTask().getTaskState())) {
+				if (TaskState.Cancelled.equals(t.getTask().getTaskState()) && !TaskState.InProgress.equals(t.getTask().getPreviousTaskState())) {
 					endDate = ProjectHelper.calculatePrevEndDate(t.getTask().getStart());
 					targetEnd = ProjectHelper.calculatePrevEndDate(t.getTask().getTargetStart());
 				}
@@ -765,7 +757,8 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 					Date now = Calendar.getInstance().getTime();
 
 					if (TaskState.OnHold.equals(task.getTask().getTaskState())
-							|| TaskState.InProgress.equals(task.getTask().getTaskState()) && (endDate != null) && endDate.before(now)) {
+							|| (TaskState.InProgress.equals(task.getTask().getTaskState()) && (endDate != null) && endDate.before(now))
+							|| (TaskState.InProgress.equals(task.getTask().getPreviousTaskState()))) {
 						endDate = now;
 					}
 
@@ -785,7 +778,7 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 
 			}
 		}
-		if (!TaskState.Cancelled.equals(task.getTask().getTaskState())) {
+		if (!TaskState.Cancelled.equals(task.getTask().getTaskState()) && !TaskState.InProgress.equals(task.getTask().getPreviousTaskState())) {
 			if (task.getDuration() != null) {
 				task.setMaxDuration(maxDuration + task.getDuration());
 			}
@@ -799,10 +792,8 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 
 		if (TaskState.Completed.equals(task.getTask().getTaskState())) {
 			task.setMaxRealDuration(ProjectHelper.calculateTaskDuration(projectData.getStartDate(), task.getTask().getEnd()));
-		} else {
-			if (realDuration != null) {
-				task.setMaxRealDuration(maxRealDuration + realDuration);
-			}
+		} else if (realDuration != null) {
+			task.setMaxRealDuration(maxRealDuration + realDuration);
 		}
 
 	}
