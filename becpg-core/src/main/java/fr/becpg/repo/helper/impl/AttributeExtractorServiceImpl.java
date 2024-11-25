@@ -513,7 +513,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		} else if (dataType.equals(DataTypeDefinition.DATETIME.toString())) {
 			return propertyFormats.formatDateTime(v);
 		} else if (dataType.equals(DataTypeDefinition.NODE_REF.toString())) {
-			if (!propertyDef.isMultiValued() || v instanceof NodeRef) {
+			if (!propertyDef.isMultiValued()) {
 				return extractPropName((NodeRef) v);
 			} else {
 				List<NodeRef> values = (List<NodeRef>) v;
