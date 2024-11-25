@@ -8951,6 +8951,7 @@
 			</form>
 			<form id="create-productSpecification">
 				<field-visibility>
+					<show id="bcpg:regulatoryType" force="true" />
 					<show id="bcpg:nutListNut" />
 					<show id="bcpg:nutListMini" />
 					<show id="bcpg:nutListMaxi" />
