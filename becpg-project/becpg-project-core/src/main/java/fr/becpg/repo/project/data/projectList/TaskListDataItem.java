@@ -68,6 +68,7 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	private Date targetEnd;
 	
 	private TaskState taskState = TaskState.Planned;
+	private TaskState previousTaskState = null;
 	private Integer completionPercent = 0;
 	
 	private List<NodeRef> refusedTasksToReopen;
@@ -477,6 +478,8 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	public TaskState getTaskState() {
 		return taskState;
 	}
+	
+	
 
 	/**
 	 * <p>Setter for the field <code>taskState</code>.</p>
@@ -487,6 +490,22 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 		this.taskState = state;
 	}
 
+	@AlfProp
+	@AlfQname(qname = "pjt:tlPreviousState")
+	public TaskState getPreviousTaskState() {
+		return previousTaskState;
+	}
+	
+	/**
+	 * <p>Setter for the field <code>taskState</code>.</p>
+	 *
+	 * @param state a {@link fr.becpg.repo.project.data.projectList.TaskState} object.
+	 */
+	public void setPreviousTaskState(TaskState previousTaskState) {
+		this.previousTaskState = previousTaskState;
+	}
+	
+	
 	// Helper method for script and Spel
 	/**
 	 * <p>getState.</p>
