@@ -1,5 +1,6 @@
 package fr.becpg.repo.activity.extractor;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -333,6 +334,9 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 				if (nodeService.exists(nodeRef)) {
 					if (permissionService.hasPermission(nodeRef, PermissionService.READ) == AccessStatus.ALLOWED) {
 						if (propertyDef != null) {
+							if (propertyDef.isMultiValued()) {
+								return attributeExtractorService.getStringValue(propertyDef, new ArrayList<>(List.of(nodeRef)), attributeExtractorService.getPropertyFormats(FormatMode.JSON, true));
+							}
 							return attributeExtractorService.getStringValue(propertyDef, nodeRef, attributeExtractorService.getPropertyFormats(FormatMode.JSON, true));
 						} else {
 							return attributeExtractorService.extractPropName(nodeRef);
