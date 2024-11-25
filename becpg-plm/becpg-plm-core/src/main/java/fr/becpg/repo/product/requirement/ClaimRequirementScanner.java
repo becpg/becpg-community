@@ -72,6 +72,7 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 								}
 							}
 							if (isForbidden || Boolean.TRUE.equals(addInfoReqCtrl)) {
+								
 								MLText message = MLTextHelper.getI18NMessage(MESSAGE_NOT_CLAIM, extractName(listDataItem.getLabelClaim()),
 										extractClaimValue(specDataItem.getLabelClaimValue()));
 
@@ -82,7 +83,7 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 								if (!isForbidden && specDataItem.getRegulatoryType() != null) {
 									reqType = specDataItem.getRegulatoryType();
 								}
-								if (specDataItem.getRegulatoryMessage() != null) {
+								if (specDataItem.getRegulatoryMessage() != null && !MLTextHelper.isEmpty(specDataItem.getRegulatoryMessage())) {
 									message = specDataItem.getRegulatoryMessage();
 								}
 
