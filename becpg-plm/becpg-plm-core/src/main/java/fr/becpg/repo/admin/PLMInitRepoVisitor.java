@@ -625,15 +625,10 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				: nodeService.getChildByName(listContainer, ContentModel.ASSOC_CONTAINS, RepoConsts.PATH_NOTIFICATIONS);
 
 		createRequirementsNotification(notificationFolder);
-
 		createObsoleteDocumentsNotification(notificationFolder);
-
 		createInProgressProjectsNotification(notificationFolder);
-
 		createValidatedProductsNotification(notificationFolder);
-
 		createValidatedAndUpdatedProductsNotification(notificationFolder);
-
 		createArchivedProductsNotification(notificationFolder);
 	}
 
@@ -644,6 +639,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 		if ((notificationFolder != null) && (notification == null)) {
 
+			properties.put(BeCPGModel.PROP_COLOR, "#cfe2f3");
+			
 			notification = nodeService
 					.createNode(notificationFolder, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, BeCPGModel.TYPE_NOTIFICATIONRULELIST)
 					.getChildRef();
