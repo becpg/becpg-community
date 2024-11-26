@@ -296,8 +296,13 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 					
 					if (nodeService.exists(initialNode)) {
 						if (VersionHelper.isVersion(initialNode)) {
-							if (nextWork.size() < BatchInfo.BATCH_SIZE) {
-								nextWork.add(initialNode);
+							if (treated.size() + toTreat.size() < maxProcessedNodes && !toTreat.contains(initialNode) && !treated.contains(initialNode)) {
+								if (nextWork.size() < BatchInfo.BATCH_SIZE) {
+									nextWork.add(initialNode);
+									treated.add(initialNode);
+								} else {
+									toTreat.add(initialNode);
+								}
 							}
 						} else {
 							logger.trace("find convertible relatives of " + initialNode);
