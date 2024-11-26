@@ -964,6 +964,7 @@
         <property name="applyToTenants"><value>true</value></property>
         <property name="ruleService" ref="ruleService"/>
         <property name="policyBehaviourFilter" ref="policyBehaviourFilter"/>
+        <property name="associationService" ref="associationService" />
         <property name="patchDAO">
             <ref bean="patchDAO"/>
         </property>

@@ -32,7 +32,6 @@ import org.alfresco.repo.forum.CommentService;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authority.AuthorityDAO;
-import org.alfresco.repo.tenant.TenantUtil;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -140,11 +139,11 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 	public void reopenTask(NodeRef taskNodeRef) {
 
 		logger.debug("open Task " + taskNodeRef);
-		List<AssociationRef> sourceAssocs = nodeService.getSourceAssocs(taskNodeRef, ProjectModel.ASSOC_DL_TASK);
-		for (AssociationRef sourceAssoc : sourceAssocs) {
-			String dlState = (String) nodeService.getProperty(sourceAssoc.getSourceRef(), ProjectModel.PROP_DL_STATE);
+		List<NodeRef> sourceAssocs = associationService.getSourcesAssocs(taskNodeRef, ProjectModel.ASSOC_DL_TASK);
+		for (NodeRef sourceAssoc : sourceAssocs) {
+			String dlState = (String) nodeService.getProperty(sourceAssoc, ProjectModel.PROP_DL_STATE);
 			if (DeliverableState.Completed.toString().equals(dlState)) {
-				nodeService.setProperty(sourceAssoc.getSourceRef(), ProjectModel.PROP_DL_STATE, DeliverableState.InProgress.toString());
+				nodeService.setProperty(sourceAssoc, ProjectModel.PROP_DL_STATE, DeliverableState.InProgress.toString());
 			}
 		}
 

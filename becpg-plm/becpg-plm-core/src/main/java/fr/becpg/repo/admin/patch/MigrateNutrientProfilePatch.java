@@ -15,7 +15,6 @@ import org.alfresco.repo.domain.qname.QNameDAO;
 import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.rule.RuleService;
 import org.alfresco.service.namespace.QName;
@@ -28,6 +27,7 @@ import fr.becpg.model.NutrientProfileCategory;
 import fr.becpg.model.NutrientProfileVersion;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.helper.AssociationService;
 
 public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 
@@ -46,6 +46,11 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 	private RuleService ruleService;
 	private BehaviourFilter policyBehaviourFilter;
 	private IntegrityChecker integrityChecker;
+	private AssociationService associationService;
+	
+	public void setAssociationService(AssociationService associationService) {
+		this.associationService = associationService;
+	}
 	
 	public void setIntegrityChecker(IntegrityChecker integrityChecker) {
 		this.integrityChecker = integrityChecker;
@@ -208,7 +213,7 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 				ruleService.disableRules();
 				policyBehaviourFilter.disableBehaviour();
 				
-				List<AssociationRef> sourceAssocs = nodeService.getSourceAssocs(nutrientProfile, ASSOC_NUTRIENT_PROFILE_REF);
+				List<NodeRef> sourceAssocs = associationService.getSourcesAssocs(nutrientProfile, ASSOC_NUTRIENT_PROFILE_REF);
 				
 				logger.info("identified nutrient profile to migrate : " + nutrientProfile);
 				
@@ -227,24 +232,24 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 									|| nutrientProfileClass.contains("Red meats") || nutrientProfileClass.contains("Viandes rouges"));
 					
 					if (nutrientProfileClassKnown) {
-						for (AssociationRef sourceAssoc : sourceAssocs) {
+						for (NodeRef sourceAssoc : sourceAssocs) {
 							if (nutrientProfileClass.contains("Others") || nutrientProfileClass.contains("Autres")) {
-								nodeService.setProperty(sourceAssoc.getSourceRef(), PLMModel.PROP_NUTRIENT_PROFILE_CATEGORY, NutrientProfileCategory.Others.toString());
+								nodeService.setProperty(sourceAssoc, PLMModel.PROP_NUTRIENT_PROFILE_CATEGORY, NutrientProfileCategory.Others.toString());
 							} else if (nutrientProfileClass.contains("Beverages") || nutrientProfileClass.contains("Boissons")) {
-								nodeService.setProperty(sourceAssoc.getSourceRef(), PLMModel.PROP_NUTRIENT_PROFILE_CATEGORY, NutrientProfileCategory.Beverages.toString());
+								nodeService.setProperty(sourceAssoc, PLMModel.PROP_NUTRIENT_PROFILE_CATEGORY, NutrientProfileCategory.Beverages.toString());
 							} else if (nutrientProfileClass.contains("Fats") || nutrientProfileClass.contains("Matières grasses")) {
-								nodeService.setProperty(sourceAssoc.getSourceRef(), PLMModel.PROP_NUTRIENT_PROFILE_CATEGORY, NutrientProfileCategory.Fats.toString());
+								nodeService.setProperty(sourceAssoc, PLMModel.PROP_NUTRIENT_PROFILE_CATEGORY, NutrientProfileCategory.Fats.toString());
 							} else if (nutrientProfileClass.contains("Cheeses") || nutrientProfileClass.contains("Fromages")) {
-								nodeService.setProperty(sourceAssoc.getSourceRef(), PLMModel.PROP_NUTRIENT_PROFILE_CATEGORY, NutrientProfileCategory.Cheeses.toString());
+								nodeService.setProperty(sourceAssoc, PLMModel.PROP_NUTRIENT_PROFILE_CATEGORY, NutrientProfileCategory.Cheeses.toString());
 							} else if (nutrientProfileClass.contains("Red meats") || nutrientProfileClass.contains("Viandes rouges")) {
-								nodeService.setProperty(sourceAssoc.getSourceRef(), PLMModel.PROP_NUTRIENT_PROFILE_CATEGORY, NutrientProfileCategory.RedMeats.toString());
+								nodeService.setProperty(sourceAssoc, PLMModel.PROP_NUTRIENT_PROFILE_CATEGORY, NutrientProfileCategory.RedMeats.toString());
 							}
 							
 							if (nutrientProfileClass.contains(NutrientProfileVersion.VERSION_2023.toString())) {
-								nodeService.setProperty(sourceAssoc.getSourceRef(), PLMModel.PROP_NUTRIENT_PROFILE_VERSION, NutrientProfileVersion.VERSION_2023.toString());
+								nodeService.setProperty(sourceAssoc, PLMModel.PROP_NUTRIENT_PROFILE_VERSION, NutrientProfileVersion.VERSION_2023.toString());
 							}
 							
-							nodeService.removeAssociation(sourceAssoc.getSourceRef(), nutrientProfile, ASSOC_NUTRIENT_PROFILE_REF);
+							nodeService.removeAssociation(sourceAssoc, nutrientProfile, ASSOC_NUTRIENT_PROFILE_REF);
 						}
 						nodeService.deleteNode(nutrientProfile);
 					} else {

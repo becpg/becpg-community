@@ -672,10 +672,10 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 		List<NodeRef> ret = new LinkedList<>();
 		// Look for childs
-		for (AssociationRef associationRef : nodeService.getSourceAssocs(entityNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY)) {
-			if (!isVersion(associationRef.getSourceRef())
-					&& !nodeService.hasAspect(associationRef.getSourceRef(), BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
-				NodeRef tmpNodeRef = associationRef.getSourceRef();
+		for (NodeRef associationRef : associationService.getSourcesAssocs(entityNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY)) {
+			if (!isVersion(associationRef)
+					&& !nodeService.hasAspect(associationRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
+				NodeRef tmpNodeRef = associationRef;
 				if (!ret.contains(tmpNodeRef)) {
 					ret.add(tmpNodeRef);
 					if (!entityNodeRef.equals(tmpNodeRef)) {
