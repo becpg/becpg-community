@@ -47,6 +47,7 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 	private ScriptMode scriptMode;
 	private String errorLog;
 	private List<NodeRef> reportTpls;
+	private Boolean disabled;
 	
 	
 	
@@ -55,6 +56,16 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 	 */
 	public NotificationRuleListDataItem() {
 		super();	
+	}
+	
+	@AlfProp
+	@AlfQname(qname="bcpg:nrDisabled")
+	public Boolean getDisabled() {
+		return disabled;
+	}
+	
+	public void setDisabled(Boolean disabled) {
+		this.disabled = disabled;
 	}
 
 	/**
