@@ -258,6 +258,7 @@
 		<property name="projectService" ref="projectService" />
 		<property name="serviceRegistry" ref="ServiceRegistry" />
 		<property name="entityService" ref="entityService" />
+		<property name="associationService" ref="associationService" />
 	</bean>
     
 
