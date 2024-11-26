@@ -48,6 +48,7 @@ import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.repo.transaction.TransactionalResourceHelper;
 import org.alfresco.repo.version.Version2Model;
+import org.alfresco.repo.version.VersionBaseModel;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.repository.AssociationRef;
@@ -435,9 +436,16 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, qNamePattern);
 		List<NodeRef> listItems = new LinkedList<>();
 		for (AssociationRef assocRef : assocRefs) {
-			listItems.add(assocRef.getSourceRef());
+			if (!isVersion(assocRef.getSourceRef()) && !nodeService.hasAspect(assocRef.getSourceRef(), BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
+				listItems.add(assocRef.getSourceRef());
+			}
 		}
 		return listItems;
+	}
+	
+	private boolean isVersion(NodeRef nodeRef) {
+		return nodeRef.getStoreRef().getProtocol().contains(VersionBaseModel.STORE_PROTOCOL)
+				|| nodeRef.getStoreRef().getIdentifier().contains(Version2Model.STORE_ID);
 	}
 
 	private static final String SQL_SELECT_SOURCE_ASSOC_ENTITY_FIRST_PART = "select entity.uuid as entity, dataListItem.uuid as dataListItem, dataListItem.type_qname_id as dataListItemType, targetNode.uuid as targetNode"

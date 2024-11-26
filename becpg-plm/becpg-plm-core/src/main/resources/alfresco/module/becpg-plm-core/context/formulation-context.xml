@@ -301,6 +301,7 @@
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
 		<property name="nodeService" ref="nodeService" />
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
+		<property name="associationService" ref="associationService" />
 		<property name="requirementScanners">
 			<list>
 				<bean class="fr.becpg.repo.product.requirement.AllergenRequirementScanner">
