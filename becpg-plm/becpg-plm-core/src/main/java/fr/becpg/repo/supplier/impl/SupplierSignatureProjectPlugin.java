@@ -28,6 +28,7 @@ import fr.becpg.artworks.signature.model.SignatureModel;
 import fr.becpg.artworks.signature.model.SignatureStatus;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.entity.version.VersionHelper;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.project.ProjectService;
@@ -174,7 +175,7 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 	
 			if ((sourceSupplierAccountAssocs != null) && !sourceSupplierAccountAssocs.isEmpty()) {
 				for (NodeRef sourceSupplierAccountAssoc : sourceSupplierAccountAssocs) {
-					if (PLMModel.TYPE_SUPPLIER.equals(nodeService.getType(sourceSupplierAccountAssoc))) {
+					if (!VersionHelper.isVersion(sourceSupplierAccountAssoc) && PLMModel.TYPE_SUPPLIER.equals(nodeService.getType(sourceSupplierAccountAssoc))) {
 						return sourceSupplierAccountAssoc;
 					}
 				}

@@ -37,6 +37,7 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.repo.entity.version.EntityVersionService;
+import fr.becpg.repo.entity.version.VersionHelper;
 import fr.becpg.repo.helper.AttachmentHelper;
 import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.report.client.ReportFormat;
@@ -135,7 +136,7 @@ public class ReportContentGet extends ContentGet {
 				entityNodeRef = entityReportService.getEntityNodeRef(nodeRef);
 			}
 
-			if (entityVersionService.isVersion(nodeRef)) {
+			if (VersionHelper.isVersion(nodeRef)) {
 				entityNodeRef = entityVersionService.extractVersion(entityReportService.getEntityNodeRef(nodeRef));
 			}
 

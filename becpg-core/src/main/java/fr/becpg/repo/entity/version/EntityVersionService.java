@@ -183,8 +183,6 @@ public interface EntityVersionService {
 	 */
 	void updateLastVersionLabel(NodeRef entityNodeRef, String versionLabel);
 
-	boolean isVersion(NodeRef entity1);
-
 	NodeRef extractVersion(NodeRef entity1);
 	
 	void createInitialVersionWithProps(NodeRef entityNodeRef, Map<QName, Serializable> before);
