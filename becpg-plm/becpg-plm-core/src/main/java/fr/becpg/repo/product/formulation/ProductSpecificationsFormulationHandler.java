@@ -17,7 +17,6 @@ import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
-import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.transaction.TransactionService;
@@ -31,6 +30,7 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.formulation.FormulationService;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
@@ -61,6 +61,12 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 
 	private NodeService nodeService;
 
+	private AssociationService associationService;
+	
+	public void setAssociationService(AssociationService associationService) {
+		this.associationService = associationService;
+	}
+	
 	/**
 	 * <p>
 	 * Setter for the field <code>policyBehaviourFilter</code>.
@@ -311,12 +317,12 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 		if ((formulatedProduct.getSpecCompatibilityTpls() != null) && !formulatedProduct.getSpecCompatibilityTpls().isEmpty()) {
 			List<NodeRef> ret = new ArrayList<>();
 			for (NodeRef tplNodeRef : formulatedProduct.getSpecCompatibilityTpls()) {
-				List<AssociationRef> assocRefs = nodeService.getSourceAssocs(tplNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
+				List<NodeRef> assocRefs = associationService.getSourcesAssocs(tplNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
 
-				for (AssociationRef assocRef : assocRefs) {
-					if (!nodeService.hasAspect(assocRef.getSourceRef(), BeCPGModel.ASPECT_COMPOSITE_VERSION)
-							&& !tplNodeRef.equals(assocRef.getSourceRef())) {
-						ret.add(assocRef.getSourceRef());
+				for (NodeRef assocRef : assocRefs) {
+					if (!nodeService.hasAspect(assocRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)
+							&& !tplNodeRef.equals(assocRef)) {
+						ret.add(assocRef);
 					}
 				}
 
