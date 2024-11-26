@@ -46,6 +46,7 @@ import fr.becpg.repo.entity.datalist.MultiLevelDataListService;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.entity.version.EntityVersionService;
+import fr.becpg.repo.entity.version.VersionHelper;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.system.SystemConfigurationService;
@@ -130,7 +131,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 	public List<CompareResultDataItem> compare(NodeRef entity1, List<NodeRef> entities, List<CompareResultDataItem> compareResult,
 			Map<String, List<StructCompareResultDataItem>> structCompareResults) {
 
-		if (entityVersionService.isVersion(entity1)) {
+		if (VersionHelper.isVersion(entity1)) {
 			entity1 = entityVersionService.extractVersion(entity1);
 		}
 		
@@ -141,7 +142,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		for (NodeRef entity : entities) {
 			logger.debug("compare entity " + entity1 + " with entity " + entity + " nbEntities " + nbEntities + " pos " + pos);
 			
-			if (entityVersionService.isVersion(entity)) {
+			if (VersionHelper.isVersion(entity)) {
 				entity = entityVersionService.extractVersion(entity);
 			}
 			
