@@ -46,6 +46,7 @@ import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.projectList.BudgetListDataItem;
@@ -76,6 +77,12 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 	private ServiceRegistry serviceRegistry;
 	
 	private EntityService entityService;
+	
+	private AssociationService associationService;
+	
+	public void setAssociationService(AssociationService associationService) {
+		this.associationService = associationService;
+	}
 	
 	/**
 	 * <p>Setter for the field <code>entityService</code>.</p>
@@ -228,11 +235,11 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 
 				NodeRef projectNodeRef = null;
 
-				List<AssociationRef> projectAssocs = nodeService.getSourceAssocs(taskNodeRef,
+				List<NodeRef> projectAssocs = associationService.getSourcesAssocs(taskNodeRef,
 						ProjectModel.ASSOC_PROJECT_CUR_TASKS);
 				
 				if (projectAssocs != null && !projectAssocs.isEmpty()) {
-					projectNodeRef = projectAssocs.get(0).getSourceRef();
+					projectNodeRef = projectAssocs.get(0);
 				} else {
 					projectNodeRef = entityService.getEntityNodeRef(taskNodeRef, nodeService.getType(taskNodeRef));
 				}
