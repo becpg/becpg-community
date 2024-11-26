@@ -7,8 +7,6 @@ import java.util.Map;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.repo.version.Version2Model;
-import org.alfresco.repo.version.VersionBaseModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.rule.RuleService;
@@ -24,6 +22,7 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.entity.catalog.EntityCatalogService;
+import fr.becpg.repo.entity.version.VersionHelper;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.repository.L2CacheSupport;
@@ -116,7 +115,7 @@ public class EntityCatalogWebScript extends AbstractWebScript {
 			try {
 				JSONObject jsonObject = new JSONObject();
 				
-				if (!isVersion(productNodeRef)) {
+				if (!VersionHelper.isVersion(productNodeRef)) {
 					if (catalogId == null) {
 						
 						boolean formulated = false;
@@ -168,11 +167,6 @@ public class EntityCatalogWebScript extends AbstractWebScript {
 				throw new WebScriptException("Unable to serialize JSON", e);
 			}
 
-	}
-	
-	private boolean isVersion(NodeRef entityNodeRef) {
-		return entityNodeRef.getStoreRef().getProtocol().contains(VersionBaseModel.STORE_PROTOCOL)
-				|| entityNodeRef.getStoreRef().getIdentifier().contains(Version2Model.STORE_ID);
 	}
 
 }
