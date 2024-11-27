@@ -1367,7 +1367,7 @@
                             key: columnKey,
                             label: column.label == "hidden" ? "" : column.label,
                             hidden: hidden,
-                            sortable: (column.type == "property"),
+                            sortable: (column.type == "property" || column.type == "association"),
                             sortOptions:
                             {
                                 field: column.formsName,
@@ -1602,27 +1602,24 @@
                     this.widgets.dataTable.doBeforeSortColumn = function DataGrid_doBeforeSortColumn(oColumn,
                         sSortDir) {
 
-                        if (!me.options.localSort) {
+                        if (!me.options.localSort 
+                            && oColumn.key.indexOf("assoc_")!=0 
+                            && oColumn.key.indexOf("prop_bcpg_dynamicCharactColumn")!=0 ) {
                             if (oColumn.key.indexOf("prop_") == 0) {
                                 me.currentSort = oColumn.key;
                                 me.currentSortDir = sSortDir;
                                 me.currentPage = 1;
                                 me.queryExecutionId = null;
                                 me._updateDataGrid.call(me);
-
                                 return false;
-
                             } else {
                                 me.currentSort = null;
                                 return true;
                             }
                         } else {
 
-                            me.currentSort =
-                            {
-                                oColumn: oColumn,
-                                sSortDir: sSortDir
-                            };
+                            me.currentSort = null;
+                            
                             // Change when dynamic sort
 
                             var oSortedBy = this.get("sortedBy") || {};
