@@ -6,7 +6,8 @@ package fr.becpg.model;
  * @author matthieu
  */
 public enum ToxType {
-	SkinIrritation,
+	SkinIrritationRinseOff,
+	SkinIrritationLeaveOn,
 	Sensitization,
 	OcularIrritation,
 	SystemicIngredient,

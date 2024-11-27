@@ -326,5 +326,9 @@ public final class BeCPGModel {
 
 	/** Constant <code>ASPECT_UNDELETABLE_ASPECT</code> */
 	public static final QName ASPECT_UNDELETABLE_ASPECT = QName.createQName(BECPG_URI, "undeletableAspect");
+	
+	
+	public static final QName TYPE_SAVED_SEARCH = QName.createQName(BECPG_URI, "savedSearch");
+	public static final QName PROP_SAVED_SEARCH_TYPE = QName.createQName(BECPG_URI, "savedSearchType");
 
 }

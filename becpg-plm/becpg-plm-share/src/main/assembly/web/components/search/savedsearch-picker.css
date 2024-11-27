@@ -1,0 +1,38 @@
+.datalist-toolbar .edit-saved-search span.first-child
+{
+   background: url(../images/edit-16.png) no-repeat 6px 4px;
+   padding: inherit 4px inherit 4px;
+}
+
+
+.datalist-toolbar .duplicate-saved-search span.first-child
+{
+   background: url(../images/duplicate-row-16.png) no-repeat 6px 4px;
+   padding: inherit 4px inherit 4px;
+}
+
+
+.datalist-toolbar .delete-saved-search span.first-child
+{
+   background: url(../images/delete-16.png) no-repeat 6px 4px;
+   padding: inherit 4px inherit 4px;
+}
+
+
+.datalist-toolbar .create-saved-search span.first-child
+{
+   background: url(./images/floppy-16.png) no-repeat 4px 6px;
+   padding: inherit 4px inherit 4px;
+}
+
+
+.datalist-toolbar .savedSearchPicker .yui-push-button button {
+    padding-right: 10px !important;
+    padding-left: 10px !important;
+}
+
+/* .datalist-toolbar  span.saved-search-global {
+	background: url(../../components/images/enabled-indicator-off-16.png) no-repeat;
+	padding-left: 20px;
+}
+ */

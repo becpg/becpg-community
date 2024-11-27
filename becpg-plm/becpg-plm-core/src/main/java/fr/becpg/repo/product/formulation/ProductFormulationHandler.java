@@ -244,7 +244,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		if (formulatedProduct.hasCompoListEl()) {
 			for (CompoListDataItem c : formulatedProduct.getCompoList()) {
 				if (c.getCompoListUnit() == null) {
-					addMessingReq(formulatedProduct.getReqCtrlList(), null, MESSAGE_WRONG_UNIT, RequirementDataType.Composition);
+					addMissingReq(formulatedProduct.getReqCtrlList(), null, MESSAGE_WRONG_UNIT, RequirementDataType.Composition);
 				} else {
 					checkCompositionItem(formulatedProduct.getReqCtrlList(), c.getProduct(), c);
 				}
@@ -253,7 +253,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		if (formulatedProduct.hasPackagingListEl()) {
 			for (PackagingListDataItem p : formulatedProduct.getPackagingList()) {
 				if (p.getPackagingListUnit() == null) {
-					addMessingReq(formulatedProduct.getReqCtrlList(), null, MESSAGE_WRONG_UNIT, RequirementDataType.Packaging);
+					addMissingReq(formulatedProduct.getReqCtrlList(), null, MESSAGE_WRONG_UNIT, RequirementDataType.Packaging);
 				} else {
 					checkPackagingItem(formulatedProduct.getReqCtrlList(), p);
 				}
@@ -267,7 +267,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		if (!(formulatedProduct instanceof ResourceProductData)) {
 			ProductUnit productUnit = formulatedProduct.getUnit();
 			if (productUnit == null) {
-				addMessingReq(formulatedProduct.getReqCtrlList(), formulatedProduct.getNodeRef(), MESSAGE_MISSING_UNIT,
+				addMissingReq(formulatedProduct.getReqCtrlList(), formulatedProduct.getNodeRef(), MESSAGE_MISSING_UNIT,
 						RequirementDataType.Formulation);
 			}
 		}
@@ -286,13 +286,13 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 			Double density = subComponent.getDensity();
 
 			if ((density == null) && ((shouldUseLiter && !useLiter) || (!shouldUseLiter && useLiter))) {
-				addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_WRONG_UNIT, RequirementDataType.Composition);
-				addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_MISSING_DENSITY, RequirementDataType.Composition);
+				addMissingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_WRONG_UNIT, RequirementDataType.Composition);
+				addMissingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_MISSING_DENSITY, RequirementDataType.Composition);
 			}
 			Double overrunPerc = c.getOverrunPerc();
 			if (((productUnit != null) && productUnit.isVolume()) || (overrunPerc != null)) {
 				if ((density == null) || density.equals(0d)) {
-					addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_MISSING_DENSITY, RequirementDataType.Composition);
+					addMissingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_MISSING_DENSITY, RequirementDataType.Composition);
 				}
 			}
 		}
@@ -304,7 +304,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 
 		ProductUnit productUnit = subComponent.getUnit();
 		if (productUnit == null) {
-			addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_MISSING_UNIT, RequirementDataType.Packaging);
+			addMissingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_MISSING_UNIT, RequirementDataType.Packaging);
 		} else {
 			boolean wrongUnit = false;
 			if (productUnit.isWeight()) {
@@ -326,19 +326,19 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 			}
 
 			if (wrongUnit) {
-				addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_WRONG_UNIT, RequirementDataType.Packaging);
+				addMissingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_WRONG_UNIT, RequirementDataType.Packaging);
 			}
 		}
 
 		if (!nodeService.hasAspect(p.getProduct(), PackModel.ASPECT_PALLET)) {
 			BigDecimal tare = FormulationHelper.getTareInKg(subComponent);
 			if (tare == null) {
-				addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_MISSING_TARE, RequirementDataType.Packaging);
+				addMissingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_MISSING_TARE, RequirementDataType.Packaging);
 			}
 		}
 	}
 
-	private void addMessingReq(List<ReqCtrlListDataItem> reqCtrlListDataItem, NodeRef sourceNodeRef, String reqMsg, RequirementDataType reqDataType) {
+	private void addMissingReq(List<ReqCtrlListDataItem> reqCtrlListDataItem, NodeRef sourceNodeRef, String reqMsg, RequirementDataType reqDataType) {
 		reqCtrlListDataItem.add(ReqCtrlListDataItem.forbidden().withMessage(MLTextHelper.getI18NMessage(reqMsg))
 				.withSources(Arrays.asList(sourceNodeRef)).ofDataType(reqDataType));
 	}

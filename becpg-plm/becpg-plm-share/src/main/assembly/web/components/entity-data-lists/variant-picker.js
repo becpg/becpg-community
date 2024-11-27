@@ -149,7 +149,7 @@
 
                   },
 
-                  createYUIButton : function(instance, actionName, fn) {
+                  createYUIButton : function(_instance, actionName, fn) {
 
                      var template = Dom.get("custom-toolBar-template-button"), buttonWidget = null;
 

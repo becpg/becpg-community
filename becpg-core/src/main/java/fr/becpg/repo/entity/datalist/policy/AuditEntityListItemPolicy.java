@@ -12,10 +12,16 @@ import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.query.PagingRequest;
+import org.alfresco.query.PagingResults;
+import org.alfresco.repo.forum.CommentService;
+import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
+import org.alfresco.service.cmr.repository.ContentReader;
+import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AuthenticationService;
 import org.alfresco.service.namespace.QName;
@@ -28,6 +34,7 @@ import com.google.common.collect.Maps;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.behaviour.BehaviourRegistry;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.catalog.EntityCatalogService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
@@ -45,6 +52,7 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 
 	/** Constant <code>UPDATED_LISTS="AuditEntityListItemPolicy.UpdatedLists"</code> */
 	public static final String UPDATED_LISTS = "AuditEntityListItemPolicy.UpdatedLists";
+	private static final String IGNORED_LISTS = "AuditEntityListItemPolicy.IgnoredLists";
 	private static final String CATALOG_ONLY = "AuditEntityListItemPolicy.CatalogOnly";
 
 	private static final Log logger = LogFactory.getLog(AuditEntityListItemPolicy.class);
@@ -52,6 +60,24 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 	private AuthenticationService authenticationService;
 
 	private EntityCatalogService entityCatalogService;
+	
+	private CommentService commentService;
+	
+	private ContentService contentService;
+	
+	private EntityDictionaryService entityDictionaryService;
+	
+	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
+		this.entityDictionaryService = entityDictionaryService;
+	}
+	
+	public void setContentService(ContentService contentService) {
+		this.contentService = contentService;
+	}
+	
+	public void setCommentService(CommentService commentService) {
+		this.commentService = commentService;
+	}
 	
 	/**
 	 * <p>
@@ -110,6 +136,36 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 	public void onCopyComplete(QName classRef, NodeRef sourceNodeRef, NodeRef destinationRef, boolean copyToNewNode, Map<NodeRef, NodeRef> copyMap) {
 		queueListNodeRef(nodeService.getPrimaryParent(destinationRef).getParentRef());
 		super.onCopyComplete(classRef, sourceNodeRef, destinationRef, copyToNewNode, copyMap);
+		if (entityDictionaryService.isSubClass(classRef, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
+			copyComments(sourceNodeRef, destinationRef);
+		}
+	}
+
+	private void copyComments(NodeRef sourceNodeRef, NodeRef destinationRef) {
+		PagingResults<NodeRef> comments = commentService.listComments(sourceNodeRef, new PagingRequest(5000, null));
+		if (comments != null) {
+			for (NodeRef commentNodeRef : comments.getPage()) {
+				NodeRef newComment = null;
+				boolean mlAware = MLPropertyInterceptor.setMLAware(false);
+				try {
+					MLPropertyInterceptor.setMLAware(false);
+					ContentReader reader = contentService.getReader(commentNodeRef, ContentModel.PROP_CONTENT);
+					if (reader != null) {
+						String comment = reader.getContentString();
+						newComment = commentService.createComment(destinationRef,
+								(String) nodeService.getProperty(commentNodeRef, ContentModel.PROP_TITLE), comment, false);
+						nodeService.setProperty(newComment, ContentModel.PROP_CREATED,
+								nodeService.getProperty(commentNodeRef, ContentModel.PROP_CREATED));
+						nodeService.setProperty(newComment, ContentModel.PROP_CREATOR,
+								nodeService.getProperty(commentNodeRef, ContentModel.PROP_CREATOR));
+						nodeService.setProperty(newComment, ContentModel.PROP_MODIFIED,
+								nodeService.getProperty(commentNodeRef, ContentModel.PROP_MODIFIED));
+					}
+				} finally {
+					MLPropertyInterceptor.setMLAware(mlAware);
+				}
+			}
+		}
 	}
 
 	/** {@inheritDoc} */
@@ -157,22 +213,22 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 		Set<NodeRef> listContainerNodeRefs = new HashSet<>();
 		Map<NodeRef, Set<NodeRef>> listNodeRefByContainer = new HashMap<>();
 		for (NodeRef listNodeRef : pendingNodes) {
-			if (nodeService.exists(listNodeRef)) {
+			
+			Set<NodeRef> ignoredLists = TransactionSupportUtil.getResource(IGNORED_LISTS);
+			if ((ignoredLists == null || !ignoredLists.contains(listNodeRef)) && !listNodeRefs.contains(listNodeRef)
+					&& nodeService.exists(listNodeRef)) {
+				listNodeRefs.add(listNodeRef);
+				NodeRef listContainerNodeRef = nodeService.getPrimaryParent(listNodeRef).getParentRef();
 				
-				if (!listNodeRefs.contains(listNodeRef)) {
-					listNodeRefs.add(listNodeRef);
-					NodeRef listContainerNodeRef = nodeService.getPrimaryParent(listNodeRef).getParentRef();
-					
-					if (listNodeRefByContainer.get(listContainerNodeRef) != null) {
-						listNodeRefByContainer.get(listContainerNodeRef).add(listNodeRef);
-					} else {
-						listNodeRefByContainer.put(listContainerNodeRef, new HashSet<>(Arrays.asList(listNodeRef)));
-					}
-					
-					if ((listContainerNodeRef != null) && !listContainerNodeRefs.contains(listContainerNodeRef)
-							&& nodeService.exists(listContainerNodeRef)) {
-						listContainerNodeRefs.add(listContainerNodeRef);
-					}
+				if (listNodeRefByContainer.get(listContainerNodeRef) != null) {
+					listNodeRefByContainer.get(listContainerNodeRef).add(listNodeRef);
+				} else {
+					listNodeRefByContainer.put(listContainerNodeRef, new HashSet<>(Arrays.asList(listNodeRef)));
+				}
+				
+				if ((listContainerNodeRef != null) && !listContainerNodeRefs.contains(listContainerNodeRef)
+						&& nodeService.exists(listContainerNodeRef)) {
+					listContainerNodeRefs.add(listContainerNodeRef);
 				}
 			}
 		}
@@ -222,6 +278,13 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 				
 				if (!shouldIgnoreAudit) {
 					queueListNodeRef(nodeService.getPrimaryParent(nodeRef).getParentRef());
+				} else {
+					Set<NodeRef> ignoredLists = TransactionSupportUtil.getResource(IGNORED_LISTS);
+					if (ignoredLists == null) {
+						ignoredLists = new HashSet<>();
+					}
+					ignoredLists.add(nodeService.getPrimaryParent(nodeRef).getParentRef());
+					TransactionSupportUtil.bindResource(IGNORED_LISTS, ignoredLists);
 				}
 			}
 		}

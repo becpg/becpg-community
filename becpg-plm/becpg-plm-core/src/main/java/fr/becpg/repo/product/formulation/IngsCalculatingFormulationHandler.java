@@ -15,7 +15,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -45,6 +47,7 @@ import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.product.formulation.labeling.EvaporatedDataItem;
 import fr.becpg.repo.product.helper.IngListHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -57,7 +60,7 @@ import fr.becpg.repo.variant.filters.VariantFilters;
  * @version $Id: $Id
  */
 public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<ProductData> {
-	
+
 	/** The Constant NO_GRP. */
 	public static final String NO_GRP = "-";
 
@@ -188,10 +191,10 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 		Set<NodeRef> visited = new HashSet<>();
 
-		boolean shouldSort = compoList != null && compoList.size() > 1;
+		boolean shouldSort = (compoList != null) && (compoList.size() > 1);
 
-		Double totalQtyUsedWithYield = 0d;
-		Double totalVolumeUsed = 0d;
+		double totalQtyUsedWithYield = 0d;
+		double totalVolumeUsed = 0d;
 		if (compoList != null) {
 			for (CompoListDataItem compoItem : compoList) {
 
@@ -223,6 +226,9 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		formulatedProduct.getIngList().retainAll(retainNodes);
 
 		if (totalQtyUsedWithYield != 0d) {
+
+			Set<EvaporatedDataItem> evaporatedDataItems = new HashSet<>();
+
 			for (IngListDataItem ingListDataItem : formulatedProduct.getIngList()) {
 
 				IngListDataItem totalQtyIng = totalQtyIngMap.get(ingListDataItem.getName());
@@ -258,12 +264,12 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 					} else {
 						ingListDataItem.setQtyPerc3(totalQty3 / totalQtyUsedWithYield);
 					}
-				} 
+				}
 				if (totalQty4 != null) {
 					if (formulatedProduct.isGeneric()) {
 						ingListDataItem.setQtyPerc4(totalQty4);
 					} else {
-					  ingListDataItem.setQtyPerc4(totalQty4 / totalQtyUsedWithYield);
+						ingListDataItem.setQtyPerc4(totalQty4 / totalQtyUsedWithYield);
 					}
 				}
 
@@ -289,17 +295,14 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				}
 
 				if ((totalQtyIngWithYield != null) && !formulatedProduct.isGeneric()) {
-					Double x = (formulatedProduct.getYield() != null ? formulatedProduct.getYield() / 100d : 1d);
+					double primaryYieldFactor = formulatedProduct.getYield() != null ? formulatedProduct.getYield() / 100d : 1d;
+					Double qtyPercWithYield = totalQtyIngWithYield / totalQtyUsedWithYield;
 
-					Double qtyPercWithYield = (totalQtyIngWithYield) / (totalQtyUsedWithYield);
-
-					if ((formulatedProduct.getYield() != null) && (nodeService.hasAspect(ingListDataItem.getIng(), PLMModel.ASPECT_WATER)
-							|| (nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE) != null
-									&& (Double) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE) == 100d))) {
-
-						qtyPercWithYield = qtyPercWithYield / x + (100d - 100d / x);
+					if (hasEvaporationData(ingListDataItem)) {
+						Double evaporateRate = getEvaporateRate(ingListDataItem);
+						evaporatedDataItems.add(new EvaporatedDataItem(ingListDataItem.getIng(), evaporateRate));
 					} else {
-						qtyPercWithYield = qtyPercWithYield / x;
+						qtyPercWithYield /= primaryYieldFactor;
 					}
 					ingListDataItem.setQtyPercWithYield(qtyPercWithYield);
 				} else {
@@ -308,20 +311,18 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 				if (!formulatedProduct.isGeneric() && (formulatedProduct.getSecondaryYield() != null)
 						&& (formulatedProduct.getSecondaryYield() != 0d)) {
-
 					Double qtyPercWithSecondaryYield = ingListDataItem.getQtyPercWithYield() != null ? ingListDataItem.getQtyPercWithYield()
 							: ingListDataItem.getQtyPerc();
-					Double x = (formulatedProduct.getSecondaryYield() / 100d);
-					if(qtyPercWithSecondaryYield!=null) {
-						if (nodeService.hasAspect(ingListDataItem.getIng(), PLMModel.ASPECT_WATER)
-								|| (nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE) != null
-										&& (Double) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE) == 100d)) {
-							qtyPercWithSecondaryYield = qtyPercWithSecondaryYield / x + (100d - 100d / x);
+
+					if (qtyPercWithSecondaryYield != null) {
+						double secondaryYieldFactor = formulatedProduct.getSecondaryYield() / 100d;
+						if (hasEvaporationData(ingListDataItem)) {
+							Double evaporateRate = getEvaporateRate(ingListDataItem);
+							evaporatedDataItems.add(new EvaporatedDataItem(ingListDataItem.getIng(), evaporateRate));
 						} else {
-							qtyPercWithSecondaryYield = qtyPercWithSecondaryYield / x;
+							qtyPercWithSecondaryYield /= secondaryYieldFactor;
 						}
 					}
-
 					ingListDataItem.setQtyPercWithSecondaryYield(qtyPercWithSecondaryYield);
 				} else {
 					ingListDataItem.setQtyPercWithSecondaryYield(null);
@@ -332,12 +333,121 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 					ingListDataItem.getAspects().add(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
 				}
 			}
+
+			if (!formulatedProduct.isGeneric()) {
+
+				applyEvaporation(formulatedProduct, evaporatedDataItems);
+				applySecondaryEvaporation(formulatedProduct, evaporatedDataItems);
+			}
 		}
 
 		// sort collection
 		if (shouldSort) {
 			sortIL(formulatedProduct.getIngList());
 		}
+	}
+
+	private boolean hasEvaporationData(IngListDataItem ingListDataItem) {
+		return nodeService.hasAspect(ingListDataItem.getIng(), PLMModel.ASPECT_WATER)
+				|| (nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE) != null);
+	}
+
+	private Double getEvaporateRate(IngListDataItem ingListDataItem) {
+		Double evaporateRate = (Double) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE);
+		return evaporateRate != null ? evaporateRate : 100d;
+	}
+
+	private void applyEvaporation(ProductData formulatedProduct, Set<EvaporatedDataItem> evaporatedDataItems) {
+		applyEvaporation(formulatedProduct, evaporatedDataItems, formulatedProduct.getYield(), IngListDataItem::getQtyPercWithYield,
+				IngListDataItem::setQtyPercWithYield);
+	}
+
+	private void applySecondaryEvaporation(ProductData formulatedProduct, Set<EvaporatedDataItem> evaporatedDataItems) {
+		applyEvaporation(formulatedProduct, evaporatedDataItems, formulatedProduct.getSecondaryYield(), IngListDataItem::getQtyPercWithSecondaryYield,
+				IngListDataItem::setQtyPercWithSecondaryYield);
+	}
+
+	private void applyEvaporation(ProductData formulatedProduct, Set<EvaporatedDataItem> evaporatedDataItems, Double currYield,
+			Function<IngListDataItem, Double> getQtyPercWithYield, BiConsumer<IngListDataItem, Double> setQtyPercWithYield) {
+		if ((currYield != null) && (currYield != 0d)) {
+			double yieldFactor = currYield / 100d;
+			Double evaporatingQty = 100d - currYield;
+
+			if (!evaporatedDataItems.isEmpty() && (evaporatingQty > 0d)) {
+
+				// 1. Evaporate ingredients with 100% rate first
+				Set<EvaporatedDataItem> fullEvaporationItems = evaporatedDataItems.stream()
+						.filter(item -> (item.getRate() != null) && (item.getRate() == 100d)).collect(Collectors.toSet());
+
+				evaporatingQty = processEvaporation(formulatedProduct.getIngList(), evaporatingQty, fullEvaporationItems, null, getQtyPercWithYield,
+						setQtyPercWithYield);
+
+				// 2. Distribute remaining evaporation proportionally
+				Set<EvaporatedDataItem> remainingItems = evaporatedDataItems.stream().filter(item -> !fullEvaporationItems.contains(item))
+						.collect(Collectors.toSet());
+
+				Double totalRate = remainingItems.stream().mapToDouble(EvaporatedDataItem::getRate).sum();
+
+				evaporatingQty = processEvaporation(formulatedProduct.getIngList(), evaporatingQty, remainingItems, totalRate, getQtyPercWithYield,
+						setQtyPercWithYield);
+
+				// 3. If not all has been evaporated, remove from the first item
+				if ((evaporatingQty > 0.000001) && !fullEvaporationItems.isEmpty()) {
+					EvaporatedDataItem evaporatedDataItem = fullEvaporationItems.iterator().next();
+					IngListDataItem ingListDataItem = formulatedProduct.getIngList().stream()
+							.filter(i -> i.getIng().equals(evaporatedDataItem.getProductNodeRef())).findFirst().orElse(null);
+
+					if ((ingListDataItem != null) && (getQtyPercWithYield.apply(ingListDataItem) != null)) {
+						setQtyPercWithYield.accept(ingListDataItem, getQtyPercWithYield.apply(ingListDataItem) - evaporatingQty);
+					}
+				}
+
+				// 4. Adjust quantities by the yield factor
+				for (EvaporatedDataItem evaporatedDataItem : evaporatedDataItems) {
+					IngListDataItem ingListDataItem = formulatedProduct.getIngList().stream()
+							.filter(i -> i.getIng().equals(evaporatedDataItem.getProductNodeRef())).findFirst().orElse(null);
+					if (ingListDataItem != null) {
+						Double adjustedQty = getQtyPercWithYield.apply(ingListDataItem) / yieldFactor;
+						setQtyPercWithYield.accept(ingListDataItem, adjustedQty);
+					}
+				}
+			}
+		}
+	}
+
+	private Double processEvaporation(List<IngListDataItem> ingList, Double evaporatingQty, Set<EvaporatedDataItem> items, Double totalRate,
+			Function<IngListDataItem, Double> getQtyPercWithYield, BiConsumer<IngListDataItem, Double> setQtyPercWithYield) {
+		Double ret = evaporatingQty;
+
+		if (evaporatingQty > 0d) {
+			for (EvaporatedDataItem evaporatedDataItem : items) {
+				IngListDataItem ingListDataItem = ingList.stream().filter(i -> i.getIng().equals(evaporatedDataItem.getProductNodeRef())).findFirst()
+						.orElse(null);
+
+				if (ingListDataItem != null) {
+					Double rate = evaporatedDataItem.getRate() != null ? evaporatedDataItem.getRate() : 100d;
+					Double qtyPercWithYield = getQtyPercWithYield.apply(ingListDataItem);
+
+					if ((qtyPercWithYield != null) && (evaporatingQty > 0d)) {
+						Double maxEvapQty = (qtyPercWithYield * rate) / 100d;
+
+						Double proportionalEvap = ((totalRate == null) || (totalRate == 0d)) ? evaporatingQty : evaporatingQty * (rate / totalRate);
+
+						Double evaporatedQty = Math.min(maxEvapQty, proportionalEvap);
+
+						setQtyPercWithYield.accept(ingListDataItem, qtyPercWithYield - evaporatedQty);
+
+						if (logger.isDebugEnabled()) {
+							logger.debug("Apply evaporation qty " + evaporatedQty + " on " + ingListDataItem.getName() + " after "
+									+ getQtyPercWithYield.apply(ingListDataItem));
+						}
+
+						ret -= evaporatedQty;
+					}
+				}
+			}
+		}
+		return ret;
 	}
 
 	private void addReqCtrl(Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap, NodeRef reqNodeRef, RequirementType requirementType, MLText message,
@@ -393,27 +503,24 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 				return;
 
-			} else {
-
-				if ((compoListDataItem.getDeclType() == null) || (!compoListDataItem.getDeclType().equals(DeclarationType.DoNotDetails)
-						&& !compoListDataItem.getDeclType().equals(DeclarationType.Omit))) {
-					double total = 0d;
-					for (IngListDataItem ingListDataItem : componentProductData.getIngList()) {
-						if ((ingListDataItem.getQtyPerc() != null)
-								&& ((ingListDataItem.getDepthLevel() == null) || (ingListDataItem.getDepthLevel() == 1))) {
-							total += ingListDataItem.getQtyPerc();
-						}
-
-					}
-
-					// Due to double precision
-					if (Math.abs(total - 100d) > 0.00001) {
-						addReqCtrl(reqCtrlMap, new NodeRef(RepoConsts.SPACES_STORE, "incorrect-inglist-total"), RequirementType.Tolerated,
-								MLTextHelper.getI18NMessage(MESSAGE_INCORRECT_INGLIST_TOTAL), componentProductData.getNodeRef(),
-								RequirementDataType.Ingredient);
+			} else if ((compoListDataItem.getDeclType() == null) || (!compoListDataItem.getDeclType().equals(DeclarationType.DoNotDetails)
+					&& !compoListDataItem.getDeclType().equals(DeclarationType.Omit))) {
+				double total = 0d;
+				for (IngListDataItem ingListDataItem : componentProductData.getIngList()) {
+					if ((ingListDataItem.getQtyPerc() != null)
+							&& ((ingListDataItem.getDepthLevel() == null) || (ingListDataItem.getDepthLevel() == 1))) {
+						total += ingListDataItem.getQtyPerc();
 					}
 
 				}
+
+				// Due to double precision
+				if (Math.abs(total - 100d) > 0.00001) {
+					addReqCtrl(reqCtrlMap, new NodeRef(RepoConsts.SPACES_STORE, "incorrect-inglist-total"), RequirementType.Tolerated,
+							MLTextHelper.getI18NMessage(MESSAGE_INCORRECT_INGLIST_TOTAL), componentProductData.getNodeRef(),
+							RequirementDataType.Ingredient);
+				}
+
 			}
 		}
 
@@ -477,8 +584,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				updateQty(qty, ingListDataItem.getQtyPerc(), totalIng::getQtyPerc, totalIng::setQtyPerc, yieldFactor);
 				updateQty(qty, ingListDataItem.getQtyPerc1(), totalIng::getQtyPerc1, totalIng::setQtyPerc1, yieldFactor);
 				updateQty(qty, ingListDataItem.getQtyPerc2(), totalIng::getQtyPerc2, totalIng::setQtyPerc2, yieldFactor);
-				updateMinMaxQty(qty, ingListDataItem.getQtyPerc3(), totalIng::getQtyPerc3, totalIng::setQtyPerc3, isGeneric,true);
-				updateMinMaxQty(qty, ingListDataItem.getQtyPerc4(), totalIng::getQtyPerc4, totalIng::setQtyPerc4, isGeneric,true);
+				updateMinMaxQty(qty, ingListDataItem.getQtyPerc3(), totalIng::getQtyPerc3, totalIng::setQtyPerc3, isGeneric, true);
+				updateMinMaxQty(qty, ingListDataItem.getQtyPerc4(), totalIng::getQtyPerc4, totalIng::setQtyPerc4, isGeneric, true);
 
 				if ((qtyIngWithYield != null)) {
 
@@ -488,10 +595,10 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 						totalQtyIngWithYield = 0d;
 					}
 
-					if ((FormulationHelper.getYield(compoListDataItem) != null)
-							&& (nodeService.hasAspect(ingListDataItem.getIng(), PLMModel.ASPECT_WATER)
-									|| (nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE) != null
-											&& (Double) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE) == 100d))) {
+					if ((FormulationHelper.getYield(compoListDataItem) != null) && (nodeService.hasAspect(ingListDataItem.getIng(),
+							PLMModel.ASPECT_WATER)
+							|| ((nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE) != null)
+									&& ((Double) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE) == 100d)))) {
 
 						valueToAdd = qty * ((qtyIngWithYield) - (100d - FormulationHelper.getYield(compoListDataItem)));
 					}
@@ -582,7 +689,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		if (qtyIng != null) {
 			Double totalQty = getTotalQty.get();
 			if (isGeneric) {
-				if (totalQty == null || (isMax ? qtyIng > totalQty : qtyIng < totalQty)) {
+				if ((totalQty == null) || (isMax ? qtyIng > totalQty : qtyIng < totalQty)) {
 					totalQty = qtyIng;
 				}
 			} else {

@@ -29,7 +29,29 @@ function main()
    {
      var description = "";
     
-     
+
+     // Editor Parameters
+     model.defaultEditorParameters = 
+         "toolbar: \"bold italic underline\"," +
+         "formats: {" +
+         "    bold: { inline: \"b\" }," +
+         "    underline: { inline: \"u\", exact: true }," +
+         "    italic: { inline: \"i\" }" +
+         "}," +
+         "extended_valid_elements: \"u,b,i\"," +
+         "invalid_elements: \"em strong\"," +
+         "contextmenu: false," +
+         "menu: {}," +
+         "entity_encoding: \"raw\"," +
+         "forced_root_blocks: false," +
+         "forced_root_block: ''," +
+         "force_br_newlines: true," +
+         "force_p_newlines: false," +
+         "newline_behavior: \"linebreak\"," +
+         "paste_as_text: true";
+
+
+
       // Call the repository for the site profile
       var json = remote.call("/becpg/form/multilingual/field/"+model.field+"?nodeRef=" + model.nodeRef + (args.diffField != null ? "&diffField="+args.diffField: ""));
       if (json.status == 200)
@@ -52,7 +74,7 @@ function main()
 								 editorAppearance: "custom",
 								 editorWidth: 750,
 								 branding: false,
-           						 editorParameters:"toolbar: \"bold italic underline\",formats: { bold : {inline :'b' },underline : {inline : 'u', exact : true},italic : {inline : 'i'} },extended_valid_elements:'u,b,i',invalid_elements:'em strong',menu: {},entity_encoding : \"raw\",forced_root_blocks : false,forced_root_block: false,force_p_newlines: false"
+           						 editorParameters:  model.defaultEditorParameters
            						}
            					 };
 
@@ -68,7 +90,7 @@ function main()
            			  	 country = lang.key.split("_")[1].toLowerCase();
            			  	}
            				var toAdd  = { "localeLabel" : lang.label, "locale" : lang.key, "value": "", "description":description, "country":country, "control": { "params": 
-           					{"editorAppearance": "custom",  "branding": false, "editorWidth" : 750, "editorParameters":"toolbar: \"bold italic underline\",menu: {},formats: { bold : {inline :'b' },underline : {inline : 'u', exact : true},italic : {inline : 'i'} },extended_valid_elements:'u,b,i',invalid_elements:'em strong',entity_encoding : \"raw\",forced_root_blocks : false,forced_root_block: false,force_p_newlines: false"}
+           					{"editorAppearance": "custom",  "branding": false, "editorWidth" : 750, "editorParameters":  model.defaultEditorParameters}
            					}};
            				model.mlFields.push(toAdd);
            			}

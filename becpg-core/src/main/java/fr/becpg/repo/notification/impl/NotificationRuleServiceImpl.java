@@ -164,7 +164,7 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 			}
 			try {
 				if (notification.getNodeType() == null || notification.getTarget() == null || !nodeService.exists(notification.getTarget())
-						|| notification.getAuthorities() == null || !isAllowed(notification)) {
+						|| notification.getAuthorities() == null || !isAllowed(notification) || Boolean.TRUE.equals(notification.getDisabled())) {
 					logger.debug("Skip notification : " + notification.getSubject());
 					continue;
 				}

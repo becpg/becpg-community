@@ -87,6 +87,7 @@ import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.version.EntityVersionService;
+import fr.becpg.repo.entity.version.VersionHelper;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.AssociationService;
@@ -735,6 +736,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * @param value a {@link java.lang.String} object.
 	 */
 	public void setMLProperty(ScriptNode sourceNode, String propQName, String locale, String value) {
+		Locale parsedLocale = MLTextHelper.parseLocale(locale);
 
 		MLText mlText = (MLText) mlNodeService.getProperty(sourceNode.getNodeRef(), getQName(propQName));
 		if (mlText == null) {
@@ -742,12 +744,17 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		}
 
 		if ((value != null) && !value.isEmpty()) {
-			mlText.addValue(MLTextHelper.parseLocale(locale), value);
+			if (value.equals(mlText.get(parsedLocale))) {
+				return;
+			}
+			mlText.addValue(parsedLocale, value);
 		} else {
-			mlText.removeValue(MLTextHelper.parseLocale(locale));
+			if (!mlText.containsKey(parsedLocale)) {
+				return;
+			}
+			mlText.removeValue(parsedLocale);
 		}
 		mlNodeService.setProperty(sourceNode.getNodeRef(), getQName(propQName), mlText);
-
 	}
 
 	/**
@@ -1867,7 +1874,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		NodeRef versionNode = VersionUtil
 				.convertNodeRef(versionService.getVersionHistory(entityNodeRef).getVersion(versionLabel).getFrozenStateNodeRef());
 
-		if (entityVersionService.isVersion(versionNode) && (nodeService.getProperty(versionNode, BeCPGModel.PROP_ENTITY_FORMAT) != null)) {
+		if (VersionHelper.isVersion(versionNode) && (nodeService.getProperty(versionNode, BeCPGModel.PROP_ENTITY_FORMAT) != null)) {
 			NodeRef extractedNode = entityVersionService.extractVersion(versionNode);
 			entityReportService.generateReports(extractedNode, versionNode);
 		}
@@ -1883,7 +1890,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
 		for (Version version : versionHistory.getAllVersions()) {
 			NodeRef versionNode = VersionUtil.convertNodeRef(version.getFrozenStateNodeRef());
-			if (entityVersionService.isVersion(versionNode) && (nodeService.getProperty(versionNode, BeCPGModel.PROP_ENTITY_FORMAT) != null)) {
+			if (VersionHelper.isVersion(versionNode) && (nodeService.getProperty(versionNode, BeCPGModel.PROP_ENTITY_FORMAT) != null)) {
 				NodeRef extractedNode = entityVersionService.extractVersion(versionNode);
 				entityReportService.generateReports(extractedNode, versionNode);
 			}
