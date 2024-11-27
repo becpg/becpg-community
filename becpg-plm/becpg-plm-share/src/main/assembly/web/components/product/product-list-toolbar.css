@@ -62,3 +62,25 @@
 {
    background-image: url(../../components/images/filetypes/img-file-16.png);
 }
+
+
+.product-list-toolbar .onActionShowWused {
+    background-image: url(../images/wused-16.png);
+}
+
+.product-list-toolbar .onActionBulkEdit {
+    background-image:  url("../../components/images/edit-inline-16.png");
+}
+
+.product-list-toolbar.onActionSelectColor  {
+    background-image:  url("../../components/images/select-color-16.png") ;
+}
+
+.product-list-toolbar .onActionLock  {
+    background-image:  url("../../modules/entity-datagrid/images/lock-16.png") ;
+}
+
+.product-list-toolbar.onActionUnlock  {
+    background-image:  url("../../modules/entity-datagrid/images/unlock-16.png") ;
+}
+
