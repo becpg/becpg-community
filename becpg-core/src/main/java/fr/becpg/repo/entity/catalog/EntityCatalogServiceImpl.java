@@ -152,7 +152,7 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 	@Override
 	public void updateAuditedField(NodeRef entityNodeRef, Set<QName> diffQnames, Set<NodeRef> listNodeRefs) {
 		try {
-			if ((diffQnames != null || listNodeRefs != null) && nodeService.exists(entityNodeRef)) {
+			if (((diffQnames != null) || (listNodeRefs != null)) && nodeService.exists(entityNodeRef)) {
 
 				for (JSONArray catalogDef : getCatalogsDef()) {
 
@@ -422,7 +422,6 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 
 						JSONArray nonUniqueFields = extractNonUniqueFields(entityType, entityNodeRef, uniqueFields, i18nMessages);
 
-						
 						boolean isFirst = true;
 						for (String lang : langs) {
 
@@ -576,11 +575,9 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 		return queryResults;
 	}
 
-	private JSONArray extractMissingFields(RepositoryEntity formulatedEntity, QName entityType, Map<QName, Serializable> properties, JSONArray reqFields,
-			JSONObject i18nMessages, String lang, boolean isFirstLang) throws JSONException {
+	private JSONArray extractMissingFields(RepositoryEntity formulatedEntity, QName entityType, Map<QName, Serializable> properties,
+			JSONArray reqFields, JSONObject i18nMessages, String lang, boolean isFirstLang) throws JSONException {
 		JSONArray ret = new JSONArray();
-		
-		
 
 		for (int i = 0; i < reqFields.length(); i++) {
 			String field = reqFields.getString(i);
@@ -598,7 +595,7 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 
 				String i18nKey = i18nMessages.has(currentField) ? i18nMessages.getString(currentField) : null;
 
-				if (currentField.startsWith("formula") && splitFields.size() == 2) {
+				if (currentField.startsWith("formula") && (splitFields.size() == 2)) {
 					isFormula = true;
 					present = testCondition(splitFields.get(1), formulatedEntity);
 					if (i18nKey == null) {
@@ -616,7 +613,6 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 					}
 
 					QName fieldQname = null;
-					
 
 					if (logger.isDebugEnabled()) {
 						logger.debug("Test field qname: " + currentField + ", lang: " + lang);
@@ -626,29 +622,29 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 						fieldQname = QName.createQName(currentField, namespaceService);
 
 						propDef = dictionaryService.getProperty(fieldQname);
-						if (propDef instanceof PropertyDefinition) {
-							if ((DataTypeDefinition.MLTEXT.equals(((PropertyDefinition) propDef).getDataType().getName()))) {
+						if (propDef instanceof PropertyDefinition fieldDef) {
+							if ((DataTypeDefinition.MLTEXT.equals(fieldDef.getDataType().getName()))
+									&& !MLTextHelper.isDisabledMLTextField(currentField)) {
 								if (mlTextIsPresent(fieldQname, formulatedEntity.getNodeRef(), lang, currLang, properties)) {
 									logger.debug(" - mlProp is present");
 									present = true;
-								} 
-							} else {
-								if (!isFirstLang || ((properties.get(fieldQname) != null) && !properties.get(fieldQname).toString().isEmpty())) {
-									logger.debug(" - regular prop is present: " + properties.get(fieldQname));
-									present = true;
-								} 
+								}
+							} else if (!isFirstLang || ((properties.get(fieldQname) != null) && !properties.get(fieldQname).toString().isEmpty())) {
+								logger.debug(" - regular prop is present: " + properties.get(fieldQname));
+								present = true;
 							}
 
 						} else {
 							propDef = dictionaryService.getAssociation(fieldQname);
 							// only check assoc when lang is null
-							if (isFirstLang && propDef != null) {
+							if (isFirstLang && (propDef != null)) {
 								if (associationService.getTargetAssoc(formulatedEntity.getNodeRef(), fieldQname) != null) {
 									logger.debug(" - assoc is present");
 									present = true;
-								} 
+								}
 							} else {
-								present = true;							}
+								present = true;
+							}
 						}
 
 					} catch (NamespaceException e) {
@@ -657,8 +653,7 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 						// happens if namespace does not exist
 					}
 				}
-				
-				
+
 				if (!present) {
 					if (!id.toString().isBlank()) {
 						id.append("|");
@@ -685,12 +680,11 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 						}
 					}
 
-				} 
-				
-				if( isFormula) {
-					break;
 				}
 
+				if (isFormula) {
+					break;
+				}
 
 			}
 
