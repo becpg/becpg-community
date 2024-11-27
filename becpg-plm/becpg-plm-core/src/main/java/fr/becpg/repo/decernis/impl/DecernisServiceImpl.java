@@ -87,8 +87,6 @@ public class DecernisServiceImpl  extends AbstractLifecycleBean implements Decer
 	private static final String PARAM_RESULTS = "results";
 	private static final String PARAM_QUERY = "query";
 
-	private static final String MISSING_VALUE = "NA";
-	
 	private final NodeService nodeService;
 
 	private final DecernisAnalysisPlugin[] decernisPlugins;
@@ -425,7 +423,7 @@ public class DecernisServiceImpl  extends AbstractLifecycleBean implements Decer
 					function = (String) nodeService.getProperty(ingType, PLMModel.PROP_REGULATORY_CODE);
 				}
 				try {
-					if ((rid != null) && !rid.isEmpty() && !rid.equals(MISSING_VALUE)
+					if ((rid != null) && !rid.isEmpty() && !rid.equals(NOT_APPLICABLE)
 							&& ((ingName != null) && !ingName.isEmpty())) {
 						JSONObject ingredient = new JSONObject();
 						ingredient.put("name", ingName);
@@ -484,7 +482,7 @@ public class DecernisServiceImpl  extends AbstractLifecycleBean implements Decer
 		while (iterator.hasNext()) {
 			Map.Entry<QName, String> ingNumber = iterator.next();
 			String number = (String) nodeService.getProperty(ingListDataItem.getIng(), ingNumber.getKey());
-			if ((number != null) && !number.isEmpty() && !number.equals(MISSING_VALUE) && !number.contains(",")) {
+			if ((number != null) && !number.isEmpty() && !number.equals(NOT_APPLICABLE) && !number.contains(",")) {
 				params.put(PARAM_QUERY, number);
 				params.put("type", ingNumber.getValue());
 				return true;
