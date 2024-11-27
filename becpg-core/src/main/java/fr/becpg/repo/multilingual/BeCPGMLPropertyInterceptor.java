@@ -50,7 +50,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.repo.helper.MLTextHelper;
-import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * Interceptor to filter out multilingual text properties from getter methods and
@@ -86,25 +85,6 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
     
     private NamespaceService namespaceService;
     
-    private SystemConfigurationService systemConfigurationService;
-    
-    /**
-     * <p>Setter for the field <code>systemConfigurationService</code>.</p>
-     *
-     * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
-     */
-    public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
-		this.systemConfigurationService = systemConfigurationService;
-	}
-    
-    /**
-     * <p>getDisabledMLTextFields.</p>
-     *
-     * @return a {@link java.lang.String} object
-     */
-    public String getDisabledMLTextFields() {
-		return systemConfigurationService.confValue("beCPG.multilinguale.disabledMLTextFields");
-	}
 
 	/**
 	 * <p>Setter for the field <code>namespaceService</code>.</p>
@@ -679,9 +659,7 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
     }
 
     private Locale getLocale( QName propertyQName) {
-    	String disabledMLTextFields = getDisabledMLTextFields();
-    	if(disabledMLTextFields !=null && !disabledMLTextFields.isBlank()
-    			&& propertyQName!=null && disabledMLTextFields.contains(propertyQName.toPrefixString(namespaceService))){
+    	if(propertyQName!=null && MLTextHelper.isDisabledMLTextField(propertyQName.toPrefixString(namespaceService))){
     		return Locale.getDefault();
     	}
 		return I18NUtil.getContentLocale();
