@@ -129,6 +129,12 @@
 					<show id="bcpg:entityTplEnabled" force="false" />
 					<show id="bcpg:entityTplIsDefault" force="false" />
 					<show id="bcpg:entityTplScript" force="false" />
+					<show id="bcpg:regulatoryCountries" />
+					<show id="bcpg:regulatoryUsageRef" />
+					<show id="bcpg:regulatoryMode" />
+					<show id="bcpg:regulatoryRecipeId" />
+					<show id="bcpg:regulatoryResult" />
+					<show id="bcpg:regulatoryValidationDate" />
 				</field-visibility>
 				<appearance>
 					<set id="template" appearance="bordered-panel" label-id="becpg.forms.set.template.label" />
@@ -325,6 +331,28 @@
 					<field id="gs1:alcoholBeverageTypeCode" mandatory="false" read-only="false" set="alcohol" />
 					<field id="gs1:alcoholBeverageContainerRef" mandatory="false" read-only="false" set="alcohol">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl"></control>
+					</field>
+
+					<set appearance="bordered-panel" id="regulatory" label-id="becpg.forms.set.regulatory.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="bcpg:regulatoryCountries" set="regulatory">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:regulatoryUsageRef" set="regulatory">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:regulatoryMode" set="regulatory" />
+					<field id="bcpg:regulatoryRecipeId" read-only="true"
+						set="regulatory" />
+					<field id="bcpg:regulatoryResult" read-only="true"
+						set="regulatory" />
+					<field id="bcpg:regulatoryValidationDate" mandatory="false"
+						read-only="false" set="regulatory">
+						<control
+							template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
 					</field>
 
 					<field id="bcpg:ingTypeV2" mandatory="false" read-only="false" set="consumer">
@@ -801,6 +829,9 @@
 					<show force="true" id="bcpg:certificateDate" />
 					<show force="false" id="cm:taggable" />
 					<show force="false" id="cm:categories" />
+					<show force ="true" id="bcpg:regulatoryMode" />
+					<show force="true" id="bcpg:regulatoryCountries" />
+					<show force="true" id="bcpg:regulatoryUsageRef" />
 				</field-visibility>
 				<appearance>
 					<set appearance="bordered-panel" id="mainInfo" label-id="becpg.forms.set.designation.label"
@@ -876,6 +907,20 @@
 							<control-param name="style">width:200px</control-param>
 						</control>
 					</field>
+
+					<set appearance="bordered-panel" id="regulatory"
+						label-id="becpg.forms.set.regulatory.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="bcpg:regulatoryCountries" set="regulatory">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:regulatoryUsageRef" set="regulatory">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:regulatoryMode" set="regulatory" />
+					
 					<set appearance="bordered-panel" id="consumer" label-id="becpg.forms.set.consumer.label"
 						template="/org/alfresco/components/form/2-column-set.ftl" />
 					<field id="bcpg:productUnit" mandatory="false" read-only="false" set="consumer">
