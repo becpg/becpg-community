@@ -367,7 +367,11 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 								// sushi AND (saumon OR thon) AND -dorade
 								// formQuery += (first ? "" : " AND ") +
 
-								queryBuilder.andPropQuery(QName.createQName(propName, namespaceService), cleanValue(propValue));
+								if(propValue.startsWith("=")) {
+									queryBuilder.andPropEquals(QName.createQName(propName, namespaceService), propValue.replaceFirst("=",""));
+								} else {
+									queryBuilder.andPropQuery(QName.createQName(propName, namespaceService), cleanValue(propValue));
+								}
 							}
 						} else {
 

@@ -10,14 +10,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.repo.entity.version.EntityVersionService;
-import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LogisticUnitData;
-import fr.becpg.repo.product.data.PackagingMaterialData;
-import fr.becpg.repo.product.data.constraints.DeclarationType;
-import fr.becpg.repo.product.data.constraints.PackagingLevel;
-import fr.becpg.repo.product.data.constraints.ProductUnit;
-import fr.becpg.repo.product.data.productList.CompoListDataItem;
-import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.test.repo.StandardChocolateEclairTestProduct;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
@@ -62,7 +55,7 @@ public class LogisticUnitIT extends AbstractFinishedProductTest {
 			
 			assertEquals("Colis d'éclairs au chocolat", caseLogisticUnitEntity.getName());
 			assertEquals(200d, caseLogisticUnitEntity.getSecondaryWidth());
-			assertEquals("Eclair au chocolat", alfrescoRepository.findOne(caseLogisticUnitEntity.getCompoList().get(0).getProduct()).getName());
+			assertEquals("Éclair au chocolat", alfrescoRepository.findOne(caseLogisticUnitEntity.getCompoList().get(0).getProduct()).getName());
 			assertEquals("Colis en carton", alfrescoRepository.findOne(caseLogisticUnitEntity.getPackagingList().get(0).getProduct()).getName());
 			
 			assertEquals("Palette d'éclairs au chocolat", palletLogisticUnitEntity.getName());

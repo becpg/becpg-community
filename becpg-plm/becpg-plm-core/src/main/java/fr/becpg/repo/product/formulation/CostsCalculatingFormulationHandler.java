@@ -108,6 +108,9 @@ public class CostsCalculatingFormulationHandler extends AbstractCostCalculatingF
 				Double costPerProduct = null;
 				Double previousCostPerProduct = null;
 				Double futureCostPerProduct = null;
+				Double futureCostPerProduct2 = null;
+				Double futureCostPerProduct3 = null;
+				Double futureCostPerProduct4 = null;
 				String costCurrency = (String) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTCURRENCY);
 				String productCurrency = (String) nodeService.getProperty(formulatedProduct.getNodeRef(), PLMModel.PROP_PRICE_CURRENCY);
 	
@@ -120,6 +123,18 @@ public class CostsCalculatingFormulationHandler extends AbstractCostCalculatingF
 	
 							if (c.getFutureValue() != null) {
 								futureCostPerProduct = c.getFutureValue() / formulatedProduct.getProjectedQty();
+							}
+							
+							if (c.getFutureValue2() != null) {
+								futureCostPerProduct2 = c.getFutureValue2() / formulatedProduct.getProjectedQty();
+							}
+							
+							if (c.getFutureValue3() != null) {
+								futureCostPerProduct3 = c.getFutureValue3() / formulatedProduct.getProjectedQty();
+							}
+							
+							if (c.getFutureValue4() != null) {
+								futureCostPerProduct4 = c.getFutureValue4() / formulatedProduct.getProjectedQty();
 							}
 	
 							if (c.getPreviousValue() != null) {
@@ -134,6 +149,18 @@ public class CostsCalculatingFormulationHandler extends AbstractCostCalculatingF
 						if (c.getFutureValue() != null) {
 							futureCostPerProduct = c.getFutureValue();
 						}
+						
+						if (c.getFutureValue2() != null) {
+							futureCostPerProduct2 = c.getFutureValue2();
+						}
+						
+						if (c.getFutureValue3() != null) {
+							futureCostPerProduct3 = c.getFutureValue3();
+						}
+						
+						if (c.getFutureValue4() != null) {
+							futureCostPerProduct4 = c.getFutureValue4();
+						}
 	
 						if (c.getPreviousValue() != null) {
 							previousCostPerProduct = c.getPreviousValue();
@@ -146,6 +173,15 @@ public class CostsCalculatingFormulationHandler extends AbstractCostCalculatingF
 							if (futureCostPerProduct != null) {
 								futureCostPerProduct *= formulatedProduct.getQty();
 							}
+							if (futureCostPerProduct2 != null) {
+								futureCostPerProduct2 *= formulatedProduct.getQty();
+							}
+							if (futureCostPerProduct3 != null) {
+								futureCostPerProduct3 *= formulatedProduct.getQty();
+							}
+							if (futureCostPerProduct4 != null) {
+								futureCostPerProduct4 *= formulatedProduct.getQty();
+							}
 							if (previousCostPerProduct != null) {
 								previousCostPerProduct *= formulatedProduct.getQty();
 							}
@@ -157,6 +193,18 @@ public class CostsCalculatingFormulationHandler extends AbstractCostCalculatingF
 	
 						if (c.getFutureValue() != null) {
 							futureCostPerProduct = netQty * c.getFutureValue();
+						}
+						
+						if (c.getFutureValue2() != null) {
+							futureCostPerProduct2 = netQty * c.getFutureValue2();
+						}
+						
+						if (c.getFutureValue3() != null) {
+							futureCostPerProduct3 = netQty * c.getFutureValue3();
+						}
+						
+						if (c.getFutureValue4() != null) {
+							futureCostPerProduct4 = netQty * c.getFutureValue4();
 						}
 	
 						if (c.getPreviousValue() != null) {
@@ -182,6 +230,21 @@ public class CostsCalculatingFormulationHandler extends AbstractCostCalculatingF
 						futureTotalVariableCost += futureCostPerProduct;
 					}
 					c.setFutureValuePerProduct(futureCostPerProduct);
+				}
+				
+				c.setFutureValuePerProduct2(null);
+				if (futureCostPerProduct2 != null) {
+					c.setFutureValuePerProduct2(futureCostPerProduct2);
+				}
+				
+				c.setFutureValuePerProduct3(null);
+				if (futureCostPerProduct3 != null) {
+					c.setFutureValuePerProduct3(futureCostPerProduct3);
+				}
+				
+				c.setFutureValuePerProduct4(null);
+				if (futureCostPerProduct4 != null) {
+					c.setFutureValuePerProduct4(futureCostPerProduct4);
 				}
 	
 				c.setPreviousValuePerProduct(null);

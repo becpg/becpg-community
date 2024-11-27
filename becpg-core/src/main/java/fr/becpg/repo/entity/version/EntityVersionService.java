@@ -197,14 +197,6 @@ public interface EntityVersionService {
 	void updateLastVersionLabel(NodeRef entityNodeRef, String versionLabel);
 
 	/**
-	 * <p>isVersion.</p>
-	 *
-	 * @param entity1 a {@link org.alfresco.service.cmr.repository.NodeRef} object
-	 * @return a boolean
-	 */
-	boolean isVersion(NodeRef entity1);
-
-	/**
 	 * <p>extractVersion.</p>
 	 *
 	 * @param entity1 a {@link org.alfresco.service.cmr.repository.NodeRef} object

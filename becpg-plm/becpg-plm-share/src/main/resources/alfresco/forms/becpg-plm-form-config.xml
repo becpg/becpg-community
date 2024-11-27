@@ -292,6 +292,9 @@
 					<show id="bcpg:regulatoryCountries" force="true" />
 					<show id="bcpg:regulatoryUsageRef" force="true" />
 				</field-visibility>
+				<appearance>
+					<field id="cm:name" read-only="true"></field>
+				</appearance>
 			</form>
 		</forms>
 	</config>
@@ -1216,6 +1219,9 @@
 					<show id="gs1:platformTermsAndConditionsCode" force="false" />
 
 				</field-visibility>
+				<appearance>
+					<field id="cm:name" read-only="true"></field>
+				</appearance>
 			</form>
 
 			<form id="bulk-edit">
@@ -1386,8 +1392,8 @@
 						</control>
 					</field>
 					<field id="bcpg:allergenSubset">
-						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-						</control>
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+
 					</field>
 					<field id="rep:reportLocales">
 						<control template="/org/alfresco/components/form/controls/mtlangue.ftl">
@@ -1442,8 +1448,8 @@
 						</control>
 					</field>
 					<field id="bcpg:allergenSubset">
-						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-						</control>
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+
 					</field>
 					<field id="rep:reportLocales">
 						<control template="/org/alfresco/components/form/controls/mtlangue.ftl">
@@ -1459,7 +1465,6 @@
 					<show id="bcpg:charactName" />
 					<show id="bcpg:allergenCode" />
 					<show id="bcpg:allergenType" />
-					<show id="sec:readGroups" force="true" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
@@ -1475,7 +1480,9 @@
 						</control>
 					</field>
 					<field id="bcpg:isDeleted">
-						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
 					</field>
 				</appearance>
 			</form>
@@ -1575,7 +1582,9 @@
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:isDeleted">
-						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
 					</field>
 				</appearance>
 			</form>
@@ -1679,7 +1688,9 @@
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:isDeleted">
-						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
 					</field>
 				</appearance>
 			</form>
@@ -1731,7 +1742,9 @@
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:isDeleted">
-						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
 					</field>
 				</appearance>
 			</form>
@@ -1770,21 +1783,8 @@
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="bcpg:toxIngIng" />
-					<show id="bcpg:toxIngTox" />
 					<show id="bcpg:toxIngSystemicValue" />
-					<show id="bcpg:toxIngMaxValue" />
 				</field-visibility>
-				<appearance>
-					<field id="bcpg:toxIngIng" read-only="true">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl" />
-					</field>
-					<field id="bcpg:toxIngTox" read-only="true">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl" />
-					</field>
-					<field id="bcpg:toxIngSystemicValue" />
-					<field id="bcpg:toxIngMaxValue" read-only="true" />
-				</appearance>
 			</form>
 
 			<form id="filter">
@@ -1795,12 +1795,33 @@
 					<show id="bcpg:toxIngMaxValue" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:toxIngIng" read-only="true">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl" />
+					<field id="bcpg:toxIngIng">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ing
+							</control-param>
+						</control>
 					</field>
-					<field id="bcpg:toxIngTox" read-only="true">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl" />
+					<field id="bcpg:toxIngTox">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:tox
+							</control-param>
+						</control>
 					</field>
+
+					<field id="bcpg:toxIngSystemicValue">
+						<control template="/org/alfresco/components/form/controls/numberrange.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+
+					<field id="bcpg:toxIngMaxValue">
+						<control template="/org/alfresco/components/form/controls/numberrange.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+
+
+
 				</appearance>
 			</form>
 
@@ -1829,173 +1850,12 @@
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="bcpg:toxIngIng" />
-					<show id="bcpg:toxIngTox" />
 					<show id="bcpg:toxIngSystemicValue" />
-					<show id="bcpg:toxIngMaxValue" />
-				</field-visibility>
-				<appearance>
-					<field id="bcpg:toxIngIng" read-only="true">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl" />
-					</field>
-					<field id="bcpg:toxIngTox" read-only="true">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl" />
-					</field>
-					<field id="bcpg:toxIngSystemicValue" />
-					<field id="bcpg:toxIngMaxValue" read-only="true" />
-				</appearance>
-			</form>
-		</forms>
-	</config>
-
-
-	<config evaluator="model-type" condition="bcpg:tox">
-		<forms>
-			<form>
-				<field-visibility>
-					<show id="bcpg:charactName" />
-					<show id="bcpg:toxTypes" />
-					<show id="bcpg:toxValue" />
-					<show id="bcpg:toxCalculateSystemic" />
-					<show id="sec:readGroups" force="true" />
-					<show id="bcpg:erpCode" force="true" />
-					<show id="bcpg:isDeleted" />
-				</field-visibility>
-			</form>
-
-			<form id="filter">
-				<field-visibility>
-					<show id="bcpg:charactName" />
-					<show id="bcpg:toxTypes" />
-					<show id="bcpg:toxValue" />
-					<show id="bcpg:toxCalculateSystemic" />
-					<show id="sec:readGroups" force="true" />
-					<show id="bcpg:erpCode" force="true" />
-					<show id="bcpg:isDeleted" />
-				</field-visibility>
-				<appearance>
-					<field id="bcpg:charactName">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
-					</field>
-					<field id="bcpg:isDeleted">
-						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
-					</field>
-				</appearance>
-			</form>
-
-			<form id="datagrid">
-				<field-visibility>
-					<show id="bcpg:charactName" />
-					<show id="bcpg:toxTypes" />
-					<show id="bcpg:toxValue" />
-					<show id="bcpg:toxCalculateSystemic" />
-					<show id="sec:readGroups" force="true" />
-					<show id="bcpg:erpCode" force="true" />
-					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
 		</forms>
 	</config>
 
-	<config evaluator="node-type" condition="bcpg:tox">
-		<forms>
-			<form>
-				<field-visibility>
-					<show id="bcpg:charactName" />
-					<show id="bcpg:toxTypes" />
-					<show id="bcpg:toxValue" />
-					<show id="bcpg:toxCalculateSystemic" />
-					<show id="sec:readGroups" force="true" />
-					<show id="bcpg:erpCode" force="true" />
-					<show id="bcpg:isDeleted" />
-				</field-visibility>
-			</form>
-		</forms>
-	</config>
-
-	<config evaluator="model-type" condition="bcpg:toxIng">
-		<forms>
-			<form>
-				<field-visibility>
-					<show id="bcpg:toxIngIng" />
-					<show id="bcpg:toxIngTox" />
-					<show id="bcpg:toxIngSystemicValue" />
-					<show id="bcpg:toxIngMaxValue" />
-				</field-visibility>
-				<appearance>
-					<field id="bcpg:toxIngIng" read-only="true">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl" />
-					</field>
-					<field id="bcpg:toxIngTox" read-only="true">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl" />
-					</field>
-					<field id="bcpg:toxIngSystemicValue" />
-					<field id="bcpg:toxIngMaxValue" read-only="true" />
-				</appearance>
-			</form>
-
-			<form id="filter">
-				<field-visibility>
-					<show id="bcpg:toxIngIng" />
-					<show id="bcpg:toxIngTox" />
-					<show id="bcpg:toxIngSystemicValue" />
-					<show id="bcpg:toxIngMaxValue" />
-				</field-visibility>
-				<appearance>
-					<field id="bcpg:toxIngIng" read-only="true">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl" />
-					</field>
-					<field id="bcpg:toxIngTox" read-only="true">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl" />
-					</field>
-				</appearance>
-			</form>
-
-			<form id="datagrid">
-				<field-visibility>
-					<show id="bcpg:toxIngIng" />
-					<show id="bcpg:toxIngTox" />
-					<show id="bcpg:toxIngSystemicValue" />
-					<show id="bcpg:toxIngMaxValue" />
-				</field-visibility>
-				<appearance>
-					<field id="bcpg:toxIngIng" read-only="true">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl" />
-					</field>
-					<field id="bcpg:toxIngTox" read-only="true">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl" />
-					</field>
-					<field id="bcpg:toxIngSystemicValue" />
-					<field id="bcpg:toxIngMaxValue" read-only="true" />
-				</appearance>
-			</form>
-		</forms>
-	</config>
-
-	<config evaluator="node-type" condition="bcpg:toxIng">
-		<forms>
-			<form>
-				<field-visibility>
-					<show id="bcpg:toxIngIng" />
-					<show id="bcpg:toxIngTox" />
-					<show id="bcpg:toxIngSystemicValue" />
-					<show id="bcpg:toxIngMaxValue" />
-				</field-visibility>
-				<appearance>
-					<field id="bcpg:toxIngIng" read-only="true">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl" />
-					</field>
-					<field id="bcpg:toxIngTox" read-only="true">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl" />
-					</field>
-					<field id="bcpg:toxIngSystemicValue" />
-					<field id="bcpg:toxIngMaxValue" read-only="true" />
-				</appearance>
-			</form>
-		</forms>
-	</config>
-	
-	
     <!-- bcpg:ing type (existing nodes) -->
 	<config evaluator="node-type" condition="bcpg:ing">
 		<forms>
@@ -2027,7 +1887,8 @@
 					<show id="bcpg:ingToxPodSystemic" force="true" />
 					<show id="bcpg:ingToxDermalAbsorption" force="true" />
 					<show id="bcpg:ingToxMosMoe" force="true" />
-					<show id="bcpg:ingToxMaxSkinIrritation" force="true" />
+					<show id="bcpg:ingToxMaxSkinIrritationRinseOff" force="true" />
+					<show id="bcpg:ingToxMaxSkinIrritationLeaveOn" force="true" />
 					<show id="bcpg:ingToxMaxSensitization" force="true" />
 					<show id="bcpg:ingToxMaxOcularIrritation" force="true" />
 					<show id="bcpg:ingToxMaxPhototoxic" force="true" />
@@ -2086,8 +1947,7 @@
 					</field>
 					<field id="gs1:productActivityTypeCode" set="formulation" />
 					<field id="bcpg:ingAllergens" set="formulation">
-						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-						</control>
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 					<field id="bcpg:ingAllergensQtyPerc" help-id="becpg.forms.help.ingAllergensQtyPerc" set="formulation" />
 					<field id="bcpg:evaporatedRate" set="formulation" />
@@ -2096,15 +1956,218 @@
 					<field id="bcpg:ingToxPodSystemic" set="toxTab" />
 					<field id="bcpg:ingToxDermalAbsorption" set="toxTab" />
 					<field id="bcpg:ingToxMosMoe" set="toxTab" />
-					<field id="bcpg:ingToxMaxSkinIrritation" set="toxTab" />
+					<field id="bcpg:ingToxMaxSkinIrritationRinseOff" set="toxTab" />
+					<field id="bcpg:ingToxMaxSkinIrritationLeaveOn" set="toxTab" />
 					<field id="bcpg:ingToxMaxSensitization" set="toxTab" />
 					<field id="bcpg:ingToxMaxOcularIrritation" set="toxTab" />
 					<field id="bcpg:ingToxMaxPhototoxic" set="toxTab" />
 					<field id="bcpg:ingToxData" set="toxTab" />
+				</appearance>
+			</form>
+			<form id="create">
+				<field-visibility>
+					<show id="bcpg:charactName" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:legalName" />
+					<show id="bcpg:pluralLegalName" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:ingCEECode" force="true" />
+					<show id="bcpg:casNumber" force="true" />
+					<show id="bcpg:ceNumber" force="true" />
+					<show id="bcpg:ecNumber" force="true" />
+					<show id="bcpg:fdaNumber" force="true" />
+					<show id="bcpg:femaNumber" force="true" />
+					<show id="bcpg:flNumber" force="true" />
+					<show id="bcpg:regulatoryCode" force="true" />
+					<show id="bcpg:regulatoryComment" force="true" />
+					<show id="bcpg:ingTypeV2" force="true" />
+					<show id="bcpg:evaporatedRate" force="true" />
+					<show id="bcpg:ingAllergens" force="true" />
+					<show id="bcpg:ingAllergensQtyPerc" force="true" />
+					<show id="gs1:productActivityTypeCode" force="true" />
+					<show id="bcpg:linkedSearchAssociation" force="true" />
+					<show id="bcpg:isSubstanceOfVeryHighConcern" force="true" />
+					<show id="bcpg:svhcReasonsForInclusion" force="true" />
+					<show id="bcpg:ingToxPodSystemic" force="true" />
+					<show id="bcpg:ingToxDermalAbsorption" force="true" />
+					<show id="bcpg:ingToxMosMoe" force="true" />
+					<show id="bcpg:ingToxMaxSkinIrritationRinseOff" force="true" />
+					<show id="bcpg:ingToxMaxSkinIrritationLeaveOn" force="true" />
+					<show id="bcpg:ingToxMaxSensitization" force="true" />
+					<show id="bcpg:ingToxMaxOcularIrritation" force="true" />
+					<show id="bcpg:ingToxMaxPhototoxic" force="true" />
+					<show id="bcpg:ingToxData" force="true" />
+					<show id="bcpg:parentEntityRef" force="true" />
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:isDeleted" />
+
+				</field-visibility>
+				<appearance>
+					<set label-id="becpg.forms.set.designation.label" id="designation" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set label-id="becpg.forms.set.formulation.label" id="formulation" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set label-id="becpg.forms.set.toxicology.label" id="toxTab" template="/org/alfresco/components/form/2-column-set.ftl" />
+
+					<field id="bcpg:charactName" set="designation" />
+					<field id="bcpg:pluralLegalName" set="designation" />
+					<field id="bcpg:legalName" set="designation" />
+					<field id="cm:description" set="designation">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:parentEntityRef" set="designation" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:rawMaterial
+							</control-param>
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
+							</control-param>
+							<control-param name="excludeSources">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:erpCode" set="designation" />
+					<field id="bcpg:ingCEECode" set="designation" />
+					<field id="bcpg:casNumber" set="designation" />
+					<field id="bcpg:ceNumber" set="designation" />
+					<field id="bcpg:ecNumber" set="designation" />
+					<field id="bcpg:fdaNumber" set="designation" />
+					<field id="bcpg:femaNumber" set="designation" />
+					<field id="bcpg:flNumber" set="designation" />
+					<field id="bcpg:linkedSearchAssociation" set="designation">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:ing
+							</control-param>
+						</control>
+					</field>
+					<field id="sec:readGroups" set="designation" />
+					<field id="bcpg:isDeleted" set="designation" />
+
+					<field id="bcpg:regulatoryCode" set="formulation" />
+					<field id="bcpg:regulatoryComment" set="formulation" />
+					<field id="bcpg:ingTypeV2" set="formulation">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ingTypeItem
+							</control-param>
+						</control>
+					</field>
+					<field id="gs1:productActivityTypeCode" set="formulation" />
+					<field id="bcpg:ingAllergens" set="formulation">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+
+					</field>
+					<field id="bcpg:ingAllergensQtyPerc" help-id="becpg.forms.help.ingAllergensQtyPerc" set="formulation" />
+					<field id="bcpg:evaporatedRate" set="formulation" />
+					<field id="bcpg:isSubstanceOfVeryHighConcern" set="formulation" />
+					<field id="bcpg:svhcReasonsForInclusion" set="formulation" />
 					<field id="bcpg:ingToxPodSystemic" set="toxTab" />
 					<field id="bcpg:ingToxDermalAbsorption" set="toxTab" />
 					<field id="bcpg:ingToxMosMoe" set="toxTab" />
-					<field id="bcpg:ingToxMaxSkinIrritation" set="toxTab" />
+					<field id="bcpg:ingToxMaxSkinIrritationRinseOff" set="toxTab" />
+					<field id="bcpg:ingToxMaxSkinIrritationLeaveOn" set="toxTab" />
+					<field id="bcpg:ingToxMaxSensitization" set="toxTab" />
+					<field id="bcpg:ingToxMaxOcularIrritation" set="toxTab" />
+					<field id="bcpg:ingToxMaxPhototoxic" set="toxTab" />
+					<field id="bcpg:ingToxData" set="toxTab" />
+				</appearance>
+			</form>
+			<form id="create">
+				<field-visibility>
+					<show id="bcpg:charactName" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:legalName" />
+					<show id="bcpg:pluralLegalName" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:ingCEECode" force="true" />
+					<show id="bcpg:casNumber" force="true" />
+					<show id="bcpg:ceNumber" force="true" />
+					<show id="bcpg:ecNumber" force="true" />
+					<show id="bcpg:fdaNumber" force="true" />
+					<show id="bcpg:femaNumber" force="true" />
+					<show id="bcpg:flNumber" force="true" />
+					<show id="bcpg:regulatoryCode" force="true" />
+					<show id="bcpg:regulatoryComment" force="true" />
+					<show id="bcpg:ingTypeV2" force="true" />
+					<show id="bcpg:evaporatedRate" force="true" />
+					<show id="bcpg:ingAllergens" force="true" />
+					<show id="bcpg:ingAllergensQtyPerc" force="true" />
+					<show id="gs1:productActivityTypeCode" force="true" />
+					<show id="bcpg:linkedSearchAssociation" force="true" />
+					<show id="bcpg:isSubstanceOfVeryHighConcern" force="true" />
+					<show id="bcpg:svhcReasonsForInclusion" force="true" />
+					<show id="bcpg:ingToxPodSystemic" force="true" />
+					<show id="bcpg:ingToxDermalAbsorption" force="true" />
+					<show id="bcpg:ingToxMosMoe" force="true" />
+					<show id="bcpg:ingToxMaxSkinIrritationRinseOff" force="true" />
+					<show id="bcpg:ingToxMaxSkinIrritationLeaveOn" force="true" />
+					<show id="bcpg:ingToxMaxSensitization" force="true" />
+					<show id="bcpg:ingToxMaxOcularIrritation" force="true" />
+					<show id="bcpg:ingToxMaxPhototoxic" force="true" />
+					<show id="bcpg:ingToxData" force="true" />
+					<show id="bcpg:parentEntityRef" force="true" />
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:isDeleted" />
+
+				</field-visibility>
+				<appearance>
+					<set label-id="becpg.forms.set.designation.label" id="designation" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set label-id="becpg.forms.set.formulation.label" id="formulation" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set label-id="becpg.forms.set.toxicology.label" id="toxTab" template="/org/alfresco/components/form/2-column-set.ftl" />
+
+					<field id="bcpg:charactName" set="designation" />
+					<field id="bcpg:pluralLegalName" set="designation" />
+					<field id="bcpg:legalName" set="designation" />
+					<field id="cm:description" set="designation">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:parentEntityRef" set="designation" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:rawMaterial
+							</control-param>
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
+							</control-param>
+							<control-param name="excludeSources">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:erpCode" set="designation" />
+					<field id="bcpg:ingCEECode" set="designation" />
+					<field id="bcpg:casNumber" set="designation" />
+					<field id="bcpg:ceNumber" set="designation" />
+					<field id="bcpg:ecNumber" set="designation" />
+					<field id="bcpg:fdaNumber" set="designation" />
+					<field id="bcpg:femaNumber" set="designation" />
+					<field id="bcpg:flNumber" set="designation" />
+					<field id="bcpg:linkedSearchAssociation" set="designation">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:ing
+							</control-param>
+						</control>
+					</field>
+					<field id="sec:readGroups" set="designation" />
+					<field id="bcpg:isDeleted" set="designation" />
+
+					<field id="bcpg:regulatoryCode" set="formulation" />
+					<field id="bcpg:regulatoryComment" set="formulation" />
+					<field id="bcpg:ingTypeV2" set="formulation">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ingTypeItem
+							</control-param>
+						</control>
+					</field>
+					<field id="gs1:productActivityTypeCode" set="formulation" />
+					<field id="bcpg:ingAllergens" set="formulation">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+
+					</field>
+					<field id="bcpg:ingAllergensQtyPerc" help-id="becpg.forms.help.ingAllergensQtyPerc" set="formulation" />
+					<field id="bcpg:evaporatedRate" set="formulation" />
+					<field id="bcpg:isSubstanceOfVeryHighConcern" set="formulation" />
+					<field id="bcpg:svhcReasonsForInclusion" set="formulation" />
+					<field id="bcpg:ingToxPodSystemic" set="toxTab" />
+					<field id="bcpg:ingToxDermalAbsorption" set="toxTab" />
+					<field id="bcpg:ingToxMosMoe" set="toxTab" />
+					<field id="bcpg:ingToxMaxSkinIrritationRinseOff" set="toxTab" />
+					<field id="bcpg:ingToxMaxSkinIrritationLeaveOn" set="toxTab" />
 					<field id="bcpg:ingToxMaxSensitization" set="toxTab" />
 					<field id="bcpg:ingToxMaxOcularIrritation" set="toxTab" />
 					<field id="bcpg:ingToxMaxPhototoxic" set="toxTab" />
@@ -2145,7 +2208,8 @@
 					<show id="bcpg:ingToxPodSystemic" force="true" />
 					<show id="bcpg:ingToxDermalAbsorption" force="true" />
 					<show id="bcpg:ingToxMosMoe" force="true" />
-					<show id="bcpg:ingToxMaxSkinIrritation" force="true" />
+					<show id="bcpg:ingToxMaxSkinIrritationRinseOff" force="true" />
+					<show id="bcpg:ingToxMaxSkinIrritationLeaveOn" force="true" />
 					<show id="bcpg:ingToxMaxSensitization" force="true" />
 					<show id="bcpg:ingToxMaxOcularIrritation" force="true" />
 					<show id="bcpg:ingToxMaxPhototoxic" force="true" />
@@ -2204,8 +2268,8 @@
 					</field>
 					<field id="gs1:productActivityTypeCode" set="formulation" />
 					<field id="bcpg:ingAllergens" set="formulation">
-						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-						</control>
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+
 					</field>
 					<field id="bcpg:ingAllergensQtyPerc" help-id="becpg.forms.help.ingAllergensQtyPerc" set="formulation" />
 					<field id="bcpg:evaporatedRate" set="formulation" />
@@ -2214,15 +2278,8 @@
 					<field id="bcpg:ingToxPodSystemic" set="toxTab" />
 					<field id="bcpg:ingToxDermalAbsorption" set="toxTab" />
 					<field id="bcpg:ingToxMosMoe" set="toxTab" />
-					<field id="bcpg:ingToxMaxSkinIrritation" set="toxTab" />
-					<field id="bcpg:ingToxMaxSensitization" set="toxTab" />
-					<field id="bcpg:ingToxMaxOcularIrritation" set="toxTab" />
-					<field id="bcpg:ingToxMaxPhototoxic" set="toxTab" />
-					<field id="bcpg:ingToxData" set="toxTab" />
-					<field id="bcpg:ingToxPodSystemic" set="toxTab" />
-					<field id="bcpg:ingToxDermalAbsorption" set="toxTab" />
-					<field id="bcpg:ingToxMosMoe" set="toxTab" />
-					<field id="bcpg:ingToxMaxSkinIrritation" set="toxTab" />
+					<field id="bcpg:ingToxMaxSkinIrritationRinseOff" set="toxTab" />
+					<field id="bcpg:ingToxMaxSkinIrritationLeaveOn" set="toxTab" />
 					<field id="bcpg:ingToxMaxSensitization" set="toxTab" />
 					<field id="bcpg:ingToxMaxOcularIrritation" set="toxTab" />
 					<field id="bcpg:ingToxMaxPhototoxic" set="toxTab" />
@@ -2230,6 +2287,111 @@
 				</appearance>
 			</form>
 
+			<form id="create">
+				<field-visibility>
+					<show id="bcpg:charactName" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:legalName" />
+					<show id="bcpg:pluralLegalName" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:ingCEECode" force="true" />
+					<show id="bcpg:casNumber" force="true" />
+					<show id="bcpg:ceNumber" force="true" />
+					<show id="bcpg:ecNumber" force="true" />
+					<show id="bcpg:fdaNumber" force="true" />
+					<show id="bcpg:femaNumber" force="true" />
+					<show id="bcpg:flNumber" force="true" />
+					<show id="bcpg:regulatoryCode" force="true" />
+					<show id="bcpg:regulatoryComment" force="true" />
+					<show id="bcpg:ingTypeV2" force="true" />
+					<show id="bcpg:evaporatedRate" force="true" />
+					<show id="bcpg:ingAllergens" />
+					<show id="bcpg:ingAllergensQtyPerc" />
+					<show id="gs1:productActivityTypeCode" force="true" />
+					<show id="bcpg:linkedSearchAssociation" force="true" />
+					<show id="bcpg:isSubstanceOfVeryHighConcern" force="true" />
+					<show id="bcpg:svhcReasonsForInclusion" force="true" />
+					<show id="bcpg:ingToxPodSystemic" force="true" />
+					<show id="bcpg:ingToxDermalAbsorption" force="true" />
+					<show id="bcpg:ingToxMosMoe" force="true" />
+					<show id="bcpg:ingToxMaxSkinIrritationRinseOff" force="true" />
+					<show id="bcpg:ingToxMaxSkinIrritationLeaveOn" force="true" />
+					<show id="bcpg:ingToxMaxSensitization" force="true" />
+					<show id="bcpg:ingToxMaxOcularIrritation" force="true" />
+					<show id="bcpg:ingToxMaxPhototoxic" force="true" />
+					<show id="bcpg:ingToxData" force="true" />
+					<show id="bcpg:parentEntityRef" force="true" />
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:isDeleted" />
+				</field-visibility>
+
+				<appearance>
+					<set label-id="becpg.forms.set.designation.label" id="designation" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set label-id="becpg.forms.set.formulation.label" id="formulation" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set label-id="becpg.forms.set.toxicology.label" id="toxTab" template="/org/alfresco/components/form/2-column-set.ftl" />
+
+					<field id="bcpg:charactName" set="designation" />
+					<field id="bcpg:pluralLegalName" set="designation" />
+					<field id="bcpg:legalName" set="designation" />
+					<field id="cm:description" set="designation">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:parentEntityRef" set="designation" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:rawMaterial
+							</control-param>
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
+							</control-param>
+							<control-param name="excludeSources">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:erpCode" set="designation" />
+					<field id="bcpg:ingCEECode" set="designation" />
+					<field id="bcpg:casNumber" set="designation" />
+					<field id="bcpg:ceNumber" set="designation" />
+					<field id="bcpg:ecNumber" set="designation" />
+					<field id="bcpg:fdaNumber" set="designation" />
+					<field id="bcpg:femaNumber" set="designation" />
+					<field id="bcpg:flNumber" set="designation" />
+					<field id="bcpg:linkedSearchAssociation" set="designation">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:ing
+							</control-param>
+						</control>
+					</field>
+					<field id="sec:readGroups" set="designation" />
+					<field id="bcpg:isDeleted" set="designation" />
+
+					<field id="bcpg:regulatoryCode" set="formulation" />
+					<field id="bcpg:regulatoryComment" set="formulation" />
+					<field id="bcpg:ingTypeV2" set="formulation">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ingTypeItem
+							</control-param>
+						</control>
+					</field>
+					<field id="gs1:productActivityTypeCode" set="formulation" />
+					<field id="bcpg:ingAllergens" set="formulation">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:ingAllergensQtyPerc" help-id="becpg.forms.help.ingAllergensQtyPerc" set="formulation" />
+					<field id="bcpg:evaporatedRate" set="formulation" />
+					<field id="bcpg:isSubstanceOfVeryHighConcern" set="formulation" />
+					<field id="bcpg:svhcReasonsForInclusion" set="formulation" />
+					<field id="bcpg:ingToxPodSystemic" set="toxTab" />
+					<field id="bcpg:ingToxDermalAbsorption" set="toxTab" />
+					<field id="bcpg:ingToxMosMoe" set="toxTab" />
+					<field id="bcpg:ingToxMaxSkinIrritationRinseOff" set="toxTab" />
+					<field id="bcpg:ingToxMaxSkinIrritationLeaveOn" set="toxTab" />
+					<field id="bcpg:ingToxMaxSensitization" set="toxTab" />
+					<field id="bcpg:ingToxMaxOcularIrritation" set="toxTab" />
+					<field id="bcpg:ingToxMaxPhototoxic" set="toxTab" />
+					<field id="bcpg:ingToxData" set="toxTab" />
+				</appearance>
+			</form>
+			
             <!-- Data Grid view -->
 			<form id="filter">
 				<field-visibility>
@@ -2271,11 +2433,8 @@
 						</control>
 					</field>
 					<field id="bcpg:isDeleted">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
 							<control-param name="isSearch">true</control-param>
-							<control-param name="insertBlank">true</control-param>
-							<control-param name="options">true|data.boolean.true,false|data.boolean.false
-							</control-param>
 						</control>
 					</field>
 
@@ -2438,9 +2597,11 @@
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:isDeleted">
-						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
 					</field>
-					<field id="bcpg:physicoChemType">
+					<field id="bcpg:microbioType">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="isSearch">true</control-param>
 							<control-param name="insertBlank">true</control-param>
@@ -2558,8 +2719,8 @@
 					<show id="bcpg:charactName" />
 					<show id="bcpg:nutGroup" />
 					<show id="bcpg:nutType" />
-					<show id="bcpg:isDeleted" force="true" />
 					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:isDeleted" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:charactName">
@@ -2568,15 +2729,19 @@
 					<field id="bcpg:nutGroup">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
+							<control-param name="isSearch">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:nutType">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
+							<control-param name="isSearch">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:isDeleted">
-						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
 					</field>
 				</appearance>
 			</form>
@@ -2683,7 +2848,9 @@
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:isDeleted">
-						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
 					</field>
 				</appearance>
 			</form>
@@ -2762,7 +2929,9 @@
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:isDeleted">
-						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
 					</field>
 				</appearance>
 			</form>
@@ -2886,7 +3055,9 @@
 						</control>
 					</field>
 					<field id="bcpg:isDeleted">
-						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
 					</field>
 				</appearance>
 			</form>
@@ -2934,7 +3105,7 @@
 						</control>
 					</field>
 					<field id="gs1:productActivityTypeCode">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/selectone.ftl" />
 					</field>
 					<field id="bcpg:linkedSearchAssociation">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -2984,7 +3155,7 @@
 						</control>
 					</field>
 					<field id="gs1:productActivityTypeCode">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/selectone.ftl" />
 					</field>
 				</appearance>
 			</form>
@@ -2994,7 +3165,6 @@
 				<field-visibility>
 					<show id="bcpg:charactName" />
 					<show id="bcpg:geoOriginISOCode" />
-					<show id="sec:readGroups" force="true" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
@@ -3003,7 +3173,9 @@
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:isDeleted">
-						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
 					</field>
 				</appearance>
 			</form>
@@ -3104,8 +3276,17 @@
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:isDeleted">
-						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
 					</field>
+					<field id="bcpg:bioOriginType">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
+
 				</appearance>
 			</form>
 
@@ -3165,25 +3346,25 @@
 					</field>
 
 					<field id="bcpg:locationAddress1" help-id="becpg.forms.help.locationAddress1" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationAddress2" help-id="becpg.forms.help.locationAddress2" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationAddress3" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationCity" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationZip" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationState" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationCountry" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 				</appearance>
 			</form>
@@ -3234,25 +3415,25 @@
 					</field>
 
 					<field id="bcpg:locationAddress1" help-id="becpg.forms.help.locationAddress1" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationAddress2" help-id="becpg.forms.help.locationAddress2" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationAddress3" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationCity" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationZip" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationState" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationCountry" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 				</appearance>
 			</form>
@@ -3301,25 +3482,25 @@
 					</field>
 
 					<field id="bcpg:locationAddress1" help-id="becpg.forms.help.locationAddress1" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationAddress2" help-id="becpg.forms.help.locationAddress2" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationAddress3" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationCity" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationZip" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationState" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationCountry" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:eanCode" set="2-col" />
 				</appearance>
@@ -3372,25 +3553,25 @@
 					</field>
 
 					<field id="bcpg:locationAddress1" help-id="becpg.forms.help.locationAddress1" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationAddress2" help-id="becpg.forms.help.locationAddress2" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationAddress3" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationCity" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationZip" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationState" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationCountry" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 				</appearance>
 			</form>
@@ -3506,25 +3687,25 @@
 						</control>
 					</field>
 					<field id="bcpg:locationAddress1" help-id="becpg.forms.help.locationAddress1">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationAddress2" help-id="becpg.forms.help.locationAddress2">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationAddress3">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationCity">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationZip">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationState">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationCountry">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 				</appearance>
 			</form>
@@ -3569,30 +3750,181 @@
 					</field>
 
 					<field id="bcpg:locationAddress1" help-id="becpg.forms.help.locationAddress1">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationAddress2" help-id="becpg.forms.help.locationAddress2">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationAddress3">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationCity">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationZip">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationState">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationCountry">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 				</appearance>
 			</form>
 
 			<!-- Data Grid view -->
+			<form id="filter">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:isDeleted" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:isDeleted">
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+
+			<form id="datagrid">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="bcpg:erpCode" force="true" />
+					<show force="true" id="bcpg:eanCode" />
+					<show id="cm:title" />
+					<show id="cm:description" />
+					<show id="bcpg:locationAddress1" force="true" />
+					<show id="bcpg:locationAddress2" force="true" />
+					<show id="bcpg:locationAddress3" force="true" />
+					<show id="bcpg:locationCity" force="true" />
+					<show id="bcpg:locationZip" force="true" />
+					<show id="bcpg:locationState" force="true" />
+					<show id="bcpg:locationCountry" force="true" />
+
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:isDeleted" />
+
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:isDeleted">
+						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+    <!-- bcpg:laboratory type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:laboratory">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="bcpg:erpCode" force="true" />
+					<show force="true" id="bcpg:eanCode" />
+					<show id="cm:title" force="true" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:locationAddress1" force="true" />
+					<show id="bcpg:locationAddress2" force="true" />
+					<show id="bcpg:locationAddress3" force="true" />
+					<show id="bcpg:locationCity" force="true" />
+					<show id="bcpg:locationZip" force="true" />
+					<show id="bcpg:locationState" force="true" />
+					<show id="bcpg:locationCountry" force="true" />
+
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:isDeleted" />
+
+				</field-visibility>
+				<appearance>
+					<field id="cm:description">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:locationAddress1" help-id="becpg.forms.help.locationAddress1">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:locationAddress2" help-id="becpg.forms.help.locationAddress2">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:locationAddress3">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:locationCity">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:locationZip">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:locationState">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:locationCountry">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<config evaluator="model-type" condition="bcpg:laboratory">
+		<forms>
+            <!-- Create item form -->
+			<form>
+
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="bcpg:erpCode" force="true" />
+					<show force="true" id="bcpg:eanCode" />
+					<show id="cm:title" force="true" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:locationAddress1" force="true" />
+					<show id="bcpg:locationAddress2" force="true" />
+					<show id="bcpg:locationAddress3" force="true" />
+					<show id="bcpg:locationCity" force="true" />
+					<show id="bcpg:locationZip" force="true" />
+					<show id="bcpg:locationState" force="true" />
+					<show id="bcpg:locationCountry" force="true" />
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:isDeleted" />
+
+				</field-visibility>
+
+				<appearance>
+					<field id="cm:description">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:locationAddress1" help-id="becpg.forms.help.locationAddress1">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:locationAddress2" help-id="becpg.forms.help.locationAddress2">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:locationAddress3">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:locationCity">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:locationZip">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:locationState">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:locationCountry">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+				</appearance>
+			</form>
+
+            <!-- Data Grid view -->
 			<form id="filter">
 				<field-visibility>
 					<show id="cm:name" />
@@ -3626,148 +3958,6 @@
 			</form>
 		</forms>
 	</config>
-
-    <!-- bcpg:laboratory type (existing nodes) -->
-    <config evaluator="node-type" condition="bcpg:laboratory">
-        <forms>
-            <form>
-                <field-visibility>
-                    <show id="cm:name" />
-                    <show id="bcpg:erpCode" force="true" />
-                    <show force="true" id="bcpg:eanCode" />
-                    <show id="cm:title" force="true" />
-                    <show id="cm:description" force="true" />
-                    <show id="bcpg:locationAddress1" force="true" />
-                    <show id="bcpg:locationAddress2" force="true" />
-                    <show id="bcpg:locationAddress3" force="true" />
-                    <show id="bcpg:locationCity" force="true" />
-                    <show id="bcpg:locationZip" force="true" />
-                    <show id="bcpg:locationState" force="true" />
-                    <show id="bcpg:locationCountry" force="true" />
-
-                    <show id="sec:readGroups" force="true" />
-                    <show id="bcpg:isDeleted" />
-
-                </field-visibility>
-                <appearance>
-                    <field id="cm:description">
-                        <control>
-                            <control-param name="activateLinks">true</control-param>
-                        </control>
-                    </field>
-                    <field id="bcpg:locationAddress1" help-id="becpg.forms.help.locationAddress1">
-                        <control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
-                    </field>
-                    <field id="bcpg:locationAddress2" help-id="becpg.forms.help.locationAddress2">
-                        <control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
-                    </field>
-                    <field id="bcpg:locationAddress3">
-                        <control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
-                    </field>
-                    <field id="bcpg:locationCity">
-                        <control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
-                    </field>
-                    <field id="bcpg:locationZip">
-                        <control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
-                    </field>
-                    <field id="bcpg:locationState">
-                        <control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
-                    </field>
-                    <field id="bcpg:locationCountry">
-                        <control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
-                    </field>
-                </appearance>
-            </form>
-        </forms>
-    </config>
-
-    <config evaluator="model-type" condition="bcpg:laboratory">
-        <forms>
-            <!-- Create item form -->
-            <form>
-
-                <field-visibility>
-                    <show id="cm:name" />
-                    <show id="bcpg:erpCode" force="true" />
-                    <show force="true" id="bcpg:eanCode" />
-                    <show id="cm:title" force="true" />
-                    <show id="cm:description" force="true" />
-                    <show id="bcpg:locationAddress1" force="true" />
-                    <show id="bcpg:locationAddress2" force="true" />
-                    <show id="bcpg:locationAddress3" force="true" />
-                    <show id="bcpg:locationCity" force="true" />
-                    <show id="bcpg:locationZip" force="true" />
-                    <show id="bcpg:locationState" force="true" />
-                    <show id="bcpg:locationCountry" force="true" />
-                    <show id="sec:readGroups" force="true" />
-                    <show id="bcpg:isDeleted" />
-
-                </field-visibility>
-
-                <appearance>
-                    <field id="cm:description">
-                        <control>
-                            <control-param name="activateLinks">true</control-param>
-                        </control>
-                    </field>
-                    <field id="bcpg:locationAddress1" help-id="becpg.forms.help.locationAddress1">
-                        <control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
-                    </field>
-                    <field id="bcpg:locationAddress2" help-id="becpg.forms.help.locationAddress2">
-                        <control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
-                    </field>
-                    <field id="bcpg:locationAddress3">
-                        <control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
-                    </field>
-                    <field id="bcpg:locationCity">
-                        <control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
-                    </field>
-                    <field id="bcpg:locationZip">
-                        <control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
-                    </field>
-                    <field id="bcpg:locationState">
-                        <control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
-                    </field>
-                    <field id="bcpg:locationCountry">
-                        <control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
-                    </field>
-                </appearance>
-            </form>
-
-            <!-- Data Grid view -->
-            <form id="filter">
-                <field-visibility>
-                    <show id="cm:name" />
-                </field-visibility>
-            </form>
-
-            <form id="datagrid">
-                <field-visibility>
-                    <show id="cm:name" />
-                    <show id="bcpg:erpCode" force="true" />
-                    <show force="true" id="bcpg:eanCode" />
-                    <show id="cm:title" />
-                    <show id="cm:description" />
-                    <show id="bcpg:locationAddress1" force="true" />
-                    <show id="bcpg:locationAddress2" force="true" />
-                    <show id="bcpg:locationAddress3" force="true" />
-                    <show id="bcpg:locationCity" force="true" />
-                    <show id="bcpg:locationZip" force="true" />
-                    <show id="bcpg:locationState" force="true" />
-                    <show id="bcpg:locationCountry" force="true" />
-
-                    <show id="sec:readGroups" force="true" />
-                    <show id="bcpg:isDeleted" />
-
-                </field-visibility>
-                <appearance>
-                    <field id="bcpg:isDeleted">
-                        <control template="/org/alfresco/components/form/controls/boolean.ftl" />
-                    </field>
-                </appearance>
-            </form>
-        </forms>
-    </config>
 
 
 
@@ -3825,25 +4015,25 @@
 						</control>
 					</field>
 					<field id="bcpg:locationAddress1" help-id="becpg.forms.help.locationAddress1">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationAddress2" help-id="becpg.forms.help.locationAddress2">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationAddress3">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationCity">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationZip">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationState">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationCountry">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 				</appearance>
 			</form>
@@ -3891,25 +4081,25 @@
 						</control>
 					</field>
 					<field id="bcpg:locationAddress1" help-id="becpg.forms.help.locationAddress1">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationAddress2" help-id="becpg.forms.help.locationAddress2">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationAddress3">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationCity">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationZip">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationState">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationCountry">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 				</appearance>
 			</form>
@@ -3920,6 +4110,7 @@
 					<show id="cm:name" />
 					<show id="bcpg:trademarkType" />
 					<show id="cm:title" force="true" />
+					<show id="bcpg:isDeleted" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:trademarkType">
@@ -3928,6 +4119,12 @@
 							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
+					<field id="bcpg:isDeleted">
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+
 				</appearance>
 			</form>
 
@@ -4251,7 +4448,9 @@
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:isDeleted">
-						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
 					</field>
 				</appearance>
 			</form>
@@ -4392,10 +4591,13 @@
 					<field id="bcpg:labelClaimType">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="isSearch">true</control-param>
+
 						</control>
 					</field>
 					<field id="bcpg:isDeleted">
-						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
 					</field>
 				</appearance>
 			</form>
@@ -4476,7 +4678,9 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:isDeleted">
-						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
 					</field>
 				</appearance>
 
@@ -5099,6 +5303,9 @@
 					<show id="bcpg:locationCountry" force="false" />
 
 				</field-visibility>
+				<appearance>
+					<field id="cm:name" read-only="true"></field>
+				</appearance>
 			</form>
 		</forms>
 	</config>
@@ -5713,6 +5920,9 @@
 					<show force="false" id="bcpg:supplierRefCode" />
 
 				</field-visibility>
+				<appearance>
+					<field id="cm:name" read-only="true"></field>
+				</appearance>
 			</form>
 
 			<form id="search">
@@ -5743,14 +5953,11 @@
 						</control>
 					</field>
 
-
 					<field id="cm:title" mandatory="false" read-only="false" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/textfield.ftl">
 							<control-param name="forceEditable">true</control-param>
 						</control>
-
 					</field>
-
 
 					<field id="bcpg:productCollectionHierarchy1" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
@@ -5825,11 +6032,6 @@
 			</form>
 		</forms>
 	</config>
-
-	<!-- <config evaluator="aspect" condition="bcpg:clientsAspect"> <forms> 
-		<form id="filter"> <show id="entity_bcpg:clients_bcpg:product" for-mode="wused" 
-		/> </form> </forms> </config> -->
-
 
 	<!-- bcpg:compoList type -->
 	<config evaluator="model-type" condition="bcpg:compoList">
@@ -6142,23 +6344,23 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:entityDataListState" label="hidden" />
-					<field id="bcpg:variantIds" label="hidden"></field>
+					<field id="bcpg:variantIds" label="hidden" />
 					<field id="bcpg:compoListQtySubFormula"
 						help="{&quot;className&quot;: &quot;align-right&quot;, &quot;numberFormat&quot;:  { &quot;minimumFractionDigits&quot;: 0, &quot;maximumFractionDigits&quot;: 4}}" />
 					<field id="bcpg:compareWithDynColumn" label="hidden" read-only="true" />
-					<field id="bcpg:compoListQty" read-only="true"></field>
-					<field id="bcpg:compoListVolume" read-only="true"></field>
-					<field id="bcpg:dynamicCharactColumn1" read-only="true" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn2" read-only="true" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn3" read-only="true" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn4" read-only="true" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn5" read-only="true" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn6" read-only="true" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn7" read-only="true" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn8" read-only="true" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn9" read-only="true" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn10" read-only="true" label="hidden"></field>
-					<field id="bcpg:instruction" label="hidden"></field>
+					<field id="bcpg:compoListQty" read-only="true" />
+					<field id="bcpg:compoListVolume" read-only="true" />
+					<field id="bcpg:dynamicCharactColumn1" read-only="true" label="hidden" />
+					<field id="bcpg:dynamicCharactColumn2" read-only="true" label="hidden" />
+					<field id="bcpg:dynamicCharactColumn3" read-only="true" label="hidden" />
+					<field id="bcpg:dynamicCharactColumn4" read-only="true" label="hidden" />
+					<field id="bcpg:dynamicCharactColumn5" read-only="true" label="hidden" />
+					<field id="bcpg:dynamicCharactColumn6" read-only="true" label="hidden" />
+					<field id="bcpg:dynamicCharactColumn7" read-only="true" label="hidden" />
+					<field id="bcpg:dynamicCharactColumn8" read-only="true" label="hidden" />
+					<field id="bcpg:dynamicCharactColumn9" read-only="true" label="hidden" />
+					<field id="bcpg:dynamicCharactColumn10" read-only="true" label="hidden" />
+					<field id="bcpg:instruction" label="hidden" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
 			</form>
@@ -6187,19 +6389,19 @@
 					<field id="bcpg:compoListQtySubFormula"
 						help="{&quot;className&quot;: &quot;align-right&quot;, &quot;numberFormat&quot;:  { &quot;minimumFractionDigits&quot;: 0, &quot;maximumFractionDigits&quot;: 4}}" />
 					<field id="bcpg:compareWithDynColumn" label="hidden" read-only="true" />
-					<field id="bcpg:compoListQty" read-only="true"></field>
-					<field id="bcpg:compoListVolume" read-only="true"></field>
-					<field id="bcpg:dynamicCharactColumn1" read-only="true" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn2" read-only="true" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn3" read-only="true" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn4" read-only="true" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn5" read-only="true" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn6" read-only="true" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn7" read-only="true" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn8" read-only="true" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn9" read-only="true" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn10" read-only="true" label="hidden"></field>
-					<field id="bcpg:instruction" label="hidden"></field>
+					<field id="bcpg:compoListQty" read-only="true" />
+					<field id="bcpg:compoListVolume" read-only="true" />
+					<field id="bcpg:dynamicCharactColumn1" read-only="true" label="hidden" />
+					<field id="bcpg:dynamicCharactColumn2" read-only="true" label="hidden" />
+					<field id="bcpg:dynamicCharactColumn3" read-only="true" label="hidden" />
+					<field id="bcpg:dynamicCharactColumn4" read-only="true" label="hidden" />
+					<field id="bcpg:dynamicCharactColumn5" read-only="true" label="hidden" />
+					<field id="bcpg:dynamicCharactColumn6" read-only="true" label="hidden" />
+					<field id="bcpg:dynamicCharactColumn7" read-only="true" label="hidden" />
+					<field id="bcpg:dynamicCharactColumn8" read-only="true" label="hidden" />
+					<field id="bcpg:dynamicCharactColumn9" read-only="true" label="hidden" />
+					<field id="bcpg:dynamicCharactColumn10" read-only="true" label="hidden" />
+					<field id="bcpg:instruction" label="hidden" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
 			</form>
@@ -6242,7 +6444,7 @@
 					<show id="bcpg:compoListDeclType" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:variantIds" label="hidden"></field>
+					<field id="bcpg:variantIds" label="hidden" />
 				</appearance>
 			</form>
 			<form id="datagridWUsed">
@@ -6298,8 +6500,8 @@
 					</field>
 					<field id="bcpg:compoListQtySubFormula" help-id="becpg.forms.help.compoListQtySubFormula" set="2-col-1" />
 					<field id="bcpg:compoListUnit" set="2-col-1">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-						</control>
+						<control template="/org/alfresco/components/form/controls/selectone.ftl" />
+
 					</field>
 
 
@@ -6316,8 +6518,8 @@
 
 
 					<field id="bcpg:compoListDeclType" set="2-col-2">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-						</control>
+						<control template="/org/alfresco/components/form/controls/selectone.ftl" />
+
 					</field>
 
 					<field id="bcpg:variantIds" help-id="becpg.forms.help.variantIds" set="2-col-2">
@@ -6388,8 +6590,8 @@
 					</field>
 					<field id="bcpg:compoListQtySubFormula" help-id="becpg.forms.help.compoListQtySubFormula" set="2-col-1" />
 					<field id="bcpg:compoListUnit" set="2-col-1">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-						</control>
+						<control template="/org/alfresco/components/form/controls/selectone.ftl" />
+
 					</field>
 
 
@@ -6406,8 +6608,8 @@
 
 
 					<field id="bcpg:compoListDeclType" set="2-col-2">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-						</control>
+						<control template="/org/alfresco/components/form/controls/selectone.ftl" />
+
 					</field>
 
 					<field id="bcpg:variantIds" help-id="becpg.forms.help.variantIds" set="2-col-2">
@@ -6721,19 +6923,19 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:entityDataListState" label="hidden" />
-					<field id="bcpg:variantIds" label="hidden"></field>
+					<field id="bcpg:variantIds" label="hidden" />
 					<field id="pack:labelingPosition" label="hidden" />
-					<field id="bcpg:dynamicCharactColumn1" read-only="true" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn2" read-only="true" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn3" read-only="true" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn4" read-only="true" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn5" read-only="true" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn6" read-only="true" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn7" read-only="true" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn8" read-only="true" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn9" read-only="true" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn10" read-only="true" label="hidden"></field>
-					<field id="bcpg:instruction" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn1" read-only="true" label="hidden" />
+					<field id="bcpg:dynamicCharactColumn2" read-only="true" label="hidden" />
+					<field id="bcpg:dynamicCharactColumn3" read-only="true" label="hidden" />
+					<field id="bcpg:dynamicCharactColumn4" read-only="true" label="hidden" />
+					<field id="bcpg:dynamicCharactColumn5" read-only="true" label="hidden" />
+					<field id="bcpg:dynamicCharactColumn6" read-only="true" label="hidden" />
+					<field id="bcpg:dynamicCharactColumn7" read-only="true" label="hidden" />
+					<field id="bcpg:dynamicCharactColumn8" read-only="true" label="hidden" />
+					<field id="bcpg:dynamicCharactColumn9" read-only="true" label="hidden" />
+					<field id="bcpg:dynamicCharactColumn10" read-only="true" label="hidden" />
+					<field id="bcpg:instruction" label="hidden" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
 			</form>
@@ -6755,19 +6957,15 @@
 					</field>
 					<field id="bcpg:packagingListPkgLevel" set="2-col" />
 					<field id="bcpg:packagingListIsMaster" set="2-col">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
 							<control-param name="isSearch">true</control-param>
-							<control-param name="insertBlank">true</control-param>
-							<control-param name="options">true|data.boolean.true,false|data.boolean.false
-							</control-param>
+							<control-param name="forceEditable">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:packagingListIsRecycle" set="2-col">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
 							<control-param name="isSearch">true</control-param>
-							<control-param name="insertBlank">true</control-param>
-							<control-param name="options">true|data.boolean.true,false|data.boolean.false
-							</control-param>
+							<control-param name="forceEditable">true</control-param>
 						</control>
 					</field>
 					<field id="entity_bcpg:packagingListProduct_bcpg:product" set="2-col" />
@@ -6923,8 +7121,8 @@
 						</control>
 					</field>
 					<field id="bcpg:allergenListVoluntary" help-id="becpg.forms.help.allergenListVoluntary" set="2-col">
-						<control template="/org/alfresco/components/form/controls/allergen-voluntary.ftl">
-						</control>
+						<control template="/org/alfresco/components/form/controls/allergen-voluntary.ftl" />
+
 					</field>
 
 					<!--   <field id="bcpg:allergenListDecisionTree">
@@ -6999,8 +7197,8 @@
 						</control>
 					</field>
 					<field id="bcpg:allergenListVoluntary" help-id="becpg.forms.help.allergenListVoluntary" set="2-col">
-						<control template="/org/alfresco/components/form/controls/allergen-voluntary.ftl">
-						</control>
+						<control template="/org/alfresco/components/form/controls/allergen-voluntary.ftl" />
+
 					</field>
 					<field id="bcpg:allergenListInVoluntary" help-id="becpg.forms.help.allergenListInVoluntary" set="2-col">
 						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
@@ -7028,7 +7226,7 @@
 					<show id="bcpg:glopValue" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:variantIds" label="hidden"></field>
+					<field id="bcpg:variantIds" label="hidden" />
 				</appearance>
 			</form>
 
@@ -7055,7 +7253,7 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:entityDataListState" label="hidden" />
-					<field id="bcpg:variantIds" label="hidden"></field>
+					<field id="bcpg:variantIds" label="hidden" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 					<field id="bcpg:allergenListDecisionTree" read-only="true" />
 					<field id="dataList_bcpg:reqCtrlList" label-id="hidden" />
@@ -7086,19 +7284,29 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:allergenListVoluntary">
-						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
 					</field>
 					<field id="bcpg:allergenListInVoluntary">
-						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
 					</field>
 					<field id="bcpg:allergenListIsCleaned">
-						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
 					</field>
 					<field id="bcpg:allergenListOnLine">
-						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
 					</field>
 					<field id="bcpg:allergenListOnSite">
-						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
 					</field>
 				</appearance>
 			</form>
@@ -7137,8 +7345,8 @@
 						</control>
 					</field>
 					<field id="bcpg:allergenListVoluntary" help-id="becpg.forms.help.allergenListVoluntary" set="2-col">
-						<control template="/org/alfresco/components/form/controls/allergen-voluntary.ftl">
-						</control>
+						<control template="/org/alfresco/components/form/controls/allergen-voluntary.ftl" />
+
 					</field>
 
 					<!-- <field id="bcpg:allergenListDecisionTree">
@@ -7214,8 +7422,8 @@
 						</control>
 					</field>
 					<field id="bcpg:allergenListVoluntary" help-id="becpg.forms.help.allergenListVoluntary" set="2-col">
-						<control template="/org/alfresco/components/form/controls/allergen-voluntary.ftl">
-						</control>
+						<control template="/org/alfresco/components/form/controls/allergen-voluntary.ftl" />
+
 					</field>
 
 					<field id="bcpg:allergenListInVoluntary" help-id="becpg.forms.help.allergenListInVoluntary" set="2-col">
@@ -7306,13 +7514,13 @@
 					<show id="dataList_bcpg:reqCtrlList" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:variantIds" label="hidden"></field>
-					<field id="bcpg:depthLevel" label="hidden"></field>
-					<field id="bcpg:variantColumn1" read-only="true" label="hidden"></field>
-					<field id="bcpg:variantColumn2" read-only="true" label="hidden"></field>
-					<field id="bcpg:variantColumn3" read-only="true" label="hidden"></field>
-					<field id="bcpg:variantColumn4" read-only="true" label="hidden"></field>
-					<field id="bcpg:variantColumn5" read-only="true" label="hidden"></field>
+					<field id="bcpg:variantIds" label="hidden" />
+					<field id="bcpg:depthLevel" label="hidden" />
+					<field id="bcpg:variantColumn1" read-only="true" label="hidden" />
+					<field id="bcpg:variantColumn2" read-only="true" label="hidden" />
+					<field id="bcpg:variantColumn3" read-only="true" label="hidden" />
+					<field id="bcpg:variantColumn4" read-only="true" label="hidden" />
+					<field id="bcpg:variantColumn5" read-only="true" label="hidden" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 					<field id="bcpg:costListIsFormulated" label="hidden" />
 					<field id="bcpg:costListValuePerProduct" read-only="true" />
@@ -7333,8 +7541,8 @@
 					<show id="bcpg:glopValue" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:variantIds" label="hidden"></field>
-					<field id="bcpg:depthLevel" label="hidden"></field>
+					<field id="bcpg:variantIds" label="hidden" />
+					<field id="bcpg:depthLevel" label="hidden" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 					<field id="bcpg:costListIsFormulated" label="hidden" />
 					<field id="bcpg:costListValuePerProduct" read-only="true" />
@@ -7358,8 +7566,8 @@
 					<show id="bcpg:costListIsFormulated" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:variantIds" label="hidden"></field>
-					<field id="bcpg:depthLevel" label="hidden"></field>
+					<field id="bcpg:variantIds" label="hidden" />
+					<field id="bcpg:depthLevel" label="hidden" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 					<field id="bcpg:costListIsFormulated" label="hidden" />
 					<field id="bcpg:costListValuePerProduct" read-only="true" />
@@ -7369,11 +7577,18 @@
 				<field-visibility>
 					<show id="bcpg:costListCost" for-mode="create" />
 					<show id="entity_bcpg:costListCost_bcpg:product" for-mode="view" />
+					<show id="bcpg:costListValue" />
 					<show id="bcpg:plants" for-mode="create" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:costListCost">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:costListValue">
+						<control template="/org/alfresco/components/form/controls/numberrange.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="forceEditable">true</control-param>
+						</control>
 					</field>
 				</appearance>
 			</form>
@@ -7500,13 +7715,13 @@
 					<show id="dataList_bcpg:reqCtrlList" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:variantIds" label="hidden"></field>
-					<field id="bcpg:depthLevel" label="hidden"></field>
-					<field id="bcpg:variantColumn1" read-only="true" label="hidden"></field>
-					<field id="bcpg:variantColumn2" read-only="true" label="hidden"></field>
-					<field id="bcpg:variantColumn3" read-only="true" label="hidden"></field>
-					<field id="bcpg:variantColumn4" read-only="true" label="hidden"></field>
-					<field id="bcpg:variantColumn5" read-only="true" label="hidden"></field>
+					<field id="bcpg:variantIds" label="hidden" />
+					<field id="bcpg:depthLevel" label="hidden" />
+					<field id="bcpg:variantColumn1" read-only="true" label="hidden" />
+					<field id="bcpg:variantColumn2" read-only="true" label="hidden" />
+					<field id="bcpg:variantColumn3" read-only="true" label="hidden" />
+					<field id="bcpg:variantColumn4" read-only="true" label="hidden" />
+					<field id="bcpg:variantColumn5" read-only="true" label="hidden" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 					<field id="bcpg:lcaListIsFormulated" label="hidden" />
 					<field id="bcpg:lcaListFormulaErrorLog" label="hidden" />
@@ -7529,8 +7744,8 @@
 					<show id="bcpg:glopValue" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:variantIds" label="hidden"></field>
-					<field id="bcpg:depthLevel" label="hidden"></field>
+					<field id="bcpg:variantIds" label="hidden" />
+					<field id="bcpg:depthLevel" label="hidden" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 					<field id="bcpg:lcaListIsFormulated" label="hidden" />
 					<field id="bcpg:lcaListFormulaErrorLog" label="hidden" />
@@ -7556,8 +7771,8 @@
 					<show id="bcpg:lcaListFormulaErrorLog" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:variantIds" label="hidden"></field>
-					<field id="bcpg:depthLevel" label="hidden"></field>
+					<field id="bcpg:variantIds" label="hidden" />
+					<field id="bcpg:depthLevel" label="hidden" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 					<field id="bcpg:lcaListIsFormulated" label="hidden" />
 					<field id="bcpg:lcaListFormulaErrorLog" label="hidden" />
@@ -7567,12 +7782,19 @@
 			<form id="filter">
 				<field-visibility>
 					<show id="bcpg:lcaListLca" for-mode="create" />
+					<show id="bcpg:lcaListValue" for-mode="create" />
 					<show id="entity_bcpg:lcaListLca_bcpg:product" for-mode="view" />
 					<show id="bcpg:plants" for-mode="create" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:lcaListLca">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:lcaListValue">
+						<control template="/org/alfresco/components/form/controls/numberrange.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="forceEditable">true</control-param>
+						</control>
 					</field>
 				</appearance>
 			</form>
@@ -7791,15 +8013,24 @@
 						<control template="/org/alfresco/components/form/controls/richtext.ftl">
 							<control-param name="editorAppearance">custom</control-param>
 							<control-param name="editorParameters">
-								toolbar: "bold italic underline",
-								menu: {},
-								contextmenu: {},
-								entity_encoding : "raw",
-								forced_root_blocks : false,
-								forced_root_block: '',
-								force_p_newlines: false,
-								force_br_newlines : true
-							</control-param>
+                                   toolbar: "bold italic underline",
+								   contextmenu: false,
+								   menu: {},
+								   formats: {
+								        bold: { inline: "b" },
+								        underline: { inline: "u", exact: true },
+								        italic: { inline: "i" }
+								    },
+								    extended_valid_elements: "u,b,i",
+								    invalid_elements: "em strong",
+								    entity_encoding: "raw",
+								    forced_root_blocks: false,
+								    force_br_newlines: true,
+					                forced_root_block: '',
+                                    force_p_newlines: false, 
+                                    newline_behavior: "linebreak",
+                                    paste_as_text: true
+                            </control-param>
 						</control>
 					</field>
 				</appearance>
@@ -7819,8 +8050,8 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:entityDataListState" label="hidden" />
-					<field id="bcpg:variantIds" label="hidden"></field>
-					<field id="bcpg:lrLocales" label="hidden" read-only="true"></field>
+					<field id="bcpg:variantIds" label="hidden" />
+					<field id="bcpg:lrLocales" label="hidden" read-only="true" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 					<field id="bcpg:illValue" read-only="true" />
 					<field id="bcpg:illManualValue" read-only="true" />
@@ -7834,8 +8065,8 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:illGrp">
-						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-						</control>
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+
 					</field>
 					<field id="bcpg:lrLocales">
 						<control template="/org/alfresco/components/form/controls/mtlangue.ftl" />
@@ -7869,15 +8100,24 @@
 						<control template="/org/alfresco/components/form/controls/richtext.ftl">
 							<control-param name="editorAppearance">custom</control-param>
 							<control-param name="editorParameters">
-								toolbar: "bold italic underline",
-								menu: {},
-								contextmenu: {},
-								entity_encoding : "raw",
-								forced_root_blocks : false,
-								forced_root_block: '',
-								force_p_newlines: false,
-								force_br_newlines : true
-							</control-param>
+                                   toolbar: "bold italic underline",
+                                   contextmenu: false,
+                                   menu: {},
+                                   formats: {
+                                      bold: { inline: "b" },
+                                      underline: { inline: "u", exact: true },
+                                      italic: { inline: "i" }
+                                    },
+                                    extended_valid_elements: "u,b,i",
+                                    invalid_elements: "em strong",
+                                    entity_encoding: "raw",
+                                    forced_root_blocks: false,
+                                    force_br_newlines: true,
+                                    forced_root_block: '',
+                                    force_p_newlines: false, 
+                                    newline_behavior: "linebreak",
+                                    paste_as_text: true
+                            </control-param>
 						</control>
 					</field>
 				</appearance>
@@ -7974,6 +8214,13 @@
 					<field id="bcpg:lrType">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:lrIsActive">
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="forceEditable">true</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -8169,11 +8416,11 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:entityDataListState" label="hidden" />
-					<field id="bcpg:variantIds" label="hidden"></field>
-					<field id="bcpg:ingListVolumeQtyPerc" read-only="true" label="hidden"></field>
-					<field id="bcpg:ingListQtyPercWithYield" read-only="true"></field>
-					<field id="bcpg:ingListQtyPercWithSecondaryYield" read-only="true"></field>
-					<field id="bcpg:depthLevel" label="hidden"></field>
+					<field id="bcpg:variantIds" label="hidden" />
+					<field id="bcpg:ingListVolumeQtyPerc" read-only="true" label="hidden" />
+					<field id="bcpg:ingListQtyPercWithYield" read-only="true" />
+					<field id="bcpg:ingListQtyPercWithSecondaryYield" read-only="true" />
+					<field id="bcpg:depthLevel" label="hidden" />
 					<field id="dataList_bcpg:reqCtrlList" label-id="hidden" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
@@ -8198,11 +8445,11 @@
 					<show id="bcpg:glopValue" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:variantIds" label="hidden"></field>
-					<field id="bcpg:ingListVolumeQtyPerc" read-only="true" label="hidden"></field>
-					<field id="bcpg:ingListQtyPercWithYield" read-only="true"></field>
-					<field id="bcpg:ingListQtyPercWithSecondaryYield" read-only="true"></field>
-					<field id="bcpg:depthLevel" label="hidden"></field>
+					<field id="bcpg:variantIds" label="hidden" />
+					<field id="bcpg:ingListVolumeQtyPerc" read-only="true" label="hidden" />
+					<field id="bcpg:ingListQtyPercWithYield" read-only="true" />
+					<field id="bcpg:ingListQtyPercWithSecondaryYield" read-only="true" />
+					<field id="bcpg:depthLevel" label="hidden" />
 				</appearance>
 			</form>
 
@@ -8231,11 +8478,11 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:entityDataListState" label="hidden" />
-					<field id="bcpg:variantIds" label="hidden"></field>
-					<field id="bcpg:ingListVolumeQtyPerc" read-only="true" label="hidden"></field>
-					<field id="bcpg:ingListQtyPercWithYield" read-only="true"></field>
-					<field id="bcpg:ingListQtyPercWithSecondaryYield" read-only="true"></field>
-					<field id="bcpg:depthLevel" label="hidden"></field>
+					<field id="bcpg:variantIds" label="hidden" />
+					<field id="bcpg:ingListVolumeQtyPerc" read-only="true" label="hidden" />
+					<field id="bcpg:ingListQtyPercWithYield" read-only="true" />
+					<field id="bcpg:ingListQtyPercWithSecondaryYield" read-only="true" />
+					<field id="bcpg:depthLevel" label="hidden" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
 			</form>
@@ -8264,8 +8511,8 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:entityDataListState" label="hidden" />
-					<field id="bcpg:variantIds" label="hidden"></field>
-					<field id="bcpg:depthLevel" label="hidden"></field>
+					<field id="bcpg:variantIds" label="hidden" />
+					<field id="bcpg:depthLevel" label="hidden" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
 			</form>
@@ -8275,6 +8522,7 @@
 					<show id="bcpg:ingListIng" />
 					<show id="entity_bcpg:ingListIng_bcpg:ing@filter-ingList" force="true" />
 					<show id="bcpg:ingListQtyPerc" />
+					<show id="bcpg:ingListQtyPercWithYield" />
 					<show id="bcpg:ingListQtyMini" />
 					<show id="bcpg:ingListQtyMaxi" />
 					<show id="bcpg:ingListIsGMO" />
@@ -8288,6 +8536,7 @@
 
 				<appearance>
 					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="2-col-2" template="/org/alfresco/components/form/2-column-set.ftl" />
 
 					<field id="bcpg:depthLevel" set="2-col">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
@@ -8296,7 +8545,7 @@
 						</control>
 					</field>
 
-					<field id="entity_bcpg:ingListIng_bcpg:ing@filter-ingList" set="2-col"></field>
+					<field id="entity_bcpg:ingListIng_bcpg:ing@filter-ingList" set="2-col" />
 					<field id="bcpg:ingListIng" set="2-col">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ing?extra.searchTemplate=%25(bcpg%3AcharactName%20bcpg%3AerpCode%20bcpg%3AlegalName%20bcpg%3AingCEECode%20bcpg%3AcasNumber%20bcpg%3AecNumber%20bcpg%3AceNumber%20bcpg%3AfdaNumber%20bcpg%3AfemaNumber%20bcpg%3AflNumber)
@@ -8304,35 +8553,43 @@
 						</control>
 					</field>
 					<field id="bcpg:ingListQtyPerc" set="2-col">
-						<control template="/org/alfresco/components/form/controls/number-unit.ftl">
-							<control-param name="unit">perc</control-param>
+						<control template="/org/alfresco/components/form/controls/numberrange.ftl">
+							<control-param name="isSearch">true</control-param>
 						</control>
 					</field>
-					<field id="bcpg:ingListQtyMini" set="2-col" />
-					<field id="bcpg:ingListQtyMaxi" set="2-col" />
+					<field id="bcpg:ingListQtyPercWithYield" set="2-col">
+						<control template="/org/alfresco/components/form/controls/numberrange.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:ingListQtyMini" set="2-col">
+						<control template="/org/alfresco/components/form/controls/numberrange.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:ingListQtyMaxi" set="2-col">
+						<control template="/org/alfresco/components/form/controls/numberrange.ftl" />
+
+					</field>
 
 					<field id="bcpg:ingListIsGMO" set="2-col">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">,false|data.boolean.false,true|data.boolean.true
-							</control-param>
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
+							<control-param name="isSearch">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:ingListIsIonized" set="2-col">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">,false|data.boolean.false,true|data.boolean.true
-							</control-param>
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
+							<control-param name="isSearch">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:ingListIsProcessingAid" set="2-col">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">,false|data.boolean.false,true|data.boolean.true
-							</control-param>
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
+							<control-param name="isSearch">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:ingListIsSupport" set="2-col">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">,false|data.boolean.false,true|data.boolean.true
-							</control-param>
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
+							<control-param name="isSearch">true</control-param>
 						</control>
 					</field>
 
@@ -8457,8 +8714,8 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:toxListTox">
-						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-						</control>
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+
 					</field>
 					<field id="bcpg:toxListValue" read-only="true" />
 				</appearance>
@@ -8476,8 +8733,8 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:toxListTox">
-						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-						</control>
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+
 					</field>
 					<field id="bcpg:toxListValue" read-only="true" />
 				</appearance>
@@ -8539,9 +8796,53 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:entityDataListState" label="hidden" />
-					<field id="bcpg:variantIds" label="hidden"></field>
-					<field id="bcpg:pclType" read-only="true"></field>
+					<field id="bcpg:variantIds" label="hidden" />
+					<field id="bcpg:pclType" read-only="true" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
+				</appearance>
+			</form>
+
+			<form id="filter">
+				<field-visibility>
+					<show id="bcpg:mblMicrobio" />
+					<show id="bcpg:mblValue" />
+					<show id="bcpg:mblMaxi" />
+					<show id="bcpg:mblType" />
+					<show id="bcpg:mblMaxi" />
+					<show id="bcpg:mblControlStep" />
+					<show id="bcpg:mblMethod" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:mblMicrobio">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/microbio</control-param>
+						</control>
+					</field>
+					<field id="bcpg:mblValue">
+						<control template="/org/alfresco/components/form/controls/numberrange.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:mblType">
+						<control template="/org/alfresco/components/form/controls/selectmany.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:mblControlStep">
+						<control template="/org/alfresco/components/form/controls/selectmany.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:mblMaxi">
+						<control template="/org/alfresco/components/form/controls/numberrange.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:mblMethod">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/qa:controlMethod</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 		</forms>
@@ -8668,6 +8969,7 @@
 			</form>
 			<form id="create-productSpecification">
 				<field-visibility>
+					<show id="bcpg:regulatoryType" force="true" />
 					<show id="bcpg:nutListNut" />
 					<show id="bcpg:nutListMini" />
 					<show id="bcpg:nutListMaxi" />
@@ -8736,24 +9038,24 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:entityDataListState" label="hidden" />
-					<field id="bcpg:variantIds" label="hidden"></field>
-					<field id="bcpg:depthLevel" label="hidden"></field>
+					<field id="bcpg:variantIds" label="hidden" />
+					<field id="bcpg:depthLevel" label="hidden" />
 					<field id="bcpg:nutListFormulatedValue" label="hidden" read-only="true" />
 					<field id="bcpg:nutListFormulatedMaxi" label="hidden" read-only="true" />
 					<field id="bcpg:nutListFormulatedMini" label="hidden" read-only="true" />
-					<field id="bcpg:nutListUnit" read-only="true" label="hidden"></field>
+					<field id="bcpg:nutListUnit" read-only="true" label="hidden" />
 					<field id="bcpg:nutListFormulatedValuePrepared" label="hidden" read-only="true" />
 					<field id="bcpg:nutListFormulatedValuePerServing" label="hidden" read-only="true" />
 					<field id="bcpg:nutListReductionFormulatedValue" label="hidden" read-only="true" />
 					<field id="bcpg:nutListReferenceValue" />
-					<field id="bcpg:nutListUnitPrepared" read-only="true" label="hidden"></field>
-					<field id="bcpg:nutListRoundedValue" read-only="true"></field>
-					<field id="bcpg:nutListRoundedValuePrepared" read-only="true"></field>
-					<field id="bcpg:variantColumn1" read-only="true" label="hidden"></field>
-					<field id="bcpg:variantColumn2" read-only="true" label="hidden"></field>
-					<field id="bcpg:variantColumn3" read-only="true" label="hidden"></field>
-					<field id="bcpg:variantColumn4" read-only="true" label="hidden"></field>
-					<field id="bcpg:variantColumn5" read-only="true" label="hidden"></field>
+					<field id="bcpg:nutListUnitPrepared" read-only="true" label="hidden" />
+					<field id="bcpg:nutListRoundedValue" read-only="true" />
+					<field id="bcpg:nutListRoundedValuePrepared" read-only="true" />
+					<field id="bcpg:variantColumn1" read-only="true" label="hidden" />
+					<field id="bcpg:variantColumn2" read-only="true" label="hidden" />
+					<field id="bcpg:variantColumn3" read-only="true" label="hidden" />
+					<field id="bcpg:variantColumn4" read-only="true" label="hidden" />
+					<field id="bcpg:variantColumn5" read-only="true" label="hidden" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 					<field id="bcpg:nutListIsFormulated" label="hidden" />
 					<field id="bcpg:nutListFormulaErrorLog" label="hidden" />
@@ -8800,15 +9102,15 @@
 					<show id="bcpg:glopValue" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:variantIds" label="hidden"></field>
-					<field id="bcpg:depthLevel" label="hidden"></field>
+					<field id="bcpg:variantIds" label="hidden" />
+					<field id="bcpg:depthLevel" label="hidden" />
 					<field id="bcpg:nutListFormulatedValue" label="hidden" read-only="true" />
 					<field id="bcpg:nutListFormulatedValuePerServing" label="hidden" read-only="true" />
-					<field id="bcpg:nutListUnit" read-only="true" label="hidden"></field>
+					<field id="bcpg:nutListUnit" read-only="true" label="hidden" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 					<field id="bcpg:nutListIsFormulated" label="hidden" />
 					<field id="bcpg:nutListFormulaErrorLog" label="hidden" />
-					<field id="bcpg:nutListRoundedValue" read-only="true"></field>
+					<field id="bcpg:nutListRoundedValue" read-only="true" />
 				</appearance>
 			</form>
 			<form id="datagridWUsed">
@@ -8837,15 +9139,15 @@
 					<show id="entity_bcpg:nutListNut_bcpg:nut" force="true" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:variantIds" label="hidden"></field>
-					<field id="bcpg:depthLevel" label="hidden"></field>
+					<field id="bcpg:variantIds" label="hidden" />
+					<field id="bcpg:depthLevel" label="hidden" />
 					<field id="bcpg:nutListFormulatedValue" label="hidden" read-only="true" />
 					<field id="bcpg:nutListFormulatedValuePrepared" label="hidden" read-only="true" />
 					<field id="bcpg:nutListFormulatedValuePerServing" label="hidden" read-only="true" />
 					<field id="bcpg:nutListFormulatedMaxi" label="hidden" read-only="true" />
 					<field id="bcpg:nutListFormulatedMini" label="hidden" read-only="true" />
-					<field id="bcpg:nutListUnit" read-only="true" label="hidden"></field>
-					<field id="bcpg:nutListUnitPrepared" read-only="true" label="hidden"></field>
+					<field id="bcpg:nutListUnit" read-only="true" label="hidden" />
+					<field id="bcpg:nutListUnitPrepared" read-only="true" label="hidden" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 					<field id="bcpg:nutListIsFormulated" label="hidden" />
 					<field id="bcpg:nutListFormulaErrorLog" label="hidden" />
@@ -8867,6 +9169,7 @@
 					<field id="bcpg:nutListGroup">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
+							<control-param name="isSearch">true</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -9007,8 +9310,25 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:entityDataListState" label="hidden" />
-					<field id="bcpg:variantIds" label="hidden"></field>
+					<field id="bcpg:variantIds" label="hidden" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
+				</appearance>
+			</form>
+
+			<form id="filter">
+				<field-visibility>
+					<show id="bcpg:organoListOrgano" />
+					<show id="bcpg:organoListMethod" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:organoListOrgano">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:organoListMethod">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/qa:controlMethod</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 		</forms>
@@ -9161,14 +9481,14 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:entityDataListState" label="hidden" />
-					<field id="bcpg:variantIds" label="hidden"></field>
-					<field id="bcpg:pclUnit" read-only="true"></field>
-					<field id="bcpg:pclType" read-only="true"></field>
-					<field id="bcpg:variantColumn1" read-only="true" label="hidden"></field>
-					<field id="bcpg:variantColumn2" read-only="true" label="hidden"></field>
-					<field id="bcpg:variantColumn3" read-only="true" label="hidden"></field>
-					<field id="bcpg:variantColumn4" read-only="true" label="hidden"></field>
-					<field id="bcpg:variantColumn5" read-only="true" label="hidden"></field>
+					<field id="bcpg:variantIds" label="hidden" />
+					<field id="bcpg:pclUnit" read-only="true" />
+					<field id="bcpg:pclType" read-only="true" />
+					<field id="bcpg:variantColumn1" read-only="true" label="hidden" />
+					<field id="bcpg:variantColumn2" read-only="true" label="hidden" />
+					<field id="bcpg:variantColumn3" read-only="true" label="hidden" />
+					<field id="bcpg:variantColumn4" read-only="true" label="hidden" />
+					<field id="bcpg:variantColumn5" read-only="true" label="hidden" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 					<field id="dataList_bcpg:reqCtrlList" label-id="hidden" />
 					<field id="bcpg:physicoChemIsFormulated" label="hidden" />
@@ -9188,8 +9508,8 @@
 					<show id="bcpg:regulatoryUsageRef" force="true" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:pclUnit" read-only="true"></field>
-					<field id="bcpg:pclType" read-only="true"></field>
+					<field id="bcpg:pclUnit" read-only="true" />
+					<field id="bcpg:pclType" read-only="true" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 					<field id="bcpg:regulatoryCountries">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
@@ -9213,8 +9533,8 @@
 					<show id="bcpg:glopValue" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:variantIds" label="hidden"></field>
-					<field id="bcpg:pclUnit" read-only="true"></field>
+					<field id="bcpg:variantIds" label="hidden" />
+					<field id="bcpg:pclUnit" read-only="true" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 					<field id="bcpg:physicoChemIsFormulated" label="hidden" />
 					<field id="bcpg:physicoChemFormulaErrorLog" label="hidden" />
@@ -9236,9 +9556,9 @@
 					<show id="bcpg:physicoChemFormulaErrorLog" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:variantIds" label="hidden"></field>
-					<field id="bcpg:pclUnit" read-only="true"></field>
-					<field id="bcpg:pclType" read-only="true"></field>
+					<field id="bcpg:variantIds" label="hidden" />
+					<field id="bcpg:pclUnit" read-only="true" />
+					<field id="bcpg:pclType" read-only="true" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 					<field id="bcpg:physicoChemIsFormulated" label="hidden" />
 					<field id="bcpg:physicoChemFormulaErrorLog" label="hidden" />
@@ -9360,8 +9680,8 @@
 					<field id="bcpg:filReqMessage">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
-					<field id="bcpg:filQtyPercMaxi">
-					</field>
+					<field id="bcpg:filQtyPercMaxi" />
+
 					<field id="bcpg:filIsGMO">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">,false|data.boolean.false,true|data.boolean.true
@@ -9425,15 +9745,15 @@
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:filIsGMO">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">,false|data.boolean.false,true|data.boolean.true
-							</control-param>
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="forceEditable">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:filIsIonized">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">,false|data.boolean.false,true|data.boolean.true
-							</control-param>
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="forceEditable">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:filIngs">
@@ -9531,8 +9851,8 @@
 					<field id="bcpg:filReqMessage">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
-					<field id="bcpg:filQtyPercMaxi">
-					</field>
+					<field id="bcpg:filQtyPercMaxi" />
+
 					<field id="bcpg:filIsGMO">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">,false|data.boolean.false,true|data.boolean.true
@@ -9688,25 +10008,25 @@
 					<field id="bcpg:contactListPhoneMobile" set="2-col" />
 					<field id="bcpg:contactListFax" set="2-col" />
 					<field id="bcpg:locationCity" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationZip" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationState" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationCountry" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationAddress1" help-id="becpg.forms.help.locationAddress1" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationAddress2" help-id="becpg.forms.help.locationAddress2" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationAddress3" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:contactListNotes" set="2-col">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" set="2-col" />
@@ -9749,28 +10069,28 @@
 					<field id="bcpg:contactListPhoneMobile" set="2-col" />
 					<field id="bcpg:contactListFax" set="2-col" />
 					<field id="bcpg:locationCity" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationZip" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationState" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationCountry" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="sec:readGroups" set="2-col" />
 					<field id="bcpg:erpCode" set="2-col" />
 					<field id="bcpg:isDeleted" set="2-col" />
 					<field id="bcpg:locationAddress1" help-id="becpg.forms.help.locationAddress1" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationAddress2" help-id="becpg.forms.help.locationAddress2" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationAddress3" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:contactListNotes" set="2-col">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" set="2-col" />
@@ -9909,25 +10229,25 @@
 					<field id="bcpg:contactListPhoneMobile" set="2-col" />
 					<field id="bcpg:contactListFax" set="2-col" />
 					<field id="bcpg:locationCity" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationZip" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationState" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationCountry" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationAddress1" help-id="becpg.forms.help.locationAddress1" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationAddress2" help-id="becpg.forms.help.locationAddress2" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationAddress3" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:contactListNotes" set="2-col">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" set="2-col" />
@@ -9970,28 +10290,28 @@
 					<field id="bcpg:contactListPhoneMobile" set="2-col" />
 					<field id="bcpg:contactListFax" set="2-col" />
 					<field id="bcpg:locationCity" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationZip" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationState" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationCountry" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="sec:readGroups" set="2-col" />
 					<field id="bcpg:erpCode" set="2-col" />
 					<field id="bcpg:isDeleted" set="2-col" />
 					<field id="bcpg:locationAddress1" help-id="becpg.forms.help.locationAddress1" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationAddress2" help-id="becpg.forms.help.locationAddress2" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:locationAddress3" set="2-col">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:contactListNotes" set="2-col">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" set="2-col" />
@@ -10073,6 +10393,14 @@
 							<control-param name="isSearch">true</control-param>
 						</control>
 					</field>
+					<field id="bcpg:lclClaimValue">
+						<control template="/org/alfresco/components/form/controls/numberrange.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+
+
 				</appearance>
 			</form>
 
@@ -10352,6 +10680,14 @@
 					<show id="bcpg:regulatoryCode" force="true" />
 					<show id="bcpg:isDeleted" force="true" />
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:isDeleted">
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+				</appearance>
 			</form>
 
 			<form id="datagrid">
@@ -10443,6 +10779,36 @@
 		</forms>
 	</config>
 
+
+
+	<config evaluator="node-type" condition="bcpg:savedSearch">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="bcpg:isGlobalSavedSearch" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+
+	<config evaluator="model-type" condition="bcpg:savedSearch">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="bcpg:isGlobalSavedSearch" />
+				</field-visibility>
+			</form>
+			<form id="duplicate">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="bcpg:isGlobalSavedSearch" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+
 	<config evaluator="aspect" condition="bcpg:productTypeAspect">
 		<forms>
 			<form>
@@ -10470,8 +10836,8 @@
 				<field-visibility>
 					<show id="bcpg:suppliers" force="true" />
 				</field-visibility>
-				<appearance>
-				</appearance>
+				<appearance />
+
 			</form>
 		</forms>
 	</config>
@@ -10608,7 +10974,10 @@
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:isDeleted">
-						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="forceEditable">true</control-param>
+						</control>
 					</field>
 				</appearance>
 			</form>
@@ -10686,7 +11055,10 @@
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:isDeleted">
-						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="forceEditable">true</control-param>
+						</control>
 					</field>
 				</appearance>
 			</form>
@@ -10893,11 +11265,18 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="gs1:targetMarketCountries" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:isDeleted" />
 				</field-visibility>
 				<appearance>
 					<field id="gs1:targetMarketCountries">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="showLink">false</control-param>
+						</control>
+					</field>
+					<field id="bcpg:isDeleted">
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
+							<control-param name="isSearch">true</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -11054,6 +11433,15 @@
 				<field-visibility>
 					<show id="gs1:tradeItemPriceType" />
 				</field-visibility>
+				<appearance>
+
+					<field id="gs1:tradeItemPriceType">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
+				</appearance>
 			</form>
 			<form id="datagrid">
 				<field-visibility>
@@ -11251,10 +11639,30 @@
 			<form id="filter">
 				<field-visibility>
 					<show id="gs1:speciesForFisheryStatisticsPurposesCode" />
-					<show id="gs1:speciesForFisheryStatisticsPurposesName" />
 					<show id="gs1:productionMethodForFishAndSeafoodCode" />
 					<show id="gs1:storageStateCode" />
 				</field-visibility>
+				<appearance>
+					<field id="gs1:speciesForFisheryStatisticsPurposesCode">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
+					<field id="gs1:productionMethodForFishAndSeafoodCode">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
+					<field id="gs1:storageStateCode">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
+
+				</appearance>
 			</form>
 			<form id="datagrid">
 				<field-visibility>
@@ -11310,7 +11718,6 @@
 					<show id="bcpg:irlRestrictionLevels" />
 					<show id="bcpg:irlCitation" />
 					<show id="bcpg:irlPrecautions" />
-					<show id="bcpg:regulatoryComment" />
 					<show id="bcpg:irlSources" />
 				</field-visibility>
 				<appearance>
@@ -11318,6 +11725,30 @@
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ing
 							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:irlUsages">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:irlResultIndicator">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:irlRestrictionLevels">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:irlPrecautions">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:regulatoryCountries">
@@ -11479,11 +11910,23 @@
 						</control>
 					</field>
 					<field id="bcpg:svhcListQtyPerc">
-						<control template="/org/alfresco/components/form/controls/number-unit.ftl">
-							<control-param name="unit">perc</control-param>
+						<control template="/org/alfresco/components/form/controls/numberrange.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="forceEditable">true</control-param>
 						</control>
 					</field>
-					<field id="bcpg:isManualListItem" />
+					<field id="bcpg:isManualListItem">
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:svhcReasonsForInclusion">
+						<control template="/org/alfresco/components/form/controls/selectmany.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 		</forms>
@@ -11539,8 +11982,6 @@
 					</field>
 				</appearance>
 			</form>
-
-
 
 		</forms>
 	</config>

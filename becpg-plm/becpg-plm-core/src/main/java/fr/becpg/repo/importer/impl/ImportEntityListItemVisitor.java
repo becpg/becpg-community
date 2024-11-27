@@ -32,6 +32,7 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.content.encoding.ContentCharsetFinder;
+import org.alfresco.repo.forum.CommentService;
 import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
@@ -67,10 +68,21 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 
 	/** Constant <code>MSG_ERROR_NO_MAPPING_FOR="import_service.error.no_mapping_for"</code> */
 	protected static final String MSG_ERROR_NO_MAPPING_FOR = "import_service.error.no_mapping_for";
+	
+	private CommentService commentService;
 
 	private static final Log logger = LogFactory.getLog(ImportEntityListItemVisitor.class);
 
 	private FileFolderService fileFolderService;
+	
+	/**
+	 * <p>Setter for the field <code>commentService</code>.</p>
+	 *
+	 * @param commentService a {@link org.alfresco.repo.forum.CommentService} object.
+	 */
+	public void setCommentService(CommentService commentService) {
+		this.commentService = commentService;
+	}
 
 	/**
 	 * <p>Setter for the field <code>fileFolderService</code>.</p>
@@ -262,6 +274,12 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 
 		// import associations
 		importAssociations(importContext, values, entityListItemNodeRef);
+		
+		MLText comment = (MLText) propValues.get(PLMModel.PROP_PRODUCT_COMMENTS);
+		logger.debug("Import comments :"+comment +" for product :"+entityListItemNodeRef);
+		if(comment!=null){
+			commentService.createComment(entityListItemNodeRef, "", comment.getDefaultValue(), false);
+		}
 
 		return entityListItemNodeRef;
 	}
