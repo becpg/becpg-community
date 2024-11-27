@@ -198,7 +198,6 @@
 			<ref bean="cachedDictionaryService" />
 		</property>
 		<property name="namespaceService" ref="namespaceService" />
-		<property name="systemConfigurationService" ref="systemConfigurationService" />
 	</bean>
 
 
