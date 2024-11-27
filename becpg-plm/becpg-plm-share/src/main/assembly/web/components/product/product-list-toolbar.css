@@ -21,15 +21,33 @@
 	float: right;
 }
 
+.product-list-toolbar .right > div  {
+  float: left;
+}
+
 .product-list-toolbar .right .separator {
 	float: left;
 }
 
-.product-list-toolbar .export-csv {
-	float: left;
+
+#toolbar-contribs .yui-menu-button button,
+.datagrid-bar  .yui-menu-button button
+ {
+ padding-right: 10px;
 }
 
-.product-list-toolbar .export-csv span.first-child {
+#toolbar-contribs .filter-form .yui-menu-button button,
+.datagrid-bar .filter-form  .yui-menu-button button{
+ padding-right: 0px;
+}
+
+.datalist-toolbar .new-row span.first-child {
+    padding-left: 0px ! important;
+}
+
+
+.product-list-toolbar .export-csv span.first-child,
+.product-list-toolbar .show-thumbnails span.first-child {
 	background-position: 50% 50%;
 	background-repeat: no-repeat;
 	min-height: 16px;
@@ -39,3 +57,30 @@
 .product-list-toolbar .export-csv span.first-child {
 	background-image: url(../../components/images/filetypes/xls-file-16.png);
 }
+
+.product-list-toolbar .show-thumbnails span.first-child
+{
+   background-image: url(../../components/images/filetypes/img-file-16.png);
+}
+
+
+.product-list-toolbar .onActionShowWused {
+    background-image: url(../images/wused-16.png);
+}
+
+.product-list-toolbar .onActionBulkEdit {
+    background-image:  url("../../components/images/edit-inline-16.png");
+}
+
+.product-list-toolbar.onActionSelectColor  {
+    background-image:  url("../../components/images/select-color-16.png") ;
+}
+
+.product-list-toolbar .onActionLock  {
+    background-image:  url("../../modules/entity-datagrid/images/lock-16.png") ;
+}
+
+.product-list-toolbar.onActionUnlock  {
+    background-image:  url("../../modules/entity-datagrid/images/unlock-16.png") ;
+}
+

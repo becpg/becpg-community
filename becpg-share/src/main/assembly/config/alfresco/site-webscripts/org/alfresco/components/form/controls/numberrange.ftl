@@ -27,9 +27,11 @@
             <span>${msg("form.control.range.max")}:</span>
             <#-- max value -->
             <input id="${controlId}-max" name="-" type="text"  autocomplete="off" class="number number-range" <#if field.description??>title="${field.description}"</#if> tabindex="0" />
-            <#if !field.disabled || (field.control.params.forceEditable?? && field.control.params.forceEditable == "true")>
-			    <@formLib.renderFieldHelp field=field />
-			</#if>
+            <#if !(field.control.params.isSearch??)>
+             <#if !field.disabled || (field.control.params.forceEditable?? && field.control.params.forceEditable == "true")>
+                 <@formLib.renderFieldHelp field=field />
+             </#if>
+            </#if> 
          </div>
       </div>
    </div>

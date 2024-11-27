@@ -7,7 +7,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.alfresco.repo.version.Version2Model;
-import org.alfresco.repo.version.VersionBaseModel;
 import org.alfresco.service.cmr.repository.StoreRef;
 
 /**
@@ -132,7 +131,7 @@ public class RepoConsts
 	/** Constant <code>SPACES_STORE</code> */
 	public static final StoreRef SPACES_STORE =  new StoreRef(StoreRef.PROTOCOL_WORKSPACE, "SpacesStore");
 	/** Constant <code>VERSION_STORE</code> */
-	public static final StoreRef VERSION_STORE =  new StoreRef(VersionBaseModel.STORE_PROTOCOL, Version2Model.STORE_ID);
+	public static final StoreRef VERSION_STORE =  new StoreRef(StoreRef.PROTOCOL_WORKSPACE, Version2Model.STORE_ID);
 	
 	/*-- Regex --*/	
 	/** Constant <code>REGEX_NON_NEGATIVE_INTEGER_FIELD="^\\d*$"</code> */
@@ -303,6 +302,8 @@ public class RepoConsts
 	
 	/** Constant <code>CATALOGS_PATH="/app:company_home/cm:System/cm:Property"{trunked}</code> */
 	public static final String CATALOGS_PATH = "/app:company_home/cm:System/cm:PropertyCatalogs";
+
+	public static final Object PATH_SAVED_SEARCHES = "saved_searches";
 
 	
 }

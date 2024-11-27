@@ -77,12 +77,11 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 
 				if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 					for (CompoListDataItem compoListDataItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-						if (compoListDataItem.getProduct() != null) {
-							if ((compoListDataItem.getQtySubFormula() != null) && (compoListDataItem.getQtySubFormula() > 0)) {
-								ProductData componentProductData = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());
-								checkILOfPart(compoListDataItem.getProduct(), compoListDataItem.getDeclType(), componentProductData, requirements,
-										specification, sources, visited);
-							}
+						if ((compoListDataItem.getProduct() != null)
+								&& ((compoListDataItem.getQtySubFormula() != null) && (compoListDataItem.getQtySubFormula() > 0))) {
+							ProductData componentProductData = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());
+							checkILOfPart(compoListDataItem.getProduct(), compoListDataItem.getDeclType(), componentProductData, requirements,
+									specification, sources, visited);
 						}
 					}
 				}
@@ -119,8 +118,8 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 	 *            the total qty ing map
 	 */
 	private void checkILOfPart(NodeRef productNodeRef, DeclarationType declType, ProductData componentProductData,
-			List<ForbiddenIngListDataItem> forbiddenIngredientsList, ProductSpecificationData specification,
-			Map<String, List<NodeRef>> sources, Set<NodeRef> visited) {
+			List<ForbiddenIngListDataItem> forbiddenIngredientsList, ProductSpecificationData specification, Map<String, List<NodeRef>> sources,
+			Set<NodeRef> visited) {
 
 		if (!PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.equals(mlNodeService.getType(productNodeRef)) && !visited.contains(productNodeRef)) {
 
@@ -148,8 +147,8 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 
 						} else {
 							String key = createReqSourceKey(fil, ingListDataItem);
-							
-							List<NodeRef> sourceList = sources.computeIfAbsent(key, (f) -> new ArrayList<>());
+
+							List<NodeRef> sourceList = sources.computeIfAbsent(key, f -> new ArrayList<>());
 							sourceList.add(productNodeRef);
 							sources.put(key, sourceList);
 						}
@@ -165,7 +164,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 	private void processForbiddenRequirements(ProductSpecificationData specification, ProductData productData, ForbiddenIngListDataItem fil,
 			List<ReqCtrlListDataItem> reqCtrlMap, Map<String, List<NodeRef>> sources) {
 
-		Double qtyPerc = calculateQtyPerc(fil, productData);
+		Double totalQtyPerc = calculateQtyPerc(fil, productData);
 
 		for (IngListDataItem ingListDataItem : productData.getIngList()) {
 			if (checkRuleMatchIng(ingListDataItem, fil)) {
@@ -177,25 +176,26 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 					Double filMaxQtyPerc = getFilMaxQtyPerc(productData, fil);
 					Double filMinQtyPerc = getFilMinQtyPerc(productData, fil);
 
-					boolean dontMatchQty = (qtyPerc == null) || ((filMaxQtyPerc != null) && (filMaxQtyPerc <= qtyPerc))
-							|| ((filMinQtyPerc != null) && (filMinQtyPerc >= qtyPerc));
+					Double qtyPerc = getQtyPerc(ingListDataItem, fil);
 
-					boolean isInfo = !dontMatchQty && Boolean.TRUE.equals(addInfoReqCtrl) && (fil.getReqMessage() != null)
-							&& !fil.getReqMessage().isEmpty();
+					if (!((totalQtyPerc == null) || (qtyPerc == null) || (totalQtyPerc == 0) || (qtyPerc == 0))) {
+						boolean dontMatchQty = ((filMaxQtyPerc != null) && (filMaxQtyPerc <= totalQtyPerc))
+								|| ((filMinQtyPerc != null) && (filMinQtyPerc >= totalQtyPerc));
 
-					if (dontMatchQty || isInfo) {
+						boolean isInfo = !dontMatchQty && Boolean.TRUE.equals(addInfoReqCtrl) && (fil.getReqMessage() != null)
+								&& !fil.getReqMessage().isEmpty();
 
-						if (isInfo) {
-							reqCtrl.setReqType(RequirementType.Info);
-						} else {
+						if (dontMatchQty || isInfo) {
 
-							if ((qtyPerc != null) && (filMaxQtyPerc != null) && (qtyPerc != 0)) {
-								reqCtrl.setReqMaxQty((filMaxQtyPerc / qtyPerc) * 100d);
-							} else if ((qtyPerc != null) && (filMinQtyPerc != null) && (qtyPerc != 0)) {
-								reqCtrl.setReqMaxQty((filMinQtyPerc / qtyPerc) * 100d);
+							if (isInfo) {
+								reqCtrl.setReqType(RequirementType.Info);
+							} else if ((totalQtyPerc != null) && (filMaxQtyPerc != null) && (totalQtyPerc != 0)) {
+								reqCtrl.setReqMaxQty((filMaxQtyPerc / totalQtyPerc) * 100d);
+							} else if ((totalQtyPerc != null) && (filMinQtyPerc != null) && (totalQtyPerc != 0)) {
+								reqCtrl.setReqMaxQty((filMinQtyPerc / totalQtyPerc) * 100d);
 							}
+							reqCtrlMap.add(reqCtrl);
 						}
-						reqCtrlMap.add(reqCtrl);
 					}
 
 				} else {
@@ -217,19 +217,17 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 			boolean autorized = false;
 
 			for (ForbiddenIngListDataItem fil : requirements) {
-				if (RequirementType.Authorized.equals(fil.getReqType())) {
-					if (checkRuleMatchIng(ingListDataItem, fil)) {
-						autorized = true;
-						if ((fil.getReqMessage() != null) && (fil.getReqMessage().getDefaultValue() != null)
-								&& (!fil.getReqMessage().getDefaultValue().isEmpty())) {
+				if (RequirementType.Authorized.equals(fil.getReqType()) && checkRuleMatchIng(ingListDataItem, fil)) {
+					autorized = true;
+					if ((fil.getReqMessage() != null) && (fil.getReqMessage().getDefaultValue() != null)
+							&& (!fil.getReqMessage().getDefaultValue().isEmpty())) {
 
-							reqCtrlMap.add(ReqCtrlListDataItem.build().ofType(RequirementType.Authorized).withMessage(fil.getReqMessage())
-									.ofDataType(RequirementDataType.Specification)
-									.withCharact(ingListDataItem.getNodeRef() != null ? ingListDataItem.getNodeRef() : ingListDataItem.getIng())
-									.withSources(List.of(ingListDataItem.getIng())).withRegulatoryCode(extractRegulatoryId(fil, specification)));
-						}
-						break;
+						reqCtrlMap.add(ReqCtrlListDataItem.build().ofType(RequirementType.Authorized).withMessage(fil.getReqMessage())
+								.ofDataType(RequirementDataType.Specification)
+								.withCharact(ingListDataItem.getNodeRef() != null ? ingListDataItem.getNodeRef() : ingListDataItem.getIng())
+								.withSources(List.of(ingListDataItem.getIng())).withRegulatoryCode(extractRegulatoryId(fil, specification)));
 					}
+					break;
 				}
 			}
 
@@ -256,7 +254,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 		if (logger.isDebugEnabled()) {
 			logger.debug("Adding not respected for: " + curMessage);
 		}
-		
+
 		String key = createReqSourceKey(fil, ingListDataItem);
 		List<NodeRef> sourceList = sources.computeIfAbsent(key, f -> new ArrayList<>());
 		if (!fil.getIngs().isEmpty() && sourceList.isEmpty()) {
@@ -270,7 +268,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 	}
 
 	private String createReqSourceKey(ForbiddenIngListDataItem fil, IngListDataItem ingListDataItem) {
-		return ingListDataItem.getIng()+""+fil.hashCode();
+		return ingListDataItem.getIng() + "" + fil.hashCode();
 	}
 
 	private Double calculateQtyPerc(ForbiddenIngListDataItem fil, ProductData productData) {
@@ -293,26 +291,17 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 
 	private Double getQtyPerc(IngListDataItem il, ForbiddenIngListDataItem fil) {
 		if (fil.getQtyPercType() != null) {
-			switch (fil.getQtyPercType()) {
-			case QtyPercWithYield:
-				return il.getQtyPercWithYield();
-			case QtyPercWithSecondaryYield:
-				return il.getQtyPercWithSecondaryYield();
-			case QtyPerc1:
-				return il.getQtyPerc1();
-			case QtyPerc2:
-				return il.getQtyPerc2();
-			case QtyPerc3:
-				return il.getQtyPerc3();
-			case QtyPerc4:
-				return il.getQtyPerc4();
-			case Mini:
-				return il.getMini();
-			case Maxi:
-				return il.getMaxi();
-			default:
-				return il.getQtyPerc();
-			}
+			return switch (fil.getQtyPercType()) {
+			case QtyPercWithYield -> il.getQtyPercWithYield();
+			case QtyPercWithSecondaryYield -> il.getQtyPercWithSecondaryYield();
+			case QtyPerc1 -> il.getQtyPerc1();
+			case QtyPerc2 -> il.getQtyPerc2();
+			case QtyPerc3 -> il.getQtyPerc3();
+			case QtyPerc4 -> il.getQtyPerc4();
+			case Mini -> il.getMini();
+			case Maxi -> il.getMaxi();
+			default -> il.getQtyPerc();
+			};
 		}
 		return il.getQtyPerc();
 	}
@@ -321,18 +310,20 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 		String unit = fil.getQtyPercMaxiUnit();
 		Double quantity = isMaxi ? fil.getQtyPercMaxi() : fil.getQtyPercMini();
 
-		if ("%".equals(unit)) {
+		switch (unit) {
+		case "%":
 			return quantity;
-		}
-		if ("mg/kg".equals(unit)) {
+		case "mg/kg":
 			return quantity / 10000;
-		}
-		if ("mg/L".equals(unit)) {
+		case "mg/L": {
 			Double density = product.getDensity();
 			if ((density == null) || (density == 0d)) {
 				density = 1d;
 			}
 			return quantity / density / 10000;
+		}
+		default:
+			break;
 		}
 		return quantity;
 	}
@@ -367,14 +358,9 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 		}
 
 		//Check same ing
-		if (!fil.getIngs().isEmpty()) {
-			if (!fil.getIngs().contains(ingListDataItem.getIng())) {
-				return false; // check next rule
-			}
-		}
-
 		//Check level
-		if (((fil.getIngLevel() != null) && !fil.getIngLevel().equals(ingListDataItem.getDepthLevel()))) {
+		if ((!fil.getIngs().isEmpty() && !fil.getIngs().contains(ingListDataItem.getIng()))
+				|| ((fil.getIngLevel() != null) && !fil.getIngLevel().equals(ingListDataItem.getDepthLevel()))) {
 			return false;
 		}
 

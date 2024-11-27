@@ -10,20 +10,22 @@ function main() {
 		}
 	}
 
-	var document = search.findNode(docDeliverable.content);
-	
-	var recipients = document.assocs["sign:recipients"];
+	if (urlDeliverable.content) {
+		var document = search.findNode(docDeliverable.content);
 		
-	document = bSign.cancelSignature(document);
+		var recipients = document.assocs["sign:recipients"];
+			
+		document = bSign.cancelSignature(document);
+		
+		for (var j in recipients) {
+			var recipient = recipients[j];
+			document.createAssociation(recipient, "sign:recipients");
+		}
 	
-	for (var j in recipients) {
-		var recipient = recipients[j];
-		document.createAssociation(recipient, "sign:recipients");
+		document.properties["sign:status"] = "Initialized";
+		
+		document.save();
 	}
-
-	document.properties["sign:status"] = "Initialized";
-	
-	document.save();
 }
 
 main();

@@ -57,7 +57,7 @@ public class ToxicologyServiceIT extends PLMBaseTestCase {
 		NodeRef listContainer = nodeService.getChildByName(charactsNodeRef, BeCPGModel.ASSOC_ENTITYLISTS, RepoConsts.CONTAINER_DATALISTS);
 		NodeRef toxFolder = nodeService.getChildByName(listContainer, ContentModel.ASSOC_CONTAINS, PlmRepoConsts.PATH_TOXICITIES);
 		
-		adultROHairNodeRef = inWriteTx(() -> {
+		inWriteTx(() -> {
 			NodeRef nodeRef = BeCPGQueryBuilder.createQuery().andPropEquals(BeCPGModel.PROP_CHARACT_NAME, "Adult RO Hair - test").singleValue();
 			if (nodeRef != null) {
 				nodeService.deleteNode(nodeRef);
@@ -66,83 +66,74 @@ public class ToxicologyServiceIT extends PLMBaseTestCase {
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "Adult RO Hair - test");
 			properties.put(PLMModel.PROP_TOX_VALUE, 110);
 			properties.put(PLMModel.PROP_TOX_CALCULATE_SYSTEMIC, true);
-			properties.put(PLMModel.PROP_TOX_TYPES, new ArrayList<>(List.of(ToxType.SkinIrritation, ToxType.Sensitization, ToxType.SystemicIngredient)));
-			return nodeService.createNode(toxFolder, ContentModel.ASSOC_CONTAINS,
+			properties.put(PLMModel.PROP_TOX_TYPES, new ArrayList<>(List.of(ToxType.SkinIrritationRinseOff, ToxType.Sensitization, ToxType.SystemicIngredient)));
+			adultROHairNodeRef = nodeService.createNode(toxFolder, ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_TOX, properties).getChildRef();
-		});
 		
-		adultROBodyNodeRef = inWriteTx(() -> {
-			NodeRef nodeRef = BeCPGQueryBuilder.createQuery().andPropEquals(BeCPGModel.PROP_CHARACT_NAME, "Adult RO Body - test").singleValue();
+			nodeRef = BeCPGQueryBuilder.createQuery().andPropEquals(BeCPGModel.PROP_CHARACT_NAME, "Adult RO Body - test").singleValue();
 			if (nodeRef != null) {
 				nodeService.deleteNode(nodeRef);
 			}
-			Map<QName, Serializable> properties = new HashMap<>();
+			properties = new HashMap<>();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "Adult RO Body - test");
 			properties.put(PLMModel.PROP_TOX_CALCULATE_SYSTEMIC, true);
 			properties.put(PLMModel.PROP_TOX_VALUE, 220);
-			properties.put(PLMModel.PROP_TOX_TYPES, new ArrayList<>(List.of(ToxType.SkinIrritation, ToxType.Sensitization, ToxType.SystemicIngredient)));
-			return nodeService.createNode(toxFolder, ContentModel.ASSOC_CONTAINS,
+			properties.put(PLMModel.PROP_TOX_TYPES, new ArrayList<>(List.of(ToxType.SkinIrritationRinseOff, ToxType.Sensitization, ToxType.SystemicIngredient)));
+			adultROBodyNodeRef = nodeService.createNode(toxFolder, ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_TOX, properties).getChildRef();
-		});
 		
-		adultROFaceNodeRef = inWriteTx(() -> {
-			NodeRef nodeRef = BeCPGQueryBuilder.createQuery().andPropEquals(BeCPGModel.PROP_CHARACT_NAME, "Adult RO Face - test").singleValue();
+			nodeRef = BeCPGQueryBuilder.createQuery().andPropEquals(BeCPGModel.PROP_CHARACT_NAME, "Adult RO Face - test").singleValue();
 			if (nodeRef != null) {
 				nodeService.deleteNode(nodeRef);
 			}
-			Map<QName, Serializable> properties = new HashMap<>();
+			properties = new HashMap<>();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "Adult RO Face - test");
 			properties.put(PLMModel.PROP_TOX_CALCULATE_SYSTEMIC, true);
 			properties.put(PLMModel.PROP_TOX_VALUE, 140);
-			properties.put(PLMModel.PROP_TOX_TYPES, new ArrayList<>(List.of(ToxType.SkinIrritation, ToxType.Sensitization, ToxType.OcularIrritation, ToxType.SystemicIngredient)));
-			return nodeService.createNode(toxFolder, ContentModel.ASSOC_CONTAINS,
+			properties.put(PLMModel.PROP_TOX_TYPES, new ArrayList<>(List.of(ToxType.SkinIrritationRinseOff, ToxType.Sensitization, ToxType.OcularIrritation, ToxType.SystemicIngredient)));
+			adultROFaceNodeRef = nodeService.createNode(toxFolder, ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_TOX, properties).getChildRef();
-		});
 		
-		glycerinNodeRef = inWriteTx(() -> {
-			Map<QName, Serializable> properties = new HashMap<>();
+			properties = new HashMap<>();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "Glycerin");
 			properties.put(PLMModel.PROP_ING_TOX_POD_SYSTEMIC, 10000);
 			properties.put(PLMModel.PROP_ING_TOX_DERMAL_ABSORPTIION, 18);
 			properties.put(PLMModel.PROP_ING_TOX_MOS_MOE, 100);
-			properties.put(PLMModel.PROP_ING_TOX_MAX_SKIN_IRRITATION, 100);
+			properties.put(PLMModel.PROP_ING_TOX_MAX_SKIN_IRRITATION_RINSE_OFF, 100);
 			properties.put(PLMModel.PROP_ING_TOX_MAX_SENSITIZATION, 80);
 			properties.put(PLMModel.PROP_ING_TOX_MAX_OCULAR_IRRITATION, 50);
 			properties.put(PLMModel.PROP_ING_TOX_MAX_PHOTOTOXIC, 85);
-			return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+			glycerinNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_ING, properties).getChildRef();
-		});
 		
-		citricAcidNodeRef = inWriteTx(() -> {
-			Map<QName, Serializable> properties = new HashMap<>();
+			properties = new HashMap<>();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "Citric acid");
 			properties.put(PLMModel.PROP_ING_TOX_POD_SYSTEMIC, 1200);
 			properties.put(PLMModel.PROP_ING_TOX_DERMAL_ABSORPTIION, 50);
 			properties.put(PLMModel.PROP_ING_TOX_MOS_MOE, 100);
-			properties.put(PLMModel.PROP_ING_TOX_MAX_SKIN_IRRITATION, 5);
+			properties.put(PLMModel.PROP_ING_TOX_MAX_SKIN_IRRITATION_RINSE_OFF, 5);
 			properties.put(PLMModel.PROP_ING_TOX_MAX_SENSITIZATION, 100);
 			properties.put(PLMModel.PROP_ING_TOX_MAX_OCULAR_IRRITATION, 0.2);
 			properties.put(PLMModel.PROP_ING_TOX_MAX_PHOTOTOXIC, 100);
-			return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+			citricAcidNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_ING, properties).getChildRef();
-		});
 		
-		alpiniaNodeRef = inWriteTx(() -> {
-			Map<QName, Serializable> properties = new HashMap<>();
+			properties = new HashMap<>();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "Alpania");
 			properties.put(PLMModel.PROP_ING_TOX_DERMAL_ABSORPTIION, 50);
-			properties.put(PLMModel.PROP_ING_TOX_MAX_SKIN_IRRITATION, 5);
+			properties.put(PLMModel.PROP_ING_TOX_MAX_SKIN_IRRITATION_RINSE_OFF, 5);
 			properties.put(PLMModel.PROP_ING_TOX_MAX_SENSITIZATION, 1);
 			properties.put(PLMModel.PROP_ING_TOX_MAX_OCULAR_IRRITATION, 5);
 			properties.put(PLMModel.PROP_ING_TOX_MAX_PHOTOTOXIC, 5);
-			return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+			alpiniaNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_ING, properties).getChildRef();
+			return null;
 		});
 		waitForIndex(adultROHairNodeRef);
 		waitForIndex(adultROBodyNodeRef);

@@ -241,6 +241,11 @@
 				<bean class="fr.becpg.repo.project.formulation.ScoreListFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 				</bean>
+                <bean class="fr.becpg.repo.product.formulation.SurveyListFormulationHandler">
+                    <property name="namespaceService" ref="namespaceService" />
+                    <property name="alfrescoRepository" ref="alfrescoRepository" />
+                    <property name="associationService" ref="associationService" />
+                </bean>
 
 				<bean class="fr.becpg.repo.product.formulation.FormulaFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
@@ -287,11 +292,7 @@
 					<property name="contentService" ref="contentService" />
 					<property name="associationService" ref="associationService" />
 				</bean>
-				<bean class="fr.becpg.repo.product.formulation.SurveyListFormulationHandler">
-					<property name="namespaceService" ref="namespaceService" />
-					<property name="alfrescoRepository" ref="alfrescoRepository" />
-					<property name="associationService" ref="associationService" />
-				</bean>
+
 			</list>
 		</property>
 		<property name="formulationService" ref="formulationService" />
@@ -385,6 +386,7 @@
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
 		<property name="nodeService" ref="nodeService" />
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
+		<property name="associationService" ref="associationService" />
 		<property name="requirementScanners">
 			<list>
 				<bean class="fr.becpg.repo.product.requirement.AllergenRequirementScanner">

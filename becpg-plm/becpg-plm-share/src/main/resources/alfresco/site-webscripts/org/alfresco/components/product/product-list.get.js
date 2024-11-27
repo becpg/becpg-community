@@ -44,7 +44,8 @@ function main()
        extraDataParams: page.url.templateArgs.site!=null ? "&repo=false&container=documentLibrary":"&repo=true",
        sortUrl :  page.url.context+"/proxy/alfresco/becpg/entity/datalists/sort/node",
        dataUrl : page.url.context+"/proxy/alfresco/becpg/entity/datalists/data/node",
-       itemUrl : page.url.context+"/proxy/alfresco/becpg/entity/datalists/item/node/"
+       itemUrl : page.url.context+"/proxy/alfresco/becpg/entity/datalists/item/node/",
+       saveFieldUrl :  page.url.context+"/proxy/alfresco/becpg/bulkedit/save"
       }
    };
     

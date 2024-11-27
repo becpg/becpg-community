@@ -21,7 +21,7 @@
 	<types>
 		<type name="smp:sampleList">
 			<title>Samples</title>
-			<parent>bcpg:entityListItem</parent>
+			<parent>bcpg:productListItem</parent>
 			<properties>
 				<property name="smp:slUnitWeight">
 					<title>Unit weight (kg)</title>

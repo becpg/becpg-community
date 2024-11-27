@@ -56,7 +56,7 @@ public abstract class AbstractBeCPGQueryBuilder {
 	private static final String QUERY_COND_ASPECT = "ASPECT:\"%s\"";
 	private static final String QUERY_COND = " %s %s";
 
-	protected String language = SearchService.LANGUAGE_LUCENE;
+	protected String language = SearchService.LANGUAGE_FTS_ALFRESCO;
 
 	/**
 	 * <p>getCondEqualValue.</p>

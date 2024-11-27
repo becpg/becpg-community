@@ -354,7 +354,7 @@ public class MLTextHelper {
 	 */
 	public static boolean isEmpty(MLText mlText) {
 		for (String value : mlText.values()) {
-			if ((value != null) && !value.isEmpty()) {
+			if ((value != null) && !value.isBlank()) {
 				return false;
 			}
 		}

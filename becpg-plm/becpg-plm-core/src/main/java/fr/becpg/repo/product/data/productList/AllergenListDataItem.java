@@ -58,7 +58,7 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem
 	private RequirementType regulatoryType;
 	private MLText regulatoryMessage;
 
-	Map<NodeRef, Double> qtyByVariant = null;
+	private Map<NodeRef, Double> qtyByVariant = null;
 
 	/**
 	 * <p>addQtyPerc.</p>

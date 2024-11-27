@@ -2,7 +2,8 @@
 <@markup id="css" >
    <#-- CSS Dependencies -->
    <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/data-lists/toolbar.css" group="product-toolbar" />
-	<@link rel="stylesheet" type="text/css" href="${url.context}/res/components/entity-data-lists/entity-toolbar.css"  group="product-toolbar"/>
+    <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/data-lists/toolbar.css" group="product-toolbar" />
+	<@link rel="stylesheet" type="text/css" href="${url.context}/res/components/search/savedsearch-picker.css"  group="product-toolbar"/>
 	<@link rel="stylesheet" type="text/css" href="${url.context}/res/components/product/product-list-toolbar.css" group="product-toolbar" />
 </@>
 
@@ -10,8 +11,9 @@
    <#-- JavaScript Dependencies -->
 	<@script type="text/javascript" src="${url.context}/res/components/entity-data-lists/entity-toolbar.js" group="product-toolbar"></@script>
 	<@script type="text/javascript" src="${url.context}/res/js/async-download.js" group="product-toolbar"/>
+	<@script type="text/javascript" src="${url.context}/res/components/search/savedsearch-picker.js" group="product-toolbar"></@script>
 	<@script type="text/javascript" src="${url.context}/res/components/product/product-list-toolbar.js" group="product-toolbar"></@script>
-
+   
 </@>
 
 <@markup id="widgets">
@@ -38,15 +40,11 @@
 			         </select>
 			      </div>   
 			      <div class="product-filters">  
-			         <span class="align-left yui-button yui-menu-button" id="${el}-filters">
-			            <span class="first-child">
-			               <button type="button" tabindex="0"></button>
-			            </span>
-			         </span>
-			         <select id="${el}-filters-menu"> </select>
+			        <div id="${el}-savedSearchPicker" class="savedSearchPicker"></div>
 				 </div>
 		      </div>
 		      <div class="right">
+		         
 		         <div class="export-csv">
 		            <span id="${el}-export-csv-button" class="yui-button yui-checkbox-button">
 		               <span class="first-child">
@@ -54,6 +52,13 @@
 		               </span>
 		            </span>
 		         </div>
+		         <div class="show-thumbnails"> 
+                    <span id="${el}-show-thumbnails" class="yui-button yui-checkbox-button">
+                          <span class="first-child">
+                              <button type="button" ></button>
+                          </span>
+                      </span>
+                  </div>
 		         <div class="separator">&nbsp;</div>
 		         <div class="reporting-menu">
 					    <span class="yui-button yui-push-button" id="${el}-reporting-menu-button">
@@ -67,5 +72,13 @@
 		      </div>
 		   </div>
 		</div>
+		<#-- template -->
+        <div id="custom-toolBar-template-button" class="hidden" >
+                <span class="yui-button yui-push-button">
+                   <span class="first-child">
+                         <button type="button" ></button>
+                   </span>
+                </span>
+        </div>
 	</@>
 </@>

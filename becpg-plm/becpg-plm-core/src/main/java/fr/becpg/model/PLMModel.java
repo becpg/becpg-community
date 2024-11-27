@@ -228,6 +228,8 @@ public interface PLMModel {
 	/** Constant <code>PROP_NUTLIST_ROUNDED_VALUE</code> */
 	QName PROP_NUTLIST_ROUNDED_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "nutListRoundedValue");
 	/** Constant <code>PROP_NUTLIST_FORMULA_ERROR</code> */
+	
+	QName PROP_NUTLIST_PREPARED_ROUNDED_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "nutListRoundedValuePrepared");
 	@Deprecated
 	QName PROP_NUTLIST_FORMULA_ERROR = QName.createQName(BeCPGModel.BECPG_URI, "nutListFormulaErrorLog");
 	/** Constant <code>PROP_NUTLIST_METHOD</code> */
@@ -808,7 +810,9 @@ public interface PLMModel {
 	QName PROP_ING_TOX_MOS_MOE = QName.createQName(BeCPGModel.BECPG_URI, "ingToxMosMoe");
 	
 	/** Constant <code>PROP_ING_TOX_MAX_SKIN_IRRITATION</code> */
-	QName PROP_ING_TOX_MAX_SKIN_IRRITATION = QName.createQName(BeCPGModel.BECPG_URI, "ingToxMaxSkinIrritation");
+	QName PROP_ING_TOX_MAX_SKIN_IRRITATION_RINSE_OFF = QName.createQName(BeCPGModel.BECPG_URI, "ingToxMaxSkinIrritationRinseOff");
+	
+	QName PROP_ING_TOX_MAX_SKIN_IRRITATION_LEAVE_ON = QName.createQName(BeCPGModel.BECPG_URI, "ingToxMaxSkinIrritationLeaveOn");
 	
 	/** Constant <code>PROP_ING_TOX_MAX_SENSITIZATION</code> */
 	QName PROP_ING_TOX_MAX_SENSITIZATION = QName.createQName(BeCPGModel.BECPG_URI, "ingToxMaxSensitization");
