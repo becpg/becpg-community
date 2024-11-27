@@ -152,7 +152,9 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 		
 		Paging paging = Paging.valueOf(Paging.DEFAULT_SKIP_COUNT, auditFilter.getMaxResults());
 		
-		RecognizedParams recognizedParams = new RecognizedParams(null, paging, null, null, Arrays.asList("values"),
+		String[] trueArray = { "true" };
+		
+		RecognizedParams recognizedParams = new RecognizedParams(Map.of("omitTotalItems", trueArray), paging, null, null, Arrays.asList("values"),
 				null, query, List.of(new SortColumn("createdAt", auditFilter.isDbAscending())), false);
 		
 		Parameters params = Params.valueOf(recognizedParams, plugin.getAuditApplicationId(), null, null);
