@@ -183,7 +183,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 				}
 			}
 			String rid = (String) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_REGULATORY_CODE);
-			if (rid != null && !rid.isBlank()) {
+			if (rid != null && !rid.isBlank() && !DecernisService.NOT_APPLICABLE.equals(rid)) {
 				String legalName = (String) nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_LEGAL_NAME);
 				String ingName = (legalName != null) && !legalName.isEmpty() ? legalName
 						: (String) nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME);
@@ -265,7 +265,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 		
 		for (IngListDataItem ingListDataItem : context.getProduct().getIngList()) {
 			String rid = (String) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_REGULATORY_CODE);
-			if (rid != null && !rid.isBlank()) {
+			if (rid != null && !rid.isBlank() && !DecernisService.NOT_APPLICABLE.equals(rid)) {
 				String legalName = (String) nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_LEGAL_NAME);
 				String ingName = (legalName != null) && !legalName.isEmpty() ? legalName
 						: (String) nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME);
