@@ -20,6 +20,8 @@ public interface DecernisService {
 	/** Constant <code>MODULE_SUFFIX=" module"</code> */
 	public static final String MODULE_SUFFIX = " module";
 
+	public static final String NOT_APPLICABLE = "NA";
+
 	 /**
 	  * <p>isEnabled.</p>
 	  *
