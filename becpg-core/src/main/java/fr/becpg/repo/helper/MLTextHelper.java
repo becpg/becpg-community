@@ -103,6 +103,16 @@ public class MLTextHelper {
 	public static boolean shouldExtractMLText() {
 		return shouldExtractMLText;
 	}
+	
+    	
+	public static boolean isDisabledMLTextField(String propertyQNamePrexiString) {
+		String disabledMLTextFields = SystemConfigurationRegistry.instance().confValue("beCPG.multilinguale.disabledMLTextFields");
+		if(disabledMLTextFields !=null && !disabledMLTextFields.isBlank()
+				&& disabledMLTextFields.contains(propertyQNamePrexiString)){
+			return true;
+		}
+		return false;
+	}
 
 	/**
 	 * Try to find the best match for locale or try with default server local
