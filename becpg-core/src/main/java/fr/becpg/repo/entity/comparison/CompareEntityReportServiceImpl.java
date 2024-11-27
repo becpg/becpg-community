@@ -234,7 +234,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 			}
 			
 			String title =  getClassAttributeTitle(nodeService.getType(entity1NodeRef), def, c.getProperty());
-			if(title!=null) {
+			if(title!=null && !title.isBlank()) {
 				Element cmpRowElt = cmpRowsElt.addElement(TAG_COMPARISON_ROW);
 				
 				if (c.getEntityList() != null) {
