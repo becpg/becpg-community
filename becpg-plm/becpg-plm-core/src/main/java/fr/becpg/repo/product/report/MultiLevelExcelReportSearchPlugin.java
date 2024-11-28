@@ -78,7 +78,6 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 		String depthLevel;
 		
 		if (parameter != null) {
-
 			wUsed = parameter.contains("wUsed");
 			if (wUsed) {
 				parameter = parameter.replace("wUsed", "");
@@ -126,7 +125,6 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 
 				rownum = appendNextLevel(listData, sheet, itemType, metadataFields, cache, rownum, key, null, parameters, entityItems,
 						new HashMap<>(), excelCellStyles, mainType, wUsedAssocCache);
-
 			}
 		}
 
