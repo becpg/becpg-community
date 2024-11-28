@@ -1689,7 +1689,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	@Override
 	@Nullable
 	public NodeRef getEntityNodeRef(NodeRef reportNodeRef) {
-		List<NodeRef> entityNodeRefs = associationService.getSourcesAssocs(reportNodeRef, ReportModel.ASSOC_REPORTS);
+		List<NodeRef> entityNodeRefs = associationService.getSourcesAssocs(reportNodeRef, ReportModel.ASSOC_REPORTS, true);
 		if ((entityNodeRefs != null) && !entityNodeRefs.isEmpty()) {
 			return entityNodeRefs.get(0);
 		}
