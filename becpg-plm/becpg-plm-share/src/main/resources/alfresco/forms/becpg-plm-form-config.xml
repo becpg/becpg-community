@@ -1767,21 +1767,8 @@
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="bcpg:toxIngIng" />
-					<show id="bcpg:toxIngTox" />
 					<show id="bcpg:toxIngSystemicValue" />
-					<show id="bcpg:toxIngMaxValue" />
 				</field-visibility>
-				<appearance>
-					<field id="bcpg:toxIngIng" read-only="true">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl"/>
-					</field>
-					<field id="bcpg:toxIngTox" read-only="true">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl"/>
-					</field>
-					<field id="bcpg:toxIngSystemicValue" />
-					<field id="bcpg:toxIngMaxValue" read-only="true"/>
-				</appearance>
 			</form>
 
 			<form id="filter">
@@ -1792,11 +1779,29 @@
 					<show id="bcpg:toxIngMaxValue" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:toxIngIng" read-only="true">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl"/>
+					<field id="bcpg:toxIngIng">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ing
+							</control-param>
+						</control>
 					</field>
-					<field id="bcpg:toxIngTox" read-only="true">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl"/>
+					<field id="bcpg:toxIngTox">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:tox
+							</control-param>
+						</control>
+					</field>
+
+					<field id="bcpg:toxIngSystemicValue">
+						<control template="/org/alfresco/components/form/controls/numberrange.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+
+					<field id="bcpg:toxIngMaxValue">
+						<control template="/org/alfresco/components/form/controls/numberrange.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
 					</field>
 				</appearance>				
 			</form>
@@ -1826,21 +1831,8 @@
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="bcpg:toxIngIng" />
-					<show id="bcpg:toxIngTox" />
 					<show id="bcpg:toxIngSystemicValue" />
-					<show id="bcpg:toxIngMaxValue" />
 				</field-visibility>
-				<appearance>
-					<field id="bcpg:toxIngIng" read-only="true">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl"/>
-					</field>
-					<field id="bcpg:toxIngTox" read-only="true">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl"/>
-					</field>
-					<field id="bcpg:toxIngSystemicValue" />
-					<field id="bcpg:toxIngMaxValue" read-only="true"/>
-				</appearance>
 			</form>
 		</forms>
 	</config>
@@ -1910,88 +1902,6 @@
 		</forms>
 	</config>
 	
-	<config evaluator="model-type" condition="bcpg:toxIng">
-		<forms>
-			<form>
-				<field-visibility>
-					<show id="bcpg:toxIngIng" />
-					<show id="bcpg:toxIngTox" />
-					<show id="bcpg:toxIngSystemicValue" />
-					<show id="bcpg:toxIngMaxValue" />
-				</field-visibility>
-				<appearance>
-					<field id="bcpg:toxIngIng" read-only="true">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl"/>
-					</field>
-					<field id="bcpg:toxIngTox" read-only="true">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl"/>
-					</field>
-					<field id="bcpg:toxIngSystemicValue" />
-					<field id="bcpg:toxIngMaxValue" read-only="true"/>
-				</appearance>
-			</form>
-
-			<form id="filter">
-				<field-visibility>
-					<show id="bcpg:toxIngIng" />
-					<show id="bcpg:toxIngTox" />
-					<show id="bcpg:toxIngSystemicValue" />
-					<show id="bcpg:toxIngMaxValue" />
-				</field-visibility>
-				<appearance>
-					<field id="bcpg:toxIngIng" read-only="true">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl"/>
-					</field>
-					<field id="bcpg:toxIngTox" read-only="true">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl"/>
-					</field>
-				</appearance>				
-			</form>
-
-			<form id="datagrid">
-				<field-visibility>
-					<show id="bcpg:toxIngIng" />
-					<show id="bcpg:toxIngTox" />
-					<show id="bcpg:toxIngSystemicValue" />
-					<show id="bcpg:toxIngMaxValue" />
-				</field-visibility>
-				<appearance>
-					<field id="bcpg:toxIngIng" read-only="true">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl"/>
-					</field>
-					<field id="bcpg:toxIngTox" read-only="true">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl"/>
-					</field>
-					<field id="bcpg:toxIngSystemicValue" />
-					<field id="bcpg:toxIngMaxValue" read-only="true"/>
-				</appearance>
-			</form>
-		</forms>
-	</config>
-	
-	<config evaluator="node-type" condition="bcpg:toxIng">
-		<forms>
-			<form>
-				<field-visibility>
-					<show id="bcpg:toxIngIng" />
-					<show id="bcpg:toxIngTox" />
-					<show id="bcpg:toxIngSystemicValue" />
-					<show id="bcpg:toxIngMaxValue" />
-				</field-visibility>
-				<appearance>
-					<field id="bcpg:toxIngIng" read-only="true">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl"/>
-					</field>
-					<field id="bcpg:toxIngTox" read-only="true">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl"/>
-					</field>
-					<field id="bcpg:toxIngSystemicValue" />
-					<field id="bcpg:toxIngMaxValue" read-only="true"/>
-				</appearance>
-			</form>
-		</forms>
-	</config>
-	
 	
     <!-- bcpg:ing type (existing nodes) -->
 	<config evaluator="node-type" condition="bcpg:ing">
@@ -2024,7 +1934,8 @@
 					<show id="bcpg:ingToxPodSystemic" force="true" />
 					<show id="bcpg:ingToxDermalAbsorption" force="true" />
 					<show id="bcpg:ingToxMosMoe" force="true" />
-					<show id="bcpg:ingToxMaxSkinIrritation" force="true" />
+					<show id="bcpg:ingToxMaxSkinIrritationRinseOff" force="true" />
+					<show id="bcpg:ingToxMaxSkinIrritationLeaveOn" force="true" />
 					<show id="bcpg:ingToxMaxSensitization" force="true" />
 					<show id="bcpg:ingToxMaxOcularIrritation" force="true" />
 					<show id="bcpg:ingToxMaxPhototoxic" force="true" />
@@ -2093,15 +2004,8 @@
 					<field id="bcpg:ingToxPodSystemic" set="toxTab" />
 					<field id="bcpg:ingToxDermalAbsorption" set="toxTab" />
 					<field id="bcpg:ingToxMosMoe" set="toxTab" />
-					<field id="bcpg:ingToxMaxSkinIrritation" set="toxTab" />
-					<field id="bcpg:ingToxMaxSensitization" set="toxTab" />
-					<field id="bcpg:ingToxMaxOcularIrritation" set="toxTab" />
-					<field id="bcpg:ingToxMaxPhototoxic" set="toxTab" />
-					<field id="bcpg:ingToxData" set="toxTab" />
-					<field id="bcpg:ingToxPodSystemic" set="toxTab" />
-					<field id="bcpg:ingToxDermalAbsorption" set="toxTab" />
-					<field id="bcpg:ingToxMosMoe" set="toxTab" />
-					<field id="bcpg:ingToxMaxSkinIrritation" set="toxTab" />
+					<field id="bcpg:ingToxMaxSkinIrritationRinseOff" set="toxTab" />
+					<field id="bcpg:ingToxMaxSkinIrritationLeaveOn" set="toxTab" />
 					<field id="bcpg:ingToxMaxSensitization" set="toxTab" />
 					<field id="bcpg:ingToxMaxOcularIrritation" set="toxTab" />
 					<field id="bcpg:ingToxMaxPhototoxic" set="toxTab" />
@@ -2142,7 +2046,8 @@
 					<show id="bcpg:ingToxPodSystemic" force="true" />
 					<show id="bcpg:ingToxDermalAbsorption" force="true" />
 					<show id="bcpg:ingToxMosMoe" force="true" />
-					<show id="bcpg:ingToxMaxSkinIrritation" force="true" />
+					<show id="bcpg:ingToxMaxSkinIrritationRinseOff" force="true" />
+					<show id="bcpg:ingToxMaxSkinIrritationLeaveOn" force="true" />
 					<show id="bcpg:ingToxMaxSensitization" force="true" />
 					<show id="bcpg:ingToxMaxOcularIrritation" force="true" />
 					<show id="bcpg:ingToxMaxPhototoxic" force="true" />
@@ -2211,15 +2116,8 @@
 					<field id="bcpg:ingToxPodSystemic" set="toxTab" />
 					<field id="bcpg:ingToxDermalAbsorption" set="toxTab" />
 					<field id="bcpg:ingToxMosMoe" set="toxTab" />
-					<field id="bcpg:ingToxMaxSkinIrritation" set="toxTab" />
-					<field id="bcpg:ingToxMaxSensitization" set="toxTab" />
-					<field id="bcpg:ingToxMaxOcularIrritation" set="toxTab" />
-					<field id="bcpg:ingToxMaxPhototoxic" set="toxTab" />
-					<field id="bcpg:ingToxData" set="toxTab" />
-					<field id="bcpg:ingToxPodSystemic" set="toxTab" />
-					<field id="bcpg:ingToxDermalAbsorption" set="toxTab" />
-					<field id="bcpg:ingToxMosMoe" set="toxTab" />
-					<field id="bcpg:ingToxMaxSkinIrritation" set="toxTab" />
+					<field id="bcpg:ingToxMaxSkinIrritationRinseOff" set="toxTab" />
+					<field id="bcpg:ingToxMaxSkinIrritationLeaveOn" set="toxTab" />
 					<field id="bcpg:ingToxMaxSensitization" set="toxTab" />
 					<field id="bcpg:ingToxMaxOcularIrritation" set="toxTab" />
 					<field id="bcpg:ingToxMaxPhototoxic" set="toxTab" />
