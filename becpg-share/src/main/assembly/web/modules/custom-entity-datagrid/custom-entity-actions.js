@@ -624,12 +624,12 @@
 		},
 
         onActionSimulate: function EntityDataGrid_onActionSimulate(p_items) {
-            doSimulate(p_items, true);
+            this.doSimulate(p_items, true);
         },
 
 
         onActionCopyProducts: function EntityDataGrid_onActionCopyProducts(p_items) {
-            doSimulate(p_items, false);
+            this.doSimulate(p_items, false);
         },
 
 		doSimulate: function EntityDataGrid_onActionSimulate(p_items,isBranch) {
