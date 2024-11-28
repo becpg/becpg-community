@@ -115,6 +115,8 @@ public interface AssociationService {
 	 * @return a {@link java.util.List} object.
 	 */
 	List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QNamePattern qNamePattern);
+	
+	List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QNamePattern qNamePattern, boolean includeVersions);
 	/**
 	 * <p>getEntitySourceAssocs.</p>
 	 *
