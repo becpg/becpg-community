@@ -83,7 +83,7 @@ public class EntitySimulationServiceImpl implements EntitySimulationService {
 
 					if (entitySimulationPlugin != null) {
 						transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-							return entitySimulationPlugin.simulateNodeRefs(destNodeRef, nodeRefs);
+							return entitySimulationPlugin.simulateNodeRefs(destNodeRef, nodeRefs, true);
 
 						}, false, true);
 
@@ -200,7 +200,7 @@ public class EntitySimulationServiceImpl implements EntitySimulationService {
 		List<NodeRef> ret = null;
 
 		if (entitySimulationPlugin != null) {
-			ret = entitySimulationPlugin.simulateNodeRefs(destNodeRef, Arrays.asList(entityNodeRef));
+			ret = entitySimulationPlugin.simulateNodeRefs(destNodeRef, Arrays.asList(entityNodeRef), true);
 
 		}
 
@@ -210,11 +210,11 @@ public class EntitySimulationServiceImpl implements EntitySimulationService {
 
 	/** {@inheritDoc} */
 	@Override
-	public void simuleDataListItems(NodeRef entityNodeRef, List<NodeRef> dataListItemsNodeRefs) {
+	public void simuleDataListItems(NodeRef entityNodeRef, List<NodeRef> dataListItemsNodeRefs, boolean branch) {
 
 		EntitySimulationPlugin entitySimulationPlugin = findPlugin(EntitySimulationPlugin.DATALIST_MODE);
 		if (entitySimulationPlugin != null) {
-			entitySimulationPlugin.simulateNodeRefs(entityNodeRef, dataListItemsNodeRefs);
+			entitySimulationPlugin.simulateNodeRefs(entityNodeRef, dataListItemsNodeRefs, branch);
 		}
 
 	}
