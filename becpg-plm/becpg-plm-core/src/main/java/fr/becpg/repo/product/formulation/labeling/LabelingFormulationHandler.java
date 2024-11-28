@@ -1335,23 +1335,31 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				for (CompositeLabeling childGroup : ret) {
 					// Reset qty
 
-					qtyTotalToremove += childGroup.getQty();
-					childGroup.setQty((childGroup.getQty() * current.getQty()) / current.getQtyTotal().doubleValue());
+					if(childGroup.getQty()!=null) {
+						qtyTotalToremove += childGroup.getQty();
+						childGroup.setQty((childGroup.getQty() * current.getQty()) / current.getQtyTotal().doubleValue());
+					}
+					
+					if(childGroup.getVolume()!=null) {
+						volumeTotalToremove += childGroup.getVolume();
+						childGroup.setVolume((childGroup.getVolume() * current.getVolume()) / current.getVolumeTotal().doubleValue());
+					}
 
-					volumeTotalToremove += childGroup.getVolume();
-					childGroup.setVolume((childGroup.getVolume() * current.getVolume()) / current.getVolumeTotal().doubleValue());
+					if(childGroup.getQtyWithYield()!=null) {
+						qtyTotalToremoveWithYield += childGroup.getQtyWithYield();
+						childGroup.setQtyWithYield((childGroup.getQtyWithYield() * current.getQtyWithYield()) / current.getQtyTotal().doubleValue());
+					}
 
-					qtyTotalToremoveWithYield += childGroup.getQtyWithYield();
-					childGroup.setQtyWithYield((childGroup.getQtyWithYield() * current.getQtyWithYield()) / current.getQtyTotal().doubleValue());
-
-					volumeTotalToremoveWithYield += childGroup.getVolumeWithYield();
-					childGroup.setVolumeWithYield((childGroup.getVolumeWithYield() * current.getVolumeWithYield()) / current.getVolumeTotal().doubleValue());
+					if(childGroup.getVolumeWithYield()!=null) {
+						volumeTotalToremoveWithYield += childGroup.getVolumeWithYield();
+						childGroup.setVolumeWithYield(
+								(childGroup.getVolumeWithYield() * current.getVolumeWithYield()) / current.getVolumeTotal().doubleValue());
+					}
 
 					if (logger.isTraceEnabled()) {
 						logger.trace(" - Move child group to level n-1 :" + getName(childGroup) + " new qty " + childGroup.getQty() + " new vol "
 								+ childGroup.getVolume());
 					}
-
 				}
 				current.setQty(current.getQty() - ((qtyTotalToremove * current.getQty()) / current.getQtyTotal().doubleValue()));
 
