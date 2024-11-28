@@ -31,7 +31,7 @@ public class EntitySimpleSimulationPlugin implements EntitySimulationPlugin{
 
 	/** {@inheritDoc} */
 	@Override
-	public List<NodeRef> simulateNodeRefs(NodeRef destNodeRef, List<NodeRef> entityNodeRefs) {
+	public List<NodeRef> simulateNodeRefs(NodeRef destNodeRef, List<NodeRef> entityNodeRefs, boolean unused) {
 		List<NodeRef> ret = new ArrayList<>();
 		
 		for(NodeRef entityNodeRef : entityNodeRefs) {
