@@ -40,7 +40,6 @@ import org.alfresco.service.cmr.model.FileExistsException;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.model.FileNotFoundException;
-import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.InvalidNodeRefException;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -72,6 +71,7 @@ import fr.becpg.repo.entity.EntityTplPlugin;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationService;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -143,6 +143,9 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 	@Autowired
 	private BatchQueueService batchQueueService;
+	
+	@Autowired
+	private AssociationService associationService;
 
 	static {
 		isIgnoredAspect.add(ContentModel.ASPECT_VERSIONABLE);
@@ -538,11 +541,11 @@ public class EntityTplServiceImpl implements EntityTplService {
 	private BatchProcessWorkProvider<NodeRef> createWorkProcessWorkProvider(NodeRef tplNodeRef, boolean includeTpl) {
 		List<NodeRef> entityNodeRefs = new ArrayList<>();
 
-		List<AssociationRef> assocRefs = nodeService.getSourceAssocs(tplNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
+		List<NodeRef> sourceNodeRefs = associationService.getSourcesAssocs(tplNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
 
-		for (AssociationRef assocRef : assocRefs) {
-			if (!nodeService.hasAspect(assocRef.getSourceRef(), BeCPGModel.ASPECT_COMPOSITE_VERSION) && !tplNodeRef.equals(assocRef.getSourceRef())) {
-				entityNodeRefs.add(assocRef.getSourceRef());
+		for (NodeRef sourceNodeRef : sourceNodeRefs) {
+			if (!tplNodeRef.equals(sourceNodeRef)) {
+				entityNodeRefs.add(sourceNodeRef);
 			}
 		}
 
