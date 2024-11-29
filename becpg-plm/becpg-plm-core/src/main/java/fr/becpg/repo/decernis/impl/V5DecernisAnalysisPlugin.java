@@ -171,12 +171,18 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 			String function = null;
 			NodeRef ingType = (NodeRef) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_ING_TYPE_V2);
 			if (ingType != null) {
-				String functionValue = (String) nodeService.getProperty(ingType, BeCPGModel.PROP_LV_VALUE);
+				String functionValue = (String) nodeService.getProperty(ingType, PLMModel.PROP_REGULATORY_CODE);
 				if (functionValue != null) {
 					function = findFunction(moduleId, functionValue);
 				}
 				if (function == null) {
 					functionValue = (String) nodeService.getProperty(ingType, BeCPGModel.PROP_LV_CODE);
+					if (functionValue != null) {
+						function = findFunction(moduleId, functionValue);
+					}
+				}
+				if (function == null) {
+					functionValue = (String) nodeService.getProperty(ingType, BeCPGModel.PROP_LV_VALUE);
 					if (functionValue != null) {
 						function = findFunction(moduleId, functionValue);
 					}
@@ -571,7 +577,10 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 		for (IngListDataItem ing : ingList) {
 			if (decernisID.equals(nodeService.getProperty(ing.getIng(), PLMModel.PROP_REGULATORY_CODE))) {
 				NodeRef ingType = (NodeRef) nodeService.getProperty(ing.getIng(), PLMModel.PROP_ING_TYPE_V2);
-				if (ingType != null && function != null && function.equalsIgnoreCase((String) nodeService.getProperty(ingType, BeCPGModel.PROP_LV_CODE))) {
+				if (ingType != null && function != null
+						&& (function.equalsIgnoreCase((String) nodeService.getProperty(ingType, BeCPGModel.PROP_LV_VALUE))
+								|| function.equalsIgnoreCase((String) nodeService.getProperty(ingType, BeCPGModel.PROP_LV_CODE))
+								|| function.equalsIgnoreCase((String) nodeService.getProperty(ingType, PLMModel.PROP_REGULATORY_CODE)))) {
 					return ing;
 				}
 			}
