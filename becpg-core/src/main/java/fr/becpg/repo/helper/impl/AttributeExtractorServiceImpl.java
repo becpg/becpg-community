@@ -798,8 +798,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 								if ((entry.getValue() instanceof Number) && ret.containsKey(key) && (ret.get(key) instanceof Number)) {
 									Double value = (Double) ret.get(key) + (Double) entry.getValue();
 									ret.put(key, value);
-								}
-								if ((entry.getValue() instanceof String) && ret.containsKey(key) && (ret.get(key) instanceof String)) {
+								} else if ((entry.getValue() instanceof String) && ret.containsKey(key) && (ret.get(key) instanceof String)) {
 									String value = (String) ret.get(key) + "," + (String) entry.getValue();
 									ret.put(key, value);
 								} else {
