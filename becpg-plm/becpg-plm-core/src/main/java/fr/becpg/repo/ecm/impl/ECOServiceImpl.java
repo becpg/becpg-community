@@ -98,6 +98,7 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
+import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
@@ -710,6 +711,10 @@ public class ECOServiceImpl implements ECOService {
 							applyReplacementList(ecoData, productToFormulateData, isSimulation, isMergeItem);
 						}
 						
+						if (!isMergeItem) {
+							applyLabelingReplacements(ecoData, productToFormulateData);
+						}
+						
 						if (isMergeItem && isSimulation) {
 							
 							logger.debug("Merge finding corresponding branch...");
@@ -1130,7 +1135,23 @@ public class ECOServiceImpl implements ECOService {
 				}
 			}
 		}
+	}
 
+	private void applyLabelingReplacements(ChangeOrderData ecoData, ProductData product) {
+		if (product.getLabelingListView() != null && product.getLabelingListView().getLabelingRuleList() != null) {
+			for (LabelingRuleListDataItem labelingRuleListDataItem : product.getLabelingListView().getLabelingRuleList()) {
+				for (ReplacementListDataItem rep : ecoData.getReplacementList()) {
+					for (NodeRef sourceItem : rep.getSourceItems()) {
+						if (labelingRuleListDataItem.getComponents() != null && labelingRuleListDataItem.getComponents().contains(sourceItem)) {
+							labelingRuleListDataItem.getComponents().remove(sourceItem);
+							if (!labelingRuleListDataItem.getComponents().contains(rep.getTargetItem())) {
+								labelingRuleListDataItem.getComponents().add(rep.getTargetItem());
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 
 	private void merge(ChangeOrderData ecoData) {
