@@ -446,6 +446,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	private boolean showIngCEECode = false;
 	private boolean useVolume = false;
 	private boolean ingsLabelingWithYield = false;
+	private boolean doNotPropagateYield = false;
+	
 	private boolean uncapitalizeLegalName = false;
 	private boolean shouldBreakIngType = false;
 	private boolean labelingByLanguage = false;
@@ -555,6 +557,16 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 */
 	public void setIngsLabelingWithYield(boolean ingsLabelingWithYield) {
 		this.ingsLabelingWithYield = ingsLabelingWithYield;
+	}
+	
+	
+
+	public boolean isDoNotPropagateYield() {
+		return doNotPropagateYield;
+	}
+
+	public void setDoNotPropagateYield(boolean doNotPropagateYield) {
+		this.doNotPropagateYield = doNotPropagateYield;
 	}
 
 	/**

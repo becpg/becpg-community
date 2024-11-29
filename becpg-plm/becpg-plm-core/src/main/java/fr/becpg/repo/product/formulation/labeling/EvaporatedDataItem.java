@@ -15,13 +15,16 @@ public class EvaporatedDataItem {
 	private NodeRef productNodeRef;
 
 	private Double rate;
+	
+	private Double maxEvaporableQty;
+	private Double maxEvaporableVolume;
 	/**
 	 * <p>Constructor for EvaporatedDataItem.</p>
 	 *
 	 * @param productNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param rate a {@link java.lang.Double} object.
 	 */
-	public EvaporatedDataItem(NodeRef productNodeRef, Double rate) {
+	public EvaporatedDataItem(NodeRef productNodeRef, Double rate, Double maxEvaporableQty, Double maxEvaporableVolume) {
 		super();
 		this.productNodeRef = productNodeRef;
 		if (rate == null) {
@@ -29,6 +32,8 @@ public class EvaporatedDataItem {
 		} else {
 			this.rate = rate;
 		}
+		this.maxEvaporableQty = maxEvaporableQty;
+		this.maxEvaporableVolume =maxEvaporableVolume;
 	}
 
 	/**
@@ -39,7 +44,6 @@ public class EvaporatedDataItem {
 	public NodeRef getProductNodeRef() {
 		return productNodeRef;
 	}
-
 	/**
 	 * <p>Getter for the field <code>rate</code>.</p>
 	 *
@@ -49,11 +53,31 @@ public class EvaporatedDataItem {
 		return rate;
 	}
 
+
+	public Double getMaxEvaporableQty() {
+		return maxEvaporableQty;
+	}
+
+	public void setMaxEvaporableQty(Double maxEvaporableQty) {
+		this.maxEvaporableQty = maxEvaporableQty;
+	}
+
+
+	public Double getMaxEvaporableVolume() {
+		return maxEvaporableVolume;
+	}
+
+	public void setMaxEvaporableVolume(Double maxEvaporableVolume) {
+		this.maxEvaporableVolume = maxEvaporableVolume;
+	}
+
 	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		return Objects.hash(productNodeRef, rate);
 	}
+	
+	
 
 	/** {@inheritDoc} */
 	@Override

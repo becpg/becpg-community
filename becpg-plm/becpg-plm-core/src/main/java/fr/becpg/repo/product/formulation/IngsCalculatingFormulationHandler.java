@@ -300,7 +300,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 					if (hasEvaporationData(ingListDataItem)) {
 						Double evaporateRate = getEvaporateRate(ingListDataItem);
-						evaporatedDataItems.add(new EvaporatedDataItem(ingListDataItem.getIng(), evaporateRate));
+						evaporatedDataItems.add(new EvaporatedDataItem(ingListDataItem.getIng(), evaporateRate,null,null));
 					} else {
 						qtyPercWithYield /= primaryYieldFactor;
 					}
@@ -318,7 +318,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 						double secondaryYieldFactor = formulatedProduct.getSecondaryYield() / 100d;
 						if (hasEvaporationData(ingListDataItem)) {
 							Double evaporateRate = getEvaporateRate(ingListDataItem);
-							evaporatedDataItems.add(new EvaporatedDataItem(ingListDataItem.getIng(), evaporateRate));
+							evaporatedDataItems.add(new EvaporatedDataItem(ingListDataItem.getIng(), evaporateRate,null,null));
 						} else {
 							qtyPercWithSecondaryYield /= secondaryYieldFactor;
 						}
