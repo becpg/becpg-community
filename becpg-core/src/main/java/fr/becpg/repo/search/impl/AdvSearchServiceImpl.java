@@ -396,7 +396,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	}
 	
 	private String cleanValue(String propValue) {
-		String cleanQuery = propValue.replace(".", "").replace("#", "");
+		String cleanQuery = propValue.replace(".", "").replace("#", "").replace("%", "");
 		
 		if (cleanQuery.contains("\",\"")) {
 			cleanQuery = cleanQuery.replace("\",\"", "\" OR \"");
