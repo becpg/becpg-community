@@ -10,7 +10,6 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.batch.BatchProcessWorkProvider;
 import org.alfresco.repo.batch.BatchProcessor;
 import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
-import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
@@ -184,24 +183,24 @@ public class ReportTplWebScript extends AbstractWebScript {
 
 	private void deleteReports(NodeRef nodeRef) {
 
-		List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, ReportModel.ASSOC_REPORT_TPL);
+		List<NodeRef> assocRefs = associationService.getSourcesAssocs(nodeRef, ReportModel.ASSOC_REPORT_TPL, true);
 
 		BatchInfo batchInfo = new BatchInfo( String.format("deleteReports-%s",nodeRef.getId()), "becpg.batch.entityTpl.deleteReports");
 		batchInfo.setRunAsSystem(true);
 		batchInfo.setPriority(BatchPriority.VERY_LOW);
 		
-		BatchProcessWorkProvider<AssociationRef> workProvider = new EntityListBatchProcessWorkProvider<>(assocRefs);
+		BatchProcessWorkProvider<NodeRef> workProvider = new EntityListBatchProcessWorkProvider<>(assocRefs);
 
-		BatchProcessWorker<AssociationRef> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<>() {
+		BatchProcessWorker<NodeRef> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<>() {
 
 			@Override
-			public void process(AssociationRef assocRef) throws Throwable {
+			public void process(NodeRef assocRef) throws Throwable {
 				if (logger.isDebugEnabled()) {
-					logger.debug("Delete report " + assocRef.getSourceRef() + " - name: "
-							+ nodeService.getProperty(assocRef.getSourceRef(), ContentModel.PROP_NAME));
+					logger.debug("Delete report " + assocRef + " - name: "
+							+ nodeService.getProperty(assocRef, ContentModel.PROP_NAME));
 				}
-				nodeService.addAspect(assocRef.getSourceRef(), ContentModel.ASPECT_TEMPORARY, null);
-				nodeService.deleteNode(assocRef.getSourceRef());
+				nodeService.addAspect(assocRef, ContentModel.ASPECT_TEMPORARY, null);
+				nodeService.deleteNode(assocRef);
 
 			}
 		};
