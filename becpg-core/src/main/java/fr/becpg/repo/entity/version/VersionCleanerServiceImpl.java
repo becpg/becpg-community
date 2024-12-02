@@ -2,6 +2,7 @@ package fr.becpg.repo.entity.version;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -145,26 +146,27 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 	}
 	
 	private List<NodeRef> getVersionedAssocsChilds(int limit) {
-		String sql = "SELECT \n"
-				+ "    alf_node.uuid \n"
-				+ "FROM \n"
-				+ "    alf_node\n"
-				+ "JOIN \n"
-				+ "    alf_child_assoc aca \n"
-				+ "ON \n"
-				+ "    alf_node.id = aca.child_node_id\n"
-				+ "JOIN \n"
-				+ "    alf_qname aq \n"
-				+ "ON \n"
-				+ "    aq.id = aca.type_qname_id\n"
-				+ "WHERE \n"
-				+ "    aq.local_name = 'versionedAssocs' LIMIT " + limit + ";"
-				+ "";
+		
+		String sql = """
+				SELECT alf_node.uuid
+				FROM alf_qname aq
+				STRAIGHT_JOIN alf_child_assoc aca ON aq.id = aca.type_qname_id
+				STRAIGHT_JOIN alf_node ON alf_node.id = aca.child_node_id
+				WHERE aq.local_name = 'versionedAssocs'
+				LIMIT ?;
+				""";
+
 		List<NodeRef> ret = new ArrayList<>();
 		try (Connection con = dataSource.getConnection()) {
 
 			try (PreparedStatement statement = con.prepareStatement(sql)) {
-				try (java.sql.ResultSet res = statement.executeQuery()) {
+				statement.setInt(1, limit);
+				long start = System.currentTimeMillis();
+				try (ResultSet res = statement.executeQuery()) {
+					long time = System.currentTimeMillis() - start;
+					if (logger.isDebugEnabled()) {
+						logger.debug("time for versioned assocs SQL query: " + time + " ms");
+					}
 					while (res.next()) {
 						NodeRef tmp = new NodeRef(RepoConsts.VERSION_STORE, res.getString("uuid"));
 						if (nodeService.exists(tmp)) {
