@@ -1934,6 +1934,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			if (logger.isTraceEnabled()) {
 				logger.trace("- REMAINING evaporation QTY: " + parent.getEvaporatedQty());
 				logger.trace("- REMAINING evaporation VOL: " + parent.getEvaporatedVolume());
+				logger.trace("- Propagate yield: " + labelingFormulaContext.isDoNotPropagateYield());
 			}
 
 			// 2. Distribute remaining evaporation proportionally
