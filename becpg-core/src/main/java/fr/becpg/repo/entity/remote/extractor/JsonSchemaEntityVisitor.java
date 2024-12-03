@@ -271,7 +271,7 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 		if (JsonVisitNodeType.ENTITY.equals(type) || JsonVisitNodeType.CONTENT.equals(type) || JsonVisitNodeType.ASSOC.equals(type)
 				|| (JsonVisitNodeType.CHILD_ASSOC.equals(type) && !ContentModel.TYPE_FOLDER.equals(nodeType))) {
 
-			if (nodeService.getPrimaryParent(nodeRef) != null) {
+			if (getPrimaryParentRef(nodeRef) != null) {
 
 				addProperty(entity, RemoteEntityService.ATTR_PATH, TYPE_STRING, "Path of the entity", null);
 
