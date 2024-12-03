@@ -1,3 +1,3 @@
-FROM mysql:8.3
+FROM mysql:9.1
 
 COPY becpg-db.cnf /etc/mysql/conf.d
