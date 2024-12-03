@@ -1707,7 +1707,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							visitIngList(compositeLabeling, productData,
 									CompositeHelper.getHierarchicalCompoList(
 											IngListHelper.extractParentList(productData.getIngList(), associationService, alfrescoRepository)),
-									null, qty, volume, qtyWithYield, volumeWithYield, labelingFormulaContext, compoListDataItem, errors);
+									null, qty, volume, qtyWithYield, volumeWithYield, labelingFormulaContext, compoListDataItem, errors,
+									calculatedYield);
 						}
 
 						BigDecimal computedRatio = BigDecimal.valueOf(1d);
@@ -1988,7 +1989,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						productLabelItem.setQtyWithYield(productLabelItem.getQtyWithYield() - evaporatedQty);
 
 						if (logger.isDebugEnabled()) {
-							logger.debug("Apply evaporation qty " + evaporatedQty + " on " + productLabelItem.getName() + " after "
+							logger.debug("Apply evaporation qty " + evaporatedQty + " on " + getName(productLabelItem) + " after "
 									+ productLabelItem.getQtyWithYield());
 						}
 
@@ -2008,7 +2009,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						Double evaporatedVol = Math.min(maxEvapQty, proportionalEvap);
 
 						if (logger.isDebugEnabled()) {
-							logger.debug("Apply evaporation volume " + evaporatedVol + " on " + productLabelItem.getName() + " after "
+							logger.debug("Apply evaporation volume " + evaporatedVol + " on " + getName(productLabelItem) + " after "
 									+ productLabelItem.getVolumeWithYield());
 						}
 
@@ -2017,6 +2018,16 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						evaporatingVolume.set(evaporatingVolume.get() - evaporatedVol);
 					}
 
+				} else {
+					if (logger.isDebugEnabled()) {
+						logger.debug("Take in account evaporation in Do Not declare");
+					}
+					if(evaporatedDataItem.getMaxEvaporableQty()!=null) {
+						evaporatingQty.set(evaporatingQty.get() - evaporatedDataItem.getMaxEvaporableQty());
+					}
+					if(evaporatedDataItem.getMaxEvaporableVolume()!=null) {
+						evaporatingVolume.set(evaporatingVolume.get() - evaporatedDataItem.getMaxEvaporableVolume());
+					}
 				}
 			});
 
@@ -2158,7 +2169,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	private CompositeLabeling visitIngList(CompositeLabeling parent, ProductData product, Composite<IngListDataItem> compositeIngList,
 			Double omitQtyPerc, Double qty, Double volume, Double qtyWithYield, Double volumeWithYield, LabelingFormulaContext labelingFormulaContext,
-			CompoListDataItem compoListDataItem, Map<String, ReqCtrlListDataItem> errors) {
+			CompoListDataItem compoListDataItem, Map<String, ReqCtrlListDataItem> errors, Double calculatedYield) {
 
 		boolean applyThreshold = false;
 		if (nodeService.hasAspect(product.getNodeRef(), PLMModel.ASPECT_WATER)
@@ -2206,7 +2217,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						&& hasVisibleSubIng(compoListDataItem, ingListItem, labelingFormulaContext)) {
 					logger.debug("Declaring ingredient: ");
 					visitIngList(parent, product, ingListItem, omitQtyPerc, qty, volume, qtyWithYield, volumeWithYield, labelingFormulaContext,
-							compoListDataItem, errors);
+							compoListDataItem, errors, calculatedYield);
 				} else {
 
 					if (DeclarationType.Declare.equals(ingDeclarationType)) {
@@ -2234,7 +2245,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							labelingFormulaContext.getToApplyThresholdItems().add(ingNodeRef);
 						}
 
-						if (hasEvaporationData(ingNodeRef)) {
+						if (hasEvaporationData(ingNodeRef) && calculatedYield != null && calculatedYield != 100d) {
 
 							Double evaporateRate = (Double) nodeService.getProperty(ingNodeRef, PLMModel.PROP_EVAPORATED_RATE);
 
@@ -2385,7 +2396,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						}
 
 						visitIngList(ingLabelItem, product, ingListItem, omitQtyPerc, qty, volume, qty, volume, labelingFormulaContext,
-								compoListDataItem, errors);
+								compoListDataItem, errors, calculatedYield);
 
 					} else if (DeclarationType.Detail.equals(ingDeclarationType) && ingLabelItem.getIngList().isEmpty()) {
 						ingLabelItem.setDeclarationType(DeclarationType.DoNotDetails);
