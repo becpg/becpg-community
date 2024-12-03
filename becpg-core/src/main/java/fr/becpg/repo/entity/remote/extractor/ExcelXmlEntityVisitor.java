@@ -147,7 +147,7 @@ public class ExcelXmlEntityVisitor extends AbstractEntityVisitor {
 		QName nodeType = nodeService.getType(nodeRef).getPrefixedQName(namespaceService);
 		xmlw.writeStartElement(name != null ? name : getXmlName(nodeType));
 
-		NodeRef parentRef = nodeService.getPrimaryParent(nodeRef).getParentRef();
+		NodeRef parentRef = getPrimaryParentRef(nodeRef);
 
 		Path path = nodeService.getPath(parentRef);
 
