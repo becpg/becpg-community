@@ -33,6 +33,7 @@ import org.alfresco.model.ApplicationModel;
 import org.alfresco.model.ContentModel;
 import org.alfresco.model.ForumModel;
 import org.alfresco.repo.rule.RuleModel;
+import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.repo.version.Version2Model;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
@@ -238,6 +239,9 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	@Autowired
 	private ExpressionService expressionService;
+	
+	@Autowired
+	private TenantAdminService tenantAdminService;
 
 
 	protected interface DefaultExtractorContextCallBack {
@@ -1226,6 +1230,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	}
 
 	private void loadCreator(NodeRef entityNodeRef, Element entityElt, Element imgsElt, DefaultExtractorContext context) {
+		if ((tenantAdminService != null) && tenantAdminService.isEnabled()) {
 		String creator = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_CREATOR);
 		if ((creator != null) && personService.personExists(creator)) {
 			Element creatorElt = (Element) entityElt.selectSingleNode(ContentModel.PROP_CREATOR.getLocalName());
@@ -1236,6 +1241,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			if (!avatorAssocs.isEmpty()) {
 				extractImage(creatorNodeRef, avatorAssocs.get(0).getTargetRef(), AVATAR_IMG_ID, imgsElt, context,null);
 			}
+		}
 		}
 	}
 
