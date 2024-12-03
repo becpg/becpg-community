@@ -66,7 +66,7 @@ services:
  
  
   alfresco-transform-core-aio:
-      image: alfresco/alfresco-transform-core-aio:5.1.0
+      image: alfresco/alfresco-transform-core-aio:5.1.5
       environment:
           JAVA_OPTS: " -Xms256m -Xmx256m"
       ports:
