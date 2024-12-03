@@ -1534,11 +1534,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				//Water loss
 				if ((qty != null) && (calculatedYield != null) && (calculatedYield.doubleValue() != 100d) && hasEvaporationData(productNodeRef)) {
 
-					if (logger.isTraceEnabled()) {
-						logger.trace("Detected evaporated components (" + productData.getName() + " - " + productNodeRef + "), rate: "
-								+ nodeService.getProperty(productNodeRef, PLMModel.PROP_EVAPORATED_RATE));
-					}
-
 					// Override declaration type
 					declarationType = DeclarationType.DoNotDetails;
 
@@ -1547,7 +1542,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					if (evaporateRate == null) {
 						evaporateRate = 100d;
 					}
-					
+
 					Double maxEvaporableQty = (qty * (evaporateRate / 100d));
 					Double maxEvaporableVolume = (volume * (evaporateRate / 100d));
 
@@ -1555,9 +1550,15 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					qtyWithYield = maxEvaporableQty + (((qty * (1d - (evaporateRate / 100d))) * 100d) / calculatedYield);
 					volumeWithYield = maxEvaporableVolume + (((volume * (1d - (evaporateRate / 100d))) * 100d) / calculatedYield);
 
-				
-					
-					mergeEvaporatedItem(parent.getEvaporatedDataItems(),new EvaporatedDataItem(productNodeRef, evaporateRate, maxEvaporableQty,maxEvaporableVolume));
+					if (logger.isTraceEnabled()) {
+						logger.trace("Detected evaporated components (" + productData.getName() + " - " + productNodeRef + "), rate: " + evaporateRate
+								+ ", qtyWithYield :" + qtyWithYield + ", maxEvaporableQty :" + maxEvaporableQty
+
+						);
+					}
+
+					mergeEvaporatedItem(parent.getEvaporatedDataItems(),
+							new EvaporatedDataItem(productNodeRef, evaporateRate, maxEvaporableQty, maxEvaporableVolume));
 
 					labelingFormulaContext.getToApplyThresholdItems().add(productNodeRef);
 
@@ -1764,7 +1765,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							}
 
 							visitCompoList(compositeLabeling, composite, labelingFormulaContext, computedRatio,
-									recurYield != null ? recurYield.doubleValue() : null, !parent.equals(compositeLabeling) );
+									recurYield != null ? recurYield.doubleValue() : null, !parent.equals(compositeLabeling));
 						}
 					}
 
@@ -1888,33 +1889,29 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		return component.getName();
 	}
 
-
 	private void mergeEvaporatedItem(Set<EvaporatedDataItem> evaporatedDataItems, EvaporatedDataItem evaporatedDataItem) {
 
-	    EvaporatedDataItem existingItem = evaporatedDataItems.stream()
-	            .filter(item -> item.getProductNodeRef() != null && 
-	                            item.getProductNodeRef().equals(evaporatedDataItem.getProductNodeRef()))
-	            .findFirst()
-	            .orElse(null);
+		EvaporatedDataItem existingItem = evaporatedDataItems.stream()
+				.filter(item -> (item.getProductNodeRef() != null) && item.getProductNodeRef().equals(evaporatedDataItem.getProductNodeRef()))
+				.findFirst().orElse(null);
 
-	    if (existingItem != null) {
-	        if (existingItem.getMaxEvaporableQty() != null && evaporatedDataItem.getMaxEvaporableQty() != null) {
-	            existingItem.setMaxEvaporableQty(existingItem.getMaxEvaporableQty() + evaporatedDataItem.getMaxEvaporableQty());
-	        } else {
-	            existingItem.setMaxEvaporableQty(null);
-	        }
-	        
-	        if (existingItem.getMaxEvaporableVolume() != null && evaporatedDataItem.getMaxEvaporableVolume() != null) {
-	            existingItem.setMaxEvaporableVolume(existingItem.getMaxEvaporableVolume() + evaporatedDataItem.getMaxEvaporableVolume());
-	        } else {
-	            existingItem.setMaxEvaporableVolume(null);
-	        }
-	    } else {
-	        evaporatedDataItems.add(evaporatedDataItem);
-	    }
+		if (existingItem != null) {
+			if ((existingItem.getMaxEvaporableQty() != null) && (evaporatedDataItem.getMaxEvaporableQty() != null)) {
+				existingItem.setMaxEvaporableQty(existingItem.getMaxEvaporableQty() + evaporatedDataItem.getMaxEvaporableQty());
+			} else {
+				existingItem.setMaxEvaporableQty(null);
+			}
+
+			if ((existingItem.getMaxEvaporableVolume() != null) && (evaporatedDataItem.getMaxEvaporableVolume() != null)) {
+				existingItem.setMaxEvaporableVolume(existingItem.getMaxEvaporableVolume() + evaporatedDataItem.getMaxEvaporableVolume());
+			} else {
+				existingItem.setMaxEvaporableVolume(null);
+			}
+		} else {
+			evaporatedDataItems.add(evaporatedDataItem);
+		}
 	}
 
-	
 	private void applyEvaporation(LabelingFormulaContext labelingFormulaContext, CompositeLabeling parent) {
 
 		if (!parent.getEvaporatedDataItems().isEmpty()) {
@@ -1943,7 +1940,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 			Double totalRate = remainingItems.stream().mapToDouble(EvaporatedDataItem::getRate).sum();
 
-			processEvaporation(parent, remainingItems, totalRate,labelingFormulaContext.isDoNotPropagateYield());
+			processEvaporation(parent, remainingItems, totalRate, labelingFormulaContext.isDoNotPropagateYield());
 
 			// 3 - If not all has been evaporated remove from first
 			if ((parent.getEvaporatedQty() > 0) && !fullEvaporationItems.isEmpty() && !labelingFormulaContext.isDoNotPropagateYield()) {
@@ -1979,8 +1976,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 					if ((productLabelItem.getQtyWithYield() != null) && (parent.getEvaporatedQty() != null) && (parent.getEvaporatedQty() > 0d)) {
 						Double maxEvapQty = (productLabelItem.getQtyWithYield() * rate) / 100d;
-						
-						if(isDoNotPropagateYield && evaporatedDataItem.getMaxEvaporableQty()!=null) {
+
+						if (isDoNotPropagateYield && (evaporatedDataItem.getMaxEvaporableQty() != null)) {
 							maxEvapQty = Math.min(maxEvapQty, evaporatedDataItem.getMaxEvaporableQty());
 						}
 
@@ -2001,8 +1998,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					if ((productLabelItem.getVolumeWithYield() != null) && (parent.getEvaporatedVolume() != null)
 							&& (parent.getEvaporatedVolume() > 0d)) {
 						Double maxEvapQty = (productLabelItem.getVolumeWithYield() * rate) / 100d;
-						
-						if(isDoNotPropagateYield && evaporatedDataItem.getMaxEvaporableVolume()!=null) {
+
+						if (isDoNotPropagateYield && (evaporatedDataItem.getMaxEvaporableVolume() != null)) {
 							maxEvapQty = Math.min(maxEvapQty, evaporatedDataItem.getMaxEvaporableVolume());
 						}
 
@@ -2239,20 +2236,25 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 						if (hasEvaporationData(ingNodeRef)) {
 
-							if (logger.isTraceEnabled()) {
-								logger.trace("Detected water lost");
-							}
 							Double evaporateRate = (Double) nodeService.getProperty(ingNodeRef, PLMModel.PROP_EVAPORATED_RATE);
 
 							if (evaporateRate == null) {
 								evaporateRate = 100d;
 							}
-							
+
 							Double maxEvaporableQty = (qty * (evaporateRate / 100d));
 							Double maxEvaporableVolume = (volume * (evaporateRate / 100d));
-							
-							mergeEvaporatedItem(parent.getEvaporatedDataItems(),new EvaporatedDataItem(ingNodeRef, evaporateRate, maxEvaporableQty,maxEvaporableVolume));
-							
+
+							if (logger.isTraceEnabled()) {
+								logger.trace("Detected evaporated ings (" + ingLabelItem.getLegalName(I18NUtil.getContentLocaleLang()) + "), rate: "
+										+ evaporateRate + ", qtyWithYield :" + qtyWithYield + ", maxEvaporableQty :" + maxEvaporableQty
+
+								);
+							}
+
+							mergeEvaporatedItem(parent.getEvaporatedDataItems(),
+									new EvaporatedDataItem(ingNodeRef, evaporateRate, maxEvaporableQty, maxEvaporableVolume));
+
 							labelingFormulaContext.getToApplyThresholdItems().add(ingNodeRef);
 
 						}
@@ -2395,7 +2397,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 		return parent;
 	}
-
 
 	private void updateIfNotNull(Double oldValue, Double newValue, Double qtyPerc, DoubleConsumer updateFunction, String name) {
 		if ((oldValue != null) && (newValue != null)) {
