@@ -212,17 +212,15 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 		if (JsonVisitNodeType.ENTITY.equals(type) || JsonVisitNodeType.CONTENT.equals(type) || JsonVisitNodeType.ASSOC.equals(type)
 				|| (JsonVisitNodeType.CHILD_ASSOC.equals(type) && !ContentModel.TYPE_FOLDER.equals(nodeType))) {
 
-			if (nodeService.getPrimaryParent(nodeRef) != null) {
-				NodeRef parentRef = nodeService.getPrimaryParent(nodeRef).getParentRef();
-				if (parentRef != null) {
-					Path parentPath = nodeService.getPath(parentRef);
-					String path = parentPath.toPrefixString(namespaceService);
+			NodeRef parentRef = getPrimaryParentRef(nodeRef);
+			if (parentRef != null) {
+				Path parentPath = nodeService.getPath(parentRef);
+				String path = parentPath.toPrefixString(namespaceService);
 
-					entity.put(RemoteEntityService.ATTR_PATH, path.replace(context.getEntityPath(nodeService, namespaceService), "~"));
-					if (!JsonVisitNodeType.ASSOC.equals(type)) {
-						visitSite(entity, parentPath);
-						entity.put(RemoteEntityService.ATTR_PARENT_ID, parentRef.getId());
-					}
+				entity.put(RemoteEntityService.ATTR_PATH, path.replace(context.getEntityPath(nodeService, namespaceService), "~"));
+				if (!JsonVisitNodeType.ASSOC.equals(type)) {
+					visitSite(entity, parentPath);
+					entity.put(RemoteEntityService.ATTR_PARENT_ID, parentRef.getId());
 				}
 			} else {
 				logger.warn("Node : " + nodeRef + " has no primary parent");
@@ -304,7 +302,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 					if (Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_REPLACE_HISTORY_NODEREFS, Boolean.FALSE))
 							&& nodeService.getPath(nodeRef).toPrefixString(namespaceService).contains(RepoConsts.ENTITIES_HISTORY_XPATH)) {
-						NodeRef parentNode = nodeService.getPrimaryParent(nodeRef).getParentRef();
+						NodeRef parentNode = getPrimaryParentRef(nodeRef);
 
 						String parentName = (String) nodeService.getProperty(parentNode, ContentModel.PROP_NAME);
 
