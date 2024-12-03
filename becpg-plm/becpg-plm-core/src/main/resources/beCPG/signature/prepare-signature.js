@@ -6,7 +6,7 @@ function main() {
 	
 	for (var i = 0; i < project.deliverableList.size(); i++) {
 		var del = project.deliverableList.get(i);
-		if (del.name.endsWith(" - url") && del.name.startsWith(keyName)) {
+		if (del.name == keyName + " - url") {
 			urlDeliverable = del;
 			break;
 		}

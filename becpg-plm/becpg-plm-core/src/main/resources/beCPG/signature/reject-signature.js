@@ -4,7 +4,7 @@ function main() {
 	
 	for (var i = 0; i < project.deliverableList.size(); i++) {
 		var del = project.deliverableList.get(i);
-		if (del.name.endsWith(" - doc") && del.name.startsWith(deliverable.name)) {
+		if (del.name == keyName + " - doc") {
 			docDeliverable = del;
 			break;
 		}
