@@ -239,7 +239,7 @@ public class EntityServiceImpl implements EntityService {
 
 		// manage workingCopy
 		String wcLabel = CheckOutCheckInServiceImpl.getWorkingCopyLabel();
-		if (imgName.endsWith(wcLabel)) {
+		if (wcLabel!=null && imgName!=null && imgName.endsWith(wcLabel)) {
 			imgName = getNameFromWorkingCopyName(imgName, wcLabel);
 		}
 
