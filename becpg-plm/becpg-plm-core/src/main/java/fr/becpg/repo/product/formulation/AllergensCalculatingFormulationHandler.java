@@ -531,11 +531,6 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 								}
 
 								ret.add(error);
-							}
-
-							if (regulatoryThreshold == null) {
-								// Reset
-								newAllergenListDataItem.setQtyPerc(null);
 							} else if (newAllergenListDataItem.getQtyPerc() == null) {
 								newAllergenListDataItem.setQtyPerc(0d);
 							}
