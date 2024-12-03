@@ -2245,31 +2245,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							labelingFormulaContext.getToApplyThresholdItems().add(ingNodeRef);
 						}
 
-						if (hasEvaporationData(ingNodeRef) && calculatedYield != null && calculatedYield != 100d) {
-
-							Double evaporateRate = (Double) nodeService.getProperty(ingNodeRef, PLMModel.PROP_EVAPORATED_RATE);
-
-							if (evaporateRate == null) {
-								evaporateRate = 100d;
-							}
-
-							Double maxEvaporableQty = (qty * (evaporateRate / 100d));
-							Double maxEvaporableVolume = (volume * (evaporateRate / 100d));
-
-							if (logger.isTraceEnabled()) {
-								logger.trace("Detected evaporated ings (" + ingLabelItem.getLegalName(I18NUtil.getContentLocaleLang()) + "), rate: "
-										+ evaporateRate + ", qtyWithYield :" + qtyWithYield + ", maxEvaporableQty :" + maxEvaporableQty
-
-								);
-							}
-
-							mergeEvaporatedItem(parent.getEvaporatedDataItems(),
-									new EvaporatedDataItem(ingNodeRef, evaporateRate, maxEvaporableQty, maxEvaporableVolume));
-
-							labelingFormulaContext.getToApplyThresholdItems().add(ingNodeRef);
-
-						}
-
+						
 					} else if (!DeclarationType.DoNotDeclare.equals(ingDeclarationType)) {
 						if (logger.isTraceEnabled()) {
 							logger.trace("- Update ing value: " + ingLabelItem.getLegalName(I18NUtil.getContentLocaleLang()));
@@ -2280,6 +2256,32 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							ingLabelItem.setPlural(true);
 						}
 					}
+					
+					if (hasEvaporationData(ingNodeRef) && calculatedYield != null && calculatedYield != 100d) {
+
+						Double evaporateRate = (Double) nodeService.getProperty(ingNodeRef, PLMModel.PROP_EVAPORATED_RATE);
+
+						if (evaporateRate == null) {
+							evaporateRate = 100d;
+						}
+
+						Double maxEvaporableQty = (qty * (evaporateRate / 100d));
+						Double maxEvaporableVolume = (volume * (evaporateRate / 100d));
+
+						if (logger.isTraceEnabled()) {
+							logger.trace("Detected evaporated ings (" + ingLabelItem.getLegalName(I18NUtil.getContentLocaleLang()) + "), rate: "
+									+ evaporateRate + ", qtyWithYield :" + qtyWithYield + ", maxEvaporableQty :" + maxEvaporableQty
+
+							);
+						}
+
+						mergeEvaporatedItem(parent.getEvaporatedDataItems(),
+								new EvaporatedDataItem(ingNodeRef, evaporateRate, maxEvaporableQty, maxEvaporableVolume));
+
+						labelingFormulaContext.getToApplyThresholdItems().add(ingNodeRef);
+
+					}
+
 
 					if (!DeclarationType.DoNotDeclare.equals(ingDeclarationType)) {
 
