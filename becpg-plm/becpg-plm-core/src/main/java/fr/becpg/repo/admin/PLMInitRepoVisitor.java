@@ -418,7 +418,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				if (nodeRef == null) {
 
 					MLText mltValue = new MLText();
-
 					for (String locKey : supportedLocale) {
 						String i18NKey = I18NUtil.getMessage("listconstraint.qa_controlTypes." + value, MLTextHelper.parseLocale(locKey));
 						if (i18NKey != null) {

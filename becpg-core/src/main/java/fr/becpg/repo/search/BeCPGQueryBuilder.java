@@ -57,6 +57,7 @@ import org.alfresco.service.cmr.search.SearchParameters;
 import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.repo.model.Repository;
 import org.alfresco.util.ISO9075;
 import org.alfresco.util.Pair;
 import org.alfresco.util.registry.NamedObjectRegistry;
@@ -94,7 +95,6 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 	private static final String CANNED_QUERY_FILEFOLDER_LIST = "fileFolderGetChildrenCannedQueryFactory";
 	
-
 	private static final String ENABLE_INDEX_TYPES_KEY = "beCPG.solr.enableIndexForTypes";
 
 	private static BeCPGQueryBuilder INSTANCE = null;
@@ -125,6 +125,9 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 	@Autowired
 	private NodeService nodeService;
+	
+	@Autowired
+	private Repository repository;
 
 	private Integer maxResults = RepoConsts.MAX_RESULTS_256;
 	private Integer page = -1;
@@ -224,6 +227,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			builder.entityDictionaryService = INSTANCE.entityDictionaryService;
 			builder.tenantService = INSTANCE.tenantService;
 			builder.systemConfigurationService = INSTANCE.systemConfigurationService;
+			builder.repository = INSTANCE.repository;
 		}
 		return builder;
 	}
@@ -974,6 +978,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		return this;
 	}
 
+	
+	public NodeRef selectNodeByPath(String xPath) {
+	
+		return selectNodeByPath(repository.getRootHome(),xPath);
+	}
+	
 	/**
 	 * <p>
 	 * selectNodeByPath.

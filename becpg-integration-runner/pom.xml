@@ -14,7 +14,7 @@
 		<version>23.2.2</version>
 		<relativePath>../</relativePath>
 	</parent>
-    <version>23.2.2.26-SNAPSHOT</version>
+    <version>23.2.2.30-SNAPSHOT</version>
 	<dependencies>
 		<dependency>
 			<groupId>fr.becpg</groupId>

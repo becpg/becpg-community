@@ -9500,6 +9500,8 @@
 					<show id="bcpg:regulatoryType" force="true" />
 					<show id="bcpg:regulatoryText" force="true" />
 					<show id="bcpg:pclPhysicoChem" />
+					<show id="bcpg:physicoChemIsFormulated" />
+                    <show id="bcpg:physicoChemFormulaErrorLog" />
 					<show id="bcpg:pclMini" />
 					<show id="bcpg:pclMaxi" />
 					<show id="fm:commentCount" force="true" />
@@ -9510,13 +9512,9 @@
 				<appearance>
 					<field id="bcpg:pclUnit" read-only="true" />
 					<field id="bcpg:pclType" read-only="true" />
-					<field id="fm:commentCount" label="hidden" read-only="true" />
-					<field id="bcpg:regulatoryCountries">
-						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
-					</field>
-					<field id="bcpg:regulatoryUsageRef">
-						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
-					</field>
+					<field id="bcpg:physicoChemIsFormulated" label="hidden" />
+                    <field id="bcpg:physicoChemFormulaErrorLog" label="hidden" />
+                    <field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
 			</form>
 			<form id="customListDatagrid">
