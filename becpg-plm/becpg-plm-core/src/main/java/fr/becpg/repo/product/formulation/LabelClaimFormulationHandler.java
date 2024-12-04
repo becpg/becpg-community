@@ -142,7 +142,8 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 			if (!compoItems.isEmpty()) {
 				Set<LabelClaimListDataItem> toRemove = new HashSet<>();
 
-				Double netQty =  FormulationHelper.getNetQtyInLorKg(productData, null, FormulationHelper.DEFAULT_NET_WEIGHT);
+				Double netQty =  FormulationHelper.getQtyInKgFromComposition(productData, null,
+						FormulationHelper.DEFAULT_NET_WEIGHT);
 				
 				productData.getLabelClaimList().forEach(labelClaimItem -> {
 
