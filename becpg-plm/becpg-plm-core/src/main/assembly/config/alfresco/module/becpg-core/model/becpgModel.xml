@@ -603,6 +603,15 @@
                 </list>
             </parameter>
         </constraint>
+        <constraint name="bcpg:specCompatibilityTestModes" type="LIST">
+            <parameter name="allowedValues">
+                <list>
+                    <value></value>
+                    <value>Manual</value>
+                    <value>Automatic</value>
+                </list>
+            </parameter>
+        </constraint>
         <constraint name="bcpg:reqDataTypes" type="LIST">
             <parameter name="allowedValues">
                 <list>
@@ -1092,6 +1101,16 @@
                         <tokenised>false</tokenised>
                         <facetable>true</facetable>
                     </index>
+                </property>
+                <property name="bcpg:specCompatibilityTestMode">
+                    <type>d:text</type>
+                    <index enabled="true">
+                        <tokenised>false</tokenised>
+                        <facetable>true</facetable>
+                    </index>
+                    <constraints>
+                        <constraint ref="bcpg:specCompatibilityTestModes" />
+                    </constraints>
                 </property>
                 <property name="bcpg:specCompatibilityLog">
                     <type>d:text</type>
