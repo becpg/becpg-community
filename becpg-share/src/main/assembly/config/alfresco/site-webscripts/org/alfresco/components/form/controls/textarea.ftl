@@ -19,6 +19,7 @@
 				              actionUrl : Alfresco.constants.PROXY_URI + "becpg/form/multilingual/field/" + field + "?nodeRef=" + nodeRef,
 				              validateOnSubmit : false,
 				              destroyOnHide : true,
+				              destroyFormContainer: false,
 				              width: "33em",
 				              doBeforeFormSubmit : {
 				              	fn: function(){
