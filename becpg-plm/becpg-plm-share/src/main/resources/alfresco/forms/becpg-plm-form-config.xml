@@ -167,7 +167,7 @@
 					<show id="cm:description" />
 					<show id="bcpg:productSpecifications" force="true" />
 					<show id="bcpg:specCompatibilityTpls" force="true" />
-					<show id="bcpg:specCompatibilityJobOn" force="true" />
+					<show id="bcpg:specCompatibilityTestMode" force="true" />
 					<show id="bcpg:specCompatibilityLog" force="true" for-mode="view" />
 					<show id="bcpg:formulatedDate" force="true" for-mode="view" />
 					<!-- local security rule -->
@@ -220,7 +220,7 @@
 					<show id="cm:description" />
 					<show id="bcpg:productSpecifications" force="true" />
 					<show id="bcpg:specCompatibilityTpls" force="true" />
-					<show id="bcpg:specCompatibilityJobOn" force="true" />
+					<show id="bcpg:specCompatibilityTestMode" force="true" />
 					<show id="bcpg:regulatoryCountries" force="true" />
 					<show id="bcpg:regulatoryUsageRef" force="true" />
 				</field-visibility>
@@ -254,7 +254,7 @@
 					<show id="cm:description" />
 					<show id="bcpg:productSpecifications" force="true" />
 					<show id="bcpg:specCompatibilityTpls" force="true" />
-					<show id="bcpg:specCompatibilityJobOn" force="true" />
+					<show id="bcpg:specCompatibilityTestMode" force="true" />
 					<show id="bcpg:regulatoryCountries" force="true" />
 					<show id="bcpg:regulatoryUsageRef" force="true" />
 				</field-visibility>
@@ -288,7 +288,7 @@
 					<show id="cm:description" />
 					<show id="bcpg:productSpecifications" force="true" />
 					<show id="bcpg:specCompatibilityTpls" force="true" />
-					<show id="bcpg:specCompatibilityJobOn" force="true" />
+					<show id="bcpg:specCompatibilityTestMode" force="true" />
 					<show id="bcpg:regulatoryCountries" force="true" />
 					<show id="bcpg:regulatoryUsageRef" force="true" />
 				</field-visibility>
