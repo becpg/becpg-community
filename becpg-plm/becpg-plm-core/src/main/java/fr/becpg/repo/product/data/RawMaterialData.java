@@ -10,6 +10,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.repository.annotation.AlfCacheable;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
@@ -128,6 +129,11 @@ public class RawMaterialData extends ProductData {
 	 */
 	public RawMaterialData withCompoList(List<CompoListDataItem> compoList) {
 		getCompoListView().setCompoList(compoList);
+		return this;
+	}
+	
+	public RawMaterialData withIngList(List<IngListDataItem> ingList) {
+		setIngList(ingList);
 		return this;
 	}
 	

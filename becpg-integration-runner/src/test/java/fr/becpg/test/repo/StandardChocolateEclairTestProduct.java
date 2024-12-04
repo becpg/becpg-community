@@ -8,12 +8,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.Pair;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LogisticUnitData;
@@ -26,10 +28,12 @@ import fr.becpg.repo.product.data.constraints.LabelingRuleType;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.quality.data.dataList.StockListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 public class StandardChocolateEclairTestProduct {
 
@@ -58,9 +62,6 @@ public class StandardChocolateEclairTestProduct {
 	protected NodeRef pateChouxNodeRef;
 	protected NodeRef cremePatissiereNodeRef;
 	protected NodeRef nappageNodeRef;
-	protected NodeRef waterNodeRef;
-	protected NodeRef milkNodeRef;
-	protected NodeRef sugarNodeRef;
 
 	protected NodeRef sugarPlants1NodeRef;
 	protected NodeRef sugarPlants2NodeRef;
@@ -68,9 +69,83 @@ public class StandardChocolateEclairTestProduct {
 	protected NodeRef sugarSupplier2NodeRef;
 	protected NodeRef sugarSupplier3NodeRef;
 
+	protected NodeRef waterNodeRef;
+	protected NodeRef milkNodeRef;
+	protected NodeRef sugarNodeRef;
 	protected NodeRef flourNodeRef;
 	protected NodeRef eggNodeRef;
 	protected NodeRef chocolateNodeRef;
+
+	protected NodeRef ingWaterNodeRef;
+	protected NodeRef ingMilkNodeRef;
+	protected NodeRef ingSugarNodeRef;
+	protected NodeRef ingFlourNodeRef;
+	protected NodeRef ingEggNodeRef;
+	protected NodeRef ingChocolateNodeRef;
+
+	public NodeRef getPateChouxNodeRef() {
+		return pateChouxNodeRef;
+	}
+
+	public NodeRef getCremePatissiereNodeRef() {
+		return cremePatissiereNodeRef;
+	}
+
+	public NodeRef getNappageNodeRef() {
+		return nappageNodeRef;
+	}
+
+	public NodeRef getWaterNodeRef() {
+		return waterNodeRef;
+	}
+
+	public NodeRef getMilkNodeRef() {
+		return milkNodeRef;
+	}
+
+	public NodeRef getSugarNodeRef() {
+		return sugarNodeRef;
+	}
+
+	public NodeRef getSugarPlants1NodeRef() {
+		return sugarPlants1NodeRef;
+	}
+
+	public NodeRef getSugarPlants2NodeRef() {
+		return sugarPlants2NodeRef;
+	}
+
+	public NodeRef getSugarSupplier1NodeRef() {
+		return sugarSupplier1NodeRef;
+	}
+
+	public NodeRef getSugarSupplier2NodeRef() {
+		return sugarSupplier2NodeRef;
+	}
+
+	public NodeRef getSugarSupplier3NodeRef() {
+		return sugarSupplier3NodeRef;
+	}
+
+	public NodeRef getFlourNodeRef() {
+		return flourNodeRef;
+	}
+
+	public NodeRef getEggNodeRef() {
+		return eggNodeRef;
+	}
+
+	public NodeRef getChocolateNodeRef() {
+		return chocolateNodeRef;
+	}
+
+	public NodeService getNodeService() {
+		return nodeService;
+	}
+
+	public NodeRef getDestFolder() {
+		return destFolder;
+	}
 
 	private AlfrescoRepository<ProductData> alfrescoRepository;
 	private NodeService nodeService;
@@ -80,6 +155,7 @@ public class StandardChocolateEclairTestProduct {
 	private boolean isWithLabeling = true;
 	private boolean isWithGenericRawMaterial = true;
 	private boolean isWithStocks = true;
+	private boolean isWithIngredients = true;
 
 	// Private constructor to prevent direct instantiation
 	private StandardChocolateEclairTestProduct(Builder builder) {
@@ -90,6 +166,7 @@ public class StandardChocolateEclairTestProduct {
 		this.isWithLabeling = builder.isWithLabeling;
 		this.isWithGenericRawMaterial = builder.isWithGenericRawMaterial;
 		this.isWithStocks = builder.isWithStocks;
+		this.isWithIngredients = builder.isWithIngredients;
 	}
 
 	// Static inner Builder class
@@ -102,6 +179,7 @@ public class StandardChocolateEclairTestProduct {
 		private boolean isWithLabeling = true;
 		private boolean isWithGenericRawMaterial = true;
 		private boolean isWithStocks = true;
+		private boolean isWithIngredients = true;
 
 		public Builder withAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
 			this.alfrescoRepository = alfrescoRepository;
@@ -135,6 +213,11 @@ public class StandardChocolateEclairTestProduct {
 
 		public Builder withStocks(boolean isWithStocks) {
 			this.isWithStocks = isWithStocks;
+			return this;
+		}
+
+		public Builder withIngredients(boolean isWithIngredients) {
+			this.isWithIngredients = isWithIngredients;
 			return this;
 		}
 
@@ -217,12 +300,17 @@ public class StandardChocolateEclairTestProduct {
 		return palletLogisticUnit;
 	}
 
-	private void initCompoProduct() {
+	public void initCompoProduct() {
 		// Creating raw materials
 		RawMaterialData water = RawMaterialData.build().withName(WATER_NAME).withQty(100d).withUnit(ProductUnit.kg);
 
 		if (isWithStocks) {
 			addStocks(water, 1000d, new ArrayList<>());
+		}
+
+		if (isWithIngredients) {
+			initIngredients();
+			water.withIngList(List.of(IngListDataItem.build().withQtyPerc(100d).withIngredient(ingWaterNodeRef)));
 		}
 
 		waterNodeRef = alfrescoRepository.create(destFolder, water).getNodeRef();
@@ -245,13 +333,25 @@ public class StandardChocolateEclairTestProduct {
 					.withPlants(List.of(getOrCreateCharact(PLANT_USINE_1, PLMModel.TYPE_PLANT)));
 			sugarSupplier1.setSuppliers(List.of(getOrCreateCharact(SUPPLIER_1, PLMModel.TYPE_SUPPLIER)));
 
+			if (isWithIngredients) {
+				sugarSupplier1.withIngList(List.of(IngListDataItem.build().withQtyPerc(100d).withIngredient(ingSugarNodeRef)));
+			}
+
 			RawMaterialData sugarSupplier2 = RawMaterialData.build().withName(SUGAR_SUPPLIER_2_NAME).withUnit(ProductUnit.kg).withPlants(
 					List.of(getOrCreateCharact(PLANT_USINE_1, PLMModel.TYPE_PLANT), getOrCreateCharact(PLANT_USINE_2, PLMModel.TYPE_PLANT)));
 			sugarSupplier2.setSuppliers(List.of(getOrCreateCharact(SUPPLIER_2, PLMModel.TYPE_SUPPLIER)));
 
+			if (isWithIngredients) {
+				sugarSupplier2.withIngList(List.of(IngListDataItem.build().withQtyPerc(100d).withIngredient(ingSugarNodeRef)));
+			}
+
 			RawMaterialData sugarSupplier3 = RawMaterialData.build().withName(SUGAR_SUPPLIER_3_NAME).withUnit(ProductUnit.kg)
 					.withPlants(List.of(getOrCreateCharact(PLANT_USINE_2, PLMModel.TYPE_PLANT)));
 			sugarSupplier3.setSuppliers(List.of(getOrCreateCharact(SUPPLIER_3, PLMModel.TYPE_SUPPLIER)));
+
+			if (isWithIngredients) {
+				sugarSupplier3.withIngList(List.of(IngListDataItem.build().withQtyPerc(100d).withIngredient(ingSugarNodeRef)));
+			}
 
 			if (isWithStocks) {
 				addStocks(sugarSupplier1, 100d, List.of(getOrCreateCharact(LABORATORY_1, PLMModel.TYPE_LABORATORY),
@@ -288,6 +388,10 @@ public class StandardChocolateEclairTestProduct {
 
 		RawMaterialData flour = RawMaterialData.build().withName(FLOUR_NAME).withQty(30d).withUnit(ProductUnit.kg);
 
+		if (isWithIngredients) {
+			flour.withIngList(List.of(IngListDataItem.build().withQtyPerc(100d).withIngredient(ingFlourNodeRef)));
+		}
+
 		if (isWithStocks) {
 			addStocks(flour, 100d,
 					List.of(getOrCreateCharact(LABORATORY_1, PLMModel.TYPE_LABORATORY), getOrCreateCharact(LABORATORY_2, PLMModel.TYPE_LABORATORY)));
@@ -297,6 +401,10 @@ public class StandardChocolateEclairTestProduct {
 
 		RawMaterialData egg = RawMaterialData.build().withName(EGG_NAME).withQty(40d).withUnit(ProductUnit.kg);
 
+		if (isWithIngredients) {
+			egg.withIngList(List.of(IngListDataItem.build().withQtyPerc(100d).withIngredient(ingEggNodeRef)));
+		}
+
 		if (isWithStocks) {
 			addStocks(egg, 100d,
 					List.of(getOrCreateCharact(LABORATORY_1, PLMModel.TYPE_LABORATORY), getOrCreateCharact(LABORATORY_2, PLMModel.TYPE_LABORATORY)));
@@ -305,6 +413,10 @@ public class StandardChocolateEclairTestProduct {
 		eggNodeRef = alfrescoRepository.create(destFolder, egg).getNodeRef();
 
 		RawMaterialData chocolate = RawMaterialData.build().withName(CHOCOLATE_NAME).withQty(50d).withUnit(ProductUnit.kg);
+
+		if (isWithIngredients) {
+			chocolate.withIngList(List.of(IngListDataItem.build().withQtyPerc(100d).withIngredient(ingChocolateNodeRef)));
+		}
 
 		if (isWithStocks) {
 			addStocks(chocolate, 100d,
@@ -364,6 +476,44 @@ public class StandardChocolateEclairTestProduct {
 								.withProduct(chocolateNodeRef)));
 
 		nappageNodeRef = alfrescoRepository.create(destFolder, nappage).getNodeRef();
+	}
+
+	private void initIngredients() {
+
+		ingWaterNodeRef = getOrCreateIng(WATER_NAME);
+
+		nodeService.addAspect(ingWaterNodeRef, PLMModel.ASPECT_WATER, new HashMap<>());
+
+		ingMilkNodeRef = getOrCreateIng(MILK_NAME);
+
+		nodeService.setProperty(ingMilkNodeRef, PLMModel.PROP_EVAPORATED_RATE, 90d);
+
+		ingSugarNodeRef = getOrCreateIng(SUGAR_NAME);
+		ingFlourNodeRef = getOrCreateIng(FLOUR_NAME);
+		ingEggNodeRef = getOrCreateIng(EGG_NAME);
+
+		nodeService.setProperty(ingEggNodeRef, PLMModel.PROP_EVAPORATED_RATE, 10d);
+
+		ingChocolateNodeRef = getOrCreateIng(CHOCOLATE_NAME);
+
+	}
+
+	private NodeRef getOrCreateIng(String ingName) {
+
+		NodeRef ingFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath("/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:Ings");
+
+		NodeRef ret = nodeService.getChildByName(ingFolder, ContentModel.ASSOC_CONTAINS, ingName);
+
+		if (ret == null) {
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(BeCPGModel.PROP_CHARACT_NAME, ingName);
+			ChildAssociationRef childAssocRef = nodeService.createNode(ingFolder, ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					PLMModel.TYPE_ING, properties);
+			ret = childAssocRef.getChildRef();
+		}
+
+		return ret;
 	}
 
 	private void addStocks(RawMaterialData rawMaterial, Double qty, List<NodeRef> laboratories) {
