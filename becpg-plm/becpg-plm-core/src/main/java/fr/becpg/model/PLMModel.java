@@ -351,6 +351,7 @@ public interface PLMModel {
 
 	/** Constant <code>PROP_SPEC_COMPATIBILITY_JOB_ON</code> */
 	QName PROP_SPEC_COMPATIBILITY_JOB_ON = QName.createQName(BeCPGModel.BECPG_URI, "specCompatibilityJobOn");
+	QName PROP_SPEC_COMPATIBILITY_TEST_MODE = QName.createQName(BeCPGModel.BECPG_URI, "specCompatibilityTestMode");
 	/** Constant <code>PROP_SPEC_COMPATIBILITY_LOG</code> */
 	QName PROP_SPEC_COMPATIBILITY_LOG = QName.createQName(BeCPGModel.BECPG_URI, "specCompatibilityLog");
 
