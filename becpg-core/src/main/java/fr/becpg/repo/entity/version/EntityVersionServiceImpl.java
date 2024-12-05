@@ -1206,7 +1206,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		}
 		visited.add(sourceEntity);
 		Set<NodeRef> refs = new HashSet<>();
-		List<NodeRef> assocRefs = associationService.getSourcesAssocs(sourceEntity, RegexQNamePattern.MATCH_ALL);
+		List<NodeRef> assocRefs = associationService.getSourcesAssocs(sourceEntity, RegexQNamePattern.MATCH_ALL, true);
 		List<ChildAssociationRef> parentRefs = nodeService.getParentAssocs(sourceEntity);
 		
 		for (NodeRef assocRef : assocRefs) {
