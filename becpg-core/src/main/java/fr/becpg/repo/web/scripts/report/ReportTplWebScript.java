@@ -183,7 +183,7 @@ public class ReportTplWebScript extends AbstractWebScript {
 
 	private void deleteReports(NodeRef nodeRef) {
 
-		List<NodeRef> assocRefs = associationService.getSourcesAssocs(nodeRef, ReportModel.ASSOC_REPORT_TPL);
+		List<NodeRef> assocRefs = associationService.getSourcesAssocs(nodeRef, ReportModel.ASSOC_REPORT_TPL, true);
 
 		BatchInfo batchInfo = new BatchInfo( String.format("deleteReports-%s",nodeRef.getId()), "becpg.batch.entityTpl.deleteReports");
 		batchInfo.setRunAsSystem(true);
