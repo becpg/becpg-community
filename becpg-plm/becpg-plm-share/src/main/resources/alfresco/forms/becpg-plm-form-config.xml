@@ -6275,6 +6275,7 @@
 			<form id="filter">
 				<field-visibility>
 					<show id="bcpg:depthLevel" />
+					<show id="entity_bcpg:compoListProduct_bcpg:product" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:depthLevel">
