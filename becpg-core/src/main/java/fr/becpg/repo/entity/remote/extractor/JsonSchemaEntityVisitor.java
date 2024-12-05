@@ -261,10 +261,11 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 
 	}
 
-	/** {@inheritDoc} */
+	/** {@inheritDoc} 
+	 * @throws RemoteException */
 	@Override
 	protected void visitNode(NodeRef nodeRef, JSONObject entity, JsonVisitNodeType type, QName assocName, RemoteJSONContext context)
-			throws JSONException {
+			throws JSONException, RemoteException {
 		cacheList.add(nodeRef);
 		QName nodeType = nodeService.getType(nodeRef).getPrefixedQName(namespaceService);
 
@@ -387,9 +388,10 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 		//"contentMediaType": "image/png"
 	}
 
-	/** {@inheritDoc} */
+	/** {@inheritDoc} 
+	 * @throws RemoteException */
 	@Override
-	protected void visitAssocs(NodeRef nodeRef, JSONObject entity, QName assocName, RemoteJSONContext context) throws JSONException {
+	protected void visitAssocs(NodeRef nodeRef, JSONObject entity, QName assocName, RemoteJSONContext context) throws JSONException, RemoteException {
 
 		TypeDefinition typeDef = entityDictionaryService.getType(nodeService.getType(nodeRef));
 		if (typeDef != null) {
