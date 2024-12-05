@@ -429,18 +429,23 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		return ret;
 
 	}
-
-	/** {@inheritDoc} */
+	
 	@Override
-	public List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QNamePattern qNamePattern) {
+	public List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QNamePattern qNamePattern, boolean includeVersions) {
 		List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, qNamePattern);
 		List<NodeRef> listItems = new LinkedList<>();
 		for (AssociationRef assocRef : assocRefs) {
-			if (!isVersion(assocRef.getSourceRef()) && !nodeService.hasAspect(assocRef.getSourceRef(), BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
+			if (includeVersions || !isVersion(assocRef.getSourceRef()) && !nodeService.hasAspect(assocRef.getSourceRef(), BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
 				listItems.add(assocRef.getSourceRef());
 			}
 		}
 		return listItems;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QNamePattern qNamePattern) {
+		return getSourcesAssocs(nodeRef, qNamePattern, false);
 	}
 	
 	private boolean isVersion(NodeRef nodeRef) {
