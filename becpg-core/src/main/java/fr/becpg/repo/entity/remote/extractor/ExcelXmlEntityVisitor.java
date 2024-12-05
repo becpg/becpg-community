@@ -75,9 +75,10 @@ public class ExcelXmlEntityVisitor extends AbstractEntityVisitor {
 
 	private static final Log logger = LogFactory.getLog(ExcelXmlEntityVisitor.class);
 
-	/** {@inheritDoc} */
+	/** {@inheritDoc} 
+	 * @throws RemoteException */
 	@Override
-	public void visit(NodeRef entityNodeRef, OutputStream result) throws XMLStreamException {
+	public void visit(NodeRef entityNodeRef, OutputStream result) throws XMLStreamException, RemoteException {
 
 		XMLStreamWriter xmlw = createWriter(result);
 		// Visit node
@@ -89,9 +90,10 @@ public class ExcelXmlEntityVisitor extends AbstractEntityVisitor {
 
 	}
 
-	/** {@inheritDoc} */
+	/** {@inheritDoc} 
+	 * @throws RemoteException */
 	@Override
-	public void visit(PagingResults<NodeRef> entities, OutputStream result) throws XMLStreamException {
+	public void visit(PagingResults<NodeRef> entities, OutputStream result) throws XMLStreamException, RemoteException {
 
 		XMLStreamWriter xmlw = createWriter(result);
 
@@ -109,9 +111,10 @@ public class ExcelXmlEntityVisitor extends AbstractEntityVisitor {
 
 	}
 
-	/** {@inheritDoc} */
+	/** {@inheritDoc} 
+	 * @throws RemoteException */
 	@Override
-	public void visitData(NodeRef entityNodeRef, OutputStream result) throws XMLStreamException {
+	public void visitData(NodeRef entityNodeRef, OutputStream result) throws XMLStreamException, RemoteException {
 
 		XMLStreamWriter xmlw = createWriter(result);
 		// Visit node
@@ -142,7 +145,7 @@ public class ExcelXmlEntityVisitor extends AbstractEntityVisitor {
 	}
 
 	private void visitNode(NodeRef nodeRef, String name, XMLStreamWriter xmlw, boolean assocs, boolean props, boolean content)
-			throws XMLStreamException {
+			throws XMLStreamException, RemoteException {
 
 		QName nodeType = nodeService.getType(nodeRef).getPrefixedQName(namespaceService);
 		xmlw.writeStartElement(name != null ? name : getXmlName(nodeType));
@@ -202,7 +205,7 @@ public class ExcelXmlEntityVisitor extends AbstractEntityVisitor {
 		xmlw.writeEndElement();
 	}
 
-	private void visitAssocs(NodeRef nodeRef, XMLStreamWriter xmlw) throws XMLStreamException {
+	private void visitAssocs(NodeRef nodeRef, XMLStreamWriter xmlw) throws XMLStreamException, RemoteException {
 
 		Map<QName, AssociationDefinition> assocs = new HashMap<>(entityDictionaryService.getType(nodeService.getType(nodeRef)).getAssociations());
 		for (QName aspect : nodeService.getAspects(nodeRef)) {
@@ -255,7 +258,7 @@ public class ExcelXmlEntityVisitor extends AbstractEntityVisitor {
 		return nodeType.toPrefixString(namespaceService).replace(":", "_");
 	}
 
-	private void visitProps(NodeRef nodeRef, XMLStreamWriter xmlw) throws XMLStreamException {
+	private void visitProps(NodeRef nodeRef, XMLStreamWriter xmlw) throws XMLStreamException, RemoteException {
 
 		Map<QName, Serializable> props = nodeService.getProperties(nodeRef);
 		if (props != null) {
@@ -284,7 +287,7 @@ public class ExcelXmlEntityVisitor extends AbstractEntityVisitor {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void visitPropValue(Serializable value, XMLStreamWriter xmlw) throws XMLStreamException {
+	private void visitPropValue(Serializable value, XMLStreamWriter xmlw) throws XMLStreamException, RemoteException {
 		if (value instanceof List) {
 			xmlw.writeStartElement(RemoteEntityService.ELEM_LIST);
 			for (Serializable subEl : (List<Serializable>) value) {
