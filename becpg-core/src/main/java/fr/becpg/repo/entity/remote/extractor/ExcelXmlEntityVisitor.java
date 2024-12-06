@@ -75,8 +75,7 @@ public class ExcelXmlEntityVisitor extends AbstractEntityVisitor {
 
 	private static final Log logger = LogFactory.getLog(ExcelXmlEntityVisitor.class);
 
-	/** {@inheritDoc} 
-	 * @throws RemoteException */
+	/** {@inheritDoc} */
 	@Override
 	public void visit(NodeRef entityNodeRef, OutputStream result) throws XMLStreamException, RemoteException {
 
@@ -90,8 +89,7 @@ public class ExcelXmlEntityVisitor extends AbstractEntityVisitor {
 
 	}
 
-	/** {@inheritDoc} 
-	 * @throws RemoteException */
+	/** {@inheritDoc} */
 	@Override
 	public void visit(PagingResults<NodeRef> entities, OutputStream result) throws XMLStreamException, RemoteException {
 
@@ -111,8 +109,7 @@ public class ExcelXmlEntityVisitor extends AbstractEntityVisitor {
 
 	}
 
-	/** {@inheritDoc} 
-	 * @throws RemoteException */
+	/** {@inheritDoc} */
 	@Override
 	public void visitData(NodeRef entityNodeRef, OutputStream result) throws XMLStreamException, RemoteException {
 

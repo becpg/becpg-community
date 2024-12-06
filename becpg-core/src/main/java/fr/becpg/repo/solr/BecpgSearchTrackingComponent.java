@@ -14,6 +14,11 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
+/**
+ * <p>BecpgSearchTrackingComponent class.</p>
+ *
+ * @author matthieu
+ */
 public class BecpgSearchTrackingComponent extends SOLRTrackingComponentImpl {
 
 	private static Log logger = LogFactory.getLog(BecpgSearchTrackingComponent.class);
@@ -27,12 +32,14 @@ public class BecpgSearchTrackingComponent extends SOLRTrackingComponentImpl {
 	protected NamespaceService namespaceService;
 	protected DictionaryService dictionaryService;
 
+	/** {@inheritDoc} */
 	@Override
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 		super.setNamespaceService(namespaceService);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
@@ -41,15 +48,26 @@ public class BecpgSearchTrackingComponent extends SOLRTrackingComponentImpl {
 	
 	
 
+	/**
+	 * <p>Setter for the field <code>typesToExcludeFromSearch</code>.</p>
+	 *
+	 * @param typesToExcludeFromSearch a {@link java.util.List} object
+	 */
 	public void setTypesToExcludeFromSearch(List<String> typesToExcludeFromSearch) {
 		this.typesToExcludeFromSearch = typesToExcludeFromSearch;
 	}
 	
 	
+	/**
+	 * <p>Setter for the field <code>beCPGQueryBuilder</code>.</p>
+	 *
+	 * @param beCPGQueryBuilder a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object
+	 */
 	public void setBeCPGQueryBuilder(BeCPGQueryBuilder beCPGQueryBuilder) {
 		this.beCPGQueryBuilder = beCPGQueryBuilder;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void init() {
 	     Set<QName> typesToExclude = new HashSet<>();
@@ -71,6 +89,7 @@ public class BecpgSearchTrackingComponent extends SOLRTrackingComponentImpl {
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public void getNodes(NodeParameters nodeParameters, NodeQueryCallback callback) {
 		Set<QName> exludesTypes =  BeCPGQueryBuilder.getTypesExcludedFromIndex();
