@@ -561,10 +561,20 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	
 	
 
+	/**
+	 * <p>isDoNotPropagateYield.</p>
+	 *
+	 * @return a boolean
+	 */
 	public boolean isDoNotPropagateYield() {
 		return doNotPropagateYield;
 	}
 
+	/**
+	 * <p>Setter for the field <code>doNotPropagateYield</code>.</p>
+	 *
+	 * @param doNotPropagateYield a boolean
+	 */
 	public void setDoNotPropagateYield(boolean doNotPropagateYield) {
 		this.doNotPropagateYield = doNotPropagateYield;
 	}

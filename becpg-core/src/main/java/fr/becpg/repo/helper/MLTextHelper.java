@@ -132,6 +132,12 @@ public class MLTextHelper {
 	}
 	
     	
+	/**
+	 * <p>isDisabledMLTextField.</p>
+	 *
+	 * @param propertyQNamePrexiString a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	public static boolean isDisabledMLTextField(String propertyQNamePrexiString) {
 		String disabledMLTextFields = SystemConfigurationRegistry.instance().confValue("beCPG.multilinguale.disabledMLTextFields");
 		if(disabledMLTextFields !=null && !disabledMLTextFields.isBlank()
@@ -267,7 +273,7 @@ public class MLTextHelper {
 	 * Replace any text in mlText having the same language (but any variant) as contentLocale
 	 * with updatedText keyed by the language of contentLocale. This ensures that the mlText
 	 * will have no more than one entry for the particular language.
-	 * 
+	 *
 	 * @param contentLocale Locale
 	 * @param updatedText String
 	 * @param mlText MLText

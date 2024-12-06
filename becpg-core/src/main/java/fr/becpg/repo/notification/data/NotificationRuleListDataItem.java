@@ -58,12 +58,22 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 		super();	
 	}
 	
+	/**
+	 * <p>Getter for the field <code>disabled</code>.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:nrDisabled")
 	public Boolean getDisabled() {
 		return disabled;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>disabled</code>.</p>
+	 *
+	 * @param disabled a {@link java.lang.Boolean} object
+	 */
 	public void setDisabled(Boolean disabled) {
 		this.disabled = disabled;
 	}

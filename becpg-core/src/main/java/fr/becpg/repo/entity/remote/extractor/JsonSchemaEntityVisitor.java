@@ -261,8 +261,7 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 
 	}
 
-	/** {@inheritDoc} 
-	 * @throws RemoteException */
+	/** {@inheritDoc} */
 	@Override
 	protected void visitNode(NodeRef nodeRef, JSONObject entity, JsonVisitNodeType type, QName assocName, RemoteJSONContext context)
 			throws JSONException, RemoteException {
@@ -388,8 +387,7 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 		//"contentMediaType": "image/png"
 	}
 
-	/** {@inheritDoc} 
-	 * @throws RemoteException */
+	/** {@inheritDoc} */
 	@Override
 	protected void visitAssocs(NodeRef nodeRef, JSONObject entity, QName assocName, RemoteJSONContext context) throws JSONException, RemoteException {
 
