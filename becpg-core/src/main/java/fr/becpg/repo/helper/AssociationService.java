@@ -116,6 +116,14 @@ public interface AssociationService {
 	 */
 	List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QNamePattern qNamePattern);
 	
+	/**
+	 * <p>getSourcesAssocs.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param qNamePattern a {@link org.alfresco.service.namespace.QNamePattern} object
+	 * @param includeVersions a boolean
+	 * @return a {@link java.util.List} object
+	 */
 	List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QNamePattern qNamePattern, boolean includeVersions);
 	/**
 	 * <p>getEntitySourceAssocs.</p>

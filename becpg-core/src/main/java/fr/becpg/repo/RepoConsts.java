@@ -303,6 +303,7 @@ public class RepoConsts
 	/** Constant <code>CATALOGS_PATH="/app:company_home/cm:System/cm:Property"{trunked}</code> */
 	public static final String CATALOGS_PATH = "/app:company_home/cm:System/cm:PropertyCatalogs";
 
+	/** Constant <code>PATH_SAVED_SEARCHES</code> */
 	public static final Object PATH_SAVED_SEARCHES = "saved_searches";
 
 	

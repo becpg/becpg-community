@@ -116,6 +116,12 @@ public class RawMaterialData extends ProductData {
 		return this;
 	}
 
+	/**
+	 * <p>withPlants.</p>
+	 *
+	 * @param plants a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.product.data.RawMaterialData} object
+	 */
 	public RawMaterialData withPlants(List<NodeRef> plants) {
 		setPlants(plants);
 		return this;
@@ -132,6 +138,12 @@ public class RawMaterialData extends ProductData {
 		return this;
 	}
 	
+	/**
+	 * <p>withIngList.</p>
+	 *
+	 * @param ingList a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.product.data.RawMaterialData} object
+	 */
 	public RawMaterialData withIngList(List<IngListDataItem> ingList) {
 		setIngList(ingList);
 		return this;
