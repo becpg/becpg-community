@@ -8,7 +8,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.junit.Assert;
 import org.junit.Test;
 
-import fr.becpg.model.PLMModel;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
@@ -59,18 +58,18 @@ public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTes
 	}
 
 	@Test
-	public void testDoNotPropagateYield()  {
+	public void testDoNotPropagateYield() {
 		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
 
 			StandardChocolateEclairTestProduct testProduct = new StandardChocolateEclairTestProduct.Builder()
 					.withAlfrescoRepository(alfrescoRepository).withNodeService(nodeService).withDestFolder(getTestFolderNodeRef()).withCompo(false)
 					.withLabeling(false).withIngredients(true).build();
 			testProduct.initCompoProduct();
-			
-			 FinishedProductData biscuit = testProduct.createTestProduct();
-			 biscuit.setName("Crousti-Flow 💧🍪");
-			 biscuit.withQty(100d);
-			 
+
+			FinishedProductData biscuit = testProduct.createTestProduct();
+			biscuit.setName("Crousti-Flow 💧🍪");
+			biscuit.withQty(100d);
+
 			SemiFinishedProductData bisCuiCui = SemiFinishedProductData.build().withName("BisCuiCui 🐦🐦🐦").withQty(80d).withUnit(ProductUnit.kg)
 					.withCompoList(List.of(
 							CompoListDataItem.build().withQtyUsed(15d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
@@ -80,41 +79,32 @@ public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTes
 							CompoListDataItem.build().withQtyUsed(50d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
 									.withProduct(testProduct.getEggNodeRef()),
 							CompoListDataItem.build().withQtyUsed(15d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
-							.withProduct(testProduct.getSugarNodeRef())));
-			
-			
+									.withProduct(testProduct.getSugarNodeRef())));
 
 			NodeRef biscuicuiNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), bisCuiCui).getNodeRef();
-			
-			
+
 			biscuit.withCompoList(List.of(
 					CompoListDataItem.build().withQtyUsed(50d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
 							.withProduct(testProduct.getWaterNodeRef()),
 					CompoListDataItem.build().withQtyUsed(50d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
 							.withProduct(biscuicuiNodeRef)));
-			
-	//		nodeService.setProperty(testProduct.getEggNodeRef(), PLMModel.PROP_EVAPORATED_RATE, 10d);
-			
+
 			return alfrescoRepository.save(biscuit).getNodeRef();
 		});
 
 		Assert.assertNotNull(finishedProductNodeRef);
 
-		checkILL(finishedProductNodeRef, 
-				List.of(LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render),
-						LabelingRuleListDataItem.build().withName("Rendu as HTML").withFormula("renderAsHtmlTable()")
-								.withLabelingRuleType(LabelingRuleType.Render),
-						LabelingRuleListDataItem.build().withName("%").withFormula("{0} {1,number,0.#%} ({2})")
-								.withLabelingRuleType(LabelingRuleType.Format),
-						LabelingRuleListDataItem.build().withName("Param1").withFormula("ingsLabelingWithYield=true")
-								.withLabelingRuleType(LabelingRuleType.Prefs),
-				LabelingRuleListDataItem.build().withName("doNotPropagateYield")
-				.withFormula("doNotPropagateYield=true").withLabelingRuleType(LabelingRuleType.Prefs)),
-				" Eau 50%, Oeuf 28,1%, Farine 12,5%, Sucre 9,4%",
-				Locale.FRENCH);
+		checkILL(finishedProductNodeRef, new ArrayList<>(List.of(
+				LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render),
+				LabelingRuleListDataItem.build().withName("Rendu as HTML").withFormula("renderAsHtmlTable()")
+						.withLabelingRuleType(LabelingRuleType.Render),
+				LabelingRuleListDataItem.build().withName("%").withFormula("{0} {1,number,0.#%} ({2})").withLabelingRuleType(LabelingRuleType.Format),
+				LabelingRuleListDataItem.build().withName("Param1").withFormula("ingsLabelingWithYield=true")
+						.withLabelingRuleType(LabelingRuleType.Prefs),
+				LabelingRuleListDataItem.build().withName("doNotPropagateYield").withFormula("doNotPropagateYield=true")
+						.withLabelingRuleType(LabelingRuleType.Prefs))),
+				" Eau 50%, Oeuf 28,1%, Farine 12,5%, Sucre 9,4%", Locale.FRENCH);
 
 	}
-	
-	
 
 }
