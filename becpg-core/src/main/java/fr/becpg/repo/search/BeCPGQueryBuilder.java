@@ -195,10 +195,20 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 	
 	
+	/**
+	 * <p>Setter for the field <code>typesToExcludeFromIndex</code>.</p>
+	 *
+	 * @param typesToExcludeFromIndex a {@link java.util.Set} object
+	 */
 	public void setTypesToExcludeFromIndex(Set<QName> typesToExcludeFromIndex) {
 		this.typesToExcludeFromIndex = typesToExcludeFromIndex;
 	}
 
+	/**
+	 * <p>getTypesExcludedFromIndex.</p>
+	 *
+	 * @return a {@link java.util.Set} object
+	 */
 	public static Set<QName> getTypesExcludedFromIndex() {
 		return INSTANCE.typesToExcludeFromIndex.stream()
 	            .filter(nodeType -> !INSTANCE.systemConfigurationService.confValue(ENABLE_INDEX_TYPES_KEY)
@@ -206,6 +216,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	            .collect(Collectors.toSet());
 	}
 	
+	/**
+	 * <p>isExcludedFromIndex.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 * @return a boolean
+	 */
 	public static boolean isExcludedFromIndex(QName type) {
 		return getTypesExcludedFromIndex().contains(type);
 	}
@@ -232,6 +248,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		return builder;
 	}
 
+	/**
+	 * <p>inStore.</p>
+	 *
+	 * @param store a {@link org.alfresco.service.cmr.repository.StoreRef} object
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object
+	 */
 	public BeCPGQueryBuilder inStore(StoreRef store) {
 		this.store = store;
 		return this;
@@ -979,6 +1001,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	
+	/**
+	 * <p>selectNodeByPath.</p>
+	 *
+	 * @param xPath a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public NodeRef selectNodeByPath(String xPath) {
 	
 		return selectNodeByPath(repository.getRootHome(),xPath);

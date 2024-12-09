@@ -192,6 +192,11 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	
 	private RemoteUserMapper remoteUserMapper;
 	
+	/**
+	 * <p>Setter for the field <code>remoteUserMapper</code>.</p>
+	 *
+	 * @param remoteUserMapper a {@link org.alfresco.repo.security.authentication.external.RemoteUserMapper} object
+	 */
 	public void setRemoteUserMapper(RemoteUserMapper remoteUserMapper) {
 		this.remoteUserMapper = remoteUserMapper;
 	}
@@ -2236,6 +2241,11 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		}
 	}
 	
+	/**
+	 * <p>isSsoEnabled.</p>
+	 *
+	 * @return a boolean
+	 */
 	public boolean isSsoEnabled() {
         return remoteUserMapper != null && (!(remoteUserMapper instanceof ActivateableBean activateableBean) || activateableBean.isActive());
 	}
