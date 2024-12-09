@@ -140,6 +140,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	/** Constant <code>PRODUCT_IMG_ID="Img%d"</code> */
 	protected static final String PRODUCT_IMG_ID = "Img%d";
 	
+	/** Constant <code>DATALIST_IMG_ID="Datalist_Img_%s"</code> */
 	protected static final String DATALIST_IMG_ID = "Datalist_Img_%s";
 	
 	
@@ -462,6 +463,14 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		}
 	}
 	
+	/**
+	 * <p>extractImage.</p>
+	 *
+	 * @param imgNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param imgId a {@link java.lang.String} object
+	 * @param imgsElt a {@link org.dom4j.Element} object
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
+	 */
 	protected void extractImage(NodeRef imgNodeRef, String imgId, Element imgsElt, DefaultExtractorContext context) {
 		if (ApplicationModel.TYPE_FILELINK.equals(nodeService.getType(imgNodeRef))) {
 			imgNodeRef = (NodeRef) nodeService.getProperty(imgNodeRef, ContentModel.PROP_LINK_DESTINATION);

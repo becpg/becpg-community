@@ -80,6 +80,11 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 
 	
 	
+	/**
+	 * <p>Setter for the field <code>sysAdminParams</code>.</p>
+	 *
+	 * @param sysAdminParams a {@link org.alfresco.repo.admin.SysAdminParams} object
+	 */
 	public void setSysAdminParams(SysAdminParams sysAdminParams) {
 		this.sysAdminParams = sysAdminParams;
 	}

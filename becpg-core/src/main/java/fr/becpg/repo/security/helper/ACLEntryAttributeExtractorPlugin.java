@@ -13,9 +13,15 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.SecurityModel;
 import fr.becpg.repo.helper.impl.CharactAttributeExtractorPlugin;
 
+/**
+ * <p>ACLEntryAttributeExtractorPlugin class.</p>
+ *
+ * @author matthieu
+ */
 @Service
 public class ACLEntryAttributeExtractorPlugin extends CharactAttributeExtractorPlugin {
 	
+	/** {@inheritDoc} */
 	@Override
 	public String extractPropName(QName type, NodeRef nodeRef) {
 		String permission = I18NUtil.getMessage("listconstraint.sec_aclPermission." + nodeService.getProperty(nodeRef, SecurityModel.PROP_ACL_PERMISSION));
@@ -37,11 +43,13 @@ public class ACLEntryAttributeExtractorPlugin extends CharactAttributeExtractorP
 		return permission;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Collection<QName> getMatchingTypes() {
 		return Collections.singletonList(SecurityModel.TYPE_ACL_ENTRY);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public Integer getPriority() {
 		return 1;

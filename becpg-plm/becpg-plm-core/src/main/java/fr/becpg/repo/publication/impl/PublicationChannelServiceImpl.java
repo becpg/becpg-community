@@ -126,10 +126,20 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 				new JavaBehaviour(this, "onUpdateNode"));
 	}
 
+	/**
+	 * <p>Setter for the field <code>beCPGCacheService</code>.</p>
+	 *
+	 * @param beCPGCacheService a {@link fr.becpg.repo.cache.BeCPGCacheService} object
+	 */
 	public void setBeCPGCacheService(BeCPGCacheService beCPGCacheService) {
 		this.beCPGCacheService = beCPGCacheService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>systemConfigurationService</code>.</p>
+	 *
+	 * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
+	 */
 	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
 		this.systemConfigurationService = systemConfigurationService;
 	}
