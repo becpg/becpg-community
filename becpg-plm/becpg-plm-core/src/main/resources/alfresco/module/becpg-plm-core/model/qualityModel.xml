@@ -485,6 +485,7 @@
             <mandatory-aspects>
                 <aspect>bcpg:codeAspect</aspect>
                 <aspect>qa:batchAspect</aspect>
+                <aspect>bcpg:entityTplRefAspect</aspect>
             </mandatory-aspects>
         </type>
         
