@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -53,6 +54,7 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
@@ -82,6 +84,7 @@ import fr.becpg.repo.ecm.data.dataList.ChangeUnitDataItem;
 import fr.becpg.repo.ecm.data.dataList.ReplacementListDataItem;
 import fr.becpg.repo.ecm.data.dataList.SimulationListDataItem;
 import fr.becpg.repo.ecm.data.dataList.WUsedListDataItem;
+import fr.becpg.repo.entity.datalist.WUsedFilter;
 import fr.becpg.repo.entity.datalist.WUsedListService;
 import fr.becpg.repo.entity.datalist.WUsedListService.WUsedOperator;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
@@ -158,6 +161,9 @@ public class ECOServiceImpl implements ECOService {
 	
 	@Autowired
 	private EntityActivityService entityActivityService;
+	
+	@Value("${beCPG.eco.impactwused.states}")
+	private String impactWUsedStates;
 
 	/** {@inheritDoc} */
 	@Override
@@ -956,9 +962,34 @@ public class ECOServiceImpl implements ECOService {
 
 					List<QName> associationQNames = evaluateWUsedAssociations(replacements);
 
+					WUsedFilter filter = null;
+					
+					if (ChangeOrderType.ImpactWUsed.equals(ecoData.getEcoType())) {
+						List<String> impactWUsedStatesList = Arrays.stream(impactWUsedStates.split(",")).toList();
+						filter = new WUsedFilter() {
+							@Override
+							public WUsedFilterKind getFilterKind() {
+								return WUsedFilterKind.STANDARD;
+							}
+							@Override
+							public void filter(MultiLevelListData wUsedData) {
+								for (Iterator<Entry<NodeRef, MultiLevelListData>> iterator = wUsedData.getTree().entrySet().iterator(); iterator
+										.hasNext();) {
+									Entry<NodeRef, MultiLevelListData> entry = iterator.next();
+									NodeRef nodeRef = entry.getValue().getEntityNodeRef();
+									String productState = (String) nodeService.getProperty(nodeRef, PLMModel.PROP_PRODUCT_STATE);
+									if (!impactWUsedStatesList.contains(productState)) {
+										iterator.remove();
+									}
+								}
+							}
+						};
+					}
+					
 					for (QName associationQName : associationQNames) {
 
-						MultiLevelListData wUsedData = wUsedListService.getWUsedEntity(replacements, WUsedOperator.AND, associationQName,
+						
+						MultiLevelListData wUsedData = wUsedListService.getWUsedEntity(replacements, WUsedOperator.AND, filter, associationQName,
 								RepoConsts.MAX_DEPTH_LEVEL);
 
 						QName datalistQName = evaluateListFromAssociation(associationQName);
