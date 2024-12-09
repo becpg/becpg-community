@@ -32,9 +32,9 @@ public class MLTextHelper {
 
 	private static Map<String, MLText> mlTextCache = new ConcurrentHashMap<>();
 
-	private static List<Locale> supportedLocales = null;
+	private static  List<Locale> supportedLocales = null;
 
-	private static String supportedLocalesText = null;
+	private static  String supportedLocalesText = null;
 
 	/**
 	 * <p>Constructor for MLTextHelper.</p>
@@ -79,27 +79,29 @@ public class MLTextHelper {
 	public static List<Locale> getSupportedLocales() {
 
 		if (supportedLocales == null) {
-			supportedLocales = new ArrayList<>();
 
-			if (supportedLocalesText() != null) {
-				String[] locales = supportedLocalesText().split(",");
-				for (String key : locales) {
-					supportedLocales.add(parseLocale(key));
+			   synchronized (MLTextHelper.class) {
+				supportedLocales = new ArrayList<>();
+	
+				if (supportedLocalesText() != null) {
+					String[] locales = supportedLocalesText().split(",");
+					for (String key : locales) {
+						supportedLocales.add(parseLocale(key.trim()));
+					}
 				}
-			}
-
-			// put default locale in first position and sort by name
-
-			supportedLocales.sort((a, b) -> {
-				if (MLTextHelper.isDefaultLocale(a)) {
-					return -1;
-				} else if (MLTextHelper.isDefaultLocale(b)) {
-					return 1;
-				} else {
-					return localeLabel(a).compareTo(localeLabel(b));
-				}
-			});
-
+	
+				// put default locale in first position and sort by name
+	
+				supportedLocales.sort((a, b) -> {
+					if (MLTextHelper.isDefaultLocale(a)) {
+						return -1;
+					} else if (MLTextHelper.isDefaultLocale(b)) {
+						return 1;
+					} else {
+						return localeLabel(a).compareTo(localeLabel(b));
+					}
+				});
+			   }
 		}
 
 		return supportedLocales;
