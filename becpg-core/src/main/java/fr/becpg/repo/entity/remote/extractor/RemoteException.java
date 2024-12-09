@@ -27,5 +27,15 @@ public class RemoteException extends Exception {
 	public RemoteException(String message) {
 		super(message);
 	}
+
+	/**
+	 * <p>Constructor for RemoteException.</p>
+	 *
+	 * @param message a {@link java.lang.String} object
+	 * @param cause a {@link java.lang.Exception} object
+	 */
+	public RemoteException(String message, Exception cause) {
+		super(message, cause);
+	}
 	
 }

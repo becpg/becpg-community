@@ -54,6 +54,11 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 	private IntegrityChecker integrityChecker;
 	private AssociationService associationService;
 	
+	/**
+	 * <p>Setter for the field <code>associationService</code>.</p>
+	 *
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object
+	 */
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
