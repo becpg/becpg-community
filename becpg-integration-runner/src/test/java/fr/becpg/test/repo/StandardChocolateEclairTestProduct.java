@@ -155,7 +155,7 @@ public class StandardChocolateEclairTestProduct {
 	private boolean isWithLabeling = true;
 	private boolean isWithGenericRawMaterial = true;
 	private boolean isWithStocks = true;
-	private boolean isWithIngredients = true;
+	private boolean isWithIngredients = false;
 
 	// Private constructor to prevent direct instantiation
 	private StandardChocolateEclairTestProduct(Builder builder) {
@@ -179,7 +179,7 @@ public class StandardChocolateEclairTestProduct {
 		private boolean isWithLabeling = true;
 		private boolean isWithGenericRawMaterial = true;
 		private boolean isWithStocks = true;
-		private boolean isWithIngredients = true;
+		private boolean isWithIngredients = false;
 
 		public Builder withAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
 			this.alfrescoRepository = alfrescoRepository;
