@@ -1604,7 +1604,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							logger.warn("Diluent or Target ing is null for: " + productData.getName());
 						}
 					} else {
-						logger.warn("No reconstitution rate on: " + productData.getName());
+						logger.debug("No reconstitution rate on: " + productData.getName());
 					}
 				}
 
