@@ -1038,7 +1038,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				logger.info("Cannot merge "+ branchNodeRef+ " you don't have permission");
 			}
 		}
-		return null;
+		return branchToNodeRef;
 	}
 
 	private void triggerRules(NodeRef internalBranchToNodeRef) {
