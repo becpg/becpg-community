@@ -185,13 +185,13 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	private BeCPGTicketService beCPGTicketService;
 
 	private BehaviourFilter policyBehaviourFilter;
-	
+
 	private AuthorityService authorityService;
-	
+
 	private PersonService personService;
-	
+
 	private RemoteUserMapper remoteUserMapper;
-	
+
 	/**
 	 * <p>Setter for the field <code>remoteUserMapper</code>.</p>
 	 *
@@ -200,7 +200,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public void setRemoteUserMapper(RemoteUserMapper remoteUserMapper) {
 		this.remoteUserMapper = remoteUserMapper;
 	}
-	
+
 	/**
 	 * <p>Setter for the field <code>personService</code>.</p>
 	 *
@@ -209,7 +209,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public void setPersonService(PersonService personService) {
 		this.personService = personService;
 	}
-	
+
 	/**
 	 * <p>Setter for the field <code>authorityService</code>.</p>
 	 *
@@ -218,9 +218,9 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public void setAuthorityService(AuthorityService authorityService) {
 		this.authorityService = authorityService;
 	}
-	
+
 	private MutableAuthenticationService authenticationService;
-	
+
 	/**
 	 * <p>Setter for the field <code>authenticationService</code>.</p>
 	 *
@@ -229,7 +229,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public void setAuthenticationService(MutableAuthenticationService authenticationService) {
 		this.authenticationService = authenticationService;
 	}
-	
+
 	private boolean useBrowserLocale;
 
 	private boolean showUnauthorizedWarning = true;
@@ -1243,7 +1243,9 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public ScriptNode mergeBranch(ScriptNode entity, ScriptNode branchTo, String description, String type) {
 		NodeRef retNodeRef = entityVersionService.mergeBranch(entity.getNodeRef(), branchTo != null ? branchTo.getNodeRef() : null,
 				VersionType.valueOf(type), description);
-
+		if (retNodeRef == null) {
+			throw new IllegalStateException("Cannot merge :" + entity.getNodeRef());
+		}
 		return new ScriptNode(retNodeRef, serviceRegistry);
 	}
 
@@ -1787,7 +1789,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public boolean isLicenseValid() {
 		return beCPGLicenseManager.isLicenseValid();
 	}
-	
+
 	/**
 	 * <p>isSpecialLicenceUser.</p>
 	 *
@@ -2178,7 +2180,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public String[] extractPeople(String[] authorities) {
 		return AuthorityHelper.extractPeople(Set.of(authorities)).toArray(new String[0]);
 	}
-	
+
 	/**
 	 * <p>floatingLicensesExceeded.</p>
 	 *
@@ -2188,7 +2190,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public boolean floatingLicensesExceeded(String sessionId) {
 		return beCPGLicenseManager.floatingLicensesExceeded(sessionId);
 	}
-	
+
 	/**
 	 * <p>hasWriteLicense.</p>
 	 *
@@ -2205,12 +2207,13 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * @return a boolean
 	 */
 	public boolean isAccountEnabled(String userName) {
-		if (!authenticationService.isAuthenticationMutable(userName) && nodeService.hasAspect(personService.getPerson(userName), ContentModel.ASPECT_PERSON_DISABLED)) {
+		if (!authenticationService.isAuthenticationMutable(userName)
+				&& nodeService.hasAspect(personService.getPerson(userName), ContentModel.ASPECT_PERSON_DISABLED)) {
 			return false;
 		}
 		return this.authenticationService.getAuthenticationEnabled(userName);
 	}
-	
+
 	/**
 	 * <p>enableAccount.</p>
 	 *
@@ -2240,14 +2243,14 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 			this.authenticationService.setAuthenticationEnabled(userName, false);
 		}
 	}
-	
+
 	/**
 	 * <p>isSsoEnabled.</p>
 	 *
 	 * @return a boolean
 	 */
 	public boolean isSsoEnabled() {
-        return remoteUserMapper != null && (!(remoteUserMapper instanceof ActivateableBean activateableBean) || activateableBean.isActive());
+		return remoteUserMapper != null && (!(remoteUserMapper instanceof ActivateableBean activateableBean) || activateableBean.isActive());
 	}
 
 }
