@@ -36,6 +36,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.extensions.surf.util.ISO8601DateFormat;
 import org.springframework.stereotype.Service;
@@ -95,6 +96,9 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 
 	@Autowired
 	private EntityCatalogObserver[] observers;
+	
+	@Value("${beCPG.multilinguale.disabledMLTextFields}")
+	private String disabledMLTextFields;
 
 	/**
 	 * <p>
@@ -653,7 +657,7 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 						propDef = dictionaryService.getProperty(fieldQname);
 						if (propDef instanceof PropertyDefinition ) {
 							if ((DataTypeDefinition.MLTEXT.equals(((PropertyDefinition)propDef).getDataType().getName()))
-									&& !MLTextHelper.isDisabledMLTextField(currentField)) {
+									&& !isDisabledMLTextField(currentField)) {
 								if (mlTextIsPresent(fieldQname, formulatedEntity.getNodeRef(), lang, currLang, properties)) {
 									logger.debug(" - mlProp is present");
 									present = true;
@@ -747,6 +751,16 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 
 		return ret;
 	}
+	
+  	
+	private boolean isDisabledMLTextField(String propertyQNamePrexiString) {
+		if(disabledMLTextFields !=null && !disabledMLTextFields.isBlank()
+				&& disabledMLTextFields.contains(propertyQNamePrexiString)){
+			return true;
+		}
+		return false;
+	}
+
 
 	private boolean mlTextIsPresent(QName fieldQname, NodeRef entityNodeRef, String lang, String curLang, Map<QName, Serializable> properties) {
 		boolean res = true;
