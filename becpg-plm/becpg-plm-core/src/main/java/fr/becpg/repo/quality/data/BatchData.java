@@ -490,7 +490,7 @@ public class BatchData extends AbstractScorableEntity {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result
-				+ Objects.hash(allocationList, batchId, batchQty, compoListView, currentReformulateCount, entityScore, entityTpl, formulatedDate,
+				+ Objects.hash(allocationList, batchId, batchQty, compoListView, currentReformulateCount, entityScore, formulatedDate,
 						formulationChainId, laboratories, plants, product, reformulateCount, requirementChecksum, state, unit, updateFormulatedDate);
 		return result;
 	}
