@@ -560,7 +560,6 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 				String authorityName = authorityDAO.getAuthorityName(resourceNodeRef);
 
 				if ((authorityName != null) && !ProjectHelper.isRoleAuhtority(authorityName)) {
-					logger.debug("Set permission for authority: " + authorityName + " allow :" + allow);
 					ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 					List<DeliverableListDataItem> deliverableList = ProjectHelper.getDeliverables(projectData, taskListNodeRef);
 					for (DeliverableListDataItem dl : deliverableList) {
@@ -577,12 +576,17 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 								}
 							}
 							if (updatePerm) {
+								if (logger.isDebugEnabled()) {
+									logger.debug("Set Coordinator permission for authority: " + authorityName + " nodeRef: " + n);
+								}
 								permissionService.setPermission(n, authorityName, PermissionService.COORDINATOR, true);
 							}
 						} else {
+							if (logger.isDebugEnabled()) {
+								logger.debug("Clear permission for authority: " + authorityName + " nodeRef: " + n);
+							}
 							permissionService.clearPermission(n, authorityName);
 						}
-
 					}
 				}
 			}
