@@ -55,7 +55,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
-import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.util.StringUtils;
@@ -64,6 +63,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.formulation.spel.BeCPGSpelExpressionParser;
 import fr.becpg.repo.formulation.spel.SpelFormulaContext;
 import fr.becpg.repo.formulation.spel.SpelFormulaService;
 import fr.becpg.repo.formulation.spel.SpelHelper;
@@ -3059,7 +3059,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		if ((formulaFilter.getFormula() != null) && !formulaFilter.getFormula().isEmpty()) {
 			if (!MeatType.isMeatType(formulaFilter.getFormula())) {
 				try {
-					ExpressionParser parser = new SpelExpressionParser();
+					ExpressionParser parser = new BeCPGSpelExpressionParser();
 
 					StandardEvaluationContext dataContext = formulaService.createCustomSpelContext(entity, formulaFilterContext, false);
 
