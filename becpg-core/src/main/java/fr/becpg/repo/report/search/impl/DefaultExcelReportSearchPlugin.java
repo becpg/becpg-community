@@ -24,21 +24,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
-import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.config.format.FormatMode;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.formulation.spel.BeCPGSpelExpressionParser;
 import fr.becpg.repo.formulation.spel.DataListItemSpelContext;
 import fr.becpg.repo.formulation.spel.SpelFormulaService;
 import fr.becpg.repo.formulation.spel.SpelHelper;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.ExcelHelper;
-import fr.becpg.repo.helper.JsonFormulaHelper;
 import fr.becpg.repo.helper.ExcelHelper.ExcelCellStyles;
+import fr.becpg.repo.helper.JsonFormulaHelper;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
@@ -332,7 +332,7 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 			return values.get(formula);
 		}
 
-		ExpressionParser parser = new SpelExpressionParser();
+		ExpressionParser parser = new BeCPGSpelExpressionParser();
 
 		EvaluationContext context = spelFormulaService.createCustomSpelContext(new SimpleRepositoryEntity(entityNodeRef),
 				new FormulaContext(spelFormulaService, itemNodeRef, values), false);
