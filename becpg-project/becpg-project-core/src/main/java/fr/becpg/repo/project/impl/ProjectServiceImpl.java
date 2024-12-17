@@ -560,6 +560,9 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 				String authorityName = authorityDAO.getAuthorityName(resourceNodeRef);
 
 				if ((authorityName != null) && !ProjectHelper.isRoleAuhtority(authorityName)) {
+					if (logger.isDebugEnabled()) {
+						logger.debug("Update task permission for authority: " + authorityName + ", taskNodeRef: " + taskListNodeRef + ", allow: " + allow);
+					}
 					ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 					List<DeliverableListDataItem> deliverableList = ProjectHelper.getDeliverables(projectData, taskListNodeRef);
 					for (DeliverableListDataItem dl : deliverableList) {
@@ -571,6 +574,9 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 							boolean updatePerm = true;
 							for (AccessPermission perm : permissionService.getAllSetPermissions(n)) {
 								if (authorityName.equals(perm.getAuthority()) && PermissionService.COORDINATOR.equals(perm.getPermission())) {
+									if (logger.isDebugEnabled()) {
+										logger.debug("Permission Coordinator already set for authority: " + authorityName + " nodeRef: " + n);
+									}
 									updatePerm = false;
 									break;
 								}
