@@ -86,7 +86,8 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 				"T(java.lang.Class).forName('java.lang.Runtime').getDeclaredMethod('getRuntime').setAccessible(true).invoke(null)",
 				"T(java.io.ObjectInputStream).newInstance(new java.io.FileInputStream('/tmp/malicious_object.ser')).readObject()",
 				"''.getClass().forName('java.lang.Runtime').getMethods()[6].invoke(''.getClass().forName('java.lang.Runtime')).exec('echo TEST')",
-				"T(sun.misc.Unsafe).getUnsafe().allocateMemory(1024 * 1024 * 10)", "T(org.apache.commons.io.FileUtils).forceDelete(new java.io.File('/path/to/sensitive/file'))");
+				"T(sun.misc.Unsafe).getUnsafe().allocateMemory(1024 * 1024 * 10)",
+				"T(org.apache.commons.io.FileUtils).forceDelete(new java.io.File('/path/to/sensitive/file'))");
 
 		for (String unsafeFormula : unsafeFormulas) {
 			NodeRef finishedProductDataNodeRef = inWriteTx(() -> {
@@ -100,9 +101,10 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 			});
 
 			inWriteTx(() -> {
-				L2CacheSupport.doInCacheContext(() -> AuthenticationUtil.runAsSystem(() -> {
-					return formulationService.formulate(finishedProductDataNodeRef, FormulationService.DEFAULT_CHAIN_ID);
-				}), false, true);
+				L2CacheSupport.doInCacheContext(
+						() -> AuthenticationUtil
+								.runAsSystem(() -> formulationService.formulate(finishedProductDataNodeRef, FormulationService.DEFAULT_CHAIN_ID)),
+						false, true);
 				return true;
 			});
 
@@ -116,8 +118,7 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 		}
 
 	}
-	
-	
+
 	@Test
 	public void testAuthorizedTypes() {
 		
@@ -158,9 +159,10 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 		});
 		
 		inWriteTx(() -> {
-			L2CacheSupport.doInCacheContext(() -> AuthenticationUtil.runAsSystem(() -> {
-				return formulationService.formulate(finishedProductDataNodeRef, FormulationService.DEFAULT_CHAIN_ID);
-			}), false, true);
+			L2CacheSupport.doInCacheContext(
+					() -> AuthenticationUtil
+							.runAsSystem(() -> formulationService.formulate(finishedProductDataNodeRef, FormulationService.DEFAULT_CHAIN_ID)),
+					false, true);
 			return true;
 		});
 		
@@ -314,7 +316,8 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 			compoList.add(new CompoListDataItem(null, null, null, 5d, ProductUnit.kg, 0d, DeclarationType.Detail, sf4NodeRef));
 			SF3.getCompoListView().setCompoList(compoList);
 
-			alfrescoRepository.save(SF3);
+			sf3.getCompoListView().setCompoList(compoList);
+			alfrescoRepository.save(sf3);
 
 			FinishedProductData FP1 = new FinishedProductData();
 			FP1.setName("FP1");
@@ -333,8 +336,7 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 			
 			alfrescoRepository.create(getTestFolderNodeRef(), FP1);
 
-			return FP1.getNodeRef();
-
+			return fp1.getNodeRef();
 		});
 		
 		inWriteTx(() -> {
@@ -345,7 +347,7 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 		});
 			
 		inWriteTx(() -> {
-			FinishedProductData FP1 = (FinishedProductData) alfrescoRepository.findOne(finishedProductDataNodeRef);
+			FinishedProductData fp1 = (FinishedProductData) alfrescoRepository.findOne(finishedProductDataNodeRef);
 
 			int checks = 0;
 			
@@ -361,8 +363,7 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 					JSONObject json = new JSONObject(dynCol.toString());
 					assertEquals(3, ((JSONArray) json.get("sub")).length());
 					checks++;
-				} else if ("SF3".equals(SF.getName())) {
-					JSONObject json = new JSONObject(dynCol.toString());
+				} else if ("SF3".equals(semiFinishedProduct.getName())) {
 					assertEquals(4, ((JSONArray) json.get("sub")).length());
 					checks++;
 				}
@@ -372,6 +373,6 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 			
 			return FP1.getNodeRef();
 		});
-
 	}
+
 }
