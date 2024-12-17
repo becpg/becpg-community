@@ -315,6 +315,10 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 				if (!((p.getPackagingListUnit() != null) && p.getPackagingListUnit().isVolume())) {
 					wrongUnit = true;
 				}
+			} else if (productUnit.isM()) {
+				if (!((p.getPackagingListUnit() != null) && p.getPackagingListUnit().isM())) {
+					wrongUnit = true;
+				}
 			} else {
 				if (ProductUnit.PP.equals(p.getPackagingListUnit())) {
 					if (!ProductUnit.P.equals(productUnit)) {
