@@ -55,7 +55,6 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.Resource;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.ParserContext;
-import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 
@@ -73,6 +72,7 @@ import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.remote.extractor.RemoteHelper;
+import fr.becpg.repo.formulation.spel.BeCPGSpelExpressionParser;
 import fr.becpg.repo.formulation.spel.SpelFormulaService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.PropertiesHelper;
@@ -469,7 +469,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 	private String parseFormula(String formula) throws ImporterException {
 		try {
-			ExpressionParser parser = new SpelExpressionParser();
+			ExpressionParser parser = new BeCPGSpelExpressionParser();
 			StandardEvaluationContext context = formulaService.createSpelContext(this);
 
 			return parser.parseExpression(formula, new ParserContext() {
