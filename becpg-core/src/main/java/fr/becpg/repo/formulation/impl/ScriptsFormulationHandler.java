@@ -18,7 +18,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
-import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 import fr.becpg.model.BeCPGModel;
@@ -26,6 +25,7 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.formulation.ReportableEntity;
+import fr.becpg.repo.formulation.spel.BeCPGSpelExpressionParser;
 import fr.becpg.repo.formulation.spel.SpelFormulaService;
 import fr.becpg.repo.formulation.spel.SpelHelper;
 import fr.becpg.repo.helper.AssociationService;
@@ -135,7 +135,7 @@ public class ScriptsFormulationHandler extends FormulationBaseHandler<Formulated
 
 				try {
 					if (scriptName.endsWith(".spel")) {
-						ExpressionParser parser = new SpelExpressionParser();
+						ExpressionParser parser = new BeCPGSpelExpressionParser();
 						StandardEvaluationContext context = formulaService.createEntitySpelContext(entity);
 						ContentReader reader = contentService.getReader(scriptNode, ContentModel.PROP_CONTENT);
 
