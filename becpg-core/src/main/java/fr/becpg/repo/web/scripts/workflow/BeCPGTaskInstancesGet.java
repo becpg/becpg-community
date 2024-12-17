@@ -36,6 +36,7 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import fr.becpg.config.format.FormatMode;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.helper.BeCPGQueryHelper;
 import fr.becpg.repo.helper.impl.AttributeExtractorField;
 
 /**
@@ -429,7 +430,7 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 					}
 				} else if (key.equals(PARAM_SEARCH)) {
 					String value = (String) task.getProperties().get(WorkflowModel.PROP_DESCRIPTION);
-					if ((value != null) && !value.toLowerCase().contains(((String) filterValue).toLowerCase())) {
+					if ((value != null) && !BeCPGQueryHelper.isQueryMatch( (String) filterValue, value)) {
 						result = false;
 						break;
 					}
