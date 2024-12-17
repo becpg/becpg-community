@@ -18,7 +18,6 @@ import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.SpelCompilerMode;
 import org.springframework.expression.spel.SpelParserConfiguration;
-import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.expression.spel.support.StandardTypeLocator;
 import org.springframework.lang.Nullable;
@@ -89,7 +88,7 @@ public class SpelFormulaService {
 			SpelParserConfiguration config = new SpelParserConfiguration(SpelCompilerMode.MIXED,
 				    this.getClass().getClassLoader());
 			
-			 parser = new SpelExpressionParser(config);
+			 parser = new BeCPGSpelExpressionParser(config);
 		}
 		return parser;
 	}
@@ -254,10 +253,8 @@ public class SpelFormulaService {
 	public RepositoryEntity findOne(NodeRef nodeRef) {
 		return createSecurityProxy(alfrescoRepository.findOne(nodeRef));
 	}
-
+	
 	private class BecpgSpelSecurityTypeLocator extends StandardTypeLocator {
-		
-		private static final String TYPE_NOT_AUTHORIZED = "Type is not authorized: ";
 		
 		private List<String> authorizedTypes = new ArrayList<>();
 		
@@ -269,11 +266,30 @@ public class SpelFormulaService {
 		
 		@Override
 		public Class<?> findType(String typeName) throws EvaluationException {
-			if (authorizedTypes.stream().anyMatch(clazz -> clazz.equals(typeName) || clazz.endsWith("*") && typeName.startsWith(clazz.replace("*", "")))) {
-				return super.findType(typeName);
+			if (!isTypeAuthorized(typeName, authorizedTypes)) {
+				logger.error(TYPE_NOT_AUTHORIZED + typeName);
+				throw new EvaluationException(TYPE_NOT_AUTHORIZED + typeName);
 			}
-			throw new EvaluationException(TYPE_NOT_AUTHORIZED + typeName);
+			return super.findType(typeName);
+		}
+		
+		private boolean isTypeAuthorized(String typeName, List<String> authorizedTypes) {
+			if (FORBIDDEN_TYPES.contains(typeName)) {
+				return false;
+			}
+			return authorizedTypes.stream().anyMatch(clazz -> clazz.equals(typeName) || clazz.endsWith("*") && typeName.startsWith(clazz.replace("*", "")));
 		}
 	}
-
+	
+	private static final String TYPE_NOT_AUTHORIZED = "Type is not authorized: ";
+	
+	private static final List<String> FORBIDDEN_TYPES = List.of("java.lang.System", "java.lang.Runtime", "java.lang.ProcessBuilder",
+			"java.lang.Class", "java.lang.ClassLoader", "java.lang.Thread", "java.lang.ThreadGroup", "java.lang.reflect.Method",
+			"java.lang.reflect.Field", "java.lang.reflect.Constructor", "java.lang.reflect.Proxy", "javax.script.ScriptEngine",
+			"javax.script.ScriptEngineManager", "java.util.concurrent.Executors", "java.util.concurrent.ExecutorService", "java.io.File",
+			"java.io.FileInputStream", "java.io.FileOutputStream", "java.io.RandomAccessFile", "java.io.FileReader", "java.io.FileWriter",
+			"java.net.URL", "java.net.Socket", "java.sql.Connection", "java.sql.Statement", "java.sql.ResultSet",
+			"org.springframework.beans.factory.config.BeanFactory", "org.springframework.beans.factory.config.ConfigurableListableBeanFactory",
+			"org.springframework.context.ApplicationContext", "org.springframework.context.support.AbstractApplicationContext", "sun.misc.Unsafe",
+			"org.apache.commons.io.FileUtils");
 }
