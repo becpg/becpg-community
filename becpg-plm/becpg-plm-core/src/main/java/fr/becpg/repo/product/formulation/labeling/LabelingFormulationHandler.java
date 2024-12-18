@@ -40,7 +40,6 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
-import fr.becpg.repo.formulation.spel.BeCPGSpelExpressionParser;
 import fr.becpg.repo.formulation.spel.SpelFormulaService;
 import fr.becpg.repo.formulation.spel.SpelHelper;
 import fr.becpg.repo.helper.AssociationService;
@@ -229,7 +228,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 			labelingFormulaContext.setIngsLabelingWithYield(ingsCalculatingWithYield());
 
-			ExpressionParser parser = new BeCPGSpelExpressionParser();
+			ExpressionParser parser = formulaService.getSpelParser();
 			StandardEvaluationContext dataContext = formulaService.createCustomSpelContext(formulatedProduct, labelingFormulaContext);
 
 			List<LabelingRuleListDataItem> labelingRuleLists = labelingRuleListsGroup.getValue();
