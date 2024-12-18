@@ -25,7 +25,6 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.formulation.ReportableEntity;
-import fr.becpg.repo.formulation.spel.BeCPGSpelExpressionParser;
 import fr.becpg.repo.formulation.spel.SpelFormulaService;
 import fr.becpg.repo.formulation.spel.SpelHelper;
 import fr.becpg.repo.helper.AssociationService;
@@ -135,7 +134,7 @@ public class ScriptsFormulationHandler extends FormulationBaseHandler<Formulated
 
 				try {
 					if (scriptName.endsWith(".spel")) {
-						ExpressionParser parser = new BeCPGSpelExpressionParser();
+						ExpressionParser parser = formulaService.getSpelParser();
 						StandardEvaluationContext context = formulaService.createEntitySpelContext(entity);
 						ContentReader reader = contentService.getReader(scriptNode, ContentModel.PROP_CONTENT);
 

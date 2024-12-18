@@ -72,7 +72,6 @@ import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.remote.extractor.RemoteHelper;
-import fr.becpg.repo.formulation.spel.BeCPGSpelExpressionParser;
 import fr.becpg.repo.formulation.spel.SpelFormulaService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.PropertiesHelper;
@@ -469,7 +468,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 	private String parseFormula(String formula) throws ImporterException {
 		try {
-			ExpressionParser parser = new BeCPGSpelExpressionParser();
+			ExpressionParser parser = formulaService.getSpelParser();
 			StandardEvaluationContext context = formulaService.createSpelContext(this);
 
 			return parser.parseExpression(formula, new ParserContext() {
