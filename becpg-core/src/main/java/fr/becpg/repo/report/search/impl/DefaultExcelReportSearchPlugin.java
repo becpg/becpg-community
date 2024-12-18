@@ -30,7 +30,6 @@ import fr.becpg.config.format.FormatMode;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
-import fr.becpg.repo.formulation.spel.BeCPGSpelExpressionParser;
 import fr.becpg.repo.formulation.spel.DataListItemSpelContext;
 import fr.becpg.repo.formulation.spel.SpelFormulaService;
 import fr.becpg.repo.formulation.spel.SpelHelper;
@@ -332,7 +331,7 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 			return values.get(formula);
 		}
 
-		ExpressionParser parser = new BeCPGSpelExpressionParser();
+		ExpressionParser parser = spelFormulaService.getSpelParser();
 
 		EvaluationContext context = spelFormulaService.createCustomSpelContext(new SimpleRepositoryEntity(entityNodeRef),
 				new FormulaContext(spelFormulaService, itemNodeRef, values), false);
