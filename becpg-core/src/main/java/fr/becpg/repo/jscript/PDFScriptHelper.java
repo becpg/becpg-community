@@ -3,6 +3,8 @@ package fr.becpg.repo.jscript;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.alfresco.error.AlfrescoRuntimeException;
 import org.alfresco.model.ContentModel;
@@ -30,14 +32,13 @@ import org.apache.pdfbox.pdmodel.PDDocument;
  * @version $Id: $Id
  */
 public class PDFScriptHelper extends BaseScopableProcessorExtension {
-	
+
 	private static final String FILE_MIMETYPE = "application/pdf";
 
 	private NodeService nodeService;
 	private ContentService contentService;
 	private DictionaryService dictionaryService;
-	
-	
+
 	/**
 	 * <p>Setter for the field <code>nodeService</code>.</p>
 	 *
@@ -74,112 +75,67 @@ public class PDFScriptHelper extends BaseScopableProcessorExtension {
 	 * @param toAppendPDFNode a {@link org.alfresco.repo.jscript.ScriptNode} object.
 	 * @return a {@link org.alfresco.repo.jscript.ScriptNode} object.
 	 */
+
 	public ScriptNode appendPDF(ScriptNode targetPDFNode, ScriptNode toAppendPDFNode) {
-		
-		logger.debug("Append PDF "+toAppendPDFNode.getName()+" to "+targetPDFNode.getName());
-		
-		PDDocument pdf = null;
-		PDDocument pdfTarget = null;
-		InputStream is = null;
-		InputStream tis = null;
-		File tempDir = null;
-		ContentWriter writer = null;
+		logger.debug("Append PDF " + toAppendPDFNode.getName() + " to " + targetPDFNode.getName());
 
-		try {
-
-			ContentReader append = getReader(toAppendPDFNode.getNodeRef());
-			is = append.getContentInputStream();
-
-			ContentReader targetReader = getReader(targetPDFNode.getNodeRef());
-			tis = targetReader.getContentInputStream();
-
-			// stream the document in
-			pdf = PDDocument.load(is);
-			pdfTarget = PDDocument.load(tis);
-
-			// Append the PDFs
+		try (InputStream is = getReader(toAppendPDFNode.getNodeRef()).getContentInputStream();
+				InputStream tis = getReader(targetPDFNode.getNodeRef()).getContentInputStream();
+				PDDocument pdf = PDDocument.load(is);
+				PDDocument pdfTarget = PDDocument.load(tis)) {
+			// Append the PDFs using PDFMergerUtility
 			PDFMergerUtility merger = new PDFMergerUtility();
 			merger.appendDocument(pdfTarget, pdf);
 			merger.setDestinationFileName(targetPDFNode.getName());
 			merger.mergeDocuments(MemoryUsageSetting.setupMainMemoryOnly());
 
-			// build a temp dir name based on the ID of the noderef we are
-			// importing
-			File alfTempDir = TempFileProvider.getTempDir();
-			tempDir = new File(alfTempDir.getPath() + File.separatorChar + targetPDFNode.getNodeRef().getId());
-			tempDir.mkdir();
+			// Create a temporary directory for saving the merged PDF
+			Path tempDir = Files.createTempDirectory(TempFileProvider.getTempDir().toPath(), targetPDFNode.getNodeRef().getId());
 
-			pdfTarget.save(tempDir + "" + File.separatorChar + targetPDFNode.getName());
+			Path mergedPDFPath = tempDir.resolve(targetPDFNode.getName());
+			pdfTarget.save(mergedPDFPath.toFile());
 
-			for (File file : tempDir.listFiles()) {
-				try {
-					if (file.isFile()) {
+			// Save the merged PDF back to the repository
+			saveMergedPDF(targetPDFNode, mergedPDFPath.toFile());
 
-						writer = contentService.getWriter(targetPDFNode.getNodeRef(), ContentModel.PROP_CONTENT, true);
+			// Clean up the temporary file and directory
 
-						writer.setEncoding(targetReader.getEncoding()); // original
-						// encoding
-						writer.setMimetype(FILE_MIMETYPE);
+			Files.delete(mergedPDFPath); 
 
-						// Put it in the repo
-						writer.putContent(file);
+			Files.delete(tempDir); 
 
-						// Clean up
-						if(!file.delete()) {
-							logger.error("Cannot delete file: "+file.getName());
-						}
-					}
-				} catch (FileExistsException e) {
-					throw new AlfrescoRuntimeException("Failed to process file.", e);
-				}
-			}
 		} catch (IOException e) {
-			throw new AlfrescoRuntimeException(e.getMessage(), e);
-		}
-
-		finally {
-			if (pdf != null) {
-				try {
-					pdf.close();
-				} catch (IOException e) {
-					throw new AlfrescoRuntimeException(e.getMessage(), e);
-				}
-			}
-			if (pdfTarget != null) {
-				try {
-					pdfTarget.close();
-				} catch (IOException e) {
-					throw new AlfrescoRuntimeException(e.getMessage(), e);
-				}
-			}
-			if (is != null) {
-				try {
-					is.close();
-				} catch (IOException e) {
-					throw new AlfrescoRuntimeException(e.getMessage(), e);
-				}
-			}
-
-			if (tempDir != null) {
-				if(!tempDir.delete()) {
-					logger.error("Cannot delete dir: "+tempDir.getName());
-				}
-			}
+			throw new AlfrescoRuntimeException("Error processing PDF documents", e);
 		}
 
 		return targetPDFNode;
 	}
 
+	private void saveMergedPDF(ScriptNode targetPDFNode, File mergedPDFFile) {
+		ContentReader targetReader = getReader(targetPDFNode.getNodeRef());
+		ContentWriter writer = contentService.getWriter(targetPDFNode.getNodeRef(), ContentModel.PROP_CONTENT, true);
+
+		writer.setEncoding(targetReader.getEncoding()); // Use original encoding
+		writer.setMimetype(FILE_MIMETYPE);
+
+		// Write the content back to the repository
+		try {
+			writer.putContent(mergedPDFFile);
+		} catch (FileExistsException e) {
+			throw new AlfrescoRuntimeException("Failed to save merged PDF to repository", e);
+		}
+	}
+
 	private ContentReader getReader(NodeRef nodeRef) {
 		// first, make sure the node exists
-		if (nodeService.exists(nodeRef) == false) {
+		if (!nodeService.exists(nodeRef)) {
 			// node doesn't exist - can't do anything
 			throw new AlfrescoRuntimeException("NodeRef: " + nodeRef + " does not exist");
 		}
 
 		// Next check that the node is a sub-type of content
 		QName typeQName = nodeService.getType(nodeRef);
-		if (dictionaryService.isSubClass(typeQName, ContentModel.TYPE_CONTENT) == false) {
+		if (!dictionaryService.isSubClass(typeQName, ContentModel.TYPE_CONTENT)) {
 			// it is not content, so can't transform
 			throw new AlfrescoRuntimeException("The selected node is not a content node");
 		}
