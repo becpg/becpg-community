@@ -286,7 +286,7 @@ public class MLTextHelper {
 		Iterator<Locale> locales = mlText.getLocales().iterator();
 		while (locales.hasNext()) {
 			Locale locale = locales.next();
-			if (locale.getLanguage().equals(toSaveUnderLocale.getLanguage()) && (!MLTextHelper.isSupportedLocale(locale))) {
+			if (toSaveUnderLocale!=null && locale.getLanguage().equals(toSaveUnderLocale.getLanguage()) && (!MLTextHelper.isSupportedLocale(locale))) {
 				locales.remove();
 			}
 		}

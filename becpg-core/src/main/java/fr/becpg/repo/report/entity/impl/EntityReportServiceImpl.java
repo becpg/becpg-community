@@ -257,11 +257,11 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 		ReentrantLock lock = mutexFactory.getMutex(nodeRefTo.toString());
 
 		try {
-			if (lock.tryLock()) {
+			 if (lock.tryLock() || lock.isHeldByCurrentThread()) { 
 				internalGenerateReports(nodeRefFrom != null ? nodeRefFrom : nodeRefTo, nodeRefTo, generateAllReports);
-			} else {
-				lock.lock();
-			}
+			}  else {
+	            logger.warn("Failed to acquire lock for NodeRef: " + nodeRefTo.toString());
+	        }
 		} finally {
 			if ((lock.isHeldByCurrentThread())) {
 				lock.unlock();
