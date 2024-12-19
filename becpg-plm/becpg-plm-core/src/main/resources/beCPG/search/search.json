@@ -55,7 +55,7 @@
          
         "al5":    [ 
            {"attribute": "bcpg:allergenListAllergen" ,  "listType": "bcpg:allergenList", "htmlId":"assoc_bcpg_advAlInVolNot_added" },
-           {"attribute": "bcpg:allergenListINVoluntary" , "value":"false" }
+           {"attribute": "bcpg:allergenListInVoluntary" , "value":"false" }
          ], 
          
           "cost1":  [ 

@@ -27,8 +27,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
@@ -121,9 +119,6 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 	private static Log logger = LogFactory.getLog(BeCPGScriptHelper.class);
 
-	// Matches the counter at the end of the string (exists the prefix and keeps the numbers at the end)
-	private static final Pattern END_COUNTER_PATTERN = Pattern.compile("\\d+$");
-
 	private NodeService nodeService;
 
 	private AutoNumService autoNumService;
@@ -185,17 +180,22 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	private BeCPGTicketService beCPGTicketService;
 
 	private BehaviourFilter policyBehaviourFilter;
-	
+
 	private AuthorityService authorityService;
-	
+
 	private PersonService personService;
-	
+
 	private RemoteUserMapper remoteUserMapper;
-	
+
+	/**
+	 * <p>Setter for the field <code>remoteUserMapper</code>.</p>
+	 *
+	 * @param remoteUserMapper a {@link org.alfresco.repo.security.authentication.external.RemoteUserMapper} object
+	 */
 	public void setRemoteUserMapper(RemoteUserMapper remoteUserMapper) {
 		this.remoteUserMapper = remoteUserMapper;
 	}
-	
+
 	/**
 	 * <p>Setter for the field <code>personService</code>.</p>
 	 *
@@ -204,7 +204,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public void setPersonService(PersonService personService) {
 		this.personService = personService;
 	}
-	
+
 	/**
 	 * <p>Setter for the field <code>authorityService</code>.</p>
 	 *
@@ -213,9 +213,9 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public void setAuthorityService(AuthorityService authorityService) {
 		this.authorityService = authorityService;
 	}
-	
+
 	private MutableAuthenticationService authenticationService;
-	
+
 	/**
 	 * <p>Setter for the field <code>authenticationService</code>.</p>
 	 *
@@ -224,7 +224,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public void setAuthenticationService(MutableAuthenticationService authenticationService) {
 		this.authenticationService = authenticationService;
 	}
-	
+
 	private boolean useBrowserLocale;
 
 	private boolean showUnauthorizedWarning = true;
@@ -422,16 +422,18 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 		String autoNumValue = getAutoNumValue(className, propertyName);
 
-		// Create a matcher object to find the pattern in the input string
-		Matcher matcher = END_COUNTER_PATTERN.matcher(autoNumValue);
+		int endIndex = autoNumValue.length();
+		int startIndex = endIndex;
 
-		// Check if the pattern is found
-		if (matcher.find()) {
-			// Extract the matched counter value and parse it as a long
-			String counterStr = matcher.group();
-			return Long.parseLong(counterStr);
+		while (startIndex > 0 && Character.isDigit(autoNumValue.charAt(startIndex - 1))) {
+		    startIndex--;
+		}
+
+		if (startIndex < endIndex) {
+		    String counterStr = autoNumValue.substring(startIndex, endIndex);
+		    return Long.parseLong(counterStr);
 		} else {
-			return null;
+		    return null;
 		}
 	}
 
@@ -1238,7 +1240,9 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public ScriptNode mergeBranch(ScriptNode entity, ScriptNode branchTo, String description, String type) {
 		NodeRef retNodeRef = entityVersionService.mergeBranch(entity.getNodeRef(), branchTo != null ? branchTo.getNodeRef() : null,
 				VersionType.valueOf(type), description);
-
+		if (retNodeRef == null) {
+			throw new IllegalStateException("Cannot merge :" + entity.getNodeRef());
+		}
 		return new ScriptNode(retNodeRef, serviceRegistry);
 	}
 
@@ -1782,7 +1786,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public boolean isLicenseValid() {
 		return beCPGLicenseManager.isLicenseValid();
 	}
-	
+
 	/**
 	 * <p>isSpecialLicenceUser.</p>
 	 *
@@ -2173,7 +2177,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public String[] extractPeople(String[] authorities) {
 		return AuthorityHelper.extractPeople(Set.of(authorities)).toArray(new String[0]);
 	}
-	
+
 	/**
 	 * <p>floatingLicensesExceeded.</p>
 	 *
@@ -2183,7 +2187,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public boolean floatingLicensesExceeded(String sessionId) {
 		return beCPGLicenseManager.floatingLicensesExceeded(sessionId);
 	}
-	
+
 	/**
 	 * <p>hasWriteLicense.</p>
 	 *
@@ -2200,12 +2204,13 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * @return a boolean
 	 */
 	public boolean isAccountEnabled(String userName) {
-		if (!authenticationService.isAuthenticationMutable(userName) && nodeService.hasAspect(personService.getPerson(userName), ContentModel.ASPECT_PERSON_DISABLED)) {
+		if (!authenticationService.isAuthenticationMutable(userName)
+				&& nodeService.hasAspect(personService.getPerson(userName), ContentModel.ASPECT_PERSON_DISABLED)) {
 			return false;
 		}
 		return this.authenticationService.getAuthenticationEnabled(userName);
 	}
-	
+
 	/**
 	 * <p>enableAccount.</p>
 	 *
@@ -2235,9 +2240,14 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 			this.authenticationService.setAuthenticationEnabled(userName, false);
 		}
 	}
-	
+
+	/**
+	 * <p>isSsoEnabled.</p>
+	 *
+	 * @return a boolean
+	 */
 	public boolean isSsoEnabled() {
-        return remoteUserMapper != null && (!(remoteUserMapper instanceof ActivateableBean activateableBean) || activateableBean.isActive());
+		return remoteUserMapper != null && (!(remoteUserMapper instanceof ActivateableBean activateableBean) || activateableBean.isActive());
 	}
 
 }

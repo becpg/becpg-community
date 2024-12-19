@@ -53,7 +53,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
-import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.util.StringUtils;
@@ -561,10 +560,20 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	
 	
 
+	/**
+	 * <p>isDoNotPropagateYield.</p>
+	 *
+	 * @return a boolean
+	 */
 	public boolean isDoNotPropagateYield() {
 		return doNotPropagateYield;
 	}
 
+	/**
+	 * <p>Setter for the field <code>doNotPropagateYield</code>.</p>
+	 *
+	 * @param doNotPropagateYield a boolean
+	 */
 	public void setDoNotPropagateYield(boolean doNotPropagateYield) {
 		this.doNotPropagateYield = doNotPropagateYield;
 	}
@@ -3199,7 +3208,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		if ((formulaFilter.getFormula() != null) && !formulaFilter.getFormula().isEmpty()) {
 			if (!MeatType.isMeatType(formulaFilter.getFormula())) {
 				try {
-					ExpressionParser parser = new SpelExpressionParser();
+					ExpressionParser parser = formulaService.getSpelParser();
 
 					StandardEvaluationContext dataContext = formulaService.createCustomSpelContext(entity, formulaFilterContext, false);
 

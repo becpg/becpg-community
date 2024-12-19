@@ -55,7 +55,6 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.Resource;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.ParserContext;
-import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 
@@ -469,7 +468,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 	private String parseFormula(String formula) throws ImporterException {
 		try {
-			ExpressionParser parser = new SpelExpressionParser();
+			ExpressionParser parser = formulaService.getSpelParser();
 			StandardEvaluationContext context = formulaService.createSpelContext(this);
 
 			return parser.parseExpression(formula, new ParserContext() {

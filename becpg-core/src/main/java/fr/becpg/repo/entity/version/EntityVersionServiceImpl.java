@@ -1038,7 +1038,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				logger.info("Cannot merge "+ branchNodeRef+ " you don't have permission");
 			}
 		}
-		return null;
+		return branchToNodeRef;
 	}
 
 	private void triggerRules(NodeRef internalBranchToNodeRef) {
@@ -1219,11 +1219,13 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		}
 		visited.add(sourceEntity);
 		Set<NodeRef> refs = new HashSet<>();
-		List<NodeRef> assocRefs = associationService.getSourcesAssocs(sourceEntity, RegexQNamePattern.MATCH_ALL, true);
+		List<AssociationRef> assocRefs = nodeService.getSourceAssocs(sourceEntity, RegexQNamePattern.MATCH_ALL);
 		List<ChildAssociationRef> parentRefs = nodeService.getParentAssocs(sourceEntity);
 		
-		for (NodeRef assocRef : assocRefs) {
-			refs.add(assocRef);
+		for (AssociationRef assocRef : assocRefs) {
+			if (!assocRef.getTypeQName().equals(ContentModel.ASSOC_ORIGINAL)) {
+				refs.add(assocRef.getSourceRef());
+			}
 		}
 		for (ChildAssociationRef parentRef : parentRefs) {
 			refs.add(parentRef.getParentRef());

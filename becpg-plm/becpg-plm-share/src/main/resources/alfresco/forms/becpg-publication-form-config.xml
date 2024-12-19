@@ -229,7 +229,7 @@
 				</field-visibility>
 				<appearance>
 					<field id="bp:pubChannelListChannel" />
-						<field id="bp:pubChannelListAction" >
+				  <field id="bp:pubChannelListAction" >
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">,RETRY|data.pubChannelStatus.retry,STOP|data.pubChannelStatus.stop
 							</control-param>

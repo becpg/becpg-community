@@ -307,7 +307,7 @@
 					<permission allow="true">Write</permission>
 				</permissions>
 				<evaluator>evaluator.becpg.doclib.action.entityTpl</evaluator>
-				<evaluator>evaluator.becpg.doclib.action.product</evaluator>
+				<evaluator>evaluator.becpg.doclib.action.productOrSupplier</evaluator>
 			</action>
 			<action id="entityTpl-wused" type="pagelink" icon="entity-wused" label="actions.entity.wused">
 				<param name="page">wused?assocName=assoc_bcpg_entityTplRef&amp;nodeRefs={node.nodeRef}</param>
