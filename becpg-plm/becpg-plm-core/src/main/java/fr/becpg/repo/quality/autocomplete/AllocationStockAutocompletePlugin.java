@@ -24,6 +24,11 @@ import fr.becpg.repo.quality.formulation.BatchFormulationHandler;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 
+/**
+ * <p>AllocationStockAutocompletePlugin class.</p>
+ *
+ * @author matthieu
+ */
 @Service
 public class AllocationStockAutocompletePlugin implements AutoCompletePlugin {
 
@@ -33,10 +38,12 @@ public class AllocationStockAutocompletePlugin implements AutoCompletePlugin {
 	@Autowired
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 	
+	/** {@inheritDoc} */
 	@Override
 	public String[] getHandleSourceTypes() {
 		return new String[] { "stocks" };
 	}
+	/** {@inheritDoc} */
 	@Override
 	public AutoCompletePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
 

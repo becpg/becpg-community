@@ -33,9 +33,9 @@ public class MLTextHelper {
 
 	private static Map<String, MLText> mlTextCache = new ConcurrentHashMap<>();
 
-	private static List<Locale> supportedLocales = null;
+	private static  List<Locale> supportedLocales = null;
 
-	private static String supportedLocalesText = null;
+	private static  String supportedLocalesText = null;
 
 	/**
 	 * <p>Constructor for MLTextHelper.</p>
@@ -83,27 +83,28 @@ public class MLTextHelper {
 	public static List<Locale> getSupportedLocales() {
 
 		if (supportedLocales == null) {
-			supportedLocales = new ArrayList<>();
-
-			if (supportedLocalesText() != null) {
-				String[] locales = supportedLocalesText().split(",");
-				for (String key : locales) {
-					supportedLocales.add(parseLocale(key.trim()));
+			   synchronized (MLTextHelper.class) {
+				supportedLocales = new ArrayList<>();
+	
+				if (supportedLocalesText() != null) {
+					String[] locales = supportedLocalesText().split(",");
+					for (String key : locales) {
+						supportedLocales.add(parseLocale(key.trim()));
+					}
 				}
-			}
-
-			// put default locale in first position and sort by name
-
-			supportedLocales.sort((a, b) -> {
-				if (MLTextHelper.isDefaultLocale(a)) {
-					return -1;
-				} else if (MLTextHelper.isDefaultLocale(b)) {
-					return 1;
-				} else {
-					return localeLabel(a).compareTo(localeLabel(b));
-				}
-			});
-
+	
+				// put default locale in first position and sort by name
+	
+				supportedLocales.sort((a, b) -> {
+					if (MLTextHelper.isDefaultLocale(a)) {
+						return -1;
+					} else if (MLTextHelper.isDefaultLocale(b)) {
+						return 1;
+					} else {
+						return localeLabel(a).compareTo(localeLabel(b));
+					}
+				});
+			   }
 		}
 
 		return supportedLocales;
@@ -132,6 +133,12 @@ public class MLTextHelper {
 	}
 	
     	
+	/**
+	 * <p>isDisabledMLTextField.</p>
+	 *
+	 * @param propertyQNamePrexiString a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	public static boolean isDisabledMLTextField(String propertyQNamePrexiString) {
 		String disabledMLTextFields = SystemConfigurationRegistry.instance().confValue("beCPG.multilinguale.disabledMLTextFields");
 		if(disabledMLTextFields !=null && !disabledMLTextFields.isBlank()
@@ -267,7 +274,7 @@ public class MLTextHelper {
 	 * Replace any text in mlText having the same language (but any variant) as contentLocale
 	 * with updatedText keyed by the language of contentLocale. This ensures that the mlText
 	 * will have no more than one entry for the particular language.
-	 * 
+	 *
 	 * @param contentLocale Locale
 	 * @param updatedText String
 	 * @param mlText MLText

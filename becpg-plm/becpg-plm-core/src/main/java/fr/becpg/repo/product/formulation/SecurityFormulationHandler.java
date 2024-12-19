@@ -17,6 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.product.formulation;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -233,8 +234,7 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 			for(NodeRef dataListNodeRef : datalists) {
 				String dataListQName = (String)nodeService.getProperty(dataListNodeRef, DataListModel.PROP_DATALISTITEMTYPE);
 				PermissionContext permissionContext = securityService.getPermissionContext(productDataNodeRef, nodeService.getType(productDataNodeRef), dataListQName);
-				updateSupplierPortalPermissionContext(permissionContext, productDataNodeRef);
-				updatePermissions(siteInfo, dataListNodeRef, permissionContext.getPermissions(), false);
+				updatePermissions(productDataNodeRef, siteInfo, dataListNodeRef, permissionContext.getPermissions(), false);
 			}
 
 			//Set document permissions
@@ -244,25 +244,11 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 					updatePermissionsFromTemplateFolder(folder.getNodeRef(), templateFolderWithSpecificPermissions);
 				} else {
 					PermissionContext permissionContext = securityService.getPermissionContext(productDataNodeRef, nodeService.getType(productDataNodeRef), VIEW_DOCUMENTS);
-					updateSupplierPortalPermissionContext(permissionContext, productDataNodeRef);
-					updatePermissions(siteInfo, folder.getNodeRef(), permissionContext.getPermissions(), true);
+					updatePermissions(productDataNodeRef, siteInfo, folder.getNodeRef(), permissionContext.getPermissions(), true);
 				}
 			}
 		}
 		return true;
-	}
-
-	private void updateSupplierPortalPermissionContext(PermissionContext permissionContext, NodeRef productDataNodeRef) {
-		List<NodeRef> supplierAccountNodeRefs = associationService.getTargetAssocs(productDataNodeRef, PLMModel.ASSOC_SUPPLIERS).stream()
-				.flatMap(s -> associationService.getTargetAssocs(s, PLMModel.ASSOC_SUPPLIER_ACCOUNTS).stream()).collect(Collectors.toList());
-		for (PermissionModel permissionModel : permissionContext.getPermissions()) {
-			NodeRef externalUserGroup = permissionModel.getGroups().stream()
-					.filter(n -> "GROUP_ExternalUser".equals(authorityDAO.getAuthorityName(n))).findFirst().orElse(null);
-			if (externalUserGroup != null) {
-				permissionModel.getGroups().remove(externalUserGroup);
-				permissionModel.getGroups().addAll(supplierAccountNodeRefs);
-			}
-		}
 	}
 
 	private NodeRef findTemplateFolderWithSpecificPermissions(NodeRef folderNodeRef, ProductData entityTpl) {
@@ -313,7 +299,7 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 	}
 
-	private void updatePermissions(SiteInfo siteInfo, NodeRef nodeRef, List<PermissionModel> permissionModels, boolean areDocuments) {
+	private void updatePermissions(NodeRef productDataNodeRef, SiteInfo siteInfo, NodeRef nodeRef, List<PermissionModel> permissionModels, boolean areDocuments) {
 		
 		boolean hasParentPermissions = permissionService.getInheritParentPermissions(nodeRef);
 		Map<String, String> specificPermissions = new HashMap<>();
@@ -333,12 +319,15 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 		Set<String> toRemove = new HashSet<>();
 		
 		if (permissionModels != null && !permissionModels.isEmpty() && (areDocuments || enforceACL())) {
+			
+			List<PermissionModel> copyPermissions = copyPermissionsForSuppliers(productDataNodeRef, permissionModels);
+			
 			if (logger.isDebugEnabled()) {
 				logger.debug("specificPermissions: " + specificPermissions + " on node: " + nodeRef);
 				logger.debug("parentPermissions: " + parentPermissions + " on node: " + nodeRef);
-				logger.debug("permissionModels to be applied: " + permissionModels + " on node: " + nodeRef);
+				logger.debug("permissionModels to be applied: " + copyPermissions + " on node: " + nodeRef);
 			}
-			computePermissions(siteInfo, parentPermissions, specificPermissions, permissionModels, toAdd, toRemove);
+			computePermissions(siteInfo, parentPermissions, specificPermissions, copyPermissions, toAdd, toRemove);
 			for (Entry<String, String> entry : toAdd.entrySet()) {
 				String authority = entry.getKey();
 				String permission = entry.getValue();
@@ -372,6 +361,27 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 	}
 	
+	private List<PermissionModel> copyPermissionsForSuppliers(NodeRef productDataNodeRef, List<PermissionModel> permissionModels) {
+		List<PermissionModel> copyPermissions = new ArrayList<>();
+		
+		List<NodeRef> supplierAccountNodeRefs = associationService.getTargetAssocs(productDataNodeRef, PLMModel.ASSOC_SUPPLIERS).stream()
+				.flatMap(s -> associationService.getTargetAssocs(s, PLMModel.ASSOC_SUPPLIER_ACCOUNTS).stream()).collect(Collectors.toList());
+		for (PermissionModel permissionModel : permissionModels) {
+			NodeRef externalUserGroup = permissionModel.getGroups().stream()
+					.filter(n -> "GROUP_ExternalUser".equals(authorityDAO.getAuthorityName(n))).findFirst().orElse(null);
+			if (externalUserGroup != null) {
+				List<NodeRef> newGroups = new ArrayList<>(permissionModel.getGroups());
+				newGroups.addAll(supplierAccountNodeRefs);
+				newGroups.remove(externalUserGroup);
+				PermissionModel permissionModelCopy = new PermissionModel(permissionModel.getPermission(), newGroups, permissionModel.getIsEnforceACL());
+				copyPermissions.add(permissionModelCopy);
+			} else {
+				copyPermissions.add(permissionModel);
+			}
+		}
+		return copyPermissions;
+	}
+
 	private void computePermissions(SiteInfo siteInfo, Map<String, String> parentPermissions, Map<String, String> specificPermissions, List<PermissionModel> permissionModels, HashMap<String, String> toAdd, Set<String> toRemove) {
 		for (PermissionModel permissionModel : permissionModels) {
 			String targetPermission = PermissionModel.READ_ONLY.equals(permissionModel.getPermission()) ? PermissionService.CONSUMER : PermissionService.CONTRIBUTOR;

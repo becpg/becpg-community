@@ -43,6 +43,7 @@ public class IngToxPolicy extends AbstractBeCPGPolicy implements OnUpdatePropert
 		policyComponent.bindClassBehaviour(BeforeDeleteNodePolicy.QNAME, PLMModel.TYPE_TOX, new JavaBehaviour(this, "beforeDeleteNode"));
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void beforeDeleteNode(NodeRef nodeRef) {
 		QName type = nodeService.getType(nodeRef);

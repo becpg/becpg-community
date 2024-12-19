@@ -127,6 +127,7 @@ public class ListValuePolicy extends AbstractBeCPGPolicy implements OnUpdateProp
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 		if (after.get(BeCPGModel.PROP_LV_CODE) == null || after.get(BeCPGModel.PROP_LV_CODE).toString().isBlank()) {
