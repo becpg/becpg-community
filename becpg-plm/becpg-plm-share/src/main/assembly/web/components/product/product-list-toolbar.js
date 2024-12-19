@@ -341,6 +341,11 @@
             onReportingMenuClick: function PTL_onReportingMenuClick(p_sType, p_aArgs) {
                 var menuItem = p_aArgs[1];
                 if (menuItem) {
+                    
+                    var dt = Alfresco.util.ComponentManager.find({
+                               name: "beCPG.module.EntityDataGrid"
+                          })[0];
+                                  
                     var values = menuItem.value.split("#");
 
                     var url = Alfresco.constants.PROXY_URI + "becpg/report/exportsearch/" + values[0].replace("://", "/") + "/" + encodeURIComponent(values[1]);
@@ -350,9 +355,11 @@
                     if (this.options.selectedType != null) {
                         dataType = this.options.selectedType.indexOf("_") > 0 ? this.options.selectedType.replace("_", ":") : "bcpg:" + this.options.selectedType;
                     }
+                    
+                    var query = convertToQuery(dataType, dt.currentFilter);
 
                     // Add search data webscript arguments
-                    url += "?term=&query=" + encodeURIComponent('{datatype:"' + dataType + '"}');
+                    url += "?term=&query=" + query;
 
                     if (this.options.siteId.length !== 0) {
                         url += "&site=" + this.options.siteId + "&repo=false";
@@ -363,7 +370,34 @@
                     beCPG.util.launchAsyncDownload(values[1], values[2], url);
                 }
             },
+            
+            convertToQuery: function(dataType, filter) {
+                // Base query with datatype
+                var query = '{"datatype":"' + encodeURIComponent(dataType) + '"';
 
+                if (filter.filterId && filter.filterId === "filterform") {
+                    // Parse filterData and convert it to the encoded key-value pairs
+                    var filterData = filter.filterData || {}; // Ensure filterData is an object
+                    for (var key in filterData) {
+                        if (filterData.hasOwnProperty(key)) {
+                            var value = filterData[key];
+                            query += ',"%22' + encodeURIComponent(key) + '%22:%22' + encodeURIComponent(value) + '%22';
+                        }
+                    }
+                }
+
+                // Append filterParams if present
+                if (filter.filterParams && filter.filterParams.indexOf("fts") >= 0) {
+                    query += ',"%22fts%22:%22' + encodeURIComponent(filter.filterParams) + '%22';
+                }
+
+                query += "}";
+
+                // Encode the entire query
+                return encodeURIComponent(query);
+            },
+
+            
             onExportProductList: function PTL_onExportProductList(e, p_obj) {
                 var dt = Alfresco.util.ComponentManager.find({
                     name: "beCPG.module.EntityDataGrid"
