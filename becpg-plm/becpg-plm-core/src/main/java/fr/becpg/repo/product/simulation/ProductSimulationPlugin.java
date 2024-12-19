@@ -62,7 +62,7 @@ public class ProductSimulationPlugin implements EntitySimulationPlugin {
 
 	/** {@inheritDoc} */
 	@Override
-	public List<NodeRef> simulateNodeRefs(NodeRef destNodeRef, List<NodeRef> nodeRefs) {
+	public List<NodeRef> simulateNodeRefs(NodeRef destNodeRef, List<NodeRef> nodeRefs, boolean unused) {
 
 		Map<NodeRef, NodeRef> cache = new HashMap<>();
 
@@ -152,5 +152,4 @@ public class ProductSimulationPlugin implements EntitySimulationPlugin {
 
 		return null;
 	}
-
 }

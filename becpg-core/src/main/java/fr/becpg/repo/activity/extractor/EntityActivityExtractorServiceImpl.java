@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import org.alfresco.error.AlfrescoRuntimeException;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
@@ -326,7 +325,7 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 							&& !stringVal.isBlank() && !"null".equals(stringVal)  && !"[\"\"]".equals(stringVal))) {
 				NodeRef nodeRef = null;
 				String name = null;
-				if (Pattern.matches("\\(.*,.*\\)", stringVal)) {
+				if (stringVal.startsWith("(") && stringVal.endsWith(")")) {
 					String nodeRefString = stringVal.substring(stringVal.indexOf("(") + 1, stringVal.indexOf(","));
 					nodeRef = new NodeRef(nodeRefString);
 					name = stringVal.substring(stringVal.indexOf(",") + 1, stringVal.indexOf(")"));

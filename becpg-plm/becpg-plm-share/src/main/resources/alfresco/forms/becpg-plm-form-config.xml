@@ -167,7 +167,7 @@
 					<show id="cm:description" />
 					<show id="bcpg:productSpecifications" force="true" />
 					<show id="bcpg:specCompatibilityTpls" force="true" />
-					<show id="bcpg:specCompatibilityJobOn" force="true" />
+					<show id="bcpg:specCompatibilityTestMode" force="true" />
 					<show id="bcpg:specCompatibilityLog" force="true" for-mode="view" />
 					<show id="bcpg:formulatedDate" force="true" for-mode="view" />
 					<!-- local security rule -->
@@ -220,7 +220,7 @@
 					<show id="cm:description" />
 					<show id="bcpg:productSpecifications" force="true" />
 					<show id="bcpg:specCompatibilityTpls" force="true" />
-					<show id="bcpg:specCompatibilityJobOn" force="true" />
+					<show id="bcpg:specCompatibilityTestMode" force="true" />
 					<show id="bcpg:regulatoryCountries" force="true" />
 					<show id="bcpg:regulatoryUsageRef" force="true" />
 				</field-visibility>
@@ -254,7 +254,7 @@
 					<show id="cm:description" />
 					<show id="bcpg:productSpecifications" force="true" />
 					<show id="bcpg:specCompatibilityTpls" force="true" />
-					<show id="bcpg:specCompatibilityJobOn" force="true" />
+					<show id="bcpg:specCompatibilityTestMode" force="true" />
 					<show id="bcpg:regulatoryCountries" force="true" />
 					<show id="bcpg:regulatoryUsageRef" force="true" />
 				</field-visibility>
@@ -288,7 +288,7 @@
 					<show id="cm:description" />
 					<show id="bcpg:productSpecifications" force="true" />
 					<show id="bcpg:specCompatibilityTpls" force="true" />
-					<show id="bcpg:specCompatibilityJobOn" force="true" />
+					<show id="bcpg:specCompatibilityTestMode" force="true" />
 					<show id="bcpg:regulatoryCountries" force="true" />
 					<show id="bcpg:regulatoryUsageRef" force="true" />
 				</field-visibility>
@@ -6275,6 +6275,7 @@
 			<form id="filter">
 				<field-visibility>
 					<show id="bcpg:depthLevel" />
+					<show id="entity_bcpg:compoListProduct_bcpg:product" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:depthLevel">
@@ -8417,6 +8418,7 @@
 				<appearance>
 					<field id="bcpg:entityDataListState" label="hidden" />
 					<field id="bcpg:variantIds" label="hidden" />
+					<field id="bcpg:ingListIng" help="{&quot;width&quot;:200}"/>
 					<field id="bcpg:ingListVolumeQtyPerc" read-only="true" label="hidden" />
 					<field id="bcpg:ingListQtyPercWithYield" read-only="true" />
 					<field id="bcpg:ingListQtyPercWithSecondaryYield" read-only="true" />
@@ -9500,6 +9502,8 @@
 					<show id="bcpg:regulatoryType" force="true" />
 					<show id="bcpg:regulatoryText" force="true" />
 					<show id="bcpg:pclPhysicoChem" />
+					<show id="bcpg:physicoChemIsFormulated" />
+                    <show id="bcpg:physicoChemFormulaErrorLog" />
 					<show id="bcpg:pclMini" />
 					<show id="bcpg:pclMaxi" />
 					<show id="fm:commentCount" force="true" />
@@ -9510,13 +9514,9 @@
 				<appearance>
 					<field id="bcpg:pclUnit" read-only="true" />
 					<field id="bcpg:pclType" read-only="true" />
-					<field id="fm:commentCount" label="hidden" read-only="true" />
-					<field id="bcpg:regulatoryCountries">
-						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
-					</field>
-					<field id="bcpg:regulatoryUsageRef">
-						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
-					</field>
+					<field id="bcpg:physicoChemIsFormulated" label="hidden" />
+                    <field id="bcpg:physicoChemFormulaErrorLog" label="hidden" />
+                    <field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
 			</form>
 			<form id="customListDatagrid">

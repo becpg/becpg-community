@@ -32,7 +32,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
-import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 
@@ -235,7 +234,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 			labelingFormulaContext.setIngsLabelingWithYield(ingsCalculatingWithYield());
 
-			ExpressionParser parser = new SpelExpressionParser();
+			ExpressionParser parser = formulaService.getSpelParser();
 			StandardEvaluationContext dataContext = formulaService.createCustomSpelContext(formulatedProduct, labelingFormulaContext);
 
 			List<LabelingRuleListDataItem> labelingRuleLists = labelingRuleListsGroup.getValue();
@@ -1532,12 +1531,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				}
 
 				//Water loss
-				if ((qty != null) && (calculatedYield != null) && (calculatedYield.doubleValue() != 100d) && hasEvaporationData(productNodeRef)) {
-
-					if (logger.isTraceEnabled()) {
-						logger.trace("Detected evaporated components (" + productData.getName() + " - " + productNodeRef + "), rate: "
-								+ nodeService.getProperty(productNodeRef, PLMModel.PROP_EVAPORATED_RATE));
-					}
+				if ( (calculatedYield != null) && (calculatedYield.doubleValue() != 100d)
+						&& hasEvaporationData(productNodeRef)) {
 
 					// Override declaration type
 					declarationType = DeclarationType.DoNotDetails;
@@ -1547,17 +1542,27 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					if (evaporateRate == null) {
 						evaporateRate = 100d;
 					}
-					
-					Double maxEvaporableQty = (qty * (evaporateRate / 100d));
-					Double maxEvaporableVolume = (volume * (evaporateRate / 100d));
 
-					//We only apply yield on dry matter
-					qtyWithYield = maxEvaporableQty + (((qty * (1d - (evaporateRate / 100d))) * 100d) / calculatedYield);
-					volumeWithYield = maxEvaporableVolume + (((volume * (1d - (evaporateRate / 100d))) * 100d) / calculatedYield);
+					Double maxEvaporableQty = 0d;
+					if (qtyWithYield != null) {
+						maxEvaporableQty = (qtyWithYield * (evaporateRate / 100d));
+					}
 
-				
-					
-					mergeEvaporatedItem(parent.getEvaporatedDataItems(),new EvaporatedDataItem(productNodeRef, evaporateRate, maxEvaporableQty,maxEvaporableVolume));
+					Double maxEvaporableVolume = 0d;
+
+					if (volumeWithYield != null) {
+						maxEvaporableVolume = (volumeWithYield * (evaporateRate / 100d));
+					}
+
+					if (logger.isTraceEnabled()) {
+						logger.trace("Detected evaporated components (" + productData.getName() + " - " + productNodeRef + "), rate: " + evaporateRate
+								+ ", qtyWithYield :" + qtyWithYield + ", maxEvaporableQty :" + maxEvaporableQty
+
+						);
+					}
+
+					mergeEvaporatedItem(parent.getEvaporatedDataItems(),
+							new EvaporatedDataItem(productNodeRef, evaporateRate, maxEvaporableQty, maxEvaporableVolume));
 
 					labelingFormulaContext.getToApplyThresholdItems().add(productNodeRef);
 
@@ -1589,7 +1594,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							logger.warn("Diluent or Target ing is null for: " + productData.getName());
 						}
 					} else {
-						logger.warn("No reconstitution rate on: " + productData.getName());
+						logger.debug("No reconstitution rate on: " + productData.getName());
 					}
 				}
 
@@ -1706,7 +1711,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							visitIngList(compositeLabeling, productData,
 									CompositeHelper.getHierarchicalCompoList(
 											IngListHelper.extractParentList(productData.getIngList(), associationService, alfrescoRepository)),
-									null, qty, volume, qtyWithYield, volumeWithYield, labelingFormulaContext, compoListDataItem, errors);
+									null, qty, volume, qtyWithYield, volumeWithYield, labelingFormulaContext, compoListDataItem, errors,
+									calculatedYield);
 						}
 
 						BigDecimal computedRatio = BigDecimal.valueOf(1d);
@@ -1764,7 +1770,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							}
 
 							visitCompoList(compositeLabeling, composite, labelingFormulaContext, computedRatio,
-									recurYield != null ? recurYield.doubleValue() : null, !parent.equals(compositeLabeling) );
+									recurYield != null ? recurYield.doubleValue() : null, !parent.equals(compositeLabeling));
 						}
 					}
 
@@ -1888,33 +1894,29 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		return component.getName();
 	}
 
-
 	private void mergeEvaporatedItem(Set<EvaporatedDataItem> evaporatedDataItems, EvaporatedDataItem evaporatedDataItem) {
 
-	    EvaporatedDataItem existingItem = evaporatedDataItems.stream()
-	            .filter(item -> item.getProductNodeRef() != null && 
-	                            item.getProductNodeRef().equals(evaporatedDataItem.getProductNodeRef()))
-	            .findFirst()
-	            .orElse(null);
+		EvaporatedDataItem existingItem = evaporatedDataItems.stream()
+				.filter(item -> (item.getProductNodeRef() != null) && item.getProductNodeRef().equals(evaporatedDataItem.getProductNodeRef()))
+				.findFirst().orElse(null);
 
-	    if (existingItem != null) {
-	        if (existingItem.getMaxEvaporableQty() != null && evaporatedDataItem.getMaxEvaporableQty() != null) {
-	            existingItem.setMaxEvaporableQty(existingItem.getMaxEvaporableQty() + evaporatedDataItem.getMaxEvaporableQty());
-	        } else {
-	            existingItem.setMaxEvaporableQty(null);
-	        }
-	        
-	        if (existingItem.getMaxEvaporableVolume() != null && evaporatedDataItem.getMaxEvaporableVolume() != null) {
-	            existingItem.setMaxEvaporableVolume(existingItem.getMaxEvaporableVolume() + evaporatedDataItem.getMaxEvaporableVolume());
-	        } else {
-	            existingItem.setMaxEvaporableVolume(null);
-	        }
-	    } else {
-	        evaporatedDataItems.add(evaporatedDataItem);
-	    }
+		if (existingItem != null) {
+			if ((existingItem.getMaxEvaporableQty() != null) && (evaporatedDataItem.getMaxEvaporableQty() != null)) {
+				existingItem.setMaxEvaporableQty(existingItem.getMaxEvaporableQty() + evaporatedDataItem.getMaxEvaporableQty());
+			} else {
+				existingItem.setMaxEvaporableQty(null);
+			}
+
+			if ((existingItem.getMaxEvaporableVolume() != null) && (evaporatedDataItem.getMaxEvaporableVolume() != null)) {
+				existingItem.setMaxEvaporableVolume(existingItem.getMaxEvaporableVolume() + evaporatedDataItem.getMaxEvaporableVolume());
+			} else {
+				existingItem.setMaxEvaporableVolume(null);
+			}
+		} else {
+			evaporatedDataItems.add(evaporatedDataItem);
+		}
 	}
 
-	
 	private void applyEvaporation(LabelingFormulaContext labelingFormulaContext, CompositeLabeling parent) {
 
 		if (!parent.getEvaporatedDataItems().isEmpty()) {
@@ -1943,7 +1945,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 			Double totalRate = remainingItems.stream().mapToDouble(EvaporatedDataItem::getRate).sum();
 
-			processEvaporation(parent, remainingItems, totalRate,labelingFormulaContext.isDoNotPropagateYield());
+			processEvaporation(parent, remainingItems, totalRate, labelingFormulaContext.isDoNotPropagateYield());
 
 			// 3 - If not all has been evaporated remove from first
 			if ((parent.getEvaporatedQty() > 0) && !fullEvaporationItems.isEmpty() && !labelingFormulaContext.isDoNotPropagateYield()) {
@@ -1979,8 +1981,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 					if ((productLabelItem.getQtyWithYield() != null) && (parent.getEvaporatedQty() != null) && (parent.getEvaporatedQty() > 0d)) {
 						Double maxEvapQty = (productLabelItem.getQtyWithYield() * rate) / 100d;
-						
-						if(isDoNotPropagateYield && evaporatedDataItem.getMaxEvaporableQty()!=null) {
+
+						if (isDoNotPropagateYield && (evaporatedDataItem.getMaxEvaporableQty() != null)) {
 							maxEvapQty = Math.min(maxEvapQty, evaporatedDataItem.getMaxEvaporableQty());
 						}
 
@@ -1991,7 +1993,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						productLabelItem.setQtyWithYield(productLabelItem.getQtyWithYield() - evaporatedQty);
 
 						if (logger.isDebugEnabled()) {
-							logger.debug("Apply evaporation qty " + evaporatedQty + " on " + productLabelItem.getName() + " after "
+							logger.debug("Apply evaporation qty " + evaporatedQty + " on " + getName(productLabelItem) + " after "
 									+ productLabelItem.getQtyWithYield());
 						}
 
@@ -2001,8 +2003,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					if ((productLabelItem.getVolumeWithYield() != null) && (parent.getEvaporatedVolume() != null)
 							&& (parent.getEvaporatedVolume() > 0d)) {
 						Double maxEvapQty = (productLabelItem.getVolumeWithYield() * rate) / 100d;
-						
-						if(isDoNotPropagateYield && evaporatedDataItem.getMaxEvaporableVolume()!=null) {
+
+						if (isDoNotPropagateYield && (evaporatedDataItem.getMaxEvaporableVolume() != null)) {
 							maxEvapQty = Math.min(maxEvapQty, evaporatedDataItem.getMaxEvaporableVolume());
 						}
 
@@ -2010,8 +2012,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 								: parent.getEvaporatedVolume() * (rate / totalRate); // Consider total rate for remaining items
 						Double evaporatedVol = Math.min(maxEvapQty, proportionalEvap);
 
+						productLabelItem.setVolumeWithYield(productLabelItem.getVolume() - evaporatedVol);
+
 						if (logger.isDebugEnabled()) {
-							logger.debug("Apply evaporation volume " + evaporatedVol + " on " + productLabelItem.getName() + " after "
+							logger.debug("Apply evaporation volume " + evaporatedVol + " on " + getName(productLabelItem) + " after "
 									+ productLabelItem.getVolumeWithYield());
 						}
 
@@ -2020,6 +2024,16 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						evaporatingVolume.set(evaporatingVolume.get() - evaporatedVol);
 					}
 
+				} else {
+					if (logger.isDebugEnabled()) {
+						logger.debug("Take in account evaporation in Do Not declare");
+					}
+					if (evaporatedDataItem.getMaxEvaporableQty() != null) {
+						evaporatingQty.set(evaporatingQty.get() - evaporatedDataItem.getMaxEvaporableQty());
+					}
+					if (evaporatedDataItem.getMaxEvaporableVolume() != null) {
+						evaporatingVolume.set(evaporatingVolume.get() - evaporatedDataItem.getMaxEvaporableVolume());
+					}
 				}
 			});
 
@@ -2161,7 +2175,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	private CompositeLabeling visitIngList(CompositeLabeling parent, ProductData product, Composite<IngListDataItem> compositeIngList,
 			Double omitQtyPerc, Double qty, Double volume, Double qtyWithYield, Double volumeWithYield, LabelingFormulaContext labelingFormulaContext,
-			CompoListDataItem compoListDataItem, Map<String, ReqCtrlListDataItem> errors) {
+			CompoListDataItem compoListDataItem, Map<String, ReqCtrlListDataItem> errors, Double calculatedYield) {
 
 		boolean applyThreshold = false;
 		if (nodeService.hasAspect(product.getNodeRef(), PLMModel.ASPECT_WATER)
@@ -2209,7 +2223,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						&& hasVisibleSubIng(compoListDataItem, ingListItem, labelingFormulaContext)) {
 					logger.debug("Declaring ingredient: ");
 					visitIngList(parent, product, ingListItem, omitQtyPerc, qty, volume, qtyWithYield, volumeWithYield, labelingFormulaContext,
-							compoListDataItem, errors);
+							compoListDataItem, errors, calculatedYield);
 				} else {
 
 					if (DeclarationType.Declare.equals(ingDeclarationType)) {
@@ -2237,26 +2251,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							labelingFormulaContext.getToApplyThresholdItems().add(ingNodeRef);
 						}
 
-						if (hasEvaporationData(ingNodeRef)) {
-
-							if (logger.isTraceEnabled()) {
-								logger.trace("Detected water lost");
-							}
-							Double evaporateRate = (Double) nodeService.getProperty(ingNodeRef, PLMModel.PROP_EVAPORATED_RATE);
-
-							if (evaporateRate == null) {
-								evaporateRate = 100d;
-							}
-							
-							Double maxEvaporableQty = (qty * (evaporateRate / 100d));
-							Double maxEvaporableVolume = (volume * (evaporateRate / 100d));
-							
-							mergeEvaporatedItem(parent.getEvaporatedDataItems(),new EvaporatedDataItem(ingNodeRef, evaporateRate, maxEvaporableQty,maxEvaporableVolume));
-							
-							labelingFormulaContext.getToApplyThresholdItems().add(ingNodeRef);
-
-						}
-
 					} else if (!DeclarationType.DoNotDeclare.equals(ingDeclarationType)) {
 						if (logger.isTraceEnabled()) {
 							logger.trace("- Update ing value: " + ingLabelItem.getLegalName(I18NUtil.getContentLocaleLang()));
@@ -2266,6 +2260,36 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							ingLabelItem.getPluralParents().add(ingListItem.getData().getNodeRef());
 							ingLabelItem.setPlural(true);
 						}
+					}
+
+					if (hasEvaporationData(ingNodeRef) && calculatedYield != null && calculatedYield != 100d) {
+
+						Double evaporateRate = (Double) nodeService.getProperty(ingNodeRef, PLMModel.PROP_EVAPORATED_RATE);
+						Double maxEvaporableQty = 0d;
+						Double maxEvaporableVolume = 0d;
+
+						if (evaporateRate == null) {
+							evaporateRate = 100d;
+						}
+
+						if (qtyWithYield != null) {
+							maxEvaporableQty = (qtyWithYield * (evaporateRate / 100d));
+						}
+
+						if (volumeWithYield != null) {
+							maxEvaporableVolume = (volumeWithYield * (evaporateRate / 100d));
+						}
+
+						if (logger.isTraceEnabled()) {
+							logger.trace("Detected evaporated ings (" + ingLabelItem.getLegalName(I18NUtil.getContentLocaleLang()) + "), rate: "
+									+ evaporateRate + ", qtyWithYield :" + qtyWithYield + ", maxEvaporableQty :" + maxEvaporableQty);
+						}
+
+						mergeEvaporatedItem(parent.getEvaporatedDataItems(),
+								new EvaporatedDataItem(ingNodeRef, evaporateRate, maxEvaporableQty, maxEvaporableVolume));
+
+						labelingFormulaContext.getToApplyThresholdItems().add(ingNodeRef);
+
 					}
 
 					if (!DeclarationType.DoNotDeclare.equals(ingDeclarationType)) {
@@ -2383,7 +2407,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						}
 
 						visitIngList(ingLabelItem, product, ingListItem, omitQtyPerc, qty, volume, qty, volume, labelingFormulaContext,
-								compoListDataItem, errors);
+								compoListDataItem, errors, calculatedYield);
 
 					} else if (DeclarationType.Detail.equals(ingDeclarationType) && ingLabelItem.getIngList().isEmpty()) {
 						ingLabelItem.setDeclarationType(DeclarationType.DoNotDetails);
@@ -2395,7 +2419,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 		return parent;
 	}
-
 
 	private void updateIfNotNull(Double oldValue, Double newValue, Double qtyPerc, DoubleConsumer updateFunction, String name) {
 		if ((oldValue != null) && (newValue != null)) {

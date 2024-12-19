@@ -33,6 +33,11 @@ public class GetSavedSearchWebScript extends AbstractSearchWebScript {
 
 	private SavedSearchService savedSearchService;
 
+	/**
+	 * <p>Setter for the field <code>savedSearchService</code>.</p>
+	 *
+	 * @param savedSearchService a {@link fr.becpg.repo.search.SavedSearchService} object
+	 */
 	public void setSavedSearchService(SavedSearchService savedSearchService) {
 		this.savedSearchService = savedSearchService;
 	}
