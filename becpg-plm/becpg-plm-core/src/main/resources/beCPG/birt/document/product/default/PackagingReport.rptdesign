@@ -8071,7 +8071,7 @@ adress;</expression>
                                     <property name="style">becpg-cell-dynamic-header-left</property>
                                     <data id="3523">
                                         <property name="fontFamily">"Arial"</property>
-                                        <property name="textAlign">center</property>
+                                        <property name="textAlign">left</property>
                                         <property name="resultSetColumn">clCharacts</property>
                                     </data>
                                 </cell>
