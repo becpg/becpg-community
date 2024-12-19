@@ -32,8 +32,19 @@ public interface EntitySimulationPlugin {
 	 *
 	 * @param destNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param nodeRefs a {@link java.util.List} object.
+	 * @param branch a boolean
 	 * @return a {@link java.util.List} object.
 	 */
-	List<NodeRef> simulateNodeRefs(NodeRef destNodeRef, List<NodeRef> nodeRefs);
-
+	List<NodeRef> simulateNodeRefs(NodeRef destNodeRef, List<NodeRef> nodeRefs, boolean branch);
+	
+	/**
+	 * <p>simulateNodeRefs.</p>
+	 *
+	 * @param destNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param nodeRefs a {@link java.util.List} object.
+	 * @return a {@link java.util.List} object.
+	 */
+	default List<NodeRef> simulateNodeRefs(NodeRef destNodeRef, List<NodeRef> nodeRefs) {
+		return simulateNodeRefs(destNodeRef, nodeRefs, true);
+	}
 }

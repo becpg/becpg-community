@@ -1270,7 +1270,8 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 		NodeRef grpNodeRef = null;
 
 		for (LabelingRuleListDataItem rule : labelingRuleList) {
-			if (rule.getLabelingRuleType().equals(LabelingRuleType.Render)) {
+			if (rule.getLabelingRuleType().equals(LabelingRuleType.Render) 
+					&& !rule.getFormula().contains("renderAsHtmlTable")) {
 				rule.setNodeRef(new NodeRef("test", "becpg", UUID.randomUUID().toString()));
 				if ((ruleName != null) && ruleName.equals(rule.getName())) {
 					grpNodeRef = rule.getNodeRef();

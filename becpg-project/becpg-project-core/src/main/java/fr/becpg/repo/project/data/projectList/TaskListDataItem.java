@@ -490,6 +490,11 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 		this.taskState = state;
 	}
 
+	/**
+	 * <p>Getter for the field <code>previousTaskState</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.project.data.projectList.TaskState} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:tlPreviousState")
 	public TaskState getPreviousTaskState() {
@@ -499,7 +504,7 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	/**
 	 * <p>Setter for the field <code>taskState</code>.</p>
 	 *
-	 * @param state a {@link fr.becpg.repo.project.data.projectList.TaskState} object.
+	 * @param previousTaskState a {@link fr.becpg.repo.project.data.projectList.TaskState} object
 	 */
 	public void setPreviousTaskState(TaskState previousTaskState) {
 		this.previousTaskState = previousTaskState;

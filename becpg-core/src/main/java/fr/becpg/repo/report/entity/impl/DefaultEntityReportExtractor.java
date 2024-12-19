@@ -31,6 +31,7 @@ import org.alfresco.model.ApplicationModel;
 import org.alfresco.model.ContentModel;
 import org.alfresco.model.ForumModel;
 import org.alfresco.repo.rule.RuleModel;
+import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.repo.version.Version2Model;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
@@ -139,6 +140,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	/** Constant <code>PRODUCT_IMG_ID="Img%d"</code> */
 	protected static final String PRODUCT_IMG_ID = "Img%d";
 	
+	/** Constant <code>DATALIST_IMG_ID="Datalist_Img_%s"</code> */
 	protected static final String DATALIST_IMG_ID = "Datalist_Img_%s";
 	
 	
@@ -281,6 +283,9 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	@Autowired
 	private ExpressionService expressionService;
+	
+	@Autowired
+	private TenantAdminService tenantAdminService;
 
 	protected interface DefaultExtractorContextCallBack {
 		public void run();
@@ -458,6 +463,14 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		}
 	}
 	
+	/**
+	 * <p>extractImage.</p>
+	 *
+	 * @param imgNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param imgId a {@link java.lang.String} object
+	 * @param imgsElt a {@link org.dom4j.Element} object
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
+	 */
 	protected void extractImage(NodeRef imgNodeRef, String imgId, Element imgsElt, DefaultExtractorContext context) {
 		if (ApplicationModel.TYPE_FILELINK.equals(nodeService.getType(imgNodeRef))) {
 			imgNodeRef = (NodeRef) nodeService.getProperty(imgNodeRef, ContentModel.PROP_LINK_DESTINATION);
@@ -1203,6 +1216,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	}
 
 	private void loadCreator(NodeRef entityNodeRef, Element entityElt, Element imgsElt, DefaultExtractorContext context) {
+		if ((tenantAdminService != null) && tenantAdminService.isEnabled()) {
 		String creator = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_CREATOR);
 		if ((creator != null) && personService.personExists(creator)) {
 			Element creatorElt = (Element) entityElt.selectSingleNode(ContentModel.PROP_CREATOR.getLocalName());
@@ -1213,6 +1227,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			if (!avatorAssocs.isEmpty()) {
 				extractImage(creatorNodeRef, avatorAssocs.get(0).getTargetRef(), AVATAR_IMG_ID, imgsElt, context,null);
 			}
+		}
 		}
 	}
 
