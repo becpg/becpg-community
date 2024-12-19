@@ -75,7 +75,6 @@ public class PDFScriptHelper extends BaseScopableProcessorExtension {
 	 * @param toAppendPDFNode a {@link org.alfresco.repo.jscript.ScriptNode} object.
 	 * @return a {@link org.alfresco.repo.jscript.ScriptNode} object.
 	 */
-
 	public ScriptNode appendPDF(ScriptNode targetPDFNode, ScriptNode toAppendPDFNode) {
 		logger.debug("Append PDF " + toAppendPDFNode.getName() + " to " + targetPDFNode.getName());
 
