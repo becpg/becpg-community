@@ -229,7 +229,7 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 				regulatoryList.add(item1);
 				regulatoryList.add(item2);
 				
-				productService.formulate(product);
+				productService.formulate(product, DecernisService.DECERNIS_CHAIN_ID);
 				
 				assertTrue(product.getRegulatoryCountriesRef().contains(country1NodeRef));
 				assertFalse(product.getRegulatoryCountriesRef().contains(country2NodeRef));
@@ -239,7 +239,7 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 				item1.setRegulatoryState(SystemState.Simulation);
 				item2.setRegulatoryState(SystemState.Valid);
 				
-				productService.formulate(product);
+				productService.formulate(product, DecernisService.DECERNIS_CHAIN_ID);
 				
 				assertFalse(product.getRegulatoryCountriesRef().contains(country1NodeRef));
 				assertTrue(product.getRegulatoryCountriesRef().contains(country2NodeRef));

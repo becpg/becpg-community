@@ -60,6 +60,8 @@ public interface ProductService {
      * @throws fr.becpg.repo.formulation.FormulateException if any.
      */
     ProductData formulate(ProductData productData);
+    
+    ProductData formulate(ProductData productData, String chainId);
      
     
 	/**
