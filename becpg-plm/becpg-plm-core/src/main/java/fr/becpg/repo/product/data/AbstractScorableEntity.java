@@ -138,7 +138,7 @@ public abstract class AbstractScorableEntity extends BeCPGDataObject implements 
 				if (!newReqCtrlList.containsKey(dbKV.getKey())) {
 
 					if (((dbKV.getValue().getFormulationChainId() == null)
-							&& ((getFormulationChainId() == null) || FormulationService.FAST_FORMULATION_CHAINID.equals(currentChainId)
+							&& ((currentChainId == null) || FormulationService.FAST_FORMULATION_CHAINID.equals(currentChainId)
 									|| FormulationService.DEFAULT_CHAIN_ID.equals(currentChainId)))
 							|| ((dbKV.getValue().getFormulationChainId() != null)
 									&& dbKV.getValue().getFormulationChainId().equals(currentChainId))) {
