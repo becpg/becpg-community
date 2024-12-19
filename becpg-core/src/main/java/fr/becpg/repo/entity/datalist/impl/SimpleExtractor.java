@@ -123,6 +123,13 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 		return simpleExtract(dataListFilter, metadataFields);
 	}
 
+	/**
+	 * <p>simpleExtract.</p>
+	 *
+	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object
+	 * @param metadataFields a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.entity.datalist.PaginatedExtractedItems} object
+	 */
 	protected PaginatedExtractedItems simpleExtract(DataListFilter dataListFilter, List<AttributeExtractorField> metadataFields) {
 
 		PaginatedExtractedItems ret = new PaginatedExtractedItems(dataListFilter.getPagination().getPageSize());

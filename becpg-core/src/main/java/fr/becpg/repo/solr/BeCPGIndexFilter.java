@@ -33,7 +33,7 @@ public class BeCPGIndexFilter extends TypeIndexFilter {
 	}
 
 
-    /** {@inheritDoc} */
+	/** {@inheritDoc} */
     @Override
 	public boolean shouldBeIgnored(QName nodeType)
 	    {

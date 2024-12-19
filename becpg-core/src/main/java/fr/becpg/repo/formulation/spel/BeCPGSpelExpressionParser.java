@@ -9,6 +9,11 @@ import org.springframework.expression.ParserContext;
 import org.springframework.expression.spel.SpelParserConfiguration;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 
+/**
+ * <p>BeCPGSpelExpressionParser class.</p>
+ *
+ * @author matthieu
+ */
 public class BeCPGSpelExpressionParser extends SpelExpressionParser {
 
 	private static final Log logger = LogFactory.getLog(BeCPGSpelExpressionParser.class);
@@ -21,20 +26,30 @@ public class BeCPGSpelExpressionParser extends SpelExpressionParser {
 			"ClassLoader.getSystemClassLoader(", "URLClassLoader.newInstance(", "Files.delete(", "Files.copy(", "Files.move(", ".eval(",
 			".executeScript(", ".invokeFunction(", ".readObject(", ".writeObject(" };
 	
+	/**
+	 * <p>Constructor for BeCPGSpelExpressionParser.</p>
+	 */
 	public BeCPGSpelExpressionParser() {
 		super();
 	}
 
+	/**
+	 * <p>Constructor for BeCPGSpelExpressionParser.</p>
+	 *
+	 * @param config a {@link org.springframework.expression.spel.SpelParserConfiguration} object
+	 */
 	public BeCPGSpelExpressionParser(SpelParserConfiguration config) {
 		super(config);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Expression parseExpression(String expressionString) throws ParseException {
 		checkExpression(expressionString);
 		return super.parseExpression(expressionString);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Expression parseExpression(String expressionString, ParserContext context) throws ParseException {
 		checkExpression(expressionString);
