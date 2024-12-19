@@ -27,8 +27,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
@@ -120,9 +118,6 @@ import fr.becpg.repo.system.SystemConfigurationService;
 public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 	private static Log logger = LogFactory.getLog(BeCPGScriptHelper.class);
-
-	// Matches the counter at the end of the string (exists the prefix and keeps the numbers at the end)
-	private static final Pattern END_COUNTER_PATTERN = Pattern.compile("\\d+$");
 
 	private NodeService nodeService;
 
@@ -427,16 +422,18 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 		String autoNumValue = getAutoNumValue(className, propertyName);
 
-		// Create a matcher object to find the pattern in the input string
-		Matcher matcher = END_COUNTER_PATTERN.matcher(autoNumValue);
+		int endIndex = autoNumValue.length();
+		int startIndex = endIndex;
 
-		// Check if the pattern is found
-		if (matcher.find()) {
-			// Extract the matched counter value and parse it as a long
-			String counterStr = matcher.group();
-			return Long.parseLong(counterStr);
+		while (startIndex > 0 && Character.isDigit(autoNumValue.charAt(startIndex - 1))) {
+		    startIndex--;
+		}
+
+		if (startIndex < endIndex) {
+		    String counterStr = autoNumValue.substring(startIndex, endIndex);
+		    return Long.parseLong(counterStr);
 		} else {
-			return null;
+		    return null;
 		}
 	}
 
