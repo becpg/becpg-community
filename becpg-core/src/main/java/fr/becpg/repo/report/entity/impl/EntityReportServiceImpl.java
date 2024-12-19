@@ -132,8 +132,6 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 
 	private static final Log logger = LogFactory.getLog(EntityReportServiceImpl.class);
 
-	private static final String REPORT_KIND_SPLIT_REGEXP = "\\s*,\\s*";
-	
 	private static final List<String> SEMICOLON_SEPARATED_PROPERTIES = List.of("extraImagePaths");
 
 	@Autowired
@@ -564,7 +562,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 				Element entityEl = entityIterator.next();
 				// get report parameters
 				if (entityEl.getName().equals(ReportModel.PROP_REPORT_PARAMETERS.getLocalName())) {
-					entityParams = entityEl.getStringValue().split(REPORT_KIND_SPLIT_REGEXP);
+					entityParams = splitReportKinds(entityEl.getStringValue());
 				}
 			}
 			
@@ -598,8 +596,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 
 			for (Iterator<Element> elIterator = dlEl.elementIterator(); elIterator.hasNext();) {
 				Element itemEl = elIterator.next();
-				String[] repKindCodes = itemEl.valueOf("@" + ReportModel.PROP_REPORT_KINDS_CODE.getLocalName())
-						.split(REPORT_KIND_SPLIT_REGEXP);
+				String[] repKindCodes = splitReportKinds(itemEl.valueOf("@" + ReportModel.PROP_REPORT_KINDS_CODE.getLocalName()));
 
 				if (Arrays.asList(repKindCodes).contains("None")) {
 					dlEl.remove(itemEl);
@@ -615,14 +612,21 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 			if (hasReportKindAspect) {
 				for (Iterator<Element> elIterator = dlEl.elementIterator(); elIterator.hasNext();) {
 					Element itemEl = elIterator.next();
-					String[] repKindCodes = itemEl.valueOf("@" + ReportModel.PROP_REPORT_KINDS_CODE.getLocalName())
-							.split(REPORT_KIND_SPLIT_REGEXP);
-					if (!Arrays.asList(repKindCodes).contains(reportKindCode) || (repKindCodes == null)) {
+					String[] repKindCodes = splitReportKinds(itemEl.valueOf("@" + ReportModel.PROP_REPORT_KINDS_CODE.getLocalName()));
+					if (!Arrays.asList(repKindCodes).contains(reportKindCode)) {
 						dlEl.remove(itemEl);
 					}
 				}
 			}
 		}
+	}
+
+	private String[] splitReportKinds(String input) {
+		String[] repKindCodes = input.split(",");
+		for (int i = 0; i < repKindCodes.length; i++) {
+	        repKindCodes[i] = repKindCodes[i].trim();
+	    }
+	    return repKindCodes;
 	}
 
 	/**
