@@ -196,6 +196,7 @@ public class NutrientHelper {
 			nutriScoreContext.setVersion(productData.getNutrientProfileVersion());
 			boolean containsWaterAspect = productData.getAspects().contains(PLMModel.ASPECT_WATER)
 					|| (productData.getAspects().contains(PLMModel.ASPECT_EVAPORABLE) && productData.getNodeRef() != null
+							&& (Double) nodeService.getProperty(productData.getNodeRef(), PLMModel.PROP_EVAPORATED_RATE)!=null 
 							&& (Double) nodeService.getProperty(productData.getNodeRef(), PLMModel.PROP_EVAPORATED_RATE) == 100d);
 			nutriScoreContext.setWater(containsWaterAspect);
 
