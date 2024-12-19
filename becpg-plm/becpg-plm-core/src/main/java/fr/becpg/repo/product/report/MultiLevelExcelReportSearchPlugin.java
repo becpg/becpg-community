@@ -146,8 +146,9 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 	 * @param entityItems a {@link java.util.Map} object.
 	 * @param dynamicCharactColumnCache a {@link java.util.Map} object
 	 * @param excelCellStyles a {@link fr.becpg.repo.helper.ExcelHelper.ExcelCellStyles} object
-	 * @param wUsedAssoc a {org.alfresco.service.cmr.repository.NodeRef} object
 	 * @return an int.
+	 * @param wUsedEntityType a {@link org.alfresco.service.namespace.QName} object
+	 * @param wUsedAssocCache a {@link java.util.Map} object
 	 */
 	protected int appendNextLevel(MultiLevelListData listData, XSSFSheet sheet, QName itemType,
 			List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache, int rownum,
