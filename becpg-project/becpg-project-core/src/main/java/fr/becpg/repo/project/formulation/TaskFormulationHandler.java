@@ -669,6 +669,9 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 			}
 
 			if (updatePermission) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Update project permissions after reassignment");
+				}
 				projectService.updateProjectPermission(projectData.getNodeRef(), taskListDataItem.getNodeRef(), toAdd, true);
 			}
 

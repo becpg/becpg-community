@@ -10,9 +10,11 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.simulation.EntitySimulationPlugin;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.product.data.AbstractProductDataView;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -40,6 +42,12 @@ public class DataListSimulationPlugin implements EntitySimulationPlugin {
 
 	@Autowired
 	private EntityVersionService entityVersionService;
+	
+	@Autowired
+	private EntityService entityService;
+	
+	@Autowired
+	private RepoService repoService;
 
 	/** {@inheritDoc} */
 	@Override
@@ -49,12 +57,12 @@ public class DataListSimulationPlugin implements EntitySimulationPlugin {
 
 	/** {@inheritDoc} */
 	@Override
-	public List<NodeRef> simulateNodeRefs(NodeRef entityNodeRef, List<NodeRef> dataListItemsNodeRefs) {
-		recurSimule(entityNodeRef, null, dataListItemsNodeRefs);
+	public List<NodeRef> simulateNodeRefs(NodeRef entityNodeRef, List<NodeRef> dataListItemsNodeRefs, boolean branch) {
+		recurSimule(entityNodeRef, null, dataListItemsNodeRefs, branch);
 		return null;
 	}
 
-	private NodeRef recurSimule(NodeRef entityNodeRef, CompositionDataItem dataListItem, List<NodeRef> dataListItemsNodeRefs) {
+	private NodeRef recurSimule(NodeRef entityNodeRef, CompositionDataItem dataListItem, List<NodeRef> dataListItemsNodeRefs, boolean branch) {
 
 		NodeRef parentNodeRef = dataListItem != null ? dataListItem.getComponent() : entityNodeRef;
 
@@ -66,21 +74,22 @@ public class DataListSimulationPlugin implements EntitySimulationPlugin {
 				for (AbstractProductDataView view : productData.getViews()) {
 					for (CompositionDataItem item : view.getMainDataList()) {
 	
-						NodeRef simulationNodeRef = recurSimule(entityNodeRef, item, dataListItemsNodeRefs);
+						NodeRef simulationNodeRef = recurSimule(entityNodeRef, item, dataListItemsNodeRefs, branch);
 						if (simulationNodeRef != null) {
 							if (dataListItem == null) {
 								logger.debug("Update root " + productData.getName());
 								associationService.update(item.getNodeRef(), item.getComponentAssocName(), simulationNodeRef);
 							} else {
 								NodeRef parentSimulationNodeRef = createSimulationNodeRef(parentNodeRef,
-										nodeService.getPrimaryParent(entityNodeRef).getParentRef());
+										nodeService.getPrimaryParent(entityNodeRef).getParentRef(), branch);
 								ProductData newProductData = alfrescoRepository.findOne(parentSimulationNodeRef);
 								logger.debug("Create new SF " + newProductData.getName());
 	
 								for (AbstractProductDataView newView : newProductData.getViews()) {
 									if (newView.getClass().isAssignableFrom(view.getClass())) {
 										for (CompositionDataItem newItem : newView.getMainDataList()) {
-											NodeRef origNodeRef = associationService.getTargetAssoc(newItem.getNodeRef(), ContentModel.ASSOC_ORIGINAL);
+											NodeRef origNodeRef = associationService
+													.getTargetAssoc(newItem.getNodeRef(), ContentModel.ASSOC_ORIGINAL);
 											if ((origNodeRef != null) && origNodeRef.equals(item.getNodeRef())) {
 												associationService.update(newItem.getNodeRef(), item.getComponentAssocName(), simulationNodeRef);
 												logger.debug("Update new SF " + newProductData.getName());
@@ -98,7 +107,7 @@ public class DataListSimulationPlugin implements EntitySimulationPlugin {
 	
 			if ((dataListItem != null) && dataListItemsNodeRefs.contains(dataListItem.getNodeRef())) {
 				logger.debug("Found item to simulate:" + dataListItem.getNodeRef());
-				return createSimulationNodeRef(dataListItem.getComponent(), nodeService.getPrimaryParent(entityNodeRef).getParentRef());
+				return createSimulationNodeRef(dataListItem.getComponent(), nodeService.getPrimaryParent(entityNodeRef).getParentRef(), branch);
 			}
 		} else if(dataListItem!=null){
 			logger.warn("Empty component for :"+dataListItem.toString());
@@ -108,8 +117,11 @@ public class DataListSimulationPlugin implements EntitySimulationPlugin {
 
 	}
 
-	private NodeRef createSimulationNodeRef(NodeRef entityNodeRef, NodeRef parentRef) {
-		return entityVersionService.createBranch(entityNodeRef, parentRef);
+	private NodeRef createSimulationNodeRef(NodeRef entityNodeRef, NodeRef parentRef, boolean branch) {
+		return branch ? entityVersionService.createBranch(entityNodeRef, parentRef)
+				: entityService.createOrCopyFrom(entityNodeRef, parentRef, nodeService.getType(entityNodeRef),
+						repoService.getAvailableName(entityNodeRef,
+								nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME).toString(), true));
 	}
 
 }

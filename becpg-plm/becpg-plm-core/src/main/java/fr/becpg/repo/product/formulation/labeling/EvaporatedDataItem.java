@@ -23,6 +23,8 @@ public class EvaporatedDataItem {
 	 *
 	 * @param productNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param rate a {@link java.lang.Double} object.
+	 * @param maxEvaporableQty a {@link java.lang.Double} object
+	 * @param maxEvaporableVolume a {@link java.lang.Double} object
 	 */
 	public EvaporatedDataItem(NodeRef productNodeRef, Double rate, Double maxEvaporableQty, Double maxEvaporableVolume) {
 		super();
@@ -54,19 +56,39 @@ public class EvaporatedDataItem {
 	}
 
 
+	/**
+	 * <p>Getter for the field <code>maxEvaporableQty</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	public Double getMaxEvaporableQty() {
 		return maxEvaporableQty;
 	}
 
+	/**
+	 * <p>Setter for the field <code>maxEvaporableQty</code>.</p>
+	 *
+	 * @param maxEvaporableQty a {@link java.lang.Double} object
+	 */
 	public void setMaxEvaporableQty(Double maxEvaporableQty) {
 		this.maxEvaporableQty = maxEvaporableQty;
 	}
 
 
+	/**
+	 * <p>Getter for the field <code>maxEvaporableVolume</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	public Double getMaxEvaporableVolume() {
 		return maxEvaporableVolume;
 	}
 
+	/**
+	 * <p>Setter for the field <code>maxEvaporableVolume</code>.</p>
+	 *
+	 * @param maxEvaporableVolume a {@link java.lang.Double} object
+	 */
 	public void setMaxEvaporableVolume(Double maxEvaporableVolume) {
 		this.maxEvaporableVolume = maxEvaporableVolume;
 	}

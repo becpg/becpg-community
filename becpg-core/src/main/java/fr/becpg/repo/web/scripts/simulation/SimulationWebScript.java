@@ -20,6 +20,7 @@ package fr.becpg.repo.web.scripts.simulation;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -54,6 +55,8 @@ public class SimulationWebScript extends AbstractWebScript {
 	private static final String PARAM_MODE = "mode";
 
 	private static final String PARAM_DEST_NODEREF = "destNodeRef";
+
+	private static final String PARAM_BRANCH = "branch";
 
 	private NodeService nodeService;
 	
@@ -108,6 +111,9 @@ public class SimulationWebScript extends AbstractWebScript {
 		String nodeRefsParam = req.getParameter(PARAM_NODEREFS);
 		String mode  = req.getParameter(PARAM_MODE);
 		
+		final boolean branch = Optional.ofNullable(req.getParameter(PARAM_BRANCH)).map(Boolean::valueOf)
+				.orElse(true);
+		
 		
 		List<NodeRef> nodeRefs = new ArrayList<>();
 		
@@ -154,7 +160,7 @@ public class SimulationWebScript extends AbstractWebScript {
 			
 			simulationNodeRef = simulationService.createSimulationNodeRefs(nodeRefs,destNodeRef, mode);
 		} else if (!dataListItemsNodeRefs.isEmpty()) {
-			simulationService.simuleDataListItems(entityNodeRef, dataListItemsNodeRefs);
+			simulationService.simuleDataListItems(entityNodeRef, dataListItemsNodeRefs, branch);
 
 		} else if (entityNodeRef != null) {
 			

@@ -36,45 +36,42 @@ function main() {
 
 	if (urlDeliverable.content) {
 		var document = search.findNode(urlDeliverable.content);
-	
-		document = bSign.signDocument(document);
 		
-		if (document.properties["sign:status"] == "Signed") {
-			
-			if (document.assocs["cm:original"] && document.assocs["cm:original"].length > 0) {
+		if (document.properties["sign:status"] != "Signed") {
+			document = bSign.signDocument(document);
+			if (document.properties["sign:status"] == "Signed") {
+				if (document.assocs["cm:original"] && document.assocs["cm:original"].length > 0) {
+					
+					var originalDoc = document.assocs["cm:original"][0];
+					var checkout = originalDoc.checkout();
+					bcpg.copyContent(document, checkout);
+					
+					checkout.properties["sign:status"] = document.properties["sign:status"];
+					checkout.properties["sign:validator"] = document.properties["sign:validator"];
+					checkout.properties["sign:validationDate"] = document.properties["sign:validationDate"];
+					checkout.properties["sign:recipientsData"] = document.properties["sign:recipientsData"];
+					
+					checkout.save();
+					document.remove();
+					bSign.disableSignaturePolicy();
+					document = checkout.checkin();
+				}
 				
-				var originalDoc = document.assocs["cm:original"][0];
+				var suppliers = extractRecipients(document);
+				var documentName = document.properties["cm:name"];
+				var shareId = bcpg.shareContent(document);
 				
-				var checkout = originalDoc.checkout();
+				var templateArgs = {};
+				var templateModel = {};
+		
+				templateArgs['documentName'] = documentName;
+				templateArgs['shareId'] = shareId;
+				templateModel['args'] = templateArgs;
 				
-				bcpg.copyContent(document, checkout);
-				
-				checkout.properties["sign:status"] = document.properties["sign:status"];
-				checkout.properties["sign:validator"] = document.properties["sign:validator"];
-				checkout.properties["sign:validationDate"] = document.properties["sign:validationDate"];
-				checkout.properties["sign:recipientsData"] = document.properties["sign:recipientsData"];
-				
-				checkout.save();
-				
-				document.remove();
-				
-				bSign.disableSignaturePolicy();
-				
-				document = checkout.checkin();
+				bcpg.sendMail(suppliers, bcpg.getMessage("plm.supplier.portal.sign.mail.title", documentName), "/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:signature-notify-email.ftl", templateModel, true);
 			}
-			
-			var suppliers = extractRecipients(document);
-			var documentName = document.properties["cm:name"];
-			var shareId = bcpg.shareContent(document);
-			
-			var templateArgs = {};
-			var templateModel = {};
-	
-			templateArgs['documentName'] = documentName;
-			templateArgs['shareId'] = shareId;
-			templateModel['args'] = templateArgs;
-			
-			bcpg.sendMail(suppliers, bcpg.getMessage("plm.supplier.portal.sign.mail.title", documentName), "/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:signature-notify-email.ftl", templateModel, true);
+		} else {
+			logger.warn("Document is already signed: " + document.name + " (" + document.nodeRef + ")");
 		}
 	}
 	
