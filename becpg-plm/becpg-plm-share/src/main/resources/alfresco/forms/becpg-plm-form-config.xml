@@ -8935,6 +8935,22 @@
 					<field id="rep:reportKinds" set="2-col" />
 				</appearance>
 			</form>
+			<form id="export">
+				<field-visibility>
+					<show id="bcpg:nutListNut" />
+					<show id="bcpg:nutListValue" />
+					<show id="bcpg:nutListValuePrepared" force="true" />
+					<show id="bcpg:nutListMini" />
+					<show id="bcpg:nutListMaxi" />
+					<show id="bcpg:nutListFormulatedMini" />
+					<show id="bcpg:nutListFormulatedMaxi" />
+					<show id="bcpg:parentLevel" />
+					<show id="bcpg:nutListLossPerc" />
+					<show id="bcpg:nutListMethod" />
+					<show id="bcpg:nutListMeasurementPrecision" />
+					<show id="rep:reportKinds" />
+				</field-visibility>
+			</form>
 			<form id="create">
 				<field-visibility>
 					<show id="bcpg:nutListNut" />
