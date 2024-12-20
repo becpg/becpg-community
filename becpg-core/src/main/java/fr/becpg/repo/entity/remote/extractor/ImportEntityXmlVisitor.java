@@ -298,7 +298,7 @@ public class ImportEntityXmlVisitor {
 				}
 
 				String type = attributes.getValue(RemoteEntityService.ATTR_TYPE);
-				typeDeque.push(type);
+				typeDeque.push(type!=null ? type : "");
 
 				if ((type != null) && type.equals(RemoteEntityService.NODE_TYPE)) {
 					String path = attributes.getValue(RemoteEntityService.ATTR_PATH);
@@ -540,7 +540,7 @@ public class ImportEntityXmlVisitor {
 					currAssoc.pop();
 					currAssocType.pop();
 
-				} else if ((type != null) && (type.length() > 0)) {
+				} else if ((type != null) && (!type.isBlank())) {
 					if (!shouldIgnoreProperty(currProp)) {
 						if (logger.isDebugEnabled()) {
 							logger.debug("Set property : " + currProp.toPrefixString() + " value " + currValue + " for type " + type);
