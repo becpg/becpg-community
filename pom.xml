@@ -167,13 +167,7 @@
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 	  	<sonar.coverage.jacoco.xmlReportPaths>${maven.multiModuleProjectDirectory}/becpg-integration-runner/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
-	    <sonar.dependencyCheck.xmlReportPath>${maven.multiModuleProjectDirectory}/target/dependency-check-report.xml</sonar.dependencyCheck.xmlReportPath>
-		<sonar.dependencyCheck.jsonReportPath>${maven.multiModuleProjectDirectory}/target/dependency-check-report.json</sonar.dependencyCheck.jsonReportPath>
-		<sonar.dependencyCheck.htmlReportPath>${maven.multiModuleProjectDirectory}/target/dependency-check-report.html</sonar.dependencyCheck.htmlReportPath>
-	    <sonar.dependencyCheck.severity.blocker>9.0</sonar.dependencyCheck.severity.blocker>
-        <sonar.dependencyCheck.severity.critical>7.0</sonar.dependencyCheck.severity.critical>
-        <sonar.dependencyCheck.severity.major>4.0</sonar.dependencyCheck.severity.major>
-        <sonar.junit.reportPaths>${maven.multiModuleProjectDirectory}/becpg-integration-runner/target/surefire-reports/,${maven.multiModuleProjectDirectory}/becpg-integration-runner/target/failsafe-reports/</sonar.junit.reportPaths>
+	    <sonar.junit.reportPaths>${maven.multiModuleProjectDirectory}/becpg-integration-runner/target/surefire-reports/,${maven.multiModuleProjectDirectory}/becpg-integration-runner/target/failsafe-reports/</sonar.junit.reportPaths>
 		<sonar.scm.disabled>true</sonar.scm.disabled>
 		<sonar.scanner.socketTimeout>3600</sonar.scanner.socketTimeout>
 		<sonar.language>java</sonar.language>
@@ -513,25 +507,6 @@
 	<reporting>
 		<plugins>
 
-		   <plugin>
-				<groupId>org.owasp</groupId>
-				<artifactId>dependency-check-maven</artifactId>
-				<version>11.1.1</version>
-				<configuration>
-					<skipProvidedScope>false</skipProvidedScope>
-					<skipRuntimeScope>true</skipRuntimeScope>
-					<skipSystemScope>true</skipSystemScope>
-					<skipTestScope>true</skipTestScope>
-					<archiveAnalyzerEnabled>false</archiveAnalyzerEnabled>
-				</configuration>
-				<reportSets>
-					<reportSet>
-						<reports>
-							<report>aggregate</report>
-						</reports>
-					</reportSet>
-				</reportSets>
-			</plugin>
 		<!-- Surefire Report Plugin -->
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
