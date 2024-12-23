@@ -591,13 +591,15 @@ function concatName(name, value, separator) {
  * @param {ScriptNode} productNode
  * @param {ScriptNode} folderNode
  * @param {string} [?propHierarchy] optional
+ * @param {string} locale if 'propPathName' is a ML Property,
+ *     locale specifies which language to use to naming subfolder.
  * @returns {boolean} true if success
  */
-function classifyByHierarchy(productNode, folderNode, propHierarchy) {
+function classifyByHierarchy(productNode, folderNode, propHierarchy, locale) {
 	if (propHierarchy) {
-		return bcpg.classifyByHierarchy(productNode, folderNode, propHierarchy);
+		return bcpg.classifyByHierarchy(productNode, folderNode, propHierarchy, locale);
 	}
-	return bcpg.classifyByHierarchy(productNode, folderNode, null);
+	return bcpg.classifyByHierarchy(productNode, folderNode, null, locale);
 }
 
 /**
