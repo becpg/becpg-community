@@ -145,6 +145,32 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * }
  * </pre>
  *
+ *
+ * <pre>
+ * param: {extra.getByAssoc} return items that are in association
+ * </pre>
+ *
+ * <p>If a parent is provided, use it as the target association.</p>
+ *
+ * <p>If itemId is provided, use itemId as the entity; otherwise, use currentEntity.</p>
+ *
+ * <p>Examples:</p>
+ * <pre>
+ * becpg/autocomplete/bcpg:plant?extra.getByAssoc=bcpg:plant
+ * </pre>
+ *
+ * <p>Example Control:</p>
+ * <pre>
+ * {@code
+ *     <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+          <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ing?extra.getByAssoc=bcpg:linkedSearchAssociation</control-param>
+          <control-param name="parentAssoc">bcpg_ingListIng</control-param>
+        </control>
+ * }
+ * </pre>
+ *
+ *
+ *
  * @author matthieu
  * @version $Id: $Id
  */
@@ -156,6 +182,8 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 
 	/** Constant <code>PROP_FILTER_BY_ASSOC="filterByAssoc"</code> */
 	protected static final String PROP_FILTER_BY_ASSOC = "filterByAssoc";
+
+	protected static final String PROP_GET_BY_ASSOC = "getByAssoc";
 	/** Constant <code>SOURCE_TYPE_TARGET_ASSOC="targetassoc"</code> */
 	protected static final String SOURCE_TYPE_TARGET_ASSOC = "targetassoc";
 	/** Constant <code>searchTemplate="%(cm:name bcpg:erpCode bcpg:code bcpg:l"{trunked}</code> */
@@ -227,12 +255,25 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 	 * @param pageSize a {@link java.lang.Integer} object.
 	 * @param arrClassNames an array of {@link java.lang.String} objects.
 	 */
+	@SuppressWarnings("unchecked")
 	public AutoCompletePage suggestTargetAssoc(String path, QName type, String query, Integer pageNum, Integer pageSize, String[] arrClassNames,
 			Map<String, Serializable> props) {
 
-		if (logger.isDebugEnabled()) {
-			if (arrClassNames != null) {
-				logger.debug("suggestTargetAssoc with arrClassNames : " + Arrays.toString(arrClassNames));
+		if (logger.isDebugEnabled() && (arrClassNames != null)) {
+			logger.debug("suggestTargetAssoc with arrClassNames : " + Arrays.toString(arrClassNames));
+		}
+
+		Map<String, String> extras = null;
+
+		if (props != null) {
+			extras = (HashMap<String, String>) props.get(AutoCompleteService.EXTRA_PARAM);
+			if (extras != null) {
+				String assocName = extras.get(PROP_GET_BY_ASSOC);
+
+				if ((assocName != null) && (!assocName.isBlank())) {
+					return new AutoCompletePage(getByAssoc(assocName, props), pageNum, pageSize, getTargetAssocValueExtractor());
+				}
+
 			}
 		}
 
@@ -240,9 +281,9 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 
 		queryBuilder.excludeArchivedEntities();
 
-		Boolean includeDeleted = props != null && props.containsKey(AutoCompleteService.PROP_INCLUDE_DELETED)
+		boolean includeDeleted = (props != null) && props.containsKey(AutoCompleteService.PROP_INCLUDE_DELETED)
 				&& (Boolean) props.get(AutoCompleteService.PROP_INCLUDE_DELETED);
-		if (!includeDeleted.booleanValue()) {
+		if (!includeDeleted) {
 			queryBuilder.excludeProp(BeCPGModel.PROP_IS_DELETED, "true");
 		}
 
@@ -276,18 +317,12 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 					break;
 				}
 			}
-		} else {
-			if (isAllQuery(query)) {
-				queryBuilder.addSort(ContentModel.PROP_NAME, true);
-			}
+		} else if (isAllQuery(query)) {
+			queryBuilder.addSort(ContentModel.PROP_NAME, true);
 		}
-		
-		if (props != null) {
-			@SuppressWarnings("unchecked")
-			Map<String, String> extras = (HashMap<String, String>) props.get(AutoCompleteService.EXTRA_PARAM);
-			if (extras != null && extras.containsKey(AutoCompleteService.EXTRA_PARAM_SEARCH_TEMPLATE)) {
-				template = extras.get(AutoCompleteService.EXTRA_PARAM_SEARCH_TEMPLATE);
-			}
+
+		if ((extras != null) && extras.containsKey(AutoCompleteService.EXTRA_PARAM_SEARCH_TEMPLATE)) {
+			template = extras.get(AutoCompleteService.EXTRA_PARAM_SEARCH_TEMPLATE);
 		}
 
 		queryBuilder.ofType(type).excludeDefaults().inSearchTemplate(template).locale(I18NUtil.getContentLocale()).andOperator().ftsLanguage();
@@ -305,6 +340,21 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 
 	}
 
+	private List<NodeRef> getByAssoc(String assocName, Map<String, Serializable> props) {
+		NodeRef entityNodeRef = extractEntityNodeRef(props);
+
+		String propParent = (String) props.get(AutoCompleteService.PROP_PARENT);
+
+		NodeRef targetNodeRef = entityNodeRef;
+		if ((propParent != null) && !propParent.isBlank() && NodeRef.isNodeRef(propParent)) {
+			targetNodeRef = new NodeRef(propParent);
+		}
+		QName assocQName = QName.createQName(assocName, namespaceService);
+
+		return associationService.getTargetAssocs(targetNodeRef, assocQName);
+
+	}
+
 	/**
 	 * <p>filter.</p>
 	 *
@@ -318,19 +368,7 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 	@SuppressWarnings("unchecked")
 	protected List<NodeRef> filter(BeCPGQueryBuilder queryBuilder, String path, String[] arrClassNames, Integer pageSize,
 			Map<String, Serializable> props) {
-		NodeRef entityNodeRef = null;
-		if (props != null) {
-
-			String strNodeRef = (String) props.get(AutoCompleteService.PROP_NODEREF); //itemId
-			if ((strNodeRef == null) || strNodeRef.isBlank()) {
-				strNodeRef = (String) props.get(AutoCompleteService.PROP_ENTITYNODEREF);
-			}
-
-			if ((strNodeRef != null) && NodeRef.isNodeRef(strNodeRef)) {
-				entityNodeRef = new NodeRef(strNodeRef);
-			}
-
-		}
+		NodeRef entityNodeRef = extractEntityNodeRef(props);
 
 		filterByPath(queryBuilder, path, entityNodeRef);
 
@@ -365,7 +403,7 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 				if ((propParent != null) && !propParent.isBlank() && NodeRef.isNodeRef(propParent)) {
 					targetNodeRef = new NodeRef(propParent);
 				}
-				if ((filterByAssoc != null) && (filterByAssoc.length() > 0)) {
+				if ((filterByAssoc != null) && (!filterByAssoc.isBlank())) {
 					ret = filterByAssoc(queryBuilder, pageSize, entityNodeRef, filterByAssoc, targetNodeRef);
 				}
 			}
@@ -382,7 +420,7 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 			ret = queryBuilder.list();
 		}
 
-		if (props != null && props.containsKey(AutoCompleteService.PROP_EXCLUDE_SOURCES)
+		if ((props != null) && props.containsKey(AutoCompleteService.PROP_EXCLUDE_SOURCES)
 				&& "true".equals(props.get(AutoCompleteService.PROP_EXCLUDE_SOURCES))) {
 			String itemId = (String) props.get(AutoCompleteService.PROP_ITEM_ID);
 			String fieldName = (String) props.get(AutoCompleteService.PROP_FIELD_NAME);
@@ -392,8 +430,25 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 		return ret;
 	}
 
+	protected NodeRef extractEntityNodeRef(Map<String, Serializable> props) {
+		NodeRef entityNodeRef = null;
+		if (props != null) {
+
+			String strNodeRef = (String) props.get(AutoCompleteService.PROP_NODEREF); //itemId
+			if ((strNodeRef == null) || strNodeRef.isBlank()) {
+				strNodeRef = (String) props.get(AutoCompleteService.PROP_ENTITYNODEREF);
+			}
+
+			if ((strNodeRef != null) && NodeRef.isNodeRef(strNodeRef)) {
+				entityNodeRef = new NodeRef(strNodeRef);
+			}
+
+		}
+		return entityNodeRef;
+	}
+
 	private void excludeSources(List<NodeRef> ret, String itemId, String fieldName) {
-		if (itemId != null && NodeRef.isNodeRef(itemId) && fieldName != null && fieldName.startsWith("assoc_")) {
+		if ((itemId != null) && NodeRef.isNodeRef(itemId) && (fieldName != null) && fieldName.startsWith("assoc_")) {
 			QName fieldQName = QName.createQName(fieldName.split("assoc_")[1].replace("_", ":"), namespaceService);
 			NodeRef rootNodeRef = new NodeRef(itemId);
 			ret.removeAll(extractAllSources(rootNodeRef, fieldQName, new ArrayList<>()));
@@ -514,13 +569,11 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 					String[] splitted = className.split("\\^");
 					classQName = QName.createQName(splitted[0], namespaceService);
 					boost = Integer.valueOf(splitted[1]);
+				} else if (className.startsWith("inc_")) {
+					include = true;
+					classQName = QName.createQName(className.replace("inc_", ""), namespaceService);
 				} else {
-					if (className.startsWith("inc_")) {
-						include = true;
-						classQName = QName.createQName(className.replace("inc_", ""), namespaceService);
-					} else {
-						classQName = QName.createQName(className, namespaceService);
-					}
+					classQName = QName.createQName(className, namespaceService);
 				}
 				ClassDefinition classDef = dictionaryService.getClass(classQName);
 				if (classDef.isAspect()) {
@@ -529,12 +582,10 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 					} else {
 						queryBuilder.withAspect(classQName);
 					}
+				} else if (boost != null) {
+					queryBuilder.inBoostedType(classQName, boost);
 				} else {
-					if (boost != null) {
-						queryBuilder.inBoostedType(classQName, boost);
-					} else {
-						queryBuilder.inType(classQName);
-					}
+					queryBuilder.inType(classQName);
 				}
 			}
 		}
@@ -698,12 +749,9 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 
 		PropertyDefinition propertyDef = dictionaryService.getProperty(propertyQName);
 		// Tokenised "false" or "both"
-		if (propertyDef != null) {
-
-			if (IndexTokenisationMode.BOTH.equals(propertyDef.getIndexTokenisationMode())
-					|| (IndexTokenisationMode.FALSE.equals(propertyDef.getIndexTokenisationMode()) && isAllQuery(query))) {
-				queryBuilder.addSort(propertyQName, true);
-			}
+		if ((propertyDef != null) && (IndexTokenisationMode.BOTH.equals(propertyDef.getIndexTokenisationMode())
+				|| (IndexTokenisationMode.FALSE.equals(propertyDef.getIndexTokenisationMode()) && isAllQuery(query)))) {
+			queryBuilder.addSort(propertyQName, true);
 		}
 
 		return new AutoCompletePage(queryBuilder.list(), pageNum, pageSize, new NodeRefAutoCompleteExtractor(propertyQName, nodeService));
