@@ -10,6 +10,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.repository.annotation.AlfCacheable;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
@@ -115,6 +116,12 @@ public class RawMaterialData extends ProductData {
 		return this;
 	}
 
+	/**
+	 * <p>withPlants.</p>
+	 *
+	 * @param plants a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.product.data.RawMaterialData} object
+	 */
 	public RawMaterialData withPlants(List<NodeRef> plants) {
 		setPlants(plants);
 		return this;
@@ -128,6 +135,17 @@ public class RawMaterialData extends ProductData {
 	 */
 	public RawMaterialData withCompoList(List<CompoListDataItem> compoList) {
 		getCompoListView().setCompoList(compoList);
+		return this;
+	}
+	
+	/**
+	 * <p>withIngList.</p>
+	 *
+	 * @param ingList a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.product.data.RawMaterialData} object
+	 */
+	public RawMaterialData withIngList(List<IngListDataItem> ingList) {
+		setIngList(ingList);
 		return this;
 	}
 	

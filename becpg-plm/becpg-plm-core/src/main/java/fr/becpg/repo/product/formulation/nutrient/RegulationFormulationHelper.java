@@ -697,6 +697,20 @@ public class RegulationFormulationHelper {
 		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("zh_HK"))) {
 			ret.add("HK");
 		}
+		
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ja_JP"))) {
+			ret.add("JP");
+		}
+		
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ja_JP"))) {
+			ret.add("JP");
+		}
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("zh_TW"))) {
+			ret.add("TW");
+		}
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("vi_VN"))) {
+			ret.add("VN");
+		}
 		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("hi_IN")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("en_IN"))) {
 			ret.add("IN");
 		}

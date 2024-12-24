@@ -51,6 +51,7 @@ public class ToxicologyServiceImpl implements ToxicologyService {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void updateToxIngAfterToxUpdate(NodeRef toxNodeRef) {
 		NodeRef listContainer = getCharactListContainer();
@@ -67,6 +68,7 @@ public class ToxicologyServiceImpl implements ToxicologyService {
 		}
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void deleteToxIngBeforeIngDelete(NodeRef ingNodeRef) {
 		NodeRef listContainer = getCharactListContainer();
@@ -80,6 +82,7 @@ public class ToxicologyServiceImpl implements ToxicologyService {
 		}
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void deleteToxIngBeforeToxDelete(NodeRef toxNodeRef) {
 		NodeRef listContainer = getCharactListContainer();

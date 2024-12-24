@@ -64,15 +64,15 @@ public class UserImporterServiceImpl implements UserImporterService {
 	private static final Log logger = LogFactory.getLog(UserImporterServiceImpl.class);
 
 	/** Constant <code>USERNAME="username"</code> */
-	public static final String USERNAME = "username";
+	public static final String ATTR_USERNAME = "username";
 	/** Constant <code>PASSWORD="password"</code> */
-	public static final String PASSWORD = "password";
+	public static final String ATTR_PASSWORD = "password";
 	/** Constant <code>NOTIFY="notify"</code> */
-	public static final String NOTIFY = "notify";
+	public static final String ATTR_NOTIFY = "notify";
 	/** Constant <code>MEMBERSHIPS="memberships"</code> */
-	public static final String MEMBERSHIPS = "memberships";
+	public static final String ATTR_MEMBERSHIPS = "memberships";
 	/** Constant <code>GROUPS="groups"</code> */
-	public static final String GROUPS = "groups";
+	public static final String ATTR_GROUPS = "groups";
 
 	/** The Constant SEPARATOR. */
 	private static final char SEPARATOR = ';';
@@ -256,12 +256,12 @@ public class UserImporterServiceImpl implements UserImporterService {
 		if ((splitted != null) && (headers != null)) {
 			BeCPGUserAccount userAccount = new BeCPGUserAccount();
 
-			String username = splitted[headers.get(USERNAME)];
+			String username = splitted[headers.get(ATTR_USERNAME)];
 			username = username != null ? username.toLowerCase() : null;
 			
 			userAccount.setUserName(username);
-			userAccount.setPassword(splitted[headers.get(PASSWORD)]);
-			userAccount.setNotify(headers.containsKey(NOTIFY) && Boolean.parseBoolean(splitted[headers.get(NOTIFY)]));
+			userAccount.setPassword(splitted[headers.get(ATTR_PASSWORD)]);
+			userAccount.setNotify(headers.containsKey(ATTR_NOTIFY) && Boolean.parseBoolean(splitted[headers.get(ATTR_NOTIFY)]));
 
 			for (Map.Entry<String, Integer> entry : headers.entrySet()) {
 				if (isPropQname(entry.getKey()) && !splitted[entry.getValue()].isEmpty()) {
@@ -275,8 +275,8 @@ public class UserImporterServiceImpl implements UserImporterService {
 
 			}
 
-			if (headers.containsKey(GROUPS)) {
-				String[] groups = splitted[headers.get(GROUPS)].split(FIELD_SEPARATOR);
+			if (headers.containsKey(ATTR_GROUPS)) {
+				String[] groups = splitted[headers.get(ATTR_GROUPS)].split(FIELD_SEPARATOR);
 				for (String group : groups) {
 					userAccount.getAuthorities().add(group);
 				}
@@ -284,11 +284,11 @@ public class UserImporterServiceImpl implements UserImporterService {
 
 			 beCPGUserAccountService.getOrCreateUser(userAccount);
 
-			if (headers.containsKey(MEMBERSHIPS)) {
+			if (headers.containsKey(ATTR_MEMBERSHIPS)) {
 				AuthenticationUtil.runAsSystem(() -> {
-					if ((splitted[headers.get(MEMBERSHIPS)] != null) && !splitted[headers.get(MEMBERSHIPS)].isEmpty()) {
+					if ((splitted[headers.get(ATTR_MEMBERSHIPS)] != null) && !splitted[headers.get(ATTR_MEMBERSHIPS)].isEmpty()) {
 
-						String[] memberships = splitted[headers.get(MEMBERSHIPS)].split(FIELD_SEPARATOR);
+						String[] memberships = splitted[headers.get(ATTR_MEMBERSHIPS)].split(FIELD_SEPARATOR);
 						for (String membership : memberships) {
 
 							String[] sites = membership.split("_");
@@ -344,7 +344,7 @@ public class UserImporterServiceImpl implements UserImporterService {
 	}
 
 	private boolean isPropQname(String key) {
-		return !(GROUPS.equals(key) || MEMBERSHIPS.equals(key) || PASSWORD.equals(key) || USERNAME.equals(key) || NOTIFY.equals(key));
+		return !(ATTR_GROUPS.equals(key) || ATTR_MEMBERSHIPS.equals(key) || ATTR_PASSWORD.equals(key) || ATTR_USERNAME.equals(key) || ATTR_NOTIFY.equals(key));
 	}
 
 	private Map<String, Integer> processHeaders(String[] splitted) throws ImporterException {
@@ -358,7 +358,7 @@ public class UserImporterServiceImpl implements UserImporterService {
 	}
 
 	private void verifyHeaders(Map<String, Integer> headers) throws ImporterException {
-		if (!headers.containsKey(USERNAME) && (headers.size() < 4)) {
+		if (!headers.containsKey(ATTR_USERNAME) && (headers.size() < 4)) {
 			throw new ImporterException("Invalid headers");
 		}
 	}

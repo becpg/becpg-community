@@ -514,7 +514,9 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 	}
 
 	private boolean isWater(NodeRef ing) {
-		return nodeService.hasAspect(ing, PLMModel.ASPECT_WATER) || (nodeService.hasAspect(ing, PLMModel.ASPECT_EVAPORABLE)
+		return nodeService.hasAspect(ing, PLMModel.ASPECT_WATER) 
+				|| (nodeService.hasAspect(ing, PLMModel.ASPECT_EVAPORABLE)
+				&& nodeService.getProperty(ing, PLMModel.PROP_EVAPORATED_RATE) != null
 				&& (Double) nodeService.getProperty(ing, PLMModel.PROP_EVAPORATED_RATE) == 100d);
 	}
 

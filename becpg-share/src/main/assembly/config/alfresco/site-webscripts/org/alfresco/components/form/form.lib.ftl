@@ -306,6 +306,7 @@
 		                  actionUrl : Alfresco.constants.PROXY_URI + "becpg/form/multilingual/field/"+fieldId+"?nodeRef=${form.arguments.itemId}",
 		                  validateOnSubmit : false,
 		                  destroyOnHide : true,
+		                  destroyFormContainer: false,
 		                  width: "33em",
 		                  successMessage : "${msg("message.save.success")}"
 		               }).show();

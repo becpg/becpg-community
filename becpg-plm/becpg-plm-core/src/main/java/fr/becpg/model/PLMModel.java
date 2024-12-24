@@ -231,6 +231,7 @@ public interface PLMModel {
 	
 	QName PROP_NUTLIST_PREPARED_ROUNDED_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "nutListRoundedValuePrepared");
 	@Deprecated
+	/** Constant <code>PROP_NUTLIST_FORMULA_ERROR</code> */
 	QName PROP_NUTLIST_FORMULA_ERROR = QName.createQName(BeCPGModel.BECPG_URI, "nutListFormulaErrorLog");
 	/** Constant <code>PROP_NUTLIST_METHOD</code> */
 	QName PROP_NUTLIST_METHOD = QName.createQName(BeCPGModel.BECPG_URI, "nutListMethod");
@@ -351,6 +352,8 @@ public interface PLMModel {
 
 	/** Constant <code>PROP_SPEC_COMPATIBILITY_JOB_ON</code> */
 	QName PROP_SPEC_COMPATIBILITY_JOB_ON = QName.createQName(BeCPGModel.BECPG_URI, "specCompatibilityJobOn");
+	/** Constant <code>PROP_SPEC_COMPATIBILITY_TEST_MODE</code> */
+	QName PROP_SPEC_COMPATIBILITY_TEST_MODE = QName.createQName(BeCPGModel.BECPG_URI, "specCompatibilityTestMode");
 	/** Constant <code>PROP_SPEC_COMPATIBILITY_LOG</code> */
 	QName PROP_SPEC_COMPATIBILITY_LOG = QName.createQName(BeCPGModel.BECPG_URI, "specCompatibilityLog");
 
@@ -812,6 +815,7 @@ public interface PLMModel {
 	/** Constant <code>PROP_ING_TOX_MAX_SKIN_IRRITATION</code> */
 	QName PROP_ING_TOX_MAX_SKIN_IRRITATION_RINSE_OFF = QName.createQName(BeCPGModel.BECPG_URI, "ingToxMaxSkinIrritationRinseOff");
 	
+	/** Constant <code>PROP_ING_TOX_MAX_SKIN_IRRITATION_LEAVE_ON</code> */
 	QName PROP_ING_TOX_MAX_SKIN_IRRITATION_LEAVE_ON = QName.createQName(BeCPGModel.BECPG_URI, "ingToxMaxSkinIrritationLeaveOn");
 	
 	/** Constant <code>PROP_ING_TOX_MAX_SENSITIZATION</code> */
@@ -897,6 +901,7 @@ public interface PLMModel {
 	/** Constant <code>PROP_PERIOD_AFTER_OPENING</code> */
 	QName PROP_PERIOD_AFTER_OPENING = QName.createQName(BeCPGModel.BECPG_URI, "periodAfterOpening");
 	
+	/** Constant <code>TYPE_LABORATORY</code> */
 	QName TYPE_LABORATORY = QName.createQName(BeCPGModel.BECPG_URI, "laboratory");
 	
 	

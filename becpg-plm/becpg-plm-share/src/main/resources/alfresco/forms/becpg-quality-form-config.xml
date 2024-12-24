@@ -1914,9 +1914,7 @@
 					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<field id="qa:slControlPoint" set="2-col" />
 					<field id="qa:sdlQty" set="2-col" />
-					<field id="qa:sdlFreqText"
-						help="eg: 1D,2W,3M,0.5BBD,2UBD,0.75PAO (1D: 1 day, 2W: 2 weeks, 3M: 3 months, 0.5BBD: 0.5 * bestBeforeDate, 2UBD: 2 * useByDate, 0.75PAO: 0.75 * periodAfterOpening)"
-						set="2-col" />
+					<field id="qa:sdlFreqText" help-id="becpg.forms.help.sdlFreqText" set="2-col" />
 					<field id="qa:sdlFreq" set="2-col" />
 					<field id="qa:sdlFreqUnit" set="2-col" />
 					<field id="qa:slControlStep" set="2-col" />
@@ -1954,9 +1952,7 @@
 					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<field id="qa:slControlPoint" set="2-col" />
 					<field id="qa:sdlQty" set="2-col" />
-					<field id="qa:sdlFreqText"
-						help="eg: 1D,2W,3M,0.5BBD,2UBD,0.75PAO (1D: 1 day, 2W: 2 weeks, 3M: 3 months, 0.5BBD: 0.5 * bestBeforeDate, 2UBD: 2 * useByDate, 0.75PAO: 0.75 * periodAfterOpening)"
-						set="2-col" />
+					<field id="qa:sdlFreqText" help-id="becpg.forms.help.sdlFreqText" set="2-col" />
 					<field id="qa:sdlFreq" set="2-col" />
 					<field id="qa:sdlFreqUnit" set="2-col" />
 					<field id="qa:slControlStep" set="2-col" />
@@ -1988,9 +1984,7 @@
 					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<field id="qa:slControlPoint" set="2-col" />
 					<field id="qa:sdlQty" set="2-col" />
-					<field id="qa:sdlFreqText"
-						help="eg: 1D,2W,3M,0.5BBD,2UBD,0.75PAO (1D: 1 day, 2W: 2 weeks, 3M: 3 months, 0.5BBD: 0.5 * bestBeforeDate, 2UBD: 2 * useByDate, 0.75PAO: 0.75 * periodAfterOpening)"
-						set="2-col" />
+					<field id="qa:sdlFreqText" help-id="becpg.forms.help.sdlFreqText" set="2-col" />
 					<field id="qa:sdlFreq" set="2-col" />
 					<field id="qa:sdlFreqUnit" set="2-col" />
 					<field id="qa:slControlStep" set="2-col" />
