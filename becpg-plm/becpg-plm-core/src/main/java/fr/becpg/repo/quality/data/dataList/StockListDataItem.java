@@ -179,21 +179,41 @@ public class StockListDataItem extends BeCPGDataObject {
 	}
 
 
+	/**
+	 * <p>Getter for the field <code>plants</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	@AlfMultiAssoc
 	@AlfQname(qname = "bcpg:plants")
 	public List<NodeRef> getPlants() {
 		return plants;
 	}
 
+	/**
+	 * <p>Setter for the field <code>plants</code>.</p>
+	 *
+	 * @param plants a {@link java.util.List} object
+	 */
 	public void setPlants(List<NodeRef> plants) {
 		this.plants = plants;
 	}
+	/**
+	 * <p>Getter for the field <code>laboratories</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	@AlfMultiAssoc
 	@AlfQname(qname = "bcpg:laboratories")
 	public List<NodeRef> getLaboratories() {
 		return laboratories;
 	}
 
+	/**
+	 * <p>Setter for the field <code>laboratories</code>.</p>
+	 *
+	 * @param laboratories a {@link java.util.List} object
+	 */
 	public void setLaboratories(List<NodeRef> laboratories) {
 		this.laboratories = laboratories;
 	}
@@ -206,6 +226,7 @@ public class StockListDataItem extends BeCPGDataObject {
 				+ "]";
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -214,6 +235,7 @@ public class StockListDataItem extends BeCPGDataObject {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

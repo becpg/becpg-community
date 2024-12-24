@@ -453,6 +453,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QNamePattern qNamePattern, boolean includeVersions) {
 		List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, qNamePattern);

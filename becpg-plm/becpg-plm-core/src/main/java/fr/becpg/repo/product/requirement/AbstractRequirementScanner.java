@@ -93,24 +93,23 @@ public abstract class AbstractRequirementScanner<T> implements RequirementScanne
 	 * @return a {@link java.lang.String} object
 	 */
 	protected String extractRegulatoryId(RegulatoryEntityItem regulatoryEntityItem, ProductSpecificationData specification) {
-		if(regulatoryEntityItem!=null) {
-			if (regulatoryEntityItem.getRegulatoryCountriesRef() != null && !regulatoryEntityItem.getRegulatoryCountriesRef().isEmpty()) {
-				String countryCode = (String) mlNodeService.getProperty(regulatoryEntityItem.getRegulatoryCountriesRef().get(0),
-						PLMModel.PROP_REGULATORY_CODE);
-				if (regulatoryEntityItem.getRegulatoryUsagesRef() != null && !regulatoryEntityItem.getRegulatoryUsagesRef().isEmpty()) {
-					return (countryCode != null ? countryCode : "") + " - "
-							+ (String) mlNodeService.getProperty(regulatoryEntityItem.getRegulatoryUsagesRef().get(0), PLMModel.PROP_REGULATORY_CODE);
-				}
+		if ((regulatoryEntityItem != null)
+				&& ((regulatoryEntityItem.getRegulatoryCountriesRef() != null) && !regulatoryEntityItem.getRegulatoryCountriesRef().isEmpty())) {
+			String countryCode = (String) mlNodeService.getProperty(regulatoryEntityItem.getRegulatoryCountriesRef().get(0),
+					PLMModel.PROP_REGULATORY_CODE);
+			if ((regulatoryEntityItem.getRegulatoryUsagesRef() != null) && !regulatoryEntityItem.getRegulatoryUsagesRef().isEmpty()) {
+				return (countryCode != null ? countryCode + " - " : "")
+						+ (String) mlNodeService.getProperty(regulatoryEntityItem.getRegulatoryUsagesRef().get(0), PLMModel.PROP_REGULATORY_CODE);
 			}
 		}
-		if (specification.getRegulatoryCountriesRef() != null && !specification.getRegulatoryCountriesRef().isEmpty()) {
+		if ((specification.getRegulatoryCountriesRef() != null) && !specification.getRegulatoryCountriesRef().isEmpty()) {
 			String countryCode = (String) mlNodeService.getProperty(specification.getRegulatoryCountriesRef().get(0), PLMModel.PROP_REGULATORY_CODE);
-			if (specification.getRegulatoryUsagesRef() != null && !specification.getRegulatoryUsagesRef().isEmpty()) {
-				return (countryCode != null ? countryCode : "")
+			if ((specification.getRegulatoryUsagesRef() != null) && !specification.getRegulatoryUsagesRef().isEmpty()) {
+				return (countryCode != null ? countryCode + " - " : "")
 						+ (String) mlNodeService.getProperty(specification.getRegulatoryUsagesRef().get(0), PLMModel.PROP_REGULATORY_CODE);
 			}
 		}
-		if (specification.getRegulatoryCode() != null && !specification.getRegulatoryCode().isBlank()) {
+		if ((specification.getRegulatoryCode() != null) && !specification.getRegulatoryCode().isBlank()) {
 			return specification.getRegulatoryCode();
 		}
 		return specification.getName();

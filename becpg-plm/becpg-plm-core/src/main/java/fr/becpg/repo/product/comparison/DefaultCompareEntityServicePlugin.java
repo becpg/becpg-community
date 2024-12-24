@@ -1108,6 +1108,10 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 						isDifferent = false;
 					}
 
+				} else if (propertyDef.getDataType().toString().equals(DataTypeDefinition.TEXT.toString())) {
+					if (oValue1.toString().trim().equals(oValue2.toString().trim())) {
+						isDifferent = false;
+					}
 				} else if (oValue1.equals(oValue2)) {
 					isDifferent = false;
 				}

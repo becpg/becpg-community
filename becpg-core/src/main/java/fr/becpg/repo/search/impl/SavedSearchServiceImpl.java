@@ -31,6 +31,8 @@ import fr.becpg.repo.search.data.SavedSearch;
 
 /**
  * author Matthieu
+ *
+ * @author matthieu
  */
 @Service("SavedSearchService")
 public class SavedSearchServiceImpl implements SavedSearchService {
@@ -57,6 +59,7 @@ public class SavedSearchServiceImpl implements SavedSearchService {
 	@Autowired
 	private AuthorityService authorityService;
 
+	/** {@inheritDoc} */
 	@Override
 	public String getSavedSearchContent(SavedSearch savedSearch) {
 
@@ -68,6 +71,7 @@ public class SavedSearchServiceImpl implements SavedSearchService {
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef createOrUpdate(SavedSearch savedSearch, String jsonString) {
 
@@ -101,6 +105,7 @@ public class SavedSearchServiceImpl implements SavedSearchService {
 		throw new IllegalStateException("Cannot create savedSearch");
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getSaveSearchFolder(SavedSearch savedSearch) {
 
@@ -158,6 +163,7 @@ public class SavedSearchServiceImpl implements SavedSearchService {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<SavedSearch> findSavedSearch(SavedSearch filter) {
 		BeCPGQueryBuilder query = BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_SAVED_SEARCH)
@@ -168,6 +174,11 @@ public class SavedSearchServiceImpl implements SavedSearchService {
 				|| ((filter.getSiteId() != null) && filter.getSiteId().equals(s.getSiteId()))).toList();
 	}
 
+	/**
+	 * <p>isSearchManagerUser.</p>
+	 *
+	 * @return a boolean
+	 */
 	public boolean isSearchManagerUser() {
 		if (AuthenticationUtil.isRunAsUserTheSystemUser()) {
 			return true;

@@ -241,6 +241,14 @@ public class BatchFormulationHandler extends FormulationBaseHandler<BatchData> {
 		return stockRefs;
 	}
 
+	/**
+	 * <p>extractFilteredStockList.</p>
+	 *
+	 * @param batchData a {@link fr.becpg.repo.quality.data.BatchData} object
+	 * @param rawMaterialData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param stockListItems a {@link java.util.List} object
+	 * @return a {@link java.util.List} object
+	 */
 	public List<StockListDataItem> extractFilteredStockList(BatchData batchData, ProductData rawMaterialData, List<NodeRef> stockListItems) {
 		List<StockListDataItem> tmp = extractStockList(batchData, rawMaterialData);
 

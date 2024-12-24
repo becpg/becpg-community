@@ -10,6 +10,11 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.Pair;
 
+/**
+ * <p>BehaviourRegistry class.</p>
+ *
+ * @author matthieu
+ */
 public class BehaviourRegistry {
 	
 	private static final List<ActivityBehaviour> activityBehaviours = new ArrayList<>();
@@ -20,6 +25,12 @@ public class BehaviourRegistry {
 		
 	}
 	
+	/**
+	 * <p>shouldIgnoreAuditField.</p>
+	 *
+	 * @param field a {@link org.alfresco.service.namespace.QName} object
+	 * @return a boolean
+	 */
 	public static boolean shouldIgnoreAuditField(QName field) {
 		for (AuditBehaviour behaviour : auditBehaviours) {
 			if (behaviour.shouldIgnoreField(field)) {
@@ -29,15 +40,31 @@ public class BehaviourRegistry {
 		return false;
 	}
 	
+	/**
+	 * <p>registerAuditBehaviour.</p>
+	 *
+	 * @param fieldBehaviour a {@link fr.becpg.repo.behaviour.BehaviourRegistry.AuditBehaviour} object
+	 */
 	public static void registerAuditBehaviour(AuditBehaviour fieldBehaviour) {
 		auditBehaviours.add(fieldBehaviour);
 	}
 	
 	
+	/**
+	 * <p>registerActivityBehaviour.</p>
+	 *
+	 * @param fieldBehaviour a {@link fr.becpg.repo.behaviour.BehaviourRegistry.ActivityBehaviour} object
+	 */
 	public static void registerActivityBehaviour(ActivityBehaviour fieldBehaviour) {
 		activityBehaviours.add(fieldBehaviour);
 	}
 	
+	/**
+	 * <p>shouldIgnoreActivityField.</p>
+	 *
+	 * @param field a {@link org.alfresco.service.namespace.QName} object
+	 * @return a boolean
+	 */
 	public static boolean shouldIgnoreActivityField(QName field) {
 		for (ActivityBehaviour behaviour : activityBehaviours) {
 			if (behaviour.shouldIgnoreField(field)) {
@@ -47,6 +74,14 @@ public class BehaviourRegistry {
 		return false;
 	}
 	
+	/**
+	 * <p>shouldIgnoreActivity.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 * @param fields a {@link java.util.Map} object
+	 * @return a boolean
+	 */
 	public static boolean shouldIgnoreActivity(NodeRef nodeRef, QName type, Map<QName, Pair<Serializable, Serializable>> fields) {
 		for (ActivityBehaviour behaviour : activityBehaviours) {
 			if (behaviour.shouldIgnoreActivity(nodeRef, type, fields)) {
