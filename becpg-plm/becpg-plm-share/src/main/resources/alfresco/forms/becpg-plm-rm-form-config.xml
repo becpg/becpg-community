@@ -29,6 +29,8 @@
 					<show force="true" id="bcpg:productGeoOrigin" />
 					<show force="true" id="bcpg:entityTplRef" />
 					<show force="false" id="bcpg:parentEntityRef" />
+					<show force="false" id="bcpg:linkedSearchAssociation" />
+					
 					<show force="false" id="pjt:projectScore" />
 					<show force="false" id="bcpg:productUnit" />
 					<show force="true" id="bcpg:netWeight" />
@@ -223,6 +225,13 @@
 							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
 						</control>
 					</field>
+					
+					<field id="bcpg:linkedSearchAssociation"  mandatory="false" read-only="false" set="mainInfo">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:ing,bcpg:rawMaterial
+                            </control-param>
+                        </control>
+                    </field>
 					<field id="pjt:projectScore" mandatory="false" read-only="false" set="mainInfo" />
 					<set appearance="bordered-panel" id="formulation" label-id="becpg.forms.set.formulation.label"
 						template="/org/alfresco/components/form/3-column-set.ftl" />
@@ -1533,6 +1542,7 @@
 					<show force="true" id="bcpg:productGeoOrigin" />
 					<show force="true" id="bcpg:entityTplRef" />
 					<show force="true" id="bcpg:parentEntityRef" />
+					<show force="true" id="bcpg:linkedSearchAssociation" />
 					<show force="false" id="pjt:projectScore" />
 					<show force="true" id="bcpg:productUnit" />
 					<show force="true" id="bcpg:netWeight" />
@@ -1661,6 +1671,12 @@
 							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
 						</control>
 					</field>
+					<field id="bcpg:linkedSearchAssociation"  mandatory="false" read-only="false" set="mainInfo">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:ing,bcpg:rawMaterial
+                            </control-param>
+                        </control>
+                    </field>
 					<field id="pjt:projectScore" mandatory="false" read-only="false" set="mainInfo" />
 					<set appearance="bordered-panel" id="formulation" label-id="becpg.forms.set.formulation.label"
 						template="/org/alfresco/components/form/3-column-set.ftl" />
@@ -1849,6 +1865,7 @@
 					<show force="false" id="bcpg:productGeoOrigin" />
 					<show force="false" id="bcpg:entityTplRef" />
 					<show force="false" id="bcpg:parentEntityRef" />
+					<show force="false" id="bcpg:linkedSearchAssociation" />
 					<show force="false" id="pjt:projectScore" />
 					<show force="false" id="bcpg:productUnit" />
 					<show force="false" id="bcpg:netWeight" />
