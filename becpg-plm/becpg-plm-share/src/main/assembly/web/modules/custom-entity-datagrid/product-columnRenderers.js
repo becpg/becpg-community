@@ -316,7 +316,8 @@ if (beCPG.module.EntityDataGridRenderers) {
 	});
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-		propertyName: ["bcpg:allergen", "bcpg:ing", "bcpg:geoOrigin", "bcpg:bioOrigin", "bcpg:geo", "bcpg:microbio", "bcpg:organo", "bcpg:listValue"],
+		propertyName: ["bcpg:allergen", "bcpg:ing", "bcpg:geoOrigin", "bcpg:bioOrigin", "bcpg:geo", "bcpg:microbio", "bcpg:organo", "bcpg:listValue"
+                ,"bcpg:linkedSearchAssociation"],
 		renderer: function(oRecord, data, label, scope) {
 			var url = null;
 			if (scope.datalistMeta && scope.datalistMeta.name.indexOf("WUsed") > -1) {
