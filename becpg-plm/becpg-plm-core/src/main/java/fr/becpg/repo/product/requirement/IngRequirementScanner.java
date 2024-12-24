@@ -307,23 +307,24 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 	}
 
 	private Double getFilQtyPerc(ProductData product, ForbiddenIngListDataItem fil, boolean isMaxi) {
-		String unit = fil.getQtyPercMaxiUnit();
+		String unit = fil.getQtyPercMaxiUnit(); 
 		Double quantity = isMaxi ? fil.getQtyPercMaxi() : fil.getQtyPercMini();
-
-		switch (unit) {
-		case "%":
-			return quantity;
-		case "mg/kg":
-			return quantity / 10000;
-		case "mg/L": {
-			Double density = product.getDensity();
-			if ((density == null) || (density == 0d)) {
-				density = 1d;
+		if (quantity != null && unit!=null) {
+			switch (unit) {
+			case "%":
+				return quantity;
+			case "mg/kg":
+				return quantity / 10000;
+			case "mg/L": {
+				Double density = product.getDensity();
+				if ((density == null) || (density == 0d)) {
+					density = 1d;
+				}
+				return quantity / density / 10000;
 			}
-			return quantity / density / 10000;
-		}
-		default:
-			break;
+			default:
+				break;
+			}
 		}
 		return quantity;
 	}

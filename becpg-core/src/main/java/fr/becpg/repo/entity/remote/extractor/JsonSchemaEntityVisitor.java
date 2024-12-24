@@ -264,14 +264,14 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 	/** {@inheritDoc} */
 	@Override
 	protected void visitNode(NodeRef nodeRef, JSONObject entity, JsonVisitNodeType type, QName assocName, RemoteJSONContext context)
-			throws JSONException {
+			throws JSONException, RemoteException {
 		cacheList.add(nodeRef);
 		QName nodeType = nodeService.getType(nodeRef).getPrefixedQName(namespaceService);
 
 		if (JsonVisitNodeType.ENTITY.equals(type) || JsonVisitNodeType.CONTENT.equals(type) || JsonVisitNodeType.ASSOC.equals(type)
 				|| (JsonVisitNodeType.CHILD_ASSOC.equals(type) && !ContentModel.TYPE_FOLDER.equals(nodeType))) {
 
-			if (nodeService.getPrimaryParent(nodeRef) != null) {
+			if (getPrimaryParentRef(nodeRef) != null) {
 
 				addProperty(entity, RemoteEntityService.ATTR_PATH, TYPE_STRING, "Path of the entity", null);
 
@@ -389,7 +389,7 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 
 	/** {@inheritDoc} */
 	@Override
-	protected void visitAssocs(NodeRef nodeRef, JSONObject entity, QName assocName, RemoteJSONContext context) throws JSONException {
+	protected void visitAssocs(NodeRef nodeRef, JSONObject entity, QName assocName, RemoteJSONContext context) throws JSONException, RemoteException {
 
 		TypeDefinition typeDef = entityDictionaryService.getType(nodeService.getType(nodeRef));
 		if (typeDef != null) {

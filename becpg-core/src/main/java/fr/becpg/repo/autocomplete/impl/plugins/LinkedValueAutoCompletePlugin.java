@@ -166,7 +166,7 @@ public class LinkedValueAutoCompletePlugin extends TargetAssocAutoCompletePlugin
 				ret = hierarchyService.getAllHierarchiesByDepthLevel(path, query, depthLevel);
 			}
 		} else {
-			if (extras.containsKey(AutoCompleteService.EXTRA_PARAM_PATHS)) {
+			if (extras!=null && extras.containsKey(AutoCompleteService.EXTRA_PARAM_PATHS)) {
 				ret = new LinkedList<>();
 				for (String subPath : extras.get(AutoCompleteService.EXTRA_PARAM_PATHS).split(",")) {
 					ret.addAll(hierarchyService.getAllHierarchiesByPath(path + "/" + subPath, query));
