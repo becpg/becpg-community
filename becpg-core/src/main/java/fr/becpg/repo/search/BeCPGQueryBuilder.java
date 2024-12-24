@@ -947,7 +947,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		excludeArchivedEntities();
 		return this;
 	}
-
+	
 	/**
 	 * <p>
 	 * excludeSystems.
