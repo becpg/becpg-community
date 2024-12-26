@@ -8584,6 +8584,68 @@
 		</forms>
 	</config>
 
+
+
+
+
+<config evaluator="model-type" condition="ghs:clpList">
+        <forms>
+            <!-- Create item form -->
+            <form>
+                <field-visibility>
+                    <show id="ghs:sdsClassCode" />
+                    <show id="ghs:clpListQty" />
+                    <show id="ghs:sdsHazardStatements" />
+                    <show id="ghs:sdsPictograms" />
+                    <show id="ghs:sdsSignalWord" />
+                    <show id="bcpg:regulatoryText" />
+                </field-visibility>
+            </form>
+        </forms>
+        
+        
+            <!-- Data Grid view -->
+            <form id="datagrid">
+                <field-visibility>
+                    <show id="ghs:sdsClassCode" />
+                    <show id="ghs:clpListQty" />
+                    <show id="ghs:sdsHazardStatements" />
+                    <show id="ghs:sdsPictograms" />
+                    <show id="ghs:sdsSignalWord" />
+                    <show id="bcpg:regulatoryText" />
+                </field-visibility>
+             </form>   
+                
+    </config>
+
+    <config evaluator="node-type" condition="ghs:clpList">
+        <forms>
+            <!-- Create item form -->
+            <form>
+                <field-visibility>
+                    <show id="ghs:sdsClassCode" />
+                    <show id="ghs:clpListQty" />
+                    <show id="ghs:sdsHazardStatements" />
+                    <show id="ghs:sdsPictograms" />
+                    <show id="ghs:sdsSignalWord" />
+                    <show id="bcpg:regulatoryText" />
+                </field-visibility>
+            </form>
+        </forms>
+    </config>
+
+
+
+
+
+
+
+
+
+
+
+
+
 	<!-- bcpg:microbioList type -->
 	<config evaluator="model-type" condition="bcpg:microbioList">
 		<forms>
