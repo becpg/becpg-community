@@ -219,6 +219,19 @@
 			</properties>
 		</type>
 		
+		
+		
+        <type name="ghs:clpList">
+            <parent>bcpg:productListItem</parent>
+            <properties>
+            
+            </properties>
+                <mandatory-aspects>
+                <aspect>ghs:sdsAspect</aspect>
+            </mandatory-aspects>
+        </type>    
+		
+		
 	</types>
 
 	<aspects>
