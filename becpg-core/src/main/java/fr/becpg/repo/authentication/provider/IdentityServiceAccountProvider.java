@@ -83,15 +83,20 @@ public class IdentityServiceAccountProvider {
 		try {
 			HttpClientBuilder builder = HttpClientBuilder.create();
 
-			try (CloseableHttpClient httpClient = (CloseableHttpClient) builder.build()) {
+			try (CloseableHttpClient httpClient = builder.build()) {
 
 				HttpPost request = new HttpPost(authServerUrl + "/realms/" + realm + "/protocol/openid-connect/token");
 
 				ArrayList<BasicNameValuePair> parameters = new ArrayList<>();
-				parameters.add(new BasicNameValuePair("grant_type", "password"));
+				
 				parameters.add(new BasicNameValuePair("client_id", clientId));
-				parameters.add(new BasicNameValuePair("username", identityServiceUserName));
-				parameters.add(new BasicNameValuePair("password", identityServicePassword));
+				if (identityServiceUserName != null && !identityServiceUserName.isEmpty()) {
+					parameters.add(new BasicNameValuePair("username", identityServiceUserName));
+					parameters.add(new BasicNameValuePair("password", identityServicePassword));
+					parameters.add(new BasicNameValuePair("grant_type", "password"));
+				} else {
+					parameters.add(new BasicNameValuePair("grant_type","client_credentials"));
+				}
 				if (clientSecret != null && !clientSecret.isEmpty()) {
 					parameters.add(new BasicNameValuePair("client_secret", clientSecret));
 				}
