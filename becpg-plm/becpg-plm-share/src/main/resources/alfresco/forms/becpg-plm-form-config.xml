@@ -8643,15 +8643,16 @@
 					<field id="bcpg:nutListFormulatedValuePrepared" label="hidden" read-only="true" />
 					<field id="bcpg:nutListFormulatedValuePerServing" label="hidden" read-only="true" />
 					<field id="bcpg:nutListReductionFormulatedValue" label="hidden" read-only="true" />
-					<field id="bcpg:nutListReferenceValue"  />
-					<field id="bcpg:nutListUnitPrepared" read-only="true" label="hidden"></field>
-					<field id="bcpg:nutListRoundedValue" read-only="true"></field>
-					<field id="bcpg:nutListRoundedValuePrepared" read-only="true"></field>
-					<field id="bcpg:variantColumn1" read-only="true" label="hidden"></field>
-					<field id="bcpg:variantColumn2" read-only="true" label="hidden"></field>
-					<field id="bcpg:variantColumn3" read-only="true" label="hidden"></field>
-					<field id="bcpg:variantColumn4" read-only="true" label="hidden"></field>
-					<field id="bcpg:variantColumn5" read-only="true" label="hidden"></field>
+					<field id="bcpg:nutListGDAPerc" help="{&quot;width&quot;:200}" />
+					<field id="bcpg:nutListReferenceValue" />
+					<field id="bcpg:nutListUnitPrepared" read-only="true" label="hidden" />
+					<field id="bcpg:nutListRoundedValue" read-only="true" />
+					<field id="bcpg:nutListRoundedValuePrepared" read-only="true" />
+					<field id="bcpg:variantColumn1" read-only="true" label="hidden" />
+					<field id="bcpg:variantColumn2" read-only="true" label="hidden" />
+					<field id="bcpg:variantColumn3" read-only="true" label="hidden" />
+					<field id="bcpg:variantColumn4" read-only="true" label="hidden" />
+					<field id="bcpg:variantColumn5" read-only="true" label="hidden" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 					<field id="bcpg:nutListIsFormulated" label="hidden" />
 					<field id="bcpg:nutListFormulaErrorLog" label="hidden" />
@@ -8742,8 +8743,9 @@
 					<field id="bcpg:nutListFormulatedValuePerServing" label="hidden" read-only="true" />
 					<field id="bcpg:nutListFormulatedMaxi" label="hidden" read-only="true" />
 					<field id="bcpg:nutListFormulatedMini" label="hidden" read-only="true" />
-					<field id="bcpg:nutListUnit" read-only="true" label="hidden"></field>
-					<field id="bcpg:nutListUnitPrepared" read-only="true" label="hidden"></field>
+					<field id="bcpg:nutListUnit" read-only="true" label="hidden" />
+					<field id="bcpg:nutListUnitPrepared" read-only="true" label="hidden" />
+					<field id="bcpg:nutListGDAPerc" help="{&quot;width&quot;:200}" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 					<field id="bcpg:nutListIsFormulated" label="hidden" />
 					<field id="bcpg:nutListFormulaErrorLog" label="hidden" />
