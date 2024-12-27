@@ -4,6 +4,7 @@
 		<forms>
 			<form>
 				<field-visibility>
+					<!--mainInfo -->
 					<show force="false" id="cm:name" />
 					<show force="true" id="cm:title" />
 					<show force="false" id="bcpg:productHierarchy1" />
@@ -30,6 +31,8 @@
 					<show force="true" id="bcpg:entityTplRef" />
 					<show force="false" id="bcpg:parentEntityRef" />
 					<show force="false" id="pjt:projectScore" />
+					
+					<!--consumer -->
 					<show force="false" id="bcpg:productUnit" />
 					<show force="true" id="bcpg:netWeight" />
 					<show force="false" id="bcpg:productDensity" />
@@ -41,6 +44,24 @@
 					<show force="false" id="bcpg:targetReconstitutionRef" />
 					<show force="false" id="bcpg:evaporatedRate" />
 					<show force="false" id="bcpg:meatType" />
+					<show force="true" id="bcpg:ingTypeV2" />
+					<show force="true" id="bcpg:ingCEECode" />
+					<show force="true" id="bcpg:useByDate" />
+					<show force="true" id="bcpg:bestBeforeDate" />
+					<show force="true" id="bcpg:periodAfterOpening" />
+					<show force="true" id="hkscan:periodAfterMelting" />
+					<show force="true" id="bcpg:contractDate" />
+					<show force="true" id="bcpg:storageConditionsRef" />
+					<show force="true" id="hkscan:storageConditionsAdditionalInformation" />
+					<show force="true" id="bcpg:precautionOfUseRef" />
+					<show force="true" id="bcpg:preparationTips" />
+					<show force="false" id="bcpg:productMicrobioCriteriaRef" />
+					<show force="true" id="bcpg:certificateDate" />
+					
+					<!--formulation -->
+					<show force="true" id="bcpg:productSpecifications" />
+					
+					<!--gs1 -->
 					<show force="false" id="gs1:cheeseMaturationPeriodDescription" />
 					<show force="false" id="gs1:cheeseMaturationProcessContainerTypeCode" />
 					<show force="false" id="gs1:fatPercentageInDryMatter" />
@@ -74,20 +95,8 @@
 					<show force="false" id="gs1:alcoholBeverageFilteringMethodTypeCode" />
 					<show force="false" id="gs1:alcoholBeverageDistilledFromCode" />
 					<show force="false" id="gs1:alcoholBeverageProductionMethodTypeCode" />
-
-					<show force="true" id="bcpg:productSpecifications" />
-
-					<show force="true" id="bcpg:ingTypeV2" />
-					<show force="true" id="bcpg:ingCEECode" />
-					<show force="true" id="bcpg:useByDate" />
-					<show force="true" id="bcpg:bestBeforeDate" />
-					<show force="true" id="bcpg:periodAfterOpening" />
-					<show force="true" id="bcpg:contractDate" />
-					<show force="true" id="bcpg:storageConditionsRef" />
-					<show force="true" id="bcpg:precautionOfUseRef" />
-					<show force="true" id="bcpg:preparationTips" />
-					<show force="false" id="bcpg:productMicrobioCriteriaRef" />
-					<show force="true" id="bcpg:certificateDate" />
+					
+					<!--pallet -->
 					<show force="false" id="pack:palletProductsPerBox" />
 					<show force="false" id="pack:palletLayers" />
 					<show force="false" id="pack:palletBoxesPerLayer" />
@@ -96,12 +105,18 @@
 					<show force="false" id="pack:palletHeight" />
 					<show force="false" id="pack:palletNumberOnGround" />
 					<show force="false" id="pack:palletStackingMaxWeight" />
+					
+					<!--tare -->
 					<show force="false" id="pack:tare" />
 					<show force="false" id="pack:tareUnit" />
+					
+					<!--score -->
 					<show for-mode="view" force="false" id="bcpg:nutrientProfilingScore" />
 					<show for-mode="view" force="false" id="bcpg:nutrientProfilingDetails" />
 					<show force="false" id="bcpg:nutrientProfileCategory" />
 					<show force="false" id="bcpg:nutrientProfileVersion" />
+					
+					<!--security -->
 					<show force="false" id="ghs:sdsStandardCode" />
 					<show force="false" id="ghs:sdsSheetNumber" />
 					<show force="false" id="ghs:sdsSheetEffectiveDate" />
@@ -114,27 +129,44 @@
 					<show force="false" id="ghs:sdsOnuCode" />
 					<show force="false" id="ghs:sdsClassCode" />
 					<show force="false" id="ghs:sdsPackagingGroupCode" />
+					
+					<!--securityRef -->
 					<show force="false" id="sec:securityRef" />
+					
+					<!--category -->
 					<show force="false" id="cm:taggable" />
 					<show force="false" id="cm:categories" />
-					<show for-mode="view" force="false" id="cm:creator" />
-					<show for-mode="view" force="false" id="cm:created" />
-					<show for-mode="view" force="false" id="cm:modifier" />
-					<show for-mode="view" force="false" id="cm:modified" />
+					
+					<!--audit -->
+					<show for-mode="view" force="false" id="cm:creator"/>
+					<show for-mode="view" force="false" id="cm:created"/>
+					<show for-mode="view" force="false" id="cm:modifier"/>
+					<show for-mode="view" force="false" id="cm:modified"/>
+					<show for-mode="view" force="false" id="bcpg:formulatedDate"/>
+					
+					<!--effectivity -->
+					<show for-mode="view" force="false" id="bcpg:startEffectivity"/>
+					<show for-mode="view" force="false" id="bcpg:endEffectivity"/>
+					
+					<!--version -->
 					<show force="false" id="bcpg:autoMergeDate" />
 					<show force="false" id="bcpg:autoMergeTo" />
 					<show force="false" id="bcpg:autoMergeVersionType" />
 					<show force="false" id="bcpg:autoMergeComments" />
 					<show force="false" id="bcpg:autoMergeImpactWUsed" />
+					
+					<!--template -->
 					<show id="bcpg:entityTplEnabled" force="false" />
 					<show id="bcpg:entityTplIsDefault" force="false" />
 					<show id="bcpg:entityTplScript" force="false" />
-					<show id="bcpg:regulatoryCountries" />
-					<show id="bcpg:regulatoryUsageRef" />
-					<show id="bcpg:regulatoryMode" />
-					<show id="bcpg:regulatoryRecipeId" />
-					<show id="bcpg:regulatoryResult" />
-					<show id="bcpg:regulatoryValidationDate" />
+					
+					<!--regulatory -->
+					<show id="bcpg:regulatoryCountries" force="false" />
+					<show id="bcpg:regulatoryUsageRef" force="false" />
+					<show id="bcpg:regulatoryMode" force="false" />
+					<show id="bcpg:regulatoryRecipeId" force="false" />
+					<show id="bcpg:regulatoryResult" force="false" />
+					<show id="bcpg:regulatoryValidationDate" force="false" />
 				</field-visibility>
 				<appearance>
 					<set id="template" appearance="bordered-panel" label-id="becpg.forms.set.template.label" />
@@ -502,6 +534,21 @@
 					<field id="cm:created" mandatory="false" read-only="false" set="audit" />
 					<field id="cm:modifier" mandatory="false" read-only="false" set="audit" />
 					<field id="cm:modified" mandatory="false" read-only="false" set="audit" />
+					<field id="bcpg:formulatedDate" mandatory="false" read-only="false" set="audit" />
+					
+					<set appearance="bordered-panel" id="effectivity" label-id="becpg.forms.set.effectivity.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="bcpg:startEffectivity" mandatory="false" read-only="false" set="effectivity">
+						<control template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
+					<field id="bcpg:endEffectivity" mandatory="false" read-only="false" set="effectivity">
+						<control template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
+					
 					<set appearance="bordered-panel" id="branch" label-id="becpg.forms.set.branch.label"
 						template="/org/alfresco/components/form/2-column-set.ftl" />
 					<field id="bcpg:autoMergeDate" mandatory="false" read-only="false" set="branch" />
