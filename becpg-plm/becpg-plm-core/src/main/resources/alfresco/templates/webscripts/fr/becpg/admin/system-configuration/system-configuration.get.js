@@ -27,6 +27,7 @@ function main() {
 			});
 				
 	[
+        "beCPG.charact.name.format",
 		"beCPG.project.name.format",
 		"beCPG.comparison.name.format",
 		"beCPG.product.name.format",
