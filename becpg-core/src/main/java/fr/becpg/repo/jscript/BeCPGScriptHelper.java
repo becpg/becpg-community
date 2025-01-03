@@ -227,8 +227,6 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 	private boolean useBrowserLocale;
 
-	private boolean showUnauthorizedWarning = true;
-
 	private boolean showEntitiesInTree() {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("becpg.doclibtree.showEntities"));
 	}
@@ -599,7 +597,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * @return a boolean.
 	 */
 	public boolean isShowUnauthorizedWarning() {
-		return showUnauthorizedWarning;
+		return beCPGLicenseManager.isShowLicenseWarning();
 	}
 
 	/**
@@ -608,16 +606,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * @return a boolean
 	 */
 	public boolean isShowLicenceWarning() {
-		return isShowUnauthorizedWarning();
-	}
-
-	/**
-	 * <p>Setter for the field <code>showUnauthorizedWarning</code>.</p>
-	 *
-	 * @param showUnauthorizedWarning a boolean.
-	 */
-	public void setShowUnauthorizedWarning(boolean showUnauthorizedWarning) {
-		this.showUnauthorizedWarning = showUnauthorizedWarning;
+		return beCPGLicenseManager.isShowLicenseWarning();
 	}
 
 	/**
