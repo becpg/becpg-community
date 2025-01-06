@@ -298,10 +298,10 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 				try {
 					analysisResults = postRecipeAnalysis(productContext, countries, usageContext.getName(), usageContext.getModuleId());
 				} catch (HttpStatusCodeException e) {
-					logger.error("Error during Decernis analysis: " + e.getMessage(), e);
+					logger.error("Error during Decernis analysis: " + DecernisHelper.cleanError(e.getMessage()), e);
 					for (String country : countries) {
 						ReqCtrlListDataItem req = ReqCtrlListDataItem.forbidden().withMessage(
-								MLTextHelper.getI18NMessage("message.decernis.error", "Error while creating Decernis recipe: " + e.getMessage()))
+								MLTextHelper.getI18NMessage("message.decernis.error", "Error while creating Decernis recipe: " + DecernisHelper.cleanError(e.getMessage())))
 								.ofDataType(RequirementDataType.Formulation);
 
 						req.setFormulationChainId(DecernisService.DECERNIS_CHAIN_ID);
