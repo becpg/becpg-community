@@ -34,9 +34,14 @@ public abstract class AbstractExprNameExtractor implements AttributeExtractorPlu
 	 * @return a {@link java.lang.String} object
 	 */
 	public  String extractExpr(NodeRef nodeRef, String exprFormat) {
-		return expressionService.extractExpr(nodeRef,null, exprFormat);
+		return clean(expressionService.extractExpr(nodeRef,null, exprFormat));
 	}
 	
+	private String clean(String expr) {
+		return expr!=null ? expr.replaceFirst("^ - ", "").trim() : expr;
+	}
+
+
 
 	/** {@inheritDoc} */
 	@Override
