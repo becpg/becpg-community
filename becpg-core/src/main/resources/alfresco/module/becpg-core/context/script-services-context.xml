@@ -68,7 +68,6 @@
 		<property name="useBrowserLocale" value="${beCPG.multilinguale.useBrowserLocale}"/>
 		<property name="nodeService" ref="nodeService"/>
 		<property name="entityListDAO" ref="entityListDAO" />
-		<property name="showUnauthorizedWarning" value="${beCPG.licence.showWarning}"/>
 		<property name="alfrescoRepository" ref="alfrescoRepository"/>
 		<property name="siteService" ref="siteService"/>
 		<property name="tenantAdminService" ref="tenantAdminService" />
