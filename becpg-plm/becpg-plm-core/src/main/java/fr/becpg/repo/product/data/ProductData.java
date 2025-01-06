@@ -33,6 +33,7 @@ import fr.becpg.repo.product.data.ing.IngTypeItem;
 import fr.becpg.repo.product.data.meat.MeatContentData;
 import fr.becpg.repo.product.data.packaging.VariantPackagingData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
+import fr.becpg.repo.product.data.productList.ClpListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
@@ -256,6 +257,7 @@ public class ProductData extends AbstractScorableEntity
 	private List<RegulatoryListDataItem> regulatoryList;
 	private List<IngRegulatoryListDataItem> ingRegulatoryList;
 	private List<SvhcListDataItem> svhcList;
+	private List<ClpListDataItem> clpList;
 	private List<PubChannelListDataItem> pubChannelList;
 	private List<ToxListDataItem> toxList;
 
@@ -2457,7 +2459,17 @@ public class ProductData extends AbstractScorableEntity
 	public void setSvhcList(List<SvhcListDataItem> svhcList) {
 		this.svhcList = svhcList;
 	}
-	
+
+	@DataList
+	@AlfQname(qname = "ghs:clpList")
+	public List<ClpListDataItem> getClpList() {
+		return clpList;
+	}
+
+	public void setClpList(List<ClpListDataItem> clpList) {
+		this.clpList = clpList;
+	}
+
 	/**
 	 * <p>Getter for the field <code>pubChannelList</code>.</p>
 	 *
