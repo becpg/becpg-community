@@ -34,4 +34,8 @@ public class GHSModel {
 	/** Constant <code>TYPE_PACKAGING_GROUP_CODE</code> */
 	public static final QName TYPE_PACKAGING_GROUP_CODE = QName.createQName(GHS_URI, "packagingGroupCode");
 
+	public static final QName TYPE_CLPLIST = QName.createQName(GHS_URI, "clpList");
+
+	public static final QName PROP_CLP_CLASSIFICATIONS = null;
+
 }
