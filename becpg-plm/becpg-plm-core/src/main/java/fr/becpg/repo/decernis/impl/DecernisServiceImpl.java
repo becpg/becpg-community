@@ -222,7 +222,7 @@ public class DecernisServiceImpl  extends AbstractLifecycleBean implements Decer
 			return context.getRequirements();
 
 		} catch (Exception e) {
-			throw new FormulateException("Unexpected decernis error: " + e.getMessage(), e);
+			throw new FormulateException("Unexpected decernis error: " + DecernisHelper.cleanError(e.getMessage()), e);
 		}
 	}
 
@@ -384,9 +384,9 @@ public class DecernisServiceImpl  extends AbstractLifecycleBean implements Decer
 				}
 			}
 		} catch (HttpStatusCodeException e) {
-			logger.error("Error while creating Decernis recipe: " + e.getMessage(), e);
+			logger.error("Error while creating Decernis recipe: " + DecernisHelper.cleanError(e.getMessage()), e);
 			ReqCtrlListDataItem req = ReqCtrlListDataItem.forbidden()
-					.withMessage(MLTextHelper.getI18NMessage("message.decernis.error", "Error while creating Decernis recipe: " + e.getMessage()))
+					.withMessage(MLTextHelper.getI18NMessage("message.decernis.error", "Error while creating Decernis recipe: " + DecernisHelper.cleanError(e.getMessage())))
 					.ofDataType(RequirementDataType.Specification).withFormulationChainId(DecernisService.DECERNIS_CHAIN_ID);
 			context.getRequirements().add(req);
 		}
@@ -455,7 +455,7 @@ public class DecernisServiceImpl  extends AbstractLifecycleBean implements Decer
 					logger.warn("Cannot retrieve ingredient " + ingName + " error:" + e.getStatusText());
 				} catch (Exception e) {
 					logger.error(e, e);
-					throw new FormulateException("Unexpected decernis error: " + e.getMessage(), e);
+					throw new FormulateException("Unexpected decernis error: " + DecernisHelper.cleanError(e.getMessage()), e);
 				}
 			}
 		}

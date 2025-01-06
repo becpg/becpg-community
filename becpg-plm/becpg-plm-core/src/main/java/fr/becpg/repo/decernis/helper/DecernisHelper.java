@@ -70,6 +70,17 @@ public class DecernisHelper {
 		
 		return null;
 	}
+	
+	public static String cleanError(String error) {
+		if (error != null) {
+			String token = getToken();
+			if (token != null && !token.isBlank()) {
+				return error.replace(token, "XXX");
+			}
+		}
+		return error;
+	}
+	
 	public static String getToken() {
 		if (!TenantService.DEFAULT_DOMAIN.equals(TenantUtil.getCurrentDomain())) {
 			String confValue = SystemConfigurationRegistry.instance().confValue("beCPG.decernis.token." + TenantUtil.getCurrentDomain());
