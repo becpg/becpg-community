@@ -3333,7 +3333,7 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>bcpg:charact</class>
+						<class>cm:cmobject</class>
 						<mandatory>false</mandatory>
 						<many>false</many>
 					</target>

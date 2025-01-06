@@ -16,6 +16,7 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 
@@ -53,6 +54,18 @@ public class BeCPGLicenseManager {
 
 	@Autowired
 	private AbstractAuthenticationService authenticationService;
+	
+	@Value("${beCPG.licence.showWarning:true}")
+	private boolean showLicenseWarning;
+
+	/**
+	 * <p>isShowUnauthorizedWarning.</p>
+	 *
+	 * @return a boolean.
+	 */
+	public boolean isShowLicenseWarning() {
+		return showLicenseWarning;
+	}
 	
 	/**
 	 * <p>getAllowedConcurrentRead.</p>
@@ -165,7 +178,7 @@ public class BeCPGLicenseManager {
 	 * @return a boolean
 	 */
 	public boolean isLicenseValid() {
-		return getLicenseFile() != null && !INVALID_LICENSE_FILE.equals(getLicenseName()) && !namedLicenseExceeded();
+		return getLicense() != null && !INVALID_LICENSE_FILE.equals(getLicenseName()) && !namedLicenseExceeded();
 	}
 
 
@@ -302,7 +315,9 @@ public class BeCPGLicenseManager {
 	public boolean hasWriteLicense() {
 		String runAsUser = AuthenticationUtil.getRunAsUser();
 		return beCPGCacheService.getFromCache(BeCPGLicenseManager.class.getName() + ".writeLicenses", runAsUser, () -> {
-			
+			if (!showLicenseWarning) {
+				return true;
+			}
 			if(isSpecialLicenceUser()) {
 				return true;
 			}
