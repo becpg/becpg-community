@@ -115,11 +115,11 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 					try {
 						recipeAnalysisResults = postV5RecipeAnalysis(productContext, countries, usageContext.getName(), usageContext.getModuleId());
 					} catch (HttpStatusCodeException e) {
-						logger.error("Error during Decernis recipe analysis: " + e.getMessage(), e);
+						logger.error("Error during Decernis recipe analysis: " + DecernisHelper.cleanError(e.getMessage()), e);
 						for (String country : countries) {
 							ReqCtrlListDataItem req = ReqCtrlListDataItem.forbidden()
 									.withMessage(MLTextHelper.getI18NMessage("message.decernis.error",
-											"Error while creating Decernis recipe: " + e.getMessage()))
+											"Error while creating Decernis recipe: " + DecernisHelper.cleanError(e.getMessage())))
 									.ofDataType(RequirementDataType.Formulation).withFormulationChainId(DecernisService.DECERNIS_CHAIN_ID)
 									.withRegulatoryCode(country + (!usageContext.getName().isEmpty() ? " - " + usageContext.getName() : ""));
 							
@@ -143,10 +143,10 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 			try {
 				ingredientAnalysisResults = postV5IngredientAnalysis(productContext, contextItem, countries);
 			} catch (HttpStatusCodeException e) {
-				logger.error("Error during Decernis ingredients analysis: " + e.getMessage(), e);
+				logger.error("Error during Decernis ingredients analysis: " + DecernisHelper.cleanError(e.getMessage()), e);
 				ReqCtrlListDataItem req = ReqCtrlListDataItem.forbidden()
 						.withMessage(MLTextHelper.getI18NMessage("message.decernis.error",
-								"Error while creating Decernis recipe: " + e.getMessage()))
+								"Error while creating Decernis recipe: " + DecernisHelper.cleanError(e.getMessage())))
 						.ofDataType(RequirementDataType.Formulation).withFormulationChainId(DecernisService.DECERNIS_CHAIN_ID);
 				productContext.getRequirements().add(req);
 			}
