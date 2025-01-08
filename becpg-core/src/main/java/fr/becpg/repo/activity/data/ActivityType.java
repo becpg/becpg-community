@@ -7,5 +7,5 @@ package fr.becpg.repo.activity.data;
  * @version $Id: $Id
  */
 public enum ActivityType {
-	State, Entity, Datalist, DatalistCopy, Formulation, Report , Comment, Content, Merge, Version, Export, ChangeOrder
+State, Entity, Datalist, DatalistCopy, Formulation, Report , Comment, Content, Merge, Version, Export, ChangeOrder, AspectsAddition, AspectsRemoval
 }
