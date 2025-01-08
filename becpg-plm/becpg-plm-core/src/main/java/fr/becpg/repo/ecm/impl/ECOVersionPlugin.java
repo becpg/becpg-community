@@ -7,7 +7,6 @@ import java.util.List;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.version.VersionType;
@@ -64,9 +63,6 @@ public class ECOVersionPlugin implements EntityVersionPlugin {
 
 	@Autowired
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
-	
-	@Autowired
-	private TenantAdminService tenantAdminService;
 
 	private static final Log logger = LogFactory.getLog(ECOVersionPlugin.class);
 
@@ -92,13 +88,7 @@ public class ECOVersionPlugin implements EntityVersionPlugin {
 	@Override
 	public void impactWUsed(NodeRef entityNodeRef, VersionType versionType, String description, Date effectiveDate) {
 
-		String userName = AuthenticationUtil.getSystemUserName();
-		
-		if (tenantAdminService.isEnabled()) {
-			userName = tenantAdminService.getDomainUser(userName, tenantAdminService.getCurrentUserDomain());
-		}
-		
-		final String finalUsername = userName;
+		String userName = AuthenticationUtil.getFullyAuthenticatedUser();
 		
 		Thread asyncEcoGenerator = new Thread() {
 			
@@ -154,7 +144,7 @@ public class ECOVersionPlugin implements EntityVersionPlugin {
 						return ecoService.apply(ecoNodeRef, deleteOnApply(), true, false);
 					}, false, true);
 					return null;
-				}, finalUsername);
+				}, userName);
 			};
 		};
 		
