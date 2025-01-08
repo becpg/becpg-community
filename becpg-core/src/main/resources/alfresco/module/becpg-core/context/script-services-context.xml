@@ -87,6 +87,7 @@
 		<property name="authorityService" ref="authorityService" />
 		<property name="authenticationService" ref="authenticationService" />
 		<property name="remoteUserMapper" ref="RemoteUserMapper" />
+		<property name="entityActivityService" ref="entityActivityService" />
 	</bean>
 	
 	<bean id="beCPGStateHelper" parent="baseJavaScriptExtension" class="fr.becpg.repo.jscript.BeCPGStateHelper">
