@@ -1249,11 +1249,11 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 				qName.equals(BeCPGModel.PROP_PARENT_LEVEL) || qName.equals(BeCPGModel.PROP_START_EFFECTIVITY)
 				|| qName.equals(BeCPGModel.PROP_END_EFFECTIVITY) || qName.equals(ReportModel.PROP_REPORT_ENTITY_GENERATED)
 				|| qName.equals(ReportModel.ASSOC_REPORTS) || qName.equals(BeCPGModel.PROP_VERSION_LABEL) || qName.equals(BeCPGModel.PROP_COLOR)
-				|| qName.equals(BeCPGModel.PROP_ENTITY_SCORE)
-				|| qName.equals(PLMModel.PROP_COMPARE_WITH_DYN_COLUMN)
-				|| qName.getLocalName().contains("ErrorLog")
-				|| qName.equals(ContentModel.PROP_IS_INDEXED) || qName.equals(ContentModel.PROP_IS_CONTENT_INDEXED)) {
-			
+
+				|| qName.equals(BeCPGModel.PROP_ENTITY_SCORE) || qName.equals(PLMModel.PROP_COMPARE_WITH_DYN_COLUMN)
+				|| qName.getLocalName().contains("ErrorLog") || qName.equals(ContentModel.PROP_IS_INDEXED)
+				|| qName.equals(ContentModel.PROP_IS_CONTENT_INDEXED) || qName.equals(PLMModel.PROP_NUTRIENT_PROFILING_DETAILS)) {
+
 			isComparable = false;
 		}
 
