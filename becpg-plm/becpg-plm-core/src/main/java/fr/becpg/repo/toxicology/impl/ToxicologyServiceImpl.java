@@ -23,7 +23,7 @@ import fr.becpg.repo.toxicology.ToxicologyService;
 /**
  * <p>ToxicologyServiceImpl class.</p>
  *
- * @author matthieu
+ * @author valentin
  */
 @Service("toxicologyService")
 public class ToxicologyServiceImpl implements ToxicologyService {

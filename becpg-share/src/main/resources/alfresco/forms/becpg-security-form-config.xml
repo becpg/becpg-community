@@ -21,7 +21,7 @@
 	<!-- sec:aclGroup type  -->
 	<config evaluator="node-type" condition="sec:aclGroup">
 		<forms>
-			<form >
+			<form>
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="sec:nodeType" />
@@ -29,7 +29,7 @@
 					<show id="sec:isDefaultReadOnly" />
 				</field-visibility>
 				<appearance>
-					<field id="sec:nodeType" >
+					<field id="sec:nodeType">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/aclType</control-param>
 							<control-param name="showTooltip">false</control-param>
@@ -43,7 +43,7 @@
 
 
 	<!-- sec:aclEntry type -->
-	
+
 	<config evaluator="node-type" condition="sec:aclEntry">
 		<forms>
 			<form>
@@ -61,12 +61,12 @@
 							<control-param name="saveTitle">false</control-param>
 						</control>
 					</field>
-					<field id="sec:aclPermission"/>
+					<field id="sec:aclPermission" />
 				</appearance>
 			</form>
 		</forms>
 	</config>
-	
+
 	<config evaluator="model-type" condition="sec:aclEntry">
 		<forms>
 			<form>
@@ -85,8 +85,7 @@
 						</control>
 					</field>
 					<field id="sec:aclPermission">
-						<control
-							template="/org/alfresco/components/form/controls/selectone.ftl" >
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 						</control>
 					</field>
 				</appearance>
@@ -99,7 +98,32 @@
 					<show id="sec:groupsAssignee" />
 				</field-visibility>
 			</form>
+
+			<form id="filter">
+				<field-visibility>
+					<show id="sec:aclPermission" />
+					<show id="sec:propName" />
+					<show id="sec:isEnforceACL" />
+					<show id="sec:groupsAssignee" />
+				</field-visibility>
+				<appearance>
+					<field id="sec:aclPermission" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/selectmany.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="sec:isEnforceACL">
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+
+				</appearance>
+			</form>
+
 		</forms>
 	</config>
-	
+
 </alfresco-config>
