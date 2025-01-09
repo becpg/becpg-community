@@ -22,7 +22,7 @@
 			<form>
 				<field-visibility>
 					<show id="bcpg:charactName" />
-					<show id="bcpg:isDeleted"/>
+					<show id="bcpg:isDeleted" />
 					<!-- hide exif:exif -->
 					<hide id="exif:dateTimeOriginal" />
 					<hide id="exif:pixelXDimension" />
@@ -48,16 +48,16 @@
 			<form>
 				<field-visibility>
 					<show id="bcpg:charactName" />
-					<show id="bcpg:isDeleted"/>
+					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
 			<form id="filter">
 				<field-visibility>
 					<show id="bcpg:charactName" />
-					<show id="bcpg:isDeleted"/>
+					<show id="bcpg:isDeleted" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:isDeleted" >
+					<field id="bcpg:isDeleted">
 						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
 					</field>
 				</appearance>
@@ -66,19 +66,19 @@
 				<field-visibility>
 					<show id="bcpg:charactName" />
 					<show id="cm:content" force="true" />
-					<show id="bcpg:isDeleted"/>
+					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
 		</forms>
-	</config>	
-	
+	</config>
+
 	<config evaluator="node-type" condition="ghs:pictogram">
 		<forms>
 			<form>
 				<field-visibility>
 					<show id="ghs:pictogramCode" />
 					<show id="bcpg:charactName" />
-					<show id="bcpg:isDeleted"/>
+					<show id="bcpg:isDeleted" />
 							<!-- hide exif:exif -->
 					<hide id="exif:dateTimeOriginal" />
 					<hide id="exif:pixelXDimension" />
@@ -105,17 +105,17 @@
 				<field-visibility>
 					<show id="ghs:pictogramCode" />
 					<show id="bcpg:charactName" />
-					<show id="bcpg:isDeleted"/>
+					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
 			<form id="filter">
 				<field-visibility>
 					<show id="ghs:pictogramCode" />
 					<show id="bcpg:charactName" />
-					<show id="bcpg:isDeleted"/>
+					<show id="bcpg:isDeleted" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:isDeleted" >
+					<field id="bcpg:isDeleted">
 						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
 					</field>
 				</appearance>
@@ -125,12 +125,12 @@
 					<show id="ghs:pictogramCode" />
 					<show id="bcpg:charactName" />
 					<show id="cm:content" force="true" />
-					<show id="bcpg:isDeleted"/>
+					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
 		</forms>
-	</config>	
-	
+	</config>
+
 
 	<config evaluator="node-type" condition="ghs:hazardStatement">
 		<forms>
@@ -139,25 +139,7 @@
 					<show id="ghs:hazardType" />
 					<show id="ghs:hazardCode" />
 					<show id="bcpg:charactName" />
-					<show id="ghs:signalWord" />
-					<show id="ghs:hazardClassCode" />
-					<show id="bcpg:isDeleted"/>
-							<!-- hide exif:exif -->
-					<hide id="exif:dateTimeOriginal" />
-					<hide id="exif:pixelXDimension" />
-					<hide id="exif:pixelYDimension" />
-					<hide id="exif:exposureTime" />
-					<hide id="exif:fNumber" />
-					<hide id="exif:flash" />
-					<hide id="exif:focalLength" />
-					<hide id="exif:isoSpeedRatings" />
-					<hide id="exif:manufacturer" />
-					<hide id="exif:model" />
-					<hide id="exif:software" />
-					<hide id="exif:orientation" />
-					<hide id="exif:xResolution" />
-					<hide id="exif:yResolution" />
-					<hide id="exif:resolutionUnit" />
+					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
 		</forms>
@@ -169,9 +151,7 @@
 					<show id="ghs:hazardType" />
 					<show id="ghs:hazardCode" />
 					<show id="bcpg:charactName" />
-					<show id="ghs:signalWord" />
-					<show id="ghs:hazardClassCode" />
-					<show id="bcpg:isDeleted"/>
+					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
 			<form id="filter">
@@ -179,12 +159,10 @@
 					<show id="ghs:hazardType" />
 					<show id="ghs:hazardCode" />
 					<show id="bcpg:charactName" />
-					<show id="ghs:signalWord" />
-					<show id="ghs:hazardClassCode" />
-					<show id="bcpg:isDeleted"/>
+					<show id="bcpg:isDeleted" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:isDeleted" >
+					<field id="bcpg:isDeleted">
 						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
 					</field>
 				</appearance>
@@ -194,14 +172,104 @@
 					<show id="ghs:hazardType" />
 					<show id="ghs:hazardCode" />
 					<show id="bcpg:charactName" />
-					<show id="ghs:signalWord" />
-					<show id="ghs:hazardClassCode" />
-					<show id="bcpg:isDeleted"/>
+					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
 		</forms>
 	</config>
-	
+
+
+
+
+	<config evaluator="node-type" condition="ghs:hazardClassificationList">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="ghs:hazardClassCode" />
+					<show id="ghs:hazardStatementRef" />
+					<show id="ghs:pictogramRef" />
+					<show id="ghs:signalWord" />
+					<show id="ghs:hclRegulatoryText" />
+					<show id="ghs:hclDetail" />
+				</field-visibility>
+				<appearance>
+                    <field id="ghs:hazardStatementRef" mandatory="false" read-only="false" set="security">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="showLink">false</control-param>
+                        </control>
+                    </field>
+                    <field id="ghs:pictogramRef" mandatory="false" read-only="false" set="security">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="showLink">false</control-param>
+                        </control>
+                    </field>
+                </appearance>
+			</form>
+		</forms>
+	</config>
+	<config evaluator="model-type" condition="ghs:hazardClassificationList">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="ghs:hazardClassCode" />
+					<show id="ghs:hazardStatementRef" />
+					<show id="ghs:pictogramRef" />
+					<show id="ghs:signalWord" />
+					<show id="ghs:hclRegulatoryText" />
+					<show id="ghs:hclDetail" />
+				</field-visibility>
+				<appearance>
+                    <field id="ghs:hazardStatementRef" mandatory="false" read-only="false" set="security">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="showLink">false</control-param>
+                        </control>
+                    </field>
+                    <field id="ghs:pictogramRef" mandatory="false" read-only="false" set="security">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="showLink">false</control-param>
+                        </control>
+                    </field>
+                </appearance>
+			</form>
+			<form id="filter">
+				<field-visibility>
+					<show id="ghs:hazardClassCode" />
+					<show id="ghs:hazardStatementRef" />
+					<show id="ghs:pictogramRef" />
+					<show id="ghs:signalWord" />
+					<show id="ghs:hclRegulatoryText" />
+					<show id="ghs:hclDetail" />
+				</field-visibility>
+				<appearance>
+					<field id="ghs:hazardStatementRef" mandatory="false" read-only="false" set="security">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="showLink">false</control-param>
+						</control>
+					</field>
+					<field id="ghs:pictogramRef" mandatory="false" read-only="false" set="security">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="showLink">false</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+			<form id="datagrid">
+				<field-visibility>
+					<show id="ghs:hazardClassCode" />
+					<show id="ghs:hazardStatementRef" />
+					<show id="ghs:pictogramRef" />
+					<show id="ghs:signalWord" />
+					<show id="ghs:hclRegulatoryText" />
+					<show id="ghs:hclDetail" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+
+
+
+
+
 	<config evaluator="node-type" condition="ghs:precautionaryStatement">
 		<forms>
 			<form>
@@ -209,7 +277,7 @@
 					<show id="ghs:precautionaryType" />
 					<show id="ghs:precautionaryCode" />
 					<show id="bcpg:charactName" />
-					<show id="bcpg:isDeleted"/>
+					<show id="bcpg:isDeleted" />
 							<!-- hide exif:exif -->
 					<hide id="exif:dateTimeOriginal" />
 					<hide id="exif:pixelXDimension" />
@@ -237,7 +305,7 @@
 					<show id="ghs:precautionaryType" />
 					<show id="ghs:precautionaryCode" />
 					<show id="bcpg:charactName" />
-					<show id="bcpg:isDeleted"/>
+					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
 			<form id="filter">
@@ -245,10 +313,10 @@
 					<show id="ghs:precautionaryType" />
 					<show id="ghs:precautionaryCode" />
 					<show id="bcpg:charactName" />
-					<show id="bcpg:isDeleted"/>
+					<show id="bcpg:isDeleted" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:isDeleted" >
+					<field id="bcpg:isDeleted">
 						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
 					</field>
 				</appearance>
@@ -258,19 +326,19 @@
 					<show id="ghs:precautionaryType" />
 					<show id="ghs:precautionaryCode" />
 					<show id="bcpg:charactName" />
-					<show id="bcpg:isDeleted"/>
+					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
 		</forms>
 	</config>
-	
+
 	<config evaluator="node-type" condition="ghs:onuCode">
 		<forms>
 			<form>
 				<field-visibility>
 					<show id="ghs:onuCodeNumber" />
 					<show id="bcpg:charactName" />
-					<show id="bcpg:isDeleted"/>
+					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
 		</forms>
@@ -281,17 +349,17 @@
 				<field-visibility>
 					<show id="ghs:onuCodeNumber" />
 					<show id="bcpg:charactName" />
-					<show id="bcpg:isDeleted"/>
+					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
 			<form id="filter">
 				<field-visibility>
 					<show id="ghs:onuCodeNumber" />
 					<show id="bcpg:charactName" />
-					<show id="bcpg:isDeleted"/>
+					<show id="bcpg:isDeleted" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:isDeleted" >
+					<field id="bcpg:isDeleted">
 						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
 					</field>
 				</appearance>
@@ -300,19 +368,19 @@
 				<field-visibility>
 					<show id="ghs:onuCodeNumber" />
 					<show id="bcpg:charactName" />
-					<show id="bcpg:isDeleted"/>
+					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
 		</forms>
-	</config>	
-	
+	</config>
+
 	<config evaluator="node-type" condition="ghs:classCode">
 		<forms>
 			<form>
 				<field-visibility>
 					<show id="ghs:classCodeNumber" />
 					<show id="bcpg:charactName" />
-					<show id="bcpg:isDeleted"/>
+					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
 		</forms>
@@ -323,17 +391,17 @@
 				<field-visibility>
 					<show id="ghs:classCodeNumber" />
 					<show id="bcpg:charactName" />
-					<show id="bcpg:isDeleted"/>
+					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
 			<form id="filter">
 				<field-visibility>
 					<show id="ghs:classCodeNumber" />
 					<show id="bcpg:charactName" />
-					<show id="bcpg:isDeleted"/>
+					<show id="bcpg:isDeleted" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:isDeleted" >
+					<field id="bcpg:isDeleted">
 						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
 					</field>
 				</appearance>
@@ -342,19 +410,19 @@
 				<field-visibility>
 					<show id="ghs:classCodeNumber" />
 					<show id="bcpg:charactName" />
-					<show id="bcpg:isDeleted"/>
+					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
 		</forms>
 	</config>
-		
+
 	<config evaluator="node-type" condition="ghs:packagingGroupCode">
 		<forms>
 			<form>
 				<field-visibility>
 					<show id="ghs:packagingGroupCodeNumber" />
 					<show id="bcpg:charactName" />
-					<show id="bcpg:isDeleted"/>
+					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
 		</forms>
@@ -365,17 +433,17 @@
 				<field-visibility>
 					<show id="ghs:packagingGroupCodeNumber" />
 					<show id="bcpg:charactName" />
-					<show id="bcpg:isDeleted"/>
+					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
 			<form id="filter">
 				<field-visibility>
 					<show id="ghs:packagingGroupCodeNumber" />
 					<show id="bcpg:charactName" />
-					<show id="bcpg:isDeleted"/>
+					<show id="bcpg:isDeleted" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:isDeleted" >
+					<field id="bcpg:isDeleted">
 						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
 					</field>
 				</appearance>
@@ -384,10 +452,10 @@
 				<field-visibility>
 					<show id="ghs:packagingGroupCodeNumber" />
 					<show id="bcpg:charactName" />
-					<show id="bcpg:isDeleted"/>
+					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
 		</forms>
-	</config>	
-		
+	</config>
+
 </alfresco-config>
