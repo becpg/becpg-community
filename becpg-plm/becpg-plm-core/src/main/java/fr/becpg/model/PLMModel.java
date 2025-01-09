@@ -731,6 +731,8 @@ public interface PLMModel {
 	QName PROP_NUTRIENT_PROFILE_SCORE_FORMULA = QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfileScoreFormula");
 	/** Constant <code>PROP_NUTRIENT_PROFILE_CLASS_FORMULA</code> */
 	QName PROP_NUTRIENT_PROFILE_CLASS_FORMULA = QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfileClassFormula");
+	
+	QName PROP_NUTRIENT_PROFILING_DETAILS = QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfilingDetails");
 
 	/** Constant <code>PROP_NUTRIENT_PROFILE_CATEGORY</code> */
 	QName PROP_NUTRIENT_PROFILE_CATEGORY = QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfileCategory");
