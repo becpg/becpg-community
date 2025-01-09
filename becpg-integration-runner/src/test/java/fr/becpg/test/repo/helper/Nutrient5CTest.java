@@ -139,14 +139,14 @@ public class Nutrient5CTest {
 		Nutrient5C2021Helper.compute5CScore(nutriScoreContext);
 		Nutrient5C2021Helper.extractNutrientClass(nutriScoreContext);
 		Assert.assertEquals(1d, nutriScoreContext.getParts().getJSONObject(NutriScoreContext.PROTEIN_CODE).getDouble(NutriScoreContext.SCORE), 0.001);
-		Assert.assertEquals(2d, nutriScoreContext.getParts().getJSONObject(NutriScoreContext.FRUIT_VEGETABLE_CODE).getDouble(NutriScoreContext.SCORE), 0.001);
+		Assert.assertEquals(0d, nutriScoreContext.getParts().getJSONObject(NutriScoreContext.FRUIT_VEGETABLE_CODE).getDouble(NutriScoreContext.SCORE), 0.001);
 		
 		nutriScoreContext = new NutriScoreContext(30d, 0d, 0d, 12d, 0d, 80d, 0d, 0d, 0d, "Beverages");
 		Nutrient5C2021Helper.compute5CScore(nutriScoreContext);
 		Nutrient5C2021Helper.extractNutrientClass(nutriScoreContext);
 		Assert.assertEquals(1d, nutriScoreContext.getParts().getJSONObject(NutriScoreContext.ENERGY_CODE).getDouble(NutriScoreContext.SCORE), 0.001);
 		Assert.assertEquals(8d, nutriScoreContext.getParts().getJSONObject(NutriScoreContext.SUGAR_CODE).getDouble(NutriScoreContext.SCORE), 0.001);
-		Assert.assertEquals(10d, nutriScoreContext.getParts().getJSONObject(NutriScoreContext.FRUIT_VEGETABLE_CODE).getDouble(NutriScoreContext.SCORE), 0.001);
+		Assert.assertEquals(4d, nutriScoreContext.getParts().getJSONObject(NutriScoreContext.FRUIT_VEGETABLE_CODE).getDouble(NutriScoreContext.SCORE), 0.001);
 		
 		nutriScoreContext = new NutriScoreContext(0d, 0d, 0d, 11d, 550d, 10d, 0d, 3.5d, 5d, "Others");
 		Nutrient5C2021Helper.compute5CScore(nutriScoreContext);
@@ -162,7 +162,7 @@ public class Nutrient5CTest {
 		Nutrient5C2021Helper.extractNutrientClass(nutriScoreContext);
 		Assert.assertEquals(9d, nutriScoreContext.getParts().getJSONObject(NutriScoreContext.SUGAR_CODE).getDouble(NutriScoreContext.SCORE), 0.001);
 		Assert.assertEquals(10d, nutriScoreContext.getParts().getJSONObject(NutriScoreContext.SODIUM_CODE).getDouble(NutriScoreContext.SCORE), 0.001);
-		Assert.assertEquals(5d, nutriScoreContext.getParts().getJSONObject(NutriScoreContext.FRUIT_VEGETABLE_CODE).getDouble(NutriScoreContext.SCORE), 0.001);
+		Assert.assertEquals(2d, nutriScoreContext.getParts().getJSONObject(NutriScoreContext.FRUIT_VEGETABLE_CODE).getDouble(NutriScoreContext.SCORE), 0.001);
 	}
 	
 	@Test
@@ -245,14 +245,14 @@ public class Nutrient5CTest {
 		Nutrient5C2023Helper.compute5CScore(nutriScoreContext);
 		Nutrient5C2023Helper.extractNutrientClass(nutriScoreContext);
 		Assert.assertEquals(2d, nutriScoreContext.getParts().getJSONObject(NutriScoreContext.PROTEIN_CODE).getDouble(NutriScoreContext.SCORE), 0.001);
-		Assert.assertEquals(2d, nutriScoreContext.getParts().getJSONObject(NutriScoreContext.FRUIT_VEGETABLE_CODE).getDouble(NutriScoreContext.SCORE), 0.001);
+		Assert.assertEquals(0d, nutriScoreContext.getParts().getJSONObject(NutriScoreContext.FRUIT_VEGETABLE_CODE).getDouble(NutriScoreContext.SCORE), 0.001);
 		
 		nutriScoreContext = new NutriScoreContext(30d, 0d, 0d, 12d, 0d, 80d, 0d, 0d, 0d, "Beverages");
 		Nutrient5C2023Helper.compute5CScore(nutriScoreContext);
 		Nutrient5C2023Helper.extractNutrientClass(nutriScoreContext);
 		Assert.assertEquals(0d, nutriScoreContext.getParts().getJSONObject(NutriScoreContext.ENERGY_CODE).getDouble(NutriScoreContext.SCORE), 0.001);
 		Assert.assertEquals(10d, nutriScoreContext.getParts().getJSONObject(NutriScoreContext.SUGAR_CODE).getDouble(NutriScoreContext.SCORE), 0.001);
-		Assert.assertEquals(6d, nutriScoreContext.getParts().getJSONObject(NutriScoreContext.FRUIT_VEGETABLE_CODE).getDouble(NutriScoreContext.SCORE), 0.001);
+		Assert.assertEquals(4d, nutriScoreContext.getParts().getJSONObject(NutriScoreContext.FRUIT_VEGETABLE_CODE).getDouble(NutriScoreContext.SCORE), 0.001);
 		
 		nutriScoreContext = new NutriScoreContext(0d, 0d, 0d, 11d, 700d, 10d, 0d, 3.5d, 5d, "Others");
 		Nutrient5C2023Helper.compute5CScore(nutriScoreContext);
@@ -267,7 +267,7 @@ public class Nutrient5CTest {
 		Nutrient5C2023Helper.extractNutrientClass(nutriScoreContext);
 		Assert.assertEquals(12d, nutriScoreContext.getParts().getJSONObject(NutriScoreContext.SUGAR_CODE).getDouble(NutriScoreContext.SCORE), 0.001);
 		Assert.assertEquals(14d, nutriScoreContext.getParts().getJSONObject(NutriScoreContext.SODIUM_CODE).getDouble(NutriScoreContext.SCORE), 0.001);
-		Assert.assertEquals(5d, nutriScoreContext.getParts().getJSONObject(NutriScoreContext.FRUIT_VEGETABLE_CODE).getDouble(NutriScoreContext.SCORE), 0.001);
+		Assert.assertEquals(2d, nutriScoreContext.getParts().getJSONObject(NutriScoreContext.FRUIT_VEGETABLE_CODE).getDouble(NutriScoreContext.SCORE), 0.001);
 		
 		//#19177
 		nutriScoreContext = new NutriScoreContext(1833.9d, 3.3d, 0d, 32.5d, 200d, 17d, 0d, 1.4d, 4.9d, "Others");

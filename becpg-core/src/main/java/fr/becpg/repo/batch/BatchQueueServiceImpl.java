@@ -340,7 +340,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 
 					if (batchStep.getBatchStepListener() != null) {
 
-						pushAndSetBatchAuthentication();
+						pushAndSetBatchAuthentication(batchStep);
 
 						transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 							batchStep.getBatchStepListener().beforeStep();
@@ -366,7 +366,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 							getNextWorkWrapper(batchStep.getWorkProvider()), batchInfo.getWorkerThreads(),
 							batchInfo.getBatchSize(), applicationEventPublisher, logger, 100);
 
-					batchProcessor.processLong(runAsWrapper(batchStep.getProcessWorker()), true);
+					batchProcessor.processLong(runAsWrapper(batchStep), true);
 
 					totalItems += batchProcessor.getTotalResultsLong();
 					totalErrors += batchProcessor.getTotalErrorsLong();
@@ -386,7 +386,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 					}
 					if (batchStep.getBatchStepListener() != null) {
 
-						pushAndSetBatchAuthentication();
+						pushAndSetBatchAuthentication(batchStep);
 
 						transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 							batchStep.getBatchStepListener().afterStep();
@@ -400,7 +400,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 
 				if (closingHook != null) {
 
-					pushAndSetBatchAuthentication();
+					pushAndSetBatchAuthentication(null);
 
 					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 						closingHook.run();
@@ -457,22 +457,24 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 			}
 		}
 
-		private void pushAndSetBatchAuthentication() {
+		private void pushAndSetBatchAuthentication(BatchStep<T> batchStep) {
 			AuthenticationUtil.pushAuthentication();
-			String username = batchInfo.getBatchUser();
-			if (Boolean.TRUE.equals(batchInfo.getRunAsSystem())) {
-				
-				username = AuthenticationUtil.getSystemUserName();
-				
+			
+			Boolean runAsSystem = batchStep != null && batchStep.getRunAsSystem() != null ? batchStep.getRunAsSystem() : batchInfo.getRunAsSystem();
+			String batchUser = batchStep != null && batchStep.getBatchUser() != null ? batchStep.getBatchUser() : batchInfo.getBatchUser();
+			
+			if (Boolean.TRUE.equals(runAsSystem)) {
 				if (tenantAdminService.isEnabled()) {
-					if (AuthenticationUtil.getSystemUserName().equals(batchInfo.getBatchUser())) {
-						username = tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), batchInfo.getTenant());
+					if (AuthenticationUtil.getSystemUserName().equals(batchUser)) {
+						batchUser = tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), batchInfo.getTenant());
 					} else {
-						username = tenantAdminService.getDomainUser(username, tenantAdminService.getUserDomain(batchInfo.getBatchUser()));
+						batchUser = tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenantAdminService.getUserDomain(batchUser));
 					}
+				} else {
+					batchUser = AuthenticationUtil.getSystemUserName();
 				}
 			}
-			AuthenticationUtil.setFullyAuthenticatedUser(username);
+			AuthenticationUtil.setFullyAuthenticatedUser(batchUser);
 		}
 
 		private BatchProcessWorkProvider<T> getNextWorkWrapper(BatchProcessWorkProvider<T> workProvider) {
@@ -496,18 +498,18 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 			};
 		}
 
-		private BatchProcessWorker<T> runAsWrapper(BatchProcessWorker<T> processWorker) {
+		private BatchProcessWorker<T> runAsWrapper(BatchStep<T> batchStep) {
 			return new BatchProcessWorker<>() {
 
 				@Override
 				public String getIdentifier(T entry) {
-					return processWorker.getIdentifier(entry);
+					return batchStep.getProcessWorker().getIdentifier(entry);
 				}
 
 				@Override
 				public void beforeProcess() throws Throwable {
-					pushAndSetBatchAuthentication();
-					processWorker.beforeProcess();
+					pushAndSetBatchAuthentication(batchStep);
+					batchStep.getProcessWorker().beforeProcess();
 				}
 
 				@Override
@@ -521,14 +523,14 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 						return;
 					}
 					checkPausedCommand();
-					processWorker.process(entry);
+					batchStep.getProcessWorker().process(entry);
 					batchInfo.setCurrentItem(batchInfo.getCurrentItem() + 1);
 				}
 
 
 				@Override
 				public void afterProcess() throws Throwable {
-					processWorker.afterProcess();
+					batchStep.getProcessWorker().afterProcess();
 					AuthenticationUtil.popAuthentication();
 				}
 

@@ -19,6 +19,26 @@ public class BatchStep<T> {
 	
 	private String stepDescId;
 	
+	private Boolean runAsSystem;
+	
+	private String batchUser;
+	
+	public String getBatchUser() {
+		return batchUser;
+	}
+	
+	public void setBatchUser(String batchUser) {
+		this.batchUser = batchUser;
+	}
+	
+	public void setRunAsSystem(Boolean runAsSystem) {
+		this.runAsSystem = runAsSystem;
+	}
+	
+	public Boolean getRunAsSystem() {
+		return runAsSystem;
+	}
+	
 	/**
 	 * <p>Setter for the field <code>stepDescId</code>.</p>
 	 *
