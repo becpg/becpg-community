@@ -3,6 +3,7 @@ package fr.becpg.repo.activity.policy;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -17,6 +18,7 @@ import org.alfresco.repo.copy.CopyBehaviourCallback;
 import org.alfresco.repo.copy.CopyDetails;
 import org.alfresco.repo.copy.DoNothingCopyBehaviourCallback;
 import org.alfresco.repo.node.NodeServicePolicies;
+import org.alfresco.repo.node.NodeServicePolicies.OnRemoveAspectPolicy;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
@@ -51,7 +53,7 @@ import fr.becpg.repo.repository.L2CacheSupport;
  */
 public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnAddAspectPolicy,
 		NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.BeforeDeleteNodePolicy, NodeServicePolicies.OnCreateNodePolicy,
-		NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnDeleteAssociationPolicy, ContentServicePolicies.OnContentUpdatePolicy {
+		NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnDeleteAssociationPolicy, OnRemoveAspectPolicy, ContentServicePolicies.OnContentUpdatePolicy {
 
 	private static final Log logger = LogFactory.getLog(EntityActivityPolicy.class);
 
@@ -65,6 +67,9 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 	public static final String KEY_QUEUE_UPDATED_STATUS = "EntityActivity_UpdatedStatus";
 	/** Constant <code>KEY_QUEUE_ADDED_TPL_ASPECT="EntityActivity_AddedTplAspect"</code> */
 	public static final String KEY_QUEUE_ADDED_TPL_ASPECT = "EntityActivity_AddedTplAspect";
+	
+	public static final String KEY_QUEUE_ADDED_ASPECT = "EntityActivity_AddedAspect";
+	public static final String KEY_QUEUE_REMOVED_ASPECT = "EntityActivity_RemovedAspect";
 
 	private static final String DELIMITER = "###";
 	private static final Pattern pattern = Pattern.compile(Pattern.quote(DELIMITER));
@@ -105,8 +110,8 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 	@Override
 	public void doInit() {
 		logger.debug("Init EntityActivityPolicy...");
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnAddAspectPolicy.QNAME, BeCPGModel.ASPECT_ENTITY_TPL,
-				new JavaBehaviour(this, "onAddAspect"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnAddAspectPolicy.QNAME, this, new JavaBehaviour(this, "onAddAspect"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnRemoveAspectPolicy.QNAME, this, new JavaBehaviour(this, "onRemoveAspect"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2,
 				new JavaBehaviour(this, "onUpdateProperties"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2,
@@ -179,10 +184,40 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 				}
 				return;
 			}
-			QName type = nodeService.getType(nodeRef);
-			if (accept(type)) {
-				queueNode(KEY_QUEUE_ADDED_TPL_ASPECT, nodeRef);
+			if (aspectTypeQName.equals(BeCPGModel.ASPECT_ENTITY_TPL)) {
+				QName type = nodeService.getType(nodeRef);
+				if (accept(type)) {
+					queueNode(KEY_QUEUE_ADDED_TPL_ASPECT, nodeRef);
+				}
+			} else {
+				Set<QName> addedAspects = TransactionSupportUtil.getResource(KEY_QUEUE_ADDED_ASPECT + nodeRef);
+				if (addedAspects == null) {
+					addedAspects = new HashSet<>();
+				}
+				addedAspects.add(aspectTypeQName);
+				TransactionSupportUtil.bindResource(KEY_QUEUE_ADDED_ASPECT + nodeRef, addedAspects);
+				queueNode(KEY_QUEUE_ADDED_ASPECT, nodeRef);
 			}
+		}
+	}
+	
+	@Override
+	public void onRemoveAspect(NodeRef nodeRef, QName aspectTypeQName) {
+		if (policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE) && policyBehaviourFilter.isEnabled(BeCPGModel.ASPECT_SORTABLE_LIST)
+				&& policyBehaviourFilter.isEnabled(BeCPGModel.TYPE_ACTIVITY_LIST)) {
+			if (L2CacheSupport.isThreadLockEnable()) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Entity [" + Thread.currentThread().getName() + "] is locked  :" + nodeRef);
+				}
+				return;
+			}
+			Set<QName> removedAspects = TransactionSupportUtil.getResource(KEY_QUEUE_REMOVED_ASPECT + nodeRef);
+			if (removedAspects == null) {
+				removedAspects = new HashSet<>();
+			}
+			removedAspects.add(aspectTypeQName);
+			TransactionSupportUtil.bindResource(KEY_QUEUE_REMOVED_ASPECT + nodeRef, removedAspects);
+			queueNode(KEY_QUEUE_REMOVED_ASPECT, nodeRef);
 		}
 	}
 
@@ -513,6 +548,9 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 							&& !containsNodeInQueue(KEY_QUEUE_UPDATED_STATUS, nodeRef)) {
 						registerActivity(nodeRef, type, ActivityEvent.Update);
 					}
+					break;
+				case KEY_QUEUE_ADDED_ASPECT, KEY_QUEUE_REMOVED_ASPECT:
+					registerActivity(nodeRef, type, ActivityEvent.Aspect);
 					break;
 				case KEY_QUEUE_CREATED:
 					registerActivity(nodeRef, type, ActivityEvent.Create);

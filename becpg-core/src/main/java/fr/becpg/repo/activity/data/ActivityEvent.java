@@ -7,5 +7,5 @@ package fr.becpg.repo.activity.data;
  * @version $Id: $Id
  */
 public enum ActivityEvent {
-	Update, Create, Delete 
+	Update, Create, Delete, Aspect
 }
