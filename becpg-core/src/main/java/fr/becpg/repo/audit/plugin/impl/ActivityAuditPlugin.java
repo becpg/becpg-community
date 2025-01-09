@@ -3,14 +3,19 @@ package fr.becpg.repo.audit.plugin.impl;
 import java.io.Serializable;
 import java.util.Map;
 
+import org.alfresco.repo.tenant.TenantService;
+import org.alfresco.repo.tenant.TenantUtil;
+import org.alfresco.service.cmr.repository.NodeRef;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.audit.model.AuditDataType;
+import fr.becpg.repo.audit.model.AuditQuery;
 import fr.becpg.repo.audit.model.AuditType;
 import fr.becpg.repo.audit.plugin.AbstractAuditPlugin;
-import fr.becpg.repo.audit.plugin.DatabaseAuditPlugin;
+import fr.becpg.repo.audit.plugin.ExtraQueryDatabaseAuditPlugin;
 
 /**
  * <p>ActivityAuditPlugin class.</p>
@@ -19,7 +24,7 @@ import fr.becpg.repo.audit.plugin.DatabaseAuditPlugin;
  * @version $Id: $Id
  */
 @Service
-public class ActivityAuditPlugin extends AbstractAuditPlugin implements DatabaseAuditPlugin {
+public class ActivityAuditPlugin extends AbstractAuditPlugin implements ExtraQueryDatabaseAuditPlugin {
 
 	/** Constant <code>ENTITY_NODEREF="entityNodeRef"</code> */
 	public static final String ENTITY_NODEREF = "entityNodeRef";
@@ -31,7 +36,10 @@ public class ActivityAuditPlugin extends AbstractAuditPlugin implements Database
 	public static final String PROP_BCPG_AL_TYPE = "prop_bcpg_alType";
 	/** Constant <code>PROP_BCPG_AL_USER_ID="prop_bcpg_alUserId"</code> */
 	public static final String PROP_BCPG_AL_USER_ID = "prop_bcpg_alUserId";
-
+	
+	@Autowired
+	private TenantService tenantService;
+	
 	static {
 		KEY_MAP.put(PROP_BCPG_AL_USER_ID, AuditDataType.STRING);
 		KEY_MAP.put(PROP_BCPG_AL_TYPE, AuditDataType.STRING);
@@ -81,6 +89,16 @@ public class ActivityAuditPlugin extends AbstractAuditPlugin implements Database
 	@Override
 	public void afterRecordAuditEntry(Map<String, Serializable> auditValues) {
 		// nothing
+	}
+	
+	@Override
+	public AuditQuery extraQuery(AuditQuery auditQuery) {
+		if (auditQuery.getFilter().contains(ENTITY_NODEREF + "=") && auditQuery.getFilter().split(ENTITY_NODEREF + "=").length > 1
+				&& !TenantService.DEFAULT_DOMAIN.equals(TenantUtil.getCurrentDomain()) && tenantService.isEnabled()) {
+			String entityNodeRef = auditQuery.getFilter().split(ENTITY_NODEREF + "=")[1];
+			return auditQuery.filter(ENTITY_NODEREF + "=" + tenantService.getName(new NodeRef(entityNodeRef)));
+		}
+		return auditQuery;
 	}
 
 }
