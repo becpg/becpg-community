@@ -250,7 +250,7 @@ public class Nutrient5C2023Helper implements InitializingBean, NutrientRegulator
 		
 		aScore += sodiumPart.getDouble(NutriScoreContext.SCORE);
 
-		NutrientHelper.buildNutriScorePart(nutriScoreContext.getParts().getJSONObject(NutriScoreContext.FRUIT_VEGETABLE_CODE), cCategories[0], true);
+		NutrientHelper.buildNutriScorePart(nutriScoreContext.getParts().getJSONObject(NutriScoreContext.FRUIT_VEGETABLE_CODE), cCategories[0]);
 		
 		cScore += nutriScoreContext.getParts().getJSONObject(NutriScoreContext.FRUIT_VEGETABLE_CODE).getDouble(NutriScoreContext.SCORE);
 
