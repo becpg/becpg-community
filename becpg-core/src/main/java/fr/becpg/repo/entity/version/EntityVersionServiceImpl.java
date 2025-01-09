@@ -1656,6 +1656,11 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	@Override
 	public NodeRef createBranch(NodeRef entityNodeRef, NodeRef parentRef) {
 
+		if (permissionService.hasPermission(parentRef, PermissionService.WRITE) != AccessStatus.ALLOWED 
+				&& permissionService.hasPermission(entityNodeRef, BeCPGPermissions.BRANCH_ENTITY) != AccessStatus.ALLOWED) {
+			throw new IllegalStateException("You do not have permission to create a branch for this entity: " + entityNodeRef + " into this folder: " + parentRef);
+		}
+		
 		return StopWatchSupport.build().logger(logger).scopeName(entityNodeRef.toString()).run(() -> {
 			
 			boolean mlAware = MLPropertyInterceptor.setMLAware(true);
