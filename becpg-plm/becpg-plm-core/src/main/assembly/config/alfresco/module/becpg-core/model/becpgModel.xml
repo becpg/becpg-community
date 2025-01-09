@@ -667,6 +667,16 @@
 				</list>
 			</parameter>
 		</constraint>
+		
+		<constraint name="bcpg:toxExposureTypes" type="LIST">
+		    <parameter name="allowedValues">
+		        <list>
+		            <value>Gas</value>
+		            <value>Mist</value>
+		            <value>Vapor</value>
+		        </list>
+		    </parameter>
+		</constraint>
 
 
 		<constraint name="bcpg:labelClaimTypes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
@@ -2796,11 +2806,11 @@
 						<constraint ref="bcpg:declarationTypes" />
 					</constraints>
 				</property>
-				
+
 				<property name="bcpg:ingListComments">
-                    <type>d:mltext</type>
-                    <index enabled="false" />
-                </property>
+					<type>d:mltext</type>
+					<index enabled="false" />
+				</property>
                 
                 <!-- Deprecated -->
 				<property name="bcpg:ingListIsGMO">
@@ -6602,6 +6612,46 @@
 					<index enabled="false" />
 				</property>
 			</properties>
+		
+			<property name="bcpg:ingToxAcuteOral">
+				<type>d:double</type>
+				<mandatory>false</mandatory>
+				<index enabled="false" />
+			</property>
+			<property name="bcpg:ingToxAcuteDermal">
+                <type>d:double</type>
+                <mandatory>false</mandatory>
+                <index enabled="false" />
+            </property>
+			<property name="bcpg:ingToxAcuteInhalation">
+				<type>d:double</type>
+				<mandatory>false</mandatory>
+				<index enabled="false" />
+			</property>
+			 <property name="bcpg:ingToxAcuteInhalationExposureType">
+                <type>d:text</type>
+                <mandatory>false</mandatory>
+                <index enabled="true">
+                     <tokenised>false</tokenised>
+                     <facetable>true</facetable>
+                 </index>
+                <constraints>
+                    <constraint ref="bcpg:toxAcuteInhalationExposureTypes" />
+                </constraints>
+               
+            </property>
+			<property name="bcpg:ingToxAquaticMFactor">
+				<type>d:double</type>
+				<mandatory>false</mandatory>
+				<index enabled="false" />
+			</property>
+			<property name="bcpg:ingToxIsSuperSensitizing">
+				<type>d:boolean</type>
+				<index enabled="true">
+					<tokenised>false</tokenised>
+					<facetable>false</facetable>
+				</index>
+			</property>
 		</aspect>
 
 		<aspect name="bcpg:httpLinkAspect">

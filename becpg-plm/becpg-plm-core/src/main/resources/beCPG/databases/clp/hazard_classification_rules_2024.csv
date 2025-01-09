@@ -1,0 +1,89 @@
+ghs:hazardType;ghs:hazardCode;ghs:hazardClassCode;ghs:pictogramCode;ghs:signalWord;formula;bcpg:regulatoryText;;;;;
+Physical;H226;Flam. Liq. 3;GHS02;Warning;60 >= FP >= 23  ;-> calcul du point éclair obligatoire pour déterminer ce danger. le point éclair est calculé, non pas en auto dans BeCPG, mais par le controle qualité dans X3 et remonte dans beCPG.;;Liquides inflammables;FL 3;Liquide inflammable CAT 3;Catégorie 3
+Physical;H225;Flam. Liq. 2;GHS02;Danger;FP < 23 && BP > 35;-> calcul du point éclair obligatoire pour déterminer ce danger. le point éclair est calculé, non pas en auto dans BeCPG, mais par le controle qualité dans X3 et remonte dans beCPG.;;Liquides inflammables;FL 2;Liquide inflammable CAT 2;Catégorie 2
+Physical;H224;Flam. Liq. 1;GHS02;Danger;FP <= 35 && BP <= 35;-> calcul du point éclair obligatoire pour déterminer ce danger. le point éclair est calculé, non pas en auto dans BeCPG, mais par le controle qualité dans X3 et remonte dans beCPG.;;Liquides inflammables;FL 1;Liquide inflammable CAT 1;Catégorie 1
+Physical;H290;Met. Corr. 1;GHS05;Warning;"hSum(""H290"") >= 0%";;;Substances corosives (métaux);;;Catégorie 1
+Health;H314;Skin Corr. 1A,Skin Corr. 1B,Skin Corr. 1C;GHS05;Danger;"hSum(""H314"") >= 5%  ";;;Corrosion / irritation cutanée;SCI 1A ou SCI 1B ou SCI 1C;;Catégorie 1 (1A, 1B, 1C)
+Health;H315;Skin Irrit. 2;GHS07;Warning;"hSum(""H314"") >= 1% && hSum(""H314"") < 5%  ";;;Corrosion / irritation cutanée;SCI 2;;Catégorie 2
+Health;H315;Skin Irrit. 2;GHS07;Warning;"hSum(""H315"") >= 10%  ";;;Corrosion / irritation cutanée;SCI 2;;Catégorie 2
+Health;H315;Skin Irrit. 2;GHS07;Warning;"10 * hSum(""H314"") + hSum(""H315"") >= 10%  ";;;Corrosion / irritation cutanée;SCI 2;;Catégorie 2
+Health;H318;Eye Dam. 1;GHS05;Danger;"hSum(""H318"") + hSum(""H314"") >= 3%  ";;;Lésion occulaire grave / irritation occulaire;ED 1 ;;Catégorie 1 (1A, 1B, 1C)
+Health;H319;Eye Irrit. 2;GHS07;Warning;"hSum(""H318"") + hSum(""H314"") >= 1% && hSum(""H318"") + hSum(""H314"") < 3%  ";;;Lésion occulaire grave / irritation occulaire;ED 2;;Catégorie 2
+Health;H319;Eye Irrit. 2;GHS07;Warning;"hSum(""H319"") >= 10%  ";;;Lésion occulaire grave / irritation occulaire;ED 2;;Catégorie 2
+Health;H319;Eye Irrit. 2;GHS07;Warning;"10 * hSum(""H314"") + 10 * hSum(""H318"") + hSum(""H319"") >= 10%  ";;;Lésion occulaire grave / irritation occulaire;ED 2;;Catégorie 2
+Health;H317;Skin Sens. 1,Skin Sens. 1B;GHS07;Warning;"hMax(""H317"",""Skin Sens. 1"")>=1 % || hMax(""H317"",""Skin Sens. 1B"") >= 1%  ||  hMax(""H317"",""SuperSensitizing"") >=0.01";"exception pour deux substances considérées comme ""supersensibilisant"" (isoeugenol et cinnamaldéhyde) : 
+- mélange classé H317 si >/= 0,01%
+- mélange classé EUH208 si >/= 0,001%";Attention la notion de respiratoire pas encore dans le tableau car on attend le retour sur la conception qu'il y aura dans BeCPG;Sensibilisation respiratoire ou cutanée;SS 1 ou SS 1B;;Catégorie 1 (1A, 1B, 1)
+Health;H317;Skin Sens. 1A ;GHS07;Warning;"hMax(""H317"",""Skin Sens. 1A"") >= 0.1%  ";"exception pour deux substances considérées comme ""supersensibilisant"" (isoeugenol et cinnamaldéhyde) : 
+- mélange classé H317 si >/= 0,01%
+- mélange classé EUH208 si >/= 0,001%";Attention la notion de respiratoire pas encore dans le tableau car on attend le retour sur la conception qu'il y aura dans BeCPG;Sensibilisation respiratoire ou cutanée;SS 1A;;Catégorie 1 (1A, 1B, 1)
+Health;EUH208;;;;"hMax(""H317"",""Skin Sens. 1"") || hMax(""H317"",""Skin Sens. 1B"") >= 0.1%   ||  hMax(""H317"",""SuperSensitizing"") >=0.001";"exception pour deux substances considérées comme ""supersensibilisant"" (isoeugenol et cinnamaldéhyde) : 
+- mélange classé H317 si >/= 0,01%
+- mélange classé EUH208 si >/= 0,001%";Attention la notion de respiratoire pas encore dans le tableau car on attend le retour sur la conception qu'il y aura dans BeCPG;Sensibilisation respiratoire ou cutanée;/;;/
+Health;EUH208;;;;"hMax(""H317"",""Skin Sens. 1A"") >= 0.01%  ";"exception pour deux substances considérées comme ""supersensibilisant"" (isoeugenol et cinnamaldéhyde) : 
+- mélange classé H317 si >/= 0,01%
+- mélange classé EUH208 si >/= 0,001%";Attention la notion de respiratoire pas encore dans le tableau car on attend le retour sur la conception qu'il y aura dans BeCPG;Sensibilisation respiratoire ou cutanée;/;;/
+Health;H341;Muta. 2;GHS08;Warning;"hMax(""H341"",""Muta. 2"") >= 1%  ";;;Mutagénicité;MUT 2;Mutagénicité sur celles germinales CAT 2;Catégorie 2
+Health;H340;Muta. 1B;GHS08;Danger;"hMax(""H340"",""Muta. 1A"")  >= 0.1%   ||  hMax(""H340"",""Muta. 1B"") >= 0.1%  ";;;Mutagénicité;MUT 1B;Mutagénicité sur celles germinales CAT 1B;Catégorie 1B
+Health;H340;Muta. 1A;GHS08;Danger;"hMax(""H340"",""Muta. 1A"")  >=0.1%  ||  hMax(""H340"",""Muta. 1B"")  >=0.1%  ";;;Mutagénicité;MUT 1A;Mutagénicité sur celles germinales CAT 1A;Catégorie 1A
+Health;H351;Carc. 2;GHS08;Warning;"hMax(""H351"",""Carc. 2"") >= 1%  ";attention, si le mélange contient une substance cancérogène de la catégorie 2 >/= 0,1% et que le mélange n'est pas classé dangereux, alors la mention EUH210 devra apparaître;;Cancérogénicité;CAR 2;Cancérogénicité CAT 2;Catégorie 2
+Health;H350;Carc. 1B;GHS08;Danger;"hMax(""H350"",""Carc. 1"") >= 0.1%   || hMax(""H350"",""Carc. 1B"") >= 0.1%  ";attention, si le mélange contient une substance cancérogène de la catégorie 2 >/= 0,1% et que le mélange n'est pas classé dangereux, alors la mention EUH210 devra apparaître;;Cancérogénicité;CAR 1B;Cancérogénicité CAT 1B;Catégorie 1B
+Health;H350;Carc. 1A;GHS08;Danger;"hMax(""H350"",""Carc. 1"") >= 0.1%   || hMax(""H350"",""Carc. 1B"")  > = 0.1%  ";attention, si le mélange contient une substance cancérogène de la catégorie 2 >/= 0,1% et que le mélange n'est pas classé dangereux, alors la mention EUH210 devra apparaître;;Cancérogénicité;CAR 1A;Cancérogénicité CAT 1A;Catégorie 1A
+Health;H361;Repr. 2;GHS08;Warning;"hMax(""H361"",""Repr. 2"") >= 3%  ";attention, si le mélange contient une substance reprotoxique de la catégorie 2 >/= 0,1% et que le mélange n'est pas classé dangereux, alors la mention EUH210 devra apparaître;;Toxicité pour la reproduction;REP 2;Toxicité pour la reproduction CAT 2;Catégorie 2
+Health;H360;Repr. 1B;GHS08;Danger;"hMax(""H360"",""Repr. 1A"") >= 0.3%   || hMax(""H360"",""Repr. 1B"") >= 0.3%  ";attention, si le mélange contient une substance reprotoxique de la catégorie 2 >/= 0,1% et que le mélange n'est pas classé dangereux, alors la mention EUH210 devra apparaître;;Toxicité pour la reproduction;REP 1B;Toxicité pour la reproduction CAT 1B;Catégorie 1B
+Health;H360;Repr. 1A;GHS08;Danger;"hMax(""H360"",""Repr. 1A"") >= 0.3%  || hMax(""H360"",""Repr. 1B"") >= 0.3%  ";attention, si le mélange contient une substance reprotoxique de la catégorie 2 >/= 0,1% et que le mélange n'est pas classé dangereux, alors la mention EUH210 devra apparaître;;Toxicité pour la reproduction;REP 1A;Toxicité pour la reproduction CAT 1A;Catégorie 1A
+Health;H362;Lact.;;;"hMax(""H362"") >= 0.3%  ";attention, si le mélange contient une substance reprotoxique de la catégorie 2 >/= 0,1% et que le mélange n'est pas classé dangereux, alors la mention EUH210 devra apparaître;;Toxicité pour la reproduction;REP LACT;;/
+Health;H370;STOT SE 1 ;GHS08;Danger;"hMax(""H370"") >= 10%  ";attention, si le mélange contient une substance catégorie 2 >/= 1%, alors la mention EUH210 devra apparaître;;Toxicité spécifique pour certains organes cibles;STO SE-1;;Catégorie 1 
+Health;H371;STOT SE 2;GHS08;Danger;"hMax(""H370"") < 10% && hMax(""H370"") >= 1%  ";attention, si le mélange contient une substance catégorie 2 >/= 1%, alors la mention EUH210 devra apparaître;;Toxicité spécifique pour certains organes cibles;STOT SE -2;;Catégorie 2
+Health;H371;STOT SE 2;GHS08;Danger;"hMax(""H371"") >= 10%  ";attention, si le mélange contient une substance catégorie 2 >/= 1%, alors la mention EUH210 devra apparaître;;Toxicité spécifique pour certains organes cibles;STOT SE -2;;Catégorie 2
+Health;H335 (voies respiratoires) ou H336 (vertiges, somnolences);STOT SE 3;GHS07;Warning;"hSum(""H335"") >= 20%   || hSum(""H336"") >= 20%  ";attention, si le mélange contient une substance catégorie 2 >/= 1%, alors la mention EUH210 devra apparaître;;Toxicité spécifique pour certains organes cibles;STOT SE-3;;Catégorie 3
+Health;H372;STOT RE 1;GHS08;Danger;"hMax(""H372"") >= 10%  ";attention, si le mélange contient une substance catégorie 2 >/= 1%, alors la mention EUH210 devra apparaître;;Toxicité spécifique pour certains organes cibles;STOT Rep;;Catégorie 1 
+Health;H373;STOT RE 2 ;GHS08;Warning;"hMax(""H372"") < 10% && hMax(""H372"") >= 1%  ";attention, si le mélange contient une substance catégorie 2 >/= 1%, alors la mention EUH210 devra apparaître;;Toxicité spécifique pour certains organes cibles;STOT Rep;;Catégorie 2
+Health;H373;STOT RE 2 ;GHS08;Warning;"hMax(""H373"") >= 10%  ";attention, si le mélange contient une substance catégorie 2 >/= 1%, alors la mention EUH210 devra apparaître;;Toxicité spécifique pour certains organes cibles;STOT Rep;;Catégorie 2
+Health;H304;Asp. Tox. 1;GHS08;Danger;"hSum(""H304"") >= 10%  ";;;Danger par aspiration;AH 1;Danger d'aspiration (poumons) CAT 1;Catégorie 1 
+Health;H304;Asp. Tox. 1;GHS08;Danger;"hydrocarbonPerc + hSum(""H304"") >= 10%  ";;;Danger par aspiration;AH 1;Danger d'aspiration (poumons) CAT 1;Catégorie 1 
+Health;EUH380;;;Danger;"hSum(""EUH380"") >= 0.1%  ";attention, si le mélange contient une substance catégorie 2 >/= 0,1%, alors la mention EUH210 devra apparaître;;Perturbateur endocrinien (santé humaine);ED HH1;;Catégorie 1 
+Health;EUH381;;;Warning;"hSum(""EUH381"") >= 1%  ";attention, si le mélange contient une substance catégorie 2 >/= 0,1%, alors la mention EUH210 devra apparaître;;Perturbateur endocrinien (santé humaine);ED HH2;;Catégorie 2
+Health;EUH210;;;;"hMax(""Repr. 2’) >=1 || (hMax(""Carc. 2’)>=0.1 && )";;;;;;
+Environmental;H410;Aquatic Chronic 1;GHS09;Warning;"(hSum(""H410"",""M"") >= 25%  ";;;Toxicité chronique;EH C1;;Catégorie 1 
+Environmental;H411;Aquatic Chronic 2;GHS09;;"(hSum(""H410"",""M"") * 10) + (hSum(""H411"")) >= 25%  ";;;Toxicité chronique;EH C2;;Catégorie 2
+Environmental;H412;Aquatic Chronic 3;;;"(hSum(""H410"",""M"") * 100) + (hSum(""H411"",""M"") * 10) + hSum(""H412"") >= 25%  ";;;Toxicité chronique;EH C3;;Catégorie 3
+Environmental;H413;Aquatic Chronic 4;;;"hSum(""H410"") + hSum(""H411"") + hSum(""H412"") + hSum(""H413"") >= 25%  ";;;Toxicité chronique;EH C4;;Catégorie 4
+Environmental;H400;Aquatic Acute 1;GHS09;Warning;"(hSum(""H400"",""M"")) >= 25%  ";;;Toxicité aiguë;EH A1;;Catégorie 1 
+Environmental;EUH430;;;Danger;"hMax(""EUH430"") >= 0.1%  ";attention, si le mélange contient une substance catégorie 2 >/= 0,1%, alors la mention EUH210 devra apparaître;;Perturbateur endocrinien (environnement);ED ENV1;;Catégorie 1 
+Environmental;EUH431;;;Warning;"hMax(""EUH431"") >= 1%  ";attention, si le mélange contient une substance catégorie 2 >/= 0,1%, alors la mention EUH210 devra apparaître;;Perturbateur endocrinien (environnement);ED ENV2;;Catégorie 2
+Environmental;EUH440;;;Danger;"hMax(""EUH440"") >= 0.1%  ";;;PBT / vPvB (environnement et santé);;;/
+Environmental;EUH441;;;Danger;"hMax(""EUH441"") >= 0.1%  ";;;PBT / vPvB (environnement et santé);;;/
+Environmental;EUH450;;;Danger;"hMax(""EUH450"") >= 0.1%  ";;;PMT / VPvM ;;;/
+Environmental;EUH451;;;Danger;"hMax(""EUH451"") >= 0.1%  ";;;PMT / VPvM ;;;/
+Health;H300;Acute Tox. 1 vo;GHS06;Danger;etaVo <= 5  ;"Pour calculer l'ETA, il faut prendre en compte les champs sur la substances
+Pour Toxicité aigue orale : si >0
+Pour Toxicité aigue dermale  si >0
+Pour toxicité aigue inhalation : si >0, puis voir dans le champs Voie ATI si Gaz ou
+Brouillard particules ou
+Vapeur
+et faire la somme de toutes les substances sur chaque thématiques 
+
+Exemple sur un mélange
+Ingrédit 1 - Quantité 5% - Toxcité orale 1800
+Ingrédient 2 - Quantité 0,5% - Toxcité orale 500
+Calcul : =100/SOMME((C42/1800)+(1,5/500)) = 17307 alors pas de classification pour l'oral";;Toxicité aigue orale;ATO 1;;Catégorie 1 
+Health;H300;Acute Tox. 2 vo;GHS06;Danger;5 < etaVo <= 50  ;;;Toxicité aigue orale;ATO 2;;Catégorie 2
+Health;H301;Acute Tox. 3 vo;GHS06;Danger;50 < etaVo <= 300  ;;;Toxicité aigue orale;ATO 3;;Catégorie 3
+Health;H302;Acute Tox. 4 vo;GHS07;Warning;300 < etaVo <= 2000  ;;;Toxicité aigue orale;ATO 4;;Catégorie 4
+Health;H310;Acute Tox. 1 vc;GHS06;Danger;etaVc <= 50  ;;;Toxicité aigue dermale;ATD 1;;Catégorie 1 
+Health;H310;Acute Tox. 2 vc;GHS06;Danger;50 < etaVc <= 200  ;;;Toxicité aigue dermale;ATD 2;;Catégorie 2
+Health;H311;Acute Tox. 3 vc;GHS06;Danger;200 < etaVc <= 1000  ;;;Toxicité aigue dermale;ATD 3;;Catégorie 3
+Health;H312;Acute Tox. 4 vc;GHS07;Warning;1000 < etaVc <= 2000  ;;;Toxicité aigue dermale;ATD 4;;Catégorie 4
+Health;H330;Acute Tox. 1 in;GHS06;Danger;etaIn <= 100  ;Toxicité aigue inhalation (gaz);;Toxicité aigue inhalation (gaz);ATI 1;;Catégorie 1 
+Health;H330;Acute Tox. 2 in;GHS06;Danger;100 < etaIn <= 500  ;Toxicité aigue inhalation (gaz);;Toxicité aigue inhalation (gaz);ATI 2;;Catégorie 2
+Health;H331;Acute Tox. 3 in;GHS06;Danger;500 < etaIn <= 2500  ;Toxicité aigue inhalation (gaz);;Toxicité aigue inhalation (gaz);ATI 3;;Catégorie 3
+Health;H332;Acute Tox. 4 in;GHS07;Warning;2500 < etaIn <= 20000  ;Toxicité aigue inhalation (gaz);;Toxicité aigue inhalation (gaz);ATI 4;;Catégorie 4
+Health;H330;Acute Tox. 1 in;GHS06;Danger;etaIn <= 0.5  ;Toxicité aigue inhalation (vapeur);;Toxicité aigue inhalation (vapeur);ATI 1;;Catégorie 1 
+Health;H330;Acute Tox. 2 in;GHS06;Danger;0.5 < etaIn <= 2  ;Toxicité aigue inhalation (vapeur);;Toxicité aigue inhalation (vapeur);ATI 2;;Catégorie 2
+Health;H331;Acute Tox. 3 in;GHS06;Danger;2 < etaIn <= 10  ;Toxicité aigue inhalation (vapeur);;Toxicité aigue inhalation (vapeur);ATI 3;;Catégorie 3
+Health;H332;Acute Tox. 4 in;GHS07;Warning;10 < etaIn <= 20  ;Toxicité aigue inhalation (vapeur);;Toxicité aigue inhalation (vapeur);ATI 4;;Catégorie 4
+Health;H330;Acute Tox. 1 in;GHS06;Danger;etaIn <= 0.05  ;Toxicité aigue inhalation (poussières/brouillard);;Toxicité aigue inhalation (poussières/brouillard);ATI 1;;Catégorie 1 
+Health;H330;Acute Tox. 2 in;GHS06;Danger;0.05 < etaIn <= 0.5  ;Toxicité aigue inhalation (poussières/brouillard);;Toxicité aigue inhalation (poussières/brouillard);ATI 2;;Catégorie 2
+Health;H331;Acute Tox. 3 in;GHS06;Danger;0.5 < etaIn <= 1  ;Toxicité aigue inhalation (poussières/brouillard);;Toxicité aigue inhalation (poussières/brouillard);ATI 3;;Catégorie 3
+Health;H332;Acute Tox. 4 in;GHS07;Warning;1 < etaIn <= 5  ;Toxicité aigue inhalation (poussières/brouillard);;Toxicité aigue inhalation (poussières/brouillard);ATI 4;;Catégorie 4

@@ -332,5 +332,11 @@ public final class BeCPGModel {
 	public static final QName TYPE_SAVED_SEARCH = QName.createQName(BECPG_URI, "savedSearch");
 	/** Constant <code>PROP_SAVED_SEARCH_TYPE</code> */
 	public static final QName PROP_SAVED_SEARCH_TYPE = QName.createQName(BECPG_URI, "savedSearchType");
+	public static final QName PROP_ING_TOX_ACUTE_ORAL = QName.createQName(BECPG_URI, "ingToxAcuteOral");
+	public static final QName PROP_ING_TOX_ACUTE_DERMAL = QName.createQName(BECPG_URI, "ingToxAcuteDermal");
+	public static final QName PROP_ING_TOX_ACUTE_INHALATION = QName.createQName(BECPG_URI, "ingToxAcuteInhalation");
+	
+	public static final QName PROP_M_FACTOR = QName.createQName(BECPG_URI, "mFactor");
+	public static final QName PROP_SUPER_SENSITIZING =  QName.createQName(BECPG_URI, "superSensitizing");
 
 }

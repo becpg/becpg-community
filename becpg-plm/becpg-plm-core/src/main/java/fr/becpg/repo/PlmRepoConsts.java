@@ -322,6 +322,8 @@ public class PlmRepoConsts {
 
 	/** Constant <code>PATH_LCA_DATABASES="LCADatabases"</code> */
 	public static final String PATH_LCA_DATABASES = "LCADatabases";
+	
+	public static final String PATH_CLP_DATABASES = "CLPDatabases";
 
 	//GS1
 	/** Constant <code>PATH_GS1_PACKAGING_TYPE_CODES="PackagingTypeCodes"</code> */
@@ -372,5 +374,6 @@ public class PlmRepoConsts {
 	public static final String PATH_GS1_ALCOHOL_BEVERAGE_CONTAINERS = "AlcoholBeverageContainers";
 	/** Constant <code>PATH_LABORATORIES="Laboratories"</code> */
 	public static final String PATH_LABORATORIES = "Laboratories";
+	
 
 }
