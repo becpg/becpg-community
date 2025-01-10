@@ -29,6 +29,7 @@ import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.quality.data.dataList.StockListDataItem;
+import fr.becpg.test.utils.CharactTestHelper;
 
 public class StandardChocolateEclairTestProduct extends StandardProductBuilder {
 
@@ -455,21 +456,21 @@ public class StandardChocolateEclairTestProduct extends StandardProductBuilder {
 
 	private void initIngredients() {
 
-		ingWaterNodeRef = getOrCreateIng(WATER_NAME);
+		ingWaterNodeRef = CharactTestHelper.getOrCreateIng(nodeService,WATER_NAME);
 
 		nodeService.addAspect(ingWaterNodeRef, PLMModel.ASPECT_WATER, new HashMap<>());
 
-		ingMilkNodeRef = getOrCreateIng(MILK_NAME);
+		ingMilkNodeRef = CharactTestHelper.getOrCreateIng(nodeService,MILK_NAME);
 
 		nodeService.setProperty(ingMilkNodeRef, PLMModel.PROP_EVAPORATED_RATE, 90d);
 
-		ingSugarNodeRef = getOrCreateIng(SUGAR_NAME);
-		ingFlourNodeRef = getOrCreateIng(FLOUR_NAME);
-		ingEggNodeRef = getOrCreateIng(EGG_NAME);
+		ingSugarNodeRef = CharactTestHelper.getOrCreateIng(nodeService,SUGAR_NAME);
+		ingFlourNodeRef = CharactTestHelper.getOrCreateIng(nodeService,FLOUR_NAME);
+		ingEggNodeRef = CharactTestHelper.getOrCreateIng(nodeService,EGG_NAME);
 
 		nodeService.setProperty(ingEggNodeRef, PLMModel.PROP_EVAPORATED_RATE, 10d);
 
-		ingChocolateNodeRef = getOrCreateIng(CHOCOLATE_NAME);
+		ingChocolateNodeRef = CharactTestHelper.getOrCreateIng(nodeService,CHOCOLATE_NAME);
 
 	}
 
