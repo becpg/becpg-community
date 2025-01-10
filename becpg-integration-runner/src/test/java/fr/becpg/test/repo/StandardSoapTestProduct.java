@@ -20,16 +20,34 @@ import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
-import fr.becpg.repo.product.formulation.cpl.HazardClassificationFormulaContext;
+import fr.becpg.repo.product.formulation.clp.HazardClassificationFormulaContext;
+import fr.becpg.test.utils.CharactTestHelper;
 
 public class StandardSoapTestProduct extends StandardProductBuilder {
 
+	private boolean isWithCompo = true;
+	private boolean isWithPhysico = true;
+
 	protected StandardSoapTestProduct(Builder builder) {
 		super(builder);
+		this.isWithCompo = builder.isWithCompo;
+		this.isWithPhysico = builder.isWithPhysico;
 	}
 
 	// Static inner Builder class
 	public static class Builder extends StandardProductBuilder.Builder<Builder> {
+		private boolean isWithCompo = true;
+		private boolean isWithPhysico = true;
+
+		public Builder withCompo(boolean isWithCompo) {
+			this.isWithCompo = isWithCompo;
+			return this;
+		}
+
+		public Builder withPhysico(boolean isWithPhysico) {
+			this.isWithPhysico = isWithPhysico;
+			return this;
+		}
 
 		@Override
 		protected Builder self() {
@@ -61,19 +79,25 @@ public class StandardSoapTestProduct extends StandardProductBuilder {
 
 		// Create the soap finished product
 		FinishedProductData soapProduct = FinishedProductData.build().withName("Natural Olive Soap").withUnit(ProductUnit.kg).withQty(1000d)
-				.withDensity(1.2d)
-				.withCompoList(List.of(
-						CompoListDataItem.build().withQtyUsed(130d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Detail)
-								.withProduct(sodiumHydroxideNodeRef),
-						CompoListDataItem.build().withQtyUsed(800d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Detail)
-								.withProduct(oliveOilNodeRef),
-						CompoListDataItem.build().withQtyUsed(70d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Detail)
-								.withProduct(essentialOilsNodeRef)));
-		
-        // Add physico-chemical properties
-        addPhysicoChemProperty(soapProduct,"Boiling point",  HazardClassificationFormulaContext.BOILING_POINT, 78.0);  // Boiling point
-        addPhysicoChemProperty(soapProduct,"Flash point", HazardClassificationFormulaContext.FLASH_POINT, 23.0);  // Flash point
-        addPhysicoChemProperty(soapProduct,"Hydrocarbon", HazardClassificationFormulaContext.HYDROCARBON_PERC, 15.0);  // Hydrocarbon percentage
+				.withDensity(1.2d);
+
+		if (isWithCompo) {
+			soapProduct = soapProduct.withCompoList(List.of(
+					CompoListDataItem.build().withQtyUsed(130d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Detail)
+							.withProduct(sodiumHydroxideNodeRef),
+					CompoListDataItem.build().withQtyUsed(800d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Detail)
+							.withProduct(oliveOilNodeRef),
+					CompoListDataItem.build().withQtyUsed(70d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Detail)
+							.withProduct(essentialOilsNodeRef)));
+		}
+
+		if (isWithPhysico) {
+			// Add physico-chemical properties
+			addPhysicoChemProperty(soapProduct, "Boiling point", HazardClassificationFormulaContext.BOILING_POINT, 78.0); // Boiling point
+			addPhysicoChemProperty(soapProduct, "Flash point", HazardClassificationFormulaContext.FLASH_POINT, 23.0); // Flash point
+			addPhysicoChemProperty(soapProduct, "Hydrocarbon", HazardClassificationFormulaContext.HYDROCARBON_PERC, 15.0); // Hydrocarbon percentage
+
+		}
 
 		alfrescoRepository.create(destFolder, soapProduct);
 
@@ -137,38 +161,48 @@ public class StandardSoapTestProduct extends StandardProductBuilder {
 	private IngListDataItem createIngListItem(String ingName, Double percentage, String casNumber, String hazardClass, Double toxicityOral,
 			Double toxicityDermal, Double mFactor, Boolean superSensitizing) {
 
-		NodeRef ing = getOrCreateIng(ingName);
+		NodeRef ing = CharactTestHelper.getOrCreateIng(nodeService, ingName);
 
 		Map<QName, Serializable> properties = new HashMap<>();
 		properties.put(PLMModel.PROP_CAS_NUMBER, casNumber);
 		properties.put(GHSModel.PROP_SDS_HAZARD_CLASSIFICATIONS, hazardClass);
 		properties.put(BeCPGModel.PROP_ING_TOX_ACUTE_ORAL, toxicityOral);
 		properties.put(BeCPGModel.PROP_ING_TOX_ACUTE_DERMAL, toxicityDermal);
-		properties.put(BeCPGModel.PROP_M_FACTOR, mFactor);
-		properties.put(BeCPGModel.PROP_SUPER_SENSITIZING, superSensitizing);
+		properties.put(BeCPGModel.PROP_ING_TOX_AQUATIC_MFACTOR, mFactor);
+		properties.put(BeCPGModel.PROP_ING_TOX_IS_SUPER_SENSITIZING, superSensitizing);
 
 		nodeService.setProperties(ing, properties);
 
 		return IngListDataItem.build().withQtyPerc(percentage).withIngredient(ing);
 	}
-	
-	private void addPhysicoChemProperty(ProductData product,String name,  String code, Double value) {
-        PhysicoChemListDataItem physicoChemList = new PhysicoChemListDataItem();
-        
-        NodeRef physicoChem = getOrCreatePhysico(name);
-        
-        Map<QName, Serializable> props = new HashMap<>();
-        props.put(PLMModel.PROP_PHYSICO_CHEM_CODE, code);
-        
-        nodeService.setProperties(physicoChem, props);
-      
-        
-        
-        physicoChemList.setPhysicoChem(physicoChem);
-        physicoChemList.setValue(value);
-        product.getPhysicoChemList().add(physicoChemList);
-    }
 
+	public void addIngredient(ProductData product, String ingName, Double percentage, String hazardClass, Double toxicityOral, Double mFactor,
+			Boolean superSensitizing) {
+		if (product.getIngList() == null) {
+			product.setIngList(new ArrayList<>());
+		}
+
+		product.getIngList().add(createIngListItem(ingName, percentage, null, hazardClass, toxicityOral, null, mFactor, superSensitizing));
+
+	}
+
+	public void addPhysicoChemProperty(ProductData product, String name, String code, Double value) {
+		PhysicoChemListDataItem physicoChemList = new PhysicoChemListDataItem();
+
+		NodeRef physicoChem = CharactTestHelper.getOrCreatePhysico(nodeService, name);
+
+		Map<QName, Serializable> props = new HashMap<>();
+		props.put(PLMModel.PROP_PHYSICO_CHEM_CODE, code);
+		props.put(PLMModel.PROP_PHYSICO_CHEM_UNIT, "%");
+		nodeService.setProperties(physicoChem, props);
+		if (product.getPhysicoChemList() == null) {
+			product.setPhysicoChemList(new ArrayList<>());
+		}
+
+		physicoChemList.setPhysicoChem(physicoChem);
+		physicoChemList.setValue(value);
+		product.getPhysicoChemList().add(physicoChemList);
+	}
 
 	// Getters
 	public NodeRef getSodiumHydroxideNodeRef() {
@@ -182,4 +216,5 @@ public class StandardSoapTestProduct extends StandardProductBuilder {
 	public NodeRef getEssentialOilsNodeRef() {
 		return essentialOilsNodeRef;
 	}
+
 }

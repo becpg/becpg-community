@@ -1,7 +1,7 @@
 /*
  *
  */
-package fr.becpg.repo.product.formulation.cpl;
+package fr.becpg.repo.product.formulation.clp;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -74,7 +74,7 @@ public class HazardClassificationFormulationHandler extends FormulationBaseHandl
 
 	private Repository repositoryHelper;
 
-	private SpelFormulaService spelFormulaService;
+	private SpelFormulaService formulaService;
 
 	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
@@ -96,8 +96,8 @@ public class HazardClassificationFormulationHandler extends FormulationBaseHandl
 		this.repositoryHelper = repositoryHelper;
 	}
 
-	public void setSpelFormulaService(SpelFormulaService spelFormulaService) {
-		this.spelFormulaService = spelFormulaService;
+	public void setFormulaService(SpelFormulaService formulaService) {
+		this.formulaService = formulaService;
 	}
 
 	/**
@@ -145,7 +145,7 @@ public class HazardClassificationFormulationHandler extends FormulationBaseHandl
 						.ofDataType(RequirementDataType.Physicochem).withSources(new ArrayList<>(missingCharacts.values())));
 			}
 
-			StandardEvaluationContext context = spelFormulaService.createCustomSpelContext(formulatedProduct, formulaContext);
+			StandardEvaluationContext context = formulaService.createCustomSpelContext(formulatedProduct, formulaContext);
 
 			try (CSVReader csvReader = getCSVReaderFromNodeRef(getCLPDatabase())) {
 				processCSVData(formulatedProduct, retainNodes, context, csvReader);
@@ -254,12 +254,15 @@ public class HazardClassificationFormulationHandler extends FormulationBaseHandl
 			}
 
 			Double toxicityAcuteInhalation = (Double) nodeService.getProperty(ing.getIng(), BeCPGModel.PROP_ING_TOX_ACUTE_INHALATION);
-			if ((toxicityAcuteInhalation != null) && (toxicityAcuteInhalation != 0)) {
-				clpQuantities.merge(HazardClassificationFormulaContext.ETA_IN, quantityPercentage / toxicityAcuteInhalation, Double::sum);
+			String toxicityAcuteInhalationType = (String) nodeService.getProperty(ing.getIng(), BeCPGModel.PROP_ING_TOX_ACUTE_INHALATION_TYPE);
+			if ((toxicityAcuteInhalation != null) && (toxicityAcuteInhalation != 0) && toxicityAcuteInhalationType != null
+					&& !toxicityAcuteInhalationType.isBlank()) {
+				clpQuantities.merge(HazardClassificationFormulaContext.etaType(toxicityAcuteInhalationType),
+						quantityPercentage / toxicityAcuteInhalation, Double::sum);
 			}
 
-			Double mFactor = (Double) nodeService.getProperty(ing.getIng(), BeCPGModel.PROP_M_FACTOR);
-			Boolean superSensitizing = (Boolean) nodeService.getProperty(ing.getIng(), BeCPGModel.PROP_SUPER_SENSITIZING);
+			Double mFactor = (Double) nodeService.getProperty(ing.getIng(), BeCPGModel.PROP_ING_TOX_AQUATIC_MFACTOR);
+			Boolean superSensitizing = (Boolean) nodeService.getProperty(ing.getIng(), BeCPGModel.PROP_ING_TOX_IS_SUPER_SENSITIZING);
 
 			if ((clpClassifications != null) && !clpClassifications.isEmpty()) {
 				String[] classifications = clpClassifications.split(",");
@@ -349,29 +352,31 @@ public class HazardClassificationFormulationHandler extends FormulationBaseHandl
 
 	private Double findPhysicoValue(ProductData entity, String physicoCode, Map<String, NodeRef> missingCharacts) {
 		PhysicoChemListDataItem physicoListItem = null;
-		for (PhysicoChemListDataItem physico : entity.getPhysicoChemList()) {
+		if (entity.getPhysicoChemList() != null) {
+			for (PhysicoChemListDataItem physico : entity.getPhysicoChemList()) {
 
-			if (physicoCode.equals(nodeService.getProperty(physico.getPhysicoChem(), PLMModel.PROP_PHYSICO_CHEM_CODE))) {
+				if (physicoCode.equals(nodeService.getProperty(physico.getPhysicoChem(), PLMModel.PROP_PHYSICO_CHEM_CODE))) {
 
-				for (ReqCtrlListDataItem reqCtrl : entity.getReqCtrlList()) {
-					if (RequirementType.Forbidden.equals(reqCtrl.getReqType()) && RequirementDataType.Physicochem.equals(reqCtrl.getReqDataType())
-							&& physico.getPhysicoChem().equals(reqCtrl.getCharact())) {
-						missingCharacts.put(physicoCode, reqCtrl.getCharact());
-						break;
+					for (ReqCtrlListDataItem reqCtrl : entity.getReqCtrlList()) {
+						if (RequirementType.Forbidden.equals(reqCtrl.getReqType()) && RequirementDataType.Physicochem.equals(reqCtrl.getReqDataType())
+								&& physico.getPhysicoChem().equals(reqCtrl.getCharact())) {
+							missingCharacts.put(physicoCode, reqCtrl.getCharact());
+							break;
+						}
 					}
+
+					physicoListItem = physico;
 				}
-
-				physicoListItem = physico;
 			}
-		}
 
-		if (physicoListItem != null) {
-			Double value = physicoListItem.getValue();
+			if (physicoListItem != null) {
+				Double value = physicoListItem.getValue();
 
-			if (value == null) {
-				missingCharacts.put(physicoCode, physicoListItem.getPhysicoChem());
+				if (value == null) {
+					missingCharacts.put(physicoCode, physicoListItem.getPhysicoChem());
+				}
+				return value;
 			}
-			return value;
 		}
 
 		return null;

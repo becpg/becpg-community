@@ -336,7 +336,8 @@ public final class BeCPGModel {
 	public static final QName PROP_ING_TOX_ACUTE_DERMAL = QName.createQName(BECPG_URI, "ingToxAcuteDermal");
 	public static final QName PROP_ING_TOX_ACUTE_INHALATION = QName.createQName(BECPG_URI, "ingToxAcuteInhalation");
 	
-	public static final QName PROP_M_FACTOR = QName.createQName(BECPG_URI, "mFactor");
-	public static final QName PROP_SUPER_SENSITIZING =  QName.createQName(BECPG_URI, "superSensitizing");
+	public static final QName PROP_ING_TOX_AQUATIC_MFACTOR = QName.createQName(BECPG_URI, "ingToxAquaticMFactor");
+	public static final QName PROP_ING_TOX_IS_SUPER_SENSITIZING =  QName.createQName(BECPG_URI, "ingToxIsSuperSensitizing");
+	public static final QName PROP_ING_TOX_ACUTE_INHALATION_TYPE = QName.createQName(BECPG_URI, "ingToxAcuteInhalationType");
 
 }

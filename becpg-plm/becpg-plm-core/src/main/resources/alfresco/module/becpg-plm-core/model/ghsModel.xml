@@ -48,23 +48,6 @@
 			</parameter>
 		</constraint>
 		
-		<constraint name="ghs:hazardCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
-            <parameter name="path">
-                <list>
-                    <value>/System/SecurityLists/bcpg:entityLists/HazardCodes</value>
-                </list>
-            </parameter>
-            <parameter name="constraintType">
-                <value>bcpg:listValue</value>
-            </parameter>
-            <parameter name="constraintProp">
-                <value>bcpg:lvValue</value>
-            </parameter>
-            <parameter name="addEmptyValue">
-                <value>true</value>
-            </parameter>
-        </constraint>
-
 		<constraint name="ghs:hazardTypes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -152,9 +135,6 @@
                       <tokenised>false</tokenised>
                       <facetable>false</facetable>
                    </index>
-                   <constraints>
-                       <constraint ref="ghs:hazardCodes" />
-                   </constraints>
                 </property>
 			</properties>
 		</type>

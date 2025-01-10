@@ -243,7 +243,8 @@
                     <property name="fileFolderService" ref="fileFolderService" />
                     <property name="repositoryHelper" ref="repositoryHelper" />
                     <property name="nodeService" ref="nodeService" />
-                    <property name="spelFormulaService" ref="spelFormulaService" />
+                    <property name="formulaService" ref="formulaService" />
+                    <property name="contentService" ref="contentService" />
                 </bean>
 				<bean class="fr.becpg.repo.project.formulation.ScoreListFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />

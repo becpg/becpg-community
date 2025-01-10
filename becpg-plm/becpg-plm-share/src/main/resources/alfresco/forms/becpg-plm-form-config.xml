@@ -1893,16 +1893,17 @@
 					<show id="bcpg:ingToxMaxSensitization" force="true" />
 					<show id="bcpg:ingToxMaxOcularIrritation" force="true" />
 					<show id="bcpg:ingToxMaxPhototoxic" force="true" />
-					<show id="bcpg:ingToxData" force="true" />
 					<show id="bcpg:ingToxAcuteOral" force="true" />
-					<show id="bcpg:ingToxAcuteInhalation" force="true" />
 					<show id="bcpg:ingToxAcuteDermal" force="true" />
+					<show id="bcpg:ingToxAcuteInhalation" force="true" />
+					<show id="bcpg:ingToxAcuteInhalationType" force="true" />
+					<show id="bcpg:ingToxAquaticMFactor" force="true" />
+					<show id="bcpg:ingToxIsSuperSensitizing" force="true" />
+					<show id="bcpg:ingToxData" force="true" />
+
 					<show id="ghs:sdsHazardClassifications" force="true" />
 					<show id="ghs:sdsSignalWord" force="true" />
 					<show id="ghs:sdsPictograms" force="true" />
-					<show id="bcpg:mFactor" force="true" />
-					<show id="bcpg:superSensitizing" force="true" />
-
 
 					<show id="bcpg:parentEntityRef" force="true" />
 					<show id="sec:readGroups" force="true" />
@@ -1978,15 +1979,22 @@
 					<field id="bcpg:ingToxMaxSensitization" set="toxTab" />
 					<field id="bcpg:ingToxMaxOcularIrritation" set="toxTab" />
 					<field id="bcpg:ingToxMaxPhototoxic" set="toxTab" />
-					<field id="bcpg:ingToxData" set="toxTab" />
+
 					<field id="bcpg:ingToxAcuteOral" set="toxTab" />
-					<field id="bcpg:ingToxAcuteInhalation" set="toxTab" />
 					<field id="bcpg:ingToxAcuteDermal" set="toxTab" />
-					<field id="bcpg:superSensitizing" set="toxTab" />
+					<field id="bcpg:ingToxAcuteInhalation" set="toxTab" />
+					<field id="bcpg:ingToxAcuteInhalationType" set="toxTab" />
+					<field id="bcpg:ingToxAquaticMFactor" set="toxTab" />
+					<field id="bcpg:ingToxIsSuperSensitizing" set="toxTab" />
+					<field id="bcpg:ingToxData" set="toxTab" />
 					<field id="ghs:sdsHazardClassifications" help-id="becpg.forms.help.sdsHazardClassifications" set="clpTab" />
 					<field id="ghs:sdsSignalWord" set="clpTab" />
-					<field id="ghs:sdsPictograms" set="clpTab" />
-					<field id="bcpg:mFactor" set="clpTab" />
+					<field id="ghs:sdsPictograms" set="clpTab">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="showLink">false</control-param>
+						</control>
+					</field>
+
 				</appearance>
 			</form>
 
@@ -2030,15 +2038,14 @@
 					<show id="bcpg:ingToxMaxSensitization" force="true" />
 					<show id="bcpg:ingToxMaxOcularIrritation" force="true" />
 					<show id="bcpg:ingToxMaxPhototoxic" force="true" />
-					<show id="bcpg:ingToxData" force="true" />
-					<show id="bcpg:ingToxAcuteOral" force="true" />
-					<show id="bcpg:ingToxAcuteInhalation" force="true" />
 					<show id="bcpg:ingToxAcuteDermal" force="true" />
+					<show id="bcpg:ingToxAcuteInhalation" force="true" />
+					<show id="bcpg:ingToxAcuteInhalationType" force="true" />
+					<show id="bcpg:ingToxAquaticMFactor" force="true" />
+					<show id="bcpg:ingToxIsSuperSensitizing" force="true" />
 					<show id="ghs:sdsHazardClassifications" force="true" />
 					<show id="ghs:sdsSignalWord" force="true" />
 					<show id="ghs:sdsPictograms" force="true" />
-					<show id="bcpg:mFactor" force="true" />
-					<show id="bcpg:superSensitizing" force="true" />
 					<show id="bcpg:parentEntityRef" force="true" />
 					<show id="sec:readGroups" force="true" />
 					<show id="bcpg:isDeleted" />
@@ -2049,7 +2056,7 @@
 					<set label-id="becpg.forms.set.search.label" id="search" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set label-id="becpg.forms.set.formulation.label" id="formulation" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set label-id="becpg.forms.set.toxicology.label" id="toxTab" template="/org/alfresco/components/form/2-column-set.ftl" />
-					<set label-id="becpg.forms.set.clp.label" id="clpTab" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set label-id="becpg.forms.set.clp.label" id="clpTab" template="/org/alfresco/components/form/1-column-set.ftl" />
 
 					<field id="bcpg:charactName" set="designation" />
 					<field id="bcpg:pluralLegalName" set="designation" />
@@ -2113,15 +2120,20 @@
 					<field id="bcpg:ingToxMaxSensitization" set="toxTab" />
 					<field id="bcpg:ingToxMaxOcularIrritation" set="toxTab" />
 					<field id="bcpg:ingToxMaxPhototoxic" set="toxTab" />
-					<field id="bcpg:ingToxData" set="toxTab" />
 					<field id="bcpg:ingToxAcuteOral" set="toxTab" />
-					<field id="bcpg:ingToxAcuteInhalation" set="toxTab" />
 					<field id="bcpg:ingToxAcuteDermal" set="toxTab" />
-					<field id="bcpg:superSensitizing" set="toxTab" />
+					<field id="bcpg:ingToxAcuteInhalation" set="toxTab" />
+					<field id="bcpg:ingToxAcuteInhalationType" set="toxTab" />
+					<field id="bcpg:ingToxAquaticMFactor" set="toxTab" />
+					<field id="bcpg:ingToxIsSuperSensitizing" set="toxTab" />
+					<field id="bcpg:ingToxData" set="toxTab" />
 					<field id="ghs:sdsHazardClassifications" help-id="becpg.forms.help.sdsHazardClassifications" set="clpTab" />
 					<field id="ghs:sdsSignalWord" set="clpTab" />
-					<field id="ghs:sdsPictograms" set="clpTab" />
-					<field id="bcpg:mFactor" set="clpTab" />
+					<field id="ghs:sdsPictograms" set="clpTab">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="showLink">false</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 
@@ -2158,7 +2170,11 @@
 					<show id="bcpg:ingToxMaxSensitization" force="true" />
 					<show id="bcpg:ingToxMaxOcularIrritation" force="true" />
 					<show id="bcpg:ingToxMaxPhototoxic" force="true" />
-					<show id="bcpg:ingToxData" force="true" />
+					<show id="bcpg:ingToxAcuteDermal" force="true" />
+					<show id="bcpg:ingToxAcuteInhalation" force="true" />
+					<show id="bcpg:ingToxAcuteInhalationType" force="true" />
+					<show id="bcpg:ingToxAquaticMFactor" force="true" />
+					<show id="bcpg:ingToxIsSuperSensitizing" force="true" />
 					<show id="bcpg:parentEntityRef" force="true" />
 					<show id="sec:readGroups" force="true" />
 					<show id="bcpg:isDeleted" />
@@ -2168,8 +2184,8 @@
 					<set label-id="becpg.forms.set.designation.label" id="designation" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set label-id="becpg.forms.set.search.label" id="search" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set label-id="becpg.forms.set.formulation.label" id="formulation" template="/org/alfresco/components/form/2-column-set.ftl" />
-
 					<set label-id="becpg.forms.set.toxicology.label" id="toxTab" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set label-id="becpg.forms.set.clp.label" id="clpTab" template="/org/alfresco/components/form/1-column-set.ftl" />
 
 					<field id="bcpg:charactName" set="designation" />
 					<field id="bcpg:pluralLegalName" set="designation" />
@@ -2231,7 +2247,20 @@
 					<field id="bcpg:ingToxMaxSensitization" set="toxTab" />
 					<field id="bcpg:ingToxMaxOcularIrritation" set="toxTab" />
 					<field id="bcpg:ingToxMaxPhototoxic" set="toxTab" />
+					<field id="bcpg:ingToxAcuteOral" set="toxTab" />
+					<field id="bcpg:ingToxAcuteDermal" set="toxTab" />
+					<field id="bcpg:ingToxAcuteInhalation" set="toxTab" />
+					<field id="bcpg:ingToxAcuteInhalationType" set="toxTab" />
+					<field id="bcpg:ingToxAquaticMFactor" set="toxTab" />
+					<field id="bcpg:ingToxIsSuperSensitizing" set="toxTab" />
 					<field id="bcpg:ingToxData" set="toxTab" />
+					<field id="ghs:sdsHazardClassifications" help-id="becpg.forms.help.sdsHazardClassifications" set="clpTab" />
+					<field id="ghs:sdsSignalWord" set="clpTab" />
+					<field id="ghs:sdsPictograms" set="clpTab">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="showLink">false</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 			
@@ -7861,7 +7890,8 @@
 								menu: {},
 								formats: {
 								bold: { inline: "b" },
-								underline: { inline: "u", exact: true },
+								underline: {
+								inline: "u", exact: true },
 								italic: { inline: "i" }
 								},
 								extended_valid_elements: "u,b,i",
@@ -7872,7 +7902,8 @@
 								forced_root_block: '',
 								force_p_newlines: false,
 								newline_behavior: "linebreak",
-								paste_as_text: true
+								paste_as_text:
+								true
 							</control-param>
 						</control>
 					</field>
@@ -7948,7 +7979,8 @@
 								menu: {},
 								formats: {
 								bold: { inline: "b" },
-								underline: { inline: "u", exact: true },
+								underline: {
+								inline: "u", exact: true },
 								italic: { inline: "i" }
 								},
 								extended_valid_elements: "u,b,i",
@@ -7959,7 +7991,8 @@
 								forced_root_block: '',
 								force_p_newlines: false,
 								newline_behavior: "linebreak",
-								paste_as_text: true
+								paste_as_text:
+								true
 							</control-param>
 						</control>
 					</field>
@@ -8622,55 +8655,6 @@
 
 
 
-
-
-	<config evaluator="model-type" condition="ghs:clpList">
-		<forms>
-            <!-- Create item form -->
-			<form>
-				<field-visibility>
-					<show id="ghs:sdsClassCode" />
-					<show id="ghs:clpListQty" />
-					<show id="ghs:sdsHazardStatements" />
-					<show id="ghs:sdsPictograms" />
-					<show id="ghs:sdsSignalWord" />
-					<show id="bcpg:regulatoryText" />
-				</field-visibility>
-			</form>
-		</forms>
-        
-        
-            <!-- Data Grid view -->
-		<form id="datagrid">
-			<field-visibility>
-				<show id="ghs:sdsClassCode" />
-				<show id="ghs:clpListQty" />
-				<show id="ghs:sdsHazardStatements" />
-				<show id="ghs:sdsPictograms" />
-				<show id="ghs:sdsSignalWord" />
-				<show id="bcpg:regulatoryText" />
-			</field-visibility>
-		</form>
-
-	</config>
-
-	<config evaluator="node-type" condition="ghs:clpList">
-		<forms>
-            <!-- Create item form -->
-			<form>
-				<field-visibility>
-					<show id="ghs:sdsClassCode" />
-					<show id="ghs:clpListQty" />
-					<show id="ghs:sdsHazardStatements" />
-					<show id="ghs:sdsPictograms" />
-					<show id="ghs:sdsSignalWord" />
-					<show id="bcpg:regulatoryText" />
-				</field-visibility>
-			</form>
-		</forms>
-	</config>
-
-
 	<!-- bcpg:microbioList type -->
 	<config evaluator="model-type" condition="bcpg:microbioList">
 		<forms>
@@ -8993,7 +8977,7 @@
 					<field id="bcpg:nutListFormulatedValuePerServing" label="hidden" read-only="true" />
 					<field id="bcpg:nutListReductionFormulatedValue" label="hidden" read-only="true" />
 					<field id="bcpg:nutListGDAPerc" help="{&quot;width&quot;:200}" />
-					
+
 					<field id="bcpg:nutListReferenceValue" />
 					<field id="bcpg:nutListUnitPrepared" read-only="true" label="hidden" />
 					<field id="bcpg:nutListRoundedValue" read-only="true" />
