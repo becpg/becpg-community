@@ -1,5 +1,6 @@
-package fr.becpg.repo.product.formulation.cpl;
+package fr.becpg.repo.product.formulation.clp;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import fr.becpg.repo.formulation.spel.SpelFormulaContext;
@@ -13,7 +14,22 @@ public class HazardClassificationFormulaContext implements SpelFormulaContext<Pr
 
 	public static final String ETA_VO = "ETA_VO";
 	public static final String ETA_VC = "ETA_VC";
-	public static final String ETA_IN = "ETA_IN";
+	public static final String ETA_IN_GAS = "ETA_IN_GAS";
+	public static final String ETA_IN_MIST = "ETA_IN_MIST";
+	public static final String ETA_IN_VAPOR = "ETA_IN_VAPOR";
+
+	public static String etaType(String toxicityAcuteInhalationType) {
+		switch (toxicityAcuteInhalationType) {
+		case "Gas":
+			return ETA_IN_GAS;
+		case "Mist":
+			return ETA_IN_MIST;
+		case "Vapor":
+			return ETA_IN_VAPOR;
+		default:
+			return null;
+		}
+	}
 
 	Map<String, Double> hSum;
 	Map<String, Map<String, Double>> details;
@@ -73,8 +89,16 @@ public class HazardClassificationFormulaContext implements SpelFormulaContext<Pr
 		return hMax.getOrDefault(ETA_VC, 0d);
 	}
 
-	public Double getEtaIn() {
-		return hMax.getOrDefault(ETA_IN, 0d);
+	public Double getEtaInGas() {
+		return hMax.getOrDefault(ETA_IN_GAS, 0d);
+	}
+
+	public Double getEtaInVapor() {
+		return hMax.getOrDefault(ETA_IN_GAS, 0d);
+	}
+
+	public Double getEtaInMist() {
+		return hMax.getOrDefault(ETA_IN_MIST, 0d);
 	}
 
 	public Double getFlashPoint() {
@@ -121,6 +145,38 @@ public class HazardClassificationFormulaContext implements SpelFormulaContext<Pr
 
 	private String toCode(String hazardStatement, String hazardClassCode) {
 		return hazardClassCode + ":" + hazardStatement;
+	}
+
+	public Boolean isDangerousMisture() {
+		return false; //TODO
+	}
+
+	public String detail(String hazardStatement, String hazardClassCode) {
+		Map<String, Double> detail = null;
+
+		if (hazardClassCode != null) {
+			detail = details.getOrDefault(toCode(hazardStatement, hazardClassCode), new HashMap<>());
+		}
+		detail = details.getOrDefault(hazardStatement, new HashMap<>());
+
+		// Convert Map to a string format "(key value%, key2 value2%)"
+		if (detail != null && !detail.isEmpty()) {
+			StringBuilder result = new StringBuilder("(");
+			for (Map.Entry<String, Double> entry : detail.entrySet()) {
+				result.append(entry.getKey()).append(" ").append(entry.getValue()).append("%, ");
+			}
+			// Remove the last ", " and close the parenthesis
+			if (result.length() > 1) {
+				result.setLength(result.length() - 2); // Remove ", "
+			}
+			result.append(")");
+			return result.toString();
+		}
+		return "()"; // Return empty parenthesis if detail is null or empty
+	}
+
+	public String detail(String hazardStatement) {
+		return detail(hazardStatement, null);
 	}
 
 }
