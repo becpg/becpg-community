@@ -550,9 +550,7 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 					}
 					break;
 				case KEY_QUEUE_ADDED_ASPECT, KEY_QUEUE_REMOVED_ASPECT:
-					if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITY_V2)) {
-						registerActivity(nodeRef, type, ActivityEvent.Aspect);
-					}
+					registerActivity(nodeRef, type, ActivityEvent.Aspect);
 					break;
 				case KEY_QUEUE_CREATED:
 					registerActivity(nodeRef, type, ActivityEvent.Create);
