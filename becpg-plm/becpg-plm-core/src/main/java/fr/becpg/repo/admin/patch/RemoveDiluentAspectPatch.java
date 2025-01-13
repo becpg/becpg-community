@@ -102,12 +102,12 @@ public class RemoveDiluentAspectPatch extends AbstractBeCPGPatch {
 
 			@Override
 			public void afterProcess() throws Throwable {
-				ruleService.disableRules();
+				//DO NOthing
 			}
 
 			@Override
 			public void beforeProcess() throws Throwable {
-				ruleService.enableRules();
+				//DO NOthing
 			}
 
 			@Override
@@ -117,7 +117,7 @@ public class RemoveDiluentAspectPatch extends AbstractBeCPGPatch {
 
 			@Override
 			public void process(NodeRef nodeRef) throws Throwable {
-
+				ruleService.disableRules();
 				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 				policyBehaviourFilter.disableBehaviour();
 				
@@ -130,7 +130,7 @@ public class RemoveDiluentAspectPatch extends AbstractBeCPGPatch {
 				}
 				
 				integrityChecker.setEnabled(true);
-
+				ruleService.enableRules();
 			}
 
 		};
