@@ -95,10 +95,6 @@ if (beCPG.module.EntityDataGridRenderers) {
 				} else if(activityType == "Entity"){
 					if (data.activityEvent == "Create") {
 						title  = scope.msg("entity.activity.entity.create", title);
-					} else if (data.addedAspects) {
-						title  = scope.msg("entity.activity.entity.added-aspect", title, data.addedAspects);
-					} else if (data.removedAspects) {
-						title  = scope.msg("entity.activity.entity.removed-aspect", title, data.removedAspects);
 					} else {
 						title  = scope.msg("entity.activity.entity", title);
 					}
