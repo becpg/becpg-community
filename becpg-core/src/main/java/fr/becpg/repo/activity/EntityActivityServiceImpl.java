@@ -14,7 +14,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.model.DataListModel;
@@ -41,7 +40,6 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
 import org.alfresco.util.ISO8601DateFormat;
 import org.alfresco.util.Pair;
-import org.alfresco.util.transaction.TransactionSupportUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
@@ -58,7 +56,6 @@ import fr.becpg.repo.activity.data.ActivityEvent;
 import fr.becpg.repo.activity.data.ActivityListDataItem;
 import fr.becpg.repo.activity.data.ActivityType;
 import fr.becpg.repo.activity.helper.AuditActivityHelper;
-import fr.becpg.repo.activity.policy.EntityActivityPolicy;
 import fr.becpg.repo.audit.model.AuditQuery;
 import fr.becpg.repo.audit.model.AuditScope;
 import fr.becpg.repo.audit.model.AuditType;
@@ -882,7 +879,6 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 				ActivityListDataItem activityListDataItem = new ActivityListDataItem();
 				// Don't save System activities
 				if (!AuthenticationUtil.getSystemUserName().equals(activityListDataItem.getUserId())) {
-					
 					JSONObject data = new JSONObject();
 					if (activityEvent != null) {
 						data.put(PROP_ACTIVITY_EVENT, activityEvent.toString());
@@ -891,38 +887,27 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					data.put(PROP_ENTITY_NODEREF, entityNodeRef);
 					data.put(PROP_ENTITY_TYPE, nodeService.getType(entityNodeRef));
 					data.put(PROP_TITLE, nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
-					if (activityEvent.equals(ActivityEvent.Update)) {
-						if (updatedProperties != null) {
-							List<JSONObject> properties = new ArrayList<>();
-							for (Map.Entry<QName, Pair<Serializable, Serializable>> entry : updatedProperties.entrySet()) {
-								JSONObject property = new JSONObject();
-								
-								property.put(PROP_TITLE, entry.getKey());
-								
-								processMLTexts(entry);
-								
-								Serializable before = processEntry(entry.getValue().getFirst(), entry.getKey());
-								property.put(BEFORE, before);
-								
-								if (data.has(PROP_TITLE) && (data.get(PROP_TITLE) != null) && entry.getKey().equals(ContentModel.PROP_NAME)) {
-									property.put(AFTER, data.get(PROP_TITLE));
-								} else {
-									Serializable after = processEntry(entry.getValue().getSecond(), entry.getKey());
-									property.put(AFTER, after);
-								}
-								properties.add(property);
+					if (activityEvent.equals(ActivityEvent.Update) && (updatedProperties != null)) {
+						List<JSONObject> properties = new ArrayList<>();
+						for (Map.Entry<QName, Pair<Serializable, Serializable>> entry : updatedProperties.entrySet()) {
+							JSONObject property = new JSONObject();
+
+							property.put(PROP_TITLE, entry.getKey());
+
+							processMLTexts(entry);
+							
+							Serializable before = processEntry(entry.getValue().getFirst(), entry.getKey());
+							property.put(BEFORE, before);
+
+							if (data.has(PROP_TITLE) && (data.get(PROP_TITLE) != null) && entry.getKey().equals(ContentModel.PROP_NAME)) {
+								property.put(AFTER, data.get(PROP_TITLE));
+							} else {
+								Serializable after = processEntry(entry.getValue().getSecond(), entry.getKey());
+								property.put(AFTER, after);
 							}
-							data.put(PROP_PROPERTIES, new JSONArray(properties));
+							properties.add(property);
 						}
-					} else if (activityEvent.equals(ActivityEvent.Aspect)) {
-						Set<QName> addedAspectQNames = TransactionSupportUtil.getResource(EntityActivityPolicy.KEY_QUEUE_ADDED_ASPECT + entityNodeRef);
-						if (addedAspectQNames != null) {
-							data.put(ADDED_ASPECTS, extractAspectNames(addedAspectQNames));
-						}
-						Set<QName> removedAspectQNames = TransactionSupportUtil.getResource(EntityActivityPolicy.KEY_QUEUE_REMOVED_ASPECT + entityNodeRef);
-						if (removedAspectQNames != null) {
-							data.put(REMOVED_ASPECTS, extractAspectNames(removedAspectQNames));
-						}
+						data.put(PROP_PROPERTIES, new JSONArray(properties));
 					}
 
 					if (!activityType.equals(ActivityType.Entity) || !activityEvent.equals(ActivityEvent.Update) || (updatedProperties != null)) {
@@ -931,7 +916,9 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 						activityListDataItem.setParentNodeRef(activityListNodeRef);
 
 						mergeWithLastActivity(activityListDataItem);
+
 						recordAuditActivity(entityNodeRef, activityListDataItem);
+
 						notifyListeners(entityNodeRef, activityListDataItem);
 					}
 
@@ -944,14 +931,6 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 			policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 		}
 		return false;
-	}
-
-	private String extractAspectNames(Set<QName> aspectQNames) {
-		return aspectQNames
-				.stream()
-				.map(q -> entityDictionaryService.getAspect(q).getTitle(entityDictionaryService)
-						!= null ? entityDictionaryService.getAspect(q).getTitle(entityDictionaryService) : q.toPrefixString(namespaceService))
-				.collect(Collectors.joining(", "));
 	}
 
 	private void notifyListeners(NodeRef entityNodeRef, ActivityListDataItem activityListDataItem) {

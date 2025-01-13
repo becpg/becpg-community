@@ -65,9 +65,8 @@ public interface EntityActivityService {
 	/** Constant <code>AFTER="after"</code> */
 	static final String AFTER = "after";
 	
-	static final String ADDED_ASPECTS = "addedAspects";
-	static final String REMOVED_ASPECTS = "removedAspects";
 
+	
 
 	/**
 	 * <p>postCommentActivity.</p>
