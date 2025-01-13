@@ -79,35 +79,35 @@ public class MLTextHelper {
 	public static List<Locale> getSupportedLocales() {
 
 		if (supportedLocales == null) {
-			supportedLocales = new ArrayList<>();
-
-			if (supportedLocalesText() != null) {
-				String[] locales = supportedLocalesText().split(",");
-				for (String key : locales) {
-					supportedLocales.add(parseLocale(key));
+			   synchronized (MLTextHelper.class) {
+				supportedLocales = new ArrayList<>();
+	
+				if (supportedLocalesText() != null) {
+					String[] locales = supportedLocalesText().split(",");
+					for (String key : locales) {
+						supportedLocales.add(parseLocale(key.trim()));
+					}
 				}
-			}
-
-			// put default locale in first position and sort by name
-
-			supportedLocales.sort((a, b) -> {
-				if (MLTextHelper.isDefaultLocale(a)) {
-					return -1;
-				} else if (MLTextHelper.isDefaultLocale(b)) {
-					return 1;
-				} else {
-					return localeLabel(a).compareTo(localeLabel(b));
-				}
-			});
-
+	
+				// put default locale in first position and sort by name
+	
+				supportedLocales.sort((a, b) -> {
+					if (MLTextHelper.isDefaultLocale(a)) {
+						return -1;
+					} else if (MLTextHelper.isDefaultLocale(b)) {
+						return 1;
+					} else {
+						return localeLabel(a).compareTo(localeLabel(b));
+					}
+				});
+			   }
 		}
 
 		return supportedLocales;
 
 	}
-
+	
 	/**
-	 * <p>getSupportedLocalesList.</p>
 	 *
 	 * @return a {@link java.util.List} object.
 	 */
