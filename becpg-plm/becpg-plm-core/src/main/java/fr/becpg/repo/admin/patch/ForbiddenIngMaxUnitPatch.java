@@ -102,12 +102,12 @@ public class ForbiddenIngMaxUnitPatch extends AbstractBeCPGPatch {
 
 			@Override
 			public void afterProcess() throws Throwable {
-				ruleService.enableRules();
+				//Do Nothing
 			}
 
 			@Override
 			public void beforeProcess() throws Throwable {
-				ruleService.disableRules();
+				//Do Nothing
 			}
 
 			@Override
@@ -117,7 +117,8 @@ public class ForbiddenIngMaxUnitPatch extends AbstractBeCPGPatch {
 
 			@Override
 			public void process(NodeRef dataListNodeRef) throws Throwable {
-
+				ruleService.disableRules();
+				
 				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 				policyBehaviourFilter.disableBehaviour();
 
@@ -130,6 +131,7 @@ public class ForbiddenIngMaxUnitPatch extends AbstractBeCPGPatch {
 				} else {
 					logger.warn("dataListNodeRef doesn't exist : " + dataListNodeRef);
 				}
+				ruleService.enableRules();
 			}
 
 		};
