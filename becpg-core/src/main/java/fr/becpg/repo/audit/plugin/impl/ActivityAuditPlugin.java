@@ -98,7 +98,7 @@ public class ActivityAuditPlugin extends AbstractAuditPlugin implements ExtraQue
 			String entityNodeRef = auditQuery.getFilter().split(ENTITY_NODEREF + "=")[1];
 			return auditQuery.filter(ENTITY_NODEREF + "=" + tenantService.getName(new NodeRef(entityNodeRef)));
 		}
-		return auditQuery;
+		return null;
 	}
 
 }
