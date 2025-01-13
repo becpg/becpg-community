@@ -103,12 +103,12 @@ public class ReqCtrlSourcesPatch extends AbstractBeCPGPatch {
 
 			@Override
 			public void afterProcess() throws Throwable {
-				ruleService.enableRules();
+				//DO Nothing
 			}
 
 			@Override
 			public void beforeProcess() throws Throwable {
-				ruleService.disableRules();
+				//DO Nothing
 			}
 
 			@Override
@@ -118,7 +118,7 @@ public class ReqCtrlSourcesPatch extends AbstractBeCPGPatch {
 
 			@Override
 			public void process(NodeRef dataListNodeRef) throws Throwable {
-
+				ruleService.disableRules();
 				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 				policyBehaviourFilter.disableBehaviour();
 
@@ -130,7 +130,7 @@ public class ReqCtrlSourcesPatch extends AbstractBeCPGPatch {
 				} else {
 					logger.warn("dataListNodeRef doesn't exist : " + dataListNodeRef);
 				}
-
+				ruleService.enableRules();
 			}
 
 		};
