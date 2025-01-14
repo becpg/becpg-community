@@ -95,7 +95,7 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
 	}
 	
 	public BeCPGMLPropertyInterceptor() {
-		logger.info("Starting BeCPGMLPropertyInterceptor");
+		logger.error("Starting BeCPGMLPropertyInterceptor");
 		if(MLTextHelper.getSupportedLocales() == null || MLTextHelper.getSupportedLocales().isEmpty()) {
 			throw new IllegalStateException("Cannot start BeCPGMLPropertyInterceptor if getSupportedLocales is empty ");
 		}
