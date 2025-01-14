@@ -36,13 +36,12 @@ public class BudgetPatch extends AbstractBeCPGPatch {
 
 	private static final Log logger = LogFactory.getLog(BudgetPatch.class);
 	private static final String MSG_SUCCESS = "patch.bcpg.projet.budgetPatch.result";
-	
+
 	/** Constant <code>PROP_TL_ACTUAL_INVOICE</code> */
 	public static final QName PROP_TL_ACTUAL_INVOICE = QName.createQName(ProjectModel.PROJECT_URI, "tlActualInvoice");
 
 	/** Constant <code>PROP_TL_ACTUAL_EXPENSE</code> */
 	public static final QName PROP_TL_ACTUAL_EXPENSE = QName.createQName(ProjectModel.PROJECT_URI, "tlActualExpense");
-
 
 	private NodeDAO nodeDAO;
 	private PatchDAO patchDAO;
@@ -50,104 +49,107 @@ public class BudgetPatch extends AbstractBeCPGPatch {
 	private BehaviourFilter policyBehaviourFilter;
 	private RuleService ruleService;
 
-
 	/** {@inheritDoc} */
 	@Override
 	protected String applyInternal() throws Exception {
 
-			AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
+		AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
-			BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
-				final List<NodeRef> result = new ArrayList<>();
+		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<>() {
+			final List<NodeRef> result = new ArrayList<>();
 
-				final long maxNodeId = getNodeDAO().getMaxNodeId();
+			final long maxNodeId = getNodeDAO().getMaxNodeId();
 
-				long minSearchNodeId = 1;
-				long maxSearchNodeId = INC;
+			long minSearchNodeId = 1;
+			long maxSearchNodeId = INC;
 
-				final Pair<Long, QName> val = getQnameDAO().getQName(ProjectModel.TYPE_TASK_LIST);
+			final Pair<Long, QName> val = getQnameDAO().getQName(ProjectModel.TYPE_TASK_LIST);
 
-				public int getTotalEstimatedWorkSize() {
-					return result.size();
-				}
-				
-				@Override
-				public long getTotalEstimatedWorkSizeLong() {
-					return getTotalEstimatedWorkSize();
-				}
+			@Override
+			public int getTotalEstimatedWorkSize() {
+				return result.size();
+			}
 
-				public Collection<NodeRef> getNextWork() {
-					if (val != null) {
-						Long typeQNameId = val.getFirst();
+			@Override
+			public long getTotalEstimatedWorkSizeLong() {
+				return getTotalEstimatedWorkSize();
+			}
 
-						result.clear();
+			@Override
+			public Collection<NodeRef> getNextWork() {
+				if (val != null) {
+					Long typeQNameId = val.getFirst();
 
-						while (result.isEmpty() && minSearchNodeId < maxNodeId) {
-							
-							
-							List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, maxSearchNodeId);
+					result.clear();
 
-							for (Long nodeid : nodeids) {
-								NodeRef.Status status = getNodeDAO().getNodeIdStatus(nodeid);
-								if (!status.isDeleted()) {
-									result.add(status.getNodeRef());
-								}
+					while (result.isEmpty() && (minSearchNodeId < maxNodeId)) {
+
+						List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, maxSearchNodeId);
+
+						for (Long nodeid : nodeids) {
+							NodeRef.Status status = getNodeDAO().getNodeIdStatus(nodeid);
+							if (!status.isDeleted()) {
+								result.add(status.getNodeRef());
 							}
-							minSearchNodeId = minSearchNodeId + INC;
-							maxSearchNodeId = maxSearchNodeId + INC;
 						}
+						minSearchNodeId = minSearchNodeId + INC;
+						maxSearchNodeId = maxSearchNodeId + INC;
 					}
-
-					return result;
-				}
-			};
-
-			BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("BudgetPatch",
-					transactionService.getRetryingTransactionHelper(), workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 1000);
-
-			BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
-
-				public void afterProcess() throws Throwable {
-					ruleService.disableRules();
 				}
 
-				public void beforeProcess() throws Throwable {
-					ruleService.enableRules();
-				}
+				return result;
+			}
+		};
 
-				public String getIdentifier(NodeRef entry) {
-					return entry.toString();
-				}
+		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("BudgetPatch", transactionService.getRetryingTransactionHelper(), workProvider,
+				BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 1000);
 
-				public void process(NodeRef taskNodeRef) throws Throwable {
-					
+		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<>() {
+
+			@Override
+			public void afterProcess() throws Throwable {
+				//Do Nothing
+
+			}
+
+			@Override
+			public void beforeProcess() throws Throwable {
+				//Do Nothing
+
+			}
+
+			@Override
+			public String getIdentifier(NodeRef entry) {
+				return entry.toString();
+			}
+
+			@Override
+			public void process(NodeRef taskNodeRef) throws Throwable {
+				ruleService.disableRules();
+				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
+				policyBehaviourFilter.disableBehaviour();
+
+				if (nodeService.exists(taskNodeRef)) {
 					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
-					policyBehaviourFilter.disableBehaviour();
-					
-					if (nodeService.exists(taskNodeRef)) {
-						AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
-						
-						Map<QName,Serializable> props = new HashMap<>();
-						props.put(ProjectModel.PROP_BUDGET_INVOICE, nodeService.getProperty(taskNodeRef, PROP_TL_ACTUAL_INVOICE));
-						props.put(ProjectModel.PROP_BUDGET_EXPENSE, nodeService.getProperty(taskNodeRef, PROP_TL_ACTUAL_EXPENSE));
-						
-						nodeService.removeProperty(taskNodeRef, PROP_TL_ACTUAL_INVOICE);
-						nodeService.removeProperty(taskNodeRef, PROP_TL_ACTUAL_EXPENSE);
-						
-						nodeService.addAspect(taskNodeRef, ProjectModel.ASPECT_BUDGET, props);
-						
-						
-						
-					} else {
-						logger.warn("projectNodeRef doesn't exist : " + taskNodeRef);
-					}
 
+					Map<QName, Serializable> props = new HashMap<>();
+					props.put(ProjectModel.PROP_BUDGET_INVOICE, nodeService.getProperty(taskNodeRef, PROP_TL_ACTUAL_INVOICE));
+					props.put(ProjectModel.PROP_BUDGET_EXPENSE, nodeService.getProperty(taskNodeRef, PROP_TL_ACTUAL_EXPENSE));
+
+					nodeService.removeProperty(taskNodeRef, PROP_TL_ACTUAL_INVOICE);
+					nodeService.removeProperty(taskNodeRef, PROP_TL_ACTUAL_EXPENSE);
+
+					nodeService.addAspect(taskNodeRef, ProjectModel.ASPECT_BUDGET, props);
+
+				} else {
+					logger.warn("projectNodeRef doesn't exist : " + taskNodeRef);
 				}
+				ruleService.enableRules();
+			}
 
-			};
+		};
 
-			batchProcessor.processLong(worker, true);
-		
+		batchProcessor.processLong(worker, true);
 
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}
