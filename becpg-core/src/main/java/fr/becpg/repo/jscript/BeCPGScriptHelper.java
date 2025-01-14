@@ -217,6 +217,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		this.beCPGLicenseManager = beCPGLicenseManager;
 	}
 
+
 	public void setBeCPGMailService(BeCPGMailService beCPGMailService) {
 		this.beCPGMailService = beCPGMailService;
 	}
@@ -551,11 +552,10 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 		MLText mlText = (MLText) mlNodeService.getProperty(sourceNode.getNodeRef(), getQName(propQName));
 
-		if (Boolean.TRUE.equals(exactLocale)) {
-			return mlText.get(MLTextHelper.parseLocale(locale));
-		}
-
 		if (mlText != null) {
+			if (Boolean.TRUE.equals(exactLocale)) {
+				return mlText.get(MLTextHelper.parseLocale(locale));
+			}
 			return MLTextHelper.getClosestValue(mlText, MLTextHelper.parseLocale(locale));
 		}
 		return null;
@@ -586,7 +586,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 				}
 
-				if (constraintName != null || dynListConstraint != null) {
+				if ((constraintName != null) || (dynListConstraint != null)) {
 					break;
 				}
 			}
@@ -615,18 +615,25 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 			mlText = new MLText();
 		}
 
-		if ((value != null) && !value.isEmpty()) {
-			if (value.equals(mlText.get(parsedLocale))) {
-				return;
+		if ((locale != null) && !locale.isBlank()) {
+			Locale loc = MLTextHelper.parseLocale(locale);
+
+			if ((value != null) && !value.isEmpty()) {
+				if (MLTextHelper.isSupportedLocale(loc)) {
+					mlText.addValue(loc, value);
+				} else {
+					logger.error("Unsupported locale in setMLProperty " + loc + " for " + propQName);
+				}
+			} else {
+				mlText.removeValue(loc);
 			}
-			mlText.addValue(parsedLocale, value);
+			mlNodeService.setProperty(sourceNode.getNodeRef(), getQName(propQName), mlText);
+
 		} else {
-			if (!mlText.containsKey(parsedLocale)) {
-				return;
-			}
-			mlText.removeValue(parsedLocale);
+			logger.error("Null or empty locale in setMLProperty for " + propQName);
 		}
 		mlNodeService.setProperty(sourceNode.getNodeRef(), getQName(propQName), mlText);
+
 	}
 
 	/**
@@ -1462,7 +1469,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	/**
 	 * <p>count.</p>
 	 * @param type
-	 * @return Number of object of type 
+	 * @return Number of object of type
 	 */
 	public Long count(String type) {
 		return BeCPGQueryBuilder.createQuery().ofType(QName.createQName(type, namespaceService)).inDB().ftsLanguage().count();
