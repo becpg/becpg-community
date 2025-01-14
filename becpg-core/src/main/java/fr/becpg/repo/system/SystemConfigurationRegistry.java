@@ -3,9 +3,10 @@ package fr.becpg.repo.system;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+<<<<<<< 23.2.0
 import jakarta.annotation.PostConstruct;
 
-@Service
+@Service("systemConfigurationRegistry")
 public class SystemConfigurationRegistry {
 	   private static SystemConfigurationService instance;
 
