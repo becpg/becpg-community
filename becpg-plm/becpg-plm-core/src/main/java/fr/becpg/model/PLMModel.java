@@ -845,6 +845,10 @@ public interface PLMModel {
 
 	/** Constant <code>TYPE_REGULATORY_LIST</code> */
 	QName TYPE_REGULATORY_LIST = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryList");
+	
+	QName ASSOC_REGULATORY_COUNTRIES = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryCountries");
+	
+	QName ASSOC_REGULATORY_USAGE_REF = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryUsageRef");
 
 	/** Constant <code>TYPE_ING_REGULATORY_LIST</code> */
 	QName TYPE_ING_REGULATORY_LIST = QName.createQName(BeCPGModel.BECPG_URI, "ingRegulatoryList");
