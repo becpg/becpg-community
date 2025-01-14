@@ -1851,7 +1851,6 @@
 					</field>
 					<field id="bcpg:toxIngSystemicValue" />
 					<field id="bcpg:toxIngMaxValue" />
-
 				</appearance>
 			</form>
 		</forms>
@@ -8378,6 +8377,7 @@
 					<field id="bcpg:toxListTox">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
+					<field id="bcpg:toxListValue" />
 				</appearance>
 			</form>
 			<form id="filter">
@@ -8419,6 +8419,7 @@
 					<field id="bcpg:toxListTox">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
+				    <field id="bcpg:toxListValue" />
 				</appearance>
 			</form>
 		</forms>
