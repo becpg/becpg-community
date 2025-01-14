@@ -33,7 +33,7 @@ public class DeleteNetWeightUnitPropertyPatch extends AbstractBeCPGPatch {
 
 	private static final Log logger = LogFactory.getLog(DeleteNetWeightUnitPropertyPatch.class);
 	private static final String MSG_SUCCESS = "patch.bcpg.plm.deleteNetWeightPropertyPatch.result";
-	
+
 	private static final QName PROP_NET_WEIGHT_UNIT = QName.createQName(BeCPGModel.BECPG_URI, "netWeightUnit");
 
 	private NodeDAO nodeDAO;
@@ -41,26 +41,25 @@ public class DeleteNetWeightUnitPropertyPatch extends AbstractBeCPGPatch {
 	private QNameDAO qnameDAO;
 	private BehaviourFilter policyBehaviourFilter;
 	private RuleService ruleService;
-	
+
 	/** {@inheritDoc} */
 	@Override
 	protected String applyInternal() throws Exception {
 
 		AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
-		
 
 		doForType(PLMModel.TYPE_FINISHEDPRODUCT, false);
 		doForType(PLMModel.TYPE_SEMIFINISHEDPRODUCT, false);
 		doForType(PLMModel.TYPE_RAWMATERIAL, false);
 		doForType(PLMModel.TYPE_PACKAGINGMATERIAL, false);
 		doForType(PLMModel.TYPE_PACKAGINGKIT, false);
-		
+
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}
 
 	private void doForType(final QName type, boolean isAspect) {
-		
-		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
+
+		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<>() {
 			final List<NodeRef> result = new ArrayList<>();
 
 			final long maxNodeId = getNodeDAO().getMaxNodeId();
@@ -70,24 +69,25 @@ public class DeleteNetWeightUnitPropertyPatch extends AbstractBeCPGPatch {
 
 			final Pair<Long, QName> val = getQnameDAO().getQName(type);
 
+			@Override
 			public int getTotalEstimatedWorkSize() {
 				return result.size();
 			}
-			
+
 			@Override
 			public long getTotalEstimatedWorkSizeLong() {
 				return getTotalEstimatedWorkSize();
 			}
 
+			@Override
 			public Collection<NodeRef> getNextWork() {
 				if (val != null) {
 					Long typeQNameId = val.getFirst();
 
 					result.clear();
 
-					while (result.isEmpty() && minSearchNodeId < maxNodeId) {
-						
-						
+					while (result.isEmpty() && (minSearchNodeId < maxNodeId)) {
+
 						List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, maxSearchNodeId);
 
 						for (Long nodeid : nodeids) {
@@ -105,45 +105,48 @@ public class DeleteNetWeightUnitPropertyPatch extends AbstractBeCPGPatch {
 			}
 		};
 
-		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("RemovePalletNbOfBoxesPatch",
-				transactionService.getRetryingTransactionHelper(), workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 1000);
-		
-		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
+		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("RemovePalletNbOfBoxesPatch", transactionService.getRetryingTransactionHelper(),
+				workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 1000);
 
+		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<>() {
+
+			@Override
 			public void afterProcess() throws Throwable {
-				ruleService.enableRules();
+				//Do nothing
 			}
 
+			@Override
 			public void beforeProcess() throws Throwable {
-				ruleService.disableRules();
+				//Do nothing
 			}
 
+			@Override
 			public String getIdentifier(NodeRef entry) {
 				return entry.toString();
 			}
 
+			@Override
 			public void process(NodeRef productNodeRef) throws Throwable {
-				
+				ruleService.disableRules();
 				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 				policyBehaviourFilter.disableBehaviour();
 				if (nodeService.exists(productNodeRef)) {
-					if(nodeService.getProperty(productNodeRef, PROP_NET_WEIGHT_UNIT) != null) {
+					if (nodeService.getProperty(productNodeRef, PROP_NET_WEIGHT_UNIT) != null) {
 						logger.info("Remove netWeightUnit On :" + productNodeRef);
 						nodeService.removeProperty(productNodeRef, PROP_NET_WEIGHT_UNIT);
 					}
 				} else {
 					logger.warn("entityNodeRef doesn't exist : " + productNodeRef);
 				}
-				
-				policyBehaviourFilter.disableBehaviour();
 
+				policyBehaviourFilter.disableBehaviour();
+				ruleService.enableRules();
 			}
 
 		};
-		
-		batchProcessor.processLong(worker, true);			
+
+		batchProcessor.processLong(worker, true);
 	}
-			
 
 	/**
 	 * <p>Getter for the field <code>nodeDAO</code>.</p>
@@ -225,5 +228,5 @@ public class DeleteNetWeightUnitPropertyPatch extends AbstractBeCPGPatch {
 	public void setRuleService(RuleService ruleService) {
 		this.ruleService = ruleService;
 	}
-	
+
 }
