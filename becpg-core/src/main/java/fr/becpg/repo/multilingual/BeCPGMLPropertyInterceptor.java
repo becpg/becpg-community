@@ -99,6 +99,14 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
+	
+	public BeCPGMLPropertyInterceptor() {
+		logger.info("Starting BeCPGMLPropertyInterceptor");
+		if(MLTextHelper.getSupportedLocales() == null || MLTextHelper.getSupportedLocales().isEmpty()) {
+			throw new IllegalStateException("Cannot start BeCPGMLPropertyInterceptor if getSupportedLocales is empty ");
+		}
+		
+	}
 
 	/**
      * <p>isMLAware.</p>
@@ -106,7 +114,7 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
      * @return Returns <tt>true</tt> if the current thread has marked itself
      *      as being able to handle {@link MLText d:mltext} types properly.
      */
-    static public boolean isMLAware()
+	public static  boolean isMLAware()
     {
        return MLPropertyInterceptor.isMLAware();
     }
@@ -140,6 +148,9 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
     {
         this.dictionaryService = dictionaryService;
     }
+    
+    
+    
     
     /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
@@ -184,7 +195,7 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
             NodeRef pivotNodeRef = getPivotNodeRef(nodeRef);
             
             Map<QName, Serializable> properties = (Map<QName, Serializable>) invocation.proceed();
-            Map<QName, Serializable> convertedProperties = new HashMap<QName, Serializable>(properties.size() * 2);
+            Map<QName, Serializable> convertedProperties = new HashMap<>(properties.size() * 2);
             // Check each return value type
             for (Map.Entry<QName, Serializable> entry : properties.entrySet())
             {
@@ -347,10 +358,6 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
             Serializable outboundValue)
     {
         Serializable ret = null;
-        if (outboundValue == null)
-        {
-           ret = null;
-        }
         if (outboundValue instanceof MLText)
         {
             // It is MLText
@@ -360,7 +367,7 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
         else if(isCollectionOfMLText(outboundValue))
         {
             Collection<?> col = (Collection<?>)outboundValue; 
-            ArrayList<String> answer = new ArrayList<String>(col.size());
+            ArrayList<String> answer = new ArrayList<>(col.size());
             Locale closestLocale = getClosestLocale(col);
             for(Object o : col)
             {
@@ -427,12 +434,12 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
      */
     public Locale getClosestLocale(Collection<?> collection)
     {
-        if (collection.size() == 0)
+        if (collection.isEmpty())
         {
             return null;
         }
         // Use the available keys as options
-        HashSet<Locale> locales = new HashSet<Locale>();
+        HashSet<Locale> locales = new HashSet<>();
         for(Object o : collection)
         {
             MLText mlText = (MLText)o;
@@ -492,7 +499,7 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
             NodeRef nodeRef,
             NodeRef pivotNodeRef)
     {
-        Map<QName, Serializable> convertedProperties = new HashMap<QName, Serializable>(newProperties.size() * 2);
+        Map<QName, Serializable> convertedProperties = new HashMap<>(newProperties.size() * 2);
         for (Map.Entry<QName, Serializable> entry : newProperties.entrySet())
         {
              QName propertyQName = entry.getKey();
@@ -548,7 +555,7 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
                     {
                         currentValue = nodeService.getProperty(nodeRef, propertyQName);
                     }
-                    ArrayList<MLText> returnMLList = new ArrayList<MLText>();
+                    ArrayList<MLText> returnMLList = new ArrayList<>();
                     if (currentValue != null)
                     {
                         Collection<MLText> currentCollection = DefaultTypeConverter.INSTANCE.getCollection(MLText.class, currentValue);  
@@ -596,10 +603,10 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
                         returnMLList.set(i, newMLValue);
                     }
                     // tidy up empty locales
-                    ArrayList<MLText> tidy = new ArrayList<MLText>();
+                    ArrayList<MLText> tidy = new ArrayList<>();
                     for(MLText mlText : returnMLList)
                     {
-                        if(mlText.keySet().size() > 0)
+                        if(!mlText.keySet().isEmpty())
                         {
                             tidy.add(mlText);
                         }
@@ -640,7 +647,7 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
            if (EqualsHelper.nullSafeEquals(pivotContentUrl, emptyContentUrl))
            {
               // They are a match.  So the empty translation must be reset to it's original value
-              ret = (ContentData) nodeService.getProperty(nodeRef, ContentModel.PROP_CONTENT);
+              ret =  nodeService.getProperty(nodeRef, ContentModel.PROP_CONTENT);
            }
            else
            {
