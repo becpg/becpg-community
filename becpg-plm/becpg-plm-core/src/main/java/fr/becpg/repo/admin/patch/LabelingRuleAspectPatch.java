@@ -39,7 +39,7 @@ public class LabelingRuleAspectPatch extends AbstractBeCPGPatch {
 	private QNameDAO qnameDAO;
 	private BehaviourFilter policyBehaviourFilter;
 	private RuleService ruleService;
-	
+
 	/**
 	 * <p>Setter for the field <code>ruleService</code>.</p>
 	 *
@@ -52,14 +52,14 @@ public class LabelingRuleAspectPatch extends AbstractBeCPGPatch {
 	/** {@inheritDoc} */
 	@Override
 	protected String applyInternal() throws Exception {
-		
-	   doForType(PLMModel.TYPE_INGLABELINGLIST);
-	   doForType(PLMModel.TYPE_LABELINGRULELIST);
-	   
+
+		doForType(PLMModel.TYPE_INGLABELINGLIST);
+		doForType(PLMModel.TYPE_LABELINGRULELIST);
+
 		return I18NUtil.getMessage(MSG_SUCCESS);
-	   
+
 	}
-		
+
 	/**
 	 * <p>doForType.</p>
 	 *
@@ -67,7 +67,7 @@ public class LabelingRuleAspectPatch extends AbstractBeCPGPatch {
 	 * @throws java.lang.Exception if any.
 	 */
 	protected void doForType(QName typeQname) throws Exception {
-		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
+		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<>() {
 			final List<NodeRef> result = new ArrayList<>();
 
 			final long maxNodeId = getNodeDAO().getMaxNodeId();
@@ -76,7 +76,7 @@ public class LabelingRuleAspectPatch extends AbstractBeCPGPatch {
 
 			final Pair<Long, QName> val = getQnameDAO().getQName(typeQname);
 
-
+			@Override
 			public int getTotalEstimatedWorkSize() {
 				return result.size();
 			}
@@ -85,14 +85,15 @@ public class LabelingRuleAspectPatch extends AbstractBeCPGPatch {
 			public long getTotalEstimatedWorkSizeLong() {
 				return getTotalEstimatedWorkSize();
 			}
-			
+
+			@Override
 			public Collection<NodeRef> getNextWork() {
 				if (val != null) {
 					Long typeQNameId = val.getFirst();
 
 					result.clear();
 
-					while (result.isEmpty() && minSearchNodeId < maxNodeId) {
+					while (result.isEmpty() && (minSearchNodeId < maxNodeId)) {
 						List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, minSearchNodeId + INC);
 
 						for (Long nodeid : nodeids) {
@@ -112,27 +113,32 @@ public class LabelingRuleAspectPatch extends AbstractBeCPGPatch {
 		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("LabelingRuleAspectPatch", transactionService.getRetryingTransactionHelper(),
 				workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 500);
 
-		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
+		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<>() {
 
+			@Override
 			public void afterProcess() throws Throwable {
-				ruleService.enableRules();
-				
+				//Do nothing
 			}
 
+			@Override
 			public void beforeProcess() throws Throwable {
-				ruleService.disableRules();
+				//Do nothing
 			}
 
+			@Override
 			public String getIdentifier(NodeRef entry) {
 				return entry.toString();
 			}
 
+			@Override
 			public void process(NodeRef dataListNodeRef) throws Throwable {
+				ruleService.disableRules();
 				if (nodeService.exists(dataListNodeRef) && !nodeService.hasAspect(dataListNodeRef, PLMModel.LABELING_RULE_ASPECT)) {
 					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 					policyBehaviourFilter.disableBehaviour();
-					nodeService.addAspect(dataListNodeRef,  PLMModel.LABELING_RULE_ASPECT, new HashMap<>());
+					nodeService.addAspect(dataListNodeRef, PLMModel.LABELING_RULE_ASPECT, new HashMap<>());
 				}
+				ruleService.enableRules();
 			}
 
 		};

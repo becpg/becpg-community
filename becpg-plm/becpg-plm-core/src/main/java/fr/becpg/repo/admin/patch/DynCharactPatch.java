@@ -41,100 +41,102 @@ public class DynCharactPatch extends AbstractBeCPGPatch {
 	private BehaviourFilter policyBehaviourFilter;
 	private RuleService ruleService;
 
-
 	/** {@inheritDoc} */
 	@Override
 	protected String applyInternal() throws Exception {
 
-			AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
+		AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
-			BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
-				final List<NodeRef> result = new ArrayList<>();
+		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<>() {
+			final List<NodeRef> result = new ArrayList<>();
 
-				final long maxNodeId = getNodeDAO().getMaxNodeId();
+			final long maxNodeId = getNodeDAO().getMaxNodeId();
 
-				long minSearchNodeId = 0;
-				long maxSearchNodeId = INC;
+			long minSearchNodeId = 0;
+			long maxSearchNodeId = INC;
 
-				final Pair<Long, QName> val = getQnameDAO().getQName(PLMModel.TYPE_DYNAMICCHARACTLIST);
+			final Pair<Long, QName> val = getQnameDAO().getQName(PLMModel.TYPE_DYNAMICCHARACTLIST);
 
-				public int getTotalEstimatedWorkSize() {
-					return result.size();
-				}
+			@Override
+			public int getTotalEstimatedWorkSize() {
+				return result.size();
+			}
 
-				@Override
-				public long getTotalEstimatedWorkSizeLong() {
-					return getTotalEstimatedWorkSize();
-				}
-				
-				public Collection<NodeRef> getNextWork() {
-					if (val != null) {
-						Long typeQNameId = val.getFirst();
+			@Override
+			public long getTotalEstimatedWorkSizeLong() {
+				return getTotalEstimatedWorkSize();
+			}
 
-						result.clear();
+			@Override
+			public Collection<NodeRef> getNextWork() {
+				if (val != null) {
+					Long typeQNameId = val.getFirst();
 
-						while (result.isEmpty() && minSearchNodeId < maxNodeId) {
-							List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, maxSearchNodeId);
+					result.clear();
 
-							for (Long nodeid : nodeids) {
-								NodeRef.Status status = getNodeDAO().getNodeIdStatus(nodeid);
-								if (!status.isDeleted()) {
-									result.add(status.getNodeRef());
-								}
+					while (result.isEmpty() && (minSearchNodeId < maxNodeId)) {
+						List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, maxSearchNodeId);
+
+						for (Long nodeid : nodeids) {
+							NodeRef.Status status = getNodeDAO().getNodeIdStatus(nodeid);
+							if (!status.isDeleted()) {
+								result.add(status.getNodeRef());
 							}
-							minSearchNodeId = minSearchNodeId + INC;
-							maxSearchNodeId = maxSearchNodeId + INC;
 						}
+						minSearchNodeId = minSearchNodeId + INC;
+						maxSearchNodeId = maxSearchNodeId + INC;
 					}
-
-					return result;
-				}
-			};
-
-			BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("DynCharactPatch",
-					transactionService.getRetryingTransactionHelper(), workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 1000);
-
-			BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
-
-				public void afterProcess() throws Throwable {
-					ruleService.enableRules();
 				}
 
-				public void beforeProcess() throws Throwable {
-					ruleService.disableRules();
-				}
+				return result;
+			}
+		};
 
-				public String getIdentifier(NodeRef entry) {
-					return entry.toString();
-				}
+		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("DynCharactPatch", transactionService.getRetryingTransactionHelper(),
+				workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 1000);
 
-				public void process(NodeRef dataListNodeRef) throws Throwable {
-					
+		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<>() {
+
+			@Override
+			public void afterProcess() throws Throwable {
+				//Do nothing
+			}
+
+			@Override
+			public void beforeProcess() throws Throwable {
+				//Do nothing
+			}
+
+			@Override
+			public String getIdentifier(NodeRef entry) {
+				return entry.toString();
+			}
+
+			@Override
+			public void process(NodeRef dataListNodeRef) throws Throwable {
+				ruleService.disableRules();
+				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
+				policyBehaviourFilter.disableBehaviour();
+
+				if (nodeService.exists(dataListNodeRef)) {
 					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
-					policyBehaviourFilter.disableBehaviour();
-					
-					if (nodeService.exists(dataListNodeRef)) {
-						AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
-						Boolean isManual = (Boolean) nodeService.getProperty(dataListNodeRef, BeCPGModel.PROP_IS_MANUAL_LISTITEM);
-						if (Boolean.TRUE.equals(isManual)) {
-							nodeService.setProperty(dataListNodeRef, PLMModel.PROP_DYNAMICCHARACT_SYNCHRONIZABLE_STATE,
-									SynchronisableState.Manual);
-						} else {
-							nodeService.setProperty(dataListNodeRef, PLMModel.PROP_DYNAMICCHARACT_SYNCHRONIZABLE_STATE,
-									SynchronisableState.Synchronized);
-						}
-						nodeService.removeAspect(dataListNodeRef, BeCPGModel.ASPECT_IS_MANUAL_LISTITEM);
-
+					Boolean isManual = (Boolean) nodeService.getProperty(dataListNodeRef, BeCPGModel.PROP_IS_MANUAL_LISTITEM);
+					if (Boolean.TRUE.equals(isManual)) {
+						nodeService.setProperty(dataListNodeRef, PLMModel.PROP_DYNAMICCHARACT_SYNCHRONIZABLE_STATE, SynchronisableState.Manual);
 					} else {
-						logger.warn("dataListNodeRef doesn't exist : " + dataListNodeRef);
+						nodeService.setProperty(dataListNodeRef, PLMModel.PROP_DYNAMICCHARACT_SYNCHRONIZABLE_STATE, SynchronisableState.Synchronized);
 					}
+					nodeService.removeAspect(dataListNodeRef, BeCPGModel.ASPECT_IS_MANUAL_LISTITEM);
 
+				} else {
+					logger.warn("dataListNodeRef doesn't exist : " + dataListNodeRef);
 				}
+				ruleService.enableRules();
+			}
 
-			};
+		};
 
-			batchProcessor.processLong(worker, true);
-		
+		batchProcessor.processLong(worker, true);
 
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}
