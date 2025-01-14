@@ -159,8 +159,12 @@ public class ToxicologyServiceImpl implements ToxicologyService {
 			nodeService.setProperty(toxIngNodeRef, PLMModel.PROP_TOX_ING_ING, ingNodeRef);
 			nodeService.setProperty(toxIngNodeRef, PLMModel.PROP_TOX_ING_TOX, toxNodeRef);
 		}
-		Double maxValue = computeMaxValue(ingNodeRef, toxNodeRef);
-		nodeService.setProperty(toxIngNodeRef, PLMModel.PROP_TOX_ING_MAX_VALUE, maxValue);
+		
+		Boolean calculateMax = (Boolean) nodeService.getProperty(toxNodeRef, PLMModel.PROP_TOX_CALCULATE_MAX);
+		if (Boolean.TRUE.equals(calculateMax)) {
+			Double maxValue = computeMaxValue(ingNodeRef, toxNodeRef);
+			nodeService.setProperty(toxIngNodeRef, PLMModel.PROP_TOX_ING_MAX_VALUE, maxValue);
+		}
 		
 		Boolean calculateSystemic = (Boolean) nodeService.getProperty(toxNodeRef, PLMModel.PROP_TOX_CALCULATE_SYSTEMIC);
 		if (Boolean.TRUE.equals(calculateSystemic)) {
