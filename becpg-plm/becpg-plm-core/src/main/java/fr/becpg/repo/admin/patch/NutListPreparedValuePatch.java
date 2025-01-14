@@ -113,11 +113,11 @@ public class NutListPreparedValuePatch extends AbstractBeCPGPatch {
 		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
 
 			public void afterProcess() throws Throwable {
-				
+				//Do Nothing
 			}
 
 			public void beforeProcess() throws Throwable {
-				
+				//Do Nothing
 			}
 
 			public String getIdentifier(NodeRef entry) {

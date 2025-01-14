@@ -186,12 +186,12 @@ public class GS1ModelPatch extends AbstractBeCPGPatch {
 
 			@Override
 			public void afterProcess() throws Throwable {
-				ruleService.enableRules();
+				//DO Nothing
 			}
 
 			@Override
 			public void beforeProcess() throws Throwable {
-				ruleService.disableRules();
+				//DO Nothing
 			}
 
 			@Override
@@ -201,6 +201,7 @@ public class GS1ModelPatch extends AbstractBeCPGPatch {
 
 			@Override
 			public void process(NodeRef productNodeRef) throws Throwable {
+				ruleService.disableRules();
 
 				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
@@ -215,7 +216,7 @@ public class GS1ModelPatch extends AbstractBeCPGPatch {
 				} else {
 					logger.warn("productNodeRef doesn't exist : " + productNodeRef + " or is not in workspace store");
 				}
-
+				ruleService.enableRules();
 			}
 
 		};
