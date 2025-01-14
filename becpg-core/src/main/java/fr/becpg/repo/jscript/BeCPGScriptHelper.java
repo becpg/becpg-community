@@ -608,9 +608,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * @param value a {@link java.lang.String} object.
 	 */
 	public void setMLProperty(ScriptNode sourceNode, String propQName, String locale, String value) {
-		Locale parsedLocale = MLTextHelper.parseLocale(locale);
-
-		MLText mlText = (MLText) mlNodeService.getProperty(sourceNode.getNodeRef(), getQName(propQName));
+	    MLText mlText = (MLText) mlNodeService.getProperty(sourceNode.getNodeRef(), getQName(propQName));
 		if (mlText == null) {
 			mlText = new MLText();
 		}
@@ -632,7 +630,6 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		} else {
 			logger.error("Null or empty locale in setMLProperty for " + propQName);
 		}
-		mlNodeService.setProperty(sourceNode.getNodeRef(), getQName(propQName), mlText);
 
 	}
 
@@ -1468,7 +1465,16 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 	/**
 	 * <p>count.</p>
+<<<<<<< 23.2.0
 	 * @param type
+=======
+<<<<<<< 23.2.1
+	 *
+	 * @param type a {@link java.lang.String} object
+=======
+	 * @param type
+>>>>>>> 5350029 [Feature] Improve ML helper
+>>>>>>> 663ad5e [Feature] Improve ML helper
 	 * @return Number of object of type
 	 */
 	public Long count(String type) {
