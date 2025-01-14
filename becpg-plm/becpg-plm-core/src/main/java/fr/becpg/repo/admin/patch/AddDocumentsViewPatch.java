@@ -70,7 +70,7 @@ public class AddDocumentsViewPatch extends AbstractBeCPGPatch {
 	}
 
 	private void doForType(final QName type, boolean isAspect) {
-		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
+		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<>() {
 			final List<NodeRef> result = new ArrayList<>();
 
 			final long maxNodeId = getNodeDAO().getMaxNodeId();
@@ -84,7 +84,7 @@ public class AddDocumentsViewPatch extends AbstractBeCPGPatch {
 			public int getTotalEstimatedWorkSize() {
 				return result.size();
 			}
-			
+
 			@Override
 			public long getTotalEstimatedWorkSizeLong() {
 				return getTotalEstimatedWorkSize();
@@ -125,16 +125,16 @@ public class AddDocumentsViewPatch extends AbstractBeCPGPatch {
 		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("AddDocumentsViewPatch", transactionService.getRetryingTransactionHelper(),
 				workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 1000);
 
-		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
+		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<>() {
 
 			@Override
 			public void afterProcess() throws Throwable {
-				ruleService.enableRules();
+				//Do nothing
 			}
 
 			@Override
 			public void beforeProcess() throws Throwable {
-				ruleService.disableRules();
+				//Do nothing
 			}
 
 			@Override
@@ -151,7 +151,9 @@ public class AddDocumentsViewPatch extends AbstractBeCPGPatch {
 					if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)
 							|| nodeService.getTargetAssocs(entityNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF).isEmpty()) {
 						logger.debug("Create views on entity " + entityNodeRef);
+						ruleService.disableRules();
 						entityTplService.createView(entityNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_DOCUMENTS);
+						ruleService.enableRules();
 					}
 				} else {
 					logger.warn("entityNodeRef doesn't exist : " + entityNodeRef);
