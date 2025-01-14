@@ -1721,6 +1721,7 @@
 					<show id="bcpg:toxTypes" />
 					<show id="bcpg:toxValue" />
 					<show id="bcpg:toxCalculateSystemic" />
+					<show id="bcpg:toxCalculateMax" />
 					<show id="sec:readGroups" force="true" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted" />
@@ -1733,6 +1734,7 @@
 					<show id="bcpg:toxTypes" />
 					<show id="bcpg:toxValue" />
 					<show id="bcpg:toxCalculateSystemic" />
+					<show id="bcpg:toxCalculateMax" />
 					<show id="sec:readGroups" force="true" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted" />
@@ -1755,6 +1757,7 @@
 					<show id="bcpg:toxTypes" />
 					<show id="bcpg:toxValue" />
 					<show id="bcpg:toxCalculateSystemic" />
+					<show id="bcpg:toxCalculateMax" />
 					<show id="sec:readGroups" force="true" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted" />
@@ -1771,6 +1774,7 @@
 					<show id="bcpg:toxTypes" />
 					<show id="bcpg:toxValue" />
 					<show id="bcpg:toxCalculateSystemic" />
+					<show id="bcpg:toxCalculateMax" />
 					<show id="sec:readGroups" force="true" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted" />
@@ -1840,7 +1844,7 @@
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl" />
 					</field>
 					<field id="bcpg:toxIngSystemicValue" />
-					<field id="bcpg:toxIngMaxValue" read-only="true" />
+					<field id="bcpg:toxIngMaxValue" />
 				</appearance>
 			</form>
 		</forms>
@@ -8713,13 +8717,14 @@
 				<field-visibility>
 					<show id="bcpg:toxListTox" />
 					<show id="bcpg:toxListValue" />
+					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:toxListTox">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 
 					</field>
-					<field id="bcpg:toxListValue" read-only="true" />
+					<field id="bcpg:toxListValue" />
 				</appearance>
 			</form>
 		</forms>
@@ -8732,13 +8737,14 @@
 				<field-visibility>
 					<show id="bcpg:toxListTox" />
 					<show id="bcpg:toxListValue" />
+					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:toxListTox">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 
 					</field>
-					<field id="bcpg:toxListValue" read-only="true" />
+					<field id="bcpg:toxListValue" />
 				</appearance>
 			</form>
 		</forms>
