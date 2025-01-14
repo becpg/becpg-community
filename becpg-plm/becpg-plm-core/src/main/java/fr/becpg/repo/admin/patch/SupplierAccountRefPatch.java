@@ -14,7 +14,7 @@ import org.alfresco.repo.domain.qname.QNameDAO;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.version.Version2Model;
-import org.alfresco.repo.version.VersionModel;
+import org.alfresco.repo.version.VersionBaseModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.cmr.rule.RuleService;
@@ -56,85 +56,86 @@ public class SupplierAccountRefPatch extends AbstractBeCPGPatch {
 	@Override
 	protected String applyInternal() throws Exception {
 
+		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<>() {
+			final List<NodeRef> result = new ArrayList<>();
 
-			BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
-				final List<NodeRef> result = new ArrayList<>();
+			final long maxNodeId = getNodeDAO().getMaxNodeId();
 
-				final long maxNodeId = getNodeDAO().getMaxNodeId();
+			long minSearchNodeId = 0;
 
-				long minSearchNodeId = 0;
+			final Pair<Long, QName> val = getQnameDAO().getQName(PLMModel.TYPE_SUPPLIER);
 
-				final Pair<Long, QName> val = getQnameDAO().getQName(PLMModel.TYPE_SUPPLIER);
+			@Override
+			public int getTotalEstimatedWorkSize() {
+				return result.size();
+			}
 
-				@Override
-				public int getTotalEstimatedWorkSize() {
-					return result.size();
-				}
-				
-				@Override
-				public long getTotalEstimatedWorkSizeLong() {
-					return getTotalEstimatedWorkSize();
-				}
+			@Override
+			public long getTotalEstimatedWorkSizeLong() {
+				return getTotalEstimatedWorkSize();
+			}
 
-				@Override
-				public Collection<NodeRef> getNextWork() {
-					if (val != null) {
-						Long typeQNameId = val.getFirst();
+			@Override
+			public Collection<NodeRef> getNextWork() {
+				if (val != null) {
+					Long typeQNameId = val.getFirst();
 
-						result.clear();
+					result.clear();
 
-						while (result.isEmpty() && (minSearchNodeId < maxNodeId)) {
-							List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, minSearchNodeId + INC);
+					while (result.isEmpty() && (minSearchNodeId < maxNodeId)) {
+						List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, minSearchNodeId + INC);
 
-							for (Long nodeid : nodeids) {
-								NodeRef.Status status = getNodeDAO().getNodeIdStatus(nodeid);
-								if (!status.isDeleted()) {
-									result.add(status.getNodeRef());
-								}
+						for (Long nodeid : nodeids) {
+							NodeRef.Status status = getNodeDAO().getNodeIdStatus(nodeid);
+							if (!status.isDeleted()) {
+								result.add(status.getNodeRef());
 							}
-							minSearchNodeId = minSearchNodeId + INC;
 						}
-					}
-
-					return result;
-				}
-			};
-
-			BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("AddSupplierAccountPatch",
-					transactionService.getRetryingTransactionHelper(), workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 500);
-
-			BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
-
-				@Override
-				public void afterProcess() throws Throwable {
-					ruleService.enableRules();
-
-				}
-
-				@Override
-				public void beforeProcess() throws Throwable {
-					ruleService.disableRules();
-				}
-
-				@Override
-				public String getIdentifier(NodeRef entry) {
-					return entry.toString();
-				}
-
-				@Override
-				public void process(NodeRef dataListNodeRef) throws Throwable {
-					if (nodeService.exists(dataListNodeRef)  && dataListNodeRef.getStoreRef().getProtocol().equals(StoreRef.PROTOCOL_WORKSPACE)
-							&&  ! ( dataListNodeRef.getStoreRef().getProtocol().equals(VersionModel.STORE_PROTOCOL) || dataListNodeRef.getStoreRef().getIdentifier().equals(Version2Model.STORE_ID))) {
-						AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
-						policyBehaviourFilter.disableBehaviour();
-						nodeService.addAspect(dataListNodeRef, PLMModel.ASPECT_SUPPLIERS_ACCOUNTREF, new HashMap<>());
+						minSearchNodeId = minSearchNodeId + INC;
 					}
 				}
 
-			};
-			batchProcessor.processLong(worker, true);
+				return result;
+			}
+		};
 
-		
+		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("AddSupplierAccountPatch", transactionService.getRetryingTransactionHelper(),
+				workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 500);
+
+		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<>() {
+
+			@Override
+			public void afterProcess() throws Throwable {
+				//Do Nothing
+
+			}
+
+			@Override
+			public void beforeProcess() throws Throwable {
+				//Do Nothing
+
+			}
+
+			@Override
+			public String getIdentifier(NodeRef entry) {
+				return entry.toString();
+			}
+
+			@Override
+			public void process(NodeRef dataListNodeRef) throws Throwable {
+				ruleService.disableRules();
+				if (nodeService.exists(dataListNodeRef) && dataListNodeRef.getStoreRef().getProtocol().equals(StoreRef.PROTOCOL_WORKSPACE)
+						&& !(dataListNodeRef.getStoreRef().getProtocol().equals(VersionBaseModel.STORE_PROTOCOL)
+								|| dataListNodeRef.getStoreRef().getIdentifier().equals(Version2Model.STORE_ID))) {
+					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
+					policyBehaviourFilter.disableBehaviour();
+					nodeService.addAspect(dataListNodeRef, PLMModel.ASPECT_SUPPLIERS_ACCOUNTREF, new HashMap<>());
+				}
+				ruleService.enableRules();
+			}
+
+		};
+		batchProcessor.processLong(worker, true);
 
 		return I18NUtil.getMessage(MSG_SUCCESS);
 
