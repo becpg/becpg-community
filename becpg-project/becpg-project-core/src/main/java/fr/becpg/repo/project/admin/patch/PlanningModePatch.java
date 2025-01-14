@@ -41,101 +41,105 @@ public class PlanningModePatch extends AbstractBeCPGPatch {
 	private BehaviourFilter policyBehaviourFilter;
 	private RuleService ruleService;
 
-
 	/** {@inheritDoc} */
 	@Override
 	protected String applyInternal() throws Exception {
 
-			AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
+		AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
-			BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
-				final List<NodeRef> result = new ArrayList<>();
+		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<>() {
+			final List<NodeRef> result = new ArrayList<>();
 
-				final long maxNodeId = getNodeDAO().getMaxNodeId();
+			final long maxNodeId = getNodeDAO().getMaxNodeId();
 
-				long minSearchNodeId = 0;
-				long maxSearchNodeId = INC;
+			long minSearchNodeId = 0;
+			long maxSearchNodeId = INC;
 
-				final Pair<Long, QName> val = getQnameDAO().getQName(ProjectModel.TYPE_PROJECT);
+			final Pair<Long, QName> val = getQnameDAO().getQName(ProjectModel.TYPE_PROJECT);
 
-				public int getTotalEstimatedWorkSize() {
-					return result.size();
-				}
-				
-				@Override
-				public long getTotalEstimatedWorkSizeLong() {
-					return getTotalEstimatedWorkSize();
-				}
+			@Override
+			public int getTotalEstimatedWorkSize() {
+				return result.size();
+			}
 
-				public Collection<NodeRef> getNextWork() {
-					if (val != null) {
-						Long typeQNameId = val.getFirst();
+			@Override
+			public long getTotalEstimatedWorkSizeLong() {
+				return getTotalEstimatedWorkSize();
+			}
 
-						result.clear();
+			@Override
+			public Collection<NodeRef> getNextWork() {
+				if (val != null) {
+					Long typeQNameId = val.getFirst();
 
-						while (result.isEmpty() && minSearchNodeId < maxNodeId) {
-							
-							
-							List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, maxSearchNodeId);
+					result.clear();
 
-							for (Long nodeid : nodeids) {
-								NodeRef.Status status = getNodeDAO().getNodeIdStatus(nodeid);
-								if (!status.isDeleted()) {
-									result.add(status.getNodeRef());
-								}
+					while (result.isEmpty() && (minSearchNodeId < maxNodeId)) {
+
+						List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, maxSearchNodeId);
+
+						for (Long nodeid : nodeids) {
+							NodeRef.Status status = getNodeDAO().getNodeIdStatus(nodeid);
+							if (!status.isDeleted()) {
+								result.add(status.getNodeRef());
 							}
-							minSearchNodeId = minSearchNodeId + INC;
-							maxSearchNodeId = maxSearchNodeId + INC;
+						}
+						minSearchNodeId = minSearchNodeId + INC;
+						maxSearchNodeId = maxSearchNodeId + INC;
+					}
+				}
+
+				return result;
+			}
+		};
+
+		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("PlanningModePatch", transactionService.getRetryingTransactionHelper(),
+				workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 1000);
+
+		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<>() {
+
+			@Override
+			public void afterProcess() throws Throwable {
+				//Do Nothing
+
+			}
+
+			@Override
+			public void beforeProcess() throws Throwable {
+				//Do Nothing
+
+			}
+
+			@Override
+			public String getIdentifier(NodeRef entry) {
+				return entry.toString();
+			}
+
+			@Override
+			public void process(NodeRef projectNodeRef) throws Throwable {
+				ruleService.disableRules();
+				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
+				policyBehaviourFilter.disableBehaviour();
+
+				if (nodeService.exists(projectNodeRef)) {
+					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
+					if (nodeService.getProperty(projectNodeRef, ProjectModel.PROP_PROJECT_PLANNING_MODE) == null) {
+						if (nodeService.getProperty(projectNodeRef, ProjectModel.PROP_PROJECT_DUE_DATE) == null) {
+							nodeService.setProperty(projectNodeRef, ProjectModel.PROP_PROJECT_PLANNING_MODE, PlanningMode.RetroPlanning);
+						} else {
+							nodeService.setProperty(projectNodeRef, ProjectModel.PROP_PROJECT_PLANNING_MODE, PlanningMode.Planning);
 						}
 					}
 
-					return result;
+				} else {
+					logger.warn("projectNodeRef doesn't exist : " + projectNodeRef);
 				}
-			};
+				ruleService.enableRules();
+			}
 
-			BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("PlanningModePatch",
-					transactionService.getRetryingTransactionHelper(), workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 1000);
+		};
 
-			BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
-
-				public void afterProcess() throws Throwable {
-					ruleService.disableRules();
-				}
-
-				public void beforeProcess() throws Throwable {
-					ruleService.enableRules();
-				}
-
-				public String getIdentifier(NodeRef entry) {
-					return entry.toString();
-				}
-
-				public void process(NodeRef projectNodeRef) throws Throwable {
-					
-					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
-					policyBehaviourFilter.disableBehaviour();
-					
-					if (nodeService.exists(projectNodeRef)) {
-						AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
-						if(nodeService.getProperty(projectNodeRef, ProjectModel.PROP_PROJECT_PLANNING_MODE) == null){
-							if(nodeService.getProperty(projectNodeRef, ProjectModel.PROP_PROJECT_DUE_DATE) == null){
-								nodeService.setProperty(projectNodeRef, ProjectModel.PROP_PROJECT_PLANNING_MODE, PlanningMode.RetroPlanning);
-							}
-							else{
-								nodeService.setProperty(projectNodeRef, ProjectModel.PROP_PROJECT_PLANNING_MODE, PlanningMode.Planning);
-							}															
-						}					
-						
-					} else {
-						logger.warn("projectNodeRef doesn't exist : " + projectNodeRef);
-					}
-
-				}
-
-			};
-
-			batchProcessor.processLong(worker, true);
-		
+		batchProcessor.processLong(worker, true);
 
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}

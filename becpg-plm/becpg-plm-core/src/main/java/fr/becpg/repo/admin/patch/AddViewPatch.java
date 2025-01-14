@@ -40,7 +40,7 @@ public class AddViewPatch extends AbstractBeCPGPatch {
 	private QNameDAO qnameDAO;
 	private RuleService ruleService;
 	private EntityTplService entityTplService;
-		
+
 	/**
 	 * <p>Setter for the field <code>entityTplService</code>.</p>
 	 *
@@ -50,21 +50,19 @@ public class AddViewPatch extends AbstractBeCPGPatch {
 		this.entityTplService = entityTplService;
 	}
 
-
 	/** {@inheritDoc} */
 	@Override
 	protected String applyInternal() throws Exception {
 
-			AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
-			
-			doForAspect(PLMModel.ASPECT_PRODUCT);
+		AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
-		
+		doForAspect(PLMModel.ASPECT_PRODUCT);
+
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}
 
 	private void doForAspect(final QName type) {
-		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
+		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<>() {
 			final List<NodeRef> result = new ArrayList<>();
 
 			final long maxNodeId = getNodeDAO().getMaxNodeId();
@@ -74,24 +72,25 @@ public class AddViewPatch extends AbstractBeCPGPatch {
 
 			final Pair<Long, QName> val = getQnameDAO().getQName(type);
 
+			@Override
 			public int getTotalEstimatedWorkSize() {
 				return result.size();
 			}
-			
+
 			@Override
 			public long getTotalEstimatedWorkSizeLong() {
 				return getTotalEstimatedWorkSize();
 			}
 
+			@Override
 			public Collection<NodeRef> getNextWork() {
 				if (val != null) {
 					Long typeQNameId = val.getFirst();
 
 					result.clear();
 
-					while (result.isEmpty() && minSearchNodeId < maxNodeId) {
-						
-						
+					while (result.isEmpty() && (minSearchNodeId < maxNodeId)) {
+
 						List<Long> nodeids = getPatchDAO().getNodesByAspectQNameId(typeQNameId, minSearchNodeId, maxSearchNodeId);
 
 						for (Long nodeid : nodeids) {
@@ -109,34 +108,41 @@ public class AddViewPatch extends AbstractBeCPGPatch {
 			}
 		};
 
-		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("AddViewPatch",
-				transactionService.getRetryingTransactionHelper(), workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 1000);
+		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("AddViewPatch", transactionService.getRetryingTransactionHelper(), workProvider,
+				BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 1000);
 
-		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
+		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<>() {
 
+			@Override
 			public void afterProcess() throws Throwable {
-				ruleService.enableRules();
+				//Do nothing
 			}
 
+			@Override
 			public void beforeProcess() throws Throwable {
-				ruleService.disableRules();
+				//Do nothing
 			}
 
+			@Override
 			public String getIdentifier(NodeRef entry) {
 				return entry.toString();
 			}
 
+			@Override
 			public void process(NodeRef entityNodeRef) throws Throwable {
-				
-				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();				
-				
+
+				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
+
 				if (nodeService.exists(entityNodeRef)) {
-					if(nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL) ||
-							nodeService.getTargetAssocs(entityNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF).isEmpty()){
+
+					if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)
+							|| nodeService.getTargetAssocs(entityNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF).isEmpty()) {
 						logger.debug("Create views on entity " + entityNodeRef);
+						ruleService.disableRules();
 						entityTplService.createView(entityNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 						entityTplService.createView(entityNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_REPORTS);
-					}					
+						ruleService.enableRules();
+					}
 				} else {
 					logger.warn("entityNodeRef doesn't exist : " + entityNodeRef);
 				}
@@ -146,7 +152,7 @@ public class AddViewPatch extends AbstractBeCPGPatch {
 		};
 
 		batchProcessor.processLong(worker, true);
-	
+
 	}
 
 	/**

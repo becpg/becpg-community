@@ -47,7 +47,6 @@ public class PMMaterialPatch extends AbstractBeCPGPatch {
 	private RuleService ruleService;
 	private AssociationService associationService;
 
-
 	/**
 	 * <p>Setter for the field <code>ruleService</code>.</p>
 	 *
@@ -61,7 +60,7 @@ public class PMMaterialPatch extends AbstractBeCPGPatch {
 	@Override
 	protected String applyInternal() throws Exception {
 
-		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
+		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<>() {
 			final List<NodeRef> result = new ArrayList<>();
 
 			final long maxNodeId = getNodeDAO().getMaxNodeId();
@@ -74,7 +73,7 @@ public class PMMaterialPatch extends AbstractBeCPGPatch {
 			public int getTotalEstimatedWorkSize() {
 				return result.size();
 			}
-			
+
 			@Override
 			public long getTotalEstimatedWorkSizeLong() {
 				return getTotalEstimatedWorkSize();
@@ -104,16 +103,16 @@ public class PMMaterialPatch extends AbstractBeCPGPatch {
 			}
 		};
 
-		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("PMMaterialPatch", transactionService.getRetryingTransactionHelper(), workProvider,
-				BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 500);
+		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("PMMaterialPatch", transactionService.getRetryingTransactionHelper(),
+				workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 500);
 
-		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
+		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<>() {
 
 			List<NodeRef> materials = new ArrayList<>();
 
 			@Override
 			public void afterProcess() throws Throwable {
-				ruleService.enableRules();
+				//Do nothing
 
 			}
 
@@ -123,7 +122,6 @@ public class PMMaterialPatch extends AbstractBeCPGPatch {
 				materials = BeCPGQueryBuilder.createQuery().selectNodesByPath(nodeService.getRootNode(RepoConsts.SPACES_STORE),
 						"/app:company_home/" + AbstractBeCPGQueryBuilder.encodePath("/System/Lists/bcpg:entityLists/pmMaterials") + "/*");
 
-				ruleService.disableRules();
 			}
 
 			@Override
@@ -134,6 +132,8 @@ public class PMMaterialPatch extends AbstractBeCPGPatch {
 			@SuppressWarnings("unchecked")
 			@Override
 			public void process(NodeRef dataListNodeRef) throws Throwable {
+				ruleService.disableRules();
+
 				if (nodeService.exists(dataListNodeRef)) {
 					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 					policyBehaviourFilter.disableBehaviour();
@@ -161,6 +161,7 @@ public class PMMaterialPatch extends AbstractBeCPGPatch {
 				} else {
 					logger.warn("node doesn't exist : " + dataListNodeRef);
 				}
+				ruleService.enableRules();
 			}
 
 		};
@@ -241,5 +242,4 @@ public class PMMaterialPatch extends AbstractBeCPGPatch {
 		this.associationService = associationService;
 	}
 
-	
 }

@@ -138,15 +138,13 @@ public class ProjectActivityPatch extends AbstractBeCPGPatch {
 		this.attributeExtractorService = attributeExtractorService;
 	}
 
-
 	/** {@inheritDoc} */
 	@Override
 	protected String applyInternal() throws Exception {
 
 		AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
-		
 
-		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
+		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<>() {
 			final List<NodeRef> result = new ArrayList<>();
 
 			final long maxNodeId = getNodeDAO().getMaxNodeId();
@@ -190,7 +188,7 @@ public class ProjectActivityPatch extends AbstractBeCPGPatch {
 		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("ProjectActivityPatch", transactionService.getRetryingTransactionHelper(),
 				workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 1000);
 
-		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
+		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<>() {
 
 			@Override
 			public void afterProcess() throws Throwable {
@@ -201,13 +199,12 @@ public class ProjectActivityPatch extends AbstractBeCPGPatch {
 			public void beforeProcess() throws Throwable {
 				ruleService.disableRules();
 			}
-			
 
 			@Override
 			public String getIdentifier(NodeRef entry) {
 				return entry.toString();
 			}
-			
+
 			@Override
 			public void process(NodeRef activityNodeRef) throws Throwable {
 
@@ -265,7 +262,7 @@ public class ProjectActivityPatch extends AbstractBeCPGPatch {
 					nodeService.addAspect(activityNodeRef, ContentModel.ASPECT_TEMPORARY, new HashMap<>());
 					nodeService.deleteNode(activityNodeRef);
 
-				} 
+				}
 
 				policyBehaviourFilter.enableBehaviour();
 
@@ -289,12 +286,11 @@ public class ProjectActivityPatch extends AbstractBeCPGPatch {
 			public int getTotalEstimatedWorkSize() {
 				return result.size();
 			}
-			
+
 			@Override
 			public long getTotalEstimatedWorkSizeLong() {
 				return getTotalEstimatedWorkSize();
 			}
-			
 
 			@Override
 			public Collection<NodeRef> getNextWork() {
@@ -320,16 +316,18 @@ public class ProjectActivityPatch extends AbstractBeCPGPatch {
 
 				return result;
 			}
-		}, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 1000).process(new BatchProcessWorker<NodeRef>() {
+		}, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 1000).processLong(new BatchProcessWorker<NodeRef>() {
 
 			@Override
 			public void afterProcess() throws Throwable {
-				ruleService.enableRules();
+				//Do Nothing
+
 			}
 
 			@Override
 			public void beforeProcess() throws Throwable {
-				ruleService.disableRules();
+				//Do Nothing
+
 			}
 
 			@Override
@@ -339,24 +337,21 @@ public class ProjectActivityPatch extends AbstractBeCPGPatch {
 
 			@Override
 			public void process(NodeRef dataListNodeRef) throws Throwable {
-
+				ruleService.disableRules();
 				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
 				policyBehaviourFilter.disableBehaviour();
-				if (nodeService.exists(dataListNodeRef) && dataListNodeRef.getStoreRef().getProtocol().equals(StoreRef.PROTOCOL_WORKSPACE)) {
-					if (TYPE_ACTIVITY_LIST.toPrefixString(namespaceService)
-							.equals(nodeService.getProperty(dataListNodeRef, DataListModel.PROP_DATALISTITEMTYPE))) {
-						nodeService.setProperty(dataListNodeRef, DataListModel.PROP_DATALISTITEMTYPE,
-								BeCPGModel.TYPE_ACTIVITY_LIST.toPrefixString(namespaceService));
-					}
-
+				if ((nodeService.exists(dataListNodeRef) && dataListNodeRef.getStoreRef().getProtocol().equals(StoreRef.PROTOCOL_WORKSPACE))
+						&& TYPE_ACTIVITY_LIST.toPrefixString(namespaceService)
+								.equals(nodeService.getProperty(dataListNodeRef, DataListModel.PROP_DATALISTITEMTYPE))) {
+					nodeService.setProperty(dataListNodeRef, DataListModel.PROP_DATALISTITEMTYPE,
+							BeCPGModel.TYPE_ACTIVITY_LIST.toPrefixString(namespaceService));
 				}
 				policyBehaviourFilter.enableBehaviour();
-
+				ruleService.enableRules();
 			}
 
 		}, true);
-		
 
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}

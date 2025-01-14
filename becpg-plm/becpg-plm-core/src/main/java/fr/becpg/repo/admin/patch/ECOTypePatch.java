@@ -39,7 +39,7 @@ public class ECOTypePatch extends AbstractBeCPGPatch {
 	private QNameDAO qnameDAO;
 	private BehaviourFilter policyBehaviourFilter;
 	private RuleService ruleService;
-	
+
 	/**
 	 * <p>Setter for the field <code>ruleService</code>.</p>
 	 *
@@ -52,9 +52,8 @@ public class ECOTypePatch extends AbstractBeCPGPatch {
 	/** {@inheritDoc} */
 	@Override
 	protected String applyInternal() throws Exception {
-		
 
-		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
+		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<>() {
 			final List<NodeRef> result = new ArrayList<>();
 
 			final long maxNodeId = getNodeDAO().getMaxNodeId();
@@ -63,22 +62,24 @@ public class ECOTypePatch extends AbstractBeCPGPatch {
 
 			final Pair<Long, QName> val = getQnameDAO().getQName(ECMModel.TYPE_ECO);
 
+			@Override
 			public int getTotalEstimatedWorkSize() {
 				return result.size();
 			}
-			
+
 			@Override
 			public long getTotalEstimatedWorkSizeLong() {
 				return getTotalEstimatedWorkSize();
 			}
 
+			@Override
 			public Collection<NodeRef> getNextWork() {
 				if (val != null) {
 					Long typeQNameId = val.getFirst();
 
 					result.clear();
 
-					while (result.isEmpty() && minSearchNodeId < maxNodeId) {
+					while (result.isEmpty() && (minSearchNodeId < maxNodeId)) {
 						List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, minSearchNodeId + INC);
 
 						for (Long nodeid : nodeids) {
@@ -95,35 +96,42 @@ public class ECOTypePatch extends AbstractBeCPGPatch {
 			}
 		};
 
-		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("ECOTypePatch", transactionService.getRetryingTransactionHelper(),
-				workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 500);
+		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("ECOTypePatch", transactionService.getRetryingTransactionHelper(), workProvider,
+				BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 500);
 
-		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
+		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<>() {
 
+			@Override
 			public void afterProcess() throws Throwable {
-				ruleService.enableRules();	
+				//Do nothing
 			}
 
+			@Override
 			public void beforeProcess() throws Throwable {
-				ruleService.disableRules();
+				//Do nothing
 			}
 
+			@Override
 			public String getIdentifier(NodeRef entry) {
 				return entry.toString();
 			}
 
+			@Override
 			public void process(NodeRef dataListNodeRef) throws Throwable {
+				ruleService.disableRules();
 				if (nodeService.exists(dataListNodeRef)) {
 					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 					policyBehaviourFilter.disableBehaviour();
 					String oldType = (String) nodeService.getProperty(dataListNodeRef, ECMModel.PROP_ECO_TYPE);
-					if (oldType != null && ! (ChangeOrderType.Replacement.toString().equals(oldType) || ChangeOrderType.Merge.toString().equals(oldType))) {
+					if ((oldType != null)
+							&& !(ChangeOrderType.Replacement.toString().equals(oldType) || ChangeOrderType.Merge.toString().equals(oldType))) {
 						nodeService.setProperty(dataListNodeRef, ECMModel.PROP_ECO_TYPE, ChangeOrderType.Replacement.toString());
 					}
 
 				} else {
 					logger.warn("dataListNodeRef doesn't exist : " + dataListNodeRef);
 				}
+				ruleService.enableRules();
 			}
 
 		};
