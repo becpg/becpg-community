@@ -9,8 +9,8 @@ import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.model.AbstractManualDataItem;
 import fr.becpg.repo.repository.model.AspectAwareDataItem;
-import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.repository.model.CopiableDataItem;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 
@@ -22,7 +22,7 @@ import fr.becpg.repo.repository.model.SimpleCharactDataItem;
  */
 @AlfType
 @AlfQname(qname = "bcpg:toxList")
-public class ToxListDataItem extends BeCPGDataObject implements SimpleCharactDataItem, AspectAwareDataItem {
+public class ToxListDataItem extends AbstractManualDataItem implements SimpleCharactDataItem, AspectAwareDataItem {
 
 	private static final long serialVersionUID = 8297326459126736070L;
 
