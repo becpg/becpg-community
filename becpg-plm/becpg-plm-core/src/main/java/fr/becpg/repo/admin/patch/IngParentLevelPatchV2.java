@@ -100,11 +100,11 @@ public class IngParentLevelPatchV2 extends AbstractBeCPGPatch {
 			BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
 
 				public void afterProcess() throws Throwable {
-					ruleService.disableRules();
+					
 				}
 
 				public void beforeProcess() throws Throwable {
-					ruleService.enableRules();
+					
 				}
 
 				public String getIdentifier(NodeRef entry) {
@@ -112,7 +112,7 @@ public class IngParentLevelPatchV2 extends AbstractBeCPGPatch {
 				}
 
 				public void process(NodeRef dataListNodeRef) throws Throwable {
-					
+					ruleService.disableRules();
 					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 					policyBehaviourFilter.disableBehaviour();
 					
@@ -133,7 +133,7 @@ public class IngParentLevelPatchV2 extends AbstractBeCPGPatch {
 					} else {
 						logger.warn("dataListNodeRef doesn't exist : " + dataListNodeRef);
 					}
-
+					ruleService.enableRules();
 				}
 
 			};
