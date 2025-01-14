@@ -113,11 +113,11 @@ public class NutListMiniMaxiPatch extends AbstractBeCPGPatch {
 		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
 
 			public void afterProcess() throws Throwable {
-				ruleService.enableRules();
+				
 			}
 
 			public void beforeProcess() throws Throwable {
-				ruleService.disableRules();
+				
 			}
 
 			public String getIdentifier(NodeRef entry) {
@@ -125,7 +125,7 @@ public class NutListMiniMaxiPatch extends AbstractBeCPGPatch {
 			}
 
 			public void process(NodeRef entityNodeRef) throws Throwable {
-
+				ruleService.disableRules();
 				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
 				if (nodeService.exists(entityNodeRef) &&  entityNodeRef.getStoreRef().equals(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE)
@@ -164,7 +164,7 @@ public class NutListMiniMaxiPatch extends AbstractBeCPGPatch {
 						logger.warn("dataListNodeRef doesn't exist : " + entityNodeRef);
 					}
 				}
-
+				ruleService.enableRules();
 			}
 
 		};
