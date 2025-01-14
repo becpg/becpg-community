@@ -42,25 +42,23 @@ public class RemovePalletNbOfBoxesPatch extends AbstractBeCPGPatch {
 	private BehaviourFilter policyBehaviourFilter;
 	private RuleService ruleService;
 
-
 	/** {@inheritDoc} */
 	@Override
 	protected String applyInternal() throws Exception {
 
-			AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
-			
-			doForType(PLMModel.TYPE_PACKAGINGMATERIAL);
-			doForType(PLMModel.TYPE_FINISHEDPRODUCT);
-			doForType(PLMModel.TYPE_PACKAGINGKIT);
-			doForType(PLMModel.TYPE_RAWMATERIAL);
-			doForType(PLMModel.TYPE_SEMIFINISHEDPRODUCT);
+		AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
-		
+		doForType(PLMModel.TYPE_PACKAGINGMATERIAL);
+		doForType(PLMModel.TYPE_FINISHEDPRODUCT);
+		doForType(PLMModel.TYPE_PACKAGINGKIT);
+		doForType(PLMModel.TYPE_RAWMATERIAL);
+		doForType(PLMModel.TYPE_SEMIFINISHEDPRODUCT);
+
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}
 
 	private void doForType(final QName type) {
-		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
+		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<>() {
 			final List<NodeRef> result = new ArrayList<>();
 
 			final long maxNodeId = getNodeDAO().getMaxNodeId();
@@ -70,6 +68,7 @@ public class RemovePalletNbOfBoxesPatch extends AbstractBeCPGPatch {
 
 			final Pair<Long, QName> val = getQnameDAO().getQName(type);
 
+			@Override
 			public int getTotalEstimatedWorkSize() {
 				return result.size();
 			}
@@ -78,16 +77,16 @@ public class RemovePalletNbOfBoxesPatch extends AbstractBeCPGPatch {
 			public long getTotalEstimatedWorkSizeLong() {
 				return getTotalEstimatedWorkSize();
 			}
-			
+
+			@Override
 			public Collection<NodeRef> getNextWork() {
 				if (val != null) {
 					Long typeQNameId = val.getFirst();
 
 					result.clear();
 
-					while (result.isEmpty() && minSearchNodeId < maxNodeId) {
-						
-						
+					while (result.isEmpty() && (minSearchNodeId < maxNodeId)) {
+
 						List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, maxSearchNodeId);
 
 						for (Long nodeid : nodeids) {
@@ -105,47 +104,52 @@ public class RemovePalletNbOfBoxesPatch extends AbstractBeCPGPatch {
 			}
 		};
 
-		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("RemovePalletNbOfBoxesPatch",
-				transactionService.getRetryingTransactionHelper(), workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 1000);
+		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("RemovePalletNbOfBoxesPatch", transactionService.getRetryingTransactionHelper(),
+				workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 1000);
 
-		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
+		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<>() {
 
+			@Override
 			public void afterProcess() throws Throwable {
-				ruleService.enableRules();
+				//Do nothing
 			}
 
+			@Override
 			public void beforeProcess() throws Throwable {
-				ruleService.disableRules();
+				//Do nothing
 			}
 
+			@Override
 			public String getIdentifier(NodeRef entry) {
 				return entry.toString();
 			}
 
+			@Override
 			public void process(NodeRef productNodeRef) throws Throwable {
-				
+				ruleService.disableRules();
 				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 				policyBehaviourFilter.disableBehaviour();
-				
+
 				if (nodeService.exists(productNodeRef)) {
 					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
-					
-					if(!nodeService.hasAspect(productNodeRef, BeCPGModel.ASPECT_FORMULATED_ENTITY)){
+
+					if (!nodeService.hasAspect(productNodeRef, BeCPGModel.ASPECT_FORMULATED_ENTITY)) {
 						nodeService.addAspect(productNodeRef, BeCPGModel.ASPECT_FORMULATED_ENTITY, new HashMap<>());
 					}
-					
+
 					nodeService.removeProperty(productNodeRef, QName.createQName(PackModel.PACK_URI, "palletNbOfBoxes"));
-					nodeService.removeProperty(productNodeRef,  QName.createQName(BeCPGModel.BECPG_URI, "productYield"));
+					nodeService.removeProperty(productNodeRef, QName.createQName(BeCPGModel.BECPG_URI, "productYield"));
 				} else {
 					logger.warn("productNodeRef doesn't exist : " + productNodeRef);
 				}
+				ruleService.enableRules();
 
 			}
 
 		};
 
 		batchProcessor.processLong(worker, true);
-	
+
 	}
 
 	/**

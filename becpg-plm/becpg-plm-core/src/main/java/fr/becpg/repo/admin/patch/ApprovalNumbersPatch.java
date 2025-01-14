@@ -44,7 +44,7 @@ public class ApprovalNumbersPatch extends AbstractBeCPGPatch {
 
 	private BehaviourFilter policyBehaviourFilter;
 	private RuleService ruleService;
-	
+
 	/** {@inheritDoc} */
 	@Override
 	protected String applyInternal() throws Exception {
@@ -63,7 +63,7 @@ public class ApprovalNumbersPatch extends AbstractBeCPGPatch {
 			public int getTotalEstimatedWorkSize() {
 				return result.size();
 			}
-			
+
 			@Override
 			public long getTotalEstimatedWorkSizeLong() {
 				return getTotalEstimatedWorkSize();
@@ -103,12 +103,12 @@ public class ApprovalNumbersPatch extends AbstractBeCPGPatch {
 
 			@Override
 			public void afterProcess() throws Throwable {
-				ruleService.enableRules();
+				//Do nothing
 			}
 
 			@Override
 			public void beforeProcess() throws Throwable {
-				ruleService.disableRules();
+				//Do nothing
 			}
 
 			@Override
@@ -118,7 +118,7 @@ public class ApprovalNumbersPatch extends AbstractBeCPGPatch {
 
 			@Override
 			public void process(NodeRef dataListNodeRef) throws Throwable {
-
+				ruleService.disableRules();
 				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 				policyBehaviourFilter.disableBehaviour();
 
@@ -139,6 +139,7 @@ public class ApprovalNumbersPatch extends AbstractBeCPGPatch {
 					logger.debug("Setting approval number prop for node " + dataListNodeRef + " to \"" + approvalNumberName + "\"");
 					nodeService.setProperty(dataListNodeRef, ASSOC_PLANT_APPROVAL_NUMBERS, approvalNumberName);
 				}
+				ruleService.enableRules();
 			}
 
 		};
