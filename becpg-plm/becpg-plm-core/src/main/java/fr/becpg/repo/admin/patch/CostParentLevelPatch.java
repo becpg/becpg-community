@@ -105,11 +105,11 @@ public class CostParentLevelPatch extends AbstractBeCPGPatch {
 			BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
 
 				public void afterProcess() throws Throwable {
-					ruleService.enableRules();									
+													
 				}
 
 				public void beforeProcess() throws Throwable {
-					ruleService.disableRules();					
+										
 				}
 
 				public String getIdentifier(NodeRef entry) {
@@ -117,7 +117,7 @@ public class CostParentLevelPatch extends AbstractBeCPGPatch {
 				}
 
 				public void process(NodeRef dataListNodeRef) throws Throwable {									
-					
+					ruleService.disableRules();
 					if (nodeService.exists(dataListNodeRef)) {
 						AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 						if(!nodeService.hasAspect(dataListNodeRef, BeCPGModel.ASPECT_DEPTH_LEVEL)){
@@ -140,7 +140,7 @@ public class CostParentLevelPatch extends AbstractBeCPGPatch {
 					} else {
 						logger.warn("dataListNodeRef doesn't exist : " + dataListNodeRef);
 					}
-
+					ruleService.enableRules();	
 				}
 
 			};
