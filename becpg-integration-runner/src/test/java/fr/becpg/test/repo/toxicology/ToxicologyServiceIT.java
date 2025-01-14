@@ -66,6 +66,7 @@ public class ToxicologyServiceIT extends PLMBaseTestCase {
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "Adult RO Hair - test");
 			properties.put(PLMModel.PROP_TOX_VALUE, 110);
 			properties.put(PLMModel.PROP_TOX_CALCULATE_SYSTEMIC, true);
+			properties.put(PLMModel.PROP_TOX_CALCULATE_MAX, true);
 			properties.put(PLMModel.PROP_TOX_TYPES, new ArrayList<>(List.of(ToxType.SkinIrritationRinseOff, ToxType.Sensitization, ToxType.SystemicIngredient)));
 			adultROHairNodeRef = nodeService.createNode(toxFolder, ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
@@ -78,6 +79,7 @@ public class ToxicologyServiceIT extends PLMBaseTestCase {
 			properties = new HashMap<>();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "Adult RO Body - test");
 			properties.put(PLMModel.PROP_TOX_CALCULATE_SYSTEMIC, true);
+			properties.put(PLMModel.PROP_TOX_CALCULATE_MAX, true);
 			properties.put(PLMModel.PROP_TOX_VALUE, 220);
 			properties.put(PLMModel.PROP_TOX_TYPES, new ArrayList<>(List.of(ToxType.SkinIrritationRinseOff, ToxType.Sensitization, ToxType.SystemicIngredient)));
 			adultROBodyNodeRef = nodeService.createNode(toxFolder, ContentModel.ASSOC_CONTAINS,
@@ -91,6 +93,7 @@ public class ToxicologyServiceIT extends PLMBaseTestCase {
 			properties = new HashMap<>();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "Adult RO Face - test");
 			properties.put(PLMModel.PROP_TOX_CALCULATE_SYSTEMIC, true);
+			properties.put(PLMModel.PROP_TOX_CALCULATE_MAX, true);
 			properties.put(PLMModel.PROP_TOX_VALUE, 140);
 			properties.put(PLMModel.PROP_TOX_TYPES, new ArrayList<>(List.of(ToxType.SkinIrritationRinseOff, ToxType.Sensitization, ToxType.OcularIrritation, ToxType.SystemicIngredient)));
 			adultROFaceNodeRef = nodeService.createNode(toxFolder, ContentModel.ASSOC_CONTAINS,

@@ -11,6 +11,7 @@ import fr.becpg.repo.product.data.CharactDetailsValue;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.ToxListDataItem;
+import fr.becpg.repo.toxicology.ToxHelper;
 import fr.becpg.repo.toxicology.ToxicologyService;
 
 /**
@@ -41,10 +42,11 @@ public class ToxCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 		for (ToxListDataItem toxListDataItem : productData.getToxList()) {
 			if (ret.hasElement(toxListDataItem.getTox())) {
 				for (IngListDataItem ingListDataItem : productData.getIngList()) {
-					if (ingListDataItem.getQtyPerc() != null && ingListDataItem.getQtyPerc() != 0d) {
+					Double maxQuantity = ToxHelper.extractIngMaxQuantity(ingListDataItem);
+					if (maxQuantity != null && maxQuantity != 0d) {
 						Double maxValue = toxicologyService.computeMaxValue(ingListDataItem.getIng(), toxListDataItem.getTox());
 						if (maxValue != null) {
-							Double ingMaxValue = maxValue * 100 / ingListDataItem.getQtyPerc();
+							Double ingMaxValue = maxValue * 100 / maxQuantity;
 							CharactDetailsValue charactDetailValue = new CharactDetailsValue(productData.getNodeRef(), ingListDataItem.getIng(), ingListDataItem.getNodeRef(), ingMaxValue, 0, "%");
 							ret.addKeyValue(toxListDataItem.getTox(), charactDetailValue);
 						}
