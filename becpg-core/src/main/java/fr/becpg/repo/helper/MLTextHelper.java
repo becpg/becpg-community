@@ -109,7 +109,7 @@ public class MLTextHelper {
 				return localeLabel(a).compareTo(localeLabel(b));
 			});
 
-			logger.error("Init supported locale with: " + ret.toString());
+			logger.info("Init supported locale with: " + ret.toString());
 			
 		}
 		return supportedLocales;
