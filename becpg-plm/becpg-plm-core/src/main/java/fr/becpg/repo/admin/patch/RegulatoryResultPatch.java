@@ -99,10 +99,12 @@ public class RegulatoryResultPatch extends AbstractBeCPGPatch {
 
 			@Override
 			public void afterProcess() throws Throwable {
+				//Do NOthing
 			}
 
 			@Override
 			public void beforeProcess() throws Throwable {
+				//Do NOthing
 			}
 
 			@Override

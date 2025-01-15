@@ -39,9 +39,6 @@ public class ListValuePatch extends AbstractBeCPGPatch {
 	private QNameDAO qnameDAO;
 	private BehaviourFilter policyBehaviourFilter;
 	private RuleService ruleService;
-	
-	
-	
 
 	/**
 	 * <p>Setter for the field <code>ruleService</code>.</p>
@@ -56,7 +53,7 @@ public class ListValuePatch extends AbstractBeCPGPatch {
 	@Override
 	protected String applyInternal() throws Exception {
 
-		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
+		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<>() {
 			final List<NodeRef> result = new ArrayList<>();
 
 			final long maxNodeId = getNodeDAO().getMaxNodeId();
@@ -66,22 +63,24 @@ public class ListValuePatch extends AbstractBeCPGPatch {
 
 			final Pair<Long, QName> val = getQnameDAO().getQName(BeCPGModel.TYPE_LIST_VALUE);
 
+			@Override
 			public int getTotalEstimatedWorkSize() {
 				return result.size();
 			}
-			
+
 			@Override
 			public long getTotalEstimatedWorkSizeLong() {
 				return getTotalEstimatedWorkSize();
 			}
 
+			@Override
 			public Collection<NodeRef> getNextWork() {
 				if (val != null) {
 					Long typeQNameId = val.getFirst();
 
 					result.clear();
 
-					while (result.isEmpty() && minSearchNodeId < maxNodeId) {
+					while (result.isEmpty() && (minSearchNodeId < maxNodeId)) {
 						List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, maxSearchNodeId);
 
 						for (Long nodeid : nodeids) {
@@ -102,29 +101,34 @@ public class ListValuePatch extends AbstractBeCPGPatch {
 		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("ListValuePatch", transactionService.getRetryingTransactionHelper(),
 				workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 1000);
 
-		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
+		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<>() {
 
+			@Override
 			public void afterProcess() throws Throwable {
-				ruleService.enableRules();
-				
+				//Do nothing
+
 			}
 
+			@Override
 			public void beforeProcess() throws Throwable {
-				ruleService.disableRules();
+				//Do nothing
 			}
 
+			@Override
 			public String getIdentifier(NodeRef entry) {
 				return entry.toString();
 			}
 
+			@Override
 			public void process(NodeRef dataListNodeRef) throws Throwable {
+				ruleService.disableRules();
 				if (nodeService.exists(dataListNodeRef)) {
 					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 					policyBehaviourFilter.disableBehaviour();
 					String name = (String) nodeService.getProperty(dataListNodeRef, ContentModel.PROP_NAME);
 					Boolean isDeleted = (Boolean) nodeService.getProperty(dataListNodeRef, BeCPGModel.PROP_IS_DELETED);
 					if (name != null) {
-						nodeService.setProperty(dataListNodeRef, ContentModel.PROP_NAME, name.replaceAll("\\?", ""));
+						nodeService.setProperty(dataListNodeRef, ContentModel.PROP_NAME, name.replace("?", ""));
 						nodeService.setProperty(dataListNodeRef, BeCPGModel.PROP_LV_VALUE, name);
 						nodeService.setProperty(dataListNodeRef, BeCPGModel.PROP_IS_DELETED, isDeleted != null ? isDeleted : false);
 					}
@@ -132,13 +136,14 @@ public class ListValuePatch extends AbstractBeCPGPatch {
 				} else {
 					logger.warn("dataListNodeRef doesn't exist : " + dataListNodeRef);
 				}
+				ruleService.enableRules();
 			}
 
 		};
 
 		// Now set the batch processor to work
 
-		batchProcessor.process(worker, true);
+		batchProcessor.processLong(worker, true);
 
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}

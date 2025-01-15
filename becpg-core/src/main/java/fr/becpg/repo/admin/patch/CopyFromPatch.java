@@ -46,7 +46,6 @@ public class CopyFromPatch extends AbstractBeCPGPatch {
 	private RuleService ruleService;
 	private DictionaryService dictionaryService;
 
-
 	/**
 	 * <p>Setter for the field <code>ruleService</code>.</p>
 	 *
@@ -55,7 +54,7 @@ public class CopyFromPatch extends AbstractBeCPGPatch {
 	public void setRuleService(RuleService ruleService) {
 		this.ruleService = ruleService;
 	}
-	
+
 	/**
 	 * <p>Setter for the field <code>dictionaryService</code>.</p>
 	 *
@@ -64,8 +63,6 @@ public class CopyFromPatch extends AbstractBeCPGPatch {
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
 	}
-
-
 
 	/** {@inheritDoc} */
 	@Override
@@ -103,7 +100,7 @@ public class CopyFromPatch extends AbstractBeCPGPatch {
 			public int getTotalEstimatedWorkSize() {
 				return result.size();
 			}
-			
+
 			@Override
 			public long getTotalEstimatedWorkSizeLong() {
 				return getTotalEstimatedWorkSize();
@@ -141,13 +138,13 @@ public class CopyFromPatch extends AbstractBeCPGPatch {
 
 			@Override
 			public void afterProcess() throws Throwable {
-				ruleService.enableRules();
+				//Do nothing
 
 			}
 
 			@Override
 			public void beforeProcess() throws Throwable {
-				ruleService.disableRules();
+				//Do nothing
 			}
 
 			@Override
@@ -157,6 +154,7 @@ public class CopyFromPatch extends AbstractBeCPGPatch {
 
 			@Override
 			public void process(NodeRef dataListNodeRef) throws Throwable {
+				ruleService.disableRules();
 				if (nodeService.exists(dataListNodeRef) && nodeService.hasAspect(dataListNodeRef, ContentModel.ASPECT_COPIEDFROM)) {
 					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 					policyBehaviourFilter.disableBehaviour();
@@ -170,7 +168,8 @@ public class CopyFromPatch extends AbstractBeCPGPatch {
 
 					nodeService.removeAspect(dataListNodeRef, ContentModel.ASPECT_COPIEDFROM);
 
-				} 
+				}
+				ruleService.enableRules();
 			}
 
 		};

@@ -113,8 +113,10 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 		Collection<AuditEntry> auditEntries = internalListAuditEntries(plugin, auditQuery);
 		
 		if (plugin instanceof ExtraQueryDatabaseAuditPlugin) {
-			auditQuery = ((ExtraQueryDatabaseAuditPlugin) plugin).extraQuery(auditQuery);
-			auditEntries.addAll(internalListAuditEntries(plugin, auditQuery));
+			AuditQuery extraAuditQuery = ((ExtraQueryDatabaseAuditPlugin) plugin).extraQuery(auditQuery);
+			if (extraAuditQuery != null) {
+				auditEntries.addAll(internalListAuditEntries(plugin, extraAuditQuery));
+			}
 		}
 		
 		List<JSONObject> statistics = new ArrayList<>();

@@ -40,14 +40,13 @@ public class RemoveReqCtrlViewPatch extends AbstractBeCPGPatch {
 	private BehaviourFilter policyBehaviourFilter;
 	private RuleService ruleService;
 
-
 	/** {@inheritDoc} */
 	@Override
 	protected String applyInternal() throws Exception {
 
 		AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
-		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
+		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<>() {
 			final List<NodeRef> result = new ArrayList<>();
 
 			final long maxNodeId = getNodeDAO().getMaxNodeId();
@@ -61,7 +60,7 @@ public class RemoveReqCtrlViewPatch extends AbstractBeCPGPatch {
 			public int getTotalEstimatedWorkSize() {
 				return result.size();
 			}
-			
+
 			@Override
 			public long getTotalEstimatedWorkSizeLong() {
 				return getTotalEstimatedWorkSize();
@@ -96,16 +95,18 @@ public class RemoveReqCtrlViewPatch extends AbstractBeCPGPatch {
 		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("RemoveReqCtrlViewPatch", transactionService.getRetryingTransactionHelper(),
 				workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 1000);
 
-		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
+		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<>() {
 
 			@Override
 			public void afterProcess() throws Throwable {
-				ruleService.disableRules();
+				//Do Nothing
+
 			}
 
 			@Override
 			public void beforeProcess() throws Throwable {
-				ruleService.enableRules();
+				//Do Nothing
+
 			}
 
 			@Override
@@ -115,7 +116,7 @@ public class RemoveReqCtrlViewPatch extends AbstractBeCPGPatch {
 
 			@Override
 			public void process(NodeRef dataListNodeRef) throws Throwable {
-
+				ruleService.disableRules();
 				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 				policyBehaviourFilter.disableBehaviour();
 
@@ -126,7 +127,7 @@ public class RemoveReqCtrlViewPatch extends AbstractBeCPGPatch {
 				} else {
 					logger.warn("dataListNodeRef doesn't exist : " + dataListNodeRef);
 				}
-
+				ruleService.enableRules();
 			}
 
 		};

@@ -101,11 +101,12 @@ public class TaskDescPatch extends AbstractBeCPGPatch {
 			BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
 
 				public void afterProcess() throws Throwable {
-					ruleService.disableRules();
+					//Do Nothing
 				}
 
 				public void beforeProcess() throws Throwable {
-					ruleService.enableRules();
+					//Do Nothing
+
 				}
 
 				public String getIdentifier(NodeRef entry) {
@@ -113,7 +114,7 @@ public class TaskDescPatch extends AbstractBeCPGPatch {
 				}
 
 				public void process(NodeRef taskNodeRef) throws Throwable {
-					
+					ruleService.disableRules();
 					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 					policyBehaviourFilter.disableBehaviour();
 					
@@ -124,7 +125,7 @@ public class TaskDescPatch extends AbstractBeCPGPatch {
 					} else {
 						logger.warn("taskNodeRef doesn't exist : " + taskNodeRef);
 					}
-
+					ruleService.enableRules();
 				}
 
 			};
