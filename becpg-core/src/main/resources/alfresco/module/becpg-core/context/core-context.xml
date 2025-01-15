@@ -186,8 +186,7 @@
 
     
     <!-- Alfresco patch for country support under MLText -->
-
-	<bean id="mlPropertyInterceptor" class="fr.becpg.repo.multilingual.BeCPGMLPropertyInterceptor">
+	<bean id="mlPropertyInterceptor" class="fr.becpg.repo.multilingual.BeCPGMLPropertyInterceptor" depends-on="systemConfigurationRegistry">
 		<property name="nodeService">
 			<ref bean="mlAwareNodeService" />
 		</property>
@@ -199,6 +198,7 @@
 		</property>
 		<property name="namespaceService" ref="namespaceService" />
 	</bean>
+
 
 
 <!--  NotificationRule Job -->

@@ -802,6 +802,8 @@ public interface PLMModel {
 	/** Constant <code>PROP_TOX_CALCULATE_SYSTEMIC</code> */
 	QName PROP_TOX_CALCULATE_SYSTEMIC = QName.createQName(BeCPGModel.BECPG_URI, "toxCalculateSystemic");
 	
+	QName PROP_TOX_CALCULATE_MAX = QName.createQName(BeCPGModel.BECPG_URI, "toxCalculateMax");
+	
 	/** Constant <code>PROP_ING_TOX_DATA</code> */
 	QName PROP_ING_TOX_DATA = QName.createQName(BeCPGModel.BECPG_URI, "ingToxData");
 	
@@ -843,6 +845,10 @@ public interface PLMModel {
 
 	/** Constant <code>TYPE_REGULATORY_LIST</code> */
 	QName TYPE_REGULATORY_LIST = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryList");
+	
+	QName ASSOC_REGULATORY_COUNTRIES = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryCountries");
+	
+	QName ASSOC_REGULATORY_USAGE_REF = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryUsageRef");
 
 	/** Constant <code>TYPE_ING_REGULATORY_LIST</code> */
 	QName TYPE_ING_REGULATORY_LIST = QName.createQName(BeCPGModel.BECPG_URI, "ingRegulatoryList");
