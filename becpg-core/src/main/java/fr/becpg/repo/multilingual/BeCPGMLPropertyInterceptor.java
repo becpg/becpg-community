@@ -101,11 +101,10 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
 	}
 	
 	public BeCPGMLPropertyInterceptor() {
-		logger.error("Starting BeCPGMLPropertyInterceptor");
+		logger.info("Starting BeCPGMLPropertyInterceptor");
 		if(MLTextHelper.getSupportedLocales() == null || MLTextHelper.getSupportedLocales().isEmpty()) {
 			throw new IllegalStateException("Cannot start BeCPGMLPropertyInterceptor if getSupportedLocales is empty ");
-		}
-		
+		}	
 	}
 
 	/**
