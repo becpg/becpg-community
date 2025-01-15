@@ -42,23 +42,21 @@ public class FormulatedAspectPatch extends AbstractBeCPGPatch {
 
 	private IntegrityChecker integrityChecker;
 
-
 	/** {@inheritDoc} */
 	@Override
 	protected String applyInternal() throws Exception {
 
-			AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
-			
-			doForType(PLMModel.TYPE_PACKAGINGMATERIAL);
-			doForType(PLMModel.TYPE_RAWMATERIAL);
-			doForType(PLMModel.TYPE_RESOURCEPRODUCT);
+		AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
-		
+		doForType(PLMModel.TYPE_PACKAGINGMATERIAL);
+		doForType(PLMModel.TYPE_RAWMATERIAL);
+		doForType(PLMModel.TYPE_RESOURCEPRODUCT);
+
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}
 
 	private void doForType(final QName type) {
-		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
+		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<>() {
 			final List<NodeRef> result = new ArrayList<>();
 
 			final long maxNodeId = getNodeDAO().getMaxNodeId();
@@ -68,24 +66,25 @@ public class FormulatedAspectPatch extends AbstractBeCPGPatch {
 
 			final Pair<Long, QName> val = getQnameDAO().getQName(type);
 
+			@Override
 			public int getTotalEstimatedWorkSize() {
 				return result.size();
 			}
-			
+
 			@Override
 			public long getTotalEstimatedWorkSizeLong() {
 				return getTotalEstimatedWorkSize();
 			}
 
+			@Override
 			public Collection<NodeRef> getNextWork() {
 				if (val != null) {
 					Long typeQNameId = val.getFirst();
 
 					result.clear();
 
-					while (result.isEmpty() && minSearchNodeId < maxNodeId) {
-						
-						
+					while (result.isEmpty() && (minSearchNodeId < maxNodeId)) {
+
 						List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, maxSearchNodeId);
 
 						for (Long nodeid : nodeids) {
@@ -103,39 +102,42 @@ public class FormulatedAspectPatch extends AbstractBeCPGPatch {
 			}
 		};
 
-		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("FormulatedAspectPatch",
-				transactionService.getRetryingTransactionHelper(), workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 1000);
+		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("FormulatedAspectPatch", transactionService.getRetryingTransactionHelper(),
+				workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 1000);
 
-		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
+		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<>() {
 
+			@Override
 			public void afterProcess() throws Throwable {
-				ruleService.enableRules();
+				//Do nothing
 			}
 
+			@Override
 			public void beforeProcess() throws Throwable {
-				ruleService.disableRules();
+				//Do nothing
 			}
 
+			@Override
 			public String getIdentifier(NodeRef entry) {
 				return entry.toString();
 			}
 
+			@Override
 			public void process(NodeRef productNodeRef) throws Throwable {
-				
-				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();				
-				
-				if (nodeService.exists(productNodeRef) && productNodeRef.getStoreRef().getProtocol().equals(StoreRef.PROTOCOL_WORKSPACE) ) {
-					if(!nodeService.hasAspect(productNodeRef, BeCPGModel.ASPECT_FORMULATED_ENTITY)){
-						nodeService.addAspect(productNodeRef, BeCPGModel.ASPECT_FORMULATED_ENTITY, null);						
-					}
-					if(!nodeService.hasAspect(productNodeRef, BeCPGModel.ASPECT_ENTITY_TPL_REF)){
-						nodeService.addAspect(productNodeRef, BeCPGModel.ASPECT_ENTITY_TPL_REF, null);						
-					}
-					// nodeService.removeAspect(productNodeRef, QName.createQName(BeCPGModel.BECPG_URI, "entityVersionable"));
-				} else {
-					logger.warn("productNodeRef doesn't exist : " + productNodeRef +" or is not in workspace store");
-				}
 
+				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
+				ruleService.disableRules();
+				if (nodeService.exists(productNodeRef) && productNodeRef.getStoreRef().getProtocol().equals(StoreRef.PROTOCOL_WORKSPACE)) {
+					if (!nodeService.hasAspect(productNodeRef, BeCPGModel.ASPECT_FORMULATED_ENTITY)) {
+						nodeService.addAspect(productNodeRef, BeCPGModel.ASPECT_FORMULATED_ENTITY, null);
+					}
+					if (!nodeService.hasAspect(productNodeRef, BeCPGModel.ASPECT_ENTITY_TPL_REF)) {
+						nodeService.addAspect(productNodeRef, BeCPGModel.ASPECT_ENTITY_TPL_REF, null);
+					}
+				} else {
+					logger.warn("productNodeRef doesn't exist : " + productNodeRef + " or is not in workspace store");
+				}
+				ruleService.enableRules();
 			}
 
 		};
@@ -146,7 +148,7 @@ public class FormulatedAspectPatch extends AbstractBeCPGPatch {
 		} finally {
 			integrityChecker.setEnabled(true);
 		}
-	
+
 	}
 
 	/**
@@ -220,7 +222,6 @@ public class FormulatedAspectPatch extends AbstractBeCPGPatch {
 	public void setRuleService(RuleService ruleService) {
 		this.ruleService = ruleService;
 	}
-	
 
 	/**
 	 * <p>Setter for the field <code>integrityChecker</code>.</p>
@@ -230,6 +231,5 @@ public class FormulatedAspectPatch extends AbstractBeCPGPatch {
 	public void setIntegrityChecker(IntegrityChecker integrityChecker) {
 		this.integrityChecker = integrityChecker;
 	}
-	
 
 }

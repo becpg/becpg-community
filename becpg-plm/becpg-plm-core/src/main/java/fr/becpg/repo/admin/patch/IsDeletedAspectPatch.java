@@ -123,6 +123,7 @@ public class IsDeletedAspectPatch extends AbstractBeCPGPatch {
 
 		BatchProcessWorker<NodeRef> worker = new BatchProcessWorkerAdaptor<NodeRef>() {
 
+			@Override
 			public String getIdentifier(NodeRef entry) {
 				return entry.toString();
 			}
