@@ -87,9 +87,6 @@ public class MLTextHelper {
 	public static synchronized List<Locale> getSupportedLocales() {
 		if (supportedLocales == null) {
 
-			supportedLocales = new ArrayList<>();
-
-
 			List<Locale> ret = new ArrayList<>();
 			String localesText = supportedLocalesText;
 
