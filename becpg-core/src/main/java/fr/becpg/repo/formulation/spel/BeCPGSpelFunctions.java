@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -516,15 +517,24 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 * @return value being set
 		 */
 		public MLText updateMLText(MLText mlText, String locale, String value) {
-
 			if (mlText == null) {
 				mlText = new MLText();
 			}
 
-			if ((value != null) && !value.isEmpty()) {
-				mlText.addValue(MLTextHelper.parseLocale(locale), value);
+			if ((locale != null) && !locale.isBlank()) {
+				Locale loc = MLTextHelper.parseLocale(locale);
+
+				if ((value != null) && !value.isEmpty()) {
+					if (MLTextHelper.isSupportedLocale(loc)) {
+						mlText.addValue(loc, value);
+					} else {
+						logger.error("Unsupported locale in updateMLText " + loc);
+					}
+				} else {
+					mlText.removeValue(loc);
+				}
 			} else {
-				mlText.removeValue(MLTextHelper.parseLocale(locale));
+				logger.error("Null or empty locale in updateMLText ");
 			}
 
 			return mlText;
