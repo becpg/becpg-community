@@ -362,27 +362,29 @@ public class DecernisServiceImpl  extends AbstractLifecycleBean implements Decer
 
 		try {
 			JSONObject recipePayload = createRecipePayload(context);
-			
-			String recipeId = null;
-			
 			if (recipePayload != null) {
-				String url = serverUrl() + "/formulas";
+				String recipeId = context.getProduct().getRegulatoryRecipeId();
 				HttpEntity<String> request = createEntity(recipePayload.toString());
-				if (logger.isTraceEnabled()) {
-					logger.trace("POST url: " + url + " body: " + recipePayload);
+				String url = serverUrl() + "/formulas";
+				if (recipeId != null && !recipeId.isBlank()) {
+					url += "/" + recipeId;
+					if (logger.isTraceEnabled()) {
+						logger.trace("PUT url: " + url + " body: " + recipePayload);
+					}
+					logger.debug("Update decernis recipe : " + recipeId);
+					ResponseEntity<String> responseEntity = RestTemplateHelper.getRestTemplate().exchange(url, HttpMethod.PUT, request, String.class);
+					
+					if (!responseEntity.getStatusCode().is2xxSuccessful()) {
+						logger.debug("Error while updating recipe : " + recipeId + ", response is: " + responseEntity);
+						recipeId = postRecipe(recipePayload, request, url);
+					}
+				} else {
+					recipeId = postRecipe(recipePayload, request, url);
+					context.getProduct().setRegulatoryRecipeId(recipeId);
 				}
-				JSONObject jsonObject = new JSONObject(RestTemplateHelper.getRestTemplate().postForObject(url, request, String.class));
-				if (jsonObject.has("id")) {
-					recipeId = jsonObject.get("id").toString();
+				for (RegulatoryContextItem contextItem : context.getContextItems()) {
+					contextItem.getItem().setRegulatoryRecipeId(recipeId);
 				}
-			}
-			
-			logger.debug("Create decernis recipe : "+recipeId);
-			
-			context.getProduct().setRegulatoryRecipeId(recipeId);
-			
-			for (RegulatoryContextItem contextItem : context.getContextItems()) {
-				contextItem.getItem().setRegulatoryRecipeId(recipeId);
 			}
 		} catch (HttpStatusCodeException e) {
 			logger.error("Error while creating Decernis recipe: " + DecernisHelper.cleanError(e.getMessage()), e);
@@ -391,6 +393,19 @@ public class DecernisServiceImpl  extends AbstractLifecycleBean implements Decer
 					.ofDataType(RequirementDataType.Specification).withFormulationChainId(DecernisService.DECERNIS_CHAIN_ID);
 			context.getRequirements().add(req);
 		}
+	}
+
+	private String postRecipe(JSONObject recipePayload, HttpEntity<String> request, String url) {
+		if (logger.isTraceEnabled()) {
+			logger.trace("POST url: " + url + " body: " + recipePayload);
+		}
+		JSONObject jsonObject = new JSONObject(RestTemplateHelper.getRestTemplate().postForObject(url, request, String.class));
+		String recipeId = null;
+		if (jsonObject.has("id")) {
+			recipeId = jsonObject.get("id").toString();
+		}
+		logger.debug("Create decernis recipe : "+recipeId);
+		return recipeId;
 	}
 
 	private JSONObject createRecipePayload(RegulatoryContext context) throws JSONException {
