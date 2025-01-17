@@ -94,12 +94,6 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
 		this.namespaceService = namespaceService;
 	}
 	
-	public BeCPGMLPropertyInterceptor() {
-		logger.info("Starting BeCPGMLPropertyInterceptor");
-		if(MLTextHelper.getSupportedLocales() == null || MLTextHelper.getSupportedLocales().isEmpty()) {
-			logger.error("Cannot start BeCPGMLPropertyInterceptor if getSupportedLocales is empty ");
-		}	
-	}
 
 	/**
 	 * <p>isMLAware.</p>
