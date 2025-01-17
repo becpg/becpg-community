@@ -226,9 +226,13 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 		if (dataListItems != null) {
 			for (NodeRef dataListItem : dataListItems) {
 				
-				SimpleCharactDataItem o = (SimpleCharactDataItem) alfrescoRepository.findOne(dataListItem);
-					if (o != null) {
-						tmp.add(o.getCharactNodeRef());
+				if(entityDictionaryService.isSubClass(nodeService.getType(dataListItem), BeCPGModel.TYPE_CHARACT)) {
+					tmp.add(dataListItem);
+				} else {
+					SimpleCharactDataItem o = (SimpleCharactDataItem) alfrescoRepository.findOne(dataListItem);
+						if (o != null) {
+							tmp.add(o.getCharactNodeRef());
+					}
 				}
 			}
 		}

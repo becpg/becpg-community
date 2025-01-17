@@ -27,6 +27,7 @@
 	var $html = Alfresco.util.encodeHTML;
 
 	var REQFILTER_EVENTCLASS = Alfresco.util.generateDomId(null, "notificationsReqType");
+    var CHARACTDETAILS_EVENTCLASS = Alfresco.util.generateDomId(null, "charactDetails");
 
 	/**
 	 * ProductNotifications constructor.
@@ -154,6 +155,26 @@
 									instance.reloadDataTable();
 
 							}, true );
+                            
+                            YAHOO.Bubbling.addDefaultAction(CHARACTDETAILS_EVENTCLASS, function(layer, args) {
+                                    var owner = YAHOO.Bubbling.getOwnerByTagName(args[1].anchor, "span");
+                                    if (owner !== null) {
+                                        var splitted = owner.className.split("#");
+                                     
+                                           var dt = Alfresco.util.ComponentManager.find({
+                                            name: "beCPG.module.EntityDataGrid"
+                                        })[0];
+
+                                        var url = Alfresco.constants.URL_SERVICECONTEXT + "modules/entity-charact-details/entity-charact-details" + "?entityNodeRef="
+                                            + dt.options.entityNodeRef + "&itemType="
+                                            + encodeURIComponent(splitted[0].replace("_",":")) + "&dataListName="
+                                            + encodeURIComponent(dt.datalistMeta.name) + "&dataListItems=workspace://SpacesStore/" +splitted[1];
+
+                                        dt._showPanel(url, dt.id, null, "60em");
+
+                                    }
+                                    return true;
+                                });
 						},
 						
 
@@ -471,53 +492,64 @@
 								desc += '      <div class="rclReq-content"><ul>';
 
 								if (reqProducts) {
-									for ( var i in reqProducts) {
-										var product = reqProducts[i], pUrl = beCPG.util.entityURL(product.siteId, product.value);
-										var dataList = null;
-										if (product.metadata.indexOf("finishedProduct") != -1
-												|| product.metadata.indexOf("semiFinishedProduct") != -1) {
-											dataList =  "compoList";
-										} else if (product.metadata.indexOf("packagingKit") != -1) {
-											dataList =  "packagingList";
-										}
-										
-										switch (reqDataType) {
-											case 'Labelling':
-												dataList = "ingLabelingList";
-												break;
-											case 'Labelclaim':
-												dataList = "labelClaimList";
-												break;
-											case 'Physicochem':
-												dataList = "physicoChemList";
-												break;
-											case 'Nutrient':
-												dataList = "nutList";
-												break;
-											case 'Ingredient':
-												dataList = "ingList";
-												break;
-											case 'Allergen':
-												dataList = "allergenList";
-												break;
-											case 'Cost':
-												dataList = "costList";
-												break;
-										}
+                                    for (var i in reqProducts) {
+                                        var product = reqProducts[i], pUrl = beCPG.util.entityURL(product.siteId, product.value);
+                                        var dataList = null;
 
-										if(dataList!=null){
-											pUrl = beCPG.util.entityURL(product.siteId, product.value, null, null, dataList);
-										}
+                                        if (product.metadata == "ing") {
 
-										if (pUrl) {
-											pUrl += "&bcPath=true&bcList=" + this.options.list;
-										}
+                                            var ingNodeRef = new Alfresco.util.NodeRef(product.value);
+                                            desc += '<li><span class="' + product.metadata + '" ><span class="bcpg_ingList#' + ingNodeRef.id + '"><a class="charact-details '
+                                                +CHARACTDETAILS_EVENTCLASS+'" href="">'
+                                                + Alfresco.util.encodeHTML(product.displayValue) + '</a></span></span></li>';
 
-										desc += '<li><span class="' + product.metadata + '" ><a href="' + pUrl + '">'
-												+ Alfresco.util.encodeHTML(product.displayValue) + '</a></span></li>';
+                                        } else {
 
-									}
-								}
+                                            if (product.metadata.indexOf("finishedProduct") != -1
+                                                || product.metadata.indexOf("semiFinishedProduct") != -1) {
+                                                dataList = "compoList";
+                                            } else if (product.metadata.indexOf("packagingKit") != -1) {
+                                                dataList = "packagingList";
+                                            }
+
+                                            switch (reqDataType) {
+                                                case 'Labelling':
+                                                    dataList = "ingLabelingList";
+                                                    break;
+                                                case 'Labelclaim':
+                                                    dataList = "labelClaimList";
+                                                    break;
+                                                case 'Physicochem':
+                                                    dataList = "physicoChemList";
+                                                    break;
+                                                case 'Nutrient':
+                                                    dataList = "nutList";
+                                                    break;
+                                                case 'Ingredient':
+                                                    dataList = "ingList";
+                                                    break;
+                                                case 'Allergen':
+                                                    dataList = "allergenList";
+                                                    break;
+                                                case 'Cost':
+                                                    dataList = "costList";
+                                                    break;
+                                            }
+
+                                            if (dataList != null) {
+                                                pUrl = beCPG.util.entityURL(product.siteId, product.value, null, null, dataList);
+                                            }
+
+                                            if (pUrl) {
+                                                pUrl += "&bcPath=true&bcList=" + this.options.list;
+                                            }
+
+                                            desc += '<li><span class="' + product.metadata + '" ><a href="' + pUrl + '">'
+                                                + Alfresco.util.encodeHTML(product.displayValue) + '</a></span></li>';
+                                        }
+
+                                    }
+                                }
 								desc += '</ul></div>';
 								desc += '   </div>';
 								desc += '   <div class="clear"></div>';

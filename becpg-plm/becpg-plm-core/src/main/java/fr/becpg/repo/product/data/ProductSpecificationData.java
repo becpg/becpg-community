@@ -11,6 +11,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
+import fr.becpg.repo.product.data.productList.HazardClassificationListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.ResourceParamDataItem;
@@ -84,6 +85,16 @@ public class ProductSpecificationData extends ProductData {
 	 */
 	public ProductSpecificationData withNutList(List<NutListDataItem> nutList) {
 		setNutList(nutList);
+		return this;
+	}
+	
+	public ProductSpecificationData withHcList(List<HazardClassificationListDataItem> hList) {
+		setHcList(hList);
+		return this;
+	}
+	
+	public ProductSpecificationData withForbiddenIngList(List<ForbiddenIngListDataItem> forbiddenIngList) {
+		setForbiddenIngList(forbiddenIngList);
 		return this;
 	}
 
