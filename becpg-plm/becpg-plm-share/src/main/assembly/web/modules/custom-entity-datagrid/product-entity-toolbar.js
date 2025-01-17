@@ -404,7 +404,8 @@
 					(asset.name === "compoList" || asset.name === "processList" || asset.name === "packagingList"
 						|| asset.name === "ingLabelingList" || asset.name === "ingRegulatoryList" || asset.name === "nutList" || asset.name === "labelClaimList"
 						|| asset.name === "costList" || asset.name === "physicoChemList" || asset.name === "ingList" || asset.name === "allergenList"
-						|| asset.name === "priceList" || asset.name === "packMaterialList" || asset.name === "lcaList" || asset.name === "regulatoryList"
+						|| asset.name === "priceList" || asset.name === "hazardClassificationList" || asset.name === "svhcList"
+                         || asset.name === "packMaterialList" || asset.name === "lcaList" || asset.name === "regulatoryList"
 						|| asset.name === "View-properties") && beCPG.util.contains(entity.aspects,"bcpg:entityScoreAspect") ;
 			},
 			createWidget: function(containerDiv, instance) {
