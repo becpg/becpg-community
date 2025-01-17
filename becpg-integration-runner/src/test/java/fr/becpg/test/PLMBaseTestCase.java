@@ -339,7 +339,8 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 			List<NodeRef> ingsNodeRef = entityListDAO.getListItems(ingFolder, PLMModel.TYPE_ING);
 
 			for (NodeRef fileInfo : ingsNodeRef) {
-				if (((String) nodeService.getProperty(fileInfo, BeCPGModel.PROP_CHARACT_NAME)).startsWith("Ing ")) {
+				String name = ((String) nodeService.getProperty(fileInfo, BeCPGModel.PROP_CHARACT_NAME));
+				if (name!=null && name.startsWith("Ing ")) {
 					ings.add(fileInfo);
 				}
 			}
