@@ -424,7 +424,9 @@
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="nodeService" ref="nodeService" />
 				</bean>
-
+                <bean class="fr.becpg.repo.product.requirement.HazardClassificationRequirementScanner">
+                    <property name="mlNodeService" ref="mlAwareNodeService" />
+                </bean>
 			</list>
 		</property>
 	</bean>

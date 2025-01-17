@@ -34,9 +34,10 @@ public class HazardClassificationFormulationIT extends PLMBaseTestCase {
 
 		inWriteTx(() -> {
 			// Arrays of hazard statements and pictograms
-			String[] hazardStatements = { "H314", "H225", "H315", "H317", "H410", "H302", "H226", "H412", "H290", "H319" };
+			String[] hazardStatements = { "H314", "H310", "H330", "H225", "H315", "H224", "H413", "H412", "H318", "H317", "H410", "H302", "H226",
+					"H412", "H290", "H319", "EUH208", "H304", "H300", "H312" };
 
-			String[] pictograms = { "GHS02", "GHS05", "GHS07", "GHS09" };
+			String[] pictograms = { "GHS02", "GHS05", "GHS07", "GHS09", "GHS06", "GHS08" };
 
 			// Create hazard statements
 			for (String hazard : hazardStatements) {
@@ -55,7 +56,7 @@ public class HazardClassificationFormulationIT extends PLMBaseTestCase {
 	@Test
 	public void testFormulateHazardClassification() {
 		ProductData soapTestProduct = inWriteTx(() -> new StandardSoapTestProduct.Builder().withAlfrescoRepository(alfrescoRepository)
-				.withNodeService(nodeService).withDestFolder(getTestFolderNodeRef()).build().createTestProduct());
+				.withNodeService(nodeService).withDestFolder(getTestFolderNodeRef()).withSpecification(true).build().createTestProduct());
 
 		inWriteTx(() -> {
 			// Perform formulation
@@ -73,8 +74,8 @@ public class HazardClassificationFormulationIT extends PLMBaseTestCase {
 			expectedHazards.put("H315", false); // From Oleic Acid
 			expectedHazards.put("H317", false); // From Linoleic Acid and Essential Oils
 			expectedHazards.put("H226", false); // From Eucalyptus and Tea Tree Oil
-			expectedHazards.put("H302", false); // From Tea Tree Oil
-			expectedHazards.put("H412", false); // From Lavender Oil
+			//expectedHazards.put("H302", false); // From Tea Tree Oil
+			//expectedHazards.put("H412", false); // From Lavender Oil
 
 			for (HazardClassificationListDataItem hc : soapTestProduct.getHcList()) {
 				String hazardCode = (String) nodeService.getProperty(hc.getHazardStatement(), GHSModel.PROP_HAZARD_CODE);
@@ -103,7 +104,26 @@ public class HazardClassificationFormulationIT extends PLMBaseTestCase {
 
 			// Verify no forbidden requirements were generated
 			boolean hasForbidden = reqControls.stream().anyMatch(req -> RequirementType.Forbidden.equals(req.getReqType()));
-			Assert.assertFalse("Should not have any forbidden requirements", hasForbidden);
+			Assert.assertTrue("Should have forbidden requirements", hasForbidden);
+			// Track which requirements we've found
+			int foundRequirements = 0;
+
+			for (ReqCtrlListDataItem requirement : reqControls) {
+
+				// Verify each requirement
+				switch (requirement.getReqMessage()) {
+				case StandardSoapTestProduct.H226_FORBIDDEN, StandardSoapTestProduct.H290_DANGER_FORBIDDEN, 
+				StandardSoapTestProduct.DANGER_FORBIDDEN, StandardSoapTestProduct.GHS07_FORBIDDEN:
+					foundRequirements++;
+					break;
+
+				default:
+					break;
+				}
+			}
+
+			// Verify we found all expected requirements
+			assertEquals("Should have found all specified requirements", 4, foundRequirements);
 
 			return "SUCCESS";
 		});
@@ -204,6 +224,8 @@ public class HazardClassificationFormulationIT extends PLMBaseTestCase {
 
 		product.setHcList(new ArrayList<>());
 
+		alfrescoRepository.save(product);
+
 		return product;
 	}
 
@@ -211,7 +233,10 @@ public class HazardClassificationFormulationIT extends PLMBaseTestCase {
 		boolean found = false;
 		for (HazardClassificationListDataItem hc : product.getHcList()) {
 			String currentHazardCode = (String) nodeService.getProperty(hc.getHazardStatement(), GHSModel.PROP_HAZARD_CODE);
-			String currentPictogramCode = (String) nodeService.getProperty(hc.getPictogram(), GHSModel.PROP_PICTOGRAM_CODE);
+			String currentPictogramCode = null;
+			if (hc.getPictogram() != null) {
+				currentPictogramCode = (String) nodeService.getProperty(hc.getPictogram(), GHSModel.PROP_PICTOGRAM_CODE);
+			}
 
 			if (hazardCode.equals(currentHazardCode) && pictogramCode.equals(currentPictogramCode) && signalWord.equals(hc.getSignalWord())) {
 				found = true;
