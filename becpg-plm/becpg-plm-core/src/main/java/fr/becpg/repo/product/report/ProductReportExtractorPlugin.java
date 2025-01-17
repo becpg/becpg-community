@@ -1601,11 +1601,13 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 				Element variantElt = variantsElt.addElement(BeCPGModel.TYPE_VARIANT.getLocalName());
 				variantElt.addAttribute(ContentModel.PROP_NAME.getLocalName(), variant.getName());
+				variantElt.addAttribute(BeCPGModel.PROP_VARIANT_COLUMN.getLocalName(), variant.getVariantColumn());
 				variantElt.addAttribute(BeCPGModel.PROP_IS_DEFAULT_VARIANT.getLocalName(), Boolean.toString(variant.getIsDefaultVariant()));
 			}
 		} else {
 			Element variantElt = variantsElt.addElement(BeCPGModel.TYPE_VARIANT.getLocalName());
 			variantElt.addAttribute(ContentModel.PROP_NAME.getLocalName(), "");
+			variantElt.addAttribute(BeCPGModel.PROP_VARIANT_COLUMN.getLocalName(), "");
 			variantElt.addAttribute(BeCPGModel.PROP_IS_DEFAULT_VARIANT.getLocalName(), Boolean.TRUE.toString());
 		}
 		return defaultVariantNodeRef;
