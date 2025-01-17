@@ -5,13 +5,14 @@ import java.util.Map;
 
 import fr.becpg.repo.formulation.spel.SpelFormulaContext;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.ing.IngItem;
 
 public class HazardClassificationFormulaContext implements SpelFormulaContext<ProductData> {
 
 	public static final String BOILING_POINT = "BOILING_POINT";
 	public static final String FLASH_POINT = "FLASH_POINT";
 	public static final String HYDROCARBON_PERC = "HYDROCARBON_PERC";
-
+	
 	public static final String ETA_VO = "ETA_VO";
 	public static final String ETA_VC = "ETA_VC";
 	public static final String ETA_IN_GAS = "ETA_IN_GAS";
@@ -32,17 +33,17 @@ public class HazardClassificationFormulaContext implements SpelFormulaContext<Pr
 	}
 
 	Map<String, Double> hSum;
-	Map<String, Map<String, Double>> details;
+	Map<String, Map<IngItem, Double>> details;
 	Map<String, Double> hMax;
 
 	ProductData entity;
 
-	Double boilingPoint = null;
-	Double flashPoint = null;
-	Double hydrocarbonPerc = null;
+	Double boilingPoint;
+	Double flashPoint;
+	Double hydrocarbonPerc;
 
 	public HazardClassificationFormulaContext(ProductData entity, Map<String, Double> hSum, Map<String, Double> hMax,
-			Map<String, Map<String, Double>> details, Double boilingPoint, Double flashPoint, Double hydrocarbonPerc) {
+			Map<String, Map<IngItem, Double>> details, Double boilingPoint, Double flashPoint, Double hydrocarbonPerc) {
 		this.hSum = hSum;
 		this.hMax = hMax;
 		this.details = details;
@@ -82,23 +83,30 @@ public class HazardClassificationFormulaContext implements SpelFormulaContext<Pr
 	 */
 
 	public Double getEtaVo() {
-		return hMax.getOrDefault(ETA_VO, 0d);
+		return computeETA(hSum.getOrDefault(ETA_VO, 0d));
+	}
+
+	private Double computeETA(Double ret) {
+		if(ret!=0d) {
+			ret = 100/ret;
+		}
+		return ret;
 	}
 
 	public Double getEtaVc() {
-		return hMax.getOrDefault(ETA_VC, 0d);
+		return computeETA(hSum.getOrDefault(ETA_VC, 0d));
 	}
 
 	public Double getEtaInGas() {
-		return hMax.getOrDefault(ETA_IN_GAS, 0d);
+		return computeETA(hSum.getOrDefault(ETA_IN_GAS, 0d));
 	}
 
 	public Double getEtaInVapor() {
-		return hMax.getOrDefault(ETA_IN_GAS, 0d);
+		return computeETA(hSum.getOrDefault(ETA_IN_GAS, 0d));
 	}
 
 	public Double getEtaInMist() {
-		return hMax.getOrDefault(ETA_IN_MIST, 0d);
+		return computeETA(hSum.getOrDefault(ETA_IN_MIST, 0d));
 	}
 
 	public Double getFlashPoint() {
@@ -126,10 +134,7 @@ public class HazardClassificationFormulaContext implements SpelFormulaContext<Pr
 	}
 
 	public Double hSum(String hazardStatement, String hazardClassCode) {
-		if (hazardClassCode != null) {
-			return hSum.getOrDefault(toCode(hazardStatement, hazardClassCode), 0d);
-		}
-		return hSum.getOrDefault(hazardStatement, 0d);
+		return hSum.getOrDefault(toCode(hazardStatement, hazardClassCode), 0d);
 	}
 
 	public Double hMax(String hazardStatement) {
@@ -137,42 +142,47 @@ public class HazardClassificationFormulaContext implements SpelFormulaContext<Pr
 	}
 
 	public Double hMax(String hazardStatement, String hazardClassCode) {
-		if (hazardClassCode != null) {
-			return hMax.getOrDefault(toCode(hazardStatement, hazardClassCode), 0d);
-		}
-		return hMax.getOrDefault(hazardStatement, 0d);
+		return hMax.getOrDefault(toCode(hazardStatement, hazardClassCode), 0d);
 	}
 
 	private String toCode(String hazardStatement, String hazardClassCode) {
-		return hazardClassCode + ":" + hazardStatement;
+		if (hazardClassCode != null) {
+			return hazardClassCode + ":" + hazardStatement;
+		}
+		return hazardStatement;
 	}
 
+	// Oblige à reformuler x2 ??
 	public Boolean isDangerousMisture() {
-		return false; //TODO
+		return entity.getHcList()!=null 
+				&& entity.getHcList().stream().anyMatch(h -> "Danger".equals(h.getSignalWord())); 
 	}
 
 	public String detail(String hazardStatement, String hazardClassCode) {
-		Map<String, Double> detail = null;
+		Map<IngItem, Double> detail = null;
 
 		if (hazardClassCode != null) {
 			detail = details.getOrDefault(toCode(hazardStatement, hazardClassCode), new HashMap<>());
+		} else {
+			detail = details.getOrDefault(hazardStatement, new HashMap<>());
 		}
-		detail = details.getOrDefault(hazardStatement, new HashMap<>());
 
 		// Convert Map to a string format "(key value%, key2 value2%)"
 		if (detail != null && !detail.isEmpty()) {
-			StringBuilder result = new StringBuilder("(");
-			for (Map.Entry<String, Double> entry : detail.entrySet()) {
-				result.append(entry.getKey()).append(" ").append(entry.getValue()).append("%, ");
-			}
-			// Remove the last ", " and close the parenthesis
-			if (result.length() > 1) {
-				result.setLength(result.length() - 2); // Remove ", "
-			}
-			result.append(")");
-			return result.toString();
+			 StringBuilder result = new StringBuilder(toCode(hazardStatement, hazardClassCode) + " [");
+		        for (Map.Entry<IngItem, Double> entry : detail.entrySet()) {
+		            result.append("{").append(entry.getKey().getNodeRef().getId()).append(":")
+		                  .append(entry.getKey().getIngCASCode() != null ? entry.getKey().getIngCASCode() : entry.getKey().getCharactName())
+		                  .append("} ").append(entry.getValue()).append("%, ");
+		        }
+		        // Remove the last ", " and close the parenthesis
+		        if (result.length() > 1) {
+		            result.setLength(result.length() - 2); // Remove ", "
+		        }
+		        result.append("]");
+		        return result.toString();
 		}
-		return "()"; // Return empty parenthesis if detail is null or empty
+		return toCode(hazardStatement, hazardClassCode) + " [none]"; // Return empty parenthesis if detail is null or empty
 	}
 
 	public String detail(String hazardStatement) {

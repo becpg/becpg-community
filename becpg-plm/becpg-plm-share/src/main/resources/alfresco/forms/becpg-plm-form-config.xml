@@ -1915,7 +1915,7 @@
 					<set label-id="becpg.forms.set.search.label" id="search" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set label-id="becpg.forms.set.formulation.label" id="formulation" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set label-id="becpg.forms.set.toxicology.label" id="toxTab" template="/org/alfresco/components/form/2-column-set.ftl" />
-					<set label-id="becpg.forms.set.clp.label" id="clpTab" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set label-id="becpg.forms.set.clp.label" id="clpTab" />
 
 					<field id="bcpg:charactName" set="designation" />
 					<field id="bcpg:pluralLegalName" set="designation" />
@@ -1987,7 +1987,11 @@
 					<field id="bcpg:ingToxAquaticMFactor" set="toxTab" />
 					<field id="bcpg:ingToxIsSuperSensitizing" set="toxTab" />
 					<field id="bcpg:ingToxData" set="toxTab" />
-					<field id="ghs:sdsHazardClassifications" help-id="becpg.forms.help.sdsHazardClassifications" set="clpTab" />
+					<field id="ghs:sdsHazardClassifications" help-id="becpg.forms.help.sdsHazardClassifications" set="clpTab" >
+					     <control template="/org/alfresco/components/form/controls/textarea.ftl">
+                            <control-param name="maxLength">10000</control-param>
+                        </control>
+					</field>
 					<field id="ghs:sdsSignalWord" set="clpTab" />
 					<field id="ghs:sdsPictograms" set="clpTab">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -2056,7 +2060,7 @@
 					<set label-id="becpg.forms.set.search.label" id="search" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set label-id="becpg.forms.set.formulation.label" id="formulation" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set label-id="becpg.forms.set.toxicology.label" id="toxTab" template="/org/alfresco/components/form/2-column-set.ftl" />
-					<set label-id="becpg.forms.set.clp.label" id="clpTab" template="/org/alfresco/components/form/1-column-set.ftl" />
+					<set label-id="becpg.forms.set.clp.label" id="clpTab" />
 
 					<field id="bcpg:charactName" set="designation" />
 					<field id="bcpg:pluralLegalName" set="designation" />
@@ -2127,7 +2131,11 @@
 					<field id="bcpg:ingToxAquaticMFactor" set="toxTab" />
 					<field id="bcpg:ingToxIsSuperSensitizing" set="toxTab" />
 					<field id="bcpg:ingToxData" set="toxTab" />
-					<field id="ghs:sdsHazardClassifications" help-id="becpg.forms.help.sdsHazardClassifications" set="clpTab" />
+					<field id="ghs:sdsHazardClassifications" help-id="becpg.forms.help.sdsHazardClassifications" set="clpTab" >
+                         <control template="/org/alfresco/components/form/controls/textarea.ftl">
+                            <control-param name="maxLength">10000</control-param>
+                        </control>
+                    </field>
 					<field id="ghs:sdsSignalWord" set="clpTab" />
 					<field id="ghs:sdsPictograms" set="clpTab">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -2254,7 +2262,11 @@
 					<field id="bcpg:ingToxAquaticMFactor" set="toxTab" />
 					<field id="bcpg:ingToxIsSuperSensitizing" set="toxTab" />
 					<field id="bcpg:ingToxData" set="toxTab" />
-					<field id="ghs:sdsHazardClassifications" help-id="becpg.forms.help.sdsHazardClassifications" set="clpTab" />
+					<field id="ghs:sdsHazardClassifications" help-id="becpg.forms.help.sdsHazardClassifications" set="clpTab" >
+                         <control template="/org/alfresco/components/form/controls/textarea.ftl">
+                            <control-param name="maxLength">10000</control-param>
+                        </control>
+                    </field>
 					<field id="ghs:sdsSignalWord" set="clpTab" />
 					<field id="ghs:sdsPictograms" set="clpTab">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">

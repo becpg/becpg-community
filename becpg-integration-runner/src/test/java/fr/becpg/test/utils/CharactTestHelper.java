@@ -35,7 +35,8 @@ public class CharactTestHelper {
     private static NodeRef getOrCreateNode(NodeService nodeService, String path, String nodeName, QName type, Map<QName, Serializable> properties) {
         NodeRef folder = BeCPGQueryBuilder.createQuery().selectNodeByPath(path);
         NodeRef node = nodeService.getChildByName(folder, ContentModel.ASSOC_CONTAINS, nodeName);
-
+        properties.put(ContentModel.PROP_NAME, nodeName);
+        
         if (node == null) {
             ChildAssociationRef childAssocRef = nodeService.createNode(
                 folder,

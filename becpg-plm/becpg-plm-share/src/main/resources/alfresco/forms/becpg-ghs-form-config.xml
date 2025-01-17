@@ -203,8 +203,34 @@
                             <control-param name="showLink">false</control-param>
                         </control>
                     </field>
+                        <field id="ghs:hclDetail" read-only="true"/>
                 </appearance>
 			</form>
+			<form id="edit-productSpecification">
+                <field-visibility>
+                    <show id="bcpg:regulatoryType" force="true" />
+                    <show id="bcpg:regulatoryText" force="true" />
+                    <show id="ghs:hazardClassCode" />
+                    <show id="ghs:hazardStatementRef" />
+                    <show id="ghs:pictogramRef" />
+                    <show id="ghs:signalWord" />
+                    
+                    <show id="bcpg:regulatoryCountries" force="true" />
+                    <show id="bcpg:regulatoryUsageRef" force="true" />
+                </field-visibility>
+                <appearance>
+                    <field id="ghs:hazardStatementRef" mandatory="false" read-only="false" set="security">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="showLink">false</control-param>
+                        </control>
+                    </field>
+                    <field id="ghs:pictogramRef" mandatory="false" read-only="false" set="security">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="showLink">false</control-param>
+                        </control>
+                    </field>
+                </appearance>
+            </form>
 		</forms>
 	</config>
 	<config evaluator="model-type" condition="ghs:hazardClassificationList">
@@ -229,16 +255,40 @@
                             <control-param name="showLink">false</control-param>
                         </control>
                     </field>
+                    <field id="ghs:hclDetail" read-only="true"/>
                 </appearance>
 			</form>
+			<form id="create-productSpecification">
+                <field-visibility>
+                    <show id="bcpg:regulatoryType" force="true" />
+                    <show id="bcpg:regulatoryText" force="true" />
+                    <show id="ghs:hazardClassCode" />
+                    <show id="ghs:hazardStatementRef" />
+                    <show id="ghs:pictogramRef" />
+                    <show id="ghs:signalWord" />
+                    
+                    <show id="bcpg:regulatoryCountries" force="true" />
+                    <show id="bcpg:regulatoryUsageRef" force="true" />
+                </field-visibility>
+                <appearance>
+                    <field id="ghs:hazardStatementRef" mandatory="false" read-only="false" set="security">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="showLink">false</control-param>
+                        </control>
+                    </field>
+                    <field id="ghs:pictogramRef" mandatory="false" read-only="false" set="security">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="showLink">false</control-param>
+                        </control>
+                    </field>
+                </appearance>
+            </form>
 			<form id="filter">
 				<field-visibility>
 					<show id="ghs:hazardClassCode" />
 					<show id="ghs:hazardStatementRef" />
 					<show id="ghs:pictogramRef" />
 					<show id="ghs:signalWord" />
-					<show id="ghs:hclRegulatoryText" />
-					<show id="ghs:hclDetail" />
 				</field-visibility>
 				<appearance>
 					<field id="ghs:hazardStatementRef" mandatory="false" read-only="false" set="security">
@@ -262,7 +312,27 @@
 					<show id="ghs:hclRegulatoryText" />
 					<show id="ghs:hclDetail" />
 				</field-visibility>
+				<appearance>
+				        <field id="ghs:hclDetail" read-only="true"/>
+				</appearance>
 			</form>
+			<form id="datagrid-productSpecification">
+                <field-visibility>
+                    <show id="bcpg:regulatoryType" force="true" />
+                    <show id="bcpg:regulatoryText" force="true" />
+                    <show id="ghs:hazardClassCode" />
+                    <show id="ghs:hazardStatementRef" />
+                    <show id="ghs:pictogramRef" />
+                    <show id="ghs:signalWord" />
+                    
+                    <show id="bcpg:regulatoryCountries" force="true" />
+                    <show id="bcpg:regulatoryUsageRef" force="true" />
+                    <show id="fm:commentCount" force="true" />
+                </field-visibility>
+                <appearance>
+                    <field id="fm:commentCount" label="hidden" read-only="true" />
+                </appearance>
+            </form>
 		</forms>
 	</config>
 

@@ -498,6 +498,23 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 		this.ings = ings;
 	}
 
+
+	public static ForbiddenIngListDataItem build() {
+		return new ForbiddenIngListDataItem();
+	}
+
+	public ForbiddenIngListDataItem withIngs(List<NodeRef> ings) {
+		this.ings = ings;
+		return this;
+	}
+	
+	
+	public ForbiddenIngListDataItem withQtyPercMaxi(Double qtyPercMaxi) {
+		this.qtyPercMaxi = qtyPercMaxi;
+		return this;
+	}
+	
+	
 	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {

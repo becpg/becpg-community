@@ -1,5 +1,7 @@
 package fr.becpg.test.repo;
 
+import java.util.Calendar;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 
@@ -56,4 +58,8 @@ public abstract class StandardProductBuilder {
 
 
 	public abstract FinishedProductData createTestProduct();
+	
+	protected String uniqueName(String name) {
+		return name +" - "+ Calendar.getInstance().getTimeInMillis();
+	}
 }

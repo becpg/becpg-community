@@ -14,10 +14,14 @@ import fr.becpg.model.GHSModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
+import fr.becpg.repo.product.data.productList.HazardClassificationListDataItem;
+import fr.becpg.repo.product.data.productList.HazardClassificationListDataItem.SignalWord;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.formulation.clp.HazardClassificationFormulaContext;
@@ -25,19 +29,27 @@ import fr.becpg.test.utils.CharactTestHelper;
 
 public class StandardSoapTestProduct extends StandardProductBuilder {
 
+	public static final String H226_FORBIDDEN = "Product should not contain H226";
+	public static final String H290_DANGER_FORBIDDEN = "Product should not contain H290 with Danger";
+	public static final String DANGER_FORBIDDEN = "Product should not contain Danger";
+	public static final String GHS07_FORBIDDEN = "Product should not contain Pictogram GHS07";
+
 	private boolean isWithCompo = true;
 	private boolean isWithPhysico = true;
+	private boolean isWithSpecification = false;
 
 	protected StandardSoapTestProduct(Builder builder) {
 		super(builder);
 		this.isWithCompo = builder.isWithCompo;
 		this.isWithPhysico = builder.isWithPhysico;
+		this.isWithSpecification = builder.isWithSpecification;
 	}
 
 	// Static inner Builder class
 	public static class Builder extends StandardProductBuilder.Builder<Builder> {
 		private boolean isWithCompo = true;
 		private boolean isWithPhysico = true;
+		private boolean isWithSpecification = false;
 
 		public Builder withCompo(boolean isWithCompo) {
 			this.isWithCompo = isWithCompo;
@@ -46,6 +58,11 @@ public class StandardSoapTestProduct extends StandardProductBuilder {
 
 		public Builder withPhysico(boolean isWithPhysico) {
 			this.isWithPhysico = isWithPhysico;
+			return this;
+		}
+
+		public Builder withSpecification(boolean isWithSpecification) {
+			this.isWithSpecification = isWithSpecification;
 			return this;
 		}
 
@@ -72,16 +89,17 @@ public class StandardSoapTestProduct extends StandardProductBuilder {
 
 	@Override
 	public FinishedProductData createTestProduct() {
-		// Initialize raw materials if not already done
-		if (sodiumHydroxideNodeRef == null) {
-			initRawMaterialsWithIngredients();
-		}
 
 		// Create the soap finished product
-		FinishedProductData soapProduct = FinishedProductData.build().withName("Natural Olive Soap").withUnit(ProductUnit.kg).withQty(1000d)
+		FinishedProductData soapProduct = FinishedProductData.build().withName(uniqueName("🧼 Standard Natural Olive Soap 🫒💧")).withUnit(ProductUnit.kg).withQty(1000d)
 				.withDensity(1.2d);
 
 		if (isWithCompo) {
+			// Initialize raw materials if not already done
+			if (sodiumHydroxideNodeRef == null) {
+				initRawMaterialsWithIngredients();
+			}
+
 			soapProduct = soapProduct.withCompoList(List.of(
 					CompoListDataItem.build().withQtyUsed(130d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Detail)
 							.withProduct(sodiumHydroxideNodeRef),
@@ -99,30 +117,59 @@ public class StandardSoapTestProduct extends StandardProductBuilder {
 
 		}
 
+		if (isWithSpecification) {
+
+			soapProduct.setProductSpecifications(createProductSpecifications());
+
+		}
+
 		alfrescoRepository.create(destFolder, soapProduct);
 
 		return soapProduct;
 	}
 
+	private List<ProductSpecificationData> createProductSpecifications() {
+
+		ProductSpecificationData productSpecification = ProductSpecificationData.build().withName(uniqueName("🧼 Soap products specification 📋"))
+				.withHcList(List.of(
+						HazardClassificationListDataItem.build().withHazardStatement(CharactTestHelper.getOrCreateH(nodeService, "H226"))
+								.withRegulatoryMessage(H226_FORBIDDEN),
+
+						HazardClassificationListDataItem.build().withHazardStatement(CharactTestHelper.getOrCreateH(nodeService, "H290"))
+								.withSignalWord(SignalWord.Danger.toString()).withRegulatoryMessage(H290_DANGER_FORBIDDEN),
+
+						HazardClassificationListDataItem.build().withSignalWord(SignalWord.Danger.toString()).withRegulatoryMessage(DANGER_FORBIDDEN),
+
+						HazardClassificationListDataItem.build().withPictogram(CharactTestHelper.getOrCreatePicto(nodeService, "GHS07"))
+								.withRegulatoryMessage(GHS07_FORBIDDEN))).withForbiddenIngList(List.of(ForbiddenIngListDataItem
+										
+										.build().withQtyPercMaxi(2d).withIngs(List.of(CharactTestHelper.getOrCreateIng(nodeService, "Sodium Chloride")))));
+
+		alfrescoRepository.create(destFolder, productSpecification);
+		return List.of(productSpecification);
+	}
+
 	public void initRawMaterialsWithIngredients() {
 		// Create Sodium Hydroxide raw material with ingredients
-		RawMaterialData sodiumHydroxide = RawMaterialData.build().withName(SODIUM_HYDROXIDE).withQty(100d).withUnit(ProductUnit.kg)
+		RawMaterialData sodiumHydroxide = RawMaterialData.build().withName(uniqueName(SODIUM_HYDROXIDE)).withQty(100d).withUnit(ProductUnit.kg)
 				.withIngList(createSodiumHydroxideIngredients());
 
 		sodiumHydroxideNodeRef = alfrescoRepository.create(destFolder, sodiumHydroxide).getNodeRef();
 
 		// Create Olive Oil raw material with ingredients
-		RawMaterialData oliveOil = RawMaterialData.build().withName(OLIVE_OIL).withQty(500d).withUnit(ProductUnit.kg)
+		RawMaterialData oliveOil = RawMaterialData.build().withName(uniqueName(OLIVE_OIL)).withQty(500d).withUnit(ProductUnit.kg)
 				.withIngList(createOliveOilIngredients());
 
 		oliveOilNodeRef = alfrescoRepository.create(destFolder, oliveOil).getNodeRef();
 
 		// Create Essential Oils raw material with ingredients
-		RawMaterialData essentialOils = RawMaterialData.build().withName(ESSENTIAL_OILS).withQty(50d).withUnit(ProductUnit.kg)
+		RawMaterialData essentialOils = RawMaterialData.build().withName(uniqueName(ESSENTIAL_OILS)).withQty(50d).withUnit(ProductUnit.kg)
 				.withIngList(createEssentialOilsIngredients());
 
 		essentialOilsNodeRef = alfrescoRepository.create(destFolder, essentialOils).getNodeRef();
 	}
+
+
 
 	private List<IngListDataItem> createSodiumHydroxideIngredients() {
 		List<IngListDataItem> ingredients = new ArrayList<>();
@@ -171,7 +218,7 @@ public class StandardSoapTestProduct extends StandardProductBuilder {
 		properties.put(BeCPGModel.PROP_ING_TOX_AQUATIC_MFACTOR, mFactor);
 		properties.put(BeCPGModel.PROP_ING_TOX_IS_SUPER_SENSITIZING, superSensitizing);
 
-		nodeService.setProperties(ing, properties);
+		nodeService.addProperties(ing, properties);
 
 		return IngListDataItem.build().withQtyPerc(percentage).withIngredient(ing);
 	}
@@ -194,7 +241,8 @@ public class StandardSoapTestProduct extends StandardProductBuilder {
 		Map<QName, Serializable> props = new HashMap<>();
 		props.put(PLMModel.PROP_PHYSICO_CHEM_CODE, code);
 		props.put(PLMModel.PROP_PHYSICO_CHEM_UNIT, "%");
-		nodeService.setProperties(physicoChem, props);
+		nodeService.addProperties(physicoChem, props);
+
 		if (product.getPhysicoChemList() == null) {
 			product.setPhysicoChemList(new ArrayList<>());
 		}
