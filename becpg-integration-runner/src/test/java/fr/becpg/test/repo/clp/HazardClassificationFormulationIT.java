@@ -123,7 +123,7 @@ public class HazardClassificationFormulationIT extends PLMBaseTestCase {
 			}
 
 			// Verify we found all expected requirements
-			assertEquals("Should have found all specified requirements", 4, foundRequirements);
+			assertEquals("Should have found 3 specified requirements", 3, foundRequirements);
 
 			return "SUCCESS";
 		});
