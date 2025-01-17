@@ -247,6 +247,14 @@
 				<bean class="fr.becpg.repo.product.formulation.ToxFormulationHandler">
 					<property name="toxicologyService" ref="toxicologyService" />
 				</bean>
+				<bean class="fr.becpg.repo.product.formulation.clp.HazardClassificationFormulationHandler">
+                   <property name="alfrescoRepository" ref="alfrescoRepository" />
+                    <property name="fileFolderService" ref="fileFolderService" />
+                    <property name="repositoryHelper" ref="repositoryHelper" />
+                    <property name="nodeService" ref="nodeService" />
+                    <property name="formulaService" ref="formulaService" />
+                    <property name="contentService" ref="contentService" />
+                </bean>
 				<bean class="fr.becpg.repo.project.formulation.ScoreListFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 				</bean>
@@ -425,7 +433,9 @@
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="nodeService" ref="nodeService" />
 				</bean>
-
+                <bean class="fr.becpg.repo.product.requirement.HazardClassificationRequirementScanner">
+                    <property name="mlNodeService" ref="mlAwareNodeService" />
+                </bean>
 			</list>
 		</property>
 	</bean>
