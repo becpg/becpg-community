@@ -99,6 +99,15 @@
 
 		<type name="ghs:personalProtection">
 			<parent>bcpg:charact</parent>
+			<properties>
+				<property name="ghs:personalProtectionCode">
+					<type>d:text</type>
+					<index enabled="true">
+					  <tokenised>false</tokenised>
+					  <facetable>false</facetable>
+				   </index>
+				</property>
+			</properties>
 		</type>
 
 		<type name="ghs:pictogram">
