@@ -39,11 +39,5 @@
 		</plugins>
 	</build>
 
-<<<<<<< HEAD
-=======
 
-  <scm>
-    <tag>23.2.2.36</tag>
-  </scm>
->>>>>>> refs/heads/master
 </project>
