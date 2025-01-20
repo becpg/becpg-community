@@ -93,7 +93,7 @@ public class ActivityAuditPlugin extends AbstractAuditPlugin implements ExtraQue
 	
 	@Override
 	public AuditQuery extraQuery(AuditQuery auditQuery) {
-		if (auditQuery.getFilter().contains(ENTITY_NODEREF + "=") && auditQuery.getFilter().split(ENTITY_NODEREF + "=").length > 1
+		if (auditQuery.getFilter() != null && auditQuery.getFilter().contains(ENTITY_NODEREF + "=") && auditQuery.getFilter().split(ENTITY_NODEREF + "=").length > 1
 				&& !TenantService.DEFAULT_DOMAIN.equals(TenantUtil.getCurrentDomain()) && tenantService.isEnabled()) {
 			String entityNodeRef = auditQuery.getFilter().split(ENTITY_NODEREF + "=")[1];
 			return auditQuery.filter(ENTITY_NODEREF + "=" + tenantService.getName(new NodeRef(entityNodeRef)));
