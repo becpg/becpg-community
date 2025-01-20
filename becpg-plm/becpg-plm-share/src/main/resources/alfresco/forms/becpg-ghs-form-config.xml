@@ -21,6 +21,7 @@
 		<forms>
 			<form>
 				<field-visibility>
+					<show id="ghs:personalProtectionCode" />
 					<show id="bcpg:charactName" />
 					<show id="bcpg:isDeleted"/>
 					<!-- hide exif:exif -->
@@ -47,12 +48,14 @@
 		<forms>
 			<form>
 				<field-visibility>
+					<show id="ghs:personalProtectionCode" />
 					<show id="bcpg:charactName" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 			<form id="filter">
 				<field-visibility>
+					<show id="ghs:personalProtectionCode" />
 					<show id="bcpg:charactName" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -64,6 +67,7 @@
 			</form>
 			<form id="datagrid">
 				<field-visibility>
+					<show id="ghs:personalProtectionCode" />
 					<show id="bcpg:charactName" />
 					<show id="cm:content" force="true" />
 					<show id="bcpg:isDeleted"/>
