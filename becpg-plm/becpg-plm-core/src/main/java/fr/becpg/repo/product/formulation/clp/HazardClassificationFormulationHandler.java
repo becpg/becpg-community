@@ -37,6 +37,7 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.formulation.spel.SpelFormulaService;
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
@@ -409,9 +410,16 @@ public class HazardClassificationFormulationHandler extends FormulationBaseHandl
 	}
 
 	private boolean accept(ProductData formulatedProduct) {
-		return !(formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || (formulatedProduct instanceof ProductSpecificationData)
-				|| ((formulatedProduct.getHcList() == null)
-						&& !alfrescoRepository.hasDataList(formulatedProduct, GHSModel.TYPE_HAZARD_CLASSIFICATION_LIST)));
+		// Reject if the product contains the ASPECT_ENTITY_TPL aspect or is an instance of ProductSpecificationData
+		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || formulatedProduct instanceof ProductSpecificationData) {
+			return false;
+		}
+
+		// Reject if either ingList or hazard classification list is missing
+		boolean hasIngredientList = alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_INGLIST);
+		boolean hasHazardClassificationList = alfrescoRepository.hasDataList(formulatedProduct, GHSModel.TYPE_HAZARD_CLASSIFICATION_LIST);
+		return (hasIngredientList && hasHazardClassificationList);
+
 	}
 
 	public NodeRef getCLPDatabase() {
