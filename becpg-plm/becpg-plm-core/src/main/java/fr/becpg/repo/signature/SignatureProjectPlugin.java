@@ -17,11 +17,11 @@ public interface SignatureProjectPlugin {
 	/**
 	 * <p>prepareEntitySignatureFolder.</p>
 	 *
-	 * @param project a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param projectNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
-	NodeRef prepareEntitySignatureFolder(ProjectData project, NodeRef entityNodeRef);
+	NodeRef prepareEntitySignatureFolder(NodeRef projectNodeRef, NodeRef entityNodeRef);
 	
 	/**
 	 * <p>getExternalSignatureFolder.</p>
