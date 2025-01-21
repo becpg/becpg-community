@@ -182,6 +182,7 @@
 			<value>bFormulation</value>
 		</property>
 		<property name="nodeService" ref="NodeService" />
+		<property name="alfrescoRepository" ref="alfrescoRepository"/>
 	</bean>
 
 
