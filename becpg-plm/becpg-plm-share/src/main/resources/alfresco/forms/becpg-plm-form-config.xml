@@ -6376,7 +6376,8 @@
 					<show id="bcpg:compoListQtySubFormula" />
 					<show id="bcpg:compoListUnit" />
 					<show id="bcpg:compoListQty" />
-					<show id="bcpg:compoListDeclType" />
+					<show id="bcpg:compoListLossPerc" />
+					<show id="bcpg:compoListStockType" />
 					<show id="bcpg:dynamicCharactColumn1" force="true" />
 					<show id="bcpg:dynamicCharactColumn2" force="true" />
 					<show id="bcpg:dynamicCharactColumn3" force="true" />
