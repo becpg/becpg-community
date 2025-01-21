@@ -23,6 +23,7 @@ import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
+import fr.becpg.repo.product.data.constraints.StockType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.formulation.FormulationHelper;
@@ -71,23 +72,27 @@ public class BatchFormulationHandler extends FormulationBaseHandler<BatchData> {
 			Map<NodeRef, Double> rawMaterials = new HashMap<>();
 			for (CompoListDataItem compoList : batchData.getCompoList()) {
 				NodeRef productNodeRef = compoList.getProduct();
-				if ((productNodeRef != null) && !DeclarationType.Omit.equals(compoList.getDeclType())) {
+				if ((productNodeRef != null) && !shouldOmit(compoList)) {
 
 					Double qty = FormulationHelper.getQtyInKg(compoList);
 
 					if (qty != null) {
+
 						ProductData subProductData = (ProductData) alfrescoRepository.findOne(productNodeRef);
+
+						Double lossPerc = FormulationHelper.calculateLossPerc(0d, FormulationHelper.getComponentLossPerc(subProductData, compoList));
+
 						if (!(subProductData instanceof LocalSemiFinishedProductData) && accept(batchData, subProductData)) {
-							if (!DeclarationType.Declare.equals(compoList.getDeclType()) || (subProductData instanceof RawMaterialData)) {
+							if (!shouldDeclare(compoList) || (subProductData instanceof RawMaterialData)) {
 
 								Double rmQty = rawMaterials.get(productNodeRef);
 								if (rmQty == null) {
 									rmQty = 0d;
 								}
-								rmQty += qty;
+								rmQty += FormulationHelper.getQtyWithLoss(qty, lossPerc);
 								rawMaterials.put(productNodeRef, rmQty);
 							} else {
-								extractRawMaterials(subProductData, rawMaterials, qty);
+								extractRawMaterials(subProductData, rawMaterials, qty, lossPerc);
 							}
 						}
 					}
@@ -260,9 +265,8 @@ public class BatchFormulationHandler extends FormulationBaseHandler<BatchData> {
 		});
 
 		// Filter the list based on stockListItems
-		return tmp.stream().filter(
-				item -> ((stockListItems != null && !stockListItems.isEmpty() && stockListItems.contains(item.getNodeRef())) || accept(batchData, item)))
-				.toList();
+		return tmp.stream().filter(item -> ((stockListItems != null && !stockListItems.isEmpty() && stockListItems.contains(item.getNodeRef()))
+				|| accept(batchData, item))).toList();
 	}
 
 	private List<StockListDataItem> extractStockList(BatchData batchData, ProductData rawMaterialData) {
@@ -271,19 +275,29 @@ public class BatchFormulationHandler extends FormulationBaseHandler<BatchData> {
 		if (rawMaterialData.isGeneric() && rawMaterialData.hasCompoListEl()) {
 			for (CompoListDataItem compoList : rawMaterialData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 				NodeRef productNodeRef = compoList.getProduct();
-				if ((productNodeRef != null) && !DeclarationType.Omit.equals(compoList.getDeclType())) {
+				if ((productNodeRef != null) && !shouldOmit(compoList)) {
 					ProductData subProductData = (ProductData) alfrescoRepository.findOne(productNodeRef);
 					if (accept(batchData, subProductData)) {
 						ret.addAll(extractStockList(batchData, subProductData));
 					}
 				}
 			}
-
 		} else {
 			ret.addAll(rawMaterialData.getStockList());
 		}
 
 		return ret;
+	}
+
+	private boolean shouldOmit(CompoListDataItem compoList) {
+		return StockType.Omit.equals(compoList.getStockType())
+				|| (compoList.getStockType() == null && DeclarationType.Omit.equals(compoList.getDeclType()));
+	}
+
+	private boolean shouldDeclare(CompoListDataItem compoList) {
+		return StockType.Components.equals(compoList.getStockType())
+				|| (compoList.getStockType() == null && DeclarationType.Declare.equals(compoList.getDeclType()));
+
 	}
 
 	private boolean accept(BatchData batchData, StockListDataItem item) {
@@ -345,11 +359,11 @@ public class BatchFormulationHandler extends FormulationBaseHandler<BatchData> {
 		return total;
 	}
 
-	private void extractRawMaterials(ProductData productData, Map<NodeRef, Double> rawMaterials, Double parentQty) {
+	private void extractRawMaterials(ProductData productData, Map<NodeRef, Double> rawMaterials, Double parentQty, Double parentLossPerc) {
 
 		for (CompoListDataItem compoList : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 			NodeRef productNodeRef = compoList.getProduct();
-			if ((productNodeRef != null) && !DeclarationType.Omit.equals(compoList.getDeclType())) {
+			if ((productNodeRef != null) && !shouldOmit(compoList)) {
 
 				Double qty = FormulationHelper.getQtyInKg(compoList);
 				Double netWeight = FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT);
@@ -361,16 +375,19 @@ public class BatchFormulationHandler extends FormulationBaseHandler<BatchData> {
 
 					ProductData subProductData = (ProductData) alfrescoRepository.findOne(productNodeRef);
 
+					Double lossPerc = FormulationHelper.calculateLossPerc(parentLossPerc,
+							FormulationHelper.getComponentLossPerc(subProductData, compoList));
+
 					if (subProductData instanceof RawMaterialData) {
 
 						Double rmQty = rawMaterials.get(productNodeRef);
 						if (rmQty == null) {
 							rmQty = 0d;
 						}
-						rmQty += qty;
+						rmQty += FormulationHelper.getQtyWithLoss(qty, lossPerc);
 						rawMaterials.put(productNodeRef, rmQty);
 					} else if (!(subProductData instanceof LocalSemiFinishedProductData)) {
-						extractRawMaterials(subProductData, rawMaterials, qty);
+						extractRawMaterials(subProductData, rawMaterials, qty, lossPerc);
 					}
 				}
 			}
