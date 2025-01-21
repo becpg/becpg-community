@@ -177,6 +177,17 @@
 		</constraint>
 
 
+       <constraint name="bcpg:compoListStockTypes" type="LIST">
+            <parameter name="allowedValues">
+                <list>
+                    <value></value>
+                    <value>Product</value>
+                    <value>Components</value>
+                    <value>Omit</value>
+                </list>
+            </parameter>
+        </constraint>
+
 		<constraint name="bcpg:compoListUnit" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -2164,6 +2175,13 @@
 						<constraint ref="bcpg:declarationTypes" />
 					</constraints>
 				</property>
+				<property name="bcpg:compoListStockType">
+                    <type>d:text</type>
+                    <index enabled="false" />
+                    <constraints>
+                        <constraint ref="bcpg:compoListStockTypes" />
+                    </constraints>
+                </property>
 				<property name="bcpg:compoListOverrunPerc">
 					<type>d:double</type>
 					<index enabled="true">
