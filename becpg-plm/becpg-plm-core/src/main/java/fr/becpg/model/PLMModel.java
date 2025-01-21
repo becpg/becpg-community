@@ -752,6 +752,8 @@ public interface PLMModel {
 	QName PROP_ECO_SCORE_CLASS = QName.createQName(BeCPGModel.BECPG_URI, "ecoScoreClass");
 	/** Constant <code>PROP_ECO_SCORE_CATEGORY</code> */
 	QName PROP_ECO_SCORE_CATEGORY = QName.createQName(BeCPGModel.BECPG_URI, "ecoScoreCategory");
+	
+	QName PROP_ECO_SCORE_DETAILS = QName.createQName(BeCPGModel.BECPG_URI, "ecoScoreDetails");
 
 	//Custom codes
 	/** Constant <code>TYPE_CUSTOMSCODE</code> */
