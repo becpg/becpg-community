@@ -396,7 +396,8 @@ public class ImportHelper {
 	 */
 	public static Number parseNumber(ImportContext importContext, String val) throws ParseException {
 		
-	    Matcher m = NUMBER_PATTERN.matcher(val);
+	    val = val.replaceAll("\\s", "").replace("\u202F", "");
+		Matcher m = NUMBER_PATTERN.matcher(val);
 	    if (!m.find()) {
 	    	throw new ParseException("Not a number",0);
 	    }
