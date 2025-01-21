@@ -16,6 +16,8 @@ public class ImportHelperTest {
 	public void testParseNumber() throws ParseException  {
 		Locale.setDefault(Locale.FRENCH);
 		
+		Assert.assertEquals(1195l, ImportHelper.parseNumber(new ImportContext(), "1 195"));
+		
 		Assert.assertEquals(1.2d, ImportHelper.parseNumber(new ImportContext(), "1,2"));
 
 		String input = "1. Allergen management has separate ";
