@@ -51,6 +51,27 @@
 				<field-visibility>
 					<show id="bcpg:regulatoryCountries" />
 					<show id="bcpg:regulatoryUsageRef" />
+					<show id="bcpg:regulatoryResult" />
+					<show id="bcpg:limitingIngredient" />
+					<show id="bcpg:regulatoryMaximumDosage" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:regulatoryCountries">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:regulatoryUsageRef">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+						</control>
+					</field>
+					<field id="bcpg:regulatoryResult" read-only="true" />
+					<field id="bcpg:limitingIngredient" read-only="true" />
+					<field id="bcpg:regulatoryMaximumDosage" read-only="true" />
+				</appearance>
+			</form>
+			<form id="create">
+				<field-visibility>
+					<show id="bcpg:regulatoryCountries" />
+					<show id="bcpg:regulatoryUsageRef" />
 					<show id="bcpg:regulatoryState" />
 				</field-visibility>
 				<appearance>
