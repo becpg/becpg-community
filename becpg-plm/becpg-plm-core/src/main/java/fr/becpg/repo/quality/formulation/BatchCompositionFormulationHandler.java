@@ -1,27 +1,40 @@
+/*******************************************************************************
+ * Copyright (C) 2010-2025 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
+ ******************************************************************************/
 package fr.becpg.repo.quality.formulation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
-import fr.becpg.repo.formulation.FormulateException;
-import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.formulation.spel.SpelFormulaService;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
+import fr.becpg.repo.product.data.constraints.StockType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.product.formulation.AbstractCompositionQtyCalculatingFormulationHandler;
 import fr.becpg.repo.product.formulation.FormulaHelper;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.quality.data.BatchData;
-import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
 /**
@@ -30,11 +43,7 @@ import fr.becpg.repo.variant.filters.VariantFilters;
  * @author matthieu
  * @version $Id: $Id
  */
-public class BatchCompositionFormulationHandler extends FormulationBaseHandler<BatchData> {
-
-	private static Log logger = LogFactory.getLog(BatchCompositionFormulationHandler.class);
-
-	private AlfrescoRepository<ProductData> alfrescoRepository;
+public class BatchCompositionFormulationHandler extends AbstractCompositionQtyCalculatingFormulationHandler<BatchData> {
 
 	private SpelFormulaService formulaService;
 
@@ -45,15 +54,6 @@ public class BatchCompositionFormulationHandler extends FormulationBaseHandler<B
 	 */
 	public void setFormulaService(SpelFormulaService formulaService) {
 		this.formulaService = formulaService;
-	}
-
-	/**
-	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
-	 *
-	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
-	 */
-	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
-		this.alfrescoRepository = alfrescoRepository;
 	}
 
 	/** {@inheritDoc} */
@@ -81,14 +81,14 @@ public class BatchCompositionFormulationHandler extends FormulationBaseHandler<B
 				// 500 product of 5 Kg
 
 				Double ratio;
-				if (batchData.getUnit() != null && batchData.getUnit().isP()) {
+				if ((batchData.getUnit() != null) && batchData.getUnit().isP()) {
 					ratio = batchQty;
-				} else if (batchData.getUnit() != null && batchData.getUnit().isPerc()) {
+				} else if ((batchData.getUnit() != null) && batchData.getUnit().isPerc()) {
 					ratio = batchQty / 100;
 				} else {
 					ratio = batchQty / productNetWeight;
 				}
-
+				
 				for (CompoListDataItem compoListItem : productData
 						.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 
@@ -97,11 +97,18 @@ public class BatchCompositionFormulationHandler extends FormulationBaseHandler<B
 					toAdd.setParentNodeRef(null);
 					toAdd.setNodeRef(null);
 					toAdd.setVariants(new ArrayList<>());
-					toAdd.setDeclType(DeclarationType.DoNotDetails);
-					if (toAdd.getQtySubFormula() != null) {
-						if (!ProductUnit.Perc.equals(compoListItem.getCompoListUnit())) {
-							toAdd.setQtySubFormula(toAdd.getQtySubFormula() * ratio);
+					toAdd.setStockType(StockType.Product);
+					if(productData.getComponentLossPerc()!=null) {
+						if(toAdd.getLossPerc()!=null) {
+							toAdd.setLossPerc(toAdd.getLossPerc() + productData.getComponentLossPerc());
+						} else {
+							toAdd.setLossPerc(productData.getComponentLossPerc());
 						}
+					}
+					
+					
+					if ((toAdd.getQtySubFormula() != null) && !ProductUnit.Perc.equals(compoListItem.getCompoListUnit())) {
+						toAdd.setQtySubFormula(toAdd.getQtySubFormula() * ratio);
 					}
 					batchData.getCompoList().add(toAdd);
 				}
@@ -110,8 +117,8 @@ public class BatchCompositionFormulationHandler extends FormulationBaseHandler<B
 
 			Composite<CompoListDataItem> compositeAll = CompositeHelper.getHierarchicalCompoList(batchData.getCompoList());
 
-			// calculate on every item	
-			visitQtyChildren(batchQty, compositeAll);
+			// calculate on every item
+			visitQtyChildren(batchData.getProduct(), batchQty, compositeAll);
 
 			copyTemplateDynamicCharactLists(batchData);
 
@@ -123,102 +130,6 @@ public class BatchCompositionFormulationHandler extends FormulationBaseHandler<B
 
 		return true;
 	}
-
-	private void visitQtyChildren(Double parentQty, Composite<CompoListDataItem> composite) throws FormulateException {
-
-		for (Composite<CompoListDataItem> component : composite.getChildren()) {
-
-			Double qtyInKg = calculateQtyInKg(component.getData());
-			if (logger.isDebugEnabled()) {
-				logger.debug("qtySubFormula: " + qtyInKg + " parentQty: " + parentQty);
-			}
-			if (qtyInKg != null) {
-
-				// take in account percentage
-				if (ProductUnit.Perc.equals(component.getData().getCompoListUnit()) && (parentQty != null) && !parentQty.equals(0d)) {
-					qtyInKg = (qtyInKg * parentQty) / 100;
-				}
-
-				component.getData().setQty(qtyInKg);
-			}
-
-			// calculate children
-			if (!component.isLeaf()) {
-
-				// take in account percentage
-				if (ProductUnit.Perc.equals(component.getData().getCompoListUnit()) && (parentQty != null) && !parentQty.equals(0d)) {
-
-					visitQtyChildren(parentQty, component);
-
-					// no yield but calculate % of composite
-					Double compositePerc = 0d;
-					boolean isUnitPerc = true;
-					for (Composite<CompoListDataItem> child : component.getChildren()) {
-						compositePerc += child.getData().getQtySubFormula();
-						isUnitPerc = isUnitPerc && ProductUnit.Perc.equals(child.getData().getCompoListUnit());
-						if (!isUnitPerc) {
-							break;
-						}
-					}
-					if (isUnitPerc) {
-						component.getData().setQtySubFormula(compositePerc);
-						component.getData().setQty((compositePerc * parentQty) / 100);
-					}
-				} else {
-					visitQtyChildren(component.getData().getQty(), component);
-				}
-			}
-		}
-	}
-
-	private Double calculateQtyInKg(CompoListDataItem compoListDataItem) {
-		Double qty = compoListDataItem.getQtySubFormula();
-		ProductUnit compoListUnit = compoListDataItem.getCompoListUnit();
-
-		ProductData componentProductData = alfrescoRepository.findOne(compoListDataItem.getProduct());
-
-		if ((qty != null) && (compoListUnit != null)) {
-
-			Double unitFactor = compoListUnit.getUnitFactor();
-
-			if (compoListUnit.isWeight()) {
-				return qty / unitFactor;
-			} else if (compoListUnit.isP()) {
-
-				Double productQty = FormulationHelper.QTY_FOR_PIECE;
-
-				if ((componentProductData.getUnit() != null) && componentProductData.getUnit().isP() && (componentProductData.getQty() != null)) {
-					productQty = componentProductData.getQty();
-				}
-
-				return (FormulationHelper.getNetWeight(componentProductData, FormulationHelper.DEFAULT_NET_WEIGHT) * qty) / productQty;
-
-			} else if (compoListUnit.isVolume()) {
-
-				qty = qty / unitFactor;
-
-				Double overrun = compoListDataItem.getOverrunPerc();
-				if (compoListDataItem.getOverrunPerc() == null) {
-					overrun = FormulationHelper.DEFAULT_OVERRUN;
-				}
-
-				Double density = componentProductData.getDensity();
-				if ((density == null) || density.equals(0d)) {
-					if (logger.isDebugEnabled()) {
-						logger.debug("Cannot calculate qty since density is null or equals to 0");
-					}
-				} else {
-					return (qty * density * 100) / (100 + overrun);
-
-				}
-
-			}
-			return qty;
-		}
-
-		return FormulationHelper.DEFAULT_COMPONANT_QUANTITY;
-	}
-
 
 	/**
 	 * Copy missing item from template
@@ -236,6 +147,5 @@ public class BatchCompositionFormulationHandler extends FormulationBaseHandler<B
 		}
 
 	}
-	
 
 }
