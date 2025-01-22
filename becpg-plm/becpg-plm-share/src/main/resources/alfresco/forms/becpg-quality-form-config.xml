@@ -1356,7 +1356,69 @@
 
 				</appearance>
 			</form>
+         	<form id="supplier">
+         		<field-visibility>
 
+					<!-- mainInfo -->
+					<show id="cm:name" />
+ 					<show id="bcpg:code" />
+ 					<show id="qa:ncPriority" />
+ 					<show id="qa:ncQuantityNc" />
+ 					<show id="qa:ncQuantityNcUnit" />
+ 					
+ 					<!-- Saisie -->
+ 					<show force="true" id="qa:product" />
+ 					<show force="true" id="qa:batchId" />
+ 					<show force="true" id="qa:productUseByDate" />
+ 					<show force="true" id="qa:claimDescription" />
+ 					<show force="true" id="qa:claimStartComment" />
+ 					
+ 					<!-- Traitement -->
+ 					<show force="true" id="qa:claimTreatementDate" />
+ 					<show force="true" id="qa:claimTreatementDetails" />
+ 					<show force="true" id="qa:claimTreatementPrevActions" />
+ 					<show force="true" id="qa:claimTreatementComment" />
+
+				</field-visibility>
+				<appearance>
+				
+					<!-- mainInfo -->
+					<set id="mainInfo" template="/org/alfresco/components/form/2-column-set.ftl" appearance="bordered-panel" label-id="becpg.forms.set.nc-info.label" />
+					<field id="cm:name" read-only="true" set="mainInfo" />
+					<field id="bcpg:code" read-only="true" set="mainInfo" />
+					<field id="qa:ncPriority" read-only="true" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/workflow/priority.ftl" />
+					</field>
+					<field id="qa:ncQuantityNc" read-only="true" set="mainInfo" />
+					<field id="qa:ncQuantityNcUnit" read-only="true" set="mainInfo" />
+					
+					<!-- Saisie -->
+					<set id="entry" template="/org/alfresco/components/form/2-column-set.ftl" appearance="bordered-panel" label-id="workflow.claim.set.start" />
+					<field id="qa:product" read-only="true" set="entry" />
+					<field id="qa:batchId" read-only="true" set="entry" />
+					<field id="qa:productUseByDate" read-only="true" set="entry" />
+					<field id="qa:claimDescription" read-only="true" set="entry" >
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="qa:claimStartComment" read-only="true" set="entry" >
+						<control template="/org/alfresco/components/form/controls/textarea.ftl"/>
+					</field>
+					
+					<!-- Traitement -->
+					<set id="treatment" template="/org/alfresco/components/form/2-column-set.ftl" appearance="bordered-panel" label-id="workflow.claim.set.treatment" />
+					<field id="qa:claimTreatementDate" read-only="false" set="treatment" />
+					<field id="qa:claimTreatementDetails" read-only="false" set="treatment" >
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="qa:claimTreatementPrevActions" read-only="false" set="treatment" >
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="qa:claimTreatementComment" read-only="false" set="treatment" >
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+
+				</appearance>
+      		</form>
 		</forms>
 	</config>
 
