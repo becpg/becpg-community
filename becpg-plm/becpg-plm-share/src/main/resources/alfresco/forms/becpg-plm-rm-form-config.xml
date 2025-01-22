@@ -166,6 +166,7 @@
 					<show id="bcpg:regulatoryMode" force="false" />
 					<show id="bcpg:regulatoryRecipeId" force="false" />
 					<show id="bcpg:regulatoryResult" force="false" />
+					<show id="bcpg:regulatoryFormulatedDate" force="false" />
 					<show id="bcpg:regulatoryValidationDate" force="false" />
 				</field-visibility>
 				<appearance>
@@ -385,6 +386,8 @@
 					<field id="bcpg:regulatoryRecipeId" read-only="true"
 						set="regulatory" />
 					<field id="bcpg:regulatoryResult" read-only="true"
+						set="regulatory" />
+					<field id="bcpg:regulatoryFormulatedDate" read-only="true"
 						set="regulatory" />
 					<field id="bcpg:regulatoryValidationDate" mandatory="false"
 						read-only="false" set="regulatory">
