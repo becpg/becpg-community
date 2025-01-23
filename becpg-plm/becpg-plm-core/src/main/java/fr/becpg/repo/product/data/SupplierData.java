@@ -15,6 +15,7 @@ import fr.becpg.repo.product.data.productList.PlantListDataItem;
 import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
+import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
@@ -62,6 +63,12 @@ public class SupplierData extends BeCPGDataObject implements HierarchicalEntity,
 	private List<SurveyListDataItem> surveyList;
 	private Integer supplierScore;
 
+	@AlfSingleAssoc(isEntity = true, isCacheable = true)
+	@AlfQname(qname = "bcpg:entityTplRef")
+	public SupplierData getEntityTpl() {
+		return entityTpl;
+	}
+	
 	/**
 	 * <p>Getter for the field <code>state</code>.</p>
 	 *
