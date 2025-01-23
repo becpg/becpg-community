@@ -287,6 +287,7 @@
 		  <show id="bcpg:regulatoryMode" />
 		  <show id="bcpg:regulatoryRecipeId" />
 		  <show id="bcpg:regulatoryResult" />
+		  <show id="bcpg:regulatoryFormulatedDate" />
 		  <show id="bcpg:regulatoryValidationDate" />
         </field-visibility>
         <appearance>
@@ -673,6 +674,7 @@
 			<field id="bcpg:regulatoryMode" set="regulatory"/>
 			<field id="bcpg:regulatoryRecipeId" read-only="true" set="regulatory"/>
 			<field id="bcpg:regulatoryResult" read-only="true" set="regulatory"/>
+			<field id="bcpg:regulatoryFormulatedDate" read-only="true" set="regulatory"/>
 			<field id="bcpg:regulatoryValidationDate" mandatory="false" read-only="false" set="regulatory">
             <control template="/org/alfresco/components/form/controls/date.ftl">
               <control-param name="showTime">false</control-param>
