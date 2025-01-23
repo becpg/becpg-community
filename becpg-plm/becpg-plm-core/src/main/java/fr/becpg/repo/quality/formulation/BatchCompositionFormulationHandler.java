@@ -98,14 +98,13 @@ public class BatchCompositionFormulationHandler extends AbstractCompositionQtyCa
 					toAdd.setNodeRef(null);
 					toAdd.setVariants(new ArrayList<>());
 					toAdd.setStockType(StockType.Product);
-					if(productData.getComponentLossPerc()!=null) {
+					if(productData.getProductLossPerc()!=null) {
 						if(toAdd.getLossPerc()!=null) {
-							toAdd.setLossPerc(toAdd.getLossPerc() + productData.getComponentLossPerc());
+							toAdd.setLossPerc(toAdd.getLossPerc() + productData.getProductLossPerc());
 						} else {
-							toAdd.setLossPerc(productData.getComponentLossPerc());
+							toAdd.setLossPerc(productData.getProductLossPerc());
 						}
 					}
-					
 					
 					if ((toAdd.getQtySubFormula() != null) && !ProductUnit.Perc.equals(compoListItem.getCompoListUnit())) {
 						toAdd.setQtySubFormula(toAdd.getQtySubFormula() * ratio);

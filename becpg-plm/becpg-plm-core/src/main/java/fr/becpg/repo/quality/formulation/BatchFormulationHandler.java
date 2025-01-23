@@ -81,7 +81,7 @@ public class BatchFormulationHandler extends FormulationBaseHandler<BatchData> {
 						ProductData subProductData = (ProductData) alfrescoRepository.findOne(productNodeRef);
 
 						Double lossPerc = FormulationHelper.calculateLossPerc(0d, FormulationHelper.getComponentLossPerc(subProductData, compoList));
-
+						
 						if (!(subProductData instanceof LocalSemiFinishedProductData) && accept(batchData, subProductData)) {
 							if (!shouldDeclare(compoList) || (subProductData instanceof RawMaterialData)) {
 
@@ -171,7 +171,6 @@ public class BatchFormulationHandler extends FormulationBaseHandler<BatchData> {
 
 					} else {
 						canApply = false;
-
 					}
 
 				}

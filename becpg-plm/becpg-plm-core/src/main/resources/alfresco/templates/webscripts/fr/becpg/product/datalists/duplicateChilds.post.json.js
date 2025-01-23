@@ -129,15 +129,11 @@ function runAction(p_params) {
                                 duplicateProperties["bcpg:compoListUnit"]= "kg";
                             }
                             
-                            var componentLossPerc = product.properties["bcpg:componentLossPerc"];
                             var parentLossPerc = itemNode.properties["bcpg:compoListLossPerc"];
-                            if(componentLossPerc!=null ){
-                                if(duplicateProperties["bcpg:compoListLossPerc"]!=null ){
-                                    duplicateProperties["bcpg:compoListLossPerc"] = compoListLossPerc + duplicateProperties["bcpg:compoListLossPerc"];
-                                } else {
-                                    duplicateProperties["bcpg:compoListLossPerc"] = compoListLossPerc;
-                                }
+                            if(parentLossPerc ==null){
+                                parentLossPerc = product.properties["bcpg:componentLossPerc"];
                             }
+                            
                            if(parentLossPerc!=null ){
                                 if(duplicateProperties["bcpg:compoListLossPerc"]!=null ){
                                      duplicateProperties["bcpg:compoListLossPerc"] = parentLossPerc + duplicateProperties["bcpg:compoListLossPerc"];
