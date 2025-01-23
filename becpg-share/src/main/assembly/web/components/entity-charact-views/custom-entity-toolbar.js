@@ -308,7 +308,7 @@
 						text: this.msg("message.formulate.please-wait")
 					});
 
-					var formulateButton = YAHOO.util.Selector.query('div.formulate');
+					var formulateButton = YAHOO.util.Selector.query('div.formulate-decernis');
 
 					Dom.addClass(formulateButton, "loading");
 
