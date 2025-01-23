@@ -33,6 +33,7 @@
           <show force="true" id="bcpg:trademarkRef"/>
           <show force="true" id="bcpg:plants"/>
           <show force="false" id="gs1:organicProductPlaceOfFarmingCode"/>
+          <show force="false" id="gs1:organicProductPlaceOfFarmingCountry"/>
           <show force="true" id="bcpg:productGeoOrigin"/>
           <show force="false" id="gs1:provenanceStatement"/>
           <show force="false" id="gs1:targetMarkets"/>
@@ -423,7 +424,12 @@
           <field id="bcpg:subsidiaryRef" mandatory="false" read-only="false" set="mainInfo"/>
           <field id="bcpg:trademarkRef" mandatory="false" read-only="false" set="mainInfo"/>
           <field id="bcpg:plants" mandatory="false" read-only="false" set="mainInfo"/>
-          <field id="gs1:organicProductPlaceOfFarmingCode" mandatory="false" read-only="false" set="mainInfo"/>
+          <field id="gs1:organicProductPlaceOfFarmingCode" mandatory="false" read-only="false" set="mainInfo">
+            <constraint-handlers>
+              <constraint event="keyup,change@[{'prop':'assoc_gs1_organicProductPlaceOfFarmingCountry', 'condition' : 'RegExp_^(?!FARMING_COUNTRY_OF_ORIGIN$).*'}]" type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf"/>
+            </constraint-handlers>
+          </field>
+          <field id="gs1:organicProductPlaceOfFarmingCountry" mandatory="false" read-only="false" set="mainInfo"/>
           <field id="bcpg:productGeoOrigin" mandatory="false" read-only="false" set="mainInfo"/>
           <field id="gs1:provenanceStatement" mandatory="false" read-only="false" set="mainInfo"/>
           <field id="gs1:targetMarkets" mandatory="false" read-only="false" set="mainInfo">
@@ -606,7 +612,7 @@
 		  <field id="gs1:alcoholicBeverageSubregion" mandatory="false" read-only="false" set="alcohol" />
 		  <field id="gs1:vintner" mandatory="false" read-only="false" set="alcohol" />
 		  <field id="gs1:isTradeItemAQualityVintageAlcoholProduct" mandatory="false" read-only="false" set="alcohol" >
-		   <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
+		    <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
             <constraint-handlers>
               <constraint event="change@[{'prop':'prop_gs1_vintage', 'condition' : '|false'}]" type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf"/>
             </constraint-handlers>
