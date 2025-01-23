@@ -207,6 +207,9 @@
     		case "mm":
     			val=    val / 1000;	
     			break;
+    		case "µm":
+    			val=    val / 1000000;	
+    			break;
     		case "cL":	
     		case "cm":
     			val=   val / 100; 
