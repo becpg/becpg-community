@@ -330,5 +330,12 @@ public final class BeCPGModel {
 	
 	public static final QName TYPE_SAVED_SEARCH = QName.createQName(BECPG_URI, "savedSearch");
 	public static final QName PROP_SAVED_SEARCH_TYPE = QName.createQName(BECPG_URI, "savedSearchType");
+	
+	/** Constant <code>ASPECT_MANUFACTURING_ASPECT</code> */
+	public static final QName ASPECT_MANUFACTURING_ASPECT = QName.createQName(BECPG_URI, "manufacturingAspect");
+	/** Constant <code>ASSOC_VARIANTS</code> */
+	public static final QName ASSOC_PLANTS = QName.createQName(BECPG_URI, "plants");
+	/** Constant <code>ASSOC_VARIANTS</code> */
+	public static final QName ASSOC_SUBSIDIARY_REF = QName.createQName(BECPG_URI, "subsidiaryRef");
 
 }

@@ -52,7 +52,9 @@ public class SurveyQuestion extends BeCPGDataObject {
 	private List<String> fsLinkedTypes;
 	private List<NodeRef> fsLinkedHierarchy;
 	private String fsSurveyListName;
-
+	private List<NodeRef> subsidiaryRefs;
+	private List<NodeRef> plants;
+	
 	/**
 	 * <p>Getter for the field <code>sort</code>.</p>
 	 *
@@ -435,21 +437,60 @@ public class SurveyQuestion extends BeCPGDataObject {
 	public void setFsSurveyListName(String fsSurveyListName) {
 		this.fsSurveyListName = fsSurveyListName;
 	}
-
 	
-	/** {@inheritDoc} */
+	/**
+	 * <p>Getter for the field <code>subsidiaryRefs</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
+	@AlfMultiAssoc
+	@AlfReadOnly
+	@AlfQname(qname = "bcpg:subsidiaryRef")
+	public List<NodeRef> getSubsidiaryRefs() {
+		return subsidiaryRefs;
+	}
+
+	/**
+	 * <p>Setter for the field <code>subsidiaryRefs</code>.</p>
+	 *
+	 * @param subsidiaryRefs a {@link java.util.List} object
+	 */
+	public void setSubsidiaryRefs(List<NodeRef> subsidiaryRefs) {
+		this.subsidiaryRefs = subsidiaryRefs;
+	}
+
+	/**
+	 * <p>Getter for the field <code>plants</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
+	@AlfMultiAssoc
+	@AlfReadOnly
+	@AlfQname(qname = "bcpg:plants")
+	public List<NodeRef> getPlants() {
+		return plants;
+	}
+
+	/**
+	 * <p>Setter for the field <code>plants</code>.</p>
+	 *
+	 * @param plants a {@link java.util.List} object
+	 */
+	public void setPlants(List<NodeRef> plants) {
+		this.plants = plants;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + Objects.hash(fsLinkedCharactRefs, fsLinkedHierarchy, fsLinkedTypes, fsSurveyListName,
-				isMandatory, isVisible, label, nextQuestions, parent, questionLowerNote, questionNote, questionScore,
-				questionUpperNote, questionUrl, responseCommentLabel, responseCommentType, responseType, sort,
-				surveyCriterion);
+				isMandatory, isVisible, label, nextQuestions, parent, plants, questionLowerNote, questionNote,
+				questionScore, questionUpperNote, questionUrl, responseCommentLabel, responseCommentType, responseType,
+				sort, subsidiaryRefs, surveyCriterion);
 		return result;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -465,7 +506,8 @@ public class SurveyQuestion extends BeCPGDataObject {
 				&& Objects.equals(fsSurveyListName, other.fsSurveyListName)
 				&& Objects.equals(isMandatory, other.isMandatory) && Objects.equals(isVisible, other.isVisible)
 				&& Objects.equals(label, other.label) && Objects.equals(nextQuestions, other.nextQuestions)
-				&& Objects.equals(parent, other.parent) && Objects.equals(questionLowerNote, other.questionLowerNote)
+				&& Objects.equals(parent, other.parent) && Objects.equals(plants, other.plants)
+				&& Objects.equals(questionLowerNote, other.questionLowerNote)
 				&& Objects.equals(questionNote, other.questionNote)
 				&& Objects.equals(questionScore, other.questionScore)
 				&& Objects.equals(questionUpperNote, other.questionUpperNote)
@@ -473,10 +515,10 @@ public class SurveyQuestion extends BeCPGDataObject {
 				&& Objects.equals(responseCommentLabel, other.responseCommentLabel)
 				&& Objects.equals(responseCommentType, other.responseCommentType)
 				&& Objects.equals(responseType, other.responseType) && Objects.equals(sort, other.sort)
+				&& Objects.equals(subsidiaryRefs, other.subsidiaryRefs)
 				&& Objects.equals(surveyCriterion, other.surveyCriterion);
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "SurveyQuestion [parent=" + parent + ", label=" + label + ", questionNote=" + questionNote
@@ -486,8 +528,7 @@ public class SurveyQuestion extends BeCPGDataObject {
 				+ responseType + ", responseCommentType=" + responseCommentType + ", responseCommentLabel="
 				+ responseCommentLabel + ", nextQuestions=" + nextQuestions + ", sort=" + sort
 				+ ", fsLinkedCharactRefs=" + fsLinkedCharactRefs + ", fsLinkedTypes=" + fsLinkedTypes
-				+ ", fsLinkedHierarchy=" + fsLinkedHierarchy + ", fsSurveyListName=" + fsSurveyListName + "]";
+				+ ", fsLinkedHierarchy=" + fsLinkedHierarchy + ", fsSurveyListName=" + fsSurveyListName
+				+ ", subsidiaries=" + subsidiaryRefs + ", plants=" + plants + "]";
 	}
-
-	
 }
