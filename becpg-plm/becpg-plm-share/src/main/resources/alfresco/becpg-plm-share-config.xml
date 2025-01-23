@@ -348,6 +348,16 @@
 				<step id="step1" labelId="becpg.wizard.supplier.documents.label"
 					titleId="becpg.wizard.supplier.documents.title" type="documents"></step>
 			</wizard>
+			
+			<!-- RÉCLAMATION FOURNISSEUR  -->
+			<wizard id="supplier-compliance" draft="true" comments="true">
+				<step id="step1" label="Réclamation fournisseur"
+					titleId="becpg.wizard.supplier.properties.title" type="form"
+					formId="supplier" itemId="qa:nc" nextStepWebScript="becpg/project/path?nodeRef={nodeRef}&amp;path=SupplierDocuments" ></step>
+				<step id="step2" labelId="becpg.wizard.supplier.documents.label"
+					titleId="becpg.wizard.supplier.documents.title" type="documents"></step>
+			</wizard>
+			
 			<wizard id="sample-survey">
 				<step id="step1" labelId="becpg.wizard.supplier.properties.label"
 					titleId="becpg.wizard.supplier.properties.title" type="form"
