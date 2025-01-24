@@ -8,19 +8,16 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.Pair;
 
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LogisticUnitData;
 import fr.becpg.repo.product.data.PackagingMaterialData;
-import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
@@ -32,10 +29,9 @@ import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.quality.data.dataList.StockListDataItem;
-import fr.becpg.repo.repository.AlfrescoRepository;
-import fr.becpg.repo.search.BeCPGQueryBuilder;
+import fr.becpg.test.utils.CharactTestHelper;
 
-public class StandardChocolateEclairTestProduct {
+public class StandardChocolateEclairTestProduct extends StandardProductBuilder {
 
 	public static final String WATER_NAME = "Eau";
 	public static final String MILK_NAME = "Lait";
@@ -147,21 +143,15 @@ public class StandardChocolateEclairTestProduct {
 		return destFolder;
 	}
 
-	private AlfrescoRepository<ProductData> alfrescoRepository;
-	private NodeService nodeService;
-	private NodeRef destFolder;
-
 	private boolean isWithCompo = true;
 	private boolean isWithLabeling = true;
 	private boolean isWithGenericRawMaterial = true;
 	private boolean isWithStocks = true;
-	private boolean isWithIngredients = true;
+	private boolean isWithIngredients = false;
 
-	// Private constructor to prevent direct instantiation
+	// Private constructor to enforce usage of the builder
 	private StandardChocolateEclairTestProduct(Builder builder) {
-		this.alfrescoRepository = builder.alfrescoRepository;
-		this.nodeService = builder.nodeService;
-		this.destFolder = builder.destFolder;
+		super(builder);
 		this.isWithCompo = builder.isWithCompo;
 		this.isWithLabeling = builder.isWithLabeling;
 		this.isWithGenericRawMaterial = builder.isWithGenericRawMaterial;
@@ -170,31 +160,12 @@ public class StandardChocolateEclairTestProduct {
 	}
 
 	// Static inner Builder class
-	public static class Builder {
-		private AlfrescoRepository<ProductData> alfrescoRepository;
-		private NodeService nodeService;
-		private NodeRef destFolder;
-
+	public static class Builder extends StandardProductBuilder.Builder<Builder> {
 		private boolean isWithCompo = true;
 		private boolean isWithLabeling = true;
 		private boolean isWithGenericRawMaterial = true;
 		private boolean isWithStocks = true;
-		private boolean isWithIngredients = true;
-
-		public Builder withAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
-			this.alfrescoRepository = alfrescoRepository;
-			return this;
-		}
-
-		public Builder withNodeService(NodeService nodeService) {
-			this.nodeService = nodeService;
-			return this;
-		}
-
-		public Builder withDestFolder(NodeRef destFolder) {
-			this.destFolder = destFolder;
-			return this;
-		}
+		private boolean isWithIngredients = false;
 
 		public Builder withCompo(boolean isWithCompo) {
 			this.isWithCompo = isWithCompo;
@@ -221,13 +192,18 @@ public class StandardChocolateEclairTestProduct {
 			return this;
 		}
 
-		// Build method to create the object
+		@Override
+		protected Builder self() {
+			return this;
+		}
+
+		@Override
 		public StandardChocolateEclairTestProduct build() {
 			return new StandardChocolateEclairTestProduct(this);
 		}
-
 	}
 
+	@Override
 	public FinishedProductData createTestProduct() {
 		FinishedProductData finishedProduct = FinishedProductData.build().withName("Éclair au chocolat").withUnit(ProductUnit.kg).withQty(550d)
 				.withDensity(1d);
@@ -480,40 +456,22 @@ public class StandardChocolateEclairTestProduct {
 
 	private void initIngredients() {
 
-		ingWaterNodeRef = getOrCreateIng(WATER_NAME);
+		ingWaterNodeRef = CharactTestHelper.getOrCreateIng(nodeService,WATER_NAME);
 
 		nodeService.addAspect(ingWaterNodeRef, PLMModel.ASPECT_WATER, new HashMap<>());
 
-		ingMilkNodeRef = getOrCreateIng(MILK_NAME);
+		ingMilkNodeRef = CharactTestHelper.getOrCreateIng(nodeService,MILK_NAME);
 
 		nodeService.setProperty(ingMilkNodeRef, PLMModel.PROP_EVAPORATED_RATE, 90d);
 
-		ingSugarNodeRef = getOrCreateIng(SUGAR_NAME);
-		ingFlourNodeRef = getOrCreateIng(FLOUR_NAME);
-		ingEggNodeRef = getOrCreateIng(EGG_NAME);
+		ingSugarNodeRef = CharactTestHelper.getOrCreateIng(nodeService,SUGAR_NAME);
+		ingFlourNodeRef = CharactTestHelper.getOrCreateIng(nodeService,FLOUR_NAME);
+		ingEggNodeRef = CharactTestHelper.getOrCreateIng(nodeService,EGG_NAME);
 
 		nodeService.setProperty(ingEggNodeRef, PLMModel.PROP_EVAPORATED_RATE, 10d);
 
-		ingChocolateNodeRef = getOrCreateIng(CHOCOLATE_NAME);
+		ingChocolateNodeRef = CharactTestHelper.getOrCreateIng(nodeService,CHOCOLATE_NAME);
 
-	}
-
-	private NodeRef getOrCreateIng(String ingName) {
-
-		NodeRef ingFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath("/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:Ings");
-
-		NodeRef ret = nodeService.getChildByName(ingFolder, ContentModel.ASSOC_CONTAINS, ingName);
-
-		if (ret == null) {
-			Map<QName, Serializable> properties = new HashMap<>();
-			properties.put(BeCPGModel.PROP_CHARACT_NAME, ingName);
-			ChildAssociationRef childAssocRef = nodeService.createNode(ingFolder, ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
-					PLMModel.TYPE_ING, properties);
-			ret = childAssocRef.getChildRef();
-		}
-
-		return ret;
 	}
 
 	private void addStocks(RawMaterialData rawMaterial, Double qty, List<NodeRef> laboratories) {

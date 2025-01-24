@@ -5,12 +5,13 @@ import org.springframework.stereotype.Service;
 
 import jakarta.annotation.PostConstruct;
 
+
 /**
  * <p>SystemConfigurationRegistry class.</p>
  *
  * @author matthieu
  */
-@Service
+@Service("systemConfigurationRegistry")
 public class SystemConfigurationRegistry {
 	   private static SystemConfigurationService instance;
 

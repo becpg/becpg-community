@@ -12,6 +12,11 @@ import fr.becpg.repo.survey.SurveyModel;
 import fr.becpg.repo.survey.data.SurveyListDataItem;
 import fr.becpg.repo.survey.data.SurveyableEntity;
 
+/**
+ * <p>SurveyableEntityHelper class.</p>
+ *
+ * @author matthieu
+ */
 public class SurveyableEntityHelper {
 
 	private static final byte NB_OF_SURVEY_LISTS = 4;
@@ -29,14 +34,33 @@ public class SurveyableEntityHelper {
 		SURVEY_LIST_NAMES = Collections.unmodifiableList(surveyListNames);
 	}
 	
+	/**
+	 * <p>isTransient.</p>
+	 *
+	 * @param entity a {@link fr.becpg.repo.survey.data.SurveyableEntity} object
+	 * @return a boolean
+	 */
 	public static boolean isTransient(SurveyableEntity entity) {
 		return entity.getNodeRef() == null;
 	}
 	
+	/**
+	 * <p>isDefault.</p>
+	 *
+	 * @param surveyListName a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	public static boolean isDefault(String surveyListName) {
 		return SURVEY_LIST_BASE_NAME.equals(surveyListName);
 	}
 	
+	/**
+	 * <p>getNamesSurveyLists.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 * @param entity a {@link fr.becpg.repo.survey.data.SurveyableEntity} object
+	 * @return a {@link java.util.Map} object
+	 */
 	public static Map<String, List<SurveyListDataItem>> getNamesSurveyLists(AlfrescoRepository<?> alfrescoRepository,
 			SurveyableEntity entity) {
 		final Map<String, List<SurveyListDataItem>> namesSurveyLists = new HashMap<>(

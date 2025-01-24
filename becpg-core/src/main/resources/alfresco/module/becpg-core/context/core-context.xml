@@ -186,8 +186,7 @@
 
     
     <!-- Alfresco patch for country support under MLText -->
-
-	<bean id="mlPropertyInterceptor" class="fr.becpg.repo.multilingual.BeCPGMLPropertyInterceptor">
+	<bean id="mlPropertyInterceptor" class="fr.becpg.repo.multilingual.BeCPGMLPropertyInterceptor" depends-on="systemConfigurationRegistry">
 		<property name="nodeService">
 			<ref bean="mlAwareNodeService" />
 		</property>
@@ -199,6 +198,7 @@
 		</property>
 		<property name="namespaceService" ref="namespaceService" />
 	</bean>
+
 
 
 <!--  NotificationRule Job -->
@@ -302,9 +302,10 @@
 	<bean id="siteRoleComparator" class="org.alfresco.repo.site.RoleComparatorImpl" init-method="init">
 		<property name="rolePrecedence">
 			<map>
-				<entry key="SiteManager" value="5" />
-				<entry key="SiteCollaborator" value="4" />
-				<entry key="SiteContributor" value="3" />
+				<entry key="SiteManager" value="6" />
+				<entry key="SiteCollaborator" value="5" />
+				<entry key="SiteContributor" value="4" />
+				<entry key="SiteBranchOnlyManager" value="3" />
 				<entry key="SiteBranchManager" value="2" />
 				<entry key="SiteConsumer" value="1" />
 			</map>

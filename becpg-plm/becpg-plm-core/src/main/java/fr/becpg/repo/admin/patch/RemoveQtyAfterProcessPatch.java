@@ -48,89 +48,95 @@ public class RemoveQtyAfterProcessPatch extends AbstractBeCPGPatch {
 	@Override
 	protected String applyInternal() throws Exception {
 
-			AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
+		AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
-			BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
-				final List<NodeRef> result = new ArrayList<>();
+		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<>() {
+			final List<NodeRef> result = new ArrayList<>();
 
-				final long maxNodeId = getNodeDAO().getMaxNodeId();
+			final long maxNodeId = getNodeDAO().getMaxNodeId();
 
-				long minSearchNodeId = 0;
-				long maxSearchNodeId = count;
+			long minSearchNodeId = 0;
+			long maxSearchNodeId = count;
 
-				final Pair<Long, QName> val = getQnameDAO().getQName(PLMModel.TYPE_COMPOLIST);
+			final Pair<Long, QName> val = getQnameDAO().getQName(PLMModel.TYPE_COMPOLIST);
 
-				public int getTotalEstimatedWorkSize() {
-					return result.size();
-				}
-				
-				@Override
-				public long getTotalEstimatedWorkSizeLong() {
-					return getTotalEstimatedWorkSize();
-				}
+			@Override
+			public int getTotalEstimatedWorkSize() {
+				return result.size();
+			}
 
-				public Collection<NodeRef> getNextWork() {
-					if (val != null) {
-						Long typeQNameId = val.getFirst();
+			@Override
+			public long getTotalEstimatedWorkSizeLong() {
+				return getTotalEstimatedWorkSize();
+			}
 
-						result.clear();
+			@Override
+			public Collection<NodeRef> getNextWork() {
+				if (val != null) {
+					Long typeQNameId = val.getFirst();
 
-						while (result.isEmpty() && minSearchNodeId < maxNodeId) {
-							
-							
-							List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, maxSearchNodeId);
+					result.clear();
 
-							for (Long nodeid : nodeids) {
-								NodeRef.Status status = getNodeDAO().getNodeIdStatus(nodeid);
-								if (!status.isDeleted()) {
-									result.add(status.getNodeRef());
-								}
+					while (result.isEmpty() && (minSearchNodeId < maxNodeId)) {
+
+						List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, maxSearchNodeId);
+
+						for (Long nodeid : nodeids) {
+							NodeRef.Status status = getNodeDAO().getNodeIdStatus(nodeid);
+							if (!status.isDeleted()) {
+								result.add(status.getNodeRef());
 							}
-							minSearchNodeId = minSearchNodeId + count;
-							maxSearchNodeId = maxSearchNodeId + count;
 						}
+						minSearchNodeId = minSearchNodeId + count;
+						maxSearchNodeId = maxSearchNodeId + count;
 					}
-
-					return result;
-				}
-			};
-
-			BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("RemoveQtyAfterProcessPatch",
-					transactionService.getRetryingTransactionHelper(), workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 1000);
-
-			BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
-
-				public void afterProcess() throws Throwable {
-					ruleService.enableRules();
 				}
 
-				public void beforeProcess() throws Throwable {
-					ruleService.disableRules();
-				}
+				return result;
+			}
+		};
 
-				public String getIdentifier(NodeRef entry) {
-					return entry.toString();
-				}
+		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("RemoveQtyAfterProcessPatch", transactionService.getRetryingTransactionHelper(),
+				workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 1000);
 
-				public void process(NodeRef dataListNodeRef) throws Throwable {
-					
+		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<>() {
+
+			@Override
+			public void afterProcess() throws Throwable {
+				//Do Nothing
+
+			}
+
+			@Override
+			public void beforeProcess() throws Throwable {
+				//Do Nothing
+
+			}
+
+			@Override
+			public String getIdentifier(NodeRef entry) {
+				return entry.toString();
+			}
+
+			@Override
+			public void process(NodeRef dataListNodeRef) throws Throwable {
+				ruleService.disableRules();
+				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
+				policyBehaviourFilter.disableBehaviour();
+
+				if (nodeService.exists(dataListNodeRef)) {
 					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
-					policyBehaviourFilter.disableBehaviour();
-					
-					if (nodeService.exists(dataListNodeRef)) {
-						AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
-						nodeService.removeProperty(dataListNodeRef, QName.createQName(BeCPGModel.BECPG_URI, "compoListQtyAfterProcess"));
-						
-					} else {
-						logger.warn("dataListNodeRef doesn't exist : " + dataListNodeRef);
-					}
+					nodeService.removeProperty(dataListNodeRef, QName.createQName(BeCPGModel.BECPG_URI, "compoListQtyAfterProcess"));
 
+				} else {
+					logger.warn("dataListNodeRef doesn't exist : " + dataListNodeRef);
 				}
+				ruleService.enableRules();
+			}
 
-			};
+		};
 
-			batchProcessor.processLong(worker, true);
-		
+		batchProcessor.processLong(worker, true);
 
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}

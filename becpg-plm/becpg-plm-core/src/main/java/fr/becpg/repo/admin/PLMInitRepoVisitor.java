@@ -383,6 +383,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 		// LCADatabases
 		visitFolder(systemNodeRef, PlmRepoConsts.PATH_LCA_DATABASES);
+		
+		// LCADatabases
+	    visitFolder(systemNodeRef, PlmRepoConsts.PATH_CLP_DATABASES);
 
 		// Property catalogs
 		visitFolder(systemNodeRef, PlmRepoConsts.PATH_CATALOGS);
@@ -589,6 +592,11 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/databases/ecoscore/agribalyse_3_0.csv");
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/databases/ecoscore/agribalyse_3_1.csv");
 		}
+		
+		if (Objects.equals(folderName, PlmRepoConsts.PATH_CLP_DATABASES)) {
+			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/databases/clp/*.csv");
+		}
+		
 		if (Objects.equals(folderName, PlmRepoConsts.PATH_CATALOGS)) {
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/catalogs/*.json");
 		}
@@ -1423,6 +1431,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
 		dataLists.add(PLMModel.TYPE_LABELCLAIMLIST);
 		dataLists.add(PLMModel.TYPE_SPEC_COMPATIBILTY_LIST);
+		dataLists.add(GHSModel.TYPE_HAZARD_CLASSIFICATION_LIST);
 		dataLists.add(BeCPGModel.TYPE_ACTIVITY_LIST);
 		entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, PLMModel.TYPE_PRODUCT_SPECIFICATION, null, true, true, dataLists,
 				null);

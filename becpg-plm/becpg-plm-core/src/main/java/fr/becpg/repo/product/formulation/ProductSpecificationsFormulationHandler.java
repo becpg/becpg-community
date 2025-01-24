@@ -74,10 +74,20 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 	
 	private BatchQueueService batchQueueService;
 	
+	/**
+	 * <p>Setter for the field <code>batchQueueService</code>.</p>
+	 *
+	 * @param batchQueueService a {@link fr.becpg.repo.batch.BatchQueueService} object
+	 */
 	public void setBatchQueueService(BatchQueueService batchQueueService) {
 		this.batchQueueService = batchQueueService;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>associationService</code>.</p>
+	 *
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object
+	 */
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
@@ -196,47 +206,54 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 								
 								public void process(NodeRef productNodeRef) throws Throwable {
 									
-									ProductSpecificationData productSpecificationData = (ProductSpecificationData) alfrescoRepository.findOne(formulatedProduct.getNodeRef());
-									
-									Date formulatedDate = (Date) nodeService.getProperty(productNodeRef, BeCPGModel.PROP_FORMULATED_DATE);
-									
-									if ((formulatedDate == null) || (specFormulatedDate == null)
-											|| ((specModifiedDate != null) && (specModifiedDate.getTime() > specFormulatedDate.getTime()))
-											|| (formulatedDate.getTime() > specFormulatedDate.getTime())) {
+									try {
 										
-										ProductData productData = alfrescoRepository.findOne(productNodeRef);
+										policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 										
-										for (RequirementScanner scanner : requirementScanners) {
+										ProductSpecificationData productSpecificationData = (ProductSpecificationData) alfrescoRepository.findOne(formulatedProduct.getNodeRef());
+										
+										Date formulatedDate = (Date) nodeService.getProperty(productNodeRef, BeCPGModel.PROP_FORMULATED_DATE);
+										
+										if ((formulatedDate == null) || (specFormulatedDate == null)
+												|| ((specModifiedDate != null) && (specModifiedDate.getTime() > specFormulatedDate.getTime()))
+												|| (formulatedDate.getTime() > specFormulatedDate.getTime())) {
 											
-											StringBuilder reqDetails = null;
+											ProductData productData = alfrescoRepository.findOne(productNodeRef);
 											
-											for (ReqCtrlListDataItem reqCtrlListDataItem : scanner.checkRequirements(productData,
-													Arrays.asList((ProductSpecificationData) formulatedProduct))) {
-												if (RequirementType.Forbidden.equals(reqCtrlListDataItem.getReqType())
-														&& RequirementDataType.Specification.equals(reqCtrlListDataItem.getReqDataType())) {
-													if (reqDetails == null) {
-														reqDetails = new StringBuilder(reqCtrlListDataItem.getReqMessage());
-													} else {
-														reqDetails.append(RepoConsts.LABEL_SEPARATOR);
-														reqDetails.append(reqCtrlListDataItem.getReqMessage());
+											for (RequirementScanner scanner : requirementScanners) {
+												
+												StringBuilder reqDetails = null;
+												
+												for (ReqCtrlListDataItem reqCtrlListDataItem : scanner.checkRequirements(productData,
+														Arrays.asList((ProductSpecificationData) formulatedProduct))) {
+													if (RequirementType.Forbidden.equals(reqCtrlListDataItem.getReqType())
+															&& RequirementDataType.Specification.equals(reqCtrlListDataItem.getReqDataType())) {
+														if (reqDetails == null) {
+															reqDetails = new StringBuilder(reqCtrlListDataItem.getReqMessage());
+														} else {
+															reqDetails.append(RepoConsts.LABEL_SEPARATOR);
+															reqDetails.append(reqCtrlListDataItem.getReqMessage());
+														}
 													}
 												}
-											}
-											if (reqDetails != null) {
-												if (logger.isDebugEnabled()) {
-													logger.debug("Adding Forbidden for " + productNodeRef);
+												if (reqDetails != null) {
+													if (logger.isDebugEnabled()) {
+														logger.debug("Adding Forbidden for " + productNodeRef);
+													}
+													
+													toUpdateProducts.add(productNodeRef);
+													productSpecificationData.getSpecCompatibilityList().add(new SpecCompatibilityDataItem(
+															RequirementType.Forbidden, reqDetails.toString(), productNodeRef));
 												}
-												
-												toUpdateProducts.add(productNodeRef);
-												productSpecificationData.getSpecCompatibilityList().add(new SpecCompatibilityDataItem(
-														RequirementType.Forbidden, reqDetails.toString(), productNodeRef));
 											}
+										} else {
+											logger.trace("Skipping productNodeRef: " + productNodeRef);
+											toSkipProducts.add(productNodeRef);
 										}
-									} else {
-										logger.trace("Skipping productNodeRef: " + productNodeRef);
-										toSkipProducts.add(productNodeRef);
+										alfrescoRepository.save(productSpecificationData);
+									} finally {
+										policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
 									}
-									alfrescoRepository.save(productSpecificationData);
 								}
 							});
 							
@@ -265,17 +282,23 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 								@Override
 								public void afterStep() {
 									
-									ProductSpecificationData productSpecificationData = (ProductSpecificationData) alfrescoRepository.findOne(formulatedProduct.getNodeRef());
-									productSpecificationData.getSpecCompatibilityList().removeIf(p -> !toSkipProducts.contains(p.getSourceItem()));
-									
-									stopWatch.stop();
-									
-									logs.append( "- found " + toUpdateProducts.size() + " new forbidden products,\n");
-									logs.append( "- found " + toSkipProducts.size() + " products to skip,\n");
-									logs.append( "batch formulation end in " + stopWatch.getTotalTimeSeconds() + "s at " + Calendar.getInstance().getTime().toString()
-											+ "\n");
-									productSpecificationData.setSpecCompatibilityLog(logs.toString());
-									alfrescoRepository.save(productSpecificationData);
+									try {
+										policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+										
+										ProductSpecificationData productSpecificationData = (ProductSpecificationData) alfrescoRepository.findOne(formulatedProduct.getNodeRef());
+										productSpecificationData.getSpecCompatibilityList().removeIf(p -> !toSkipProducts.contains(p.getSourceItem()));
+										
+										stopWatch.stop();
+										
+										logs.append( "- found " + toUpdateProducts.size() + " new forbidden products,\n");
+										logs.append( "- found " + toSkipProducts.size() + " products to skip,\n");
+										logs.append( "batch formulation end in " + stopWatch.getTotalTimeSeconds() + "s at " + Calendar.getInstance().getTime().toString()
+												+ "\n");
+										productSpecificationData.setSpecCompatibilityLog(logs.toString());
+										alfrescoRepository.save(productSpecificationData);
+									} finally {
+										policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+									}
 									
 								}
 							});

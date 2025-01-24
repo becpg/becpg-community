@@ -196,6 +196,7 @@ public class NutrientHelper {
 			nutriScoreContext.setVersion(productData.getNutrientProfileVersion());
 			boolean containsWaterAspect = productData.getAspects().contains(PLMModel.ASPECT_WATER)
 					|| (productData.getAspects().contains(PLMModel.ASPECT_EVAPORABLE) && productData.getNodeRef() != null
+							&& (Double) nodeService.getProperty(productData.getNodeRef(), PLMModel.PROP_EVAPORATED_RATE)!=null 
 							&& (Double) nodeService.getProperty(productData.getNodeRef(), PLMModel.PROP_EVAPORATED_RATE) == 100d);
 			nutriScoreContext.setWater(containsWaterAspect);
 
@@ -338,19 +339,9 @@ public class NutrientHelper {
 	 *
 	 * @param part a {@link org.json.JSONObject} object
 	 * @param categories an array of {@link double} objects
-	 */
-	public static void buildNutriScorePart(JSONObject part, double[] categories) {
-		buildNutriScorePart(part, categories, false);
-	}
-
-	/**
-	 * <p>buildNutriScorePart.</p>
-	 *
-	 * @param part a {@link org.json.JSONObject} object
-	 * @param categories an array of {@link double} objects
 	 * @param includeLower a boolean
 	 */
-	public static void buildNutriScorePart(JSONObject part, double[] categories, boolean includeLower) {
+	public static void buildNutriScorePart(JSONObject part, double[] categories) {
 
 		int score = categories.length;
 
@@ -367,7 +358,7 @@ public class NutrientHelper {
 
 			lower = threshold;
 
-			if ((value > threshold || includeLower && value == threshold) && (threshold != -1)) {
+			if ((value > threshold) && (threshold != -1)) {
 				break;
 			}
 

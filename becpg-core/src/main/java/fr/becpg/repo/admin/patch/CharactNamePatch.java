@@ -135,12 +135,12 @@ public class CharactNamePatch extends AbstractBeCPGPatch {
 		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
 
 			public void afterProcess() throws Throwable {
-				ruleService.enableRules();
 				
+				//Do Nothing
 			}
 
 			public void beforeProcess() throws Throwable {
-				ruleService.disableRules();
+				//Do Nothing
 			}
 
 			public String getIdentifier(NodeRef entry) {
@@ -148,6 +148,7 @@ public class CharactNamePatch extends AbstractBeCPGPatch {
 			}
 
 			public void process(NodeRef dataListNodeRef) throws Throwable {
+				ruleService.disableRules();
 				if (nodeService.exists(dataListNodeRef)) {
 					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 					policyBehaviourFilter.disableBehaviour();
@@ -168,6 +169,7 @@ public class CharactNamePatch extends AbstractBeCPGPatch {
 				} else {
 					logger.warn("dataListNodeRef doesn't exist : " + dataListNodeRef);
 				}
+				ruleService.enableRules();
 			}
 
 		};

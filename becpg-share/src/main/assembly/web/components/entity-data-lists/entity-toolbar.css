@@ -127,7 +127,13 @@
    background: url(../documentlibrary/actions/entity-refresh-reports-16.png) no-repeat 8px 4px;
 }
 
+.datalist-toolbar .formulate-decernis span.first-child
+{
+   background: url(../documentlibrary/actions/entity-refresh-reports-16.png) no-repeat 8px 4px;
+}
+
 .datalist-toolbar .formulate.loading span.first-child,
+.datalist-toolbar .formulate-decernis.loading span.first-child,
 .datalist-toolbar .entity-refresh-reports.loading span.first-child
 {
    background: url(images/loading.gif) no-repeat 8px 4px;

@@ -46,9 +46,6 @@ public class IsManualListItemPatch extends AbstractBeCPGPatch {
 	private RuleService ruleService;
 	private DictionaryService dictionaryService;
 	private IntegrityChecker integrityChecker;
-	
-	
-	
 
 	/**
 	 * <p>Setter for the field <code>ruleService</code>.</p>
@@ -71,48 +68,45 @@ public class IsManualListItemPatch extends AbstractBeCPGPatch {
 	/** {@inheritDoc} */
 	@Override
 	protected String applyInternal() throws Exception {
-		
+
 		HashMap<QName, List<PropertyDefinition>> mapAspect = new HashMap<>();
-		for(QName aspect : dictionaryService.getAllAspects()){
+		for (QName aspect : dictionaryService.getAllAspects()) {
 			AspectDefinition aspectDef = dictionaryService.getAspect(aspect);
-			if(!aspectDef.getName().equals(ContentModel.ASPECT_AUDITABLE) && !aspectDef.getName().equals(ContentModel.ASPECT_REFERENCEABLE)){
+			if (!aspectDef.getName().equals(ContentModel.ASPECT_AUDITABLE) && !aspectDef.getName().equals(ContentModel.ASPECT_REFERENCEABLE)) {
 				List<PropertyDefinition> propDefs = getEnforcedProps(aspectDef.getProperties().values());
-				if(!propDefs.isEmpty()){
+				if (!propDefs.isEmpty()) {
 					logger.debug("add aspect " + aspect + " propDefs " + propDefs);
 					mapAspect.put(aspect, propDefs);
 				}
-			}				
+			}
 		}
 		HashMap<QName, List<PropertyDefinition>> mapType = new HashMap<>();
-		for(QName type : dictionaryService.getAllTypes()){
+		for (QName type : dictionaryService.getAllTypes()) {
 			TypeDefinition typeDef = dictionaryService.getType(type);
 			List<PropertyDefinition> propDefs = getEnforcedProps(typeDef.getProperties().values());
-			if(!propDefs.isEmpty()){
+			if (!propDefs.isEmpty()) {
 				logger.debug("add type " + type + " propDefs " + propDefs);
 				mapType.put(type, propDefs);
-			}			
+			}
 		}
-		for(QName aspect : mapAspect.keySet()){
+		for (QName aspect : mapAspect.keySet()) {
 			logger.debug("aspect " + aspect);
 			doForAspect(aspect, mapAspect, mapType, true);
 		}
-		
-		for(QName type : mapType.keySet()){
+
+		for (QName type : mapType.keySet()) {
 			logger.debug("type " + type);
 			doForAspect(type, mapAspect, mapType, true);
 		}
 
-		
-		
-			    	
-		patchCurrentUSerSize();	    	
-		
+		patchCurrentUSerSize();
+
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}
-	
+
 	private void patchCurrentUSerSize() {
 
-		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
+		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<>() {
 			final List<NodeRef> result = new ArrayList<>();
 
 			final long maxNodeId = getNodeDAO().getMaxNodeId();
@@ -122,24 +116,25 @@ public class IsManualListItemPatch extends AbstractBeCPGPatch {
 
 			final Pair<Long, QName> val = getQnameDAO().getQName(ContentModel.TYPE_PERSON);
 
+			@Override
 			public int getTotalEstimatedWorkSize() {
 				return result.size();
 			}
-			
+
 			@Override
 			public long getTotalEstimatedWorkSizeLong() {
 				return getTotalEstimatedWorkSize();
 			}
 
+			@Override
 			public Collection<NodeRef> getNextWork() {
 				if (val != null) {
 					Long typeQNameId = val.getFirst();
 
 					result.clear();
 
-					while (result.isEmpty() && minSearchNodeId < maxNodeId) {
-						
-						
+					while (result.isEmpty() && (minSearchNodeId < maxNodeId)) {
+
 						List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, maxSearchNodeId);
 
 						for (Long nodeid : nodeids) {
@@ -157,58 +152,63 @@ public class IsManualListItemPatch extends AbstractBeCPGPatch {
 			}
 		};
 
-		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("CostParentLevelPatch",
-				transactionService.getRetryingTransactionHelper(), workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 1000);
+		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("CostParentLevelPatch", transactionService.getRetryingTransactionHelper(),
+				workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 1000);
 
-		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
+		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<>() {
 
+			@Override
 			public void afterProcess() throws Throwable {
-				ruleService.enableRules();									
+				//Do nothing
 			}
 
+			@Override
 			public void beforeProcess() throws Throwable {
-				ruleService.disableRules();					
+				//Do nothing
 			}
 
+			@Override
 			public String getIdentifier(NodeRef entry) {
 				return entry.toString();
 			}
 
-			public void process(NodeRef personNodeRef) throws Throwable {									
-				
-				if (nodeService.exists(personNodeRef) ) {
-					if(nodeService.getProperty(personNodeRef,ContentModel.PROP_SIZE_CURRENT) == null ){
-						nodeService.setProperty(personNodeRef,ContentModel.PROP_SIZE_CURRENT, 0);
+			@Override
+			public void process(NodeRef personNodeRef) throws Throwable {
+				ruleService.disableRules();
+				if (nodeService.exists(personNodeRef)) {
+					if (nodeService.getProperty(personNodeRef, ContentModel.PROP_SIZE_CURRENT) == null) {
+						nodeService.setProperty(personNodeRef, ContentModel.PROP_SIZE_CURRENT, 0);
 					}
 				} else {
 					logger.warn("personNodeRef doesn't exist : " + personNodeRef);
 				}
-
+				ruleService.enableRules();
 			}
 
 		};
 
 		integrityChecker.setEnabled(false);
 		try {
-			batchProcessor.process(worker, true);
+			batchProcessor.processLong(worker, true);
 		} finally {
 			integrityChecker.setEnabled(true);
 		}
-	
+
 	}
 
-	private List<PropertyDefinition> getEnforcedProps(Collection<PropertyDefinition> propertyDefs){
-		List<PropertyDefinition> propDefs = new ArrayList<>();		
-		for(PropertyDefinition propDef : propertyDefs){
-			if(propDef.isMandatoryEnforced() && propDef.getDefaultValue() != null && !propDef.getName().equals(ContentModel.PROP_NAME)){										
+	private List<PropertyDefinition> getEnforcedProps(Collection<PropertyDefinition> propertyDefs) {
+		List<PropertyDefinition> propDefs = new ArrayList<>();
+		for (PropertyDefinition propDef : propertyDefs) {
+			if (propDef.isMandatoryEnforced() && (propDef.getDefaultValue() != null) && !propDef.getName().equals(ContentModel.PROP_NAME)) {
 				propDefs.add(propDef);
 			}
-		}		
+		}
 		return propDefs;
 	}
-		
-	private void doForAspect(final QName aspect, final Map<QName, List<PropertyDefinition>> mapAspect, final Map<QName, List<PropertyDefinition>> mapTypes, final boolean isAspect) {
-		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
+
+	private void doForAspect(final QName aspect, final Map<QName, List<PropertyDefinition>> mapAspect,
+			final Map<QName, List<PropertyDefinition>> mapTypes, final boolean isAspect) {
+		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<>() {
 			final List<NodeRef> result = new ArrayList<>();
 
 			final long maxNodeId = getNodeDAO().getMaxNodeId();
@@ -218,30 +218,30 @@ public class IsManualListItemPatch extends AbstractBeCPGPatch {
 
 			final Pair<Long, QName> val = getQnameDAO().getQName(aspect);
 
+			@Override
 			public int getTotalEstimatedWorkSize() {
 				return result.size();
 			}
-			
+
 			@Override
 			public long getTotalEstimatedWorkSizeLong() {
 				return getTotalEstimatedWorkSize();
 			}
 
+			@Override
 			public Collection<NodeRef> getNextWork() {
 				if (val != null) {
 					Long typeQNameId = val.getFirst();
 
 					result.clear();
 
-					while (result.isEmpty() && minSearchNodeId < maxNodeId) {
+					while (result.isEmpty() && (minSearchNodeId < maxNodeId)) {
 						List<Long> nodeids;
-						if(isAspect){
+						if (isAspect) {
 							nodeids = getPatchDAO().getNodesByAspectQNameId(typeQNameId, minSearchNodeId, maxSearchNodeId);
-						}
-						else{
+						} else {
 							nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, maxSearchNodeId);
 						}
-						
 
 						for (Long nodeid : nodeids) {
 							NodeRef.Status status = getNodeDAO().getNodeIdStatus(nodeid);
@@ -261,35 +261,41 @@ public class IsManualListItemPatch extends AbstractBeCPGPatch {
 		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("IsManualListItemPatch", transactionService.getRetryingTransactionHelper(),
 				workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 1000);
 
-		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
+		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<>() {
 
+			@Override
 			public void afterProcess() throws Throwable {
-				ruleService.enableRules();
-				
+
+				//Do nothing
+
 			}
 
+			@Override
 			public void beforeProcess() throws Throwable {
-				ruleService.disableRules();
+
+				//Do nothing
 			}
 
+			@Override
 			public String getIdentifier(NodeRef entry) {
 				return entry.toString();
 			}
 
+			@Override
 			public void process(NodeRef dataListNodeRef) throws Throwable {
+				ruleService.disableRules();
 				if (nodeService.exists(dataListNodeRef)) {
 					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 					policyBehaviourFilter.disableBehaviour();
-					for(QName aspect : mapAspect.keySet()){
-						//logger.info("aspectDef " + aspectDef.getName());
-						if(nodeService.hasAspect(dataListNodeRef, aspect)){
+					for (QName aspect : mapAspect.keySet()) {
+						if (nodeService.hasAspect(dataListNodeRef, aspect)) {
 							updatePropertyDefs(dataListNodeRef, mapAspect.get(aspect));
 						}
 					}
-					
-					if(isAspect){
+
+					if (isAspect) {
 						QName type = nodeService.getType(dataListNodeRef);
-						if(mapTypes.containsKey(type)){
+						if (mapTypes.containsKey(type)) {
 							updatePropertyDefs(dataListNodeRef, mapTypes.get(type));
 						}
 					}
@@ -297,6 +303,7 @@ public class IsManualListItemPatch extends AbstractBeCPGPatch {
 				} else {
 					logger.warn("dataListNodeRef doesn't exist : " + dataListNodeRef);
 				}
+				ruleService.enableRules();
 			}
 
 		};
@@ -305,16 +312,16 @@ public class IsManualListItemPatch extends AbstractBeCPGPatch {
 
 		integrityChecker.setEnabled(false);
 		try {
-			batchProcessor.process(worker, true);
+			batchProcessor.processLong(worker, true);
 		} finally {
 			integrityChecker.setEnabled(true);
 		}
 	}
-	
-	private void updatePropertyDefs(NodeRef dataListNodeRef, Collection<PropertyDefinition> propertyDefs){
-		for(PropertyDefinition propDef : propertyDefs){
+
+	private void updatePropertyDefs(NodeRef dataListNodeRef, Collection<PropertyDefinition> propertyDefs) {
+		for (PropertyDefinition propDef : propertyDefs) {
 			//logger.info("propDef " + propDef.getName());
-			if(nodeService.getProperty(dataListNodeRef, propDef.getName()) == null){
+			if (nodeService.getProperty(dataListNodeRef, propDef.getName()) == null) {
 				nodeService.setProperty(dataListNodeRef, propDef.getName(), propDef.getDefaultValue());
 				logger.debug("set enforced prop " + propDef.getName() + " default value " + propDef.getDefaultValue());
 			}
@@ -402,6 +409,4 @@ public class IsManualListItemPatch extends AbstractBeCPGPatch {
 		this.integrityChecker = integrityChecker;
 	}
 
-	
-	
 }

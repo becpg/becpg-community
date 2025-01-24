@@ -77,7 +77,7 @@
             "itemId": "pjt:project",
             "itemKind": "type",
             "formId": "supplier-process",
-            "condition": "js(items.length > 0 && items.every( (n) =>  ((items.length == 1) && n.isSubType(\"bcpg:product\")) || (items.length==1 && n.isSubType(\"bcpg:supplier\")) ) )",
+            "condition": "js(items.length > 0 && items.every( (n) =>  ((items.length == 1) && n.isSubType(\"bcpg:product\")) || (items.length==1 && n.isSubType(\"bcpg:supplier\")) || (items.length==1 && n.isSubType(\"qa:nc\")) ) )",
 			"formFields": {
 				"prop_pjt_projectState": "InProgress",
 				"prop_cm_name": "js(bSupplier.extractSupplierProjectName(items))",

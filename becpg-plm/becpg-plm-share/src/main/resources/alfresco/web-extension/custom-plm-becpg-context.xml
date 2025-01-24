@@ -68,6 +68,15 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 	
 	<!-- evaluators -->
 	
+	<bean id="evaluator.becpg.doclib.action.productOrSupplier" parent="evaluator.doclib.action.nodeType">
+      <property name="types">
+			<list>
+				<value>bcpg:product</value>
+				<value>bcpg:supplier</value>
+			</list>
+		</property>
+   </bean>
+	
 	<bean id="evaluator.becpg.doclib.action.product" parent="evaluator.doclib.action.nodeType">
 		<property name="types">
 			<list>

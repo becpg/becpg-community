@@ -56,6 +56,11 @@ public class ProductRegulatoryFormulationHandler extends FormulationBaseHandler<
 	}
 
 	private void computeRegulatoryResults(RegulatoryEntity regulatoryEntity, List<ReqCtrlListDataItem> reqCtrlList) {
+		boolean isProhibited = false;
+		if (regulatoryEntity instanceof RegulatoryListDataItem) {
+			((RegulatoryListDataItem) regulatoryEntity).setLimitingIngredients(null);
+			((RegulatoryListDataItem) regulatoryEntity).setMaximumDosage(null);
+		}
 		List<String> regulatoryIds = extractRegulatoryIds(regulatoryEntity);
 		for (String regulatoryId : regulatoryIds) {
 			List<ReqCtrlListDataItem> matchingRequirements = reqCtrlList.stream().filter(req -> regulatoryId.equals(req.getRegulatoryCode())).collect(Collectors.toList());
@@ -65,15 +70,20 @@ public class ProductRegulatoryFormulationHandler extends FormulationBaseHandler<
 					((RegulatoryListDataItem) regulatoryEntity).setLimitingIngredients(null);
 					((RegulatoryListDataItem) regulatoryEntity).setMaximumDosage(null);
 				}
+				return;
 			} else {
 				List<ReqCtrlListDataItem> maximumDosageRequirements = getMaximumDosageRequirements(matchingRequirements);
 				if (!maximumDosageRequirements.isEmpty()) {
 					regulatoryEntity.setRegulatoryResult(RegulatoryResult.PROHIBITED);
 					if (regulatoryEntity instanceof RegulatoryListDataItem) {
-						((RegulatoryListDataItem) regulatoryEntity).setLimitingIngredients(maximumDosageRequirements.stream().map(r -> r.getCharact()).collect(Collectors.toList()));
-						((RegulatoryListDataItem) regulatoryEntity).setMaximumDosage(maximumDosageRequirements.get(0).getReqMaxQty());
+						Double reqMaxQty = maximumDosageRequirements.get(0).getReqMaxQty();
+						if (((RegulatoryListDataItem) regulatoryEntity).getMaximumDosage() == null || reqMaxQty < ((RegulatoryListDataItem) regulatoryEntity).getMaximumDosage()) {
+							((RegulatoryListDataItem) regulatoryEntity).setLimitingIngredients(maximumDosageRequirements.stream().map(r -> r.getCharact()).collect(Collectors.toList()));
+							((RegulatoryListDataItem) regulatoryEntity).setMaximumDosage(reqMaxQty);
+						}
 					}
-				} else {
+					isProhibited = true;
+				} else if (!isProhibited) {
 					if (regulatoryEntity instanceof RegulatoryListDataItem) {
 						((RegulatoryListDataItem) regulatoryEntity).setLimitingIngredients(null);
 						((RegulatoryListDataItem) regulatoryEntity).setMaximumDosage(null);

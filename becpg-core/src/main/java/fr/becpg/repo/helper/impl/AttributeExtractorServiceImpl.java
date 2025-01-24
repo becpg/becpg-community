@@ -1196,11 +1196,13 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 						value = data.get("value").toString().toLowerCase();
 					} else {
 
-						for (Map.Entry<String, Object> subEntry : data.entrySet()) {
-							tmp = subEntry.getValue();
+						Map.Entry<String, Object> firstEntry = data.entrySet().stream().findFirst().orElse(null);
+
+						if (firstEntry != null) {
+							tmp = firstEntry.getValue();
 
 							critKey += "|"
-									+ subEntry.getKey().replace(PROP_SUFFIX, "").replace(ASSOC_SUFFIX, "").replace(DT_SUFFIX, "").replace("_", ":");
+									+ firstEntry.getKey().replace(PROP_SUFFIX, "").replace(ASSOC_SUFFIX, "").replace(DT_SUFFIX, "").replace("_", ":");
 
 							if (tmp instanceof ArrayList<?>) {
 								if (!((ArrayList<?>) tmp).isEmpty()) {
@@ -1218,7 +1220,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 								value = data.get("value").toString().toLowerCase();
 							}
 
-							break;
+
 						}
 
 					}

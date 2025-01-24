@@ -93,6 +93,7 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
+	
 
 	/**
 	 * <p>isMLAware.</p>
@@ -134,6 +135,9 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
     {
         this.dictionaryService = dictionaryService;
     }
+    
+    
+    
     
     /** {@inheritDoc} */
     @SuppressWarnings("unchecked")

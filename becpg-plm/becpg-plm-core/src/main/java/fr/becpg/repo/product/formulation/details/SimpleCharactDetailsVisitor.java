@@ -110,9 +110,12 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 			maxLevel = 0;
 		}
 
-		Double netQty = FormulationHelper.getNetQtyInLorKg(productData, FormulationHelper.DEFAULT_NET_WEIGHT);
+		Double netQty = applyYield() ? FormulationHelper.getNetQtyInLorKg(productData, FormulationHelper.DEFAULT_NET_WEIGHT) :
+			FormulationHelper.getQtyInKgFromComposition(productData, null,
+				FormulationHelper.DEFAULT_NET_WEIGHT);
 		Double netWeight = FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT);
 		Double netVol = FormulationHelper.getNetVolume(productData, FormulationHelper.DEFAULT_NET_WEIGHT);
+		
 
 		CharactDetailsVisitorContext context = new CharactDetailsVisitorContext(productData, maxLevel, ret);
 		
@@ -121,6 +124,10 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 		return ret;
 	}
 	
+	protected boolean applyYield() {
+		return true;
+	}
+
 	/**
 	 * <p>areDetailsApplicable.</p>
 	 *
@@ -197,6 +204,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 	private Double computeCompoListWeight(ProductData subProductData, Double parentProductNetWeight, CompoListDataItem compoListDataItem) {
 		Double compoListWeight = FormulationHelper.getQtyInKg(compoListDataItem);
 		Double compoProductNetWeight = FormulationHelper.getNetWeight(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT);
+	
 		if ((compoProductNetWeight != 0d) && (parentProductNetWeight != null)) {
 			compoListWeight = (compoListWeight / compoProductNetWeight) * parentProductNetWeight;
 		}
@@ -226,9 +234,13 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 		if (dataListItems != null) {
 			for (NodeRef dataListItem : dataListItems) {
 				
-				SimpleCharactDataItem o = (SimpleCharactDataItem) alfrescoRepository.findOne(dataListItem);
-					if (o != null) {
-						tmp.add(o.getCharactNodeRef());
+				if(entityDictionaryService.isSubClass(nodeService.getType(dataListItem), BeCPGModel.TYPE_CHARACT)) {
+					tmp.add(dataListItem);
+				} else {
+					SimpleCharactDataItem o = (SimpleCharactDataItem) alfrescoRepository.findOne(dataListItem);
+						if (o != null) {
+							tmp.add(o.getCharactNodeRef());
+					}
 				}
 			}
 		}

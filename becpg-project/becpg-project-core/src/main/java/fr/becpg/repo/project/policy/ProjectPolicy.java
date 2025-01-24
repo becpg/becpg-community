@@ -101,6 +101,7 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 		super.disableOnCopyBehaviour(ProjectModel.TYPE_PROJECT);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void onCopyComplete(QName classRef, NodeRef sourceNodeRef, NodeRef destinationRef, boolean copyToNewNode, Map<NodeRef, NodeRef> copyMap) {
 		if (ProjectModel.TYPE_PROJECT.equals(classRef)) {
