@@ -32,10 +32,10 @@ public class ProjectRepoConsts {
 	/** Constant <code>PATH_EMAILS_PROJECT="project"</code> */
 	public static final String PATH_EMAILS_PROJECT = "project";
 
-	
 	//
 	/** Constant <code>PROJECT_GROUP_PREFIX="PROJECT_"</code> */
 	public static final String PROJECT_GROUP_PREFIX = "PROJECT_";
+	public static final String PATH_SCORE_CRITERION_TYPES = "ScoreCriterionTypes";
 	
 	
 }
