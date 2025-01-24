@@ -46,7 +46,6 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 	private RuleService ruleService;
 	private IntegrityChecker integrityChecker;
 
-
 	Map<String, String> nutrientTypeCode = new HashMap<>();
 
 	{
@@ -149,7 +148,6 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 		nutrientTypeCode.put("Fatty acids, total trans", "FATRN");
 		nutrientTypeCode.put("Fatty acids, omega 3", "FAPUN3F");
 		nutrientTypeCode.put("Fatty acids, omega 6", "FAPUN6F");
-		
 
 		nutrientTypeCode.put("Eau", "WATER");
 		nutrientTypeCode.put("Sodium", "NA");
@@ -249,7 +247,7 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 	public void setRuleService(RuleService ruleService) {
 		this.ruleService = ruleService;
 	}
-	
+
 	/**
 	 * <p>Setter for the field <code>integrityChecker</code>.</p>
 	 *
@@ -263,7 +261,7 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 	@Override
 	protected String applyInternal() throws Exception {
 
-		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
+		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<>() {
 			final List<NodeRef> result = new ArrayList<>();
 
 			final long maxNodeId = getNodeDAO().getMaxNodeId();
@@ -281,7 +279,7 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 			public long getTotalEstimatedWorkSizeLong() {
 				return getTotalEstimatedWorkSize();
 			}
-			
+
 			@Override
 			public Collection<NodeRef> getNextWork() {
 				if (val != null) {
@@ -309,17 +307,17 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("NutrientTypeCodePatch", transactionService.getRetryingTransactionHelper(),
 				workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 500);
 
-		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
+		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<>() {
 
 			@Override
 			public void afterProcess() throws Throwable {
-				ruleService.enableRules();
+				//Do nothing
 
 			}
 
 			@Override
 			public void beforeProcess() throws Throwable {
-				ruleService.disableRules();
+				//Do nothing
 			}
 
 			@Override
@@ -329,6 +327,7 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 
 			@Override
 			public void process(NodeRef dataListNodeRef) throws Throwable {
+				ruleService.disableRules();
 				if (nodeService.exists(dataListNodeRef)) {
 					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 					policyBehaviourFilter.disableBehaviour();
@@ -336,7 +335,7 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 					String charactName = (String) nodeService.getProperty(dataListNodeRef, BeCPGModel.PROP_CHARACT_NAME);
 					String nutTypeCode = (String) nodeService.getProperty(dataListNodeRef, GS1Model.PROP_NUTRIENT_TYPE_CODE);
 					if ((name != null) && ((charactName != null) && !charactName.isEmpty()) && ((nutTypeCode == null) || nutTypeCode.isEmpty())) {
-						if (nutrientTypeCode.containsKey(charactName) && (nutrientTypeCode.get(charactName).isEmpty() == false)) {
+						if (nutrientTypeCode.containsKey(charactName) && !nutrientTypeCode.get(charactName).isEmpty()) {
 							nodeService.setProperty(dataListNodeRef, GS1Model.PROP_NUTRIENT_TYPE_CODE, nutrientTypeCode.get(charactName));
 						}
 					}
@@ -344,6 +343,7 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 				} else {
 					logger.warn("dataListNodeRef doesn't exist : " + dataListNodeRef);
 				}
+				ruleService.enableRules();
 			}
 
 		};

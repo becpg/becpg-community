@@ -67,14 +67,29 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 	
 	private EntityDictionaryService entityDictionaryService;
 	
+	/**
+	 * <p>Setter for the field <code>entityDictionaryService</code>.</p>
+	 *
+	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object
+	 */
 	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
 		this.entityDictionaryService = entityDictionaryService;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>contentService</code>.</p>
+	 *
+	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object
+	 */
 	public void setContentService(ContentService contentService) {
 		this.contentService = contentService;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>commentService</code>.</p>
+	 *
+	 * @param commentService a {@link org.alfresco.repo.forum.CommentService} object
+	 */
 	public void setCommentService(CommentService commentService) {
 		this.commentService = commentService;
 	}

@@ -104,6 +104,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	protected static final String ATTR_LANGUAGE = "language";
 	/** Constant <code>ATTR_LANGUAGE_CODE="languageCode"</code> */
 	protected static final String ATTR_LANGUAGE_CODE = "languageCode";
+	protected static final String ATTR_GROUP = "group";
 
 	private static final String ATTR_PKG_TARE_LEVEL_1 = "tarePkgLevel1";
 	private static final String ATTR_PKG_TARE_LEVEL_2 = "tarePkgLevel2";
@@ -374,12 +375,14 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 							}
 
 							String grpName = "";
+							String grpKey = "";
 							if (dataItem.getGrp() != null) {
+								grpKey =  (String) nodeService.getProperty(dataItem.getGrp(), ContentModel.PROP_NAME);
 								MLText grpMLText = (MLText) mlNodeService.getProperty(dataItem.getGrp(), PLMModel.PROP_LABELINGRULELIST_LABEL);
 								if ((grpMLText != null) && (grpMLText.getValue(locale) != null) && !grpMLText.getValue(locale).isEmpty()) {
 									grpName = grpMLText.getValue(locale);
 								} else {
-									grpName = (String) nodeService.getProperty(dataItem.getGrp(), ContentModel.PROP_NAME);
+									grpName = grpKey;
 								}
 							}
 
@@ -395,6 +398,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 							ingLabelingElt.addAttribute(ATTR_LANGUAGE, locale.getDisplayLanguage());
 							ingLabelingElt.addAttribute(ATTR_LANGUAGE_CODE, locale.toString());
+							ingLabelingElt.addAttribute(ATTR_GROUP, grpKey);
 							addCDATA(ingLabelingElt, PLMModel.ASSOC_ILL_GRP, grpName, null);
 							// #4510
 							Element cDATAElt = ingLabelingElt.addElement(PLMModel.PROP_ILL_VALUE.getLocalName());
@@ -1597,11 +1601,13 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 				Element variantElt = variantsElt.addElement(BeCPGModel.TYPE_VARIANT.getLocalName());
 				variantElt.addAttribute(ContentModel.PROP_NAME.getLocalName(), variant.getName());
+				variantElt.addAttribute(BeCPGModel.PROP_VARIANT_COLUMN.getLocalName(), variant.getVariantColumn());
 				variantElt.addAttribute(BeCPGModel.PROP_IS_DEFAULT_VARIANT.getLocalName(), Boolean.toString(variant.getIsDefaultVariant()));
 			}
 		} else {
 			Element variantElt = variantsElt.addElement(BeCPGModel.TYPE_VARIANT.getLocalName());
 			variantElt.addAttribute(ContentModel.PROP_NAME.getLocalName(), "");
+			variantElt.addAttribute(BeCPGModel.PROP_VARIANT_COLUMN.getLocalName(), "");
 			variantElt.addAttribute(BeCPGModel.PROP_IS_DEFAULT_VARIANT.getLocalName(), Boolean.TRUE.toString());
 		}
 		return defaultVariantNodeRef;

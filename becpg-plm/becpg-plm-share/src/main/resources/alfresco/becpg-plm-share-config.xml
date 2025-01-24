@@ -142,13 +142,19 @@
 			<list id="replacementList" index="190" />
 			<list id="certification" index="200"/>
 			<list id="plant" index="210"/>
+			<list id="packMaterialList" index="212"/>
 			<list id="regulatoryList" index="213"/>
 			<list id="ingRegulatoryList" index="214"/>
 			<list id="toxList" index="215"/>
+			<list id="hazardClassificationList" index="216"/>
+			<list id="svhcList" index="217"/>
+			
 
+            <list id="pubChannelList" index="219" />
 			<list id="wUsedList" index="220" />
 			<list id="calculatedCharactList" index="230" />
 			<list id="changeUnitList" index="240" />
+			
 			
 			<!-- Characteristics -->
 			<list id="Ings" index="0"/>
@@ -342,6 +348,16 @@
 				<step id="step1" labelId="becpg.wizard.supplier.documents.label"
 					titleId="becpg.wizard.supplier.documents.title" type="documents"></step>
 			</wizard>
+			
+			<!-- RÉCLAMATION FOURNISSEUR  -->
+			<wizard id="supplier-compliance" draft="true" comments="true">
+				<step id="step1" label="Réclamation fournisseur"
+					titleId="becpg.wizard.supplier.properties.title" type="form"
+					formId="supplier" itemId="qa:nc" nextStepWebScript="becpg/project/path?nodeRef={nodeRef}&amp;path=SupplierDocuments" ></step>
+				<step id="step2" labelId="becpg.wizard.supplier.documents.label"
+					titleId="becpg.wizard.supplier.documents.title" type="documents"></step>
+			</wizard>
+			
 			<wizard id="sample-survey">
 				<step id="step1" labelId="becpg.wizard.supplier.properties.label"
 					titleId="becpg.wizard.supplier.properties.title" type="form"

@@ -20,6 +20,7 @@ package fr.becpg.test.repo.web.scripts.entity;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Assert;
 import org.junit.Test;
 
 import fr.becpg.test.BeCPGPLMTestHelper;
@@ -74,6 +75,9 @@ public class EntityListsWebScriptIT extends PLMBaseTestCase {
 		url = "/becpg/entitylists/node/" + finishedProductNodeRef.toString().replace(":/", "");
 		logger.debug("url : " + url);
 		response = TestWebscriptExecuters.sendRequest(new GetRequest(url), 200, "admin");
+		
+		Assert.assertNotNull(response);
+		
 		logger.debug("content : " + response.getContentAsString());
 
 		// //Check product

@@ -96,6 +96,13 @@ div.constraintsList .scrollableList {
 	padding-left: 22px;
 }
 
+.datalist-toolbar .onActionCopyProducts, .datagrid .onActionCopyProducts a {
+    background: transparent
+        url(../../components/documentlibrary/actions/document-copy-to-16.png)
+        no-repeat 12px 4px;
+    padding-left: 22px;
+}
+
 .datalist-toolbar .onActionGroup, .datagrid .onActionGroup a {
 	background: transparent
 		url(../../components/documentlibrary/actions/document-copy-to-16.png)

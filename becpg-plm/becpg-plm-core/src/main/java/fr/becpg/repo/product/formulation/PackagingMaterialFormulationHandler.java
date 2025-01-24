@@ -95,9 +95,12 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 				Map<Pair<PackagingLevel, NodeRef>, Pair<BigDecimal, BigDecimal>> toUpdate = calculateMaterialOfComposition(formulatedProduct);
 
 				// PackagingList
-				for (PackagingListDataItem packagingItem : formulatedProduct
-						.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
-					calculateTareByMaterialItem(packagingItem, toUpdate, 1);
+				if (formulatedProduct
+						.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())) != null) {
+					for (PackagingListDataItem packagingItem : formulatedProduct
+							.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
+						calculateTareByMaterialItem(packagingItem, toUpdate, 1);
+					}
 				}
 
 				// Create/Update Packaging Material List
@@ -187,64 +190,67 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 		Map<Pair<PackagingLevel, NodeRef>, Pair<BigDecimal, BigDecimal>> toUpdate = new HashMap<>();
 		if (!Boolean.TRUE.equals(formulatedProduct.getDropPackagingOfComponents())) {
 
-			for (CompoListDataItem compoList : formulatedProduct
-					.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
-				if (compoList.getProduct() != null) {
+			if (formulatedProduct.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())) != null) {
+				for (CompoListDataItem compoList : formulatedProduct
+						.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
+					if (compoList.getProduct() != null) {
 
-					ProductData compoProduct = alfrescoRepository.findOne(compoList.getProduct());
-					if (compoProduct.getPackMaterialList() != null) {
+						ProductData compoProduct = alfrescoRepository.findOne(compoList.getProduct());
+						if (compoProduct.getPackMaterialList() != null) {
 
-						Double qtyUsed = compoList.getQtySubFormula();
-						ProductUnit compoListUnit = compoList.getCompoListUnit();
+							Double qtyUsed = compoList.getQtySubFormula();
+							ProductUnit compoListUnit = compoList.getCompoListUnit();
 
-						if ((qtyUsed != null) && (qtyUsed > 0)) {
+							if ((qtyUsed != null) && (qtyUsed > 0)) {
 
-							// get compoProduct qty
-							Double compoProductQty = compoProduct.getQty();
-							if (compoProductQty == null) {
-								compoProductQty = 1d;
-							}
-
-							if (compoListUnit.isP()) {
-								if ((compoProduct.getUnit() != null) && !compoProduct.getUnit().isP()) {
+								// get compoProduct qty
+								Double compoProductQty = compoProduct.getQty();
+								if (compoProductQty == null) {
 									compoProductQty = 1d;
 								}
 
-							} else if (compoListUnit.isWeight() || compoListUnit.isVolume()) {
-								compoProductQty = FormulationHelper.getNetWeight(compoProduct, 1d);
-								qtyUsed = FormulationHelper.getQtyInKg(compoList);
-							}
+								if (compoListUnit.isP()) {
+									if ((compoProduct.getUnit() != null) && !compoProduct.getUnit().isP()) {
+										compoProductQty = 1d;
+									}
 
-							for (PackMaterialListDataItem packMateriDataItem : compoProduct.getPackMaterialList()) {
-								if (packMateriDataItem.getPmlWeight() != null) {
-									if ((compoProductQty != null) && !compoProductQty.isNaN() && !compoProductQty.isInfinite()
-											&& (compoProductQty != 0d)) {
+								} else if (compoListUnit.isWeight() || compoListUnit.isVolume()) {
+									compoProductQty = FormulationHelper.getNetWeight(compoProduct, 1d);
+									qtyUsed = FormulationHelper.getQtyInKg(compoList);
+								}
 
-										BigDecimal plmWeight = BigDecimal.valueOf(packMateriDataItem.getPmlWeight())
-												.multiply(BigDecimal.valueOf(qtyUsed))
-												.divide(BigDecimal.valueOf(compoProductQty), MathContext.DECIMAL64);
-										BigDecimal pmlRecycledPercentage = BigDecimal.valueOf(
-												packMateriDataItem.getPmlRecycledPercentage() != null ? packMateriDataItem.getPmlRecycledPercentage()
-														: 0d)
-												.multiply(plmWeight).divide(BigDecimal.valueOf(100d), MathContext.DECIMAL64);
-										PackagingLevel pkgLevel = packMateriDataItem.getPkgLevel();
+								for (PackMaterialListDataItem packMateriDataItem : compoProduct.getPackMaterialList()) {
+									if (packMateriDataItem.getPmlWeight() != null) {
+										if ((compoProductQty != null) && !compoProductQty.isNaN() && !compoProductQty.isInfinite()
+												&& (compoProductQty != 0d)) {
 
-										if (pkgLevel == null && compoProduct.isRawMaterial()) {
-											pkgLevel = PackagingLevel.Primary;
-										}
+											BigDecimal plmWeight = BigDecimal.valueOf(packMateriDataItem.getPmlWeight())
+													.multiply(BigDecimal.valueOf(qtyUsed))
+													.divide(BigDecimal.valueOf(compoProductQty), MathContext.DECIMAL64);
+											BigDecimal pmlRecycledPercentage = BigDecimal
+													.valueOf(packMateriDataItem.getPmlRecycledPercentage() != null
+															? packMateriDataItem.getPmlRecycledPercentage()
+															: 0d)
+													.multiply(plmWeight).divide(BigDecimal.valueOf(100d), MathContext.DECIMAL64);
+											PackagingLevel pkgLevel = packMateriDataItem.getPkgLevel();
 
-										Pair<PackagingLevel, NodeRef> key = new Pair<>(pkgLevel, packMateriDataItem.getPmlMaterial());
+											if (pkgLevel == null && compoProduct.isRawMaterial()) {
+												pkgLevel = PackagingLevel.Primary;
+											}
 
-										if (toUpdate.containsKey(key)) {
-											BigDecimal newPlmWeight = toUpdate.get(key).getFirst().add(plmWeight);
-											BigDecimal newPmlRecycledPercentage = toUpdate.get(key).getSecond().add(pmlRecycledPercentage);
-											toUpdate.put(key, new Pair<>(newPlmWeight, newPmlRecycledPercentage));
+											Pair<PackagingLevel, NodeRef> key = new Pair<>(pkgLevel, packMateriDataItem.getPmlMaterial());
+
+											if (toUpdate.containsKey(key)) {
+												BigDecimal newPlmWeight = toUpdate.get(key).getFirst().add(plmWeight);
+												BigDecimal newPmlRecycledPercentage = toUpdate.get(key).getSecond().add(pmlRecycledPercentage);
+												toUpdate.put(key, new Pair<>(newPlmWeight, newPmlRecycledPercentage));
+											} else {
+												toUpdate.put(key, new Pair<>(plmWeight, pmlRecycledPercentage));
+											}
 										} else {
-											toUpdate.put(key, new Pair<>(plmWeight, pmlRecycledPercentage));
+											logger.error("QtyUsed/CompoProductQty is NaN or 0 or infinite:" + qtyUsed + " " + compoProductQty
+													+ " for " + compoList.getProduct());
 										}
-									} else {
-										logger.error("QtyUsed/CompoProductQty is NaN or 0 or infinite:" + qtyUsed + " " + compoProductQty + " for "
-												+ compoList.getProduct());
 									}
 								}
 							}
@@ -265,7 +271,8 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 			}
 			ProductData packagingKitData = alfrescoRepository.findOne(dataItem.getProduct());
 			if (packagingKitData.hasPackagingListEl()) {
-				for (PackagingListDataItem p : packagingKitData.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
+				for (PackagingListDataItem p : packagingKitData
+						.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 					calculateTareByMaterialItem(p, toUpdate, subQty);
 				}
 			}

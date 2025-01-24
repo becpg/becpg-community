@@ -13,7 +13,7 @@ echo -e " \e[91mCopyright (C) 2010-2024 beCPG.\e[0m"
 
 export COMPOSE_FILE_PATH=${PWD}/becpg-integration-runner/target/docker-compose.yml
 export MVN_EXEC="${PWD}/mvnw"
-export BECPG_VERSION_PROFILE=becpg_23_2_2
+export BECPG_VERSION_PROFILE=becpg_23_4_0
 
 . .env
 
@@ -147,7 +147,7 @@ install_hotswap(){
 }
 
 tail() {
-    docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH logs -f --tail=100 becpg
+    docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH logs -f --tail=100 becpg becpg-db
 }
 
 test() {

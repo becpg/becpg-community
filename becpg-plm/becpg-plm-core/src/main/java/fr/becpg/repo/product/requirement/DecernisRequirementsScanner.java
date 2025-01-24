@@ -18,7 +18,6 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.decernis.DecernisMode;
 import fr.becpg.repo.decernis.DecernisService;
-import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.CheckSumHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
@@ -82,8 +81,8 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 	@Override
 	public List<ReqCtrlListDataItem> checkRequirements(ProductData formulatedProduct, List<ProductSpecificationData> specifications) {
 
-		if (FormulationService.FAST_FORMULATION_CHAINID.equals(formulatedProduct.getFormulationChainId())) {
-			logger.debug("Fast formulation skipping decernis");
+		if (!DecernisService.DECERNIS_CHAIN_ID.equals(formulatedProduct.getFormulationChainId())) {
+			logger.debug("Formulation chain is not decernis");
 			return Collections.emptyList();
 		}
 		
@@ -116,8 +115,6 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 					watch = new StopWatch();
 					watch.start();
 				}
-				
-				formulatedProduct.setFormulationChainId(DecernisService.DECERNIS_CHAIN_ID);
 				
 				List<ReqCtrlListDataItem> requirements = decernisService.extractRequirements(formulatedProduct);
 				if (!hasError(requirements)) {

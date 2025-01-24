@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -53,6 +54,7 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
@@ -82,6 +84,7 @@ import fr.becpg.repo.ecm.data.dataList.ChangeUnitDataItem;
 import fr.becpg.repo.ecm.data.dataList.ReplacementListDataItem;
 import fr.becpg.repo.ecm.data.dataList.SimulationListDataItem;
 import fr.becpg.repo.ecm.data.dataList.WUsedListDataItem;
+import fr.becpg.repo.entity.datalist.WUsedFilter;
 import fr.becpg.repo.entity.datalist.WUsedListService;
 import fr.becpg.repo.entity.datalist.WUsedListService.WUsedOperator;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
@@ -158,6 +161,9 @@ public class ECOServiceImpl implements ECOService {
 	
 	@Autowired
 	private EntityActivityService entityActivityService;
+	
+	@Value("${beCPG.eco.impactwused.states}")
+	private String impactWUsedStates;
 
 	/** {@inheritDoc} */
 	@Override
@@ -188,10 +194,9 @@ public class ECOServiceImpl implements ECOService {
 
 			BatchInfo batchInfo = new BatchInfo(String.format(isSimulated ? "simulateECO-%s" : "applyECO-%s", ecoNodeRef.getId()),
 					isSimulated ? "becpg.batch.eco.simulate" : "becpg.batch.eco.apply", entityDescription);
+			batchInfo.setRunAsSystem(true);
 			
 			batchInfo.setWorkerThreads(1);
-			
-			batchInfo.setRunAsSystem(true);
 			
 			if (notifyByMail) {
 				batchInfo.enableNotifyByMail(isSimulated ? "eco.simulate" : "eco.apply", String.format(ACTION_URL_PREFIX, ecoNodeRef.toString()));
@@ -330,7 +335,8 @@ public class ECOServiceImpl implements ECOService {
 	private BatchStep<Object> createApplyECOStep(ChangeOrderData ecoData, boolean deleteOnApply) {
 		
 		BatchStep<Object> applyStep = new BatchStep<>();
-	
+		applyStep.setRunAsSystem(false);
+		
 		ApplyECOProcessWorker processWorker = new ApplyECOProcessWorker(ecoData);
 		
 		applyStep.setProcessWorker(processWorker);
@@ -402,9 +408,8 @@ public class ECOServiceImpl implements ECOService {
 				
 				if (entry instanceof NodeRef && nodeService.hasAspect((NodeRef) entry, ECMModel.ASPECT_CHANGE_ORDER)) {
 					
-					nodeService.removeAspect((NodeRef) entry, ECMModel.ASPECT_CHANGE_ORDER);
-					
 					lockService.unlock((NodeRef) entry);
+					nodeService.removeAspect((NodeRef) entry, ECMModel.ASPECT_CHANGE_ORDER);
 					
 					if (logger.isDebugEnabled()) {
 						String name = (String) nodeService.getProperty((NodeRef) entry, ContentModel.PROP_NAME);
@@ -832,15 +837,12 @@ public class ECOServiceImpl implements ECOService {
 
 			@Override
 			public void process(Object entry) throws Throwable {
-				
 				internalCalculateWUsedList(ecoData, isWUsedImpacted);
 			}
 		};
 		
 		batchStep.setProcessWorker(processWorker);
-		
 		batchStep.setWorkProvider(new EntityListBatchProcessWorkProvider<>(Arrays.asList(ecoData)));
-		
 		batchStep.setBatchStepListener(new BatchStepAdapter() {
 			
 			@Override
@@ -859,12 +861,9 @@ public class ECOServiceImpl implements ECOService {
 			
 			@Override
 			public void onError(String lastErrorEntryId, String lastError) {
-
 				if (!ECOState.InError.equals(ecoData.getEcoState())) {
 					ecoData.setEcoState(ECOState.InError);
-
 					commentService.createComment(ecoData.getNodeRef(), "", "Error during OM calculating of WUsed: " + lastError, false);
-
 					alfrescoRepository.save(ecoData);
 				}
 			}
@@ -884,7 +883,6 @@ public class ECOServiceImpl implements ECOService {
 			String entityDescription = nodeService.getProperty(ecoNodeRef, BeCPGModel.PROP_CODE) + " - " + nodeService.getProperty(ecoNodeRef, ContentModel.PROP_NAME);
 			
 			BatchInfo batchInfo = new BatchInfo(String.format("calculateWUsed-%s", ecoNodeRef.getId()), "becpg.batch.eco.calculateWUsed", entityDescription);
-			
 			batchInfo.setRunAsSystem(true);
 			
 			if (notifyByMail) {
@@ -912,7 +910,6 @@ public class ECOServiceImpl implements ECOService {
 		String entityDescription = nodeService.getProperty(ecoNodeRef, BeCPGModel.PROP_CODE) + " - " + nodeService.getProperty(ecoNodeRef, ContentModel.PROP_NAME);
 
 		BatchInfo closingBatchInfo = new BatchInfo(String.format("closeECO-%s", ecoNodeRef.getId()), "becpg.batch.eco.close", entityDescription);
-		
 		closingBatchInfo.setRunAsSystem(true);
 		
 		List<BatchStep<Object>> closingBatchStepList = new LinkedList<>();
@@ -938,29 +935,54 @@ public class ECOServiceImpl implements ECOService {
 		if (ecoData.getReplacementList() != null) {
 
 			int sort = 1;
-
+			
 			for (ReplacementListDataItem replacementListDataItem : ecoData.getReplacementList()) {
-
+				
 				List<NodeRef> replacements = getSourceItems(ecoData, replacementListDataItem);
-
+				
 				if ((replacements != null) && !replacements.isEmpty()) {
-
+					
 					WUsedListDataItem parent = new WUsedListDataItem();
 					parent.setSourceItems(replacements);
 					parent.setIsWUsedImpacted(true);
 					parent.setDepthLevel(1);
 					parent.setSort(sort++);
 					parent.setTargetItem(replacementListDataItem.getTargetItem());
-
+					
 					ecoData.getWUsedList().add(parent);
-
+					
 					List<QName> associationQNames = evaluateWUsedAssociations(replacements);
-
+					
+					WUsedFilter filter = null;
+					
+					if (ChangeOrderType.ImpactWUsed.equals(ecoData.getEcoType())) {
+						List<String> impactWUsedStatesList = Arrays.stream(impactWUsedStates.split(",")).toList();
+						filter = new WUsedFilter() {
+							@Override
+							public WUsedFilterKind getFilterKind() {
+								return WUsedFilterKind.STANDARD;
+							}
+							@Override
+							public void filter(MultiLevelListData wUsedData) {
+								for (Iterator<Entry<NodeRef, MultiLevelListData>> iterator = wUsedData.getTree().entrySet().iterator(); iterator
+										.hasNext();) {
+									Entry<NodeRef, MultiLevelListData> entry = iterator.next();
+									NodeRef nodeRef = entry.getValue().getEntityNodeRef();
+									String productState = (String) nodeService.getProperty(nodeRef, PLMModel.PROP_PRODUCT_STATE);
+									if (!impactWUsedStatesList.contains(productState)) {
+										iterator.remove();
+									}
+								}
+							}
+						};
+					}
+					
 					for (QName associationQName : associationQNames) {
-
-						MultiLevelListData wUsedData = wUsedListService.getWUsedEntity(replacements, WUsedOperator.AND, associationQName,
+						
+						
+						MultiLevelListData wUsedData = wUsedListService.getWUsedEntity(replacements, WUsedOperator.AND, filter, associationQName,
 								RepoConsts.MAX_DEPTH_LEVEL);
-
+						
 						QName datalistQName = evaluateListFromAssociation(associationQName);
 						sort = calculateWUsedList(ecoData, wUsedData, datalistQName, parent,
 								ChangeOrderType.Merge.equals(ecoData.getEcoType()) || isWUsedImpacted, sort, replacementListDataItem.getTargetItem());
