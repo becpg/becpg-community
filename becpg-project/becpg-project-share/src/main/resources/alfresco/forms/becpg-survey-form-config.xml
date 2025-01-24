@@ -127,6 +127,8 @@
 					<show id="survey:fsLinkedCharactRefs" force="true" />
 					<show id="survey:fsLinkedTypes" force="true" />
 					<show id="survey:fsLinkedHierarchy" force="true" />
+					<show id="bcpg:subsidiaryRef" force="true" />
+					<show id="bcpg:plants" force="true" />
 				</field-visibility>
 				<appearance>
 					<set id="surveyQuestion" appearance="bordered-panel" label-id="becpg.forms.set.survey-question.label" />
@@ -200,6 +202,8 @@
 							<control-param name="saveTitle">false</control-param>
 						</control>
 					</field>
+					<field id="bcpg:subsidiaryRef" set="surveyAutogeneration"/>
+					<field id="bcpg:plants" set="surveyAutogeneration"/>
 				</appearance>
 			</form>
 			<form id="create">
@@ -327,6 +331,8 @@
 					<show id="survey:fsLinkedCharactRefs" force="true" />
 					<show id="survey:fsLinkedTypes" force="true" />
 					<show id="survey:fsLinkedHierarchy" force="true" />
+					<show id="bcpg:subsidiaryRef" force="true" />
+					<show id="bcpg:plants" force="true" />
 				</field-visibility>
 				<appearance>
 					<set id="surveyQuestion" appearance="bordered-panel" label-id="becpg.forms.set.survey-question.label" />
@@ -400,6 +406,8 @@
 							<control-param name="saveTitle">false</control-param>
 						</control>
 					</field>
+					<field id="bcpg:subsidiaryRef" set="surveyAutogeneration"/>
+					<field id="bcpg:plants" set="surveyAutogeneration"/>
 				</appearance>
 			</form>
 			<form id="create">
