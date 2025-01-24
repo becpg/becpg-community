@@ -31,13 +31,13 @@
  	<#if unit=="perc" || unit=="ppm">
   	 <#assign currUnits="perc,ppm">
    <#elseif unit=="kg" >
-	<#assign currUnits="mg,g,kg,lb,oz">
+	<#assign currUnits="micro_g,mg,g,kg,lb,oz">
    <#elseif unit=="g" >
      <#assign currUnits="g,oz">
    <#elseif unit=="L" >
 	<#assign currUnits="mL,cL,L,fl_oz,cp,gal">
    <#elseif unit=="m" || unit=="mm" >
-	<#assign currUnits="mil,in,ft,u00B5m,mm,cm,m">
+	<#assign currUnits="mil,in,ft,micro_m,mm,cm,m">
    <#elseif unit=="d" ||  unit=="mo" || unit=="y">
 	<#assign currUnits="d,mo,y">
    <#elseif unit=="-">
@@ -55,6 +55,9 @@
    <#elseif currUnit=="kg">
 	  <#if field.value == 0  >
         <#assign currUnit="kg">
+     <#elseif field.value?abs &lt; 0.000001  >
+		<#assign currUnit="micro_g">
+		<#assign currValue=field.value*1000000000>
      <#elseif field.value?abs &lt; 0.001  >
 		<#assign currUnit="mg">
 		<#assign currValue=field.value*1000000>
@@ -91,7 +94,7 @@
 	  <#if field.value == 0  >
         <#assign currUnit="mm">
      <#elseif field.value?abs &lt; 0.001  >
-		<#assign currUnit="u00B5m">
+		<#assign currUnit="micro_m">
 		<#assign currValue=field.value*1000>
 	 <#elseif field.value?abs &gt; 1000  >
 		<#assign currUnit="m" >
