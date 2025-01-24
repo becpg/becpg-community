@@ -314,6 +314,8 @@ public class ProductData extends AbstractScorableEntity
 	private List<String> glopConstraintLists;
 	private Boolean glopApplyOptimization;
 	
+	private List<NodeRef> subsidiaryRefs;
+	
 	/**
 	 * <p>Getter for the field <code>glopTargetCharact</code>.</p>
 	 *
@@ -3177,6 +3179,28 @@ public class ProductData extends AbstractScorableEntity
 	@Override
 	public void setScore(Integer productScore) {
 		this.productScore = productScore;
+	}
+	
+	
+	/**
+	 * <p>Getter for the field <code>subsidiaryRefs</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
+	@AlfMultiAssoc
+	@AlfReadOnly
+	@AlfQname(qname = "bcpg:subsidiaryRef")
+	public List<NodeRef> getSubsidiaryRefs() {
+		return subsidiaryRefs;
+	}
+
+	/**
+	 * <p>Setter for the field <code>subsidiaryRefs</code>.</p>
+	 *
+	 * @param subsidiaryRefs a {@link java.util.List} object
+	 */
+	public void setSubsidiaryRefs(List<NodeRef> subsidiaryRefs) {
+		this.subsidiaryRefs = subsidiaryRefs;
 	}
 
 	/**
