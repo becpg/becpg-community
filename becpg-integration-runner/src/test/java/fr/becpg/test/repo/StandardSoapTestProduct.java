@@ -128,7 +128,7 @@ public class StandardSoapTestProduct extends StandardProductBuilder {
 		return soapProduct;
 	}
 
-	private List<ProductSpecificationData> createProductSpecifications() {
+	protected List<ProductSpecificationData> createProductSpecifications() {
 
 		ProductSpecificationData productSpecification = ProductSpecificationData.build().withName(uniqueName("🧼 Soap products specification 📋"))
 				.withHcList(List.of(

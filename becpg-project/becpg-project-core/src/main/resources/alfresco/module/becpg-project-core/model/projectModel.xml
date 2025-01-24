@@ -167,11 +167,11 @@
             </parameter>
         </constraint>
 
-        <constraint name="pjt:scoreCriteria"
+        <constraint name="pjt:scoreCriterionTypes"
             type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
             <parameter name="path">
                 <list>
-                    <value>/System/ProjectLists/bcpg:entityLists/ScoreCriteria</value>
+                    <value>/System/ProjectLists/bcpg:entityLists/ScoreCriterionTypes</value>
                 </list>
             </parameter>
             <parameter name="constraintType">
@@ -799,18 +799,8 @@
         <type name="pjt:scoreList">
 			<parent>pjt:projectListItem</parent>
             <properties>
-                <property name="pjt:slCriterion">
-                    <type>d:text</type>
-                    <index enabled="true">
-                          <tokenised>false</tokenised>
-                          <facetable>false</facetable>
-                    </index>
-                    <constraints>
-                        <constraint ref="pjt:scoreCriteria" />
-                    </constraints>
-                </property>
                 <property name="pjt:slWeight">
-                    <type>d:int</type>
+                    <type>d:double</type>
                     <index enabled="true">
                           <tokenised>false</tokenised>
                           <facetable>false</facetable>
@@ -820,7 +810,7 @@
                     </constraints>
                 </property>
                 <property name="pjt:slScore">
-                    <type>d:int</type>
+                    <type>d:double</type>
                     <index enabled="true">
                           <tokenised>false</tokenised>
                           <facetable>false</facetable>
@@ -837,12 +827,82 @@
                           <facetable>false</facetable>
                     </index>
                 </property>
+                <property name="pjt:slScoreDetail">
+                    <type>d:text</type>
+                    <index enabled="false" />
+                </property>
+                <property name="pjt:slScoreRange">
+                    <type>d:text</type>
+                     <index enabled="true">
+                          <tokenised>both</tokenised>
+                          <facetable>false</facetable>
+                    </index>
+                </property> 
+                 <property name="pjt:slCriterion">
+                    <type>d:text</type>
+                    <index enabled="true">
+                          <tokenised>false</tokenised>
+                          <facetable>false</facetable>
+                    </index>
+                    <constraints>
+                        <constraint ref="pjt:scoreCriterionTypes" />
+                    </constraints>
+                </property>
             </properties>
+            <association name="pjt:slScoreCriterion">
+                    <source>
+                        <mandatory>false</mandatory>
+                        <many>true</many>
+                    </source>
+                    <target>
+                        <class>pjt:score</class>
+                        <mandatory>true</mandatory>
+                        <many>false</many>
+                    </target>
+             </association>
             <mandatory-aspects>
                 <aspect>bcpg:sortableListAspect</aspect>
                 <aspect>pjt:completionAspect</aspect>
+                <aspect>bcpg:depthLevelAspect</aspect>
             </mandatory-aspects>
         </type>
+        
+        
+         <type name="pjt:scoreCriterion">
+            <parent>bcpg:charact</parent>
+            <properties>
+                <property name="pjt:scoreCriterionType">
+                    <type>d:text</type>
+                    <index enabled="true">
+                          <tokenised>false</tokenised>
+                          <facetable>false</facetable>
+                    </index>
+                    <constraints>
+                        <constraint ref="pjt:scoreCriterionTypes" />
+                    </constraints>
+                </property>
+                 <property name="pjt:scoreCriterionWeight">
+                    <type>d:double</type>
+                    <index enabled="false" />
+                </property> 
+                <property name="pjt:scoreCriterionFormula">
+                    <type>d:text</type>
+                    <index enabled="false" />
+                </property> 
+                <property name="pjt:scoreCriterionDetailFormula">
+                    <type>d:text</type>
+                    <index enabled="false" />
+                </property>
+                  <property name="pjt:scoreCriterionRangeFormula">
+                    <type>d:text</type>
+                    <index enabled="false" />
+                </property> 
+                 <property name="pjt:scoreCriterionRange">
+                    <type>d:text</type>
+                    <index enabled="false" />
+                </property>        
+         </properties>
+         </type>
 
         <!-- Data List - Request List -->
         <type name="pjt:requestList">

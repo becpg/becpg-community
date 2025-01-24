@@ -16,6 +16,7 @@ import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.ResourceParamDataItem;
 import fr.becpg.repo.product.data.productList.SpecCompatibilityDataItem;
+import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.repository.annotation.AlfCacheable;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
@@ -97,6 +98,12 @@ public class ProductSpecificationData extends ProductData {
 		setForbiddenIngList(forbiddenIngList);
 		return this;
 	}
+	
+	public ProductSpecificationData withScoreList(List<ScoreListDataItem> scoreList) {
+		setScoreList(scoreList);
+		return this;
+	}
+	
 
 	
 	/**
