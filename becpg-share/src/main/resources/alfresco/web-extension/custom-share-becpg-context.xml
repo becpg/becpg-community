@@ -186,6 +186,13 @@ http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 		         </list>
 		      </property>
 		   </bean>
+           <bean  parent="evaluator.doclib.action.groupMembership">
+		      <property name="groups">
+		         <list>
+		            <value>SiteBranchOnlyManager</value>
+		         </list>
+		      </property>
+		   </bean>
          </list>
       </property>
    </bean>

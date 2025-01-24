@@ -7,6 +7,11 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.repo.system.SystemConfigurationService;
 
+/**
+ * <p>BeCPGIndexFilter class.</p>
+ *
+ * @author matthieu
+ */
 public class BeCPGIndexFilter extends TypeIndexFilter {
 
 	private static final String CONF_KEY = "beCPG.solr.enableIndexForTypes";
@@ -18,11 +23,17 @@ public class BeCPGIndexFilter extends TypeIndexFilter {
 
 	
 	
+	 /**
+	  * <p>Setter for the field <code>systemConfigurationService</code>.</p>
+	  *
+	  * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
+	  */
 	 public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
 		this.systemConfigurationService = systemConfigurationService;
 	}
 
 
+	/** {@inheritDoc} */
     @Override
 	public boolean shouldBeIgnored(QName nodeType)
 	    {

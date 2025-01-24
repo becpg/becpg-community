@@ -101,11 +101,11 @@ public class ClaimListValuePatch extends AbstractBeCPGPatch {
 		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
 
 			public void afterProcess() throws Throwable {
-				ruleService.enableRules();
+				//Do nothing
 			}
 
 			public void beforeProcess() throws Throwable {
-				ruleService.disableRules();
+				//Do nothing
 			}
 
 			public String getIdentifier(NodeRef entry) {
@@ -113,7 +113,7 @@ public class ClaimListValuePatch extends AbstractBeCPGPatch {
 			}
 
 			public void process(NodeRef dataListNodeRef) throws Throwable {
-
+				ruleService.disableRules();
 				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 				policyBehaviourFilter.disableBehaviour();
 
@@ -129,7 +129,7 @@ public class ClaimListValuePatch extends AbstractBeCPGPatch {
 				} else {
 					logger.warn("dataListNodeRef doesn't exist : " + dataListNodeRef);
 				}
-
+				ruleService.enableRules();
 			}
 
 		};

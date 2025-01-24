@@ -274,8 +274,10 @@ public class ImportHelper {
 								Locale locale = MLTextHelper.parseLocale(strLocale);
 								if(values.get(z_idx) == null || values.get(z_idx).isBlank()) {
 									mlText.removeValue(locale);
-								} else {
+								} else 	if (MLTextHelper.isSupportedLocale(locale)) {
 									mlText.addValue(locale, values.get(z_idx));
+								} else {
+									throw new IllegalStateException("Unsupported locale : "+locale);
 								}
 							} else {
 								// the translation is finished
@@ -394,7 +396,8 @@ public class ImportHelper {
 	 */
 	public static Number parseNumber(ImportContext importContext, String val) throws ParseException {
 		
-	    Matcher m = NUMBER_PATTERN.matcher(val);
+	    val = val.replaceAll("\\s", "").replace("\u202F", "");
+		Matcher m = NUMBER_PATTERN.matcher(val);
 	    if (!m.find()) {
 	    	throw new ParseException("Not a number",0);
 	    }

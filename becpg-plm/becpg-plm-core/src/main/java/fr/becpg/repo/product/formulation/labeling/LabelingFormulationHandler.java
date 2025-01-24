@@ -32,7 +32,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
-import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 
@@ -235,7 +234,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 			labelingFormulaContext.setIngsLabelingWithYield(ingsCalculatingWithYield());
 
-			ExpressionParser parser = new SpelExpressionParser();
+			ExpressionParser parser = formulaService.getSpelParser();
 			StandardEvaluationContext dataContext = formulaService.createCustomSpelContext(formulatedProduct, labelingFormulaContext);
 
 			List<LabelingRuleListDataItem> labelingRuleLists = labelingRuleListsGroup.getValue();
@@ -1532,7 +1531,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				}
 
 				//Water loss
-				if ((qty != null) && (calculatedYield != null) && (calculatedYield.doubleValue() != 100d) && hasEvaporationData(productNodeRef)) {
+				if ( (calculatedYield != null) && (calculatedYield.doubleValue() != 100d)
+						&& hasEvaporationData(productNodeRef)) {
 
 					// Override declaration type
 					declarationType = DeclarationType.DoNotDetails;
@@ -1543,12 +1543,16 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						evaporateRate = 100d;
 					}
 
-					Double maxEvaporableQty = (qty * (evaporateRate / 100d));
-					Double maxEvaporableVolume = (volume * (evaporateRate / 100d));
+					Double maxEvaporableQty = 0d;
+					if (qtyWithYield != null) {
+						maxEvaporableQty = (qtyWithYield * (evaporateRate / 100d));
+					}
 
-					//We only apply yield on dry matter
-					qtyWithYield = maxEvaporableQty + (((qty * (1d - (evaporateRate / 100d))) * 100d) / calculatedYield);
-					volumeWithYield = maxEvaporableVolume + (((volume * (1d - (evaporateRate / 100d))) * 100d) / calculatedYield);
+					Double maxEvaporableVolume = 0d;
+
+					if (volumeWithYield != null) {
+						maxEvaporableVolume = (volumeWithYield * (evaporateRate / 100d));
+					}
 
 					if (logger.isTraceEnabled()) {
 						logger.trace("Detected evaporated components (" + productData.getName() + " - " + productNodeRef + "), rate: " + evaporateRate
@@ -1590,7 +1594,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							logger.warn("Diluent or Target ing is null for: " + productData.getName());
 						}
 					} else {
-						logger.warn("No reconstitution rate on: " + productData.getName());
+						logger.debug("No reconstitution rate on: " + productData.getName());
 					}
 				}
 
@@ -2008,6 +2012,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 								: parent.getEvaporatedVolume() * (rate / totalRate); // Consider total rate for remaining items
 						Double evaporatedVol = Math.min(maxEvapQty, proportionalEvap);
 
+						productLabelItem.setVolumeWithYield(productLabelItem.getVolume() - evaporatedVol);
+
 						if (logger.isDebugEnabled()) {
 							logger.debug("Apply evaporation volume " + evaporatedVol + " on " + getName(productLabelItem) + " after "
 									+ productLabelItem.getVolumeWithYield());
@@ -2265,21 +2271,18 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						if (evaporateRate == null) {
 							evaporateRate = 100d;
 						}
-						
-						if (qty != null) {
-							maxEvaporableQty = (qty * (evaporateRate / 100d));
-							qtyWithYield = maxEvaporableQty + (((qty * (1d - (evaporateRate / 100d))) * 100d) / calculatedYield);
+
+						if (qtyWithYield != null) {
+							maxEvaporableQty = (qtyWithYield * (evaporateRate / 100d));
 						}
 
-						if (volume != null) {
-							maxEvaporableVolume = (volume * (evaporateRate / 100d));
-							volumeWithYield = maxEvaporableVolume + (((volume * (1d - (evaporateRate / 100d))) * 100d) / calculatedYield);
+						if (volumeWithYield != null) {
+							maxEvaporableVolume = (volumeWithYield * (evaporateRate / 100d));
 						}
 
 						if (logger.isTraceEnabled()) {
 							logger.trace("Detected evaporated ings (" + ingLabelItem.getLegalName(I18NUtil.getContentLocaleLang()) + "), rate: "
-									+ evaporateRate + ", qtyWithYield :" + qtyWithYield + ", maxEvaporableQty :" + maxEvaporableQty
-							);
+									+ evaporateRate + ", qtyWithYield :" + qtyWithYield + ", maxEvaporableQty :" + maxEvaporableQty);
 						}
 
 						mergeEvaporatedItem(parent.getEvaporatedDataItems(),

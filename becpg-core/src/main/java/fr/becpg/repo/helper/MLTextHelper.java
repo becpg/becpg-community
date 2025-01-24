@@ -2,7 +2,6 @@ package fr.becpg.repo.helper;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -17,6 +16,8 @@ import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
@@ -33,9 +34,12 @@ public class MLTextHelper {
 
 	private static Map<String, MLText> mlTextCache = new ConcurrentHashMap<>();
 
-	private static List<Locale> supportedLocales = null;
+	private static  List<Locale> supportedLocales = null;
 
-	private static String supportedLocalesText = null;
+	private static  String supportedLocalesText = null;
+
+
+	private static final Log logger = LogFactory.getLog(MLTextHelper.class);
 
 	/**
 	 * <p>Constructor for MLTextHelper.</p>
@@ -58,7 +62,7 @@ public class MLTextHelper {
 	 *
 	 * @param supportedLocalesText a {@link java.lang.String} object
 	 */
-	public static void setSupportedLocales(String supportedLocalesText) {
+	public static synchronized void setSupportedLocales(String supportedLocalesText) {
 		MLTextHelper.supportedLocalesText = supportedLocalesText;
 	}
 
@@ -80,34 +84,42 @@ public class MLTextHelper {
 	 *
 	 * @return a {@link java.util.List} object.
 	 */
-	public static List<Locale> getSupportedLocales() {
-
+	public static synchronized List<Locale> getSupportedLocales() {
 		if (supportedLocales == null) {
-			supportedLocales = new ArrayList<>();
 
-			if (supportedLocalesText() != null) {
-				String[] locales = supportedLocalesText().split(",");
-				for (String key : locales) {
-					supportedLocales.add(parseLocale(key.trim()));
-				}
+			List<Locale> ret = new ArrayList<>();
+			String localesText = supportedLocalesText;
+
+			if (supportedLocalesText == null) {
+				localesText = SystemConfigurationRegistry.instance().confValue("beCPG.multilinguale.supportedLocales");
 			}
 
-			// put default locale in first position and sort by name
+			if (localesText != null) {
+				String[] locales = localesText.split(",");
+				for (String key : locales) {
+					ret.add(parseLocale(key.trim()));
 
-			supportedLocales.sort((a, b) -> {
-				if (MLTextHelper.isDefaultLocale(a)) {
-					return -1;
-				} else if (MLTextHelper.isDefaultLocale(b)) {
-					return 1;
-				} else {
-					return localeLabel(a).compareTo(localeLabel(b));
 				}
+
+			}
+
+			supportedLocales = ret;
+
+			// Sort locales
+			supportedLocales.sort((a, b) -> {
+				if (isDefaultLocale(a)) {
+					return -1;
+				}
+				if (isDefaultLocale(b)) {
+					return 1;
+				}
+				return localeLabel(a).compareTo(localeLabel(b));
 			});
 
+			logger.info("Init supported locale with: " + ret.toString());
+			
 		}
-
 		return supportedLocales;
-
 	}
 
 	/**
@@ -116,29 +128,13 @@ public class MLTextHelper {
 	 * @return a {@link java.util.List} object.
 	 */
 	public static List<String> getSupportedLocalesList() {
-
-		if (supportedLocalesText() != null) {
-			return Arrays.asList(supportedLocalesText().split(","));
-		}
-
-		return new ArrayList<>();
+		return getSupportedLocales().stream().map(MLTextHelper::localeKey).toList();
 	}
 
-	private static String supportedLocalesText() {
-		if (supportedLocalesText != null) {
-			return supportedLocalesText;
-		}
-		return SystemConfigurationRegistry.instance().confValue("beCPG.multilinguale.supportedLocales");
-	}
-	
-    	
+
 	public static boolean isDisabledMLTextField(String propertyQNamePrexiString) {
 		String disabledMLTextFields = SystemConfigurationRegistry.instance().confValue("beCPG.multilinguale.disabledMLTextFields");
-		if(disabledMLTextFields !=null && !disabledMLTextFields.isBlank()
-				&& disabledMLTextFields.contains(propertyQNamePrexiString)){
-			return true;
-		}
-		return false;
+		return ((disabledMLTextFields != null) && !disabledMLTextFields.isBlank() && disabledMLTextFields.contains(propertyQNamePrexiString));
 	}
 
 	/**
@@ -267,7 +263,7 @@ public class MLTextHelper {
 	 * Replace any text in mlText having the same language (but any variant) as contentLocale
 	 * with updatedText keyed by the language of contentLocale. This ensures that the mlText
 	 * will have no more than one entry for the particular language.
-	 * 
+	 *
 	 * @param contentLocale Locale
 	 * @param updatedText String
 	 * @param mlText MLText
@@ -276,11 +272,14 @@ public class MLTextHelper {
 
 		Locale toSaveUnderLocale = MLTextHelper.getSupportedLocale(contentLocale);
 
-		Iterator<Locale> locales = mlText.getLocales().iterator();
-		while (locales.hasNext()) {
-			Locale locale = locales.next();
-			if (locale.getLanguage().equals(toSaveUnderLocale.getLanguage()) && (!MLTextHelper.isSupportedLocale(locale))) {
-				locales.remove();
+
+		if(toSaveUnderLocale!=null) {
+			Iterator<Locale> locales = mlText.getLocales().iterator();
+			while (locales.hasNext()) {
+				Locale locale = locales.next();
+				if (locale.getLanguage().equals(toSaveUnderLocale.getLanguage()) && (!MLTextHelper.isSupportedLocale(locale))) {
+					locales.remove();
+				}
 			}
 		}
 
@@ -335,11 +334,11 @@ public class MLTextHelper {
 	 * @return a {@link java.lang.String} object.
 	 */
 	public static String localeKey(Locale locale) {
-		String ret = locale.getLanguage();
+		StringBuilder ret = new StringBuilder().append(locale.getLanguage());
 		if ((locale.getCountry() != null) && !locale.getCountry().isBlank()) {
-			ret += "_" + locale.getCountry();
+			ret.append("_").append(locale.getCountry());
 		}
-		return ret;
+		return ret.toString();
 	}
 
 	/**
@@ -349,11 +348,11 @@ public class MLTextHelper {
 	 * @return a {@link java.lang.String} object.
 	 */
 	public static String localeLabel(Locale locale) {
-		String ret = locale.getDisplayLanguage();
+		StringBuilder ret = new StringBuilder().append(locale.getDisplayLanguage());
 		if ((locale.getCountry() != null) && !locale.getCountry().isBlank()) {
-			ret += " - " + locale.getDisplayCountry();
+			ret.append(" - ").append(locale.getDisplayCountry());
 		}
-		return ret;
+		return ret.toString();
 	}
 
 	/**
@@ -406,9 +405,8 @@ public class MLTextHelper {
 
 		MLText ret = new MLText();
 		for (String key : RepoConsts.SUPPORTED_UI_LOCALES.split(",")) {
-
-			if (supportedLocalesText().contains(key)) {
-				Locale locale = parseLocale(key);
+			Locale locale = parseLocale(key);
+			if (isSupportedLocale(locale)) {
 				List<Object> parsedVariable = new LinkedList<>();
 				if (variables != null) {
 					for (Object tmp : variables) {
@@ -424,7 +422,6 @@ public class MLTextHelper {
 				} else {
 					ret.addValue(locale, I18NUtil.getMessage(messageKey, locale, parsedVariable.toArray()));
 				}
-
 			}
 
 		}
@@ -432,7 +429,7 @@ public class MLTextHelper {
 	}
 
 	public interface MLTextCallback {
-		public String run(Locale locale);
+		String run(Locale locale);
 	}
 
 	/**
@@ -445,8 +442,8 @@ public class MLTextHelper {
 		MLText ret = new MLText();
 
 		for (String key : RepoConsts.SUPPORTED_UI_LOCALES.split(",")) {
-			if (supportedLocalesText().contains(key)) {
-				Locale locale = parseLocale(key);
+			Locale locale = parseLocale(key);
+			if (isSupportedLocale(locale)) {
 				ret.addValue(locale, callback.run(locale));
 			}
 		}

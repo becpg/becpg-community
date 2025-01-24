@@ -55,7 +55,7 @@ public class BatchOrderIT extends AbstractFinishedProductTest {
 			formulationService.formulate(batchData.getProduct().getNodeRef());
 			formulationService.formulate(batchNodeRef);
 			
-			Assert.assertEquals(batchData.getCompoList().size(),3);
+			Assert.assertEquals(3L,batchData.getCompoList().size());
 
 			return batchData;
 

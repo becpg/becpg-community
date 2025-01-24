@@ -52,7 +52,7 @@ public class TaiwanNutrientRegulation extends AbstractNutrientRegulation {
 										|| ((nutrientTypeCode.equals(NutrientCode.Fat) || nutrientTypeCode.equals(NutrientCode.CarbohydrateByDiff)
 												|| nutrientTypeCode.equals(NutrientCode.Protein) || nutrientTypeCode.equals(NutrientCode.Sugar))
 												&& value <= 0.5)
-										|| (nutrientTypeCode.equals(NutrientCode.Sodium) && value <= 0.005)
+										|| (nutrientTypeCode.equals(NutrientCode.Sodium) && value <= 0.5)
 										|| (nutrientTypeCode.equals(NutrientCode.FatSaturated) && value <= 0.1)
 										|| (nutrientTypeCode.equals(NutrientCode.FatTrans) && value <= 0.3)))) {
 			return "0";

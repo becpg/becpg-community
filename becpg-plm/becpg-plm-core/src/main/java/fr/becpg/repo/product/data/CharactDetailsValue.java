@@ -244,7 +244,11 @@ public class CharactDetailsValue {
 			if (currentAdditionalValue == null) {
 				additionalValues.add(new CharactDetailAdditionalValue(additionalValue));
 			} else {
-				currentAdditionalValue.setValue(currentAdditionalValue.getValue() + additionalValue.getValue());
+				Double currentValue = currentAdditionalValue.getValue();
+				currentValue = currentValue == null ? 0d : currentValue;
+				Double addedValue = additionalValue.getValue();
+				addedValue = addedValue == null ? 0d : addedValue;
+				currentAdditionalValue.setValue(currentValue + addedValue);
 			}
 		}
 	}

@@ -5,6 +5,7 @@ package fr.becpg.test.repo.web.scripts.admin;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Assert;
 import org.junit.Test;
 
 import fr.becpg.test.RepoBaseTestCase;
@@ -19,7 +20,6 @@ import fr.becpg.test.utils.TestWebscriptExecuters.Response;
  */
 public class AdminModuleWebScriptIT extends RepoBaseTestCase {
 
-	
 	private static final Log logger = LogFactory.getLog(AdminModuleWebScriptIT.class);
 
 	/**
@@ -35,7 +35,9 @@ public class AdminModuleWebScriptIT extends RepoBaseTestCase {
 		logger.debug("test init repo webscript ");
 		String url = "/becpg/admin/repository/init-repo";
 		Response response = TestWebscriptExecuters.sendRequest(new GetRequest(url), 200, "admin");
+		Assert.assertNotNull(response);
 		logger.debug(response.getContentAsString());
+
 	}
 
 	/**
@@ -50,7 +52,9 @@ public class AdminModuleWebScriptIT extends RepoBaseTestCase {
 		logger.debug("test reload models webscript ");
 		String url = "/becpg/admin/repository/reload-model";
 		Response response = TestWebscriptExecuters.sendRequest(new GetRequest(url), 200, "admin");
+		Assert.assertNotNull(response);
 		logger.debug(response.getContentAsString());
+
 	}
 
 }

@@ -23,7 +23,7 @@ import fr.becpg.repo.toxicology.ToxicologyService;
 /**
  * <p>ToxicologyServiceImpl class.</p>
  *
- * @author matthieu
+ * @author valentin
  */
 @Service("toxicologyService")
 public class ToxicologyServiceImpl implements ToxicologyService {
@@ -51,6 +51,7 @@ public class ToxicologyServiceImpl implements ToxicologyService {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void updateToxIngAfterToxUpdate(NodeRef toxNodeRef) {
 		NodeRef listContainer = getCharactListContainer();
@@ -67,6 +68,7 @@ public class ToxicologyServiceImpl implements ToxicologyService {
 		}
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void deleteToxIngBeforeIngDelete(NodeRef ingNodeRef) {
 		NodeRef listContainer = getCharactListContainer();
@@ -80,6 +82,7 @@ public class ToxicologyServiceImpl implements ToxicologyService {
 		}
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void deleteToxIngBeforeToxDelete(NodeRef toxNodeRef) {
 		NodeRef listContainer = getCharactListContainer();
@@ -159,8 +162,12 @@ public class ToxicologyServiceImpl implements ToxicologyService {
 			nodeService.setProperty(toxIngNodeRef, PLMModel.PROP_TOX_ING_ING, ingNodeRef);
 			nodeService.setProperty(toxIngNodeRef, PLMModel.PROP_TOX_ING_TOX, toxNodeRef);
 		}
-		Double maxValue = computeMaxValue(ingNodeRef, toxNodeRef);
-		nodeService.setProperty(toxIngNodeRef, PLMModel.PROP_TOX_ING_MAX_VALUE, maxValue);
+		
+		Boolean calculateMax = (Boolean) nodeService.getProperty(toxNodeRef, PLMModel.PROP_TOX_CALCULATE_MAX);
+		if (Boolean.TRUE.equals(calculateMax)) {
+			Double maxValue = computeMaxValue(ingNodeRef, toxNodeRef);
+			nodeService.setProperty(toxIngNodeRef, PLMModel.PROP_TOX_ING_MAX_VALUE, maxValue);
+		}
 		
 		Boolean calculateSystemic = (Boolean) nodeService.getProperty(toxNodeRef, PLMModel.PROP_TOX_CALCULATE_SYSTEMIC);
 		if (Boolean.TRUE.equals(calculateSystemic)) {

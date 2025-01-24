@@ -34,4 +34,11 @@ public class GHSModel {
 	/** Constant <code>TYPE_PACKAGING_GROUP_CODE</code> */
 	public static final QName TYPE_PACKAGING_GROUP_CODE = QName.createQName(GHS_URI, "packagingGroupCode");
 
+	public static final QName PROP_SDS_HAZARD_CLASSIFICATIONS = QName.createQName(GHS_URI, "sdsHazardClassifications");
+
+	public static final QName TYPE_HAZARD_CLASSIFICATION_LIST = QName.createQName(GHS_URI, "hazardClassificationList");
+
+	public static final QName PROP_HAZARD_CODE = QName.createQName(GHS_URI, "hazardCode");
+	public static final QName PROP_PICTOGRAM_CODE = QName.createQName(GHS_URI, "pictogramCode");
+
 }

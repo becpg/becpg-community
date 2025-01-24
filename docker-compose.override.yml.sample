@@ -52,7 +52,7 @@ services:
 #    command: sh -c "chown -R 33000:1000 /data1 && chown -R alfresco:alfresco /data2"   
 
   becpg-report:
-    image:  europe-west1-docker.pkg.dev/becpg-314807/becpg-docker/becpg-report:4.4.0
+    image:  europe-west1-docker.pkg.dev/becpg-314807/becpg-docker/becpg-report:4.17.0.0
     user: root
     ports:
        - "8086:8080"

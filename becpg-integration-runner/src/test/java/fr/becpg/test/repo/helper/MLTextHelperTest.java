@@ -80,8 +80,20 @@ public class MLTextHelperTest {
 
 	@Test
 	public void testDecimalFormat() {
-		System.out.printf(Locale.UK, "%.2f", 10.5d);
-		System.out.printf(MLTextHelper.parseLocale("en_ZA"), "%.2f", 10.5d);
+		 // Capture the outputs of the formatted values
+	    String ukFormatted = String.format(Locale.UK, "%.2f", 10.5d);
+	    String zaFormatted = String.format(MLTextHelper.parseLocale("en_ZA"), "%.2f", 10.5d);
+
+	    // Assert that the formatted strings are as expected
+		Assert.assertEquals("10.50", ukFormatted);
+		Assert.assertEquals("10,50", zaFormatted);
 	}
 
+	@Test
+	public void tesstParseLocale() {
+		Locale loc = MLTextHelper.parseLocale("en_us");
+		Assert.assertEquals("en_US", MLTextHelper.localeKey(loc));
+		
+	}
+	
 }

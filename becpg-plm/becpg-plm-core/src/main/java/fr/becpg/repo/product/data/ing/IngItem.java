@@ -133,7 +133,7 @@ public class IngItem extends CompositeLabeling {
 	 * @return a {@link java.lang.String} object.
 	 */
 	@AlfProp
-	@AlfQname(qname = "bcpg:ingCASCode")
+	@AlfQname(qname = "bcpg:casNumber")
 	public String getIngCASCode() {
 		return ingCASCode;
 	}

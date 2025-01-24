@@ -4931,7 +4931,7 @@ dataSetRow["name"]
                                         <expression name="valueExpr" type="javascript">reportContext.getMessage("footer2", reportContext.getLocale()) == null || reportContext.getMessage("footer2", reportContext.getLocale())  == ""</expression>
                                     </structure>
                                 </list-property>
-                                <text-property name="text" key="footer2"></text-property>
+                                <text-property name="text" key="footer5"></text-property>
                             </label>
                             <label id="10554">
                                 <property name="style">color-adress-website</property>
@@ -6110,9 +6110,6 @@ adress;</expression>
                     <property name="dataType">integer</property>
                 </structure>
             </list-property>
-            <column id="12282">
-                <property name="width">25%</property>
-            </column>
             <column id="12283">
                 <list-property name="highlightRules">
                     <structure>
@@ -6157,7 +6154,7 @@ adress;</expression>
                     <property name="borderRightStyle">none</property>
                     <property name="borderTopStyle">none</property>
                     <cell id="12267">
-                        <property name="colSpan">5</property>
+                        <property name="colSpan">4</property>
                         <property name="rowSpan">1</property>
                         <property name="paddingTop">0pt</property>
                         <label id="12268">
@@ -6170,7 +6167,7 @@ adress;</expression>
                 </row>
                 <row id="12269">
                     <cell id="12270">
-                        <property name="colSpan">5</property>
+                        <property name="colSpan">4</property>
                         <property name="rowSpan">1</property>
                         <label id="12271">
                             <property name="fontSize">7pt</property>
@@ -6187,16 +6184,6 @@ adress;</expression>
                             <property name="style">becpg-row-border</property>
                         </structure>
                     </list-property>
-                    <cell id="12273">
-                        <property name="style">becpg-cell-data</property>
-                        <label id="12906">
-                            <property name="fontFamily">"Arial"</property>
-                            <property name="fontSize">9pt</property>
-                            <property name="fontWeight">bold</property>
-                            <property name="fontStyle">normal</property>
-                            <text-property name="text" key="level"></text-property>
-                        </label>
-                    </cell>
                     <cell id="12275">
                         <property name="style">becpg-cell-data</property>
                         <label id="12910">
@@ -6248,12 +6235,6 @@ adress;</expression>
                             <property name="style">becpg-row-border</property>
                         </structure>
                     </list-property>
-                    <cell id="12278">
-                        <property name="style">becpg-cell-data</property>
-                        <data id="12912">
-                            <property name="resultSetColumn">pmlLevel</property>
-                        </data>
-                    </cell>
                     <cell id="12280">
                         <property name="style">becpg-cell-data</property>
                         <data id="12913">
@@ -8071,7 +8052,7 @@ adress;</expression>
                                     <property name="style">becpg-cell-dynamic-header-left</property>
                                     <data id="3523">
                                         <property name="fontFamily">"Arial"</property>
-                                        <property name="textAlign">center</property>
+                                        <property name="textAlign">left</property>
                                         <property name="resultSetColumn">clCharacts</property>
                                     </data>
                                 </cell>
@@ -8170,27 +8151,20 @@ adress;</expression>
             </list-property>
             <column id="13158">
                 <property name="style">becpg-col-header</property>
-                <property name="width">1.7in</property>
+                <property name="width">65%</property>
             </column>
             <column id="13159">
                 <property name="style">becpg-col-border</property>
+                <property name="width">10%</property>
             </column>
             <column id="13160">
                 <property name="style">becpg-col-border</property>
-            </column>
-            <column id="13161">
-                <list-property name="visibility">
-                    <structure>
-                        <property name="format">all</property>
-                        <expression name="valueExpr" type="javascript">true</expression>
-                    </structure>
-                </list-property>
-                <property name="style">becpg-col-border</property>
+                <property name="width">25%</property>
             </column>
             <header>
                 <row id="13134">
                     <cell id="13135">
-                        <property name="colSpan">4</property>
+                        <property name="colSpan">3</property>
                         <property name="rowSpan">1</property>
                         <property name="style">becpg-chapter-header</property>
                         <label id="13136">
@@ -8209,7 +8183,7 @@ adress;</expression>
                 </row>
                 <row id="13137">
                     <cell id="13138">
-                        <property name="colSpan">4</property>
+                        <property name="colSpan">3</property>
                         <property name="rowSpan">1</property>
                         <label id="13139"/>
                     </cell>
@@ -8245,17 +8219,6 @@ adress;</expression>
                             <text-property name="text" key="unit"></text-property>
                         </label>
                     </cell>
-                    <cell id="13147">
-                        <property name="style">becpg-cell-header</property>
-                        <label id="13148">
-                            <property name="style">becpg-col-header</property>
-                            <property name="fontFamily">"Arial"</property>
-                            <property name="fontStyle">normal</property>
-                            <property name="paddingLeft">5pt</property>
-                            <property name="textAlign">center</property>
-                            <text-property name="text" key="manual">Manuel</text-property>
-                        </label>
-                    </cell>
                 </row>
             </header>
             <detail>
@@ -8282,13 +8245,6 @@ adress;</expression>
                         <data id="13155">
                             <property name="fontFamily">"Arial"</property>
                             <property name="resultSetColumn">lcaListUnit</property>
-                        </data>
-                    </cell>
-                    <cell id="13156">
-                        <property name="style">becpg-cell-data</property>
-                        <data id="13157">
-                            <property name="fontFamily">"Arial"</property>
-                            <property name="resultSetColumn">isManualListItem</property>
                         </data>
                     </cell>
                 </row>
@@ -8339,13 +8295,15 @@ adress;</expression>
             </list-property>
             <column id="13018">
                 <property name="style">becpg-col-header</property>
-                <property name="width">1.7in</property>
+                <property name="width">50%</property>
             </column>
             <column id="13019">
                 <property name="style">becpg-col-border</property>
+                <property name="width">15%</property>
             </column>
             <column id="13020">
                 <property name="style">becpg-col-border</property>
+                <property name="width">35%</property>
             </column>
             <header>
                 <row id="12994">
@@ -8507,7 +8465,7 @@ question += dataSetRow["integer"] + " -"</expression>
                         <property name="rowSpan">1</property>
                         <label id="13066">
                             <property name="style">becpg-chapter-header</property>
-                            <text-property name="text" key="SurveyChapter"></text-property>
+                            <text-property name="text" key="questionnaire"></text-property>
                         </label>
                     </cell>
                 </row>

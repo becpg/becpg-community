@@ -173,7 +173,9 @@
 				
 					<field id="survey:nextQuestion" set="surveyQuestion">
 						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+							     <control-param name="ds">becpg/autocomplete/survey</control-param>
+						</control>
 					</field>
 					<field id="survey:fsSurveyListName" set="surveyAutogeneration" />
 					<field id="survey:fsLinkedCharactRefs" set="surveyAutogeneration">
@@ -374,8 +376,10 @@
 					<field id="survey:responseCommentLabel" set="surveyQuestion" />
 				
 					<field id="survey:nextQuestion" set="surveyQuestion">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					<control
+                            template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+                                 <control-param name="ds">becpg/autocomplete/survey</control-param>
+                        </control>
 					</field>
 					<field id="survey:fsSurveyListName" set="surveyAutogeneration" />
 					<field id="survey:fsLinkedCharactRefs" set="surveyAutogeneration">
@@ -537,7 +541,9 @@
 					<field id="bcpg:depthLevel" label="hidden"/>
 					<field id="survey:nextQuestion">
 						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+                            template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+                                 <control-param name="ds">becpg/autocomplete/survey</control-param>
+                        </control>
 					</field>
 					
 				</appearance>

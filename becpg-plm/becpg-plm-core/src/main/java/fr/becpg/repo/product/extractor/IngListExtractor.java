@@ -35,17 +35,26 @@ public class IngListExtractor extends MultiLevelExtractor {
 	private static final String TOTAL_WITHYIELD_KEY = "prop_bcpg_ingListQtyPercWithYield";
 	private static final String TOTAL_WITHYIELDSECONDARY_KEY = "prop_bcpg_ingListQtyPercWithSecondaryYield";
 
+	private static final String TYPE_DOUBLE = "double";
+	private static final String TYPE_TOTAL = "total";
+
 	/** {@inheritDoc} */
 	@Override
 	public PaginatedExtractedItems extract(DataListFilter dataListFilter, List<AttributeExtractorField> metadataFields) {
-		
-		PaginatedExtractedItems ret = super.extract(dataListFilter, metadataFields);
+
+		PaginatedExtractedItems ret;
+
+		if (dataListFilter.isAllFilter()) {
+			ret = super.extract(dataListFilter, metadataFields);
+		} else {
+			ret = super.simpleExtract(dataListFilter, metadataFields);
+		}
 
 		if (!(RepoConsts.FORMAT_CSV.equals(dataListFilter.getFormat()) || RepoConsts.FORMAT_XLSX.equals(dataListFilter.getFormat()))) {
 
 			Map<String, Object> totalRow = new HashMap<>(20);
 
-			totalRow.put(PROP_TYPE, "total");
+			totalRow.put(PROP_TYPE, TYPE_TOTAL);
 			totalRow.put(PROP_LEAF, true);
 
 			Map<String, Map<String, Boolean>> permissions = new HashMap<>(1);
@@ -64,20 +73,19 @@ public class IngListExtractor extends MultiLevelExtractor {
 
 			Map<String, Object> totalNodeDataRow = new HashMap<>(20);
 
-			
 			Double totalQtyPerc = 0d;
-			Double totalQtyPercWithYield= 0d;
-			Double totalQtyPercWithSecondaryYield= 0d;
+			Double totalQtyPercWithYield = 0d;
+			Double totalQtyPercWithSecondaryYield = 0d;
 
 			for (Map<String, Object> row : ret.getPageItems()) {
-				
+
 				NodeRef nodeRef = new NodeRef(row.get(PROP_NODE).toString());
 
 				if (nodeRef != null) {
 					Integer depthLevel = (Integer) nodeService.getProperty(nodeRef, BeCPGModel.PROP_DEPTH_LEVEL);
 					if ((depthLevel == null) || (depthLevel == 1)) {
 						Double value = (Double) nodeService.getProperty(nodeRef, PLMModel.PROP_INGLIST_QTY_PERC);
-						
+
 						if (value != null) {
 							totalQtyPerc += value;
 						}
@@ -85,7 +93,7 @@ public class IngListExtractor extends MultiLevelExtractor {
 						if (yieldValue != null) {
 							totalQtyPercWithYield += yieldValue;
 						}
-						
+
 						Double secondaryYieldValue = (Double) nodeService.getProperty(nodeRef, PLMModel.PROP_INGLIST_QTY_PERCWITHSECONDARYYIELD);
 						if (secondaryYieldValue != null) {
 							totalQtyPercWithSecondaryYield += secondaryYieldValue;
@@ -93,40 +101,23 @@ public class IngListExtractor extends MultiLevelExtractor {
 					}
 				}
 			}
-			
-
-			HashMap<String, Object> tmp = new HashMap<>(3);
 
 			String totalHeader = I18NUtil.getMessage("entity.datalist.item.details.total");
 
-			tmp.put("metadata", "total");
-			tmp.put("displayValue", totalHeader);
-			tmp.put("value", totalHeader);
+			totalNodeDataRow.put(LABEL_ASSOC_KEY, Arrays.asList(createColumn(TYPE_TOTAL, totalHeader, totalHeader)));
 
-			totalNodeDataRow.put(LABEL_ASSOC_KEY, Arrays.asList(tmp));
+			totalNodeDataRow.put(TOTAL_KEY, createColumn(TYPE_DOUBLE,
+					attributeExtractorService.getPropertyFormats(FormatMode.JSON, false).formatDecimal(totalQtyPerc), totalQtyPerc));
 
-			tmp = new HashMap<>(3);
-			tmp.put("metadata", "double");
-			tmp.put("displayValue", attributeExtractorService.getPropertyFormats(FormatMode.JSON, false).formatDecimal(totalQtyPerc));
-			tmp.put("value", totalQtyPerc);
+			totalNodeDataRow.put(TOTAL_WITHYIELD_KEY,
+					createColumn(TYPE_DOUBLE,
+							attributeExtractorService.getPropertyFormats(FormatMode.JSON, false).formatDecimal(totalQtyPercWithYield),
+							totalQtyPercWithYield));
 
-			totalNodeDataRow.put(TOTAL_KEY, tmp);
-			
-
-			tmp = new HashMap<>(3);
-			tmp.put("metadata", "double");
-			tmp.put("displayValue", attributeExtractorService.getPropertyFormats(FormatMode.JSON, false).formatDecimal(totalQtyPercWithYield));
-			tmp.put("value", totalQtyPercWithYield);
-
-			totalNodeDataRow.put(TOTAL_WITHYIELD_KEY, tmp);
-			
-			
-			tmp = new HashMap<>(3);
-			tmp.put("metadata", "double");
-			tmp.put("displayValue", attributeExtractorService.getPropertyFormats(FormatMode.JSON, false).formatDecimal(totalQtyPercWithSecondaryYield));
-			tmp.put("value", totalQtyPercWithSecondaryYield);
-
-			totalNodeDataRow.put(TOTAL_WITHYIELDSECONDARY_KEY, tmp);
+			totalNodeDataRow.put(TOTAL_WITHYIELDSECONDARY_KEY,
+					createColumn(TYPE_DOUBLE,
+							attributeExtractorService.getPropertyFormats(FormatMode.JSON, false).formatDecimal(totalQtyPercWithSecondaryYield),
+							totalQtyPercWithSecondaryYield));
 
 			totalRow.put(PROP_NODEDATA, totalNodeDataRow);
 
@@ -136,6 +127,15 @@ public class IngListExtractor extends MultiLevelExtractor {
 
 		return ret;
 
+	}
+
+	private Object createColumn(String metadata, String displayValue, Object value) {
+		HashMap<String, Object> tmp = new HashMap<>(3);
+		tmp.put("metadata", metadata);
+		tmp.put("displayValue", displayValue);
+		tmp.put("value", value);
+
+		return tmp;
 	}
 
 	/** {@inheritDoc} */

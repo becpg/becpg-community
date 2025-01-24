@@ -213,6 +213,7 @@ public class NutriScoreIT extends PLMBaseTestCase {
 		}, false, true);
 	}
 
+	@Deprecated //Merge with CharactTestHelper
 	private NodeRef findOrCreateNode(QName type, QName property, String value) {
 		NodeRef node = ImportHelper.findCharact(type, property, value, nodeService);
 
