@@ -18,6 +18,7 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.decernis.DecernisMode;
 import fr.becpg.repo.decernis.DecernisService;
+import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.CheckSumHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
@@ -88,16 +89,19 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 		
 		if (formulatedProduct.getReformulateCount() != null && !formulatedProduct.getReformulateCount().equals(formulatedProduct.getCurrentReformulateCount())) {
 			logger.debug("Skip decernis in reformulateCount " + formulatedProduct.getCurrentReformulateCount());
+			formulatedProduct.setFormulationChainId(FormulationService.DEFAULT_CHAIN_ID);
 			return Collections.emptyList();
 		}
 		
 		if (!decernisService.isEnabled()) {
 			logger.debug("Decernis service is not enabled");
+			formulatedProduct.setFormulationChainId(FormulationService.DEFAULT_CHAIN_ID);
 			return Collections.emptyList();
 		}
 		
 		if (DecernisMode.DISABLED.equals(formulatedProduct.getRegulatoryMode())) {
 			logger.debug("Decernis service is disabled for this product");
+			formulatedProduct.setFormulationChainId(FormulationService.DEFAULT_CHAIN_ID);
 			return Collections.emptyList();
 		}
 		
@@ -108,35 +112,35 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 		updateProductFromRegulatoryList(formulatedProduct);
 		
 		boolean isDirty = isDirty(formulatedProduct);
-		if (isDirty) {
-			StopWatch watch = null;
-			try {
-				if (logger.isDebugEnabled()) {
-					watch = new StopWatch();
-					watch.start();
-				}
-				
-				List<ReqCtrlListDataItem> requirements = decernisService.extractRequirements(formulatedProduct);
-				if (!hasError(requirements)) {
-					updateChecksums(formulatedProduct);
-					formulatedProduct.setRegulatoryFormulatedDate(new Date());
-				} else {
-					formulatedProduct.setRequirementChecksum(null);
-				}
-				
-				return requirements;
-			} finally {
-				if (logger.isDebugEnabled() && (watch != null)) {
-					watch.stop();
-					logger.debug("Running decernis requirement scanner in: " + watch.getTotalTimeSeconds() + "s");
-				}
-			}
-
-		} else {
+		
+		if (!isDirty) {
 			logger.debug("product is not dirty");
+			formulatedProduct.setFormulationChainId(FormulationService.DEFAULT_CHAIN_ID);
+			return Collections.emptyList();
 		}
-
-		return Collections.emptyList();
+		
+		StopWatch watch = null;
+		try {
+			if (logger.isDebugEnabled()) {
+				watch = new StopWatch();
+				watch.start();
+			}
+			
+			List<ReqCtrlListDataItem> requirements = decernisService.extractRequirements(formulatedProduct);
+			if (!hasError(requirements)) {
+				updateChecksums(formulatedProduct);
+				formulatedProduct.setRegulatoryFormulatedDate(new Date());
+			} else {
+				formulatedProduct.setRequirementChecksum(null);
+			}
+			
+			return requirements;
+		} finally {
+			if (logger.isDebugEnabled() && (watch != null)) {
+				watch.stop();
+				logger.debug("Running decernis requirement scanner in: " + watch.getTotalTimeSeconds() + "s");
+			}
+		}
 	}
 	
 	private boolean hasError(List<ReqCtrlListDataItem> reqList) {
