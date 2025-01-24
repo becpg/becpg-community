@@ -132,4 +132,19 @@ public class CharactTestHelper {
             properties
         );
     }
+    
+    
+    
+    public static NodeRef getOrCreateScoreCriteriom(NodeService nodeService, String name) {
+    	  Map<QName, Serializable> properties = new HashMap<>();
+          properties.put(BeCPGModel.PROP_CHARACT_NAME, name);
+
+          return getOrCreateNode(
+              nodeService,
+              "/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:ScoreCriteria",
+              name,
+              ProjectModel.TYPE_SCORE_CRITERION,
+              properties
+          );
+    }
 }

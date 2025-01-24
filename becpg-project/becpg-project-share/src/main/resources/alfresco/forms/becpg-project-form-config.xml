@@ -1927,17 +1927,34 @@
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="pjt:slCriterion" />
+					<show id="pjt:slScoreCriterion" />
 					<show id="pjt:slWeight" />
 					<show id="pjt:slScore" />
+					<show id="pjt:slScoreRange" />
 					<show id="pjt:slScreening" />
+					<show id="bcpg:parentLevel" />
 				</field-visibility>
 				<appearance>
-					<field id="pjt:slScreening">
-						<control template="/org/alfresco/components/form/controls/richtext.ftl">
-							<control-param name="row">8</control-param>
-						</control>
-					</field>
+					 <field id="pjt:slScoreCriterion" >
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/pjt:scoreCriterion
+                            </control-param>
+                        </control>
+                    </field>
+                     
+                
+                    <field id="pjt:slScreening">
+                        <control template="/org/alfresco/components/form/controls/richtext.ftl">
+                            <control-param name="row">8</control-param>
+                        </control>
+                    </field>
+                    
+                    <field id="bcpg:parentLevel">
+                        <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+                            <control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:scoreList&#38;attributeName=pjt:slScoreCriterion&#38;extra.showFullPath=true
+                            </control-param>
+                        </control>
+                    </field>
 				</appearance>
 			</form>
 		</forms>
@@ -1946,38 +1963,70 @@
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="pjt:slCriterion" />
+				    <show id="pjt:slScoreCriterion" />
 					<show id="pjt:slWeight" />
 					<show id="pjt:slScore" />
+					<show id="pjt:slScoreRange" />
 					<show id="pjt:slScreening" />
+					<show id="bcpg:parentLevel" />
 				</field-visibility>
 				<appearance>
+				     <field id="pjt:slScoreCriterion" >
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/pjt:scoreCriterion
+                            </control-param>
+                        </control>
+                    </field>
+				     
+				
 					<field id="pjt:slScreening">
 						<control template="/org/alfresco/components/form/controls/richtext.ftl">
 							<control-param name="row">8</control-param>
 						</control>
 					</field>
+					
+					<field id="bcpg:parentLevel">
+                        <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+                            <control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:scoreList&#38;attributeName=pjt:slScoreCriterion&#38;extra.showFullPath=true
+                            </control-param>
+                        </control>
+                    </field>
+					
 				</appearance>
 			</form>
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
-					<show id="pjt:slCriterion" />
-					<show id="pjt:slWeight" />
-					<show id="pjt:slScore" />
-					<show id="pjt:slScreening" />
+				    <show id="bcpg:depthLevel" />
+				    <show id="pjt:slCriterion" />
+				    <show id="pjt:slScoreCriterion" />
+                    <show id="pjt:slWeight" />
+                    <show id="pjt:slScore" />
+                    <show id="pjt:slScoreRange" />
+                    <show id="pjt:slScreening" />
+					<show id="pjt:slScoreDetail" />
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
+				    <field id="bcpg:depthLevel" label="hidden" />
+				    <field id="pjt:slScoreDetail" label="hidden" />
 					<field id="pjt:slScreening" read-only="true" />
+					<field id="pjt:slCriterion" read-only="true" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
 			</form>
 			<form id="filter">
 				<field-visibility>
 					<show id="pjt:slCriterion" />
+					<show id="pjt:slScoreCriterion" />
 				</field-visibility>
 				<appearance>
+				     <field id="pjt:slScoreCriterion" >
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/pjt:scoreCriterion
+                            </control-param>
+                        </control>
+                     </field>
 				      <field id="pjt:slCriterion">
                          <control template="/org/alfresco/components/form/controls/selectmany.ftl">
                             <control-param name="insertBlank">true</control-param>
@@ -1988,6 +2037,123 @@
 			</form>
 		</forms>
 	</config>
+
+
+    <config condition="pjt:scoreCriterion" evaluator="node-type">
+        <forms>
+            <form>
+                <field-visibility>
+                    <show id="bcpg:charactName" />
+                    <show id="cm:description" force="true" />
+                    <show id="pjt:scoreCriterionType" />
+                    <show id="pjt:scoreCriterionWeight" />
+                    <show id="pjt:scoreCriterionFormula" />
+                    <show id="pjt:scoreCriterionDetailFormula" />
+                    <show id="pjt:scoreCriterionRangeFormula" />
+                    <show id="pjt:scoreCriterionRange" />
+                    <show id="sec:readGroups" force="true" />
+                    <show id="bcpg:erpCode" force="true" />
+                    <show id="bcpg:isDeleted" />
+                </field-visibility>
+                <appearance>
+                    <field id="bcpg:charactName" />
+                    <field id="cm:description">
+                        <control>
+                            <control-param name="activateLinks">true</control-param>
+                        </control>
+                    </field>
+                    <field id="pjt:scoreCriterionFormula">
+                        <control template="/org/alfresco/components/form/controls/spel-editor.ftl">
+                            <control-param name="rows">10</control-param>
+                        </control>
+                    </field>
+                     <field id="pjt:scoreCriterionDetailFormula">
+                        <control template="/org/alfresco/components/form/controls/spel-editor.ftl">
+                            <control-param name="rows">10</control-param>
+                        </control>
+                    </field>
+                     <field id="pjt:scoreCriterionRangeFormula">
+                        <control template="/org/alfresco/components/form/controls/spel-editor.ftl">
+                            <control-param name="rows">10</control-param>
+                        </control>
+                    </field>
+                     <field id="pjt:scoreCriterionRange" help-id="becpg.forms.help.scoreCriterionRange"/>
+                </appearance>
+            </form>
+        </forms>
+    </config>
+    <config condition="pjt:scoreCriterion" evaluator="model-type">
+        <forms>
+            <form>
+               <field-visibility>
+                    <show id="bcpg:charactName" />
+                    <show id="cm:description" force="true" />
+                    <show id="pjt:scoreCriterionType" />
+                    <show id="pjt:scoreCriterionWeight" />
+                    <show id="pjt:scoreCriterionFormula" />
+                    <show id="pjt:scoreCriterionDetailFormula" />
+                    <show id="pjt:scoreCriterionRangeFormula" />
+                    <show id="pjt:scoreCriterionRange" />
+                    <show id="sec:readGroups" force="true" />
+                    <show id="bcpg:erpCode" force="true" />
+                    <show id="bcpg:isDeleted" />
+                </field-visibility>
+                <appearance>
+                    <field id="bcpg:charactName" />
+                    <field id="cm:description">
+                        <control>
+                            <control-param name="activateLinks">true</control-param>
+                        </control>
+                    </field>
+                    <field id="pjt:scoreCriterionFormula">
+                        <control template="/org/alfresco/components/form/controls/spel-editor.ftl">
+                            <control-param name="rows">10</control-param>
+                        </control>
+                    </field>
+                     <field id="pjt:scoreCriterionDetailFormula">
+                        <control template="/org/alfresco/components/form/controls/spel-editor.ftl">
+                            <control-param name="rows">10</control-param>
+                        </control>
+                    </field>
+                     <field id="pjt:scoreCriterionRangeFormula">
+                        <control template="/org/alfresco/components/form/controls/spel-editor.ftl">
+                            <control-param name="rows">10</control-param>
+                        </control>
+                    </field>
+                     <field id="pjt:scoreCriterionRange" help-id="becpg.forms.help.scoreCriterionRange"/>
+                </appearance>
+            </form>
+            <!-- Data Grid view -->
+            <form id="datagrid">
+                <field-visibility>
+                    <show id="bcpg:charactName" />
+                    <show id="cm:description" force="true" />
+                    <show id="pjt:scoreCriterionType" />
+                    <show id="pjt:scoreCriterionWeight" />
+                    <show id="pjt:scoreCriterionRange" />
+                    <show id="sec:readGroups" force="true" />
+                    <show id="bcpg:erpCode" force="true" />
+                    <show id="bcpg:isDeleted" />
+                </field-visibility>
+            </form>
+            <form id="filter">
+                <field-visibility>
+                    <show id="bcpg:charactName" />
+                    <show id="bcpg:isDeleted" />
+                </field-visibility>
+                <appearance>
+                    <field id="bcpg:charactName">
+                        <control template="/org/alfresco/components/form/controls/textfield.ftl" />
+                    </field>
+                    <field id="bcpg:isDeleted">
+                        <control template="/org/alfresco/components/form/controls/boolean.ftl">
+                            <control-param name="isSearch">true</control-param>
+                        </control>
+                    </field>
+                </appearance>
+            </form>
+        </forms>
+    </config>
 
 	<!-- pjt:requestList type create form config -->
 	<config evaluator="model-type" condition="pjt:requestList">

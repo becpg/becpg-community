@@ -248,11 +248,17 @@ public interface ProjectModel {
 	/** Constant <code>ASSOC_NOTIFICATION_AUTHORITIES</code> */
 	QName ASSOC_NOTIFICATION_AUTHORITIES = QName.createQName(PROJECT_URI, "notificationAuthorities");
 
-
 	/** Constant <code>PROP_SL_CRITERION</code> */
 	QName PROP_SL_CRITERION = QName.createQName(PROJECT_URI, "slCriterion");
 
 	/** Constant <code>ASPECT_PROJECT_SCORE</code> */
 	QName ASPECT_PROJECT_SCORE = QName.createQName(PROJECT_URI, "projectScoreAspect");
+
+	QName TYPE_SCORE_CRITERION = QName.createQName(PROJECT_URI, "scoreCriterion");
+
+	QName PROP_SCORE_CRITERION_TYPE =  QName.createQName(PROJECT_URI, "scoreCriterionType");
+
+	QName ASSOC_SL_SCORE_CRITERION = QName.createQName(PROJECT_URI, "slScoreCriterion");
+
 
 }
