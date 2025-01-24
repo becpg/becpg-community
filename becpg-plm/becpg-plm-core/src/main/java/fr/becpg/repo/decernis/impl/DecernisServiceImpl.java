@@ -342,7 +342,7 @@ public class DecernisServiceImpl  extends AbstractLifecycleBean implements Decer
 					for (UsageContext usage : contextItem.getUsages()) {
 						if (usage.getModuleId().intValue() == moduleId.intValue()) {
 							moduleContextItem.getCountries().putAll(contextItem.getCountries());
-							moduleContextItem.getUsages().addAll(contextItem.getUsages());
+							moduleContextItem.getUsages().add(usage);
 						}
 					}
 				}
