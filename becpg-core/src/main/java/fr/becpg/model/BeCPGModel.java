@@ -339,5 +339,11 @@ public final class BeCPGModel {
 	public static final QName PROP_ING_TOX_AQUATIC_MFACTOR = QName.createQName(BECPG_URI, "ingToxAquaticMFactor");
 	public static final QName PROP_ING_TOX_IS_SUPER_SENSITIZING =  QName.createQName(BECPG_URI, "ingToxIsSuperSensitizing");
 	public static final QName PROP_ING_TOX_ACUTE_INHALATION_TYPE = QName.createQName(BECPG_URI, "ingToxAcuteInhalationType");
+	/** Constant <code>ASPECT_MANUFACTURING_ASPECT</code> */
+	public static final QName ASPECT_MANUFACTURING_ASPECT = QName.createQName(BECPG_URI, "manufacturingAspect");
+	/** Constant <code>ASSOC_PLANTS</code> */
+	public static final QName ASSOC_PLANTS = QName.createQName(BECPG_URI, "plants");
+	/** Constant <code>ASSOC_SUBSIDIARY_REF</code> */
+	public static final QName ASSOC_SUBSIDIARY_REF = QName.createQName(BECPG_URI, "subsidiaryRef");
 
 }
