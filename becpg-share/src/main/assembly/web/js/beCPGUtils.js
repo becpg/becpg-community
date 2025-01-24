@@ -207,7 +207,7 @@
     		case "mm":
     			val=    val / 1000;	
     			break;
-    		case "u00B5m":
+    		case "micro_m":
     			val=    val / 1000000;	
     			break;
     		case "cL":	
@@ -227,7 +227,7 @@
     		case "micro":		
     			val=   val / 1000000; 
     			break;
-    		case "µg":		
+    		case "micro_g":		
     			val=   val / 1000000000; 
     			break;	
     		case "mega":		
