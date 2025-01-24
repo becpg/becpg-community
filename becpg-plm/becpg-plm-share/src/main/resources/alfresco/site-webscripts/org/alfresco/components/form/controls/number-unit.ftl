@@ -36,8 +36,8 @@
      <#assign currUnits="g,oz">
    <#elseif unit=="L" >
 	<#assign currUnits="mL,cL,L,fl_oz,cp,gal">
-   <#elseif unit=="m" || unit=="mm" >	
-	<#assign currUnits="mil,in,ft,µm,mm,cm,m">
+   <#elseif unit=="m" || unit=="mm" >
+	<#assign currUnits="mil,in,ft,u00B5m,mm,cm,m">
    <#elseif unit=="d" ||  unit=="mo" || unit=="y">
 	<#assign currUnits="d,mo,y">
    <#elseif unit=="-">
@@ -81,13 +81,24 @@
      <#elseif currUnit=="m">
 	  <#if field.value == 0  >
         <#assign currUnit="m">
-     <#elseif field.value?abs &lt; 0.001  >
-		<#assign currUnit="µm">
-		<#assign currValue=field.value*1000000>
 	 <#elseif field.value?abs &lt; 1  >
 		<#assign currUnit="mm" >
 		<#assign currValue=field.value*1000 >
-  	 </#if>
+  	 <#else>
+		<#assign currUnit="m">
+	 </#if>
+	 <#elseif currUnit=="mm">
+	  <#if field.value == 0  >
+        <#assign currUnit="mm">
+     <#elseif field.value?abs &lt; 0.001  >
+		<#assign currUnit="u00B5m">
+		<#assign currValue=field.value*1000>
+	 <#elseif field.value?abs &gt; 1000  >
+		<#assign currUnit="m" >
+		<#assign currValue=field.value/1000 >
+  	 <#else>
+		<#assign currUnit="mm">
+	 </#if>
       <#elseif currUnit=="ft">
 	 <#assign currValue=field.value* 3.28084 >
 	 <#if currValue == 0  >
