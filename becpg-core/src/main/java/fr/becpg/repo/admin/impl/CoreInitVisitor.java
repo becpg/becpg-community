@@ -42,8 +42,6 @@ import org.alfresco.service.cmr.action.ActionCondition;
 import org.alfresco.service.cmr.action.CompositeAction;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.rule.Rule;
-import org.alfresco.service.cmr.rule.RuleType;
 import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.site.SiteInfo;
@@ -188,16 +186,8 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 			aspectCondition.setInvertCondition(true);
 			compositeAction.addActionCondition(aspectCondition);
 
-			// rule
-			Rule rule = new Rule();
-			rule.setTitle("Add no Index aspect");
-			rule.setDescription("Add no Index aspect to the created node");
-			rule.applyToChildren(true);
-			rule.setExecuteAsynchronously(true);
-			rule.setRuleDisabled(false);
-			rule.setRuleType(RuleType.INBOUND);
-			rule.setAction(compositeAction);
-			ruleService.saveRule(entitiesHistoryFolder, rule);
+			createRule(entitiesHistoryFolder, "Add no Index aspect", "Add no Index aspect to the created node", true, compositeAction);
+			
 		}
 
 	}
@@ -272,16 +262,7 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 			conditionOnName.setInvertCondition(false);
 			compositeAction.addActionCondition(conditionOnName);
 
-			// Create Rule
-			Rule rule = new Rule();
-			rule.setTitle("Specialise type");
-			rule.setDescription("Every item created will have this type");
-			rule.applyToChildren(applyToChildren);
-			rule.setExecuteAsynchronously(false);
-			rule.setRuleDisabled(false);
-			rule.setRuleType(RuleType.INBOUND);
-			rule.setAction(compositeAction);
-			ruleService.saveRule(nodeRef, rule);
+			createRule(nodeRef, "Specialise type", "Every item created will have this type", applyToChildren, compositeAction);
 
 		} else if (RepoConsts.PATH_SECURITY.equals(folderName)) {
 			specialiseType = SecurityModel.TYPE_ACL_GROUP;
