@@ -37,6 +37,8 @@
                            name : "beCPG.module.EntityDataGrid"
                         })[0];
                         
+                        YAHOO.Bubbling.fire("refreshDataGrids",{ clearCache :true,
+			            	    		  cacheTimeStamp : (new Date()).getTime() });
                         
 	                     Alfresco.util.Ajax
 	                     .jsonGet({
