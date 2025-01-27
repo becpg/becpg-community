@@ -868,21 +868,12 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			conditionOnSize.setInvertCondition(false);
 			compositeAction.addActionCondition(conditionOnSize);
 
-			// rule
-			Rule rule = new Rule();
-			rule.setRuleTypes(Arrays.asList(RuleType.INBOUND));
-			rule.setAction(compositeAction);
-			rule.applyToChildren(true);
-			rule.setTitle("import csv file");
-			rule.setExecuteAsynchronously(true);
-			rule.setDescription("Every csv item created will be imported");
-
-			ruleService.saveRule(nodeRef, rule);
+			createRule(nodeRef, "import csv file", "Every csv item created will be imported", true, compositeAction);
 
 			action = actionService.createAction(ImporterActionExecuter.NAME, null);
 			compositeAction = actionService.createCompositeAction();
 			compositeAction.addAction(action);
-
+			
 			// compare-mime-type == text/csv
 			conditionOnMimeType = actionService.createActionCondition(CompareMimeTypeEvaluator.NAME);
 			conditionOnMimeType.setParameterValue(ComparePropertyValueEvaluator.PARAM_VALUE, MimetypeMap.MIMETYPE_OPENXML_SPREADSHEET);
@@ -906,17 +897,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			conditionOnSize.setParameterValue(ComparePropertyValueEvaluator.PARAM_VALUE, 5);
 			conditionOnSize.setInvertCondition(false);
 			compositeAction.addActionCondition(conditionOnSize);
-
-			// rule
-			rule = new Rule();
-			rule.setRuleTypes(Arrays.asList(RuleType.INBOUND));
-			rule.setAction(compositeAction);
-			rule.applyToChildren(true);
-			rule.setTitle("import xlsx file");
-			rule.setExecuteAsynchronously(true);
-			rule.setDescription("Every xlsx item created will be imported");
-
-			ruleService.saveRule(nodeRef, rule);
+			
+			
+			createRule(nodeRef, "import xlsx file", "Every xlsx item created will be imported", true, compositeAction);
 
 		} else if (Objects.equals(folderName, PlmRepoConsts.PATH_IMPORT_USER)) {
 
@@ -940,16 +923,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			conditionOnName.setInvertCondition(false);
 			compositeAction.addActionCondition(conditionOnName);
 
-			// rule
-			Rule rule = new Rule();
-			rule.setRuleTypes(Arrays.asList(RuleType.INBOUND));
-			rule.setAction(compositeAction);
-			rule.applyToChildren(true);
-			rule.setTitle("import user");
-			rule.setExecuteAsynchronously(true);
-			rule.setDescription("Every item created will be imported");
+			createRule(nodeRef, "import user", "Every item created will be imported", true, compositeAction);
 
-			ruleService.saveRule(nodeRef, rule);
 		}
 
 		// quality
