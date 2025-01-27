@@ -66,6 +66,7 @@ import fr.becpg.model.ECMGroup;
 import fr.becpg.model.ECMModel;
 import fr.becpg.model.MPMModel;
 import fr.becpg.model.PLMModel;
+import fr.becpg.model.SystemState;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.batch.BatchClosingHook;
@@ -113,6 +114,7 @@ import fr.becpg.repo.repository.model.EffectiveDataItem;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 import fr.becpg.repo.security.BeCPGAccessDeniedException;
 import fr.becpg.repo.security.SecurityService;
+import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * Engineering change order service implementation
@@ -164,6 +166,9 @@ public class ECOServiceImpl implements ECOService {
 	@Autowired
 	private EntityActivityService entityActivityService;
 	
+	@Autowired
+	private SystemConfigurationService systemConfigurationService;
+	
 	@Value("${beCPG.eco.impactwused.states}")
 	private String impactWUsedStates;
 
@@ -208,8 +213,10 @@ public class ECOServiceImpl implements ECOService {
 			
 			BatchClosingHook closingHook = null;
 			
-			if (calculateWUsed) {
-				batchStepList.add(createCalculateWUsedListBatchStep(ecoData, true));
+			boolean applyToAll = Boolean.TRUE.equals(ecoData.getApplyToAll()) && !isSimulated;
+			
+			if (calculateWUsed || applyToAll) {
+				batchStepList.add(createCalculateWUsedListBatchStep(ecoData, true, applyToAll));
 			}
 			
 			if (isSimulated) {
@@ -832,14 +839,14 @@ public class ECOServiceImpl implements ECOService {
 
 	}
 	
-	private BatchStep<Object> createCalculateWUsedListBatchStep(ChangeOrderData ecoData, boolean isWUsedImpacted) {
+	private BatchStep<Object> createCalculateWUsedListBatchStep(ChangeOrderData ecoData, boolean isWUsedImpacted, boolean applyToAll) {
 		BatchStep<Object> batchStep = new BatchStep<>();
 		
 		BatchProcessor.BatchProcessWorkerAdaptor<Object> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<Object>() {
 
 			@Override
 			public void process(Object entry) throws Throwable {
-				internalCalculateWUsedList(ecoData, isWUsedImpacted);
+				internalCalculateWUsedList(ecoData, isWUsedImpacted, applyToAll);
 			}
 		};
 		
@@ -893,7 +900,7 @@ public class ECOServiceImpl implements ECOService {
 			
 			List<BatchStep<Object>> batchStepList = new LinkedList<>();
 			
-			batchStepList.add(createCalculateWUsedListBatchStep(ecoData, isWUsedImpacted));
+			batchStepList.add(createCalculateWUsedListBatchStep(ecoData, isWUsedImpacted, false));
 			
 			batchQueueService.queueBatch(batchInfo, batchStepList);
 			
@@ -927,7 +934,7 @@ public class ECOServiceImpl implements ECOService {
 		return null;
 	}
 
-	private void internalCalculateWUsedList(ChangeOrderData ecoData, boolean isWUsedImpacted) {
+	private void internalCalculateWUsedList(ChangeOrderData ecoData, boolean isWUsedImpacted, boolean applyToAll) {
 		logger.debug("calculateWUsedList");
 
 		// clear WUsedList
@@ -957,37 +964,33 @@ public class ECOServiceImpl implements ECOService {
 					
 					WUsedFilter filter = null;
 					
-					if (ChangeOrderType.ImpactWUsed.equals(ecoData.getEcoType())) {
-						List<String> impactWUsedStatesList = Arrays.stream(impactWUsedStates.split(",")).toList();
-						filter = new WUsedFilter() {
-							@Override
-							public WUsedFilterKind getFilterKind() {
-								return WUsedFilterKind.STANDARD;
-							}
-							@Override
-							public void filter(MultiLevelListData wUsedData) {
-								for (Iterator<Entry<NodeRef, MultiLevelListData>> iterator = wUsedData.getTree().entrySet().iterator(); iterator
-										.hasNext();) {
-									Entry<NodeRef, MultiLevelListData> entry = iterator.next();
-									NodeRef nodeRef = entry.getValue().getEntityNodeRef();
-									String productState = (String) nodeService.getProperty(nodeRef, PLMModel.PROP_PRODUCT_STATE);
-									if (!impactWUsedStatesList.contains(productState)) {
-										iterator.remove();
-									}
+					List<String> wUsedStatesList = getWUsedStates(ecoData);
+					filter = new WUsedFilter() {
+						@Override
+						public WUsedFilterKind getFilterKind() {
+							return WUsedFilterKind.STANDARD;
+						}
+						@Override
+						public void filter(MultiLevelListData wUsedData) {
+							for (Iterator<Entry<NodeRef, MultiLevelListData>> iterator = wUsedData.getTree().entrySet().iterator(); iterator
+									.hasNext();) {
+								Entry<NodeRef, MultiLevelListData> entry = iterator.next();
+								NodeRef nodeRef = entry.getValue().getEntityNodeRef();
+								String productState = (String) nodeService.getProperty(nodeRef, PLMModel.PROP_PRODUCT_STATE);
+								if (!wUsedStatesList.contains(productState)) {
+									iterator.remove();
 								}
 							}
-						};
-					}
+						}
+					};
 					
 					for (QName associationQName : associationQNames) {
-						
-						
 						MultiLevelListData wUsedData = wUsedListService.getWUsedEntity(replacements, WUsedOperator.AND, filter, associationQName,
 								RepoConsts.MAX_DEPTH_LEVEL);
 						
 						QName datalistQName = evaluateListFromAssociation(associationQName);
 						sort = calculateWUsedList(ecoData, wUsedData, datalistQName, parent,
-								ChangeOrderType.Merge.equals(ecoData.getEcoType()) || isWUsedImpacted, sort, replacementListDataItem.getTargetItem());
+								ChangeOrderType.Merge.equals(ecoData.getEcoType()) || isWUsedImpacted, sort, replacementListDataItem.getTargetItem(), applyToAll);
 					}
 				}
 			}
@@ -995,6 +998,13 @@ public class ECOServiceImpl implements ECOService {
 
 		alfrescoRepository.save(ecoData);
 
+	}
+
+	private List<String> getWUsedStates(ChangeOrderData ecoData) {
+		if (ChangeOrderType.ImpactWUsed.equals(ecoData.getEcoType())) {
+			return Arrays.stream(impactWUsedStates.split(",")).toList();
+		}
+		return List.of(SystemState.Simulation.toString(), SystemState.ToValidate.toString(), SystemState.Valid.toString());
 	}
 	
 	private List<NodeRef> getSourceItems(ChangeOrderData ecoData, ReplacementListDataItem replacementListDataItem) {
@@ -1025,7 +1035,7 @@ public class ECOServiceImpl implements ECOService {
 	}
 
 	private int calculateWUsedList(ChangeOrderData ecoData, MultiLevelListData wUsedData, QName dataListQName, WUsedListDataItem parent,
-			boolean isWUsedImpacted, int sort, NodeRef targetItem) {
+			boolean isWUsedImpacted, int sort, NodeRef targetItem, boolean applyToAll) {
 
 		List<NodeRef> sortedKeys = new ArrayList<>(wUsedData.getTree().keySet());
 		
@@ -1041,24 +1051,31 @@ public class ECOServiceImpl implements ECOService {
 			
 		});
 		
+		int maxEcoWUsedSize = maxEcoWUsedSize();
+		
 		for (NodeRef key : sortedKeys) {
 			
-			WUsedListDataItem wUsedListDataItem = new WUsedListDataItem();
-			wUsedListDataItem.setLink(key);
-			wUsedListDataItem.setParent(parent);
-			wUsedListDataItem.setImpactedDataList(dataListQName);
-			wUsedListDataItem.setIsWUsedImpacted(isWUsedImpacted);
-			wUsedListDataItem.setSourceItems(wUsedData.getTree().get(key).getEntityNodeRefs());
-			wUsedListDataItem.setSort(sort++);
-			wUsedListDataItem.setTargetItem(targetItem);
+			if (applyToAll || ecoData.getWUsedList().size() < maxEcoWUsedSize) {
+				WUsedListDataItem wUsedListDataItem = new WUsedListDataItem();
+				wUsedListDataItem.setLink(key);
+				wUsedListDataItem.setParent(parent);
+				wUsedListDataItem.setImpactedDataList(dataListQName);
+				wUsedListDataItem.setIsWUsedImpacted(isWUsedImpacted || applyToAll);
+				wUsedListDataItem.setSourceItems(wUsedData.getTree().get(key).getEntityNodeRefs());
+				wUsedListDataItem.setSort(sort++);
+				wUsedListDataItem.setTargetItem(targetItem);
 
-			ecoData.getWUsedList().add(wUsedListDataItem);
-
-			// recursive
-			sort = calculateWUsedList(ecoData, wUsedData.getTree().get(key), dataListQName, wUsedListDataItem, isWUsedImpacted, sort, targetItem);
+				ecoData.getWUsedList().add(wUsedListDataItem);
+				// recursive
+				sort = calculateWUsedList(ecoData, wUsedData.getTree().get(key), dataListQName, wUsedListDataItem, isWUsedImpacted, sort, targetItem, applyToAll);
+			}
 		}
 
 		return sort;
+	}
+
+	private int maxEcoWUsedSize() {
+		return Integer.parseInt(systemConfigurationService.confValue("beCPG.eco.max.wused.size"));
 	}
 
 	private ChangeUnitDataItem getOrCreateChangeUnitDataItem(ChangeOrderData ecoData, WUsedListDataItem data) {
