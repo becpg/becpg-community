@@ -76,6 +76,7 @@ import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
+import fr.becpg.repo.system.SystemConfigurationService;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
 /**
@@ -105,6 +106,9 @@ public class ECOIT extends AbstractFinishedProductTest {
 	@Autowired
 	private EntityVersionService entityVersionService;
 
+	@Autowired
+	private SystemConfigurationService systemConfigurationService;
+	
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
@@ -2021,6 +2025,75 @@ public class ECOIT extends AbstractFinishedProductTest {
 		
 		assertEquals(originalCompoListItem, newCompoListItem);
 		
+	}
+	@Test
+	public void testApplyToAll() throws InterruptedException {
+		
+		int maxWusedSize = 10;
+		
+		try {
+			inWriteTx(() -> {
+				systemConfigurationService.updateConfValue("beCPG.eco.max.wused.size", ((Integer) maxWusedSize).toString());
+				return null;
+			});
+			
+			inWriteTx(() -> {
+				for (int i = 0; i < maxWusedSize + 5; i++) {
+					SemiFinishedProductData product = new SemiFinishedProductData();
+					product.setName("SF" + i);
+					product.setQty(2d);
+					List<CompoListDataItem> compoList = new ArrayList<>();
+					compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial1NodeRef));
+					product.getCompoListView().setCompoList(compoList);
+					alfrescoRepository.create(getTestFolderNodeRef(), product).getNodeRef();
+				}
+				return null;
+			});
+			
+			NodeRef ecoNodeRef = inWriteTx(() -> {
+				ChangeOrderData changeOrderData = new ChangeOrderData("ECO_1", ECOState.ToCalculateWUsed, ChangeOrderType.Replacement, new ArrayList<>());
+				List<ReplacementListDataItem> replacementList = new ArrayList<>();
+				ReplacementListDataItem replacement = new ReplacementListDataItem(RevisionType.Minor, Arrays.asList(rawMaterial1NodeRef), rawMaterial2NodeRef, 100);
+				replacementList.add(replacement);
+				changeOrderData.setReplacementList(replacementList);
+				return alfrescoRepository.create(getTestFolderNodeRef(), changeOrderData).getNodeRef();
+			});
+			
+			waitForBatchEnd(ecoService.calculateWUsedList(ecoNodeRef, false, false));
+			
+			NodeRef ecoNodeRef2 = ecoNodeRef;
+			
+			inReadTx(() -> {
+				ChangeOrderData ecoData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef2);
+				assertEquals(maxWusedSize, ecoData.getWUsedList().size());
+				assertTrue(ecoData.getWUsedList().stream().anyMatch(wu -> wu.getIsWUsedImpacted().equals(Boolean.FALSE)));
+				return null;
+			});
+			
+			ecoNodeRef = inWriteTx(() -> {
+				ChangeOrderData ecoData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef2);
+				ecoData.setApplyToAll(true);
+				alfrescoRepository.save(ecoData).getNodeRef();
+				return null;
+			});
+			
+			inWriteTx(() -> {
+				waitForBatchEnd(ecoService.apply(ecoNodeRef2, false, false, false));
+				return null;
+			});
+			
+			inReadTx(() -> {
+				ChangeOrderData ecoData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef2);
+				assertEquals(maxWusedSize + 6, ecoData.getWUsedList().size());
+				assertTrue(ecoData.getWUsedList().stream().allMatch(wu -> wu.getIsWUsedImpacted().equals(Boolean.TRUE)));
+				return null;
+			});
+		} finally {
+			inWriteTx(() -> {
+				systemConfigurationService.resetConfValue("beCPG.eco.max.wused.size");
+				return null;
+			});
+		}
 	}
 
 	private NodeRef findCompoListItemNodeRef(NodeRef semiFinishedProductNodeRef, NodeRef productNodeRef) {

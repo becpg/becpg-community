@@ -29,6 +29,7 @@
 					<show id="ecm:effectiveDate" />
 					<show id="ecm:calculatedCharacts" />							
 					<show id="ecm:propertiesToCopy" />
+					<show id="ecm:applyToAll" />
 				</field-visibility>
 				<appearance>
 					<field id="cm:description">
@@ -59,6 +60,10 @@
 							<control-param name="saveTitle">false</control-param>
 						</control>
 					</field>					
+					<field id="ecm:applyToAll">
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
+						</control>
+					</field>					
 				</appearance>
 			</form>
 
@@ -78,6 +83,7 @@
 					<show id="ecm:ecoType" />
 					<show id="ecm:calculatedCharacts" />							
 					<show id="ecm:propertiesToCopy" />							
+					<show id="ecm:applyToAll" />							
 					
 					<!-- auditable -->
 					<show id="cm:creator" for-mode="view" />
@@ -113,6 +119,10 @@
 							<control-param name="ds">components/autocomplete/fields?itemType=ecm:changeOrder</control-param>
 							<control-param name="local">true</control-param>
 							<control-param name="saveTitle">false</control-param>
+						</control>
+					</field>		
+					<field id="ecm:applyToAll">
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
 						</control>
 					</field>			
 				</appearance>
