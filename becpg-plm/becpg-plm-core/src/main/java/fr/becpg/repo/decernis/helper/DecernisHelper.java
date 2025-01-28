@@ -69,6 +69,12 @@ public class DecernisHelper {
 		return null;
 	}
 	
+	/**
+	 * <p>cleanError.</p>
+	 *
+	 * @param error a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	public static String cleanError(String error) {
 		if (error != null) {
 			String token = SystemConfigurationRegistry.instance().confValue("beCPG.decernis.token");

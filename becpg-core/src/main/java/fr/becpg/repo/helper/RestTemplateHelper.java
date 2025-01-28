@@ -25,6 +25,8 @@ import org.springframework.web.client.RestTemplate;
 /**
  * Helper class for RestTemplate configuration with optimized connection, DNS cache management,
  * and DNS resolution logging.
+ *
+ * @author matthieu
  */
 public final class RestTemplateHelper {
     
@@ -46,6 +48,11 @@ public final class RestTemplateHelper {
         restTemplate = new RestTemplate(httpRequestFactory);
     }
 
+    /**
+     * <p>Getter for the field <code>restTemplate</code>.</p>
+     *
+     * @return a {@link org.springframework.web.client.RestTemplate} object
+     */
     public static RestTemplate getRestTemplate() {
         return restTemplate;
     }
@@ -123,6 +130,7 @@ public final class RestTemplateHelper {
     
     /**
      * Utility method to manually check DNS resolution for a hostname
+     *
      * @param hostname The hostname to resolve
      * @return Array of resolved IP addresses
      */

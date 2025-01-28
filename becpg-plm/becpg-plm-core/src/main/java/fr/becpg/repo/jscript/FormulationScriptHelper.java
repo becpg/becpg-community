@@ -51,6 +51,13 @@ public class FormulationScriptHelper extends BaseScopableProcessorExtension {
 		return FormulationHelper.getNetWeight(entity.getNodeRef(), nodeService, FormulationHelper.DEFAULT_NET_WEIGHT);
 	}
 
+	/**
+	 * <p>computeDuplicateChildQty.</p>
+	 *
+	 * @param parentCompoList a {@link org.alfresco.repo.jscript.ScriptNode} object
+	 * @param compoList a {@link org.alfresco.repo.jscript.ScriptNode} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	public Double computeDuplicateChildQty(final ScriptNode parentCompoList, final ScriptNode compoList) {
 
 		CompoListDataItem parentCompoListItem = (CompoListDataItem) alfrescoRepository.findOne(parentCompoList.getNodeRef());

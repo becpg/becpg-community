@@ -735,6 +735,7 @@ public interface PLMModel {
 	/** Constant <code>PROP_NUTRIENT_PROFILE_CLASS_FORMULA</code> */
 	QName PROP_NUTRIENT_PROFILE_CLASS_FORMULA = QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfileClassFormula");
 	
+	/** Constant <code>PROP_NUTRIENT_PROFILING_DETAILS</code> */
 	QName PROP_NUTRIENT_PROFILING_DETAILS = QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfilingDetails");
 
 	/** Constant <code>PROP_NUTRIENT_PROFILE_CATEGORY</code> */
@@ -753,6 +754,7 @@ public interface PLMModel {
 	/** Constant <code>PROP_ECO_SCORE_CATEGORY</code> */
 	QName PROP_ECO_SCORE_CATEGORY = QName.createQName(BeCPGModel.BECPG_URI, "ecoScoreCategory");
 	
+	/** Constant <code>PROP_ECO_SCORE_DETAILS</code> */
 	QName PROP_ECO_SCORE_DETAILS = QName.createQName(BeCPGModel.BECPG_URI, "ecoScoreDetails");
 
 	//Custom codes
@@ -804,6 +806,7 @@ public interface PLMModel {
 	/** Constant <code>PROP_TOX_CALCULATE_SYSTEMIC</code> */
 	QName PROP_TOX_CALCULATE_SYSTEMIC = QName.createQName(BeCPGModel.BECPG_URI, "toxCalculateSystemic");
 	
+	/** Constant <code>PROP_TOX_CALCULATE_MAX</code> */
 	QName PROP_TOX_CALCULATE_MAX = QName.createQName(BeCPGModel.BECPG_URI, "toxCalculateMax");
 	
 	/** Constant <code>PROP_ING_TOX_DATA</code> */
@@ -848,8 +851,10 @@ public interface PLMModel {
 	/** Constant <code>TYPE_REGULATORY_LIST</code> */
 	QName TYPE_REGULATORY_LIST = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryList");
 	
+	/** Constant <code>ASSOC_REGULATORY_COUNTRIES</code> */
 	QName ASSOC_REGULATORY_COUNTRIES = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryCountries");
 	
+	/** Constant <code>ASSOC_REGULATORY_USAGE_REF</code> */
 	QName ASSOC_REGULATORY_USAGE_REF = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryUsageRef");
 
 	/** Constant <code>TYPE_ING_REGULATORY_LIST</code> */

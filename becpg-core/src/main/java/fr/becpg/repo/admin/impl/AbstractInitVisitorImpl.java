@@ -203,6 +203,15 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 		createRule(nodeRef, "Specialise type", "Every item created will have this type", applyToChildren, compositeAction);
 	}
 
+	/**
+	 * <p>createRule.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param title a {@link java.lang.String} object
+	 * @param description a {@link java.lang.String} object
+	 * @param applyToChildren a boolean
+	 * @param compositeAction a {@link org.alfresco.service.cmr.action.CompositeAction} object
+	 */
 	protected void createRule(NodeRef nodeRef, String title, String description, boolean applyToChildren, CompositeAction compositeAction) {
 		
 		if (ruleExists(nodeRef, title, description)) {

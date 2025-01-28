@@ -64,12 +64,22 @@ public class ChangeOrderData extends BeCPGDataObject {
 	private List<ChangeUnitDataItem> changeUnitList;
 	private List<String> propertiesToCopy;
 
+	/**
+	 * <p>Getter for the field <code>applyToAll</code>.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "ecm:applyToAll")
 	public Boolean getApplyToAll() {
 		return applyToAll;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>applyToAll</code>.</p>
+	 *
+	 * @param applyToAll a {@link java.lang.Boolean} object
+	 */
 	public void setApplyToAll(Boolean applyToAll) {
 		this.applyToAll = applyToAll;
 	}
