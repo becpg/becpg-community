@@ -887,6 +887,15 @@ public class FormulationHelper {
 		return formulatedValue;
 	}
 
+	/**
+	 * <p>compoListUnitToKg.</p>
+	 *
+	 * @param qty a {@link java.lang.Double} object
+	 * @param compoListDataItem a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object
+	 * @param componentProductData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param compoListUnit a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object
+	 * @return a {@link java.math.BigDecimal} object
+	 */
 	public static BigDecimal compoListUnitToKg(Double qty, CompoListDataItem compoListDataItem, ProductData componentProductData,
 			ProductUnit compoListUnit) {
 
@@ -935,6 +944,15 @@ public class FormulationHelper {
 		return BigDecimal.valueOf(FormulationHelper.DEFAULT_COMPONANT_QUANTITY);
 	}
 
+	/**
+	 * <p>kgToCompoListUnit.</p>
+	 *
+	 * @param qty a {@link java.lang.Double} object
+	 * @param compoListDataItem a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object
+	 * @param componentProductData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param compoListUnit a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object
+	 * @return a {@link java.math.BigDecimal} object
+	 */
 	public static BigDecimal kgToCompoListUnit(Double qty, CompoListDataItem compoListDataItem, ProductData componentProductData,
 			ProductUnit compoListUnit) {
 

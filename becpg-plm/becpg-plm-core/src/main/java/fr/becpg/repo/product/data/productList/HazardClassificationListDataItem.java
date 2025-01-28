@@ -19,6 +19,11 @@ import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.model.AbstractManualDataItem;
 
+/**
+ * <p>HazardClassificationListDataItem class.</p>
+ *
+ * @author matthieu
+ */
 @AlfType
 @AlfQname(qname = "ghs:hazardClassificationList")
 public class HazardClassificationListDataItem extends AbstractManualDataItem implements RegulatoryEntityItem {
@@ -42,9 +47,9 @@ public class HazardClassificationListDataItem extends AbstractManualDataItem imp
 	private List<NodeRef> regulatoryUsagesRef = new ArrayList<>();
 
 	/**
-	 * <p>Getter for the field <code>regulatoryCountriesRef</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @return a {@link java.util.List} object
+	 * <p>Getter for the field <code>regulatoryCountriesRef</code>.</p>
 	 */
 	@Override
 	@AlfMultiAssoc
@@ -60,9 +65,9 @@ public class HazardClassificationListDataItem extends AbstractManualDataItem imp
 	}
 
 	/**
-	 * <p>Getter for the field <code>regulatoryUsagesRef</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @return a {@link java.util.List} object
+	 * <p>Getter for the field <code>regulatoryUsagesRef</code>.</p>
 	 */
 	@Override
 	@AlfMultiAssoc
@@ -78,9 +83,9 @@ public class HazardClassificationListDataItem extends AbstractManualDataItem imp
 	}
 
 	/**
-	 * <p>Getter for the field <code>regulatoryType</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @return a {@link fr.becpg.repo.product.data.constraints.RequirementType} object
+	 * <p>Getter for the field <code>regulatoryType</code>.</p>
 	 */
 	@Override
 	@AlfProp
@@ -96,9 +101,9 @@ public class HazardClassificationListDataItem extends AbstractManualDataItem imp
 	}
 
 	/**
-	 * <p>Getter for the field <code>regulatoryMessage</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object
+	 * <p>Getter for the field <code>regulatoryMessage</code>.</p>
 	 */
 	@Override
 	@AlfProp
@@ -114,76 +119,145 @@ public class HazardClassificationListDataItem extends AbstractManualDataItem imp
 		this.regulatoryMessage = regulatoryMessage;
 	}
 
+	/**
+	 * <p>Getter for the field <code>hazardClassCode</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "ghs:hazardClassCode")
 	public String getHazardClassCode() {
 		return hazardClassCode;
 	}
 
+	/**
+	 * <p>Setter for the field <code>hazardClassCode</code>.</p>
+	 *
+	 * @param hazardClassCode a {@link java.lang.String} object
+	 */
 	public void setHazardClassCode(String hazardClassCode) {
 		this.hazardClassCode = hazardClassCode;
 	}
 
+	/**
+	 * <p>Getter for the field <code>hazardStatement</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	@AlfSingleAssoc
 	@AlfQname(qname = "ghs:hazardStatementRef")
 	public NodeRef getHazardStatement() {
 		return hazardStatement;
 	}
 
+	/**
+	 * <p>Setter for the field <code>hazardStatement</code>.</p>
+	 *
+	 * @param hazardStatement a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public void setHazardStatement(NodeRef hazardStatement) {
 		this.hazardStatement = hazardStatement;
 	}
 
+	/**
+	 * <p>Getter for the field <code>pictogram</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	@AlfSingleAssoc
 	@AlfQname(qname = "ghs:pictogramRef")
 	public NodeRef getPictogram() {
 		return pictogram;
 	}
 
+	/**
+	 * <p>Setter for the field <code>pictogram</code>.</p>
+	 *
+	 * @param pictogram a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public void setPictogram(NodeRef pictogram) {
 		this.pictogram = pictogram;
 	}
 
+	/**
+	 * <p>Getter for the field <code>signalWord</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "ghs:signalWord")
 	public String getSignalWord() {
 		return signalWord;
 	}
 
+	/**
+	 * <p>Setter for the field <code>signalWord</code>.</p>
+	 *
+	 * @param signalWord a {@link java.lang.String} object
+	 */
 	public void setSignalWord(String signalWord) {
 		this.signalWord = signalWord;
 	}
 
+	/**
+	 * <p>Getter for the field <code>regulatoryText</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "ghs:hclRegulatoryText")
 	public String getRegulatoryText() {
 		return regulatoryText;
 	}
 
+	/**
+	 * <p>Setter for the field <code>regulatoryText</code>.</p>
+	 *
+	 * @param regulatoryText a {@link java.lang.String} object
+	 */
 	public void setRegulatoryText(String regulatoryText) {
 		this.regulatoryText = regulatoryText;
 	}
 
+	/**
+	 * <p>Getter for the field <code>details</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "ghs:hclDetail")
 	public String getDetails() {
 		return details;
 	}
 
+	/**
+	 * <p>Setter for the field <code>details</code>.</p>
+	 *
+	 * @param details a {@link java.lang.String} object
+	 */
 	public void setDetails(String details) {
 		this.details = details;
 	}
 
+	/**
+	 * <p>toCode.</p>
+	 *
+	 * @param hazardStatement a {@link java.lang.String} object
+	 * @param hazardClassCode a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	public static String toCode(String hazardStatement, String hazardClassCode) {
 		return hazardClassCode + ":" + hazardStatement;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "HazardClassificationListDataItem [hazardClassCode=" + hazardClassCode + ", hazardStatement=" + hazardStatement + ", pictogram="
 				+ pictogram + ", signalWord=" + signalWord + ", regulatoryText=" + regulatoryText + ", details=" + details + "]";
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -191,6 +265,7 @@ public class HazardClassificationListDataItem extends AbstractManualDataItem imp
 		return (prime * result) + Objects.hash(details, hazardClassCode, hazardStatement, pictogram, regulatoryText, signalWord);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -205,46 +280,99 @@ public class HazardClassificationListDataItem extends AbstractManualDataItem imp
 				&& Objects.equals(regulatoryText, other.regulatoryText) && Objects.equals(signalWord, other.signalWord);
 	}
 
+	/**
+	 * <p>build.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.productList.HazardClassificationListDataItem} object
+	 */
 	public static HazardClassificationListDataItem build() {
 		return new HazardClassificationListDataItem();
 	}
 
+	/**
+	 * <p>withHazardStatement.</p>
+	 *
+	 * @param hazardStatement a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.HazardClassificationListDataItem} object
+	 */
 	public HazardClassificationListDataItem withHazardStatement(NodeRef hazardStatement) {
 		this.hazardStatement = hazardStatement;
 		return this;
 	}
 
+	/**
+	 * <p>withPictogram.</p>
+	 *
+	 * @param pictogram a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.HazardClassificationListDataItem} object
+	 */
 	public HazardClassificationListDataItem withPictogram(NodeRef pictogram) {
 		this.pictogram = pictogram;
 		return this;
 	}
 
+	/**
+	 * <p>withHazardClassCode.</p>
+	 *
+	 * @param hazardClassCode a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.HazardClassificationListDataItem} object
+	 */
 	public HazardClassificationListDataItem withHazardClassCode(String hazardClassCode) {
 		this.hazardClassCode = hazardClassCode;
 		return this;
 	}
 
+	/**
+	 * <p>withSignalWord.</p>
+	 *
+	 * @param signalWord a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.HazardClassificationListDataItem} object
+	 */
 	public HazardClassificationListDataItem withSignalWord(String signalWord) {
 		this.signalWord = signalWord;
 		return this;
 	}
 
+	/**
+	 * <p>withRegulatoryText.</p>
+	 *
+	 * @param regulatoryText a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.HazardClassificationListDataItem} object
+	 */
 	public HazardClassificationListDataItem withRegulatoryText(String regulatoryText) {
 		this.regulatoryText = regulatoryText;
 		return this;
 	}
 
+	/**
+	 * <p>withRegulatoryMessage.</p>
+	 *
+	 * @param regulatoryMessage a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.HazardClassificationListDataItem} object
+	 */
 	public HazardClassificationListDataItem withRegulatoryMessage(String regulatoryMessage) {
 		this.regulatoryMessage = new MLText();
 		this.regulatoryMessage.addValue(MLTextHelper.getNearestLocale(Locale.getDefault()), regulatoryMessage);
 		return this;
 	}
 
+	/**
+	 * <p>withDetail.</p>
+	 *
+	 * @param details a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.HazardClassificationListDataItem} object
+	 */
 	public HazardClassificationListDataItem withDetail(String details) {
 		this.details = details;
 		return this;
 	}
 
+	/**
+	 * <p>merge.</p>
+	 *
+	 * @param toMerge a {@link fr.becpg.repo.product.data.productList.HazardClassificationListDataItem} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.HazardClassificationListDataItem} object
+	 */
 	public HazardClassificationListDataItem merge(HazardClassificationListDataItem toMerge) {
 		this.pictogram = toMerge.pictogram;
 		this.hazardClassCode = toMerge.hazardClassCode;

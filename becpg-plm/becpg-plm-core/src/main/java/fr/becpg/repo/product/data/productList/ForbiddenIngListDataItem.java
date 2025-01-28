@@ -499,16 +499,33 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 	}
 
 
+	/**
+	 * <p>build.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem} object
+	 */
 	public static ForbiddenIngListDataItem build() {
 		return new ForbiddenIngListDataItem();
 	}
 
+	/**
+	 * <p>withIngs.</p>
+	 *
+	 * @param ings a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem} object
+	 */
 	public ForbiddenIngListDataItem withIngs(List<NodeRef> ings) {
 		this.ings = ings;
 		return this;
 	}
 	
 	
+	/**
+	 * <p>withQtyPercMaxi.</p>
+	 *
+	 * @param qtyPercMaxi a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem} object
+	 */
 	public ForbiddenIngListDataItem withQtyPercMaxi(Double qtyPercMaxi) {
 		this.qtyPercMaxi = qtyPercMaxi;
 		return this;

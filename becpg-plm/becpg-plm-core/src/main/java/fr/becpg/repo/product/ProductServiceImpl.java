@@ -126,6 +126,7 @@ public class ProductServiceImpl implements ProductService, InitializingBean, For
 		return formulationService.formulate(productData);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public ProductData formulate(ProductData productData, String chainId) {
 		return formulationService.formulate(productData, chainId);
