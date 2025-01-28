@@ -59,6 +59,7 @@ import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.system.SystemConfigurationService;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
@@ -95,7 +96,7 @@ public class DecernisServiceImpl  extends AbstractLifecycleBean implements Decer
 
 	private final SystemConfigurationService systemConfigurationService;
 	
-	private final AlfrescoRepository<ProductData> alfrescoRepository;
+	private final AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
 	private static final Map<String, Integer> moduleIdMap = new HashMap<>();
 
@@ -124,7 +125,7 @@ public class DecernisServiceImpl  extends AbstractLifecycleBean implements Decer
 	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
 	 */
 	public DecernisServiceImpl(@Qualifier("nodeService") NodeService nodeService,
-			DecernisAnalysisPlugin[] decernisPlugins, SystemConfigurationService systemConfigurationService, AlfrescoRepository<ProductData> alfrescoRepository) {
+			DecernisAnalysisPlugin[] decernisPlugins, SystemConfigurationService systemConfigurationService, AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		super();
 		this.nodeService = nodeService;
 		this.decernisPlugins = decernisPlugins;

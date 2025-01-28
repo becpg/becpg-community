@@ -458,7 +458,7 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 			// somme 100 6
 
 			for (int i2 = 0; i2 < 5; i2++) {
-				projectData.getScoreList().get(i2).setScore(i2 * 2);
+				projectData.getScoreList().get(i2).setScore((double) (i2 * 2));
 			}
 
 			alfrescoRepository.save(projectData);

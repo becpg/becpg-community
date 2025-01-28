@@ -28,6 +28,7 @@ import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.annotation.InternalField;
+import fr.becpg.repo.repository.annotation.MultiLevelDataList;
 import fr.becpg.repo.repository.model.AbstractManualDataItem;
 import fr.becpg.repo.repository.model.CopiableDataItem;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
@@ -40,6 +41,7 @@ import fr.becpg.repo.repository.model.SimpleCharactDataItem;
  */
 @AlfType
 @AlfQname(qname = "pjt:scoreList")
+@MultiLevelDataList
 public class ScoreListDataItem extends AbstractManualDataItem implements SimpleCharactDataItem, CompositeDataItem<ScoreListDataItem> {
 
 	/**
@@ -219,34 +221,6 @@ public class ScoreListDataItem extends AbstractManualDataItem implements SimpleC
 	/**
 	 * <p>Constructor for ScoreListDataItem.</p>
 	 *
-	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param name a {@link java.lang.String} object.
-	 */
-	@Deprecated
-	public ScoreListDataItem(NodeRef nodeRef, String name) {
-		this.nodeRef = nodeRef;
-		this.name = name;
-	}
-
-	/**
-	 * <p>Constructor for ScoreListDataItem.</p>
-	 *
-	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param criterion a {@link java.lang.String} object.
-	 * @param weight a {@link java.lang.Integer} object.
-	 * @param score a {@link java.lang.Integer} object.
-	 */
-	@Deprecated
-	public ScoreListDataItem(NodeRef nodeRef, String criterion, Double weight, Double score) {
-		this.nodeRef = nodeRef;
-		this.criterion = criterion;
-		this.weight = weight;
-		this.score = score;
-	}
-
-	/**
-	 * <p>Constructor for ScoreListDataItem.</p>
-	 *
 	 * @param s a {@link fr.becpg.repo.project.data.projectList.ScoreListDataItem} object.
 	 */
 	public ScoreListDataItem(ScoreListDataItem s) {
@@ -314,6 +288,11 @@ public class ScoreListDataItem extends AbstractManualDataItem implements SimpleC
 
 	public ScoreListDataItem withScoreCriterion(NodeRef orCreateScoreCriteriom) {
 		this.setScoreCriterion(orCreateScoreCriteriom);
+		return this;
+	}
+
+	public ScoreListDataItem withWeight(Double weight) {
+	    this.weight = weight;
 		return this;
 	}
 

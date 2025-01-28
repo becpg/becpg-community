@@ -102,7 +102,7 @@ public class FormulationTareIT extends AbstractFinishedProductTest {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 				productService.formulate(finishedProductNodeRef);
-				ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+				ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 
 				DecimalFormat df = new DecimalFormat("0.####");
 				assertEquals(df.format(compoTare + packTare), df.format(formulatedProduct.getTare()));
@@ -131,7 +131,7 @@ public class FormulationTareIT extends AbstractFinishedProductTest {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 		
 				productService.formulate(finishedProduct2NodeRef);
-				ProductData formulatedProduct = alfrescoRepository.findOne(finishedProduct2NodeRef);
+				ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProduct2NodeRef);
 				
 				DecimalFormat df = new DecimalFormat("0.####");
 				assertEquals(df.format(compoTare + packTare), df.format(formulatedProduct.getTare()));
@@ -181,7 +181,7 @@ public class FormulationTareIT extends AbstractFinishedProductTest {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 		
 				productService.formulate(finishedProduct3NodeRef);
-				ProductData formulatedProduct = alfrescoRepository.findOne(finishedProduct3NodeRef);
+				ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProduct3NodeRef);
 		
 				DecimalFormat df = new DecimalFormat("0.####");
 				assertEquals(df.format(packTare), df.format(formulatedProduct.getTare()));
@@ -216,7 +216,7 @@ public class FormulationTareIT extends AbstractFinishedProductTest {
 
 		
 				productService.formulate(finishedProduct4NodeRef);
-				ProductData formulatedProduct = alfrescoRepository.findOne(finishedProduct4NodeRef);
+				ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProduct4NodeRef);
 		
 				DecimalFormat df = new DecimalFormat("0.####");
 				assertEquals(df.format(15d), df.format(formulatedProduct.getTare()));

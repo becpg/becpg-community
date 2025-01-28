@@ -213,7 +213,7 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 		
 		try {
 			inWriteTx(() -> {
-				ProductData product = alfrescoRepository.findOne(finishedProductNodeRef);
+				ProductData product = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 				
 				List<RegulatoryListDataItem> regulatoryList = product.getRegulatoryList();
 				
@@ -373,7 +373,7 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 			NodeRef finishedProductNodeRef = createFinishedProduct("PF Decernis testDefaultAnalysis");
 			
 			inWriteTx(() -> {
-				ProductData product = alfrescoRepository.findOne(finishedProductNodeRef);
+				ProductData product = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 				
 				List<IngListDataItem> ingList = product.getIngList();
 				
@@ -498,7 +498,7 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 			NodeRef finishedProductNodeRef = createFinishedProduct("PF Decernis testV5Analysis");
 			
 			inWriteTx(() -> {
-				ProductData product = alfrescoRepository.findOne(finishedProductNodeRef);
+				ProductData product = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 				
 				List<IngListDataItem> ingList = product.getIngList();
 				
@@ -722,7 +722,7 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 			NodeRef finishedProductNodeRef = createFinishedProduct("PF Decernis testDefaultDoubleFunction");
 			
 			inWriteTx(() -> {
-				ProductData product = alfrescoRepository.findOne(finishedProductNodeRef);
+				ProductData product = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 				
 				List<IngListDataItem> ingList = product.getIngList();
 				
@@ -926,7 +926,7 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 			NodeRef finishedProductNodeRef = createFinishedProduct("PF Decernis testDefaultDoubleFunction");
 			
 			inWriteTx(() -> {
-				ProductData product = alfrescoRepository.findOne(finishedProductNodeRef);
+				ProductData product = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 				
 				List<IngListDataItem> ingList = product.getIngList();
 				

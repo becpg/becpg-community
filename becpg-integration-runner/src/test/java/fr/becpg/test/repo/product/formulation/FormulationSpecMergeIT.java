@@ -89,7 +89,7 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			List<CompoListDataItem> compoList = new ArrayList<>();
 			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(localSF11NodeRef));
 			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(2d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial12NodeRef));
-			ProductData finishedProduct = alfrescoRepository.findOne(tmp);
+			ProductData finishedProduct = (ProductData) alfrescoRepository.findOne(tmp);
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			alfrescoRepository.save(finishedProduct);
 
@@ -182,7 +182,7 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			globalSpec.getProductSpecifications().add(productSpec1);
 			globalSpec.getProductSpecifications().add(productSpec2);
 
-			ProductData product = alfrescoRepository.findOne(tmp);
+			ProductData product = (ProductData) alfrescoRepository.findOne(tmp);
 			product.setProductSpecifications(new ArrayList<ProductSpecificationData>());
 			product.getProductSpecifications().add(globalSpec);
 			product.setLabelClaimList(new ArrayList<LabelClaimListDataItem>());
@@ -205,7 +205,7 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			subProductLabelClaim6.setIsManual(Boolean.TRUE);
 			subProductLabelClaim7.setIsManual(Boolean.TRUE);
 
-			ProductData rm12 = alfrescoRepository.findOne(rawMaterial12NodeRef);
+			ProductData rm12 = (ProductData) alfrescoRepository.findOne(rawMaterial12NodeRef);
 			if ((rm12 != null) && (rm12.getLabelClaimList() != null)) {
 				rm12.getLabelClaimList().add(subProductLabelClaim6);
 				rm12.getLabelClaimList().add(subProductLabelClaim7);
@@ -241,7 +241,7 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			/* -- Check formulation -- */
-			ProductData formulatedProduct = alfrescoRepository.findOne(testProduct);
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(testProduct);
 
 			logger.info("/*-- Formulation raised " + formulatedProduct.getReqCtrlList().size() + " rclDataItem --*/");
 			int checks = 0;
@@ -293,7 +293,7 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			logger.info("/*************************************/");
 
 			NodeRef fp2 = createTestProduct("Finished Product 2");
-			ProductData finishedProduct = alfrescoRepository.findOne(fp2);
+			ProductData finishedProduct = (ProductData) alfrescoRepository.findOne(fp2);
 			final String name = finishedProduct.getName();
 
 			Map<QName, Serializable> properties = new HashMap<>();
@@ -386,7 +386,7 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			 */
 			productService.formulate(fp2);
 
-			finishedProduct = alfrescoRepository.findOne(fp2);
+			finishedProduct = (ProductData) alfrescoRepository.findOne(fp2);
 
 			// tests rclDataItem
 			String message0 = I18NUtil.getMessage(NutsRequirementScanner.MESSAGE_NUT_NOT_IN_RANGE,
@@ -449,7 +449,7 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-			ProductData finishedProduct = alfrescoRepository.findOne(fp3);
+			ProductData finishedProduct = (ProductData) alfrescoRepository.findOne(fp3);
 			final String name = finishedProduct.getName();
 			
 			Map<QName, Serializable> properties = new HashMap<>();
@@ -508,7 +508,7 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 
 			// avoids rclDataItems due to invalid status
 			for (CompoListDataItem compo : compoList) {
-				ProductData product = alfrescoRepository.findOne(compo.getProduct());
+				ProductData product = (ProductData) alfrescoRepository.findOne(compo.getProduct());
 				product.setState(SystemState.Valid);
 				alfrescoRepository.save(product);
 
@@ -517,7 +517,7 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			alfrescoRepository.save(finishedProduct);
 
 			// putting allergens in RMs
-			ProductData rm1 = alfrescoRepository.findOne(rawMaterial1NodeRef);
+			ProductData rm1 = (ProductData) alfrescoRepository.findOne(rawMaterial1NodeRef);
 			if (rm1.getAllergenList() != null) {
 				rm1.getAllergenList().clear();
 				rm1.getAllergenList().add(new AllergenListDataItem(null, null, true, false, new ArrayList<>(), new ArrayList<>(), allergen1, false));
@@ -527,7 +527,7 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			}
 			alfrescoRepository.save(rm1);
 
-			ProductData rm2 = alfrescoRepository.findOne(rawMaterial2NodeRef);
+			ProductData rm2 = (ProductData) alfrescoRepository.findOne(rawMaterial2NodeRef);
 			if (rm2.getAllergenList() != null) {
 				rm2.getAllergenList().clear();
 				rm2.getAllergenList().add(new AllergenListDataItem(null, null, true, true, new ArrayList<>(), new ArrayList<>(), allergen2, false));
@@ -537,11 +537,11 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			}
 			alfrescoRepository.save(rm2);
 
-			ProductData rm3 = alfrescoRepository.findOne(rawMaterial3NodeRef);
+			ProductData rm3 = (ProductData) alfrescoRepository.findOne(rawMaterial3NodeRef);
 			rm3.getAllergenList().clear();
 			alfrescoRepository.save(rm3);
 
-			ProductData rm4 = alfrescoRepository.findOne(rawMaterial4NodeRef);
+			ProductData rm4 = (ProductData) alfrescoRepository.findOne(rawMaterial4NodeRef);
 			rm4.getAllergenList().clear();
 			alfrescoRepository.save(rm4);
 
@@ -551,7 +551,7 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			nodeService.createAssociation(productSpecificationNodeRef1, productSpecificationNodeRef2, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
 			nodeService.createAssociation(fp3, productSpecificationNodeRef1, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
 
-			finishedProduct = alfrescoRepository.findOne(fp3);
+			finishedProduct = (ProductData) alfrescoRepository.findOne(fp3);
 			assertEquals(1,finishedProduct.getProductSpecifications().size());
 			assertEquals(2,finishedProduct.getProductSpecifications().get(0).getProductSpecifications().size());
 			
@@ -565,7 +565,7 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			
 			logger.debug("Find one Finished Product 3");
 
-			finishedProduct = alfrescoRepository.findOne(fp3);
+			finishedProduct = (ProductData) alfrescoRepository.findOne(fp3);
 
 			int checkMissingFields = 0;
 			int checks = 0;
@@ -628,7 +628,7 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 		logger.info("/*************************************/");
 
 		NodeRef fp4 = createTestProduct("Finished Product 4");
-		ProductData finishedProduct = alfrescoRepository.findOne(fp4);
+		ProductData finishedProduct = (ProductData) alfrescoRepository.findOne(fp4);
 		final String name = finishedProduct.getName();
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -699,7 +699,7 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 
 			/*-- Verify formulation --*/
 			logger.info("/*-- Verify formulation --*/");
-			ProductData formulatedProduct = alfrescoRepository.findOne(fp4);
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(fp4);
 
 			logger.debug("/*-- Formulation raised " + formulatedProduct.getReqCtrlList().size() + " rclDataItems --*/");
 			int checks = 0;
@@ -740,7 +740,7 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 		logger.info("/*************************************/");
 
 		NodeRef fp5 = createTestProduct("Finished Product 5");
-		ProductData finishedProduct = alfrescoRepository.findOne(fp5);
+		ProductData finishedProduct = (ProductData) alfrescoRepository.findOne(fp5);
 		final String name = finishedProduct.getName();
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -829,7 +829,7 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 
 			/*-- Verify formulation --*/
 			logger.info("/*-- Verify formulation --*/");
-			ProductData formulatedProduct = alfrescoRepository.findOne(fp5);
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(fp5);
 
 			logger.debug("/*-- Formulation raised " + formulatedProduct.getReqCtrlList().size() + " rclDataItems --*/");
 			int checks = 0, checkMissingFields = 0;

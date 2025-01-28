@@ -53,7 +53,7 @@ Health;H300;Acute Tox. 1 vo;GHS06;Danger;;etaVo > 0 && etaVo <= 5;"etaVo + "" <=
 Health;H300;Acute Tox. 2 vo;GHS06;Danger;;etaVo > 5 && etaVo <= 50;"etaVo + "" > 5 and "" + etaVo + "" <= 50"""
 Health;H301;Acute Tox. 3 vo;GHS06;Danger;;etaVo > 50 && etaVo <= 300;"etaVo + "" > 50 and "" + etaVo + "" <= 300"""
 Health;H302;Acute Tox. 4 vo;GHS07;Warning;;etaVo > 300 && etaVo <= 2000;"etaVo + "" > 300 and "" + etaVo + "" <= 2000"""
-Health;H310;Acute Tox. 1 vc;GHS06;Danger;;EtaVc > 0 && etaVc <= 50;"etaVc + "" <= 50"""
+Health;H310;Acute Tox. 1 vc;GHS06;Danger;;etaVc > 0 && etaVc <= 50;"etaVc + "" <= 50"""
 Health;H310;Acute Tox. 2 vc;GHS06;Danger;;etaVc > 50 && etaVc <= 200;"etaVc + "" > 50 and "" + etaVc + "" <= 200"""
 Health;H311;Acute Tox. 3 vc;GHS06;Danger;;etaVc > 200 && etaVc <= 1000;"etaVc + "" > 200 and "" + etaVc + "" <= 1000"""
 Health;H312;Acute Tox. 4 vc;GHS07;Warning;;etaVc > 1000 && etaVc <= 2000;"etaVc + "" > 1000 and "" + etaVc + "" <= 2000"""

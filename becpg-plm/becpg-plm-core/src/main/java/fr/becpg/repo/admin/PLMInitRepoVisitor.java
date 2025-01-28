@@ -108,6 +108,7 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.search.data.DateFilterType;
 import fr.becpg.repo.search.data.VersionFilterType;
+import fr.becpg.repo.survey.SurveyModel;
 import fr.becpg.report.client.ReportFormat;
 
 /**
@@ -1109,6 +1110,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_REGULATORY_USAGES, PLMModel.TYPE_REGULATORY_USAGE);
 		entityLists.put(PlmRepoConsts.PATH_TOXICITIES, PLMModel.TYPE_TOX);
 		entityLists.put(PlmRepoConsts.PATH_TOX_ING, PLMModel.TYPE_TOX_ING);
+		entityLists.put(PlmRepoConsts.PATH_SURVEY_QUESTIONS, SurveyModel.TYPE_SURVEY_QUESTION);
 
 		entityLists.put(RepoConsts.PATH_NOTIFICATIONS, BeCPGModel.TYPE_NOTIFICATIONRULELIST);
 		entityLists.put(PlmRepoConsts.PATH_PUBCHANNELS, PublicationModel.TYPE_PUBLICATION_CHANNEL);
@@ -1432,6 +1434,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		dataLists.add(PLMModel.TYPE_LABELCLAIMLIST);
 		dataLists.add(PLMModel.TYPE_SPEC_COMPATIBILTY_LIST);
 		dataLists.add(GHSModel.TYPE_HAZARD_CLASSIFICATION_LIST);
+		dataLists.add(ProjectModel.TYPE_SCORE_LIST);
 		dataLists.add(BeCPGModel.TYPE_ACTIVITY_LIST);
 		entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, PLMModel.TYPE_PRODUCT_SPECIFICATION, null, true, true, dataLists,
 				null);

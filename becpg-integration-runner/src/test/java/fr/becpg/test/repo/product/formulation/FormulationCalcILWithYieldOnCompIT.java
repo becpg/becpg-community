@@ -79,7 +79,7 @@ public class FormulationCalcILWithYieldOnCompIT extends AbstractFinishedProductT
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			// productService.formulate(finishedProductNodeRef);
-			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 			formulatedProduct = productService.formulate(formulatedProduct);
 
 			DecimalFormat df = new DecimalFormat("0.00");
@@ -147,7 +147,7 @@ public class FormulationCalcILWithYieldOnCompIT extends AbstractFinishedProductT
 
 			/*-- Verify formulation --*/
 			logger.debug("/*-- Verify formulation --*/");
-			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProduct2NodeRef);
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProduct2NodeRef);
 			DecimalFormat df = new DecimalFormat("0.00");
 
 			assertEquals(df.format(0.065d), df.format(formulatedProduct.getCompoListView().getCompoList().get(0).getQty()));

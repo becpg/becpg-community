@@ -55,6 +55,7 @@ import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.test.BeCPGTestHelper;
 import fr.becpg.test.RepoBaseTestCase;
 import fr.becpg.test.data.EntityTestData;
+import fr.becpg.test.utils.CharactTestHelper;
 
 public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 
@@ -67,9 +68,9 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 	protected static final Double RESOURCE_COST_VALUE = 100d;
 	protected static final Double RESOURCE_COST_BILL_RATE = 200d;
 
-	protected  NodeRef PROJECT_HIERARCHY1_SEA_FOOD_REF;
-	protected  NodeRef PROJECT_HIERARCHY2_FISH_REF;
-	protected  NodeRef PROJECT_HIERARCHY2_CRUSTACEAN_REF;
+	protected NodeRef PROJECT_HIERARCHY1_SEA_FOOD_REF;
+	protected NodeRef PROJECT_HIERARCHY2_FISH_REF;
+	protected NodeRef PROJECT_HIERARCHY2_CRUSTACEAN_REF;
 
 	protected final List<NodeRef> taskLegends = new ArrayList<>();
 
@@ -200,9 +201,9 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 			List<NodeRef> resourceCostsFileInfo = entityListDAO.getListItems(resourceCostFolder, ProjectModel.TYPE_RESOURCE_COST);
 			resourceCost = (ResourceCost) alfrescoRepository.findOne(resourceCostsFileInfo.get(0));
 
-				userOne = BeCPGTestHelper.createUser(BeCPGTestHelper.USER_ONE);
-				userTwo = BeCPGTestHelper.createUser(BeCPGTestHelper.USER_TWO);
-				observerOne =  BeCPGTestHelper.createUser("ObserverOne");
+			userOne = BeCPGTestHelper.createUser(BeCPGTestHelper.USER_ONE);
+			userTwo = BeCPGTestHelper.createUser(BeCPGTestHelper.USER_TWO);
+			observerOne = BeCPGTestHelper.createUser("ObserverOne");
 
 			groupOne = BeCPGTestHelper.createGroup("groupOne", BeCPGTestHelper.USER_TWO);
 
@@ -278,7 +279,8 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 			// create scoreList
 			List<ScoreListDataItem> scoreList = new LinkedList<>();
 			for (int i = 0; i < 5; i++) {
-				scoreList.add(new ScoreListDataItem(null, "Criterion" + i, i * 10, null));
+				scoreList.add(ScoreListDataItem.build().withScoreCriterion(CharactTestHelper.getOrCreateScoreCriterion(nodeService, "Criterion" + i))
+						.withWeight((double) (i * 10)));
 			}
 			projectTplData.setScoreList(scoreList);
 
@@ -303,7 +305,6 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 			prevTasks = new ArrayList<>();
 			prevTasks.add(projectTplData.getTaskList().get(2).getNodeRef());
 			projectTplData.getTaskList().get(3).setPrevTasks(prevTasks);
-		
 
 			prevTasks = new ArrayList<>();
 			prevTasks.add(projectTplData.getTaskList().get(2).getNodeRef());
@@ -368,7 +369,7 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ENTITY_TPL_REF);
-			
+
 			ProjectData projectData = new ProjectData(null, "Pjt", PROJECT_HIERARCHY1_SEA_FOOD_REF, PROJECT_HIERARCHY2_CRUSTACEAN_REF, startDate,
 					endDate, null, planningMode, null, null, null, 0, null);
 			projectData.setParentNodeRef(getTestFolderNodeRef());

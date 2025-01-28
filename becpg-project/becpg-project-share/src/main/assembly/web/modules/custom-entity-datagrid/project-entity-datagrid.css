@@ -74,10 +74,54 @@
 	padding-left: 20px;
 }
 
-.datagrid div.scoreList-screening {
+.datagrid div.score-screening {
 	height: 150px;
 	overflow: auto;
 }
+
+
+.score-class-a,
+.score-class-b,
+.score-class-c,
+.score-class-d,
+.score-class-e
+ {
+    border: 0 none;
+    display: inline-block;
+    font-size: 17px;
+    height: 20px;
+    padding: 7px;
+    text-align: center;
+    width: 15px;
+    word-spacing: normal;
+     border-radius : 5px 0 0 5px;
+}
+
+.score-class-a{
+    background: #00853f;
+    color: #47a97b;
+}
+
+.score-class-b{  
+    background: #64bf21;
+    color:#b6e86d;
+}
+
+.score-class-c{  
+    background: #ffc800;
+    color: #ffde7d;
+}
+
+.score-class-d{  
+    background: #ff7600;
+    color:#ffb36b;
+}
+
+.score-class-e{  
+    background: #ff0100;
+    color:#ff8d67;
+}
+
 
 .datagrid span.score-black {
 	background-color:#424242;

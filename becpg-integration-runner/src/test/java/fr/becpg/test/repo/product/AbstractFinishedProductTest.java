@@ -1280,7 +1280,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 		}
 
 		ProductData formulatedProduct = inWriteTx(() -> {
-			ProductData ret = alfrescoRepository.findOne(productNodeRef);
+			ProductData ret = (ProductData) alfrescoRepository.findOne(productNodeRef);
 			if (labelingRuleList.stream().noneMatch(item -> "Pref 7".equals(item.getName()))) {
 				labelingRuleList.add(LabelingRuleListDataItem.build().withName("Pref 7").withFormula("uncapitalizeLegalName = true")
 						.withLabelingRuleType(LabelingRuleType.Prefs));

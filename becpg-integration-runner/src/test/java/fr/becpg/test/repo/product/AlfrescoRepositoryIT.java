@@ -133,7 +133,7 @@ public class AlfrescoRepositoryIT extends PLMBaseTestCase {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			NodeRef rawMaterialNodeRef = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test report");
-			ProductData rawMaterial = alfrescoRepository.findOne(rawMaterialNodeRef);
+			ProductData rawMaterial = (ProductData) alfrescoRepository.findOne(rawMaterialNodeRef);
 
 			NodeRef costNodeRef = costs.get(3);
 
@@ -162,7 +162,7 @@ public class AlfrescoRepositoryIT extends PLMBaseTestCase {
 		inWriteTx(() -> {
 
 			NodeRef rawMaterialNodeRef = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test properties");
-			ProductData rawMaterial = alfrescoRepository.findOne(rawMaterialNodeRef);
+			ProductData rawMaterial = (ProductData) alfrescoRepository.findOne(rawMaterialNodeRef);
 
 			Assert.assertFalse(rawMaterial.getAspects().contains(PLMModel.ASPECT_NUTRIENT_PROFILING_SCORE));
 

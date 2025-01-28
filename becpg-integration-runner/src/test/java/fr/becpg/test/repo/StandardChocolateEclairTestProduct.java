@@ -28,7 +28,11 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
+import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.quality.data.dataList.StockListDataItem;
+import fr.becpg.repo.survey.data.SurveyListDataItem;
+import fr.becpg.repo.survey.data.SurveyQuestion;
+import fr.becpg.repo.survey.impl.SurveyServiceImpl.ResponseType;
 import fr.becpg.test.utils.CharactTestHelper;
 
 public class StandardChocolateEclairTestProduct extends StandardProductBuilder {
@@ -54,6 +58,9 @@ public class StandardChocolateEclairTestProduct extends StandardProductBuilder {
 	public static final String LABORATORY_2 = "Laboratoire 2";
 	public static final String PLANT_USINE_1 = "Usine 1";
 	public static final String PLANT_USINE_2 = "Usine 2";
+	public static final String PASTRY_QUALITY = "Pastry quality";
+	public static final String CCP_COMPLIANCE = "CCP compliance";
+	public static final String FILLING_QUALITY = "Filling quality";
 
 	protected NodeRef pateChouxNodeRef;
 	protected NodeRef cremePatissiereNodeRef;
@@ -148,6 +155,8 @@ public class StandardChocolateEclairTestProduct extends StandardProductBuilder {
 	private boolean isWithGenericRawMaterial = true;
 	private boolean isWithStocks = true;
 	private boolean isWithIngredients = false;
+	private boolean isWithSurvey = false;
+	private boolean isWithScoreList = false;
 
 	// Private constructor to enforce usage of the builder
 	private StandardChocolateEclairTestProduct(Builder builder) {
@@ -157,6 +166,8 @@ public class StandardChocolateEclairTestProduct extends StandardProductBuilder {
 		this.isWithGenericRawMaterial = builder.isWithGenericRawMaterial;
 		this.isWithStocks = builder.isWithStocks;
 		this.isWithIngredients = builder.isWithIngredients;
+		this.isWithSurvey = builder.isWithSurvey;
+		this.isWithScoreList = builder.isWithScoreList;
 	}
 
 	// Static inner Builder class
@@ -166,6 +177,20 @@ public class StandardChocolateEclairTestProduct extends StandardProductBuilder {
 		private boolean isWithGenericRawMaterial = true;
 		private boolean isWithStocks = true;
 		private boolean isWithIngredients = false;
+		private boolean isWithSurvey = false;
+		private boolean isWithScoreList = false;
+		
+		
+		public Builder withSurvey(boolean isWithSurvey) {
+			this.isWithSurvey = isWithSurvey;
+			return this;
+		}
+		
+		public Builder withScoreList(boolean isWithScoreList) {
+			this.isWithScoreList = isWithScoreList;
+			return this;
+		}
+		
 
 		public Builder withCompo(boolean isWithCompo) {
 			this.isWithCompo = isWithCompo;
@@ -235,6 +260,14 @@ public class StandardChocolateEclairTestProduct extends StandardProductBuilder {
 							LabelingRuleListDataItem.build().withName("Param1").withFormula("ingsLabelingWithYield=true")
 									.withLabelingRuleType(LabelingRuleType.Prefs)));
 
+		}
+		
+		if(isWithSurvey) {
+			finishedProduct.withSurveyList(createEclairQMSSurveyList());
+		}
+		
+		if(isWithScoreList) {
+			finishedProduct.withScoreList(createScoreList());
 		}
 
 		alfrescoRepository.create(destFolder, finishedProduct);
@@ -517,5 +550,139 @@ public class StandardChocolateEclairTestProduct extends StandardProductBuilder {
 
 		});
 	}
+	
+	private List<SurveyListDataItem> createEclairQMSSurveyList() {
+	    // Question 1: Choux Pastry Quality Check
+	    final SurveyQuestion question1 = getOrCreateSurveyQuestion(
+	        "Evaluate the choux pastry characteristics:",
+	        PASTRY_QUALITY,
+	        ResponseType.multiChoicelist.name(),
+	        null
+	    );
+	    
+	    final SurveyQuestion q1Answer1 = getOrCreateSurveyAnswer(
+	        question1,
+	        "Perfect - Golden brown, hollow, crisp exterior (18-20cm length)",
+	        100d
+	    );
+	    
+	    final SurveyQuestion q1Answer2 = getOrCreateSurveyAnswer(
+	        question1,
+	        "Minor defects - Slight color variation, size within 17-21cm",
+	        75d
+	    );
+	    
+	    final SurveyQuestion q1Answer3 = getOrCreateSurveyAnswer(
+	        question1,
+	        "Major defects - Improper rise, inconsistent texture",
+	        0d
+	    );
+
+	    final SurveyListDataItem survey1 = new SurveyListDataItem();
+	    survey1.setQuestion(question1.getNodeRef());
+	    survey1.setChoices(List.of(q1Answer1.getNodeRef(), q1Answer2.getNodeRef(), q1Answer3.getNodeRef()));
+
+	    // Question 2: Chocolate Filling Quality
+	    final SurveyQuestion question2 = getOrCreateSurveyQuestion(
+	        "Chocolate Filling Quality Parameters:",
+	        FILLING_QUALITY,
+	        null,
+	        100d
+	    );
+	    
+	    final SurveyQuestion q2Answer1 = getOrCreateSurveyAnswer(
+	        question2,
+	        "Correct viscosity (65-70% chocolate content), uniform texture",
+	        100d
+	    );
+	    
+	    final SurveyQuestion q2Answer2 = getOrCreateSurveyAnswer(
+	        question2,
+	        "Slight viscosity deviation (60-75% content), minor texture issues",
+	        50d
+	    );
+	    
+	    final SurveyQuestion q2Answer3 = getOrCreateSurveyAnswer(
+	        question2,
+	        "Out of specification - improper viscosity or crystallization",
+	        0d
+	    );
+
+	    final SurveyListDataItem survey2 = new SurveyListDataItem();
+	    survey2.setQuestion(question2.getNodeRef());
+	    survey2.setChoices(List.of(q2Answer1.getNodeRef(), q2Answer2.getNodeRef(), q2Answer3.getNodeRef()));
+
+	    // Question 3: Critical Control Points Check
+	    final SurveyQuestion question3 = getOrCreateSurveyQuestion(
+	        "Critical Control Points Verification:",
+	        CCP_COMPLIANCE,
+	        null,
+	        100d
+	    );
+	    
+	    final SurveyQuestion q3Answer1 = getOrCreateSurveyAnswer(
+	        question3,
+	        "All CCPs within range (Temp: 2-4°C, Water activity: <0.85, pH: 6.5-7.0)",
+	        100d
+	    );
+	    
+	    final SurveyQuestion q3Answer2 = getOrCreateSurveyAnswer(
+	        question3,
+	        "One parameter slightly out of range but within critical limits",
+	        50d
+	    );
+	    
+	    final SurveyQuestion q3Answer3 = getOrCreateSurveyAnswer(
+	        question3,
+	        "Critical limit breach - product hold required",
+	        0d
+	    );
+
+	    final SurveyListDataItem survey3 = new SurveyListDataItem();
+	    survey3.setQuestion(question3.getNodeRef());
+	    survey3.setChoices(List.of(q3Answer1.getNodeRef(), q3Answer2.getNodeRef(), q3Answer3.getNodeRef()));
+
+	    return List.of(survey1, survey2, survey3);
+	}
+
+	private List<ScoreListDataItem> createScoreList() {
+	    return List.of(
+	        ScoreListDataItem.build().withScoreCriterion(CharactTestHelper.getOrCreateScoreCriterion(nodeService, PASTRY_QUALITY)),
+	        ScoreListDataItem.build().withScoreCriterion(CharactTestHelper.getOrCreateScoreCriterion(nodeService, FILLING_QUALITY)),
+	        ScoreListDataItem.build().withScoreCriterion(CharactTestHelper.getOrCreateScoreCriterion(nodeService, CCP_COMPLIANCE))
+	    );
+	}
+	
+	private SurveyQuestion getOrCreateSurveyQuestion( String label, String scoreCriterion, String responseType, Double questionScore) {
+		  
+	    // Create new question if not found
+	    final SurveyQuestion question = (SurveyQuestion) alfrescoRepository.findOne(CharactTestHelper.getOrCreateSurveyQuestion(nodeService,label));
+	    question.setLabel(label);
+	    question.setScoreCriterion(CharactTestHelper.getOrCreateScoreCriterion(nodeService, scoreCriterion));
+	    
+	    if (responseType != null) {
+	        question.setResponseType(responseType);
+	    }
+	    
+	    if (questionScore != null) {
+	        question.setQuestionScore(questionScore);
+	    }
+	    
+	    return (SurveyQuestion) alfrescoRepository.save(question);
+	}
+
+	private SurveyQuestion getOrCreateSurveyAnswer(SurveyQuestion parentQuestion, String label, Double score) {
+	 final SurveyQuestion answer = (SurveyQuestion) alfrescoRepository.findOne(CharactTestHelper.getOrCreateSurveyQuestion(nodeService,label));
+	    answer.setParent(parentQuestion);
+	    answer.setLabel(label);
+	    
+	    if (score != null) {
+	        answer.setQuestionScore(score);
+	    }
+
+	    return (SurveyQuestion) alfrescoRepository.save(answer);
+	}
+	    
+
 
 }

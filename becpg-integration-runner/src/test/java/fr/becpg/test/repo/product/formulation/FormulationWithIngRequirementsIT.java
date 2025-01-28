@@ -221,7 +221,7 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 
 			/*-- Verify formulation --*/
 			logger.info("/*-- Verify formulation --*/");
-			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 
 			int checks = 0;
 			logger.info("/*-- Formulation raised " + formulatedProduct.getReqCtrlList().size() + " rclDataItems --*/");
@@ -333,7 +333,7 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 
 			/*-- Verify formulation --*/
 			logger.debug("/*-- Verify formulation --*/");
-			formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+			formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 
 			logger.debug("After removing specs, " + formulatedProduct.getReqCtrlList().size() + " remain");
 			assertEquals(0, formulatedProduct.getReqCtrlList().stream().filter(r -> RequirementDataType.Specification.equals(r.getReqDataType()))
