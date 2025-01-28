@@ -249,7 +249,7 @@ public class FormulationNutsIT extends AbstractFinishedProductTest {
 
 				/*-- Verify formulation --*/
 				logger.info("/*-- Verify formulation --*/");
-				ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+				ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 
 				checkProduct(formulatedProduct, propagate);
 

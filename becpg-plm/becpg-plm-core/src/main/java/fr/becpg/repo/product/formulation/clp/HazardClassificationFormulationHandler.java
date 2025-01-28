@@ -37,7 +37,6 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.formulation.spel.SpelFormulaService;
 import fr.becpg.repo.helper.MLTextHelper;
-import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
@@ -147,6 +146,8 @@ public class HazardClassificationFormulationHandler extends FormulationBaseHandl
 				formulatedProduct.getReqCtrlList().add(ReqCtrlListDataItem.forbidden().withMessage(MLTextHelper.getI18NMessage(MISSING_CHARACTS_MSG))
 						.ofDataType(RequirementDataType.Physicochem).withSources(new ArrayList<>(missingCharacts.values())));
 			}
+			
+			formulatedProduct.setHazardClassificationFormulaContext(formulaContext);
 
 			StandardEvaluationContext context = formulaService.createCustomSpelContext(formulatedProduct, formulaContext);
 

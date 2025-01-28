@@ -109,7 +109,7 @@ public class CompareProductReportWebScriptIT extends AbstractCompareProductTest 
 
 			logger.debug("update workingCopy");
 
-			ProductData workingCopy = alfrescoRepository.findOne(workingCopyNodeRef);
+			ProductData workingCopy = (ProductData) alfrescoRepository.findOne(workingCopyNodeRef);
 			workingCopy.setName("FP new version");
 
 			// Costs

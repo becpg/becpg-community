@@ -75,7 +75,7 @@ public class FormulationMultiLevelILIT extends AbstractFinishedProductTest {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 
 			assertEquals(5, formulatedProduct.getIngList().size());
 			assertEquals(ing5, formulatedProduct.getIngList().get(0).getIng());

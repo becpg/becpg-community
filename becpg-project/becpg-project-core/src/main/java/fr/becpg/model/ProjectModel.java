@@ -19,6 +19,9 @@ package fr.becpg.model;
 
 import org.alfresco.service.namespace.QName;
 
+import fr.becpg.test.repo.index;
+import fr.becpg.test.repo.property;
+
 /**
  * <p>
  * ProjectModel interface.
@@ -260,5 +263,15 @@ public interface ProjectModel {
 
 	QName ASSOC_SL_SCORE_CRITERION = QName.createQName(PROJECT_URI, "slScoreCriterion");
 
+	QName PROP_SCORE_CRITERION_WEIGHT = QName.createQName(PROJECT_URI, "scoreCriterionWeight");
+	
+	QName PROP_SCORE_CRITERION_FORMULA = QName.createQName(PROJECT_URI, "scoreCriterionFormula");
+	
+	QName PROP_SCORE_CRITERION_FORMULA_DETAIL = QName.createQName(PROJECT_URI, "scoreCriterionDetailFormula");
+	
+	QName PROP_SCORE_CRITERION_RANGE_FORMULA = QName.createQName(PROJECT_URI, "scoreCriterionRangeFormula");
+	
+	QName PROP_SCORE_CRITERION_RANGE = QName.createQName(PROJECT_URI, "scoreCriterionRange");
+	
 
 }

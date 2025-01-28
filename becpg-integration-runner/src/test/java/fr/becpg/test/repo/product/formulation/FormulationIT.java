@@ -114,7 +114,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			
 			/*-- Verify formulation --*/
 			logger.debug("/*-- Verify formulation --*/");
-			ProductData formulatedProduct1 = alfrescoRepository.findOne(finishedProductNodeRef1);
+			ProductData formulatedProduct1 = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef1);
 
 			// verify IngList
 			// 1 * lSF1 [Pâte, DETAIL]
@@ -246,7 +246,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 			/*-- Verify formulation --*/
 			logger.debug("/*-- Verify formulation --*/");
-			ProductData formulatedProduct2 = alfrescoRepository.findOne(finishedProductNodeRef2);
+			ProductData formulatedProduct2 = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef2);
 
 			// verify IngList
 			// 1 * lSF1 [Pâte, DETAIL]
@@ -396,7 +396,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 			/*-- Verify formulation --*/
 			logger.debug("/*-- Verify formulation --*/");
-			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 
 			logger.debug("unit of product formulated: " + finishedProduct.getUnit());
 
@@ -498,7 +498,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 			/*-- Verify formulation --*/
 			logger.debug("/*-- Verify formulation --*/");
-			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 
 			logger.debug("unit of product formulated: " + finishedProduct.getUnit());
 			DecimalFormat df = new DecimalFormat("0.000");
@@ -588,7 +588,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 			/*-- Verify formulation --*/
 			logger.debug("/*-- Verify formulation --*/");
-			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 
 			DecimalFormat df = new DecimalFormat("0.000");
 			int checks = 0;
@@ -882,7 +882,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			logger.debug("/*-- Verify formulation --*/");
 
 			// Verify SF1
-			ProductData formulatedSF1 = alfrescoRepository.findOne(SFProduct1NodeRef);
+			ProductData formulatedSF1 = (ProductData) alfrescoRepository.findOne(SFProduct1NodeRef);
 
 			// allergens
 			assertNotNull("AllergenList is not null", formulatedSF1.getAllergenList());
@@ -944,7 +944,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			}
 
 			// Verify SF1
-			ProductData formulatedSF2 = alfrescoRepository.findOne(SFProduct2NodeRef);
+			ProductData formulatedSF2 = (ProductData) alfrescoRepository.findOne(SFProduct2NodeRef);
 
 			// allergens
 			assertNotNull("AllergenList is not null", formulatedSF2.getAllergenList());
@@ -1004,7 +1004,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 				}
 			}
 
-			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 
 			// allergens
 			assertNotNull("AllergenList is null", formulatedProduct.getAllergenList());
@@ -1202,7 +1202,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 			/*-- Verify formulation --*/
 			logger.debug("/*-- Verify formulation --*/");
-			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 			DecimalFormat df = new DecimalFormat("0.####");
 
 			// costs
@@ -1453,7 +1453,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 			/*-- Verify formulation --*/
 			logger.debug("/*-- Verify formulation --*/");
-			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 			int checks = 0;
 
 			for (CompoListDataItem compoListDataItem : formulatedProduct.getCompoListView().getCompoList()) {
@@ -1536,7 +1536,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 			/*-- Verify formulation --*/
 			logger.debug("/*-- Verify formulation --*/");
-			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 
 			logger.debug("unit of product formulated: " + finishedProduct.getUnit());
 			int checks = 0;
@@ -1566,7 +1566,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 );
 			alfrescoRepository.save(formulatedProduct);
 			productService.formulate(finishedProductNodeRef);
-			formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+			formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 
 			// (1×3+3×1+1÷(8*25*40))/2 = 3,0000625
 			// (1×2+3×2+1÷(8*25*40)*2)/2 = 4.125
@@ -1649,7 +1649,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			/*-- Verify formulation --*/
 			logger.debug("/*-- Verify formulation --*/");
 			DecimalFormat df = new DecimalFormat("0.####");
-			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 
 			// costs
 			int checks = 0;
@@ -1709,7 +1709,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 					.add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 			alfrescoRepository.save(formulatedProduct);
 			productService.formulate(finishedProductNodeRef);
-			formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+			formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 
 			// nuts
 			checks = 0;
@@ -1949,7 +1949,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 			/*-- Verify formulation --*/
 			logger.debug("/*-- Verify formulation --*/");
-			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 			int checks = 0;
 			DecimalFormat df = new DecimalFormat("0.00");
 
@@ -2033,7 +2033,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 			/*-- Verify formulation --*/
 			logger.debug("/*-- Verify formulation --*/");
-			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 
 			// costs
 			int checks = 0;
@@ -2069,7 +2069,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 			productService.formulate(finishedProductNodeRef);
 
-			formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+			formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 
 			// check costs
 			checks = 0;
@@ -2278,7 +2278,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 			/*-- Verify formulation --*/
 			logger.debug("/*-- Verify formulation --*/");
-			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 
 			// costs
 			logger.debug("/*-- Verify costs --*/");
@@ -2435,7 +2435,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 			/*-- Verify formulation --*/
 			logger.debug("/*-- Verify formulation --*/");
-			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 			int checks = 0;
 
 			for (CompoListDataItem compoListDataItem : formulatedProduct.getCompoListView().getCompoList()) {
@@ -2528,7 +2528,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 			/*-- Verify formulation --*/
 			logger.info("/*-- Verify formulation --*/");
-			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 
 			DecimalFormat df = new DecimalFormat("0.00");
 
@@ -2616,13 +2616,13 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 			/*-- Verify formulation --*/
 			logger.debug("/*-- Verify formulation --*/");
-			ProductData formulatedProduct1 = alfrescoRepository.findOne(finishedProductNodeRef1);
+			ProductData formulatedProduct1 = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef1);
 
 			assertNotNull(formulatedProduct1.getCompoList());
 			int checks = 0;
 			for (CompoListDataItem compoListDataItem : formulatedProduct1.getCompoList()) {
 
-				ProductData partProduct = alfrescoRepository.findOne(compoListDataItem.getProduct());
+				ProductData partProduct = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());
 
 				Double volume = compoListDataItem.getVolume();
 				Double overrun = compoListDataItem.getOverrunPerc();
@@ -2680,7 +2680,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			productService.formulate(finishedProductNodeRef);
 
 			/*-- Verify formulation --*/
-			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 			assertEquals(8.4d, formulatedProduct.getNutList().get(0).getValue());
 			assertEquals(7.7d, formulatedProduct.getNutList().get(0).getMini());
 			assertEquals(9.1d, formulatedProduct.getNutList().get(0).getMaxi());

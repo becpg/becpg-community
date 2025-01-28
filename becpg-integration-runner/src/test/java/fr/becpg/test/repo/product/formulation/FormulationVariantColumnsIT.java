@@ -77,7 +77,7 @@ public class FormulationVariantColumnsIT extends AbstractFinishedProductTest {
 			// template
 			FinishedProductData templateFinishedProduct = new FinishedProductData();
 			templateFinishedProduct.setName("Template Produit fini");
-			ProductData entityTpl1 = alfrescoRepository.create(getTestFolderNodeRef(), templateFinishedProduct);
+			ProductData entityTpl1 = (ProductData) alfrescoRepository.create(getTestFolderNodeRef(), templateFinishedProduct);
 			nodeService.addAspect(entityTpl1.getNodeRef(), BeCPGModel.ASPECT_ENTITY_TPL, null);
 			nodeService.addAspect(entityTpl1.getNodeRef(), BeCPGModel.ASPECT_ENTITY_VARIANT, null);
 			//add variants on template
@@ -160,7 +160,7 @@ public class FormulationVariantColumnsIT extends AbstractFinishedProductTest {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			int checks = 0;
-			ProductData finishedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+			ProductData finishedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 			List<VariantData> variants = finishedProduct.getVariants();
 			
 			assertNotNull(variants);
@@ -176,7 +176,7 @@ public class FormulationVariantColumnsIT extends AbstractFinishedProductTest {
 			}
 			alfrescoRepository.save(finishedProduct);
 			productService.formulate(finishedProductNodeRef);
-			finishedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+			finishedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 
 			//Check costList
 			for (CostListDataItem costListDataItem : finishedProduct.getCostList()) {

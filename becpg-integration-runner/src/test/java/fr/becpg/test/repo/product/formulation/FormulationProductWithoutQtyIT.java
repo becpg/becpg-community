@@ -96,7 +96,7 @@ public class FormulationProductWithoutQtyIT extends AbstractFinishedProductTest 
 			NodeRef finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
 			/*-- Formulate product --*/
-			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 			formulatedProduct = productService.formulate(formulatedProduct);
 
 			logger.debug("getRecipeQtyUsed: " + formulatedProduct.getRecipeQtyUsed());
@@ -193,7 +193,7 @@ public class FormulationProductWithoutQtyIT extends AbstractFinishedProductTest 
 			NodeRef finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
 			/*-- Formulate product --*/
-			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 			formulatedProduct = productService.formulate(formulatedProduct);
 
 			logger.debug("getRecipeQtyUsed: " + formulatedProduct.getRecipeQtyUsed());

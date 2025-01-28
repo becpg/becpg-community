@@ -1951,7 +1951,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		labelingRuleList.add(new LabelingRuleListDataItem("Param1", "detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs));
 
 		inWriteTx(() -> {
-			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef1);
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef1);
 			formulatedProduct.getCompoListView().getCompoList().get(2).setProduct(rawMaterial7NodeRef);
 			alfrescoRepository.save(formulatedProduct);
 			return null;
@@ -1988,7 +1988,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 		inWriteTx(() -> {
 			productService.formulate(finishProduct2);
-			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef1);
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef1);
 			formulatedProduct.setQty(7d);
 			formulatedProduct.getCompoListView().getCompoList().get(2).setProduct(finishProduct2);
 			formulatedProduct.getCompoListView().getCompoList().add(CompoListDataItem.build().withParent(null).withQty(5d).withQtyUsed(null)
@@ -2073,7 +2073,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 	private void checkError(final NodeRef productNodeRef, final List<LabelingRuleListDataItem> labelingRuleList, final String errorMessage) {
 		inWriteTx(() -> {
 
-			ProductData formulatedProduct = alfrescoRepository.findOne(productNodeRef);
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(productNodeRef);
 
 			formulatedProduct.getLabelingListView().setLabelingRuleList(labelingRuleList);
 
@@ -2125,7 +2125,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 			/*-- Verify formulation --*/
 			logger.debug("/*-- Verify formulation --*/");
-			ProductData formulatedProduct1 = alfrescoRepository.findOne(finishedProductNodeRef1);
+			ProductData formulatedProduct1 = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef1);
 
 			assertTrue(formulatedProduct1.getLabelingListView().getLabelingRuleList().size() > 0);
 
@@ -2335,7 +2335,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 					productService.formulate(finishedProductNodeRef1);
 
-					ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef1);
+					ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef1);
 
 					Assert.assertTrue(formulatedProduct.getLabelingListView().getLabelingRuleList().size() > 0);
 

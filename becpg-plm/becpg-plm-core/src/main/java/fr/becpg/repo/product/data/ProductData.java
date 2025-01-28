@@ -54,6 +54,7 @@ import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.ResourceParamListItem;
 import fr.becpg.repo.product.data.productList.SvhcListDataItem;
 import fr.becpg.repo.product.data.productList.ToxListDataItem;
+import fr.becpg.repo.product.formulation.clp.HazardClassificationFormulaContext;
 import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.quality.data.dataList.ControlDefListDataItem;
 import fr.becpg.repo.quality.data.dataList.StockListDataItem;
@@ -236,6 +237,7 @@ public class ProductData extends AbstractScorableEntity
 	 */
 	private Boolean isGeneric;
 
+
 	/*
 	 * DataList
 	 */
@@ -260,6 +262,11 @@ public class ProductData extends AbstractScorableEntity
 	private List<HazardClassificationListDataItem> hcList;
 	private List<PubChannelListDataItem> pubChannelList;
 	private List<ToxListDataItem> toxList;
+	
+	/*
+	 * Hazard classification
+	 */
+	private HazardClassificationFormulaContext hazardClassificationFormulaContext;
 
 	/*
 	 * View
@@ -2775,6 +2782,21 @@ public class ProductData extends AbstractScorableEntity
 	 */
 	public void setRequirementChecksum(String requirementChecksum) {
 		this.requirementChecksum = requirementChecksum;
+	}
+	
+	/*
+	 * Do not remove spel helper
+	 */
+	public HazardClassificationFormulaContext getHazards(){
+		return getHazardClassificationFormulaContext();
+	}
+
+	public HazardClassificationFormulaContext getHazardClassificationFormulaContext() {
+		return hazardClassificationFormulaContext;
+	}
+
+	public void setHazardClassificationFormulaContext(HazardClassificationFormulaContext hazardClassificationFormulaContext) {
+		this.hazardClassificationFormulaContext = hazardClassificationFormulaContext;
 	}
 
 	private <T> List<T> filterList(List<T> list, List<DataListFilter<ProductData, T>> filters) {
