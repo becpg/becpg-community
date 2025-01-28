@@ -1092,13 +1092,65 @@
 		
 		<Dimension  name="ideaOrigin" caption="${msg("jsolap.ideaOrigin.title")}" >
 			<Hierarchy name="ideaOrigin" caption="${msg("jsolap.ideaOrigin.title")}" hasAll="true" allMemberCaption="${msg("jsolap.ideaOrigin.caption")}">
-				<Level name="projectOrigin" caption="${msg("jsolap.ideaOrigin.title")}" column="projectOrigin"  type="String"    />
+				<Level approxRowCount="9" name="projectOrigin" caption="${msg("jsolap.ideaOrigin.title")}" column="projectOrigin"  type="String"    >
+					<MemberFormatter>
+						<Script language="JavaScript">
+							switch (member.getName()) {
+				   				case 'SERV_COM' :
+				      				return   '${msg("listconstraint.pjt_projectOrigins.Sales_Department")}';
+				      			case 'ADV' :
+				    				return   '${msg("listconstraint.pjt_projectOrigins.Administration_des_ventes")}';
+				   				case 'SERV_QUAL' :
+				    				return   '${msg("listconstraint.pjt_projectOrigins.Service_Qualite")}';
+				   				case 'Direction' :
+				    				return   '${msg("listconstraint.pjt_projectOrigins.Direction")}';   
+				    			case 'SERV_PROD' :
+				    				return   '${msg("listconstraint.pjt_projectOrigins.Service_Production")}';
+				    			case 'Marketing' :
+				    				return   '${msg("listconstraint.pjt_projectOrigins.Marketing")}';
+				    			case 'Commerciaux' :
+				    				return   '${msg("listconstraint.pjt_projectOrigins.Commerciaux")}';
+				    			case 'Clients' :
+				    				return   '${msg("listconstraint.pjt_projectOrigins.Clients")}';
+				    			case 'Production' :
+				    				return   '${msg("listconstraint.pjt_projectOrigins.Production")}';
+							   default:
+								    return member.getName();
+								}
+						</Script>
+					</MemberFormatter>
+				</Level>
 			</Hierarchy>
 		</Dimension>
 		
 		<Dimension  name="sponsor" caption="${msg("jsolap.sponsor.title")}" >
 			<Hierarchy name="sponsor" caption="${msg("jsolap.sponsor.title")}" hasAll="true" allMemberCaption="${msg("jsolap.sponsor.caption")}">
-				<Level name="projectSponsor" caption="${msg("jsolap.sponsor.title")}" column="projectSponsor"  type="String"    />
+				<Level approxRowCount="8" name="projectSponsor" caption="${msg("jsolap.sponsor.title")}" column="projectSponsor"  type="String"    >
+					<MemberFormatter>
+						<Script language="JavaScript">
+							switch (member.getName()) {
+				   				case 'Client' :
+				      				return   '${msg("listconstraint.pjt_projectSponsors.Client")}';
+				      			case 'SUPPLIERS' :
+				    				return   '${msg("listconstraint.pjt_projectSponsors.Suppliers")}';
+				   				case 'SERV_INT' :
+				    				return   '${msg("listconstraint.pjt_projectSponsors.Internal")}';
+				   				case 'Direction' :
+				    				return   '${msg("listconstraint.pjt_projectSponsors.Direction")}';
+				   				case 'Marketing' :
+				    				return   '${msg("listconstraint.pjt_projectSponsors.Marketing")}';   
+				    			case 'Qualité' :
+				    				return   '${msg("listconstraint.pjt_projectSponsors.Quality")}';
+				    			case 'Achat' :
+				    				return   '${msg("listconstraint.pjt_projectSponsors.Purchase")}';
+				    			case 'SUPPLY' :
+				    				return   '${msg("listconstraint.pjt_projectSponsors.Supply")}';
+							   default:
+								    return member.getName();
+								}
+						</Script>
+					</MemberFormatter>
+				</Level>
 			</Hierarchy>
 		</Dimension>
 		
