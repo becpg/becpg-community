@@ -998,7 +998,6 @@
 						doc->>"$.pjt_completionPercent" as completionPercent,
 						doc->>"$.pjt_projectScore" as projectScore,
 						doc->>"$.pjt_projectOverdue" as projectOverdue,
-						doc->>"$.pjt_projectManager[0]" as projectManager,
 						doc->>"$.pjt_projectOrigin" as projectOrigin,
 						doc->>"$.pjt_projectSponsor" as projectSponsor,
 						doc->>"$.bcpg_entityTplRef[0]" as entityTplRef,
@@ -1077,10 +1076,20 @@
 		
 		<DimensionUsage name="entities" caption="${msg("jsolap.entities.title")}" source="productsDimension" foreignKey="projectEntityNodeRef" />
 		
-		
-		<Dimension  name="projectManager" caption="${msg("jsolap.projectManager.title")}" >
-			<Hierarchy name="projectManager" caption="${msg("jsolap.projectManager.title")}" hasAll="true" allMemberCaption="${msg("jsolap.projectManager.caption")}">
-				<Level name="projectManager" caption="${msg("jsolap.projectManager.title")}" column="projectManager"  type="String"    />
+		<Dimension foreignKey="nodeRef" name="projectManager" caption="${msg("jsolap.projectManager.title")}">
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.projectManager.caption")}" primaryKey="entityNodeRef">
+				<View name="projectManager" alias="projectManager">
+								<SQL dialect="generic">
+									select
+										entityNodeRef,
+										doc->>"$.name" as name,
+										nodeRef
+									from
+										assoc_pjt_projectManager
+								</SQL>
+				</View>
+				<Level name="name" caption="${msg("jsolap.projectManager.title")}" table="projectManager" column="name" type="String"  >
+				</Level>
 			</Hierarchy>
 		</Dimension>
 		
