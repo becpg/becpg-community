@@ -40,5 +40,9 @@ public final class SurveyModel {
 
 	/** Constant <code>ASSOC_SURVEY_FS_LINKED_HIERARCHY</code> */
 	public static final QName ASSOC_SURVEY_FS_LINKED_HIERARCHY = QName.createQName(SURVEY_URI, "fsLinkedHierarchy");
+
+	public static final QName PROP_RESPONSE_TYPE = QName.createQName(SURVEY_URI, "responseType");
+
+	public static final QName ASSOC_SCORE_CRITERION =  QName.createQName(SURVEY_URI, "scoreCriterion");
 	
 }

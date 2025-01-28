@@ -6,8 +6,8 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 
 import fr.becpg.repo.product.data.FinishedProductData;
-import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.RepositoryEntity;
 
 public abstract class StandardProductBuilder {
 
@@ -18,7 +18,7 @@ public abstract class StandardProductBuilder {
     }
 	
 	
-	protected AlfrescoRepository<ProductData> alfrescoRepository;
+	protected AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 	protected NodeService nodeService;
 	protected NodeRef destFolder;
 
@@ -31,11 +31,11 @@ public abstract class StandardProductBuilder {
 
 	// Static generic Builder class
 	public abstract static class Builder<T extends Builder<T>> {
-		private AlfrescoRepository<ProductData> alfrescoRepository;
+		private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 		private NodeService nodeService;
 		private NodeRef destFolder;
 
-		public T withAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
+		public T withAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 			this.alfrescoRepository = alfrescoRepository;
 			return self();
 		}

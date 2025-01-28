@@ -92,23 +92,23 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 			/**
 			 * Raw Material part
 			 */
-			ProductData rawMaterial1 = alfrescoRepository.findOne(rawMaterial1NodeRef);
+			ProductData rawMaterial1 = (ProductData) alfrescoRepository.findOne(rawMaterial1NodeRef);
 			rawMaterial1.setState(SystemState.Valid);
 			alfrescoRepository.save(rawMaterial1);
 
-			ProductData rawMaterial5 = alfrescoRepository.findOne(rawMaterial5NodeRef);
+			ProductData rawMaterial5 = (ProductData) alfrescoRepository.findOne(rawMaterial5NodeRef);
 			rawMaterial5.setState(SystemState.ToValidate);
 			alfrescoRepository.save(rawMaterial5);
 
-			ProductData rawMaterial6 = alfrescoRepository.findOne(rawMaterial6NodeRef);
+			ProductData rawMaterial6 = (ProductData) alfrescoRepository.findOne(rawMaterial6NodeRef);
 			rawMaterial6.setState(SystemState.Refused);
 			alfrescoRepository.save(rawMaterial6);
 
-			ProductData rawMaterial11 = alfrescoRepository.findOne(rawMaterial11NodeRef);
+			ProductData rawMaterial11 = (ProductData) alfrescoRepository.findOne(rawMaterial11NodeRef);
 			rawMaterial11.setState(SystemState.Archived);
 			alfrescoRepository.save(rawMaterial11);
 
-			ProductData rawMaterial12 = alfrescoRepository.findOne(rawMaterial12NodeRef);
+			ProductData rawMaterial12 = (ProductData) alfrescoRepository.findOne(rawMaterial12NodeRef);
 			rawMaterial12.setState(SystemState.Valid);
 			alfrescoRepository.save(rawMaterial12);
 
@@ -123,15 +123,15 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 			/**
 			 * Packaging part
 			 */
-			ProductData packaging1 = alfrescoRepository.findOne(packagingMaterial1NodeRef);
+			ProductData packaging1 = (ProductData) alfrescoRepository.findOne(packagingMaterial1NodeRef);
 			packaging1.setState(SystemState.Valid);
 			alfrescoRepository.save(packaging1);
 
-			ProductData packaging2 = alfrescoRepository.findOne(packagingMaterial2NodeRef);
+			ProductData packaging2 = (ProductData) alfrescoRepository.findOne(packagingMaterial2NodeRef);
 			packaging2.setState(SystemState.ToValidate);
 			alfrescoRepository.save(packaging2);
 
-			ProductData packagingKit = alfrescoRepository.findOne(packagingKit1NodeRef);
+			ProductData packagingKit = (ProductData) alfrescoRepository.findOne(packagingKit1NodeRef);
 			packagingKit.setState(SystemState.Simulation);
 			alfrescoRepository.save(packagingKit);
 
@@ -192,7 +192,7 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 
 		// formulate and check FP score
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			ProductData finishedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+			ProductData finishedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 
 			assertNotNull(finishedProduct.getEntityScore());
 			JSONObject scoresObject = new JSONObject(finishedProduct.getEntityScore());

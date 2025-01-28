@@ -126,7 +126,7 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 
 	private void verifyFormulatedPackMaterial(NodeRef finishedProductNodeRef) {
 		logger.info("Verifying formulated pack materials");
-		ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+		ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 		int checks = 0;
 		DecimalFormat df = new DecimalFormat("0.###");
 

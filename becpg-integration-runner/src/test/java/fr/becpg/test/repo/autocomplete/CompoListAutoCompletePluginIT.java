@@ -76,7 +76,7 @@ public class CompoListAutoCompletePluginIT extends AbstractAutoCompletePluginTes
 			assertEquals(2, AutoCompletePage.getResults().size());
 
 			// Check cycle detection (exclude localSF1NodeRef)
-			ProductData finishedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+			ProductData finishedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 
 			HashMap<String, String> extras = new HashMap<>();
 			extras.put("itemId", finishedProduct.getCompoListView().getCompoList().get(0).getNodeRef().toString());

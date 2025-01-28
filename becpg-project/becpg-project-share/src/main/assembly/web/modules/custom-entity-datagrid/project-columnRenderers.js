@@ -83,10 +83,24 @@ if (beCPG.module.EntityDataGridRenderers) {
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName: "pjt:slScreening",
 		renderer: function(oRecord, data, label, scope) {
-
-			return '<div class="scoreList-screening">' + data.displayValue + '</div>';
+            if(data.displayValue){
+                return '<div class="score-screening">' + data.displayValue + '</div>';
+            }
+            return "";
 		}
 	});
+    
+
+    YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName: "pjt:slRange",
+        renderer: function(oRecord, data, label, scope) {
+            if(data.displayValue){
+                return '<span class="score-class-' + data.displayValue.toLowerCase() + '">' + data.displayValue + '</div>';
+            }
+            return "";
+        }
+    });
+    
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName: "pjt:slScore",

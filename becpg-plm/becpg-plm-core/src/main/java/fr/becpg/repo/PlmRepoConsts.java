@@ -375,5 +375,7 @@ public class PlmRepoConsts {
 	/** Constant <code>PATH_LABORATORIES="Laboratories"</code> */
 	public static final String PATH_LABORATORIES = "Laboratories";
 	
+	public static final String PATH_SURVEY_QUESTIONS = "SurveyQuestions";
+	
 
 }

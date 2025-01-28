@@ -241,7 +241,7 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 
 			/*-- Verify formulation --*/
 			logger.info("/*-- Verify formulation --*/");
-			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 
 			checkProduct(formulatedProduct);
 
@@ -576,7 +576,7 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 
 			/*-- Verify formulation --*/
 			logger.info("/*-- Verify formulation --*/");
-			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 
 			// nuts
 			int checks = 0;

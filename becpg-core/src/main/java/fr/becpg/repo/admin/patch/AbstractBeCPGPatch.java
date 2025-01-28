@@ -17,12 +17,21 @@
  ******************************************************************************/
 package fr.becpg.repo.admin.patch;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.alfresco.repo.admin.patch.AbstractPatch;
+import org.alfresco.repo.batch.BatchProcessWorkProvider;
+import org.alfresco.repo.batch.BatchProcessor;
+import org.alfresco.repo.domain.node.NodeDAO;
+import org.alfresco.repo.domain.patch.PatchDAO;
+import org.alfresco.repo.domain.qname.QNameDAO;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.service.cmr.admin.PatchException;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
+import org.alfresco.util.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -55,7 +64,24 @@ public abstract class AbstractBeCPGPatch extends AbstractPatch {
 	/** Constant <code>INC=BATCH_THREADS * BATCH_SIZE * 1L</code> */
 	protected static final long INC = BATCH_THREADS * BATCH_SIZE * 1L;
 	
-	
+	protected NodeDAO nodeDAO;
+
+	protected PatchDAO patchDAO;
+
+	protected QNameDAO qnameDAO;
+
+	public void setNodeDAO(NodeDAO nodeDAO) {
+		this.nodeDAO = nodeDAO;
+	}
+
+	public void setPatchDAO(PatchDAO patchDAO) {
+		this.patchDAO = patchDAO;
+	}
+
+	public void setQnameDAO(QNameDAO qnameDAO) {
+		this.qnameDAO = qnameDAO;
+	}
+
 	/**
 	 * <p>Setter for the field <code>repository</code>.</p>
 	 *
@@ -181,6 +207,56 @@ public abstract class AbstractBeCPGPatch extends AbstractPatch {
 	public NodeRef getCharactDataList(NodeRef systemEntityNodeRef, String dataListPath) {
 		return entitySystemService.getSystemEntityDataList(systemEntityNodeRef, dataListPath);
 	}
+	
+	
+	
+	
+	protected BatchProcessor<NodeRef> createBatchTypeProcessor(QName type) {
+		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<>() {
+			private final long maxNodeId = nodeDAO.getMaxNodeId();
+			private final Pair<Long, QName> typeQNamePair = qnameDAO.getQName(type);
+			private final List<NodeRef> result = new ArrayList<>();
+			private long minSearchNodeId = 0;
+			private long maxSearchNodeId = BATCH_SIZE;
+
+			@Override
+			public Collection<NodeRef> getNextWork() {
+				result.clear();
+
+				if (typeQNamePair == null) {
+					return result;
+				}
+
+				Long typeQNameId = typeQNamePair.getFirst();
+
+				while (result.isEmpty() && (minSearchNodeId < maxNodeId)) {
+					List<Long> nodeIds = patchDAO.getNodesByTypeQNameId(typeQNameId, minSearchNodeId, maxSearchNodeId);
+
+					result.addAll(nodeIds.stream().map(nodeDAO::getNodeIdStatus).filter(status -> !status.isDeleted()).map(NodeRef.Status::getNodeRef)
+							.toList());
+
+					minSearchNodeId += BATCH_SIZE;
+					maxSearchNodeId += BATCH_SIZE;
+				}
+
+				return result;
+			}
+
+			@Override
+			public int getTotalEstimatedWorkSize() {
+				return result.size();
+			}
+
+			@Override
+			public long getTotalEstimatedWorkSizeLong() {
+				return getTotalEstimatedWorkSize();
+			}
+		};
+
+		return new BatchProcessor<>("ScoreListPatch", transactionService.getRetryingTransactionHelper(), workProvider, BATCH_THREADS, BATCH_SIZE,
+				applicationEventPublisher, logger, 500);
+	}
+	
 
 
 }

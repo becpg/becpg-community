@@ -197,7 +197,7 @@ public class FormulationSVHCIT extends PLMBaseTestCase {
 	 */
 	private void verifySVHCList(NodeRef finishedProductNodeRef) {
 		logger.info("Verifying formulated SVHC");
-		ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+		ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 		int checks = 0;
 
 		for (SvhcListDataItem svhcListDataItem : formulatedProduct.getSvhcList()) {

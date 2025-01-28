@@ -55,7 +55,7 @@ public class DepthLevelListPolicyIT extends PLMBaseTestCase {
 
 		final ProductData finishedProductLoaded = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-			final ProductData tmp = alfrescoRepository.findOne(finishedProductNodeRef);
+			final ProductData tmp = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 
 			assertNotNull(tmp.getCompoListView().getCompoList());
 
@@ -225,7 +225,7 @@ public class DepthLevelListPolicyIT extends PLMBaseTestCase {
 		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			ProductData finishedProductLoaded2 = alfrescoRepository.findOne(finishedProductNodeRef);
+			ProductData finishedProductLoaded2 = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 
 			printSort(finishedProductLoaded.getCompoListView().getCompoList());
 
@@ -248,7 +248,7 @@ public class DepthLevelListPolicyIT extends PLMBaseTestCase {
 
 		final ProductData finishedProductLoaded = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-			ProductData tmp = alfrescoRepository.findOne(finishedProductNodeRef);
+			ProductData tmp = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 
 			assertNotNull(tmp.getCompoListView().getCompoList());
 
@@ -307,7 +307,7 @@ public class DepthLevelListPolicyIT extends PLMBaseTestCase {
 
 		final ProductData finishedProductLoaded = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-			ProductData tmp = alfrescoRepository.findOne(finishedProductNodeRef);
+			ProductData tmp = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 
 			assertNotNull(tmp.getCompoListView().getCompoList());
 
@@ -517,7 +517,7 @@ public class DepthLevelListPolicyIT extends PLMBaseTestCase {
 		NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper()
 				.doInTransaction(() -> BeCPGPLMTestHelper.createMultiLevelProduct(getTestFolderNodeRef()), false, true);
 
-		final ProductData finishedProductLoaded = alfrescoRepository.findOne(finishedProductNodeRef);
+		final ProductData finishedProductLoaded = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 
 		assertNotNull(finishedProductLoaded.getCompoListView().getCompoList());
 
@@ -569,7 +569,7 @@ public class DepthLevelListPolicyIT extends PLMBaseTestCase {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-			ProductData finishedProductLoaded = alfrescoRepository.findOne(finishedProductNodeRef);
+			ProductData finishedProductLoaded = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 
 			finishedProductLoaded.getCompoListView().getCompoList().get(0).setParent(finishedProductLoaded.getCompoListView().getCompoList().get(1));
 			alfrescoRepository.save(finishedProductLoaded);
@@ -586,8 +586,8 @@ public class DepthLevelListPolicyIT extends PLMBaseTestCase {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-			final ProductData finishedProductLoaded = alfrescoRepository.findOne(finishedProductNodeRef);
-			final ProductData copiedProductLoaded = alfrescoRepository.findOne(copiedNodeRef);
+			final ProductData finishedProductLoaded = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+			final ProductData copiedProductLoaded = (ProductData) alfrescoRepository.findOne(copiedNodeRef);
 			
 			printSort(finishedProductLoaded.getCompoList());
 			logger.debug("copied sort :"+copiedProductLoaded.getName());

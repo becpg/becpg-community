@@ -117,7 +117,7 @@ public class DefaultProductReportExtractorIT extends AbstractFinishedProductTest
 			associationService.update(finishedProduct.getNodeRef(), PLMModel.ASSOC_PRODUCT_SPECIFICATIONS, psdNodeRefs);
 
 			// add labelingTemplate aspect
-			ProductData finishedProductData = alfrescoRepository.findOne(finishedProductNodeRef);
+			ProductData finishedProductData = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 			Map<QName, Serializable> properties = new HashMap<>();
 			properties.put(PackModel.PROP_LABELING_POSITION, "Côté de la boîte");
 			nodeService.addAspect(finishedProductData.getPackagingList().get(0).getNodeRef(), PackModel.ASPECT_LABELING, properties);

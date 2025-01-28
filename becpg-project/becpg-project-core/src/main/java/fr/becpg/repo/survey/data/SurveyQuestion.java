@@ -9,7 +9,10 @@ import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfReadOnly;
+import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
+import fr.becpg.repo.repository.annotation.InternalField;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 /**
@@ -36,8 +39,10 @@ public class SurveyQuestion extends BeCPGDataObject {
 
 	private String questionLowerNote;
 	private String questionUrl;
-	private String surveyCriterion;
-	private Integer questionScore;
+	
+	private NodeRef scoreCriterion;	
+	private Double questionScore;
+	
 	private Boolean isMandatory;
 	private Boolean isVisible;
 	private String responseType;
@@ -141,15 +146,18 @@ public class SurveyQuestion extends BeCPGDataObject {
 		return questionUrl;
 	}
 
-	/**
-	 * <p>Getter for the field <code>surveyCriterion</code>.</p>
-	 *
-	 * @return a {@link java.lang.String} object
-	 */
-	@AlfProp
-	@AlfQname(qname = "survey:questionCriterion")
-	public String getSurveyCriterion() {
-		return surveyCriterion;
+	
+
+	@AlfSingleAssoc
+	@DataListIdentifierAttr
+	@AlfQname(qname = "survey:scoreCriterion")
+	@InternalField
+	public NodeRef getScoreCriterion() {
+		return scoreCriterion;
+	}
+
+	public void setScoreCriterion(NodeRef scoreCriterion) {
+		this.scoreCriterion = scoreCriterion;
 	}
 
 	/**
@@ -159,7 +167,7 @@ public class SurveyQuestion extends BeCPGDataObject {
 	 */
 	@AlfProp
 	@AlfQname(qname = "survey:questionScore")
-	public Integer getQuestionScore() {
+	public Double getQuestionScore() {
 		return questionScore;
 	}
 
@@ -294,20 +302,11 @@ public class SurveyQuestion extends BeCPGDataObject {
 	}
 
 	/**
-	 * <p>Setter for the field <code>surveyCriterion</code>.</p>
-	 *
-	 * @param surveyCriterion a {@link java.lang.String} object
-	 */
-	public void setSurveyCriterion(String surveyCriterion) {
-		this.surveyCriterion = surveyCriterion;
-	}
-
-	/**
 	 * <p>Setter for the field <code>questionScore</code>.</p>
 	 *
 	 * @param questionScore a {@link java.lang.Integer} object
 	 */
-	public void setQuestionScore(Integer questionScore) {
+	public void setQuestionScore(Double questionScore) {
 		this.questionScore = questionScore;
 	}
 
@@ -487,7 +486,7 @@ public class SurveyQuestion extends BeCPGDataObject {
 		result = prime * result + Objects.hash(fsLinkedCharactRefs, fsLinkedHierarchy, fsLinkedTypes, fsSurveyListName,
 				isMandatory, isVisible, label, nextQuestions, parent, plants, questionLowerNote, questionNote,
 				questionScore, questionUpperNote, questionUrl, responseCommentLabel, responseCommentType, responseType,
-				sort, subsidiaryRefs, surveyCriterion);
+				sort, subsidiaryRefs, scoreCriterion);
 		return result;
 	}
 
@@ -516,14 +515,14 @@ public class SurveyQuestion extends BeCPGDataObject {
 				&& Objects.equals(responseCommentType, other.responseCommentType)
 				&& Objects.equals(responseType, other.responseType) && Objects.equals(sort, other.sort)
 				&& Objects.equals(subsidiaryRefs, other.subsidiaryRefs)
-				&& Objects.equals(surveyCriterion, other.surveyCriterion);
+				&& Objects.equals(scoreCriterion, other.scoreCriterion);
 	}
 
 	@Override
 	public String toString() {
 		return "SurveyQuestion [parent=" + parent + ", label=" + label + ", questionNote=" + questionNote
 				+ ", questionUpperNote=" + questionUpperNote + ", questionLowerNote=" + questionLowerNote
-				+ ", questionUrl=" + questionUrl + ", surveyCriterion=" + surveyCriterion + ", questionScore="
+				+ ", questionUrl=" + questionUrl + ", scoreCriterion=" + scoreCriterion + ", questionScore="
 				+ questionScore + ", isMandatory=" + isMandatory + ", isVisible=" + isVisible + ", responseType="
 				+ responseType + ", responseCommentType=" + responseCommentType + ", responseCommentLabel="
 				+ responseCommentLabel + ", nextQuestions=" + nextQuestions + ", sort=" + sort

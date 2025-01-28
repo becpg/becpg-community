@@ -110,11 +110,9 @@ public class StandardSoapTestProduct extends StandardProductBuilder {
 		}
 
 		if (isWithPhysico) {
-			// Add physico-chemical properties
-			addPhysicoChemProperty(soapProduct, "Boiling point", HazardClassificationFormulaContext.BOILING_POINT, 78.0); // Boiling point
-			addPhysicoChemProperty(soapProduct, "Flash point", HazardClassificationFormulaContext.FLASH_POINT, 23.0); // Flash point
-			addPhysicoChemProperty(soapProduct, "Hydrocarbon", HazardClassificationFormulaContext.HYDROCARBON_PERC, 15.0); // Hydrocarbon percentage
-
+			
+			createPhysicoChems(soapProduct);
+		
 		}
 
 		if (isWithSpecification) {
@@ -126,6 +124,13 @@ public class StandardSoapTestProduct extends StandardProductBuilder {
 		alfrescoRepository.create(destFolder, soapProduct);
 
 		return soapProduct;
+	}
+
+	protected void createPhysicoChems(FinishedProductData soapProduct) {
+		// Add physico-chemical properties
+		addPhysicoChemProperty(soapProduct, "Boiling point", HazardClassificationFormulaContext.BOILING_POINT, 78.0); // Boiling point
+		addPhysicoChemProperty(soapProduct, "Flash point", HazardClassificationFormulaContext.FLASH_POINT, 23.0); // Flash point
+		addPhysicoChemProperty(soapProduct, "Hydrocarbon", HazardClassificationFormulaContext.HYDROCARBON_PERC, 15.0); // Hydrocarbon percentage
 	}
 
 	protected List<ProductSpecificationData> createProductSpecifications() {
