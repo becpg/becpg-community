@@ -23,18 +23,38 @@ public class BatchStep<T> {
 	
 	private String batchUser;
 	
+	/**
+	 * <p>Getter for the field <code>batchUser</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	public String getBatchUser() {
 		return batchUser;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>batchUser</code>.</p>
+	 *
+	 * @param batchUser a {@link java.lang.String} object
+	 */
 	public void setBatchUser(String batchUser) {
 		this.batchUser = batchUser;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>runAsSystem</code>.</p>
+	 *
+	 * @param runAsSystem a {@link java.lang.Boolean} object
+	 */
 	public void setRunAsSystem(Boolean runAsSystem) {
 		this.runAsSystem = runAsSystem;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>runAsSystem</code>.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object
+	 */
 	public Boolean getRunAsSystem() {
 		return runAsSystem;
 	}

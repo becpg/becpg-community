@@ -88,11 +88,23 @@ public class ProductSpecificationData extends ProductData {
 		return this;
 	}
 	
+	/**
+	 * <p>withHcList.</p>
+	 *
+	 * @param hList a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.product.data.ProductSpecificationData} object
+	 */
 	public ProductSpecificationData withHcList(List<HazardClassificationListDataItem> hList) {
 		setHcList(hList);
 		return this;
 	}
 	
+	/**
+	 * <p>withForbiddenIngList.</p>
+	 *
+	 * @param forbiddenIngList a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.product.data.ProductSpecificationData} object
+	 */
 	public ProductSpecificationData withForbiddenIngList(List<ForbiddenIngListDataItem> forbiddenIngList) {
 		setForbiddenIngList(forbiddenIngList);
 		return this;

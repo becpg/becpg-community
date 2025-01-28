@@ -104,6 +104,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	protected static final String ATTR_LANGUAGE = "language";
 	/** Constant <code>ATTR_LANGUAGE_CODE="languageCode"</code> */
 	protected static final String ATTR_LANGUAGE_CODE = "languageCode";
+	/** Constant <code>ATTR_GROUP="group"</code> */
 	protected static final String ATTR_GROUP = "group";
 
 	private static final String ATTR_PKG_TARE_LEVEL_1 = "tarePkgLevel1";

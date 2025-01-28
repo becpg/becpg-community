@@ -163,13 +163,11 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * <pre>
  * {@code
  *     <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-          <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ing?extra.getByAssoc=bcpg:linkedSearchAssociation</control-param>
-          <control-param name="parentAssoc">bcpg_ingListIng</control-param>
-        </control>
+ *          <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ing?extra.getByAssoc=bcpg:linkedSearchAssociation</control-param>
+ *          <control-param name="parentAssoc">bcpg_ingListIng</control-param>
+ *        </control>
  * }
  * </pre>
- *
- *
  *
  * @author matthieu
  * @version $Id: $Id
@@ -183,6 +181,7 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 	/** Constant <code>PROP_FILTER_BY_ASSOC="filterByAssoc"</code> */
 	protected static final String PROP_FILTER_BY_ASSOC = "filterByAssoc";
 
+	/** Constant <code>PROP_GET_BY_ASSOC="getByAssoc"</code> */
 	protected static final String PROP_GET_BY_ASSOC = "getByAssoc";
 	/** Constant <code>SOURCE_TYPE_TARGET_ASSOC="targetassoc"</code> */
 	protected static final String SOURCE_TYPE_TARGET_ASSOC = "targetassoc";
@@ -430,6 +429,12 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 		return ret;
 	}
 
+	/**
+	 * <p>extractEntityNodeRef.</p>
+	 *
+	 * @param props a {@link java.util.Map} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	protected NodeRef extractEntityNodeRef(Map<String, Serializable> props) {
 		NodeRef entityNodeRef = null;
 		if (props != null) {

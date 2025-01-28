@@ -501,7 +501,7 @@ public class DesignerServiceImpl implements DesignerService {
 				}
 
 			} catch (IOException | SAXException | ParserConfigurationException | FactoryConfigurationError | IllegalArgumentException
-					| IllegalAccessException | InvocationTargetException | ClassNotFoundException e) {
+					| IllegalAccessException | InvocationTargetException  e) {
 				logger.error(e, e);
 			}
 		}

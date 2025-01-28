@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2021 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.designer.admin;
@@ -51,48 +51,46 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * @version $Id: $Id
  */
 @Service
-public class DesignerInitVisitor extends AbstractInitVisitorImpl  {
-	
+public class DesignerInitVisitor extends AbstractInitVisitorImpl {
+
 	private static final String PATH_CONFIGS = "configs";
 
 	private static final String XPATH_DICTIONARY = "./app:dictionary";
 
 	private static final String PATH_MODELS = "../app:models";
-	
+
 	@Autowired
 	private ContentHelper contentHelper;
-	
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public List<SiteInfo> visitContainer(NodeRef companyHome) {
-		
+
 		logger.info("Run DesignerInitVisitor");
-		
+
 		// System
 		NodeRef dictionaryNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(companyHome, XPATH_DICTIONARY);
-		
 
 		// Security
 		visitFolder(dictionaryNodeRef, PATH_CONFIGS);
-		
-		 return new ArrayList<>();
+
+		return new ArrayList<>();
 
 	}
-	
+
 	/** {@inheritDoc} */
 	@Override
 	protected void visitRules(NodeRef nodeRef, String folderName) {
 		if (Objects.equals(folderName, PATH_CONFIGS)) {
-			addAspectRule(nodeRef, "Add config aspect", "Add config aspect to xml file", DesignerModel.ASPECT_CONFIG, MimetypeMap.MIMETYPE_XML, ".xml");
-			addAspectRule(nodeRef, "Add config aspect", "Add config aspect to properties file", DesignerModel.ASPECT_CONFIG, MimetypeMap.MIMETYPE_TEXT_PLAIN, ".properties");
-			addAspectRule(getModelNodeRef(nodeRef), "Add model aspect", "Add model aspect to xml file", DesignerModel.ASPECT_MODEL, MimetypeMap.MIMETYPE_XML, ".xml");
+			addAspectRule(nodeRef, "Add config aspect", "Add config aspect to xml file", DesignerModel.ASPECT_CONFIG, MimetypeMap.MIMETYPE_XML,
+					".xml");
+			addAspectRule(nodeRef, "Add config aspect", "Add config aspect to properties file", DesignerModel.ASPECT_CONFIG,
+					MimetypeMap.MIMETYPE_TEXT_PLAIN, ".properties");
+			addAspectRule(getModelNodeRef(nodeRef), "Add model aspect", "Add model aspect to xml file", DesignerModel.ASPECT_MODEL,
+					MimetypeMap.MIMETYPE_XML, ".xml");
 		}
 	}
-	
 
-
-	
 	private NodeRef getModelNodeRef(NodeRef configNodeRef) {
 		return BeCPGQueryBuilder.createQuery().selectNodeByPath(configNodeRef, PATH_MODELS);
 	}
@@ -105,10 +103,16 @@ public class DesignerInitVisitor extends AbstractInitVisitorImpl  {
 			contentHelper.addFilesResources(getModelNodeRef(folderNodeRef), "classpath:beCPG/designer/extCustomModel.xml");
 		}
 	}
-	
 
-
-
+	/**
+	 * 
+	 * @param nodeRef
+	 * @param ruleName
+	 * @param ruleDescription
+	 * @param aspectModel
+	 * @param mimeType
+	 * @param nameExtension
+	 */
 	private void addAspectRule(NodeRef nodeRef, String ruleName, String ruleDescription, QName aspectModel, String mimeType, String nameExtension) {
 
 		// action

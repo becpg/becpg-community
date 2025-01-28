@@ -23,6 +23,11 @@ import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 
+/**
+ * <p>LabelingRuleAutoCompletePlugin class.</p>
+ *
+ * @author matthieu
+ */
 @Service("labelingRuleAutoCompletePlugin")
 public class LabelingRuleAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 
@@ -33,11 +38,13 @@ public class LabelingRuleAutoCompletePlugin extends TargetAssocAutoCompletePlugi
     @Autowired
     private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
+    /** {@inheritDoc} */
     @Override
     public String[] getHandleSourceTypes() {
         return new String[] { SOURCE_TYPE_LABELING };
     }
 
+    /** {@inheritDoc} */
     @Override
     public AutoCompletePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
         logger.info("Executing suggest method with sourceType: " + sourceType + ", query: " + query);

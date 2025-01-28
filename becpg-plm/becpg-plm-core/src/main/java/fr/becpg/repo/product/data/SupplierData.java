@@ -63,6 +63,11 @@ public class SupplierData extends BeCPGDataObject implements HierarchicalEntity,
 	private List<SurveyListDataItem> surveyList;
 	private Integer supplierScore;
 
+	/**
+	 * <p>Getter for the field <code>entityTpl</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.SupplierData} object
+	 */
 	@AlfSingleAssoc(isEntity = true, isCacheable = true)
 	@AlfQname(qname = "bcpg:entityTplRef")
 	public SupplierData getEntityTpl() {
