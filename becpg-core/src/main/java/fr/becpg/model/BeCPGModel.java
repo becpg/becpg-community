@@ -332,12 +332,18 @@ public final class BeCPGModel {
 	public static final QName TYPE_SAVED_SEARCH = QName.createQName(BECPG_URI, "savedSearch");
 	/** Constant <code>PROP_SAVED_SEARCH_TYPE</code> */
 	public static final QName PROP_SAVED_SEARCH_TYPE = QName.createQName(BECPG_URI, "savedSearchType");
+	/** Constant <code>PROP_ING_TOX_ACUTE_ORAL</code> */
 	public static final QName PROP_ING_TOX_ACUTE_ORAL = QName.createQName(BECPG_URI, "ingToxAcuteOral");
+	/** Constant <code>PROP_ING_TOX_ACUTE_DERMAL</code> */
 	public static final QName PROP_ING_TOX_ACUTE_DERMAL = QName.createQName(BECPG_URI, "ingToxAcuteDermal");
+	/** Constant <code>PROP_ING_TOX_ACUTE_INHALATION</code> */
 	public static final QName PROP_ING_TOX_ACUTE_INHALATION = QName.createQName(BECPG_URI, "ingToxAcuteInhalation");
 	
+	/** Constant <code>PROP_ING_TOX_AQUATIC_MFACTOR</code> */
 	public static final QName PROP_ING_TOX_AQUATIC_MFACTOR = QName.createQName(BECPG_URI, "ingToxAquaticMFactor");
+	/** Constant <code>PROP_ING_TOX_IS_SUPER_SENSITIZING</code> */
 	public static final QName PROP_ING_TOX_IS_SUPER_SENSITIZING =  QName.createQName(BECPG_URI, "ingToxIsSuperSensitizing");
+	/** Constant <code>PROP_ING_TOX_ACUTE_INHALATION_TYPE</code> */
 	public static final QName PROP_ING_TOX_ACUTE_INHALATION_TYPE = QName.createQName(BECPG_URI, "ingToxAcuteInhalationType");
 	/** Constant <code>ASPECT_MANUFACTURING_ASPECT</code> */
 	public static final QName ASPECT_MANUFACTURING_ASPECT = QName.createQName(BECPG_URI, "manufacturingAspect");

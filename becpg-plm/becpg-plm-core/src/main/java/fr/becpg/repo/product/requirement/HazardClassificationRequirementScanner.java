@@ -31,9 +31,7 @@ public class HazardClassificationRequirementScanner extends AbstractRequirementS
 
 	private static Log logger = LogFactory.getLog(HazardClassificationRequirementScanner.class);
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public List<ReqCtrlListDataItem> checkRequirements(ProductData formulatedProduct, 
 	        List<ProductSpecificationData> specifications) {
