@@ -56,6 +56,7 @@ public class ChangeOrderData extends BeCPGDataObject {
 	private ECOState ecoState;
 	private ChangeOrderType ecoType;
 	private Date effectiveDate;
+	private Boolean applyToAll;
 	private List<NodeRef> calculatedCharacts;
 	private List<ReplacementListDataItem> replacementList;
 	private List<WUsedListDataItem> wUsedList;
@@ -63,6 +64,16 @@ public class ChangeOrderData extends BeCPGDataObject {
 	private List<ChangeUnitDataItem> changeUnitList;
 	private List<String> propertiesToCopy;
 
+	@AlfProp
+	@AlfQname(qname = "ecm:applyToAll")
+	public Boolean getApplyToAll() {
+		return applyToAll;
+	}
+	
+	public void setApplyToAll(Boolean applyToAll) {
+		this.applyToAll = applyToAll;
+	}
+	
 	/**
 	 * <p>Getter for the field <code>propertiesToCopy</code>.</p>
 	 *

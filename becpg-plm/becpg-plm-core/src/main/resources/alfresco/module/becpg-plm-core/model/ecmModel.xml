@@ -98,6 +98,10 @@
                     <multiple>true</multiple>
                     <index enabled="false"/>
                 </property>
+                <property name="ecm:applyToAll">
+                    <type>d:boolean</type>
+                    <index enabled="false"/>
+                </property>
             </properties>
             <associations>              
                 <association name="ecm:calculatedCharacts">
