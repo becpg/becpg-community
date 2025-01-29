@@ -594,17 +594,12 @@ if (beCPG.module.EntityDataGridRenderers) {
 
 
 
-	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-		propertyName: ["bcpg:allergenListQtyPerc", "bcpg:allergenRegulatoryThreshold", "bcpg:allergenInVoluntaryRegulatoryThreshold", "bcpg:ingListQtyPerc", "bcpg:ingListQtyPercWithYield", "bcpg:ingListQtyPercWithSecondaryYield"],
-		renderer: function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
-			if (data.value != null) {
-				var forceUnit = oColumn.forceUnit;
-
-
-				if (oColumn.hidden) {
-					oColumn.showAfterRender = true;
-				}
-				var sigFig = 5;
+    YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName: ["bcpg:allergenListQtyPerc", "bcpg:allergenRegulatoryThreshold", "bcpg:allergenInVoluntaryRegulatoryThreshold","bcpg:svhcListQtyPerc"
+            , "bcpg:ingListQtyPerc", "bcpg:ingListQtyPercWithYield", "bcpg:ingListQtyPercWithSecondaryYield"],
+        renderer: function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+            if (data.value != null) {
+                var forceUnit = oColumn.forceUnit;
 
 				var unit, qty;
 				if (data.value == 0) {
