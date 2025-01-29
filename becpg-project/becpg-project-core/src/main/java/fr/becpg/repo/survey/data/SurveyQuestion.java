@@ -479,6 +479,7 @@ public class SurveyQuestion extends BeCPGDataObject {
 		this.plants = plants;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -490,6 +491,7 @@ public class SurveyQuestion extends BeCPGDataObject {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -518,6 +520,7 @@ public class SurveyQuestion extends BeCPGDataObject {
 				&& Objects.equals(scoreCriterion, other.scoreCriterion);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "SurveyQuestion [parent=" + parent + ", label=" + label + ", questionNote=" + questionNote

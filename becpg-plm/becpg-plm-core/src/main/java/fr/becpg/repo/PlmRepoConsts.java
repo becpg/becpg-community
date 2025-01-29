@@ -323,6 +323,7 @@ public class PlmRepoConsts {
 	/** Constant <code>PATH_LCA_DATABASES="LCADatabases"</code> */
 	public static final String PATH_LCA_DATABASES = "LCADatabases";
 	
+	/** Constant <code>PATH_CLP_DATABASES="CLPDatabases"</code> */
 	public static final String PATH_CLP_DATABASES = "CLPDatabases";
 
 	//GS1

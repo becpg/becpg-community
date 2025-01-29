@@ -335,11 +335,23 @@ public class DecernisServiceImpl  extends AbstractLifecycleBean implements Decer
 	}
 
 	private void analyzeRecipe(RegulatoryContext productContext) {
-		for (RegulatoryContextItem contextItem : productContext.getContextItems()) {
-			if (!contextItem.isEmpty()) {
-				getAnalysisPlugin().extractRequirements(productContext, contextItem);
+		
+		for (Integer moduleId : moduleIdMap.values()) {
+			RegulatoryContextItem moduleContextItem = new RegulatoryContextItem();
+			for (RegulatoryContextItem contextItem : productContext.getContextItems()) {
+				if (!contextItem.isEmpty()) {
+					for (UsageContext usage : contextItem.getUsages()) {
+						if (usage.getModuleId().intValue() == moduleId.intValue()) {
+							moduleContextItem.getCountries().putAll(contextItem.getCountries());
+							moduleContextItem.getUsages().add(usage);
+						}
+					}
+				}
+			}
+			if (!moduleContextItem.isEmpty()) {
+				getAnalysisPlugin().extractRequirements(productContext, moduleContextItem);
 				if (Boolean.TRUE.equals(ingredientAnalysisEnabled())) {
-					getAnalysisPlugin().ingredientAnalysis(productContext, contextItem);
+					getAnalysisPlugin().ingredientAnalysis(productContext, moduleContextItem);
 				}
 			}
 		}

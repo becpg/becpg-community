@@ -53,6 +53,14 @@ public abstract class AbstractCompositionQtyCalculatingFormulationHandler<T> ext
 	}
 
 
+	/**
+	 * <p>visitQtyChildren.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param parentQty a {@link java.lang.Double} object
+	 * @param composite a {@link fr.becpg.repo.data.hierarchicalList.Composite} object
+	 * @throws fr.becpg.repo.formulation.FormulateException if any.
+	 */
 	protected void visitQtyChildren(ProductData formulatedProduct, Double parentQty, Composite<CompoListDataItem> composite) throws FormulateException {
 
 		for (Composite<CompoListDataItem> component : composite.getChildren()) {
@@ -110,6 +118,12 @@ public abstract class AbstractCompositionQtyCalculatingFormulationHandler<T> ext
 	}
 
 
+	/**
+	 * <p>calculateQtyInKg.</p>
+	 *
+	 * @param compoListDataItem a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object
+	 * @return a {@link java.math.BigDecimal} object
+	 */
 	protected BigDecimal calculateQtyInKg(CompoListDataItem compoListDataItem) {
 		Double qty = compoListDataItem.getQtySubFormula();
 		ProductUnit compoListUnit = compoListDataItem.getCompoListUnit();

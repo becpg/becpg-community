@@ -269,12 +269,22 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem
 	
 	
 	
+	/**
+	 * <p>Getter for the field <code>stockType</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.constraints.StockType} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:compoListStockType")
 	public StockType getStockType() {
 		return stockType;
 	}
 
+	/**
+	 * <p>Setter for the field <code>stockType</code>.</p>
+	 *
+	 * @param stockType a {@link fr.becpg.repo.product.data.constraints.StockType} object
+	 */
 	public void setStockType(StockType stockType) {
 		this.stockType = stockType;
 	}
@@ -442,6 +452,12 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem
 		return this;
 	}
 	
+	/**
+	 * <p>withStockType.</p>
+	 *
+	 * @param stockType a {@link fr.becpg.repo.product.data.constraints.StockType} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object
+	 */
 	public CompoListDataItem withStockType(StockType stockType) {
 		this.stockType = stockType;
 		return this;

@@ -2469,12 +2469,22 @@ public class ProductData extends AbstractScorableEntity
 		this.svhcList = svhcList;
 	}
 
+	/**
+	 * <p>Getter for the field <code>hcList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	@DataList
 	@AlfQname(qname = "ghs:hazardClassificationList")
 	public List<HazardClassificationListDataItem> getHcList() {
 		return hcList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>hcList</code>.</p>
+	 *
+	 * @param hcList a {@link java.util.List} object
+	 */
 	public void setHcList(List<HazardClassificationListDataItem> hcList) {
 		this.hcList = hcList;
 	}
