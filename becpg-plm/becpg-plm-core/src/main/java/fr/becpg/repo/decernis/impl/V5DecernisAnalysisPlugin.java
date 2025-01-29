@@ -127,7 +127,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 						}
 					}
 					if (recipeAnalysisResults != null) {
-						parseRecipeAnalysisResults(productContext, contextItem, usageContext, countries, recipeAnalysisResults);
+						parseRecipeAnalysisResults(productContext, usageContext, countries, recipeAnalysisResults);
 					}
 				}
 			}
@@ -387,7 +387,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 		return functions;
 	}
 
-	private void parseRecipeAnalysisResults(RegulatoryContext productContext, RegulatoryContextItem contextItem, UsageContext usageContext,
+	private void parseRecipeAnalysisResults(RegulatoryContext productContext, UsageContext usageContext,
 			List<String> countries, JSONObject analysisResults) {
 		for (String country : countries) {
 

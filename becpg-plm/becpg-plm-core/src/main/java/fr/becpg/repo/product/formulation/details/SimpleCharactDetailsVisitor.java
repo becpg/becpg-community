@@ -124,6 +124,11 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 		return ret;
 	}
 	
+	/**
+	 * <p>applyYield.</p>
+	 *
+	 * @return a boolean
+	 */
 	protected boolean applyYield() {
 		return true;
 	}

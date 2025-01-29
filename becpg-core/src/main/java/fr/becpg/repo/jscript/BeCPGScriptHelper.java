@@ -1758,12 +1758,8 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 	/**
 	 * <p>count.</p>
-<<<<<<< 23.2.1
 	 *
 	 * @param type a {@link java.lang.String} object
-=======
-	 * @param type
->>>>>>> 5350029 [Feature] Improve ML helper
 	 * @return Number of object of type
 	 */
 	public Long count(String type) {

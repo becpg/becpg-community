@@ -13,12 +13,18 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.impl.CharactAttributeExtractorPlugin;
 
+/**
+ * <p>RegulatoryListAttributeExtractorPlugin class.</p>
+ *
+ * @author matthieu
+ */
 @Service
 public class RegulatoryListAttributeExtractorPlugin extends CharactAttributeExtractorPlugin {
 
 	@Autowired
 	private AssociationService associationService;
 	
+	/** {@inheritDoc} */
 	@Override
 	public String extractPropName(QName type, NodeRef nodeRef) {
 		String countries = associationService.getTargetAssocs(nodeRef, PLMModel.ASSOC_REGULATORY_COUNTRIES)
@@ -34,11 +40,13 @@ public class RegulatoryListAttributeExtractorPlugin extends CharactAttributeExtr
 		return countries + ", " + usages;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Collection<QName> getMatchingTypes() {
 		return Collections.singletonList(PLMModel.TYPE_REGULATORY_LIST);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public Integer getPriority() {
 		return 1;
