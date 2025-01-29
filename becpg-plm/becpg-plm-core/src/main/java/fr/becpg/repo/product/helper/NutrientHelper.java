@@ -339,7 +339,6 @@ public class NutrientHelper {
 	 *
 	 * @param part a {@link org.json.JSONObject} object
 	 * @param categories an array of {@link double} objects
-	 * @param includeLower a boolean
 	 */
 	public static void buildNutriScorePart(JSONObject part, double[] categories) {
 

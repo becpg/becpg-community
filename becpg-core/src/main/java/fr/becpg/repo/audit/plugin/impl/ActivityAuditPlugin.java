@@ -91,6 +91,7 @@ public class ActivityAuditPlugin extends AbstractAuditPlugin implements ExtraQue
 		// nothing
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public AuditQuery extraQuery(AuditQuery auditQuery) {
 		if (auditQuery.getFilter() != null && auditQuery.getFilter().contains(ENTITY_NODEREF + "=") && auditQuery.getFilter().split(ENTITY_NODEREF + "=").length > 1

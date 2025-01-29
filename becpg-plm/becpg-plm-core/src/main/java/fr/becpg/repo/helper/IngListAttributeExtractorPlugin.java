@@ -10,33 +10,29 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.impl.CharactAttributeExtractorPlugin;
-import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
- * <p>CompoListAttributeExtractorPlugin class.</p>
+ * <p>IngListAttributeExtractorPlugin class.</p>
  *
  * @author matthieu
  */
 @Service
-public class CompoListAttributeExtractorPlugin extends CharactAttributeExtractorPlugin {
+public class IngListAttributeExtractorPlugin extends CharactAttributeExtractorPlugin {
 
 	@Autowired
 	private AssociationService associationService;
 	
-	@Autowired
-	private SystemConfigurationService systemConfigurationService;
-	
 	/** {@inheritDoc} */
 	@Override
 	public String extractPropName(QName type, NodeRef nodeRef) {
-		NodeRef product = associationService.getTargetAssoc(nodeRef, PLMModel.ASSOC_COMPOLIST_PRODUCT);
-		return super.extractExpr(product, systemConfigurationService.confValue("beCPG.product.name.format"));
+		NodeRef ing = associationService.getTargetAssoc(nodeRef, PLMModel.ASSOC_INGLIST_ING);
+		return super.extractPropName(type, ing);
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public Collection<QName> getMatchingTypes() {
-		return Collections.singletonList(PLMModel.TYPE_COMPOLIST);
+		return Collections.singletonList(PLMModel.TYPE_INGLIST);
 	}
 	
 	/** {@inheritDoc} */
@@ -48,7 +44,7 @@ public class CompoListAttributeExtractorPlugin extends CharactAttributeExtractor
 	/** {@inheritDoc} */
 	@Override
 	public String extractMetadata(QName type, NodeRef nodeRef) {
-		NodeRef product = associationService.getTargetAssoc(nodeRef, PLMModel.ASSOC_COMPOLIST_PRODUCT);
+		NodeRef product = associationService.getTargetAssoc(nodeRef, PLMModel.TYPE_INGLIST);
 		return super.extractMetadata(nodeService.getType(product), product);
 	}
 

@@ -132,6 +132,12 @@ public class MLTextHelper {
 	}
 
 
+	/**
+	 * <p>isDisabledMLTextField.</p>
+	 *
+	 * @param propertyQNamePrexiString a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	public static boolean isDisabledMLTextField(String propertyQNamePrexiString) {
 		String disabledMLTextFields = SystemConfigurationRegistry.instance().confValue("beCPG.multilinguale.disabledMLTextFields");
 		return ((disabledMLTextFields != null) && !disabledMLTextFields.isBlank() && disabledMLTextFields.contains(propertyQNamePrexiString));
