@@ -114,9 +114,41 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 				return null;
 			});
 		}
-
 	}
 	
+
+	@Test
+	public void testSafeFormula() {
+		
+		List<String> safeFormulas = List.of("@beCPG.join(\", \", {\" test \"})");
+		
+		for (String unsafeFormula : safeFormulas) {
+			NodeRef finishedProductDataNodeRef = inWriteTx(() -> {
+				FinishedProductData finishedProductData = new FinishedProductData();
+				finishedProductData.setName("test FP " + unsafeFormula.hashCode());
+				List<DynamicCharactListItem> dynamicCharactListItems = new ArrayList<>();
+				dynamicCharactListItems.add(new DynamicCharactListItem("formula", unsafeFormula));
+				finishedProductData.getCompoListView().setDynamicCharactList(dynamicCharactListItems);
+				alfrescoRepository.create(getTestFolderNodeRef(), finishedProductData);
+				return finishedProductData.getNodeRef();
+			});
+			
+			inWriteTx(() -> {
+				L2CacheSupport.doInCacheContext(
+						() -> AuthenticationUtil
+						.runAsSystem(() -> formulationService.formulate(finishedProductDataNodeRef, FormulationService.DEFAULT_CHAIN_ID)),
+						false, true);
+				return true;
+			});
+			
+			inReadTx(() -> {
+				FinishedProductData finishedProductData = (FinishedProductData) alfrescoRepository.findOne(finishedProductDataNodeRef);
+				DynamicCharactListItem dynamicCharactListItem = finishedProductData.getCompoListView().getDynamicCharactList().get(0);
+				assertTrue(dynamicCharactListItem.getErrorLog() == null);
+				return null;
+			});
+		}
+	}
 	
 	@Test
 	public void testAuthorizedTypes() {

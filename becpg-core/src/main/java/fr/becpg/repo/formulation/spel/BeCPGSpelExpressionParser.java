@@ -21,6 +21,13 @@ public class BeCPGSpelExpressionParser extends SpelExpressionParser {
 			"ClassLoader.getSystemClassLoader(", "URLClassLoader.newInstance(", "Files.delete(", "Files.copy(", "Files.move(", ".eval(",
 			".executeScript(", ".invokeFunction(", ".readObject(", ".writeObject(" };
 	
+
+	private static final String[] SAFE_PATTERNS = { "@beCPG.join(" };
+	
+	/**
+	 * <p>Constructor for BeCPGSpelExpressionParser.</p>
+	 */
+
 	public BeCPGSpelExpressionParser() {
 		super();
 	}
@@ -42,6 +49,9 @@ public class BeCPGSpelExpressionParser extends SpelExpressionParser {
 	}
 
 	private void checkExpression(String expression) {
+		for (String safePattern : SAFE_PATTERNS) {
+			expression = expression.replace(safePattern, "");
+		}
 		for (String pattern : UNSAFE_PATTERNS) {
 			if (expression.contains(pattern)) {
 				logger.error("Expression is unsafe: " + expression);
