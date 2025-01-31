@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -67,9 +68,11 @@ import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.util.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.validator.routines.checkdigit.CheckDigitException;
+import org.json.JSONObject;
 import org.mozilla.javascript.Context;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.extensions.webscripts.ScriptValueConverter;
@@ -78,6 +81,9 @@ import fr.becpg.api.BeCPGPublicApi;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.EntityListState;
 import fr.becpg.model.ReportModel;
+import fr.becpg.repo.activity.EntityActivityService;
+import fr.becpg.repo.activity.data.ActivityEvent;
+import fr.becpg.repo.activity.data.ActivityType;
 import fr.becpg.repo.authentication.BeCPGTicketService;
 import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.entity.AutoNumService;
@@ -186,6 +192,12 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	private PersonService personService;
 
 	private RemoteUserMapper remoteUserMapper;
+	
+	private EntityActivityService entityActivityService;
+	
+	public void setEntityActivityService(EntityActivityService entityActivityService) {
+		this.entityActivityService = entityActivityService;
+	}
 
 	/**
 	 * <p>Setter for the field <code>remoteUserMapper</code>.</p>
@@ -2251,6 +2263,42 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 */
 	public boolean isSsoEnabled() {
 		return remoteUserMapper != null && (!(remoteUserMapper instanceof ActivateableBean activateableBean) || activateableBean.isActive());
+	}
+	
+	
+	/**
+	 * 
+	 * @param scriptNode
+	 * @param activityType
+	 * @param activityEvent
+	 * @param properties
+		 * {
+			  "qname1": {
+			    "before": "value1",
+			    "after": "value2"
+			  },
+			  "qname2": {
+			    "before": "value3",
+			    "after": "value4"
+			  }
+			}
+	 */
+	public void postEntityActivity(ScriptNode scriptNode, String activityType, String activityEvent, String properties) {
+		JSONObject jsonProperties = new JSONObject(properties);
+        Map<QName, Pair<Serializable, Serializable>> updatedProperties = new HashMap<>();
+        for (String key : jsonProperties.keySet()) {
+        	JSONObject value = jsonProperties.getJSONObject(key);
+        	Serializable before = "";
+        	if (value.has("before")) {
+        		before = (Serializable) ScriptValueConverter.unwrapValue(value.get("before"));
+        	}
+        	Serializable after = "";
+        	if (value.has("after")) {
+        		after = (Serializable) ScriptValueConverter.unwrapValue(value.get("after"));
+        	}
+			updatedProperties.put(QName.createQName(key, namespaceService), new Pair<>(before, after));
+        }
+		entityActivityService.postEntityActivity(scriptNode.getNodeRef(), ActivityType.valueOf(activityType), ActivityEvent.valueOf(activityEvent), updatedProperties);
 	}
 
 }
