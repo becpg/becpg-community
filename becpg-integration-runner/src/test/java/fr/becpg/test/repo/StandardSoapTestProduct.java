@@ -12,6 +12,7 @@ import org.alfresco.service.namespace.QName;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.GHSModel;
 import fr.becpg.model.PLMModel;
+import fr.becpg.repo.product.data.ClientData;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
@@ -23,8 +24,10 @@ import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
 import fr.becpg.repo.product.data.productList.HazardClassificationListDataItem;
 import fr.becpg.repo.product.data.productList.HazardClassificationListDataItem.SignalWord;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
+import fr.becpg.repo.product.data.productList.LCAListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.formulation.clp.HazardClassificationFormulaContext;
+import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.test.utils.CharactTestHelper;
 
 public class StandardSoapTestProduct extends StandardProductBuilder {
@@ -33,8 +36,18 @@ public class StandardSoapTestProduct extends StandardProductBuilder {
 	public static final String H290_DANGER_FORBIDDEN = "Product should not contain H290 with Danger";
 	public static final String DANGER_FORBIDDEN = "Product should not contain Danger";
 	public static final String GHS07_FORBIDDEN = "Product should not contain Pictogram GHS07";
+	public static final String CLIMATE_CHANGE = "Climate change";
+
+	// Transport subcategories
+	public static final String TRANSPORT_IMPACTS = "TRANSPORT IMPACTS (kg CO2/kg/km)";
+
+	public static final String EPI_SCORE = "EPI Score";
+	public static final String SPI_SCORE = "SPI Score";
+
+	public static final String SUPPLIER_ECOVADIS_CERTIFICATION = "Supplier Ecovadis Certification Score";
 
 	private boolean isWithCompo = true;
+	private boolean isWithScore = false;
 	private boolean isWithPhysico = true;
 	private boolean isWithSpecification = false;
 
@@ -43,6 +56,7 @@ public class StandardSoapTestProduct extends StandardProductBuilder {
 		this.isWithCompo = builder.isWithCompo;
 		this.isWithPhysico = builder.isWithPhysico;
 		this.isWithSpecification = builder.isWithSpecification;
+		this.isWithScore = builder.isWithScore;
 	}
 
 	// Static inner Builder class
@@ -50,6 +64,7 @@ public class StandardSoapTestProduct extends StandardProductBuilder {
 		private boolean isWithCompo = true;
 		private boolean isWithPhysico = true;
 		private boolean isWithSpecification = false;
+		private boolean isWithScore = false;
 
 		public Builder withCompo(boolean isWithCompo) {
 			this.isWithCompo = isWithCompo;
@@ -63,6 +78,11 @@ public class StandardSoapTestProduct extends StandardProductBuilder {
 
 		public Builder withSpecification(boolean isWithSpecification) {
 			this.isWithSpecification = isWithSpecification;
+			return this;
+		}
+
+		public Builder withScore(boolean isWithScore) {
+			this.isWithScore = isWithScore;
 			return this;
 		}
 
@@ -91,8 +111,17 @@ public class StandardSoapTestProduct extends StandardProductBuilder {
 	public FinishedProductData createTestProduct() {
 
 		// Create the soap finished product
-		FinishedProductData soapProduct = FinishedProductData.build().withName(uniqueName("🧼 Standard Natural Olive Soap 🫒💧")).withUnit(ProductUnit.kg).withQty(1000d)
-				.withDensity(1.2d);
+		FinishedProductData soapProduct = FinishedProductData.build().withName(uniqueName("🧼 Standard Natural Olive Soap 🫒💧"))
+				.withUnit(ProductUnit.kg).withQty(1000d).withDensity(1.2d);
+
+		if (isWithScore) {
+			//Client
+			ClientData clientData = ClientData.build().withName(uniqueName("Natural Soap Dealer Shop")).withScoreList(List.of(ScoreListDataItem
+					.build().withScoreCriterion(CharactTestHelper.getOrCreateScoreCriterion(nodeService, TRANSPORT_IMPACTS)).withScore(10d)));
+
+			alfrescoRepository.create(destFolder, clientData);
+			soapProduct.setClients(List.of(clientData));
+		}
 
 		if (isWithCompo) {
 			// Initialize raw materials if not already done
@@ -110,9 +139,9 @@ public class StandardSoapTestProduct extends StandardProductBuilder {
 		}
 
 		if (isWithPhysico) {
-			
+
 			createPhysicoChems(soapProduct);
-		
+
 		}
 
 		if (isWithSpecification) {
@@ -146,9 +175,10 @@ public class StandardSoapTestProduct extends StandardProductBuilder {
 						HazardClassificationListDataItem.build().withSignalWord(SignalWord.Danger.toString()).withRegulatoryMessage(DANGER_FORBIDDEN),
 
 						HazardClassificationListDataItem.build().withPictogram(CharactTestHelper.getOrCreatePicto(nodeService, "GHS07"))
-								.withRegulatoryMessage(GHS07_FORBIDDEN))).withForbiddenIngList(List.of(ForbiddenIngListDataItem
-										
-										.build().withQtyPercMaxi(2d).withIngs(List.of(CharactTestHelper.getOrCreateIng(nodeService, "Sodium Chloride")))));
+								.withRegulatoryMessage(GHS07_FORBIDDEN)))
+				.withForbiddenIngList(List.of(ForbiddenIngListDataItem
+
+						.build().withQtyPercMaxi(2d).withIngs(List.of(CharactTestHelper.getOrCreateIng(nodeService, "Sodium Chloride")))));
 
 		alfrescoRepository.create(destFolder, productSpecification);
 		return List.of(productSpecification);
@@ -157,24 +187,56 @@ public class StandardSoapTestProduct extends StandardProductBuilder {
 	public void initRawMaterialsWithIngredients() {
 		// Create Sodium Hydroxide raw material with ingredients
 		RawMaterialData sodiumHydroxide = RawMaterialData.build().withName(uniqueName(SODIUM_HYDROXIDE)).withQty(100d).withUnit(ProductUnit.kg)
-				.withIngList(createSodiumHydroxideIngredients());
+				.withIngList(createSodiumHydroxideIngredients())
+				.withGeoOrigins(List.of(CharactTestHelper.getOrCreateGeo(nodeService, "Germany", "DE")));
+
+		if (isWithScore) {
+
+			sodiumHydroxide = sodiumHydroxide.withScoreList(List.of(
+					ScoreListDataItem.build().withScoreCriterion(CharactTestHelper.getOrCreateScoreCriterion(nodeService, EPI_SCORE))
+							.withScore(62.4d),
+					ScoreListDataItem.build().withScoreCriterion(CharactTestHelper.getOrCreateScoreCriterion(nodeService, SPI_SCORE))
+							.withScore(77.4d)));
+			addLCAProperty(sodiumHydroxide, CLIMATE_CHANGE, "CLIMATE_CHANGE", 2.51d);
+
+		}
 
 		sodiumHydroxideNodeRef = alfrescoRepository.create(destFolder, sodiumHydroxide).getNodeRef();
 
 		// Create Olive Oil raw material with ingredients
 		RawMaterialData oliveOil = RawMaterialData.build().withName(uniqueName(OLIVE_OIL)).withQty(500d).withUnit(ProductUnit.kg)
-				.withIngList(createOliveOilIngredients());
+				.withIngList(createOliveOilIngredients()).withGeoOrigins(List.of(CharactTestHelper.getOrCreateGeo(nodeService, "France", "FR")));
+
+		if (isWithScore) {
+
+			oliveOil = oliveOil.withScoreList(List.of(
+					ScoreListDataItem.build().withScoreCriterion(CharactTestHelper.getOrCreateScoreCriterion(nodeService, EPI_SCORE))
+							.withScore(62.5d),
+					ScoreListDataItem.build().withScoreCriterion(CharactTestHelper.getOrCreateScoreCriterion(nodeService, SPI_SCORE))
+							.withScore(77.5d)));
+			addLCAProperty(sodiumHydroxide, CLIMATE_CHANGE, "CLIMATE_CHANGE", 109.99d);
+
+		}
 
 		oliveOilNodeRef = alfrescoRepository.create(destFolder, oliveOil).getNodeRef();
 
 		// Create Essential Oils raw material with ingredients
 		RawMaterialData essentialOils = RawMaterialData.build().withName(uniqueName(ESSENTIAL_OILS)).withQty(50d).withUnit(ProductUnit.kg)
-				.withIngList(createEssentialOilsIngredients());
+				.withIngList(createEssentialOilsIngredients()).withGeoOrigins(List.of(CharactTestHelper.getOrCreateGeo(nodeService, "China", "ZN")));
+
+		if (isWithScore) {
+
+			essentialOils = essentialOils.withScoreList(List.of(
+					ScoreListDataItem.build().withScoreCriterion(CharactTestHelper.getOrCreateScoreCriterion(nodeService, EPI_SCORE))
+							.withScore(28.4d),
+					ScoreListDataItem.build().withScoreCriterion(CharactTestHelper.getOrCreateScoreCriterion(nodeService, SPI_SCORE))
+							.withScore(43.4d)));
+			addLCAProperty(sodiumHydroxide, CLIMATE_CHANGE, "CLIMATE_CHANGE", 300d);
+
+		}
 
 		essentialOilsNodeRef = alfrescoRepository.create(destFolder, essentialOils).getNodeRef();
 	}
-
-
 
 	private List<IngListDataItem> createSodiumHydroxideIngredients() {
 		List<IngListDataItem> ingredients = new ArrayList<>();
@@ -255,6 +317,26 @@ public class StandardSoapTestProduct extends StandardProductBuilder {
 		physicoChemList.setPhysicoChem(physicoChem);
 		physicoChemList.setValue(value);
 		product.getPhysicoChemList().add(physicoChemList);
+	}
+
+	public void addLCAProperty(ProductData product, String name, String code, Double value) {
+		LCAListDataItem lcaListDataItem = new LCAListDataItem();
+
+		NodeRef lca = CharactTestHelper.getOrCreateLCA(nodeService, name);
+
+		Map<QName, Serializable> props = new HashMap<>();
+		props.put(PLMModel.PROP_LCA_CODE, code);
+		props.put(PLMModel.PROP_LCAUNIT, CharactTestHelper.getOrCreateLCAUnit(nodeService, "kg CO2 eq"));
+		nodeService.addProperties(lca, props);
+
+		if (product.getLcaList() == null) {
+			product.setLcaList(new ArrayList<>());
+		}
+
+		lcaListDataItem.setLca(lca);
+		lcaListDataItem.setValue(value);
+		product.getLcaList().add(lcaListDataItem);
+
 	}
 
 	// Getters

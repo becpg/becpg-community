@@ -190,6 +190,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			logger.debug("no labelingListView => no formulation - " + formulatedProduct.getName());
 			return true;
 		}
+		
+		if (formulatedProduct.getLabelingListView().getIngLabelingList() == null) {
+			formulatedProduct.getLabelingListView().setIngLabelingList(new ArrayList<>()); 
+		}
 
 		copyTemplateLabelingRuleList(formulatedProduct);
 
@@ -455,9 +459,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 		}
 
-		if (formulatedProduct.getLabelingListView().getIngLabelingList() != null) {
 			formulatedProduct.getLabelingListView().getIngLabelingList().retainAll(retainNodes);
-		}
+		
 
 		return true;
 	}

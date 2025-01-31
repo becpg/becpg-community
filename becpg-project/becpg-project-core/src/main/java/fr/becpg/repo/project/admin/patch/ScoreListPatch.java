@@ -11,6 +11,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.batch.BatchProcessor;
 import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
 import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorkerAdaptor;
+import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -47,8 +48,6 @@ public class ScoreListPatch extends AbstractBeCPGPatch {
 
 	private EntityListDAO entityListDAO;
 
-	
-
 	private BehaviourFilter policyBehaviourFilter;
 
 	private IntegrityChecker integrityChecker;
@@ -58,8 +57,6 @@ public class ScoreListPatch extends AbstractBeCPGPatch {
 	private LockService lockService;
 
 	private AssociationService associationService;
-	
-	
 
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
@@ -87,6 +84,10 @@ public class ScoreListPatch extends AbstractBeCPGPatch {
 
 	@Override
 	protected String applyInternal() throws Exception {
+		return migrateScoreList();
+	}
+
+	public String migrateScoreList() throws Exception {
 		return AuthenticationUtil.runAsSystem(() -> {
 			NodeRef scoreCriteriaFolder = findScoreCriteriaFolder();
 			if (scoreCriteriaFolder == null) {
@@ -104,7 +105,7 @@ public class ScoreListPatch extends AbstractBeCPGPatch {
 
 	private NodeRef findScoreCriteriaFolder() {
 		return BeCPGQueryBuilder.createQuery().selectNodeByPath(nodeService.getRootNode(RepoConsts.SPACES_STORE),
-				"/app:company_home/System/ProjectLists/bcpg:entityLists/ScoreCriteria");
+				"/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:ScoreCriteria/.");
 	}
 
 	private Map<String, NodeRef> processScoreCriteria(NodeRef scoreCriteriaFolder) {
@@ -112,7 +113,7 @@ public class ScoreListPatch extends AbstractBeCPGPatch {
 		Map<String, NodeRef> scoreCriterionNodeRefs = new HashMap<>();
 
 		List<NodeRef> criteriaNodes = BeCPGQueryBuilder.createQuery().selectNodesByPath(nodeService.getRootNode(RepoConsts.SPACES_STORE),
-				"/app:company_home/System/ProjectLists/bcpg:entityLists/ScoreCriteria/*");
+				"/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:ScoreCriteria/*");
 
 		for (NodeRef nodeRef : criteriaNodes) {
 			processSingleCriteria(nodeRef, criterionTypesNodeRef, scoreCriterionNodeRefs);
@@ -126,7 +127,7 @@ public class ScoreListPatch extends AbstractBeCPGPatch {
 
 	private NodeRef createOrGetCriterionTypesFolder() {
 		NodeRef entityListsFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath(nodeService.getRootNode(RepoConsts.SPACES_STORE),
-				"/app:company_home/" + AbstractBeCPGQueryBuilder.encodePath("/System/ProjectLists/bcpg:entityLists/") + "/.");
+				"/app:company_home/" + AbstractBeCPGQueryBuilder.encodePath("/System/ProjectLists/bcpg:entityLists") + "/.");
 
 		NodeRef scoreCriterionTypesFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath(nodeService.getRootNode(RepoConsts.SPACES_STORE),
 				"/app:company_home/" + AbstractBeCPGQueryBuilder.encodePath("/System/ProjectLists/bcpg:entityLists/ScoreCriterionTypes") + "/.");
@@ -146,16 +147,21 @@ public class ScoreListPatch extends AbstractBeCPGPatch {
 			return;
 		}
 
-		MLText mlText = (MLText) nodeService.getProperty(nodeRef, BeCPGModel.PROP_LV_VALUE);
-		if (mlText == null) {
-			return;
+		boolean isMLAware = MLPropertyInterceptor.setMLAware(true);
+		try {
+			MLText mlText = (MLText) nodeService.getProperty(nodeRef, BeCPGModel.PROP_LV_VALUE);
+			if (mlText == null) {
+				return;
+			}
+
+			String key = Optional.ofNullable((String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_LV_CODE))
+					.orElse(MLTextHelper.getClosestValue(mlText, Locale.getDefault()));
+
+			NodeRef scoreCriterion = createScoreCriterion(key, mlText);
+			scoreCriterionNodeRefs.put(key, scoreCriterion);
+		} finally {
+			MLPropertyInterceptor.setMLAware(isMLAware);
 		}
-
-		String key = Optional.ofNullable((String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_LV_CODE))
-				.orElse(MLTextHelper.getClosestValue(mlText, Locale.getDefault()));
-
-		NodeRef scoreCriterion = createScoreCriterion(key, mlText);
-		scoreCriterionNodeRefs.put(key, scoreCriterion);
 
 		nodeService.moveNode(nodeRef, criterionTypesNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
 	}
@@ -164,13 +170,11 @@ public class ScoreListPatch extends AbstractBeCPGPatch {
 		BatchProcessor<NodeRef> batchProcessor = createBatchTypeProcessor(ProjectModel.TYPE_SCORE_LIST);
 		batchProcessor.processLong(createScoreListWorker(scoreCriterionNodeRefs), true);
 	}
-	
+
 	private void updateSurveyQuestion(Map<String, NodeRef> scoreCriterionNodeRefs) {
 		BatchProcessor<NodeRef> batchProcessor = createBatchTypeProcessor(SurveyModel.TYPE_SURVEY_QUESTION);
 		batchProcessor.processLong(createSurveyQuestionWorker(scoreCriterionNodeRefs), true);
 	}
-
-	
 
 	private BatchProcessWorker<NodeRef> createSurveyQuestionWorker(Map<String, NodeRef> scoreCriterionNodeRefs) {
 		return new BatchProcessWorkerAdaptor<>() {
@@ -193,7 +197,7 @@ public class ScoreListPatch extends AbstractBeCPGPatch {
 					NodeRef criterionNodeRef = scoreCriterionNodeRefs.get(criterion);
 
 					if (criterionNodeRef != null) {
-					
+
 						associationService.update(entityNodeRef, SurveyModel.ASSOC_SCORE_CRITERION, criterionNodeRef);
 					}
 				} finally {

@@ -3,7 +3,7 @@ package fr.becpg.repo.product.formulation.lca;
 /**
  * <p>LCAData class.</p>
  *
- * @author matthieu
+ * @author valentin
  * @version $Id: $Id
  */
 public class LCAData {

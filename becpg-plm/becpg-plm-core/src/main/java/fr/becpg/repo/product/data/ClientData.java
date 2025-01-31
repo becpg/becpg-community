@@ -56,6 +56,22 @@ public class ClientData extends BeCPGDataObject implements HierarchicalEntity, S
 	private List<LCAListDataItem> lcaList;
 	private List<ScoreListDataItem> scoreList;
 	private List<SurveyListDataItem> surveyList;
+	
+	public static ClientData build() {
+		return new ClientData();
+	}
+
+	public ClientData withName(String name) {
+		setName(name);
+		return this;
+	}
+	
+
+	public ClientData withScoreList(List<ScoreListDataItem> scoreList) {
+		setScoreList(scoreList);
+		return this;
+	}
+	
 
 	/**
 	 * <p>Getter for the field <code>state</code>.</p>
@@ -355,4 +371,5 @@ public class ClientData extends BeCPGDataObject implements HierarchicalEntity, S
 				&& state == other.state && Objects.equals(surveyList, other.surveyList)
 				&& Objects.equals(updateFormulatedDate, other.updateFormulatedDate);
 	}
+
 }

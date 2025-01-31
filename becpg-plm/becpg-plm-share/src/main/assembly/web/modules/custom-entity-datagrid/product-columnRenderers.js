@@ -87,7 +87,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 
 
     YAHOO.Bubbling.fire("registerDataGridRenderer", {
-        propertyName: ["bcpg:ing_bcpg:ingListIng"],
+        propertyName: ["bcpg:ing_bcpg:ingListIng","pjt:scoreCriterion_pjt:slScoreCriterion"],
         renderer: function(oRecord, data, label, scope, z, zz, elCell, oColumn) {
             var url = null;
             var toogleGroupButton = null;

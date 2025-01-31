@@ -24,7 +24,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 /**
  * <p>LCADatabaseService class.</p>
  *
- * @author matthieu
+ * @author valentin
  * @version $Id: $Id
  */
 @Service("lcaDatabaseService")

@@ -190,7 +190,7 @@
         <property name="id"><value>patch.bcpg.project.scoreListPatch</value></property>
         <property name="description"><value>patch.bcpg.project.scoreListPatch.description</value></property>
         <property name="fixesFromSchema" value="0"/>
-        <property name="fixesToSchema" value="10170" />
+        <property name="fixesToSchema" value="19300" />
         <property name="targetSchema" value="19301"/>
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>

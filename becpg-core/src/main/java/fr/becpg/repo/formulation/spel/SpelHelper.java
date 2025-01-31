@@ -29,6 +29,10 @@ import java.util.regex.Pattern;
  * @version $Id: $Id
  */
 public class SpelHelper {
+	
+	private SpelHelper() {
+		super();
+	}
 
 	public static class SpelShortcut {
 		Pattern pattern;
@@ -44,12 +48,7 @@ public class SpelHelper {
 
 	private static List<SpelShortcut> shortCuts = new LinkedList<>();
 
-// breaks nodeRef;	
-//	static {
-//		//Single line comment should end by \n
-//		shortCuts.add(new SpelShortcut("//.*\n", ""));
-//	}
-	
+
 	/**
 	 * <p>registerShortcut.</p>
 	 *
