@@ -44,7 +44,7 @@ public class IngListAttributeExtractorPlugin extends CharactAttributeExtractorPl
 	/** {@inheritDoc} */
 	@Override
 	public String extractMetadata(QName type, NodeRef nodeRef) {
-		NodeRef product = associationService.getTargetAssoc(nodeRef, PLMModel.TYPE_INGLIST);
+		NodeRef product = associationService.getTargetAssoc(nodeRef, PLMModel.ASSOC_INGLIST_ING);
 		return super.extractMetadata(nodeService.getType(product), product);
 	}
 
