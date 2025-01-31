@@ -210,5 +210,10 @@ public class FinishedProductData extends ProductData {
 		return this;
 	}
 
+	public FinishedProductData withClient(ClientData clientData) {
+		setClients(List.of(clientData));
+		return this;
+	}
+
 
 }

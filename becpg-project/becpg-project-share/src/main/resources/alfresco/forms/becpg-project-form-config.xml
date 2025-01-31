@@ -1998,11 +1998,12 @@
 			<form id="datagrid">
 				<field-visibility>
 				    <show id="bcpg:depthLevel" />
-				    <show id="pjt:slCriterion" />
+				   
 				    <show id="pjt:slScoreCriterion" />
                     <show id="pjt:slWeight" />
                     <show id="pjt:slScore" />
                     <show id="pjt:slScoreRange" />
+                    <show id="pjt:slCriterion" />
                     <show id="pjt:slScreening" />
 					<show id="pjt:slScoreDetail" />
 					<show id="fm:commentCount" force="true" />

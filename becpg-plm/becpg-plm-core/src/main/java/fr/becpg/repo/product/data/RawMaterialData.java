@@ -11,6 +11,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
+import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.repository.annotation.AlfCacheable;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
@@ -149,5 +150,15 @@ public class RawMaterialData extends ProductData {
 		return this;
 	}
 	
+	
+	public RawMaterialData withScoreList(List<ScoreListDataItem> scoreList) {
+		setScoreList(scoreList);
+		return this;
+	}
+
+	public RawMaterialData withGeoOrigins(List<NodeRef> geoOrigins) {
+		setGeoOrigins(geoOrigins);
+		return this;
+	}
 
 }
