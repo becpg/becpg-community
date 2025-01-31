@@ -32,6 +32,7 @@ import fr.becpg.repo.repository.annotation.MultiLevelDataList;
 import fr.becpg.repo.repository.model.AbstractManualDataItem;
 import fr.becpg.repo.repository.model.CopiableDataItem;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
+import fr.becpg.repo.repository.model.SimpleListDataItem;
 
 /**
  * Score list of project
@@ -42,7 +43,7 @@ import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 @AlfType
 @AlfQname(qname = "pjt:scoreList")
 @MultiLevelDataList
-public class ScoreListDataItem extends AbstractManualDataItem implements SimpleCharactDataItem, CompositeDataItem<ScoreListDataItem> {
+public class ScoreListDataItem extends AbstractManualDataItem implements  SimpleListDataItem, SimpleCharactDataItem, CompositeDataItem<ScoreListDataItem> {
 
 	/**
 	 *
@@ -295,5 +296,11 @@ public class ScoreListDataItem extends AbstractManualDataItem implements SimpleC
 	    this.weight = weight;
 		return this;
 	}
+	
+	public ScoreListDataItem withScore(Double score) {
+	    this.score = score;
+		return this;
+	}
+
 
 }

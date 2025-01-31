@@ -1,4 +1,4 @@
-package fr.becpg.repo.product.formulation.score;
+package fr.becpg.repo.product.formulation.ecoscore;
 
 import java.util.Objects;
 

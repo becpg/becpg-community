@@ -23,7 +23,7 @@ import fr.becpg.repo.product.formulation.lca.LCADatabasePlugin;
 /**
  * <p>AgribalyseLCADatabasePlugin class.</p>
  *
- * @author matthieu
+ * @author valentin
  * @version $Id: $Id
  */
 @Service

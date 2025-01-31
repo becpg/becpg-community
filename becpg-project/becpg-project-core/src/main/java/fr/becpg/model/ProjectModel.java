@@ -19,9 +19,6 @@ package fr.becpg.model;
 
 import org.alfresco.service.namespace.QName;
 
-import fr.becpg.test.repo.index;
-import fr.becpg.test.repo.property;
-
 /**
  * <p>
  * ProjectModel interface.

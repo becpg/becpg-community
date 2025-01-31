@@ -559,20 +559,20 @@ public class StandardChocolateEclairTestProduct extends StandardProductBuilder {
 	        ResponseType.multiChoicelist.name(),
 	        null
 	    );
-	    
-	    final SurveyQuestion q1Answer1 = getOrCreateSurveyAnswer(
+
+	    getOrCreateSurveyAnswer(
 	        question1,
 	        "Perfect - Golden brown, hollow, crisp exterior (18-20cm length)",
 	        100d
 	    );
-	    
-	    final SurveyQuestion q1Answer2 = getOrCreateSurveyAnswer(
+
+	    final SurveyQuestion q1Answer1 =  getOrCreateSurveyAnswer(
 	        question1,
 	        "Minor defects - Slight color variation, size within 17-21cm",
-	        75d
+	        20d
 	    );
-	    
-	    final SurveyQuestion q1Answer3 = getOrCreateSurveyAnswer(
+
+	    getOrCreateSurveyAnswer(
 	        question1,
 	        "Major defects - Improper rise, inconsistent texture",
 	        0d
@@ -580,70 +580,71 @@ public class StandardChocolateEclairTestProduct extends StandardProductBuilder {
 
 	    final SurveyListDataItem survey1 = new SurveyListDataItem();
 	    survey1.setQuestion(question1.getNodeRef());
-	    survey1.setChoices(List.of(q1Answer1.getNodeRef(), q1Answer2.getNodeRef(), q1Answer3.getNodeRef()));
+	    survey1.setChoices(List.of(q1Answer1.getNodeRef()));
 
-	    // Question 2: Chocolate Filling Quality
+	    // Question 2: Puff Pastry Layering Quality Check
 	    final SurveyQuestion question2 = getOrCreateSurveyQuestion(
-	        "Chocolate Filling Quality Parameters:",
-	        FILLING_QUALITY,
-	        null,
+	        "Evaluate the puff pastry layering quality:",
+	        PASTRY_QUALITY,
+	        ResponseType.multiChoicelist.name(),
+	        null
+	    );
+
+	     getOrCreateSurveyAnswer(
+	        question2,
+	        "Ideal - Even, well-defined layers, crisp and flaky texture",
 	        100d
 	    );
-	    
-	    final SurveyQuestion q2Answer1 = getOrCreateSurveyAnswer(
+
+	     final SurveyQuestion q2Answer1 = getOrCreateSurveyAnswer(
 	        question2,
-	        "Correct viscosity (65-70% chocolate content), uniform texture",
-	        100d
+	        "Acceptable - Slight layer compression, moderate flakiness",
+	        40d
 	    );
-	    
-	    final SurveyQuestion q2Answer2 = getOrCreateSurveyAnswer(
+
+	    getOrCreateSurveyAnswer(
 	        question2,
-	        "Slight viscosity deviation (60-75% content), minor texture issues",
-	        50d
-	    );
-	    
-	    final SurveyQuestion q2Answer3 = getOrCreateSurveyAnswer(
-	        question2,
-	        "Out of specification - improper viscosity or crystallization",
+	        "Defective - Dense, underbaked, or collapsed layers",
 	        0d
 	    );
 
 	    final SurveyListDataItem survey2 = new SurveyListDataItem();
 	    survey2.setQuestion(question2.getNodeRef());
-	    survey2.setChoices(List.of(q2Answer1.getNodeRef(), q2Answer2.getNodeRef(), q2Answer3.getNodeRef()));
+	    survey2.setChoices(List.of(q2Answer1.getNodeRef()));
 
-	    // Question 3: Critical Control Points Check
+	    // Question 3: Chocolate Filling Quality
 	    final SurveyQuestion question3 = getOrCreateSurveyQuestion(
-	        "Critical Control Points Verification:",
-	        CCP_COMPLIANCE,
+	        "Chocolate Filling Quality Parameters:",
+	        FILLING_QUALITY,
 	        null,
 	        100d
 	    );
-	    
-	    final SurveyQuestion q3Answer1 = getOrCreateSurveyAnswer(
+
+	    getOrCreateSurveyAnswer(
 	        question3,
-	        "All CCPs within range (Temp: 2-4°C, Water activity: <0.85, pH: 6.5-7.0)",
+	        "Correct viscosity (65-70% chocolate content), uniform texture",
 	        100d
 	    );
-	    
-	    final SurveyQuestion q3Answer2 = getOrCreateSurveyAnswer(
+
+	    getOrCreateSurveyAnswer(
 	        question3,
-	        "One parameter slightly out of range but within critical limits",
+	        "Slight viscosity deviation (60-75% content), minor texture issues",
 	        50d
 	    );
-	    
+
 	    final SurveyQuestion q3Answer3 = getOrCreateSurveyAnswer(
 	        question3,
-	        "Critical limit breach - product hold required",
+	        "Out of specification - improper viscosity or crystallization",
 	        0d
 	    );
 
 	    final SurveyListDataItem survey3 = new SurveyListDataItem();
 	    survey3.setQuestion(question3.getNodeRef());
-	    survey3.setChoices(List.of(q3Answer1.getNodeRef(), q3Answer2.getNodeRef(), q3Answer3.getNodeRef()));
+	    survey3.setChoices(List.of(q3Answer3.getNodeRef()));
 
 	    return List.of(survey1, survey2, survey3);
 	}
+
 
 	private List<ScoreListDataItem> createScoreList() {
 	    return List.of(

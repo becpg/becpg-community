@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.admin.RepoHealthChecker;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -37,15 +36,15 @@ public class CharactTestHelper {
 	 * @return the NodeRef of the found or created node
 	 */
 	private static NodeRef getOrCreateNode(NodeService nodeService, String path, String nodeName, QName type, Map<QName, Serializable> properties) {
-		NodeRef folder = BeCPGQueryBuilder.createQuery().selectNodeByPath(path);
-		NodeRef node = nodeService.getChildByName(folder, ContentModel.ASSOC_CONTAINS, nodeName);
-		properties.put(ContentModel.PROP_NAME, PropertiesHelper.cleanName(nodeName));
+		String name = PropertiesHelper.cleanName(nodeName);
 		
-	  
+		NodeRef folder = BeCPGQueryBuilder.createQuery().selectNodeByPath(path);
+		NodeRef node = nodeService.getChildByName(folder, ContentModel.ASSOC_CONTAINS,name);
+		properties.put(ContentModel.PROP_NAME,name);
 
 		if (node == null) {
 			ChildAssociationRef childAssocRef = nodeService.createNode(folder, ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, PropertiesHelper.cleanName(nodeName)), type, properties);
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,name), type, properties);
 			node = childAssocRef.getChildRef();
 		}
 
@@ -129,6 +128,31 @@ public class CharactTestHelper {
 		return getOrCreateNode(nodeService, "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:SurveyQuestions", label,
 				SurveyModel.TYPE_SURVEY_QUESTION, properties);
 
+	}
+
+	public static NodeRef getOrCreateLCA(NodeService nodeService, String name) {
+		Map<QName, Serializable> properties = new HashMap<>();
+		properties.put(BeCPGModel.PROP_CHARACT_NAME, name);
+
+		return getOrCreateNode(nodeService, "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:LifeCycleAnalysis", name, PLMModel.TYPE_LCA,
+				properties);
+	}
+
+	public static NodeRef getOrCreateGeo(NodeService nodeService, String name, String code) {
+		Map<QName, Serializable> properties = new HashMap<>();
+		properties.put(BeCPGModel.PROP_CHARACT_NAME, name);
+		properties.put(PLMModel.PROP_GEO_ORIGIN_ISOCODE,code);
+		return getOrCreateNode(nodeService, "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:GeoOrigins", name, PLMModel.TYPE_GEO_ORIGIN,
+				properties);
+	}
+
+	public static String getOrCreateLCAUnit(NodeService nodeService,String name) {
+		Map<QName, Serializable> properties = new HashMap<>();
+		properties.put(BeCPGModel.PROP_LV_CODE, name);
+		properties.put(BeCPGModel.PROP_LV_VALUE, name);
+	    getOrCreateNode(nodeService, "/app:company_home/cm:System/cm:Lists/bcpg:entityLists/cm:LCAUnits", name, BeCPGModel.TYPE_LIST_VALUE,
+				properties);
+	    return name;
 	}
 
 }
