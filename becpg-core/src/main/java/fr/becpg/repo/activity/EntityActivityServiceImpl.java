@@ -14,6 +14,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.model.DataListModel;
@@ -879,6 +880,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 				ActivityListDataItem activityListDataItem = new ActivityListDataItem();
 				// Don't save System activities
 				if (!AuthenticationUtil.getSystemUserName().equals(activityListDataItem.getUserId())) {
+					
 					JSONObject data = new JSONObject();
 					if (activityEvent != null) {
 						data.put(PROP_ACTIVITY_EVENT, activityEvent.toString());
@@ -887,27 +889,33 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					data.put(PROP_ENTITY_NODEREF, entityNodeRef);
 					data.put(PROP_ENTITY_TYPE, nodeService.getType(entityNodeRef));
 					data.put(PROP_TITLE, nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
-					if (activityEvent.equals(ActivityEvent.Update) && (updatedProperties != null)) {
-						List<JSONObject> properties = new ArrayList<>();
-						for (Map.Entry<QName, Pair<Serializable, Serializable>> entry : updatedProperties.entrySet()) {
-							JSONObject property = new JSONObject();
-
-							property.put(PROP_TITLE, entry.getKey());
-
-							processMLTexts(entry);
-							
-							Serializable before = processEntry(entry.getValue().getFirst(), entry.getKey());
-							property.put(BEFORE, before);
-
-							if (data.has(PROP_TITLE) && (data.get(PROP_TITLE) != null) && entry.getKey().equals(ContentModel.PROP_NAME)) {
-								property.put(AFTER, data.get(PROP_TITLE));
-							} else {
-								Serializable after = processEntry(entry.getValue().getSecond(), entry.getKey());
-								property.put(AFTER, after);
+					if (activityEvent.equals(ActivityEvent.Update)) {
+						if (activityType.equals(ActivityType.AspectsAddition)) {
+							data.put(ADDED_ASPECTS, extractAspectNames(updatedProperties.keySet()));
+						} else if (activityType.equals(ActivityType.AspectsRemoval)) {
+							data.put(REMOVED_ASPECTS, extractAspectNames(updatedProperties.keySet()));
+						} else if (updatedProperties != null) {
+							List<JSONObject> properties = new ArrayList<>();
+							for (Map.Entry<QName, Pair<Serializable, Serializable>> entry : updatedProperties.entrySet()) {
+								JSONObject property = new JSONObject();
+								
+								property.put(PROP_TITLE, entry.getKey());
+								
+								processMLTexts(entry);
+								
+								Serializable before = processEntry(entry.getValue().getFirst(), entry.getKey());
+								property.put(BEFORE, before);
+								
+								if (data.has(PROP_TITLE) && (data.get(PROP_TITLE) != null) && entry.getKey().equals(ContentModel.PROP_NAME)) {
+									property.put(AFTER, data.get(PROP_TITLE));
+								} else {
+									Serializable after = processEntry(entry.getValue().getSecond(), entry.getKey());
+									property.put(AFTER, after);
+								}
+								properties.add(property);
 							}
-							properties.add(property);
+							data.put(PROP_PROPERTIES, new JSONArray(properties));
 						}
-						data.put(PROP_PROPERTIES, new JSONArray(properties));
 					}
 
 					if (!activityType.equals(ActivityType.Entity) || !activityEvent.equals(ActivityEvent.Update) || (updatedProperties != null)) {
@@ -916,9 +924,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 						activityListDataItem.setParentNodeRef(activityListNodeRef);
 
 						mergeWithLastActivity(activityListDataItem);
-
 						recordAuditActivity(entityNodeRef, activityListDataItem);
-
 						notifyListeners(entityNodeRef, activityListDataItem);
 					}
 
@@ -931,6 +937,14 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 			policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 		}
 		return false;
+	}
+
+	private String extractAspectNames(Set<QName> aspectQNames) {
+		return aspectQNames
+				.stream()
+				.map(q -> entityDictionaryService.getAspect(q).getTitle(entityDictionaryService)
+						!= null ? entityDictionaryService.getAspect(q).getTitle(entityDictionaryService) : q.toPrefixString(namespaceService))
+				.collect(Collectors.joining(", "));
 	}
 
 	private void notifyListeners(NodeRef entityNodeRef, ActivityListDataItem activityListDataItem) {

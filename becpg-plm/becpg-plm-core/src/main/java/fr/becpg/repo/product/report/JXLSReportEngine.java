@@ -79,34 +79,23 @@ public class JXLSReportEngine implements BeCPGReportEngine {
 		}
 		logger.debug("Run jxls report");
 
+		ContentReader reader = contentService.getReader(tplNodeRef, ContentModel.PROP_CONTENT);
 
-			ContentReader reader = contentService.getReader(tplNodeRef, ContentModel.PROP_CONTENT);
+		Map<String, Object> context = new HashMap<>();
 
-			Map<String, Object>  context = new HashMap<> ();
+		context.put("entity", alfrescoRepository.findOne((NodeRef) params.get(BeCPGReportEngine.PARAM_ENTITY_NODEREF)));
 
-			context.put("entity", alfrescoRepository.findOne((NodeRef) params.get(BeCPGReportEngine.PARAM_ENTITY_NODEREF)));
-
-			for (EntityImageInfo imageInfo : reportData.getImages()) {
-				if (logger.isDebugEnabled()) {
-					logger.debug("Adding image: IMG_" + cleanName(imageInfo.getName()));
-				}
-				context.put("IMG_" + cleanName(imageInfo.getName()), entityService.getImage(imageInfo.getImageNodeRef()));
+		for (EntityImageInfo imageInfo : reportData.getImages()) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Adding image: IMG_" + cleanName(imageInfo.getName()));
 			}
-//
-//			Transformer transformer = TransformerFactory.createTransformer(reader.getContentInputStream(), out);
-//
-			ExpressionEvaluator evaluator = new SpelJXLSExpressionEvaluator(formulaService);
-//			transformer.getTransformationConfig().setExpressionEvaluator(evaluator);
-//
-//			JxlsPoiTemplateFillerBuilder.newInstance().processTemplate(context, transformer);
-//			
-			
-			JxlsPoiTemplateFillerBuilder.newInstance()
-	        		.withExpressionEvaluatorFactory(( expression ) -> evaluator)
-	        		.withRecalculateFormulasOnOpening(true).withRecalculateFormulasBeforeSaving(true)
-	                .withTemplate(reader.getContentInputStream())
-	                .buildAndFill(context,  () ->  out );
-			
+			context.put("IMG_" + cleanName(imageInfo.getName()), entityService.getImage(imageInfo.getImageNodeRef()));
+		}
+
+		ExpressionEvaluator evaluator = new SpelJXLSExpressionEvaluator(formulaService);
+
+		JxlsPoiTemplateFillerBuilder.newInstance().withExpressionEvaluatorFactory(expression -> evaluator).withRecalculateFormulasOnOpening(true)
+				.withRecalculateFormulasBeforeSaving(true).withTemplate(reader.getContentInputStream()).buildAndFill(context, () -> out);
 
 		if (logger.isDebugEnabled() && (watch != null)) {
 			watch.stop();
