@@ -350,7 +350,7 @@
 			</wizard>
 			
 			<!-- RÉCLAMATION FOURNISSEUR  -->
-			<wizard id="supplier-compliance" draft="true" comments="true">
+			<wizard id="supplier-nc" draft="true" comments="true">
 				<step id="step1" label="Réclamation fournisseur"
 					titleId="becpg.wizard.supplier.properties.title" type="form"
 					formId="supplier" itemId="qa:nc" nextStepWebScript="becpg/project/path?nodeRef={nodeRef}&amp;path=SupplierDocuments" ></step>

@@ -48,6 +48,13 @@
 			 </comments>
 		</license>
 	</licenses>
+	
+	<distributionManagement>
+	       <site>
+            <id>default-site</id>
+            <url>file://${maven.multiModuleProjectDirectory}/target/staging</url>
+        </site>
+    </distributionManagement>
 
 	<repositories>
 		<repository>
@@ -123,10 +130,9 @@
 		<spring-surf.version>9.2</spring-surf.version>
 	    <spring-webscripts.version>9.4</spring-webscripts.version>
 	    <spring-webscripts-share.version>9.4</spring-webscripts-share.version>
-	
-
 
 		<alfresco.aos.version>3.2.0</alfresco.aos.version>
+
 		<mysql.connector.version>8.3.0</mysql.connector.version>
         
     
@@ -161,17 +167,10 @@
 		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-		<!-- <sonar.jacoco.reportPaths>${maven.multiModuleProjectDirectory}/target/jacoco.exec</sonar.jacoco.reportPaths> -->
-		<sonar.coverage.jacoco.xmlReportPaths>${maven.multiModuleProjectDirectory}/becpg-integration-runner/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
-	    <sonar.dependencyCheck.xmlReportPath>${maven.multiModuleProjectDirectory}/target/dependency-check-report.xml</sonar.dependencyCheck.xmlReportPath>
-		<sonar.dependencyCheck.jsonReportPath>${maven.multiModuleProjectDirectory}/target/dependency-check-report.json</sonar.dependencyCheck.jsonReportPath>
-		<sonar.dependencyCheck.htmlReportPath>${maven.multiModuleProjectDirectory}/target/dependency-check-report.html</sonar.dependencyCheck.htmlReportPath>
-	    <sonar.dependencyCheck.severity.blocker>9.0</sonar.dependencyCheck.severity.blocker>
-        <sonar.dependencyCheck.severity.critical>7.0</sonar.dependencyCheck.severity.critical>
-        <sonar.dependencyCheck.severity.major>4.0</sonar.dependencyCheck.severity.major>
-        <sonar.junit.reportPaths>${project.basedir}/target/surefire-reports/,${project.basedir}/target/failsafe-reports/</sonar.junit.reportPaths>
+	  	<sonar.coverage.jacoco.xmlReportPaths>${maven.multiModuleProjectDirectory}/becpg-integration-runner/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+	    <sonar.junit.reportPaths>${maven.multiModuleProjectDirectory}/becpg-integration-runner/target/surefire-reports/,${maven.multiModuleProjectDirectory}/becpg-integration-runner/target/failsafe-reports/</sonar.junit.reportPaths>
 		<sonar.scm.disabled>true</sonar.scm.disabled>
-		<sonar.ws.timeout>3600</sonar.ws.timeout>
+		<sonar.scanner.socketTimeout>3600</sonar.scanner.socketTimeout>
 		<sonar.language>java</sonar.language>
 		<becpg.artworks.version>23.4.0.1</becpg.artworks.version>
 		<becpg.i18n.version>1.0-129</becpg.i18n.version>
@@ -454,7 +453,6 @@
 				<version>3.13.0</version>
 				<configuration>
 					<release>17</release>
-				<!--	<compilerArgs>-Xlint:deprecation</compilerArgs>-->
 				</configuration>
 
 			</plugin>
@@ -462,7 +460,7 @@
 			<plugin>
 				<groupId>org.owasp</groupId>
 				<artifactId>dependency-check-maven</artifactId>
-				<version>10.0.4</version>
+				<version>11.1.1</version>
 				<configuration>
 					<skipProvidedScope>false</skipProvidedScope>
 					<skipRuntimeScope>true</skipRuntimeScope>
@@ -478,7 +476,7 @@
 			<plugin>
 				<groupId>org.sonarsource.scanner.maven</groupId>
 				<artifactId>sonar-maven-plugin</artifactId>
-				<version>4.0.0.4121</version>
+				<version>5.0.0.4389</version>
 			</plugin>
 			
 			<plugin>
@@ -510,44 +508,21 @@
 	</modules>
 
 	<reporting>
-		<excludeDefaults>true</excludeDefaults>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.10.1</version>
-				<reportSets>
-					<reportSet>
-						<reports>
-							<report>aggregate-no-fork</report>
-						</reports>
-					</reportSet>
-				</reportSets>
-			</plugin>
-		   <plugin>
-				<groupId>org.owasp</groupId>
-				<artifactId>dependency-check-maven</artifactId>
-				<version>10.0.4</version>
-				<configuration>
-					<skipProvidedScope>false</skipProvidedScope>
-					<skipRuntimeScope>true</skipRuntimeScope>
-					<skipSystemScope>true</skipSystemScope>
-					<skipTestScope>true</skipTestScope>
-					<archiveAnalyzerEnabled>false</archiveAnalyzerEnabled>
-				</configuration>
-				<reportSets>
-					<reportSet>
-						<reports>
-							<report>aggregate</report>
-						</reports>
-					</reportSet>
-				</reportSets>
-			</plugin>
-		     <plugin>
-		        <groupId>org.apache.maven.plugins</groupId>
-		        <artifactId>maven-surefire-report-plugin</artifactId>
-		        <version>3.5.0</version>
-		    </plugin>
+
+		<!-- Surefire Report Plugin -->
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-report-plugin</artifactId>
+            <version>3.5.0</version>
+            <configuration>
+                <!-- No specific executions required, just the goal for site phase aggregation -->
+                <aggregate>true</aggregate>
+                <linkXRef>false</linkXRef>
+            </configuration>
+        </plugin>
+
+
 		</plugins>
 	</reporting>
 
