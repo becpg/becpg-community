@@ -353,10 +353,8 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 				return function;
 			}
 		}
-		if (logger.isDebugEnabled()) {
-			logger.debug("Ingredient function is not recognized by Decernis v5 API: " + ingTypeValue + ", available functions are: "
-					+ functionsMap.get(moduelId));
-		}
+		logger.warn("Ingredient function is not recognized by Decernis v5 API: " + ingTypeValue + ", available functions are: "
+				+ functionsMap.get(moduelId));
 		return null;
 	}
 

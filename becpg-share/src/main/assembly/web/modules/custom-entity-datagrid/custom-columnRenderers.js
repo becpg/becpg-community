@@ -98,6 +98,10 @@ if (beCPG.module.EntityDataGridRenderers) {
 					} else {
 						title  = scope.msg("entity.activity.entity", title);
 					}
+				} else if(activityType == "AspectsAddition" && data.addedAspects){
+					title  = scope.msg("entity.activity.entity.added-aspect", title, data.addedAspects);
+				} else if(activityType == "AspectsRemoval" && data.removedAspects){
+					title  = scope.msg("entity.activity.entity.removed-aspect", title, data.removedAspects);
 				} else if(activityType == "Formulation" || activityType == "Report"){
 					title  = scope.msg("entity.activity."+activityType.toLowerCase(), title);
 				} else if(activityType == "Export"){
@@ -131,7 +135,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 				html += Alfresco.util.userProfileLink(user.value, user.displayValue, 'class="theme-color-1"') + ' ';
 				html += '      </span>';
 				html += '      <span class="date-info">';
-				html += Alfresco.util.relativeTime(Alfresco.util.fromISO8601(dateCreated.value)) +' ('+  Alfresco.util.formatDate(dateCreated.value	, Alfresco.util.message(scope.msg("date.format"))) + ') <br/>';
+				html += Alfresco.util.relativeTime(Alfresco.util.fromISO8601(dateCreated.value)) +' ('+  Alfresco.util.formatDate(dateCreated.value	, Alfresco.util.message(scope.msg("datetime.format"))) + ') <br/>';
 				html += '      </span>';
 				html += '      <div class="activity-title">' + title + '</div>';
 
