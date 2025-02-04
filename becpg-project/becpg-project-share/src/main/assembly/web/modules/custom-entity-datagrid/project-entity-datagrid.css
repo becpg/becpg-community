@@ -89,76 +89,60 @@
     border: 0 none;
     display: inline-block;
     font-size: 17px;
+    font-weight: bold;
     height: 20px;
     padding: 7px;
     text-align: center;
     width: 15px;
     word-spacing: normal;
-     border-radius : 5px 0 0 5px;
+    border-radius : 5px;
+    color: black;
 }
 
 .score-class-a{
     background: #00853f;
-    color: #47a97b;
 }
 
 .score-class-b{  
     background: #64bf21;
-    color:#b6e86d;
 }
 
 .score-class-c{  
     background: #ffc800;
-    color: #ffde7d;
 }
 
 .score-class-d{  
     background: #ff7600;
-    color:#ffb36b;
 }
 
 .score-class-e{  
     background: #ff0100;
-    color:#ff8d67;
 }
 
 
-.datagrid span.score-black {
-	background-color:#424242;
-	border-radius: 50%;
-	padding:7px;
-	color:white;
-	font-weight:bold;
+
+.datagrid span[class^="score-"] {
+  padding-left: 5px; /* Extra space for the color bar */
+  color: black;
+  font-weight: bold;
+  display: inline-flex;
+     text-align: center;
+  align-items: stretch; /* Ensures full height */
 }
 
-.datagrid span.score-red {
-	background-color:#f44336;
-	border-radius: 50%;
-	padding:7px;
-	color:white;
-	font-weight:bold;
+.datagrid span[class^="score-"]::before {
+  content: "";
+  width: 5px;
+  flex-shrink: 0;
+  margin-right:5px;
 }
 
-.datagrid span.score-orange {
-	background-color:orange;
-	border-radius: 50%;
-	padding:7px;
-	color:white;
-	font-weight:bold;
-}
 
-.datagrid span.score-blue {
-	background-color:rgb(73, 134, 231);
-	border-radius: 50%;
-	padding:7px;
-	color:white;
-	font-weight:bold;
-}
+/* Set specific colors */
+.datagrid span.score-green::before { background-color: #00853f; }
+.datagrid span.score-blue::before { background-color: #64bf21; }
+.datagrid span.score-yellow::before { background-color: #ffc800; }
+.datagrid span.score-orange::before { background-color: #ff7600; }
+.datagrid span.score-red::before { background-color: #ff0100; }
+.datagrid span.score-black::before { background-color: #424242; }
 
-.datagrid span.score-green {
-	background-color:rgb(123, 209, 72);
-	border-radius: 50%;
-	padding:7px;
-	color:white;
-	font-weight:bold;
-}

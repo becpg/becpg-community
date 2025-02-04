@@ -17,13 +17,12 @@
  ******************************************************************************/
 package fr.becpg.repo.project.formulation;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.stream.DoubleStream;
@@ -78,6 +77,14 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 
 	private SpelFormulaService formulaService;
 
+	public void setMlNodeService(NodeService mlNodeService) {
+		this.mlNodeService = mlNodeService;
+	}
+
+	public void setFormulaService(SpelFormulaService formulaService) {
+		this.formulaService = formulaService;
+	}
+
 	/**
 	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
 	 *
@@ -97,29 +104,48 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 
 		if (accept(surveyableEntity)) {
 
-			List<ScoreListDataItem> scoreList = surveyableEntity.getScoreList();
-
-			final List<SurveyListDataItem> surveyList = SurveyableEntityHelper.getNamesSurveyLists(alfrescoRepository, surveyableEntity).values()
-					.stream().filter(Objects::nonNull).flatMap(List::stream).toList();
-
-			// If surveyList is empty, we do nothing
-			if (CollectionUtils.isNotEmpty(surveyList)) {
-
-				Map<NodeRef, Double> scoresPerCriterion = new HashMap<>();
-				Map<NodeRef, Double> maxScoresPerCriterion = new HashMap<>();
-
-				fillScores(surveyList, scoresPerCriterion, maxScoresPerCriterion);
-
-				// For each criterion present in the surveyList, we calculate the score for each criterion in the scoreList. For the criterion that are not
-				// in the surveyList, we do nothing
-				calculateAndFillScoreList(scoreList, scoresPerCriterion, maxScoresPerCriterion);
+			if (surveyableEntity.getSurveyList() == null) {
+				surveyableEntity.setScoreList(new ArrayList<>());
 			}
 
+			formulateSurveylist(surveyableEntity);
+
 			calculateScore(surveyableEntity);
+
+			calculateScoreType(surveyableEntity);
 
 		}
 
 		return true;
+	}
+
+	public void calculateScoreType(SurveyableEntity surveyableEntity) {
+
+		surveyableEntity.getScoreList().forEach(n ->
+		n.setCriterion((String) nodeService.getProperty(n.getCharactNodeRef(), ProjectModel.PROP_SCORE_CRITERION_TYPE))
+		);
+
+	}
+
+	public void formulateSurveylist(SurveyableEntity surveyableEntity) {
+		List<ScoreListDataItem> scoreList = surveyableEntity.getScoreList();
+
+		final List<SurveyListDataItem> surveyList = SurveyableEntityHelper.getNamesSurveyLists(alfrescoRepository, surveyableEntity).values().stream()
+				.filter(Objects::nonNull).flatMap(List::stream).toList();
+
+		// If surveyList is empty, we do nothing
+		if (CollectionUtils.isNotEmpty(surveyList)) {
+
+			Map<NodeRef, Double> scoresPerCriterion = new HashMap<>();
+			Map<NodeRef, Double> maxScoresPerCriterion = new HashMap<>();
+
+			fillScores(surveyList, scoresPerCriterion, maxScoresPerCriterion);
+
+			// For each criterion present in the surveyList, we calculate the score for each criterion in the scoreList. For the criterion that are not
+			// in the surveyList, we do nothing
+			calculateAndFillScoreList(scoreList, scoresPerCriterion, maxScoresPerCriterion);
+		}
+
 	}
 
 	public void calculateScore(SurveyableEntity surveyableEntity) {
@@ -157,7 +183,7 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 
 			// Error handling
 			if ((error != null) && surveyableEntity instanceof ReportableEntity reportableEntity) {
-				reportableEntity.addError(MLTextHelper.getI18NMessage("message.formulate.formula.error",
+				reportableEntity.addError(MLTextHelper.getI18NMessage("message.formulate.scoreList.error",
 						mlNodeService.getProperty(scoreListItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME), error));
 			}
 		}
@@ -208,7 +234,7 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 			calculateParentScores(surveyableEntity, component);
 
 			ScoreListDataItem scoreListDataItem = component.getData();
-			Double weight = getEffectiveWeight(scoreListDataItem);
+			Double weight = retrieveEffectiveWeight(scoreListDataItem);
 
 			if (scoreListDataItem.getValue() != null) {
 				totalScore += (scoreListDataItem.getValue() * weight) / 100d;
@@ -220,15 +246,18 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 		}
 	}
 
-	private Double getEffectiveWeight(ScoreListDataItem scoreListDataItem) {
-		if (scoreListDataItem.getWeight() != null) {
-			return scoreListDataItem.getWeight();
-		}
-
+	private Double retrieveEffectiveWeight(ScoreListDataItem scoreListDataItem) {
+		
 		if (scoreListDataItem.getCharactNodeRef() != null) {
 			Double criterionWeight = (Double) nodeService.getProperty(scoreListDataItem.getCharactNodeRef(),
 					ProjectModel.PROP_SCORE_CRITERION_WEIGHT);
-			return criterionWeight != null ? criterionWeight : 100.0;
+			if( criterionWeight != null ) {
+				scoreListDataItem.setWeight(criterionWeight);
+			}
+		}
+		
+		if (scoreListDataItem.getWeight() != null) {
+			return scoreListDataItem.getWeight();
 		}
 
 		return 100.0;
@@ -256,7 +285,7 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 
 			// Error handling
 			if ((error != null) && surveyableEntity instanceof ReportableEntity reportableEntity) {
-				reportableEntity.addError(MLTextHelper.getI18NMessage("message.formulate.formula.error",
+				reportableEntity.addError(MLTextHelper.getI18NMessage("message.formulate.scoreList.error",
 						mlNodeService.getProperty(scoreListItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME), error));
 			}
 		}
@@ -284,13 +313,12 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 	}
 
 	protected boolean accept(SurveyableEntity surveyableEntity) {
-	    return !isTemplateEntity(surveyableEntity) &&
-	    		surveyableEntity.getScoreList() != null && alfrescoRepository.hasDataList(surveyableEntity, ProjectModel.TYPE_SCORE_LIST);
+		return !isTemplateEntity(surveyableEntity) && (surveyableEntity.getScoreList() != null)
+				&& alfrescoRepository.hasDataList(surveyableEntity, ProjectModel.TYPE_SCORE_LIST);
 	}
 
 	protected boolean isTemplateEntity(SurveyableEntity surveyableEntity) {
-	    return surveyableEntity instanceof BeCPGDataObject dataObj && 
-	           dataObj.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL);
+		return surveyableEntity instanceof BeCPGDataObject dataObj && dataObj.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL);
 	}
 
 	private void fillScores(List<SurveyListDataItem> surveyList, Map<NodeRef, Double> scoresPerCriterion,
@@ -299,19 +327,19 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 			SurveyQuestion question = (SurveyQuestion) alfrescoRepository.findOne(s.getQuestion());
 			NodeRef criterion = question.getScoreCriterion();
 
-			double maxScore = calculateMaxScore(question);
+			Double maxScore = calculateMaxScore(question);
 
 			if (maxScore == 0) {
 				continue;
 			}
 
-			double questionScore = calculateQuestionScore(s);
+			Double questionScore = calculateQuestionScore(s);
 
 			updateCriterionScores(criterion, questionScore, maxScore, scoresPerCriterion, maxScoresPerCriterion);
 		}
 	}
 
-	private double calculateMaxScore(SurveyQuestion question) {
+	private Double calculateMaxScore(SurveyQuestion question) {
 		if (question.getQuestionScore() != null) {
 			return question.getQuestionScore();
 		}
@@ -346,4 +374,5 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 					.ifPresent(scoreItem -> scoreItem.setScore(normalizedScore));
 		});
 	}
+
 }

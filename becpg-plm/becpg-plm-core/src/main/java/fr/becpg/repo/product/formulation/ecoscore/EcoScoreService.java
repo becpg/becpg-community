@@ -28,6 +28,8 @@ public class EcoScoreService {
 	private static final char CSV_QUOTE = '"';
 	private static final int SKIP_LINES = 1;
 
+	private static final String INVALID_COUNTRY_CODE = "Invalid country codes provided: %s";
+
 	private Map<String, EnvironmentalFootprintValue> environmentalFootprints;
 	private Map<String, Pair<Double, Double>> countryScores;
 	private Map<String, Pair<Double, Double>> countryPositions;
@@ -164,7 +166,7 @@ public class EcoScoreService {
 		Pair<Double, Double> loc2 = locations.get(countryCode2);
 
 		if ((loc1 == null) || (loc2 == null)) {
-			throw new IllegalArgumentException("Invalid country codes provided.");
+			throw new IllegalArgumentException(String.format(INVALID_COUNTRY_CODE, countryCode));
 		}
 
 		return Math.round(haversine(loc1.getFirst(), loc1.getSecond(), loc2.getFirst(), loc2.getSecond()));
@@ -179,7 +181,7 @@ public class EcoScoreService {
 	public Double countryEPI(String countryCode) {
 		Pair<Double, Double> score = getCountryScores().get(countryCode);
 		if ((score == null)) {
-			throw new IllegalArgumentException("Invalid country codes provided.");
+			throw new IllegalArgumentException(String.format(INVALID_COUNTRY_CODE, countryCode));
 		}
 		
 		return score.getFirst();
@@ -194,7 +196,7 @@ public class EcoScoreService {
 	public Double countrySPI(String countryCode) {
 		Pair<Double, Double> score = getCountryScores().get(countryCode);
 		if ((score == null)) {
-			throw new IllegalArgumentException("Invalid country codes provided.");
+			throw new IllegalArgumentException(String.format(INVALID_COUNTRY_CODE, countryCode));
 		}
 		
 		return score.getSecond();

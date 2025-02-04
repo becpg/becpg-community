@@ -357,7 +357,7 @@ public class HazardClassificationFormulationHandler extends FormulationBaseHandl
 						addToDetails(details, hazardStatement, ingItem, quantityPercentage);
 
 						if (hazardClassCode != null) {
-							maxQuantities.merge(hazardClassCode, quantityPercentage, Double::sum);
+							clpQuantities.merge(hazardClassCode, quantityPercentage, Double::sum);
 							maxQuantities.merge(hazardClassCode, quantityPercentage, Double::max);
 							addToDetails(details, hazardClassCode, ingItem, quantityPercentage);
 						}

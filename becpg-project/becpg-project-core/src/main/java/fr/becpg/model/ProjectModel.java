@@ -269,6 +269,8 @@ public interface ProjectModel {
 	QName PROP_SCORE_CRITERION_RANGE_FORMULA = QName.createQName(PROJECT_URI, "scoreCriterionRangeFormula");
 	
 	QName PROP_SCORE_CRITERION_RANGE = QName.createQName(PROJECT_URI, "scoreCriterionRange");
+
+	QName PROP_SCORE_CRITERION_FORMULATED = QName.createQName(PROJECT_URI, "scoreCriterionFormulated");
 	
 
 }
