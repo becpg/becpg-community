@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
@@ -18,7 +19,7 @@ import fr.becpg.test.utils.CharactTestHelper;
 
 public class GreenScoreSpecificationTestProduct extends StandardSoapTestProduct {
 
-	private static final String DEFAULT_RANGE = "A: [8), B: [6;8), C: [4;6), D: [2;4), E: [0;2)";
+	private static final String DEFAULT_RANGE = "A: [80;100), B: [60;80), C: [40;60), D: [20;40), E: [0;20)";
 
 	// Main categories
 	public static final String FORMULATION = "1- FORMULATION";
@@ -30,10 +31,11 @@ public class GreenScoreSpecificationTestProduct extends StandardSoapTestProduct 
 	// Formulation subcategories
 	public static final String CARBON_SCORE_INGREDIENTS = "INGREDIENTS CARBON SCORE";
 	public static final String CARBON_SCORE_INGREDIENTS_WITHOUT_TRANSPORT = "Ingredients carbon score (excluding transport)";
-	public static final String CARBON_TRANSPORT_IMPACT = "Transport carbon impact (kCO2/kg/km)";
+	
 	public static final String BIODIVERSITY = "BIODIVERSITY";
 	public static final String BIOTECH_RAW_MATERIALS_WEIGHT = "Weight of biotech raw materials";
 	public static final String UPCYCLED_RAW_MATERIALS_WEIGHT = "Weight of upcycled raw materials";
+	public static final String BIODSCENT = "BioDscent";
 	public static final String ENVIRONMENTAL_PERFORMANCE = "ENVIRONMENTAL PERFORMANCE";
 
 	public static final String ISO_16128_PERCENTAGE = "Raw materials percentage according to ISO 16128";
@@ -78,12 +80,21 @@ public class GreenScoreSpecificationTestProduct extends StandardSoapTestProduct 
 		super.createPhysicoChems(soapProduct);
 
 		// Add physico-chemical properties
-		addPhysicoChemProperty(soapProduct, "Poids des MP issues Biotech", null, 2.7d);
-		addPhysicoChemProperty(soapProduct, "Poids des MP upcyclées", null, 0d);
-		addPhysicoChemProperty(soapProduct, "Poids des MP énergivores", null, 0d); //--> Claim
-		addPhysicoChemProperty(soapProduct, "% de MP selon ISO 16128", null, 0d); //--> Claim
+		addPhysicoChemProperty(soapProduct, BIOTECH_RAW_MATERIALS_WEIGHT, null, 2.7d);
+		addPhysicoChemProperty(soapProduct, UPCYCLED_RAW_MATERIALS_WEIGHT, null, 0d);
+		addPhysicoChemProperty(soapProduct, ENERGY_INTENSIVE_MATERIALS, null, 0d);
+		addPhysicoChemProperty(soapProduct, ISO_16128_PERCENTAGE, null, 100d);
+		addPhysicoChemProperty(soapProduct, BIODSCENT, null, 0d);
 
 		addLCAProperty(soapProduct, CLIMATE_CHANGE, "CLIMATE_CHANGE", 5.45d);
+
+		//Add on item for formulation
+		List<ScoreListDataItem> scoreList = new ArrayList<>();
+
+		ScoreListDataItem formulation = ScoreListDataItem.build().withScoreCriterion(crit(FORMULATION, DEFAULT_RANGE, 50d));
+		scoreList.add(formulation);
+
+		soapProduct.setScoreList(scoreList);
 	}
 
 	private List<ScoreListDataItem> createGreenScoreList() {
@@ -100,39 +111,45 @@ public class GreenScoreSpecificationTestProduct extends StandardSoapTestProduct 
 		scoreList.add(scoreCarboneIngredients);
 
 		scoreList.add(ScoreListDataItem.build().withParent(scoreCarboneIngredients)
-				.withScoreCriterion(crit(CARBON_SCORE_INGREDIENTS_WITHOUT_TRANSPORT, null, 90d, createLcaFormula(CLIMATE_CHANGE))));
+				.withScoreCriterion(crit(CARBON_SCORE_INGREDIENTS_WITHOUT_TRANSPORT, null, 90d, createLcaFormula(CLIMATE_CHANGE), null)));
 
-		scoreList.add(ScoreListDataItem.build().withParent(scoreCarboneIngredients).withScoreCriterion(crit(CARBON_TRANSPORT_IMPACT, null, 10d,
-				"entity.isRawMaterial() ? @ecoScore.distance(entity.plant.geoOrigins, entity.geoOrigins) * 0,135d : value")));
+		addCriterion(scoreList, scoreCarboneIngredients, CARBON_SCORE_INGREDIENTS_WITHOUT_TRANSPORT, 50d, createLcaFormula(CLIMATE_CHANGE),
+				"\"ACV: \"+"+createLcaFormula(CLIMATE_CHANGE), new Double[] { 0.0, 6d, 12d, 18d, 24d, 10000d });
+
+		addCriterion(scoreList, scoreCarboneIngredients, SUPPLIER_TRANSPORT_IMPACT, 50d,
+				"entity.isRawMaterial() ? (@beCPG.interpolate(@ecoScore.distance(entity.plants?.![geoOrigins], entity.geoOrigins), {100, 80, 60, 40, 20, 0}, {0.0, 0.068, 0.169, 0.847, 3.0, 6.0})) : dataListItem.value",
+				"(entity.isRawMaterial() ? \"Distance: \"+(@ecoScore.distance(entity.plants?.![geoOrigins], entity.geoOrigins)+ \"* 0.135d\") : \"\")",
+				null);
 
 		// 1.2 - Biodiversity
 		ScoreListDataItem biodiversite = ScoreListDataItem.build().withParent(formulation).withScoreCriterion(crit(BIODIVERSITY, DEFAULT_RANGE, 9d));
 		scoreList.add(biodiversite);
 
-		scoreList.add(ScoreListDataItem.build().withParent(biodiversite)
-				.withScoreCriterion(crit(BIOTECH_RAW_MATERIALS_WEIGHT, null, 50d, createPhysicoFormula("Poids des MP issues Biotech"))));
-
-		scoreList.add(ScoreListDataItem.build().withParent(biodiversite)
-				.withScoreCriterion(crit(UPCYCLED_RAW_MATERIALS_WEIGHT, null, 50d, createPhysicoFormula("Poids des MP upcyclées"))));
+		addCriterion(scoreList, biodiversite, BIOTECH_RAW_MATERIALS_WEIGHT, 50d, createPhysicoFormula(BIOTECH_RAW_MATERIALS_WEIGHT), null,
+				new Double[] { 100.0, 4.0, 2.0, 1.0, 0.5, 0.0 });
+		addCriterion(scoreList, biodiversite, UPCYCLED_RAW_MATERIALS_WEIGHT, 50d, createPhysicoFormula(UPCYCLED_RAW_MATERIALS_WEIGHT), null,
+				new Double[] { 100.0, 4.0, 2.0, 1.0, 0.5, 0.0 });
 
 		// 1.3 - Environmental Performance
 		ScoreListDataItem performanceEnvironnementale = ScoreListDataItem.build().withParent(formulation)
 				.withScoreCriterion(crit(ENVIRONMENTAL_PERFORMANCE, DEFAULT_RANGE, 36d));
 		scoreList.add(performanceEnvironnementale);
 
-		scoreList.add(ScoreListDataItem.build().withParent(performanceEnvironnementale).withScoreCriterion(
-				crit(EPI_SCORE, null, 9.1d, "entity.isRawMaterial() ? @ecoScore.countryEPI(entity.geoOrigins): dataListItem.value")));
+		addCriterion(scoreList, performanceEnvironnementale, EPI_SCORE, 50d,
+				"entity.isRawMaterial() ? (@beCPG.interpolate( @ecoScore.countryEPI(entity.geoOrigins), {100, 80, 60, 40, 20, 0}, {100.0, 53.33, 40.0, 26.66, 13.33, 0.0})) : dataListItem.value",
+				"(entity.isRawMaterial() ? \"EPI: \"+ @ecoScore.countryEPI(entity.geoOrigins) : '')", null);
 
-		scoreList.add(ScoreListDataItem.build().withParent(performanceEnvironnementale)
-				.withScoreCriterion(crit(ISO_16128_PERCENTAGE, null, 9.1d, createPhysicoFormula("% de MP selon ISO 16128"))));
+		addCriterion(scoreList, performanceEnvironnementale, ISO_16128_PERCENTAGE, 50d, createPhysicoFormula(ISO_16128_PERCENTAGE), null,
+				new Double[] { 100.0, 95.0, 85.0, 75.0, 50.0, 0.0 });
 
 		// 1.4 - Societal Performance
 		ScoreListDataItem impactsSocietaux = ScoreListDataItem.build().withParent(formulation)
 				.withScoreCriterion(crit(SOCIETAL_PERFORMANCE, DEFAULT_RANGE, 36d));
 		scoreList.add(impactsSocietaux);
 
-		scoreList.add(ScoreListDataItem.build().withParent(impactsSocietaux).withScoreCriterion(
-				crit(SPI_SCORE, null, 66.7d, "entity.isRawMaterial() ? @ecoScore.countrySPI(entity.geoOrigins): dataListItem.value")));
+		addCriterion(scoreList, impactsSocietaux, SPI_SCORE, 66.7d,
+				"entity.isRawMaterial() ? (@beCPG.interpolate( @ecoScore.countrySPI(entity.geoOrigins), {100, 80, 60, 40, 20, 0}, {100d, 74.66d, 56d, 37.33d, 18.66d, 0.0})) : dataListItem.value",
+				"(entity.isRawMaterial() ? \"SPI: \"+ @ecoScore.countryEPI(entity.geoOrigins) : '')", null);
 
 		scoreList.add(ScoreListDataItem.build().withParent(impactsSocietaux).withScoreCriterion(crit(SUPPLIER_ECOVADIS_CERTIFICATION, null, 33.3d)));
 
@@ -146,17 +163,22 @@ public class GreenScoreSpecificationTestProduct extends StandardSoapTestProduct 
 		scoreList.add(consommationRessources);
 
 		scoreList.add(ScoreListDataItem.build().withParent(consommationRessources)
-				.withScoreCriterion(crit(RAW_MATERIALS_COUNT, null, 42.9d, "entity.compoList.length")));
+				.withScoreCriterion(crit(RAW_MATERIALS_COUNT, null, 42.9d, "@ecoScore.countRawMaterials(entity)", null)));
+		
+		addCriterion(scoreList, consommationRessources, RAW_MATERIALS_COUNT, 42.9d,  "@ecoScore.countRawMaterials(entity)", null,
+				new Double[] { 10.0, 20.0, 30.0, 50.0, 10.0, 80.0 });
 
-		scoreList.add(ScoreListDataItem.build().withParent(consommationRessources)
-				.withScoreCriterion(crit(ENERGY_INTENSIVE_MATERIALS, null, 57.1d, createPhysicoFormula("Poids des MP énergivores"))));
 
+		addCriterion(scoreList, consommationRessources, ENERGY_INTENSIVE_MATERIALS, 57.1d, createPhysicoFormula(ENERGY_INTENSIVE_MATERIALS), null,
+				new Double[] { 0.0, 10.0, 20.0, 50.0, 80.0, 100.0 });
+		
 		// 2.2 - Factory Carbon Score
 		ScoreListDataItem scoreCarboneUsine = ScoreListDataItem.build().withParent(fabrication)
 				.withScoreCriterion(crit(FACTORY_CARBON_SCORE, DEFAULT_RANGE, 50d));
 		scoreList.add(scoreCarboneUsine);
 
-		scoreList.add(ScoreListDataItem.build().withParent(scoreCarboneUsine).withScoreCriterion(crit(FACTORY_CARBON_INTENSITY, null, 100d, "2.5d")));
+		scoreList.add(
+				ScoreListDataItem.build().withParent(scoreCarboneUsine).withScoreCriterion(crit(FACTORY_CARBON_INTENSITY, null, 100d, "2.5d", null)));
 
 		// 3 - TRANSPORT
 		ScoreListDataItem transport = ScoreListDataItem.build().withScoreCriterion(crit(TRANSPORT, DEFAULT_RANGE, 10.71d));
@@ -164,7 +186,7 @@ public class GreenScoreSpecificationTestProduct extends StandardSoapTestProduct 
 
 		// Transport Impacts
 		ScoreListDataItem impactsTransport = ScoreListDataItem.build().withParent(transport)
-				.withScoreCriterion(crit(TRANSPORT_IMPACTS, DEFAULT_RANGE, 100d));
+				.withScoreCriterion(crit(CLIENT_TRANSPORT_IMPACTS, DEFAULT_RANGE, 100d));
 		scoreList.add(impactsTransport);
 
 		ScoreListDataItem usage = ScoreListDataItem.build().withScoreCriterion(crit(USAGE, DEFAULT_RANGE, 10.7d));
@@ -173,45 +195,53 @@ public class GreenScoreSpecificationTestProduct extends StandardSoapTestProduct 
 		// 2.4 - Toxicité santé
 		ScoreListDataItem toxiciteSante = ScoreListDataItem.build().withParent(usage).withScoreCriterion(crit("TOXICITE SANTE", DEFAULT_RANGE, 100d));
 		scoreList.add(toxiciteSante);
-		addCriterion(scoreList, toxiciteSante, "ATO (mg/kg)", 1.2d, "entity.hazards.etaVo", new Double[] { 500000.0, 2000.0, 300.0, 50.0, 5.0, 0.0 });
-		addCriterion(scoreList, toxiciteSante, "ATD (mg/kg)", 1.2d, "entity.hazards.etaVc",
+		addCriterion(scoreList, toxiciteSante, "ATO (mg/kg)", 1.2d, "entity.hazards.etaVo", "\"ATO (mg/kg): \"+ entity.hazards.etaVo",
 				new Double[] { 500000.0, 2000.0, 1000.0, 200.0, 50.0, 0.0 });
-		addCriterion(scoreList, toxiciteSante, "ATIV (ppm)", 1.2d, "entity.hazards.etaInGas",
+		addCriterion(scoreList, toxiciteSante, "ATD (mg/kg)", 1.2d, "entity.hazards.etaVc", "\"ATD (mg/kg): \"+ entity.hazards.etaVc",
 				new Double[] { 500000.0, 20000.0, 2500.0, 500.0, 100.0, 0.0 });
-		addCriterion(scoreList, toxiciteSante, "AH1", 0.6d, "entity.hazards.hSum(\"AH1\")", new Double[] { 0.0, 0.1, 0.5, 1.0, 3.0, 10.0 });
-		addCriterion(scoreList, toxiciteSante, "STOT SE 1", 1.2d, "entity.hazards.hSum(\"STOT SE 1\")",
+		addCriterion(scoreList, toxiciteSante, "ATIV (ppm)", 1.2d, "entity.hazards.etaInGas", "\"ATIV (ppm): \"+ entity.hazards.etaInGas",
+				new Double[] { 0.0, 0.1, 0.5, 1.0, 3.0, 10.0 });
+		addCriterion(scoreList, toxiciteSante, "AH1", 0.6d, "entity.hazards.hSum(\"AH1\")", "entity.hazards.detail(\"AH1\")",
+				new Double[] { 0.0, 0.1, 0.5, 1.0, 3.0, 10.0 });
+		addCriterion(scoreList, toxiciteSante, "STOT SE 1", 1.2d, "entity.hazards.hSum(\"STOT SE 1\")", "entity.hazards.detail(\"STOT SE 1\")",
 				new Double[] { 0.0, 0.01, 0.1, 1.0, 3.0, 10.0 });
-		addCriterion(scoreList, toxiciteSante, "STOT SE 2", 1.2d, "entity.hazards.hSum(\"STOT SE 2\")",
+		addCriterion(scoreList, toxiciteSante, "STOT SE 2", 1.2d, "entity.hazards.hSum(\"STOT SE 2\")", "entity.hazards.detail(\"STOT SE 2\")",
 				new Double[] { 0.0, 0.01, 0.1, 1.0, 3.0, 10.0 });
-		addCriterion(scoreList, toxiciteSante, "STOT RE 1", 1.2d, "entity.hazards.hSum(\"STOT RE 1\")",
+		addCriterion(scoreList, toxiciteSante, "STOT RE 1", 1.2d, "entity.hazards.hSum(\"STOT RE 1\")", "entity.hazards.detail(\"STOT RE 1\")",
 				new Double[] { 0.0, 0.01, 0.1, 1.0, 3.0, 10.0 });
-		addCriterion(scoreList, toxiciteSante, "STOT RE 2", 1.2d, "entity.hazards.hSum(\"STOT RE 2\")",
+		addCriterion(scoreList, toxiciteSante, "STOT RE 2", 1.2d, "entity.hazards.hSum(\"STOT RE 2\")", "entity.hazards.detail(\"STOT RE 2\")",
 				new Double[] { 0.0, 0.01, 0.1, 1.0, 3.0, 10.0 });
 		addCriterion(scoreList, toxiciteSante, "Skin Sens. 1A", 6d, "entity.hazards.hSum(\"Skin Sens. 1A\")",
-				new Double[] { 0.0, 0.01, 0.1, 1.0, 5.0, 10.0 });
+				"entity.hazards.detail(\"Skin Sens. 1A\")", new Double[] { 0.0, 0.01, 0.1, 1.0, 5.0, 10.0 });
 		addCriterion(scoreList, toxiciteSante, "Skin Sens. 1B", 6d, "entity.hazards.hSum(\"Skin Sens. 1B\")",
-				new Double[] { 0.0, 0.0001, 0.001, 0.01, 0.1, 1.0 });
-		addCriterion(scoreList, toxiciteSante, "Skin Sens. 1", 6d, "entity.hazards.hSum(\"Skin Sens. 1\")",
+				"entity.hazards.detail(\"Skin Sens. 1B\")", new Double[] { 0.0, 0.0001, 0.001, 0.01, 0.1, 1.0 });
+		addCriterion(scoreList, toxiciteSante, "Skin Sens. 1", 6d, "entity.hazards.hSum(\"Skin Sens. 1\")", "entity.hazards.detail(\"Skin Sens. 1\")",
+				new Double[] { 0.0, 0.01, 0.1, 1.0, 10.0, 100.0 });
+		addCriterion(scoreList, toxiciteSante, "S-SS1A", 6d, "entity.hazards.hSum(\"S-SS1A\")", "entity.hazards.detail(\"S-SS1A\")",
+				new Double[] { 0.0, 0.01, 0.1, 1.0, 10.0, 100.0 });
+		addCriterion(scoreList, toxiciteSante, "EDHH1", 6d, "entity.hazards.hSum(\"EDHH1\")", "entity.hazards.detail(\"EDHH1\")",
 				new Double[] { 0.0, 0.01, 0.1, 1.0, 5.0, 10.0 });
-		addCriterion(scoreList, toxiciteSante, "S-SS1A", 6d, "entity.hazards.hSum(\"S-SS1A\")", new Double[] { 0.0, 0.01, 0.1, 1.0, 5.0, 10.0 });
-		addCriterion(scoreList, toxiciteSante, "EDHH1", 6d, "entity.hazards.hSum(\"EDHH1\")", new Double[] { 0.0, 0.01, 0.1, 1.0, 5.0, 10.0 });
-		addCriterion(scoreList, toxiciteSante, "EDHH2", 6d, "entity.hazards.hSum(\"EDHH2\")", new Double[] { 0.0, 0.01, 0.1, 1.0, 5.0, 10.0 });
-		addCriterion(scoreList, toxiciteSante, "Carc. 1A", 6d, "entity.hazards.hSum(\"Carc. 1A\")",
+		addCriterion(scoreList, toxiciteSante, "EDHH2", 6d, "entity.hazards.hSum(\"EDHH2\")", "entity.hazards.detail(\"EDHH2\")",
+				new Double[] { 0.0, 0.01, 0.1, 1.0, 5.0, 10.0 });
+		addCriterion(scoreList, toxiciteSante, "Carc. 1A", 6d, "entity.hazards.hSum(\"Carc. 1A\")", "entity.hazards.detail(\"Carc. 1A\")",
 				new Double[] { 0.0, 0.001, 0.005, 0.01, 0.1, 100.0 });
-		addCriterion(scoreList, toxiciteSante, "Carc. 1B", 6d, "entity.hazards.hSum(\"Carc. 1B\")",
+		addCriterion(scoreList, toxiciteSante, "Carc. 1B", 6d, "entity.hazards.hSum(\"Carc. 1B\")", "entity.hazards.detail(\"Carc. 1B\")",
 				new Double[] { 0.0, 0.001, 0.005, 0.01, 0.1, 100.0 });
-		addCriterion(scoreList, toxiciteSante, "Carc. 2", 6d, "entity.hazards.hSum(\"Carc. 2\")", new Double[] { 0.0, 0.001, 0.05, 0.1, 1.0, 100.0 });
-		addCriterion(scoreList, toxiciteSante, "Muta. 1A", 6d, "entity.hazards.hSum(\"Muta. 1A\")",
+		addCriterion(scoreList, toxiciteSante, "Carc. 2", 6d, "entity.hazards.hSum(\"Carc. 2\")", "entity.hazards.detail(\"Carc. 2\")",
+				new Double[] { 0.0, 0.001, 0.05, 0.1, 1.0, 100.0 });
+		addCriterion(scoreList, toxiciteSante, "Muta. 1A", 6d, "entity.hazards.hSum(\"Muta. 1A\")", "entity.hazards.detail(\"Muta. 1A\")",
 				new Double[] { 0.0, 0.001, 0.005, 0.01, 0.1, 100.0 });
-		addCriterion(scoreList, toxiciteSante, "Muta. 1B", 6d, "entity.hazards.hSum(\"Muta. 1B\")",
+		addCriterion(scoreList, toxiciteSante, "Muta. 1B", 6d, "entity.hazards.hSum(\"Muta. 1B\")", "entity.hazards.detail(\"Muta. 1B\")",
 				new Double[] { 0.0, 0.001, 0.005, 0.01, 0.1, 100.0 });
-		addCriterion(scoreList, toxiciteSante, "Muta. 2", 6d, "entity.hazards.hSum(\"Muta. 2\")", new Double[] { 0.0, 0.001, 0.05, 0.1, 1.0, 100.0 });
-		addCriterion(scoreList, toxiciteSante, "Repr. 1A", 6d, "entity.hazards.hSum(\"Repr. 1A\")",
+		addCriterion(scoreList, toxiciteSante, "Muta. 2", 6d, "entity.hazards.hSum(\"Muta. 2\")", "entity.hazards.detail(\"Muta. 2\")",
+				new Double[] { 0.0, 0.001, 0.05, 0.1, 1.0, 100.0 });
+		addCriterion(scoreList, toxiciteSante, "Repr. 1A", 6d, "entity.hazards.hSum(\"Repr. 1A\")", "entity.hazards.detail(\"Repr. 1A\")",
 				new Double[] { 0.0, 0.001, 0.005, 0.01, 0.3, 100.0 });
-		addCriterion(scoreList, toxiciteSante, "Repr. 1B", 6d, "entity.hazards.hSum(\"Repr. 1B\")",
+		addCriterion(scoreList, toxiciteSante, "Repr. 1B", 6d, "entity.hazards.hSum(\"Repr. 1B\")", "entity.hazards.detail(\"Repr. 1B\")",
 				new Double[] { 0.0, 0.001, 0.005, 0.01, 0.3, 100.0 });
-		addCriterion(scoreList, toxiciteSante, "Repr. 2", 6d, "entity.hazards.hSum(\"Repr. 2\")", new Double[] { 0.0, 0.001, 0.05, 0.3, 3.0, 100.0 });
-		addCriterion(scoreList, toxiciteSante, "REP LACT", 1.2d, "entity.hazards.hSum(\"REP LACT\")",
+		addCriterion(scoreList, toxiciteSante, "Repr. 2", 6d, "entity.hazards.hSum(\"Repr. 2\")", "entity.hazards.detail(\"Repr. 2\")",
+				new Double[] { 0.0, 0.001, 0.05, 0.3, 3.0, 100.0 });
+		addCriterion(scoreList, toxiciteSante, "REP LACT", 1.2d, "entity.hazards.hSum(\"REP LACT\")", "entity.hazards.detail(\"REP LACT\")",
 				new Double[] { 0.0, 0.001, 0.005, 0.01, 0.3, 100.0 });
 
 		// 3 - FIN DE VIE
@@ -222,8 +252,9 @@ public class GreenScoreSpecificationTestProduct extends StandardSoapTestProduct 
 		ScoreListDataItem biodegradabilite = ScoreListDataItem.build().withParent(finDeVie)
 				.withScoreCriterion(crit("BIODEGRADABILITE", DEFAULT_RANGE, 40d));
 		scoreList.add(biodegradabilite);
-		scoreList.add(ScoreListDataItem.build().withParent(biodegradabilite)
-				.withScoreCriterion(crit("BioDscent", null, 100d, createPhysicoFormula("BioDscent"))));
+
+		addCriterion(scoreList, biodegradabilite, BIODSCENT, 100d, createPhysicoFormula(BIODSCENT), createPhysicoFormula(BIODSCENT),
+				new Double[] { 0.0, 20d, 40d, 70d, 85d, 100d });
 
 		// 3.2 - Toxicité environnement
 		ScoreListDataItem toxiciteEnvironnement = ScoreListDataItem.build().withParent(finDeVie)
@@ -232,39 +263,48 @@ public class GreenScoreSpecificationTestProduct extends StandardSoapTestProduct 
 
 		scoreList.add(toxiciteEnvironnement);
 		addCriterion(scoreList, toxiciteEnvironnement, "EHA1 XMFactor", 26.3d, "entity.hazards.hSum(\"EHA1\",\"M\")",
-				new Double[] { 0.0, 0.001, 2.5, 25d, 50d, 100d });
+				"entity.hazards.detail(\"EHA1\",\"M\")", new Double[] { 0.0, 0.001, 2.5, 25d, 50d, 100d });
 		addCriterion(scoreList, toxiciteEnvironnement, "EHC1 XMFactor", 13.2d, "entity.hazards.hSum(\"REP LACT\")",
-				new Double[] { 0.0, 0.001, 2.5, 25d, 50d, 100d });
+				"entity.hazards.detail(\"REP LACT\")", new Double[] { 0.0, 0.001, 2.5, 25d, 50d, 100d });
 		addCriterion(scoreList, toxiciteEnvironnement, "EHC2 XMFactor", 13.2d, "entity.hazards.hSum(\"REP LACT\")",
-				new Double[] { 0.0, 0.001, 2.5, 25d, 50d, 100d });
+				"entity.hazards.detail(\"REP LACT\")", new Double[] { 0.0, 0.001, 2.5, 25d, 50d, 100d });
 		addCriterion(scoreList, toxiciteEnvironnement, "EHC3 XMFactor", 13.2d, "entity.hazards.hSum(\"REP LACT\")",
-				new Double[] { 0.0, 0.001, 2.5, 25d, 50d, 100d });
+				"entity.hazards.detail(\"REP LACT\")", new Double[] { 0.0, 0.001, 2.5, 25d, 50d, 100d });
 		addCriterion(scoreList, toxiciteEnvironnement, "EHC4 XMFactor", 2.6d, "entity.hazards.hSum(\"REP LACT\")",
-				new Double[] { 0.0, 0.001, 2.5, 25d, 50d, 100d });
-		addCriterion(scoreList, toxiciteEnvironnement, "ED ENV1", 13.2d, "entity.hazards.hSum(\"REP LACT\")",
+				"entity.hazards.detail(\"REP LACT\")", new Double[] { 0.0, 0.001, 2.5, 25d, 50d, 100d });
+		addCriterion(scoreList, toxiciteEnvironnement, "ED ENV1", 13.2d, "entity.hazards.hSum(\"REP LACT\")", "entity.hazards.detail(\"REP LACT\")",
 				new Double[] { 0.0, 0.010, 0.1, 1d, 10d, 100d });
-		addCriterion(scoreList, toxiciteEnvironnement, "ED ENV2", 13.2d, "entity.hazards.hSum(\"REP LACT\")",
+		addCriterion(scoreList, toxiciteEnvironnement, "ED ENV2", 13.2d, "entity.hazards.hSum(\"REP LACT\")", "entity.hazards.detail(\"REP LACT\")",
 				new Double[] { 0.0, 0.001, 2.5, 25d, 50d, 100d });
-		addCriterion(scoreList, toxiciteEnvironnement, "PMT/vPvM", 2.6d, "entity.hazards.hSum(\"REP LACT\")",
+		addCriterion(scoreList, toxiciteEnvironnement, "PMT/vPvM", 2.6d, "entity.hazards.hSum(\"REP LACT\")", "entity.hazards.detail(\"REP LACT\")",
 				new Double[] { 0.0, 0.010, 0.1, 1d, 10d, 100d });
-		addCriterion(scoreList, toxiciteEnvironnement, "PBT/vPvB", 2.6d, "entity.hazards.hSum(\"REP LACT\")",
+		addCriterion(scoreList, toxiciteEnvironnement, "PBT/vPvB", 2.6d, "entity.hazards.hSum(\"REP LACT\")", "entity.hazards.detail(\"REP LACT\")",
 				new Double[] { 0.0, 0.010, 0.1, 1d, 10d, 100d });
 
 		return scoreList;
 	}
 
-	private void addCriterion(List<ScoreListDataItem> scoreList, ScoreListDataItem parent, String key, Double weight, String field, Double[] ds) {
-		scoreList.add(ScoreListDataItem.build().withParent(parent).withScoreCriterion(
-				crit(key, null, weight, String.format("@beCPG.interpolate(%s, [10, 8, 6, 4, 2, 0], %s)", field, Arrays.toString(ds)))));
+	private void addCriterion(List<ScoreListDataItem> scoreList, ScoreListDataItem parent, String key, Double weight, String field,
+			String detailFormula, Double[] ds) {
+
+		if (ds != null) {
+
+			scoreList.add(ScoreListDataItem.build().withParent(parent)
+					.withScoreCriterion(crit(key, null, weight, String.format("@beCPG.interpolate(%s, {100, 80, 60, 40, 20, 0}, {%s})", field,
+							Arrays.stream(ds).map(String::valueOf).collect(Collectors.joining(", "))), detailFormula)));
+		} else {
+			scoreList.add(ScoreListDataItem.build().withParent(parent).withScoreCriterion(crit(key, null, weight, field, detailFormula)));
+		}
 	}
 
-	private NodeRef crit(String label, String range, Double weight, String formula) {
+	private NodeRef crit(String label, String range, Double weight, String formula, String detailFormula) {
 		NodeRef crit = crit(label);
 
 		Map<QName, Serializable> properties = new HashMap<>();
 		properties.put(ProjectModel.PROP_SCORE_CRITERION_WEIGHT, weight);
 		properties.put(ProjectModel.PROP_SCORE_CRITERION_RANGE, range);
 		properties.put(ProjectModel.PROP_SCORE_CRITERION_FORMULA, formula);
+		properties.put(ProjectModel.PROP_SCORE_CRITERION_FORMULA_DETAIL, detailFormula);
 
 		nodeService.addProperties(crit, properties);
 
@@ -272,11 +312,11 @@ public class GreenScoreSpecificationTestProduct extends StandardSoapTestProduct 
 	}
 
 	private String createLcaFormula(String lca) {
-		return String.format("lca['%s']?.value", CharactTestHelper.getOrCreateLCA(nodeService, lca));
+		return String.format("entity.lca['%s']?.value", CharactTestHelper.getOrCreateLCA(nodeService, lca));
 	}
 
 	private String createPhysicoFormula(String physico) {
-		return String.format("physico['%s']?.value", CharactTestHelper.getOrCreatePhysico(nodeService, physico));
+		return String.format("entity.physico['%s']?.value", CharactTestHelper.getOrCreatePhysico(nodeService, physico));
 	}
 
 	private NodeRef crit(String label, String range, Double weight) {

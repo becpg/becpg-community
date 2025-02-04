@@ -12,6 +12,7 @@ import org.alfresco.service.namespace.QName;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.GHSModel;
 import fr.becpg.model.PLMModel;
+import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.product.data.ClientData;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
@@ -39,7 +40,8 @@ public class StandardSoapTestProduct extends StandardProductBuilder {
 	public static final String CLIMATE_CHANGE = "Climate change";
 
 	// Transport subcategories
-	public static final String TRANSPORT_IMPACTS = "TRANSPORT IMPACTS (kg CO2/kg/km)";
+	public static final String CLIENT_TRANSPORT_IMPACTS = "Client transport carbon impact (kg CO2/kg/km)";
+	public static final String SUPPLIER_TRANSPORT_IMPACT = "Supplier transport carbon impact (kCO2/kg/km)";
 
 	public static final String EPI_SCORE = "EPI Score";
 	public static final String SPI_SCORE = "SPI Score";
@@ -115,9 +117,12 @@ public class StandardSoapTestProduct extends StandardProductBuilder {
 				.withUnit(ProductUnit.kg).withQty(1000d).withDensity(1.2d);
 
 		if (isWithScore) {
+			
+			nodeService.setProperty(CharactTestHelper.getOrCreateScoreCriterion(nodeService, CLIENT_TRANSPORT_IMPACTS),ProjectModel.PROP_SCORE_CRITERION_FORMULATED, true);
+			
 			//Client
 			ClientData clientData = ClientData.build().withName(uniqueName("Natural Soap Dealer Shop")).withScoreList(List.of(ScoreListDataItem
-					.build().withScoreCriterion(CharactTestHelper.getOrCreateScoreCriterion(nodeService, TRANSPORT_IMPACTS)).withScore(10d)));
+					.build().withScoreCriterion(CharactTestHelper.getOrCreateScoreCriterion(nodeService, CLIENT_TRANSPORT_IMPACTS)).withScore(55d)));
 
 			alfrescoRepository.create(destFolder, clientData);
 			soapProduct.setClients(List.of(clientData));
@@ -145,14 +150,30 @@ public class StandardSoapTestProduct extends StandardProductBuilder {
 		}
 
 		if (isWithSpecification) {
-
 			soapProduct.setProductSpecifications(createProductSpecifications());
-
 		}
 
 		alfrescoRepository.create(destFolder, soapProduct);
 
+		saveEntityAssociations(soapProduct);
+
 		return soapProduct;
+	}
+
+	private void saveEntityAssociations(FinishedProductData soapProduct) {
+
+		if (soapProduct.getProductSpecifications() != null) {
+			for (ProductSpecificationData productSpecificationData : soapProduct.getProductSpecifications()) {
+				nodeService.createAssociation(soapProduct.getNodeRef(), productSpecificationData.getNodeRef(), PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
+			}
+		}
+
+		if (soapProduct.getClients() != null) {
+			for (ClientData clientData : soapProduct.getClients()) {
+				nodeService.createAssociation(soapProduct.getNodeRef(), clientData.getNodeRef(), PLMModel.ASSOC_CLIENTS);
+			}
+		}
+
 	}
 
 	protected void createPhysicoChems(FinishedProductData soapProduct) {
@@ -191,12 +212,16 @@ public class StandardSoapTestProduct extends StandardProductBuilder {
 				.withGeoOrigins(List.of(CharactTestHelper.getOrCreateGeo(nodeService, "Germany", "DE")));
 
 		if (isWithScore) {
+			
+			nodeService.setProperty(CharactTestHelper.getOrCreateScoreCriterion(nodeService, EPI_SCORE),ProjectModel.PROP_SCORE_CRITERION_FORMULATED, true);
+			nodeService.setProperty(CharactTestHelper.getOrCreateScoreCriterion(nodeService, SPI_SCORE),ProjectModel.PROP_SCORE_CRITERION_FORMULATED, true);
 
 			sodiumHydroxide = sodiumHydroxide.withScoreList(List.of(
 					ScoreListDataItem.build().withScoreCriterion(CharactTestHelper.getOrCreateScoreCriterion(nodeService, EPI_SCORE))
 							.withScore(62.4d),
 					ScoreListDataItem.build().withScoreCriterion(CharactTestHelper.getOrCreateScoreCriterion(nodeService, SPI_SCORE))
-							.withScore(77.4d)));
+							.withScore(77.4d),
+				 ScoreListDataItem.build().withScoreCriterion(CharactTestHelper.getOrCreateScoreCriterion(nodeService, SUPPLIER_TRANSPORT_IMPACT))));
 			addLCAProperty(sodiumHydroxide, CLIMATE_CHANGE, "CLIMATE_CHANGE", 2.51d);
 
 		}
@@ -213,7 +238,8 @@ public class StandardSoapTestProduct extends StandardProductBuilder {
 					ScoreListDataItem.build().withScoreCriterion(CharactTestHelper.getOrCreateScoreCriterion(nodeService, EPI_SCORE))
 							.withScore(62.5d),
 					ScoreListDataItem.build().withScoreCriterion(CharactTestHelper.getOrCreateScoreCriterion(nodeService, SPI_SCORE))
-							.withScore(77.5d)));
+							.withScore(77.5d),
+					ScoreListDataItem.build().withScoreCriterion(CharactTestHelper.getOrCreateScoreCriterion(nodeService, SUPPLIER_TRANSPORT_IMPACT))));
 			addLCAProperty(sodiumHydroxide, CLIMATE_CHANGE, "CLIMATE_CHANGE", 109.99d);
 
 		}
@@ -222,7 +248,7 @@ public class StandardSoapTestProduct extends StandardProductBuilder {
 
 		// Create Essential Oils raw material with ingredients
 		RawMaterialData essentialOils = RawMaterialData.build().withName(uniqueName(ESSENTIAL_OILS)).withQty(50d).withUnit(ProductUnit.kg)
-				.withIngList(createEssentialOilsIngredients()).withGeoOrigins(List.of(CharactTestHelper.getOrCreateGeo(nodeService, "China", "ZN")));
+				.withIngList(createEssentialOilsIngredients()).withGeoOrigins(List.of(CharactTestHelper.getOrCreateGeo(nodeService, "China", "CN")));
 
 		if (isWithScore) {
 
@@ -230,7 +256,8 @@ public class StandardSoapTestProduct extends StandardProductBuilder {
 					ScoreListDataItem.build().withScoreCriterion(CharactTestHelper.getOrCreateScoreCriterion(nodeService, EPI_SCORE))
 							.withScore(28.4d),
 					ScoreListDataItem.build().withScoreCriterion(CharactTestHelper.getOrCreateScoreCriterion(nodeService, SPI_SCORE))
-							.withScore(43.4d)));
+							.withScore(43.4d),
+					ScoreListDataItem.build().withScoreCriterion(CharactTestHelper.getOrCreateScoreCriterion(nodeService, CLIENT_TRANSPORT_IMPACTS))));
 			addLCAProperty(sodiumHydroxide, CLIMATE_CHANGE, "CLIMATE_CHANGE", 300d);
 
 		}

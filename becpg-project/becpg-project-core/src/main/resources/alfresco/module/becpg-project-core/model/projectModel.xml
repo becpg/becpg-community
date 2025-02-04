@@ -893,6 +893,10 @@
 					<type>d:text</type>
 					<index enabled="false" />
 				</property>
+				<property name="pjt:scoreCriterionFormulated">
+                    <type>d:boolean</type>
+                    <index enabled="false" />
+                </property>
 			</properties>
 		</type>
 

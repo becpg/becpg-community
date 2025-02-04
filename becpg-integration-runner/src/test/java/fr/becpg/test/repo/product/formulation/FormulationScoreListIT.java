@@ -57,7 +57,33 @@ public class FormulationScoreListIT extends PLMBaseTestCase {
 				() -> new GreenScoreSpecificationTestProduct.Builder().withAlfrescoRepository(alfrescoRepository).withNodeService(nodeService)
 						.withDestFolder(getTestFolderNodeRef()).withSpecification(true).build().createTestProduct());
 
+		inWriteTx(() -> {
+			productService.formulate(greenScoreProductData);
+			verifyGreenScoreList(greenScoreProductData);
+			return null;
+		});
+		
 		Assert.assertNotNull(greenScoreProductData);
+	}
+
+	private void verifyGreenScoreList(ProductData formulatedProduct) {
+		int checks = 0;
+
+		for (ScoreListDataItem scoreListDataItem : formulatedProduct.getScoreList()) {
+			if (scoreListDataItem.getScoreCriterion()
+					.equals(CharactTestHelper.getOrCreateScoreCriterion(nodeService, GreenScoreSpecificationTestProduct.FORMULATION))) {
+				assertEquals("Score range should be A","A", scoreListDataItem.getRange());
+			}  else if (scoreListDataItem.getScoreCriterion()
+					.equals(CharactTestHelper.getOrCreateScoreCriterion(nodeService, GreenScoreSpecificationTestProduct.USAGE))) {
+				// Calculate expected score for type C
+				assertEquals("The mean of the type FILLING_QUALITY is incorrect", Integer.valueOf(50), scoreListDataItem.getScore());
+			}
+			checks++;
+		}
+
+		// Ensure checks for type A, and C are performed
+		assertEquals("Verify checks done", 2, checks);
+		
 	}
 
 	@Test
@@ -106,12 +132,7 @@ public class FormulationScoreListIT extends PLMBaseTestCase {
 	    - Question 3:
 	      - Question: Q3
 	      - Question Type: B
-	      - Question Score: 0
-
-	    - Question 4:
-	      - Question: Q4
-	      - Question Type: B
-	      - Question Score: 100
+	      - Question Score: 50d
 
 	  - Expected Score List:
 	     - Score Item 1:
@@ -135,15 +156,15 @@ public class FormulationScoreListIT extends PLMBaseTestCase {
 			if (scoreListDataItem.getScoreCriterion()
 					.equals(CharactTestHelper.getOrCreateScoreCriterion(nodeService, StandardChocolateEclairTestProduct.PASTRY_QUALITY))) {
 				// Calculate expected score for type A
-				assertEquals("The mean of the type A is incorrect", Integer.valueOf(30), scoreListDataItem.getScore());
+				assertEquals("The mean of the type PASTRY_QUALITY is incorrect", Integer.valueOf(30), scoreListDataItem.getScore());
 			} else if (scoreListDataItem.getScoreCriterion()
 					.equals(CharactTestHelper.getOrCreateScoreCriterion(nodeService, StandardChocolateEclairTestProduct.CCP_COMPLIANCE))) {
 				// Calculate expected score for type B
-				fail("B should not exists");
+				fail("CCP_COMPLIANCE should not exists");
 			} else if (scoreListDataItem.getScoreCriterion()
 					.equals(CharactTestHelper.getOrCreateScoreCriterion(nodeService, StandardChocolateEclairTestProduct.FILLING_QUALITY))) {
 				// Calculate expected score for type C
-				assertEquals("The mean of the type C is incorrect", Integer.valueOf(50), scoreListDataItem.getScore());
+				assertEquals("The mean of the type FILLING_QUALITY is incorrect", Integer.valueOf(50), scoreListDataItem.getScore());
 			}
 			checks++;
 		}

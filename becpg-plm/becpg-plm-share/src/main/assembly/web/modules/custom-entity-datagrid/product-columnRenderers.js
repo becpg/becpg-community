@@ -127,15 +127,22 @@ if (beCPG.module.EntityDataGridRenderers) {
 
 
     YAHOO.Bubbling.fire("registerDataGridRenderer", {
-        propertyName: ["ghs:hclDetail"],
+        propertyName: ["ghs:hclDetail", "pjt:slScoreDetail"],
         renderer: function(oRecord, data, label, scope, z, zz, elCell, oColumn) {
-                 // Safeguard for undefined or null data
+            if (data.value && data.value != null && data.value.length > 0) {
+                // Safeguard for undefined or null data
                 var displayValue = Alfresco.util.encodeHTML(data.displayValue) || "";
+
+                if (oColumn.hidden) {
+                    oColumn.showAfterRender = true;
+                }
 
                 // Replace the placeholders in the format `{id:Value} percentage`
                 return displayValue.replace(
-                          /\{([^:}]+):([^}]+)\}/g,'<span class="bcpg_ingList#$1"><a class="charact-details ' 
-                          + CHARACTDETAILS_EVENTCLASS+'" href="" ><b>$2</b></a></span>' );
+                    /\{([^:}]+):([^}]+)\}/g, '<span class="bcpg_ingList#$1"><a class="charact-details '
+                    + CHARACTDETAILS_EVENTCLASS + '" href="" ><b>$2</b></a></span>');
+            }
+            return "";
         }
 
     });

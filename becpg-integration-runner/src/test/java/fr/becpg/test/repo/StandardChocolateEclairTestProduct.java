@@ -629,13 +629,13 @@ public class StandardChocolateEclairTestProduct extends StandardProductBuilder {
 	    getOrCreateSurveyAnswer(
 	        question3,
 	        "Slight viscosity deviation (60-75% content), minor texture issues",
-	        50d
+	        0d
 	    );
 
 	    final SurveyQuestion q3Answer3 = getOrCreateSurveyAnswer(
 	        question3,
 	        "Out of specification - improper viscosity or crystallization",
-	        0d
+	        50d
 	    );
 
 	    final SurveyListDataItem survey3 = new SurveyListDataItem();
@@ -647,11 +647,11 @@ public class StandardChocolateEclairTestProduct extends StandardProductBuilder {
 
 
 	private List<ScoreListDataItem> createScoreList() {
-	    return List.of(
+	    return new ArrayList<>(List.of(
 	        ScoreListDataItem.build().withScoreCriterion(CharactTestHelper.getOrCreateScoreCriterion(nodeService, PASTRY_QUALITY)),
 	        ScoreListDataItem.build().withScoreCriterion(CharactTestHelper.getOrCreateScoreCriterion(nodeService, FILLING_QUALITY)),
-	        ScoreListDataItem.build().withScoreCriterion(CharactTestHelper.getOrCreateScoreCriterion(nodeService, CCP_COMPLIANCE))
-	    );
+	        ScoreListDataItem.build().withScoreCriterion(CharactTestHelper.getOrCreateScoreCriterion(nodeService, CCP_COMPLIANCE)).withScore(80d)
+	    ));
 	}
 	
 	private SurveyQuestion getOrCreateSurveyQuestion( String label, String scoreCriterion, String responseType, Double questionScore) {

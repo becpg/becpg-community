@@ -147,7 +147,7 @@ install_hotswap(){
 }
 
 tail() {
-    docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH logs -f --tail=100 becpg becpg-db
+    docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH logs -f --tail=100 becpg becpg-db becpg-share
 }
 
 test() {

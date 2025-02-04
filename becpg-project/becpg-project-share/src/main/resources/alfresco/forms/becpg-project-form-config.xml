@@ -2009,8 +2009,11 @@
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
+				   <field id="pjt:slWeight"  
+				        help="{&quot;className&quot;:  &quot;italic-ifchild bold-ifopen&quot;, &quot;numberFormat&quot;:  { &quot;minimumFractionDigits&quot;: 0, &quot;maximumFractionDigits&quot;: 4}}"
+				        /> 
 				    <field id="bcpg:depthLevel" label="hidden" />
-				    <field id="pjt:slScoreDetail" label="hidden" />
+				    <field id="pjt:slScoreDetail"  read-only="true" />
 					<field id="pjt:slScreening" read-only="true" />
 					<field id="pjt:slCriterion" read-only="true" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
@@ -2052,6 +2055,7 @@
                     <show id="pjt:scoreCriterionDetailFormula" />
                     <show id="pjt:scoreCriterionRangeFormula" />
                     <show id="pjt:scoreCriterionRange" />
+                    <show id="pjt:scoreCriterionFormulated" />
                     <show id="sec:readGroups" force="true" />
                     <show id="bcpg:erpCode" force="true" />
                     <show id="bcpg:isDeleted" />
@@ -2095,6 +2099,7 @@
                     <show id="pjt:scoreCriterionDetailFormula" />
                     <show id="pjt:scoreCriterionRangeFormula" />
                     <show id="pjt:scoreCriterionRange" />
+                     <show id="pjt:scoreCriterionFormulated" />
                     <show id="sec:readGroups" force="true" />
                     <show id="bcpg:erpCode" force="true" />
                     <show id="bcpg:isDeleted" />
@@ -2132,6 +2137,22 @@
                     <show id="pjt:scoreCriterionType" />
                     <show id="pjt:scoreCriterionWeight" />
                     <show id="pjt:scoreCriterionRange" />
+                    <show id="sec:readGroups" force="true" />
+                    <show id="bcpg:erpCode" force="true" />
+                    <show id="bcpg:isDeleted" />
+                </field-visibility>
+            </form>
+              <form id="export">
+                <field-visibility>
+                    <show id="bcpg:charactName" />
+                    <show id="cm:description" force="true" />
+                    <show id="pjt:scoreCriterionType" />
+                    <show id="pjt:scoreCriterionWeight" />
+                    <show id="pjt:scoreCriterionFormula" />
+                    <show id="pjt:scoreCriterionDetailFormula" />
+                    <show id="pjt:scoreCriterionRangeFormula" />
+                    <show id="pjt:scoreCriterionRange" />
+                    <show id="pjt:scoreCriterionFormulated" />
                     <show id="sec:readGroups" force="true" />
                     <show id="bcpg:erpCode" force="true" />
                     <show id="bcpg:isDeleted" />
