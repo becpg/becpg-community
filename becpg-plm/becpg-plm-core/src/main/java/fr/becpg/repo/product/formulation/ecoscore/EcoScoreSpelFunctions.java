@@ -1,7 +1,9 @@
 package fr.becpg.repo.product.formulation.ecoscore;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -10,7 +12,12 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.spel.CustomSpelFunctions;
+import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.formulation.FormulationHelper;
+import fr.becpg.repo.product.helper.AllocationHelper;
+import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
+import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 /**
  * Register custom EcoScore SPEL helper accessible with @ecoScore.
@@ -24,10 +31,13 @@ public class EcoScoreSpelFunctions implements CustomSpelFunctions {
 	@Autowired
 	private EcoScoreService ecoScoreService;
 
+	@Autowired
+	private AlfrescoRepository<BeCPGDataObject> alfrescoRepository;
+
 	/** {@inheritDoc} */
 	@Override
 	public boolean match(String beanName) {
-		return beanName.equals("@ecoScore");
+		return beanName.equals("ecoScore");
 	}
 
 	/** {@inheritDoc} */
@@ -74,6 +84,16 @@ public class EcoScoreSpelFunctions implements CustomSpelFunctions {
 				ret = Math.max(ret, ecoScoreService.distance(fromCode, geoCode));
 			}
 			return ret;
+		}
+
+		public Map<NodeRef, Double> extractAllocation(ProductData productData) {
+			Double productNetWeight = FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT);
+			return AllocationHelper.extractAllocations(productData, new HashMap<>(), productNetWeight, alfrescoRepository);
+
+		}
+
+		public Double countRawMaterials(ProductData entity) {
+			return extractAllocation(entity).size() * 1d;
 		}
 	}
 

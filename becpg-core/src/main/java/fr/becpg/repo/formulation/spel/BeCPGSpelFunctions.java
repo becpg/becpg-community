@@ -902,62 +902,81 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 		
 		/**
-	     * {@code @beCPG.interpolate($val, $values, $thresholds)}
-	     *
-	     * Example:
-	     * {@code @beCPG.interpolate(0.05, List.of(10.0, 8.0, 6.0, 4.0, 2.0, 0.0), 
-	     *                     List.of(0.0, 0.0001, 0.001, 0.01, 0.1, 1.0))}
-	     *
-	     * This function performs linear interpolation based on a list of threshold values and their
-	     * corresponding output values. The function assumes the thresholds are in ascending order.
-	     * 
-	     * @param val the input value to be interpolated
-	     * @param values the list of output values corresponding to each threshold
-	     * @param thresholds the list of input thresholds defining the interpolation ranges
-	     * @return the interpolated value for the given input {@code val}
-	     * @throws IllegalArgumentException if the sizes of {@code values} and {@code thresholds} do not match, 
-	     *                                  or if thresholds are not sorted in ascending order
-	     * @throws IllegalStateException if interpolation cannot be performed due to invalid inputs
-	     */
+		 * {@code @beCPG.interpolate($val, $values, $thresholds)}
+		 *
+		 * Example:
+		 * {@code @beCPG.interpolate(0.05, List.of(10.0, 8.0, 6.0, 4.0, 2.0, 0.0), 
+		 *                     List.of(0.0, 0.0001, 0.001, 0.01, 0.1, 1.0))}
+		 *
+		 * This function performs linear interpolation based on a list of threshold values and their
+		 * corresponding output values. The thresholds can be in ascending or descending order.
+		 * 
+		 * @param val the input value to be interpolated
+		 * @param values the list of output values corresponding to each threshold
+		 * @param thresholds the list of input thresholds defining the interpolation ranges
+		 * @return the interpolated value for the given input {@code val}
+		 * @throws IllegalArgumentException if the sizes of {@code values} and {@code thresholds} do not match,
+		 *                                  or if thresholds are constant (which would lead to division by zero)
+		 * @throws IllegalStateException if interpolation cannot be performed due to invalid inputs
+		 */
 		public Double interpolate(Double val, List<Double> values, List<Double> thresholds) {
-			   if(val==null) {
-				   return null;
-			   }
-			
-		        if (values.size() != thresholds.size()) {
-		            throw new IllegalArgumentException("The size of values and thresholds must match.");
-		        }
+		    if (val == null) {
+		        return null;
+		    }
 
-		        // Ensure inputs are sorted (assumes thresholds are ascending)
-		        for (int i = 1; i < thresholds.size(); i++) {
-		            if (thresholds.get(i) < thresholds.get(i - 1)) {
-		                throw new IllegalArgumentException("Thresholds must be in ascending order.");
-		            }
-		        }
+		    if (values.size() != thresholds.size()) {
+		        throw new IllegalArgumentException("The size of values and thresholds must match.");
+		    }
+		    
+		    // Check for constant thresholds which would make interpolation impossible
+		    if (thresholds.isEmpty() || thresholds.stream().distinct().count() == 1) {
+		        throw new IllegalArgumentException("Thresholds must not be constant.");
+		    }
 
-		        // Handle cases below the first threshold and above the last threshold
+		    // Determine ordering: ascending if first element is less than the last element, descending otherwise.
+		    boolean ascending = thresholds.get(0) < thresholds.get(thresholds.size() - 1);
+
+		    // Boundary conditions
+		    if (ascending) {
 		        if (val <= thresholds.get(0)) {
 		            return values.get(0);
 		        }
 		        if (val >= thresholds.get(thresholds.size() - 1)) {
 		            return values.get(values.size() - 1);
 		        }
-
-		        // Perform interpolation
-		        for (int i = 1; i < thresholds.size(); i++) {
-		            if (val <= thresholds.get(i)) {
-		                double x1 = thresholds.get(i - 1);
-		                double x2 = thresholds.get(i);
-		                double y1 = values.get(i - 1);
-		                double y2 = values.get(i);
-
-		                // Linear interpolation formula
-		                return y1 + (val - x1) * (y2 - y1) / (x2 - x1);
-		            }
+		    } else {  // descending order
+		        if (val >= thresholds.get(0)) {
+		            return values.get(0);
 		        }
-
-		        throw new IllegalStateException("Interpolation failed. Ensure inputs are valid.");
+		        if (val <= thresholds.get(thresholds.size() - 1)) {
+		            return values.get(values.size() - 1);
+		        }
 		    }
+
+		    // Interpolation: Find the segment where val falls.
+		    // For ascending: look for the first threshold greater than or equal to val.
+		    // For descending: look for the first threshold less than or equal to val.
+		    for (int i = 1; i < thresholds.size(); i++) {
+		        if ((ascending && val <= thresholds.get(i)) ||
+		            (!ascending && val >= thresholds.get(i))) {
+
+		            double x1 = thresholds.get(i - 1);
+		            double x2 = thresholds.get(i);
+		            double y1 = values.get(i - 1);
+		            double y2 = values.get(i);
+
+		            // Check for zero denominator (shouldn't happen if thresholds are valid and distinct)
+		            if (x2 == x1) {
+		                throw new IllegalStateException("Two threshold values are equal, cannot interpolate.");
+		            }
+
+		            // Linear interpolation formula:
+		            return y1 + (val - x1) * (y2 - y1) / (x2 - x1);
+		        }
+		    }
+
+		    throw new IllegalStateException("Interpolation failed. Ensure inputs are valid.");
+		}
 		
 
 		/**
