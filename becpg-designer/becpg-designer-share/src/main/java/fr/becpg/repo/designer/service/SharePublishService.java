@@ -124,12 +124,23 @@ public class SharePublishService implements ApplicationListener<ContextRefreshed
 	private void deleteClasspathMessages() {
 		String pathName = System.getProperty("catalina.base") + "/shared/classes/alfresco/messages/custom";
 		File messageDir = new File(pathName);
+		boolean exists = true;
 		if (!messageDir.exists()) {
-			messageDir.mkdirs();
+			exists = messageDir.mkdirs();
 		}
-		for (File messageFile : messageDir.listFiles()) {
-			if (messageFile.isFile() && messageFile.getName().endsWith(PROPERTIES)) {
-				messageFile.delete();
+		if(exists) {
+			File[] files = messageDir.listFiles();
+			if (files == null) {
+				throw new IllegalStateException("Failed to list files in directory: " + pathName);
+			}
+			for (File messageFile : files) {
+				if (messageFile.isFile() && messageFile.getName().endsWith(PROPERTIES)) {
+					try {
+						Files.delete(messageFile.toPath());
+					} catch (IOException e) {
+						throw new IllegalStateException("Cannot delete file: " + messageFile.getPath(), e);
+					}
+				}
 			}
 		}
 	}
