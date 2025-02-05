@@ -11,7 +11,7 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.quality.data.BatchData;
 import fr.becpg.repo.repository.AlfrescoRepository;
-import fr.becpg.test.repo.StandardChocolateEclairTestProduct;
+import fr.becpg.repo.sample.StandardChocolateEclairTestProduct;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
 public class BatchOrderIT extends AbstractFinishedProductTest {

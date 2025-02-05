@@ -1,4 +1,4 @@
-package fr.becpg.test.utils;
+package fr.becpg.repo.sample;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -25,6 +25,10 @@ import fr.becpg.repo.survey.SurveyModel;
  */
 public class CharactTestHelper {
 
+	private CharactTestHelper() {
+		//Do Nothing
+	}
+	
 	/**
 	 * Generic method to get or create a node based on the provided path, type, and properties.
 	 * 

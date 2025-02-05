@@ -1,4 +1,4 @@
-package fr.becpg.test.repo;
+package fr.becpg.repo.sample;
 
 import java.util.Calendar;
 
@@ -9,12 +9,12 @@ import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 
-public abstract class StandardProductBuilder {
+public abstract class SampleProductBuilder {
 
 
     @FunctionalInterface
 	public interface ProductBuilder {
-        void build(StandardProductBuilder builder, FinishedProductData product);
+        void build(SampleProductBuilder builder, FinishedProductData product);
     }
 	
 	
@@ -23,7 +23,7 @@ public abstract class StandardProductBuilder {
 	protected NodeRef destFolder;
 
 	// Protected constructor to prevent direct instantiation
-	protected StandardProductBuilder(Builder<?> builder) {
+	protected SampleProductBuilder(Builder<?> builder) {
 		this.alfrescoRepository = builder.alfrescoRepository;
 		this.nodeService = builder.nodeService;
 		this.destFolder = builder.destFolder;
@@ -52,7 +52,7 @@ public abstract class StandardProductBuilder {
 
 		protected abstract T self();
 
-		public abstract StandardProductBuilder build();
+		public abstract SampleProductBuilder build();
 	}
 
 

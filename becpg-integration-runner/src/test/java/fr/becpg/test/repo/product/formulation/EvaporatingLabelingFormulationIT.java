@@ -16,7 +16,7 @@ import fr.becpg.repo.product.data.constraints.LabelingRuleType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
-import fr.becpg.test.repo.StandardChocolateEclairTestProduct;
+import fr.becpg.repo.sample.StandardChocolateEclairTestProduct;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
 public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTest {
