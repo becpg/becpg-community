@@ -2021,10 +2021,18 @@
 			</form>
 			<form id="filter">
 				<field-visibility>
+				    <show id="bcpg:depthLevel" />
 					<show id="pjt:slCriterion" />
 					<show id="pjt:slScoreCriterion" />
 				</field-visibility>
 				<appearance>
+				
+                    <field id="bcpg:depthLevel" >
+                        <control template="/org/alfresco/components/form/controls/selectone.ftl">
+                            <control-param name="options">0|,1|1,2|2,3|3,4|4,All|data.level.all
+                            </control-param>
+                        </control>
+                    </field>
 				     <field id="pjt:slScoreCriterion" >
                         <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
                             <control-param name="ds">becpg/autocomplete/targetassoc/associations/pjt:scoreCriterion

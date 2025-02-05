@@ -80,18 +80,16 @@
 }
 
 
-.score-class-a,
-.score-class-b,
-.score-class-c,
-.score-class-d,
-.score-class-e
+.range-score-a,
+.range-score-b,
+.range-score-c,
+.range-score-d,
+.range-score-e
  {
     border: 0 none;
     display: inline-block;
-    font-size: 17px;
     font-weight: bold;
-    height: 20px;
-    padding: 7px;
+    padding: 5px;
     text-align: center;
     width: 15px;
     word-spacing: normal;
@@ -99,23 +97,23 @@
     color: black;
 }
 
-.score-class-a{
+.range-score-a{
     background: #00853f;
 }
 
-.score-class-b{  
+.range-score-b{  
     background: #64bf21;
 }
 
-.score-class-c{  
+.range-score-c{  
     background: #ffc800;
 }
 
-.score-class-d{  
+.range-score-d{  
     background: #ff7600;
 }
 
-.score-class-e{  
+.range-score-e{  
     background: #ff0100;
 }
 

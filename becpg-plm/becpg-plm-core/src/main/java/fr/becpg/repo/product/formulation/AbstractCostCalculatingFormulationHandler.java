@@ -300,7 +300,9 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 		}
 		if (formulatedProduct.getClients() != null) {
 			for (ClientData client : formulatedProduct.getClients()) {
-				getDataListVisited(client).forEach(templateCostList -> synchronizeCost(formulatedProduct, templateCostList, simpleListDataList, false, toRemove));
+				if(getDataListVisited(client)!=null) {
+					getDataListVisited(client).forEach(templateCostList -> synchronizeCost(formulatedProduct, templateCostList, simpleListDataList, false, toRemove));
+				}
 			}
 		}
 		
@@ -308,7 +310,9 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 		if (formulatedProduct.getSuppliers() != null) {
 			for (NodeRef supplierNodeRef : formulatedProduct.getSuppliers()) {
 				SupplierData supplier = (SupplierData) alfrescoRepository.findOne(supplierNodeRef);
-				getDataListVisited(supplier).forEach(templateCostList -> synchronizeCost(formulatedProduct, templateCostList, simpleListDataList, false, toRemove));
+				if(getDataListVisited(supplier)!=null) {
+					getDataListVisited(supplier).forEach(templateCostList -> synchronizeCost(formulatedProduct, templateCostList, simpleListDataList, false, toRemove));
+				}
 			}
 		}
 
