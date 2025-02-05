@@ -91,6 +91,8 @@ public class ScoreListPatch extends AbstractBeCPGPatch {
 			}
 
 			Map<String, NodeRef> scoreCriterionNodeRefs = processScoreCriteria(scoreCriteriaFolder);
+			
+			//TODO Ne fonctionne pas les noeuds n'existe pas dans le batch car la transaction n'est pas terminé.
 			updateScoreLists(scoreCriterionNodeRefs);
 			updateSurveyQuestion(scoreCriterionNodeRefs);
 
