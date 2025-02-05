@@ -50,8 +50,6 @@ public class ScoreListPatch extends AbstractBeCPGPatch {
 
 	private BehaviourFilter policyBehaviourFilter;
 
-	private IntegrityChecker integrityChecker;
-
 	private RuleService ruleService;
 
 	private LockService lockService;
@@ -65,11 +63,6 @@ public class ScoreListPatch extends AbstractBeCPGPatch {
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
-
-	public void setIntegrityChecker(IntegrityChecker integrityChecker) {
-		this.integrityChecker = integrityChecker;
-	}
-
 	public void setRuleService(RuleService ruleService) {
 		this.ruleService = ruleService;
 	}
@@ -88,28 +81,21 @@ public class ScoreListPatch extends AbstractBeCPGPatch {
 	}
 
 	public String migrateScoreList() throws Exception {
-		try {
-			policyBehaviourFilter.disableBehaviour();
-			ruleService.disableRules();
-			integrityChecker.setEnabled(false);
-			return AuthenticationUtil.runAsSystem(() -> {
-				NodeRef scoreCriteriaFolder = findScoreCriteriaFolder();
-				if (scoreCriteriaFolder == null) {
-					logger.warn("Score Criteria folder not found");
-					return "No changes applied";
-				}
 
-				Map<String, NodeRef> scoreCriterionNodeRefs = processScoreCriteria(scoreCriteriaFolder);
-				updateScoreLists(scoreCriterionNodeRefs);
-				updateSurveyQuestion(scoreCriterionNodeRefs);
+		IntegrityChecker.setWarnInTransaction();
+		return AuthenticationUtil.runAsSystem(() -> {
+			NodeRef scoreCriteriaFolder = findScoreCriteriaFolder();
+			if (scoreCriteriaFolder == null) {
+				logger.warn("Score Criteria folder not found");
+				return "No changes applied";
+			}
 
-				return "Patch applied successfully";
-			});
-		} finally {
-			policyBehaviourFilter.enableBehaviour();
-			ruleService.enableRules();
-			integrityChecker.setEnabled(true);
-		}
+			Map<String, NodeRef> scoreCriterionNodeRefs = processScoreCriteria(scoreCriteriaFolder);
+			updateScoreLists(scoreCriterionNodeRefs);
+			updateSurveyQuestion(scoreCriterionNodeRefs);
+
+			return "Patch applied successfully";
+		});
 	}
 
 	private NodeRef findScoreCriteriaFolder() {
@@ -197,7 +183,7 @@ public class ScoreListPatch extends AbstractBeCPGPatch {
 				try {
 					policyBehaviourFilter.disableBehaviour();
 					ruleService.disableRules();
-					integrityChecker.setEnabled(false);
+					IntegrityChecker.setWarnInTransaction();
 
 					if (!nodeService.exists(entityNodeRef) || !entityNodeRef.getStoreRef().equals(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE)) {
 						return;
@@ -211,13 +197,12 @@ public class ScoreListPatch extends AbstractBeCPGPatch {
 					NodeRef criterionNodeRef = scoreCriterionNodeRefs.get(criterion);
 
 					if (criterionNodeRef != null) {
-
 						associationService.update(entityNodeRef, SurveyModel.ASSOC_SCORE_CRITERION, criterionNodeRef);
 					}
 				} finally {
 					policyBehaviourFilter.enableBehaviour();
 					ruleService.enableRules();
-					integrityChecker.setEnabled(true);
+
 				}
 			}
 		};
@@ -230,7 +215,7 @@ public class ScoreListPatch extends AbstractBeCPGPatch {
 				try {
 					policyBehaviourFilter.disableBehaviour();
 					ruleService.disableRules();
-					integrityChecker.setEnabled(false);
+					IntegrityChecker.setWarnInTransaction();
 
 					if (!nodeService.exists(entityNodeRef) || !entityNodeRef.getStoreRef().equals(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE)) {
 						return;
@@ -240,20 +225,20 @@ public class ScoreListPatch extends AbstractBeCPGPatch {
 						lockService.unlock(entityNodeRef);
 					}
 
+					if (!nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_DEPTH_LEVEL)) {
+						nodeService.addAspect(entityNodeRef, BeCPGModel.ASPECT_DEPTH_LEVEL, new HashMap<>());
+					}
+					
 					String criterion = (String) nodeService.getProperty(entityNodeRef, ProjectModel.PROP_SL_CRITERION);
 					NodeRef criterionNodeRef = scoreCriterionNodeRefs.get(criterion);
 
 					if (criterionNodeRef != null) {
-						if (!nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_DEPTH_LEVEL)) {
-							nodeService.addAspect(entityNodeRef, BeCPGModel.ASPECT_DEPTH_LEVEL, new HashMap<>());
-						}
-
 						associationService.update(entityNodeRef, ProjectModel.ASSOC_SL_SCORE_CRITERION, criterionNodeRef);
 					}
 				} finally {
 					policyBehaviourFilter.enableBehaviour();
 					ruleService.enableRules();
-					integrityChecker.setEnabled(true);
+
 				}
 			}
 		};
@@ -262,7 +247,7 @@ public class ScoreListPatch extends AbstractBeCPGPatch {
 	private NodeRef createScoreCriterion(String key, MLText mlText) {
 		Map<QName, Serializable> properties = new HashMap<>();
 		properties.put(BeCPGModel.PROP_CHARACT_NAME, mlText);
-		properties.put(ProjectModel.PROP_SCORE_CRITERION_TYPE, key);
+		//properties.put(ProjectModel.PROP_SCORE_CRITERION_TYPE, key);
 
 		return getOrCreateNode(nodeService, "/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:ScoreCriteria", key,
 				ProjectModel.TYPE_SCORE_CRITERION, properties);
