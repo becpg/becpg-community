@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.product.data.LogisticUnitData;
-import fr.becpg.test.repo.StandardChocolateEclairTestProduct;
+import fr.becpg.repo.sample.StandardChocolateEclairTestProduct;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
 public class LogisticUnitIT extends AbstractFinishedProductTest {

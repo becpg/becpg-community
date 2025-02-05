@@ -186,6 +186,16 @@
 	</bean>
 
 
+    <bean id="bSampleProductHelper" parent="baseJavaScriptExtension" class="fr.becpg.repo.jscript.SampleProductHelper" >
+        <property name="extensionName">
+            <value>bTest</value>
+        </property>
+        <property name="nodeService" ref="NodeService" />
+        <property name="alfrescoRepository" ref="alfrescoRepository"/>
+    </bean>
+
+
+
 	<!-- Supplier portal -->
 	<bean id="bSupplierPortalScript" parent="baseJavaScriptExtension" class="fr.becpg.repo.jscript.SupplierPortalHelper">
 		<property name="extensionName">

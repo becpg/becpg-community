@@ -1,4 +1,4 @@
-package fr.becpg.test.repo;
+package fr.becpg.repo.sample;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -29,9 +29,8 @@ import fr.becpg.repo.product.data.productList.LCAListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.formulation.clp.HazardClassificationFormulaContext;
 import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
-import fr.becpg.test.utils.CharactTestHelper;
 
-public class StandardSoapTestProduct extends StandardProductBuilder {
+public class StandardSoapTestProduct extends SampleProductBuilder {
 
 	public static final String H226_FORBIDDEN = "Product should not contain H226";
 	public static final String H290_DANGER_FORBIDDEN = "Product should not contain H290 with Danger";
@@ -62,7 +61,7 @@ public class StandardSoapTestProduct extends StandardProductBuilder {
 	}
 
 	// Static inner Builder class
-	public static class Builder extends StandardProductBuilder.Builder<Builder> {
+	public static class Builder extends SampleProductBuilder.Builder<Builder> {
 		private boolean isWithCompo = true;
 		private boolean isWithPhysico = true;
 		private boolean isWithSpecification = false;

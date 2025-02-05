@@ -1,4 +1,4 @@
-package fr.becpg.test.repo;
+package fr.becpg.repo.sample;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -33,9 +33,8 @@ import fr.becpg.repo.quality.data.dataList.StockListDataItem;
 import fr.becpg.repo.survey.data.SurveyListDataItem;
 import fr.becpg.repo.survey.data.SurveyQuestion;
 import fr.becpg.repo.survey.impl.SurveyServiceImpl.ResponseType;
-import fr.becpg.test.utils.CharactTestHelper;
 
-public class StandardChocolateEclairTestProduct extends StandardProductBuilder {
+public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 
 	public static final String WATER_NAME = "Eau";
 	public static final String MILK_NAME = "Lait";
@@ -171,7 +170,7 @@ public class StandardChocolateEclairTestProduct extends StandardProductBuilder {
 	}
 
 	// Static inner Builder class
-	public static class Builder extends StandardProductBuilder.Builder<Builder> {
+	public static class Builder extends SampleProductBuilder.Builder<Builder> {
 		private boolean isWithCompo = true;
 		private boolean isWithLabeling = true;
 		private boolean isWithGenericRawMaterial = true;
