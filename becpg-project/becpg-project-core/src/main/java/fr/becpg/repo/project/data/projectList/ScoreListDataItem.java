@@ -241,36 +241,26 @@ public class ScoreListDataItem extends AbstractManualDataItem implements  Simple
 		return "ScoreListDataItem [criterion=" + criterion + ", weight=" + weight + ", score=" + score + "]";
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = (prime * result) + ((criterion == null) ? 0 : criterion.hashCode());
-		result = (prime * result) + ((score == null) ? 0 : score.hashCode());
-		return (prime * result) + ((weight == null) ? 0 : weight.hashCode());
+		result = prime * result + Objects.hash(criterion, depthLevel, detail, range, score, scoreCriterion, weight);
+		return result;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
+		if (this == obj)
 			return true;
-		}
-		if (!super.equals(obj) || (getClass() != obj.getClass())) {
+		if (!super.equals(obj))
 			return false;
-		}
+		if (getClass() != obj.getClass())
+			return false;
 		ScoreListDataItem other = (ScoreListDataItem) obj;
-		if (!Objects.equals(criterion, other.criterion)) {
-			return false;
-		}
-		if (!Objects.equals(score, other.score)) {
-			return false;
-		}
-		if (!Objects.equals(weight, other.weight)) {
-			return false;
-		}
-		return true;
+		return Objects.equals(criterion, other.criterion) && Objects.equals(depthLevel, other.depthLevel) && Objects.equals(detail, other.detail)
+				&& Objects.equals(range, other.range) && Objects.equals(score, other.score) && Objects.equals(scoreCriterion, other.scoreCriterion)
+				&& Objects.equals(weight, other.weight);
 	}
 
 	public static ScoreListDataItem build() {

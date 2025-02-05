@@ -59,6 +59,8 @@ public class HazardClassificationFormulationIT extends PLMBaseTestCase {
 				.withNodeService(nodeService).withDestFolder(getTestFolderNodeRef()).withSpecification(true).build().createTestProduct());
 
 		inWriteTx(() -> {
+			
+			soapTestProduct.setHcList(new ArrayList<>());
 			// Perform formulation
 			formulationService.formulate(soapTestProduct);
 

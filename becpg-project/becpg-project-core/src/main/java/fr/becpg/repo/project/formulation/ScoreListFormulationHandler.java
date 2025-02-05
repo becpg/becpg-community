@@ -313,8 +313,11 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 	}
 
 	protected boolean accept(SurveyableEntity surveyableEntity) {
-		return !isTemplateEntity(surveyableEntity) && (surveyableEntity.getScoreList() != null)
-				&& alfrescoRepository.hasDataList(surveyableEntity, ProjectModel.TYPE_SCORE_LIST);
+		
+		boolean hasScoreList = surveyableEntity.getScoreList() != null
+				&& (( surveyableEntity.getScoreList() instanceof ArrayList) || alfrescoRepository.hasDataList(surveyableEntity, ProjectModel.TYPE_SCORE_LIST));
+		
+		return !isTemplateEntity(surveyableEntity) && hasScoreList;
 	}
 
 	protected boolean isTemplateEntity(SurveyableEntity surveyableEntity) {

@@ -167,9 +167,10 @@
 		<property name="systemConfigurationService" ref="systemConfigurationService" />
 	</bean>
 
+  
 
+    <bean id="scoreListExtractor" parent="multiLevelExtractor" class="fr.becpg.repo.project.extractor.ScoreListExtractor"></bean>
 
- 
 	<!-- Webscripts -->
 	<bean id="webscript.fr.becpg.project.projectModuleInfo.get" class="fr.becpg.repo.project.web.scripts.ProjectModuleInfoWebScript"
 		parent="webscript">

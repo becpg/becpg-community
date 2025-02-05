@@ -88,13 +88,9 @@ public class GreenScoreSpecificationTestProduct extends StandardSoapTestProduct 
 
 		addLCAProperty(soapProduct, CLIMATE_CHANGE, "CLIMATE_CHANGE", 5.45d);
 
-		//Add on item for formulation
-		List<ScoreListDataItem> scoreList = new ArrayList<>();
-
-		ScoreListDataItem formulation = ScoreListDataItem.build().withScoreCriterion(crit(FORMULATION, DEFAULT_RANGE, 50d));
-		scoreList.add(formulation);
-
-		soapProduct.setScoreList(scoreList);
+		//Force scoreList Formulation
+		soapProduct.setScoreList(new ArrayList<>());
+		soapProduct.setHcList(new ArrayList<>());
 	}
 
 	private List<ScoreListDataItem> createGreenScoreList() {

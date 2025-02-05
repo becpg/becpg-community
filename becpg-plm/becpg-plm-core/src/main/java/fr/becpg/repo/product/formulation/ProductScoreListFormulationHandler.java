@@ -40,8 +40,12 @@ public class ProductScoreListFormulationHandler extends AbstractSimpleListFormul
 	/** {@inheritDoc} */
 	@Override
 	protected boolean accept(ProductData formulatedProduct) {
+
+		boolean hasScoreList = (formulatedProduct.getScoreList() != null) && ((formulatedProduct.getScoreList() instanceof ArrayList)
+				|| alfrescoRepository.hasDataList(formulatedProduct, ProjectModel.TYPE_SCORE_LIST));
+
 		return !formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) && !(formulatedProduct instanceof ProductSpecificationData)
-				&& (formulatedProduct.getScoreList() != null) && alfrescoRepository.hasDataList(formulatedProduct, ProjectModel.TYPE_SCORE_LIST);
+				&& hasScoreList;
 
 	}
 
@@ -88,9 +92,22 @@ public class ProductScoreListFormulationHandler extends AbstractSimpleListFormul
 			List<ScoreListDataItem> toRemove) {
 		List<ScoreListDataItem> templateScoreList = formulatedProduct.getEntityTpl().getScoreList();
 
-		templateScoreList.forEach(templateScoreItem -> synchronizeScore(templateScoreItem, simpleListDataList, true, toRemove));
+		if ((templateScoreList != null) && !templateScoreList.isEmpty()) {
+			templateScoreList.forEach(templateScoreItem -> synchronizeScore(templateScoreItem, simpleListDataList, true, toRemove));
+			updateScoreListSorting(simpleListDataList, templateScoreList);
+		}
 
-		updateScoreListSorting(simpleListDataList, templateScoreList);
+		if (formulatedProduct.getProductSpecifications() != null) {
+			for (ProductSpecificationData productSpecificationData : formulatedProduct.getProductSpecifications()) {
+				templateScoreList = productSpecificationData.getScoreList();
+				if ((templateScoreList != null) && !templateScoreList.isEmpty()) {
+					templateScoreList.forEach(templateScoreItem -> synchronizeScore(templateScoreItem, simpleListDataList, true, toRemove));
+					updateScoreListSorting(simpleListDataList, templateScoreList);
+				}
+			}
+
+		}
+
 	}
 
 	private void updateScoreListSorting(List<ScoreListDataItem> simpleListDataList, List<ScoreListDataItem> templateScoreList) {
@@ -114,20 +131,19 @@ public class ProductScoreListFormulationHandler extends AbstractSimpleListFormul
 
 	private void synchronizeWithRelatedEntities(ProductData formulatedProduct, List<ScoreListDataItem> simpleListDataList,
 			List<ScoreListDataItem> toRemove) {
+
 		// Synchronize with clients
-		Optional.ofNullable(formulatedProduct.getClients()).ifPresent(clients -> clients.forEach(client -> client.getScoreList()
-				.forEach(templateScoreList -> synchronizeScore(templateScoreList, simpleListDataList, false, toRemove))));
+		Optional.ofNullable(formulatedProduct.getClients())
+				.ifPresent(clients -> clients.forEach(client -> Optional.ofNullable(client.getScoreList()).ifPresent(scoreList -> scoreList
+						.forEach(templateScoreList -> synchronizeScore(templateScoreList, simpleListDataList, false, toRemove)))));
 
 		// Synchronize with suppliers
 		Optional.ofNullable(formulatedProduct.getSuppliers()).ifPresent(suppliers -> suppliers.forEach(supplierNodeRef -> {
 			SupplierData supplier = (SupplierData) alfrescoRepository.findOne(supplierNodeRef);
-			supplier.getScoreList().forEach(templateScoreList -> synchronizeScore(templateScoreList, simpleListDataList, false, toRemove));
+			Optional.ofNullable(supplier.getScoreList()).ifPresent(
+					scoreList -> scoreList.forEach(templateScoreList -> synchronizeScore(templateScoreList, simpleListDataList, false, toRemove)));
 		}));
 
-		// Synchronize with product specifications
-		Optional.ofNullable(formulatedProduct.getProductSpecifications())
-				.ifPresent(specifications -> specifications.forEach(productSpecification -> productSpecification.getScoreList()
-						.forEach(templateScoreList -> synchronizeScore(templateScoreList, simpleListDataList, true, toRemove))));
 	}
 
 	private void synchronizeScore(ScoreListDataItem templateScoreListItem, List<ScoreListDataItem> scoreList, boolean isTemplateScore,
@@ -139,10 +155,10 @@ public class ProductScoreListFormulationHandler extends AbstractSimpleListFormul
 						&& scoreListItem.getCharactNodeRef().equals(templateScoreListItem.getCharactNodeRef()))
 				.findFirst().ifPresentOrElse(existingScoreItem -> {
 
-					if(!isTemplateScore && isCharactFormulated(existingScoreItem)) {
+					if (!isTemplateScore && isCharactFormulated(existingScoreItem)) {
 						existingScoreItem.setScore(templateScoreListItem.getScore());
 					}
-					
+
 					toRemove.remove(existingScoreItem);
 					addScore[0] = false;
 				}, () -> {
