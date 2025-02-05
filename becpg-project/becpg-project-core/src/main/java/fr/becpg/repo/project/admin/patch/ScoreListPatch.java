@@ -88,19 +88,28 @@ public class ScoreListPatch extends AbstractBeCPGPatch {
 	}
 
 	public String migrateScoreList() throws Exception {
-		return AuthenticationUtil.runAsSystem(() -> {
-			NodeRef scoreCriteriaFolder = findScoreCriteriaFolder();
-			if (scoreCriteriaFolder == null) {
-				logger.warn("Score Criteria folder not found");
-				return "No changes applied";
-			}
+		try {
+			policyBehaviourFilter.disableBehaviour();
+			ruleService.disableRules();
+			integrityChecker.setEnabled(false);
+			return AuthenticationUtil.runAsSystem(() -> {
+				NodeRef scoreCriteriaFolder = findScoreCriteriaFolder();
+				if (scoreCriteriaFolder == null) {
+					logger.warn("Score Criteria folder not found");
+					return "No changes applied";
+				}
 
-			Map<String, NodeRef> scoreCriterionNodeRefs = processScoreCriteria(scoreCriteriaFolder);
-			updateScoreLists(scoreCriterionNodeRefs);
-			updateSurveyQuestion(scoreCriterionNodeRefs);
+				Map<String, NodeRef> scoreCriterionNodeRefs = processScoreCriteria(scoreCriteriaFolder);
+				updateScoreLists(scoreCriterionNodeRefs);
+				updateSurveyQuestion(scoreCriterionNodeRefs);
 
-			return "Patch applied successfully";
-		});
+				return "Patch applied successfully";
+			});
+		} finally {
+			policyBehaviourFilter.enableBehaviour();
+			ruleService.enableRules();
+			integrityChecker.setEnabled(true);
+		}
 	}
 
 	private NodeRef findScoreCriteriaFolder() {
@@ -154,11 +163,11 @@ public class ScoreListPatch extends AbstractBeCPGPatch {
 				return;
 			}
 
-			String key = Optional.ofNullable((String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_LV_CODE))
-					.orElse(MLTextHelper.getClosestValue(mlText, Locale.getDefault()));
-			
-			if(key == null || key.isEmpty()) {
-				logger.warn("No key found for: "+mlText.toString());
+			String key = Optional.ofNullable(nodeService.getProperty(nodeRef, BeCPGModel.PROP_LV_CODE)).map(Object::toString)
+					.filter(s -> !s.isBlank()).orElseGet(() -> MLTextHelper.getClosestValue(mlText, Locale.getDefault()));
+
+			if (key == null || key.isEmpty()) {
+				logger.warn("No key found for: " + mlText.toString());
 				key = nodeRef.getId();
 			}
 
