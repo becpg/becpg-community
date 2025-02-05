@@ -198,7 +198,6 @@
         <property name="associationService" ref="associationService"/>
         <property name="ruleService" ref="ruleService"/>
          <property name="lockService" ref="lockService"/>
-         <property name="integrityChecker" ref="integrityChecker"/>
          <property name="patchDAO">
             <ref bean="patchDAO"/>
         </property>
