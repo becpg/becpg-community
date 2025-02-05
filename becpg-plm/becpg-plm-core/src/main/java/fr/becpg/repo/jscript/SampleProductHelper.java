@@ -40,12 +40,14 @@ public final class SampleProductHelper extends BaseScopableProcessorExtension {
 
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
-	public NodeService getNodeService() {
-		return nodeService;
-	}
-
+	
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
+	}
+	
+	
+	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
+		this.alfrescoRepository = alfrescoRepository;
 	}
 
 	public fr.becpg.repo.sample.StandardChocolateEclairTestProduct.Builder chocolateEclairBuilder(final ScriptNode destFolder) {
