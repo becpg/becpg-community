@@ -44,7 +44,7 @@ import fr.becpg.repo.survey.SurveyModel;
 public class ScoreListPatch extends AbstractBeCPGPatch {
 	private static final Log logger = LogFactory.getLog(ScoreListPatch.class);
 
-	protected static final QName QUESTION_CRITERION = QName.createQName(SurveyModel.SURVEY_URI, "questionCriterion");;
+	protected static final QName QUESTION_CRITERION = QName.createQName(SurveyModel.SURVEY_URI, "questionCriterion");
 
 	private EntityListDAO entityListDAO;
 
@@ -156,6 +156,11 @@ public class ScoreListPatch extends AbstractBeCPGPatch {
 
 			String key = Optional.ofNullable((String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_LV_CODE))
 					.orElse(MLTextHelper.getClosestValue(mlText, Locale.getDefault()));
+			
+			if(key == null || key.isEmpty()) {
+				logger.warn("No key found for: "+mlText.toString());
+				key = nodeRef.getId();
+			}
 
 			NodeRef scoreCriterion = createScoreCriterion(key, mlText);
 			scoreCriterionNodeRefs.put(key, scoreCriterion);
