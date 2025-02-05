@@ -52,7 +52,7 @@ public class EcoScoreServiceTest {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             ecoScoreService.distance("XX", "YY");
         });
-        Assert.assertEquals("Invalid country codes provided.", exception.getMessage());
+        Assert.assertEquals("Invalid country codes provided: XX", exception.getMessage());
     }
 	
 }
