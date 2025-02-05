@@ -52,10 +52,10 @@ import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 import fr.becpg.repo.project.data.projectList.ResourceCost;
 import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
+import fr.becpg.repo.sample.CharactTestHelper;
 import fr.becpg.test.BeCPGTestHelper;
 import fr.becpg.test.RepoBaseTestCase;
 import fr.becpg.test.data.EntityTestData;
-import fr.becpg.test.utils.CharactTestHelper;
 
 public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 

@@ -30,10 +30,10 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
+import fr.becpg.repo.sample.CharactTestHelper;
+import fr.becpg.repo.sample.GreenScoreSpecificationTestProduct;
+import fr.becpg.repo.sample.StandardChocolateEclairTestProduct;
 import fr.becpg.test.PLMBaseTestCase;
-import fr.becpg.test.repo.GreenScoreSpecificationTestProduct;
-import fr.becpg.test.repo.StandardChocolateEclairTestProduct;
-import fr.becpg.test.utils.CharactTestHelper;
 
 /**
  * @author frederic
@@ -72,12 +72,17 @@ public class FormulationScoreListIT extends PLMBaseTestCase {
 		for (ScoreListDataItem scoreListDataItem : formulatedProduct.getScoreList()) {
 			if (scoreListDataItem.getScoreCriterion()
 					.equals(CharactTestHelper.getOrCreateScoreCriterion(nodeService, GreenScoreSpecificationTestProduct.FORMULATION))) {
-				assertEquals("Score range should be B","B", scoreListDataItem.getRange());
+				assertEquals("Score range should be C","C", scoreListDataItem.getRange());
+				checks++;
 			} 
-			checks++;
+			if (scoreListDataItem.getScoreCriterion()
+					.equals(CharactTestHelper.getOrCreateScoreCriterion(nodeService, GreenScoreSpecificationTestProduct.RESOURCE_CONSUMPTION))) {
+				assertEquals("Score range should be A","A", scoreListDataItem.getRange());
+				checks++;
+			} 
+			
 		}
 
-		// Ensure checks for type A, and C are performed
 		assertEquals("Verify checks done", 2, checks);
 		
 	}
@@ -153,21 +158,23 @@ public class FormulationScoreListIT extends PLMBaseTestCase {
 			if (scoreListDataItem.getScoreCriterion()
 					.equals(CharactTestHelper.getOrCreateScoreCriterion(nodeService, StandardChocolateEclairTestProduct.PASTRY_QUALITY))) {
 				// Calculate expected score for type A
-				assertEquals("The mean of the type PASTRY_QUALITY is incorrect", Integer.valueOf(30), scoreListDataItem.getScore());
+				assertEquals("The mean of the type PASTRY_QUALITY is incorrect", 30d, scoreListDataItem.getScore());
+				checks++;
 			} else if (scoreListDataItem.getScoreCriterion()
 					.equals(CharactTestHelper.getOrCreateScoreCriterion(nodeService, StandardChocolateEclairTestProduct.CCP_COMPLIANCE))) {
 				// Calculate expected score for type B
-				fail("CCP_COMPLIANCE should not exists");
+				assertEquals("The mean of the type CCP_COMPLIANCE is incorrect", 80d, scoreListDataItem.getScore());
 			} else if (scoreListDataItem.getScoreCriterion()
 					.equals(CharactTestHelper.getOrCreateScoreCriterion(nodeService, StandardChocolateEclairTestProduct.FILLING_QUALITY))) {
 				// Calculate expected score for type C
-				assertEquals("The mean of the type FILLING_QUALITY is incorrect", Integer.valueOf(50), scoreListDataItem.getScore());
+				assertEquals("The mean of the type FILLING_QUALITY is incorrect",50d, scoreListDataItem.getScore());
+				checks++;
 			}
-			checks++;
+			
 		}
 
 		// Ensure checks for type A, and C are performed
-		assertEquals("Verify checks done", 2, checks);
+		assertEquals("Verify checks done", 3, checks);
 	}
 
 }

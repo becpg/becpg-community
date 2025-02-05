@@ -18,10 +18,10 @@ import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.HazardClassificationListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.formulation.clp.HazardClassificationFormulaContext;
+import fr.becpg.repo.sample.CharactTestHelper;
+import fr.becpg.repo.sample.SampleProductBuilder;
+import fr.becpg.repo.sample.StandardSoapTestProduct;
 import fr.becpg.test.PLMBaseTestCase;
-import fr.becpg.test.repo.StandardProductBuilder;
-import fr.becpg.test.repo.StandardSoapTestProduct;
-import fr.becpg.test.utils.CharactTestHelper;
 
 public class HazardClassificationFormulationIT extends PLMBaseTestCase {
 
@@ -214,7 +214,7 @@ public class HazardClassificationFormulationIT extends PLMBaseTestCase {
 		}), "H302", "GHS07", "Warning");
 	}
 
-	private FinishedProductData createTestProduct(StandardProductBuilder.ProductBuilder builder) {
+	private FinishedProductData createTestProduct(SampleProductBuilder.ProductBuilder builder) {
 		StandardSoapTestProduct testProduct = new StandardSoapTestProduct.Builder().withAlfrescoRepository(alfrescoRepository)
 				.withNodeService(nodeService).withDestFolder(getTestFolderNodeRef()).withCompo(false).withPhysico(false).build();
 
