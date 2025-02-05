@@ -371,10 +371,12 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 	private void calculateAndFillScoreList(List<ScoreListDataItem> scoreList, Map<NodeRef, Double> scoresPerCriterion,
 			Map<NodeRef, Double> maxScoresPerCriterion) {
 		scoresPerCriterion.forEach((criterion, score) -> {
-			double normalizedScore = 100 * (score / maxScoresPerCriterion.get(criterion));
-
-			scoreList.stream().filter(sl -> criterion.equals(sl.getScoreCriterion())).findFirst()
-					.ifPresent(scoreItem -> scoreItem.setScore(normalizedScore));
+			if(criterion!=null) {
+				double normalizedScore = 100 * (score / maxScoresPerCriterion.get(criterion));
+	
+				scoreList.stream().filter(sl -> criterion.equals(sl.getScoreCriterion())).findFirst()
+						.ifPresent(scoreItem -> scoreItem.setScore(normalizedScore));
+			}
 		});
 	}
 
