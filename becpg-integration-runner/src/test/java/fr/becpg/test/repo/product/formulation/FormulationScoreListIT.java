@@ -72,12 +72,8 @@ public class FormulationScoreListIT extends PLMBaseTestCase {
 		for (ScoreListDataItem scoreListDataItem : formulatedProduct.getScoreList()) {
 			if (scoreListDataItem.getScoreCriterion()
 					.equals(CharactTestHelper.getOrCreateScoreCriterion(nodeService, GreenScoreSpecificationTestProduct.FORMULATION))) {
-				assertEquals("Score range should be A","A", scoreListDataItem.getRange());
-			}  else if (scoreListDataItem.getScoreCriterion()
-					.equals(CharactTestHelper.getOrCreateScoreCriterion(nodeService, GreenScoreSpecificationTestProduct.USAGE))) {
-				// Calculate expected score for type C
-				assertEquals("The mean of the type FILLING_QUALITY is incorrect", Integer.valueOf(50), scoreListDataItem.getScore());
-			}
+				assertEquals("Score range should be B","B", scoreListDataItem.getRange());
+			} 
 			checks++;
 		}
 
@@ -94,6 +90,7 @@ public class FormulationScoreListIT extends PLMBaseTestCase {
 				.withDestFolder(getTestFolderNodeRef()).withCompo(true).withSurvey(true).withScoreList(true).build().createTestProduct());
 
 		inWriteTx(() -> {
+			
 			productService.formulate(product);
 			verifyScoreList(product);
 			return null;

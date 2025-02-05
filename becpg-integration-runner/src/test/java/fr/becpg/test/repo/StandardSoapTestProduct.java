@@ -215,6 +215,7 @@ public class StandardSoapTestProduct extends StandardProductBuilder {
 			
 			nodeService.setProperty(CharactTestHelper.getOrCreateScoreCriterion(nodeService, EPI_SCORE),ProjectModel.PROP_SCORE_CRITERION_FORMULATED, true);
 			nodeService.setProperty(CharactTestHelper.getOrCreateScoreCriterion(nodeService, SPI_SCORE),ProjectModel.PROP_SCORE_CRITERION_FORMULATED, true);
+			nodeService.setProperty(CharactTestHelper.getOrCreateScoreCriterion(nodeService, SUPPLIER_TRANSPORT_IMPACT),ProjectModel.PROP_SCORE_CRITERION_FORMULATED, true);
 
 			sodiumHydroxide = sodiumHydroxide.withScoreList(List.of(
 					ScoreListDataItem.build().withScoreCriterion(CharactTestHelper.getOrCreateScoreCriterion(nodeService, EPI_SCORE))
@@ -257,7 +258,7 @@ public class StandardSoapTestProduct extends StandardProductBuilder {
 							.withScore(28.4d),
 					ScoreListDataItem.build().withScoreCriterion(CharactTestHelper.getOrCreateScoreCriterion(nodeService, SPI_SCORE))
 							.withScore(43.4d),
-					ScoreListDataItem.build().withScoreCriterion(CharactTestHelper.getOrCreateScoreCriterion(nodeService, CLIENT_TRANSPORT_IMPACTS))));
+					ScoreListDataItem.build().withScoreCriterion(CharactTestHelper.getOrCreateScoreCriterion(nodeService, SUPPLIER_TRANSPORT_IMPACT))));
 			addLCAProperty(sodiumHydroxide, CLIMATE_CHANGE, "CLIMATE_CHANGE", 300d);
 
 		}

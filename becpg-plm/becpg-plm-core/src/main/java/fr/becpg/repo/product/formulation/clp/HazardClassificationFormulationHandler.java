@@ -151,6 +151,10 @@ public class HazardClassificationFormulationHandler extends FormulationBaseHandl
 			if (formulatedProduct.getHcList() == null) {
 				formulatedProduct.setHcList(new LinkedList<>());
 			}
+			
+			if (formulatedProduct.getIngList() == null) {
+				formulatedProduct.setIngList(new LinkedList<>());
+			}
 
 			List<HazardClassificationListDataItem> retainNodes = new ArrayList<>();
 
@@ -177,7 +181,7 @@ public class HazardClassificationFormulationHandler extends FormulationBaseHandl
 				formulatedProduct.getReqCtrlList().add(ReqCtrlListDataItem.forbidden().withMessage(MLTextHelper.getI18NMessage(MISSING_CHARACTS_MSG))
 						.ofDataType(RequirementDataType.Physicochem).withSources(new ArrayList<>(missingCharacts.values())));
 			}
-			
+
 			formulatedProduct.setHazardClassificationFormulaContext(formulaContext);
 
 			StandardEvaluationContext context = formulaService.createCustomSpelContext(formulatedProduct, formulaContext);
@@ -222,7 +226,7 @@ public class HazardClassificationFormulationHandler extends FormulationBaseHandl
 							} else {
 
 								NodeRef pictogram = null;
-								if (pictogramCode != null && !pictogramCode.isBlank()) {
+								if ((pictogramCode != null) && !pictogramCode.isBlank()) {
 									pictogram = findPictogram(pictogramCode);
 									if (pictogram == null) {
 										formulatedProduct.getReqCtrlList()
@@ -316,7 +320,7 @@ public class HazardClassificationFormulationHandler extends FormulationBaseHandl
 
 				Double toxicityAcuteInhalation = (Double) nodeService.getProperty(ing.getIng(), BeCPGModel.PROP_ING_TOX_ACUTE_INHALATION);
 				String toxicityAcuteInhalationType = (String) nodeService.getProperty(ing.getIng(), BeCPGModel.PROP_ING_TOX_ACUTE_INHALATION_TYPE);
-				if ((toxicityAcuteInhalation != null) && (toxicityAcuteInhalation != 0) && toxicityAcuteInhalationType != null
+				if ((toxicityAcuteInhalation != null) && (toxicityAcuteInhalation != 0) && (toxicityAcuteInhalationType != null)
 						&& !toxicityAcuteInhalationType.isBlank()) {
 					clpQuantities.merge(HazardClassificationFormulaContext.etaType(toxicityAcuteInhalationType),
 							quantityPercentage / toxicityAcuteInhalation, Double::sum);
@@ -443,14 +447,12 @@ public class HazardClassificationFormulationHandler extends FormulationBaseHandl
 
 	private boolean accept(ProductData formulatedProduct) {
 		// Reject if the product contains the ASPECT_ENTITY_TPL aspect or is an instance of ProductSpecificationData
-		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || formulatedProduct instanceof ProductSpecificationData) {
+		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || (formulatedProduct instanceof ProductSpecificationData)) {
 			return false;
 		}
+		return(formulatedProduct.getHcList() != null) && ((formulatedProduct.getHcList() instanceof ArrayList)
+				|| alfrescoRepository.hasDataList(formulatedProduct, GHSModel.TYPE_HAZARD_CLASSIFICATION_LIST));
 
-		// Reject if either ingList or hazard classification list is missing
-		boolean hasIngredientList = alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_INGLIST);
-		boolean hasHazardClassificationList = alfrescoRepository.hasDataList(formulatedProduct, GHSModel.TYPE_HAZARD_CLASSIFICATION_LIST);
-		return (hasIngredientList && hasHazardClassificationList);
 
 	}
 

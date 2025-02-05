@@ -95,7 +95,7 @@ if (beCPG.module.EntityDataGridRenderers) {
         propertyName: "pjt:slScoreRange",
         renderer: function(oRecord, data, label, scope) {
             if (data.displayValue) {
-                return '<span class="score-letter-' + data.displayValue.toLowerCase() + '">' + data.displayValue + '</div>';
+                return '<span class="range-score-' + data.displayValue.toLowerCase() + '">' + data.displayValue + '</div>';
             }
             return "";
         }
