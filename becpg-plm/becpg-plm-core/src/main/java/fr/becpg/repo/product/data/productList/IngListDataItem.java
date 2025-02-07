@@ -21,10 +21,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
+import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -95,6 +97,8 @@ public class IngListDataItem extends AbstractManualDataItem
 	private Double mini;
 
 	private Double maxi;
+	
+	private MLText comments;
 
 	private DeclarationType declType = DeclarationType.Detail;
 
@@ -481,6 +485,17 @@ public class IngListDataItem extends AbstractManualDataItem
 	public void setIng(NodeRef ing) {
 		this.ing = ing;
 	}
+	
+	@AlfMlText
+	@AlfProp
+	@AlfQname(qname = "bcpg:ingListComments")
+	public MLText getComments() {
+		return comments;
+	}
+
+	public void setComments(MLText comments) {
+		this.comments = comments;
+	}
 
 	/**
 	 * <p>
@@ -514,7 +529,11 @@ public class IngListDataItem extends AbstractManualDataItem
 		this.declType = declType;
 	}
 
+	
+	
 	//////////////////////////////
+	
+
 
 	/** {@inheritDoc} */
 	@Override
@@ -704,6 +723,7 @@ public class IngListDataItem extends AbstractManualDataItem
 		this.mini = i.mini;
 		this.maxi = i.maxi;
 		this.declType = i.declType;
+		this.comments = i.comments;
 	}
 
 	/** {@inheritDoc} */
@@ -745,6 +765,7 @@ public class IngListDataItem extends AbstractManualDataItem
 				&& Objects.equals(parent, other.parent) && Objects.equals(qtyPerc, other.qtyPerc) && Objects.equals(qtyPerc1, other.qtyPerc1)
 				&& Objects.equals(qtyPerc2, other.qtyPerc2) && Objects.equals(qtyPerc3, other.qtyPerc3) && Objects.equals(qtyPerc4, other.qtyPerc4)
 				&& Objects.equals(qtyPercWithSecondaryYield, other.qtyPercWithSecondaryYield)
+				&& Objects.equals(comments, other.comments)
 				&& Objects.equals(qtyPercWithYield, other.qtyPercWithYield) && Objects.equals(volumeQtyPerc, other.volumeQtyPerc);
 	}
 
