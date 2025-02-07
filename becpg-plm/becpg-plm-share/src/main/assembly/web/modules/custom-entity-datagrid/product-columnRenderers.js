@@ -1764,6 +1764,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 
             if (percentValue !== null && percentValue > 0 && nutColor != null && nutColor !== undefined) {
 
+                
                 var additionalProps = oRecord.getData("itemData")["dt_bcpg_nutListNut"][0].itemData;
                 var nutValue = oRecord.getData("itemData")["prop_bcpg_nutListValue"].displayValue;
                 var gda = additionalProps.prop_bcpg_nutGDA.value;
@@ -1775,7 +1776,6 @@ if (beCPG.module.EntityDataGridRenderers) {
                     var jsonData = JSON.parse(oRecord.getData("itemData")["prop_bcpg_nutListRoundedValue"].value);
                     if (jsonData.ul && jsonData.ul[key]) {
                         ul = jsonData.ul[key];
-                        percentValue = jsonData.gda[key];
                     }
                 }
 
