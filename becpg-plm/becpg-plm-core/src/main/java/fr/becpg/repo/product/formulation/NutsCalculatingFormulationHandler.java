@@ -165,7 +165,9 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 					if (reconstituant != null) {
 						preparedValue = n.getValue();
 
-						if ((preparedValue != null) && (formulatedProduct.getReconstituantQty() != null)) {
+
+						if (preparedValue != null && formulatedProduct.getReconstituantQty() != null) {
+
 							// Find the corresponding NutListDataItem in the reconstituant's NutList
 							NutListDataItem reconstituantNutListDataItem = reconstituant.getNutList().stream()
 									.filter(s -> n.getCharactNodeRef().equals(s.getCharactNodeRef())).findFirst().orElse(null);
@@ -178,14 +180,17 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 							Double preparationQuantity = formulatedProduct.getPreparationQuantity() != null
 									? formulatedProduct.getPreparationQuantity()
 									: 100d;
-							double reconstituantQty = FormulationHelper.getDensity(reconstituant) * formulatedProduct.getReconstituantQty();
+
+							Double reconstituantQty = FormulationHelper.getDensity(reconstituant) * formulatedProduct.getReconstituantQty();
+
 
 							// Calculate total reconstituted quantity
-							double totalReconstitutedQty = reconstituantQty + preparationQuantity;
+
+							Double totalReconstitutedQty = reconstituantQty + preparationQuantity;
 
 							// Compute the prepared value
-							preparedValue = ((preparedValue * preparationQuantity) / totalReconstitutedQty)
-									+ ((reconstituantValue * reconstituantQty) / totalReconstitutedQty);
+							preparedValue = (preparedValue * preparationQuantity / totalReconstitutedQty)
+									+ (reconstituantValue * reconstituantQty / totalReconstitutedQty);
 
 						}
 					}
