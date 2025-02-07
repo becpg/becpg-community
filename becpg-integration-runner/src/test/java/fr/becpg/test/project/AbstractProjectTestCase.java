@@ -115,18 +115,6 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 			}
 		}
 
-		// score criteria
-		NodeRef criteriaFolder = entitySystemService.getSystemEntityDataList(listsFolder, ProjectRepoConsts.PATH_SCORE_CRITERIA);
-		for (int i = 0; i < 5; i++) {
-			if (nodeService.getChildByName(criteriaFolder, ContentModel.ASSOC_CONTAINS, "Criterion" + i) == null) {
-				Map<QName, Serializable> properties = new HashMap<>();
-				properties.put(BeCPGModel.PROP_LV_VALUE, "Criterion" + i);
-				properties.put(ContentModel.PROP_NAME, "Criterion" + i);
-				nodeService.createNode(criteriaFolder, ContentModel.ASSOC_CONTAINS,
-						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)),
-						BeCPGModel.TYPE_LIST_VALUE, properties).getChildRef();
-			}
-		}
 
 		// resourceCost
 		NodeRef resourceCostsFolder = entitySystemService.getSystemEntityDataList(listsFolder, ProjectRepoConsts.PATH_RESOURCE_COSTS);
