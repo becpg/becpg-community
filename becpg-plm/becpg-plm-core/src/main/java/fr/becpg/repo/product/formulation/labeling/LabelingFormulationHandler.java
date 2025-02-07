@@ -787,6 +787,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		prev.getAllergens().addAll(component.getAllergens());
 		prev.getBioOrigins().addAll(component.getBioOrigins());
 		prev.getFootNotes().addAll(component.getFootNotes());
+		prev.setAdditionalInformation(component.getAdditionalInformation());
 
 		for (Map.Entry<PlaceOfActivityTypeCode, Set<NodeRef>> entry : component.getGeoOriginsByPlaceOfActivity().entrySet()) {
 			if (prev.getGeoOriginsByPlaceOfActivity().containsKey(entry.getKey())) {
@@ -2326,6 +2327,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							ingLabelItem.getBioOrigins().addAll(ingListItem.getData().getBioOrigin());
 						}
 
+						if (ingListItem.getData().getComments() != null) {
+							ingLabelItem.setAdditionalInformation(ingListItem.getData().getComments());
+						}
+
+						
 						ingLabelItem.getFootNotes().addAll(extractFootNotes(compoListDataItem, ingListItem.getData(), labelingFormulaContext));
 
 						Double qtyPerc = ingListItem.getData().getQtyPerc();
