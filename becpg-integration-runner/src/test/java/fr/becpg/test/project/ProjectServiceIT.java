@@ -445,7 +445,7 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 			assertNotNull(projectData.getScoreList());
 			assertEquals(5, projectData.getScoreList().size());
 			for (int i1 = 0; i1 < 5; i1++) {
-				assertEquals("Criterion" + i1, projectData.getScoreList().get(i1).getCriterion());
+				assertEquals("Criterion" + i1, nodeService.getProperty(projectData.getScoreList().get(i1).getScoreCriterion(),BeCPGModel.PROP_CHARACT_NAME));
 				assertEquals(i1 * 10, projectData.getScoreList().get(i1).getWeight().intValue());
 			}
 
