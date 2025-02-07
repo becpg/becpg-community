@@ -163,31 +163,31 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 					Double preparedValue = null;
 
 					if (reconstituant != null) {
-					    preparedValue = n.getValue();
+						preparedValue = n.getValue();
 
-					    if (preparedValue != null && formulatedProduct.getReconstituantQty() != null) {
-					        // Find the corresponding NutListDataItem in the reconstituant's NutList
-					        NutListDataItem reconstituantNutListDataItem = reconstituant.getNutList().stream()
-					                .filter(s -> n.getCharactNodeRef().equals(s.getCharactNodeRef()))
-					                .findFirst()
-					                .orElse(null);
+						if (preparedValue != null && formulatedProduct.getReconstituantQty() != null) {
+							// Find the corresponding NutListDataItem in the reconstituant's NutList
+							NutListDataItem reconstituantNutListDataItem = reconstituant.getNutList().stream()
+									.filter(s -> n.getCharactNodeRef().equals(s.getCharactNodeRef())).findFirst().orElse(null);
 
-					        if (reconstituantNutListDataItem != null && reconstituantNutListDataItem.getValue() != null) {
-					            // Calculate product and reconstituant quantities
-					            Double preparationQuantity = formulatedProduct.getPreparationQuantity() != null
-					                    ? formulatedProduct.getPreparationQuantity()
-					                    : 100d;
-					            Double reconstituantQty = FormulationHelper.getDensity(reconstituant) 
-					                    * formulatedProduct.getReconstituantQty();
-					            
-					            // Calculate total reconstituted quantity
-					            Double totalReconstitutedQty = reconstituantQty + preparationQuantity;
+							Double reconstituantValue = reconstituantNutListDataItem != null ? reconstituantNutListDataItem.getValue() : null;
+							if (reconstituantValue == null) {
+								reconstituantValue = 0d;
+							}
+							// Calculate product and reconstituant quantities
+							Double preparationQuantity = formulatedProduct.getPreparationQuantity() != null
+									? formulatedProduct.getPreparationQuantity()
+									: 100d;
+							Double reconstituantQty = FormulationHelper.getDensity(reconstituant) * formulatedProduct.getReconstituantQty();
 
-					            // Compute the prepared value
-					            preparedValue = (preparedValue * preparationQuantity / totalReconstitutedQty)
-					                    + (reconstituantNutListDataItem.getValue() * reconstituantQty / totalReconstitutedQty);
-					        }
-					    }
+							// Calculate total reconstituted quantity
+							Double totalReconstitutedQty = reconstituantQty + preparationQuantity;
+
+							// Compute the prepared value
+							preparedValue = (preparedValue * preparationQuantity / totalReconstitutedQty)
+									+ (reconstituantValue * reconstituantQty / totalReconstitutedQty);
+
+						}
 					}
 
 					if ((formulatedProduct.getSecondaryYield() != null) && (formulatedProduct.getSecondaryYield() != 0d)) {
@@ -223,7 +223,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 					n.setFormulatedReductionValue(reductionValue);
 
 					Double servingSize = FormulationHelper.getServingSizeInLorKg(formulatedProduct);
-					Double valueForServing = formulatedProduct.isPrepared() && (n.getPreparedValue() != null) ? n.getPreparedValue() : n.getValue();
+					Double valueForServing = (formulatedProduct.isPrepared() && (n.getPreparedValue() != null)) ? n.getPreparedValue() : n.getValue();
 
 					if ((servingSize != null) && (valueForServing != null)) {
 						Double valuePerserving = (valueForServing * (servingSize * 1000d)) / 100;
