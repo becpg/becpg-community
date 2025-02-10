@@ -141,7 +141,7 @@ public class IdentityServiceAccountProvider {
 								logger.debug("Create user:"+userRepresentation.toString());
 							}
 							try (CloseableHttpResponse createResp = httpClient.execute(request)) {
-								if (response.getStatusLine().getStatusCode() != 200) {
+								if (createResp.getStatusLine().getStatusCode() != 200) {
 									throw new IllegalStateException(EntityUtils.toString(createResp.getEntity()));
 								} else  if(logger.isDebugEnabled()){
 									logger.debug(EntityUtils.toString(createResp.getEntity()));
@@ -164,6 +164,7 @@ public class IdentityServiceAccountProvider {
 			}
 		} catch (IOException e) {
 			logger.error(e, e);
+			return false;
 		}
 		return true;
 	}
