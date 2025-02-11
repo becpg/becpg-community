@@ -131,7 +131,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 				html += Alfresco.util.userProfileLink(user.value, user.displayValue, 'class="theme-color-1"') + ' ';
 				html += '      </span>';
 				html += '      <span class="date-info">';
-				html += Alfresco.util.relativeTime(Alfresco.util.fromISO8601(dateCreated.value)) +' ('+  Alfresco.util.formatDate(dateCreated.value	, Alfresco.util.message(scope.msg("date.format"))) + ') <br/>';
+				html += Alfresco.util.relativeTime(Alfresco.util.fromISO8601(dateCreated.value)) +' ('+  Alfresco.util.formatDate(dateCreated.value	, Alfresco.util.message(scope.msg("datetime.format"))) + ') <br/>';
 				html += '      </span>';
 				html += '      <div class="activity-title">' + title + '</div>';
 

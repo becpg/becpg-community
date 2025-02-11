@@ -113,6 +113,13 @@ build() {
    
 }
 
+ged() {
+  cd becpg-enterprise
+  $MVN_EXEC clean package $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="ged"
+  docker compose -f ./distribution/target/docker-compose-build.yml build
+  cd .. 
+}
+
 install() {
   if [ -d becpg-enterprise ]; then
     cd becpg-enterprise
@@ -174,6 +181,11 @@ case "$1" in
     start
     tail
     ;;
+  ged_start)
+    ged
+    start
+    tail
+    ;;    
   build_test)
     build
     start_test

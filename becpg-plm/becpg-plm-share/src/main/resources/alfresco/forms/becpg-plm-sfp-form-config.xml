@@ -1125,9 +1125,9 @@
 					<show force="false" id="bcpg:productSpecifications" />
 					<show force="false" id="cm:taggable" />
 					<show force="false" id="cm:categories" />
-					<show force ="true" id="bcpg:regulatoryMode" />
-					<show force="true" id="bcpg:regulatoryCountries" />
-					<show force="true" id="bcpg:regulatoryUsageRef" />
+					<show id="bcpg:regulatoryMode" />
+					<show id="bcpg:regulatoryCountries" />
+					<show id="bcpg:regulatoryUsageRef" />
 				</field-visibility>
 				<appearance>
 					<set appearance="bordered-panel" id="mainInfo" label-id="becpg.forms.set.designation.label"
