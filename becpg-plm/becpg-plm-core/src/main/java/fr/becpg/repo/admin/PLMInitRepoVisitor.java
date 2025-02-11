@@ -186,6 +186,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 	private static final String EXPORT_LABELLING_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportLabelling.xlsx";
 	private static final String EXPORT_CITEO_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportCiteo.xlsx";
+	private static final String EXPORT_CITEO_PRO_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportCiteoPro.xlsx";
 	private static final String EXPORT_ALLERGENS_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportAllergens.xlsx";
 	private static final String EXPORT_LCA_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportLCA.xlsx";
 	private static final String EXPORT_SVHC_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportSVHC.xlsx";
@@ -1731,6 +1732,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
 					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_CITEO),
 					TranslateHelper.getLocaleAwarePath(EXPORT_CITEO_XLSX_PATH), reportTplInformation, false);
+			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
+					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_CITEO_PRO),
+					TranslateHelper.getLocaleAwarePath(EXPORT_CITEO_PRO_XLSX_PATH), reportTplInformation, false);
 			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
 					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_ALLERGENS),
 					TranslateHelper.getLocaleAwarePath(EXPORT_ALLERGENS_XLSX_PATH), reportTplInformation, false);
