@@ -210,7 +210,8 @@ public class MonitorWebScript extends DeclarativeWebScript {
 		Set<String> users = new HashSet<>(authenticationService.getUsersWithTickets(true));
 		for (Iterator<String> iterator = users.iterator(); iterator.hasNext();) {
 			String user = iterator.next();
-			if ((AuthenticationUtil.getGuestUserName().equals(user) || AuthenticationUtil.getSystemUserName().equals(user))
+			if ((AuthenticationUtil.getGuestUserName().equals(user) || AuthenticationUtil.getSystemUserName().equals(user)
+					|| user.contains("connector"))
 					|| !includeTenantUsers && (tenantAdminService.isEnabled()
 							&& !tenantAdminService.getCurrentUserDomain().equals(tenantAdminService.getUserDomain(user)))
 					) {

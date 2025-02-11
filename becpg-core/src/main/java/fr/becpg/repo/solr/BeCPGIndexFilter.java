@@ -38,8 +38,10 @@ public class BeCPGIndexFilter extends TypeIndexFilter {
 	public boolean shouldBeIgnored(QName nodeType)
 	    {
     		boolean ret = super.shouldBeIgnored(nodeType);
+    		
+    		String confValue  = systemConfigurationService.confValue(CONF_KEY);
     	
-			if(ret && systemConfigurationService.confValue(CONF_KEY).contains(nodeType.toPrefixString(namespaceService))) {
+			if(ret && confValue!=null && confValue.contains(nodeType.toPrefixString(namespaceService))) {
 				ret = false;
 			}
 			
