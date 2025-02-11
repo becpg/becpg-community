@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
@@ -73,7 +74,6 @@ public class SharePublishService implements ApplicationListener<ContextRefreshed
 	/** {@inheritDoc} */
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
-		deleteClasspathMessages();
 		loadDiskMessages();
 	}
 
@@ -81,67 +81,54 @@ public class SharePublishService implements ApplicationListener<ContextRefreshed
 		File configDir = new File(configPath + FILE_SEPARATOR + "messages");
 		if (configDir.exists()) {
 			List<File> files = new ArrayList<>(Arrays.asList(configDir.listFiles()));
-			List<File> rootFiles = files.stream().filter(f -> !f.getName().contains("_")).toList();
-			
-			for (File rootFile : rootFiles) {
-				try {
-					Long bundleId = new Date().getTime();
-					logger.info("Write classpath messages for " + rootFile.getName());
-					writeClassPathMessages(rootFile.getName(), Files.readString(rootFile.toPath()), bundleId);
-					files.remove(rootFile);
-					String baseName = rootFile.getName().replace(PROPERTIES, "");
-					String bundleName = baseName + "-" + bundleId;
-					String defaultLocaleFileName = baseName + "_" + Locale.getDefault().getCountry() + PROPERTIES;
-					File defaultLocaleFile = files.stream().filter(f -> f.getName().equalsIgnoreCase(defaultLocaleFileName)).findFirst().orElse(null);
-					if (defaultLocaleFile != null) {
-						logger.info("Write classpath messages for " + defaultLocaleFile.getName());
-						writeClassPathMessages(defaultLocaleFile.getName(), Files.readString(defaultLocaleFile.toPath()), bundleId);
-						files.remove(defaultLocaleFile);
-					}
-					List<File> otherFiles = files.stream().filter(f -> f.getName().contains("_") && f.getName().split("_")[0].equals(baseName)).toList();
-					for (File otherFile : otherFiles) {
-						logger.info("Write classpath messages for " + otherFile.getName());
-						writeClassPathMessages(otherFile.getName(), Files.readString(otherFile.toPath()), bundleId);
-						files.remove(otherFile);
-					}
-					I18NUtil.registerResourceBundle("alfresco.messages.custom." + bundleName);
-				} catch (IOException e) {
-					logger.error("Error while reading properties file: " + rootFile.getName());
-				}
-			}
-			for (File file : files) {
+			Map<String, List<File>> groupedFiles = files.stream().collect(Collectors.groupingBy(f -> f.getName().replace(PROPERTIES, "").split("_")[0]));
+			groupedFiles.forEach((baseName, associatedFiles) -> {
 				Long bundleId = new Date().getTime();
-				try {
-					logger.info("Write classpath messages for " + file.getName());
-					writeClassPathMessages(file.getName(), Files.readString(file.toPath()), bundleId);
-				} catch (IOException e) {
-					logger.error("Error while reading properties file: " + file.getName());
+				File rootFile = files.stream().filter(f -> f.getName().equalsIgnoreCase(baseName + PROPERTIES)).findFirst().orElse(null);
+				if (rootFile != null) {
+					writeClassPathMessages(bundleId, rootFile);
+					files.remove(rootFile);
 				}
-			}
+				String defaultLocaleFileName = baseName + "_" + Locale.getDefault().getCountry() + PROPERTIES;
+				File defaultLocaleFile = files.stream().filter(f -> f.getName().equalsIgnoreCase(defaultLocaleFileName)).findFirst().orElse(null);
+				if (defaultLocaleFile != null) {
+					writeClassPathMessages(bundleId, defaultLocaleFile);
+					files.remove(defaultLocaleFile);
+				}
+				List<File> otherFiles = files.stream().filter(f -> f.getName().contains("_") && f.getName().split("_")[0].equals(baseName)).toList();
+				for (File otherFile : otherFiles) {
+					writeClassPathMessages(bundleId, otherFile);
+				}
+				String bundleName = baseName + "-" + bundleId;
+				logger.info("Register resource bundle: " + bundleName);
+				I18NUtil.registerResourceBundle("alfresco.messages.custom." + bundleName);
+			});
 		}
 	}
 
-	private void deleteClasspathMessages() {
-		String pathName = System.getProperty("catalina.base") + "/shared/classes/alfresco/messages/custom";
-		File messageDir = new File(pathName);
-		boolean exists = true;
-		if (!messageDir.exists()) {
-			exists = messageDir.mkdirs();
-		}
-		if(exists) {
-			File[] files = messageDir.listFiles();
-			if (files == null) {
-				throw new IllegalStateException("Failed to list files in directory: " + pathName);
-			}
-			for (File messageFile : files) {
-				if (messageFile.isFile() && messageFile.getName().endsWith(PROPERTIES)) {
-					try {
-						Files.delete(messageFile.toPath());
-					} catch (IOException e) {
-						throw new IllegalStateException("Cannot delete file: " + messageFile.getPath(), e);
+	private void writeClassPathMessages(Long bundleId, File file) {
+		try {
+			String fileName = file.getName();
+			logger.info("Write classpath file: " + fileName);
+			String content = Files.readString(file.toPath());
+			String fileBaseName = fileName.split("_")[0].replace(PROPERTIES, "");
+			String locale = fileName.contains("_") ? fileName.split("_")[1].replace(PROPERTIES, "") : "";
+			String bundleName = fileBaseName + "-" + bundleId;
+			if (locale.isEmpty() || locale.equalsIgnoreCase(Locale.getDefault().getCountry())) {
+				List<String> uiLocales = configService.getConfig("Languages").getConfigElement("ui-languages").getChildren().stream()
+						.map(c -> c.getAttribute("locale")).toList();
+				for (String uiLocale : uiLocales) {
+					if (locale.isEmpty()) {
+						writeClassPathFile(content, bundleName, uiLocale);
+					} else {
+						writeClassPathFile("", bundleName, uiLocale);
 					}
 				}
 			}
+			writeClassPathFile("", bundleName, "");
+			writeClassPathFile(content, bundleName, locale);
+		} catch (IOException e) {
+			logger.error("Error writing classpath file: " + file.getName());
 		}
 	}
 
@@ -161,9 +148,7 @@ public class SharePublishService implements ApplicationListener<ContextRefreshed
 				I18NUtil.getAllMessages();
 				I18NUtil.getAllMessages(Locale.FRENCH);
 				I18NUtil.getAllMessages(Locale.ENGLISH);
-				if (logger.isDebugEnabled()) {
-					logger.debug("Register bundle: " + bundleClasspathName);
-				}
+				logger.info("Register bundle: " + bundleClasspathName);
 				I18NUtil.registerResourceBundle(bundleClasspathName);
 				I18NUtil.getAllMessages();
 				I18NUtil.getAllMessages(Locale.FRENCH);
@@ -262,9 +247,7 @@ public class SharePublishService implements ApplicationListener<ContextRefreshed
 		if (configDir.exists()) {
 			path = path + FILE_SEPARATOR + fileName;
 			File file = new File(path);
-			if (logger.isDebugEnabled()) {
-				logger.debug("Deleting file at path " + path + ", exists ? " + file.exists());
-			}
+			logger.info("Deleting file at path " + path + ", exists ? " + file.exists());
 			if (file.exists() && !file.delete()) {
 				logger.error("Cannot delete file: " + file.getName());
 			}
@@ -294,9 +277,7 @@ public class SharePublishService implements ApplicationListener<ContextRefreshed
 			configDir.mkdirs();
 		}
 		path = path + FILE_SEPARATOR + fileName;
-		if (logger.isDebugEnabled()) {
-			logger.debug("Write designer file: " + path);
-		}
+		logger.info("Write designer file: " + path);
 		try {
 			File file = new File(path);
 			if (file.exists() || file.createNewFile()) {
@@ -318,9 +299,7 @@ public class SharePublishService implements ApplicationListener<ContextRefreshed
 	 * @param modifiedDate a {@link java.lang.Long} object
 	 */
 	public void writeClassPathMessages(String fileName, String content, Long modifiedDate) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Write classpath messages for " + fileName);
-		}
+		logger.info("Write classpath messages for " + fileName);
 		String fileBaseName = fileName.split("_")[0].replace(PROPERTIES, "");
 		String locale = fileName.contains("_") ? fileName.split("_")[1].replace(PROPERTIES, "") : "";
 		String bundleName = fileBaseName + "-" + modifiedDate;
@@ -358,9 +337,9 @@ public class SharePublishService implements ApplicationListener<ContextRefreshed
 		if (file.exists() || file.createNewFile()) {
 			if (logger.isDebugEnabled()) {
 				if (contentString.isBlank()) {
-					logger.debug("Write empty classpath file: " + pathname);
+					logger.info("Write empty classpath file: " + pathname);
 				} else {
-					logger.debug("Write classpath file: " + pathname);
+					logger.info("Write classpath file: " + pathname);
 				}
 			}
 			try (InputStream in = new ByteArrayInputStream(contentString.getBytes()); OutputStream out = new FileOutputStream(file)) {
