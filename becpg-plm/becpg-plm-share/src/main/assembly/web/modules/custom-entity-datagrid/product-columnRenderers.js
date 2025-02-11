@@ -1720,20 +1720,21 @@ if (beCPG.module.EntityDataGridRenderers) {
 
 			if (percentValue !== null && percentValue > 0 && nutColor != null && nutColor !== undefined) {
 
+
 				var additionalProps = oRecord.getData("itemData")["dt_bcpg_nutListNut"][0].itemData;
 				var nutValue = oRecord.getData("itemData")["prop_bcpg_nutListValue"].displayValue;
 				var gda = additionalProps.prop_bcpg_nutGDA.value;
 				var ul = additionalProps.prop_bcpg_nutUL.value;
 
-				if (oRecord.getData("itemData")["prop_bcpg_nutListRoundedValue"]
-					&& oRecord.getData("itemData")["prop_bcpg_nutListRoundedValue"].value != null) {
-					var key = beCPG.util.getRegulatoryCountryKey(Alfresco.constants.JS_LOCALE);
-					var jsonData = JSON.parse(oRecord.getData("itemData")["prop_bcpg_nutListRoundedValue"].value);
-					if (jsonData.ul && jsonData.ul[key]) {
-						ul = jsonData.ul[key];
-						percentValue = jsonData.gda[key];
-					}
-				}
+
+                if (oRecord.getData("itemData")["prop_bcpg_nutListRoundedValue"]
+                    && oRecord.getData("itemData")["prop_bcpg_nutListRoundedValue"].value != null) {
+                    var key = beCPG.util.getRegulatoryCountryKey(Alfresco.constants.JS_LOCALE);
+                    var jsonData = JSON.parse(oRecord.getData("itemData")["prop_bcpg_nutListRoundedValue"].value);
+                    if (jsonData.ul && jsonData.ul[key]) {
+                        ul = jsonData.ul[key];
+                    }
+                }
 
 				var unit = additionalProps.prop_bcpg_nutUnit.displayValue;
 
