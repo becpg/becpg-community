@@ -462,8 +462,12 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 			final NodeRef storeNodeRef = nodeService.getRootNode(RepoConsts.SPACES_STORE);
 
-			NodeRef entitiesHistoryNodeRef = nodeService.getChildByName(storeNodeRef, ContentModel.ASSOC_CONTAINS, RepoConsts.ENTITIES_HISTORY_NAME);
+			NodeRef entitiesHistoryNodeRef = nodeService.getChildByName(storeNodeRef, ContentModel.ASSOC_CHILDREN, RepoConsts.ENTITIES_HISTORY_NAME);
 
+			if (entitiesHistoryNodeRef == null) {
+				entitiesHistoryNodeRef = nodeService.getChildByName(storeNodeRef, ContentModel.ASSOC_CONTAINS, RepoConsts.ENTITIES_HISTORY_NAME);
+			}
+			
 			//Backward compatibility
 			if (entitiesHistoryNodeRef == null) {
 				entitiesHistoryNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(storeNodeRef, RepoConsts.ENTITIES_HISTORY_XPATH);
@@ -474,7 +478,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 					HashMap<QName, Serializable> props = new HashMap<>();
 					props.put(ContentModel.PROP_NAME, RepoConsts.ENTITIES_HISTORY_NAME);
 					NodeRef n = nodeService
-							.createNode(storeNodeRef, ContentModel.ASSOC_CONTAINS, QNAME_ENTITIES_HISTORY, ContentModel.TYPE_FOLDER, props)
+							.createNode(storeNodeRef, ContentModel.ASSOC_CHILDREN, QNAME_ENTITIES_HISTORY, ContentModel.TYPE_FOLDER, props)
 							.getChildRef();
 
 					logger.debug("create folder 'EntitiesHistory' " + n + " - " + nodeService.exists(n));
