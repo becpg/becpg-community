@@ -133,6 +133,14 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 		// AutoNum
 		visitFolder(systemNodeRef, RepoConsts.PATH_AUTO_NUM);
 
+		NodeRef systemExchangeNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_EXCHANGE);
+		NodeRef systemExportNodeRef = visitFolder(systemExchangeNodeRef, RepoConsts.PATH_EXPORT);
+		visitFolder(systemExportNodeRef, RepoConsts.PATH_NOTIFICATIONS);
+		
+
+		// license
+		visitFolder(systemNodeRef, RepoConsts.PATH_LICENSE);
+
 		visitReports(systemNodeRef);
 
 		// EntityTemplates
@@ -146,14 +154,9 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 				"classpath*:alfresco/templates/invite-email-templates/*.ftl");
 		contentHelper.addFilesResources(beCPGMailService.getEmailInviteTemplatesFolder(), "classpath*:alfresco/templates/new-user-templates/*.ftl");
 
-		// license
-		visitFolder(systemNodeRef, RepoConsts.PATH_LICENSE);
 
 		// version
 		visitVersionFolder(entityVersionService.getEntitiesHistoryFolder());
-
-		// exchange/export/notifications
-		visitFolder(visitFolder(visitFolder(systemNodeRef, RepoConsts.PATH_EXCHANGE), RepoConsts.PATH_EXPORT), RepoConsts.PATH_NOTIFICATIONS);
 
 		//Saved searchs
 		NodeRef savedSearchFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath(companyHome, "./app:dictionary/app:saved_searches");
@@ -187,7 +190,7 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 			compositeAction.addActionCondition(aspectCondition);
 
 			createRule(entitiesHistoryFolder, "Add no Index aspect", "Add no Index aspect to the created node", true, compositeAction);
-			
+
 		}
 
 	}
