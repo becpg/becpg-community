@@ -48,6 +48,7 @@ public class ToxCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 						if (maxValue != null) {
 							Double ingMaxValue = maxValue * 100 / maxQuantity;
 							CharactDetailsValue charactDetailValue = new CharactDetailsValue(productData.getNodeRef(), ingListDataItem.getIng(), ingListDataItem.getNodeRef(), ingMaxValue, 0, "%");
+							charactDetailValue.setAllowZeroValue(true);
 							ret.addKeyValue(toxListDataItem.getTox(), charactDetailValue);
 						}
 					}
