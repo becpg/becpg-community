@@ -240,7 +240,8 @@ public class RegulationFormulationHelper {
 	public static Double extractGDAPerc(String roundedValue, String key) {
 		return extractValueByKey(roundedValue, KEY_GDA_PERC, key);
 	}
-
+	
+	
 	private static Double extractValueByKey(String roundedValue, String item, String key) {
 		if (roundedValue != null) {
 			try {
