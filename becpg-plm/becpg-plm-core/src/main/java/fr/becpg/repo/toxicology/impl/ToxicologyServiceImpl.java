@@ -156,6 +156,10 @@ public class ToxicologyServiceImpl implements ToxicologyService {
 	}
 
 	private void updateToxIng(NodeRef ingNodeRef, NodeRef toxIngFolder, NodeRef toxNodeRef) {
+		if (Boolean.TRUE.equals(nodeService.getProperty(ingNodeRef, BeCPGModel.PROP_IS_DELETED))
+				|| Boolean.TRUE.equals(nodeService.getProperty(toxNodeRef, BeCPGModel.PROP_IS_DELETED))) {
+			return;
+		}
 		NodeRef toxIngNodeRef = BeCPGQueryBuilder.createQuery().andPropEquals(PLMModel.PROP_TOX_ING_ING, ingNodeRef.toString()).andPropEquals(PLMModel.PROP_TOX_ING_TOX, toxNodeRef.toString()).singleValue();
 		if (toxIngNodeRef == null) {
 			toxIngNodeRef = nodeService.createNode(toxIngFolder, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, PLMModel.TYPE_TOX_ING).getChildRef();
