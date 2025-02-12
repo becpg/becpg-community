@@ -143,13 +143,13 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 					n.setUnit(calculateUnit(formulatedProduct.getUnit(), formulatedProduct.getServingSizeUnit(), nut.getNutUnit()));
 
 					if (n.getLossPerc() != null) {
-						if (n.getValue() != null && n.getManualValue() == null) {
+						if ((n.getValue() != null) && (n.getManualValue() == null)) {
 							n.setValue((n.getValue() * (100 - n.getLossPerc())) / 100);
 						}
-						if (n.getMini() != null && n.getManualMini() == null) {
+						if ((n.getMini() != null) && (n.getManualMini() == null)) {
 							n.setMini((n.getMini() * (100 - n.getLossPerc())) / 100);
 						}
-						if (n.getMaxi() != null && n.getManualMaxi() == null) {
+						if ((n.getMaxi() != null) && (n.getManualMaxi() == null)) {
 							n.setMaxi((n.getMaxi() * (100 - n.getLossPerc())) / 100);
 						}
 						for (int i = 1; i <= VariantAwareDataItem.VARIANT_COLUMN_SIZE; i++) {
@@ -165,7 +165,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 					if (reconstituant != null) {
 						preparedValue = n.getValue();
 
-						if (preparedValue != null && formulatedProduct.getReconstituantQty() != null) {
+						if ((preparedValue != null) && (formulatedProduct.getReconstituantQty() != null)) {
 							// Find the corresponding NutListDataItem in the reconstituant's NutList
 							NutListDataItem reconstituantNutListDataItem = reconstituant.getNutList().stream()
 									.filter(s -> n.getCharactNodeRef().equals(s.getCharactNodeRef())).findFirst().orElse(null);
@@ -178,14 +178,14 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 							Double preparationQuantity = formulatedProduct.getPreparationQuantity() != null
 									? formulatedProduct.getPreparationQuantity()
 									: 100d;
-							Double reconstituantQty = FormulationHelper.getDensity(reconstituant) * formulatedProduct.getReconstituantQty();
+							double reconstituantQty = FormulationHelper.getDensity(reconstituant) * formulatedProduct.getReconstituantQty();
 
 							// Calculate total reconstituted quantity
-							Double totalReconstitutedQty = reconstituantQty + preparationQuantity;
+							double totalReconstitutedQty = reconstituantQty + preparationQuantity;
 
 							// Compute the prepared value
-							preparedValue = (preparedValue * preparationQuantity / totalReconstitutedQty)
-									+ (reconstituantValue * reconstituantQty / totalReconstitutedQty);
+							preparedValue = ((preparedValue * preparationQuantity) / totalReconstitutedQty)
+									+ ((reconstituantValue * reconstituantQty) / totalReconstitutedQty);
 
 						}
 					}
@@ -212,7 +212,11 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 								Double baseValue = (formulatedProduct.isPrepared() && (preparedValue != null)) ? preparedValue : n.getValue();
 
 								if (baseValue != null) {
-									Double reduction = calculateReduction(refValue, baseValue);
+
+									Double roundedBaseValue = RegulationFormulationHelper.round(baseValue, nut.getNutCode(), refValueEntry.getKey(),
+											n.getUnit());
+
+									Double reduction = calculateReduction(refValue, roundedBaseValue);
 									reductionValue.put(refValueEntry.getKey(), reduction.toString());
 								}
 							}
@@ -245,10 +249,8 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 						n.setGdaPerc(null);
 					}
 
-					if (isCharactFormulated(n) && hasCompo) {
-						if (n.getManualValue() == null) {
-							n.setMethod(NUT_FORMULATED);
-						}
+					if ((isCharactFormulated(n) && hasCompo) && (n.getManualValue() == null)) {
+						n.setMethod(NUT_FORMULATED);
 					}
 
 					RegulationFormulationHelper.extractRoundedValue(formulatedProduct, nut.getNutCode(), n);
@@ -300,12 +302,10 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 			} else {
 				return NutListDataItem.UNIT_PER100G;
 			}
+		} else if ((productUnit != null) && productUnit.isVolume()) {
+			return NutListDataItem.UNIT_PER100ML;
 		} else {
-			if ((productUnit != null) && productUnit.isVolume()) {
-				return NutListDataItem.UNIT_PER100ML;
-			} else {
-				return NutListDataItem.UNIT_PER100G;
-			}
+			return NutListDataItem.UNIT_PER100G;
 		}
 	}
 
@@ -352,9 +352,11 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 	}
 
 	/**
+	 * @param locale
 	 * Calculates the percentage reduction based on the reference value and the base value (either prepared or unprepared).
 	 */
 	private Double calculateReduction(Double refValue, Double baseValue) {
-		return ((refValue - baseValue) / baseValue) * 100;
+
+		return ((100 - baseValue) / refValue) * 100d;
 	}
 }
