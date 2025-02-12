@@ -355,8 +355,10 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 									}
 								}
-							} else if (isMultiValueProperty(propValue, modePropValue) && !isListProperty(criteriaMap, key)) {
-								queryBuilder.andFTSQuery(processMultiValue(propName, propValue, modePropValue, false));
+							} else if (isMultiValueProperty(propValue, modePropValue) || isListProperty(criteriaMap, key)) {
+								if (propName.indexOf("isListProperty") == -1) {
+									queryBuilder.andFTSQuery(processMultiValue(propName, propValue, modePropValue, false));
+								}
 							} else if (!propName.endsWith("-entry")) {
 								// beCPG - bug fix : pb with operator -,
 								// AND, OR
