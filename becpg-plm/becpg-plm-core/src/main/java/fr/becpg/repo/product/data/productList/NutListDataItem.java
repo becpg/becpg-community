@@ -710,6 +710,11 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 		return RegulationFormulationHelper.extractValuePerServing(getRoundedValue(), key);
 	}
 
+	
+
+	public Double preparedValuePerServing(String key) {
+		return RegulationFormulationHelper.extractPreparedValuePerServing(getRoundedValue(), key);
+	}
 	/**
 	 * <p>Getter for the field <code>gdaPerc</code>.</p>
 	 *
@@ -740,6 +745,13 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 		return RegulationFormulationHelper.extractGDAPerc(getRoundedValue(), key);
 	}
 
+	
+	
+	public Double preparedGdaPerc(String key) {
+		return RegulationFormulationHelper.extractGDAPerc(getRoundedValuePrepared(), key);
+	}
+	
+	
 	/**
 	 * <p>Getter for the field <code>lossPerc</code>.</p>
 	 *
