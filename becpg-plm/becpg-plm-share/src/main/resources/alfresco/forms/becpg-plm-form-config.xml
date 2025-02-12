@@ -1748,6 +1748,21 @@
 							<control-param name="isSearch">true</control-param>
 						</control>
 					</field>
+					<field id="bcpg:toxCalculateSystemic">
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:toxCalculateMax">
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:toxValue">
+						<control template="/org/alfresco/components/form/controls/numberrange.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 
@@ -8723,9 +8738,30 @@
 				<appearance>
 					<field id="bcpg:toxListTox">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
-
 					</field>
-					<field id="bcpg:toxListValue" />
+				</appearance>
+			</form>
+			<form id="filter">
+				<field-visibility>
+					<show id="bcpg:toxListTox" />
+					<show id="bcpg:toxListValue" />
+					<show id="bcpg:isManualListItem" force="true" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:toxListTox">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:toxListValue">
+						<control template="/org/alfresco/components/form/controls/numberrange.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:isManualListItem">
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 		</forms>
@@ -8743,9 +8779,7 @@
 				<appearance>
 					<field id="bcpg:toxListTox">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
-
 					</field>
-					<field id="bcpg:toxListValue" />
 				</appearance>
 			</form>
 		</forms>
