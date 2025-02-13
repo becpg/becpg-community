@@ -25,7 +25,6 @@ import javax.annotation.Nullable;
 import org.alfresco.query.PagingRequest;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.service.namespace.QNamePattern;
 
 import fr.becpg.repo.helper.impl.AssociationCriteriaFilter;
 import fr.becpg.repo.helper.impl.ChildAssocCacheEntry;
@@ -107,6 +106,9 @@ public interface AssociationService {
 	 * @return a {@link java.util.List} object.
 	 */
 	List<NodeRef> getChildAssocs(NodeRef listNodeRef, QName assocContains, QName listQNameFilter,@Nullable Map<String, Boolean> sortMap);
+	
+	List<NodeRef> getSourcesAssocs(NodeRef nodeRef);
+	
 	/**
 	 * <p>getSourcesAssocs.</p>
 	 *
@@ -114,7 +116,7 @@ public interface AssociationService {
 	 * @param qNamePattern a {@link org.alfresco.service.namespace.QNamePattern} object.
 	 * @return a {@link java.util.List} object.
 	 */
-	List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QNamePattern qNamePattern);
+	List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QName qNamePattern);
 	
 	/**
 	 * <p>getSourcesAssocs.</p>
@@ -124,7 +126,9 @@ public interface AssociationService {
 	 * @param includeVersions a boolean
 	 * @return a {@link java.util.List} object
 	 */
-	List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QNamePattern qNamePattern, boolean includeVersions);
+	List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QName qNamePattern, boolean includeVersions);
+	
+	List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QName qNamePattern, boolean includeVersions, Integer maxResults, Integer offset);
 	/**
 	 * <p>getEntitySourceAssocs.</p>
 	 *
