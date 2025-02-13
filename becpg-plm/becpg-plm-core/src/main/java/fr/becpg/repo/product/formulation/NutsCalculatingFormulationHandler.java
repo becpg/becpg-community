@@ -357,6 +357,6 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 	 */
 	private Double calculateReduction(Double refValue, Double baseValue) {
 
-		return ((100 - baseValue) / refValue) * 100d;
+		return 100d-(baseValue/refValue*100d);
 	}
 }
