@@ -42,7 +42,8 @@ public class IngCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 	        ingListDataItem.getQtyPerc1(),
 	        ingListDataItem.getQtyPerc2(),
 	        ingListDataItem.getQtyPerc3(),
-	        ingListDataItem.getQtyPerc4()
+	        ingListDataItem.getQtyPerc4(),
+	        ingListDataItem.getQtyPerc5()
 	    };
 
 	    // Loop through percentage values

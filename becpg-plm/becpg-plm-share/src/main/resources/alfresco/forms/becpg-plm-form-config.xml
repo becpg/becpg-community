@@ -8324,6 +8324,7 @@
 					<show id="bcpg:ingListQtyPerc2" force="true" />
 					<show id="bcpg:ingListQtyPerc3" force="true" />
 					<show id="bcpg:ingListQtyPerc4" force="true" />
+					<show id="bcpg:ingListQtyPerc5" force="true" />
 					<show id="bcpg:ingListQtyMini" />
 					<show id="bcpg:ingListQtyMaxi" />
 
@@ -8361,6 +8362,7 @@
 					<field id="bcpg:ingListQtyPerc2" set="2-col-1" />
 					<field id="bcpg:ingListQtyPerc3" set="2-col-1" />
 					<field id="bcpg:ingListQtyPerc4" set="2-col-1" />
+					<field id="bcpg:ingListQtyPerc5" set="2-col-1" />
 
 
 					<field id="bcpg:ingListQtyMini" set="2-col-1" />
@@ -8421,6 +8423,7 @@
 					<show id="bcpg:ingListQtyPerc2" />
 					<show id="bcpg:ingListQtyPerc3" />
 					<show id="bcpg:ingListQtyPerc4" />
+					<show id="bcpg:ingListQtyPerc5" />
 					<show id="bcpg:ingListIsGMO" />
 					<show id="bcpg:ingListIsIonized" />
 					<show id="bcpg:ingListIsProcessingAid" />
@@ -8520,6 +8523,7 @@
 					<show id="bcpg:ingListQtyPerc2" />
 					<show id="bcpg:ingListQtyPerc3" />
 					<show id="bcpg:ingListQtyPerc4" />
+					<show id="bcpg:ingListQtyPerc5" />
 					<show id="bcpg:ingListIsGMO" />
 					<show id="bcpg:ingListIsIonized" />
 					<show id="bcpg:ingListIsProcessingAid" />
@@ -8642,6 +8646,7 @@
 					<show id="bcpg:ingListQtyPerc2" force="true" />
 					<show id="bcpg:ingListQtyPerc3" force="true" />
 					<show id="bcpg:ingListQtyPerc4" force="true" />
+					<show id="bcpg:ingListQtyPerc5" force="true" />
 					<show id="bcpg:ingListQtyMini" />
 					<show id="bcpg:ingListQtyMaxi" />
 					<show id="bcpg:ingListIsGMO" />
@@ -8680,6 +8685,7 @@
 					<field id="bcpg:ingListQtyPerc2" set="2-col-1" />
 					<field id="bcpg:ingListQtyPerc3" set="2-col-1" />
 					<field id="bcpg:ingListQtyPerc4" set="2-col-1" />
+					<field id="bcpg:ingListQtyPerc5" set="2-col-1" />
 					<field id="bcpg:ingListQtyMini" set="2-col-1" />
 					<field id="bcpg:ingListQtyMaxi" set="2-col-1" />
 
