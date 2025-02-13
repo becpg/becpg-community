@@ -60,7 +60,6 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.service.namespace.QNamePattern;
 import org.alfresco.service.namespace.RegexQNamePattern;
 import org.alfresco.util.Pair;
 import org.alfresco.util.cache.AsynchronouslyRefreshedCacheRegistry;
@@ -453,24 +452,69 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 
 	}
 	
-	/** {@inheritDoc} */
-	@Override
-	public List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QNamePattern qNamePattern, boolean includeVersions) {
-		List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, qNamePattern);
-		List<NodeRef> listItems = new LinkedList<>();
-		for (AssociationRef assocRef : assocRefs) {
-			if (includeVersions || !isVersion(assocRef.getSourceRef()) && !nodeService.hasAspect(assocRef.getSourceRef(), BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
-				listItems.add(assocRef.getSourceRef());
-			}
-		}
-		return listItems;
-	}
 
-	/** {@inheritDoc} */
 	@Override
-	public List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QNamePattern qNamePattern) {
-		return getSourcesAssocs(nodeRef, qNamePattern, false);
+	public List<NodeRef> getSourcesAssocs(NodeRef nodeRef) {
+		return getSourcesAssocs(nodeRef, null);
 	}
+	
+	@Override
+	public List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QName qName) {
+		return getSourcesAssocs(nodeRef, qName, false);
+	}
+	
+	@Override
+	public List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QName qName, boolean includeVersions) {
+		return getSourcesAssocs(nodeRef, qName, includeVersions, null, null);
+	}
+	
+	@Override
+	public List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QName qName, boolean includeVersions, Integer maxResults, Integer offset) {
+		StringBuilder query = new StringBuilder(
+			    "SELECT q.local_name AS assoc_type, s.uuid AS source_uuid, t.uuid AS target_uuid, sstore.identifier AS source_store " +
+			    "FROM alf_node_assoc a " +
+			    "JOIN alf_node s ON a.source_node_id = s.id " +
+			    "JOIN alf_store sstore ON s.store_id = sstore.id " + 
+			    "JOIN alf_node t ON a.target_node_id = t.id " +
+			    "JOIN alf_qname q ON a.type_qname_id = q.id " +
+			    "WHERE t.uuid = ? "
+			);
+			if (qName != null) {
+			    query.append(" AND q.local_name = ? ");
+			}
+
+			if (maxResults != null) {
+			    query.append(" LIMIT ").append(maxResults).append(" ");
+			}
+			if (offset != null) {
+				query.append(" OFFSET ").append(offset).append(" ");
+			}
+			query.append(";");
+
+		List<NodeRef> ret = new ArrayList<>();
+		try (Connection con = dataSource.getConnection()) {
+			try (PreparedStatement statement = con.prepareStatement(query.toString())) {
+				statement.setString(1, nodeRef.getId());
+				if (qName != null) {
+					statement.setString(2, qName.getLocalName());
+				}
+				try (java.sql.ResultSet res = statement.executeQuery()) {
+					while (res.next()) {
+						NodeRef sourceNodeRef = new NodeRef(new StoreRef("workspace", res.getString("source_store")), res.getString("source_uuid"));
+						if (includeVersions
+								|| !isVersion(sourceNodeRef) && !nodeService.hasAspect(sourceNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
+							ret.add(sourceNodeRef);
+						}
+					}
+				}
+			}
+		} catch (SQLException e) {
+			logger.error(e, e);
+		}
+		return ret;
+	}
+	
+	/** {@inheritDoc} */
 	
 	private boolean isVersion(NodeRef nodeRef) {
 		return nodeRef.getStoreRef().getProtocol().contains(VersionBaseModel.STORE_PROTOCOL)
@@ -588,7 +632,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 								query.append(" left");
 							}
 
-							query.append(" join alf_node_properties p" + index + " on (" + propertyName + ".node_id = dataListItem.id " + "and "
+							query.append(" join alf_node_properties p" + index + " on (" + propertyName + ".node_id = " + (criteriaFilter.isEntityFilter() ? "entity" : "dataListItem") + ".id " + "and "
 									+ propertyName + ".qname_id= " + qNameId );
 							
 							if(!AssociationCriteriaFilterMode.NOT_EQUALS.equals(criteriaFilter.getMode())) {
