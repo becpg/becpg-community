@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.BasicPasswordGenerator;
 import org.alfresco.repo.security.authentication.MutableAuthenticationDao;
@@ -65,6 +66,9 @@ public class BeCPGUserAccountService {
 	@Autowired
 	private NodeService nodeService;
 	
+	@Autowired
+	private BehaviourFilter policyBehaviourFilter;
+
 	/**
 	 * <p>getOrCreateUser.</p>
 	 *
@@ -165,14 +169,16 @@ public class BeCPGUserAccountService {
 				logger.debug("Create user in Identity Service");
 			}
 			identityServiceAccountProvider.registerAccount(userAccount);
-			
 			addAuthorityToIdsZone(userAccount.getUserName());
-			
-			nodeService.setProperty(personNodeRef, BeCPGModel.PROP_IS_SSO_USER, true);
+			try {
+				policyBehaviourFilter.disableBehaviour(personNodeRef);
+				nodeService.setProperty(personNodeRef, BeCPGModel.PROP_IS_SSO_USER, true);
+			} finally {
+				policyBehaviourFilter.enableBehaviour(personNodeRef);
+			}
 		} else {
 			authenticationService.createAuthentication(userAccount.getUserName(), userAccount.getPassword().toCharArray());
 		}
-
 	}
 
 	private void addAuthorityToIdsZone(String authority) {
