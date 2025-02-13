@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -89,7 +88,7 @@ public class BudgetFormulationHandler extends FormulationBaseHandler<ProjectData
 	}
 	
 	private void calculateExpensesAndInvoices(ProjectData projectData, BudgetListDataItem budgetListDataItem){
-		List<NodeRef> assocs = associationService.getSourcesAssocs(budgetListDataItem.getNodeRef(), RegexQNamePattern.MATCH_ALL);
+		List<NodeRef> assocs = associationService.getSourcesAssocs(budgetListDataItem.getNodeRef());
 		for(NodeRef item : assocs){
 			if(nodeService.exists(item) && nodeService.hasAspect(item, ProjectModel.ASPECT_BUDGET)){
 				Double expense  = null;
