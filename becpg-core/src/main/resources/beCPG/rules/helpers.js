@@ -35,7 +35,9 @@
  * 
  * assocValues(node, assocName) returns nodeRef array for given assocName
  * 
- * sourceAssocValues(node, assocName) returns nodeRef array for given source assocName
+ * sourceAssocValues(node, assocName, maxResults, offset) returns nodeRef array for given source assocName
+ * 
+ * entitySourceAssocs(node, assocName, filter) returns entityNodeRef array for given source assocName
  * 
  * assocPropValues(node, assocName, propName) returns association property array of values
  * 
@@ -335,10 +337,40 @@ function assocValues(node, assocName) {
 /**
  * @param {(ScriptNode|NodeRef|string)} node
  * @param {string} assocName
+ * @param {string} maxResults
+ * @param {string} offset
  * @returns {NodeRef[]} nodeRef array for given source assocName
  */
-function sourceAssocValues(node, assocName) {
-	return isEmpty(node) ? new Array() : orEmpty(bcpg.sourceAssocValues(node, assocName), new Array());
+function sourceAssocValues(node, assocName, maxResults, offset) {
+	if (isEmpty(node)) {
+		return [];
+	}
+	if (maxResults) {
+		if (offset) {
+			return bcpg.sourceAssocValues(node, assocName, maxResults, offset);
+		}
+		return bcpg.sourceAssocValues(node, assocName, maxResults, null);
+	}
+	if (offset) {
+		return bcpg.sourceAssocValues(node, assocName, null, offset);
+	}
+	return bcpg.sourceAssocValues(node, assocName, null, null);
+}
+
+/**
+ * @param {(ScriptNode|NodeRef|string)} node
+ * @param {string} assocName
+ * @param {object} filter
+ * @returns {NodeRef[]} nodeRef array for given assocName
+ */
+function entitySourceAssocs(node, assocName, filter) {
+	if (isEmpty(node)) {
+		return [];
+	}
+	if (filter) {
+		return bcpg.entitySourceAssocs(node, assocName, JSON.stringify(filter));
+	}
+	return bcpg.entitySourceAssocs(node, assocName, null);
 }
 
 /**
@@ -591,15 +623,13 @@ function concatName(name, value, separator) {
  * @param {ScriptNode} productNode
  * @param {ScriptNode} folderNode
  * @param {string} [?propHierarchy] optional
- * @param {string} locale if 'propPathName' is a ML Property,
- *     locale specifies which language to use to naming subfolder.
  * @returns {boolean} true if success
  */
-function classifyByHierarchy(productNode, folderNode, propHierarchy, locale) {
+function classifyByHierarchy(productNode, folderNode, propHierarchy) {
 	if (propHierarchy) {
-		return bcpg.classifyByHierarchy(productNode, folderNode, propHierarchy, locale);
+		return bcpg.classifyByHierarchy(productNode, folderNode, propHierarchy);
 	}
-	return bcpg.classifyByHierarchy(productNode, folderNode, null, locale);
+	return bcpg.classifyByHierarchy(productNode, folderNode, null);
 }
 
 /**
