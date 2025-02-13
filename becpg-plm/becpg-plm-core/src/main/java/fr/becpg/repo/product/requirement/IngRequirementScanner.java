@@ -298,6 +298,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 			case QtyPerc2 -> il.getQtyPerc2();
 			case QtyPerc3 -> il.getQtyPerc3();
 			case QtyPerc4 -> il.getQtyPerc4();
+			case QtyPerc5 -> il.getQtyPerc5();
 			case Mini -> il.getMini();
 			case Maxi -> il.getMaxi();
 			default -> il.getQtyPerc();
