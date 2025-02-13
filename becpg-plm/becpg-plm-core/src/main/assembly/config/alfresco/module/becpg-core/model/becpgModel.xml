@@ -367,6 +367,7 @@
 					<value>QtyPerc2</value>
 					<value>QtyPerc3</value>
 					<value>QtyPerc4</value>
+					<value>QtyPerc5</value>
 					<value>Mini</value>
 					<value>Maxi</value>
 				</list>
@@ -4320,6 +4321,11 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
+				<property name="bcpg:ingListQtyPerc5">
+                    <type>d:double</type>
+                    <mandatory>false</mandatory>
+                    <index enabled="false" />
+                </property>
 			</properties>
 
 		</aspect>

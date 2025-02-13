@@ -65,6 +65,8 @@ public class IngListDataItem extends AbstractManualDataItem
 	private Double qtyPerc3 = null;
 	
 	private Double qtyPerc4 = null;
+	
+	private Double qtyPerc5 = null;
 
 	private Double qtyPercWithYield = null;
 
@@ -202,6 +204,21 @@ public class IngListDataItem extends AbstractManualDataItem
 	 */
 	public void setQtyPerc4(Double qtyPerc4) {
 		this.qtyPerc4 = qtyPerc4;
+	}
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:ingListQtyPerc5")
+	public Double getQtyPerc5() {
+		return qtyPerc5;
+	}
+
+	/**
+	 * <p>Setter for the field <code>qtyPerc5</code>.</p>
+	 *
+	 * @param qtyPerc5 a {@link java.lang.Double} object
+	 */
+	public void setQtyPerc5(Double qtyPerc5) {
+		this.qtyPerc5 = qtyPerc5;
 	}
 
 	/**
@@ -706,6 +723,7 @@ public class IngListDataItem extends AbstractManualDataItem
 		this.qtyPerc2 = i.qtyPerc2;
 		this.qtyPerc3 = i.qtyPerc3;
 		this.qtyPerc4 = i.qtyPerc4;
+		this.qtyPerc5 = i.qtyPerc5;
 		this.qtyPercWithYield = i.qtyPercWithYield;
 		this.qtyPercWithSecondaryYield = i.qtyPercWithSecondaryYield;
 		this.volumeQtyPerc = i.volumeQtyPerc;
@@ -742,7 +760,7 @@ public class IngListDataItem extends AbstractManualDataItem
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + Objects.hash(bioOrigin, claims, declType, depthLevel, geoOrigin, geoTransfo, ing, isGMO, isIonized, isProcessingAid,
-				isSupport, maxi, mini, parent, qtyPerc, qtyPerc1, qtyPerc2, qtyPerc3, qtyPerc4, qtyPercWithSecondaryYield, qtyPercWithYield,
+				isSupport, maxi, mini, parent, qtyPerc, qtyPerc1, qtyPerc2, qtyPerc3, qtyPerc4, qtyPerc5, qtyPercWithSecondaryYield, qtyPercWithYield,
 				volumeQtyPerc);
 		return result;
 	}
@@ -764,6 +782,7 @@ public class IngListDataItem extends AbstractManualDataItem
 				&& Objects.equals(isSupport, other.isSupport) && Objects.equals(maxi, other.maxi) && Objects.equals(mini, other.mini)
 				&& Objects.equals(parent, other.parent) && Objects.equals(qtyPerc, other.qtyPerc) && Objects.equals(qtyPerc1, other.qtyPerc1)
 				&& Objects.equals(qtyPerc2, other.qtyPerc2) && Objects.equals(qtyPerc3, other.qtyPerc3) && Objects.equals(qtyPerc4, other.qtyPerc4)
+				&& Objects.equals(qtyPerc5, other.qtyPerc5)
 				&& Objects.equals(qtyPercWithSecondaryYield, other.qtyPercWithSecondaryYield)
 				&& Objects.equals(comments, other.comments)
 				&& Objects.equals(qtyPercWithYield, other.qtyPercWithYield) && Objects.equals(volumeQtyPerc, other.volumeQtyPerc);
