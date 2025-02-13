@@ -17,6 +17,7 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.authentication.BeCPGUserAccount;
@@ -141,7 +142,7 @@ public class IdentityServiceAccountProvider {
 								logger.debug("Create user:"+userRepresentation.toString());
 							}
 							try (CloseableHttpResponse createResp = httpClient.execute(request)) {
-								if (createResp.getStatusLine().getStatusCode() != 200) {
+								if (!HttpStatus.valueOf(createResp.getStatusLine().getStatusCode()).is2xxSuccessful()) {
 									throw new IllegalStateException(EntityUtils.toString(createResp.getEntity()));
 								} else  if(logger.isDebugEnabled()){
 									logger.debug(EntityUtils.toString(createResp.getEntity()));
