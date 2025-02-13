@@ -238,6 +238,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				Double totalQty2 = totalQtyIng != null ? totalQtyIng.getQtyPerc2() : null;
 				Double totalQty3 = totalQtyIng != null ? totalQtyIng.getQtyPerc3() : null;
 				Double totalQty4 = totalQtyIng != null ? totalQtyIng.getQtyPerc4() : null;
+				Double totalQty5 = totalQtyIng != null ? totalQtyIng.getQtyPerc5() : null;
 				Double totalQtyMini = totalQtyIng != null ? totalQtyIng.getMini() : null;
 				Double totalQtyMaxi = totalQtyIng != null ? totalQtyIng.getMaxi() : null;
 				Double totalQtyIngWithYield = totalQtyIng != null ? totalQtyIng.getQtyPercWithYield() : null;
@@ -272,6 +273,14 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 						ingListDataItem.setQtyPerc4(totalQty4 / totalQtyUsedWithYield);
 					}
 				}
+				
+				if (totalQty5 != null) {
+					ingListDataItem.setQtyPerc5(totalQty5 / totalQtyUsedWithYield);
+				} else {
+					ingListDataItem.setQtyPerc5(null);
+				}
+				
+				
 
 				if (totalVol != null) {
 					ingListDataItem.setVolumeQtyPerc(totalVol / totalVolumeUsed);
@@ -584,6 +593,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				updateQty(qty, ingListDataItem.getQtyPerc(), totalIng::getQtyPerc, totalIng::setQtyPerc, yieldFactor);
 				updateQty(qty, ingListDataItem.getQtyPerc1(), totalIng::getQtyPerc1, totalIng::setQtyPerc1, yieldFactor);
 				updateQty(qty, ingListDataItem.getQtyPerc2(), totalIng::getQtyPerc2, totalIng::setQtyPerc2, yieldFactor);
+				updateQty(qty, ingListDataItem.getQtyPerc5(), totalIng::getQtyPerc5, totalIng::setQtyPerc5, yieldFactor);
 				updateMinMaxQty(qty, ingListDataItem.getQtyPerc3(), totalIng::getQtyPerc3, totalIng::setQtyPerc3, isGeneric, true);
 				updateMinMaxQty(qty, ingListDataItem.getQtyPerc4(), totalIng::getQtyPerc4, totalIng::setQtyPerc4, isGeneric, true);
 
