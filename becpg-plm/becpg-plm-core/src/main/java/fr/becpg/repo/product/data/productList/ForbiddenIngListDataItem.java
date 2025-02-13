@@ -45,7 +45,7 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 
 	public enum ReqQtyPercType{
 		
-		 QtyPercWithYield,QtyPercWithSecondaryYield,QtyPerc1,QtyPerc2,QtyPerc3,QtyPerc4,Mini,Maxi;
+		 QtyPercWithYield,QtyPercWithSecondaryYield,QtyPerc1,QtyPerc2,QtyPerc3,QtyPerc4,QtyPerc5,Mini,Maxi;
 		
 		public static ReqQtyPercType fromString(String type) {
 			try {
