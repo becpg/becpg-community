@@ -121,8 +121,9 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 
 	public void calculateScoreType(SurveyableEntity surveyableEntity) {
 
-		surveyableEntity.getScoreList().forEach(n ->
-		n.setCriterion((String) nodeService.getProperty(n.getCharactNodeRef(), ProjectModel.PROP_SCORE_CRITERION_TYPE))
+		surveyableEntity.getScoreList().forEach(
+				n -> n.setCriterion((String) nodeService.getProperty(n.getCharactNodeRef(),
+						ProjectModel.PROP_SCORE_CRITERION_TYPE))
 		);
 
 	}
@@ -371,7 +372,7 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 	private void calculateAndFillScoreList(List<ScoreListDataItem> scoreList, Map<NodeRef, Double> scoresPerCriterion,
 			Map<NodeRef, Double> maxScoresPerCriterion) {
 		scoresPerCriterion.forEach((criterion, score) -> {
-			if(criterion!=null) {
+			if(criterion != null) {
 				double normalizedScore = 100 * (score / maxScoresPerCriterion.get(criterion));
 	
 				scoreList.stream().filter(sl -> criterion.equals(sl.getScoreCriterion())).findFirst()
