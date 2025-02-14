@@ -11,12 +11,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.alfresco.model.ContentModel;
-import org.alfresco.service.cmr.lock.LockService;
-import org.alfresco.service.cmr.lock.LockStatus;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -24,28 +19,21 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.extensions.surf.util.I18NUtil;
-import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.Cache;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 import org.springframework.util.StopWatch;
 
-import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.DataListModel;
-import fr.becpg.model.SystemState;
 import fr.becpg.repo.entity.datalist.AsyncPaginatedExtractorWrapper;
 import fr.becpg.repo.entity.datalist.DataListExtractor;
 import fr.becpg.repo.entity.datalist.DataListExtractorFactory;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.impl.DataListOutputWriterFactory;
-import fr.becpg.repo.helper.AuthorityHelper;
 import fr.becpg.repo.helper.JsonHelper;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.impl.AttributeExtractorField;
-import fr.becpg.repo.license.BeCPGLicenseManager;
-import fr.becpg.repo.security.SecurityService;
 import fr.becpg.repo.system.SystemConfigurationService;
 import fr.becpg.repo.web.scripts.BrowserCacheHelper;
 import fr.becpg.repo.web.scripts.WebscriptHelper;
@@ -57,7 +45,7 @@ import jakarta.servlet.http.HttpServletResponse;
  * @author matthieu
  * @version $Id: $Id
  */
-public class EntityDataListWebScript extends AbstractWebScript {
+public class EntityDataListWebScript extends AbstractEntityDataListWebScript {
 
 	
 	private static final Log logger = LogFactory.getLog(EntityDataListWebScript.class);
@@ -147,35 +135,11 @@ public class EntityDataListWebScript extends AbstractWebScript {
 	/** Constant <code>PARAM_EFFECTIVE_FILTER_ON="effectiveFilterOn"</code> */
 	protected static final String PARAM_EFFECTIVE_FILTER_ON = "effectiveFilterOn";
 
-	private NodeService nodeService;
-
-	private SecurityService securityService;
-
-	private LockService lockService;
-
-	private NamespaceService namespaceService;
-
 	private DataListExtractorFactory dataListExtractorFactory;
 
 	private DataListOutputWriterFactory datalistOutputWriterFactory;
 
 	private SystemConfigurationService systemConfigurationService;
-	
-	/**
-	 * <p>Setter for the field <code>systemConfigurationService</code>.</p>
-	 *
-	 * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
-	 */
-	private BeCPGLicenseManager becpgLicenseManager;
-	
-	/**
-	 * <p>Setter for the field <code>becpgLicenseManager</code>.</p>
-	 *
-	 * @param becpgLicenseManager a {@link fr.becpg.repo.license.BeCPGLicenseManager} object
-	 */
-	public void setBecpgLicenseManager(BeCPGLicenseManager becpgLicenseManager) {
-		this.becpgLicenseManager = becpgLicenseManager;
-	}
 	
 	/**
 	 * <p>Setter for the field <code>systemConfigurationService</code>.</p>
@@ -201,48 +165,12 @@ public class EntityDataListWebScript extends AbstractWebScript {
 	}
 
 	/**
-	 * <p>Setter for the field <code>nodeService</code>.</p>
-	 *
-	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
-	 */
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
-
-	/**
-	 * <p>Setter for the field <code>securityService</code>.</p>
-	 *
-	 * @param securityService a {@link fr.becpg.repo.security.SecurityService} object.
-	 */
-	public void setSecurityService(SecurityService securityService) {
-		this.securityService = securityService;
-	}
-
-	/**
-	 * <p>Setter for the field <code>namespaceService</code>.</p>
-	 *
-	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
-	 */
-	public void setNamespaceService(NamespaceService namespaceService) {
-		this.namespaceService = namespaceService;
-	}
-
-	/**
 	 * <p>Setter for the field <code>dataListExtractorFactory</code>.</p>
 	 *
 	 * @param dataListExtractorFactory a {@link fr.becpg.repo.entity.datalist.DataListExtractorFactory} object.
 	 */
 	public void setDataListExtractorFactory(DataListExtractorFactory dataListExtractorFactory) {
 		this.dataListExtractorFactory = dataListExtractorFactory;
-	}
-
-	/**
-	 * <p>Setter for the field <code>lockService</code>.</p>
-	 *
-	 * @param lockService a {@link org.alfresco.service.cmr.lock.LockService} object.
-	 */
-	public void setLockService(LockService lockService) {
-		this.lockService = lockService;
 	}
 
 	/** {@inheritDoc} */
@@ -433,34 +361,12 @@ public class EntityDataListWebScript extends AbstractWebScript {
 				logger.debug("Using extractor: "+extractor.getClass().getSimpleName());
 			}
 
-			boolean hasWriteAccess = !dataListFilter.isVersionFilter();
-			boolean hasReadAccess = true;
-			if(!entityNodeRefsList.isEmpty()) {
-				NodeRef entityNodeRef = entityNodeRefsList.get(0);
-				QName entityNodeRefType = nodeService.getType(entityNodeRef);
-				
-				int accessMode = securityService.computeAccessMode(entityNodeRef, entityNodeRefType, itemType);
-				hasReadAccess = accessMode != SecurityService.NONE_ACCESS;
-				
-				if (hasReadAccess && hasWriteAccess) {
-
-					hasWriteAccess = extractor.hasWriteAccess() && !nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_CHECKED_OUT)
-							&& !nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)
-							&& (lockService.getLockStatus(entityNodeRef) == LockStatus.NO_LOCK)
-							&& (accessMode == SecurityService.WRITE_ACCESS)
-							&& becpgLicenseManager.hasWriteLicense()
-							&& isExternalUserAllowed(dataListFilter);
-	
-					if (hasWriteAccess && (dataListFilter.getParentNodeRef() != null) && dataType!=null && !dataType.getLocalName().equals(dataListFilter.getDataListName())) {
-						String dataListType = (String) nodeService.getProperty(dataListFilter.getParentNodeRef(), DataListModel.PROP_DATALISTITEMTYPE);
-	
-						if ((dataListType != null) && !dataListType.isEmpty()) {
-							QName dataListTypeQName = QName.createQName(dataListType, namespaceService);
-							hasWriteAccess = securityService.computeAccessMode(entityNodeRef, entityNodeRefType, dataListTypeQName) == SecurityService.WRITE_ACCESS;
-						}
-					}
-				}
-			}
+			final Access access = getAccess(dataType, entityNodeRefsList, dataListFilter.hasWriteAccess(),
+					dataListFilter.getParentNodeRef(), dataListFilter.getDataListName(), extractor);
+			
+			boolean hasWriteAccess = access.canWrite();
+			boolean hasReadAccess = access.canRead();
+			
 			PaginatedExtractedItems extractedItems;
 			if(hasReadAccess) {
 				dataListFilter.setHasWriteAccess(hasWriteAccess);
@@ -507,17 +413,6 @@ public class EntityDataListWebScript extends AbstractWebScript {
 			}
 		}
 
-	}
-
-	private boolean isExternalUserAllowed(DataListFilter dataListFilter) {
-		if ((dataListFilter.getParentNodeRef() != null) && nodeService.exists(dataListFilter.getParentNodeRef())
-				&& nodeService.hasAspect(dataListFilter.getParentNodeRef(), BeCPGModel.ASPECT_ENTITYLIST_STATE)
-				&& SystemState.Valid.toString().equals(nodeService.getProperty(dataListFilter.getParentNodeRef(), BeCPGModel.PROP_ENTITYLIST_STATE))
-				&& AuthorityHelper.isCurrentUserExternal()) {
-			return false;
-
-		}
-		return true;
 	}
 
 	/**
