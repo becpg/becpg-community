@@ -341,36 +341,30 @@ function assocValues(node, assocName) {
  * @param {string} offset
  * @returns {NodeRef[]} nodeRef array for given source assocName
  */
-function sourceAssocValues(node, assocName, maxResults, offset) {
-	if (isEmpty(node)) {
-		return [];
+function sourceAssocValues(node, assocName, maxResults, offset, includeVersions) {
+	if (!maxResults) {
+		maxResults = null;
 	}
-	if (maxResults) {
-		if (offset) {
-			return bcpg.sourceAssocValues(node, assocName, maxResults, offset);
-		}
-		return bcpg.sourceAssocValues(node, assocName, maxResults, null);
+	if (!offset) {
+		offset = null;
 	}
-	if (offset) {
-		return bcpg.sourceAssocValues(node, assocName, null, offset);
+	if (!includeVersions) {
+		includeVersions = false;
 	}
-	return bcpg.sourceAssocValues(node, assocName, null, null);
+	return bcpg.sourceAssocValues(node, assocName, maxResults, offset, includeVersions);
 }
 
 /**
  * @param {(ScriptNode|NodeRef|string)} node
  * @param {string} assocName
  * @param {object} filter
- * @returns {NodeRef[]} nodeRef array for given assocName
+ * @returns boolean
  */
-function entitySourceAssocs(node, assocName, filter) {
-	if (isEmpty(node)) {
-		return [];
-	}
+function hasEntitySourceAssocs(node, assocName, filter) {
 	if (filter) {
-		return bcpg.entitySourceAssocs(node, assocName, JSON.stringify(filter));
+		return bcpg.hasEntitySourceAssocs(node, assocName, JSON.stringify(filter));
 	}
-	return bcpg.entitySourceAssocs(node, assocName, null);
+	return bcpg.hasEntitySourceAssocs(node, assocName, null);
 }
 
 /**

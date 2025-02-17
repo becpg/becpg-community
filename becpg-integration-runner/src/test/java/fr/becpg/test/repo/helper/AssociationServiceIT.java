@@ -280,5 +280,34 @@ public class AssociationServiceIT extends PLMBaseTestCase {
 		}, false, true);
 
 	}
+	
+	@Test
+	public void testSourceAssocs() {
+		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			return BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test source assoc");
+		}, false, true);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			NodeRef supplierNodeRef = null;
+			NodeRef entityFolder = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "Supplier1");
+			if (entityFolder != null) {
+				supplierNodeRef = nodeService.getChildByName(entityFolder, ContentModel.ASSOC_CONTAINS, "Supplier1");
+			}
+			if (supplierNodeRef == null) {
+				Map<QName, Serializable> properties = new HashMap<>();
+				properties.put(ContentModel.PROP_NAME, "Supplier1");
+				supplierNodeRef = nodeService
+						.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+								QName.createQName((String) properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_SUPPLIER, properties)
+						.getChildRef();
+			}
+			associationService.update(rawMaterialNodeRef, PLMModel.ASSOC_SUPPLIERS, supplierNodeRef);
+			List<NodeRef> sourceNodeRefs = associationService.getSourcesAssocs(supplierNodeRef, PLMModel.ASSOC_SUPPLIERS);
+			assertTrue(sourceNodeRefs.contains(rawMaterialNodeRef));
+			sourceNodeRefs = associationService.getSourcesAssocs(supplierNodeRef);
+			assertTrue(sourceNodeRefs.contains(rawMaterialNodeRef));
+			return null;
+		}, false, true);
+	}
 
 }

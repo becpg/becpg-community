@@ -98,6 +98,9 @@
 		<property name="childsAssocsCache" ref="becpgChildAssocsCache" />
 		<property name="assocsCache" ref="becpgAssocsCache" />
 		<property name="registry" ref="asynchronouslyRefreshedCacheRegistry" />
+		<property name="sqlSessionTemplate" ref="repoSqlSessionTemplate"/>
+		<property name="permissionService" ref="permissionService"/>
+		<property name="nodeDAO" ref="nodeDAO"/>
 	</bean>
 
 
