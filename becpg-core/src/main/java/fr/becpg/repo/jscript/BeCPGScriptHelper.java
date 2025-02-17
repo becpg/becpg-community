@@ -843,49 +843,20 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		return wrapValue(associationService.getTargetAssocs(nodeRef, getQName(assocQname)));
 	}
 	
-	/**
-
-	 * @param nodeRef
-	 * @param assocQname
-	 * @param listTypeQname
-	 * @param filter
-	 * example:
-	 * {
-		  "isOrOperator": true,
-		  "filters": [
-		    {
-		      "attribute": "cm:name",
-		      "value": "TEST",
-		    },
-		    {
-		      "attribute": "bcpg:netWeight",
-		      "fromRange": "25",
-		      "toRange": "35",
-		      "mode": "RANGE"
-		    },
-		    {
-		      "attribute": "bcpg:productState",
-		      "value": "Valid",
-		    }
-		  ]
-		}
-	 * @return
-	 */
-	public Object entitySourceAssocs(String nodeRef, String assocQname, String filter) {
-		return entitySourceAssocs(new NodeRef(nodeRef), assocQname, filter);
+	public boolean hasEntitySourceAssocs(String nodeRef, String assocQname, String filter) {
+		return hasEntitySourceAssocs(new NodeRef(nodeRef), assocQname, filter);
 	}
 	
-	public Object entitySourceAssocs(ScriptNode node, String assocQname, String filter) {
-		return entitySourceAssocs(node.getNodeRef(), assocQname, filter);
+	public boolean hasEntitySourceAssocs(ScriptNode node, String assocQname, String filter) {
+		return hasEntitySourceAssocs(node.getNodeRef(), assocQname, filter);
 	}
 	
-	public Object entitySourceAssocs(NodeRef nodeRef, String assocQname, String filter) {
+	public boolean hasEntitySourceAssocs(NodeRef nodeRef, String assocQname, String filter) {
 		List<EntitySourceAssoc> entitySourceAssocs;
+		PagingRequest pagingRequest = new PagingRequest(1);
 		if (filter != null) {
 			JSONObject jsonConfig = new JSONObject(filter);
-			boolean isOrOperator = jsonConfig.has("isOrOperator") && jsonConfig.getBoolean("isOrOperator");
 			List<AssociationCriteriaFilter> filters = new ArrayList<>();
-			PagingRequest pagingRequest = null;
 			if (jsonConfig.has("filters")) {
 				for (int i = 0; i < jsonConfig.getJSONArray("filters").length(); i++) {
 					JSONObject jsonFilter = jsonConfig.getJSONArray("filters").getJSONObject(i);
@@ -912,34 +883,23 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 					filters.add(assocFilter);
 				}
 			}
-			if (jsonConfig.has("page")) {
-				JSONObject page = jsonConfig.getJSONObject("page");
-				if (page.has("offset")) {
-					pagingRequest = new PagingRequest(page.getInt("offset"), page.getInt("maxResults"));
-				} else {
-					pagingRequest = new PagingRequest(page.getInt("maxResults"));
-				}
-			}
-			entitySourceAssocs = associationService.getEntitySourceAssocs(List.of(nodeRef), getQName(assocQname), null, isOrOperator, filters, pagingRequest);
-			if (jsonConfig.has("includeSelf") && !jsonConfig.getBoolean("includeSelf")) {
-				entitySourceAssocs.removeIf(s-> s.getEntityNodeRef().equals(nodeRef));
-			}
+			entitySourceAssocs = associationService.getEntitySourceAssocs(List.of(nodeRef), getQName(assocQname), null, false, filters, pagingRequest);
 		} else {
-			entitySourceAssocs = associationService.getEntitySourceAssocs(List.of(nodeRef), getQName(assocQname), null, false, null);
+			entitySourceAssocs = associationService.getEntitySourceAssocs(List.of(nodeRef), getQName(assocQname), null, false, null, pagingRequest);
 		}
-		return wrapValue(entitySourceAssocs.stream().map(s -> s.getEntityNodeRef()).toList());
+		return !entitySourceAssocs.isEmpty();
 	}
 	
-	public Object sourceAssocValues(ScriptNode sourceNode, String assocQname, Integer maxResults, Integer offset) {
-		return sourceAssocValues(sourceNode.getNodeRef(), assocQname, maxResults, offset);
+	public Object sourceAssocValues(ScriptNode sourceNode, String assocQname, Integer maxResults, Integer offset, boolean includeVersions) {
+		return sourceAssocValues(sourceNode.getNodeRef(), assocQname, maxResults, offset, includeVersions);
 	}
 	
-	public Object sourceAssocValues(String nodeRef, String assocQname, Integer maxResults, Integer offset) {
-		return sourceAssocValues(new NodeRef(nodeRef), assocQname, maxResults, offset);
+	public Object sourceAssocValues(String nodeRef, String assocQname, Integer maxResults, Integer offset, Boolean includeVersions) {
+		return sourceAssocValues(new NodeRef(nodeRef), assocQname, maxResults, offset, includeVersions);
 	}
 	
-	public Object sourceAssocValues(NodeRef nodeRef, String assocQname, Integer maxResults, Integer offset) {
-		return wrapValue(associationService.getSourcesAssocs(nodeRef, getQName(assocQname), false, maxResults, offset));
+	public Object sourceAssocValues(NodeRef nodeRef, String assocQname, Integer maxResults, Integer offset, Boolean includeVersions) {
+		return wrapValue(associationService.getSourcesAssocs(nodeRef, getQName(assocQname), includeVersions, maxResults, offset, true));
 	}
 
 	// TODO Perfs

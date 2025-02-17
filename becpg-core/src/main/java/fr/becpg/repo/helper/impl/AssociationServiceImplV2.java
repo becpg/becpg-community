@@ -41,6 +41,8 @@ import org.alfresco.query.PagingRequest;
 import org.alfresco.repo.cache.RefreshableCacheListener;
 import org.alfresco.repo.cache.SimpleCache;
 import org.alfresco.repo.coci.CheckOutCheckInServicePolicies;
+import org.alfresco.repo.domain.node.Node;
+import org.alfresco.repo.domain.node.NodeDAO;
 import org.alfresco.repo.domain.qname.QNameDAO;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
@@ -49,7 +51,6 @@ import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.repo.transaction.TransactionalResourceHelper;
 import org.alfresco.repo.version.Version2Model;
-import org.alfresco.repo.version.VersionBaseModel;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.repository.AssociationRef;
@@ -58,6 +59,7 @@ import org.alfresco.service.cmr.repository.InvalidNodeRefException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.StoreRef;
+import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
@@ -66,6 +68,7 @@ import org.alfresco.util.cache.AsynchronouslyRefreshedCacheRegistry;
 import org.alfresco.util.cache.RefreshableCacheEvent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.util.StopWatch;
@@ -100,6 +103,20 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 	private NamespaceService namespaceService;
 
 	private CommonDataListSort commonDataListSort;
+	
+	private SqlSessionTemplate sqlSessionTemplate;
+	
+	private PermissionService permissionService;
+	
+	private NodeDAO nodeDAO;
+	
+	public void setNodeDAO(NodeDAO nodeDAO) {
+		this.nodeDAO = nodeDAO;
+	}
+	
+	public void setPermissionService(PermissionService permissionService) {
+		this.permissionService = permissionService;
+	}
 
 	//Immutable cluster cache
 	private SimpleCache<AssociationCacheRegion, ChildAssocCacheEntry> childsAssocsCache;
@@ -116,6 +133,10 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 	static {
 		ignoredAssocs.add(ContentModel.ASSOC_ORIGINAL);
 		ignoredStoreRefs.add(new StoreRef(StoreRef.PROTOCOL_WORKSPACE, Version2Model.STORE_ID));
+	}
+	
+	public void setSqlSessionTemplate(SqlSessionTemplate sqlSessionTemplate) {
+		this.sqlSessionTemplate = sqlSessionTemplate;
 	}
 
 	/**
@@ -464,61 +485,105 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 	}
 	
 	@Override
-	public List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QName qName, boolean includeVersions) {
+	public List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QName qName, Boolean includeVersions) {
 		return getSourcesAssocs(nodeRef, qName, includeVersions, null, null);
 	}
 	
 	@Override
-	public List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QName qName, boolean includeVersions, Integer maxResults, Integer offset) {
-		StringBuilder query = new StringBuilder(
-			    "SELECT q.local_name AS assoc_type, s.uuid AS source_uuid, t.uuid AS target_uuid, sstore.identifier AS source_store " +
-			    "FROM alf_node_assoc a " +
-			    "JOIN alf_node s ON a.source_node_id = s.id " +
-			    "JOIN alf_store sstore ON s.store_id = sstore.id " + 
-			    "JOIN alf_node t ON a.target_node_id = t.id " +
-			    "JOIN alf_qname q ON a.type_qname_id = q.id " +
-			    "WHERE t.uuid = ? "
-			);
-			if (qName != null) {
-			    query.append(" AND q.local_name = ? ");
+	public List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QName qName, Boolean includeVersions, Integer maxResults, Integer offset) {
+		return getSourcesAssocs(nodeRef, qName, includeVersions, maxResults, offset, false);
+	}
+	
+	@Override
+	public List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QName qName, Boolean includeVersions, Integer maxResults, Integer offset, boolean checkPermissions) {
+		Map<String, Object> params = new HashMap<>();
+		params.put("qName", qName != null ? qName.getLocalName() : null);
+		params.put("includeVersions", includeVersions != null && includeVersions.booleanValue());
+		Pair<Long, NodeRef> nodePair = nodeDAO.getNodePair(nodeRef);
+		params.put("targetId", nodePair.getFirst());
+		return queryNodes("alfresco.node.select_SourcesAssocs", params, maxResults, offset, checkPermissions);
+	}
+	
+	private List<NodeRef> queryNodes(String statement, Map<String, Object> params, Integer maxResults, Integer offset
+			, boolean checkPermissions) {
+		List<Node> foundNodes = new ArrayList<>();
+		if (checkPermissions) {
+			Map<Long, Boolean> aclReadCache = new HashMap<>();
+			Set<String> authorisations = AuthenticationUtil.runAs(() -> permissionService.getAuthorisations(),
+					AuthenticationUtil.getFullyAuthenticatedUser());
+			boolean isSystemReading = AuthenticationUtil.runAs(AuthenticationUtil::isRunAsUserTheSystemUser,
+					AuthenticationUtil.getFullyAuthenticatedUser());
+			boolean isAdminReading = AuthenticationUtil.runAs(() -> authorisations.contains(AuthenticationUtil.getAdminRoleName()),
+					AuthenticationUtil.getFullyAuthenticatedUser());
+			if (maxResults == null || maxResults == -1 || maxResults == Integer.MAX_VALUE) {
+				maxResults = Integer.MAX_VALUE;
 			}
-
-			if (maxResults != null) {
-			    query.append(" LIMIT ").append(maxResults).append(" ");
-			}
-			if (offset != null) {
-				query.append(" OFFSET ").append(offset).append(" ");
-			}
-			query.append(";");
-
-		List<NodeRef> ret = new ArrayList<>();
-		try (Connection con = dataSource.getConnection()) {
-			try (PreparedStatement statement = con.prepareStatement(query.toString())) {
-				statement.setString(1, nodeRef.getId());
-				if (qName != null) {
-					statement.setString(2, qName.getLocalName());
-				}
-				try (java.sql.ResultSet res = statement.executeQuery()) {
-					while (res.next()) {
-						NodeRef sourceNodeRef = new NodeRef(new StoreRef("workspace", res.getString("source_store")), res.getString("source_uuid"));
-						if (includeVersions
-								|| !isVersion(sourceNodeRef) && !nodeService.hasAspect(sourceNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
-							ret.add(sourceNodeRef);
+			int batchStart = 0;
+			int batchSize = 1000;
+			params.put("offset", batchStart);
+			params.put("maxResults", batchSize);
+			List<Node> offsetNodes = new ArrayList<>();
+			while (foundNodes.size() < maxResults) {
+				params.put("offset", batchStart);
+				List<Node> nextResults = sqlSessionTemplate.selectList(statement, params);
+				for (Node node : nextResults) {
+					if (foundNodes.size() >= maxResults) {
+						break;
+					}
+					if (isIncluded(node, isSystemReading, isAdminReading, aclReadCache)) {
+						if (offset != null && offsetNodes.size() < offset) {
+							offsetNodes.add(node);
+						} else {
+							foundNodes.add(node);
 						}
 					}
 				}
+				if (foundNodes.size() >= maxResults || nextResults.size() < batchSize) {
+					break;
+				} else {
+					batchStart += batchSize;
+				}
 			}
-		} catch (SQLException e) {
-			logger.error(e, e);
+			return foundNodes.stream().map(Node::getNodeRef).toList();
 		}
-		return ret;
+		params.put("offset", offset);
+		params.put("maxResults", maxResults);
+		foundNodes = sqlSessionTemplate.selectList(statement, params);
+		return foundNodes.stream().map(Node::getNodeRef).toList();
 	}
 	
-	/** {@inheritDoc} */
+	boolean isIncluded(Node node, boolean isSystemReading, boolean isAdminReading, Map<Long, Boolean> aclReadCache) {
+		return isSystemReading || isAdminReading || canRead(node.getAclId(), aclReadCache);
+	}
 	
-	private boolean isVersion(NodeRef nodeRef) {
-		return nodeRef.getStoreRef().getProtocol().contains(VersionBaseModel.STORE_PROTOCOL)
-				|| nodeRef.getStoreRef().getIdentifier().contains(Version2Model.STORE_ID);
+	protected boolean canRead(Long aclId, Map<Long, Boolean> aclReadCache) {
+		Boolean res = aclReadCache.get(aclId);
+		if (res == null) {
+			res = canCurrentUserRead(aclId);
+			aclReadCache.put(aclId, res);
+		}
+		return res;
+	}
+
+	protected boolean canCurrentUserRead(Long aclId) {
+		// cache resolved ACLs
+		Set<String> authorities = permissionService.getAuthorisations();
+
+		Set<String> aclReadersDenied = permissionService.getReadersDenied(aclId);
+		for (String auth : aclReadersDenied) {
+			if (authorities.contains(auth)) {
+				return false;
+			}
+		}
+
+		Set<String> aclReaders = permissionService.getReaders(aclId);
+		for (String auth : aclReaders) {
+			if (authorities.contains(auth)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private static final String SQL_SELECT_SOURCE_ASSOC_ENTITY_FIRST_PART = "select entity.uuid as entity, dataListItem.uuid as dataListItem, dataListItem.type_qname_id as dataListItemType, targetNode.uuid as targetNode"
@@ -688,9 +753,9 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 				if (!isFirst) {
 					query.append(" or ");
 				}
-				query.append("targetNode.uuid='");
-				query.append(nodeRef.getId());
-				query.append("'");
+				query.append("targetNode.id=");
+				Pair<Long, NodeRef> nodePair = nodeDAO.getNodePair(nodeRef);
+				query.append(nodePair.getFirst());
 				isFirst = false;
 			}
 			query.append(")");
