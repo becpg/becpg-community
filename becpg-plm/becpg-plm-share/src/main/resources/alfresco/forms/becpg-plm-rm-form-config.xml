@@ -128,12 +128,14 @@
           <show id="bcpg:entityTplEnabled" force="false" />
           <show id="bcpg:entityTplIsDefault" force="false" />
           <show id="bcpg:entityTplScript" force="false" />
-					<show id="bcpg:regulatoryCountries" />
-					<show id="bcpg:regulatoryUsageRef" />
-					<show id="bcpg:regulatoryMode" />
-					<show id="bcpg:regulatoryRecipeId" />
-					<show id="bcpg:regulatoryResult" />
-					<show id="bcpg:regulatoryValidationDate" />
+					<!--regulatory -->
+					<show id="bcpg:regulatoryCountries" force="false" />
+					<show id="bcpg:regulatoryUsageRef" force="false" />
+					<show id="bcpg:regulatoryMode" force="false" />
+					<show id="bcpg:regulatoryRecipeId" force="false" />
+					<show id="bcpg:regulatoryResult" force="false" />
+					<show id="bcpg:regulatoryFormulatedDate" force="false" />
+					<show id="bcpg:regulatoryValidationDate" force="false" />
         </field-visibility>
         <appearance>
           <set id="template" appearance="bordered-panel" label-id="becpg.forms.set.template.label" />
@@ -336,6 +338,8 @@
 					<field id="bcpg:regulatoryRecipeId" read-only="true"
 						set="regulatory" />
 					<field id="bcpg:regulatoryResult" read-only="true"
+						set="regulatory" />
+					<field id="bcpg:regulatoryFormulatedDate" read-only="true"
 						set="regulatory" />
 					<field id="bcpg:regulatoryValidationDate" mandatory="false"
 						read-only="false" set="regulatory">
