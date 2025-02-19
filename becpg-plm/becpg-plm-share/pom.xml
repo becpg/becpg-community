@@ -6,11 +6,7 @@
 		<version>23.4.1</version>
 		<relativePath>../../</relativePath>
 	</parent>
-<<<<<<< HEAD
  <version>23.4.1.0-SNAPSHOT</version>
-=======
- <version>23.4.0.17-SNAPSHOT</version>
->>>>>>> a7626cfb9cc02c3a37d6c19579c9265174f0c69f
     <modelVersion>4.0.0</modelVersion>    
 	<artifactId>becpg-plm-share</artifactId>
 	<packaging>jar</packaging>
