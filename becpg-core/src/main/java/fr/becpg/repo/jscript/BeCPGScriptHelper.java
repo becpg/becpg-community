@@ -852,42 +852,68 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	}
 	
 	public boolean hasEntitySourceAssocs(NodeRef nodeRef, String assocQname, String filter) {
-		List<EntitySourceAssoc> entitySourceAssocs;
 		PagingRequest pagingRequest = new PagingRequest(1);
+		List<AssociationCriteriaFilter> filters = null;
 		if (filter != null) {
 			JSONObject jsonConfig = new JSONObject(filter);
-			List<AssociationCriteriaFilter> filters = new ArrayList<>();
-			if (jsonConfig.has("filters")) {
-				for (int i = 0; i < jsonConfig.getJSONArray("filters").length(); i++) {
-					JSONObject jsonFilter = jsonConfig.getJSONArray("filters").getJSONObject(i);
-					AssociationCriteriaFilter assocFilter = new AssociationCriteriaFilter(getQName(jsonFilter.getString("attribute")), null);
-					String value = jsonFilter.has("value") ? jsonFilter.getString("value") : null;
-					if (value != null) {
-						assocFilter.setValue(value);
-					}
-					String fromRange = jsonFilter.has("fromRange") ? jsonFilter.getString("fromRange") : null;
-					if (fromRange != null) {
-						assocFilter.setFromRange(fromRange);
-					}
-					String toRange = jsonFilter.has("toRange") ? jsonFilter.getString("toRange") : null;
-					if (toRange != null) {
-						assocFilter.setToRange(toRange);
-					}
-					AssociationCriteriaFilterMode mode = jsonFilter.has("mode") ? AssociationCriteriaFilterMode.valueOf(jsonFilter.getString("mode"))
-							: null;
-					if (mode != null) {
-						assocFilter.setMode(mode);
-					}
-					boolean entityFilter = jsonFilter.has("entityFilter") && jsonFilter.getBoolean("entityFilter");
-					assocFilter.setEntityFilter(entityFilter);
-					filters.add(assocFilter);
-				}
-			}
-			entitySourceAssocs = associationService.getEntitySourceAssocs(List.of(nodeRef), getQName(assocQname), null, false, filters, pagingRequest);
-		} else {
-			entitySourceAssocs = associationService.getEntitySourceAssocs(List.of(nodeRef), getQName(assocQname), null, false, null, pagingRequest);
+			filters = createFilters(jsonConfig);
 		}
-		return !entitySourceAssocs.isEmpty();
+		return !associationService.getEntitySourceAssocs(List.of(nodeRef), getQName(assocQname), null, false, filters, pagingRequest).isEmpty();
+	}
+	
+	public Object entitySourceAssocs(String nodeRef, String assocQname, String filter) {
+		return entitySourceAssocs(new NodeRef(nodeRef), assocQname, filter);
+	}
+	
+	public Object entitySourceAssocs(ScriptNode node, String assocQname, String filter) {
+		return entitySourceAssocs(node.getNodeRef(), assocQname, filter);
+	}
+	
+	public Object entitySourceAssocs(NodeRef nodeRef, String assocQname, String filter) {
+		PagingRequest pagingRequest = null;
+		List<AssociationCriteriaFilter> filters = null;
+		if (filter != null) {
+			JSONObject jsonConfig = new JSONObject(filter);
+			filters = createFilters(jsonConfig);
+			if (jsonConfig.has("maxResults") && jsonConfig.has("offset")) {
+				pagingRequest = new PagingRequest((int) jsonConfig.get("offset"), (int) jsonConfig.get("maxResults"));
+			} else if (jsonConfig.has("maxResults")) {
+				pagingRequest = new PagingRequest((int) jsonConfig.get("maxResults"));
+			}
+		}
+		List<EntitySourceAssoc> entitySourceAssocs = associationService.getEntitySourceAssocs(List.of(nodeRef), getQName(assocQname), null, false, filters, pagingRequest, true);
+		return wrapValue(entitySourceAssocs.stream().map(s -> s.getEntityNodeRef()).toList());
+	}
+
+	private List<AssociationCriteriaFilter> createFilters(JSONObject jsonConfig) {
+		List<AssociationCriteriaFilter> filters = new ArrayList<>();
+		if (jsonConfig.has("filters")) {
+			for (int i = 0; i < jsonConfig.getJSONArray("filters").length(); i++) {
+				JSONObject jsonFilter = jsonConfig.getJSONArray("filters").getJSONObject(i);
+				AssociationCriteriaFilter assocFilter = new AssociationCriteriaFilter(getQName(jsonFilter.getString("attribute")), null);
+				String value = jsonFilter.has("value") ? jsonFilter.getString("value") : null;
+				if (value != null) {
+					assocFilter.setValue(value);
+				}
+				String fromRange = jsonFilter.has("fromRange") ? jsonFilter.getString("fromRange") : null;
+				if (fromRange != null) {
+					assocFilter.setFromRange(fromRange);
+				}
+				String toRange = jsonFilter.has("toRange") ? jsonFilter.getString("toRange") : null;
+				if (toRange != null) {
+					assocFilter.setToRange(toRange);
+				}
+				AssociationCriteriaFilterMode mode = jsonFilter.has("mode") ? AssociationCriteriaFilterMode.valueOf(jsonFilter.getString("mode"))
+						: null;
+				if (mode != null) {
+					assocFilter.setMode(mode);
+				}
+				boolean entityFilter = jsonFilter.has("entityFilter") && jsonFilter.getBoolean("entityFilter");
+				assocFilter.setEntityFilter(entityFilter);
+				filters.add(assocFilter);
+			}
+		}
+		return filters;
 	}
 	
 	public Object sourceAssocValues(ScriptNode sourceNode, String assocQname, Integer maxResults, Integer offset, boolean includeVersions) {
