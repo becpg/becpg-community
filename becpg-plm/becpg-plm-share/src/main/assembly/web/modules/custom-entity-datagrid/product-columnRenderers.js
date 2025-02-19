@@ -230,7 +230,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 	});
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-		propertyName: ["qa:stockList"],
+		propertyName: ["qa:stockList","bp:pubChannelListChannel"],
 		renderer: function(oRecord, data, label, scope) {
 			var url = scope._buildCellUrl(data);
 			if (scope.datalistMeta && scope.datalistMeta.name.indexOf("WUsed") > -1) {
