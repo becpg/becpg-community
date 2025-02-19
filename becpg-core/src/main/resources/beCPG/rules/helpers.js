@@ -367,6 +367,13 @@ function hasEntitySourceAssocs(node, assocName, filter) {
 	return bcpg.hasEntitySourceAssocs(node, assocName, null);
 }
 
+function entitySourceAssocs(node, assocName, filter) {
+	if (filter) {
+		return bcpg.entitySourceAssocs(node, assocName, JSON.stringify(filter));
+	}
+	return bcpg.entitySourceAssocs(node, assocName, null);
+}
+
 /**
  * @param {(ScriptNode|NodeRef|string)} node
  * @param {string} assocName
