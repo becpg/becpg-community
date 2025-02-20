@@ -601,6 +601,12 @@ if (beCPG.module.EntityDataGridRenderers) {
             if (data.value != null) {
                 var forceUnit = oColumn.forceUnit;
 
+
+                if (oColumn.hidden) {
+                    oColumn.showAfterRender = true;
+                }
+                var sigFig = 5;
+
 				var unit, qty;
 				if (data.value == 0) {
 					return "0";
