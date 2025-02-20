@@ -13,6 +13,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.GHSModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.ProjectModel;
+import fr.becpg.model.ToxType;
 import fr.becpg.repo.product.data.ClientData;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
@@ -27,6 +28,7 @@ import fr.becpg.repo.product.data.productList.HazardClassificationListDataItem.S
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.LCAListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
+import fr.becpg.repo.product.data.productList.ToxListDataItem;
 import fr.becpg.repo.product.formulation.clp.HazardClassificationFormulaContext;
 import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 
@@ -51,6 +53,7 @@ public class StandardSoapTestProduct extends SampleProductBuilder {
 	private boolean isWithScore = false;
 	private boolean isWithPhysico = true;
 	private boolean isWithSpecification = false;
+	private boolean isWithToxicology = false;
 
 	protected StandardSoapTestProduct(Builder builder) {
 		super(builder);
@@ -58,6 +61,7 @@ public class StandardSoapTestProduct extends SampleProductBuilder {
 		this.isWithPhysico = builder.isWithPhysico;
 		this.isWithSpecification = builder.isWithSpecification;
 		this.isWithScore = builder.isWithScore;
+		this.isWithToxicology = builder.isWithToxicology;
 	}
 
 	// Static inner Builder class
@@ -66,6 +70,7 @@ public class StandardSoapTestProduct extends SampleProductBuilder {
 		private boolean isWithPhysico = true;
 		private boolean isWithSpecification = false;
 		private boolean isWithScore = false;
+		private boolean isWithToxicology = false;
 
 		public Builder withCompo(boolean isWithCompo) {
 			this.isWithCompo = isWithCompo;
@@ -86,6 +91,11 @@ public class StandardSoapTestProduct extends SampleProductBuilder {
 			this.isWithScore = isWithScore;
 			return this;
 		}
+		
+		public Builder withToxicology(boolean isWithToxicology) {
+			this.isWithToxicology = isWithToxicology;
+			return this;
+		}
 
 		@Override
 		protected Builder self() {
@@ -101,6 +111,8 @@ public class StandardSoapTestProduct extends SampleProductBuilder {
 
 	// Raw Material Names
 	public static final String SODIUM_HYDROXIDE = "Sodium Hydroxide";
+	public static final String SODIUM_CARBONATE = "Sodium Carbonate";
+	public static final String SODIUM_CHLORIDE = "Sodium Chloride";
 	public static final String OLIVE_OIL = "Olive Oil";
 	public static final String ESSENTIAL_OILS = "Essential Oils Mix";
 
@@ -127,7 +139,7 @@ public class StandardSoapTestProduct extends SampleProductBuilder {
 			soapProduct.setClients(List.of(clientData));
 		}
 
-		if (isWithCompo) {
+		if (isWithCompo || isWithToxicology) {
 			// Initialize raw materials if not already done
 			if (sodiumHydroxideNodeRef == null) {
 				initRawMaterialsWithIngredients();
@@ -151,12 +163,35 @@ public class StandardSoapTestProduct extends SampleProductBuilder {
 		if (isWithSpecification) {
 			soapProduct.setProductSpecifications(createProductSpecifications());
 		}
+		
+		if (isWithToxicology) {
+			soapProduct.setToxList(createToxList());
+		}
 
 		alfrescoRepository.create(destFolder, soapProduct);
 
 		saveEntityAssociations(soapProduct);
 
 		return soapProduct;
+	}
+
+	private List<ToxListDataItem> createToxList() {
+		List<ToxListDataItem> toxList = new ArrayList<>();
+		ToxListDataItem toxListDataItem = new ToxListDataItem();
+		toxListDataItem.setTox(CharactTestHelper.getOrCreateTox(nodeService, "Adult RO Face", 140.0, true, true,
+				List.of(ToxType.SkinIrritationRinseOff, ToxType.Sensitization, ToxType.OcularIrritation, ToxType.SystemicIngredient)));
+		toxList.add(toxListDataItem);
+		
+		toxListDataItem = new ToxListDataItem();
+		toxListDataItem.setTox(CharactTestHelper.getOrCreateTox(nodeService, "Adult RO Hair", 110.0, true, true,
+				List.of(ToxType.SkinIrritationRinseOff, ToxType.Sensitization, ToxType.SystemicIngredient)));
+		toxList.add(toxListDataItem);
+		
+		toxListDataItem = new ToxListDataItem();
+		toxListDataItem.setTox(CharactTestHelper.getOrCreateTox(nodeService, "Adult RO Body", 220.0, true, true,
+				List.of(ToxType.SkinIrritationRinseOff, ToxType.Sensitization, ToxType.SystemicIngredient)));
+		toxList.add(toxListDataItem);
+		return toxList;
 	}
 
 	private void saveEntityAssociations(FinishedProductData soapProduct) {
@@ -198,7 +233,7 @@ public class StandardSoapTestProduct extends SampleProductBuilder {
 								.withRegulatoryMessage(GHS07_FORBIDDEN)))
 				.withForbiddenIngList(List.of(ForbiddenIngListDataItem
 
-						.build().withQtyPercMaxi(2d).withIngs(List.of(CharactTestHelper.getOrCreateIng(nodeService, "Sodium Chloride")))));
+						.build().withQtyPercMaxi(2d).withIngs(List.of(CharactTestHelper.getOrCreateIng(nodeService, SODIUM_CHLORIDE)))));
 
 		alfrescoRepository.create(destFolder, productSpecification);
 		return List.of(productSpecification);
@@ -269,10 +304,41 @@ public class StandardSoapTestProduct extends SampleProductBuilder {
 		List<IngListDataItem> ingredients = new ArrayList<>();
 
 		// Sodium Hydroxide ingredients
-		ingredients.add(createIngListItem("Sodium Hydroxide", 80.0, "1310-73-2", "Skin Corr. 1A:H314, Met. Corr. 1:H290", 500.0, 1000.0, 1.0, true));
-		ingredients.add(createIngListItem("Sodium Carbonate", 10.0, "497-19-8", "Eye Irrit. 2:H319", 2800.0, 2000.0, null, false));
-		ingredients.add(createIngListItem("Sodium Chloride", 10.0, "7647-14-5", "Eye Irrit. 2:H319", 3000.0, null, null, false));
+		ingredients.add(createIngListItem(SODIUM_HYDROXIDE, 80.0, "1310-73-2", "Skin Corr. 1A:H314, Met. Corr. 1:H290", 500.0, 1000.0, 1.0, true));
+		ingredients.add(createIngListItem(SODIUM_CARBONATE, 10.0, "497-19-8", "Eye Irrit. 2:H319", 2800.0, 2000.0, null, false));
+		ingredients.add(createIngListItem(SODIUM_CHLORIDE, 10.0, "7647-14-5", "Eye Irrit. 2:H319", 3000.0, null, null, false));
 
+		if (isWithToxicology) {
+			NodeRef ing = CharactTestHelper.getOrCreateIng(nodeService, SODIUM_HYDROXIDE);
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(PLMModel.PROP_ING_TOX_POD_SYSTEMIC, 10000);
+			properties.put(PLMModel.PROP_ING_TOX_DERMAL_ABSORPTIION, 18);
+			properties.put(PLMModel.PROP_ING_TOX_MOS_MOE, 100);
+			properties.put(PLMModel.PROP_ING_TOX_MAX_SKIN_IRRITATION_RINSE_OFF, 100);
+			properties.put(PLMModel.PROP_ING_TOX_MAX_SENSITIZATION, 80);
+			properties.put(PLMModel.PROP_ING_TOX_MAX_OCULAR_IRRITATION, 50);
+			properties.put(PLMModel.PROP_ING_TOX_MAX_PHOTOTOXIC, 85);
+			nodeService.addProperties(ing, properties);
+			
+			ing = CharactTestHelper.getOrCreateIng(nodeService, SODIUM_CARBONATE);
+			properties.put(PLMModel.PROP_ING_TOX_POD_SYSTEMIC, 1200);
+			properties.put(PLMModel.PROP_ING_TOX_DERMAL_ABSORPTIION, 50);
+			properties.put(PLMModel.PROP_ING_TOX_MOS_MOE, 100);
+			properties.put(PLMModel.PROP_ING_TOX_MAX_SKIN_IRRITATION_RINSE_OFF, 5);
+			properties.put(PLMModel.PROP_ING_TOX_MAX_SENSITIZATION, 100);
+			properties.put(PLMModel.PROP_ING_TOX_MAX_OCULAR_IRRITATION, 0.2);
+			properties.put(PLMModel.PROP_ING_TOX_MAX_PHOTOTOXIC, 100);
+			nodeService.addProperties(ing, properties);
+			
+			ing = CharactTestHelper.getOrCreateIng(nodeService, SODIUM_CHLORIDE);
+			properties.put(PLMModel.PROP_ING_TOX_DERMAL_ABSORPTIION, 50);
+			properties.put(PLMModel.PROP_ING_TOX_MAX_SKIN_IRRITATION_RINSE_OFF, 5);
+			properties.put(PLMModel.PROP_ING_TOX_MAX_SENSITIZATION, 1);
+			properties.put(PLMModel.PROP_ING_TOX_MAX_OCULAR_IRRITATION, 5);
+			properties.put(PLMModel.PROP_ING_TOX_MAX_PHOTOTOXIC, 5);
+			nodeService.addProperties(ing, properties);
+		}
+		
 		return ingredients;
 	}
 
