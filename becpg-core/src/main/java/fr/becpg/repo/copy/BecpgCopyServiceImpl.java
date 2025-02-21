@@ -123,10 +123,7 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 			return systemConfigurationService.confValue("beCPG.copyOrBranch.typesToReset");
 		}
 
-	    
-	    
-	    
-	    
+	 
 	    /**
 	     * <p>Setter for the field <code>contentPropertyRestrictionInterceptor</code>.</p>
 	     *
@@ -1150,7 +1147,7 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	    
 	    
 	    private boolean isExcludeTypes(QName sourceClassQName) {
-	    	return typesToReset().contains(dictionaryService.toPrefixString(sourceClassQName));
+	    	return typesToReset()!=null && !typesToReset().isBlank() && typesToReset().contains(dictionaryService.toPrefixString(sourceClassQName));
 	    }
 	    
 	    /**
