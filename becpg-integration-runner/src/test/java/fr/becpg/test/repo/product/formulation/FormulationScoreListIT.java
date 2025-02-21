@@ -161,7 +161,8 @@ public class FormulationScoreListIT extends PLMBaseTestCase {
 			} else if (scoreListDataItem.getScoreCriterion()
 					.equals(CharactTestHelper.getOrCreateScoreCriterion(nodeService, StandardChocolateEclairTestProduct.CCP_COMPLIANCE))) {
 				// Calculate expected score for type B
-				fail("CCP_COMPLIANCE should not exists");
+				assertEquals("The mean of the type CCP_COMPLIANCE is incorrect", 80d, scoreListDataItem.getScore());
+				checks++;
 			} else if (scoreListDataItem.getScoreCriterion()
 					.equals(CharactTestHelper.getOrCreateScoreCriterion(nodeService, StandardChocolateEclairTestProduct.FILLING_QUALITY))) {
 				// Calculate expected score for type C
@@ -172,7 +173,7 @@ public class FormulationScoreListIT extends PLMBaseTestCase {
 		}
 
 		// Ensure checks for type PASTRY_QUALITY, and FILLING_QUALITY are performed
-		assertEquals("Verify checks done", 2, checks);
+		assertEquals("Verify checks done", 3, checks);
 	}
 
 }
