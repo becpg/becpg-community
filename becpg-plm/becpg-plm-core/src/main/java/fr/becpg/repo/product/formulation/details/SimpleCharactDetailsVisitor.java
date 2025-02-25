@@ -37,11 +37,14 @@ import fr.becpg.repo.product.data.CharactDetailsValue;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
+import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.formulation.FormulatedQties;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
+import fr.becpg.repo.repository.model.CompositionDataItem;
 import fr.becpg.repo.repository.model.ForecastValueDataItem;
 import fr.becpg.repo.repository.model.MinMaxValueDataItem;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
@@ -158,29 +161,60 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 	public CharactDetails visitRecur(CharactDetailsVisitorContext context, ProductData subProductData, Integer currLevel, Double parentNetWeight,
 			Double parentVoume, Double parentQuantity) throws FormulateException {
 		
-		if (areDetailsApplicable(subProductData)
-				&& subProductData.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
-			
-			for (CompoListDataItem compoListDataItem : subProductData
-					.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
-				
-				if (compoListDataItem != null && !omitItem(compoListDataItem)) {
+		if (areDetailsApplicable(subProductData)) {
+			if (subProductData.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
+				for (CompoListDataItem compoListDataItem : subProductData
+						.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 					
-					Double compoListWeight = computeCompoListWeight(subProductData, parentNetWeight, compoListDataItem);
-					Double compoListVol = computeCompoListVol(subProductData, parentVoume, compoListDataItem);
-					ProductData compoListProduct = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());
+					if (compoListDataItem != null && !omitItem(compoListDataItem)) {
+						
+						Double compoListWeight = computeCompoListWeight(subProductData, parentNetWeight, compoListDataItem);
+						Double compoListVol = computeCompoListVol(subProductData, parentVoume, compoListDataItem);
+						ProductData compoListProduct = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());
+						
+						FormulatedQties qties = new FormulatedQties(compoListWeight, compoListVol, parentQuantity, parentNetWeight);
+						visitPart(context, subProductData, compoListProduct, compoListDataItem.getNodeRef(), qties, currLevel);
+						
+						if (shouldVisitNextLevel(currLevel, context.getMaxLevel(), compoListDataItem)) {
+							visitRecur(context, compoListProduct, currLevel + 1, compoListWeight, compoListVol, parentQuantity);
+						}
+					}
+				}
+			}
+			if (subProductData.hasPackagingListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
+				for (PackagingListDataItem packagingListDataItem : subProductData
+						.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 					
-					FormulatedQties qties = new FormulatedQties(compoListWeight, compoListVol, parentQuantity, parentNetWeight);
-					visitPart(context, subProductData, compoListProduct, compoListDataItem.getNodeRef(), qties, currLevel);
-					
-					if (shouldVisitNextLevel(currLevel, context.getMaxLevel(), compoListDataItem)) {
-						visitRecur(context, compoListProduct, currLevel + 1, compoListWeight, compoListVol, parentQuantity);
+					if (packagingListDataItem != null && (packagingListDataItem.getProduct() != null)
+							&& ((packagingListDataItem.getIsRecycle() == null) || !packagingListDataItem.getIsRecycle())) {
+						ProductData partProduct = (ProductData) alfrescoRepository.findOne(packagingListDataItem.getProduct());
+						Double qty = getQty(context.getRootProductData(), packagingListDataItem, partProduct);
+						FormulatedQties qties = new FormulatedQties(qty, qty, getNetQty(context.getRootProductData()), getNetWeight(context.getRootProductData()));
+						visitPart(context, subProductData, partProduct, packagingListDataItem.getNodeRef(), qties, currLevel);
+						if (shouldVisitNextLevel(currLevel, context.getMaxLevel(), packagingListDataItem)) {
+							visitRecur(context, partProduct, currLevel + 1, qty, qty, parentQuantity);
+						}
 					}
 				}
 			}
 		}
 		
 		return context.getCharactDetails();
+	}
+	
+	private Double getQty(ProductData formulatedProduct, PackagingListDataItem packagingListDataItem, ProductData componentProduct) {
+		if (PackagingLevel.Primary.equals(packagingListDataItem.getPkgLevel())) {
+			return FormulationHelper.getQtyForCostByPackagingLevel(formulatedProduct, packagingListDataItem, componentProduct);
+		}
+		return null;
+	}
+	
+	private Double getNetQty(ProductData formulatedProduct) {
+		return FormulationHelper.getNetQtyInLorKg(formulatedProduct, null, FormulationHelper.DEFAULT_NET_WEIGHT);
+	}
+	
+	private Double getNetWeight(ProductData formulatedProduct) {
+		return FormulationHelper.getNetWeight(formulatedProduct, null, FormulationHelper.DEFAULT_NET_WEIGHT);
 	}
 
 	/**
@@ -191,9 +225,9 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 	 * @param compoListDataItem a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object
 	 * @return a boolean
 	 */
-	protected boolean shouldVisitNextLevel(Integer currLevel, Integer maxLevel, CompoListDataItem compoListDataItem) {
+	protected boolean shouldVisitNextLevel(Integer currLevel, Integer maxLevel, CompositionDataItem compoListDataItem) {
 		return ((maxLevel < 0) || (currLevel < maxLevel))
-				&& !entityDictionaryService.isMultiLevelLeaf(nodeService.getType(compoListDataItem.getProduct()));
+				&& !entityDictionaryService.isMultiLevelLeaf(nodeService.getType(compoListDataItem.getComponent()));
 	}
 
 	private Double computeCompoListVol(ProductData subProductData, Double subVol, CompoListDataItem compoListDataItem) {
