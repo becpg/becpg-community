@@ -1101,6 +1101,12 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 				|| propertyDef.getDataType().toString().equals(DataTypeDefinition.DATE.toString())
 				|| propertyDef.getDataType().toString().equals(DataTypeDefinition.DATETIME.toString())
 				|| propertyDef.getDataType().toString().equals(DataTypeDefinition.TEXT.toString())) {
+			if (strValue1 == null) {
+				strValue1 = "";
+			}
+			if (strValue2 == null) {
+				strValue2 = "";
+			}
 			if (strValue1.trim().equals(strValue2.trim())) {
 				isDifferent = false;
 			}
