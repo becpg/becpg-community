@@ -691,6 +691,16 @@
 			</parameter>
 		</constraint>
 
+		<constraint name="bcpg:toxAbsorptionTypes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>Dermal</value>
+					<value>Oral</value>
+					<value>Worst</value>
+				</list>
+			</parameter>
+		</constraint>
+
 
 		<constraint name="bcpg:labelClaimTypes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
@@ -1609,6 +1619,17 @@
                         <facetable>true</facetable>
                     </index>
                 </property>
+                <property name="bcpg:toxAbsorptionType">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:toxAbsorptionTypes" />
+					</constraints>
+				</property>
 			</properties>
 		</type>
 		<type name="bcpg:toxIng">
@@ -6614,6 +6635,11 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
+				<property name="bcpg:ingToxOralAbsorption">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 				<property name="bcpg:ingToxMosMoe">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
@@ -6670,7 +6696,6 @@
 					<constraints>
 						<constraint ref="bcpg:toxAcuteInhalationTypes" />
 					</constraints>
-
 				</property>
 				<property name="bcpg:ingToxAquaticMFactor">
 					<type>d:double</type>
