@@ -80,7 +80,7 @@
 		<property name="toxicologyService" ref="toxicologyService" />
 	</bean>
 	
-	<bean id="svhcCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.SimpleCharactDetailsVisitor">
+	<bean id="svhcCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.SvhcCharactDetailsVisitor">
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
 		<property name="nodeService" ref="nodeService" />
 		<property name="entityDictionaryService" ref="entityDictionaryService" />
