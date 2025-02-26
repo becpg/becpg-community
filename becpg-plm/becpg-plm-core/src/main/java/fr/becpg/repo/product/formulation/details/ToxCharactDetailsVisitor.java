@@ -3,9 +3,11 @@ package fr.becpg.repo.product.formulation.details;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.formulation.FormulateException;
+import fr.becpg.repo.product.data.CharactDetailAdditionalValue;
 import fr.becpg.repo.product.data.CharactDetails;
 import fr.becpg.repo.product.data.CharactDetailsValue;
 import fr.becpg.repo.product.data.ProductData;
@@ -49,6 +51,9 @@ public class ToxCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 							Double ingMaxValue = maxValue * 100 / maxQuantity;
 							CharactDetailsValue charactDetailValue = new CharactDetailsValue(productData.getNodeRef(), ingListDataItem.getIng(), ingListDataItem.getNodeRef(), ingMaxValue, 0, "%");
 							charactDetailValue.setAllowZeroValue(true);
+							CharactDetailAdditionalValue additionalValue = new CharactDetailAdditionalValue(I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_ingListQtyPerc.title"),
+									maxQuantity, null);
+							charactDetailValue.getAdditionalValues().add(additionalValue);
 							ret.addKeyValue(toxListDataItem.getTox(), charactDetailValue);
 						}
 					}
@@ -58,5 +63,5 @@ public class ToxCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 		
 		return ret;
 	}
-
+	
 }

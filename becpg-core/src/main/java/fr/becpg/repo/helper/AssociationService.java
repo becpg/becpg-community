@@ -126,9 +126,13 @@ public interface AssociationService {
 	 * @param includeVersions a boolean
 	 * @return a {@link java.util.List} object
 	 */
-	List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QName qNamePattern, boolean includeVersions);
+	List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QName qNamePattern, Boolean includeVersions);
 	
-	List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QName qNamePattern, boolean includeVersions, Integer maxResults, Integer offset);
+	List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QName qNamePattern, Boolean includeVersions, Integer maxResults, Integer offset);
+	
+	List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QName qName, Boolean includeVersions, Integer maxResults, Integer offset,
+			boolean checkPermissions);
+	
 	/**
 	 * <p>getEntitySourceAssocs.</p>
 	 *
@@ -154,6 +158,8 @@ public interface AssociationService {
 	 */
 	List<EntitySourceAssoc> getEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocQName, QName listTypeQname, boolean isOrOperator, List<AssociationCriteriaFilter> criteriaFilters, PagingRequest pagingRequest);
 	
+	List<EntitySourceAssoc> getEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocQName, QName listTypeQname, boolean isOrOperator, List<AssociationCriteriaFilter> criteriaFilters, PagingRequest pagingRequest, boolean checkPermissions);
+	
 	
 	/**
 	 * <p>removeChildCachedAssoc.</p>
@@ -178,5 +184,6 @@ public interface AssociationService {
 	 * @return a {@link fr.becpg.repo.helper.impl.ChildAssocCacheEntry} object
 	 */
 	ChildAssocCacheEntry getChildAssocsByType(NodeRef nodeRef, QName qName);
+	
 	
 }

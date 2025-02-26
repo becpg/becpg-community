@@ -1,7 +1,9 @@
 package fr.becpg.repo.sample;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
@@ -15,6 +17,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.GHSModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.ProjectModel;
+import fr.becpg.model.ToxType;
 import fr.becpg.repo.helper.PropertiesHelper;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.survey.SurveyModel;
@@ -157,6 +160,19 @@ public class CharactTestHelper {
 	    getOrCreateNode(nodeService, "/app:company_home/cm:System/cm:Lists/bcpg:entityLists/cm:LCAUnits", name, BeCPGModel.TYPE_LIST_VALUE,
 				properties);
 	    return name;
+	}
+	
+	public static NodeRef getOrCreateTox(NodeService nodeService, String name, Double toxValue, boolean calculateSystemic, boolean calculateMax,
+			List<ToxType> toxTypes) {
+		Map<QName, Serializable> properties = new HashMap<>();
+		properties.put(BeCPGModel.PROP_CHARACT_NAME, name);
+		properties.put(PLMModel.PROP_TOX_VALUE, toxValue);
+		properties.put(PLMModel.PROP_TOX_CALCULATE_SYSTEMIC, calculateSystemic);
+		properties.put(PLMModel.PROP_TOX_CALCULATE_MAX, calculateMax);
+		properties.put(PLMModel.PROP_TOX_TYPES, new ArrayList<>(toxTypes));
+
+		return getOrCreateNode(nodeService, "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:Toxicities", name,
+				PLMModel.TYPE_TOX, properties);
 	}
 
 }
