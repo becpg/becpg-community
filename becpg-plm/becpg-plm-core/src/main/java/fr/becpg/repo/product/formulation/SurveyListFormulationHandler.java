@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -140,11 +139,11 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Product
 			QName productTypeQName, List<NodeRef> subsidiaryRefs, List<NodeRef> plants) {
 		final Map<String, QName> qNameCache = new HashMap<>();
 		return Map.of(
-				new Criterion(SurveyModel.ASSOC_SURVEY_FS_LINKED_CHARACT_REFS, "PackMaterialListDataItem",
+				new Criterion(true, SurveyModel.ASSOC_SURVEY_FS_LINKED_CHARACT_REFS, "PackMaterialListDataItem",
 						surveyQuestion -> CollectionUtils.isEmpty(surveyQuestion.getFsLinkedCharactRefs())
 								|| surveyQuestion.getFsLinkedCharactRefs().stream().anyMatch(packMaterialListCharactNodeRefs::contains)),
 					packMaterialListCharactNodeRefs,
-				new Criterion(SurveyModel.ASSOC_SURVEY_FS_LINKED_HIERARCHY, "Hierarchy",
+				new Criterion(true, SurveyModel.ASSOC_SURVEY_FS_LINKED_HIERARCHY, "Hierarchy",
 						surveyQuestion -> CollectionUtils.isEmpty(surveyQuestion.getFsLinkedHierarchy())
 								|| surveyQuestion.getFsLinkedHierarchy().contains(hierarchyNodeRef)),
 					hierarchyNodeRef != null ? Collections.singletonList(hierarchyNodeRef) : Collections.emptyList(),
@@ -153,13 +152,13 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Product
 								|| surveyQuestion.getFsLinkedTypes().stream()
 										.map(typeName -> qNameCache.computeIfAbsent(typeName,
 												q -> QName.createQName(typeName, namespaceService)))
-										.anyMatch(productTypeQName::equals),
-						qName -> ((QName) qName).toPrefixString()), Collections.singletonList(productTypeQName),
-				new Criterion(BeCPGModel.ASSOC_SUBSIDIARY_REF, "SubsidiaryRefs",
+										.anyMatch(productTypeQName::equals)),
+						Collections.singletonList(productTypeQName.toPrefixString()),
+				new Criterion(true, BeCPGModel.ASSOC_SUBSIDIARY_REF, "SubsidiaryRefs",
 						surveyQuestion -> CollectionUtils.isEmpty(surveyQuestion.getSubsidiaryRefs())
 								|| !Collections.disjoint(surveyQuestion.getSubsidiaryRefs(), subsidiaryRefs)),
 					subsidiaryRefs, 
-				new Criterion(BeCPGModel.ASSOC_PLANTS, "Plants", surveyQuestion -> CollectionUtils.isEmpty(surveyQuestion.getPlants())
+				new Criterion(true, BeCPGModel.ASSOC_PLANTS, "Plants", surveyQuestion -> CollectionUtils.isEmpty(surveyQuestion.getPlants())
 						|| !Collections.disjoint(surveyQuestion.getPlants(), plants)),
 					plants
 		);
@@ -181,8 +180,7 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Product
 								.getSourcesAssocs(criterionNodeRef, criterion.qName()).stream());
 			} else {
 				nodeRefStream = BeCPGQueryBuilder.createQuery().ofType(SurveyModel.TYPE_SURVEY_QUESTION)
-						.andPropEquals(criterion.qName(),
-								criterion.transformer().apply(entry.getValue().get(0)).toString())
+						.andPropEquals(criterion.qName(), entry.getValue().get(0).toString())
 						.inDB().list().stream();
 			}
 			nodeRefStream.forEach(surveyQuestionNodeRef -> {
@@ -235,10 +233,7 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Product
 	/**
 	 * A simple record to group the citerion type (FALSE = prop, TRUE = assoc), QName, a display name, a predicate filter and a transformer together.
 	 */
-	private record Criterion(boolean assoc, QName qName, String displayedName, Predicate<SurveyQuestion> filter, UnaryOperator<Serializable> transformer) {
-		Criterion(QName qName, String displayedName, Predicate<SurveyQuestion> filter) {
-			this(true, qName, displayedName, filter, UnaryOperator.identity());
-		}
+	private record Criterion(boolean assoc, QName qName, String displayedName, Predicate<SurveyQuestion> filter) {
 	}
 
 	private QName getTypeQName(ProductData formulatedProduct) {
