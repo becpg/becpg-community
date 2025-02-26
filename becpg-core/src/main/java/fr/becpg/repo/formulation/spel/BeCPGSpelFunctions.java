@@ -393,7 +393,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 */
 		public List<NodeRef> sourcesAssocValues(NodeRef nodeRef, String qname) {
 			if (nodeRef != null) {
-				return associationService.getSourcesAssocs(nodeRef, getQName(qname));
+				return associationService.getSourcesAssocs(nodeRef, getQName(qname), false, null, null, true);
 			}
 			return null;
 		}

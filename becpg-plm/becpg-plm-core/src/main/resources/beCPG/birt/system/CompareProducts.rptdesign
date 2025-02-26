@@ -7426,6 +7426,8 @@ row["propertyQName"] == "bcpg:ingListQtyPerc" ||
 row["propertyQName"] == "bcpg:ingListGeoOrigin" ||
 row["propertyQName"] == "bcpg:ingListQtyTransfo" ||
 row["propertyQName"] == "bcpg:ingListBioOrigin" ||
+row["propertyQName"] == "bcpg:lcaListValue" ||
+row["propertyQName"] == "bcpg:toxListValue" ||
 row["propertyQName"] == "mpm:rplParamValue" ||
 row["propertyQName"] == "qa:clState" ||
 row["propertyQName"] == "qa:clValue")</expression>
