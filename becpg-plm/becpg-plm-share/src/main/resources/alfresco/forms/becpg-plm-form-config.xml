@@ -1750,7 +1750,7 @@
 							<control-param name="isSearch">true</control-param>
 						</control>
 					</field>
-					<field id="bcpg:toxAbsorptionType" set="toxTab" >
+					<field id="bcpg:toxAbsorptionType">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl" />
 					</field>
 					<field id="bcpg:toxCalculateSystemic">
@@ -1802,7 +1802,7 @@
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:toxAbsorptionType" set="toxTab" >
+					<field id="bcpg:toxAbsorptionType">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl" />
 					</field>
 				</appearance>
