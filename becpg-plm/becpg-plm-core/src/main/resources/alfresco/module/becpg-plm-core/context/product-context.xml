@@ -54,6 +54,11 @@
 		<property name="toxicologyService" ref="toxicologyService"/>
 	</bean>
 	
+	<bean id="supplierPortalPolicy" class="fr.becpg.repo.supplier.SupplierPortalPolicy"
+		parent="abstractBeCPGPolicy" depends-on="bcpg.plm.dictionaryBootstrap">
+		<property name="associationService" ref="associationService"/>
+	</bean>
+	
 	<bean id="dynamicCharactListPolicy" class="fr.becpg.repo.product.policy.DynamicCharactListPolicy"
 		parent="abstractBeCPGPolicy" depends-on="bcpg.plm.dictionaryBootstrap">
 		<property name="entityListDAO" ref="entityListDAO"/>
@@ -69,6 +74,10 @@
 	<bean id="ingListExtractor" parent="multiLevelExtractor" class="fr.becpg.repo.product.extractor.IngListExtractor"></bean>
 	
 	<bean id="ingRegulatoryListExtractor" parent="simpleExtractor" class="fr.becpg.repo.product.extractor.IngRegulatoryListExtractor">
+		<property name="defaultExtractor" value="false"/>
+	</bean>
+	
+	<bean id="contactListExtractor" parent="simpleExtractor" class="fr.becpg.repo.product.extractor.ContactListExtractor">
 		<property name="defaultExtractor" value="false"/>
 	</bean>
 	

@@ -10162,6 +10162,7 @@
 					<show id="bcpg:contactListFirstName" />
 					<show id="bcpg:contactListLastName" />
 					<show id="bcpg:contactListEmail" />
+					<show id="bcpg:supplierAccountRef" force="true" />
 					<show id="bcpg:contactListPhoneOffice" />
 					<show id="bcpg:contactListPhoneMobile" />
 					<show id="bcpg:contactListNotes" />
@@ -10171,6 +10172,7 @@
 				<appearance>
 					<field id="bcpg:entityDataListState" label="hidden" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
+					<field id="bcpg:supplierAccountRef" read-only="true" />
 					<field id="bcpg:isDeleted">
 						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
 					</field>
