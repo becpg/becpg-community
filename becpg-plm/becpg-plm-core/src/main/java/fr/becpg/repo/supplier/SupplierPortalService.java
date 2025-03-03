@@ -95,4 +95,8 @@ public interface SupplierPortalService {
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
 	NodeRef getOrCreateSupplierDocumentsFolder(NodeRef entityNodeRef);
+
+	void updateSupplierAccount(NodeRef supplierNodeRef, NodeRef contactListNodeRef);
+
+	void deleteExternalUser(NodeRef userNodeRef, NodeRef supplierNodeRef);
 }
