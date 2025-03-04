@@ -28,6 +28,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.alfresco.repo.dictionary.constraint.ListOfValuesConstraint;
 import org.alfresco.repo.jscript.BaseScopableProcessorExtension;
 import org.alfresco.repo.jscript.ScriptNode;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -44,6 +45,7 @@ import fr.becpg.model.DeliverableUrl;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AssociationService;
@@ -80,6 +82,8 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 	
 	private AssociationService associationService;
 	
+	private EntityDictionaryService entityDictionaryService;
+
 	/**
 	 * <p>Setter for the field <code>associationService</code>.</p>
 	 *
@@ -150,6 +154,15 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
+	}
+	
+	/**
+	 * <p>Setter for the field <code>entityDictionaryService</code>.</p>
+	 *
+	 * @param nodeService a {@link fr.becpg.repo.entity.EntityDictionaryService} object.
+	 */
+	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
+		this.entityDictionaryService = entityDictionaryService;
 	}
 
 	/**
@@ -232,6 +245,10 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 
 			String url = (String) nodeService.getProperty(deliverableNodeRef, ProjectModel.PROP_DL_URL);
 
+			final String[] splitUrl = url.split("/");
+			
+			final boolean search = splitUrl.length != 0 && splitUrl[splitUrl.length -1].startsWith("search");
+			
 			List<AssociationRef> taskAssocs = nodeService.getTargetAssocs(deliverableNodeRef,
 					ProjectModel.ASSOC_DL_TASK);
 
@@ -258,11 +275,11 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 						StringBuilder replacement = new StringBuilder();
 						if ((assocQname != null) && assocQname.startsWith(DeliverableUrl.NODEREF_URL_PARAM)) {
 							String[] splitted = assocQname.split("\\|");
-							replacement.append(extractDeliverableProp(projectNodeRef, splitted));
+							replacement.append(extractDeliverableProp(projectNodeRef, splitted, search));
 
 						} else if ((assocQname != null) && assocQname.startsWith(DeliverableUrl.TASK_URL_PARAM)) {
 							String[] splitted = assocQname.split("\\|");
-							replacement.append(extractDeliverableProp(taskNodeRef, splitted));
+							replacement.append(extractDeliverableProp(taskNodeRef, splitted, search));
 
 						} else if (assocQname != null) {
 							String[] splitted = assocQname.split("\\|");
@@ -273,7 +290,7 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 									if (replacement.length() > 0) {
 										replacement.append(",");
 									}
-									replacement.append(extractDeliverableProp(assoc.getTargetRef(), splitted));
+									replacement.append(extractDeliverableProp(assoc.getTargetRef(), splitted, search));
 								}
 							}
 						}
@@ -294,7 +311,7 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 
 
 	@SuppressWarnings("unchecked")
-	private String extractDeliverableProp(NodeRef nodeRef, String[] splitted) {
+	private String extractDeliverableProp(NodeRef nodeRef, String[] splitted, boolean search) {
 		NodeRef ret = null;
 		if (splitted.length > 1) {
 			if (splitted[1].startsWith(DeliverableUrl.XPATH_URL_PREFIX)) {
@@ -304,18 +321,23 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 				QName type = nodeService.getType(nodeRef);
 				return type != null ? type.getLocalName() : "";
 			} else {
-				Serializable tmp = nodeService.getProperty(nodeRef, QName.createQName(splitted[1], namespaceService));
+				final QName propQName = QName.createQName(splitted[1], namespaceService);
+				Serializable tmp = nodeService.getProperty(nodeRef, propQName);
 				StringBuilder strRet = new StringBuilder();
-				
 				if(tmp instanceof List) {
 					for (Serializable subEl : (List<Serializable>) tmp) {
 						if (subEl.toString().length() > 0) {
 							strRet.append(",");
 						}
+						if (search) strRet.append("=");
 						strRet.append(subEl.toString());
 					}
 					
-				} else if(tmp!=null) {
+				} else if(tmp != null) {
+					if (search && entityDictionaryService.getProperty(propQName).getConstraints().stream()
+							.anyMatch(constraint -> constraint.getConstraint() instanceof ListOfValuesConstraint)) {
+						strRet.append("=");
+					}
 					strRet.append(tmp.toString());
 				}
 				
