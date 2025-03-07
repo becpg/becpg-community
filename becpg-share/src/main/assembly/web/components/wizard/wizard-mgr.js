@@ -23,6 +23,17 @@
         Bubbling.on("beforeFormRuntimeInit", this.onBeforeFormRuntimeInit, this);
         return this;
     };
+    
+    var nextAllowed = true;
+    var button;
+    
+    function setNextAllowed(val) {
+		if (button == null) {
+			button = $(".wizard-mgr").find(".actions a[href$='#next']")[0].parentElement;
+		}
+		const methodName = (nextAllowed = val ? "remove" : "add");
+		button.classList[methodName]("disabled");
+	}
 
     YAHOO
         .extend(
@@ -93,6 +104,8 @@
                                     if (currentIndex > newIndex) {
                                         return true;
                                     }
+                                    
+                                    if (!nextAllowed) return false;
 
                                     var isValid = false;
 
@@ -115,6 +128,8 @@
 
                                 },
                                 onStepChanged: function(event, currentIndex, priorIndex) {
+									
+                                    setNextAllowed(false);
 
                                     me.currentIndex = currentIndex;
 
@@ -408,9 +423,7 @@
                     }
 
 
-                    if (url != null) {
-
-                        if ((step.type != "entityDataList" && step.type != "documents") || !step.loaded) {
+                    if (url != null && (step.type != "entityDataList" && step.type != "documents" || !step.loaded)) {
                             Alfresco.util.Ajax
                                 .request(
                                     {
@@ -426,16 +439,18 @@
                                                 step.loaded = true;
                                                 if (step.type == "entityDataList") {
                                                     this.loadDataList(step);
-                                                }
-
+                                                } else {
+													setNextAllowed(true);
+												}
                                             },
                                             scope: this
                                         },
                                         scope: this,
                                         execScripts: true
                                     });
-                        }
-                    }
+                        } else {
+							setNextAllowed(true);
+						}
                 },
 
                 loadDataList: function WizardMgr_loadDataList(step) {
@@ -460,6 +475,7 @@
 
                                     }
                                 }
+                                setNextAllowed(true);
                             },
                             scope: this
                         }
@@ -504,7 +520,5 @@
 
 
                 }
-
-
             });
 })();
