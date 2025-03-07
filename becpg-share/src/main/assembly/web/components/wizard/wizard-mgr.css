@@ -398,3 +398,7 @@ div.wizard-content {
     padding: 0.6em;
 	display: block;
 }
+
+.wizard-mgr li.disabled > a {
+    cursor: not-allowed;
+}
