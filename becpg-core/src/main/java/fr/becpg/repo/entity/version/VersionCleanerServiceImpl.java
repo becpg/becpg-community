@@ -14,12 +14,14 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.batch.BatchProcessWorkProvider;
 import org.alfresco.repo.batch.BatchProcessor;
 import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
+import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.Tenant;
 import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.repo.version.Version2Model;
+import org.alfresco.repo.version.VersionBaseModel;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.lock.LockService;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
@@ -230,28 +232,42 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 			@Override
 			public void process(NodeRef entityNodeRef) throws Throwable {
 
+				IntegrityChecker.setWarnInTransaction();
+				
 				if (nodeService.exists(entityNodeRef)) {
-					if (nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_TEMPORARY)) {
-						deleteTemporaryNode(entityNodeRef);
-					} else {
-						try {
-							convertNode(entityNodeRef);
-						} catch (Throwable t) {
-							if (RetryingTransactionHelper.extractRetryCause(t) == null) {
-
-								transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-									
-									entityFormatService.moveToImportToDoFolder(entityNodeRef);
-									
-									nodeService.removeAspect(entityNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION);
-								
-									return null;
-								}, false, true);
-							}
-							throw t;
+					
+					if (isVersion(entityNodeRef)) {
+						if (logger.isDebugEnabled()) {
+							logger.debug("Delete version store node: " + entityNodeRef);
 						}
+						nodeService.addAspect(entityNodeRef, ContentModel.ASPECT_TEMPORARY, null);
+						nodeService.deleteNode(entityNodeRef);
+					} else {
+						if (nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_TEMPORARY)) {
+							deleteTemporaryNode(entityNodeRef);
+						} else {
+							try {
+								convertNode(entityNodeRef);
+							} catch (Throwable t) {
+								if (RetryingTransactionHelper.extractRetryCause(t) == null) {
+									
+									transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+										
+										IntegrityChecker.setWarnInTransaction();
+										
+										entityFormatService.moveToImportToDoFolder(entityNodeRef);
+										
+										nodeService.removeAspect(entityNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION);
+										
+										return null;
+									}, false, true);
+								}
+								throw t;
+							}
 							
+						}
 					}
+					
 				} else {
 					logger.debug("Node already deleted : " + entityNodeRef + ", tenant : " + tenantDomain);
 				}
@@ -262,6 +278,11 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 
 		batchQueueService.queueBatch(batchInfo, new CleanVersionWorkProvider(maxProcessedNodes, path), processWorker, null);
 
+	}
+	
+	private boolean isVersion(NodeRef nodeRef) {
+		return nodeRef.getStoreRef().getProtocol().contains(VersionBaseModel.STORE_PROTOCOL)
+				|| nodeRef.getStoreRef().getIdentifier().contains(Version2Model.STORE_ID);
 	}
 
 	@Override
