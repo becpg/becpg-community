@@ -175,7 +175,7 @@ public class JapanNutrientRegulation extends AbstractNutrientRegulation {
 										|| ((nutrientTypeCode.equals(NutrientCode.Fat) || nutrientTypeCode.equals(NutrientCode.CarbohydrateByDiff)
 												|| nutrientTypeCode.equals(NutrientCode.Protein) || nutrientTypeCode.equals(NutrientCode.Sugar))
 												&& value <= 0.5)
-										|| (nutrientTypeCode.equals(NutrientCode.Sodium) && value <= 0.005)
+										|| (nutrientTypeCode.equals(NutrientCode.Sodium) && value <= 5)
 										|| (nutrientTypeCode.equals(NutrientCode.Cholesterol) && value <= 0.005)
 										|| (nutrientTypeCode.equals(NutrientCode.FatSaturated) && value <= 0.1)))) {
 			return "0";

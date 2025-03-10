@@ -105,12 +105,9 @@ public class AutoNumServiceImpl implements AutoNumService {
 	}
 
 	/**
-	 * <p>setAutoNumValue.</p>
+	 * {@inheritDoc}
 	 *
-	 * @param className a {@link java.lang.String} object.
-	 * @param propertyName a {@link java.lang.String} object.
-	 * @param counter a {@link Long} with the value of the new counter to create.
-	 * @return a {@link boolean} telling if the new value has been set
+	 * <p>setAutoNumValue.</p>
 	 */
 	@Override
 	public synchronized boolean setAutoNumValue(QName className, QName propertyName, Long counter) {
@@ -190,6 +187,7 @@ public class AutoNumServiceImpl implements AutoNumService {
 	@Override
 	public synchronized String getOrCreateCode(NodeRef nodeRef, QName codeQName) {
 
+		boolean isEnabledBehaviour = policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE);
 		try {
 
 			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
@@ -217,7 +215,9 @@ public class AutoNumServiceImpl implements AutoNumService {
 			}
 			return code;
 		} finally {
-			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+			if(isEnabledBehaviour) {
+				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+			}
 		}
 
 	}
@@ -268,13 +268,9 @@ public class AutoNumServiceImpl implements AutoNumService {
 	}
 
 	/**
-	 * get AutoNum value from db.
+	 * {@inheritDoc}
 	 *
-	 * @param className
-	 *            the class name
-	 * @param propertyName
-	 *            the property name
-	 * @return the auto num node ref
+	 * get AutoNum value from db.
 	 */
 	@Override
 	public NodeRef getAutoNumNodeRef(final QName className, final QName propertyName) {

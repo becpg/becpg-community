@@ -43,6 +43,11 @@ import org.springframework.stereotype.Service;
 import fr.becpg.repo.activity.data.ActivityListDataItem;
 import fr.becpg.repo.activity.data.ActivityType;
 
+/**
+ * <p>CommentActivityListener class.</p>
+ *
+ * @author matthieu
+ */
 @Service
 public class CommentActivityListener implements InitializingBean, EntityActivityListener {
 
@@ -71,11 +76,13 @@ public class CommentActivityListener implements InitializingBean, EntityActivity
 
 	private static final Log logger = LogFactory.getLog(CommentActivityListener.class);
 	
+	/** {@inheritDoc} */
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		packageMgr = new PackageManager(workflowService, nodeService, policyBehaviourFilter, null);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void notify(NodeRef entityNodeRef, ActivityListDataItem activityListDataItem) {
 		JSONObject activityData = new JSONObject(activityListDataItem.getActivityData());

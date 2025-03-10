@@ -540,91 +540,67 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 	public void testDefaultReadOnly() {
 
 		final NodeRef aclGroupNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-
 			NodeRef ret = createDefaultReadOnlyACLGroup();
-
 			securityService.refreshAcls();
-
 			return ret;
 
 		}, false, true);
 
-		authenticationComponent.setCurrentUser(USER_TWO);
-
-		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:name"),
-				SecurityService.READ_ACCESS);
-
-		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:propName"),
-				SecurityService.READ_ACCESS);
-
-		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:aclPermission"),
-				SecurityService.READ_ACCESS);
-
-		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:description"),
-				SecurityService.READ_ACCESS);
-
-		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:titled"),
-				SecurityService.NONE_ACCESS);
-
-		authenticationComponent.setCurrentUser(USER_ONE);
-
-		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:name"),
-				SecurityService.READ_ACCESS);
-
-		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:propName"),
-				SecurityService.WRITE_ACCESS);
-
-		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:aclPermission"),
-				SecurityService.READ_ACCESS);
-
-		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:description"),
-				SecurityService.WRITE_ACCESS);
-
-		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:titled"),
-				SecurityService.WRITE_ACCESS);
-
-		authenticationComponent.setCurrentUser(USER_THREE);
-
-		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:name"),
-				SecurityService.READ_ACCESS);
-
-		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:propName"),
-				SecurityService.READ_ACCESS);
-
-		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:aclPermission"),
-				SecurityService.READ_ACCESS);
-
-		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:description"),
-				SecurityService.READ_ACCESS);
-
-		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:titled"),
-				SecurityService.NONE_ACCESS);
-
-		authenticationComponent.setCurrentUser("admin");
-
-		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:name"),
-				SecurityService.WRITE_ACCESS);
-
-		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:propName"),
-				SecurityService.WRITE_ACCESS);
-
-		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:aclPermission"),
-				SecurityService.WRITE_ACCESS);
+		inReadTx(() -> {
+			authenticationComponent.setCurrentUser(USER_TWO);
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:name"),
+					SecurityService.READ_ACCESS);
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:propName"),
+					SecurityService.READ_ACCESS);
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:aclPermission"),
+					SecurityService.READ_ACCESS);
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:description"),
+					SecurityService.READ_ACCESS);
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:titled"),
+					SecurityService.NONE_ACCESS);
+			
+			authenticationComponent.setCurrentUser(USER_ONE);
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:name"),
+					SecurityService.READ_ACCESS);
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:propName"),
+					SecurityService.WRITE_ACCESS);
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:aclPermission"),
+					SecurityService.READ_ACCESS);
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:description"),
+					SecurityService.WRITE_ACCESS);
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:titled"),
+					SecurityService.WRITE_ACCESS);
+			
+			authenticationComponent.setCurrentUser(USER_THREE);
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:name"),
+					SecurityService.READ_ACCESS);
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:propName"),
+					SecurityService.READ_ACCESS);
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:aclPermission"),
+					SecurityService.READ_ACCESS);
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:description"),
+					SecurityService.READ_ACCESS);
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:titled"),
+					SecurityService.NONE_ACCESS);
+			
+			authenticationComponent.setCurrentUser("admin");
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:name"),
+					SecurityService.WRITE_ACCESS);
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:propName"),
+					SecurityService.WRITE_ACCESS);
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:aclPermission"),
+					SecurityService.WRITE_ACCESS);
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:description"),
+					SecurityService.WRITE_ACCESS);
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:titled"),
+					SecurityService.WRITE_ACCESS);
+			return null;
+		});
 		
-		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:description"),
-				SecurityService.WRITE_ACCESS);
-
-		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:titled"),
-				SecurityService.WRITE_ACCESS);
-
-
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-
 			nodeService.deleteNode(aclGroupNodeRef);
-
 			return null;
 		}, false, true);
-
 	}
 	
 	@Test
@@ -650,7 +626,8 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 				productData.setParentNodeRef(getTestFolderNodeRef());
 				productData.setName("FP testDataListPermissions");
 				List<NutListDataItem> nutList = new LinkedList<>();
-				nutList.add(new NutListDataItem(null, 1d, null, null, null, null, nut1, null));
+				nutList.add(NutListDataItem.build().withValue(1d).withUnit(null).withMini(null).withMaxi(null).withGroup(null).withNut(nut1)
+);
 				productData.setNutList(nutList);
 				return alfrescoRepository.save(productData).getNodeRef();
 			}, false, true);
@@ -931,7 +908,8 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 				productData.setParentNodeRef(getTestFolderNodeRef());
 				productData.setName("FP testDataListPermissions");
 				List<NutListDataItem> nutList = new LinkedList<>();
-				nutList.add(new NutListDataItem(null, 1d, null, null, null, null, nut1, null));
+				nutList.add(NutListDataItem.build().withValue(1d).withUnit(null).withMini(null).withMaxi(null).withGroup(null).withNut(nut1)
+);
 				productData.setNutList(nutList);
 				return alfrescoRepository.save(productData).getNodeRef();
 			});

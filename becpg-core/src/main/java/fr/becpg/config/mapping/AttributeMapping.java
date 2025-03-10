@@ -26,8 +26,12 @@ import org.alfresco.service.namespace.QName;
 /**
  * Class that represent the mapping for importing a property or an association of a node
  *
+ * <pre>
+ * {@code
  * <column id="modifier" attribute="cm:modifier" />
  * <column id="suppliers" attribute="bcpg:supplierAssoc" />.
+ * }
+ * </pre>
  *
  * @author querephi
  * @version $Id: $Id

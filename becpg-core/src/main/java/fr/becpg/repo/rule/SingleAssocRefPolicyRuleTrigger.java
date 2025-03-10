@@ -43,6 +43,11 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 
+/**
+ * <p>SingleAssocRefPolicyRuleTrigger class.</p>
+ *
+ * @author matthieu
+ */
 public class SingleAssocRefPolicyRuleTrigger extends RuleTriggerAbstractBase {
 	private static Log logger = LogFactory.getLog(SingleAssocRefPolicyRuleTrigger.class);
 
@@ -52,23 +57,45 @@ public class SingleAssocRefPolicyRuleTrigger extends RuleTriggerAbstractBase {
 
 	private boolean ignoreEntityDataList = true;
 
+	/**
+	 * <p>Setter for the field <code>policyNamespace</code>.</p>
+	 *
+	 * @param policyNamespace a {@link java.lang.String} object
+	 */
 	public void setPolicyNamespace(String policyNamespace) {
 		this.policyNamespace = policyNamespace;
 	}
 
+	/**
+	 * <p>Setter for the field <code>policyName</code>.</p>
+	 *
+	 * @param policyName a {@link java.lang.String} object
+	 */
 	public void setPolicyName(String policyName) {
 		this.policyName = policyName;
 	}
 
+	/**
+	 * <p>setExcludedAssociationTypes.</p>
+	 *
+	 * @param assocTypes a {@link java.util.Set} object
+	 */
 	public void setExcludedAssociationTypes(Set<QName> assocTypes) {
 		this.excludedAssocTypes = assocTypes;
 	}
 
+	/**
+	 * <p>Setter for the field <code>ignoreEntityDataList</code>.</p>
+	 *
+	 * @param ignoreEntityDataList a boolean
+	 */
 	public void setIgnoreEntityDataList(boolean ignoreEntityDataList) {
 		this.ignoreEntityDataList = ignoreEntityDataList;
 	}
 
 	/**
+	 * <p>registerRuleTrigger.</p>
+	 *
 	 * @see org.alfresco.repo.rule.ruletrigger.RuleTrigger#registerRuleTrigger()
 	 */
 	public void registerRuleTrigger() {
@@ -79,6 +106,11 @@ public class SingleAssocRefPolicyRuleTrigger extends RuleTriggerAbstractBase {
 				new JavaBehaviour(this, "policyBehaviour"));
 	}
 
+	/**
+	 * <p>policyBehaviour.</p>
+	 *
+	 * @param assocRef a {@link org.alfresco.service.cmr.repository.AssociationRef} object
+	 */
 	public void policyBehaviour(AssociationRef assocRef) {
 		//beCPG Break out early if rules are not enabled
 		if (!areRulesEnabled()) {

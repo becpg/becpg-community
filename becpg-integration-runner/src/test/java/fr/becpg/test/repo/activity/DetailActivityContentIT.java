@@ -113,8 +113,8 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 			if (data.getJSONArray("properties") != null && data.getJSONArray("properties").length() > 0) {
 				JSONObject dataProp = data.getJSONArray("properties").getJSONObject(0);
 				if (dataProp != null) {
-					assertEquals("Check erpCode before modification", "[\"11111\"]", dataProp.getJSONArray("before").toString());
-					assertEquals("Check erpCode after modification", "[\"22222\"]", dataProp.getJSONArray("after").toString());
+					assertEquals("Check erpCode before modification", "11111", dataProp.get("before").toString());
+					assertEquals("Check erpCode after modification", "22222", dataProp.get("after").toString());
 				}
 			}
 
@@ -204,7 +204,7 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 		//Add composition to product
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			List<CompoListDataItem> compoList = new ArrayList<>(); 
-			compoList.add(new CompoListDataItem(null, null, 1d, 1d, ProductUnit.P, 0d, DeclarationType.Declare, lSF1NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(null).withQty(1d).withQtyUsed(1d).withUnit(ProductUnit.P).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(lSF1NodeRef));
 			FinishedProductData finishedProduct = ((FinishedProductData)alfrescoRepository.findOne(finishedProductNodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			alfrescoRepository.save(finishedProduct);
@@ -233,8 +233,8 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 			if (data.getJSONArray("properties") != null && data.getJSONArray("properties").length() > 0) {
 				JSONObject dataProp = data.getJSONArray("properties").getJSONObject(0);
 				if (dataProp != null) {
-					assertEquals("Check compo qty modification", "[1]",dataProp.getJSONArray("before").toString());
-					assertEquals("Check compo qty modification", "[2]", dataProp.getJSONArray("after").toString());
+					assertEquals("Check compo qty modification", "1",dataProp.get("before").toString());
+					assertEquals("Check compo qty modification", "2", dataProp.get("after").toString());
 				}
 			}
 

@@ -1,7 +1,7 @@
 package fr.becpg.repo.product.report;
 
-import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
@@ -11,11 +11,8 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jxls.common.Context;
 import org.jxls.expression.ExpressionEvaluator;
-import org.jxls.transform.Transformer;
-import org.jxls.util.JxlsHelper;
-import org.jxls.util.TransformerFactory;
+import org.jxls.transform.poi.JxlsPoiTemplateFillerBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
@@ -82,30 +79,23 @@ public class JXLSReportEngine implements BeCPGReportEngine {
 		}
 		logger.debug("Run jxls report");
 
-		try {
+		ContentReader reader = contentService.getReader(tplNodeRef, ContentModel.PROP_CONTENT);
 
-			ContentReader reader = contentService.getReader(tplNodeRef, ContentModel.PROP_CONTENT);
+		Map<String, Object> context = new HashMap<>();
 
-			Context context = new Context();
+		context.put("entity", alfrescoRepository.findOne((NodeRef) params.get(BeCPGReportEngine.PARAM_ENTITY_NODEREF)));
 
-			context.putVar("entity", alfrescoRepository.findOne((NodeRef) params.get(BeCPGReportEngine.PARAM_ENTITY_NODEREF)));
-
-			for (EntityImageInfo imageInfo : reportData.getImages()) {
-				if (logger.isDebugEnabled()) {
-					logger.debug("Adding image: IMG_" + cleanName(imageInfo.getName()));
-				}
-				context.putVar("IMG_" + cleanName(imageInfo.getName()), entityService.getImage(imageInfo.getImageNodeRef()));
+		for (EntityImageInfo imageInfo : reportData.getImages()) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Adding image: IMG_" + cleanName(imageInfo.getName()));
 			}
-
-			Transformer transformer = TransformerFactory.createTransformer(reader.getContentInputStream(), out);
-
-			ExpressionEvaluator evaluator = new SpelJXLSExpressionEvaluator(formulaService);
-			transformer.getTransformationConfig().setExpressionEvaluator(evaluator);
-
-			JxlsHelper.getInstance().processTemplate(context, transformer);
-		} catch (IOException e) {
-			throw new ReportException(e);
+			context.put("IMG_" + cleanName(imageInfo.getName()), entityService.getImage(imageInfo.getImageNodeRef()));
 		}
+
+		ExpressionEvaluator evaluator = new SpelJXLSExpressionEvaluator(formulaService);
+
+		JxlsPoiTemplateFillerBuilder.newInstance().withExpressionEvaluatorFactory(expression -> evaluator).withRecalculateFormulasOnOpening(true)
+				.withRecalculateFormulasBeforeSaving(true).withTemplate(reader.getContentInputStream()).buildAndFill(context, () -> out);
 
 		if (logger.isDebugEnabled() && (watch != null)) {
 			watch.stop();

@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -61,7 +62,7 @@ import fr.becpg.repo.repository.model.CopiableDataItem;
 
 /**
  *
- * Register custom beCPG SPEL helper accessible with @beCPG.
+ * Register custom beCPG SPEL helper accessible with {@code @beCPG}.
  *
  * @author matthieu
  * @version $Id: $Id
@@ -125,10 +126,10 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * Helper @beCPG.findOne($nodeRef)
+		 * Helper {@code @beCPG.findOne($nodeRef)}
 		 *
 		 * <code>
-		 * 	Example : @beCPG.findOne(nodeRef).qty
+		 * 	Example : {@code @beCPG.findOne(nodeRef)}.qty
 		 *</code>
 		 *
 		 * @param nodeRef
@@ -142,8 +143,8 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * Helper @beCPG.propValue($nodeRef, $qname) <code>
-		 * Example : @beCPG.propValue(nodeRef,'bcpg:productQty')
+		 * Helper {@code @beCPG.propValue($nodeRef, $qname)} <code>
+		 * Example : {@code @beCPG.propValue(nodeRef,'bcpg:productQty')}
 		 *</code>
 		 *
 		 * @param nodeRef
@@ -158,7 +159,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * Helper @beCPG.propValue($entity, $qname)
+		 * Helper {@code @beCPG.propValue($entity, $qname)}
 		 *
 		 * @param item
 		 * @param qname
@@ -178,7 +179,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * Helper @beCPG.propMLValue($entity, $qname, $locale)
+		 * Helper {@code @beCPG.propMLValue($entity, $qname, $locale)}
 		 *
 		 * @param item
 		 * @param qname
@@ -195,19 +196,19 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 				MLPropertyInterceptor.setMLAware(isMLAware);
 			}
 
-			if (value instanceof MLText) {
+			if (value instanceof MLText mlText) {
 				if (locale == null) {
 					return value;
 				}
 
-				return MLTextHelper.getClosestValue((MLText) value, MLTextHelper.parseLocale(locale));
+				return MLTextHelper.getClosestValue(mlText, MLTextHelper.parseLocale(locale));
 			}
 
 			return null;
 		}
 
 		/**
-		 * Helper @beCPG.propMLValue($nodeRef, $qname, $locale)
+		 * Helper {@code @beCPG.propMLValue($nodeRef, $qname, $locale)}
 		 *
 		 * @param nodeRef
 		 * @param qname
@@ -236,7 +237,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * Helper @beCPG.propValue( $qname)
+		 * Helper {@code @beCPG.propValue( $qname)}
 		 *
 		 * @param qname
 		 * @return property value in current entity
@@ -247,7 +248,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * Helper @beCPG.propMLValue($mltext, $locale)
+		 * Helper {@code @beCPG.propMLValue($mltext, $locale)}
 		 *
 		 * get mlText locale value
 		 *
@@ -260,7 +261,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * Helper @beCPG.setValue($entity, $qname, $value)
+		 * Helper {@code @beCPG.setValue($entity, $qname, $value)}
 		 *
 		 * Set property value on entity
 		 *
@@ -279,7 +280,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * Helper @beCPG.setValue( $qname, $value)
+		 * Helper {@code @beCPG.setValue( $qname, $value)}
 		 *
 		 * Set property value on current entity
 		 *
@@ -292,7 +293,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * Helper @beCPG.setAssocs($nodeRef, $qname, $assocNodeRefs)
+		 * Helper {@code @beCPG.setAssocs($nodeRef, $qname, $assocNodeRefs)}
 		 *
 		 * @param nodeRef
 		 * @param qname
@@ -313,7 +314,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * Helper @beCPG.setAssoc($nodeRef, $qname, $assocNodeRef)
+		 * Helper {@code {@code @beCPG.setAssoc($nodeRef, $qname, $assocNodeRef)}}
 		 *
 		 * @param nodeRef
 		 * @param qname
@@ -335,7 +336,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * Helper @beCPG.assocValue($nodeRef, $qname)
+		 * Helper {@code @beCPG.assocValue($nodeRef, $qname)}
 		 *
 		 * @param nodeRef
 		 * @param qname
@@ -360,7 +361,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * Helper @beCPG.assocValues($entity, $qname)
+		 * Helper {@code @beCPG.assocValues($entity, $qname)}
 		 *
 		 * @param nodeRef
 		 * @param qname
@@ -384,7 +385,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * Helper @beCPG.sourcesAssocValues($nodeRef, $qname)
+		 * Helper {@code @beCPG.sourcesAssocValues($nodeRef, $qname)}
 		 *
 		 * @param nodeRef
 		 * @param qname
@@ -392,7 +393,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 */
 		public List<NodeRef> sourcesAssocValues(NodeRef nodeRef, String qname) {
 			if (nodeRef != null) {
-				return associationService.getSourcesAssocs(nodeRef, getQName(qname));
+				return associationService.getSourcesAssocs(nodeRef, getQName(qname), false, null, null, true);
 			}
 			return null;
 		}
@@ -406,7 +407,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * Helper @beCPG.assocPropValues($nodeRef, $assocQname, $propQName)
+		 * Helper {@code @beCPG.assocPropValues($nodeRef, $assocQname, $propQName)}
 		 *
 		 * @param nodeRef
 		 * @param assocQname
@@ -416,7 +417,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		public List<Serializable> assocPropValues(NodeRef nodeRef, String assocQname, String propQName) {
 			if (nodeRef != null) {
 				return associationService.getTargetAssocs(nodeRef, getQName(assocQname)).stream().map(o -> propValue(o, propQName))
-						.filter(Objects::nonNull).collect(Collectors.toList());
+						.filter(Objects::nonNull).toList();
 			}
 			return null;
 		}
@@ -430,18 +431,17 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * Helper @beCPG.assocAssocValues($nodeRef, $assocQname, $assocAssocQName)
+		 * Helper {@code @beCPG.assocAssocValues($nodeRef, $assocQname, $assocAssocQName)}
 		 *
 		 * @param nodeRef
 		 * @param assocAssocQName
-		 * @param propQName
 		 * @return collection of association association values
 		 */
 		public List<NodeRef> assocAssocValues(NodeRef nodeRef, String assocQname, String assocAssocQName) {
 			if (nodeRef != null) {
 				return associationService.getTargetAssocs(nodeRef, getQName(assocQname)).stream()
 						.flatMap(o -> assocValues(o, assocAssocQName).stream()) // Flatten the list of NodeRef
-						.filter(Objects::nonNull).collect(Collectors.toList());
+						.filter(Objects::nonNull).toList();
 			}
 
 			return null;
@@ -456,17 +456,18 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * Helper @beCPG.assocPropValue($nodeRef, $assocQname, $propQName)
+		 * Helper {@code @beCPG.assocPropValue($nodeRef, $assocQname, $propQName)}
 		 *
-		 * Example : var val = @beCPG.assocPropValue(nodeRef, "bcpg:geoOrigin",
+		 * Example :  {@code var val = @beCPG.assocPropValue(nodeRef, "bcpg:geoOrigin",
 		 * "bcpg:isoCode"); #val!=null ? @beCPG.setValue($nodeRef,
-		 * "cm:title", @beCPG.assocPropValue("bcpg:geoOrigin", "bcpg:isoCode"))
-		 * : "";
+		 * "cm:title",  @beCPG.assocPropValue("bcpg:geoOrigin", "bcpg:isoCode"))
+		 * : ""; 
 		 *
 		 * or
 		 *
 		 * @beCPG.setValue("cm:title", @beCPG.assocPropValue("bcpg:geoOrigin",
 		 * "bcpg:isoCode"))
+		 *}
 		 *
 		 * @param nodeRef
 		 * @param assocQname
@@ -486,7 +487,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * Helper @beCPG.findDuplicates($collection)
+		 * Helper {@code @beCPG.findDuplicates($collection)}
 		 *
 		 * @return Set of duplicates
 		 */
@@ -496,7 +497,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * Helper @beCPG.getQName($qname)
+		 * Helper {@code @beCPG.getQName($qname)}
 		 *
 		 * @param qName
 		 * @return QName from string
@@ -506,7 +507,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * Helper @beCPG.updateMLText($mltext, $locale, $value)
+		 * Helper {@code @beCPG.updateMLText($mltext, $locale, $value)}
 		 *
 		 * Update mlText locale value
 		 *
@@ -516,22 +517,31 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 * @return value being set
 		 */
 		public MLText updateMLText(MLText mlText, String locale, String value) {
-
 			if (mlText == null) {
 				mlText = new MLText();
 			}
 
-			if ((value != null) && !value.isEmpty()) {
-				mlText.addValue(MLTextHelper.parseLocale(locale), value);
+			if ((locale != null) && !locale.isBlank()) {
+				Locale loc = MLTextHelper.parseLocale(locale);
+
+				if ((value != null) && !value.isEmpty()) {
+					if (MLTextHelper.isSupportedLocale(loc)) {
+						mlText.addValue(loc, value);
+					} else {
+						logger.error("Unsupported locale in updateMLText " + loc);
+					}
+				} else {
+					mlText.removeValue(loc);
+				}
 			} else {
-				mlText.removeValue(MLTextHelper.parseLocale(locale));
+				logger.error("Null or empty locale in updateMLText ");
 			}
 
 			return mlText;
 		}
 
 		/**
-		 * @beCPG.runScript($nodeRef)
+		 * {@code @beCPG.runScript($nodeRef)}
 		 *
 		 * @param scriptNode
 		 */
@@ -555,14 +565,16 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * @beCPG.sum($range, $formula)
+		 * <pre>
+		 * {@code @beCPG.sum($range, $formula)}
 		 *
-		 *                    Example :
+		 *                    Example :{@code
 		 * @beCPG.sum(compoListView.compoList.?[parent ==
 		 *                                             null],"entity.costList[0].value
 		 *                                             + dataListItem.qty")
 		 * @beCPG.sum(compoListView.compoList.?[parent ==
-		 *                                             null],"@beCPG.propValue(dataListItem.nodeRef,'bcpg:compoListQty')")
+		 *                                             null],"@beCPG.propValue(dataListItem.nodeRef,'bcpg:compoListQty')")}
+		 * </pre>                                            
 		 *
 		 * @param range
 		 * @param formula
@@ -573,7 +585,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * @beCPG.sum($range)
+		 * {@code @beCPG.sum($range)}
 		 *
 		 * @param range
 		 * @return sum range of double
@@ -583,7 +595,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * @beCPG.avg($range, $formula)
+		 * {@code @beCPG.avg($range, $formula)}
 		 *
 		 * @param range
 		 * @param formula
@@ -594,7 +606,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * @beCPG.avg($range)
+		 * {@code @beCPG.avg($range)}
 		 *
 		 *                    @param range
 		 * @return average range of double
@@ -604,7 +616,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * @beCPG.max($range, $formula)
+		 * {@code @beCPG.max($range, $formula)}
 		 *
 		 * @param range
 		 * @param formula
@@ -615,7 +627,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * @beCPG.max($range)
+		 * {@code @beCPG.max($range)}
 		 *
 		 * @param range
 		 * @return get max of range of double
@@ -625,7 +637,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * @beCPG.join($pattern, $range)
+		 * {@code @beCPG.join($pattern, $range)}
 		 *
 		 * @param pattern
 		 * @param range
@@ -636,11 +648,12 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * @beCPG.join($pattern, $range)
-		 * @beCPG.join($pattern, $range1, $range2)
+		 * {@code @beCPG.join($pattern, $range)}
+		 * {@code @beCPG.join($pattern, $range1, $range2)}
 		 *
 		 * @param pattern
-		 * @param ranges
+		 * @param range1
+		 * @param range2
 		 * @return get join from pattern and ranges
 		 */
 		public String join(String pattern, List<String> range1, List<String> range2) {
@@ -655,7 +668,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * @beCPG.min($range, $formula)
+		 * {@code @beCPG.min($range, $formula)}
 		 *
 		 * @param range
 		 * @param formula
@@ -666,7 +679,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * @beCPG.min($range)
+		 * {@code @beCPG.min($range)}
 		 *
 		 * @param range
 		 * @return get min of range of double
@@ -676,7 +689,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * @beCPG.extractCustomList($nodeRef, $listType) @param listType
+		 * {@code @beCPG.extractCustomList($nodeRef, $listType)} @param listType
 		 * @return list
 		 */
 		public Collection<RepositoryEntity> extractCustomList(NodeRef nodeRef, String listType) {
@@ -684,7 +697,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * @beCPG.extractCustomList($listType) @param listType
+		 * {@code @beCPG.extractCustomList($listType)} @param listType
 		 * @return list
 		 */
 		public Collection<RepositoryEntity> extractCustomList(String listType) {
@@ -692,7 +705,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * @beCPG.saveCustomList($range)
+		 * {@code @beCPG.saveCustomList($range)}
 		 *
 		 * @param range
 		 */
@@ -701,7 +714,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * @beCPG.applyFormulaToList($range, $formula)
+		 * {@code @beCPG.applyFormulaToList($range, $formula)}
 		 *
 		 * @param range
 		 * @param formula
@@ -711,9 +724,8 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * Helper @beCPG.filter($range, formula)
+		 * Helper {@code @beCPG.filter($range, formula)}
 		 *
-		 * @param <T>
 		 * @param range
 		 * @param formula
 		 * @return filter collection with spel formula
@@ -725,15 +737,14 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 
 				return range.stream().filter(p -> {
 					return exp.getValue(formulaService.createItemSpelContext(entity, p), Boolean.class);
-				}).collect(Collectors.toList());
+				}).toList();
 			}
 			return null;
 		}
 
 		/**
-		 * Helper @beCPG.replaceByFormula($rangeR, formula)
+		 * Helper {@code @beCPG.replaceByFormula($rangeR, formula)}
 		 *
-		 * @param <T>
 		 * @param range
 		 * @param formula
 		 * @return for each item return a new item based on formula
@@ -746,15 +757,14 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 
 				return (Collection<T>) range.stream().map(p -> {
 					return exp.getValue(formulaService.createItemSpelContext(entity, p));
-				}).collect(Collectors.toList());
+				}).toList();
 			}
 			return null;
 		}
 
 		/**
-		 * Helper @beCPG.groupingByFormula($range, groupingFormula)
+		 * Helper {@code @beCPG.groupingByFormula($range, groupingFormula)}
 		 *
-		 * @param <T>
 		 * @param range
 		 * @param groupingFormula
 		 * @return group the list by formula
@@ -773,9 +783,8 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * Helper @beCPG.filterByAssoc($range, $assocQname, $values)
+		 * Helper {@code @beCPG.filterByAssoc($range, $assocQname, $values)}
 		 *
-		 * @param <T>
 		 * @param range
 		 * @param assocName
 		 * @param values
@@ -786,15 +795,14 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 				return range.stream().filter(nodeRef -> {
 					List<NodeRef> assocs = associationService.getTargetAssocs(nodeRef, getQName(assocName));
 					return assocs.containsAll(values);
-				}).collect(Collectors.toList());
+				}).toList();
 			}
 			return null;
 		}
 
 		/**
-		 * Helper @beCPG.getOrDefault($range, $index, $defaultValue)
+		 * Helper {@code @beCPG.getOrDefault($range, $index, $defaultValue)}
 		 *
-		 * @param <T>
 		 * @param range
 		 * @param index
 		 * @param defaultValue
@@ -808,9 +816,8 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * Helper  @beCPG.children($parent, $compositeList)
+		 * Helper  {@code @beCPG.children($parent, $compositeList)}
 		 *
-		 * @param <T>
 		 * @param parent
 		 * @param compositeList
 		 * @return children of parent item
@@ -828,7 +835,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * Helper @beCPG.formatNumber($number)
+		 * Helper {@code @beCPG.formatNumber($number)}
 		 *
 		 * @param number
 		 * @return standard becpg number format
@@ -838,10 +845,10 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * Helper @beCPG.formatNumber($number, $format )
+		 * Helper {@code @beCPG.formatNumber($number, $format )}
 		 *
-		 *    Example: @beCPG.formatNumber(10.00005d,
-		 *                              "0.##")
+		 *    Example:{@code @beCPG.formatNumber(10.00005d,
+		 *                              "0.##")}
 		 *
 		 * @param number
 		 * @param format
@@ -852,10 +859,10 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * Helper  @beCPG.formatDate($date )
+		 * Helper  {@code @beCPG.formatDate($date )}
 		 *
-		 *  Example: @beCPG.formatDate(new
-		 *                          java.util.Date() )
+		 *  Example: {@code @beCPG.formatDate(new
+		 *                          java.util.Date() )}
 		 *
 		 * @param date
 		 * @return standard becpg date format
@@ -865,10 +872,10 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * @beCPG.formatDate($date, $format )
+		 * {@code @beCPG.formatDate($date, $format )}
 		 *
-		 *  Example: @beCPG.formatDate(new
-		 *                          java.util.Date(),"dd/mm/YYYY" )
+		 *  Example: {@code@beCPG.formatDate(new
+		 *                          java.util.Date(),"dd/mm/YYYY" )}
 		 *
 		 * @param date
 		 * @return standard becpg number format
@@ -878,10 +885,10 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * @beCPG.updateDate($date, $field, $amount )
+		 * {@code @beCPG.updateDate($date, $field, $amount )}
 		 *
-		 *  Example: @beCPG.updateDate(new
-		 *                          java.util.Date(), java.util.Calendar.DAY_OF_MONTH, -5 )
+		 *  Example:  {@code @beCPG.updateDate(new
+		 *                          java.util.Date(), java.util.Calendar.DAY_OF_MONTH, -5 )}
 		 *  cf Calendar JavaDoc
 		 *
 		 * @param date
@@ -893,16 +900,94 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 			cal.add(field, amount);
 			return cal.getTime();
 		}
+		
+		/**
+		 * {@code @beCPG.interpolate($val, $values, $thresholds)}
+		 *
+		 * Example:
+		 * {@code @beCPG.interpolate(0.05, List.of(10.0, 8.0, 6.0, 4.0, 2.0, 0.0), 
+		 *                     List.of(0.0, 0.0001, 0.001, 0.01, 0.1, 1.0))}
+		 *
+		 * This function performs linear interpolation based on a list of threshold values and their
+		 * corresponding output values. The thresholds can be in ascending or descending order.
+		 * 
+		 * @param val the input value to be interpolated
+		 * @param values the list of output values corresponding to each threshold
+		 * @param thresholds the list of input thresholds defining the interpolation ranges
+		 * @return the interpolated value for the given input {@code val}
+		 * @throws IllegalArgumentException if the sizes of {@code values} and {@code thresholds} do not match,
+		 *                                  or if thresholds are constant (which would lead to division by zero)
+		 * @throws IllegalStateException if interpolation cannot be performed due to invalid inputs
+		 */
+		public Double interpolate(Double val, List<Double> values, List<Double> thresholds) {
+		    if (val == null) {
+		        return null;
+		    }
+
+		    if (values.size() != thresholds.size()) {
+		        throw new IllegalArgumentException("The size of values and thresholds must match.");
+		    }
+		    
+		    // Check for constant thresholds which would make interpolation impossible
+		    if (thresholds.isEmpty() || thresholds.stream().distinct().count() == 1) {
+		        throw new IllegalArgumentException("Thresholds must not be constant.");
+		    }
+
+		    // Determine ordering: ascending if first element is less than the last element, descending otherwise.
+		    boolean ascending = thresholds.get(0) < thresholds.get(thresholds.size() - 1);
+
+		    // Boundary conditions
+		    if (ascending) {
+		        if (val <= thresholds.get(0)) {
+		            return values.get(0);
+		        }
+		        if (val >= thresholds.get(thresholds.size() - 1)) {
+		            return values.get(values.size() - 1);
+		        }
+		    } else {  // descending order
+		        if (val >= thresholds.get(0)) {
+		            return values.get(0);
+		        }
+		        if (val <= thresholds.get(thresholds.size() - 1)) {
+		            return values.get(values.size() - 1);
+		        }
+		    }
+
+		    // Interpolation: Find the segment where val falls.
+		    // For ascending: look for the first threshold greater than or equal to val.
+		    // For descending: look for the first threshold less than or equal to val.
+		    for (int i = 1; i < thresholds.size(); i++) {
+		        if ((ascending && val <= thresholds.get(i)) ||
+		            (!ascending && val >= thresholds.get(i))) {
+
+		            double x1 = thresholds.get(i - 1);
+		            double x2 = thresholds.get(i);
+		            double y1 = values.get(i - 1);
+		            double y2 = values.get(i);
+
+		            // Check for zero denominator (shouldn't happen if thresholds are valid and distinct)
+		            if (x2 == x1) {
+		                throw new IllegalStateException("Two threshold values are equal, cannot interpolate.");
+		            }
+
+		            // Linear interpolation formula:
+		            return y1 + (val - x1) * (y2 - y1) / (x2 - x1);
+		        }
+		    }
+
+		    throw new IllegalStateException("Interpolation failed. Ensure inputs are valid.");
+		}
+		
 
 		/**
 		 *
-		 * Helper  @beCPG.copy($fromNodeRef, $propQNames, $listQNames)
+		 * Helper  {@code @beCPG.copy($fromNodeRef, $propQNames, $listQNames)}
 		 *
 		 *  Copy properties from an entity to current
 		 *  entity
 		 *
-		 *  Example: @beCPG.copy(compoListView.compoList[0].product,{"bcpg:suppliers","bcpg:legalName"},{"bcpg:costList"});
-		 *  Example: @beCPG.copy(compoListView.compoList[0].product,{"bcpg:suppliers","bcpg:legalName"},{"bcpg:costList|true"}); // Force full copy of costList
+		 *  Example: {@code @beCPG.copy(compoListView.compoList[0].product,{"bcpg:suppliers","bcpg:legalName"},{"bcpg:costList"})};
+		 *  Example: {@code @beCPG.copy(compoListView.compoList[0].product,{"bcpg:suppliers","bcpg:legalName"},{"bcpg:costList|true"})}; // Force full copy of costList
 		 *
 		 * @param fromNodeRef
 		 * @param propQNames
@@ -1029,8 +1114,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		private void cloneDataList(Object data, Object oldData, Object to, PropertyDescriptor pd)
 				throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-			if (oldData instanceof LazyLoadingDataList) {
-				LazyLoadingDataList lazyDataList = (LazyLoadingDataList) oldData;
+			if (oldData instanceof LazyLoadingDataList lazyDataList) {
 				lazyDataList.clear();
 				lazyDataList.addAll(clone((Collection) data));
 			} else {
@@ -1038,7 +1122,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 			}
 		}
 
-		@SuppressWarnings({ "unchecked", "rawtypes" })
+		@SuppressWarnings({ "unchecked" })
 		private <T extends RepositoryEntity> List<T> clone(Collection<T> data) {
 			List<T> clonedList = new LinkedList<>();
 			Map<NodeRef, T> origDataItemMap = new HashMap<>();
@@ -1054,8 +1138,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 			}
 
 			for (T item : clonedList) {
-				if (item instanceof CompositeDataItem) {
-					CompositeDataItem compositeItem = (CompositeDataItem) item;
+				if (item instanceof CompositeDataItem compositeItem) {
 					T parent = (T) compositeItem.getParent();
 					if (parent != null) {
 						if (parent.getNodeRef() != null) {
@@ -1109,6 +1192,10 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 			}
 		}
 
+		
 	}
+	
+	
+	
 
 }

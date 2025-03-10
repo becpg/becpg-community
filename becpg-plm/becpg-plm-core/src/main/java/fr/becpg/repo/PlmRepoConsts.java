@@ -211,6 +211,12 @@ public class PlmRepoConsts {
 
 	/** Constant <code>PATH_REGULATORY_USAGES="RegulatoryUsages"</code> */
 	public static final String PATH_REGULATORY_USAGES = "RegulatoryUsages";
+	
+	/** Constant <code>PATH_TOXICITIES="Toxicities"</code> */
+	public static final String PATH_TOXICITIES = "Toxicities";
+	
+	/** Constant <code>PATH_TOX_ING="ToxIng"</code> */
+	public static final String PATH_TOX_ING = "ToxIng";
 
 	/** Constant <code>PATH_CONTACT_TYPES="ContactTypes"</code> */
 	public static final String PATH_CONTACT_TYPES = "ContactTypes";
@@ -235,6 +241,9 @@ public class PlmRepoConsts {
 
 	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_COMPOSITIONPACKAGING="ExportCompositionPackaging"</code> */
 	public static final String PATH_REPORTS_EXPORT_SEARCH_COMPOSITIONPACKAGING = "ExportCompositionPackaging";
+	
+	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_SCORELIST="ExportScoreList"</code> */
+	public static final String PATH_REPORTS_EXPORT_SEARCH_SCORELIST = "ExportScoreList";
 
 	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_INGLABELING="ExportIngLabeling"</code> */
 	public static final String PATH_REPORTS_EXPORT_SEARCH_LABELLING = "ExportLabelling";
@@ -249,10 +258,48 @@ public class PlmRepoConsts {
 
 	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_CITEO="ExportCiteo"</code> */
 	public static final String PATH_REPORTS_EXPORT_SEARCH_CITEO = "ExportCiteo";
+	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_CITEO_PRO="ExportCiteoPro"</code> */
+	public static final String PATH_REPORTS_EXPORT_SEARCH_CITEO_PRO = "ExportCiteoPro";
 	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_ALLERGENS="ExportAllergens"</code> */
 	public static final String PATH_REPORTS_EXPORT_SEARCH_ALLERGENS = "ExportAllergens";
+	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_LCA="ExportLCA"</code> */
+	public static final String PATH_REPORTS_EXPORT_SEARCH_LCA = "ExportLCA";
+	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_SVHC="ExportSVHC"</code> */
+	public static final String PATH_REPORTS_EXPORT_SEARCH_SVHC = "ExportSVHC";
+	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_SURVEY="ExportSurvey"</code> */
+	public static final String PATH_REPORTS_EXPORT_SEARCH_SURVEY = "ExportSurvey";
 	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_NUTRIENTS="ExportNutrients"</code> */
 	public static final String PATH_REPORTS_EXPORT_SEARCH_NUTRIENTS = "ExportNutrients";
+	
+	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_SPECALLERGENS="ExportSpecAllergens"</code> */
+	public static final String PATH_REPORTS_EXPORT_SEARCH_SPECALLERGENS = "ExportSpecAllergens";
+	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_SPECNUTRIENTS="ExportSpecNutrients"</code> */
+	public static final String PATH_REPORTS_EXPORT_SEARCH_SPECNUTRIENTS = "ExportSpecNutrients";
+	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_SPECPHYSICOCHEMICALLIST="ExportSpecPhysicoChemicalList"</code> */
+	public static final String PATH_REPORTS_EXPORT_SEARCH_SPECPHYSICOCHEMICALLIST = "ExportSpecPhysicoChemicalList";
+	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_SPECLABELCLAIMLIST="ExportSpecLabelClaimList"</code> */
+	public static final String PATH_REPORTS_EXPORT_SEARCH_SPECLABELCLAIMLIST = "ExportSpecLabelClaimList";
+	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_FORBIDDENING="ExportForbiddenIng"</code> */
+	public static final String PATH_REPORTS_EXPORT_SEARCH_FORBIDDENING = "ExportForbiddenIng";
+	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_LABELINGRULELIST="ExportLabelingRuleList"</code> */
+	public static final String PATH_REPORTS_EXPORT_SEARCH_LABELINGRULELIST = "ExportLabelingRuleList";
+	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_SPECCOMPATIBILITYLIST="ExportSpecCompatibilityList"</code> */
+	public static final String PATH_REPORTS_EXPORT_SEARCH_SPECCOMPATIBILITYLIST = "ExportSpecCompatibilityList";
+	
+	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_CLIENTSURVEY="ExportClientSurvey"</code> */
+	public static final String PATH_REPORTS_EXPORT_SEARCH_CLIENTSURVEY = "ExportClientSurvey";
+	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_CLIENTSCORELIST="ExportClientScoreList"</code> */
+	public static final String PATH_REPORTS_EXPORT_SEARCH_CLIENTSCORELIST = "ExportClientScoreList";
+	
+	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_SUPPLIERSURVEY="ExportSupplierSurvey"</code> */
+	public static final String PATH_REPORTS_EXPORT_SEARCH_SUPPLIERSURVEY = "ExportSupplierSurvey";
+	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_SUPPLIERSCORELIST="ExportSupplierScoreList"</code> */
+	public static final String PATH_REPORTS_EXPORT_SEARCH_SUPPLIERSCORELIST = "ExportSupplierScoreList";
+	
+	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_PROJECTSURVEY="ExportProjectSurvey"</code> */
+	public static final String PATH_REPORTS_EXPORT_SEARCH_PROJECTSURVEY = "ExportProjectSurvey";
+	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_PROJECTSCORELIST="ExportProjectScoreList"</code> */
+	public static final String PATH_REPORTS_EXPORT_SEARCH_PROJECTSCORELIST= "ExportProjectScoreList";
 
 	// ECO
 	/** Constant <code>PATH_ECO="ECO"</code> */
@@ -277,6 +324,9 @@ public class PlmRepoConsts {
 
 	/** Constant <code>PATH_LCA_DATABASES="LCADatabases"</code> */
 	public static final String PATH_LCA_DATABASES = "LCADatabases";
+	
+	/** Constant <code>PATH_CLP_DATABASES="CLPDatabases"</code> */
+	public static final String PATH_CLP_DATABASES = "CLPDatabases";
 
 	//GS1
 	/** Constant <code>PATH_GS1_PACKAGING_TYPE_CODES="PackagingTypeCodes"</code> */
@@ -319,10 +369,16 @@ public class PlmRepoConsts {
 	public static final String PATH_GS1_CATCH_AREA_CODES = "CatchAreaCodes";
 	/** Constant <code>PATH_PUBCHANNELS="PubChannels"</code> */
 	public static final String PATH_PUBCHANNELS = "PubChannels";
+	/** Constant <code>PATH_ACTIVITY_LIST="activityList"</code> */
 	public static final String PATH_ACTIVITY_LIST = "activityList";
 	/** Constant <code>PATH_MICROBIO_TYPES="MicrobioTypes"</code> */
 	public static final String PATH_MICROBIO_TYPES = "MicrobioTypes";
 	/** Constant <code>PATH_GS1_ALCOHOL_BEVERAGE_CONTAINERS="AlcoholBeverageContainers"</code> */
 	public static final String PATH_GS1_ALCOHOL_BEVERAGE_CONTAINERS = "AlcoholBeverageContainers";
+	/** Constant <code>PATH_LABORATORIES="Laboratories"</code> */
+	public static final String PATH_LABORATORIES = "Laboratories";
+	
+	public static final String PATH_SURVEY_QUESTIONS = "SurveyQuestions";
+	
 
 }

@@ -9,6 +9,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.repo.system.SystemConfigurationRegistry;
+
 /**
  * <p>DecernisHelper class.</p>
  *
@@ -66,4 +68,21 @@ public class DecernisHelper {
 		
 		return null;
 	}
+	
+	/**
+	 * <p>cleanError.</p>
+	 *
+	 * @param error a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
+	public static String cleanError(String error) {
+		if (error != null) {
+			String token = SystemConfigurationRegistry.instance().confValue("beCPG.decernis.token");
+			if (token != null && !token.isBlank()) {
+				return error.replace(token, "XXX");
+			}
+		}
+		return error;
+	}
+	
 }

@@ -8,16 +8,27 @@ import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 
+/**
+ * <p>AccentFilter class.</p>
+ *
+ * @author matthieu
+ */
 public class AccentFilter extends TokenFilter {
 	
 	private static final HashMap<String,String> substitutions = initSubstitutions();
 
 	private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
 
+	/**
+	 * <p>Constructor for AccentFilter.</p>
+	 *
+	 * @param input a {@link org.apache.lucene.analysis.TokenStream} object
+	 */
 	public AccentFilter(TokenStream input) {
 		super(input);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean incrementToken() throws IOException {
 		if (input.incrementToken()) {
@@ -28,6 +39,11 @@ public class AccentFilter extends TokenFilter {
 		return false;
 	}
 
+	/**
+	 * <p>killAccents.</p>
+	 *
+	 * @param chars an array of {@link char} objects
+	 */
 	public void killAccents(char[] chars) {
 		for (int i = 0; i < chars.length; i++) {
 			if (substitutions.containsKey("" + chars[i])) {
@@ -221,6 +237,7 @@ public class AccentFilter extends TokenFilter {
 		return retVal;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == this) {
@@ -236,6 +253,7 @@ public class AccentFilter extends TokenFilter {
 		return termAtt.equals(fobj.termAtt);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		return Objects.hash(termAtt);

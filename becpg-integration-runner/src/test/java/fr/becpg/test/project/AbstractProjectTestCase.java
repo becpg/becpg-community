@@ -52,6 +52,7 @@ import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 import fr.becpg.repo.project.data.projectList.ResourceCost;
 import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
+import fr.becpg.repo.sample.CharactTestHelper;
 import fr.becpg.test.BeCPGTestHelper;
 import fr.becpg.test.RepoBaseTestCase;
 import fr.becpg.test.data.EntityTestData;
@@ -114,18 +115,6 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 			}
 		}
 
-		// score criteria
-		NodeRef criteriaFolder = entitySystemService.getSystemEntityDataList(listsFolder, ProjectRepoConsts.PATH_SCORE_CRITERIA);
-		for (int i = 0; i < 5; i++) {
-			if (nodeService.getChildByName(criteriaFolder, ContentModel.ASSOC_CONTAINS, "Criterion" + i) == null) {
-				Map<QName, Serializable> properties = new HashMap<>();
-				properties.put(BeCPGModel.PROP_LV_VALUE, "Criterion" + i);
-				properties.put(ContentModel.PROP_NAME, "Criterion" + i);
-				nodeService.createNode(criteriaFolder, ContentModel.ASSOC_CONTAINS,
-						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)),
-						BeCPGModel.TYPE_LIST_VALUE, properties).getChildRef();
-			}
-		}
 
 		// resourceCost
 		NodeRef resourceCostsFolder = entitySystemService.getSystemEntityDataList(listsFolder, ProjectRepoConsts.PATH_RESOURCE_COSTS);
@@ -200,9 +189,9 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 			List<NodeRef> resourceCostsFileInfo = entityListDAO.getListItems(resourceCostFolder, ProjectModel.TYPE_RESOURCE_COST);
 			resourceCost = (ResourceCost) alfrescoRepository.findOne(resourceCostsFileInfo.get(0));
 
-				userOne = BeCPGTestHelper.createUser(BeCPGTestHelper.USER_ONE);
-				userTwo = BeCPGTestHelper.createUser(BeCPGTestHelper.USER_TWO);
-				observerOne =  BeCPGTestHelper.createUser("ObserverOne");
+			userOne = BeCPGTestHelper.createUser(BeCPGTestHelper.USER_ONE);
+			userTwo = BeCPGTestHelper.createUser(BeCPGTestHelper.USER_TWO);
+			observerOne = BeCPGTestHelper.createUser("ObserverOne");
 
 			groupOne = BeCPGTestHelper.createGroup("groupOne", BeCPGTestHelper.USER_TWO);
 
@@ -278,7 +267,8 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 			// create scoreList
 			List<ScoreListDataItem> scoreList = new LinkedList<>();
 			for (int i = 0; i < 5; i++) {
-				scoreList.add(new ScoreListDataItem(null, "Criterion" + i, i * 10, null));
+				scoreList.add(ScoreListDataItem.build().withScoreCriterion(CharactTestHelper.getOrCreateScoreCriterion(nodeService, "Criterion" + i))
+						.withWeight((double) (i * 10)));
 			}
 			projectTplData.setScoreList(scoreList);
 
@@ -303,7 +293,6 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 			prevTasks = new ArrayList<>();
 			prevTasks.add(projectTplData.getTaskList().get(2).getNodeRef());
 			projectTplData.getTaskList().get(3).setPrevTasks(prevTasks);
-		
 
 			prevTasks = new ArrayList<>();
 			prevTasks.add(projectTplData.getTaskList().get(2).getNodeRef());
@@ -368,7 +357,7 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ENTITY_TPL_REF);
-			
+
 			ProjectData projectData = new ProjectData(null, "Pjt", PROJECT_HIERARCHY1_SEA_FOOD_REF, PROJECT_HIERARCHY2_CRUSTACEAN_REF, startDate,
 					endDate, null, planningMode, null, null, null, 0, null);
 			projectData.setParentNodeRef(getTestFolderNodeRef());

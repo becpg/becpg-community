@@ -94,11 +94,11 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	public static final String SEARCH_CONFIG_CACHE_KEY = "SEARCH_CONFIG";
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * <p>
 	 * getSearchConfig.
 	 * </p>
-	 *
-	 * @return a {@link fr.becpg.repo.search.impl.SearchConfig} object.
 	 */
 	@Override
 	public SearchConfig getSearchConfig() {
@@ -170,7 +170,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		BeCPGQueryBuilder beCPGQueryBuilder = BeCPGQueryBuilder.createQuery();
 		// Simple keyword search and tag specific search
 		if ((term != null) && (term.length() != 0)) {
-			beCPGQueryBuilder.andFTSQuery(cleanValue(term, true));
+			beCPGQueryBuilder.andFTSQuery(cleanFTSQuery(term));
 		} else if ((tag != null) && (tag.length() != 0)) {
 			beCPGQueryBuilder.andFTSQuery("TAG:\"" + tag + "\"");
 		}
@@ -367,7 +367,11 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 								// sushi AND (saumon OR thon) AND -dorade
 								// formQuery += (first ? "" : " AND ") +
 
-								queryBuilder.andPropQuery(QName.createQName(propName, namespaceService), cleanValue(propValue, false));
+								if(propValue.startsWith("=")) {
+									queryBuilder.andPropEquals(QName.createQName(propName, namespaceService), propValue.replaceFirst("=",""));
+								} else {
+									queryBuilder.andPropQuery(QName.createQName(propName, namespaceService), cleanValue(propValue));
+								}
 							}
 						} else {
 
@@ -391,13 +395,17 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 	}
 
-	private String cleanValue(String propValue, boolean cleanFTS) {
-		String cleanQuery = cleanFTS ? propValue.replace(".", "").replace("#", "") : propValue;
-
+	private String cleanFTSQuery(String query) {
+		return query.replace("#", "");
+	}
+	
+	private String cleanValue(String propValue) {
+		String cleanQuery = propValue.replace(".", "").replace("#", "").replace("%", "");
+		
 		if (cleanQuery.contains("\",\"")) {
 			cleanQuery = cleanQuery.replace("\",\"", "\" OR \"");
 		}
-
+		
 		return escapeValue(cleanQuery);
 	}
 
@@ -505,7 +513,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 				formQuery.append("(cm:content." + propName + ":\"" + multiValue[i] + "\")");
 			} else {
 				formQuery.append(  QName.createQName(propName, namespaceService) + ":("
-						+ cleanValue(multiValue[i], false) + ")");
+						+ cleanValue(multiValue[i]) + ")");
 			}
 		}
 

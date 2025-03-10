@@ -145,7 +145,7 @@
          // Create the panel from the HTML returned in the server reponse
          this.widgets.panel = Alfresco.util.createYUIPanel(dialogDiv, {
 				draggable : true,
-				width : "45em"
+				width : "55em"
 			});
          
          // Update
@@ -300,10 +300,10 @@
          if(!current || doc.label != beCPG.module.getVersionsGraphInstance().options.label){
 	         if(current ){
 	        	 compareURL = Alfresco.constants.PROXY_URI + 'becpg/entity/compare/' + beCPG.module.getVersionsGraphInstance().options.nodeRef
-	             .replace(":/", "") + '/' + encodeURIComponent(doc.label) + '/' + encodeURIComponent(doc.name);
+	             .replace(":/", "") + '/' + encodeURIComponent(doc.label) + '/' + encodeURIComponent(doc.name) + "?noCache=" + new Date().getTime();
 	         } else {
 	        	 compareURL = Alfresco.constants.PROXY_URI + 'becpg/entity/compare/' + beCPG.module.getVersionsGraphInstance().options.nodeRef
-	        	 .replace(":/", "") + "/compare?entities="+doc.nodeRef;
+	        	 .replace(":/", "") + "/compare?entities="+doc.nodeRef + "&noCache=" + new Date().getTime();
 	         }
 			
          }
@@ -349,8 +349,10 @@
             userid : doc.creator.userName
          });
 
-         html += '<a href="' + uri + '" title="' + $html(doc.creator.firstName + ' ' + doc.creator.lastName) + '">' + $userAvatar(
-               doc.creator.userName, 32) + '</a>';
+		html += '<a href="' + uri + '" title="' + $html(doc.creator.firstName + ' ' + doc.creator.lastName) + '" style="display: flex; align-items: center; text-decoration: none;">'
+          + $userAvatar(doc.creator.userName, 32)
+          + '<span style="white-space: nowrap; margin-left: 5px;">' + doc.creator.firstName + ' ' + doc.creator.lastName + '</span>'
+          + '</a>';
 
          elCell.innerHTML = html;
       },
@@ -358,7 +360,8 @@
       renderCellDate : function VersionsGraph_renderCellDate(elCell, oRecord, oColumn, oData) {
          var doc = oRecord.getData();
 
-         elCell.innerHTML = Alfresco.util.relativeTime(Alfresco.util.fromISO8601(doc.createdDateISO));
+         elCell.innerHTML = Alfresco.util.relativeTime(Alfresco.util.fromISO8601(doc.createdDateISO))+'<span> ('+ Alfresco.util.formatDate(doc.createdDateISO, Alfresco.util.message("datetime.format")) + ')</span>';
+         
       },
 
       setColor : function VersionsGraph_setColor(color, bg, fg) {

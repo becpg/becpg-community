@@ -347,6 +347,9 @@
                <div class="field-row">
                   <span class="crud-label" <#if aimsEnabled>hidden</#if> ><input type="checkbox" id="${el}-create-disableaccount" />&nbsp;${msg("label.disableaccount")}</span>
                </div>
+               <div class="field-row">
+                  <span class="crud-label" ><input type="checkbox" id="${el}-create-ssouser" />&nbsp;${msg("label.ssouser")}</span>
+               </div>
             </div>
             
             <div>
@@ -516,6 +519,7 @@
                <div class="field-row">
                      <!-- If AIMS is enabled then make the HTML input element disabled. -->
                      <span class="crud-label" <#if aimsEnabled>hidden</#if> ><input type="checkbox" id="${el}-update-disableaccount" />&nbsp;${msg("label.disableaccount")}</span>
+                     <span class="crud-label"><input type="checkbox" id="${el}-update-ssouser" />&nbsp;${msg("label.ssouser")}</span>
                </div>
                
                <div class="header-bar">${msg("label.photo")}</div>

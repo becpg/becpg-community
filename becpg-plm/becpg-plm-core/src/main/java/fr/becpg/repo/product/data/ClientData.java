@@ -17,7 +17,7 @@ import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.repository.model.StateableEntity;
-import fr.becpg.repo.survey.data.SurveyList;
+import fr.becpg.repo.survey.data.SurveyListDataItem;
 import fr.becpg.repo.survey.data.SurveyableEntity;
 
 /**
@@ -55,7 +55,23 @@ public class ClientData extends BeCPGDataObject implements HierarchicalEntity, S
 	private List<CostListDataItem> costList;
 	private List<LCAListDataItem> lcaList;
 	private List<ScoreListDataItem> scoreList;
-	private List<SurveyList> surveyList;
+	private List<SurveyListDataItem> surveyList;
+	
+	public static ClientData build() {
+		return new ClientData();
+	}
+
+	public ClientData withName(String name) {
+		setName(name);
+		return this;
+	}
+	
+
+	public ClientData withScoreList(List<ScoreListDataItem> scoreList) {
+		setScoreList(scoreList);
+		return this;
+	}
+	
 
 	/**
 	 * <p>Getter for the field <code>state</code>.</p>
@@ -288,13 +304,13 @@ public class ClientData extends BeCPGDataObject implements HierarchicalEntity, S
 	@DataList
 	@AlfQname(qname = "survey:surveyList")
 	@Override
-	public List<SurveyList> getSurveyList() {
+	public List<SurveyListDataItem> getSurveyList() {
 		return surveyList;
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public void setSurveyList(List<SurveyList> surveyList) {
+	public void setSurveyList(List<SurveyListDataItem> surveyList) {
 		this.surveyList = surveyList;
 	}
 
@@ -355,4 +371,5 @@ public class ClientData extends BeCPGDataObject implements HierarchicalEntity, S
 				&& state == other.state && Objects.equals(surveyList, other.surveyList)
 				&& Objects.equals(updateFormulatedDate, other.updateFormulatedDate);
 	}
+
 }

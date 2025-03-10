@@ -850,6 +850,19 @@
                failureMessage: "Could not load Group Finder component",
                execScripts: true
             });
+            
+            Alfresco.util.Ajax.request(
+            {
+               url: Alfresco.constants.PROXY_URI + "webframework/content/metadata?user=" + parent.options.userId,
+               successCallback:
+               {
+                  fn: this.onMetadataLoaded,
+                  scope: this
+               },
+               failureMessage: "Could not load Metadata",
+               execScripts: true
+            });
+            
          },
 
          onGroupFinderLoaded: function onGroupFinderLoaded(res)
@@ -1028,6 +1041,21 @@
          onHide: function onHide()
          {
             this._visible = false;
+         },
+         
+         onMetadataLoaded: function onMetadataLoaded(res)
+         {
+            var metadata = res.serverResponse.responseText;
+            var isSsoEnabled = metadata && JSON.parse(metadata).data.capabilities.isSsoEnabled;
+            var createSsoUserCheckBox = Dom.get(parent.id + "-create-ssouser");
+            if (createSsoUserCheckBox) {
+	            createSsoUserCheckBox.checked = isSsoEnabled;
+	            createSsoUserCheckBox.disabled = !isSsoEnabled;
+			}
+            var updateSsoUserCheckBox = Dom.get(parent.id + "-update-ssouser");
+			if (updateSsoUserCheckBox) {
+	            updateSsoUserCheckBox.disabled = !isSsoEnabled;
+			}
          }
       });
       new CreatePanelHandler();
@@ -1088,6 +1116,18 @@
                   scope: this
                },
                failureMessage: "Could not load Group Finder component",
+               execScripts: true
+            });
+            
+            Alfresco.util.Ajax.request(
+            {
+               url: Alfresco.constants.PROXY_URI + "webframework/content/metadata?user=" + parent.options.userId,
+               successCallback:
+               {
+                  fn: this.onMetadataLoaded,
+                  scope: this
+               },
+               failureMessage: "Could not load Metadata",
                execScripts: true
             });
          },
@@ -1303,12 +1343,14 @@
                fnDisabler("-update-email", "email", person.immutability);
                fnSetter("-update-userlocale", person.userLocale);
                fnSetter("-update-usercontentlocale", person.userContentLocale);
+               if (person.isSsoUser) {
+	               Dom.get(parent.id + "-update-ssouser").setAttribute("disabled", true);
+			   }
                if (!person.capabilities.isMutable)
                {
                   Dom.get(parent.id + "-update-old-password").setAttribute("disabled", true);
                   Dom.get(parent.id + "-update-password").setAttribute("disabled", true);
                   Dom.get(parent.id + "-update-verifypassword").setAttribute("disabled", true);
-                  Dom.get(parent.id + "-update-disableaccount").setAttribute("disabled", true);
                }
                fnSetter("-update-old-password", "");
                fnSetter("-update-password", "");
@@ -1345,6 +1387,7 @@
 
                // account enabled/disabled
                Dom.get(parent.id + "-update-disableaccount").checked = (person.enabled == false);
+               Dom.get(parent.id + "-update-ssouser").checked = (person.isSsoUser == true);
 
                // add groups the user is already assigned to and maintain a copy of the original group list
                me.resetGroups();
@@ -2299,6 +2342,7 @@
             lastName: fnGetter("-create-lastname"),
             email: fnGetter("-create-email"),
             disableAccount: Dom.get(me.id + "-create-disableaccount").checked,
+            isSsoUser: Dom.get(me.id + "-create-ssouser").checked,
             quota: quota,
             groups: groups
          };
@@ -2476,6 +2520,7 @@
             lastName: fnGetter("-update-lastname"),
             email: fnGetter("-update-email"),
             disableAccount: Dom.get(me.id + "-update-disableaccount").checked,
+            isSsoUser: Dom.get(me.id + "-update-ssouser").checked,
             quota: quota,
             addGroups: addGroups,
             removeGroups: removeGroups,

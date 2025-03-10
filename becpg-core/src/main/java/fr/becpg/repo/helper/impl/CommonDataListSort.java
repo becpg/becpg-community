@@ -68,41 +68,5 @@ public class CommonDataListSort implements Comparator<NodeRef>{
 		return sort1.compareTo(sort2);
 	}
 	
-	
-	// Comparing on other fields will need to register onPropertiesUpdate invalidation for comparedFields			
-
-//	Comparator<NodeRef> comparator = null;
-//	Map<String, Boolean> sortMap = null;
-//	if (sortProps == null || sortProps.isEmpty()) {
-//		sortMap = RepoConsts.DEFAULT_SORT;
-//	} else {
-//		sortMap = sortProps;
-//	}
-//	
-//	for (Map.Entry<String, Boolean> sortEntry : sortMap.entrySet()) {
-//		final QName sortFieldQName;
-//
-//		if (sortEntry.getKey().indexOf(QName.NAMESPACE_BEGIN) != -1) {
-//			sortFieldQName = QName.createQName(sortEntry.getKey().replace("@", ""));
-//		} else {
-//			sortFieldQName = QName.createQName(sortEntry.getKey().replace("@", ""), namespaceService);
-//		}
-//
-//		if (comparator == null) {
-//			comparator = Comparator.comparing(n -> (Comparable) nodeService.getProperty(n, sortFieldQName), Comparator.nullsLast(Comparator.naturalOrder()));
-//		} else {
-//			comparator = comparator.thenComparing(n -> (Comparable) nodeService.getProperty(n, sortFieldQName), Comparator.nullsLast(Comparator.naturalOrder()));
-//		}
-//
-//		if (Boolean.FALSE.equals(sortEntry.getValue())) {
-//			comparator =  comparator.reversed();
-//		}
-//
-//	}
-//	
-//	
-//	if(comparator!=null) {
-//		ret.sort(comparator);
-//	}
 
 }

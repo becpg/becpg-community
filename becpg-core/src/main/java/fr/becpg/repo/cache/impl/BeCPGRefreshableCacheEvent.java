@@ -4,6 +4,11 @@ import java.util.Objects;
 
 import org.alfresco.util.cache.RefreshableCacheEvent;
 
+/**
+ * <p>BeCPGRefreshableCacheEvent class.</p>
+ *
+ * @author matthieu
+ */
 public class BeCPGRefreshableCacheEvent  implements RefreshableCacheEvent
 {
 	  
@@ -18,23 +23,27 @@ public class BeCPGRefreshableCacheEvent  implements RefreshableCacheEvent
 	        this.key = key;
 	    }
 
+	    /** {@inheritDoc} */
 	    @Override
 	    public String getCacheId()
 	    {
 	        return cacheId;
 	    }
 
+	    /** {@inheritDoc} */
 	    @Override
 	    public String getKey()
 	    {
 	        return key;
 	    }
 
+		/** {@inheritDoc} */
 		@Override
 		public int hashCode() {
 			return Objects.hash(cacheId, key);
 		}
 
+		/** {@inheritDoc} */
 		@Override
 		public boolean equals(Object obj) {
 			if (this == obj)
@@ -47,6 +56,7 @@ public class BeCPGRefreshableCacheEvent  implements RefreshableCacheEvent
 			return Objects.equals(cacheId, other.cacheId) && Objects.equals(key, other.key);
 		}
 
+		/** {@inheritDoc} */
 		@Override
 		public String toString() {
 			return "BeCPGRefreshableCacheEvent [cacheId=" + cacheId + ", key=" + key + "]";

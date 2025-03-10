@@ -54,6 +54,7 @@ import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.entity.remote.RemoteRateLimiter;
 import fr.becpg.repo.entity.remote.impl.HttpEntityProviderCallback;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
+import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * Abstract remote entity webscript
@@ -124,7 +125,17 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	
 	protected RemoteRateLimiter remoteRateLimiter;
 	
-	
+	protected SystemConfigurationService systemConfigurationService;
+
+	/**
+	 * <p>Setter for the field <code>systemConfigurationService</code>.</p>
+	 *
+	 * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
+	 */
+	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
+		this.systemConfigurationService = systemConfigurationService;
+	}
+
 	/**
 	 * <p>Setter for the field <code>namespaceService</code>.</p>
 	 *
@@ -180,6 +191,12 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	}
 
 	
+
+	private  Integer maxResultsLimit() {
+		return Integer.parseInt(systemConfigurationService.confValue("beCPG.remote.maxResults.limit"));
+	}
+	
+	
 	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
@@ -232,7 +249,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		}
 
 		if (maxResults == null || Boolean.TRUE.equals(limit)) {
-			queryBuilder.maxResults(RepoConsts.MAX_RESULTS_256);
+			queryBuilder.maxResults(Boolean.TRUE.equals(limit) ?  maxResultsLimit() :  RepoConsts.MAX_RESULTS_256);
 		} else {
 			queryBuilder.maxResults(maxResults);
 		}

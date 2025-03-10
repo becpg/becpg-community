@@ -105,10 +105,8 @@
 		
 		                              var MAX_RESULTS_UNLIMITED = -1;
 									
-		 							 beCPG.util.launchAsyncDownload("export.xlsx", "export.xlsx", dt._getDataUrl(MAX_RESULTS_UNLIMITED) + "&format=xlsx&metadata=" + encodeURIComponent(YAHOO.lang.JSON
-		                                    .stringify(requestParams)));  
+		 							 beCPG.util.launchAsyncDownload("export.xlsx", "export.xlsx", dt._getDataUrl(MAX_RESULTS_UNLIMITED) + "&format=xlsx" ,requestParams);  
 		                 
-
                                  },
                                  scope : this
                               }

@@ -94,6 +94,11 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 
 	private SysAdminParams sysAdminParams;
 
+	/**
+	 * <p>Constructor for JsonSchemaEntityVisitor.</p>
+	 *
+	 * @param remoteServiceRegisty a {@link fr.becpg.repo.entity.remote.RemoteServiceRegisty} object
+	 */
 	public JsonSchemaEntityVisitor(RemoteServiceRegisty remoteServiceRegisty) {
 		super( remoteServiceRegisty);
 		this.sysAdminParams = remoteServiceRegisty.sysAdminParams();
@@ -117,6 +122,7 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 
 	}
 
+	/** {@inheritDoc} */
 	public void visit(QName entityType, OutputStream result) throws IOException {
 		JSONObject root = new JSONObject();
 
@@ -204,10 +210,10 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 
 						if (propertyDefinition.isMultiValued()) {
 							JSONObject arrayDef = addProperty(entity, entityDictionaryService.toPrefixString(propName), TYPE_ARRAY,
-									propertyDefinition.getTitle(entityDictionaryService), propertyDefinition.getDescription(entityDictionaryService));
-							addProperty(arrayDef, entityDictionaryService.toPrefixString(propName), propertyDefinition);
+									entityDictionaryService.getTitle(propertyDefinition, entityType), entityDictionaryService.getDescription(propertyDefinition, entityType));
+							addProperty(entityType, arrayDef, entityDictionaryService.toPrefixString(propName), propertyDefinition);
 						} else {
-							addProperty(attributes, entityDictionaryService.toPrefixString(propName), propertyDefinition);
+							addProperty(entityType, attributes, entityDictionaryService.toPrefixString(propName), propertyDefinition);
 						}
 
 					} else {
@@ -255,16 +261,17 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void visitNode(NodeRef nodeRef, JSONObject entity, JsonVisitNodeType type, QName assocName, RemoteJSONContext context)
-			throws JSONException {
+			throws JSONException, RemoteException {
 		cacheList.add(nodeRef);
 		QName nodeType = nodeService.getType(nodeRef).getPrefixedQName(namespaceService);
 
 		if (JsonVisitNodeType.ENTITY.equals(type) || JsonVisitNodeType.CONTENT.equals(type) || JsonVisitNodeType.ASSOC.equals(type)
 				|| (JsonVisitNodeType.CHILD_ASSOC.equals(type) && !ContentModel.TYPE_FOLDER.equals(nodeType))) {
 
-			if (nodeService.getPrimaryParent(nodeRef) != null) {
+			if (getPrimaryParentRef(nodeRef) != null) {
 
 				addProperty(entity, RemoteEntityService.ATTR_PATH, TYPE_STRING, "Path of the entity", null);
 
@@ -324,6 +331,7 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void visitLists(NodeRef nodeRef, JSONObject entity, RemoteJSONContext context) throws JSONException {
 
@@ -371,6 +379,7 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void visitContent(NodeRef nodeRef, JSONObject entity) throws JSONException {
 		JSONObject object = addProperty(entity, RemoteEntityService.ELEM_CONTENT, TYPE_STRING, "Base64 Content", null);
@@ -378,8 +387,9 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 		//"contentMediaType": "image/png"
 	}
 
+	/** {@inheritDoc} */
 	@Override
-	protected void visitAssocs(NodeRef nodeRef, JSONObject entity, QName assocName, RemoteJSONContext context) throws JSONException {
+	protected void visitAssocs(NodeRef nodeRef, JSONObject entity, QName assocName, RemoteJSONContext context) throws JSONException, RemoteException {
 
 		TypeDefinition typeDef = entityDictionaryService.getType(nodeService.getType(nodeRef));
 		if (typeDef != null) {
@@ -482,41 +492,50 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void visitProps(NodeRef nodeRef, JSONObject entity, QName assocName, Map<QName, Serializable> props, RemoteJSONContext context)
 			throws JSONException {
-
 		if (props != null) {
 			for (Map.Entry<QName, Serializable> entry : props.entrySet()) {
-				QName propQName = entry.getKey();
 				QName propName = entry.getKey().getPrefixedQName(namespaceService);
-				if (!propQName.getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
-						&& !propQName.getNamespaceURI().equals(NamespaceService.RENDITION_MODEL_1_0_URI)
-						&& (!propQName.getNamespaceURI().equals(ReportModel.REPORT_URI) || matchProp(assocName, propName, true))
-						&& !propQName.equals(ContentModel.PROP_CONTENT) && params.shouldExtractField(propQName)) {
-					PropertyDefinition propertyDefinition = entityDictionaryService.getProperty(entry.getKey());
-					if (propertyDefinition != null) {
-						// Assoc properties filter
-						if (!matchProp(assocName, propName, false)) {
-							continue;
-						}
-
-						visitPropValue(propName, entity, entry.getValue(), context, propertyDefinition);
-					} else {
-						logger.debug("Properties not in dictionary: " + entry.getKey());
-					}
+				visitProp(nodeRef, entity, assocName, context, propName, entry.getValue());
+			}
+		}
+		if (params.getFilteredProperties() != null) {
+			for (QName propQName : params.getFilteredProperties()) {
+				if (props == null || !props.containsKey(propQName)) {
+					QName propName = propQName.getPrefixedQName(namespaceService);
+					visitProp(nodeRef, entity, assocName, context, propName, null);
 				}
 			}
 		}
+	}
 
+	private void visitProp(NodeRef nodeRef, JSONObject entity, QName assocName, RemoteJSONContext context, QName propQName, Serializable propValue) {
+		if (!propQName.getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
+				&& !propQName.getNamespaceURI().equals(NamespaceService.RENDITION_MODEL_1_0_URI)
+				&& (!propQName.getNamespaceURI().equals(ReportModel.REPORT_URI) || matchProp(assocName, propQName, true))
+				&& !propQName.equals(ContentModel.PROP_CONTENT) && params.shouldExtractField(propQName)) {
+			PropertyDefinition propertyDefinition = entityDictionaryService.getProperty(propQName);
+			if (propertyDefinition != null) {
+				// Assoc properties filter
+				if (!matchProp(assocName, propQName, false)) {
+					return;
+				}
+				visitPropValue(nodeRef, propQName, entity, propValue, context, propertyDefinition);
+			} else {
+				logger.debug("Properties not in dictionary: " + propQName);
+			}
+		}
 	}
 
 	@SuppressWarnings("unchecked")
-	private void visitPropValue(QName propType, JSONObject entity, Serializable value, RemoteJSONContext context,
+	private void visitPropValue(NodeRef entityNodeRef, QName propType, JSONObject entity, Serializable value, RemoteJSONContext context,
 			PropertyDefinition propertyDefinition) throws JSONException {
 		if (propertyDefinition.isMultiValued() && (value != null)) {
 			JSONObject arrayDef = addProperty(entity, entityDictionaryService.toPrefixString(propType), TYPE_ARRAY,
-					propertyDefinition.getTitle(entityDictionaryService), propertyDefinition.getDescription(entityDictionaryService));
+					entityDictionaryService.getTitle(propertyDefinition, nodeService.getType(entityNodeRef)), entityDictionaryService.getDescription(propertyDefinition, nodeService.getType(entityNodeRef)));
 			if (!((List<Serializable>) value).isEmpty()) {
 				JSONObject node = new JSONObject();
 				Serializable subEl = ((List<Serializable>) value).get(0);
@@ -538,19 +557,19 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 			}
 		} else if (value instanceof NodeRef) {
 			JSONObject node = addProperty(entity, entityDictionaryService.toPrefixString(propType), TYPE_OBJECT,
-					propertyDefinition.getTitle(entityDictionaryService), propertyDefinition.getDescription(entityDictionaryService));
+					entityDictionaryService.getTitle(propertyDefinition, nodeService.getType(entityNodeRef)), entityDictionaryService.getDescription(propertyDefinition, nodeService.getType(entityNodeRef)));
 			visitNode((NodeRef) value, node, JsonVisitNodeType.ASSOC, context);
 		} else {
 			if (RemoteHelper.isJSONValue(propType)) {
 				addProperty(entity, entityDictionaryService.toPrefixString(propType), TYPE_OBJECT,
-						propertyDefinition.getTitle(entityDictionaryService), propertyDefinition.getDescription(entityDictionaryService));
+						entityDictionaryService.getTitle(propertyDefinition, nodeService.getType(entityNodeRef)), entityDictionaryService.getDescription(propertyDefinition, nodeService.getType(entityNodeRef)));
 			} else {
-				addProperty(entity, entityDictionaryService.toPrefixString(propType), propertyDefinition);
+				addProperty(nodeService.getType(entityNodeRef), entity, entityDictionaryService.toPrefixString(propType), propertyDefinition);
 			}
 		}
 	}
 
-	private JSONObject addProperty(JSONObject entity, String attr, PropertyDefinition propertyDefinition) {
+	private JSONObject addProperty(QName entityType, JSONObject entity, String attr, PropertyDefinition propertyDefinition) {
 
 		JSONObject properties = new JSONObject();
 		if (entity.has(PROP_PROPERTIES)) {
@@ -621,13 +640,17 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 
 		}
 
-		object.put(PROP_TITLE, propertyDefinition.getTitle(entityDictionaryService));
-		if (propertyDefinition.getDescription(entityDictionaryService) != null) {
-			object.put(PROP_DESCRIPTION, propertyDefinition.getDescription(entityDictionaryService));
+		object.put(PROP_TITLE, entityDictionaryService.getTitle(propertyDefinition, entityType));
+		if (entityDictionaryService.getDescription(propertyDefinition, entityType) != null) {
+			object.put(PROP_DESCRIPTION, entityDictionaryService.getDescription(propertyDefinition, getJsonEntityType(entity)));
 		}
 		properties.put(attr, object);
 		return object;
 
+	}
+	
+	private QName getJsonEntityType(JSONObject entity) {
+		return QName.createQName(entity.getString(RemoteEntityService.ATTR_TYPE), namespaceService);
 	}
 
 	private JSONObject addProperty(JSONObject entity, String attr, String type, String title, String description, JSONObject object) {

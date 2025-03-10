@@ -132,8 +132,6 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 
 	private static final Log logger = LogFactory.getLog(EntityReportServiceImpl.class);
 
-	private static final String REPORT_KIND_SPLIT_REGEXP = "\\s*,\\s*";
-	
 	private static final List<String> SEMICOLON_SEPARATED_PROPERTIES = List.of("extraImagePaths");
 
 	@Autowired
@@ -221,11 +219,13 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	@Autowired
 	private BeCPGAuditService beCPGAuditService;
 	
+	/** {@inheritDoc} */
 	@Override
 	public String getChainId() {
 		return REPORT_FORMULATION_CHAIN_ID;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public boolean isChainActiveOnEntity(NodeRef entityNodeRef) {
 		NodeRef reportList = entityListDAO.getList(entityListDAO.getListContainer(entityNodeRef), "View-reports");
@@ -238,11 +238,13 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 		generateReports(null, entityNodeRef);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void generateReports(final NodeRef entityNodeRef, boolean generateAllReports) {
 		generateReports(null, entityNodeRef, generateAllReports);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void generateReports(final NodeRef nodeRefFrom, final NodeRef nodeRefTo) {
 		generateReports(nodeRefFrom, nodeRefTo, false);
@@ -253,11 +255,11 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 		ReentrantLock lock = mutexFactory.getMutex(nodeRefTo.toString());
 
 		try {
-			if (lock.tryLock()) {
+			 if (lock.tryLock() || lock.isHeldByCurrentThread()) { 
 				internalGenerateReports(nodeRefFrom != null ? nodeRefFrom : nodeRefTo, nodeRefTo, generateAllReports);
-			} else {
-				lock.lock();
-			}
+			}  else {
+	            logger.warn("Failed to acquire lock for NodeRef: " + nodeRefTo.toString());
+	        }
 		} finally {
 			if ((lock.isHeldByCurrentThread())) {
 				lock.unlock();
@@ -560,7 +562,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 				Element entityEl = entityIterator.next();
 				// get report parameters
 				if (entityEl.getName().equals(ReportModel.PROP_REPORT_PARAMETERS.getLocalName())) {
-					entityParams = entityEl.getStringValue().split(REPORT_KIND_SPLIT_REGEXP);
+					entityParams = splitReportKinds(entityEl.getStringValue());
 				}
 			}
 			
@@ -594,8 +596,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 
 			for (Iterator<Element> elIterator = dlEl.elementIterator(); elIterator.hasNext();) {
 				Element itemEl = elIterator.next();
-				String[] repKindCodes = itemEl.valueOf("@" + ReportModel.PROP_REPORT_KINDS_CODE.getLocalName())
-						.split(REPORT_KIND_SPLIT_REGEXP);
+				String[] repKindCodes = splitReportKinds(itemEl.valueOf("@" + ReportModel.PROP_REPORT_KINDS_CODE.getLocalName()));
 
 				if (Arrays.asList(repKindCodes).contains("None")) {
 					dlEl.remove(itemEl);
@@ -611,14 +612,21 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 			if (hasReportKindAspect) {
 				for (Iterator<Element> elIterator = dlEl.elementIterator(); elIterator.hasNext();) {
 					Element itemEl = elIterator.next();
-					String[] repKindCodes = itemEl.valueOf("@" + ReportModel.PROP_REPORT_KINDS_CODE.getLocalName())
-							.split(REPORT_KIND_SPLIT_REGEXP);
-					if (!Arrays.asList(repKindCodes).contains(reportKindCode) || (repKindCodes == null)) {
+					String[] repKindCodes = splitReportKinds(itemEl.valueOf("@" + ReportModel.PROP_REPORT_KINDS_CODE.getLocalName()));
+					if (!Arrays.asList(repKindCodes).contains(reportKindCode)) {
 						dlEl.remove(itemEl);
 					}
 				}
 			}
 		}
+	}
+
+	private String[] splitReportKinds(String input) {
+		String[] repKindCodes = input.split(",");
+		for (int i = 0; i < repKindCodes.length; i++) {
+	        repKindCodes[i] = repKindCodes[i].trim();
+	    }
+	    return repKindCodes;
 	}
 
 	/**
@@ -1477,6 +1485,17 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 			
 			if (entityNodeRef.getStoreRef().getProtocol().equals(VersionBaseModel.STORE_PROTOCOL)
 					|| entityNodeRef.getStoreRef().getIdentifier().equals(Version2Model.STORE_ID)) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Skip report generation because entity is a version");
+				}
+				return false;
+			}
+			
+			if (documentNodeRef != null && (documentNodeRef.getStoreRef().getProtocol().equals(VersionBaseModel.STORE_PROTOCOL)
+					|| documentNodeRef.getStoreRef().getIdentifier().equals(Version2Model.STORE_ID))) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Skip report generation because the report is a version");
+				}
 				return false;
 			}
 			
@@ -1596,6 +1615,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 		return ret;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> getReportsOfKind(NodeRef entityNodeRef, String reportKind) {
 
@@ -1665,6 +1685,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 		return documentNodeRef;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> getOrRefreshReportsOfKind(NodeRef entityNodeRef, String reportKind) {
 		if (shouldGenerateReport(entityNodeRef, null)) {
@@ -1678,7 +1699,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	@Override
 	@Nullable
 	public NodeRef getEntityNodeRef(NodeRef reportNodeRef) {
-		List<NodeRef> entityNodeRefs = associationService.getSourcesAssocs(reportNodeRef, ReportModel.ASSOC_REPORTS);
+		List<NodeRef> entityNodeRefs = associationService.getSourcesAssocs(reportNodeRef, ReportModel.ASSOC_REPORTS, true);
 		if ((entityNodeRefs != null) && !entityNodeRefs.isEmpty()) {
 			return entityNodeRefs.get(0);
 		}

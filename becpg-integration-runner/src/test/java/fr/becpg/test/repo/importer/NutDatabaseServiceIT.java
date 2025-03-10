@@ -51,7 +51,7 @@ public class NutDatabaseServiceIT extends PLMBaseTestCase {
 			NodeRef importedRM1 = nutDatabaseService.createProduct(csvFile, "5450", emptyRM);
 			assertNotNull(importedRM1);
 
-			ProductData importedRMdata = alfrescoRepository.findOne(importedRM1);
+			ProductData importedRMdata = (ProductData) alfrescoRepository.findOne(importedRM1);
 			assertNotNull(importedRMdata);
 			assertEquals(3, importedRMdata.getNutList().size());
 			int checks = 0;
@@ -78,7 +78,7 @@ public class NutDatabaseServiceIT extends PLMBaseTestCase {
 			checks = 0;
 			NodeRef importedRM2 = nutDatabaseService.createProduct(csvFile, "5451", emptyRM);
 			assertNotNull(importedRM2);
-			for (NutListDataItem nut : alfrescoRepository.findOne(importedRM2).getNutList()) {
+			for (NutListDataItem nut : ((ProductData) alfrescoRepository.findOne(importedRM2)).getNutList()) {
 
 				if ("Nut 2".equals(extractCharactName(nut.getCharactNodeRef()))) {
 					assertEquals(2.64d, nut.getValue());
@@ -99,7 +99,7 @@ public class NutDatabaseServiceIT extends PLMBaseTestCase {
 			checks = 0;
 			NodeRef importedRM3 = nutDatabaseService.createProduct(csvFile, "5452", emptyRM);
 			assertNotNull(importedRM3);
-			for (NutListDataItem nut : alfrescoRepository.findOne(importedRM3).getNutList()) {
+			for (NutListDataItem nut : ((ProductData) alfrescoRepository.findOne(importedRM3)).getNutList()) {
 
 				if ("Nut 2".equals(extractCharactName(nut.getCharactNodeRef()))) {
 					assertEquals(null, nut.getValue());

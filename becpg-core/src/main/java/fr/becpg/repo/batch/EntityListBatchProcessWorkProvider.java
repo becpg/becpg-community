@@ -11,9 +11,9 @@ import org.springframework.lang.NonNull;
 /**
  * <p>EntityListBatchProcessWorkProvider class.</p>
  *
+ *  Split lists into several batch of batch size (processing order is not guaranted)
+ *
  * @author matthieu
- * Split lists into several batch of batch size (processing order is not guaranted)
- * @param <T>
  * @version $Id: $Id
  */
 public class EntityListBatchProcessWorkProvider<T> implements BatchProcessWorkProvider<T> {

@@ -9,4 +9,6 @@ package fr.becpg.model;
 public class BeCPGPermissions {
 	/** Constant <code>MERGE_ENTITY="MergeEntity"</code> */
 	public static final String MERGE_ENTITY = "MergeEntity";
+	/** Constant <code>BRANCH_ENTITY="BranchEntity"</code> */
+	public static final String BRANCH_ENTITY = "BranchEntity";
 }

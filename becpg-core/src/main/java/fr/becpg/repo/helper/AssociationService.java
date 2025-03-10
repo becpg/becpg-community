@@ -25,7 +25,6 @@ import javax.annotation.Nullable;
 import org.alfresco.query.PagingRequest;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.service.namespace.QNamePattern;
 
 import fr.becpg.repo.helper.impl.AssociationCriteriaFilter;
 import fr.becpg.repo.helper.impl.ChildAssocCacheEntry;
@@ -107,6 +106,9 @@ public interface AssociationService {
 	 * @return a {@link java.util.List} object.
 	 */
 	List<NodeRef> getChildAssocs(NodeRef listNodeRef, QName assocContains, QName listQNameFilter,@Nullable Map<String, Boolean> sortMap);
+	
+	List<NodeRef> getSourcesAssocs(NodeRef nodeRef);
+	
 	/**
 	 * <p>getSourcesAssocs.</p>
 	 *
@@ -114,7 +116,23 @@ public interface AssociationService {
 	 * @param qNamePattern a {@link org.alfresco.service.namespace.QNamePattern} object.
 	 * @return a {@link java.util.List} object.
 	 */
-	List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QNamePattern qNamePattern);
+	List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QName qNamePattern);
+	
+	/**
+	 * <p>getSourcesAssocs.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param qNamePattern a {@link org.alfresco.service.namespace.QNamePattern} object
+	 * @param includeVersions a boolean
+	 * @return a {@link java.util.List} object
+	 */
+	List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QName qNamePattern, Boolean includeVersions);
+	
+	List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QName qNamePattern, Boolean includeVersions, Integer maxResults, Integer offset);
+	
+	List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QName qName, Boolean includeVersions, Integer maxResults, Integer offset,
+			boolean checkPermissions);
+	
 	/**
 	 * <p>getEntitySourceAssocs.</p>
 	 *
@@ -140,6 +158,8 @@ public interface AssociationService {
 	 */
 	List<EntitySourceAssoc> getEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocQName, QName listTypeQname, boolean isOrOperator, List<AssociationCriteriaFilter> criteriaFilters, PagingRequest pagingRequest);
 	
+	List<EntitySourceAssoc> getEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocQName, QName listTypeQname, boolean isOrOperator, List<AssociationCriteriaFilter> criteriaFilters, PagingRequest pagingRequest, boolean checkPermissions);
+	
 	
 	/**
 	 * <p>removeChildCachedAssoc.</p>
@@ -164,5 +184,6 @@ public interface AssociationService {
 	 * @return a {@link fr.becpg.repo.helper.impl.ChildAssocCacheEntry} object
 	 */
 	ChildAssocCacheEntry getChildAssocsByType(NodeRef nodeRef, QName qName);
+	
 	
 }

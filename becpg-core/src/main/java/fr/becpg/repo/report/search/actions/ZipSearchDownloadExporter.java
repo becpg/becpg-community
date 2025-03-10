@@ -44,6 +44,7 @@ import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.expressions.ExpressionService;
@@ -131,9 +132,6 @@ public class ZipSearchDownloadExporter implements Exporter {
 	 * Constructor for ZipSearchDownloadExporter.
 	 * </p>
 	 *
-	 * @param namespaceService
-	 *            a {@link org.alfresco.service.namespace.NamespaceService}
-	 *            object.
 	 * @param checkOutCheckInService
 	 *            a {@link org.alfresco.service.cmr.coci.CheckOutCheckInService}
 	 *            object.
@@ -157,6 +155,8 @@ public class ZipSearchDownloadExporter implements Exporter {
 	 *            a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param templateNodeRef
 	 *            a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param expressionService a {@link fr.becpg.repo.expressions.ExpressionService} object
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
 	 */
 	public ZipSearchDownloadExporter( CheckOutCheckInService checkOutCheckInService, NodeService nodeService,
 			RetryingTransactionHelper transactionHelper, DownloadStatusUpdateService updateService, DownloadStorage downloadStorage,
@@ -199,6 +199,11 @@ public class ZipSearchDownloadExporter implements Exporter {
 		ContentReader reader = contentService.getReader(templateNodeRef, ContentModel.PROP_CONTENT);
 
 		SAXReader saxReader = new SAXReader();
+		try {
+			saxReader.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+		} catch (SAXException e) {
+			log.error(e.getMessage(), e);
+		}
 
 		Document doc = saxReader.read(reader.getContentInputStream());
 		Element queryElt = doc.getRootElement();

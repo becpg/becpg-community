@@ -1,7 +1,6 @@
 package fr.becpg.repo.activity;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -9,7 +8,6 @@ import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.Pair;
 import org.json.JSONObject;
-
 
 import fr.becpg.repo.activity.data.ActivityEvent;
 import fr.becpg.repo.activity.data.ActivityListDataItem;
@@ -35,6 +33,7 @@ public interface EntityActivityService {
 	/** Constant <code>PROP_ENTITY_NODEREF="entityNodeRef"</code> */
 	static final String PROP_ENTITY_NODEREF = "entityNodeRef";
 	
+	/** Constant <code>PROP_PARENT_NAME="parentName"</code> */
 	static final String PROP_PARENT_NAME = "parentName";
 	/** Constant <code>PROP_ENTITY_TYPE="entityType"</code> */
 	static final String PROP_ENTITY_TYPE= "entityType";
@@ -66,8 +65,9 @@ public interface EntityActivityService {
 	/** Constant <code>AFTER="after"</code> */
 	static final String AFTER = "after";
 	
+	static final String ADDED_ASPECTS = "addedAspects";
+	static final String REMOVED_ASPECTS = "removedAspects";
 
-	
 
 	/**
 	 * <p>postCommentActivity.</p>
@@ -141,7 +141,7 @@ public interface EntityActivityService {
 	 * @param updatedProperties a {@link java.util.Map} object.
 	 * @return a boolean.
 	 */
-	boolean postEntityActivity(NodeRef entityNodeRef, ActivityType activityType, ActivityEvent activityEvent, Map<QName,Pair<List<Serializable>,List<Serializable>>> updatedProperties);
+	boolean postEntityActivity(NodeRef entityNodeRef, ActivityType activityType, ActivityEvent activityEvent, Map<QName,Pair<Serializable,Serializable>> updatedProperties);
 
 	/**
 	 * <p>postStateChangeActivity.</p>
@@ -174,6 +174,8 @@ public interface EntityActivityService {
 
 	/**
 	 * <p>cleanActivities.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.batch.BatchInfo} object
 	 */
 	BatchInfo cleanActivities();
 
@@ -208,8 +210,32 @@ public interface EntityActivityService {
 	 */
 	boolean isIgnoreStateProperty(QName propName);
 
+	/**
+	 * <p>postExportActivity.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param dataType a {@link org.alfresco.service.namespace.QName} object
+	 * @param fileName a {@link java.lang.String} object
+	 */
 	void postExportActivity(NodeRef entityNodeRef, QName dataType, String fileName);
 
+	/**
+	 * <p>postChangeOrderActivity.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param changeOrderNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
 	boolean postChangeOrderActivity(NodeRef entityNodeRef, NodeRef changeOrderNodeRef);
+
+	/**
+	 * <p>postDataListCopyActivity.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param sourceEntityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param sourceListNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param action a {@link java.lang.String} object
+	 */
+	void postDataListCopyActivity(NodeRef entityNodeRef, NodeRef sourceEntityNodeRef, NodeRef sourceListNodeRef, String action);
 
 }

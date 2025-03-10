@@ -69,18 +69,6 @@ public class ImportEntityJsonVisitor {
 
 	Set<String> ignoredKeys = new HashSet<>();
 
-	{
-		ignoredKeys.add(RemoteEntityService.ATTR_TYPE);
-		ignoredKeys.add(RemoteEntityService.ATTR_NAME);
-		ignoredKeys.add(RemoteEntityService.ATTR_PATH);
-		ignoredKeys.add(RemoteEntityService.ATTR_NODEREF);
-		ignoredKeys.add(RemoteEntityService.ELEM_ATTRIBUTES);
-		ignoredKeys.add(RemoteEntityService.ELEM_DATALISTS);
-		ignoredKeys.add(RemoteEntityService.ATTR_SITE);
-		ignoredKeys.add(RemoteEntityService.ATTR_PARENT_ID);
-		ignoredKeys.add(RemoteEntityService.ELEM_CONTENT);
-	}
-
 	private EntityDictionaryService entityDictionaryService;
 
 	private NamespaceService namespaceService;
@@ -101,16 +89,12 @@ public class ImportEntityJsonVisitor {
 
 	/**
 	 * <p>Constructor for ImportEntityJsonVisitor.</p>
-	 * @param serviceRegistry
 	 *
-	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object.
-	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
-	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object.
-	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
-	 * @param entityListDAO a {@link fr.becpg.repo.entity.EntityListDAO} object.
+	 * @param remoteRegisty a {@link fr.becpg.repo.entity.remote.RemoteServiceRegisty} object
 	 */
 	public ImportEntityJsonVisitor(RemoteServiceRegisty remoteRegisty) {
 		super();
+
 		this.entityDictionaryService = remoteRegisty.entityDictionaryService();
 		this.namespaceService = remoteRegisty.namespaceService();
 		this.associationService = remoteRegisty.associationService();
@@ -119,6 +103,17 @@ public class ImportEntityJsonVisitor {
 		this.mimetypeService = remoteRegisty.mimetypeService();
 		this.contentService = remoteRegisty.contentService();
 		this.permissionService = remoteRegisty.permissionService();
+		
+		ignoredKeys.add(RemoteEntityService.ATTR_TYPE);
+		ignoredKeys.add(RemoteEntityService.ATTR_NAME);
+		ignoredKeys.add(RemoteEntityService.ATTR_PATH);
+		ignoredKeys.add(RemoteEntityService.ATTR_NODEREF);
+		ignoredKeys.add(RemoteEntityService.ELEM_ATTRIBUTES);
+		ignoredKeys.add(RemoteEntityService.ELEM_DATALISTS);
+		ignoredKeys.add(RemoteEntityService.ATTR_SITE);
+		ignoredKeys.add(RemoteEntityService.ATTR_PARENT_ID);
+		ignoredKeys.add(RemoteEntityService.ELEM_CONTENT);
+		
 	}
 
 	/**
@@ -179,10 +174,10 @@ public class ImportEntityJsonVisitor {
 		QName type = null;
 
 		QName propName = ContentModel.PROP_NAME;
-		if(assocName == null) {
+		if (assocName == null) {
 			assocName = ContentModel.ASSOC_CONTAINS;
 		}
-		
+
 		boolean isInPath = false;
 		String path = null;
 
@@ -198,7 +193,7 @@ public class ImportEntityJsonVisitor {
 				if (context.getEntityNodeRef() != null) {
 					path = path.replace("~", context.getEntityPath(nodeService, namespaceService));
 				} else {
-					logger.debug("Path not found for: "+path);
+					logger.debug("Path not found for: " + path);
 					path = null;
 				}
 			}
@@ -266,8 +261,8 @@ public class ImportEntityJsonVisitor {
 
 			if (JsonVisitNodeType.CHILD_ASSOC.equals(jsonType)) {
 				if (parentNodeRef != null) {
-					if(logger.isDebugEnabled()) {
-						logger.debug("Try to find child: "+assocName+ " "+ (String) properties.get(propName));
+					if (logger.isDebugEnabled()) {
+						logger.debug("Try to find child: " + assocName + " " + (String) properties.get(propName));
 					}
 					entityNodeRef = nodeService.getChildByName(parentNodeRef, assocName, (String) properties.get(propName));
 				}
@@ -299,15 +294,15 @@ public class ImportEntityJsonVisitor {
 				if (parentNodeRef != null) {
 					errMsg += ", in path " + parentNodeRef;
 				}
-				
-				errMsg += ", isInPath " + isInPath+ ", lastRetry:"+context.isLastRetry();
+
+				errMsg += ", isInPath " + isInPath + ", lastRetry:" + context.isLastRetry();
 
 				if (isInPath && !context.isLastRetry()) {
 					// will be create later retry
 					context.setRetry(true);
 					logger.debug("Mark retring for :" + errMsg);
 				} else {
-				
+
 					throw new BeCPGException(errMsg);
 				}
 			}
@@ -325,11 +320,11 @@ public class ImportEntityJsonVisitor {
 		}
 
 		String name = null;
-		
-		if (properties.get(propName) instanceof String) {
-			name = (String) properties.get(propName);
-		} else if (properties.get(propName) instanceof MLText) {
-			name = ((MLText) properties.get(propName)).getDefaultValue();
+
+		if (properties.get(propName) instanceof String prop) {
+			name = prop;
+		} else if (properties.get(propName) instanceof MLText mlText) {
+			name = mlText.getDefaultValue();
 		}
 
 		if ((name == null) || name.trim().isEmpty()) {
@@ -341,7 +336,7 @@ public class ImportEntityJsonVisitor {
 			if (parentNodeRef == null) {
 				if (JsonVisitNodeType.CHILD_ASSOC.equals(jsonType)) {
 					context.setRetry(true);
-					if(logger.isDebugEnabled()) {
+					if (logger.isDebugEnabled()) {
 						logger.debug("Parent not found for child assoc retrying, with properties: " + properties.toString());
 					}
 					return null;
@@ -358,10 +353,8 @@ public class ImportEntityJsonVisitor {
 				throw new IllegalAccessError("You have no rights to perform this operation");
 			}
 
-			entityNodeRef = nodeService
-					.createNode(parentNodeRef, assocName,
-							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name)), type, properties)
-					.getChildRef();
+			entityNodeRef = nodeService.createNode(parentNodeRef, assocName,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name)), type, properties).getChildRef();
 
 			if (jsonEntityNodeRef != null) {
 				context.getCache().put(jsonEntityNodeRef, entityNodeRef);
@@ -384,31 +377,31 @@ public class ImportEntityJsonVisitor {
 
 		if (JsonVisitNodeType.ENTITY.equals(jsonType)) {
 			context.setEntityNodeRef(entityNodeRef);
-		} 
-			
+		}
+
 		NodeRef prevCurrentNodeRef = context.getCurrentNodeRef();
 		try {
 			context.setCurrentNodeRef(entityNodeRef);
 			if (entity.has(RemoteEntityService.ELEM_ATTRIBUTES)) {
 				associations.putAll(jsonToAssocs(entity.getJSONObject(RemoteEntityService.ELEM_ATTRIBUTES), context));
 			}
-	
+
 			for (Entry<QName, List<NodeRef>> assocEntry : associations.entrySet()) {
 				associationService.update(entityNodeRef, assocEntry.getKey(), assocEntry.getValue());
 			}
-	
+
 			if (entity.has(RemoteEntityService.ELEM_DATALISTS)) {
 				visitDataLists(entityNodeRef, entity.getJSONObject(RemoteEntityService.ELEM_DATALISTS), context);
 			}
-	
+
 			if (entity.has(RemoteEntityService.ELEM_CONTENT)) {
 				visitContent(entityNodeRef, name, entity.getString(RemoteEntityService.ELEM_CONTENT));
 			}
-			
+
 		} finally {
 			context.setCurrentNodeRef(prevCurrentNodeRef);
 		}
-		
+
 		return entityNodeRef;
 	}
 
@@ -425,7 +418,8 @@ public class ImportEntityJsonVisitor {
 
 	}
 
-	private NodeRef findNode(QName type, NodeRef parentNodeRef, Map<QName, Serializable> properties, Map<QName, List<NodeRef>> associations) throws JSONException {
+	private NodeRef findNode(QName type, NodeRef parentNodeRef, Map<QName, Serializable> properties, Map<QName, List<NodeRef>> associations)
+			throws JSONException {
 		if (properties.isEmpty() && associations.isEmpty()) {
 			return null;
 		}
@@ -444,14 +438,12 @@ public class ImportEntityJsonVisitor {
 		if (type != null) {
 			queryBuilder = queryBuilder.ofType(type);
 		}
-		
+
 		boolean ignorePath = false;
-		if(properties.containsKey(BeCPGModel.PROP_CODE)  || properties.containsKey(BeCPGModel.PROP_ERP_CODE)
-			&& 	Boolean.TRUE.equals(remoteParams.extractParams(RemoteParams.PARAM_IGNORE_PATH_FOR_SEARCH, Boolean.FALSE))
-				) {
+		if (properties.containsKey(BeCPGModel.PROP_CODE) || properties.containsKey(BeCPGModel.PROP_ERP_CODE)
+				&& Boolean.TRUE.equals(remoteParams.extractParams(RemoteParams.PARAM_IGNORE_PATH_FOR_SEARCH, Boolean.FALSE))) {
 			ignorePath = true;
 		}
-		
 
 		if (parentNodeRef != null && !ignorePath) {
 			queryBuilder = queryBuilder.inParent(parentNodeRef);
@@ -459,13 +451,13 @@ public class ImportEntityJsonVisitor {
 
 		for (Entry<QName, Serializable> entry : properties.entrySet()) {
 			if (entry.getValue() != null) {
-				
+
 				String stringValue = entry.getValue().toString();
-				
-				if (entry.getValue() instanceof MLText) {
-					stringValue = ((MLText) entry.getValue()).getDefaultValue();
+
+				if (entry.getValue() instanceof MLText mlText) {
+					stringValue = mlText.getDefaultValue();
 				}
-				
+
 				queryBuilder = queryBuilder.andPropEquals(entry.getKey(), stringValue);
 			}
 		}
@@ -539,11 +531,11 @@ public class ImportEntityJsonVisitor {
 				listNodeRef = entityListDAO.createList(listContainerNodeRef, dataListName, dataListQName);
 
 				ClassDefinition classDef = entityDictionaryService.getClass(dataListQName);
-				
+
 				if (classDef != null) {
 					MLText classTitleMLText = TranslateHelper.getTemplateTitleMLText(classDef.getName());
 					MLText classDescritptionMLText = TranslateHelper.getTemplateDescriptionMLText(classDef.getName());
-					
+
 					nodeService.setProperty(listNodeRef, ContentModel.PROP_TITLE, classTitleMLText);
 					nodeService.setProperty(listNodeRef, ContentModel.PROP_DESCRIPTION, classDescritptionMLText);
 				}
@@ -580,14 +572,14 @@ public class ImportEntityJsonVisitor {
 		}
 
 	}
-	
+
 	private String getListName(String qnameStr) {
 		if ((qnameStr != null) && qnameStr.contains("|")) {
 			return qnameStr.split("\\|")[1];
 		}
-		
+
 		QName qname;
-		
+
 		if ((qnameStr != null) && (qnameStr.indexOf(QName.NAMESPACE_BEGIN) != -1)) {
 			qname = QName.createQName(qnameStr);
 		} else {
@@ -695,10 +687,10 @@ public class ImportEntityJsonVisitor {
 						MLText mlValue = null;
 						if (nodeProps.get(propQName) != null) {
 
-							if (nodeProps.get(propQName) instanceof String) {
-								value = (String) nodeProps.get(propQName);
-							} else if (nodeProps.get(propQName) instanceof MLText) {
-								mlValue = (MLText) nodeProps.get(propQName);
+							if (nodeProps.get(propQName) instanceof String prop) {
+								value = prop;
+							} else if (nodeProps.get(propQName) instanceof MLText mlText) {
+								mlValue = mlText;
 							}
 
 						}
@@ -707,10 +699,10 @@ public class ImportEntityJsonVisitor {
 							String[] keyParts = key.split("_");
 							String localKey = keyParts.length > 0 ? keyParts[1] : "";
 							if (keyParts.length > 2) {
-							    localKey += "_" + keyParts[2];
+								localKey += "_" + keyParts[2];
 							}
 							Locale locale = MLTextHelper.parseLocale(localKey);
-							
+
 							if (MLTextHelper.isSupportedLocale(locale)) {
 								if (mlValue == null) {
 									mlValue = new MLText();
@@ -736,23 +728,23 @@ public class ImportEntityJsonVisitor {
 								MLText mlText = new MLText();
 
 								String content = value.substring(1, value.length() - 1);
-								
+
 								String[] contents = content.split(",");
 
 								for (String cont : contents) {
 									if (cont.contains(":")) {
 										String locale = cont.split(":")[0];
-										
+
 										Locale parseLocale = MLTextHelper.parseLocale(locale);
-										
+
 										if (MLTextHelper.isSupportedLocale(parseLocale)) {
 											int index = cont.indexOf(":");
 											String actualValue = cont.substring(index + 1);
-											
+
 											if (actualValue.length() > 1 && actualValue.startsWith("\"") && actualValue.endsWith("\"")) {
 												actualValue = actualValue.substring(1, actualValue.length() - 1);
 											}
-											
+
 											mlText.addValue(parseLocale, actualValue);
 										}
 									}
@@ -771,43 +763,28 @@ public class ImportEntityJsonVisitor {
 
 					} else if (!isMlText) {
 						Serializable value = null;
-						if ((entity.get(key) != null) && !JSONObject.NULL.equals(entity.get(key))) {
-							if (pd.isMultiValued() && entity.get(key) instanceof JSONArray ) {
+						Object entityValue = entity.get(key);
 
+						if (entityValue != null && !JSONObject.NULL.equals(entityValue)) {
+
+							QName dataTypeName = pd.getDataType().getName();
+
+							if (pd.isMultiValued() && entityValue instanceof JSONArray values) {
 								value = new ArrayList<Serializable>();
-								JSONArray values = entity.getJSONArray(key);
+
 								for (int i = 0; i < values.length(); i++) {
-
-									Serializable val;
-
-									if (pd.getDataType().getName().equals(DataTypeDefinition.NODE_REF) || pd.getDataType().getName().equals(DataTypeDefinition.CATEGORY) ) {
-										val = visit(values.getJSONObject(i), JsonVisitNodeType.ASSOC, propQName, context);
-									} else {
-										if (RemoteHelper.isJSONValue(propQName) || values.get(i) instanceof JSONObject) {
-											val = values.getJSONObject(i).toString();
-										} else {
-											val = (Serializable) values.get(i);
-										}
+									Serializable val = getSerializableValue(values.get(i), dataTypeName, propQName, context);
+									if (val != null) {
+										((List<Serializable>) value).add(val);
 									}
-									((List<Serializable>) value).add(val);
 								}
-
 							} else {
-								if (pd.getDataType().getName().equals(DataTypeDefinition.NODE_REF) || pd.getDataType().getName().equals(DataTypeDefinition.CATEGORY) ) {
-									value = visit(entity.getJSONObject(key), JsonVisitNodeType.ASSOC, propQName, context);
-								} else {
-									if (RemoteHelper.isJSONValue(propQName) || entity.get(key) instanceof JSONObject) {
-										value = entity.getJSONObject(key).toString();
-									} else {
-										value = (Serializable) entity.get(key);
-									}
-								}
+								value = getSerializableValue(entityValue, dataTypeName, propQName, context);
 							}
 							nodeProps.put(propQName, value);
 						} else {
 							nodeProps.put(propQName, null);
 						}
-
 					}
 
 				}
@@ -817,6 +794,26 @@ public class ImportEntityJsonVisitor {
 		}
 
 		return nodeProps;
+	}
+
+	private Serializable getSerializableValue(Object value, QName dataTypeName, QName propQName, RemoteJSONContext context) {
+		if (DataTypeDefinition.NODE_REF.equals(dataTypeName) || DataTypeDefinition.CATEGORY.equals(dataTypeName)) {
+			return visit((JSONObject) value, JsonVisitNodeType.ASSOC, propQName, context);
+		} else {
+
+			if (value instanceof JSONArray array) {
+				value = array.length() > 0 ? array.get(0) : null;
+			}
+
+			if (RemoteHelper.isJSONValue(propQName) || value instanceof JSONObject) {
+				return value!=null ? value.toString(): null;
+			} else if (value instanceof Serializable ret) {
+				return ret;
+			} else {
+				logger.warn("PropQName value is not serializable: " + propQName);
+				return null;
+			}
+		}
 	}
 
 	private NodeRef findNodeByPath(String parentPath) {

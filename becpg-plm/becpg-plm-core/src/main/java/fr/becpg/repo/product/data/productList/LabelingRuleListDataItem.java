@@ -54,6 +54,7 @@ public class LabelingRuleListDataItem extends BeCPGDataObject implements Synchro
 	
 	private String formula;
 	private MLText label;
+	private MLText mlTitle;
 	private LabelingRuleType labelingRuleType;
 	private List<NodeRef> components = new ArrayList<>();
 	private List<NodeRef> replacements = new ArrayList<>();
@@ -63,6 +64,26 @@ public class LabelingRuleListDataItem extends BeCPGDataObject implements Synchro
 	private SynchronisableState synchronisableState = SynchronisableState.Synchronized;
 
 	
+	/**
+	 * <p>Getter for the field <code>title</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
+	@AlfMlText
+	@AlfProp
+	@AlfQname(qname = "cm:title")
+	public MLText getMlTitle() {
+		return mlTitle;
+	}
+
+	/**
+	 * <p>Setter for the field <code>mlTitle</code>.</p>
+	 *
+	 * @param mlTitle a {@link org.alfresco.service.cmr.repository.MLText} object
+	 */
+	public void setMlTitle(MLText mlTitle) {
+		this.mlTitle = mlTitle;
+	}
 
 	
 
@@ -284,6 +305,72 @@ public class LabelingRuleListDataItem extends BeCPGDataObject implements Synchro
 	public LabelingRuleListDataItem() {
 		super();
 	}
+	
+	/**
+	 * <p>build.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.productList.LabelingRuleListDataItem} object
+	 */
+	public static LabelingRuleListDataItem build() {
+		return new LabelingRuleListDataItem();
+	}
+
+	
+	/**
+	 * <p>withName.</p>
+	 *
+	 * @param name a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.LabelingRuleListDataItem} object
+	 */
+	public LabelingRuleListDataItem withName(String name) {
+		this.name = name;
+		return this;
+	}
+	
+	/**
+	 * <p>withFormula.</p>
+	 *
+	 * @param formula a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.LabelingRuleListDataItem} object
+	 */
+	public LabelingRuleListDataItem withFormula(String formula) {
+		this.formula = formula;
+		return this;
+	}
+	
+	/**
+	 * <p>withLabelingRuleType.</p>
+	 *
+	 * @param labelingRuleType a {@link fr.becpg.repo.product.data.constraints.LabelingRuleType} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.LabelingRuleListDataItem} object
+	 */
+	public LabelingRuleListDataItem withLabelingRuleType(LabelingRuleType labelingRuleType) {
+		this.labelingRuleType = labelingRuleType;
+		return this;
+	}
+
+	/**
+	 * <p>withComponents.</p>
+	 *
+	 * @param components a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.LabelingRuleListDataItem} object
+	 */
+	public LabelingRuleListDataItem withComponents( List<NodeRef> components) {
+		this.components = components;
+		return this;
+	}
+	
+
+	/**
+	 * <p>withReplacements.</p>
+	 *
+	 * @param replacements a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.LabelingRuleListDataItem} object
+	 */
+	public LabelingRuleListDataItem withReplacements( List<NodeRef> replacements) {
+		this.replacements = replacements;
+		return this;
+	}
 
 	/**
 	 * <p>Constructor for LabelingRuleListDataItem.</p>
@@ -292,6 +379,7 @@ public class LabelingRuleListDataItem extends BeCPGDataObject implements Synchro
 	 * @param formula a {@link java.lang.String} object.
 	 * @param labelingRuleType a {@link fr.becpg.repo.product.data.constraints.LabelingRuleType} object.
 	 */
+	@Deprecated
 	public LabelingRuleListDataItem(String name, String formula, LabelingRuleType labelingRuleType) {
 		super();
 		this.name = name;
@@ -312,6 +400,7 @@ public class LabelingRuleListDataItem extends BeCPGDataObject implements Synchro
 	 * @param components a {@link java.util.List} object.
 	 * @param replacements a {@link java.util.List} object.
 	 */
+	@Deprecated
 	public LabelingRuleListDataItem(String name, String formula, LabelingRuleType labelingRuleType, List<NodeRef> components, List<NodeRef> replacements) {
 		super();
 		this.name = name;

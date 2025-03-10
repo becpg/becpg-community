@@ -74,10 +74,9 @@ import fr.becpg.repo.system.SystemConfigurationService;
  */
 @Service
 public class DefaultCompareEntityServicePlugin implements CompareEntityServicePlugin {
-	
-	
+
 	private static final Log logger = LogFactory.getLog(DefaultCompareEntityServicePlugin.class);
-	
+
 	private static final String COMPARISON_SEPARATOR = " - ";
 
 	private static final int COMPARE_MAX_PRECISION = 9;
@@ -101,7 +100,7 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 	protected AssociationService associationService;
 
 	@Autowired
-	private AttributeExtractorService attributeExtractorService;
+	protected AttributeExtractorService attributeExtractorService;
 
 	@Autowired
 	private EntityDictionaryService entityDictionaryService;
@@ -114,13 +113,13 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 
 	@Autowired
 	private FileFolderService fileFolderService;
-	
+
 	@Value("${beCPG.comparison.pivots}")
 	private String customPivots;
 
 	@Autowired
 	private SystemConfigurationService systemConfigurationService;
-	
+
 	private String customNames() {
 		return systemConfigurationService.confValue("beCPG.comparison.name.format");
 	}
@@ -144,7 +143,7 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 		String comparison = nodeService.getProperty(entity1NodeRef, ContentModel.PROP_NAME) + COMPARISON_SEPARATOR
 				+ nodeService.getProperty(entity2NodeRef, ContentModel.PROP_NAME) + COMPARISON_SEPARATOR + "Documents";
 
-		compareFiles(1, entity1NodeRef, entity2NodeRef, structCompareResults, new ArrayList<StructCompareResultDataItem>(), comparison, true);
+		compareFiles(1, entity1NodeRef, entity2NodeRef, structCompareResults, new ArrayList<>(), comparison, true);
 
 		// load datalists
 		List<String> comparedDataLists = new ArrayList<>();
@@ -204,7 +203,7 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 			}
 		}
 	}
-	
+
 	/**
 	 * <p>multiLevelComparison.</p>
 	 *
@@ -218,8 +217,9 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 	 * @param comparisonMap a {@link java.util.Map} object
 	 * @param totalQty an array of {@link double} objects
 	 */
-	protected void multiLevelComparison(QName dataListType, String charactName, String pivotKey, NodeRef entity1NodeRef, NodeRef entity2NodeRef, 
-			int nbEntities, int comparisonPosition, Map<String, CompareResultDataItem> comparisonMap, double[] totalQty) {}
+	protected void multiLevelComparison(QName dataListType, String charactName, String pivotKey, NodeRef entity1NodeRef, NodeRef entity2NodeRef,
+			int nbEntities, int comparisonPosition, Map<String, CompareResultDataItem> comparisonMap, double[] totalQty) {
+	}
 
 	private Pair<List<StructCompareResultDataItem>, Boolean> compareFiles(int depthLevel, NodeRef entity1, NodeRef entity2,
 			Map<String, List<StructCompareResultDataItem>> structCompareResults, List<StructCompareResultDataItem> structCompareListTMP,
@@ -246,12 +246,12 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 
 				if (fileName1.equals(fileName2)) {
 					ContentData contentRef1 = (ContentData) nodeService.getProperty(fileNodeRef1, ContentModel.PROP_CONTENT);
-					Long size1 = contentRef1!=null ? contentRef1.getSize() :null;
+					Long size1 = contentRef1 != null ? contentRef1.getSize() : null;
 
 					ContentData contentRef2 = (ContentData) nodeService.getProperty(fileNodeRef2, ContentModel.PROP_CONTENT);
-					Long size2 = contentRef2!=null ? contentRef2.getSize(): null;
+					Long size2 = contentRef2 != null ? contentRef2.getSize() : null;
 
-					if (size1!=null && !size1.equals(size2)) {
+					if ((size1 != null) && !size1.equals(size2)) {
 						properties1 = new TreeMap<>();
 						properties2 = new TreeMap<>();
 
@@ -463,8 +463,8 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 		return QName.createQName((String) nodeService.getProperty(listNodeRef, DataListModel.PROP_DATALISTITEMTYPE), namespaceService);
 	}
 
-	private void compareDataLists(QName dataListType, NodeRef dataList1NodeRef, NodeRef dataList2NodeRef, 
-			int nbEntities, int comparisonPosition, Map<String, CompareResultDataItem> comparisonMap) {
+	private void compareDataLists(QName dataListType, NodeRef dataList1NodeRef, NodeRef dataList2NodeRef, int nbEntities, int comparisonPosition,
+			Map<String, CompareResultDataItem> comparisonMap) {
 
 		List<QName> pivotProperties = getPivotForComparison(dataListType);
 
@@ -519,8 +519,8 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 						}
 					}
 
-					if(dataListItem2NodeRef == null && logger.isDebugEnabled()) {
-						logger.debug("Missing key: "+pivot1Key);
+					if ((dataListItem2NodeRef == null) && logger.isDebugEnabled()) {
+						logger.debug("Missing key: " + pivot1Key);
 					}
 
 					CharacteristicToCompare characteristicToCmp = new CharacteristicToCompare(pivot1Key, dataListItem1, dataListItem2NodeRef);
@@ -543,16 +543,16 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 					pivot2Keys.add(pivot2Key);
 
 					if (!pivot1Keys.contains(pivot2Key)) {
-						logger.debug("Missing key: "+pivot2Key);
+						logger.debug("Missing key: " + pivot2Key);
 
-						CharacteristicToCompare characteristicToCmp = new CharacteristicToCompare( pivot2Key, null, d);
+						CharacteristicToCompare characteristicToCmp = new CharacteristicToCompare(pivot2Key, null, d);
 						characteristicsToCmp.add(characteristicToCmp);
 					}
 				}
 			}
 
 			// Store total qty for before multiLevelComparison
-			double[] totalQty = new double[] {0,0};
+			double[] totalQty = new double[nbEntities];
 
 			// compare properties of characteristics
 			for (CharacteristicToCompare c : characteristicsToCmp) {
@@ -569,7 +569,7 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 							nameFormat = dataType.split(Pattern.quote("|"))[1];
 						}
 					}
-					if (!nameFormat.isEmpty() && itemNodeRef != null) {
+					if (!nameFormat.isEmpty() && (itemNodeRef != null)) {
 						charactName = attributeExtractorService.extractExpr(nameFormat, itemNodeRef);
 					}
 				}
@@ -583,7 +583,8 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 					calculateDataListsQty(c.getNodeRef2(), dataListType, comparisonMap, charactName, nbEntities, totalQty, comparisonPosition);
 				}
 
-				compareNode(dataListType, charactName, c.getPivotKey(), c.getNodeRef1(), c.getNodeRef2(), nbEntities, comparisonPosition, true, comparisonMap);
+				compareNode(dataListType, charactName, c.getPivotKey(), c.getNodeRef1(), c.getNodeRef2(), nbEntities, comparisonPosition, true,
+						comparisonMap);
 			}
 
 			for (CharacteristicToCompare c : characteristicsToCmp) {
@@ -600,41 +601,47 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 							nameFormat = dataType.split(Pattern.quote("|"))[1];
 						}
 					}
-					if (!nameFormat.isEmpty() && itemNodeRef != null) {
+					if (!nameFormat.isEmpty() && (itemNodeRef != null)) {
 						charactName = attributeExtractorService.extractExpr(nameFormat, itemNodeRef);
 					}
 				}
 
-				multiLevelComparison(dataListType, charactName, c.getPivotKey(), c.getNodeRef1(), c.getNodeRef2(),
-						nbEntities, comparisonPosition, comparisonMap, totalQty);
+				multiLevelComparison(dataListType, charactName, c.getPivotKey(), c.getNodeRef1(), c.getNodeRef2(), nbEntities, comparisonPosition,
+						comparisonMap, totalQty);
 			}
 		}
 	}
 
-	private void calculateDataListsQty(NodeRef nodeRef, QName dataListType, Map<String, CompareResultDataItem> comparisonMap, 
-			String charactName, int nbEntities, double[] totalQty, int position) {
+	private void calculateDataListsQty(NodeRef nodeRef, QName dataListType, Map<String, CompareResultDataItem> comparisonMap, String charactName,
+			int nbEntities, double[] totalQty, int position) {
 		CompositionDataItem item = null;
 		CurrentLevelQuantities levelQuantities1 = null;
 		ProductData productData = null;
-		
+
 		if (dataListType.equals(PLMModel.TYPE_COMPOLIST)) {
 			var compoListItem = (CompoListDataItem) alfrescoRepository.findOne(nodeRef);
-			item = compoListItem;
-			productData = (ProductData) alfrescoRepository.findOne(compoListItem.getComponent());
-			levelQuantities1 = new CurrentLevelQuantities(alfrescoRepository, packagingHelper, productData, compoListItem);
-			totalQty[position] += levelQuantities1.getQtyForProduct() * 1000;
+			if ((compoListItem != null) && (compoListItem.getComponent() != null)) {
+				item = compoListItem;
+				productData = (ProductData) alfrescoRepository.findOne(compoListItem.getComponent());
+				levelQuantities1 = new CurrentLevelQuantities(alfrescoRepository, packagingHelper, productData, compoListItem);
+				totalQty[position] += levelQuantities1.getQtyForProduct() * 1000;
+			}
 		} else if (dataListType.equals(PLMModel.TYPE_PACKAGINGLIST)) {
 			var pakagingListItem = (PackagingListDataItem) alfrescoRepository.findOne(nodeRef);
-			item = pakagingListItem;
-			productData = (ProductData) alfrescoRepository.findOne(pakagingListItem.getComponent());
-			levelQuantities1 = new CurrentLevelQuantities(alfrescoRepository, productData, pakagingListItem);
-			totalQty[position] += levelQuantities1.getQtyForProduct();
+			if ((pakagingListItem != null) && (pakagingListItem.getComponent() != null)) {
+				item = pakagingListItem;
+				productData = (ProductData) alfrescoRepository.findOne(pakagingListItem.getComponent());
+				levelQuantities1 = new CurrentLevelQuantities(alfrescoRepository, productData, pakagingListItem);
+				totalQty[position] += levelQuantities1.getQtyForProduct();
+			}
 		} else if (dataListType.equals(MPMModel.TYPE_PROCESSLIST)) {
 			var processListItem = (ProcessListDataItem) alfrescoRepository.findOne(nodeRef);
-			item = processListItem;
-			productData = (ProductData) alfrescoRepository.findOne(processListItem.getComponent());
-			levelQuantities1 = new CurrentLevelQuantities(nodeService, alfrescoRepository, productData, processListItem);
-			totalQty[position] += levelQuantities1.getQtyForProduct();
+			if ((processListItem != null) && (processListItem.getComponent() != null)) {
+				item = processListItem;
+				productData = (ProductData) alfrescoRepository.findOne(processListItem.getComponent());
+				levelQuantities1 = new CurrentLevelQuantities(nodeService, alfrescoRepository, productData, processListItem);
+				totalQty[position] += levelQuantities1.getQtyForProduct();
+			}
 		}
 
 		if ((item != null) && (productData != null)) {
@@ -644,78 +651,81 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 
 	private void calculateDataListQty(ProductData productData, CompositionDataItem item, Map<String, CompareResultDataItem> comparisonMap,
 			String charactName, QName dataListType, String pivotKey, int nbEntities, int comparisonPosition) {
-			CurrentLevelQuantities levelQuantities = null;
-			QName qtyProperty = null;
-			Double qtyForProduct = null;
+		CurrentLevelQuantities levelQuantities = null;
+		QName qtyProperty = null;
+		Double qtyForProduct = null;
+
+		if (dataListType.equals(PLMModel.TYPE_COMPOLIST)) {
+			var compoListItem = (CompoListDataItem) item;
+			levelQuantities = new CurrentLevelQuantities(alfrescoRepository, packagingHelper, productData, compoListItem);
+			qtyProperty = PLMModel.PROP_COMPOLIST_QTY_FOR_PRODUCT;
+			qtyForProduct = levelQuantities.getQtyForProduct() * 1000;
+		} else if (dataListType.equals(PLMModel.TYPE_PACKAGINGLIST)) {
+			var packagingListItem = (PackagingListDataItem) item;
+			levelQuantities = new CurrentLevelQuantities(alfrescoRepository, productData, packagingListItem);
+			qtyProperty = PLMModel.PROP_PACKAGINGLIST_QTY_FOR_PRODUCT;
+			qtyForProduct = levelQuantities.getQtyForProduct();
+		} else if (dataListType.equals(MPMModel.TYPE_PROCESSLIST)) {
+			var processListItem = (ProcessListDataItem) item;
+			levelQuantities = new CurrentLevelQuantities(nodeService, alfrescoRepository, productData, processListItem);
+			qtyProperty = MPMModel.PROP_PL_QTY_FOR_PRODUCT;
+			qtyForProduct = levelQuantities.getQtyForProduct();
+		}
+
+		if (qtyProperty != null) {
+			String key = String.format("%s-%s-%s", dataListType, pivotKey, qtyProperty);
+			CompareResultDataItem comparisonDataItem = comparisonMap.get(key);
+
+			if ((comparisonDataItem == null)) {
+				String[] values = new String[nbEntities];
+				values[comparisonPosition] = Double.toString(qtyForProduct);
+				comparisonDataItem = new CompareResultDataItem(dataListType, charactName, pivotKey, qtyProperty, values);
+				comparisonMap.put(key, comparisonDataItem);
+			} else {
+				String value = comparisonDataItem.getValues()[comparisonPosition];
+				if (value != null) {
+					qtyForProduct += Double.parseDouble(value);
+				}
+				String qtyForProductStr = Double.toString(qtyForProduct);
+				comparisonDataItem.getValues()[comparisonPosition] = qtyForProductStr;
+
+				if (!qtyForProductStr.equals(comparisonDataItem.getValues()[0])) {
+					comparisonDataItem.setDifferent(true);
+				}
+			}
 
 			if (dataListType.equals(PLMModel.TYPE_COMPOLIST)) {
-				var compoListItem = (CompoListDataItem) item;
-				levelQuantities = new CurrentLevelQuantities(alfrescoRepository, packagingHelper, productData, compoListItem);
-				qtyProperty = PLMModel.PROP_COMPOLIST_QTY_FOR_PRODUCT;
-				qtyForProduct = levelQuantities.getQtyForProduct() * 1000;
+				for (CompoListDataItem compoItem : productData.getCompoList()) {
+					ProductData itemProduct = (ProductData) alfrescoRepository.findOne(compoItem.getProduct());
+					charactName = attributeExtractorService.extractPropName(compoItem.getProduct());
+					calculateDataListQty(itemProduct, compoItem, comparisonMap, charactName, dataListType, charactName, nbEntities,
+							comparisonPosition);
+				}
 			} else if (dataListType.equals(PLMModel.TYPE_PACKAGINGLIST)) {
-				var packagingListItem = (PackagingListDataItem) item;
-				levelQuantities = new CurrentLevelQuantities(alfrescoRepository, productData, packagingListItem);
-				qtyProperty = PLMModel.PROP_PACKAGINGLIST_QTY_FOR_PRODUCT;
-				qtyForProduct = levelQuantities.getQtyForProduct();
+				for (PackagingListDataItem packagingItem : productData.getPackagingList()) {
+					ProductData itemProduct = (ProductData) alfrescoRepository.findOne(packagingItem.getProduct());
+					charactName = attributeExtractorService.extractPropName(packagingItem.getProduct());
+					calculateDataListQty(itemProduct, packagingItem, comparisonMap, charactName, dataListType, charactName, nbEntities,
+							comparisonPosition);
+				}
 			} else if (dataListType.equals(MPMModel.TYPE_PROCESSLIST)) {
-				var processListItem = (ProcessListDataItem) item;
-				levelQuantities = new CurrentLevelQuantities(nodeService, alfrescoRepository, productData, processListItem);
-				qtyProperty = MPMModel.PROP_PL_QTY_FOR_PRODUCT;
-				qtyForProduct = levelQuantities.getQtyForProduct();
-			}
-
-			if (qtyProperty != null) {
-				String key = String.format("%s-%s-%s", dataListType, pivotKey, qtyProperty);
-				CompareResultDataItem comparisonDataItem = comparisonMap.get(key);
-	
-				if ((comparisonDataItem == null)) {
-					String[] values = new String[nbEntities];
-					values[comparisonPosition] = Double.toString(qtyForProduct);
-					comparisonDataItem = new CompareResultDataItem(dataListType, charactName, pivotKey, qtyProperty, values);
-					comparisonMap.put(key, comparisonDataItem);
-				} else {
-					String value = comparisonDataItem.getValues()[comparisonPosition];
-					if (value != null) {
-						qtyForProduct += Double.parseDouble(value);
-					}
-					String qtyForProductStr = Double.toString(qtyForProduct);
-					comparisonDataItem.getValues()[comparisonPosition] = qtyForProductStr;
-					
-					if (!qtyForProductStr.equals(comparisonDataItem.getValues()[0])) {
-						comparisonDataItem.setDifferent(true);
-					}
-				}
-	
-				if (dataListType.equals(PLMModel.TYPE_COMPOLIST)) {
-					for (CompoListDataItem compoItem: productData.getCompoList()) {
-						ProductData itemProduct = (ProductData) alfrescoRepository.findOne(compoItem.getProduct());
-						charactName = itemProduct.getName();
-						calculateDataListQty(itemProduct, compoItem, comparisonMap, charactName, dataListType, charactName, nbEntities, comparisonPosition);
-					}
-				} else if (dataListType.equals(PLMModel.TYPE_PACKAGINGLIST)) {
-					for (PackagingListDataItem packagingItem: productData.getPackagingList()) {
-						ProductData itemProduct = (ProductData) alfrescoRepository.findOne(packagingItem.getProduct());
-						charactName = itemProduct.getName();
-						calculateDataListQty(itemProduct, packagingItem, comparisonMap, charactName, dataListType, charactName, nbEntities, comparisonPosition);
-					}
-				} else if (dataListType.equals(MPMModel.TYPE_PROCESSLIST)) {
-					for (ProcessListDataItem processItem: productData.getProcessList()) {
-						ProductData itemProduct = (ProductData) alfrescoRepository.findOne(processItem.getProduct());
-						charactName = itemProduct.getName();
-						calculateDataListQty(itemProduct, processItem, comparisonMap, charactName, dataListType, charactName, nbEntities, comparisonPosition);
-					}
+				for (ProcessListDataItem processItem : productData.getProcessList()) {
+					ProductData itemProduct = (ProductData) alfrescoRepository.findOne(processItem.getProduct());
+					charactName = attributeExtractorService.extractPropName(processItem.getProduct());
+					calculateDataListQty(itemProduct, processItem, comparisonMap, charactName, dataListType, charactName, nbEntities,
+							comparisonPosition);
 				}
 			}
+		}
 	}
 
 	private String extractCharactName(NodeRef itemNodeRef, QName pivotAssoc) {
-		if(itemNodeRef!=null) {
+		if (itemNodeRef != null) {
 			if (pivotAssoc != null) {
 				NodeRef part = associationService.getTargetAssoc(itemNodeRef, pivotAssoc);
 				if ((part != null)) {
 					return attributeExtractorService.extractPropName(part);
-				}else {
+				} else {
 					return "";
 				}
 			}
@@ -812,7 +822,7 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 				StructCompareOperator operator = StructCompareOperator.Equal;
 
 				Map<String, CompareResultDataItem> comparisonMap = new TreeMap<>();
-				compareNode(entityListType,null , null, nodeRef1, nodeRef2, 2, 1, true, comparisonMap);
+				compareNode(entityListType, null, null, nodeRef1, nodeRef2, 2, 1, true, comparisonMap);
 
 				if (logger.isDebugEnabled()) {
 					logger.debug("structCompareCompositeDataLists: nodeRef1: " + nodeRef1 + " - nodeRef2: " + nodeRef2 + " pivotProperty: "
@@ -937,8 +947,8 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 					oValue2 = properties2.get(propertyQName);
 				}
 
-				compareValues(dataListType, charactName, privotKey, propertyQName, oValue1, oValue2, nbEntities, comparisonPosition,
-						comparisonMap, propertyFormats);
+				compareValues(dataListType, charactName, privotKey, propertyQName, oValue1, oValue2, nbEntities, comparisonPosition, comparisonMap,
+						propertyFormats);
 			}
 		}
 
@@ -1020,7 +1030,7 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 					isDifferent = true;
 				}
 
-				compareAssocs(dataListType,  charactName,  privotKey, propertyQName, nodeRefs1, nodeRefs2, nbEntities, comparisonPosition,
+				compareAssocs(dataListType, charactName, privotKey, propertyQName, nodeRefs1, nodeRefs2, nbEntities, comparisonPosition,
 						comparisonMap, isDifferent);
 			}
 		}
@@ -1036,7 +1046,7 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 
 	}
 
-	private void compareAssocs(QName dataListType,String charactName,  String privotKey, QName propertyQName, List<NodeRef> nodeRefs1,
+	private void compareAssocs(QName dataListType, String charactName, String privotKey, QName propertyQName, List<NodeRef> nodeRefs1,
 			List<NodeRef> nodeRefs2, int nbEntities, int comparisonPosition, Map<String, CompareResultDataItem> comparisonMap, boolean isDifferent) {
 
 		String strValue1 = null;
@@ -1086,24 +1096,28 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 		String strValue1 = attributeExtractorService.extractPropertyForReport(propertyDef, oValue1, propertyFormats, true);
 		String strValue2 = attributeExtractorService.extractPropertyForReport(propertyDef, oValue2, propertyFormats, true);
 
-		if (oValue1 != null) {
-
-			if (oValue2 != null) {
-				if (propertyDef.getDataType().toString().equals(DataTypeDefinition.DOUBLE.toString())
-						|| propertyDef.getDataType().toString().equals(DataTypeDefinition.FLOAT.toString())
-						|| propertyDef.getDataType().toString().equals(DataTypeDefinition.DATE.toString())
-						|| propertyDef.getDataType().toString().equals(DataTypeDefinition.DATETIME.toString())) {
-
-					if (strValue1.equals(strValue2)) {
-						isDifferent = false;
-					}
-
-				} else if (oValue1.equals(oValue2)) {
+		if (propertyDef.getDataType().toString().equals(DataTypeDefinition.DOUBLE.toString())
+				|| propertyDef.getDataType().toString().equals(DataTypeDefinition.FLOAT.toString())
+				|| propertyDef.getDataType().toString().equals(DataTypeDefinition.DATE.toString())
+				|| propertyDef.getDataType().toString().equals(DataTypeDefinition.DATETIME.toString())
+				|| propertyDef.getDataType().toString().equals(DataTypeDefinition.TEXT.toString())) {
+			if (strValue1 == null) {
+				strValue1 = "";
+			}
+			if (strValue2 == null) {
+				strValue2 = "";
+			}
+			if (strValue1.trim().equals(strValue2.trim())) {
+				isDifferent = false;
+			}
+		} else {
+			if (oValue1 != null) {
+				if (oValue1.equals(oValue2)) {
 					isDifferent = false;
 				}
+			} else if (oValue2 == null) {
+				isDifferent = false;
 			}
-		} else if (oValue2 == null) {
-			isDifferent = false;
 		}
 
 		addComparisonDataItem(comparisonMap, dataListType, charactName, privotKey, propertyQName, strValue1, strValue2, nbEntities,
@@ -1124,9 +1138,8 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 	 * @param comparisonPosition a int
 	 * @param isDifferent a boolean
 	 */
-	protected void addComparisonDataItem(Map<String, CompareResultDataItem> comparisonMap, QName dataListType,
-			String charactName, String pivotKey, QName propertyQName, String strValue1, String strValue2, int nbEntities, int comparisonPosition,
-			boolean isDifferent) {
+	protected void addComparisonDataItem(Map<String, CompareResultDataItem> comparisonMap, QName dataListType, String charactName, String pivotKey,
+			QName propertyQName, String strValue1, String strValue2, int nbEntities, int comparisonPosition, boolean isDifferent) {
 
 		String key = String.format("%s-%s-%s", dataListType, pivotKey, propertyQName);
 
@@ -1184,10 +1197,8 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 
 		}
 
-		if (res.isEmpty()) {
-			if((entityDictionaryService.getDefaultPivotAssoc(type) != null)) {
-				res.add(entityDictionaryService.getDefaultPivotAssoc(type));
-			}
+		if (res.isEmpty() && (entityDictionaryService.getDefaultPivotAssoc(type) != null)) {
+			res.add(entityDictionaryService.getDefaultPivotAssoc(type));
 		}
 
 		return res;
@@ -1203,7 +1214,7 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 				res += (res.isEmpty() ? "" : "|") + nodeService.getProperty(node, pivot);
 			} else {
 				NodeRef targetAssoc = associationService.getTargetAssoc(node, pivot);
-				if (targetAssoc!=null) {
+				if (targetAssoc != null) {
 					res += (res.isEmpty() ? "" : "|") + targetAssoc;
 				} else {
 					res += (res.isEmpty() ? "" : "|") + "null";
@@ -1211,10 +1222,10 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 			}
 		}
 
-		if(nodeService.hasAspect(node, BeCPGModel.ASPECT_DEPTH_LEVEL) ) {
+		if (nodeService.hasAspect(node, BeCPGModel.ASPECT_DEPTH_LEVEL)) {
 			NodeRef parentNodeRef = (NodeRef) nodeService.getProperty(node, BeCPGModel.PROP_PARENT_LEVEL);
-			if(parentNodeRef!=null) {
-				res += (res.isEmpty() ? "" : "|")+getKeyFromPivots(parentNodeRef,pivotProperties);
+			if (parentNodeRef != null) {
+				res += (res.isEmpty() ? "" : "|") + getKeyFromPivots(parentNodeRef, pivotProperties);
 			}
 		}
 
@@ -1239,17 +1250,20 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 				qName.equals(BeCPGModel.PROP_PARENT_LEVEL) || qName.equals(BeCPGModel.PROP_START_EFFECTIVITY)
 				|| qName.equals(BeCPGModel.PROP_END_EFFECTIVITY) || qName.equals(ReportModel.PROP_REPORT_ENTITY_GENERATED)
 				|| qName.equals(ReportModel.ASSOC_REPORTS) || qName.equals(BeCPGModel.PROP_VERSION_LABEL) || qName.equals(BeCPGModel.PROP_COLOR)
-				|| qName.equals(BeCPGModel.PROP_ENTITY_SCORE)
-				|| qName.equals(PLMModel.PROP_COMPARE_WITH_DYN_COLUMN)
-				|| qName.getLocalName().contains("ErrorLog")
-				|| qName.equals(ContentModel.PROP_IS_INDEXED) || qName.equals(ContentModel.PROP_IS_CONTENT_INDEXED)) {
-			
+				|| qName.equals(BeCPGModel.PROP_ENTITY_SCORE) || qName.equals(PLMModel.PROP_COMPARE_WITH_DYN_COLUMN)
+				|| qName.getLocalName().contains("ErrorLog") || qName.equals(ContentModel.PROP_IS_INDEXED)
+				|| qName.equals(ContentModel.PROP_IS_CONTENT_INDEXED) || qName.equals(PLMModel.PROP_NUTRIENT_PROFILING_DETAILS)
+				|| qName.equals(PLMModel.PROP_ECO_SCORE_DETAILS)) {
+
 			isComparable = false;
 		}
 
 		if (isDataList && isComparable) {
 			if (qName.equals(ContentModel.PROP_NAME) || qName.equals(ContentModel.PROP_CREATOR) || qName.equals(ContentModel.PROP_CREATED)
-					|| qName.equals(ContentModel.PROP_MODIFIER) || qName.equals(ContentModel.PROP_MODIFIED) || qName.equals(BeCPGModel.PROP_SORT)) {
+					|| qName.equals(ContentModel.PROP_MODIFIER) || qName.equals(ContentModel.PROP_MODIFIED) || qName.equals(BeCPGModel.PROP_SORT)
+					|| qName.equals(PLMModel.PROP_NUTLIST_ROUNDED_VALUE) || qName.equals(PLMModel.PROP_NUTLIST_PREPARED_ROUNDED_VALUE)
+					
+					) {
 
 				isComparable = false;
 			}

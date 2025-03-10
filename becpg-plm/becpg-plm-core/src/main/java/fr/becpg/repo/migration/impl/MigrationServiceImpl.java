@@ -138,6 +138,7 @@ public class MigrationServiceImpl implements MigrationService {
 	}
 
 	/** {@inheritDoc} */
+	@SuppressWarnings("deprecation")
 	@Override
 	public void removeAspectInMt(final QName type, final QName aspect) {
 		PropertyCheck.mandatory(this, "tenantAdminService", tenantAdminService);
@@ -198,6 +199,7 @@ public class MigrationServiceImpl implements MigrationService {
 	}
 
 	/** {@inheritDoc} */
+	@SuppressWarnings("deprecation")
 	@Override
 	public void migrateAssociationInMt(final QName classQName, final QName sourceAssoc, final QName targetAssoc) {
 		PropertyCheck.mandatory(this, "tenantAdminService", tenantAdminService);

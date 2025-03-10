@@ -90,14 +90,10 @@ public interface ReportTplService {
 	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param tplName a {@link java.lang.String} object.
 	 * @param tplFilePath a {@link java.lang.String} object.
-	 * @param reportType a {@link fr.becpg.repo.report.template.ReportType} object.
-	 * @param reportFormat a {@link fr.becpg.report.client.ReportFormat} object.
-	 * @param nodeType a {@link org.alfresco.service.namespace.QName} object.
-	 * @param isSystemTpl a boolean.
-	 * @param isDefaultTpl a boolean.
 	 * @param overrideTpl a boolean.
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @throws java.io.IOException if any.
+	 * @param tplInformation a {@link fr.becpg.repo.report.template.ReportTplInformation} object
 	 */
 	NodeRef createTplRptDesign(NodeRef parentNodeRef, String tplName, String tplFilePath, ReportTplInformation tplInformation, boolean overrideTpl) throws IOException;
 	

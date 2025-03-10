@@ -43,23 +43,28 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * StartProcessWebscript class.
  * </p>
  *
+ * <p>
+ * Parses process.json and executes the script.
+ * </p>
+ *
+ * <pre>
+ * {@code
+ * {
+ *     "title": "Validation",
+ *     "itemId": "cm:content",
+ *     "itemKind": "type",
+ *     "formId": "content-validation",
+ *     "condition": "js(items.length > 0 && items.every((n) => n.isDocument))",
+ *     "submissionUrl": "/becpg/workflow/start-process?script=start-validation-workflow.js&nodeRefs={selectedItems}",
+ *     "formFields": {
+ *         "prop_cm_name": "js(bcpg.getMessage(\"plm.script.start-validation-workflow.js.message\", items.map((n) => n.name).join(\", \"))) "
+ *     }
+ * }
+ * }
+ * </pre>
+ *
  * @author matthieu
  * @version $Id: $Id
- *
- * Parse process.json and exec script
- *  <code>
- *  {
- *			"title": "Validation",
- *			"itemId": "cm:content",
- *			"itemKind": "type",
- *			"formId": "content-validation",
- *			"condition": "js( items.length > 0 && items.every( (n) =>  n.isDocument ))",
- *			"submissionUrl": "/becpg/workflow/start-process?script=start-validation-workflow.js&nodeRefs={selectedItems}",
- *			"formFields": {
- *				"prop_cm_name": "js(bcpg.getMessage(\"plm.script.start-validation-workflow.js.message\",items.map( (n) =>  n.name ).join(\", \")))"
- *			}
- *		}
- *	<code>
  */
 public class StartProcessWebscript extends AbstractWebScript {
 

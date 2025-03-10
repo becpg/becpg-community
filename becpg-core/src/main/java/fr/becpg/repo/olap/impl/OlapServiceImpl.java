@@ -22,13 +22,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.security.AuthenticationService;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.util.URIUtil;
 import org.apache.commons.logging.Log;

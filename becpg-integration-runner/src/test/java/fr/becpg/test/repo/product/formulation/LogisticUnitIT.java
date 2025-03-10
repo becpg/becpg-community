@@ -10,14 +10,8 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.repo.entity.version.EntityVersionService;
-import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LogisticUnitData;
-import fr.becpg.repo.product.data.PackagingMaterialData;
-import fr.becpg.repo.product.data.constraints.DeclarationType;
-import fr.becpg.repo.product.data.constraints.PackagingLevel;
-import fr.becpg.repo.product.data.constraints.ProductUnit;
-import fr.becpg.repo.product.data.productList.CompoListDataItem;
-import fr.becpg.repo.product.data.productList.PackagingListDataItem;
+import fr.becpg.repo.sample.StandardChocolateEclairTestProduct;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
 public class LogisticUnitIT extends AbstractFinishedProductTest {
@@ -26,32 +20,7 @@ public class LogisticUnitIT extends AbstractFinishedProductTest {
 	
 	@Autowired
 	private EntityVersionService entityVersionService;
-	
-	private LogisticUnitData createCaseLogisticUnit() {
-		FinishedProductData eclairAuChocolat = FinishedProductData.build().withName("Eclair au chocolat");
-		NodeRef productNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), eclairAuChocolat).getNodeRef();
-		
-		PackagingMaterialData packagingMaterialData = PackagingMaterialData.build().withName("Colis en carton");
-		NodeRef packagingMaterialNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterialData).getNodeRef();
-		
-		return LogisticUnitData.build()
-				.withName("Colis d'éclairs au chocolat")
-				.withSecondaryWidth(200d)
-				.withCompoList(List.of(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Detail).withProduct(productNodeRef)))
-				.withPackagingList(List.of(PackagingListDataItem.build().withQty(500d).withUnit(ProductUnit.g).withPkgLevel(PackagingLevel.Secondary).withProduct(packagingMaterialNodeRef)));
-	}
-	
-	private LogisticUnitData createPalletLogisticUnit(NodeRef caseNodeRef) {
-		PackagingMaterialData packagingMaterialData = PackagingMaterialData.build().withName("Palette en bois");
-		NodeRef packagingMaterialNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterialData).getNodeRef();
-		
-		return LogisticUnitData.build()
-				.withName("Palette d'éclairs au chocolat")
-				.withTertiaryWidth(500d)
-				.withCompoList(List.of(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Detail).withProduct(caseNodeRef)))
-				.withPackagingList(List.of(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.kg).withPkgLevel(PackagingLevel.Tertiary).withProduct(packagingMaterialNodeRef)));
-	}
-	
+
 	private LogisticUnitData updateLogisticUnit(LogisticUnitData logisticUnit) {
 		return logisticUnit.withName("Palette d'éclairs au chocolat 2").withTertiaryWidth(600d);
 	}
@@ -65,11 +34,17 @@ public class LogisticUnitIT extends AbstractFinishedProductTest {
 		List<NodeRef> logisticUnitNodeRefList = inWriteTx(() -> {
 			logger.info("Creating logistic units");
 			
-			LogisticUnitData caseLogisticUnit = createCaseLogisticUnit();
-			NodeRef caseLogisticUnitNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), caseLogisticUnit).getNodeRef();
+				StandardChocolateEclairTestProduct testProduct = new StandardChocolateEclairTestProduct.Builder()
+						.withAlfrescoRepository(alfrescoRepository).withNodeService(nodeService).withDestFolder(getTestFolderNodeRef()).withCompo(false)
+						.withLabeling(false).build();
+
+	
 			
-			LogisticUnitData palletLogisticUnit = createPalletLogisticUnit(caseLogisticUnitNodeRef);
-			NodeRef palletLogisticUnitNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), palletLogisticUnit).getNodeRef();
+			LogisticUnitData caseLogisticUnit = testProduct.createCaseLogisticUnit();
+			NodeRef caseLogisticUnitNodeRef = caseLogisticUnit.getNodeRef();
+			
+			LogisticUnitData palletLogisticUnit = testProduct.createPalletLogisticUnit(caseLogisticUnitNodeRef);
+			NodeRef palletLogisticUnitNodeRef =palletLogisticUnit.getNodeRef();
 			
 			return List.of(caseLogisticUnitNodeRef, palletLogisticUnitNodeRef);
 		});
@@ -80,7 +55,7 @@ public class LogisticUnitIT extends AbstractFinishedProductTest {
 			
 			assertEquals("Colis d'éclairs au chocolat", caseLogisticUnitEntity.getName());
 			assertEquals(200d, caseLogisticUnitEntity.getSecondaryWidth());
-			assertEquals("Eclair au chocolat", alfrescoRepository.findOne(caseLogisticUnitEntity.getCompoList().get(0).getProduct()).getName());
+			assertEquals("Éclair au chocolat", alfrescoRepository.findOne(caseLogisticUnitEntity.getCompoList().get(0).getProduct()).getName());
 			assertEquals("Colis en carton", alfrescoRepository.findOne(caseLogisticUnitEntity.getPackagingList().get(0).getProduct()).getName());
 			
 			assertEquals("Palette d'éclairs au chocolat", palletLogisticUnitEntity.getName());

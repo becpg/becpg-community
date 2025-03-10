@@ -11,9 +11,12 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
+import fr.becpg.repo.product.data.productList.HazardClassificationListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
+import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.ResourceParamDataItem;
 import fr.becpg.repo.product.data.productList.SpecCompatibilityDataItem;
+import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.repository.annotation.AlfCacheable;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
@@ -52,6 +55,70 @@ public class ProductSpecificationData extends ProductData {
 
 	private List<NodeRef> specCompatibilityTpls = new ArrayList<>();
 	
+	
+	/**
+	 * <p>build.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.FinishedProductData} object
+	 */
+	public static ProductSpecificationData build() {
+		return new ProductSpecificationData();
+	}
+
+	/**
+	 * <p>withName.</p>
+	 *
+	 * @param name a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.product.data.FinishedProductData} object
+	 */
+	public ProductSpecificationData withName(String name) {
+		setName(name);
+		return this;
+	}
+
+	
+
+	/**
+	 * <p>withNutList.</p>
+	 *
+	 * @param nutList a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.product.data.ProductSpecificationData} object
+	 */
+	public ProductSpecificationData withNutList(List<NutListDataItem> nutList) {
+		setNutList(nutList);
+		return this;
+	}
+	
+	/**
+	 * <p>withHcList.</p>
+	 *
+	 * @param hList a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.product.data.ProductSpecificationData} object
+	 */
+	public ProductSpecificationData withHcList(List<HazardClassificationListDataItem> hList) {
+		setHcList(hList);
+		return this;
+	}
+	
+	/**
+	 * <p>withForbiddenIngList.</p>
+	 *
+	 * @param forbiddenIngList a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.product.data.ProductSpecificationData} object
+	 */
+	public ProductSpecificationData withForbiddenIngList(List<ForbiddenIngListDataItem> forbiddenIngList) {
+		setForbiddenIngList(forbiddenIngList);
+		return this;
+	}
+	
+	public ProductSpecificationData withScoreList(List<ScoreListDataItem> scoreList) {
+		setScoreList(scoreList);
+		return this;
+	}
+	
+	
+	
+
 	
 	/**
 	 * <p>Getter for the field <code>regulatoryCode</code>.</p>

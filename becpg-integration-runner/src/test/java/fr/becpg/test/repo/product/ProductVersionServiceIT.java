@@ -154,8 +154,8 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 			assertTrue(!dbNodeService.hasAspect(workingCopyNodeRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT));
 
 			// Check costs on working copy
-			ProductData rawMaterial1 = alfrescoRepository.findOne(rawMaterialNodeRef);
-			ProductData workingCopyRawMaterial = alfrescoRepository.findOne(workingCopyNodeRef);
+			ProductData rawMaterial1 = (ProductData) alfrescoRepository.findOne(rawMaterialNodeRef);
+			ProductData workingCopyRawMaterial = (ProductData) alfrescoRepository.findOne(workingCopyNodeRef);
 			assertEquals("Check costs size", rawMaterial1.getCostList().size(), workingCopyRawMaterial.getCostList().size());
 
 			for (int i = 0; i < rawMaterial1.getCostList().size(); i++) {
@@ -341,12 +341,12 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 					.createNode(finishedProductNodeRef1, BeCPGModel.ASSOC_VARIANTS, BeCPGModel.ASSOC_VARIANTS, BeCPGModel.TYPE_VARIANT, props)
 					.getChildRef();
 
-			ProductData productData = alfrescoRepository.findOne(finishedProductNodeRef1);
+			ProductData productData = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef1);
 			productData.getCompoListView().getCompoList().get(2).setVariants(Collections.singletonList(variantNodeRef));
 			alfrescoRepository.save(productData);
 
 			// check variant before checkOut
-			productData = alfrescoRepository.findOne(finishedProductNodeRef1);
+			productData = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef1);
 			assertEquals(1, productData.getCompoListView().getCompoList().get(2).getVariants().size());
 			logger.info("finishedProductNodeRef compoList is " + productData.getCompoListView().getCompoList().get(2).getNodeRef() + " "
 					+ dbNodeService.getPath(productData.getCompoListView().getCompoList().get(2).getNodeRef()));
@@ -367,7 +367,7 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 		final NodeRef versionNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			// check variant before checkin
-			ProductData productData = alfrescoRepository.findOne(workingCopyNodeRef);
+			ProductData productData = (ProductData) alfrescoRepository.findOne(workingCopyNodeRef);
 			assertEquals(1, productData.getCompoListView().getCompoList().get(2).getVariants().size());
 			logger.info("finishedProductNodeRef compoList is " + productData.getCompoListView().getCompoList().get(2).getNodeRef() + " "
 					+ dbNodeService.getPath(productData.getCompoListView().getCompoList().get(2).getNodeRef()));
@@ -383,7 +383,7 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 
 			assertNotNull("Check history version exists", versionNodeRef);
 
-			ProductData productData = alfrescoRepository.findOne(versionNodeRef);
+			ProductData productData = (ProductData) alfrescoRepository.findOne(versionNodeRef);
 			assertEquals(1, dbNodeService.getChildAssocs(versionNodeRef, BeCPGModel.ASSOC_VARIANTS, RegexQNamePattern.MATCH_ALL).size());
 			logger.info("finishedProductNodeRef compoList is " + productData.getCompoListView().getCompoList().get(2).getNodeRef());
 			logger.info("finishedProductNodeRef variant is " + productData.getCompoListView().getCompoList().get(2).getVariants());
@@ -398,7 +398,7 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 		// Check orig node
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-			ProductData productData = alfrescoRepository.findOne(finishedProductNodeRef);
+			ProductData productData = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 			assertEquals(1, dbNodeService.getChildAssocs(versionNodeRef, BeCPGModel.ASSOC_VARIANTS, RegexQNamePattern.MATCH_ALL).size());
 			logger.info("finishedProductNodeRef compoList is " + productData.getCompoListView().getCompoList().get(2).getNodeRef());
 			logger.info("finishedProductNodeRef variant is " + productData.getCompoListView().getCompoList().get(2).getVariants());
@@ -585,8 +585,8 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 			assertTrue(!dbNodeService.hasAspect(branchNodeRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT));
 
 			// Check costs on working copy
-			ProductData rawMaterial1 = alfrescoRepository.findOne(rawMaterialNodeRef);
-			ProductData branchRawMaterial = alfrescoRepository.findOne(branchNodeRef);
+			ProductData rawMaterial1 = (ProductData) alfrescoRepository.findOne(rawMaterialNodeRef);
+			ProductData branchRawMaterial = (ProductData) alfrescoRepository.findOne(branchNodeRef);
 			assertEquals("Check costs size", rawMaterial1.getCostList().size(), branchRawMaterial.getCostList().size());
 
 			for (int i = 0; i < rawMaterial1.getCostList().size(); i++) {
@@ -859,7 +859,7 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			assertNotNull("Check new version exists", newRawMaterialNodeRef);
-			ProductData newRawMaterial = alfrescoRepository.findOne(newRawMaterialNodeRef);
+			ProductData newRawMaterial = (ProductData) alfrescoRepository.findOne(newRawMaterialNodeRef);
 			assertEquals("Check version", "2.0", getVersionLabel(newRawMaterial));
 			assertEquals("Check unit", productUnit, newRawMaterial.getUnit());
 
@@ -904,7 +904,7 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 		if (secondCheckin) {
 			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-				ProductData newRawMaterial = alfrescoRepository.findOne(newRawMaterialNodeRef);
+				ProductData newRawMaterial = (ProductData) alfrescoRepository.findOne(newRawMaterialNodeRef);
 				assertEquals("Check version", "3.0", getVersionLabel(newRawMaterial));
 				VersionHistory versionHistory = versionService.getVersionHistory(newRawMaterialNodeRef);
 				Version version = versionHistory.getVersion("3.0");

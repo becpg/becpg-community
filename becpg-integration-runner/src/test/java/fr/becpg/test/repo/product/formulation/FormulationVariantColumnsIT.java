@@ -77,7 +77,7 @@ public class FormulationVariantColumnsIT extends AbstractFinishedProductTest {
 			// template
 			FinishedProductData templateFinishedProduct = new FinishedProductData();
 			templateFinishedProduct.setName("Template Produit fini");
-			ProductData entityTpl1 = alfrescoRepository.create(getTestFolderNodeRef(), templateFinishedProduct);
+			ProductData entityTpl1 = (ProductData) alfrescoRepository.create(getTestFolderNodeRef(), templateFinishedProduct);
 			nodeService.addAspect(entityTpl1.getNodeRef(), BeCPGModel.ASPECT_ENTITY_TPL, null);
 			nodeService.addAspect(entityTpl1.getNodeRef(), BeCPGModel.ASPECT_ENTITY_VARIANT, null);
 			//add variants on template
@@ -117,11 +117,11 @@ public class FormulationVariantColumnsIT extends AbstractFinishedProductTest {
 			//CompoList
 
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 2d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial4NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial5NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(2d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial2NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial3NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial4NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial5NodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
 			// CostList
@@ -133,10 +133,14 @@ public class FormulationVariantColumnsIT extends AbstractFinishedProductTest {
 
 			// NutList
 			List<NutListDataItem> nutList = new LinkedList<>();
-			nutList.add(new NutListDataItem(null, null, null, null, null, null, nut1, null));
-			nutList.add(new NutListDataItem(null, null, null, null, null, null, nut2, null));
-			nutList.add(new NutListDataItem(null, null, null, null, null, null, nut3, null));
-			nutList.add(new NutListDataItem(null, null, null, null, null, null, nut4, null));
+			nutList.add(NutListDataItem.build().withNut(nut1)
+);
+			nutList.add(NutListDataItem.build().withNut(nut2)
+);
+			nutList.add(NutListDataItem.build().withNut(nut3)
+);
+			nutList.add(NutListDataItem.build().withNut(nut4)
+);
 			finishedProduct.setNutList(nutList);
 			assertNotNull("NutList is null", finishedProduct.getNutList());
 
@@ -156,7 +160,7 @@ public class FormulationVariantColumnsIT extends AbstractFinishedProductTest {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			int checks = 0;
-			ProductData finishedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+			ProductData finishedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 			List<VariantData> variants = finishedProduct.getVariants();
 			
 			assertNotNull(variants);
@@ -172,7 +176,7 @@ public class FormulationVariantColumnsIT extends AbstractFinishedProductTest {
 			}
 			alfrescoRepository.save(finishedProduct);
 			productService.formulate(finishedProductNodeRef);
-			finishedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+			finishedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 
 			//Check costList
 			for (CostListDataItem costListDataItem : finishedProduct.getCostList()) {

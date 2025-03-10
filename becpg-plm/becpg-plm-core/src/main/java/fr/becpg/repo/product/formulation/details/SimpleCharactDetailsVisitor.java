@@ -37,15 +37,14 @@ import fr.becpg.repo.product.data.CharactDetailsValue;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
+import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
-import fr.becpg.repo.product.data.productList.IngListDataItem;
-import fr.becpg.repo.product.data.productList.NutListDataItem;
-import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
+import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.formulation.FormulatedQties;
 import fr.becpg.repo.product.formulation.FormulationHelper;
-import fr.becpg.repo.product.formulation.NutsCalculatingFormulationHandler;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
+import fr.becpg.repo.repository.model.CompositionDataItem;
 import fr.becpg.repo.repository.model.ForecastValueDataItem;
 import fr.becpg.repo.repository.model.MinMaxValueDataItem;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
@@ -104,91 +103,162 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 		this.dataListType = dataListType;
 	}
 
-	public interface SimpleCharactUnitProvider {
-		public String provideUnit(SimpleCharactDataItem item);
-
-	}
-
 	/** {@inheritDoc} */
 	@Override
-	public CharactDetails visit(ProductData productData, List<NodeRef> dataListItems, Integer level) throws FormulateException {
+	public CharactDetails visit(ProductData productData, List<NodeRef> dataListItems, Integer maxLevel) throws FormulateException {
 
 		CharactDetails ret = createCharactDetails(dataListItems);
 
-		if (level == null) {
-			level = 0;
+		if (maxLevel == null) {
+			maxLevel = 0;
 		}
 
-		Double netQty = FormulationHelper.getNetQtyInLorKg(productData, FormulationHelper.DEFAULT_NET_WEIGHT);
+		Double netQty = applyYield() ? FormulationHelper.getNetQtyInLorKg(productData, FormulationHelper.DEFAULT_NET_WEIGHT) :
+			FormulationHelper.getQtyInKgFromComposition(productData, null,
+				FormulationHelper.DEFAULT_NET_WEIGHT);
 		Double netWeight = FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT);
 		Double netVol = FormulationHelper.getNetVolume(productData, FormulationHelper.DEFAULT_NET_WEIGHT);
+		
 
-		visitRecur(productData, productData, ret, 0, level, netWeight, netVol, netQty);
+		CharactDetailsVisitorContext context = new CharactDetailsVisitorContext(productData, maxLevel, ret);
+		
+		visitRecur(context, productData, 0, netWeight, netVol, netQty);
 
 		return ret;
+	}
+	
+	/**
+	 * <p>applyYield.</p>
+	 *
+	 * @return a boolean
+	 */
+	protected boolean applyYield() {
+		return true;
+	}
+
+	/**
+	 * <p>areDetailsApplicable.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a boolean
+	 */
+	protected boolean areDetailsApplicable(ProductData productData) {
+		return productData.isRawMaterial() || !productData.isGeneric();
 	}
 
 	/**
 	 * <p>visitRecur.</p>
 	 *
-	 * @param subProductData a {@link fr.becpg.repo.product.data.ProductData} object.
-	 * @param ret a {@link fr.becpg.repo.product.data.CharactDetails} object.
-	 * @param currLevel a {@link java.lang.Integer} object.
-	 * @param maxLevel a {@link java.lang.Integer} object.
-	 * @param subWeight a {@link java.lang.Double} object.
-	 * @param subVol a {@link java.lang.Double} object.
-	 * @param netQty a {@link java.lang.Double} object.
-	 * @return a {@link fr.becpg.repo.product.data.CharactDetails} object.
+	 * @param context a {@link fr.becpg.repo.product.formulation.details.CharactDetailsVisitorContext} object
+	 * @param subProductData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param currLevel a {@link java.lang.Integer} object
+	 * @param parentNetWeight a {@link java.lang.Double} object
+	 * @param parentVoume a {@link java.lang.Double} object
+	 * @param parentQuantity a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.product.data.CharactDetails} object
 	 * @throws fr.becpg.repo.formulation.FormulateException if any.
-	 * @param rootProductData a {@link fr.becpg.repo.product.data.ProductData} object
 	 */
-	public CharactDetails visitRecur(ProductData rootProductData, ProductData subProductData, CharactDetails ret, Integer currLevel, Integer maxLevel, Double subWeight,
-			Double subVol, Double netQty) throws FormulateException {
-
-		if (!subProductData.isGeneric()
-				&& subProductData.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
-
-			for (CompoListDataItem compoListDataItem : subProductData
-					.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
-
-				//omit item if parent is omitted
-				boolean omit = false;
-				CompoListDataItem tmpCompoItem = compoListDataItem;
-				while (tmpCompoItem != null && !omit) {
-					omit = DeclarationType.Omit.equals(tmpCompoItem.getDeclType());
-					tmpCompoItem = tmpCompoItem.getParent();
+	public CharactDetails visitRecur(CharactDetailsVisitorContext context, ProductData subProductData, Integer currLevel, Double parentNetWeight,
+			Double parentVoume, Double parentQuantity) throws FormulateException {
+		
+		if (areDetailsApplicable(subProductData)) {
+			if (subProductData.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
+				for (CompoListDataItem compoListDataItem : subProductData
+						.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
+					
+					if (compoListDataItem != null && !omitItem(compoListDataItem)) {
+						
+						Double compoListWeight = computeCompoListWeight(subProductData, parentNetWeight, compoListDataItem);
+						Double compoListVol = computeCompoListVol(subProductData, parentVoume, compoListDataItem);
+						ProductData compoListProduct = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());
+						
+						FormulatedQties qties = new FormulatedQties(compoListWeight, compoListVol, parentQuantity, parentNetWeight);
+						visitPart(context, subProductData, compoListProduct, compoListDataItem.getNodeRef(), qties, currLevel);
+						
+						if (shouldVisitNextLevel(currLevel, context.getMaxLevel(), compoListDataItem)) {
+							visitRecur(context, compoListProduct, currLevel + 1, compoListWeight, compoListVol, parentQuantity);
+						}
+					}
 				}
-
-				if (!omit && compoListDataItem != null) {
-
-					Double weightUsed = FormulationHelper.getQtyInKg(compoListDataItem);
-					Double netWeight = FormulationHelper.getNetWeight(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT);
-					if ((netWeight != 0d) && (subWeight != null)) {
-						weightUsed = (weightUsed / netWeight) * subWeight;
-
-					}
-
-					ProductData partProduct = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());
-					Double volUsed = FormulationHelper.getNetVolume(compoListDataItem, partProduct);
-					Double netVol = FormulationHelper.getNetVolume(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT);
-					if ((volUsed != null) && (netVol != null) && (netVol != 0d) && (subVol != null)) {
-						volUsed = (volUsed / netVol) * subVol;
-					}
-
-					ProductData compoListProduct = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());
-
-					FormulatedQties qties = new FormulatedQties(weightUsed, volUsed, netQty, subWeight);
-
-					visitPart(rootProductData, subProductData, compoListProduct, compoListDataItem.getNodeRef(), ret, qties, currLevel,null);
-					if (((maxLevel < 0) || (currLevel < maxLevel))
-							&& !entityDictionaryService.isMultiLevelLeaf(nodeService.getType(compoListDataItem.getProduct()))) {
-						visitRecur(rootProductData, compoListProduct, ret, currLevel + 1, maxLevel, weightUsed, volUsed, netQty);
+			}
+			if (subProductData.hasPackagingListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
+				for (PackagingListDataItem packagingListDataItem : subProductData
+						.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
+					
+					if (packagingListDataItem != null && (packagingListDataItem.getProduct() != null)
+							&& ((packagingListDataItem.getIsRecycle() == null) || !packagingListDataItem.getIsRecycle())) {
+						ProductData partProduct = (ProductData) alfrescoRepository.findOne(packagingListDataItem.getProduct());
+						Double qty = getQty(context.getRootProductData(), packagingListDataItem, partProduct);
+						FormulatedQties qties = new FormulatedQties(qty, qty, getNetQty(context.getRootProductData()), getNetWeight(context.getRootProductData()));
+						visitPart(context, subProductData, partProduct, packagingListDataItem.getNodeRef(), qties, currLevel);
+						if (shouldVisitNextLevel(currLevel, context.getMaxLevel(), packagingListDataItem)) {
+							visitRecur(context, partProduct, currLevel + 1, qty, qty, parentQuantity);
+						}
 					}
 				}
 			}
 		}
+		
+		return context.getCharactDetails();
+	}
+	
+	private Double getQty(ProductData formulatedProduct, PackagingListDataItem packagingListDataItem, ProductData componentProduct) {
+		if (PackagingLevel.Primary.equals(packagingListDataItem.getPkgLevel())) {
+			return FormulationHelper.getQtyForCostByPackagingLevel(formulatedProduct, packagingListDataItem, componentProduct);
+		}
+		return null;
+	}
+	
+	private Double getNetQty(ProductData formulatedProduct) {
+		return FormulationHelper.getNetQtyInLorKg(formulatedProduct, null, FormulationHelper.DEFAULT_NET_WEIGHT);
+	}
+	
+	private Double getNetWeight(ProductData formulatedProduct) {
+		return FormulationHelper.getNetWeight(formulatedProduct, null, FormulationHelper.DEFAULT_NET_WEIGHT);
+	}
 
-		return ret;
+	/**
+	 * <p>shouldVisitNextLevel.</p>
+	 *
+	 * @param currLevel a {@link java.lang.Integer} object
+	 * @param maxLevel a {@link java.lang.Integer} object
+	 * @param compoListDataItem a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object
+	 * @return a boolean
+	 */
+	protected boolean shouldVisitNextLevel(Integer currLevel, Integer maxLevel, CompositionDataItem compoListDataItem) {
+		return ((maxLevel < 0) || (currLevel < maxLevel))
+				&& !entityDictionaryService.isMultiLevelLeaf(nodeService.getType(compoListDataItem.getComponent()));
+	}
+
+	private Double computeCompoListVol(ProductData subProductData, Double subVol, CompoListDataItem compoListDataItem) {
+		ProductData partProduct = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());
+		Double volUsed = FormulationHelper.getNetVolume(compoListDataItem, partProduct);
+		Double netVol = FormulationHelper.getNetVolume(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT);
+		if ((volUsed != null) && (netVol != null) && (netVol != 0d) && (subVol != null)) {
+			volUsed = (volUsed / netVol) * subVol;
+		}
+		return volUsed;
+	}
+
+	private Double computeCompoListWeight(ProductData subProductData, Double parentProductNetWeight, CompoListDataItem compoListDataItem) {
+		Double compoListWeight = FormulationHelper.getQtyInKg(compoListDataItem);
+		Double compoProductNetWeight = FormulationHelper.getNetWeight(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT);
+	
+		if ((compoProductNetWeight != 0d) && (parentProductNetWeight != null)) {
+			compoListWeight = (compoListWeight / compoProductNetWeight) * parentProductNetWeight;
+		}
+		return compoListWeight;
+	}
+
+	private boolean omitItem(CompoListDataItem compoListDataItem) {
+		//omit item if parent is omitted
+		while (compoListDataItem != null) {
+			if (DeclarationType.Omit.equals(compoListDataItem.getDeclType())) {
+				return true;
+			}
+			compoListDataItem = compoListDataItem.getParent();
+		}
+		return false;
 	}
 
 	/**
@@ -203,9 +273,13 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 		if (dataListItems != null) {
 			for (NodeRef dataListItem : dataListItems) {
 				
-				SimpleCharactDataItem o = (SimpleCharactDataItem) alfrescoRepository.findOne(dataListItem);
-					if (o != null) {
-						tmp.add(o.getCharactNodeRef());
+				if(entityDictionaryService.isSubClass(nodeService.getType(dataListItem), BeCPGModel.TYPE_CHARACT)) {
+					tmp.add(dataListItem);
+				} else {
+					SimpleCharactDataItem o = (SimpleCharactDataItem) alfrescoRepository.findOne(dataListItem);
+						if (o != null) {
+							tmp.add(o.getCharactNodeRef());
+					}
 				}
 			}
 		}
@@ -217,17 +291,15 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 	 * <p>visitPart.</p>
 	 *
 	 * @param componentDataList a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param charactDetails a {@link fr.becpg.repo.product.data.CharactDetails} object.
 	 * @param currLevel a {@link java.lang.Integer} object.
-	 * @param unitProvider a {@link fr.becpg.repo.product.formulation.details.SimpleCharactDetailsVisitor.SimpleCharactUnitProvider} object.
 	 * @throws fr.becpg.repo.formulation.FormulateException if any.
-	 * @param rootProduct a {@link fr.becpg.repo.product.data.ProductData} object
 	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
 	 * @param partProduct a {@link fr.becpg.repo.product.data.ProductData} object
 	 * @param qties a {@link fr.becpg.repo.product.formulation.FormulatedQties} object
+	 * @param context a {@link fr.becpg.repo.product.formulation.details.CharactDetailsVisitorContext} object
 	 */
-	protected void visitPart(ProductData rootProduct, ProductData formulatedProduct, ProductData partProduct, NodeRef componentDataList, CharactDetails charactDetails,
-			FormulatedQties qties, Integer currLevel, SimpleCharactUnitProvider unitProvider) throws FormulateException {
+	protected void visitPart(CharactDetailsVisitorContext context, ProductData formulatedProduct, ProductData partProduct, NodeRef componentDataList, FormulatedQties qties,
+			Integer currLevel) throws FormulateException {
 
 		if (partProduct == null) {
 			return;
@@ -241,118 +313,113 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 		List<SimpleCharactDataItem> simpleCharactDataList = alfrescoRepository.getList(partProduct, dataListType, dataListType);
 
 		for (SimpleCharactDataItem simpleCharact : simpleCharactDataList) {
-			if ((simpleCharact != null) && charactDetails.hasElement(simpleCharact.getCharactNodeRef())) {
+			if ((simpleCharact != null) && context.getCharactDetails().hasElement(simpleCharact.getCharactNodeRef())) {
 
-				String unit = null;
-				if (unitProvider != null) {
-					unit = unitProvider.provideUnit(simpleCharact);
-				}
-
-				if ((unit == null) && (simpleCharact instanceof UnitAwareDataItem)) {
-					unit = ((UnitAwareDataItem) simpleCharact).getUnit();
-				}
-				if (unit == null) {
-					unit = provideUnit();
-				}
-				
+				String unit = provideUnit(context, simpleCharact);
 
 				// calculate charact from qty or vol ?
-				boolean formulateInVol = (partProduct.getUnit() != null) && partProduct.getUnit().isVolume();
-				boolean forceWeight = false;
+				boolean formulateInVol = shouldFormulateInVolume(context, partProduct, simpleCharact);
+				boolean forceWeight = shouldForceWeight(context, partProduct, simpleCharact);
 
-				if (simpleCharact instanceof PhysicoChemListDataItem) {
-					if (FormulationHelper.isCharactFormulatedFromVol(nodeService, simpleCharact)) {
-						formulateInVol = true;
-					} else {
-						formulateInVol = false;
-						forceWeight = true;
-					}
-				} else if (simpleCharact instanceof NutListDataItem) {
-					
-					if(unit!=null) {
-						unit = NutsCalculatingFormulationHandler.calculateUnit(rootProduct.getUnit(), rootProduct.getServingSizeUnit(), unit.split("/")[0]);
-					}
-					
-					if (formulateInVol && (partProduct.getServingSizeUnit() != null) && partProduct.getServingSizeUnit().isWeight()) {
-						if ((formulatedProduct.getServingSizeUnit() != null) && formulatedProduct.getServingSizeUnit().isWeight()) {
-							formulateInVol = false;
-							forceWeight = true;
-						} else {
-							formulateInVol = false;
-						}
-					}
-
-				} else if (simpleCharact instanceof IngListDataItem) {
-					formulateInVol = false;
-					forceWeight = true;
-				}
-
-				// calculate charact from qty or vol ?
 				Double qtyUsed = qties.getQtyUsed(formulateInVol);
 				Double netQty = qties.getNetQty(forceWeight);
 
-				// Calculate values
 				if ((qtyUsed != null)) {
-					Double value = FormulationHelper.calculateValue(0d, qtyUsed, extractValue(formulatedProduct, partProduct, simpleCharact), netQty);
-
-					CharactDetailsValue currentCharactDetailsValue = null;
-
-					if ((value != null) && (simpleCharact.shouldDetailIfZero() || (value != 0d))) {
-
-						if (logger.isDebugEnabled()) {
-							logger.debug("Add new charact detail. Charact: "
-									+ nodeService.getProperty(simpleCharact.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME) + " - entityNodeRef: "
-									+ partProduct.getName() + " - netQty: " + netQty + " - qty: " + qtyUsed + " - value: " + value);
-						}
-
-						currentCharactDetailsValue = new CharactDetailsValue(formulatedProduct.getNodeRef(), partProduct.getNodeRef(),
-								componentDataList, value, currLevel, unit);
-						
-						if ((simpleCharact instanceof ForecastValueDataItem forecastValue) && !charactDetails.isMultiple()) {
-
-							for (String forecastColumn : forecastValue.getForecastColumns()) {
-								logger.debug("ForecastDataItem, " + forecastColumn + "=" + forecastValue.getForecastValue(forecastColumn));
-								// add future and past values
-								if (forecastValue.getForecastValue(forecastColumn) != null) {
-									currentCharactDetailsValue
-									.setForecastValue(forecastColumn, FormulationHelper.calculateValue(0d, qtyUsed, forecastValue.getForecastValue(forecastColumn), netQty));
-								}
-							}
-						}
-
-						if ((simpleCharact instanceof MinMaxValueDataItem) && !charactDetails.isMultiple()) {
-							MinMaxValueDataItem minMaxValue = (MinMaxValueDataItem) simpleCharact;
-							minMaxValue.setMaxi(FormulationHelper.flatPercValue(minMaxValue.getMaxi(), unit));
-							minMaxValue.setMini(FormulationHelper.flatPercValue(minMaxValue.getMini(), unit));
-
-							logger.debug("minMaxValue, prev=" + minMaxValue.getMini() + ", maxi=" + minMaxValue.getMaxi());
-							// add future and past values
-							if (minMaxValue.getMini() != null) {
-								currentCharactDetailsValue.setMini(FormulationHelper.calculateValue(0d, qtyUsed, minMaxValue.getMini(), netQty));
-							}
-
-							if (minMaxValue.getMaxi() != null) {
-								currentCharactDetailsValue.setMaxi(FormulationHelper.calculateValue(0d, qtyUsed, minMaxValue.getMaxi(), netQty));
-							}
-						}
-						
-						if (!charactDetails.isMultiple()) {
-							provideAdditionalValues(rootProduct, formulatedProduct, simpleCharact, unit, qtyUsed, netQty, currentCharactDetailsValue);
-						}
-						
-						charactDetails.addKeyValue(simpleCharact.getCharactNodeRef(), currentCharactDetailsValue);
-					}
+					calculateCharactDetailsValues(context, formulatedProduct, partProduct, componentDataList, currLevel, simpleCharact, unit, qtyUsed,
+							netQty);
 				}
 			}
 		}
 	}
 
+	private void calculateCharactDetailsValues(CharactDetailsVisitorContext context, ProductData formulatedProduct, ProductData partProduct,
+			NodeRef componentDataList, Integer currLevel, SimpleCharactDataItem simpleCharact, String unit, Double qtyUsed, Double netQty) {
+		Double value = FormulationHelper.calculateValue(0d, qtyUsed, extractValue(formulatedProduct, partProduct, simpleCharact), netQty);
+
+		CharactDetailsValue currentCharactDetailsValue = null;
+
+		if ((value != null) && (simpleCharact.shouldDetailIfZero() || (value != 0d))) {
+
+			if (logger.isDebugEnabled()) {
+				logger.debug("Add new charact detail. Charact: "
+						+ nodeService.getProperty(simpleCharact.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME) + " - entityNodeRef: "
+						+ partProduct.getName() + " - netQty: " + netQty + " - qty: " + qtyUsed + " - value: " + value);
+			}
+
+			currentCharactDetailsValue = new CharactDetailsValue(formulatedProduct.getNodeRef(), partProduct.getNodeRef(),
+					componentDataList, value, currLevel, unit);
+			
+			if ((simpleCharact instanceof ForecastValueDataItem forecastValue) && !context.getCharactDetails().isMultiple()) {
+
+				for (String forecastColumn : forecastValue.getForecastColumns()) {
+					logger.debug("ForecastDataItem, " + forecastColumn + "=" + forecastValue.getForecastValue(forecastColumn));
+					// add future and past values
+					if (forecastValue.getForecastValue(forecastColumn) != null) {
+						currentCharactDetailsValue
+						.setForecastValue(forecastColumn, FormulationHelper.calculateValue(0d, qtyUsed, forecastValue.getForecastValue(forecastColumn), netQty));
+					}
+				}
+			}
+
+			if ((simpleCharact instanceof MinMaxValueDataItem) && !context.getCharactDetails().isMultiple()) {
+				MinMaxValueDataItem minMaxValue = (MinMaxValueDataItem) simpleCharact;
+				minMaxValue.setMaxi(FormulationHelper.flatPercValue(minMaxValue.getMaxi(), unit));
+				minMaxValue.setMini(FormulationHelper.flatPercValue(minMaxValue.getMini(), unit));
+
+				logger.debug("minMaxValue, prev=" + minMaxValue.getMini() + ", maxi=" + minMaxValue.getMaxi());
+				// add future and past values
+				if (minMaxValue.getMini() != null) {
+					currentCharactDetailsValue.setMini(FormulationHelper.calculateValue(0d, qtyUsed, minMaxValue.getMini(), netQty));
+				}
+
+				if (minMaxValue.getMaxi() != null) {
+					currentCharactDetailsValue.setMaxi(FormulationHelper.calculateValue(0d, qtyUsed, minMaxValue.getMaxi(), netQty));
+				}
+			}
+			
+			if (!context.getCharactDetails().isMultiple()) {
+				provideAdditionalValues(context.getRootProductData(), formulatedProduct, simpleCharact, unit, qtyUsed, netQty, currentCharactDetailsValue);
+			}
+			
+			context.getCharactDetails().addKeyValue(simpleCharact.getCharactNodeRef(), currentCharactDetailsValue);
+		}
+	}
+
+	/**
+	 * <p>shouldForceWeight.</p>
+	 *
+	 * @param context a {@link fr.becpg.repo.product.formulation.details.CharactDetailsVisitorContext} object
+	 * @param partProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param simpleCharact a {@link fr.becpg.repo.repository.model.SimpleCharactDataItem} object
+	 * @return a boolean
+	 */
+	protected boolean shouldForceWeight(CharactDetailsVisitorContext context, ProductData partProduct, SimpleCharactDataItem simpleCharact) {
+		return false;
+	}
+
+	/**
+	 * <p>shouldFormulateInVolume.</p>
+	 *
+	 * @param context a {@link fr.becpg.repo.product.formulation.details.CharactDetailsVisitorContext} object
+	 * @param partProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param simpleCharact a {@link fr.becpg.repo.repository.model.SimpleCharactDataItem} object
+	 * @return a boolean
+	 */
+	protected boolean shouldFormulateInVolume(CharactDetailsVisitorContext context, ProductData partProduct, SimpleCharactDataItem simpleCharact) {
+		return (partProduct.getUnit() != null) && partProduct.getUnit().isVolume();
+	}
+
 	/**
 	 * <p>provideUnit.</p>
 	 *
+	 * @param context a {@link fr.becpg.repo.product.formulation.details.CharactDetailsVisitorContext} object
+	 * @param simpleCharact a {@link fr.becpg.repo.repository.model.SimpleCharactDataItem} object
 	 * @return a {@link java.lang.String} object
 	 */
-	protected String provideUnit() {
+	protected String provideUnit(CharactDetailsVisitorContext context, SimpleCharactDataItem simpleCharact) {
+		if (simpleCharact instanceof UnitAwareDataItem unitAwareDataItem) {
+			return unitAwareDataItem.getUnit();
+		}
 		return null;
 	}
 

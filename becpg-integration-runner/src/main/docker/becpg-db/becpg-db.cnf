@@ -1,12 +1,15 @@
 [mysqld]
+# SQL Modes
 sql_mode="STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"
+
+# Case-insensitivity for table names
 lower_case_table_names=1
+
+# Character Set and Collation
 character-set-server=utf8mb4
 collation-server=utf8mb4_general_ci
+
+# Connection Settings
 max_connections = 275
-default_authentication_plugin=caching_sha2_password
-innodb_buffer_pool_size = 2G
-innodb_flush_log_at_trx_commit = 2
-innodb_flush_method=O_DIRECT
-innodb_redo_log_capacity = 512M
-transaction_isolation=READ-COMMITTED
+
+

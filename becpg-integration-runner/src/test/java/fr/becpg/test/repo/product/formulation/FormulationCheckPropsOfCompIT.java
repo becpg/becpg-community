@@ -64,10 +64,10 @@ public class FormulationCheckPropsOfCompIT extends AbstractFinishedProductTest {
 			finishedProduct.setNetWeight(0d);
 			finishedProduct.setState(SystemState.Valid);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 100d, ProductUnit.P, 10d, DeclarationType.Detail, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 10d, ProductUnit.mL, 10d, DeclarationType.Detail, rawMaterial5NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 10d, ProductUnit.g, 10d, DeclarationType.Detail, rawMaterial6NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 10d, ProductUnit.g, 10d, DeclarationType.Detail, rawMaterial7NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(100d).withUnit(ProductUnit.P).withLossPerc(10d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(10d).withUnit(ProductUnit.mL).withLossPerc(10d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial5NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(10d).withUnit(ProductUnit.g).withLossPerc(10d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial6NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(10d).withUnit(ProductUnit.g).withLossPerc(10d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial7NodeRef));
 
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			NodeRef finishedProductNodeRef1 = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
@@ -78,7 +78,7 @@ public class FormulationCheckPropsOfCompIT extends AbstractFinishedProductTest {
 
 			/*-- Verify formulation --*/
 			logger.debug("/*-- Verify formulation --*/");
-			ProductData formulatedProduct1 = alfrescoRepository.findOne(finishedProductNodeRef1);
+			ProductData formulatedProduct1 = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef1);
 
 			assertNotNull(formulatedProduct1.getReqCtrlList());
 			logger.info("formulation raised " + formulatedProduct1.getReqCtrlList().size() + " rclDataItems");

@@ -4,13 +4,15 @@ import java.util.List;
 import java.util.Objects;
 
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.namespace.QName;
 
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfReadOnly;
+import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
+import fr.becpg.repo.repository.annotation.InternalField;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 /**
@@ -37,8 +39,10 @@ public class SurveyQuestion extends BeCPGDataObject {
 
 	private String questionLowerNote;
 	private String questionUrl;
-	private String surveyCriterion;
-	private Integer questionScore;
+	
+	private NodeRef scoreCriterion;	
+	private Double questionScore;
+	
 	private Boolean isMandatory;
 	private Boolean isVisible;
 	private String responseType;
@@ -50,9 +54,12 @@ public class SurveyQuestion extends BeCPGDataObject {
 	
 
 	private List<NodeRef> fsLinkedCharactRefs;
-	private List<QName> fsLinkedTypes;
+	private List<String> fsLinkedTypes;
 	private List<NodeRef> fsLinkedHierarchy;
-
+	private String fsSurveyListName;
+	private List<NodeRef> subsidiaryRefs;
+	private List<NodeRef> plants;
+	
 	/**
 	 * <p>Getter for the field <code>sort</code>.</p>
 	 *
@@ -139,15 +146,18 @@ public class SurveyQuestion extends BeCPGDataObject {
 		return questionUrl;
 	}
 
-	/**
-	 * <p>Getter for the field <code>surveyCriterion</code>.</p>
-	 *
-	 * @return a {@link java.lang.String} object
-	 */
-	@AlfProp
-	@AlfQname(qname = "survey:questionCriterion")
-	public String getSurveyCriterion() {
-		return surveyCriterion;
+	
+
+	@AlfSingleAssoc
+	@DataListIdentifierAttr
+	@AlfQname(qname = "survey:scoreCriterion")
+	@InternalField
+	public NodeRef getScoreCriterion() {
+		return scoreCriterion;
+	}
+
+	public void setScoreCriterion(NodeRef scoreCriterion) {
+		this.scoreCriterion = scoreCriterion;
 	}
 
 	/**
@@ -157,7 +167,7 @@ public class SurveyQuestion extends BeCPGDataObject {
 	 */
 	@AlfProp
 	@AlfQname(qname = "survey:questionScore")
-	public Integer getQuestionScore() {
+	public Double getQuestionScore() {
 		return questionScore;
 	}
 
@@ -292,20 +302,11 @@ public class SurveyQuestion extends BeCPGDataObject {
 	}
 
 	/**
-	 * <p>Setter for the field <code>surveyCriterion</code>.</p>
-	 *
-	 * @param surveyCriterion a {@link java.lang.String} object
-	 */
-	public void setSurveyCriterion(String surveyCriterion) {
-		this.surveyCriterion = surveyCriterion;
-	}
-
-	/**
 	 * <p>Setter for the field <code>questionScore</code>.</p>
 	 *
 	 * @param questionScore a {@link java.lang.Integer} object
 	 */
-	public void setQuestionScore(Integer questionScore) {
+	public void setQuestionScore(Double questionScore) {
 		this.questionScore = questionScore;
 	}
 
@@ -354,6 +355,11 @@ public class SurveyQuestion extends BeCPGDataObject {
 		this.nextQuestions = nextQuestions;
 	}
 
+	/**
+	 * <p>Getter for the field <code>fsLinkedCharactRefs</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	@AlfMultiAssoc
 	@AlfReadOnly
 	@AlfQname(qname = "survey:fsLinkedCharactRefs")
@@ -361,20 +367,40 @@ public class SurveyQuestion extends BeCPGDataObject {
 		return fsLinkedCharactRefs;
 	}
 
+	/**
+	 * <p>Setter for the field <code>fsLinkedCharactRefs</code>.</p>
+	 *
+	 * @param fsLinkedCharactRefs a {@link java.util.List} object
+	 */
 	public void setFsLinkedCharactRefs(List<NodeRef> fsLinkedCharactRefs) {
 		this.fsLinkedCharactRefs = fsLinkedCharactRefs;
 	}
 
+	/**
+	 * <p>Getter for the field <code>fsLinkedTypes</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "survey:fsLinkedTypes")
-	public List<QName> getFsLinkedTypes() {
+	public List<String> getFsLinkedTypes() {
 		return fsLinkedTypes;
 	}
 
-	public void setFsLinkedTypes(List<QName> fsLinkedTypes) {
+	/**
+	 * <p>Setter for the field <code>fsLinkedTypes</code>.</p>
+	 *
+	 * @param fsLinkedTypes a {@link java.util.List} object
+	 */
+	public void setFsLinkedTypes(List<String> fsLinkedTypes) {
 		this.fsLinkedTypes = fsLinkedTypes;
 	}
 
+	/**
+	 * <p>Getter for the field <code>fsLinkedHierarchy</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	@AlfMultiAssoc
 	@AlfReadOnly
 	@AlfQname(qname = "survey:fsLinkedHierarchy")
@@ -382,19 +408,86 @@ public class SurveyQuestion extends BeCPGDataObject {
 		return fsLinkedHierarchy;
 	}
 
+	/**
+	 * <p>Setter for the field <code>fsLinkedHierarchy</code>.</p>
+	 *
+	 * @param fsLinkedHierarchy a {@link java.util.List} object
+	 */
 	public void setFsLinkedHierarchy(List<NodeRef> fsLinkedHierarchy) {
 		this.fsLinkedHierarchy = fsLinkedHierarchy;
 	}
-
 	
+	/**
+	 * <p>Getter for the field <code>fsSurveyListName</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
+	@AlfProp
+	@AlfQname(qname = "survey:fsSurveyListName")
+	public String getFsSurveyListName() {
+		return fsSurveyListName;
+	}
+
+	/**
+	 * <p>Setter for the field <code>fsSurveyListName</code>.</p>
+	 *
+	 * @param fsSurveyListName a {@link java.lang.String} object
+	 */
+	public void setFsSurveyListName(String fsSurveyListName) {
+		this.fsSurveyListName = fsSurveyListName;
+	}
+	
+	/**
+	 * <p>Getter for the field <code>subsidiaryRefs</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
+	@AlfMultiAssoc
+	@AlfReadOnly
+	@AlfQname(qname = "bcpg:subsidiaryRef")
+	public List<NodeRef> getSubsidiaryRefs() {
+		return subsidiaryRefs;
+	}
+
+	/**
+	 * <p>Setter for the field <code>subsidiaryRefs</code>.</p>
+	 *
+	 * @param subsidiaryRefs a {@link java.util.List} object
+	 */
+	public void setSubsidiaryRefs(List<NodeRef> subsidiaryRefs) {
+		this.subsidiaryRefs = subsidiaryRefs;
+	}
+
+	/**
+	 * <p>Getter for the field <code>plants</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
+	@AlfMultiAssoc
+	@AlfReadOnly
+	@AlfQname(qname = "bcpg:plants")
+	public List<NodeRef> getPlants() {
+		return plants;
+	}
+
+	/**
+	 * <p>Setter for the field <code>plants</code>.</p>
+	 *
+	 * @param plants a {@link java.util.List} object
+	 */
+	public void setPlants(List<NodeRef> plants) {
+		this.plants = plants;
+	}
+
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result
-				+ Objects.hash(fsLinkedCharactRefs, fsLinkedHierarchy, fsLinkedTypes, isMandatory, isVisible, label,
-						nextQuestions, parent, questionLowerNote, questionNote, questionScore, questionUpperNote,
-						questionUrl, responseCommentLabel, responseCommentType, responseType, sort, surveyCriterion);
+		result = prime * result + Objects.hash(fsLinkedCharactRefs, fsLinkedHierarchy, fsLinkedTypes, fsSurveyListName,
+				isMandatory, isVisible, label, nextQuestions, parent, plants, questionLowerNote, questionNote,
+				questionScore, questionUpperNote, questionUrl, responseCommentLabel, responseCommentType, responseType,
+				sort, subsidiaryRefs, scoreCriterion);
 		return result;
 	}
 
@@ -410,9 +503,11 @@ public class SurveyQuestion extends BeCPGDataObject {
 		SurveyQuestion other = (SurveyQuestion) obj;
 		return Objects.equals(fsLinkedCharactRefs, other.fsLinkedCharactRefs)
 				&& Objects.equals(fsLinkedHierarchy, other.fsLinkedHierarchy)
-				&& Objects.equals(fsLinkedTypes, other.fsLinkedTypes) && Objects.equals(isMandatory, other.isMandatory)
-				&& Objects.equals(isVisible, other.isVisible) && Objects.equals(label, other.label)
-				&& Objects.equals(nextQuestions, other.nextQuestions) && Objects.equals(parent, other.parent)
+				&& Objects.equals(fsLinkedTypes, other.fsLinkedTypes)
+				&& Objects.equals(fsSurveyListName, other.fsSurveyListName)
+				&& Objects.equals(isMandatory, other.isMandatory) && Objects.equals(isVisible, other.isVisible)
+				&& Objects.equals(label, other.label) && Objects.equals(nextQuestions, other.nextQuestions)
+				&& Objects.equals(parent, other.parent) && Objects.equals(plants, other.plants)
 				&& Objects.equals(questionLowerNote, other.questionLowerNote)
 				&& Objects.equals(questionNote, other.questionNote)
 				&& Objects.equals(questionScore, other.questionScore)
@@ -421,7 +516,8 @@ public class SurveyQuestion extends BeCPGDataObject {
 				&& Objects.equals(responseCommentLabel, other.responseCommentLabel)
 				&& Objects.equals(responseCommentType, other.responseCommentType)
 				&& Objects.equals(responseType, other.responseType) && Objects.equals(sort, other.sort)
-				&& Objects.equals(surveyCriterion, other.surveyCriterion);
+				&& Objects.equals(subsidiaryRefs, other.subsidiaryRefs)
+				&& Objects.equals(scoreCriterion, other.scoreCriterion);
 	}
 
 	/** {@inheritDoc} */
@@ -429,12 +525,12 @@ public class SurveyQuestion extends BeCPGDataObject {
 	public String toString() {
 		return "SurveyQuestion [parent=" + parent + ", label=" + label + ", questionNote=" + questionNote
 				+ ", questionUpperNote=" + questionUpperNote + ", questionLowerNote=" + questionLowerNote
-				+ ", questionUrl=" + questionUrl + ", surveyCriterion=" + surveyCriterion + ", questionScore="
+				+ ", questionUrl=" + questionUrl + ", scoreCriterion=" + scoreCriterion + ", questionScore="
 				+ questionScore + ", isMandatory=" + isMandatory + ", isVisible=" + isVisible + ", responseType="
 				+ responseType + ", responseCommentType=" + responseCommentType + ", responseCommentLabel="
 				+ responseCommentLabel + ", nextQuestions=" + nextQuestions + ", sort=" + sort
 				+ ", fsLinkedCharactRefs=" + fsLinkedCharactRefs + ", fsLinkedTypes=" + fsLinkedTypes
-				+ ", fsLinkedHierarchy=" + fsLinkedHierarchy + "]";
+				+ ", fsLinkedHierarchy=" + fsLinkedHierarchy + ", fsSurveyListName=" + fsSurveyListName
+				+ ", subsidiaries=" + subsidiaryRefs + ", plants=" + plants + "]";
 	}
-	
 }

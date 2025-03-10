@@ -49,10 +49,16 @@ public class UnPublishWebScript extends AbstractWebScript {
 		this.designerService = designerService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
 

@@ -24,7 +24,10 @@ public class NutsRequirementScanner extends SimpleListRequirementScanner<NutList
 
 	/** {@inheritDoc} */
 	@Override
-	protected String getSpecErrorMessageKey() {
+	protected String getSpecErrorMessageKey(NutListDataItem specDataItem) {
+		if(specDataItem.getRequirementType()!=null) {
+			return MESSAGE_NUT_NOT_IN_RANGE+"."+specDataItem.getRequirementType().toString();
+		}
 		return MESSAGE_NUT_NOT_IN_RANGE;
 	}
 
@@ -35,10 +38,38 @@ public class NutsRequirementScanner extends SimpleListRequirementScanner<NutList
 
 	/** {@inheritDoc} */
 	@Override
-	protected String getSpecInfoMessageKey() {
+	protected String getSpecInfoMessageKey(NutListDataItem specDataItem) {
 		return MESSAGE_NUT_NOT_IN_RANGE_INFO;
 	}
 
+	
+	/** {@inheritDoc} */
+	@Override
+	protected Double getValue(NutListDataItem specListDataItem, NutListDataItem listDataItem) {
+		if(specListDataItem.getRequirementType()!=null) {
+			switch(specListDataItem.getRequirementType()) {
+			  case Serving:
+				  return listDataItem.getValuePerServing();
+			  case GdaPerc:
+				  return listDataItem.getGdaPerc();
+			  case AsPrepared:
+				  return listDataItem.getPreparedValue();  
+			  default:
+				  break;
+			}
+		}
+		
+		return listDataItem.getValue();
+	}
 
+	
+	/** {@inheritDoc} */
+	@Override
+	protected boolean shouldMerge(NutListDataItem item, NutListDataItem sl) {
+		return item.getCharactNodeRef().equals(sl.getCharactNodeRef()) 
+				&& ((item.getRequirementType()!=null &&  item.getRequirementType().equals(sl.getRequirementType()))
+				|| (item.getRequirementType() == null && sl.getRequirementType() == null)
+				);
+	}
 	
 }

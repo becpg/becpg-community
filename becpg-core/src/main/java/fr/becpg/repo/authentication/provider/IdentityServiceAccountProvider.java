@@ -17,6 +17,7 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.authentication.BeCPGUserAccount;
@@ -83,15 +84,20 @@ public class IdentityServiceAccountProvider {
 		try {
 			HttpClientBuilder builder = HttpClientBuilder.create();
 
-			try (CloseableHttpClient httpClient = (CloseableHttpClient) builder.build()) {
+			try (CloseableHttpClient httpClient = builder.build()) {
 
 				HttpPost request = new HttpPost(authServerUrl + "/realms/" + realm + "/protocol/openid-connect/token");
 
 				ArrayList<BasicNameValuePair> parameters = new ArrayList<>();
-				parameters.add(new BasicNameValuePair("grant_type", "password"));
+				
 				parameters.add(new BasicNameValuePair("client_id", clientId));
-				parameters.add(new BasicNameValuePair("username", identityServiceUserName));
-				parameters.add(new BasicNameValuePair("password", identityServicePassword));
+				if (identityServiceUserName != null && !identityServiceUserName.isEmpty()) {
+					parameters.add(new BasicNameValuePair("username", identityServiceUserName));
+					parameters.add(new BasicNameValuePair("password", identityServicePassword));
+					parameters.add(new BasicNameValuePair("grant_type", "password"));
+				} else {
+					parameters.add(new BasicNameValuePair("grant_type","client_credentials"));
+				}
 				if (clientSecret != null && !clientSecret.isEmpty()) {
 					parameters.add(new BasicNameValuePair("client_secret", clientSecret));
 				}
@@ -136,7 +142,13 @@ public class IdentityServiceAccountProvider {
 								logger.debug("Create user:"+userRepresentation.toString());
 							}
 							try (CloseableHttpResponse createResp = httpClient.execute(request)) {
-								if (response.getStatusLine().getStatusCode() != 200) {
+								if (EntityUtils.toString(createResp.getEntity()).toLowerCase().contains("user exists")) {
+									if(logger.isDebugEnabled()){
+										logger.debug(EntityUtils.toString(createResp.getEntity()));
+									}
+									return false;
+								}
+								if (!HttpStatus.valueOf(createResp.getStatusLine().getStatusCode()).is2xxSuccessful()) {
 									throw new IllegalStateException(EntityUtils.toString(createResp.getEntity()));
 								} else  if(logger.isDebugEnabled()){
 									logger.debug(EntityUtils.toString(createResp.getEntity()));
@@ -156,6 +168,7 @@ public class IdentityServiceAccountProvider {
 			}
 		} catch (IOException e) {
 			logger.error(e, e);
+			return false;
 		}
 		return true;
 	}

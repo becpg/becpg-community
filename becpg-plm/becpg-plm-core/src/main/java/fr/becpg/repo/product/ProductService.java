@@ -60,6 +60,15 @@ public interface ProductService {
      * @throws fr.becpg.repo.formulation.FormulateException if any.
      */
     ProductData formulate(ProductData productData);
+    
+    /**
+     * <p>formulate.</p>
+     *
+     * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+     * @param chainId a {@link java.lang.String} object
+     * @return a {@link fr.becpg.repo.product.data.ProductData} object
+     */
+    ProductData formulate(ProductData productData, String chainId);
      
     
 	/**

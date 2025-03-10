@@ -68,6 +68,7 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	private Date targetEnd;
 	
 	private TaskState taskState = TaskState.Planned;
+	private TaskState previousTaskState = null;
 	private Integer completionPercent = 0;
 	
 	private List<NodeRef> refusedTasksToReopen;
@@ -477,6 +478,8 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	public TaskState getTaskState() {
 		return taskState;
 	}
+	
+	
 
 	/**
 	 * <p>Setter for the field <code>taskState</code>.</p>
@@ -487,6 +490,27 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 		this.taskState = state;
 	}
 
+	/**
+	 * <p>Getter for the field <code>previousTaskState</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.project.data.projectList.TaskState} object
+	 */
+	@AlfProp
+	@AlfQname(qname = "pjt:tlPreviousState")
+	public TaskState getPreviousTaskState() {
+		return previousTaskState;
+	}
+	
+	/**
+	 * <p>Setter for the field <code>taskState</code>.</p>
+	 *
+	 * @param previousTaskState a {@link fr.becpg.repo.project.data.projectList.TaskState} object
+	 */
+	public void setPreviousTaskState(TaskState previousTaskState) {
+		this.previousTaskState = previousTaskState;
+	}
+	
+	
 	// Helper method for script and Spel
 	/**
 	 * <p>getState.</p>
@@ -931,76 +955,165 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	}
 
 
+	/**
+	 * <p>build.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object
+	 */
 	public static TaskListDataItem build() {
 		return new TaskListDataItem();
 	}
 
+    /**
+     * <p>withNodeRef.</p>
+     *
+     * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+     * @return a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object
+     */
     public TaskListDataItem withNodeRef(NodeRef nodeRef) {
         this.nodeRef = nodeRef;
         return this;
     }
 
+    /**
+     * <p>withTaskName.</p>
+     *
+     * @param taskName a {@link java.lang.String} object
+     * @return a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object
+     */
     public TaskListDataItem withTaskName(String taskName) {
         this.taskName = taskName;
         return this;
     }
 
+    /**
+     * <p>withIsMilestone.</p>
+     *
+     * @param isMilestone a {@link java.lang.Boolean} object
+     * @return a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object
+     */
     public TaskListDataItem withIsMilestone(Boolean isMilestone) {
         this.isMilestone = isMilestone;
         return this;
     }
 
+    /**
+     * <p>withDuration.</p>
+     *
+     * @param duration a {@link java.lang.Integer} object
+     * @return a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object
+     */
     public TaskListDataItem withDuration(Integer duration) {
         this.duration = duration;
         return this;
     }
 
+    /**
+     * <p>withStart.</p>
+     *
+     * @param start a {@link java.util.Date} object
+     * @return a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object
+     */
     public TaskListDataItem withStart(Date start) {
         this.start = start;
         return this;
     }
 
+    /**
+     * <p>withEnd.</p>
+     *
+     * @param end a {@link java.util.Date} object
+     * @return a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object
+     */
     public TaskListDataItem withEnd(Date end) {
         this.end = end;
         return this;
     }
 
+    /**
+     * <p>withTaskState.</p>
+     *
+     * @param taskState a {@link fr.becpg.repo.project.data.projectList.TaskState} object
+     * @return a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object
+     */
     public TaskListDataItem withTaskState(TaskState taskState) {
         this.taskState = taskState;
         return this;
     }
 
+    /**
+     * <p>withCompletionPercent.</p>
+     *
+     * @param completionPercent a {@link java.lang.Integer} object
+     * @return a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object
+     */
     public TaskListDataItem withCompletionPercent(Integer completionPercent) {
         this.completionPercent = completionPercent;
         return this;
     }
 
+    /**
+     * <p>withPrevTasks.</p>
+     *
+     * @param prevTasks a {@link java.util.List} object
+     * @return a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object
+     */
     public TaskListDataItem withPrevTasks(List<NodeRef> prevTasks) {
         this.prevTasks = prevTasks;
         return this;
     }
 
+    /**
+     * <p>withResources.</p>
+     *
+     * @param resources a {@link java.util.List} object
+     * @return a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object
+     */
     public TaskListDataItem withResources(List<NodeRef> resources) {
         this.resources = resources;
         return this;
     }
 
+    /**
+     * <p>withTaskLegend.</p>
+     *
+     * @param taskLegend a {@link org.alfresco.service.cmr.repository.NodeRef} object
+     * @return a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object
+     */
     public TaskListDataItem withTaskLegend(NodeRef taskLegend) {
         this.taskLegend = taskLegend;
         return this;
     }
 
+    /**
+     * <p>withWorkflowName.</p>
+     *
+     * @param workflowName a {@link java.lang.String} object
+     * @return a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object
+     */
     public TaskListDataItem withWorkflowName(String workflowName) {
         this.workflowName = workflowName;
         return this;
     }
 
+    /**
+     * <p>withWorkflowInstance.</p>
+     *
+     * @param workflowInstance a {@link java.lang.String} object
+     * @return a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object
+     */
     public TaskListDataItem withWorkflowInstance(String workflowInstance) {
         this.workflowInstance = workflowInstance;
         return this;
     }
 
 
+    /**
+     * <p>withExpense.</p>
+     *
+     * @param expense a {@link java.lang.Double} object
+     * @return a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object
+     */
     public TaskListDataItem withExpense(Double expense) {
         this.expense = expense;
         return this;
@@ -1060,7 +1173,6 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	 * @param taskLegend a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param workflowName a {@link java.lang.String} object.
 	 * @param workflowInstance a {@link java.lang.String} object.
-	 * @param plannedExpense a {@link java.lang.Double} object.
 	 * @param expense a {@link java.lang.Double} object.
 	 */
 	@Deprecated

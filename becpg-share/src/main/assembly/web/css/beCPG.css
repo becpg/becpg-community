@@ -32,6 +32,10 @@
 		url("../../components/images/filetypes/generic-project-16.png");
 }
 
+#bd {
+	padding-bottom: 0em;
+}
+
 .footer-becpg .copyright {
 	display: inline-block;
 	line-height: 22px;
@@ -56,8 +60,13 @@
 
 
 .form-container .yui-ac .ac-body,
+.form-container .yui-g.number-range,
 .form-container .form-field input.number {
 	width: 28em;
+}
+
+.form-container .form-field input.number-range {
+    width: 10em;
 }
 
 .form-container .form-field input.number-unit {
@@ -122,7 +131,9 @@
 
 .filter-form .form-fields {
 	width: 58em;
+    border-bottom: 0px !important;
 }
+
 
 
 /* 1-2 Column Tabbed Set */
@@ -133,7 +144,7 @@
 	 :not(.bd) > .form-container .yui-navset .form-field input[type="text"]:not(.date-entry,.number-range,.date-range,.number-unit,.yui-ac-input),
 	 :not(.bd) > .form-container .yui-navset .form-field input[type="file"],
 	 :not(.bd) > .form-container .yui-navset .form-field input[type="password"],
-	 :not(.bd) > .form-container .yui-navset .form-field input:not(.number-range,.date-entry,.date-range,.number-unit,.yui-ac-input,.formsCheckBox), 
+	 :not(.bd) > .form-container .yui-navset .form-field input:not(.number-range,.date-entry,.number-range,.date-range,.number-unit,.yui-ac-input,.formsCheckBox), 
 	 :not(.bd) > .form-container .yui-navset .form-field select,
 	 :not(.bd) > .form-container .yui-navset .form-field textarea, .form-container .yui-navset .yui-ac .ac-body
 	{
@@ -189,6 +200,7 @@
 	.form-container .yui-gb .form-field input[type="checkbox"] {
 	width: auto !important;
 }
+
 
 .form-container .yui-gb .yui-g.date-range,.form-container .yui-gb .yui-g.number-range {
 	
@@ -349,6 +361,10 @@ img.icon16_11 {
 .dijitIcon.dijitMenuItemIcon.project-list-header {
     background-image: url("../../components/images/header/project-list.png") !important
 }
+.dijitIcon.dijitMenuItemIcon.product-list-header {
+    background-image: url("../../components/images/header/product-list.png") !important
+}
+
 .dijitIcon.dijitMenuItemIcon.nc-list-header {
     background-image: url("../../components/images/header/nc-list.png") !important
 }
@@ -399,6 +415,12 @@ img.icon16_11 {
 
 .dijitIcon.dijitMenuItemIcon.entity {
 	  padding: 0px !important;
+}
+
+span.link {
+    background-image: url("../../components/images/link-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
 }
 
 span.dynaAccessDenied,

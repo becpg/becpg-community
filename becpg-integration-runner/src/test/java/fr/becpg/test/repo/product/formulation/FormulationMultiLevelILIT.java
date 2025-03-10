@@ -57,8 +57,8 @@ public class FormulationMultiLevelILIT extends AbstractFinishedProductTest {
 			finishedProduct.setQty(4d);
 			finishedProduct.setDensity(1d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg, 3d, DeclarationType.Declare, rawMaterial7NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 1d, DeclarationType.Declare, rawMaterial6NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(3d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial7NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(1d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial6NodeRef));
 
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
@@ -75,7 +75,7 @@ public class FormulationMultiLevelILIT extends AbstractFinishedProductTest {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 
 			assertEquals(5, formulatedProduct.getIngList().size());
 			assertEquals(ing5, formulatedProduct.getIngList().get(0).getIng());

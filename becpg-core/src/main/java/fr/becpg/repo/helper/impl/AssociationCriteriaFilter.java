@@ -15,6 +15,7 @@ public class AssociationCriteriaFilter {
 	private String value;
 	private QName attributeQname;
 	private AssociationCriteriaFilterMode mode = AssociationCriteriaFilterMode.EQUALS;
+	private boolean isEntityFilter = false;
 	
 	public enum AssociationCriteriaFilterMode {
 		RANGE, EQUALS, NOT_EQUALS, 
@@ -30,6 +31,14 @@ public class AssociationCriteriaFilter {
 		this(attributeQName,criteriaValue,AssociationCriteriaFilterMode.EQUALS);
 	}
 
+	public void setEntityFilter(boolean isEntityFilter) {
+		this.isEntityFilter = isEntityFilter;
+	}
+	
+	public boolean isEntityFilter() {
+		return isEntityFilter;
+	}
+	
 	/**
 	 * <p>Constructor for AssociationCriteriaFilter.</p>
 	 *
@@ -52,6 +61,22 @@ public class AssociationCriteriaFilter {
 		} else {
 			this.value = criteriaValue;
 		}
+	}
+	
+	public void setValue(String value) {
+		this.value = value;
+	}
+	
+	public void setMode(AssociationCriteriaFilterMode mode) {
+		this.mode = mode;
+	}
+	
+	public void setFromRange(String fromRange) {
+		this.fromRange = fromRange;
+	}
+	
+	public void setToRange(String toRange) {
+		this.toRange = toRange;
 	}
 
 	/**

@@ -27,16 +27,20 @@ import fr.becpg.common.BeCPGException;
 
 /**
  * Visitor for retrieving Activities in Json format
- * 
+ *
  * @author frederic
  */
 public class JsonActivityVisitor implements RemoteActivityVisitor {
 
 	private static Log logger = LogFactory.getLog(JsonActivityVisitor.class);
 
+	/** Constant <code>NODE_REF="nodeRef"</code> */
 	public static final String NODE_REF = "nodeRef";
+	/** Constant <code>TITLE="title"</code> */
 	public static final String TITLE = "title";
+	/** Constant <code>LAST_NAME="lastName"</code> */
 	public static final String LAST_NAME = "lastName";
+	/** Constant <code>FIRST_NAME="firstName"</code> */
 	public static final String FIRST_NAME = "firstName";
 
 	private SiteService siteService;
@@ -48,10 +52,12 @@ public class JsonActivityVisitor implements RemoteActivityVisitor {
 	private ContentService contentService;
 
 	/**
-	 * @param siteService
-	 * @param nodeService
-	 * @param namespaceService
-	 * @param contentService
+	 * <p>Constructor for JsonActivityVisitor.</p>
+	 *
+	 * @param siteService a {@link org.alfresco.service.cmr.site.SiteService} object
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object
+	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object
 	 */
 	public JsonActivityVisitor(SiteService siteService, NodeService nodeService, NamespaceService namespaceService, ContentService contentService) {
 		super();
@@ -62,11 +68,9 @@ public class JsonActivityVisitor implements RemoteActivityVisitor {
 	}
 
 	/**
-	 * <p>visit.</p>
+	 * {@inheritDoc}
 	 *
-	 * @param feedEntries a {@link org.alfresco.query.PagingResults} object.
-	 * @param result a {@link java.io.OutputStream} object.
-	 * @throws java.io.IOException if any.
+	 * <p>visit.</p>
 	 */
 	@Override
 	public void visit(List<ActivityFeedEntity> feedEntries, OutputStream result) throws BeCPGException {
@@ -166,6 +170,7 @@ public class JsonActivityVisitor implements RemoteActivityVisitor {
 		return "";
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getContentType() {
 		return "application/json";

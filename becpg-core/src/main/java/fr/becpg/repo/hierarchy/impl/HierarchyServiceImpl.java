@@ -31,6 +31,8 @@ import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.security.AccessStatus;
+import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -40,6 +42,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.BeCPGPermissions;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.PropertiesHelper;
 import fr.becpg.repo.helper.RepoService;
@@ -50,6 +53,7 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.search.impl.AbstractBeCPGQueryBuilder;
+import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * Service that manages hierarchies
@@ -74,7 +78,14 @@ public class HierarchyServiceImpl implements HierarchyService {
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 	@Autowired
 	private Repository repositoryHelper;
+	
+	@Autowired
+	private PermissionService permissionService;
+	
+	@Autowired
+	private SystemConfigurationService systemConfigurationService;
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getHierarchyByPath(String path, NodeRef parentNodeRef, QName key, String value) {
 		if (key == null) {
@@ -117,6 +128,7 @@ public class HierarchyServiceImpl implements HierarchyService {
 		return getLuceneQuery(path, null, BeCPGModel.PROP_LKV_VALUE, value, true).list();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> getAllHierarchiesByDepthLevel(String parentPath, String query, String depthLevel) {
 
@@ -239,17 +251,26 @@ public class HierarchyServiceImpl implements HierarchyService {
 
 				if (destinationNodeRef != null) {
 					if (destinationNodeRef != entityNodeRef) {
+						final NodeRef finalDestinationNodeRef = destinationNodeRef;
 						// classify
 						if (!ContentModel.TYPE_FOLDER.equals(nodeService.getType(destinationNodeRef))) {
 							logger.warn("Incorrect destination node type:" + nodeService.getType(destinationNodeRef));
 						} else {
+							AuthenticationUtil.runAs(() -> {
+								if (permissionService.hasPermission(finalDestinationNodeRef, PermissionService.WRITE) != AccessStatus.ALLOWED
+										&& permissionService.hasPermission(finalDestinationNodeRef, BeCPGPermissions.MERGE_ENTITY) != AccessStatus.ALLOWED
+										&& Boolean.TRUE.equals(Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.classify.rights.check")))) {
+									throw new IllegalStateException("You do not have permission to move the entity into this folder: " + finalDestinationNodeRef + ", entity :" + entityNodeRef);
+								}
+								return null;
+							}, AuthenticationUtil.getFullyAuthenticatedUser());
 							return repoService.moveNode(entityNodeRef, destinationNodeRef);
 						}
 					} else {
 						logger.warn("Failed to classify entity. entityNodeRef: " + entityNodeRef + " cannot classify into itselfs");
 					}
 				} else {
-					logger.warn("Failed to classify entity. entityNodeRef: " + entityNodeRef);
+					logger.warn("Failed to classify entity. entityNodeRef: " + entityNodeRef +", destinationNodeRef: "+destinationNodeRef+", hierarchyQname: "+hierarchyQname);
 				}
 
 				return false;

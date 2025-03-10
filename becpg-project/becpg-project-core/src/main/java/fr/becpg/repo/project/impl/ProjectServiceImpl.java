@@ -139,11 +139,11 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 	public void reopenTask(NodeRef taskNodeRef) {
 
 		logger.debug("open Task " + taskNodeRef);
-		List<AssociationRef> sourceAssocs = nodeService.getSourceAssocs(taskNodeRef, ProjectModel.ASSOC_DL_TASK);
-		for (AssociationRef sourceAssoc : sourceAssocs) {
-			String dlState = (String) nodeService.getProperty(sourceAssoc.getSourceRef(), ProjectModel.PROP_DL_STATE);
+		List<NodeRef> sourceAssocs = associationService.getSourcesAssocs(taskNodeRef, ProjectModel.ASSOC_DL_TASK);
+		for (NodeRef sourceAssoc : sourceAssocs) {
+			String dlState = (String) nodeService.getProperty(sourceAssoc, ProjectModel.PROP_DL_STATE);
 			if (DeliverableState.Completed.toString().equals(dlState)) {
-				nodeService.setProperty(sourceAssoc.getSourceRef(), ProjectModel.PROP_DL_STATE, DeliverableState.InProgress.toString());
+				nodeService.setProperty(sourceAssoc, ProjectModel.PROP_DL_STATE, DeliverableState.InProgress.toString());
 			}
 		}
 
@@ -560,7 +560,9 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 				String authorityName = authorityDAO.getAuthorityName(resourceNodeRef);
 
 				if ((authorityName != null) && !ProjectHelper.isRoleAuhtority(authorityName)) {
-					logger.debug("Set permission for authority: " + authorityName + " allow :" + allow);
+					if (logger.isDebugEnabled()) {
+						logger.debug("Update task permission for authority: " + authorityName + ", taskNodeRef: " + taskListNodeRef + ", allow: " + allow);
+					}
 					ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 					List<DeliverableListDataItem> deliverableList = ProjectHelper.getDeliverables(projectData, taskListNodeRef);
 					for (DeliverableListDataItem dl : deliverableList) {
@@ -572,17 +574,25 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 							boolean updatePerm = true;
 							for (AccessPermission perm : permissionService.getAllSetPermissions(n)) {
 								if (authorityName.equals(perm.getAuthority()) && PermissionService.COORDINATOR.equals(perm.getPermission())) {
+									if (logger.isDebugEnabled()) {
+										logger.debug("Permission Coordinator already set for authority: " + authorityName + " nodeRef: " + n);
+									}
 									updatePerm = false;
 									break;
 								}
 							}
 							if (updatePerm) {
+								if (logger.isDebugEnabled()) {
+									logger.debug("Set Coordinator permission for authority: " + authorityName + " nodeRef: " + n);
+								}
 								permissionService.setPermission(n, authorityName, PermissionService.COORDINATOR, true);
 							}
 						} else {
+							if (logger.isDebugEnabled()) {
+								logger.debug("Clear permission for authority: " + authorityName + " nodeRef: " + n);
+							}
 							permissionService.clearPermission(n, authorityName);
 						}
-
 					}
 				}
 			}

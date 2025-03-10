@@ -43,7 +43,6 @@ public class AddEffectivityAspectPatch extends AbstractBeCPGPatch {
 	private BehaviourFilter policyBehaviourFilter;
 	private RuleService ruleService;
 
-
 	/**
 	 * <p>Setter for the field <code>ruleService</code>.</p>
 	 *
@@ -59,7 +58,7 @@ public class AddEffectivityAspectPatch extends AbstractBeCPGPatch {
 
 		for (QName listQName : Arrays.asList(PLMModel.TYPE_COMPOLIST, PLMModel.TYPE_PACKAGINGLIST, MPMModel.TYPE_PROCESSLIST)) {
 
-			BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
+			BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<>() {
 				final List<NodeRef> result = new ArrayList<>();
 
 				final long maxNodeId = getNodeDAO().getMaxNodeId();
@@ -72,7 +71,7 @@ public class AddEffectivityAspectPatch extends AbstractBeCPGPatch {
 				public int getTotalEstimatedWorkSize() {
 					return result.size();
 				}
-				
+
 				@Override
 				public long getTotalEstimatedWorkSizeLong() {
 					return getTotalEstimatedWorkSize();
@@ -103,19 +102,20 @@ public class AddEffectivityAspectPatch extends AbstractBeCPGPatch {
 			};
 
 			BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("AddEffectivityAspectPatch",
-					transactionService.getRetryingTransactionHelper(), workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 500);
+					transactionService.getRetryingTransactionHelper(), workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger,
+					500);
 
-			BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
+			BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<>() {
 
 				@Override
 				public void afterProcess() throws Throwable {
-					ruleService.enableRules();
+					//Do nothing
 
 				}
 
 				@Override
 				public void beforeProcess() throws Throwable {
-					ruleService.disableRules();
+					//Do nothing
 				}
 
 				@Override
@@ -126,9 +126,11 @@ public class AddEffectivityAspectPatch extends AbstractBeCPGPatch {
 				@Override
 				public void process(NodeRef dataListNodeRef) throws Throwable {
 					if (nodeService.exists(dataListNodeRef) && !nodeService.hasAspect(dataListNodeRef, BeCPGModel.ASPECT_EFFECTIVITY)) {
+						ruleService.disableRules();
 						AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 						policyBehaviourFilter.disableBehaviour();
 						nodeService.addAspect(dataListNodeRef, BeCPGModel.ASPECT_EFFECTIVITY, new HashMap<>());
+						ruleService.enableRules();
 					}
 				}
 

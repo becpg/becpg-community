@@ -355,6 +355,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		createInitialVersion(entityNodeRef, null);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void createInitialVersion(NodeRef entityNodeRef, Date effectiveDate) {
 		internalCreateInitialVersion(entityNodeRef, effectiveDate);
@@ -393,6 +394,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void createInitialVersionWithProps(NodeRef entityNodeRef, Map<QName, Serializable> before) {
 
@@ -692,10 +694,10 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 		List<NodeRef> ret = new LinkedList<>();
 		// Look for childs
-		for (AssociationRef associationRef : nodeService.getSourceAssocs(entityNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY)) {
-			if (!isVersion(associationRef.getSourceRef())
-					&& !nodeService.hasAspect(associationRef.getSourceRef(), BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
-				NodeRef tmpNodeRef = associationRef.getSourceRef();
+		for (NodeRef associationRef : associationService.getSourcesAssocs(entityNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY)) {
+			if (!VersionHelper.isVersion(associationRef)
+					&& !nodeService.hasAspect(associationRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
+				NodeRef tmpNodeRef = associationRef;
 				if (!ret.contains(tmpNodeRef)) {
 					ret.add(tmpNodeRef);
 					if (!entityNodeRef.equals(tmpNodeRef)) {
@@ -791,7 +793,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			branchToNodeRef = associationService.getTargetAssoc(branchNodeRef, BeCPGModel.ASSOC_AUTO_MERGE_TO);
 		}
 
-		if ((permissionService.hasPermission(branchToNodeRef, BeCPGPermissions.MERGE_ENTITY) == AccessStatus.ALLOWED) && (branchToNodeRef != null)) {
+		if ((permissionService.hasPermission(branchToNodeRef, BeCPGPermissions.MERGE_ENTITY) == AccessStatus.ALLOWED) && (branchToNodeRef != null) && (!branchToNodeRef.equals(branchNodeRef))) {
 
 			boolean mlAware = 	MLPropertyInterceptor.setMLAware(true);
 			try(ActionStateContext state = BeCPGStateHelper.onMergeEntity(branchToNodeRef, versionType) ){
@@ -970,7 +972,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 									
 									for (Version version : versionHistory.getAllVersions()) {
 										NodeRef entityVersionNodeRef = getEntityVersion(versionAssocs, version);
-										if (entityVersionNodeRef != null && !isVersion(entityVersionNodeRef)) {
+										if (entityVersionNodeRef != null && !VersionHelper.isVersion(entityVersionNodeRef)) {
 											updateBranchAssoc(entityVersionNodeRef, internalBranchToNodeRef);
 										}
 									}
@@ -1027,8 +1029,16 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				MLPropertyInterceptor.setMLAware(mlAware);
 			}
 
+		} else {
+			if(branchToNodeRef ==null) {
+				logger.info("Cannot AUTO merge "+ branchNodeRef+ " ASSOC_AUTO_MERGE_TO is empty ");
+			} else if(branchToNodeRef.equals(branchNodeRef)) {
+				logger.info("Cannot merge "+ branchNodeRef+ " to itself");
+			} else {
+				logger.info("Cannot merge "+ branchNodeRef+ " you don't have permission");
+			}
 		}
-		return null;
+		return branchToNodeRef;
 	}
 
 	private void triggerRules(NodeRef internalBranchToNodeRef) {
@@ -1122,6 +1132,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef convertVersion(NodeRef nodeRef) {
 		
@@ -1192,11 +1203,13 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		repoService.moveEntity(toMove, newParent);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public Set<NodeRef> findOldVersionWUsed(NodeRef sourceEntity) {
 		return findOldVersionWUsed(sourceEntity, new HashSet<>(), null, -1, new AtomicInteger(0), null);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public Set<NodeRef> findOldVersionWUsed(NodeRef sourceEntity, Set<NodeRef> visited,
 			final List<NodeRef> ignoredItems, final int maxProcessedNodes, AtomicInteger currentCount, String path) {
@@ -1210,7 +1223,9 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		List<ChildAssociationRef> parentRefs = nodeService.getParentAssocs(sourceEntity);
 		
 		for (AssociationRef assocRef : assocRefs) {
-			refs.add(assocRef.getSourceRef());
+			if (!assocRef.getTypeQName().equals(ContentModel.ASSOC_ORIGINAL)) {
+				refs.add(assocRef.getSourceRef());
+			}
 		}
 		for (ChildAssociationRef parentRef : parentRefs) {
 			refs.add(parentRef.getParentRef());
@@ -1373,6 +1388,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		
 		return links;
 	}
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef revertVersion(NodeRef versionNodeRef) throws IllegalAccessException {
 
@@ -1425,6 +1441,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		return createVersion(entityNodeRef, versionProperties, null);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef createVersion(final NodeRef entityNodeRef, Map<String, Serializable> versionProperties, Date effectiveDate) {
 		NodeRef versionNodeRef = internalCreateVersion(entityNodeRef, versionProperties, effectiveDate, null, false);
@@ -1639,6 +1656,11 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	@Override
 	public NodeRef createBranch(NodeRef entityNodeRef, NodeRef parentRef) {
 
+		if (permissionService.hasPermission(parentRef, PermissionService.WRITE) != AccessStatus.ALLOWED 
+				&& permissionService.hasPermission(entityNodeRef, BeCPGPermissions.BRANCH_ENTITY) != AccessStatus.ALLOWED) {
+			throw new IllegalStateException("You do not have permission to create a branch for this entity: " + entityNodeRef + " into this folder: " + parentRef);
+		}
+		
 		return StopWatchSupport.build().logger(logger).scopeName(entityNodeRef.toString()).run(() -> {
 			
 			boolean mlAware = MLPropertyInterceptor.setMLAware(true);
@@ -1662,6 +1684,9 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 						StopWatchSupport.addCheckpoint("createOrCopyFrom");
 						state.addToState(branchNodeRef);
 					} catch (AssociationExistsException e) {
+						if (logger.isDebugEnabled()) {
+							logger.debug(e.getMessage(), e);
+						}
 						// This will be rare, but it's not impossible.
 						// We have to retry the operation.
 						throw new ConcurrencyFailureException("Association already exists for this noderef : " + entityNodeRef);
@@ -1705,12 +1730,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 	}
 
-	@Override
-	public boolean isVersion(NodeRef nodeRef) {
-		return nodeRef.getStoreRef().getProtocol().contains(VersionBaseModel.STORE_PROTOCOL)
-				|| nodeRef.getStoreRef().getIdentifier().contains(Version2Model.STORE_ID);
-	}
-
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef extractVersion(NodeRef versionNodeRef) {
 
@@ -1719,9 +1739,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			NodeRef extractedVersion = findExtractedVersion(versionNodeRef);
 
 			if (extractedVersion == null || !nodeService.exists(extractedVersion)) {
-
-				extractedVersion = createExtractedVersion(versionNodeRef);
-
+				extractedVersion = AuthenticationUtil.runAsSystem(() -> createExtractedVersion(versionNodeRef));
 			}
 			return extractedVersion;
 		}, false, false);
@@ -1760,6 +1778,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 			((RuleService) ruleService).disableRules();
 
+			IntegrityChecker.setWarnInTransaction();
+			
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ENTITY_BRANCH);
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);

@@ -469,4 +469,8 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 		return new ScriptNode(supplierPortalService.createExternalUser(email, firstName, lastName, notify, convertedExtraProps), serviceRegistry, getScope());
 	}
 	
+	public void deleteExternalUser(ScriptNode userNode, ScriptNode supplierNode) {
+		supplierPortalService.deleteExternalUser(userNode.getNodeRef(), supplierNode.getNodeRef());
+	}
+	
 }

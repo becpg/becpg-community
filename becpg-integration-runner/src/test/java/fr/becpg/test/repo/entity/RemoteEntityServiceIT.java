@@ -267,8 +267,7 @@ public class RemoteEntityServiceIT extends PLMBaseTestCase {
 			productData.setErpCode("erp0001");
 			productData.setUnit(ProductUnit.kg);
 			List<CompoListDataItem> compoList = new LinkedList<>();
-			CompoListDataItem compoListItem = new CompoListDataItem(null, null, 1d, 1d, ProductUnit.P, 0d, DeclarationType.Declare,
-					rawMaterialNodeRef);
+			CompoListDataItem compoListItem = CompoListDataItem.build().withParent(null).withQty(1d).withQtyUsed(1d).withUnit(ProductUnit.P).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterialNodeRef);
 			compoList.add(compoListItem);
 			productData.getCompoListView().setCompoList(compoList);
 			List<PackagingListDataItem> packList = new ArrayList<>();

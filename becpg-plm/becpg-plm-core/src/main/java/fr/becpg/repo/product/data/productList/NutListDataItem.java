@@ -5,14 +5,19 @@ package fr.becpg.repo.product.data.productList;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.RegulatoryEntityItem;
+import fr.becpg.repo.product.data.constraints.NutRequirementType;
+import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.formulation.nutrient.RegulationFormulationHelper;
+import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -37,8 +42,8 @@ import fr.becpg.repo.repository.model.VariantAwareDataItem;
  */
 @AlfType
 @AlfQname(qname = "bcpg:nutList")
-public class NutListDataItem extends VariantAwareDataItem implements SimpleListDataItem, MinMaxValueDataItem, FormulatedCharactDataItem, SourceableDataItem,
-		UnitAwareDataItem, ControlableListDataItem, CompositeDataItem<NutListDataItem>, ManualDataItem, RegulatoryEntityItem {
+public class NutListDataItem extends VariantAwareDataItem implements SimpleListDataItem, MinMaxValueDataItem, FormulatedCharactDataItem,
+		SourceableDataItem, UnitAwareDataItem, ControlableListDataItem, CompositeDataItem<NutListDataItem>, ManualDataItem, RegulatoryEntityItem {
 
 	/** Constant <code>UNIT_PER100G="/100g"</code> */
 	public static final String UNIT_PER100G = "/100g";
@@ -52,14 +57,16 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	private static final long serialVersionUID = -4580421935974923617L;
 
 	private Double manualValue;
-	
+
 	private Double formulatedValue;
-	
+
 	private Double manualPreparedValue;
-	
+
 	private Double formulatedPreparedValue;
 
 	private String unit;
+
+	private NutRequirementType requirementType;
 
 	private Double manualMini;
 
@@ -68,11 +75,11 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	private Double manualMaxi;
 
 	private Double formulatedMaxi;
-	
+
 	private Double manualValuePerServing;
 
 	private Double formulatedValuePerServing;
-	
+
 	private Double gdaPerc;
 
 	private Double lossPerc;
@@ -80,7 +87,7 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	private String group;
 
 	private String method;
-	
+
 	private String measurementPrecision;
 
 	private NodeRef nut;
@@ -92,14 +99,23 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	private NutListDataItem parent;
 
 	private String roundedValue;
-	
+
 	private String roundedValuePrepared;
 	
+	private MLText formulatedReductionValue;
+	
+	private MLText manualReductionValue;
+
+	private MLText referenceValue;
+
 	private List<NodeRef> sources = new ArrayList<>();
+
+	private RequirementType regulatoryType;
+	private MLText regulatoryMessage;
 
 	private List<NodeRef> regulatoryCountriesRef = new ArrayList<>();
 	private List<NodeRef> regulatoryUsagesRef = new ArrayList<>();
-	
+
 	/**
 	 * <p>Getter for the field <code>regulatoryCountriesRef</code>.</p>
 	 *
@@ -131,7 +147,42 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	public void setRegulatoryUsagesRef(List<NodeRef> regulatoryUsages) {
 		this.regulatoryUsagesRef = regulatoryUsages;
 	}
+
+	/**
+	 * <p>Getter for the field <code>regulatoryType</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.constraints.RequirementType} object
+	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:regulatoryType")
+	public RequirementType getRegulatoryType() {
+		return regulatoryType;
+	}
+
+	/** {@inheritDoc} */
+	public void setRegulatoryType(RequirementType regulatoryType) {
+		this.regulatoryType = regulatoryType;
+	}
+
+	/**
+	 * <p>Getter for the field <code>regulatoryMessage</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object
+	 */
+	@AlfProp
+	@AlfMlText
+	@AlfQname(qname = "bcpg:regulatoryText")
+	public MLText getRegulatoryMessage() {
+		return regulatoryMessage;
+	}
+
+	/** {@inheritDoc} */
+	public void setRegulatoryMessage(MLText regulatoryMessage) {
+		this.regulatoryMessage = regulatoryMessage;
+	}
 	
+	
+
 	/** {@inheritDoc} */
 	@Override
 	@AlfProp
@@ -186,7 +237,6 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	public Double value(String key) {
 		return RegulationFormulationHelper.extractValue(getRoundedValue(), key);
 	}
-	
 
 	/**
 	 * <p>variantValue.</p>
@@ -220,12 +270,100 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 		this.manualValue = manualValue;
 	}
 	
-	
+
+	/**
+	 * <p>reductionValue.</p>
+	 *
+	 * @param key a {@link java.lang.String} object
+	 * @return a {@link java.lang.Double} object
+	 */
+	public Double reductionValue(String key) {
+		Locale locale = MLTextHelper.parseLocale(key);
+		
+		String ret = null;
+		if(manualReductionValue!=null && manualReductionValue.containsKey(locale)) {
+			ret =  manualReductionValue.get(locale);
+		} else if(formulatedReductionValue!=null) {
+			ret = formulatedReductionValue.get(locale);
+		}
+		
+		if(ret!=null ) {
+			try {
+				return Double.parseDouble(ret);
+			} catch (NumberFormatException e) {
+				//Do Nothing
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * <p>Getter for the field <code>formulatedReductionValue</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object
+	 */
+	@AlfProp
+	@AlfMlText
+	@AlfQname(qname = "bcpg:nutListReductionFormulatedValue")
+	public MLText getFormulatedReductionValue() {
+		return formulatedReductionValue;
+	}
+
+	/**
+	 * <p>Setter for the field <code>formulatedReductionValue</code>.</p>
+	 *
+	 * @param formulatedReductionValue a {@link org.alfresco.service.cmr.repository.MLText} object
+	 */
+	public void setFormulatedReductionValue(MLText formulatedReductionValue) {
+		this.formulatedReductionValue = formulatedReductionValue;
+	}
+
+	/**
+	 * <p>Getter for the field <code>manualReductionValue</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object
+	 */
+	@AlfProp
+	@AlfMlText
+	@AlfQname(qname = "bcpg:nutListReductionValue")
+	public MLText getManualReductionValue() {
+		return manualReductionValue;
+	}
+
+	/**
+	 * <p>Setter for the field <code>manualReductionValue</code>.</p>
+	 *
+	 * @param manualReductionValue a {@link org.alfresco.service.cmr.repository.MLText} object
+	 */
+	public void setManualReductionValue(MLText manualReductionValue) {
+		this.manualReductionValue = manualReductionValue;
+	}
+
+	/**
+	 * <p>Getter for the field <code>referenceValue</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object
+	 */
+	@AlfProp
+	@AlfMlText
+	@AlfQname(qname = "bcpg:nutListReferenceValue")
+	public MLText getReferenceValue() {
+		return referenceValue;
+	}
+
+	/**
+	 * <p>Setter for the field <code>referenceValue</code>.</p>
+	 *
+	 * @param referenceValue a {@link org.alfresco.service.cmr.repository.MLText} object
+	 */
+	public void setReferenceValue(MLText referenceValue) {
+		this.referenceValue = referenceValue;
+	}
 	
 	/** {@inheritDoc} */
 	@AlfMultiAssoc
 	@InternalField
-	@AlfQname(qname="bcpg:nutListSources")
+	@AlfQname(qname = "bcpg:nutListSources")
 	@Override
 	public List<NodeRef> getSources() {
 		return sources;
@@ -259,7 +397,7 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	public void setFormulatedPreparedValue(Double formulatedPreparedValue) {
 		this.formulatedPreparedValue = formulatedPreparedValue;
 	}
-	
+
 	/**
 	 * <p>Getter for the field <code>manualPreparedValue</code>.</p>
 	 *
@@ -297,7 +435,7 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	public void setPreparedValue(Double preparedValue) {
 		this.formulatedPreparedValue = preparedValue;
 	}
-	
+
 	/**
 	 * <p>Getter for the field <code>measurementPrecision</code>.</p>
 	 *
@@ -355,6 +493,26 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	@Override
 	public void setUnit(String unit) {
 		this.unit = unit;
+	}
+
+	/**
+	 * <p>Getter for the field <code>requirementType</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.constraints.NutRequirementType} object
+	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:nutListRequirementType")
+	public NutRequirementType getRequirementType() {
+		return requirementType;
+	}
+
+	/**
+	 * <p>Setter for the field <code>requirementType</code>.</p>
+	 *
+	 * @param requirementType a {@link fr.becpg.repo.product.data.constraints.NutRequirementType} object
+	 */
+	public void setRequirementType(NutRequirementType requirementType) {
+		this.requirementType = requirementType;
 	}
 
 	/** {@inheritDoc} */
@@ -482,9 +640,7 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	public Double maxi(String key) {
 		return RegulationFormulationHelper.extractMaxi(getRoundedValue(), key);
 	}
-	
-	
-	
+
 	/**
 	 * <p>Getter for the field <code>formulatedValuePerServing</code>.</p>
 	 *
@@ -532,7 +688,7 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	 * @return a {@link java.lang.Double} object.
 	 */
 	public Double getValuePerServing() {
-		return manualValuePerServing!=null ? manualValuePerServing : formulatedValuePerServing;
+		return manualValuePerServing != null ? manualValuePerServing : formulatedValuePerServing;
 	}
 
 	/**
@@ -554,6 +710,11 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 		return RegulationFormulationHelper.extractValuePerServing(getRoundedValue(), key);
 	}
 
+	
+
+	public Double preparedValuePerServing(String key) {
+		return RegulationFormulationHelper.extractPreparedValuePerServing(getRoundedValue(), key);
+	}
 	/**
 	 * <p>Getter for the field <code>gdaPerc</code>.</p>
 	 *
@@ -584,6 +745,13 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 		return RegulationFormulationHelper.extractGDAPerc(getRoundedValue(), key);
 	}
 
+	
+	
+	public Double preparedGdaPerc(String key) {
+		return RegulationFormulationHelper.extractGDAPerc(getRoundedValuePrepared(), key);
+	}
+	
+	
 	/**
 	 * <p>Getter for the field <code>lossPerc</code>.</p>
 	 *
@@ -720,8 +888,6 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	public void setRoundedValue(String roundedValue) {
 		this.roundedValue = roundedValue;
 	}
-	
-	
 
 	/**
 	 * <p>Getter for the field <code>roundedValuePrepared</code>.</p>
@@ -767,6 +933,7 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	 * @param maxi a {@link java.lang.Double} object.
 	 * @param isManual a {@link java.lang.Boolean} object.
 	 */
+	@Deprecated
 	public NutListDataItem(NodeRef nodeRef, Double value, String unit, Double mini, Double maxi, String group, NodeRef nut, Boolean isManual) {
 		setNodeRef(nodeRef);
 		setValue(value);
@@ -776,6 +943,114 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 		setGroup(group);
 		setNut(nut);
 		setIsManual(isManual);
+	}
+
+	/**
+	 * <p>build.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.productList.NutListDataItem} object
+	 */
+	public static NutListDataItem build() {
+		return new NutListDataItem();
+	}
+
+	/**
+	 * <p>withNodeRef.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.NutListDataItem} object
+	 */
+	public NutListDataItem withNodeRef(NodeRef nodeRef) {
+		setNodeRef(nodeRef);
+		return this;
+	}
+
+	/**
+	 * <p>withValue.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.NutListDataItem} object
+	 */
+	public NutListDataItem withValue(Double value) {
+		setValue(value);
+		return this;
+	}
+
+	/**
+	 * <p>withUnit.</p>
+	 *
+	 * @param unit a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.NutListDataItem} object
+	 */
+	public NutListDataItem withUnit(String unit) {
+		setUnit(unit);
+		return this;
+	}
+
+	/**
+	 * <p>withMini.</p>
+	 *
+	 * @param mini a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.NutListDataItem} object
+	 */
+	public NutListDataItem withMini(Double mini) {
+		setMini(mini);
+		return this;
+	}
+
+	/**
+	 * <p>withMaxi.</p>
+	 *
+	 * @param maxi a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.NutListDataItem} object
+	 */
+	public NutListDataItem withMaxi(Double maxi) {
+		setMaxi(maxi);
+		return this;
+	}
+
+	/**
+	 * <p>withGroup.</p>
+	 *
+	 * @param group a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.NutListDataItem} object
+	 */
+	public NutListDataItem withGroup(String group) {
+		setGroup(group);
+		return this;
+	}
+
+	/**
+	 * <p>withNut.</p>
+	 *
+	 * @param nut a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.NutListDataItem} object
+	 */
+	public NutListDataItem withNut(NodeRef nut) {
+		setNut(nut);
+		return this;
+	}
+
+	/**
+	 * <p>withIsManual.</p>
+	 *
+	 * @param isManual a {@link java.lang.Boolean} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.NutListDataItem} object
+	 */
+	public NutListDataItem withIsManual(Boolean isManual) {
+		setIsManual(isManual);
+		return this;
+	}
+
+	/**
+	 * <p>withNutRequirementType.</p>
+	 *
+	 * @param requirementType a {@link fr.becpg.repo.product.data.constraints.NutRequirementType} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.NutListDataItem} object
+	 */
+	public NutListDataItem withNutRequirementType(NutRequirementType requirementType) {
+		setRequirementType(requirementType);
+		return this;
 	}
 
 	/**
@@ -805,7 +1080,14 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 		this.manualPreparedValue = n.manualPreparedValue;
 		this.formulatedPreparedValue = n.formulatedPreparedValue;
 		this.measurementPrecision = n.measurementPrecision;
+		this.formulatedReductionValue = n.formulatedReductionValue;
+		this.manualReductionValue = n.manualReductionValue;
+		this.referenceValue = n.referenceValue;
 		this.sources = n.sources;
+		this.regulatoryCountriesRef = new ArrayList<>(n.regulatoryCountriesRef);
+		this.regulatoryUsagesRef = new ArrayList<>(n.regulatoryUsagesRef);
+		this.regulatoryMessage = n.regulatoryMessage;
+		this.regulatoryType = n.regulatoryType;
 	}
 
 	/** {@inheritDoc} */
@@ -823,8 +1105,7 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	public Boolean shouldDetailIfZero() {
 		return true;
 	}
-	
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
@@ -832,7 +1113,7 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 		int result = super.hashCode();
 		result = prime * result + Objects.hash(depthLevel, formulatedMaxi, formulatedMini, formulatedPreparedValue, formulatedValue,
 				formulatedValuePerServing, gdaPerc, group, isFormulated, lossPerc, manualMaxi, manualMini, manualPreparedValue, manualValue,
-				manualValuePerServing, measurementPrecision, method, nut, parent, roundedValue,roundedValuePrepared, sources, unit);
+				manualValuePerServing, measurementPrecision, method, nut, parent, roundedValue, roundedValuePrepared, sources, unit);
 		return result;
 	}
 
@@ -846,17 +1127,18 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 		if (getClass() != obj.getClass())
 			return false;
 		NutListDataItem other = (NutListDataItem) obj;
-		return Objects.equals(depthLevel, other.depthLevel)
-				&& Objects.equals(formulatedMaxi, other.formulatedMaxi) && Objects.equals(formulatedMini, other.formulatedMini)
-				&& Objects.equals(formulatedPreparedValue, other.formulatedPreparedValue) && Objects.equals(formulatedValue, other.formulatedValue)
+		return Objects.equals(depthLevel, other.depthLevel) && Objects.equals(formulatedMaxi, other.formulatedMaxi)
+				&& Objects.equals(formulatedMini, other.formulatedMini) && Objects.equals(formulatedPreparedValue, other.formulatedPreparedValue)
+				&& Objects.equals(formulatedValue, other.formulatedValue)
 				&& Objects.equals(formulatedValuePerServing, other.formulatedValuePerServing) && Objects.equals(gdaPerc, other.gdaPerc)
 				&& Objects.equals(group, other.group) && Objects.equals(isFormulated, other.isFormulated) && Objects.equals(lossPerc, other.lossPerc)
 				&& Objects.equals(manualMaxi, other.manualMaxi) && Objects.equals(manualMini, other.manualMini)
 				&& Objects.equals(manualPreparedValue, other.manualPreparedValue) && Objects.equals(manualValue, other.manualValue)
 				&& Objects.equals(manualValuePerServing, other.manualValuePerServing)
 				&& Objects.equals(measurementPrecision, other.measurementPrecision) && Objects.equals(method, other.method)
-				&& Objects.equals(nut, other.nut) && Objects.equals(parent, other.parent) && Objects.equals(roundedValue, other.roundedValue) && Objects.equals(roundedValuePrepared, other.roundedValuePrepared)
-				&& Objects.equals(sources, other.sources) && Objects.equals(unit, other.unit);
+				&& Objects.equals(nut, other.nut) && Objects.equals(parent, other.parent) && Objects.equals(roundedValue, other.roundedValue)
+				&& Objects.equals(roundedValuePrepared, other.roundedValuePrepared) && Objects.equals(sources, other.sources)
+				&& Objects.equals(unit, other.unit);
 	}
 
 	/** {@inheritDoc} */
@@ -867,8 +1149,8 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 				+ formulatedMini + ", manualMaxi=" + manualMaxi + ", formulatedMaxi=" + formulatedMaxi + ", manualValuePerServing="
 				+ manualValuePerServing + ", formulatedValuePerServing=" + formulatedValuePerServing + ", gdaPerc=" + gdaPerc + ", lossPerc="
 				+ lossPerc + ", group=" + group + ", method=" + method + ", measurementPrecision=" + measurementPrecision + ", nut=" + nut
-				+ ", isFormulated=" + isFormulated + ", depthLevel=" + depthLevel + ", parent=" + parent
-				+ ", roundedValue=" + roundedValue + ", roundedValuePrepared=" + roundedValuePrepared + ", sources=" + sources + "]";
+				+ ", isFormulated=" + isFormulated + ", depthLevel=" + depthLevel + ", parent=" + parent + ", roundedValue=" + roundedValue
+				+ ", roundedValuePrepared=" + roundedValuePrepared + ", sources=" + sources + "]";
 	}
 
 }

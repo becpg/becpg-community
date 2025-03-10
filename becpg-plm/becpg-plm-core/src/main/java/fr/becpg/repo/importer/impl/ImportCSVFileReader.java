@@ -33,7 +33,8 @@ public class ImportCSVFileReader implements ImportFileReader {
 	 * @throws java.io.IOException if any.
 	 */
 	public ImportCSVFileReader(InputStream is, Charset charset, char separator) throws IOException {
-		try (CSVReader csvReader = new CSVReader(new InputStreamReader(new BOMInputStream(is, false), charset), separator)) {
+		try (BOMInputStream bomInputStream = BOMInputStream.builder().setInputStream(is).get();
+				CSVReader csvReader = new CSVReader(new InputStreamReader(bomInputStream, charset), separator)) {
 			lines = csvReader.readAll();
 		}
 	}
@@ -84,5 +85,5 @@ public class ImportCSVFileReader implements ImportFileReader {
 		// DO nothing for CSV
 
 	}
-	
+
 }

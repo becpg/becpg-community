@@ -63,6 +63,7 @@ public class ZipSearchAction extends ActionExecuterAbstractBase {
 	public static final String PARAM_TPL_NODEREF = "templateNodeRef";
 	private static final Log logger = LogFactory.getLog(ZipSearchAction.class);
 
+	/** Constant <code>NAME="zipSearchAction"</code> */
 	public static final String NAME = "zipSearchAction";
 
 	// Dependencies
@@ -78,10 +79,20 @@ public class ZipSearchAction extends ActionExecuterAbstractBase {
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 	private long maximumContentSize = -1l;
 
+	/**
+	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 */
 	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>expressionService</code>.</p>
+	 *
+	 * @param expressionService a {@link fr.becpg.repo.expressions.ExpressionService} object
+	 */
 	public void setExpressionService(ExpressionService expressionService) {
 		this.expressionService = expressionService;
 	}

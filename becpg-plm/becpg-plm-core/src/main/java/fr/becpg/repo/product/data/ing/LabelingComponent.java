@@ -55,6 +55,8 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 	protected Double volumeWithYield = 0d;
 
 	protected MLText legalName;
+	
+	protected MLText additionalInformation;
 
 	private boolean isPlural = false;
 
@@ -83,6 +85,7 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 	protected LabelingComponent(LabelingComponent abstractLabelingComponent) {
 		super(abstractLabelingComponent);
 		this.pluralLegalName = abstractLabelingComponent.pluralLegalName;
+		this.additionalInformation = abstractLabelingComponent.additionalInformation;
 		this.qty = abstractLabelingComponent.qty;
 		this.qtyWithYield = abstractLabelingComponent.qtyWithYield;
 		this.volume = abstractLabelingComponent.volume;
@@ -167,6 +170,16 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 		}
 
 		return ret;
+	}
+
+
+	
+	public MLText getAdditionalInformation() {
+		return additionalInformation;
+	}
+
+	public void setAdditionalInformation(MLText additionalInformation) {
+		this.additionalInformation = additionalInformation;
 	}
 
 	/**

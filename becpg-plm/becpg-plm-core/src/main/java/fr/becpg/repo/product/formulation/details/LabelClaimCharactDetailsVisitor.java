@@ -21,7 +21,7 @@ public class LabelClaimCharactDetailsVisitor extends SimpleCharactDetailsVisitor
 
 	/** {@inheritDoc} */
 	@Override
-	protected String provideUnit() {
+	protected String provideUnit(CharactDetailsVisitorContext context, SimpleCharactDataItem simpleCharact) {
 		return "%";
 	}
 	
@@ -34,8 +34,7 @@ public class LabelClaimCharactDetailsVisitor extends SimpleCharactDetailsVisitor
 		Double percentClaim = labelClaimItem.getPercentClaim();
 		
 		switch (labelClaimItem.getLabelClaimValue()) {
-		case LabelClaimListDataItem.VALUE_TRUE:
-		case LabelClaimListDataItem.VALUE_CERTIFIED:
+		case LabelClaimListDataItem.VALUE_TRUE, LabelClaimListDataItem.VALUE_CERTIFIED:
 
 			if (percentClaim == null) {
 				percentClaim = 100d;
@@ -86,5 +85,11 @@ public class LabelClaimCharactDetailsVisitor extends SimpleCharactDetailsVisitor
 		CharactDetailAdditionalValue additionalValue = new CharactDetailAdditionalValue(I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_lclPercentApplicable.title"),
 				FormulationHelper.calculateValue(0d, qtyUsed, percentApplicable, netQty), unit);
 		currentCharactDetailsValue.getAdditionalValues().add(additionalValue);
+	}
+	
+	/** {@inheritDoc} */
+	@Override
+	protected boolean applyYield() {
+		return false;
 	}
 }

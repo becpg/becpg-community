@@ -51,26 +51,26 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  *
  * @author matthieu
  * @version $Id: $Id
- * 
+ *
  * Autocomplete plugin that suggest dataListItem from specific sources
- * 
+ *
  * Possible source type ParentValue/DataListCharact
- * 
+ *
  * Example:
- * 
+ *
  * <pre>
  * {@code
- * 
+ *
  *  Suggest current entity list (bcpg:ingList) and use attributeName (bcpg:ingListIng) as display name
- * 
+ *
  *     <control-param name="ds">becpg/autocomplete/DataListCharact?className=bcpg:ingList&#38;attributeName=bcpg:ingListIng</control>
  *
  * Suggest entity list (bcpg:plant) where entity in assoc path (bcpg:clients) of the current entity
- *   
+ *
  *     <control-param name="ds">becpg/autocomplete/DataListCharact?path=bcpg:clients&amp;className=bcpg:plant&amp;attributeName=cm:name
  *
  *  Suggest entity list (qa:stockList) where entity in assoc path (qa:product) of the current dataListitem
- *  
+ *
  *     <control-param name="ds">becpg/autocomplete/DataListCharact?path=qa:product&amp;className=qa:stockList&amp;attributeName=qa:batchId&amp;filter=itemAsEntity</control-param>
  *     <control-param name="urlParamsToPass">itemId</control-param>
  *
@@ -78,7 +78,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  *
  *      <control-param name="ds">becpg/autocomplete/DataListCharact?className=bcpg:contactList&amp;attributeName=bcpg:contactListFirstName,bcpg:contactListLastName&amp;filter=parentAsEntity</control-param>
  *	    <control-param name="parentAssoc">bcpg_clients</control-param>
-
+ *
  *	    <control-param name="ds">becpg/autocomplete/DataListCharact?className=bcpg:plant&amp;attributeName=cm:name&amp;filter=parentAsEntity</control-param>
  *	    <control-param name="parentAssoc">bcpg_clients</control-param>
  *
@@ -93,27 +93,26 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  *
  * }
  * </pre>
- * 
+ *
  * Datasources:
- * 
- * DataListCharact 
- * 
+ *
+ * DataListCharact
+ *
  * ds:  becpg/autocomplete/DataListCharact?path={path}&amp;className={className}&amp;attributeName={attributeName}&amp;filter={filter}
  * param: {className} type of dataListItem to retrieve
  * param: {path} specify a field name on the currentEntity to retrieve entity
  * param: {attributeName} attribute names coma separated list that is used to filter on and display title
- * param: {filter} (none,itemAsEntity, parentAsEntity) 
+ * param: {filter} (none,itemAsEntity, parentAsEntity)
  * control-param: {parent} (filter=parentAsEntity) htmlField that can be used as path
- * control-param: {urlParamsToPass} (filter=itemAsEntity)  itemId 
- * 
+ * control-param: {urlParamsToPass} (filter=itemAsEntity)  itemId
+ *
  * ParentValue
  *
  * ds:  becpg/autocomplete/ParentValue?className={className}&amp;attributeName={attributeName}&amp;extra.showFullPath=false
  * param: {showFullPath} false, show fullpath
  * param: {className} type of dataListItem to retrieve exclude current item
  * param: {attributeName} attribute names coma separated list that is used to filter on and display title
- * control-param: {urlParamsToPass} itemId 
- * 
+ * control-param: {urlParamsToPass} itemId
  */
 @Service("dataListItemAutoCompletePlugin")
 @BeCPGPublicApi

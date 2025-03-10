@@ -29,6 +29,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import org.alfresco.model.ApplicationModel;
 import org.alfresco.model.ContentModel;
@@ -48,6 +49,7 @@ import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.cmr.search.LimitBy;
 import org.alfresco.service.cmr.search.QueryConsistency;
 import org.alfresco.service.cmr.search.ResultSet;
@@ -55,6 +57,7 @@ import org.alfresco.service.cmr.search.SearchParameters;
 import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.repo.model.Repository;
 import org.alfresco.util.ISO9075;
 import org.alfresco.util.Pair;
 import org.alfresco.util.registry.NamedObjectRegistry;
@@ -91,6 +94,8 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	private static final String DEFAULT_FIELD_NAME = "keywords";
 
 	private static final String CANNED_QUERY_FILEFOLDER_LIST = "fileFolderGetChildrenCannedQueryFactory";
+	
+	private static final String ENABLE_INDEX_TYPES_KEY = "beCPG.solr.enableIndexForTypes";
 
 	private static BeCPGQueryBuilder INSTANCE = null;
 
@@ -120,6 +125,9 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 	@Autowired
 	private NodeService nodeService;
+	
+	@Autowired
+	private Repository repository;
 
 	private Integer maxResults = RepoConsts.MAX_RESULTS_256;
 	private Integer page = -1;
@@ -128,6 +136,8 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	private QName type = null;
 	private final Set<QName> types = new HashSet<>();
 	private final Set<Pair<QName, Integer>> boostedTypes = new HashSet<>();
+	
+ 	private Set<QName> typesToExcludeFromIndex = new HashSet<>();
 
 	private final Set<QName> aspects = new HashSet<>();
 	private String subPath = null;
@@ -155,6 +165,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	private String searchTemplate = null;
 	private SearchParameters.Operator operator = null;
 	private Locale locale = Locale.getDefault();
+	private StoreRef store = RepoConsts.SPACES_STORE;
 
 	private String defaultSearchTemplate() {
 		return systemConfigurationService.confValue("beCPG.defaultSearchTemplate");
@@ -182,6 +193,38 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		// Make creation private
 
 	}
+	
+	
+	/**
+	 * <p>Setter for the field <code>typesToExcludeFromIndex</code>.</p>
+	 *
+	 * @param typesToExcludeFromIndex a {@link java.util.Set} object
+	 */
+	public void setTypesToExcludeFromIndex(Set<QName> typesToExcludeFromIndex) {
+		this.typesToExcludeFromIndex = typesToExcludeFromIndex;
+	}
+
+	/**
+	 * <p>getTypesExcludedFromIndex.</p>
+	 *
+	 * @return a {@link java.util.Set} object
+	 */
+	public static Set<QName> getTypesExcludedFromIndex() {
+		return INSTANCE.typesToExcludeFromIndex.stream()
+	            .filter(nodeType -> !INSTANCE.systemConfigurationService.confValue(ENABLE_INDEX_TYPES_KEY)
+	                    .contains(nodeType.toPrefixString(INSTANCE.namespaceService)))
+	            .collect(Collectors.toSet());
+	}
+	
+	/**
+	 * <p>isExcludedFromIndex.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 * @return a boolean
+	 */
+	public static boolean isExcludedFromIndex(QName type) {
+		return getTypesExcludedFromIndex().contains(type);
+	}
 
 	/**
 	 * <p>
@@ -200,10 +243,22 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			builder.entityDictionaryService = INSTANCE.entityDictionaryService;
 			builder.tenantService = INSTANCE.tenantService;
 			builder.systemConfigurationService = INSTANCE.systemConfigurationService;
+			builder.repository = INSTANCE.repository;
 		}
 		return builder;
 	}
 
+	/**
+	 * <p>inStore.</p>
+	 *
+	 * @param store a {@link org.alfresco.service.cmr.repository.StoreRef} object
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object
+	 */
+	public BeCPGQueryBuilder inStore(StoreRef store) {
+		this.store = store;
+		return this;
+	}
+	
 	/**
 	 * <p>
 	 * ofType.
@@ -330,15 +385,20 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	 * skipCount.
 	 * </p>
 	 *
-	 * @param maxResults
-	 *            a int.
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 * @param page a int
 	 */
 	public BeCPGQueryBuilder page(int page) {
 		this.page = page;
 		return this;
 	}
 	
+	/**
+	 * <p>page.</p>
+	 *
+	 * @param pagingRequest a {@link org.alfresco.query.PagingRequest} object
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object
+	 */
 	public BeCPGQueryBuilder page(PagingRequest pagingRequest) {
 		this.maxResults = pagingRequest.getMaxItems();
 		this.page = pagingRequest.getSkipCount()/pagingRequest.getMaxItems();
@@ -776,6 +836,14 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		return this;
 	}
 
+	/**
+	 * <p>orBetween.</p>
+	 *
+	 * @param propQName a {@link org.alfresco.service.namespace.QName} object
+	 * @param start a {@link java.lang.String} object
+	 * @param end a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object
+	 */
 	public BeCPGQueryBuilder orBetween(QName propQName, String start, String end) {
 		propOrBetweenQueriesMap.put(propQName, new Pair<>(start, end));
 		return this;
@@ -879,7 +947,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		excludeArchivedEntities();
 		return this;
 	}
-
+	
 	/**
 	 * <p>
 	 * excludeSystems.
@@ -922,11 +990,28 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		return this;
 	}
 
+	/**
+	 * <p>excludeArchivedEntities.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object
+	 */
 	public BeCPGQueryBuilder excludeArchivedEntities() {
 		excludeAspect(BeCPGModel.ASPECT_ARCHIVED_ENTITY);
 		return this;
 	}
 
+	
+	/**
+	 * <p>selectNodeByPath.</p>
+	 *
+	 * @param xPath a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
+	public NodeRef selectNodeByPath(String xPath) {
+	
+		return selectNodeByPath(repository.getRootHome(),xPath);
+	}
+	
 	/**
 	 * <p>
 	 * selectNodeByPath.
@@ -987,7 +1072,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	public List<NodeRef> list() {
 		PagingResults<NodeRef> ret = pagingResults();
 
-		return ret != null ? pagingResults().getPage() : new ArrayList<>();
+		return ret != null ? ret.getPage() : new ArrayList<>();
 	}
 
 	/**
@@ -995,6 +1080,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	 * pagingResults.
 	 * </p>
 	 *
+	 * @return a {@link org.alfresco.query.PagingResults} object
 	 */
 	public PagingResults<NodeRef> pagingResults() {
 
@@ -1471,7 +1557,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		int skipCount = 0;
 
 		SearchParameters sp = new SearchParameters();
-		sp.addStore(RepoConsts.SPACES_STORE);
+		sp.addStore(store);
 
 		sp.setQuery(runnedQuery);
 		sp.addLocale(locale);
@@ -1601,7 +1687,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	 * <p>
 	 * count.
 	 * </p>
-	 * 
+	 *
 	 * This method can be very slow for high result counts and saturate nodeDao cache
 	 *
 	 * @return a {@link java.lang.Long} object.
@@ -1613,7 +1699,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		Long ret = 0L;
 
 		SearchParameters sp = new SearchParameters();
-		sp.addStore(RepoConsts.SPACES_STORE);
+		sp.addStore(store);
 
 		sp.setQuery(runnedQuery);
 		sp.addLocale(locale);

@@ -34,6 +34,7 @@ import org.dom4j.io.SAXReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
+import org.xml.sax.SAXException;
 
 import fr.becpg.config.mapping.AttributeMapping;
 import fr.becpg.config.mapping.CharacteristicMapping;
@@ -113,6 +114,7 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 	private static final String QUERY_ATTR_GET_CHARACT_NAME = "@charactName";
 	private static final String QUERY_ATTR_GET_PATH = "@path";
 
+	/** Constant <code>VALUE_NULL=""</code> */
 	public static final String VALUE_NULL = "";
 
 	/** Constant <code>KEY_IMAGE_NODE_IMG="%s-%s"</code> */
@@ -140,6 +142,15 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 
 	}
 
+	/**
+	 * <p>createReport.</p>
+	 *
+	 * @param templateNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param exportSearchCtx a {@link fr.becpg.repo.report.search.impl.ReportServerSearchContext} object
+	 * @param outputStream a {@link java.io.OutputStream} object
+	 * @param reportFormat a {@link fr.becpg.report.client.ReportFormat} object
+	 * @throws fr.becpg.report.client.ReportException if any.
+	 */
 	public void createReport(NodeRef templateNodeRef, ReportServerSearchContext exportSearchCtx, OutputStream outputStream, ReportFormat reportFormat)
 			throws ReportException {
 		Map<String, Object> params = new HashMap<>();
@@ -181,6 +192,9 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 	/**
 	 * Export properties and associations of a node.
 	 *
+	 * @param exportSearchCtx a {@link fr.becpg.repo.report.search.impl.ReportServerSearchContext} object
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param idx a long
 	 */
 	public void exportNode(ReportServerSearchContext exportSearchCtx, NodeRef nodeRef, long idx) {
 		Element nodeElt = exportSearchCtx.createNodeElt(idx);
@@ -306,6 +320,10 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 
 	/**
 	 * Load the query file.
+	 *
+	 * @param templateNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.repo.report.search.impl.ReportServerSearchContext} object
+	 * @throws fr.becpg.config.mapping.MappingException if any.
 	 */
 	public ReportServerSearchContext createContext(NodeRef templateNodeRef) throws MappingException {
 
@@ -323,6 +341,11 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 
 		try {
 			SAXReader saxReader = new SAXReader();
+			try {
+				saxReader.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+			} catch (SAXException e) {
+				logger.error(e.getMessage(), e);
+			}
 			Document doc = saxReader.read(reader.getContentInputStream());
 			Element queryElt = doc.getRootElement();
 

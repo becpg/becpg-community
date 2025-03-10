@@ -77,6 +77,7 @@
 
 	<bean id="importEntityListItemVisitor" class="fr.becpg.repo.importer.impl.ImportEntityListItemVisitor" parent="parentImportVisitor">
 		<property name="fileFolderService" ref="fileFolderService" />
+		<property name="commentService" ref="commentService" />
 	</bean>
 
 
@@ -113,6 +114,8 @@
 	
 	<bean id="webscript.fr.becpg.product.nutDatabaseImport.post" class="fr.becpg.repo.web.scripts.product.NutDatabaseImportWebScript" parent="webscript">
 		<property name="nutDatabaseService" ref="nutDatabaseService"/>
+		<property name="securityService" ref="securityService"/>
+		<property name="nodeService" ref="nodeService" />
 	</bean>
 	
 	<bean id="webscript.fr.becpg.product.lcaDatabaseImport.post" class="fr.becpg.repo.web.scripts.product.LCADatabaseImportWebScript" parent="webscript">
@@ -164,6 +167,8 @@
 		<property name="namespaceService" ref="namespaceService"/>
 		<property name="entityListDAO" ref="entityListDAO"/>
 		<property name="associationService" ref="associationService"/>
+		<property name="systemConfigurationService" ref="systemConfigurationService"/>
+		<property name="beCPGCacheService" ref="beCPGCacheService"/>
 	</bean>
 	
 	<bean id="webscript.fr.becpg.publication.channelList.get" class="fr.becpg.repo.web.scripts.publication.ListEntitiesByChannelWebScript" parent="webscript.fr.becpg.remote.entities.get">
@@ -177,7 +182,18 @@
 			<value>bFormulation</value>
 		</property>
 		<property name="nodeService" ref="NodeService" />
+		<property name="alfrescoRepository" ref="alfrescoRepository"/>
 	</bean>
+
+
+    <bean id="bSampleProductHelper" parent="baseJavaScriptExtension" class="fr.becpg.repo.jscript.SampleProductHelper" >
+        <property name="extensionName">
+            <value>bTest</value>
+        </property>
+        <property name="nodeService" ref="NodeService" />
+        <property name="alfrescoRepository" ref="alfrescoRepository"/>
+    </bean>
+
 
 
 	<!-- Supplier portal -->
@@ -204,6 +220,11 @@
 		<property name="supplierPortalService" ref="supplierPortalService"/>
 	</bean>
 	
+	<bean id="webscript.fr.becpg.supplier.updateSupplier.post" class="fr.becpg.repo.web.scripts.supplier.UpdateSupplierAccountWebScript" parent="webscript">
+		<property name="nodeService" ref="NodeService" />
+		<property name="supplierPortalService" ref="supplierPortalService"/>
+		<property name="entityService" ref="entityService"/>
+	</bean>
 	
 	<bean id="webscript.fr.becpg.workflow.startProcess.get" class="fr.becpg.repo.web.scripts.workflow.StartProcessWebscript" parent="webscript">
 		<property name="nodeService" ref="NodeService" />
@@ -232,4 +253,6 @@
 		<property name="serviceRegistry" ref="ServiceRegistry" />
 		<property name="signatureProjectService" ref="signatureProjectService" />
 	</bean>
+	
+
 </beans>

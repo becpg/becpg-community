@@ -12,6 +12,7 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
+import fr.becpg.repo.product.data.constraints.StockType;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
@@ -54,6 +55,8 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem
 	private Double yieldPerc = null;
 
 	private DeclarationType declType = DeclarationType.Declare;
+	
+	private StockType stockType = null;
 
 	private Double overrunPerc = null;
 
@@ -263,6 +266,28 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem
 
 		this.declType = declType;
 	}
+	
+	
+	
+	/**
+	 * <p>Getter for the field <code>stockType</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.constraints.StockType} object
+	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:compoListStockType")
+	public StockType getStockType() {
+		return stockType;
+	}
+
+	/**
+	 * <p>Setter for the field <code>stockType</code>.</p>
+	 *
+	 * @param stockType a {@link fr.becpg.repo.product.data.constraints.StockType} object
+	 */
+	public void setStockType(StockType stockType) {
+		this.stockType = stockType;
+	}
 
 	/**
 	 * <p>
@@ -401,6 +426,20 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem
 		this.product = product;
 		return this;
 	}
+	
+
+	/**
+	 * <p>withProduct.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object
+	 * @param parent a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object
+	 */
+	public CompoListDataItem withParent(CompoListDataItem parent) {
+		this.parent = parent;
+		return this;
+	}
+
+	/**
 
 	/**
 	 * <p>withDeclarationType.</p>
@@ -412,7 +451,29 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem
 		this.declType = declType;
 		return this;
 	}
+	
+	/**
+	 * <p>withStockType.</p>
+	 *
+	 * @param stockType a {@link fr.becpg.repo.product.data.constraints.StockType} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object
+	 */
+	public CompoListDataItem withStockType(StockType stockType) {
+		this.stockType = stockType;
+		return this;
+	}
 
+	/**
+	 * <p>withLossPerc.</p>
+	 *
+	 * @param lossPerc a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object
+	 */
+	public CompoListDataItem withLossPerc(Double lossPerc) {
+		this.lossPerc = lossPerc;
+		return this;
+	}
+	
 	/**
 	 * <p>
 	 * Constructor for CompoListDataItem.
@@ -477,6 +538,7 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem
 		this.lossPerc = c.lossPerc;
 		this.yieldPerc = c.yieldPerc;
 		this.declType = c.declType;
+		this.stockType = c.stockType;
 		this.overrunPerc = c.overrunPerc;
 		this.volume = c.volume;
 		this.product = c.product;
@@ -586,5 +648,6 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem
 	public Double getValue() {
 		return getQty();
 	}
+
 
 }

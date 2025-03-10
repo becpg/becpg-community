@@ -74,47 +74,73 @@
 	padding-left: 20px;
 }
 
-.datagrid div.scoreList-screening {
+.datagrid div.score-screening {
 	height: 150px;
 	overflow: auto;
 }
 
-.datagrid span.score-black {
-	background-color:#424242;
-	border-radius: 50%;
-	padding:7px;
-	color:white;
-	font-weight:bold;
+
+.range-score-a,
+.range-score-b,
+.range-score-c,
+.range-score-d,
+.range-score-e
+ {
+    border: 0 none;
+    display: inline-block;
+    font-weight: bold;
+    padding: 5px;
+    text-align: center;
+    width: 15px;
+    word-spacing: normal;
+    border-radius : 5px;
+    color: black;
 }
 
-.datagrid span.score-red {
-	background-color:#f44336;
-	border-radius: 50%;
-	padding:7px;
-	color:white;
-	font-weight:bold;
+.range-score-a{
+    background: #00853f;
 }
 
-.datagrid span.score-orange {
-	background-color:orange;
-	border-radius: 50%;
-	padding:7px;
-	color:white;
-	font-weight:bold;
+.range-score-b{  
+    background: #64bf21;
 }
 
-.datagrid span.score-blue {
-	background-color:rgb(73, 134, 231);
-	border-radius: 50%;
-	padding:7px;
-	color:white;
-	font-weight:bold;
+.range-score-c{  
+    background: #ffc800;
 }
 
-.datagrid span.score-green {
-	background-color:rgb(123, 209, 72);
-	border-radius: 50%;
-	padding:7px;
-	color:white;
-	font-weight:bold;
+.range-score-d{  
+    background: #ff7600;
 }
+
+.range-score-e{  
+    background: #ff0100;
+}
+
+
+
+.datagrid span[class^="score-"] {
+  padding-left: 5px; /* Extra space for the color bar */
+  color: black;
+  font-weight: bold;
+  display: inline-flex;
+     text-align: center;
+  align-items: stretch; /* Ensures full height */
+}
+
+.datagrid span[class^="score-"]::before {
+  content: "";
+  width: 5px;
+  flex-shrink: 0;
+  margin-right:5px;
+}
+
+
+/* Set specific colors */
+.datagrid span.score-green::before { background-color: #00853f; }
+.datagrid span.score-blue::before { background-color: #64bf21; }
+.datagrid span.score-yellow::before { background-color: #ffc800; }
+.datagrid span.score-orange::before { background-color: #ff7600; }
+.datagrid span.score-red::before { background-color: #ff0100; }
+.datagrid span.score-black::before { background-color: #424242; }
+

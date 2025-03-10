@@ -125,7 +125,7 @@ margin-top:3px;
 															<tr> 
 																<td class="becpg_rowBorderTop" style="border-top: solid 1px black;padding: 1px 5px 1px 5px;"> ${node.parent.name} </td>
 																<td class="becpg_rowBorderTopLeftRight" style="border-top: solid 1px black;border-left: solid 1px black;padding: 1px 5px 1px 5px;">
-																	<a href="${shareUrl}/page/<#if node.siteShortName??>site/${node.siteShortName}/</#if><#if item.isEntityV2SubType>entity-data-lists<#else>document-details</#if>?nodeRef=${node.nodeRef}">${node.name}</a>
+																	<a href="${shareUrl}/page/<#if node.siteShortName??>site/${node.siteShortName}/</#if><#if item.isEntityV2SubType>entity-data-lists<#else>document-details</#if>?nodeRef=${node.nodeRef}">${(item.displayName)!node.name}</a>
 																</td>
 																<td class="becpg_rowBorderTopLeftRight" style="border-top: solid 1px black;border-left: solid 1px black;padding: 1px 5px 1px 5px;">${version.properties["cm:created"]?date}</td>
 																<td class="becpg_rowBorderTopLeftRight" style="border-top: solid 1px black;border-left: solid 1px black;padding: 1px 5px 1px 5px;">${version.properties["cm:versionLabel"]}</td>
@@ -137,7 +137,7 @@ margin-top:3px;
 														<tr> 
 															<#--  <td class="becpg_rowBorderTop"> ${node.parent.name} </td>  -->
 															<td class="becpg_rowBorderTop" style="border-top: solid 1px black;padding: 1px 5px 1px 5px;">
-																<a href="${shareUrl}/page/<#if node.siteShortName??>site/${node.siteShortName}/</#if><#if item.isEntityV2SubType>entity-data-lists<#else>document-details</#if>?nodeRef=${node.nodeRef}">${node.name}</a>
+																<a href="${shareUrl}/page/<#if node.siteShortName??>site/${node.siteShortName}/</#if><#if item.isEntityV2SubType>entity-data-lists<#else>document-details</#if>?nodeRef=${node.nodeRef}">${(item.displayName)!node.name}</a>
 															</td>
                                              <td class="becpg_rowBorderTopLeftRight" style="border-top: solid 1px black;border-left: solid 1px black;padding: 1px 5px 1px 5px;">
                                                 <#if (node.properties["pjt:projectHierarchy1"])??>

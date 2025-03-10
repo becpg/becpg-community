@@ -422,7 +422,7 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 						List<CompoListDataItem> compoList = new ArrayList<>(kv.getValue().size());
 						for(NodeRef rmNodeRef : supplierRMNodeRefs){
 							Double subQty = (double) (100 / kv.getValue().size());
-							compoList.add(new CompoListDataItem(null, null, null, subQty, ProductUnit.Perc, null, DeclarationType.Declare, rmNodeRef));						
+							compoList.add(CompoListDataItem.build().withQtyUsed(subQty).withUnit(ProductUnit.Perc).withLossPerc(null).withDeclarationType(DeclarationType.Declare).withProduct(rmNodeRef));						
 						}								
 						
 						genRawMaterialData.getCompoListView().setCompoList(compoList);
