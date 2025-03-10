@@ -1720,6 +1720,7 @@
 					<show id="bcpg:charactName" />
 					<show id="bcpg:toxTypes" />
 					<show id="bcpg:toxValue" />
+					<show id="bcpg:toxAbsorptionType" force="true" />
 					<show id="bcpg:toxCalculateSystemic" />
 					<show id="bcpg:toxCalculateMax" />
 					<show id="sec:readGroups" force="true" />
@@ -1733,6 +1734,7 @@
 					<show id="bcpg:charactName" />
 					<show id="bcpg:toxTypes" />
 					<show id="bcpg:toxValue" />
+					<show id="bcpg:toxAbsorptionType" force="true" />
 					<show id="bcpg:toxCalculateSystemic" />
 					<show id="bcpg:toxCalculateMax" />
 					<show id="sec:readGroups" force="true" />
@@ -1747,6 +1749,9 @@
 						<control template="/org/alfresco/components/form/controls/boolean.ftl">
 							<control-param name="isSearch">true</control-param>
 						</control>
+					</field>
+					<field id="bcpg:toxAbsorptionType">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl" />
 					</field>
 					<field id="bcpg:toxCalculateSystemic">
 						<control template="/org/alfresco/components/form/controls/boolean.ftl">
@@ -1771,6 +1776,7 @@
 					<show id="bcpg:charactName" />
 					<show id="bcpg:toxTypes" />
 					<show id="bcpg:toxValue" />
+					<show id="bcpg:toxAbsorptionType" force="true" />
 					<show id="bcpg:toxCalculateSystemic" />
 					<show id="bcpg:toxCalculateMax" />
 					<show id="sec:readGroups" force="true" />
@@ -1788,12 +1794,18 @@
 					<show id="bcpg:charactName" />
 					<show id="bcpg:toxTypes" />
 					<show id="bcpg:toxValue" />
+					<show id="bcpg:toxAbsorptionType" force="true" />
 					<show id="bcpg:toxCalculateSystemic" />
 					<show id="bcpg:toxCalculateMax" />
 					<show id="sec:readGroups" force="true" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:toxAbsorptionType">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl" />
+					</field>
+				</appearance>
 			</form>
 		</forms>
 	</config>
@@ -1906,6 +1918,7 @@
 					<show id="bcpg:svhcReasonsForInclusion" force="true" />
 					<show id="bcpg:ingToxPodSystemic" force="true" />
 					<show id="bcpg:ingToxDermalAbsorption" force="true" />
+					<show id="bcpg:ingToxOralAbsorption" force="true" />
 					<show id="bcpg:ingToxMosMoe" force="true" />
 					<show id="bcpg:ingToxMaxSkinIrritationRinseOff" force="true" />
 					<show id="bcpg:ingToxMaxSkinIrritationLeaveOn" force="true" />
@@ -1917,8 +1930,8 @@
 					<show id="bcpg:ingToxAcuteInhalation" force="true" />
 					<show id="bcpg:ingToxAcuteInhalationType" force="true" />
 					<show id="bcpg:ingToxAquaticMFactor" force="true" />
-					<show id="bcpg:ingToxIsSuperSensitizing" force="true" />
 					<show id="bcpg:ingToxData" force="true" />
+					<show id="bcpg:ingToxIsSuperSensitizing" force="true" />
 
 					<show id="ghs:sdsHazardClassifications" force="true" />
 					<show id="ghs:sdsSignalWord" force="true" />
@@ -1992,6 +2005,7 @@
 					<field id="bcpg:svhcReasonsForInclusion" set="formulation" />
 					<field id="bcpg:ingToxPodSystemic" set="toxTab" />
 					<field id="bcpg:ingToxDermalAbsorption" set="toxTab" />
+					<field id="bcpg:ingToxOralAbsorption" set="toxTab" />
 					<field id="bcpg:ingToxMosMoe" set="toxTab" />
 					<field id="bcpg:ingToxMaxSkinIrritationRinseOff" set="toxTab" />
 					<field id="bcpg:ingToxMaxSkinIrritationLeaveOn" set="toxTab" />
@@ -2004,8 +2018,8 @@
 					<field id="bcpg:ingToxAcuteInhalation" set="toxTab" />
 					<field id="bcpg:ingToxAcuteInhalationType" set="toxTab" />
 					<field id="bcpg:ingToxAquaticMFactor" set="toxTab" />
-					<field id="bcpg:ingToxIsSuperSensitizing" set="toxTab" />
 					<field id="bcpg:ingToxData" set="toxTab" />
+					<field id="bcpg:ingToxIsSuperSensitizing" set="toxTab" />
 					<field id="ghs:sdsHazardClassifications" help-id="becpg.forms.help.sdsHazardClassifications" set="clpTab" >
 					     <control template="/org/alfresco/components/form/controls/textarea.ftl">
                             <control-param name="maxLength">10000</control-param>
@@ -2055,6 +2069,7 @@
 					<show id="bcpg:svhcReasonsForInclusion" force="true" />
 					<show id="bcpg:ingToxPodSystemic" force="true" />
 					<show id="bcpg:ingToxDermalAbsorption" force="true" />
+					<show id="bcpg:ingToxOralAbsorption" force="true" />
 					<show id="bcpg:ingToxMosMoe" force="true" />
 					<show id="bcpg:ingToxMaxSkinIrritationRinseOff" force="true" />
 					<show id="bcpg:ingToxMaxSkinIrritationLeaveOn" force="true" />
@@ -2065,6 +2080,7 @@
 					<show id="bcpg:ingToxAcuteInhalation" force="true" />
 					<show id="bcpg:ingToxAcuteInhalationType" force="true" />
 					<show id="bcpg:ingToxAquaticMFactor" force="true" />
+					<show id="bcpg:ingToxData" force="true" />
 					<show id="bcpg:ingToxIsSuperSensitizing" force="true" />
 					<show id="ghs:sdsHazardClassifications" force="true" />
 					<show id="ghs:sdsSignalWord" force="true" />
@@ -2137,6 +2153,7 @@
 					<field id="bcpg:svhcReasonsForInclusion" set="formulation" />
 					<field id="bcpg:ingToxPodSystemic" set="toxTab" />
 					<field id="bcpg:ingToxDermalAbsorption" set="toxTab" />
+					<field id="bcpg:ingToxOralAbsorption" set="toxTab" />
 					<field id="bcpg:ingToxMosMoe" set="toxTab" />
 					<field id="bcpg:ingToxMaxSkinIrritationRinseOff" set="toxTab" />
 					<field id="bcpg:ingToxMaxSkinIrritationLeaveOn" set="toxTab" />
@@ -2148,8 +2165,8 @@
 					<field id="bcpg:ingToxAcuteInhalation" set="toxTab" />
 					<field id="bcpg:ingToxAcuteInhalationType" set="toxTab" />
 					<field id="bcpg:ingToxAquaticMFactor" set="toxTab" />
-					<field id="bcpg:ingToxIsSuperSensitizing" set="toxTab" />
 					<field id="bcpg:ingToxData" set="toxTab" />
+					<field id="bcpg:ingToxIsSuperSensitizing" set="toxTab" />
 					<field id="ghs:sdsHazardClassifications" help-id="becpg.forms.help.sdsHazardClassifications" set="clpTab" >
                          <control template="/org/alfresco/components/form/controls/textarea.ftl">
                             <control-param name="maxLength">10000</control-param>
@@ -2191,6 +2208,7 @@
 					<show id="bcpg:svhcReasonsForInclusion" force="true" />
 					<show id="bcpg:ingToxPodSystemic" force="true" />
 					<show id="bcpg:ingToxDermalAbsorption" force="true" />
+					<show id="bcpg:ingToxOralAbsorption" force="true" />
 					<show id="bcpg:ingToxMosMoe" force="true" />
 					<show id="bcpg:ingToxMaxSkinIrritationRinseOff" force="true" />
 					<show id="bcpg:ingToxMaxSkinIrritationLeaveOn" force="true" />
@@ -2201,6 +2219,7 @@
 					<show id="bcpg:ingToxAcuteInhalation" force="true" />
 					<show id="bcpg:ingToxAcuteInhalationType" force="true" />
 					<show id="bcpg:ingToxAquaticMFactor" force="true" />
+					<show id="bcpg:ingToxData" force="true" />
 					<show id="bcpg:ingToxIsSuperSensitizing" force="true" />
 					<show id="bcpg:parentEntityRef" force="true" />
 					<show id="sec:readGroups" force="true" />
@@ -2268,6 +2287,7 @@
 					<field id="bcpg:svhcReasonsForInclusion" set="formulation" />
 					<field id="bcpg:ingToxPodSystemic" set="toxTab" />
 					<field id="bcpg:ingToxDermalAbsorption" set="toxTab" />
+					<field id="bcpg:ingToxOralAbsorption" set="toxTab" />
 					<field id="bcpg:ingToxMosMoe" set="toxTab" />
 					<field id="bcpg:ingToxMaxSkinIrritationRinseOff" set="toxTab" />
 					<field id="bcpg:ingToxMaxSkinIrritationLeaveOn" set="toxTab" />
@@ -2279,8 +2299,8 @@
 					<field id="bcpg:ingToxAcuteInhalation" set="toxTab" />
 					<field id="bcpg:ingToxAcuteInhalationType" set="toxTab" />
 					<field id="bcpg:ingToxAquaticMFactor" set="toxTab" />
-					<field id="bcpg:ingToxIsSuperSensitizing" set="toxTab" />
 					<field id="bcpg:ingToxData" set="toxTab" />
+					<field id="bcpg:ingToxIsSuperSensitizing" set="toxTab" />
 					<field id="ghs:sdsHazardClassifications" help-id="becpg.forms.help.sdsHazardClassifications" set="clpTab" >
                          <control template="/org/alfresco/components/form/controls/textarea.ftl">
                             <control-param name="maxLength">10000</control-param>
@@ -10142,6 +10162,7 @@
 					<show id="bcpg:contactListFirstName" />
 					<show id="bcpg:contactListLastName" />
 					<show id="bcpg:contactListEmail" />
+					<show id="bcpg:supplierAccountRef" force="true" />
 					<show id="bcpg:contactListPhoneOffice" />
 					<show id="bcpg:contactListPhoneMobile" />
 					<show id="bcpg:contactListNotes" />
@@ -10151,6 +10172,7 @@
 				<appearance>
 					<field id="bcpg:entityDataListState" label="hidden" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
+					<field id="bcpg:supplierAccountRef" read-only="true" />
 					<field id="bcpg:isDeleted">
 						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
 					</field>

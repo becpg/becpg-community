@@ -382,6 +382,8 @@ public interface PLMModel {
 	QName PROP_CONTACT_LIST_FIRST_NAME = QName.createQName(BeCPGModel.BECPG_URI, "contactListFirstName");
 	/** Constant <code>PROP_CONTACT_LIST_LAST_NAME</code> */
 	QName PROP_CONTACT_LIST_LAST_NAME = QName.createQName(BeCPGModel.BECPG_URI, "contactListLastName");
+	
+	QName PROP_CONTACT_LIST_EMAIL = QName.createQName(BeCPGModel.BECPG_URI, "contactListEmail");
 
 	// labelClaimList
 	/** Constant <code>TYPE_LABELCLAIMLIST</code> */
@@ -816,7 +818,11 @@ public interface PLMModel {
 	QName PROP_ING_TOX_POD_SYSTEMIC = QName.createQName(BeCPGModel.BECPG_URI, "ingToxPodSystemic");
 
 	/** Constant <code>PROP_ING_TOX_DERMAL_ABSORPTIION</code> */
-	QName PROP_ING_TOX_DERMAL_ABSORPTIION = QName.createQName(BeCPGModel.BECPG_URI, "ingToxDermalAbsorption");
+	QName PROP_ING_TOX_DERMAL_ABSORPTION = QName.createQName(BeCPGModel.BECPG_URI, "ingToxDermalAbsorption");
+	
+	QName PROP_ING_TOX_ORAL_ABSORPTION = QName.createQName(BeCPGModel.BECPG_URI, "ingToxOralAbsorption");
+	
+	QName PROP_TOX_ABSORPTION_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "toxAbsorptionType");
 
 	/** Constant <code>PROP_ING_TOX_MOS_MOE</code> */
 	QName PROP_ING_TOX_MOS_MOE = QName.createQName(BeCPGModel.BECPG_URI, "ingToxMosMoe");
