@@ -3,20 +3,29 @@
  */
 package fr.becpg.repo.dictionary.constraint;
 
+import java.io.Serializable;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.repo.node.NodeServicePolicies;
+import org.alfresco.repo.node.NodeServicePolicies.OnUpdatePropertiesPolicy;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
+import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
+import com.google.common.base.Objects;
+
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.cache.BeCPGCacheService;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
 /**
@@ -25,8 +34,9 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
  * @author matthieu
  * @version $Id: $Id
  */
-public class ListValuePolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnDeleteNodePolicy,
-		NodeServicePolicies.OnUpdateNodePolicy, NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnDeleteAssociationPolicy, NodeServicePolicies.OnCreateAssociationPolicy {
+public class ListValuePolicy extends AbstractBeCPGPolicy implements OnUpdatePropertiesPolicy,
+		NodeServicePolicies.OnDeleteNodePolicy, NodeServicePolicies.OnUpdateNodePolicy, NodeServicePolicies.OnCreateNodePolicy,
+		NodeServicePolicies.OnDeleteAssociationPolicy, NodeServicePolicies.OnCreateAssociationPolicy {
 
 	private static final Log logger = LogFactory.getLog(ListValuePolicy.class);
 
@@ -61,8 +71,10 @@ public class ListValuePolicy extends AbstractBeCPGPolicy implements NodeServiceP
 				new JavaBehaviour(this, "onDeleteNode"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdateNodePolicy.QNAME, BeCPGModel.TYPE_LIST_VALUE,
 				new JavaBehaviour(this, "onUpdateNode"));
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, BeCPGModel.TYPE_LIST_VALUE,
-				new JavaBehaviour(this, "onCreateNode"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdateNodePolicy.QNAME, BeCPGModel.TYPE_LIST_VALUE,
+				new JavaBehaviour(this, "onUpdateNode"));
+		policyComponent.bindClassBehaviour(OnUpdatePropertiesPolicy.QNAME, BeCPGModel.TYPE_LIST_VALUE,
+				new JavaBehaviour(this, "onUpdateProperties"));
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, BeCPGModel.TYPE_LIST_VALUE,
 				new JavaBehaviour(this, "onCreateAssociation"));
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME, BeCPGModel.TYPE_LIST_VALUE,
@@ -113,6 +125,24 @@ public class ListValuePolicy extends AbstractBeCPGPolicy implements NodeServiceP
 			beCPGCacheService.clearCache(DynListConstraint.class.getName());
 		}
 		return true;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
+		if (after.get(BeCPGModel.PROP_LV_CODE) == null || after.get(BeCPGModel.PROP_LV_CODE).toString().isBlank()) {
+			String beforeDefaultValue = null;
+			if (before.get(BeCPGModel.PROP_LV_VALUE) instanceof MLText beforeMltext) {
+				beforeDefaultValue = MLTextHelper.getClosestValue(beforeMltext, Locale.getDefault());
+				String afterDefaultValue = null;
+				if (after.get(BeCPGModel.PROP_LV_VALUE) instanceof MLText afterMltext) {
+					afterDefaultValue = MLTextHelper.getClosestValue(afterMltext, Locale.getDefault());
+				}
+				if (!Objects.equal(beforeDefaultValue, afterDefaultValue)) {
+					throw new IllegalStateException("You cannot update bcpg:lvValue because bcpg:lvCode is empty");
+				}
+			}
+		}
 	}
 
 }

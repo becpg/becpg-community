@@ -11,6 +11,7 @@ import java.util.function.Predicate;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
@@ -18,16 +19,20 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.artworks.signature.SignatureService;
 import fr.becpg.artworks.signature.model.SignatureModel;
 import fr.becpg.artworks.signature.model.SignatureStatus;
 import fr.becpg.model.PLMModel;
+import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.entity.version.VersionHelper;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.project.ProjectService;
@@ -80,6 +85,9 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 	
 	@Autowired
 	private Repository repository;
+	
+	@Autowired
+	private SignatureService signatureService;
 
 	private static final String SUPPLIER_REFERENCING_PROJECT_TYPE = "supplierReferencing";
 	
@@ -93,17 +101,27 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 
 	/** {@inheritDoc} */
 	@Override
-	public NodeRef prepareEntitySignatureFolder(NodeRef projectNodeRef, NodeRef entityNodeRef) {
+	public NodeRef prepareEntitySignatureFolder(ProjectData project, NodeRef entityNodeRef) {
 		
 		NodeRef supplierDocumentsFolder = supplierPortalService.getOrCreateSupplierDocumentsFolder(entityNodeRef);
 
+		for (ChildAssociationRef existingDocumentAssoc: nodeService.getChildAssocs(supplierDocumentsFolder, ContentModel.ASSOC_CONTAINS, RegexQNamePattern.MATCH_ALL)) {
+			NodeRef existingDocument = existingDocumentAssoc.getChildRef();
+			if (nodeService.exists(existingDocument) && SignatureStatus.Prepared.toString().equals(nodeService.getProperty(existingDocument, SignatureModel.PROP_STATUS))) {
+				List<NodeRef> recipients = associationService.getTargetAssocs(existingDocument, SignatureModel.ASSOC_RECIPIENTS);
+				existingDocument = signatureService.cancelDocument(existingDocument);
+				nodeService.setProperty(existingDocument, SignatureModel.PROP_STATUS, SignatureStatus.Initialized);
+				associationService.update(existingDocument, SignatureModel.ASSOC_RECIPIENTS, recipients);
+			}
+		}
+		
 		List<NodeRef> reports = entityReportService.getOrRefreshReportsOfKind(entityNodeRef, SUPPLIER_REPORT_KIND);
 		
 		if (reports.isEmpty()) {
 			logger.warn("No report with 'Supplier Sheet' type was found for entity: " + entityNodeRef);
 		}
 		
-		List<NodeRef> suppliers = associationService.getTargetAssocs(projectNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
+		List<NodeRef> suppliers = associationService.getTargetAssocs(project.getNodeRef(), PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
 
 		for (NodeRef reportNodeRef : reports) {
 
@@ -185,7 +203,7 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 	
 			if ((sourceSupplierAccountAssocs != null) && !sourceSupplierAccountAssocs.isEmpty()) {
 				for (NodeRef sourceSupplierAccountAssoc : sourceSupplierAccountAssocs) {
-					if (PLMModel.TYPE_SUPPLIER.equals(nodeService.getType(sourceSupplierAccountAssoc))) {
+					if (!VersionHelper.isVersion(sourceSupplierAccountAssoc) && PLMModel.TYPE_SUPPLIER.equals(nodeService.getType(sourceSupplierAccountAssoc))) {
 						return sourceSupplierAccountAssoc;
 					}
 				}
@@ -194,14 +212,17 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 	
 		return null;
 	}
-
+	
 	private NodeRef copyReport(NodeRef parentFolder, NodeRef reportNodeRef) {
 		String reportName = extractReportName(reportNodeRef);
 		
 		NodeRef existingReportCopy = nodeService.getChildByName(parentFolder, ContentModel.ASSOC_CONTAINS, reportName);
 		
-		if (existingReportCopy != null && SignatureStatus.Initialized.toString().equals(nodeService.getProperty(existingReportCopy, SignatureModel.PROP_STATUS))) {
-			return existingReportCopy;
+		if (existingReportCopy != null) {
+			for (NodeRef deliverable : associationService.getSourcesAssocs(existingReportCopy, ProjectModel.ASSOC_DL_CONTENT)) {
+				associationService.update(deliverable, ProjectModel.ASSOC_DL_CONTENT, List.of());
+			}
+			nodeService.deleteNode(existingReportCopy);
 		}
 		
 		reportName = repoService.getAvailableName(parentFolder, reportName, false, true);

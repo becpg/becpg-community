@@ -40,14 +40,24 @@ public final class BeCPGModel {
 	public static final QName PROP_ENTITYLIST_STATE = QName.createQName(BECPG_URI, "entityDataListState");
 
 	// Format
+	/** Constant <code>ASPECT_ENTITY_FORMAT</code> */
 	public static final QName ASPECT_ENTITY_FORMAT = QName.createQName(BECPG_URI, "entityFormatAspect");
 
+	/** Constant <code>PROP_ENTITY_FORMAT</code> */
 	public static final QName PROP_ENTITY_FORMAT = QName.createQName(BECPG_URI, "entityFormat");
 
+	/** Constant <code>PROP_ENTITY_DATA</code> */
 	public static final QName PROP_ENTITY_DATA = QName.createQName(BECPG_URI, "entityData");
 
 	// archived entity aspect
+	/** Constant <code>ASPECT_ARCHIVED_ENTITY</code> */
 	public static final QName ASPECT_ARCHIVED_ENTITY = QName.createQName(BECPG_URI, "archivedEntityAspect");
+	
+	/** Constant <code>ASPECT_USER_AUTHENTICATION</code> */
+	public static final QName ASPECT_USER_AUTHENTICATION = QName.createQName(BECPG_URI, "userAuthenticationAspect");
+	
+	/** Constant <code>PROP_IS_SSO_USER</code> */
+	public static final QName PROP_IS_SSO_USER = QName.createQName(BECPG_URI, "isSsoUser");
 
 	public enum EntityFormat {
 		NODE, JSON, XML
@@ -152,6 +162,7 @@ public final class BeCPGModel {
 	public static final QName ASPECT_COMPOSITE_VERSION = QName.createQName(BECPG_URI, "compositeVersion");
 	/** Constant <code>PROP_VERSION_LABEL</code> */
 	public static final QName PROP_VERSION_LABEL = QName.createQName(BECPG_URI, "versionLabel");
+	/** Constant <code>PROP_MANUAL_VERSION_LABEL</code> */
 	public static final QName PROP_MANUAL_VERSION_LABEL = QName.createQName(BECPG_URI, "manualVersionLabel");
 
 	// permissionsTpl
@@ -247,6 +258,7 @@ public final class BeCPGModel {
 	/** Constant <code>PROP_AUTO_MERGE_IMPACTWUSED</code> */
 	public static final QName PROP_AUTO_MERGE_IMPACTWUSED = QName.createQName(BECPG_URI, "autoMergeImpactWUsed");
 
+	/** Constant <code>PROP_AUTO_MERGE_DATE</code> */
 	public static final QName PROP_AUTO_MERGE_DATE = QName.createQName(BECPG_URI, "autoMergeDate");
 
 	/** Constant <code>ASPECT_AUTO_MERGE_ASPECT</code> */
@@ -294,13 +306,50 @@ public final class BeCPGModel {
 	public static final QName PROP_IS_DEFAULT_VARIANT = QName.createQName(BECPG_URI, "isDefaultVariant");
 	/** Constant <code>PROP_IS_DEFAULT_VARIANT</code> */
 	public static final QName PROP_VARIANT_COLUMN = QName.createQName(BECPG_URI, "variantColumn");
+	
+	/** Constant <code>PROP_EMAIL_TASK_RESOURCE_DISABLED</code> */
+	public static final QName PROP_EMAIL_TASK_RESOURCE_DISABLED = QName.createQName(BECPG_URI, "emailTaskResourceDisabled");
+	/** Constant <code>PROP_EMAIL_TASK_OBSERVER_DISABLED</code> */
+	public static final QName PROP_EMAIL_TASK_OBSERVER_DISABLED = QName.createQName(BECPG_URI, "emailTaskObserverDisabled");
+	/** Constant <code>PROP_EMAIL_PROJECT_NOTIFICATION_DISABLED</code> */
+	public static final QName PROP_EMAIL_PROJECT_NOTIFICATION_DISABLED = QName.createQName(BECPG_URI, "emailProjectNotificationDisabled");
+	/** Constant <code>PROP_EMAIL_ADMIN_NOTIFICATION_DISABLED</code> */
+	public static final QName PROP_EMAIL_ADMIN_NOTIFICATION_DISABLED = QName.createQName(BECPG_URI, "emailAdminNotificationDisabled");
 
 	//forms
 
+	/** Constant <code>ASPECT_CUSTOM_FORM_DEFINITIONS</code> */
 	public static final QName ASPECT_CUSTOM_FORM_DEFINITIONS = QName.createQName(BECPG_URI, "customFormDefinitionsAspect");
 
+	/** Constant <code>PROP_CUSTOM_FORM_DEFINITIONS</code> */
 	public static final QName PROP_CUSTOM_FORM_DEFINITIONS = QName.createQName(BECPG_URI, "customFormDefinitions");
 
+	/** Constant <code>ASPECT_UNDELETABLE_ASPECT</code> */
 	public static final QName ASPECT_UNDELETABLE_ASPECT = QName.createQName(BECPG_URI, "undeletableAspect");
+	
+	
+	/** Constant <code>TYPE_SAVED_SEARCH</code> */
+	public static final QName TYPE_SAVED_SEARCH = QName.createQName(BECPG_URI, "savedSearch");
+	/** Constant <code>PROP_SAVED_SEARCH_TYPE</code> */
+	public static final QName PROP_SAVED_SEARCH_TYPE = QName.createQName(BECPG_URI, "savedSearchType");
+	/** Constant <code>PROP_ING_TOX_ACUTE_ORAL</code> */
+	public static final QName PROP_ING_TOX_ACUTE_ORAL = QName.createQName(BECPG_URI, "ingToxAcuteOral");
+	/** Constant <code>PROP_ING_TOX_ACUTE_DERMAL</code> */
+	public static final QName PROP_ING_TOX_ACUTE_DERMAL = QName.createQName(BECPG_URI, "ingToxAcuteDermal");
+	/** Constant <code>PROP_ING_TOX_ACUTE_INHALATION</code> */
+	public static final QName PROP_ING_TOX_ACUTE_INHALATION = QName.createQName(BECPG_URI, "ingToxAcuteInhalation");
+	
+	/** Constant <code>PROP_ING_TOX_AQUATIC_MFACTOR</code> */
+	public static final QName PROP_ING_TOX_AQUATIC_MFACTOR = QName.createQName(BECPG_URI, "ingToxAquaticMFactor");
+	/** Constant <code>PROP_ING_TOX_IS_SUPER_SENSITIZING</code> */
+	public static final QName PROP_ING_TOX_IS_SUPER_SENSITIZING =  QName.createQName(BECPG_URI, "ingToxIsSuperSensitizing");
+	/** Constant <code>PROP_ING_TOX_ACUTE_INHALATION_TYPE</code> */
+	public static final QName PROP_ING_TOX_ACUTE_INHALATION_TYPE = QName.createQName(BECPG_URI, "ingToxAcuteInhalationType");
+	/** Constant <code>ASPECT_MANUFACTURING_ASPECT</code> */
+	public static final QName ASPECT_MANUFACTURING_ASPECT = QName.createQName(BECPG_URI, "manufacturingAspect");
+	/** Constant <code>ASSOC_PLANTS</code> */
+	public static final QName ASSOC_PLANTS = QName.createQName(BECPG_URI, "plants");
+	/** Constant <code>ASSOC_SUBSIDIARY_REF</code> */
+	public static final QName ASSOC_SUBSIDIARY_REF = QName.createQName(BECPG_URI, "subsidiaryRef");
 
 }

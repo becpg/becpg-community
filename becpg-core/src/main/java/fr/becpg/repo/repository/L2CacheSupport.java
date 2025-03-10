@@ -42,8 +42,8 @@ public class L2CacheSupport {
 	/**
 	 * <p>getCurrentThreadCache.</p>
 	 *
-	 * @param <T> a T object.
 	 * @return a {@link java.util.Map} object.
+	 * @param <T> a T class
 	 */
 	public static <T> Map<NodeRef, RepositoryEntity> getCurrentThreadCache() {
 		if (threadLocalCache.get().isThreadCacheEnable()) {

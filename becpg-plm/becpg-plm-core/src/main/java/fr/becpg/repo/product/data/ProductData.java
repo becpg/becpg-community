@@ -35,6 +35,7 @@ import fr.becpg.repo.product.data.packaging.VariantPackagingData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
+import fr.becpg.repo.product.data.productList.HazardClassificationListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.LCAListDataItem;
@@ -52,6 +53,8 @@ import fr.becpg.repo.product.data.productList.PubChannelListDataItem;
 import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.ResourceParamListItem;
 import fr.becpg.repo.product.data.productList.SvhcListDataItem;
+import fr.becpg.repo.product.data.productList.ToxListDataItem;
+import fr.becpg.repo.product.formulation.clp.HazardClassificationFormulaContext;
 import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.quality.data.dataList.ControlDefListDataItem;
 import fr.becpg.repo.quality.data.dataList.StockListDataItem;
@@ -68,7 +71,7 @@ import fr.becpg.repo.repository.filters.DataListFilter;
 import fr.becpg.repo.repository.model.AspectAwareDataItem;
 import fr.becpg.repo.repository.model.EffectiveDataItem;
 import fr.becpg.repo.repository.model.StateableEntity;
-import fr.becpg.repo.survey.data.SurveyList;
+import fr.becpg.repo.survey.data.SurveyListDataItem;
 import fr.becpg.repo.survey.data.SurveyableEntity;
 import fr.becpg.repo.variant.model.VariantData;
 import fr.becpg.repo.variant.model.VariantEntity;
@@ -167,7 +170,10 @@ public class ProductData extends AbstractScorableEntity
 	 * Nutlist formulation
 	 */
 	private List<String> preparationStates;
-
+	private NodeRef reconstituant;
+	private Double reconstituantQty;
+	private Double preparationQuantity;
+	private MLText referenceProducts;
 	/*
 	 * Labeling formulation
 	 */
@@ -231,6 +237,7 @@ public class ProductData extends AbstractScorableEntity
 	 */
 	private Boolean isGeneric;
 
+
 	/*
 	 * DataList
 	 */
@@ -252,7 +259,14 @@ public class ProductData extends AbstractScorableEntity
 	private List<RegulatoryListDataItem> regulatoryList;
 	private List<IngRegulatoryListDataItem> ingRegulatoryList;
 	private List<SvhcListDataItem> svhcList;
+	private List<HazardClassificationListDataItem> hcList;
 	private List<PubChannelListDataItem> pubChannelList;
+	private List<ToxListDataItem> toxList;
+	
+	/*
+	 * Hazard classification
+	 */
+	private HazardClassificationFormulaContext hazardClassificationFormulaContext;
 
 	/*
 	 * View
@@ -297,9 +311,119 @@ public class ProductData extends AbstractScorableEntity
 	 * Survey score
 	 */
 	private List<ScoreListDataItem> scoreList;
-	private List<SurveyList> surveyList;
+	private List<SurveyListDataItem> surveyList;
 	private Integer productScore;
 
+	
+	private NodeRef glopTargetCharact;
+	private String glopTargetTask;
+	private Double glopTolerance;
+	private List<String> glopConstraintLists;
+	private Boolean glopApplyOptimization;
+	
+	private List<NodeRef> subsidiaryRefs;
+	
+	/**
+	 * <p>Getter for the field <code>glopTargetCharact</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
+	@AlfSingleAssoc
+	@AlfQname(qname = "bcpg:glopTargetCharact")
+	public NodeRef getGlopTargetCharact() {
+		return glopTargetCharact;
+	}
+	
+	/**
+	 * <p>Getter for the field <code>glopTolerance</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:glopTolerance")
+	public Double getGlopTolerance() {
+		return glopTolerance;
+	}
+	
+	/**
+	 * <p>Setter for the field <code>glopTolerance</code>.</p>
+	 *
+	 * @param glopTolerance a {@link java.lang.Double} object
+	 */
+	public void setGlopTolerance(Double glopTolerance) {
+		this.glopTolerance = glopTolerance;
+	}
+	
+	/**
+	 * <p>Setter for the field <code>glopTargetCharact</code>.</p>
+	 *
+	 * @param glopTargetCharact a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
+	public void setGlopTargetCharact(NodeRef glopTargetCharact) {
+		this.glopTargetCharact = glopTargetCharact;
+	}
+	
+	/**
+	 * <p>Getter for the field <code>glopTargetTask</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:glopTargetTask")
+	public String getGlopTargetTask() {
+		return glopTargetTask;
+	}
+	
+	/**
+	 * <p>Setter for the field <code>glopTargetTask</code>.</p>
+	 *
+	 * @param glopTargetTask a {@link java.lang.String} object
+	 */
+	public void setGlopTargetTask(String glopTargetTask) {
+		this.glopTargetTask = glopTargetTask;
+	}
+	
+	/**
+	 * <p>Getter for the field <code>glopConstraintLists</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:glopConstraintLists")
+	public List<String> getGlopConstraintLists() {
+		return glopConstraintLists;
+	}
+	
+	/**
+	 * <p>Setter for the field <code>glopConstraintLists</code>.</p>
+	 *
+	 * @param glopConstraintLists a {@link java.util.List} object
+	 */
+	public void setGlopConstraintLists(List<String> glopConstraintLists) {
+		this.glopConstraintLists = glopConstraintLists;
+	}
+	
+	/**
+	 * <p>Getter for the field <code>glopApplyOptimization</code>.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object
+	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:glopApplyOptimization")
+	public Boolean getGlopApplyOptimization() {
+		return glopApplyOptimization;
+	}
+
+	/**
+	 * <p>Setter for the field <code>glopApplyOptimization</code>.</p>
+	 *
+	 * @param glopApplyOptimization a {@link java.lang.Boolean} object
+	 */
+	public void setGlopApplyOptimization(Boolean glopApplyOptimization) {
+		this.glopApplyOptimization = glopApplyOptimization;
+	}
+	
+	
 	/**
 	 * {@inheritDoc}
 	 *
@@ -1531,6 +1655,92 @@ public class ProductData extends AbstractScorableEntity
 	public boolean isPrepared() {
 		return preparationStates != null && preparationStates.contains("Prepared");
 	}
+	
+	
+	
+	/**
+	 * <p>Getter for the field <code>reconstituant</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
+	@AlfSingleAssoc
+	@AlfQname(qname = "bcpg:nutrientPreparationReconstituantRef")
+	public NodeRef getReconstituant() {
+		return reconstituant;
+	}
+
+	/**
+	 * <p>Setter for the field <code>reconstituant</code>.</p>
+	 *
+	 * @param reconstituant a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
+	public void setReconstituant(NodeRef reconstituant) {
+		this.reconstituant = reconstituant;
+	}
+
+	/**
+	 * <p>Getter for the field <code>reconstituantQty</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:nutrientPreparationReconstituantQty")
+	public Double getReconstituantQty() {
+		return reconstituantQty;
+	}
+
+	/**
+	 * <p>Setter for the field <code>reconstituantQty</code>.</p>
+	 *
+	 * @param reconstituantQty a {@link java.lang.Double} object
+	 */
+	public void setReconstituantQty(Double reconstituantQty) {
+		this.reconstituantQty = reconstituantQty;
+	}
+	
+	/**
+	 * <p>Getter for the field <code>preparationQuantity</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:nutrientPreparationQty")
+	public Double getPreparationQuantity() {
+		return preparationQuantity;
+	}
+
+	/**
+	 * <p>Setter for the field <code>preparationQuantity</code>.</p>
+	 *
+	 * @param preparationQuantity a {@link java.lang.Double} object
+	 */
+	public void setPreparationQuantity(Double preparationQuantity) {
+		this.preparationQuantity = preparationQuantity;
+	}
+	
+	
+
+	
+	/**
+	 * <p>Getter for the field <code>referenceProducts</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object
+	 */
+	@AlfProp
+	@AlfMlText
+	@AlfQname(qname = "bcpg:nutrientReferenceProducts")
+	public MLText getReferenceProducts() {
+		return referenceProducts;
+	}
+
+	/**
+	 * <p>Setter for the field <code>referenceProducts</code>.</p>
+	 *
+	 * @param referenceProducts a {@link org.alfresco.service.cmr.repository.MLText} object
+	 */
+	public void setReferenceProducts(MLText referenceProducts) {
+		this.referenceProducts = referenceProducts;
+	}
 
 	/**
 	 * <p>Getter for the field <code>ecoScore</code>.</p>
@@ -2198,6 +2408,26 @@ public class ProductData extends AbstractScorableEntity
 	public void setRegulatoryList(List<RegulatoryListDataItem> regulatoryList) {
 		this.regulatoryList = regulatoryList;
 	}
+	
+	/**
+	 * <p>Getter for the field <code>toxList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
+	@DataList
+	@AlfQname(qname = "bcpg:toxList")
+	public List<ToxListDataItem> getToxList() {
+		return toxList;
+	}
+	
+	/**
+	 * <p>Setter for the field <code>toxList</code>.</p>
+	 *
+	 * @param toxList a {@link java.util.List} object
+	 */
+	public void setToxList(List<ToxListDataItem> toxList) {
+		this.toxList = toxList;
+	}
 
 	/**
 	 * <p>Getter for the field <code>ingRegulatoryList</code>.</p>
@@ -2238,13 +2468,43 @@ public class ProductData extends AbstractScorableEntity
 	public void setSvhcList(List<SvhcListDataItem> svhcList) {
 		this.svhcList = svhcList;
 	}
-	
+
+	/**
+	 * <p>Getter for the field <code>hcList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
+	@DataList
+	@AlfQname(qname = "ghs:hazardClassificationList")
+	public List<HazardClassificationListDataItem> getHcList() {
+		return hcList;
+	}
+
+	/**
+	 * <p>Setter for the field <code>hcList</code>.</p>
+	 *
+	 * @param hcList a {@link java.util.List} object
+	 */
+	public void setHcList(List<HazardClassificationListDataItem> hcList) {
+		this.hcList = hcList;
+	}
+
+	/**
+	 * <p>Getter for the field <code>pubChannelList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	@DataList
 	@AlfQname(qname = "bp:pubChannelList")
 	public List<PubChannelListDataItem> getPubChannelList() {
 		return pubChannelList;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>pubChannelList</code>.</p>
+	 *
+	 * @param pubChannelList a {@link java.util.List} object
+	 */
 	public void setPubChannelList(List<PubChannelListDataItem> pubChannelList) {
 		this.pubChannelList = pubChannelList;
 	}
@@ -2276,7 +2536,7 @@ public class ProductData extends AbstractScorableEntity
 	 */
 	@DataList
 	@AlfQname(qname = "survey:surveyList")
-	public List<SurveyList> getSurveyList() {
+	public List<SurveyListDataItem> getSurveyList() {
 		return surveyList;
 	}
 
@@ -2285,7 +2545,7 @@ public class ProductData extends AbstractScorableEntity
 	 *
 	 * <p>Setter for the field <code>surveyList</code>.</p>
 	 */
-	public void setSurveyList(List<SurveyList> surveyList) {
+	public void setSurveyList(List<SurveyListDataItem> surveyList) {
 		this.surveyList = surveyList;
 	}
 
@@ -2532,6 +2792,21 @@ public class ProductData extends AbstractScorableEntity
 	 */
 	public void setRequirementChecksum(String requirementChecksum) {
 		this.requirementChecksum = requirementChecksum;
+	}
+	
+	/*
+	 * Do not remove spel helper
+	 */
+	public HazardClassificationFormulaContext getHazards(){
+		return getHazardClassificationFormulaContext();
+	}
+
+	public HazardClassificationFormulaContext getHazardClassificationFormulaContext() {
+		return hazardClassificationFormulaContext;
+	}
+
+	public void setHazardClassificationFormulaContext(HazardClassificationFormulaContext hazardClassificationFormulaContext) {
+		this.hazardClassificationFormulaContext = hazardClassificationFormulaContext;
 	}
 
 	private <T> List<T> filterList(List<T> list, List<DataListFilter<ProductData, T>> filters) {
@@ -2936,6 +3211,28 @@ public class ProductData extends AbstractScorableEntity
 	@Override
 	public void setScore(Integer productScore) {
 		this.productScore = productScore;
+	}
+	
+	
+	/**
+	 * <p>Getter for the field <code>subsidiaryRefs</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
+	@AlfMultiAssoc
+	@AlfReadOnly
+	@AlfQname(qname = "bcpg:subsidiaryRef")
+	public List<NodeRef> getSubsidiaryRefs() {
+		return subsidiaryRefs;
+	}
+
+	/**
+	 * <p>Setter for the field <code>subsidiaryRefs</code>.</p>
+	 *
+	 * @param subsidiaryRefs a {@link java.util.List} object
+	 */
+	public void setSubsidiaryRefs(List<NodeRef> subsidiaryRefs) {
+		this.subsidiaryRefs = subsidiaryRefs;
 	}
 
 	/**

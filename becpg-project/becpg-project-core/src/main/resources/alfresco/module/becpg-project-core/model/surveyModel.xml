@@ -38,12 +38,12 @@
 				<list>
 					<value>none</value>
 					<value>text</value>
-					<value>textarea</value>			
+					<value>textarea</value>
 					<value>file</value>
 				</list>
 			</parameter>
 		</constraint>
-
+		
 		<constraint name="survey:responseTypes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -54,6 +54,19 @@
 				</list>
 			</parameter>
 		</constraint>
+
+		<constraint name="survey:surveyListNames" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>surveyList</value>
+					<value>surveyList@1</value>
+					<value>surveyList@2</value>
+					<value>surveyList@3</value>
+				</list>
+			</parameter>
+		</constraint>
+		
 
 	</constraints>
 
@@ -67,6 +80,10 @@
 				</property>
 				<property name="survey:slResponse">
 					<type>d:any</type>
+				</property>
+				<property name="survey:generated">
+					<type>d:boolean</type>
+					<default>false</default>
 				</property>
 			</properties>
 			<associations>
@@ -115,7 +132,7 @@
 					<type>d:text</type>
 				</property>
 				<property name="survey:questionScore">
-					<type>d:int</type>
+					<type>d:double</type>
 				</property>
 				<property name="survey:questionIsMandatory">
 					<type>d:boolean</type>
@@ -132,18 +149,8 @@
 				<property name="survey:responseCommentType">
 					<type>d:text</type>
 					<default>none</default>
-					<constraints>
+					<constraints>pro
 						<constraint ref="survey:responseCommentTypes" />
-					</constraints>
-				</property>
-				<property name="survey:questionCriterion">
-					<type>d:text</type>
-					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>false</facetable>
-		            </index>
-					<constraints>
-						<constraint ref="pjt:scoreCriteria" />
 					</constraints>
 				</property>
 				<property name="survey:responseCommentLabel">
@@ -162,6 +169,17 @@
 						<many>true</many>
 					</target>
 				</association>
+				<association name="survey:scoreCriterion">
+                    <source>
+                        <mandatory>true</mandatory>
+                        <many>true</many>
+                    </source>
+                    <target>
+                        <class>pjt:scoreCriterion</class>
+                        <mandatory>false</mandatory>
+                        <many>false</many>
+                    </target>
+                </association>
 			</associations>
 			<mandatory-aspects>
 				<aspect>bcpg:depthLevelAspect</aspect>
@@ -181,15 +199,13 @@
 					<type>d:text</type>
 					<multiple>true</multiple>
 				</property>
-				<!--property name="survey:fsLinkedHierarchy">
-					<type>d:noderef</type>
-					<multiple>true</multiple>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>true</facetable>
-					</index>
-				</property-->
-				<!-- TODO SurveyList?(@[1-3]) -->
+				<property name="survey:fsSurveyListName">
+					<type>d:text</type>
+					<default>surveyList</default>
+					<constraints>
+						<constraint ref="survey:surveyListNames" />
+					</constraints>
+				</property>
 			</properties>
 			<associations>
 				<association name="survey:fsLinkedCharactRefs">
@@ -210,6 +226,230 @@
 					</source>
 					<target>
 						<class>bcpg:linkedValue</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>
+		</aspect>
+		<aspect name="survey:advSurveySearchAspect">
+			<associations>
+				<association name="survey:advSearchSurveyQuestion1">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>survey:surveyQuestion</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="survey:advSearchSurveyQuestion2">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>survey:surveyQuestion</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="survey:advSearchSurveyQuestion3">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>survey:surveyQuestion</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="survey:advSearchSurveyQuestion4">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>survey:surveyQuestion</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="survey:advSearchSurveyQuestion5">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>survey:surveyQuestion</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="survey:advSearchSurveyQuestion6">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>survey:surveyQuestion</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="survey:advSearchSurveyQuestion7">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>survey:surveyQuestion</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="survey:advSearchSurveyQuestion8">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>survey:surveyQuestion</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="survey:advSearchSurveyQuestion9">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>survey:surveyQuestion</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="survey:advSearchSurveyQuestion10">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>survey:surveyQuestion</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="survey:advSearchSurveyAnswer1">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>survey:surveyQuestion</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="survey:advSearchSurveyAnswer2">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>survey:surveyQuestion</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="survey:advSearchSurveyAnswer3">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>survey:surveyQuestion</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="survey:advSearchSurveyAnswer4">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>survey:surveyQuestion</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="survey:advSearchSurveyAnswer5">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>survey:surveyQuestion</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="survey:advSearchSurveyAnswer6">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>survey:surveyQuestion</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="survey:advSearchSurveyAnswer7">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>survey:surveyQuestion</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="survey:advSearchSurveyAnswer8">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>survey:surveyQuestion</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="survey:advSearchSurveyAnswer9">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>survey:surveyQuestion</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="survey:advSearchSurveyAnswer10">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>survey:surveyQuestion</class>
 						<mandatory>false</mandatory>
 						<many>true</many>
 					</target>

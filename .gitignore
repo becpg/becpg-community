@@ -1,5 +1,6 @@
 HELP.md
 target/
+bin/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
@@ -37,3 +38,5 @@ build/
 
 #Hive local devs specifics files
 ^devs-*
+/.env
+.aider*

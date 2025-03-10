@@ -168,91 +168,203 @@ public class SearchRuleFilter {
 		this.entityCriteria = entityCriteria;
 	}
 
+	/**
+	 * <p>Getter for the field <code>dateField</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.namespace.QName} object
+	 */
 	public QName getDateField() {
 		return dateField;
 	}
 
+	/**
+	 * <p>Setter for the field <code>dateField</code>.</p>
+	 *
+	 * @param dateField a {@link org.alfresco.service.namespace.QName} object
+	 */
 	public void setDateField(QName dateField) {
 		this.dateField = dateField;
 	}
 
+	/**
+	 * <p>Getter for the field <code>versionFilterType</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.search.data.VersionFilterType} object
+	 */
 	public VersionFilterType getVersionFilterType() {
 		return versionFilterType;
 	}
 
+	/**
+	 * <p>Setter for the field <code>versionFilterType</code>.</p>
+	 *
+	 * @param versionFilterType a {@link fr.becpg.repo.search.data.VersionFilterType} object
+	 */
 	public void setVersionFilterType(VersionFilterType versionFilterType) {
 		this.versionFilterType = versionFilterType;
 	}
 
+	/**
+	 * <p>Getter for the field <code>nodePath</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.Path} object
+	 */
 	public Path getNodePath() {
 		return nodePath;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodePath</code>.</p>
+	 *
+	 * @param nodePath a {@link org.alfresco.service.cmr.repository.Path} object
+	 */
 	public void setNodePath(Path nodePath) {
 		this.nodePath = nodePath;
 	}
 
+	/**
+	 * <p>Getter for the field <code>dateFilterType</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.search.data.DateFilterType} object
+	 */
 	public DateFilterType getDateFilterType() {
 		return dateFilterType;
 	}
 
+	/**
+	 * <p>Setter for the field <code>dateFilterType</code>.</p>
+	 *
+	 * @param dateFilterType a {@link fr.becpg.repo.search.data.DateFilterType} object
+	 */
 	public void setDateFilterType(DateFilterType dateFilterType) {
 		this.dateFilterType = dateFilterType;
 	}
 
+	/**
+	 * <p>Getter for the field <code>dateFilterDelay</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object
+	 */
 	public Integer getDateFilterDelay() {
 		return dateFilterDelay;
 	}
 
+	/**
+	 * <p>Setter for the field <code>dateFilterDelay</code>.</p>
+	 *
+	 * @param dateFilterDelay a {@link java.lang.Integer} object
+	 */
 	public void setDateFilterDelay(Integer dateFilterDelay) {
 		this.dateFilterDelay = dateFilterDelay;
 	}
 
+	/**
+	 * <p>Getter for the field <code>dateFilterDelayUnit</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.search.data.DateFilterDelayUnit} object
+	 */
 	public DateFilterDelayUnit getDateFilterDelayUnit() {
 		return dateFilterDelayUnit;
 	}
 
+	/**
+	 * <p>Setter for the field <code>dateFilterDelayUnit</code>.</p>
+	 *
+	 * @param dateFilterDelayUnit a {@link fr.becpg.repo.search.data.DateFilterDelayUnit} object
+	 */
 	public void setDateFilterDelayUnit(DateFilterDelayUnit dateFilterDelayUnit) {
 		this.dateFilterDelayUnit = dateFilterDelayUnit;
 	}
 
+	/**
+	 * <p>Getter for the field <code>currentDate</code>.</p>
+	 *
+	 * @return a {@link java.util.Date} object
+	 */
 	public Date getCurrentDate() {
 		return currentDate;
 	}
 
+	/**
+	 * <p>Setter for the field <code>currentDate</code>.</p>
+	 *
+	 * @param currentDate a {@link java.util.Date} object
+	 */
 	public void setCurrentDate(Date currentDate) {
 		this.currentDate = currentDate;
 	}
 
+	/**
+	 * <p>Getter for the field <code>ensureDbQuery</code>.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object
+	 */
 	public Boolean getEnsureDbQuery() {
 		return ensureDbQuery;
 	}
 
+	/**
+	 * <p>Setter for the field <code>ensureDbQuery</code>.</p>
+	 *
+	 * @param ensureDbQuery a {@link java.lang.Boolean} object
+	 */
 	public void setEnsureDbQuery(Boolean ensureDbQuery) {
 		this.ensureDbQuery = ensureDbQuery;
 	}
 
+	/**
+	 * <p>isEmptyJsonQuery.</p>
+	 *
+	 * @return a boolean
+	 */
 	public boolean isEmptyJsonQuery() {
 		return isEmptyJsonQuery;
 	}
 
+	/**
+	 * <p>isFilter.</p>
+	 *
+	 * @return a boolean
+	 */
 	public boolean isFilter() {
 		return isFilter;
 	}
 
+	/**
+	 * <p>Setter for the field <code>isFilter</code>.</p>
+	 *
+	 * @param isFilter a {@link java.lang.Boolean} object
+	 */
 	public void setIsFilter(Boolean isFilter) {
 		this.isFilter = isFilter;
 	}
 	
 
+	/**
+	 * <p>excludePublishedEntities.</p>
+	 *
+	 * @return a boolean
+	 */
 	public boolean excludePublishedEntities() {
 		return excludePublishedEntities;
 	}
 
+	/**
+	 * <p>Setter for the field <code>excludePublishedEntities</code>.</p>
+	 *
+	 * @param excludePublishedEntities a {@link java.lang.Boolean} object
+	 */
 	public void setExcludePublishedEntities(Boolean excludePublishedEntities) {
 		this.excludePublishedEntities = excludePublishedEntities;
 	}
 
+	/**
+	 * <p>fromJsonString.</p>
+	 *
+	 * @param jsonString a {@link java.lang.String} object
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object
+	 * @return a {@link fr.becpg.repo.search.data.SearchRuleFilter} object
+	 */
 	public SearchRuleFilter fromJsonString(String jsonString, NamespaceService namespaceService) {
 		try {
 			if ((jsonString != null) && !jsonString.isEmpty()) {
@@ -268,6 +380,13 @@ public class SearchRuleFilter {
 		return this;
 	}
 
+	/**
+	 * <p>fromJsonObject.</p>
+	 *
+	 * @param filterObject a {@link org.json.JSONObject} object
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object
+	 * @return a {@link fr.becpg.repo.search.data.SearchRuleFilter} object
+	 */
 	public SearchRuleFilter fromJsonObject(JSONObject filterObject, NamespaceService namespaceService) {
 		if (filterObject.has(PROP_QUERY)) {
 			setQuery(filterObject.getString(PROP_QUERY));
@@ -341,12 +460,14 @@ public class SearchRuleFilter {
 		return this;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		return Objects.hash(currentDate, dateField, dateFilterDelay, dateFilterDelayUnit, dateFilterType, ensureDbQuery, entityCriteria, entityType,
 				nodeCriteria, nodePath, nodeType, query, versionFilterType);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -364,6 +485,7 @@ public class SearchRuleFilter {
 				&& Objects.equals(nodeType, other.nodeType) && Objects.equals(query, other.query) && (versionFilterType == other.versionFilterType);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "SearchRuleFilter [query=" + query + ", nodeType=" + nodeType + ", nodePath=" + nodePath + ", nodeCriteria=" + nodeCriteria

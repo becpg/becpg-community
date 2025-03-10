@@ -35,6 +35,8 @@ public class CharactDetails {
 	List<NodeRef> computedCharacts = null;
 	
 	final Map<NodeRef, List<CharactDetailsValue>> data = new LinkedHashMap<>();
+	
+	private String totalOperation = "SUM";
 
 	/**
 	 * <p>Constructor for CharactDetails.</p>
@@ -44,6 +46,24 @@ public class CharactDetails {
 	public CharactDetails(List<NodeRef> computedCharacts ) {
 		super();
 		this.computedCharacts = computedCharacts;
+	}
+	
+	/**
+	 * <p>Setter for the field <code>totalOperation</code>.</p>
+	 *
+	 * @param totalOperation a {@link java.lang.String} object
+	 */
+	public void setTotalOperation(String totalOperation) {
+		this.totalOperation = totalOperation;
+	}
+	
+	/**
+	 * <p>Getter for the field <code>totalOperation</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
+	public String getTotalOperation() {
+		return totalOperation;
 	}
 	
 	/**

@@ -87,8 +87,10 @@ public class DesignerModel {
 	/** Constant <code>TYPE_WORKFLOW_DEFINITION</code> */
 	public static final QName TYPE_WORKFLOW_DEFINITION = QName.createQName(DESIGNER_URI, "workflowDefinition");
 
+	/** Constant <code>TYPE_DSG_FORMCONSTRAINT</code> */
 	public static final QName TYPE_DSG_FORMCONSTRAINT = QName.createQName(DESIGNER_URI, "formConstraint");
 
+	/** Constant <code>TYPE_DSG_CONSTRAINTPARAMETER</code> */
 	public static final QName TYPE_DSG_CONSTRAINTPARAMETER = QName.createQName(DESIGNER_URI, "constraintParameter");
 	/**
 	 * Aspects
@@ -96,6 +98,7 @@ public class DesignerModel {
 
 	public static final QName ASPECT_CONFIG = QName.createQName(DESIGNER_URI, "configAspect");
 
+	/** Constant <code>PROP_PUBLISHED_CONFIG_NAME</code> */
 	public static final QName PROP_PUBLISHED_CONFIG_NAME = QName.createQName(DESIGNER_URI, "publishedConfigName");
 
 	/** Constant <code>ASPECT_MODEL</code> */
@@ -207,10 +210,13 @@ public class DesignerModel {
 	/** Constant <code>PROP_DSG_MANDATORY</code> */
 	public static final QName PROP_DSG_MANDATORY = QName.createQName(DESIGNER_URI, "mandatory");
 	
+	/** Constant <code>PROP_DSG_VALIDATION_HANDLER</code> */
 	public static final QName PROP_DSG_VALIDATION_HANDLER = QName.createQName(DESIGNER_URI, "validation-handler");
 	
+	/** Constant <code>PROP_DSG_TYPE</code> */
 	public static final QName PROP_DSG_TYPE = QName.createQName(DESIGNER_URI, "type");
 	
+	/** Constant <code>PROP_DSG_EVENT</code> */
 	public static final QName PROP_DSG_EVENT = QName.createQName(DESIGNER_URI, "event");
 
 	/** Constant <code>PROP_WORKFLOW_DEFINITION_ACTIVE</code> */
@@ -282,8 +288,10 @@ public class DesignerModel {
 	/** Constant <code>ASSOC_DSG_CONFIG</code> */
 	public static final QName ASSOC_DSG_CONFIG = QName.createQName(DESIGNER_URI, "config");
 	
+	/** Constant <code>ASSOC_DSG_CONSTRAINTS</code> */
 	public static final QName ASSOC_DSG_CONSTRAINTS = QName.createQName(DESIGNER_URI, "constraints");
 	
+	/** Constant <code>ASSOC_DSG_CONSTRAINT_ASSOC</code> */
 	public static final QName ASSOC_DSG_CONSTRAINT_ASSOC = QName.createQName(DESIGNER_URI, "constraintAssoc");
 
 

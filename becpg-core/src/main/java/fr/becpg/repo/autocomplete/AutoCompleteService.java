@@ -65,6 +65,7 @@ public interface AutoCompleteService {
 	/** Constant <code>PROP_PRODUCT_TYPE="productType"</code> */
 	final String PROP_PRODUCT_TYPE = "productType";
 	
+	/** Constant <code>PROP_INCLUDE_DELETED="includeDeleted"</code> */
 	final String PROP_INCLUDE_DELETED = "includeDeleted";
 	
 	/** Constant <code>EXTRA_PARAM="extra"</code> */
@@ -76,26 +77,37 @@ public interface AutoCompleteService {
 	/** Constant <code>PROP_EXCLUDE_PROPS="excludeProps"</code> */
 	final String PROP_EXCLUDE_PROPS = "excludeProps";
 	
+	/** Constant <code>PROP_EXCLUDE_SOURCES="excludeSources"</code> */
 	final String PROP_EXCLUDE_SOURCES = "excludeSources";
 	
+	/** Constant <code>PROP_ITEM_ID="itemId"</code> */
 	final String PROP_ITEM_ID = "itemId";
 	
+	/** Constant <code>PROP_FIELD_NAME="fieldName"</code> */
 	final String PROP_FIELD_NAME = "fieldName";
 
+	/** Constant <code>PROP_AND_PROPS="andProps"</code> */
 	final String PROP_AND_PROPS = "andProps";
 
+	/** Constant <code>EXTRA_PARAM_ITEMID="itemId"</code> */
 	final String EXTRA_PARAM_ITEMID = "itemId";
 	
+	/** Constant <code>EXTRA_PARAM_DESTINATION="destination"</code> */
 	final String EXTRA_PARAM_DESTINATION = "destination";
 
+	/** Constant <code>EXTRA_PARAM_LIST="list"</code> */
 	final String EXTRA_PARAM_LIST = "list";
 
+	/** Constant <code>EXTRA_PARAM_PATHS="paths"</code> */
 	final String EXTRA_PARAM_PATHS = "paths";
 
+	/** Constant <code>EXTRA_PARAM_DEPTH_LEVEL="depthLevel"</code> */
 	final String EXTRA_PARAM_DEPTH_LEVEL = "depthLevel";
 
+	/** Constant <code>EXTRA_PARAM_TASKID="taskId"</code> */
 	final String EXTRA_PARAM_TASKID = "taskId";
 	
+	/** Constant <code>EXTRA_PARAM_SEARCH_TEMPLATE="searchTemplate"</code> */
 	final String EXTRA_PARAM_SEARCH_TEMPLATE = "searchTemplate";
 
 	
@@ -108,7 +120,7 @@ public interface AutoCompleteService {
 	 * @param pageNum a {@link java.lang.Integer} object.
 	 * @param pageSize a {@link java.lang.Integer} object.
 	 * @param props a {@link java.util.Map} object.
-	 * @return a {@link fr.becpg.repo.listvalue.AutoCompletePage} object.
+	 * @return a {@link fr.becpg.repo.autocomplete.AutoCompletePage} object.
 	 */
 	AutoCompletePage suggestBySourceType(String sourceType, String query, Integer pageNum,
 									  Integer pageSize, Map<String, Serializable> props);

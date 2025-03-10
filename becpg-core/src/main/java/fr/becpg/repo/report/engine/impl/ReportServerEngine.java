@@ -66,6 +66,11 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 	
 	private SystemConfigurationService systemConfigurationService;
 	
+	/**
+	 * <p>Setter for the field <code>systemConfigurationService</code>.</p>
+	 *
+	 * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
+	 */
 	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
 		this.systemConfigurationService = systemConfigurationService;
 	}
@@ -88,6 +93,11 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 		this.contentService = contentService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityService</code>.</p>
+	 *
+	 * @param entityService a {@link fr.becpg.repo.entity.EntityService} object
+	 */
 	public void setEntityService(EntityService entityService) {
 		this.entityService = entityService;
 	}
@@ -108,6 +118,11 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 		return Long.MAX_VALUE;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>instanceName</code>.</p>
+	 *
+	 * @param instanceName a {@link java.lang.String} object
+	 */
 	public void setInstanceName(String instanceName) {
 		this.instanceName = instanceName;
 	}
@@ -146,7 +161,7 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 			if (associatedTplFiles != null) {
 				for (NodeRef nodeRef : associatedTplFiles) {
 					String name = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
-					if (name.startsWith("logo")) {
+					if (name.startsWith("logo") || name.startsWith("img")) {
 						reportData.getImages().add(new EntityImageInfo(name, nodeRef));
 					} else {
 						String assocFileId = getAssociatedTplFileId(templateId, name);

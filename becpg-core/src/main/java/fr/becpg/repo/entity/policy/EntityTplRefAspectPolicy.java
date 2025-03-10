@@ -40,6 +40,11 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy
 	
 	private AttributeExtractorService attributeExtractorService;
 	
+	/**
+	 * <p>Setter for the field <code>attributeExtractorService</code>.</p>
+	 *
+	 * @param attributeExtractorService a {@link fr.becpg.repo.helper.AttributeExtractorService} object
+	 */
 	public void setAttributeExtractorService(AttributeExtractorService attributeExtractorService) {
 		this.attributeExtractorService = attributeExtractorService;
 	}
@@ -134,6 +139,7 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void beforeDeleteNode(NodeRef nodeRef) {
 		

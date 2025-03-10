@@ -17,7 +17,6 @@ import org.alfresco.repo.model.Repository;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
-import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
@@ -44,6 +43,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.cache.BeCPGCacheService;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.expressions.ExpressionService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
@@ -78,7 +78,7 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 	@Autowired
 	private Repository repository;
 	@Autowired
-	private DictionaryService dictionaryService;
+	private EntityDictionaryService dictionaryService;
 
 	@Autowired
 	@Qualifier("mlAwareNodeService")
@@ -143,23 +143,16 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * <p>
 	 * updateAuditedField.
 	 * </p>
-	 *
-	 * @param entityNodeRef
-	 *            a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param before
-	 *            a {@link java.util.Map} object.
-	 * @param after
-	 *            a {@link java.util.Map} object.
-	 * @param listNodeRefs
-	 *            a {@link java.util.Set} object.
 	 */
 	@Override
 	public void updateAuditedField(NodeRef entityNodeRef, Set<QName> diffQnames, Set<NodeRef> listNodeRefs) {
 		try {
-			if ((diffQnames != null || listNodeRefs != null) && nodeService.exists(entityNodeRef)) {
+			if (((diffQnames != null) || (listNodeRefs != null)) && nodeService.exists(entityNodeRef)) {
 
 				for (JSONArray catalogDef : getCatalogsDef()) {
 
@@ -358,50 +351,29 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * <p>
 	 * formulateCatalogs.
 	 * </p>
-	 *
-	 * @param entityNodeRef
-	 *            a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param locales
-	 *            a {@link java.util.List} object.
-	 * @param entityCatalogMatcher
-	 *            a
-	 *            {@link fr.becpg.repo.entity.catalog.EntityCatalogService.EntityCatalogMatcher}
-	 *            object.
-	 * @return a {@link org.json.JSONArray} object.
-	 * @throws org.json.JSONException
-	 *             if any.
 	 */
 	@Override
 	public JSONArray formulateCatalogs(RepositoryEntity formulatedEntity, List<String> locales) throws JSONException {
 		return formulateCatalog(null, formulatedEntity, locales);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public JSONArray formulateCatalog(String catalogId, NodeRef entityNodeRef, List<String> locales) throws JSONException {
 		return formulateCatalog(catalogId, alfrescoRepository.findOne(entityNodeRef), locales);
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * <p>
 	 * formulateCatalog.
 	 * </p>
-	 *
-	 * @param catalogId
-	 *            a {@link java.lang.String} object.
-	 * @param entityNodeRef
-	 *            a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param locales
-	 *            a {@link java.util.List} object.
-	 * @param entityCatalogMatcher
-	 *            a
-	 *            {@link fr.becpg.repo.entity.catalog.EntityCatalogService.EntityCatalogMatcher}
-	 *            object.
-	 * @return a {@link org.json.JSONArray} object.
-	 * @throws org.json.JSONException
-	 *             if any.
 	 */
 	public JSONArray formulateCatalog(String catalogId, RepositoryEntity formulatedEntity, List<String> locales) throws JSONException {
 		JSONArray ret = new JSONArray();
@@ -450,7 +422,6 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 
 						JSONArray nonUniqueFields = extractNonUniqueFields(entityType, entityNodeRef, uniqueFields, i18nMessages);
 
-						
 						boolean isFirst = true;
 						for (String lang : langs) {
 
@@ -460,7 +431,7 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 								properties = nodeService.getProperties(entityNodeRef);
 							}
 
-							JSONArray missingFields = extractMissingFields(formulatedEntity, properties, reqFields, i18nMessages,
+							JSONArray missingFields = extractMissingFields(formulatedEntity, entityType, properties, reqFields, i18nMessages,
 									defaultLocale.equals(lang) ? null : lang, isFirst);
 							if ((missingFields.length() > 0) || (nonUniqueFields.length() > 0)) {
 
@@ -525,20 +496,20 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 					if (!(propDuplicates.isEmpty())) {
 
 						ClassAttributeDefinition classDef = formatQnameString(field);
-						String propTitle = getFieldDisplayName(classDef, i18nMessages.has(field) ? i18nMessages.getString(field) : null);
+						String propTitle = getFieldDisplayName(entityType, classDef, i18nMessages.has(field) ? i18nMessages.getString(field) : null);
 
 						JSONObject nonUniqueField = new JSONObject();
 						nonUniqueField.put(EntityCatalogService.PROP_ID, field);
 						nonUniqueField.put(EntityCatalogService.PROP_DISPLAY_NAME, propTitle);
 						nonUniqueField.put(EntityCatalogService.PROP_VALUE, propValue);
 						nonUniqueField.put(EntityCatalogService.PROP_ENTITIES, toJsonArray(propDuplicates));
-
+						final QName finalEntityType = entityType;
 						MLText displayMLName = MLTextHelper.createMLTextI18N(loc -> {
 							Locale old = I18NUtil.getLocale();
 							String ret = "";
 							try {
 								I18NUtil.setLocale(loc);
-								return getFieldDisplayName(classDef, i18nMessages.has(field) ? i18nMessages.getString(field) : null);
+								return getFieldDisplayName(finalEntityType, classDef, i18nMessages.has(field) ? i18nMessages.getString(field) : null);
 
 							} catch (JSONException e) {
 								logger.error(e, e);
@@ -604,11 +575,9 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 		return queryResults;
 	}
 
-	private JSONArray extractMissingFields(RepositoryEntity formulatedEntity, Map<QName, Serializable> properties, JSONArray reqFields,
-			JSONObject i18nMessages, String lang, boolean isFirstLang) throws JSONException {
+	private JSONArray extractMissingFields(RepositoryEntity formulatedEntity, QName entityType, Map<QName, Serializable> properties,
+			JSONArray reqFields, JSONObject i18nMessages, String lang, boolean isFirstLang) throws JSONException {
 		JSONArray ret = new JSONArray();
-		
-		
 
 		for (int i = 0; i < reqFields.length(); i++) {
 			String field = reqFields.getString(i);
@@ -626,7 +595,7 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 
 				String i18nKey = i18nMessages.has(currentField) ? i18nMessages.getString(currentField) : null;
 
-				if (currentField.startsWith("formula") && splitFields.size() == 2) {
+				if (currentField.startsWith("formula") && (splitFields.size() == 2)) {
 					isFormula = true;
 					present = testCondition(splitFields.get(1), formulatedEntity);
 					if (i18nKey == null) {
@@ -644,7 +613,6 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 					}
 
 					QName fieldQname = null;
-					
 
 					if (logger.isDebugEnabled()) {
 						logger.debug("Test field qname: " + currentField + ", lang: " + lang);
@@ -654,29 +622,29 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 						fieldQname = QName.createQName(currentField, namespaceService);
 
 						propDef = dictionaryService.getProperty(fieldQname);
-						if (propDef instanceof PropertyDefinition) {
-							if ((DataTypeDefinition.MLTEXT.equals(((PropertyDefinition) propDef).getDataType().getName()))) {
+						if (propDef instanceof PropertyDefinition fieldDef) {
+							if ((DataTypeDefinition.MLTEXT.equals(fieldDef.getDataType().getName()))
+									&& !MLTextHelper.isDisabledMLTextField(currentField)) {
 								if (mlTextIsPresent(fieldQname, formulatedEntity.getNodeRef(), lang, currLang, properties)) {
 									logger.debug(" - mlProp is present");
 									present = true;
-								} 
-							} else {
-								if (!isFirstLang || ((properties.get(fieldQname) != null) && !properties.get(fieldQname).toString().isEmpty())) {
-									logger.debug(" - regular prop is present: " + properties.get(fieldQname));
-									present = true;
-								} 
+								}
+							} else if (!isFirstLang || ((properties.get(fieldQname) != null) && !properties.get(fieldQname).toString().isEmpty())) {
+								logger.debug(" - regular prop is present: " + properties.get(fieldQname));
+								present = true;
 							}
 
 						} else {
 							propDef = dictionaryService.getAssociation(fieldQname);
 							// only check assoc when lang is null
-							if (isFirstLang && propDef != null) {
+							if (isFirstLang && (propDef != null)) {
 								if (associationService.getTargetAssoc(formulatedEntity.getNodeRef(), fieldQname) != null) {
 									logger.debug(" - assoc is present");
 									present = true;
-								} 
+								}
 							} else {
-								present = true;							}
+								present = true;
+							}
 						}
 
 					} catch (NamespaceException e) {
@@ -685,8 +653,7 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 						// happens if namespace does not exist
 					}
 				}
-				
-				
+
 				if (!present) {
 					if (!id.toString().isBlank()) {
 						id.append("|");
@@ -703,7 +670,7 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 								if (!label.isBlank()) {
 									label += " " + I18NUtil.getMessage(MESSAGE_OR) + " ";
 								}
-								label += getFieldDisplayName(propDef, i18nKey);
+								label += getFieldDisplayName(entityType, propDef, i18nKey);
 
 								displayName.addValue(loc, label);
 							} finally {
@@ -713,12 +680,11 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 						}
 					}
 
-				} 
-				
-				if( isFormula) {
-					break;
 				}
 
+				if (isFormula) {
+					break;
+				}
 
 			}
 
@@ -790,8 +756,8 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 	 *            a {@link java.lang.String} object.
 	 * @return a {@link java.lang.String} object.
 	 */
-	public String getFieldDisplayName(ClassAttributeDefinition classDef, String messageKey) {
-		String displayName = messageKey != null ? I18NUtil.getMessage(messageKey) : classDef.getTitle(dictionaryService);
+	private String getFieldDisplayName(QName nodeType, ClassAttributeDefinition classDef, String messageKey) {
+		String displayName = messageKey != null ? I18NUtil.getMessage(messageKey) : dictionaryService.getTitle(classDef, nodeType);
 		return displayName != null ? displayName : messageKey;
 	}
 

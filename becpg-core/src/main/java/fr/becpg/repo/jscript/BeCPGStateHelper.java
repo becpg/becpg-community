@@ -12,14 +12,25 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.api.BeCPGPublicApi;
 
+/**
+ * <p>BeCPGStateHelper class.</p>
+ *
+ * @author matthieu
+ */
 @BeCPGPublicApi
 public class BeCPGStateHelper extends BaseScopableProcessorExtension {
 
+	/** Constant <code>ACTION_BRANCH_ENTITY="ACTION_BRANCH_ENTITY"</code> */
 	public static final String ACTION_BRANCH_ENTITY = "ACTION_BRANCH_ENTITY";
+	/** Constant <code>ACTION_COPY_ENTITY="ACTION_COPY_ENTITY"</code> */
 	public static final String ACTION_COPY_ENTITY = "ACTION_COPY_ENTITY";
+	/** Constant <code>ACTION_FORMULATE_ENTITY="ACTION_FORMULATE_ENTITY"</code> */
 	public static final String ACTION_FORMULATE_ENTITY = "ACTION_FORMULATE_ENTITY";
+	/** Constant <code>ACTION_CREATE_MINOR_VERSION="ACTION_CREATE_MINOR_VERSION"</code> */
 	public static final String ACTION_CREATE_MINOR_VERSION = "ACTION_CREATE_MINOR_VERSION";
+	/** Constant <code>ACTION_CREATE_MAJOR_VERSION="ACTION_CREATE_MAJOR_VERSION"</code> */
 	public static final String ACTION_CREATE_MAJOR_VERSION = "ACTION_CREATE_MAJOR_VERSION";
+	/** Constant <code>ACTION_CREATE_ENTITY="ACTION_CREATE_ENTITY"</code> */
 	public static final String ACTION_CREATE_ENTITY = "ACTION_CREATE_ENTITY";
 	
 	private static Log logger = LogFactory.getLog(BeCPGStateHelper.class);
@@ -60,10 +71,21 @@ public class BeCPGStateHelper extends BaseScopableProcessorExtension {
 
 	}
 
+	/**
+	 * <p>onBranchEntity.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.repo.jscript.BeCPGStateHelper.ActionStateContext} object
+	 */
 	public static ActionStateContext onBranchEntity(NodeRef entityNodeRef) {
 		return new ActionStateContext(entityNodeRef, ACTION_BRANCH_ENTITY);
 	}
 
+	/**
+	 * <p>onCopyEntity.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public static void onCopyEntity(NodeRef entityNodeRef) {
 		if (TransactionalResourceHelper.getCount(getCounterState(ACTION_BRANCH_ENTITY)) == 0 && TransactionalResourceHelper.getCount(getCounterState(ACTION_CREATE_MAJOR_VERSION)) == 0
 				&& TransactionalResourceHelper.getCount(getCounterState(ACTION_CREATE_MINOR_VERSION)) == 0) {
@@ -80,6 +102,11 @@ public class BeCPGStateHelper extends BaseScopableProcessorExtension {
 	}
 	
 
+	/**
+	 * <p>onCreateEntity.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public static void onCreateEntity(NodeRef entityNodeRef) {
 		if (TransactionalResourceHelper.getCount(getCounterState(ACTION_BRANCH_ENTITY)) == 0 && TransactionalResourceHelper.getCount(getCounterState(ACTION_CREATE_MAJOR_VERSION)) == 0
 				&& TransactionalResourceHelper.getCount(getCounterState(ACTION_CREATE_MINOR_VERSION)) == 0
@@ -99,6 +126,13 @@ public class BeCPGStateHelper extends BaseScopableProcessorExtension {
 		return state+"_IDX";
 	}
 
+	/**
+	 * <p>onMergeEntity.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param versionType a {@link org.alfresco.service.cmr.version.VersionType} object
+	 * @return a {@link fr.becpg.repo.jscript.BeCPGStateHelper.ActionStateContext} object
+	 */
 	public static ActionStateContext onMergeEntity(NodeRef entityNodeRef, VersionType versionType) {
 		if (VersionType.MAJOR.equals(versionType)) {
 			return new ActionStateContext(entityNodeRef, ACTION_CREATE_MAJOR_VERSION);
@@ -107,62 +141,152 @@ public class BeCPGStateHelper extends BaseScopableProcessorExtension {
 		return new ActionStateContext(entityNodeRef, ACTION_CREATE_MINOR_VERSION);
 	}
 
+	/**
+	 * <p>onFormulateEntity.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.repo.jscript.BeCPGStateHelper.ActionStateContext} object
+	 */
 	public static ActionStateContext onFormulateEntity(NodeRef entityNodeRef) {
 		return new ActionStateContext(entityNodeRef, ACTION_FORMULATE_ENTITY);
 	}
 
+	/**
+	 * <p>isOnMergeEntity.</p>
+	 *
+	 * @param entityNode a {@link org.alfresco.repo.jscript.ScriptNode} object
+	 * @return a boolean
+	 */
 	public boolean isOnMergeEntity(ScriptNode entityNode) {
 		return isOnMergeEntity(entityNode.getNodeRef());
 	}
 	
+	/**
+	 * <p>isOnCreateEntity.</p>
+	 *
+	 * @param entityNode a {@link org.alfresco.repo.jscript.ScriptNode} object
+	 * @return a boolean
+	 */
 	public boolean isOnCreateEntity(ScriptNode entityNode) {
 		return isOnCreateEntity(entityNode.getNodeRef());
 	}
 
+	/**
+	 * <p>isOnMergeMajorVersion.</p>
+	 *
+	 * @param entityNode a {@link org.alfresco.repo.jscript.ScriptNode} object
+	 * @return a boolean
+	 */
 	public boolean isOnMergeMajorVersion(ScriptNode entityNode) {
 		return isOnMergeMajorVersion(entityNode.getNodeRef());
 	}
 
+	/**
+	 * <p>isOnMergeMinorVersion.</p>
+	 *
+	 * @param entityNode a {@link org.alfresco.repo.jscript.ScriptNode} object
+	 * @return a boolean
+	 */
 	public boolean isOnMergeMinorVersion(ScriptNode entityNode) {
 		return isOnMergeMinorVersion(entityNode.getNodeRef());
 	}
 
+	/**
+	 * <p>isOnFormulateEntity.</p>
+	 *
+	 * @param entityNode a {@link org.alfresco.repo.jscript.ScriptNode} object
+	 * @return a boolean
+	 */
 	public boolean isOnFormulateEntity(ScriptNode entityNode) {
 		return isOnFormulateEntity(entityNode.getNodeRef());
 	}
 
+	/**
+	 * <p>isOnCopyEntity.</p>
+	 *
+	 * @param entityNode a {@link org.alfresco.repo.jscript.ScriptNode} object
+	 * @return a boolean
+	 */
 	public boolean isOnCopyEntity(ScriptNode entityNode) {
 		return isOnCopyEntity(entityNode.getNodeRef());
 	}
 
+	/**
+	 * <p>isOnBranchEntity.</p>
+	 *
+	 * @param entityNode a {@link org.alfresco.repo.jscript.ScriptNode} object
+	 * @return a boolean
+	 */
 	public boolean isOnBranchEntity(ScriptNode entityNode) {
 		return isOnBranchEntity(entityNode.getNodeRef());
 	}
 
+	/**
+	 * <p>isOnMergeEntity.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
 	public boolean isOnMergeEntity(NodeRef entityNodeRef) {
 		return isOnMergeMajorVersion(entityNodeRef) || isOnMergeMinorVersion(entityNodeRef);
 	}
 
+	/**
+	 * <p>isOnCreateEntity.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
 	public boolean isOnCreateEntity(NodeRef entityNodeRef) {
 		return hasEntity(entityNodeRef, ACTION_CREATE_ENTITY);
 	}
 	
+	/**
+	 * <p>isOnMergeMinorVersion.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
 	public boolean isOnMergeMinorVersion(NodeRef entityNodeRef) {
 		return hasEntity(entityNodeRef, ACTION_CREATE_MINOR_VERSION);
 	}
 
+	/**
+	 * <p>isOnMergeMajorVersion.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
 	public boolean isOnMergeMajorVersion(NodeRef entityNodeRef) {
 		return hasEntity(entityNodeRef, ACTION_CREATE_MAJOR_VERSION);
 	}
 
+	/**
+	 * <p>isOnCopyEntity.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
 	public boolean isOnCopyEntity(NodeRef entityNodeRef) {
 		return hasEntity(entityNodeRef, ACTION_COPY_ENTITY);
 	}
 
+	/**
+	 * <p>isOnFormulateEntity.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
 	public boolean isOnFormulateEntity(NodeRef entityNodeRef) {
 		return hasEntity(entityNodeRef, ACTION_FORMULATE_ENTITY);
 	}
 
+	/**
+	 * <p>isOnBranchEntity.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
 	public boolean isOnBranchEntity(NodeRef entityNodeRef) {
 		return hasEntity(entityNodeRef, ACTION_BRANCH_ENTITY);
 	}

@@ -66,8 +66,8 @@ public class CopyEntityServiceIT extends PLMBaseTestCase {
 			assertTrue(startEffectivity.getTime() < startEffectivity2.getTime());
 
 			// #276 bcpg:parent nodeRef must be different
-			ProductData sourceProductData = alfrescoRepository.findOne(sourceNodeRef);
-			ProductData copyProductData = alfrescoRepository.findOne(productNodeRef);
+			ProductData sourceProductData = (ProductData) alfrescoRepository.findOne(sourceNodeRef);
+			ProductData copyProductData = (ProductData) alfrescoRepository.findOne(productNodeRef);
 
 			int[] arrRawMaterials = { 2, 4 };
 

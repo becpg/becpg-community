@@ -16,6 +16,8 @@ import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.product.data.RegulatoryEntityItem;
+import fr.becpg.repo.product.data.constraints.RequirementType;
+import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -53,8 +55,10 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem
 	private NodeRef allergen;
 	private List<NodeRef> regulatoryCountriesRef = new ArrayList<>();
 	private List<NodeRef> regulatoryUsagesRef = new ArrayList<>();
+	private RequirementType regulatoryType;
+	private MLText regulatoryMessage;
 
-	Map<NodeRef, Double> qtyByVariant = null;
+	private Map<NodeRef, Double> qtyByVariant = null;
 
 	/**
 	 * <p>addQtyPerc.</p>
@@ -108,6 +112,40 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem
 	/** {@inheritDoc} */
 	public void setRegulatoryUsagesRef(List<NodeRef> regulatoryUsages) {
 		this.regulatoryUsagesRef = regulatoryUsages;
+	}
+	
+	
+	/**
+	 * <p>Getter for the field <code>regulatoryType</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.constraints.RequirementType} object
+	 */
+	@AlfProp
+	@AlfQname(qname="bcpg:regulatoryType")
+	public RequirementType getRegulatoryType() {
+		return regulatoryType;
+	}
+
+	/** {@inheritDoc} */
+	public void setRegulatoryType(RequirementType regulatoryType) {
+		this.regulatoryType = regulatoryType;
+	}
+
+	/**
+	 * <p>Getter for the field <code>regulatoryMessage</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object
+	 */
+	@AlfProp
+	@AlfMlText
+	@AlfQname(qname="bcpg:regulatoryText")
+	public MLText getRegulatoryMessage() {
+		return regulatoryMessage;
+	}
+
+	/** {@inheritDoc} */
+	public void setRegulatoryMessage(MLText regulatoryMessage) {
+		this.regulatoryMessage = regulatoryMessage;
 	}
 
 	/** {@inheritDoc} */
@@ -408,6 +446,10 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem
 		this.voluntarySources = new ArrayList<>(allergenListDataItem.voluntarySources);
 		this.inVoluntarySources = new ArrayList<>(allergenListDataItem.inVoluntarySources);
 		this.allergen = allergenListDataItem.allergen;
+		this.regulatoryCountriesRef = new ArrayList<>(allergenListDataItem.regulatoryCountriesRef);
+		this.regulatoryUsagesRef = new ArrayList<>(allergenListDataItem.regulatoryUsagesRef);
+		this.regulatoryMessage = allergenListDataItem.regulatoryMessage;
+		this.regulatoryType = allergenListDataItem.regulatoryType;
 	}
 
 	/** {@inheritDoc} */

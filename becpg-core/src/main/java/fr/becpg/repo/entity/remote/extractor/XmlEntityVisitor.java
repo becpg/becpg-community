@@ -83,13 +83,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 	/**
 	 * <p>Constructor for XmlEntityVisitor.</p>
 	 *
-	 * @param mlNodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
-	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
-	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
-	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object.
-	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object.
-	 * @param siteService a {@link org.alfresco.service.cmr.site.SiteService} object.
-	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object.
+	 * @param remoteServiceRegisty a {@link fr.becpg.repo.entity.remote.RemoteServiceRegisty} object
 	 */
 	public XmlEntityVisitor(RemoteServiceRegisty remoteServiceRegisty) {
 		super(remoteServiceRegisty);
@@ -100,7 +94,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 
 	/** {@inheritDoc} */
 	@Override
-	public void visit(NodeRef entityNodeRef, OutputStream result) throws XMLStreamException {
+	public void visit(NodeRef entityNodeRef, OutputStream result) throws XMLStreamException, RemoteException {
 
 		XMLStreamWriter xmlw = createWriter(result);
 		// Visit node
@@ -114,7 +108,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 
 	/** {@inheritDoc} */
 	@Override
-	public void visit(PagingResults<NodeRef> entities, OutputStream result) throws XMLStreamException {
+	public void visit(PagingResults<NodeRef> entities, OutputStream result) throws XMLStreamException, RemoteException {
 
 		XMLStreamWriter xmlw = createWriter(result);
 
@@ -138,9 +132,9 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 
 	}
 
-	/** {@inheritDoc} **/
+	/** {@inheritDoc} */
 	@Override
-	public void visitData(NodeRef entityNodeRef, OutputStream result) throws XMLStreamException {
+	public void visitData(NodeRef entityNodeRef, OutputStream result) throws XMLStreamException, RemoteException {
 
 		XMLStreamWriter xmlw = createWriter(result);
 
@@ -177,7 +171,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 	}
 
 	private void visitNode(NodeRef nodeRef, XMLStreamWriter xmlw, boolean assocs, boolean props, boolean content, boolean siteInfo)
-			throws XMLStreamException {
+			throws XMLStreamException, RemoteException {
 		cacheList.add(nodeRef);
 
 		extractLevel++;
@@ -230,16 +224,13 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 	}
 
 	private void writeStdAttributes(XMLStreamWriter xmlw, NodeRef nodeRef, String name, boolean isCharact, boolean appendSite)
-			throws XMLStreamException {
+			throws XMLStreamException, RemoteException {
 		Path path = null;
-
-		if (nodeService.getPrimaryParent(nodeRef) != null) {
-			NodeRef parentRef = nodeService.getPrimaryParent(nodeRef).getParentRef();
-			if (parentRef != null) {
-				path = nodeService.getPath(parentRef);
-				xmlw.writeAttribute(isCharact ? RemoteEntityService.CHARACT_ATTR_PATH : RemoteEntityService.ATTR_PATH,
-						path.toPrefixString(namespaceService));
-			}
+		NodeRef parentRef = getPrimaryParentRef(nodeRef);
+		if (parentRef != null) {
+			path = nodeService.getPath(parentRef);
+			xmlw.writeAttribute(isCharact ? RemoteEntityService.CHARACT_ATTR_PATH : RemoteEntityService.ATTR_PATH,
+			path.toPrefixString(namespaceService));
 		} else {
 			logger.warn("Node : " + nodeRef + " has no primary parent");
 		}
@@ -294,7 +285,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 		xmlw.writeEndElement();
 	}
 
-	private void visitAssocs(NodeRef nodeRef, XMLStreamWriter xmlw) throws XMLStreamException {
+	private void visitAssocs(NodeRef nodeRef, XMLStreamWriter xmlw) throws XMLStreamException, RemoteException {
 
 		TypeDefinition typeDef = entityDictionaryService.getType(nodeService.getType(nodeRef));
 		if (typeDef != null) {

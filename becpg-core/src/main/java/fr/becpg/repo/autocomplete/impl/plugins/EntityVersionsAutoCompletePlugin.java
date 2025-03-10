@@ -45,9 +45,9 @@ import fr.becpg.repo.entity.version.EntityVersionService;
  *
  * @author "Matthieu Laborie"
  * @version $Id: $Id
- * 
+ *
  * Autocomplete plugin that allows to get current entity branch or versions
- * 
+ *
  * Example:
  *
  * <pre>
@@ -55,17 +55,16 @@ import fr.becpg.repo.entity.version.EntityVersionService;
  * 	 <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
  *       <control-param name="ds">becpg/autocomplete/branches</control-param>
  *       <control-param name="urlParamsToPass">itemId</control-param>
- *    </control>		
+ *    </control>
  * }
  * </pre>
- *   
+ *
  *  Datasources available:
- * 
- * Return all survey questions by code or questionLabel, if parentAssoc is provided filter by parent question 
- * 
+ *
+ * Return all survey questions by code or questionLabel, if parentAssoc is provided filter by parent question
+ *
  *  becpg/autocomplete/branches return all entity branches
  *  becpg/autocomplete/versions return all entity versions
- * 
  */
 @Service
 public class EntityVersionsAutoCompletePlugin implements AutoCompletePlugin {

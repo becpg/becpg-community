@@ -54,7 +54,7 @@ import fr.becpg.model.BeCPGModel;
 
 /**
  * On propety update trigger
- * 
+ *
  * @author Roy Wetherall
  */
 public class OnPropertyUpdateRuleTrigger extends RuleTriggerAbstractBase implements NodeServicePolicies.OnUpdatePropertiesPolicy {
@@ -81,17 +81,17 @@ public class OnPropertyUpdateRuleTrigger extends RuleTriggerAbstractBase impleme
 
 
 	/**
-	* If set to true the trigger will fire on new content, otherwise it will fire on content update
-	* 
-	* @param onNewContent  indicates whether to fire on content create or update
-	*/
+	 * If set to true the trigger will fire on new content, otherwise it will fire on content update
+	 *
+	 * @param onNewContent  indicates whether to fire on content create or update
+	 */
 	public void setOnNewContent(boolean onNewContent) {
 		this.onNewContent = onNewContent;
 	}
 
 	/**
 	 * If set to true, then we consider zero byte content to be equivalent to no content.
-	 * 
+	 *
 	 * @param ignoreEmptyContent boolean
 	 */
 	public void setIgnoreEmptyContent(boolean ignoreEmptyContent) {
@@ -100,7 +100,7 @@ public class OnPropertyUpdateRuleTrigger extends RuleTriggerAbstractBase impleme
 
 	/**
 	 * Indicates whether the parent rules should be triggered or the rules on the node itself
-	 * 
+	 *
 	 * @param triggerParentRules    true trigger parent rules, false otherwise
 	 */
 	public void setTriggerParentRules(boolean triggerParentRules) {
@@ -109,6 +109,8 @@ public class OnPropertyUpdateRuleTrigger extends RuleTriggerAbstractBase impleme
 
 	/**
 	 * Set the rule service
+	 *
+	 * @param runtimeRuleService a {@link org.alfresco.repo.rule.RuntimeRuleService} object
 	 */
 	public void setRuntimeRuleService(RuntimeRuleService runtimeRuleService) {
 		this.runtimeRuleService = runtimeRuleService;
@@ -116,6 +118,11 @@ public class OnPropertyUpdateRuleTrigger extends RuleTriggerAbstractBase impleme
 
 	
 	
+	/**
+	 * <p>Setter for the field <code>ignoreEntityDataList</code>.</p>
+	 *
+	 * @param ignoreEntityDataList a boolean
+	 */
 	public void setIgnoreEntityDataList(boolean ignoreEntityDataList) {
 		this.ignoreEntityDataList = ignoreEntityDataList;
 	}
@@ -123,6 +130,9 @@ public class OnPropertyUpdateRuleTrigger extends RuleTriggerAbstractBase impleme
 
 	/*
 	 * @see org.alfresco.repo.rule.ruletrigger.RuleTrigger#registerRuleTrigger()
+	 */
+	/**
+	 * <p>registerRuleTrigger.</p>
 	 */
 	public void registerRuleTrigger() {
 		// Bind behaviour
@@ -220,6 +230,8 @@ public class OnPropertyUpdateRuleTrigger extends RuleTriggerAbstractBase impleme
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Triggers rules if properties have been updated
 	 */
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {

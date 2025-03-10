@@ -35,7 +35,7 @@ public class StopWatchScope implements AutoCloseable {
 			logger.debug("StopWatchScope start '" + scopeName + "'");
 			stopWatch = new StopWatch();
 			stopWatch.start();
-			lastCheckpointTime = stopWatch.getTime();
+			lastCheckpointTime = stopWatch.getDuration().toMillis();
 		}
 	}
 	
@@ -44,7 +44,7 @@ public class StopWatchScope implements AutoCloseable {
 	public void close() {
 		if (logger.isDebugEnabled() && stopWatch != null) {
 			stopWatch.stop();
-			logger.debug("StopWatchScope finish '" + scopeName + "' => " + stopWatch.getTime() + " ms");
+			logger.debug("StopWatchScope finish '" + scopeName + "' => " + stopWatch.getDuration().toMillis() + " ms");
 		}
 	}
 
@@ -55,8 +55,8 @@ public class StopWatchScope implements AutoCloseable {
 	 */
 	public void addCheckpoint(String checkpointName) {
 		if (logger.isDebugEnabled() && stopWatch != null) {
-			logger.debug("StopWatchScope step '" + checkpointName + "' from '" + scopeName + "' => " + (stopWatch.getTime() - lastCheckpointTime) + " ms");
-			lastCheckpointTime = stopWatch.getTime();
+			logger.debug("StopWatchScope step '" + checkpointName + "' from '" + scopeName + "' => " + (stopWatch.getDuration().toMillis() - lastCheckpointTime) + " ms");
+			lastCheckpointTime = stopWatch.getDuration().toMillis();
 		}
 	}
 

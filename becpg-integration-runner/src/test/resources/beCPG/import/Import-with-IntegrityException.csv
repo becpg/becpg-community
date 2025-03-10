@@ -1,4 +1,4 @@
-MAPPING;TestMapping.xml;
+MAPPING;TestMapping;
 PATH;/System/Characts/bcpg:entityLists/Costs;
 TYPE;bcpg:cost;
 COLUMNS;bcpg:charactName;bcpg:costCurrency

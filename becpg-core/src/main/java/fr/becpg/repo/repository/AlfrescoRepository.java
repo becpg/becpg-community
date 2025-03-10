@@ -27,7 +27,6 @@ import org.alfresco.service.namespace.QName;
  * Used to retrieve entity from repository
  *
  * @author matthieu
- * @param <T>
  * @since 1.5
  * @version $Id: $Id
  */
@@ -59,8 +58,6 @@ public interface AlfrescoRepository<T extends RepositoryEntity>  extends CrudRep
 	 */
 	List<T> loadDataList(NodeRef entityNodeRef, String listName, QName datalistQname);
 	
-	
-
 	/**
 	 * <p>loadDataList.</p>
 	 *
@@ -94,6 +91,15 @@ public interface AlfrescoRepository<T extends RepositoryEntity>  extends CrudRep
 	 * @param dataList a {@link java.util.List} object.
 	 */
 	void saveDataList(NodeRef listContainerNodeRef, QName dataListContainerType, QName dataListType, List<? extends RepositoryEntity> dataList);
+	/**
+	 * <p>saveDataList.</p>
+	 *
+	 * @param listContainerNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param dataListContainerType a {@link org.alfresco.service.namespace.QName} object.
+	 * @param dataListName a {@link java.lang.String} object.
+	 * @param dataList a {@link java.util.List} object.
+	 */
+	void saveDataList(NodeRef listContainerNodeRef, QName dataListContainerType, String dataListName, List<? extends RepositoryEntity> dataList);
 	/**
 	 * <p>isRegisteredType.</p>
 	 *

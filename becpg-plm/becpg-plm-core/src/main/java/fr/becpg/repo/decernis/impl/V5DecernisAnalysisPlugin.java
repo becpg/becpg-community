@@ -115,11 +115,11 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 					try {
 						recipeAnalysisResults = postV5RecipeAnalysis(productContext, countries, usageContext.getName(), usageContext.getModuleId());
 					} catch (HttpStatusCodeException e) {
-						logger.error("Error during Decernis recipe analysis: " + e.getMessage(), e);
+						logger.error("Error during Decernis recipe analysis: " + DecernisHelper.cleanError(e.getMessage()), e);
 						for (String country : countries) {
 							ReqCtrlListDataItem req = ReqCtrlListDataItem.forbidden()
 									.withMessage(MLTextHelper.getI18NMessage("message.decernis.error",
-											"Error while creating Decernis recipe: " + e.getMessage()))
+											"Error while creating Decernis recipe: " + DecernisHelper.cleanError(e.getMessage())))
 									.ofDataType(RequirementDataType.Formulation).withFormulationChainId(DecernisService.DECERNIS_CHAIN_ID)
 									.withRegulatoryCode(country + (!usageContext.getName().isEmpty() ? " - " + usageContext.getName() : ""));
 							
@@ -127,7 +127,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 						}
 					}
 					if (recipeAnalysisResults != null) {
-						parseRecipeAnalysisResults(productContext, contextItem, usageContext, countries, recipeAnalysisResults);
+						parseRecipeAnalysisResults(productContext, usageContext, countries, recipeAnalysisResults);
 					}
 				}
 			}
@@ -143,10 +143,10 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 			try {
 				ingredientAnalysisResults = postV5IngredientAnalysis(productContext, contextItem, countries);
 			} catch (HttpStatusCodeException e) {
-				logger.error("Error during Decernis ingredients analysis: " + e.getMessage(), e);
+				logger.error("Error during Decernis ingredients analysis: " + DecernisHelper.cleanError(e.getMessage()), e);
 				ReqCtrlListDataItem req = ReqCtrlListDataItem.forbidden()
 						.withMessage(MLTextHelper.getI18NMessage("message.decernis.error",
-								"Error while creating Decernis recipe: " + e.getMessage()))
+								"Error while creating Decernis recipe: " + DecernisHelper.cleanError(e.getMessage())))
 						.ofDataType(RequirementDataType.Formulation).withFormulationChainId(DecernisService.DECERNIS_CHAIN_ID);
 				productContext.getRequirements().add(req);
 			}
@@ -183,7 +183,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 			String function = null;
 			NodeRef ingType = (NodeRef) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_ING_TYPE_V2);
 			if (ingType != null) {
-				String functionValue = (String) nodeService.getProperty(ingType, BeCPGModel.PROP_LV_VALUE);
+				String functionValue = (String) nodeService.getProperty(ingType, PLMModel.PROP_REGULATORY_CODE);
 				if (functionValue != null) {
 					function = findFunction(moduleId, functionValue);
 				}
@@ -193,9 +193,15 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 						function = findFunction(moduleId, functionValue);
 					}
 				}
+				if (function == null) {
+					functionValue = (String) nodeService.getProperty(ingType, BeCPGModel.PROP_LV_VALUE);
+					if (functionValue != null) {
+						function = findFunction(moduleId, functionValue);
+					}
+				}
 			}
 			String rid = (String) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_REGULATORY_CODE);
-			if (rid != null && !rid.isBlank()) {
+			if (rid != null && !rid.isBlank() && !DecernisService.NOT_APPLICABLE.equals(rid)) {
 				String legalName = (String) nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_LEGAL_NAME);
 				String ingName = (legalName != null) && !legalName.isEmpty() ? legalName
 						: (String) nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME);
@@ -277,7 +283,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 		
 		for (IngListDataItem ingListDataItem : context.getProduct().getIngList()) {
 			String rid = (String) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_REGULATORY_CODE);
-			if (rid != null && !rid.isBlank()) {
+			if (rid != null && !rid.isBlank() && !DecernisService.NOT_APPLICABLE.equals(rid)) {
 				String legalName = (String) nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_LEGAL_NAME);
 				String ingName = (legalName != null) && !legalName.isEmpty() ? legalName
 						: (String) nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME);
@@ -347,10 +353,8 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 				return function;
 			}
 		}
-		if (logger.isDebugEnabled()) {
-			logger.debug("Ingredient function is not recognized by Decernis v5 API: " + ingTypeValue + ", available functions are: "
-					+ functionsMap.get(moduelId));
-		}
+		logger.warn("Ingredient function is not recognized by Decernis v5 API: " + ingTypeValue + ", available functions are: "
+				+ functionsMap.get(moduelId));
 		return null;
 	}
 
@@ -381,7 +385,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 		return functions;
 	}
 
-	private void parseRecipeAnalysisResults(RegulatoryContext productContext, RegulatoryContextItem contextItem, UsageContext usageContext,
+	private void parseRecipeAnalysisResults(RegulatoryContext productContext, UsageContext usageContext,
 			List<String> countries, JSONObject analysisResults) {
 		for (String country : countries) {
 
@@ -406,7 +410,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 							for (int j = 0; j < tabularReports.length(); j++) {
 								JSONObject tabularReport = tabularReports.getJSONObject(j);
 
-								String usage = tabularReport.getString("usage");
+								String usage = usageContext.getName();
 
 								String decernisID = tabularReport.getString("did");
 								String function = tabularReport.getString("function");
@@ -537,6 +541,16 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 										.distinct()
 										.toList());
 						ingRegulatoryListDataItem.setRestrictionLevels(new MLText(restrictionLevel));
+						
+						String precautions = String.join(";;",
+								countryDidReports.stream()
+								.filter(j -> j.getJSONObject("comments").get("comments") != null
+								&& !j.getJSONObject("comments").get("comments").toString().isBlank()
+								&& !j.getJSONObject("comments").get("comments").toString().equals("null"))
+								.map(j -> j.getJSONObject("comments").getString("comments"))
+								.distinct()
+								.toList());
+						ingRegulatoryListDataItem.setPrecautions(new MLText(precautions));
 
 						String resultIndicator = String.join(";;",
 								countryDidReports.stream()
@@ -573,7 +587,10 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 		for (IngListDataItem ing : ingList) {
 			if (decernisID.equals(nodeService.getProperty(ing.getIng(), PLMModel.PROP_REGULATORY_CODE))) {
 				NodeRef ingType = (NodeRef) nodeService.getProperty(ing.getIng(), PLMModel.PROP_ING_TYPE_V2);
-				if (ingType != null && function != null && function.equalsIgnoreCase((String) nodeService.getProperty(ingType, BeCPGModel.PROP_LV_CODE))) {
+				if (ingType != null && function != null
+						&& (function.equalsIgnoreCase((String) nodeService.getProperty(ingType, BeCPGModel.PROP_LV_VALUE))
+								|| function.equalsIgnoreCase((String) nodeService.getProperty(ingType, BeCPGModel.PROP_LV_CODE))
+								|| function.equalsIgnoreCase((String) nodeService.getProperty(ingType, PLMModel.PROP_REGULATORY_CODE)))) {
 					return ing;
 				}
 			}

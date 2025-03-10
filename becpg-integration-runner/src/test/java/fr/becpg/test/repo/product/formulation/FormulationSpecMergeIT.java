@@ -87,9 +87,9 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			NodeRef tmp = createTestProduct("Finished product 1");
 
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF11NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial12NodeRef));
-			ProductData finishedProduct = alfrescoRepository.findOne(tmp);
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(localSF11NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(2d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial12NodeRef));
+			ProductData finishedProduct = (ProductData) alfrescoRepository.findOne(tmp);
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			alfrescoRepository.save(finishedProduct);
 
@@ -182,7 +182,7 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			globalSpec.getProductSpecifications().add(productSpec1);
 			globalSpec.getProductSpecifications().add(productSpec2);
 
-			ProductData product = alfrescoRepository.findOne(tmp);
+			ProductData product = (ProductData) alfrescoRepository.findOne(tmp);
 			product.setProductSpecifications(new ArrayList<ProductSpecificationData>());
 			product.getProductSpecifications().add(globalSpec);
 			product.setLabelClaimList(new ArrayList<LabelClaimListDataItem>());
@@ -205,7 +205,7 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			subProductLabelClaim6.setIsManual(Boolean.TRUE);
 			subProductLabelClaim7.setIsManual(Boolean.TRUE);
 
-			ProductData rm12 = alfrescoRepository.findOne(rawMaterial12NodeRef);
+			ProductData rm12 = (ProductData) alfrescoRepository.findOne(rawMaterial12NodeRef);
 			if ((rm12 != null) && (rm12.getLabelClaimList() != null)) {
 				rm12.getLabelClaimList().add(subProductLabelClaim6);
 				rm12.getLabelClaimList().add(subProductLabelClaim7);
@@ -241,7 +241,7 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			/* -- Check formulation -- */
-			ProductData formulatedProduct = alfrescoRepository.findOne(testProduct);
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(testProduct);
 
 			logger.info("/*-- Formulation raised " + formulatedProduct.getReqCtrlList().size() + " rclDataItem --*/");
 			int checks = 0;
@@ -293,7 +293,7 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			logger.info("/*************************************/");
 
 			NodeRef fp2 = createTestProduct("Finished Product 2");
-			ProductData finishedProduct = alfrescoRepository.findOne(fp2);
+			ProductData finishedProduct = (ProductData) alfrescoRepository.findOne(fp2);
 			final String name = finishedProduct.getName();
 
 			Map<QName, Serializable> properties = new HashMap<>();
@@ -308,10 +308,14 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			ProductSpecificationData productSpecification1 = (ProductSpecificationData) alfrescoRepository.findOne(productSpecificationNodeRef1);
 
 			List<NutListDataItem> nutList = new ArrayList<>();
-			nutList.add(new NutListDataItem(null, null, null, 3d, 4d, null, nut1, null));
-			nutList.add(new NutListDataItem(null, null, null, 7d, null, null, nut2, null));
-			nutList.add(new NutListDataItem(null, null, null, null, 10d, null, nut3, null));
-			nutList.add(new NutListDataItem(null, null, null, 0.4d, 10d, null, nut4, null));
+			nutList.add(NutListDataItem.build().withValue(null).withUnit(null).withMini(3d).withMaxi(4d).withGroup(null).withNut(nut1)
+);
+			nutList.add(NutListDataItem.build().withValue(null).withUnit(null).withMini(7d).withMaxi(null).withGroup(null).withNut(nut2)
+);
+			nutList.add(NutListDataItem.build().withValue(null).withUnit(null).withMini(null).withMaxi(10d).withGroup(null).withNut(nut3)
+);
+			nutList.add(NutListDataItem.build().withValue(null).withUnit(null).withMini(0.4d).withMaxi(10d).withGroup(null).withNut(nut4)
+);
 			productSpecification1.setNutList(nutList);
 
 			properties.put(ContentModel.PROP_NAME, name + " Spec Nut 2");
@@ -321,7 +325,8 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 
 			ProductSpecificationData productSpecification2 = (ProductSpecificationData) alfrescoRepository.findOne(productSpecificationNodeRef2);
 			List<NutListDataItem> nutList2 = new ArrayList<>();
-			nutList2.add(new NutListDataItem(null, null, null, 0.3d, 1.5d, null, nut4, null));
+			nutList2.add(NutListDataItem.build().withValue(null).withUnit(null).withMini(0.3d).withMaxi(1.5d).withGroup(null).withNut(nut4)
+);
 			productSpecification2.setNutList(nutList2);
 
 			alfrescoRepository.save(productSpecification1);
@@ -338,7 +343,8 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			specList.add(productSpecification1);
 			specList.add(productSpecification2);
 			List<NutListDataItem> nutList4 = new ArrayList<>();
-			nutList4.add(new NutListDataItem(null, null, null, 1d, 1.2d, null, nut4, null));
+			nutList4.add(NutListDataItem.build().withValue(null).withUnit(null).withMini(1d).withMaxi(1.2d).withGroup(null).withNut(nut4)
+);
 			globalProductSpecification.setProductSpecifications(specList);
 			globalProductSpecification.setNutList(nutList4);
 			alfrescoRepository.save(globalProductSpecification);
@@ -347,22 +353,26 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			 * ======= Compo =======
 			 */
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(localSF1NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(2d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial2NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(localSF2NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial3NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Omit).withProduct(rawMaterial4NodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
 			/*
 			 * ====== Nuts ======
 			 */
 			List<NutListDataItem> nutList3 = new ArrayList<>();
-			nutList3.add(new NutListDataItem(null, null, null, null, null, null, nut1, null));
-			nutList3.add(new NutListDataItem(null, null, null, null, null, null, nut2, null));
-			nutList3.add(new NutListDataItem(null, null, null, null, null, null, nut3, null));
-			nutList3.add(new NutListDataItem(null, null, null, null, null, null, nut4, null));
+			nutList3.add(NutListDataItem.build().withNut(nut1)
+);
+			nutList3.add(NutListDataItem.build().withNut(nut2)
+);
+			nutList3.add(NutListDataItem.build().withNut(nut3)
+);
+			nutList3.add(NutListDataItem.build().withNut(nut4)
+);
 			finishedProduct.setNutList(nutList3);
 
 			alfrescoRepository.save(finishedProduct);
@@ -376,7 +386,7 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			 */
 			productService.formulate(fp2);
 
-			finishedProduct = alfrescoRepository.findOne(fp2);
+			finishedProduct = (ProductData) alfrescoRepository.findOne(fp2);
 
 			// tests rclDataItem
 			String message0 = I18NUtil.getMessage(NutsRequirementScanner.MESSAGE_NUT_NOT_IN_RANGE,
@@ -439,7 +449,7 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-			ProductData finishedProduct = alfrescoRepository.findOne(fp3);
+			ProductData finishedProduct = (ProductData) alfrescoRepository.findOne(fp3);
 			final String name = finishedProduct.getName();
 			
 			Map<QName, Serializable> properties = new HashMap<>();
@@ -489,16 +499,16 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 
 
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(localSF1NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(2d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial2NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(localSF2NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial3NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Omit).withProduct(rawMaterial4NodeRef));
 
 			// avoids rclDataItems due to invalid status
 			for (CompoListDataItem compo : compoList) {
-				ProductData product = alfrescoRepository.findOne(compo.getProduct());
+				ProductData product = (ProductData) alfrescoRepository.findOne(compo.getProduct());
 				product.setState(SystemState.Valid);
 				alfrescoRepository.save(product);
 
@@ -507,7 +517,7 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			alfrescoRepository.save(finishedProduct);
 
 			// putting allergens in RMs
-			ProductData rm1 = alfrescoRepository.findOne(rawMaterial1NodeRef);
+			ProductData rm1 = (ProductData) alfrescoRepository.findOne(rawMaterial1NodeRef);
 			if (rm1.getAllergenList() != null) {
 				rm1.getAllergenList().clear();
 				rm1.getAllergenList().add(new AllergenListDataItem(null, null, true, false, new ArrayList<>(), new ArrayList<>(), allergen1, false));
@@ -517,7 +527,7 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			}
 			alfrescoRepository.save(rm1);
 
-			ProductData rm2 = alfrescoRepository.findOne(rawMaterial2NodeRef);
+			ProductData rm2 = (ProductData) alfrescoRepository.findOne(rawMaterial2NodeRef);
 			if (rm2.getAllergenList() != null) {
 				rm2.getAllergenList().clear();
 				rm2.getAllergenList().add(new AllergenListDataItem(null, null, true, true, new ArrayList<>(), new ArrayList<>(), allergen2, false));
@@ -527,11 +537,11 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			}
 			alfrescoRepository.save(rm2);
 
-			ProductData rm3 = alfrescoRepository.findOne(rawMaterial3NodeRef);
+			ProductData rm3 = (ProductData) alfrescoRepository.findOne(rawMaterial3NodeRef);
 			rm3.getAllergenList().clear();
 			alfrescoRepository.save(rm3);
 
-			ProductData rm4 = alfrescoRepository.findOne(rawMaterial4NodeRef);
+			ProductData rm4 = (ProductData) alfrescoRepository.findOne(rawMaterial4NodeRef);
 			rm4.getAllergenList().clear();
 			alfrescoRepository.save(rm4);
 
@@ -541,7 +551,7 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			nodeService.createAssociation(productSpecificationNodeRef1, productSpecificationNodeRef2, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
 			nodeService.createAssociation(fp3, productSpecificationNodeRef1, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
 
-			finishedProduct = alfrescoRepository.findOne(fp3);
+			finishedProduct = (ProductData) alfrescoRepository.findOne(fp3);
 			assertEquals(1,finishedProduct.getProductSpecifications().size());
 			assertEquals(2,finishedProduct.getProductSpecifications().get(0).getProductSpecifications().size());
 			
@@ -555,7 +565,7 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			
 			logger.debug("Find one Finished Product 3");
 
-			finishedProduct = alfrescoRepository.findOne(fp3);
+			finishedProduct = (ProductData) alfrescoRepository.findOne(fp3);
 
 			int checkMissingFields = 0;
 			int checks = 0;
@@ -618,7 +628,7 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 		logger.info("/*************************************/");
 
 		NodeRef fp4 = createTestProduct("Finished Product 4");
-		ProductData finishedProduct = alfrescoRepository.findOne(fp4);
+		ProductData finishedProduct = (ProductData) alfrescoRepository.findOne(fp4);
 		final String name = finishedProduct.getName();
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -689,7 +699,7 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 
 			/*-- Verify formulation --*/
 			logger.info("/*-- Verify formulation --*/");
-			ProductData formulatedProduct = alfrescoRepository.findOne(fp4);
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(fp4);
 
 			logger.debug("/*-- Formulation raised " + formulatedProduct.getReqCtrlList().size() + " rclDataItems --*/");
 			int checks = 0;
@@ -730,7 +740,7 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 		logger.info("/*************************************/");
 
 		NodeRef fp5 = createTestProduct("Finished Product 5");
-		ProductData finishedProduct = alfrescoRepository.findOne(fp5);
+		ProductData finishedProduct = (ProductData) alfrescoRepository.findOne(fp5);
 		final String name = finishedProduct.getName();
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -765,10 +775,10 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			NodeRef rawMaterial4bNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial4).getNodeRef();
 
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 0.80d, ProductUnit.kg, 5d, DeclarationType.Declare, rawMaterial2bNodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 0.30d, ProductUnit.kg, 10d, DeclarationType.Detail, rawMaterial3bNodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 0.80d, ProductUnit.kg, 5d, DeclarationType.Declare, rawMaterial1bNodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 0.30d, ProductUnit.kg, 10d, DeclarationType.Detail, rawMaterial4bNodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(0.80d).withUnit(ProductUnit.kg).withLossPerc(5d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial2bNodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(0.30d).withUnit(ProductUnit.kg).withLossPerc(10d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial3bNodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(0.80d).withUnit(ProductUnit.kg).withLossPerc(5d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1bNodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(0.30d).withUnit(ProductUnit.kg).withLossPerc(10d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial4bNodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			alfrescoRepository.save(finishedProduct);
 
@@ -819,7 +829,7 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 
 			/*-- Verify formulation --*/
 			logger.info("/*-- Verify formulation --*/");
-			ProductData formulatedProduct = alfrescoRepository.findOne(fp5);
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(fp5);
 
 			logger.debug("/*-- Formulation raised " + formulatedProduct.getReqCtrlList().size() + " rclDataItems --*/");
 			int checks = 0, checkMissingFields = 0;

@@ -10,11 +10,12 @@ import org.alfresco.service.cmr.repository.MLText;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
+import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
-import fr.becpg.repo.survey.data.SurveyList;
+import fr.becpg.repo.survey.data.SurveyListDataItem;
 
 /**
  * <p>FinishedProductData class.</p>
@@ -80,6 +81,19 @@ public class FinishedProductData extends ProductData {
 		setUnit(unit);
 		return this;
 	}
+	
+	
+	/**
+	 * <p>withUnitPrice.</p>
+	 *
+	 * @param unitPrice a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.product.data.FinishedProductData} object
+	 */
+	public FinishedProductData withUnitPrice(Double unitPrice) {
+		setUnitPrice(unitPrice);
+		return this;
+	}
+
 
 	/**
 	 * <p>withQty.</p>
@@ -102,6 +116,31 @@ public class FinishedProductData extends ProductData {
 		setDensity(density);
 		return this;
 	}
+	
+
+	/**
+	 * <p>withServingSize.</p>
+	 *
+	 * @param servingSize a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.product.data.FinishedProductData} object
+	 */
+	public FinishedProductData withServingSize(Double servingSize) {
+		setServingSize(servingSize);
+		return this;
+	}
+	
+
+	/**
+	 * <p>withProjectedQty.</p>
+	 *
+	 * @param projectedQty a {@link java.lang.Long} object
+	 * @return a {@link fr.becpg.repo.product.data.FinishedProductData} object
+	 */
+	public FinishedProductData withProjectedQty(Long projectedQty) {
+		setProjectedQty(projectedQty);
+		return this;
+	}
+
 
 	/**
 	 * <p>withCompoList.</p>
@@ -111,6 +150,18 @@ public class FinishedProductData extends ProductData {
 	 */
 	public FinishedProductData withCompoList(List<CompoListDataItem> compoList) {
 		getCompoListView().setCompoList(compoList);
+		return this;
+	}
+	
+
+	/**
+	 * <p>withNutList.</p>
+	 *
+	 * @param nutList a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.product.data.FinishedProductData} object
+	 */
+	public FinishedProductData withNutList(List<NutListDataItem> nutList) {
+		setNutList(nutList);
 		return this;
 	}
 
@@ -131,7 +182,8 @@ public class FinishedProductData extends ProductData {
 	 * @param surveyList a {@link java.util.List} object
 	 * @return a {@link fr.becpg.repo.product.data.FinishedProductData} object
 	 */
-	public FinishedProductData withSurveyList(List<SurveyList> surveyList) {
+	public FinishedProductData withSurveyList(List<SurveyListDataItem> surveyList) {
+
 		setSurveyList(surveyList);
 		return this;
 	}
@@ -157,5 +209,11 @@ public class FinishedProductData extends ProductData {
 		getLabelingListView().setLabelingRuleList(labelingRuleList);
 		return this;
 	}
+
+	public FinishedProductData withClient(ClientData clientData) {
+		setClients(List.of(clientData));
+		return this;
+	}
+
 
 }

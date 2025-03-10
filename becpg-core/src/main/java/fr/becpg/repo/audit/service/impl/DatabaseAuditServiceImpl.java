@@ -38,6 +38,7 @@ import fr.becpg.repo.audit.exception.BeCPGAuditException;
 import fr.becpg.repo.audit.helper.StopWatchSupport;
 import fr.becpg.repo.audit.model.AuditDataType;
 import fr.becpg.repo.audit.model.AuditQuery;
+import fr.becpg.repo.audit.plugin.ExtraQueryDatabaseAuditPlugin;
 import fr.becpg.repo.audit.plugin.AuditPlugin;
 import fr.becpg.repo.audit.plugin.DatabaseAuditPlugin;
 import fr.becpg.repo.audit.service.DatabaseAuditService;
@@ -107,9 +108,16 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 
 	/** {@inheritDoc} */
 	@Override
-	public List<JSONObject> listAuditEntries(DatabaseAuditPlugin plugin, AuditQuery auditFilter) {
+	public List<JSONObject> listAuditEntries(DatabaseAuditPlugin plugin, AuditQuery auditQuery) {
 		
-		Collection<AuditEntry> auditEntries = internalListAuditEntries(plugin, auditFilter);
+		Collection<AuditEntry> auditEntries = internalListAuditEntries(plugin, auditQuery);
+		
+		if (plugin instanceof ExtraQueryDatabaseAuditPlugin) {
+			AuditQuery extraAuditQuery = ((ExtraQueryDatabaseAuditPlugin) plugin).extraQuery(auditQuery);
+			if (extraAuditQuery != null) {
+				auditEntries.addAll(internalListAuditEntries(plugin, extraAuditQuery));
+			}
+		}
 		
 		List<JSONObject> statistics = new ArrayList<>();
 		
@@ -130,8 +138,8 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 			
 		}
 		
-		if (auditFilter.getSortBy() != null && !auditFilter.getSortBy().isBlank()) {
-			Collections.sort(statistics, new StatisticsComparator(plugin.getKeyMap(), auditFilter.getSortBy(), auditFilter.isAscending()));
+		if (auditQuery.getSortBy() != null && !auditQuery.getSortBy().isBlank()) {
+			Collections.sort(statistics, new StatisticsComparator(plugin.getKeyMap(), auditQuery.getSortBy(), auditQuery.isAscending()));
 		}
 		
 		return statistics;
@@ -152,7 +160,9 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 		
 		Paging paging = Paging.valueOf(Paging.DEFAULT_SKIP_COUNT, auditFilter.getMaxResults());
 		
-		RecognizedParams recognizedParams = new RecognizedParams(null, paging, null, null, Arrays.asList("values"),
+		String[] trueArray = { "true" };
+		
+		RecognizedParams recognizedParams = new RecognizedParams(Map.of("omitTotalItems", trueArray), paging, null, null, Arrays.asList("values"),
 				null, query, List.of(new SortColumn("createdAt", auditFilter.isDbAscending())), false);
 		
 		Parameters params = Params.valueOf(recognizedParams, plugin.getAuditApplicationId(), null, null);

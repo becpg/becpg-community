@@ -24,6 +24,11 @@ import fr.becpg.repo.entity.remote.RemoteServiceRegisty;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 
+/**
+ * <p>RemoteServiceRegistryImpl class.</p>
+ *
+ * @author matthieu
+ */
 @Service
 public class RemoteServiceRegistryImpl implements RemoteServiceRegisty{
 	
@@ -80,42 +85,50 @@ public class RemoteServiceRegistryImpl implements RemoteServiceRegisty{
 	private LockService lockService;
 
 
+	/** {@inheritDoc} */
 	@Override
 	public SiteService siteService() {
 		return siteService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeService nodeService() {
 		return nodeService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeService mlNodeService() {
 		return mlNodeService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NamespaceService namespaceService() {
 		return namespaceService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public ContentService contentService() {
 		return contentService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public AttributeExtractorService attributeExtractor() {
 		return attributeExtractor;
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public TransactionService transactionService() {
 		return transactionService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public BehaviourFilter policyBehaviourFilter() {
 		return policyBehaviourFilter;
@@ -123,51 +136,61 @@ public class RemoteServiceRegistryImpl implements RemoteServiceRegisty{
 	
 
 
+	/** {@inheritDoc} */
 	@Override
 	public EntityDictionaryService entityDictionaryService() {
 		return entityDictionaryService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public AssociationService associationService() {
 		return associationService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public EntityListDAO entityListDAO() {
 		return entityListDAO;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public VersionService versionService() {
 		return versionService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public SysAdminParams sysAdminParams() {
 		return sysAdminParams;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public LockService lockService() {
 		return lockService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public MimetypeService mimetypeService() {
 		return serviceRegistry.getMimetypeService();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public PermissionService permissionService() {
 		return serviceRegistry.getPermissionService();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public PersonService personService() {
 		return serviceRegistry.getPersonService();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public AuthorityService authorityService() {
 		return serviceRegistry.getAuthorityService();

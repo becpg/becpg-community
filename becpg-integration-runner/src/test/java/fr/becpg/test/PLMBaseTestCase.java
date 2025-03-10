@@ -48,6 +48,7 @@ import fr.becpg.repo.product.data.constraints.AllergenType;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.RepositoryEntity;
 
 /**
  * base class of test cases for product classes.
@@ -91,7 +92,7 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 	protected NodeRef labelingTemplateNodeRef = null;
 
 	@Autowired
-	protected AlfrescoRepository<ProductData> alfrescoRepository;
+	protected AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -339,7 +340,8 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 			List<NodeRef> ingsNodeRef = entityListDAO.getListItems(ingFolder, PLMModel.TYPE_ING);
 
 			for (NodeRef fileInfo : ingsNodeRef) {
-				if (((String) nodeService.getProperty(fileInfo, BeCPGModel.PROP_CHARACT_NAME)).startsWith("Ing ")) {
+				String name = ((String) nodeService.getProperty(fileInfo, BeCPGModel.PROP_CHARACT_NAME));
+				if (name!=null && name.startsWith("Ing ")) {
 					ings.add(fileInfo);
 				}
 			}
@@ -452,15 +454,17 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 		logger.info("initEntityTemplates");
 
 		NodeRef rawMaterialTplNodeRef = entityTplService.getEntityTpl(PLMModel.TYPE_RAWMATERIAL);
-		ProductData rawMaterialData = alfrescoRepository.findOne(rawMaterialTplNodeRef);
+		ProductData rawMaterialData = (ProductData) alfrescoRepository.findOne(rawMaterialTplNodeRef);
 		rawMaterialData.getCostList().add(new CostListDataItem(null, null, null, null, costs.get(0), null));
-		rawMaterialData.getNutList().add(new NutListDataItem(null, null, null, null, null, null, nuts.get(0), null));
-		rawMaterialData.getNutList().add(new NutListDataItem(null, null, null, null, null, null, nuts.get(0), null));
+		rawMaterialData.getNutList().add(NutListDataItem.build().withNut(nuts.get(0)).withIsManual(null)
+);
+		rawMaterialData.getNutList().add(NutListDataItem.build().withNut(nuts.get(0)).withIsManual(null)
+);
 
 		alfrescoRepository.save(rawMaterialData);
 
 		NodeRef packMaterialTplNodeRef = entityTplService.getEntityTpl(PLMModel.TYPE_PACKAGINGMATERIAL);
-		ProductData packMaterialTplData = alfrescoRepository.findOne(packMaterialTplNodeRef);
+		ProductData packMaterialTplData = (ProductData) alfrescoRepository.findOne(packMaterialTplNodeRef);
 		packMaterialTplData.getCostList().add(new CostListDataItem(null, null, null, null, costs.get(3), null));
 		alfrescoRepository.save(packMaterialTplData);
 

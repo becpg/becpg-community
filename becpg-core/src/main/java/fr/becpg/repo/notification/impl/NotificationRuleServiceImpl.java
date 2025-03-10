@@ -1,5 +1,6 @@
 package fr.becpg.repo.notification.impl;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -18,10 +19,10 @@ import org.alfresco.repo.batch.BatchProcessor;
 import org.alfresco.repo.jscript.ScriptNode;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.ServiceRegistry;
-import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.download.DownloadService;
 import org.alfresco.service.cmr.download.DownloadStatus;
 import org.alfresco.service.cmr.model.FileFolderService;
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.ScriptService;
@@ -29,6 +30,7 @@ import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
+import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
@@ -48,6 +50,8 @@ import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.batch.BatchStep;
 import fr.becpg.repo.batch.BatchStepAdapter;
 import fr.becpg.repo.batch.EntityListBatchProcessWorkProvider;
+import fr.becpg.repo.entity.EntityDictionaryService;
+import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.mail.BeCPGMailService;
@@ -81,6 +85,7 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 	private static final String TARGET_PATH = "targetPath";
 	private static final String ENTITYV2_SUBTYPE = "isEntityV2SubType";
 	private static final String DISPLAY_PATH = "displayPath";
+	private static final String DISPLAY_NAME = "displayName";
 
 	@Autowired
 	private NodeService nodeService;
@@ -102,7 +107,7 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 	private PermissionService permissionService;
 
 	@Autowired
-	private DictionaryService dictionaryService;
+	private EntityDictionaryService dictionaryService;
 	
 	@Autowired
 	private SearchRuleService searchRuleService;
@@ -133,6 +138,12 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 
 	@Autowired
 	private FileFolderService fileFolderService;
+	
+	@Autowired
+	private PersonService personService;
+	
+	@Autowired
+	private AttributeExtractorService attributeExtractorService;
 
 	/** {@inheritDoc} */
 	@Override
@@ -153,7 +164,7 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 			}
 			try {
 				if (notification.getNodeType() == null || notification.getTarget() == null || !nodeService.exists(notification.getTarget())
-						|| notification.getAuthorities() == null || !isAllowed(notification)) {
+						|| notification.getAuthorities() == null || !isAllowed(notification) || Boolean.TRUE.equals(notification.getDisabled())) {
 					logger.debug("Skip notification : " + notification.getSubject());
 					continue;
 				}
@@ -188,8 +199,8 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 					continue;
 				}
 				
-				templateArgs.put(NODE_TYPE, Objects.toString(dictionaryService.getType(nodeType).getTitle(serviceRegistry.getDictionaryService()), nodeType.toPrefixString()));
-				templateArgs.put(DATE_FIELD, Objects.toString(dictionaryService.getProperty(filter.getDateField()).getTitle(serviceRegistry.getDictionaryService()), filter.getDateField().toPrefixString()));
+				templateArgs.put(NODE_TYPE, Objects.toString(dictionaryService.getType(nodeType).getTitle(dictionaryService), nodeType.toPrefixString()));
+				templateArgs.put(DATE_FIELD, Objects.toString(dictionaryService.getTitle(dictionaryService.getProperty(filter.getDateField()), nodeType), filter.getDateField().toPrefixString()));
 				templateArgs.put(TARGET_PATH,
 						filter.getNodePath().subPath(2, filter.getNodePath().size() - 1).toDisplayPath(nodeService, permissionService) + "/"
 								+ nodeService.getProperty(notification.getTarget(), ContentModel.PROP_NAME));
@@ -197,12 +208,19 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 				
 				String emailTemplate = notification.getEmail() != null ? nodeService.getPath(notification.getEmail()).toPrefixString(namespaceService)
 						: RepoConsts.EMAIL_NOTIF_RULE_LIST_TEMPLATE;
-				
+				final QName pivotAssoc = dictionaryService.isSubClass(nodeType, BeCPGModel.TYPE_ENTITYLIST_ITEM)
+						? dictionaryService.getDefaultPivotAssoc(nodeType)
+						: null;
 				for (NodeRef nodeRef : items) {
 					Map<String, Object> item = new HashMap<>();
 					item.put(NODE, nodeRef);
 					item.put(DISPLAY_PATH,
 							SiteHelper.extractSiteDisplayPath(nodeService.getPath(nodeRef), permissionService, nodeService, namespaceService));
+					if (pivotAssoc != null)
+						item.put(DISPLAY_NAME,
+								nodeService.getTargetAssocs(nodeRef, pivotAssoc).stream().findFirst()
+										.map(AssociationRef::getTargetRef)
+										.map(attributeExtractorService::extractPropName).orElse(StringUtils.EMPTY));
 					item.put(ENTITYV2_SUBTYPE, dictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITY_V2));
 					entities.put(nodeRef, item);
 				}
@@ -216,12 +234,16 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 								continue;
 							}
 							
+							if (emailAdminNotificationDisabled(userName)) {
+								continue;
+							}
+							
 							authorities.add(userName);
 							final List<Object> entitiesByUser = new ArrayList<>();
 							
 							for (NodeRef nodeRef : items) {
 								if (Boolean.TRUE.equals(AuthenticationUtil.runAs(
-										() -> permissionService.hasPermission(nodeRef, PermissionService.READ_PERMISSIONS).equals(AccessStatus.ALLOWED),
+										() -> permissionService.hasPermission(nodeRef, PermissionService.READ).equals(AccessStatus.ALLOWED),
 										userName))) {
 									
 									entitiesByUser.add(entities.get(nodeRef));
@@ -337,6 +359,21 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 		}
 
 	}
+	
+	private boolean emailAdminNotificationDisabled(String username) {
+		NodeRef person = personService.getPerson(username);
+		if (person != null) {
+			Serializable emailAdminNotificationDisabled = nodeService.getProperty(person, BeCPGModel.PROP_EMAIL_ADMIN_NOTIFICATION_DISABLED);
+			if (Boolean.TRUE.equals(emailAdminNotificationDisabled)) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("emailAdminNotificationDisabled for " + username);
+				}
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	private void executeScript(NotificationRuleListDataItem notification, List<NodeRef> items, Map<String, Object> templateArgs) {
 		
 		Map<String, Object> model = new HashMap<>();

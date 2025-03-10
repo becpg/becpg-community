@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
@@ -41,10 +42,16 @@ import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.helper.impl.AttributeExtractorField;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 
+/**
+ * <p>JSONVersionExtractor class.</p>
+ *
+ * @author matthieu
+ */
 public class JSONVersionExtractor extends SimpleExtractor {
 
 	private static final Log logger = LogFactory.getLog(JSONVersionExtractor.class);
 	
+	/** Constant <code>PROP_ACCESSRIGHT="accessRight"</code> */
 	public static final String PROP_ACCESSRIGHT = "accessRight";
 
 	private static final String PROP_NODE = "nodeRef";
@@ -98,11 +105,17 @@ public class JSONVersionExtractor extends SimpleExtractor {
 	
 	private boolean isDefaultExtractor = false;
 	
+	/** {@inheritDoc} */
 	@Override
 	public boolean isDefaultExtractor() {
 		return isDefaultExtractor;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>entityFormatService</code>.</p>
+	 *
+	 * @param entityJsonService a {@link fr.becpg.repo.entity.EntityFormatService} object
+	 */
 	public void setEntityFormatService(EntityFormatService entityJsonService) {
 		this.entityFormatService = entityJsonService;
 	}
@@ -247,7 +260,19 @@ public class JSONVersionExtractor extends SimpleExtractor {
 		}
 		
 		if (object.has(BeCPGModel.PROP_CHARACT_NAME.toPrefixString(namespaceService))) {
-			displayValue = object.getString(BeCPGModel.PROP_CHARACT_NAME.toPrefixString(namespaceService));
+			if (object.get(BeCPGModel.PROP_CHARACT_NAME.toPrefixString(namespaceService)) instanceof JSONObject) {
+				JSONObject json = (JSONObject) object.get(BeCPGModel.PROP_CHARACT_NAME.toPrefixString(namespaceService));
+				if (json.has(I18NUtil.getLocale().toLanguageTag())) {
+					displayValue = json.getString(I18NUtil.getLocale().toLanguageTag());
+				} else if (json.has(Locale.getDefault().toLanguageTag())) {
+					displayValue = json.getString(Locale.getDefault().toLanguageTag());
+				} else if (json.has(Locale.ENGLISH.toLanguageTag())) {
+					displayValue = json.getString(Locale.ENGLISH.toLanguageTag());
+				}
+			}
+			if (displayValue == null) {
+				displayValue = object.getString(BeCPGModel.PROP_CHARACT_NAME.toPrefixString(namespaceService));
+			}
 		} else if (object.has(ContentModel.PROP_NAME.toPrefixString(namespaceService))) {
 			if (type != null) {
 				String entityName = object.getString(ContentModel.PROP_NAME.toPrefixString(namespaceService));
@@ -386,6 +411,22 @@ public class JSONVersionExtractor extends SimpleExtractor {
 			Calendar cal = Calendar.getInstance();
 
 			cal.set(year, month - 1, day, hour, min, sec);
+
+			displayName = attributeExtractorService.getStringValue(attribute, cal.getTime(), attributeExtractorService.getPropertyFormats(mode, false));
+
+		} else if (metadata.equals("date")) {
+
+			String dateString = (String) value;
+
+			String yearMonthDay = dateString.split("T")[0];
+
+			int year = Integer.parseInt(yearMonthDay.split("-")[0]);
+			int month = Integer.parseInt(yearMonthDay.split("-")[1]);
+			int day = Integer.parseInt(yearMonthDay.split("-")[2]);
+
+			Calendar cal = Calendar.getInstance();
+
+			cal.set(year, month - 1, day, 0, 0, 0);
 
 			displayName = attributeExtractorService.getStringValue(attribute, cal.getTime(), attributeExtractorService.getPropertyFormats(mode, false));
 
@@ -622,6 +663,7 @@ public class JSONVersionExtractor extends SimpleExtractor {
 		return entityFormatService.getEntityData(dataListFilter.getEntityNodeRef());
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public PaginatedExtractedItems extract(DataListFilter dataListFilter, List<AttributeExtractorField> metadataFields) {
 
@@ -705,6 +747,7 @@ public class JSONVersionExtractor extends SimpleExtractor {
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean applyTo(DataListFilter dataListFilter) {
 		
@@ -727,11 +770,13 @@ public class JSONVersionExtractor extends SimpleExtractor {
 		return EntityFormat.JSON.toString().equals(entityFormatService.getEntityFormat(targetNodeRef));
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Date computeLastModified(DataListFilter dataListFilter) {
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean hasWriteAccess() {
 		return false;
@@ -749,31 +794,36 @@ public class JSONVersionExtractor extends SimpleExtractor {
 		
 		@Override
 		public int compare(JSONObject a, JSONObject b) {
-			Integer sortA = 0;
-			Integer sortB = 0;
 
 			try {
+				Object sortA = 0;
+				Object sortB = 0;
 				if (a.getJSONObject(ATTRIBUTES).has(sortString)) {
-					sortA = (Integer) a.getJSONObject(ATTRIBUTES).get(sortString);
+					sortA = a.getJSONObject(ATTRIBUTES).get(sortString);
 				} else {
 					return -order;
 				}
 				if (b.getJSONObject(ATTRIBUTES).has(sortString)) {
-					sortB = (Integer) b.getJSONObject(ATTRIBUTES).get(sortString);
+					sortB = b.getJSONObject(ATTRIBUTES).get(sortString);
 				} else {
 					return order;
 				}
+				
+				if (sortA instanceof Double compA && sortB instanceof Double compB) {
+					return order * compA.compareTo(compB);
+				}
+				
+				if (sortA instanceof Integer compA && sortB instanceof Integer compB) {
+					return order * compA.compareTo(compB);
+				}
+				
+				return order * sortA.toString().compareTo(sortB.toString());
+				
 			} catch (JSONException e) {
 				logger.warn("comparison error", e);
 			}
-			
-			try {
-				return order * sortA.compareTo(sortB);
-			} catch (NumberFormatException e) {
-				// do nothing : let the String comparator do the work
-			}
 
-			return order * sortA.compareTo(sortB);
+			return order * a.toString().compareTo(b.toString());
 		}
 		
 	}

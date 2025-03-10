@@ -47,6 +47,12 @@
 	<bean id="webscript.fr.becpg.form.multilingualField.post" class="fr.becpg.repo.web.scripts.multilingual.MultilingualFieldWebScript" parent="webscript">
 		<property name="serviceRegistry" ref="ServiceRegistry" />
 	</bean>
+	
+	<!-- Saved search -->
+	
+    <bean id="webscript.fr.becpg.search.savedsearch.get" class="fr.becpg.repo.web.scripts.search.GetSavedSearchWebScript" parent="webscript">
+      <property name="savedSearchService" ref="SavedSearchService" />
+    </bean>
 
 	<!-- Admin -->
 	<bean id="webscript.fr.becpg.admin.adminModule.get" class="fr.becpg.repo.web.scripts.admin.AdminModuleWebScript" parent="webscript">
@@ -156,6 +162,8 @@
 	
 	<bean id="webscript.fr.becpg.entity.datalist.copy.post" class="fr.becpg.repo.web.scripts.entity.datalist.CopyDataListWebScript" parent="webscript">
 		<property name="entityListDAO" ref="entityListDAO" />
+		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
+		<property name="entityActivityService" ref="entityActivityService" />
 	</bean>
 	
 	
@@ -257,6 +265,7 @@
 		<property name="mimetypeService" ref="MimetypeService" />
 		<property name="permissionService" ref="permissionService" />
 		<property name="remoteRateLimiter" ref="remoteRateLimiter" />
+		<property name="systemConfigurationService" ref="systemConfigurationService" />
 	</bean>
 
 

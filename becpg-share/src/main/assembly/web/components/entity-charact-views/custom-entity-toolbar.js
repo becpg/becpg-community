@@ -37,6 +37,8 @@
                            name : "beCPG.module.EntityDataGrid"
                         })[0];
                         
+                        YAHOO.Bubbling.fire("refreshDataGrids",{ clearCache :true,
+			            	    		  cacheTimeStamp : (new Date()).getTime() });
                         
 	                     Alfresco.util.Ajax
 	                     .jsonGet({
@@ -235,7 +237,7 @@
 					hideLabel: true,
 					evaluate: function(asset, entity) {
 						return asset.name != null &&
-							(asset.name != "View-documents" && asset.name != "View-reports" && asset.name != "activityList" && asset.name != "WUsed")
+							(asset.name != "regulatoryList" && asset.name != "ingRegulatoryList" && asset.name != "View-documents" && asset.name != "View-reports" && asset.name != "activityList" && asset.name != "WUsed")
 							&& entity != null && (beCPG.util.contains(entity.aspects,
 								"bcpg:productAspect") || entity.type == "bcpg:productSpecification" || entity.type == "qa:batch" || entity.type == "pjt:project" 
 								|| entity.type == "bcpg:productCollection" || entity.type == "bcpg:supplier" || entity.type == "bcpg:client") 
@@ -292,7 +294,63 @@
 				});
 
     
-   
-   
+	YAHOO.Bubbling
+		.fire(
+			"registerToolbarButtonAction",
+			{
+				actionName: "formulate-decernis",
+				hideLabel: true,
+				evaluate: function(asset, entity) {
+					return asset.name != null && (asset.name == "regulatoryList" || asset.name == "ingRegulatoryList") && entity != null && (beCPG.util.contains(entity.aspects,
+						"bcpg:productAspect")) && entity.userAccess.edit && !entity.aspects.includes("bcpg:archivedEntityAspect");
+				},
+				fn: function(instance) {
+
+					Alfresco.util.PopupManager.displayMessage({
+						text: this.msg("message.formulate.please-wait")
+					});
+
+					var formulateButton = YAHOO.util.Selector.query('div.formulate-decernis');
+
+					Dom.addClass(formulateButton, "loading");
+
+					Alfresco.util.Ajax
+						.request({
+							method: Alfresco.util.Ajax.GET,
+							responseContentType: Alfresco.util.Ajax.JSON,
+							url: Alfresco.constants.PROXY_URI + "becpg/remote/formulate?nodeRef=" + this.options.entityNodeRef + "&format=json" + "&chainId=decernis",
+							successCallback: {
+								fn: function(response) {
+									Alfresco.util.PopupManager.displayMessage({
+										text: this.msg("message.formulate.success")
+									});
+
+									YAHOO.Bubbling.fire("refreshDataGrids", {
+										clearCache: true,
+										cacheTimeStamp: (new Date()).getTime()
+									});
+									Dom.removeClass(formulateButton, "loading");
+								},
+								scope: this
+							},
+							failureCallback: {
+								fn: function(response) {
+									if (response.json && response.json.message) {
+										Alfresco.util.PopupManager.displayPrompt({
+											title: this.msg("message.formulate.failure"),
+											text: response.json.message
+										});
+									} else {
+										Alfresco.util.PopupManager.displayMessage({
+											text: this.msg("message.formulate.failure")
+										});
+									}
+									Dom.removeClass(formulateButton, "loading");
+								},
+								scope: this
+							}
+						});
+				}
+			});
 
 })();

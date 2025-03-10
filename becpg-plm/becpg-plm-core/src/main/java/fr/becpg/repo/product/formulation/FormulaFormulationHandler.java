@@ -561,9 +561,9 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 		targetItem.setTitle(sourceItem.getTitle());
 		targetItem.setMlTitle(sourceItem.getMlTitle());
 		targetItem.setSort(sourceItem.getSort());
+		targetItem.setName(sourceItem.getName());
 
 		if (!Boolean.TRUE.equals(targetItem.getIsManual())) {
-			targetItem.setName(sourceItem.getName());
 			targetItem.setFormula(sourceItem.getFormula());
 			targetItem.setColumnName(sourceItem.getColumnName());
 			targetItem.setGroupColor(sourceItem.getGroupColor());

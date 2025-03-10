@@ -147,8 +147,8 @@ public class DataListPagination {
 	 * <p>paginate.</p>
 	 *
 	 * @param list a {@link java.util.List} object.
-	 * @param <T> a T object.
 	 * @return a {@link java.util.List} object.
+	 * @param <T> a T class
 	 */
 	public <T> List<T> paginate(List<T> list) {
 		if (list != null) {

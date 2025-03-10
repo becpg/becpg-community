@@ -68,7 +68,7 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 
 	@Autowired
 	private AssociationService associationService;
-	
+
 	@Autowired
 	private SystemConfigurationService systemConfigurationService;
 
@@ -86,7 +86,7 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 	 *             the exception
 	 */
 	@Test
-	public void testFormulationCostsFromTemplate() throws Exception {
+	public void testFormulationCostsFromTemplate() {
 
 		logger.info("testFormulationCostsFromTemplate");
 
@@ -108,7 +108,7 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 			plants.add(plant2);
 			costList.add(new CostListDataItem(null, 4000d, "€/Pal", 4400d, cost3, false, plants, null, null));
 			templateFinishedProduct.setCostList(costList);
-			ProductData entityTpl1 = alfrescoRepository.create(getTestFolderNodeRef(), templateFinishedProduct);
+			ProductData entityTpl1 = (ProductData) alfrescoRepository.create(getTestFolderNodeRef(), templateFinishedProduct);
 			nodeService.addAspect(entityTpl1.getNodeRef(), BeCPGModel.ASPECT_ENTITY_TPL, null);
 
 			return entityTpl1;
@@ -135,7 +135,8 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 			finishedProduct.setPlants(plants);
 
 			List<PackagingListDataItem> packList = new ArrayList<>();
-			packList.add(new PackagingListDataItem(null, 25d, ProductUnit.PP, PackagingLevel.Secondary, true, packagingKit1NodeRef));
+			packList.add(PackagingListDataItem.build().withQty(25d).withUnit(ProductUnit.PP).withPkgLevel(PackagingLevel.Secondary).withIsMaster(true)
+					.withProduct(packagingKit1NodeRef));
 			finishedProduct.getPackagingListView().setPackagingList(packList);
 
 			finishedProduct = (FinishedProductData) alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct);
@@ -147,13 +148,12 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 			return finishedProduct.getNodeRef();
 
 		}, false, true);
-		
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			productService.formulate(finishedProductNodeRef);
-			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
-			
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+
 			for (CostListDataItem c1 : formulatedProduct.getCostList()) {
 				String trace1 = "cost: " + nodeService.getProperty(c1.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + c1.getValue()
 						+ " - unit: " + c1.getUnit() + " level: " + c1.getDepthLevel();
@@ -184,8 +184,6 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 			assertEquals(5, formulatedProduct.getCostList().size());
 			assertEquals(TareUnit.g, formulatedProduct.getTareUnit());
 
-			
-
 			assertEquals(44d, formulatedProduct.getUnitTotalCost());
 
 			// change data
@@ -203,7 +201,7 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 
 			alfrescoRepository.save(formulatedProduct);
 			productService.formulate(finishedProductNodeRef);
-			formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+			formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 
 			for (CostListDataItem c3 : formulatedProduct.getCostList()) {
 
@@ -242,7 +240,7 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 	}
 
 	@Test
-	public void testFormulationCostsWithSimulation() throws Exception {
+	public void testFormulationCostsWithSimulation() {
 
 		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -252,12 +250,18 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 			finishedProduct.setUnit(ProductUnit.kg);
 			finishedProduct.setQty(2d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF1NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(1d).withUnit(ProductUnit.kg)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(2d).withUnit(ProductUnit.kg)
+					.withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial2NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF2NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQtyUsed(3d).withUnit(ProductUnit.kg)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial3NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQtyUsed(3d).withUnit(ProductUnit.kg)
+					.withDeclarationType(DeclarationType.Omit).withProduct(rawMaterial4NodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
 			List<CostListDataItem> costList = new LinkedList<>();
@@ -276,7 +280,7 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			productService.formulate(finishedProductNodeRef);
-			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 
 			// costs
 			int checks = 0;
@@ -322,12 +326,14 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			/*-- Packaging kit --*/
-			ProductData packagingKit = alfrescoRepository.findOne(packagingKit1NodeRef);
+			ProductData packagingKit = (ProductData) alfrescoRepository.findOne(packagingKit1NodeRef);
 
 			// Packaging list Of packaging kit
 			List<PackagingListDataItem> kitPackList = new ArrayList<>();
-			kitPackList.add(new PackagingListDataItem(null, 1d, ProductUnit.P, PackagingLevel.Secondary, true, packagingMaterial2NodeRef));
-			kitPackList.add(new PackagingListDataItem(null, 1d, ProductUnit.P, PackagingLevel.Tertiary, true, packagingMaterial3NodeRef));
+			kitPackList.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.P).withPkgLevel(PackagingLevel.Secondary)
+					.withIsMaster(true).withProduct(packagingMaterial2NodeRef));
+			kitPackList.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.P).withPkgLevel(PackagingLevel.Tertiary).withIsMaster(true)
+					.withProduct(packagingMaterial3NodeRef));
 
 			packagingKit.getPackagingListView().setPackagingList(kitPackList);
 
@@ -348,8 +354,10 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 			// Packaging list Of finished product
 			List<PackagingListDataItem> finishedProductPackList = new ArrayList<>();
 			finishedProduct.getPackagingListView().setPackagingList(finishedProductPackList);
-			finishedProductPackList.add(new PackagingListDataItem(null, 8d, ProductUnit.P, PackagingLevel.Primary, true, packagingMaterial1NodeRef));
-			finishedProductPackList.add(new PackagingListDataItem(null, 10d, ProductUnit.PP, PackagingLevel.Secondary, true, packagingKit1NodeRef));
+			finishedProductPackList.add(PackagingListDataItem.build().withQty(8d).withUnit(ProductUnit.P).withPkgLevel(PackagingLevel.Primary)
+					.withIsMaster(true).withProduct(packagingMaterial1NodeRef));
+			finishedProductPackList.add(PackagingListDataItem.build().withQty(10d).withUnit(ProductUnit.PP).withPkgLevel(PackagingLevel.Secondary)
+					.withIsMaster(true).withProduct(packagingKit1NodeRef));
 
 			finishedProduct = (FinishedProductData) alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct);
 
@@ -369,7 +377,7 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			productService.formulate(finishedProductNodeRef);
-			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 
 			int checks = 0;
 			assertNotNull("CostList is null", formulatedProduct.getCostList());
@@ -397,9 +405,9 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 	}
 
 	@Test
-	public void testFormulationCostsWithKeepProductUnit() throws Exception {
+	public void testFormulationCostsWithKeepProductUnit() {
 		try {
-			
+
 			inWriteTx(() -> {
 				systemConfigurationService.updateConfValue("beCPG.formulation.costList.keepProductUnit", "true");
 				return null;
@@ -425,7 +433,8 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 				finishedProduct.setName("Produit fini 1");
 				finishedProduct.setUnit(ProductUnit.kg);
 				List<CompoListDataItem> compoList = new ArrayList<>();
-				compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.g, 0d, DeclarationType.Detail, rawMaterialNodeRef));
+				compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.g)
+						.withDeclarationType(DeclarationType.Detail).withProduct(rawMaterialNodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
 
 				List<CostListDataItem> costList = new LinkedList<>();
@@ -439,9 +448,9 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 				productService.formulate(finishedProductNodeRef);
-				ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+				ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 
-				ProductData rawMaterialProduct = alfrescoRepository.findOne(rawMaterialNodeRef);
+				ProductData rawMaterialProduct = (ProductData) alfrescoRepository.findOne(rawMaterialNodeRef);
 
 				assertEquals("€/g", rawMaterialProduct.getCostList().get(0).getUnit());
 
@@ -472,7 +481,7 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 	}
 
 	@Test
-	public void testFormulationCostsWithoutKeepProductUnit() throws Exception {
+	public void testFormulationCostsWithoutKeepProductUnit() {
 
 		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -494,7 +503,8 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 			finishedProduct.setName("Produit fini 1");
 			finishedProduct.setUnit(ProductUnit.kg);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.g, 0d, DeclarationType.Detail, rawMaterialNodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.g)
+					.withDeclarationType(DeclarationType.Detail).withProduct(rawMaterialNodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
 			List<CostListDataItem> costList = new LinkedList<>();
@@ -507,9 +517,9 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			productService.formulate(finishedProductNodeRef);
-			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 
-			ProductData rawMaterialProduct = alfrescoRepository.findOne(rawMaterialNodeRef);
+			ProductData rawMaterialProduct = (ProductData) alfrescoRepository.findOne(rawMaterialNodeRef);
 
 			assertEquals("€/kg", rawMaterialProduct.getCostList().get(0).getUnit());
 
@@ -538,7 +548,7 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 	}
 
 	@Test
-	public void testFormulationCostsWithLandLbUnits() throws Exception {
+	public void testFormulationCostsWithLandLbUnits() {
 
 		try {
 
@@ -578,19 +588,22 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 
 				// compoList
 				List<CompoListDataItem> compoList = new ArrayList<>();
-				compoList.add(new CompoListDataItem(null, null, null, 0.5d, ProductUnit.lb, 0d, DeclarationType.Detail, rawMaterial8NodeRef));// 5€/lb
-																																				// ->
-																																				// 2.5
-				compoList.add(new CompoListDataItem(null, null, null, 0.5d, ProductUnit.lb, 0d, DeclarationType.Detail, rawMaterial3NodeRef));// 1€/kg
-																																				// ->
-																																				// 0.226796185
+				compoList.add(CompoListDataItem.build().withQtyUsed(0.5d).withUnit(ProductUnit.lb)
+						.withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial8NodeRef));// 5€/lb
+				// ->
+				// 2.5
+				compoList.add(CompoListDataItem.build().withQtyUsed(0.5d).withUnit(ProductUnit.lb)
+						.withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial3NodeRef));// 1€/kg
+				// ->
+				// 0.226796185
 				finishedProduct.getCompoListView().setCompoList(compoList);
 
 				// packList
 				List<PackagingListDataItem> packList = new ArrayList<>();
-				packList.add(new PackagingListDataItem(null, 2d, ProductUnit.L, PackagingLevel.Primary, true, varnishNodeRef)); // 5€/L
-																																// ->
-																																// 10€/lb
+				packList.add(PackagingListDataItem.build().withQty(2d).withUnit(ProductUnit.L).withPkgLevel(PackagingLevel.Primary).withIsMaster(true)
+						.withProduct(varnishNodeRef)); // 5€/L
+																																																// ->
+																																																// 10€/lb
 				finishedProduct.getPackagingListView().setPackagingList(packList);
 
 				// processList
@@ -613,9 +626,9 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 				productService.formulate(finishedProductNodeRef);
-				ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+				ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 
-				ProductData varnishProduct = alfrescoRepository.findOne(varnishNodeRef);
+				ProductData varnishProduct = (ProductData) alfrescoRepository.findOne(varnishNodeRef);
 
 				// costs test
 				assertEquals("€/L", varnishProduct.getCostList().get(0).getUnit());

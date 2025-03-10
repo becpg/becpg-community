@@ -23,7 +23,14 @@ import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.report.entity.EntityReportService;
+import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.RepositoryEntity;
 
+/**
+ * <p>ArchivedEntityPolicy class.</p>
+ *
+ * @author matthieu
+ */
 public class ArchivedEntityPolicy extends AbstractBeCPGPolicy implements OnAddAspectPolicy, OnRemoveAspectPolicy {
 
 	private EntityFormatService entityFormatService;
@@ -34,26 +41,58 @@ public class ArchivedEntityPolicy extends AbstractBeCPGPolicy implements OnAddAs
 
 	private FormulationService<FormulatedEntity> formulationService;
 
+	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
+	
 	private static final String KEY_ASPECT_ADDED = "aspectAdded";
 
 	private static final String KEY_ASPECT_REMOVED = "aspectRemoved";
+	
+	/**
+	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 */
+	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
+		this.alfrescoRepository = alfrescoRepository;
+	}
 
+	/**
+	 * <p>Setter for the field <code>formulationService</code>.</p>
+	 *
+	 * @param formulationService a {@link fr.becpg.repo.formulation.FormulationService} object
+	 */
 	public void setFormulationService(FormulationService<FormulatedEntity> formulationService) {
 		this.formulationService = formulationService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>batchQueueService</code>.</p>
+	 *
+	 * @param batchQueueService a {@link fr.becpg.repo.batch.BatchQueueService} object
+	 */
 	public void setBatchQueueService(BatchQueueService batchQueueService) {
 		this.batchQueueService = batchQueueService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityReportService</code>.</p>
+	 *
+	 * @param entityReportService a {@link fr.becpg.repo.report.entity.EntityReportService} object
+	 */
 	public void setEntityReportService(EntityReportService entityReportService) {
 		this.entityReportService = entityReportService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityFormatService</code>.</p>
+	 *
+	 * @param entityFormatService a {@link fr.becpg.repo.entity.EntityFormatService} object
+	 */
 	public void setEntityFormatService(EntityFormatService entityFormatService) {
 		this.entityFormatService = entityFormatService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void doInit() {
 		policyComponent.bindClassBehaviour(OnAddAspectPolicy.QNAME, BeCPGModel.ASPECT_ARCHIVED_ENTITY,
@@ -62,16 +101,19 @@ public class ArchivedEntityPolicy extends AbstractBeCPGPolicy implements OnAddAs
 				new JavaBehaviour(this, "onRemoveAspect"));
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onAddAspect(NodeRef nodeRef, QName aspectTypeQName) {
 		queueNode(KEY_ASPECT_ADDED, nodeRef);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onRemoveAspect(NodeRef nodeRef, QName aspectTypeQName) {
 		queueNode(KEY_ASPECT_REMOVED, nodeRef);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void doAfterCommit(String key, Set<NodeRef> pendingNodes) {
 		if (KEY_ASPECT_ADDED.equals(key)) {
@@ -88,7 +130,9 @@ public class ArchivedEntityPolicy extends AbstractBeCPGPolicy implements OnAddAs
 				formulationStep.setProcessWorker(new BatchProcessor.BatchProcessWorkerAdaptor<NodeRef>() {
 					@Override
 					public void process(NodeRef entry) throws Throwable {
-						formulationService.formulate(nodeRef);
+						if (alfrescoRepository.findOne(nodeRef) instanceof FormulatedEntity) {
+							formulationService.formulate(nodeRef);
+						}
 					}
 				});
 

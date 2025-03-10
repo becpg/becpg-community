@@ -60,6 +60,7 @@ public interface RemoteEntityService {
 	/** Constant <code>ATTR_ID="id"</code> */
 	String ATTR_ID = "id";
 
+	/** Constant <code>ATTR_CREATE_IN_PATH="createInPath"</code> */
 	String ATTR_CREATE_IN_PATH = "createInPath";
 
 	/** Constant <code>CHARACT_ATTR_PATH="charactPath"</code> */
@@ -103,8 +104,10 @@ public interface RemoteEntityService {
 	/** Constant <code>ATTR_PARENT_ID="parent"</code> */
 	String ATTR_PARENT_ID = "parent";
 	
+	/** Constant <code>ATTR_VERSION="version"</code> */
 	String ATTR_VERSION = "version";
 	
+	/** Constant <code>ELEM_CONTENT="content"</code> */
 	String ELEM_CONTENT = "content";
 
 	/**
@@ -112,8 +115,8 @@ public interface RemoteEntityService {
 	 *
 	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param result a {@link java.io.OutputStream} object.
-	 * @param format a {@link fr.becpg.repo.entity.remote.RemoteEntityFormat} object.
 	 * @throws fr.becpg.common.BeCPGException if any.
+	 * @param params a {@link fr.becpg.repo.entity.remote.RemoteParams} object
 	 */
 	void getEntity(NodeRef entityNodeRef, OutputStream result, RemoteParams params);
 
@@ -122,10 +125,10 @@ public interface RemoteEntityService {
 	 *
 	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param in a {@link java.io.InputStream} object.
-	 * @param format a {@link fr.becpg.repo.entity.remote.RemoteEntityFormat} object.
 	 * @param callback a {@link fr.becpg.repo.entity.remote.EntityProviderCallBack} object.
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @throws fr.becpg.common.BeCPGException if any.
+	 * @param params a {@link fr.becpg.repo.entity.remote.RemoteParams} object
 	 */
 	NodeRef createOrUpdateEntity(NodeRef entityNodeRef, InputStream in, RemoteParams params, EntityProviderCallBack callback);
 
@@ -136,11 +139,11 @@ public interface RemoteEntityService {
 	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param destNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param in a {@link java.io.InputStream} object.
-	 * @param format a {@link fr.becpg.repo.entity.remote.RemoteEntityFormat} object.
 	 * @param callback a {@link fr.becpg.repo.entity.remote.EntityProviderCallBack} object.
 	 * @param cache a {@link java.util.Map} object.
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @throws fr.becpg.common.BeCPGException if any.
+	 * @param params a {@link fr.becpg.repo.entity.remote.RemoteParams} object
 	 */
 	NodeRef internalCreateOrUpdateEntity(NodeRef entityNodeRef, NodeRef destNodeRef, InputStream in, RemoteParams params,
 			EntityProviderCallBack callback, Map<NodeRef, NodeRef> cache);
@@ -150,9 +153,8 @@ public interface RemoteEntityService {
 	 *
 	 * @param entities a {@link java.util.List} object.
 	 * @param result a {@link java.io.OutputStream} object.
-	 * @param format a {@link fr.becpg.repo.entity.remote.RemoteEntityFormat} object.
-	 * @param fields a {@link java.util.List} object.
 	 * @throws fr.becpg.common.BeCPGException if any.
+	 * @param params a {@link fr.becpg.repo.entity.remote.RemoteParams} object
 	 */
 	void listEntities(PagingResults<NodeRef> entities, OutputStream result, RemoteParams params);
 
@@ -161,9 +163,8 @@ public interface RemoteEntityService {
 	 *
 	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param outputStream a {@link java.io.OutputStream} object.
-	 * @param format a {@link fr.becpg.repo.entity.remote.RemoteEntityFormat} object.
-	 * @param fields a {@link java.util.List} object.
 	 * @throws fr.becpg.common.BeCPGException if any.
+	 * @param params a {@link fr.becpg.repo.entity.remote.RemoteParams} object
 	 */
 	void getEntityData(NodeRef entityNodeRef, OutputStream outputStream, RemoteParams params);
 
@@ -172,21 +173,27 @@ public interface RemoteEntityService {
 	 *
 	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param inputStream a {@link java.io.InputStream} object.
-	 * @param format a {@link fr.becpg.repo.entity.remote.RemoteEntityFormat} object.
 	 * @throws fr.becpg.common.BeCPGException if any.
+	 * @param params a {@link fr.becpg.repo.entity.remote.RemoteParams} object
 	 */
 	void addOrUpdateEntityData(NodeRef entityNodeRef, InputStream inputStream, RemoteParams params);
 	
 	
 	/**
 	 * Return schema for type
-	 * @param type
-	 * @param out
-	 * @param params
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 * @param out a {@link java.io.OutputStream} object
+	 * @param params a {@link fr.becpg.repo.entity.remote.RemoteParams} object
 	 */
 	void getEntitySchema(QName type, OutputStream out, RemoteParams params);
 
 	
+	/**
+	 * <p>serviceRegistry.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.entity.remote.RemoteServiceRegisty} object
+	 */
 	RemoteServiceRegisty serviceRegistry();
 
 

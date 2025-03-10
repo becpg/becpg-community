@@ -40,6 +40,9 @@ public class PaginatedExtractedItems {
 	protected int fullListSize;
 	
 
+	/**
+	 * <p>Constructor for PaginatedExtractedItems.</p>
+	 */
 	protected PaginatedExtractedItems() {
 		//Do Nothing
 	}
@@ -110,11 +113,13 @@ public class PaginatedExtractedItems {
 		this.computedFields = computedFields;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		return Objects.hash(computedFields, fullListSize, items);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -127,6 +132,7 @@ public class PaginatedExtractedItems {
 		return Objects.equals(computedFields, other.computedFields) && fullListSize == other.fullListSize && Objects.equals(items, other.items);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "PaginatedExtractedItems [items=" + items + ", computedFields=" + computedFields + ", fullListSize=" + fullListSize + "]";

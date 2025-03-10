@@ -7,6 +7,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Date;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.ContentReader;
@@ -57,10 +58,20 @@ public class PublishWebScript extends AbstractWebScript  {
 		this.designerService = designerService;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>contentService</code>.</p>
+	 *
+	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object
+	 */
 	public void setContentService(ContentService contentService) {
 		this.contentService = contentService;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
@@ -87,11 +98,12 @@ public class PublishWebScript extends AbstractWebScript  {
 		
 		ContentReader reader = contentService.getReader(parentNodeRef, ContentModel.PROP_CONTENT);
 		
-		String xml = IOUtils.toString(reader.getContentInputStream(), StandardCharsets.UTF_8);
+		String content = IOUtils.toString(reader.getContentInputStream(), StandardCharsets.UTF_8);
 		
 		JSONObject jsonResponse = new JSONObject();
 		
-		jsonResponse.put("xml", xml);
+		jsonResponse.put("content", content);
+		jsonResponse.put("modifiedDate", ((Date) nodeService.getProperty(parentNodeRef, ContentModel.PROP_MODIFIED)).getTime());
 		
 		String publishedConfigName = (String) nodeService.getProperty(parentNodeRef, DesignerModel.PROP_PUBLISHED_CONFIG_NAME);
 		

@@ -19,6 +19,15 @@
 	</namespaces>
 
 	<constraints>
+		<constraint name="bcpg:httpLink" type="REGEX">
+			<parameter name="expression">
+				<value><![CDATA["([^"]+)":(https?:\/\/[^\s]+)|(?:https?:\/\/[^\s]+)]]></value>
+			</parameter>
+			<parameter name="requiresMatch">
+				<value>true</value>
+			</parameter>
+		</constraint>
+
 		<constraint name="bcpg:autoNumPrefix" type="REGEX">
 			<parameter name="expression">
 				<value>[A-Z]*</value>
@@ -47,7 +56,7 @@
 				</list>
 			</parameter>
 		</constraint>
-		
+
 		<constraint name="bcpg:versionTypes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -56,7 +65,7 @@
 				</list>
 			</parameter>
 		</constraint>
-		
+
 		<constraint name="bcpg:entityFormat" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -67,7 +76,7 @@
 				</list>
 			</parameter>
 		</constraint>
-		
+
 		<constraint name="bcpg:activityTypes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -85,7 +94,7 @@
 				</list>
 			</parameter>
 		</constraint>
-		
+
 		<constraint name="bcpg:nrTimeTypes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -97,7 +106,7 @@
 				</list>
 			</parameter>
 		</constraint>
-		
+
 		<constraint name="bcpg:nrVersionFilterTypes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -107,7 +116,7 @@
 				</list>
 			</parameter>
 		</constraint>
-		
+
 		<constraint name="bcpg:nrRecurringTimeTypes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -118,7 +127,7 @@
 				</list>
 			</parameter>
 		</constraint>
-		
+
 		<constraint name="bcpg:nrRecurringDays" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -133,7 +142,7 @@
 				</list>
 			</parameter>
 		</constraint>
-		
+
 		<constraint name="bcpg:nrScriptModes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -142,8 +151,8 @@
 				</list>
 			</parameter>
 		</constraint>
-		
-		
+
+
 		<constraint name="bcpg:externalLinkTargets" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -152,8 +161,8 @@
 				</list>
 			</parameter>
 		</constraint>
-		
-		
+
+
 		<constraint name="bcpg:externalLinkMediaTypes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -164,13 +173,13 @@
 				</list>
 			</parameter>
 		</constraint>
-		
-		
-		
 
-		
+
+
+
+
 	</constraints>
-	
+
 	<types>
 		<type name="bcpg:listValue">
 			<parent>bcpg:entityListItem</parent>
@@ -229,29 +238,29 @@
 				<property name="bcpg:autoNumClassName">
 					<type>d:qname</type>
 					<index enabled="true">
-					    <tokenised>false</tokenised>
-					    <facetable>false</facetable>
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
 					</index>
 				</property>
 				<property name="bcpg:autoNumPropertyName">
 					<type>d:qname</type>
 					<index enabled="true">
-					    <tokenised>false</tokenised>
-					    <facetable>false</facetable>
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
 					</index>
 				</property>
 				<property name="bcpg:autoNumValue">
 					<type>d:long</type>
 					<index enabled="true">
-					    <tokenised>false</tokenised>
-					    <facetable>true</facetable>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="bcpg:autoNumPrefix">
 					<type>d:text</type>
 					<index enabled="true">
-					    <tokenised>false</tokenised>
-					    <facetable>true</facetable>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 					<constraints>
 						<constraint ref="bcpg:autoNumPrefix" />
@@ -265,23 +274,23 @@
 			<mandatory-aspects>
 				<aspect>bcpg:sortableListAspect</aspect>
 			</mandatory-aspects>
-		</type>		
-		
+		</type>
+
 		<type name="bcpg:smartContentListItem">
 			<parent>bcpg:entityListItem</parent>
 		</type>
-		
-		
+
+
 		<type name="bcpg:charact">
 			<parent>bcpg:entityListItem</parent>
 			<properties>
 				<property name="bcpg:charactName">
-				    <type>d:mltext</type>
-				    <mandatory>true</mandatory>
-				    <index enabled="true">
-	                  <tokenised>both</tokenised>
-	                  <facetable>false</facetable>
-	               </index>
+					<type>d:mltext</type>
+					<mandatory>true</mandatory>
+					<index enabled="true">
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
+					</index>
 				</property>
 			</properties>
 			<mandatory-aspects>
@@ -289,7 +298,7 @@
 				<aspect>bcpg:isDeletedAspect</aspect>
 			</mandatory-aspects>
 		</type>
-		
+
 		<type name="bcpg:activityList">
 			<parent>bcpg:entityListItem</parent>
 			<properties>
@@ -300,8 +309,8 @@
 						<constraint ref="bcpg:activityTypes" />
 					</constraints>
 					<index enabled="true">
-					    <tokenised>false</tokenised>
-					    <facetable>false</facetable>
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
 					</index>
 				</property>
 				<property name="bcpg:alData">
@@ -313,51 +322,51 @@
 					<type>d:text</type>
 					<mandatory enforced="true">true</mandatory>
 					<index enabled="true">
-					    <tokenised>both</tokenised>
-					    <facetable>false</facetable>
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
 					</index>
 				</property>
 			</properties>
 		</type>
-		
+
 		<type name="bcpg:notificationRuleList">
 			<parent>bcpg:entityListItem</parent>
 			<properties>
 				<property name="bcpg:nrNodeType">
 					<type>d:text</type>
 					<index enabled="true">
-					    <tokenised>both</tokenised>
-					    <facetable>false</facetable>
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
 					</index>
 					<mandatory enforced="true">true</mandatory>
 				</property>
 				<property name="bcpg:nrDateField">
 					<type>d:text</type>
 					<index enabled="true">
-					    <tokenised>both</tokenised>
-					    <facetable>false</facetable>
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
 					</index>
 				</property>
 				<property name="bcpg:nrConditions">
-					<type>d:text</type>					
+					<type>d:text</type>
 					<index enabled="true">
-					    <tokenised>both</tokenised>
-					    <facetable>false</facetable>
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
 					</index>
 				</property>
 				<property name="bcpg:nrFrequency">
 					<type>d:int</type>
 					<mandatory enforced="true">true</mandatory>
 					<index enabled="true">
-					    <tokenised>false</tokenised>
-					    <facetable>false</facetable>
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
 					</index>
 				</property>
 				<property name="bcpg:nrTimeType">
 					<type>d:text</type>
 					<index enabled="true">
-					    <tokenised>false</tokenised>
-					    <facetable>false</facetable>
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
 					</index>
 					<constraints>
 						<constraint ref="bcpg:nrTimeTypes" />
@@ -366,73 +375,77 @@
 				<property name="bcpg:nrTimeNumber">
 					<type>d:int</type>
 					<index enabled="true">
-					    <tokenised>false</tokenised>
-					    <facetable>false</facetable>
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
 					</index>
 				</property>
 				<property name="bcpg:nrSubject">
 					<type>d:text</type>
 					<index enabled="true">
-					    <tokenised>both</tokenised>
-					    <facetable>false</facetable>
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
 					</index>
 					<mandatory enforced="true">true</mandatory>
 				</property>
 				<property name="bcpg:nrFrequencyStartDate">
 					<type>d:date</type>
 					<index enabled="true">
-					    <tokenised>false</tokenised>
-					    <facetable>false</facetable>
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
 					</index>
 					<mandatory enforced="true">true</mandatory>
 				</property>
 				<property name="bcpg:nrVersionFilter">
-					<type>d:text</type>	
+					<type>d:text</type>
 					<index enabled="true">
-					    <tokenised>false</tokenised>
-					    <facetable>false</facetable>
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
 					</index>
 					<constraints>
 						<constraint ref="bcpg:nrVersionFilterTypes" />
-					</constraints>				
+					</constraints>
 				</property>
 				<property name="bcpg:nrForceNotification">
-					<type>d:boolean</type>					
+					<type>d:boolean</type>
 					<index enabled="true">
-					    <tokenised>false</tokenised>
-					    <facetable>false</facetable>
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
 					</index>
 				</property>
 				<property name="bcpg:nrRecurringTimeType">
-					<type>d:text</type>	
+					<type>d:text</type>
 					<index enabled="true">
-					    <tokenised>false</tokenised>
-					    <facetable>false</facetable>
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
 					</index>
 					<constraints>
 						<constraint ref="bcpg:nrRecurringTimeTypes" />
-					</constraints>				
+					</constraints>
 				</property>
 				<property name="bcpg:nrRecurringDay">
-					<type>d:text</type>	
+					<type>d:text</type>
 					<index enabled="true">
-					    <tokenised>false</tokenised>
-					    <facetable>false</facetable>
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
 					</index>
 					<constraints>
 						<constraint ref="bcpg:nrRecurringDays" />
-					</constraints>				
+					</constraints>
 				</property>
 				<property name="bcpg:nrScriptMode">
-					<type>d:text</type>	
-					<index enabled="false"/>
+					<type>d:text</type>
+					<index enabled="false" />
 					<constraints>
 						<constraint ref="bcpg:nrScriptModes" />
-					</constraints>				
+					</constraints>
 				</property>
 				<property name="bcpg:nrErrorLog">
-					<type>d:text</type>	
-					<index enabled="false"/>
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:nrDisabled">
+					<type>d:boolean</type>
+					<index enabled="false" />
 				</property>
 			</properties>
 			<associations>
@@ -479,64 +492,92 @@
 						<many>false</many>
 					</target>
 				</association>
-			</associations>			
+			</associations>
 		</type>
-		
+
 		<type name="bcpg:variant">
 			<parent>cm:content</parent>
 			<properties>
 				<property name="bcpg:isDefaultVariant">
 					<type>d:boolean</type>
 					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		            </index>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
 				</property>
-				 <property name="bcpg:variantColumn">
-                    <type>d:text</type>
-                    <index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		            </index>
-                    <constraints>
-                        <constraint ref="bcpg:variantColumns" />
-                    </constraints>
-                </property>
+				<property name="bcpg:variantColumn">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:variantColumns" />
+					</constraints>
+				</property>
 			</properties>
 		</type>
-		
+
 		<type name="bcpg:externalLink">
 			<parent>cm:content</parent>
 			<properties>
 				<property name="bcpg:externalLinkUrl">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:externalLinkTarget">
 					<type>d:text</type>
 					<default>_blank</default>
-					<index enabled="false"/>
+					<index enabled="false" />
 					<constraints>
-                        <constraint ref="bcpg:externalLinkTargets" />
-                    </constraints>
+						<constraint ref="bcpg:externalLinkTargets" />
+					</constraints>
 				</property>
 				<property name="bcpg:externalLinkMediaType">
 					<type>d:text</type>
 					<default>page</default>
-					<index enabled="false"/>
+					<index enabled="false" />
 					<constraints>
-                        <constraint ref="bcpg:externalLinkMediaTypes" />
-                    </constraints>
+						<constraint ref="bcpg:externalLinkMediaTypes" />
+					</constraints>
 				</property>
 			</properties>
 		</type>
-		
+
+
+		<type name="bcpg:savedSearch">
+			<parent>cm:content</parent>
+			<properties>
+				<property name="bcpg:isGlobalSavedSearch">
+					<type>d:boolean</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
+				<property name="bcpg:savedSearchSiteId">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
+				<property name="bcpg:savedSearchType">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
+			</properties>
+		</type>
+
 	</types>
-	
+
 	<aspects>
-	
-	    <aspect name="bcpg:customFormDefinitionsAspect">
+
+		<aspect name="bcpg:customFormDefinitionsAspect">
 			<properties>
 				<property name="bcpg:customFormDefinitions">
 					<type>d:text</type>
@@ -561,18 +602,18 @@
 				</association>
 			</associations>
 		</aspect>
-		
+
 		<aspect name="bcpg:entityBranchAspect">
-		 <properties>
+			<properties>
 				<property name="bcpg:branchFromVersionLabel">
 					<title>Branch from version label</title>
-               <type>d:text</type>
-               <index enabled="true">
-				    <tokenised>both</tokenised>
-				    <facetable>false</facetable>
-				</index>
-               <protected>true</protected>
-               <mandatory>true</mandatory>
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
+					</index>
+					<protected>true</protected>
+					<mandatory>true</mandatory>
 				</property>
 			</properties>
 			<associations>
@@ -590,39 +631,39 @@
 				</association>
 			</associations>
 		</aspect>
-	
+
 		<aspect name="bcpg:autoMergeAspect">
 			<properties>
 				<property name="bcpg:autoMergeDate">
 					<type>d:date</type>
 					<index enabled="true">
-					    <tokenised>false</tokenised>
-					    <facetable>true</facetable>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="bcpg:autoMergeVersionType">
 					<type>d:text</type>
 					<default>MINOR</default>
 					<index enabled="true">
-					    <tokenised>false</tokenised>
-					    <facetable>true</facetable>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 					<constraints>
-					  <constraint ref="bcpg:versionTypes"/>
+						<constraint ref="bcpg:versionTypes" />
 					</constraints>
 				</property>
 				<property name="bcpg:autoMergeComments">
 					<type>d:text</type>
 					<index enabled="true">
-					    <tokenised>both</tokenised>
-					    <facetable>false</facetable>
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
 					</index>
 				</property>
 				<property name="bcpg:autoMergeImpactWUsed">
 					<type>d:boolean</type>
 					<index enabled="true">
-					    <tokenised>false</tokenised>
-					    <facetable>true</facetable>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="bcpg:manualVersionLabel">
@@ -651,22 +692,22 @@
 				<property name="bcpg:formulatedDate">
 					<type>d:datetime</type>
 					<index enabled="true">
-					    <tokenised>false</tokenised>
-					    <facetable>true</facetable>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="bcpg:regulatoryFormulatedDate">
 					<type>d:datetime</type>
 					<index enabled="true">
-					    <tokenised>false</tokenised>
-					    <facetable>true</facetable>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="bcpg:regulatoryRecipeId">
 					<type>d:text</type>
 					<index enabled="true">
-					    <tokenised>both</tokenised>
-					    <facetable>false</facetable>
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
 					</index>
 				</property>
 				<property name="bcpg:requirementChecksum">
@@ -676,34 +717,34 @@
 			</properties>
 		</aspect>
 
-		
+
 		<aspect name="bcpg:stateActivityAspect">
 			<properties>
 				<property name="bcpg:stateActivityModified">
 					<type>d:datetime</type>
 					<index enabled="true">
-					    <tokenised>false</tokenised>
-					    <facetable>true</facetable>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="bcpg:stateActivityPreviousState">
 					<type>d:text</type>
 					<index enabled="true">
-					    <tokenised>both</tokenised>
-					    <facetable>false</facetable>
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
 					</index>
 				</property>
 				<property name="bcpg:stateActivityModifier">
 					<type>d:text</type>
 					<index enabled="true">
-					    <tokenised>both</tokenised>
-					    <facetable>false</facetable>
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
 					</index>
 				</property>
 			</properties>
 		</aspect>
-		
-		
+
+
 		<aspect name="bcpg:docLinkedEntitiesAspect">
 			<associations>
 				<association name="bcpg:docLinkedEntities">
@@ -719,38 +760,38 @@
 				</association>
 			</associations>
 		</aspect>
-		
+
 		<aspect name="bcpg:legalNameAspect">
 			<properties>
 				<property name="bcpg:legalName">
 					<type>d:mltext</type>
 					<index enabled="true">
-					    <tokenised>both</tokenised>
-					    <facetable>false</facetable>
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
 					</index>
 				</property>
 			</properties>
 		</aspect>
-	
+
 		<aspect name="bcpg:systemFolderAspect">
 		</aspect>
-		
+
 		<aspect name="bcpg:depthLevelAspect">
 			<properties>
 				<property name="bcpg:depthLevel">
 					<type>d:int</type>
 					<mandatory>true</mandatory>
 					<index enabled="true">
-					    <tokenised>false</tokenised>
-					    <facetable>true</facetable>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<!-- used to store the direct parentLevel node (multi-leve recipe)l -->
 				<property name="bcpg:parentLevel">
 					<type>d:noderef</type>
 					<index enabled="true">
-					    <tokenised>false</tokenised>
-					    <facetable>true</facetable>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 			</properties>
@@ -765,8 +806,8 @@
 					<type>d:int</type>
 					<mandatory>true</mandatory>
 					<index enabled="true">
-					    <tokenised>false</tokenised>
-					    <facetable>true</facetable>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 			</properties>
@@ -782,27 +823,36 @@
 					<mandatory enforced="true">true</mandatory>
 					<default>false</default>
 					<index enabled="true">
-					    <tokenised>false</tokenised>
-					    <facetable>true</facetable>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 			</properties>
 		</aspect>
-		
+
 		<aspect name="bcpg:codeAspect">
 			<properties>
 				<property name="bcpg:code">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-					    <tokenised>both</tokenised>
-					    <facetable>false</facetable>
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
 					</index>
 				</property>
 			</properties>
 		</aspect>
 
 		<aspect name="bcpg:linkedSearchAspect">
+			<properties>
+				<property name="bcpg:excludeFromSearch">
+					<type>d:boolean</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
+			</properties>
 			<associations>
 				<association name="bcpg:linkedSearchAssociation">
 					<source>
@@ -817,25 +867,35 @@
 				</association>
 			</associations>
 		</aspect>
-		
-		
-		
-		
+
+
+
+
 		<aspect name="bcpg:userLanguageAspect">
 			<properties>
 				<property name="bcpg:userContentLocale">
-					<type>d:locale</type>
+					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:userLocale">
-					<type>d:locale</type>
+					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 			</properties>
 		</aspect>
-		
+
+		<aspect name="bcpg:userAuthenticationAspect">
+			<properties>
+				<property name="bcpg:isSsoUser">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+			</properties>
+		</aspect>
+
 
 		<aspect name="bcpg:entityDataListStateAspect">
 			<properties>
@@ -843,8 +903,8 @@
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-					    <tokenised>false</tokenised>
-					    <facetable>true</facetable>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 					<constraints>
 						<constraint ref="bcpg:entityDataListStates"></constraint>
@@ -859,8 +919,8 @@
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-					    <tokenised>false</tokenised>
-					    <facetable>true</facetable>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 					<constraints>
 						<constraint ref="bcpg:entityFormat" />
@@ -870,27 +930,27 @@
 					<type>d:content</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-					    <tokenised>false</tokenised>
-					    <facetable>false</facetable>
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
 					</index>
 				</property>
 			</properties>
 		</aspect>
-		
-		
+
+
 		<aspect name="bcpg:subEntityAspect">
 			<associations>
-					<association name="bcpg:parentEntityRef">
-						<source>
-							<mandatory>true</mandatory>
-							<many>true</many>
-						</source>
-						<target>
-							<class>bcpg:entityV2</class>
-							<mandatory>false</mandatory>
-							<many>false</many>
-						</target>
-				   </association>
+				<association name="bcpg:parentEntityRef">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:entityV2</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
 			</associations>
 		</aspect>
 
@@ -906,8 +966,8 @@
 					<type>d:text</type>
 					<protected>true</protected>
 					<index enabled="true">
-					    <tokenised>both</tokenised>
-					    <facetable>false</facetable>
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
 					</index>
 				</property>
 				<property name="bcpg:versionLabel">
@@ -915,8 +975,8 @@
 					<type>d:text</type>
 					<protected>true</protected>
 					<index enabled="true">
-					    <tokenised>both</tokenised>
-					    <facetable>false</facetable>
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
 					</index>
 				</property>
 				<property name="bcpg:frozenCreated">
@@ -924,8 +984,8 @@
 					<type>d:datetime</type>
 					<protected>true</protected>
 					<index enabled="true">
-					    <tokenised>false</tokenised>
-					    <facetable>true</facetable>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="bcpg:frozenCreator">
@@ -933,8 +993,8 @@
 					<type>d:text</type>
 					<protected>true</protected>
 					<index enabled="true">
-					    <tokenised>both</tokenised>
-					    <facetable>false</facetable>
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
 					</index>
 				</property>
 				<property name="bcpg:frozenModified">
@@ -942,8 +1002,8 @@
 					<type>d:datetime</type>
 					<protected>true</protected>
 					<index enabled="true">
-					    <tokenised>false</tokenised>
-					    <facetable>true</facetable>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="bcpg:frozenModifier">
@@ -951,8 +1011,8 @@
 					<type>d:text</type>
 					<protected>true</protected>
 					<index enabled="true">
-					    <tokenised>both</tokenised>
-					    <facetable>false</facetable>
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
 					</index>
 				</property>
 				<property name="bcpg:frozenAccessed">
@@ -960,24 +1020,24 @@
 					<type>d:datetime</type>
 					<protected>true</protected>
 					<index enabled="true">
-					    <tokenised>false</tokenised>
-					    <facetable>true</facetable>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="bcpg:frozenNodeRef">
 					<type>d:text</type>
 					<mandatory enforced="true">false</mandatory>
 					<index enabled="true">
-					    <tokenised>both</tokenised>
-					    <facetable>false</facetable>
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
 					</index>
 				</property>
 				<property name="bcpg:frozenNodeDbId">
 					<type>d:long</type>
 					<mandatory enforced="true">false</mandatory>
 					<index enabled="true">
-					    <tokenised>false</tokenised>
-					    <facetable>false</facetable>
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
 					</index>
 				</property>
 			</properties>
@@ -1043,20 +1103,20 @@
 				<property name="bcpg:startEffectivity">
 					<type>d:datetime</type>
 					<index enabled="true">
-					    <tokenised>false</tokenised>
-					    <facetable>true</facetable>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="bcpg:endEffectivity">
 					<type>d:datetime</type>
 					<index enabled="true">
-					    <tokenised>false</tokenised>
-					    <facetable>true</facetable>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 			</properties>
 		</aspect>
-		
+
 		<aspect name="bcpg:isDeletedAspect">
 			<properties>
 				<property name="bcpg:isDeleted">
@@ -1064,8 +1124,8 @@
 					<mandatory enforced="true">true</mandatory>
 					<default>false</default>
 					<index enabled="true">
-					    <tokenised>false</tokenised>
-					    <facetable>true</facetable>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 			</properties>
@@ -1077,8 +1137,8 @@
 					<type>d:text</type>
 					<default>000000</default>
 					<index enabled="true">
-					    <tokenised>both</tokenised>
-					    <facetable>false</facetable>
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
 					</index>
 				</property>
 			</properties>
@@ -1090,8 +1150,8 @@
 				<property name="bcpg:entityTplClassName">
 					<type>d:qname</type>
 					<index enabled="true">
-					    <tokenised>false</tokenised>
-					    <facetable>false</facetable>
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
 					</index>
 				</property>
 				<property name="bcpg:entityTplEnabled">
@@ -1099,16 +1159,16 @@
 					<mandatory enforced="true">true</mandatory>
 					<default>true</default>
 					<index enabled="true">
-					    <tokenised>false</tokenised>
-					    <facetable>true</facetable>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="bcpg:entityTplIsDefault">
 					<type>d:boolean</type>
 					<default>false</default>
 					<index enabled="true">
-					    <tokenised>false</tokenised>
-					    <facetable>true</facetable>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 			</properties>
@@ -1171,61 +1231,61 @@
 				</child-association>
 			</associations>
 		</aspect>
-		
+
 		<aspect name="bcpg:entityScoreAspect">
 			<properties>
 				<property name="bcpg:entityScore">
-				  <type>d:text</type>
-				  <index enabled="false"/>
+					<type>d:text</type>
+					<index enabled="false" />
 				</property>
 			</properties>
 		</aspect>
-		
+
 		<aspect name="bcpg:erpCodeAspect">
 			<properties>
 				<property name="bcpg:erpCode">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-					    <tokenised>false</tokenised>
-					    <facetable>false</facetable>
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
 					</index>
 				</property>
 			</properties>
 		</aspect>
-		
+
 		<aspect name="bcpg:auditableCatalogAspect">
 			<properties>
 				<property name="bcpg:modifiedCatalog1">
-					 <type>d:datetime</type>
-		             <protected>true</protected>
-		             <mandatory>false</mandatory>
-		             <index enabled="true">
-					    <tokenised>false</tokenised>
-					    <facetable>true</facetable>
+					<type>d:datetime</type>
+					<protected>true</protected>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="bcpg:modifiedCatalog2">
-					 <type>d:datetime</type>
-		             <protected>true</protected>
-		             <mandatory>false</mandatory>
-		             <index enabled="true">
-					    <tokenised>false</tokenised>
-					    <facetable>true</facetable>
+					<type>d:datetime</type>
+					<protected>true</protected>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="bcpg:modifiedCatalog3">
-					 <type>d:datetime</type>
-		             <protected>true</protected>
-		             <mandatory>false</mandatory>
-		             <index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		              </index>
+					<type>d:datetime</type>
+					<protected>true</protected>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
 				</property>
 			</properties>
 		</aspect>
-		
+
 		<aspect name="bcpg:workflowAspect">
 			<associations>
 				<association name="bcpg:workflowEntity">
@@ -1241,7 +1301,7 @@
 				</association>
 			</associations>
 		</aspect>
-		
+
 		<aspect name="bcpg:entityVariantAspect">
 			<associations>
 				<child-association name="bcpg:variants">
@@ -1265,9 +1325,9 @@
 				<property name="bcpg:variantIds">
 					<type>d:noderef</type>
 					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>false</facetable>
-		            </index>
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
 					<mandatory>false</mandatory>
 					<multiple>true</multiple>
 				</property>
@@ -1276,9 +1336,50 @@
 
 		<aspect name="bcpg:undeletableAspect">
 		</aspect>
-		
+
 		<aspect name="bcpg:archivedEntityAspect">
 		</aspect>
-		
+
+		<aspect name="bcpg:httpLinkAspect">
+			<properties>
+				<property name="bcpg:httpLink1">
+					<type>d:text</type>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="bcpg:httpLink" />
+					</constraints>
+				</property>
+				<property name="bcpg:httpLink2">
+					<type>d:text</type>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="bcpg:httpLink" />
+					</constraints>
+				</property>
+				<property name="bcpg:httpLink3">
+					<type>d:text</type>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="bcpg:httpLink" />
+					</constraints>
+				</property>
+				<property name="bcpg:httpLink4">
+					<type>d:text</type>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="bcpg:httpLink" />
+					</constraints>
+				</property>
+				<property name="bcpg:httpLink5">
+					<type>d:text</type>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="bcpg:httpLink" />
+					</constraints>
+				</property>
+			</properties>
+		</aspect>
+
+
 	</aspects>
 </model>

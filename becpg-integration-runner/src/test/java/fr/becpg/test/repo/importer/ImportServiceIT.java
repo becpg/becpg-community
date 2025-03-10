@@ -299,7 +299,7 @@ public class ImportServiceIT extends PLMBaseTestCase {
 
 			assertNotNull("product 1 should exist", product1NodeRef);
 
-			ProductData productData = alfrescoRepository.findOne(product1NodeRef);
+			ProductData productData = (ProductData) alfrescoRepository.findOne(product1NodeRef);
 
 			logger.debug("Props: " + nodeService.getProperties(product1NodeRef));
 
@@ -402,7 +402,7 @@ public class ImportServiceIT extends PLMBaseTestCase {
 			NodeRef productTplNodeRef = nodeService.getChildByName(importFolderNodeRef, ContentModel.ASSOC_CONTAINS, "productTpl");
 			assertNotNull("productTpl should exist", productTplNodeRef);
 
-			ProductData productTplData = alfrescoRepository.findOne(product1NodeRef);
+			ProductData productTplData = (ProductData) alfrescoRepository.findOne(product1NodeRef);
 
 			/*-- check productLists of productTpl --*/
 			assertEquals("costs should exist", 2, productData.getCostList().size());
@@ -602,7 +602,7 @@ public class ImportServiceIT extends PLMBaseTestCase {
 			NodeRef product1NodeRef = nodeService.getChildByName(importFolderNodeRef, ContentModel.ASSOC_CONTAINS, "Saumon surgelé 80x20x4");
 
 			assertNotNull("product 1 should exist", product1NodeRef);
-			ProductData productData = alfrescoRepository.findOne(product1NodeRef);
+			ProductData productData = (ProductData) alfrescoRepository.findOne(product1NodeRef);
 
 			/*-- check productLists --*/
 

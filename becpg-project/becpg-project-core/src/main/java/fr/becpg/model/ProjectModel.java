@@ -248,11 +248,29 @@ public interface ProjectModel {
 	/** Constant <code>ASSOC_NOTIFICATION_AUTHORITIES</code> */
 	QName ASSOC_NOTIFICATION_AUTHORITIES = QName.createQName(PROJECT_URI, "notificationAuthorities");
 
-
 	/** Constant <code>PROP_SL_CRITERION</code> */
 	QName PROP_SL_CRITERION = QName.createQName(PROJECT_URI, "slCriterion");
 
 	/** Constant <code>ASPECT_PROJECT_SCORE</code> */
 	QName ASPECT_PROJECT_SCORE = QName.createQName(PROJECT_URI, "projectScoreAspect");
+
+	QName TYPE_SCORE_CRITERION = QName.createQName(PROJECT_URI, "scoreCriterion");
+
+	QName PROP_SCORE_CRITERION_TYPE =  QName.createQName(PROJECT_URI, "scoreCriterionType");
+
+	QName ASSOC_SL_SCORE_CRITERION = QName.createQName(PROJECT_URI, "slScoreCriterion");
+
+	QName PROP_SCORE_CRITERION_WEIGHT = QName.createQName(PROJECT_URI, "scoreCriterionWeight");
+	
+	QName PROP_SCORE_CRITERION_FORMULA = QName.createQName(PROJECT_URI, "scoreCriterionFormula");
+	
+	QName PROP_SCORE_CRITERION_FORMULA_DETAIL = QName.createQName(PROJECT_URI, "scoreCriterionDetailFormula");
+	
+	QName PROP_SCORE_CRITERION_RANGE_FORMULA = QName.createQName(PROJECT_URI, "scoreCriterionRangeFormula");
+	
+	QName PROP_SCORE_CRITERION_RANGE = QName.createQName(PROJECT_URI, "scoreCriterionRange");
+
+	QName PROP_SCORE_CRITERION_FORMULATED = QName.createQName(PROJECT_URI, "scoreCriterionFormulated");
+	
 
 }

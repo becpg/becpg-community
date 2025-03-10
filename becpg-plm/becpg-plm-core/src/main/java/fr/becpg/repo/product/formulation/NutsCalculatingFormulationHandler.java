@@ -6,6 +6,7 @@ package fr.becpg.repo.product.formulation;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.MLText;
@@ -49,6 +50,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 	private static final Log logger = LogFactory.getLog(NutsCalculatingFormulationHandler.class);
 
 	/** {@inheritDoc} */
+	@Override
 	protected boolean propagateModeEnable(ProductData formulatedProduct) {
 		return formulatedProduct.getAspects().contains(PLMModel.ASPECT_PROPAGATE_UP)
 				|| Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.formulation.nutList.propagateUpEnable"));
@@ -101,19 +103,36 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 			}, formulatedProduct.hasCompoListEl(new VariantFilters<>()));
 
 			if (formulatedProduct.getNutList() != null) {
+				ProductData reconstituant = null;
+				if ((formulatedProduct.getReconstituant() != null) && (formulatedProduct.getReconstituantQty() != null)) {
+					reconstituant = (ProductData) alfrescoRepository.findOne(formulatedProduct.getReconstituant());
+					if (formulatedProduct.getPreparationQuantity() != null) {
+						if (formulatedProduct.isPrepared()) {
+							Double servingSizeOfPreparation = null;
+							if ((formulatedProduct.getServingSizeUnit() != null) && formulatedProduct.getServingSizeUnit().isVolume()) {
+								servingSizeOfPreparation = formulatedProduct.getPreparationQuantity() + formulatedProduct.getReconstituantQty();
+							} else {
+								servingSizeOfPreparation = formulatedProduct.getPreparationQuantity()
+										+ (FormulationHelper.getDensity(reconstituant) * formulatedProduct.getReconstituantQty());
+							}
+							formulatedProduct.setServingSize(servingSizeOfPreparation);
+						} else {
+							formulatedProduct.setServingSize(formulatedProduct.getPreparationQuantity());
+						}
+					}
+				}
 
-				calculateNutListDataItem(formulatedProduct, false, formulatedProduct.hasCompoListEl(new VariantFilters<>()));
+				calculateNutListDataItem(formulatedProduct, reconstituant, false, formulatedProduct.hasCompoListEl(new VariantFilters<>()));
 				computeFormulatedList(formulatedProduct, formulatedProduct.getNutList(), PLMModel.PROP_NUT_FORMULA,
 						"message.formulate.nutList.error");
-				calculateNutListDataItem(formulatedProduct, true, formulatedProduct.hasCompoListEl(new VariantFilters<>()));
-
+				calculateNutListDataItem(formulatedProduct, reconstituant, true, formulatedProduct.hasCompoListEl(new VariantFilters<>()));
 			}
 		}
 
 		return true;
 	}
 
-	private void calculateNutListDataItem(ProductData formulatedProduct, boolean onlyFormulaNutrient, boolean hasCompo) {
+	private void calculateNutListDataItem(ProductData formulatedProduct, ProductData reconstituant, boolean onlyFormulaNutrient, boolean hasCompo) {
 		formulatedProduct.getNutList().forEach(n -> {
 			if (n.getNut() != null) {
 				NutDataItem nut = (NutDataItem) alfrescoRepository.findOne(n.getNut());
@@ -124,38 +143,91 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 					n.setUnit(calculateUnit(formulatedProduct.getUnit(), formulatedProduct.getServingSizeUnit(), nut.getNutUnit()));
 
 					if (n.getLossPerc() != null) {
-						if (n.getValue() != null) {
+						if ((n.getValue() != null) && (n.getManualValue() == null)) {
 							n.setValue((n.getValue() * (100 - n.getLossPerc())) / 100);
 						}
-						if (n.getMini() != null) {
+						if ((n.getMini() != null) && (n.getManualMini() == null)) {
 							n.setMini((n.getMini() * (100 - n.getLossPerc())) / 100);
 						}
-						if (n.getMaxi() != null) {
+						if ((n.getMaxi() != null) && (n.getManualMaxi() == null)) {
 							n.setMaxi((n.getMaxi() * (100 - n.getLossPerc())) / 100);
 						}
-						if (n instanceof VariantAwareDataItem) {
-							for (int i = 1; i <= VariantAwareDataItem.VARIANT_COLUMN_SIZE; i++) {
-								if (((VariantAwareDataItem) n).getValue(VariantAwareDataItem.VARIANT_COLUMN_NAME + i) != null) {
-									((VariantAwareDataItem) n)
-											.setValue(((((VariantAwareDataItem) n).getValue(VariantAwareDataItem.VARIANT_COLUMN_NAME + i)
-													* (100 - n.getLossPerc())) / 100), VariantAwareDataItem.VARIANT_COLUMN_NAME + i);
+						for (int i = 1; i <= VariantAwareDataItem.VARIANT_COLUMN_SIZE; i++) {
+							if (n.getValue(VariantAwareDataItem.VARIANT_COLUMN_NAME + i) != null) {
+								n.setValue(((n.getValue(VariantAwareDataItem.VARIANT_COLUMN_NAME + i) * (100 - n.getLossPerc())) / 100),
+										VariantAwareDataItem.VARIANT_COLUMN_NAME + i);
+							}
+						}
+					}
+
+					Double preparedValue = null;
+
+					if (reconstituant != null) {
+						preparedValue = n.getValue();
+
+						if ((preparedValue != null) && (formulatedProduct.getReconstituantQty() != null)) {
+							// Find the corresponding NutListDataItem in the reconstituant's NutList
+							NutListDataItem reconstituantNutListDataItem = reconstituant.getNutList().stream()
+									.filter(s -> n.getCharactNodeRef().equals(s.getCharactNodeRef())).findFirst().orElse(null);
+
+							Double reconstituantValue = reconstituantNutListDataItem != null ? reconstituantNutListDataItem.getValue() : null;
+							if (reconstituantValue == null) {
+								reconstituantValue = 0d;
+							}
+							// Calculate product and reconstituant quantities
+							Double preparationQuantity = formulatedProduct.getPreparationQuantity() != null
+									? formulatedProduct.getPreparationQuantity()
+									: 100d;
+							double reconstituantQty = FormulationHelper.getDensity(reconstituant) * formulatedProduct.getReconstituantQty();
+
+							// Calculate total reconstituted quantity
+							double totalReconstitutedQty = reconstituantQty + preparationQuantity;
+
+							// Compute the prepared value
+							preparedValue = ((preparedValue * preparationQuantity) / totalReconstitutedQty)
+									+ ((reconstituantValue * reconstituantQty) / totalReconstitutedQty);
+
+						}
+					}
+
+					if ((formulatedProduct.getSecondaryYield() != null) && (formulatedProduct.getSecondaryYield() != 0d)) {
+						if (preparedValue == null) {
+							preparedValue = n.getValue();
+						}
+
+						if (preparedValue != null) {
+							preparedValue /= (formulatedProduct.getSecondaryYield() / 100d);
+						}
+
+					}
+					n.setPreparedValue(preparedValue);
+					MLText reductionValue = new MLText();
+
+					if (n.getReferenceValue() != null) {
+
+						for (Map.Entry<Locale, String> refValueEntry : n.getReferenceValue().entrySet()) {
+							Double refValue = parseToDouble(refValueEntry.getValue());
+
+							if (refValue != null) {
+								Double baseValue = (formulatedProduct.isPrepared() && (preparedValue != null)) ? preparedValue : n.getValue();
+
+								if (baseValue != null) {
+
+									Double roundedBaseValue = RegulationFormulationHelper.round(baseValue, nut.getNutCode(), refValueEntry.getKey(),
+											n.getUnit());
+
+									Double reduction = calculateReduction(refValue, roundedBaseValue);
+									reductionValue.put(refValueEntry.getKey(), reduction.toString());
 								}
 							}
 						}
 					}
 
-					if ((formulatedProduct.getSecondaryYield() != null) && (formulatedProduct.getSecondaryYield() != 0d)) {
-						Double preparedValue = n.getValue();
-						if (preparedValue != null) {
-							preparedValue = preparedValue / (formulatedProduct.getSecondaryYield() / 100d);
-							n.setPreparedValue(preparedValue);
-						}
-					} else {
-						n.setPreparedValue(null);
-					}
+					// Set the formulated reduction value
+					n.setFormulatedReductionValue(reductionValue);
 
 					Double servingSize = FormulationHelper.getServingSizeInLorKg(formulatedProduct);
-					Double valueForServing = formulatedProduct.isPrepared() && n.getPreparedValue() != null ? n.getPreparedValue() : n.getValue();
+					Double valueForServing = (formulatedProduct.isPrepared() && (n.getPreparedValue() != null)) ? n.getPreparedValue() : n.getValue();
 
 					if ((servingSize != null) && (valueForServing != null)) {
 						Double valuePerserving = (valueForServing * (servingSize * 1000d)) / 100;
@@ -165,7 +237,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 							n.setGdaPerc((100 * n.getValuePerServing()) / gda);
 						}
 						Double ul = nut.getNutUL();
-						if (ul != null && n.getValuePerServing() > ul) {
+						if ((ul != null) && (n.getValuePerServing() > ul)) {
 							MLText message = MLTextHelper.getI18NMessage(MESSAGE_MAXIMAL_DAILY_VALUE, nut.getCharactName());
 
 							formulatedProduct.getReqCtrlList().add(ReqCtrlListDataItem.forbidden().withMessage(message).withCharact(n.getNut())
@@ -177,10 +249,8 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 						n.setGdaPerc(null);
 					}
 
-					if (isCharactFormulated(n) && hasCompo) {
-						if (n.getManualValue() == null) {
-							n.setMethod(NUT_FORMULATED);
-						}
+					if ((isCharactFormulated(n) && hasCompo) && (n.getManualValue() == null)) {
+						n.setMethod(NUT_FORMULATED);
 					}
 
 					RegulationFormulationHelper.extractRoundedValue(formulatedProduct, nut.getNutCode(), n);
@@ -232,12 +302,10 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 			} else {
 				return NutListDataItem.UNIT_PER100G;
 			}
+		} else if ((productUnit != null) && productUnit.isVolume()) {
+			return NutListDataItem.UNIT_PER100ML;
 		} else {
-			if ((productUnit != null) && productUnit.isVolume()) {
-				return NutListDataItem.UNIT_PER100ML;
-			} else {
-				return NutListDataItem.UNIT_PER100G;
-			}
+			return NutListDataItem.UNIT_PER100G;
 		}
 	}
 
@@ -270,4 +338,25 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 		return RequirementDataType.Nutrient;
 	}
 
+	/**
+	 * Parses a string to a Double, returning null if the input is not a valid number.
+	 */
+	private Double parseToDouble(String value) {
+		try {
+			return Double.parseDouble(value);
+		} catch (NumberFormatException e) {
+			// Log the error for debugging purposes, but allow the flow to continue
+			logger.debug("Invalid number format for value: " + value);
+			return null;
+		}
+	}
+
+	/**
+	 * @param locale
+	 * Calculates the percentage reduction based on the reference value and the base value (either prepared or unprepared).
+	 */
+	private Double calculateReduction(Double refValue, Double baseValue) {
+
+		return 100d-(baseValue/refValue*100d);
+	}
 }

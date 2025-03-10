@@ -13,6 +13,11 @@ import org.springframework.stereotype.Service;
 import fr.becpg.repo.activity.data.ActivityListDataItem;
 import fr.becpg.repo.activity.data.ActivityType;
 
+/**
+ * <p>ContentActivityListener class.</p>
+ *
+ * @author matthieu
+ */
 @Service
 public class ContentActivityListener implements EntityActivityListener {
 
@@ -21,6 +26,7 @@ public class ContentActivityListener implements EntityActivityListener {
 	@Autowired
 	private NodeService nodeService;
 
+	/** {@inheritDoc} */
 	@Override
 	public void notify(NodeRef entityNodeRef, ActivityListDataItem activityListDataItem) {
 		if (ActivityType.Content.equals(activityListDataItem.getActivityType())) {

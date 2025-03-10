@@ -320,7 +320,7 @@
 		
 	</Cube>
 
-	<Cube name="requirements" caption="${msg("jsolap.requirements.title")}" cache="true" enabled="true" defaultMeasure="${msg("jsolap.requirementsNumber.title")}">
+	<Cube name="requirements" caption="${msg("jsolap.requirements.title")}" cache="true" enabled="true" defaultMeasure="requirementsNumber">
 		
 			<View name="requirements" alias="requirements">
 				<SQL dialect="generic">
@@ -503,7 +503,7 @@
     </Cube>
 
 
-	<Cube name="incidents" caption="${msg("jsolap.incidents.title")}" cache="true" enabled="true" defaultMeasure="${msg("jsolap.incidentsNumber.title")}">
+	<Cube name="incidents" caption="${msg("jsolap.incidents.title")}" cache="true" enabled="true" defaultMeasure="noderef">
 		
 		<View name="incidents" alias="incidents">
 				<SQL dialect="generic">
@@ -661,7 +661,7 @@
 		<Measure name="ncCost" caption="${msg("jsolap.nonConformityCost.title")}" column="ncCost" datatype="Numeric" aggregator="sum" visible="true"  />
 	</Cube>
 	
-	<Cube name="projectsSteps" caption="${msg("jsolap.projectsTasks.title")}" cache="true" enabled="true" defaultMeasure="${msg("jsolap.projectsTasks.title")}">
+	<Cube name="projectsSteps" caption="${msg("jsolap.projectsTasks.title")}" cache="true" enabled="true">
 			
 				<View name="taskList" alias="taskList">
 					<SQL dialect="generic">
@@ -848,26 +848,31 @@
 	</Cube>
 	
 	
-	<Cube name="projectsEvaluation" caption="${msg("jsolap.projectsEvaluation.title")}" cache="true" enabled="true" defaultMeasure="${msg("jsolap.note.title")}">
+	<Cube name="evaluation" caption="${msg("jsolap.evaluation.title")}" cache="true" enabled="true" defaultMeasure="slScore">
 
 				<View name="scoreList" alias="scoreList">
 					<SQL dialect="generic">
-						select  
-							a.entityNodeRef,
+						select
+							a.entityNodeRef as scoreNodeRef,
 							a.doc->>"$.pjt_slCriterion" as slCriterion,
 							a.doc->>"$.pjt_slWeight" as slWeight,
 							a.doc->>"$.pjt_slScore" as slScore,
-							b.nodeRef as projectNodeRef,
-							b.doc->>"$.cm_name" as projectName,
-							b.doc->>"$.pjt_projectHierarchy1[0]" as	projectHierarchy1,
-							b.doc->>"$.pjt_projectHierarchy2[0]" as	projectHierarchy2,
-							b.doc->>"$.pjt_projectManager[0]" as projectManager,
-							b.doc->>"$.pjt_projectState" as projectState,
-							b.doc->>"$.metadata_siteId" as siteId,
-							b.doc->>"$.metadata_siteName" as siteName	
+							COALESCE(p.nodeRef, pjt.nodeRef, c.nodeRef, s.nodeRef) as entityNodeRef,
+							COALESCE(p.doc->>"$.cm_name", pjt.doc->>"$.cm_name", c.doc->>"$.cm_name", s.doc->>"$.cm_name") as entityName,
+							COALESCE(p.doc->>"$.bcpg_productHierarchy1[0]", pjt.doc->>"$.pjt_projectHierarchy1[0]", c.doc->>"$.bcpg_clientHierarchy1[0]", s.doc->>"$.bcpg_supplierHierarchy1[0]") as entityHierarchy1,
+							COALESCE(p.doc->>"$.bcpg_productHierarchy2[0]", pjt.doc->>"$.pjt_projectHierarchy2[0]", c.doc->>"$.bcpg_clientHierarchy2[0]", s.doc->>"$.bcpg_supplierHierarchy2[0]") as entityHierarchy2,
+							COALESCE(p.doc->>"$.pjt_projectManager[0]", pjt.doc->>"$.pjt_projectManager[0]", c.doc->>"$.pjt_projectManager[0]", s.doc->>"$.pjt_projectManager[0]") as projectManager,
+							COALESCE(p.doc->>"$.bcpg_productState", pjt.doc->>"$.pjt_projectState", c.doc->>"$.bcpg_clientState", s.doc->>"$.bcpg_supplierState") as entityState,
+							COALESCE(p.doc->>"$.metadata_siteId", pjt.doc->>"$.metadata_siteId", c.doc->>"$.metadata_siteId", s.doc->>"$.metadata_siteId") as siteId,
+							COALESCE(p.doc->>"$.metadata_siteName", pjt.doc->>"$.metadata_siteName", c.doc->>"$.metadata_siteName", s.doc->>"$.metadata_siteName") as siteName,
+							COALESCE(p.doc->>"$.type", pjt.doc->>"$.type", c.doc->>"$.type", s.doc->>"$.type") as entityType,
+							COALESCE(p.doc->>"$.pjt_projectScore", pjt.doc->>"$.pjt_projectScore", c.doc->>"$.pjt_projectScore", s.doc->>"$.pjt_projectScore") as projectScore
 						from
-							scoreList a inner join pjt_project b on a.entityNodeRef = b.nodeRef 
-
+							scoreList a
+							LEFT JOIN bcpg_product p ON a.entityNodeRef = p.nodeRef
+							LEFT JOIN pjt_project pjt ON a.entityNodeRef = pjt.nodeRef
+							LEFT JOIN bcpg_client c ON a.entityNodeRef = c.nodeRef
+							LEFT JOIN bcpg_supplier s ON a.entityNodeRef = s.nodeRef
 					</SQL>
 				</View>
 		
@@ -889,17 +894,17 @@
 			</Hierarchy>
 		</Dimension>
 		
-		<Dimension name="project" caption="${msg("jsolap.project.title")}">
-			<Hierarchy name="project_dim" hasAll="true" allMemberCaption="${msg("jsolap.project.caption")}">
-				<Level name="entity_noderef" caption="${msg("jsolap.project.title")}" column="projectNodeRef" nameColumn="projectName" type="String" highCardinality="true"  />
-				<Level name="projectHierarchy1" caption="${msg("jsolap.projectFamily.title")}" column="projectHierarchy1" type="String"   />
-				<Level name="projectHierarchy2" caption="${msg("jsolap.projectSubFamily.title")}" column="projectHierarchy2" type="String"   />
+		<Dimension name="entity" caption="${msg("jsolap.entity.title")}">
+			<Hierarchy name="entity_dim" hasAll="true" allMemberCaption="${msg("jsolap.entity.caption")}">
+				<Level name="entity_noderef" caption="${msg("jsolap.entity.title")}" column="entityNodeRef" nameColumn="entityName" type="String" highCardinality="true"  />
+				<Level name="entityHierarchy1" caption="${msg("jsolap.entityFamily.title")}" column="entityHierarchy1" type="String"   />
+				<Level name="entityHierarchy2" caption="${msg("jsolap.entitySubFamily.title")}" column="entityHierarchy2" type="String"   />
 				</Hierarchy>
 		</Dimension>
 		
-		<Dimension  name="state" caption="${msg("jsolap.projectState.title")}" >
+		<Dimension  name="state" caption="${msg("jsolap.entityState.title")}" >
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.state.caption")}" >
-				<Level approxRowCount="5" name="projectState" caption="${msg("jsolap.projectState.title")}" column="projectState" type="String">
+				<Level approxRowCount="5" name="entityState" caption="${msg("jsolap.entityState.title")}" column="entityState" type="String">
 				  <MemberFormatter>
 						<Script language="JavaScript">
 							switch (member.getName()) {
@@ -921,11 +926,47 @@
 				</Level>
 			</Hierarchy>
 		</Dimension>
+		
+		<Dimension name="entityType" caption="${msg("jsolap.entityType.title")}">
+			<Hierarchy name="entityType" caption="${msg("jsolap.entityType.title")}" hasAll="true" allMemberCaption="${msg("jsolap.entityType.caption")}">
+				<Level approxRowCount="10" name="entity_type" caption="${msg("jsolap.entityType.title")}" column="entityType" nameColumn="entityType" type="String"   >
+					<MemberFormatter>
+						<Script language="JavaScript">
+							switch (member.getName()) {
+				   				case 'bcpg:rawMaterial' :
+				      				return  '${msg("bcpg_bcpgmodel.type.bcpg_rawMaterial.title")}';
+				   				case 'bcpg:finishedProduct' :
+				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_finishedProduct.title")}';
+				   				case 'bcpg:semiFinishedProduct' :
+				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_semiFinishedProduct.title")}';
+				    			case 'bcpg:packagingMaterial' :
+				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_packagingMaterial.title")}';
+				   				case 'bcpg:packagingKit' :
+				    				return  '${msg("jsolap.packagingKit.title")}';
+				   				case 'bcpg:localSemiFinishedProduct' :
+				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_localSemiFinishedProduct.title")}';
+				    			case 'bcpg:resourceProduct' :
+				    				return  '${msg("bcpg_bcpgmodel.type.bcpg_resourceProduct.title")}';
+			    				case 'bcpg:client' :
+			    					return  '${msg("bcpg_bcpgmodel.type.bcpg_client.title")}';
+		    					case 'bcpg:supplier' :
+		    						return  '${msg("bcpg_bcpgmodel.type.bcpg_supplier.title")}';
+	    						case 'pjt:project' :
+	    							return  '${msg("pjt_pjtmodel.type.pjt_project.title")}';
+							   default:
+								    return member.getName();
+								}
+						</Script>
+					</MemberFormatter>
+				</Level>
+			</Hierarchy>
+		</Dimension>
 				
 		
-		<DimensionUsage name="tags" caption="${msg("jsolap.tags.title")}" source="tagsDimension" foreignKey="entityNodeRef" />
+		<DimensionUsage name="tags" caption="${msg("jsolap.tags.title")}" source="tagsDimension" foreignKey="scoreNodeRef" />
 		
 		
+		<Measure name="averageNote" caption="${msg("jsolap.averageNote.title")}" column="projectScore" datatype="Numeric" aggregator="avg" visible="true" />
 		<Measure name="slWeight" caption="${msg("jsolap.weighting.title")}" column="slWeight" datatype="Numeric" aggregator="avg" visible="true" />
 		<Measure name="slScore" caption="${msg("jsolap.note.title")}" column="slScore" datatype="Numeric" aggregator="avg" visible="true"  />
 		
@@ -934,7 +975,7 @@
 		</CalculatedMember> 
 	</Cube>
 
-	<Cube name="projects" caption="${msg("jsolap.projects.title")}" cache="true" enabled="true" defaultMeasure="${msg("jsolap.projectsNumberDistinct.title")}">
+	<Cube name="projects" caption="${msg("jsolap.projects.title")}" cache="true" enabled="true" defaultMeasure="projectsNumber">
 			<View name="projects" alias="projects">
 				<SQL dialect="generic">
 					select
@@ -1051,13 +1092,65 @@
 		
 		<Dimension  name="ideaOrigin" caption="${msg("jsolap.ideaOrigin.title")}" >
 			<Hierarchy name="ideaOrigin" caption="${msg("jsolap.ideaOrigin.title")}" hasAll="true" allMemberCaption="${msg("jsolap.ideaOrigin.caption")}">
-				<Level name="projectOrigin" caption="${msg("jsolap.ideaOrigin.title")}" column="projectOrigin"  type="String"    />
+				<Level approxRowCount="9" name="projectOrigin" caption="${msg("jsolap.ideaOrigin.title")}" column="projectOrigin"  type="String"    >
+					<MemberFormatter>
+						<Script language="JavaScript">
+							switch (member.getName()) {
+				   				case 'SERV_COM' :
+				      				return   '${msg("listconstraint.pjt_projectOrigins.Sales_Department")}';
+				      			case 'ADV' :
+				    				return   '${msg("listconstraint.pjt_projectOrigins.Administration_des_ventes")}';
+				   				case 'SERV_QUAL' :
+				    				return   '${msg("listconstraint.pjt_projectOrigins.Service_Qualite")}';
+				   				case 'Direction' :
+				    				return   '${msg("listconstraint.pjt_projectOrigins.Direction")}';   
+				    			case 'SERV_PROD' :
+				    				return   '${msg("listconstraint.pjt_projectOrigins.Service_Production")}';
+				    			case 'Marketing' :
+				    				return   '${msg("listconstraint.pjt_projectOrigins.Marketing")}';
+				    			case 'Commerciaux' :
+				    				return   '${msg("listconstraint.pjt_projectOrigins.Commerciaux")}';
+				    			case 'Clients' :
+				    				return   '${msg("listconstraint.pjt_projectOrigins.Clients")}';
+				    			case 'Production' :
+				    				return   '${msg("listconstraint.pjt_projectOrigins.Production")}';
+							   default:
+								    return member.getName();
+								}
+						</Script>
+					</MemberFormatter>
+				</Level>
 			</Hierarchy>
 		</Dimension>
 		
 		<Dimension  name="sponsor" caption="${msg("jsolap.sponsor.title")}" >
 			<Hierarchy name="sponsor" caption="${msg("jsolap.sponsor.title")}" hasAll="true" allMemberCaption="${msg("jsolap.sponsor.caption")}">
-				<Level name="projectSponsor" caption="${msg("jsolap.sponsor.title")}" column="projectSponsor"  type="String"    />
+				<Level approxRowCount="8" name="projectSponsor" caption="${msg("jsolap.sponsor.title")}" column="projectSponsor"  type="String"    >
+					<MemberFormatter>
+						<Script language="JavaScript">
+							switch (member.getName()) {
+				   				case 'Client' :
+				      				return   '${msg("listconstraint.pjt_projectSponsors.Client")}';
+				      			case 'SUPPLIERS' :
+				    				return   '${msg("listconstraint.pjt_projectSponsors.Suppliers")}';
+				   				case 'SERV_INT' :
+				    				return   '${msg("listconstraint.pjt_projectSponsors.Internal")}';
+				   				case 'Direction' :
+				    				return   '${msg("listconstraint.pjt_projectSponsors.Direction")}';
+				   				case 'Marketing' :
+				    				return   '${msg("listconstraint.pjt_projectSponsors.Marketing")}';   
+				    			case 'Qualité' :
+				    				return   '${msg("listconstraint.pjt_projectSponsors.Quality")}';
+				    			case 'Achat' :
+				    				return   '${msg("listconstraint.pjt_projectSponsors.Purchase")}';
+				    			case 'SUPPLY' :
+				    				return   '${msg("listconstraint.pjt_projectSponsors.Supply")}';
+							   default:
+								    return member.getName();
+								}
+						</Script>
+					</MemberFormatter>
+				</Level>
 			</Hierarchy>
 		</Dimension>
 		
@@ -1420,7 +1513,7 @@
 		<Measure name="lcaFutureValue" caption="${msg("jsolap.lcaFutureValue.title")}" column="lcaFutureValue" datatype="Numeric" aggregator="avg" visible="true"></Measure>
 	</Cube>			
 	
-	<Cube name="products" caption="${msg("jsolap.products.title")}" cache="true" enabled="true" defaultMeasure="${msg("jsolap.productsNumber.title")}">
+	<Cube name="products" caption="${msg("jsolap.products.title")}" cache="true" enabled="true" defaultMeasure="productNumber">
 		
 			<View name="products" alias="products">
 				<SQL dialect="generic">

@@ -149,7 +149,7 @@
 
                   },
 
-                  createYUIButton : function(instance, actionName, fn) {
+                  createYUIButton : function(_instance, actionName, fn) {
 
                      var template = Dom.get("custom-toolBar-template-button"), buttonWidget = null;
 
@@ -195,7 +195,7 @@
                               YAHOO.Bubbling.fire("changeFilter", {
                                  filterOwner : this.id,
                                  filterId : "fts",
-                                 filterData : "ISNULL:bcpg\\:variantIds OR ISUNSET:bcpg\\:variantIds OR NOT EXISTS:bcpg\\:variantIds"
+                                 filterData : "-ISNOTNULL:bcpg\\:variantIds OR =@bcpg\\:variantIds:\"\""
                               });
                            }
                         } else {
@@ -205,7 +205,7 @@
                                        {
                                           filterOwner : this.id,
                                           filterId : "fts",
-                                          filterData : "@bcpg\\:variantIds:\"" + p_oItem.value + "\" OR ISNULL:bcpg\\:variantIds OR ISUNSET:bcpg\\:variantIds OR NOT EXISTS:bcpg\\:variantIds"
+                                          filterData : "=@bcpg\\:variantIds:\"" + p_oItem.value + "\" OR -ISNOTNULL:bcpg\\:variantIds OR =@bcpg\\:variantIds:\"\""
                                        });
 
                            this.currentVariantNodeRef = p_oItem.value;

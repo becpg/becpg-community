@@ -10,6 +10,11 @@ import org.json.JSONException;
 
 import fr.becpg.repo.repository.RepositoryEntity;
 
+/**
+ * <p>EntityCatalogService interface.</p>
+ *
+ * @author matthieu
+ */
 public interface EntityCatalogService {
 	
 	/** Constant <code>PROP_CATALOGS="catalogs"</code> */
@@ -59,10 +64,34 @@ public interface EntityCatalogService {
 	/** Constant <code>MESSAGE_OR="message.formulate.or"</code> */
 	public static final String MESSAGE_OR = "message.formulate.or";
 
+	/**
+	 * <p>formulateCatalogs.</p>
+	 *
+	 * @param formulatedEntity a {@link fr.becpg.repo.repository.RepositoryEntity} object
+	 * @param locales a {@link java.util.List} object
+	 * @return a {@link org.json.JSONArray} object
+	 * @throws org.json.JSONException if any.
+	 */
 	JSONArray formulateCatalogs(RepositoryEntity formulatedEntity, List<String> locales) throws JSONException;
 
+	/**
+	 * <p>formulateCatalog.</p>
+	 *
+	 * @param catalogId a {@link java.lang.String} object
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param locales a {@link java.util.List} object
+	 * @return a {@link org.json.JSONArray} object
+	 * @throws org.json.JSONException if any.
+	 */
 	JSONArray formulateCatalog(String catalogId, NodeRef entityNodeRef, List<String> locales) throws JSONException;
 
+	/**
+	 * <p>updateAuditedField.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param diffQnames a {@link java.util.Set} object
+	 * @param listNodeRefs a {@link java.util.Set} object
+	 */
 	void updateAuditedField(NodeRef entityNodeRef, Set<QName> diffQnames, Set<NodeRef> listNodeRefs);
 
 }

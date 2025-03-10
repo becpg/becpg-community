@@ -9,6 +9,7 @@ package fr.becpg.repo.system;
  */
 public interface SystemConfigurationService {
 
+
 	/**
 	 * <p>confValue.</p>
 	 *
@@ -29,5 +30,7 @@ public interface SystemConfigurationService {
 	 * @param value a {@link java.lang.String} object
 	 */
 	void updateConfValue(String propKey, String value);
+	
+	
 	
 }

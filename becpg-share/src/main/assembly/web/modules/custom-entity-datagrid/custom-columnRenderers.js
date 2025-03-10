@@ -73,7 +73,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 			var user = oRecord.getData("itemData")["prop_bcpg_alUserId"];
 			var dateCreated = oRecord.getData("itemData")["prop_cm_created"];			
 			var html = "";
-			if(data.title || activityType == "Datalist" ){
+			if(data.title || activityType == "Datalist"  || activityType == "DatalistCopy"){
 				var title = "";
 				var className = data.className!=null ? data.className : "entity";
 				var charactType = data.charactType!=null ? data.charactType : className;
@@ -89,7 +89,20 @@ if (beCPG.module.EntityDataGridRenderers) {
 						title  = scope.msg("entity.activity.datalist."+data.activityEvent.toLowerCase(), title, scope.msg("data.list."+className) );
 					}
 
-				} else if(activityType == "Entity"|| activityType == "Formulation" || activityType == "Report"){
+				} else if (activityType == "DatalistCopy" ){
+					title = "<span class=\""+data.entityType+"\">"+Alfresco.util.encodeHTML(data.title)+"</span>";
+					title  = scope.msg("entity.activity.datalist.copy." + data.activityEvent.toLowerCase(), scope.msg("data.list."+className), title);
+				} else if(activityType == "Entity"){
+					if (data.activityEvent == "Create") {
+						title  = scope.msg("entity.activity.entity.create", title);
+					} else {
+						title  = scope.msg("entity.activity.entity", title);
+					}
+				} else if(activityType == "AspectsAddition" && data.addedAspects){
+					title  = scope.msg("entity.activity.entity.added-aspect", title, data.addedAspects);
+				} else if(activityType == "AspectsRemoval" && data.removedAspects){
+					title  = scope.msg("entity.activity.entity.removed-aspect", title, data.removedAspects);
+				} else if(activityType == "Formulation" || activityType == "Report"){
 					title  = scope.msg("entity.activity."+activityType.toLowerCase(), title);
 				} else if(activityType == "Export"){
 					title  = scope.msg("entity.activity.export", scope.msg("data.list."+className), data.title);
@@ -122,88 +135,89 @@ if (beCPG.module.EntityDataGridRenderers) {
 				html += Alfresco.util.userProfileLink(user.value, user.displayValue, 'class="theme-color-1"') + ' ';
 				html += '      </span>';
 				html += '      <span class="date-info">';
-				html += Alfresco.util.relativeTime(Alfresco.util.fromISO8601(dateCreated.value)) +' ('+  Alfresco.util.formatDate(dateCreated.value	, Alfresco.util.message(scope.msg("date.format"))) + ') <br/>';
+				html += Alfresco.util.relativeTime(Alfresco.util.fromISO8601(dateCreated.value)) +' ('+  Alfresco.util.formatDate(dateCreated.value	, Alfresco.util.message(scope.msg("datetime.format"))) + ') <br/>';
 				html += '      </span>';
 				html += '      <div class="activity-title">' + title + '</div>';
 
-				if (data.properties){
-					html += '      <div class="before-after-prop">';
-					html += '      <table><thead><tr>';
-					html += '      <th class="prop-col">' + scope.msg("entity.activity.property") + '</th>';
-					html += '      <th class="before-after-col">' + scope.msg("entity.activity.before") + '</th>';
-					html += '      <th class="before-after-col">' + scope.msg("entity.activity.after") + '</th></tr></thead><tbody>';
-
-					var count = 0;
-					data.properties.forEach(function(prop){
-						var property="";
-						var before = prop.before;
-						var after = prop.after;
-						var locale = "";
-	
-						var hasBefore = before != null && before.length > 0 && before[0] != null && Object.prototype.toString.call(before[0]).slice(8, -1) == 'Object';
-						var hasAfter = after != null && after.length > 0 && after[0] != null && Object.prototype.toString.call(after[0]).slice(8, -1) == 'Object';
-						
-						if (hasBefore){
-							var beforePerLocale = before[0];
-							var afterPerLocale = after[0];
-							Object.keys(beforePerLocale).forEach(function(key){
-								if (beforePerLocale[key] != afterPerLocale[key]) {
-									locale = key;
-									if (key.indexOf("_") > -1){
-										locale = key.substring(3,5).toLowerCase();
-									}
-									html += '      <tr '+(count%2 == 0 ? '':'class="grey"')+'><td>' + prop.title +
-									' <img class="icon16_11" src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/flags/' + locale + '.png" /></td>';
-									html += '      <td>' + beforePerLocale[key] + '</td>';
-									html += '      <td>' + afterPerLocale[key] + '</td></tr>';		
-									count++;
-								}
-							});
-							if (after != null && after.length > 0 && after[0] != null && typeof after[0] == 'object'){
-								Object.keys(afterPerLocale).forEach(function(key){
-									if (!beforePerLocale.hasOwnProperty(key)) {
-										locale = key;
-										if (key.indexOf("_") > -1){
-											locale = key.substring(3,5).toLowerCase();
-										}
-										html += '      <tr '+(count%2 == 0 ? '':'class="grey"')+'><td>' + prop.title +
-										' <img class="icon16_11" src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/flags/' + locale + '.png" /></td>';
-										html += '      <td> </td>';
-										html += '      <td>' + afterPerLocale[key] + '</td></tr>';
-										count++;
-									}
-								});
-							}
-						} else if (hasAfter) {
-							var afterPerLocale = after[0];
-							html += '      <td> </td>';
-							Object.keys(afterPerLocale).forEach(function(key){
-								locale = key;
-								if (key.indexOf("_") > -1){
-									locale = key.substring(3,5).toLowerCase();
-								}
-								html += '      <tr '+(count%2 == 0 ? '':'class="grey"')+'><td>' + prop.title +
-								' <img class="icon16_11" src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/flags/' + locale + '.png" /></td>';
-								html += '      <td> </td>';
-								html += '      <td>' + afterPerLocale[key] + '</td></tr>';
-								count++;
-							});
-						} else {
-							html += '      <tr '+(count%2 == 0 ? '':'class="grey"')+'><td>' + prop.title + '</td>';
-							if (before != null){
-								html += '      <td>' + before + '</td>';
-							} else {
-								html += '      <td> </td>';
-							} 
-							if (after != null){
-								html += '      <td>' + after + '</td></tr>';
-							} else {
-								html += '      <td> </td></tr>';
-							}
-							count++;
-						}
-					});
-					html += '    </tbody></table></div>'
+				if (data.properties) {
+				    html += '      <div class="before-after-prop">';
+				    html += '      <table><thead><tr>';
+				    html += '      <th class="prop-col">' + scope.msg("entity.activity.property") + '</th>';
+				    html += '      <th class="before-after-col">' + scope.msg("entity.activity.before") + '</th>';
+				    html += '      <th class="before-after-col">' + scope.msg("entity.activity.after") + '</th></tr></thead><tbody>';
+				
+				    var count = 0;
+				    data.properties.forEach(function(prop) {
+				        var before = prop.before;
+				        var after = prop.after;
+				        var locale = "";
+				
+				        var isBeforeArray = Array.isArray(before);
+				        var isAfterArray = Array.isArray(after);
+				
+				        var hasBefore = before != null && (isBeforeArray ? before.length > 0 && before[0] != null && typeof before[0] === 'object' : typeof before === 'object');
+				        var hasAfter = after != null && (isAfterArray ? after.length > 0 && after[0] != null && typeof after[0] === 'object' : typeof after === 'object');
+				
+				        if (hasBefore) {
+				            var beforeObj = isBeforeArray ? before[0] : before;
+				            var afterObj = isAfterArray ? (after.length > 0 ? after[0] : {}) : after;
+				
+				            Object.keys(beforeObj).forEach(function(key) {
+				                var beforeValue = beforeObj[key] ? beforeObj[key] : "";
+				                var afterValue = afterObj[key] ? afterObj[key] : "";
+				                if (beforeValue != afterValue) {
+				                    locale = key;
+				                    if (key.indexOf("_") > -1) {
+				                        locale = key.substring(3,5).toLowerCase();
+				                    }
+				                    html += '      <tr '+(count%2 == 0 ? '' : 'class="grey"')+'><td>' + prop.title +
+				                    ' <img class="icon16_11" src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/flags/' + locale + '.png" /></td>';
+				                    html += '      <td>' + beforeValue + '</td>';
+				                    html += '      <td>' + afterValue + '</td></tr>';
+				                    count++;
+				                }
+				            });
+				
+				            if (hasAfter) {
+				                Object.keys(afterObj).forEach(function(key) {
+				                    if (!beforeObj.hasOwnProperty(key)) {
+				                        var afterValue = afterObj[key] ? afterObj[key] : "";
+				                        locale = key;
+				                        if (key.indexOf("_") > -1) {
+				                            locale = key.substring(3,5).toLowerCase();
+				                        }
+				                        html += '      <tr '+(count%2 == 0 ? '' : 'class="grey"')+'><td>' + prop.title +
+				                        ' <img class="icon16_11" src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/flags/' + locale + '.png" /></td>';
+				                        html += '      <td> </td>';
+				                        html += '      <td>' + afterValue + '</td></tr>';
+				                        count++;
+				                    }
+				                });
+				            }
+				        } else if (hasAfter) {
+				            var afterObj = isAfterArray ? (after.length > 0 ? after[0] : {}) : after;
+				            html += '      <td> </td>';
+				            Object.keys(afterObj).forEach(function(key) {
+				                if (afterObj[key]) {
+				                    locale = key;
+				                    if (key.indexOf("_") > -1) {
+				                        locale = key.substring(3,5).toLowerCase();
+				                    }
+				                    html += '      <tr '+(count%2 == 0 ? '' : 'class="grey"')+'><td>' + prop.title +
+				                    ' <img class="icon16_11" src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/flags/' + locale + '.png" /></td>';
+				                    html += '      <td> </td>';
+				                    html += '      <td>' + afterObj[key] + '</td></tr>';
+				                    count++;
+				                }
+				            });
+				        } else {
+				            html += '      <tr '+(count%2 == 0 ? '' : 'class="grey"')+'><td>' + prop.title + '</td>';
+				            html += '      <td>' + (before != null ? before : ' ') + '</td>';
+				            html += '      <td>' + (after != null ? after : ' ') + '</td></tr>';
+				            count++;
+				        }
+				    });
+				    html += '    </tbody></table></div>';
 				}
 
 				if(data.content){

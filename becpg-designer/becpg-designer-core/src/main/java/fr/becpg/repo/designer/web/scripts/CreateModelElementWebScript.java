@@ -98,10 +98,13 @@ public class CreateModelElementWebScript extends DeclarativeWebScript  {
 	 * {@inheritDoc}
 	 *
 	 * Retrieve model Tree
-	 *
+	 *<pre>
+	 *{@code
 	 *    <url>/becpg/designer/create/element?nodeRef={nodeRef}</url>
 	 *	  <url>/becpg/designer/dnd/{palette_el_id}?nodeRef={nodeRef}</url>
 	 *	  <url>/becpg/designer/dnd/{store_type}/{store_id}/{id}?nodeRef={nodeRef}</url>
+	 *}
+	 *</pre>
 	 */
 	@Override
 	protected Map<String, Object> executeImpl(WebScriptRequest req, Status status, Cache cache){

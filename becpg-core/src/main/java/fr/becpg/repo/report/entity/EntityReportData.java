@@ -58,18 +58,38 @@ public class EntityReportData {
 	}
 	
 	
+	/**
+	 * <p>Getter for the field <code>images</code>.</p>
+	 *
+	 * @return a {@link java.util.Set} object
+	 */
 	public Set<EntityImageInfo> getImages() {
 		return images;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>images</code>.</p>
+	 *
+	 * @param images a {@link java.util.Set} object
+	 */
 	public void setImages(Set<EntityImageInfo> images) {
 		this.images = images;
 	}
 
+	/**
+	 * <p>Getter for the field <code>logs</code>.</p>
+	 *
+	 * @return a {@link java.util.Set} object
+	 */
 	public Set<ReportableError> getLogs() {
 		return logs;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>logs</code>.</p>
+	 *
+	 * @param logs a {@link java.util.Set} object
+	 */
 	public void setLogs(Set<ReportableError> logs) {
 		this.logs = logs;
 	}

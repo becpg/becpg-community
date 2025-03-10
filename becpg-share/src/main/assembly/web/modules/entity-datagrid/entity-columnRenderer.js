@@ -181,6 +181,40 @@
 
 			});
 
+			this.registerRenderer(
+			    ["bcpg:httpLink1", "bcpg:httpLink2", "bcpg:httpLink3", "bcpg:httpLink4", "bcpg:httpLink5"],
+			    function(oRecord, data, label, scope, z, zz, elCell, oColumn) {
+			        const regex = /"([^"]+)":(https?:\/\/[^\s]+)|(?:https?:\/\/[^\s]+)/g;
+
+			        // Check if data.value exists and is not empty
+			        if (typeof data.value === 'undefined' || data.value === null || data.value === "") {
+			            return "";
+			        }
+
+			        var match = regex.exec(data.value);
+			        var outputHTML = "";
+
+			        if (match) {
+			            var anchorText = "";
+			            var href = "";
+
+			            if (match[1] && match[2]) {
+			                // If it's a markdown-style link
+			                anchorText = match[1];  // Label
+			                href = match[2];        // URL
+			            } else {
+			                // For a simple URL match
+			                anchorText = match[0];
+			                href = match[0];
+			            }
+			            ret = '<span class="link"><a href="'+href+'" target="_blank" rel="noopener noreferrer">'+anchorText+' </a></span>';
+			        }
+
+			        return ret;
+			    }
+			);
+
+
 
 		},
 
@@ -736,7 +770,14 @@
 					field = column.fieldRef;
 				}
 
-
+				switch (dataType.toLowerCase()) {
+					case "datetime":
+					case "date":
+						validValue = Alfresco.util.formatDate(validValue, "yyyy-mm-dd");
+						break;
+					default:
+						break;
+				}
 
 				Alfresco.util.Ajax.jsonPost({
 					url: saveFieldUrl,

@@ -66,6 +66,7 @@ public interface EntityVersionService {
 	 *
 	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param shouldCreate a boolean
 	 */
 	NodeRef getVersionHistoryNodeRef(NodeRef entityNodeRef, boolean shouldCreate);
 
@@ -103,6 +104,14 @@ public interface EntityVersionService {
 	 */
 	NodeRef createVersion(NodeRef entityNodeRef, Map<String, Serializable> versionProperties);
 
+	/**
+	 * <p>createVersion.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param versionProperties a {@link java.util.Map} object
+	 * @param effectiveDate a {@link java.util.Date} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	NodeRef createVersion(NodeRef entityNodeRef, Map<String, Serializable> versionProperties, Date effectiveDate);
 
 	/**
@@ -141,6 +150,7 @@ public interface EntityVersionService {
 	 * @param newEntityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param versionType a {@link org.alfresco.service.cmr.version.VersionType} object.
 	 * @param description a {@link java.lang.String} object.
+	 * @param effectiveDate a {@link java.util.Date} object
 	 */
 	void impactWUsed(NodeRef newEntityNodeRef, VersionType versionType, String description, Date effectiveDate);
 
@@ -174,6 +184,7 @@ public interface EntityVersionService {
 	 *
 	 * @param branchNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param newEffectivity a {@link java.util.Date} object
 	 */
 	NodeRef mergeBranch(NodeRef branchNodeRef, Date newEffectivity);
 
@@ -185,21 +196,67 @@ public interface EntityVersionService {
 	 */
 	void updateLastVersionLabel(NodeRef entityNodeRef, String versionLabel);
 
-	boolean isVersion(NodeRef entity1);
-
+	/**
+	 * <p>extractVersion.</p>
+	 *
+	 * @param entity1 a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	NodeRef extractVersion(NodeRef entity1);
 	
+	/**
+	 * <p>createInitialVersionWithProps.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param before a {@link java.util.Map} object
+	 */
 	void createInitialVersionWithProps(NodeRef entityNodeRef, Map<QName, Serializable> before);
 
+	/**
+	 * <p>revertVersion.</p>
+	 *
+	 * @param versionNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @throws java.lang.IllegalAccessException if any.
+	 */
 	NodeRef revertVersion(NodeRef versionNodeRef) throws IllegalAccessException;
 
+	/**
+	 * <p>createInitialVersion.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param effectiveDate a {@link java.util.Date} object
+	 */
 	void createInitialVersion(NodeRef entityNodeRef, Date effectiveDate);
 
+	/**
+	 * <p>convertVersion.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	NodeRef convertVersion(NodeRef nodeRef);
 
+	/**
+	 * <p>findOldVersionWUsed.</p>
+	 *
+	 * @param originalEntity a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param visited a {@link java.util.Set} object
+	 * @param ignoredItems a {@link java.util.List} object
+	 * @param maxProcessedNodes a int
+	 * @param currentCount a {@link java.util.concurrent.atomic.AtomicInteger} object
+	 * @param path a {@link java.lang.String} object
+	 * @return a {@link java.util.Set} object
+	 */
 	Set<NodeRef> findOldVersionWUsed(NodeRef originalEntity, Set<NodeRef> visited, List<NodeRef> ignoredItems,
 			int maxProcessedNodes, AtomicInteger currentCount, String path);
 
+	/**
+	 * <p>findOldVersionWUsed.</p>
+	 *
+	 * @param sourceEntity a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.util.Set} object
+	 */
 	Set<NodeRef> findOldVersionWUsed(NodeRef sourceEntity);
 
 }

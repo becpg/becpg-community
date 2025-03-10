@@ -37,12 +37,8 @@ import org.alfresco.service.transaction.TransactionService;
 import org.alfresco.util.TempFileProvider;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.JSONException;
@@ -64,6 +60,7 @@ import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.helper.AttachmentHelper;
 import fr.becpg.repo.helper.ExcelHelper;
+import fr.becpg.repo.helper.ExcelHelper.ExcelCellStyles;
 import fr.becpg.repo.helper.ExcelHelper.ExcelFieldTitleProvider;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
@@ -285,6 +282,16 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 
 	}
 
+	/**
+	 * <p>createExcelFile.</p>
+	 *
+	 * @param extractedItems a {@link fr.becpg.repo.entity.datalist.PaginatedExtractedItems} object
+	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object
+	 * @param handler a {@link fr.becpg.repo.entity.datalist.impl.ExcelDataListDownloadExporter} object
+	 * @param outputStream a {@link java.io.OutputStream} object
+	 * @return a boolean
+	 * @throws java.io.IOException if any.
+	 */
 	public boolean createExcelFile(PaginatedExtractedItems extractedItems, DataListFilter dataListFilter,
 			@Nullable ExcelDataListDownloadExporter handler, OutputStream outputStream) throws IOException {
 
@@ -320,15 +327,12 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 				}
 				XSSFSheet sheet = workbook.createSheet(sheetName);
 
-				XSSFCellStyle style = workbook.createCellStyle();
-
-				style.setFillForegroundColor(ExcelHelper.beCPGHeaderColor());
-				style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-
+				ExcelCellStyles exeCellStyles = new ExcelCellStyles(workbook);
+				
 				int rownum = 0;
 
 				Row headerRow = sheet.createRow(rownum++);
-				headerRow.setRowStyle(style);
+				headerRow.setRowStyle(exeCellStyles.getHeaderStyle());
 				Cell cell = headerRow.createCell(0);
 				cell.setCellValue("MAPPING");
 				cell = headerRow.createCell(1);
@@ -337,7 +341,7 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 				if (type != null) {
 					headerRow = sheet.createRow(rownum++);
 					cell = headerRow.createCell(0);
-					headerRow.setRowStyle(style);
+					headerRow.setRowStyle(exeCellStyles.getHeaderStyle());
 					cell.setCellValue("TYPE");
 					cell = headerRow.createCell(1);
 					cell.setCellValue(type.toPrefixString());
@@ -368,7 +372,7 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 
 				if (nodePath != null) {
 					headerRow = sheet.createRow(rownum++);
-					headerRow.setRowStyle(style);
+					headerRow.setRowStyle(exeCellStyles.getHeaderStyle());
 					cell = headerRow.createCell(0);
 					cell.setCellValue("PATH");
 					cell = headerRow.createCell(1);
@@ -378,7 +382,7 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 				if (entityDictionaryService.isSubClass(dataListFilter.getDataType(), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
 					if ((nodePath != null) && !nodePath.startsWith("/System/")) {
 						headerRow = sheet.createRow(rownum++);
-						headerRow.setRowStyle(style);
+						headerRow.setRowStyle(exeCellStyles.getHeaderStyle());
 						cell = headerRow.createCell(0);
 						cell.setCellValue("IMPORT_TYPE");
 						cell = headerRow.createCell(1);
@@ -387,7 +391,7 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 
 					if (entityType != null) {
 						headerRow = sheet.createRow(rownum++);
-						headerRow.setRowStyle(style);
+						headerRow.setRowStyle(exeCellStyles.getHeaderStyle());
 						cell = headerRow.createCell(0);
 						cell.setCellValue("ENTITY_TYPE");
 						cell = headerRow.createCell(1);
@@ -395,7 +399,7 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 					}
 
 					headerRow = sheet.createRow(rownum++);
-					headerRow.setRowStyle(style);
+					headerRow.setRowStyle(exeCellStyles.getHeaderStyle());
 					cell = headerRow.createCell(0);
 					cell.setCellValue("DELETE_DATALIST");
 					cell = headerRow.createCell(1);
@@ -406,14 +410,14 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 				}
 
 				headerRow = sheet.createRow(rownum++);
-				headerRow.setRowStyle(style);
+				headerRow.setRowStyle(exeCellStyles.getHeaderStyle());
 				cell = headerRow.createCell(0);
 				cell.setCellValue("STOP_ON_FIRST_ERROR");
 				cell = headerRow.createCell(1);
 				cell.setCellValue("false");
 
 				headerRow = sheet.createRow(rownum++);
-				headerRow.setRowStyle(style);
+				headerRow.setRowStyle(exeCellStyles.getHeaderStyle());
 
 				sheet.groupRow(0, rownum);
 				sheet.setRowGroupCollapsed(0, true);
@@ -430,22 +434,15 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 				cell.setCellValue("COLUMNS");
 				cell = labelRow.createCell(cellnum++);
 				cell.setCellValue("#");
-				cell.setCellStyle(style);
+				cell.setCellStyle(exeCellStyles.getHeaderStyle());
 
-				XSSFCellStyle headerStyle = workbook.createCellStyle();
-
-				headerStyle.setFillForegroundColor(ExcelHelper.beCPGHeaderTextColor());
-				headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-				XSSFFont font = workbook.createFont();
-				font.setColor(HSSFColorPredefined.WHITE.getIndex());
-				headerStyle.setFont(font);
 
 				if (bcpgCode != null) {
 					cell = headerRow.createCell(cellnum);
 					cell.setCellValue("bcpg:code");
 					cell = labelRow.createCell(cellnum++);
 					cell.setCellValue(I18NUtil.getMessage("message.becpg.export.entity"));
-					cell.setCellStyle(headerStyle);
+					cell.setCellStyle(exeCellStyles.getHeaderTextStyle());
 				}
 
 				Row row = null;
@@ -454,7 +451,7 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 					List<AttributeExtractorStructure> fields = extractedItems.getComputedFields().stream().filter(titleProvider::isAllowed)
 							.collect(Collectors.toList());
 
-					ExcelHelper.appendExcelHeader(fields, null, null, headerRow, labelRow, headerStyle, sheet, cellnum, titleProvider,
+					ExcelHelper.appendExcelHeader(fields, null, null, headerRow, labelRow, exeCellStyles, sheet, cellnum, titleProvider,
 							MLTextHelper.shouldExtractMLText() ? MLTextHelper.getSupportedLocales() : null);
 
 					List<Map<String, Object>> items = null;
@@ -474,7 +471,7 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 
 							cell = row.createCell(cellnum++);
 							cell.setCellValue("VALUES");
-							cell.setCellStyle(style);
+							cell.setCellStyle(exeCellStyles.getHeaderStyle());
 
 							if (bcpgCode != null) {
 								cell = row.createCell(cellnum++);
@@ -482,7 +479,7 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 							}
 
 							ExcelHelper.appendExcelField(fields, null, item, sheet, row, cellnum, rownum,
-									MLTextHelper.shouldExtractMLText() ? MLTextHelper.getSupportedLocales() : null);
+									MLTextHelper.shouldExtractMLText() ? MLTextHelper.getSupportedLocales() : null,exeCellStyles);
 
 							if (handler != null) {
 								handler.updateStatus();
@@ -505,7 +502,7 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 
 				// Extract extras sheets
 				if (extractedExtrasItems != null) {
-					ExcelHelper.appendExcelHeader(extractedExtrasItems.getComputedFields(), null, null, headerRow, labelRow, headerStyle, sheet,
+					ExcelHelper.appendExcelHeader(extractedExtrasItems.getComputedFields(), null, null, headerRow, labelRow, exeCellStyles, sheet,
 							cellnum, titleProvider, MLTextHelper.shouldExtractMLText() ? MLTextHelper.getSupportedLocales() : null);
 
 					for (Map<String, Object> item : extractedExtrasItems.getPageItems()) {
@@ -514,7 +511,7 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 
 						cell = row.createCell(cellnum++);
 						cell.setCellValue("VALUES");
-						cell.setCellStyle(style);
+						cell.setCellStyle(exeCellStyles.getHeaderStyle());
 
 						if (bcpgCode != null) {
 							cell = row.createCell(cellnum++);
@@ -522,7 +519,7 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 						}
 
 						ExcelHelper.appendExcelField(extractedExtrasItems.getComputedFields(), null, item, sheet, row, cellnum, rownum,
-								MLTextHelper.shouldExtractMLText() ? MLTextHelper.getSupportedLocales() : null);
+								MLTextHelper.shouldExtractMLText() ? MLTextHelper.getSupportedLocales() : null,exeCellStyles);
 
 					}
 				}

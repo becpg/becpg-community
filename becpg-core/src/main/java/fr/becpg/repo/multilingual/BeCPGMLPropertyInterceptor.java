@@ -25,7 +25,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 
@@ -50,7 +49,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.repo.helper.MLTextHelper;
-import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * Interceptor to filter out multilingual text properties from getter methods and
@@ -86,25 +84,6 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
     
     private NamespaceService namespaceService;
     
-    private SystemConfigurationService systemConfigurationService;
-    
-    /**
-     * <p>Setter for the field <code>systemConfigurationService</code>.</p>
-     *
-     * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
-     */
-    public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
-		this.systemConfigurationService = systemConfigurationService;
-	}
-    
-    /**
-     * <p>getDisabledMLTextFields.</p>
-     *
-     * @return a {@link java.lang.String} object
-     */
-    public String getDisabledMLTextFields() {
-		return systemConfigurationService.confValue("beCPG.multilinguale.disabledMLTextFields");
-	}
 
 	/**
 	 * <p>Setter for the field <code>namespaceService</code>.</p>
@@ -114,14 +93,15 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
+	
 
-    /**
-     * <p>isMLAware.</p>
-     *
-     * @return Returns <tt>true</tt> if the current thread has marked itself
-     *      as being able to handle {@link MLText d:mltext} types properly.
-     */
-    static public boolean isMLAware()
+	/**
+	 * <p>isMLAware.</p>
+	 *
+	 * @return Returns true if the current thread has marked itself
+	 *      as being able to handle {@link MLText d:mltext} types properly.
+	 */
+	public static boolean isMLAware()
     {
        return MLPropertyInterceptor.isMLAware();
     }
@@ -155,6 +135,9 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
     {
         this.dictionaryService = dictionaryService;
     }
+    
+    
+    
     
     /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
@@ -199,7 +182,7 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
             NodeRef pivotNodeRef = getPivotNodeRef(nodeRef);
             
             Map<QName, Serializable> properties = (Map<QName, Serializable>) invocation.proceed();
-            Map<QName, Serializable> convertedProperties = new HashMap<QName, Serializable>(properties.size() * 2);
+            Map<QName, Serializable> convertedProperties = new HashMap<>(properties.size() * 2);
             // Check each return value type
             for (Map.Entry<QName, Serializable> entry : properties.entrySet())
             {
@@ -362,20 +345,15 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
             Serializable outboundValue)
     {
         Serializable ret = null;
-        if (outboundValue == null)
-        {
-           ret = null;
-        }
-        if (outboundValue instanceof MLText)
+        if (outboundValue instanceof MLText mlText)
         {
             // It is MLText
-            MLText mlText = (MLText) outboundValue;
             ret = MLTextHelper.getClosestValue(mlText, getLocale(propertyQName));
         }
         else if(isCollectionOfMLText(outboundValue))
         {
             Collection<?> col = (Collection<?>)outboundValue; 
-            ArrayList<String> answer = new ArrayList<String>(col.size());
+            ArrayList<String> answer = new ArrayList<>(col.size());
             Locale closestLocale = getClosestLocale(col);
             for(Object o : col)
             {
@@ -442,12 +420,12 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
      */
     public Locale getClosestLocale(Collection<?> collection)
     {
-        if (collection.size() == 0)
+        if (collection.isEmpty())
         {
             return null;
         }
         // Use the available keys as options
-        HashSet<Locale> locales = new HashSet<Locale>();
+        HashSet<Locale> locales = new HashSet<>();
         for(Object o : collection)
         {
             MLText mlText = (MLText)o;
@@ -507,7 +485,7 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
             NodeRef nodeRef,
             NodeRef pivotNodeRef)
     {
-        Map<QName, Serializable> convertedProperties = new HashMap<QName, Serializable>(newProperties.size() * 2);
+        Map<QName, Serializable> convertedProperties = new HashMap<>(newProperties.size() * 2);
         for (Map.Entry<QName, Serializable> entry : newProperties.entrySet())
         {
              QName propertyQName = entry.getKey();
@@ -563,7 +541,7 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
                     {
                         currentValue = nodeService.getProperty(nodeRef, propertyQName);
                     }
-                    ArrayList<MLText> returnMLList = new ArrayList<MLText>();
+                    ArrayList<MLText> returnMLList = new ArrayList<>();
                     if (currentValue != null)
                     {
                         Collection<MLText> currentCollection = DefaultTypeConverter.INSTANCE.getCollection(MLText.class, currentValue);  
@@ -587,7 +565,7 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
                         {
                             newMLValue = new MLText();
                         }
-                        replaceTextForLanguage(getLocale(propertyQName ), current, newMLValue);
+                        MLTextHelper.replaceTextForLanguage(getLocale(propertyQName ), current, newMLValue);
                         if(count < returnMLList.size())
                         {
                             returnMLList.set(count, newMLValue);
@@ -611,10 +589,10 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
                         returnMLList.set(i, newMLValue);
                     }
                     // tidy up empty locales
-                    ArrayList<MLText> tidy = new ArrayList<MLText>();
+                    ArrayList<MLText> tidy = new ArrayList<>();
                     for(MLText mlText : returnMLList)
                     {
-                        if(mlText.keySet().size() > 0)
+                        if(!mlText.keySet().isEmpty())
                         {
                             tidy.add(mlText);
                         }
@@ -639,7 +617,7 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
                 // Force the inbound value to be a String (it isn't MLText)
                 String inboundValueStr = DefaultTypeConverter.INSTANCE.convert(String.class, inboundValue);
                 // Update the text for the appropriate language.
-                replaceTextForLanguage(getLocale(propertyQName ), inboundValueStr, returnMLValue);
+                MLTextHelper.replaceTextForLanguage(getLocale(propertyQName ), inboundValueStr, returnMLValue);
                 // Done
                 ret = returnMLValue;
             }
@@ -655,7 +633,7 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
            if (EqualsHelper.nullSafeEquals(pivotContentUrl, emptyContentUrl))
            {
               // They are a match.  So the empty translation must be reset to it's original value
-              ret = (ContentData) nodeService.getProperty(nodeRef, ContentModel.PROP_CONTENT);
+              ret = nodeService.getProperty(nodeRef, ContentModel.PROP_CONTENT);
            }
            else
            {
@@ -679,41 +657,11 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
     }
 
     private Locale getLocale( QName propertyQName) {
-    	String disabledMLTextFields = getDisabledMLTextFields();
-    	if(disabledMLTextFields !=null && !disabledMLTextFields.isBlank()
-    			&& propertyQName!=null && disabledMLTextFields.contains(propertyQName.toPrefixString(namespaceService))){
+    	if(propertyQName!=null && MLTextHelper.isDisabledMLTextField(propertyQName.toPrefixString(namespaceService))){
     		return Locale.getDefault();
     	}
 		return I18NUtil.getContentLocale();
 	}
 
-	/**
-     * Replace any text in mlText having the same language (but any variant) as contentLocale
-     * with updatedText keyed by the language of contentLocale. This ensures that the mlText
-     * will have no more than one entry for the particular language.
-     * 
-     * @param contentLocale Locale
-     * @param updatedText String
-     * @param mlText MLText
-     */
-    private void replaceTextForLanguage(Locale contentLocale, String updatedText, MLText mlText)
-    {
-    	
-    	Locale  toSaveUnderLocale = MLTextHelper.getSupportedLocale(contentLocale);
-    	
-    	
-    	 Iterator<Locale> locales = mlText.getLocales().iterator();
-	        while (locales.hasNext())
-	        {
-	            Locale locale = locales.next();
-	            if (locale.getLanguage().equals(toSaveUnderLocale.getLanguage()) && (!MLTextHelper.isSupportedLocale(locale) ) )
-	            {
-	                locales.remove();
-	            }
-	        }
-	        
-	     // Add the new value for the specific language
-	       mlText.addValue(toSaveUnderLocale, updatedText);
-	              
-    }
+	
 }

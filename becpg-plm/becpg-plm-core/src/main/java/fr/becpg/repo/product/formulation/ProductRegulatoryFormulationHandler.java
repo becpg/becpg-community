@@ -56,6 +56,11 @@ public class ProductRegulatoryFormulationHandler extends FormulationBaseHandler<
 	}
 
 	private void computeRegulatoryResults(RegulatoryEntity regulatoryEntity, List<ReqCtrlListDataItem> reqCtrlList) {
+		boolean isProhibited = false;
+		if (regulatoryEntity instanceof RegulatoryListDataItem) {
+			((RegulatoryListDataItem) regulatoryEntity).setLimitingIngredients(null);
+			((RegulatoryListDataItem) regulatoryEntity).setMaximumDosage(null);
+		}
 		List<String> regulatoryIds = extractRegulatoryIds(regulatoryEntity);
 		for (String regulatoryId : regulatoryIds) {
 			List<ReqCtrlListDataItem> matchingRequirements = reqCtrlList.stream().filter(req -> regulatoryId.equals(req.getRegulatoryCode())).collect(Collectors.toList());
@@ -65,15 +70,20 @@ public class ProductRegulatoryFormulationHandler extends FormulationBaseHandler<
 					((RegulatoryListDataItem) regulatoryEntity).setLimitingIngredients(null);
 					((RegulatoryListDataItem) regulatoryEntity).setMaximumDosage(null);
 				}
+				return;
 			} else {
 				List<ReqCtrlListDataItem> maximumDosageRequirements = getMaximumDosageRequirements(matchingRequirements);
 				if (!maximumDosageRequirements.isEmpty()) {
 					regulatoryEntity.setRegulatoryResult(RegulatoryResult.PROHIBITED);
 					if (regulatoryEntity instanceof RegulatoryListDataItem) {
-						((RegulatoryListDataItem) regulatoryEntity).setLimitingIngredients(maximumDosageRequirements.stream().map(r -> r.getCharact()).collect(Collectors.toList()));
-						((RegulatoryListDataItem) regulatoryEntity).setMaximumDosage(maximumDosageRequirements.get(0).getReqMaxQty());
+						Double reqMaxQty = maximumDosageRequirements.get(0).getReqMaxQty() == null ? 0d : maximumDosageRequirements.get(0).getReqMaxQty();
+						if (((RegulatoryListDataItem) regulatoryEntity).getMaximumDosage() == null || reqMaxQty < ((RegulatoryListDataItem) regulatoryEntity).getMaximumDosage()) {
+							((RegulatoryListDataItem) regulatoryEntity).setMaximumDosage(reqMaxQty);
+							((RegulatoryListDataItem) regulatoryEntity).setLimitingIngredients(maximumDosageRequirements.stream().map(r -> r.getCharact()).collect(Collectors.toList()));
+						}
 					}
-				} else {
+					isProhibited = true;
+				} else if (!isProhibited) {
 					if (regulatoryEntity instanceof RegulatoryListDataItem) {
 						((RegulatoryListDataItem) regulatoryEntity).setLimitingIngredients(null);
 						((RegulatoryListDataItem) regulatoryEntity).setMaximumDosage(null);
@@ -113,15 +123,15 @@ public class ProductRegulatoryFormulationHandler extends FormulationBaseHandler<
 	private List<ReqCtrlListDataItem> getMaximumDosageRequirements(List<ReqCtrlListDataItem> reqList) {
 		double minValue = Double.POSITIVE_INFINITY;
 		for (ReqCtrlListDataItem req : reqList) {
-			if (RequirementType.Forbidden.equals(req.getReqType())
-					&& RequirementDataType.Specification.equals(req.getReqDataType()) && req.getReqMaxQty() != null
-					&& req.getReqMaxQty() < minValue) {
-				minValue = req.getReqMaxQty();
+			if (RequirementType.Forbidden.equals(req.getReqType()) && RequirementDataType.Specification.equals(req.getReqDataType())
+					&& (req.getReqMaxQty() == null || req.getReqMaxQty() < minValue)) {
+				minValue = req.getReqMaxQty() == null ? 0d : req.getReqMaxQty();
 			}
 		}
-		
 		double finalMinValue = minValue;
-		return reqList.stream().filter(r -> r.getReqMaxQty() != null && r.getReqMaxQty() == finalMinValue).collect(Collectors.toList());
+		return reqList.stream().filter(r -> RequirementType.Forbidden.equals(r.getReqType())
+				&& RequirementDataType.Specification.equals(r.getReqDataType()) && (r.getReqMaxQty() == null || r.getReqMaxQty() == finalMinValue))
+				.collect(Collectors.toList());
 	}
 
 }

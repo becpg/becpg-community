@@ -29,8 +29,8 @@ public interface ExpressionService {
 	 *
 	 * @param condition a {@link java.lang.String} object
 	 * @param formulatedEntity a T object
-	 * @param <T> a T class
 	 * @return a {@link java.lang.Object} object
+	 * @param <T> a T class
 	 */
 	<T extends RepositoryEntity> Object eval(String condition, T formulatedEntity);
 

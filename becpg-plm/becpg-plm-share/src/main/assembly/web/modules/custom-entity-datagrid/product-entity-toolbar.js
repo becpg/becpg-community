@@ -404,7 +404,8 @@
 					(asset.name === "compoList" || asset.name === "processList" || asset.name === "packagingList"
 						|| asset.name === "ingLabelingList" || asset.name === "ingRegulatoryList" || asset.name === "nutList" || asset.name === "labelClaimList"
 						|| asset.name === "costList" || asset.name === "physicoChemList" || asset.name === "ingList" || asset.name === "allergenList"
-						|| asset.name === "priceList" || asset.name === "packMaterialList" || asset.name === "lcaList" || asset.name === "regulatoryList"
+						|| asset.name === "priceList" || asset.name === "hazardClassificationList" || asset.name === "svhcList"
+                         || asset.name === "packMaterialList" || asset.name === "lcaList" || asset.name === "regulatoryList" || asset.name === 'scoreList'
 						|| asset.name === "View-properties") && beCPG.util.contains(entity.aspects,"bcpg:entityScoreAspect") ;
 			},
 			createWidget: function(containerDiv, instance) {
@@ -544,7 +545,7 @@
 					}
 				});
 
-
+		var assetRef;
 		YAHOO.Bubbling
 			.fire(
 				"registerToolbarButtonAction",
@@ -552,6 +553,7 @@
 					actionName: "import-nuts",
 					right: false,
 					evaluate: function(asset, entity) {
+						assetRef = asset;
 						return (entity != null && entity.userAccess.edit && asset.name != null && asset.name === "nutList" && beCPG.util.contains(entity.aspects,
 							"bcpg:productAspect"));
 
@@ -561,7 +563,7 @@
 
 						nutImporter.setOptions({
 							width: this.options.formWidth,
-							templateUrl: Alfresco.constants.URL_SERVICECONTEXT + "modules/nut-database/nut-importer?entityNodeRef=" + this.options.entityNodeRef + "&nutsCompare=true",
+							templateUrl: Alfresco.constants.URL_SERVICECONTEXT + "modules/nut-database/nut-importer?entityNodeRef=" + this.options.entityNodeRef + "&nutsCompare=true&writePermission=" + assetRef.permissions.editChildren,
 							actionUrl: Alfresco.constants.PROXY_URI + "becpg/product/nutdatabaseimport?dest=" + this.options.entityNodeRef + "&onlyNuts=true",
 							validateOnSubmit: false,
 							firstFocus: this.id + "-nutImporter-supplier-field",

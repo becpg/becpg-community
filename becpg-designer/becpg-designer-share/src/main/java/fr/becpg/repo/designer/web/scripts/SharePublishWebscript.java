@@ -19,24 +19,11 @@ package fr.becpg.repo.designer.web.scripts;
 
 import java.io.IOException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.json.JSONObject;
-import org.springframework.extensions.surf.RequestContext;
-import org.springframework.extensions.surf.ServletUtil;
-import org.springframework.extensions.surf.exception.ConnectorServiceException;
-import org.springframework.extensions.surf.support.ThreadLocalRequestContext;
 import org.springframework.extensions.webscripts.AbstractWebScript;
-import org.springframework.extensions.webscripts.Status;
-import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
-import org.springframework.extensions.webscripts.connector.Connector;
-import org.springframework.extensions.webscripts.connector.ConnectorContext;
-import org.springframework.extensions.webscripts.connector.HttpMethod;
-import org.springframework.extensions.webscripts.connector.Response;
 
-import fr.becpg.repo.designer.config.SharePublishHelper;
+import fr.becpg.repo.designer.service.SharePublishService;
 
 /**
  * Publish config files in share
@@ -45,57 +32,27 @@ import fr.becpg.repo.designer.config.SharePublishHelper;
  * @version $Id: $Id
  */
 public class SharePublishWebscript extends AbstractWebScript {
-
-	private static final String PUBLISHED_CONFIG_NAME = "publishedConfigName";
-
-	private static final Log logger = LogFactory.getLog(SharePublishWebscript.class);
-
-	private String configPath;
-
-	public void setConfigPath(String configPath) {
-		this.configPath = configPath;
+	
+	private SharePublishService sharePublishService;
+	
+	/**
+	 * <p>Setter for the field <code>sharePublishService</code>.</p>
+	 *
+	 * @param sharePublishService a {@link fr.becpg.repo.designer.service.SharePublishService} object
+	 */
+	public void setSharePublishService(SharePublishService sharePublishService) {
+		this.sharePublishService = sharePublishService;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
 
 		String nodeRef = req.getParameter("nodeRef");
-		
 		Boolean writeXml = Boolean.parseBoolean(req.getParameter("writeXml"));
-		
 		String fileName = req.getParameter("fileName");
 		
-		RequestContext rc = ThreadLocalRequestContext.getRequestContext();
-		Connector conn;
-		try {
-			conn = rc.getServiceRegistry().getConnectorService().getConnector("alfresco", rc.getUserId(), ServletUtil.getSession());
-			ConnectorContext ctx = new ConnectorContext();
-			ctx.setMethod(HttpMethod.POST);
-			Response response = conn.call("/becpg/designer/model/publish" + "?nodeRef=" + nodeRef + "&writeXml=" + writeXml, ctx);
-			if (response.getStatus().getCode() == Status.STATUS_OK) {
-
-				JSONObject jsonResponse = new JSONObject(response.getResponse());
-				
-				
-				if (jsonResponse.has("type")) {
-					if (jsonResponse.getString("type").equals("config")) {
-						if (jsonResponse.has(PUBLISHED_CONFIG_NAME)) {
-							SharePublishHelper.unpublishConfig(configPath, jsonResponse.getString(PUBLISHED_CONFIG_NAME));
-						}
-						SharePublishHelper.publishConfig(configPath, fileName, jsonResponse);
-					}
-				} else {
-					throw new WebScriptException("Response has no type");
-				}
-				
-				
-			} else {
-				throw new WebScriptException("Response status is not OK");
-			}
-		} catch (ConnectorServiceException e) {
-			logger.error(e.getMessage(), e);
-			throw new WebScriptException(e.getMessage());
-		}
+		sharePublishService.publishDocument(nodeRef, fileName, writeXml);
 
 	}
 

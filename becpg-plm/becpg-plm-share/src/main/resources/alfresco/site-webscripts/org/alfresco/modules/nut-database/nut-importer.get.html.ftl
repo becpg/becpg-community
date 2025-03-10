@@ -22,6 +22,7 @@
 						   </div>
 					   </div>
 					</div>
+					
 		          <div class="form-field">
 		     			<label for="${el}-entities">${msg("label.entities")}:<span class="mandatory-indicator">*</span></label>     
 						<div id="${el}-entities" class="object-finder">        
@@ -37,6 +38,27 @@
 						   </div>
 					   </div>
 					</div>
+				</div>	
+				 <div class="set">	
+					<div class="form-field">
+					      <input id="${el}-addAsReferenceNutrient" type="hidden" name="addAsReferenceNutrient" value="false">
+					      <input class="formsCheckBox" id="${el}-addAsReferenceNutrient-entry" type="checkbox" tabindex="0" name="-" onchange="javascript:YAHOO.util.Dom.get(&quot;${el}-addAsReferenceNutrient&quot;).value=YAHOO.util.Dom.get(&quot;${el}-addAsReferenceNutrient-entry&quot;).checked;">
+					      <label for="${el}-addAsReferenceNutrient-entry" class="checkbox">${msg("label.addAsReferenceNutrient")}</label>
+					</div>		   
+					
+					<#assign h = config.scoped["Languages"]["languages"]>
+					<div class="form-field">
+					   <label for="${el}-referenceNutrientLocales-entry">${msg("label.referenceNutrientLocales")}</label>
+					   <input id="${el}-referenceNutrientLocales" type="hidden" name="referenceNutrientLocales" value="">
+					   <select id="${el}-referenceNutrientLocales-entry" name="-" multiple="multiple" size="5" index="0" onchange="javascript:Alfresco.util.updateMultiSelectListValue('${el}-referenceNutrientLocales-entry', '${el}-referenceNutrientLocales', false);">
+					      <#list h.getChildren("language") as language>
+					         <#assign key = language.getAttribute("locale")>
+					         <option value="${key}">${msg("locale.name.${key}")}</option>
+					      </#list>             
+					   </select>
+					</div>
+
+
 				</div>
 			</div>
          <div class="bdft">
@@ -47,7 +69,9 @@
          			</span>
          		</span>
          	</#if>
-         	<input type="button" id="${el}-ok" value="<#if args.nutsCompare??>${msg("button.load")}<#else>${msg("button.ok")}</#if>" tabindex="0" />
+         	<#if args.writePermission??>
+         		<input type="button" id="${el}-ok" value="<#if args.nutsCompare??>${msg("button.load")}<#else>${msg("button.ok")}</#if>" tabindex="0" />
+     		</#if>
             <input type="button" id="${el}-cancel" value="${msg("button.cancel")}" tabindex="0" />
          </div>
       </form>

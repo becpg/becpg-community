@@ -13,16 +13,21 @@ function main() {
 		"beCPG.datalist.effectiveFilterEnabled",
 		"beCPG.spel.security.authorizedTypes",
 		"beCPG.copyOrBranch.propertiesToReset",
+		"beCPG.copyOrBranch.typesToReset",
 		"mail.logo.url",
 		"beCPG.version.cleaner.maxProcessedNodes",
 		"beCPG.remote.rateLimiter.capacity",
         "beCPG.remote.rateLimiter.refillRate",
+        "beCPG.remote.maxResults.limit",
 		"beCPG.security.supplierPermission",
+        "beCPG.solr.enableIndexForTypes",
+        "beCPG.classify.rights.check",
 	].forEach(function(p) {
 				model.sysBeCPGAttributes[p] = { "type": "java.lang.String", "readonly": false, "qname": p, "name": p, "value": bSys.confValue(p), "set": "system" }
 			});
 				
 	[
+        "beCPG.charact.name.format",
 		"beCPG.project.name.format",
 		"beCPG.comparison.name.format",
 		"beCPG.product.name.format",
@@ -30,6 +35,7 @@ function main() {
 		"beCPG.sendToSupplier.entityName.format",
 		"beCPG.sendToSupplier.projectName.format",
 		"beCPG.report.name.format",
+		"beCPG.connector.channel.register.activity",
 	].forEach(function(p) {
 				model.sysBeCPGAttributes[p] = { "type": "java.lang.String", "readonly": false, "qname": p, "name": p, "value": bSys.confValue(p), "set": "format"  }
 			});

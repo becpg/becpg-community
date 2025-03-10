@@ -22,6 +22,8 @@ import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.CheckSumHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
+import fr.becpg.repo.product.data.constraints.RequirementDataType;
+import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
@@ -80,23 +82,26 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 	@Override
 	public List<ReqCtrlListDataItem> checkRequirements(ProductData formulatedProduct, List<ProductSpecificationData> specifications) {
 
-		if (FormulationService.FAST_FORMULATION_CHAINID.equals(formulatedProduct.getFormulationChainId())) {
-			logger.debug("Fast formulation skipping decernis");
+		if (!DecernisService.DECERNIS_CHAIN_ID.equals(formulatedProduct.getFormulationChainId())) {
+			logger.debug("Formulation chain is not decernis");
 			return Collections.emptyList();
 		}
 		
 		if (formulatedProduct.getReformulateCount() != null && !formulatedProduct.getReformulateCount().equals(formulatedProduct.getCurrentReformulateCount())) {
 			logger.debug("Skip decernis in reformulateCount " + formulatedProduct.getCurrentReformulateCount());
+			formulatedProduct.setFormulationChainId(FormulationService.DEFAULT_CHAIN_ID);
 			return Collections.emptyList();
 		}
 		
 		if (!decernisService.isEnabled()) {
 			logger.debug("Decernis service is not enabled");
+			formulatedProduct.setFormulationChainId(FormulationService.DEFAULT_CHAIN_ID);
 			return Collections.emptyList();
 		}
 		
 		if (DecernisMode.DISABLED.equals(formulatedProduct.getRegulatoryMode())) {
 			logger.debug("Decernis service is disabled for this product");
+			formulatedProduct.setFormulationChainId(FormulationService.DEFAULT_CHAIN_ID);
 			return Collections.emptyList();
 		}
 		
@@ -107,33 +112,45 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 		updateProductFromRegulatoryList(formulatedProduct);
 		
 		boolean isDirty = isDirty(formulatedProduct);
-		if (isDirty) {
-			StopWatch watch = null;
-			try {
-				if (logger.isDebugEnabled()) {
-					watch = new StopWatch();
-					watch.start();
-				}
-				
-				formulatedProduct.setFormulationChainId(DecernisService.DECERNIS_CHAIN_ID);
-				
-				List<ReqCtrlListDataItem> requirements = decernisService.extractRequirements(formulatedProduct);
+		
+		if (!isDirty) {
+			logger.debug("product is not dirty");
+			formulatedProduct.setFormulationChainId(FormulationService.DEFAULT_CHAIN_ID);
+			return Collections.emptyList();
+		}
+		
+		StopWatch watch = null;
+		try {
+			if (logger.isDebugEnabled()) {
+				watch = new StopWatch();
+				watch.start();
+			}
+			
+			List<ReqCtrlListDataItem> requirements = decernisService.extractRequirements(formulatedProduct);
+			if (!hasError(requirements)) {
 				updateChecksums(formulatedProduct);
 				formulatedProduct.setRegulatoryFormulatedDate(new Date());
-				
-				return requirements;
-			} finally {
-				if (logger.isDebugEnabled() && (watch != null)) {
-					watch.stop();
-					logger.debug("Running decernis requirement scanner in: " + watch.getTotalTimeSeconds() + "s");
-				}
+			} else {
+				formulatedProduct.setRequirementChecksum(null);
 			}
-
-		} else {
-			logger.debug("product is not dirty");
+			
+			return requirements;
+		} finally {
+			if (logger.isDebugEnabled() && (watch != null)) {
+				watch.stop();
+				logger.debug("Running decernis requirement scanner in: " + watch.getTotalTimeSeconds() + "s");
+			}
 		}
-
-		return Collections.emptyList();
+	}
+	
+	private boolean hasError(List<ReqCtrlListDataItem> reqList) {
+		for (ReqCtrlListDataItem req : reqList) {
+			if (RequirementType.Forbidden.equals(req.getReqType())
+					&& RequirementDataType.Formulation.equals(req.getReqDataType())) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	private boolean isSameRequirementChecksum(ProductData product) {

@@ -12,8 +12,15 @@
 	<config evaluator="string-compare" condition="BecpgMenu">
 	 	<hideSharedFiles>true</hideSharedFiles>
 	 	<hidePeople>true</hidePeople>
+	 	<hideSiteMembers>supplier-portal,co-contractor-portal</hideSiteMembers>
 	 	<hideMyFiles>false</hideMyFiles>
 	</config>
+	
+   <config evaluator="string-compare" condition="SitePages">
+      <pages>
+         <page id="product-list">product-list?list=product#filter=all</page>
+      </pages>
+   </config>
 	
 	<!-- Deprecated -->
 	<config evaluator="string-compare" condition="Workflow">
@@ -135,12 +142,19 @@
 			<list id="replacementList" index="190" />
 			<list id="certification" index="200"/>
 			<list id="plant" index="210"/>
+			<list id="packMaterialList" index="212"/>
 			<list id="regulatoryList" index="213"/>
 			<list id="ingRegulatoryList" index="214"/>
+			<list id="toxList" index="215"/>
+			<list id="hazardClassificationList" index="216"/>
+			<list id="svhcList" index="217"/>
+			
 
+            <list id="pubChannelList" index="219" />
 			<list id="wUsedList" index="220" />
 			<list id="calculatedCharactList" index="230" />
 			<list id="changeUnitList" index="240" />
+			
 			
 			<!-- Characteristics -->
 			<list id="Ings" index="0"/>
@@ -196,6 +210,7 @@
 			<list id="SortingMalusCriteria" index="220"/> 
 			<list id="LCAUnits" index="230"/>
 			<list id="LcaListMethods" index="240"/>
+			<list id="PackagingFunctionCodes" index="250"/>
 		</lists>
 	</config>
 	
@@ -220,9 +235,9 @@
 				<step id="step6" labelId="becpg.wizard.supplier.labelClaimList.label"
 					titleId="becpg.wizard.supplier.labelClaimList.title" type="entityDataList"
 					listId="labelClaimList" itemId="bcpg:labelClaimList"></step>
-<!-- 				<step id="step7" labelId="becpg.wizard.supplier.microbioList.label" -->
-<!-- 					titleId="becpg.wizard.supplier.microbioList.title" type="entityDataList" -->
-<!-- 					listId="microbioList" itemId="bcpg:microbioList"></step> -->
+ 				<step id="step7" labelId="becpg.wizard.supplier.microbioList.label"
+ 					titleId="becpg.wizard.supplier.microbioList.title" type="entityDataList"
+ 					listId="microbioList" itemId="bcpg:microbioList"></step>
 				<step id="step8" labelId="becpg.wizard.supplier.organoList.label"
 					titleId="becpg.wizard.supplier.organoList.title" type="entityDataList"
 					listId="organoList" itemId="bcpg:organoList" 
@@ -249,9 +264,9 @@
 				<step id="step6" labelId="becpg.wizard.supplier.labelClaimList.label"
 					titleId="becpg.wizard.supplier.labelClaimList.title" type="entityDataList"
 					listId="labelClaimList" itemId="bcpg:labelClaimList"></step>
-<!-- 				<step id="step7" labelId="becpg.wizard.supplier.microbioList.label" -->
-<!-- 					titleId="becpg.wizard.supplier.microbioList.title" type="entityDataList" -->
-<!-- 					listId="microbioList" itemId="bcpg:microbioList"></step> -->
+ 				<step id="step7" labelId="becpg.wizard.supplier.microbioList.label"
+ 					titleId="becpg.wizard.supplier.microbioList.title" type="entityDataList"
+ 					listId="microbioList" itemId="bcpg:microbioList"></step>
 				<step id="step8" labelId="becpg.wizard.supplier.organoList.label"
 					titleId="becpg.wizard.supplier.organoList.title" type="entityDataList"
 					listId="organoList" itemId="bcpg:organoList"
@@ -278,9 +293,9 @@
 				<step id="step6" labelId="becpg.wizard.supplier.labelClaimList.label"
 					titleId="becpg.wizard.supplier.labelClaimList.title" type="entityDataList"
 					listId="labelClaimList" itemId="bcpg:labelClaimList"></step>
-<!-- 				<step id="step7" labelId="becpg.wizard.supplier.microbioList.label" -->
-<!-- 					titleId="becpg.wizard.supplier.microbioList.title" type="entityDataList" -->
-<!-- 					listId="microbioList" itemId="bcpg:microbioList"></step> -->
+ 				<step id="step7" labelId="becpg.wizard.supplier.microbioList.label"
+ 					titleId="becpg.wizard.supplier.microbioList.title" type="entityDataList"
+ 					listId="microbioList" itemId="bcpg:microbioList"></step>
 				<step id="step8" labelId="becpg.wizard.supplier.organoList.label"
 					titleId="becpg.wizard.supplier.organoList.title" type="entityDataList"
 					listId="organoList" itemId="bcpg:organoList"
@@ -317,22 +332,32 @@
 				<step id="step2" labelId="becpg.wizard.supplier.surveyList.label"
 					titleId="becpg.wizard.supplier.surveyList.title" type="survey"
 					listId="surveyList" itemId="survey:surveyList"></step>
-				<!-- <step id="step3" labelId="becpg.wizard.supplier.certification.label"
+				<step id="step3" labelId="becpg.wizard.supplier.certification.label"
 					titleId="becpg.wizard.supplier.certification.title" type="entityDataList"
-					listId="certification" itemId="bcpg:certification"></step> -->
-				<step id="step3" labelId="becpg.wizard.supplier.plant.label"
+					listId="certification" itemId="bcpg:certification"></step>
+				<step id="step4" labelId="becpg.wizard.supplier.plant.label"
 					titleId="becpg.wizard.supplier.plant.title" type="entityDataList"
 					listId="plant" itemId="bcpg:plant"></step>
-				<step id="step4" labelId="becpg.wizard.supplier.contactList.label"
+				<step id="step5" labelId="becpg.wizard.supplier.contactList.label"
 					titleId="becpg.wizard.supplier.contactList.title" type="entityDataList"
 					listId="contactList" itemId="bcpg:contactList" nextStepWebScript="becpg/project/path?nodeRef={nodeRef}&amp;path=SupplierDocuments" ></step>
-				<step id="step5" labelId="becpg.wizard.supplier.documents.label"
+				<step id="step6" labelId="becpg.wizard.supplier.documents.label"
 					titleId="becpg.wizard.supplier.documents.title" type="documents"></step>
 			</wizard>
 			<wizard id="supplier-content">
 				<step id="step1" labelId="becpg.wizard.supplier.documents.label"
 					titleId="becpg.wizard.supplier.documents.title" type="documents"></step>
 			</wizard>
+			
+			<!-- RÉCLAMATION FOURNISSEUR  -->
+			<wizard id="supplier-nc" draft="true" comments="true">
+				<step id="step1" label="Réclamation fournisseur"
+					titleId="becpg.wizard.supplier.properties.title" type="form"
+					formId="supplier" itemId="qa:nc" nextStepWebScript="becpg/project/path?nodeRef={nodeRef}&amp;path=SupplierDocuments" ></step>
+				<step id="step2" labelId="becpg.wizard.supplier.documents.label"
+					titleId="becpg.wizard.supplier.documents.title" type="documents"></step>
+			</wizard>
+			
 			<wizard id="sample-survey">
 				<step id="step1" labelId="becpg.wizard.supplier.properties.label"
 					titleId="becpg.wizard.supplier.properties.title" type="form"
@@ -397,6 +422,11 @@
 					<control-param name="showLink">false</control-param>
 					<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:plant?path=System/Characts/bcpg:entityLists/Plants</control-param>
 				</type>
+				<type name="association:bcpg:laboratory"
+                    template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                    <control-param name="showLink">false</control-param>
+                    <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:laboratory?path=System/Characts/bcpg:entityLists/Laboratories</control-param>
+                </type>
 				<type name="association:bcpg:geoOrigin"
 					template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 					<control-param name="showLink">false</control-param>

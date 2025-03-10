@@ -8,9 +8,9 @@ import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.helper.impl.AttributeExtractorField;
 
 /**
- * 
- * @author matthieu
+ * <p>AsyncPaginatedExtractorWrapper class.</p>
  *
+ * @author matthieu
  */
 public class AsyncPaginatedExtractorWrapper extends PaginatedExtractedItems  {
 
@@ -20,8 +20,16 @@ public class AsyncPaginatedExtractorWrapper extends PaginatedExtractedItems  {
 
 	private int curPage = 1;
 
+	/** Constant <code>PAGE_SIZE=100</code> */
 	protected static final int PAGE_SIZE = 100;
 
+	/**
+	 * <p>Constructor for AsyncPaginatedExtractorWrapper.</p>
+	 *
+	 * @param extractor a {@link fr.becpg.repo.entity.datalist.DataListExtractor} object
+	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object
+	 * @param metadataFields a {@link java.util.List} object
+	 */
 	public AsyncPaginatedExtractorWrapper(DataListExtractor extractor, DataListFilter dataListFilter, List<AttributeExtractorField> metadataFields) {
 
 		this.extractor = extractor;
@@ -31,6 +39,11 @@ public class AsyncPaginatedExtractorWrapper extends PaginatedExtractedItems  {
 	}
 
 	
+	/**
+	 * <p>getNextWork.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	public List<Map<String, Object>> getNextWork() {
 
 		try {
@@ -54,11 +67,17 @@ public class AsyncPaginatedExtractorWrapper extends PaginatedExtractedItems  {
 		this.items = extract.getPageItems();
 	}
 
+	/**
+	 * <p>Getter for the field <code>dataListFilter</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object
+	 */
 	public DataListFilter getDataListFilter() {
 		return dataListFilter;
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -68,6 +87,7 @@ public class AsyncPaginatedExtractorWrapper extends PaginatedExtractedItems  {
 	}
 
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
