@@ -258,4 +258,8 @@
 	background-image:  url("../../modules/entity-datagrid/images/unlock-16.png") ;
 }
 
+.datalist-toolbar .onActionUpdateSupplierAccount  {
+	background-image: url(../../components/images/add-row-16.png);
+}
+
 

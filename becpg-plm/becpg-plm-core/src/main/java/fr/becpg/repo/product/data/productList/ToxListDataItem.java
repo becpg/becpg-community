@@ -9,6 +9,7 @@ import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.model.AbstractManualDataItem;
 import fr.becpg.repo.repository.model.AspectAwareDataItem;
 import fr.becpg.repo.repository.model.CopiableDataItem;
@@ -53,6 +54,7 @@ public class ToxListDataItem extends AbstractManualDataItem implements SimpleCha
 	 */
 	@AlfSingleAssoc
 	@AlfQname(qname = "bcpg:toxListTox")
+	@DataListIdentifierAttr
 	public NodeRef getTox() {
 		return tox;
 	}

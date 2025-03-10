@@ -312,7 +312,7 @@ public class StandardSoapTestProduct extends SampleProductBuilder {
 			NodeRef ing = CharactTestHelper.getOrCreateIng(nodeService, SODIUM_HYDROXIDE);
 			Map<QName, Serializable> properties = new HashMap<>();
 			properties.put(PLMModel.PROP_ING_TOX_POD_SYSTEMIC, 10000);
-			properties.put(PLMModel.PROP_ING_TOX_DERMAL_ABSORPTIION, 18);
+			properties.put(PLMModel.PROP_ING_TOX_DERMAL_ABSORPTION, 18);
 			properties.put(PLMModel.PROP_ING_TOX_MOS_MOE, 100);
 			properties.put(PLMModel.PROP_ING_TOX_MAX_SKIN_IRRITATION_RINSE_OFF, 100);
 			properties.put(PLMModel.PROP_ING_TOX_MAX_SENSITIZATION, 80);
@@ -322,7 +322,7 @@ public class StandardSoapTestProduct extends SampleProductBuilder {
 			
 			ing = CharactTestHelper.getOrCreateIng(nodeService, SODIUM_CARBONATE);
 			properties.put(PLMModel.PROP_ING_TOX_POD_SYSTEMIC, 1200);
-			properties.put(PLMModel.PROP_ING_TOX_DERMAL_ABSORPTIION, 50);
+			properties.put(PLMModel.PROP_ING_TOX_DERMAL_ABSORPTION, 50);
 			properties.put(PLMModel.PROP_ING_TOX_MOS_MOE, 100);
 			properties.put(PLMModel.PROP_ING_TOX_MAX_SKIN_IRRITATION_RINSE_OFF, 5);
 			properties.put(PLMModel.PROP_ING_TOX_MAX_SENSITIZATION, 100);
@@ -331,7 +331,7 @@ public class StandardSoapTestProduct extends SampleProductBuilder {
 			nodeService.addProperties(ing, properties);
 			
 			ing = CharactTestHelper.getOrCreateIng(nodeService, SODIUM_CHLORIDE);
-			properties.put(PLMModel.PROP_ING_TOX_DERMAL_ABSORPTIION, 50);
+			properties.put(PLMModel.PROP_ING_TOX_DERMAL_ABSORPTION, 50);
 			properties.put(PLMModel.PROP_ING_TOX_MAX_SKIN_IRRITATION_RINSE_OFF, 5);
 			properties.put(PLMModel.PROP_ING_TOX_MAX_SENSITIZATION, 1);
 			properties.put(PLMModel.PROP_ING_TOX_MAX_OCULAR_IRRITATION, 5);

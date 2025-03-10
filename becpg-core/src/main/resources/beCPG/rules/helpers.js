@@ -1138,3 +1138,7 @@ function isOnFormulateEntity(node) {
 function isOnBranchEntity(node) {
 	return bState.isOnBranchEntity(node);
 }
+
+function deleteExternalUser(userNode, supplierNode) {
+	bSupplier.deleteExternalUser(userNode, supplierNode);
+}
