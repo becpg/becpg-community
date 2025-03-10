@@ -10,7 +10,6 @@ import java.util.Map;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.MLText;
-import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaRenderer;
 import org.apache.poi.ss.formula.FormulaType;
@@ -20,6 +19,7 @@ import org.apache.poi.ss.formula.ptg.RefPtgBase;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
@@ -87,10 +87,6 @@ public class ExcelHelper {
 	            headerStyle = workbook.createCellStyle();
 	            headerStyle.setFillForegroundColor(ExcelHelper.beCPGHeaderColor());
 	            headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-
-	            XSSFFont font = workbook.createFont();
-	            font.setColor(HSSFColorPredefined.WHITE.getIndex());
-	            headerStyle.setFont(font);
 	        }
 	        return headerStyle;
 	    }
@@ -100,6 +96,10 @@ public class ExcelHelper {
 	            headerTextStyle = workbook.createCellStyle();
 	            headerTextStyle.setFillForegroundColor(ExcelHelper.beCPGHeaderTextColor());
 	            headerTextStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+	        
+	            XSSFFont font = workbook.createFont();
+	            font.setColor(IndexedColors.WHITE.getIndex());
+	            headerTextStyle.setFont(font);
 	        }
 	        return headerTextStyle;
 	    }
@@ -279,7 +279,7 @@ public class ExcelHelper {
 						for (Locale locale : supportedLocales) {
 
 							Cell cell = headerRow.createCell(cellnum);
-
+							cell.setCellStyle(excelCellStyles.getHeaderStyle());
 							if (prefix != null) {
 								cell.setCellValue(
 										prefix + "_" + field.getFieldDef().getName().toPrefixString() + "_" + MLTextHelper.localeKey(locale));
@@ -306,7 +306,7 @@ public class ExcelHelper {
 					} else {
 
 						Cell cell = headerRow.createCell(cellnum);
-
+						cell.setCellStyle(excelCellStyles.getHeaderStyle());
 						if (prefix != null) {
 							cell.setCellValue(prefix + "_" + field.getFieldDef().getName().toPrefixString());
 						} else {
