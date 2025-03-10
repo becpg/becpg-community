@@ -10,6 +10,7 @@
       <action type="action-link" id="onActionBulkEdit"  permission="edit,allPages" label="actions.bulk-edit" />
       <action type="action-link" id="onActionSelectColor"  permission="edit" label="actions.select-color" />
       <action type="action-link" id="onActionLock"  permission="lock" label="menu.selected-items.lock" />
+      <action type="action-link" id="onActionUpdateSupplierAccount"  permission="update-supplier-account" label="menu.selected-items.update-supplier-account" />
    </actionSetToolbar>
    <actionSetDataGrid>
       <action type="action-link" id="onActionUnlock"  permission="unlock" label="actions.unlock" />
@@ -23,5 +24,6 @@
       <action type="action-link" id="onActionUploadContent"  permission="content" label="actions.upload-content" />
       <action type="action-link" id="onActionDeleteContent"  permission="content" label="actions.delete-content" />
       <action type="action-link" id="onActionLock"  permission="lock" label="actions.lock" />
+      <action type="action-link" id="onActionUpdateSupplierAccount"  permission="update-supplier-account" label="menu.selected-items.update-supplier-account" />
    </actionSetDataGrid>
 </datagrid-view>

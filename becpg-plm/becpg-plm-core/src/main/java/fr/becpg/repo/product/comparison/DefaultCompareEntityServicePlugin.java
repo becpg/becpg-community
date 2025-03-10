@@ -1096,28 +1096,28 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 		String strValue1 = attributeExtractorService.extractPropertyForReport(propertyDef, oValue1, propertyFormats, true);
 		String strValue2 = attributeExtractorService.extractPropertyForReport(propertyDef, oValue2, propertyFormats, true);
 
-		if (oValue1 != null) {
-
-			if (oValue2 != null) {
-				if (propertyDef.getDataType().toString().equals(DataTypeDefinition.DOUBLE.toString())
-						|| propertyDef.getDataType().toString().equals(DataTypeDefinition.FLOAT.toString())
-						|| propertyDef.getDataType().toString().equals(DataTypeDefinition.DATE.toString())
-						|| propertyDef.getDataType().toString().equals(DataTypeDefinition.DATETIME.toString())) {
-
-					if (strValue1.equals(strValue2)) {
-						isDifferent = false;
-					}
-
-				} else if (propertyDef.getDataType().toString().equals(DataTypeDefinition.TEXT.toString())) {
-					if (oValue1.toString().trim().equals(oValue2.toString().trim())) {
-						isDifferent = false;
-					}
-				} else if (oValue1.equals(oValue2)) {
+		if (propertyDef.getDataType().toString().equals(DataTypeDefinition.DOUBLE.toString())
+				|| propertyDef.getDataType().toString().equals(DataTypeDefinition.FLOAT.toString())
+				|| propertyDef.getDataType().toString().equals(DataTypeDefinition.DATE.toString())
+				|| propertyDef.getDataType().toString().equals(DataTypeDefinition.DATETIME.toString())
+				|| propertyDef.getDataType().toString().equals(DataTypeDefinition.TEXT.toString())) {
+			if (strValue1 == null) {
+				strValue1 = "";
+			}
+			if (strValue2 == null) {
+				strValue2 = "";
+			}
+			if (strValue1.trim().equals(strValue2.trim())) {
+				isDifferent = false;
+			}
+		} else {
+			if (oValue1 != null) {
+				if (oValue1.equals(oValue2)) {
 					isDifferent = false;
 				}
+			} else if (oValue2 == null) {
+				isDifferent = false;
 			}
-		} else if (oValue2 == null) {
-			isDifferent = false;
 		}
 
 		addComparisonDataItem(comparisonMap, dataListType, charactName, privotKey, propertyQName, strValue1, strValue2, nbEntities,
