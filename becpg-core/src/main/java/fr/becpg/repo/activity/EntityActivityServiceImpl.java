@@ -1343,7 +1343,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 					data.put(PROP_TITLE, fileName);
 					if (datalistNodeRef != null) {
-						data.put(PROP_CLASSNAME, attributeExtractorService.extractMetadata(dataType, datalistNodeRef));
+						data.put(PROP_CLASSNAME,entityDictionaryService.toPrefixString(dataType).split(":")[1]);
 					}
 
 					activityListDataItem.setActivityType(ActivityType.Export);

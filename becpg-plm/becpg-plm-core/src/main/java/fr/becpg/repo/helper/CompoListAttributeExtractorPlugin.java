@@ -5,6 +5,8 @@ import java.util.Collections;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,8 @@ import fr.becpg.repo.system.SystemConfigurationService;
  */
 @Service
 public class CompoListAttributeExtractorPlugin extends CharactAttributeExtractorPlugin {
+	
+	private static Log logger = LogFactory.getLog(CompoListAttributeExtractorPlugin.class);
 
 	@Autowired
 	private AssociationService associationService;
@@ -49,6 +53,10 @@ public class CompoListAttributeExtractorPlugin extends CharactAttributeExtractor
 	@Override
 	public String extractMetadata(QName type, NodeRef nodeRef) {
 		NodeRef product = associationService.getTargetAssoc(nodeRef, PLMModel.ASSOC_COMPOLIST_PRODUCT);
+		if(product == null) {
+			logger.warn("No compoList product for :"+nodeRef);
+			return "product";
+		}
 		return super.extractMetadata(nodeService.getType(product), product);
 	}
 
