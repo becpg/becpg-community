@@ -53,17 +53,16 @@ public class ListEntitiesByChannelWebScript extends ListEntitiesWebScript {
 
 	/** {@inheritDoc} */
 	@Override
-	protected PagingResults<NodeRef> findEntities(WebScriptRequest req, Boolean limit) {
+	protected PagingResults<NodeRef> findEntities(WebScriptRequest req, Integer maxResults) {
 
 		String channelId = req.getParameter(PARAM_CHANNELID);
 		String channelNodeRefStr = req.getParameter(PARAM_CHANNELNODEREF);
 
-		Integer maxResults = intParam(req, PARAM_MAX_RESULTS);
 		Integer page = intParam(req, PARAM_PAGE);
 
 		int skipCount = 0;
 
-		if (maxResults == null || Boolean.TRUE.equals(limit)) {
+		if (maxResults == null ) {
 			maxResults = RepoConsts.MAX_RESULTS_256;
 		}
 
