@@ -192,7 +192,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 
 	
 
-	private  Integer maxResultsLimit() {
+	protected  Integer maxResultsLimit() {
 		return Integer.parseInt(systemConfigurationService.confValue("beCPG.remote.maxResults.limit"));
 	}
 	
@@ -222,12 +222,11 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	 * @return a {@link java.util.List} object.
 	 * @param limit a {@link java.lang.Boolean} object
 	 */
-	protected PagingResults<NodeRef> findEntities(WebScriptRequest req, Boolean limit) {
+	protected PagingResults<NodeRef> findEntities(WebScriptRequest req, Integer maxResults) {
 
 		String path = decodeParam(req.getParameter(PARAM_PATH));
 		String query = decodeParam(req.getParameter(PARAM_QUERY));
-
-		Integer maxResults = intParam(req, PARAM_MAX_RESULTS);
+		
 		Integer page = intParam(req, PARAM_PAGE);
 		
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery();
@@ -248,8 +247,8 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 			}
 		}
 
-		if (maxResults == null || Boolean.TRUE.equals(limit)) {
-			queryBuilder.maxResults(Boolean.TRUE.equals(limit) ?  maxResultsLimit() :  RepoConsts.MAX_RESULTS_256);
+		if (maxResults == null ) {
+			queryBuilder.maxResults(RepoConsts.MAX_RESULTS_256);
 		} else {
 			queryBuilder.maxResults(maxResults);
 		}
@@ -259,11 +258,11 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		}
 
 		
-		if ((path != null) && (path.length() > 0)) {
+		if ((path != null) && (!path.isBlank())) {
 			queryBuilder.inPath(path);
 		}
 
-		if ((query != null) && (query.length() > 0)) {
+		if ((query != null) && (!query.isBlank())) {
 			queryBuilder.andFTSQuery(query);
 
 		}
@@ -331,7 +330,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 				&& ((req.getParameter(PARAM_QUERY) == null) || req.getParameter(PARAM_QUERY).isEmpty())) {
 			throw new WebScriptException(Status.STATUS_NOT_IMPLEMENTED, "One of nodeRef query or path parameter is mandatory");
 		}
-		PagingResults<NodeRef> ret = findEntities(req, true);
+		PagingResults<NodeRef> ret = findEntities(req, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
 		if ((ret != null) && !ret.getPage().isEmpty()) {
 			return ret.getPage().get(0);
 		}
@@ -379,7 +378,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		String user = req.getParameter(PARAM_CALLBACK_USER) != null ? req.getParameter(PARAM_CALLBACK_USER) : "admin";
 		String password = req.getParameter(PARAM_CALLBACK_PASSWORD) != null ? req.getParameter(PARAM_CALLBACK_PASSWORD) : "becpg";
 
-		if ((callBack != null) && (callBack.length() > 0)) {
+		if ((callBack != null) && (!callBack.isBlank())) {
 			return new HttpEntityProviderCallback(callBack, user, password, remoteEntityService);
 		}
 		logger.debug("No callback param provided");
@@ -444,7 +443,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	public Set<String> extractFields(WebScriptRequest req) {
 		Set<String> fields = new HashSet<>();
 		String fieldsParams = req.getParameter(PARAM_FIELDS);
-		if ((fieldsParams != null) && (fieldsParams.length() > 0)) {
+		if ((fieldsParams != null) && (!fieldsParams.isBlank())) {
 
 			for (String field : decodeParam(fieldsParams).split(",")) {
 				fields.add(field);
