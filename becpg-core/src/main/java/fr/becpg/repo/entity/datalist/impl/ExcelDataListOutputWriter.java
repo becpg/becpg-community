@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -115,13 +114,12 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 	public void write(WebScriptRequest req, WebScriptResponse res, DataListFilter dataListFilter, PaginatedExtractedItems extractedItems)
 			throws IOException {
 
-		if (extractedItems instanceof AsyncPaginatedExtractorWrapper) {
+		if (extractedItems instanceof AsyncPaginatedExtractorWrapper asyncItems) {
 
-			NodeRef downloadNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-				return downloadStorage.createDownloadNode(false);
-			}, false, true);
+			NodeRef downloadNodeRef = transactionService.getRetryingTransactionHelper()
+					.doInTransaction(() -> downloadStorage.createDownloadNode(false), false, true);
 
-			Runnable command = new AsyncExcelDataListOutputWriter((AsyncPaginatedExtractorWrapper) extractedItems, downloadNodeRef);
+			Runnable command = new AsyncExcelDataListOutputWriter(asyncItems, downloadNodeRef);
 			if (!threadExecuter.getQueue().contains(command)) {
 				threadExecuter.execute(command);
 			} else {
@@ -193,9 +191,8 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 
 				try (OutputStream out = new FileOutputStream(tempFile)) {
 
-					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-						return createExcelFile(asynExtractor, asynExtractor.getDataListFilter(), handler, out);
-					}, false, true);
+					transactionService.getRetryingTransactionHelper()
+							.doInTransaction(() -> createExcelFile(asynExtractor, asynExtractor.getDataListFilter(), handler, out), false, true);
 
 					fileCreationComplete(downloadNodeRef, "xlsx", tempFile, handler);
 
@@ -318,22 +315,28 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 				XSSFSheet sheet = workbook.createSheet(sheetName);
 
 				ExcelCellStyles exeCellStyles = new ExcelCellStyles(workbook);
-				
+
 				int rownum = 0;
 
 				Row headerRow = sheet.createRow(rownum++);
 				headerRow.setRowStyle(exeCellStyles.getHeaderStyle());
+
 				Cell cell = headerRow.createCell(0);
+				cell.setCellStyle(exeCellStyles.getHeaderStyle());
 				cell.setCellValue("MAPPING");
 				cell = headerRow.createCell(1);
+				cell.setCellStyle(exeCellStyles.getHeaderStyle());
 				cell.setCellValue("Default");
 
 				if (type != null) {
 					headerRow = sheet.createRow(rownum++);
-					cell = headerRow.createCell(0);
 					headerRow.setRowStyle(exeCellStyles.getHeaderStyle());
+
+					cell = headerRow.createCell(0);
 					cell.setCellValue("TYPE");
+					cell.setCellStyle(exeCellStyles.getHeaderStyle());
 					cell = headerRow.createCell(1);
+					cell.setCellStyle(exeCellStyles.getHeaderStyle());
 					cell.setCellValue(type.toPrefixString());
 				}
 
@@ -364,9 +367,11 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 					headerRow = sheet.createRow(rownum++);
 					headerRow.setRowStyle(exeCellStyles.getHeaderStyle());
 					cell = headerRow.createCell(0);
+					cell.setCellStyle(exeCellStyles.getHeaderStyle());
 					cell.setCellValue("PATH");
 					cell = headerRow.createCell(1);
 					cell.setCellValue(nodePath);
+					cell.setCellStyle(exeCellStyles.getHeaderStyle());
 				}
 
 				if (entityDictionaryService.isSubClass(dataListFilter.getDataType(), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
@@ -374,8 +379,10 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 						headerRow = sheet.createRow(rownum++);
 						headerRow.setRowStyle(exeCellStyles.getHeaderStyle());
 						cell = headerRow.createCell(0);
+						cell.setCellStyle(exeCellStyles.getHeaderStyle());
 						cell.setCellValue("IMPORT_TYPE");
 						cell = headerRow.createCell(1);
+						cell.setCellStyle(exeCellStyles.getHeaderStyle());
 						cell.setCellValue("EntityListItem");
 					}
 
@@ -383,16 +390,21 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 						headerRow = sheet.createRow(rownum++);
 						headerRow.setRowStyle(exeCellStyles.getHeaderStyle());
 						cell = headerRow.createCell(0);
+						cell.setCellStyle(exeCellStyles.getHeaderStyle());
 						cell.setCellValue("ENTITY_TYPE");
 						cell = headerRow.createCell(1);
+						cell.setCellStyle(exeCellStyles.getHeaderStyle());
 						cell.setCellValue(entityType.toPrefixString(namespaceService));
 					}
 
 					headerRow = sheet.createRow(rownum++);
 					headerRow.setRowStyle(exeCellStyles.getHeaderStyle());
+
 					cell = headerRow.createCell(0);
+					cell.setCellStyle(exeCellStyles.getHeaderStyle());
 					cell.setCellValue("DELETE_DATALIST");
 					cell = headerRow.createCell(1);
+					cell.setCellStyle(exeCellStyles.getHeaderStyle());
 					cell.setCellValue("false");
 
 				} else {
@@ -401,9 +413,12 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 
 				headerRow = sheet.createRow(rownum++);
 				headerRow.setRowStyle(exeCellStyles.getHeaderStyle());
+
 				cell = headerRow.createCell(0);
+				cell.setCellStyle(exeCellStyles.getHeaderStyle());
 				cell.setCellValue("STOP_ON_FIRST_ERROR");
 				cell = headerRow.createCell(1);
+				cell.setCellStyle(exeCellStyles.getHeaderStyle());
 				cell.setCellValue("false");
 
 				headerRow = sheet.createRow(rownum++);
@@ -422,14 +437,16 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 				int cellnum = 0;
 				cell = headerRow.createCell(cellnum);
 				cell.setCellValue("COLUMNS");
+				cell.setCellStyle(exeCellStyles.getHeaderStyle());
 				cell = labelRow.createCell(cellnum++);
 				cell.setCellValue("#");
 				cell.setCellStyle(exeCellStyles.getHeaderStyle());
 
-
 				if (bcpgCode != null) {
 					cell = headerRow.createCell(cellnum);
 					cell.setCellValue("bcpg:code");
+					cell.setCellStyle(exeCellStyles.getHeaderStyle());
+
 					cell = labelRow.createCell(cellnum++);
 					cell.setCellValue(I18NUtil.getMessage("message.becpg.export.entity"));
 					cell.setCellStyle(exeCellStyles.getHeaderTextStyle());
@@ -438,15 +455,14 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 				Row row = null;
 
 				if ((extractedExtrasItems == null) && (extractedItems.getComputedFields() != null)) {
-					List<AttributeExtractorStructure> fields = extractedItems.getComputedFields().stream().filter(titleProvider::isAllowed)
-							.collect(Collectors.toList());
+					List<AttributeExtractorStructure> fields = extractedItems.getComputedFields().stream().filter(titleProvider::isAllowed).toList();
 
 					ExcelHelper.appendExcelHeader(fields, null, null, headerRow, labelRow, exeCellStyles, sheet, cellnum, titleProvider,
 							MLTextHelper.shouldExtractMLText() ? MLTextHelper.getSupportedLocales() : null);
 
 					List<Map<String, Object>> items = null;
-					if (extractedItems instanceof AsyncPaginatedExtractorWrapper) {
-						items = plugin.decorate(((AsyncPaginatedExtractorWrapper) extractedItems).getNextWork());
+					if (extractedItems instanceof AsyncPaginatedExtractorWrapper asyncItems) {
+						items = plugin.decorate(asyncItems.getNextWork());
 					} else {
 						items = plugin.decorate(extractedItems.getPageItems());
 					}
@@ -469,14 +485,14 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 							}
 
 							ExcelHelper.appendExcelField(fields, null, item, sheet, row, cellnum, rownum,
-									MLTextHelper.shouldExtractMLText() ? MLTextHelper.getSupportedLocales() : null,exeCellStyles);
+									MLTextHelper.shouldExtractMLText() ? MLTextHelper.getSupportedLocales() : null, exeCellStyles);
 
 							if (handler != null) {
 								handler.updateStatus();
 							}
 						}
-						if (extractedItems instanceof AsyncPaginatedExtractorWrapper) {
-							items = plugin.decorate(((AsyncPaginatedExtractorWrapper) extractedItems).getNextWork());
+						if (extractedItems instanceof AsyncPaginatedExtractorWrapper asyncItems) {
+							items = plugin.decorate(asyncItems.getNextWork());
 						} else {
 							items = null;
 						}
@@ -509,7 +525,7 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 						}
 
 						ExcelHelper.appendExcelField(extractedExtrasItems.getComputedFields(), null, item, sheet, row, cellnum, rownum,
-								MLTextHelper.shouldExtractMLText() ? MLTextHelper.getSupportedLocales() : null,exeCellStyles);
+								MLTextHelper.shouldExtractMLText() ? MLTextHelper.getSupportedLocales() : null, exeCellStyles);
 
 					}
 				}
