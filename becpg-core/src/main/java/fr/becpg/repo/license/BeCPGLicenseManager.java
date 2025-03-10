@@ -16,6 +16,7 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 
@@ -53,6 +54,18 @@ public class BeCPGLicenseManager {
 
 	@Autowired
 	private AbstractAuthenticationService authenticationService;
+	
+	@Value("${beCPG.licence.showWarning:true}")
+	private boolean showLicenseWarning;
+
+	/**
+	 * <p>isShowUnauthorizedWarning.</p>
+	 *
+	 * @return a boolean.
+	 */
+	public boolean isShowLicenseWarning() {
+		return showLicenseWarning;
+	}
 	
 	/**
 	 * <p>getAllowedConcurrentRead.</p>
@@ -165,7 +178,7 @@ public class BeCPGLicenseManager {
 	 * @return a boolean
 	 */
 	public boolean isLicenseValid() {
-		return getLicenseFile() != null && !INVALID_LICENSE_FILE.equals(getLicenseName()) && !namedLicenseExceeded();
+		return getLicense() != null && !INVALID_LICENSE_FILE.equals(getLicenseName()) && !namedLicenseExceeded();
 	}
 
 
@@ -248,6 +261,12 @@ public class BeCPGLicenseManager {
 
 	}
 
+	/**
+	 * <p>floatingLicensesExceeded.</p>
+	 *
+	 * @param sessionId a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	public boolean floatingLicensesExceeded(String sessionId) {
 		return beCPGCacheService.getFromCache(BeCPGLicenseManager.class.getName() + ".sessions", sessionId, () -> {
 			Set<String> users = new HashSet<>(authenticationService.getUsersWithTickets(true));
@@ -270,10 +289,36 @@ public class BeCPGLicenseManager {
 		});
 	}
 
+	/**
+	 * <p>isSpecialLicenceUser.</p>
+	 *
+	 * @return a boolean
+	 */
+	public boolean isSpecialLicenceUser() {
+		String runAsUser = AuthenticationUtil.getRunAsUser();
+		if(authenticationService.getDefaultAdministratorUserNames().contains(runAsUser)) {
+			return true;
+		}
+		if (runAsUser.equals("admin") || runAsUser.endsWith("@becpg.fr")
+				|| runAsUser.startsWith("admin@") ) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * <p>hasWriteLicense.</p>
+	 *
+	 * @return a boolean
+	 */
 	public boolean hasWriteLicense() {
 		String runAsUser = AuthenticationUtil.getRunAsUser();
 		return beCPGCacheService.getFromCache(BeCPGLicenseManager.class.getName() + ".writeLicenses", runAsUser, () -> {
-			if (runAsUser.equals("admin") || runAsUser.endsWith("@becpg.fr")) {
+			if (!showLicenseWarning) {
+				return true;
+			}
+			if(isSpecialLicenceUser()) {
 				return true;
 			}
 			if (AuthorityHelper.hasGroupAuthority(runAsUser, SystemGroup.LicenseWriteNamed.toString())) {

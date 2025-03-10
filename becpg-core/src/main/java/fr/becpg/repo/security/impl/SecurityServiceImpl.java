@@ -436,7 +436,7 @@ public class SecurityServiceImpl implements SecurityService {
 
 	private void appendPropName(TypeDefinition typeDefinition, Entry<QName, PropertyDefinition> properties, List<String> ret) {
 		String key = properties.getKey().toPrefixString(namespaceService);
-		String label = properties.getValue().getTitle(dictionaryService);
+		String label = dictionaryService.getTitle(properties.getValue(), typeDefinition.getName());
 
 		if (!ret.contains(key + "|" + typeDefinition.getTitle(dictionaryService) + " - " + label) && (label != null)) {
 			ret.add(key + "|" + typeDefinition.getTitle(dictionaryService) + " - " + label);

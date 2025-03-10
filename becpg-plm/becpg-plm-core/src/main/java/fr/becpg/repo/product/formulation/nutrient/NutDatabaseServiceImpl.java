@@ -169,7 +169,8 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 								nutValue = decimalFormat.parse(nutValueToken);
 							}
 
-							NutListDataItem nut = new NutListDataItem(null, null, null, null, null, null, nutNodeRef, false);
+							NutListDataItem nut = NutListDataItem.build().withNut(nutNodeRef).withIsManual(false)
+;
 
 							String newMethod = extractNutMethod(databaseFile);
 							PropertyDefinition methodDef = dictionaryService.getProperty(PLMModel.PROP_NUTLIST_METHOD);
@@ -228,7 +229,7 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 
 		StopWatch watch = null;
 
-		boolean mlAware = MLPropertyInterceptor.isMLAware();
+		boolean mlAware = MLPropertyInterceptor.setMLAware(true);
 		try {
 
 			if (logger.isDebugEnabled()) {
@@ -236,7 +237,6 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 				watch.start();
 			}
 
-			MLPropertyInterceptor.setMLAware(true);
 			return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 				// Only for transaction do not reenable it

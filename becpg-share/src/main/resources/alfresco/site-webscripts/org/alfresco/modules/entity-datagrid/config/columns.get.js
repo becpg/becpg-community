@@ -435,7 +435,7 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 								}
 								
 							} else {
-								if (existInPref(preferences) && !isChecked(preferences)) {
+								if (mode != "bulk-edit"  && existInPref(preferences) && !isChecked(preferences)) {
 									columns[j].label = "datasource";
 								}
 							}

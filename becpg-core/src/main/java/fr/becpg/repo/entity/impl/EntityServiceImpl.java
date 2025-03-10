@@ -143,6 +143,7 @@ public class EntityServiceImpl implements EntityService {
 		return imageNodeRef;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getEntityDefaultIcon(NodeRef entityNodeRef, String imageResolution) {
 
@@ -182,6 +183,7 @@ public class EntityServiceImpl implements EntityService {
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Map<String, NodeRef> getEntityIcons() {
 		return beCPGCacheService.getFromCache(EntityServiceImpl.class.getName(), ENTITY_ICONS_CACHE_KEY, () -> {
@@ -239,6 +241,7 @@ public class EntityServiceImpl implements EntityService {
 	}
 
 	// TODO Refactor and avoid duplicate
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getOrCreateImageFolder(NodeRef entityNodeRef) {
 		NodeRef imagesFolderNodeRef = nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS,
@@ -320,7 +323,7 @@ public class EntityServiceImpl implements EntityService {
 
 		// manage workingCopy
 		String wcLabel = CheckOutCheckInServiceImpl.getWorkingCopyLabel();
-		if (imgName.endsWith(wcLabel)) {
+		if (wcLabel!=null && imgName.endsWith(wcLabel)) {
 			imgName = getNameFromWorkingCopyName(imgName, wcLabel);
 		}
 

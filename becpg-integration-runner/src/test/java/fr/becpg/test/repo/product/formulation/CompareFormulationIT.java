@@ -66,7 +66,7 @@ public class CompareFormulationIT extends FormulationFullIT {
 
 			/*-- Verify formulation --*/
 			logger.info("/*-- Verify formulation --*/");
-			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef1);
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef1);
 
 			checkProduct(formulatedProduct);
 
@@ -76,7 +76,7 @@ public class CompareFormulationIT extends FormulationFullIT {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-			ProductData product2 = alfrescoRepository.findOne(finishedProductNodeRef2);
+			ProductData product2 = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef2);
 
 			product2.setQty(3d);
 
@@ -88,7 +88,7 @@ public class CompareFormulationIT extends FormulationFullIT {
 
 			/*-- Verify formulation --*/
 			logger.info("/*-- Verify formulation --*/");
-			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef1);
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef1);
 
 			for (DynamicCharactListItem dynamicCharactListItem : formulatedProduct.getCompoListView().getDynamicCharactList()) {
 				String trace = "Dyn charact :" + dynamicCharactListItem.getName() + " value " + dynamicCharactListItem.getValue();

@@ -51,12 +51,14 @@ import org.springframework.stereotype.Service;
 import fr.becpg.config.mapping.MappingException;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.batch.BatchClosingHook;
 import fr.becpg.repo.batch.BatchInfo;
 import fr.becpg.repo.batch.BatchPriority;
 import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.batch.BatchStep;
 import fr.becpg.repo.batch.BatchStepAdapter;
 import fr.becpg.repo.batch.EntityListBatchProcessWorkProvider;
+import fr.becpg.repo.helper.LargeTextHelper;
 import fr.becpg.repo.helper.PropertiesHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.importer.ImportContext;
@@ -261,21 +263,24 @@ public class ImportServiceImpl implements ImportService {
 		
 		batchStep.setWorkProvider(new EntityListBatchProcessWorkProvider<>(indexEntries));
 		
-		batchQueueService.queueBatch(batchInfo, List.of(batchStep));
+		BatchClosingHook closingHook = () -> {
+			if ((!importContext.getLog().isEmpty()) && (importContext.getImportFileReader() instanceof ImportExcelFileReader)) {
+				
+				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+					ruleService.disableRules();
+					try {
+						
+						importContext.getImportFileReader().writeErrorInFile(contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true));
+						return importContext;
+					} finally {
+						ruleService.enableRules();
+					}
+				}, false, requiresNewTransaction);
+			}
+		};
 		
-		if ((!importContext.getLog().isEmpty()) && (importContext.getImportFileReader() instanceof ImportExcelFileReader)) {
-
-			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-				ruleService.disableRules();
-				try {
-
-					importContext.getImportFileReader().writeErrorInFile(contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true));
-					return importContext;
-				} finally {
-					ruleService.enableRules();
-				}
-			}, false, requiresNewTransaction);
-		}
+		batchQueueService.queueBatch(batchInfo, List.of(batchStep), closingHook);
+		
 		
 		return batchInfo;
 	}
@@ -311,10 +316,14 @@ public class ImportServiceImpl implements ImportService {
 		String log = startlog + LOG_SEPARATOR + (errosLogs != null ? errosLogs + LOG_SEPARATOR : "")
 				+ (first50ErrorsLog.toString().isEmpty() ? "" : first50ErrorsLog.toString() + LOG_SEPARATOR)
 				+ (after50ErrorsLog.toString().isEmpty() ? "" : LOG_ERROR_MAX_REACHED + LOG_SEPARATOR) + endlog;
+		
+		log = LargeTextHelper.elipse(log, 997);
 
 		String allLog = startlog + LOG_SEPARATOR + (errosLogs != null ? errosLogs + LOG_SEPARATOR : "")
 				+ (first50ErrorsLog.toString().isEmpty() ? "" : first50ErrorsLog.toString() + LOG_SEPARATOR)
 				+ (after50ErrorsLog.toString().isEmpty() ? "" : after50ErrorsLog.toString() + LOG_SEPARATOR) + endlog;
+		
+		allLog = LargeTextHelper.elipse(allLog, 997);
 
 		// set log, stackTrace and move file
 		if ((doNotMoveNode == null) || Boolean.FALSE.equals(doNotMoveNode)) {

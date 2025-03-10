@@ -193,8 +193,10 @@ public class BeCPGHashCodeBuilder {
 					if ((total1 != total2)) {
 
 						ret += "\n append :" + pd.getName()  +"  hash " + total1 + "/" + total2 + "\n";
-
+						
 						if (fieldValue instanceof RepositoryEntity) {
+							// skip recursion
+							if (obj1.equals(fieldValue) && obj2.equals(fieldValue2)) continue;
 							ret += "\n-- Recur diff ";
 							ret += printDiff((RepositoryEntity) fieldValue, (RepositoryEntity) fieldValue2);
 						} else if (fieldValue instanceof List && fieldValue2 instanceof List) {

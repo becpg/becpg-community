@@ -1,5 +1,9 @@
 package fr.becpg.repo.entity.version;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -11,10 +15,13 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.sql.DataSource;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.batch.BatchProcessWorkProvider;
 import org.alfresco.repo.batch.BatchProcessor;
 import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
+import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.Tenant;
 import org.alfresco.repo.tenant.TenantAdminService;
@@ -49,6 +56,11 @@ import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
+/**
+ * <p>VersionCleanerServiceImpl class.</p>
+ *
+ * @author matthieu
+ */
 @Service("versionCleanerService")
 public class VersionCleanerServiceImpl implements VersionCleanerService {
 
@@ -86,6 +98,10 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 	@Autowired
 	private RepoService repoService;
 	
+	@Autowired
+	private DataSource dataSource;
+	
+	/** {@inheritDoc} */
 	@Override
 	public boolean cleanVersions(int maxProcessedNodes, String path) {
 		while (maxProcessedNodes > 0) {
@@ -127,6 +143,42 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 		}
 		
 		return true;
+	}
+	
+	private List<NodeRef> getVersionedAssocsChilds(int limit) {
+		
+		String sql = """
+				SELECT alf_node.uuid
+				FROM alf_qname aq
+				STRAIGHT_JOIN alf_child_assoc aca ON aq.id = aca.type_qname_id
+				STRAIGHT_JOIN alf_node ON alf_node.id = aca.child_node_id
+				WHERE aq.local_name = 'versionedAssocs'
+				LIMIT ?;
+				""";
+
+		List<NodeRef> ret = new ArrayList<>();
+		try (Connection con = dataSource.getConnection()) {
+
+			try (PreparedStatement statement = con.prepareStatement(sql)) {
+				statement.setInt(1, limit);
+				long start = System.currentTimeMillis();
+				try (ResultSet res = statement.executeQuery()) {
+					long time = System.currentTimeMillis() - start;
+					if (logger.isDebugEnabled()) {
+						logger.debug("time for versioned assocs SQL query: " + time + " ms");
+					}
+					while (res.next()) {
+						NodeRef tmp = new NodeRef(RepoConsts.VERSION_STORE, res.getString("uuid"));
+						if (nodeService.exists(tmp)) {
+							ret.add(tmp);
+						}
+					}
+				}
+			}
+		} catch (SQLException e) {
+			logger.error("Error running : " + sql, e);
+		}
+		return ret;
 	}
 	
 	private class CleanVersionWorkProvider implements BatchProcessWorkProvider<NodeRef>{
@@ -190,6 +242,19 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 				}
 			}
 			
+			if (initialList.size() < maxProcessedNodes) {
+				List<NodeRef> versionNodesToDelete = BeCPGQueryBuilder.createQuery()
+				.inStore(RepoConsts.VERSION_STORE)
+				.inDB()
+				.ofType(ContentModel.TYPE_FOLDER)
+				.andPropEquals(ContentModel.PROP_NAME, "DataLists")
+				.maxResults(maxProcessedNodes - initialList.size()).list();
+				initialList.addAll(versionNodesToDelete);
+			}
+			if (initialList.size() < maxProcessedNodes) {
+				List<NodeRef> versionNodesToDelete = getVersionedAssocsChilds(maxProcessedNodes - initialList.size());
+				initialList.addAll(versionNodesToDelete);
+			}
 		}
 
 		private void fillInitialListForType(QName type) {
@@ -243,26 +308,34 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 			
 			if (nextWork.size() < BatchInfo.BATCH_SIZE) {
 				for (NodeRef initialNode : initialList) {
-					
 					if (nodeService.exists(initialNode)) {
-						
-						if (logger.isTraceEnabled()) {
-							logger.trace("find convertible relatives of " + initialNode);
-						}
-						
-						Set<NodeRef> oldVersionWUsedList = entityVersionService.findOldVersionWUsed(initialNode, new HashSet<>(), nextWork, maxProcessedNodes, new AtomicInteger(treated.size() + toTreat.size()), path);
-						for (NodeRef oldVersionWUsed : oldVersionWUsedList) {
-							if (treated.size() + toTreat.size() >= maxProcessedNodes) {
-								break;
+						if (VersionHelper.isVersion(initialNode)) {
+							if (treated.size() + toTreat.size() < maxProcessedNodes && !toTreat.contains(initialNode) && !treated.contains(initialNode)) {
+								if (nextWork.size() < BatchInfo.BATCH_SIZE) {
+									nextWork.add(initialNode);
+									treated.add(initialNode);
+								} else {
+									toTreat.add(initialNode);
+								}
 							}
-							if (!toTreat.contains(oldVersionWUsed) && !treated.contains(oldVersionWUsed)) {
-								Date modified = (Date) nodeService.getProperty(oldVersionWUsed, ContentModel.PROP_MODIFIED);
-								if (cal.getTime().compareTo(modified) > 0) {
-									if (nextWork.size() < BatchInfo.BATCH_SIZE) {
-										nextWork.add(oldVersionWUsed);
-										treated.add(oldVersionWUsed);
-									} else {
-										toTreat.add(oldVersionWUsed);
+						} else {
+							if (logger.isTraceEnabled()) {
+								logger.trace("find convertible relatives of " + initialNode);
+							}
+							Set<NodeRef> oldVersionWUsedList = entityVersionService.findOldVersionWUsed(initialNode, new HashSet<>(), nextWork, maxProcessedNodes, new AtomicInteger(treated.size() + toTreat.size()), path);
+							for (NodeRef oldVersionWUsed : oldVersionWUsedList) {
+								if (treated.size() + toTreat.size() >= maxProcessedNodes) {
+									break;
+								}
+								if (!toTreat.contains(oldVersionWUsed) && !treated.contains(oldVersionWUsed)) {
+									Date modified = (Date) nodeService.getProperty(oldVersionWUsed, ContentModel.PROP_MODIFIED);
+									if (cal.getTime().compareTo(modified) > 0) {
+										if (nextWork.size() < BatchInfo.BATCH_SIZE) {
+											nextWork.add(oldVersionWUsed);
+											treated.add(oldVersionWUsed);
+										} else {
+											toTreat.add(oldVersionWUsed);
+										}
 									}
 								}
 							}
@@ -281,7 +354,21 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 			return false;
 		}
 		NodeRef parentNode = BeCPGQueryBuilder.createQuery().selectNodeByPath(nodeService.getRootNode(RepoConsts.SPACES_STORE), path);
-		return parentNode == null || !nodeService.exists(parentNode) || nodeService.getChildAssocs(parentNode, ContentModel.ASSOC_CONTAINS, RegexQNamePattern.MATCH_ALL, maxProcessedNodes, false).isEmpty();
+		if  (parentNode != null && nodeService.exists(parentNode) && !nodeService.getChildAssocs(parentNode, ContentModel.ASSOC_CONTAINS, RegexQNamePattern.MATCH_ALL, maxProcessedNodes, false).isEmpty()) {
+			return false;
+		}
+		if (!BeCPGQueryBuilder.createQuery()
+				.inStore(RepoConsts.VERSION_STORE)
+				.inDB()
+				.ofType(ContentModel.TYPE_FOLDER)
+				.andPropEquals(ContentModel.PROP_NAME, "DataLists")
+				.maxResults(1).list().isEmpty()) {
+			return false;
+		}
+		if (!getVersionedAssocsChilds(1).isEmpty()) {
+			return false;
+		}
+		return true;
 	}
 
 	private void convertAndDeleteVersions(int maxProcessedNodes, String tenantDomain, String path) {
@@ -300,28 +387,42 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 			@Override
 			public void process(NodeRef entityNodeRef) throws Throwable {
 
+				IntegrityChecker.setWarnInTransaction();
+				
 				if (nodeService.exists(entityNodeRef)) {
-					if (nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_TEMPORARY)) {
-						deleteTemporaryNode(entityNodeRef);
-					} else {
-						try {
-							convertNode(entityNodeRef);
-						} catch (Throwable t) {
-							if (RetryingTransactionHelper.extractRetryCause(t) == null) {
-
-								transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-									
-									moveToImportToDoFolder(entityNodeRef);
-									
-									nodeService.removeAspect(entityNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION);
-								
-									return null;
-								}, false, true);
-							}
-							throw t;
+					
+					if (VersionHelper.isVersion(entityNodeRef)) {
+						if (logger.isDebugEnabled()) {
+							logger.debug("Delete version store node: " + entityNodeRef);
 						}
+						nodeService.addAspect(entityNodeRef, ContentModel.ASPECT_TEMPORARY, null);
+						nodeService.deleteNode(entityNodeRef);
+					} else {
+						if (nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_TEMPORARY)) {
+							deleteTemporaryNode(entityNodeRef);
+						} else {
+							try {
+								convertNode(entityNodeRef);
+							} catch (Throwable t) {
+								if (RetryingTransactionHelper.extractRetryCause(t) == null) {
+									
+									transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+										
+										IntegrityChecker.setWarnInTransaction();
+										
+										moveToImportToDoFolder(entityNodeRef);
+										
+										nodeService.removeAspect(entityNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION);
+										
+										return null;
+									}, false, true);
+								}
+								throw t;
+							}
 							
+						}
 					}
+					
 				} else {
 					logger.debug("Node already deleted : " + entityNodeRef + ", tenant : " + tenantDomain);
 				}
@@ -361,6 +462,7 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 		repoService.moveEntity(toMove, newParent);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void cleanVersionStore() {
 		

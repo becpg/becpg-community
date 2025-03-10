@@ -160,12 +160,12 @@ public interface EntityListDAO {
 	void copyDataList(NodeRef dataListNodeRef, NodeRef entityNodeRef, boolean override);
 	
 	/**
-	 * 
-	 * Merge one dataList into another 
-	 * 
-	 * @param dataListNodeRef
-	 * @param entityNodeRef
-	 * @param appendOnly
+	 *
+	 * Merge one dataList into another
+	 *
+	 * @param dataListNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param appendOnly a boolean
 	 */
 	void mergeDataList(NodeRef dataListNodeRef,NodeRef entityNodeRef, boolean appendOnly );
 
@@ -217,12 +217,19 @@ public interface EntityListDAO {
 
 	/**
 	 * Find list with the same list in other entityListContainer
-	 * @param dataListNodeRef
-	 * @param targetListContainerNodeRef
+	 *
+	 * @param dataListNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param targetListContainerNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @return a nodeRef
 	 */
 	NodeRef findMatchingList(NodeRef dataListNodeRef, NodeRef targetListContainerNodeRef);
 
+	/**
+	 * <p>getListItemsByType.</p>
+	 *
+	 * @param dataListNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.util.Map} object
+	 */
 	Map<QName, List<NodeRef>> getListItemsByType(NodeRef dataListNodeRef);
 
 }

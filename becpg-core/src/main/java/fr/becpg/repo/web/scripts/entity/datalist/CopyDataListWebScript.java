@@ -6,6 +6,8 @@ package fr.becpg.repo.web.scripts.entity.datalist;
 import java.io.IOException;
 import java.util.Map;
 
+import org.alfresco.model.ContentModel;
+import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,6 +17,7 @@ import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
+import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.entity.EntityListDAO;
 
 /**
@@ -33,6 +36,28 @@ public class CopyDataListWebScript extends AbstractWebScript {
 	protected static final String PARAM_ID = "id";
 
 	private EntityListDAO entityListDAO;
+	
+	private EntityActivityService entityActivityService;
+	
+	private BehaviourFilter policyBehaviourFilter;
+	
+	/**
+	 * <p>Setter for the field <code>entityActivityService</code>.</p>
+	 *
+	 * @param entityActivityService a {@link fr.becpg.repo.activity.EntityActivityService} object
+	 */
+	public void setEntityActivityService(EntityActivityService entityActivityService) {
+		this.entityActivityService = entityActivityService;
+	}
+	
+	/**
+	 * <p>Setter for the field <code>policyBehaviourFilter</code>.</p>
+	 *
+	 * @param policyBehaviourFilter a {@link org.alfresco.repo.policy.BehaviourFilter} object
+	 */
+	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
+		this.policyBehaviourFilter = policyBehaviourFilter;
+	}
 
 	/**
 	 * <p>Setter for the field <code>entityListDAO</code>.</p>
@@ -84,7 +109,11 @@ public class CopyDataListWebScript extends AbstractWebScript {
 							sourceListNodeRef = dataListNodeRef;
 							targetEntityNodeRef = entityNodeRef;
 						}
-
+						
+						entityActivityService.postDataListCopyActivity(targetEntityNodeRef, entityNodeRef, sourceListNodeRef, action);
+						
+						policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+						
 						if("Add".equals(action)) {
 							entityListDAO.mergeDataList(sourceListNodeRef, targetEntityNodeRef, true);
 						} else if ("Merge".equals(action)) {

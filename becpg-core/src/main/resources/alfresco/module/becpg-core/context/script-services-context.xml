@@ -68,7 +68,6 @@
 		<property name="useBrowserLocale" value="${beCPG.multilinguale.useBrowserLocale}"/>
 		<property name="nodeService" ref="nodeService"/>
 		<property name="entityListDAO" ref="entityListDAO" />
-		<property name="showUnauthorizedWarning" value="${beCPG.licence.showWarning}"/>
 		<property name="alfrescoRepository" ref="alfrescoRepository"/>
 		<property name="siteService" ref="siteService"/>
 		<property name="tenantAdminService" ref="tenantAdminService" />
@@ -83,6 +82,11 @@
 		<property name="beCPGMailService" ref="beCPGMailService" />
 		<property name="beCPGTicketService" ref="beCPGTicketService" />
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
+		<property name="personService" ref="personService" />
+		<property name="authorityService" ref="authorityService" />
+		<property name="authenticationService" ref="authenticationService" />
+		<property name="remoteUserMapper" ref="RemoteUserMapper" />
+		<property name="entityActivityService" ref="entityActivityService" />
 	</bean>
 	
 	<bean id="beCPGStateHelper" parent="baseJavaScriptExtension" class="fr.becpg.repo.jscript.BeCPGStateHelper">

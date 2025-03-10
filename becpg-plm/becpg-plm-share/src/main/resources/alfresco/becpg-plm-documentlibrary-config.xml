@@ -12,6 +12,7 @@
 				<aspect name="bcpg:reconstitutableAspect" />
 				<aspect name="bcpg:evaporableAspect" />
 				<aspect name="bcpg:customsCodeAspect" />
+				<aspect name="bcpg:glopProductAspect" />
 				<aspect name="qa:batchAspect" />
 				<aspect name="qa:acAspect" />
 				<aspect name="gs1:gs1Aspect" />
@@ -41,6 +42,7 @@
 				<aspect name="gs1:referencedTradeItemAspect"/>
 				<aspect name="gs1:seasonalAspect"/>
 				<aspect name="gs1:pegHoleAspect"/>
+				<aspect name="gs1:animalFeedingAspect"/>
 				<aspect name="gs1:animalFeedingAspect"/>
 				
 			</visible>
@@ -104,6 +106,7 @@
 				<subtype name="bcpg:physicoChemList" />
 				<subtype name="bcpg:regulatoryList" />
 				<subtype name="bcpg:ingRegulatoryList" />
+				<subtype name="bcpg:toxList" />
 			</type>
 			<type name="trx:transferTarget">
 				<subtype name="trx:fileTransferTarget" />
@@ -256,7 +259,7 @@
 			<content id="entity" label="menu.create-content.entity" type="pagelink" index="210" icon="entity">
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:entityV2&amp;formId=create-entity&amp;isEntity=true</param>
 			</content>
-			<content id="externalLink" label="menu.create-content.externalLink" type="pagelink" index="220" icon="link">
+			<content id="externalLink" label="menu.create-content.externalLink" type="pagelink" index="220" icon="externalLink">
                <param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:externalLink</param>
          	</content>
 		</create-content>
@@ -304,7 +307,7 @@
 					<permission allow="true">Write</permission>
 				</permissions>
 				<evaluator>evaluator.becpg.doclib.action.entityTpl</evaluator>
-				<evaluator>evaluator.becpg.doclib.action.product</evaluator>
+				<evaluator>evaluator.becpg.doclib.action.productOrSupplier</evaluator>
 			</action>
 			<action id="entityTpl-wused" type="pagelink" icon="entity-wused" label="actions.entity.wused">
 				<param name="page">wused?assocName=assoc_bcpg_entityTplRef&amp;nodeRefs={node.nodeRef}</param>

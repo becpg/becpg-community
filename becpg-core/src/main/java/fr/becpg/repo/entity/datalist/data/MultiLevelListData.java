@@ -111,6 +111,11 @@ public class MultiLevelListData {
 	}
 	
 	
+	/**
+	 * <p>isEmpty.</p>
+	 *
+	 * @return a boolean
+	 */
 	public boolean isEmpty() {
 		return  tree.isEmpty();
 	}
@@ -181,11 +186,13 @@ public class MultiLevelListData {
 	}
 	
 	
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		return Objects.hash(depth, entityNodeRefs, isLeaf, tree);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

@@ -100,6 +100,11 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 	private String getTestFolderName() {
 		return getClassName().replaceAll("\\.", "_") + "_" + name.getMethodName();
 	}
+	
+	protected String toTestName(String product) {
+		return  name.getMethodName()+" -  "+ product;
+	}
+
 
 	protected NodeRef systemFolderNodeRef;
 
@@ -345,13 +350,13 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 		int j = 0;
 		
 		while(!Boolean.TRUE.equals(batch.getIsCompleted()) && (j < 60)) {
-			logger.info("Wait for batch: "+ batch.getBatchId());
+			logger.info("Wait for batch: "+ batch.getBatchId() + ", progress: " + (batch.getCurrentItem() + "/" + batch.getTotalItems()));
 			Thread.sleep(5000);
 			j++;
 		}
 		
 		if(j == 60) {
-			Assert.fail("Batch is taking too long!");
+			Assert.fail("Batch is taking too long! Progress: " + (double) (batch.getCurrentItem() / batch.getTotalItems()) + "%");
 		}
 		
 	}

@@ -19,6 +19,7 @@ package fr.becpg.test.repo.web.scripts.listvalue;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Assert;
 import org.junit.Test;
 
 import fr.becpg.test.BeCPGPLMTestHelper;
@@ -52,6 +53,10 @@ public class AutoCompleteWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 		url = "/becpg/autocomplete/targetassoc/associations/bcpg:nut?q=nut11";
 
 		response = TestWebscriptExecuters.sendRequest(new GetRequest(url), 200, "admin");
+		
+
+		Assert.assertNotNull(response);
+		
 		logger.debug("content : " + response.getContentAsString());
 
 	}
@@ -73,6 +78,9 @@ public class AutoCompleteWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 		url = "/becpg/autocomplete/listvalue/values/System/ProductHierarchy/RawMaterial_Hierarchy1?q=F";
 
 		response = TestWebscriptExecuters.sendRequest(new GetRequest(url), 200, "admin");
+
+		Assert.assertNotNull(response);
+		
 		logger.debug("testSuggestListValue content : " + response.getContentAsString());
 	}
 
@@ -88,6 +96,9 @@ public class AutoCompleteWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 		String url = "/becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/RawMaterial_Hierarchy1?q=s&parent=Fam4";
 
 		Response response = TestWebscriptExecuters.sendRequest(new GetRequest(url), 200, "admin");
+
+		Assert.assertNotNull(response);
+		
 		logger.debug("testSuggestLinkedValues : " + response.getContentAsString());
 
 	}
@@ -119,6 +130,9 @@ public class AutoCompleteWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 
 		url = "/becpg/autocomplete/product?classNames=bcpg:packagingMaterial&q=ra";
 		response = TestWebscriptExecuters.sendRequest(new GetRequest(url), 200, "admin");
+
+		Assert.assertNotNull(response);
+		
 		logger.debug("testSuggestProduct : " + response.getContentAsString());
 	}
 
@@ -134,6 +148,9 @@ public class AutoCompleteWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 		String url = "/becpg/autocomplete/productreport/reports/SemiFinishedProduct?q=u";
 
 		Response response = TestWebscriptExecuters.sendRequest(new GetRequest(url), 200, "admin");
+
+		Assert.assertNotNull(response);
+		
 		logger.debug("testProductReportTpls : " + response.getContentAsString());
 	}
 

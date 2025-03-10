@@ -271,6 +271,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 				&& !dataListFilter.getDataListName().startsWith(RepoConsts.WUSED_PREFIX) 
 				&& !dataListFilter.getDataListName().equals("projectList") // TODO better
 				&& !dataListFilter.getDataListName().equals("ingList") // TODO better
+				&& !dataListFilter.getDataListName().equals("scoreList") // TODO better
 				&& !dataListFilter.isVersionFilter();
 	}
 

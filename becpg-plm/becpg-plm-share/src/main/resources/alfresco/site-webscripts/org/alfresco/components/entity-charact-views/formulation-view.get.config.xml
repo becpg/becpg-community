@@ -11,6 +11,10 @@
    	    <customList id="processList" type="mpm:processList"  filter="!qa:batch" />
    	    <customList id="packMaterialList" type="pack:packMaterialList" selected="true" filter="!qa:batch" />
    	    <customList id="batchAllocationList" type="qa:batchAllocationList" selected="true" filter="qa:batch" />
+   	    <customList id="svhcList" type="bcpg:svhcList" filter="!qa:batch" />
+   	    <customList id="controlDefList" type="qa:controlDefList" filter="!qa:batch" />
+   	    <customList id="regulatoryList" type="bcpg:regulatoryList" filter="!qa:batch" />
+   	    <customList id="ingRegulatoryList" type="bcpg:ingRegulatoryList" filter="!qa:batch" />
    </customLists>
  
    <actionSetToolbar>
@@ -18,6 +22,7 @@
 	   	<action type="action-link" id="onActionBulkEdit"  permission="edit,allPages" label="actions.bulk-edit" />
 	   	<action type="action-link" id="onActionDelete" permission="delete" label="menu.selected-items.delete" />
 	   	<action type="action-link" id="onActionSimulate" list="compoList" permission="edit" label="actions.selected-items.simulate" />
+	   	<action type="action-link" id="onActionCopyProducts" list="compoList" permission="edit" label="actions.selected-items.copy-product" />
 	    <action type="action-link" id="onActionDuplicate" permission="create" label="menu.selected-items.duplicate" />
 	    <action type="action-link" id="onActionDuplicateChilds" list="compoList" permission="create" label="actions.selected-items.duplicate-childs" />
 	    <action type="action-link" id="onActionGroup" list="compoList" permission="edit,allPages" label="actions.selected-items.group" />
@@ -32,9 +37,12 @@
       <action type="action-link" id="onActionDuplicate" permission="create" label="actions.duplicate-row" />
       <action type="action-link" id="onActionDuplicateChilds" list="compoList" permission="edit" label="actions.duplicate-childs" />
       <action type="action-link" id="onActionSimulate" list="compoList" permission="edit" label="actions.simulate" />
+      <action type="action-link" id="onActionCopyProducts" list="compoList" permission="edit" label="actions.copy-product" />
       <action type="action-link" id="onActionShowComments" permission="edit" label="actions.comment" />
       <action type="action-link" id="onAddLabelingAspect" permission="edit" label="actions.add-labelingAspect" />
       <action type="action-link" id="onActionSelectColor"  permission="edit" label="actions.select-color" />
       <action type="action-link" id="onActionUploadContent"  permission="content" label="actions.upload-content" />
+      <action type="action-link" id="onActionDeleteContent"  permission="content" label="actions.delete-content" />
+      
    </actionSetDataGrid>
 </formulation-view>

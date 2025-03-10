@@ -13,7 +13,9 @@ echo -e " \e[91mCopyright (C) 2010-2024 beCPG.\e[0m"
 
 export COMPOSE_FILE_PATH=${PWD}/becpg-integration-runner/target/docker-compose.yml
 export MVN_EXEC="${PWD}/mvnw"
-export BECPG_VERSION_PROFILE=becpg_23_2_1
+export BECPG_VERSION_PROFILE=becpg_23_4_0
+
+. .env
 
 case "$2" in
   branch)
@@ -122,8 +124,30 @@ install() {
   
 }
 
+install_hotswap(){
+	mkdir -p /opt/hotswap/jvm
+	curl -sL  https://cache-redirector.jetbrains.com/intellij-jbr/jbr_jcef-21.0.4-linux-x64-b607.1.tar.gz \
+	      -o /opt/hotswap/jbr_jcef-21.0.4-linux-x64-b607.1.tar.gz && \
+	     mkdir -p /usr/java && tar -xvf /opt/hotswap/jbr_jcef-21.0.4-linux-x64-b607.1.tar.gz -C /opt/hotswap/jvm && \
+	     rm /opt/hotswap/jbr_jcef-21.0.4-linux-x64-b607.1.tar.gz 
+	    
+	mkdir -p /opt/hotswap/jvm/jbr_jcef-21.0.4-linux-x64-b607.1/lib/hotswap/ && \
+	     curl -sL https://github.com/HotswapProjects/HotswapAgent/releases/download/RELEASE-2.0.1/hotswap-agent-2.0.1.jar -o  \
+	     /opt/hotswap/jvm/jbr_jcef-21.0.4-linux-x64-b607.1/lib/hotswap/hotswap-agent.jar
+    ln -sfn /opt/hotswap/jvm/jbr_jcef-21.0.4-linux-x64-b607.1 /opt/hotswap/jvm/latest
+	     
+	echo -e "Append to docker-compose.override.yml : -XX:+AllowEnhancedClassRedefinition -XX:HotswapAgent=fatjar\n\
+	volumes:\n\
+	  - becpg_data:/usr/local/tomcat/data\n\
+	  - ../../becpg-core/target/classes:/usr/local/tomcat/hotswap-agent/becpg-core/target/classes\n\
+	  - ../../becpg-plm/becpg-plm-core/target/classes:/usr/local/tomcat/hotswap-agent/becpg-plm-core/target/classes\n\
+	  - ../../becpg-project/becpg-project-core/target/classes:/usr/local/tomcat/hotswap-agent/becpg-project-core/target/classes\n\
+	  - ../../becpg-integration-runner/target/test-classes:/usr/local/tomcat/hotswap-agent/becpg-integration-runner/target/test-classes\n\
+	  - /opt/hotswap/jvm/latest:/etc/alternatives/jre"
+}
+
 tail() {
-    docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH logs -f --tail=100 becpg becpg-share
+    docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH logs -f --tail=100 becpg becpg-db becpg-share
 }
 
 test() {
@@ -142,6 +166,9 @@ case "$1" in
   install)
     install
     ;;
+  install_hotswap)
+    install_hotswap
+    ;;  
   build_start)
     build
     start

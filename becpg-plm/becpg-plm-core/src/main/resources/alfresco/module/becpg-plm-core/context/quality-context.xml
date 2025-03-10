@@ -56,6 +56,10 @@
     	<property name="entityService" ref="entityService"/>
     </bean>    
     
+    <bean id="batchFormulationHandler" class="fr.becpg.repo.quality.formulation.BatchFormulationHandler">
+           <property name="alfrescoRepository" ref="alfrescoRepository" />
+    </bean>
+    
     <!--  batch -->
 	<bean id="batchFormulationChain" class="fr.becpg.repo.formulation.FormulationChain" init-method="init">
 		<property name="handlers">
@@ -64,9 +68,7 @@
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="formulaService" ref="formulaService" />
 				</bean>
-				<bean class="fr.becpg.repo.quality.formulation.BatchFormulationHandler">
-					<property name="alfrescoRepository" ref="alfrescoRepository" />
-				</bean>
+				<ref bean="batchFormulationHandler" />
 				<bean  class="fr.becpg.repo.product.formulation.MergeReqCtrlFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="systemConfigurationService" ref="systemConfigurationService" />

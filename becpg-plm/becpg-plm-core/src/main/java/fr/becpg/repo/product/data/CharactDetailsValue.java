@@ -28,6 +28,7 @@ public class CharactDetailsValue {
 	private String unit;
 	private String name;
 	private List<CharactDetailAdditionalValue> additionalValues = new ArrayList<>();
+	private boolean allowZeroValue = false;
 
 	/**
 	 * <p>Constructor for CharactDetailsValue.</p>
@@ -47,6 +48,10 @@ public class CharactDetailsValue {
 		this.value = value;
 		this.level = level;
 		this.unit = unit;
+	}
+	
+	public void setAllowZeroValue(boolean allowZeroValue) {
+		this.allowZeroValue = allowZeroValue;
 	}
 	
 	/**
@@ -125,7 +130,7 @@ public class CharactDetailsValue {
 	 * @return a {@link java.lang.Double} object.
 	 */
 	public Double getValue() {
-		return value!=null && value != 0d && !value.isInfinite() && !value.isNaN() ? value : null;
+		return value!=null && (value != 0d || allowZeroValue) && !value.isInfinite() && !value.isNaN() ? value : null;
 	}
 	
 	
@@ -244,7 +249,11 @@ public class CharactDetailsValue {
 			if (currentAdditionalValue == null) {
 				additionalValues.add(new CharactDetailAdditionalValue(additionalValue));
 			} else {
-				currentAdditionalValue.setValue(currentAdditionalValue.getValue() + additionalValue.getValue());
+				Double currentValue = currentAdditionalValue.getValue();
+				currentValue = currentValue == null ? 0d : currentValue;
+				Double addedValue = additionalValue.getValue();
+				addedValue = addedValue == null ? 0d : addedValue;
+				currentAdditionalValue.setValue(currentValue + addedValue);
 			}
 		}
 	}

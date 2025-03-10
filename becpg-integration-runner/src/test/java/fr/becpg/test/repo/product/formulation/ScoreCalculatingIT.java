@@ -92,53 +92,56 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 			/**
 			 * Raw Material part
 			 */
-			ProductData rawMaterial1 = alfrescoRepository.findOne(rawMaterial1NodeRef);
+			ProductData rawMaterial1 = (ProductData) alfrescoRepository.findOne(rawMaterial1NodeRef);
 			rawMaterial1.setState(SystemState.Valid);
 			alfrescoRepository.save(rawMaterial1);
 
-			ProductData rawMaterial5 = alfrescoRepository.findOne(rawMaterial5NodeRef);
+			ProductData rawMaterial5 = (ProductData) alfrescoRepository.findOne(rawMaterial5NodeRef);
 			rawMaterial5.setState(SystemState.ToValidate);
 			alfrescoRepository.save(rawMaterial5);
 
-			ProductData rawMaterial6 = alfrescoRepository.findOne(rawMaterial6NodeRef);
+			ProductData rawMaterial6 = (ProductData) alfrescoRepository.findOne(rawMaterial6NodeRef);
 			rawMaterial6.setState(SystemState.Refused);
 			alfrescoRepository.save(rawMaterial6);
 
-			ProductData rawMaterial11 = alfrescoRepository.findOne(rawMaterial11NodeRef);
+			ProductData rawMaterial11 = (ProductData) alfrescoRepository.findOne(rawMaterial11NodeRef);
 			rawMaterial11.setState(SystemState.Archived);
 			alfrescoRepository.save(rawMaterial11);
 
-			ProductData rawMaterial12 = alfrescoRepository.findOne(rawMaterial12NodeRef);
+			ProductData rawMaterial12 = (ProductData) alfrescoRepository.findOne(rawMaterial12NodeRef);
 			rawMaterial12.setState(SystemState.Valid);
 			alfrescoRepository.save(rawMaterial12);
 
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial5NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial6NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial11NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial12NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial5NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial6NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial11NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial12NodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
 			/**
 			 * Packaging part
 			 */
-			ProductData packaging1 = alfrescoRepository.findOne(packagingMaterial1NodeRef);
+			ProductData packaging1 = (ProductData) alfrescoRepository.findOne(packagingMaterial1NodeRef);
 			packaging1.setState(SystemState.Valid);
 			alfrescoRepository.save(packaging1);
 
-			ProductData packaging2 = alfrescoRepository.findOne(packagingMaterial2NodeRef);
+			ProductData packaging2 = (ProductData) alfrescoRepository.findOne(packagingMaterial2NodeRef);
 			packaging2.setState(SystemState.ToValidate);
 			alfrescoRepository.save(packaging2);
 
-			ProductData packagingKit = alfrescoRepository.findOne(packagingKit1NodeRef);
+			ProductData packagingKit = (ProductData) alfrescoRepository.findOne(packagingKit1NodeRef);
 			packagingKit.setState(SystemState.Simulation);
 			alfrescoRepository.save(packagingKit);
 
 			List<PackagingListDataItem> packagingList = new ArrayList<>();
-			packagingList.add(new PackagingListDataItem(null, 1d, ProductUnit.kg, PackagingLevel.Primary, false, packagingMaterial1NodeRef));
-			packagingList.add(new PackagingListDataItem(null, 1d, ProductUnit.kg, PackagingLevel.Primary, false, packagingMaterial2NodeRef));
-			packagingList.add(new PackagingListDataItem(null, 1d, ProductUnit.kg, PackagingLevel.Secondary, true, packagingKit1NodeRef));
+			packagingList.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.kg).withPkgLevel(PackagingLevel.Primary).withIsMaster(false).withProduct(packagingMaterial1NodeRef)
+);
+			packagingList.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.kg).withPkgLevel(PackagingLevel.Primary).withIsMaster(false).withProduct(packagingMaterial2NodeRef)
+);
+			packagingList.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.kg).withPkgLevel(PackagingLevel.Secondary).withIsMaster(true).withProduct(packagingKit1NodeRef)
+);
 			finishedProduct.getPackagingListView().setPackagingList(packagingList);
 
 			finishedProduct.setLegalName(new MLText(Locale.FRENCH, "Produit fini 1"));
@@ -189,7 +192,7 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 
 		// formulate and check FP score
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			ProductData finishedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+			ProductData finishedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 
 			assertNotNull(finishedProduct.getEntityScore());
 			JSONObject scoresObject = new JSONObject(finishedProduct.getEntityScore());

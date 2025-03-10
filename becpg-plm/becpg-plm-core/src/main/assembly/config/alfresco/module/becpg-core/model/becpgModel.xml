@@ -1,24 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Definition of new Model -->
 <model name="bcpg:bcpgmodel" xmlns="http://www.alfresco.org/model/dictionary/1.0">
-	<!-- Optional meta-data about the model -->
+    <!-- Optional meta-data about the model -->
 	<description>beCPG Model</description>
 	<author>QUERE</author>
 	<version>1.0</version>
-	<!-- Imports are required to allow references to definitions in other models -->
+    <!-- Imports are required to allow references to definitions in other models -->
 	<imports>
-		<!-- Import Alfresco Dictionary Definitions -->
+        <!-- Import Alfresco Dictionary Definitions -->
 		<import uri="http://www.alfresco.org/model/dictionary/1.0" prefix="d" />
-		<!-- Import Alfresco Content Domain Model Definitions -->
+        <!-- Import Alfresco Content Domain Model Definitions -->
 		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
 		<import uri="http://www.bcpg.fr/model/report/1.0" prefix="rep" />
+
 	</imports>
-	<!-- Introduction of new namespaces defined by this model -->
+    <!-- Introduction of new namespaces defined by this model -->
 	<namespaces>
 		<namespace uri="http://www.bcpg.fr/model/becpg/1.0" prefix="bcpg" />
 	</namespaces>
 
 	<constraints>
+
+		<constraint name="bcpg:httpLink" type="REGEX">
+			<parameter name="expression">
+				<value><![CDATA["([^"]+)":(https?:\/\/[^\s]+)|(?:https?:\/\/[^\s]+)]]></value>
+			</parameter>
+			<parameter name="requiresMatch">
+				<value>true</value>
+			</parameter>
+		</constraint>
+
 		<constraint name="bcpg:autoNumPrefix" type="REGEX">
 			<parameter name="expression">
 				<value>[A-Z]*</value>
@@ -112,10 +123,10 @@
 				</list>
 			</parameter>
 		</constraint>
-		
+        
 
-		
-		<!-- PLM -->
+        
+        <!-- PLM -->
 		<constraint name="bcpg:productUnit" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -166,6 +177,17 @@
 		</constraint>
 
 
+       <constraint name="bcpg:compoListStockTypes" type="LIST">
+            <parameter name="allowedValues">
+                <list>
+                    <value></value>
+                    <value>Product</value>
+                    <value>Components</value>
+                    <value>Omit</value>
+                </list>
+            </parameter>
+        </constraint>
+
 		<constraint name="bcpg:compoListUnit" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -184,6 +206,7 @@
 					<value>P</value>
 					<value>m</value>
 					<value>m2</value>
+					<value>m3</value>
 					<value>Perc</value>
 				</list>
 			</parameter>
@@ -198,6 +221,7 @@
 					<value>in</value>
 					<value>ft</value>
 					<value>m2</value>
+					<value>m3</value>
 					<value>kg</value>
 					<value>g</value>
 					<value>lb</value>
@@ -263,6 +287,9 @@
 			<parameter name="constraintProp">
 				<value>bcpg:lvValue</value>
 			</parameter>
+			<parameter name="addEmptyValue">
+                <value>true</value>
+            </parameter>
 		</constraint>
 		<constraint name="bcpg:nutUnit" type="LIST">
 			<parameter name="allowedValues">
@@ -317,6 +344,36 @@
 			</parameter>
 			<parameter name="addEmptyValue">
 				<value>true</value>
+			</parameter>
+		</constraint>
+
+
+		<constraint name="bcpg:nutListRequirementTypes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>Serving</value>
+					<value>GdaPerc</value>
+					<value>AsPrepared</value>
+				</list>
+			</parameter>
+		</constraint>
+
+
+		<constraint name="bcpg:filQtyPercTypes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>QtyPercWithYield</value>
+					<value>QtyPercWithSecondaryYield</value>
+					<value>QtyPerc1</value>
+					<value>QtyPerc2</value>
+					<value>QtyPerc3</value>
+					<value>QtyPerc4</value>
+					<value>QtyPerc5</value>
+					<value>Mini</value>
+					<value>Maxi</value>
+				</list>
 			</parameter>
 		</constraint>
 
@@ -464,6 +521,7 @@
 					<value>/cp</value>
 					<value>/fl_oz</value>
 					<value>/m2</value>
+					<value>/m3</value>
 					<value>/h</value>
 					<value>/Pal</value>
 				</list>
@@ -560,6 +618,15 @@
 				</list>
 			</parameter>
 		</constraint>
+		<constraint name="bcpg:specCompatibilityTestModes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>Manual</value>
+					<value>Automatic</value>
+				</list>
+			</parameter>
+		</constraint>
 		<constraint name="bcpg:reqDataTypes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -598,6 +665,41 @@
 					<value>true</value>
 					<value>certified</value>
 					<value>false</value>
+				</list>
+			</parameter>
+		</constraint>
+
+		<constraint name="bcpg:toxTypesConstraint" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>SkinIrritationRinseOff</value>
+					<value>SkinIrritationLeaveOn</value>
+					<value>Sensitization</value>
+					<value>OcularIrritation</value>
+					<value>SystemicIngredient</value>
+					<value>PhototoxicalPotential</value>
+				</list>
+			</parameter>
+		</constraint>
+
+		<constraint name="bcpg:toxAcuteInhalationTypes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>Gas</value>
+					<value>Mist</value>
+					<value>Vapor</value>
+				</list>
+			</parameter>
+		</constraint>
+
+		<constraint name="bcpg:toxAbsorptionTypes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>Dermal</value>
+					<value>Oral</value>
+					<value>Worst</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -880,10 +982,18 @@
 				<value>bcpg:lvValue</value>
 			</parameter>
 			<parameter name="addEmptyValue">
-                <value>true</value>
-            </parameter>
+				<value>true</value>
+			</parameter>
 		</constraint>
 
+		<constraint name="bcpg:glopTargetTasks" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>MIN</value>
+					<value>MAX</value>
+				</list>
+			</parameter>
+		</constraint>
 	</constraints>
 
 	<types>
@@ -1016,8 +1126,8 @@
 				</property>
 			</properties>
 		</type>
-		
-		<!-- PLM -->
+        
+        <!-- PLM -->
 		<type name="bcpg:productSpecification">
 			<parent>bcpg:entityV2</parent>
 			<properties>
@@ -1027,6 +1137,16 @@
 						<tokenised>false</tokenised>
 						<facetable>true</facetable>
 					</index>
+				</property>
+				<property name="bcpg:specCompatibilityTestMode">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:specCompatibilityTestModes" />
+					</constraints>
 				</property>
 				<property name="bcpg:specCompatibilityLog">
 					<type>d:text</type>
@@ -1463,6 +1583,95 @@
 				<aspect>bcpg:ingTypeAspect</aspect>
 			</mandatory-aspects>
 		</type>
+		<type name="bcpg:tox">
+			<parent>bcpg:charact</parent>
+			<properties>
+				<property name="bcpg:toxTypes">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<multiple>true</multiple>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:toxTypesConstraint" />
+					</constraints>
+				</property>
+				<property name="bcpg:toxValue">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+				<property name="bcpg:toxCalculateSystemic">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
+                <property name="bcpg:toxCalculateMax">
+                    <type>d:boolean</type>
+                    <mandatory>false</mandatory>
+                    <index enabled="true">
+                        <tokenised>false</tokenised>
+                        <facetable>true</facetable>
+                    </index>
+                </property>
+                <property name="bcpg:toxAbsorptionType">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:toxAbsorptionTypes" />
+					</constraints>
+				</property>
+			</properties>
+		</type>
+		<type name="bcpg:toxIng">
+			<parent>bcpg:charact</parent>
+			<properties>
+				<property name="bcpg:toxIngIng">
+					<type>d:noderef</type>
+					<mandatory>true</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+				<property name="bcpg:toxIngTox">
+					<type>d:noderef</type>
+					<mandatory>true</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+				<property name="bcpg:toxIngMaxValue">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+				<property name="bcpg:toxIngSystemicValue">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+			</properties>
+		</type>
 
 		<type name="bcpg:microbio">
 			<parent>bcpg:charact</parent>
@@ -1536,7 +1745,7 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
-				<!-- deprecated -->
+                <!-- deprecated -->
 				<property name="bcpg:isNutPropagateUp">
 					<type>d:boolean</type>
 					<mandatory>false</mandatory>
@@ -1796,17 +2005,17 @@
 						<many>true</many>
 					</target>
 				</association>
-<!-- 				<association name="bcpg:plantApprovalNumbers"> -->
-<!-- 					<source> -->
-<!-- 						<mandatory>false</mandatory> -->
-<!-- 						<many>true</many> -->
-<!-- 					</source> -->
-<!-- 					<target> -->
-<!-- 						<class>bcpg:approvalNumber</class> -->
-<!-- 						<mandatory>false</mandatory> -->
-<!-- 						<many>true</many> -->
-<!-- 					</target> -->
-<!-- 				</association> -->
+<!--                <association name="bcpg:plantApprovalNumbers"> -->
+<!--                    <source> -->
+<!--                        <mandatory>false</mandatory> -->
+<!--                        <many>true</many> -->
+<!--                    </source> -->
+<!--                    <target> -->
+<!--                        <class>bcpg:approvalNumber</class> -->
+<!--                        <mandatory>false</mandatory> -->
+<!--                        <many>true</many> -->
+<!--                    </target> -->
+<!--                </association> -->
 			</associations>
 			<mandatory-aspects>
 				<aspect>bcpg:location</aspect>
@@ -1829,6 +2038,14 @@
 					</target>
 				</association>
 			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:isDeletedAspect</aspect>
+			</mandatory-aspects>
+		</type>
+
+
+		<type name="bcpg:laboratory">
+			<parent>bcpg:entityListItem</parent>
 			<mandatory-aspects>
 				<aspect>bcpg:isDeletedAspect</aspect>
 			</mandatory-aspects>
@@ -1923,6 +2140,12 @@
 			<parent>bcpg:entityListItem</parent>
 		</type>
 
+
+		<type name="bcpg:productListItem">
+			<parent>bcpg:entityListItem</parent>
+		</type>
+
+
 		<type name="bcpg:compoList">
 			<parent>bcpg:productListItem</parent>
 			<properties>
@@ -1977,6 +2200,13 @@
 						<constraint ref="bcpg:declarationTypes" />
 					</constraints>
 				</property>
+				<property name="bcpg:compoListStockType">
+                    <type>d:text</type>
+                    <index enabled="false" />
+                    <constraints>
+                        <constraint ref="bcpg:compoListStockTypes" />
+                    </constraints>
+                </property>
 				<property name="bcpg:compoListOverrunPerc">
 					<type>d:double</type>
 					<index enabled="true">
@@ -2093,9 +2323,6 @@
 			</mandatory-aspects>
 		</type>
 
-		<type name="bcpg:productListItem">
-			<parent>bcpg:entityListItem</parent>
-		</type>
 
 		<type name="bcpg:allergenList">
 			<parent>bcpg:productListItem</parent>
@@ -2182,7 +2409,6 @@
 				</association>
 			</associations>
 		</type>
-
 		<type name="bcpg:costList">
 			<parent>bcpg:productListItem</parent>
 			<properties>
@@ -2235,6 +2461,21 @@
 					<index enabled="false" />
 				</property>
 				<property name="bcpg:costListFutureValuePerProduct">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:costListFutureValuePerProduct2">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:costListFutureValuePerProduct3">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:costListFutureValuePerProduct4">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="false" />
@@ -2617,8 +2858,13 @@
 						<constraint ref="bcpg:declarationTypes" />
 					</constraints>
 				</property>
-				
-				<!-- Deprecated -->
+
+				<property name="bcpg:ingListComments">
+					<type>d:mltext</type>
+					<index enabled="false" />
+				</property>
+                
+                <!-- Deprecated -->
 				<property name="bcpg:ingListIsGMO">
 					<type>d:boolean</type>
 					<mandatory enforced="true">true</mandatory>
@@ -3000,7 +3246,7 @@
 			</associations>
 		</type>
 
-		<!-- List used to specify what is forbidden -->
+        <!-- List used to specify what is forbidden -->
 		<type name="bcpg:forbiddenIngList">
 			<parent>bcpg:productListItem</parent>
 			<properties>
@@ -3028,12 +3274,27 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
+				<property name="bcpg:filQtyPercMini">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 				<property name="bcpg:filQtyPercMaxiUnit">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
 					<index enabled="false" />
 					<constraints>
 						<constraint ref="bcpg:filQtyPercMaxiUnits" />
+					</constraints>
+				</property>
+				<property name="bcpg:filQtyPercType">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:filQtyPercTypes" />
 					</constraints>
 				</property>
 				<property name="bcpg:filIsGMO">
@@ -3051,6 +3312,10 @@
 					<constraints>
 						<constraint ref="bcpg:nullableBoolean" />
 					</constraints>
+				</property>
+				<property name="bcpg:filIngLevel">
+					<type>d:int</type>
+					<index enabled="false" />
 				</property>
 			</properties>
 			<associations>
@@ -3087,6 +3352,17 @@
 						<many>true</many>
 					</target>
 				</association>
+				<association name="bcpg:filGeoTransfo">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:geoOrigin</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
 				<association name="bcpg:filBioOrigins">
 					<source>
 						<mandatory>false</mandatory>
@@ -3101,7 +3377,7 @@
 			</associations>
 		</type>
 
-		<!-- List used to display the result of the requirement controls -->
+        <!-- List used to display the result of the requirement controls -->
 		<type name="bcpg:reqCtrlList">
 			<parent>bcpg:productListItem</parent>
 			<properties>
@@ -3156,7 +3432,7 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>bcpg:charact</class>
+						<class>cm:cmobject</class>
 						<mandatory>false</mandatory>
 						<many>false</many>
 					</target>
@@ -3408,8 +3684,8 @@
 
 			</properties>
 		</type>
-		
-		
+
+
 		<type name="bcpg:svhcList">
 			<parent>bcpg:productListItem</parent>
 			<properties>
@@ -3473,7 +3749,7 @@
 					<type>d:double</type>
 					<index enabled="false" />
 				</property>
-				<!-- Deprecated -->
+                <!-- Deprecated -->
 				<property name="bcpg:isLabelClaimPropagateUp">
 					<type>d:boolean</type>
 					<mandatory>false</mandatory>
@@ -3672,6 +3948,10 @@
 					<type>d:text</type>
 					<index enabled="false" />
 				</property>
+				<property name="bcpg:nrDisabled">
+					<type>d:boolean</type>
+					<index enabled="false" />
+				</property>
 			</properties>
 			<associations>
 				<association name="bcpg:nrNotificationAuthorities">
@@ -3760,7 +4040,7 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>bcpg:charact</class>
+						<class>cm:cmobject</class>
 						<mandatory>false</mandatory>
 						<many>true</many>
 					</target>
@@ -3773,7 +4053,7 @@
 
 
 		<type name="bcpg:ingRegulatoryList">
-			<parent>bcpg:entityListItem</parent>
+			<parent>bcpg:productListItem</parent>
 			<properties>
 				<property name="bcpg:irlIng">
 					<type>d:noderef</type>
@@ -3811,6 +4091,13 @@
 						<facetable>false</facetable>
 					</index>
 				</property>
+				<property name="bcpg:irlPrecautions">
+					<type>d:mltext</type>
+					<index enabled="true">
+						<tokenised>true</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
 				<property name="bcpg:irlSources">
 					<type>d:noderef</type>
 					<multiple>true</multiple>
@@ -3825,7 +4112,56 @@
 			</mandatory-aspects>
 		</type>
 
+		<type name="bcpg:toxList">
+			<parent>bcpg:productListItem</parent>
+			<properties>
+				<property name="bcpg:toxListValue">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+			</properties>
+			<associations>
+				<association name="bcpg:toxListTox">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:tox</class>
+						<mandatory>true</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+		</type>
 
+
+		<type name="bcpg:savedSearch">
+			<parent>cm:content</parent>
+			<properties>
+				<property name="bcpg:isGlobalSavedSearch">
+					<type>d:boolean</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
+				<property name="bcpg:savedSearchSiteId">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
+				<property name="bcpg:savedSearchType">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
+			</properties>
+		</type>
 	</types>
 
 	<aspects>
@@ -3912,7 +4248,7 @@
 						<facetable>true</facetable>
 					</index>
 				</property>
-				<!-- used to store the direct parentLevel node (multi-leve recipe)l -->
+                <!-- used to store the direct parentLevel node (multi-leve recipe)l -->
 				<property name="bcpg:parentLevel">
 					<type>d:noderef</type>
 					<index enabled="true">
@@ -3987,13 +4323,44 @@
 		<aspect name="bcpg:hiddenFolder">
 		</aspect>
 
+		<aspect name="bcpg:ingListQtyPercAspect">
+			<properties>
+				<property name="bcpg:ingListQtyPerc1">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:ingListQtyPerc2">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:ingListQtyPerc3">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:ingListQtyPerc4">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:ingListQtyPerc5">
+                    <type>d:double</type>
+                    <mandatory>false</mandatory>
+                    <index enabled="false" />
+                </property>
+			</properties>
+
+		</aspect>
+
 		<aspect name="bcpg:svhcAspect">
 			<properties>
 				<property name="bcpg:isSubstanceOfVeryHighConcern">
 					<type>d:boolean</type>
 					<index enabled="true">
 						<tokenised>false</tokenised>
-						<facetable>true</facetable>
+						<facetable>false</facetable>
 					</index>
 				</property>
 				<property name="bcpg:svhcReasonsForInclusion">
@@ -4002,7 +4369,7 @@
 					<multiple>true</multiple>
 					<index enabled="true">
 						<tokenised>false</tokenised>
-						<facetable>true</facetable>
+						<facetable>false</facetable>
 					</index>
 					<constraints>
 						<constraint ref="bcpg:svhcReasonsForInclusions" />
@@ -4010,14 +4377,14 @@
 				</property>
 			</properties>
 		</aspect>
-		
-		<!-- version with datalists -->
-		
-<!-- 		Deprecated -->
+        
+        <!-- version with datalists -->
+        
+<!--        Deprecated -->
 		<aspect name="bcpg:compositeVersion">
 			<title>Versionable with datalists</title>
 			<properties>
-			<!-- 		Deprecated -->
+            <!--        Deprecated -->
 				<property name="bcpg:versionDescription">
 					<title>Version Label</title>
 					<type>d:text</type>
@@ -4027,7 +4394,7 @@
 						<facetable>false</facetable>
 					</index>
 				</property>
-				<!-- 		Deprecated -->
+                <!--        Deprecated -->
 				<property name="bcpg:versionLabel">
 					<title>Version Label</title>
 					<type>d:text</type>
@@ -4037,7 +4404,7 @@
 						<facetable>false</facetable>
 					</index>
 				</property>
-				<!-- 		Deprecated -->
+                <!--        Deprecated -->
 				<property name="bcpg:frozenCreated">
 					<title>Created</title>
 					<type>d:datetime</type>
@@ -4047,7 +4414,7 @@
 						<facetable>true</facetable>
 					</index>
 				</property>
-				<!-- 		Deprecated -->
+                <!--        Deprecated -->
 				<property name="bcpg:frozenCreator">
 					<title>Creator</title>
 					<type>d:text</type>
@@ -4057,7 +4424,7 @@
 						<facetable>false</facetable>
 					</index>
 				</property>
-				<!-- 		Deprecated -->
+                <!--        Deprecated -->
 				<property name="bcpg:frozenModified">
 					<title>Modified</title>
 					<type>d:datetime</type>
@@ -4067,7 +4434,7 @@
 						<facetable>true</facetable>
 					</index>
 				</property>
-				<!-- 		Deprecated -->
+                <!--        Deprecated -->
 				<property name="bcpg:frozenModifier">
 					<title>Modifier</title>
 					<type>d:text</type>
@@ -4077,7 +4444,7 @@
 						<facetable>false</facetable>
 					</index>
 				</property>
-				<!-- 		Deprecated -->
+                <!--        Deprecated -->
 				<property name="bcpg:frozenAccessed">
 					<title>Accessed</title>
 					<type>d:datetime</type>
@@ -4087,7 +4454,7 @@
 						<facetable>true</facetable>
 					</index>
 				</property>
-				<!-- 		Deprecated -->
+                <!--        Deprecated -->
 				<property name="bcpg:frozenNodeRef">
 					<type>d:text</type>
 					<mandatory enforced="true">false</mandatory>
@@ -4096,7 +4463,7 @@
 						<facetable>false</facetable>
 					</index>
 				</property>
-				<!-- 		Deprecated -->
+                <!--        Deprecated -->
 				<property name="bcpg:frozenNodeDbId">
 					<type>d:long</type>
 					<mandatory enforced="true">false</mandatory>
@@ -4108,7 +4475,7 @@
 			</properties>
 		</aspect>
 
-		<!-- Aspect for folder templates used to store permission groups -->
+        <!-- Aspect for folder templates used to store permission groups -->
 		<aspect name="bcpg:permissionsTpl">
 			<associations>
 
@@ -4250,13 +4617,13 @@
 					</target>
 				</association>
 			</associations>
-		</aspect>	
-		
-		<!-- Deprecated -->
+		</aspect>   
+        
+        <!-- Deprecated -->
 		<aspect name="bcpg:diluentAspect"></aspect>
 
 		<aspect name="bcpg:waterAspect"></aspect>
-		
+
 		<aspect name="bcpg:evaporableAspect">
 			<properties>
 				<property name="bcpg:evaporatedRate">
@@ -4265,8 +4632,8 @@
 				</property>
 			</properties>
 		</aspect>
-		
-		<!-- Aspect used to store the entity type of the template (entityFolderTpl, entityTpl, etc...) -->
+        
+        <!-- Aspect used to store the entity type of the template (entityFolderTpl, entityTpl, etc...) -->
 		<aspect name="bcpg:entityTplAspect">
 			<properties>
 				<property name="bcpg:entityTplClassName">
@@ -4422,8 +4789,8 @@
 				</child-association>
 			</associations>
 		</aspect>
-		
-		<!-- PLM -->
+        
+        <!-- PLM -->
 		<aspect name="bcpg:productAspect">
 			<properties>
 				<property name="bcpg:productComments">
@@ -4634,6 +5001,17 @@
 						<many>true</many>
 					</target>
 				</association>
+				<association name="bcpg:laboratories">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:laboratory</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
 				<association name="bcpg:trademarkRef">
 					<source>
 						<mandatory>false</mandatory>
@@ -4725,6 +5103,8 @@
 						<facetable>true</facetable>
 					</index>
 				</property>
+
+
 				<property name="bcpg:servingSizeByCountry">
 					<type>d:mltext</type>
 					<index enabled="false" />
@@ -4761,6 +5141,25 @@
 					<constraints>
 						<constraint ref="bcpg:nutrientPreparationStates" />
 					</constraints>
+				</property>
+
+				<property name="bcpg:nutrientPreparationReconstituantQty">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+
+				<property name="bcpg:nutrientPreparationQty">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+
+
+				<property name="bcpg:nutrientReferenceProducts">
+					<type>d:mltext</type>
+					<index enabled="true">
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
+					</index>
 				</property>
 
 				<property name="bcpg:nutrientPreparedUnit">
@@ -4805,6 +5204,17 @@
 					</source>
 					<target>
 						<class>bcpg:precautionOfUse</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="bcpg:nutrientPreparationReconstituantRef">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:product</class>
 						<mandatory>false</mandatory>
 						<many>false</many>
 					</target>
@@ -5169,6 +5579,15 @@
 		</aspect>
 
 		<aspect name="bcpg:linkedSearchAspect">
+			<properties>
+				<property name="bcpg:excludeFromSearch">
+					<type>d:boolean</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
+			</properties>
 			<associations>
 				<association name="bcpg:linkedSearchAssociation">
 					<source>
@@ -5475,6 +5894,28 @@
 			</properties>
 		</aspect>
 
+
+		<aspect name="bcpg:nutListReferenceAspect">
+			<properties>
+				<property name="bcpg:nutListReductionFormulatedValue">
+					<type>d:mltext</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:nutListReductionValue">
+					<type>d:mltext</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:nutListReferenceValue">
+					<type>d:mltext</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+			</properties>
+		</aspect>
+
+
 		<aspect name="bcpg:nutListPreparedAspect">
 			<properties>
 				<property name="bcpg:nutListValuePrepared">
@@ -5493,7 +5934,7 @@
 						<constraint ref="bcpg:nutListUnit" />
 					</constraints>
 				</property>
-			    <property name="bcpg:nutListRoundedValuePrepared">
+				<property name="bcpg:nutListRoundedValuePrepared">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="false" />
@@ -5501,7 +5942,18 @@
 			</properties>
 		</aspect>
 
-
+		<aspect name="bcpg:nutListRequirementAspect">
+			<properties>
+				<property name="bcpg:nutListRequirementType">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="bcpg:nutListRequirementTypes" />
+					</constraints>
+				</property>
+			</properties>
+		</aspect>
 
 		<aspect name="bcpg:nutrientProfilingScoreAspect">
 			<properties>
@@ -5553,7 +6005,7 @@
 				</property>
 			</properties>
 			<associations>
-			<!-- Deprecated -->
+            <!-- Deprecated -->
 				<association name="bcpg:nutrientProfileRef">
 					<title>Nutrient profil</title>
 					<source>
@@ -5623,6 +6075,41 @@
 			</properties>
 		</aspect>
 
+		<aspect name="bcpg:userAuthenticationAspect">
+			<properties>
+				<property name="bcpg:isSsoUser">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+			</properties>
+		</aspect>
+
+		<aspect name="bcpg:userNotificationAspect">
+			<properties>
+				<property name="bcpg:emailTaskResourceDisabled">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:emailTaskObserverDisabled">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:emailProjectNotificationDisabled">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:emailAdminNotificationDisabled">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+			</properties>
+		</aspect>
+
 		<aspect name="bcpg:advSearchAspect">
 			<properties>
 				<property name="bcpg:advPclValue1">
@@ -5663,6 +6150,39 @@
 			</properties>
 
 			<associations>
+				<association name="bcpg:advLca">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:lca</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="bcpg:advSvhcAnd">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:ing</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="bcpg:advSvhcNot">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:ing</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
 				<association name="bcpg:advIlIngAnd">
 					<source>
 						<mandatory>false</mandatory>
@@ -5931,6 +6451,44 @@
 			</properties>
 		</aspect>
 
+		<aspect name="bcpg:glopProductAspect">
+			<properties>
+				<property name="bcpg:glopTargetTask">
+					<type>d:text</type>
+					<index enabled="false"></index>
+					<constraints>
+						<constraint ref="bcpg:glopTargetTasks"></constraint>
+					</constraints>
+				</property>
+				<property name="bcpg:glopConstraintLists">
+					<type>d:text</type>
+					<multiple>true</multiple>
+					<index enabled="false"></index>
+				</property>
+				<property name="bcpg:glopTolerance">
+					<type>d:double</type>
+					<index enabled="false"></index>
+				</property>
+				<property name="bcpg:glopApplyOptimization">
+					<type>d:boolean</type>
+					<index enabled="false"></index>
+				</property>
+			</properties>
+			<associations>
+				<association name="bcpg:glopTargetCharact">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:charact</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+		</aspect>
+
 		<aspect name="bcpg:propagateUpAspect">
 			<properties>
 				<property name="bcpg:isCharactPropagateUp">
@@ -6019,6 +6577,25 @@
 					<type>d:text</type>
 					<index enabled="false"></index>
 				</property>
+				<property name="bcpg:regulatoryType">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:reqTypes" />
+					</constraints>
+				</property>
+				<property name="bcpg:regulatoryText">
+					<type>d:mltext</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
 			</properties>
 			<associations>
 				<association name="bcpg:regulatoryUsageRef">
@@ -6043,5 +6620,140 @@
 				</association>
 			</associations>
 		</aspect>
+
+		<aspect name="bcpg:ingToxAspect">
+			<properties>
+				<property name="bcpg:ingToxData">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:ingToxPodSystemic">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:ingToxDermalAbsorption">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:ingToxOralAbsorption">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:ingToxMosMoe">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:ingToxMaxSkinIrritationRinseOff">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:ingToxMaxSkinIrritationLeaveOn">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:ingToxMaxSensitization">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:ingToxMaxOcularIrritation">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:ingToxMaxPhototoxic">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+
+				<property name="bcpg:ingToxAcuteOral">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:ingToxAcuteDermal">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:ingToxAcuteInhalation">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:ingToxAcuteInhalationType">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:toxAcuteInhalationTypes" />
+					</constraints>
+				</property>
+				<property name="bcpg:ingToxAquaticMFactor">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:ingToxIsSuperSensitizing">
+					<type>d:boolean</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+			</properties>
+		</aspect>
+
+		<aspect name="bcpg:httpLinkAspect">
+			<properties>
+				<property name="bcpg:httpLink1">
+					<type>d:text</type>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="bcpg:httpLink" />
+					</constraints>
+				</property>
+				<property name="bcpg:httpLink2">
+					<type>d:text</type>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="bcpg:httpLink" />
+					</constraints>
+				</property>
+				<property name="bcpg:httpLink3">
+					<type>d:text</type>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="bcpg:httpLink" />
+					</constraints>
+				</property>
+				<property name="bcpg:httpLink4">
+					<type>d:text</type>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="bcpg:httpLink" />
+					</constraints>
+				</property>
+				<property name="bcpg:httpLink5">
+					<type>d:text</type>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="bcpg:httpLink" />
+					</constraints>
+				</property>
+			</properties>
+		</aspect>
+
 	</aspects>
 </model>

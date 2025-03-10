@@ -121,10 +121,22 @@ public class CharactDetailsHelper {
 		// Entity nut 1, nut2, nut3
 
 		List<List<Object>> resultsets = new LinkedList<>();
-		totals.add(I18NUtil.getMessage("entity.datalist.item.details.totals"));
+		
+		String totalKey = "entity.datalist.item.details.totals";
+		if (charactDetails.getTotalOperation().equals("MIN")) {
+			totalKey = "entity.datalist.item.details.mins";
+		} else if (charactDetails.getTotalOperation().equals("MAX")) {
+			totalKey = "entity.datalist.item.details.maxs";
+		}
+		
+		totals.add(I18NUtil.getMessage(totalKey));
 
 		for (int i = 0; i < indexMap.size(); ++i) {
-			totals.add(0d);
+			if ("MIN".equals(charactDetails.getTotalOperation())) {
+				totals.add(Double.MAX_VALUE);
+			} else {
+				totals.add(0d);
+			}
 		}
 
 		Map<NodeRef, List<Object>> tmpMap = new LinkedHashMap<>();
@@ -155,12 +167,20 @@ public class CharactDetailsHelper {
 							.filter(elt -> elt.keyEquals(charactDetailsValue) && elt.getName().equals(currentDetailsName)).findFirst();
 					if (matchingCharact.isPresent()) {
 						
-						int entryIndex = entry.getValue().indexOf(matchingCharact.get());
+						List<CharactDetailsValue> charactDetailValues = entry.getValue();
+						int entryIndex = charactDetailValues.indexOf(matchingCharact.get());
 						if (entryIndex != -1) {
-							Double value = entry.getValue().get(entryIndex).getValue();
+							CharactDetailsValue currentCharactDetailsValue = charactDetailValues.get(entryIndex);
+							Double value = currentCharactDetailsValue.getValue();
 							tmp.set(currentIndex, value);
-							if (entry.getValue().get(entryIndex).getLevel() == 0) {
-								total += value != null ? value : 0d;
+							if (currentCharactDetailsValue.getLevel() == 0) {
+								if ("SUM".equals(charactDetails.getTotalOperation())) {
+									total += value != null ? value : 0d;
+								} else if ("MAX".equals(charactDetails.getTotalOperation())) {
+									total = value != null ? Math.max(total, value) : total;
+								} else if ("MIN".equals(charactDetails.getTotalOperation())) {
+									total = value != null ? Math.min(total, value) : total;
+								}
 							}
 						}
 					}
@@ -207,7 +227,7 @@ public class CharactDetailsHelper {
 				}
 
 				if (level == 0) {
-					computeTotals(index, totals, currentAdditionalValue);
+					computeTotals(index, totals, currentAdditionalValue, charactDetails.getTotalOperation());
 				}
 				tmp.set(index, elementToDisplay);
 			}
@@ -266,9 +286,15 @@ public class CharactDetailsHelper {
 		return idx;
 	}
 
-	private static void computeTotals(Integer index, List<Object> totals, Double currentValue) {
+	private static void computeTotals(Integer index, List<Object> totals, Double currentValue, String totalOperation) {
 		if (totals.size() > index) {
-			totals.set(index, (Double) totals.get(index) + currentValue);
+			if ("SUM".equals(totalOperation)) {
+				totals.set(index, (Double) totals.get(index) + currentValue);
+			} else if ("MAX".equals(totalOperation)) {
+				totals.set(index, Math.max((Double) totals.get(index), currentValue));
+			} else if ("MIN".equals(totalOperation)) {
+				totals.set(index, Math.min((Double) totals.get(index), currentValue));
+			}
 		} else {
 			totals.add(index, currentValue);
 		}

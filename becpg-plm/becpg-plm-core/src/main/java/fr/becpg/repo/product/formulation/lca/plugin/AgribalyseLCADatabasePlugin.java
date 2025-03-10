@@ -3,6 +3,7 @@ package fr.becpg.repo.product.formulation.lca.plugin;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -22,7 +23,7 @@ import fr.becpg.repo.product.formulation.lca.LCADatabasePlugin;
 /**
  * <p>AgribalyseLCADatabasePlugin class.</p>
  *
- * @author matthieu
+ * @author valentin
  * @version $Id: $Id
  */
 @Service
@@ -52,17 +53,24 @@ public class AgribalyseLCADatabasePlugin implements LCADatabasePlugin {
 		ContentReader reader = contentService.getReader(databaseNodeRef, ContentModel.PROP_CONTENT);
 		try (InputStream in = reader.getContentInputStream()) {
 			try (InputStreamReader inReader = new InputStreamReader(in)) {
-				try (CSVReader csvReader = new CSVReader(inReader, ';', '"', 1)) {
+				try (CSVReader csvReader = new CSVReader(inReader, ';', '"', 0)) {
+					String[] headers = csvReader.readNext();
+		            
+		            Map<String, Integer> headerIndexMap = new HashMap<>();
+		            for (int i = 0; i < headers.length; i++) {
+		                headerIndexMap.put(headers[i], i);
+		            }
+		            
 					String[] line = null;
 					while ((line = csvReader.readNext()) != null) {
 						lcaData.put(line[1],
 								new LCAData(line[1], line[4], parseDouble(line[12]),
-										parseDouble(line[27]), parseDouble(line[28]), parseDouble(line[29]),
-										parseDouble(line[30]), parseDouble(line[31]), parseDouble(line[32]),
-										parseDouble(line[33]), parseDouble(line[34]), parseDouble(line[35]),
-										parseDouble(line[36]), parseDouble(line[37]), parseDouble(line[38]),
-										parseDouble(line[39]), parseDouble(line[40]), parseDouble(line[41]),
-										parseDouble(line[42])));
+										parseDouble(line[headerIndexMap.get("CLIMATE_CHANGE")]), parseDouble(line[headerIndexMap.get("PARTICULATE_MATTER")]), parseDouble(line[headerIndexMap.get("WATER_USE")]),
+										parseDouble(line[headerIndexMap.get("LAND_USE")]), parseDouble(line[headerIndexMap.get("RESOURCE_USE_MINERALS_METALS")]), parseDouble(line[headerIndexMap.get("OZONE_DEPLETION")]),
+										parseDouble(line[headerIndexMap.get("ACIDIFICATION")]), parseDouble(line[headerIndexMap.get("IONIZING_RADIATION")]), parseDouble(line[headerIndexMap.get("PHOTOCHEMICAL_OZONE_FORMATION")]),
+										parseDouble(line[headerIndexMap.get("EUTROPHICATION_TERRESTRIAL")]), parseDouble(line[headerIndexMap.get("EUTROPHICATION_MARINE")]), parseDouble(line[headerIndexMap.get("EUTROPHICATION_FRESHWATER")]),
+										parseDouble(line[headerIndexMap.get("ECOTOXICITY_FRESHWATER")]), parseDouble(line[headerIndexMap.get("HUMAN_TOXICITY_CANCER")]), parseDouble(line[headerIndexMap.get("HUMAN_TOXICITY_NON_CANCER")]),
+										parseDouble(line[headerIndexMap.get("RESOURCE_USE_FOSSILS")])));
 					}
 				}
 			}

@@ -19,9 +19,11 @@ package fr.becpg.repo.entity.remote.extractor;
 
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -33,6 +35,7 @@ import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteParams;
 import fr.becpg.repo.entity.remote.RemoteServiceRegisty;
+import net.sf.acegisecurity.AccessDeniedException;
 
 /**
  * <p>Abstract AbstractEntityVisitor class.</p>
@@ -58,18 +61,34 @@ public abstract class AbstractEntityVisitor implements RemoteEntityVisitor {
 
 	protected final Set<NodeRef> cacheList = new HashSet<>();
 
+	/**
+	 * <p>isLight.</p>
+	 *
+	 * @return a boolean
+	 */
 	protected boolean isLight() {
 		return RemoteEntityFormat.xml_light.equals(params.getFormat());
 	}
 
+	/**
+	 * <p>isAll.</p>
+	 *
+	 * @return a boolean
+	 */
 	protected boolean isAll() {
 		return RemoteEntityFormat.xml_all.equals(params.getFormat()) || RemoteEntityFormat.json_all.equals(params.getFormat());
 	}
 
+	/**
+	 * <p>Getter for the field <code>params</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.entity.remote.RemoteParams} object
+	 */
 	public RemoteParams getParams() {
 		return params;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void setParams(RemoteParams params) {
 		this.params = params;
@@ -78,12 +97,7 @@ public abstract class AbstractEntityVisitor implements RemoteEntityVisitor {
 	/**
 	 * <p>Constructor for AbstractEntityVisitor.</p>
 	 *
-	 * @param mlNodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
-	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
-	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
-	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object.
-	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object.
-	 * @param siteService a {@link org.alfresco.service.cmr.site.SiteService} object.
+	 * @param remoteServiceRegisty a {@link fr.becpg.repo.entity.remote.RemoteServiceRegisty} object
 	 */
 	protected AbstractEntityVisitor(RemoteServiceRegisty remoteServiceRegisty) {
 		super();
@@ -107,5 +121,20 @@ public abstract class AbstractEntityVisitor implements RemoteEntityVisitor {
 		return isAll() && !cacheList.contains(nodeRef) && !(ContentModel.TYPE_AUTHORITY.equals(nodeType) || ContentModel.TYPE_PERSON.equals(nodeType)
 				|| ContentModel.TYPE_AUTHORITY_CONTAINER.equals(nodeType));
 	}
-
+	
+	/**
+	 * <p>getPrimaryParentRef.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @throws fr.becpg.repo.entity.remote.extractor.RemoteException if any.
+	 */
+	protected NodeRef getPrimaryParentRef(NodeRef nodeRef) throws RemoteException {
+		try {
+			return Optional.ofNullable(nodeService.getPrimaryParent(nodeRef)).map(ChildAssociationRef::getParentRef)
+					.orElse(null);
+		} catch (final AccessDeniedException e) {
+			throw new RemoteException(String.format("Cannot read entity %s's primary parent", nodeRef.toString()), e);
+		}
+	}
 }

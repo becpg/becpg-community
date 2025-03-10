@@ -80,7 +80,10 @@
 				"title": "${row.item.assocs["bcpg:costListCost"][0].properties["bcpg:charactName"]!""}",	
 				<#elseif row.item.typeShort == "bcpg:ingList" >				
 				"name": "${row.item.assocs["bcpg:ingListIng"][0].properties["bcpg:charactName"]!""}",
-				"title": "${row.item.assocs["bcpg:ingListIng"][0].properties["bcpg:charactName"]!""}",		
+				"title": "${row.item.assocs["bcpg:ingListIng"][0].properties["bcpg:charactName"]!""}",
+			   <#elseif row.item.typeShort == "pjt:scoreList" >             
+                "name": "${row.item.assocs["pjt:slScoreCriterion"][0].properties["bcpg:charactName"]!""}",
+                "title": "${row.item.assocs["pjt:slScoreCriterion"][0].properties["bcpg:charactName"]!""}",      		
 				<#elseif  row.item.typeShort == "bcpg:contactList" >
 				"name": "${row.item.properties["bcpg:contactListFirstName"]!""} ${row.item.properties["bcpg:contactListLastName"]!""}",
 				"title": "${row.item.properties["bcpg:contactListFirstName"]!""} ${row.item.properties["bcpg:contactListLastName"]!""}",			

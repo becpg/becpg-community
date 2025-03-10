@@ -212,6 +212,12 @@
 		</itemTypes>
 	</config>
 	
+	<config evaluator="string-compare" condition="product-list">
+		<itemTypes>
+			<itemType name="cm:content" editSelectedFormId="product-list" />
+		</itemTypes>
+	</config>
+	
 	<config evaluator="string-compare" condition="wused-search">
 		<itemTypes>
 			<!-- Sample use case -->
@@ -254,6 +260,7 @@
 				<aspect name="bcpg:entityBranchAspect" />
 				<aspect name="bcpg:docLinkedEntitiesAspect" />
 				<aspect name="bcpg:autoMergeAspect" />
+				<aspect name="bcpg:linkedSearchAspect" />
 			</visible>
 
 			<!-- Aspects that a user can add. Same as "visible" if left empty -->
@@ -282,7 +289,7 @@
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:entityV2&amp;formId=create-entity&amp;isEntity=true</param>
 			</content>
 			
-			<content id="externalLink" label="menu.create-content.externalLink" type="pagelink" index="210" icon="link">
+			<content id="externalLink" label="menu.create-content.externalLink" type="pagelink" index="210" icon="externalLink">
                <param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:externalLink</param>
          	</content>
 		</create-content>

@@ -23,6 +23,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * ds: becpg/autocomplete/listvalue/values/{path}
  * param: {path} return list values in path
  *
+ * @author matthieu
  */
 @Service("listValueAutoCompletePlugin")
 @BeCPGPublicApi

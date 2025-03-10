@@ -80,18 +80,24 @@ public class TranslateHelper {
 	 * @return a {@link java.lang.String} object.
 	 */
 	public static String getTranslatedBoolean(Boolean b, boolean useDefaultLocale) {
+	    if (b == null) {
+	        return "";
+	    }
 
-		String translation;
+	    // Determine the locale to use
+	    Locale locale = useDefaultLocale ? Locale.getDefault() : I18NUtil.getLocale();
 
-		if (useDefaultLocale) {
-			translation = b ? I18NUtil.getMessage(MESSAGE_TRUE, Locale.getDefault()) : I18NUtil.getMessage(MESSAGE_FALSE, Locale.getDefault());
-		} else {
-			translation = b ? I18NUtil.getMessage(MESSAGE_TRUE) : I18NUtil.getMessage(MESSAGE_FALSE);
-		}
+	    // Fetch the translation for the boolean value
+	    String translation = I18NUtil.getMessage(Boolean.TRUE.equals(b) ? MESSAGE_TRUE : MESSAGE_FALSE, locale);
 
-		return translation;
+	    // Provide English fallback if the translation is missing
+	    if (translation == null || translation.isEmpty()) {
+	        translation = I18NUtil.getMessage(Boolean.TRUE.equals(b) ? MESSAGE_TRUE : MESSAGE_FALSE, Locale.ENGLISH);
+	    }
+
+	    return translation;
 	}
-
+	
 	/**
 	 * <p>getConstraint.</p>
 	 *

@@ -33,6 +33,8 @@ public class IngRegulatoryListDataItem extends BeCPGDataObject {
 	private MLText citation;
 
 	private MLText restrictionLevels;
+	
+	private MLText precautions;
 
 	private MLText comment;
 
@@ -108,6 +110,27 @@ public class IngRegulatoryListDataItem extends BeCPGDataObject {
 	 */
 	public void setRestrictionLevels(MLText restrictionLevels) {
 		this.restrictionLevels = restrictionLevels;
+	}
+	
+	/**
+	 * <p>Getter for the field <code>precautions</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object
+	 */
+	@AlfProp
+	@AlfMlText
+	@AlfQname(qname = "bcpg:irlPrecautions")
+	public MLText getPrecautions() {
+		return precautions;
+	}
+	
+	/**
+	 * <p>Setter for the field <code>precautions</code>.</p>
+	 *
+	 * @param precautions a {@link org.alfresco.service.cmr.repository.MLText} object
+	 */
+	public void setPrecautions(MLText precautions) {
+		this.precautions = precautions;
 	}
 	
 	

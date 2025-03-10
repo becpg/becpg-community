@@ -379,7 +379,6 @@
             <aspect name="cm:dublincore" />
             <aspect name="cm:effectivity" />
             <aspect name="cm:summarizable" />
-            <aspect name="cm:versionable" />
             <aspect name="cm:templatable" />
             <aspect name="cm:emailed" />
             <aspect name="emailserver:aliasable" />

@@ -536,7 +536,8 @@ public class ProductServiceIT extends PLMBaseTestCase {
 			FinishedProductData finishedProduct1 = new FinishedProductData();
 			finishedProduct1.setName("Finished Product 1");
 			List<PackagingListDataItem> packagingList1 = new ArrayList<>();
-			packagingList1.add(new PackagingListDataItem(null, 1d, ProductUnit.P, PackagingLevel.Primary, true, packagingMaterialNodeRef));
+			packagingList1.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.P).withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packagingMaterialNodeRef)
+);
 			finishedProduct1.getPackagingListView().setPackagingList(packagingList1);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
 		}, false, true);
@@ -545,7 +546,8 @@ public class ProductServiceIT extends PLMBaseTestCase {
 			FinishedProductData finishedProduct2 = new FinishedProductData();
 			finishedProduct2.setName("Finished Product");
 			List<PackagingListDataItem> packagingList2 = new ArrayList<>();
-			packagingList2.add(new PackagingListDataItem(null, 8d, ProductUnit.PP, PackagingLevel.Secondary, true, packagingMaterialNodeRef));
+			packagingList2.add(PackagingListDataItem.build().withQty(8d).withUnit(ProductUnit.PP).withPkgLevel(PackagingLevel.Secondary).withIsMaster(true).withProduct(packagingMaterialNodeRef)
+);
 			finishedProduct2.getPackagingListView().setPackagingList(packagingList2);
 			alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct2).getNodeRef();
 
@@ -589,9 +591,10 @@ public class ProductServiceIT extends PLMBaseTestCase {
 			ProductUnit packagingListUnit = ProductUnit.valueOf((String) properties.get(PLMModel.PROP_PACKAGINGLIST_UNIT));
 			PackagingLevel packagingLevel = PackagingLevel.valueOf((String) properties.get(PLMModel.PROP_PACKAGINGLIST_PKG_LEVEL));
 
-			PackagingListDataItem packagingListDataItem = new PackagingListDataItem(kv.getKey(),
-					(Double) properties.get(PLMModel.PROP_PACKAGINGLIST_QTY), packagingListUnit, packagingLevel, true,
-					kv.getValue().getEntityNodeRef());
+			PackagingListDataItem packagingListDataItem = PackagingListDataItem.build().withQty((Double) properties.get(PLMModel.PROP_PACKAGINGLIST_QTY)).withUnit(packagingListUnit).withPkgLevel(packagingLevel).withIsMaster(true).withProduct(kv.getValue()
+.getEntityNodeRef());
+			
+			packagingListDataItem.setNodeRef(kv.getKey());
 
 			wUsedList.add(packagingListDataItem);
 		}

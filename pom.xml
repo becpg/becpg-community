@@ -5,7 +5,7 @@
 	<groupId>fr.becpg</groupId>
 	<artifactId>becpg-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>23.2.1</version>
+	<version>23.4.1</version>
 	<name>beCPG</name>
 	
 	<description>BeCPG Parent Project</description>
@@ -48,6 +48,13 @@
 			 </comments>
 		</license>
 	</licenses>
+	
+	<distributionManagement>
+	       <site>
+            <id>default-site</id>
+            <url>file://${maven.multiModuleProjectDirectory}/target/staging</url>
+        </site>
+    </distributionManagement>
 
 	<repositories>
 		<repository>
@@ -102,7 +109,7 @@
 		
 	
 	 <!-- Alfresco Maven Plugin version to use -->
-		<alfresco.sdk.version>4.8.0</alfresco.sdk.version>
+		<alfresco.sdk.version>4.10.0</alfresco.sdk.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -112,21 +119,20 @@
         
         
          <!-- Alfresco 7.2 -->
-		<alfresco.platform.version>23.2.1</alfresco.platform.version>
-		<alfresco.share.docker.version>23.2.1</alfresco.share.docker.version>
+		<alfresco.platform.version>23.4.1</alfresco.platform.version>
+		<alfresco.share.docker.version>23.4.1</alfresco.share.docker.version>
 		
-        <alfresco.share.version>23.2.0.72</alfresco.share.version>
-        <alfresco-repository.version>23.2.0.60</alfresco-repository.version>
-		<alfresco-remote-api.version>23.2.0.60</alfresco-remote-api.version>
-		<alfresco-data-model.version>23.2.0.60</alfresco-data-model.version>
-		<alfresco-core.version>23.2.0.60</alfresco-core.version>
-		<spring-surf.version>9.0</spring-surf.version>
-	    <spring-webscripts.version>9.0</spring-webscripts.version>
-	    <spring-webscripts-share.version>9.1</spring-webscripts-share.version>
-	
+        <alfresco.share.version>23.4.0.46</alfresco.share.version>
+        <alfresco-repository.version>23.4.1.1</alfresco-repository.version>
+		<alfresco-remote-api.version>23.4.1.1</alfresco-remote-api.version>
+		<alfresco-data-model.version>23.4.1.1</alfresco-data-model.version>
+		<alfresco-core.version>23.4.1.1</alfresco-core.version>
+		<spring-surf.version>9.2</spring-surf.version>
+	    <spring-webscripts.version>9.4</spring-webscripts.version>
+	    <spring-webscripts-share.version>9.4</spring-webscripts-share.version>
 
+		<alfresco.aos.version>3.2.0</alfresco.aos.version>
 
-		<alfresco.aos.version>3.0.0</alfresco.aos.version>
 		<mysql.connector.version>8.3.0</mysql.connector.version>
         
     
@@ -154,27 +160,20 @@
 		<test.acs.endpoint.path />
 
 		<becpg.dockerbuild.name>test</becpg.dockerbuild.name>
-		<becpg.version>23.2.1</becpg.version>
+		<becpg.version>23.4.1</becpg.version>
 		<docker.becpg.url>becpg</docker.becpg.url>
 		<docker.becpg.version>${becpg.version}</docker.becpg.version>
 		<docker.becpg.tag>${project.version}</docker.becpg.tag>
 		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-		<!-- <sonar.jacoco.reportPaths>${maven.multiModuleProjectDirectory}/target/jacoco.exec</sonar.jacoco.reportPaths> -->
-		<sonar.coverage.jacoco.xmlReportPaths>${maven.multiModuleProjectDirectory}/becpg-integration-runner/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
-	    <sonar.dependencyCheck.xmlReportPath>${maven.multiModuleProjectDirectory}/target/dependency-check-report.xml</sonar.dependencyCheck.xmlReportPath>
-		<sonar.dependencyCheck.jsonReportPath>${maven.multiModuleProjectDirectory}/target/dependency-check-report.json</sonar.dependencyCheck.jsonReportPath>
-		<sonar.dependencyCheck.htmlReportPath>${maven.multiModuleProjectDirectory}/target/dependency-check-report.html</sonar.dependencyCheck.htmlReportPath>
-	    <sonar.dependencyCheck.severity.blocker>9.0</sonar.dependencyCheck.severity.blocker>
-        <sonar.dependencyCheck.severity.critical>7.0</sonar.dependencyCheck.severity.critical>
-        <sonar.dependencyCheck.severity.major>4.0</sonar.dependencyCheck.severity.major>
-        <sonar.junit.reportPaths>${project.basedir}/target/surefire-reports/,${project.basedir}/target/failsafe-reports/</sonar.junit.reportPaths>
+	  	<sonar.coverage.jacoco.xmlReportPaths>${maven.multiModuleProjectDirectory}/becpg-integration-runner/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+	    <sonar.junit.reportPaths>${maven.multiModuleProjectDirectory}/becpg-integration-runner/target/surefire-reports/,${maven.multiModuleProjectDirectory}/becpg-integration-runner/target/failsafe-reports/</sonar.junit.reportPaths>
 		<sonar.scm.disabled>true</sonar.scm.disabled>
-		<sonar.ws.timeout>3600</sonar.ws.timeout>
+		<sonar.scanner.socketTimeout>3600</sonar.scanner.socketTimeout>
 		<sonar.language>java</sonar.language>
-		<becpg.artworks.version>23.2.0.0</becpg.artworks.version>
-		<becpg.i18n.version>1.0-123</becpg.i18n.version>
+		<becpg.artworks.version>23.4.0.3</becpg.artworks.version>
+		<becpg.i18n.version>1.0-132</becpg.i18n.version>
 		<becpg.supporttools.version>1.3.1.0-beCPG-amp</becpg.supporttools.version>
 		
 	</properties>
@@ -297,13 +296,13 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-jar-plugin</artifactId>
-					<version>3.3.0</version>
+					<version>3.4.2</version>
 				</plugin>
 
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-failsafe-plugin</artifactId>
-					<version>3.1.0</version>
+					<version>3.5.2</version>
 					<executions>
 						<execution>
 							<id>integration-test</id>
@@ -327,7 +326,7 @@
 						<dependency>
 							<groupId>org.apache.maven.surefire</groupId>
 							<artifactId>surefire-junit47</artifactId>
-							<version>3.1.0</version>
+							<version>3.5.2</version>
 						</dependency>
 					</dependencies>
 				</plugin>
@@ -335,7 +334,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-dependency-plugin</artifactId>
-					<version>3.6.0</version>
+					<version>3.8.1</version>
 				</plugin>
 
 
@@ -367,7 +366,6 @@
 								<exclude>**/signature/**</exclude>
 								<exclude>**/rules/**</exclude>
 								<exclude>**/script/**</exclude>
-								<exclude>**/project/**</exclude>
 								<exclude>**/site-webscripts/**</exclude>
 								<exclude>**/META-INF/**</exclude>
 								<exclude>**/*.lib.js</exclude>
@@ -394,7 +392,6 @@
 								<exclude>**/artworks-viewer/**</exclude>
 								<exclude>**/signature/**</exclude>
 								<exclude>**/script/**</exclude>
-								<exclude>**/project/**</exclude>
 								<exclude>**/site-webscripts/**</exclude>
 								<exclude>**/*.lib.js</exclude>
 								<exclude>**/*.css</exclude>
@@ -412,7 +409,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>buildnumber-maven-plugin</artifactId>
-				<version>3.2.0</version>
+				<version>3.2.1</version>
 				<executions>
 					<execution>
 						<phase>validate</phase>
@@ -430,7 +427,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.1.0</version>
+				<version>3.5.0</version>
 				<configuration>
 					<runOrder>alphabetical</runOrder>
 				</configuration>
@@ -439,7 +436,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.7.0</version>
+				<version>3.11.2</version>
 				<configuration>
 				</configuration>
 			</plugin>
@@ -447,16 +444,15 @@
 		    <plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>3.4.1</version>
+				<version>3.6.0</version>
 			</plugin>	
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.11.0</version>
+				<version>3.13.0</version>
 				<configuration>
 					<release>17</release>
-				<!--	<compilerArgs>-Xlint:deprecation</compilerArgs>-->
 				</configuration>
 
 			</plugin>
@@ -464,7 +460,7 @@
 			<plugin>
 				<groupId>org.owasp</groupId>
 				<artifactId>dependency-check-maven</artifactId>
-				<version>8.4.0</version>
+				<version>11.1.1</version>
 				<configuration>
 					<skipProvidedScope>false</skipProvidedScope>
 					<skipRuntimeScope>true</skipRuntimeScope>
@@ -480,7 +476,13 @@
 			<plugin>
 				<groupId>org.sonarsource.scanner.maven</groupId>
 				<artifactId>sonar-maven-plugin</artifactId>
-				<version>3.11.0.3922</version>
+				<version>5.0.0.4389</version>
+			</plugin>
+			
+			<plugin>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-site-plugin</artifactId>
+			    <version>3.20.0</version>
 			</plugin>
 		</plugins>
 		
@@ -488,7 +490,7 @@
 			<extension>
 				<groupId>com.google.cloud.artifactregistry</groupId>
 				<artifactId>artifactregistry-maven-wagon</artifactId>
-				<version>2.2.0</version>
+				<version>2.2.3</version>
 			</extension>
 		</extensions>
 	</build>
@@ -506,39 +508,21 @@
 	</modules>
 
 	<reporting>
-		<excludeDefaults>true</excludeDefaults>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.5.0</version>
-				<reportSets>
-					<reportSet>
-						<reports>
-							<report>aggregate-no-fork</report>
-						</reports>
-					</reportSet>
-				</reportSets>
-			</plugin>
-			<plugin>
-				<groupId>org.owasp</groupId>
-				<artifactId>dependency-check-maven</artifactId>
-				<version>8.4.0</version>
-				<configuration>
-					<skipProvidedScope>false</skipProvidedScope>
-					<skipRuntimeScope>true</skipRuntimeScope>
-					<skipSystemScope>true</skipSystemScope>
-					<skipTestScope>true</skipTestScope>
-					<archiveAnalyzerEnabled>false</archiveAnalyzerEnabled>
-				</configuration>
-				<reportSets>
-					<reportSet>
-						<reports>
-							<report>aggregate</report>
-						</reports>
-					</reportSet>
-				</reportSets>
-			</plugin>
+
+		<!-- Surefire Report Plugin -->
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-report-plugin</artifactId>
+            <version>3.5.0</version>
+            <configuration>
+                <!-- No specific executions required, just the goal for site phase aggregation -->
+                <aggregate>true</aggregate>
+                <linkXRef>false</linkXRef>
+            </configuration>
+        </plugin>
+
+
 		</plugins>
 	</reporting>
 
@@ -550,10 +534,9 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>1.9.5</version><!--$NO-MVN-MAN-VER$-->
-			<scope>test</scope>
+		    <groupId>org.mockito</groupId>
+		    <artifactId>mockito-core</artifactId>
+		    <scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>

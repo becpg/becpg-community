@@ -39,7 +39,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * @version $Id: $Id
  * TODO use batch Service
  */
-@Deprecated 
+@Deprecated
 public class PurgeNodesWebscript extends AbstractWebScript {
 
 	private static  final  Log logger = LogFactory.getLog(PurgeNodesWebscript.class);
@@ -177,12 +177,12 @@ public class PurgeNodesWebscript extends AbstractWebScript {
 
 					@Override
 					public void afterProcess() throws Throwable {
-						ruleService.enableRules();
+						
 					}
 
 					@Override
 					public void beforeProcess() throws Throwable {
-						ruleService.disableRules();
+					
 					}
 
 					@Override
@@ -197,7 +197,7 @@ public class PurgeNodesWebscript extends AbstractWebScript {
 		                    {
 		                        public String doWork() throws Exception
 		                        {
-		                        	
+		                        	ruleService.disableRules();
 		    						if (nodeService.exists(nodeRef)) {
 		    							//TODO bug here disabling behaviour make association cache not working
 		    							policyBehaviourFilter.disableBehaviour();
@@ -210,6 +210,7 @@ public class PurgeNodesWebscript extends AbstractWebScript {
 		    						} else {
 		    							logger.warn("nodeRef doesn't exist : " + nodeRef);
 		    						}
+		    						ruleService.enableRules();
 		    						
 		    						return "OK";
 		    						

@@ -25,7 +25,6 @@ import java.util.List;
  * Class representing a hierarchical data list
  *
  * @author quere
- * @param <T>
  * @version $Id: $Id
  */
 public class Composite<T extends CompositeDataItem<T>> {

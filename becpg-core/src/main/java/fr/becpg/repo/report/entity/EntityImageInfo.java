@@ -18,6 +18,12 @@ public class EntityImageInfo {
 	NodeRef imageNodeRef;
 	
 
+	/**
+	 * <p>Constructor for EntityImageInfo.</p>
+	 *
+	 * @param imgId a {@link java.lang.String} object
+	 * @param imageNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public EntityImageInfo(String imgId, NodeRef imageNodeRef) {
 		super();
 		this.id = imgId;
@@ -25,6 +31,11 @@ public class EntityImageInfo {
 	}
 
 	
+	/**
+	 * <p>Getter for the field <code>imageNodeRef</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public NodeRef getImageNodeRef() {
 		return imageNodeRef;
 	}
@@ -103,11 +114,13 @@ public class EntityImageInfo {
 	}
 
 	
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		return Objects.hash(description, id, imageNodeRef, name, title);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -122,6 +135,7 @@ public class EntityImageInfo {
 	}
 
 	
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "EntityImageInfo [id=" + id + ", name=" + name + ", title=" + title + ", description=" + description + ", imageNodeRef=" + imageNodeRef

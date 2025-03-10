@@ -240,7 +240,8 @@ public class RegulationFormulationHelper {
 	public static Double extractGDAPerc(String roundedValue, String key) {
 		return extractValueByKey(roundedValue, KEY_GDA_PERC, key);
 	}
-
+	
+	
 	private static Double extractValueByKey(String roundedValue, String item, String key) {
 		if (roundedValue != null) {
 			try {
@@ -444,10 +445,6 @@ public class RegulationFormulationHelper {
 			return "Mini";
 		case KEY_MAXI:
 			return "Maxi";
-		case KEY_TOLERANCE_MAX:
-			return "Tmax";
-		case KEY_TOLERANCE_MIN:
-			return "Tmin";
 		case KEY_VALUE_PER_SERVING:
 			return "ValuePerServing";
 		case KEY_GDA_PERC:
@@ -458,12 +455,19 @@ public class RegulationFormulationHelper {
 			return "GDAPercPerContainer";
 		case KEY_UNIT:
 			return "Unit";
+		case KEY_TOLERANCE_MAX:
+			return "ToleranceMax";	
+		case KEY_TOLERANCE_MIN:
+			return "ToleranceMax";	
+		case KEY_UL:
+			return "UpperLimit";		
 		default:
 			break;
 		}
 		return "Value";
 	}
 
+	
 	// {
 	// v : {
 	// eu: 5.0,
@@ -564,10 +568,9 @@ public class RegulationFormulationHelper {
 
 				if ((n.getPreparedValue() != null) && (servingSize != null)) {
 					Double valuePerserving = (n.getPreparedValue() * (servingSize * 1000d)) / 100;
-					secondaryValuePerServing.put(key, regulation.round(valuePerserving, nutCode, nutUnit));
 					
 					Double vps = regulation.round(valuePerserving, nutCode, nutUnit);
-					valuePerServing.put(key, vps);
+					secondaryValuePerServing.put(key, vps);
 					if ((def != null) && (def.getGda() != null) && (def.getGda() != 0)) {
 						secondaryGda.put(key, regulation.roundGDA((100 * vps) / def.getGda(), nutCode));
 					}
@@ -615,9 +618,10 @@ public class RegulationFormulationHelper {
 				jsonPreparedRound.put(KEY_GDA_PERC_PER_CONTAINER, secondaryGdaPerContainer);
 				
 
-				for (String variantKey : variants.keySet()) {
-					jsonRound.put(variantKey, variants.get(variantKey));
+				for (Map.Entry<String, JSONObject> entry : variants.entrySet()) {
+				    jsonRound.put(entry.getKey(), entry.getValue());
 				}
+
 			}
 
 		} catch (JSONException e) {
@@ -693,6 +697,20 @@ public class RegulationFormulationHelper {
 		}
 		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("zh_HK"))) {
 			ret.add("HK");
+		}
+		
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ja_JP"))) {
+			ret.add("JP");
+		}
+		
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ja_JP"))) {
+			ret.add("JP");
+		}
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("zh_TW"))) {
+			ret.add("TW");
+		}
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("vi_VN"))) {
+			ret.add("VN");
 		}
 		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("hi_IN")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("en_IN"))) {
 			ret.add("IN");

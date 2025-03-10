@@ -47,7 +47,7 @@
 				<value>true</value>
 			</parameter>
 		</constraint>
-
+		
 		<constraint name="ghs:hazardTypes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -99,6 +99,15 @@
 
 		<type name="ghs:personalProtection">
 			<parent>bcpg:charact</parent>
+			<properties>
+				<property name="ghs:personalProtectionCode">
+					<type>d:text</type>
+					<index enabled="true">
+					  <tokenised>false</tokenised>
+					  <facetable>false</facetable>
+				   </index>
+				</property>
+			</properties>
 		</type>
 
 		<type name="ghs:pictogram">
@@ -117,43 +126,25 @@
 		<type name="ghs:hazardStatement">
 			<parent>bcpg:charact</parent>
 			<properties>
-				<property name="ghs:hazardCode">
-					<type>d:text</type>
-					<index enabled="true">
-					  <tokenised>false</tokenised>
-					  <facetable>false</facetable>
-				   </index>
-				</property>
-				<property name="ghs:hazardType">
-					<type>d:text</type>
-					<index enabled="true">
-					  <tokenised>false</tokenised>
-					  <facetable>true</facetable>
-			  		</index>
-					<constraints>
-						<constraint ref="ghs:hazardTypes" />
-					</constraints>
-				</property>
-				 <property name="ghs:hazardClassCode">
-					<type>d:text</type>
-					<index enabled="true">
-					  <tokenised>false</tokenised>
-					  <facetable>true</facetable>
-				   </index>
-					<constraints>
-						<constraint ref="ghs:hazardCategories" />
-					</constraints>
-				</property>
-				<property name="ghs:signalWord">
-				  <type>d:text</type>
-				 	<index enabled="true">
-					  <tokenised>false</tokenised>
-					  <facetable>true</facetable>
-				    </index>
-					<constraints>
-						<constraint ref="ghs:signalWords" />
-					</constraints>
-				</property>
+			   <!-- Hazard Class -->
+                <property name="ghs:hazardType">
+                    <type>d:text</type>
+                    <index enabled="true">
+                      <tokenised>false</tokenised>
+                      <facetable>true</facetable>
+                    </index>
+                    <constraints>
+                        <constraint ref="ghs:hazardTypes" />
+                    </constraints>
+                </property>
+			    <!-- Hazard Statement -->
+                <property name="ghs:hazardCode">
+                    <type>d:text</type>
+                    <index enabled="true">
+                      <tokenised>false</tokenised>
+                      <facetable>false</facetable>
+                   </index>
+                </property>
 			</properties>
 		</type>
 
@@ -219,32 +210,105 @@
 			</properties>
 		</type>
 		
+		
+		
+        <type name="ghs:hazardClassificationList">
+            <parent>bcpg:productListItem</parent>
+            <properties>
+                <property name="ghs:hclDetail">
+                    <type>d:text</type>
+                    <index enabled="false"/>
+                </property>
+                <property name="ghs:hclRegulatoryText">
+                    <type>d:text</type>
+                    <index enabled="false"/>
+                </property>
+            </properties>
+             <mandatory-aspects>
+                <aspect>ghs:hazardClassificationAspect</aspect>
+            </mandatory-aspects>
+        </type>    
+		
+		
 	</types>
 
 	<aspects>
 	
-		<!-- 	
-		https://www.chemsafetypro.com/pdf/Minimum_Info_GHS_SDS_Safety_Data_Sheets.pdf
-		
-	    Section 1 Identification of the substance or mixture and of the supplier;
-	    Section 2 Hazard identification;
-	    Section 3 Composition/information on ingredients;
-	    Section 4 First-aid measures;
-	    Section 5 Fire-fighting measures;
-	    Section 6 Accidental release measures;
-	    Section 7 Handling and storage;
-	    Section 8 Exposure controls/personal protection;
-	    Section 9 Physical and chemical properties;
-	    Section 10 Stability and reactivity;
-	    Section 11 Toxicological information;
-	    Section 12 Ecological information;
-	    Section 13 Disposal consideration;
-	    Section 14 Transport information;
-	    Section 15 Regulatory information;
-	    Section 16 Other information.
-		-->
+
+       <aspect name="ghs:hazardClassificationAspect">
+          <properties>
+                
+                 <!-- Hazard Category -->
+                 <property name="ghs:hazardClassCode">
+                    <type>d:text</type>
+                    <index enabled="true">
+                      <tokenised>false</tokenised>
+                      <facetable>true</facetable>
+                   </index>
+                    <constraints>
+                        <constraint ref="ghs:hazardCategories" />
+                    </constraints>
+                </property>
+                <!-- Signal Word -->
+                <property name="ghs:signalWord">
+                  <type>d:text</type>
+                    <index enabled="true">
+                      <tokenised>false</tokenised>
+                      <facetable>true</facetable>
+                    </index>
+                    <constraints>
+                        <constraint ref="ghs:signalWords" />
+                    </constraints>
+                </property>
+            </properties>
+            <associations>
+                <association name="ghs:pictogramRef">
+                    <source>
+                        <mandatory>true</mandatory>
+                        <many>true</many>
+                    </source>
+                    <target>
+                        <class>ghs:pictogram</class>
+                        <mandatory>false</mandatory>
+                        <many>true</many>
+                    </target>
+                </association>
+                 <association name="ghs:hazardStatementRef">
+                    <source>
+                        <mandatory>true</mandatory>
+                        <many>true</many>
+                    </source>
+                    <target>
+                        <class>ghs:hazardStatement</class>
+                        <mandatory>false</mandatory>
+                        <many>true</many>
+                    </target>
+                </association>
+            </associations>    
+       </aspect>
 
 
+
+        <!--    
+        https://www.chemsafetypro.com/pdf/Minimum_Info_GHS_SDS_Safety_Data_Sheets.pdf
+        
+        Section 1 Identification of the substance or mixture and of the supplier;
+        Section 2 Hazard identification;
+        Section 3 Composition/information on ingredients;
+        Section 4 First-aid measures;
+        Section 5 Fire-fighting measures;
+        Section 6 Accidental release measures;
+        Section 7 Handling and storage;
+        Section 8 Exposure controls/personal protection;
+        Section 9 Physical and chemical properties;
+        Section 10 Stability and reactivity;
+        Section 11 Toxicological information;
+        Section 12 Ecological information;
+        Section 13 Disposal consideration;
+        Section 14 Transport information;
+        Section 15 Regulatory information;
+        Section 16 Other information.
+        -->
 		<aspect name="ghs:sdsAspect">
 			<properties>
 				<property name="ghs:sdsStandardCode">
@@ -257,6 +321,13 @@
 						<constraint ref="ghs:sdsStandardCodes" />
 					</constraints>
 				</property>
+				<property name="ghs:sdsHazardClassifications">
+                    <type>d:text</type>
+                    <index enabled="true">
+                      <tokenised>false</tokenised>
+                      <facetable>true</facetable>
+                    </index>
+                </property>
 				<property name="ghs:sdsSheetNumber">
 					<type>d:text</type>
 					<index enabled="true">
@@ -297,6 +368,7 @@
 						<many>true</many>
 					</target>
 				</association>
+				<!-- Deprecated -->
 				<association name="ghs:sdsHazardStatements">
 					<source>
 						<mandatory>true</mandatory>

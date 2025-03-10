@@ -44,7 +44,7 @@ public class CharactAttributeExtractorPlugin extends AbstractExprNameExtractor {
 
 
 	@Autowired
-	private EntityDictionaryService entityDictionaryService;
+	protected EntityDictionaryService entityDictionaryService;
 
 	/** {@inheritDoc} */
 	@Override

@@ -41,7 +41,7 @@ import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.model.AspectAwareDataItem;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.repository.model.StateableEntity;
-import fr.becpg.repo.survey.data.SurveyList;
+import fr.becpg.repo.survey.data.SurveyListDataItem;
 import fr.becpg.repo.survey.data.SurveyableEntity;
 
 /**
@@ -104,7 +104,7 @@ public class ProjectData extends BeCPGDataObject
 	private List<InvoiceListDataItem> invoiceList;
 	private List<ExpenseListDataItem> expenseList;
 	private List<ScoreListDataItem> scoreList;
-	private List<SurveyList> surveyList;
+	private List<SurveyListDataItem> surveyList;
 
 	private List<NodeRef> currTasks;
 
@@ -116,11 +116,22 @@ public class ProjectData extends BeCPGDataObject
 	}
 	
 
+	/**
+	 * <p>build.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.project.data.ProjectData} object
+	 */
 	public static ProjectData build() {
 		return new ProjectData();
 	}
 
 	
+	/**
+	 * <p>withName.</p>
+	 *
+	 * @param name a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.project.data.ProjectData} object
+	 */
 	public ProjectData withName(String name) {
 		setName(name);
 		return this;
@@ -128,11 +139,23 @@ public class ProjectData extends BeCPGDataObject
 	
 
 	
+	/**
+	 * <p>withTaskList.</p>
+	 *
+	 * @param taskList a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.project.data.ProjectData} object
+	 */
 	public ProjectData withTaskList(List<TaskListDataItem> taskList) {
 		setTaskList(taskList);
 		return this;
 	}
 
+	/**
+	 * <p>withDeliverableList.</p>
+	 *
+	 * @param deliverableList a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.project.data.ProjectData} object
+	 */
 	public ProjectData withDeliverableList(List<DeliverableListDataItem> deliverableList) {
 		setDeliverableList(deliverableList);
 		return this;
@@ -992,13 +1015,13 @@ public class ProjectData extends BeCPGDataObject
 	@DataList
 	@AlfQname(qname = "survey:surveyList")
 	@Override
-	public List<SurveyList> getSurveyList() {
+	public List<SurveyListDataItem> getSurveyList() {
 		return surveyList;
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public void setSurveyList(List<SurveyList> surveyList) {
+	public void setSurveyList(List<SurveyListDataItem> surveyList) {
 		this.surveyList = surveyList;
 	}
 

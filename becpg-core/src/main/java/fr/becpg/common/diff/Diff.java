@@ -24,16 +24,18 @@ package fr.becpg.common.diff;
 
 /**
  * Class representing one diff operation.
+ *
+ * @author matthieu
  */
 public class Diff {
     /**
      * One of: INSERT, DELETE or EQUAL.
      */
-    public Operation operation;
+    private Operation operation;
     /**
      * The dmp associated with this diff operation.
      */
-    public String text;
+    private String text;
 
     /**
      * Constructor.  Initializes the diff with the provided values.
@@ -47,6 +49,56 @@ public class Diff {
         this.text = text;
     }
 
+    
+    
+    /**
+     * <p>Getter for the field <code>operation</code>.</p>
+     *
+     * @return a {@link fr.becpg.common.diff.Operation} object
+     * @since 23.2.1.26
+     */
+    public Operation getOperation() {
+		return operation;
+	}
+
+
+
+	/**
+	 * <p>Setter for the field <code>operation</code>.</p>
+	 *
+	 * @param operation a {@link fr.becpg.common.diff.Operation} object
+	 * @since 23.2.1.26
+	 */
+	public void setOperation(Operation operation) {
+		this.operation = operation;
+	}
+
+
+
+	/**
+	 * <p>Getter for the field <code>text</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 * @since 23.2.1.26
+	 */
+	public String getText() {
+		return text;
+	}
+
+
+
+	/**
+	 * <p>Setter for the field <code>text</code>.</p>
+	 *
+	 * @param text a {@link java.lang.String} object
+	 * @since 23.2.1.26
+	 */
+	public void setText(String text) {
+		this.text = text;
+	}
+
+
+
     /**
      * Display a human-readable version of this Diff.
      *
@@ -57,11 +109,13 @@ public class Diff {
         return "Diff(" + this.operation + ",\"" + prettyText + "\")";
     }
 
+    
+    
     /**
+     * {@inheritDoc}
+     *
      * Create a numeric hash value for a Diff.
      * This function is not used by DMP.
-     *
-     * @return Hash value.
      */
     @Override
     public int hashCode() {
@@ -72,10 +126,9 @@ public class Diff {
     }
 
     /**
-     * Is this Diff equivalent to another Diff?
+     * {@inheritDoc}
      *
-     * @param obj Another Diff to compare against.
-     * @return true or false.
+     * Is this Diff equivalent to another Diff?
      */
     @Override
     public boolean equals(Object obj) {

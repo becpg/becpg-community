@@ -73,7 +73,7 @@ public class ImpactedVersionProductIT extends PLMBaseTestCase {
 			
 			List<CompoListDataItem> compoList = new ArrayList<>();
 
-			CompoListDataItem child1 = new CompoListDataItem(null, null, 3d, 0d, ProductUnit.kg, 0d, DeclarationType.Omit, RM);
+			CompoListDataItem child1 = CompoListDataItem.build().withParent(null).withQty(3d).withQtyUsed(0d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Omit).withProduct(RM);
 			compoList.add(child1);
 
 			semiFinished.getCompoListView().setCompoList(compoList);		
@@ -93,7 +93,7 @@ public class ImpactedVersionProductIT extends PLMBaseTestCase {
 			
 			List<CompoListDataItem> compoList = new ArrayList<>();
 			
-			CompoListDataItem child1 = new CompoListDataItem(null, null, 3d, 0d, ProductUnit.kg, 0d, DeclarationType.Omit, RM);
+			CompoListDataItem child1 = CompoListDataItem.build().withParent(null).withQty(3d).withQtyUsed(0d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Omit).withProduct(RM);
 			compoList.add(child1);
 			
 			semiFinished.getCompoListView().setCompoList(compoList);		
@@ -126,11 +126,11 @@ public class ImpactedVersionProductIT extends PLMBaseTestCase {
 			
 			List<CompoListDataItem> compoList = new ArrayList<>();
 
-			CompoListDataItem child1 = new CompoListDataItem(null, null, 3d, 0d, ProductUnit.kg, 0d, DeclarationType.Omit, SF1);
+			CompoListDataItem child1 = CompoListDataItem.build().withParent(null).withQty(3d).withQtyUsed(0d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Omit).withProduct(SF1);
 			compoList.add(child1);
-			CompoListDataItem child2 = new CompoListDataItem(null, null, 3d, 0d, ProductUnit.kg, 0d, DeclarationType.Omit, SF2);
+			CompoListDataItem child2 = CompoListDataItem.build().withParent(null).withQty(3d).withQtyUsed(0d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Omit).withProduct(SF2);
 			compoList.add(child2);
-			CompoListDataItem child3 = new CompoListDataItem(null, null, 3d, 0d, ProductUnit.kg, 0d, DeclarationType.Omit, SF3);
+			CompoListDataItem child3 = CompoListDataItem.build().withParent(null).withQty(3d).withQtyUsed(0d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Omit).withProduct(SF3);
 			compoList.add(child3);
 
 			finishedProduct.getCompoListView().setCompoList(compoList);			
@@ -263,7 +263,7 @@ public class ImpactedVersionProductIT extends PLMBaseTestCase {
 			finishedProduct.setName("FP effectivity version test");
 			finishedProduct.setParentNodeRef(getTestFolderNodeRef());
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			CompoListDataItem child1 = new CompoListDataItem(null, null, 3d, 0d, ProductUnit.kg, 0d, DeclarationType.Omit, RM);
+			CompoListDataItem child1 = CompoListDataItem.build().withParent(null).withQty(3d).withQtyUsed(0d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Omit).withProduct(RM);
 			compoList.add(child1);
 			finishedProduct.getCompoListView().setCompoList(compoList);			
 			return alfrescoRepository.save(finishedProduct).getNodeRef();

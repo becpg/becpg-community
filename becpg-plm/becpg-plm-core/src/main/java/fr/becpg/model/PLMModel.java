@@ -228,7 +228,10 @@ public interface PLMModel {
 	/** Constant <code>PROP_NUTLIST_ROUNDED_VALUE</code> */
 	QName PROP_NUTLIST_ROUNDED_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "nutListRoundedValue");
 	/** Constant <code>PROP_NUTLIST_FORMULA_ERROR</code> */
+
+	QName PROP_NUTLIST_PREPARED_ROUNDED_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "nutListRoundedValuePrepared");
 	@Deprecated
+	/** Constant <code>PROP_NUTLIST_FORMULA_ERROR</code> */
 	QName PROP_NUTLIST_FORMULA_ERROR = QName.createQName(BeCPGModel.BECPG_URI, "nutListFormulaErrorLog");
 	/** Constant <code>PROP_NUTLIST_METHOD</code> */
 	QName PROP_NUTLIST_METHOD = QName.createQName(BeCPGModel.BECPG_URI, "nutListMethod");
@@ -349,6 +352,8 @@ public interface PLMModel {
 
 	/** Constant <code>PROP_SPEC_COMPATIBILITY_JOB_ON</code> */
 	QName PROP_SPEC_COMPATIBILITY_JOB_ON = QName.createQName(BeCPGModel.BECPG_URI, "specCompatibilityJobOn");
+	/** Constant <code>PROP_SPEC_COMPATIBILITY_TEST_MODE</code> */
+	QName PROP_SPEC_COMPATIBILITY_TEST_MODE = QName.createQName(BeCPGModel.BECPG_URI, "specCompatibilityTestMode");
 	/** Constant <code>PROP_SPEC_COMPATIBILITY_LOG</code> */
 	QName PROP_SPEC_COMPATIBILITY_LOG = QName.createQName(BeCPGModel.BECPG_URI, "specCompatibilityLog");
 
@@ -377,6 +382,8 @@ public interface PLMModel {
 	QName PROP_CONTACT_LIST_FIRST_NAME = QName.createQName(BeCPGModel.BECPG_URI, "contactListFirstName");
 	/** Constant <code>PROP_CONTACT_LIST_LAST_NAME</code> */
 	QName PROP_CONTACT_LIST_LAST_NAME = QName.createQName(BeCPGModel.BECPG_URI, "contactListLastName");
+	
+	QName PROP_CONTACT_LIST_EMAIL = QName.createQName(BeCPGModel.BECPG_URI, "contactListEmail");
 
 	// labelClaimList
 	/** Constant <code>TYPE_LABELCLAIMLIST</code> */
@@ -397,10 +404,10 @@ public interface PLMModel {
 	QName TYPE_SVHCLIST = QName.createQName(BeCPGModel.BECPG_URI, "svhcList");
 	/** Constant <code>TYPE_SVHC_LIST_QTY_PERC</code> */
 	QName PROP_SVHCLIST_QTY_PERC = QName.createQName(BeCPGModel.BECPG_URI, "svhcListQtyPerc");
-	
+
 	/** Constant <code>PROP_IS_SVHC</code> */
 	QName PROP_IS_SVHC = QName.createQName(BeCPGModel.BECPG_URI, "isSubstanceOfVeryHighConcern");
-	
+
 	/** Constant <code>TYPE_SVHC_LIST_ING</code> */
 	QName ASSOC_SVHCLIST_ING = QName.createQName(BeCPGModel.BECPG_URI, "svhcListIng");
 
@@ -730,6 +737,9 @@ public interface PLMModel {
 	/** Constant <code>PROP_NUTRIENT_PROFILE_CLASS_FORMULA</code> */
 	QName PROP_NUTRIENT_PROFILE_CLASS_FORMULA = QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfileClassFormula");
 
+	/** Constant <code>PROP_NUTRIENT_PROFILING_DETAILS</code> */
+	QName PROP_NUTRIENT_PROFILING_DETAILS = QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfilingDetails");
+
 	/** Constant <code>PROP_NUTRIENT_PROFILE_CATEGORY</code> */
 	QName PROP_NUTRIENT_PROFILE_CATEGORY = QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfileCategory");
 
@@ -745,6 +755,9 @@ public interface PLMModel {
 	QName PROP_ECO_SCORE_CLASS = QName.createQName(BeCPGModel.BECPG_URI, "ecoScoreClass");
 	/** Constant <code>PROP_ECO_SCORE_CATEGORY</code> */
 	QName PROP_ECO_SCORE_CATEGORY = QName.createQName(BeCPGModel.BECPG_URI, "ecoScoreCategory");
+
+	/** Constant <code>PROP_ECO_SCORE_DETAILS</code> */
+	QName PROP_ECO_SCORE_DETAILS = QName.createQName(BeCPGModel.BECPG_URI, "ecoScoreDetails");
 
 	//Custom codes
 	/** Constant <code>TYPE_CUSTOMSCODE</code> */
@@ -768,6 +781,67 @@ public interface PLMModel {
 	/** Constant <code>TYPE_REGULATORY_USAGE</code> */
 	QName TYPE_REGULATORY_USAGE = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryUsage");
 
+	/** Constant <code>TYPE_TOX</code> */
+	QName TYPE_TOX = QName.createQName(BeCPGModel.BECPG_URI, "tox");
+
+	/** Constant <code>TYPE_TOX_ING</code> */
+	QName TYPE_TOX_ING = QName.createQName(BeCPGModel.BECPG_URI, "toxIng");
+
+	/** Constant <code>PROP_TOX_TYPES</code> */
+	QName PROP_TOX_TYPES = QName.createQName(BeCPGModel.BECPG_URI, "toxTypes");
+
+	/** Constant <code>PROP_TOX_VALUE</code> */
+	QName PROP_TOX_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "toxValue");
+
+	/** Constant <code>PROP_TOX_ING_ING</code> */
+	QName PROP_TOX_ING_ING = QName.createQName(BeCPGModel.BECPG_URI, "toxIngIng");
+
+	/** Constant <code>PROP_TOX_ING_TOX</code> */
+	QName PROP_TOX_ING_TOX = QName.createQName(BeCPGModel.BECPG_URI, "toxIngTox");
+
+	/** Constant <code>PROP_TOX_ING_MAX_VALUE</code> */
+	QName PROP_TOX_ING_MAX_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "toxIngMaxValue");
+
+	/** Constant <code>PROP_TOX_ING_SYSTEMIC_VALUE</code> */
+	QName PROP_TOX_ING_SYSTEMIC_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "toxIngSystemicValue");
+
+	/** Constant <code>PROP_TOX_CALCULATE_SYSTEMIC</code> */
+	QName PROP_TOX_CALCULATE_SYSTEMIC = QName.createQName(BeCPGModel.BECPG_URI, "toxCalculateSystemic");
+
+	/** Constant <code>PROP_TOX_CALCULATE_MAX</code> */
+	QName PROP_TOX_CALCULATE_MAX = QName.createQName(BeCPGModel.BECPG_URI, "toxCalculateMax");
+
+	/** Constant <code>PROP_ING_TOX_DATA</code> */
+	QName PROP_ING_TOX_DATA = QName.createQName(BeCPGModel.BECPG_URI, "ingToxData");
+
+	/** Constant <code>PROP_ING_TOX_POD_SYSTEMIC</code> */
+	QName PROP_ING_TOX_POD_SYSTEMIC = QName.createQName(BeCPGModel.BECPG_URI, "ingToxPodSystemic");
+
+	/** Constant <code>PROP_ING_TOX_DERMAL_ABSORPTIION</code> */
+	QName PROP_ING_TOX_DERMAL_ABSORPTION = QName.createQName(BeCPGModel.BECPG_URI, "ingToxDermalAbsorption");
+	
+	QName PROP_ING_TOX_ORAL_ABSORPTION = QName.createQName(BeCPGModel.BECPG_URI, "ingToxOralAbsorption");
+	
+	QName PROP_TOX_ABSORPTION_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "toxAbsorptionType");
+
+	/** Constant <code>PROP_ING_TOX_MOS_MOE</code> */
+	QName PROP_ING_TOX_MOS_MOE = QName.createQName(BeCPGModel.BECPG_URI, "ingToxMosMoe");
+
+	/** Constant <code>PROP_ING_TOX_MAX_SKIN_IRRITATION</code> */
+	QName PROP_ING_TOX_MAX_SKIN_IRRITATION_RINSE_OFF = QName.createQName(BeCPGModel.BECPG_URI, "ingToxMaxSkinIrritationRinseOff");
+
+	/** Constant <code>PROP_ING_TOX_MAX_SKIN_IRRITATION_LEAVE_ON</code> */
+	QName PROP_ING_TOX_MAX_SKIN_IRRITATION_LEAVE_ON = QName.createQName(BeCPGModel.BECPG_URI, "ingToxMaxSkinIrritationLeaveOn");
+
+	/** Constant <code>PROP_ING_TOX_MAX_SENSITIZATION</code> */
+	QName PROP_ING_TOX_MAX_SENSITIZATION = QName.createQName(BeCPGModel.BECPG_URI, "ingToxMaxSensitization");
+
+	/** Constant <code>PROP_ING_TOX_MAX_OCULAR_IRRITATION</code> */
+	QName PROP_ING_TOX_MAX_OCULAR_IRRITATION = QName.createQName(BeCPGModel.BECPG_URI, "ingToxMaxOcularIrritation");
+
+	/** Constant <code>PROP_ING_TOX_MAX_PHOTOTOXIC</code> */
+	QName PROP_ING_TOX_MAX_PHOTOTOXIC = QName.createQName(BeCPGModel.BECPG_URI, "ingToxMaxPhototoxic");
+
 	/** Constant <code>PROP_REGULATORY_COMMENT</code> */
 	QName PROP_REGULATORY_COMMENT = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryComment");
 
@@ -782,6 +856,12 @@ public interface PLMModel {
 
 	/** Constant <code>TYPE_REGULATORY_LIST</code> */
 	QName TYPE_REGULATORY_LIST = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryList");
+
+	/** Constant <code>ASSOC_REGULATORY_COUNTRIES</code> */
+	QName ASSOC_REGULATORY_COUNTRIES = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryCountries");
+
+	/** Constant <code>ASSOC_REGULATORY_USAGE_REF</code> */
+	QName ASSOC_REGULATORY_USAGE_REF = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryUsageRef");
 
 	/** Constant <code>TYPE_ING_REGULATORY_LIST</code> */
 	QName TYPE_ING_REGULATORY_LIST = QName.createQName(BeCPGModel.BECPG_URI, "ingRegulatoryList");
@@ -823,6 +903,9 @@ public interface PLMModel {
 	/** Constant <code>PROP_GLOP_VALUE</code> */
 	QName PROP_GLOP_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "glopValue");
 
+	/** Constant <code>ASPECT_GLOP_PRODUCT</code> */
+	QName ASPECT_GLOP_PRODUCT = QName.createQName(BeCPGModel.BECPG_URI, "glopProductAspect");
+
 	/** Constant <code>PROP_IS_CHARACT_PROPAGATE_UP</code> */
 	QName PROP_IS_CHARACT_PROPAGATE_UP = QName.createQName(BeCPGModel.BECPG_URI, "isCharactPropagateUp");
 
@@ -838,7 +921,8 @@ public interface PLMModel {
 	QName PROP_USE_BY_DATE = QName.createQName(BeCPGModel.BECPG_URI, "useByDate");
 	/** Constant <code>PROP_PERIOD_AFTER_OPENING</code> */
 	QName PROP_PERIOD_AFTER_OPENING = QName.createQName(BeCPGModel.BECPG_URI, "periodAfterOpening");
-	
-	
+
+	/** Constant <code>TYPE_LABORATORY</code> */
+	QName TYPE_LABORATORY = QName.createQName(BeCPGModel.BECPG_URI, "laboratory");
 
 }

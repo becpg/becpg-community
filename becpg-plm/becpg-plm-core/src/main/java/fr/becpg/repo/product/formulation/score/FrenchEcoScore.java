@@ -1,26 +1,19 @@
 package fr.becpg.repo.product.formulation.score;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.util.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
-import fr.becpg.common.csv.CSVReader;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
 import fr.becpg.repo.autocomplete.AutoCompleteEntry;
@@ -32,6 +25,9 @@ import fr.becpg.repo.product.data.ScorableEntity;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.PackMaterialListDataItem;
+import fr.becpg.repo.product.formulation.ecoscore.EcoScoreContext;
+import fr.becpg.repo.product.formulation.ecoscore.EcoScoreService;
+import fr.becpg.repo.product.formulation.ecoscore.EcoScoreService.EnvironmentalFootprintValue;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 /**
@@ -47,9 +43,10 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 
 	@Autowired
 	private NodeService nodeService;
+	
+	@Autowired
+	private EcoScoreService ecoScoreService;
 
-	private String agribaliseDBPath;
-	private String countryScoreDBPath;
 
 	/** Constant <code>ECO_SCORE_SOURCE_TYPE="ecoscore"</code> */
 	public static final String ECO_SCORE_SOURCE_TYPE = "ecoscore";
@@ -78,51 +75,18 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 		Label Rouge	10 / LABEL_ROUGE
 		ASC	10 / AQUACULTURE_STEWARDSHIP_COUNCIL
 		MSC	10 / MARINE_STEWARDSHIP_COUNCIL_LABEL
-
+	
 	 */
 
 	private static final List<String> GROUP1_CLAIM = Arrays.asList("NATURE_ET_PROGRES", "BIO_COHERANCE", "DEMETER_LABEL");
-	private static final List<String> GROUP2_CLAIM = Arrays.asList("EU_ORGANIC","ORGANIC");
+	private static final List<String> GROUP2_CLAIM = Arrays.asList("EU_ORGANIC", "ORGANIC");
 	private static final List<String> GROUP3_CLAIM = Arrays.asList("HAUTE_VALEUR_ENVIRONNEMENTALE", "UTZ_CERTIFIED", "RAINFOREST_ALLIANCE",
 			"FAIR_TRADE_MARK", "BLEU_BLANC_COEUR", "LABEL_ROUGE", "AQUACULTURE_STEWARDSHIP_COUNCIL", "MARINE_STEWARDSHIP_COUNCIL_LABEL");
 
 	private FrenchEcoScore() {
-		agribaliseDBPath = "beCPG/databases/ecoscore/agribalyse_3_0.csv";
-		countryScoreDBPath = "beCPG/databases/ecoscore/country_score_2021.csv";
+	
 	}
 
-	private Map<String, EnvironmentalFootprintValue> environmentalFootprints = null;
-	private Map<String, Pair<Integer, Integer>> countryScores = null;
-
-	private class EnvironmentalFootprintValue {
-		private String id;
-		private String value;
-		private Double score;
-
-		public EnvironmentalFootprintValue(String id, String value, Double score) {
-			super();
-			this.id = id;
-			this.value = value;
-			this.score = score;
-		}
-
-		public String getId() {
-			return id;
-		}
-
-		public Double getScore() {
-			return score;
-		}
-
-		public String getValue() {
-			return value;
-		}
-
-		@Override
-		public String toString() {
-			return id + " - " + value;
-		}
-	}
 
 	/** {@inheritDoc} */
 	@Override
@@ -136,14 +100,11 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 
 		List<EnvironmentalFootprintValue> matches = new ArrayList<>();
 
-		if (environmentalFootprints == null) {
-			loadEFs();
-		}
 
-		String preparedQuery = BeCPGQueryHelper.prepareQuery( query).replace("*", "");
+		String preparedQuery = BeCPGQueryHelper.prepareQuery(query).replace("*", "");
 
-		matches.addAll(environmentalFootprints.values().stream()
-				.filter(res -> BeCPGQueryHelper.isQueryMatch(query, res.value)).limit(100).collect(Collectors.toList()));
+		matches.addAll(ecoScoreService.getEnvironmentalFootprints().values().stream().filter(res -> BeCPGQueryHelper.isQueryMatch(query, res.getValue())).limit(100)
+				.collect(Collectors.toList()));
 
 		matches.sort((o1, o2) -> {
 
@@ -151,7 +112,7 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 				return o1.getValue().compareTo(o2.getValue());
 			}
 
-			String value = BeCPGQueryHelper.prepareQueryForSorting( o1.getValue()).replace("*", "").replace(preparedQuery, "A");
+			String value = BeCPGQueryHelper.prepareQueryForSorting(o1.getValue()).replace("*", "").replace(preparedQuery, "A");
 			String value2 = BeCPGQueryHelper.prepareQueryForSorting(o2.getValue()).replace("*", "").replace(preparedQuery, "A");
 
 			return value.compareTo(value2);
@@ -171,68 +132,20 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 		});
 	}
 
-	private void loadEFs() {
-		environmentalFootprints = new LinkedHashMap<>();
-		ClassPathResource resource = new ClassPathResource(agribaliseDBPath);
-		try (InputStream in = resource.getInputStream()) {
-			try (InputStreamReader inReader = new InputStreamReader(resource.getInputStream())) {
-				try (CSVReader csvReader = new CSVReader(inReader, ';', '"', 1)) {
-					String[] line = null;
-					while ((line = csvReader.readNext()) != null) {
-						environmentalFootprints.put(line[1], new EnvironmentalFootprintValue(line[1], line[4], parseDouble(line[12])));
-					}
-				}
-			}
-		} catch (IOException e) {
-			logger.error(e, e);
-		}
-	}
 
-	private void loadCountryScores() {
-		countryScores = new LinkedHashMap<>();
-		ClassPathResource resource = new ClassPathResource(countryScoreDBPath);
-		try (InputStream in = resource.getInputStream()) {
-			try (InputStreamReader inReader = new InputStreamReader(resource.getInputStream())) {
-				try (CSVReader csvReader = new CSVReader(inReader, ';', '"', 1)) {
-					String[] line = null;
-					while ((line = csvReader.readNext()) != null) {
-						countryScores.put(line[0], new Pair<>(parseInt(line[2]), parseInt(line[3])));
-					}
-				}
-			}
-		} catch (IOException e) {
-			logger.error(e, e);
-		}
-	}
-
-	private Integer parseInt(String value) {
-		if ((value != null) && !value.trim().isEmpty()) {
-			return Integer.valueOf(value);
-		}
-
-		return null;
-	}
-
-	private Double parseDouble(String value) {
-		if ((value != null) && !value.trim().isEmpty()) {
-			return Double.valueOf(value.trim().replace(",", "."));
-		}
-
-		return null;
-	}
 
 	/** {@inheritDoc} */
 	@Override
 	public boolean accept(ScorableEntity productData) {
-		return (productData instanceof ProductData) &&  ((BeCPGDataObject) productData).getAspects().contains(PLMModel.ASPECT_ECO_SCORE);
+		return (productData instanceof ProductData) && ((BeCPGDataObject) productData).getAspects().contains(PLMModel.ASPECT_ECO_SCORE);
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public boolean formulateScore(ScorableEntity scorableEntity) {
 
-		ProductData productData  = (ProductData) scorableEntity;
-		
+		ProductData productData = (ProductData) scorableEntity;
+
 		if ((productData.getEcoScoreCategory() != null) && !productData.getEcoScoreCategory().isEmpty()) {
 			Boolean hasThreatenedSpecies = false;
 			Boolean notRecyclable = false;
@@ -244,23 +157,23 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 			int transportScore = 0;
 			int politicalScore = 0;
 			int ecoScore = 0;
-			
+
 			List<LabelClaimListDataItem> labelClaimList = productData.getLabelClaimList();
-			
+
 			claimBonus = computeClaimBonus(labelClaimList);
-			
+
 			hasThreatenedSpecies = hasThreatenedSpecies(labelClaimList);
 
 			if (Boolean.TRUE.equals(hasThreatenedSpecies)) {
 				ecoScore = 19;
 			} else {
 
-				 List<PackMaterialListDataItem> packMaterialList = productData.getPackMaterialList();
-				
+				List<PackMaterialListDataItem> packMaterialList = productData.getPackMaterialList();
+
 				packagingMalus = computePackagingMalus(packMaterialList);
-				
+
 				notRecyclable = isNotRecyclable(packMaterialList);
-				
+
 				if (Boolean.TRUE.equals(notRecyclable)) {
 					ecoScore = 79;
 				} else {
@@ -270,7 +183,7 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 				acvScore = computeEFScore(productData.getEcoScoreCategory(), isDrink);
 
 				int[] result = computeTransportAndPoliticalScore(productData);
-				
+
 				transportScore = result[0];
 				politicalScore = result[1];
 
@@ -289,13 +202,13 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 			}
 
 			productData.setEcoScore(ecoScore * 1d);
-			
+
 			String scoreClass = computeScoreClass(ecoScore);
-			
+
 			productData.setEcoScoreClass(scoreClass);
-			
+
 			EcoScoreContext ecoScoreContext = new EcoScoreContext();
-			
+
 			ecoScoreContext.setEcoScore(ecoScore);
 			ecoScoreContext.setScoreClass(scoreClass);
 			ecoScoreContext.setAcvScore(acvScore);
@@ -303,9 +216,9 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 			ecoScoreContext.setTransportScore(transportScore);
 			ecoScoreContext.setPoliticalScore(politicalScore);
 			ecoScoreContext.setPackagingMalus(packagingMalus);
-			
+
 			productData.setEcoScoreDetails(ecoScoreContext.toJSON().toString());
-			
+
 		} else {
 			productData.setEcoScore(null);
 			productData.setEcoScoreClass(null);
@@ -317,9 +230,9 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 	}
 
 	private Boolean hasThreatenedSpecies(List<LabelClaimListDataItem> labelClaimList) {
-		
+
 		Boolean hasThreatenedSpecies = false;
-		
+
 		if (labelClaimList != null) {
 			for (LabelClaimListDataItem claim : labelClaimList) {
 				if (Boolean.TRUE.equals(claim.getIsClaimed())) {
@@ -332,14 +245,14 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 				}
 			}
 		}
-		
+
 		return hasThreatenedSpecies;
 	}
 
 	private Boolean isNotRecyclable(List<PackMaterialListDataItem> packMaterialList) {
-		
+
 		Boolean notRecyclable = false;
-		
+
 		if (packMaterialList != null) {
 			for (PackMaterialListDataItem material : packMaterialList) {
 				if (!Boolean.TRUE.equals(notRecyclable)) {
@@ -352,9 +265,9 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 	}
 
 	private int computeClaimBonus(List<LabelClaimListDataItem> labelClaimList) {
-		
+
 		int claimBonus = 0;
-		
+
 		if (labelClaimList != null) {
 			boolean isASCorMSC = true;
 			for (LabelClaimListDataItem claim : labelClaimList) {
@@ -385,27 +298,27 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 
 		if (claimBonus > 20) {
 			claimBonus = 20;
-		} 
-		
+		}
+
 		return claimBonus;
 	}
 
 	private int computePackagingMalus(List<PackMaterialListDataItem> packMaterialList) {
-		
+
 		int packagingMalus = 0;
-		
+
 		if (packMaterialList != null) {
 
 			Double totalWeight = 0d;
-			
+
 			for (PackMaterialListDataItem material : packMaterialList) {
 				totalWeight += material.getPmlWeight();
 			}
-			
+
 			if (totalWeight == 0d) {
 				totalWeight = 1d;
 			}
-			
+
 			Double score = 100d;
 			for (PackMaterialListDataItem material : packMaterialList) {
 
@@ -424,19 +337,15 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 
 			packagingMalus = (int) Math.round((score / 10) - 10);
 		}
-		
+
 		return packagingMalus;
 	}
 
 	private int computeEFScore(String categoryCode, boolean isDrink) {
 
-		//Defers loading
-		if (environmentalFootprints == null) {
-			loadEFs();
-		}
-
-		if (environmentalFootprints.containsKey(categoryCode)) {
-			EnvironmentalFootprintValue environmentalFootprintValue = environmentalFootprints.get(categoryCode);
+		
+		if (ecoScoreService.getEnvironmentalFootprints().containsKey(categoryCode)) {
+			EnvironmentalFootprintValue environmentalFootprintValue = ecoScoreService.getEnvironmentalFootprints().get(categoryCode);
 
 			Double score;
 			if (isDrink) {
@@ -457,11 +366,8 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 	private int[] computeTransportAndPoliticalScore(ProductData productData) {
 
 		int[] result = new int[2];
+
 		
-		//Defers loading
-		if (countryScores == null) {
-			loadCountryScores();
-		}
 
 		Double transportScore = 0d;
 		Double politicalScore = 0d;
@@ -474,27 +380,27 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 					} else {
 						// À défaut d'origine disponible, l'origine "Monde" est appliquée pour les ingrédients concernés.
 						// L'origine "UE et hors UE" correspond à l'origine "Monde"
-						int transportScoreByCountry = 100;
-						int politicalScoreByCountry = 100;
+						Double transportScoreByCountry = 100d;
+						Double politicalScoreByCountry = 100d;
 
 						if ((ingListDataItem.getGeoOrigin() != null) && !ingListDataItem.getGeoOrigin().isEmpty()) {
 							for (NodeRef geoOrigin : ingListDataItem.getGeoOrigin()) {
 								String geoCode = (String) nodeService.getProperty(geoOrigin, PLMModel.PROP_GEO_ORIGIN_ISOCODE);
-								if (countryScores.containsKey(geoCode)) {
-									transportScoreByCountry = Math.min(transportScoreByCountry, countryScores.get(geoCode).getFirst());
+								if (ecoScoreService.getCountryScores().containsKey(geoCode)) {
+									transportScoreByCountry = Math.min(transportScoreByCountry, ecoScoreService.getCountryScores().get(geoCode).getFirst());
 
-									politicalScoreByCountry = Math.min(politicalScoreByCountry, countryScores.get(geoCode).getSecond());
+									politicalScoreByCountry = Math.min(politicalScoreByCountry, ecoScoreService.getCountryScores().get(geoCode).getSecond());
 
 									logger.debug("Found transportScoreByCountry: " + transportScoreByCountry + " for " + geoCode);
 									logger.debug("Found politicalScoreByCountry: " + politicalScoreByCountry + " for " + geoCode);
 								} else {
-									transportScoreByCountry = 0;
-									politicalScoreByCountry = 0;
+									transportScoreByCountry = 0d;
+									politicalScoreByCountry = 0d;
 								}
 							}
 						} else {
-							transportScoreByCountry = 0;
-							politicalScoreByCountry = 0;
+							transportScoreByCountry = 0d;
+							politicalScoreByCountry = 0d;
 						}
 
 						transportScore += (transportScoreByCountry * ingListDataItem.getQtyPerc()) / 100d;
@@ -509,13 +415,15 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 
 		result[0] = (int) Math.round((transportScore * 0.15d));
 		result[1] = (int) Math.round(((politicalScore / 10d) - 5));
-		
+
 		return result;
 	}
 
 	private boolean isWater(NodeRef ing) {
-
-		return nodeService.hasAspect(ing, PLMModel.ASPECT_WATER);
+		return nodeService.hasAspect(ing, PLMModel.ASPECT_WATER) 
+				|| (nodeService.hasAspect(ing, PLMModel.ASPECT_EVAPORABLE)
+				&& nodeService.getProperty(ing, PLMModel.PROP_EVAPORATED_RATE) != null
+				&& (Double) nodeService.getProperty(ing, PLMModel.PROP_EVAPORATED_RATE) == 100d);
 	}
 
 	/**

@@ -238,8 +238,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 		return existingLists;
 	}
 
-	/** {@inheritDoc} 
-	 * @return */
+	/** {@inheritDoc} */
 	@Override
 	public Map<QName, List<NodeRef>> getListItemsByType(NodeRef dataListNodeRef) {
 		return associationService.getChildAssocsByType(dataListNodeRef, ContentModel.ASSOC_CONTAINS).getItemsByType();
@@ -384,6 +383,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void mergeDataList(NodeRef dataListNodeRef, NodeRef entityNodeRef, boolean appendOnly) {
 		NodeRef targetListContainerNodeRef = getListContainer(entityNodeRef);
@@ -467,6 +467,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef findMatchingList(NodeRef dataListNodeRef, NodeRef targetListContainerNodeRef) {
 

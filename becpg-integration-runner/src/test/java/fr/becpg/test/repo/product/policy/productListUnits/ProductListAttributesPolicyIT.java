@@ -82,8 +82,10 @@ public class ProductListAttributesPolicyIT extends PLMBaseTestCase {
 			rawMaterialData.setCostList(costList);
 
 			List<NutListDataItem> nutList = new ArrayList<>();
-			nutList.add(new NutListDataItem(null, 12.4d, "", 0d, 0d, "Groupe 1", nut1, false));
-			nutList.add(new NutListDataItem(null, 12.5d, "", 0d, 0d, "Groupe 1", nut2, false));
+			nutList.add(NutListDataItem.build().withValue(12.4d).withUnit("").withMini(0d).withMaxi(0d).withGroup("Groupe 1").withNut(nut1).withIsManual(false)
+);
+			nutList.add(NutListDataItem.build().withValue(12.5d).withUnit("").withMini(0d).withMaxi(0d).withGroup("Groupe 1").withNut(nut2).withIsManual(false)
+);
 			rawMaterialData.setNutList(nutList);
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterialData).getNodeRef();

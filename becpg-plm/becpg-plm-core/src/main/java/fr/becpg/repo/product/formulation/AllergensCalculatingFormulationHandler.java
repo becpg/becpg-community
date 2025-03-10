@@ -30,6 +30,7 @@ import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.ResourceProductData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.AllergenType;
+import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
@@ -128,48 +129,53 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 				for (CompoListDataItem compoItem : formulatedProduct.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 
-					NodeRef part = compoItem.getProduct();
+					if (!DeclarationType.Omit.equals(compoItem.getDeclType())) {
 
-					ProductData partProduct = (ProductData) alfrescoRepository.findOne(part);
+						NodeRef part = compoItem.getProduct();
 
-					Double qtyUsed = FormulationHelper.getQtyInKg(compoItem);
+						ProductData partProduct = (ProductData) alfrescoRepository.findOne(part);
 
-					if ((qtyUsed != null) && (qtyUsed > 0)) {
-						if (!(partProduct instanceof LocalSemiFinishedProductData)) {
-							visitPart(compoItem, partProduct, formulatedProduct, retainNodes, qtyUsed, netQty, errors).forEach(error -> {
-								if (!rclCtrlMap.containsKey(error.getKey())) {
-									rclCtrlMap.put(error.getKey(), error);
-								}
-							});
+						Double qtyUsed = FormulationHelper.getQtyInKg(compoItem);
 
-							if ((partProduct.isRawMaterial()) && !SystemState.Valid.equals(partProduct.getState())) {
+						if ((qtyUsed != null) && (qtyUsed > 0)) {
+							if (!(partProduct instanceof LocalSemiFinishedProductData)) {
+								visitPart(compoItem, partProduct, formulatedProduct, retainNodes, qtyUsed, netQty, errors).forEach(error -> {
+									if (!rclCtrlMap.containsKey(error.getKey())) {
+										rclCtrlMap.put(error.getKey(), error);
+									}
+								});
 
-								if ((partProduct.getAllergenList() == null) || partProduct.getAllergenList().isEmpty()
-										|| (partProduct.getAllergenList().get(0).getParentNodeRef() == null)
-										|| !SystemState.Valid.toString().equals(nodeService.getProperty(
-												partProduct.getAllergenList().get(0).getParentNodeRef(), BeCPGModel.PROP_ENTITYLIST_STATE))) {
+								if ((partProduct.isRawMaterial()) && !SystemState.Valid.equals(partProduct.getState())) {
 
-									String message = I18NUtil.getMessage(MESSAGE_NOT_VALIDATED_ALLERGEN);
-									ReqCtrlListDataItem error = rclCtrlMap.get(message);
+									if ((partProduct.getAllergenList() == null) || partProduct.getAllergenList().isEmpty()
+											|| (partProduct.getAllergenList().get(0).getParentNodeRef() == null)
+											|| !SystemState.Valid.toString().equals(nodeService.getProperty(
+													partProduct.getAllergenList().get(0).getParentNodeRef(), BeCPGModel.PROP_ENTITYLIST_STATE))) {
 
-									List<NodeRef> sourceNodeRefs = new ArrayList<>();
-									if (error == null) {
-										error = ReqCtrlListDataItem.tolerated().ofDataType(RequirementDataType.Allergen)
-												.withMessage(MLTextHelper.getI18NMessage(MESSAGE_NOT_VALIDATED_ALLERGEN)).withSources(sourceNodeRefs);
-									} else {
-										sourceNodeRefs = error.getSources();
+										String message = I18NUtil.getMessage(MESSAGE_NOT_VALIDATED_ALLERGEN);
+										ReqCtrlListDataItem error = rclCtrlMap.get(message);
+
+										List<NodeRef> sourceNodeRefs = new ArrayList<>();
+										if (error == null) {
+											error = ReqCtrlListDataItem.tolerated().ofDataType(RequirementDataType.Allergen)
+													.withMessage(MLTextHelper.getI18NMessage(MESSAGE_NOT_VALIDATED_ALLERGEN))
+													.withSources(sourceNodeRefs);
+										} else {
+											sourceNodeRefs = error.getSources();
+										}
+
+										if (!sourceNodeRefs.contains(partProduct.getNodeRef())) {
+											sourceNodeRefs.add(partProduct.getNodeRef());
+										}
+
+										rclCtrlMap.put(message, error);
 									}
 
-									if (!sourceNodeRefs.contains(partProduct.getNodeRef())) {
-										sourceNodeRefs.add(partProduct.getNodeRef());
-									}
-
-									rclCtrlMap.put(message, error);
 								}
 
 							}
-
 						}
+
 					}
 				}
 
@@ -210,42 +216,47 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 		}
 
-		if (formulatedProduct.getIngList() != null) {
+		if (formulatedProduct.getIngList() != null)
+
+		{
 			Set<NodeRef> visitedAllergens = new HashSet<>();
 			for (IngListDataItem ing : formulatedProduct.getIngList()) {
+				if (ing.getIng() != null) {
 
-				IngItem ingItem = (IngItem) alfrescoRepository.findOne(ing.getIng());
+					IngItem ingItem = (IngItem) alfrescoRepository.findOne(ing.getIng());
 
-				for (NodeRef allergenNodeRef : ingItem.getAllergenList()) {
-					AllergenListDataItem allergen = findAllergen(formulatedProduct, allergenNodeRef);
+					for (NodeRef allergenNodeRef : ingItem.getAllergenList()) {
+						AllergenListDataItem allergen = findAllergen(formulatedProduct, allergenNodeRef);
 
-					if (allergen == null) {
-						allergen = new AllergenListDataItem();
-						allergen.setAllergen(allergenNodeRef);
-						formulatedProduct.getAllergenList().add(allergen);
-					}
-
-					if (!allergen.getVoluntarySources().contains(ing.getIng())) {
-						allergen.getVoluntarySources().add(ing.getIng());
-					}
-					allergen.setVoluntary(true);
-
-					if (!ingItem.getAllergensQtyMap().isEmpty()
-							&& !formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-						String code = (String) nodeService.getProperty(allergenNodeRef, PLMModel.PROP_ALLERGEN_CODE);
-						Double allergenRate = null;
-						if (ingItem.getAllergensQtyMap().containsKey(code)) {
-							allergenRate = ingItem.getAllergensQtyMap().get(code);
-						} else if (ingItem.getAllergensQtyMap().containsKey("ALL")) {
-							allergenRate = ingItem.getAllergensQtyMap().get("ALL");
+						if (allergen == null) {
+							allergen = new AllergenListDataItem();
+							allergen.setAllergen(allergenNodeRef);
+							formulatedProduct.getAllergenList().add(allergen);
 						}
 
-						if (allergenRate != null) {
-							if (!visitedAllergens.contains(allergenNodeRef)) {
-								allergen.setQtyPerc(0d);
-								visitedAllergens.add(allergenNodeRef);
+						if (!allergen.getVoluntarySources().contains(ing.getIng())) {
+							allergen.getVoluntarySources().add(ing.getIng());
+						}
+						allergen.setVoluntary(true);
+
+						if (!ingItem.getAllergensQtyMap().isEmpty()
+								&& !formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+							String code = (String) nodeService.getProperty(allergenNodeRef, PLMModel.PROP_ALLERGEN_CODE);
+							Double allergenRate = null;
+							if (ingItem.getAllergensQtyMap().containsKey(code)) {
+								allergenRate = ingItem.getAllergensQtyMap().get(code);
+							} else if (ingItem.getAllergensQtyMap().containsKey("ALL")) {
+								allergenRate = ingItem.getAllergensQtyMap().get("ALL");
 							}
-							allergen.setQtyPerc(allergen.getQtyPerc() + ((ing.getQtyPerc() == null ? 0d : ing.getQtyPerc()) * allergenRate / 100));
+
+							if (allergenRate != null) {
+								if (!visitedAllergens.contains(allergenNodeRef)) {
+									allergen.setQtyPerc(0d);
+									visitedAllergens.add(allergenNodeRef);
+								}
+								allergen.setQtyPerc(
+										allergen.getQtyPerc() + ((ing.getQtyPerc() == null ? 0d : ing.getQtyPerc()) * allergenRate / 100));
+							}
 						}
 					}
 				}
@@ -267,7 +278,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 					}
 
 					if (!Boolean.TRUE.equals(allergenListDataItem.getVoluntary())) {
-						Double inVolRegulatoryThreshold = getInVolRegulatoryThreshold(formulatedProduct, allergenListDataItem.getAllergen());
+						Double inVolRegulatoryThreshold = getInVolRegulatoryThreshold(allergenListDataItem.getAllergen());
 						if (inVolRegulatoryThreshold != null && allergenListDataItem.getQtyPerc() != null) {
 							if (inVolRegulatoryThreshold > allergenListDataItem.getQtyPerc()) {
 								allergenListDataItem.setInVoluntary(false);
@@ -318,7 +329,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 		return ret != null ? ret : (Double) nodeService.getProperty(allergen, PLMModel.PROP_ALLERGEN_REGULATORY_THRESHOLD);
 	}
 
-	private Double getInVolRegulatoryThreshold(ProductData formulatedProduct, NodeRef allergen) {
+	private Double getInVolRegulatoryThreshold(NodeRef allergen) {
 		return (Double) nodeService.getProperty(allergen, PLMModel.PROP_ALLERGEN_INVOL_REGULATORY_THRESHOLD);
 	}
 
@@ -370,11 +381,14 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 				if (!retainNodes.contains(newAllergenListDataItem)) {
 					// Reset existing variants
 					if (!Boolean.TRUE.equals(newAllergenListDataItem.getIsManual())) {
+
 						newAllergenListDataItem.setVariants(null);
 
-						newAllergenListDataItem.setQtyPerc(null);
-						newAllergenListDataItem.setVoluntary(false);
-						newAllergenListDataItem.getVoluntarySources().clear();
+						if (!(partProduct instanceof ResourceProductData)) {
+							newAllergenListDataItem.setQtyPerc(null);
+							newAllergenListDataItem.setVoluntary(false);
+							newAllergenListDataItem.getVoluntarySources().clear();
+						}
 
 						newAllergenListDataItem.setInVoluntary(false);
 						newAllergenListDataItem.getInVoluntarySources().clear();
@@ -506,8 +520,9 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 								sourceNodeRefs.add(partProduct.getNodeRef());
 
 								error = ReqCtrlListDataItem.forbidden().ofDataType(RequirementDataType.Allergen)
-										.withMessage(MLTextHelper.getI18NMessage(MESSAGE_NULL_PERC, mlNodeService.getProperty(allergenNodeRef, BeCPGModel.PROP_CHARACT_NAME))).withSources(sourceNodeRefs)
-										.withCharact(allergenNodeRef);
+										.withMessage(MLTextHelper.getI18NMessage(MESSAGE_NULL_PERC,
+												mlNodeService.getProperty(allergenNodeRef, BeCPGModel.PROP_CHARACT_NAME)))
+										.withSources(sourceNodeRefs).withCharact(allergenNodeRef);
 
 								errors.put(message, error);
 
@@ -518,10 +533,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 								ret.add(error);
 							}
 
-							if (regulatoryThreshold == null) {
-								// Reset
-								newAllergenListDataItem.setQtyPerc(null);
-							} else if (newAllergenListDataItem.getQtyPerc() == null) {
+							if (regulatoryThreshold != null && newAllergenListDataItem.getQtyPerc() == null) {
 								newAllergenListDataItem.setQtyPerc(0d);
 							}
 						}
@@ -561,7 +573,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 		} else {
 			sourceNodeRefs = error.getSources();
 		}
-		
+
 		if (!sourceNodeRefs.contains(partProduct.getNodeRef())) {
 			sourceNodeRefs.add(partProduct.getNodeRef());
 		}

@@ -59,12 +59,12 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 
 	/** {@inheritDoc} */
 	@Override
-	public CharactDetails visit(ProductData formulatedProduct, List<NodeRef> dataListItems, Integer level)  {
+	public CharactDetails visit(ProductData formulatedProduct, List<NodeRef> dataListItems, Integer maxLevel)  {
 
 		CharactDetails ret = createCharactDetails(dataListItems);
 
-		if (level == null) {
-			level = 0;
+		if (maxLevel == null) {
+			maxLevel = 0;
 		}
 		/*
 		 * CompoList
@@ -72,9 +72,11 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 		Double netQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
 		Double netWeight = FormulationHelper.getNetWeight(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
 		Double netVol = FormulationHelper.getNetVolume(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
-
+		
+		CharactDetailsVisitorContext context = new CharactDetailsVisitorContext(formulatedProduct, maxLevel, ret);
+		
 		if ( !Boolean.TRUE.equals(formulatedProduct.getDropPackagingOfComponents())) {
-			visitRecurPMaterial(formulatedProduct, ret, 0, level, netWeight, netVol, netQty);
+			visitRecurPMaterial(context, formulatedProduct, 0, netWeight, netVol, netQty);
 		}
 
 		/*
@@ -192,11 +194,7 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 	 *
 	 * @param subProductData
 	 *            a {@link fr.becpg.repo.product.data.ProductData} object.
-	 * @param ret
-	 *            a {@link fr.becpg.repo.product.data.CharactDetails} object.
 	 * @param currLevel
-	 *            a {@link java.lang.Integer} object.
-	 * @param maxLevel
 	 *            a {@link java.lang.Integer} object.
 	 * @param subWeight
 	 *            a {@link java.lang.Double} object.
@@ -207,11 +205,12 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 	 * @return a {@link fr.becpg.repo.product.data.CharactDetails} object.
 	 * @throws fr.becpg.repo.formulation.FormulateException
 	 *             if any.
+	 * @param context a {@link fr.becpg.repo.product.formulation.details.CharactDetailsVisitorContext} object
 	 */
-	public CharactDetails visitRecurPMaterial(ProductData subProductData, CharactDetails ret, Integer currLevel, Integer maxLevel, Double subWeight,
+	public CharactDetails visitRecurPMaterial(CharactDetailsVisitorContext context, ProductData subProductData, Integer currLevel, Double subWeight,
 			Double subVol, Double netQty)  {
 
-		if (!subProductData.isGeneric() && subProductData.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
+		if (areDetailsApplicable(subProductData) && subProductData.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 
 			for (CompoListDataItem compoListDataItem : subProductData
 					.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
@@ -252,18 +251,16 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 				}
 				
 				FormulatedQties qties = new FormulatedQties(weightUsed, volUsed, compoProductQty, compoProductQty);
-				
 
-				visitPart(subProductData, subProductData, compoListProduct, compoListDataItem.getNodeRef(), ret, qties, currLevel, null);
-				if (((maxLevel < 0) || (currLevel < maxLevel))
-						&& !entityDictionaryService.isMultiLevelLeaf(nodeService.getType(compoListDataItem.getProduct()))) {
-					visitRecur(subProductData, compoListProduct, ret, currLevel + 1, maxLevel, weightUsed, volUsed, netQty);
+				visitPart(context, subProductData, compoListProduct, compoListDataItem.getNodeRef(), qties, currLevel);
+				if (shouldVisitNextLevel(currLevel, context.getMaxLevel(), compoListDataItem)) {
+					visitRecur(context, compoListProduct, currLevel + 1, weightUsed, volUsed, netQty);
 				}
 
 			}
 		}
 
-		return ret;
+		return context.getCharactDetails();
 	}
 
 }

@@ -60,6 +60,10 @@ public class DOMUtils {
 
 	private static final Log logger = LogFactory.getLog(DOMUtils.class);
 
+	private DOMUtils() {
+		//Do Nothing
+	}
+	
 	/**
 	 * <p>getElementText.</p>
 	 *
@@ -114,16 +118,20 @@ public class DOMUtils {
 	 * Renvoie sous la forme d'un tableau la valeur des attributs donnés pour
 	 * toutes les occurences d'un élément donnée dans le dom
 	 *
-	 * <code>
+	 * <pre>
+	 * {@code
 	 *  <toto>
 	 *   <titi id="a" val="ba"/>
 	 *   <titi id="b" val="bb"/>
 	 *  </toto>
-	 * </code>
+	 *  }
+	 * </pre>
 	 *
+	 *<pre>
 	 * et getAttributes(&lt;toto&gt;, "titi", { "id", "val" }) renvoie
 	 *
 	 * { { "a", "ba" } { "b", "bb" } }
+	 * </pre>
 	 *
 	 * @param root a {@link org.w3c.dom.Element} object.
 	 * @param elementName a {@link java.lang.String} object.
@@ -279,8 +287,10 @@ public class DOMUtils {
 	 * @throws javax.xml.transform.TransformerException if any.
 	 */
 	public static void serialise(Document doc, OutputStream out, boolean keepXmlDecl) throws TransformerException {
-		TransformerFactory factory = TransformerFactory.newInstance();
+		TransformerFactory factory = TransformerFactory.newInstance("com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl", DOMUtils.class.getClassLoader());
 		factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+		factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+		factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
 		Transformer tf = factory.newTransformer();
 		tf.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 		tf.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -296,11 +306,10 @@ public class DOMUtils {
 	/**
 	 * <p>logDom.</p>
 	 *
-	 * @param logSource a {@link java.lang.Object} object.
 	 * @param doc a {@link org.w3c.dom.Document} object.
 	 * @throws javax.xml.transform.TransformerException if any.
 	 */
-	public static void logDom(Object logSource, Document doc) throws TransformerException {
+	public static void logDom( Document doc) throws TransformerException {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		serialise(doc, out);
 		logger.info(new String(out.toByteArray()));
@@ -318,6 +327,7 @@ public class DOMUtils {
 	 */
 	public static Document parse(InputStream is) throws SAXException, IOException, ParserConfigurationException, FactoryConfigurationError {
 		DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+		domFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
 		domFactory.setNamespaceAware(true);
 		domFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
 		DocumentBuilder builder = domFactory.newDocumentBuilder();

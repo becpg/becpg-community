@@ -300,6 +300,9 @@ public class ProjectListPolicy extends ProjectPolicy
 		NodeRef taskListNodeRef = assocRef.getSourceRef();
 		NodeRef resourceNodeRef = assocRef.getTargetRef();
 		NodeRef projectNodeRef = entityListDAO.getEntity(taskListNodeRef);
+		if (logger.isDebugEnabled()) {
+			logger.debug("Update project permissions after bcpg:tlResources update");
+		}
 		projectService.updateProjectPermission(projectNodeRef, taskListNodeRef, resourceNodeRef, allow);
 
 	}

@@ -121,13 +121,7 @@ NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnCreateNodePo
 
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, QualityModel.TYPE_SAMPLING_LIST,
 				new JavaBehaviour(this, "onCreateNode", NotificationFrequency.TRANSACTION_COMMIT));
-
-		policyComponent.bindClassBehaviour(QName.createQName(NamespaceService.ALFRESCO_URI, "getCopyCallback"), QualityModel.TYPE_CONTROL_LIST,
-				new JavaBehaviour(this, "getCopyCallback"));
-		
-		policyComponent.bindClassBehaviour(QName.createQName(NamespaceService.ALFRESCO_URI, "getCopyCallback"), QualityModel.TYPE_SAMPLING_LIST,
-				new JavaBehaviour(this, "getCopyCallback"));
-		
+	
 		policyComponent.bindClassBehaviour(QName.createQName(NamespaceService.ALFRESCO_URI, "getCopyCallback"), QualityModel.TYPE_STOCK_LIST,
 				new JavaBehaviour(this, "getCopyCallback"));
 
@@ -242,7 +236,7 @@ NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnCreateNodePo
 					policyBehaviourFilter.disableBehaviour( QualityModel.TYPE_STOCK_LIST);
 					entityListDAO.copyDataList(stockListNodeRef, workingCopyNodeRef, true);
 				} finally {
-					policyBehaviourFilter.disableBehaviour( QualityModel.TYPE_STOCK_LIST);
+					policyBehaviourFilter.enableBehaviour( QualityModel.TYPE_STOCK_LIST);
 				}
 			}
 		}

@@ -101,7 +101,6 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 			folderNodeRef = repoService.getOrCreateFolderByPath(parentNodeRef, folderPath, folderName);
 			nodeService.setProperty(folderNodeRef, ContentModel.PROP_TITLE, mlTitle);
 
-			visitRules(folderNodeRef, folderPath);
 			visitWF(folderNodeRef, folderPath);
 		} else {
 			if(!folderName.equals(nodeService.getProperty(folderNodeRef, ContentModel.PROP_NAME))) {
@@ -123,6 +122,7 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 
 		}
 
+		visitRules(folderNodeRef, folderPath);
 		visitPermissions(folderNodeRef, folderPath);
 		visitFiles(folderNodeRef, folderPath, folderExists);
 		vivitFolderAspects(folderNodeRef, folderPath);
@@ -200,16 +200,42 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 		actionCondition.setInvertCondition(true);
 		compositeAction.addActionCondition(actionCondition);
 
+		createRule(nodeRef, "Specialise type", "Every item created will have this type", applyToChildren, compositeAction);
+	}
+
+	/**
+	 * <p>createRule.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param title a {@link java.lang.String} object
+	 * @param description a {@link java.lang.String} object
+	 * @param applyToChildren a boolean
+	 * @param compositeAction a {@link org.alfresco.service.cmr.action.CompositeAction} object
+	 */
+	protected void createRule(NodeRef nodeRef, String title, String description, boolean applyToChildren, CompositeAction compositeAction) {
+		
+		if (ruleExists(nodeRef, title, description)) {
+			return;
+		}
+		
 		// Create Rule
 		Rule rule = new Rule();
-		rule.setTitle("Specialise type");
-		rule.setDescription("Every item created will have this type");
+		rule.setTitle(title);
+		rule.setDescription(description);
 		rule.applyToChildren(applyToChildren);
 		rule.setExecuteAsynchronously(false);
 		rule.setRuleDisabled(false);
 		rule.setRuleType(RuleType.INBOUND);
 		rule.setAction(compositeAction);
 		ruleService.saveRule(nodeRef, rule);
+	}
+
+	private boolean ruleExists(NodeRef nodeRef, String ruleTitle, String ruleDescription) {
+		if (ruleService.getRules(nodeRef, false).stream().anyMatch(r -> ruleTitle.equals(r.getTitle()) && ruleDescription.equals(r.getDescription()))) {
+			return true;
+		}
+		logger.info("Rule does not exist: " + ruleTitle);
+		return false;
 	}
 
 	/**
@@ -240,17 +266,8 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 		aspectCondition.setInvertCondition(true);
 		compositeAction.addActionCondition(aspectCondition);
 
-		// rule
-		Rule rule = new Rule();
-		rule.setTitle("Add entityTpl aspect");
-		rule.setDescription("Add entityTpl aspect to the created node");
-		rule.applyToChildren(applyToChildren);
-		rule.setExecuteAsynchronously(false);
-		rule.setRuleDisabled(false);
-		rule.setRuleType(RuleType.INBOUND);
-		rule.setAction(compositeAction);
-		ruleService.saveRule(nodeRef, rule);
-
+		createRule(nodeRef, "Add entityTpl aspect", "Add entityTpl aspect to the created node", applyToChildren, compositeAction);
+		
 	}
 
 	/**

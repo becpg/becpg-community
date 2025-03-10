@@ -58,22 +58,26 @@ public class FormulationLabelClaimIT extends AbstractFinishedProductTest {
 			finishedProduct1.setUnit(ProductUnit.kg);
 			finishedProduct1.setDensity(1d);
 			List<CompoListDataItem> compoList1 = new ArrayList<>();
-			compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF11NodeRef));
-			compoList1
-					.add(new CompoListDataItem(null, compoList1.get(0), null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial11NodeRef));
-			compoList1
-					.add(new CompoListDataItem(null, compoList1.get(0), null, 2d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial12NodeRef));
-			compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF12NodeRef));
-			compoList1
-					.add(new CompoListDataItem(null, compoList1.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial13NodeRef));
-			compoList1
-					.add(new CompoListDataItem(null, compoList1.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial14NodeRef));
+			compoList1.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF11NodeRef));
+			compoList1.add(CompoListDataItem.build().withParent(compoList1.get(0)).withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial11NodeRef));
+			compoList1.add(CompoListDataItem.build().withParent(compoList1.get(0)).withQtyUsed(2d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial12NodeRef));
+			compoList1.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF12NodeRef));
+			compoList1.add(CompoListDataItem.build().withParent(compoList1.get(3)).withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial13NodeRef));
+			compoList1.add(CompoListDataItem.build().withParent(compoList1.get(3)).withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial14NodeRef));
 
 			List<PackagingListDataItem> packagingList = new ArrayList<>();
-			
-			packagingList.add(new PackagingListDataItem(null, 1d, ProductUnit.kg, PackagingLevel.Primary, true, packagingMaterial1NodeRef));
-			packagingList.add(new PackagingListDataItem(null, 1d, ProductUnit.kg, PackagingLevel.Primary, true, packagingMaterial2NodeRef));
-			
+
+			packagingList.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.kg).withPkgLevel(PackagingLevel.Primary)
+					.withIsMaster(true).withProduct(packagingMaterial1NodeRef));
+			packagingList.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.kg).withPkgLevel(PackagingLevel.Primary)
+					.withIsMaster(true).withProduct(packagingMaterial2NodeRef));
+
 			finishedProduct1.getCompoListView().setCompoList(compoList1);
 			finishedProduct1.getPackagingListView().setPackagingList(packagingList);
 
@@ -88,7 +92,6 @@ public class FormulationLabelClaimIT extends AbstractFinishedProductTest {
 
 		NodeRef testProduct = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			Map<QName, Serializable> properties = new HashMap<>();
-			// properties.put(BeCPGModel.PROP_CHARACT_NAME, "labelClaim1");
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "labelClaim1");
 			properties.put(ContentModel.PROP_NAME, "labelClaim1");
 			NodeRef tmp = createTestProduct(null);
@@ -181,7 +184,7 @@ public class FormulationLabelClaimIT extends AbstractFinishedProductTest {
 			globalSpec.getProductSpecifications().add(productSpec1);
 			globalSpec.getProductSpecifications().add(productSpec2);
 
-			ProductData product = alfrescoRepository.findOne(tmp);
+			ProductData product = (ProductData) alfrescoRepository.findOne(tmp);
 			product.setProductSpecifications(new ArrayList<ProductSpecificationData>());
 			product.getProductSpecifications().add(globalSpec);
 			product.setLabelClaimList(new ArrayList<LabelClaimListDataItem>());
@@ -204,25 +207,26 @@ public class FormulationLabelClaimIT extends AbstractFinishedProductTest {
 			subProductLabelClaim6.setIsManual(Boolean.TRUE);
 			subProductLabelClaim7.setIsManual(Boolean.TRUE);
 
-			ProductData rm12 = alfrescoRepository.findOne(rawMaterial12NodeRef);
+			ProductData rm12 = (ProductData) alfrescoRepository.findOne(rawMaterial12NodeRef);
 			if ((rm12 != null) && (rm12.getLabelClaimList() != null)) {
 				rm12.getLabelClaimList().add(subProductLabelClaim6);
 				rm12.getLabelClaimList().add(subProductLabelClaim7);
 				alfrescoRepository.save(rm12);
 			}
-			
-			ProductData packaging1 = alfrescoRepository.findOne(packagingMaterial1NodeRef);
+
+			ProductData packaging1 = (ProductData) alfrescoRepository.findOne(packagingMaterial1NodeRef);
 			if ((packaging1 != null) && (packaging1.getLabelClaimList() != null)) {
-				
-				LabelClaimListDataItem subPackagingProductLabelClaim6 = new LabelClaimListDataItem(labelClaimNodeRef6, LABEL_CLAIM_TYPE, Boolean.TRUE);
+
+				LabelClaimListDataItem subPackagingProductLabelClaim6 = new LabelClaimListDataItem(labelClaimNodeRef6, LABEL_CLAIM_TYPE,
+						Boolean.TRUE);
 				subPackagingProductLabelClaim6.setLabelClaimValue(LabelClaimListDataItem.VALUE_EMPTY);
-				LabelClaimListDataItem subPackagingProductLabelClaim7 = new LabelClaimListDataItem(labelClaimNodeRef7, LABEL_CLAIM_TYPE, Boolean.TRUE);
+				LabelClaimListDataItem subPackagingProductLabelClaim7 = new LabelClaimListDataItem(labelClaimNodeRef7, LABEL_CLAIM_TYPE,
+						Boolean.TRUE);
 
 				packaging1.getLabelClaimList().add(subPackagingProductLabelClaim6);
 				packaging1.getLabelClaimList().add(subPackagingProductLabelClaim7);
 				alfrescoRepository.save(packaging1);
 			}
-
 
 			product.getLabelClaimList().add(productLabelClaimFalse);
 			product.getLabelClaimList().add(productLabelClaimFalse2);
@@ -243,11 +247,9 @@ public class FormulationLabelClaimIT extends AbstractFinishedProductTest {
 			logger.info("/*-- Formulation --*/");
 			productService.formulate(tmp);
 
-
 			return tmp;
 		}, false, true);
-			
-		
+
 		checkRequirement(testProduct);
 
 	}
@@ -256,7 +258,7 @@ public class FormulationLabelClaimIT extends AbstractFinishedProductTest {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			/* -- Check formulation -- */
-			ProductData formulatedProduct = alfrescoRepository.findOne(testProduct);
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(testProduct);
 
 			logger.info("/*-- Formulation raised " + formulatedProduct.getReqCtrlList().size() + " rclDataItem --*/");
 			int checks = 0;
@@ -300,6 +302,6 @@ public class FormulationLabelClaimIT extends AbstractFinishedProductTest {
 
 			return null;
 		}, false, true);
-		
+
 	}
 }

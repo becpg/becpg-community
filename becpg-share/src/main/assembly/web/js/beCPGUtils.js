@@ -207,6 +207,9 @@
     		case "mm":
     			val=    val / 1000;	
     			break;
+    		case "micro_m":
+    			val=    val / 1000000;	
+    			break;
     		case "cL":	
     		case "cm":
     			val=   val / 100; 
@@ -224,7 +227,7 @@
     		case "micro":		
     			val=   val / 1000000; 
     			break;
-    		case "µg":		
+    		case "micro_g":		
     			val=   val / 1000000000; 
     			break;	
     		case "mega":		
@@ -417,6 +420,32 @@
 				}
 
 				return "EU";
+	};
+	
+	beCPG.util.renderHttpLink = function(fieldValue) {
+		if(fieldValue){
+			var regex = /"([^"]+)":(https?:\/\/[^\s]+)|(?:https?:\/\/[^\s]+)/g;
+			var match = regex.exec(fieldValue);
+			if (match) {
+				var anchorText = "";
+				var href = "";
+	
+				if (match[1] && match[2]) {
+					anchorText = match[1];
+					href = match[2];
+				} else {
+					anchorText = match[0];
+					href = match[0];
+				}
+				var a = document.createElement('a');
+				a.textContent = anchorText;
+				a.href = href;
+				a.target = "_blank";
+				a.rel = "noopener noreferrer";
+				return a.outerHTML;
+			}
+		}
+		return fieldValue;
 	};
 
     Alfresco.util.getFileIcon.types =

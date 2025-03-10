@@ -46,6 +46,7 @@ public interface EntityTplPlugin {
      * @param entity a {@link fr.becpg.repo.repository.RepositoryEntity} object.
      * @param dataListItems a {@link java.util.List} object.
      * @param tplDataListItems a {@link java.util.List} object.
+     * @param <T> a T class
      */
     <T extends RepositoryEntity> void synchronizeDataList(RepositoryEntity entity, List<T> dataListItems,
 														  List<T> tplDataListItems);

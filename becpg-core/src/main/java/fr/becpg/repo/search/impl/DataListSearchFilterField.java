@@ -81,9 +81,19 @@ public class DataListSearchFilterField {
 	public void setAttributeQname(QName attributeQname) {
 		this.attributeQname = attributeQname;
 	}
+	/**
+	 * <p>Getter for the field <code>sourceTypeQname</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.namespace.QName} object
+	 */
 	public QName getSourceTypeQname() {
 		return sourceTypeQname;
 	}
+	/**
+	 * <p>Setter for the field <code>sourceTypeQname</code>.</p>
+	 *
+	 * @param sourceTypeQname a {@link org.alfresco.service.namespace.QName} object
+	 */
 	public void setSourceTypeQname(QName sourceTypeQname) {
 		this.sourceTypeQname = sourceTypeQname;
 	}

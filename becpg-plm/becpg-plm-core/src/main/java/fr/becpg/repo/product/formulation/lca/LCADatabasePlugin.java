@@ -7,7 +7,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 /**
  * <p>LCADatabasePlugin interface.</p>
  *
- * @author matthieu
+ * @author valentin
  * @version $Id: $Id
  */
 public interface LCADatabasePlugin {

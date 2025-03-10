@@ -111,11 +111,9 @@ public interface EntityDictionaryService extends DictionaryService {
 	ClassAttributeDefinition findMatchingPropDef(QName itemType, QName newItemType, QName fieldQname);
 	
 	/**
-	 * <p>isSubClass.</p>
+	 * {@inheritDoc}
 	 *
-	 * @param subClass a {@link org.alfresco.service.namespace.QName} object.
-	 * @param subClassOf a {@link org.alfresco.service.namespace.QName} object.
-	 * @return a boolean.
+	 * <p>isSubClass.</p>
 	 */
 	boolean isSubClass(QName subClass, QName subClassOf);
 
@@ -153,11 +151,39 @@ public interface EntityDictionaryService extends DictionaryService {
 	 */
 	boolean isAssoc(QName propQname);
 
+	/**
+	 * <p>toPrefixString.</p>
+	 *
+	 * @param propertyQName a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link java.lang.String} object
+	 */
 	String toPrefixString(QName propertyQName);
 
+	/**
+	 * <p>registerExtraAssocsDefMapping.</p>
+	 *
+	 * @param orig a {@link org.alfresco.service.namespace.QName} object
+	 * @param dest a {@link org.alfresco.service.namespace.QName} object
+	 */
 	void registerExtraAssocsDefMapping(QName orig, QName dest);
 
-
-
+	/**
+	 * <p>getTitle.</p>
+	 *
+	 * @param attributeDefinition a {@link org.alfresco.service.cmr.dictionary.ClassAttributeDefinition} object
+	 * @param nodeType a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link java.lang.String} object
+	 */
+	String getTitle(ClassAttributeDefinition attributeDefinition, QName nodeType);
+	
+	/**
+	 * <p>getDescription.</p>
+	 *
+	 * @param attributeDefinition a {@link org.alfresco.service.cmr.dictionary.ClassAttributeDefinition} object
+	 * @param nodeType a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link java.lang.String} object
+	 */
+	String getDescription(ClassAttributeDefinition attributeDefinition, QName nodeType);
+	
 
 }

@@ -66,15 +66,9 @@ public class ShareFormParser implements FormParser{
 	// </config>
 
 	/**
-	 * <p>visitConfig.</p>
+	 * {@inheritDoc}
 	 *
-	 * @param definitions a {@link java.util.Map} object.
-	 * @param in a {@link java.io.InputStream} object.
-	 * @throws org.xml.sax.SAXException if any.
-	 * @throws java.io.IOException if any.
-	 * @throws javax.xml.parsers.ParserConfigurationException if any.
-	 * @throws javax.xml.parsers.FactoryConfigurationError if any.
-	 * @throws org.json.JSONException if any.
+	 * <p>visitConfig.</p>
 	 */
 	@Override
 	public void visitConfig(Map<String, Map<String, BecpgFormDefinition>> definitions, InputStream in) throws JSONException, SAXException, IOException, ParserConfigurationException, FactoryConfigurationError
@@ -100,6 +94,7 @@ public class ShareFormParser implements FormParser{
 	}
 	
 
+	/** {@inheritDoc} */
 	@Override
 	public void visitConfig(Map<String, Map<String, BecpgFormDefinition>> definitions, String defs) throws IOException, JSONException, SAXException, ParserConfigurationException, FactoryConfigurationError  {
 		try(InputStream in = new ByteArrayInputStream(defs.getBytes())){

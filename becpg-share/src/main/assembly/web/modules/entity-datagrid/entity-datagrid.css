@@ -29,7 +29,7 @@
 }
 
 .datagrid .datagrid-bar-bottom {
-	margin-top: 2em;
+	margin-top: 1em !important;
 	display: none;
 }
 
@@ -524,6 +524,7 @@ div.filterButtonsBar {
 	background: url(../../components/images/search-16.png) no-repeat 12px
 		4px;
 	padding-left: 24px;
+	cursor: pointer;
 }
 
 
@@ -742,9 +743,10 @@ div.filterButtonsBar {
 
 /* Tooltip */
 
-div.dt-tooltip {
-  position: relative;
+
+div.dt-tooltip:hover {
   display: inline-block;
+	 position: relative;
 }
 
 div.dt-tooltip span.dt-tooltip-content {

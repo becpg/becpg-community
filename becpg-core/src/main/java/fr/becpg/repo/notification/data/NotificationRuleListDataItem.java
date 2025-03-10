@@ -47,6 +47,7 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 	private ScriptMode scriptMode;
 	private String errorLog;
 	private List<NodeRef> reportTpls;
+	private Boolean disabled;
 	
 	
 	
@@ -55,6 +56,26 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 	 */
 	public NotificationRuleListDataItem() {
 		super();	
+	}
+	
+	/**
+	 * <p>Getter for the field <code>disabled</code>.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object
+	 */
+	@AlfProp
+	@AlfQname(qname="bcpg:nrDisabled")
+	public Boolean getDisabled() {
+		return disabled;
+	}
+	
+	/**
+	 * <p>Setter for the field <code>disabled</code>.</p>
+	 *
+	 * @param disabled a {@link java.lang.Boolean} object
+	 */
+	public void setDisabled(Boolean disabled) {
+		this.disabled = disabled;
 	}
 
 	/**
@@ -181,7 +202,7 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 	/**
 	 * <p>Getter for the field <code>timeType</code>.</p>
 	 *
-	 * @return a {@link fr.becpg.repo.notification.data.NotificationRuleTimeType} object.
+	 * @return a {@link fr.becpg.repo.search.data.DateFilterType} object
 	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:nrTimeType")
@@ -192,7 +213,7 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 	/**
 	 * <p>Setter for the field <code>timeType</code>.</p>
 	 *
-	 * @param timeType a {@link fr.becpg.repo.notification.data.NotificationRuleTimeType} object.
+	 * @param timeType a {@link fr.becpg.repo.search.data.DateFilterType} object
 	 */
 	public void setTimeType(DateFilterType timeType) {
 		this.timeType = timeType;
@@ -282,7 +303,7 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 	/**
 	 * <p>Getter for the field <code>versionFilterType</code>.</p>
 	 *
-	 * @return a {@link fr.becpg.repo.notification.data.VersionFilterType} object.
+	 * @return a {@link fr.becpg.repo.search.data.VersionFilterType} object.
 	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:nrVersionFilter")
@@ -293,7 +314,7 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 	/**
 	 * <p>Setter for the field <code>versionFilterType</code>.</p>
 	 *
-	 * @param versionFilterType a {@link fr.becpg.repo.notification.data.VersionFilterType} object.
+	 * @param versionFilterType a {@link fr.becpg.repo.search.data.VersionFilterType} object.
 	 */
 	public void setVersionFilterType(VersionFilterType versionFilterType) {
 		this.versionFilterType = versionFilterType;
@@ -350,22 +371,42 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 		return recurringDay;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>script</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	@AlfSingleAssoc
 	@AlfQname(qname = "bcpg:nrScript")
 	public NodeRef getScript() {
 		return script;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>script</code>.</p>
+	 *
+	 * @param script a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public void setScript(NodeRef script) {
 		this.script = script;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>scriptMode</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.notification.data.ScriptMode} object
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:nrScriptMode")
 	public ScriptMode getScriptMode() {
 		return scriptMode;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>scriptMode</code>.</p>
+	 *
+	 * @param scriptMode a {@link fr.becpg.repo.notification.data.ScriptMode} object
+	 */
 	public void setScriptMode(ScriptMode scriptMode) {
 		this.scriptMode = scriptMode;
 	}
@@ -379,12 +420,22 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 		this.recurringDay = recurringDay;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>errorLog</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:nrErrorLog")
 	public String getErrorLog() {
 		return errorLog;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>errorLog</code>.</p>
+	 *
+	 * @param errorLog a {@link java.lang.String} object
+	 */
 	public void setErrorLog(String errorLog) {
 		this.errorLog = errorLog;
 	}
@@ -403,7 +454,7 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 	/**
 	 * <p>Setter for the field <code>reportTpls</code>.</p>
 	 *
-	 * @param email a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param reportTpls a {@link java.util.List} object
 	 */
 	public void setReportTpls(List<NodeRef> reportTpls) {
 		this.reportTpls = reportTpls;

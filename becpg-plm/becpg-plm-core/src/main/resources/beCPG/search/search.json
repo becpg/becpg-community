@@ -9,7 +9,7 @@
          ],
          "claim2" :  [ 
            {"attribute": "bcpg:lclLabelClaim" , "htmlId":"assoc_bcpg_advLclClaimAnd_added", "operator": "AND",  "listType": "bcpg:labelClaimList"  },
-           {"attribute": "bcpg:lclClaimValue" , "value":"true" }
+           {"attribute": "bcpg:lclClaimValue" , "value":"true,certified" }
          ],
          
          "claim3" : [ 
@@ -55,7 +55,7 @@
          
         "al5":    [ 
            {"attribute": "bcpg:allergenListAllergen" ,  "listType": "bcpg:allergenList", "htmlId":"assoc_bcpg_advAlInVolNot_added" },
-           {"attribute": "bcpg:allergenListINVoluntary" , "value":"false" }
+           {"attribute": "bcpg:allergenListInVoluntary" , "value":"false" }
          ], 
          
           "cost1":  [ 
@@ -110,9 +110,41 @@
            {"attribute": "pack:llLabel" ,  "listType": "pack:labelingList", "htmlId":"assoc_pack_llLabel_added" },
            {"attribute": "pack:llPosition" , "htmlId":"prop_pack_llPosition" }
          
-         ]
-
+         ],
+         
+         "lca1": [
+           {"attribute": "bcpg:lcaListLca" , "htmlId":"assoc_bcpg_advLca_added", "listType": "bcpg:lcaList" },
+       	   {"attribute": "bcpg:lcaListValue" , "htmlId":"prop_bcpg_lcaListValue-range" }
+       	 ],
+       	 
+		 "svhc1" : [ 
+           {"attribute": "bcpg:svhcListIng" , "htmlId":"assoc_bcpg_svhcListIng_added", "listType": "bcpg:svhcList" },
+           {"attribute": "bcpg:svhcListQtyPerc" , "htmlId":"prop_bcpg_svhcListQtyPerc-range" }
+         ],
+		 "svhc2": [
+           {"attribute": "bcpg:svhcListIng" , "htmlId":"assoc_bcpg_advSvhcAnd_added", "listType": "bcpg:svhcList", "operator": "AND" },
+           {"attribute": "bcpg:svhcListQtyPerc" , "htmlId":"prop_bcpg_svhcListQtyPerc-range" }
+       	 ],
+	   	 "svhc3": [
+	       {"attribute": "bcpg:svhcListIng" , "htmlId":"assoc_bcpg_advSvhcNot_added", "listType": "bcpg:svhcList", "operator": "NOT" }
+	   	 ],
+	   	 
+	   	 "survey1": [ 
+		   {"attribute": "survey:slQuestion" , "listType": "survey:surveyList", "htmlId":"assoc_survey_advSearchSurveyQuestion1_added"},
+		   {"attribute": "survey:slChoices" , "listType": "survey:surveyList", "htmlId":"assoc_survey_advSearchSurveyAnswer1_added"}
+		 ],
+		 "survey2": [ 
+		   {"attribute": "survey:slQuestion" , "listType": "survey:surveyList", "htmlId":"assoc_survey_advSearchSurveyQuestion2_added"},
+		   {"attribute": "survey:slChoices" , "listType": "survey:surveyList", "htmlId":"assoc_survey_advSearchSurveyAnswer2_added"}
+		 ],
+		 "survey3": [ 
+		   {"attribute": "survey:slQuestion" , "listType": "survey:surveyList", "htmlId":"assoc_survey_advSearchSurveyQuestion3_added"},
+		   {"attribute": "survey:slChoices" , "listType": "survey:surveyList", "htmlId":"assoc_survey_advSearchSurveyAnswer3_added"}
+		 ],
+		 "survey4": [ 
+		   {"attribute": "survey:slQuestion" , "listType": "survey:surveyList", "htmlId":"assoc_survey_advSearchSurveyQuestion4_added"},
+		   {"attribute": "survey:slChoices" , "listType": "survey:surveyList", "htmlId":"assoc_survey_advSearchSurveyAnswer4_added"}
+		 ]
 	}
 }
-
 

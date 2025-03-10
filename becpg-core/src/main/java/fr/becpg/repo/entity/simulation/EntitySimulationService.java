@@ -17,8 +17,9 @@ public interface EntitySimulationService {
 	 *
 	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param dataListItemsNodeRefs a {@link java.util.List} object.
+	 * @param branch a boolean.
 	 */
-	void simuleDataListItems(NodeRef entityNodeRef, List<NodeRef> dataListItemsNodeRefs);
+	void simuleDataListItems(NodeRef entityNodeRef, List<NodeRef> dataListItemsNodeRefs, boolean branch);
 
 	/**
 	 * <p>createSimulationNodeRef.</p>

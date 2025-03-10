@@ -69,7 +69,7 @@
 					<show id="pjt:projectCompletionDate" for-mode="view" />
 					<show id="pjt:completionPercent" for-mode="view" />
 					<show id="pjt:projectOverdue" for-mode="view" />
-					<show id="pjt:projectScore" for-mode="view" />
+					<show id="pjt:projectScore" force="true" for-mode="view" />
 					<show id="pjt:projectWork" for-mode="view" />
 					<show id="pjt:projectBudgetedCost" for-mode="view" />
 					<show id="pjt:projectLoggedTime" for-mode="view" />
@@ -450,7 +450,7 @@
 					<show id="pjt:projectHierarchy2" />
 				    <!-- <show id="pjt:projectPriority" /> -->
 					<show id="pjt:completionPercent" />
-					<show id="pjt:projectScore" />
+					<show id="pjt:projectScore" force="true" />
 					<show id="pjt:projectManager" />
 					<show id="dataList_pjt:taskList" />
 					<show id="dataList_bcpg:activityList" />
@@ -521,7 +521,7 @@
 					<show id="pjt:projectHierarchy1" />
 					<show id="pjt:projectHierarchy2" />
 					<show id="pjt:completionPercent" />
-					<show id="pjt:projectScore" />
+					<show id="pjt:projectScore"  force="true" />
 					<show id="pjt:projectManager" />
 					<show id="pjt:projectEntity" />
 					<show id="pjt:projectCompletionDate" />		
@@ -604,7 +604,7 @@
 					<show id="pjt:projectHierarchy1" />
 					<show id="pjt:projectHierarchy2" />
 					<show id="pjt:completionPercent" />
-					<show id="pjt:projectScore" />
+					<show id="pjt:projectScore"  force="true" />
 					<show id="pjt:projectManager" />
 					<show id="pjt:projectEntity" />
 					<show id="pjt:projectCompletionDate" />		
@@ -753,6 +753,14 @@
 					<show id="pjt:projectStartDate" />
 					<show id="pjt:projectCompletionDate" />
 					<show id="pjt:projectDueDate" />
+					<show id="survey:advSearchSurveyQuestion1" force="true" />
+					<show id="survey:advSearchSurveyAnswer1" force="true" />
+					<show id="survey:advSearchSurveyQuestion2" force="true" />
+					<show id="survey:advSearchSurveyAnswer2" force="true" />
+					<show id="survey:advSearchSurveyQuestion3" force="true" />
+					<show id="survey:advSearchSurveyAnswer3" force="true" />
+					<show id="survey:advSearchSurveyQuestion4" force="true" />
+					<show id="survey:advSearchSurveyAnswer4" force="true" />
 				</field-visibility>
 				<appearance>
 					<set id="main" />
@@ -834,6 +842,67 @@
 							<control-param name="forceEditable">true</control-param>
 						</control>
 					</field>
+					<set appearance="bordered-panel" id="survey" label-id="becpg.forms.set.survey-criteria.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
+         	 		<field id="survey:advSearchSurveyQuestion1" mandatory="false" read-only="false" set="survey">
+		  				<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+				  	  		<control-param name="ds">becpg/autocomplete/survey</control-param>
+				  	  		<control-param name="forceEditable">true</control-param>
+		              		<control-param name="isSearch">true</control-param>
+				  		</control>
+				  	</field>
+				    <field id="survey:advSearchSurveyAnswer1" mandatory="false" read-only="false" set="survey">
+				  		<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+					  		<control-param name="ds">becpg/autocomplete/survey</control-param>
+					  		<control-param name="parentAssoc">survey_advSearchSurveyQuestion1</control-param>
+					  		<control-param name="forceEditable">true</control-param>
+		              		<control-param name="isSearch">true</control-param>
+				  		</control>
+				  	</field>
+				  	<field id="survey:advSearchSurveyQuestion2" mandatory="false" read-only="false" set="survey">
+		  				<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+				  	  		<control-param name="ds">becpg/autocomplete/survey</control-param>
+				  	  		<control-param name="forceEditable">true</control-param>
+		              		<control-param name="isSearch">true</control-param>
+				  		</control>
+				  	</field>
+				    <field id="survey:advSearchSurveyAnswer2" mandatory="false" read-only="false" set="survey">
+				  		<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+					  		<control-param name="ds">becpg/autocomplete/survey</control-param>
+					  		<control-param name="parentAssoc">survey_advSearchSurveyQuestion2</control-param>
+					  		<control-param name="forceEditable">true</control-param>
+		              		<control-param name="isSearch">true</control-param>
+				  		</control>
+				  	</field>
+				  	<field id="survey:advSearchSurveyQuestion3" mandatory="false" read-only="false" set="survey">
+		  				<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+				  	  		<control-param name="ds">becpg/autocomplete/survey</control-param>
+				  	  		<control-param name="forceEditable">true</control-param>
+		              		<control-param name="isSearch">true</control-param>
+				  		</control>
+				  	</field>
+				    <field id="survey:advSearchSurveyAnswer3" mandatory="false" read-only="false" set="survey">
+				  		<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+					  		<control-param name="ds">becpg/autocomplete/survey</control-param>
+					  		<control-param name="parentAssoc">survey_advSearchSurveyQuestion3</control-param>
+					  		<control-param name="forceEditable">true</control-param>
+		              		<control-param name="isSearch">true</control-param>
+				  		</control>
+				  	</field>
+				  	<field id="survey:advSearchSurveyQuestion4" mandatory="false" read-only="false" set="survey">
+		  				<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+				  	  		<control-param name="ds">becpg/autocomplete/survey</control-param>
+				  	  		<control-param name="forceEditable">true</control-param>
+		              		<control-param name="isSearch">true</control-param>
+				  		</control>
+				  	</field>
+				    <field id="survey:advSearchSurveyAnswer4" mandatory="false" read-only="false" set="survey">
+				  		<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+					  		<control-param name="ds">becpg/autocomplete/survey</control-param>
+					  		<control-param name="parentAssoc">survey_advSearchSurveyQuestion4</control-param>
+					  		<control-param name="forceEditable">true</control-param>
+		              		<control-param name="isSearch">true</control-param>
+				  		</control>
+				  	</field>
 				</appearance>
 			</form>
 			
@@ -1385,12 +1454,9 @@
 						</control>
 					</field>
 					<field id="pjt:tlIsMilestone">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="isSearch">true</control-param>
-							<control-param name="insertBlank">true</control-param>
-							<control-param name="options">true|data.boolean.true,false|data.boolean.false
-							</control-param>
-						</control>
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
+                            <control-param name="isSearch">true</control-param>
+                        </control>
 					</field>
 					
 				</appearance>
@@ -1821,6 +1887,28 @@
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
 			</form>
+			<form id="filter">
+                <field-visibility>
+                    <show id="pjt:dlDescription" />
+                    <show id="pjt:dlTask" />
+                    <show id="pjt:dlState" />
+                </field-visibility>
+                <appearance>
+                     <field id="pjt:dlTask">
+                        <control
+                            template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
+                            </control-param>
+                        </control>
+                    </field>
+                   <field id="pjt:dlState">
+                         <control template="/org/alfresco/components/form/controls/selectmany.ftl">
+                            <control-param name="insertBlank">true</control-param>
+                            <control-param name="isSearch">true</control-param>
+                        </control>
+                    </field>
+                </appearance>
+            </form>
 			<form id="sub-datagrid">
 				<field-visibility>
 					<show id="pjt:dlDescription" />
@@ -1839,17 +1927,34 @@
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="pjt:slCriterion" />
+					<show id="pjt:slScoreCriterion" />
 					<show id="pjt:slWeight" />
 					<show id="pjt:slScore" />
+					<show id="pjt:slScoreRange" />
 					<show id="pjt:slScreening" />
+					<show id="bcpg:parentLevel" />
 				</field-visibility>
 				<appearance>
-					<field id="pjt:slScreening">
-						<control template="/org/alfresco/components/form/controls/richtext.ftl">
-							<control-param name="row">8</control-param>
-						</control>
-					</field>
+					 <field id="pjt:slScoreCriterion" >
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/pjt:scoreCriterion
+                            </control-param>
+                        </control>
+                    </field>
+                     
+                
+                    <field id="pjt:slScreening">
+                        <control template="/org/alfresco/components/form/controls/richtext.ftl">
+                            <control-param name="row">8</control-param>
+                        </control>
+                    </field>
+                    
+                    <field id="bcpg:parentLevel">
+                        <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+                            <control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:scoreList&#38;attributeName=pjt:slScoreCriterion&#38;extra.showFullPath=true
+                            </control-param>
+                        </control>
+                    </field>
 				</appearance>
 			</form>
 		</forms>
@@ -1858,38 +1963,227 @@
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="pjt:slCriterion" />
+				    <show id="pjt:slScoreCriterion" />
 					<show id="pjt:slWeight" />
 					<show id="pjt:slScore" />
+					<show id="pjt:slScoreRange" />
 					<show id="pjt:slScreening" />
+					<show id="bcpg:parentLevel" />
 				</field-visibility>
 				<appearance>
+				     <field id="pjt:slScoreCriterion" >
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/pjt:scoreCriterion
+                            </control-param>
+                        </control>
+                    </field>
+				     
+				
 					<field id="pjt:slScreening">
 						<control template="/org/alfresco/components/form/controls/richtext.ftl">
 							<control-param name="row">8</control-param>
 						</control>
 					</field>
+					
+					<field id="bcpg:parentLevel">
+                        <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+                            <control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:scoreList&#38;attributeName=pjt:slScoreCriterion&#38;extra.showFullPath=true
+                            </control-param>
+                        </control>
+                    </field>
+					
 				</appearance>
 			</form>
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
-					<show id="pjt:slCriterion" />
-					<show id="pjt:slWeight" />
-					<show id="pjt:slScore" />
-					<show id="pjt:slScreening" />
+				    <show id="bcpg:depthLevel" />
+				   
+				    <show id="pjt:slScoreCriterion" />
+                    <show id="pjt:slWeight" />
+                    <show id="pjt:slScore" />
+                    <show id="pjt:slScoreRange" />
+                    <show id="pjt:slCriterion" />
+                    <show id="pjt:slScreening" />
+					<show id="pjt:slScoreDetail" />
+					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
+				   <field id="pjt:slWeight"  
+				        help="{&quot;className&quot;:  &quot;italic-ifchild bold-ifopen&quot;, &quot;numberFormat&quot;:  { &quot;minimumFractionDigits&quot;: 0, &quot;maximumFractionDigits&quot;: 4}}"
+				        /> 
+				    <field id="bcpg:depthLevel" label="hidden" />
+				    <field id="pjt:slScoreDetail"  read-only="true" />
 					<field id="pjt:slScreening" read-only="true" />
+					<field id="pjt:slCriterion" read-only="true" />
+					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
 			</form>
 			<form id="filter">
 				<field-visibility>
+				    <show id="bcpg:depthLevel" />
 					<show id="pjt:slCriterion" />
+					<show id="pjt:slScoreCriterion" />
 				</field-visibility>
+				<appearance>
+				
+                    <field id="bcpg:depthLevel" >
+                        <control template="/org/alfresco/components/form/controls/selectone.ftl">
+                            <control-param name="options">0|,1|1,2|2,3|3,4|4,All|data.level.all
+                            </control-param>
+                        </control>
+                    </field>
+				     <field id="pjt:slScoreCriterion" >
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/pjt:scoreCriterion
+                            </control-param>
+                        </control>
+                     </field>
+				      <field id="pjt:slCriterion">
+                         <control template="/org/alfresco/components/form/controls/selectmany.ftl">
+                            <control-param name="insertBlank">true</control-param>
+                            <control-param name="isSearch">true</control-param>
+                        </control>
+                    </field>
+				</appearance>
 			</form>
 		</forms>
 	</config>
+
+
+    <config condition="pjt:scoreCriterion" evaluator="node-type">
+        <forms>
+            <form>
+                <field-visibility>
+                    <show id="bcpg:charactName" />
+                    <show id="cm:description" force="true" />
+                    <show id="pjt:scoreCriterionType" />
+                    <show id="pjt:scoreCriterionWeight" />
+                    <show id="pjt:scoreCriterionFormula" />
+                    <show id="pjt:scoreCriterionDetailFormula" />
+                    <show id="pjt:scoreCriterionRangeFormula" />
+                    <show id="pjt:scoreCriterionRange" />
+                    <show id="pjt:scoreCriterionFormulated" />
+                    <show id="sec:readGroups" force="true" />
+                    <show id="bcpg:erpCode" force="true" />
+                    <show id="bcpg:isDeleted" />
+                </field-visibility>
+                <appearance>
+                    <field id="bcpg:charactName" />
+                    <field id="cm:description">
+                        <control>
+                            <control-param name="activateLinks">true</control-param>
+                        </control>
+                    </field>
+                    <field id="pjt:scoreCriterionFormula">
+                        <control template="/org/alfresco/components/form/controls/spel-editor.ftl">
+                            <control-param name="rows">10</control-param>
+                        </control>
+                    </field>
+                     <field id="pjt:scoreCriterionDetailFormula">
+                        <control template="/org/alfresco/components/form/controls/spel-editor.ftl">
+                            <control-param name="rows">10</control-param>
+                        </control>
+                    </field>
+                     <field id="pjt:scoreCriterionRangeFormula">
+                        <control template="/org/alfresco/components/form/controls/spel-editor.ftl">
+                            <control-param name="rows">10</control-param>
+                        </control>
+                    </field>
+                     <field id="pjt:scoreCriterionRange" help-id="becpg.forms.help.scoreCriterionRange"/>
+                </appearance>
+            </form>
+        </forms>
+    </config>
+    <config condition="pjt:scoreCriterion" evaluator="model-type">
+        <forms>
+            <form>
+               <field-visibility>
+                    <show id="bcpg:charactName" />
+                    <show id="cm:description" force="true" />
+                    <show id="pjt:scoreCriterionType" />
+                    <show id="pjt:scoreCriterionWeight" />
+                    <show id="pjt:scoreCriterionFormula" />
+                    <show id="pjt:scoreCriterionDetailFormula" />
+                    <show id="pjt:scoreCriterionRangeFormula" />
+                    <show id="pjt:scoreCriterionRange" />
+                     <show id="pjt:scoreCriterionFormulated" />
+                    <show id="sec:readGroups" force="true" />
+                    <show id="bcpg:erpCode" force="true" />
+                    <show id="bcpg:isDeleted" />
+                </field-visibility>
+                <appearance>
+                    <field id="bcpg:charactName" />
+                    <field id="cm:description">
+                        <control>
+                            <control-param name="activateLinks">true</control-param>
+                        </control>
+                    </field>
+                    <field id="pjt:scoreCriterionFormula">
+                        <control template="/org/alfresco/components/form/controls/spel-editor.ftl">
+                            <control-param name="rows">10</control-param>
+                        </control>
+                    </field>
+                     <field id="pjt:scoreCriterionDetailFormula">
+                        <control template="/org/alfresco/components/form/controls/spel-editor.ftl">
+                            <control-param name="rows">10</control-param>
+                        </control>
+                    </field>
+                     <field id="pjt:scoreCriterionRangeFormula">
+                        <control template="/org/alfresco/components/form/controls/spel-editor.ftl">
+                            <control-param name="rows">10</control-param>
+                        </control>
+                    </field>
+                     <field id="pjt:scoreCriterionRange" help-id="becpg.forms.help.scoreCriterionRange"/>
+                </appearance>
+            </form>
+            <!-- Data Grid view -->
+            <form id="datagrid">
+                <field-visibility>
+                    <show id="bcpg:charactName" />
+                    <show id="cm:description" force="true" />
+                    <show id="pjt:scoreCriterionType" />
+                    <show id="pjt:scoreCriterionWeight" />
+                    <show id="pjt:scoreCriterionRange" />
+                    <show id="sec:readGroups" force="true" />
+                    <show id="bcpg:erpCode" force="true" />
+                    <show id="bcpg:isDeleted" />
+                </field-visibility>
+            </form>
+              <form id="export">
+                <field-visibility>
+                    <show id="bcpg:charactName" />
+                    <show id="cm:description" force="true" />
+                    <show id="pjt:scoreCriterionType" />
+                    <show id="pjt:scoreCriterionWeight" />
+                    <show id="pjt:scoreCriterionFormula" />
+                    <show id="pjt:scoreCriterionDetailFormula" />
+                    <show id="pjt:scoreCriterionRangeFormula" />
+                    <show id="pjt:scoreCriterionRange" />
+                    <show id="pjt:scoreCriterionFormulated" />
+                    <show id="sec:readGroups" force="true" />
+                    <show id="bcpg:erpCode" force="true" />
+                    <show id="bcpg:isDeleted" />
+                </field-visibility>
+            </form>
+            <form id="filter">
+                <field-visibility>
+                    <show id="bcpg:charactName" />
+                    <show id="bcpg:isDeleted" />
+                </field-visibility>
+                <appearance>
+                    <field id="bcpg:charactName">
+                        <control template="/org/alfresco/components/form/controls/textfield.ftl" />
+                    </field>
+                    <field id="bcpg:isDeleted">
+                        <control template="/org/alfresco/components/form/controls/boolean.ftl">
+                            <control-param name="isSearch">true</control-param>
+                        </control>
+                    </field>
+                </appearance>
+            </form>
+        </forms>
+    </config>
 
 	<!-- pjt:requestList type create form config -->
 	<config evaluator="model-type" condition="pjt:requestList">

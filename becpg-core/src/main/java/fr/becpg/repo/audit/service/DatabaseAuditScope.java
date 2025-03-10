@@ -38,6 +38,9 @@ public class DatabaseAuditScope implements AutoCloseable {
 		this.auditPlugin = auditPlugin;
 	}
 	
+	/**
+	 * <p>disableAuditRecord.</p>
+	 */
 	public void disableAuditRecord() {
 		this.shouldRecordAudit = false;
 	}

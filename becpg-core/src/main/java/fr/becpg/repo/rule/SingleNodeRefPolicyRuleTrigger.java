@@ -38,6 +38,11 @@ import org.alfresco.service.namespace.QName;
 
 import fr.becpg.model.BeCPGModel;
 
+/**
+ * <p>SingleNodeRefPolicyRuleTrigger class.</p>
+ *
+ * @author matthieu
+ */
 public class SingleNodeRefPolicyRuleTrigger extends RuleTriggerAbstractBase {
 	private static final String ERR_POLICY_NAME_NOT_SET = "Unable to register rule trigger since policy name has not been set.";
 
@@ -49,22 +54,45 @@ public class SingleNodeRefPolicyRuleTrigger extends RuleTriggerAbstractBase {
 
 	private boolean ignoreEntityDataList = true;
 	
+	/**
+	 * <p>Setter for the field <code>ignoreEntityDataList</code>.</p>
+	 *
+	 * @param ignoreEntityDataList a boolean
+	 */
 	public void setIgnoreEntityDataList(boolean ignoreEntityDataList) {
 		this.ignoreEntityDataList = ignoreEntityDataList;
 	}
 
+	/**
+	 * <p>Setter for the field <code>policyNamespace</code>.</p>
+	 *
+	 * @param policyNamespace a {@link java.lang.String} object
+	 */
 	public void setPolicyNamespace(String policyNamespace) {
 		this.policyNamespace = policyNamespace;
 	}
 
+	/**
+	 * <p>Setter for the field <code>policyName</code>.</p>
+	 *
+	 * @param policyName a {@link java.lang.String} object
+	 */
 	public void setPolicyName(String policyName) {
 		this.policyName = policyName;
 	}
 
+	/**
+	 * <p>Setter for the field <code>triggerParentRules</code>.</p>
+	 *
+	 * @param triggerParentRules a boolean
+	 */
 	public void setTriggerParentRules(boolean triggerParentRules) {
 		this.triggerParentRules = triggerParentRules;
 	}
 
+	/**
+	 * <p>registerRuleTrigger.</p>
+	 */
 	public void registerRuleTrigger() {
 		if (policyName == null) {
 			throw new RuleServiceException(ERR_POLICY_NAME_NOT_SET);
@@ -74,6 +102,11 @@ public class SingleNodeRefPolicyRuleTrigger extends RuleTriggerAbstractBase {
 				new JavaBehaviour(this, "policyBehaviour"));
 	}
 
+	/**
+	 * <p>policyBehaviour.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public void policyBehaviour(NodeRef nodeRef) {
 		// Break out early if rules are not enabled
 		if (!areRulesEnabled()) {

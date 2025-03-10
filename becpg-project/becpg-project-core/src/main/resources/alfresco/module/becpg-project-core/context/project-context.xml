@@ -16,22 +16,22 @@
    
   You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 -->
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
 	<!-- beCPG configuration files -->
-	<bean name="beCPGProjectPlaceholderConfigurer"
-		class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
+	<bean name="beCPGProjectPlaceholderConfigurer" class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
 		<property name="ignoreUnresolvablePlaceholders" value="true" />
 		<property name="ignoreResourceNotFound" value="true"></property>
 		<property name="locations">
 			<list>
 				<value>classpath:alfresco/module/${pom.artifactId}/becpg-config-project.properties</value>
-				<value>classpath*:beCPG.properties</value>	
+				<value>classpath*:beCPG.properties</value>
 			</list>
 		</property>
 	</bean>
-	
-	<bean id="becpgProjectBootstrapMessages" class="org.alfresco.i18n.ResourceBundleBootstrapComponent" >
+
+	<bean id="becpgProjectBootstrapMessages" class="org.alfresco.i18n.ResourceBundleBootstrapComponent">
 		<property name="resourceBundles">
 			<list>
 				<value>alfresco/module/${pom.artifactId}/messages/project-messages</value>
@@ -41,12 +41,11 @@
 	</bean>
 
 	<!-- Models -->
-	<bean id="bcpg.project.dictionaryBootstrap" parent="dictionaryModelBootstrap"
-		depends-on="bcpg.dictionaryBootstrap">
+	<bean id="bcpg.project.dictionaryBootstrap" parent="dictionaryModelBootstrap" depends-on="bcpg.dictionaryBootstrap">
 		<property name="models">
 			<list>
 				<value>alfresco/module/${pom.artifactId}/model/projectModel.xml</value>
-                <value>alfresco/module/${pom.artifactId}/model/surveyModel.xml</value>
+				<value>alfresco/module/${pom.artifactId}/model/surveyModel.xml</value>
 			</list>
 		</property>
 
@@ -67,66 +66,71 @@
 					<prop key="location">alfresco/module/${pom.artifactId}/workflow/project/project-adhoc.bpmn</prop>
 					<prop key="mimetype">text/xml</prop>
 					<prop key="redeploy">false</prop>
-				</props>					
+				</props>
 			</list>
 		</property>
 		<property name="labels">
 			<list>
-				<value>alfresco/module/${pom.artifactId}/workflow/project/projectWorkflow-messages</value>	
+				<value>alfresco/module/${pom.artifactId}/workflow/project/projectWorkflow-messages</value>
 			</list>
 		</property>
 		<property name="models">
 			<list>
-				<value>alfresco/module/${pom.artifactId}/workflow/project/projectWorkflowModel.xml</value>	
+				<value>alfresco/module/${pom.artifactId}/workflow/project/projectWorkflowModel.xml</value>
 			</list>
 		</property>
 	</bean>
+
 
 	<!-- Formulation -->
 	<bean id="projectFormulationChain" class="fr.becpg.repo.formulation.FormulationChain" init-method="init">
 		<property name="handlers">
 			<list>
-				<bean class="fr.becpg.repo.project.formulation.SubProjectFormulationHandler" >
+				<bean class="fr.becpg.repo.project.formulation.SubProjectFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="projectActivityService" ref="projectActivityService" />
-					<property name="nodeService" ref="nodeService"/>
-					<property name="namespaceService" ref="namespaceService"/>
-					<property name="associationService" ref="associationService"/>
-					<property name="entityDictionaryService" ref="entityDictionaryService"/>
-					<property name="systemConfigurationService" ref="systemConfigurationService"/>
+					<property name="nodeService" ref="nodeService" />
+					<property name="namespaceService" ref="namespaceService" />
+					<property name="associationService" ref="associationService" />
+					<property name="entityDictionaryService" ref="entityDictionaryService" />
+					<property name="systemConfigurationService" ref="systemConfigurationService" />
 				</bean>
-			   <bean class="fr.becpg.repo.project.formulation.TaskFormulationHandler">
+				<bean class="fr.becpg.repo.project.formulation.TaskFormulationHandler">
 					<property name="projectWorkflowService" ref="projectWorkflowService" />
 					<property name="projectService" ref="projectService" />
 					<property name="projectActivityService" ref="projectActivityService" />
-					<property name="nodeService" ref="nodeService"/>
+					<property name="nodeService" ref="nodeService" />
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 				</bean>
-				
-				<bean class="fr.becpg.repo.project.formulation.BudgetFormulationHandler" >
-				  <property name="associationService" ref="associationService"/>
-				  <property name="nodeService" ref="nodeService"/>
-				  <property name="alfrescoRepository" ref="alfrescoRepository" />
-				</bean>
-				<bean class="fr.becpg.repo.project.formulation.ScoreListFormulationHandler" >
+
+				<bean class="fr.becpg.repo.project.formulation.BudgetFormulationHandler">
+					<property name="associationService" ref="associationService" />
+					<property name="nodeService" ref="nodeService" />
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 				</bean>
+				<bean class="fr.becpg.repo.project.formulation.ScoreListFormulationHandler">
+                    <property name="alfrescoRepository" ref="alfrescoRepository" />
+                    <property name="nodeService" ref="nodeService" />
+                    <property name="mlNodeService" ref="mlAwareNodeService" />
+                    <property name="formulaService" ref="formulaService" />
+                </bean>
 				<bean class="fr.becpg.repo.project.formulation.TaskOverdueFormulationHandler">
-					<property name="beCPGMailService" ref="beCPGMailService"/>
-					<property name="workflowService" ref="WorkflowService"/>
-					<property name="projectNotificationService" ref="projectNotificationService"/>
+					<property name="beCPGMailService" ref="beCPGMailService" />
+					<property name="workflowService" ref="WorkflowService" />
+					<property name="projectNotificationService" ref="projectNotificationService" />
 					<property name="projectService" ref="projectService" />
+					<property name="nodeService" ref="nodeService" />
 				</bean>
-				
+
 				<bean class="fr.becpg.repo.formulation.impl.ScriptsFormulationHandler">
-					<property name="nodeService" ref="nodeService"/>
-					<property name="namespaceService" ref="namespaceService"/>
-					<property name="scriptService" ref="scriptService"/>
+					<property name="nodeService" ref="nodeService" />
+					<property name="namespaceService" ref="namespaceService" />
+					<property name="scriptService" ref="scriptService" />
 					<property name="formulaService" ref="formulaService" />
 					<property name="contentService" ref="contentService" />
 					<property name="associationService" ref="associationService" />
 				</bean>
-				
+
 			</list>
 		</property>
 		<property name="formulationService" ref="formulationService" />
@@ -134,14 +138,16 @@
 	</bean>
 
 	<!-- Policy -->
-	<bean id="projectPolicy" class="fr.becpg.repo.project.policy.ProjectPolicy" parent="abstractBeCPGPolicy" depends-on="bcpg.project.dictionaryBootstrap">
+	<bean id="projectPolicy" class="fr.becpg.repo.project.policy.ProjectPolicy" parent="abstractBeCPGPolicy"
+		depends-on="bcpg.project.dictionaryBootstrap">
 		<property name="projectService" ref="projectService" />
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
 		<property name="projectWorkflowService" ref="projectWorkflowService" />
 		<property name="entityListDAO" ref="entityListDAO" />
 	</bean>
-	
-	<bean id="projectListPolicy" class="fr.becpg.repo.project.policy.ProjectListPolicy" parent="projectPolicy" depends-on="bcpg.project.dictionaryBootstrap">
+
+	<bean id="projectListPolicy" class="fr.becpg.repo.project.policy.ProjectListPolicy" parent="projectPolicy"
+		depends-on="bcpg.project.dictionaryBootstrap">
 		<property name="associationService" ref="associationService" />
 		<property name="projectActivityService" ref="projectActivityService" />
 	</bean>
@@ -149,53 +155,57 @@
 
 	<!-- DataList Extractor -->
 
-	<bean id="projectListExtractor" class="fr.becpg.repo.project.extractor.ProjectListExtractor" parent="simpleExtractor" >
+	<bean id="projectListExtractor" class="fr.becpg.repo.project.extractor.ProjectListExtractor" parent="simpleExtractor">
 		<property name="personService" ref="personService" />
 		<property name="preferenceService" ref="preferenceService" />
 		<property name="projectService" ref="projectService" />
 		<property name="securityService" ref="securityService" />
-	 	<property name="namespaceService" ref="namespaceService" />
-	 	<property name="entityActivityExtractorService" ref="entityActivityExtractorService" />
-	 	<property name="dataListExtractorFactory" ref="dataListExtractorFactory" />
-	 	<property name="defaultExtractor" value="false"/>
-	 	<property name="systemConfigurationService" ref="systemConfigurationService" />
+		<property name="namespaceService" ref="namespaceService" />
+		<property name="entityActivityExtractorService" ref="entityActivityExtractorService" />
+		<property name="dataListExtractorFactory" ref="dataListExtractorFactory" />
+		<property name="defaultExtractor" value="false" />
+		<property name="systemConfigurationService" ref="systemConfigurationService" />
 	</bean>
 
+  
 
+    <bean id="scoreListExtractor" parent="multiLevelExtractor" class="fr.becpg.repo.project.extractor.ScoreListExtractor"></bean>
 
- 
 	<!-- Webscripts -->
-	<bean id="webscript.fr.becpg.project.projectModuleInfo.get" class="fr.becpg.repo.project.web.scripts.ProjectModuleInfoWebScript" parent="webscript">
+	<bean id="webscript.fr.becpg.project.projectModuleInfo.get" class="fr.becpg.repo.project.web.scripts.ProjectModuleInfoWebScript"
+		parent="webscript">
 		<property name="nodeService" ref="NodeService" />
 		<property name="projectService" ref="projectService" />
 	</bean>
-	
-	<bean id="webscript.fr.becpg.project.completeProjectTask.post" class="fr.becpg.repo.project.web.scripts.CompleteProjectTaskWebScript" parent="webscript">
+
+	<bean id="webscript.fr.becpg.project.completeProjectTask.post" class="fr.becpg.repo.project.web.scripts.CompleteProjectTaskWebScript"
+		parent="webscript">
 		<property name="projectService" ref="projectService" />
 	</bean>
-	
+
 	<bean id="webscript.fr.becpg.project.projectDetails.get" class="fr.becpg.repo.project.web.scripts.ProjectDetailsWebScript" parent="webscript">
 		<property name="nodeService" ref="NodeService" />
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
-		<property name="contentService" ref="contentService"/>
-		<property name="propertyFormatService" ref="propertyFormatService"/>
+		<property name="contentService" ref="contentService" />
+		<property name="propertyFormatService" ref="propertyFormatService" />
 	</bean>
-	
-	<bean id="webscript.fr.becpg.project.projectTaskEditUrl.get" class="fr.becpg.repo.project.web.scripts.ProjectTaskEditUrlWebScript" parent="webscript">
-    	<property name="nodeService" ref="nodeService" />
-    	<property name="sysAdminParams" ref="sysAdminParams" />
-    </bean>
+
+	<bean id="webscript.fr.becpg.project.projectTaskEditUrl.get" class="fr.becpg.repo.project.web.scripts.ProjectTaskEditUrlWebScript"
+		parent="webscript">
+		<property name="nodeService" ref="nodeService" />
+		<property name="sysAdminParams" ref="sysAdminParams" />
+	</bean>
     
        <!-- Survey -->
-    
-    <bean id="webscript.fr.becpg.survey.survey.get" class="fr.becpg.repo.survey.web.scripts.SurveyWebScript" parent="webscript">
-      	<property name="surveyService" ref="surveyService"/>
-      	<property name="nodeService" ref="NodeService"/>
-      	<property name="permissionService" ref="permissionService"/>
-   	</bean>
-   	
-   	<alias alias="webscript.fr.becpg.survey.survey.post" name="webscript.fr.becpg.survey.survey.get"/>
+
+	<bean id="webscript.fr.becpg.survey.survey.get" class="fr.becpg.repo.survey.web.scripts.SurveyWebScript" parent="webscript">
+		<property name="surveyService" ref="surveyService" />
+		<property name="nodeService" ref="NodeService" />
+		<property name="permissionService" ref="permissionService" />
+	</bean>
+
+	<alias alias="webscript.fr.becpg.survey.survey.post" name="webscript.fr.becpg.survey.survey.get" />
     
 	
    <!--                 -->
@@ -210,40 +220,40 @@
 	</bean>
 
     <!-- Project formulation -->
-        
-    <bean id="projectFormulationJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
-        <property name="jobClass">
-            <value>fr.becpg.repo.project.impl.ProjectFormulationJob</value>
-        </property>
-        <property name="group" value="beCPG"/>
-        <property name="description" value="Run project formulation" />
-        <property name="jobDataAsMap">
-            <map>
-                <entry key="projectFormulationWorker">
-                    <ref bean="projectFormulationWorker" />
-                </entry>
-                <entry key="tenantAdminService">
-                    <ref bean="tenantAdminService" />
-                </entry>
-	            <entry key="jobLockService">
-	               <ref bean="jobLockService" />
-	           </entry>
-            </map>
-        </property>
-    </bean>
-    
-     <bean id="projectFormulationSchedulerAccessor" class="org.alfresco.schedule.AlfrescoSchedulerAccessorBean">
-        <property name="scheduler" ref="schedulerFactory"/>
-        <property name="triggers">
-            <list>
-               <bean id="projectFormulationTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"  >
-			        <property name="jobDetail" ref="projectFormulationJob"/>
-			        <property name="cronExpression" value="${beCPG.project.formulation.cronExpression}" />
-			    </bean>
+
+	<bean id="projectFormulationJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass">
+			<value>fr.becpg.repo.project.impl.ProjectFormulationJob</value>
+		</property>
+		<property name="group" value="beCPG" />
+		<property name="description" value="Run project formulation" />
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="projectFormulationWorker">
+					<ref bean="projectFormulationWorker" />
+				</entry>
+				<entry key="tenantAdminService">
+					<ref bean="tenantAdminService" />
+				</entry>
+				<entry key="jobLockService">
+					<ref bean="jobLockService" />
+				</entry>
+			</map>
+		</property>
+	</bean>
+
+	<bean id="projectFormulationSchedulerAccessor" class="org.alfresco.schedule.AlfrescoSchedulerAccessorBean">
+		<property name="scheduler" ref="schedulerFactory" />
+		<property name="triggers">
+			<list>
+				<bean id="projectFormulationTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+					<property name="jobDetail" ref="projectFormulationJob" />
+					<property name="cronExpression" value="${beCPG.project.formulation.cronExpression}" />
+				</bean>
 			</list>
-        </property>
-        <property name="enabled" value="${beCPG.project.formulation.enabled}"/>
-    </bean>
+		</property>
+		<property name="enabled" value="${beCPG.project.formulation.enabled}" />
+	</bean>
     
     
     	<!-- Supplier portal -->
@@ -258,7 +268,8 @@
 		<property name="projectService" ref="projectService" />
 		<property name="serviceRegistry" ref="ServiceRegistry" />
 		<property name="entityService" ref="entityService" />
+		<property name="associationService" ref="associationService" />
 	</bean>
-    
+
 
 </beans>

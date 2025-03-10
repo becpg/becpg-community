@@ -1,11 +1,17 @@
 /*
- * 
+ *
  */
 package fr.becpg.repo.product.data;
 
+import java.util.List;
+
 import org.alfresco.service.cmr.repository.MLText;
+import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.product.data.constraints.ProductUnit;
+import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.product.data.productList.IngListDataItem;
+import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.repository.annotation.AlfCacheable;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
@@ -44,7 +50,13 @@ public class RawMaterialData extends ProductData {
 		setName(name);
 		return this;
 	}
-	
+
+	/**
+	 * <p>withNetWeight.</p>
+	 *
+	 * @param netWeight a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.product.data.RawMaterialData} object
+	 */
 	public RawMaterialData withNetWeight(Double netWeight) {
 		setNetWeight(netWeight);
 		return this;
@@ -60,7 +72,7 @@ public class RawMaterialData extends ProductData {
 		setLegalName(legalName);
 		return this;
 	}
-	
+
 	/**
 	 * <p>withLegalName.</p>
 	 *
@@ -105,5 +117,48 @@ public class RawMaterialData extends ProductData {
 		return this;
 	}
 
+	/**
+	 * <p>withPlants.</p>
+	 *
+	 * @param plants a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.product.data.RawMaterialData} object
+	 */
+	public RawMaterialData withPlants(List<NodeRef> plants) {
+		setPlants(plants);
+		return this;
+	}
+
+	/**
+	 * <p>withCompoList.</p>
+	 *
+	 * @param compoList a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.product.data.FinishedProductData} object
+	 */
+	public RawMaterialData withCompoList(List<CompoListDataItem> compoList) {
+		getCompoListView().setCompoList(compoList);
+		return this;
+	}
+	
+	/**
+	 * <p>withIngList.</p>
+	 *
+	 * @param ingList a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.product.data.RawMaterialData} object
+	 */
+	public RawMaterialData withIngList(List<IngListDataItem> ingList) {
+		setIngList(ingList);
+		return this;
+	}
+	
+	
+	public RawMaterialData withScoreList(List<ScoreListDataItem> scoreList) {
+		setScoreList(scoreList);
+		return this;
+	}
+
+	public RawMaterialData withGeoOrigins(List<NodeRef> geoOrigins) {
+		setGeoOrigins(geoOrigins);
+		return this;
+	}
 
 }

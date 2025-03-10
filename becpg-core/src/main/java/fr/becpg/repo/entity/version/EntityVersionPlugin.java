@@ -46,6 +46,7 @@ public interface EntityVersionPlugin {
 	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param versionType a {@link org.alfresco.service.cmr.version.VersionType} object.
 	 * @param description a {@link java.lang.String} object.
+	 * @param effectiveDate a {@link java.util.Date} object
 	 */
 	void impactWUsed(NodeRef entityNodeRef, VersionType versionType, String description, Date effectiveDate);
 }

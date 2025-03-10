@@ -38,6 +38,11 @@ import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.entity.remote.RemoteParams;
 
+/**
+ * <p>EntityFormatServiceImpl class.</p>
+ *
+ * @author matthieu
+ */
 @Service("entityFormatService")
 public class EntityFormatServiceImpl implements EntityFormatService {
 
@@ -69,11 +74,13 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 	
 	private static final Log logger = LogFactory.getLog(EntityFormatServiceImpl.class);
 
+	/** {@inheritDoc} */
 	@Override
 	public String generateEntityData(NodeRef entityNodeRef, EntityFormat toFormat) {
 		return generateEntityData(entityNodeRef, toFormat, null);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public String generateEntityData(NodeRef entityNodeRef, EntityFormat toFormat, Map<String, Object> extraParams) {
 		
@@ -112,6 +119,7 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 		return null;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void convertToFormat(NodeRef entityNodeRef, EntityFormat targetFormat) {
 		if (EntityFormat.JSON.equals(targetFormat)) {
@@ -172,6 +180,7 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 		dbNodeService.removeProperty(entityNodeRef, BeCPGModel.PROP_ENTITY_DATA);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void createOrUpdateEntityFromJson(NodeRef entityNodeRef, String entityJson) {
 		
@@ -198,6 +207,7 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 		
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void updateEntityFormat(NodeRef entityNodeRef, EntityFormat format, String data) {
 		dbNodeService.setProperty(entityNodeRef, BeCPGModel.PROP_ENTITY_FORMAT, format);
@@ -207,6 +217,7 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 		contentWriter.putContent(data);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getEntityData(NodeRef entityNodeRef) {
 		if (dbNodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_FORMAT)) {
@@ -219,6 +230,7 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getEntityFormat(NodeRef entityNodeRef) {
 		if (entityNodeRef != null && dbNodeService.exists(entityNodeRef) && dbNodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_FORMAT)) {

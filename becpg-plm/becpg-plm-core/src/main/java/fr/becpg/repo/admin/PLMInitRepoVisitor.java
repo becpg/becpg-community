@@ -186,14 +186,36 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 	private static final String EXPORT_LABELLING_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportLabelling.xlsx";
 	private static final String EXPORT_CITEO_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportCiteo.xlsx";
+	private static final String EXPORT_CITEO_PRO_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportCiteoPro.xlsx";
 	private static final String EXPORT_ALLERGENS_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportAllergens.xlsx";
+	private static final String EXPORT_LCA_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportLCA.xlsx";
+	private static final String EXPORT_SVHC_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportSVHC.xlsx";
+	private static final String EXPORT_SURVEY_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportSurvey.xlsx";
 	private static final String EXPORT_NUTRIENTS_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportNutrients.xlsx";
-	private static final String EXPORT_SUPPLIERS_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportSuppliers.xlsx";
 	private static final String EXPORT_QUALITY_CONTROLS_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportQualityControls.xlsx";
 	private static final String EXPORT_INGLIST_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportIngList.xlsx";
 	private static final String EXPORT_LABELCLAIMLIST_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportLabelClaimList.xlsx";
 	private static final String EXPORT_PHYSICOCHEMICALLIST_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportPhysicoChemicalList.xlsx";
 	private static final String EXPORT_COMPOSITIONPACKAGING_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportCompositionPackaging.xlsx";
+	private static final String EXPORT_SCORELIST_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportScoreList.xlsx";
+	
+	private static final String EXPORT_SPEC_ALLERGENS_XLSX_PATH = "beCPG/birt/exportsearch/spec/%s/ExportSpecAllergens.xlsx";
+	private static final String EXPORT_SPEC_NUTRIENTS_XLSX_PATH = "beCPG/birt/exportsearch/spec/%s/ExportSpecNutrients.xlsx";
+	private static final String EXPORT_SPEC_PHYSICOCHEMICALLIST_XLSX_PATH = "beCPG/birt/exportsearch/spec/%s/ExportSpecPhysicoChemicalList.xlsx";
+	private static final String EXPORT_SPEC_LABELCLAIMLIST_XLSX_PATH = "beCPG/birt/exportsearch/spec/%s/ExportSpecLabelClaimList.xlsx";
+	private static final String EXPORT_FORBIDDENING_XLSX_PATH = "beCPG/birt/exportsearch/spec/%s/ExportForbiddenIng.xlsx";
+	private static final String EXPORT_LABELINGRULELIST_XLSX_PATH = "beCPG/birt/exportsearch/spec/%s/ExportLabelingRuleList.xlsx";
+	private static final String EXPORT_SPECCOMPATIBILITYLIST_XLSX_PATH = "beCPG/birt/exportsearch/spec/%s/ExportSpecCompatibilityList.xlsx";
+	
+	private static final String EXPORT_SUPPLIERS_XLSX_PATH = "beCPG/birt/exportsearch/supplier/%s/ExportSuppliers.xlsx";
+	private static final String EXPORT_SUPPLIER_SURVEY_XLSX_PATH = "beCPG/birt/exportsearch/supplier/%s/ExportSupplierSurvey.xlsx";
+	private static final String EXPORT_SUPPLIER_SCORELIST_XLSX_PATH = "beCPG/birt/exportsearch/supplier/%s/ExportSupplierScoreList.xlsx";
+	
+	private static final String EXPORT_CLIENT_SURVEY_XLSX_PATH = "beCPG/birt/exportsearch/client/%s/ExportClientSurvey.xlsx";
+	private static final String EXPORT_CLIENT_SCORELIST_XLSX_PATH = "beCPG/birt/exportsearch/client/%s/ExportClientScoreList.xlsx";
+	
+	private static final String EXPORT_PROJECT_SURVEY_XLSX_PATH = "beCPG/birt/exportsearch/project/%s/ExportProjectSurvey.xlsx";
+	private static final String EXPORT_PROJECT_SCORELIST_XLSX_PATH = "beCPG/birt/exportsearch/project/%s/ExportProjectScoreList.xlsx";
 
 	private static final String PRODUCT_REPORT_DE_RESOURCE = "beCPG/birt/document/product/default/ProductReport_de.properties";
 	private static final String PRODUCT_REPORT_EN_US_RESOURCE = "beCPG/birt/document/product/default/ProductReport_en_US.properties";
@@ -363,6 +385,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 		// LCADatabases
 		visitFolder(systemNodeRef, PlmRepoConsts.PATH_LCA_DATABASES);
+		
+		// LCADatabases
+	    visitFolder(systemNodeRef, PlmRepoConsts.PATH_CLP_DATABASES);
 
 		// Property catalogs
 		visitFolder(systemNodeRef, PlmRepoConsts.PATH_CATALOGS);
@@ -398,7 +423,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				if (nodeRef == null) {
 
 					MLText mltValue = new MLText();
-
 					for (String locKey : supportedLocale) {
 						String i18NKey = I18NUtil.getMessage("listconstraint.qa_controlTypes." + value, MLTextHelper.parseLocale(locKey));
 						if (i18NKey != null) {
@@ -568,7 +592,13 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		}
 		if (Objects.equals(folderName, PlmRepoConsts.PATH_LCA_DATABASES)) {
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/databases/ecoscore/agribalyse_3_0.csv");
+			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/databases/ecoscore/agribalyse_3_1.csv");
 		}
+		
+		if (Objects.equals(folderName, PlmRepoConsts.PATH_CLP_DATABASES)) {
+			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/databases/clp/*.csv");
+		}
+		
 		if (Objects.equals(folderName, PlmRepoConsts.PATH_CATALOGS)) {
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/catalogs/*.json");
 		}
@@ -604,15 +634,10 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				: nodeService.getChildByName(listContainer, ContentModel.ASSOC_CONTAINS, RepoConsts.PATH_NOTIFICATIONS);
 
 		createRequirementsNotification(notificationFolder);
-
 		createObsoleteDocumentsNotification(notificationFolder);
-
 		createInProgressProjectsNotification(notificationFolder);
-
 		createValidatedProductsNotification(notificationFolder);
-
 		createValidatedAndUpdatedProductsNotification(notificationFolder);
-
 		createArchivedProductsNotification(notificationFolder);
 	}
 
@@ -623,6 +648,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 		if ((notificationFolder != null) && (notification == null)) {
 
+			properties.put(BeCPGModel.PROP_COLOR, "#cfe2f3");
+			
 			notification = nodeService
 					.createNode(notificationFolder, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, BeCPGModel.TYPE_NOTIFICATIONRULELIST)
 					.getChildRef();
@@ -843,21 +870,12 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			conditionOnSize.setInvertCondition(false);
 			compositeAction.addActionCondition(conditionOnSize);
 
-			// rule
-			Rule rule = new Rule();
-			rule.setRuleTypes(Arrays.asList(RuleType.INBOUND));
-			rule.setAction(compositeAction);
-			rule.applyToChildren(true);
-			rule.setTitle("import csv file");
-			rule.setExecuteAsynchronously(true);
-			rule.setDescription("Every csv item created will be imported");
-
-			ruleService.saveRule(nodeRef, rule);
+			createRule(nodeRef, "import csv file", "Every csv item created will be imported", true, compositeAction);
 
 			action = actionService.createAction(ImporterActionExecuter.NAME, null);
 			compositeAction = actionService.createCompositeAction();
 			compositeAction.addAction(action);
-
+			
 			// compare-mime-type == text/csv
 			conditionOnMimeType = actionService.createActionCondition(CompareMimeTypeEvaluator.NAME);
 			conditionOnMimeType.setParameterValue(ComparePropertyValueEvaluator.PARAM_VALUE, MimetypeMap.MIMETYPE_OPENXML_SPREADSHEET);
@@ -881,17 +899,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			conditionOnSize.setParameterValue(ComparePropertyValueEvaluator.PARAM_VALUE, 5);
 			conditionOnSize.setInvertCondition(false);
 			compositeAction.addActionCondition(conditionOnSize);
-
-			// rule
-			rule = new Rule();
-			rule.setRuleTypes(Arrays.asList(RuleType.INBOUND));
-			rule.setAction(compositeAction);
-			rule.applyToChildren(true);
-			rule.setTitle("import xlsx file");
-			rule.setExecuteAsynchronously(true);
-			rule.setDescription("Every xlsx item created will be imported");
-
-			ruleService.saveRule(nodeRef, rule);
+			
+			
+			createRule(nodeRef, "import xlsx file", "Every xlsx item created will be imported", true, compositeAction);
 
 		} else if (Objects.equals(folderName, PlmRepoConsts.PATH_IMPORT_USER)) {
 
@@ -915,16 +925,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			conditionOnName.setInvertCondition(false);
 			compositeAction.addActionCondition(conditionOnName);
 
-			// rule
-			Rule rule = new Rule();
-			rule.setRuleTypes(Arrays.asList(RuleType.INBOUND));
-			rule.setAction(compositeAction);
-			rule.applyToChildren(true);
-			rule.setTitle("import user");
-			rule.setExecuteAsynchronously(true);
-			rule.setDescription("Every item created will be imported");
+			createRule(nodeRef, "import user", "Every item created will be imported", true, compositeAction);
 
-			ruleService.saveRule(nodeRef, rule);
 		}
 
 		// quality
@@ -1069,6 +1071,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_SUBSIDIARIES, PLMModel.TYPE_SUBSIDIARY);
 		entityLists.put(PlmRepoConsts.PATH_TRADEMARKS, PLMModel.TYPE_TRADEMARK);
 		entityLists.put(PlmRepoConsts.PATH_PLANTS, PLMModel.TYPE_PLANT);
+		entityLists.put(PlmRepoConsts.PATH_LABORATORIES, PLMModel.TYPE_LABORATORY);
 		entityLists.put(PlmRepoConsts.PATH_CUSTOMSCODES, PLMModel.TYPE_CUSTOMSCODE);
 		entityLists.put(PlmRepoConsts.PATH_CERTIFICATIONS, PLMModel.TYPE_CERTIFICATION);
 		entityLists.put(PlmRepoConsts.PATH_LABELCLAIMS, PLMModel.TYPE_LABEL_CLAIM);
@@ -1083,6 +1086,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_GS1_ALCOHOL_BEVERAGE_CONTAINERS, GS1Model.TYPE_ALCOHOL_BEVERAGE_CONTAINER);
 		entityLists.put(PlmRepoConsts.PATH_CONTACTS, PLMModel.TYPE_CONTACTLIST);
 		entityLists.put(PlmRepoConsts.PATH_REGULATORY_USAGES, PLMModel.TYPE_REGULATORY_USAGE);
+		entityLists.put(PlmRepoConsts.PATH_TOXICITIES, PLMModel.TYPE_TOX);
+		entityLists.put(PlmRepoConsts.PATH_TOX_ING, PLMModel.TYPE_TOX_ING);
+		entityLists.put(PlmRepoConsts.PATH_SURVEY_QUESTIONS, SurveyModel.TYPE_SURVEY_QUESTION);
 
 		entityLists.put(RepoConsts.PATH_NOTIFICATIONS, BeCPGModel.TYPE_NOTIFICATIONRULELIST);
 		entityLists.put(PlmRepoConsts.PATH_PUBCHANNELS, PublicationModel.TYPE_PUBLICATION_CHANNEL);
@@ -1405,6 +1411,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
 		dataLists.add(PLMModel.TYPE_LABELCLAIMLIST);
 		dataLists.add(PLMModel.TYPE_SPEC_COMPATIBILTY_LIST);
+		dataLists.add(GHSModel.TYPE_HAZARD_CLASSIFICATION_LIST);
+		dataLists.add(ProjectModel.TYPE_SCORE_LIST);
 		dataLists.add(BeCPGModel.TYPE_ACTIVITY_LIST);
 		entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, PLMModel.TYPE_PRODUCT_SPECIFICATION, null, true, true, dataLists,
 				null);
@@ -1727,8 +1735,20 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_CITEO),
 					TranslateHelper.getLocaleAwarePath(EXPORT_CITEO_XLSX_PATH), reportTplInformation, false);
 			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
+					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_CITEO_PRO),
+					TranslateHelper.getLocaleAwarePath(EXPORT_CITEO_PRO_XLSX_PATH), reportTplInformation, false);
+			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
 					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_ALLERGENS),
 					TranslateHelper.getLocaleAwarePath(EXPORT_ALLERGENS_XLSX_PATH), reportTplInformation, false);
+			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
+					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_LCA),
+					TranslateHelper.getLocaleAwarePath(EXPORT_LCA_XLSX_PATH), reportTplInformation, false);
+			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
+					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_SVHC),
+					TranslateHelper.getLocaleAwarePath(EXPORT_SVHC_XLSX_PATH), reportTplInformation, false);
+			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
+					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_SURVEY),
+					TranslateHelper.getLocaleAwarePath(EXPORT_SURVEY_XLSX_PATH), reportTplInformation, false);
 			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
 					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_NUTRIENTS),
 					TranslateHelper.getLocaleAwarePath(EXPORT_NUTRIENTS_XLSX_PATH), reportTplInformation, false);
@@ -1744,19 +1764,71 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
 					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_COMPOSITIONPACKAGING),
 					TranslateHelper.getLocaleAwarePath(EXPORT_COMPOSITIONPACKAGING_XLSX_PATH), reportTplInformation, false);
+			
+			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
+					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_SCORELIST),
+					TranslateHelper.getLocaleAwarePath(EXPORT_SCORELIST_XLSX_PATH), reportTplInformation, false);
 
 			reportTplInformation.setNodeType(PLMModel.TYPE_SUPPLIER);
 
 			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
 					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_SUPPLIERS_CONTACTS),
 					TranslateHelper.getLocaleAwarePath(EXPORT_SUPPLIERS_XLSX_PATH), reportTplInformation, false);
-
+			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
+					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_SUPPLIERSURVEY),
+					TranslateHelper.getLocaleAwarePath(EXPORT_SUPPLIER_SURVEY_XLSX_PATH), reportTplInformation, false);
+			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
+					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_SUPPLIERSCORELIST),
+					TranslateHelper.getLocaleAwarePath(EXPORT_SUPPLIER_SCORELIST_XLSX_PATH), reportTplInformation, false);
+			
+			reportTplInformation.setNodeType(PLMModel.TYPE_CLIENT);
+			
+			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
+					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_CLIENTSURVEY),
+					TranslateHelper.getLocaleAwarePath(EXPORT_CLIENT_SURVEY_XLSX_PATH), reportTplInformation, false);
+			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
+					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_CLIENTSCORELIST),
+					TranslateHelper.getLocaleAwarePath(EXPORT_CLIENT_SCORELIST_XLSX_PATH), reportTplInformation, false);
+			
 			reportTplInformation.setNodeType(QualityModel.TYPE_QUALITY_CONTROL);
 
 			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
 					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_QUALITY_CONTROLS),
 					TranslateHelper.getLocaleAwarePath(EXPORT_QUALITY_CONTROLS_XLSX_PATH), reportTplInformation, false);
 
+			reportTplInformation.setNodeType(PLMModel.TYPE_PRODUCT_SPECIFICATION);
+			
+			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
+					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_SPECALLERGENS),
+					TranslateHelper.getLocaleAwarePath(EXPORT_SPEC_ALLERGENS_XLSX_PATH), reportTplInformation, false);
+			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
+					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_SPECNUTRIENTS),
+					TranslateHelper.getLocaleAwarePath(EXPORT_SPEC_NUTRIENTS_XLSX_PATH), reportTplInformation, false);
+			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
+					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_SPECPHYSICOCHEMICALLIST),
+					TranslateHelper.getLocaleAwarePath(EXPORT_SPEC_PHYSICOCHEMICALLIST_XLSX_PATH), reportTplInformation, false);
+			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
+					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_SPECLABELCLAIMLIST),
+					TranslateHelper.getLocaleAwarePath(EXPORT_SPEC_LABELCLAIMLIST_XLSX_PATH), reportTplInformation, false);
+			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
+					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_FORBIDDENING),
+					TranslateHelper.getLocaleAwarePath(EXPORT_FORBIDDENING_XLSX_PATH), reportTplInformation, false);
+			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
+					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_LABELINGRULELIST),
+					TranslateHelper.getLocaleAwarePath(EXPORT_LABELINGRULELIST_XLSX_PATH), reportTplInformation, false);
+			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
+					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_SPECCOMPATIBILITYLIST),
+					TranslateHelper.getLocaleAwarePath(EXPORT_SPECCOMPATIBILITYLIST_XLSX_PATH), reportTplInformation, false);
+			
+			reportTplInformation.setNodeType(ProjectModel.TYPE_PROJECT);
+			
+			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
+					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_PROJECTSURVEY),
+					TranslateHelper.getLocaleAwarePath(EXPORT_PROJECT_SURVEY_XLSX_PATH), reportTplInformation, false);
+			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
+					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_PROJECTSCORELIST),
+					TranslateHelper.getLocaleAwarePath(EXPORT_PROJECT_SCORELIST_XLSX_PATH), reportTplInformation, false);
+			
 			// export search NC
 
 			NodeRef exportNCSynthesisNodeRef = visitFolder(exportSearchNodeRef, PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_NON_CONFORMITIES);

@@ -35,7 +35,9 @@
  * 
  * assocValues(node, assocName) returns nodeRef array for given assocName
  * 
- * sourceAssocValues(node, assocName) returns nodeRef array for given source assocName
+ * sourceAssocValues(node, assocName, maxResults, offset) returns nodeRef array for given source assocName
+ * 
+ * entitySourceAssocs(node, assocName, filter) returns entityNodeRef array for given source assocName
  * 
  * assocPropValues(node, assocName, propName) returns association property array of values
  * 
@@ -151,8 +153,10 @@ const SUPPLIER_PORTAL_SITE_ID = "supplier-portal";
  * @returns {boolean} true if value is empty or null
  */
 function isNullOrEmpty(value) {
-	 return value == null || (value === String(value) 
-	 	&& typeof value.trim === "function" ? value.trim() : value).length === 0;
+	var strValue;
+	return value == null || 
+		(value === (strValue = String(value)) || 
+		value instanceof String ? strValue.trim() : value).length === 0;
 }
 
 /**
@@ -333,10 +337,41 @@ function assocValues(node, assocName) {
 /**
  * @param {(ScriptNode|NodeRef|string)} node
  * @param {string} assocName
+ * @param {string} maxResults
+ * @param {string} offset
  * @returns {NodeRef[]} nodeRef array for given source assocName
  */
-function sourceAssocValues(node, assocName) {
-	return isEmpty(node) ? new Array() : orEmpty(bcpg.sourceAssocValues(node, assocName), new Array());
+function sourceAssocValues(node, assocName, maxResults, offset, includeVersions) {
+	if (!maxResults) {
+		maxResults = null;
+	}
+	if (!offset) {
+		offset = null;
+	}
+	if (!includeVersions) {
+		includeVersions = false;
+	}
+	return bcpg.sourceAssocValues(node, assocName, maxResults, offset, includeVersions);
+}
+
+/**
+ * @param {(ScriptNode|NodeRef|string)} node
+ * @param {string} assocName
+ * @param {object} filter
+ * @returns boolean
+ */
+function hasEntitySourceAssocs(node, assocName, filter) {
+	if (filter) {
+		return bcpg.hasEntitySourceAssocs(node, assocName, JSON.stringify(filter));
+	}
+	return bcpg.hasEntitySourceAssocs(node, assocName, null);
+}
+
+function entitySourceAssocs(node, assocName, filter) {
+	if (filter) {
+		return bcpg.entitySourceAssocs(node, assocName, JSON.stringify(filter));
+	}
+	return bcpg.entitySourceAssocs(node, assocName, null);
 }
 
 /**
@@ -1102,4 +1137,8 @@ function isOnFormulateEntity(node) {
  */
 function isOnBranchEntity(node) {
 	return bState.isOnBranchEntity(node);
+}
+
+function deleteExternalUser(userNode, supplierNode) {
+	bSupplier.deleteExternalUser(userNode, supplierNode);
 }

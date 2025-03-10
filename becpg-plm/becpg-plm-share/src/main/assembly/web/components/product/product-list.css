@@ -1,0 +1,181 @@
+.product-list {
+	clear: both;
+}
+
+.product-list .datagrid {
+	margin: 0px;
+	padding: 0px;
+}
+
+.product-list .alfresco-datatable thead {
+	display: table-header-group;
+}
+
+.datagrid .datagrid-bar .item-select {
+	float: left;
+	width: auto;
+}
+/* product-list bar */
+.product-list .product-list-bar {
+	border-bottom: 1px dashed #c0c0c0;
+	margin: 0 -10px;
+	padding: 4px 0.5em 2px;
+}
+
+.product-list .product-list-bar-bottom {
+	border-top: 1px dashed #d9d9d9;
+	margin-top: 2em;
+}
+
+.product-list span.separator {
+	border-right: 1px dotted #457A9C;
+	border-top: medium none;
+	margin: 0 4px;
+	padding: 2px 0;
+	position: relative;
+	top: -4px;
+	vertical-align: bottom;
+}
+
+/* product-list bar Buttons and Paginator */
+.product-list .product-list-bar .thin, .product-list .product-list-bar .paginator
+	{
+	padding: 4px 1em;
+	margin: 0;
+}
+
+.product-list .products tr:hover td.yui-dt-last .yui-dt-liner {
+	border-left: none;
+	visibility: visible;
+}
+
+.product-list .product-list-bar .yui-u {
+	text-align: right;
+}
+
+.product-list .product-list-bar .yui-u.first {
+	text-align: left;
+}
+
+.product-list .product-list-bar .yui-pg-current {
+	margin-right: 0;
+}
+
+.product-list-toolbar div.filterform .yui-u {
+	text-align: left;
+}
+
+.product-list-toolbar div.filterform {
+	width: 60em;
+}
+
+/* Data Table */
+.product-list .products table {
+	border: medium none;
+	width: 100%;
+}
+
+.product-list .products tbody {
+	outline: none;
+}
+
+.product-list .products .yui-dt table {
+	border: none;
+}
+
+.product-list tr.yui-dt-odd {
+	background-color: #ffffff;
+}
+
+.product-list .products td.yui-dt-last .yui-dt-liner {
+	visibility: hidden;
+}
+
+.product-list .products .yui-dt-data td {
+	border-bottom: 1px dashed #d9d9d9;
+	border-right: medium none;
+	vertical-align: middle !important;
+	-webkit-hyphens: auto;
+	-moz-hyphens: auto;
+	-ms-hyphens: auto;
+	-o-hyphens: auto;
+	hyphens: auto;
+	padding: 5px;
+}
+
+
+.product-list .products .yui-dt-data td.ghead,
+.product-list .products .yui-dt-data td.gheadwkend {
+	padding: 0px;
+}
+
+.product-list .products .yui-dt-data .yui-dt-last td {
+	border-bottom: medium none;
+}
+
+.product-list .products tr.yui-dt-first td {
+	border-top: medium none;
+}
+
+.product-list .products td.yui-dt-last {
+	border-left: 1px solid #fff;
+	vertical-align: middle;
+}
+
+.product-list tbody td .yui-dt-liner {
+	padding: 4px !important;
+}
+
+.product-list .products tr.yui-dt-first td.yui-dt-empty, .product-list .products tr.yui-dt-first td.yui-dt-loading
+	{
+	border-right: medium none;
+	padding: 0.5em 1em;
+}
+
+.product-list .yui-dt-error {
+	background: red;
+	color: white;
+	font-weight: bold;
+	margin: 1em auto;
+	padding: 1em;
+}
+
+/* This rule is vital to workaround a Firefox mouseout bug */
+.product-list .yui-dt-col-2 {
+	overflow: visible;
+}
+
+/* Cell Renderers */
+.product-list .products {
+	color: #333333;
+	margin: 0 -10px 0 -8px;
+}
+
+.product-list .products .yui-dt-col-id .yui-dt-liner {
+	padding: 0.5em 1em;
+	text-align: center;
+}
+
+.product-list .products .yui-dt-col-title .yui-dt-liner div {
+	float: left;
+	margin-top: 0.5em;
+	min-width: 15em;
+}
+
+.product-list .products .yui-dt-col-title .yui-dt-liner div.type {
+	clear: both;
+	margin-bottom: 0.5em;
+}
+
+
+/* Data Table */
+
+.sticky-footer, .sticky-push {
+	display:none;
+}
+
+.product-list .datagrid div.grid {
+	height: calc(100vh - 215px);
+}
+
+

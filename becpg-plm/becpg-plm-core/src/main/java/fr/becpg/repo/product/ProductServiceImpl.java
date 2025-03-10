@@ -128,6 +128,12 @@ public class ProductServiceImpl implements ProductService, InitializingBean, For
 
 	/** {@inheritDoc} */
 	@Override
+	public ProductData formulate(ProductData productData, String chainId) {
+		return formulationService.formulate(productData, chainId);
+	}
+	
+	/** {@inheritDoc} */
+	@Override
 	public CharactDetails formulateDetails(NodeRef productNodeRef, QName datatType, String dataListName, List<NodeRef> elements, Integer level) {
 		ProductData productData = alfrescoRepository.findOne(productNodeRef);
 

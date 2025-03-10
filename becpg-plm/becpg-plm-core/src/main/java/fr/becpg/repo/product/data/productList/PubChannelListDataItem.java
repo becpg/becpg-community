@@ -29,6 +29,11 @@ import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
+/**
+ * <p>PubChannelListDataItem class.</p>
+ *
+ * @author matthieu
+ */
 @AlfType
 @AlfQname(qname = "bp:pubChannelList")
 public class PubChannelListDataItem extends BeCPGDataObject {
@@ -49,66 +54,131 @@ public class PubChannelListDataItem extends BeCPGDataObject {
 	
 	private NodeRef channel;
 
+	/**
+	 * <p>Getter for the field <code>batchId</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bp:pubChannelListBatchId")
 	public String getBatchId() {
 		return batchId;
 	}
 
+	/**
+	 * <p>Setter for the field <code>batchId</code>.</p>
+	 *
+	 * @param batchId a {@link java.lang.String} object
+	 */
 	public void setBatchId(String batchId) {
 		this.batchId = batchId;
 	}
 
+	/**
+	 * <p>Getter for the field <code>publishedDate</code>.</p>
+	 *
+	 * @return a {@link java.util.Date} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bp:pubChannelListPublishedDate")
 	public Date getPublishedDate() {
 		return publishedDate;
 	}
 
+	/**
+	 * <p>Setter for the field <code>publishedDate</code>.</p>
+	 *
+	 * @param publishedDate a {@link java.util.Date} object
+	 */
 	public void setPublishedDate(Date publishedDate) {
 		this.publishedDate = publishedDate;
 	}
 
+	/**
+	 * <p>Getter for the field <code>status</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bp:pubChannelListStatus")
 	public String getStatus() {
 		return status;
 	}
 
+	/**
+	 * <p>Setter for the field <code>status</code>.</p>
+	 *
+	 * @param status a {@link java.lang.String} object
+	 */
 	public void setStatus(String status) {
 		this.status = status;
 	}
 
+	/**
+	 * <p>Getter for the field <code>error</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bp:pubChannelListError")
 	public String getError() {
 		return error;
 	}
 
+	/**
+	 * <p>Setter for the field <code>error</code>.</p>
+	 *
+	 * @param error a {@link java.lang.String} object
+	 */
 	public void setError(String error) {
 		this.error = error;
 	}
 
+	/**
+	 * <p>Getter for the field <code>action</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bp:pubChannelListAction")
 	public String getAction() {
 		return action;
 	}
 
+	/**
+	 * <p>Setter for the field <code>action</code>.</p>
+	 *
+	 * @param action a {@link java.lang.String} object
+	 */
 	public void setAction(String action) {
 		this.action = action;
 	}
 
+	/**
+	 * <p>Getter for the field <code>modifiedDate</code>.</p>
+	 *
+	 * @return a {@link java.util.Date} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bp:pubChannelListModifiedDate")
 	public Date getModifiedDate() {
 		return modifiedDate;
 	}
 
+	/**
+	 * <p>Setter for the field <code>modifiedDate</code>.</p>
+	 *
+	 * @param modifiedDate a {@link java.util.Date} object
+	 */
 	public void setModifiedDate(Date modifiedDate) {
 		this.modifiedDate = modifiedDate;
 	}
 
+	/**
+	 * <p>Getter for the field <code>channel</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	@AlfSingleAssoc
 	@AlfQname(qname = "bp:pubChannelListChannel")
 	@DataListIdentifierAttr
@@ -116,10 +186,16 @@ public class PubChannelListDataItem extends BeCPGDataObject {
 		return channel;
 	}
 
+	/**
+	 * <p>Setter for the field <code>channel</code>.</p>
+	 *
+	 * @param channel a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public void setChannel(NodeRef channel) {
 		this.channel = channel;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -128,6 +204,7 @@ public class PubChannelListDataItem extends BeCPGDataObject {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -142,6 +219,7 @@ public class PubChannelListDataItem extends BeCPGDataObject {
 				&& Objects.equals(publishedDate, other.publishedDate) && Objects.equals(status, other.status);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "PubChannelListDataItem [batchId=" + batchId + ", publishedDate=" + publishedDate + ", status=" + status + ", error=" + error

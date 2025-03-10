@@ -2,6 +2,7 @@
 <import resource="classpath:/alfresco/templates/org/alfresco/import/alfresco-util.js">
 
 
+
 if(isExternalUser(user)){
     widgetUtils.deleteObjectFromArray(model.jsonModel, "id", "HEADER_SITES_MENU"); 
     widgetUtils.deleteObjectFromArray(model.jsonModel, "id", "HEADER_SHARED_FILES"); 
@@ -11,10 +12,12 @@ if(isExternalUser(user)){
     widgetUtils.deleteObjectFromArray(model.jsonModel, "id", "HEADER_REPOSITORY");
 } else {
 
+	var showPeopleResults = true; 
 	
 	if (config.scoped["BecpgMenu"]){
 		if (  config.scoped["BecpgMenu"]["hidePeople"] &&
 	    config.scoped["BecpgMenu"]["hidePeople"].getValue() == "true"){
+		showPeopleResults = false;
 	     widgetUtils.deleteObjectFromArray(model.jsonModel, "id", "HEADER_PEOPLE"); 
 	}
 	
@@ -28,6 +31,16 @@ if(isExternalUser(user)){
 		     widgetUtils.deleteObjectFromArray(model.jsonModel, "id", "MY_FILES"); 
 		}
 	}
+	
+	const siteData = model.siteData;
+
+	if (siteData && !user.isAdmin && !siteData.isSiteManager &&
+	    config.scoped.BecpgMenu.hideSiteMembers &&
+	    config.scoped.BecpgMenu.hideSiteMembers.getValue().includes(siteData.profile.shortName)) {
+
+	    widgetUtils.deleteObjectFromArray(model.jsonModel, 'id', 'HEADER_SITE_MEMBERS');
+	}
+
 	
 	
     var beCPGMenu = getOrCreateBeCPGMenu();
@@ -55,6 +68,15 @@ if(isExternalUser(user)){
                  label : "header.nc-list.label",
                  iconClass : "nc-list-header",
                  targetUrl : "nc-list#filter=ncs|Claim"
+              }
+           });
+           
+           tools.config.widgets.push({
+              name : "alfresco/header/AlfMenuItem",
+              config : {
+                 label : "header.product-list.label",
+                 iconClass : "product-list-header",
+                 targetUrl : "product-list"
               }
            });
          }
@@ -95,6 +117,7 @@ if(isExternalUser(user)){
          if(searchBox){
              searchBox.name ="alfresco/header/BecpgSearchBox";
              searchBox.config.linkToFacetedSearch=false;
+			 searchBox.config.showPeopleResults = showPeopleResults;
          }
     	
     }

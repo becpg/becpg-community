@@ -35,7 +35,6 @@ import org.alfresco.repo.policy.Behaviour;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.version.VersionServicePolicies;
 import org.alfresco.repo.version.common.VersionUtil;
-import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.rule.RuleService;
@@ -50,6 +49,8 @@ import fr.becpg.repo.batch.BatchInfo;
 import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.batch.EntityListBatchProcessWorkProvider;
 import fr.becpg.repo.entity.version.EntityVersionService;
+import fr.becpg.repo.entity.version.VersionHelper;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.report.entity.EntityReportService;
 
@@ -74,6 +75,17 @@ public class EntityVersionPolicy extends AbstractBeCPGPolicy
 
 	private RuleService ruleService;
 	
+	private AssociationService associationService;
+	
+	/**
+	 * <p>Setter for the field <code>associationService</code>.</p>
+	 *
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object
+	 */
+	public void setAssociationService(AssociationService associationService) {
+		this.associationService = associationService;
+	}
+	
 	/**
 	 * <p>Setter for the field <code>ruleService</code>.</p>
 	 *
@@ -94,10 +106,20 @@ public class EntityVersionPolicy extends AbstractBeCPGPolicy
 
 	
 
+	/**
+	 * <p>Setter for the field <code>entityReportService</code>.</p>
+	 *
+	 * @param entityReportService a {@link fr.becpg.repo.report.entity.EntityReportService} object
+	 */
 	public void setEntityReportService(EntityReportService entityReportService) {
 		this.entityReportService = entityReportService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>batchQueueService</code>.</p>
+	 *
+	 * @param batchQueueService a {@link fr.becpg.repo.batch.BatchQueueService} object
+	 */
 	public void setBatchQueueService(BatchQueueService batchQueueService) {
 		this.batchQueueService = batchQueueService;
 	}
@@ -203,7 +225,7 @@ public class EntityVersionPolicy extends AbstractBeCPGPolicy
 	private NodeRef getCheckedOut(NodeRef nodeRef) {
 		NodeRef original = null;
 		if (nodeService.hasAspect(nodeRef, ContentModel.ASPECT_WORKING_COPY)) {
-			List<AssociationRef> assocs = nodeService.getSourceAssocs(nodeRef, ContentModel.ASSOC_WORKING_COPY_LINK);
+			List<NodeRef> assocs = associationService.getSourcesAssocs(nodeRef, ContentModel.ASSOC_WORKING_COPY_LINK);
 			// It is a 1:1 relationship
 			if (!assocs.isEmpty()) {
 				if (logger.isWarnEnabled()) {
@@ -211,7 +233,7 @@ public class EntityVersionPolicy extends AbstractBeCPGPolicy
 						logger.warn("Found multiple " + ContentModel.ASSOC_WORKING_COPY_LINK + " associations to node: " + nodeRef);
 					}
 				}
-				original = assocs.get(0).getSourceRef();
+				original = assocs.get(0);
 			}
 		}
 
@@ -243,7 +265,7 @@ public class EntityVersionPolicy extends AbstractBeCPGPolicy
 			public void process(NodeRef entityNodeRef) throws Throwable {
 
 				NodeRef extractedNode = entityNodeRef;
-				if (entityVersionService.isVersion(entityNodeRef)
+				if (VersionHelper.isVersion(entityNodeRef)
 						&& (nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_ENTITY_FORMAT) != null)) {
 					extractedNode = entityVersionService.extractVersion(entityNodeRef);
 				}
@@ -270,6 +292,7 @@ public class EntityVersionPolicy extends AbstractBeCPGPolicy
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void afterCreateVersion(NodeRef versionableNode, Version version) {
 		queueNode(VersionUtil.convertNodeRef(version.getFrozenStateNodeRef()));

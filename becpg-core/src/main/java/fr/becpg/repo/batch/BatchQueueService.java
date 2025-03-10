@@ -21,8 +21,8 @@ public interface BatchQueueService {
 	 * @param workProvider a {@link org.alfresco.repo.batch.BatchProcessWorkProvider} object
 	 * @param processWorker a {@link org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker} object
 	 * @param errorCallback a {@link fr.becpg.repo.batch.BatchErrorCallback} object
-	 * @param <T> a T class
 	 * @return a {@link java.lang.Boolean} object
+	 * @param <T> a T class
 	 */
 	<T> Boolean queueBatch(BatchInfo batchInfo, BatchProcessWorkProvider<T> workProvider, BatchProcessWorker<T> processWorker,
 			BatchErrorCallback errorCallback);
@@ -32,8 +32,8 @@ public interface BatchQueueService {
 	 *
 	 * @param batchInfo a {@link fr.becpg.repo.batch.BatchInfo} object
 	 * @param batchSteps a {@link java.util.List} object
-	 * @param <T> a T class
 	 * @return a {@link java.lang.Boolean} object
+	 * @param <T> a T class
 	 */
 	<T> Boolean queueBatch(BatchInfo batchInfo, List<BatchStep<T>> batchSteps);
 	
@@ -43,8 +43,8 @@ public interface BatchQueueService {
 	 * @param batchInfo a {@link fr.becpg.repo.batch.BatchInfo} object
 	 * @param batchSteps a {@link java.util.List} object
 	 * @param closingHook a {@link fr.becpg.repo.batch.BatchClosingHook} object
-	 * @param <T> a T class
 	 * @return a {@link java.lang.Boolean} object
+	 * @param <T> a T class
 	 */
 	<T> Boolean queueBatch(BatchInfo batchInfo, List<BatchStep<T>> batchSteps, BatchClosingHook closingHook);
 	

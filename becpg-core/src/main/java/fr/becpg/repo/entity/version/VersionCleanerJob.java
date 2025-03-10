@@ -20,10 +20,14 @@ import fr.becpg.repo.system.SystemConfigurationService;
 @DisallowConcurrentExecution
 public class VersionCleanerJob extends AbstractScheduledLockedJob implements Job {
 
+	/**
+	 * <p>Constructor for VersionCleanerJob.</p>
+	 */
 	public VersionCleanerJob() {
 		super();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void executeJob(JobExecutionContext context) throws JobExecutionException {
 		JobDataMap jobData = context.getJobDetail().getJobDataMap();

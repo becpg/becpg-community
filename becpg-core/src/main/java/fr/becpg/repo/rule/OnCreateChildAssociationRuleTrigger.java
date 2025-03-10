@@ -48,7 +48,7 @@ import fr.becpg.model.BeCPGModel;
  * <ul>
  *   <li>{@linkplain org.alfresco.repo.node.NodeServicePolicies.OnCreateChildAssociationPolicy}</li>
  * </ul>
- * 
+ *
  * @author Roy Wetherall
  */
 public class OnCreateChildAssociationRuleTrigger
@@ -70,16 +70,28 @@ public class OnCreateChildAssociationRuleTrigger
 
 	
 	
+	/**
+	 * <p>Setter for the field <code>ignoreEntityDataList</code>.</p>
+	 *
+	 * @param ignoreEntityDataList a boolean
+	 */
 	public void setIgnoreEntityDataList(boolean ignoreEntityDataList) {
 		this.ignoreEntityDataList = ignoreEntityDataList;
 	}
 		
+	/**
+	 * <p>Setter for the field <code>isClassBehaviour</code>.</p>
+	 *
+	 * @param isClassBehaviour a boolean
+	 */
 	public void setIsClassBehaviour(boolean isClassBehaviour)
 	{
 		this.isClassBehaviour = isClassBehaviour;
 	}
 	
 	/**
+	 * <p>registerRuleTrigger.</p>
+	 *
 	 * @see org.alfresco.repo.rule.ruletrigger.RuleTrigger#registerRuleTrigger()
 	 */
 	public void registerRuleTrigger()
@@ -100,6 +112,7 @@ public class OnCreateChildAssociationRuleTrigger
 		}
 	}
 
+    /** {@inheritDoc} */
     public void onCreateChildAssociation(ChildAssociationRef childAssocRef, boolean isNewNode)
     {
         // Break out early if rules are not enabled

@@ -228,7 +228,6 @@
                      
                      
                      var me = this;
-                     me.toogleVisible();
                      
                      var fnOnSelectChoice = function DT__fnOnSelectChoice(layer, args) {
                         var owner = Bubbling.getOwnerByTagName(args[1].input, "input");
@@ -272,7 +271,7 @@
                          var question_id = this.options.currentValue[i].qid;
                          var choice_id = this.options.currentValue[i].cid;
                            if(qid  == question_id  && cid == choice_id ){
-                            return this.options.currentValue[i].listOptions;
+                            return this.options.currentValue[i].listOptions || "";
                            }
                       }
                       return "";
@@ -307,7 +306,7 @@
                               }
                           };
                       }
-                      
+                      this.toogleVisible();
                   },
                   
                   
