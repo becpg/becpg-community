@@ -127,6 +127,9 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 			for (NodeRef documentToSign : documentsToSign) {
 				associationService.update(documentToSign, ContentModel.ASSOC_ORIGINAL, List.of());
 				List<NodeRef> viewRecipients = associationService.getTargetAssocs(documentToSign, SignatureModel.ASSOC_RECIPIENTS);
+				if (viewRecipients.isEmpty() && signatureProjectPlugin != null) {
+					viewRecipients.addAll(signatureProjectPlugin.extractRecipients(documentToSign));
+				}
 				viewRecipients = projectService.extractResources(projectNodeRef, viewRecipients);
 				associationService.update(documentToSign, SignatureModel.ASSOC_RECIPIENTS, viewRecipients);
 				List<NodeRef> recipients = AuthorityHelper.extractPeople(viewRecipients);
@@ -379,8 +382,7 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 		for (NodeRef child : children) {
 			QName type = nodeService.getType(child);
 			if (ContentModel.TYPE_CONTENT.equals(type)) {
-				List<NodeRef> recipients = associationService.getTargetAssocs(child, SignatureModel.ASSOC_RECIPIENTS);
-				if ((recipients != null) && !recipients.isEmpty()) {
+				if (nodeService.hasAspect(child, SignatureModel.ASPECT_SIGNATURE)) {
 					String status = (String) nodeService.getProperty(child, SignatureModel.PROP_STATUS);
 					if (!SignatureStatus.Signed.toString().equals(status)) {
 						docs.add(child);
