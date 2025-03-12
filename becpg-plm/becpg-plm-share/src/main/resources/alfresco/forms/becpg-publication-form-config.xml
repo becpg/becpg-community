@@ -30,7 +30,7 @@
 					<show id="bp:pubChannelConfig" />
 					<show id="bp:pubChannelConfigFile" />
 					<show id="bp:pubChannelAction" />
-					<show id="bp:pubChannelBatchId" />
+				<!-- 	<show id="bp:pubChannelBatchId" />
 					<show id="bp:pubChannelLastSuccessBatchId" />
 					<show id="bp:pubChannelLastDate" />
 					<show id="bp:pubChannelBatchStartTime" />
@@ -39,14 +39,14 @@
 					<show id="bp:pubChannelStatus" />
 					<show id="bp:pubChannelReadCount" />
 					<show id="bp:pubChannelFailCount" />
-					<show id="bp:pubChannelError" />
+					<show id="bp:pubChannelError" /> -->
 
 
 				</field-visibility>
 				<appearance>
 					<field id="cm:name" />
 					<field id="bp:pubChannelId" />
-					<field id="bp:pubChannelBatchId" read-only="true" />
+			<!-- 		<field id="bp:pubChannelBatchId" read-only="true" />
 					<field id="bp:pubChannelLastSuccessBatchId" read-only="true" />
 					<field id="bp:pubChannelBatchStartTime" read-only="true" />
 					<field id="bp:pubChannelBatchEndTime" read-only="true" />
@@ -54,7 +54,7 @@
 					<field id="bp:pubChannelStatus" read-only="true" />
 					<field id="bp:pubChannelReadCount" read-only="true" />
 					<field id="bp:pubChannelFailCount" read-only="true" />
-					<field id="bp:pubChannelError" read-only="true" />
+					<field id="bp:pubChannelError" read-only="true" /> -->
 					<field id="bp:pubChannelConfig">
 						<control template="/org/alfresco/components/form/controls/config-editor.ftl">
 							<control-param name="syntax">channel</control-param>
@@ -139,12 +139,11 @@
 				<field-visibility>
 				    <show id="bp:pubChannelListAction" />
 					<show id="bp:pubChannelListChannel" />
-					<show id="bp:pubChannelListBatchId" />
+					<!-- <show id="bp:pubChannelListBatchId" />
 					<show id="bp:pubChannelListModifiedDate" />
 					<show id="bp:pubChannelListPublishedDate" />
 					<show id="bp:pubChannelListStatus" />
-					<show id="bp:pubChannelListError" />
-
+					<show id="bp:pubChannelListError" />-->
 				</field-visibility>
 				<appearance>
 					<field id="bp:pubChannelListChannel">
@@ -157,11 +156,11 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="bp:pubChannelListModifiedDate" read-only="true" />
+			<!-- 		<field id="bp:pubChannelListModifiedDate" read-only="true" />
 					<field id="bp:pubChannelListPublishedDate" read-only="true" />
 					<field id="bp:pubChannelListBatchId" read-only="true" />
 					<field id="bp:pubChannelListStatus" read-only="true" />
-					<field id="bp:pubChannelListError" read-only="true" />
+					<field id="bp:pubChannelListError" read-only="true" /> -->
 				</appearance>
 			</form>
 		</forms>
