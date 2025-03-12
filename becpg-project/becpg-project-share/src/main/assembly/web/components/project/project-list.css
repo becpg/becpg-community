@@ -121,9 +121,9 @@
 }
 
 
-.project-list .projects .yui-dt-data td.ghead,
-.project-list .projects .yui-dt-data td.gheadwkend {
-	padding: 0px;
+
+.project-list .projects.gantt .yui-dt-data td {
+    padding: 0px;
 }
 
 .project-list .projects .yui-dt-data .yui-dt-last td {
