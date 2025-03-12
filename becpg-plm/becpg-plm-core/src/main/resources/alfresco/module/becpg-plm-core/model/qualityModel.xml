@@ -95,6 +95,9 @@
                     <value>/System/QualityLists/bcpg:entityLists/ControlTypes</value>
                 </list>
             </parameter>
+            <parameter name="addEmptyValue">
+			  <value>true</value>
+			</parameter>
             <parameter name="constraintType">
                 <value>bcpg:listValue</value>
             </parameter>
