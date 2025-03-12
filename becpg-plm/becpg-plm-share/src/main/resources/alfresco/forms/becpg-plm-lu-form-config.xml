@@ -227,6 +227,19 @@
           <show force="true" id="gs1:priceComparisonContentTypeCode"/>
           <show force="true" id="gs1:isTradeItemAFullDisplayStand"/>
           <show force="true" id="gs1:hasDisplayReadyPackaging"/>
+          
+          <!--merge -->
+          <show force="false" id="bcpg:autoMergeDate" />
+          <show force="false" id="bcpg:autoMergeTo" />
+          <show force="false" id="bcpg:autoMergeVersionType" />
+          <show force="false" id="bcpg:autoMergeComments" />
+          <show force="false" id="bcpg:autoMergeImpactWUsed" />
+					
+          <!--template -->
+          <show id="bcpg:entityTplEnabled" force="false" />
+          <show id="bcpg:entityTplIsDefault" force="false" />
+          <show id="bcpg:entityTplScript" force="false" />
+					
         </field-visibility>
         <appearance>
           <set id="mainTab" label-id="becpg.forms.set.characteristics.label"/>
@@ -367,14 +380,14 @@
           <field id="bcpg:supplierRefCode" mandatory="false" read-only="false" set="mainInfo"/>
           <field id="bcpg:entityTplRef" mandatory="false" read-only="false" set="mainInfo">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:finishedProduct?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
+              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:logisticUnit?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
               </control-param>
               <control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
             </control>
           </field>
           <field id="bcpg:parentEntityRef" mandatory="false" read-only="false" set="mainInfo">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:finishedProduct
+              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:logisticUnit
               </control-param>
               <control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
               <control-param name="excludeSources">true</control-param>
@@ -823,6 +836,37 @@
               <control-param name="showTime">false</control-param>
             </control>
           </field>
+          
+          <set id="branchTab" label-id="becpg.forms.set.branch.label"/>
+          <set id="branch" appearance="bordered-panel"  
+            label-id="becpg.forms.set.branch.label" template="/org/alfresco/components/form/2-column-set.ftl" 
+            parent="branchTab" />
+					<!--branch -->
+          <field id="bcpg:autoMergeDate" mandatory="false" read-only="false" set="branch" />
+          <field id="bcpg:autoMergeTo" mandatory="false" read-only="false" set="branch">
+            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+              <control-param name="ds">becpg/autocomplete/branches</control-param>
+              <control-param name="urlParamsToPass">itemId</control-param>
+            </control>
+          </field>
+          <field id="bcpg:autoMergeVersionType" mandatory="false" read-only="false" set="branch" />
+          <field id="bcpg:autoMergeComments" mandatory="false" read-only="false" set="branch">
+            <control template="/org/alfresco/components/form/controls/textarea.ftl" />
+          </field>
+          <field id="bcpg:autoMergeImpactWUsed" mandatory="false" read-only="false" set="branch" />
+					
+          <set id="templateTab" label-id="becpg.forms.set.template.label" />
+          <set id="template" appearance="bordered-panel" 
+            label-id="becpg.forms.set.template.label" parent="templateTab" />
+						
+          <!--template -->
+          <field id="bcpg:entityTplEnabled" set="template" />
+          <field id="bcpg:entityTplIsDefault" set="template" />
+          <field id="bcpg:entityTplScript" set="template" mandatory="false" read-only="false">
+            <control template="/org/alfresco/components/form/controls/association.ftl">
+              <control-param name="startLocation">{doclib}</control-param>
+            </control>
+          </field>
         </appearance>
         <edit-form template="/org/alfresco/components/form/tab-edit-form.ftl"/>
         <view-form template="/org/alfresco/components/form/tab-edit-form.ftl"/>
@@ -928,7 +972,7 @@
           </field>
           <field id="bcpg:entityTplRef" mandatory="false" read-only="false" set="2-col-product-criteria">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:finishedProduct?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
+              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:logisticUnit?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
 							</control-param>
 				<control-param name="isSearch">true</control-param>
             </control>
@@ -1304,14 +1348,14 @@
           <field id="bcpg:supplierRefCode" mandatory="false" read-only="false" set="mainInfo"/>
           <field id="bcpg:entityTplRef" mandatory="false" read-only="false" set="mainInfo">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:finishedProduct?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
+              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:logisticUnit?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
               </control-param>
               <control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
             </control>
           </field>
           <field id="bcpg:parentEntityRef" mandatory="false" read-only="false" set="mainInfo">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:finishedProduct
+              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:logisticUnit
               </control-param>
               <control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
               <control-param name="excludeSources">true</control-param>
@@ -1713,14 +1757,14 @@
           <field id="bcpg:supplierRefCode" mandatory="false" read-only="false" set="mainInfo"/>
           <field id="bcpg:entityTplRef" mandatory="false" read-only="false" set="mainInfo">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:finishedProduct?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
+              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:logisticUnit?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
               </control-param>
               <control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
             </control>
           </field>
           <field id="bcpg:parentEntityRef" mandatory="false" read-only="false" set="mainInfo">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:finishedProduct
+              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:logisticUnit
               </control-param>
               <control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
               <control-param name="excludeSources">true</control-param>
