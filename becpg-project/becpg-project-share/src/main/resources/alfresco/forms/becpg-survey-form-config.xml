@@ -545,6 +545,7 @@
 			</form>
 			<form id="datagrid">
 				<field-visibility>
+				    <show id="bcpg:sort" />
 					<show id="bcpg:depthLevel" />
 					<show id="bcpg:code" />
 					<show id="survey:questionLabel" />
