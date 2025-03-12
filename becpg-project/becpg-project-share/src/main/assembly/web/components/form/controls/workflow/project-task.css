@@ -85,6 +85,14 @@
 	
 }
 
+
+.project-list.project-task #page_x002e_data-form_x002e_task-edit_x0023_default_assoc_pjt_workflowTask-cntrl-currentTask-description ol,
+.project-list.project-task #page_x002e_data-form_x002e_task-edit_x0023_default_assoc_pjt_workflowTask-cntrl-currentTask-description  li{
+  list-style: revert;
+  padding: revert;
+  margin: revert;
+}
+
 .hidden-1, .hidden-2, .hidden-3, .hidden-4 {
 	visibility: hidden;
 }
