@@ -131,8 +131,7 @@
 							<control-param name="maxLength">200</control-param>
 						</control>
 					</field>
-<!-- 	  <field id="gs1:packagingFeatureCode" mandatory="false" read-only="false" set="mainInfo"/>
-		  <field id="gs1:packagingFunctionCode" mandatory="false" read-only="false" set="mainInfo"/> -->
+<!-- 	  <field id="gs1:packagingFeatureCode" mandatory="false" read-only="false" set="mainInfo"/> -->
 
 					<field id="bcpg:productState" mandatory="false" read-only="false" set="mainInfo" />
 					<field id="bcpg:productUnit" mandatory="false" read-only="false" set="mainInfo">
