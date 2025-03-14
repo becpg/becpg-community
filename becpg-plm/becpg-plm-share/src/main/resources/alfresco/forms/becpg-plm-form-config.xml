@@ -5618,6 +5618,38 @@
 					</field>
 				</appearance>
 			</form>
+			<form id="product-list">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:title" force="true" />
+					<show id="bcpg:code" force="true" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:clientHierarchy1" force="true" />
+					<show id="bcpg:clientHierarchy2" force="true"/>
+					<show id="bcpg:clientState" force="true" />
+					<show id="cm:description" force="true" />
+					<show id="cm:modified" force="true" />
+					<show id="cm:modifier" force="true" />
+					<show id="cm:created" force="true" />
+					<show id="cm:creator" force="true" />
+					<show id="bcpg:clientTel" force="false"/>
+					<show id="bcpg:clientEmail" force="false"/>
+					<show id="bcpg:clientFax" force="false"/>
+					
+					<!-- bcpg:location type -->
+					<show id="bcpg:locationAddress1" force="false"/>
+					<show id="bcpg:locationAddress2" force="false"/>
+					<show id="bcpg:locationAddress3" force="false" />
+					<show id="bcpg:locationCity" force="false"/>
+					<show id="bcpg:locationZip" force="false"/>
+					<show id="bcpg:locationState" force="false"/>
+					<show id="bcpg:locationCountry" force="false"/>
+
+				</field-visibility>
+				<appearance>
+					<field id="cm:name" read-only="true"></field>
+				</appearance>
+			</form>
 		</forms>
 	</config>
 	
