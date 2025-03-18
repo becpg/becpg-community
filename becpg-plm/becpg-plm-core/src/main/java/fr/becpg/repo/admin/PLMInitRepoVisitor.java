@@ -679,9 +679,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			NodeRef adminGroupNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, "GROUP_ALFRESCO_ADMINISTRATORS");
 
-			NodeRef siteRoot = siteService.getSiteRoot();
 
-			createNotification(notificationFolder, properties, mailTemplate, adminGroupNodeRef, siteRoot);
+			createNotification(notificationFolder, properties, mailTemplate, adminGroupNodeRef, null);
 		}
 	}
 
@@ -703,9 +702,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			NodeRef adminGroupNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, "GROUP_ALFRESCO_ADMINISTRATORS");
 
-			NodeRef siteRoot = siteService.getSiteRoot();
 
-			createNotification(notificationFolder, properties, null, adminGroupNodeRef, siteRoot);
+			createNotification(notificationFolder, properties, null, adminGroupNodeRef, null);
 		}
 	}
 
@@ -731,9 +729,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			NodeRef adminGroupNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, "GROUP_ALFRESCO_ADMINISTRATORS");
 
-			NodeRef siteRoot = siteService.getSiteRoot();
-
-			createNotification(notificationFolder, properties, mailTemplate, adminGroupNodeRef, siteRoot);
+			createNotification(notificationFolder, properties, mailTemplate, adminGroupNodeRef, null);
 		}
 	}
 
@@ -757,9 +753,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			NodeRef adminGroupNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, "GROUP_ALFRESCO_ADMINISTRATORS");
 
-			NodeRef siteRoot = siteService.getSiteRoot();
 
-			createNotification(notificationFolder, properties, null, adminGroupNodeRef, siteRoot);
+			createNotification(notificationFolder, properties, null, adminGroupNodeRef, null);
 		}
 	}
 
@@ -784,9 +779,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			NodeRef adminGroupNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, "GROUP_ALFRESCO_ADMINISTRATORS");
 
-			NodeRef siteRoot = siteService.getSiteRoot();
 
-			createNotification(notificationFolder, properties, null, adminGroupNodeRef, siteRoot);
+			createNotification(notificationFolder, properties, null, adminGroupNodeRef, null);
 		}
 	}
 
@@ -810,9 +804,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			NodeRef adminGroupNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, "GROUP_ALFRESCO_ADMINISTRATORS");
 
-			NodeRef siteRoot = siteService.getSiteRoot();
 
-			createNotification(notificationFolder, properties, null, adminGroupNodeRef, siteRoot);
+			createNotification(notificationFolder, properties, null, adminGroupNodeRef, null);
 		}
 	}
 
