@@ -142,6 +142,12 @@ public class IdentityServiceAccountProvider {
 								logger.debug("Create user:"+userRepresentation.toString());
 							}
 							try (CloseableHttpResponse createResp = httpClient.execute(request)) {
+								if (EntityUtils.toString(createResp.getEntity()).toLowerCase().contains("user exists")) {
+									if(logger.isDebugEnabled()){
+										logger.debug(EntityUtils.toString(createResp.getEntity()));
+									}
+									return false;
+								}
 								if (!HttpStatus.valueOf(createResp.getStatusLine().getStatusCode()).is2xxSuccessful()) {
 									throw new IllegalStateException(EntityUtils.toString(createResp.getEntity()));
 								} else  if(logger.isDebugEnabled()){
