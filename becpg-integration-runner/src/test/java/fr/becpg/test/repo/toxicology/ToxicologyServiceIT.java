@@ -103,7 +103,7 @@ public class ToxicologyServiceIT extends PLMBaseTestCase {
 			properties = new HashMap<>();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "Glycerin");
 			properties.put(PLMModel.PROP_ING_TOX_POD_SYSTEMIC, 10000);
-			properties.put(PLMModel.PROP_ING_TOX_DERMAL_ABSORPTIION, 18);
+			properties.put(PLMModel.PROP_ING_TOX_DERMAL_ABSORPTION, 18);
 			properties.put(PLMModel.PROP_ING_TOX_MOS_MOE, 100);
 			properties.put(PLMModel.PROP_ING_TOX_MAX_SKIN_IRRITATION_RINSE_OFF, 100);
 			properties.put(PLMModel.PROP_ING_TOX_MAX_SENSITIZATION, 80);
@@ -116,7 +116,7 @@ public class ToxicologyServiceIT extends PLMBaseTestCase {
 			properties = new HashMap<>();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "Citric acid");
 			properties.put(PLMModel.PROP_ING_TOX_POD_SYSTEMIC, 1200);
-			properties.put(PLMModel.PROP_ING_TOX_DERMAL_ABSORPTIION, 50);
+			properties.put(PLMModel.PROP_ING_TOX_DERMAL_ABSORPTION, 50);
 			properties.put(PLMModel.PROP_ING_TOX_MOS_MOE, 100);
 			properties.put(PLMModel.PROP_ING_TOX_MAX_SKIN_IRRITATION_RINSE_OFF, 5);
 			properties.put(PLMModel.PROP_ING_TOX_MAX_SENSITIZATION, 100);
@@ -128,7 +128,7 @@ public class ToxicologyServiceIT extends PLMBaseTestCase {
 		
 			properties = new HashMap<>();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "Alpania");
-			properties.put(PLMModel.PROP_ING_TOX_DERMAL_ABSORPTIION, 50);
+			properties.put(PLMModel.PROP_ING_TOX_DERMAL_ABSORPTION, 50);
 			properties.put(PLMModel.PROP_ING_TOX_MAX_SKIN_IRRITATION_RINSE_OFF, 5);
 			properties.put(PLMModel.PROP_ING_TOX_MAX_SENSITIZATION, 1);
 			properties.put(PLMModel.PROP_ING_TOX_MAX_OCULAR_IRRITATION, 5);

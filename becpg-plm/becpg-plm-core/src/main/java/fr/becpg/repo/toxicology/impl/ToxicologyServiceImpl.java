@@ -134,12 +134,6 @@ public class ToxicologyServiceImpl implements ToxicologyService {
 					maxList.add(value);
 				}
 			}
-			if (toxTypes.contains(ToxType.SystemicIngredient.toString())) {
-				Double value = (Double) nodeService.getProperty(ingNodeRef, PLMModel.PROP_ING_TOX_POD_SYSTEMIC);
-				if (value != null) {
-					maxList.add(value);
-				}
-			}
 			
 			if (!maxList.isEmpty()) {
 				return maxList.stream().mapToDouble(Double::doubleValue).min().getAsDouble();
@@ -176,12 +170,22 @@ public class ToxicologyServiceImpl implements ToxicologyService {
 		Boolean calculateSystemic = (Boolean) nodeService.getProperty(toxNodeRef, PLMModel.PROP_TOX_CALCULATE_SYSTEMIC);
 		if (Boolean.TRUE.equals(calculateSystemic)) {
 			Double podMax = (Double) nodeService.getProperty(ingNodeRef, PLMModel.PROP_ING_TOX_POD_SYSTEMIC);
-			Double dermalAbsorption = (Double) nodeService.getProperty(ingNodeRef, PLMModel.PROP_ING_TOX_DERMAL_ABSORPTIION);
 			Double mosMoe = (Double) nodeService.getProperty(ingNodeRef, PLMModel.PROP_ING_TOX_MOS_MOE);
 			Double finalQuantity = (Double) nodeService.getProperty(toxNodeRef, PLMModel.PROP_TOX_VALUE);
-			if (podMax != null && dermalAbsorption != null && dermalAbsorption != 0 && mosMoe != null && mosMoe != 0
+			
+			String absorptionType = (String) nodeService.getProperty(toxNodeRef, PLMModel.PROP_TOX_ABSORPTION_TYPE);
+			Double dermalAbsorption = (Double) nodeService.getProperty(ingNodeRef, PLMModel.PROP_ING_TOX_DERMAL_ABSORPTION);
+			Double oralAbsorption = (Double) nodeService.getProperty(ingNodeRef, PLMModel.PROP_ING_TOX_ORAL_ABSORPTION);
+			Double finalAbsorption = dermalAbsorption;
+			if ("Oral".equals(absorptionType)) {
+				finalAbsorption = oralAbsorption;
+			} else if ("Worst".equals(absorptionType)) {
+				finalAbsorption = 100d;
+			}
+			
+			if (podMax != null && finalAbsorption != null && finalAbsorption != 0 && mosMoe != null && mosMoe != 0
 					&& finalQuantity != null) {
-				Double systemicValue = (podMax * 60 / (finalQuantity * dermalAbsorption / 100 * mosMoe)) * 100;
+				Double systemicValue = (podMax * 60 / (finalQuantity * finalAbsorption / 100 * mosMoe)) * 100;
 				nodeService.setProperty(toxIngNodeRef, PLMModel.PROP_TOX_ING_SYSTEMIC_VALUE, systemicValue);
 			}
 		}

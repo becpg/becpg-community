@@ -811,7 +811,11 @@ public interface PLMModel {
 	QName PROP_ING_TOX_POD_SYSTEMIC = QName.createQName(BeCPGModel.BECPG_URI, "ingToxPodSystemic");
 	
 	/** Constant <code>PROP_ING_TOX_DERMAL_ABSORPTIION</code> */
-	QName PROP_ING_TOX_DERMAL_ABSORPTIION = QName.createQName(BeCPGModel.BECPG_URI, "ingToxDermalAbsorption");
+	QName PROP_ING_TOX_DERMAL_ABSORPTION = QName.createQName(BeCPGModel.BECPG_URI, "ingToxDermalAbsorption");
+	
+	QName PROP_ING_TOX_ORAL_ABSORPTION = QName.createQName(BeCPGModel.BECPG_URI, "ingToxOralAbsorption");
+	
+	QName PROP_TOX_ABSORPTION_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "toxAbsorptionType");
 	
 	/** Constant <code>PROP_ING_TOX_MOS_MOE</code> */
 	QName PROP_ING_TOX_MOS_MOE = QName.createQName(BeCPGModel.BECPG_URI, "ingToxMosMoe");
