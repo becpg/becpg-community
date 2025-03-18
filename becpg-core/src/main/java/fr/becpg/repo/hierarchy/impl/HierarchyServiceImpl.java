@@ -256,14 +256,17 @@ public class HierarchyServiceImpl implements HierarchyService {
 						if (!ContentModel.TYPE_FOLDER.equals(nodeService.getType(destinationNodeRef))) {
 							logger.warn("Incorrect destination node type:" + nodeService.getType(destinationNodeRef));
 						} else {
-							AuthenticationUtil.runAs(() -> {
-								if (permissionService.hasPermission(finalDestinationNodeRef, PermissionService.WRITE) != AccessStatus.ALLOWED
-										&& permissionService.hasPermission(finalDestinationNodeRef, BeCPGPermissions.MERGE_ENTITY) != AccessStatus.ALLOWED
-										&& Boolean.TRUE.equals(Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.classify.rights.check")))) {
-									throw new IllegalStateException("You do not have permission to move the entity into this folder: " + finalDestinationNodeRef + ", entity :" + entityNodeRef);
-								}
-								return null;
-							}, AuthenticationUtil.getFullyAuthenticatedUser());
+							NodeRef currentParentNodeRef = nodeService.getPrimaryParent(entityNodeRef).getParentRef();
+							if (!destinationNodeRef.equals(currentParentNodeRef)) {
+								AuthenticationUtil.runAs(() -> {
+									if (permissionService.hasPermission(finalDestinationNodeRef, PermissionService.WRITE) != AccessStatus.ALLOWED
+											&& permissionService.hasPermission(finalDestinationNodeRef, BeCPGPermissions.MERGE_ENTITY) != AccessStatus.ALLOWED
+											&& Boolean.TRUE.equals(Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.classify.rights.check")))) {
+										throw new IllegalStateException("You do not have permission to move the entity into this folder: " + finalDestinationNodeRef + ", entity :" + entityNodeRef);
+									}
+									return null;
+								}, AuthenticationUtil.getFullyAuthenticatedUser());
+							}
 							return repoService.moveNode(entityNodeRef, destinationNodeRef);
 						}
 					} else {
