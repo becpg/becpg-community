@@ -393,7 +393,7 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 			query.andPropEquals(PublicationModel.PROP_CHANNELIDS, channelId);
 		}
 
-		return query.inDB().ftsLanguage().pagingResults();
+		return query.inDBIfPossible().ftsLanguage().pagingResults();
 	}
 
 }
