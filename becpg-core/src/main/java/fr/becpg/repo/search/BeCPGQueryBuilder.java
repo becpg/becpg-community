@@ -588,13 +588,13 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 			String sitePath = SiteHelper.SITES_SPACE_QNAME_PATH;
 
-			if ((siteId != null) && (siteId.length() > 0)) {
+			if ((siteId != null) && (!siteId.isBlank())) {
 				sitePath += "cm:" + ISO9075.encode(siteId);
 			} else {
 				sitePath += "*";
 			}
 
-			if ((containerId != null) && (containerId.length() > 0)) {
+			if ((containerId != null) && (!containerId.isBlank())) {
 				sitePath += "/cm:" + ISO9075.encode(containerId);
 			}
 

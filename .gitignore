@@ -40,3 +40,4 @@ build/
 ^devs-*
 /.env
 .aider*
+/becpg.code-workspace
