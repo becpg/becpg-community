@@ -163,7 +163,7 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 				continue;
 			}
 			try {
-				if (notification.getNodeType() == null || notification.getTarget() == null || !nodeService.exists(notification.getTarget())
+				if (notification.getNodeType() == null 
 						|| notification.getAuthorities() == null || !isAllowed(notification) || Boolean.TRUE.equals(notification.getDisabled())) {
 					logger.debug("Skip notification : " + notification.getSubject());
 					continue;
@@ -180,7 +180,9 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 				final QName nodeType = QName.createQName(notification.getNodeType(), namespaceService);
 				filter.setNodeType(nodeType);
 				filter.setDateField(QName.createQName(notification.getDateField(), namespaceService));
-				filter.setNodePath(nodeService.getPath(notification.getTarget()));
+				if( notification.getTarget() !=null && nodeService.exists(notification.getTarget())){
+					filter.setNodePath(nodeService.getPath(notification.getTarget()));
+				}
 				
 				filter.setDateFilterDelay(notification.getDays());
 				filter.setVersionFilterType(notification.getVersionFilterType());
@@ -201,9 +203,11 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 				
 				templateArgs.put(NODE_TYPE, Objects.toString(dictionaryService.getType(nodeType).getTitle(dictionaryService), nodeType.toPrefixString()));
 				templateArgs.put(DATE_FIELD, Objects.toString(dictionaryService.getTitle(dictionaryService.getProperty(filter.getDateField()), nodeType), filter.getDateField().toPrefixString()));
-				templateArgs.put(TARGET_PATH,
-						filter.getNodePath().subPath(2, filter.getNodePath().size() - 1).toDisplayPath(nodeService, permissionService) + "/"
-								+ nodeService.getProperty(notification.getTarget(), ContentModel.PROP_NAME));
+				if( notification.getTarget() !=null && nodeService.exists(notification.getTarget())){
+					templateArgs.put(TARGET_PATH,
+							filter.getNodePath().subPath(2, filter.getNodePath().size() - 1).toDisplayPath(nodeService, permissionService) + "/"
+									+ nodeService.getProperty(notification.getTarget(), ContentModel.PROP_NAME));
+				}
 				templateArgs.put(NOTIFICATION, notification.getNodeRef());
 				
 				String emailTemplate = notification.getEmail() != null ? nodeService.getPath(notification.getEmail()).toPrefixString(namespaceService)
