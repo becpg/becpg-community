@@ -657,6 +657,13 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		if ((nodeRefs != null) && !nodeRefs.isEmpty()) {
 			Map<String, Object> params = buildQueryParameters(nodeRefs, assocTypeQName, listTypeQname);
 		    
+			if (params.isEmpty()) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Params are empty");
+				}
+				return ret;
+			}
+			
 		    if (criteriaFilters != null && !criteriaFilters.isEmpty()) {
 		        Map<String, Object> filterMap = buildCriteriaFilterMap(criteriaFilters);
 		        params.putAll(filterMap);
