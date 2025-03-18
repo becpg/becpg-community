@@ -26,12 +26,16 @@
     
     var nextAllowed = true;
     var button;
+    var firstStepTab = null;
     
     function setNextAllowed(val) {
 		if (button == null) {
 			button = $(".wizard-mgr").find(".actions a[href$='#next']")[0].parentElement;
 		}
-		const methodName = (nextAllowed = val ? "remove" : "add");
+		if (firstStepTab == null && val) {
+			firstStepTab = $("list.first");
+		}
+		const methodName = (nextAllowed = val) ? "remove" : "add";
 		button.classList[methodName]("disabled");
 	}
 
@@ -130,6 +134,10 @@
                                 onStepChanged: function(event, currentIndex, priorIndex) {
 									
                                     setNextAllowed(false);
+                                    
+	                                if (!firstStepTab.hasClass("Valid")) {
+                        				firstStepTab.addClass("Valid");
+                    				}
 
                                     me.currentIndex = currentIndex;
 
