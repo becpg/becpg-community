@@ -192,34 +192,36 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 
 	private String processFormulaByType(ExpressionParser parser, StandardEvaluationContext context, ScoreListDataItem scoreListItem,
 			QName propertyKey, Consumer<Object> setter, Class<?> expectedType, String errorMessageKey) {
-		String formulaText = (String) nodeService.getProperty(scoreListItem.getCharactNodeRef(), propertyKey);
-
-		if ((formulaText == null) || formulaText.isBlank()) {
-			return null;
-		}
-
-		try {
-			String[] formulas = SpelHelper.formatMTFormulas(formulaText);
-			for (String formula : formulas) {
-				Matcher varFormulaMatcher = SpelHelper.formulaVarPattern.matcher(formula);
-
-				if (varFormulaMatcher.matches()) {
-					Expression exp = parser.parseExpression(varFormulaMatcher.group(2));
-					context.setVariable(varFormulaMatcher.group(1), exp.getValue(context));
-				} else {
-					Expression exp = parser.parseExpression(formula);
-					Object result = exp.getValue(context);
-
-					if ((result == null) || expectedType.isInstance(result)) {
-						setter.accept(result);
+		if(scoreListItem.getCharactNodeRef()!=null) {
+			String formulaText = (String) nodeService.getProperty(scoreListItem.getCharactNodeRef(), propertyKey);
+	
+			if ((formulaText == null) || formulaText.isBlank()) {
+				return null;
+			}
+	
+			try {
+				String[] formulas = SpelHelper.formatMTFormulas(formulaText);
+				for (String formula : formulas) {
+					Matcher varFormulaMatcher = SpelHelper.formulaVarPattern.matcher(formula);
+	
+					if (varFormulaMatcher.matches()) {
+						Expression exp = parser.parseExpression(varFormulaMatcher.group(2));
+						context.setVariable(varFormulaMatcher.group(1), exp.getValue(context));
 					} else {
-						return I18NUtil.getMessage(errorMessageKey, Locale.getDefault());
+						Expression exp = parser.parseExpression(formula);
+						Object result = exp.getValue(context);
+	
+						if ((result == null) || expectedType.isInstance(result)) {
+							setter.accept(result);
+						} else {
+							return I18NUtil.getMessage(errorMessageKey, Locale.getDefault());
+						}
 					}
 				}
+			} catch (Exception e) {
+				logger.debug("Error in formula: " + SpelHelper.formatFormula(formulaText), e);
+				return e.getLocalizedMessage();
 			}
-		} catch (Exception e) {
-			logger.debug("Error in formula: " + SpelHelper.formatFormula(formulaText), e);
-			return e.getLocalizedMessage();
 		}
 
 		return null;
