@@ -68,6 +68,99 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 	private DynamicCharactExecOrder execOrder = DynamicCharactExecOrder.Post;
 	
 	/**
+	 * <p>Constructor for DynamicCharactListItem.</p>
+	 */
+	public DynamicCharactListItem() {
+		super();
+	}
+	
+	/**
+	 * <p>build.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.productList.DynamicCharactListItem} object
+	 */
+	public static DynamicCharactListItem build() {
+		return new DynamicCharactListItem();
+	}
+	
+	/**
+	 * <p>withTitle.</p>
+	 *
+	 * @param title a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.DynamicCharactListItem} object
+	 */
+	public DynamicCharactListItem withTitle(String title) {
+		this.title = title;
+		return this;
+	}
+	
+	/**
+	 * <p>withFormula.</p>
+	 *
+	 * @param formula a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.DynamicCharactListItem} object
+	 */
+	public DynamicCharactListItem withFormula(String formula) {
+		this.formula = formula;
+		return this;
+	}
+	
+	/**
+	 * <p>withColumnName.</p>
+	 *
+	 * @param columnName a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.DynamicCharactListItem} object
+	 */
+	public DynamicCharactListItem withColumnName(String columnName) {
+		this.columnName = columnName;
+		return this;
+	}
+	
+	/**
+	 * <p>withColor.</p>
+	 *
+	 * @param color a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.DynamicCharactListItem} object
+	 */
+	public DynamicCharactListItem withColor(String color) {
+		this.color = color;
+		return this;
+	}
+	
+	/**
+	 * <p>withSort.</p>
+	 *
+	 * @param sort a {@link java.lang.Integer} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.DynamicCharactListItem} object
+	 */
+	public DynamicCharactListItem withSort(Integer sort) {
+		this.sort = sort;
+		return this;
+	}
+	
+	/**
+	 * <p>withExecOrder.</p>
+	 *
+	 * @param execOrder a {@link fr.becpg.repo.product.data.productList.DynamicCharactExecOrder} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.DynamicCharactListItem} object
+	 */
+	public DynamicCharactListItem withExecOrder(DynamicCharactExecOrder execOrder) {
+		this.execOrder = execOrder;
+		return this;
+	}
+	
+	/**
+	 * <p>withMultiLevelFormula.</p>
+	 *
+	 * @param multiLevelFormula a {@link java.lang.Boolean} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.DynamicCharactListItem} object
+	 */
+	public DynamicCharactListItem withMultiLevelFormula(Boolean multiLevelFormula) {
+		this.multiLevelFormula = multiLevelFormula;
+		return this;
+	}
+	
+	/**
 	 * <p>Getter for the field <code>sort</code>.</p>
 	 *
 	 * @return a {@link java.lang.Integer} object.
@@ -363,21 +456,13 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 		return columnName!=null && !columnName.isBlank();
 	}
 
-	
-	/**
-	 * <p>Constructor for DynamicCharactListItem.</p>
-	 */
-	public DynamicCharactListItem() {
-		super();
-	}
-
-	
 	/**
 	 * <p>Constructor for DynamicCharactListItem.</p>
 	 *
 	 * @param dynamicCharactTitle a {@link java.lang.String} object.
 	 * @param dynamicCharactFormula a {@link java.lang.String} object.
 	 */
+	@Deprecated
 	public DynamicCharactListItem(String dynamicCharactTitle, String dynamicCharactFormula) {
 		super();
 		this.title = dynamicCharactTitle;
