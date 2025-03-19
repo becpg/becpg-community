@@ -3,6 +3,8 @@ package fr.becpg.repo.product.formulation.clp;
 import java.util.HashMap;
 import java.util.Map;
 
+import fr.becpg.config.format.FormatMode;
+import fr.becpg.config.format.PropertyFormatService;
 import fr.becpg.repo.formulation.spel.SpelFormulaContext;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ing.IngItem;
@@ -287,7 +289,7 @@ public class HazardClassificationFormulaContext implements SpelFormulaContext<Pr
 		        for (Map.Entry<IngItem, Double> entry : detail.entrySet()) {
 		            result.append("{").append(entry.getKey().getNodeRef().getId()).append(":")
 		                  .append(entry.getKey().getIngCASCode() != null ? entry.getKey().getIngCASCode() : entry.getKey().getCharactName())
-		                  .append("} ").append(entry.getValue()).append("%, ");
+		                  .append("} ").append(formatNumber(entry.getValue())).append("%, ");
 		        }
 		        // Remove the last ", " and close the parenthesis
 		        if (result.length() > 1) {
@@ -297,6 +299,13 @@ public class HazardClassificationFormulaContext implements SpelFormulaContext<Pr
 		        return result.toString();
 		}
 		return toCode(hazardStatement, hazardClassCode) + " [none]"; // Return empty parenthesis if detail is null or empty
+	}
+
+	private String formatNumber(Double value) {
+		if(value!=null) {
+			return PropertyFormatService.instance().getPropertyFormats(FormatMode.JSON, true).formatDecimal(value);
+		}
+		return "N/A";
 	}
 
 	/**
