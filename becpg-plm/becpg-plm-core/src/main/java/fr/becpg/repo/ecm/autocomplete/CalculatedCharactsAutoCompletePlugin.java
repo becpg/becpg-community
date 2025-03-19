@@ -159,7 +159,7 @@ public class CalculatedCharactsAutoCompletePlugin extends TargetAssocAutoComplet
 			return;
 		}
 
-		NodeRef labelingRulesList = entityListDAO.getList(listsContainer, PLMModel.TYPE_LABELINGRULELIST);
+		NodeRef labelingRulesList = entityListDAO.getList(listsContainer, PLMModel.TYPE_INGLABELINGLIST);
 		if (labelingRulesList == null) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("No labeling rules list found for template product: " + templateProduct);
@@ -171,7 +171,7 @@ public class CalculatedCharactsAutoCompletePlugin extends TargetAssocAutoComplet
 		int matchCount = 0;
 		
 		for (NodeRef labelingRule : labelingRules) {
-			Object ruleType = nodeService.getProperty(labelingRule, PLMModel.PROP_LABELINGRULELIST_TYPE);
+			String ruleType = (String) nodeService.getProperty(labelingRule, PLMModel.PROP_LABELINGRULELIST_TYPE);
 			
 			if (LabelingRuleType.Render.toString().equals(ruleType)) {
 				String name = (String) nodeService.getProperty(labelingRule, ContentModel.PROP_NAME);
