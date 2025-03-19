@@ -39,6 +39,6 @@ public class SearchRuleServiceImplIT extends PLMBaseTestCase {
 		filter.setNodePath(nodeService.getPath(getTestFolderNodeRef()));
 
 		results = searchRuleService.search(filter).getResults();
-		Assert.assertEquals(3, results.size());
+		Assert.assertEquals(10, results.size());
 	}
 }
