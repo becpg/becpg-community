@@ -1,8 +1,13 @@
 package fr.becpg.repo.survey;
 
+import java.util.List;
+import java.util.function.Predicate;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import fr.becpg.repo.survey.data.SurveyListDataItem;
 
 /**
  * <p>SurveyService interface.</p>
@@ -17,10 +22,12 @@ public interface SurveyService {
 	 *
 	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @param dataListName a {@link java.lang.String} object
+	 * @param writeAccessTester a {@java.util.function.Predicate} object
 	 * @return a {@link org.json.JSONObject} object
 	 * @throws org.json.JSONException if any.
 	 */
-	JSONObject getSurveyData(NodeRef entityNodeRef, String dataListName) throws JSONException;
+	JSONObject getSurveyData(NodeRef entityNodeRef, String dataListName, Predicate<List<SurveyListDataItem>> writeAccessTester)
+			throws JSONException;
 	
 	/**
 	 * <p>saveSurveyData.</p>
@@ -30,7 +37,5 @@ public interface SurveyService {
 	 * @param data a {@link org.json.JSONObject} object
 	 * @throws org.json.JSONException if any.
 	 */
-	void saveSurveyData(NodeRef entityNodeRef, String dataListName, JSONObject data) throws JSONException;
-	
-	
+	void saveSurveyData(NodeRef entityNodeRef, String dataListName, JSONObject data) throws JSONException;	
 }
