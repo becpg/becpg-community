@@ -3,18 +3,19 @@ package fr.becpg.repo.survey.web.scripts;
 import java.io.IOException;
 
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
+import fr.becpg.repo.repository.model.BeCPGDataObject;
+import fr.becpg.repo.survey.SurveyModel;
 import fr.becpg.repo.survey.SurveyService;
+import fr.becpg.repo.web.scripts.entity.datalist.AbstractEntityDataListWebScript;
 
 /**
  * <p>SurveyWebScript class.</p>
@@ -22,7 +23,7 @@ import fr.becpg.repo.survey.SurveyService;
  * @author matthieu
  * @version $Id: $Id
  */
-public class SurveyWebScript extends AbstractWebScript {
+public class SurveyWebScript extends AbstractEntityDataListWebScript {
 
 	/** Constant <code>PARAM_ENTITY_NODEREF="entityNodeRef"</code> */
 	protected static final String PARAM_ENTITY_NODEREF = "entityNodeRef";
@@ -30,21 +31,10 @@ public class SurveyWebScript extends AbstractWebScript {
 	/** Constant <code>PARAM_DATA_LIST_NAME="dataListName"</code> */
 	protected static final String PARAM_DATA_LIST_NAME = "dataListName";
 
-	private NodeService nodeService;
-
 	private SurveyService surveyService;
 
-	private PermissionService permissionService;
-
-	/**
-	 * <p>Setter for the field <code>permissionService</code>.</p>
-	 *
-	 * @param permissionService a {@link org.alfresco.service.cmr.security.PermissionService} object
-	 */
-	public void setPermissionService(PermissionService permissionService) {
-		this.permissionService = permissionService;
-	}
-
+	protected PermissionService permissionService;
+	
 	/**
 	 * <p>Setter for the field <code>surveyService</code>.</p>
 	 *
@@ -55,12 +45,12 @@ public class SurveyWebScript extends AbstractWebScript {
 	}
 
 	/**
-	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 * <p>Setter for the field <code>permissionService</code>.</p>
 	 *
-	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @param permissionService a {@link org.alfresco.service.cmr.security.PermissionService} object
 	 */
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
+	public void setPermissionService(PermissionService permissionService) {
+		this.permissionService = permissionService;
 	}
 
 	/** {@inheritDoc} */
@@ -82,7 +72,10 @@ public class SurveyWebScript extends AbstractWebScript {
 				ret.put("message", "Success");
 			} else {
 
-				ret = surveyService.getSurveyData(entityNodeRef, dataListName);
+				ret = surveyService.getSurveyData(entityNodeRef, dataListName,
+						surveyListDataItems -> getAccess(SurveyModel.TYPE_SURVEY_LIST,
+								surveyListDataItems.stream().map(BeCPGDataObject::getNodeRef).toList(), false,
+								entityNodeRef, SurveyModel.TYPE_SURVEY_LIST.getLocalName(), null).canWrite());
 			}
 
 			res.setContentType("application/json");

@@ -34,7 +34,7 @@ function main() {
 		name: "beCPG.component.DecisionTree",
 		initArgs : ["\"" + args.htmlid + "-control\"","\"" + args.htmlid + "-survey\""],
 		options: {
-			disabled: false,
+			disabled: result.disabled,
 			prefix: "survey",
 			data: sorted,
 			currentValue: result.data
