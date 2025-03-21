@@ -20,12 +20,48 @@ public class BeCPGUserAccount {
 
 	private String userName;
 	private String password;
+	private Boolean generatePassword;
+	private Boolean synchronizeWithIDS;
+	private Boolean disable;
+	private String newUserName;
 
 	private Map<QName,Serializable> extraProps = new HashMap<>();
 
 	private Set<String> authorities = new HashSet<>();
 
 	private Boolean notify = false;
+
+	public Boolean getSynchronizeWithIDS() {
+		return synchronizeWithIDS;
+	}
+
+	public void setSynchronizeWithIDS(Boolean synchronizeWithIDS) {
+		this.synchronizeWithIDS = synchronizeWithIDS;
+	}
+
+	public Boolean getGeneratePassword() {
+		return generatePassword;
+	}
+
+	public void setGeneratePassword(Boolean generatePassword) {
+		this.generatePassword = generatePassword;
+	}
+
+	public Boolean getDisable() {
+		return disable;
+	}
+
+	public void setDisable(Boolean disable) {
+		this.disable = disable;
+	}
+
+	public String getNewUserName() {
+		return newUserName;
+	}
+
+	public void setNewUserName(String newUserName) {
+		this.newUserName = newUserName;
+	}
 
 	/**
 	 * <p>Getter for the field <code>userName</code>.</p>
@@ -171,31 +207,31 @@ public class BeCPGUserAccount {
 		this.extraProps = extraProps;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
-		return Objects.hash(authorities, extraProps, notify, password, userName);
+		return Objects.hash(authorities, disable, extraProps, generatePassword, newUserName, notify, password, synchronizeWithIDS, userName);
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if ((obj == null) || (getClass() != obj.getClass()))
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
 			return false;
 		BeCPGUserAccount other = (BeCPGUserAccount) obj;
-		return Objects.equals(authorities, other.authorities) && Objects.equals(extraProps, other.extraProps) && Objects.equals(notify, other.notify)
-				&& Objects.equals(password, other.password) && Objects.equals(userName, other.userName);
+		return Objects.equals(authorities, other.authorities) && Objects.equals(disable, other.disable)
+				&& Objects.equals(extraProps, other.extraProps) && Objects.equals(generatePassword, other.generatePassword)
+				&& Objects.equals(newUserName, other.newUserName) && Objects.equals(notify, other.notify) && Objects.equals(password, other.password)
+				&& Objects.equals(synchronizeWithIDS, other.synchronizeWithIDS) && Objects.equals(userName, other.userName);
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return "BeCPGUserAccount [userName=" + userName + ", password=" + password + ", extraProps=" + extraProps + ", authorities=" + authorities
-				+ ", notify=" + notify + "]";
+		return "BeCPGUserAccount [userName=" + userName + ", password=" + password + ", generatePassword=" + generatePassword
+				+ ", synchronizeWithIDS=" + synchronizeWithIDS + ", disable=" + disable + ", newUserName=" + newUserName + ", extraProps="
+				+ extraProps + ", authorities=" + authorities + ", notify=" + notify + "]";
 	}
-
-
 
 }
