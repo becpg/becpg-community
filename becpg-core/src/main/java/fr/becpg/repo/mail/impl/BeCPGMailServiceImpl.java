@@ -172,10 +172,19 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 
 	/** {@inheritDoc} */
 	@Override
-	public void sendMailNewUser(NodeRef personNodeRef, String userName, String password, boolean sendToSelf) {
+	public void sendMailNewUser(NodeRef personNodeRef, String userName, String password) {
 		_logger.debug("Email new user");
-		Map<String, Object> templateModel = new HashMap<>(8, 1.0f);
+		sendMailUser(personNodeRef, userName, password, "becpg.mail.newUser.title");
+	}
 
+	@Override
+	public void sendMailNewPassword(NodeRef personNodeRef, String userName, String password) {
+		_logger.debug("Email new password");
+		sendMailUser(personNodeRef, userName, password, "becpg.mail.newPassword.title");
+	}
+	
+	private void sendMailUser(NodeRef personNodeRef, String userName, String password, String mailTitleKey) {
+		Map<String, Object> templateModel = new HashMap<>(8, 1.0f);
 		templateModel.put("person", new TemplateNode(personNodeRef, serviceRegistry, null));
 		templateModel.put("username", userName);
 		templateModel.put("password", password);
@@ -183,14 +192,12 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 		// current date/time is useful to have and isn't supplied by FreeMarker
 		// by default
 		templateModel.put("date", new Date());
-
 		String email = (String) nodeService.getProperty(personNodeRef, ContentModel.PROP_EMAIL);
 		if (email!=null && !email.isEmpty()) {
 			List<NodeRef> users = new ArrayList<>(1);
 			users.add(personNodeRef);
-			sendMail(users, I18NUtil.getMessage("becpg.mail.newUser.title"), RepoConsts.EMAIL_NEW_USER_TEMPLATE, templateModel, sendToSelf);
+			sendMail(users, I18NUtil.getMessage(mailTitleKey), RepoConsts.EMAIL_NEW_USER_TEMPLATE, templateModel, false);
 		}
-
 	}
 	
 	/** {@inheritDoc} */
