@@ -61,12 +61,18 @@ import fr.becpg.repo.importer.user.UserImporterService;
  */
 public class UserImporterServiceImpl implements UserImporterService {
 
+
 	private static final Log logger = LogFactory.getLog(UserImporterServiceImpl.class);
 
+	public static final String ATTR_REMOVE = "Remove";
 	/** Constant <code>USERNAME="username"</code> */
 	public static final String ATTR_USERNAME = "username";
 	/** Constant <code>PASSWORD="password"</code> */
 	public static final String ATTR_PASSWORD = "password";
+	public static final String ATTR_SHOULD_GENERATE_PASSWORD = "should_generate_password";
+	public static final String ATTR_IS_IDS_USER = "is_ids_user";
+	public static final String ATTR_NEW_USERNAME = "new_username";
+	public static final String ATTR_DISABLE = "disable";
 	/** Constant <code>NOTIFY="notify"</code> */
 	public static final String ATTR_NOTIFY = "notify";
 	/** Constant <code>MEMBERSHIPS="memberships"</code> */
@@ -260,8 +266,22 @@ public class UserImporterServiceImpl implements UserImporterService {
 			username = username != null ? username.toLowerCase() : null;
 			
 			userAccount.setUserName(username);
-			userAccount.setPassword(splitted[headers.get(ATTR_PASSWORD)]);
-			userAccount.setNotify(headers.containsKey(ATTR_NOTIFY) && Boolean.parseBoolean(splitted[headers.get(ATTR_NOTIFY)]));
+			if (headers.containsKey(ATTR_PASSWORD)) {
+				userAccount.setPassword(splitted[headers.get(ATTR_PASSWORD)]);
+			}
+			if (headers.containsKey(ATTR_SHOULD_GENERATE_PASSWORD)) {
+				userAccount.setGeneratePassword(Boolean.parseBoolean(splitted[headers.get(ATTR_SHOULD_GENERATE_PASSWORD)].toLowerCase()));
+			}
+			if (headers.containsKey(ATTR_IS_IDS_USER)) {
+				userAccount.setSynchronizeWithIDS(Boolean.parseBoolean(splitted[headers.get(ATTR_IS_IDS_USER)].toLowerCase()));
+			}
+			if (headers.containsKey(ATTR_DISABLE)) {
+				userAccount.setDisable(Boolean.parseBoolean(splitted[headers.get(ATTR_DISABLE)].toLowerCase()));
+			}
+			if (headers.containsKey(ATTR_NEW_USERNAME)) {
+				userAccount.setNewUserName(splitted[headers.get(ATTR_NEW_USERNAME)]);
+			}
+			userAccount.setNotify(headers.containsKey(ATTR_NOTIFY) && Boolean.parseBoolean(splitted[headers.get(ATTR_NOTIFY)].toLowerCase()));
 
 			for (Map.Entry<String, Integer> entry : headers.entrySet()) {
 				if (isPropQname(entry.getKey()) && !splitted[entry.getValue()].isEmpty()) {
@@ -301,12 +321,17 @@ public class UserImporterServiceImpl implements UserImporterService {
 							if (logger.isDebugEnabled()) {
 								logger.debug("Adding role " + role + " to " + userAccount.getUserName() + " on site " + siteName);
 							}
-							if (siteService.getSite(cleanSiteName(siteName)) != null) {
-								siteService.setMembership(cleanSiteName(siteName), userAccount.getUserName(), role);
-							} else {
+							String finalSiteName = cleanSiteName(siteName);
+							if (siteService.getSite(finalSiteName) != null) {
+								if (ATTR_REMOVE.equals(role)) {
+									siteService.removeMembership(finalSiteName, userAccount.getUserName());
+								} else {
+									siteService.setMembership(finalSiteName, userAccount.getUserName(), role);
+								}
+							} else if (!ATTR_REMOVE.equals(role)) {
 								logger.debug("Site " + siteName + " doesn't exist.");
 
-								SiteInfo siteInfo = siteService.createSite(DEFAULT_PRESET, cleanSiteName(siteName), siteName, "",
+								SiteInfo siteInfo = siteService.createSite(DEFAULT_PRESET, finalSiteName, siteName, "",
 										SiteVisibility.PUBLIC);
 								try {
 
@@ -371,6 +396,8 @@ public class UserImporterServiceImpl implements UserImporterService {
 				return SiteModel.SITE_COLLABORATOR;
 			} else if (role.trim().equalsIgnoreCase("Manager")) {
 				return SiteModel.SITE_MANAGER;
+			} else if (role.trim().equalsIgnoreCase(ATTR_REMOVE)) {
+				return ATTR_REMOVE;
 			}
 		}
 
