@@ -58,6 +58,8 @@ public final class BeCPGModel {
 	
 	/** Constant <code>PROP_IS_SSO_USER</code> */
 	public static final QName PROP_IS_SSO_USER = QName.createQName(BECPG_URI, "isSsoUser");
+	
+	public static final QName PROP_GENERATE_PASSWORD = QName.createQName(BECPG_URI, "generatePassword");
 
 	public enum EntityFormat {
 		NODE, JSON, XML
