@@ -392,7 +392,7 @@ public class RegulationFormulationHelper {
 						if ((nutListValuePerServing != null) && (!nutListValuePerServing.isBlank())) {
 							nutListElt.addAttribute("roundedDisplayValuePerServing" + suffix,
 									RegulationFormulationHelper.displayValue(Double.parseDouble(nutListValuePerServing),
-											extractValuePerServing(roundedValue, locKey), measurementPrecision, nutCode, locale, locKey));
+											extractValuePerServing(roundedValue, locKey), nutCode, measurementPrecision, locale, locKey));
 						}
 
 						if ((nutListValuePrepared != null) && (!nutListValuePrepared.isBlank())) {
@@ -405,7 +405,7 @@ public class RegulationFormulationHelper {
 							if (nutListValuePreparedPerServing != null) {
 								nutListElt.addAttribute("roundedDisplayValuePreparedPerServing" + suffix,
 										RegulationFormulationHelper.displayValue(nutListValuePreparedPerServing, nutListValuePreparedPerServing,
-												measurementPrecision, nutCode, locale, locKey));
+												nutCode, measurementPrecision, locale, locKey));
 							}
 						}
 
