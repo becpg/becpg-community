@@ -38,9 +38,10 @@ public interface BeCPGMailService {
 	 * @param personNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param userName a {@link java.lang.String} object.
 	 * @param password a {@link java.lang.String} object.
-	 * @param sendToSelf a boolean.
 	 */
-	void sendMailNewUser(NodeRef personNodeRef, String userName, String password, boolean sendToSelf);
+	void sendMailNewUser(NodeRef personNodeRef, String userName, String password);
+	
+	void sendMailNewPassword(NodeRef personNodeRef, String userName, String password);
 
 	/**
 	 * <p>sendMail.</p>
