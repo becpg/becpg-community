@@ -58,6 +58,11 @@ function main()
 			person.properties["bcpg:isSsoUser"] = true; 
 		}
 	}
+   if (!json.isNull("generatePassword")) {
+		if (json.get("generatePassword") == true) {
+			person.properties["bcpg:generatePassword"] = true; 
+		}
+	}
    person.save();
    
    // set quota if any - note that only Admin can set this and will be ignored otherwise

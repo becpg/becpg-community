@@ -99,6 +99,11 @@ function main()
 			person.properties["bcpg:isSsoUser"] = true; 
 		}
 	}
+   if (!json.isNull("generatePassword")) {
+		if (json.get("generatePassword") == true) {
+			person.properties["bcpg:generatePassword"] = true; 
+		}
+	}
    // Update the person node with the modified details
    
    logger.log("update user");
