@@ -13,6 +13,7 @@ import org.alfresco.repo.security.authentication.MutableAuthenticationDao;
 import org.alfresco.repo.security.person.PersonServiceImpl;
 import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.repo.tenant.TenantService;
+import org.alfresco.service.cmr.preference.PreferenceService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AuthorityService;
@@ -70,6 +71,9 @@ public class BeCPGUserAccountService {
 	
 	@Autowired
 	private BehaviourFilter policyBehaviourFilter;
+	
+	@Autowired
+	private PreferenceService preferenceService;
 
 	/**
 	 * <p>getOrCreateUser.</p>
@@ -178,21 +182,28 @@ public class BeCPGUserAccountService {
 		String userName = userAccount.getUserName();
 		NodeRef personNodeRef = personService.getPerson(userName);
 		if (userAccount.getNewUserName() != null && !userAccount.getNewUserName().isBlank()) {
-			String newUserName = createTenantAware(userAccount.getNewUserName());
-			if (!newUserName.equals(userName)) {
-				userAccount.setUserName(newUserName);
-				TransactionSupportUtil.bindResource(PersonServiceImpl.KEY_ALLOW_UID_UPDATE, Boolean.TRUE);
-				nodeService.setProperty(personNodeRef, ContentModel.PROP_USERNAME, userAccount.getUserName());
-				NodeRef homeFolder = (NodeRef) nodeService.getProperty(personNodeRef, ContentModel.PROP_HOMEFOLDER);
-				if (homeFolder != null) {
-					nodeService.setProperty(homeFolder, ContentModel.PROP_NAME, userAccount.getUserName());
-				}
-			}
+
+			renameUser(userAccount, personNodeRef);
 		}
 		
 		nodeService.addProperties(personNodeRef, propMap);
 		
 		return personNodeRef;
+	}
+
+	private void renameUser(BeCPGUserAccount userAccount, NodeRef personNodeRef) {
+		String newUserName = createTenantAware(userAccount.getNewUserName());
+		if (!newUserName.equals(userAccount.getUserName())) {
+			userAccount.setUserName(newUserName);
+			TransactionSupportUtil.bindResource(PersonServiceImpl.KEY_ALLOW_UID_UPDATE, Boolean.TRUE);
+			nodeService.setProperty(personNodeRef, ContentModel.PROP_USERNAME, newUserName);
+			nodeService.setProperty(personNodeRef, ContentModel.PROP_OWNER, newUserName);
+			preferenceService.clearPreferences(newUserName);
+			NodeRef homeFolder = (NodeRef) nodeService.getProperty(personNodeRef, ContentModel.PROP_HOMEFOLDER);
+			if (homeFolder != null) {
+				nodeService.setProperty(homeFolder, ContentModel.PROP_NAME, newUserName);
+			}
+		}
 	}
 
 	private void createAuthentication(BeCPGUserAccount userAccount, NodeRef personNodeRef) {
