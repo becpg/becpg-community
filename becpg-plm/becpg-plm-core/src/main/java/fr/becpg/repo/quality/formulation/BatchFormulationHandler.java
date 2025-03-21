@@ -377,7 +377,7 @@ public class BatchFormulationHandler extends FormulationBaseHandler<BatchData> {
 					Double lossPerc = FormulationHelper.calculateLossPerc(parentLossPerc,
 							FormulationHelper.getComponentLossPerc(subProductData, compoList));
 
-					if (subProductData instanceof RawMaterialData) {
+					if (!shouldDeclare(compoList) || subProductData instanceof RawMaterialData) {
 
 						Double rmQty = rawMaterials.get(productNodeRef);
 						if (rmQty == null) {
