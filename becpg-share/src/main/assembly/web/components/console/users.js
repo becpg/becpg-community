@@ -1902,48 +1902,9 @@
       },
          
 	   onExportUsersClick: function ConsoleUsers_onExportUsersClick(e, args) {
-		   var displayedUsers = this.widgets.pagingDataTable.widgets.dataTable.getRecordSet().getRecords();
-
-		   if (displayedUsers.length === 0) {
-			   Alfresco.util.PopupManager.displayMessage({
-				   text: "No users to export."
-			   });
-			   return;
-		   }
-
-		   // CSV header
-		   var csvContent = '"cm:lastName";"cm:firstName";"cm:email";"cm:telephone";"cm:organization";"username";"new_username";"password";"should_generate_password";"memberships";"groups";"notify";"is_ids_user";"disable"\n'
-
-		   // Loop through displayed users and extract relevant data
-		   for (var i = 0; i < displayedUsers.length; i++) {
-			   var userData = displayedUsers[i].getData();
-			   var row = [
-				   userData.lastName,
-				   userData.firstName,
-				   userData.email,
-				   userData.telephone,
-				   userData.organization,
-				   userData.userName,
-				   "",
-				   "",
-				   "",
-				   "",
-				   "",
-				   "",
-				   userData.isSsoUser,
-				   !userData.enabled
-			   ].join(";");
-			   csvContent += row + "\n";
-		   }
-
-		   // Create and download CSV file (YUI-compatible approach)
-		   var uri = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvContent);
-		   var link = document.createElement("a");
-		   link.setAttribute("href", uri);
-		   link.setAttribute("download", this._msg("message.export-users.filename"));
-		   document.body.appendChild(link);
-		   link.click();
-		   document.body.removeChild(link);
+		   var me = this;
+		   var downloadUrl = Alfresco.constants.PROXY_URI + "becpg/export-users?search=" + encodeURIComponent(me.searchTerm);
+		   window.location.href = downloadUrl;
 	   },
 
       /**
