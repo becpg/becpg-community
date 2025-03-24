@@ -441,7 +441,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 
             if (unit != null && ((oColumn.label != null && oColumn.label.indexOf && (oColumn.label.indexOf("100g") > 0 || oColumn.label.indexOf("/") > 0))
                 || (oColumn.field == "prop_bcpg_nutListValuePerServing"))) {
-                unit = unit.replace("/100g", "").replace("/100ml", "");
+                unit = unit.replace("/100g", "").replace("/100mL", "");
             }
 
             var key = "prop_bcpg_nutListFormulatedValue";
