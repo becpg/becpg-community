@@ -187,14 +187,14 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 				nodeService.setProperty(branchNodeRef, BeCPGModel.PROP_AUTO_MERGE_COMMENTS, projectName);
 				nodeService.setProperty(branchNodeRef, ContentModel.PROP_NAME, branchName);
 
-				NodeRef supplierDocumentsFolder = getOrCreateSupplierDocumentsFolder(branchNodeRef);
+				createAndSetSupplierDocumentsFolder(branchNodeRef);
 				
-				for (ChildAssociationRef childAssoc : nodeService.getChildAssocs(supplierDocumentsFolder)) {
-					NodeRef childNodeRef = childAssoc.getChildRef();
-					nodeService.setProperty(childNodeRef, ContentModel.PROP_OWNER, AuthenticationUtil.SYSTEM_USER_NAME);
-				}
 			} else {
 				branchNodeRef = supplierNodeRef;
+				
+				if (PLMModel.TYPE_SUPPLIER.equals(nodeService.getType(entityNodeRef))) {
+					createAndSetSupplierDocumentsFolder(branchNodeRef);
+				}
 			}
 
 			projectData.setEntities(Arrays.asList(branchNodeRef));
@@ -221,6 +221,15 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 	public NodeRef getOrCreateSupplierDocumentsFolder(NodeRef entityNodeRef) {
 		return getOrCreateDocumentFolder(entityNodeRef, RepoConsts.PATH_SUPPLIER_DOCUMENTS);
 		
+	}
+	
+	private void createAndSetSupplierDocumentsFolder(NodeRef entityNodeRef) {
+		NodeRef supplierDocumentsFolder = getOrCreateSupplierDocumentsFolder(entityNodeRef);
+		
+		for (ChildAssociationRef childAssoc : nodeService.getChildAssocs(supplierDocumentsFolder)) {
+			NodeRef childNodeRef = childAssoc.getChildRef();
+			nodeService.setProperty(childNodeRef, ContentModel.PROP_OWNER, AuthenticationUtil.SYSTEM_USER_NAME);
+		}
 	}
 	
 	private NodeRef getOrCreateDocumentFolder(NodeRef entityNodeRef, String path) {
