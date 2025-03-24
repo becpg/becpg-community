@@ -821,7 +821,9 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 								policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_VERSIONABLE);
 								policyBehaviourFilter.disableBehaviour(ImapModel.ASPECT_IMAP_CONTENT);
 								
-								internalCreateInitialVersion(internalBranchToNodeRef, newEffectivity);
+								Date finalNewEffectivity = newEffectivity == null ? new Date() : newEffectivity;
+								
+								internalCreateInitialVersion(internalBranchToNodeRef, finalNewEffectivity);
 								
 								String manualVersionLabelFrom = (String) nodeService.getProperty(branchNodeRef, BeCPGModel.PROP_MANUAL_VERSION_LABEL);
 								
@@ -946,13 +948,13 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 									Version lastVersion = originalVersionHistory.getVersion(versionLabel);
 									if (lastVersion != null) {
 										NodeRef lastVersionNodeRef = getEntityVersion(lastVersion);
-										dbNodeService.setProperty(lastVersionNodeRef, BeCPGModel.PROP_END_EFFECTIVITY, newEffectivity);
+										dbNodeService.setProperty(lastVersionNodeRef, BeCPGModel.PROP_END_EFFECTIVITY, finalNewEffectivity);
 									}
 								}
 								
 								StopWatchSupport.addCheckpoint("before internalCreateVersion");
 								
-								internalCreateVersion(internalBranchToNodeRef, versionProperties, newEffectivity, manualVersionLabelFrom, false);
+								internalCreateVersion(internalBranchToNodeRef, versionProperties, finalNewEffectivity, manualVersionLabelFrom, false);
 								
 								if (rename) {
 									Version currentVersion = versionService.getCurrentVersion(internalBranchToNodeRef);
@@ -1000,7 +1002,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 								associationService.removeAllCacheAssocs(internalBranchToNodeRef);
 								
 								if (nodeService.hasAspect(internalBranchToNodeRef, BeCPGModel.ASPECT_EFFECTIVITY)) {
-									nodeService.setProperty(internalBranchToNodeRef, BeCPGModel.PROP_START_EFFECTIVITY, newEffectivity);
+									nodeService.setProperty(internalBranchToNodeRef, BeCPGModel.PROP_START_EFFECTIVITY, finalNewEffectivity);
 									nodeService.removeProperty(internalBranchToNodeRef, BeCPGModel.PROP_END_EFFECTIVITY);
 								}
 								
@@ -1533,7 +1535,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				
 				
 				if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_EFFECTIVITY)) {
-					nodeService.setProperty(entityNodeRef, BeCPGModel.PROP_START_EFFECTIVITY, finalNewEffectivity == null ? new Date() : finalNewEffectivity);
+					nodeService.setProperty(entityNodeRef, BeCPGModel.PROP_START_EFFECTIVITY, finalNewEffectivity);
 					nodeService.removeProperty(entityNodeRef, BeCPGModel.PROP_END_EFFECTIVITY);
 				}
 
