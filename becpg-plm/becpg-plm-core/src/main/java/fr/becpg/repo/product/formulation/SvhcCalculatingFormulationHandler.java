@@ -23,7 +23,6 @@ import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.ing.IngItem;
-import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
@@ -69,13 +68,6 @@ public class SvhcCalculatingFormulationHandler extends AbstractSimpleListFormula
 
 					new DefaultSimpleListQtyProvider(formulatedProduct) {
 
-						@Override
-						public Double getQty(CompoListDataItem compoListDataItem, Double parentLossRatio, ProductData componentProduct) {
-							if(formulatedProduct.isGeneric()) {
-								return 100d;
-							}
-							return super.getQty(compoListDataItem, parentLossRatio, componentProduct);
-						}
 				
 						@Override
 						public Double getQty(PackagingListDataItem packagingListDataItem, ProductData componentProduct) {
