@@ -185,7 +185,7 @@ function createPostBody(itemKind, itemId, visibleFields, formConfig, mode, entit
 				if (formConfig.isFieldForced(fieldId) || mode == "datagrid-prefs") {
 					postBodyForcedFields.push(fieldId);
 				} else  {
-					var preferences = AlfrescoUtil.getPreferences("fr.becpg.formulation.dashlet.custom.datagrid-prefs." + itemId.replace(":", "_") + "." + fieldId.replace(":", "_"));
+					var preferences = AlfrescoUtil.getPreferences("fr.becpg.formulation.dashlet.custom.datagrid-prefs" + "." + itemId.replace(":", "_") + "." + fieldId.replace(":", "_"));
 					
 					if(existInPref(preferences) && isChecked(preferences)){
 						postBodyForcedFields.push(fieldId);
@@ -215,6 +215,7 @@ function main() {
 	, mode = getArgument("mode"), noCache = getArgument("noCache"), siteId = getArgument("siteId")
 	, entityType = getArgument("entityType"), entityNodeRef = getArgument("entityNodeRef");
 
+	
 	cache.maxAge = 3600; // in seconds
 	cache.neverCache=false;
 	cache.isPublic=false;
@@ -233,11 +234,11 @@ function main() {
 	}
 
 	// pass form ui model to FTL
-	model.columns = getColumns(itemType, list, formId, mode, prefixedSiteId, prefixedEntityType, entityType, entityNodeRef);
+	model.columns = getColumns(itemType, list, formId, mode, prefixedSiteId, prefixedEntityType, entityNodeRef);
 
 }
 
-function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEntityType, entityType, entityNodeRef, nestedPrefKey) {
+function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEntityType, entityNodeRef , nestedPrefKey) {
 	
 	var columns = [], defaultColumns = [], ret = [];
 
@@ -270,7 +271,7 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 			var visibleFields = getVisibleFields(mode == "bulk-edit" ? "edit" : "view", formConfig);
 
 			// build the JSON object to send to the server
-			var postBody = createPostBody("type", itemType, visibleFields, formConfig, mode, entityNodeRef);
+			var postBody = createPostBody("type", itemType, visibleFields, formConfig, mode,entityNodeRef);
 
 
 			// make remote call to service
@@ -333,14 +334,13 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 
 			for (var i in visibleFields) {
 
-			  var fieldId = visibleFields[i], name, column;
-			  var prefKey = (entityType != null ? entityType.replace(":", "_") + "." : "") + itemType.replace(":", "_") + "."  + fieldId.replace(":", "_");
-
-			   if(nestedPrefKey){
-				    prefKey =nestedPrefKey+"_"+fieldId.replace(":", "_");
-			   } 
-			   
-				var preferences = AlfrescoUtil.getPreferences("fr.becpg.formulation.dashlet.custom.datagrid-prefs." +prefKey);
+				  var fieldId = visibleFields[i], name, column;
+				  var prefKey =  itemType.replace(":", "_") + "."  + fieldId.replace(":", "_");
+				   if(nestedPrefKey){
+					    prefKey =nestedPrefKey+"_"+fieldId.replace(":", "_");
+				   } 
+				   
+					var preferences = AlfrescoUtil.getPreferences("fr.becpg.formulation.dashlet.custom.datagrid-prefs." +prefKey);
 
 				if (fieldId.indexOf("dataList_") == 0) {
 
@@ -388,15 +388,15 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 						}
 					}
 					
-					var subPrefKey =  (entityType != null ? entityType.replace(":", "_") + "." : "") + itemType.replace(":", "_") + "." + name.replace(":", "_");
-
+					var subPrefKey =  itemType.replace(":", "_") + "."  + name.replace(":", "_");
+					
 					if (splitted[1].includes("@")) {
 						var formSplitted = splitted[1].split("@");
-						column.columns = getColumns(formSplitted[0] + "", "sub-datagrid", formSplitted[1] + "",mode,null,null,null,null,subPrefKey);
+						column.columns = getColumns(formSplitted[0] + "", "sub-datagrid", formSplitted[1] + "",mode,null,null,null,subPrefKey);
 					} else if (formIdArgs != null && formIdArgs.length > 0) {
-						column.columns = getColumns(splitted[1] + "", "sub-datagrid", "sub-datagrid-" + formIdArgs, mode,null,null,null,null,subPrefKey);
+						column.columns = getColumns(splitted[1] + "", "sub-datagrid", "sub-datagrid-" + formIdArgs, mode,null,null,null,subPrefKey);
 					} else {
-						column.columns = getColumns(splitted[1] + "", "sub-datagrid",null, mode,null,null,null,null,subPrefKey);
+						column.columns = getColumns(splitted[1] + "", "sub-datagrid",null, mode,null,null,null,subPrefKey);
 					}
 
 					ret.push(column);
