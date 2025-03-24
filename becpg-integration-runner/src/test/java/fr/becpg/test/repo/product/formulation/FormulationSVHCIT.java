@@ -53,7 +53,7 @@ public class FormulationSVHCIT extends PLMBaseTestCase {
 	protected ProductService productService;
 
 	@Test
-	public void testFormulationSVHC() throws Exception {
+	public void testFormulationSVHC() {
 		logger.info("Starting testFormulationPackMaterial");
 		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
 			logger.info("Creating finished product");
