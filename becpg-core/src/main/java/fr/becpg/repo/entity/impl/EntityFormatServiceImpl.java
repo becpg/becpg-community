@@ -21,6 +21,8 @@ import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.repo.tenant.TenantService;
+import org.alfresco.repo.version.Version2Model;
+import org.alfresco.repo.version.VersionBaseModel;
 import org.alfresco.repo.version.common.VersionUtil;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
@@ -649,7 +651,9 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 		
 		if (ignoredItems == null || !ignoredItems.contains(originalEntity)) {
 			
-			boolean isConvertible = entityDictionaryService.isSubClass(nodeService.getType(originalEntity), BeCPGModel.TYPE_ENTITY_V2);
+			boolean isConvertible = entityDictionaryService.isSubClass(nodeService.getType(originalEntity), BeCPGModel.TYPE_ENTITY_V2)
+					&& !originalEntity.getStoreRef().getProtocol().contains(VersionBaseModel.STORE_PROTOCOL)
+					&& !originalEntity.getStoreRef().getIdentifier().contains(Version2Model.STORE_ID);
 			
 			if (isConvertible) {
 				isConvertible = nodeService.hasAspect(originalEntity, BeCPGModel.ASPECT_COMPOSITE_VERSION);
