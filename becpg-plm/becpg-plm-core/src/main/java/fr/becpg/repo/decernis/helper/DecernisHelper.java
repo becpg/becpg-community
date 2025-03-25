@@ -6,8 +6,12 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.alfresco.repo.tenant.TenantService;
+import org.alfresco.repo.tenant.TenantUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import fr.becpg.repo.system.SystemConfigurationRegistry;
 
 /**
  * <p>DecernisHelper class.</p>
@@ -66,4 +70,14 @@ public class DecernisHelper {
 		
 		return null;
 	}
+	public static String getToken() {
+		if (!TenantService.DEFAULT_DOMAIN.equals(TenantUtil.getCurrentDomain())) {
+			String confValue = SystemConfigurationRegistry.instance().confValue("beCPG.decernis.token." + TenantUtil.getCurrentDomain());
+			if (confValue != null) {
+				return confValue;
+			}
+		}
+		return SystemConfigurationRegistry.instance().confValue("beCPG.decernis.token");
+	}
+	
 }
