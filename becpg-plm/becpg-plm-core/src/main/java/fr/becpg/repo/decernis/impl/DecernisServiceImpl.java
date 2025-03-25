@@ -141,10 +141,6 @@ public class DecernisServiceImpl  extends AbstractLifecycleBean implements Decer
 		return systemConfigurationService.confValue("beCPG.decernis.companyName");
 	}
 
-	private String token() {
-		return systemConfigurationService.confValue("beCPG.decernis.token");
-	}
-	
 	private Boolean ingredientAnalysisEnabled() {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.decernis.ingredient.analysis.enabled"));
 	}
@@ -164,7 +160,8 @@ public class DecernisServiceImpl  extends AbstractLifecycleBean implements Decer
 	/** {@inheritDoc} */
 	@Override
 	public boolean isEnabled() {
-		return serverUrl() != null && !serverUrl().isBlank() && token() != null && !token().isBlank();
+		String token = DecernisHelper.getToken();
+		return serverUrl() != null && !serverUrl().isBlank() && token != null && !token.isBlank();
 	}
 	
 	/** {@inheritDoc} */
@@ -497,7 +494,7 @@ public class DecernisServiceImpl  extends AbstractLifecycleBean implements Decer
 	private HttpEntity<String> createEntity(String param) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-		headers.setBearerAuth(cleanToken(token()));
+		headers.setBearerAuth(cleanToken(DecernisHelper.getToken()));
 		headers.setContentType(MediaType.APPLICATION_JSON);
 
 		return new HttpEntity<>(param, headers);
