@@ -31,6 +31,29 @@
 		<!-- the list of available language files -->
 		<languages> 
 		
+		<!-- 
+		  Rules for locales:
+		    - A locale consists of a language and a country code.
+		    - If the language code is identical to the country code, the country can be omitted.
+		      Example: fr_FR → fr, it_IT → it
+		    - If the country code is different, always keep the full locale.
+		      Example: ja_JP, sv_SE
+		      → Otherwise, flags may not display correctly.
+		
+		    Special cases (because there always are some :-) ):
+		      → "en" is used for "en_UK" and displays the United Kingdom flag.
+		      → "ar" is used for generic Arabic and displays the Arab League flag 
+		         (at the expense of Argentina).
+		
+		    Nutrient regulations also use country codes.
+		    Therefore, it's important to specify the country when necessary.
+		      → For "ar" without a country, Saudi Arabian regulations apply.
+		
+		    The locales supported by the system are defined:
+		      - in `beCPG.multilinguale.supportedLocales` for the engine,
+		      - in `becpg-share-config.xml` for the user interface.
+		-->
+		
 			<language locale="en">English</language>
 			<language locale="en_CA">English - Canada</language>
 			<language locale="en_US">English - United States</language>
@@ -76,7 +99,7 @@
 			<language locale="ar_DZ">Arabic - Algeria</language>
 			<language locale="ar_LB">Arabic - Lebanon</language>
 			<language locale="be_BY">Belarusian - Belarus</language>
-			<language locale="bg_BG">Bulgarian - Bulgaria</language>
+			<language locale="bg">Bulgarian - Bulgaria</language>
 			<language locale="ca_ES">Catalan - Spain</language>
 			<language locale="cs_CZ">Czech - Czech Republic</language>
 			<language locale="da_DK">Danish - Denmark</language>
@@ -134,20 +157,20 @@
 			<language locale="iw_IL">Hebrew - Israel</language>
 			<language locale="ja_JP">Japanese - Japan</language>
 			<language locale="ko_KR">Korean - South Korea</language>
-			<language locale="lt_LT">Lithuanian - Lithuania</language>
-			<language locale="lv_LV">Latvian - Latvia</language>
-			<language locale="mk_MK">Macedonian - Macedonia</language>
+			<language locale="lt">Lithuanian - Lithuania</language>
+			<language locale="lv">Latvian - Latvia</language>
+			<language locale="mk">Macedonian - Macedonia</language>
 			<language locale="ms_MY">Malay - Malaysia</language>
-			<language locale="mt_MT">Maltese - Malta</language>
+			<language locale="mt">Maltese - Malta</language>
 			<language locale="nl_NL">Dutch - Netherlands</language>
 			<language locale="nl_BE">Dutch - Belgium</language>
 			<language locale="no_NO">Norwegian - Norway</language>
-			<language locale="pl_PL">Polish - Poland</language>
+			<language locale="pl">Polish - Poland</language>
 			<language locale="pt_BR">Portuguese - Brazil</language>
 			<language locale="pt_PT">Portuguese - Portugal</language>
 			<language locale="ro_RO">Romanian - Romania</language>
-			<language locale="ru_RU">Russian - Russia</language>
-			<language locale="sk_SK">Slovak - Slovakia</language>
+			<language locale="ru">Russian - Russia</language>
+			<language locale="sk">Slovak - Slovakia</language>
 			<language locale="sl_SI">Slovenian - Slovenia</language>
 			<language locale="sq_AL">Albanian - Albania</language>
 			<language locale="sr_ME">Serbian - Montenegro</language>
@@ -156,7 +179,7 @@
 			<language locale="sr_RS">Serbian - Serbia</language>
 			<language locale="sv_SE">Swedish - Sweden</language>
 			<language locale="th_TH">Thai - Thailand</language>
-			<language locale="tr_TR">Turkish - Turkey</language>
+			<language locale="tr">Turkish - Turkey</language>
 			<language locale="uk_UA">Ukrainian - Ukraine</language>
 			<language locale="vi_VN">Vietnamese - Vietnam</language>
 			<language locale="zh_TW">Chinese - Taiwan</language>
