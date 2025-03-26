@@ -34,6 +34,7 @@ import org.alfresco.service.cmr.action.Action;
 import org.alfresco.service.cmr.action.ActionCondition;
 import org.alfresco.service.cmr.action.CompositeAction;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.rule.RuleType;
 import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -137,7 +138,7 @@ public class DesignerInitVisitor extends AbstractInitVisitorImpl {
 		conditionOnName.setInvertCondition(false);
 		compositeAction.addActionCondition(conditionOnName);
 
-		createRule(nodeRef, ruleName, ruleDescription, true, compositeAction);
+		createRule(nodeRef, ruleName, ruleDescription, true, false, List.of(RuleType.INBOUND), compositeAction);
 
 	}
 
