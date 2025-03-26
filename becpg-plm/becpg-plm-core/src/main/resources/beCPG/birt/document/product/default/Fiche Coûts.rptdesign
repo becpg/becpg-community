@@ -38,7 +38,7 @@
     </list-property>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="452">
-            <property name="FILELIST">/home/arthur/becpg-workspace/becpg/becpg-plm/becpg-plm-core/src/main/resources/beCPG/birt/document/product/default/datasource_cost_2.xml</property>
+            <property name="FILELIST">/home/arthur/becpg-workspace/becpg/becpg-plm/becpg-plm-core/src/main/resources/beCPG/birt/document/product/default/datasource_for_Cost.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -892,12 +892,14 @@ row["compoListProduct"]
 
 if(BirtStr.indexOf("previousCost", row["reportParametersCode"]) != -1){
 	res = row["costListPreviousValue"]
-} else if(BirtStr.indexOf("futureCost", row["reportParametersCode"]) != -1){
-	res = row["costListFutureValue"]
 } else if(BirtStr.indexOf("futureCost2", row["reportParametersCode"]) != -1){
 	res = row["costListFutureValue2"]
 } else if(BirtStr.indexOf("futureCost3", row["reportParametersCode"]) != -1){
 	res = row["costListFutureValue3"]
+} else if(BirtStr.indexOf("futureCost4", row["reportParametersCode"]) != -1){
+	res = row["costListFutureValue4"]
+} else if(BirtStr.indexOf("futureCost", row["reportParametersCode"]) != -1){
+	res = row["costListFutureValue"]
 } else {
 	res = row["costListValue"]
 }
@@ -2702,12 +2704,14 @@ row["packagingListProduct"]
 
 if(BirtStr.indexOf("previousCost", row["reportParametersCode"]) != -1){
 	res = row["costListPreviousValue"]
-} else if(BirtStr.indexOf("futureCost", row["reportParametersCode"]) != -1){
-	res = row["costListFutureValue"]
 } else if(BirtStr.indexOf("futureCost2", row["reportParametersCode"]) != -1){
 	res = row["costListFutureValue2"]
 } else if(BirtStr.indexOf("futureCost3", row["reportParametersCode"]) != -1){
 	res = row["costListFutureValue3"]
+} else if(BirtStr.indexOf("futureCost4", row["reportParametersCode"]) != -1){
+	res = row["costListFutureValue4"]
+} else if(BirtStr.indexOf("futureCost", row["reportParametersCode"]) != -1){
+	res = row["costListFutureValue"]
 } else {
 	res = row["costListValue"]
 }
@@ -3422,11 +3426,17 @@ row["compoListProduct"]
                     <expression name="expression">var res = "";
 
 if(BirtStr.indexOf("previousCost", row["reportParametersCode"]) != -1){
-	res = row["previousCost"]
+	res = row["costListPreviousValue"]
+} else if(BirtStr.indexOf("futureCost2", row["reportParametersCode"]) != -1){
+	res = row["costListFutureValue2"]
+} else if(BirtStr.indexOf("futureCost3", row["reportParametersCode"]) != -1){
+	res = row["costListFutureValue3"]
+} else if(BirtStr.indexOf("futureCost4", row["reportParametersCode"]) != -1){
+	res = row["costListFutureValue4"]
 } else if(BirtStr.indexOf("futureCost", row["reportParametersCode"]) != -1){
-	res = row["futureCost"]
+	res = row["costListFutureValue"]
 } else {
-	res = row["currentCost"]
+	res = row["costListValue"]
 }
 
 res;</expression>
