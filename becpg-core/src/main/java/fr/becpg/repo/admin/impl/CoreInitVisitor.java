@@ -42,6 +42,7 @@ import org.alfresco.service.cmr.action.ActionCondition;
 import org.alfresco.service.cmr.action.CompositeAction;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.rule.RuleType;
 import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.site.SiteInfo;
@@ -186,7 +187,7 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 			aspectCondition.setInvertCondition(true);
 			compositeAction.addActionCondition(aspectCondition);
 
-			createRule(entitiesHistoryFolder, "Add no Index aspect", "Add no Index aspect to the created node", true, compositeAction);
+			createRule(entitiesHistoryFolder, "Add no Index aspect", "Add no Index aspect to the created node", true, true, List.of(RuleType.INBOUND), compositeAction);
 			
 		}
 
@@ -262,7 +263,7 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 			conditionOnName.setInvertCondition(false);
 			compositeAction.addActionCondition(conditionOnName);
 
-			createRule(nodeRef, "Specialise type", "Every item created will have this type", applyToChildren, compositeAction);
+			createRule(nodeRef, "Specialise type", "Every item created will have this type", applyToChildren, false, List.of(RuleType.INBOUND), compositeAction);
 
 		} else if (RepoConsts.PATH_SECURITY.equals(folderName)) {
 			specialiseType = SecurityModel.TYPE_ACL_GROUP;
