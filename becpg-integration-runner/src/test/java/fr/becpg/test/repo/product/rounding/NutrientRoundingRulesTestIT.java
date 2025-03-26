@@ -19,6 +19,14 @@ public class NutrientRoundingRulesTestIT {
 
 	@Autowired
 	protected MLTextHelper mlTextHelper;
+	
+	@Test
+	public void testARLocales() {
+		Locale ar = MLTextHelper.parseLocale("ar");
+		assertEquals("GSO",RegulationFormulationHelper.getLocalKey(ar));
+	}
+	
+	
 
 	@Test
 	public void testUSRoundingRules() {
