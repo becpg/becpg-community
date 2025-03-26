@@ -1576,14 +1576,6 @@
                         <facetable>true</facetable>
                     </index>
                 </property>
-                <property name="bcpg:toxCalculateMax">
-                    <type>d:boolean</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="true">
-                        <tokenised>false</tokenised>
-                        <facetable>true</facetable>
-                    </index>
-                </property>
 				<property name="bcpg:toxAbsorptionType">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
