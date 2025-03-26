@@ -863,7 +863,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			conditionOnSize.setInvertCondition(false);
 			compositeAction.addActionCondition(conditionOnSize);
 
-			createRule(nodeRef, "import csv file", "Every csv item created will be imported", true, compositeAction);
+			createRule(nodeRef, "import csv file", "Every csv item created will be imported", true, true, List.of(RuleType.INBOUND), compositeAction);
 
 			action = actionService.createAction(ImporterActionExecuter.NAME, null);
 			compositeAction = actionService.createCompositeAction();
@@ -894,7 +894,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			compositeAction.addActionCondition(conditionOnSize);
 			
 			
-			createRule(nodeRef, "import xlsx file", "Every xlsx item created will be imported", true, compositeAction);
+			createRule(nodeRef, "import xlsx file", "Every xlsx item created will be imported", true, true, List.of(RuleType.INBOUND), compositeAction);
 
 		} else if (Objects.equals(folderName, PlmRepoConsts.PATH_IMPORT_USER)) {
 
@@ -918,7 +918,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			conditionOnName.setInvertCondition(false);
 			compositeAction.addActionCondition(conditionOnName);
 
-			createRule(nodeRef, "import user", "Every item created will be imported", true, compositeAction);
+			createRule(nodeRef, "import user", "Every item created will be imported", true, true, List.of(RuleType.INBOUND), compositeAction);
 
 		}
 
