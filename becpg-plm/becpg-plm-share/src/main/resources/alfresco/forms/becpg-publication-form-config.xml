@@ -241,6 +241,33 @@
 					<field id="bp:pubChannelListError" read-only="true" />
 				</appearance>
 			</form>
+			<form id="datagridWUsed">
+                <field-visibility>
+                    <show id="bp:pubChannelListAction" />
+                    <show id="bp:pubChannelListChannel" />
+                    <show id="bp:pubChannelListBatchId" />
+                    <show id="bp:pubChannelListModifiedDate" />
+                    <show id="bp:pubChannelListPublishedDate" />
+                    <show id="bp:pubChannelListStatus" />
+                    <show id="bp:pubChannelListError" />
+                </field-visibility>
+                <appearance>
+                    <field id="bp:pubChannelListChannel" />
+                  <field id="bp:pubChannelListAction" >
+                        <control template="/org/alfresco/components/form/controls/selectone.ftl">
+                            <control-param name="options">,RETRY|data.pubChannelStatus.retry,STOP|data.pubChannelStatus.stop
+                            </control-param>
+                        </control>
+                    </field>
+                    <field id="bp:pubChannelListModifiedDate" read-only="true" />
+                    <field id="bp:pubChannelListPublishedDate" read-only="true" />
+                    <field id="bp:pubChannelListBatchId" read-only="true" />
+                    <field id="bp:pubChannelListStatus" read-only="true" />
+                    <field id="bp:pubChannelListError" read-only="true" />
+                </appearance>
+            </form>
+			
+			
 		</forms>
 	</config>
 
