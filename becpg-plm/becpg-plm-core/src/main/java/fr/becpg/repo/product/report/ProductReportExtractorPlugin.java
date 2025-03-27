@@ -1742,45 +1742,44 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			Double totalFutureCost = 0d;
 
 			for (CostListDataItem c : partProduct.getCostList()) {
-				if (c.getCost() != null) {
 
-					Boolean isFixed = (Boolean) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTFIXED);
-					if ((isFixed == null) || Boolean.FALSE.equals(isFixed)) {
+				Boolean isFixed = (Boolean) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTFIXED);
+				if ((isFixed == null) || Boolean.FALSE.equals(isFixed)) {
 
-						String costType = (String) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTTYPE);
-						String costCurrency = (String) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTCURRENCY);
-						String productCurrency = (String) nodeService.getProperty(entityNodeRef, PLMModel.PROP_PRICE_CURRENCY);
+					String costType = (String) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTTYPE);
+					String costCurrency = (String) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTCURRENCY);
+					String productCurrency = (String) nodeService.getProperty(entityNodeRef, PLMModel.PROP_PRICE_CURRENCY);
 
-						if ((productCurrency == null) || (costCurrency == null) || productCurrency.equals(costCurrency)) {
+					if ((productCurrency == null) || (costCurrency == null) || productCurrency.equals(costCurrency)) {
+
+						if (type.toString().equals(costType)) {
 
 							if (c.getValue() != null) {
-
-								if (type.toString().equals(costType)) {
-
-									currentCost += CostCalculatingHelper.extractValue(formulatedProduct, partProduct, c);
-
-									if (c.getFutureValue() != null) {
-										futureCost += c.getFutureValue();
-									}
-
-									if (c.getPreviousValue() != null) {
-										previousCost += c.getPreviousValue();
-									}
-
-								} else if ((c.getDepthLevel() == null) || (c.getDepthLevel() == 1)) {
-
-									totalCurrentCost += CostCalculatingHelper.extractValue(formulatedProduct, partProduct, c);
-
-									if (c.getFutureValue() != null) {
-										totalFutureCost += c.getFutureValue();
-									}
-
-									if (c.getPreviousValue() != null) {
-										totalPreviousCost += c.getPreviousValue();
-									}
-
-								}
+								currentCost += CostCalculatingHelper.extractValue(formulatedProduct, partProduct, c);
 							}
+							
+							if (c.getFutureValue() != null) {
+								futureCost += c.getFutureValue();
+							}
+
+							if (c.getPreviousValue() != null) {
+								previousCost += c.getPreviousValue();
+							}
+
+						} else if ((c.getDepthLevel() == null) || (c.getDepthLevel() == 1)) {
+
+							if (c.getValue() != null) {
+								totalCurrentCost += CostCalculatingHelper.extractValue(formulatedProduct, partProduct, c);
+							}
+							
+							if (c.getFutureValue() != null) {
+								totalFutureCost += c.getFutureValue();
+							}
+
+							if (c.getPreviousValue() != null) {
+								totalPreviousCost += c.getPreviousValue();
+							}
+
 						}
 					}
 				}
