@@ -88,6 +88,7 @@
 		<property name="siteService" ref="siteService" />
 		<property name="namespacePrefixResolver" ref="namespaceService" />
 		<property name="sysAdminParams" ref="sysAdminParams"/>
+		<property name="dictionaryService" ref="dictionaryService"/>
 	</bean>
 
     <!-- Variant -->
