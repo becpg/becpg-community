@@ -598,35 +598,35 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 
 	private List<NodeRef> extractWUsedToFormulate(NodeRef entityNodeRef) {
 		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			if (accept(entityNodeRef)) {
 
-				if (logger.isDebugEnabled()) {
-					logger.debug("Found modified product: " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + " (" + entityNodeRef
-							+ ") ");
-				}
-				try {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Found modified product: " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + " (" + entityNodeRef
+						+ ") ");
+			}
+			try {
 
-					QName associationQName = evaluateWUsedAssociation(entityNodeRef);
+				QName associationQName = evaluateWUsedAssociation(entityNodeRef);
 
-					if (associationQName != null) {
-						MultiLevelListData wUsedData = wUsedListService.getWUsedEntity(Arrays.asList(entityNodeRef), WUsedOperator.AND,
-								associationQName, RepoConsts.MAX_DEPTH_LEVEL);
+				if (associationQName != null) {
+					MultiLevelListData wUsedData = wUsedListService.getWUsedEntity(Arrays.asList(entityNodeRef), WUsedOperator.AND,
+							associationQName, RepoConsts.MAX_DEPTH_LEVEL);
 
-						if (logger.isTraceEnabled()) {
-							logger.trace("WUsed to apply:" + wUsedData.toString());
-							logger.trace("Leaf size :" + wUsedData.getAllLeafs().size());
+					if (logger.isTraceEnabled()) {
+						logger.trace("WUsed to apply:" + wUsedData.toString());
+						logger.trace("Leaf size :" + wUsedData.getAllLeafs().size());
 
-						}
-
-						return wUsedData.getAllLeafs();
 					}
-				} catch (Exception e) {
-					Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
-					if (validCause != null) {
-						throw (RuntimeException) validCause;
-					}
-					logger.error(e, e);
+					
+					List<NodeRef> wUsedList = new ArrayList<>(wUsedData.getAllLeafs());
+					wUsedList.removeIf(e -> !accept(e));
+					return wUsedList;
 				}
+			} catch (Exception e) {
+				Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
+				if (validCause != null) {
+					throw (RuntimeException) validCause;
+				}
+				logger.error(e, e);
 			}
 			return new ArrayList<>();
 
