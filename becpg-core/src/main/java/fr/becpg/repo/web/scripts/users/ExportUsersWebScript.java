@@ -58,7 +58,7 @@ public class ExportUsersWebScript extends AbstractWebScript {
 		res.setHeader("Pragma", "no-cache");
 
 		try (OutputStream out = res.getOutputStream()) {
-			String csvHeader = "\"cm:lastName\";\"cm:firstName\";\"cm:email\";\"cm:telephone\";\"cm:organization\";\"username\";\"new_username\";\"password\";\"should_generate_password\";\"memberships\";\"groups\";\"notify\";\"is_ids_user\";\"disable\"\n";
+			String csvHeader = "\"cm:lastName\";\"cm:firstName\";\"cm:email\";\"cm:telephone\";\"cm:organization\";\"username\";\"new_username\";\"password\";\"should_generate_password\";\"memberships\";\"groups\";\"notify\";\"is_ids_user\";\"disable\";\"delete\"\n";
 			out.write(csvHeader.getBytes(StandardCharsets.UTF_8));
 
 			PagingResults<PersonInfo> people = personService.getPeople(searchTerm, filterProps, null, new PagingRequest(Integer.MAX_VALUE));
@@ -75,8 +75,8 @@ public class ExportUsersWebScript extends AbstractWebScript {
 				String isSsoUser = getOrEmpty(nodeService.getProperty(userRef, BeCPGModel.PROP_IS_SSO_USER));
 				String disabled = getOrEmpty(nodeService.hasAspect(userRef, ContentModel.ASPECT_PERSON_DISABLED));
 
-				String csvRow = String.format("%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s%n", lastName, firstName, email, telephone, organization,
-						userName, "", "", "", "", "", "", isSsoUser, disabled);
+				String csvRow = String.format("%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s%n", lastName, firstName, email, telephone, organization,
+						userName, "", "", "", "", "", "", isSsoUser, disabled, "");
 
 				out.write(csvRow.getBytes(StandardCharsets.UTF_8));
 
