@@ -802,6 +802,11 @@
                includeWhitespace: false,
                ignoreEmpty: true
             }, "keyup", parent._msg("Alfresco.forms.validation.length.message.min", parent.options.minUsernameLength));
+            form.addValidation(parent.id + "-create-username", Alfresco.forms.validation.regexMatch, 
+			{
+			   pattern: "^[^A-Z]+$",
+			   match: true
+			}, "keyup", parent._msg("Alfresco.forms.validation.lowercase.message"));
             form.addValidation(parent.id + "-create-password", Alfresco.forms.validation.length,
             {
                min: parent.options.minPasswordLength,
@@ -1294,6 +1299,14 @@
          {
             this._visible = true;
             window.scrollTo(0, 0);
+            var createGeneratePasswordCheckBox = Dom.get(parent.id + "-create-generatepassword");
+            if (createGeneratePasswordCheckBox) {
+	            createGeneratePasswordCheckBox.checked = false;
+			}
+            var updateGeneratePasswordCheckBox = Dom.get(parent.id + "-update-generatepassword");
+            if (updateGeneratePasswordCheckBox) {
+	            updateGeneratePasswordCheckBox.checked = false;
+			}
          },
 
          onHide: function onHide()
@@ -1942,6 +1955,9 @@
          
 	   onExportUsersClick: function ConsoleUsers_onExportUsersClick(e, args) {
 		   var me = this;
+		   if (!me.searchTerm) {
+			   me.searchTerm = "*";
+		   }
 		   var downloadUrl = Alfresco.constants.PROXY_URI + "becpg/export-users?search=" + encodeURIComponent(me.searchTerm);
 		   window.location.href = downloadUrl;
 	   },
