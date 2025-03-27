@@ -2,7 +2,8 @@
 
 <#macro sysField id>
 	  <p class="info">${msg(id+".description")?html}</p>
-	  <@attrtextarea id=id attribute=sysBeCPGAttributes[id] maxlength=5000/>
+	  <#assign attr = sysBeCPGAttributes?filter(a -> a.key == id)?first>
+	  <@attrtextarea id=id attribute=attr maxlength=5000/>
       <@button label=msg("system-configuration.save") onclick="updateConf('${id?html}');" />
       <@button label=msg("system-configuration.reset") onclick="resetConf('${id?html}');" />
 </#macro>
@@ -47,73 +48,73 @@
    
    <div class="column-full">
     <@section label=msg("system-configuration.section.system.title") />
-	<#list sysBeCPGAttributes?keys as key>
-		<#if sysBeCPGAttributes[key].set == "system">
-			<@sysField id=key />
-		</#if>
+	<#list sysBeCPGAttributes as attr>
+	    <#if attr.set == "system">
+	        <@sysField id=attr.key />
+	    </#if>
 	</#list>
      </div>
    
     <div class="column-full">
     <@section label=msg("system-configuration.section.format.title") />
-	<#list sysBeCPGAttributes?keys as key>
-		<#if sysBeCPGAttributes[key].set == "format">
-			<@sysField id=key />
-		</#if>
+	<#list sysBeCPGAttributes as attr>
+	    <#if attr.set == "format">
+	        <@sysField id=attr.key />
+	    </#if>
 	</#list>
     </div>
    
     <div class="column-full">
     <@section label=msg("system-configuration.section.search.title") />
-	<#list sysBeCPGAttributes?keys as key>
-		<#if sysBeCPGAttributes[key].set == "search">
-			<@sysField id=key />
-		</#if>
+	<#list sysBeCPGAttributes as attr>
+	    <#if attr.set == "search">
+	        <@sysField id=attr.key />
+	    </#if>
 	</#list>
     </div>
    
     <div class="column-full">
     <@section label=msg("system-configuration.section.export.title") />
-	<#list sysBeCPGAttributes?keys as key>
-		<#if sysBeCPGAttributes[key].set == "export">
-			<@sysField id=key />
-		</#if>
+	<#list sysBeCPGAttributes as attr>
+	    <#if attr.set == "export">
+	        <@sysField id=attr.key />
+	    </#if>
 	</#list>
     </div>
    
     <div class="column-full">
     <@section label=msg("system-configuration.section.report.title") />
-	<#list sysBeCPGAttributes?keys as key>
-		<#if sysBeCPGAttributes[key].set == "report">
-			<@sysField id=key />
-		</#if>
+	<#list sysBeCPGAttributes as attr>
+	    <#if attr.set == "report">
+	        <@sysField id=attr.key />
+	    </#if>
 	</#list>
     </div>
    
     <div class="column-full">
     <@section label=msg("system-configuration.section.formulation.title") />
-	<#list sysBeCPGAttributes?keys as key>
-		<#if sysBeCPGAttributes[key].set == "formulation">
-			<@sysField id=key />
-		</#if>
+	<#list sysBeCPGAttributes as attr>
+	    <#if attr.set == "formulation">
+	        <@sysField id=attr.key />
+	    </#if>
 	</#list>
     </div>
    
     <div class="column-full">
-    <@section label=msg("system-configuration.section.change-order.title") />
-	<#list sysBeCPGAttributes?keys as key>
-		<#if sysBeCPGAttributes[key].set == "change-order">
-			<@sysField id=key />
-		</#if>
+    <@section label=msg("system-configuration.section.automatic-formulation.title") />
+	<#list sysBeCPGAttributes as attr>
+	    <#if attr.set == "automatic-formulation">
+	        <@sysField id=attr.key />
+	    </#if>
 	</#list>
     </div>
    
     <div class="column-full">
     <@section label=msg("system-configuration.section.project.title") />
-	<#list sysBeCPGAttributes?keys as key>
-		<#if sysBeCPGAttributes[key].set == "project">
-			<@sysField id=key />
-		</#if>
+	<#list sysBeCPGAttributes as attr>
+	    <#if attr.set == "project">
+	        <@sysField id=attr.key />
+	    </#if>
 	</#list>
     </div>
    

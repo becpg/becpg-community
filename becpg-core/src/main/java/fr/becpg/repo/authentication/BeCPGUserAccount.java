@@ -230,8 +230,8 @@ public class BeCPGUserAccount {
 	@Override
 	public String toString() {
 		return "BeCPGUserAccount [userName=" + userName + ", password=" + password + ", generatePassword=" + generatePassword
-				+ ", synchronizeWithIDS=" + synchronizeWithIDS + ", disable=" + disable + ", newUserName=" + newUserName + ", extraProps="
-				+ extraProps + ", authorities=" + authorities + ", notify=" + notify + "]";
+				+ ", synchronizeWithIDS=" + synchronizeWithIDS + ", disable=" + disable + ", newUserName=" + newUserName
+				+ ", extraProps=" + extraProps + ", authorities=" + authorities + ", notify=" + notify + "]";
 	}
 
 }
