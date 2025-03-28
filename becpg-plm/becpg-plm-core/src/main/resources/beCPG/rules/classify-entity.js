@@ -83,11 +83,6 @@ function main() {
 			wasMoved = classifyByHierarchy(document, site);
 		}
 		
-		// formulate if the document was moved
-		if (wasMoved && document.isSubType("bcpg:product")) {
-			formulate(document);
-		}
-		
 		//Rename Sample
 		//rename(document);
 	}
