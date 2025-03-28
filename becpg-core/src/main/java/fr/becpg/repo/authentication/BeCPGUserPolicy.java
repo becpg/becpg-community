@@ -90,19 +90,23 @@ public class BeCPGUserPolicy extends AbstractBeCPGPolicy implements OnUpdateProp
 	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 		if (KEY_GENERATE_PASSWORD.equals(key)) {
 			for (NodeRef pendingNode : pendingNodes) {
-				beCPGUserAccountService.generatePassword((String) nodeService.getProperty(pendingNode, ContentModel.PROP_USERNAME), true);
-				nodeService.removeProperty(pendingNode, BeCPGModel.PROP_GENERATE_PASSWORD);
+				if (nodeService.exists(pendingNode)) {
+					beCPGUserAccountService.generatePassword((String) nodeService.getProperty(pendingNode, ContentModel.PROP_USERNAME), true);
+					nodeService.removeProperty(pendingNode, BeCPGModel.PROP_GENERATE_PASSWORD);
+				}
 			}
 		} else if (KEY_UPDATED_USER.equals(key)) {
 			for (NodeRef pendingNode : pendingNodes) {
-				Boolean isIdsUser = (Boolean) nodeService.getProperty(pendingNode, BeCPGModel.PROP_IS_SSO_USER);
-				if (isIdsUser != null && isIdsUser.booleanValue() && Boolean.TRUE.equals(identityServiceAccountProvider.isEnabled())) {
-					BeCPGUserAccount account = new BeCPGUserAccount();
-					account.setUserName((String) nodeService.getProperty(pendingNode, ContentModel.PROP_USERNAME));
-					account.setFirstName((String) nodeService.getProperty(pendingNode, ContentModel.PROP_FIRSTNAME));
-					account.setLastName((String) nodeService.getProperty(pendingNode, ContentModel.PROP_LASTNAME));
-					account.setEmail((String) nodeService.getProperty(pendingNode, ContentModel.PROP_EMAIL));
-					identityServiceAccountProvider.updateUser(account);
+				if (nodeService.exists(pendingNode)) {
+					Boolean isIdsUser = (Boolean) nodeService.getProperty(pendingNode, BeCPGModel.PROP_IS_SSO_USER);
+					if (isIdsUser != null && isIdsUser.booleanValue() && Boolean.TRUE.equals(identityServiceAccountProvider.isEnabled())) {
+						BeCPGUserAccount account = new BeCPGUserAccount();
+						account.setUserName((String) nodeService.getProperty(pendingNode, ContentModel.PROP_USERNAME));
+						account.setFirstName((String) nodeService.getProperty(pendingNode, ContentModel.PROP_FIRSTNAME));
+						account.setLastName((String) nodeService.getProperty(pendingNode, ContentModel.PROP_LASTNAME));
+						account.setEmail((String) nodeService.getProperty(pendingNode, ContentModel.PROP_EMAIL));
+						identityServiceAccountProvider.updateUser(account);
+					}
 				}
 			}
 		}
