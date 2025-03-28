@@ -309,6 +309,13 @@ public class UserImporterServiceImpl implements UserImporterService {
 				}
 			}
 
+			if (userAccount.getLastName() == null) {
+				userAccount.setLastName("");
+			}
+			if (userAccount.getFirstName() == null) {
+				userAccount.setFirstName("");
+			}
+			
 			if (headers.containsKey(ATTR_GROUPS)) {
 				String[] groups = splitted[headers.get(ATTR_GROUPS)].split(FIELD_SEPARATOR);
 				for (String group : groups) {
