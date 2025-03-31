@@ -8705,38 +8705,6 @@ row["HML"] == "HIGH"</expression>
                             </cell>
                         </row>
                     </grid>
-                    <image id="8519">
-                        <property name="marginTop">0.15in</property>
-                        <property name="width">2in</property>
-                        <property name="dataSet">Product</property>
-                        <list-property name="visibility">
-                            <structure>
-                                <property name="format">all</property>
-                                <expression name="valueExpr" type="javascript">if (row["nutrientProfilingClass"] != null &amp;&amp; row["nutrientProfilingClass"] != "") {&#13;
-	(BirtStr.indexOf( reportContext.getMessage("showNutritionalScore", reportContext.getLocale()), row["reportParameters"]) == -1)&#13;
-} else {&#13;
-	true;&#13;
-}</expression>
-                            </structure>
-                        </list-property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">reportParameters</property>
-                                <text-property name="displayName">reportParameters</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["reportParameters"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">nutrientProfilingClass</property>
-                                <text-property name="displayName">nutrientProfilingClass</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["nutrientProfilingClass"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                        </list-property>
-                        <method name="onRender"><![CDATA[this.imageName = "nutri-score_" + this.getRowData().getColumnValue("nutrientProfilingClass") + ".png";]]></method>
-                        <property name="source">embed</property>
-                        <property name="imageName">logo.png</property>
-                    </image>
                 </cell>
             </row>
             <row id="3097">
@@ -8980,6 +8948,38 @@ dataSetRow["nutListUnit"].replace("/100g", "").replace("/100mL", "")
                                 <property name="style">becpg-row-header</property>
                                 <cell id="9071">
                                     <property name="style">becpg-cell-header</property>
+                                    <image id="8519">
+                                        <property name="marginTop">0.15in</property>
+                                        <property name="width">2in</property>
+                                        <property name="dataSet">Product</property>
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr" type="javascript">if (row["nutrientProfilingClass"] != null &amp;&amp; row["nutrientProfilingClass"] != "") {&#13;
+	(BirtStr.indexOf( reportContext.getMessage("showNutritionalScore", reportContext.getLocale()), row["reportParameters"]) == -1)&#13;
+} else {&#13;
+	true;&#13;
+}</expression>
+                                            </structure>
+                                        </list-property>
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">reportParameters</property>
+                                                <text-property name="displayName">reportParameters</text-property>
+                                                <expression name="expression" type="javascript">dataSetRow["reportParameters"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                            <structure>
+                                                <property name="name">nutrientProfilingClass</property>
+                                                <text-property name="displayName">nutrientProfilingClass</text-property>
+                                                <expression name="expression" type="javascript">dataSetRow["nutrientProfilingClass"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                        </list-property>
+                                        <method name="onRender"><![CDATA[this.imageName = "nutri-score_" + this.getRowData().getColumnValue("nutrientProfilingClass") + ".png";]]></method>
+                                        <property name="source">embed</property>
+                                        <property name="imageName">logo.png</property>
+                                    </image>
                                 </cell>
                                 <cell id="9072">
                                     <property name="style">becpg-cell-header</property>
