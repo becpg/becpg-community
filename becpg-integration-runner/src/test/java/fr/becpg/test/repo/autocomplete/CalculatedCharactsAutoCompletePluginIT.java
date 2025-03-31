@@ -89,7 +89,7 @@ public class CalculatedCharactsAutoCompletePluginIT extends AbstractAutoComplete
                 logger.info("AutoCompleteEntry: " + entry.getName() + " - " + entry.getValue());
             }
            
-            assertEquals("Should find at least 1 render labeling rules",  autoCompletePage.getResults().size() >= 1);
+            assertTrue("Should find at least 1 render labeling rules",  autoCompletePage.getResults().size() >= 1);
             
             // Verify all found entries are of type Render
             boolean allRenderType = true;
