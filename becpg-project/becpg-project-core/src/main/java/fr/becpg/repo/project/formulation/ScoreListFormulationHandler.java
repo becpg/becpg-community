@@ -105,7 +105,7 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 		if (accept(surveyableEntity)) {
 
 			if (surveyableEntity.getSurveyList() == null) {
-				surveyableEntity.setScoreList(new ArrayList<>());
+				surveyableEntity.setSurveyList(new ArrayList<>());
 			}
 
 			formulateSurveylist(surveyableEntity);
@@ -129,13 +129,15 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 	}
 
 	public void formulateSurveylist(SurveyableEntity surveyableEntity) {
-		List<ScoreListDataItem> scoreList = surveyableEntity.getScoreList();
-
+	
 		final List<SurveyListDataItem> surveyList = SurveyableEntityHelper.getNamesSurveyLists(alfrescoRepository, surveyableEntity).values().stream()
 				.filter(Objects::nonNull).flatMap(List::stream).toList();
 
 		// If surveyList is empty, we do nothing
 		if (CollectionUtils.isNotEmpty(surveyList)) {
+			
+			List<ScoreListDataItem> scoreList = surveyableEntity.getScoreList();
+
 
 			Map<NodeRef, Double> scoresPerCriterion = new HashMap<>();
 			Map<NodeRef, Double> maxScoresPerCriterion = new HashMap<>();

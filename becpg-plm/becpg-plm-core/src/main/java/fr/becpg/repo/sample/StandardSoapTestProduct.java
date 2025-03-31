@@ -137,6 +137,7 @@ public class StandardSoapTestProduct extends SampleProductBuilder {
 
 			alfrescoRepository.create(destFolder, clientData);
 			soapProduct.setClients(List.of(clientData));
+			soapProduct.setScoreList(new ArrayList<>());
 		}
 
 		if (isWithCompo || isWithToxicology) {

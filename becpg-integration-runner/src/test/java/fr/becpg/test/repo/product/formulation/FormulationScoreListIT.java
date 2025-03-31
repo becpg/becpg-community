@@ -59,9 +59,10 @@ public class FormulationScoreListIT extends PLMBaseTestCase {
 
 		inWriteTx(() -> {
 			productService.formulate(greenScoreProductData);
-			verifyGreenScoreList(greenScoreProductData);
 			return null;
 		});
+		
+		verifyGreenScoreList(greenScoreProductData);
 		
 		Assert.assertNotNull(greenScoreProductData);
 	}
