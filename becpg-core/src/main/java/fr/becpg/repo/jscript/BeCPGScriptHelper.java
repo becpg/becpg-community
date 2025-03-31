@@ -2015,52 +2015,36 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 */
 	public boolean classifyByPropAndHierarchy(ScriptNode productNode, ScriptNode folderNode, String propHierarchy, String propPathName,
 			String locale) {
-
-		if (propPathName == null || propPathName.isEmpty()) {
-			return classifyByHierarchy(productNode, folderNode, propHierarchy, locale);
-		} else if (propPathName.split("\\|").length == 1) {
-
-			QName propPathNameQName = getQName(propPathName);
-
-			String subFolderName = nodeService.getProperty(productNode.getNodeRef(), propPathNameQName).toString();
-
-			if (locale != null && !locale.isEmpty()) {
-				subFolderName = getMLConstraint(subFolderName, propPathName, locale);
+		if (propPathName != null && propPathName.isBlank()) {
+			String subFolderName = null;
+			String[] split = propPathName.split("\\|");
+			if (split.length == 1) {
+				QName propPathNameQName = getQName(propPathName);
+				Serializable propValue = nodeService.getProperty(productNode.getNodeRef(), propPathNameQName);
+				if (propValue != null) {
+					subFolderName = propValue.toString();
+				}
+			} else {
+				String assocName = split[0];
+				String property = split[split.length - 1];
+				NodeRef finalAssoc = classifyPropAndHierarchyExtractAssoc(productNode.getNodeRef(), assocName, new ArrayList<>(Arrays.asList(split)));
+				Serializable propValue = nodeService.getProperty(finalAssoc, getQName(property));
+				if (propValue != null) {
+					subFolderName = propValue.toString();
+				}
 			}
-
-			NodeRef childNodeRef = nodeService.getChildByName(folderNode.getNodeRef(), ContentModel.ASSOC_CONTAINS, subFolderName);
-
-			if (childNodeRef == null) {
-				childNodeRef = fileFolderService.create(folderNode.getNodeRef(), subFolderName, ContentModel.TYPE_FOLDER).getNodeRef();
+			if (subFolderName != null && !subFolderName.isBlank()) {
+				if (locale != null && !locale.isBlank()) {
+					subFolderName = getMLConstraint(subFolderName, propPathName, locale);
+				}
+				NodeRef childNodeRef = nodeService.getChildByName(folderNode.getNodeRef(), ContentModel.ASSOC_CONTAINS, subFolderName);
+				if (childNodeRef == null) {
+					childNodeRef = fileFolderService.create(folderNode.getNodeRef(), subFolderName, ContentModel.TYPE_FOLDER).getNodeRef();
+				}
+				return classifyByHierarchy(productNode.getNodeRef(), childNodeRef, propHierarchy, locale);
 			}
-
-			classifyByHierarchy(productNode.getNodeRef(), childNodeRef, propHierarchy, locale);
-		} else {
-			String[] assocs = propPathName.split("\\|");
-
-			String assocName = assocs[0];
-
-			String property = assocs[assocs.length - 1];
-
-			NodeRef finalAssoc = classifyPropAndHierarchyExtractAssoc(productNode.getNodeRef(), assocName, new ArrayList<>(Arrays.asList(assocs)));
-
-			String subFolderName = nodeService.getProperty(finalAssoc, getQName(property)).toString();
-
-			if (locale != null && !locale.isEmpty()) {
-				subFolderName = getMLConstraint(subFolderName, propPathName, locale);
-			}
-
-			NodeRef childNodeRef = nodeService.getChildByName(folderNode.getNodeRef(), ContentModel.ASSOC_CONTAINS, subFolderName);
-
-			if (childNodeRef == null) {
-				childNodeRef = fileFolderService.create(folderNode.getNodeRef(), subFolderName, ContentModel.TYPE_FOLDER).getNodeRef();
-			}
-
-			classifyByHierarchy(productNode.getNodeRef(), childNodeRef, propHierarchy, locale);
-
 		}
-
-		return false;
+		return classifyByHierarchy(productNode, folderNode, propHierarchy, locale);
 	}
 
 	private NodeRef classifyPropAndHierarchyExtractAssoc(NodeRef nodeRef, String assocName, List<String> assocList) {
