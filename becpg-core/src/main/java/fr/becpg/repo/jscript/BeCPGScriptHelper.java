@@ -2015,7 +2015,6 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 */
 	public boolean classifyByPropAndHierarchy(ScriptNode productNode, ScriptNode folderNode, String propHierarchy, String propPathName,
 			String locale) {
-
 		if (propPathName != null && propPathName.isBlank()) {
 			String subFolderName = null;
 			String[] split = propPathName.split("\\|");
@@ -2029,7 +2028,6 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 				String assocName = split[0];
 				String property = split[split.length - 1];
 				NodeRef finalAssoc = classifyPropAndHierarchyExtractAssoc(productNode.getNodeRef(), assocName, new ArrayList<>(Arrays.asList(split)));
-
 				if (finalAssoc != null) {
 					Serializable propValue = nodeService.getProperty(finalAssoc, getQName(property));
 					if (propValue != null) {
