@@ -365,7 +365,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 		String url = analysisUrl() + "/scope/function?topic=" + moduleIdMap.get(moduelId);
 
 		HttpHeaders headers = new HttpHeaders();
-		headers.setBearerAuth(token().trim());
+		headers.setBearerAuth(DecernisHelper.getToken().trim());
 		
 		if (logger.isTraceEnabled()) {
 			logger.trace("GET url: " + url);
@@ -623,7 +623,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 		String url = analysisUrl() + "/scope/country";
 
 		HttpHeaders headers = new HttpHeaders();
-		headers.setBearerAuth(token().trim());
+		headers.setBearerAuth(DecernisHelper.getToken().trim());
 
 		if (logger.isTraceEnabled()) {
 			logger.trace("GET url: " + url);
