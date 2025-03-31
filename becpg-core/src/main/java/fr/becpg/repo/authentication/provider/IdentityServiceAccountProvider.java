@@ -8,7 +8,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -86,82 +88,34 @@ public class IdentityServiceAccountProvider {
 
 			try (CloseableHttpClient httpClient = builder.build()) {
 
-				HttpPost request = new HttpPost(authServerUrl + "/realms/" + realm + "/protocol/openid-connect/token");
+				HttpPost request = new HttpPost(authServerUrl + "/admin/realms/" + realm + "/users");
+				request.setHeader("Content-Type", "application/json;charset=UTF-8");
+				request.setHeader("Authorization", "Bearer " + getAdminAccessToken());
 
-				ArrayList<BasicNameValuePair> parameters = new ArrayList<>();
-				
-				parameters.add(new BasicNameValuePair("client_id", clientId));
-				if (identityServiceUserName != null && !identityServiceUserName.isEmpty()) {
-					parameters.add(new BasicNameValuePair("username", identityServiceUserName));
-					parameters.add(new BasicNameValuePair("password", identityServicePassword));
-					parameters.add(new BasicNameValuePair("grant_type", "password"));
-				} else {
-					parameters.add(new BasicNameValuePair("grant_type","client_credentials"));
+				JSONObject userRepresentation = new JSONObject();
+				userRepresentation.put("enabled", true);
+				userRepresentation.put("username", userAccount.getUserName());
+				userRepresentation.put("firstName", userAccount.getFirstName());
+				userRepresentation.put("lastName", userAccount.getLastName());
+				userRepresentation.put("email", userAccount.getEmail());
+
+				StringEntity params = new StringEntity(userRepresentation.toString(), "UTF-8");
+				request.setEntity(params);
+				if(logger.isDebugEnabled()) {
+					logger.debug("Create user:"+userRepresentation.toString());
 				}
-				if (clientSecret != null && !clientSecret.isEmpty()) {
-					parameters.add(new BasicNameValuePair("client_secret", clientSecret));
-				}
-				request.setEntity(new UrlEncodedFormEntity(parameters, "UTF-8"));
-
-				try (CloseableHttpResponse response = httpClient.execute(request)) {
-					if (response.getStatusLine().getStatusCode() == 200) {
-						JSONObject auth = new JSONObject(EntityUtils.toString(response.getEntity()));
-
-						if (auth.has("access_token")) {
-
-							request = new HttpPost(authServerUrl + "/admin/realms/" + realm + "/users");
-
-							request.setHeader("Content-Type", "application/json;charset=UTF-8");
-							request.setHeader("Authorization", "Bearer " + auth.getString("access_token"));
-
-							JSONObject userRepresentation = new JSONObject();
-							userRepresentation.put("enabled", true);
-							userRepresentation.put("username", userAccount.getUserName());
-							userRepresentation.put("firstName", userAccount.getFirstName());
-							userRepresentation.put("lastName", userAccount.getLastName());
-							userRepresentation.put("email", userAccount.getEmail());
-							
-							if( userAccount.getPassword() !=null && !  userAccount.getPassword().isEmpty()) {
-
-								JSONObject credentialrepresentation = new JSONObject();
-	
-								credentialrepresentation.put("type", "password");
-								credentialrepresentation.put("value", userAccount.getPassword());
-								credentialrepresentation.put("temporary", true);
-								
-								JSONArray credentials = new JSONArray();
-								credentials.put(credentialrepresentation);
-
-								userRepresentation.put("credentials", credentials);
-							}
-							
-
-							StringEntity params = new StringEntity(userRepresentation.toString(), "UTF-8");
-							request.setEntity(params);
-							if(logger.isDebugEnabled()) {
-								logger.debug("Create user:"+userRepresentation.toString());
-							}
-							try (CloseableHttpResponse createResp = httpClient.execute(request)) {
-								if (EntityUtils.toString(createResp.getEntity()).toLowerCase().contains("user exists")) {
-									if(logger.isDebugEnabled()){
-										logger.debug(EntityUtils.toString(createResp.getEntity()));
-									}
-									return false;
-								}
-								if (!HttpStatus.valueOf(createResp.getStatusLine().getStatusCode()).is2xxSuccessful()) {
-									throw new IllegalStateException(EntityUtils.toString(createResp.getEntity()));
-								} else  if(logger.isDebugEnabled()){
-									logger.debug(EntityUtils.toString(createResp.getEntity()));
-								}
-							}
-						} else {
-							logger.error(auth.toString());
-							throw new IllegalStateException("Cannot get access_token from identityService");
+				try (CloseableHttpResponse createResp = httpClient.execute(request)) {
+					String response = EntityUtils.toString(createResp.getEntity());
+					if (response.toLowerCase().contains("user exists")) {
+						if(logger.isDebugEnabled()){
+							logger.debug("user exists response: " + response);
 						}
-
-					} else {
-						logger.error(EntityUtils.toString(response.getEntity()));
-						throw new IllegalStateException("Cannot get access_token from identityService");
+						return false;
+					}
+					if (!HttpStatus.valueOf(createResp.getStatusLine().getStatusCode()).is2xxSuccessful()) {
+						throw new IllegalStateException(response);
+					} else  if(logger.isDebugEnabled()){
+						logger.debug(response);
 					}
 				}
 
@@ -172,6 +126,78 @@ public class IdentityServiceAccountProvider {
 		}
 		return true;
 	}
+	
+	private String getUserId(String username) {
+		try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
+            HttpGet request = new HttpGet(authServerUrl + "/admin/realms/" + realm + "/users?username=" + username);
+            request.setHeader("Content-Type", "application/json;charset=UTF-8");
+            request.setHeader("Authorization", "Bearer " + getAdminAccessToken());
+
+            try (CloseableHttpResponse response = httpClient.execute(request)) {
+                if (HttpStatus.valueOf(response.getStatusLine().getStatusCode()).is2xxSuccessful()) {
+                    JSONArray users = new JSONArray(EntityUtils.toString(response.getEntity()));
+                    
+                    for (int i = 0 ; i < users.length(); i ++) {
+                    	JSONObject user = users.getJSONObject(i);
+						if (user.getString("username").equals(username)) {
+                    		return user.getString("id");
+                    	}
+                    }
+                } else {
+                	throw new IllegalStateException("Cannot get userId from identity service");
+                }
+            }
+        } catch (IOException e) {
+            logger.error(e, e);
+        }
+		throw new IllegalStateException("Cannot get userId from identity service");
+	}
+	
+	public boolean generatePassword(String username, String newPassword) {
+        try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
+            HttpPut request = new HttpPut(authServerUrl + "/admin/realms/" + realm + "/users/" + getUserId(username) + "/reset-password");
+            request.setHeader("Content-Type", "application/json;charset=UTF-8");
+            request.setHeader("Authorization", "Bearer " + getAdminAccessToken());
+
+            JSONObject credential = new JSONObject();
+            credential.put("type", "password");
+            credential.put("value", newPassword);
+            credential.put("temporary", true);
+
+            request.setEntity(new StringEntity(credential.toString(), "UTF-8"));
+            try (CloseableHttpResponse response = httpClient.execute(request)) {
+                return HttpStatus.valueOf(response.getStatusLine().getStatusCode()).is2xxSuccessful();
+            }
+        } catch (IOException e) {
+            logger.error(e, e);
+            return false;
+        }
+    }
+	
+	 private String getAdminAccessToken() throws IOException {
+        try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
+            HttpPost request = new HttpPost(authServerUrl + "/realms/" + realm + "/protocol/openid-connect/token");
+            ArrayList<BasicNameValuePair> parameters = new ArrayList<>();
+            parameters.add(new BasicNameValuePair("client_id", clientId));
+            parameters.add(new BasicNameValuePair("grant_type", "password"));
+            parameters.add(new BasicNameValuePair("username", identityServiceUserName));
+            parameters.add(new BasicNameValuePair("password", identityServicePassword));
+            request.setEntity(new UrlEncodedFormEntity(parameters, "UTF-8"));
+
+            try (CloseableHttpResponse response = httpClient.execute(request)) {
+                if (response.getStatusLine().getStatusCode() == 200) {
+                    JSONObject auth = new JSONObject(EntityUtils.toString(response.getEntity()));
+                    if (auth.has("access_token")) {
+                    	return auth.getString("access_token");
+                    } else {
+						logger.error(auth.toString());
+						throw new IllegalStateException("Cannot get access_token from identityService");
+					}
+                }
+            }
+        }
+        throw new IOException("Failed to obtain admin access token");
+    }
 
 	/** {@inheritDoc} */
 	@Override

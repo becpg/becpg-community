@@ -6053,6 +6053,11 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
+				<property name="bcpg:generatePassword">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 			</properties>
 		</aspect>
 
