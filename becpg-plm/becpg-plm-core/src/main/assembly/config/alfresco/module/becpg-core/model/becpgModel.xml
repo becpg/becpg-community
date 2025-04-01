@@ -1579,14 +1579,6 @@
                         <facetable>true</facetable>
                     </index>
                 </property>
-                <property name="bcpg:toxCalculateMax">
-                    <type>d:boolean</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="true">
-                        <tokenised>false</tokenised>
-                        <facetable>true</facetable>
-                    </index>
-                </property>
 				<property name="bcpg:toxAbsorptionType">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
@@ -5974,6 +5966,11 @@
 		<aspect name="bcpg:userAuthenticationAspect">
 			<properties>
 				<property name="bcpg:isSsoUser">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:generatePassword">
 					<type>d:boolean</type>
 					<mandatory>false</mandatory>
 					<index enabled="false" />

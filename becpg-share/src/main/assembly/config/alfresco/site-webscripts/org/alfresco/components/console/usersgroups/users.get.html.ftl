@@ -41,9 +41,9 @@
                            <span class="first-child"><button>${msg("button.newuser")}</button></span>
                         </span>
                      </span>
-                     <span class="uploadusers-button">
-                        <span class="yui-button yui-push-button" id="${el}-uploadusers-button">
-                           <span class="first-child"><button>${msg("button.uploaduser")}</button></span>
+                     <span class="exportusers-button">
+                        <span class="yui-button yui-push-button" id="${el}-exportusers-button">
+                           <span class="first-child"><button>${msg("button.exportusers")}</button></span>
                         </span>
                      </span>
                   </#if>
@@ -301,7 +301,7 @@
                </div>
                <div class="field-row">
                   <#if !aimsEnabled>
-                     <span class="crud-label">${msg("label.password")}:&nbsp;*</span>
+                     <span class="crud-label">${msg("label.password")}:&nbsp;</span>
                   </#if>
                </div>
                <div class="field-row">
@@ -313,7 +313,7 @@
                </div>
                <div class="field-row">
                   <#if !aimsEnabled>
-                     <span class="crud-label">${msg("label.verifypassword")}:&nbsp;*</span>
+                     <span class="crud-label">${msg("label.verifypassword")}:&nbsp;</span>
                   </#if>
                </div>
                <div class="field-row">
@@ -322,6 +322,9 @@
                         hidden
                      </#if>
                   />
+               </div>
+               <div class="field-row">
+                  <span class="crud-label" ><input type="checkbox" id="${el}-create-generatepassword" />&nbsp;${msg("label.generatepassword")}</span>
                </div>
                <div class="field-row">
                   <#if !aimsEnabled>
@@ -514,6 +517,9 @@
                           hidden
                         </#if>
                      />
+               </div>
+               <div class="field-row">
+	               <span class="crud-label"><input type="checkbox" id="${el}-update-generatepassword" />&nbsp;${msg("label.generatepassword")}</span>
                </div>
       
                <div class="field-row">

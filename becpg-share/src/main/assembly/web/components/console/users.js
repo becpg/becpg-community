@@ -122,7 +122,7 @@
             // Buttons
             parent.widgets.searchButton = Alfresco.util.createYUIButton(parent, "search-button", parent.onSearchClick);
             parent.widgets.newuserButton = Alfresco.util.createYUIButton(parent, "newuser-button", parent.onNewUserClick);
-            parent.widgets.uploadUsersButton = Alfresco.util.createYUIButton(parent, "uploadusers-button", parent.onUploadUsersClick);
+            parent.widgets.exportUsersButton = Alfresco.util.createYUIButton(parent, "exportusers-button", parent.onExportUsersClick);
 
             var newuserSuccess = function(res)
             {
@@ -130,6 +130,7 @@
                {
                   parent.widgets.newuserButton.set("disabled", true);
                   parent.widgets.uploadUsersButton.set("disabled", true);
+                  parent.widgets.exportUsersButton.set("disabled", true);
                }
             };
 
@@ -801,7 +802,11 @@
                includeWhitespace: false,
                ignoreEmpty: true
             }, "keyup", parent._msg("Alfresco.forms.validation.length.message.min", parent.options.minUsernameLength));
-            form.addValidation(parent.id + "-create-password", Alfresco.forms.validation.mandatory, null, "keyup");
+            form.addValidation(parent.id + "-create-username", Alfresco.forms.validation.regexMatch, 
+			{
+			   pattern: "^[^A-Z]+$",
+			   match: true
+			}, "keyup", parent._msg("Alfresco.forms.validation.lowercase.message"));
             form.addValidation(parent.id + "-create-password", Alfresco.forms.validation.length,
             {
                min: parent.options.minPasswordLength,
@@ -809,7 +814,6 @@
                crop: true,
                ignoreEmpty: true
             }, "change", parent._msg("Alfresco.forms.validation.length.message.min", parent.options.minPasswordLength));
-            form.addValidation(parent.id + "-create-verifypassword", Alfresco.forms.validation.mandatory, null, "keyup");
             form.addValidation(parent.id + "-create-verifypassword", Alfresco.forms.validation.length,
             {
                min: parent.options.minPasswordLength,
@@ -1256,6 +1260,14 @@
          {
             this._visible = true;
             window.scrollTo(0, 0);
+            var createGeneratePasswordCheckBox = Dom.get(parent.id + "-create-generatepassword");
+            if (createGeneratePasswordCheckBox) {
+	            createGeneratePasswordCheckBox.checked = false;
+			}
+            var updateGeneratePasswordCheckBox = Dom.get(parent.id + "-update-generatepassword");
+            if (updateGeneratePasswordCheckBox) {
+	            updateGeneratePasswordCheckBox.checked = false;
+			}
          },
 
          onHide: function onHide()
@@ -1902,54 +1914,14 @@
          });
       },
          
-      /**
-       * Upload Users button click event handler
-       *
-       * @method onUploadUsersClick
-       * @param e {object} DomEvent
-       * @param args {array} Event parameters (depends on event type)
-       */
-      onUploadUsersClick: function ConsoleUsers_onUploadUsersClick(e, args)
-      {
-         // Force the use of the HTML (rather than Flash) uploader because there are issues with the
-         // Flash uploader in these circumstances when Sharepoint is being used. The Flash uploader
-         // picks up the wrong JSESSIONID cookie which causes the upload to fail.
-         if (!this.fileUpload)
-         {
-            this.fileUpload = Alfresco.util.ComponentManager.findFirst("Alfresco.HtmlUpload")
-         }
-
-         // Show uploader for single file select - override the upload URL to use appropriate upload service
-         var uploadConfig =
-         {
-            uploadURL: "api/people/upload.html",
-            mode: this.fileUpload.MODE_SINGLE_UPLOAD,
-            onFileUploadComplete:
-            {
-               fn: this.onUsersUploadComplete,
-               scope: this
-            }
-         };
-
-         if (this.fileUploadOriginalMessages) 
-         {
-            //Message of upload dialog was changed in reauthorize method. Get back original messages
-            var extesnsionSpan = Dom.get(this.fileUpload.id + "-extension-message");
-            var selectFileMessage = Dom.get(this.fileUpload.id + "-select-file-message");
- 
-            extesnsionSpan.innerHTML = this.fileUploadOriginalMessages.originalExtesnsionSpan;
-            selectFileMessage.innerHTML = this.fileUploadOriginalMessages.originalSelectFileMessage;
-            this.fileUpload.widgets.titleText.innerHTML = this.fileUploadOriginalMessages.originalTitle;
-            this.fileUpload.widgets.uploadButton._button.innerHTML = this.fileUploadOriginalMessages.originalTitleUploadButtonLable;
-         }
-   
-         this.fileUpload.show(uploadConfig);
-
-         // Make sure the "use Flash" tip is hidden just in case Flash is enabled...
-         var singleUploadTip = Dom.get(this.fileUpload.id + "-singleUploadTip-span");
-         Dom.addClass(singleUploadTip, "hidden");
-         Event.preventDefault(e);
-      },
+	   onExportUsersClick: function ConsoleUsers_onExportUsersClick(e, args) {
+		   var me = this;
+		   if (!me.searchTerm) {
+			   me.searchTerm = "*";
+		   }
+		   var downloadUrl = Alfresco.constants.PROXY_URI + "becpg/export-users?search=" + encodeURIComponent(me.searchTerm);
+		   window.location.href = downloadUrl;
+	   },
 
       /**
        * Users Upload complete event handler
@@ -2304,6 +2276,7 @@
             email: fnGetter("-create-email"),
             disableAccount: Dom.get(me.id + "-create-disableaccount").checked,
             isSsoUser: Dom.get(me.id + "-create-ssouser").checked,
+            generatePassword: Dom.get(me.id + "-create-generatepassword").checked,
             quota: quota,
             groups: groups
          };
@@ -2482,6 +2455,7 @@
             email: fnGetter("-update-email"),
             disableAccount: Dom.get(me.id + "-update-disableaccount").checked,
             isSsoUser: Dom.get(me.id + "-update-ssouser").checked,
+            generatePassword: Dom.get(me.id + "-update-generatepassword").checked,
             quota: quota,
             addGroups: addGroups,
             removeGroups: removeGroups,

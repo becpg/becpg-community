@@ -360,6 +360,10 @@
 	<bean id="webscript.fr.becpg.statistics.statistics.delete" class="fr.becpg.repo.web.scripts.statistics.DeleteStatisticsWebScript" parent="webscript">
 		<property name="beCPGAuditService" ref="beCPGAuditService" />
 	</bean>
-
+	
+	<bean id="webscript.fr.becpg.users.export-users.get" class="fr.becpg.repo.web.scripts.users.ExportUsersWebScript" parent="webscript">
+		<property name="nodeService" ref="nodeService" />
+		<property name="personService" ref="personService" />
+	</bean>
     
 </beans>
