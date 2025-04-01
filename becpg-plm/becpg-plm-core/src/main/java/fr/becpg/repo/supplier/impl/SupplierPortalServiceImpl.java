@@ -491,6 +491,7 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 			userAccount.setPassword(pwdGen.generatePassword());
 			userAccount.setNotify(notify);
 			userAccount.getAuthorities().add(SystemGroup.ExternalUser.toString());
+			userAccount.setSynchronizeWithIDS(true);
 
 			if(extraProps == null) {
 				extraProps = new HashMap<>();
