@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.apache.commons.lang3.mutable.MutableInt;
 
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
@@ -218,7 +218,7 @@ public abstract class AbstractScorableEntity extends BeCPGDataObject implements 
 			}
 		}
 
-		AtomicInteger index = new AtomicInteger();
+		MutableInt index = new MutableInt();
 		reqCtrlList.stream().sorted(Comparator.comparing(ReqCtrlListDataItem::getReqType, Comparator.nullsFirst(Comparator.naturalOrder())))
 				.forEach(r -> r.setSort(index.getAndIncrement()));
 
