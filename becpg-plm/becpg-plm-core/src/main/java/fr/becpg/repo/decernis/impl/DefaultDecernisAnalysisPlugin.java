@@ -133,15 +133,6 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 	}
 
 	/**
-	 * <p>token.</p>
-	 *
-	 * @return a {@link java.lang.String} object
-	 */
-	public String token() {
-		return systemConfigurationService.confValue("beCPG.decernis.token");
-	}
-
-	/**
 	 * <p>addInfoReqCtrl.</p>
 	 *
 	 * @return a {@link java.lang.Boolean} object
@@ -501,7 +492,7 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 	protected HttpEntity<String> createEntity(String body) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-		headers.setBearerAuth(token().trim());
+		headers.setBearerAuth(DecernisHelper.getToken().trim());
 		headers.setContentType(MediaType.APPLICATION_JSON);
 
 		return new HttpEntity<>(body, headers);
