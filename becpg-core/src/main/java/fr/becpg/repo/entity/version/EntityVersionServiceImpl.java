@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.alfresco.model.ApplicationModel;
 import org.alfresco.model.ContentModel;
@@ -65,6 +64,7 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
 import org.alfresco.service.transaction.TransactionService;
+import org.apache.commons.lang3.mutable.MutableInt;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
@@ -1138,7 +1138,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	@Override
 	public NodeRef convertVersion(NodeRef nodeRef) {
 		
-		Set<NodeRef> oldVersionWUsed = findOldVersionWUsed(nodeRef, new HashSet<>(), null, 2, new AtomicInteger(0), null);
+		Set<NodeRef> oldVersionWUsed = findOldVersionWUsed(nodeRef, new HashSet<>(), null, 2, new MutableInt(0), null);
 		
 		if (oldVersionWUsed.size() > 1) {
 			String name = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
@@ -1208,15 +1208,15 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	/** {@inheritDoc} */
 	@Override
 	public Set<NodeRef> findOldVersionWUsed(NodeRef sourceEntity) {
-		return findOldVersionWUsed(sourceEntity, new HashSet<>(), null, -1, new AtomicInteger(0), null);
+		return findOldVersionWUsed(sourceEntity, new HashSet<>(), null, -1, new MutableInt(0), null);
 	}
 	
 	/** {@inheritDoc} */
 	@Override
 	public Set<NodeRef> findOldVersionWUsed(NodeRef sourceEntity, Set<NodeRef> visited,
-			final List<NodeRef> ignoredItems, final int maxProcessedNodes, AtomicInteger currentCount, String path) {
+			final List<NodeRef> ignoredItems, final int maxProcessedNodes, MutableInt currentCount, String path) {
 		Set<NodeRef> ret = new LinkedHashSet<>();
-		if ((maxProcessedNodes >= 0 && currentCount.get() >= maxProcessedNodes) || visited.contains(sourceEntity) || !nodeService.exists(sourceEntity)) {
+		if ((maxProcessedNodes >= 0 && currentCount.intValue() >= maxProcessedNodes) || visited.contains(sourceEntity) || !nodeService.exists(sourceEntity)) {
 			return ret;
 		}
 		visited.add(sourceEntity);
@@ -1262,7 +1262,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				ret.add(sourceEntity);
 				currentCount.addAndGet(1);
 				if (logger.isTraceEnabled()) {
-					logger.trace("found " + currentCount.get() + " items out of " + maxProcessedNodes);
+					logger.trace("found " + currentCount.intValue() + " items out of " + maxProcessedNodes);
 				}
 			}
 		}
