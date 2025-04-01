@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -114,12 +115,12 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 	public void write(WebScriptRequest req, WebScriptResponse res, DataListFilter dataListFilter, PaginatedExtractedItems extractedItems)
 			throws IOException {
 
-		if (extractedItems instanceof AsyncPaginatedExtractorWrapper asyncItems) {
+		if (extractedItems instanceof AsyncPaginatedExtractorWrapper ) {
 
 			NodeRef downloadNodeRef = transactionService.getRetryingTransactionHelper()
 					.doInTransaction(() -> downloadStorage.createDownloadNode(false), false, true);
 
-			Runnable command = new AsyncExcelDataListOutputWriter(asyncItems, downloadNodeRef);
+			Runnable command = new AsyncExcelDataListOutputWriter((AsyncPaginatedExtractorWrapper) extractedItems, downloadNodeRef);
 			if (!threadExecuter.getQueue().contains(command)) {
 				threadExecuter.execute(command);
 			} else {
@@ -455,14 +456,14 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 				Row row = null;
 
 				if ((extractedExtrasItems == null) && (extractedItems.getComputedFields() != null)) {
-					List<AttributeExtractorStructure> fields = extractedItems.getComputedFields().stream().filter(titleProvider::isAllowed).toList();
+					List<AttributeExtractorStructure> fields = extractedItems.getComputedFields().stream().filter(titleProvider::isAllowed).collect(Collectors.toList());
 
 					ExcelHelper.appendExcelHeader(fields, null, null, headerRow, labelRow, exeCellStyles, sheet, cellnum, titleProvider,
 							MLTextHelper.shouldExtractMLText() ? MLTextHelper.getSupportedLocales() : null);
 
 					List<Map<String, Object>> items = null;
-					if (extractedItems instanceof AsyncPaginatedExtractorWrapper asyncItems) {
-						items = plugin.decorate(asyncItems.getNextWork());
+					if (extractedItems instanceof AsyncPaginatedExtractorWrapper ) {
+						items = plugin.decorate(((AsyncPaginatedExtractorWrapper) extractedItems).getNextWork());
 					} else {
 						items = plugin.decorate(extractedItems.getPageItems());
 					}
@@ -491,8 +492,8 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 								handler.updateStatus();
 							}
 						}
-						if (extractedItems instanceof AsyncPaginatedExtractorWrapper asyncItems) {
-							items = plugin.decorate(asyncItems.getNextWork());
+						if (extractedItems instanceof AsyncPaginatedExtractorWrapper) {
+							items = plugin.decorate(((AsyncPaginatedExtractorWrapper) extractedItems).getNextWork());
 						} else {
 							items = null;
 						}
