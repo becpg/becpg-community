@@ -24,7 +24,9 @@
 
 	beCPG.util.launchAsyncDownload = function(fileName, tplName, url, postParams) {
 
-
+	
+		fileName = fileName.replace(/[^a-zA-ZÀ-ÿ0-9\s.,:\-]/g, ""); // remove special characters
+		    
 		if (fileName.indexOf(".zip") > 0 || tplName.indexOf(".xlsx") > 0 ||  tplName.indexOf(".xlsm") > 0 || tplName.indexOf(".rptdesign") > 0) {
 
 			url += "&async=true";
