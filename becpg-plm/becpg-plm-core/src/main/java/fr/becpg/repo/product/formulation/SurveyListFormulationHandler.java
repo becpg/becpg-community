@@ -221,7 +221,9 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Product
 								.anyMatch(nodeRef -> nodeRef.equals(surveyQuestionNodeRef));
 				if (!alreadyPresent) {
 					logger.debug(String.format("Creating SurveyList with SurveyQuestion %s into %s", surveyQuestionNodeRef, fsSurveyListName));
-					surveyLists.add(new SurveyListDataItem(surveyQuestionNodeRef, true));
+					final SurveyListDataItem surveyListDataItem = new SurveyListDataItem(surveyQuestionNodeRef, true);
+					surveyListDataItem.setSort(surveyQuestion.getSort());
+					surveyLists.add(surveyListDataItem);
 				}
 			}
 		}
