@@ -210,21 +210,24 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 
 		if (!pendingNodes.isEmpty()) {
 
-			NodeRef entityNodeRef = entityListDAO.getEntity(pendingNodes.iterator().next());
-			List<NodeRef> entityVariants = BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_VARIANT).parent(entityNodeRef).inDB().list();
-
-			Map<String, NodeRef> entityVariantsMap = entityVariants.stream().collect(Collectors.toMap(v -> (String) nodeService.getProperty(v, ContentModel.PROP_NAME), v -> v));
-			if (logger.isDebugEnabled()) {
-				logger.debug("Search variant of : " + entityNodeRef);
-			}
-
-			for (NodeRef itemNodeRef : pendingNodes) {
-				if (nodeService.exists(itemNodeRef)) {
-					if (unQueueNode) {
-						logger.info("unQueue Node : " + itemNodeRef);
-						unQueueNode(key, itemNodeRef);
+			NodeRef nodeRef = pendingNodes.stream().filter(n -> nodeService.exists(n)).findFirst().orElse(null);
+			if (nodeRef != null) {
+				NodeRef entityNodeRef = entityListDAO.getEntity(nodeRef);
+				List<NodeRef> entityVariants = BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_VARIANT).parent(entityNodeRef).inDB().list();
+				
+				Map<String, NodeRef> entityVariantsMap = entityVariants.stream().collect(Collectors.toMap(v -> (String) nodeService.getProperty(v, ContentModel.PROP_NAME), v -> v));
+				if (logger.isDebugEnabled()) {
+					logger.debug("Search variant of : " + entityNodeRef);
+				}
+				
+				for (NodeRef itemNodeRef : pendingNodes) {
+					if (nodeService.exists(itemNodeRef)) {
+						if (unQueueNode) {
+							logger.info("unQueue Node : " + itemNodeRef);
+							unQueueNode(key, itemNodeRef);
+						}
+						updateItemVariants(entityNodeRef, entityVariantsMap, itemNodeRef);
 					}
-					updateItemVariants(entityNodeRef, entityVariantsMap, itemNodeRef);
 				}
 			}
 		}
