@@ -363,7 +363,7 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 	 * @param endDate a {@link java.lang.String} object
 	 * @return a int
 	 */
-	public int calculateTaskDuration(String startDate, String endDate) {
+	public Integer calculateTaskDuration(String startDate, String endDate) {
 		return ProjectHelper.calculateTaskDuration(parseDate(startDate), parseDate(endDate));
 	}
 
