@@ -359,6 +359,8 @@
           */
          var renderCellAdd = function renderCellAdd(elCell, oRecord, oColumn, oData)
          {
+			if (me.options.mode == "view") return;
+			
             Dom.setStyle(elCell.parentNode, "width", oColumn.width + "px");
             if (oRecord.getData("canAdd"))
             {
@@ -371,6 +373,8 @@
           */
          var renderCellRemove = function renderCellRemove(elCell, oRecord, oColumn, oData)
          {  
+			if (me.options.mode == "view") return;
+			 
             Dom.setStyle(elCell.parentNode, "width", oColumn.width + "px");
             if (oRecord.getData("canRemove"))
             {

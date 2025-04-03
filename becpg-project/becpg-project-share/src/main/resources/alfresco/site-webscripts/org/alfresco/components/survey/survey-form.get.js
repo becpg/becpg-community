@@ -8,6 +8,7 @@ function main() {
 	AlfrescoUtil.param('list');
 	AlfrescoUtil.param('itemType', null);
 	AlfrescoUtil.param('title', null);
+	AlfrescoUtil.param('mode', null);
 
 
 	var result = remote.connect("alfresco").get('/becpg/survey?entityNodeRef=' + model.nodeRef + "&dataListName="+model.list);
@@ -34,7 +35,7 @@ function main() {
 		name: "beCPG.component.DecisionTree",
 		initArgs : ["\"" + args.htmlid + "-control\"","\"" + args.htmlid + "-survey\""],
 		options: {
-			disabled: result.disabled,
+			disabled: result.disabled || model.mode == "view",
 			prefix: "survey",
 			data: sorted,
 			currentValue: result.data

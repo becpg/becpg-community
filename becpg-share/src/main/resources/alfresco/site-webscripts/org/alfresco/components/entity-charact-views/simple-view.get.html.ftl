@@ -22,7 +22,8 @@
 			      saveFieldUrl :  Alfresco.constants.PROXY_URI+ "becpg/bulkedit/save",
 			      hiddenColumns : ["prop_bcpg_depthLevel"],
 			      useHistoryManager : false,
-			      configurableColumns : false
+			      configurableColumns : false,
+			      mode: "${args.mode!""}"
 			   }).setMessages(${messages});
 			   
 			 

@@ -320,7 +320,7 @@
 				{
 					itemKind: "node",
 					itemId: nodeRef,
-					mode: "edit",
+					mode: this.options.mode == "view" ? "view" : "edit",
 					submitType: "json",
 					formId: this.options.simpleFormId != null  ? this.options.simpleFormId : "doclib-simple-metadata"
 				});
@@ -462,6 +462,7 @@
 		 * @param record {object} Object literal representing the file or folder to be actioned
 		 */
 		onActionDelete: function dlA_onActionDelete(record) {
+			if(this.options.mode == "view") return;
 			var me = this,
 				jsNode = record.jsNode,
 				content = jsNode.isContainer ? "folder" : "document",
@@ -1397,6 +1398,7 @@
 		 * @param record {object} Object literal representing the file or folder to be actioned
 		 */
 		onActionUploadNewVersion: function dlA_onActionUploadNewVersion(record) {
+			if (this.options.mode == "view") return;
 			var jsNode = record.jsNode,
 				displayName = record.displayName,
 				nodeRef = jsNode.nodeRef,
