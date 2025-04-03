@@ -213,6 +213,10 @@
                   <span class="field-label-right"> ${msg("label.userlocale")}:&nbsp; </span>
                   <span id="${el}-view-userlocale" class="field-value"></span>
                </div>
+               <div class="field-row">
+                  <span class="field-label-right"> ${msg("label.ssouser")}:&nbsp; </span>
+                  <span id="${el}-view-ssouser" class="field-value"></span>
+               </div>
             </div>
             
       
