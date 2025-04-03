@@ -20,7 +20,8 @@ function main(){
        		sortUrl : page.url.context+"/proxy/alfresco/becpg/entity/datalists/sort/node",
        		dataUrl : page.url.context+"/proxy/alfresco/" +  (args.dataUrl!=null ? args.dataUrl :"becpg/entity/datalists/data/node"),
       		itemUrl : page.url.context+"/proxy/alfresco/" +  (args.itemUrl!=null ? args.itemUrl :"becpg/entity/datalists/item/node/"),
-       		saveFieldUrl : page.url.context+"/proxy/alfresco/becpg/bulkedit/save"
+       		saveFieldUrl : page.url.context+"/proxy/alfresco/becpg/bulkedit/save",
+       		mode: String(args.mode)
            }
         };
          

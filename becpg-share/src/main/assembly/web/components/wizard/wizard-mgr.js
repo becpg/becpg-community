@@ -64,6 +64,8 @@
                     draft: false,
 
                     allSteps: false,
+                    
+                    readOnly: false,
 
                     wizardStruct: []
                 },
@@ -117,13 +119,13 @@
                                     if (step != null) {
                                         if (step.type == "form" || step.type == "survey") {
                                             if (step.form != null) {
-                                                Dom.get(me.id + "-step-" + step.id + "-form-submit")
-                                                    .click();
-                                                isValid = step.form
-                                                    .validate(Alfresco.forms.Form.NOTIFICATION_LEVEL_CONTAINER);
-                                            }
-                                        }
-                                        else {
+                                            	Dom.get(me.id + "-step-" + step.id + "-form-submit").click();
+                                                isValid = step.form.validate(Alfresco.forms.Form.NOTIFICATION_LEVEL_CONTAINER);
+                                            } else {
+												me.loadStep(me.options.wizardStruct[newIndex]);
+												isValid = me.options.readOnly || step.readOnly;
+											}
+                                        } else {
                                             isValid = true;
                                         }
                                     }
@@ -377,6 +379,8 @@
                     }
 
                     var url = null;
+                    
+                    const readOnly = this.options.readOnly || step.readOnly;
 
                     if (step.type == "form") {
                         url = YAHOO.lang
@@ -387,7 +391,7 @@
                                 "&itemKind={itemKind}" +
                                 "&mode={mode}&submitType=json&showCancelButton=false&showSubmitButton=true",
                                 {
-                                    mode: (step.nodeRef != null && step.nodeRef.length > 0) ? "edit" : "create",
+                                    mode: readOnly ? "view" : (step.nodeRef != null && step.nodeRef.length > 0) ? "edit" : "create",
                                     itemKind: (step.nodeRef != null && step.nodeRef.length > 0) ? "node" : "type",
                                     itemId: (step.nodeRef != null && step.nodeRef.length > 0) ? step.nodeRef : step.itemId,
                                     destination: this.options.destination,
@@ -398,34 +402,37 @@
                         url = YAHOO.lang
                             .substitute(
                                 Alfresco.constants.URL_SERVICECONTEXT + "components/entity-charact-views/simple-view" +
-                                "?list={list}&nodeRef={nodeRef}&itemType={itemType}&title={title}&formId={formId}",
+                                "?list={list}&nodeRef={nodeRef}&itemType={itemType}&title={title}&formId={formId}" + (readOnly ? "&mode={mode}" : ""),
                                 {
                                     nodeRef: step.nodeRef,
                                     list: step.listId,
                                     itemType: step.itemId,
                                     title: encodeURIComponent(step.label),
-                                    formId: step.formId != null ? step.formId : ""
+                                    formId: step.formId != null ? step.formId : "",
+                                    mode: readOnly ? "view" : undefined
                                 });
                     } else if (step.type == "documents") {
 
                         url = YAHOO.lang
                             .substitute(
                                 Alfresco.constants.URL_SERVICECONTEXT + "components/entity-charact-views/simple-documents-view" +
-                                "?nodeRef={nodeRef}",
+                                "?nodeRef={nodeRef}" + (readOnly ? "&mode={mode}" : ""),
                                 {
                                     nodeRef: step.nodeRef,
-                                    title: encodeURIComponent(step.label)
+                                    title: encodeURIComponent(step.label),
+                                    mode: readOnly ? "view" : undefined
                                 });
                     } else if (step.type == "survey") {
                         url = YAHOO.lang
                             .substitute(
                                 Alfresco.constants.URL_SERVICECONTEXT + "components/survey/survey-form" +
-                                "?list={list}&nodeRef={nodeRef}&itemType={itemType}&title={title}",
+                                "?list={list}&nodeRef={nodeRef}&itemType={itemType}&title={title}" + (readOnly ? "&mode={mode}" : ""),
                                 {
                                     nodeRef: step.nodeRef,
                                     list: step.listId,
                                     itemType: step.itemId,
-                                    title: encodeURIComponent(step.label)
+                                    title: encodeURIComponent(step.label),
+                                    mode: readOnly ? "view" : undefined
                                 });
 
                     }

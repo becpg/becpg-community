@@ -2,8 +2,8 @@
 
 
 function main()
-{  
-   parseActions(args.list);
+{
+	parseActions(args.list, args.mode);
 }
 
 
