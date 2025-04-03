@@ -551,6 +551,8 @@
                  * The form filters runTime
                  */
                 formsFilterRuntime: null,
+                
+                mode: "bulk-edit",
 
                 /**
                  * DataTable Cell Renderers
@@ -791,7 +793,9 @@
                     // Assume no list chosen for now
                     Dom.removeClass(this.id + "-selectListMessage", "hidden");
 
-                    this.widgets.newRowButton.set("disabled", true);
+					if (this.widgets.newRowButton != null) {
+                    	this.widgets.newRowButton.set("disabled", true);
+                    }
 
 
                     // Filter forms
@@ -953,7 +957,7 @@
 
                     var columnUrl = this.options.columnsUrl + "?itemType=" + encodeURIComponent(this._getItemType()) + "&list=" + encodeURIComponent(this._getDataListName()) + (formId != null ? "&formId=" + formId : "") + (this.options.siteId ? "&siteId=" + this.options.siteId : "")
                         + (this.entity != null ? "&entityType=" + encodeURIComponent(this.entity.type) : "")
-                        + (this.options.entityNodeRef != null ? "&entityNodeRef=" + encodeURIComponent(this.options.entityNodeRef) : "");
+                        + (this.options.entityNodeRef != null ? "&entityNodeRef=" + encodeURIComponent(this.options.entityNodeRef) : "") + "&mode=" + this.options.mode;
 
 
                     var cacheTimeStamp = this.cacheTimeStamp
@@ -1113,7 +1117,7 @@
                     this._setupDataTable();
                     // Hide "no list" message
                     Dom.addClass(this.id + "-selectListMessage", "hidden");
-                    if (this.widgets.newRowButton != null) {
+                    if (this.widgets.newRowButton != null || this.options.mode != "view") {
                         this.widgets.newRowButton.set("disabled", false);
                     }
 

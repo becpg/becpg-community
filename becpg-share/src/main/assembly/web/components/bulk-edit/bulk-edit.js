@@ -822,7 +822,7 @@
 								// Query the visible columns for this list's
 								// item type
 								Alfresco.util.Ajax.jsonGet({
-									url : $combine(this.columnsUrl + "?mode=bulk-edit&itemType=" + encodeURIComponent(this.options.itemType)
+									url : $combine(this.columnsUrl + "?mode=" + (this.options.mode != "view" ? "bulk-edit" : "view") + "&itemType=" + encodeURIComponent(this.options.itemType)
 											+ "&formId=" + encodeURIComponent(this.options.formId))+"&siteId="+ encodeURIComponent(this.options.siteId),
 									successCallback : {
 										fn : this.onDatalistColumns,
