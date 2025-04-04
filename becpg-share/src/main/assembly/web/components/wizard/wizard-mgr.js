@@ -381,91 +381,109 @@
                     var url = null;
                     
                     const readOnly = this.options.readOnly || step.readOnly;
-
-                    if (step.type == "form") {
-                        url = YAHOO.lang
-                            .substitute(
-                                Alfresco.constants.URL_SERVICECONTEXT + "components/form" + "?destination={destination}" +
-                                "&formId={formId}" +
-                                "&itemId={itemId}" +
-                                "&itemKind={itemKind}" +
-                                "&mode={mode}&submitType=json&showCancelButton=false&showSubmitButton=true",
-                                {
-                                    mode: readOnly ? "view" : (step.nodeRef != null && step.nodeRef.length > 0) ? "edit" : "create",
-                                    itemKind: (step.nodeRef != null && step.nodeRef.length > 0) ? "node" : "type",
-                                    itemId: (step.nodeRef != null && step.nodeRef.length > 0) ? step.nodeRef : step.itemId,
-                                    destination: this.options.destination,
-                                    formId: step.formId != null ? step.formId : ""
-                                });
-                    } else if (step.type == "entityDataList") {
-
-                        url = YAHOO.lang
-                            .substitute(
-                                Alfresco.constants.URL_SERVICECONTEXT + "components/entity-charact-views/simple-view" +
-                                "?list={list}&nodeRef={nodeRef}&itemType={itemType}&title={title}&formId={formId}" + (readOnly ? "&mode={mode}" : ""),
-                                {
-                                    nodeRef: step.nodeRef,
-                                    list: step.listId,
-                                    itemType: step.itemId,
-                                    title: encodeURIComponent(step.label),
-                                    formId: step.formId != null ? step.formId : "",
-                                    mode: readOnly ? "view" : undefined
-                                });
-                    } else if (step.type == "documents") {
-
-                        url = YAHOO.lang
-                            .substitute(
-                                Alfresco.constants.URL_SERVICECONTEXT + "components/entity-charact-views/simple-documents-view" +
-                                "?nodeRef={nodeRef}" + (readOnly ? "&mode={mode}" : ""),
-                                {
-                                    nodeRef: step.nodeRef,
-                                    title: encodeURIComponent(step.label),
-                                    mode: readOnly ? "view" : undefined
-                                });
-                    } else if (step.type == "survey") {
-                        url = YAHOO.lang
-                            .substitute(
-                                Alfresco.constants.URL_SERVICECONTEXT + "components/survey/survey-form" +
-                                "?list={list}&nodeRef={nodeRef}&itemType={itemType}&title={title}" + (readOnly ? "&mode={mode}" : ""),
-                                {
-                                    nodeRef: step.nodeRef,
-                                    list: step.listId,
-                                    itemType: step.itemId,
-                                    title: encodeURIComponent(step.label),
-                                    mode: readOnly ? "view" : undefined
-                                });
-
-                    }
-
-
-                    if (url != null && (step.type != "entityDataList" && step.type != "documents" || !step.loaded)) {
-                            Alfresco.util.Ajax
-                                .request(
-                                    {
-                                        url: url,
-                                        dataObj:
-                                        {
-                                            htmlid: this.id + "-step-" + step.id
-                                        },
-                                        successCallback:
-                                        {
-                                            fn: function(response) {
-                                                Dom.get(this.id + "-step-" + step.id).innerHTML = response.serverResponse.responseText;
-                                                step.loaded = true;
-                                                if (step.type == "entityDataList") {
-                                                    this.loadDataList(step);
-                                                } else {
-													setNextAllowed(true);
-												}
-                                            },
-                                            scope: this
-                                        },
-                                        scope: this,
-                                        execScripts: true
-                                    });
-                        } else {
-							setNextAllowed(true);
-						}
+	                const self = this;
+	                
+					function then(validated) {
+						if (step.type == "form") {
+							url = YAHOO.lang.substitute(
+	                            Alfresco.constants.URL_SERVICECONTEXT + "components/form" + "?destination={destination}" +
+	                                "&formId={formId}" +
+	                                "&itemId={itemId}" +
+	                                "&itemKind={itemKind}" +
+	                                "&mode={mode}&submitType=json&showCancelButton=false&showSubmitButton=true", {
+	                                    mode: readOnly || validated ? "view" : (step.nodeRef != null && step.nodeRef.length > 0) ? "edit" : "create",
+	                                    itemKind: (step.nodeRef != null && step.nodeRef.length > 0) ? "node" : "type",
+	                                    itemId: (step.nodeRef != null && step.nodeRef.length > 0) ? step.nodeRef : step.itemId,
+	                                    destination: self.options.destination,
+	                                    formId: step.formId != null ? step.formId : ""
+		                    });
+	                    } else if (step.type == "entityDataList") {
+	
+	                        url = YAHOO.lang
+	                            .substitute(
+	                                Alfresco.constants.URL_SERVICECONTEXT + "components/entity-charact-views/simple-view" +
+	                                "?list={list}&nodeRef={nodeRef}&itemType={itemType}&title={title}&formId={formId}" + (readOnly ? "&mode={mode}" : ""),
+	                                {
+	                                    nodeRef: step.nodeRef,
+	                                    list: step.listId,
+	                                    itemType: step.itemId,
+	                                    title: encodeURIComponent(step.label),
+	                                    formId: step.formId != null ? step.formId : "",
+	                                    mode: readOnly || validated ? "view" : undefined
+	                                });
+	                    } else if (step.type == "documents") {
+	
+	                        url = YAHOO.lang
+	                            .substitute(
+	                                Alfresco.constants.URL_SERVICECONTEXT + "components/entity-charact-views/simple-documents-view" +
+	                                "?nodeRef={nodeRef}" + (readOnly ? "&mode={mode}" : ""),
+	                                {
+	                                    nodeRef: step.nodeRef,
+	                                    title: encodeURIComponent(step.label),
+	                                    mode: readOnly || validated ? "view" : undefined
+	                                });
+	                    } else if (step.type == "survey") {
+	                        url = YAHOO.lang
+	                            .substitute(
+	                                Alfresco.constants.URL_SERVICECONTEXT + "components/survey/survey-form" +
+	                                "?list={list}&nodeRef={nodeRef}&itemType={itemType}&title={title}" + (readOnly ? "&mode={mode}" : ""),
+	                                {
+	                                    nodeRef: step.nodeRef,
+	                                    list: step.listId,
+	                                    itemType: step.itemId,
+	                                    title: encodeURIComponent(step.label),
+	                                    mode: readOnly || validated ? "view" : undefined
+	                                });
+	
+	                    }
+	
+	
+	                    if (url != null && (step.type != "entityDataList" && step.type != "documents" || !step.loaded)) {	
+	                            Alfresco.util.Ajax
+	                                .request(
+	                                    {
+	                                        url: url,
+	                                        dataObj:
+	                                        {
+	                                            htmlid: self.id + "-step-" + step.id
+	                                        },
+	                                        successCallback:
+	                                        {
+	                                            fn: function(response) {
+	                                                Dom.get(self.id + "-step-" + step.id).innerHTML = response.serverResponse.responseText;
+	                                                step.loaded = true;
+	                                                if (step.type == "entityDataList") {
+	                                                    self.loadDataList(step);
+	                                                } else {
+														setNextAllowed(true);
+													}
+	                                            },
+	                                            scope: this
+	                                        },
+	                                        execScripts: true
+	                                    });
+	                        } else {
+								setNextAllowed(true);
+							}
+					}
+					if (!readOnly) {
+						Alfresco.util.Ajax.jsonGet({
+	                        url: Alfresco.constants.PROXY_URI + "becpg/entitylists/node/" + step.nodeRef.replace(":/", ""),
+	                        successCallback: {
+	                            fn: function(response) {
+									then(response.json.datalists.filter(function (datalist) {
+										return datalist.name === (
+											step.type === "form" ? "View-properties" : (
+												step.type === "documents" ? "View-documents" : step.listId));
+									}).some(function (datalist) { 
+										return datalist.state === "Valid";
+									}));
+		                        }        								 
+	                        }
+		                 });
+		            } else {
+						then(false);
+					}
                 },
 
                 loadDataList: function WizardMgr_loadDataList(step) {
