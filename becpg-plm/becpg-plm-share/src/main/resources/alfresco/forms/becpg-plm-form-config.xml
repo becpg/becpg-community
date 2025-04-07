@@ -560,6 +560,7 @@
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:entityTplRef" force="true" />
+					<show id="bcpg:parentEntityRef" force="false" />
 					
 					<!-- local security rule -->
 					<show id="sec:securityRef" />
@@ -679,6 +680,14 @@
 							</control-param>
 						</control>
 					</field>
+					<field id="bcpg:parentEntityRef" mandatory="false" read-only="false" set="mainInfo">
+			            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+			              	<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:packagingKit
+			              	</control-param>
+			              	<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
+			              	<control-param name="excludeSources">true</control-param>
+			            </control>
+			        </field>
 					
 					<!-- pallet -->
 					<field id="pack:palletLayers" set="pallet" />
@@ -915,6 +924,7 @@
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:entityTplRef" force="true" />
+					<show id="bcpg:parentEntityRef" force="false" />
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" />
@@ -970,6 +980,14 @@
 							</control-param>
 						</control>
 					</field>
+					<field id="bcpg:parentEntityRef" mandatory="false" read-only="false" set="mainInfo">
+			            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+			              	<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:packagingKit
+			              	</control-param>
+			              	<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
+			              	<control-param name="excludeSources">true</control-param>
+			            </control>
+			        </field>
 
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
@@ -995,6 +1013,7 @@
 					<show id="bcpg:productHierarchy1" />
 					<show id="bcpg:productState" />
 					<show id="bcpg:entityTplRef" />
+					<show id="bcpg:parentEntityRef" />
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
 
@@ -1047,6 +1066,14 @@
 							<control-param name="isSearch">true</control-param>
 						</control>
 					</field>
+					<field id="bcpg:parentEntityRef" mandatory="false" read-only="false" set="mainInfo">
+			            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+			              	<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:packagingKit
+			              	</control-param>
+			              	<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
+			              	<control-param name="excludeSources">true</control-param>
+			            </control>
+			        </field>
 
 					<field id="bcpg:code" set="mainInfo">
 						<control>
@@ -1203,6 +1230,7 @@
 					<show id="bcpg:code" force="true" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:entityTplRef" force="true" />
+					<show id="bcpg:parentEntityRef" force="false" />
 
 					<!-- pallet -->
 					<show id="pack:palletLayers" force="false" />
@@ -1240,6 +1268,7 @@
 					<show id="bcpg:code" force="true" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:entityTplRef" force="true" />
+					<show id="bcpg:parentEntityRef" force="false" />
 
 					<!-- pallet -->
 					<show id="pack:palletLayers" force="true" />
@@ -1307,6 +1336,14 @@
 							</control-param>
 						</control>
 					</field>
+					<field id="bcpg:parentEntityRef" mandatory="false" read-only="false" set="mainInfo">
+			            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+			              	<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:packagingKit
+			              	</control-param>
+			              	<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
+			              	<control-param name="excludeSources">true</control-param>
+			            </control>
+			        </field>
 					
 
 					<!-- pallet -->
@@ -5259,6 +5296,7 @@
 					<show id="bcpg:locationState" />
 					<show id="bcpg:locationCountry" />
 					<show id="pjt:projectScore" />
+					<show id="bcpg:parentEntityRef" force="false" />
 					
 					<!-- local security rule -->
 					<show id="sec:securityRef" />	
@@ -5309,6 +5347,14 @@
 					<field id="bcpg:locationState" set="mainInfo" />
 					<field id="bcpg:locationCountry" set="mainInfo" />
 					<field id="pjt:projectScore" mandatory="false" read-only="false" set="mainInfo" />
+					<field id="bcpg:parentEntityRef" mandatory="false" read-only="false" set="mainInfo">
+			            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+			              	<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:client
+			              	</control-param>
+			              	<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
+			              	<control-param name="excludeSources">true</control-param>
+			            </control>
+			        </field>
 
 					<set id="securityRule" appearance="bordered-panel" label-id="becpg.forms.set.securityRule.label" />
 					<field id="sec:securityRef" set="securityRule" mandatory="false" read-only="false">
@@ -5354,6 +5400,7 @@
 					<show id="bcpg:locationState" />
 					<show id="bcpg:locationCountry" />
 					<show id="pjt:projectScore" />
+					<show id="bcpg:parentEntityRef" force="false" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:clientHierarchy1">

@@ -31,6 +31,7 @@
 					<show force="true" id="bcpg:plants" />
 					<show force="true" id="bcpg:productGeoOrigin" />
 					<show force="true" id="bcpg:entityTplRef" />
+					<show force="false" id="bcpg:parentEntityRef"/>
 					<show force="true" id="pack:tare" />
 					<show force="true" id="pack:tareUnit" />
 
@@ -167,6 +168,14 @@
 							</control-param>
 						</control>
 					</field>
+					<field id="bcpg:parentEntityRef" mandatory="false" read-only="false" set="mainInfo">
+			            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+			              	<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:packagingMaterial
+			              	</control-param>
+			              	<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
+			              	<control-param name="excludeSources">true</control-param>
+			            </control>
+			        </field>
 					<set appearance="bordered-panel" id="tare" label-id="becpg.forms.set.tare.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<field id="pack:tare" mandatory="false" read-only="false" set="tare" />
 					<field id="pack:tareUnit" mandatory="false" read-only="false" set="tare" />
@@ -582,6 +591,7 @@
 					<show force="true" id="bcpg:plants" />
 					<show force="true" id="bcpg:productGeoOrigin" />
 					<show force="true" id="bcpg:entityTplRef" />
+					<show force="true" id="bcpg:parentEntityRef" />
 					<show force="true" id="pack:tare" />
 					<show force="true" id="pack:tareUnit" />
 
@@ -643,6 +653,7 @@
 					<show force="false" id="bcpg:plants" />
 					<show force="false" id="bcpg:productGeoOrigin" />
 					<show force="false" id="bcpg:entityTplRef" />
+					<show force="false" id="bcpg:parentEntityRef" />
 					<show force="false" id="pack:tare" />
 					<show force="false" id="pack:tareUnit" />
 
