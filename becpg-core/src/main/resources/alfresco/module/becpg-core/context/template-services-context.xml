@@ -24,7 +24,7 @@
 
 	<bean id="beCPGTemplateExtension" parent="baseTemplateImplementation" class="fr.becpg.repo.template.BeCPGTemplateExtension">
         <property name="extensionName">
-            <value>bTemp</value>
+            <value>bTemplate</value>
         </property>
         <property name="authorityService">
             <ref bean="AuthorityService"/>
