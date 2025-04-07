@@ -1003,6 +1003,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		dataLists.add(PLMModel.TYPE_CONTACTLIST);
 		dataLists.add(PLMModel.TYPE_CERTIFICATION);
 		dataLists.add(PLMModel.TYPE_PLANT);
+		dataLists.add(SurveyModel.TYPE_SURVEY_LIST);
 	
 		subFolders.add(RepoConsts.PATH_SUPPLIER_DOCUMENTS);
 		NodeRef entityTplNodeRef = entityTplService.createEntityTpl(entityTplsNodeRef, PLMModel.TYPE_SUPPLIER, null, true, true, dataLists,
@@ -1259,6 +1260,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
 				dataLists.add(PLMModel.TYPE_LABELCLAIMLIST);
 				dataLists.add(PLMModel.TYPE_SVHCLIST);
+				dataLists.add(SurveyModel.TYPE_SURVEY_LIST);
 
 				wusedQName = PLMModel.TYPE_COMPOLIST;
 
