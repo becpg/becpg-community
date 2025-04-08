@@ -89,13 +89,13 @@ if(isExternalUser(user)){
 			 var label = null;
 	
 			if (!isLicenseValid(user)) {
-				label = "NoLicenseWarning"
+				label = "NoLicenseWarning";
 			} else if (!isMemberOfLicenseGroup(user)) {
-				label = "UnauthorizedWarning"
+				label = "UnauthorizedWarning";
 			} else if (floatingLicensesExceeded(user)) {
-				label = "FloatingLicensesExceeded"
+				label = "FloatingLicensesExceeded";
 			} else {
-				label = "EcmWarning"
+				label = "EcmWarning";
 			}
 			
 	         warningBar.config = {

@@ -147,8 +147,10 @@ public class FilterFormUIGet extends FormUIGet {
 			}
 		}
 
-		Map<String, Object> form = (Map<String, Object>) model.get(MODEL_FORM);
-		form.put("mode", "create");
+		if (model != null && model.containsKey(MODEL_FORM)) {
+			Map<String, Object> form = (Map<String, Object>) model.get(MODEL_FORM);
+			form.put("mode", "create");
+		}
 
 		return model;
 	}
