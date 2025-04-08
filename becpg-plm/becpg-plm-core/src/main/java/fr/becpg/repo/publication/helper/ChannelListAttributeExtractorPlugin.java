@@ -88,7 +88,7 @@ public class ChannelListAttributeExtractorPlugin implements AttributeExtractorPl
 	/** {@inheritDoc} */
 	@Override
 	public Integer getPriority() {
-		return 0;
+		return HIGH_PRIORITY;
 	}
 
 }
