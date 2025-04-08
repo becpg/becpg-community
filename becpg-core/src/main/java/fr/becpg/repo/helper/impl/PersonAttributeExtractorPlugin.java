@@ -153,7 +153,7 @@ public class PersonAttributeExtractorPlugin implements AttributeExtractorPlugin 
 	/** {@inheritDoc} */
 	@Override
 	public Integer getPriority() {
-		return 0;
+		return HIGH_PRIORITY;
 	}
 
 }
