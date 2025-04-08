@@ -99,6 +99,10 @@ public class BeCPGUserAccountService {
 				personNodeRef = createUser(userAccount, propMap);
 			}
 			
+			if (userAccount.getPassword() != null && !userAccount.getPassword().isBlank()) {
+				updatePassword(userAccount.getUserName(), userAccount.getPassword(), Boolean.TRUE.equals(userAccount.getNotify()));
+			}
+			
 			updateGroups(userAccount);
 
 			if (Boolean.TRUE.equals(userAccount.getGeneratePassword())) {
@@ -258,9 +262,6 @@ public class BeCPGUserAccountService {
 		setIdsUser(userAccount, userName, personNodeRef, true);
 		if (userAccount.getNewUserName() != null && !userAccount.getNewUserName().isBlank()) {
 			renameUser(userAccount, personNodeRef);
-		}
-		if (userAccount.getPassword() != null && !userAccount.getPassword().isBlank()) {
-			updatePassword(userAccount.getUserName(), userAccount.getPassword(), Boolean.TRUE.equals(userAccount.getNotify()));
 		}
 		nodeService.addProperties(personNodeRef, propMap);
 		return personNodeRef;

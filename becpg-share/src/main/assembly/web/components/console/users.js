@@ -458,6 +458,13 @@
                var display = (quota !== -1 ? Alfresco.util.formatFileSize(quota) : "");
                elCell.innerHTML = display;
             };
+            
+            var renderCellSsoUser = function renderCellSsoUser(elCell, oRecord, oColumn, oData)
+            {
+               var isSsoUser = oRecord.getData("isSsoUser");
+               var display = (isSsoUser ? parent._msg("label.yes") : parent._msg("label.no"));
+               elCell.innerHTML = display;
+            };
 
             /**
              * Usage custom datacell formatter
@@ -506,6 +513,17 @@
                }
                return (numA < numB ? -1 : (numA > numB ? 1 : 0));
             };
+            var sortCellSsoUser = function sortCellSsoUser(a, b, desc)
+            {
+               var numA = a.getData("isSsoUser") == true ? 1 : 0,
+                   numB = b.getData("isSsoUser") == true ? 1 : 0;
+
+               if (desc)
+               {
+                  return (numA < numB ? 1 : (numA > numB ? -1 : 0));
+               }
+               return (numA < numB ? -1 : (numA > numB ? 1 : 0));
+            };
 
             // DataTable column defintions
             var columnDefinitions =
@@ -516,7 +534,8 @@
                { key: "jobtitle", label: parent._msg("label.jobtitle"), sortable: true, formatter: renderCellSafeHTML },
                { key: "email", label: parent._msg("label.email"), sortable: true, formatter: renderCellSafeHTML },
                { key: "usage", label: parent._msg("label.usage"), sortable: true, sortOptions: {sortFunction: sortCellUsage}, formatter: renderCellUsage },
-               { key: "quota", label: parent._msg("label.quota"), sortable: true, sortOptions: {sortFunction: sortCellQuota}, formatter: renderCellQuota }
+               { key: "quota", label: parent._msg("label.quota"), sortable: true, sortOptions: {sortFunction: sortCellQuota}, formatter: renderCellQuota },
+               { key: "ssouser", label: parent._msg("label.ssouser"), sortable: true, sortOptions: {sortFunction: sortCellSsoUser}, formatter: renderCellSsoUser }
             ];
 
             if (parent.options.showAuthorizationStatus == true)
@@ -732,6 +751,7 @@
                fnSetter("-view-usage", Alfresco.util.formatFileSize(person.sizeCurrent));
                fnSetter("-view-usercontentlocale", person.userContentLocale ? this._msg("locale.name." + person.userContentLocale) : "");
                fnSetter("-view-userlocale", person.userLocale ? this._msg("locale.name." + person.userLocale) : "");
+               fnSetter("-view-ssouser", person.isSsoUser ? this._msg("label.yes") : this._msg("label.no"));
                var fnGroupToString = function()
                {
                   return this.displayName;
@@ -854,6 +874,19 @@
                failureMessage: "Could not load Group Finder component",
                execScripts: true
             });
+            
+            Alfresco.util.Ajax.request(
+            {
+               url: Alfresco.constants.PROXY_URI + "webframework/content/metadata?user=" + parent.options.userId,
+               successCallback:
+               {
+                  fn: this.onMetadataLoaded,
+                  scope: this
+               },
+               failureMessage: "Could not load Metadata",
+               execScripts: true
+            });
+            
          },
 
          onGroupFinderLoaded: function onGroupFinderLoaded(res)
@@ -994,7 +1027,6 @@
             fnClearEl("-create-verifypassword");
             fnClearEl("-create-quota");
             Dom.get(parent.id + "-create-disableaccount").checked = false;
-            Dom.get(parent.id + "-create-ssouser").checked = true;
 
             // reset quota selection drop-down
             Dom.get(parent.id + "-create-quotatype").value = "gb";
@@ -1033,6 +1065,21 @@
          onHide: function onHide()
          {
             this._visible = false;
+         },
+         
+         onMetadataLoaded: function onMetadataLoaded(res)
+         {
+            var metadata = res.serverResponse.responseText;
+            var isSsoEnabled = metadata && JSON.parse(metadata).data.capabilities.isSsoEnabled;
+            var createSsoUserCheckBox = Dom.get(parent.id + "-create-ssouser");
+            if (createSsoUserCheckBox) {
+	            createSsoUserCheckBox.checked = isSsoEnabled;
+	            createSsoUserCheckBox.disabled = !isSsoEnabled;
+			}
+            var updateSsoUserCheckBox = Dom.get(parent.id + "-update-ssouser");
+			if (updateSsoUserCheckBox) {
+	            updateSsoUserCheckBox.disabled = !isSsoEnabled;
+			}
          }
       });
       new CreatePanelHandler();
@@ -1093,6 +1140,18 @@
                   scope: this
                },
                failureMessage: "Could not load Group Finder component",
+               execScripts: true
+            });
+            
+            Alfresco.util.Ajax.request(
+            {
+               url: Alfresco.constants.PROXY_URI + "webframework/content/metadata?user=" + parent.options.userId,
+               successCallback:
+               {
+                  fn: this.onMetadataLoaded,
+                  scope: this
+               },
+               failureMessage: "Could not load Metadata",
                execScripts: true
             });
          },

@@ -34,9 +34,11 @@ import java.util.stream.Collectors;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.jscript.BaseScopableProcessorExtension;
 import org.alfresco.repo.jscript.ScriptNode;
+import org.alfresco.repo.management.subsystems.ActivateableBean;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.security.authentication.external.RemoteUserMapper;
 import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.repo.version.common.VersionUtil;
@@ -187,6 +189,12 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	private AuthorityService authorityService;
 	
 	private PersonService personService;
+	
+	private RemoteUserMapper remoteUserMapper;
+	
+	public void setRemoteUserMapper(RemoteUserMapper remoteUserMapper) {
+		this.remoteUserMapper = remoteUserMapper;
+	}
 	
 	/**
 	 * <p>Setter for the field <code>personService</code>.</p>
@@ -2222,6 +2230,10 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 			}
 			this.authenticationService.setAuthenticationEnabled(userName, false);
 		}
+	}
+	
+	public boolean isSsoEnabled() {
+        return remoteUserMapper != null && (!(remoteUserMapper instanceof ActivateableBean activateableBean) || activateableBean.isActive());
 	}
 
 }
