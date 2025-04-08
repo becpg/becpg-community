@@ -38,7 +38,7 @@ public class IngListAttributeExtractorPlugin extends CharactAttributeExtractorPl
 	/** {@inheritDoc} */
 	@Override
 	public Integer getPriority() {
-		return 1;
+		return HIGH_PRIORITY;
 	}
 
 	/** {@inheritDoc} */
