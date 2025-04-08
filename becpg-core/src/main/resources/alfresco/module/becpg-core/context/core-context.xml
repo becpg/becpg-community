@@ -425,40 +425,20 @@
 	</bean>
     
     
-   <!-- 
-    <bean id="search.fts.alfresco.db" class="org.alfresco.repo.search.impl.solr.DbAftsQueryLanguage" >
-        <property name="dictionaryService" ref="cachedDictionaryService" />
-        <property name="namespaceService" ref="namespaceService" />
-        <property name="factories">
-            <list>
-                <ref bean="search.indexerAndSearcherFactory" />
-            </list>
-        </property>
-        <property name="queryEngine">
-            <ref bean="search.dbQueryEngine" />
-        </property>
-         <property name="metadataIndexCheck1">
-            <ref bean="metadataQueryIndexesCheck" />
-        </property>
-        <property name="metadataIndexCheck2">
-            <ref bean="metadataQueryIndexesCheck2" />
-        </property>
-    </bean>
     
-    <bean id="search.dbQueryEngineImpl" class="org.alfresco.repo.search.impl.querymodel.impl.db.DBQueryEngine" >
-        <property name="dictionaryService" ref="cachedDictionaryService" />
-        <property name="namespaceService" ref="namespaceService" />
-        <property name="sqlSessionTemplate" ref="repoSqlSessionTemplate"/>
-        <property name="qnameDAO" ref="qnameDAO"/>
-        <property name="nodeService" ref="nodeService"/>
-        <property name="nodeDAO" ref="nodeDAO"/>
-        <property name="tenantService" ref="tenantService"/>
-        <property name="metadataIndexCheck2">
-            <ref bean="metadataQueryIndexesCheck2" />
-        </property>
-    </bean>
-    
-     -->
+    <!-- Search -->
+     <bean id="facet.dateFacetFields" class="org.springframework.beans.factory.config.SetFactoryBean">
+      <property name="sourceSet">
+         <set>
+            <value>@{http://www.alfresco.org/model/content/1.0}created</value>
+            <value>@{http://www.alfresco.org/model/content/1.0}modified</value>
+            <!-- beCPG -->
+            <value>@{http://www.alfresco.org/model/content/1.0}from</value>
+            <value>@{http://www.alfresco.org/model/content/1.0}to</value>
+         </set>
+      </property>   
+   </bean>
+
      
      <!-- Override SOLR cron backup 
      
