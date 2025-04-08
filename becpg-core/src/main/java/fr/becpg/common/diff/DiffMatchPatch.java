@@ -186,13 +186,13 @@ public class DiffMatchPatch {
 	private List<Diff> diffCompute(String text1, String text2, boolean checklines, long deadline) {
 		List<Diff> diffs = new LinkedList<>();
 
-		if (text1.length() == 0) {
+		if (text1.isEmpty()) {
 			// Just add some dmp (speedup).
 			diffs.add(new Diff(Operation.INSERT, text2));
 			return diffs;
 		}
 
-		if (text2.length() == 0) {
+		if (text2.isEmpty()) {
 			// Just delete some dmp (speedup).
 			diffs.add(new Diff(Operation.DELETE, text1));
 			return diffs;
@@ -668,7 +668,6 @@ public class DiffMatchPatch {
 		// A half-match was found, sort out the return data.
 		if (text1.length() > text2.length()) {
 			return hm;
-			//return new String[]{hm[0], hm[1], hm[2], hm[3], hm[4]};
 		} else {
 			return new String[] { hm[2], hm[3], hm[0], hm[1], hm[4] };
 		}
@@ -912,7 +911,7 @@ public class DiffMatchPatch {
 
 	            // If there is an improvement, save it back to the diff.
 	            if (!prevDiff.getText().equals(bestEquality1)) {
-	                if (bestEquality1.length() != 0) {
+	                if (!bestEquality1.isEmpty()) {
 	                    prevDiff.setText(bestEquality1);
 	                } else {
 	                    pointer.previous(); // Walk past nextDiff.
@@ -923,7 +922,7 @@ public class DiffMatchPatch {
 	                    pointer.next(); // Walk past nextDiff.
 	                }
 	                thisDiff.setText(bestEdit);
-	                if (bestEquality2.length() != 0) {
+	                if (!bestEquality2.isEmpty()) {
 	                    nextDiff.setText(bestEquality2);
 	                } else {
 	                    pointer.remove(); // Delete nextDiff.
@@ -949,7 +948,7 @@ public class DiffMatchPatch {
 	 * @return The score.
 	 */
 	private int diffCleanupSemanticScore(String one, String two) {
-		if ((one.length() == 0) || (two.length() == 0)) {
+		if ((one.isEmpty()) || (two.isEmpty())) {
 			// Edges are the best.
 			return 6;
 		}
