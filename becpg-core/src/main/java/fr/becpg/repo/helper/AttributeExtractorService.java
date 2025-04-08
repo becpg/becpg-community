@@ -56,6 +56,10 @@ public interface AttributeExtractorService {
 	
 	interface AttributeExtractorPlugin {
 
+		public static Integer LOW_PRIORITY = 0;
+		public static Integer MEDIUM_PRIORITY = 1;
+		public static Integer HIGH_PRIORITY = 2;
+		
 		String extractPropName(QName type, NodeRef nodeRef);
 		
 		default String extractPropName(JSONObject jsonEntity) {
