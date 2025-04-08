@@ -440,7 +440,7 @@ public class ImportEntityXmlVisitor {
 					if (!type.equals(RemoteEntityService.NODEREF_TYPE) && !type.equals(RemoteEntityService.CATEGORY_TYPE)) {
 						queueExistingAssociations(curNodeRef.peek(), currAssoc.peek(), type);
 					}
-				} else if ((type != null) && (type.length() > 0)) {
+				} else if ((type != null) && (!type.isBlank())) {
 
 					if (RemoteEntityService.MLTEXT_TYPE.equals(type)) {
 						Locale locale;
@@ -805,11 +805,11 @@ public class ImportEntityXmlVisitor {
 					}
 					if (ret == null) {
 						logger.debug("Creating child assoc: " + assocName + " add type :" + type + " name :" + name);
-						Map<QName, Serializable> properties = new HashMap<>();
+						Map<QName, Serializable> props = new HashMap<>();
 						properties.put(ContentModel.PROP_NAME, name);
 						return nodeService
 								.createNode(parentNodeRef, assocName,
-										QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name)), type, properties)
+										QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name)), type, props)
 								.getChildRef();
 					} else {
 						return ret;
