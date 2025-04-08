@@ -82,6 +82,20 @@ public abstract class AbstractBeCPGPatch extends AbstractPatch {
 		this.qnameDAO = qnameDAO;
 	}
 
+	
+	
+	public NodeDAO getNodeDAO() {
+		return nodeDAO;
+	}
+
+	public PatchDAO getPatchDAO() {
+		return patchDAO;
+	}
+
+	public QNameDAO getQnameDAO() {
+		return qnameDAO;
+	}
+
 	/**
 	 * <p>Setter for the field <code>repository</code>.</p>
 	 *
@@ -129,7 +143,7 @@ public abstract class AbstractBeCPGPatch extends AbstractPatch {
 		if (nodeRefs.size() > 1) {
 			throw new PatchException("XPath returned too many results: \n" + "   xpath: " + xpath + "\n"
 					+ "   results: " + nodeRefs);
-		} else if (nodeRefs.size() == 0) {
+		} else if (nodeRefs.isEmpty()) {
 			// the node does not exist
 			return null;
 		} else {
@@ -161,8 +175,6 @@ public abstract class AbstractBeCPGPatch extends AbstractPatch {
 	 */
 	public NodeRef getFolder(NodeRef parentNodeRef, String folderPath) {
 		String folderName = TranslateHelper.getTranslatedPath(folderPath);
-		if (folderName == null) {
-		}
 		return repoService.getFolderByPath(parentNodeRef, folderName);
 	}
 	
