@@ -472,9 +472,10 @@
                         }
                      }
                      
+                     var hiddenInput = Dom.get(this.fieldId);
+                     hiddenInput.value = JSON.stringify(ret);
+                     
                      if(!this.options.disabled){
-                         var hiddenInput = Dom.get(this.fieldId);
-                         hiddenInput.value = JSON.stringify(ret);
                          YAHOO.Bubbling.fire("mandatoryControlValueUpdated");
                      }
                   }
