@@ -26,6 +26,10 @@ import org.alfresco.service.namespace.QName;
  * @version $Id: $Id
  */
 public class ReportModel {
+	
+	private ReportModel() {
+		//Do Nothing
+	}
 
 	/** Constant <code>REPORT_URI="http://www.bcpg.fr/model/report/1.0"</code> */
 	public static final String REPORT_URI = "http://www.bcpg.fr/model/report/1.0";
