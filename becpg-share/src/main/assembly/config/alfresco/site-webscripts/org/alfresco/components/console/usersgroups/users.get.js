@@ -29,7 +29,8 @@ function main() {
          minUsernameLength: parseInt(minUsernameLength),
          minPasswordLength: parseInt(minPasswordLength),
          showAuthorizationStatus: false, // beCPG showAuthorizationStatus == 'true' ? true : false,
-         docsEdition: context.properties["docsEdition"].getValue()
+         docsEdition: context.properties["docsEdition"].getValue(),
+         userId: user.id
       }
    };
 
