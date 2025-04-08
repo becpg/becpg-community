@@ -361,7 +361,7 @@ public class EntityDataListWebScript extends AbstractEntityDataListWebScript {
 				logger.debug("Using extractor: "+extractor.getClass().getSimpleName());
 			}
 
-			final Access access = getAccess(dataType, entityNodeRefsList, dataListFilter.hasWriteAccess(),
+			final Access access = getAccess(dataType, entityNodeRefsList, dataListFilter.isVersionFilter(),
 					dataListFilter.getParentNodeRef(), dataListFilter.getDataListName(), extractor);
 			
 			boolean hasWriteAccess = access.canWrite();
