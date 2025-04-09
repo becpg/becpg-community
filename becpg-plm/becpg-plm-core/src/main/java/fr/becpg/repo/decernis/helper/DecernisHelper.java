@@ -79,7 +79,7 @@ public class DecernisHelper {
 	 */
 	public static String cleanError(String error) {
 		if (error != null) {
-			String token = SystemConfigurationRegistry.instance().confValue("beCPG.decernis.token");
+			String token = getToken();
 			if (token != null && !token.isBlank()) {
 				return error.replace(token, "XXX");
 			}
