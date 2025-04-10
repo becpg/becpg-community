@@ -522,7 +522,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		Map<String, Object> params = new HashMap<>();
 		params.put("qName", qName != null ? qName.getLocalName() : null);
 		params.put("includeVersions", includeVersions != null && includeVersions.booleanValue());
-		Pair<Long, NodeRef> nodePair = nodeDAO.getNodePair(nodeRef);
+		Pair<Long, NodeRef> nodePair = nodeDAO.getNodePair(tenantService.getName(nodeRef));
 		params.put("targetId", nodePair.getFirst());
 		
 		Set<String> authorisations = AuthenticationUtil.runAs(() -> permissionService.getAuthorisations(),
@@ -732,7 +732,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 	    List<Long> nodeIds = new ArrayList<>();
 	    
 	    for (NodeRef nodeRef : nodeRefs) {
-	        Pair<Long, NodeRef> nodePair = nodeDAO.getNodePair(nodeRef);
+	        Pair<Long, NodeRef> nodePair = nodeDAO.getNodePair(tenantService.getName(nodeRef));
 	        if (nodePair != null) {
 	            nodeIds.add(nodePair.getFirst());
 	        }

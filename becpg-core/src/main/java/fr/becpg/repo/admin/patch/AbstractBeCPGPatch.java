@@ -98,30 +98,17 @@ public abstract class AbstractBeCPGPatch extends AbstractPatch {
 	}
 
 	
-	
-	/**
-	 * <p>Getter for the field <code>nodeDAO</code>.</p>
-	 *
-	 * @return a {@link org.alfresco.repo.domain.node.NodeDAO} object
-	 */
+
 	public NodeDAO getNodeDAO() {
 		return nodeDAO;
 	}
 
-	/**
-	 * <p>Getter for the field <code>patchDAO</code>.</p>
-	 *
-	 * @return a {@link org.alfresco.repo.domain.patch.PatchDAO} object
-	 */
+
 	public PatchDAO getPatchDAO() {
 		return patchDAO;
 	}
 
-	/**
-	 * <p>Getter for the field <code>qnameDAO</code>.</p>
-	 *
-	 * @return a {@link org.alfresco.repo.domain.qname.QNameDAO} object
-	 */
+
 	public QNameDAO getQnameDAO() {
 		return qnameDAO;
 	}
