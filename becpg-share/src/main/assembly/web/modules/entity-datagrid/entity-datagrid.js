@@ -381,10 +381,9 @@
                     /**
                      * Allow to store pageSize in prefs
                      */
-                    storePageSizeInPrefs: false
-
-
-
+                    storePageSizeInPrefs: false,
+                    
+                    readOnly: false
                 },
 
                 /**
@@ -1315,7 +1314,7 @@
                     var listNodeRef = this.datalistMeta.nodeRef != null ? new Alfresco.util.NodeRef(
                         this.datalistMeta.nodeRef) : null;
                     return this.options.dataUrl + (listNodeRef != null ? listNodeRef.uri : "") + ((this.options.entityNodeRef != null && this.options.entityNodeRef.length > 0) ? "?entityNodeRef=" + this.options.entityNodeRef + "&"
-                        : "?") + "itemType=" + encodeURIComponent(this._getItemType()) + "&dataListName=" + encodeURIComponent(this._getDataListName()) + "&pageSize=" + encodeURIComponent(this._getPageSize()) + "&site=" + this.options.siteId + this._buildSortParam() + this.options.extraDataParams;
+                        : "?") + "itemType=" + encodeURIComponent(this._getItemType()) + "&dataListName=" + encodeURIComponent(this._getDataListName()) + "&pageSize=" + encodeURIComponent(this._getPageSize()) + "&site=" + this.options.siteId + this._buildSortParam() + this.options.extraDataParams + "&readOnly=" + this.options.readOnly;
                 },
 
                 _getPageSize: function() {
