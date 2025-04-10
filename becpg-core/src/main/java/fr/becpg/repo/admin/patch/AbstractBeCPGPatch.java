@@ -20,6 +20,7 @@ package fr.becpg.repo.admin.patch;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 import org.alfresco.repo.admin.patch.AbstractPatch;
 import org.alfresco.repo.batch.BatchProcessWorkProvider;
@@ -28,6 +29,8 @@ import org.alfresco.repo.domain.node.NodeDAO;
 import org.alfresco.repo.domain.patch.PatchDAO;
 import org.alfresco.repo.domain.qname.QNameDAO;
 import org.alfresco.repo.model.Repository;
+import org.alfresco.repo.tenant.TenantService;
+import org.alfresco.repo.tenant.TenantUtil;
 import org.alfresco.service.cmr.admin.PatchException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
@@ -82,20 +85,6 @@ public abstract class AbstractBeCPGPatch extends AbstractPatch {
 		this.qnameDAO = qnameDAO;
 	}
 
-	
-	
-	public NodeDAO getNodeDAO() {
-		return nodeDAO;
-	}
-
-	public PatchDAO getPatchDAO() {
-		return patchDAO;
-	}
-
-	public QNameDAO getQnameDAO() {
-		return qnameDAO;
-	}
-
 	/**
 	 * <p>Setter for the field <code>repository</code>.</p>
 	 *
@@ -143,7 +132,7 @@ public abstract class AbstractBeCPGPatch extends AbstractPatch {
 		if (nodeRefs.size() > 1) {
 			throw new PatchException("XPath returned too many results: \n" + "   xpath: " + xpath + "\n"
 					+ "   results: " + nodeRefs);
-		} else if (nodeRefs.isEmpty()) {
+		} else if (nodeRefs.size() == 0) {
 			// the node does not exist
 			return null;
 		} else {
@@ -175,6 +164,8 @@ public abstract class AbstractBeCPGPatch extends AbstractPatch {
 	 */
 	public NodeRef getFolder(NodeRef parentNodeRef, String folderPath) {
 		String folderName = TranslateHelper.getTranslatedPath(folderPath);
+		if (folderName == null) {
+		}
 		return repoService.getFolderByPath(parentNodeRef, folderName);
 	}
 	
@@ -213,17 +204,14 @@ public abstract class AbstractBeCPGPatch extends AbstractPatch {
 	 * <p>getCharactDataList.</p>
 	 *
 	 * @param systemEntityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param dataListPath a {@link java.lang.String} object.
+	 * @param dataListPath        a {@link java.lang.String} object.
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
 	public NodeRef getCharactDataList(NodeRef systemEntityNodeRef, String dataListPath) {
 		return entitySystemService.getSystemEntityDataList(systemEntityNodeRef, dataListPath);
 	}
-	
-	
-	
-	
-	protected BatchProcessor<NodeRef> createBatchTypeProcessor(QName type) {
+
+	protected BatchProcessor<NodeRef> createBatchTypeProcessor(QName type, boolean includeOnlyTenantNodes) {
 		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<>() {
 			private final long maxNodeId = nodeDAO.getMaxNodeId();
 			private final Pair<Long, QName> typeQNamePair = qnameDAO.getQName(type);
@@ -244,7 +232,10 @@ public abstract class AbstractBeCPGPatch extends AbstractPatch {
 				while (result.isEmpty() && (minSearchNodeId < maxNodeId)) {
 					List<Long> nodeIds = patchDAO.getNodesByTypeQNameId(typeQNameId, minSearchNodeId, maxSearchNodeId);
 
-					result.addAll(nodeIds.stream().map(nodeDAO::getNodeIdStatus).filter(status -> !status.isDeleted()).map(NodeRef.Status::getNodeRef)
+					result.addAll(nodeIds.stream().map(nodeDAO::getNodeIdStatus)
+							.filter(status -> !status.isDeleted()).map(NodeRef.Status::getNodeRef)
+							.map(n -> formatTenantNodeRef(n, includeOnlyTenantNodes))
+							.filter(Objects::nonNull)
 							.toList());
 
 					minSearchNodeId += BATCH_SIZE;
@@ -268,7 +259,33 @@ public abstract class AbstractBeCPGPatch extends AbstractPatch {
 		return new BatchProcessor<>("ScoreListPatch", transactionService.getRetryingTransactionHelper(), workProvider, BATCH_THREADS, BATCH_SIZE,
 				applicationEventPublisher, logger, 500);
 	}
-	
 
+	public NodeRef formatTenantNodeRef(NodeRef nodeRef, boolean includeOnlyTenantNodes) {
+		if (nodeRef == null || !includeOnlyTenantNodes) {
+			return nodeRef;
+		}
+		String baseName = getBaseName(nodeRef.getStoreRef().getIdentifier());
+		if (baseName != null) {
+			return new NodeRef(nodeRef.getStoreRef().getProtocol(), baseName, nodeRef.getId());
+		}
+		return null;
+	}
+
+	public String getBaseName(String name) {
+		if (name == null) {
+			return null;
+		}
+		String tenantDomain = TenantUtil.getCurrentDomain();
+		int idx1 = name.indexOf(TenantService.SEPARATOR);
+		if (idx1 == 0) {
+			int idx2 = name.indexOf(TenantService.SEPARATOR, 1);
+			String nameDomain = name.substring(1, idx2);
+			if (!tenantDomain.equals(nameDomain)) {
+				return null;
+			}
+			name = name.substring(idx2 + 1);
+		}
+		return name;
+	}
 
 }
