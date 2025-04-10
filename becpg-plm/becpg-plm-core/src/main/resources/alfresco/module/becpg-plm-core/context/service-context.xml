@@ -89,6 +89,7 @@
 		<property name="siteService" ref="siteService" />
 		<property name="namespacePrefixResolver" ref="namespaceService" />
 		<property name="sysAdminParams" ref="sysAdminParams"/>
+		<property name="dictionaryService" ref="dictionaryService"/>
 	</bean>
 
     <!-- Variant -->
@@ -220,6 +221,11 @@
 		<property name="supplierPortalService" ref="supplierPortalService"/>
 	</bean>
 	
+	<bean id="webscript.fr.becpg.supplier.updateSupplier.post" class="fr.becpg.repo.web.scripts.supplier.UpdateSupplierAccountWebScript" parent="webscript">
+		<property name="nodeService" ref="NodeService" />
+		<property name="supplierPortalService" ref="supplierPortalService"/>
+		<property name="entityService" ref="entityService"/>
+	</bean>
 	
 	<bean id="webscript.fr.becpg.workflow.startProcess.get" class="fr.becpg.repo.web.scripts.workflow.StartProcessWebscript" parent="webscript">
 		<property name="nodeService" ref="NodeService" />

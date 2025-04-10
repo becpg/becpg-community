@@ -36,7 +36,6 @@ import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.ScriptService;
-import org.alfresco.service.cmr.security.AccessPermission;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.cmr.site.SiteService;
@@ -571,22 +570,10 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 
 					for (NodeRef n : nodeRefs) {
 						if (allow) {
-							boolean updatePerm = true;
-							for (AccessPermission perm : permissionService.getAllSetPermissions(n)) {
-								if (authorityName.equals(perm.getAuthority()) && PermissionService.COORDINATOR.equals(perm.getPermission())) {
-									if (logger.isDebugEnabled()) {
-										logger.debug("Permission Coordinator already set for authority: " + authorityName + " nodeRef: " + n);
-									}
-									updatePerm = false;
-									break;
-								}
+							if (logger.isDebugEnabled()) {
+								logger.debug("Set Coordinator permission for authority: " + authorityName + " nodeRef: " + n);
 							}
-							if (updatePerm) {
-								if (logger.isDebugEnabled()) {
-									logger.debug("Set Coordinator permission for authority: " + authorityName + " nodeRef: " + n);
-								}
-								permissionService.setPermission(n, authorityName, PermissionService.COORDINATOR, true);
-							}
+							permissionService.setPermission(n, authorityName, PermissionService.COORDINATOR, true);
 						} else {
 							if (logger.isDebugEnabled()) {
 								logger.debug("Clear permission for authority: " + authorityName + " nodeRef: " + n);

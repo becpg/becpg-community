@@ -3,9 +3,6 @@
  */
 package fr.becpg.repo;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import org.alfresco.repo.version.Version2Model;
 import org.alfresco.service.cmr.repository.StoreRef;
 
@@ -160,17 +157,6 @@ public class RepoConsts
 	public static final Integer MAX_RESULTS_1000000 = 1000000;
 	
 
-	
-	/** Constant <code>DEFAULT_SORT</code> */
-	public static final Map<String, Boolean> DEFAULT_SORT = new LinkedHashMap<>();
-	
-	static {
-
-		DEFAULT_SORT.put("@bcpg:sort", true);
-		DEFAULT_SORT.put("@cm:created", true);
-		
-	}
-	
 	/*-- IHM --*/
 	/** Constant <code>LABEL_SEPARATOR=", "</code> */
 	public static final String LABEL_SEPARATOR = ", ";

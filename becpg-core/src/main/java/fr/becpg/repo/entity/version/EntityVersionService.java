@@ -8,12 +8,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.version.Version;
 import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.lang3.mutable.MutableInt;
 
 /**
  * The Interface EntityVersionService.
@@ -244,12 +244,12 @@ public interface EntityVersionService {
 	 * @param visited a {@link java.util.Set} object
 	 * @param ignoredItems a {@link java.util.List} object
 	 * @param maxProcessedNodes a int
-	 * @param currentCount a {@link java.util.concurrent.atomic.AtomicInteger} object
+	 * @param currentCount a {@link org.apache.commons.lang3.mutable.MutableInt} object
 	 * @param path a {@link java.lang.String} object
 	 * @return a {@link java.util.Set} object
 	 */
 	Set<NodeRef> findOldVersionWUsed(NodeRef originalEntity, Set<NodeRef> visited, List<NodeRef> ignoredItems,
-			int maxProcessedNodes, AtomicInteger currentCount, String path);
+			int maxProcessedNodes, MutableInt currentCount, String path);
 
 	/**
 	 * <p>findOldVersionWUsed.</p>

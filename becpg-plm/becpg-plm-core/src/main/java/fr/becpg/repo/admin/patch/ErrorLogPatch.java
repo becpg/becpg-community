@@ -10,6 +10,7 @@ import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
 import org.alfresco.repo.domain.node.NodeDAO;
 import org.alfresco.repo.domain.patch.PatchDAO;
 import org.alfresco.repo.domain.qname.QNameDAO;
+import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -126,6 +127,7 @@ public class ErrorLogPatch extends AbstractBeCPGPatch {
 			public void process(NodeRef dataListNodeRef) throws Throwable {
 				
 				ruleService.disableRules();
+				IntegrityChecker.setWarnInTransaction();
 
 				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 				policyBehaviourFilter.disableBehaviour();

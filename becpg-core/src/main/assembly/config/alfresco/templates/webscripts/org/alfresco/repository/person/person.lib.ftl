@@ -3,7 +3,7 @@
 <#escape x as jsonUtils.encodeJSONString(x)>
 	"url": "${url.serviceContext + "/api/people/" + p.userName}",
 	"userName": "${p.userName}",
-	"enabled": ${people.isAccountEnabled(person)?string("true","false")},
+	"enabled": ${bTemplate.isAccountEnabled(person)?string("true","false")},
 	<#if person.assocs["cm:avatar"]??>
 	"avatar": "${"api/node/" + person.assocs["cm:avatar"][0].nodeRef?string?replace('://','/') + "/content/thumbnails/avatar"}",
 	</#if>
@@ -41,7 +41,8 @@
 	"isAdminAuthority": ${people.isAdmin(person)?string("true","false")},
 	"userLocale": <#if person.properties["bcpg:userLocale"]??>"${person.properties["bcpg:userLocale"]}"<#else>null</#if>,
 	"userContentLocale": <#if person.properties["bcpg:userContentLocale"]??>"${person.properties["bcpg:userContentLocale"]}"<#else>null</#if>,
-	"isSsoUser": <#if person.properties["bcpg:isSsoUser"]??>${person.properties["bcpg:isSsoUser"]?string("true","false")}<#else>null</#if>
+	"isSsoUser": <#if person.properties["bcpg:isSsoUser"]??>${person.properties["bcpg:isSsoUser"]?string("true","false")}<#else>null</#if>,
+	"generatePassword": <#if person.properties["bcpg:generatePassword"]??>${person.properties["bcpg:generatePassword"]?string("true","false")}<#else>null</#if>
 </#escape>
 </#macro>
 

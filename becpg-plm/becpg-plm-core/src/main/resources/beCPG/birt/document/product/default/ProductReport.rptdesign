@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
     <property name="author">beCPG</property>
-    <property name="createdBy">Eclipse BIRT Designer Version 4.8.0.v201805221921</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.7.0.v201706222054</property>
     <list-property name="userProperties">
         <structure>
             <property name="name">Data Cube.OrganoList.x</property>
@@ -142,7 +142,7 @@ function getConvertedCapacityInUsUnit (qty, unit, isVolume) {
     </list-property>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="452">
-            <property name="FILELIST">src/main/resources/beCPG/birt/document/product/default/ProductReport.xml</property>
+            <property name="FILELIST">/home/arthur/becpg-workspace/becpg/becpg-plm/becpg-plm-core/src/main/resources/beCPG/birt/document/product/default/ProductReport.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -8705,38 +8705,6 @@ row["HML"] == "HIGH"</expression>
                             </cell>
                         </row>
                     </grid>
-                    <image id="8519">
-                        <property name="marginTop">0.15in</property>
-                        <property name="width">2in</property>
-                        <property name="dataSet">Product</property>
-                        <list-property name="visibility">
-                            <structure>
-                                <property name="format">all</property>
-                                <expression name="valueExpr" type="javascript">if (row["nutrientProfilingClass"] != null &amp;&amp; row["nutrientProfilingClass"] != "") {&#13;
-	(BirtStr.indexOf( reportContext.getMessage("showNutritionalScore", reportContext.getLocale()), row["reportParameters"]) == -1)&#13;
-} else {&#13;
-	true;&#13;
-}</expression>
-                            </structure>
-                        </list-property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">reportParameters</property>
-                                <text-property name="displayName">reportParameters</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["reportParameters"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">nutrientProfilingClass</property>
-                                <text-property name="displayName">nutrientProfilingClass</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["nutrientProfilingClass"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                        </list-property>
-                        <method name="onRender"><![CDATA[this.imageName = "nutri-score_" + this.getRowData().getColumnValue("nutrientProfilingClass") + ".png";]]></method>
-                        <property name="source">embed</property>
-                        <property name="imageName">logo.png</property>
-                    </image>
                 </cell>
             </row>
             <row id="3097">
@@ -8980,6 +8948,38 @@ dataSetRow["nutListUnit"].replace("/100g", "").replace("/100mL", "")
                                 <property name="style">becpg-row-header</property>
                                 <cell id="9071">
                                     <property name="style">becpg-cell-header</property>
+                                    <image id="8519">
+                                        <property name="marginTop">0.15in</property>
+                                        <property name="width">2in</property>
+                                        <property name="dataSet">Product</property>
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr" type="javascript">if (row["nutrientProfilingClass"] != null &amp;&amp; row["nutrientProfilingClass"] != "") {&#13;
+	(BirtStr.indexOf( reportContext.getMessage("showNutritionalScore", reportContext.getLocale()), row["reportParameters"]) == -1)&#13;
+} else {&#13;
+	true;&#13;
+}</expression>
+                                            </structure>
+                                        </list-property>
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">reportParameters</property>
+                                                <text-property name="displayName">reportParameters</text-property>
+                                                <expression name="expression" type="javascript">dataSetRow["reportParameters"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                            <structure>
+                                                <property name="name">nutrientProfilingClass</property>
+                                                <text-property name="displayName">nutrientProfilingClass</text-property>
+                                                <expression name="expression" type="javascript">dataSetRow["nutrientProfilingClass"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                        </list-property>
+                                        <method name="onRender"><![CDATA[this.imageName = "nutri-score_" + this.getRowData().getColumnValue("nutrientProfilingClass") + ".png";]]></method>
+                                        <property name="source">embed</property>
+                                        <property name="imageName">logo.png</property>
+                                    </image>
                                 </cell>
                                 <cell id="9072">
                                     <property name="style">becpg-cell-header</property>
@@ -13143,7 +13143,7 @@ row["roundedGDAPerc"] + "%";
                                                 <list-property name="visibility">
                                                     <structure>
                                                         <property name="format">all</property>
-                                                        <expression name="valueExpr" type="javascript">(row["allergenListInVoluntaryFromProcess"] == null || row["allergenListInVoluntaryFromProcess"] == "")</expression>
+                                                        <expression name="valueExpr" type="javascript">(row["allergenListInVoluntary"] == null || row["allergenListInVoluntary"] == "")</expression>
                                                     </structure>
                                                 </list-property>
                                                 <list-property name="boundDataColumns">
@@ -13168,7 +13168,7 @@ row["roundedGDAPerc"] + "%";
                                                     </structure>
                                                 </list-property>
                                                 <property name="contentType">html</property>
-                                                <text-property name="content"><![CDATA[<U><VALUE-OF >reportContext.getMessage("canContain", reportContext.getLocale())</VALUE-OF></U> <VALUE-OF >row["allergenListInVoluntaryFromProcess"]</VALUE-OF>]]></text-property>
+                                                <text-property name="content"><![CDATA[<U><VALUE-OF >reportContext.getMessage("canContain", reportContext.getLocale())</VALUE-OF></U> <VALUE-OF >row["allergenListInVoluntary"]</VALUE-OF>]]></text-property>
                                             </text>
                                         </cell>
                                     </row>

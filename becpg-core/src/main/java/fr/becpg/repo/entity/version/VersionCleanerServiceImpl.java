@@ -13,7 +13,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.sql.DataSource;
 
@@ -37,6 +36,7 @@ import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
 import org.alfresco.service.transaction.TransactionService;
+import org.apache.commons.lang3.mutable.MutableInt;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -322,7 +322,7 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 							if (logger.isTraceEnabled()) {
 								logger.trace("find convertible relatives of " + initialNode);
 							}
-							Set<NodeRef> oldVersionWUsedList = entityVersionService.findOldVersionWUsed(initialNode, new HashSet<>(), nextWork, maxProcessedNodes, new AtomicInteger(treated.size() + toTreat.size()), path);
+							Set<NodeRef> oldVersionWUsedList = entityVersionService.findOldVersionWUsed(initialNode, new HashSet<>(), nextWork, maxProcessedNodes, new MutableInt(treated.size() + toTreat.size()), path);
 							for (NodeRef oldVersionWUsed : oldVersionWUsedList) {
 								if (treated.size() + toTreat.size() >= maxProcessedNodes) {
 									break;

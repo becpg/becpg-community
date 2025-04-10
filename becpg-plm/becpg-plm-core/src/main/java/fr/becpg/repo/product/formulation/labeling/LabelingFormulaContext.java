@@ -2883,7 +2883,9 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				}
 			}
 
-			return input.replaceAll(" null| \\(null\\)| \\(\\)| \\[null\\]", "").replace(":,", ",").replaceAll(":$", "").replace(">null<", "><")
+			return input.replaceAll(" null| \\(null\\)| \\(\\)| \\[null\\]| \\[\\]", "")
+					.replaceAll("null|\\(null\\)|\\(\\)|\\[null\\]|\\[\\]", "")
+					.replace(":,", ",").replaceAll(":$", "").replace(">null<", "><")
 					.replace("  ", "").trim();
 		}
 		return "";

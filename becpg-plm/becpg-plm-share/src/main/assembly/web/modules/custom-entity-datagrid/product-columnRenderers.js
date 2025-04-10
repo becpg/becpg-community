@@ -441,7 +441,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 
             if (unit != null && ((oColumn.label != null && oColumn.label.indexOf && (oColumn.label.indexOf("100g") > 0 || oColumn.label.indexOf("/") > 0))
                 || (oColumn.field == "prop_bcpg_nutListValuePerServing"))) {
-                unit = unit.replace("/100g", "").replace("/100ml", "");
+                unit = unit.replace("/100g", "").replace("/100mL", "");
             }
 
             var key = "prop_bcpg_nutListFormulatedValue";
@@ -1860,6 +1860,32 @@ if (beCPG.module.EntityDataGridRenderers) {
 
     });
 
+    YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName: ["bcpg:contactListEmail", "bcpg:supplierAccountRef"],
+        renderer: function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+			var itemData = oRecord.getData("itemData");
+			var elTr = scope.widgets.dataTable.getTrEl(elCell);
+			var accounts = itemData["assoc_bcpg_supplierAccountRef"];
+			var accountMail = accounts != null && accounts.length > 0 ? accounts[0].metadata : "";
+			var contactMail = itemData["prop_bcpg_contactListEmail"];
+			contactMail = contactMail != null ? contactMail.displayValue.toLowerCase() : "";
+			if (accountMail != contactMail) {
+	            Dom.setStyle(elTr, 'background-color', "rgb(255, 106, 106)");
+			} else {
+				Dom.setStyle(elTr, 'background-color', "");
+			}
+            return Alfresco.util.encodeHTML(data.displayValue);
+        }
+    });
+    
+    YAHOO.Bubbling.on("dirtyDataTable", function(event, args) {
+        if (args && args.length > 1) {
+            var field = args[1].column.field;
+            if (field == "prop_bcpg_contactListEmail") {
+                YAHOO.Bubbling.fire("refreshDataGrids", { updateOnly: true });
+            }
+        }
+    }, this);
 
     YAHOO.Bubbling.fire("registerDataGridRenderer", {
         propertyName: "bcpg:reqCtrlList",

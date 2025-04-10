@@ -29,6 +29,7 @@ import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.util.transaction.TransactionSupportUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,7 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMGroup;
 import fr.becpg.model.PLMModel;
+import fr.becpg.model.ProjectModel;
 import fr.becpg.model.SystemGroup;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.authentication.BeCPGUserAccount;
@@ -53,6 +55,7 @@ import fr.becpg.repo.jscript.SupplierPortalHelper;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.ProjectState;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.supplier.SupplierPortalPolicy;
 import fr.becpg.repo.supplier.SupplierPortalService;
 import fr.becpg.repo.system.SystemConfigurationService;
 
@@ -491,6 +494,7 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 			userAccount.setPassword(pwdGen.generatePassword());
 			userAccount.setNotify(notify);
 			userAccount.getAuthorities().add(SystemGroup.ExternalUser.toString());
+			userAccount.setSynchronizeWithIDS(true);
 
 			if(extraProps == null) {
 				extraProps = new HashMap<>();
@@ -520,6 +524,51 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 		}
 		
 		return new ArrayList<>();
+	}
+	
+	@Override
+	public void updateSupplierAccount(NodeRef supplierNodeRef, NodeRef contactListNodeRef) {
+		String supplierEmail = (String) nodeService.getProperty(contactListNodeRef, PLMModel.PROP_CONTACT_LIST_EMAIL);
+		String supplierFirstName = (String) nodeService.getProperty(contactListNodeRef, PLMModel.PROP_CONTACT_LIST_FIRST_NAME);
+		String supplierLastName = (String) nodeService.getProperty(contactListNodeRef, PLMModel.PROP_CONTACT_LIST_LAST_NAME);
+		List<NodeRef> supplierAccounts = associationService.getTargetAssocs(supplierNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
+		List<NodeRef> contactListAccounts = associationService.getTargetAssocs(contactListNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
+		if (supplierEmail != null && !supplierEmail.isBlank()) {
+			NodeRef oldSupplierAccount = contactListAccounts.stream()
+					.filter(a -> !supplierEmail.equals(nodeService.getProperty(a, ContentModel.PROP_EMAIL))).findFirst().orElse(null);
+			NodeRef newSupplierAccount = createExternalUser(supplierEmail, supplierFirstName, supplierLastName, true, null);
+			if (nodeService.hasAspect(newSupplierAccount, ContentModel.ASPECT_PERSON_DISABLED)) {
+				nodeService.removeAspect(newSupplierAccount, ContentModel.ASPECT_PERSON_DISABLED);
+			}
+			if (oldSupplierAccount != null) {
+				nodeService.setProperty(oldSupplierAccount, ProjectModel.PROP_QNAME_DELEGATION_STATE, true);
+				nodeService.setProperty(oldSupplierAccount, ProjectModel.PROP_QNAME_REASSIGN_TASK, true);
+				nodeService.setProperty(oldSupplierAccount, ProjectModel.PROP_QNAME_REASSIGN_RESOURCE, newSupplierAccount);
+				supplierAccounts.remove(oldSupplierAccount);
+			}
+			contactListAccounts.clear();
+			contactListAccounts.add(newSupplierAccount);
+			supplierAccounts.add(newSupplierAccount);
+		} else {
+			supplierAccounts.removeAll(contactListAccounts);
+			contactListAccounts.clear();
+		}
+		associationService.update(supplierNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS, supplierAccounts);
+		associationService.update(contactListNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS, contactListAccounts);
+	}
+	
+	@Override
+	public void deleteExternalUser(NodeRef userNodeRef, NodeRef supplierNodeRef) {
+		TransactionSupportUtil.bindResource(SupplierPortalPolicy.FORCE_REFERENCING_MANAGER, true);
+		List<NodeRef> sourceAssocs = associationService.getSourcesAssocs(userNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
+		for (NodeRef sourceAssoc : sourceAssocs) {
+			if (sourceAssoc.equals(supplierNodeRef) || (entityService.getEntityNodeRef(sourceAssoc, nodeService.getType(sourceAssoc)).equals(supplierNodeRef))) {
+				nodeService.removeAssociation(sourceAssoc, userNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
+			}
+		}
+		if (associationService.getSourcesAssocs(userNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS).isEmpty() && !nodeService.hasAspect(userNodeRef, ContentModel.ASPECT_PERSON_DISABLED)) {
+			nodeService.addAspect(userNodeRef, ContentModel.ASPECT_PERSON_DISABLED, null);
+		}
 	}
 	
 }

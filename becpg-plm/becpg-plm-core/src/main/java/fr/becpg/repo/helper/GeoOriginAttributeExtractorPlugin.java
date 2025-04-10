@@ -76,7 +76,7 @@ public class GeoOriginAttributeExtractorPlugin implements AttributeExtractorPlug
 	/** {@inheritDoc} */
 	@Override
 	public Integer getPriority() {
-		return 1;
+		return HIGH_PRIORITY;
 	}
 
 }
