@@ -177,6 +177,7 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 		sendMailUser(personNodeRef, userName, password, "becpg.mail.newUser.title");
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void sendMailNewPassword(NodeRef personNodeRef, String userName, String password) {
 		_logger.debug("Email new password");

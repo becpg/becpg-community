@@ -9,6 +9,11 @@ import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 
+/**
+ * <p>Abstract SampleProductBuilder class.</p>
+ *
+ * @author matthieu
+ */
 public abstract class SampleProductBuilder {
 
 
@@ -23,6 +28,11 @@ public abstract class SampleProductBuilder {
 	protected NodeRef destFolder;
 
 	// Protected constructor to prevent direct instantiation
+	/**
+	 * <p>Constructor for SampleProductBuilder.</p>
+	 *
+	 * @param builder a {@link fr.becpg.repo.sample.SampleProductBuilder.Builder} object
+	 */
 	protected SampleProductBuilder(Builder<?> builder) {
 		this.alfrescoRepository = builder.alfrescoRepository;
 		this.nodeService = builder.nodeService;
@@ -57,8 +67,19 @@ public abstract class SampleProductBuilder {
 
 
 
+	/**
+	 * <p>createTestProduct.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.FinishedProductData} object
+	 */
 	public abstract FinishedProductData createTestProduct();
 	
+	/**
+	 * <p>uniqueName.</p>
+	 *
+	 * @param name a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	protected String uniqueName(String name) {
 		return name +" - "+ Calendar.getInstance().getTimeInMillis();
 	}

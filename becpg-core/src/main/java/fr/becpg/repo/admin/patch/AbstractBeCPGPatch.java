@@ -70,28 +70,58 @@ public abstract class AbstractBeCPGPatch extends AbstractPatch {
 
 	protected QNameDAO qnameDAO;
 
+	/**
+	 * <p>Setter for the field <code>nodeDAO</code>.</p>
+	 *
+	 * @param nodeDAO a {@link org.alfresco.repo.domain.node.NodeDAO} object
+	 */
 	public void setNodeDAO(NodeDAO nodeDAO) {
 		this.nodeDAO = nodeDAO;
 	}
 
+	/**
+	 * <p>Setter for the field <code>patchDAO</code>.</p>
+	 *
+	 * @param patchDAO a {@link org.alfresco.repo.domain.patch.PatchDAO} object
+	 */
 	public void setPatchDAO(PatchDAO patchDAO) {
 		this.patchDAO = patchDAO;
 	}
 
+	/**
+	 * <p>Setter for the field <code>qnameDAO</code>.</p>
+	 *
+	 * @param qnameDAO a {@link org.alfresco.repo.domain.qname.QNameDAO} object
+	 */
 	public void setQnameDAO(QNameDAO qnameDAO) {
 		this.qnameDAO = qnameDAO;
 	}
 
 	
 	
+	/**
+	 * <p>Getter for the field <code>nodeDAO</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.repo.domain.node.NodeDAO} object
+	 */
 	public NodeDAO getNodeDAO() {
 		return nodeDAO;
 	}
 
+	/**
+	 * <p>Getter for the field <code>patchDAO</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.repo.domain.patch.PatchDAO} object
+	 */
 	public PatchDAO getPatchDAO() {
 		return patchDAO;
 	}
 
+	/**
+	 * <p>Getter for the field <code>qnameDAO</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.repo.domain.qname.QNameDAO} object
+	 */
 	public QNameDAO getQnameDAO() {
 		return qnameDAO;
 	}
@@ -223,6 +253,12 @@ public abstract class AbstractBeCPGPatch extends AbstractPatch {
 	
 	
 	
+	/**
+	 * <p>createBatchTypeProcessor.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link org.alfresco.repo.batch.BatchProcessor} object
+	 */
 	protected BatchProcessor<NodeRef> createBatchTypeProcessor(QName type) {
 		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<>() {
 			private final long maxNodeId = nodeDAO.getMaxNodeId();

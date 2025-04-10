@@ -526,6 +526,7 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 		return new ArrayList<>();
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void updateSupplierAccount(NodeRef supplierNodeRef, NodeRef contactListNodeRef) {
 		String supplierEmail = (String) nodeService.getProperty(contactListNodeRef, PLMModel.PROP_CONTACT_LIST_EMAIL);
@@ -557,6 +558,7 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 		associationService.update(contactListNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS, contactListAccounts);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void deleteExternalUser(NodeRef userNodeRef, NodeRef supplierNodeRef) {
 		TransactionSupportUtil.bindResource(SupplierPortalPolicy.FORCE_REFERENCING_MANAGER, true);
