@@ -199,6 +199,11 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	
 	private EntityActivityService entityActivityService;
 	
+	/**
+	 * <p>Setter for the field <code>entityActivityService</code>.</p>
+	 *
+	 * @param entityActivityService a {@link fr.becpg.repo.activity.EntityActivityService} object
+	 */
 	public void setEntityActivityService(EntityActivityService entityActivityService) {
 		this.entityActivityService = entityActivityService;
 	}
@@ -843,14 +848,38 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		return wrapValue(associationService.getTargetAssocs(nodeRef, getQName(assocQname)));
 	}
 	
+	/**
+	 * <p>hasEntitySourceAssocs.</p>
+	 *
+	 * @param nodeRef a {@link java.lang.String} object
+	 * @param assocQname a {@link java.lang.String} object
+	 * @param filter a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	public boolean hasEntitySourceAssocs(String nodeRef, String assocQname, String filter) {
 		return hasEntitySourceAssocs(new NodeRef(nodeRef), assocQname, filter);
 	}
 	
+	/**
+	 * <p>hasEntitySourceAssocs.</p>
+	 *
+	 * @param node a {@link org.alfresco.repo.jscript.ScriptNode} object
+	 * @param assocQname a {@link java.lang.String} object
+	 * @param filter a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	public boolean hasEntitySourceAssocs(ScriptNode node, String assocQname, String filter) {
 		return hasEntitySourceAssocs(node.getNodeRef(), assocQname, filter);
 	}
 	
+	/**
+	 * <p>hasEntitySourceAssocs.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param assocQname a {@link java.lang.String} object
+	 * @param filter a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	public boolean hasEntitySourceAssocs(NodeRef nodeRef, String assocQname, String filter) {
 		PagingRequest pagingRequest = new PagingRequest(1);
 		List<AssociationCriteriaFilter> filters = null;
@@ -861,14 +890,38 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		return !associationService.getEntitySourceAssocs(List.of(nodeRef), getQName(assocQname), null, false, filters, pagingRequest).isEmpty();
 	}
 	
+	/**
+	 * <p>entitySourceAssocs.</p>
+	 *
+	 * @param nodeRef a {@link java.lang.String} object
+	 * @param assocQname a {@link java.lang.String} object
+	 * @param filter a {@link java.lang.String} object
+	 * @return a {@link java.lang.Object} object
+	 */
 	public Object entitySourceAssocs(String nodeRef, String assocQname, String filter) {
 		return entitySourceAssocs(new NodeRef(nodeRef), assocQname, filter);
 	}
 	
+	/**
+	 * <p>entitySourceAssocs.</p>
+	 *
+	 * @param node a {@link org.alfresco.repo.jscript.ScriptNode} object
+	 * @param assocQname a {@link java.lang.String} object
+	 * @param filter a {@link java.lang.String} object
+	 * @return a {@link java.lang.Object} object
+	 */
 	public Object entitySourceAssocs(ScriptNode node, String assocQname, String filter) {
 		return entitySourceAssocs(node.getNodeRef(), assocQname, filter);
 	}
 	
+	/**
+	 * <p>entitySourceAssocs.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param assocQname a {@link java.lang.String} object
+	 * @param filter a {@link java.lang.String} object
+	 * @return a {@link java.lang.Object} object
+	 */
 	public Object entitySourceAssocs(NodeRef nodeRef, String assocQname, String filter) {
 		PagingRequest pagingRequest = null;
 		List<AssociationCriteriaFilter> filters = null;
@@ -916,14 +969,44 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		return filters;
 	}
 	
+	/**
+	 * <p>sourceAssocValues.</p>
+	 *
+	 * @param sourceNode a {@link org.alfresco.repo.jscript.ScriptNode} object
+	 * @param assocQname a {@link java.lang.String} object
+	 * @param maxResults a {@link java.lang.Integer} object
+	 * @param offset a {@link java.lang.Integer} object
+	 * @param includeVersions a boolean
+	 * @return a {@link java.lang.Object} object
+	 */
 	public Object sourceAssocValues(ScriptNode sourceNode, String assocQname, Integer maxResults, Integer offset, boolean includeVersions) {
 		return sourceAssocValues(sourceNode.getNodeRef(), assocQname, maxResults, offset, includeVersions);
 	}
 	
+	/**
+	 * <p>sourceAssocValues.</p>
+	 *
+	 * @param nodeRef a {@link java.lang.String} object
+	 * @param assocQname a {@link java.lang.String} object
+	 * @param maxResults a {@link java.lang.Integer} object
+	 * @param offset a {@link java.lang.Integer} object
+	 * @param includeVersions a {@link java.lang.Boolean} object
+	 * @return a {@link java.lang.Object} object
+	 */
 	public Object sourceAssocValues(String nodeRef, String assocQname, Integer maxResults, Integer offset, Boolean includeVersions) {
 		return sourceAssocValues(new NodeRef(nodeRef), assocQname, maxResults, offset, includeVersions);
 	}
 	
+	/**
+	 * <p>sourceAssocValues.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param assocQname a {@link java.lang.String} object
+	 * @param maxResults a {@link java.lang.Integer} object
+	 * @param offset a {@link java.lang.Integer} object
+	 * @param includeVersions a {@link java.lang.Boolean} object
+	 * @return a {@link java.lang.Object} object
+	 */
 	public Object sourceAssocValues(NodeRef nodeRef, String assocQname, Integer maxResults, Integer offset, Boolean includeVersions) {
 		return wrapValue(associationService.getSourcesAssocs(nodeRef, getQName(assocQname), includeVersions, maxResults, offset, true));
 	}
@@ -2292,21 +2375,22 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	
 	
 	/**
-	 * 
-	 * @param scriptNode
-	 * @param activityType
-	 * @param activityEvent
+	 * <p>postEntityActivity.</p>
+	 *
+	 * @param scriptNode a {@link org.alfresco.repo.jscript.ScriptNode} object
+	 * @param activityType a {@link java.lang.String} object
+	 * @param activityEvent a {@link java.lang.String} object
 	 * @param properties
-		 * {
-			  "qname1": {
-			    "before": "value1",
-			    "after": "value2"
-			  },
-			  "qname2": {
-			    "before": "value3",
-			    "after": "value4"
-			  }
-			}
+	 * {
+	 *			  "qname1": {
+	 *			    "before": "value1",
+	 *			    "after": "value2"
+	 *			  },
+	 *			  "qname2": {
+	 *			    "before": "value3",
+	 *			    "after": "value4"
+	 *			  }
+	 *			}
 	 */
 	public void postEntityActivity(ScriptNode scriptNode, String activityType, String activityEvent, String properties) {
 		JSONObject jsonProperties = new JSONObject(properties);

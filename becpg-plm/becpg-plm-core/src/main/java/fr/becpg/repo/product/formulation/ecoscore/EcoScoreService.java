@@ -17,6 +17,11 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.common.csv.CSVReader;
 
+/**
+ * <p>EcoScoreService class.</p>
+ *
+ * @author matthieu
+ */
 @Service
 public class EcoScoreService {
 	private static final Log LOGGER = LogFactory.getLog(EcoScoreService.class);
@@ -127,6 +132,11 @@ public class EcoScoreService {
 		return Optional.ofNullable(value).map(String::trim).filter(s -> !s.isEmpty()).map(s -> s.replace(",", ".")).map(Double::valueOf).orElse(null);
 	}
 
+	/**
+	 * <p>Getter for the field <code>environmentalFootprints</code>.</p>
+	 *
+	 * @return a {@link java.util.Map} object
+	 */
 	public Map<String, EnvironmentalFootprintValue> getEnvironmentalFootprints() {
 		if (environmentalFootprints == null) {
 			loadEnvironmentalFootprints();
@@ -134,6 +144,11 @@ public class EcoScoreService {
 		return Collections.unmodifiableMap(environmentalFootprints);
 	}
 
+	/**
+	 * <p>Getter for the field <code>countryScores</code>.</p>
+	 *
+	 * @return a {@link java.util.Map} object
+	 */
 	public Map<String, Pair<Double, Double>> getCountryScores() {
 		if (countryScores == null) {
 			loadCountryScores();
@@ -152,6 +167,11 @@ public class EcoScoreService {
 		return R * c; // Distance in km
 	}
 
+	/**
+	 * <p>getCountryLocations.</p>
+	 *
+	 * @return a {@link java.util.Map} object
+	 */
 	public Map<String, Pair<Double, Double>> getCountryLocations() {
 		if (countryPositions == null) {
 			loadCountryPositions();
@@ -160,6 +180,13 @@ public class EcoScoreService {
 	}
 
 	// Method to calculate distance between two countries using country codes
+	/**
+	 * <p>distance.</p>
+	 *
+	 * @param countryCode a {@link java.lang.String} object
+	 * @param countryCode2 a {@link java.lang.String} object
+	 * @return a {@link java.lang.Long} object
+	 */
 	public Long distance(String countryCode, String countryCode2) {
 		Map<String, Pair<Double, Double>> locations = getCountryLocations();
 		Pair<Double, Double> loc1 = locations.get(countryCode);
@@ -175,8 +202,9 @@ public class EcoScoreService {
 	
 	/**
 	 * SCORE EPI (Environmental Performance Index)
-	 * @param countryCode
-	 * @return
+	 *
+	 * @param countryCode a {@link java.lang.String} object
+	 * @return a {@link java.lang.Double} object
 	 */
 	public Double countryEPI(String countryCode) {
 		Pair<Double, Double> score = getCountryScores().get(countryCode);
@@ -190,8 +218,9 @@ public class EcoScoreService {
 	
 	/**
 	 * SCORE SPI (Social Progress Index)
-	 * @param countryCode
-	 * @return
+	 *
+	 * @param countryCode a {@link java.lang.String} object
+	 * @return a {@link java.lang.Double} object
 	 */
 	public Double countrySPI(String countryCode) {
 		Pair<Double, Double> score = getCountryScores().get(countryCode);

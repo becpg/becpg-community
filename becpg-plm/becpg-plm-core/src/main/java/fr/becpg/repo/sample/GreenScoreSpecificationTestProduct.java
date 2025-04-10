@@ -16,34 +16,60 @@ import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 
+/**
+ * <p>GreenScoreSpecificationTestProduct class.</p>
+ *
+ * @author matthieu
+ */
 public class GreenScoreSpecificationTestProduct extends StandardSoapTestProduct {
 
 	private static final String DEFAULT_RANGE = "A: [80;100), B: [60;80), C: [40;60), D: [20;40), E: [0;20)";
 
 	// Main categories
+	/** Constant <code>FORMULATION="1- FORMULATION"</code> */
 	public static final String FORMULATION = "1- FORMULATION";
+	/** Constant <code>MANUFACTURING="2- MANUFACTURING"</code> */
 	public static final String MANUFACTURING = "2- MANUFACTURING";
+	/** Constant <code>TRANSPORT="3- TRANSPORT"</code> */
 	public static final String TRANSPORT = "3- TRANSPORT";
+	/** Constant <code>USAGE="4- USAGE"</code> */
 	public static final String USAGE = "4- USAGE";
+	/** Constant <code>END_OF_LIFE="5- END OF LIFE"</code> */
 	public static final String END_OF_LIFE = "5- END OF LIFE";
 
 	// Formulation subcategories
+	/** Constant <code>CARBON_SCORE_INGREDIENTS="INGREDIENTS CARBON SCORE"</code> */
 	public static final String CARBON_SCORE_INGREDIENTS = "INGREDIENTS CARBON SCORE";
+	/** Constant <code>CARBON_SCORE_INGREDIENTS_WITHOUT_TRANSPORT="Ingredients carbon score (excluding tra"{trunked}</code> */
 	public static final String CARBON_SCORE_INGREDIENTS_WITHOUT_TRANSPORT = "Ingredients carbon score (excluding transport)";
 	
+	/** Constant <code>BIODIVERSITY="BIODIVERSITY"</code> */
 	public static final String BIODIVERSITY = "BIODIVERSITY";
+	/** Constant <code>BIOTECH_RAW_MATERIALS_WEIGHT="Weight of biotech raw materials"</code> */
 	public static final String BIOTECH_RAW_MATERIALS_WEIGHT = "Weight of biotech raw materials";
+	/** Constant <code>BIODSCENT="BioDscent"</code> */
 	public static final String BIODSCENT = "BioDscent";
+	/** Constant <code>ENVIRONMENTAL_PERFORMANCE="ENVIRONMENTAL PERFORMANCE"</code> */
 	public static final String ENVIRONMENTAL_PERFORMANCE = "ENVIRONMENTAL PERFORMANCE";
 
+	/** Constant <code>SOCIETAL_PERFORMANCE="SOCIETAL PERFORMANCE"</code> */
 	public static final String SOCIETAL_PERFORMANCE = "SOCIETAL PERFORMANCE";
 
 	// Manufacturing subcategories
+	/** Constant <code>RESOURCE_CONSUMPTION="RESOURCE CONSUMPTION"</code> */
 	public static final String RESOURCE_CONSUMPTION = "RESOURCE CONSUMPTION";
+	/** Constant <code>RAW_MATERIALS_COUNT="Raw materials count"</code> */
 	public static final String RAW_MATERIALS_COUNT = "Raw materials count";
+	/** Constant <code>FACTORY_CARBON_SCORE="FACTORY CARBON SCORE (excluding transpo"{trunked}</code> */
 	public static final String FACTORY_CARBON_SCORE = "FACTORY CARBON SCORE (excluding transport)";
+	/** Constant <code>FACTORY_CARBON_INTENSITY="Factory Carbon Score (intensity)"</code> */
 	public static final String FACTORY_CARBON_INTENSITY = "Factory Carbon Score (intensity)";
 
+	/**
+	 * <p>Constructor for GreenScoreSpecificationTestProduct.</p>
+	 *
+	 * @param builder a {@link fr.becpg.repo.sample.GreenScoreSpecificationTestProduct.Builder} object
+	 */
 	protected GreenScoreSpecificationTestProduct(Builder builder) {
 		super(builder);
 	}
@@ -61,6 +87,7 @@ public class GreenScoreSpecificationTestProduct extends StandardSoapTestProduct 
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected List<ProductSpecificationData> createProductSpecifications() {
 
@@ -71,6 +98,7 @@ public class GreenScoreSpecificationTestProduct extends StandardSoapTestProduct 
 		return List.of(productSpecification);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void createPhysicoChems(FinishedProductData soapProduct) {
 		super.createPhysicoChems(soapProduct);

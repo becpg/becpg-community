@@ -42,17 +42,13 @@ public class CalculatedCharactsAutoCompletePlugin extends TargetAssocAutoComplet
 	@Autowired
 	private EntityListDAO entityListDAO;
 
-	/** 
-	 * {@inheritDoc} 
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public String[] getHandleSourceTypes() {
 		return new String[] { SOURCE_TYPE_ECO };
 	}
 
-	/** 
-	 * {@inheritDoc} 
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public AutoCompletePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
 		if (logger.isDebugEnabled()) {
@@ -83,7 +79,7 @@ public class CalculatedCharactsAutoCompletePlugin extends TargetAssocAutoComplet
 
 	/**
 	 * Finds all product templates in the system.
-	 * 
+	 *
 	 * @return List of template product NodeRefs
 	 */
 	protected List<NodeRef> findTemplateProducts() {
@@ -96,7 +92,7 @@ public class CalculatedCharactsAutoCompletePlugin extends TargetAssocAutoComplet
 
 	/**
 	 * Adds standard characteristics matching the query.
-	 * 
+	 *
 	 * @param results The list to add results to
 	 * @param query The search query
 	 * @param props Additional properties for the search
@@ -129,7 +125,7 @@ public class CalculatedCharactsAutoCompletePlugin extends TargetAssocAutoComplet
 
 	/**
 	 * Adds characteristics from a template product.
-	 * 
+	 *
 	 * @param results The list to add results to
 	 * @param templateProduct The template product NodeRef
 	 * @param query The search query
@@ -145,7 +141,7 @@ public class CalculatedCharactsAutoCompletePlugin extends TargetAssocAutoComplet
 
 	/**
 	 * Adds labeling rules from a template product that match the query.
-	 * 
+	 *
 	 * @param results The list to add results to
 	 * @param templateProduct The template product NodeRef
 	 * @param query The search query
@@ -190,7 +186,7 @@ public class CalculatedCharactsAutoCompletePlugin extends TargetAssocAutoComplet
 
 	/**
 	 * Adds dynamic characteristics from a template product that match the query.
-	 * 
+	 *
 	 * @param results The list to add results to
 	 * @param templateProduct The template product NodeRef
 	 * @param query The search query
@@ -218,7 +214,7 @@ public class CalculatedCharactsAutoCompletePlugin extends TargetAssocAutoComplet
 
 	/**
 	 * Adds dynamic characteristics from a specific list that match the query.
-	 * 
+	 *
 	 * @param results The list to add results to
 	 * @param dataList The data list NodeRef
 	 * @param query The search query

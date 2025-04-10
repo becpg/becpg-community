@@ -17,7 +17,14 @@ import org.alfresco.service.namespace.QName;
 public class AssociationCacheRegion implements Serializable {
 	private static final long serialVersionUID = -213050301938804468L;
 
+	/**
+	 * The node reference for the association cache.
+	 */
 	protected final NodeRef nodeRef;
+	
+	/**
+	 * The qualified name of the association.
+	 */
 	protected final QName assocQName;
 
 	private final int hashCode;

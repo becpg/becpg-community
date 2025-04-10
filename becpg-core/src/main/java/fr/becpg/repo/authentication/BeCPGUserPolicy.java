@@ -30,6 +30,11 @@ public class BeCPGUserPolicy extends AbstractBeCPGPolicy implements OnUpdateProp
 	
 	private IdentityServiceAccountProvider identityServiceAccountProvider;
 	
+	/**
+	 * <p>Setter for the field <code>identityServiceAccountProvider</code>.</p>
+	 *
+	 * @param identityServiceAccountProvider a {@link fr.becpg.repo.authentication.provider.IdentityServiceAccountProvider} object
+	 */
 	public void setIdentityServiceAccountProvider(IdentityServiceAccountProvider identityServiceAccountProvider) {
 		this.identityServiceAccountProvider = identityServiceAccountProvider;
 	}
@@ -50,6 +55,7 @@ public class BeCPGUserPolicy extends AbstractBeCPGPolicy implements OnUpdateProp
 		policyComponent.bindClassBehaviour(BeforeDeleteNodePolicy.QNAME, ContentModel.TYPE_PERSON, new JavaBehaviour(this, "beforeDeleteNode"));
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void beforeDeleteNode(NodeRef nodeRef) {
 		Boolean isIdsUser = (Boolean) nodeService.getProperty(nodeRef, BeCPGModel.PROP_IS_SSO_USER);

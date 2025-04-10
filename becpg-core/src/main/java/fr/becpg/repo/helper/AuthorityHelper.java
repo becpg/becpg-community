@@ -230,6 +230,11 @@ public class AuthorityHelper implements InitializingBean {
 		return false;
 	}
 	
+	/**
+	 * <p>hasAdminAuthority.</p>
+	 *
+	 * @return a boolean
+	 */
 	public static boolean hasAdminAuthority() {
 		return instance.authorityService.hasAdminAuthority();
 	}
