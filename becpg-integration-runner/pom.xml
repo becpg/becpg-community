@@ -7,14 +7,13 @@
 	<properties>
 		<jacoco.host>localhost</jacoco.host>
 	</properties>
-
 	<parent>
 		<artifactId>becpg-parent</artifactId>
 		<groupId>fr.becpg</groupId>
 		<version>23.4.1</version>
 		<relativePath>../</relativePath>
 	</parent>
- <version>23.4.1.12-SNAPSHOT</version>
+    <version>23.4.1.12-SNAPSHOT</version>
 	<dependencies>
 		<dependency>
 			<groupId>fr.becpg</groupId>
@@ -356,6 +355,18 @@
 					</execution>
 				</executions>
 			</plugin>
+			
+			<plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-javadoc-plugin</artifactId>
+              <version>3.6.3</version> 
+              <executions>
+                <execution>
+                  <id>attach-javadocs</id>
+                  <phase>none</phase> 
+                </execution>
+              </executions>
+    </plugin>
 		</plugins>
 	</build>
 	<profiles>
