@@ -287,6 +287,9 @@
 			<parameter name="constraintProp">
 				<value>bcpg:lvValue</value>
 			</parameter>
+			<parameter name="addEmptyValue">
+                <value>true</value>
+            </parameter>
 		</constraint>
 		<constraint name="bcpg:nutUnit" type="LIST">
 			<parameter name="allowedValues">
@@ -6075,6 +6078,11 @@
 		<aspect name="bcpg:userAuthenticationAspect">
 			<properties>
 				<property name="bcpg:isSsoUser">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:generatePassword">
 					<type>d:boolean</type>
 					<mandatory>false</mandatory>
 					<index enabled="false" />

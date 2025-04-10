@@ -31,6 +31,7 @@ import org.alfresco.repo.admin.SysAdminParams;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.site.SiteModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper;
+import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -61,12 +62,18 @@ import fr.becpg.repo.importer.user.UserImporterService;
  */
 public class UserImporterServiceImpl implements UserImporterService {
 
+
 	private static final Log logger = LogFactory.getLog(UserImporterServiceImpl.class);
 
 	/** Constant <code>USERNAME="username"</code> */
 	public static final String ATTR_USERNAME = "username";
 	/** Constant <code>PASSWORD="password"</code> */
 	public static final String ATTR_PASSWORD = "password";
+	public static final String ATTR_SHOULD_GENERATE_PASSWORD = "should_generate_password";
+	public static final String ATTR_IS_IDS_USER = "is_ids_user";
+	public static final String ATTR_NEW_USERNAME = "new_username";
+	public static final String ATTR_DISABLE = "disable";
+	public static final String ATTR_DELETE = "delete";
 	/** Constant <code>NOTIFY="notify"</code> */
 	public static final String ATTR_NOTIFY = "notify";
 	/** Constant <code>MEMBERSHIPS="memberships"</code> */
@@ -97,7 +104,11 @@ public class UserImporterServiceImpl implements UserImporterService {
 
 	private SysAdminParams sysAdminParams;
 	
+	private DictionaryService dictionaryService;
 	
+	public void setDictionaryService(DictionaryService dictionaryService) {
+		this.dictionaryService = dictionaryService;
+	}
 	
 	
 	/**
@@ -254,27 +265,57 @@ public class UserImporterServiceImpl implements UserImporterService {
 	private void processRow(final Map<String, Integer> headers, final String[] splitted) {
 
 		if ((splitted != null) && (headers != null)) {
-			BeCPGUserAccount userAccount = new BeCPGUserAccount();
 
 			String username = splitted[headers.get(ATTR_USERNAME)];
 			username = username != null ? username.toLowerCase() : null;
 			
+			if (headers.containsKey(ATTR_DELETE) && Boolean.TRUE.equals(Boolean.parseBoolean(splitted[headers.get(ATTR_DELETE)].toLowerCase()))) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Delete user: " + username);
+				}
+				beCPGUserAccountService.deleteUser(username);
+				return;
+			}
+			
+			BeCPGUserAccount userAccount = new BeCPGUserAccount();
 			userAccount.setUserName(username);
-			userAccount.setPassword(splitted[headers.get(ATTR_PASSWORD)]);
-			userAccount.setNotify(headers.containsKey(ATTR_NOTIFY) && Boolean.parseBoolean(splitted[headers.get(ATTR_NOTIFY)]));
+			if (headers.containsKey(ATTR_PASSWORD)) {
+				userAccount.setPassword(splitted[headers.get(ATTR_PASSWORD)]);
+			}
+			if (headers.containsKey(ATTR_SHOULD_GENERATE_PASSWORD)) {
+				userAccount.setGeneratePassword(Boolean.parseBoolean(splitted[headers.get(ATTR_SHOULD_GENERATE_PASSWORD)].toLowerCase()));
+			}
+			if (headers.containsKey(ATTR_IS_IDS_USER)) {
+				userAccount.setSynchronizeWithIDS(Boolean.parseBoolean(splitted[headers.get(ATTR_IS_IDS_USER)].toLowerCase()));
+			}
+			if (headers.containsKey(ATTR_DISABLE)) {
+				userAccount.setDisable(Boolean.parseBoolean(splitted[headers.get(ATTR_DISABLE)].toLowerCase()));
+			}
+			if (headers.containsKey(ATTR_NEW_USERNAME)) {
+				String newUserName = splitted[headers.get(ATTR_NEW_USERNAME)];
+				newUserName = newUserName != null ? newUserName.toLowerCase() : null;
+				userAccount.setNewUserName(newUserName);
+			}
+			userAccount.setNotify(headers.containsKey(ATTR_NOTIFY) && Boolean.parseBoolean(splitted[headers.get(ATTR_NOTIFY)].toLowerCase()));
 
 			for (Map.Entry<String, Integer> entry : headers.entrySet()) {
 				if (isPropQname(entry.getKey()) && !splitted[entry.getValue()].isEmpty()) {
 					QName prop = QName.resolveToQName(namespacePrefixResolver, entry.getKey());
 					String value = splitted[entry.getValue()];
-
-					logger.debug("Adding : " + prop + " " + value);
-					userAccount.getExtraProps().put(prop, value);
-
+					if (dictionaryService.getProperty(prop) != null) {
+						logger.debug("Adding : " + prop + " " + value);
+						userAccount.getExtraProps().put(prop, value);
+					}
 				}
-
 			}
 
+			if (userAccount.getLastName() == null) {
+				userAccount.setLastName("");
+			}
+			if (userAccount.getFirstName() == null) {
+				userAccount.setFirstName("");
+			}
+			
 			if (headers.containsKey(ATTR_GROUPS)) {
 				String[] groups = splitted[headers.get(ATTR_GROUPS)].split(FIELD_SEPARATOR);
 				for (String group : groups) {
@@ -291,22 +332,34 @@ public class UserImporterServiceImpl implements UserImporterService {
 						String[] memberships = splitted[headers.get(ATTR_MEMBERSHIPS)].split(FIELD_SEPARATOR);
 						for (String membership : memberships) {
 
+							boolean shouldRemove = false;
+							if (membership.startsWith("REMOVE_")) {
+								shouldRemove = true;
+								membership = membership.replace("REMOVE_", "");
+							}
+							
 							String[] sites = membership.split("_");
 							String siteName = formatSiteName(sites[0]);
+							String finalSiteName = cleanSiteName(siteName);
+							
 							String role = SiteModel.SITE_CONSUMER;
 							if (sites.length > 1) {
 								role = formatRole(sites[1]);
 							}
 
-							if (logger.isDebugEnabled()) {
-								logger.debug("Adding role " + role + " to " + userAccount.getUserName() + " on site " + siteName);
-							}
-							if (siteService.getSite(cleanSiteName(siteName)) != null) {
-								siteService.setMembership(cleanSiteName(siteName), userAccount.getUserName(), role);
-							} else {
+							if (siteService.getSite(finalSiteName) != null) {
+								if (shouldRemove) {
+									siteService.removeMembership(finalSiteName, userAccount.getUserName());
+								} else {
+									if (logger.isDebugEnabled()) {
+										logger.debug("Adding role " + role + " to " + userAccount.getUserName() + " on site " + siteName);
+									}
+									siteService.setMembership(finalSiteName, userAccount.getUserName(), role);
+								}
+							} else if (!shouldRemove) {
 								logger.debug("Site " + siteName + " doesn't exist.");
 
-								SiteInfo siteInfo = siteService.createSite(DEFAULT_PRESET, cleanSiteName(siteName), siteName, "",
+								SiteInfo siteInfo = siteService.createSite(DEFAULT_PRESET, finalSiteName, siteName, "",
 										SiteVisibility.PUBLIC);
 								try {
 

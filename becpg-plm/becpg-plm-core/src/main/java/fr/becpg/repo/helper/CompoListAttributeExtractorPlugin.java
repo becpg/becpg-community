@@ -19,7 +19,7 @@ import fr.becpg.repo.system.SystemConfigurationService;
  */
 @Service
 public class CompoListAttributeExtractorPlugin extends CharactAttributeExtractorPlugin {
-
+	
 	@Autowired
 	private AssociationService associationService;
 	
@@ -42,14 +42,7 @@ public class CompoListAttributeExtractorPlugin extends CharactAttributeExtractor
 	/** {@inheritDoc} */
 	@Override
 	public Integer getPriority() {
-		return 1;
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public String extractMetadata(QName type, NodeRef nodeRef) {
-		NodeRef product = associationService.getTargetAssoc(nodeRef, PLMModel.ASSOC_COMPOLIST_PRODUCT);
-		return super.extractMetadata(nodeService.getType(product), product);
+		return HIGH_PRIORITY;
 	}
 
 }

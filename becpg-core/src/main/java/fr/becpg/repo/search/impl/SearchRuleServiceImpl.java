@@ -14,6 +14,7 @@ import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.repository.Path;
 import org.alfresco.service.cmr.version.VersionHistory;
 import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -158,8 +159,10 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 				}
 
 			}
+			boolean isNotIndexedType = isNotIndexedType(filter.getNodeType());
+			boolean shouldFilterByPath  = filter.getNodePath() != null && isNotIndexedType(filter.getNodeType());
 
-			if (filter.getNodePath() != null) {
+			if (filter.getNodePath() != null && !shouldFilterByPath) {
 				queryBuilder.inSubPath(filter.getNodePath().toPrefixString(namespaceService));
 			}
 
@@ -167,7 +170,7 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 				queryBuilder.andFTSQuery( String.format(filter.getQuery(), fromQuery, fromQuery, fromQuery));
 			}
 			
-			if(Boolean.TRUE.equals(filter.getEnsureDbQuery())) {
+			if(Boolean.TRUE.equals(filter.getEnsureDbQuery()) || isNotIndexedType) {
 				queryBuilder.inDB();
 			}
 
@@ -176,6 +179,11 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 
 			if ((filter.getEntityCriteria() != null) && (filter.getEntityType() != null)) {
 				ret = filterByEntityCriteria(ret, filter);
+			}
+			
+			if(shouldFilterByPath) {
+				logger.info("Filter by path for type : "+filter.getNodeType());
+				ret = filterByPath(ret,  filter.getNodePath());
 			}
 
 			//Versions history filter
@@ -208,6 +216,41 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 		}
 
 		return searchRuleResult;
+	}
+
+	public List<NodeRef> filterByPath(List<NodeRef> ret, Path nodePath) {
+		List<NodeRef> filtered = new ArrayList<>();
+		for (NodeRef node : ret) {
+			Path refPath = nodeService.getPath(node);
+			if (isPathContained(refPath, nodePath)) {
+				filtered.add(node);
+			}
+		}
+		return filtered;
+	}
+	
+	/**
+	 * Checks if a path contains another path
+	 * 
+	 * @param containerPath The path to check
+	 * @param containedPath The path that might be contained
+	 * @return true if containerPath contains containedPath
+	 */
+	private boolean isPathContained(Path containerPath, Path containedPath) {
+		if (containerPath == null || containedPath == null) {
+			return false;
+		}
+		
+		// Convert paths to string for comparison
+		String containerPathStr = containerPath.toPrefixString(namespaceService);
+		String containedPathStr = containedPath.toPrefixString(namespaceService);
+		
+		// Check if container path starts with the contained path
+		return containerPathStr.startsWith(containedPathStr);
+	}
+
+	private boolean isNotIndexedType(QName nodeType) {
+		return nodeType != null  && BeCPGQueryBuilder.isExcludedFromIndex(nodeType);
 	}
 
 	private int getDateFilterDelayUnit(DateFilterDelayUnit dateFilterDelayUnit) {

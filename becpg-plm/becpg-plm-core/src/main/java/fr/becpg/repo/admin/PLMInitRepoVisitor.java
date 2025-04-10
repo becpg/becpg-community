@@ -689,9 +689,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			NodeRef adminGroupNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, "GROUP_ALFRESCO_ADMINISTRATORS");
 
-			NodeRef siteRoot = siteService.getSiteRoot();
 
-			createNotification(notificationFolder, properties, mailTemplate, adminGroupNodeRef, siteRoot);
+			createNotification(notificationFolder, properties, mailTemplate, adminGroupNodeRef, null);
 		}
 	}
 
@@ -713,9 +712,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			NodeRef adminGroupNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, "GROUP_ALFRESCO_ADMINISTRATORS");
 
-			NodeRef siteRoot = siteService.getSiteRoot();
 
-			createNotification(notificationFolder, properties, null, adminGroupNodeRef, siteRoot);
+			createNotification(notificationFolder, properties, null, adminGroupNodeRef, null);
 		}
 	}
 
@@ -741,9 +739,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			NodeRef adminGroupNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, "GROUP_ALFRESCO_ADMINISTRATORS");
 
-			NodeRef siteRoot = siteService.getSiteRoot();
-
-			createNotification(notificationFolder, properties, mailTemplate, adminGroupNodeRef, siteRoot);
+			createNotification(notificationFolder, properties, mailTemplate, adminGroupNodeRef, null);
 		}
 	}
 
@@ -767,9 +763,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			NodeRef adminGroupNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, "GROUP_ALFRESCO_ADMINISTRATORS");
 
-			NodeRef siteRoot = siteService.getSiteRoot();
 
-			createNotification(notificationFolder, properties, null, adminGroupNodeRef, siteRoot);
+			createNotification(notificationFolder, properties, null, adminGroupNodeRef, null);
 		}
 	}
 
@@ -794,9 +789,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			NodeRef adminGroupNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, "GROUP_ALFRESCO_ADMINISTRATORS");
 
-			NodeRef siteRoot = siteService.getSiteRoot();
 
-			createNotification(notificationFolder, properties, null, adminGroupNodeRef, siteRoot);
+			createNotification(notificationFolder, properties, null, adminGroupNodeRef, null);
 		}
 	}
 
@@ -820,9 +814,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			NodeRef adminGroupNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, "GROUP_ALFRESCO_ADMINISTRATORS");
 
-			NodeRef siteRoot = siteService.getSiteRoot();
 
-			createNotification(notificationFolder, properties, null, adminGroupNodeRef, siteRoot);
+			createNotification(notificationFolder, properties, null, adminGroupNodeRef, null);
 		}
 	}
 
@@ -870,7 +863,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			conditionOnSize.setInvertCondition(false);
 			compositeAction.addActionCondition(conditionOnSize);
 
-			createRule(nodeRef, "import csv file", "Every csv item created will be imported", true, compositeAction);
+			createRule(nodeRef, "import csv file", "Every csv item created will be imported", true, true, List.of(RuleType.INBOUND), compositeAction);
 
 			action = actionService.createAction(ImporterActionExecuter.NAME, null);
 			compositeAction = actionService.createCompositeAction();
@@ -901,7 +894,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			compositeAction.addActionCondition(conditionOnSize);
 			
 			
-			createRule(nodeRef, "import xlsx file", "Every xlsx item created will be imported", true, compositeAction);
+			createRule(nodeRef, "import xlsx file", "Every xlsx item created will be imported", true, true, List.of(RuleType.INBOUND), compositeAction);
 
 		} else if (Objects.equals(folderName, PlmRepoConsts.PATH_IMPORT_USER)) {
 
@@ -925,7 +918,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			conditionOnName.setInvertCondition(false);
 			compositeAction.addActionCondition(conditionOnName);
 
-			createRule(nodeRef, "import user", "Every item created will be imported", true, compositeAction);
+			createRule(nodeRef, "import user", "Every item created will be imported", true, true, List.of(RuleType.INBOUND), compositeAction);
 
 		}
 
@@ -1010,6 +1003,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		dataLists.add(PLMModel.TYPE_CONTACTLIST);
 		dataLists.add(PLMModel.TYPE_CERTIFICATION);
 		dataLists.add(PLMModel.TYPE_PLANT);
+		dataLists.add(SurveyModel.TYPE_SURVEY_LIST);
 	
 		subFolders.add(RepoConsts.PATH_SUPPLIER_DOCUMENTS);
 		NodeRef entityTplNodeRef = entityTplService.createEntityTpl(entityTplsNodeRef, PLMModel.TYPE_SUPPLIER, null, true, true, dataLists,
@@ -1266,6 +1260,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
 				dataLists.add(PLMModel.TYPE_LABELCLAIMLIST);
 				dataLists.add(PLMModel.TYPE_SVHCLIST);
+				dataLists.add(SurveyModel.TYPE_SURVEY_LIST);
 
 				wusedQName = PLMModel.TYPE_COMPOLIST;
 

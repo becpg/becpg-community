@@ -575,23 +575,6 @@
 					<field id="bcpg:autoMergeImpactWUsed" mandatory="false" read-only="false" set="branch" />
 				</appearance>
 			</form>
-			<form id="reports-parameters">
-				<field-visibility>
-					<show force="true" id="rep:reportLocales" />
-					<show force="true" id="rep:reportTpls" />
-				</field-visibility>
-				<appearance>
-					<field id="rep:reportLocales" mandatory="false" read-only="false">
-						<control template="/org/alfresco/components/form/controls/mtlangue.ftl" />
-					</field>
-					<field id="rep:reportTpls" mandatory="false" read-only="false">
-						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/rep:reportTpl?excludeProps=rep%3AreportTplIsSystem%7Ctrue%2Crep%3AreportTplIsDisabled%7Ctrue%2Crep%3AreportTplType%7CExportSearch%2Crep%3AreportTplType%7CCompare%2Crep%3AreportTplType%7CSystem
-							</control-param>
-						</control>
-					</field>
-				</appearance>
-			</form>
 			<form id="supplier">
 				<field-visibility>
 					<show force="false" id="cm:name" />

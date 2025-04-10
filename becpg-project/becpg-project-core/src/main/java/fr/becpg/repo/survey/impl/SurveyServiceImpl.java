@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -71,7 +72,8 @@ public class SurveyServiceImpl implements SurveyService {
 	 */
 	/** {@inheritDoc} */
 	@Override
-	public JSONObject getSurveyData(NodeRef entityNodeRef, String dataListName) throws JSONException {
+	public JSONObject getSurveyData(NodeRef entityNodeRef, String dataListName,
+			Predicate<List<SurveyListDataItem>> writeAccessTester) throws JSONException {
 		JSONObject ret = new JSONObject();
 		L2CacheSupport.doInCacheContext(() -> AuthenticationUtil.runAsSystem(() -> {
 
@@ -79,8 +81,10 @@ public class SurveyServiceImpl implements SurveyService {
 			JSONArray definitions = new JSONArray();
 
 			Set<SurveyQuestion> questions = new HashSet<>();
+			
+			final List<SurveyListDataItem> surveyListDataItems = getSurveys(entityNodeRef, dataListName);
 
-			for (SurveyListDataItem survey : getSurveys(entityNodeRef, dataListName)) {
+			for (SurveyListDataItem survey : surveyListDataItems) {
 				JSONObject value = new JSONObject();
 
 				SurveyQuestion surveyQuestion = (SurveyQuestion) alfrescoRepository.findOne(survey.getQuestion());
@@ -109,7 +113,7 @@ public class SurveyServiceImpl implements SurveyService {
 
 			ret.put("data", data);
 			ret.put("def", definitions);
-
+			ret.put("disabled", writeAccessTester.negate().test(surveyListDataItems));
 			return ret;
 		}), false, true, true);
 

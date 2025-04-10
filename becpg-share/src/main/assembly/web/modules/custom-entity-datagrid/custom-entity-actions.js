@@ -870,7 +870,51 @@
 				}]
 			});
 		},
-
+		
+		onActionUpdateSupplierAccount: function EntityDataGrid_onActionUpdateSupplierAccount(p_items) {
+			var me = this;
+			var items = YAHOO.lang.isArray(p_items) ? p_items : [p_items];
+			var nodeRefs = [];
+			for (var index in items) {
+				var item = items[index];
+				nodeRefs.push(item.nodeRef.toString());
+			}
+			Alfresco.util.PopupManager.displayPrompt({
+				title: me.msg("message.update-supplier-account.title"),
+				text: me.msg("message.update-supplier-account.description"),
+				buttons: [{
+					text: me.msg("button.ok"),
+					handler: function() {
+						this.destroy();
+						Alfresco.util.Ajax.request({
+							url: Alfresco.constants.PROXY_URI + "becpg/supplier/update-supplier?&nodeRefs=" + nodeRefs.join(","),
+							method: Alfresco.util.Ajax.POST,
+							successCallback: {
+								fn: function () {
+									for (var i = 0, ii = items.length; i < ii; i++) {
+										YAHOO.Bubbling.fire(me.scopeId + "dataItemUpdated", {
+											nodeRef: items[i].nodeRef
+										});
+									}
+									Alfresco.util.PopupManager.displayMessage({
+										text: me.msg("message.update-supplier-account.success")
+									});
+								},
+								scope: this
+							},
+							failureMessage: me.msg("message.update-supplier-account.failure"),
+						});
+					}
+				}, {
+					text: me.msg("button.cancel"),
+					handler: function() {
+						this.destroy();
+					},
+					isDefault: true
+				}]
+			});
+		},
+		
 		_manageAspect: function EntityDataGrid_manageAspect(itemNodeRef, aspect) {
 			var itemUrl = itemNodeRef.replace(":/", ""), me = this;
 

@@ -98,7 +98,7 @@ public class FormulationNutsIT extends AbstractFinishedProductTest {
 				assertEquals((6d * 50d) / 100, nutListDataItem.getValuePerServing());
 				assertEquals((100 * nutListDataItem.getValuePerServing()) / 2000d, nutListDataItem.getGdaPerc());
 
-				assertEquals(RegulationFormulationHelper.extractValuePerServing(nutListDataItem.getRoundedValue(), Locale.FRENCH).doubleValue(),
+				assertEquals(RegulationFormulationHelper.extractValuePerServing(nutListDataItem.getRoundedValue(), Locale.FRENCH),
 						(6d * 50d) / 100);
 
 				RegulationFormulationHelper.extractRoundedValue(formulatedProduct, NutrientCode.Fat, nutListDataItem);
@@ -114,10 +114,10 @@ public class FormulationNutsIT extends AbstractFinishedProductTest {
 			if (nutListDataItem.getNut().equals(nut4)) {
 				assertEquals("nut4.getValue() == 1.5d, actual values: " + trace, 1.5d, nutListDataItem.getValue());
 
-				assertEquals(RegulationFormulationHelper.extractValue(nutListDataItem.getRoundedValue(), Locale.FRENCH).doubleValue(), 2d);
-				assertEquals(RegulationFormulationHelper.extractValue(nutListDataItem.getRoundedValue(), Locale.US).doubleValue(), 2d);
-				assertEquals(RegulationFormulationHelper.extractMini(nutListDataItem.getRoundedValue(), Locale.FRENCH).doubleValue(), 0d);
-				assertEquals(RegulationFormulationHelper.extractMaxi(nutListDataItem.getRoundedValue(), Locale.FRENCH).doubleValue(), 1d);
+				assertEquals(RegulationFormulationHelper.extractValue(nutListDataItem.getRoundedValue(), Locale.FRENCH), 2d);
+				assertEquals(RegulationFormulationHelper.extractValue(nutListDataItem.getRoundedValue(), Locale.US), 2d);
+				assertEquals(RegulationFormulationHelper.extractMini(nutListDataItem.getRoundedValue(), Locale.FRENCH), 0d);
+				assertEquals(RegulationFormulationHelper.extractMaxi(nutListDataItem.getRoundedValue(), Locale.FRENCH), 1d);
 
 				checks++;
 			}

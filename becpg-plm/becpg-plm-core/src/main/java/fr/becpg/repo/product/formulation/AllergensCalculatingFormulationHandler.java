@@ -10,10 +10,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.apache.commons.lang3.mutable.MutableInt;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
@@ -592,7 +592,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 		final int BEFORE = -1;
 		final int AFTER = 1;
 
-		AtomicInteger atomicInteger = new AtomicInteger(1);
+		MutableInt sort = new MutableInt(1);
 		allergenList.stream().sorted((a1, a2) -> {
 
 			String type1 = (String) nodeService.getProperty(a1.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE);
@@ -619,7 +619,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 			return type1.compareTo(type2);
 
-		}).forEach(al -> al.setSort(atomicInteger.getAndIncrement()));
+		}).forEach(al -> al.setSort(sort.getAndIncrement()));
 
 	}
 

@@ -382,6 +382,8 @@ public interface PLMModel {
 	QName PROP_CONTACT_LIST_FIRST_NAME = QName.createQName(BeCPGModel.BECPG_URI, "contactListFirstName");
 	/** Constant <code>PROP_CONTACT_LIST_LAST_NAME</code> */
 	QName PROP_CONTACT_LIST_LAST_NAME = QName.createQName(BeCPGModel.BECPG_URI, "contactListLastName");
+	
+	QName PROP_CONTACT_LIST_EMAIL = QName.createQName(BeCPGModel.BECPG_URI, "contactListEmail");
 
 	// labelClaimList
 	/** Constant <code>TYPE_LABELCLAIMLIST</code> */

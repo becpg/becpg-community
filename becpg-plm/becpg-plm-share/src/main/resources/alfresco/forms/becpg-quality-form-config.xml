@@ -342,7 +342,17 @@
 					</field>
 				</appearance>
 			</form>
-
+			<form id="datagridWUsed">
+          		<field-visibility>
+					<show id="cm:name" />
+					<show id="qa:batchState"/>
+					<show id="qa:batchQty"/>
+					<show id="qa:batchQtyUnit"/>
+                    <show id="bcpg:laboratories" force="true" />
+					<show id="cm:creator" for-mode="view" />
+					<show id="cm:created" for-mode="view" />
+          		</field-visibility>
+     		</form>
 		</forms>
 	</config>
 

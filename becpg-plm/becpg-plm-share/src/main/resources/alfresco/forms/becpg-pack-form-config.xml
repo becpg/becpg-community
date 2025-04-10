@@ -257,6 +257,21 @@
 				</appearance>
 			</form>
 			
+			<form id="customListDatagrid">
+                <field-visibility>
+                    <show id="pack:pmlLevel" />
+                    <show id="pack:pmlMaterial" />
+                    <show id="pack:pmlPerc" />
+                    <show id="pack:pmlWeight" />
+                    <show id="pack:pmlRecycledPercentage" />    
+                    <show id="fm:commentCount" force="true" />
+                </field-visibility>
+                <appearance>
+                    <field id="pack:pmlLevel"  read-only="true" />
+                    <field id="fm:commentCount" label="hidden" read-only="true" />
+                </appearance>
+            </form>
+			
 			
 			<form id="filter">
 				<field-visibility>
@@ -311,6 +326,8 @@
 					<show id="pack:pmEcoTaxeCategory" />
 					<show id="pack:pmEcoScore" />
 					<show id="pack:pmIsNotRecyclable" />
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:isDeleted" force="true"/>
 				</field-visibility>
 			</form>
 		</forms>
@@ -326,6 +343,8 @@
 					<show id="pack:pmEcoTaxeCategory" />
 					<show id="pack:pmEcoScore" />
 					<show id="pack:pmIsNotRecyclable" />
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:isDeleted" force="true" />
 				</field-visibility>
 			</form>
 
@@ -344,6 +363,8 @@
 					<show id="pack:pmEcoTaxeCategory" />
 					<show id="pack:pmEcoScore" />
 					<show id="pack:pmIsNotRecyclable" />
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:isDeleted" force="true" />
 				</field-visibility>
 			</form>
 		</forms>

@@ -1750,7 +1750,7 @@
 							<control-param name="isSearch">true</control-param>
 						</control>
 					</field>
-					<field id="bcpg:toxAbsorptionType" set="toxTab" >
+					<field id="bcpg:toxAbsorptionType">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl" />
 					</field>
 					<field id="bcpg:toxCalculateSystemic">
@@ -1802,7 +1802,7 @@
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:toxAbsorptionType" set="toxTab" >
+					<field id="bcpg:toxAbsorptionType">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl" />
 					</field>
 				</appearance>
@@ -5501,6 +5501,38 @@
 							<control-param name="isSearch">true</control-param>
 						</control>
 					</field>
+				</appearance>
+			</form>
+			<form id="product-list">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:title" force="true" />
+					<show id="bcpg:code" force="true" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:clientHierarchy1" force="true" />
+					<show id="bcpg:clientHierarchy2" force="true"/>
+					<show id="bcpg:clientState" force="true" />
+					<show id="cm:description" force="true" />
+					<show id="cm:modified" force="true" />
+					<show id="cm:modifier" force="true" />
+					<show id="cm:created" force="true" />
+					<show id="cm:creator" force="true" />
+					<show id="bcpg:clientTel" force="false"/>
+					<show id="bcpg:clientEmail" force="false"/>
+					<show id="bcpg:clientFax" force="false"/>
+					
+					<!-- bcpg:location type -->
+					<show id="bcpg:locationAddress1" force="false"/>
+					<show id="bcpg:locationAddress2" force="false"/>
+					<show id="bcpg:locationAddress3" force="false" />
+					<show id="bcpg:locationCity" force="false"/>
+					<show id="bcpg:locationZip" force="false"/>
+					<show id="bcpg:locationState" force="false"/>
+					<show id="bcpg:locationCountry" force="false"/>
+
+				</field-visibility>
+				<appearance>
+					<field id="cm:name" read-only="true"></field>
 				</appearance>
 			</form>
 		</forms>
@@ -10162,6 +10194,7 @@
 					<show id="bcpg:contactListFirstName" />
 					<show id="bcpg:contactListLastName" />
 					<show id="bcpg:contactListEmail" />
+					<show id="bcpg:supplierAccountRef" force="true" />
 					<show id="bcpg:contactListPhoneOffice" />
 					<show id="bcpg:contactListPhoneMobile" />
 					<show id="bcpg:contactListNotes" />
@@ -10171,6 +10204,7 @@
 				<appearance>
 					<field id="bcpg:entityDataListState" label="hidden" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
+					<field id="bcpg:supplierAccountRef" read-only="true" />
 					<field id="bcpg:isDeleted">
 						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
 					</field>

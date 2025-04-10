@@ -1086,7 +1086,7 @@
         <property name="fixesToSchema" value="16000" />
         <property name="targetSchema" value="16001"/>
         <property name="requiresTransaction"><value>true</value></property>
-        <property name="applyToTenants"><value>true</value></property>
+        <property name="applyToTenants"><value>false</value></property>
         <property name="ruleService" ref="ruleService"/>
          <property name="patchDAO">
             <ref bean="patchDAO"/>
@@ -1113,7 +1113,7 @@
         <property name="fixesToSchema" value="16000" />
         <property name="targetSchema" value="16001"/>
         <property name="requiresTransaction"><value>true</value></property>
-        <property name="applyToTenants"><value>true</value></property>
+        <property name="applyToTenants"><value>false</value></property>
         <property name="ruleService" ref="ruleService"/>
          <property name="patchDAO">
             <ref bean="patchDAO"/>
@@ -1136,6 +1136,7 @@
         <property name="fixesToSchema" value="16000" />
         <property name="targetSchema" value="16001"/>
         <property name="ruleService" ref="ruleService"/>
+        <property name="applyToTenants"><value>false</value></property>
         <property name="lockService" ref="lockService"/>
         <property name="patchDAO">
             <ref bean="patchDAO"/>
@@ -1146,7 +1147,6 @@
         <property name="qnameDAO">
             <ref bean="qnameDAO"/>
         </property>
-        <property name="integrityChecker" ref="integrityChecker"/>
         <property name="beCPGAuditService" ref="beCPGAuditService"/>
         <property name="entityService" ref="entityService"/>
         <property name="associationService" ref="associationService"/>
@@ -1183,7 +1183,7 @@
         <property name="fixesToSchema" value="16000" />
         <property name="targetSchema" value="16001"/>
         <property name="requiresTransaction"><value>true</value></property>
-        <property name="applyToTenants"><value>true</value></property>
+        <property name="applyToTenants"><value>false</value></property>
         <property name="ruleService" ref="ruleService"/>
          <property name="patchDAO">
             <ref bean="patchDAO"/>
