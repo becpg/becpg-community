@@ -134,6 +134,8 @@ public class EntityDataListWebScript extends AbstractEntityDataListWebScript {
 
 	/** Constant <code>PARAM_EFFECTIVE_FILTER_ON="effectiveFilterOn"</code> */
 	protected static final String PARAM_EFFECTIVE_FILTER_ON = "effectiveFilterOn";
+	
+	private static final String PARAM_READ_ONLY = "readOnly";
 
 	private DataListExtractorFactory dataListExtractorFactory;
 
@@ -364,7 +366,7 @@ public class EntityDataListWebScript extends AbstractEntityDataListWebScript {
 			final Access access = getAccess(dataType, entityNodeRefsList, dataListFilter.hasWriteAccess(),
 					dataListFilter.getParentNodeRef(), dataListFilter.getDataListName(), extractor);
 			
-			boolean hasWriteAccess = access.canWrite();
+			boolean hasWriteAccess = access.canWrite() && !Boolean.valueOf(req.getParameter(PARAM_READ_ONLY));
 			boolean hasReadAccess = access.canRead();
 			
 			PaginatedExtractedItems extractedItems;

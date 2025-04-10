@@ -13,8 +13,7 @@
          repositoryBrowsing: false,
          useTitle: false,
          createContentByTemplateEnabled: false,
-         createContentActions: [{"icon": "folder", "index": 5.0, "permission": "", "id": "folder", "label": "create-content.folder", "type": "javascript", "params": {"function": "onNewFolder"}}],
-       	 mode: "${args.mode!""}"
+         createContentActions: [{"icon": "folder", "index": 5.0, "permission": "", "id": "folder", "label": "create-content.folder", "type": "javascript", "params": {"function": "onNewFolder"}}]
        }).setMessages(${messages});
    
    var simpleDocLib =  new beCPG.custom.DocumentList("${el}",true).setOptions(
@@ -41,8 +40,7 @@
          userIsSiteManager : false,
          associatedToolbar: { _alfValue: "docListToolbar", _alfType: "REFERENCE" },
          commonComponentStyle : "{ \"browse\":{ \"folder\":[ { \"filter\":{ \"name\":\"aspect\", \"match\":[ \"smf:smartFolder\" ] }, \"style\":{ \"css\":\"icon-smart\", \"icons\":{ \"16x16\":{ \"icon\":\"components\/documentlibrary\/images\/smart-folder-16.png\" }, \"32x32\":{ \"icon\":\"components\/documentlibrary\/images\/smart-folder-32.png\" }, \"48x48\":{ \"icon\":\"components\/documentlibrary\/images\/smart-folder-48.png\" }, \"64x64\":{ \"icon\":\"components\/documentlibrary\/images\/smart-folder-64.png\" }, \"256x256\":{ \"icon\":\"components\/documentlibrary\/images\/smart-folder-256.png\" } } } } ] } }",
-         suppressComponent : "{ \"social\":{ \"browse\":{ \"folder\":[ { \"filter\":{ \"name\":\"aspect\", \"match\":[ \"smf:smartFolder\" ], \"name\":\"type\", \"match\":[ \"app:folderlink\" ] } } ], \"file\":[ { \"filter\":{ \"name\":\"type\", \"match\":[ \"app:filelink\" ] } } ] }, \"details\":{ \"folder\":[ { \"filter\":{ \"name\":\"aspect\", \"match\":[ \"smf:smartFolder\" ], \"name\":\"type\", \"match\":[ \"app:folderlink\" ] } } ], \"file\":[ { \"filter\":{ \"name\":\"type\", \"match\":[ \"app:filelink\" ] } } ] } }, \"tags\":{ \"browse\":{ \"folder\":[ { \"filter\":{ \"name\":\"aspect\", \"match\":[ \"smf:smartFolder\" ], \"name\":\"type\", \"match\":[ \"app:folderlink\" ] } } ], \"file\":[ { \"filter\":{ \"name\":\"type\", \"match\":[ \"app:filelink\" ] } } ] } }, \"date\":{ \"browse\":{ \"folder\":[ { \"filter\":{ \"name\":\"aspect\", \"match\":[ \"smf:smartFolder\" ] } } ] }, \"details\":{ \"folder\":[ { \"filter\":{ \"name\":\"aspect\", \"match\":[ \"smf:smartFolder\" ] } } ] } } }",
-         mode: "${args.mode!"edit"}"
+         suppressComponent : "{ \"social\":{ \"browse\":{ \"folder\":[ { \"filter\":{ \"name\":\"aspect\", \"match\":[ \"smf:smartFolder\" ], \"name\":\"type\", \"match\":[ \"app:folderlink\" ] } } ], \"file\":[ { \"filter\":{ \"name\":\"type\", \"match\":[ \"app:filelink\" ] } } ] }, \"details\":{ \"folder\":[ { \"filter\":{ \"name\":\"aspect\", \"match\":[ \"smf:smartFolder\" ], \"name\":\"type\", \"match\":[ \"app:folderlink\" ] } } ], \"file\":[ { \"filter\":{ \"name\":\"type\", \"match\":[ \"app:filelink\" ] } } ] } }, \"tags\":{ \"browse\":{ \"folder\":[ { \"filter\":{ \"name\":\"aspect\", \"match\":[ \"smf:smartFolder\" ], \"name\":\"type\", \"match\":[ \"app:folderlink\" ] } } ], \"file\":[ { \"filter\":{ \"name\":\"type\", \"match\":[ \"app:filelink\" ] } } ] } }, \"date\":{ \"browse\":{ \"folder\":[ { \"filter\":{ \"name\":\"aspect\", \"match\":[ \"smf:smartFolder\" ] } } ] }, \"details\":{ \"folder\":[ { \"filter\":{ \"name\":\"aspect\", \"match\":[ \"smf:smartFolder\" ] } } ] } } }"
       
        }).setMessages(${messages});
 	
@@ -82,7 +80,7 @@
                record.actionParams = {};
                for (var i = 0, ii = actions.length; i < ii; i++)
                {
-                 if(scope.options.mode != "view" && (actions[i].id == "document-upload-new-version" || actions[i].id  == "document-delete") || actions[i].id  == "document-download" || actions[i].id  == "document-edit-properties" ) {
+                 if(actions[i].id == "document-upload-new-version" || actions[i].id  == "document-delete" || actions[i].id  == "document-download" || actions[i].id  == "document-edit-properties" ) {
                   	actionHTML += scope.renderAction(actions[i], record);
                   }
                }
@@ -205,63 +203,61 @@
                            </div>
                         </div>
                      </@>
-                    <#if (args.mode!"") != "view">
-	                     <#-- CREATE CONTENT -->
-	                     <@markup id="createContent">
-	                     <div class="create-content">
-	                        <#if createContent?size != 0 || createContentByTemplateEnabled>
-	                           <span id="${el}-createContent-button" class="yui-button yui-push-button">
-	                              <span class="first-child">
-	                                 <button name="createContent">${msg("button.create-content")}&nbsp;&#9662;</button>
-	                              </span>
-	                           </span>
-	                           <div id="${el}-createContent-menu" class="yuimenu">
-	                              <div class="bd"></div>
-	                           </div>
-	                        </#if>
-	                     </div>
-	                     </@markup>
-         			</#if>
+                     <#-- CREATE CONTENT -->
+                     <@markup id="createContent">
+                     <div class="create-content">
+                        <#if createContent?size != 0 || createContentByTemplateEnabled>
+                           <span id="${el}-createContent-button" class="yui-button yui-push-button">
+                              <span class="first-child">
+                                 <button name="createContent">${msg("button.create-content")}&nbsp;&#9662;</button>
+                              </span>
+                           </span>
+                           <div id="${el}-createContent-menu" class="yuimenu">
+                              <div class="bd"></div>
+                           </div>
+                        </#if>
+                     </div>
+                     </@markup>
+         
                   </div>
                   
-                  <#if (args.mode!"") != "view">
-	                  <#-- UPLOAD BUTTON -->
-	                  <@markup id="uploadButton">
-	                     <#if uploadable>
-	                        <div class="hideable toolbar-hidden DocListTree">
-	                           <div class="file-upload">
-	                              <span id="${el}-fileUpload-button" class="yui-button yui-push-button">
-	                                 <span class="first-child">
-	                                    <button name="fileUpload">${msg("button.upload")}</button>
-	                                 </span>
-	                              </span>
-	                           </div>
-	                        </div>
-	                     </#if>
-	                  </@>
+                  <#-- UPLOAD BUTTON -->
+                  <@markup id="uploadButton">
+                     <#if uploadable>
+                        <div class="hideable toolbar-hidden DocListTree">
+                           <div class="file-upload">
+                              <span id="${el}-fileUpload-button" class="yui-button yui-push-button">
+                                 <span class="first-child">
+                                    <button name="fileUpload">${msg("button.upload")}</button>
+                                 </span>
+                              </span>
+                           </div>
+                        </div>
+                     </#if>
+                  </@>
                   
-	                  <#-- CLOUD SYNC BUTTONS -->
-	                  <@markup id="cloudSyncButtons">
-	                     <div class="hideable toolbar-hidden DocListTree">
-	                        <div class="sync-to-cloud">
-	                           <span id="${el}-syncToCloud-button" class="yui-button yui-push-button hidden">
-	                              <span class="first-child">
-	                                 <button name="syncToCloud">${msg("button.sync-to-cloud")}</button>
-	                              </span>
-	                           </span>
-	                        </div>
-	                     </div>
-	                     <div class="hideable toolbar-hidden DocListTree">
-	                        <div class="unsync-from-cloud">
-	                           <span id="${el}-unsyncFromCloud-button" class="yui-button yui-push-button hidden">
-	                              <span class="first-child">
-	                                 <button name="unsyncFromCloud">${msg("button.unsync-from-cloud")}</button>
-	                              </span>
-	                           </span>
-	                        </div>
-	                     </div>
-	                  </@>
-                  </#if>
+                  <#-- CLOUD SYNC BUTTONS -->
+                  <@markup id="cloudSyncButtons">
+                     <div class="hideable toolbar-hidden DocListTree">
+                        <div class="sync-to-cloud">
+                           <span id="${el}-syncToCloud-button" class="yui-button yui-push-button hidden">
+                              <span class="first-child">
+                                 <button name="syncToCloud">${msg("button.sync-to-cloud")}</button>
+                              </span>
+                           </span>
+                        </div>
+                     </div>
+                     <div class="hideable toolbar-hidden DocListTree">
+                        <div class="unsync-from-cloud">
+                           <span id="${el}-unsyncFromCloud-button" class="yui-button yui-push-button hidden">
+                              <span class="first-child">
+                                 <button name="unsyncFromCloud">${msg("button.unsync-from-cloud")}</button>
+                              </span>
+                           </span>
+                        </div>
+                     </div>
+                  </@>
+                  
                   <#-- SELECTED ITEMS MENU -->
                   <@markup id="selectedItems">
                      <div class="selected-items hideable toolbar-hidden DocListTree DocListFilter TagFilter DocListCategories">
@@ -270,7 +266,7 @@
                            <div class="bd">
                               <ul>
                               <#list actionSet as action>
-                                <#if action.id == "onActionDelete" && (args.mode!"") != "view">
+                                <#if action.id == "onActionDelete">
                                   <li><a type="${action.asset!""}" rel="${action.permission!""}" href="${action.href}" data-has-aspects="${action.hasAspect}" data-not-aspects="${action.notAspect}"><span class="${action.id}">${msg(action.label)}</span></a></li>
                               	</#if>
                               </#list>
@@ -388,8 +384,7 @@
    <![endif]-->
    <input id="yui-history-field" type="hidden"></input>
    <div id="${el}-dl-body" class="doclist no-check-bg">
-	
-   
+
       <#--
          INFORMATION TEMPLATES
       -->
@@ -411,70 +406,70 @@
             <a class="docListInstructionTextSmall docListLinkedInstruction"><#-- We don't know the number of hidden subfolders at this point so this needs to be inserted --></a>
          </div>
       </div>
-      <#if (args.mode!"") != "view">
-	      <#-- HTML 5 drag and drop instructions -->
-	      <div id="${el}-dnd-instructions-template" class="hidden">
-	         <div id="${el}-dnd-instructions">
-	            <span class="docListInstructionTitle">${msg("dnd.drop.title")}</span>
-	            <div>
-	               <div class="docListInstructionColumn docListInstructionColumnRightBorder">
-	                  <img class="docListInstructionImage" src="${url.context}/res/components/documentlibrary/images/help-drop-list-target-96.png">
-	                  <span class="docListInstructionText">${msg("dnd.drop.doclist.description")}</span>
-	               </div>
-	               <div class="docListInstructionColumn">
-	                  <img class="docListInstructionImage" src="${url.context}/res/components/documentlibrary/images/help-drop-folder-target-96.png">
-	                  <span class="docListInstructionText">${msg("dnd.drop.folder.description")}</span>
-	               </div>
-	               <div style="clear:both"></div>
-	            </div>
-	         </div>
-	      </div>
-	      
-	      <#-- Standard upload instructions -->
-	      <div id="${el}-upload-instructions-template" class="hidden">
-	         <div class="docListInstructionTitle">${msg("standard.upload.title")}</div>
-	         <div id="${el}-standard-upload-link-template" class="docListInstructionColumn">
-	            <img class="docListInstructionImage docListLinkedInstruction" src="${url.context}/res/components/documentlibrary/images/help-upload-96.png">
-	            <span class="docListInstructionText"><a class="docListLinkedInstruction">${msg("standard.upload.description")}</a></span>
-	         </div>
-	      </div>
-	   
-	      <#-- Other options? -->
-	      <div id="${el}-other-options-template" class="hidden">
-	         <div class="docListOtherOptions">${msg("other.options")}</div>
-	      </div>
-	   
-	      <#-- The following DOM structures should be editing with respect to documentlist.js function
-	           fired by the Doclists "tableMsgShowEvent" as it uses this structure to associate the
-	           image and anchor with the appropriate actions. NOTE: This is only a template that will
-	           be cloned, during the cloning the id will be appended with "-instance" to ensure uniqueness
-	           within the page, this allows us to locate each DOM node individually. -->
-	   
-	      <#-- Standard upload (when user has create access) -->
-	      <div id="${el}-standard-upload-template" class="hidden">
-	        <div id="${el}-standard-upload-link-template">
-	           <img class="docListOtherOptionsImage docListLinkedInstruction" src="${url.context}/res/components/documentlibrary/images/help-upload-48.png">
-	           <span class="docListOtherOptionsText"><a class="docListLinkedInstruction">${msg("dnd.upload.description")}</a></span>
-	        </div>
-	      </div>
-	   
-	      <#-- New Folder (when user has create access) -->
-	      <div id="${el}-new-folder-template" class="hidden">
-	        <div id="${el}-new-folder-link-template">
-	           <img class="docListOtherOptionsImage docListLinkedInstruction" src="${url.context}/res/components/documentlibrary/images/help-new-folder-48.png">
-	           <span class="docListOtherOptionsText"><a class="docListLinkedInstruction">${msg("dnd.newfolder.description")}</a></span>
-	        </div>
-	      </div>
-	   
-	      <#-- Hidden sub-folders message -->
-	      <div id="${el}-show-folders-template" class="hidden">
-	         <img class="docListOtherOptionsImage docListLinkedInstruction" src="${url.context}/res/components/documentlibrary/images/help-folder-48.png">
-	         <span class="docListOtherOptionsText"><a class="docListLinkedInstruction"><#-- We don't know the number of hidden subfolders at this point so this needs to be inserted --></a></span>
-	      </div>
-   	</#if>
-	      <#--
-	         END OF INFORMATION TEMPLATES
-	      -->
+   
+      <#-- HTML 5 drag and drop instructions -->
+      <div id="${el}-dnd-instructions-template" class="hidden">
+         <div id="${el}-dnd-instructions">
+            <span class="docListInstructionTitle">${msg("dnd.drop.title")}</span>
+            <div>
+               <div class="docListInstructionColumn docListInstructionColumnRightBorder">
+                  <img class="docListInstructionImage" src="${url.context}/res/components/documentlibrary/images/help-drop-list-target-96.png">
+                  <span class="docListInstructionText">${msg("dnd.drop.doclist.description")}</span>
+               </div>
+               <div class="docListInstructionColumn">
+                  <img class="docListInstructionImage" src="${url.context}/res/components/documentlibrary/images/help-drop-folder-target-96.png">
+                  <span class="docListInstructionText">${msg("dnd.drop.folder.description")}</span>
+               </div>
+               <div style="clear:both"></div>
+            </div>
+         </div>
+      </div>
+   
+      <#-- Standard upload instructions -->
+      <div id="${el}-upload-instructions-template" class="hidden">
+         <div class="docListInstructionTitle">${msg("standard.upload.title")}</div>
+         <div id="${el}-standard-upload-link-template" class="docListInstructionColumn">
+            <img class="docListInstructionImage docListLinkedInstruction" src="${url.context}/res/components/documentlibrary/images/help-upload-96.png">
+            <span class="docListInstructionText"><a class="docListLinkedInstruction">${msg("standard.upload.description")}</a></span>
+         </div>
+      </div>
+   
+      <#-- Other options? -->
+      <div id="${el}-other-options-template" class="hidden">
+         <div class="docListOtherOptions">${msg("other.options")}</div>
+      </div>
+   
+      <#-- The following DOM structures should be editing with respect to documentlist.js function
+           fired by the Doclists "tableMsgShowEvent" as it uses this structure to associate the
+           image and anchor with the appropriate actions. NOTE: This is only a template that will
+           be cloned, during the cloning the id will be appended with "-instance" to ensure uniqueness
+           within the page, this allows us to locate each DOM node individually. -->
+   
+      <#-- Standard upload (when user has create access) -->
+      <div id="${el}-standard-upload-template" class="hidden">
+        <div id="${el}-standard-upload-link-template">
+           <img class="docListOtherOptionsImage docListLinkedInstruction" src="${url.context}/res/components/documentlibrary/images/help-upload-48.png">
+           <span class="docListOtherOptionsText"><a class="docListLinkedInstruction">${msg("dnd.upload.description")}</a></span>
+        </div>
+      </div>
+   
+      <#-- New Folder (when user has create access) -->
+      <div id="${el}-new-folder-template" class="hidden">
+        <div id="${el}-new-folder-link-template">
+           <img class="docListOtherOptionsImage docListLinkedInstruction" src="${url.context}/res/components/documentlibrary/images/help-new-folder-48.png">
+           <span class="docListOtherOptionsText"><a class="docListLinkedInstruction">${msg("dnd.newfolder.description")}</a></span>
+        </div>
+      </div>
+   
+      <#-- Hidden sub-folders message -->
+      <div id="${el}-show-folders-template" class="hidden">
+         <img class="docListOtherOptionsImage docListLinkedInstruction" src="${url.context}/res/components/documentlibrary/images/help-folder-48.png">
+         <span class="docListOtherOptionsText"><a class="docListLinkedInstruction"><#-- We don't know the number of hidden subfolders at this point so this needs to be inserted --></a></span>
+      </div>
+      <#--
+         END OF INFORMATION TEMPLATES
+      -->
+   
       <#-- Top Bar: Select, Pagination, Sorting & View controls -->
       <div id="${el}-doclistBar" class="yui-gc doclist-bar flat-button no-check-bg"></div>
       <div class="alf-fullscreen-exit-button" class="hidden">
