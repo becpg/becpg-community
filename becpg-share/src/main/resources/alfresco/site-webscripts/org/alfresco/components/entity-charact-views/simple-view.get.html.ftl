@@ -23,7 +23,7 @@
 			      hiddenColumns : ["prop_bcpg_depthLevel"],
 			      useHistoryManager : false,
 			      configurableColumns : false,
-			      mode: "${args.mode!""}"
+			      readOnly: "${args.readOnly!false}"
 			   }).setMessages(${messages});
 			   
 			 

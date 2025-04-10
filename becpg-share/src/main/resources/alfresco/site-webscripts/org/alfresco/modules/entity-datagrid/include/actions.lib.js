@@ -16,7 +16,7 @@
  *  You should have received a copy of the GNU Lesser General Public License along with beCPG.
  *   If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-function parseActions(list, mode)
+function parseActions(list)
 {
    // Actions
    var myConfig = new XML(config.script),
@@ -25,8 +25,8 @@ function parseActions(list, mode)
    
    for each (var xmlAction in myConfig.actionSetToolbar.action)
    {
-    if(String(mode) != "view" && (!list || xmlAction.@list.toString().length < 1 || xmlAction.@list.toString() == list  
-    		||	(xmlAction.@list.toString().indexOf("!")==0 &&  xmlAction.@list.toString() != ("!"+list)))){
+    if( !list || xmlAction.@list.toString().length < 1 || xmlAction.@list.toString() == list  
+    		||	(xmlAction.@list.toString().indexOf("!")==0 &&  xmlAction.@list.toString() != ("!"+list))){
       	actionSetToolbar.push(
          {
             id: xmlAction.@id.toString(),
@@ -41,8 +41,8 @@ function parseActions(list, mode)
    
    for each (var xmlAction in myConfig.actionSetDataGrid.action)
    {
-      if(String(mode) != "view" && (!list || xmlAction.@list.toString().length < 1 || xmlAction.@list.toString() == list
-    		  || (xmlAction.@list.toString().indexOf("!")==0 &&  xmlAction.@list.toString() !=  ("!"+list)))){
+      if( !list || xmlAction.@list.toString().length < 1 || xmlAction.@list.toString() == list
+    		  || (xmlAction.@list.toString().indexOf("!")==0 &&  xmlAction.@list.toString() !=  ("!"+list))){
       	actionSetDataGrid.push(
          {
             id: xmlAction.@id.toString(),

@@ -381,10 +381,9 @@
                     /**
                      * Allow to store pageSize in prefs
                      */
-                    storePageSizeInPrefs: false
-
-
-
+                    storePageSizeInPrefs: false,
+                    
+                    readOnly: false
                 },
 
                 /**
@@ -551,8 +550,6 @@
                  * The form filters runTime
                  */
                 formsFilterRuntime: null,
-                
-                mode: "bulk-edit",
 
                 /**
                  * DataTable Cell Renderers
@@ -793,9 +790,7 @@
                     // Assume no list chosen for now
                     Dom.removeClass(this.id + "-selectListMessage", "hidden");
 
-					if (this.widgets.newRowButton != null) {
-                    	this.widgets.newRowButton.set("disabled", true);
-                    }
+                    this.widgets.newRowButton.set("disabled", true);
 
 
                     // Filter forms
@@ -957,7 +952,7 @@
 
                     var columnUrl = this.options.columnsUrl + "?itemType=" + encodeURIComponent(this._getItemType()) + "&list=" + encodeURIComponent(this._getDataListName()) + (formId != null ? "&formId=" + formId : "") + (this.options.siteId ? "&siteId=" + this.options.siteId : "")
                         + (this.entity != null ? "&entityType=" + encodeURIComponent(this.entity.type) : "")
-                        + (this.options.entityNodeRef != null ? "&entityNodeRef=" + encodeURIComponent(this.options.entityNodeRef) : "") + "&mode=" + this.options.mode;
+                        + (this.options.entityNodeRef != null ? "&entityNodeRef=" + encodeURIComponent(this.options.entityNodeRef) : "");
 
 
                     var cacheTimeStamp = this.cacheTimeStamp
@@ -1117,7 +1112,7 @@
                     this._setupDataTable();
                     // Hide "no list" message
                     Dom.addClass(this.id + "-selectListMessage", "hidden");
-                    if (this.widgets.newRowButton != null || this.options.mode != "view") {
+                    if (this.widgets.newRowButton != null) {
                         this.widgets.newRowButton.set("disabled", false);
                     }
 
@@ -1319,7 +1314,7 @@
                     var listNodeRef = this.datalistMeta.nodeRef != null ? new Alfresco.util.NodeRef(
                         this.datalistMeta.nodeRef) : null;
                     return this.options.dataUrl + (listNodeRef != null ? listNodeRef.uri : "") + ((this.options.entityNodeRef != null && this.options.entityNodeRef.length > 0) ? "?entityNodeRef=" + this.options.entityNodeRef + "&"
-                        : "?") + "itemType=" + encodeURIComponent(this._getItemType()) + "&dataListName=" + encodeURIComponent(this._getDataListName()) + "&pageSize=" + encodeURIComponent(this._getPageSize()) + "&site=" + this.options.siteId + this._buildSortParam() + this.options.extraDataParams;
+                        : "?") + "itemType=" + encodeURIComponent(this._getItemType()) + "&dataListName=" + encodeURIComponent(this._getDataListName()) + "&pageSize=" + encodeURIComponent(this._getPageSize()) + "&site=" + this.options.siteId + this._buildSortParam() + this.options.extraDataParams + "&readOnly=" + this.options.readOnly;
                 },
 
                 _getPageSize: function() {

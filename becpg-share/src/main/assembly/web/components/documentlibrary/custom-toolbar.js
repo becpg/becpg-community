@@ -45,7 +45,7 @@
 						onReady : function CustomDLTB_onReady() {
 							if (Dom.get(this.id + "-tb-body") != null) {
 								// Create Content menu button
-								if (this.options.mode != "view" && Dom.get(this.id + "-createContent-button")) {
+								if (Dom.get(this.id + "-createContent-button")) {
 									// Create menu button that
 									this.widgets.createContent = Alfresco.util.createYUIButton(this, "createContent-button", this.onCreateContent, {
 										type : "menu",
@@ -352,8 +352,6 @@
 						 *            event
 						 */
 						onFileUpload : function DLTB_onFileUpload(e, p_obj) {
-							if (this.options.mode == "view") return;
-							
 							if (this.fileUpload === null) {
 								this.fileUpload = Alfresco.getFileUploadInstance();
 							}

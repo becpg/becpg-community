@@ -1,13 +1,11 @@
 <#macro dataGridToolbarNewRow toolbarId>
 	<div class="new-row">
-		<#if (args.mode!"") != "view">
-      		<span id="${toolbarId}-newRowButton" class="yui-button yui-push-button">
-         		<span class="first-child">
-            		<button type="button" title="${msg('button.new-row')}">&nbsp;</button>
-         		</span>
-      		</span>
-		</#if>
-	</div>
+      <span id="${toolbarId}-newRowButton" class="yui-button yui-push-button">
+         <span class="first-child">
+            <button type="button" title="${msg('button.new-row')}">&nbsp;</button>
+         </span>
+      </span>
+  </div>
 </#macro>
 
 <#macro dataGridToolbarSelectedItem toolbarId>
