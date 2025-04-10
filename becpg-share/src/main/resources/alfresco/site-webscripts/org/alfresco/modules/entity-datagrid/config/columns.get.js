@@ -116,7 +116,7 @@ function getFormConfig(itemId, formId, mode, prefixedSiteId, prefixedEntityType)
  */
 function getVisibleFields(mode, formConfig) {
 	var visibleFields = null;
-	
+
 	if (formConfig !== null) {
 		// get visible fields for the current mode
 		switch (mode) {
@@ -348,8 +348,7 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 					column = {
 						type: "dataList",
 						name: name,
-						"dataType": "nested",
-						"readOnly": mode == "view"
+						"dataType": "nested"
 					};
 					
 				 if(!override){
@@ -375,8 +374,7 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 					column = {
 						type: "entity",
 						name: name,
-						"dataType": (fieldId.indexOf("_asColumn") > 0) ? "nested_column" : "nested",
-						"readOnly": mode == "view"
+						"dataType": (fieldId.indexOf("_asColumn") > 0) ? "nested_column" : "nested"
 					};
 
 					if(!override){
@@ -400,7 +398,7 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 					} else {
 						column.columns = getColumns(splitted[1] + "", "sub-datagrid",null, mode,null,null,null,subPrefKey);
 					}
-					column.readOnly = mode == "view";
+
 					ret.push(column);
 
 				} else {
@@ -441,7 +439,7 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 									columns[j].label = "datasource";
 								}
 							}
-							columns[j].readOnly = mode == "view";
+
 							ret.push(columns[j]);
 						}
 					}

@@ -55,8 +55,6 @@
 	       */
 	      onFileUpload: function RDLTB_onFileUpload(e, p_obj)
 	      {
-			 if (this.modules.docList.options.mode == "view") return;
-			 
 	         if (this.fileUpload === null)
 	         {
 	            this.fileUpload = Alfresco.getFileUploadInstance(); 
