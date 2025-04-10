@@ -49,7 +49,6 @@ public class AuditActivityPatch extends AbstractBeCPGPatch {
 	private QNameDAO qnameDAO;
 	private RuleService ruleService;
 	private LockService lockService;
-	private IntegrityChecker integrityChecker;
 	private BeCPGAuditService beCPGAuditService;
 	private EntityService entityService;
 	private AssociationService associationService;
@@ -91,15 +90,6 @@ public class AuditActivityPatch extends AbstractBeCPGPatch {
 		this.beCPGAuditService = beCPGAuditService;
 	}
 
-	/**
-	 * <p>Setter for the field <code>integrityChecker</code>.</p>
-	 *
-	 * @param integrityChecker a {@link org.alfresco.repo.node.integrity.IntegrityChecker} object
-	 */
-	public void setIntegrityChecker(IntegrityChecker integrityChecker) {
-		this.integrityChecker = integrityChecker;
-	}
-	
 	/**
 	 * <p>Getter for the field <code>nodeDAO</code>.</p>
 	 *
@@ -254,7 +244,7 @@ public class AuditActivityPatch extends AbstractBeCPGPatch {
 				
 				try {
 					ruleService.disableRules();
-					integrityChecker.setEnabled(false);
+					IntegrityChecker.setWarnInTransaction();
 					policyBehaviourFilter.disableBehaviour();
 					
 					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
@@ -302,7 +292,6 @@ public class AuditActivityPatch extends AbstractBeCPGPatch {
 					
 				} finally {
 					ruleService.enableRules();
-					integrityChecker.setEnabled(true);
 					policyBehaviourFilter.enableBehaviour();
 				}
 			}
