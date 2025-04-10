@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.alfresco.repo.jscript.ScriptNode;
 import org.alfresco.repo.workflow.activiti.ActivitiScriptNode;
@@ -27,6 +28,8 @@ import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
+
+import com.ibm.icu.text.MessageFormat;
 
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.expressions.ExpressionService;
@@ -50,6 +53,7 @@ public class ExpressionServiceImpl implements ExpressionService {
 
 	private static final Pattern jsPattern = Pattern.compile("^js\\((.*)\\)$");
 	private static final Pattern spelPattern = Pattern.compile("^spel\\((.*)\\)$");
+	private static final Pattern formatPattern = Pattern.compile("^format\\((.*)\\)$");
 
 	private static final String DEBUG_MESG = "Eval: %s";
 
@@ -88,7 +92,7 @@ public class ExpressionServiceImpl implements ExpressionService {
 	/** {@inheritDoc} */
 	@Override
 	public  String extractExpr(NodeRef nodeRef, String exprFormat) {
-		return extractExpr(nodeRef,null, exprFormat);
+		return extractExpr(nodeRef, null, exprFormat);
 	}
 
 	/** {@inheritDoc} */
@@ -150,7 +154,12 @@ public class ExpressionServiceImpl implements ExpressionService {
 			} else {
 				Serializable value = nodeService.getProperty(nodeRef, QName.createQName(propQname, namespaceService));
 				if (value instanceof List) {
-					return ((List<String>) value).stream().collect(Collectors.joining(","));
+					Stream<String> stream = ((List<String>) value).stream();
+					final Matcher matcher = formatPattern.matcher(ret);
+					if (matcher.matches()) {
+						stream = stream.map(listEntry -> MessageFormat.format(matcher.group(1), listEntry));
+					}
+					return stream.collect(Collectors.joining(","));
 				} else if (value != null) {
 
 					ret = String.valueOf(value);
@@ -227,6 +236,13 @@ public class ExpressionServiceImpl implements ExpressionService {
 
 					}
 
+				} else {
+					match = formatPattern.matcher(condition);
+					if (match.matches()) {
+						if (logger.isDebugEnabled()) {
+							logger.debug(String.format(DEBUG_MESG, match.group(1)));
+						}
+					}
 				}
 			}
 
@@ -267,7 +283,6 @@ public class ExpressionServiceImpl implements ExpressionService {
 		} else {
 			match = spelPattern.matcher(condition);
 			if (match.matches()) {
-
 				logger.warn("Spel not supported in context");
 			}
 		}

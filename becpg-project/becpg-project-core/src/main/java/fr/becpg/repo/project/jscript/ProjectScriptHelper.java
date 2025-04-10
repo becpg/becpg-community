@@ -17,8 +17,6 @@
  * If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.project.jscript;
-
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -28,7 +26,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import org.alfresco.repo.dictionary.constraint.ListOfValuesConstraint;
 import org.alfresco.repo.jscript.BaseScopableProcessorExtension;
 import org.alfresco.repo.jscript.ScriptNode;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -45,9 +42,9 @@ import fr.becpg.model.DeliverableUrl;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
-import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.expressions.ExpressionService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.data.ProjectData;
@@ -56,7 +53,6 @@ import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskState;
 import fr.becpg.repo.project.impl.ProjectHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
-import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * Utility script methods for budget
@@ -82,7 +78,7 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 	
 	private AssociationService associationService;
 	
-	private EntityDictionaryService entityDictionaryService;
+	private ExpressionService expressionService;
 
 	/**
 	 * <p>Setter for the field <code>associationService</code>.</p>
@@ -157,12 +153,12 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 	}
 	
 	/**
-	 * <p>Setter for the field <code>entityDictionaryService</code>.</p>
+	 * <p>Setter for the field <code>expressionService</code>.</p>
 	 *
-	 * @param nodeService a {@link fr.becpg.repo.entity.EntityDictionaryService} object.
+	 * @param expressionService a {@link fr.becpg.repo.entity.ExpressionService} object.
 	 */
-	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
-		this.entityDictionaryService = entityDictionaryService;
+	public void setExpressionService(ExpressionService expressionService) {
+		this.expressionService = expressionService;
 	}
 
 	/**
@@ -244,10 +240,6 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 			NodeRef deliverableNodeRef = deliverable.getNodeRef();
 
 			String url = (String) nodeService.getProperty(deliverableNodeRef, ProjectModel.PROP_DL_URL);
-
-			final String[] splitUrl = url.split("/");
-			
-			final boolean search = splitUrl.length != 0 && splitUrl[splitUrl.length -1].startsWith("search");
 			
 			List<AssociationRef> taskAssocs = nodeService.getTargetAssocs(deliverableNodeRef,
 					ProjectModel.ASSOC_DL_TASK);
@@ -273,14 +265,9 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 
 						String assocQname = patternMatcher.group(1);
 						StringBuilder replacement = new StringBuilder();
-						if ((assocQname != null) && assocQname.startsWith(DeliverableUrl.NODEREF_URL_PARAM)) {
-							String[] splitted = assocQname.split("\\|");
-							replacement.append(extractDeliverableProp(projectNodeRef, splitted, search));
-
-						} else if ((assocQname != null) && assocQname.startsWith(DeliverableUrl.TASK_URL_PARAM)) {
-							String[] splitted = assocQname.split("\\|");
-							replacement.append(extractDeliverableProp(taskNodeRef, splitted, search));
-
+						if (assocQname != null && (assocQname.startsWith(DeliverableUrl.NODEREF_URL_PARAM)
+								|| assocQname.startsWith(DeliverableUrl.TASK_URL_PARAM))) {
+							replacement.append(expressionService.extractExpr(projectNodeRef, assocQname));
 						} else if (assocQname != null) {
 							String[] splitted = assocQname.split("\\|");
 							List<AssociationRef> assocs = nodeService.getTargetAssocs(projectNodeRef,
@@ -290,7 +277,7 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 									if (replacement.length() > 0) {
 										replacement.append(",");
 									}
-									replacement.append(extractDeliverableProp(assoc.getTargetRef(), splitted, search));
+									replacement.append(expressionService.extractExpr(assoc.getTargetRef(), assocQname));
 								}
 							}
 						}
@@ -300,54 +287,13 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 					}
 					patternMatcher.appendTail(sb);
 
-					return sb.toString();
+					return expressionService.extractExpr(deliverableNodeRef, url);
 				}
 			}
 
 			return url;
 		});
 
-	}
-
-
-	@SuppressWarnings("unchecked")
-	private String extractDeliverableProp(NodeRef nodeRef, String[] splitted, boolean search) {
-		NodeRef ret = null;
-		if (splitted.length > 1) {
-			if (splitted[1].startsWith(DeliverableUrl.XPATH_URL_PREFIX)) {
-				ret = BeCPGQueryBuilder.createQuery().selectNodeByPath(nodeRef,
-						splitted[1].substring(DeliverableUrl.XPATH_URL_PREFIX.length()));
-			} else if(splitted[1].startsWith("@type")) {
-				QName type = nodeService.getType(nodeRef);
-				return type != null ? type.getLocalName() : "";
-			} else {
-				final QName propQName = QName.createQName(splitted[1], namespaceService);
-				Serializable tmp = nodeService.getProperty(nodeRef, propQName);
-				StringBuilder strRet = new StringBuilder();
-				if(tmp instanceof List) {
-					for (Serializable subEl : (List<Serializable>) tmp) {
-						if (subEl.toString().length() > 0) {
-							strRet.append(",");
-						}
-						if (search) strRet.append("=");
-						strRet.append(subEl.toString());
-					}
-					
-				} else if(tmp != null) {
-					if (search && entityDictionaryService.getProperty(propQName).getConstraints().stream()
-							.anyMatch(constraint -> constraint.getConstraint() instanceof ListOfValuesConstraint)) {
-						strRet.append("=");
-					}
-					strRet.append(tmp.toString());
-				}
-				
-				
-				return strRet.toString();
-			}
-		} else {
-			ret = nodeRef;
-		}
-		return ret != null ? ret.toString() : "";
 	}
 	
 	/**
