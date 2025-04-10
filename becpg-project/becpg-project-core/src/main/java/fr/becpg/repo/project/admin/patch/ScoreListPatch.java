@@ -15,6 +15,8 @@ import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.tenant.TenantUtil;
+import org.alfresco.repo.version.Version2Model;
 import org.alfresco.service.cmr.lock.LockService;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.MLText;
@@ -80,8 +82,12 @@ public class ScoreListPatch extends AbstractBeCPGPatch {
 		return migrateScoreList();
 	}
 
-	public String migrateScoreList() throws Exception {
+	public String migrateScoreList() {
+		
+		logger.info("Current tenant: " + TenantUtil.getCurrentDomain());
 
+		String currentTenant = TenantUtil.getCurrentDomain();
+		
 		IntegrityChecker.setWarnInTransaction();
 		return AuthenticationUtil.runAsSystem(() -> {
 			NodeRef scoreCriteriaFolder = findScoreCriteriaFolder();
@@ -89,14 +95,21 @@ public class ScoreListPatch extends AbstractBeCPGPatch {
 				logger.warn("Score Criteria folder not found");
 				return "No changes applied";
 			}
-
-			Map<String, NodeRef> scoreCriterionNodeRefs = processScoreCriteria(scoreCriteriaFolder);
 			
-			//TODO Ne fonctionne pas les noeuds n'existe pas dans le batch car la transaction n'est pas terminé.
-			updateScoreLists(scoreCriterionNodeRefs);
-			updateSurveyQuestion(scoreCriterionNodeRefs);
-
-			return "Patch applied successfully";
+			ruleService.disableRules();
+			policyBehaviourFilter.disableBehaviour();
+			IntegrityChecker.setWarnInTransaction();
+			try {
+				Map<String, NodeRef> scoreCriterionNodeRefs = processScoreCriteria(scoreCriteriaFolder);
+				
+				updateScoreLists(scoreCriterionNodeRefs, currentTenant);
+				updateSurveyQuestion(scoreCriterionNodeRefs, currentTenant);
+				
+				return "Patch applied successfully";
+			} finally {
+				ruleService.enableRules();
+				policyBehaviourFilter.enableBehaviour();
+			}
 		});
 	}
 
@@ -106,20 +119,22 @@ public class ScoreListPatch extends AbstractBeCPGPatch {
 	}
 
 	private Map<String, NodeRef> processScoreCriteria(NodeRef scoreCriteriaFolder) {
-		NodeRef criterionTypesNodeRef = createOrGetCriterionTypesFolder();
-		Map<String, NodeRef> scoreCriterionNodeRefs = new HashMap<>();
-
-		List<NodeRef> criteriaNodes = BeCPGQueryBuilder.createQuery().selectNodesByPath(nodeService.getRootNode(RepoConsts.SPACES_STORE),
-				"/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:ScoreCriteria/*");
-
-		for (NodeRef nodeRef : criteriaNodes) {
-			processSingleCriteria(nodeRef, criterionTypesNodeRef, scoreCriterionNodeRefs);
-		}
-
-		nodeService.setProperty(scoreCriteriaFolder, DataListModel.PROP_DATALISTITEMTYPE,
-				ProjectModel.TYPE_SCORE_CRITERION.toPrefixString(namespaceService));
-
-		return scoreCriterionNodeRefs;
+		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			ruleService.disableRules();
+			policyBehaviourFilter.disableBehaviour();
+			IntegrityChecker.setWarnInTransaction();
+			NodeRef criterionTypesNodeRef = createOrGetCriterionTypesFolder();
+			Map<String, NodeRef> scoreCriterionNodeRefs = new HashMap<>();
+			List<NodeRef> criteriaNodes = BeCPGQueryBuilder.createQuery().selectNodesByPath(nodeService.getRootNode(RepoConsts.SPACES_STORE),
+					"/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:ScoreCriteria/*");
+			for (NodeRef nodeRef : criteriaNodes) {
+				processSingleCriteria(nodeRef, criterionTypesNodeRef, scoreCriterionNodeRefs);
+			}
+			nodeService.setProperty(scoreCriteriaFolder, DataListModel.PROP_DATALISTITEMTYPE,
+					ProjectModel.TYPE_SCORE_CRITERION.toPrefixString(namespaceService));
+			
+			return scoreCriterionNodeRefs;
+		}, false, true);
 	}
 
 	private NodeRef createOrGetCriterionTypesFolder() {
@@ -135,19 +150,23 @@ public class ScoreListPatch extends AbstractBeCPGPatch {
 					BeCPGModel.TYPE_LIST_VALUE);
 			nodeService.setProperty(scoreCriterionTypesFolder, ContentModel.PROP_TITLE, entityListTranslated);
 		}
-
+		
 		return scoreCriterionTypesFolder;
 	}
 
 	private void processSingleCriteria(NodeRef nodeRef, NodeRef criterionTypesNodeRef, Map<String, NodeRef> scoreCriterionNodeRefs) {
 		if (!nodeService.exists(nodeRef) || !nodeService.getType(nodeRef).equals(BeCPGModel.TYPE_LIST_VALUE)) {
+			logger.warn("Node does not exist or is not listValue: " + nodeRef);
 			return;
 		}
 
+		nodeService.moveNode(nodeRef, criterionTypesNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
+		
 		boolean isMLAware = MLPropertyInterceptor.setMLAware(true);
 		try {
 			MLText mlText = (MLText) nodeService.getProperty(nodeRef, BeCPGModel.PROP_LV_VALUE);
 			if (mlText == null) {
+				logger.warn("No lvValue found for: " + nodeRef);
 				return;
 			}
 
@@ -164,84 +183,96 @@ public class ScoreListPatch extends AbstractBeCPGPatch {
 		} finally {
 			MLPropertyInterceptor.setMLAware(isMLAware);
 		}
-
-		nodeService.moveNode(nodeRef, criterionTypesNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
 	}
 
-	private void updateScoreLists(Map<String, NodeRef> scoreCriterionNodeRefs) {
-		BatchProcessor<NodeRef> batchProcessor = createBatchTypeProcessor(ProjectModel.TYPE_SCORE_LIST);
-		batchProcessor.processLong(createScoreListWorker(scoreCriterionNodeRefs), true);
+	private void updateScoreLists(Map<String, NodeRef> scoreCriterionNodeRefs, String currentTenant) {
+		BatchProcessor<NodeRef> batchProcessor = createBatchTypeProcessor(ProjectModel.TYPE_SCORE_LIST, true);
+		batchProcessor.processLong(createScoreListWorker(scoreCriterionNodeRefs, currentTenant), true);
 	}
 
-	private void updateSurveyQuestion(Map<String, NodeRef> scoreCriterionNodeRefs) {
-		BatchProcessor<NodeRef> batchProcessor = createBatchTypeProcessor(SurveyModel.TYPE_SURVEY_QUESTION);
-		batchProcessor.processLong(createSurveyQuestionWorker(scoreCriterionNodeRefs), true);
+	private void updateSurveyQuestion(Map<String, NodeRef> scoreCriterionNodeRefs, String currentTenant) {
+		BatchProcessor<NodeRef> batchProcessor = createBatchTypeProcessor(SurveyModel.TYPE_SURVEY_QUESTION, true);
+		batchProcessor.processLong(createSurveyQuestionWorker(scoreCriterionNodeRefs, currentTenant), true);
 	}
 
-	private BatchProcessWorker<NodeRef> createSurveyQuestionWorker(Map<String, NodeRef> scoreCriterionNodeRefs) {
+	private BatchProcessWorker<NodeRef> createSurveyQuestionWorker(Map<String, NodeRef> scoreCriterionNodeRefs, String tenantDomain) {
 		return new BatchProcessWorkerAdaptor<>() {
 			@Override
 			public void process(NodeRef entityNodeRef) throws Throwable {
-				try {
-					policyBehaviourFilter.disableBehaviour();
-					ruleService.disableRules();
-					IntegrityChecker.setWarnInTransaction();
-
-					if (!nodeService.exists(entityNodeRef) || !entityNodeRef.getStoreRef().equals(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE)) {
-						return;
+				AuthenticationUtil.runAs(() -> {
+					try {
+						policyBehaviourFilter.disableBehaviour();
+						ruleService.disableRules();
+						IntegrityChecker.setWarnInTransaction();
+						
+						if (!nodeService.exists(entityNodeRef) || !entityNodeRef.getStoreRef().getProtocol().equals(StoreRef.PROTOCOL_WORKSPACE)
+								|| entityNodeRef.getStoreRef().getIdentifier().contains(Version2Model.STORE_ID)) {
+							return null;
+						}
+						
+						if (lockService.isLocked(entityNodeRef)) {
+							lockService.unlock(entityNodeRef);
+						}
+						
+						String criterion = (String) nodeService.getProperty(entityNodeRef, QUESTION_CRITERION);
+						NodeRef criterionNodeRef = scoreCriterionNodeRefs.get(criterion);
+						
+						if (criterionNodeRef != null) {
+							if (!nodeService.exists(criterionNodeRef)) {
+								logger.error("node does not exist: " + criterionNodeRef + " in tenant: " + TenantUtil.getCurrentDomain());
+							} else {
+								associationService.update(entityNodeRef, SurveyModel.ASSOC_SCORE_CRITERION, criterionNodeRef);
+							}
+						}
+					} finally {
+						policyBehaviourFilter.enableBehaviour();
+						ruleService.enableRules();
 					}
-
-					if (lockService.isLocked(entityNodeRef)) {
-						lockService.unlock(entityNodeRef);
-					}
-
-					String criterion = (String) nodeService.getProperty(entityNodeRef, QUESTION_CRITERION);
-					NodeRef criterionNodeRef = scoreCriterionNodeRefs.get(criterion);
-
-					if (criterionNodeRef != null) {
-						associationService.update(entityNodeRef, SurveyModel.ASSOC_SCORE_CRITERION, criterionNodeRef);
-					}
-				} finally {
-					policyBehaviourFilter.enableBehaviour();
-					ruleService.enableRules();
-
-				}
+					return null;
+                }, tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenantDomain));      
 			}
 		};
 	}
 
-	private BatchProcessWorker<NodeRef> createScoreListWorker(Map<String, NodeRef> scoreCriterionNodeRefs) {
+	private BatchProcessWorker<NodeRef> createScoreListWorker(Map<String, NodeRef> scoreCriterionNodeRefs, String tenantDomain) {
 		return new BatchProcessWorkerAdaptor<>() {
 			@Override
 			public void process(NodeRef entityNodeRef) throws Throwable {
-				try {
-					policyBehaviourFilter.disableBehaviour();
-					ruleService.disableRules();
-					IntegrityChecker.setWarnInTransaction();
-
-					if (!nodeService.exists(entityNodeRef) || !entityNodeRef.getStoreRef().equals(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE)) {
-						return;
+				AuthenticationUtil.runAs(() -> {
+					try {
+						policyBehaviourFilter.disableBehaviour();
+						ruleService.disableRules();
+						IntegrityChecker.setWarnInTransaction();
+						
+						if (!nodeService.exists(entityNodeRef) || !entityNodeRef.getStoreRef().getProtocol().equals(StoreRef.PROTOCOL_WORKSPACE)
+								|| entityNodeRef.getStoreRef().getIdentifier().contains(Version2Model.STORE_ID)) {
+							return null;
+						}
+						
+						if (lockService.isLocked(entityNodeRef)) {
+							lockService.unlock(entityNodeRef);
+						}
+						
+						if (!nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_DEPTH_LEVEL)) {
+							nodeService.addAspect(entityNodeRef, BeCPGModel.ASPECT_DEPTH_LEVEL, new HashMap<>());
+						}
+						
+						String criterion = (String) nodeService.getProperty(entityNodeRef, ProjectModel.PROP_SL_CRITERION);
+						NodeRef criterionNodeRef = scoreCriterionNodeRefs.get(criterion);
+						
+						if (criterionNodeRef != null) {
+							if (!nodeService.exists(criterionNodeRef)) {
+								logger.error("node does not exist: " + criterionNodeRef + " in tenant: " + TenantUtil.getCurrentDomain());
+							} else {
+								associationService.update(entityNodeRef, ProjectModel.ASSOC_SL_SCORE_CRITERION, criterionNodeRef);
+							}
+						}
+					} finally {
+						policyBehaviourFilter.enableBehaviour();
+						ruleService.enableRules();
 					}
-
-					if (lockService.isLocked(entityNodeRef)) {
-						lockService.unlock(entityNodeRef);
-					}
-
-					if (!nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_DEPTH_LEVEL)) {
-						nodeService.addAspect(entityNodeRef, BeCPGModel.ASPECT_DEPTH_LEVEL, new HashMap<>());
-					}
-					
-					String criterion = (String) nodeService.getProperty(entityNodeRef, ProjectModel.PROP_SL_CRITERION);
-					NodeRef criterionNodeRef = scoreCriterionNodeRefs.get(criterion);
-
-					if (criterionNodeRef != null) {
-						associationService.update(entityNodeRef, ProjectModel.ASSOC_SL_SCORE_CRITERION, criterionNodeRef);
-					}
-				} finally {
-					policyBehaviourFilter.enableBehaviour();
-					ruleService.enableRules();
-
-				}
+					return null;
+                }, tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenantDomain));            
 			}
 		};
 	}
@@ -249,9 +280,9 @@ public class ScoreListPatch extends AbstractBeCPGPatch {
 	private NodeRef createScoreCriterion(String key, MLText mlText) {
 		Map<QName, Serializable> properties = new HashMap<>();
 		properties.put(BeCPGModel.PROP_CHARACT_NAME, mlText);
-		//properties.put(ProjectModel.PROP_SCORE_CRITERION_TYPE, key);
+		properties.put(ProjectModel.PROP_SCORE_CRITERION_TYPE, key);
 
-		return getOrCreateNode(nodeService, "/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:ScoreCriteria", key,
+		return getOrCreateNode(nodeService, "/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:ScoreCriteria", key.replace("/", ""),
 				ProjectModel.TYPE_SCORE_CRITERION, properties);
 
 	}
