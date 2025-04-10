@@ -676,28 +676,6 @@ function classifyByPropAndHierarchy(productNode, folderNode, propHierarchy, prop
 	return bcpg.classifyByPropAndHierarchy(productNode, folderNode, propHierarchy, propPathName, locale);
 }
 
-/**
- * @deprecated TODO: Useless code to remove
- *
- * Extract assoc
- * @param {(ScriptNode|NodeRef|string)} node
- * @param {string} assocName
- * @param {string[]} assocsArray assoc names array
- * @returns {void}
- */
-function classifyByPropAndHierarchy_extractAssoc(node, assocName, assocsArray) {
-
-	if (assocsArray.length == 0) {
-		return node;
-	}
-	var nextAssocName = assocsArray.shift(), nextNode = assocValue(node, assocName);
-
-	if (nextNode == "") {
-		return "";
-	}
-
-	classifyByPropAndHierarchy_extractAssoc(nextNode, nextAssocName, assocsArray);
-}
 
 /**
  * Get or create target folder if it doesn't exist in folderNode
@@ -1137,4 +1115,8 @@ function isOnFormulateEntity(node) {
  */
 function isOnBranchEntity(node) {
 	return bState.isOnBranchEntity(node);
+}
+
+function deleteExternalUser(userNode, supplierNode) {
+	bSupplier.deleteExternalUser(userNode, supplierNode);
 }

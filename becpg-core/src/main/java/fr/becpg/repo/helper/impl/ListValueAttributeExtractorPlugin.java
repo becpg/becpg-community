@@ -20,7 +20,6 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 package fr.becpg.repo.helper.impl;
 
 import java.util.Collection;
-import java.util.Collections;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -29,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorPlugin;
 
 /**
@@ -44,12 +44,15 @@ public class ListValueAttributeExtractorPlugin implements AttributeExtractorPlug
 	@Autowired
 	private NodeService nodeService;
 	
+	@Autowired
+	private EntityDictionaryService entityDictionaryService;
+	
 	 
 	
 	/** {@inheritDoc} */
 	@Override
 	public Collection<QName> getMatchingTypes() {
-		return Collections.singletonList(BeCPGModel.TYPE_LIST_VALUE);
+		return entityDictionaryService.getSubTypes(BeCPGModel.TYPE_LIST_VALUE);
 	}
 	
 
@@ -70,7 +73,7 @@ public class ListValueAttributeExtractorPlugin implements AttributeExtractorPlug
 	/** {@inheritDoc} */
 	@Override
 	public Integer getPriority() {
-		return 0;
+		return MEDIUM_PRIORITY;
 	}
 
 	

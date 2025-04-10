@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -24,6 +23,7 @@ import java.util.stream.Collectors;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.apache.commons.lang3.mutable.MutableInt;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.webscripts.GUID;
@@ -772,7 +772,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 					.collect(Collectors.groupingBy(item -> item.getParent() == null ? nullPlaceholder : item.getParent()));
 
 			List<IngListDataItem> sortedList = new ArrayList<>();
-			AtomicInteger index = new AtomicInteger(1);
+			MutableInt index = new MutableInt(1);
 
 			sorted(byParent.getOrDefault(nullPlaceholder, Collections.emptyList())).forEach(root -> processItem(root, byParent, sortedList));
 

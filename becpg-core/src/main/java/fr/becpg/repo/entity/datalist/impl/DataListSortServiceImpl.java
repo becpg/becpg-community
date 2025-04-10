@@ -23,13 +23,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.lang3.mutable.MutableInt;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,7 +90,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 				logger.debug("###FixSortableList. parentNodeRef: " + listContainer + "");
 			}
 
-			AtomicInteger newSort = new AtomicInteger(RepoConsts.SORT_DEFAULT_STEP);
+			MutableInt newSort = new MutableInt(RepoConsts.SORT_DEFAULT_STEP);
 			BeCPGQueryBuilder.createQuery().parent(listContainer).ofType(dataType).isNotNull(BeCPGModel.PROP_SORT).addSort(BeCPGModel.PROP_SORT, true)
 					.inDB().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list().forEach(listItem -> 
 						nodeService.setProperty(listItem, BeCPGModel.PROP_SORT, newSort.getAndAdd(RepoConsts.SORT_DEFAULT_STEP)));

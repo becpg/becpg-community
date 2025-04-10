@@ -10,9 +10,6 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.batch.BatchProcessWorkProvider;
 import org.alfresco.repo.batch.BatchProcessor;
 import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
-import org.alfresco.repo.domain.node.NodeDAO;
-import org.alfresco.repo.domain.patch.PatchDAO;
-import org.alfresco.repo.domain.qname.QNameDAO;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
@@ -39,9 +36,7 @@ public class CopyFromPatch extends AbstractBeCPGPatch {
 	private static final Log logger = LogFactory.getLog(CopyFromPatch.class);
 	private static final String MSG_SUCCESS = "patch.bcpg.copyFromPatch.result";
 
-	private NodeDAO nodeDAO;
-	private PatchDAO patchDAO;
-	private QNameDAO qnameDAO;
+
 	private BehaviourFilter policyBehaviourFilter;
 	private RuleService ruleService;
 	private DictionaryService dictionaryService;
@@ -89,12 +84,12 @@ public class CopyFromPatch extends AbstractBeCPGPatch {
 		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<>() {
 			final List<NodeRef> result = new ArrayList<>();
 
-			final long maxNodeId = getNodeDAO().getMaxNodeId();
+			final long maxNodeId = nodeDAO.getMaxNodeId();
 
 			long minSearchNodeId = 0;
 			long maxSearchNodeId = INC;
 
-			final Pair<Long, QName> val = getQnameDAO().getQName(type);
+			final Pair<Long, QName> val = qnameDAO.getQName(type);
 
 			@Override
 			public int getTotalEstimatedWorkSize() {
@@ -114,10 +109,10 @@ public class CopyFromPatch extends AbstractBeCPGPatch {
 					result.clear();
 
 					while (result.isEmpty() && (minSearchNodeId < maxNodeId)) {
-						List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, maxSearchNodeId);
+						List<Long> nodeids = patchDAO.getNodesByTypeQNameId(typeQNameId, minSearchNodeId, maxSearchNodeId);
 
 						for (Long nodeid : nodeids) {
-							NodeRef.Status status = getNodeDAO().getNodeIdStatus(nodeid);
+							NodeRef.Status status = nodeDAO.getNodeIdStatus(nodeid);
 							if (!status.isDeleted()) {
 								result.add(status.getNodeRef());
 							}
@@ -180,59 +175,6 @@ public class CopyFromPatch extends AbstractBeCPGPatch {
 
 	}
 
-	/**
-	 * <p>Getter for the field <code>nodeDAO</code>.</p>
-	 *
-	 * @return a {@link org.alfresco.repo.domain.node.NodeDAO} object.
-	 */
-	public NodeDAO getNodeDAO() {
-		return nodeDAO;
-	}
-
-	/**
-	 * <p>Setter for the field <code>nodeDAO</code>.</p>
-	 *
-	 * @param nodeDAO a {@link org.alfresco.repo.domain.node.NodeDAO} object.
-	 */
-	public void setNodeDAO(NodeDAO nodeDAO) {
-		this.nodeDAO = nodeDAO;
-	}
-
-	/**
-	 * <p>Getter for the field <code>patchDAO</code>.</p>
-	 *
-	 * @return a {@link org.alfresco.repo.domain.patch.PatchDAO} object.
-	 */
-	public PatchDAO getPatchDAO() {
-		return patchDAO;
-	}
-
-	/**
-	 * <p>Setter for the field <code>patchDAO</code>.</p>
-	 *
-	 * @param patchDAO a {@link org.alfresco.repo.domain.patch.PatchDAO} object.
-	 */
-	public void setPatchDAO(PatchDAO patchDAO) {
-		this.patchDAO = patchDAO;
-	}
-
-	/**
-	 * <p>Getter for the field <code>qnameDAO</code>.</p>
-	 *
-	 * @return a {@link org.alfresco.repo.domain.qname.QNameDAO} object.
-	 */
-	public QNameDAO getQnameDAO() {
-		return qnameDAO;
-	}
-
-	/**
-	 * <p>Setter for the field <code>qnameDAO</code>.</p>
-	 *
-	 * @param qnameDAO a {@link org.alfresco.repo.domain.qname.QNameDAO} object.
-	 */
-	public void setQnameDAO(QNameDAO qnameDAO) {
-		this.qnameDAO = qnameDAO;
-	}
 
 	/**
 	 * <p>Setter for the field <code>policyBehaviourFilter</code>.</p>

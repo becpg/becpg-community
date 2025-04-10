@@ -74,30 +74,31 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 			public boolean shouldIgnoreActivity(NodeRef nodeRef, QName type, Map<QName, Pair<Serializable, Serializable>> updatedFields) {
 				if (updatedFields != null) {
 					if (PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST.equals(type)) {
-						if (updatedFields.get(PublicationModel.PROP_PUBCHANNELLIST_BATCHID) != null
-								&& (updatedFields.get(PublicationModel.PROP_PUBCHANNELLIST_BATCHID).getFirst() == null
-										|| !updatedFields.get(PublicationModel.PROP_PUBCHANNELLIST_BATCHID).getFirst()
-												.equals(updatedFields.get(PublicationModel.PROP_PUBCHANNELLIST_BATCHID).getSecond()))) {
+						if (hasChanged(updatedFields, PublicationModel.PROP_PUBCHANNELLIST_BATCHID)) {
 							NodeRef channelNodeRef = associationService.getTargetAssoc(nodeRef, PublicationModel.ASSOC_PUBCHANNELLIST_CHANNEL);
-							Boolean registerChannelListActivity = getRegisterConnectorChannelActivity(channelNodeRef);
-							if (registerChannelListActivity != null) {
-								return !registerChannelListActivity;
-							}
-							return !Boolean.TRUE.toString().equals(systemConfigurationService.confValue("beCPG.connector.channel.register.activity"));
+							return registerConnectorChannelActivity(channelNodeRef);
 						}
 					} else if (PublicationModel.TYPE_PUBLICATION_CHANNEL.equals(type)
-							&& (updatedFields.get(PublicationModel.PROP_PUBCHANNEL_BATCHID) != null
-									&& (updatedFields.get(PublicationModel.PROP_PUBCHANNEL_BATCHID).getFirst() == null
-											|| !updatedFields.get(PublicationModel.PROP_PUBCHANNEL_BATCHID).getFirst()
-													.equals(updatedFields.get(PublicationModel.PROP_PUBCHANNEL_BATCHID).getSecond())))) {
-						Boolean registerChannelListActivity = getRegisterConnectorChannelActivity(nodeRef);
-						if (registerChannelListActivity != null) {
-							return !registerChannelListActivity;
-						}
-						return !Boolean.TRUE.toString().equals(systemConfigurationService.confValue("beCPG.connector.channel.register.activity"));
+							&& (hasChanged(updatedFields, PublicationModel.PROP_PUBCHANNEL_BATCHSTARTTIME)
+									|| hasChanged(updatedFields, PublicationModel.PROP_PUBCHANNEL_BATCHENDTIME)
+									|| hasChanged(updatedFields, PublicationModel.PROP_PUBCHANNEL_BATCHID))) {
+						return registerConnectorChannelActivity(nodeRef);
 					}
 				}
 				return false;
+			}
+
+			private boolean registerConnectorChannelActivity(NodeRef channelNodeRef) {
+				Boolean registerChannelListActivity = getRegisterConnectorChannelActivity(channelNodeRef);
+				if (registerChannelListActivity != null) {
+					return !registerChannelListActivity;
+				}
+				return !Boolean.TRUE.toString().equals(systemConfigurationService.confValue("beCPG.connector.channel.register.activity"));
+			}
+
+			private boolean hasChanged(Map<QName, Pair<Serializable, Serializable>> updatedFields, QName prop) {
+				return updatedFields.get(prop) != null && (updatedFields.get(prop).getFirst() == null
+						|| !updatedFields.get(prop).getFirst().equals(updatedFields.get(prop).getSecond()));
 			}
 
 			@Nullable
@@ -393,7 +394,7 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 			query.andPropEquals(PublicationModel.PROP_CHANNELIDS, channelId);
 		}
 
-		return query.inDB().ftsLanguage().pagingResults();
+		return query.inDBIfPossible().ftsLanguage().pagingResults();
 	}
 
 }

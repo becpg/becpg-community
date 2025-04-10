@@ -3,6 +3,7 @@ package fr.becpg.config.format;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 
 /**
@@ -12,12 +13,19 @@ import org.springframework.stereotype.Service;
  * @version $Id: $Id
  */
 @Service
-public class PropertyFormatService {
+public class PropertyFormatService implements InitializingBean {
 
 	/** Constant <code>PROCESS_DATETIME_FORMAT="dd MMMM, yyyy"</code> */
 	public static final String PROCESS_DATETIME_FORMAT = "dd MMMM, yyyy";
 
+	private static PropertyFormatService instance = null;
+
 	Map<String, PropertyFormats> cache = new ConcurrentHashMap<>();
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		instance = this;
+	}
 
 	/**
 	 * <p>Getter for the field <code>propertyFormats</code>.</p>
@@ -43,6 +51,10 @@ public class PropertyFormatService {
 
 		});
 
+	}
+
+	public static PropertyFormatService instance() {
+		return instance;
 	}
 
 }

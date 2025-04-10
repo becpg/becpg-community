@@ -823,8 +823,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			}
 
 		}
-		if (logger.isDebugEnabled()) {
-			watch.stop();
+		if (logger.isDebugEnabled()&& watch!=null) {
 			logger.debug(getClass().getSimpleName() + " extract node data in  " + watch.getTotalTimeSeconds());
 		}
 		return ret;

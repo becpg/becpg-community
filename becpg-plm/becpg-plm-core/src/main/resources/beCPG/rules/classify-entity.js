@@ -20,6 +20,15 @@ function main() {
 			if (isInSite(document, SUPPLIER_PORTAL_SITE_ID) && !(document.parent.hasPermission("Read") && document.parent.parent.hasPermission("Read") && document.parent.parent.isSubType("bcpg:supplier"))) {
 				site = getDocumentLibraryNodeRef(SUPPLIER_PORTAL_SITE_ID);	
 			}
+			if (state == "Archived") {
+				var supplierAccounts = document.assocs["bcpg:supplierAccountRef"];
+				if (supplierAccounts) {
+					for (var i = 0; i < supplierAccounts.length; i++) {
+						var supplierAccount = supplierAccounts[i];
+						deleteExternalUser(supplierAccount, document);
+					}
+				}
+			}
 		} else if (document.isSubType("bcpg:productCollection")) {
 			state = document.properties["bcpg:productCollectionState"];
 		} else if (document.isSubType("pjt:project")) {
@@ -72,11 +81,6 @@ function main() {
 			wasMoved = classifyByDate(document, path, date, "YYYY/MM - MMMM", site);
 		} else if (!isEmpty(site)) {
 			wasMoved = classifyByHierarchy(document, site);
-		}
-		
-		// formulate if the document was moved
-		if (wasMoved && document.isSubType("bcpg:product")) {
-			formulate(document);
 		}
 		
 		//Rename Sample

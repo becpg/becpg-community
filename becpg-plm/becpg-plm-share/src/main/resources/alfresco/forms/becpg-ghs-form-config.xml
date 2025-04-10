@@ -223,15 +223,21 @@
                     <show id="bcpg:regulatoryUsageRef" force="true" />
                 </field-visibility>
                 <appearance>
-                    <field id="ghs:hazardStatementRef" mandatory="false" read-only="false" set="security">
+                    <field id="ghs:hazardStatementRef" mandatory="false" read-only="false" >
                         <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
                             <control-param name="showLink">false</control-param>
                         </control>
                     </field>
-                    <field id="ghs:pictogramRef" mandatory="false" read-only="false" set="security">
+                    <field id="ghs:pictogramRef" mandatory="false" read-only="false">
                         <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
                             <control-param name="showLink">false</control-param>
                         </control>
+                    </field>
+                     <field id="bcpg:regulatoryCountries" >
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+                    </field>
+                    <field id="bcpg:regulatoryUsageRef" >
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
                     </field>
                 </appearance>
             </form>
@@ -249,12 +255,12 @@
 					<show id="ghs:hclDetail" />
 				</field-visibility>
 				<appearance>
-                    <field id="ghs:hazardStatementRef" mandatory="false" read-only="false" set="security">
+                    <field id="ghs:hazardStatementRef" mandatory="false" read-only="false" >
                         <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
                             <control-param name="showLink">false</control-param>
                         </control>
                     </field>
-                    <field id="ghs:pictogramRef" mandatory="false" read-only="false" set="security">
+                    <field id="ghs:pictogramRef" mandatory="false" read-only="false">
                         <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
                             <control-param name="showLink">false</control-param>
                         </control>
@@ -275,15 +281,21 @@
                     <show id="bcpg:regulatoryUsageRef" force="true" />
                 </field-visibility>
                 <appearance>
-                    <field id="ghs:hazardStatementRef" mandatory="false" read-only="false" set="security">
+                    <field id="ghs:hazardStatementRef" mandatory="false" read-only="false">
                         <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
                             <control-param name="showLink">false</control-param>
                         </control>
                     </field>
-                    <field id="ghs:pictogramRef" mandatory="false" read-only="false" set="security">
+                    <field id="ghs:pictogramRef" mandatory="false" read-only="false" >
                         <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
                             <control-param name="showLink">false</control-param>
                         </control>
+                    </field>
+                    <field id="bcpg:regulatoryCountries" >
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+                    </field>
+                    <field id="bcpg:regulatoryUsageRef" >
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
                     </field>
                 </appearance>
             </form>

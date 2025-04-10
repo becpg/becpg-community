@@ -59,7 +59,14 @@ public class ListEntitiesWebScript extends AbstractEntityWebScript {
 			resp.setContentType(getContentType(req));
 			resp.setContentEncoding("UTF-8");
 			
-			PagingResults<NodeRef> entities = findEntities(req,shouldLimit);
+			Integer maxResults = intParam(req, PARAM_MAX_RESULTS);
+			if(shouldLimit && maxResults!=null) {
+				if(maxResults <= 0 || maxResults >  maxResultsLimit()) {
+					maxResults = maxResultsLimit();
+				}
+			}
+			
+			PagingResults<NodeRef> entities = findEntities(req, maxResults);
 
 			logger.debug("List entities");
 

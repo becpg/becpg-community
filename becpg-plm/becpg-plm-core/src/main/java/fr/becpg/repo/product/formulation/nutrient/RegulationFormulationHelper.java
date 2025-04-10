@@ -90,8 +90,7 @@ public class RegulationFormulationHelper {
 		regulations.put("UY", new BrazilianNutrientRegulation("beCPG/databases/nuts/UruguayanNutrientRegulation.csv"));
 		regulations.put("BR", new BrazilianNutrientRegulation("beCPG/databases/nuts/BrazilianNutrientRegulation.csv"));
 		regulations.put("CTA", new CentralAmericanNutrientRegulation("beCPG/databases/nuts/CentralAmericanNutrientRegulation.csv"));
-		
-		
+
 		regulations.put("TW", new TaiwanNutrientRegulation("beCPG/databases/nuts/TaiwanNutrientRegulation.csv"));
 		regulations.put("JP", new JapanNutrientRegulation("beCPG/databases/nuts/JapanNutrientRegulation.csv"));
 		regulations.put("VN", new VietnamNutrientRegulation("beCPG/databases/nuts/VietnamNutrientRegulation.csv"));
@@ -240,8 +239,7 @@ public class RegulationFormulationHelper {
 	public static Double extractGDAPerc(String roundedValue, String key) {
 		return extractValueByKey(roundedValue, KEY_GDA_PERC, key);
 	}
-	
-	
+
 	private static Double extractValueByKey(String roundedValue, String item, String key) {
 		if (roundedValue != null) {
 			try {
@@ -262,7 +260,7 @@ public class RegulationFormulationHelper {
 		return null;
 	}
 
-	private static String getLocalKey(Locale locale) {
+	public static String getLocalKey(Locale locale) {
 		if (locale.getCountry().equals("US") || locale.getCountry().equals("CA") || locale.getCountry().equals("AU")
 				|| locale.getCountry().equals("ID") || locale.getCountry().equals("HK") || locale.getCountry().equals("MY")
 				|| locale.getCountry().equals("IL") || locale.getCountry().equals("IN") || locale.getCountry().equals("KR")
@@ -272,8 +270,7 @@ public class RegulationFormulationHelper {
 				|| locale.getCountry().equals("EG") || locale.getCountry().equals("CL") || locale.getCountry().equals("UY")
 				|| locale.getCountry().equals("BR") || locale.getCountry().equals("TT") || locale.getCountry().equals("DO")
 				|| locale.getCountry().equals("PE") || locale.getCountry().equals("TW") || locale.getCountry().equals("JP")
-				 || locale.getCountry().equals("VN")
-				) {
+				|| locale.getCountry().equals("VN")) {
 			return locale.getCountry();
 		} else if (locale.getLanguage().equals("zh")) {
 			return "CN";
@@ -287,8 +284,10 @@ public class RegulationFormulationHelper {
 			return "BR";
 		} else if (locale.getCountry().equals("GT") || locale.getCountry().equals("PA") || locale.getCountry().equals("SV")) {
 			return "CTA";
-		} else if (locale.getCountry().equals("AE") || locale.getCountry().equals("BH") || locale.getCountry().equals("SA")
-				|| locale.getCountry().equals("QA") || locale.getCountry().equals("OM") || locale.getCountry().equals("KW")) {
+		} else if ((locale.getLanguage().equals("ar") 
+				&& (locale.getCountry() == null || locale.getCountry().isEmpty())) || locale.getCountry().equals("AE")
+				|| locale.getCountry().equals("BH") || locale.getCountry().equals("SA") || locale.getCountry().equals("QA")
+				|| locale.getCountry().equals("OM") || locale.getCountry().equals("KW")) {
 			return "GSO";
 		} else if (locale.getCountry().equals("KE") || locale.getCountry().equals("NG") || locale.getCountry().equals("GH")
 				|| locale.getCountry().equals("CI") || locale.getCountry().equals("UG") || locale.getCountry().equals("MZ")
@@ -392,7 +391,7 @@ public class RegulationFormulationHelper {
 						if ((nutListValuePerServing != null) && (!nutListValuePerServing.isBlank())) {
 							nutListElt.addAttribute("roundedDisplayValuePerServing" + suffix,
 									RegulationFormulationHelper.displayValue(Double.parseDouble(nutListValuePerServing),
-											extractValuePerServing(roundedValue, locKey), measurementPrecision, nutCode, locale, locKey));
+											extractValuePerServing(roundedValue, locKey), nutCode, measurementPrecision, locale, locKey));
 						}
 
 						if ((nutListValuePrepared != null) && (!nutListValuePrepared.isBlank())) {
@@ -405,7 +404,7 @@ public class RegulationFormulationHelper {
 							if (nutListValuePreparedPerServing != null) {
 								nutListElt.addAttribute("roundedDisplayValuePreparedPerServing" + suffix,
 										RegulationFormulationHelper.displayValue(nutListValuePreparedPerServing, nutListValuePreparedPerServing,
-												measurementPrecision, nutCode, locale, locKey));
+												nutCode, measurementPrecision, locale, locKey));
 							}
 						}
 
@@ -456,18 +455,17 @@ public class RegulationFormulationHelper {
 		case KEY_UNIT:
 			return "Unit";
 		case KEY_TOLERANCE_MAX:
-			return "ToleranceMax";	
+			return "ToleranceMax";
 		case KEY_TOLERANCE_MIN:
-			return "ToleranceMax";	
+			return "ToleranceMax";
 		case KEY_UL:
-			return "UpperLimit";		
+			return "UpperLimit";
 		default:
 			break;
 		}
 		return "Value";
 	}
 
-	
 	// {
 	// v : {
 	// eu: 5.0,
@@ -503,7 +501,7 @@ public class RegulationFormulationHelper {
 			JSONObject secondaryGda = new JSONObject();
 			JSONObject secondaryValuePerContainer = new JSONObject();
 			JSONObject secondaryGdaPerContainer = new JSONObject();
-			
+
 			JSONObject tmin = new JSONObject();
 			JSONObject tmax = new JSONObject();
 			JSONObject mini = new JSONObject();
@@ -532,7 +530,7 @@ public class RegulationFormulationHelper {
 					tmin.put(key, tolerances.getFirst());
 					tmax.put(key, tolerances.getSecond());
 				}
-				
+
 				tolerances = regulation.tolerances(n.getPreparedValue(), nutCode, nutUnit);
 				if (tolerances != null) {
 					secondaryTmin.put(key, tolerances.getFirst());
@@ -568,18 +566,18 @@ public class RegulationFormulationHelper {
 
 				if ((n.getPreparedValue() != null) && (servingSize != null)) {
 					Double valuePerserving = (n.getPreparedValue() * (servingSize * 1000d)) / 100;
-					
+
 					Double vps = regulation.round(valuePerserving, nutCode, nutUnit);
 					secondaryValuePerServing.put(key, vps);
 					if ((def != null) && (def.getGda() != null) && (def.getGda() != 0)) {
 						secondaryGda.put(key, regulation.roundGDA((100 * vps) / def.getGda(), nutCode));
 					}
-					
+
 				}
 
 				Double containerQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d);
 				if ((key.equals("US"))) {
-					if((n.getValue() != null)) {
+					if ((n.getValue() != null)) {
 						Double vpc = regulation.round(n.getValue() * containerQty * 10, nutCode, nutUnit);
 						valuePerContainer.put(key, vpc);
 						if ((def != null) && (def.getGda() != null) && (def.getGda() != 0)) {
@@ -607,8 +605,7 @@ public class RegulationFormulationHelper {
 				jsonRound.put(KEY_UL, ul);
 				jsonRound.put(KEY_VALUE_PER_CONTAINER, valuePerContainer);
 				jsonRound.put(KEY_GDA_PERC_PER_CONTAINER, gdaPerContainer);
-				
-				
+
 				jsonPreparedRound.put(KEY_VALUE, secondaryValue);
 				jsonPreparedRound.put(KEY_TOLERANCE_MIN, secondaryTmin);
 				jsonPreparedRound.put(KEY_TOLERANCE_MAX, secondaryTmax);
@@ -616,10 +613,9 @@ public class RegulationFormulationHelper {
 				jsonPreparedRound.put(KEY_GDA_PERC, secondaryGda);
 				jsonPreparedRound.put(KEY_VALUE_PER_CONTAINER, secondaryValuePerContainer);
 				jsonPreparedRound.put(KEY_GDA_PERC_PER_CONTAINER, secondaryGdaPerContainer);
-				
 
 				for (Map.Entry<String, JSONObject> entry : variants.entrySet()) {
-				    jsonRound.put(entry.getKey(), entry.getValue());
+					jsonRound.put(entry.getKey(), entry.getValue());
 				}
 
 			}
@@ -627,8 +623,8 @@ public class RegulationFormulationHelper {
 		} catch (JSONException e) {
 			logger.error(e, e);
 		}
-		
-		if(n.getPreparedValue()!=null) {
+
+		if (n.getPreparedValue() != null) {
 			n.setRoundedValuePrepared(jsonPreparedRound.toString());
 		} else {
 			n.setRoundedValuePrepared(null);
@@ -698,11 +694,11 @@ public class RegulationFormulationHelper {
 		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("zh_HK"))) {
 			ret.add("HK");
 		}
-		
+
 		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ja_JP"))) {
 			ret.add("JP");
 		}
-		
+
 		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ja_JP"))) {
 			ret.add("JP");
 		}

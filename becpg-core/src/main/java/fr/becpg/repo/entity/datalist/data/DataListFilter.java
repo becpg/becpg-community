@@ -33,7 +33,6 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO9075;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
@@ -108,13 +107,21 @@ public class DataListFilter {
 	private boolean hasWriteAccess = false;
 
 	private boolean isDefaultSort = true;
+	
+	private static final Map<String, Boolean> DEFAULT_SORT = new LinkedHashMap<>();
+	
+	static {
+		DEFAULT_SORT.put("@bcpg:sort", true);
+		DEFAULT_SORT.put("@cm:created", true);
+	}
+	
 
 	/**
 	 * <p>Constructor for DataListFilter.</p>
 	 */
 	public DataListFilter() {
 		super();
-		sortMap.putAll(RepoConsts.DEFAULT_SORT);
+		sortMap.putAll(DEFAULT_SORT);
 	}
 
 	/**

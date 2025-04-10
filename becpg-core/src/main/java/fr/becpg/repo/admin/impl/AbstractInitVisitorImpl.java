@@ -6,6 +6,7 @@ package fr.becpg.repo.admin.impl;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -200,7 +201,7 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 		actionCondition.setInvertCondition(true);
 		compositeAction.addActionCondition(actionCondition);
 
-		createRule(nodeRef, "Specialise type", "Every item created will have this type", applyToChildren, compositeAction);
+		createRule(nodeRef, "Specialise type", "Every item created will have this type", applyToChildren, false, List.of(RuleType.INBOUND), compositeAction);
 	}
 
 	/**
@@ -212,7 +213,7 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 	 * @param applyToChildren a boolean
 	 * @param compositeAction a {@link org.alfresco.service.cmr.action.CompositeAction} object
 	 */
-	protected void createRule(NodeRef nodeRef, String title, String description, boolean applyToChildren, CompositeAction compositeAction) {
+	protected void createRule(NodeRef nodeRef, String title, String description, boolean applyToChildren, boolean executeAsync, List<String> ruleTypes,  CompositeAction compositeAction) {
 		
 		if (ruleExists(nodeRef, title, description)) {
 			return;
@@ -223,9 +224,9 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 		rule.setTitle(title);
 		rule.setDescription(description);
 		rule.applyToChildren(applyToChildren);
-		rule.setExecuteAsynchronously(false);
+		rule.setExecuteAsynchronously(executeAsync);
 		rule.setRuleDisabled(false);
-		rule.setRuleType(RuleType.INBOUND);
+		rule.setRuleTypes(ruleTypes);
 		rule.setAction(compositeAction);
 		ruleService.saveRule(nodeRef, rule);
 	}
@@ -266,7 +267,7 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 		aspectCondition.setInvertCondition(true);
 		compositeAction.addActionCondition(aspectCondition);
 
-		createRule(nodeRef, "Add entityTpl aspect", "Add entityTpl aspect to the created node", applyToChildren, compositeAction);
+		createRule(nodeRef, "Add entityTpl aspect", "Add entityTpl aspect to the created node", applyToChildren, false, List.of(RuleType.INBOUND), compositeAction);
 		
 	}
 
