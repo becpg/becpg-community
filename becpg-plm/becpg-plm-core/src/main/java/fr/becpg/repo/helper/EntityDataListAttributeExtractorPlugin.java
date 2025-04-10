@@ -12,9 +12,15 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.helper.impl.CharactAttributeExtractorPlugin;
 
+/**
+ * <p>EntityDataListAttributeExtractorPlugin class.</p>
+ *
+ * @author matthieu
+ */
 @Service
 public class EntityDataListAttributeExtractorPlugin extends CharactAttributeExtractorPlugin {
 	
+	/** {@inheritDoc} */
 	@Override
 	public String extractPropName(QName type, NodeRef nodeRef) {
 		QName assoc = entityDictionaryService.getDefaultPivotAssoc(type);
@@ -28,6 +34,7 @@ public class EntityDataListAttributeExtractorPlugin extends CharactAttributeExtr
 		return (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String extractMetadata(QName type, NodeRef nodeRef) {
 		QName assoc = entityDictionaryService.getDefaultPivotAssoc(type);
@@ -41,11 +48,13 @@ public class EntityDataListAttributeExtractorPlugin extends CharactAttributeExtr
 		return super.extractMetadata(type, nodeRef);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Collection<QName> getMatchingTypes() {
 		return entityDictionaryService.getSubTypes(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public Integer getPriority() {
 		return LOW_PRIORITY;

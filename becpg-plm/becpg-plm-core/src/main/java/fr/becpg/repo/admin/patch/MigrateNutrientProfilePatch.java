@@ -84,11 +84,11 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * <p>
 	 * Setter for the field <code>nodeDAO</code>.
 	 * </p>
-	 *
-	 * @param nodeDAO a {@link org.alfresco.repo.domain.node.NodeDAO} object.
 	 */
 	public void setNodeDAO(NodeDAO nodeDAO) {
 		this.nodeDAO = nodeDAO;
@@ -106,11 +106,11 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * <p>
 	 * Setter for the field <code>patchDAO</code>.
 	 * </p>
-	 *
-	 * @param patchDAO a {@link org.alfresco.repo.domain.patch.PatchDAO} object.
 	 */
 	public void setPatchDAO(PatchDAO patchDAO) {
 		this.patchDAO = patchDAO;
@@ -128,11 +128,11 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * <p>
 	 * Setter for the field <code>qnameDAO</code>.
 	 * </p>
-	 *
-	 * @param qnameDAO a {@link org.alfresco.repo.domain.qname.QNameDAO} object.
 	 */
 	public void setQnameDAO(QNameDAO qnameDAO) {
 		this.qnameDAO = qnameDAO;

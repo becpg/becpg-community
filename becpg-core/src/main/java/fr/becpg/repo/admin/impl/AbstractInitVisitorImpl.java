@@ -56,23 +56,41 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 
 	private static final String LOCALIZATION_PFX_GROUP = "becpg.group";
 
-	@Autowired
-	protected NodeService nodeService;
-
-	@Autowired
-	protected FileFolderService fileFolderService;
-
-	@Autowired
-	protected RuleService ruleService;
-
-	@Autowired
-	protected RepoService repoService;
-
+	/**
+	 * The action service for managing actions.
+	 */
 	@Autowired
 	protected ActionService actionService;
 
+	/**
+	 * The authority service for managing authorities.
+	 */
 	@Autowired
 	protected AuthorityService authorityService;
+
+	/**
+	 * The file folder service used for file operations.
+	 */
+	@Autowired
+	protected FileFolderService fileFolderService;
+
+	/**
+	 * The node service for node operations.
+	 */
+	@Autowired
+	protected NodeService nodeService;
+
+	/**
+	 * The repository service for repository operations.
+	 */
+	@Autowired
+	protected RepoService repoService;
+
+	/**
+	 * The rule service for managing rules.
+	 */
+	@Autowired
+	protected RuleService ruleService;
 
 	/**
 	 * <p>visitFolder.</p>
@@ -212,6 +230,8 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 	 * @param description a {@link java.lang.String} object
 	 * @param applyToChildren a boolean
 	 * @param compositeAction a {@link org.alfresco.service.cmr.action.CompositeAction} object
+	 * @param executeAsync a boolean
+	 * @param ruleTypes a {@link java.util.List} object
 	 */
 	protected void createRule(NodeRef nodeRef, String title, String description, boolean applyToChildren, boolean executeAsync, List<String> ruleTypes,  CompositeAction compositeAction) {
 		

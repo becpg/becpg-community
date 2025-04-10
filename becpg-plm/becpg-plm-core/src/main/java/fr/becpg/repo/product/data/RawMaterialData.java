@@ -151,11 +151,23 @@ public class RawMaterialData extends ProductData {
 	}
 	
 	
+	/**
+	 * <p>withScoreList.</p>
+	 *
+	 * @param scoreList a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.product.data.RawMaterialData} object
+	 */
 	public RawMaterialData withScoreList(List<ScoreListDataItem> scoreList) {
 		setScoreList(scoreList);
 		return this;
 	}
 
+	/**
+	 * <p>withGeoOrigins.</p>
+	 *
+	 * @param geoOrigins a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.product.data.RawMaterialData} object
+	 */
 	public RawMaterialData withGeoOrigins(List<NodeRef> geoOrigins) {
 		setGeoOrigins(geoOrigins);
 		return this;
