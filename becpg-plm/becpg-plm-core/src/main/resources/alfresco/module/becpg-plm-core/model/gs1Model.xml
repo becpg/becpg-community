@@ -634,12 +634,60 @@
             </parameter>
         </constraint>
         
+        <constraint name="gs1:sustainabilityFeatureCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+            <parameter name="path">
+                <list>
+                    <value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
+                </list>
+            </parameter>
+            <parameter name="constraintFilter">
+                <value>SustainabilityFeatureCode</value>
+            </parameter>
+        </constraint>
+        <!--
+        <constraint name="gs1:dutyFeeTaxAgencyCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+            <parameter name="path">
+                <list>
+                    <value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
+                </list>
+            </parameter>
+            <parameter name="constraintFilter">
+                <value>DutyFeeTaxAgencyCode</value>
+            </parameter>
+        </constraint>
+        
+        <constraint name="gs1:dutyFeeTaxTypeCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+            <parameter name="path">
+                <list>
+                    <value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
+                </list>
+            </parameter>
+            <parameter name="constraintFilter">
+                <value>DutyFeeTaxTypeCode</value>
+            </parameter>
+        </constraint>
+        
+        <constraint name="gs1:dutyFeeTaxCategoryCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+            <parameter name="path">
+                <list>
+                    <value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
+                </list>
+            </parameter>
+            <parameter name="constraintFilter">
+                <value>DutyFeeTaxCategoryCode</value>
+            </parameter>
+        </constraint>-->
+        
         <constraint name='gs1:text35' type='LENGTH'>
             <parameter name='maxLength'><value>35</value></parameter>
          </constraint>
         
         <constraint name='gs1:text70' type='LENGTH'>
             <parameter name='maxLength'><value>70</value></parameter>
+         </constraint>
+         
+         <constraint name='gs1:text80' type='LENGTH'>
+            <parameter name='maxLength'><value>80</value></parameter>
          </constraint>
         
          <constraint name='gs1:text200' type='LENGTH'>
@@ -1693,7 +1741,7 @@
                     <constraints>
                         <constraint ref="gs1:packagingFeatureCodes" />
                     </constraints>
-                </property> -->
+                </property>-->
                 
                 <property name="gs1:packagingFunctionCode">
                     <type>d:text</type>
@@ -1923,6 +1971,18 @@
                         <constraint ref="gs1:packagingTermsAndConditionsCodes" />
                     </constraints>
                 </property>
+                
+                <property name="gs1:recyclingInstructions">
+					<type>d:mltext</type>
+                    <mandatory>false</mandatory>
+                    <index enabled="true">
+                        <tokenised>both</tokenised>
+                        <facetable>false</facetable>
+                    </index>
+                    <constraints>
+                		<constraint ref="gs1:text5000"/>
+                	</constraints>
+				</property>
             </properties>
         </aspect>
 
@@ -2462,6 +2522,75 @@
                         <constraint ref="gs1:growingMethodCodes"/>
                     </constraints>
                 </property>
+				
+				<property name="gs1:additionalTradeItemIdentification">
+					<type>d:mltext</type>
+                    <index enabled="true">
+                        <tokenised>both</tokenised>
+                        <facetable>false</facetable>
+                    </index>
+                    <constraints>
+                		<constraint ref="gs1:text80"/>
+                	</constraints>
+				</property>
+				<property name="gs1:isAllergenRelevantDataProvided">
+                    <type>d:boolean</type>
+                    <index enabled="true">
+                        <tokenised>false</tokenised>
+                        <facetable>true</facetable>
+                    </index>
+                </property>
+                <property name="gs1:isDangerousSubstance">
+                    <type>d:boolean</type>
+                    <index enabled="true">
+                        <tokenised>false</tokenised>
+                        <facetable>true</facetable>
+                    </index>
+                </property>
+                <property name="gs1:sustainabilityFeatureCode">
+                	<type>d:text</type>
+                    <mandatory>false</mandatory>
+                    <index enabled="true">
+                        <tokenised>false</tokenised>
+                        <facetable>true</facetable>
+                    </index>
+                    <constraints>
+                        <constraint ref="gs1:sustainabilityFeatureCodes"/>
+                    </constraints>
+                </property>
+                <!--<property name="gs1:dutyFeeTaxAgencyCode">
+                	<type>d:text</type>
+                    <mandatory>false</mandatory>
+                    <index enabled="true">
+                        <tokenised>false</tokenised>
+                        <facetable>true</facetable>
+                    </index>
+                    <constraints>
+                        <constraint ref="gs1:dutyFeeTaxAgencyCodes"/>
+                    </constraints>
+                </property>
+                <property name="gs1:dutyFeeTaxTypeCode">
+                	<type>d:text</type>
+                    <mandatory>false</mandatory>
+                    <index enabled="true">
+                        <tokenised>false</tokenised>
+                        <facetable>true</facetable>
+                    </index>
+                    <constraints>
+                        <constraint ref="gs1:dutyFeeTaxTypeCodes"/>
+                    </constraints>
+                </property>
+                <property name="gs1:dutyFeeTaxCategoryCode">
+                	<type>d:text</type>
+                    <mandatory>false</mandatory>
+                    <index enabled="true">
+                        <tokenised>false</tokenised>
+                        <facetable>true</facetable>
+                    </index>
+                    <constraints>
+                        <constraint ref="gs1:dutyFeeTaxCategoryCodes"/>
+                    </constraints>
+                </property>-->
             </properties>
             <associations>
 
@@ -2500,7 +2629,29 @@
                         <many>true</many>
                     </target>
                 </association>
+                
+                <association name="gs1:catchCountryCode">
+                	<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:geoOrigin</class>
+						<many>true</many>
+					</target>
+                </association>
 
+				<association name="gs1:contact">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:contactList</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
             </associations>
             <overrides />
             <mandatory-aspects>
