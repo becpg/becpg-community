@@ -2934,9 +2934,9 @@ res;</expression>
                     <text-property name="heading">costListFutureValue2PK</text-property>
                 </structure>
                 <structure>
-                    <property name="columnName">costListFutureValuePK3</property>
+                    <property name="columnName">costListFutureValue3PK</property>
                     <property name="analysis">measure</property>
-                    <text-property name="heading">costListFutureValuePK3</text-property>
+                    <text-property name="heading">costListFutureValue3PK</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">costListValuePK</property>
@@ -3125,7 +3125,7 @@ res;</expression>
                     </structure>
                     <structure>
                         <property name="position">34</property>
-                        <property name="name">costListFutureValuePK3</property>
+                        <property name="name">costListFutureValue3PK</property>
                         <property name="dataType">float</property>
                     </structure>
                     <structure>
@@ -3405,8 +3405,8 @@ res;</expression>
                 </structure>
                 <structure>
                     <property name="position">34</property>
-                    <property name="name">costListFutureValuePK3</property>
-                    <property name="nativeName">costListFutureValuePK3</property>
+                    <property name="name">costListFutureValue3PK</property>
+                    <property name="nativeName">costListFutureValue3PK</property>
                     <property name="dataType">float</property>
                     <property name="nativeDataType">8</property>
                 </structure>
@@ -3432,7 +3432,7 @@ res;</expression>
                     <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingLists/packagingList]#:#{erpCode;STRING;/@erpCode},{packagingListProduct;STRING;/@packagingListProduct},{packagingListQty;DOUBLE;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{unitTotalCost;DOUBLE;/@unitTotalCost},{packagingListLossPerc;DOUBLE;/@packagingListLossPerc},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{packagingListQtyForProduct;DOUBLE;/@packagingListQtyForProduct},{depthLevel;INT;/@depthLevel},{netWeight;DOUBLE;../../../netWeight},{itemType;STRING;/@itemType},{versionLabel;STRING;/@versionLabel},{itemTypeEntity;STRING;../../../itemType},{title;STRING;/@title},{productCompoQtyUsed;DOUBLE;../../../productCompoQtyUsed},{currentCost;DOUBLE;/@currentCost},{compoListProduct;STRING;/@compoListProduct},{qtyForCost;DOUBLE;/@qtyForCost},{futureCost;DOUBLE;/@futureCost},{previousCost;DOUBLE;/@previousCost},{reportParametersCode;STRING;../../../reportParameters/@code},{componentLossPerc;DOUBLE;packagingListProduct//productLossPerc/},{productLossPerc;DOUBLE;../../../productLossPerc},{packagingListPkgLevelTranslation;STRING;/@packagingListPkgLevelTranslation},{costListCost;STRING;/packagingListProduct/packagingMaterial/dataLists/costLists/costList/@costListCost},{costListValue;DOUBLE;/packagingListProduct/packagingMaterial/dataLists/costLists/costList/@costListValue},{costListPreviousValue;DOUBLE;/packagingListProduct/packagingMaterial/dataLists/costLists/costList/@costListPreviousValue},{costListFutureValue;DOUBLE;/packagingListProduct/packagingMaterial/dataLists/costLists/costList/@costListFutureValue},{costListFutureValue2;DOUBLE;/packagingListProduct/packagingMaterial/dataLists/costLists/costList/@costListFutureValue2},{costListFutureValue3;DOUBLE;/packagingListProduct/packagingMaterial/dataLists/costLists/costList/@costListFutureValue3},{costListPreviousValuePK;DOUBLE;/packagingListProduct/packagingKit/dataLists/costLists/costList/@costListPreviousValue},{costListFutureValuePK;DOUBLE;/packagingListProduct/packagingKit/dataLists/costLists/costList/@costListFutureValue},{costListFutureValue2PK;DOUBLE;/packagingListProduct/packagingKit/dataLists/costLists/costList/@costListFutureValue2},{costListFutureValuePK3;DOUBLE;/packagingListProduct/packagingKit/dataLists/costLists/costList/@costListFutureValue3},{costListValuePK;DOUBLE;/packagingListProduct/packagingKit/dataLists/costLists/costList/@costListValue},{costListFutureValue4PK;DOUBLE;/packagingListProduct/packagingKit/dataLists/costLists/costList/@costListFutureValue4},{costListFutureValue4;STRING;/packagingListProduct/packagingMaterial/dataLists/costLists/costList/@costListFutureValue4}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingLists/packagingList]#:#{erpCode;STRING;/@erpCode},{packagingListProduct;STRING;/@packagingListProduct},{packagingListQty;DOUBLE;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{unitTotalCost;DOUBLE;/@unitTotalCost},{packagingListLossPerc;DOUBLE;/@packagingListLossPerc},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{packagingListQtyForProduct;DOUBLE;/@packagingListQtyForProduct},{depthLevel;INT;/@depthLevel},{netWeight;DOUBLE;../../../netWeight},{itemType;STRING;/@itemType},{versionLabel;STRING;/@versionLabel},{itemTypeEntity;STRING;../../../itemType},{title;STRING;/@title},{productCompoQtyUsed;DOUBLE;../../../productCompoQtyUsed},{currentCost;DOUBLE;/@currentCost},{compoListProduct;STRING;/@compoListProduct},{qtyForCost;DOUBLE;/@qtyForCost},{futureCost;DOUBLE;/@futureCost},{previousCost;DOUBLE;/@previousCost},{reportParametersCode;STRING;../../../reportParameters/@code},{componentLossPerc;DOUBLE;packagingListProduct//productLossPerc/},{productLossPerc;DOUBLE;../../../productLossPerc},{packagingListPkgLevelTranslation;STRING;/@packagingListPkgLevelTranslation},{costListCost;STRING;/packagingListProduct/packagingMaterial/dataLists/costLists/costList/@costListCost},{costListValue;DOUBLE;/packagingListProduct/packagingMaterial/dataLists/costLists/costList/@costListValue},{costListPreviousValue;DOUBLE;/packagingListProduct/packagingMaterial/dataLists/costLists/costList/@costListPreviousValue},{costListFutureValue;DOUBLE;/packagingListProduct/packagingMaterial/dataLists/costLists/costList/@costListFutureValue},{costListFutureValue2;DOUBLE;/packagingListProduct/packagingMaterial/dataLists/costLists/costList/@costListFutureValue2},{costListFutureValue3;DOUBLE;/packagingListProduct/packagingMaterial/dataLists/costLists/costList/@costListFutureValue3},{costListPreviousValuePK;DOUBLE;/packagingListProduct/packagingKit/dataLists/costLists/costList/@costListPreviousValue},{costListFutureValuePK;DOUBLE;/packagingListProduct/packagingKit/dataLists/costLists/costList/@costListFutureValue},{costListFutureValue2PK;DOUBLE;/packagingListProduct/packagingKit/dataLists/costLists/costList/@costListFutureValue2},{costListFutureValue3PK;DOUBLE;/packagingListProduct/packagingKit/dataLists/costLists/costList/@costListFutureValue3},{costListValuePK;DOUBLE;/packagingListProduct/packagingKit/dataLists/costLists/costList/@costListValue},{costListFutureValue4PK;DOUBLE;/packagingListProduct/packagingKit/dataLists/costLists/costList/@costListFutureValue4},{costListFutureValue4;STRING;/packagingListProduct/packagingMaterial/dataLists/costLists/costList/@costListFutureValue4}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
