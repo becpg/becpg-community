@@ -87,6 +87,7 @@
 					<show id="gs1:storageStateCode" />
 					<show id="gs1:catchMethodCode" />
 					<show id="gs1:catchAreaCode" />
+					<show id="gs1:catchCountryCode" />
 					<show id="gs1:fishCatchDateInformation" />
 				</field-visibility>
 			</form>
@@ -106,6 +107,7 @@
 					<show id="gs1:storageStateCode" />
 					<show id="gs1:catchMethodCode" />
 					<show id="gs1:catchAreaCode" />
+					<show id="gs1:catchCountryCode" />
 					<show id="gs1:fishCatchDateInformation" />
 				</field-visibility>
 			</form>
@@ -121,9 +123,9 @@
 					<show id="gs1:storageStateCode" />
 					<show id="gs1:catchMethodCode" />
 					<show id="gs1:catchAreaCode" />
+					<show id="gs1:catchCountryCode" />
 					<show id="gs1:fishCatchDateInformation" />
 				</field-visibility>
-
 			</form>
 		</forms>
 	</config>
@@ -444,6 +446,9 @@
 					<show id="gs1:dutyFeeTaxAmountUnit" force="true" />
 					<show id="bcpg:startEffectivity" force="true" />
 					<show id="bcpg:endEffectivity" force="true" />
+					<show id="gs1:dutyFeeTaxAgencyCode" force="false" />
+					<show id="gs1:dutyFeeTaxTypeCode" force="false" />
+					<show id="gs1:dutyFeeTaxCategoryCode" force="false" />
 				</field-visibility>
 				<appearance>
 					<field id="gs1:dutyFeeTaxRef">
@@ -482,6 +487,9 @@
 					<show id="gs1:dutyFeeTaxAmountUnit" force="true" />
 					<show id="bcpg:startEffectivity" force="true" />
 					<show id="bcpg:endEffectivity" force="true" />
+					<show id="gs1:dutyFeeTaxAgencyCode" force="false" />
+					<show id="gs1:dutyFeeTaxTypeCode" force="false" />
+					<show id="gs1:dutyFeeTaxCategoryCode" force="false" />
 				</field-visibility>
 			</form>
 		</forms>
