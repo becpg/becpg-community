@@ -161,6 +161,7 @@
           <show force="false" id="ghs:sdsOnuCode"/>
           <show force="false" id="ghs:sdsClassCode"/>
           <show force="false" id="ghs:sdsPackagingGroupCode"/>
+          <show force="false" id="gs1:isDangerousSubstance"/>
           <show force="false" id="sec:securityRef"/>
           <show force="false" id="cm:taggable"/>
           <show force="false" id="cm:categories"/>
@@ -183,6 +184,7 @@
           <show force="false" id="pack:tareUnit"/>
           <show force="false" id="gs1:weight"/>
           <show force="false" id="bcpg:dropPackagingOfComponents"/>
+          <show force="false" id="gs1:sustainabilityFeatureCode"/>
           <show force="false" id="gs1:innerPackTypeCode"/>
           <show force="false" id="gs1:productPerInnerPack"/>
           <show force="false" id="gs1:innerPackPerBox"/>
@@ -229,6 +231,7 @@
           <show force="false" id="gs1:sortingMalusCriteria"/>
           <show force="false" id="gs1:sortingInstructions"/>
           <show force="false" id="gs1:consumerUsageInstructions"/>
+          <show force="false" id="gs1:recyclingInstructions"/>
           <show force="false" id="gs1:productHierarchy1"/>
           <show force="false" id="gs1:productHierarchy2"/>
           <show force="false" id="gs1:productHierarchy3"/>
@@ -275,6 +278,9 @@
           <show force="false" id="gs1:priceComparisonContentTypeCode"/>
           <show force="false" id="gs1:isTradeItemAFullDisplayStand"/>
           <show force="false" id="gs1:hasDisplayReadyPackaging"/>
+          <show force="false" id="gs1:contact"/>
+          <show force="false" id="gs1:additionalTradeItemIdentification"/>
+          <show force="false" id="gs1:isAllergenRelevantDataProvided"/>
           <show force="false" id="bcpg:autoMergeDate"/>
           <show force="false" id="bcpg:autoMergeTo"/>
           <show force="false" id="bcpg:autoMergeVersionType"/>
@@ -732,6 +738,9 @@
               <control-param name="showLink">false</control-param>
             </control>
           </field>
+          <field id="gs1:isDangerousSubstance" mandatory="false" read-only="false" set="security">
+          	<control template="/org/alfresco/components/form/controls/boolean.ftl"/>
+          </field>
           <set id="securityRule" appearance="bordered-panel" label-id="becpg.forms.set.securityRule.label" parent="mainTab" />
           <field id="sec:securityRef" set="securityRule" mandatory="false" read-only="false">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -810,6 +819,7 @@
             </control>
           </field>
           <field id="bcpg:dropPackagingOfComponents" help-id="becpg.forms.help.dropPackagingOfComponents" mandatory="false" read-only="false" set="primaryPackaging"/>
+          <field id="gs1:sustainabilityFeatureCode" mandatory="false" read-only="false" set="primaryPackaging"/>
           <set appearance="bordered-panel" id="innerPack" label-id="becpg.forms.set.innerPack.label" parent="conditioningTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field id="gs1:innerPackTypeCode" mandatory="false" read-only="false" set="innerPack"/>
           <field id="gs1:productPerInnerPack" mandatory="false" read-only="false" set="innerPack"/>
@@ -956,6 +966,11 @@
               <control-param name="rows">2</control-param>
             </control>
           </field>
+          <field id="gs1:recyclingInstructions" mandatory="false" read-only="false" set="packSorting">
+          	<control template="/org/alfresco/components/form/controls/textarea.ftl">
+              <control-param name="rows">2</control-param>
+            </control>
+          </field>
           <set id="publicationTab" label-id="becpg.forms.set.publication.label"/>
           <set appearance="bordered-panel" id="hierarchyPanel" label-id="becpg.forms.set.hierarchyPanel.label" parent="publicationTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field id="gs1:productHierarchy1" mandatory="false" read-only="false" set="hierarchyPanel">
@@ -1070,6 +1085,15 @@
           </field>
           <field help-id="becpg.forms.help.gs1.hasDisplayReadyPackaging" id="gs1:hasDisplayReadyPackaging" mandatory="false" read-only="false" set="commercialPanel">
             <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
+          </field>
+          <field id="gs1:contact" mandatory="false" read-only="false" set="commercialPanel">
+          	<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+			  <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:contactList?path=System/Characts/bcpg:entityLists/Contacts</control-param>
+			</control>
+          </field>
+          <field id="gs1:additionalTradeItemIdentification" mandatory="false" read-only="false" set="commercialPanel"/>
+          <field id="gs1:isAllergenRelevantDataProvided" mandatory="false" read-only="false" set="commercialPanel">
+          	<control template="/org/alfresco/components/form/controls/boolean.ftl"/>
           </field>
           
           <set id="templateTab" label-id="becpg.forms.set.template.label"/>
@@ -2347,6 +2371,7 @@
           <show force="true" id="ghs:sdsOnuCode"/>
           <show force="true" id="ghs:sdsClassCode"/>
           <show force="true" id="ghs:sdsPackagingGroupCode"/>
+          <show force="true" id="gs1:isDangerousSubstance"/>
           <show force="true" id="cm:taggable"/>
           <show force="true" id="cm:categories"/>
           <show for-mode="view" force="true" id="cm:creator"/>
@@ -2368,6 +2393,7 @@
           <show force="true" id="pack:tareUnit"/>
           <show force="true" id="gs1:weight"/>
           <show force="true" id="bcpg:dropPackagingOfComponents"/>
+          <show force="true" id="gs1:sustainabilityFeatureCode"/>
           <show force="true" id="gs1:innerPackTypeCode"/>
           <show force="true" id="gs1:productPerInnerPack"/>
           <show force="true" id="gs1:innerPackPerBox"/>
@@ -2413,6 +2439,7 @@
           <show force="true" id="gs1:packUnitNumber"/>
           <show force="true" id="gs1:sortingInstructions"/>
           <show force="true" id="gs1:consumerUsageInstructions"/>
+          <show force="true" id="gs1:recyclingInstructions"/>
           <show force="true" id="gs1:sortingBonusCriteria"/>
           <show force="true" id="gs1:sortingMalusCriteria"/>
           <show force="true" id="gs1:productHierarchy1"/>
@@ -2460,6 +2487,8 @@
           <show force="true" id="gs1:priceComparisonContentTypeCode"/>
           <show force="true" id="gs1:isTradeItemAFullDisplayStand"/>
           <show force="true" id="gs1:hasDisplayReadyPackaging"/>
+          <show force="true" id="gs1:contact"/>
+          <show force="true" id="gs1:additionalTradeItemIdentification"/>
           <show force="true" id="gs1:isTradeItemSeasonal"/>
           <show force="true" id="gs1:seasonalAvailabilityStartDateTime"/>
           <show force="true" id="gs1:seasonalAvailabilityEndDateTime"/>
@@ -2801,6 +2830,9 @@
               <control-param name="showLink">false</control-param>
             </control>
           </field>
+          <field id="gs1:isDangerousSubstance" mandatory="false" read-only="false" set="security">
+          	<control template="/org/alfresco/components/form/controls/boolean.ftl"/>
+          </field>
           <set appearance="bordered-panel" id="categories" label-id="becpg.forms.set.category.label" parent="mainTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field id="cm:taggable" mandatory="false" read-only="false" set="categories">
             <control>
@@ -2871,6 +2903,7 @@
             </control>
           </field>
           <field id="bcpg:dropPackagingOfComponents" help-id="becpg.forms.help.dropPackagingOfComponents" mandatory="false" read-only="false" set="primaryPackaging"/>
+          <field id="gs1:sustainabilityFeatureCode" mandatory="false" read-only="false" set="primaryPackaging"/>
           <set appearance="bordered-panel" id="innerPack" label-id="becpg.forms.set.innerPack.label" parent="conditioningTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field id="gs1:innerPackTypeCode" mandatory="false" read-only="false" set="innerPack"/>
           <field id="gs1:productPerInnerPack" mandatory="false" read-only="false" set="innerPack"/>
@@ -3120,6 +3153,12 @@
           <field help-id="becpg.forms.help.gs1.hasDisplayReadyPackaging" id="gs1:hasDisplayReadyPackaging" mandatory="false" read-only="false" set="commercialPanel">
             <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
           </field>
+          <field id="gs1:contact" mandatory="false" read-only="false" set="commercialPanel">
+          	<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+			  <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:contactList?path=System/Characts/bcpg:entityLists/Contacts</control-param>
+			</control>
+          </field>
+          <field id="gs1:additionalTradeItemIdentification" mandatory="false" read-only="false" set="commercialPanel"/>
         </appearance>
       </form>
       <form id="datagridWUsed">
@@ -3233,6 +3272,7 @@
           <show force="false" id="ghs:sdsOnuCode"/>
           <show force="false" id="ghs:sdsClassCode"/>
           <show force="false" id="ghs:sdsPackagingGroupCode"/>
+          <show force="false" id="gs1:isDangerousSubstance"/>
           <show force="false" id="cm:taggable"/>
           <show force="false" id="cm:categories"/>
           <show force="false" id="cm:creator"/>
@@ -3254,6 +3294,7 @@
           <show force="false" id="pack:tareUnit"/>
           <show force="false" id="gs1:weight"/>
           <show force="false" id="bcpg:dropPackagingOfComponents"/>
+          <show force="false" id="gs1:sustainabilityFeatureCode"/>
           <show force="false" id="gs1:innerPackTypeCode"/>
           <show force="false" id="gs1:productPerInnerPack"/>
           <show force="false" id="gs1:innerPackPerBox"/>
@@ -3299,6 +3340,7 @@
           <show force="false" id="gs1:packUnitNumber"/>
           <show force="false" id="gs1:sortingInstructions"/>
           <show force="false" id="gs1:consumerUsageInstructions"/>
+          <show force="false" id="gs1:recyclingInstructions"/>
           <show force="false" id="gs1:sortingBonusCriteria"/>
           <show force="false" id="gs1:sortingMalusCriteria"/>
           <show force="false" id="gs1:productHierarcfalsehy1"/>
@@ -3346,6 +3388,8 @@
           <show force="false" id="gs1:priceComparisonContentTypeCode"/>
           <show force="false" id="gs1:isTradeItemAFullDisplayStand"/>
           <show force="false" id="gs1:hasDisplayReadyPackaging"/>
+          <show force="false" id="gs1:contact"/>
+          <show force="false" id="gs1:additionalTradeItemIdentification"/>
           <show force="false" id="gs1:isTradeItemSeasonal"/>
           <show force="false" id="gs1:seasonalAvailabilityStartDateTime"/>
           <show force="false" id="gs1:seasonalAvailabilityEndDateTime"/>
