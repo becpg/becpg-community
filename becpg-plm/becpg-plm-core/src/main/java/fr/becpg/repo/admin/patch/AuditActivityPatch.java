@@ -9,9 +9,6 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.batch.BatchProcessWorkProvider;
 import org.alfresco.repo.batch.BatchProcessor;
 import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
-import org.alfresco.repo.domain.node.NodeDAO;
-import org.alfresco.repo.domain.patch.PatchDAO;
-import org.alfresco.repo.domain.qname.QNameDAO;
 import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -44,9 +41,6 @@ public class AuditActivityPatch extends AbstractBeCPGPatch {
 	private static final Log logger = LogFactory.getLog(AuditActivityPatch.class);
 	private static final String MSG_SUCCESS = "Success of AuditActivityPtach";
 
-	private NodeDAO nodeDAO;
-	private PatchDAO patchDAO;
-	private QNameDAO qnameDAO;
 	private RuleService ruleService;
 	private LockService lockService;
 	private BeCPGAuditService beCPGAuditService;
@@ -90,60 +84,7 @@ public class AuditActivityPatch extends AbstractBeCPGPatch {
 		this.beCPGAuditService = beCPGAuditService;
 	}
 
-	/**
-	 * <p>Getter for the field <code>nodeDAO</code>.</p>
-	 *
-	 * @return a {@link org.alfresco.repo.domain.node.NodeDAO} object.
-	 */
-	public NodeDAO getNodeDAO() {
-		return nodeDAO;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>Setter for the field <code>nodeDAO</code>.</p>
-	 */
-	public void setNodeDAO(NodeDAO nodeDAO) {
-		this.nodeDAO = nodeDAO;
-	}
-
-	/**
-	 * <p>Getter for the field <code>patchDAO</code>.</p>
-	 *
-	 * @return a {@link org.alfresco.repo.domain.patch.PatchDAO} object.
-	 */
-	public PatchDAO getPatchDAO() {
-		return patchDAO;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>Setter for the field <code>patchDAO</code>.</p>
-	 */
-	public void setPatchDAO(PatchDAO patchDAO) {
-		this.patchDAO = patchDAO;
-	}
-
-	/**
-	 * <p>Getter for the field <code>qnameDAO</code>.</p>
-	 *
-	 * @return a {@link org.alfresco.repo.domain.qname.QNameDAO} object.
-	 */
-	public QNameDAO getQnameDAO() {
-		return qnameDAO;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>Setter for the field <code>qnameDAO</code>.</p>
-	 */
-	public void setQnameDAO(QNameDAO qnameDAO) {
-		this.qnameDAO = qnameDAO;
-	}
-
+	
 	/**
 	 * <p>Getter for the field <code>ruleService</code>.</p>
 	 *
