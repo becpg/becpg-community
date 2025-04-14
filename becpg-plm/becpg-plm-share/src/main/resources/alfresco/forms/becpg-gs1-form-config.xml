@@ -451,11 +451,11 @@
 					<show id="gs1:dutyFeeTaxRef" force="true" />
 					<show id="gs1:dutyFeeTaxAmount" force="true" />
 					<show id="gs1:dutyFeeTaxAmountUnit" force="true" />
+					<show id="gs1:dutyFeeTaxAgencyCode" force="true" />
+					<show id="gs1:dutyFeeTaxTypeCode" force="true" />
+					<show id="gs1:dutyFeeTaxCategoryCode" force="true" />
 					<show id="bcpg:startEffectivity" force="true" />
 					<show id="bcpg:endEffectivity" force="true" />
-					<show id="gs1:dutyFeeTaxAgencyCode" force="false" />
-					<show id="gs1:dutyFeeTaxTypeCode" force="false" />
-					<show id="gs1:dutyFeeTaxCategoryCode" force="false" />
 				</field-visibility>
 				<appearance>
 					<field id="gs1:dutyFeeTaxRef">
@@ -492,11 +492,11 @@
 					<show id="gs1:dutyFeeTaxRef" force="true" />
 					<show id="gs1:dutyFeeTaxAmount" force="true" />
 					<show id="gs1:dutyFeeTaxAmountUnit" force="true" />
-					<show id="bcpg:startEffectivity" force="true" />
-					<show id="bcpg:endEffectivity" force="true" />
 					<show id="gs1:dutyFeeTaxAgencyCode" force="false" />
 					<show id="gs1:dutyFeeTaxTypeCode" force="false" />
 					<show id="gs1:dutyFeeTaxCategoryCode" force="false" />
+					<show id="bcpg:startEffectivity" force="true" />
+					<show id="bcpg:endEffectivity" force="true" />
 				</field-visibility>
 			</form>
 		</forms>
@@ -508,6 +508,9 @@
 					<show id="gs1:dutyFeeTaxRef" force="true" />
 					<show id="gs1:dutyFeeTaxAmount" force="true" />
 					<show id="gs1:dutyFeeTaxAmountUnit" force="true" />
+					<show id="gs1:dutyFeeTaxAgencyCode" force="true" />
+					<show id="gs1:dutyFeeTaxTypeCode" force="true" />
+					<show id="gs1:dutyFeeTaxCategoryCode" force="true" />
 					<show id="bcpg:startEffectivity" force="true" />
 					<show id="bcpg:endEffectivity" force="true" />
 				</field-visibility>
