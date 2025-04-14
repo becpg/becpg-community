@@ -54,7 +54,7 @@ public class TranslateHelper {
 	 * @return the translated path
 	 */
 	public static String getTranslatedPath(String name) {
-		String translation = I18NUtil.getMessage(PATH_MSG_PFX + name.toLowerCase(), Locale.getDefault());
+		String translation = MessageHelper.getMessage(PATH_MSG_PFX + name.toLowerCase(), Locale.getDefault());
 		if (logger.isDebugEnabled() && (translation == null)) {
 			logger.debug("Failed to translate path. path: " + name);
 		}
@@ -88,11 +88,11 @@ public class TranslateHelper {
 	    Locale locale = useDefaultLocale ? Locale.getDefault() : I18NUtil.getLocale();
 
 	    // Fetch the translation for the boolean value
-	    String translation = I18NUtil.getMessage(Boolean.TRUE.equals(b) ? MESSAGE_TRUE : MESSAGE_FALSE, locale);
+	    String translation = MessageHelper.getMessage(Boolean.TRUE.equals(b) ? MESSAGE_TRUE : MESSAGE_FALSE, locale);
 
 	    // Provide English fallback if the translation is missing
 	    if (translation == null || translation.isEmpty()) {
-	        translation = I18NUtil.getMessage(Boolean.TRUE.equals(b) ? MESSAGE_TRUE : MESSAGE_FALSE, Locale.ENGLISH);
+	        translation = MessageHelper.getMessage(Boolean.TRUE.equals(b) ? MESSAGE_TRUE : MESSAGE_FALSE, Locale.ENGLISH);
 	    }
 
 	    return translation;
@@ -130,10 +130,10 @@ public class TranslateHelper {
 		for (String localeString : RepoConsts.SUPPORTED_UI_LOCALES.split(",")) {
 			Locale currentLocale = MLTextHelper.parseLocale(localeString);
 
-			String translation = I18NUtil.getMessage(key, currentLocale);
+			String translation = MessageHelper.getMessage(key, currentLocale);
 
 			if (translation != null) {
-				res.addValue(currentLocale, I18NUtil.getMessage(key, currentLocale));
+				res.addValue(currentLocale, MessageHelper.getMessage(key, currentLocale));
 			}
 		}
 
@@ -202,9 +202,9 @@ public class TranslateHelper {
 		String messageKey = String.format(LIST_CONSTRAINT_MSG_PFX, constraintName, value);
 
 		if (locale != null) {
-			translation = I18NUtil.getMessage(messageKey, locale);
+			translation = MessageHelper.getMessage(messageKey, locale);
 		} else {
-			translation = I18NUtil.getMessage(messageKey);
+			translation = MessageHelper.getMessage(messageKey);
 		}
 
 		if (translation == null) {
