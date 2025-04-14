@@ -47,6 +47,7 @@ import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.expressions.ExpressionService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.helper.MessageHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -668,7 +669,7 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 							try {
 								I18NUtil.setLocale(loc);
 								if (!label.isBlank()) {
-									label += " " + I18NUtil.getMessage(MESSAGE_OR) + " ";
+									label += " " + MessageHelper.getMessage(MESSAGE_OR) + " ";
 								}
 								label += getFieldDisplayName(entityType, propDef, i18nKey);
 
@@ -757,7 +758,7 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 	 * @return a {@link java.lang.String} object.
 	 */
 	private String getFieldDisplayName(QName nodeType, ClassAttributeDefinition classDef, String messageKey) {
-		String displayName = messageKey != null ? I18NUtil.getMessage(messageKey) : dictionaryService.getTitle(classDef, nodeType);
+		String displayName = messageKey != null ? MessageHelper.getMessage(messageKey) : dictionaryService.getTitle(classDef, nodeType);
 		return displayName != null ? displayName : messageKey;
 	}
 
