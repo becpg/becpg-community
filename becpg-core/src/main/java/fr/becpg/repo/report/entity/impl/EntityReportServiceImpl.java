@@ -251,21 +251,32 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	}
 	
 	private void generateReports(final NodeRef nodeRefFrom, final NodeRef nodeRefTo, boolean generateAllReports) {
-
 		ReentrantLock lock = mutexFactory.getMutex(nodeRefTo.toString());
-
-		try {
-			 if (lock.tryLock() || lock.isHeldByCurrentThread()) { 
-				internalGenerateReports(nodeRefFrom != null ? nodeRefFrom : nodeRefTo, nodeRefTo, generateAllReports);
-			}  else {
-	            logger.warn("Failed to acquire lock for NodeRef: " + nodeRefTo.toString());
+	    boolean lockAcquired = false;
+	    
+	    try {
+	        // Check if we already hold the lock or can acquire it
+	        if (lock.isHeldByCurrentThread()) {
+	            // We already hold the lock, just proceed
+	            lockAcquired = true;
+	        } else {
+	            // Try to acquire the lock
+	            lockAcquired = lock.tryLock();
+	            if (!lockAcquired) {
+	                logger.warn("Failed to acquire lock for NodeRef: " + nodeRefTo.toString());
+	                return; // Exit early if lock acquisition failed
+	            }
 	        }
-		} finally {
-			if ((lock.isHeldByCurrentThread())) {
-				lock.unlock();
-				mutexFactory.removeMutex(nodeRefTo.toString(), lock);
-			}
-		}
+	        
+	        // Only proceed with report generation if we have the lock
+	        internalGenerateReports(nodeRefFrom != null ? nodeRefFrom : nodeRefTo, nodeRefTo, generateAllReports);
+	    } finally {
+	        // Only release the lock if we acquired it in this method call
+	        if (lockAcquired && lock.isHeldByCurrentThread()) {
+	            lock.unlock();
+	            mutexFactory.removeMutex(nodeRefTo.toString(), lock);
+	        }
+	    }
 	}
 
 	private void internalGenerateReports(final NodeRef nodeRefFrom, final NodeRef nodeRefTo, boolean generateAllReports) {
