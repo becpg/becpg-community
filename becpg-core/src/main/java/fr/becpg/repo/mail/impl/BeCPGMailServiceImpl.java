@@ -54,6 +54,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.AuthorityHelper;
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.helper.MessageHelper;
 import fr.becpg.repo.mail.BeCPGMailService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
@@ -197,7 +198,7 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 		if (email!=null && !email.isEmpty()) {
 			List<NodeRef> users = new ArrayList<>(1);
 			users.add(personNodeRef);
-			sendMail(users, I18NUtil.getMessage(mailTitleKey), RepoConsts.EMAIL_NEW_USER_TEMPLATE, templateModel, false);
+			sendMail(users, MessageHelper.getMessage(mailTitleKey), RepoConsts.EMAIL_NEW_USER_TEMPLATE, templateModel, false);
 		}
 	}
 	
@@ -272,7 +273,7 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 		
 		if (commonLocale != null) {
 			
-			String localizedSubject = I18NUtil.getMessage(subjectKey, commonLocale, subjectParams);
+			String localizedSubject = MessageHelper.getMessage(subjectKey, commonLocale, subjectParams);
 			
 			if (localizedSubject == null) {
 				localizedSubject = subjectKey;
@@ -286,7 +287,7 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 					String localeString = (String) nodeService.getProperty(personService.getPerson(person), BeCPGModel.PROP_USER_LOCALE);
 					locale = localeString == null ? I18NUtil.getLocale() : MLTextHelper.parseLocale(localeString);
 				}
-				String localizedSubject = I18NUtil.getMessage(subjectKey, locale, subjectParams);
+				String localizedSubject = MessageHelper.getMessage(subjectKey, locale, subjectParams);
 				
 				if (localizedSubject == null) {
 					localizedSubject = subjectKey;
@@ -329,8 +330,8 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 			templateArgs.put(RepoConsts.ARG_ACTION_URL, actionUrl);
 			templateArgs.put(RepoConsts.ARG_ACTION_RUN_TIME, time);
 	
-			String subject = I18NUtil.getMessage("message.async-mail." + action + ".subject");
-			templateArgs.put(RepoConsts.ARG_ACTION_BODY, I18NUtil.getMessage("message.async-mail." + action + ".body", bodyParams));
+			String subject = MessageHelper.getMessage("message.async-mail." + action + ".subject");
+			templateArgs.put(RepoConsts.ARG_ACTION_BODY, MessageHelper.getMessage("message.async-mail." + action + ".body", bodyParams));
 	
 			List<NodeRef> recipientsNodeRef = Arrays.asList(personService.getPerson(userName));
 	

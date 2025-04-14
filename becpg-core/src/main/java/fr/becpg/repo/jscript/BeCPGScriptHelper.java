@@ -100,6 +100,7 @@ import fr.becpg.repo.helper.AuthorityHelper;
 import fr.becpg.repo.helper.CheckSumHelper;
 import fr.becpg.repo.helper.GTINHelper;
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.helper.MessageHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.helper.TranslateHelper;
@@ -1279,7 +1280,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String getMessage(String messageKey) {
-		return I18NUtil.getMessage(messageKey, I18NUtil.getLocale());
+		return MessageHelper.getMessage(messageKey, I18NUtil.getLocale());
 	}
 
 	/**
@@ -1290,7 +1291,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String getMessage(String messageKey, Object... param) {
-		return I18NUtil.getMessage(messageKey, param);
+		return MessageHelper.getMessage(messageKey, param);
 	}
 
 	/**
@@ -1305,7 +1306,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		if (locale != null && !locale.isBlank()) {
 			localeObject = MLTextHelper.parseLocale(locale);
 		}
-		return I18NUtil.getMessage(messageKey, localeObject);
+		return MessageHelper.getMessage(messageKey, localeObject);
 	}
 
 	/**
@@ -1321,7 +1322,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		if (locale != null && !locale.isBlank()) {
 			localeObject = MLTextHelper.parseLocale(locale);
 		}
-		return I18NUtil.getMessage(messageKey, localeObject, param);
+		return MessageHelper.getMessage(messageKey, localeObject, param);
 	}
 
 	/**
