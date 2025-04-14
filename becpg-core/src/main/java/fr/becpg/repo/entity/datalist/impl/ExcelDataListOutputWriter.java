@@ -114,6 +114,8 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 	public void write(WebScriptRequest req, WebScriptResponse res, DataListFilter dataListFilter, PaginatedExtractedItems extractedItems)
 			throws IOException {
 
+		entityActivityService.postExportActivity(dataListFilter.getEntityNodeRef(), dataListFilter.getDataType(), getFileName(dataListFilter));
+
 		if (extractedItems instanceof AsyncPaginatedExtractorWrapper asyncItems) {
 
 			NodeRef downloadNodeRef = transactionService.getRetryingTransactionHelper()
@@ -552,7 +554,6 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 
 			workbook.write(outputStream);
 
-			entityActivityService.postExportActivity(dataListFilter.getEntityNodeRef(), dataListFilter.getDataType(), getFileName(dataListFilter));
 		}
 		return true;
 	}
