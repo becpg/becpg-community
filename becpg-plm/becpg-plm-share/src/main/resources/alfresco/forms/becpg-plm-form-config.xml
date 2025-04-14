@@ -11197,6 +11197,8 @@
 					<show id="gs1:dutyFeeTaxCode" />
 					<show id="gs1:dutyFeeTaxCountry" />
 					<show id="gs1:dutyFeeTaxRate" />
+					<show id="gs1:dutyFeeTaxAgencyCode" />
+					<show id="gs1:dutyFeeTaxTypeCode" />
 					<show id="sec:readGroups" force="true" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted" />
@@ -11239,6 +11241,8 @@
 					<show id="gs1:dutyFeeTaxCode" />
 					<show id="gs1:dutyFeeTaxCountry" />
 					<show id="gs1:dutyFeeTaxRate" />
+					<show id="gs1:dutyFeeTaxAgencyCode" />
+					<show id="gs1:dutyFeeTaxTypeCode" />
 					<show id="sec:readGroups" force="true" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted" />
@@ -11262,6 +11266,8 @@
 					<show id="gs1:dutyFeeTaxCode" />
 					<show id="gs1:dutyFeeTaxCountry" />
 					<show id="gs1:dutyFeeTaxRate" />
+					<show id="gs1:dutyFeeTaxAgencyCode" />
+					<show id="gs1:dutyFeeTaxTypeCode" />
 					<show id="sec:readGroups" force="true" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted" />

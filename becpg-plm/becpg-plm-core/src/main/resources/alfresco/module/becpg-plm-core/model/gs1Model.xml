@@ -276,17 +276,6 @@
             </parameter>
         </constraint>
 
-        <constraint name="gs1:dutyFeeTaxCategoryCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
-            <parameter name="path">
-                <list>
-                    <value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
-                </list>
-            </parameter>
-            <parameter name="constraintFilter">
-                <value>TaxCategoryCode</value>
-            </parameter>
-        </constraint>
-
         <constraint name="gs1:storageStateCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
             <parameter name="path">
                 <list>
@@ -385,6 +374,39 @@
             <parameter name="path">
                 <list>
                     <value>/System/Lists/bcpg:entityLists/CatchAreaCodes</value>
+                </list>
+            </parameter>
+            <parameter name="addEmptyValue">
+                <value>true</value>
+            </parameter>
+        </constraint>
+        
+        <constraint name="gs1:dutyFeeTaxAgencyCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+            <parameter name="path">
+                <list>
+                    <value>/System/Lists/bcpg:entityLists/DutyFeeTaxAgencyCodes</value>
+                </list>
+            </parameter>
+            <parameter name="addEmptyValue">
+                <value>true</value>
+            </parameter>
+        </constraint>
+        
+        <constraint name="gs1:dutyFeeTaxTypeCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+            <parameter name="path">
+                <list>
+                    <value>/System/Lists/bcpg:entityLists/DutyFeeTaxTypeCodes</value>
+                </list>
+            </parameter>
+            <parameter name="addEmptyValue">
+                <value>true</value>
+            </parameter>
+        </constraint>
+        
+        <constraint name="gs1:dutyFeeTaxCategoryCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+            <parameter name="path">
+                <list>
+                    <value>/System/Lists/bcpg:entityLists/DutyFeeTaxCategoryCodes</value>
                 </list>
             </parameter>
             <parameter name="addEmptyValue">
@@ -644,39 +666,6 @@
                 <value>SustainabilityFeatureCode</value>
             </parameter>
         </constraint>
-        <!--
-        <constraint name="gs1:dutyFeeTaxAgencyCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
-            <parameter name="path">
-                <list>
-                    <value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
-                </list>
-            </parameter>
-            <parameter name="constraintFilter">
-                <value>DutyFeeTaxAgencyCode</value>
-            </parameter>
-        </constraint>
-        
-        <constraint name="gs1:dutyFeeTaxTypeCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
-            <parameter name="path">
-                <list>
-                    <value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
-                </list>
-            </parameter>
-            <parameter name="constraintFilter">
-                <value>DutyFeeTaxTypeCode</value>
-            </parameter>
-        </constraint>
-        
-        <constraint name="gs1:dutyFeeTaxCategoryCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
-            <parameter name="path">
-                <list>
-                    <value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
-                </list>
-            </parameter>
-            <parameter name="constraintFilter">
-                <value>DutyFeeTaxCategoryCode</value>
-            </parameter>
-        </constraint>-->
         
         <constraint name='gs1:text35' type='LENGTH'>
             <parameter name='maxLength'><value>35</value></parameter>
@@ -813,6 +802,28 @@
                         <tokenised>false</tokenised>
                         <facetable>true</facetable>
                     </index>
+                </property>
+                <property name="gs1:dutyFeeTaxAgencyCode">
+                	<type>d:text</type>
+                    <mandatory>false</mandatory>
+                    <index enabled="true">
+                        <tokenised>false</tokenised>
+                        <facetable>true</facetable>
+                    </index>
+                    <constraints>
+                        <constraint ref="gs1:dutyFeeTaxAgencyCodes"/>
+                    </constraints>
+                </property>
+                <property name="gs1:dutyFeeTaxTypeCode">
+                	<type>d:text</type>
+                    <mandatory>false</mandatory>
+                    <index enabled="true">
+                        <tokenised>false</tokenised>
+                        <facetable>true</facetable>
+                    </index>
+                    <constraints>
+                        <constraint ref="gs1:dutyFeeTaxTypeCodes"/>
+                    </constraints>
                 </property>
                 <property name="gs1:dutyFeeTaxCategoryCode">
                     <type>d:text</type>
@@ -1312,6 +1323,18 @@
                     </index>
                 </property>
             </properties>
+            <associations>
+				<association name="gs1:catchCountryCode">
+                	<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:geoOrigin</class>
+						<many>true</many>
+					</target>
+                </association>
+            </associations>
         </aspect>
 
 
@@ -2558,39 +2581,6 @@
                         <constraint ref="gs1:sustainabilityFeatureCodes"/>
                     </constraints>
                 </property>
-                <!--<property name="gs1:dutyFeeTaxAgencyCode">
-                	<type>d:text</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="true">
-                        <tokenised>false</tokenised>
-                        <facetable>true</facetable>
-                    </index>
-                    <constraints>
-                        <constraint ref="gs1:dutyFeeTaxAgencyCodes"/>
-                    </constraints>
-                </property>
-                <property name="gs1:dutyFeeTaxTypeCode">
-                	<type>d:text</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="true">
-                        <tokenised>false</tokenised>
-                        <facetable>true</facetable>
-                    </index>
-                    <constraints>
-                        <constraint ref="gs1:dutyFeeTaxTypeCodes"/>
-                    </constraints>
-                </property>
-                <property name="gs1:dutyFeeTaxCategoryCode">
-                	<type>d:text</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="true">
-                        <tokenised>false</tokenised>
-                        <facetable>true</facetable>
-                    </index>
-                    <constraints>
-                        <constraint ref="gs1:dutyFeeTaxCategoryCodes"/>
-                    </constraints>
-                </property>-->
             </properties>
             <associations>
 
@@ -2628,17 +2618,6 @@
                         <mandatory>false</mandatory>
                         <many>true</many>
                     </target>
-                </association>
-                
-                <association name="gs1:catchCountryCode">
-                	<source>
-						<mandatory>false</mandatory>
-						<many>true</many>
-					</source>
-					<target>
-						<class>bcpg:geoOrigin</class>
-						<many>true</many>
-					</target>
                 </association>
 
 				<association name="gs1:contact">
