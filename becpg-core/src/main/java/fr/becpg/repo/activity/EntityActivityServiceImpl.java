@@ -1285,11 +1285,12 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	/** {@inheritDoc} */
 	@Override
 	public void postExportActivity(NodeRef entityNodeRef, QName dataType, String fileName) {
-		logger.info("Exporting:" + fileName + " " + dataType + " " + entityNodeRef + " " + AuthenticationUtil.getFullyAuthenticatedUser());
 
 		if (entityNodeRef != null) {
+			logger.info("Exporting:" + fileName + " " + dataType + " " + entityNodeRef + " " + AuthenticationUtil.getFullyAuthenticatedUser());
 			postEntityExportActivity(entityNodeRef, dataType, fileName);
 		} else {
+			logger.info("Exporting:" + fileName + " " + dataType + " " + AuthenticationUtil.getFullyAuthenticatedUser());
 			postAlfrescoExportActivity(fileName);
 		}
 	}
