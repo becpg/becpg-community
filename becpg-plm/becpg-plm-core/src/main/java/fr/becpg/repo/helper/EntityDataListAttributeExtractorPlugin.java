@@ -3,6 +3,7 @@ package fr.becpg.repo.helper;
 import java.util.Collection;
 import java.util.List;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
@@ -24,7 +25,7 @@ public class EntityDataListAttributeExtractorPlugin extends CharactAttributeExtr
 				return super.extractPropName(null, targetAssoc.getTargetRef());
 			}
 		}
-		return super.extractPropName(type, nodeRef);
+		return (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
 	}
 
 	@Override
@@ -43,6 +44,11 @@ public class EntityDataListAttributeExtractorPlugin extends CharactAttributeExtr
 	@Override
 	public Collection<QName> getMatchingTypes() {
 		return entityDictionaryService.getSubTypes(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+	}
+	
+	@Override
+	public Integer getPriority() {
+		return LOW_PRIORITY;
 	}
 
 }
