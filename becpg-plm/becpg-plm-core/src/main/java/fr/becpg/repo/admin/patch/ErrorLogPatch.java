@@ -7,9 +7,7 @@ import java.util.List;
 import org.alfresco.repo.batch.BatchProcessWorkProvider;
 import org.alfresco.repo.batch.BatchProcessor;
 import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
-import org.alfresco.repo.domain.node.NodeDAO;
-import org.alfresco.repo.domain.patch.PatchDAO;
-import org.alfresco.repo.domain.qname.QNameDAO;
+import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -34,9 +32,7 @@ public class ErrorLogPatch extends AbstractBeCPGPatch {
 	private static final Log logger = LogFactory.getLog(ErrorLogPatch.class);
 	private static final String MSG_SUCCESS = "patch.bcpg.plm.errorLogPatch.result";
 
-	private NodeDAO nodeDAO;
-	private PatchDAO patchDAO;
-	private QNameDAO qnameDAO;
+
 	private BehaviourFilter policyBehaviourFilter;
 	private RuleService ruleService;
 
@@ -126,6 +122,7 @@ public class ErrorLogPatch extends AbstractBeCPGPatch {
 			public void process(NodeRef dataListNodeRef) throws Throwable {
 				
 				ruleService.disableRules();
+				IntegrityChecker.setWarnInTransaction();
 
 				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 				policyBehaviourFilter.disableBehaviour();
@@ -144,60 +141,6 @@ public class ErrorLogPatch extends AbstractBeCPGPatch {
 
 		batchProcessor.processLong(worker, true);
 
-	}
-
-	/**
-	 * <p>Getter for the field <code>nodeDAO</code>.</p>
-	 *
-	 * @return a {@link org.alfresco.repo.domain.node.NodeDAO} object.
-	 */
-	public NodeDAO getNodeDAO() {
-		return nodeDAO;
-	}
-
-	/**
-	 * <p>Setter for the field <code>nodeDAO</code>.</p>
-	 *
-	 * @param nodeDAO a {@link org.alfresco.repo.domain.node.NodeDAO} object.
-	 */
-	public void setNodeDAO(NodeDAO nodeDAO) {
-		this.nodeDAO = nodeDAO;
-	}
-
-	/**
-	 * <p>Getter for the field <code>patchDAO</code>.</p>
-	 *
-	 * @return a {@link org.alfresco.repo.domain.patch.PatchDAO} object.
-	 */
-	public PatchDAO getPatchDAO() {
-		return patchDAO;
-	}
-
-	/**
-	 * <p>Setter for the field <code>patchDAO</code>.</p>
-	 *
-	 * @param patchDAO a {@link org.alfresco.repo.domain.patch.PatchDAO} object.
-	 */
-	public void setPatchDAO(PatchDAO patchDAO) {
-		this.patchDAO = patchDAO;
-	}
-
-	/**
-	 * <p>Getter for the field <code>qnameDAO</code>.</p>
-	 *
-	 * @return a {@link org.alfresco.repo.domain.qname.QNameDAO} object.
-	 */
-	public QNameDAO getQnameDAO() {
-		return qnameDAO;
-	}
-
-	/**
-	 * <p>Setter for the field <code>qnameDAO</code>.</p>
-	 *
-	 * @param qnameDAO a {@link org.alfresco.repo.domain.qname.QNameDAO} object.
-	 */
-	public void setQnameDAO(QNameDAO qnameDAO) {
-		this.qnameDAO = qnameDAO;
 	}
 
 	/**

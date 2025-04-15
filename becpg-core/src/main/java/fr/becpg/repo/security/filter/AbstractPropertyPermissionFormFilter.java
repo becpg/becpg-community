@@ -30,6 +30,9 @@ public abstract class AbstractPropertyPermissionFormFilter<ItemType> extends Abs
 
 	private SecurityService securityService;
 
+	/**
+	 * The namespace prefix resolver for resolving namespace prefixes.
+	 */
 	protected NamespacePrefixResolver namespacePrefixResolver;
 
 	/**

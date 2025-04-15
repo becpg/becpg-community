@@ -83,10 +83,19 @@ public abstract class AbstractSearchWebScript extends AbstractWebScript {
 
 	/** Services **/
 
+	/**
+	 * The node service for handling node operations.
+	 */
 	protected NodeService nodeService;
 
+	/**
+	 * The advanced search service for performing complex searches.
+	 */
 	protected AdvSearchService advSearchService;
 
+	/**
+	 * The namespace service for handling namespace operations.
+	 */
 	protected NamespaceService namespaceService;
 
 	/**

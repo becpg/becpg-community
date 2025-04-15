@@ -79,7 +79,7 @@ public class DecernisHelper {
 	 */
 	public static String cleanError(String error) {
 		if (error != null) {
-			String token = SystemConfigurationRegistry.instance().confValue("beCPG.decernis.token");
+			String token = getToken();
 			if (token != null && !token.isBlank()) {
 				return error.replace(token, "XXX");
 			}
@@ -87,6 +87,11 @@ public class DecernisHelper {
 		return error;
 	}
 	
+	/**
+	 * <p>getToken.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	public static String getToken() {
 		if (!TenantService.DEFAULT_DOMAIN.equals(TenantUtil.getCurrentDomain())) {
 			String confValue = SystemConfigurationRegistry.instance().confValue("beCPG.decernis.token." + TenantUtil.getCurrentDomain());

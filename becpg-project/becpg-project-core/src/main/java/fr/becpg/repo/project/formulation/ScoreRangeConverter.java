@@ -7,9 +7,19 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * <p>ScoreRangeConverter class.</p>
+ *
+ * @author matthieu
+ */
 public class ScoreRangeConverter {
     private final NavigableMap<Double, String> scoreMap = new TreeMap<>(Collections.reverseOrder());
 
+    /**
+     * <p>Constructor for ScoreRangeConverter.</p>
+     *
+     * @param intervals a {@link java.lang.String} object
+     */
     public ScoreRangeConverter(String intervals) {
         parseIntervals(intervals);
     }
@@ -47,6 +57,12 @@ public class ScoreRangeConverter {
         }
     }
 
+    /**
+     * <p>getScoreLetter.</p>
+     *
+     * @param score a double
+     * @return a {@link java.lang.String} object
+     */
     public String getScoreLetter(double score) {
         Map.Entry<Double, String> entry = scoreMap.ceilingEntry(score);
         return entry != null ? entry.getValue() : "N/A";
