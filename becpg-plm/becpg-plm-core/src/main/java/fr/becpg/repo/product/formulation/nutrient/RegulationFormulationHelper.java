@@ -260,6 +260,12 @@ public class RegulationFormulationHelper {
 		return null;
 	}
 
+	/**
+	 * <p>getLocalKey.</p>
+	 *
+	 * @param locale a {@link java.util.Locale} object
+	 * @return a {@link java.lang.String} object
+	 */
 	public static String getLocalKey(Locale locale) {
 		if (locale.getCountry().equals("US") || locale.getCountry().equals("CA") || locale.getCountry().equals("AU")
 				|| locale.getCountry().equals("ID") || locale.getCountry().equals("HK") || locale.getCountry().equals("MY")

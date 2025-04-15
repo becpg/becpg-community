@@ -14,7 +14,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.extensions.surf.util.I18NUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -22,6 +21,7 @@ import org.xml.sax.SAXException;
 
 import fr.becpg.common.dom.DOMUtils;
 import fr.becpg.repo.form.FormParser;
+import fr.becpg.repo.helper.MessageHelper;
 
 /**
  * <p>ShareFormParser class.</p>
@@ -176,7 +176,7 @@ public class ShareFormParser implements FormParser{
 
 			String label = elem.getAttribute(BecpgFormDefinition.PROP_LABEL);
 			if ((label == null) || label.isEmpty()) {
-				label = I18NUtil.getMessage(elem.getAttribute("label-id"));
+				label = MessageHelper.getMessage(elem.getAttribute("label-id"));
 			}
 
 			if (hasTab && ((parentId == null) || parentId.isEmpty())) {
@@ -314,7 +314,7 @@ public class ShareFormParser implements FormParser{
 
 			String label = field.getAttribute(BecpgFormDefinition.PROP_LABEL);
 			if ((label == null) || label.isEmpty()) {
-				label = I18NUtil.getMessage(field.getAttribute("label-id"));
+				label = MessageHelper.getMessage(field.getAttribute("label-id"));
 			}
 			if ((label != null) && !label.isEmpty()) {
 				jsonField.put(BecpgFormDefinition.PROP_LABEL, label);

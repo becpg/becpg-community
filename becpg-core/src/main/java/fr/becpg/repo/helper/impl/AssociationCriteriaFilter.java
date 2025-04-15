@@ -17,8 +17,22 @@ public class AssociationCriteriaFilter {
 	private AssociationCriteriaFilterMode mode = AssociationCriteriaFilterMode.EQUALS;
 	private boolean isEntityFilter = false;
 	
+	/**
+	 * Types of filter modes for association criteria.
+	 */
 	public enum AssociationCriteriaFilterMode {
-		RANGE, EQUALS, NOT_EQUALS, 
+		/**
+		 * Represents a range filter mode.
+		 */
+		RANGE, 
+		/**
+		 * Represents an equals filter mode.
+		 */
+		EQUALS, 
+		/**
+		 * Represents a not equals filter mode.
+		 */
+		NOT_EQUALS, 
 	}
 	
 	/**
@@ -31,10 +45,20 @@ public class AssociationCriteriaFilter {
 		this(attributeQName,criteriaValue,AssociationCriteriaFilterMode.EQUALS);
 	}
 
+	/**
+	 * <p>setEntityFilter.</p>
+	 *
+	 * @param isEntityFilter a boolean
+	 */
 	public void setEntityFilter(boolean isEntityFilter) {
 		this.isEntityFilter = isEntityFilter;
 	}
 	
+	/**
+	 * <p>isEntityFilter.</p>
+	 *
+	 * @return a boolean
+	 */
 	public boolean isEntityFilter() {
 		return isEntityFilter;
 	}
@@ -63,18 +87,38 @@ public class AssociationCriteriaFilter {
 		}
 	}
 	
+	/**
+	 * Sets the value for the filter.
+	 *
+	 * @param value the value to set
+	 */
 	public void setValue(String value) {
 		this.value = value;
 	}
 	
+	/**
+	 * Sets the mode for the filter.
+	 *
+	 * @param mode the mode to set
+	 */
 	public void setMode(AssociationCriteriaFilterMode mode) {
 		this.mode = mode;
 	}
 	
+	/**
+	 * Sets the from range value for the filter.
+	 *
+	 * @param fromRange the from range value to set
+	 */
 	public void setFromRange(String fromRange) {
 		this.fromRange = fromRange;
 	}
 	
+	/**
+	 * Sets the to range value for the filter.
+	 *
+	 * @param toRange the to range value to set
+	 */
 	public void setToRange(String toRange) {
 		this.toRange = toRange;
 	}

@@ -18,6 +18,7 @@ import fr.becpg.repo.batch.BatchPriority;
 import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.batch.BatchStep;
 import fr.becpg.repo.batch.EntityListBatchProcessWorkProvider;
+import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityFormatService;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationService;
@@ -43,9 +44,15 @@ public class ArchivedEntityPolicy extends AbstractBeCPGPolicy implements OnAddAs
 
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 	
+	private BeCPGCacheService beCPGCacheService;
+	
 	private static final String KEY_ASPECT_ADDED = "aspectAdded";
 
 	private static final String KEY_ASPECT_REMOVED = "aspectRemoved";
+	
+	public void setBeCPGCacheService(BeCPGCacheService beCPGCacheService) {
+		this.beCPGCacheService = beCPGCacheService;
+	}
 	
 	/**
 	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
@@ -152,6 +159,8 @@ public class ArchivedEntityPolicy extends AbstractBeCPGPolicy implements OnAddAs
 				archivingStep.setProcessWorker(new BatchProcessor.BatchProcessWorkerAdaptor<NodeRef>() {
 					@Override
 					public void process(NodeRef entry) throws Throwable {
+						beCPGCacheService.clearAllCaches();
+						policyBehaviourFilter.disableBehaviour();
 						entityFormatService.convertToFormat(nodeRef, EntityFormat.JSON);
 					}
 				});
@@ -172,6 +181,7 @@ public class ArchivedEntityPolicy extends AbstractBeCPGPolicy implements OnAddAs
 				batchStep.setProcessWorker(new BatchProcessor.BatchProcessWorkerAdaptor<NodeRef>() {
 					@Override
 					public void process(NodeRef entry) throws Throwable {
+						policyBehaviourFilter.disableBehaviour();
 						entityFormatService.convertToFormat(nodeRef, EntityFormat.NODE);
 					}
 				});

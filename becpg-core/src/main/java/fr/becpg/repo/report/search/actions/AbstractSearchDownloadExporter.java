@@ -21,6 +21,9 @@ import fr.becpg.repo.download.AbstractDownloadExporter;
  */
 public abstract class AbstractSearchDownloadExporter extends AbstractDownloadExporter implements Exporter {
 
+	/**
+	 * The template node reference for the report template.
+	 */
 	protected NodeRef templateNodeRef;
 
 	/**

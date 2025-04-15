@@ -90,6 +90,7 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Product
 		this.associationService = associationService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean process(ProductData formulatedProduct) {
 		// Extract key data from the formulated product.

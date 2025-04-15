@@ -57,16 +57,33 @@ public class ClientData extends BeCPGDataObject implements HierarchicalEntity, S
 	private List<ScoreListDataItem> scoreList;
 	private List<SurveyListDataItem> surveyList;
 	
+	/**
+	 * <p>build.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.ClientData} object
+	 */
 	public static ClientData build() {
 		return new ClientData();
 	}
 
+	/**
+	 * <p>withName.</p>
+	 *
+	 * @param name a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.product.data.ClientData} object
+	 */
 	public ClientData withName(String name) {
 		setName(name);
 		return this;
 	}
 	
 
+	/**
+	 * <p>withScoreList.</p>
+	 *
+	 * @param scoreList a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.product.data.ClientData} object
+	 */
 	public ClientData withScoreList(List<ScoreListDataItem> scoreList) {
 		setScoreList(scoreList);
 		return this;

@@ -44,6 +44,7 @@
 		<property name="batchQueueService" ref="batchQueueService" />
 		<property name="formulationService" ref="formulationService" />
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
+		<property name="beCPGCacheService" ref="beCPGCacheService" />
 	</bean>
 
 	<bean id="beCPGUserPolicy" class="fr.becpg.repo.authentication.BeCPGUserPolicy" parent="abstractBeCPGPolicy">

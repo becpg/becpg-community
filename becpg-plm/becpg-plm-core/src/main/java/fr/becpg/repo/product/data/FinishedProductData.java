@@ -210,6 +210,12 @@ public class FinishedProductData extends ProductData {
 		return this;
 	}
 
+	/**
+	 * <p>withClient.</p>
+	 *
+	 * @param clientData a {@link fr.becpg.repo.product.data.ClientData} object
+	 * @return a {@link fr.becpg.repo.product.data.FinishedProductData} object
+	 */
 	public FinishedProductData withClient(ClientData clientData) {
 		setClients(List.of(clientData));
 		return this;
