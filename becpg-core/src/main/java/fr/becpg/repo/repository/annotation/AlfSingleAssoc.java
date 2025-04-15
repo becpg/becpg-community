@@ -23,15 +23,34 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * <p>AlfSingleAssoc class.</p>
+ * <p>AlfSingleAssoc annotation is used to mark methods that represent single associations in the repository.</p>
+ * <p>This annotation provides metadata about the association, such as whether it's cacheable,
+ * whether it's a child association, and whether it represents an entity.</p>
  *
  * @author matthieu
- * @version $Id: $Id
+ * @version 1.0
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface AlfSingleAssoc {
+  /**
+   * Indicates whether this association is cacheable.
+   * 
+   * @return true if the association is cacheable, false otherwise
+   */
+  boolean isCacheable() default false;
+
+  /**
+   * Indicates whether this association is a child association.
+   * 
+   * @return true if the association is a child association, false otherwise
+   */
   boolean isChildAssoc() default false;
+
+  /**
+   * Indicates whether this association represents an entity.
+   * 
+   * @return true if the association represents an entity, false otherwise
+   */
   boolean isEntity() default false;
-  boolean isCacheable()  default false;
 }

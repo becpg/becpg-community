@@ -148,6 +148,11 @@ public class SurveyQuestion extends BeCPGDataObject {
 
 	
 
+	/**
+	 * <p>Getter for the field <code>scoreCriterion</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	@AlfSingleAssoc
 	@DataListIdentifierAttr
 	@AlfQname(qname = "survey:scoreCriterion")
@@ -156,6 +161,11 @@ public class SurveyQuestion extends BeCPGDataObject {
 		return scoreCriterion;
 	}
 
+	/**
+	 * <p>Setter for the field <code>scoreCriterion</code>.</p>
+	 *
+	 * @param scoreCriterion a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public void setScoreCriterion(NodeRef scoreCriterion) {
 		this.scoreCriterion = scoreCriterion;
 	}

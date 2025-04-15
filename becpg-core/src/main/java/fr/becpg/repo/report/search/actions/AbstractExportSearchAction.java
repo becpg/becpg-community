@@ -236,6 +236,9 @@ public abstract class AbstractExportSearchAction extends ActionExecuterAbstractB
 			String tplName = ((String) nodeService.getProperty(templateNodeRef, ContentModel.PROP_NAME));
 			String extension = ReportUtils.getReportExtension(tplName, reportFormat);
 
+			entityActivityService.postExportActivity(null,
+					(QName) nodeService.getProperty(templateNodeRef, ReportModel.PROP_REPORT_TPL_CLASS_NAME), FilenameUtils.removeExtension(tplName) + "." + extension.toLowerCase());
+			
 			AbstractSearchDownloadExporter handler = createHandler(actionedUponNodeRef, templateNodeRef, downloadRequest, reportFormat);
 
 			final File tempFile = TempFileProvider.createTempFile(FilenameUtils.removeExtension(tplName), extension);
@@ -265,8 +268,6 @@ public abstract class AbstractExportSearchAction extends ActionExecuterAbstractB
 				
 				
 				fileCreationComplete(actionedUponNodeRef, extension, tempFile, handler);
-				entityActivityService.postExportActivity(null,
-						(QName) nodeService.getProperty(templateNodeRef, ReportModel.PROP_REPORT_TPL_CLASS_NAME), FilenameUtils.removeExtension(tplName) + "." + extension.toLowerCase());
 
 			} catch (DownloadCancelledException ex) {
 				downloadCancelled(actionedUponNodeRef, handler);

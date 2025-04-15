@@ -60,6 +60,13 @@ public interface AttributeExtractorService {
 		public static Integer MEDIUM_PRIORITY = 1;
 		public static Integer HIGH_PRIORITY = 2;
 		
+		/**
+		 * Extracts the property name from a node based on its type.
+		 * 
+		 * @param type the type of the node
+		 * @param nodeRef the reference to the node
+		 * @return the extracted property name
+		 */
 		String extractPropName(QName type, NodeRef nodeRef);
 		
 		default String extractPropName(JSONObject jsonEntity) {
@@ -68,6 +75,11 @@ public interface AttributeExtractorService {
 
 		String extractMetadata(QName type,NodeRef nodeRef);
 		
+		/**
+		 * Gets the collection of QNames that match the criteria for this extractor.
+		 * 
+		 * @return a collection of matching QNames
+		 */
 		Collection<QName> getMatchingTypes();
 		
 		Integer getPriority(); 

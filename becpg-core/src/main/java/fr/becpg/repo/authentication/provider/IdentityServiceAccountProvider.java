@@ -134,6 +134,11 @@ public class IdentityServiceAccountProvider {
 		return true;
 	}
 	
+	/**
+	 * <p>deleteAccount.</p>
+	 *
+	 * @param username a {@link java.lang.String} object
+	 */
 	public void deleteAccount(String username) {
 		if (logger.isDebugEnabled()) {
         	logger.debug("deleteAccount in IDS for username: " + username);
@@ -160,6 +165,12 @@ public class IdentityServiceAccountProvider {
 	}
 
 
+	/**
+	 * <p>updateUser.</p>
+	 *
+	 * @param userAccount a {@link fr.becpg.repo.authentication.BeCPGUserAccount} object
+	 * @return a boolean
+	 */
 	public boolean updateUser(BeCPGUserAccount userAccount) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("updateUser in IDS for username: " + userAccount.getUserName());
@@ -201,6 +212,12 @@ public class IdentityServiceAccountProvider {
 		return true;
 	}
 	
+	/**
+	 * <p>updatePassword.</p>
+	 *
+	 * @param username a {@link java.lang.String} object
+	 * @param newPassword a {@link java.lang.String} object
+	 */
 	public void updatePassword(String username, String newPassword) {
 		if (logger.isDebugEnabled()) {
         	logger.debug("generatePassword in IDS for username: " + username);

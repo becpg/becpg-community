@@ -33,6 +33,11 @@ public class ProductScoreListFormulationHandler extends AbstractSimpleListFormul
 
 	private ScoreListFormulationHandler scoreListFormulationHandler;
 
+	/**
+	 * <p>Setter for the field <code>scoreListFormulationHandler</code>.</p>
+	 *
+	 * @param scoreListFormulationHandler a {@link fr.becpg.repo.project.formulation.ScoreListFormulationHandler} object
+	 */
 	public void setScoreListFormulationHandler(ScoreListFormulationHandler scoreListFormulationHandler) {
 		this.scoreListFormulationHandler = scoreListFormulationHandler;
 	}
@@ -76,6 +81,7 @@ public class ProductScoreListFormulationHandler extends AbstractSimpleListFormul
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void synchronizeTemplate(ProductData formulatedProduct, List<ScoreListDataItem> simpleListDataList, List<ScoreListDataItem> toRemove) {
 
@@ -182,11 +188,13 @@ public class ProductScoreListFormulationHandler extends AbstractSimpleListFormul
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected Class<ScoreListDataItem> getInstanceClass() {
 		return ScoreListDataItem.class;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected List<ScoreListDataItem> getDataListVisited(ProductData partProduct) {
 		return partProduct.getScoreList();
@@ -198,16 +206,19 @@ public class ProductScoreListFormulationHandler extends AbstractSimpleListFormul
 		return new HashMap<>();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected boolean propagateModeEnable(ProductData formulatedProduct) {
 		return false;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected ScoreListDataItem newSimpleListDataItem(NodeRef charactNodeRef) {
 		return ScoreListDataItem.build().withScoreCriterion(charactNodeRef);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected RequirementDataType getRequirementDataType() {
 		return RequirementDataType.Formulation;

@@ -69,10 +69,15 @@ public class UserImporterServiceImpl implements UserImporterService {
 	public static final String ATTR_USERNAME = "username";
 	/** Constant <code>PASSWORD="password"</code> */
 	public static final String ATTR_PASSWORD = "password";
+	/** Constant <code>ATTR_SHOULD_GENERATE_PASSWORD="should_generate_password"</code> */
 	public static final String ATTR_SHOULD_GENERATE_PASSWORD = "should_generate_password";
+	/** Constant <code>ATTR_IS_IDS_USER="is_ids_user"</code> */
 	public static final String ATTR_IS_IDS_USER = "is_ids_user";
+	/** Constant <code>ATTR_NEW_USERNAME="new_username"</code> */
 	public static final String ATTR_NEW_USERNAME = "new_username";
+	/** Constant <code>ATTR_DISABLE="disable"</code> */
 	public static final String ATTR_DISABLE = "disable";
+	/** Constant <code>ATTR_DELETE="delete"</code> */
 	public static final String ATTR_DELETE = "delete";
 	/** Constant <code>NOTIFY="notify"</code> */
 	public static final String ATTR_NOTIFY = "notify";
@@ -106,6 +111,11 @@ public class UserImporterServiceImpl implements UserImporterService {
 	
 	private DictionaryService dictionaryService;
 	
+	/**
+	 * <p>Setter for the field <code>dictionaryService</code>.</p>
+	 *
+	 * @param dictionaryService a {@link org.alfresco.service.cmr.dictionary.DictionaryService} object
+	 */
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
 	}
