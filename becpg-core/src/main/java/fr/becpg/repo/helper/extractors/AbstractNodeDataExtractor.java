@@ -48,10 +48,19 @@ import fr.becpg.repo.helper.SiteHelper;
  */
 public abstract class AbstractNodeDataExtractor implements NodeDataExtractor {
 
+	/**
+	 * The node service for node operations.
+	 */
 	protected final NodeService nodeService;
 
+	/**
+	 * The service registry for accessing services.
+	 */
 	protected final ServiceRegistry services;
 
+	/**
+	 * The attribute extractor service for attribute operations.
+	 */
 	protected final AttributeExtractorService attributeExtractorService;
 
 	/** Constant <code>PROP_NODEREF="nodeRef"</code> */

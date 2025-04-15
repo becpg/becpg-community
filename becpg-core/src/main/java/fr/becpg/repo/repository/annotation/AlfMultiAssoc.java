@@ -31,7 +31,24 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface AlfMultiAssoc {
+	/**
+	 * Indicates whether this association is cacheable.
+	 * 
+	 * @return true if the association is cacheable, false otherwise
+	 */
+	boolean isCacheable() default false;
+
+	/**
+	 * Indicates whether this association is a child association.
+	 * 
+	 * @return true if the association is a child association, false otherwise
+	 */
 	boolean isChildAssoc() default false;
+
+	/**
+	 * Indicates whether this association represents an entity.
+	 * 
+	 * @return true if the association represents an entity, false otherwise
+	 */
 	boolean isEntity() default false;
-	boolean isCacheable()  default false;
 }

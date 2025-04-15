@@ -206,6 +206,11 @@ public class IngListDataItem extends AbstractManualDataItem
 		this.qtyPerc4 = qtyPerc4;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>qtyPerc5</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:ingListQtyPerc5")
 	public Double getQtyPerc5() {
@@ -503,6 +508,11 @@ public class IngListDataItem extends AbstractManualDataItem
 		this.ing = ing;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>comments</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object
+	 */
 	@AlfMlText
 	@AlfProp
 	@AlfQname(qname = "bcpg:ingListComments")
@@ -510,6 +520,11 @@ public class IngListDataItem extends AbstractManualDataItem
 		return comments;
 	}
 
+	/**
+	 * <p>Setter for the field <code>comments</code>.</p>
+	 *
+	 * @param comments a {@link org.alfresco.service.cmr.repository.MLText} object
+	 */
 	public void setComments(MLText comments) {
 		this.comments = comments;
 	}

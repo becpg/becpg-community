@@ -38,6 +38,7 @@ function main() {
         	model.comments =  wizard.attributes["comments"] == "true";
         	model.draft = wizard.attributes["draft"] == "true";
         	model.allSteps = wizard.attributes["allSteps"] == "true";
+        	model.readOnly = wizard.attributes["read-only"] == "true";
             var steps = wizard.childrenMap["step"];
             for(var j = 0, step; j < steps.size(); j++){
                 step = steps.get(j);
@@ -50,7 +51,8 @@ function main() {
                         listId : step.attributes["listId"],
                         title : getI18N(step,"title"),
                         nodeRefStepIndex : step.attributes["nodeRefStepIndex"],
-                        nextStepWebScript:  step.attributes["nextStepWebScript"]   
+                        nextStepWebScript:  step.attributes["nextStepWebScript"],
+                        readOnly: step.attributes["read-only"] == "true"
                 });
             }
             break;
@@ -68,6 +70,7 @@ function main() {
          nodeRef :  (page.url.args.nodeRef != null) ? page.url.args.nodeRef : "",
          draft : model.draft, 
          allSteps : model.allSteps,
+         readOnly: model.readOnly,
          wizardStruct : wizardStruct
       }
    };
