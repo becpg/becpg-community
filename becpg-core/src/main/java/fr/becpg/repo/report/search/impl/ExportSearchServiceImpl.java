@@ -10,6 +10,7 @@ import java.util.List;
 import org.alfresco.repo.download.DownloadStorage;
 import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ParameterCheck;
 import org.apache.commons.logging.Log;
@@ -40,6 +41,9 @@ public class ExportSearchServiceImpl implements ExportSearchService {
 
 	@Autowired
 	private DownloadStorage downloadStorage;
+	
+	@Autowired
+	private NodeService nodeService;
 
 	/** {@inheritDoc} */
 	@Override
@@ -82,7 +86,9 @@ public class ExportSearchServiceImpl implements ExportSearchService {
 
 			// Add requested nodes
 			for (NodeRef node : new LinkedHashSet<>(searchResults)) {
-				downloadStorage.addNodeToDownload(downloadNode1, node);
+				if (nodeService.exists(node)) {
+					downloadStorage.addNodeToDownload(downloadNode1, node);
+				}
 			}
 
 			return downloadNode1;

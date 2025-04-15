@@ -6,7 +6,7 @@
 		<version>23.4.1</version>
 		<relativePath>../../</relativePath>
 	</parent>
- <version>23.4.1.12-SNAPSHOT</version>
+ <version>23.4.1.13-SNAPSHOT</version>
     <modelVersion>4.0.0</modelVersion>    
 	<artifactId>becpg-project-core</artifactId>
 	<packaging>jar</packaging>
@@ -15,7 +15,7 @@
 	<licenses>
 		<license>
 			<name>GNU LESSER GENERAL PUBLIC LICENSE</name>
-			<url>http://www.gnu.org/licenses/lgpl-3.0.en.html</url>
+			<url>https://www.gnu.org/licenses/lgpl-3.0.en.html</url>
 			<comments>Copyright (C) 2010-2021 beCPG. 
   
 			  beCPG is free software: you can redistribute it and/or modify 

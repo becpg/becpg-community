@@ -6,6 +6,20 @@ package fr.becpg.repo.activity.data;
  * @author matthieu
  * @version $Id: $Id
  */
+/**
+ * Types of activity events that can occur in the system.
+ */
 public enum ActivityEvent {
-	Update, Create, Delete
+	/**
+	 * Represents an update operation.
+	 */
+	Update,
+	/**
+	 * Represents a creation operation.
+	 */
+	Create,
+	/**
+	 * Represents a deletion operation.
+	 */
+	Delete
 }

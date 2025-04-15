@@ -21,7 +21,9 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 /**
  * Register custom EcoScore SPEL helper accessible with @ecoScore.
- **/
+ *
+ * @author matthieu
+ */
 @Service
 public class EcoScoreSpelFunctions implements CustomSpelFunctions {
 

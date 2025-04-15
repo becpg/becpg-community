@@ -32,7 +32,10 @@ import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AccessStatus;
+import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.PermissionService;
+import org.alfresco.service.cmr.site.SiteInfo;
+import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -83,7 +86,13 @@ public class HierarchyServiceImpl implements HierarchyService {
 	private PermissionService permissionService;
 	
 	@Autowired
+	private AuthorityService authorityService;
+	
+	@Autowired
 	private SystemConfigurationService systemConfigurationService;
+	
+	@Autowired
+	private SiteService siteService;
 
 	/** {@inheritDoc} */
 	@Override
@@ -258,14 +267,18 @@ public class HierarchyServiceImpl implements HierarchyService {
 						} else {
 							NodeRef currentParentNodeRef = nodeService.getPrimaryParent(entityNodeRef).getParentRef();
 							if (!destinationNodeRef.equals(currentParentNodeRef)) {
+								String user = AuthenticationUtil.getFullyAuthenticatedUser();
+								SiteInfo destinationSite = siteService.getSite(destinationNodeRef);
+								String permission = PermissionService.GROUP_PREFIX + "site_" + destinationSite.getShortName() + "_SiteBranchManager";
 								AuthenticationUtil.runAs(() -> {
 									if (permissionService.hasPermission(finalDestinationNodeRef, PermissionService.WRITE) != AccessStatus.ALLOWED
 											&& permissionService.hasPermission(finalDestinationNodeRef, BeCPGPermissions.MERGE_ENTITY) != AccessStatus.ALLOWED
+											&& !authorityService.getAuthoritiesForUser(user).contains(permission)
 											&& Boolean.TRUE.equals(Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.classify.rights.check")))) {
-										throw new IllegalStateException("You do not have permission to move the entity into this folder: " + finalDestinationNodeRef + ", entity :" + entityNodeRef);
+										throw new IllegalStateException("user '"+ user + "' do not have permission to move the entity into this folder: " + finalDestinationNodeRef + ", entity :" + entityNodeRef);
 									}
 									return null;
-								}, AuthenticationUtil.getFullyAuthenticatedUser());
+								}, user);
 							}
 							return repoService.moveNode(entityNodeRef, destinationNodeRef);
 						}

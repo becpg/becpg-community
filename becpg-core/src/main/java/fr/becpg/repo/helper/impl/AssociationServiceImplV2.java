@@ -113,10 +113,20 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 	
 	private NodeDAO nodeDAO;
 	
+	/**
+	 * <p>Setter for the field <code>nodeDAO</code>.</p>
+	 *
+	 * @param nodeDAO a {@link org.alfresco.repo.domain.node.NodeDAO} object
+	 */
 	public void setNodeDAO(NodeDAO nodeDAO) {
 		this.nodeDAO = nodeDAO;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>permissionService</code>.</p>
+	 *
+	 * @param permissionService a {@link org.alfresco.service.cmr.security.PermissionService} object
+	 */
 	public void setPermissionService(PermissionService permissionService) {
 		this.permissionService = permissionService;
 	}
@@ -138,6 +148,11 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		ignoredStoreRefs.add(new StoreRef(StoreRef.PROTOCOL_WORKSPACE, Version2Model.STORE_ID));
 	}
 	
+	/**
+	 * <p>Setter for the field <code>sqlSessionTemplate</code>.</p>
+	 *
+	 * @param sqlSessionTemplate a {@link org.mybatis.spring.SqlSessionTemplate} object
+	 */
 	public void setSqlSessionTemplate(SqlSessionTemplate sqlSessionTemplate) {
 		this.sqlSessionTemplate = sqlSessionTemplate;
 	}
@@ -477,32 +492,37 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 	}
 	
 
+	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> getSourcesAssocs(NodeRef nodeRef) {
 		return getSourcesAssocs(nodeRef, null);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QName qName) {
 		return getSourcesAssocs(nodeRef, qName, false);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QName qName, Boolean includeVersions) {
 		return getSourcesAssocs(nodeRef, qName, includeVersions, null, null);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QName qName, Boolean includeVersions, Integer maxResults, Integer offset) {
 		return getSourcesAssocs(nodeRef, qName, includeVersions, maxResults, offset, false);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QName qName, Boolean includeVersions, Integer maxResults, Integer offset, boolean checkPermissions) {
 		Map<String, Object> params = new HashMap<>();
 		params.put("qName", qName != null ? qName.getLocalName() : null);
 		params.put("includeVersions", includeVersions != null && includeVersions.booleanValue());
-		Pair<Long, NodeRef> nodePair = nodeDAO.getNodePair(nodeRef);
+		Pair<Long, NodeRef> nodePair = nodeDAO.getNodePair(tenantService.getName(nodeRef));
 		params.put("targetId", nodePair.getFirst());
 		
 		Set<String> authorisations = AuthenticationUtil.runAs(() -> permissionService.getAuthorisations(),
@@ -559,6 +579,13 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		return foundNodes;
 	}
 	
+	/**
+	 * Checks if the current user has read permissions for the given ACL ID.
+	 *
+	 * @param aclId the ACL ID to check
+	 * @param authorities the user's authorities
+	 * @return true if the user can read, false otherwise
+	 */
 	protected boolean canCurrentUserRead(Long aclId, Set<String> authorities) {
 		Set<String> aclReadersDenied = permissionService.getReadersDenied(aclId);
 		for (String auth : aclReadersDenied) {
@@ -582,6 +609,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		return getEntitySourceAssocs(nodeRefs, assocQName, listTypeQname, isOrOperator, criteriaFilters, null);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public List<EntitySourceAssoc> getEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocQName, QName listTypeQname, boolean isOrOperator,
 			List<AssociationCriteriaFilter> criteriaFilters, PagingRequest pagingRequest) {
@@ -704,7 +732,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 	    List<Long> nodeIds = new ArrayList<>();
 	    
 	    for (NodeRef nodeRef : nodeRefs) {
-	        Pair<Long, NodeRef> nodePair = nodeDAO.getNodePair(nodeRef);
+	        Pair<Long, NodeRef> nodePair = nodeDAO.getNodePair(tenantService.getName(nodeRef));
 	        if (nodePair != null) {
 	            nodeIds.add(nodePair.getFirst());
 	        }
