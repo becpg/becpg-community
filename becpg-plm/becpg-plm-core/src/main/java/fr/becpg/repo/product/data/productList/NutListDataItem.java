@@ -712,6 +712,12 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 
 	
 
+	/**
+	 * <p>preparedValuePerServing.</p>
+	 *
+	 * @param key a {@link java.lang.String} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	public Double preparedValuePerServing(String key) {
 		return RegulationFormulationHelper.extractPreparedValuePerServing(getRoundedValue(), key);
 	}
@@ -747,6 +753,12 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 
 	
 	
+	/**
+	 * <p>preparedGdaPerc.</p>
+	 *
+	 * @param key a {@link java.lang.String} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	public Double preparedGdaPerc(String key) {
 		return RegulationFormulationHelper.extractGDAPerc(getRoundedValuePrepared(), key);
 	}

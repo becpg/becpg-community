@@ -41,25 +41,53 @@ public final class SampleProductHelper extends BaseScopableProcessorExtension {
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
 	
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 	
 	
+	/**
+	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 */
 	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
+	/**
+	 * <p>chocolateEclairBuilder.</p>
+	 *
+	 * @param destFolder a {@link org.alfresco.repo.jscript.ScriptNode} object
+	 * @return a {@link fr.becpg.repo.sample.StandardChocolateEclairTestProduct.Builder} object
+	 */
 	public fr.becpg.repo.sample.StandardChocolateEclairTestProduct.Builder chocolateEclairBuilder(final ScriptNode destFolder) {
 		return new StandardChocolateEclairTestProduct.Builder().withAlfrescoRepository(alfrescoRepository).withNodeService(nodeService)
 				.withDestFolder(destFolder.getNodeRef());
 	}
 
+	/**
+	 * <p>soapProductBuilder.</p>
+	 *
+	 * @param destFolder a {@link org.alfresco.repo.jscript.ScriptNode} object
+	 * @return a {@link fr.becpg.repo.sample.StandardSoapTestProduct.Builder} object
+	 */
 	public fr.becpg.repo.sample.StandardSoapTestProduct.Builder soapProductBuilder(final ScriptNode destFolder) {
 		return new StandardSoapTestProduct.Builder().withAlfrescoRepository(alfrescoRepository).withNodeService(nodeService)
 				.withDestFolder(destFolder.getNodeRef());
 	}
 
+	/**
+	 * <p>greenScoreProductBuilder.</p>
+	 *
+	 * @param destFolder a {@link org.alfresco.repo.jscript.ScriptNode} object
+	 * @return a {@link fr.becpg.repo.sample.StandardSoapTestProduct.Builder} object
+	 */
 	public fr.becpg.repo.sample.StandardSoapTestProduct.Builder greenScoreProductBuilder(final ScriptNode destFolder) {
 		return new GreenScoreSpecificationTestProduct.Builder().withAlfrescoRepository(alfrescoRepository).withNodeService(nodeService)
 				.withDestFolder(destFolder.getNodeRef());

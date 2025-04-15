@@ -2797,14 +2797,29 @@ public class ProductData extends AbstractScorableEntity
 	/*
 	 * Do not remove spel helper
 	 */
+	/**
+	 * <p>getHazards.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.formulation.clp.HazardClassificationFormulaContext} object
+	 */
 	public HazardClassificationFormulaContext getHazards(){
 		return getHazardClassificationFormulaContext();
 	}
 
+	/**
+	 * <p>Getter for the field <code>hazardClassificationFormulaContext</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.formulation.clp.HazardClassificationFormulaContext} object
+	 */
 	public HazardClassificationFormulaContext getHazardClassificationFormulaContext() {
 		return hazardClassificationFormulaContext;
 	}
 
+	/**
+	 * <p>Setter for the field <code>hazardClassificationFormulaContext</code>.</p>
+	 *
+	 * @param hazardClassificationFormulaContext a {@link fr.becpg.repo.product.formulation.clp.HazardClassificationFormulaContext} object
+	 */
 	public void setHazardClassificationFormulaContext(HazardClassificationFormulaContext hazardClassificationFormulaContext) {
 		this.hazardClassificationFormulaContext = hazardClassificationFormulaContext;
 	}

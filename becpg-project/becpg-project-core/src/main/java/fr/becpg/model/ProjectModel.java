@@ -254,22 +254,31 @@ public interface ProjectModel {
 	/** Constant <code>ASPECT_PROJECT_SCORE</code> */
 	QName ASPECT_PROJECT_SCORE = QName.createQName(PROJECT_URI, "projectScoreAspect");
 
+	/** Constant <code>TYPE_SCORE_CRITERION</code> */
 	QName TYPE_SCORE_CRITERION = QName.createQName(PROJECT_URI, "scoreCriterion");
 
+	/** Constant <code>PROP_SCORE_CRITERION_TYPE</code> */
 	QName PROP_SCORE_CRITERION_TYPE =  QName.createQName(PROJECT_URI, "scoreCriterionType");
 
+	/** Constant <code>ASSOC_SL_SCORE_CRITERION</code> */
 	QName ASSOC_SL_SCORE_CRITERION = QName.createQName(PROJECT_URI, "slScoreCriterion");
 
+	/** Constant <code>PROP_SCORE_CRITERION_WEIGHT</code> */
 	QName PROP_SCORE_CRITERION_WEIGHT = QName.createQName(PROJECT_URI, "scoreCriterionWeight");
 	
+	/** Constant <code>PROP_SCORE_CRITERION_FORMULA</code> */
 	QName PROP_SCORE_CRITERION_FORMULA = QName.createQName(PROJECT_URI, "scoreCriterionFormula");
 	
+	/** Constant <code>PROP_SCORE_CRITERION_FORMULA_DETAIL</code> */
 	QName PROP_SCORE_CRITERION_FORMULA_DETAIL = QName.createQName(PROJECT_URI, "scoreCriterionDetailFormula");
 	
+	/** Constant <code>PROP_SCORE_CRITERION_RANGE_FORMULA</code> */
 	QName PROP_SCORE_CRITERION_RANGE_FORMULA = QName.createQName(PROJECT_URI, "scoreCriterionRangeFormula");
 	
+	/** Constant <code>PROP_SCORE_CRITERION_RANGE</code> */
 	QName PROP_SCORE_CRITERION_RANGE = QName.createQName(PROJECT_URI, "scoreCriterionRange");
 
+	/** Constant <code>PROP_SCORE_CRITERION_FORMULATED</code> */
 	QName PROP_SCORE_CRITERION_FORMULATED = QName.createQName(PROJECT_URI, "scoreCriterionFormulated");
 	
 

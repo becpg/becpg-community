@@ -193,7 +193,7 @@ public class AuditActivityExtractor implements DataListExtractor {
 	/** {@inheritDoc} */
 	@Override
 	public int getPriority() {
-		return 0;
+		return 2;
 	}
 
 }

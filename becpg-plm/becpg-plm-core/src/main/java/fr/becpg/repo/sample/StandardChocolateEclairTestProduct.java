@@ -34,31 +34,60 @@ import fr.becpg.repo.survey.data.SurveyListDataItem;
 import fr.becpg.repo.survey.data.SurveyQuestion;
 import fr.becpg.repo.survey.impl.SurveyServiceImpl.ResponseType;
 
+/**
+ * <p>StandardChocolateEclairTestProduct class.</p>
+ *
+ * @author matthieu
+ */
 public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 
+	/** Constant <code>WATER_NAME="Eau"</code> */
 	public static final String WATER_NAME = "Eau";
+	/** Constant <code>MILK_NAME="Lait"</code> */
 	public static final String MILK_NAME = "Lait";
+	/** Constant <code>SUGAR_NAME="Sucre"</code> */
 	public static final String SUGAR_NAME = "Sucre";
+	/** Constant <code>SUGAR_SUPPLIER_1_NAME="Sucre - Fournisseur 1"</code> */
 	public static final String SUGAR_SUPPLIER_1_NAME = "Sucre - Fournisseur 1";
+	/** Constant <code>SUGAR_SUPPLIER_2_NAME="Sucre - Fournisseur 2"</code> */
 	public static final String SUGAR_SUPPLIER_2_NAME = "Sucre - Fournisseur 2";
+	/** Constant <code>SUGAR_SUPPLIER_3_NAME="Sucre - Fournisseur 3"</code> */
 	public static final String SUGAR_SUPPLIER_3_NAME = "Sucre - Fournisseur 3";
+	/** Constant <code>SUGAR_GEN_USINE_1_NAME="Sucre - GEN - Usine 1"</code> */
 	public static final String SUGAR_GEN_USINE_1_NAME = "Sucre - GEN - Usine 1";
+	/** Constant <code>SUGAR_GEN_USINE_2_NAME="Sucre - GEN - Usine 2"</code> */
 	public static final String SUGAR_GEN_USINE_2_NAME = "Sucre - GEN - Usine 2";
+	/** Constant <code>FLOUR_NAME="Farine"</code> */
 	public static final String FLOUR_NAME = "Farine";
+	/** Constant <code>EGG_NAME="Oeuf"</code> */
 	public static final String EGG_NAME = "Oeuf";
+	/** Constant <code>CHOCOLATE_NAME="Chocolat"</code> */
 	public static final String CHOCOLATE_NAME = "Chocolat";
+	/** Constant <code>PATE_CHOUX_NAME="P&acirc;te &agrave; choux"</code> */
 	public static final String PATE_CHOUX_NAME = "Pâte à choux";
+	/** Constant <code>CREME_PATISSIERE_NAME="Cr&egrave;me p&acirc;tissi&egrave;re"</code> */
 	public static final String CREME_PATISSIERE_NAME = "Crème pâtissière";
+	/** Constant <code>NAPPAGE_NAME="Nappage"</code> */
 	public static final String NAPPAGE_NAME = "Nappage";
+	/** Constant <code>SUPPLIER_1="Fournisseur 1"</code> */
 	public static final String SUPPLIER_1 = "Fournisseur 1";
+	/** Constant <code>SUPPLIER_2="Fournisseur 2"</code> */
 	public static final String SUPPLIER_2 = "Fournisseur 2";
+	/** Constant <code>SUPPLIER_3="Fournisseur 3"</code> */
 	public static final String SUPPLIER_3 = "Fournisseur 3";
+	/** Constant <code>LABORATORY_1="Laboratoire 1"</code> */
 	public static final String LABORATORY_1 = "Laboratoire 1";
+	/** Constant <code>LABORATORY_2="Laboratoire 2"</code> */
 	public static final String LABORATORY_2 = "Laboratoire 2";
+	/** Constant <code>PLANT_USINE_1="Usine 1"</code> */
 	public static final String PLANT_USINE_1 = "Usine 1";
+	/** Constant <code>PLANT_USINE_2="Usine 2"</code> */
 	public static final String PLANT_USINE_2 = "Usine 2";
+	/** Constant <code>PASTRY_QUALITY="Pastry quality"</code> */
 	public static final String PASTRY_QUALITY = "Pastry quality";
+	/** Constant <code>CCP_COMPLIANCE="CCP compliance"</code> */
 	public static final String CCP_COMPLIANCE = "CCP compliance";
+	/** Constant <code>FILLING_QUALITY="Filling quality"</code> */
 	public static final String FILLING_QUALITY = "Filling quality";
 
 	protected NodeRef pateChouxNodeRef;
@@ -85,66 +114,146 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 	protected NodeRef ingEggNodeRef;
 	protected NodeRef ingChocolateNodeRef;
 
+	/**
+	 * <p>Getter for the field <code>pateChouxNodeRef</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public NodeRef getPateChouxNodeRef() {
 		return pateChouxNodeRef;
 	}
 
+	/**
+	 * <p>Getter for the field <code>cremePatissiereNodeRef</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public NodeRef getCremePatissiereNodeRef() {
 		return cremePatissiereNodeRef;
 	}
 
+	/**
+	 * <p>Getter for the field <code>nappageNodeRef</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public NodeRef getNappageNodeRef() {
 		return nappageNodeRef;
 	}
 
+	/**
+	 * <p>Getter for the field <code>waterNodeRef</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public NodeRef getWaterNodeRef() {
 		return waterNodeRef;
 	}
 
+	/**
+	 * <p>Getter for the field <code>milkNodeRef</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public NodeRef getMilkNodeRef() {
 		return milkNodeRef;
 	}
 
+	/**
+	 * <p>Getter for the field <code>sugarNodeRef</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public NodeRef getSugarNodeRef() {
 		return sugarNodeRef;
 	}
 
+	/**
+	 * <p>Getter for the field <code>sugarPlants1NodeRef</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public NodeRef getSugarPlants1NodeRef() {
 		return sugarPlants1NodeRef;
 	}
 
+	/**
+	 * <p>Getter for the field <code>sugarPlants2NodeRef</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public NodeRef getSugarPlants2NodeRef() {
 		return sugarPlants2NodeRef;
 	}
 
+	/**
+	 * <p>Getter for the field <code>sugarSupplier1NodeRef</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public NodeRef getSugarSupplier1NodeRef() {
 		return sugarSupplier1NodeRef;
 	}
 
+	/**
+	 * <p>Getter for the field <code>sugarSupplier2NodeRef</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public NodeRef getSugarSupplier2NodeRef() {
 		return sugarSupplier2NodeRef;
 	}
 
+	/**
+	 * <p>Getter for the field <code>sugarSupplier3NodeRef</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public NodeRef getSugarSupplier3NodeRef() {
 		return sugarSupplier3NodeRef;
 	}
 
+	/**
+	 * <p>Getter for the field <code>flourNodeRef</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public NodeRef getFlourNodeRef() {
 		return flourNodeRef;
 	}
 
+	/**
+	 * <p>Getter for the field <code>eggNodeRef</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public NodeRef getEggNodeRef() {
 		return eggNodeRef;
 	}
 
+	/**
+	 * <p>Getter for the field <code>chocolateNodeRef</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public NodeRef getChocolateNodeRef() {
 		return chocolateNodeRef;
 	}
 
+	/**
+	 * <p>getNodeService.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 */
 	public NodeService getNodeService() {
 		return nodeService;
 	}
 
+	/**
+	 * <p>getDestFolder.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public NodeRef getDestFolder() {
 		return destFolder;
 	}
@@ -227,6 +336,7 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public FinishedProductData createTestProduct() {
 		FinishedProductData finishedProduct = FinishedProductData.build().withName("Éclair au chocolat").withUnit(ProductUnit.kg).withQty(550d)
@@ -275,6 +385,11 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 
 	}
 
+	/**
+	 * <p>createCaseLogisticUnit.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.LogisticUnitData} object
+	 */
 	public LogisticUnitData createCaseLogisticUnit() {
 		FinishedProductData eclairAuChocolat = createTestProduct();
 
@@ -292,6 +407,12 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 		return logisticUnitData;
 	}
 
+	/**
+	 * <p>createPalletLogisticUnit.</p>
+	 *
+	 * @param caseNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.repo.product.data.LogisticUnitData} object
+	 */
 	public LogisticUnitData createPalletLogisticUnit(NodeRef caseNodeRef) {
 		PackagingMaterialData packagingMaterialData = PackagingMaterialData.build().withName("Palette en bois");
 		NodeRef packagingMaterialNodeRef = alfrescoRepository.create(destFolder, packagingMaterialData).getNodeRef();
@@ -308,6 +429,9 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 		return palletLogisticUnit;
 	}
 
+	/**
+	 * <p>initCompoProduct.</p>
+	 */
 	public void initCompoProduct() {
 		// Creating raw materials
 		RawMaterialData water = RawMaterialData.build().withName(WATER_NAME).withQty(100d).withUnit(ProductUnit.kg);
@@ -537,6 +661,13 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 
 	Map<Pair<QName, String>, NodeRef> characts = new HashMap<>();
 
+	/**
+	 * <p>getOrCreateCharact.</p>
+	 *
+	 * @param name a {@link java.lang.String} object
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public NodeRef getOrCreateCharact(String name, QName type) {
 
 		return characts.computeIfAbsent(new Pair<>(type, name), p -> {

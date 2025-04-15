@@ -170,6 +170,12 @@ public class BeCPGUserAccountService {
 		}
 	}
 
+	/**
+	 * <p>generatePassword.</p>
+	 *
+	 * @param username a {@link java.lang.String} object
+	 * @param notify a boolean
+	 */
 	public void generatePassword(String username, boolean notify) {
 		if (!personService.personExists(username)) {
 			throw new IllegalStateException("user does not exist: " + username);
@@ -180,6 +186,11 @@ public class BeCPGUserAccountService {
 		updatePassword(username, newPassword, notify);
 	}
 
+	/**
+	 * <p>deleteUser.</p>
+	 *
+	 * @param username a {@link java.lang.String} object
+	 */
 	public void deleteUser(String username) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Delete user: " + username);

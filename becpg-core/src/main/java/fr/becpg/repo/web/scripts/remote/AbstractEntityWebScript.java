@@ -192,6 +192,11 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 
 	
 
+	/**
+	 * <p>maxResultsLimit.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object
+	 */
 	protected  Integer maxResultsLimit() {
 		return Integer.parseInt(systemConfigurationService.confValue("beCPG.remote.maxResults.limit"));
 	}
@@ -220,7 +225,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	 *
 	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object.
 	 * @return a {@link java.util.List} object.
-	 * @param limit a {@link java.lang.Boolean} object
+	 * @param maxResults a {@link java.lang.Integer} object
 	 */
 	protected PagingResults<NodeRef> findEntities(WebScriptRequest req, Integer maxResults) {
 

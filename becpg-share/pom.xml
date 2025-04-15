@@ -6,7 +6,7 @@
 		<version>23.4.1</version>
 		<relativePath>../</relativePath>
 	</parent>
- <version>23.4.1.12-SNAPSHOT</version>
+ <version>23.4.1.13-SNAPSHOT</version>
     <modelVersion>4.0.0</modelVersion>
 	<artifactId>becpg-share</artifactId>
 	<packaging>jar</packaging>
@@ -15,8 +15,8 @@
 	<licenses>
 		<license>
 			<name>GNU LESSER GENERAL PUBLIC LICENSE</name>
-			<url>http://www.gnu.org/licenses/lgpl-3.0.en.html</url>
-			<comments>Copyright (C) 2010-2024 beCPG. 
+			<url>https://www.gnu.org/licenses/lgpl-3.0.en.html</url>
+			<comments>Copyright (C) 2010-2025 beCPG. 
   
 			  beCPG is free software: you can redistribute it and/or modify 
 			  it under the terms of the GNU Lesser General Public License as published by 
@@ -76,24 +76,6 @@
             </plugin>
 		</plugins>
 	</build>
-	<reporting>
-		 <plugins>
-		 <plugin>
-				<groupId>org.owasp</groupId>
-				<artifactId>dependency-check-maven</artifactId>
-				<configuration>
-                    <skipProvidedScope>true</skipProvidedScope>
-                </configuration>
-				<reportSets>
-					<reportSet>
-						<reports>
-							<report>aggregate</report>
-						</reports>
-					</reportSet>
-				</reportSets>
-			</plugin>
-		</plugins>	
-	</reporting>
 
   <scm>
     <tag>23.4.1.11</tag>

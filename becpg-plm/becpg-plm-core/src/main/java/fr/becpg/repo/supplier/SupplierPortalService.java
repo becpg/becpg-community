@@ -96,7 +96,19 @@ public interface SupplierPortalService {
 	 */
 	NodeRef getOrCreateSupplierDocumentsFolder(NodeRef entityNodeRef);
 
+	/**
+	 * <p>updateSupplierAccount.</p>
+	 *
+	 * @param supplierNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param contactListNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	void updateSupplierAccount(NodeRef supplierNodeRef, NodeRef contactListNodeRef);
 
+	/**
+	 * <p>deleteExternalUser.</p>
+	 *
+	 * @param userNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param supplierNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	void deleteExternalUser(NodeRef userNodeRef, NodeRef supplierNodeRef);
 }

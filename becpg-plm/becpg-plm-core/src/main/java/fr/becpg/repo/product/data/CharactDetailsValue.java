@@ -50,6 +50,11 @@ public class CharactDetailsValue {
 		this.unit = unit;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>allowZeroValue</code>.</p>
+	 *
+	 * @param allowZeroValue a boolean
+	 */
 	public void setAllowZeroValue(boolean allowZeroValue) {
 		this.allowZeroValue = allowZeroValue;
 	}
