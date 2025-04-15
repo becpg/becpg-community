@@ -59,6 +59,7 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
@@ -88,6 +89,9 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 	@Autowired
 	private AssociationService associationService;
+	
+	@Autowired
+	private RepoService repoService;
 
 	@Autowired
 	@Qualifier("policyComponent")
@@ -398,7 +402,10 @@ public class EntityListDAOImpl implements EntityListDAO {
 			if (existingListNodeRef != null) {
 				for (NodeRef itemNodeRef : getListItems(dataListNodeRef, null, null)) {
 					if (appendOnly || (findMatchingListItem(itemNodeRef, existingListNodeRef) == null)) {
-						copyService.copy(itemNodeRef, existingListNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
+						String newItemName = repoService.getAvailableName(existingListNodeRef,
+								(String) nodeService.getProperty(itemNodeRef, ContentModel.PROP_NAME), false);
+						NodeRef newItemNodeRef = copyService.copy(itemNodeRef, existingListNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
+						nodeService.setProperty(newItemNodeRef, ContentModel.PROP_NAME, newItemName);
 					}
 				}
 
