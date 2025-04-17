@@ -267,7 +267,7 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 						StringBuilder replacement = new StringBuilder();
 						if (assocQname != null && (assocQname.startsWith(DeliverableUrl.NODEREF_URL_PARAM)
 								|| assocQname.startsWith(DeliverableUrl.TASK_URL_PARAM))) {
-							replacement.append(expressionService.extractExpr(projectNodeRef, assocQname));
+							replacement.append(expressionService.extractExpr(projectNodeRef, "{" + assocQname + "}", false));
 						} else if (assocQname != null) {
 							String[] splitted = assocQname.split("\\|");
 							List<AssociationRef> assocs = nodeService.getTargetAssocs(projectNodeRef,
@@ -277,7 +277,7 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 									if (replacement.length() > 0) {
 										replacement.append(",");
 									}
-									replacement.append(expressionService.extractExpr(assoc.getTargetRef(), assocQname));
+									replacement.append(expressionService.extractExpr(assoc.getTargetRef(), "{" + assocQname + "}", false));
 								}
 							}
 						}
@@ -287,7 +287,7 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 					}
 					patternMatcher.appendTail(sb);
 
-					return expressionService.extractExpr(deliverableNodeRef, url);
+					return sb.toString();
 				}
 			}
 
