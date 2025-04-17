@@ -29,15 +29,6 @@
         <property name="authorityService">
             <ref bean="AuthorityService"/>
         </property>
-        <property name="personService">
-            <ref bean="PersonService"/>
-        </property>
-        <property name="authenticationService">
-            <ref bean="AuthenticationService"/>
-        </property>
-        <property name="nodeService">
-            <ref bean="NodeService"/>
-        </property>
     </bean>
 	
 </beans>
