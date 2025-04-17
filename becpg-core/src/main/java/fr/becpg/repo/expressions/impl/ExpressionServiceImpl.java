@@ -18,6 +18,7 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.ScriptService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
@@ -28,8 +29,6 @@ import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
-
-import com.ibm.icu.text.MessageFormat;
 
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.expressions.ExpressionService;
@@ -91,13 +90,19 @@ public class ExpressionServiceImpl implements ExpressionService {
 
 	/** {@inheritDoc} */
 	@Override
-	public  String extractExpr(NodeRef nodeRef, String exprFormat) {
-		return extractExpr(nodeRef, null, exprFormat);
+	public  String extractExpr(NodeRef nodeRef, String exprFormat, boolean assocName) {
+		return extractExpr(nodeRef, null, exprFormat, assocName);
+	}
+	
+	/** {@inheritDoc} */
+	@Override
+	public  String extractExpr(NodeRef nodeRef, NodeRef docNodeRef, String exprFormat) { 
+		return extractExpr(nodeRef, docNodeRef, exprFormat, true);
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public  String extractExpr(NodeRef nodeRef, NodeRef docNodeRef, String exprFormat) {
+	public  String extractExpr(NodeRef nodeRef, NodeRef docNodeRef, String exprFormat, boolean assocName) {
 		Matcher patternMatcher = Pattern.compile("\\{([^}]+)\\}").matcher(exprFormat);
 		StringBuffer sb = new StringBuffer();
 		while (patternMatcher.find()) {
@@ -106,14 +111,13 @@ public class ExpressionServiceImpl implements ExpressionService {
 			String replacement = "";
 			if (propQname.contains("|")) {
 				for (String propQnameAlt : propQname.split("\\|")) {
-					replacement = extractPropText(nodeRef, docNodeRef, propQnameAlt);
-					if ((replacement != null) && !replacement.isEmpty()) {
-						break;
-					}
+					if ("nodeRef".equals(propQnameAlt)) continue;
+					replacement = extractPropText(nodeRef, docNodeRef, propQnameAlt, assocName);
+					if (StringUtils.isNotEmpty(sb)) break;
 				}
 
 			} else {
-				replacement = extractPropText(nodeRef, docNodeRef, propQname);
+				replacement = extractPropText(nodeRef, docNodeRef, propQname, assocName);
 			}
 
 			patternMatcher.appendReplacement(sb, replacement != null ? replacement.replace("$", "") : "");
@@ -124,22 +128,29 @@ public class ExpressionServiceImpl implements ExpressionService {
 		
 	}
 
-	private  String extractPropText(NodeRef nodeRef, NodeRef docNodeRef, String propQname) {
+	private String extractPropText(NodeRef nodeRef, NodeRef docNodeRef, String propQname, boolean assocName) {
 		NodeRef nodeToExtract = nodeRef;
 
 		if (propQname.startsWith("doc_")) {
 			nodeToExtract = docNodeRef;
 		}
 		propQname = propQname.replace("doc_", "");
-		
-		
-		return extractPropText(nodeToExtract, propQname);
+
+		return extractPropText(nodeToExtract, propQname, assocName);
 	}
 	
 	
 	@SuppressWarnings("unchecked")
-	private String extractPropText(NodeRef nodeRef, String propQname) {
+	private String extractPropText(NodeRef nodeRef, String propQname, boolean assocName) {
 		String ret = "";
+		final String postProcessing;
+		if (propQname.contains("?")) {
+			final String[] propQnamePostProcessing = propQname.split("\\?");
+			propQname = propQnamePostProcessing[0];
+			postProcessing = propQnamePostProcessing[1];
+		} else {
+			postProcessing = "";
+		}
 		if (propQname.startsWith(ML_PREFIX)) {
 			MLText tmp = (MLText) mlNodeService.getProperty(nodeRef, QName.createQName(propQname.substring(3), namespaceService));
 			return MLTextHelper.getClosestValue(tmp, I18NUtil.getContentLocale());
@@ -149,20 +160,23 @@ public class ExpressionServiceImpl implements ExpressionService {
 			if (dictionaryService.getAssociation(qname) != null) {
 				NodeRef assoc = associationService.getTargetAssoc(nodeRef, qname);
 				if (assoc != null) {
-					ret = attributeExtractorService.extractPropName(assoc);
+					ret = assocName ? attributeExtractorService.extractPropName(assoc) : assoc.toString();
 				}
 			} else {
-				Serializable value = nodeService.getProperty(nodeRef, QName.createQName(propQname, namespaceService));
+				Serializable value = nodeService.getProperty(nodeRef, qname);
+				final Matcher matcher = formatPattern.matcher(postProcessing);
+				final String formatStr = matcher.matches() ? matcher.group(1) : null;
 				if (value instanceof List) {
 					Stream<String> stream = ((List<String>) value).stream();
-					final Matcher matcher = formatPattern.matcher(ret);
-					if (matcher.matches()) {
-						stream = stream.map(listEntry -> MessageFormat.format(matcher.group(1), listEntry));
+					if (formatStr != null) {
+						stream = stream.map(listEntry -> String.format(formatStr, listEntry));
 					}
 					return stream.collect(Collectors.joining(","));
 				} else if (value != null) {
-
-					ret = String.valueOf(value);
+					ret = value.toString();
+					if (formatStr != null) {
+						ret = String.format(formatStr, ret);
+					}
 				}
 			}
 		}
@@ -288,6 +302,11 @@ public class ExpressionServiceImpl implements ExpressionService {
 		}
 
 		return condition;
+	}
+
+	@Override
+	public String extractExpr(NodeRef nodeRef, String exprFormat) {
+		return extractExpr(nodeRef, exprFormat, true);
 	}
 
 }
