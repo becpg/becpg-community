@@ -39,6 +39,7 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 
 import com.google.common.net.HttpHeaders;
 
+import fr.becpg.common.BeCPGException;
 import fr.becpg.model.SystemGroup;
 import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.license.BeCPGLicenseManager;
@@ -179,6 +180,7 @@ public class MonitorWebScript extends DeclarativeWebScript {
 			}
 		} catch (SQLException e) {
 			logger.error("Error running : " + VOLUMETRY_QUERY, e);
+			throw new BeCPGException(e.getMessage(), e);
 		}
 		ret.put("volumetry", volumetryArray.toString());
 	}
