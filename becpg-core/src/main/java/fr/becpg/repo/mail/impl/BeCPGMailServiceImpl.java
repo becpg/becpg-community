@@ -268,18 +268,16 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 	public void sendMLAwareMail(Set<String> authorities, String fromEmail, String subjectKey, Object[] subjectParams, String mailTemplate, Map<String, Object> templateArgs) {
 		
 		Set<String> people = AuthorityHelper.extractPeople(authorities);
+		people.removeIf(p -> !AuthorityHelper.isAccountEnabled(p));
 		
 		Locale commonLocale = AuthorityHelper.getCommonLocale(people);
 		
-		if (commonLocale != null) {
-			
+		if (commonLocale != null && !people.isEmpty()) {
 			String localizedSubject = MessageHelper.getMessage(subjectKey, commonLocale, subjectParams);
-			
 			if (localizedSubject == null) {
 				localizedSubject = subjectKey;
 			}
-			
-			internalSendMail(authorities, fromEmail, localizedSubject, mailTemplate, templateArgs, commonLocale);
+			internalSendMail(people, fromEmail, localizedSubject, mailTemplate, templateArgs, commonLocale);
 		} else {
 			for (String person : people) {
 				Locale locale = null;

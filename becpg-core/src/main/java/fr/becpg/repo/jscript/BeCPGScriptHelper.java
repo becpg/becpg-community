@@ -2328,11 +2328,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * @return a boolean
 	 */
 	public boolean isAccountEnabled(String userName) {
-		if (!authenticationService.isAuthenticationMutable(userName)
-				&& nodeService.hasAspect(personService.getPerson(userName), ContentModel.ASPECT_PERSON_DISABLED)) {
-			return false;
-		}
-		return this.authenticationService.getAuthenticationEnabled(userName);
+		return AuthorityHelper.isAccountEnabled(userName);
 	}
 
 	/**
