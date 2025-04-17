@@ -76,6 +76,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.util.StopWatch;
 
+import fr.becpg.common.BeCPGException;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.cache.impl.BeCPGCacheServiceImpl;
 import fr.becpg.repo.entity.EntityDictionaryService;
@@ -485,6 +486,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 			}
 		} catch (SQLException e) {
 			logger.error("Error running : " + sql, e);
+			throw new BeCPGException(e.getMessage(), e);
 		}
 
 		return ret;
