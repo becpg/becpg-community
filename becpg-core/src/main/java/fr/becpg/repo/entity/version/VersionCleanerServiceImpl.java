@@ -43,6 +43,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.common.BeCPGException;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.batch.BatchInfo;
@@ -181,6 +182,7 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 			}
 		} catch (SQLException e) {
 			logger.error("Error running : " + sql, e);
+			throw new BeCPGException(e.getMessage(), e);
 		}
 		return ret;
 	}
