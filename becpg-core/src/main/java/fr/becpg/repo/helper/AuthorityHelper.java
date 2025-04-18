@@ -246,13 +246,15 @@ public class AuthorityHelper implements InitializingBean {
 	}
 	
 	public static boolean isAccountEnabled(String userName) {
-		NodeRef person = instance.personService.getPerson(userName);
-		if (person != null && instance.nodeService.exists(person)) {
-			if (!instance.authenticationService.isAuthenticationMutable(userName)
-					&& instance.nodeService.hasAspect(person, ContentModel.ASPECT_PERSON_DISABLED)) {
-				return false;
+		if (instance.personService.personExists(userName)) {
+			NodeRef person = instance.personService.getPerson(userName);
+			if (person != null && instance.nodeService.exists(person)) {
+				if (!instance.authenticationService.isAuthenticationMutable(userName)
+						&& instance.nodeService.hasAspect(person, ContentModel.ASPECT_PERSON_DISABLED)) {
+					return false;
+				}
+				return instance.authenticationService.getAuthenticationEnabled(userName);
 			}
-			return instance.authenticationService.getAuthenticationEnabled(userName);
 		}
 		return false;
 	}
