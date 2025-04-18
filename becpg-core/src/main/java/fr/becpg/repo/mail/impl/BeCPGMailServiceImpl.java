@@ -34,6 +34,7 @@ import org.alfresco.repo.admin.SysAdminParams;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.template.TemplateNode;
+import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.action.Action;
 import org.alfresco.service.cmr.action.ActionService;
@@ -256,7 +257,21 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 
 		}
 		if(!authorities.isEmpty()) {
-			sendMLAwareMail(authorities, null, subject, null, mailTemplate, templateArgs);
+			String fromEmail = "";
+			String user = AuthenticationUtil.getFullyAuthenticatedUser();
+			if ((user != null) && AuthenticationUtil.isMtEnabled()) {
+				int idx = user.indexOf(TenantService.SEPARATOR);
+				if (idx != -1) {
+					user = user.substring(0, idx);
+				}
+			}
+			if (user != null && !user.equals(AuthenticationUtil.SYSTEM_USER_NAME)) {
+				String userMail = (String) nodeService.getProperty(personService.getPerson(AuthenticationUtil.getFullyAuthenticatedUser()), ContentModel.PROP_EMAIL);
+				if (userMail != null) {
+					fromEmail = userMail;
+				}
+			}
+			sendMLAwareMail(authorities, fromEmail, subject, null, mailTemplate, templateArgs);
 		} else if(_logger.isDebugEnabled()){
 			_logger.debug("No recipients to send mail to (sendToSelf:"+sendToSelf+")");
 		}
