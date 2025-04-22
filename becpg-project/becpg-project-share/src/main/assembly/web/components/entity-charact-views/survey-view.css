@@ -1,0 +1,18 @@
+/* Survey View Toolbar Button Styles */
+.surveyToggleCheckbox .yui-button {
+    background: url('../images/survey-toggle-16.png') no-repeat 4px 50%;
+    padding-left: 24px;
+    min-width: 32px;
+    min-height: 24px;
+    border: 1px solid #dcdcdc;
+    border-radius: 3px;
+    background-color: #f8fbff;
+    cursor: pointer;
+}
+.surveyToggleCheckbox .yui-button-checked {
+    background-color: #e0f7fa;
+    border-color: #54b6c6;
+}
+.surveyToggleCheckbox .yui-button:hover {
+    background-color: #e7f3fa;
+}
