@@ -17,8 +17,6 @@
  * along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-var g = null; // uggly gantt var
-
 (function() {
     /**
      * YUI Library aliases
@@ -52,7 +50,9 @@ var g = null; // uggly gantt var
 
         Bubbling.on("viewModeChange", this.onViewModeChange, this);
 
-        loadSurvey();
+        // Load the survey form on initialization
+        this.loadSurvey();
+
 
         return this;
     };
@@ -135,7 +135,8 @@ var g = null; // uggly gantt var
                             successCallback:
                             {
                                 fn: function(response) {
-                                    Dom.get(this.id + "survey").innerHTML = response.serverResponse.responseText;
+                                    // Correct selector for survey form container
+                                    Dom.get(this.id + "-survey").innerHTML = response.serverResponse.responseText;
                                 },
                                 scope: this
                             },
