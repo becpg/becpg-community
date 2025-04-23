@@ -1699,10 +1699,14 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> getOrRefreshReportsOfKind(NodeRef entityNodeRef, String reportKind) {
-		if (shouldGenerateReport(entityNodeRef, null)) {
-			logger.debug("Entity report is not up to date for entity " + entityNodeRef);
-			internalGenerateReports(entityNodeRef, entityNodeRef, true);
+		List<NodeRef> reportsOfKind = getReportsOfKind(entityNodeRef, reportKind);
+		boolean shouldGenerate = shouldGenerateReport(entityNodeRef, null)
+				|| reportsOfKind.stream().anyMatch(r -> shouldGenerateReport(entityNodeRef, r));
+		if (!shouldGenerate) {
+			return reportsOfKind;
 		}
+		logger.debug("Entity report is not up to date for entity " + entityNodeRef);
+		internalGenerateReports(entityNodeRef, entityNodeRef, true);
 		return getReportsOfKind(entityNodeRef, reportKind);
 	}
 

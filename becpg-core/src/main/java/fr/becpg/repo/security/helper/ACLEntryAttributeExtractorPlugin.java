@@ -7,10 +7,10 @@ import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
-import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.SecurityModel;
+import fr.becpg.repo.helper.MessageHelper;
 import fr.becpg.repo.helper.impl.CharactAttributeExtractorPlugin;
 
 /**
@@ -24,7 +24,7 @@ public class ACLEntryAttributeExtractorPlugin extends CharactAttributeExtractorP
 	/** {@inheritDoc} */
 	@Override
 	public String extractPropName(QName type, NodeRef nodeRef) {
-		String permission = I18NUtil.getMessage("listconstraint.sec_aclPermission." + nodeService.getProperty(nodeRef, SecurityModel.PROP_ACL_PERMISSION));
+		String permission = MessageHelper.getMessage("listconstraint.sec_aclPermission." + nodeService.getProperty(nodeRef, SecurityModel.PROP_ACL_PERMISSION));
 		String qname = (String) nodeService.getProperty(nodeRef, SecurityModel.PROP_ACL_PROPNAME);
 		if (qname != null && !qname.isBlank()) {
 			QName createQName = QName.createQName(qname, namespaceService);
