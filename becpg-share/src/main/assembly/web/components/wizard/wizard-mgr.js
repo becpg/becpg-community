@@ -123,7 +123,7 @@
                                                 isValid = step.form.validate(Alfresco.forms.Form.NOTIFICATION_LEVEL_CONTAINER);
                                             } else {
 												me.loadStep(me.options.wizardStruct[newIndex]);
-												isValid = me.options.readOnly || step.readOnly;
+												isValid = true;
 											}
                                         } else {
                                             isValid = true;

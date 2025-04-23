@@ -242,6 +242,7 @@
 					<field id="gs1:dutyFeeTaxRef">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="showLink">false</control-param>
+							<control-param name="forceEditable">true</control-param>
 						</control>
 					</field>
 
@@ -278,6 +279,8 @@
 					<show id="gs1:dutyFeeTaxCode" />
 					<show id="gs1:dutyFeeTaxCountry" />
 					<show id="gs1:dutyFeeTaxRate" />
+					<show id="gs1:dutyFeeTaxAgencyCode" />
+					<show id="gs1:dutyFeeTaxTypeCode" />
 					<show id="sec:readGroups" force="true" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted" />
@@ -320,6 +323,8 @@
 					<show id="gs1:dutyFeeTaxCode" />
 					<show id="gs1:dutyFeeTaxCountry" />
 					<show id="gs1:dutyFeeTaxRate" />
+					<show id="gs1:dutyFeeTaxAgencyCode" />
+					<show id="gs1:dutyFeeTaxTypeCode" />
 					<show id="sec:readGroups" force="true" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted" />
@@ -343,6 +348,8 @@
 					<show id="gs1:dutyFeeTaxCode" />
 					<show id="gs1:dutyFeeTaxCountry" />
 					<show id="gs1:dutyFeeTaxRate" />
+					<show id="gs1:dutyFeeTaxAgencyCode" />
+					<show id="gs1:dutyFeeTaxTypeCode" />
 					<show id="sec:readGroups" force="true" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted" />
@@ -444,6 +451,9 @@
 					<show id="gs1:dutyFeeTaxRef" force="true" />
 					<show id="gs1:dutyFeeTaxAmount" force="true" />
 					<show id="gs1:dutyFeeTaxAmountUnit" force="true" />
+					<show id="gs1:dutyFeeTaxAgencyCode" force="true" />
+					<show id="gs1:dutyFeeTaxTypeCode" force="true" />
+					<show id="gs1:dutyFeeTaxCategoryCode" force="true" />
 					<show id="bcpg:startEffectivity" force="true" />
 					<show id="bcpg:endEffectivity" force="true" />
 					<show id="gs1:dutyFeeTaxAgencyCode" force="false" />
@@ -485,6 +495,9 @@
 					<show id="gs1:dutyFeeTaxRef" force="true" />
 					<show id="gs1:dutyFeeTaxAmount" force="true" />
 					<show id="gs1:dutyFeeTaxAmountUnit" force="true" />
+					<show id="gs1:dutyFeeTaxAgencyCode" force="false" />
+					<show id="gs1:dutyFeeTaxTypeCode" force="false" />
+					<show id="gs1:dutyFeeTaxCategoryCode" force="false" />
 					<show id="bcpg:startEffectivity" force="true" />
 					<show id="bcpg:endEffectivity" force="true" />
 					<show id="gs1:dutyFeeTaxAgencyCode" force="false" />
@@ -501,6 +514,9 @@
 					<show id="gs1:dutyFeeTaxRef" force="true" />
 					<show id="gs1:dutyFeeTaxAmount" force="true" />
 					<show id="gs1:dutyFeeTaxAmountUnit" force="true" />
+					<show id="gs1:dutyFeeTaxAgencyCode" force="true" />
+					<show id="gs1:dutyFeeTaxTypeCode" force="true" />
+					<show id="gs1:dutyFeeTaxCategoryCode" force="true" />
 					<show id="bcpg:startEffectivity" force="true" />
 					<show id="bcpg:endEffectivity" force="true" />
 				</field-visibility>
