@@ -424,9 +424,9 @@ public class MLTextHelper {
 					}
 				}
 				if (parsedVariable.isEmpty()) {
-					ret.addValue(locale, I18NUtil.getMessage(messageKey, locale));
+					ret.addValue(locale, MessageHelper.getMessage(messageKey, locale));
 				} else {
-					ret.addValue(locale, I18NUtil.getMessage(messageKey, locale, parsedVariable.toArray()));
+					ret.addValue(locale, MessageHelper.getMessage(messageKey, locale, parsedVariable.toArray()));
 				}
 			}
 

@@ -33,6 +33,7 @@ import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.StoreRef;
+import org.alfresco.service.cmr.rule.RuleService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
 import org.alfresco.service.transaction.TransactionService;
@@ -42,6 +43,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.common.BeCPGException;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.batch.BatchInfo;
@@ -100,6 +102,9 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 	
 	@Autowired
 	private DataSource dataSource;
+	
+	@Autowired
+	private RuleService ruleService;
 	
 	/** {@inheritDoc} */
 	@Override
@@ -177,6 +182,7 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 			}
 		} catch (SQLException e) {
 			logger.error("Error running : " + sql, e);
+			throw new BeCPGException(e.getMessage(), e);
 		}
 		return ret;
 	}
@@ -405,15 +411,12 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 								convertNode(entityNodeRef);
 							} catch (Throwable t) {
 								if (RetryingTransactionHelper.extractRetryCause(t) == null) {
-									
+									logger.error("Error while converting version: " + entityNodeRef + ", error: " + t.getMessage(), t); 
 									transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-										
+										ruleService.disableRules();
 										IntegrityChecker.setWarnInTransaction();
-										
 										moveToImportToDoFolder(entityNodeRef);
-										
 										nodeService.removeAspect(entityNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION);
-										
 										return null;
 									}, false, true);
 								}

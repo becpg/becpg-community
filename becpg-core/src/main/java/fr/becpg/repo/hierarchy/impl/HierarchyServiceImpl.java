@@ -45,7 +45,6 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.BeCPGPermissions;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.PropertiesHelper;
 import fr.becpg.repo.helper.RepoService;
@@ -269,13 +268,12 @@ public class HierarchyServiceImpl implements HierarchyService {
 							if (!destinationNodeRef.equals(currentParentNodeRef)) {
 								String user = AuthenticationUtil.getFullyAuthenticatedUser();
 								SiteInfo destinationSite = siteService.getSite(destinationNodeRef);
-								String permission = PermissionService.GROUP_PREFIX + "site_" + destinationSite.getShortName() + "_SiteBranchManager";
+								String sitePermission = destinationSite == null ? null : PermissionService.GROUP_PREFIX + "site_" + destinationSite.getShortName() + "_SiteBranchManager";
 								AuthenticationUtil.runAs(() -> {
 									if (permissionService.hasPermission(finalDestinationNodeRef, PermissionService.WRITE) != AccessStatus.ALLOWED
-											&& permissionService.hasPermission(finalDestinationNodeRef, BeCPGPermissions.MERGE_ENTITY) != AccessStatus.ALLOWED
-											&& !authorityService.getAuthoritiesForUser(user).contains(permission)
+											&& (destinationSite == null || !authorityService.getAuthoritiesForUser(user).contains(sitePermission))
 											&& Boolean.TRUE.equals(Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.classify.rights.check")))) {
-										throw new IllegalStateException("user '"+ user + "' do not have permission to move the entity into this folder: " + finalDestinationNodeRef + ", entity :" + entityNodeRef);
+										throw new IllegalStateException("user '"+ user + "' does not have permission to move the entity into this folder: " + finalDestinationNodeRef + ", entity :" + entityNodeRef);
 									}
 									return null;
 								}, user);

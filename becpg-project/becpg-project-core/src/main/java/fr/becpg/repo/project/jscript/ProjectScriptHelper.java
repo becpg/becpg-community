@@ -17,8 +17,6 @@
  * If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.project.jscript;
-
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -46,6 +44,7 @@ import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.expressions.ExpressionService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.data.ProjectData;
@@ -54,7 +53,6 @@ import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskState;
 import fr.becpg.repo.project.impl.ProjectHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
-import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * Utility script methods for budget
@@ -80,6 +78,8 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 	
 	private AssociationService associationService;
 	
+	private ExpressionService expressionService;
+
 	/**
 	 * <p>Setter for the field <code>associationService</code>.</p>
 	 *
@@ -150,6 +150,15 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
+	}
+	
+	/**
+	 * <p>Setter for the field <code>expressionService</code>.</p>
+	 *
+	 * @param expressionService a {@link fr.becpg.repo.entity.ExpressionService} object.
+	 */
+	public void setExpressionService(ExpressionService expressionService) {
+		this.expressionService = expressionService;
 	}
 
 	/**
@@ -231,7 +240,7 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 			NodeRef deliverableNodeRef = deliverable.getNodeRef();
 
 			String url = (String) nodeService.getProperty(deliverableNodeRef, ProjectModel.PROP_DL_URL);
-
+			
 			List<AssociationRef> taskAssocs = nodeService.getTargetAssocs(deliverableNodeRef,
 					ProjectModel.ASSOC_DL_TASK);
 
@@ -256,14 +265,9 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 
 						String assocQname = patternMatcher.group(1);
 						StringBuilder replacement = new StringBuilder();
-						if ((assocQname != null) && assocQname.startsWith(DeliverableUrl.NODEREF_URL_PARAM)) {
-							String[] splitted = assocQname.split("\\|");
-							replacement.append(extractDeliverableProp(projectNodeRef, splitted));
-
-						} else if ((assocQname != null) && assocQname.startsWith(DeliverableUrl.TASK_URL_PARAM)) {
-							String[] splitted = assocQname.split("\\|");
-							replacement.append(extractDeliverableProp(taskNodeRef, splitted));
-
+						if (assocQname != null && (assocQname.startsWith(DeliverableUrl.NODEREF_URL_PARAM)
+								|| assocQname.startsWith(DeliverableUrl.TASK_URL_PARAM))) {
+							replacement.append(expressionService.extractExpr(projectNodeRef, "{" + assocQname + "}", false));
 						} else if (assocQname != null) {
 							String[] splitted = assocQname.split("\\|");
 							List<AssociationRef> assocs = nodeService.getTargetAssocs(projectNodeRef,
@@ -273,7 +277,7 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 									if (replacement.length() > 0) {
 										replacement.append(",");
 									}
-									replacement.append(extractDeliverableProp(assoc.getTargetRef(), splitted));
+									replacement.append(expressionService.extractExpr(assoc.getTargetRef(), "{" + assocQname + "}", false));
 								}
 							}
 						}
@@ -290,42 +294,6 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 			return url;
 		});
 
-	}
-
-
-	@SuppressWarnings("unchecked")
-	private String extractDeliverableProp(NodeRef nodeRef, String[] splitted) {
-		NodeRef ret = null;
-		if (splitted.length > 1) {
-			if (splitted[1].startsWith(DeliverableUrl.XPATH_URL_PREFIX)) {
-				ret = BeCPGQueryBuilder.createQuery().selectNodeByPath(nodeRef,
-						splitted[1].substring(DeliverableUrl.XPATH_URL_PREFIX.length()));
-			} else if(splitted[1].startsWith("@type")) {
-				QName type = nodeService.getType(nodeRef);
-				return type != null ? type.getLocalName() : "";
-			} else {
-				Serializable tmp = nodeService.getProperty(nodeRef, QName.createQName(splitted[1], namespaceService));
-				StringBuilder strRet = new StringBuilder();
-				
-				if(tmp instanceof List) {
-					for (Serializable subEl : (List<Serializable>) tmp) {
-						if (subEl.toString().length() > 0) {
-							strRet.append(",");
-						}
-						strRet.append(subEl.toString());
-					}
-					
-				} else if(tmp!=null) {
-					strRet.append(tmp.toString());
-				}
-				
-				
-				return strRet.toString();
-			}
-		} else {
-			ret = nodeRef;
-		}
-		return ret != null ? ret.toString() : "";
 	}
 	
 	/**
