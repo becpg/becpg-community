@@ -10,6 +10,7 @@ import org.alfresco.repo.node.NodeServicePolicies.OnUpdatePropertiesPolicy;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.util.transaction.TransactionSupportUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.authentication.provider.IdentityServiceAccountProvider;
@@ -61,6 +62,9 @@ public class BeCPGUserPolicy extends AbstractBeCPGPolicy implements OnUpdateProp
 	/** {@inheritDoc} */
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
+		if (Boolean.TRUE.equals(TransactionSupportUtil.getResource("BeCPGUserPolicy.disable"))) {
+			return;
+		}
 		if (isNewTrueProperty(before, after, BeCPGModel.PROP_IS_SSO_USER)) {
 			beCPGUserAccountService.synchronizeWithIDS((String) nodeService.getProperty(nodeRef, ContentModel.PROP_USERNAME));
 		}
