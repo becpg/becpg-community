@@ -20,6 +20,7 @@ import fr.becpg.model.SystemState;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.version.EntityVersionPlugin;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.jscript.BeCPGStateHelper;
 import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
@@ -74,20 +75,21 @@ public class ProductVersionPlugin implements EntityVersionPlugin {
      
 			if (propertiesToKeep() != null) {
 				for (String propertyToKeep : propertiesToKeep().split(",")) {
-					QName propertyQname = QName.createQName(propertyToKeep, namespaceService);
-
-					if (entityDictionaryService.getProperty(propertyQname) != null) {
-						Serializable value = nodeService.getProperty(origNodeRef, propertyQname);
-						if (value != null) {
-							nodeService.setProperty(workingCopyNodeRef, propertyQname, value);
-						} else {
-							nodeService.removeProperty(workingCopyNodeRef, propertyQname);
+					propertyToKeep = extractProperty(propertyToKeep, origNodeRef);
+					if (propertyToKeep != null) {
+						QName propertyQname = QName.createQName(propertyToKeep, namespaceService);
+						if (entityDictionaryService.getProperty(propertyQname) != null) {
+							Serializable value = nodeService.getProperty(origNodeRef, propertyQname);
+							if (value != null) {
+								nodeService.setProperty(workingCopyNodeRef, propertyQname, value);
+							} else {
+								nodeService.removeProperty(workingCopyNodeRef, propertyQname);
+							}
+						} else if (entityDictionaryService.getAssociation(propertyQname) != null) {
+							List<NodeRef> originalAssocs = associationService.getTargetAssocs(origNodeRef, propertyQname);
+							associationService.update(workingCopyNodeRef, propertyQname, originalAssocs);
 						}
-					} else if (entityDictionaryService.getAssociation(propertyQname) != null) {
-						List<NodeRef> originalAssocs = associationService.getTargetAssocs(origNodeRef, propertyQname);
-						associationService.update(workingCopyNodeRef, propertyQname, originalAssocs);
 					}
-
 				}
 	        }
 	        
@@ -105,7 +107,17 @@ public class ProductVersionPlugin implements EntityVersionPlugin {
 		
 	}
 
-	
+	private String extractProperty(String propertyToReset, NodeRef origNodeRef) {
+		String[] split = propertyToReset.split("\\|");
+		if (split.length < 2) {
+			return split[0];
+		}
+		String mode = split[1];
+		if ("branch".equals(mode) && BeCPGStateHelper.isOnMergeEntity(origNodeRef)) {
+			return split[0];
+		}
+		return null;
+	}
 	
 	
 	/** {@inheritDoc} */
