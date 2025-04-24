@@ -95,6 +95,19 @@
 }
 
 
+
+.datalist-toolbar div.flat-button .surveyToggleCheckbox  span.yui-checkbox-button button
+{
+   background: url("../project/images/survey-disabled-16.png") no-repeat 4px 4px;
+}
+
+
+.datalist-toolbar div.flat-button  .surveyToggleCheckbox span.yui-checkbox-button.yui-checkbox-button-checked button
+{
+   background: url("../project/images/survey-16.png") no-repeat 4px 4px;
+}
+
+
 .datalist-toolbar div.flat-button .targetDatesCkeckbox  span.yui-checkbox-button button
 {
    background: url("../images/calendar-disabled-16.png") no-repeat 4px 4px;
