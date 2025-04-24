@@ -19,7 +19,7 @@
                 var surveyViewOn = "dataTable" != Alfresco.util.findValueByDotNotation(instance.services.preferences.get(), PREF_VIEW_MODE);
                 var widget = new YAHOO.widget.Button({
                     type: "checkbox",
-                    title: instance.msg("button.toggle-survey.description") || "Afficher/masquer la vue enquête",
+                    title: instance.msg("button.toggle-survey.description"),
                     container: divEl,
                     checked: surveyViewOn
                 });

@@ -47,15 +47,13 @@
         // Preferences service
         this.services.preferences = new Alfresco.service.Preferences();
 
-
         Bubbling.on("viewModeChange", this.onViewModeChange, this);
 
-        // Load the survey form on initialization
-        this.loadSurvey();
-
+        Bubbling.on("beforeFormRuntimeInit", this.onBeforeFormRuntimeInit, this);
 
         return this;
     };
+
 
     /**
      * Extend from Alfresco.component.Base
@@ -70,6 +68,17 @@
     YAHOO.lang.augmentObject(beCPG.component.SurveyView.prototype,
         {
 
+            onReady: function SurveyView_onReady() {
+                beCPG.component.SurveyView.superclass.onReady.call(this);
+                if (this.options.viewMode == "survey") {
+                    Dom.addClass(this.id + "-datagridBarBottom", "hidden");
+                    Dom.addClass(this.id + "-itemSelect-div", "hidden");
+                    Dom.addClass(this.id + "-grid", "hidden");
+                    Dom.removeClass(this.id + "-survey-view", "hidden");
+                    this.loadSurvey();
+                }
+
+            },
 
 
             onViewModeChange: function SurveyView_onViewModeChange() {
@@ -79,50 +88,69 @@
                 else {
                     this.options.viewMode = "dataTable";
                 }
-
                 this.services.preferences.set(PREF_VIEW_MODE, this.options.viewMode);
-
-
                 this.refreshView();
             },
 
             refreshView: function SurveyView_refreshView() {
 
                 if (this.options.viewMode != "survey") {
-
-                    Dom.addClass(this.id + "-survey", "hidden");
+                    Dom.addClass(this.id + "-survey-view", "hidden");
                     Dom.removeClass(this.id + "-grid", "hidden");
                     Dom.removeClass(this.id + "-datagridBarBottom", "hidden");
                     Dom.removeClass(this.id + "-itemSelect-div", "hidden");
-                    YAHOO.Bubbling.fire("refreshFloatingHeader");
-
+                   this.onDataGridRefresh();
                 } else {
                     Dom.addClass(this.id + "-datagridBarBottom", "hidden");
                     Dom.addClass(this.id + "-itemSelect-div", "hidden");
                     Dom.addClass(this.id + "-grid", "hidden");
-                    Dom.removeClass(this.id + "-survey", "hidden");
-
-
-
-
+                    Dom.removeClass(this.id + "-survey-view", "hidden");
+                    this.loadSurvey();
                 }
 
             },
-            
-           loadSurvey: function SurveyView_loadSurvey() {
+
+            onBeforeFormRuntimeInit: function WizardMgr_onBeforeFormRuntimeInit(layer, args) {
+                var runtime = args[1].runtime;
+                // Only attach to our survey form (by htmlid or eventGroup)
+                if (args[1].eventGroup && args[1].eventGroup.indexOf("survey-form") !== -1) {
+                    runtime.setAJAXSubmit(true, {
+                        successCallback: {
+                            fn: function(response) {
+                                Alfresco.util.PopupManager.displayMessage({
+                                    text: this.msg("message.survey.success")
+                                });
+                                // Optionally, reload form or fire event
+                            },
+                            scope: this
+                        },
+                        failureCallback: {
+                            fn: function(response) {
+                                Alfresco.util.PopupManager.displayPrompt({
+                                    title: this.msg("message.failure"),
+                                    text: (response.json && response.json.message) ? response.json.message : "Error submitting the survey."
+                                });
+                            },
+                            scope: this
+                        }
+                    });
+                }
+            },
+
+
+            loadSurvey: function SurveyView_loadSurvey() {
 
                 var url = YAHOO.lang.substitute(
                     Alfresco.constants.URL_SERVICECONTEXT + "components/survey/survey-form" +
-                    "?list={list}&nodeRef={nodeRef}&itemType={itemType}&title={title}",
+                    "?list={list}&nodeRef={nodeRef}&itemType={itemType}&title={title}" + (this.options.readOnly ? "&mode={mode}" : ""),
                     {
                         nodeRef: this.options.entityNodeRef,
-                        list: this._getDataListName(),
-                        itemType: this._getItemType(),
-                        title: this._getDataListName()
+                        list: encodeURIComponent(this._getDataListName()),
+                        itemType: encodeURIComponent(this._getItemType()),
+                        title: encodeURIComponent(this._getDataListName()),
+                        mode: this.options.readOnly ? "view" : undefined
                     });
 
-
-                //Load survey : 
 
                 Alfresco.util.Ajax
                     .request(
@@ -135,15 +163,14 @@
                             successCallback:
                             {
                                 fn: function(response) {
-                                    // Correct selector for survey form container
-                                    Dom.get(this.id + "-survey").innerHTML = response.serverResponse.responseText;
+                                    var container = Dom.get(this.id + "-survey-view");
+                                    container.innerHTML = response.serverResponse.responseText;
                                 },
                                 scope: this
                             },
                             scope: this,
                             execScripts: true
                         });
-
             }
 
         }, true);
