@@ -1,7 +1,5 @@
 package fr.becpg.repo.web.scripts.entity.datalist;
 
-import java.util.List;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.lock.LockService;
 import org.alfresco.service.cmr.lock.LockStatus;
@@ -111,12 +109,11 @@ public abstract class AbstractEntityDataListWebScript extends AbstractWebScript 
 	 * @param extractor a {@link fr.becpg.repo.entity.datalist.DataListExtractor} object
 	 * @return a {@link fr.becpg.repo.web.scripts.entity.datalist.AbstractEntityDataListWebScript.Access} object
 	 */
-	protected Access getAccess(QName dataType, List<NodeRef> entityNodeRefsList,
+	protected Access getAccess(QName dataType, NodeRef entityNodeRef,
 			boolean versionFilter, NodeRef parentNodeRef, String dataListName, DataListExtractor extractor) {
 		boolean hasWriteAccess = !versionFilter;
 		boolean hasReadAccess = true;
-		if(!entityNodeRefsList.isEmpty()) {
-			NodeRef entityNodeRef = entityNodeRefsList.get(0);
+		if(entityNodeRef!=null  && dataType != null) {
 			QName entityNodeRefType = nodeService.getType(entityNodeRef);
 			
 			int accessMode = securityService.computeAccessMode(entityNodeRef, entityNodeRefType, dataType.toPrefixString());
@@ -131,7 +128,7 @@ public abstract class AbstractEntityDataListWebScript extends AbstractWebScript 
 						&& becpgLicenseManager.hasWriteLicense()
 						&& isExternalUserAllowed(parentNodeRef);
 
-				if (hasWriteAccess && parentNodeRef != null && dataType != null && !dataType.getLocalName().equals(dataListName)) {
+				if (hasWriteAccess && parentNodeRef != null && !dataType.getLocalName().equals(dataListName)) {
 					String dataListType = (String) nodeService.getProperty(parentNodeRef, DataListModel.PROP_DATALISTITEMTYPE);
 
 					if ((dataListType != null) && !dataListType.isEmpty()) {
