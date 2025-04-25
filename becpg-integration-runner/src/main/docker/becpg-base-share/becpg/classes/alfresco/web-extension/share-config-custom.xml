@@ -542,6 +542,18 @@
       <visible>false</visible>
    </config>
    
+  
+   <!-- OAuth2 Identity Service Configuration -->
+   <config evaluator="string-compare" condition="oauth2" replace="true">
+      <oauth2>
+         <identity-service.auth-server-url>OAUTH2_SERVER_URL</identity-service.auth-server-url>
+         <identity-service.realm>OAUTH2_REALM</identity-service.realm>
+         <identity-service.resource>OAUTH2_RESOURCE</identity-service.resource>
+         <identity-service.credentials.secret>OAUTH2_SECRET</identity-service.credentials.secret>
+         <identity-service.public-client>false</identity-service.public-client>
+      </oauth2>
+   </config>
+
    <!-- Kerberos settings -->
    <!-- To enable kerberos rename this condition to "Kerberos" -->
    <config evaluator="string-compare" condition="KerberosDisabled" replace="true">
@@ -576,6 +588,7 @@
       </kerberos>
    </config>
 
+
    <!-- Uncomment and modify the URL to Activiti Admin Console if required. -->
    <!--
    <config evaluator="string-compare" condition="ActivitiAdmin" replace="true">
@@ -594,6 +607,14 @@
             <name>Alfresco Connector</name>
             <description>Connects to an Alfresco instance using header and cookie-based authentication</description>
             <class>org.alfresco.web.site.servlet.SlingshotAlfrescoConnector</class>
+            <userHeader>X-Alfresco-Remote-User</userHeader>
+         </connector>
+
+         <connector>
+            <id>alfrescoOAuth2</id>
+            <name>Alfresco  OAuth2 Connector</name>
+            <description>Connects to an Alfresco Repository using OAuth2 authentication</description>  
+            <class>fr.becpg.web.authentication.BeCPGOAuth2Connector</class>
             <userHeader>X-Alfresco-Remote-User</userHeader>
          </connector>
          
