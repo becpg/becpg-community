@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 import org.alfresco.repo.jscript.ScriptNode;
 import org.alfresco.repo.workflow.activiti.ActivitiScriptNode;
 import org.alfresco.service.ServiceRegistry;
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -34,7 +35,6 @@ import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.expressions.ExpressionService;
 import fr.becpg.repo.formulation.ReportableEntity;
 import fr.becpg.repo.formulation.spel.SpelFormulaService;
-import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -81,9 +81,6 @@ public class ExpressionServiceImpl implements ExpressionService {
 
 	@Autowired
 	private EntityDictionaryService dictionaryService;
-
-	@Autowired
-	private AssociationService associationService;
 
 	@Autowired
 	private AttributeExtractorService attributeExtractorService;
@@ -158,9 +155,12 @@ public class ExpressionServiceImpl implements ExpressionService {
 		QName qname = QName.createQName(propQname, namespaceService);
 		if ((nodeRef != null) && (qname != null)) {
 			if (dictionaryService.getAssociation(qname) != null) {
-				NodeRef assoc = associationService.getTargetAssoc(nodeRef, qname);
-				if (assoc != null) {
-					ret = assocName ? attributeExtractorService.extractPropName(assoc) : assoc.toString();
+				List<AssociationRef> assocs = nodeService.getTargetAssocs(nodeRef, qname);
+				if (assocs != null) {
+					ret = assocs.stream().map(AssociationRef::getTargetRef)
+							.map(targetRef -> assocName ? attributeExtractorService.extractPropName(targetRef)
+									: targetRef.toString())
+							.collect(Collectors.joining(","));
 				}
 			} else {
 				Serializable value = nodeService.getProperty(nodeRef, qname);
