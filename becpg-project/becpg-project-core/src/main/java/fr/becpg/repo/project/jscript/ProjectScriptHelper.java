@@ -53,6 +53,7 @@ import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskState;
 import fr.becpg.repo.project.impl.ProjectHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * Utility script methods for budget
@@ -265,23 +266,24 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 
 						String assocQname = patternMatcher.group(1);
 						StringBuilder replacement = new StringBuilder();
-						if (assocQname != null && (assocQname.startsWith(DeliverableUrl.NODEREF_URL_PARAM)
-								|| assocQname.startsWith(DeliverableUrl.TASK_URL_PARAM))) {
-							replacement.append(expressionService.extractExpr(projectNodeRef, "{" + assocQname + "}", false));
-						} else if (assocQname != null) {
-							String[] splitted = assocQname.split("\\|");
-							List<AssociationRef> assocs = nodeService.getTargetAssocs(projectNodeRef,
-									QName.createQName(splitted[0], namespaceService));
-							if (assocs != null) {
-								for (AssociationRef assoc : assocs) {
-									if (replacement.length() > 0) {
-										replacement.append(",");
+						if (assocQname != null) {
+							final NodeRef nodeRef = assocQname.startsWith(DeliverableUrl.TASK_URL_PARAM) ? taskNodeRef
+									: projectNodeRef;
+							if (assocQname.contains("|")) {
+								final String qNameStr = assocQname.split("\\|")[1];
+								if (qNameStr.startsWith(DeliverableUrl.XPATH_URL_PREFIX)) {
+									replacement.append(BeCPGQueryBuilder.createQuery().selectNodeByPath(nodeRef,
+											qNameStr.substring(DeliverableUrl.XPATH_URL_PREFIX.length())));
+								} else if (qNameStr.startsWith("@type")) {
+									QName type = nodeService.getType(nodeRef);
+									if (type != null) {
+										replacement.append(type.getLocalName());
 									}
-									replacement.append(expressionService.extractExpr(assoc.getTargetRef(), "{" + assocQname + "}", false));
 								}
+							} else {
+								replacement.append(expressionService.extractExpr(nodeRef, "{" + assocQname + "}", false));
 							}
 						}
-
 						patternMatcher.appendReplacement(sb, replacement != null ? URLEncoder.encodeUriComponent(replacement.toString()) : "");
 
 					}
