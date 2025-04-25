@@ -18,6 +18,15 @@ function main()
 			}
 	};
 	
+	var userWebSocket = {
+			id : "UserWebSocket", 
+			name : "beCPG.component.UserWebSocket",
+			options : {
+				nodeRef : nodeRef,
+				mode : "edit"
+			}
+	};
+	
 	if (result.status == 200)
 	{
 		var metadata = JSON.parse(result);
@@ -31,9 +40,12 @@ function main()
 	model.nodeType = nodeType;
 	model.fileName = fileName;
 	model.hasScore = hasScore;
+	model.widgets = [];
 	if(hasScore){
-		model.widgets = [entityCatalog];
+		model.widgets.push(entityCatalog);
 	}
+	
+	model.widgets.push(userWebSocket);
 }
 
 main();
