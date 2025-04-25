@@ -6,6 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONObject;
 
 import jakarta.websocket.CloseReason;
 import jakarta.websocket.OnClose;
@@ -22,7 +23,7 @@ import jakarta.websocket.server.ServerEndpoint;
  * @author matthieu
  * @version $Id: $Id
  */
-@ServerEndpoint(value = "/becpgws/{store_type}/{store_id}/{id}/{user}")
+@ServerEndpoint(value = "/becpgws/{store_type}/{store_id}/{id}/{user}/{mode}")
 public class BeCPGWSHandler {
 
 	private static final Map<String, Session> userSessions = new ConcurrentHashMap<>();
@@ -37,19 +38,29 @@ public class BeCPGWSHandler {
 	 * @param user a {@link java.lang.String} object.
 	 */
 	@OnOpen
-	public void onOpen(Session session, @PathParam("id") final String room, @PathParam("user") final String user) {
+	public void onOpen(Session session, @PathParam("id") final String room, @PathParam("user") final String user, @PathParam("mode") final String mode) {
 		logger.debug("Connected ... " + session.getId() + " to room " + room);
 
 		session.getUserProperties().put("room", room);
 		session.getUserProperties().put("user", user);
+		session.getUserProperties().put("mode", mode);
 		BeCPGWSHandler.userSessions.put(session.getId(), session);
 
 		try {
 
 			for (Session s : BeCPGWSHandler.userSessions.values()) {
 				if (s.isOpen() && room.equals(s.getUserProperties().get("room")) && !s.getId().equals(session.getId())) {
-					session.getBasicRemote().sendText("{\"type\":\"JOINING\",\"user\":\"" + s.getUserProperties().get("user") + "\"}");
-					s.getBasicRemote().sendText("{\"type\":\"JOINING\",\"user\":\"" + user + "\"}");
+					JSONObject message = new JSONObject();
+					message.put("type", "JOINING");
+					message.put("user", s.getUserProperties().get("user"));
+					message.put("mode", s.getUserProperties().get("mode"));
+					session.getBasicRemote().sendText(message.toString());
+					
+					message = new JSONObject();
+					message.put("type", "JOINING");
+					message.put("user", user);
+					message.put("mode", mode);
+					s.getBasicRemote().sendText(message.toString());
 				}
 			}
 
@@ -97,8 +108,11 @@ public class BeCPGWSHandler {
 			String user = (String) session.getUserProperties().get("user");
 
 			for (Session s : BeCPGWSHandler.userSessions.values()) {
+				JSONObject message = new JSONObject();
+				message.put("type", "LEAVING");
+				message.put("user", user);
 				if (s.isOpen() && room.equals(s.getUserProperties().get("room")) && !s.getId().equals(session.getId())) {
-					s.getBasicRemote().sendText("{\"type\":\"LEAVING\",\"user\":\"" + user + "\"}");
+					s.getBasicRemote().sendText(message.toString());
 				}
 			}
 
