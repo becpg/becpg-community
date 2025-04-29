@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -41,12 +42,14 @@ import org.springframework.stereotype.Service;
 import fr.becpg.config.format.FormatMode;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
+import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.RepositoryEntityDefReader;
@@ -121,7 +124,6 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		RepositoryEntity entity;
 
 		public BeCPGSpelFunctionsWrapper(RepositoryEntity entity) {
-			super();
 			this.entity = entity;
 		}
 
@@ -205,6 +207,43 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 			}
 
 			return null;
+		}
+
+		/**
+		 * Helper {@code @beCPG.propMLConstraint($value, $qname, $locale)}
+		 *
+		 * @param item
+		 * @param qname
+		 * @param locale
+		 * @return
+		 */
+		public String propMLConstraint(String value, String propQName, String locale) {
+
+			PropertyDefinition propertyDef = entityDictionaryService.getProperty(QName.createQName(propQName, namespaceService));
+
+			String constraintName = null;
+			DynListConstraint dynListConstraint = null;
+
+			if (!propertyDef.getConstraints().isEmpty()) {
+				for (ConstraintDefinition constraint : propertyDef.getConstraints()) {
+					if (constraint.getConstraint() instanceof DynListConstraint) {
+						dynListConstraint = (DynListConstraint) constraint.getConstraint();
+
+					} else if ("LIST".equals(constraint.getConstraint().getType())) {
+						constraintName = constraint.getRef().toPrefixString(namespaceService).replace(":", "_");
+					}
+
+					if ((constraintName != null) || (dynListConstraint != null)) {
+						break;
+					}
+				}
+			}
+
+			if (dynListConstraint != null) {
+				return dynListConstraint.getDisplayLabel(value, new Locale(locale));
+			}
+
+			return constraintName != null ? TranslateHelper.getConstraint(constraintName, value, new Locale(locale)) : value;
 		}
 
 		/**
@@ -574,7 +613,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 *                                             + dataListItem.qty")
 		 * @beCPG.sum(compoListView.compoList.?[parent ==
 		 *                                             null],"@beCPG.propValue(dataListItem.nodeRef,'bcpg:compoListQty')")}
-		 * </pre>                                            
+		 * </pre>
 		 *
 		 * @param range
 		 * @param formula
@@ -735,9 +774,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 				ExpressionParser parser = formulaService.getSpelParser();
 				Expression exp = parser.parseExpression(formula);
 
-				return range.stream().filter(p -> {
-					return exp.getValue(formulaService.createItemSpelContext(entity, p), Boolean.class);
-				}).toList();
+				return range.stream().filter(p -> exp.getValue(formulaService.createItemSpelContext(entity, p), Boolean.class)).toList();
 			}
 			return null;
 		}
@@ -755,9 +792,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 				ExpressionParser parser = formulaService.getSpelParser();
 				Expression exp = parser.parseExpression(formula);
 
-				return (Collection<T>) range.stream().map(p -> {
-					return exp.getValue(formulaService.createItemSpelContext(entity, p));
-				}).toList();
+				return (Collection<T>) range.stream().map(p -> exp.getValue(formulaService.createItemSpelContext(entity, p))).toList();
 			}
 			return null;
 		}
@@ -774,9 +809,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 				ExpressionParser parser = formulaService.getSpelParser();
 				Expression exp = parser.parseExpression(groupingFormula);
 
-				return range.stream().collect(Collectors.groupingBy(p -> {
-					return exp.getValue(formulaService.createItemSpelContext(entity, p));
-				}));
+				return range.stream().collect(Collectors.groupingBy(p -> exp.getValue(formulaService.createItemSpelContext(entity, p))));
 
 			}
 			return null;
@@ -825,10 +858,8 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		public <T> Collection<CompositeDataItem<T>> children(CompositeDataItem<T> parent, Collection<CompositeDataItem<T>> compositeList) {
 			List<CompositeDataItem<T>> ret = new ArrayList<>();
 			for (CompositeDataItem<T> item : compositeList) {
-				if (item.getParent() != null) {
-					if (parent.equals(item.getParent())) {
-						ret.add(item);
-					}
+				if ((item.getParent() != null) && parent.equals(item.getParent())) {
+					ret.add(item);
 				}
 			}
 			return ret;
@@ -900,6 +931,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 			cal.add(field, amount);
 			return cal.getTime();
 		}
+
 
 		/**
 		 *
@@ -1108,7 +1140,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		private void assertIsNotMappedQname(RepositoryEntity item, QName qName, boolean allowWrite) {
-			if (item != null && repositoryEntityDefReader.isRegisteredQName(item, qName, allowWrite)) {
+			if ((item != null) && repositoryEntityDefReader.isRegisteredQName(item, qName, allowWrite)) {
 				throw new FormulateException(String.format("QName is %s mapped in entity %s. Please use entity.%s to access it ",
 						qName.getPrefixedQName(namespaceService), item.getClass().getName(), qName.getLocalName()));
 			}
