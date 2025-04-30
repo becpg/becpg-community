@@ -146,7 +146,16 @@ function main()
          model.showComments = "false";
       }
       
-      model.widgets = [nodeHeader];
+		var userWebSocket = {
+			id : "UserWebSocket",
+			name : "beCPG.component.UserWebSocket",
+			options : {
+				nodeRef : model.nodeRef,
+				mode : "view"
+			}
+		};
+
+		model.widgets = [nodeHeader, userWebSocket];
    }
 }
 
