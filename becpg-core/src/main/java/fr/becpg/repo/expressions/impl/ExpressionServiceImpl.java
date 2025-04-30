@@ -114,7 +114,8 @@ public class ExpressionServiceImpl implements ExpressionService {
 				}
 
 			} else {
-				replacement = extractPropText(nodeRef, docNodeRef, propQname, assocName);
+				replacement = "nodeRef".equals(propQname) ? nodeRef.toString()
+						: extractPropText(nodeRef, docNodeRef, propQname, assocName);
 			}
 
 			patternMatcher.appendReplacement(sb, replacement != null ? replacement.replace("$", "") : "");
