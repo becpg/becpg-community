@@ -1,39 +1,40 @@
-FROM ${docker.becpg.url}/becpg-base-core:${docker.becpg.tag} AS becpg-base-test-core
+FROM ${docker.becpg.url}/becpg-base-core:${docker.becpg.tag} AS builder
 
 ENV TOMCAT_DIR=/usr/local/tomcat
 
+# Copy all AMP files at once
+COPY becpg-*-${project.version}.amp $TOMCAT_DIR/amps/
 
-#Jacoco Agent
-RUN curl -sL https://repo1.maven.org/maven2/org/jacoco/org.jacoco.agent/0.8.12/org.jacoco.agent-0.8.12-runtime.jar -o $TOMCAT_DIR/jacoco-runtime.jar
+# Install all AMPs in a single RUN command
+RUN for amp in $TOMCAT_DIR/amps/*.amp; do \
+        java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install $amp webapps/alfresco -nobackup -force; \
+    done && \
+    rm -rf $TOMCAT_DIR/amps/*
 
-FROM becpg-base-test-core
+FROM ${docker.becpg.url}/becpg-base-core:${docker.becpg.tag}
 
+ENV TOMCAT_DIR=/usr/local/tomcat
 
-#Debuging 
-COPY alfresco/hotswap-agent.properties $TOMCAT_DIR/webapps/alfresco/WEB-INF/classes
-COPY alfresco/disable-hotswap-agent.properties $TOMCAT_DIR/webapps/ROOT/WEB-INF/classes/hotswap-agent.properties
-COPY alfresco/disable-hotswap-agent.properties $TOMCAT_DIR/webapps/_vti_bin/WEB-INF/classes/hotswap-agent.properties
-COPY alfresco/disable-hotswap-agent.properties $TOMCAT_DIR/webapps/api-explorer/WEB-INF/classes/hotswap-agent.properties
+# Download Jacoco Agent
+RUN curl -sL https://repo1.maven.org/maven2/org/jacoco/org.jacoco.agent/0.8.12/org.jacoco.agent-0.8.12-runtime.jar \
+    -o $TOMCAT_DIR/jacoco-runtime.jar
 
-COPY alfresco/beCPG.properties $TOMCAT_DIR/shared/classes/beCPG.properties
-COPY alfresco/alfresco-global.properties $TOMCAT_DIR/shared/classes/alfresco-global.properties
-COPY alfresco/catalina.policy $TOMCAT_DIR/conf
+# Copy hotswap configurations
+COPY --chown=33000:1000 alfresco/hotswap-agent.properties $TOMCAT_DIR/webapps/alfresco/WEB-INF/classes/
+COPY --chown=33000:1000 alfresco/disable-hotswap-agent.properties $TOMCAT_DIR/webapps/ROOT/WEB-INF/classes/hotswap-agent.properties
+COPY --chown=33000:1000 alfresco/disable-hotswap-agent.properties $TOMCAT_DIR/webapps/_vti_bin/WEB-INF/classes/hotswap-agent.properties
+COPY --chown=33000:1000 alfresco/disable-hotswap-agent.properties $TOMCAT_DIR/webapps/api-explorer/WEB-INF/classes/hotswap-agent.properties
 
-      
-COPY becpg-core-${project.version}.amp $TOMCAT_DIR/amps/
-COPY becpg-project-core-${project.version}.amp  $TOMCAT_DIR/amps/
-COPY becpg-designer-core-${project.version}.amp  $TOMCAT_DIR/amps/
-COPY becpg-plm-core-${project.version}.amp  $TOMCAT_DIR/amps/
+# Copy configuration files
+COPY --chown=33000:1000 alfresco/beCPG.properties $TOMCAT_DIR/shared/classes/
+COPY --chown=33000:1000 alfresco/alfresco-global.properties $TOMCAT_DIR/shared/classes/
+COPY --chown=33000:1000 alfresco/catalina.policy $TOMCAT_DIR/conf/
 
-RUN  java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install  $TOMCAT_DIR/amps/becpg-core-${project.version}.amp webapps/alfresco -nobackup -force && \
-	 java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install  $TOMCAT_DIR/amps/becpg-project-core-${project.version}.amp webapps/alfresco -nobackup -force && \
-	 java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install  $TOMCAT_DIR/amps/becpg-designer-core-${project.version}.amp webapps/alfresco -nobackup -force && \
-	 java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install  $TOMCAT_DIR/amps/becpg-plm-core-${project.version}.amp webapps/alfresco -nobackup -force 
-	 
-RUN rm -rf  $TOMCAT_DIR/amps/*
+# Copy built artifacts from builder stage
+COPY --chown=33000:1000 --from=builder ${TOMCAT_DIR}/webapps/alfresco/ ${TOMCAT_DIR}/webapps/alfresco/
 
-COPY extensions/*.jar $TOMCAT_DIR/webapps/alfresco/WEB-INF/lib/
-
-COPY forms $TOMCAT_DIR/webapps/alfresco/WEB-INF/classes/beCPG/forms/
-COPY becpg-plm $TOMCAT_DIR/webapps/alfresco/WEB-INF/classes/alfresco/module/becpg-plm-core/
+# Copy extensions and additional resources
+COPY --chown=33000:1000 extensions/*.jar $TOMCAT_DIR/webapps/alfresco/WEB-INF/lib/
+COPY --chown=33000:1000 forms/ $TOMCAT_DIR/webapps/alfresco/WEB-INF/classes/beCPG/forms/
+COPY --chown=33000:1000 becpg-plm/ $TOMCAT_DIR/webapps/alfresco/WEB-INF/classes/alfresco/module/becpg-plm-core/
 
