@@ -108,8 +108,8 @@ purge() {
 build() {
    if [ -d becpg-enterprise ]; then
     cd becpg-enterprise
-   	 $MVN_EXEC package $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="enterprise-test"
-     docker compose -f ./distribution/target/docker-compose-build.yml build
+  	 $MVN_EXEC package -T 1C $EXTRA_ENV -DskipTests=true  -Dmaven.build.cache.enabled=true -Djacoco.skip=true -Dcheckstyle.skip=true  -Dbecpg.dockerbuild.name="enterprise-test"
+     docker compose -f ./distribution/target/docker-compose-dev.yml build
    	 cd ..
    else
    	 $MVN_EXEC package $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="test"
@@ -123,9 +123,11 @@ install() {
   if [ -d becpg-enterprise ]; then
     cd becpg-enterprise
     $MVN_EXEC  clean install $EXTRA_ENV -DskipTests=true
-     cd ..
+    docker compose -f ./distribution/target/docker-compose-build.yml build
+    cd ..
    else
     $MVN_EXEC  clean install $EXTRA_ENV -DskipTests=true
+    docker compose -f ./becpg-integration-runner/target/docker-compose-build.yml build
   fi
   
 }
@@ -153,7 +155,7 @@ install_hotswap(){
 }
 
 tail() {
-    docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH logs -f --tail=100 becpg becpg-db becpg-share
+    docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml logs -f --tail=100 becpg-share http becpg-auth
 }
 
 test() {
