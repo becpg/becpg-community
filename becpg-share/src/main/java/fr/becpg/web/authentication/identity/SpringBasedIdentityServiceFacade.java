@@ -94,8 +94,7 @@ class SpringBasedIdentityServiceFacade implements IdentityServiceFacade
         this.jwtDecoder = requireNonNull(jwtDecoder);
         this.clients = Map.of(
             AuthorizationGrantType.AUTHORIZATION_CODE, createAuthorizationCodeClient(restOperations),
-            AuthorizationGrantType.REFRESH_TOKEN, createRefreshTokenClient(restOperations),
-            AuthorizationGrantType.PASSWORD, createPasswordClient(restOperations, clientRegistration));
+            AuthorizationGrantType.REFRESH_TOKEN, createRefreshTokenClient(restOperations));
     }
 
     @Override
@@ -207,11 +206,7 @@ class SpringBasedIdentityServiceFacade implements IdentityServiceFacade
 
     private AbstractOAuth2AuthorizationGrantRequest createRequest(AuthorizationGrant grant)
     {
-        if (grant.isPassword())
-        {
-            return new OAuth2PasswordGrantRequest(clientRegistration, grant.getUsername(), grant.getPassword());
-        }
-
+      
         if (grant.isRefreshToken())
         {
             final OAuth2AccessToken expiredAccessToken = new OAuth2AccessToken(
@@ -244,10 +239,10 @@ class SpringBasedIdentityServiceFacade implements IdentityServiceFacade
         throw new UnsupportedOperationException("Unsupported grant type.");
     }
 
-    private OAuth2AccessTokenResponseClient getClient(AbstractOAuth2AuthorizationGrantRequest request)
+    private OAuth2AccessTokenResponseClient<?> getClient(AbstractOAuth2AuthorizationGrantRequest request)
     {
         final AuthorizationGrantType grantType = request.getGrantType();
-        final OAuth2AccessTokenResponseClient client = clients.get(grantType);
+        final OAuth2AccessTokenResponseClient<?> client = clients.get(grantType);
         if (client == null)
         {
             throw new UnsupportedOperationException("Unsupported grant type `" + grantType + "`.");
@@ -271,35 +266,35 @@ class SpringBasedIdentityServiceFacade implements IdentityServiceFacade
         return client;
     }
 
-    private static OAuth2AccessTokenResponseClient<OAuth2PasswordGrantRequest> createPasswordClient(RestOperations rest,
-        ClientRegistration clientRegistration)
-    {
-        final DefaultPasswordTokenResponseClient client = new DefaultPasswordTokenResponseClient();
-        client.setRestOperations(rest);
-        Optional.of(clientRegistration)
-            .map(ClientRegistration::getProviderDetails)
-            .map(ProviderDetails::getConfigurationMetadata)
-            .map(metadata -> metadata.get(AUDIENCE.getValue()))
-            .filter(String.class::isInstance)
-            .map(String.class::cast)
-            .ifPresent(audienceValue -> {
-                final OAuth2PasswordGrantRequestEntityConverter requestEntityConverter = new OAuth2PasswordGrantRequestEntityConverter();
-                requestEntityConverter.addParametersConverter(audienceParameterConverter(audienceValue));
-                client.setRequestEntityConverter(requestEntityConverter);
-            });
-        return client;
-    }
-
-    private static Converter<OAuth2PasswordGrantRequest, MultiValueMap<String, String>> audienceParameterConverter(
-        String audienceValue)
-    {
-        return (grantRequest) -> {
-            MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
-            parameters.set("audience", audienceValue);
-
-            return parameters;
-        };
-    }
+//    private static OAuth2AccessTokenResponseClient<OAuth2PasswordGrantRequest> createPasswordClient(RestOperations rest,
+//        ClientRegistration clientRegistration)
+//    {
+//        final DefaultPasswordTokenResponseClient client = new DefaultPasswordTokenResponseClient();
+//        client.setRestOperations(rest);
+//        Optional.of(clientRegistration)
+//            .map(ClientRegistration::getProviderDetails)
+//            .map(ProviderDetails::getConfigurationMetadata)
+//            .map(metadata -> metadata.get(AUDIENCE.getValue()))
+//            .filter(String.class::isInstance)
+//            .map(String.class::cast)
+//            .ifPresent(audienceValue -> {
+//                final OAuth2PasswordGrantRequestEntityConverter requestEntityConverter = new OAuth2PasswordGrantRequestEntityConverter();
+//                requestEntityConverter.addParametersConverter(audienceParameterConverter(audienceValue));
+//                client.setRequestEntityConverter(requestEntityConverter);
+//            });
+//        return client;
+//    }
+//
+//    private static Converter<OAuth2PasswordGrantRequest, MultiValueMap<String, String>> audienceParameterConverter(
+//        String audienceValue)
+//    {
+//        return (grantRequest) -> {
+//            MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
+//            parameters.set("audience", audienceValue);
+//
+//            return parameters;
+//        };
+//    }
 
     private static class SpringAccessTokenAuthorization implements AccessTokenAuthorization
     {

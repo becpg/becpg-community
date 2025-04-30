@@ -18,34 +18,7 @@
 
 package fr.becpg.web.authentication;
 
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.alfresco.web.site.servlet.MTAuthenticationFilter;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.extensions.config.RemoteConfigElement.ConnectorDescriptor;
-import org.springframework.extensions.surf.ServletUtil;
-import org.springframework.extensions.webscripts.RequestCachingConnector;
-import org.springframework.extensions.webscripts.connector.ConnectorContext;
-import org.springframework.extensions.webscripts.connector.ConnectorSession;
-import org.springframework.extensions.webscripts.connector.RemoteClient;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.oauth2.core.OAuth2AccessToken;
-import org.springframework.security.oauth2.server.resource.web.BearerTokenResolver;
-import org.springframework.security.oauth2.server.resource.web.DefaultBearerTokenResolver;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.web.context.support.WebApplicationContextUtils;
-
-import fr.becpg.web.authentication.identity.IdentityServiceFacade;
-
-import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Extends the {@link RequestCachingConnector} to implement OAuth2 authentication for the connection
