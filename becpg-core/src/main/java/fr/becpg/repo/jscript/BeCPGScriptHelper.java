@@ -718,7 +718,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 		if (!propertyDef.getConstraints().isEmpty()) {
 			for (ConstraintDefinition constraint : propertyDef.getConstraints()) {
-				if (constraint.getConstraint() instanceof DynListConstraint) {
+				if (constraint.getConstraint() instanceof DynListConstraint ) {
 					dynListConstraint = (DynListConstraint) constraint.getConstraint();
 
 				} else if ("LIST".equals(constraint.getConstraint().getType())) {

@@ -33,6 +33,7 @@ if [[ $OAUTH2_REALM == "" ]]; then
    OAUTH2_REALM=inst1
 fi
 
+OAUTH2_CONFIG="Oauth2Disabled"
 
 BECPG_CONNECTOR_ID="alfresco"
 BECPG_EXTERNAL_AUTH="false"
@@ -45,6 +46,7 @@ fi
 if [[ $BECPG_AUTH_OAUTH2 == "true" ]]; then
     BECPG_CONNECTOR_ID="alfrescoOAuth2"
     BECPG_EXTERNAL_AUTH="true"
+    OAUTH2_CONFIG="oauth2"
 fi
 
 
@@ -60,6 +62,7 @@ sed -i -e 's/OAUTH2_SECRET/'"$OAUTH2_SECRET"'/g' /usr/local/tomcat/shared/classe
 sed -i -e 's|OAUTH2_SERVER_URL|'"$OAUTH2_SERVER_URL"'|g' /usr/local/tomcat/shared/classes/alfresco/web-extension/share-config-custom.xml
 sed -i -e 's/OAUTH2_RESOURCE/'"$OAUTH2_RESOURCE"'/g' /usr/local/tomcat/shared/classes/alfresco/web-extension/share-config-custom.xml
 sed -i -e 's/OAUTH2_REALM/'"$OAUTH2_REALM"'/g' /usr/local/tomcat/shared/classes/alfresco/web-extension/share-config-custom.xml
+sed -i -e 's/OAUTH2_CONFIG/'"$OAUTH2_CONFIG"'/g' /usr/local/tomcat/shared/classes/alfresco/web-extension/share-config-custom.xml
 
 
 echo "NEW -csrf.filter.referer is '$CSRF_FILTER_REFERER'"
