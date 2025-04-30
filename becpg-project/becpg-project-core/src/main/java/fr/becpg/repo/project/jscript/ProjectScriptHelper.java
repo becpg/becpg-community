@@ -36,6 +36,7 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO8601DateFormat;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.extensions.surf.util.URLEncoder;
 
 import fr.becpg.model.DeliverableUrl;
@@ -269,20 +270,21 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 						if (assocQname != null) {
 							final NodeRef nodeRef = assocQname.startsWith(DeliverableUrl.TASK_URL_PARAM) ? taskNodeRef
 									: projectNodeRef;
+							String replacementStr = null;
 							if (assocQname.contains("|")) {
 								final String qNameStr = assocQname.split("\\|")[1];
 								if (qNameStr.startsWith(DeliverableUrl.XPATH_URL_PREFIX)) {
-									replacement.append(BeCPGQueryBuilder.createQuery().selectNodeByPath(nodeRef,
+									replacementStr = String.valueOf(BeCPGQueryBuilder.createQuery().selectNodeByPath(nodeRef,
 											qNameStr.substring(DeliverableUrl.XPATH_URL_PREFIX.length())));
 								} else if (qNameStr.startsWith("@type")) {
 									QName type = nodeService.getType(nodeRef);
-									if (type != null) {
-										replacement.append(type.getLocalName());
-									}
+									replacementStr = type != null ? type.getLocalName() : StringUtils.EMPTY;
 								}
-							} else {
-								replacement.append(expressionService.extractExpr(nodeRef, "{" + assocQname + "}", false));
 							}
+							if (replacementStr == null) {
+								replacementStr = expressionService.extractExpr(nodeRef, "{" + assocQname + "}", false);
+							}
+							replacement.append(replacementStr);
 						}
 						patternMatcher.appendReplacement(sb, replacement != null ? URLEncoder.encodeUriComponent(replacement.toString()) : "");
 
