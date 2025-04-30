@@ -34,6 +34,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.nimbusds.openid.connect.sdk.claims.PersonClaims;
 
+import fr.becpg.web.authentication.config.IdentityServiceElement;
 import fr.becpg.web.authentication.identity.IdentityServiceFacade.DecodedAccessToken;
 
 /**
@@ -43,7 +44,7 @@ import fr.becpg.web.authentication.identity.IdentityServiceFacade.DecodedAccessT
  */
 public class IdentityServiceJITProvisioningHandler
 {
-    private final IdentityServiceConfig identityServiceConfig;
+    private final IdentityServiceElement identityServiceConfig;
     private final IdentityServiceFacade identityServiceFacade;
 
 
@@ -70,7 +71,7 @@ public class IdentityServiceJITProvisioningHandler
     };
 
     public IdentityServiceJITProvisioningHandler(IdentityServiceFacade identityServiceFacade,
-        IdentityServiceConfig identityServiceConfig)
+        IdentityServiceElement identityServiceConfig)
     {
         this.identityServiceFacade = identityServiceFacade;
         this.identityServiceConfig = identityServiceConfig;
@@ -83,8 +84,6 @@ public class IdentityServiceJITProvisioningHandler
             .flatMap(token -> extractUserInfoResponseFromAccessToken(token)
                 .filter(userInfo -> StringUtils.isNotEmpty(userInfo.username()))
                 .or(() -> extractUserInfoResponseFromEndpoint(token)));
-
-      
     }
 
     private Optional<OIDCUserInfo> extractUserInfoResponseFromAccessToken(String bearerToken)

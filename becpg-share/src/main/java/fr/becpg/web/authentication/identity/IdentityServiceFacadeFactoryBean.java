@@ -57,7 +57,6 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hc.client5.http.classic.HttpClient;
@@ -122,6 +121,7 @@ import com.nimbusds.oauth2.sdk.id.Identifier;
 import com.nimbusds.oauth2.sdk.id.Issuer;
 import com.nimbusds.openid.connect.sdk.op.OIDCProviderMetadata;
 
+import fr.becpg.web.authentication.config.IdentityServiceElement;
 import fr.becpg.web.authentication.identity.IdentityServiceFacade.IdentityServiceFacadeException;
 
 /**
@@ -137,7 +137,7 @@ public class IdentityServiceFacadeFactoryBean
     private SpringBasedIdentityServiceFacadeFactory factory;
 
 
-    public IdentityServiceFacadeFactoryBean(IdentityServiceConfig identityServiceConfig)
+    public IdentityServiceFacadeFactoryBean(IdentityServiceElement identityServiceConfig)
     {
         factory = new SpringBasedIdentityServiceFacadeFactory(
             new HttpClientProvider(identityServiceConfig)::createHttpClient,
@@ -268,9 +268,9 @@ public class IdentityServiceFacadeFactoryBean
 
     private static class HttpClientProvider
     {
-        private final IdentityServiceConfig config;
+        private final IdentityServiceElement config;
 
-        private HttpClientProvider(IdentityServiceConfig config)
+        private HttpClientProvider(IdentityServiceElement config)
         {
             this.config = requireNonNull(config);
         }
@@ -364,11 +364,11 @@ public class IdentityServiceFacadeFactoryBean
 
     static class ClientRegistrationProvider
     {
-        private final IdentityServiceConfig config;
+        private final IdentityServiceElement config;
 
         private static final Set<String> SCOPES = Set.of("openid", "profile", "email");
 
-        ClientRegistrationProvider(IdentityServiceConfig config)
+        ClientRegistrationProvider(IdentityServiceElement config)
         {
             this.config = requireNonNull(config);
         }
@@ -401,7 +401,7 @@ public class IdentityServiceFacadeFactoryBean
                 {
                     URI metadataIssuerURI = new URI(metadata.getIssuer().getValue());
                     validateOIDCEndpoint(metadataIssuerURI, "Issuer");
-                    if (StringUtils.isNotBlank(config.getIssuerUrl()) &&
+                    if (config.getIssuerUrl()!=null && !config.getIssuerUrl().isBlank() &&
                         !metadataIssuerURI.equals(URI.create(config.getIssuerUrl())))
                     {
                         throw new IdentityServiceException("Failed to create ClientRegistration. "
@@ -440,7 +440,8 @@ public class IdentityServiceFacadeFactoryBean
             final String issuerUri = Optional.of(metadata)
                 .map(OIDCProviderMetadata::getIssuer)
                 .map(Issuer::getValue)
-                .orElseGet(() -> (StringUtils.isNotBlank(config.getRealm()) && StringUtils.isBlank(config.getIssuerUrl())) ?
+                .orElseGet(() -> (config.getRealm()!=null && !config.getRealm().isBlank()
+                && config.getIssuerUrl()!=null &&  !config.getIssuerUrl().isBlank()) ?
                     config.getAuthServerUrl() :
                     config.getIssuerUrl());
 
@@ -463,7 +464,7 @@ public class IdentityServiceFacadeFactoryBean
             {
                 configurationMetadata.put(SCOPES_SUPPORTED.getValue(), metadata.getScopes());
             }
-            if(StringUtils.isNotBlank(config.getAudience()))
+            if(config.getAudience()!=null && !config.getAudience().isBlank())
             {
                 configurationMetadata.put(AUDIENCE.getValue(), config.getAudience());
             }
@@ -521,13 +522,14 @@ public class IdentityServiceFacadeFactoryBean
 
         private Collection<URI> possibleMetadataURIs()
         {
-            if (StringUtils.isBlank(config.getAuthServerUrl()) && StringUtils.isBlank(config.getIssuerUrl()))
+            if (config.getAuthServerUrl()== null 
+            		&& config.getIssuerUrl()== null )
             {
                 throw new IdentityServiceException(
                     "Failed to create ClientRegistration. The values of issuer url and auth server url cannot both be empty.");
             }
 
-            String baseUrl = StringUtils.isNotBlank(config.getAuthServerUrl()) ?
+            String baseUrl = config.getAuthServerUrl()!=null && !config.getAuthServerUrl().isBlank() ?
                 config.getAuthServerUrl() :
                 config.getIssuerUrl();
 
@@ -540,10 +542,10 @@ public class IdentityServiceFacadeFactoryBean
     static class JwtDecoderProvider
     {
         private static final SignatureAlgorithm DEFAULT_SIGNATURE_ALGORITHM = SignatureAlgorithm.RS256;
-        private final IdentityServiceConfig config;
+        private final IdentityServiceElement config;
         private final Set<SignatureAlgorithm> signatureAlgorithms;
 
-        JwtDecoderProvider(IdentityServiceConfig config)
+        JwtDecoderProvider(IdentityServiceElement config)
         {
             this.config = requireNonNull(config);
             this.signatureAlgorithms = ofNullable(config.getSignatureAlgorithms())
@@ -642,7 +644,7 @@ public class IdentityServiceFacadeFactoryBean
             {
                 validators.add(new JwtClaimValidator<String>("azp", config.getResource()::equals));
             }
-            if (StringUtils.isNotBlank(config.getAudience()))
+            if (config.getAudience()!=null && !config.getAudience().isBlank())
             {
                 validators.add(new JwtAudienceValidator(config.getAudience()));
             }
