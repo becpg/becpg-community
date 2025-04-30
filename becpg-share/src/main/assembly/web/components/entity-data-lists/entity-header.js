@@ -36,9 +36,7 @@
       beCPG.custom.NodeHeader.superclass.constructor.call(this, htmlId);
 
       YAHOO.Bubbling.on("folderCopied", this.onEntityCopied , this);
-      
-      YAHOO.Bubbling.on("dirtyDataTable", this.entityUpdated , this);
-      
+            
       return this;
    };
 
@@ -197,67 +195,10 @@
                 	  delete sessionStorage.pathBreadCrumbs;
                 	}
                 	
-                	//Websocket
-
-                	this.registerWebSocket();
-                
                     this.nodeType = "entity";
 
                   },
-                  entityUpdated: function NodeHeader_entityUpdated(layer, args){
-                	  if(this.ws!=null){
-                		  var message = {
-                     			 type : "UPDATE",
-                     			 user : Alfresco.constants.USERNAME	 
-                     	 };
-                		  this.ws.send( YAHOO.lang.JSON.stringify(message) );
-                	  }
-                	  
-                  },
                   
-                  registerWebSocket : function NodeHeader_entityUpdated(){
-                	  if ("WebSocket" in window && this.ws==null)
-                      {
-                         var protocolPrefix = (window.location.protocol === 'https:') ? 'wss:' : 'ws:', me = this;
-                         
-                         me.ws = new WebSocket(protocolPrefix + '//' + location.host + Alfresco.constants.URL_CONTEXT +  "becpgws/"+this.options.nodeRef.replace(":/","")+"/"+encodeURIComponent(Alfresco.constants.USERNAME));
-          		
-                         me.ws.onmessage = function (evt) 
-                         { 
-                        	 
-                            var message = YAHOO.lang.JSON.parse(evt.data);
-                            if(message.type && message.type == "JOINING" && message.user!=Alfresco.constants.USERNAME){
-                            	
-                            	if(YAHOO.util.Dom.get(me.id+"-chat-user-"+message.user)==null){
-                            		 var ulEl = YAHOO.util.Dom.get(me.id+"-node-users");
-	                            	 var html = ulEl.innerHTML;
-	                            	 
-	                            	 html += '<span id="'+me.id+'-chat-user-'+message.user+'" class="avatar" title="' + message.user + '">';
-	                            	 html += Alfresco.Share.userAvatar(message.user, 32);
-	                            	 html += "</span>";
-	                            	 
-	                            	 ulEl.innerHTML = html;
-                            	}
-                            	
-                            } else if(message.type == "LEAVING" && message.user!=Alfresco.constants.USERNAME){
-                            	 var child = document.getElementById(me.id+"-chat-user-"+message.user);
-                            	 if(child!=null){
-                            		 child.parentNode.removeChild(child);
-                            	 }
-                            	
-                            } else if(message.type == "UPDATE" && message.user!=Alfresco.constants.USERNAME){
-                            	YAHOO.util.Dom.addClass(me.id+"-chat-user-"+message.user,"user-activiti");
-                            	setTimeout(function(){
-                            	   YAHOO.Bubbling.fire("refreshDataGrids");
-                            	   YAHOO.util.Dom.removeClass(me.id+"-chat-user-"+message.user,"user-activiti");
-                            	},3000);
-                            }
-                            
-                         };
-          				
-                      }
-                  },
-
                   /**
                    * Generic file action event handler
                    *
