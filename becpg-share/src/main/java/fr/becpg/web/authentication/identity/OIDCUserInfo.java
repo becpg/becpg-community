@@ -25,49 +25,44 @@
  */
 package fr.becpg.web.authentication.identity;
 
+import java.io.Serializable;
 import java.util.stream.Stream;
 
 /**
  * Contains a set of required claims about the authentication of an End-User.
  */
-public class OIDCUserInfo
-{
-    private final String username;
-    private final String firstName;
-    private final String lastName;
-    private final String email;
+public class OIDCUserInfo implements Serializable {
+	private static final long serialVersionUID = 8783635213477410870L;
+	private final String username;
+	private final String firstName;
+	private final String lastName;
+	private final String email;
 
-    public OIDCUserInfo(String username, String firstName, String lastName, String email)
-    {
-        this.username = username;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-    }
+	public OIDCUserInfo(String username, String firstName, String lastName, String email) {
+		this.username = username;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.email = email;
+	}
 
-    public String username()
-    {
-        return username;
-    }
+	public String username() {
+		return username;
+	}
 
-    public String firstName()
-    {
-        return firstName;
-    }
+	public String firstName() {
+		return firstName;
+	}
 
-    public String lastName()
-    {
-        return lastName;
-    }
+	public String lastName() {
+		return lastName;
+	}
 
-    public String email()
-    {
-        return email;
-    }
+	public String email() {
+		return email;
+	}
 
-    public boolean allFieldsNotEmpty()
-    {
-        return Stream.of(username, firstName, lastName, email).allMatch(field -> field != null && !field.isEmpty());
-    }
+	public boolean allFieldsNotEmpty() {
+		return Stream.of(username, firstName, lastName, email).allMatch(field -> (field != null) && !field.isEmpty());
+	}
 
 }
