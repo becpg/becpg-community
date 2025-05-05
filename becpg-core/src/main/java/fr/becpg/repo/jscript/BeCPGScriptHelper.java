@@ -2099,21 +2099,21 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 */
 	public boolean classifyByPropAndHierarchy(ScriptNode productNode, ScriptNode folderNode, String propHierarchy, String propPathName,
 			String locale) {
-		if (propPathName != null && propPathName.isBlank()) {
+		if (propPathName != null && !propPathName.isBlank()) {
 			String subFolderName = null;
 			String[] split = propPathName.split("\\|");
+			String propertyName = split[split.length - 1]; 
 			if (split.length == 1) {
-				QName propPathNameQName = getQName(propPathName);
+				QName propPathNameQName = getQName(propertyName);
 				Serializable propValue = nodeService.getProperty(productNode.getNodeRef(), propPathNameQName);
 				if (propValue != null) {
 					subFolderName = propValue.toString();
 				}
 			} else {
-				String assocName = split[0];
-				String property = split[split.length - 1];
-				NodeRef finalAssoc = classifyPropAndHierarchyExtractAssoc(productNode.getNodeRef(), assocName, new ArrayList<>(Arrays.asList(split)));
-				if (finalAssoc != null) {
-					Serializable propValue = nodeService.getProperty(finalAssoc, getQName(property));
+				String firstAssocName = split[0];
+				NodeRef lastAssocNodeRef = classifyPropAndHierarchyExtractAssoc(productNode.getNodeRef(), firstAssocName, new ArrayList<>(Arrays.asList(split)));
+				if (lastAssocNodeRef != null) {
+					Serializable propValue = nodeService.getProperty(lastAssocNodeRef, getQName(propertyName));
 					if (propValue != null) {
 						subFolderName = propValue.toString();
 					}
@@ -2121,7 +2121,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 			}
 			if (subFolderName != null && !subFolderName.isBlank()) {
 				if (locale != null && !locale.isBlank()) {
-					subFolderName = getMLConstraint(subFolderName, propPathName, locale);
+					subFolderName = getMLConstraint(subFolderName, propertyName, locale);
 				}
 				NodeRef childNodeRef = nodeService.getChildByName(folderNode.getNodeRef(), ContentModel.ASSOC_CONTAINS, subFolderName);
 				if (childNodeRef == null) {
@@ -2134,7 +2134,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	}
 
 	private NodeRef classifyPropAndHierarchyExtractAssoc(NodeRef nodeRef, String assocName, List<String> assocList) {
-		if (assocList.isEmpty()) {
+		if (assocList.size() == 1) {
 			return nodeRef;
 		}
 		String nextAssocName = assocList.get(0);
