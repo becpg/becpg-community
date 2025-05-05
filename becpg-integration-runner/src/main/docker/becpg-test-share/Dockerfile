@@ -1,4 +1,4 @@
-FROM ${docker.becpg.url}/becpg-base-share:${docker.becpg.tag} as builder
+FROM ${docker.becpg.url}/becpg-base-share:${docker.becpg.tag} AS builder
 
 ENV TOMCAT_DIR=/usr/local/tomcat
 
