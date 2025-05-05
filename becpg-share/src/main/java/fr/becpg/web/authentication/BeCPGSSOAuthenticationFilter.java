@@ -6,7 +6,7 @@ import static org.alfresco.web.site.SlingshotPageView.REDIRECT_URI;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLEncoder; // Utiliser java.net.URLEncoder standard
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.util.Collections;
@@ -20,12 +20,14 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
+import org.alfresco.web.site.servlet.config.AIMSConfig;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.extensions.config.ConfigService;
@@ -48,12 +50,8 @@ import org.springframework.extensions.webscripts.connector.ConnectorService;
 import org.springframework.extensions.webscripts.connector.HttpMethod;
 import org.springframework.extensions.webscripts.connector.Response;
 import org.springframework.extensions.webscripts.servlet.DependencyInjectedFilter;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistration.ProviderDetails;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -87,8 +85,8 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 
 	private static final Log LOGGER = LogFactory.getLog(BeCPGSSOAuthenticationFilter.class);
 
-    private static final Set<String> SCOPES = Set.of("openid", "profile", "email", "offline_access");
-	
+	private static final Set<String> SCOPES = Set.of("openid", "profile", "email", "offline_access");
+
 	// --- Constants ---
 	private static final String HEADER_AUTHORIZATION = "Authorization";
 	private static final String HEADER_ACCEPT_LANGUAGE = "Accept-Language";
@@ -119,13 +117,11 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 
 	// --- OAuth2 Initiation Configuration ---
 	private boolean initiateOAuthRedirect = false; // Enable/disable OAuth initiation
-	private String oauthClientRegistrationId; 
+	private String oauthClientRegistrationId;
 
 	// --- Internal Services ---
-	private IdentityServiceFacade identityServiceFacade; // For validating Bearer tokens
+	private IdentityServiceFacade identityServiceFacade;
 	private IdentityServiceElement identityServiceConfig;
-	
-	
 
 	public void setInitiateOAuthRedirect(boolean initiateOAuthRedirect) {
 		this.initiateOAuthRedirect = initiateOAuthRedirect;
@@ -158,7 +154,7 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 
 		// Check if external authentication is enabled for the endpoint
 		EndpointDescriptor endpointDescriptor = remoteConfig.getEndpointDescriptor(endpoint);
-		if (endpointDescriptor == null || !endpointDescriptor.getExternalAuth()) {
+		if ((endpointDescriptor == null) || !endpointDescriptor.getExternalAuth()) {
 			if (LOGGER.isDebugEnabled()) {
 				LOGGER.debug("External authentication not enabled for endpoint '" + endpoint
 						+ "' or endpoint not found. Filter will be disabled for this endpoint.");
@@ -180,17 +176,15 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 				this.userHeader = conn.getConnectorSession().getParameter(BeCPGExternalConnector.CS_PARAM_USER_HEADER);
 				String connectorUserIdPattern = conn.getConnectorSession().getParameter(BeCPGExternalConnector.CS_PARAM_USER_ID_PATTERN);
 				if (StringUtils.hasText(connectorUserIdPattern)) {
-						this.userIdPattern = Pattern.compile(connectorUserIdPattern);
+					this.userIdPattern = Pattern.compile(connectorUserIdPattern);
 				}
 				if (LOGGER.isDebugEnabled()) {
 					LOGGER.debug("User header (userHeader): " + userHeader);
 					LOGGER.debug("Extraction pattern (userIdPattern): " + connectorUserIdPattern);
 				}
-			} else {
-				if (LOGGER.isDebugEnabled()) {
-					LOGGER.debug("The connector for endpoint '" + endpoint
-							+ "' is not of type BeCPGExternalConnector or does not provide header parameters.");
-				}
+			} else if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug(
+						"The connector for endpoint '" + endpoint + "' is not of type BeCPGExternalConnector or does not provide header parameters.");
 			}
 		} catch (ConnectorServiceException e) {
 			LOGGER.error("Unable to find connector '" + endpointDescriptor.getConnectorId() + "' for endpoint '" + endpoint, e);
@@ -201,38 +195,30 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 		IdentityServiceElement oauth2Config = (IdentityServiceElement) configService.getConfig(IdentityServiceElement.CONFIG_ELEMENT_ID)
 				.getConfigElement(IdentityServiceElement.CONFIG_ELEMENT_ID);
 		if (oauth2Config != null) {
-			
-			this.identityServiceConfig  = oauth2Config;
+
+			this.identityServiceConfig = oauth2Config;
 			// Get principal attribute (e.g.: preferred_username, sub, email)
 			String configPrincipalAttr = oauth2Config.getPrincipalAttribute();
 			if (StringUtils.hasText(configPrincipalAttr)) {
 				this.principalAttribute = configPrincipalAttr;
 			}
-			
+
 			String configResource = oauth2Config.getResource();
 			if (StringUtils.hasText(configResource)) {
 				this.oauthClientRegistrationId = configResource;
 			}
-			
+
 			if (LOGGER.isDebugEnabled()) {
 				LOGGER.debug("OAuth2 principal attribute used (principalAttribute): " + this.principalAttribute);
 			}
 
-			// Initialize the facade
-			try {
-				IdentityServiceFacadeFactoryBean factory = new IdentityServiceFacadeFactoryBean(oauth2Config);
-				this.identityServiceFacade = factory.createIdentityServiceFacade();
-				if (LOGGER.isDebugEnabled()) {
-					LOGGER.debug("IdentityServiceFacade initialized successfully.");
-				}
-			} catch (Exception e) {
-				LOGGER.error("Failed to initialize IdentityServiceFacade. OAuth2 Bearer token validation might fail.", e);
-				this.identityServiceFacade = null; // Ensure it's null in case of error
+			// The IdentityServiceFacade will be lazily initialized when first needed
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("IdentityServiceFacade will be initialized lazily when first needed.");
 			}
 		} else {
 			LOGGER.warn("Configuration <" + IdentityServiceElement.CONFIG_ELEMENT_ID
 					+ "> manquante. La validation des tokens Bearer OAuth2 ne sera pas disponible.");
-			this.identityServiceFacade = null;
 		}
 
 		// Log initialization completion
@@ -242,13 +228,11 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 						"BeCPGSSOAuthenticationFilter initialized. Active mode(s):" + (StringUtils.hasText(this.endpoint) ? " [Endpoint Check]" : "")
 								+ (StringUtils.hasText(this.userHeader) ? " [Header Auth]" : "")
 								+ (this.initiateOAuthRedirect && StringUtils.hasText(this.oauthClientRegistrationId) ? " [OAuth Initiation]" : "")
-								+ (this.identityServiceFacade != null ? " [OAuth Validation]" : ""));
+								+ (this.identityServiceConfig != null ? " [OAuth Validation]" : ""));
 			}
-		} else {
-			if (LOGGER.isInfoEnabled()) {
-				LOGGER.info(
-						"BeCPGSSOAuthenticationFilter initialized, but no active configuration detected (no external endpoint, no OAuth initiation). Filter will be inactive.");
-			}
+		} else if (LOGGER.isInfoEnabled()) {
+			LOGGER.info(
+					"BeCPGSSOAuthenticationFilter initialized, but no active configuration detected (no external endpoint, no OAuth initiation). Filter will be inactive.");
 		}
 	}
 
@@ -268,7 +252,6 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 		this.endpoint = endpoint;
 	}
 
-
 	// --- Main Filter Logic ---
 
 	/** {@inheritDoc} */
@@ -283,6 +266,80 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 	 */
 	public void doFilter(ServletRequest sreq, ServletResponse sresp, FilterChain chain) throws IOException, ServletException {
 		final boolean debug = LOGGER.isDebugEnabled();
+		
+		
+		   // Skip this filter, if AIMS is enabled
+        boolean skip = false;
+        try
+        {
+            AIMSConfig aimsConfig = (AIMSConfig) this.context.getBean("aims.config");
+            if (aimsConfig.isEnabled())
+            {
+                skip = true;
+            }
+        }
+        catch (BeansException e)
+        {
+            if (LOGGER.isErrorEnabled())
+            {
+            	LOGGER.error(e);
+            }
+        }
+
+        // If AIMS filter is enabled, skip this filter
+        if (skip == true)
+        {
+            chain.doFilter(sreq, sresp);
+            return;
+        }
+
+
+        
+		// Cast to HttpServletRequest/Response for early OAuth callback detection
+		HttpServletRequest req = (HttpServletRequest) sreq;
+		HttpServletResponse res = (HttpServletResponse) sresp;
+
+		// Check if this request is an OAuth callback - either by parameters or URL pattern
+		String authCode = req.getParameter("code");
+		String state = req.getParameter("state");
+		String requestUri = req.getRequestURI();
+		boolean isOAuthCallback = (StringUtils.hasText(authCode) && StringUtils.hasText(state))
+				|| ((requestUri != null) && requestUri.contains("/oauth/callback"));
+
+		if (isOAuthCallback) {
+			if (LOGGER.isInfoEnabled()) {
+				LOGGER.info("Detected OAuth callback: URI=" + requestUri + ", code=" + (authCode != null ? "present" : "missing") + ", state="
+						+ (state != null ? "present" : "missing"));
+			}
+
+			try {
+				// Handle the OAuth callback directly
+				boolean success = handleOAuthCallback(req, res, authCode, state);
+				if (success) {
+					// Redirect to the original URL stored in session
+					String redirectUrl = (String) req.getSession().getAttribute(REDIRECT_URI);
+					String redirectQuery = (String) req.getSession().getAttribute(REDIRECT_QUERY);
+
+					if (!StringUtils.hasText(redirectUrl)) {
+						redirectUrl = "/share/page/"; // Default landing page
+					}
+
+					if (StringUtils.hasText(redirectQuery)) {
+						redirectUrl += "?" + redirectQuery;
+					}
+
+					res.sendRedirect(redirectUrl);
+				} else {
+					// Authentication failed, redirect to login page with error
+					redirectToLoginPageWithError(req, res, "sso.error.oauth.exchange");
+				}
+				return;
+			} catch (Exception e) {
+				LOGGER.error("Error processing OAuth callback", e);
+				redirectToLoginPageWithError(req, res, "sso.error.oauth.callback");
+				return;
+			}
+		}
 
 		// Wrap request to handle header authentication or existing OAuth
 		sreq = wrapHeaderAuthenticatedRequest(sreq);
@@ -299,14 +356,12 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 			return;
 		}
 
-		// Cast vers HttpServletRequest/Response
-		HttpServletRequest req = (HttpServletRequest) sreq;
-		HttpServletResponse res = (HttpServletResponse) sresp;
-		HttpSession session = req.getSession(); // Get session, create if necessary
+		// Get session, create if necessary
+		HttpSession session = req.getSession();
 
 		// Bypass for unauthenticated proxies
 		String servletPath = req.getServletPath();
-		if (servletPath != null && (servletPath.startsWith(UNAUTHENTICATED_ACCESS_PROXY) || servletPath.startsWith(AI_ACCESS_PROXY))) {
+		if ((servletPath != null) && (servletPath.startsWith(UNAUTHENTICATED_ACCESS_PROXY) || servletPath.startsWith(AI_ACCESS_PROXY))) {
 			if (debug) {
 				LOGGER.debug("Request to unauthenticated proxy (" + servletPath + "). Bypassing SSO filter.");
 			}
@@ -321,7 +376,7 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 		// Bypass for Share login page itself
 		String pathInfo = req.getPathInfo(); // Peut être null
 		if (PAGE_SERVLET_PATH.equals(servletPath)
-				&& (LOGIN_PATH_INFORMATION.equals(pathInfo) || (pathInfo == null && LOGIN_PARAMETER.equals(req.getParameter("pt"))))) {
+				&& (LOGIN_PATH_INFORMATION.equals(pathInfo) || ((pathInfo == null) && LOGIN_PARAMETER.equals(req.getParameter("pt"))))) {
 			if (debug) {
 				LOGGER.debug("Request to Share login page. Bypassing SSO filter.");
 			}
@@ -342,7 +397,7 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 
 		// Check if requested Surf page does NOT require authentication
 		Page page = findSurfPage(rcontext, pathInfo);
-		if (page != null && page.getAuthentication() == RequiredAuthentication.none) {
+		if ((page != null) && (page.getAuthentication() == RequiredAuthentication.none)) {
 			if (debug) {
 				LOGGER.debug("Surf page '" + page.getId() + "' does not require authentication. Bypassing SSO filter.");
 			}
@@ -364,6 +419,7 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 			return;
 		}
 
+		 
 		// Check 2: External header authentication (e.g.: X-Alfresco-Remote-User)
 		// Note: req.getRemoteUser() will return the header user thanks to wrapHeaderAuthenticatedRequest
 		if (StringUtils.hasText(this.userHeader)) {
@@ -376,42 +432,42 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 				}
 				// Mark as external auth BEFORE /touch call, as /touch might fail if repo session expired
 				setExternalAuthSession(session);
-				// The challengeOrPassThrough call will verify the Alfresco session (/touch)
-				challengeOrPassThrough(chain, req, res, session);
+				   onSuccess(req, res, session, req.getRemoteUser());
+		              chain.doFilter(sreq, sresp);
+		              return;
 			} else {
 				// Header configured but not found/empty in request.
 				if (debug) {
 					LOGGER.debug("Header '" + this.userHeader + "' configured but not found or empty. Continuing checks.");
 				}
-				// No user by header, must check session or initiate authentication.
-				challengeOrPassThrough(chain, req, res, session);
 			}
+			// The challengeOrPassThrough call will verify the Alfresco session (/touch)
+			challengeOrPassThrough(chain, req, res, session);
 			return; // challengeOrPassThrough handles the rest
 		}
 
+
+       
+		
 		// Check 3: Existing Share session (cookie-based) or Authorization header (Basic)
 		String authHdr = req.getHeader(HEADER_AUTHORIZATION); // Mainly for Basic Auth
-		if (authHdr == null && AuthenticationUtil.isAuthenticated(req)) {
+		if ((authHdr == null) && AuthenticationUtil.isAuthenticated(req)) {
 			// No Auth header, but Share session exists (AuthenticationUtil uses session attribute)
 			if (debug) {
 				LOGGER.debug("Existing Share session detected. Validating Alfresco session via challengeOrPassThrough.");
 			}
-			challengeOrPassThrough(chain, req, res, session);
 		} else if (authHdr != null) {
 			// Authorization header present (could be Basic). Let challengeOrPassThrough attempt validation.
 			if (debug) {
 				LOGGER.debug("Authorization header detected. Processing via challengeOrPassThrough.");
 			}
-			// Note: A Bearer token should have already been handled by getOAuth2Username.
-			// If we get here with a Bearer, it means it was invalid or not processable by identityServiceFacade.
-			challengeOrPassThrough(chain, req, res, session);
 		} else {
 			// Final case: No authentication detected (no valid OAuth, no user header, no Share session, no Auth header)
 			if (debug) {
 				LOGGER.debug("No pre-existing authentication detected. Initiating authentication process via challengeOrPassThrough.");
 			}
-			challengeOrPassThrough(chain, req, res, session); // Will trigger /touch verification and potentially OAuth initiation
 		}
+		challengeOrPassThrough(chain, req, res, session);
 	}
 
 	/**
@@ -419,7 +475,7 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 	 */
 	private Page findSurfPage(RequestContext rcontext, String pathInfo) {
 		Page page = rcontext.getPage();
-		if (page == null && pathInfo != null) {
+		if ((page == null) && (pathInfo != null)) {
 			PageViewResolver pageViewResolver = (PageViewResolver) this.context.getBean(PAGE_VIEW_RESOLVER);
 			try {
 				if (pageViewResolver.resolveViewName(pathInfo, null) != null) {
@@ -465,13 +521,14 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 				}
 
 				private String extractUserFromProxyHeader(String userIdHeader) {
-					if (userIdHeader == null)
+					if (userIdHeader == null) {
 						return null;
+					}
 					if (userIdPattern == null) {
 						return userIdHeader.trim(); // No pattern, take everything after trimming
 					} else {
 						Matcher matcher = userIdPattern.matcher(userIdHeader);
-						if (matcher.matches() && matcher.groupCount() >= 1) {
+						if (matcher.matches() && (matcher.groupCount() >= 1)) {
 							// Return the first capturing group, trimmed
 							String extracted = matcher.group(1);
 							return extracted != null ? extracted.trim() : null;
@@ -479,7 +536,7 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 							// Pattern doesn't match or has no capturing group
 							if (LOGGER.isDebugEnabled()) {
 								LOGGER.debug("Header '" + userHeader + "' (" + userIdHeader
-								+ ") does not match configured pattern or has no capturing group.");
+										+ ") does not match configured pattern or has no capturing group.");
 							}
 							return null;
 						}
@@ -534,35 +591,14 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 	 * @return The username if found, otherwise null.
 	 */
 	private String getOAuth2Username(HttpServletRequest req) {
-		// 1. Check Spring security context
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		if (auth instanceof OAuth2AuthenticationToken oauthToken) {
-			OAuth2User oauth2User = oauthToken.getPrincipal();
-			String username = extractUsernameFromOAuth2User(oauth2User);
-			if (username != null) {
-				// Store OAuth2User object in session for subsequent requests (if session exists)
-				HttpSession session = req.getSession(false); // Don't create session if it doesn't exist
-				if (session != null) {
-					session.setAttribute(OAUTH2_SESSION_ATTRIBUTE, oauth2User);
-					if (LOGGER.isDebugEnabled()) {
-						LOGGER.debug("OAuth2 user found in SecurityContextHolder: '" + username + "'. Stored in session.");
-					}
-				} else {
-					if (LOGGER.isDebugEnabled()) {
-						LOGGER.debug(
-								"OAuth2 user found in SecurityContextHolder: '" + username + "'. No HTTP session to store it.");
-					}
-				}
-				return username;
-			}
-		}
+		
 
 		// 2. Check HTTP session (if user comes from a previous request)
 		HttpSession session = req.getSession(false); // Don't create session
 		if (session != null) {
-			OAuth2User oauth2User = (OAuth2User) session.getAttribute(OAUTH2_SESSION_ATTRIBUTE);
+			OIDCUserInfo oauth2User = (OIDCUserInfo) session.getAttribute(OAUTH2_SESSION_ATTRIBUTE);
 			if (oauth2User != null) {
-				String username = extractUsernameFromOAuth2User(oauth2User);
+				String username =oauth2User.username();
 				if (username != null) {
 					if (LOGGER.isDebugEnabled()) {
 						LOGGER.debug("OAuth2 user found in HTTP session: '" + username + "'.");
@@ -574,12 +610,12 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 
 		// 3. Check Authorization: Bearer header
 		String authHeader = req.getHeader(HEADER_AUTHORIZATION);
-		if (authHeader != null && authHeader.toLowerCase().startsWith("bearer ") && this.identityServiceFacade != null) {
+		if ((authHeader != null) && authHeader.toLowerCase().startsWith("bearer ") && (getIdentityServiceFacade() != null)) {
 			try {
 				String token = authHeader.substring(7).trim();
 				if (!token.isEmpty()) {
 					// Validate token and get user information via facade
-					Optional<OIDCUserInfo> userInfoOpt = identityServiceFacade.getUserInfo(token, principalAttribute);
+					Optional<OIDCUserInfo> userInfoOpt = getIdentityServiceFacade().getUserInfo(token, principalAttribute);
 
 					if (userInfoOpt.isPresent()) {
 						String username = userInfoOpt.get().username();
@@ -588,10 +624,8 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 						}
 						// We could potentially store info in session here too, but it's less common for Bearer tokens
 						return username;
-					} else {
-						if (LOGGER.isDebugEnabled()) {
-							LOGGER.debug("Bearer token presented but invalid or user not found via IdentityServiceFacade.");
-						}
+					} else if (LOGGER.isDebugEnabled()) {
+						LOGGER.debug("Bearer token presented but invalid or user not found via IdentityServiceFacade.");
 					}
 				}
 			} catch (Exception e) {
@@ -599,30 +633,10 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 				LOGGER.warn("Error validating Bearer token via IdentityServiceFacade: " + e.getMessage(), e);
 			}
 		}
-
 		// No OAuth2 user found
 		return null;
 	}
 
-	/**
-	 * Extracts the username from the OAuth2User object using the configured attribute.
-	 */
-	private String extractUsernameFromOAuth2User(OAuth2User oauth2User) {
-		if (oauth2User == null)
-			return null;
-
-		Object userAttr = oauth2User.getAttribute(this.principalAttribute);
-		if (userAttr != null) {
-			return userAttr.toString();
-		} else {
-			// Fallback to getName() if principal attribute not found
-			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("OAuth2 principal attribute '" + this.principalAttribute
-						+ "' not found in OAuth2User. Using getName() as fallback.");
-			}
-			return oauth2User.getName(); // getName() often corresponds to the 'sub' attribute
-		}
-	}
 
 	/**
 	 * Verifies Alfresco session validity via /touch call.
@@ -642,11 +656,12 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 		// Endpoint must be configured for this method
 		if (!StringUtils.hasText(this.endpoint)) {
 			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("challengeOrPassThrough called without configured endpoint. Attempting OAuth initiation if enabled, otherwise passing through.");
+				LOGGER.debug(
+						"challengeOrPassThrough called without configured endpoint. Attempting OAuth initiation if enabled, otherwise passing through.");
 			}
 			// If endpoint is not there, we can't do /touch.
 			// Simulate a 401 response to trigger required authentication logic.
-			handleAuthenticationRequired(req, res, session, null); // null for Response since we haven't called /touch
+			handleAuthenticationRequired(req, res, session); // null for Response since we haven't called /touch
 			return; // handleAuthenticationRequired handles the rest (redirect or chain.doFilter if OAuth disabled)
 		}
 
@@ -654,18 +669,16 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 			// Determine user for /touch call.
 			// Priority: Share Session > Header (via wrapped req.getRemoteUser()) > null (anonymous)
 			String userIdForTouch = AuthenticationUtil.getUserId(req); // From Share session
-			boolean isHeaderAuthUser = false;
 
-			if (userIdForTouch == null && StringUtils.hasText(this.userHeader)) {
+			if ((userIdForTouch == null) && StringUtils.hasText(this.userHeader)) {
 				// No user in Share session, check if header provides one
 				userIdForTouch = req.getRemoteUser(); // Should come from header via wrapper
 				if (StringUtils.hasText(userIdForTouch)) {
-					isHeaderAuthUser = true;
 					if (LOGGER.isDebugEnabled()) {
 						LOGGER.debug("Using header user '" + userIdForTouch + "' for /touch verification.");
 					}
 					// Ensure external auth flag is set if this is the first time we see this user header
-					if (session != null && session.getAttribute(UserFactory.SESSION_ATTRIBUTE_EXTERNAL_AUTH) == null) {
+					if ((session != null) && (session.getAttribute(UserFactory.SESSION_ATTRIBUTE_EXTERNAL_AUTH) == null)) {
 						setExternalAuthSession(session);
 					}
 				}
@@ -692,7 +705,7 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 			if (Status.STATUS_OK == statusCode) {
 				// Alfresco session OK.
 				String finalUserId = userIdForTouch; // Identified user (session or header)
-				if (finalUserId == null && isHeaderAuthUser) {
+				if (finalUserId == null) {
 					// Strange case: /touch OK but we only had a user header? Can happen if anonymous /touch OK.
 					// Use the header user as final user.
 					finalUserId = req.getRemoteUser();
@@ -706,13 +719,11 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 					if (LOGGER.isDebugEnabled()) {
 						LOGGER.debug("Alfresco session validated for user '" + finalUserId + "'. Continuing request.");
 					}
-				} else {
-					// /touch OK but no user identified (session or header). Could be authorized anonymous access.
-					if (LOGGER.isDebugEnabled()) {
-						LOGGER.debug("Alfresco session validated (potentially anonymous). Continuing without locally defined user.");
-					}
-					// Don't call onSuccess without userId.
+				} else // /touch OK but no user identified (session or header). Could be authorized anonymous access.
+				if (LOGGER.isDebugEnabled()) {
+					LOGGER.debug("Alfresco session validated (potentially anonymous). Continuing without locally defined user.");
 				}
+				// Don't call onSuccess without userId.
 
 				// Valid session, continue filter chain
 				chain.doFilter(req, res);
@@ -722,7 +733,7 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 				if (LOGGER.isDebugEnabled()) {
 					LOGGER.debug("Alfresco session invalid or missing (/touch response: 401). Triggering authentication process.");
 				}
-				handleAuthenticationRequired(req, res, session, remoteRes); // Handles OAuth redirection, challenge or login page
+				handleAuthenticationRequired(req, res, session); // Handles OAuth redirection, challenge or login page
 
 			} else {
 				// Other error during /touch call (500, 404, etc.)
@@ -732,9 +743,7 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 				redirectToLoginPageWithError(req, res, "sso.error.repository.unavailable"); // Message key to define
 			}
 		} catch (ConnectorServiceException cse) {
-			LOGGER.error(
-					"Connector service error during challengeOrPassThrough for endpoint '" + this.endpoint + "'. Check configuration.",
-					cse);
+			LOGGER.error("Connector service error during challengeOrPassThrough for endpoint '" + this.endpoint + "'. Check configuration.", cse);
 			//throw new PlatformRuntimeException("Endpoint or connector misconfigured: " + this.endpoint, cse); // Maybe too harsh
 			redirectToLoginPageWithError(req, res, "sso.error.config"); // Message key
 		} catch (Exception e) {
@@ -743,78 +752,108 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 			redirectToLoginPageWithError(req, res, "sso.error.unexpected"); // Message key
 		}
 	}
-	
 
-    private String getAuthenticationRequest(HttpServletRequest request)
-    {
-        ClientRegistration clientRegistration = identityServiceFacade.getClientRegistration();
-        State state = new State();
+	private String getAuthenticationRequest(HttpServletRequest request) {
+		ClientRegistration clientRegistration = getIdentityServiceFacade().getClientRegistration();
+		State state = new State();
 
-        UriComponentsBuilder authRequestBuilder = UriComponentsBuilder.fromUriString(clientRegistration.getProviderDetails().getAuthorizationUri())
-            .queryParam("client_id", clientRegistration.getClientId())
-            .queryParam("redirect_uri", getRedirectUri(request.getRequestURL().toString()))
-            .queryParam("response_type", "code")
-            .queryParam("scope", String.join("+", getScopes(clientRegistration)))
-            .queryParam("state", state.toString());
+		UriComponentsBuilder authRequestBuilder = UriComponentsBuilder.fromUriString(clientRegistration.getProviderDetails().getAuthorizationUri())
+				.queryParam("client_id", clientRegistration.getClientId())
+				.queryParam("redirect_uri", getRedirectUri(request.getRequestURL().toString())).queryParam("response_type", "code")
+				.queryParam("scope", String.join("+", getScopes(clientRegistration))).queryParam("state", state.toString());
 
-        if(identityServiceConfig.getAudience()!=null)
-        {
-            authRequestBuilder.queryParam("audience", identityServiceConfig.getAudience());
-        }
+		if (identityServiceConfig.getAudience() != null) {
+			authRequestBuilder.queryParam("audience", identityServiceConfig.getAudience());
+		}
 
-        return authRequestBuilder.build().toUriString();
-    }
+		return authRequestBuilder.build().toUriString();
+	}
 
-    private Set<String> getScopes(ClientRegistration clientRegistration)
-    {
-        return Optional.ofNullable(clientRegistration.getProviderDetails())
-            .map(ProviderDetails::getConfigurationMetadata)
-            .map(metadata -> metadata.get(IdentityServiceMetadataKey.SCOPES_SUPPORTED.getValue()))
-            .filter(Scope.class::isInstance)
-            .map(Scope.class::cast)
-            .map(this::getSupportedScopes)
-            .orElse(clientRegistration.getScopes());
-    }
+	private Set<String> getScopes(ClientRegistration clientRegistration) {
+		return Optional.ofNullable(clientRegistration.getProviderDetails()).map(ProviderDetails::getConfigurationMetadata)
+				.map(metadata -> metadata.get(IdentityServiceMetadataKey.SCOPES_SUPPORTED.getValue())).filter(Scope.class::isInstance)
+				.map(Scope.class::cast).map(this::getSupportedScopes).orElse(clientRegistration.getScopes());
+	}
 
-    private Set<String> getSupportedScopes(Scope scopes)
-    {
-        return scopes.stream()
-            .filter(scope -> SCOPES.contains(scope.getValue()))
-            .map(Identifier::getValue)
-            .collect(Collectors.toSet());
-    }
+	private Set<String> getSupportedScopes(Scope scopes) {
+		return scopes.stream().filter(scope -> SCOPES.contains(scope.getValue())).map(Identifier::getValue).collect(Collectors.toSet());
+	}
 
-    private String getRedirectUri(String requestURL)
-    {
-        try
-        {
-            URI originalUri = new URI(requestURL);
-            URI redirectUri = new URI(originalUri.getScheme(), originalUri.getAuthority(), identityServiceConfig.getAdminConsoleRedirectPath(), originalUri.getQuery(), originalUri.getFragment());
-            return redirectUri.toASCIIString();
-        }
-        catch (URISyntaxException e)
-        {
-            LOGGER.error("Error while trying to get the redirect URI and respond with the authentication challenge: {}", e);
-            return null;
-        }
-    }
+	/**
+	 * Builds the OAuth callback URL for use in the authorization request.
+	 * This needs to match what the OAuth provider has configured for the client's callback URL.
+	 *
+	 * @param requestURL The original request URL
+	 * @return The URI to use for the OAuth callback
+	 */
+	private String getRedirectUri(String requestURL) {
+		try {
+			URI originalUri = new URI(requestURL);
+			String callbackPath = "/share/page/oauth/callback";
 
+			// Build a URL that will be handled by this filter's doFilter method
+			URI redirectUri = new URI(originalUri.getScheme(), originalUri.getAuthority(), callbackPath, null, null);
+
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("Using OAuth callback URL: " + redirectUri.toASCIIString());
+			}
+
+			return redirectUri.toASCIIString();
+		} catch (URISyntaxException e) {
+			LOGGER.error("Error while trying to get the redirect URI and respond with the authentication challenge: {}", e);
+			return null;
+		}
+	}
 
 	/**
 	 * Handles the situation where authentication is required (typically after a 401 from /touch).
 	 * Decides whether to initiate OAuth redirection, send an NTLM/Kerberos challenge,
 	 * or redirect to Share's local login page.
 	 */
-	private void handleAuthenticationRequired(HttpServletRequest req, HttpServletResponse res, HttpSession session, Response remoteRepoResponse)
-			throws IOException {
+	/**
+	 * Lazily initializes and returns the IdentityServiceFacade instance.
+	 * This method uses double-checked locking for thread safety.
+	 *
+	 * @return The IdentityServiceFacade instance, or null if initialization fails
+	 */
+	private IdentityServiceFacade getIdentityServiceFacade() {
+		if ((this.identityServiceFacade == null) && (this.identityServiceConfig != null)) {
+			synchronized (this) {
+				if (this.identityServiceFacade == null) {
+					try {
+						IdentityServiceFacadeFactoryBean factory = new IdentityServiceFacadeFactoryBean(this.identityServiceConfig);
+						this.identityServiceFacade = factory.createIdentityServiceFacade();
+						if (LOGGER.isDebugEnabled()) {
+							LOGGER.debug("IdentityServiceFacade initialized successfully.");
+						}
+					} catch (Exception e) {
+						LOGGER.error("Failed to initialize IdentityServiceFacade. OAuth2 Bearer token validation might fail.", e);
+						this.identityServiceFacade = null; // Ensure it's null in case of error
+					}
+				}
+			}
+		}
+		return this.identityServiceFacade;
+	}
+
+	private void handleAuthenticationRequired(HttpServletRequest req, HttpServletResponse res, HttpSession session) throws IOException {
 
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Authentication required. Checking strategy: OAuth Init? Challenge? Login Page?");
 		}
 
+		// Check if this request already has code and state parameters, which would indicate it's a callback from OAuth
+		String authCode = req.getParameter("code");
+		String state = req.getParameter("state");
+		boolean isOAuthCallback = StringUtils.hasText(authCode) && StringUtils.hasText(state);
+
 		// Priority 1: Initiate OAuth2 redirection if configured and applicable
 		boolean canInitiateOAuth = this.initiateOAuthRedirect && StringUtils.hasText(this.oauthClientRegistrationId)
-				&& this.identityServiceFacade != null; // Also check that basic OAuth config seems OK
+				&& (getIdentityServiceFacade() != null) && !isOAuthCallback; // Don't initiate if this is already a callback
+
+		if (isOAuthCallback && LOGGER.isInfoEnabled()) {
+			LOGGER.info("handleAuthenticationRequired: Not initiating OAuth redirection for request that is already an OAuth callback.");
+		}
 
 		if (canInitiateOAuth) {
 			// OAuth redirection configured and ready
@@ -825,9 +864,11 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 			setRedirectUrl(req); // Save original URL before redirecting
 			String oauthRedirectUrl = getAuthenticationRequest(req);
 			try {
+				if (LOGGER.isInfoEnabled()) {
+					LOGGER.info("Redirecting to OAuth2 authorization URL: " + oauthRedirectUrl);
+				}
 				res.sendRedirect(oauthRedirectUrl);
 				// Request processing stops here for this filter.
-				// Spring Security will take over to handle /oauth2/authorization/*.
 				return; // Important: stop processing here
 			} catch (IOException e) {
 				LOGGER.error("Error during redirection to OAuth2 authorization URL: " + oauthRedirectUrl, e);
@@ -839,26 +880,28 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 
 		// Fallback if OAuth is not initiated
 		if (LOGGER.isDebugEnabled()) {
-			if (!this.initiateOAuthRedirect)
+			if (!this.initiateOAuthRedirect) {
 				LOGGER.debug("OAuth initiation disabled (initiateOAuthRedirect=false).");
-			else if (!StringUtils.hasText(this.oauthClientRegistrationId))
+			} else if (!StringUtils.hasText(this.oauthClientRegistrationId)) {
 				LOGGER.debug("OAuth initiation enabled, but oauthClientRegistrationId not defined.");
-			else if (this.identityServiceFacade == null)
-				LOGGER.debug("OAuth initiation enabled, but identityServiceFacade not initialized (check IdentityServiceElement config).");
+			} else if (this.identityServiceConfig == null) {
+				LOGGER.debug("OAuth initiation enabled, but identityServiceConfig not available (check IdentityServiceElement config).");
+			}
 			LOGGER.debug("Fallback to standard authentication handling (NTLM/Kerberos challenge or login page).");
 		}
 
 		// Default case: Redirect to Share's local login page
 		if (LOGGER.isDebugEnabled()) {
-			if (StringUtils.hasText(this.userHeader))
+			if (StringUtils.hasText(this.userHeader)) {
 				LOGGER.debug("Header authentication failed or repo session invalid. Redirecting to login page.");
-			else
+			} else {
 				LOGGER.debug("No other applicable authentication method. Redirecting to login page.");
+			}
 		}
 
 		// Clean session before redirecting to login page,
 		// EXCEPT if authentication comes from external header (we don't want to invalidate proxy/container session)
-		if (req.getRemoteUser() == null && session != null) { // Don't invalidate if user comes from header
+		if ((req.getRemoteUser() == null) && (session != null)) { // Don't invalidate if user comes from header
 			if (LOGGER.isDebugEnabled()) {
 				LOGGER.debug("Invalidating HTTP session before redirecting to login page.");
 			}
@@ -875,8 +918,8 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 		} else if (session != null) {
 			// Even if we don't invalidate (header auth case), clean potentially expired Alfresco creds
 			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("External user '" + req.getRemoteUser()
-						+ "' detected. Cleaning Alfresco credentials from session, but no invalidation.");
+				LOGGER.debug(
+						"External user '" + req.getRemoteUser() + "' detected. Cleaning Alfresco credentials from session, but no invalidation.");
 			}
 			AuthenticationUtil.clearUserContext(req);
 		}
@@ -899,8 +942,6 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 		} else {
 			ctx = new ConnectorContext(); // Empty context by default
 		}
-		// Could add other headers here if needed
-		// Example: ctx.getHeaders().put(HEADER_AUTHORIZATION, "Basic ...");
 		return ctx;
 	}
 
@@ -959,21 +1000,16 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 				LOGGER.debug("API request detected (" + requestUri + "). Sending 401 Unauthorized status.");
 			}
 			res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-			// Optional: Add WWW-Authenticate header to indicate expected auth type (if relevant)
-			// res.setHeader(HEADER_WWWAUTHENTICATE, "Bearer realm=\"Alfresco Share API\""); // Exemple
-			// Envoyer une réponse vide ou un JSON minimal si nécessaire
-			// res.setContentType("application/json");
-			// res.getWriter().write("{\"status\": 401, \"message\": \"Authentication Required\"}");
 			res.flushBuffer(); // Assure que le statut est envoyé
 		}
 	}
 
 	/**
-	 * Sauvegarde l'URI et la query string de la requête originale en session
-	 * pour pouvoir y rediriger l'utilisateur après une authentification réussie.
+	 * Saves the original request's URI and query string in the session
+	 * to redirect the user after successful authentication.
 	 */
 	private void setRedirectUrl(HttpServletRequest req) {
-		HttpSession session = req.getSession(); // Obtient ou crée la session
+		HttpSession session = req.getSession(); // Gets or creates the session
 		String requestUri = req.getRequestURI();
 		String queryString = req.getQueryString();
 
@@ -981,128 +1017,121 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 		if (StringUtils.hasText(queryString)) {
 			session.setAttribute(REDIRECT_QUERY, queryString);
 			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("URL de redirection sauvegardée en session: " + requestUri + "?" + queryString);
+				LOGGER.debug("Redirect URL saved in session: " + requestUri + "?" + queryString);
 			}
 		} else {
-			session.removeAttribute(REDIRECT_QUERY); // Nettoyer si pas de query string
+			session.removeAttribute(REDIRECT_QUERY); // Clean up if no query string
 			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("URL de redirection sauvegardée en session: " + requestUri);
+				LOGGER.debug("Redirect URL saved in session: " + requestUri);
 			}
 		}
 	}
 
 	/**
-	 * Positionne un flag en session pour indiquer que l'authentification
-	 * provient d'un mécanisme externe (SSO, OAuth, Header).
-	 * Utilisé par l'UI de Share (ex: pour masquer le bouton "Login").
+	 * Sets a flag in the session to indicate that authentication
+	 * comes from an external mechanism (SSO, OAuth, Header).
+	 * Used by the Share UI (e.g., to hide the "Login" button).
 	 */
 	private void setExternalAuthSession(HttpSession session) {
 		if (session != null) {
 			session.setAttribute(UserFactory.SESSION_ATTRIBUTE_EXTERNAL_AUTH, Boolean.TRUE);
 			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("Flag d'authentification externe positionné en session (SESSION_ATTRIBUTE_EXTERNAL_AUTH=true).");
+				LOGGER.debug("External authentication flag set in session (SESSION_ATTRIBUTE_EXTERNAL_AUTH=true).");
 			}
-		} else {
-			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("Impossible de positionner le flag d'authentification externe: session est null.");
-			}
+		} else if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Unable to set external authentication flag: session is null.");
 		}
 	}
 
 	/**
-	 * Appelé après une authentification réussie (session validée ou établie).
-	 * Met à jour la session Share avec l'ID utilisateur et appelle `beforeSuccess`
-	 * pour potentiellement charger des informations supplémentaires (comme les groupes).
+	 * Called after successful authentication (session validated or established).
+	 * Updates the Share session with the user ID and calls `beforeSuccess`
+	 * to potentially load additional information (such as groups).
 	 */
 	private void onSuccess(HttpServletRequest req, HttpServletResponse res, HttpSession session, String username) {
-		if (username == null || session == null) {
-			LOGGER.warn("onSuccess appelé avec username ou session null. Impossible de finaliser l'authentification locale.");
-			return;
-		}
+	    if ((username == null) || (session == null)) {
+	        LOGGER.warn("onSuccess called with null username or session. Unable to finalize local authentication.");
+	        return;
+	    }
 
-		// Assurer que l'ID utilisateur est dans la session Share
-		session.setAttribute(UserFactory.SESSION_ATTRIBUTE_KEY_USER_ID, username);
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Utilisateur '" + username + "' positionné dans la session Share (SESSION_ATTRIBUTE_KEY_USER_ID).");
-		}
+	    // Ensure the user ID is in the Share session
+	    session.setAttribute(UserFactory.SESSION_ATTRIBUTE_KEY_USER_ID, username);
+	    if (LOGGER.isDebugEnabled()) {
+	        LOGGER.debug("User '" + username + "' put in Share (SESSION_ATTRIBUTE_KEY_USER_ID).");
+	    }
 
-		try {
-			// Appeler la logique de post-connexion (ex: chargement des groupes)
-			beforeSuccess(req, res);
-		} catch (Exception e) {
-			// Log l'erreur mais ne pas la relancer pour ne pas casser le flux principal si possible
-			LOGGER.error("Erreur lors de l'exécution de beforeSuccess() après l'authentification de '" + username + "'.", e);
-			// On pourrait lever une AlfrescoRuntimeException si c'est critique
-			// throw new AlfrescoRuntimeException("Erreur pendant beforeSuccess() pour " + username, e);
-		}
+	    try {
+	        beforeSuccess(req, res);
+	    } catch (Exception e) {
+	        LOGGER.error("Error while executing beforeSuccess() after authentication of '" + username + "'.", e);
+	    }
 	}
 
-	/**
-	 * Méthode appelée après une authentification réussie pour effectuer des tâches supplémentaires,
-	 * notamment récupérer les groupes de l'utilisateur depuis Alfresco.
-	 */
-	protected void beforeSuccess(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		// Note: Cette méthode semble provenir du LoginController standard de Share.
-		// Elle récupère les groupes de l'utilisateur via un appel API Alfresco.
 
-		final HttpSession session = request.getSession(false); // Ne pas créer si n'existe pas
+	/**
+	 * Method called after successful authentication to perform additional tasks,
+	 * particularly retrieving the user's groups from Alfresco.
+	 */
+	
+	
+	
+	@SuppressWarnings("deprecation")
+	protected void beforeSuccess(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+		final HttpSession session = request.getSession(false); // Don't create if it doesn't exist
 		if (session == null) {
 			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("beforeSuccess: Session non trouvée, impossible de récupérer les groupes.");
+				LOGGER.debug("beforeSuccess: Session not found, unable to retrieve groups.");
 			}
 			return;
 		}
 
 		try {
-			// Récupérer le nom d'utilisateur depuis la session (défini par onSuccess)
+			// Retrieve username from session (set by onSuccess)
 			String username = (String) session.getAttribute(UserFactory.SESSION_ATTRIBUTE_KEY_USER_ID);
 
 			if (username == null) {
-				// Essayer de le récupérer du paramètre (moins fiable ici)
+				// Try to get it from the parameter (less reliable here)
 				username = request.getParameter(PARAM_USERNAME);
-				if (username == null && LOGGER.isDebugEnabled()) {
-					LOGGER.debug("beforeSuccess: Username non trouvé en session ni en paramètre.");
+				if ((username == null) && LOGGER.isDebugEnabled()) {
+					LOGGER.debug("beforeSuccess: Username not found in session or parameter.");
 				}
 			}
 
-			// Vérifier si les groupes sont déjà chargés pour cet utilisateur dans cette session
-			if (username != null && session.getAttribute(SESSION_ATTRIBUTE_KEY_USER_GROUPS) == null) {
+			// Check if groups are already loaded for this user in this session
+			if ((username != null) && (session.getAttribute(SESSION_ATTRIBUTE_KEY_USER_GROUPS) == null)) {
 				if (LOGGER.isDebugEnabled()) {
-					LOGGER.debug("beforeSuccess: Récupération des groupes pour l'utilisateur '" + username + "' depuis Alfresco...");
+					LOGGER.debug("beforeSuccess: Retrieving groups for user '" + username + "' from Alfresco...");
 				}
 
 				Connector conn = null;
 				try {
 					conn = FrameworkUtil.getConnector(session, username, AlfrescoUserFactory.ALFRESCO_ENDPOINT_ID);
 				} catch (Exception e) {
-					// Gérer le cas où le connecteur ne peut pas être créé (souvent lié à une config manquante)
-					LOGGER.error("beforeSuccess: Impossible d'obtenir le connecteur Alfresco pour récupérer les groupes de '" + username
-							+ "'. Vérifier la configuration de l'endpoint '" + AlfrescoUserFactory.ALFRESCO_ENDPOINT_ID + "'.", e);
-					session.setAttribute(SESSION_ATTRIBUTE_KEY_USER_GROUPS, ""); // Marquer comme vide pour éviter de réessayer
-					return; // Sortir si pas de connecteur
+					// Handle the case where the connector cannot be created (often related to missing configuration)
+					LOGGER.error("beforeSuccess: Unable to obtain Alfresco connector to retrieve groups for '" + username
+							+ "'. Check the configuration of endpoint '" + AlfrescoUserFactory.ALFRESCO_ENDPOINT_ID + "'.", e);
+					session.setAttribute(SESSION_ATTRIBUTE_KEY_USER_GROUPS, ""); // Mark as empty to avoid retrying
+					return; // Exit if no connector
 				}
 
-				// Préparer l'appel API /api/people/{user}?groups=true
+				// Prepare the API call /api/people/{user}?groups=true
 				ConnectorContext c = new ConnectorContext(HttpMethod.GET);
-				c.setContentType("application/json"); // Pas strictement nécessaire pour GET mais bonne pratique
+				c.setContentType("application/json"); // Not strictly necessary for GET but good practice
 
-				String encodedUsername = "";
-				try {
-					encodedUsername = URLEncoder.encode(username, StandardCharsets.UTF_8.name());
-				} catch (java.io.UnsupportedEncodingException e) {
-					/* Impossible avec UTF-8 */ }
+				String encodedUsername = URLEncoder.encode(username, StandardCharsets.UTF_8.name());
 
 				String apiUrl = "/api/people/" + encodedUsername + "?groups=true";
 				if (LOGGER.isDebugEnabled()) {
-					LOGGER.debug("beforeSuccess: Appel API Alfresco: " + apiUrl);
+					LOGGER.debug("beforeSuccess: Alfresco API call: " + apiUrl);
 				}
 
 				Response resGroups = conn.call(apiUrl, c);
 
 				if (Status.STATUS_OK == resGroups.getStatus().getCode()) {
 					String resStr = resGroups.getResponse();
-					if (LOGGER.isTraceEnabled()) { // Log JSON seulement en TRACE
-						LOGGER.trace("beforeSuccess: Réponse JSON des groupes: " + resStr);
+					if (LOGGER.isTraceEnabled()) { // Log JSON only in TRACE
+						LOGGER.trace("beforeSuccess: Groups JSON response: " + resStr);
 					}
 
 					JSONParser jp = new JSONParser();
@@ -1110,21 +1139,21 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 					try {
 						userData = jp.parse(resStr);
 					} catch (ParseException pe) {
-						LOGGER.error("beforeSuccess: Impossible de parser la réponse JSON des groupes pour '" + username + "'.", pe);
-						session.setAttribute(SESSION_ATTRIBUTE_KEY_USER_GROUPS, ""); // Marquer comme vide
+						LOGGER.error("beforeSuccess: Unable to parse groups JSON response for '" + username + "'.", pe);
+						session.setAttribute(SESSION_ATTRIBUTE_KEY_USER_GROUPS, ""); // Mark as empty
 						return;
 					}
 
-					// Extraire les noms des groupes du JSON
+					// Extract group names from JSON
 					StringBuilder groups = new StringBuilder(512);
-					if (userData instanceof JSONObject) {
-						Object groupsArray = ((JSONObject) userData).get("groups"); // La clé est bien "groups"
-						if (groupsArray instanceof JSONArray) {
-							for (Object groupData : (JSONArray) groupsArray) {
-								if (groupData instanceof JSONObject) {
-									// Le nom du groupe est dans "itemName" pour l'API /api/people
-									Object groupName = ((JSONObject) groupData).get("itemName");
-									if (groupName != null && StringUtils.hasText(groupName.toString())) {
+					if (userData instanceof JSONObject jsonData) {
+						Object groupsArray = jsonData.get("groups"); // The key is indeed "groups"
+						if (groupsArray instanceof JSONArray jsonArray) {
+							for (Object groupData : jsonArray) {
+								if (groupData instanceof JSONObject jsonGroup) {
+									// The group name is in "itemName" for the /api/people API
+									Object groupName = jsonGroup.get("itemName");
+									if ((groupName != null) && StringUtils.hasText(groupName.toString())) {
 										groups.append(groupName.toString().trim()).append(',');
 									}
 								}
@@ -1132,46 +1161,128 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 						}
 					}
 
-					// Supprimer la virgule finale si elle existe
-					if (groups.length() > 0 && groups.charAt(groups.length() - 1) == ',') {
+					// Remove the final comma if it exists
+					if ((groups.length() > 0) && (groups.charAt(groups.length() - 1) == ',')) {
 						groups.deleteCharAt(groups.length() - 1);
 					}
 
 					String groupsString = groups.toString();
 					session.setAttribute(SESSION_ATTRIBUTE_KEY_USER_GROUPS, groupsString);
 					if (LOGGER.isDebugEnabled()) {
-						LOGGER.debug("beforeSuccess: Groupes stockés en session pour '" + username + "': "
-								+ (groupsString.isEmpty() ? "<aucun>" : groupsString));
+						LOGGER.debug("beforeSuccess: Groups stored in session for '" + username + "': "
+								+ (groupsString.isEmpty() ? "<none>" : groupsString));
 					}
 
 				} else {
-					// Erreur lors de l'appel API (401, 404, 500...)
-					LOGGER.warn("beforeSuccess: Échec de la récupération des groupes pour '" + username + "'. Statut API: "
-							+ resGroups.getStatus().getCode());
-					session.setAttribute(SESSION_ATTRIBUTE_KEY_USER_GROUPS, ""); // Marquer comme vide en cas d'échec
+					// Error during API call (401, 404, 500...)
+					LOGGER.warn("beforeSuccess: Failed to retrieve groups for '" + username + "'. API Status: " + resGroups.getStatus().getCode());
+					session.setAttribute(SESSION_ATTRIBUTE_KEY_USER_GROUPS, ""); // Mark as empty in case of failure
 				}
-			} else if (username != null) {
-				if (LOGGER.isDebugEnabled()) {
-					LOGGER.debug("beforeSuccess: Les groupes pour l'utilisateur '" + username + "' sont déjà présents en session.");
-				}
+			} else if ((username != null) && LOGGER.isDebugEnabled()) {
+				LOGGER.debug("beforeSuccess: Groups for user '" + username + "' are already present in session.");
 			}
 		} catch (Exception ex) {
-			// Autres exceptions
-			LOGGER.error("beforeSuccess: Exception inattendue lors de la récupération des groupes.", ex);
+			// Other exceptions
+			LOGGER.error("beforeSuccess: Unexpected exception while retrieving groups.", ex);
 			if (session != null) {
-				session.setAttribute(SESSION_ATTRIBUTE_KEY_USER_GROUPS, ""); // Marquer comme vide
+				session.setAttribute(SESSION_ATTRIBUTE_KEY_USER_GROUPS, ""); // Mark as empty
 			}
 		}
 	}
 
-
 	/**
-	 * Méthode de l'interface CallbackHandler (non utilisée ici).
+	 * Method from the CallbackHandler interface (not used here).
 	 */
 	@Override
 	public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-		// Non implémenté, ce filtre n'utilise pas JAAS CallbackHandler activement.
-		LOGGER.warn("Méthode CallbackHandler.handle() appelée, mais non implémentée dans ce filtre.");
+		// Not implemented, this filter does not actively use JAAS CallbackHandler.
+		LOGGER.warn("CallbackHandler.handle() method called, but not implemented in this filter.");
+	}
+
+	/**
+	 * Handles the OAuth callback directly in the filter.
+	 * Exchanges the authorization code for an access token, retrieves user information,
+	 * and establishes the user session.
+	 *
+	 * @param req The HTTP request containing the authorization code
+	 * @param res The HTTP response
+	 * @param authCode The authorization code received from the OAuth provider
+	 * @param state The state parameter for CSRF protection
+	 * @return true if authentication was successful, false otherwise
+	 * @throws IOException If an I/O error occurs
+	 */
+	protected boolean handleOAuthCallback(HttpServletRequest req, HttpServletResponse res, String authCode, String state) throws IOException {
+
+		if (LOGGER.isInfoEnabled()) {
+			LOGGER.info("Processing OAuth callback with code parameter");
+		}
+
+		HttpSession session = req.getSession(true);
+		try {
+			// Get the identity service facade
+			IdentityServiceFacade identityService = getIdentityServiceFacade();
+			if (identityService == null) {
+				LOGGER.error("Cannot process OAuth callback: IdentityServiceFacade is null");
+				return false;
+			}
+
+			// Build the redirect URI that was used when initiating the flow
+			String redirectUri = getRedirectUri(req.getRequestURL().toString());
+
+			// Create an authorization grant from the code
+			IdentityServiceFacade.AuthorizationGrant grant = IdentityServiceFacade.AuthorizationGrant.authorizationCode(authCode, redirectUri);
+
+			// Exchange the grant for access tokens
+			IdentityServiceFacade.AccessTokenAuthorization tokenAuth = identityService.authorize(grant);
+			if ((tokenAuth == null) || (tokenAuth.getAccessToken() == null)) {
+				LOGGER.error("Failed to obtain access token from authorization code");
+				return false;
+			}
+
+			// Get the access token value
+			String accessToken = tokenAuth.getAccessToken().getTokenValue();
+			if (!StringUtils.hasText(accessToken)) {
+				LOGGER.error("Obtained null or empty access token");
+				return false;
+			}
+
+			// Get user information using the access token
+			Optional<OIDCUserInfo> userInfoOpt = identityService.getUserInfo(accessToken, principalAttribute);
+			if (!userInfoOpt.isPresent()) {
+				LOGGER.error("Failed to retrieve user info from OAuth provider");
+				return false;
+			}
+
+			OIDCUserInfo userInfo = userInfoOpt.get();
+
+			if (userInfo == null) {
+				LOGGER.error("No OAuth user info");
+				return false;
+			}
+
+			String username = userInfo.username();
+			if (!StringUtils.hasText(username)) {
+				LOGGER.error("Could not extract username from OAuth user info");
+				return false;
+			}
+
+			if (LOGGER.isInfoEnabled()) {
+				LOGGER.info("Successfully authenticated OAuth user: " + username);
+			}
+
+			// Store OAuth user information in session
+			session.setAttribute(OAUTH2_SESSION_ATTRIBUTE, userInfo);
+
+			// Set up the Share session for this user
+			setExternalAuthSession(session);
+			onSuccess(req, res, session, username);
+
+			return true;
+
+		} catch (Exception e) {
+			LOGGER.error("Error processing OAuth callback: " + e.getMessage(), e);
+			return false;
+		}
 	}
 
 }

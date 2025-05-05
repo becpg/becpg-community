@@ -50,7 +50,6 @@ public class IdentityServiceElement extends ConfigElementAdapter {
 	private boolean publicClient = false;
 	private String principalAttribute = "preferred_username";
 	private boolean clientIdValidationDisabled = true;
-	private String adminConsoleRedirectPath;
 	private String signatureAlgorithms = "RS256,PS256";
 
 	public IdentityServiceElement() {
@@ -242,14 +241,6 @@ public class IdentityServiceElement extends ConfigElementAdapter {
 		this.clientIdValidationDisabled = clientIdValidationDisabled;
 	}
 
-	public String getAdminConsoleRedirectPath() {
-		return adminConsoleRedirectPath;
-	}
-
-	public void setAdminConsoleRedirectPath(String adminConsoleRedirectPath) {
-		this.adminConsoleRedirectPath = adminConsoleRedirectPath;
-	}
-
 	public Set<SignatureAlgorithm> getSignatureAlgorithms() {
 		return Stream.of(signatureAlgorithms.split(",")).map(String::trim).map(SignatureAlgorithm::from).filter(Objects::nonNull)
 				.collect(Collectors.toUnmodifiableSet());
@@ -412,9 +403,7 @@ public class IdentityServiceElement extends ConfigElementAdapter {
 		combinedElement.setClientIdValidationDisabled(otherElement.isClientIdValidationDisabled());
 		combinedElement
 				.setSignatureAlgorithms(otherElement.signatureAlgorithms != null ? otherElement.signatureAlgorithms : this.signatureAlgorithms);
-		combinedElement.setAdminConsoleRedirectPath(
-				otherElement.getAdminConsoleRedirectPath() != null ? otherElement.getAdminConsoleRedirectPath() : this.adminConsoleRedirectPath);
-
+	
 		return combinedElement;
 	}
 
