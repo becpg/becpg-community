@@ -32,11 +32,10 @@ public class BeCPGTemplateExtension extends BaseTemplateProcessorExtension {
 	 * @param person a {@link org.alfresco.repo.template.TemplateNode} object
 	 * @return a boolean
 	 */
-	@SuppressWarnings("unlikely-arg-type")
 	public boolean isAccountEnabled(TemplateNode person) {
 		// Only admins have rights to check authentication enablement
 		if (this.authorityService.isAdminAuthority(AuthenticationUtil.getFullyAuthenticatedUser())) {
-			String userName = (String) person.getProperties().get(ContentModel.PROP_USERNAME);
+			String userName = (String) person.getProperties().get(ContentModel.PROP_USERNAME.toString());
 			return AuthorityHelper.isAccountEnabled(userName);
 		}
 		return true;

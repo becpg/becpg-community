@@ -91,16 +91,25 @@ public class CalculatedCharactsAutoCompletePluginIT extends AbstractAutoComplete
            
             assertTrue("Should find at least 1 render labeling rules",  autoCompletePage.getResults().size() >= 1);
             
-            // Verify all found entries are of type Render
-            boolean allRenderType = true;
+            boolean foundLBL1 = false;
             for (AutoCompleteEntry entry : autoCompletePage.getResults()) {
-                if (!entry.getName().contains("Test Render")) {
-                    allRenderType = false;
-                    logger.warn("Found non-render entry: " + entry.getName());
+                if (entry.getName().equals("CalculatedCharactsAutoCompletePluginIT - LBL 1")) {
+                    foundLBL1 = true;
                     break;
                 }
             }
-            assertTrue("All found entries should be of type Render", allRenderType);
+            assertTrue("At least one entry should be of type LBL 1", foundLBL1);
+            
+            // Verify all found entries are of type Render
+            boolean foundLBL2 = false;
+            for (AutoCompleteEntry entry : autoCompletePage.getResults()) {
+                if (entry.getName().equals("CalculatedCharactsAutoCompletePluginIT - LBL 2")) {
+                    foundLBL2 = true;
+                    logger.warn("Found LBL 2 entry: " + entry.getName());
+                    break;
+                }
+            }
+            assertFalse("No entry should be of type LBL 2", foundLBL2);
 
             return null;
         });

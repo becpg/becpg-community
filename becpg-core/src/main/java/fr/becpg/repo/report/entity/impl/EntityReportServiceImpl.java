@@ -272,7 +272,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	        internalGenerateReports(nodeRefFrom != null ? nodeRefFrom : nodeRefTo, nodeRefTo, generateAllReports);
 	    } finally {
 	        // Only release the lock if we acquired it in this method call
-	        if (lockAcquired && lock.isHeldByCurrentThread()) {
+	        if (lockAcquired) {
 	            lock.unlock();
 	            mutexFactory.removeMutex(nodeRefTo.toString(), lock);
 	        }
