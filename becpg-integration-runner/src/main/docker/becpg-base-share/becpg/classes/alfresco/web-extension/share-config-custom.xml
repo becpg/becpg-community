@@ -542,22 +542,21 @@
       <visible>false</visible>
    </config>
    
-    <plug-ins>
-        <element-readers>
-            <element-reader element-name="oauth2" class="fr.becpg.web.authentication.config.IdentityServiceElementReader"/>
-        </element-readers>
-    </plug-ins>
-  
-   <!-- OAuth2 Identity Service Configuration -->
-   <config evaluator="string-compare" condition="OAUTH2_CONFIG" replace="true">
-      <oauth2>
-         <authServerUrl>OAUTH2_SERVER_URL</authServerUrl>
-         <realm>OAUTH2_REALM</realm>
-         <resource>OAUTH2_RESOURCE</resource>
-         <clientSecret>OAUTH2_SECRET</clientSecret>
-         <publicClient>false</publicClient>
-      </oauth2>
-   </config>
+   
+     <config evaluator="string-compare" condition="AIMS">
+        <enabled>OAUTH2_ENABLED</enabled>
+        <realm>OAUTH2_REALM</realm>
+        <resource>OAUTH2_RESOURCE</resource>
+        <authServerUrl>OAUTH2_SERVER_URL</authServerUrl>
+        <secret>OAUTH2_SECRET</secret>
+        <sslRequired>none</sslRequired>
+        <publicClient>false</publicClient>
+        <autodetectBearerOnly>true</autodetectBearerOnly>
+        <alwaysRefreshToken>true</alwaysRefreshToken>
+        <principalAttribute>preferred_username</principalAttribute>
+        <enableBasicAuth>false</enableBasicAuth>
+    </config>
+   
 
    <!-- Kerberos settings -->
    <!-- To enable kerberos rename this condition to "Kerberos" -->
@@ -615,12 +614,6 @@
             <userHeader>X-Alfresco-Remote-User</userHeader>
          </connector>
 
-         <connector>
-            <id>alfrescoOAuth2</id>
-            <name>Alfresco  OAuth2 Connector</name>
-            <description>Connects to an Alfresco Repository using OAuth2 authentication</description>  
-            <class>fr.becpg.web.authentication.BeCPGOAuth2Connector</class>
-         </connector>
          
          <!-- 
          <authenticator>
