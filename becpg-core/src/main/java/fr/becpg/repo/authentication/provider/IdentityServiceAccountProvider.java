@@ -287,9 +287,10 @@ public class IdentityServiceAccountProvider {
                     if (auth.has("access_token")) {
                     	return auth.getString("access_token");
                     } else {
-						logger.error(auth.toString());
-						throw new IllegalStateException("Error while fetching access_token from identityService");
+						logger.error("Incorrect auth message: " + auth.toString());
 					}
+                } else {
+                	logger.error("Incorrect status code: "+EntityUtils.toString(response.getEntity()));
                 }
             }
         }
