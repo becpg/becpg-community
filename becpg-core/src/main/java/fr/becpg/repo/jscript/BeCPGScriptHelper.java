@@ -1605,7 +1605,11 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 */
 	public boolean allowWrite(NodeRef nodeRef, String authority) {
 		return AuthenticationUtil.runAsSystem(() -> {
-			permissionService.setPermission(nodeRef, authority, PermissionService.EDITOR, true);
+			if(entityDictionaryService.isSubClass(nodeService.getType(nodeRef), ContentModel.TYPE_FOLDER)) {
+				permissionService.setPermission(nodeRef, authority, PermissionService.COORDINATOR, true);
+			} else {
+				permissionService.setPermission(nodeRef, authority, PermissionService.EDITOR, true);
+			}
 			return true;
 		});
 	}
