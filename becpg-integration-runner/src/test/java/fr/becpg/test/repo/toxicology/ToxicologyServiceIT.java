@@ -205,46 +205,50 @@ public class ToxicologyServiceIT extends PLMBaseTestCase {
 	@Test
 	public void testToxListFormulation() throws Exception {
 		
-		FinishedProductData product = new FinishedProductData();
-		product.setToxList(new ArrayList<>());
-		product.setIngList(new ArrayList<>());
-		
-		List<ToxListDataItem> toxList = product.getToxList();
-		
-		ToxListDataItem tox1 = new ToxListDataItem();
-		tox1.setTox(adultROBodyNodeRef);
-		toxList.add(tox1);
-		
-		ToxListDataItem tox2 = new ToxListDataItem();
-		tox2.setTox(adultROHairNodeRef);
-		toxList.add(tox2);
-		
-		ToxListDataItem tox3 = new ToxListDataItem();
-		tox3.setTox(adultROFaceNodeRef);
-		toxList.add(tox3);
-		
-		List<IngListDataItem> ingList = product.getIngList();
-		
-		IngListDataItem ing1 = new IngListDataItem();
-		ing1.setIng(glycerinNodeRef);
-		ing1.setQtyPerc(90.0);
-		ingList.add(ing1);
-		
-		IngListDataItem ing2 = new IngListDataItem();
-		ing2.setIng(citricAcidNodeRef);
-		ing2.setQtyPerc(5.0);
-		ingList.add(ing2);
-		
-		IngListDataItem ing3 = new IngListDataItem();
-		ing3.setIng(alpiniaNodeRef);
-		ing3.setQtyPerc(5.0);
-		ingList.add(ing3);
-		
-		productService.formulate(product);
-		
-		assertEquals(20.0, tox1.getValue(), 0.1);
-		assertEquals(20.0, tox2.getValue(), 0.1);
-		assertEquals(4.0, tox3.getValue(), 0.1);
+		inWriteTx(() -> {
+			FinishedProductData product = new FinishedProductData();
+			product.setToxList(new ArrayList<>());
+			product.setIngList(new ArrayList<>());
+			
+			List<ToxListDataItem> toxList = product.getToxList();
+			
+			ToxListDataItem tox1 = new ToxListDataItem();
+			tox1.setTox(adultROBodyNodeRef);
+			toxList.add(tox1);
+			
+			ToxListDataItem tox2 = new ToxListDataItem();
+			tox2.setTox(adultROHairNodeRef);
+			toxList.add(tox2);
+			
+			ToxListDataItem tox3 = new ToxListDataItem();
+			tox3.setTox(adultROFaceNodeRef);
+			toxList.add(tox3);
+			
+			List<IngListDataItem> ingList = product.getIngList();
+			
+			IngListDataItem ing1 = new IngListDataItem();
+			ing1.setIng(glycerinNodeRef);
+			ing1.setQtyPerc(90.0);
+			ingList.add(ing1);
+			
+			IngListDataItem ing2 = new IngListDataItem();
+			ing2.setIng(citricAcidNodeRef);
+			ing2.setQtyPerc(5.0);
+			ingList.add(ing2);
+			
+			IngListDataItem ing3 = new IngListDataItem();
+			ing3.setIng(alpiniaNodeRef);
+			ing3.setQtyPerc(5.0);
+			ingList.add(ing3);
+			
+			productService.formulate(product);
+			
+			assertEquals(20.0, tox1.getValue(), 0.1);
+			assertEquals(20.0, tox2.getValue(), 0.1);
+			assertEquals(4.0, tox3.getValue(), 0.1);
+			
+			return null;
+		});
 	}
 	
 }

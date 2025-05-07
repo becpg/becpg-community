@@ -46,7 +46,7 @@ public class ToxCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 				for (IngListDataItem ingListDataItem : productData.getIngList()) {
 					Double maxQuantity = ToxHelper.extractIngMaxQuantity(ingListDataItem);
 					if (maxQuantity != null && maxQuantity != 0d) {
-						Double maxValue = toxicologyService.computeMaxValue(ingListDataItem.getIng(), toxListDataItem.getTox());
+						Double maxValue = toxicologyService.getMaxValue(ingListDataItem.getIng(), toxListDataItem.getTox());
 						if (maxValue != null) {
 							Double ingMaxValue = maxValue * 100 / maxQuantity;
 							CharactDetailsValue charactDetailValue = new CharactDetailsValue(productData.getNodeRef(), ingListDataItem.getIng(), ingListDataItem.getNodeRef(), ingMaxValue, 0, "%");
