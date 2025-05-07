@@ -8,9 +8,11 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,6 +25,7 @@ import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AuthorityService;
+import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.cmr.site.SiteService;
@@ -67,6 +70,8 @@ import fr.becpg.repo.system.SystemConfigurationService;
  */
 @Service("supplierPortalService")
 public class SupplierPortalServiceImpl implements SupplierPortalService {
+
+	private static final String SUPPLIER_GROUP_PREFIX = "SUPPLIER_";
 
 	private static Log logger = LogFactory.getLog(SupplierPortalServiceImpl.class);
 
@@ -338,6 +343,35 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 
 		return supplierNodeRef;
 	}
+	
+	@Override
+	public String getOrCreateSupplierGroup(NodeRef supplierNodeRef, List<NodeRef> resources) {
+		if (supplierNodeRef != null) {
+			String code =  (String) nodeService.getProperty(supplierNodeRef, BeCPGModel.PROP_CODE);
+			
+			if(code!=null && ! code.isBlank()) {
+				String groupName = SUPPLIER_GROUP_PREFIX+code;
+				
+				if (!authorityService.authorityExists(PermissionService.GROUP_PREFIX + groupName)) {
+					
+					Set<String> zones = new HashSet<>();
+					zones.add(AuthorityService.ZONE_APP_DEFAULT);
+					zones.add(AuthorityService.ZONE_AUTH_ALFRESCO
+							);
+					logger.debug("create group: " + groupName);
+					authorityService.createAuthority(AuthorityType.GROUP, groupName,groupName ,zones);
+				}
+				
+				for (NodeRef resourceRef : resources) {
+					authorityService.addAuthority(PermissionService.GROUP_PREFIX + groupName, (String) nodeService.getProperty(resourceRef, ContentModel.PROP_USERNAME));
+				}
+				
+				return PermissionService.GROUP_PREFIX + groupName;
+			}
+		}
+		return null;
+	}
+	
 
 	/** {@inheritDoc} */
 	@Override
@@ -572,5 +606,6 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 			nodeService.addAspect(userNodeRef, ContentModel.ASPECT_PERSON_DISABLED, null);
 		}
 	}
+
 	
 }

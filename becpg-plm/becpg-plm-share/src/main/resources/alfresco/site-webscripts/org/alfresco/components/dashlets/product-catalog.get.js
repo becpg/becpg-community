@@ -53,6 +53,8 @@ if(site!=null && site.length>0){
    prefs+="."+site;
 }
 
+model.isbeCPGExternalUser = (user != null && user.capabilities["isbeCPGExternalUser"] != null && user.capabilities["isbeCPGExternalUser"] == true) || false;
+
 model.preferences = AlfrescoUtil.getPreferences(prefs);
 model.filters = getFilters();
 model.types = getTypes();
