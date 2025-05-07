@@ -96,10 +96,22 @@ public class ToxicologyServiceImpl implements ToxicologyService {
 		}
 	}
 	
-	/** {@inheritDoc} */
 	@Override
+	public Double getMaxValue(NodeRef ingNodeRef, NodeRef toxNodeRef) {
+		NodeRef toxIngNodeRef = BeCPGQueryBuilder.createQuery().andPropEquals(PLMModel.PROP_TOX_ING_ING, ingNodeRef.toString()).andPropEquals(PLMModel.PROP_TOX_ING_TOX, toxNodeRef.toString()).singleValue();
+		if (toxIngNodeRef == null) {
+			NodeRef listContainer = getCharactListContainer();
+			NodeRef toxIngFolder = nodeService.getChildByName(listContainer, ContentModel.ASSOC_CONTAINS, PlmRepoConsts.PATH_TOX_ING);
+			toxIngNodeRef = nodeService.createNode(toxIngFolder, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, PLMModel.TYPE_TOX_ING).getChildRef();
+			nodeService.setProperty(toxIngNodeRef, PLMModel.PROP_TOX_ING_ING, ingNodeRef);
+			nodeService.setProperty(toxIngNodeRef, PLMModel.PROP_TOX_ING_TOX, toxNodeRef);
+			updateToxIng(ingNodeRef, toxIngFolder, toxNodeRef);
+		}
+		return (Double) nodeService.getProperty(toxIngNodeRef, PLMModel.PROP_TOX_ING_MAX_VALUE);
+	}
+	
 	@SuppressWarnings("unchecked")
-	public Double computeMaxValue(NodeRef ingNodeRef, NodeRef toxNodeRef) {
+	private Double computeMaxValue(NodeRef ingNodeRef, NodeRef toxNodeRef) {
 		List<String> toxTypes = (List<String>) nodeService.getProperty(toxNodeRef, PLMModel.PROP_TOX_TYPES);
 		if (toxTypes != null) {
 			List<Double> maxList = new ArrayList<>();
@@ -161,18 +173,11 @@ public class ToxicologyServiceImpl implements ToxicologyService {
 			nodeService.setProperty(toxIngNodeRef, PLMModel.PROP_TOX_ING_TOX, toxNodeRef);
 		}
 		
-		Boolean calculateMax = (Boolean) nodeService.getProperty(toxNodeRef, PLMModel.PROP_TOX_CALCULATE_MAX);
-		if (Boolean.TRUE.equals(calculateMax)) {
-			Double maxValue = computeMaxValue(ingNodeRef, toxNodeRef);
-			nodeService.setProperty(toxIngNodeRef, PLMModel.PROP_TOX_ING_MAX_VALUE, maxValue);
-		}
-		
 		Boolean calculateSystemic = (Boolean) nodeService.getProperty(toxNodeRef, PLMModel.PROP_TOX_CALCULATE_SYSTEMIC);
 		if (Boolean.TRUE.equals(calculateSystemic)) {
 			Double podMax = (Double) nodeService.getProperty(ingNodeRef, PLMModel.PROP_ING_TOX_POD_SYSTEMIC);
 			Double mosMoe = (Double) nodeService.getProperty(ingNodeRef, PLMModel.PROP_ING_TOX_MOS_MOE);
 			Double finalQuantity = (Double) nodeService.getProperty(toxNodeRef, PLMModel.PROP_TOX_VALUE);
-			
 			String absorptionType = (String) nodeService.getProperty(toxNodeRef, PLMModel.PROP_TOX_ABSORPTION_TYPE);
 			Double dermalAbsorption = (Double) nodeService.getProperty(ingNodeRef, PLMModel.PROP_ING_TOX_DERMAL_ABSORPTION);
 			Double oralAbsorption = (Double) nodeService.getProperty(ingNodeRef, PLMModel.PROP_ING_TOX_ORAL_ABSORPTION);
@@ -182,12 +187,24 @@ public class ToxicologyServiceImpl implements ToxicologyService {
 			} else if ("Worst".equals(absorptionType)) {
 				finalAbsorption = 100d;
 			}
-			
 			if (podMax != null && finalAbsorption != null && finalAbsorption != 0 && mosMoe != null && mosMoe != 0
 					&& finalQuantity != null) {
 				Double systemicValue = (podMax * 60 / (finalQuantity * finalAbsorption / 100 * mosMoe)) * 100;
 				nodeService.setProperty(toxIngNodeRef, PLMModel.PROP_TOX_ING_SYSTEMIC_VALUE, systemicValue);
 			}
 		}
+		
+		Boolean calculateMax = (Boolean) nodeService.getProperty(toxNodeRef, PLMModel.PROP_TOX_CALCULATE_MAX);
+		if (Boolean.TRUE.equals(calculateMax)) {
+			Double maxValue = computeMaxValue(ingNodeRef, toxNodeRef);
+			Double systemicValue = (Double) nodeService.getProperty(toxIngNodeRef, PLMModel.PROP_TOX_ING_SYSTEMIC_VALUE);
+			if (maxValue == null) {
+				maxValue = systemicValue;
+			} else if (systemicValue != null) {
+				maxValue = Math.min(maxValue, systemicValue);
+			}
+			nodeService.setProperty(toxIngNodeRef, PLMModel.PROP_TOX_ING_MAX_VALUE, maxValue);
+		}
+		
 	}
 }

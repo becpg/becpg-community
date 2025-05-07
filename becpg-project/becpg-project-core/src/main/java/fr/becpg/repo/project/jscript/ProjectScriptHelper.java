@@ -36,6 +36,7 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO8601DateFormat;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.extensions.surf.util.URLEncoder;
 
 import fr.becpg.model.DeliverableUrl;
@@ -53,6 +54,7 @@ import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskState;
 import fr.becpg.repo.project.impl.ProjectHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * Utility script methods for budget
@@ -265,23 +267,25 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 
 						String assocQname = patternMatcher.group(1);
 						StringBuilder replacement = new StringBuilder();
-						if (assocQname != null && (assocQname.startsWith(DeliverableUrl.NODEREF_URL_PARAM)
-								|| assocQname.startsWith(DeliverableUrl.TASK_URL_PARAM))) {
-							replacement.append(expressionService.extractExpr(projectNodeRef, "{" + assocQname + "}", false));
-						} else if (assocQname != null) {
-							String[] splitted = assocQname.split("\\|");
-							List<AssociationRef> assocs = nodeService.getTargetAssocs(projectNodeRef,
-									QName.createQName(splitted[0], namespaceService));
-							if (assocs != null) {
-								for (AssociationRef assoc : assocs) {
-									if (replacement.length() > 0) {
-										replacement.append(",");
-									}
-									replacement.append(expressionService.extractExpr(assoc.getTargetRef(), "{" + assocQname + "}", false));
+						if (assocQname != null) {
+							final NodeRef nodeRef = assocQname.startsWith(DeliverableUrl.TASK_URL_PARAM) ? taskNodeRef
+									: projectNodeRef;
+							String replacementStr = null;
+							if (assocQname.contains("|")) {
+								final String qNameStr = assocQname.split("\\|")[1];
+								if (qNameStr.startsWith(DeliverableUrl.XPATH_URL_PREFIX)) {
+									replacementStr = String.valueOf(BeCPGQueryBuilder.createQuery().selectNodeByPath(nodeRef,
+											qNameStr.substring(DeliverableUrl.XPATH_URL_PREFIX.length())));
+								} else if (qNameStr.startsWith("@type")) {
+									QName type = nodeService.getType(nodeRef);
+									replacementStr = type != null ? type.getLocalName() : StringUtils.EMPTY;
 								}
 							}
+							if (replacementStr == null) {
+								replacementStr = expressionService.extractExpr(nodeRef, "{" + assocQname + "}", false);
+							}
+							replacement.append(replacementStr);
 						}
-
 						patternMatcher.appendReplacement(sb, replacement != null ? URLEncoder.encodeUriComponent(replacement.toString()) : "");
 
 					}
