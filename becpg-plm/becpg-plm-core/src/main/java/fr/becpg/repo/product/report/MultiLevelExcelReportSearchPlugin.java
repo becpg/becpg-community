@@ -153,7 +153,7 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 	protected int appendNextLevel(MultiLevelListData listData, XSSFSheet sheet, QName itemType,
 			List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache, int rownum,
 			Serializable key, Double parentQty, String[] parameters, Map<String, Object> entityItems,
-			Map<String, String> dynamicCharactColumnCache, ExcelCellStyles excelCellStyles, QName wUsedEntityType, Map<NodeRef, Map<QName, Serializable>> wUsedAssocCache) {
+			Map<String, List<String>> dynamicCharactColumnCache, ExcelCellStyles excelCellStyles, QName wUsedEntityType, Map<NodeRef, Map<QName, Serializable>> wUsedAssocCache) {
 		for (Entry<NodeRef, MultiLevelListData> entry : listData.getTree().entrySet()) {
 			NodeRef itemNodeRef = entry.getKey();
 			if (itemType.equals(nodeService.getType(itemNodeRef))) {
@@ -166,15 +166,20 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 						String itemKey = itemEntry.getKey();
 						Object itemValue = itemEntry.getValue();
 						if (itemKey.startsWith("prop_bcpg_dynamicCharactColumn")) {
-							if (dynamicCharactColumnCache.get(itemKey) == null && JsonFormulaHelper.isJsonString(itemValue)) {
-								dynamicCharactColumnCache.put(itemKey, (String) itemValue);
+							if (JsonFormulaHelper.isJsonString(itemValue)) {
+								if (dynamicCharactColumnCache.get(itemKey) == null) {
+									dynamicCharactColumnCache.put(itemKey, new ArrayList<>());
+								}
+								dynamicCharactColumnCache.get(itemKey).add((String) itemValue);
 								Object value = JsonFormulaHelper.cleanCompareJSON((String) itemValue);
 								item.put(itemKey, value);
 							} else if (dynamicCharactColumnCache.get(itemKey) != null) {
-								Object subValue = JsonFormulaHelper.extractComponentValue(dynamicCharactColumnCache.get(itemKey),
-										itemNodeRef.getId());
-								if (subValue != null) {
-									item.put(itemKey, subValue);
+								for (String subValues : dynamicCharactColumnCache.get(itemKey)) {
+									Object subValue = JsonFormulaHelper.extractComponentValue(subValues, itemNodeRef.getId());
+									if (subValue != null) {
+										item.put(itemKey, subValue);
+										break;
+									}
 								}
 							}
 						}
