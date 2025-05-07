@@ -38,12 +38,12 @@ public interface ToxicologyService {
 	void deleteToxIngBeforeToxDelete(NodeRef toxNodeRef);
 
 	/**
-	 * <p>computeMaxValue.</p>
+	 * <p>getMaxValue.</p>
 	 *
 	 * @param ingNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @param toxNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @return a {@link java.lang.Double} object
 	 */
-	Double computeMaxValue(NodeRef ingNodeRef, NodeRef toxNodeRef);
+	Double getMaxValue(NodeRef ingNodeRef, NodeRef toxNodeRef);
 
 }
