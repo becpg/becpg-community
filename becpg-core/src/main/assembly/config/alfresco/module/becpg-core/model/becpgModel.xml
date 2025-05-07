@@ -206,7 +206,7 @@
 			<parent>bcpg:entityListItem</parent>
 			<properties>
 				<property name="bcpg:lkvValue">
-					<type>d:text</type>
+					<type>d:mltext</type>
 					<mandatory>true</mandatory>
 					<index enabled="true">
 						<tokenised>both</tokenised>
@@ -253,14 +253,14 @@
 					<type>d:long</type>
 					<index enabled="true">
 						<tokenised>false</tokenised>
-						<facetable>true</facetable>
+						<facetable>false</facetable>
 					</index>
 				</property>
 				<property name="bcpg:autoNumPrefix">
 					<type>d:text</type>
 					<index enabled="true">
 						<tokenised>false</tokenised>
-						<facetable>true</facetable>
+						<facetable>false</facetable>
 					</index>
 					<constraints>
 						<constraint ref="bcpg:autoNumPrefix" />
@@ -280,7 +280,36 @@
 			<parent>bcpg:entityListItem</parent>
 		</type>
 
-
+		<type name="bcpg:activityList">
+			<parent>bcpg:entityListItem</parent>
+			<properties>
+				<property name="bcpg:alType">
+					<type>d:text</type>
+					<mandatory enforced="true">true</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:activityTypes" />
+					</constraints>
+				</property>
+				<property name="bcpg:alData">
+					<type>d:text</type>
+					<mandatory enforced="true">true</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:alUserId">
+					<type>d:text</type>
+					<mandatory enforced="true">true</mandatory>
+					<index enabled="true">
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+			</properties>
+		</type>
+		
 		<type name="bcpg:charact">
 			<parent>bcpg:entityListItem</parent>
 			<properties>
@@ -299,46 +328,69 @@
 			</mandatory-aspects>
 		</type>
 
-		<type name="bcpg:activityList">
-			<parent>bcpg:entityListItem</parent>
+
+		<type name="bcpg:variant">
+			<parent>cm:content</parent>
 			<properties>
-				<property name="bcpg:alType">
-					<type>d:text</type>
-					<mandatory enforced="true">true</mandatory>
-					<constraints>
-						<constraint ref="bcpg:activityTypes" />
-					</constraints>
+				<property name="bcpg:isDefaultVariant">
+					<type>d:boolean</type>
 					<index enabled="true">
 						<tokenised>false</tokenised>
-						<facetable>false</facetable>
+						<facetable>true</facetable>
 					</index>
 				</property>
-				<property name="bcpg:alData">
+				<property name="bcpg:variantColumn">
 					<type>d:text</type>
-					<mandatory enforced="true">true</mandatory>
-					<index enabled="false" />
-				</property>
-				<property name="bcpg:alUserId">
-					<type>d:text</type>
-					<mandatory enforced="true">true</mandatory>
 					<index enabled="true">
-						<tokenised>both</tokenised>
-						<facetable>false</facetable>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
+					<constraints>
+						<constraint ref="bcpg:variantColumns" />
+					</constraints>
 				</property>
 			</properties>
 		</type>
 
-		<type name="bcpg:notificationRuleList">
+		<type name="bcpg:externalLink">
+			<parent>cm:content</parent>
+			<properties>
+				<property name="bcpg:externalLinkUrl">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:externalLinkTarget">
+					<type>d:text</type>
+					<default>_blank</default>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="bcpg:externalLinkTargets" />
+					</constraints>
+				</property>
+				<property name="bcpg:externalLinkMediaType">
+					<type>d:text</type>
+					<default>page</default>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="bcpg:externalLinkMediaTypes" />
+					</constraints>
+				</property>
+			</properties>
+		</type>
+
+	
+
+	<type name="bcpg:notificationRuleList">
 			<parent>bcpg:entityListItem</parent>
 			<properties>
 				<property name="bcpg:nrNodeType">
 					<type>d:text</type>
+					<mandatory enforced="true">true</mandatory>
 					<index enabled="true">
 						<tokenised>both</tokenised>
 						<facetable>false</facetable>
 					</index>
-					<mandatory enforced="true">true</mandatory>
 				</property>
 				<property name="bcpg:nrDateField">
 					<type>d:text</type>
@@ -381,19 +433,19 @@
 				</property>
 				<property name="bcpg:nrSubject">
 					<type>d:text</type>
+					<mandatory enforced="true">true</mandatory>
 					<index enabled="true">
 						<tokenised>both</tokenised>
 						<facetable>false</facetable>
 					</index>
-					<mandatory enforced="true">true</mandatory>
 				</property>
 				<property name="bcpg:nrFrequencyStartDate">
 					<type>d:date</type>
+					<mandatory enforced="true">true</mandatory>
 					<index enabled="true">
 						<tokenised>false</tokenised>
 						<facetable>false</facetable>
 					</index>
-					<mandatory enforced="true">true</mandatory>
 				</property>
 				<property name="bcpg:nrVersionFilter">
 					<type>d:text</type>
@@ -495,57 +547,6 @@
 			</associations>
 		</type>
 
-		<type name="bcpg:variant">
-			<parent>cm:content</parent>
-			<properties>
-				<property name="bcpg:isDefaultVariant">
-					<type>d:boolean</type>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>true</facetable>
-					</index>
-				</property>
-				<property name="bcpg:variantColumn">
-					<type>d:text</type>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>true</facetable>
-					</index>
-					<constraints>
-						<constraint ref="bcpg:variantColumns" />
-					</constraints>
-				</property>
-			</properties>
-		</type>
-
-		<type name="bcpg:externalLink">
-			<parent>cm:content</parent>
-			<properties>
-				<property name="bcpg:externalLinkUrl">
-					<type>d:text</type>
-					<mandatory>true</mandatory>
-					<index enabled="false" />
-				</property>
-				<property name="bcpg:externalLinkTarget">
-					<type>d:text</type>
-					<default>_blank</default>
-					<index enabled="false" />
-					<constraints>
-						<constraint ref="bcpg:externalLinkTargets" />
-					</constraints>
-				</property>
-				<property name="bcpg:externalLinkMediaType">
-					<type>d:text</type>
-					<default>page</default>
-					<index enabled="false" />
-					<constraints>
-						<constraint ref="bcpg:externalLinkMediaTypes" />
-					</constraints>
-				</property>
-			</properties>
-		</type>
-
-
 		<type name="bcpg:savedSearch">
 			<parent>cm:content</parent>
 			<properties>
@@ -572,10 +573,9 @@
 				</property>
 			</properties>
 		</type>
-
 	</types>
-
 	<aspects>
+
 
 		<aspect name="bcpg:customFormDefinitionsAspect">
 			<properties>
@@ -791,7 +791,7 @@
 					<type>d:noderef</type>
 					<index enabled="true">
 						<tokenised>false</tokenised>
-						<facetable>true</facetable>
+						<facetable>false</facetable>
 					</index>
 				</property>
 			</properties>
@@ -804,7 +804,7 @@
 			<properties>
 				<property name="bcpg:sort">
 					<type>d:int</type>
-					<mandatory>true</mandatory>
+					<mandatory>false</mandatory>
 					<index enabled="true">
 						<tokenised>false</tokenised>
 						<facetable>true</facetable>
@@ -820,7 +820,6 @@
 			<properties>
 				<property name="bcpg:isManualListItem">
 					<type>d:boolean</type>
-					<mandatory enforced="true">true</mandatory>
 					<default>false</default>
 					<index enabled="true">
 						<tokenised>false</tokenised>
@@ -836,7 +835,7 @@
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<tokenised>both</tokenised>
+						<tokenised>false</tokenised>
 						<facetable>false</facetable>
 					</index>
 				</property>
@@ -963,9 +962,12 @@
 		</aspect>
 		
 		<!-- version with datalists -->
+        
+<!--        Deprecated -->
 		<aspect name="bcpg:compositeVersion">
 			<title>Versionable with datalists</title>
 			<properties>
+            <!--        Deprecated -->
 				<property name="bcpg:versionDescription">
 					<title>Version Label</title>
 					<type>d:text</type>
@@ -975,6 +977,7 @@
 						<facetable>false</facetable>
 					</index>
 				</property>
+                <!--        Deprecated -->
 				<property name="bcpg:versionLabel">
 					<title>Version Label</title>
 					<type>d:text</type>
@@ -984,6 +987,7 @@
 						<facetable>false</facetable>
 					</index>
 				</property>
+                <!--        Deprecated -->
 				<property name="bcpg:frozenCreated">
 					<title>Created</title>
 					<type>d:datetime</type>
@@ -993,6 +997,7 @@
 						<facetable>true</facetable>
 					</index>
 				</property>
+                <!--        Deprecated -->
 				<property name="bcpg:frozenCreator">
 					<title>Creator</title>
 					<type>d:text</type>
@@ -1002,6 +1007,7 @@
 						<facetable>false</facetable>
 					</index>
 				</property>
+                <!--        Deprecated -->
 				<property name="bcpg:frozenModified">
 					<title>Modified</title>
 					<type>d:datetime</type>
@@ -1011,6 +1017,7 @@
 						<facetable>true</facetable>
 					</index>
 				</property>
+                <!--        Deprecated -->
 				<property name="bcpg:frozenModifier">
 					<title>Modifier</title>
 					<type>d:text</type>
@@ -1020,6 +1027,7 @@
 						<facetable>false</facetable>
 					</index>
 				</property>
+                <!--        Deprecated -->
 				<property name="bcpg:frozenAccessed">
 					<title>Accessed</title>
 					<type>d:datetime</type>
@@ -1029,14 +1037,16 @@
 						<facetable>true</facetable>
 					</index>
 				</property>
+                <!--        Deprecated -->
 				<property name="bcpg:frozenNodeRef">
 					<type>d:text</type>
 					<mandatory enforced="true">false</mandatory>
 					<index enabled="true">
-						<tokenised>both</tokenised>
+						<tokenised>false</tokenised>
 						<facetable>false</facetable>
 					</index>
 				</property>
+                <!--        Deprecated -->
 				<property name="bcpg:frozenNodeDbId">
 					<type>d:long</type>
 					<mandatory enforced="true">false</mandatory>
@@ -1140,7 +1150,6 @@
 			<properties>
 				<property name="bcpg:color">
 					<type>d:text</type>
-					<default>000000</default>
 					<index enabled="true">
 						<tokenised>both</tokenised>
 						<facetable>false</facetable>
