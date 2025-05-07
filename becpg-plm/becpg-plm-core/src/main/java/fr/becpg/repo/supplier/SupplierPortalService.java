@@ -111,4 +111,6 @@ public interface SupplierPortalService {
 	 * @param supplierNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
 	void deleteExternalUser(NodeRef userNodeRef, NodeRef supplierNodeRef);
+
+	String getOrCreateSupplierGroup(NodeRef supplierNodeRef, List<NodeRef> resources);
 }
