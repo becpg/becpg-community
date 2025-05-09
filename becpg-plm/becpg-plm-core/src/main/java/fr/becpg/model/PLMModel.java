@@ -538,6 +538,12 @@ public interface PLMModel {
 
 	/** Constant <code>PROP_PHYSICO_CHEM_CODE</code> */
 	QName PROP_PHYSICO_CHEM_CODE = QName.createQName(BeCPGModel.BECPG_URI, "physicoChemCode");
+	
+	// document type
+	/** Constant <code>TYPE_MICROBIO</code> */
+	QName TYPE_DOCUMENT_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "documentType");
+	/** Constant <code>PROP_DCUCMENT_TYPE_VALIDITY_TYPE</code> */
+	QName PROP_DCUCMENT_TYPE_VALIDITY_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "docTypeIsValidityType");
 
 	// supplier aspect
 	/** Constant <code>ASPECT_SUPPLIERS</code> */
