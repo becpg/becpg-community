@@ -993,6 +993,17 @@
 				</list>
 			</parameter>
 		</constraint>
+		
+		<constraint name="bcpg:validityTypes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>NONE</value>
+					<value>MANUAL</value>
+					<value>AUTO</value>
+				</list>
+			</parameter>
+		</constraint>
+		
 	</constraints>
 
 	<types>
@@ -1751,9 +1762,7 @@
 					<index enabled="false" />
 				</property>
 			</properties>
-
 		</type>
-
 
 		<type name="bcpg:nutrientProfile">
 			<parent>bcpg:charact</parent>
@@ -2103,6 +2112,67 @@
 					</target>
 				</association>
 
+			</associations>
+		</type>
+		
+		<type name="bcpg:documentType">
+			<parent>bcpg:charact</parent>
+			<properties>
+				<property name="bcpg:docTypeIsMandatory">
+					<type>d:boolean</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
+				<property name="bcpg:docTypeIsValidityType">
+					<type>d:text</type>
+					<default>NONE</default>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:validityTypes" />
+					</constraints>
+				</property>
+				<property name="bcpg:docTypeAutoExpirationDate">
+					<type>d:int</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:docTypeMandatoryFormula">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:docTypeNameFormat">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:docTypeLinkedHierarchy">
+					<type>d:noderef</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:docTypeLinkedTypes">
+					<type>d:text</type>
+					<multiple>true</multiple>
+				</property>
+				<property name="bcpg:docTypeDestPath">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
+			</properties>
+			<associations>
+				<association name="bcpg:docTypeLinkedCharacts">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:entityListItem</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
 			</associations>
 		</type>
 
