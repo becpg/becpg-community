@@ -1004,6 +1004,20 @@
 			</parameter>
 		</constraint>
 		
+		<constraint name="bcpg:documentStates" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>OnHold</value>
+					<value>ToValidate</value>
+					<value>Valid</value>
+					<value>Refused</value>
+					<value>Archived</value>
+				</list>
+			</parameter>
+		</constraint>
+		
+		
+		
 	</constraints>
 
 	<types>
@@ -6828,6 +6842,53 @@
 				</property>
 			</properties>
 		</aspect>
+		
+		<aspect name="bcpg:documentAspect">
+			<properties>
+				<property name="bcpg:documentState">
+					<type>d:text</type>
+					<default>OnHold</default>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:documentStates" />
+					</constraints>
+				</property>
+				<property name="bcpg:documentIsMandatory">
+					<type>d:boolean</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+				
+			</properties>
+			<associations>
+				<association name="bcpg:documentTypeRef">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:documentType</class>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="bcpg:documentEntityRef">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:entityV2</class>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>
+		</aspect>
+		
 
 	</aspects>
 </model>
