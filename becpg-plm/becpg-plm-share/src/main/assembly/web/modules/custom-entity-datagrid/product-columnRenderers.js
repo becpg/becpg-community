@@ -643,6 +643,10 @@ if (beCPG.module.EntityDataGridRenderers) {
         renderer: function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
             if (data.value != null) {
                 var forceUnit = oColumn.forceUnit;
+                
+                if(!forceUnit){
+                    forceUnit="none";
+                }
 
 
                 if (oColumn.hidden) {
@@ -653,7 +657,7 @@ if (beCPG.module.EntityDataGridRenderers) {
                 var unit, qty;
                 if (data.value == 0) {
                     return "0";
-                } else if ((Math.abs(data.value) < 0.01 && !forceUnit === "perc") || forceUnit === "ppm") {
+                } else if ((Math.abs(data.value) < 0.01 && forceUnit != "perc") || forceUnit == "ppm") {
                     qty = data.value * 10000;
                     unit = " ppm";
                 } else {
@@ -669,7 +673,6 @@ if (beCPG.module.EntityDataGridRenderers) {
                 if (oColumn.numberFormat) {
                     return beCPG.util.formatNumber(oColumn.numberFormat, data.value) + unit;
                 }
-
 
                 return Alfresco.util.encodeHTML(beCPG.util.sigFigs(qty, sigFig).toLocaleString(beCPG.util.getJSLocale(), { maximumFractionDigits: 20 }) + unit);
             }
