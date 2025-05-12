@@ -284,6 +284,7 @@
 				<aspect name="bcpg:docLinkedEntitiesAspect" />
 				<aspect name="bcpg:autoMergeAspect" />
 				<aspect name="bcpg:linkedSearchAspect" />
+				<aspect name="bcpg:documentAspect" />
 			</visible>
 
 			<!-- Aspects that a user can add. Same as "visible" if left empty -->
