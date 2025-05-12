@@ -90,6 +90,6 @@ public class LabelClaimCharactDetailsVisitor extends SimpleCharactDetailsVisitor
 	/** {@inheritDoc} */
 	@Override
 	protected boolean applyYield() {
-		return false;
+		return true;
 	}
 }
