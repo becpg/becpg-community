@@ -43,7 +43,6 @@
 				<aspect name="gs1:seasonalAspect"/>
 				<aspect name="gs1:pegHoleAspect"/>
 				<aspect name="gs1:animalFeedingAspect"/>
-				<aspect name="gs1:animalFeedingAspect"/>
 				
 			</visible>
 			<!-- Aspects that a user can add. Same as "visible" if left empty -->

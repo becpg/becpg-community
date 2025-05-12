@@ -163,12 +163,15 @@
 					<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 						<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:documentType
 						</control-param>
+						<control-param name="multipleSelectMode">true</control-param>
 					</control>
 				</field>
+					
 				<field id="bcpg:documentEntityRef" set="documentType" >
 					<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 						<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:entityV2
 						</control-param>
+						<control-param name="multipleSelectMode">true</control-param>
 					</control>
 				</field>
                

@@ -6873,7 +6873,7 @@
 					</source>
 					<target>
 						<class>bcpg:documentType</class>
-						<many>true</many>
+						<many>false</many>
 					</target>
 				</association>
 				<association name="bcpg:documentEntityRef">
