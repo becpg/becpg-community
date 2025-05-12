@@ -88,10 +88,10 @@
                <show id="cm:description" force="true" />
                <show id="mimetype" />
                
-               <show id="bcpg:documentState" />
-			   <show id="bcpg:documentIsMandatory" />
-               <show id="bcpg:documentTypeRef" />
-               <show id="bcpg:documentEntityRef" />
+               <show id="bcpg:documentState" force="true" />
+			   <show id="bcpg:documentIsMandatory" force="true" />
+               <show id="bcpg:documentTypeRef" force="true" />
+               <show id="bcpg:documentEntityRef" force="true" />
                
                <show id="cm:created" />
                <show id="cm:creator" />
@@ -113,24 +113,24 @@
 					template="/org/alfresco/components/form/2-column-set.ftl" />
 				
                <field id="cm:name" set="mainInfo">
-					<control>
+					<control template="/org/alfresco/components/form/controls/textfield.ftl" >
 						<control-param name="forceEditable">true</control-param>
 					</control>               
                </field>
                <field id="cm:title" set="mainInfo">
-					<control>
+					<control template="/org/alfresco/components/form/controls/textfield.ftl" >
 						<control-param name="forceEditable">true</control-param>
 					</control>               
                </field>
                <field id="cm:description" set="mainInfo">
-					<control>
+					<control template="/org/alfresco/components/form/controls/textfield.ftl" >
 						<control-param name="forceEditable">true</control-param>
-					</control>               
+					</control>
                </field>
                <field id="mimetype" set="mainInfo">
-                  <control template="/org/alfresco/components/form/controls/mimetype.ftl" >
-					<control-param name="forceEditable">true</control-param>
-				</control>               
+                 	 <control template="/org/alfresco/components/form/controls/mimetype.ftl" >
+						<control-param name="forceEditable">true</control-param>
+					</control>               
                </field>
                
                 <field id="cm:from" set="effectivity">
@@ -145,7 +145,12 @@
                   </control>
                </field>
                
-              	<field id="bcpg:documentState" set="documentType" />
+              	<field id="bcpg:documentState" set="documentType" >
+					<control template="/org/alfresco/components/form/controls/selectone.ftl">
+						<control-param name="insertBlank">true</control-param>
+						<control-param name="isSearch">true</control-param>
+					</control>
+				</field>
 				<field id="bcpg:documentIsMandatory" set="documentType" >
 					<control template="/org/alfresco/components/form/controls/selectone.ftl">
 						<control-param name="insertBlank">true</control-param>
