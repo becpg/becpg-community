@@ -218,7 +218,7 @@ public class PlmRepoConsts {
 	/** Constant <code>PATH_TOX_ING="ToxIng"</code> */
 	public static final String PATH_TOX_ING = "ToxIng";
 	
-	/** Constant <code>PATH_TOX_ING="DocumentTypes"</code> */
+	/** Constant <code>PATH_DOCUMENT_TYPE="DocumentTypes"</code> */
 	public static final String PATH_DOCUMENT_TYPE = "DocumentTypes";
 
 	/** Constant <code>PATH_CONTACT_TYPES="ContactTypes"</code> */

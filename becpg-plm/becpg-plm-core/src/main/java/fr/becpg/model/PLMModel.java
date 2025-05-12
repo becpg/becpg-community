@@ -933,5 +933,8 @@ public interface PLMModel {
 
 	/** Constant <code>TYPE_LABORATORY</code> */
 	QName TYPE_LABORATORY = QName.createQName(BeCPGModel.BECPG_URI, "laboratory");
+	
+	/** Constant <code>ASPECT_DOCUMENT_ASPECT</code> */
+	QName ASPECT_DOCUMENT_ASPECT = QName.createQName(BeCPGModel.BECPG_URI, "documentAspect");
 
 }
