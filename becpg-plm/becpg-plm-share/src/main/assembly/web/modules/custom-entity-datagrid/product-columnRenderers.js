@@ -639,15 +639,16 @@ if (beCPG.module.EntityDataGridRenderers) {
 
     YAHOO.Bubbling.fire("registerDataGridRenderer", {
         propertyName: ["bcpg:allergenListQtyPerc", "bcpg:allergenRegulatoryThreshold", "bcpg:allergenInVoluntaryRegulatoryThreshold","bcpg:svhcListQtyPerc"
-            , "bcpg:ingListQtyPerc", "bcpg:ingListQtyPercWithYield", "bcpg:ingListQtyPercWithSecondaryYield"],
+            , "bcpg:ingListQtyPerc", "bcpg:ingListQtyPercWithYield", "bcpg:ingListQtyPercWithSecondaryYield"
+            , "bcpg:lclPercentClaim","bcpg:lclPercentApplicable"
+        ],
         renderer: function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
             if (data.value != null) {
                 var forceUnit = oColumn.forceUnit;
                 
                 if(!forceUnit){
-                    forceUnit="none";
+                    forceUnit = "none";
                 }
-
 
                 if (oColumn.hidden) {
                     oColumn.showAfterRender = true;
@@ -657,15 +658,16 @@ if (beCPG.module.EntityDataGridRenderers) {
                 var unit, qty;
                 if (data.value == 0) {
                     return "0";
-                } else if ((Math.abs(data.value) < 0.01 && forceUnit != "perc") || forceUnit == "ppm") {
+                } else if (data.value > 100) {
+                    return ">100 %";
+                 } else if ((Math.abs(data.value) < 0.01 && forceUnit != "perc") || forceUnit == "ppm") {
                     qty = data.value * 10000;
                     unit = " ppm";
                 } else {
                     qty = data.value;
                     unit = " %";
                 }
-
-
+                
                 if (oRecord.getData("itemType") == "total") {
                     return '<span class="total">' + beCPG.util.sigFigs(qty, 7).toLocaleString(beCPG.util.getJSLocale(), { maximumFractionDigits: 20 }) + unit + "</span>";
                 }
