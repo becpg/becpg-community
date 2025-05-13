@@ -310,6 +310,7 @@ var g; // gantt var
                             {
                                 fields : fields,
                                 page : p_obj && p_obj.page ? p_obj.page : this.currentPage,
+                                pageSize: p_obj && p_obj.pageSize ? p_obj.pageSize : this._getPageSize(),
                                 extraParams : this.options.extraParams
                             };
                             
