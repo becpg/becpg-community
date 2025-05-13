@@ -20,6 +20,7 @@ package fr.becpg.repo.jscript;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -247,7 +248,8 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 							String supplierGroup = supplierPortalService.getOrCreateSupplierGroup(supplierNodeRef, resources);
 
 							if (supplierGroup != null) {
-								permissionService.setPermission(entityNodeRef, supplierGroup, PermissionService.CONSUMER, true);
+								permissionService.setPermission(entityNodeRef,  supplierGroup, PermissionService.CONSUMER, true);
+								nodeService.setProperty(entityNodeRef, PLMModel.PROP_EXTERNAL_ACCESS_GROUP,supplierGroup);
 							}
 
 							for (NodeRef resourceRef : resources) {

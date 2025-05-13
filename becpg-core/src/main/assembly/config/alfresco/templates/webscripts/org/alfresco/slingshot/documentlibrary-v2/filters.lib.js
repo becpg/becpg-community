@@ -79,6 +79,21 @@ var Filters =
       };
 
       optional = optional || {};
+      
+      var externalAccessFilter = "";
+      var groups = people.getContainerGroups(person);
+      var externalFilters = [];
+
+      for (var i = 0; i < groups.length; i++) {
+          var groupName = groups[i].shortName || groups[i].name; 
+          if (groupName.indexOf("GROUP_EXTERNAL_") === 0) {
+              externalFilters.push('@bcpg\\:externalAccessGroup:"' + groupName + '"');
+          }
+      }
+
+      if (externalFilters.length > 0) {
+          externalAccessFilter = " (" + externalFilters.join(" OR ") + ")";
+      }
 
       // Sorting parameters specified?
       var sortAscending = args.sortAsc,
@@ -117,7 +132,7 @@ var Filters =
       {
          case "all":
             filterQuery = "+PATH:\"" + parsedArgs.rootNode.qnamePath + "//*\"";
-            filterQuery += " +(TYPE:\"cm:content\" OR  TYPE:\"bcpg:entityV2\")";
+            filterQuery += " +(TYPE:\"cm:content\" OR  ( TYPE:\"bcpg:entityV2\" "+externalAccessFilter+" )";
             filterParams.query = filterQuery + filterQueryDefaults;
             break;
 
@@ -154,7 +169,7 @@ var Filters =
             {
                filterQuery += " +@cm\\:" + ownerField + ":\"" + person.properties.userName + '"';
             }
-            filterQuery += " +(TYPE:\"cm:content\" OR  TYPE:\"bcpg:entityV2\")";
+            filterQuery += " +(TYPE:\"cm:content\" OR  ( TYPE:\"bcpg:entityV2\" "+externalAccessFilter+" ))";
 
             filterParams.sort = [
             {
@@ -192,7 +207,7 @@ var Filters =
 			} else {
          		filterQuery += " +@bcpg\\:productState:\""+filter+"\"";
          	}
-            filterParams.query = filterQuery + filterQueryDefaults;
+            filterParams.query = filterQuery + filterQueryDefaults + externalAccessFilter;
          	break;
          case "Planned":
          case "InProgress":
@@ -201,7 +216,7 @@ var Filters =
          case "Completed":
          	filterQuery += this.constructPathQuery(parsedArgs);
          	filterQuery += " +@pjt\\:projectState:\""+filter+"\"";
-            filterParams.query = filterQuery + filterQueryDefaults;
+            filterParams.query = filterQuery + filterQueryDefaults + externalAccessFilter;
          	break; 	
          	
          case "favourites":
