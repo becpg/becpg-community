@@ -316,6 +316,7 @@
                 <aspect>cm:titled</aspect>
                 <aspect>bcpg:codeAspect</aspect>
                 <aspect>bcpg:entityListsAspect</aspect>
+                <aspect>bcpg:suppliersAspect</aspect>
             </mandatory-aspects>
         </type>
         <type name="qa:controlPlan">
