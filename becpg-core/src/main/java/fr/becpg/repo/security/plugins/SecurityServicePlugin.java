@@ -30,4 +30,6 @@ public interface SecurityServicePlugin {
 	 */
 	boolean accept(QName nodeType);
 
+	int computeAccessMode(NodeRef nodeRef, int accesMode);
+
 }
