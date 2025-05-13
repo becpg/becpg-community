@@ -994,7 +994,7 @@
 			</parameter>
 		</constraint>
 		
-		<constraint name="bcpg:validityTypes" type="LIST">
+		<constraint name="bcpg:documentEffectivityTypes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
 					<value>NONE</value>
@@ -2139,7 +2139,7 @@
 						<facetable>true</facetable>
 					</index>
 				</property>
-				<property name="bcpg:docTypeIsValidityType">
+				<property name="bcpg:docTypeEffectivityType">
 					<type>d:text</type>
 					<default>NONE</default>
 					<index enabled="true">
@@ -2147,10 +2147,10 @@
 						<facetable>true</facetable>
 					</index>
 					<constraints>
-						<constraint ref="bcpg:validityTypes" />
+						<constraint ref="bcpg:documentEffectivityTypes" />
 					</constraints>
 				</property>
-				<property name="bcpg:docTypeAutoExpirationDate">
+				<property name="bcpg:docTypeAutoExpirationDelay">
 					<type>d:int</type>
 					<index enabled="false" />
 				</property>

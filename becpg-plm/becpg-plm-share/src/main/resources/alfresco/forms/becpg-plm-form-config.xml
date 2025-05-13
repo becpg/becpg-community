@@ -3235,8 +3235,8 @@
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:docTypeIsMandatory" />
-					<show id="bcpg:docTypeIsValidityType" />
-					<show id="bcpg:docTypeAutoExpirationDate" force="true" />
+					<show id="bcpg:docTypeEffectivityType" />
+					<show id="bcpg:docTypeAutoExpirationDelay" force="true" />
 					<show id="bcpg:docTypeMandatoryFormula" force="true" />
 					<show id="bcpg:docTypeNameFormat" />
 					<show id="bcpg:docTypeLinkedTypes" force="true" />
@@ -3256,14 +3256,14 @@
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
 					<field id="bcpg:docTypeIsMandatory" set="documentType" />
-					<field id="bcpg:docTypeIsValidityType" set="documentType" >
+					<field id="bcpg:docTypeEffectivityType" set="documentType" >
 						<constraint-handlers>
 							<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf" event='keyup,change@[
-									{"prop":"prop_bcpg_docTypeAutoExpirationDate", "condition" : "|NONE|MANUAL"}
+									{"prop":"prop_bcpg_docTypeAutoExpirationDelay", "condition" : "|NONE|MANUAL"}
 								]' />
 						</constraint-handlers>
 					</field>
-					<field id="bcpg:docTypeAutoExpirationDate" set="documentType" >
+					<field id="bcpg:docTypeAutoExpirationDelay" set="documentType" >
 						<control template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">d</control-param>
 						</control>
@@ -3308,7 +3308,7 @@
 				<field-visibility>
 					<show id="bcpg:charactName" />
 					<show id="bcpg:docTypeIsMandatory" />
-					<show id="bcpg:docTypeIsValidityType" />
+					<show id="bcpg:docTypeEffectivityType" />
 					<show id="bcpg:isDeleted" force="true" />
 				</field-visibility>
 				<appearance>
@@ -3320,7 +3320,7 @@
 							<control-param name="isSearch">true</control-param>
 						</control>
 					</field>
-					<field id="bcpg:docTypeIsValidityType">
+					<field id="bcpg:docTypeEffectivityType">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="isSearch">true</control-param>
 							<control-param name="insertBlank">false</control-param>
@@ -3339,8 +3339,8 @@
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:docTypeIsMandatory" />
-					<show id="bcpg:docTypeIsValidityType" />
-					<show id="bcpg:docTypeAutoExpirationDate" force="true" />
+					<show id="bcpg:docTypeEffectivityType" />
+					<show id="bcpg:docTypeAutoExpirationDelay" force="true" />
 					<show id="bcpg:docTypeNameFormat" />
 					<show id="bcpg:docTypeLinkedTypes" force="true" />
 					<show id="bcpg:docTypeLinkedHierarchy" force="true" />
@@ -3364,8 +3364,8 @@
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:docTypeIsMandatory" />
-					<show id="bcpg:docTypeIsValidityType" />
-					<show id="bcpg:docTypeAutoExpirationDate" force="true" />
+					<show id="bcpg:docTypeEffectivityType" />
+					<show id="bcpg:docTypeAutoExpirationDelay" force="true" />
 					<show id="bcpg:docTypeMandatoryFormula" force="true" />
 					<show id="bcpg:docTypeNameFormat" />
 					<show id="bcpg:docTypeLinkedTypes" force="true" />
@@ -3385,14 +3385,14 @@
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
 					<field id="bcpg:docTypeIsMandatory" set="documentType" />
-					<field id="bcpg:docTypeIsValidityType" set="documentType" >
+					<field id="bcpg:docTypeEffectivityType" set="documentType" >
 						<constraint-handlers>
 							<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf" event='keyup,change@[
-									{"prop":"prop_bcpg_docTypeAutoExpirationDate", "condition" : "|NONE|MANUAL"}
+									{"prop":"prop_bcpg_docTypeAutoExpirationDelay", "condition" : "|NONE|MANUAL"}
 								]' />
 						</constraint-handlers>
 					</field>
-					<field id="bcpg:docTypeAutoExpirationDate" set="documentType" >
+					<field id="bcpg:docTypeAutoExpirationDelay" set="documentType" >
 						<control template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">d</control-param>
 						</control>
