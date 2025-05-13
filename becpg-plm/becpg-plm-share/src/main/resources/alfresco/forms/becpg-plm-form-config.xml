@@ -3246,8 +3246,8 @@
 					<show id="bcpg:isDeleted" force="true" />
 				</field-visibility>
 				<appearance>
-					<set id="documentType" appearance="bordered-panel" label-id="becpg.forms.set.document-type.label" />
-					<set id="documentTypeAutogeneration" appearance="bordered-panel" label-id="becpg.forms.set.document-type-autogeneration.label" />
+					<set id="documentType" label-id="becpg.forms.set.document-type.label" />
+					<set id="documentTypeAutogeneration" label-id="becpg.forms.set.document-type-autogeneration.label" />
 					
 					<field id="bcpg:charactName" set="documentType" >
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
@@ -3268,7 +3268,11 @@
 							<control-param name="unit">d</control-param>
 						</control>
 					</field>
-					<field id="bcpg:docTypeMandatoryFormula" set="documentType" />
+					<field id="bcpg:docTypeMandatoryFormula" set="documentType" >
+						<control template="/org/alfresco/components/form/controls/spel-editor.ftl">
+							<control-param name="rows">10</control-param>
+						</control>
+					</field>
 					<field id="bcpg:docTypeNameFormat" set="documentType" />
 					<field id="bcpg:isDeleted" set="documentType" />
 					
@@ -3337,7 +3341,6 @@
 					<show id="bcpg:docTypeIsMandatory" />
 					<show id="bcpg:docTypeIsValidityType" />
 					<show id="bcpg:docTypeAutoExpirationDate" force="true" />
-					<show id="bcpg:docTypeMandatoryFormula" force="true" />
 					<show id="bcpg:docTypeNameFormat" />
 					<show id="bcpg:docTypeLinkedTypes" force="true" />
 					<show id="bcpg:docTypeLinkedHierarchy" force="true" />
@@ -3345,6 +3348,9 @@
 					<show id="bcpg:docTypeDestPath" force="true" />
 					<show id="bcpg:isDeleted" force="true" />
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:docTypeLinkedTypes" read-only="true" />
+				</appearance>
 			</form>
 		</forms>
 	</config>
@@ -3369,8 +3375,8 @@
 					<show id="bcpg:isDeleted" force="true" />
 				</field-visibility>
 				<appearance>
-					<set id="documentType" appearance="bordered-panel" label-id="becpg.forms.set.document-type.label" />
-					<set id="documentTypeAutogeneration" appearance="bordered-panel" label-id="becpg.forms.set.document-type-autogeneration.label" />
+					<set id="documentType" label-id="becpg.forms.set.document-type.label" />
+					<set id="documentTypeAutogeneration" label-id="becpg.forms.set.document-type-autogeneration.label" />
 					
 					<field id="bcpg:charactName" set="documentType" >
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
@@ -3391,7 +3397,11 @@
 							<control-param name="unit">d</control-param>
 						</control>
 					</field>
-					<field id="bcpg:docTypeMandatoryFormula" set="documentType" />
+					<field id="bcpg:docTypeMandatoryFormula" set="documentType" >
+						<control template="/org/alfresco/components/form/controls/spel-editor.ftl">
+							<control-param name="rows">10</control-param>
+						</control>
+					</field>
 					<field id="bcpg:docTypeNameFormat" set="documentType" />
 					<field id="bcpg:isDeleted" set="documentType" />
 					
@@ -11088,6 +11098,7 @@
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:documentType
 							</control-param>
+							<control-param name="showLink">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:documentEntityRef" set="documentType" >

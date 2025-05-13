@@ -6883,7 +6883,7 @@
 					</source>
 					<target>
 						<class>bcpg:entityV2</class>
-						<many>true</many>
+						<many>false</many>
 					</target>
 				</association>
 			</associations>
