@@ -113,4 +113,6 @@ public interface SupplierPortalService {
 	void deleteExternalUser(NodeRef userNodeRef, NodeRef supplierNodeRef);
 
 	String getOrCreateSupplierGroup(NodeRef supplierNodeRef, List<NodeRef> resources);
+
+	boolean isCurrentUserInSupplierGroup(NodeRef supplierNodeRef);
 }

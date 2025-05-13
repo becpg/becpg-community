@@ -71,7 +71,7 @@ import fr.becpg.repo.system.SystemConfigurationService;
 @Service("supplierPortalService")
 public class SupplierPortalServiceImpl implements SupplierPortalService {
 
-	private static final String SUPPLIER_GROUP_PREFIX = "SUPPLIER_";
+	private static final String SUPPLIER_GROUP_PREFIX = "EXTERNAL_SUPPLIER_";
 
 	private static Log logger = LogFactory.getLog(SupplierPortalServiceImpl.class);
 
@@ -110,17 +110,17 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 
 	@Autowired
 	private AuthorityService authorityService;
-	
+
 	@Autowired
 	private EntityService entityService;
-	
+
 	@Autowired
 	private SystemConfigurationService systemConfigurationService;
-	
+
 	private String projectNameTpl() {
 		return systemConfigurationService.confValue("beCPG.sendToSupplier.projectName.format");
 	}
-	
+
 	private String entityNameTpl() {
 		return systemConfigurationService.confValue("beCPG.sendToSupplier.entityName.format");
 	}
@@ -193,7 +193,7 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 				nodeService.setProperty(branchNodeRef, ContentModel.PROP_NAME, branchName);
 
 				NodeRef supplierDocumentsFolder = getOrCreateSupplierDocumentsFolder(branchNodeRef);
-				
+
 				for (ChildAssociationRef childAssoc : nodeService.getChildAssocs(supplierDocumentsFolder)) {
 					NodeRef childNodeRef = childAssoc.getChildRef();
 					nodeService.setProperty(childNodeRef, ContentModel.PROP_OWNER, AuthenticationUtil.SYSTEM_USER_NAME);
@@ -225,24 +225,21 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 	@Override
 	public NodeRef getOrCreateSupplierDocumentsFolder(NodeRef entityNodeRef) {
 		return getOrCreateDocumentFolder(entityNodeRef, RepoConsts.PATH_SUPPLIER_DOCUMENTS);
-		
+
 	}
-	
+
 	private NodeRef getOrCreateDocumentFolder(NodeRef entityNodeRef, String path) {
 		Map<QName, Serializable> properties = new HashMap<>();
 		properties.put(ContentModel.PROP_NAME, TranslateHelper.getTranslatedPath(path));
 		NodeRef documentsFolderNodeRef = nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS,
 				(String) properties.get(ContentModel.PROP_NAME));
 		if (documentsFolderNodeRef == null) {
-			documentsFolderNodeRef = nodeService
-					.createNode(entityNodeRef, ContentModel.ASSOC_CONTAINS,
-							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
-									QName.createValidLocalName(path)),
-							ContentModel.TYPE_FOLDER, properties)
+			documentsFolderNodeRef = nodeService.createNode(entityNodeRef, ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(path)), ContentModel.TYPE_FOLDER, properties)
 					.getChildRef();
 		}
 		return documentsFolderNodeRef;
-		
+
 	}
 
 	/** {@inheritDoc} */
@@ -343,33 +340,51 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 
 		return supplierNodeRef;
 	}
-	
+
 	@Override
 	public String getOrCreateSupplierGroup(NodeRef supplierNodeRef, List<NodeRef> resources) {
 		if (supplierNodeRef != null) {
-			String code =  (String) nodeService.getProperty(supplierNodeRef, BeCPGModel.PROP_CODE);
-			
-			if(code!=null && ! code.isBlank()) {
-				String groupName = SUPPLIER_GROUP_PREFIX+code;
-				
+			String code = (String) nodeService.getProperty(supplierNodeRef, BeCPGModel.PROP_CODE);
+
+			if ((code != null) && !code.isBlank()) {
+				String groupName = SUPPLIER_GROUP_PREFIX + code;
+
 				if (!authorityService.authorityExists(PermissionService.GROUP_PREFIX + groupName)) {
-					
+
 					Set<String> zones = new HashSet<>();
 					zones.add(AuthorityService.ZONE_APP_DEFAULT);
-					zones.add(AuthorityService.ZONE_AUTH_ALFRESCO
-							);
+					zones.add(AuthorityService.ZONE_AUTH_ALFRESCO);
 					logger.debug("create group: " + groupName);
-					authorityService.createAuthority(AuthorityType.GROUP, groupName,groupName ,zones);
+					authorityService.createAuthority(AuthorityType.GROUP, groupName, groupName, zones);
 				}
-				
+
 				for (NodeRef resourceRef : resources) {
-					authorityService.addAuthority(PermissionService.GROUP_PREFIX + groupName, (String) nodeService.getProperty(resourceRef, ContentModel.PROP_USERNAME));
+					authorityService.addAuthority(PermissionService.GROUP_PREFIX + groupName,
+							(String) nodeService.getProperty(resourceRef, ContentModel.PROP_USERNAME));
 				}
-				
-				return PermissionService.GROUP_PREFIX + groupName;
+
+				return  PermissionService.GROUP_PREFIX + groupName;
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public boolean isCurrentUserInSupplierGroup(NodeRef supplierNodeRef) {
+		if (supplierNodeRef != null) {
+			String code = (String) nodeService.getProperty(supplierNodeRef, BeCPGModel.PROP_CODE);
+
+			if ((code != null) && !code.isBlank()) {
+				String groupName = SUPPLIER_GROUP_PREFIX + code;
+
+				for (String currAuth : authorityService.getAuthorities()) {
+					if ((PermissionService.GROUP_PREFIX + groupName).equals(currAuth)) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 	
 
@@ -378,10 +393,9 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 	public NodeRef getOrCreateSupplierDestFolder(NodeRef supplierNodeRef, List<NodeRef> resources) {
 
 		if (supplierNodeRef != null) {
-			
-			NodeRef documentsFolderNodeRef = getOrCreateDocumentFolder(supplierNodeRef,RepoConsts.PATH_SUPPLIER_ENTITIES );
 
-		
+			NodeRef documentsFolderNodeRef = getOrCreateDocumentFolder(supplierNodeRef, RepoConsts.PATH_SUPPLIER_ENTITIES);
+
 			SiteInfo siteInfo = siteService.getSite(SupplierPortalHelper.SUPPLIER_SITE_ID);
 
 			if (siteInfo != null) {
@@ -402,7 +416,7 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 						}
 
 						String supplierPermission = systemConfigurationService.confValue("beCPG.security.supplierPermission");
-						
+
 						for (NodeRef resourceRef : resources) {
 							permissionService.setPermission(supplierNodeRef,
 									(String) nodeService.getProperty(resourceRef, ContentModel.PROP_USERNAME), supplierPermission, true);
@@ -420,7 +434,7 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 				}
 
 			} else {
-					
+
 				//For old supplier portal dest folder was the userHome this should be deprecated
 				NodeRef resourceRef = resources.get(0);
 				NodeRef destFolder = repository.getUserHome(resourceRef);
@@ -439,13 +453,11 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 		return null;
 	}
 
-
-
 	private void migrateOldSupplierDestFolder(NodeRef supplierNodeRef, NodeRef documentLibraryNodeRef, NodeRef documentsFolderNodeRef) {
 
-		NodeRef destFolder =  nodeService.getChildByName(documentLibraryNodeRef, ContentModel.ASSOC_CONTAINS,
+		NodeRef destFolder = nodeService.getChildByName(documentLibraryNodeRef, ContentModel.ASSOC_CONTAINS,
 				PropertiesHelper.cleanFolderName(I18NUtil.getMessage("path.referencing")));
-		
+
 		if (destFolder != null) {
 
 			NodeRef oldSupplierDestNodeRef = repoService.getFolderByPath(destFolder, supplierNodeRef.getId());
@@ -456,7 +468,7 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 						PropertiesHelper.cleanFolderName((String) nodeService.getProperty(supplierNodeRef, ContentModel.PROP_NAME)));
 			}
 
-			if (oldSupplierDestNodeRef != null && !isChildOf(documentsFolderNodeRef, oldSupplierDestNodeRef)) {
+			if ((oldSupplierDestNodeRef != null) && !isChildOf(documentsFolderNodeRef, oldSupplierDestNodeRef)) {
 
 				List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(oldSupplierDestNodeRef);
 
@@ -470,25 +482,21 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 		}
 
 	}
-	
+
 	private boolean isChildOf(NodeRef child, NodeRef targetParent) {
-		
+
 		ChildAssociationRef currentParent = nodeService.getPrimaryParent(child);
-		
-		if (currentParent == null) {
+
+		if ((currentParent == null) || (currentParent.getParentRef() == null)) {
 			return false;
 		}
-		
-		if (currentParent.getParentRef() == null) {
-			return false;
-		}
-		
+
 		if (currentParent.getParentRef().equals(targetParent)) {
 			return true;
 		}
-		
+
 		return isChildOf(currentParent.getParentRef(), targetParent);
-		
+
 	}
 
 	/** {@inheritDoc} */
@@ -509,7 +517,7 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 			if ((email == null) || email.isBlank()) {
 				throw new IllegalStateException(I18NUtil.getMessage("message.supplier.missing-email"));
 			}
-			
+
 			email = email.toLowerCase();
 
 			if ((firstName == null) || firstName.isBlank()) {
@@ -530,11 +538,11 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 			userAccount.getAuthorities().add(SystemGroup.ExternalUser.toString());
 			userAccount.setSynchronizeWithIDS(true);
 
-			if(extraProps == null) {
+			if (extraProps == null) {
 				extraProps = new HashMap<>();
 			}
-			extraProps.put(	ContentModel.PROP_EMAIL_FEED_DISABLED, true);
-			
+			extraProps.put(ContentModel.PROP_EMAIL_FEED_DISABLED, true);
+
 			userAccount.getExtraProps().putAll(extraProps);
 
 			return beCPGUserAccountService.getOrCreateUser(userAccount);
@@ -548,18 +556,18 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 	@Override
 	public List<NodeRef> extractSupplierAccountRefs(NodeRef document) {
 		NodeRef entityNodeRef = entityService.getEntityNodeRef(document, nodeService.getType(document));
-		
+
 		if (entityNodeRef != null) {
 			NodeRef supplierNodeRef = getSupplierNodeRef(entityNodeRef);
-			
+
 			if (supplierNodeRef != null) {
 				return associationService.getTargetAssocs(supplierNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
 			}
 		}
-		
+
 		return new ArrayList<>();
 	}
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public void updateSupplierAccount(NodeRef supplierNodeRef, NodeRef contactListNodeRef) {
@@ -568,7 +576,7 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 		String supplierLastName = (String) nodeService.getProperty(contactListNodeRef, PLMModel.PROP_CONTACT_LIST_LAST_NAME);
 		List<NodeRef> supplierAccounts = associationService.getTargetAssocs(supplierNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
 		List<NodeRef> contactListAccounts = associationService.getTargetAssocs(contactListNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
-		if (supplierEmail != null && !supplierEmail.isBlank()) {
+		if ((supplierEmail != null) && !supplierEmail.isBlank()) {
 			NodeRef oldSupplierAccount = contactListAccounts.stream()
 					.filter(a -> !supplierEmail.equals(nodeService.getProperty(a, ContentModel.PROP_EMAIL))).findFirst().orElse(null);
 			NodeRef newSupplierAccount = createExternalUser(supplierEmail, supplierFirstName, supplierLastName, true, null);
@@ -591,21 +599,22 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 		associationService.update(supplierNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS, supplierAccounts);
 		associationService.update(contactListNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS, contactListAccounts);
 	}
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public void deleteExternalUser(NodeRef userNodeRef, NodeRef supplierNodeRef) {
 		TransactionSupportUtil.bindResource(SupplierPortalPolicy.FORCE_REFERENCING_MANAGER, true);
 		List<NodeRef> sourceAssocs = associationService.getSourcesAssocs(userNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
 		for (NodeRef sourceAssoc : sourceAssocs) {
-			if (sourceAssoc.equals(supplierNodeRef) || (entityService.getEntityNodeRef(sourceAssoc, nodeService.getType(sourceAssoc)).equals(supplierNodeRef))) {
+			if (sourceAssoc.equals(supplierNodeRef)
+					|| (entityService.getEntityNodeRef(sourceAssoc, nodeService.getType(sourceAssoc)).equals(supplierNodeRef))) {
 				nodeService.removeAssociation(sourceAssoc, userNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
 			}
 		}
-		if (associationService.getSourcesAssocs(userNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS).isEmpty() && !nodeService.hasAspect(userNodeRef, ContentModel.ASPECT_PERSON_DISABLED)) {
+		if (associationService.getSourcesAssocs(userNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS).isEmpty()
+				&& !nodeService.hasAspect(userNodeRef, ContentModel.ASPECT_PERSON_DISABLED)) {
 			nodeService.addAspect(userNodeRef, ContentModel.ASPECT_PERSON_DISABLED, null);
 		}
 	}
 
-	
 }
