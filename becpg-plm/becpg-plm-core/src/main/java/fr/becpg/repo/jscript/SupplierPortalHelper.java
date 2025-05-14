@@ -248,8 +248,8 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 							String supplierGroup = supplierPortalService.getOrCreateSupplierGroup(supplierNodeRef, resources);
 
 							if (supplierGroup != null) {
-								permissionService.setPermission(entityNodeRef,  supplierGroup, PermissionService.CONSUMER, true);
-								nodeService.setProperty(entityNodeRef, PLMModel.PROP_EXTERNAL_ACCESS_GROUP,supplierGroup);
+								permissionService.setPermission(entityNodeRef,  PermissionService.GROUP_PREFIX + supplierGroup, PermissionService.CONSUMER, true);
+								nodeService.setProperty(entityNodeRef,  PLMModel.PROP_EXTERNAL_ACCESS_GROUP,PermissionService.GROUP_PREFIX + supplierGroup);
 							}
 
 							for (NodeRef resourceRef : resources) {

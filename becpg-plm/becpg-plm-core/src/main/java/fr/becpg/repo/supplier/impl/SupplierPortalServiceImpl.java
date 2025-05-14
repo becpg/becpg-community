@@ -27,6 +27,7 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
+import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.cmr.version.VersionType;
@@ -113,6 +114,9 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 
 	@Autowired
 	private EntityService entityService;
+
+	@Autowired
+	private PersonService personService;
 
 	@Autowired
 	private SystemConfigurationService systemConfigurationService;
@@ -359,11 +363,14 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 				}
 
 				for (NodeRef resourceRef : resources) {
-					authorityService.addAuthority(PermissionService.GROUP_PREFIX + groupName,
-							(String) nodeService.getProperty(resourceRef, ContentModel.PROP_USERNAME));
+					String userName = (String) nodeService.getProperty(resourceRef, ContentModel.PROP_USERNAME);
+					if (!authorityService.getAuthoritiesForUser(userName).contains(PermissionService.GROUP_PREFIX + groupName)) {
+						authorityService.addAuthority(PermissionService.GROUP_PREFIX + groupName, userName);
+					}
+
 				}
 
-				return  PermissionService.GROUP_PREFIX + groupName;
+				return groupName;
 			}
 		}
 		return null;
@@ -383,10 +390,20 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 					}
 				}
 			}
+
+			NodeRef userNodeRef = personService.getPerson(AuthenticationUtil.getFullyAuthenticatedUser());
+
+			List<NodeRef> sourceAssocs = associationService.getSourcesAssocs(userNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
+			for (NodeRef sourceAssoc : sourceAssocs) {
+				if (sourceAssoc.equals(supplierNodeRef)
+						|| (entityService.getEntityNodeRef(sourceAssoc, nodeService.getType(sourceAssoc)).equals(supplierNodeRef))) {
+					return true;
+				}
+			}
+
 		}
 		return false;
 	}
-	
 
 	/** {@inheritDoc} */
 	@Override
