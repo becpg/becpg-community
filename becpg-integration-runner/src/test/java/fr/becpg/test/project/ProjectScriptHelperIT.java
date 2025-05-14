@@ -52,7 +52,7 @@ public class ProjectScriptHelperIT extends RepoBaseTestCase {
 			projectData.withDeliverableList(List.of(DeliverableListDataItem.build().withTasks(List.of(projectData.getTaskList().get(0).getNodeRef()))
 
 					.withUrl(
-							"https://entity?nodeRef={nodeRef}&code={nodeRef|bcpg:code}&state={nodeRef|pjt:projectState?format(.%s)}&entities={pjt:projectEntity}")));
+							"https://entity?nodeRef={nodeRef}&code={nodeRef|bcpg:code}&state={nodeRef|pjt:projectState}&entities={pjt:projectEntity}")));
 
 			return alfrescoRepository.save(projectData);
 
@@ -65,7 +65,7 @@ public class ProjectScriptHelperIT extends RepoBaseTestCase {
 			String url = projectScriptHelper.getDeliverableUrl(new ScriptNode(ret.getDeliverableList().get(0).getNodeRef(), serviceRegistry));
 
 			String url2 = "https://entity?nodeRef=" + URLEncoder.encodeUriComponent(ret.getNodeRef().toString()) + "&code=" +projectData.getCode()
-					+ "&state=." + projectData.getState().toString() + "&entities="
+					+ "&state=" + projectData.getState().toString() + "&entities="
 					+ URLEncoder.encodeUriComponent(projectData.getEntities().stream().map(NodeRef::toString).collect(Collectors.joining(",")));
 
 			
