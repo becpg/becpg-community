@@ -26,7 +26,7 @@ public interface SurveyService {
 	 * @return a {@link org.json.JSONObject} object
 	 * @throws org.json.JSONException if any.
 	 */
-	JSONObject getSurveyData(NodeRef entityNodeRef, String dataListName, Predicate<List<SurveyListDataItem>> writeAccessTester)
+	JSONObject getSurveyData(NodeRef entityNodeRef, String dataListName, Boolean disabled)
 			throws JSONException;
 	
 	/**

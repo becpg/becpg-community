@@ -70,6 +70,7 @@ import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.security.data.PermissionModel;
+import fr.becpg.repo.security.plugins.DefaultSecurityServicePlugin;
 import fr.becpg.repo.security.plugins.SecurityServicePlugin;
 
 /**
@@ -80,7 +81,7 @@ import fr.becpg.repo.security.plugins.SecurityServicePlugin;
  */
 
 @Service("projectService")
-public class ProjectServiceImpl implements ProjectService, FormulationPlugin, SecurityServicePlugin {
+public class ProjectServiceImpl extends DefaultSecurityServicePlugin implements ProjectService, FormulationPlugin, SecurityServicePlugin {
 
 	private static final Log logger = LogFactory.getLog(ProjectServiceImpl.class);
 
@@ -151,6 +152,7 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 	}
 
 	/** {@inheritDoc} */
+	@SuppressWarnings({ "deprecation", "deprecation" })
 	@Override
 	public Set<NodeRef> updateProjectState(NodeRef projectNodeRef, String beforeState, String afterState) {
 		Set<NodeRef> toReformulates = new HashSet<>();
@@ -235,7 +237,7 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 	/** {@inheritDoc} */
 	@Override
 	public NodeRef getProjectsContainer(String siteId) {
-		if ((siteId != null) && (siteId.length() > 0)) {
+		if ((siteId != null) && (!siteId.isBlank())) {
 			return siteService.getContainer(siteId, SiteService.DOCUMENT_LIBRARY);
 		}
 		return null;
