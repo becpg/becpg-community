@@ -26,7 +26,7 @@ import fr.becpg.common.csv.CSVReader;
 public class EcoScoreService {
 	private static final Log LOGGER = LogFactory.getLog(EcoScoreService.class);
 
-	private static final String DEFAULT_AGRIBALISE_PATH = "beCPG/databases/ecoscore/agribalyse_3_1.csv";
+	private static final String DEFAULT_AGRIBALYSE_PATH = "beCPG/databases/ecoscore/agribalyse_3_2.csv";
 	private static final String DEFAULT_COUNTRY_SCORE_PATH = "beCPG/databases/ecoscore/country_score_2021.csv";
 	private static final String DEFAULT_COUNTRY_POSITION_PATH = "beCPG/databases/ecoscore/countries.csv";
 	private static final char CSV_DELIMITER = ';';
@@ -71,7 +71,7 @@ public class EcoScoreService {
 	private void loadEnvironmentalFootprints() {
 		environmentalFootprints = new LinkedHashMap<>();
 		try {
-			ClassPathResource resource = new ClassPathResource(DEFAULT_AGRIBALISE_PATH);
+			ClassPathResource resource = new ClassPathResource(DEFAULT_AGRIBALYSE_PATH);
 			try (CSVReader csvReader = createCsvReader(resource)) {
 				String[] line;
 				while ((line = csvReader.readNext()) != null) {
@@ -81,7 +81,7 @@ public class EcoScoreService {
 				}
 			}
 		} catch (IOException e) {
-			LOGGER.error("Failed to load environmental footprints from " + DEFAULT_AGRIBALISE_PATH, e);
+			LOGGER.error("Failed to load environmental footprints from " + DEFAULT_AGRIBALYSE_PATH, e);
 			environmentalFootprints = Collections.emptyMap();
 		}
 	}

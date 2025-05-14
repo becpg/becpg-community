@@ -718,7 +718,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 		if (!propertyDef.getConstraints().isEmpty()) {
 			for (ConstraintDefinition constraint : propertyDef.getConstraints()) {
-				if (constraint.getConstraint() instanceof DynListConstraint) {
+				if (constraint.getConstraint() instanceof DynListConstraint ) {
 					dynListConstraint = (DynListConstraint) constraint.getConstraint();
 
 				} else if ("LIST".equals(constraint.getConstraint().getType())) {
@@ -1605,7 +1605,11 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 */
 	public boolean allowWrite(NodeRef nodeRef, String authority) {
 		return AuthenticationUtil.runAsSystem(() -> {
-			permissionService.setPermission(nodeRef, authority, PermissionService.EDITOR, true);
+			if(entityDictionaryService.isSubClass(nodeService.getType(nodeRef), ContentModel.TYPE_FOLDER)) {
+				permissionService.setPermission(nodeRef, authority, PermissionService.COORDINATOR, true);
+			} else {
+				permissionService.setPermission(nodeRef, authority, PermissionService.EDITOR, true);
+			}
 			return true;
 		});
 	}

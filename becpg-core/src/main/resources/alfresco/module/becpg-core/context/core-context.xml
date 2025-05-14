@@ -153,6 +153,8 @@
 
 	<bean id="smartContentExtractor" class="fr.becpg.repo.entity.datalist.impl.SmartContentExtractor" parent="simpleExtractor">
 		<property name="defaultExtractor" value="false" />
+		<property name="alfrescoRepository" ref="alfrescoRepository" />
+		<property name="expressionService" ref="expressionService" />
 	</bean>
 
 	<bean id="multiLevelExtractor" class="fr.becpg.repo.entity.datalist.impl.MultiLevelExtractor" parent="simpleExtractor">

@@ -1,35 +1,26 @@
-/*
- * #%L
- * Alfresco Share WAR
- * %%
- * Copyright (C) 2005 - 2016 Alfresco Software Limited
- * %%
- * This file is part of the Alfresco software. 
- * If the software was purchased under a paid Alfresco license, the terms of 
- * the paid license agreement will prevail.  Otherwise, the software is 
- * provided under the following open source license terms:
- * 
- * Alfresco is free software: you can redistribute it and/or modify
+/*******************************************************************************
+  * Copyright (C) 2010-2025 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
- * Alfresco is distributed in the hope that it will be useful,
+ *
+ * beCPG is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License
- * along with Alfresco. If not, see <http://www.gnu.org/licenses/>.
- * #L%
- */
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
+ ******************************************************************************/
+
 package fr.becpg.web.authentication;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-
-import jakarta.servlet.http.HttpServletRequest;
 
 import org.alfresco.web.site.servlet.MTAuthenticationFilter;
 import org.apache.commons.logging.Log;
@@ -40,6 +31,8 @@ import org.springframework.extensions.webscripts.RequestCachingConnector;
 import org.springframework.extensions.webscripts.connector.ConnectorContext;
 import org.springframework.extensions.webscripts.connector.ConnectorSession;
 import org.springframework.extensions.webscripts.connector.RemoteClient;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Extends the {@link org.springframework.extensions.webscripts.connector.AlfrescoConnector} to allow the connection from Share
@@ -87,175 +80,145 @@ import org.springframework.extensions.webscripts.connector.RemoteClient;
  * @author kroast
  * @version $Id: $Id
  */
-public class BeCPGExternalConnector extends RequestCachingConnector
-{
-	
-	private static Log logger = LogFactory.getLog(BeCPGExternalConnector.class);
-	
-    /**
-     * The name of the element in the {@link ConnectorDescriptor} 
-     * ({@code <connector>...<userHeader>...</userHeader></connector>}) that
-     * contains the name of the HTTP header used by an external SSO
-     * to provide the authenticated user name. 
-     */
-    private static final String CD_USER_HEADER = "userHeader";
-    
-    /**
-     * The name of the element in the {@link ConnectorDescriptor} 
-     * ({@code <connector>...<userIdPattern>...</userIdPattern></connector>}) that
-     * contains the optional regex used by the external SSO to pattern match authenticated
-     * user names. This value must match that used by Alfresco External Auth settings. 
-     */
-    private static final String CD_USER_ID_PATTERN = "userIdPattern";
-    
-    /**
-     * The name of the property in the {@link ConnectorSession} that
-     * contains the name of the HTTP header used by an external SSO
-     * to provide the authenticated user name. 
-     */
-    public static final String CS_PARAM_USER_HEADER = "userHeader";
-    
-    /**
-     * The name of the property in the {@link ConnectorSession} that
-     * contains the optional regex used by the external SSO to pattern match authenticated
-     * user names.
-     */
-    public static final String CS_PARAM_USER_ID_PATTERN = "userIdPattern";
-    
-    
-    /**
-     * <p>Constructor for BeCPGExternalConnector.</p>
-     *
-     * @param descriptor a {@link org.springframework.extensions.config.RemoteConfigElement.ConnectorDescriptor} object.
-     * @param endpoint a {@link java.lang.String} object.
-     */
-    public BeCPGExternalConnector(ConnectorDescriptor descriptor, String endpoint)
-    {
-        super(descriptor, endpoint);
-    }
-    
-    private String getUserHeader()
-    {
-        String userHeader = descriptor.getStringProperty(CD_USER_HEADER);
-        if (userHeader != null && userHeader.trim().length() == 0)
-        {
-            userHeader = null;
-        }
-        return userHeader;
-    }
-    
-    private String getUserIdPattern()
-    {
-        String userIdPattern = descriptor.getStringProperty(CD_USER_ID_PATTERN);
-        if (userIdPattern != null && userIdPattern.trim().length() == 0)
-        {
-            userIdPattern = null;
-        }
-        return userIdPattern;
-    }
-    
-    /**
-     * {@inheritDoc}
-     *
-     * Overrides super method to set the CS_PARAM_USER_HEADER. This method is
-     * always called at the end of ConnectorService#getConnector when
-     * it constructs a connector
-     */
-    @Override
-    public void setConnectorSession(ConnectorSession connectorSession)
-    {
-        super.setConnectorSession(connectorSession);
-        connectorSession.setParameter(CS_PARAM_USER_HEADER, getUserHeader());
-        connectorSession.setParameter(CS_PARAM_USER_ID_PATTERN, getUserIdPattern());
-    }
+public class BeCPGExternalConnector extends RequestCachingConnector {
 
-    /**
-     * {@inheritDoc}
-     *
-     * Overrides the super method to add the HTTP header used by an external SSO
-     * to provide the authenticated user name when calling alfresco from share.
-     */
-    @Override
-    protected void applyRequestHeaders(RemoteClient remoteClient, ConnectorContext context)
-    {
-        // Need to override the headers set on the remoteClient to include the 'userHeader'
-        // The following duplicates much of the code in the super method. Creating a new
-        // context with the userHeader is even more complex.
-        
-        // copy in cookies that have been stored back as part of the connector session
-        ConnectorSession connectorSession = getConnectorSession();
-        if (connectorSession != null)
-        {
-            Map<String, String> cookies = new HashMap<>(8);
-            for (String cookieName : connectorSession.getCookieNames())
-            {
-                cookies.put(cookieName, connectorSession.getCookie(cookieName));
-            }
-            remoteClient.setCookies(cookies);
-        }
-        
-        Map<String, String> headers = new HashMap<>(8);
-        if (context != null)
-        {
-            headers.putAll(context.getHeaders());
-        }
-        
-        // Proxy the authenticated user name if we have password-less credentials (indicates SSO auth over a secure connection)
-        if (getCredentials() != null)
-        {
-            String userHeader = getUserHeader();
-            if (userHeader != null)
-            {
-                // TODO: This is not ideal - for scenarios where the request has come through a Spring Dispatcher servlet
-                //       the request will be available in the ServletUtil helper, else if it has come through another route
-                //       it will be available on the MTAuthenticationFilter - this should be resolved.
-                HttpServletRequest req = ServletUtil.getRequest();
-                if (req == null)
-                {
-                    req = MTAuthenticationFilter.getCurrentServletRequest();
-                }
-                // MNT-15866: In some cases req can be null so we need to check it before getHeader from it
-                String user = null;
-                if (req != null)
-                {
-                    user = req.getHeader(userHeader);
-                    if (user == null)
-                    {
-                        // MNT-15795
-                        user = req.getRemoteUser();
-                    }
-                }
-                if (user != null)
-                {
-                	
-                	
-                    // MNT-11041 Share SSOAuthenticationFilter and non-ascii username strings
-                    if (!org.apache.commons.codec.binary.Base64.isBase64(user))
-                    {
-                        try
-                        {
-                            user = org.apache.commons.codec.binary.Base64.encodeBase64String((new String(user.getBytes("ISO-8859-1"), "UTF-8")).getBytes("UTF-8"));
-                        }
-                        catch (UnsupportedEncodingException e)
-                        {
-                            //TODO
-                        }
-                        headers.put("Remote-User-Encode", Boolean.TRUE.toString());
-                    }
-                    
-                    if(logger.isDebugEnabled()){
-                		logger.debug("beCPG setting user : "+user+" into "+userHeader);
-                	}
-                    
-                    headers.put(userHeader, user);
-                }
-            }
-        }
-        
-        // stamp all headers onto the remote client
-        if (headers.size() != 0)
-        {
-            remoteClient.setRequestProperties(headers);
-        }
-    }
+	private static Log logger = LogFactory.getLog(BeCPGExternalConnector.class);
+
+	/**
+	 * The name of the element in the {@link ConnectorDescriptor}
+	 * ({@code <connector>...<userHeader>...</userHeader></connector>}) that
+	 * contains the name of the HTTP header used by an external SSO
+	 * to provide the authenticated user name.
+	 */
+	private static final String CD_USER_HEADER = "userHeader";
+
+	/**
+	 * The name of the element in the {@link ConnectorDescriptor}
+	 * ({@code <connector>...<userIdPattern>...</userIdPattern></connector>}) that
+	 * contains the optional regex used by the external SSO to pattern match authenticated
+	 * user names. This value must match that used by Alfresco External Auth settings.
+	 */
+	private static final String CD_USER_ID_PATTERN = "userIdPattern";
+
+	/**
+	 * The name of the property in the {@link ConnectorSession} that
+	 * contains the name of the HTTP header used by an external SSO
+	 * to provide the authenticated user name.
+	 */
+	public static final String CS_PARAM_USER_HEADER = "userHeader";
+
+	/**
+	 * The name of the property in the {@link ConnectorSession} that
+	 * contains the optional regex used by the external SSO to pattern match authenticated
+	 * user names.
+	 */
+	public static final String CS_PARAM_USER_ID_PATTERN = "userIdPattern";
+
+	/**
+	 * <p>Constructor for BeCPGExternalConnector.</p>
+	 *
+	 * @param descriptor a {@link org.springframework.extensions.config.RemoteConfigElement.ConnectorDescriptor} object.
+	 * @param endpoint a {@link java.lang.String} object.
+	 */
+	public BeCPGExternalConnector(ConnectorDescriptor descriptor, String endpoint) {
+		super(descriptor, endpoint);
+	}
+
+	private String getUserHeader() {
+		String userHeader = descriptor.getStringProperty(CD_USER_HEADER);
+		if ((userHeader != null) && (userHeader.isBlank())) {
+			userHeader = null;
+		}
+		return userHeader;
+	}
+
+	private String getUserIdPattern() {
+		String userIdPattern = descriptor.getStringProperty(CD_USER_ID_PATTERN);
+		if ((userIdPattern != null) && (userIdPattern.isBlank())) {
+			userIdPattern = null;
+		}
+		return userIdPattern;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * Overrides super method to set the CS_PARAM_USER_HEADER. This method is
+	 * always called at the end of ConnectorService#getConnector when
+	 * it constructs a connector
+	 */
+	@Override
+	public void setConnectorSession(ConnectorSession connectorSession) {
+		super.setConnectorSession(connectorSession);
+		connectorSession.setParameter(CS_PARAM_USER_HEADER, getUserHeader());
+		connectorSession.setParameter(CS_PARAM_USER_ID_PATTERN, getUserIdPattern());
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * Overrides the super method to add the HTTP header used by an external SSO
+	 * to provide the authenticated user name when calling alfresco from share.
+	 */
+	@Override
+	protected void applyRequestHeaders(RemoteClient remoteClient, ConnectorContext context) {
+		// Need to override the headers set on the remoteClient to include the 'userHeader'
+		// The following duplicates much of the code in the super method. Creating a new
+		// context with the userHeader is even more complex.
+
+		// copy in cookies that have been stored back as part of the connector session
+		ConnectorSession connectorSession = getConnectorSession();
+		if (connectorSession != null) {
+			Map<String, String> cookies = new HashMap<>(8);
+			for (String cookieName : connectorSession.getCookieNames()) {
+				cookies.put(cookieName, connectorSession.getCookie(cookieName));
+			}
+			remoteClient.setCookies(cookies);
+		}
+
+		Map<String, String> headers = new HashMap<>(8);
+		if (context != null) {
+			headers.putAll(context.getHeaders());
+		}
+
+		// Proxy the authenticated user name if we have password-less credentials (indicates SSO auth over a secure connection)
+		if (getCredentials() != null) {
+			String userHeader = getUserHeader();
+			if (userHeader != null) {
+				HttpServletRequest req = ServletUtil.getRequest();
+				if (req == null) {
+					req = MTAuthenticationFilter.getCurrentServletRequest();
+				}
+				// MNT-15866: In some cases req can be null so we need to check it before getHeader from it
+				String user = null;
+				if (req != null) {
+					user = req.getHeader(userHeader);
+					if (user == null) {
+						// MNT-15795
+						user = req.getRemoteUser();
+					}
+				}
+				if (user != null) {
+
+					// MNT-11041 Share SSOAuthenticationFilter and non-ascii username strings
+					if (!org.apache.commons.codec.binary.Base64.isBase64(user)) {
+						user = org.apache.commons.codec.binary.Base64.encodeBase64String(
+								(new String(user.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8)).getBytes(StandardCharsets.UTF_8));
+						headers.put("Remote-User-Encode", Boolean.TRUE.toString());
+					}
+
+					if (logger.isDebugEnabled()) {
+						logger.debug("beCPG setting user : " + user + " into " + userHeader);
+					}
+
+					headers.put(userHeader, user);
+				}
+			}
+		}
+
+		// stamp all headers onto the remote client
+		if (headers.size() != 0) {
+			remoteClient.setRequestProperties(headers);
+		}
+	}
 }

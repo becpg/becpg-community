@@ -548,6 +548,8 @@ public interface PLMModel {
 	QName ASSOC_SUPPLIER_PLANTS = QName.createQName(BeCPGModel.BECPG_URI, "supplierPlants");
 	/** Constant <code>PROP_SUPPLIER_STATE</code> */
 	QName PROP_SUPPLIER_STATE = QName.createQName(BeCPGModel.BECPG_URI, "supplierState");
+	
+	QName PROP_EXTERNAL_ACCESS_GROUP = QName.createQName(BeCPGModel.BECPG_URI, "externalAccessGroup");
 
 	// supplier
 	/** Constant <code>TYPE_SUPPLIER</code> */
@@ -927,5 +929,6 @@ public interface PLMModel {
 
 	/** Constant <code>TYPE_LABORATORY</code> */
 	QName TYPE_LABORATORY = QName.createQName(BeCPGModel.BECPG_URI, "laboratory");
+	
 
 }
