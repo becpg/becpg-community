@@ -24,5 +24,6 @@
 		<filter id="qa_nc" data="*" parameters="fts(+@qa\:ncState:&quot;{data}&quot;)" />
 		<filter id="qa_qualityControl" data="*" parameters="fts(+@qa\:qcState:&quot;{data}&quot;)" />
 		<filter id="qa_batch" data="*" parameters="fts(+@qa\:batchState:&quot;{data}&quot;)" />
+		<filter id="cm_content" data="*" parameters="fts(+@bcpg\:documentState:&quot;{data}&quot;)" />
 	</filters-parameters>
 </config>

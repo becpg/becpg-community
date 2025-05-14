@@ -11,7 +11,7 @@ function main()
 		
 	var preferences = AlfrescoUtil.getPreferences(prefs);
 	var currentType = preferences.type!=null ? preferences.type: "finishedProduct";
-	   var filterParameters =  getFilterParameters();
+	var filterParameters =  getFilterParameters();
 	
 	model.pagination = true;
   
