@@ -86,6 +86,7 @@
           <show force="true" id="gs1:preparationType"/>
           <show force="false" id="bcpg:productMicrobioCriteriaRef"/>
           <show force="false" id="bcpg:meatType"/>
+          <show force="true" id="gs1:tradeItemTradeChannel"/>
           
           <show force="false" id="gs1:isTradeItemSeasonal"/>
           <show force="false" id="gs1:seasonalAvailabilityStartDateTime"/>
@@ -590,6 +591,7 @@
             </control>
           </field>
           <field id="bcpg:meatType" mandatory="false" read-only="false" set="consumer"/> 
+          <field id="gs1:tradeItemTradeChannel" mandatory="false" read-only="false" set="consumer" />
           
           <set appearance="bordered-panel" id="cheese" label-id="becpg.forms.set.cheese.label" parent="mainTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
           
@@ -1100,12 +1102,12 @@
           <set id="template" appearance="bordered-panel" label-id="becpg.forms.set.template.label" parent="templateTab"
             template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field id="bcpg:entityTplEnabled" set="template" />
-          <field id="bcpg:entityTplIsDefault" set="template" />
-          <field id="bcpg:entityTplScript" set="template" mandatory="false" read-only="false">
-            <control template="/org/alfresco/components/form/controls/association.ftl">
-              <control-param name="startLocation">{doclib}</control-param>
-            </control>
-          </field>
+		  <field id="bcpg:entityTplIsDefault" set="template" />
+		  <field id="bcpg:entityTplScript" set="template" mandatory="false" read-only="false">
+		  	<control template="/org/alfresco/components/form/controls/association.ftl">
+		  	  <control-param name="startLocation">{doclib}</control-param>
+		  	</control>
+		  </field>
           
           <set id="branchTab" label-id="becpg.forms.set.branch.label"/>
           <set id="branch" appearance="bordered-panel" label-id="becpg.forms.set.branch.label" parent="branchTab"
