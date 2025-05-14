@@ -193,7 +193,6 @@ public class EntityDataListWebScript extends AbstractEntityDataListWebScript {
 
 		String itemType = req.getParameter(PARAM_ITEMTYPE);
 		dataListFilter.setDataListName(req.getParameter(PARAM_DATA_LIST_NAME));
-		// String argDays = req.getParameter(PARAM_DAYS);
 		QName dataType = QName.createQName(itemType, namespaceService);
 		dataListFilter.setDataType(dataType);
 
@@ -316,7 +315,7 @@ public class EntityDataListWebScript extends AbstractEntityDataListWebScript {
 				dataListFilter.getPagination().setQueryExecutionId((String) json.get(PARAM_QUERY_EXECUTION_ID));
 			}
 
-			if (filterId.equals(DataListFilter.FORM_FILTER) && (filterData != null)) {
+			if (filterId!=null && filterId.equals(DataListFilter.FORM_FILTER) && (filterData != null)) {
 				JSONObject jsonObject = new JSONObject(filterData);
 				dataListFilter.setCriteriaMap(JsonHelper.extractCriteria(jsonObject));
 			}
@@ -331,9 +330,9 @@ public class EntityDataListWebScript extends AbstractEntityDataListWebScript {
 					String fieldLabel = null;
 					
 					Object field = jsonFields.get(i);
-					if(field instanceof JSONObject) {
-						fieldId = ((JSONObject) field).getString("id").replace("_", ":");
-						fieldLabel = ((JSONObject) field).getString("label");
+					if(field instanceof JSONObject jsonField) {
+						fieldId = jsonField.getString("id").replace("_", ":");
+						fieldLabel = jsonField.getString("label");
 					} else {
 						
 						fieldId = ((String) field).replace("_", ":");
@@ -363,7 +362,7 @@ public class EntityDataListWebScript extends AbstractEntityDataListWebScript {
 				logger.debug("Using extractor: "+extractor.getClass().getSimpleName());
 			}
 
-			final Access access = getAccess(dataType, entityNodeRefsList, dataListFilter.isVersionFilter(),
+			final Access access = getAccess(dataType, entityNodeRefsList.isEmpty() ? null : entityNodeRefsList.get(0), dataListFilter.isVersionFilter(),
 					dataListFilter.getParentNodeRef(), dataListFilter.getDataListName(), extractor);
 			
 			boolean hasWriteAccess = access.canWrite() && !Boolean.valueOf(req.getParameter(PARAM_READ_ONLY));
@@ -409,7 +408,7 @@ public class EntityDataListWebScript extends AbstractEntityDataListWebScript {
 				I18NUtil.setContentLocale(currentLocal);
 			}
 
-			if (logger.isDebugEnabled()) {
+			if (watch!=null && logger.isDebugEnabled()) {
 				watch.stop();
 				logger.debug("EntityDataListWebScript execute in " + watch.getTotalTimeSeconds() + "s");
 			}
