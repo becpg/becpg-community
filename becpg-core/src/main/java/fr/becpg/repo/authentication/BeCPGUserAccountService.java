@@ -96,6 +96,7 @@ public class BeCPGUserAccountService {
 			if (personService.personExists(userAccount.getUserName())) {
 				personNodeRef = updateUser(userAccount, propMap);
 			} else {
+				userAccount.setUserName(userAccount.getUserName().toLowerCase());
 				personNodeRef = createUser(userAccount, propMap);
 			}
 			
@@ -261,6 +262,7 @@ public class BeCPGUserAccountService {
 		NodeRef personNodeRef = personService.getPerson(userName);
 		setIdsUser(userAccount, userName, personNodeRef, true);
 		if (userAccount.getNewUserName() != null && !userAccount.getNewUserName().isBlank()) {
+			userAccount.setNewUserName(userAccount.getNewUserName().toLowerCase());
 			renameUser(userAccount, personNodeRef);
 		}
 		nodeService.addProperties(personNodeRef, propMap);
