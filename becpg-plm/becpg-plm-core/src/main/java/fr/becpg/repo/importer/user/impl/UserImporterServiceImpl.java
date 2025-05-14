@@ -277,7 +277,6 @@ public class UserImporterServiceImpl implements UserImporterService {
 		if ((splitted != null) && (headers != null)) {
 
 			String username = splitted[headers.get(ATTR_USERNAME)];
-			username = username != null ? username.toLowerCase() : null;
 			
 			if (headers.containsKey(ATTR_DELETE) && Boolean.TRUE.equals(Boolean.parseBoolean(splitted[headers.get(ATTR_DELETE)].toLowerCase()))) {
 				if (logger.isDebugEnabled()) {
@@ -303,7 +302,6 @@ public class UserImporterServiceImpl implements UserImporterService {
 			}
 			if (headers.containsKey(ATTR_NEW_USERNAME)) {
 				String newUserName = splitted[headers.get(ATTR_NEW_USERNAME)];
-				newUserName = newUserName != null ? newUserName.toLowerCase() : null;
 				userAccount.setNewUserName(newUserName);
 			}
 			userAccount.setNotify(headers.containsKey(ATTR_NOTIFY) && Boolean.parseBoolean(splitted[headers.get(ATTR_NOTIFY)].toLowerCase()));
