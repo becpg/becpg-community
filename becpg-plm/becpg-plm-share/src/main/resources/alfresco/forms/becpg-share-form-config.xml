@@ -194,6 +194,57 @@
 				</field>
             </appearance>
          </form>
+         
+          <!-- Search form -->
+         <form id="product-list">
+            <field-visibility>
+               <show id="cm:name" />
+               <show id="cm:title" force="true" />
+               <show id="cm:description" force="true" />
+               
+               <show id="bcpg:documentState" force="true" />
+			   <show id="bcpg:documentIsMandatory" force="true" />
+               <show id="bcpg:documentTypeRef" force="true" />
+               <show id="bcpg:documentEntityRef" force="true" />
+               
+               <show id="cm:from" force="true" />
+               <show id="cm:to" force="true" />
+                
+            </field-visibility>
+            <appearance>
+            	
+            	<set id="mainInfo" appearance="bordered-panel"
+					label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+				<set id="documentType" appearance="bordered-panel"
+					label-id="becpg.forms.set.document-type.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+				<set id="effectivity" appearance="bordered-panel" label-id="becpg.forms.set.effectivity.label"
+					template="/org/alfresco/components/form/2-column-set.ftl" />
+				
+               <field id="cm:name" set="mainInfo"/>
+               <field id="cm:title" set="mainInfo"/>
+               <field id="cm:description" set="mainInfo"/>
+               
+               <field id="cm:from" set="effectivity"/>
+               <field id="cm:to" set="effectivity" />
+               
+              	<field id="bcpg:documentState" set="documentType" />
+				<field id="bcpg:documentIsMandatory" set="documentType" />
+				<field id="bcpg:documentTypeRef" set="documentType" >
+					<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+						<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:documentType
+						</control-param>
+					</control>
+				</field>
+					
+				<field id="bcpg:documentEntityRef" set="documentType" >
+					<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+						<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:entityV2
+						</control-param>
+					</control>
+				</field>
+               
+            </appearance>
+         </form>
       </forms>
    </config>
 	
