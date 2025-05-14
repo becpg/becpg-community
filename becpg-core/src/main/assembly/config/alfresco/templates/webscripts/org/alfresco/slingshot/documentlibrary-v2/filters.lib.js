@@ -9,7 +9,7 @@ var Filters =
       "documents": '+(TYPE:"content" OR TYPE:"app:filelink" OR TYPE:"folder")',
       "folders": '+(TYPE:"folder" OR TYPE:"app:folderlink")',
       "images": '+@cm\\:content.mimetype:image/*',
-      "product": args.type!=null ? '+(TYPE:"bcpg:'+args.type+'")': '+(TYPE:"bcpg:product")',
+      "product": args.type!=null ? ( args.type.includes('_') ? '+(TYPE:"'+args.type.replace('_', ':')+'")' : '+(TYPE:"bcpg:'+args.type+'")') : '+(TYPE:"bcpg:product")',
       "project": '+(TYPE:"pjt:project")'
    },
    
@@ -30,7 +30,8 @@ var Filters =
    [
       "bcpg:compositeVersion", //beCPG
       "bcpg:hiddenFolder",
-      "cm:checkedOut"
+      "cm:checkedOut",
+      "bcpg:entityTplAspect"
    ],
 
 
@@ -83,16 +84,18 @@ var Filters =
       var externalAccessFilter = "";
       var groups = people.getContainerGroups(person);
       var externalFilters = [];
+      
+      
 
-      for (var i = 0; i < groups.length; i++) {
-          var groupName = groups[i].shortName || groups[i].name; 
-          if (groupName.indexOf("GROUP_EXTERNAL_") === 0) {
+      for (var i=0;i<groups.length;i++) {
+          var groupName = groups[i].properties["cm:authorityName"];
+          if (groupName.indexOf("EXTERNAL_") >= 0) {
               externalFilters.push('@bcpg\\:externalAccessGroup:"' + groupName + '"');
           }
       }
 
       if (externalFilters.length > 0) {
-          externalAccessFilter = " (" + externalFilters.join(" OR ") + ")";
+          externalAccessFilter = " AND (" + externalFilters.join(" OR ") + ")";
       }
 
       // Sorting parameters specified?
@@ -132,7 +135,7 @@ var Filters =
       {
          case "all":
             filterQuery = "+PATH:\"" + parsedArgs.rootNode.qnamePath + "//*\"";
-            filterQuery += " +(TYPE:\"cm:content\" OR  ( TYPE:\"bcpg:entityV2\" "+externalAccessFilter+" )";
+            filterQuery += " +(TYPE:\"cm:content\" OR  ( TYPE:\"bcpg:entityV2\" "+externalAccessFilter+" ))";
             filterParams.query = filterQuery + filterQueryDefaults;
             break;
 
@@ -201,9 +204,28 @@ var Filters =
  		 case "Valid":         
          case "Refused":
          case "Archived":
+         case "Compliant":
+         case "NonCompliant":
+         case "new":
+         case "analysis":
+         case "treatment":
+         case "response":
+         case "classification":
+         case "closing":
+         case "closed":
          	filterQuery += this.constructPathQuery(parsedArgs);
          	if( args.type == "productCollection" ){
 				filterQuery += " +@bcpg\\:productCollectionState:\""+filter+"\"";
+			} else if (args.type == "supplier" ){
+				filterQuery += " +@bcpg\\:supplierState:\""+filter+"\"";
+			} else if (args.type == "client" ){
+				filterQuery += " +@bcpg\\:clientState:\""+filter+"\"";
+			} else if (args.type == "qa_batch" ){
+				filterQuery += " +@qa\\:batchState:\""+filter+"\"";
+			} else if (args.type == "qa_nc" ){
+				filterQuery += " +@qa\\:ncState:\""+filter+"\"";
+			} else if (args.type == "qa_qualityControl" ){
+				filterQuery += " +@qa\\:qcState:\""+filter+"\"";
 			} else {
          		filterQuery += " +@bcpg\\:productState:\""+filter+"\"";
          	}
@@ -301,7 +323,12 @@ var Filters =
       if (filterParams.query !== "")
       {
          filterParams.query += " " + (Filters.TYPE_MAP[parsedArgs.type] || "");
+         if(args.searchTerm!=null &&  args.searchTerm != "" ){
+         	filterParams.query += " AND (@cm\\:name:\""+args.searchTerm+"\" OR @cm\\:title:\""+args.searchTerm+"\" OR  " +
+         			"@bcpg\\:erpCode:\""+args.searchTerm+"\" OR  @bcpg\\:code:\""+args.searchTerm+"\" OR  @bcpg\\:eanCode:\""+args.searchTerm+"\" OR  @cm\\:description:\""+args.searchTerm+"\")";	
+         }
       }
+      
 
       return filterParams;
    },
