@@ -17,13 +17,21 @@
  ******************************************************************************/
 package fr.becpg.repo.entity.datalist.impl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.DataListPagination;
+import fr.becpg.repo.expressions.ExpressionService;
+import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
@@ -34,6 +42,20 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 public class SmartContentExtractor extends SimpleExtractor {
 
+	private static final Pattern ftsPattern = Pattern.compile("^fts\\((.*)\\)$");
+
+	private ExpressionService expressionService;
+
+	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
+
+	public void setExpressionService(ExpressionService expressionService) {
+		this.expressionService = expressionService;
+	}
+
+	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
+		this.alfrescoRepository = alfrescoRepository;
+	}
+
 	/** {@inheritDoc} */
 	@Override
 	protected List<NodeRef> getListNodeRef(DataListFilter dataListFilter, DataListPagination pagination) {
@@ -41,19 +63,41 @@ public class SmartContentExtractor extends SimpleExtractor {
 		List<NodeRef> results = paginatedSearchCache.getSearchResults(pagination.getQueryExecutionId());
 
 		if (results == null) {
-			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().andFTSQuery(extractFTSQuery(dataListFilter.getParentNodeRef()));
 
-			results = queryBuilder.list();
-			
-			pagination.setQueryExecutionId(paginatedSearchCache.storeSearchResults(results));
+			String condition = (String) nodeService.getProperty(dataListFilter.getParentNodeRef(), ContentModel.PROP_DESCRIPTION);
+
+			if (condition == null) {
+				throw new IllegalArgumentException("Description in smart content should not be null");
+			}
+
+			if ((condition.startsWith("spel") || condition.startsWith("js"))) {
+				if (dataListFilter.getEntityNodeRef() != null) {
+					NodeRef entityNodeRef = (NodeRef) expressionService.eval(condition,
+							alfrescoRepository.findOne(dataListFilter.getEntityNodeRef()));
+					if ((entityNodeRef != null)) {
+						dataListFilter.setEntityNodeRefs(Arrays.asList(entityNodeRef));
+						dataListFilter.setGuessContainer(true);
+						return super.getListNodeRef(dataListFilter, pagination);
+					}
+					return new ArrayList<>();
+				}
+			} else {
+
+				Matcher match = ftsPattern.matcher(condition);
+				if (match.matches()) {
+					condition = match.group(1);
+				}
+
+				BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().andFTSQuery(condition);
+
+				results = queryBuilder.list();
+
+				pagination.setQueryExecutionId(paginatedSearchCache.storeSearchResults(results));
+			}
 
 		}
 
 		return pagination.paginate(results);
-	}
-
-	private String extractFTSQuery(NodeRef parentNodeRef) {
-		return (String) nodeService.getProperty(parentNodeRef, org.alfresco.model.ContentModel.PROP_DESCRIPTION);
 	}
 
 	/** {@inheritDoc} */

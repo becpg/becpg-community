@@ -118,7 +118,7 @@ public class EntityListsWebScript extends AbstractWebScript {
 	private static final String KEY_NAME_EDIT = "edit";
 
 	private static final String KEY_NAME_DELETE = "delete";
-	
+
 	private static final String KEY_NAME_EDIT_CHILDREN = "editChildren";
 
 	private static final String KEY_NAME_CREATE = "create";
@@ -180,9 +180,9 @@ public class EntityListsWebScript extends AbstractWebScript {
 	private LockService lockService;
 
 	private ReportAssociationDecorator reportAssociationDecorator;
-	
+
 	private BeCPGLicenseManager becpgLicenseManager;
-	
+
 	/**
 	 * <p>Setter for the field <code>becpgLicenseManager</code>.</p>
 	 *
@@ -366,10 +366,11 @@ public class EntityListsWebScript extends AbstractWebScript {
 			JSONObject permissions = new JSONObject();
 			permissions.put(KEY_NAME_EDIT, hasWritePermission && !entityIsLocked);
 			permissions.put(KEY_NAME_DELETE, hasWritePermission && !entityIsLocked);
-			
-			String dataListQName = (String)nodeService.getProperty(list, DataListModel.PROP_DATALISTITEMTYPE);
-			permissions.put(KEY_NAME_EDIT_CHILDREN, !entityIsLocked && securityService.computeAccessMode(entity, nodeService.getType(entity), dataListQName) == SecurityService.WRITE_ACCESS);
-			
+
+			String dataListQName = (String) nodeService.getProperty(list, DataListModel.PROP_DATALISTITEMTYPE);
+			permissions.put(KEY_NAME_EDIT_CHILDREN, !entityIsLocked
+					&& (securityService.computeAccessMode(entity, nodeService.getType(entity), dataListQName) == SecurityService.WRITE_ACCESS));
+
 			Boolean accessMapListNodeRef = accessMap.get(list);
 			if (accessMapListNodeRef == null) {
 				accessMapListNodeRef = false;
@@ -399,9 +400,12 @@ public class EntityListsWebScript extends AbstractWebScript {
 		boolean entityIsLocked = lockService.isLocked(entity);
 		boolean isArchived = nodeService.hasAspect(entity, BeCPGModel.ASPECT_ARCHIVED_ENTITY);
 		boolean hasWriteLicense = becpgLicenseManager.hasWriteLicense();
-		userAccess.put(KEY_NAME_CREATE, (permissionService.hasPermission(entity, "CreateChildren") == AccessStatus.ALLOWED) && hasWriteLicense && !entityIsLocked && !isArchived);
-		userAccess.put(KEY_NAME_EDIT, (permissionService.hasPermission(entity, "Write") == AccessStatus.ALLOWED) && hasWriteLicense && !entityIsLocked && !isArchived);
-		userAccess.put(KEY_NAME_DELETE, (permissionService.hasPermission(entity, "Delete") == AccessStatus.ALLOWED) && hasWriteLicense && !entityIsLocked && !isArchived);
+		userAccess.put(KEY_NAME_CREATE, (permissionService.hasPermission(entity, "CreateChildren") == AccessStatus.ALLOWED) && hasWriteLicense
+				&& !entityIsLocked && !isArchived);
+		userAccess.put(KEY_NAME_EDIT,
+				(permissionService.hasPermission(entity, "Write") == AccessStatus.ALLOWED) && hasWriteLicense && !entityIsLocked && !isArchived);
+		userAccess.put(KEY_NAME_DELETE,
+				(permissionService.hasPermission(entity, "Delete") == AccessStatus.ALLOWED) && hasWriteLicense && !entityIsLocked && !isArchived);
 		result.put(KEY_NAME_USER_ACCESS, userAccess);
 
 		JSONArray userSecurityRoles = new JSONArray();
@@ -583,7 +587,7 @@ public class EntityListsWebScript extends AbstractWebScript {
 					boolean mlAware = MLPropertyInterceptor.setMLAware(true);
 
 					try {
-						
+
 						AuthenticationUtil.runAs(() -> {
 							RetryingTransactionCallback<Object> actionCallback = () -> {
 								policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
@@ -600,7 +604,7 @@ public class EntityListsWebScript extends AbstractWebScript {
 						MLPropertyInterceptor.setMLAware(mlAware);
 					}
 
-					if (logger.isDebugEnabled()) {
+					if (logger.isDebugEnabled() && (watch != null)) {
 						watch.stop();
 						logger.debug("copyDataLists executed in  " + watch.getTotalTimeSeconds() + " seconds - templateNodeRef " + templateNodeRef);
 					}
@@ -628,10 +632,7 @@ public class EntityListsWebScript extends AbstractWebScript {
 
 						if (SecurityService.NONE_ACCESS != accessMode) {
 							String dataListName = (String) nodeService.getProperty(temp, ContentModel.PROP_NAME);
-							int newAccessMode = securityService.computeAccessMode(nodeRef, nodeType, dataListName);
-							if (newAccessMode < accessMode) {
-								accessMode = newAccessMode;
-							}
+							accessMode = Math.min(accessMode, securityService.computeAccessMode(nodeRef, nodeType, dataListName));
 						}
 
 						if (SecurityService.NONE_ACCESS == accessMode) {
@@ -639,11 +640,9 @@ public class EntityListsWebScript extends AbstractWebScript {
 								logger.trace("Don't display dataList:" + dataListType);
 							}
 							it.remove();
-						} else if (!isExternalUser && (SecurityService.WRITE_ACCESS == accessMode)
-								&& (permissionService.hasPermission(temp, PermissionService.WRITE) == AccessStatus.ALLOWED)) {
-							accessRights.put(temp, true);
 						} else {
-							accessRights.put(temp, false);
+							accessRights.put(temp, (!isExternalUser && (SecurityService.WRITE_ACCESS == accessMode)
+									&& (permissionService.hasPermission(temp, PermissionService.WRITE) == AccessStatus.ALLOWED)));
 						}
 					} else {
 						it.remove();

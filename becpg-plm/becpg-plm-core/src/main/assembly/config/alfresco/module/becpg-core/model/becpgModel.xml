@@ -6761,6 +6761,18 @@
 				</property>
 			</properties>
 		</aspect>
+		
+		  <aspect name="bcpg:externalAccessAspect">
+            <properties>
+                <property name="bcpg:externalAccessGroup">
+                    <type>d:text</type>
+                   <index enabled="true">
+                        <tokenised>false</tokenised>
+                        <facetable>false</facetable>
+                    </index>
+                </property>
+            </properties>
+         </aspect>
 
 	</aspects>
 </model>
