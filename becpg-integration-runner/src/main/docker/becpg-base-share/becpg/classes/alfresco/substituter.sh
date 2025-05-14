@@ -21,6 +21,19 @@ if [[ $BECPG_INSTANCE == "" ]]; then
    BECPG_INSTANCE=default
 fi
 
+if [[ $OAUTH2_SERVER_URL == "" ]]; then
+   OAUTH2_SERVER_URL=http://becpg-auth:8080/auth
+fi
+
+if [[ $OAUTH2_RESOURCE == "" ]]; then
+   OAUTH2_RESOURCE=inst1-openid
+fi
+
+if [[ $OAUTH2_REALM == "" ]]; then
+   OAUTH2_REALM=inst1
+fi
+
+OAUTH2_ENABLED="false"
 
 BECPG_CONNECTOR_ID="alfresco"
 BECPG_EXTERNAL_AUTH="false"
@@ -30,6 +43,18 @@ if [[ $BECPG_AUTH_EXTERNAL == "true" ]]; then
    BECPG_EXTERNAL_AUTH="true"
 fi
 
+if [[ $BECPG_AUTH_OAUTH2 == "true" ]]; then
+    OAUTH2_ENABLED="true"
+fi
+
+if [[ $OAUTH2_ENABLED == "false" ]]; then
+    OAUTH2_SECRET="changeit"
+    OAUTH2_REALM = "becpg"
+    OAUTH2_RESOURCE= "becpg-openid"
+    OAUTH2_SERVER_URL= "http://becpg-auth:8080/auth"
+fi
+
+
 
 echo "Replace 'REPO_HOST' with '$REPO_HOST' and 'REPO_PORT' with '$REPO_PORT'"
 
@@ -38,6 +63,11 @@ sed -i -e 's/AI_HOST:AI_PORT/'"$AI_HOST:$AI_PORT"'/g' /usr/local/tomcat/shared/c
 sed -i -e 's/BECPG_INSTANCE/'"$BECPG_INSTANCE"'/g' /usr/local/tomcat/shared/classes/alfresco/web-extension/share-config-custom.xml
 sed -i -e 's/BECPG_CONNECTOR_ID/'"$BECPG_CONNECTOR_ID"'/g' /usr/local/tomcat/shared/classes/alfresco/web-extension/share-config-custom.xml
 sed -i -e 's/BECPG_EXTERNAL_AUTH/'"$BECPG_EXTERNAL_AUTH"'/g' /usr/local/tomcat/shared/classes/alfresco/web-extension/share-config-custom.xml
+sed -i -e 's/OAUTH2_SECRET/'"$OAUTH2_SECRET"'/g' /usr/local/tomcat/shared/classes/alfresco/web-extension/share-config-custom.xml
+sed -i -e 's|OAUTH2_SERVER_URL|'"$OAUTH2_SERVER_URL"'|g' /usr/local/tomcat/shared/classes/alfresco/web-extension/share-config-custom.xml
+sed -i -e 's/OAUTH2_RESOURCE/'"$OAUTH2_RESOURCE"'/g' /usr/local/tomcat/shared/classes/alfresco/web-extension/share-config-custom.xml
+sed -i -e 's/OAUTH2_REALM/'"$OAUTH2_REALM"'/g' /usr/local/tomcat/shared/classes/alfresco/web-extension/share-config-custom.xml
+sed -i -e 's/OAUTH2_ENABLED/'"$OAUTH2_ENABLED"'/g' /usr/local/tomcat/shared/classes/alfresco/web-extension/share-config-custom.xml
 
 
 echo "NEW -csrf.filter.referer is '$CSRF_FILTER_REFERER'"

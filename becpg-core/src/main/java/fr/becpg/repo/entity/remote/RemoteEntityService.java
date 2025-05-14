@@ -24,6 +24,7 @@ import java.util.Map;
 import org.alfresco.query.PagingResults;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
+import org.json.JSONObject;
 
 /**
  * <p>RemoteEntityService interface.</p>
@@ -195,6 +196,8 @@ public interface RemoteEntityService {
 	 * @return a {@link fr.becpg.repo.entity.remote.RemoteServiceRegisty} object
 	 */
 	RemoteServiceRegisty serviceRegistry();
+
+	Map<String, String> toSearchCriterion(JSONObject entityQuery);
 
 
 }
