@@ -92,6 +92,8 @@
 			   <show id="bcpg:documentIsMandatory" force="true" />
                <show id="bcpg:documentTypeRef" force="true" />
                <show id="bcpg:documentEntityRef" force="true" />
+               <show id="entity_bcpg:documentEntityRef_bcpg:product" force="true" />
+               <show id="entity_bcpg:documentEntityRef_bcpg:supplier" force="true" />
                
                <show id="cm:created" />
                <show id="cm:creator" />
@@ -109,6 +111,10 @@
 					label-id="becpg.forms.set.document-type.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 				<set id="effectivity" appearance="bordered-panel" label-id="becpg.forms.set.effectivity.label"
 					template="/org/alfresco/components/form/2-column-set.ftl" />
+				<set id="productInfo" appearance="bordered-panel"
+					label-id="becpg.forms.set.product-info.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+				<set id="supplierInfo" appearance="bordered-panel"
+					label-id="becpg.forms.set.supplier-info.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 				<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
 					template="/org/alfresco/components/form/2-column-set.ftl" />
 				
@@ -132,6 +138,10 @@
 						<control-param name="forceEditable">true</control-param>
 					</control>               
                </field>
+               
+               <field id="entity_bcpg:documentEntityRef_bcpg:product" set="productInfo"/>
+               
+               <field id="entity_bcpg:documentEntityRef_bcpg:supplier" set="supplierInfo"/>
                
                 <field id="cm:from" set="effectivity">
                   <control template="/org/alfresco/components/form/controls/daterange.ftl" >
