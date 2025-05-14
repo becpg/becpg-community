@@ -146,25 +146,21 @@ public class ReportTplWebScript extends AbstractWebScript {
 		}
 
 		if (refs != null) {
-
-			String entityDescription = nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE) + " - " + nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
-
-			BatchInfo batchInfo = new BatchInfo( String.format("generateReports-%s-%s", action, nodeRef.getId()), "becpg.batch.entityTpl.generateReports", entityDescription);
-			batchInfo.enableNotifyByMail("generate-reports", null);
-			batchInfo.setRunAsSystem(true);
-			batchInfo.setPriority(BatchPriority.VERY_LOW);
-			
-			BatchProcessWorkProvider<NodeRef> workProvider = new EntityListBatchProcessWorkProvider<>(refs);
-
-			BatchProcessWorker<NodeRef> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<>() {
-
-				@Override
-				public void process(NodeRef entityNodeRef) throws Throwable {
-
-					if (ACTION_REFRESH.equals(action)) {
-
-						entityReportService.generateReports(entityNodeRef, entityNodeRef);
-					} else if (ACTION_UPDATE_PERMISSIONS.equals(action)) {
+			if (ACTION_REFRESH.equals(action)) {
+				for (NodeRef ref : refs) {
+					nodeService.addAspect(ref, BeCPGModel.ASPECT_PENDING_ENTITY_REPORT_ASPECT, null);
+				}
+			} else if (ACTION_UPDATE_PERMISSIONS.equals(action)) {
+				String entityDescription = nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE) + " - " + nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
+				
+				BatchInfo batchInfo = new BatchInfo( String.format("updatePermissions-%s", nodeRef.getId()), "becpg.batch.entityTpl.updatePermissions", entityDescription);
+				batchInfo.enableNotifyByMail("generate-reports", null);
+				batchInfo.setRunAsSystem(true);
+				batchInfo.setPriority(BatchPriority.VERY_LOW);
+				BatchProcessWorkProvider<NodeRef> workProvider = new EntityListBatchProcessWorkProvider<>(refs);
+				BatchProcessWorker<NodeRef> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<>() {
+					@Override
+					public void process(NodeRef entityNodeRef) throws Throwable {
 						List<NodeRef> reports = associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS);
 						for (NodeRef report : reports) {
 							NodeRef tplNodeRef = associationService.getTargetAssoc(report, ReportModel.ASSOC_REPORT_TPL);
@@ -173,11 +169,9 @@ public class ReportTplWebScript extends AbstractWebScript {
 							}
 						}
 					}
-				}
-			};
-
-			batchQueueService.queueBatch(batchInfo, workProvider, processWorker, null);
-
+				};
+				batchQueueService.queueBatch(batchInfo, workProvider, processWorker, null);
+			}
 		}
 	}
 
