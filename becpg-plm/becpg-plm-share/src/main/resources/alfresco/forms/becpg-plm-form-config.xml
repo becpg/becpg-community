@@ -53,25 +53,31 @@
 					<show id="bcpg:productHierarchy2" />
 					<show id="bcpg:entityTplRef" force="true" />
 					<show id="bcpg:clients" force="true" />
+					<show id="bcpg:suppliers" force="true" />
 					<show id="bcpg:plants" force="true" />
 					<show id="bcpg:productState" />
 				</field-visibility>
 				<appearance>
+					
 					<field id="cm:name" label-id="becpg.forms.field.product" />
-					<field id="bcpg:productHierarchy1" label-id="becpg.forms.field.productHierarchy1">
+					<field id="bcpg:erpCode" />
+					<field id="bcpg:productHierarchy1" label-id="becpg.forms.field.productHierarchy1" >
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
-					<field id="bcpg:productHierarchy2" label-id="becpg.forms.field.productHierarchy2">
+					<field id="bcpg:productHierarchy2" label-id="becpg.forms.field.productHierarchy2" >
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
-					<field id="bcpg:entityTplRef" mandatory="false" read-only="false">
+					<field id="bcpg:entityTplRef" mandatory="false" read-only="false" >
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:product?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
 							</control-param>
 							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productState" label-id="becpg.forms.field.productState">
+					<field id="bcpg:clients" />
+					<field id="bcpg:suppliers" />
+					<field id="bcpg:plants" />
+					<field id="bcpg:productState" label-id="becpg.forms.field.productState" >
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="isSearch">true</control-param>
 							<control-param name="insertBlank">true</control-param>
@@ -5403,6 +5409,45 @@
 					<field id="bcpg:locationAddress2" help-id="becpg.forms.help.locationAddress2" />
 				</appearance>
 
+			</form>
+			
+			<form id="sub-datagrid-filter">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:supplierHierarchy1" />
+					<show id="bcpg:supplierHierarchy2" />
+					<show id="bcpg:supplierState" />
+					<show id="bcpg:locationAddress1" />
+					<show id="bcpg:locationCity" />
+					<show id="bcpg:locationCountry" />
+				</field-visibility>
+				<appearance>
+					
+					<field id="cm:name" label-id="becpg.forms.field.product" />
+					<field id="bcpg:erpCode" />
+					<field id="bcpg:supplierHierarchy1" label-id="becpg.forms.field.productHierarchy1" >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:supplierHierarchy2" label-id="becpg.forms.field.productHierarchy2" >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:supplierState" label-id="becpg.forms.field.productState" >
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:locationAddress1" help-id="becpg.forms.help.locationAddress1" >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+              		</field>
+              		<field id="bcpg:locationCity" >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+              		</field>
+              		<field id="bcpg:locationCountry" >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+              		</field>
+				</appearance>
 			</form>
 
 			<form id="product-list">
