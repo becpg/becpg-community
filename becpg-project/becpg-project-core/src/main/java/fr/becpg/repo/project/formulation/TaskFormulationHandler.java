@@ -15,8 +15,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.DeliverableUrl;
 import fr.becpg.model.ProjectModel;
+import fr.becpg.repo.expressions.ExpressionUrl;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.project.ProjectActivityService;
 import fr.becpg.repo.project.ProjectService;
@@ -821,9 +821,9 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 						if (DeliverableState.Planned.equals(deliverable.getState())) {
 							deliverable.setState(DeliverableState.InProgress);
 
-							if ((deliverable.getUrl() != null) && deliverable.getUrl().startsWith(DeliverableUrl.CONTENT_URL_PREFIX)
-									&& NodeRef.isNodeRef(deliverable.getUrl().substring(DeliverableUrl.CONTENT_URL_PREFIX.length()))) {
-								deliverable.setContent(new NodeRef(deliverable.getUrl().substring(DeliverableUrl.CONTENT_URL_PREFIX.length())));
+							if ((deliverable.getUrl() != null) && deliverable.getUrl().startsWith(ExpressionUrl.CONTENT_URL_PREFIX)
+									&& NodeRef.isNodeRef(deliverable.getUrl().substring(ExpressionUrl.CONTENT_URL_PREFIX.length()))) {
+								deliverable.setContent(new NodeRef(deliverable.getUrl().substring(ExpressionUrl.CONTENT_URL_PREFIX.length())));
 								deliverable.setUrl(null);
 							}
 
