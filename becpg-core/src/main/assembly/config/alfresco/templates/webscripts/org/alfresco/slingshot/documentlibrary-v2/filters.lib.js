@@ -30,8 +30,7 @@ var Filters =
    [
       "bcpg:compositeVersion", //beCPG
       "bcpg:hiddenFolder",
-      "cm:checkedOut",
-      "bcpg:entityTplAspect"
+      "cm:checkedOut"
    ],
 
 
