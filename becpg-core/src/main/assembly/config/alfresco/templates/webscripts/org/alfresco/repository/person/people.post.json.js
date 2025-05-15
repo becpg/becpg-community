@@ -31,7 +31,8 @@ function main()
    // Create the person with the supplied user name
    var userName = json.get("userName");
    var enableAccount = ((json.has("disableAccount") && json.get("disableAccount")) == false);
-   var person = people.createPerson(userName, json.get("firstName"), json.get("lastName"), json.get("email"), password, enableAccount);
+   var isIdsUser = ((json.has("isSsoUser") && json.get("isSsoUser")) == true);
+   var person = bcpg.createPerson(userName, json.get("firstName"), json.get("lastName"), json.get("email"), password, enableAccount, isIdsUser);
    
    // return error message if a person with that user name could not be created
    if (person === null)
@@ -53,11 +54,6 @@ function main()
    {
       person.properties["jobtitle"] = json.get("jobtitle");
    }
-   if (!json.isNull("isSsoUser")) {
-		if (json.get("isSsoUser") == true) {
-			person.properties["bcpg:isSsoUser"] = true; 
-		}
-	}
    if (!json.isNull("generatePassword")) {
 		if (json.get("generatePassword") == true) {
 			person.properties["bcpg:generatePassword"] = true; 
