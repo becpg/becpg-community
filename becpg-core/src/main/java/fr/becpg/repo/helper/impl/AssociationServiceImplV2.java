@@ -34,6 +34,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.sql.DataSource;
 
 import org.alfresco.model.ContentModel;
@@ -236,7 +237,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 			// add nodes that are not in db
 			if (assocNodeRefs != null) {
 				for (NodeRef n : assocNodeRefs) {
-					if (!dbAssocNodeRefs.contains(n) && nodeService.exists(n)) {
+					if (dbAssocNodeRefs != null && !dbAssocNodeRefs.contains(n) && nodeService.exists(n)) {
 						if (!nodeService.hasAspect(n, ContentModel.ASPECT_PENDING_DELETE)) {
 							hasChanged = true;
 							nodeService.createAssociation(nodeRef, n, qName);
@@ -308,7 +309,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 
 	/** {@inheritDoc} */
 	@Override
-	public List<NodeRef> getChildAssocs(NodeRef listNodeRef, QName qName, QName childTypeQName, Map<String, Boolean> sortMap) {
+	public List<NodeRef> getChildAssocs(NodeRef listNodeRef, QName qName, QName childTypeQName, @Nullable Map<String, Boolean> sortMap) {
 		return getChildAssocsImpl(listNodeRef, qName, childTypeQName, sortMap);
 	}
 
@@ -477,6 +478,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 				|| nodeRef.getStoreRef().getIdentifier().contains(Version2Model.STORE_ID);
 	}
 
+
 	private static final String SQL_SELECT_SOURCE_ASSOC_ENTITY_FIRST_PART = "select entity.uuid as entity, dataListItem.uuid as dataListItem, dataListItem.type_qname_id as dataListItemType, targetNode.uuid as targetNode"
 			+ " from alf_node entity " + " join alf_child_assoc dataListContainerAssoc on (entity.id = dataListContainerAssoc.parent_node_id)"
 			+ " join alf_child_assoc dataListAssoc on (dataListAssoc.parent_node_id = dataListContainerAssoc.child_node_id)"
@@ -489,6 +491,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 			+ " left join alf_node_aspects q2 on (q2.qname_id = ? and q2.node_id=dataListItem.id)";
 
 	private static final String SQL_SELECT_SOURCE_ASSOC_ENTITY_FINAL_PART = " where  assoc.type_qname_id=? and q1.qname_id IS NULL and q2.qname_id IS NULL ";
+
 
 	/** {@inheritDoc} */
 	@Override
