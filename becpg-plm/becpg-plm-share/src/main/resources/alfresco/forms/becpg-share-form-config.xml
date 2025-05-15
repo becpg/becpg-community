@@ -86,6 +86,8 @@
                <show id="cm:name" />
                <show id="cm:title" force="true" />
                <show id="cm:description" force="true" />
+               <show id="cm:author" force="true" />
+               <show id="bcpg:code" force="true" />
                <show id="mimetype" />
                
                <show id="bcpg:documentState" force="true" />
@@ -129,6 +131,16 @@
 					</control>               
                </field>
                <field id="cm:description" set="mainInfo">
+					<control template="/org/alfresco/components/form/controls/textfield.ftl" >
+						<control-param name="forceEditable">true</control-param>
+					</control>
+               </field>
+               <field id="cm:author" set="mainInfo">
+					<control template="/org/alfresco/components/form/controls/textfield.ftl" >
+						<control-param name="forceEditable">true</control-param>
+					</control>
+               </field>
+               <field id="bcpg:code" set="mainInfo">
 					<control template="/org/alfresco/components/form/controls/textfield.ftl" >
 						<control-param name="forceEditable">true</control-param>
 					</control>
@@ -211,7 +223,7 @@
                <show id="cm:name" />
                <show id="cm:title" force="true" />
                <show id="cm:description" force="true" />
-               
+               <show id="bcpg:code" force="true" />
                <show id="bcpg:documentState" force="true" />
 			   <show id="bcpg:documentIsMandatory" force="true" />
                <show id="bcpg:documentTypeRef" force="true" />
@@ -233,6 +245,7 @@
                <field id="cm:name" set="mainInfo"/>
                <field id="cm:title" set="mainInfo"/>
                <field id="cm:description" set="mainInfo"/>
+               <field id="bcpg:code" read-only="true" set="mainInfo"/>
                
                <field id="cm:from" set="effectivity"/>
                <field id="cm:to" set="effectivity" />

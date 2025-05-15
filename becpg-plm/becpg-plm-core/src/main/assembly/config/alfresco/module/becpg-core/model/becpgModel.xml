@@ -6863,7 +6863,6 @@
 						<facetable>false</facetable>
 					</index>
 				</property>
-				
 			</properties>
 			<associations>
 				<association name="bcpg:documentTypeRef">
@@ -6887,8 +6886,10 @@
 					</target>
 				</association>
 			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:codeAspect</aspect>
+				<aspect>cm:effectivity</aspect>
+			</mandatory-aspects>
 		</aspect>
-		
-
 	</aspects>
 </model>

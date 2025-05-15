@@ -11124,6 +11124,19 @@
 		</forms>
 	</config>
 	
+	<config evaluator="aspect" condition="bcpg:codeAspect">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="bcpg:code" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:code" read-only="true" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
 	<config evaluator="aspect" condition="bcpg:documentAspect">
 		<forms>
 			<form>
