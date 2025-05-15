@@ -650,16 +650,21 @@
 	        <parameter name='maxLength'><value>500</value></parameter>
 	     </constraint>
 
-		<constraint name='gs1:text1000' type='LENGTH'>
-	        <parameter name='maxLength'><value>1000</value></parameter>
-	     </constraint>
-	     
-	     <constraint name='gs1:text5000' type='LENGTH'>
-	        <parameter name='maxLength'><value>5000</value></parameter>
-	     </constraint>
-	     
-	</constraints>
-	<types>
+        <constraint name='gs1:text1000' type='LENGTH'>
+            <parameter name='maxLength'><value>1000</value></parameter>
+         </constraint>
+         
+         <constraint name='gs1:text5000' type='LENGTH'>
+            <parameter name='maxLength'><value>5000</value></parameter>
+         </constraint>
+         
+          <constraint name="gs1:decimalConstraint31" type="REGEX">
+	         <parameter name="expression"><value><![CDATA[^\d{1,3}(\.\d)?$]]></value></parameter>
+	         <parameter name="requiresMatch"><value>true</value></parameter>
+	      </constraint>
+         
+    </constraints>
+    <types>
 
 		<type name="gs1:targetMarket">
 			<parent>bcpg:entityListItem</parent>
@@ -791,12 +796,12 @@
 						<many>false</many>
 					</target>
 				</association>
-
 			</associations>
 			<mandatory-aspects>
 				<aspect>bcpg:isDeletedAspect</aspect>
 			</mandatory-aspects>
 		</type>
+
 
 
 		<type name="gs1:dutyFeeTaxList">
@@ -1045,6 +1050,9 @@
 				<property name="gs1:alcoholicBeverageSugarContent">
 					<type>d:double</type>
 					<index enabled="false" />
+					<constraints>
+                       <constraint ref="gs1:decimalConstraint31"/>
+                    </constraints>
 				</property>
 
 				<property name="gs1:alcoholProof">
