@@ -46,6 +46,7 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.helper.PropertiesHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.hierarchy.HierarchicalEntity;
@@ -268,11 +269,15 @@ public class HierarchyServiceImpl implements HierarchyService {
 							if (!destinationNodeRef.equals(currentParentNodeRef)) {
 								String user = AuthenticationUtil.getFullyAuthenticatedUser();
 								SiteInfo destinationSite = siteService.getSite(destinationNodeRef);
-								String branchManagerSitePermission = destinationSite == null ? null : PermissionService.GROUP_PREFIX + "site_" + destinationSite.getShortName() + "_SiteBranchManager";
-								if (!hasPermissionToMove(finalDestinationNodeRef, user, branchManagerSitePermission)) {
-									logger.error("user '"+ user + "' does not have permission to move the entity into this folder: " + finalDestinationNodeRef + ", entity :" + entityNodeRef);
-									return false;
-								}
+								String sitePermission = destinationSite == null ? null : PermissionService.GROUP_PREFIX + "site_" + destinationSite.getShortName() + "_SiteBranchManager";
+								AuthenticationUtil.runAs(() -> {
+									if (permissionService.hasPermission(finalDestinationNodeRef, PermissionService.WRITE) != AccessStatus.ALLOWED
+											&& (destinationSite == null || !authorityService.getAuthoritiesForUser(user).contains(sitePermission))
+											&& Boolean.TRUE.equals(Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.classify.rights.check")))) {
+										throw new FormulateException("user '"+ user + "' does not have permission to move the entity into this folder: " + finalDestinationNodeRef + ", entity :" + entityNodeRef);
+									}
+									return null;
+								}, user);
 							}
 							return repoService.moveNode(entityNodeRef, destinationNodeRef);
 						}
@@ -291,13 +296,6 @@ public class HierarchyServiceImpl implements HierarchyService {
 			}
 		});
 
-	}
-
-	private boolean hasPermissionToMove(final NodeRef finalDestinationNodeRef, String user, String branchManagerSitePermission) {
-		return AuthenticationUtil
-				.runAs(() -> permissionService.hasPermission(finalDestinationNodeRef, PermissionService.WRITE) == AccessStatus.ALLOWED
-						|| (branchManagerSitePermission != null && authorityService.getAuthoritiesForUser(user).contains(branchManagerSitePermission))
-						|| Boolean.FALSE.equals(Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.classify.rights.check"))), user);
 	}
 
 	private NodeRef getHierarchyNodeRef(NodeRef entityNodeRef, QName hierarchyQname) {
