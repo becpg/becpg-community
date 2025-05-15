@@ -86,6 +86,8 @@ import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.activity.data.ActivityEvent;
 import fr.becpg.repo.activity.data.ActivityType;
 import fr.becpg.repo.authentication.BeCPGTicketService;
+import fr.becpg.repo.authentication.BeCPGUserAccount;
+import fr.becpg.repo.authentication.BeCPGUserAccountService;
 import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.entity.EntityDictionaryService;
@@ -199,6 +201,12 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	private RemoteUserMapper remoteUserMapper;
 	
 	private EntityActivityService entityActivityService;
+	
+	private BeCPGUserAccountService beCPGUserAccountService;
+	
+	public void setBeCPGUserAccountService(BeCPGUserAccountService beCPGUserAccountService) {
+		this.beCPGUserAccountService = beCPGUserAccountService;
+	}
 	
 	/**
 	 * <p>Setter for the field <code>entityActivityService</code>.</p>
@@ -2409,6 +2417,19 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 			updatedProperties.put(QName.createQName(key, namespaceService), new Pair<>(before, after));
         }
 		entityActivityService.postEntityActivity(scriptNode.getNodeRef(), ActivityType.valueOf(activityType), ActivityEvent.valueOf(activityEvent), updatedProperties);
+	}
+	
+	public ScriptNode createPerson(String userName, String firstName, String lastName, String email, String password, boolean enableAccount, boolean isIdsUser) {
+		BeCPGUserAccount beCPGUserAccount = new BeCPGUserAccount();
+		beCPGUserAccount.setUserName(userName);
+		beCPGUserAccount.setFirstName(firstName);
+		beCPGUserAccount.setLastName(lastName);
+		beCPGUserAccount.setEmail(email);
+		beCPGUserAccount.setPassword(password);
+		beCPGUserAccount.setDisable(!enableAccount);
+		beCPGUserAccount.setSynchronizeWithIDS(isIdsUser);
+		NodeRef nodeRef = beCPGUserAccountService.getOrCreateUser(beCPGUserAccount);
+		return new ScriptNode(nodeRef, serviceRegistry);
 	}
 
 }
