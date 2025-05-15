@@ -1,4 +1,4 @@
-package fr.becpg.model;
+package fr.becpg.repo.expressions;
 
 /**
  * Param used in advanced deliverable URL
@@ -11,9 +11,9 @@ package fr.becpg.model;
  * @author matthieu
  * @version $Id: $Id
  */
-public class DeliverableUrl {
+public class ExpressionUrl {
 	
-	private DeliverableUrl(){
+	private ExpressionUrl() {
 		//Do Nothing
 	}
 
