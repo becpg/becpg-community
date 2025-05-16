@@ -142,5 +142,11 @@
 		<property name="permissionService" ref="permissionService" />
 		<property name="securityService" ref="securityService" />
 	</bean>
+	
+	<!-- Documents -->
+	
+	<bean id="documentAspectPolicy" class="fr.becpg.repo.entity.policy.DocumentAspectPolicy" parent="abstractBeCPGPolicy">
+	  <property name="associationService" ref="associationService"/>
+    </bean>
 
 </beans>
