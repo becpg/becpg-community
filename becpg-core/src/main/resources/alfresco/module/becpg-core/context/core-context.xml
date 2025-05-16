@@ -424,10 +424,8 @@
 		<property name="workflowService" ref="WorkflowService" />
 	</bean>
     
-    
-    
     <!-- Search -->
-     <bean id="facet.dateFacetFields" class="org.springframework.beans.factory.config.SetFactoryBean">
+    <bean id="facet.dateFacetFields" class="org.springframework.beans.factory.config.SetFactoryBean">
       <property name="sourceSet">
          <set>
             <value>@{http://www.alfresco.org/model/content/1.0}created</value>
@@ -438,8 +436,54 @@
          </set>
       </property>   
    </bean>
-
-     
+   
+    <!-- beCPG overwrite to add new date filter -->
+   <bean id="facet.dateBuckets" class="org.springframework.beans.factory.config.MapFactoryBean">
+      <property name="sourceMap">
+               <map>
+                  <!-- Bucket => yesterday TO today -->
+                  <entry key="[NOW/DAY-1DAY TO NOW/DAY+1DAY]" value="becpg.faceted-search.date.one-day.label" />
+                  <!-- Bucket => Last week TO today -->
+                  <entry key="[NOW/DAY-7DAYS TO NOW/DAY+1DAY]" value="becpg.faceted-search.date.one-week.label" />
+                  <!-- Bucket => Last 2 weeks TO today -->
+                  <entry key="[NOW/DAY-14DAYS TO NOW/DAY+1DAY]" value="becpg.faceted-search.date.two-weeks.label" />
+                  <!--  Bucket => Last month TO today -->
+                  <entry key="[NOW/DAY-1MONTH TO NOW/DAY+1DAY]" value="becpg.faceted-search.date.one-month.label" />
+                  <!--  Bucket => Last 3 months TO today -->
+                  <entry key="[NOW/DAY-3MONTHS TO NOW/DAY+1DAY]" value="becpg.faceted-search.date.three-months.label" />
+                  <!--  Bucket => Last 6 months TO today -->
+                  <entry key="[NOW/DAY-6MONTHS TO NOW/DAY+1DAY]" value="becpg.faceted-search.date.six-months.label" />
+                  <!--  Bucket => Last year TO today -->
+                  <entry key="[NOW/DAY-1YEAR TO NOW/DAY+1DAY]" value="becpg.faceted-search.date.one-year.label" />
+                  <!--  Bucket => Last 2 years TO today -->
+                  <entry key="[NOW/DAY-2YEARS TO NOW/DAY+1DAY]" value="becpg.faceted-search.date.two-years.label" />
+                  <!--  Bucket => Last 3 years TO today -->
+                  <entry key="[NOW/DAY-3YEARS TO NOW/DAY+1DAY]" value="becpg.faceted-search.date.three-years.label" />
+                  <!--  Bucket => Last 6 years TO today -->
+                  <entry key="[NOW/DAY-6YEARS TO NOW/DAY+1DAY]" value="becpg.faceted-search.date.six-years.label" />
+                  <!--  Bucket => today TO next week -->
+                  <entry key="[NOW/DAY+1DAY TO NOW/DAY+7DAYS]" value="becpg.faceted-search.date.next-one-week.label" />
+                  <!--  Bucket => today TO next 2 weeks -->
+                  <entry key="[NOW/DAY+1DAY TO NOW/DAY+14DAYS]" value="becpg.faceted-search.date.next-two-weeks.label" />
+                  <!--  Bucket => today TO next month -->
+                  <entry key="[NOW/DAY+1DAY TO NOW/DAY+1MONTH]" value="becpg.faceted-search.date.next-one-month.label" />
+                  <!--  Bucket => today to next 3 months  -->
+                  <entry key="[NOW/DAY+1DAY TO NOW/DAY+3MONTHS]" value="becpg.faceted-search.date.next-three-months.label" />
+                  <!--  Bucket => today to next 6 months -->
+                  <entry key="[NOW/DAY+1DAY TO NOW/DAY+6MONTHS]" value="becpg.faceted-search.date.next-six-months.label" />
+                  <!--  Bucket => today to next year -->
+                  <entry key="[NOW/DAY+1DAY TO NOW/DAY+1YEAR]" value="becpg.faceted-search.date.next-one-year.label" />
+                  <!--  Bucket => today to next 2 years -->
+                  <entry key="[NOW/DAY+1DAY TO NOW/DAY+2YEARS]" value="becpg.faceted-search.date.next-two-years.label" />
+                  <!--  Bucket => today to next 3 years -->
+                  <entry key="[NOW/DAY+1DAY TO NOW/DAY+3YEARS]" value="becpg.faceted-search.date.next-three-years.label" />
+                  <!--  Bucket => today to next 6 years -->
+                  <entry key="[NOW/DAY+1DAY TO NOW/DAY+6YEARS]" value="becpg.faceted-search.date.next-six-years.label" />
+                  
+               </map>
+      </property>
+   </bean>
+   
      <!-- Override SOLR cron backup 
      
      
