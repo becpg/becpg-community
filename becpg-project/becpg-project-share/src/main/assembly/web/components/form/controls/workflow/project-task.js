@@ -420,10 +420,10 @@
                 },
 
                 openReauthPopup: function(callback) {
-                    var redirectUri =  Alfresco.constants.URL_CONTEXT + "page/reauth-callback";
+                    var redirectUri = window.location.origin + "/share/page/reauth-callback";
                     var aimsLoginUrl = Alfresco.constants.URL_CONTEXT + "page/aims-login?prompt=true&redirectUrl=" + encodeURIComponent(redirectUri);
 
-                    var popup = window.open(aimsLoginUrl, "ReauthPopup", "width=600,height=700");
+                    var popup = window.open(aimsLoginUrl, "ReauthPopup", "width=600,height=500");
 
                     if (!popup) {
                         Alfresco.util.PopupManager
@@ -527,6 +527,7 @@
                  *            The response from the submission
                  */
                 onFormSubmitSuccess: function FormManager_onFormSubmitSuccess(response) {
+
                     document.location.href = Alfresco.constants.URL_CONTEXT;
                 },
 
