@@ -1442,62 +1442,77 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 	 * @param response a {@link jakarta.servlet.http.HttpServletResponse} object.
 	 * @throws java.lang.Exception if any.
 	 */
-	protected void beforeSuccess(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		try {
-			final HttpSession session = request.getSession();
+	  protected void beforeSuccess(HttpServletRequest request, HttpServletResponse response) throws Exception
+	    {
+	        try
+	        {
+	            final HttpSession session = request.getSession();
 
-			// Get the authenticated user name and use it to retrieve all of the groups that the user is a member of...
-			String username = request.getParameter(PARAM_USERNAME);
-			if (username == null) {
-				username = (String) session.getAttribute(UserFactory.SESSION_ATTRIBUTE_KEY_USER_ID);
-			}
+	            // Get the authenticated user name and use it to retrieve all of the groups that the user is a member of...
+	            String username = (String)request.getParameter(PARAM_USERNAME);
+	            if (username == null)
+	            {
+	                username = (String)session.getAttribute(UserFactory.SESSION_ATTRIBUTE_KEY_USER_ID);
+	            }
 
-			if ((username != null) && (session.getAttribute(SESSION_ATTRIBUTE_KEY_USER_GROUPS) == null)) {
-				Connector conn = FrameworkUtil.getConnector(session, username, AlfrescoUserFactory.ALFRESCO_ENDPOINT_ID);
-				ConnectorContext c = new ConnectorContext(HttpMethod.GET);
-				c.setContentType("application/json");
-				Response res = conn.call("/api/people/" + URLEncoder.encode(username) + "?groups=true", c);
-				if (Status.STATUS_OK == res.getStatus().getCode()) {
-					// Assuming we get a successful response then we need to parse the response as JSON and then
-					// retrieve the group data from it...
-					//
-					// Step 1: Get a String of the response...
-					String resStr = res.getResponse();
+	            if (username != null && session.getAttribute(SESSION_ATTRIBUTE_KEY_USER_GROUPS) == null)
+	            {
+	                Connector conn = FrameworkUtil.getConnector(session, username, AlfrescoUserFactory.ALFRESCO_ENDPOINT_ID);
+	                ConnectorContext c = new ConnectorContext(HttpMethod.GET);
+	                c.setContentType("application/json");
+	                Response res = conn.call("/api/people/" + URLEncoder.encode(username) + "?groups=true", c);
+	                if (Status.STATUS_OK == res.getStatus().getCode())
+	                {
+	                    // Assuming we get a successful response then we need to parse the response as JSON and then
+	                    // retrieve the group data from it...
+	                    //
+	                    // Step 1: Get a String of the response...
+	                    String resStr = res.getResponse();
 
-					// Step 2: Parse the JSON...
-					JSONParser jp = new JSONParser();
-					Object userData = jp.parse(resStr.toString());
+	                    // Step 2: Parse the JSON...
+	                    JSONParser jp = new JSONParser();
+	                    Object userData = jp.parse(resStr.toString());
 
-					// Step 3: Iterate through the JSON object getting all the groups that the user is a member of...
-					StringBuilder groups = new StringBuilder(512);
-					if (userData instanceof JSONObject) {
-						Object groupsArray = ((JSONObject) userData).get("groups");
-						if (groupsArray instanceof org.json.simple.JSONArray) {
-							for (Object groupData : (org.json.simple.JSONArray) groupsArray) {
-								if (groupData instanceof JSONObject) {
-									Object groupName = ((JSONObject) groupData).get("itemName");
-									if (groupName != null) {
-										groups.append(groupName.toString()).append(',');
-									}
-								}
-							}
-						}
-					}
+	                    // Step 3: Iterate through the JSON object getting all the groups that the user is a member of...
+	                    StringBuilder groups = new StringBuilder(512);
+	                    if (userData instanceof JSONObject)
+	                    {
+	                        Object groupsArray = ((JSONObject) userData).get("groups");
+	                        if (groupsArray instanceof org.json.simple.JSONArray)
+	                        {
+	                            for (Object groupData: (org.json.simple.JSONArray)groupsArray)
+	                            {
+	                                if (groupData instanceof JSONObject)
+	                                {
+	                                    Object groupName = ((JSONObject) groupData).get("itemName");
+	                                    if (groupName != null)
+	                                    {
+	                                        groups.append(groupName.toString()).append(',');
+	                                    }
+	                                }
+	                            }
+	                        }
+	                    }
 
-					// Step 4: Trim off any trailing commas...
-					if (groups.length() != 0) {
-						groups.delete(groups.length() - 1, groups.length());
-					}
+	                    // Step 4: Trim off any trailing commas...
+	                    if (groups.length() != 0)
+	                    {
+	                        groups.delete(groups.length() - 1, groups.length());
+	                    }
 
-					// Step 5: Store the groups on the session...
-					session.setAttribute(SESSION_ATTRIBUTE_KEY_USER_GROUPS, groups.toString());
-				} else {
-					session.setAttribute(SESSION_ATTRIBUTE_KEY_USER_GROUPS, "");
-				}
-			}
-		} catch (ConnectorServiceException e1) {
-			throw new Exception("Error creating remote connector to request user group data.");
-		}
-	}
+	                    // Step 5: Store the groups on the session...
+	                    session.setAttribute(SESSION_ATTRIBUTE_KEY_USER_GROUPS, groups.toString());
+	                }
+	                else
+	                {
+	                    session.setAttribute(SESSION_ATTRIBUTE_KEY_USER_GROUPS, "");
+	                }
+	            }
+	        }
+	        catch (ConnectorServiceException e1)
+	        {
+	            throw new Exception("Error creating remote connector to request user group data.");
+	        }
+	    }
 
 }
