@@ -99,7 +99,7 @@
                     Dom.removeClass(this.id + "-grid", "hidden");
                     Dom.removeClass(this.id + "-datagridBarBottom", "hidden");
                     Dom.removeClass(this.id + "-itemSelect-div", "hidden");
-                   this.onDataGridRefresh();
+                    YAHOO.Bubbling.fire("refreshDataGrids", { updateOnly: true });
                 } else {
                     Dom.addClass(this.id + "-datagridBarBottom", "hidden");
                     Dom.addClass(this.id + "-itemSelect-div", "hidden");
