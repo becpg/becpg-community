@@ -1,13 +1,8 @@
 package fr.becpg.repo.survey;
 
-import java.util.List;
-import java.util.function.Predicate;
-
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import fr.becpg.repo.survey.data.SurveyListDataItem;
 
 /**
  * <p>SurveyService interface.</p>

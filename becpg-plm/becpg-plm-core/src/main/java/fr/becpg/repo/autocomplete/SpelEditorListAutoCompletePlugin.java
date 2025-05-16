@@ -99,13 +99,13 @@ public class SpelEditorListAutoCompletePlugin extends TargetAssocAutoCompletePlu
 		if (type.equals(PLMModel.TYPE_DYNAMICCHARACTLIST)) {
 
 			return suggestDynCharact(new NodeRef((String) props.get(AutoCompleteService.PROP_ENTITYNODEREF)), type,
-					PLMModel.PROP_DYNAMICCHARACT_TITLE, query, pageNum, pageSize);
+					PLMModel.PROP_DYNAMICCHARACT_TITLE, pageNum, pageSize);
 		}
 
 		return suggestTargetAssoc(null, type, query, pageNum, pageSize, null, props);
 	}
 
-	private AutoCompletePage suggestDynCharact(NodeRef entityNodeRef, QName datalistType, QName propertyQName, String query, Integer pageNum,
+	private AutoCompletePage suggestDynCharact(NodeRef entityNodeRef, QName datalistType, QName propertyQName, Integer pageNum,
 			Integer pageSize) {
 
 		List<NodeRef> ret = new ArrayList<>();
