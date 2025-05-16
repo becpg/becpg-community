@@ -9,14 +9,12 @@
 
   <script type="text/javascript">
     (function () {
-      const urlParams = new URLSearchParams(window.location.search);
-      const code = urlParams.get('code');
-      if (code && window.opener) {
-        window.opener.postMessage({ code }, window.origin);
+      if ( window.opener) {
+        window.opener.postMessage({ "SUCCESS" }, window.origin);
         window.close();
       } else {
         // document.body will be available now
-        document.body.innerHTML = "<p>Authentication code missing or invalid.</p>";
+        document.body.innerHTML = "<p>Authentication  invalid.</p>";
       }
     })();
   </script>
