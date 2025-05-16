@@ -174,7 +174,27 @@
 			</parameter>
 		</constraint>
 
-
+		<constraint name="bcpg:documentEffectivityTypes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>NONE</value>
+					<value>MANUAL</value>
+					<value>AUTO</value>
+				</list>
+			</parameter>
+		</constraint>
+		
+		<constraint name="bcpg:documentStates" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>OnHold</value>
+					<value>ToValidate</value>
+					<value>Valid</value>
+					<value>Refused</value>
+					<value>Archived</value>
+				</list>
+			</parameter>
+		</constraint>
 
 
 
@@ -381,7 +401,7 @@
 
 	
 
-	<type name="bcpg:notificationRuleList">
+		<type name="bcpg:notificationRuleList">
 			<parent>bcpg:entityListItem</parent>
 			<properties>
 				<property name="bcpg:nrNodeType">
@@ -572,6 +592,67 @@
 					</index>
 				</property>
 			</properties>
+		</type>
+		
+		<type name="bcpg:documentType">
+			<parent>bcpg:charact</parent>
+			<properties>
+				<property name="bcpg:docTypeIsMandatory">
+					<type>d:boolean</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
+				<property name="bcpg:docTypeEffectivityType">
+					<type>d:text</type>
+					<default>NONE</default>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:documentEffectivityTypes" />
+					</constraints>
+				</property>
+				<property name="bcpg:docTypeAutoExpirationDelay">
+					<type>d:int</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:docTypeMandatoryFormula">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:docTypeNameFormat">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:docTypeLinkedHierarchy">
+					<type>d:noderef</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:docTypeLinkedTypes">
+					<type>d:text</type>
+					<multiple>true</multiple>
+				</property>
+				<property name="bcpg:docTypeDestPath">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
+			</properties>
+			<associations>
+				<association name="bcpg:docTypeLinkedCharacts">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:entityListItem</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>
 		</type>
 	</types>
 	<aspects>
@@ -1393,7 +1474,54 @@
 				</property>
 			</properties>
 		</aspect>
-
-
+		
+		<aspect name="bcpg:documentAspect">
+			<properties>
+				<property name="bcpg:documentState">
+					<type>d:text</type>
+					<default>OnHold</default>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:documentStates" />
+					</constraints>
+				</property>
+				<property name="bcpg:documentIsMandatory">
+					<type>d:boolean</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+			</properties>
+			<associations>
+				<association name="bcpg:documentTypeRef">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:documentType</class>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="bcpg:documentEntityRef">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:entityV2</class>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:codeAspect</aspect>
+				<aspect>cm:effectivity</aspect>
+			</mandatory-aspects>
+		</aspect>
 	</aspects>
 </model>
