@@ -1,8 +1,6 @@
 package fr.becpg.repo.expressions.impl;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +19,7 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.ScriptService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
@@ -35,13 +33,11 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.expressions.ExpressionService;
-import fr.becpg.repo.expressions.ExpressionUrl;
 import fr.becpg.repo.formulation.ReportableEntity;
 import fr.becpg.repo.formulation.spel.SpelFormulaService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.repository.RepositoryEntity;
-import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * <p>ExpressionServiceImpl class.</p>
@@ -91,44 +87,38 @@ public class ExpressionServiceImpl implements ExpressionService {
 
 	/** {@inheritDoc} */
 	@Override
-	public String extractExpr(NodeRef nodeRef, String exprFormat, boolean assocName) {
+	public  String extractExpr(NodeRef nodeRef, String exprFormat, boolean assocName) {
 		return extractExpr(nodeRef, null, exprFormat, assocName);
 	}
 	
 	/** {@inheritDoc} */
 	@Override
-	public String extractExpr(NodeRef nodeRef, NodeRef docNodeRef, String exprFormat) { 
+	public  String extractExpr(NodeRef nodeRef, NodeRef docNodeRef, String exprFormat) { 
 		return extractExpr(nodeRef, docNodeRef, exprFormat, true);
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public String extractExpr(NodeRef nodeRef, NodeRef docNodeRef, String exprFormat, boolean assocName) {
+	public  String extractExpr(NodeRef nodeRef, NodeRef docNodeRef, String exprFormat, boolean assocName) {
 		Matcher patternMatcher = Pattern.compile("\\{([^}]+)\\}").matcher(exprFormat);
 		StringBuffer sb = new StringBuffer();
-		List<NodeRef> nodeRefs = Collections.singletonList(nodeRef);
 		while (patternMatcher.find()) {
+
 			String propQname = patternMatcher.group(1);
-			List<Serializable> replacement = null;
+			String replacement = "";
 			if (propQname.contains("|")) {
 				for (String propQnameAlt : propQname.split("\\|")) {
-					if (!"nodeRef".equals(propQnameAlt)) {
-						replacement = extractPropText(nodeRefs, docNodeRef, propQnameAlt, assocName);
-						if (replacement.stream().allMatch(NodeRef.class::isInstance)) {
-							nodeRefs = replacement.stream().map(NodeRef.class::cast).collect(Collectors.toList());
-							continue;
-						}
-						if (!sb.isEmpty()) break;
-					}
+					if ("nodeRef".equals(propQnameAlt)) continue;
+					replacement = extractPropText(nodeRef, docNodeRef, propQnameAlt, assocName);
+					if (StringUtils.isNotEmpty(sb)) break;
 				}
 
 			} else {
-				replacement = "nodeRef".equals(propQname) ? Collections.singletonList(nodeRef)
-						: extractPropText(Collections.singletonList(nodeRef), docNodeRef, propQname, assocName);
+				replacement = "nodeRef".equals(propQname) ? nodeRef.toString()
+						: extractPropText(nodeRef, docNodeRef, propQname, assocName);
 			}
-			patternMatcher.appendReplacement(sb, replacement != null
-					? replacement.stream().map(Object::toString).collect(Collectors.joining(",")).replace("$", "")
-					: "");
+
+			patternMatcher.appendReplacement(sb, replacement != null ? replacement.replace("$", "") : "");
 
 		}
 		patternMatcher.appendTail(sb);
@@ -136,20 +126,21 @@ public class ExpressionServiceImpl implements ExpressionService {
 		
 	}
 
-	private List<Serializable> extractPropText(List<NodeRef> nodeRefs, NodeRef docNodeRef, String propQname, boolean assocName) {
+	private String extractPropText(NodeRef nodeRef, NodeRef docNodeRef, String propQname, boolean assocName) {
+		NodeRef nodeToExtract = nodeRef;
 
 		if (propQname.startsWith("doc_")) {
-			nodeRefs = Collections.singletonList(docNodeRef);
+			nodeToExtract = docNodeRef;
 		}
 		propQname = propQname.replace("doc_", "");
 
-		return extractPropText(nodeRefs, propQname, assocName);
+		return extractPropText(nodeToExtract, propQname, assocName);
 	}
 	
 	
 	@SuppressWarnings("unchecked")
-	private List<Serializable> extractPropText(List<NodeRef> nodeRefs, String propQname, boolean assocName) {
-		final List<Serializable> ret = new ArrayList<>();
+	private String extractPropText(NodeRef nodeRef, String propQname, boolean assocName) {
+		String ret = "";
 		final String postProcessing;
 		if (propQname.contains("?")) {
 			final String[] propQnamePostProcessing = propQname.split("\\?");
@@ -158,47 +149,34 @@ public class ExpressionServiceImpl implements ExpressionService {
 		} else {
 			postProcessing = "";
 		}
-		final boolean xpathUrlPrefix = propQname.startsWith(ExpressionUrl.XPATH_URL_PREFIX);
-		final boolean typeExpr = propQname.startsWith("@type");
-		QName qname = !(xpathUrlPrefix || typeExpr) ? QName.createQName(propQname, namespaceService) : null;
-		if (CollectionUtils.isNotEmpty(nodeRefs)) {
-			for (final NodeRef nodeRef : nodeRefs) {
-				if (propQname.startsWith(ML_PREFIX)) {
-					MLText tmp = (MLText) mlNodeService.getProperty(nodeRef, QName.createQName(propQname.substring(3), namespaceService));
-					ret.add(MLTextHelper.getClosestValue(tmp, I18NUtil.getContentLocale()));
-				} else if (qname != null && dictionaryService.getAssociation(qname) != null) {
-					List<AssociationRef> assocs = nodeService.getTargetAssocs(nodeRef, qname);
-					if (assocs != null) {
-						assocs.stream().map(AssociationRef::getTargetRef)
-								.map(targetRef -> assocName ? attributeExtractorService.extractPropName(targetRef)
-										: targetRef)
-								.forEach(ret::add);
+		if (propQname.startsWith(ML_PREFIX)) {
+			MLText tmp = (MLText) mlNodeService.getProperty(nodeRef, QName.createQName(propQname.substring(3), namespaceService));
+			return MLTextHelper.getClosestValue(tmp, I18NUtil.getContentLocale());
+		}
+		QName qname = QName.createQName(propQname, namespaceService);
+		if ((nodeRef != null) && (qname != null)) {
+			if (dictionaryService.getAssociation(qname) != null) {
+				List<AssociationRef> assocs = nodeService.getTargetAssocs(nodeRef, qname);
+				if (assocs != null) {
+					ret = assocs.stream().map(AssociationRef::getTargetRef)
+							.map(targetRef -> assocName ? attributeExtractorService.extractPropName(targetRef)
+									: targetRef.toString())
+							.collect(Collectors.joining(","));
+				}
+			} else {
+				Serializable value = nodeService.getProperty(nodeRef, qname);
+				final Matcher matcher = formatPattern.matcher(postProcessing);
+				final String formatStr = matcher.matches() ? matcher.group(1) : null;
+				if (value instanceof List) {
+					Stream<String> stream = ((List<String>) value).stream();
+					if (formatStr != null) {
+						stream = stream.map(listEntry -> String.format(formatStr, listEntry));
 					}
-				} else {
-					Serializable value = null;
-					if (qname != null) {
-						value = nodeService.getProperty(nodeRef, qname);
-					} else if (propQname.startsWith(ExpressionUrl.XPATH_URL_PREFIX)) {
-						value = String.valueOf(BeCPGQueryBuilder.createQuery().selectNodeByPath(
-								nodeRef,
-								propQname.substring(ExpressionUrl.XPATH_URL_PREFIX.length())));
-					} else if (propQname.startsWith("@type")) {
-						QName type = nodeService.getType(nodeRef);
-						value = type != null ? type.getLocalName() : "";
-					}
-					final Matcher matcher = formatPattern.matcher(postProcessing);
-					final String formatStr = matcher.matches() ? matcher.group(1) : null;
-					if (value instanceof List) {
-						Stream<Serializable> stream = ((List<Serializable>) value).stream();
-						if (formatStr != null) {
-							stream = stream.map(listEntry -> String.format(formatStr, listEntry));
-						}
-						stream.forEach(ret::add);
-					} else if (value != null) {
-						if (formatStr != null) {
-							value = String.format(formatStr, value);
-						}
-						ret.add(value);
+					return stream.collect(Collectors.joining(","));
+				} else if (value != null) {
+					ret = value.toString();
+					if (formatStr != null) {
+						ret = String.format(formatStr, ret);
 					}
 				}
 			}

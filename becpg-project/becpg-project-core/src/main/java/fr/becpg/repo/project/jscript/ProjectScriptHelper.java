@@ -36,15 +36,16 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO8601DateFormat;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.extensions.surf.util.URLEncoder;
 
+import fr.becpg.model.DeliverableUrl;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.expressions.ExpressionService;
-import fr.becpg.repo.expressions.ExpressionUrl;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.data.ProjectData;
@@ -53,6 +54,7 @@ import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskState;
 import fr.becpg.repo.project.impl.ProjectHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * Utility script methods for budget
@@ -266,10 +268,22 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 						String assocQname = patternMatcher.group(1);
 						StringBuilder replacement = new StringBuilder();
 						if (assocQname != null) {
-							final NodeRef nodeRef = assocQname.startsWith(ExpressionUrl.TASK_URL_PARAM) ? taskNodeRef
+							final NodeRef nodeRef = assocQname.startsWith(DeliverableUrl.TASK_URL_PARAM) ? taskNodeRef
 									: projectNodeRef;
 							String replacementStr = null;
-							replacementStr = expressionService.extractExpr(nodeRef, "{" + assocQname + "}", false);
+							if (assocQname.contains("|")) {
+								final String qNameStr = assocQname.split("\\|")[1];
+								if (qNameStr.startsWith(DeliverableUrl.XPATH_URL_PREFIX)) {
+									replacementStr = String.valueOf(BeCPGQueryBuilder.createQuery().selectNodeByPath(nodeRef,
+											qNameStr.substring(DeliverableUrl.XPATH_URL_PREFIX.length())));
+								} else if (qNameStr.startsWith("@type")) {
+									QName type = nodeService.getType(nodeRef);
+									replacementStr = type != null ? type.getLocalName() : StringUtils.EMPTY;
+								}
+							}
+							if (replacementStr == null) {
+								replacementStr = expressionService.extractExpr(nodeRef, "{" + assocQname + "}", false);
+							}
 							replacement.append(replacementStr);
 						}
 						patternMatcher.appendReplacement(sb, replacement != null ? URLEncoder.encodeUriComponent(replacement.toString()) : "");
