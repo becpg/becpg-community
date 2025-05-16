@@ -270,6 +270,9 @@
                     <property name="alfrescoRepository" ref="alfrescoRepository" />
                     <property name="associationService" ref="associationService" />
                 </bean>
+                 <bean class="fr.becpg.repo.product.formulation.DocumentFormulationHandler">
+                    <property name="fileFolderService" ref="fileFolderService" />
+                </bean>
 
 				<bean class="fr.becpg.repo.product.formulation.FormulaFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
