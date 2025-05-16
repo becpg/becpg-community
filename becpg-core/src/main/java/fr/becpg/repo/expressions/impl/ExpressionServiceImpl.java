@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.alfresco.repo.jscript.ScriptNode;
 import org.alfresco.repo.workflow.activiti.ActivitiScriptNode;
@@ -18,7 +17,6 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.ScriptService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
@@ -52,7 +50,6 @@ public class ExpressionServiceImpl implements ExpressionService {
 
 	private static final Pattern jsPattern = Pattern.compile("^js\\((.*)\\)$");
 	private static final Pattern spelPattern = Pattern.compile("^spel\\((.*)\\)$");
-	private static final Pattern formatPattern = Pattern.compile("^format\\((.*)\\)$");
 
 	private static final String DEBUG_MESG = "Eval: %s";
 
@@ -90,19 +87,13 @@ public class ExpressionServiceImpl implements ExpressionService {
 
 	/** {@inheritDoc} */
 	@Override
-	public  String extractExpr(NodeRef nodeRef, String exprFormat, boolean assocName) {
-		return extractExpr(nodeRef, null, exprFormat, assocName);
-	}
-	
-	/** {@inheritDoc} */
-	@Override
-	public  String extractExpr(NodeRef nodeRef, NodeRef docNodeRef, String exprFormat) { 
-		return extractExpr(nodeRef, docNodeRef, exprFormat, true);
+	public  String extractExpr(NodeRef nodeRef, String exprFormat) {
+		return extractExpr(nodeRef,null, exprFormat);
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public  String extractExpr(NodeRef nodeRef, NodeRef docNodeRef, String exprFormat, boolean assocName) {
+	public  String extractExpr(NodeRef nodeRef, NodeRef docNodeRef, String exprFormat) {
 		Matcher patternMatcher = Pattern.compile("\\{([^}]+)\\}").matcher(exprFormat);
 		StringBuffer sb = new StringBuffer();
 		while (patternMatcher.find()) {
@@ -111,13 +102,14 @@ public class ExpressionServiceImpl implements ExpressionService {
 			String replacement = "";
 			if (propQname.contains("|")) {
 				for (String propQnameAlt : propQname.split("\\|")) {
-					if ("nodeRef".equals(propQnameAlt)) continue;
-					replacement = extractPropText(nodeRef, docNodeRef, propQnameAlt, assocName);
-					if (StringUtils.isNotEmpty(sb)) break;
+					replacement = extractPropText(nodeRef, docNodeRef, propQnameAlt);
+					if ((replacement != null) && !replacement.isEmpty()) {
+						break;
+					}
 				}
 
 			} else {
-				replacement = extractPropText(nodeRef, docNodeRef, propQname, assocName);
+				replacement = extractPropText(nodeRef, docNodeRef, propQname);
 			}
 
 			patternMatcher.appendReplacement(sb, replacement != null ? replacement.replace("$", "") : "");
@@ -128,29 +120,22 @@ public class ExpressionServiceImpl implements ExpressionService {
 		
 	}
 
-	private String extractPropText(NodeRef nodeRef, NodeRef docNodeRef, String propQname, boolean assocName) {
+	private  String extractPropText(NodeRef nodeRef, NodeRef docNodeRef, String propQname) {
 		NodeRef nodeToExtract = nodeRef;
 
 		if (propQname.startsWith("doc_")) {
 			nodeToExtract = docNodeRef;
 		}
 		propQname = propQname.replace("doc_", "");
-
-		return extractPropText(nodeToExtract, propQname, assocName);
+		
+		
+		return extractPropText(nodeToExtract, propQname);
 	}
 	
 	
 	@SuppressWarnings("unchecked")
-	private String extractPropText(NodeRef nodeRef, String propQname, boolean assocName) {
+	private String extractPropText(NodeRef nodeRef, String propQname) {
 		String ret = "";
-		final String postProcessing;
-		if (propQname.contains("?")) {
-			final String[] propQnamePostProcessing = propQname.split("\\?");
-			propQname = propQnamePostProcessing[0];
-			postProcessing = propQnamePostProcessing[1];
-		} else {
-			postProcessing = "";
-		}
 		if (propQname.startsWith(ML_PREFIX)) {
 			MLText tmp = (MLText) mlNodeService.getProperty(nodeRef, QName.createQName(propQname.substring(3), namespaceService));
 			return MLTextHelper.getClosestValue(tmp, I18NUtil.getContentLocale());
@@ -160,23 +145,15 @@ public class ExpressionServiceImpl implements ExpressionService {
 			if (dictionaryService.getAssociation(qname) != null) {
 				NodeRef assoc = associationService.getTargetAssoc(nodeRef, qname);
 				if (assoc != null) {
-					ret = assocName ? attributeExtractorService.extractPropName(assoc) : assoc.toString();
+					ret = attributeExtractorService.extractPropName(assoc);
 				}
 			} else {
-				Serializable value = nodeService.getProperty(nodeRef, qname);
-				final Matcher matcher = formatPattern.matcher(postProcessing);
-				final String formatStr = matcher.matches() ? matcher.group(1) : null;
+				Serializable value = nodeService.getProperty(nodeRef, QName.createQName(propQname, namespaceService));
 				if (value instanceof List) {
-					Stream<String> stream = ((List<String>) value).stream();
-					if (formatStr != null) {
-						stream = stream.map(listEntry -> String.format(formatStr, listEntry));
-					}
-					return stream.collect(Collectors.joining(","));
+					return ((List<String>) value).stream().collect(Collectors.joining(","));
 				} else if (value != null) {
-					ret = value.toString();
-					if (formatStr != null) {
-						ret = String.format(formatStr, ret);
-					}
+
+					ret = String.valueOf(value);
 				}
 			}
 		}
@@ -250,13 +227,6 @@ public class ExpressionServiceImpl implements ExpressionService {
 
 					}
 
-				} else {
-					match = formatPattern.matcher(condition);
-					if (match.matches()) {
-						if (logger.isDebugEnabled()) {
-							logger.debug(String.format(DEBUG_MESG, match.group(1)));
-						}
-					}
 				}
 			}
 
@@ -297,16 +267,12 @@ public class ExpressionServiceImpl implements ExpressionService {
 		} else {
 			match = spelPattern.matcher(condition);
 			if (match.matches()) {
+
 				logger.warn("Spel not supported in context");
 			}
 		}
 
 		return condition;
-	}
-
-	@Override
-	public String extractExpr(NodeRef nodeRef, String exprFormat) {
-		return extractExpr(nodeRef, exprFormat, true);
 	}
 
 }
