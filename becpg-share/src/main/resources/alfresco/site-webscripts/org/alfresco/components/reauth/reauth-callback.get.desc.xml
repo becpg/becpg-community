@@ -1,0 +1,7 @@
+<webscript>
+  <shortname>Keycloak Reauth Callback</shortname>
+  <description>Callback page for Keycloak reauthentication</description>
+  <url>/reauth-callback</url>
+  <authentication>none</authentication>
+  <format default="html"/>
+</webscript>
