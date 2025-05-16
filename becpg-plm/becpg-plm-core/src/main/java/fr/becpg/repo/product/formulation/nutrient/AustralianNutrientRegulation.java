@@ -1,7 +1,6 @@
 package fr.becpg.repo.product.formulation.nutrient;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 
 /**
