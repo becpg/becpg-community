@@ -423,36 +423,79 @@
                     var redirectUri = window.location.origin + "/share/page/reauth-callback";
                     var aimsLoginUrl = Alfresco.constants.URL_CONTEXT + "page/aims-login?prompt=true&redirectUrl=" + encodeURIComponent(redirectUri);
 
-                    var popup = window.open(aimsLoginUrl, "ReauthPopup", "width=600,height=500");
+                    // Clear any existing message listeners to prevent duplicates
+                    if (this._reauthMessageHandler) {
+                        window.removeEventListener("message", this._reauthMessageHandler);
+                    }
 
-                    if (!popup) {
-                        Alfresco.util.PopupManager
-                            .displayMessage(
-                                {
-                                    text: me
-                                        .msg("alert.popup.blocked")
-                                });
+                    var popup = window.open(aimsLoginUrl, "ReauthPopup", "width=600,height=500,menubar=no,location=no,resizable=yes,scrollbars=yes,status=no");
 
+                    if (!popup || popup.closed || typeof popup.closed === 'undefined') {
+                        Alfresco.util.PopupManager.displayMessage({
+                            text: me.msg("alert.popup.blocked")
+                        });
                         callback(null);
                         return;
                     }
 
+                    var messageReceived = false;
+                    var popupCheckInterval;
                     var self = this;
 
-                    function onMessage(event) {
-                        if (event.origin !== window.location.origin) return;
+                    // Check if popup is closed by user
+                    popupCheckInterval = setInterval(function() {
+                        if (popup.closed) {
+                            clearInterval(popupCheckInterval);
+                            if (!messageReceived) {
+                                // If we get here, the popup was closed without sending a message
+                                window.removeEventListener("message", self._reauthMessageHandler);
+                                callback(null);
+                            }
+                        }
+                    }, 500);
 
-                        var code = event.data.code;
-                        if (code) {
-                            callback(code);
-                        } else {
-                            callback(null);
+                    // Handle the message from the popup
+                    this._reauthMessageHandler = function(event) {
+                        // Ignore messages from other origins
+                        if (event.origin !== window.location.origin) {
+                            return;
                         }
 
-                        window.removeEventListener("message", onMessage);
-                    }
+                        // Only process messages with our specific source
+                        if (!event.data || typeof event.data !== 'object' || event.data.source !== 'beCPG-reauth') {
+                            return; // Not our message
+                        }
 
-                    window.addEventListener("message", onMessage);
+                        messageReceived = true;
+                        clearInterval(popupCheckInterval);
+                        
+                        // Only process our specific success code
+                        if (event.data.code === 'REAUTH_SUCCESS') {
+                            // Success - pass the code to the callback
+                            callback(event.data.code);
+                        } else {
+                            // No valid code in the message - authentication likely failed
+                            callback(null);
+                        }
+                        
+                        // Clean up
+                        window.removeEventListener("message", self._reauthMessageHandler);
+                        
+                        // Close the popup if it's still open
+                        if (popup && !popup.closed) {
+                            popup.close();
+                        }
+                    };
+
+                    // Add the event listener
+                    window.addEventListener("message", this._reauthMessageHandler);
+                    
+                    // Set focus to the popup
+                    try {
+                        popup.focus();
+                    } catch (e) {
+                        // Ignore focus errors
+                    }
                 },
 
 

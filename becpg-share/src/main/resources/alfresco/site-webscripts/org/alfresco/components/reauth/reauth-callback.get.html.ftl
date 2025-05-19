@@ -9,12 +9,23 @@
 
   <script type="text/javascript">
     (function () {
-      if ( window.opener) {
-        window.opener.postMessage({ "SUCCESS" }, window.origin);
-        window.close();
+      if (window.opener) {
+        try {
+          // Send success message with code and source identifier
+          window.opener.postMessage({ 
+            source: 'beCPG-reauth',
+            code: 'REAUTH_SUCCESS' 
+          }, window.origin);
+          // Small delay to ensure message is sent before closing
+          setTimeout(function() {
+            window.close();
+          }, 100);
+        } catch (e) {
+          console.error("Error sending message to parent:", e);
+          window.close();
+        }
       } else {
-        // document.body will be available now
-        document.body.innerHTML = "<p>Authentication  invalid.</p>";
+        document.body.innerHTML = "<p>Authentication invalid.</p>";
       }
     })();
   </script>
