@@ -421,6 +421,10 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 								? catalog.getJSONArray(EntityCatalogService.PROP_UNIQUE_FIELDS)
 								: new JSONArray();
 
+						JSONArray protectedFields = catalog.has(EntityCatalogService.PROP_PROTECTED_FIELDS)
+								? catalog.getJSONArray(EntityCatalogService.PROP_PROTECTED_FIELDS)
+								: new JSONArray();
+
 						JSONArray nonUniqueFields = extractNonUniqueFields(entityType, entityNodeRef, uniqueFields, i18nMessages);
 
 						boolean isFirst = true;
@@ -434,10 +438,14 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 
 							JSONArray missingFields = extractMissingFields(formulatedEntity, entityType, properties, reqFields, i18nMessages,
 									defaultLocale.equals(lang) ? null : lang, isFirst);
-							if ((missingFields.length() > 0) || (nonUniqueFields.length() > 0)) {
-
+							if ((missingFields.length() > 0) ) {
 								catalogDesc.put(EntityCatalogService.PROP_MISSING_FIELDS, missingFields.length() > 0 ? missingFields : null);
+							}
+							if (nonUniqueFields.length() > 0) {
 								catalogDesc.put(EntityCatalogService.PROP_NON_UNIQUE_FIELDS, nonUniqueFields.length() > 0 ? nonUniqueFields : null);
+							}
+							if (protectedFields.length() > 0) {
+								catalogDesc.put(EntityCatalogService.PROP_PROTECTED_FIELDS, protectedFields.length() > 0 ? protectedFields : null);
 							}
 
 							catalogDesc.put(EntityCatalogService.PROP_LOCALE, defaultLocale.equals(lang) ? null : lang);

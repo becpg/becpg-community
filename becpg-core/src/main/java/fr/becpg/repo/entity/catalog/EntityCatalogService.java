@@ -53,6 +53,8 @@ public interface EntityCatalogService {
 	public static final String PROP_CATALOG_MODIFIED_FIELD = "modifiedField";
 	/** Constant <code>PROP_AUDITED_FIELDS="auditedFields"</code> */
 	public static final String PROP_AUDITED_FIELDS = "auditedFields";
+	/** Constant <code>PROP_PROTECTED_FIELDS="protectedFields"</code> */
+	public static final String PROP_PROTECTED_FIELDS = "protectedFields";
 	/** Constant <code>PROP_VALUE="value"</code> */
 	public static final String PROP_VALUE = "value";
 	/** Constant <code>PROP_ENTITIES="entities"</code> */
