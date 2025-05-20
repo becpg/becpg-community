@@ -27,7 +27,7 @@ public class DocumentAspectPolicy extends AbstractBeCPGPolicy implements Content
 	@Override
 	public void doInit() {
 	//TODO	policyComponent.bindClassBehaviour(ContentServicePolicies.OnContentUpdatePolicy.QNAME, BeCPGModel.ASPECT_DOCUMENT_ASPECT, new JavaBehaviour(this, "onContentUpdate"));
-
+		
 	}
 
 	@Override

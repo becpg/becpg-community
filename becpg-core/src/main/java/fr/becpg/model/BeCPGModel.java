@@ -354,5 +354,38 @@ public final class BeCPGModel {
 	public static final QName ASSOC_PLANTS = QName.createQName(BECPG_URI, "plants");
 	/** Constant <code>ASSOC_SUBSIDIARY_REF</code> */
 	public static final QName ASSOC_SUBSIDIARY_REF = QName.createQName(BECPG_URI, "subsidiaryRef");
-
+	
+	// document aspect
+	/** Constant <code>ASPECT_DOCUMENT_ASPECT</code> */
+	public static final QName ASPECT_DOCUMENT_ASPECT = QName.createQName(BECPG_URI, "documentAspect");
+	/** Constant <code>PROP_DOCUMENT_STATE</code> */
+	public static final QName PROP_DOCUMENT_STATE = QName.createQName(BECPG_URI, "documentState");
+	/** Constant <code>PROP_DOCUMENT_IS_MANDATORY</code> */
+	public static final QName PROP_DOCUMENT_IS_MANDATORY = QName.createQName(BECPG_URI, "documentIsMandatory");
+	/** Constant <code>ASSOC_DOCUMENT_TYPE_REF</code> */
+	public static final QName ASSOC_DOCUMENT_TYPE_REF = QName.createQName(BECPG_URI, "documentTypeRef");
+	/** Constant <code>ASSOC_DOCUMENT_ENTITY_REF</code> */
+	public static final QName ASSOC_DOCUMENT_ENTITY_REF = QName.createQName(BECPG_URI, "documentEntityRef");
+	
+	// document type
+	/** Constant <code>TYPE_DOCUMENT_TYPE</code> */
+	public static final QName TYPE_DOCUMENT_TYPE = QName.createQName(BECPG_URI, "documentType");
+	/** Constant <code>PROP_DOCUMENT_TYPE_IS_MANDATORY</code> */
+	public static final QName PROP_DOCUMENT_TYPE_IS_MANDATORY = QName.createQName(BECPG_URI, "docTypeIsMandatory");
+	/** Constant <code>PROP_DOCUMENT_TYPE_EFFECTIVITY_TYPE</code> */
+	public static final QName PROP_DOCUMENT_TYPE_EFFECTIVITY_TYPE = QName.createQName(BECPG_URI, "docTypeEffectivityType");
+	/** Constant <code>PROP_DOCUMENT_TYPE_AUTO_EXPIRATION_DELAY</code> */
+	public static final QName PROP_DOCUMENT_TYPE_AUTO_EXPIRATION_DELAY= QName.createQName(BECPG_URI, "docTypeAutoExpirationDelay");
+	/** Constant <code>PROP_DOCUMENT_TYPE_FORMULA</code> */
+	public static final QName PROP_DOCUMENT_TYPE_FORMULA = QName.createQName(BECPG_URI, "docTypeFormula");
+	/** Constant <code>PROP_DOCUMENT_TYPE_FORMAT</code> */
+	public static final QName PROP_DOCUMENT_TYPE_FORMAT = QName.createQName(BECPG_URI, "docTypeNameFormat");
+	/** Constant <code>PROP_DOCUMENT_TYPE_LINKED_HIERARCHY</code> */
+	public static final QName PROP_DOCUMENT_TYPE_LINKED_HIERARCHY = QName.createQName(BECPG_URI, "docTypeLinkedHierarchy");
+	/** Constant <code>PROP_DOCUMENT_TYPE_LINKED_TYPES</code> */
+	public static final QName PROP_DOCUMENT_TYPE_LINKED_TYPES = QName.createQName(BECPG_URI, "docTypeLinkedTypes");
+	/** Constant <code>PROP_DOCUMENT_TYPE_LINKED_TYPES</code> */
+	public static final QName PROP_DOCUMENT_TYPE_PATH = QName.createQName(BECPG_URI, "docTypeDestPath");
+	/** Constant <code>ASSOC_DOCUMENT_TYPE_LINKED_CHARACTS</code> */
+	public static final QName ASSOC_DOCUMENT_TYPE_LINKED_CHARACTS = QName.createQName(BECPG_URI, "docTypeLinkedCharacts");
 }
