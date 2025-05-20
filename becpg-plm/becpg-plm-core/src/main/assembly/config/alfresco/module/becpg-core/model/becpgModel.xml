@@ -2154,7 +2154,7 @@
 					<type>d:int</type>
 					<index enabled="false" />
 				</property>
-				<property name="bcpg:docTypeMandatoryFormula">
+				<property name="bcpg:docTypeFormula">
 					<type>d:text</type>
 					<index enabled="false" />
 				</property>
