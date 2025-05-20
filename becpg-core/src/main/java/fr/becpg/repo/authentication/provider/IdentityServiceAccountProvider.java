@@ -2,6 +2,7 @@ package fr.becpg.repo.authentication.provider;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.apache.commons.logging.Log;
@@ -29,6 +30,10 @@ import fr.becpg.repo.authentication.BeCPGUserAccount;
  */
 @Service
 public class IdentityServiceAccountProvider {
+
+	private static final Pattern PROHIBITED_CHARS = Pattern.compile(
+        "[<>&\"$%!#?§;*~/\\\\|^=\\[\\]{}()\\p{Cntrl}]"
+    );
 
 	private static Log logger = LogFactory.getLog(IdentityServiceAccountProvider.class);
 
@@ -80,6 +85,7 @@ public class IdentityServiceAccountProvider {
 	 * @return a boolean
 	 */
 	public boolean registerAccount(BeCPGUserAccount userAccount) {
+		sanitizeAccount(userAccount);
 		try {
 			HttpClientBuilder builder = HttpClientBuilder.create();
 
@@ -160,6 +166,18 @@ public class IdentityServiceAccountProvider {
 		return true;
 	}
 
+	private void sanitizeAccount(BeCPGUserAccount userAccount) {
+		userAccount.setFirstName(sanitize(userAccount.getFirstName()));
+		userAccount.setLastName(sanitize(userAccount.getLastName()));
+	}
+	
+	private String sanitize(String input) {
+        if (input == null) {
+        	return null;
+        }
+        return PROHIBITED_CHARS.matcher(input).replaceAll("");
+    }
+	
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
