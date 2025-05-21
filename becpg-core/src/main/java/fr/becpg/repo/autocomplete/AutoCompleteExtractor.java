@@ -25,6 +25,7 @@ import java.util.List;
  * @author matthieu
  * @version $Id: $Id
  */
+@FunctionalInterface
 public interface AutoCompleteExtractor<T> {
 
 	/**
@@ -34,5 +35,16 @@ public interface AutoCompleteExtractor<T> {
 	 * @return a {@link java.util.List} object.
 	 */
 	List<AutoCompleteEntry> extract(List<T> values);
+	
+	/**
+	 * <p>extract.</p>
+	 *
+	 * @param values a {@link java.util.List} object.
+	 * @param characNameFormat a {@link java.lang.String} object
+	 * @return a {@link java.util.List} object.
+	 */
+	default List<AutoCompleteEntry> extract(List<T> values, String characNameFormat) {
+		return extract(values);
+	}
 
 }
