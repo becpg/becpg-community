@@ -1,5 +1,6 @@
 package fr.becpg.model;
 
+import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 
 /**
@@ -388,4 +389,12 @@ public final class BeCPGModel {
 	public static final QName PROP_DOCUMENT_TYPE_PATH = QName.createQName(BECPG_URI, "docTypeDestPath");
 	/** Constant <code>ASSOC_DOCUMENT_TYPE_LINKED_CHARACTS</code> */
 	public static final QName ASSOC_DOCUMENT_TYPE_LINKED_CHARACTS = QName.createQName(BECPG_URI, "docTypeLinkedCharacts");
+	
+	// cm_effectivity aspect
+	/** Constant <code>ASPECT_CM_EFFECTIVITY_ASPECT</code> */
+	public static final QName ASPECT_CM_EFFECTIVITY_ASPECT = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "effectivity");
+	/** Constant <code>PROP_CM_FROM</code> */
+	public static final QName PROP_CM_FROM = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "from");
+	/** Constant <code>PROP_CM_TO</code> */
+	public static final QName PROP_CM_TO = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "to");
 }
