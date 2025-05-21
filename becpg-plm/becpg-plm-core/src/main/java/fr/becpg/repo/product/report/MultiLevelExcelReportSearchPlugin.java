@@ -1,6 +1,7 @@
 package fr.becpg.repo.product.report;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -24,8 +25,8 @@ import fr.becpg.repo.entity.datalist.MultiLevelDataListService;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.helper.ExcelHelper;
-import fr.becpg.repo.helper.JsonFormulaHelper;
 import fr.becpg.repo.helper.ExcelHelper.ExcelCellStyles;
+import fr.becpg.repo.helper.JsonFormulaHelper;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.formulation.FormulationHelper;
