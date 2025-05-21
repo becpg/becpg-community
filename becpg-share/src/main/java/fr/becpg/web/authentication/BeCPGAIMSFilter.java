@@ -299,6 +299,33 @@ public class BeCPGAIMSFilter implements Filter
                 }
             }
         }
+        
+        if (this.enabled && request.getRequestURI().contains(SHARE_AIMS_LOGIN_PAGE) &&
+            "true".equalsIgnoreCase(request.getParameter("prompt"))) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Explicit re-authentication requested for URI: " + request.getRequestURI() + " due to prompt=true.");
+            }
+
+            if (isAuthenticated) {
+                LOGGER.info("User is currently authenticated, but prompt=true found. Invalidating session to force IdP re-authentication.");
+                if (session != null) {
+                    session.invalidate();
+                    session = null; // Nullify after invalidation for subsequent logic
+                }
+                SecurityContextHolder.clearContext();
+                isAuthenticated = false; // Update local state for the rest of this filter invocation
+            } else {
+                LOGGER.debug("prompt=true found, user is already unauthenticated. Proceeding to login normally.");
+            }
+            // At this point, if explicitReAuthRequested was true, isAuthenticated is now false.
+            // The request is for SHARE_AIMS_LOGIN_PAGE.
+            // The flow will continue, and since isAuthenticated is false,
+            // the aims-login page will be processed as if for an unauthenticated user.
+            // The aims-login.jsp (or handler) is then responsible for generating the
+            // link/redirect to aims-dologin, which will trigger the IdP flow.
+            // Your BeCPGCustomAuthorizationRequestResolver will add "prompt=login" (or similar)
+            // to the actual IdP authorization request.
+        }
 
         if (!isAuthenticated && this.enabled && (request.getRequestURI().contains(this.shareContext + SHARE_PAGE) || request.getRequestURI().contains(this.shareContext + SHARE_AIMS_LOGOUT)))
         {
