@@ -279,9 +279,12 @@
 					<property name="execOrder" value="Post" />
 				</bean>
 				<ref bean="productSpecificationsFormulationHandler" />
+				
+				<bean class="fr.becpg.repo.entity.catalog.formulation.EntityCatalogFormulationHandler">
+                    <property name="entityCatalogService" ref="entityCatalogService" />
+                </bean>
 				<bean class="fr.becpg.repo.product.formulation.CompletionReqCtrlCalculatingFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
-					<property name="entityCatalogService" ref="entityCatalogService" />
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.MergeReqCtrlFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
@@ -327,12 +330,16 @@
 	<bean id="supplierFormulationChain" class="fr.becpg.repo.formulation.FormulationChain" init-method="init">
 		<property name="handlers">
 			<list>
+			    
 				<bean class="fr.becpg.repo.project.formulation.ScoreListFormulationHandler">
 				    <property name="alfrescoRepository" ref="alfrescoRepository" />
 			        <property name="nodeService" ref="nodeService" />
 			        <property name="mlNodeService" ref="mlAwareNodeService" />
 			        <property name="formulaService" ref="formulaService" />
 				</bean>
+				<bean class="fr.becpg.repo.entity.catalog.formulation.EntityCatalogFormulationHandler">
+                    <property name="entityCatalogService" ref="entityCatalogService" />
+                </bean>
 				<bean class="fr.becpg.repo.formulation.impl.ScriptsFormulationHandler">
 					<property name="nodeService" ref="nodeService" />
 					<property name="namespaceService" ref="namespaceService" />
@@ -357,6 +364,9 @@
                     <property name="nodeService" ref="nodeService" />
                     <property name="mlNodeService" ref="mlAwareNodeService" />
                     <property name="formulaService" ref="formulaService" />
+                </bean>
+                <bean class="fr.becpg.repo.entity.catalog.formulation.EntityCatalogFormulationHandler">
+                    <property name="entityCatalogService" ref="entityCatalogService" />
                 </bean>
 				<bean class="fr.becpg.repo.formulation.impl.ScriptsFormulationHandler">
 					<property name="nodeService" ref="nodeService" />
