@@ -1601,6 +1601,20 @@
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
+			
+			<form id="export">
+				<field-visibility>
+					<show id="bcpg:charactName" />
+					<show id="bcpg:legalName" />
+					<show id="bcpg:costType" />
+					<show id="bcpg:costCurrency" />
+					<show id="bcpg:costFixed" />
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:isDeleted" />
+					<show id="bcpg:costFormula" />
+				</field-visibility>
+			</form>
 		</forms>
 	</config>
 	
