@@ -49,9 +49,9 @@ fi
 
 if [[ $OAUTH2_ENABLED == "false" ]]; then
     OAUTH2_SECRET="changeit"
-    OAUTH2_REALM = "becpg"
-    OAUTH2_RESOURCE= "becpg-openid"
-    OAUTH2_SERVER_URL= "http://becpg-auth:8080/auth"
+    OAUTH2_REALM="becpg"
+    OAUTH2_RESOURCE="becpg-openid"
+    OAUTH2_SERVER_URL="http://becpg-auth:8080/auth"
 fi
 
 
