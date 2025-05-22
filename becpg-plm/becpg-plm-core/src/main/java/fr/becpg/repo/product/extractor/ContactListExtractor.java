@@ -11,11 +11,17 @@ import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.impl.SimpleExtractor;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 
+/**
+ * <p>ContactListExtractor class.</p>
+ *
+ * @author matthieu
+ */
 public class ContactListExtractor extends SimpleExtractor {
 
 	private static final String UPDATE_SUPPLIER_ACCOUNT = "update-supplier-account";
 	private static final String CONTACT_LIST = "contactList";
 
+	/** {@inheritDoc} */
 	@Override
 	@SuppressWarnings("unchecked")
 	public Map<String, Object> extractJSON(NodeRef nodeRef, List<AttributeExtractorStructure> metadataFields, Map<String, Object> props,
@@ -34,6 +40,7 @@ public class ContactListExtractor extends SimpleExtractor {
 		return ret;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean applyTo(DataListFilter dataListFilter) {
 		return (dataListFilter.getDataListName() != null) && dataListFilter.getDataListName().equals(CONTACT_LIST);

@@ -593,6 +593,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		if (Objects.equals(folderName, PlmRepoConsts.PATH_LCA_DATABASES)) {
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/databases/ecoscore/agribalyse_3_0.csv");
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/databases/ecoscore/agribalyse_3_1.csv");
+			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/databases/ecoscore/agribalyse_3_2.csv");
 		}
 		
 		if (Objects.equals(folderName, PlmRepoConsts.PATH_CLP_DATABASES)) {
@@ -1003,6 +1004,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		dataLists.add(PLMModel.TYPE_CONTACTLIST);
 		dataLists.add(PLMModel.TYPE_CERTIFICATION);
 		dataLists.add(PLMModel.TYPE_PLANT);
+		dataLists.add(SurveyModel.TYPE_SURVEY_LIST);
 	
 		subFolders.add(RepoConsts.PATH_SUPPLIER_DOCUMENTS);
 		NodeRef entityTplNodeRef = entityTplService.createEntityTpl(entityTplsNodeRef, PLMModel.TYPE_SUPPLIER, null, true, true, dataLists,
@@ -1169,6 +1171,10 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_GS1_SPECIES_FOR_FISHERY, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_GS1_CATCH_METHID_CODES, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_GS1_CATCH_AREA_CODES, BeCPGModel.TYPE_LIST_VALUE);
+		
+		entityLists.put(PlmRepoConsts.PATH_GS1_DUTY_FEE_TAX_AGENCY_CODES, BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(PlmRepoConsts.PATH_GS1_DUTY_FEE_TAX_TYPE_CODES, BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(PlmRepoConsts.PATH_GS1_DUTY_FEE_TAX_CATEGORY_CODES, BeCPGModel.TYPE_LIST_VALUE);
 
 		entityLists.put(PlmRepoConsts.PATH_CONTACT_TYPES, BeCPGModel.TYPE_LIST_VALUE);
 
@@ -1259,6 +1265,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
 				dataLists.add(PLMModel.TYPE_LABELCLAIMLIST);
 				dataLists.add(PLMModel.TYPE_SVHCLIST);
+				dataLists.add(SurveyModel.TYPE_SURVEY_LIST);
 
 				wusedQName = PLMModel.TYPE_COMPOLIST;
 

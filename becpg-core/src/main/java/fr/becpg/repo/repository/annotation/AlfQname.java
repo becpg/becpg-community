@@ -28,5 +28,10 @@ import java.lang.annotation.RetentionPolicy;
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AlfQname  {
+  /**
+   * Returns the qualified name for this field.
+   * 
+   * @return the qualified name
+   */
   String qname();
 }

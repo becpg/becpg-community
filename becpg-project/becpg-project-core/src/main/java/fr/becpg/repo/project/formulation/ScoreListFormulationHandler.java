@@ -77,10 +77,20 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 
 	private SpelFormulaService formulaService;
 
+	/**
+	 * <p>Setter for the field <code>mlNodeService</code>.</p>
+	 *
+	 * @param mlNodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 */
 	public void setMlNodeService(NodeService mlNodeService) {
 		this.mlNodeService = mlNodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>formulaService</code>.</p>
+	 *
+	 * @param formulaService a {@link fr.becpg.repo.formulation.spel.SpelFormulaService} object
+	 */
 	public void setFormulaService(SpelFormulaService formulaService) {
 		this.formulaService = formulaService;
 	}
@@ -94,6 +104,11 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
@@ -119,6 +134,11 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 		return true;
 	}
 
+	/**
+	 * <p>calculateScoreType.</p>
+	 *
+	 * @param surveyableEntity a {@link fr.becpg.repo.survey.data.SurveyableEntity} object
+	 */
 	public void calculateScoreType(SurveyableEntity surveyableEntity) {
 
 		surveyableEntity.getScoreList().forEach(
@@ -128,6 +148,11 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 
 	}
 
+	/**
+	 * <p>formulateSurveylist.</p>
+	 *
+	 * @param surveyableEntity a {@link fr.becpg.repo.survey.data.SurveyableEntity} object
+	 */
 	public void formulateSurveylist(SurveyableEntity surveyableEntity) {
 	
 		final List<SurveyListDataItem> surveyList = SurveyableEntityHelper.getNamesSurveyLists(alfrescoRepository, surveyableEntity).values().stream()
@@ -151,6 +176,11 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 
 	}
 
+	/**
+	 * <p>calculateScore.</p>
+	 *
+	 * @param surveyableEntity a {@link fr.becpg.repo.survey.data.SurveyableEntity} object
+	 */
 	public void calculateScore(SurveyableEntity surveyableEntity) {
 		if (CollectionUtils.isEmpty(surveyableEntity.getScoreList())) {
 			return;
@@ -317,6 +347,12 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 		}
 	}
 
+	/**
+	 * <p>accept.</p>
+	 *
+	 * @param surveyableEntity a {@link fr.becpg.repo.survey.data.SurveyableEntity} object
+	 * @return a boolean
+	 */
 	protected boolean accept(SurveyableEntity surveyableEntity) {
 		
 		boolean hasScoreList = surveyableEntity.getScoreList() != null
@@ -325,6 +361,12 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 		return !isTemplateEntity(surveyableEntity) && hasScoreList;
 	}
 
+	/**
+	 * <p>isTemplateEntity.</p>
+	 *
+	 * @param surveyableEntity a {@link fr.becpg.repo.survey.data.SurveyableEntity} object
+	 * @return a boolean
+	 */
 	protected boolean isTemplateEntity(SurveyableEntity surveyableEntity) {
 		return surveyableEntity instanceof BeCPGDataObject dataObj && dataObj.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL);
 	}

@@ -32,7 +32,10 @@ import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AccessStatus;
+import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.PermissionService;
+import org.alfresco.service.cmr.site.SiteInfo;
+import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -42,8 +45,8 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.BeCPGPermissions;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.helper.PropertiesHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.hierarchy.HierarchicalEntity;
@@ -83,7 +86,13 @@ public class HierarchyServiceImpl implements HierarchyService {
 	private PermissionService permissionService;
 	
 	@Autowired
+	private AuthorityService authorityService;
+	
+	@Autowired
 	private SystemConfigurationService systemConfigurationService;
+	
+	@Autowired
+	private SiteService siteService;
 
 	/** {@inheritDoc} */
 	@Override
@@ -258,14 +267,17 @@ public class HierarchyServiceImpl implements HierarchyService {
 						} else {
 							NodeRef currentParentNodeRef = nodeService.getPrimaryParent(entityNodeRef).getParentRef();
 							if (!destinationNodeRef.equals(currentParentNodeRef)) {
+								String user = AuthenticationUtil.getFullyAuthenticatedUser();
+								SiteInfo destinationSite = siteService.getSite(destinationNodeRef);
+								String sitePermission = destinationSite == null ? null : PermissionService.GROUP_PREFIX + "site_" + destinationSite.getShortName() + "_SiteBranchManager";
 								AuthenticationUtil.runAs(() -> {
 									if (permissionService.hasPermission(finalDestinationNodeRef, PermissionService.WRITE) != AccessStatus.ALLOWED
-											&& permissionService.hasPermission(finalDestinationNodeRef, BeCPGPermissions.MERGE_ENTITY) != AccessStatus.ALLOWED
+											&& (destinationSite == null || !authorityService.getAuthoritiesForUser(user).contains(sitePermission))
 											&& Boolean.TRUE.equals(Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.classify.rights.check")))) {
-										throw new IllegalStateException("You do not have permission to move the entity into this folder: " + finalDestinationNodeRef + ", entity :" + entityNodeRef);
+										throw new FormulateException("user '"+ user + "' does not have permission to move the entity into this folder: " + finalDestinationNodeRef + ", entity :" + entityNodeRef);
 									}
 									return null;
-								}, AuthenticationUtil.getFullyAuthenticatedUser());
+								}, user);
 							}
 							return repoService.moveNode(entityNodeRef, destinationNodeRef);
 						}

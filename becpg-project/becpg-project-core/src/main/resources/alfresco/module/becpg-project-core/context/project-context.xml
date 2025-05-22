@@ -200,14 +200,14 @@
        <!-- Survey -->
 
 	<bean id="webscript.fr.becpg.survey.survey.get" class="fr.becpg.repo.survey.web.scripts.SurveyWebScript" parent="webscript">
-      	<property name="surveyService" ref="surveyService"/>
-      	<property name="nodeService" ref="NodeService"/>
-      	<property name="permissionService" ref="permissionService"/>
-      	<property name="namespaceService" ref="namespaceService"/>
+		<property name="surveyService" ref="surveyService" />
+		<property name="nodeService" ref="NodeService" />
+		<property name="permissionService" ref="permissionService" />
+		<property name="namespaceService" ref="namespaceService"/>
       	<property name="securityService" ref="securityService"/>
       	<property name="lockService" ref="lockService"/>
       	<property name="becpgLicenseManager" ref="becpgLicenseManager"/>
-   	</bean>
+	</bean>
 
 	<alias alias="webscript.fr.becpg.survey.survey.post" name="webscript.fr.becpg.survey.survey.get" />
     

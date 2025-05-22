@@ -31,7 +31,11 @@ import fr.becpg.repo.entity.EntityDictionaryService;
  */
 public class RemoteHelper {
 	
-
+    private RemoteHelper() {
+    	//DO Nothing
+    }
+	
+	
 	/**
 	 * <p>getPropName.</p>
 	 *

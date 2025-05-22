@@ -174,10 +174,20 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 
 
 	
+	/**
+	 * <p>Getter for the field <code>additionalInformation</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object
+	 */
 	public MLText getAdditionalInformation() {
 		return additionalInformation;
 	}
 
+	/**
+	 * <p>Setter for the field <code>additionalInformation</code>.</p>
+	 *
+	 * @param additionalInformation a {@link org.alfresco.service.cmr.repository.MLText} object
+	 */
 	public void setAdditionalInformation(MLText additionalInformation) {
 		this.additionalInformation = additionalInformation;
 	}

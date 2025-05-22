@@ -31,159 +31,202 @@ import fr.becpg.repo.helper.impl.ChildAssocCacheEntry;
 import fr.becpg.repo.helper.impl.EntitySourceAssoc;
 
 /**
- * <p>AssociationService interface.</p>
+ * <p>AssociationService interface provides methods for managing associations between nodes in the repository.</p>
+ * <p>This service handles both child and regular associations, with support for caching and filtering.</p>
  *
  * @author matthieu
- * @version $Id: $Id
+ * @version 1.0
  */
 public interface AssociationService {
 
-
 	/**
-	 * <p>update.</p>
-	 *
-	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param qName a {@link org.alfresco.service.namespace.QName} object.
-	 * @param assocNodeRefs a {@link java.util.List} object.
+	 * Updates the associations for a given node with the specified association type.
+	 * 
+	 * @param nodeRef the node reference to update associations for
+	 * @param qName the association type QName
+	 * @param assocNodeRefs the list of node references to associate with the node
 	 */
 	void update(NodeRef nodeRef, QName qName, List<NodeRef> assocNodeRefs);
+	
 	/**
-	 * <p>update.</p>
-	 *
-	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param qName a {@link org.alfresco.service.namespace.QName} object.
-	 * @param assocNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * Updates the associations for a given node with the specified association type.
+	 * 
+	 * @param nodeRef the node reference to update associations for
+	 * @param qName the association type QName
+	 * @param assocNodeRef the node reference to associate with the node
 	 */
 	void update(NodeRef nodeRef, QName qName, NodeRef assocNodeRef);
+	
 	/**
-	 * <p>getTargetAssoc.</p>
-	 *
-	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param qName a {@link org.alfresco.service.namespace.QName} object.
-	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * Retrieves the target association for a given node with the specified association type.
+	 * 
+	 * @param nodeRef the node reference to retrieve the target association for
+	 * @param qName the association type QName
+	 * @return the target association node reference
 	 */
 	NodeRef getTargetAssoc(NodeRef nodeRef, QName qName);
+	
 	/**
-	 * <p>getTargetAssocs.</p>
-	 *
-	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param qName a {@link org.alfresco.service.namespace.QName} object.
-	 * @return a {@link java.util.List} object.
+	 * Retrieves the target associations for a given node with the specified association type.
+	 * 
+	 * @param nodeRef the node reference to retrieve the target associations for
+	 * @param qName the association type QName
+	 * @return the list of target association node references
 	 */
 	List<NodeRef> getTargetAssocs(NodeRef nodeRef, QName qName);
+	
 	/**
-	 * <p>getChildAssoc.</p>
-	 *
-	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param qName a {@link org.alfresco.service.namespace.QName} object.
-	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * Retrieves the child association for a given node with the specified association type.
+	 * 
+	 * @param nodeRef the node reference to retrieve the child association for
+	 * @param qName the association type QName
+	 * @return the child association node reference
 	 */
 	NodeRef getChildAssoc(NodeRef nodeRef, QName qName);
+	
 	/**
-	 * <p>getChildAssocs.</p>
-	 *
-	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param qName a {@link org.alfresco.service.namespace.QName} object.
-	 * @return a {@link java.util.List} object.
+	 * Retrieves the child associations for a given node with the specified association type.
+	 * 
+	 * @param nodeRef the node reference to retrieve the child associations for
+	 * @param qName the association type QName
+	 * @return the list of child association node references
 	 */
 	List<NodeRef> getChildAssocs(NodeRef nodeRef, QName qName);
+	
 	/**
-	 * <p>getChildAssocs.</p>
-	 *
-	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param qName a {@link org.alfresco.service.namespace.QName} object.
-	 * @param childTypeQName a {@link org.alfresco.service.namespace.QName} object.
-	 * @return a {@link java.util.List} object.
+	 * Retrieves the child associations for a given node with the specified association type and child type.
+	 * 
+	 * @param nodeRef the node reference to retrieve the child associations for
+	 * @param qName the association type QName
+	 * @param childTypeQName the child type QName
+	 * @return the list of child association node references
 	 */
 	List<NodeRef> getChildAssocs(NodeRef nodeRef, QName qName, QName childTypeQName);
-	/**
-	 * <p>getChildAssocs.</p>
-	 *
-	 * @param listNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param assocContains a {@link org.alfresco.service.namespace.QName} object.
-	 * @param listQNameFilter a {@link org.alfresco.service.namespace.QName} object.
-	 * @param sortMap a {@link java.util.Map} object.
-	 * @return a {@link java.util.List} object.
-	 */
-	List<NodeRef> getChildAssocs(NodeRef listNodeRef, QName assocContains, QName listQNameFilter,@Nullable Map<String, Boolean> sortMap);
 	
+	/**
+	 * Retrieves the child associations for a given list node with the specified association type and list type.
+	 * 
+	 * @param listNodeRef the list node reference to retrieve the child associations for
+	 * @param assocContains the association type QName
+	 * @param listQNameFilter the list type QName filter
+	 * @param sortMap the sort map
+	 * @return the list of child association node references
+	 */
+	List<NodeRef> getChildAssocs(NodeRef listNodeRef, QName assocContains, QName listQNameFilter, @Nullable Map<String, Boolean> sortMap);
+	
+	/**
+	 * Retrieves the source associations for a given node.
+	 * 
+	 * @param nodeRef the node reference to retrieve the source associations for
+	 * @return the list of source association node references
+	 */
 	List<NodeRef> getSourcesAssocs(NodeRef nodeRef);
 	
 	/**
-	 * <p>getSourcesAssocs.</p>
-	 *
-	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param qNamePattern a {@link org.alfresco.service.namespace.QNamePattern} object.
-	 * @return a {@link java.util.List} object.
+	 * Retrieves the source associations for a given node with the specified association type.
+	 * 
+	 * @param nodeRef the node reference to retrieve the source associations for
+	 * @param qNamePattern the association type QName pattern
+	 * @return the list of source association node references
 	 */
 	List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QName qNamePattern);
 	
 	/**
-	 * <p>getSourcesAssocs.</p>
-	 *
-	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
-	 * @param qNamePattern a {@link org.alfresco.service.namespace.QNamePattern} object
-	 * @param includeVersions a boolean
-	 * @return a {@link java.util.List} object
+	 * Retrieves the source associations for a given node with the specified association type and versioning options.
+	 * 
+	 * @param nodeRef the node reference to retrieve the source associations for
+	 * @param qNamePattern the association type QName pattern
+	 * @param includeVersions whether to include versioned associations
+	 * @return the list of source association node references
 	 */
 	List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QName qNamePattern, Boolean includeVersions);
 	
+	/**
+	 * Retrieves the source associations for a given node with the specified association type, versioning options, and pagination.
+	 * 
+	 * @param nodeRef the node reference to retrieve the source associations for
+	 * @param qNamePattern the association type QName pattern
+	 * @param includeVersions whether to include versioned associations
+	 * @param maxResults the maximum number of results to return
+	 * @param offset the offset for pagination
+	 * @return the list of source association node references
+	 */
 	List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QName qNamePattern, Boolean includeVersions, Integer maxResults, Integer offset);
 	
-	List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QName qName, Boolean includeVersions, Integer maxResults, Integer offset,
-			boolean checkPermissions);
+	/**
+	 * Retrieves the source associations for a given node with the specified association type, versioning options, pagination, and permission checking.
+	 * 
+	 * @param nodeRef the node reference to retrieve the source associations for
+	 * @param qName the association type QName
+	 * @param includeVersions whether to include versioned associations
+	 * @param maxResults the maximum number of results to return
+	 * @param offset the offset for pagination
+	 * @param checkPermissions whether to check permissions
+	 * @return the list of source association node references
+	 */
+	List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QName qName, Boolean includeVersions, Integer maxResults, Integer offset, boolean checkPermissions);
 	
 	/**
-	 * <p>getEntitySourceAssocs.</p>
-	 *
-	 * @param nodeRefs a {@link java.util.List} object.
-	 * @param assocQName a {@link org.alfresco.service.namespace.QName} object.
-	 * @param isOrOperator a boolean.
-	 * @return a {@link java.util.List} object.
-	 * @param listTypeQname a {@link org.alfresco.service.namespace.QName} object
-	 * @param criteriaFilters a {@link java.util.List} object
+	 * Retrieves entity source associations with filtering and pagination.
+	 * 
+	 * @param nodeRefs the node references to check
+	 * @param assocQName the association type QName
+	 * @param listTypeQname the list type QName
+	 * @param isOrOperator whether to use OR operator for filtering
+	 * @param criteriaFilters the criteria filters to apply
+	 * @return the list of entity source associations
 	 */
 	List<EntitySourceAssoc> getEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocQName, QName listTypeQname, boolean isOrOperator, List<AssociationCriteriaFilter> criteriaFilters);
 	
 	/**
-	 * <p>getEntitySourceAssocs.</p>
-	 *
-	 * @param nodeRefs a {@link java.util.List} object
-	 * @param assocQName a {@link org.alfresco.service.namespace.QName} object
-	 * @param listTypeQname a {@link org.alfresco.service.namespace.QName} object
-	 * @param isOrOperator a boolean
-	 * @param criteriaFilters a {@link java.util.List} object
-	 * @param pagingRequest a {@link org.alfresco.query.PagingRequest} object
-	 * @return a {@link java.util.List} object
+	 * Retrieves entity source associations with filtering, pagination, and permission checking.
+	 * 
+	 * @param nodeRefs the node references to check
+	 * @param assocQName the association type QName
+	 * @param listTypeQname the list type QName
+	 * @param isOrOperator whether to use OR operator for filtering
+	 * @param criteriaFilters the criteria filters to apply
+	 * @param pagingRequest the pagination request
+	 * @return the list of entity source associations
 	 */
 	List<EntitySourceAssoc> getEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocQName, QName listTypeQname, boolean isOrOperator, List<AssociationCriteriaFilter> criteriaFilters, PagingRequest pagingRequest);
 	
+	/**
+	 * Retrieves entity source associations with filtering, pagination, and permission checking.
+	 * 
+	 * @param nodeRefs the node references to check
+	 * @param assocQName the association type QName
+	 * @param listTypeQname the list type QName
+	 * @param isOrOperator whether to use OR operator for filtering
+	 * @param criteriaFilters the criteria filters to apply
+	 * @param pagingRequest the pagination request
+	 * @param checkPermissions whether to check permissions
+	 * @return the list of entity source associations
+	 */
 	List<EntitySourceAssoc> getEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocQName, QName listTypeQname, boolean isOrOperator, List<AssociationCriteriaFilter> criteriaFilters, PagingRequest pagingRequest, boolean checkPermissions);
 	
-	
 	/**
-	 * <p>removeChildCachedAssoc.</p>
-	 *
-	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
-	 * @param qName a {@link org.alfresco.service.namespace.QName} object
+	 * Removes the child cached association for a given node with the specified association type.
+	 * 
+	 * @param nodeRef the node reference to remove the child cached association for
+	 * @param qName the association type QName
 	 */
 	void removeChildCachedAssoc(NodeRef nodeRef, QName qName);
 	
 	/**
-	 * <p>removeAllCacheAssocs.</p>
-	 *
-	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * Removes all cached associations for a given node.
+	 * 
+	 * @param nodeRef the node reference to remove all cached associations for
 	 */
 	void removeAllCacheAssocs(NodeRef nodeRef);
 	
 	/**
-	 * <p>getChildAssocsByType.</p>
-	 *
-	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
-	 * @param qName a {@link org.alfresco.service.namespace.QName} object
-	 * @return a {@link fr.becpg.repo.helper.impl.ChildAssocCacheEntry} object
+	 * Retrieves the child associations by type for a given node with the specified association type.
+	 * 
+	 * @param nodeRef the node reference to retrieve the child associations by type for
+	 * @param qName the association type QName
+	 * @return the child association cache entry
 	 */
 	ChildAssocCacheEntry getChildAssocsByType(NodeRef nodeRef, QName qName);
-	
 	
 }

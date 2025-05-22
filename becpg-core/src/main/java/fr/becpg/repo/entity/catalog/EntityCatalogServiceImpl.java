@@ -47,6 +47,7 @@ import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.expressions.ExpressionService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.helper.MessageHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -420,6 +421,10 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 								? catalog.getJSONArray(EntityCatalogService.PROP_UNIQUE_FIELDS)
 								: new JSONArray();
 
+						JSONArray protectedFields = catalog.has(EntityCatalogService.PROP_PROTECTED_FIELDS)
+								? catalog.getJSONArray(EntityCatalogService.PROP_PROTECTED_FIELDS)
+								: new JSONArray();
+
 						JSONArray nonUniqueFields = extractNonUniqueFields(entityType, entityNodeRef, uniqueFields, i18nMessages);
 
 						boolean isFirst = true;
@@ -433,10 +438,14 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 
 							JSONArray missingFields = extractMissingFields(formulatedEntity, entityType, properties, reqFields, i18nMessages,
 									defaultLocale.equals(lang) ? null : lang, isFirst);
-							if ((missingFields.length() > 0) || (nonUniqueFields.length() > 0)) {
-
+							if ((missingFields.length() > 0) ) {
 								catalogDesc.put(EntityCatalogService.PROP_MISSING_FIELDS, missingFields.length() > 0 ? missingFields : null);
+							}
+							if (nonUniqueFields.length() > 0) {
 								catalogDesc.put(EntityCatalogService.PROP_NON_UNIQUE_FIELDS, nonUniqueFields.length() > 0 ? nonUniqueFields : null);
+							}
+							if (protectedFields.length() > 0) {
+								catalogDesc.put(EntityCatalogService.PROP_PROTECTED_FIELDS, protectedFields.length() > 0 ? protectedFields : null);
 							}
 
 							catalogDesc.put(EntityCatalogService.PROP_LOCALE, defaultLocale.equals(lang) ? null : lang);
@@ -668,7 +677,7 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 							try {
 								I18NUtil.setLocale(loc);
 								if (!label.isBlank()) {
-									label += " " + I18NUtil.getMessage(MESSAGE_OR) + " ";
+									label += " " + MessageHelper.getMessage(MESSAGE_OR) + " ";
 								}
 								label += getFieldDisplayName(entityType, propDef, i18nKey);
 
@@ -757,7 +766,7 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 	 * @return a {@link java.lang.String} object.
 	 */
 	private String getFieldDisplayName(QName nodeType, ClassAttributeDefinition classDef, String messageKey) {
-		String displayName = messageKey != null ? I18NUtil.getMessage(messageKey) : dictionaryService.getTitle(classDef, nodeType);
+		String displayName = messageKey != null ? MessageHelper.getMessage(messageKey) : dictionaryService.getTitle(classDef, nodeType);
 		return displayName != null ? displayName : messageKey;
 	}
 

@@ -34,6 +34,7 @@ import org.alfresco.repo.admin.SysAdminParams;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.template.TemplateNode;
+import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.action.Action;
 import org.alfresco.service.cmr.action.ActionService;
@@ -54,6 +55,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.AuthorityHelper;
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.helper.MessageHelper;
 import fr.becpg.repo.mail.BeCPGMailService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
@@ -177,6 +179,7 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 		sendMailUser(personNodeRef, userName, password, "becpg.mail.newUser.title");
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void sendMailNewPassword(NodeRef personNodeRef, String userName, String password) {
 		_logger.debug("Email new password");
@@ -196,7 +199,7 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 		if (email!=null && !email.isEmpty()) {
 			List<NodeRef> users = new ArrayList<>(1);
 			users.add(personNodeRef);
-			sendMail(users, I18NUtil.getMessage(mailTitleKey), RepoConsts.EMAIL_NEW_USER_TEMPLATE, templateModel, false);
+			sendMail(users, MessageHelper.getMessage(mailTitleKey), RepoConsts.EMAIL_NEW_USER_TEMPLATE, templateModel, false);
 		}
 	}
 	
@@ -254,7 +257,21 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 
 		}
 		if(!authorities.isEmpty()) {
-			sendMLAwareMail(authorities, null, subject, null, mailTemplate, templateArgs);
+			String fromEmail = "";
+			String user = AuthenticationUtil.getFullyAuthenticatedUser();
+			if ((user != null) && AuthenticationUtil.isMtEnabled()) {
+				int idx = user.indexOf(TenantService.SEPARATOR);
+				if (idx != -1) {
+					user = user.substring(0, idx);
+				}
+			}
+			if (user != null && !user.equals(AuthenticationUtil.SYSTEM_USER_NAME)) {
+				String userMail = (String) nodeService.getProperty(personService.getPerson(AuthenticationUtil.getFullyAuthenticatedUser()), ContentModel.PROP_EMAIL);
+				if (userMail != null) {
+					fromEmail = userMail;
+				}
+			}
+			sendMLAwareMail(authorities, fromEmail, subject, null, mailTemplate, templateArgs);
 		} else if(_logger.isDebugEnabled()){
 			_logger.debug("No recipients to send mail to (sendToSelf:"+sendToSelf+")");
 		}
@@ -266,18 +283,16 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 	public void sendMLAwareMail(Set<String> authorities, String fromEmail, String subjectKey, Object[] subjectParams, String mailTemplate, Map<String, Object> templateArgs) {
 		
 		Set<String> people = AuthorityHelper.extractPeople(authorities);
+		people.removeIf(p -> !AuthorityHelper.isAccountEnabled(p));
 		
 		Locale commonLocale = AuthorityHelper.getCommonLocale(people);
 		
-		if (commonLocale != null) {
-			
-			String localizedSubject = I18NUtil.getMessage(subjectKey, commonLocale, subjectParams);
-			
+		if (commonLocale != null && !people.isEmpty()) {
+			String localizedSubject = MessageHelper.getMessage(subjectKey, commonLocale, subjectParams);
 			if (localizedSubject == null) {
 				localizedSubject = subjectKey;
 			}
-			
-			internalSendMail(authorities, fromEmail, localizedSubject, mailTemplate, templateArgs, commonLocale);
+			internalSendMail(people, fromEmail, localizedSubject, mailTemplate, templateArgs, commonLocale);
 		} else {
 			for (String person : people) {
 				Locale locale = null;
@@ -285,7 +300,7 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 					String localeString = (String) nodeService.getProperty(personService.getPerson(person), BeCPGModel.PROP_USER_LOCALE);
 					locale = localeString == null ? I18NUtil.getLocale() : MLTextHelper.parseLocale(localeString);
 				}
-				String localizedSubject = I18NUtil.getMessage(subjectKey, locale, subjectParams);
+				String localizedSubject = MessageHelper.getMessage(subjectKey, locale, subjectParams);
 				
 				if (localizedSubject == null) {
 					localizedSubject = subjectKey;
@@ -328,8 +343,8 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 			templateArgs.put(RepoConsts.ARG_ACTION_URL, actionUrl);
 			templateArgs.put(RepoConsts.ARG_ACTION_RUN_TIME, time);
 	
-			String subject = I18NUtil.getMessage("message.async-mail." + action + ".subject");
-			templateArgs.put(RepoConsts.ARG_ACTION_BODY, I18NUtil.getMessage("message.async-mail." + action + ".body", bodyParams));
+			String subject = MessageHelper.getMessage("message.async-mail." + action + ".subject");
+			templateArgs.put(RepoConsts.ARG_ACTION_BODY, MessageHelper.getMessage("message.async-mail." + action + ".body", bodyParams));
 	
 			List<NodeRef> recipientsNodeRef = Arrays.asList(personService.getPerson(userName));
 	

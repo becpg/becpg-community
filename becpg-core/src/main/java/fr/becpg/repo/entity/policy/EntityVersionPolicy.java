@@ -17,16 +17,11 @@
  ******************************************************************************/
 package fr.becpg.repo.entity.policy;
 
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.batch.BatchProcessWorkProvider;
-import org.alfresco.repo.batch.BatchProcessor;
-import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
 import org.alfresco.repo.coci.CheckOutCheckInServicePolicies;
 import org.alfresco.repo.node.NodeArchiveServicePolicies;
 import org.alfresco.repo.node.NodeArchiveServicePolicies.BeforePurgeNodePolicy;
@@ -45,14 +40,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.batch.BatchInfo;
-import fr.becpg.repo.batch.BatchQueueService;
-import fr.becpg.repo.batch.EntityListBatchProcessWorkProvider;
 import fr.becpg.repo.entity.version.EntityVersionService;
-import fr.becpg.repo.entity.version.VersionHelper;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
-import fr.becpg.repo.report.entity.EntityReportService;
 
 /**
  * <p>EntityVersionPolicy class.</p>
@@ -68,10 +58,6 @@ public class EntityVersionPolicy extends AbstractBeCPGPolicy
 	private static final Log logger = LogFactory.getLog(EntityVersionPolicy.class);
 
 	private EntityVersionService entityVersionService;
-
-	private EntityReportService entityReportService;
-	
-	private BatchQueueService batchQueueService;
 
 	private RuleService ruleService;
 	
@@ -102,26 +88,6 @@ public class EntityVersionPolicy extends AbstractBeCPGPolicy
 	 */
 	public void setEntityVersionService(EntityVersionService entityVersionService) {
 		this.entityVersionService = entityVersionService;
-	}
-
-	
-
-	/**
-	 * <p>Setter for the field <code>entityReportService</code>.</p>
-	 *
-	 * @param entityReportService a {@link fr.becpg.repo.report.entity.EntityReportService} object
-	 */
-	public void setEntityReportService(EntityReportService entityReportService) {
-		this.entityReportService = entityReportService;
-	}
-
-	/**
-	 * <p>Setter for the field <code>batchQueueService</code>.</p>
-	 *
-	 * @param batchQueueService a {@link fr.becpg.repo.batch.BatchQueueService} object
-	 */
-	public void setBatchQueueService(BatchQueueService batchQueueService) {
-		this.batchQueueService = batchQueueService;
 	}
 
 	/**
@@ -242,41 +208,11 @@ public class EntityVersionPolicy extends AbstractBeCPGPolicy
 
 	/** {@inheritDoc} */
 	@Override
-	protected void doAfterCommit(String key, Set<NodeRef> pendingNodes) {
-		
-		String entityDescription = null;
-
-		if (!pendingNodes.isEmpty()) {
-			
-			NodeRef versionNode = pendingNodes.iterator().next();
-			
-			entityDescription = nodeService.getProperty(versionNode, BeCPGModel.PROP_CODE) + " " + nodeService.getProperty(versionNode, ContentModel.PROP_NAME);
+	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
+		for (NodeRef pendingNode : pendingNodes) {
+			nodeService.addAspect(pendingNode, BeCPGModel.ASPECT_PENDING_ENTITY_REPORT_ASPECT, null);
 		}
-
-		BatchInfo batchInfo = new BatchInfo(String.format("generateVersionReports-%s", Calendar.getInstance().getTimeInMillis()),
-				"becpg.batch.entityVersion.generateReports", entityDescription);
-		batchInfo.setRunAsSystem(true);
-
-		BatchProcessWorkProvider<NodeRef> workProvider = new EntityListBatchProcessWorkProvider<>(new ArrayList<>(pendingNodes));
-
-		BatchProcessWorker<NodeRef> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<>() {
-
-			@Override
-			public void process(NodeRef entityNodeRef) throws Throwable {
-
-				NodeRef extractedNode = entityNodeRef;
-				if (VersionHelper.isVersion(entityNodeRef)
-						&& (nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_ENTITY_FORMAT) != null)) {
-					extractedNode = entityVersionService.extractVersion(entityNodeRef);
-				}
-
-				entityReportService.generateReports(extractedNode, entityNodeRef);
-
-			}
-		};
-
-		batchQueueService.queueBatch(batchInfo, workProvider, processWorker, null);
-		
+		return true;
 	}
 
 	/** {@inheritDoc} */

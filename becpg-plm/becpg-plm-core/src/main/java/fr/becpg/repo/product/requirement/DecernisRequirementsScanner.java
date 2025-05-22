@@ -1,5 +1,6 @@
 package fr.becpg.repo.product.requirement;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -8,12 +9,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.StopWatch;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.decernis.DecernisMode;
@@ -22,6 +25,7 @@ import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.CheckSumHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
+import fr.becpg.repo.product.data.RegulatoryEntity;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
@@ -110,6 +114,7 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 		}
 		
 		updateProductFromRegulatoryList(formulatedProduct);
+		updateProductFromLinkedSearches(formulatedProduct);
 		
 		boolean isDirty = isDirty(formulatedProduct);
 		
@@ -143,6 +148,44 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 		}
 	}
 	
+	private void updateProductFromLinkedSearches(ProductData formulatedProduct) {
+		updateRegulatoryEntityFromLinkedSearches(formulatedProduct);
+		for (RegulatoryListDataItem regList : formulatedProduct.getRegulatoryList()) {
+			updateRegulatoryEntityFromLinkedSearches(regList);
+		}
+	}
+
+	private void updateRegulatoryEntityFromLinkedSearches(RegulatoryEntity regulatoryEntity) {
+		List<NodeRef> linkedSearches = extractLinkedSearches(regulatoryEntity.getRegulatoryCountriesRef());
+		regulatoryEntity.getRegulatoryCountriesRef().clear();
+		for (NodeRef linkedSearch : linkedSearches) {
+			if (!regulatoryEntity.getRegulatoryCountriesRef().contains(linkedSearch)) {
+				regulatoryEntity.getRegulatoryCountriesRef().add(linkedSearch);
+			}
+		}
+	}
+
+	private List<NodeRef> extractLinkedSearches(List<NodeRef> regulatoryCountriesRef) {
+		List<NodeRef> linkedSearches = new ArrayList<>();
+		for (NodeRef regulatoryCountry : regulatoryCountriesRef) {
+			linkedSearches.addAll(extractLinkedSearches(regulatoryCountry));
+		}
+		return linkedSearches;
+	}
+
+	private List<NodeRef> extractLinkedSearches(NodeRef regulatoryCountry) {
+		List<NodeRef> linkedSearches = new ArrayList<>();
+		List<AssociationRef> targetAssocs = nodeService.getTargetAssocs(regulatoryCountry, BeCPGModel.ASSOC_LINKED_SEARCH_ASSOCIATION);
+		if (!targetAssocs.isEmpty()) {
+			for (AssociationRef targetAssoc : targetAssocs) {
+				linkedSearches.addAll(extractLinkedSearches(targetAssoc.getTargetRef()));
+			}
+		} else {
+			linkedSearches.add(regulatoryCountry);
+		}
+		return linkedSearches;
+	}
+
 	private boolean hasError(List<ReqCtrlListDataItem> reqList) {
 		for (ReqCtrlListDataItem req : reqList) {
 			if (RequirementType.Forbidden.equals(req.getReqType())

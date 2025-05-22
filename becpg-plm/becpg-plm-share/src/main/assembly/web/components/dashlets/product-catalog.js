@@ -414,8 +414,13 @@
                         desc += '<span>' + record.description + '</span></div>';
                      } else {
                         var id = this.id + '-metadata-' + oRecord.getId(), recordSiteName = $isValueSet(record.location.site) ? record.location.site
-                              : null, version = "", dateLine = "", locn = record.location, docDetailsUrl = beCPG.util
-                              .entityURL(recordSiteName, record.nodeRef, record.nodeType, null, "View-properties");
+                              : null, version = "", dateLine = "", locn = record.location, docDetailsUrl = null;
+                              
+                         if(!this.options.isExternalUser){
+                            docDetailsUrl =   beCPG.util.entityURL(recordSiteName, record.nodeRef, record.nodeType, null, "View-properties")
+                         } else {
+                            docDetailsUrl =   beCPG.util.entityURL(recordSiteName, record.nodeRef, record.nodeType, null, "wizard")
+                         }    
 
                         // Version display
                         if (record.version && record.version !== "") {
@@ -439,7 +444,7 @@
                                  record.modifiedByUser, record.modifiedBy, 'class="theme-color-1"'));
                         }
 
-                        if (this.options.simpleView) {
+                        if (this.options.simpleView || this.options.isExternalUser) {
                            /**
                             * Simple View
                             */

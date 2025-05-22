@@ -22,6 +22,7 @@ public class PropertyFormatService implements InitializingBean {
 
 	Map<String, PropertyFormats> cache = new ConcurrentHashMap<>();
 
+	/** {@inheritDoc} */
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		instance = this;
@@ -53,6 +54,11 @@ public class PropertyFormatService implements InitializingBean {
 
 	}
 
+	/**
+	 * <p>instance.</p>
+	 *
+	 * @return a {@link fr.becpg.config.format.PropertyFormatService} object
+	 */
 	public static PropertyFormatService instance() {
 		return instance;
 	}

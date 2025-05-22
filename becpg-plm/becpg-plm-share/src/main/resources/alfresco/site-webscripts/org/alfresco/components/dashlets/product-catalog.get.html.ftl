@@ -26,6 +26,7 @@
 		      filter: "${prefFilter?js_string}",
 		      types: [<#list types as type>"${type.name?js_string}:${type.filter?js_string}"<#if type_has_next>,</#if></#list>],
 		      simpleView: ${prefSimpleView?string?js_string},
+		      isExternalUser :${isbeCPGExternalUser?string},
 		      maxItems: ${maxItems?c}
 		   }).setMessages(${messages});
 		   new Alfresco.widget.DashletResizer("${el}", "${instance.object.id}");

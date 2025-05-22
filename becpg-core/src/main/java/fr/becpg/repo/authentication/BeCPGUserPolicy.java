@@ -8,11 +8,16 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.NodeServicePolicies.BeforeDeleteNodePolicy;
 import org.alfresco.repo.node.NodeServicePolicies.OnUpdatePropertiesPolicy;
 import org.alfresco.repo.policy.JavaBehaviour;
+import org.alfresco.repo.security.authentication.identityservice.IdentityServiceException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.util.transaction.TransactionSupportUtil;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.authentication.provider.IdentityServiceAccountProvider;
+import fr.becpg.repo.entity.datalist.policy.AuditEntityListItemPolicy;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
 /**
@@ -30,6 +35,15 @@ public class BeCPGUserPolicy extends AbstractBeCPGPolicy implements OnUpdateProp
 	
 	private IdentityServiceAccountProvider identityServiceAccountProvider;
 	
+
+	private static final Log logger = LogFactory.getLog(BeCPGUserPolicy.class);
+
+	
+	/**
+	 * <p>Setter for the field <code>identityServiceAccountProvider</code>.</p>
+	 *
+	 * @param identityServiceAccountProvider a {@link fr.becpg.repo.authentication.provider.IdentityServiceAccountProvider} object
+	 */
 	public void setIdentityServiceAccountProvider(IdentityServiceAccountProvider identityServiceAccountProvider) {
 		this.identityServiceAccountProvider = identityServiceAccountProvider;
 	}
@@ -50,6 +64,7 @@ public class BeCPGUserPolicy extends AbstractBeCPGPolicy implements OnUpdateProp
 		policyComponent.bindClassBehaviour(BeforeDeleteNodePolicy.QNAME, ContentModel.TYPE_PERSON, new JavaBehaviour(this, "beforeDeleteNode"));
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void beforeDeleteNode(NodeRef nodeRef) {
 		Boolean isIdsUser = (Boolean) nodeService.getProperty(nodeRef, BeCPGModel.PROP_IS_SSO_USER);
@@ -61,6 +76,9 @@ public class BeCPGUserPolicy extends AbstractBeCPGPolicy implements OnUpdateProp
 	/** {@inheritDoc} */
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
+		if (Boolean.TRUE.equals(TransactionSupportUtil.getResource("BeCPGUserPolicy.disable"))) {
+			return;
+		}
 		if (isNewTrueProperty(before, after, BeCPGModel.PROP_IS_SSO_USER)) {
 			beCPGUserAccountService.synchronizeWithIDS((String) nodeService.getProperty(nodeRef, ContentModel.PROP_USERNAME));
 		}
@@ -100,12 +118,16 @@ public class BeCPGUserPolicy extends AbstractBeCPGPolicy implements OnUpdateProp
 				if (nodeService.exists(pendingNode)) {
 					Boolean isIdsUser = (Boolean) nodeService.getProperty(pendingNode, BeCPGModel.PROP_IS_SSO_USER);
 					if (isIdsUser != null && isIdsUser.booleanValue() && Boolean.TRUE.equals(identityServiceAccountProvider.isEnabled())) {
-						BeCPGUserAccount account = new BeCPGUserAccount();
-						account.setUserName((String) nodeService.getProperty(pendingNode, ContentModel.PROP_USERNAME));
-						account.setFirstName((String) nodeService.getProperty(pendingNode, ContentModel.PROP_FIRSTNAME));
-						account.setLastName((String) nodeService.getProperty(pendingNode, ContentModel.PROP_LASTNAME));
-						account.setEmail((String) nodeService.getProperty(pendingNode, ContentModel.PROP_EMAIL));
-						identityServiceAccountProvider.updateUser(account);
+						try {
+							BeCPGUserAccount account = new BeCPGUserAccount();
+							account.setUserName((String) nodeService.getProperty(pendingNode, ContentModel.PROP_USERNAME));
+							account.setFirstName((String) nodeService.getProperty(pendingNode, ContentModel.PROP_FIRSTNAME));
+							account.setLastName((String) nodeService.getProperty(pendingNode, ContentModel.PROP_LASTNAME));
+							account.setEmail((String) nodeService.getProperty(pendingNode, ContentModel.PROP_EMAIL));
+							identityServiceAccountProvider.updateUser(account);
+						} catch(IdentityServiceException e) {
+							logger.warn("Cannot update user in ids",e);
+						}
 					}
 				}
 			}

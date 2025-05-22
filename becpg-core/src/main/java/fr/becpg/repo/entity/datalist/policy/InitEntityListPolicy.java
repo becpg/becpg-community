@@ -110,6 +110,7 @@ public class InitEntityListPolicy extends AbstractBeCPGPolicy implements NodeSer
 
 					String dataListName = (String) nodeService.getProperty(dataListNodeRef, ContentModel.PROP_NAME);
 					if (!dataListName.startsWith(RepoConsts.WUSED_PREFIX) && !dataListName.startsWith(RepoConsts.CUSTOM_VIEW_PREFIX)
+							&& !dataListName.startsWith(RepoConsts.SMART_CONTENT_PREFIX)
 							&& !dataListTypeQName.getLocalName().equals(dataListName) && !BeCPGModel.TYPE_LIST_VALUE.equals(dataListTypeQName)) {
 
 						nodeService.moveNode(dataListNodeRef, nodeService.getPrimaryParent(dataListNodeRef).getParentRef(),

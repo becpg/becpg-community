@@ -36,6 +36,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.sql.DataSource;
 
 import org.alfresco.model.ContentModel;
@@ -76,6 +77,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.util.StopWatch;
 
+import fr.becpg.common.BeCPGException;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.cache.impl.BeCPGCacheServiceImpl;
 import fr.becpg.repo.entity.EntityDictionaryService;
@@ -113,10 +115,20 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 	
 	private NodeDAO nodeDAO;
 	
+	/**
+	 * <p>Setter for the field <code>nodeDAO</code>.</p>
+	 *
+	 * @param nodeDAO a {@link org.alfresco.repo.domain.node.NodeDAO} object
+	 */
 	public void setNodeDAO(NodeDAO nodeDAO) {
 		this.nodeDAO = nodeDAO;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>permissionService</code>.</p>
+	 *
+	 * @param permissionService a {@link org.alfresco.service.cmr.security.PermissionService} object
+	 */
 	public void setPermissionService(PermissionService permissionService) {
 		this.permissionService = permissionService;
 	}
@@ -138,6 +150,11 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		ignoredStoreRefs.add(new StoreRef(StoreRef.PROTOCOL_WORKSPACE, Version2Model.STORE_ID));
 	}
 	
+	/**
+	 * <p>Setter for the field <code>sqlSessionTemplate</code>.</p>
+	 *
+	 * @param sqlSessionTemplate a {@link org.mybatis.spring.SqlSessionTemplate} object
+	 */
 	public void setSqlSessionTemplate(SqlSessionTemplate sqlSessionTemplate) {
 		this.sqlSessionTemplate = sqlSessionTemplate;
 	}
@@ -259,7 +276,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 			// add nodes that are not in db
 			if (assocNodeRefs != null) {
 				for (NodeRef n : assocNodeRefs) {
-					if (!dbAssocNodeRefs.contains(n) && nodeService.exists(n)) {
+					if (dbAssocNodeRefs != null && !dbAssocNodeRefs.contains(n) && nodeService.exists(n)) {
 						if (!nodeService.hasAspect(n, ContentModel.ASPECT_PENDING_DELETE)) {
 							hasChanged = true;
 							nodeService.createAssociation(nodeRef, n, qName);
@@ -331,7 +348,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 
 	/** {@inheritDoc} */
 	@Override
-	public List<NodeRef> getChildAssocs(NodeRef listNodeRef, QName qName, QName childTypeQName, Map<String, Boolean> sortMap) {
+	public List<NodeRef> getChildAssocs(NodeRef listNodeRef, QName qName, QName childTypeQName, @Nullable Map<String, Boolean> sortMap) {
 		return getChildAssocsImpl(listNodeRef, qName, childTypeQName, sortMap);
 	}
 
@@ -470,6 +487,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 			}
 		} catch (SQLException e) {
 			logger.error("Error running : " + sql, e);
+			throw new BeCPGException(e.getMessage(), e);
 		}
 
 		return ret;
@@ -477,32 +495,37 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 	}
 	
 
+	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> getSourcesAssocs(NodeRef nodeRef) {
 		return getSourcesAssocs(nodeRef, null);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QName qName) {
 		return getSourcesAssocs(nodeRef, qName, false);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QName qName, Boolean includeVersions) {
 		return getSourcesAssocs(nodeRef, qName, includeVersions, null, null);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QName qName, Boolean includeVersions, Integer maxResults, Integer offset) {
 		return getSourcesAssocs(nodeRef, qName, includeVersions, maxResults, offset, false);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QName qName, Boolean includeVersions, Integer maxResults, Integer offset, boolean checkPermissions) {
 		Map<String, Object> params = new HashMap<>();
 		params.put("qName", qName != null ? qName.getLocalName() : null);
 		params.put("includeVersions", includeVersions != null && includeVersions.booleanValue());
-		Pair<Long, NodeRef> nodePair = nodeDAO.getNodePair(nodeRef);
+		Pair<Long, NodeRef> nodePair = nodeDAO.getNodePair(tenantService.getName(nodeRef));
 		params.put("targetId", nodePair.getFirst());
 		
 		Set<String> authorisations = AuthenticationUtil.runAs(() -> permissionService.getAuthorisations(),
@@ -511,6 +534,11 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		Predicate<Node> permissionChecker = item -> canCurrentUserRead(item.getAclId(), authorisations);
 		return queryItems("alfresco.node.select_SourcesAssocs", params, maxResults, offset, checkPermissions, permissionChecker).stream().map(Node::getNodeRef).toList();
 	}
+	
+	private static final  String OFFSET_PARAM = "offset";
+	private static final  String MAXRESULTS_PARAM = "maxResults";
+	
+	
 	
 	private <T> List<T> queryItems(String template, Map<String, Object> params, Integer maxResults, Integer offset
 			, boolean checkPermissions, Predicate<T> permissionChecker) {
@@ -527,11 +555,11 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 			}
 			int batchStart = 0;
 			int batchSize = 1000;
-			params.put("offset", batchStart);
-			params.put("maxResults", batchSize);
+			params.put(OFFSET_PARAM, batchStart);
+			params.put(MAXRESULTS_PARAM, batchSize);
 			int offsetCount = 0;
 			while (foundNodes.size() < maxResults) {
-				params.put("offset", batchStart);
+				params.put(OFFSET_PARAM, batchStart);
 				List<T> nextResults = sqlSessionTemplate.selectList(template, params);
 				for (T node : nextResults) {
 					if (foundNodes.size() >= maxResults) {
@@ -553,12 +581,19 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 			}
 			return foundNodes;
 		}
-		params.put("offset", offset);
-		params.put("maxResults", maxResults);
+		params.put(OFFSET_PARAM, offset);
+		params.put(MAXRESULTS_PARAM, maxResults);
 		foundNodes = sqlSessionTemplate.selectList(template, params);
 		return foundNodes;
 	}
 	
+	/**
+	 * Checks if the current user has read permissions for the given ACL ID.
+	 *
+	 * @param aclId the ACL ID to check
+	 * @param authorities the user's authorities
+	 * @return true if the user can read, false otherwise
+	 */
 	protected boolean canCurrentUserRead(Long aclId, Set<String> authorities) {
 		Set<String> aclReadersDenied = permissionService.getReadersDenied(aclId);
 		for (String auth : aclReadersDenied) {
@@ -582,6 +617,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		return getEntitySourceAssocs(nodeRefs, assocQName, listTypeQname, isOrOperator, criteriaFilters, null);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public List<EntitySourceAssoc> getEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocQName, QName listTypeQname, boolean isOrOperator,
 			List<AssociationCriteriaFilter> criteriaFilters, PagingRequest pagingRequest) {
@@ -704,7 +740,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 	    List<Long> nodeIds = new ArrayList<>();
 	    
 	    for (NodeRef nodeRef : nodeRefs) {
-	        Pair<Long, NodeRef> nodePair = nodeDAO.getNodePair(nodeRef);
+	        Pair<Long, NodeRef> nodePair = nodeDAO.getNodePair(tenantService.getName(nodeRef));
 	        if (nodePair != null) {
 	            nodeIds.add(nodePair.getFirst());
 	        }

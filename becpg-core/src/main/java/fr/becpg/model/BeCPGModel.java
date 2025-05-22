@@ -59,6 +59,7 @@ public final class BeCPGModel {
 	/** Constant <code>PROP_IS_SSO_USER</code> */
 	public static final QName PROP_IS_SSO_USER = QName.createQName(BECPG_URI, "isSsoUser");
 	
+	/** Constant <code>PROP_GENERATE_PASSWORD</code> */
 	public static final QName PROP_GENERATE_PASSWORD = QName.createQName(BECPG_URI, "generatePassword");
 
 	public enum EntityFormat {
@@ -328,6 +329,8 @@ public final class BeCPGModel {
 
 	/** Constant <code>ASPECT_UNDELETABLE_ASPECT</code> */
 	public static final QName ASPECT_UNDELETABLE_ASPECT = QName.createQName(BECPG_URI, "undeletableAspect");
+	
+	public static final QName ASPECT_PENDING_ENTITY_REPORT_ASPECT = QName.createQName(BECPG_URI, "pendingEntityReportAspect");
 	
 	
 	/** Constant <code>TYPE_SAVED_SEARCH</code> */
