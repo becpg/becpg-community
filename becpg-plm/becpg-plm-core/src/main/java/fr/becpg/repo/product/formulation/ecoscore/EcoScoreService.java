@@ -17,13 +17,18 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.common.csv.CSVReader;
 
+/**
+ * <p>EcoScoreService class.</p>
+ *
+ * @author matthieu
+ */
 @Service
 public class EcoScoreService {
 	private static final Log LOGGER = LogFactory.getLog(EcoScoreService.class);
 
-	private static final String DEFAULT_AGRIBALISE_PATH = "beCPG/databases/ecoscore/agribalyse_3_1.csv";
+	private static final String DEFAULT_AGRIBALYSE_PATH = "beCPG/databases/ecoscore/agribalyse_3_2.csv";
 	private static final String DEFAULT_COUNTRY_SCORE_PATH = "beCPG/databases/ecoscore/country_score_2021.csv";
-	private static final String DEFAULT_COUNTRY_POSITION_PATH = "beCPG/databases/ecoscore/countries.csv";
+	private static final String DEFAULT_COUNTRY_POSITIONS_PATH = "beCPG/databases/ecoscore/country_positions.csv";
 	private static final char CSV_DELIMITER = ';';
 	private static final char CSV_QUOTE = '"';
 	private static final int SKIP_LINES = 1;
@@ -66,7 +71,7 @@ public class EcoScoreService {
 	private void loadEnvironmentalFootprints() {
 		environmentalFootprints = new LinkedHashMap<>();
 		try {
-			ClassPathResource resource = new ClassPathResource(DEFAULT_AGRIBALISE_PATH);
+			ClassPathResource resource = new ClassPathResource(DEFAULT_AGRIBALYSE_PATH);
 			try (CSVReader csvReader = createCsvReader(resource)) {
 				String[] line;
 				while ((line = csvReader.readNext()) != null) {
@@ -76,7 +81,7 @@ public class EcoScoreService {
 				}
 			}
 		} catch (IOException e) {
-			LOGGER.error("Failed to load environmental footprints from " + DEFAULT_AGRIBALISE_PATH, e);
+			LOGGER.error("Failed to load environmental footprints from " + DEFAULT_AGRIBALYSE_PATH, e);
 			environmentalFootprints = Collections.emptyMap();
 		}
 	}
@@ -102,7 +107,7 @@ public class EcoScoreService {
 	private void loadCountryPositions() {
 		countryPositions = new LinkedHashMap<>();
 		try {
-			ClassPathResource resource = new ClassPathResource(DEFAULT_COUNTRY_POSITION_PATH);
+			ClassPathResource resource = new ClassPathResource(DEFAULT_COUNTRY_POSITIONS_PATH);
 			try (CSVReader csvReader = createCsvReader(resource)) {
 				String[] line;
 				while ((line = csvReader.readNext()) != null) {
@@ -112,7 +117,7 @@ public class EcoScoreService {
 				}
 			}
 		} catch (IOException e) {
-			LOGGER.error("Failed to load country positions from " + DEFAULT_COUNTRY_POSITION_PATH, e);
+			LOGGER.error("Failed to load country positions from " + DEFAULT_COUNTRY_POSITIONS_PATH, e);
 			countryPositions = Collections.emptyMap();
 		}
 	}
@@ -127,6 +132,11 @@ public class EcoScoreService {
 		return Optional.ofNullable(value).map(String::trim).filter(s -> !s.isEmpty()).map(s -> s.replace(",", ".")).map(Double::valueOf).orElse(null);
 	}
 
+	/**
+	 * <p>Getter for the field <code>environmentalFootprints</code>.</p>
+	 *
+	 * @return a {@link java.util.Map} object
+	 */
 	public Map<String, EnvironmentalFootprintValue> getEnvironmentalFootprints() {
 		if (environmentalFootprints == null) {
 			loadEnvironmentalFootprints();
@@ -134,6 +144,11 @@ public class EcoScoreService {
 		return Collections.unmodifiableMap(environmentalFootprints);
 	}
 
+	/**
+	 * <p>Getter for the field <code>countryScores</code>.</p>
+	 *
+	 * @return a {@link java.util.Map} object
+	 */
 	public Map<String, Pair<Double, Double>> getCountryScores() {
 		if (countryScores == null) {
 			loadCountryScores();
@@ -152,6 +167,11 @@ public class EcoScoreService {
 		return R * c; // Distance in km
 	}
 
+	/**
+	 * <p>getCountryLocations.</p>
+	 *
+	 * @return a {@link java.util.Map} object
+	 */
 	public Map<String, Pair<Double, Double>> getCountryLocations() {
 		if (countryPositions == null) {
 			loadCountryPositions();
@@ -160,6 +180,13 @@ public class EcoScoreService {
 	}
 
 	// Method to calculate distance between two countries using country codes
+	/**
+	 * <p>distance.</p>
+	 *
+	 * @param countryCode a {@link java.lang.String} object
+	 * @param countryCode2 a {@link java.lang.String} object
+	 * @return a {@link java.lang.Long} object
+	 */
 	public Long distance(String countryCode, String countryCode2) {
 		Map<String, Pair<Double, Double>> locations = getCountryLocations();
 		Pair<Double, Double> loc1 = locations.get(countryCode);
@@ -175,8 +202,9 @@ public class EcoScoreService {
 	
 	/**
 	 * SCORE EPI (Environmental Performance Index)
-	 * @param countryCode
-	 * @return
+	 *
+	 * @param countryCode a {@link java.lang.String} object
+	 * @return a {@link java.lang.Double} object
 	 */
 	public Double countryEPI(String countryCode) {
 		Pair<Double, Double> score = getCountryScores().get(countryCode);
@@ -190,8 +218,9 @@ public class EcoScoreService {
 	
 	/**
 	 * SCORE SPI (Social Progress Index)
-	 * @param countryCode
-	 * @return
+	 *
+	 * @param countryCode a {@link java.lang.String} object
+	 * @return a {@link java.lang.Double} object
 	 */
 	public Double countrySPI(String countryCode) {
 		Pair<Double, Double> score = getCountryScores().get(countryCode);

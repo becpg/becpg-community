@@ -90,6 +90,7 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Product
 		this.associationService = associationService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean process(ProductData formulatedProduct) {
 		// Extract key data from the formulated product.
@@ -206,17 +207,24 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Product
 	private void updateSurveyLists(ProductData formulatedProduct, Set<SurveyQuestion> surveyQuestions) {
 		final Map<String, List<SurveyListDataItem>> namesSurveyLists = SurveyableEntityHelper.getNamesSurveyLists(alfrescoRepository,
 				formulatedProduct);
-
 		for (final SurveyQuestion surveyQuestion : surveyQuestions) {
 			final NodeRef surveyQuestionNodeRef = surveyQuestion.getNodeRef();
 			final String fsSurveyListName = surveyQuestion.getFsSurveyListName();
 			if (namesSurveyLists.containsKey(fsSurveyListName)) {
-				final List<SurveyListDataItem> surveyLists = namesSurveyLists.get(fsSurveyListName);
+				final List<SurveyListDataItem> surveyLists = namesSurveyLists.computeIfAbsent(fsSurveyListName, unused -> { 
+					final List<SurveyListDataItem> empty = new ArrayList<>();
+					if (SurveyableEntityHelper.isDefault(fsSurveyListName)) {
+						formulatedProduct.setSurveyList(empty);
+					}
+					return empty;
+				});
 				boolean alreadyPresent = surveyLists.stream().map(SurveyListDataItem::getQuestion)
-						.anyMatch(nodeRef -> nodeRef.equals(surveyQuestionNodeRef));
+								.anyMatch(nodeRef -> nodeRef.equals(surveyQuestionNodeRef));
 				if (!alreadyPresent) {
 					logger.debug(String.format("Creating SurveyList with SurveyQuestion %s into %s", surveyQuestionNodeRef, fsSurveyListName));
-					surveyLists.add(new SurveyListDataItem(surveyQuestionNodeRef, true));
+					final SurveyListDataItem surveyListDataItem = new SurveyListDataItem(surveyQuestionNodeRef, true);
+					surveyListDataItem.setSort(surveyQuestion.getSort());
+					surveyLists.add(surveyListDataItem);
 				}
 			}
 		}

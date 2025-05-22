@@ -218,6 +218,13 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 		return searchRuleResult;
 	}
 
+	/**
+	 * <p>filterByPath.</p>
+	 *
+	 * @param ret a {@link java.util.List} object
+	 * @param nodePath a {@link org.alfresco.service.cmr.repository.Path} object
+	 * @return a {@link java.util.List} object
+	 */
 	public List<NodeRef> filterByPath(List<NodeRef> ret, Path nodePath) {
 		List<NodeRef> filtered = new ArrayList<>();
 		for (NodeRef node : ret) {

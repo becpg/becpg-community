@@ -60,6 +60,11 @@ public class ScoreListDataItem extends AbstractManualDataItem implements  Simple
 
 	private ScoreListDataItem parent;
 
+	/**
+	 * <p>Getter for the field <code>scoreCriterion</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	@AlfSingleAssoc
 	@DataListIdentifierAttr
 	@AlfQname(qname = "pjt:slScoreCriterion")
@@ -68,26 +73,51 @@ public class ScoreListDataItem extends AbstractManualDataItem implements  Simple
 		return scoreCriterion;
 	}
 
+	/**
+	 * <p>Setter for the field <code>scoreCriterion</code>.</p>
+	 *
+	 * @param scoreCriterion a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public void setScoreCriterion(NodeRef scoreCriterion) {
 		this.scoreCriterion = scoreCriterion;
 	}
 
+	/**
+	 * <p>Getter for the field <code>range</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:slScoreRange")
 	public String getRange() {
 		return range;
 	}
 
+	/**
+	 * <p>Getter for the field <code>detail</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:slScoreDetail")
 	public String getDetail() {
 		return detail;
 	}
 
+	/**
+	 * <p>Setter for the field <code>detail</code>.</p>
+	 *
+	 * @param detail a {@link java.lang.String} object
+	 */
 	public void setDetail(String detail) {
 		this.detail = detail;
 	}
 
+	/**
+	 * <p>Setter for the field <code>range</code>.</p>
+	 *
+	 * @param range a {@link java.lang.String} object
+	 */
 	public void setRange(String range) {
 		this.range = range;
 	}
@@ -241,6 +271,7 @@ public class ScoreListDataItem extends AbstractManualDataItem implements  Simple
 		return "ScoreListDataItem [criterion=" + criterion + ", weight=" + weight + ", score=" + score + "]";
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -249,6 +280,7 @@ public class ScoreListDataItem extends AbstractManualDataItem implements  Simple
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -263,30 +295,60 @@ public class ScoreListDataItem extends AbstractManualDataItem implements  Simple
 				&& Objects.equals(weight, other.weight);
 	}
 
+	/**
+	 * <p>build.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.project.data.projectList.ScoreListDataItem} object
+	 */
 	public static ScoreListDataItem build() {
 		return new ScoreListDataItem();
 	}
 
+	/**
+	 * <p>withParent.</p>
+	 *
+	 * @param parent a {@link fr.becpg.repo.project.data.projectList.ScoreListDataItem} object
+	 * @return a {@link fr.becpg.repo.project.data.projectList.ScoreListDataItem} object
+	 */
 	public ScoreListDataItem withParent(ScoreListDataItem parent) {
 		this.parent = parent;
 		return this;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public CopiableDataItem copy() {
 		return new ScoreListDataItem(this);
 	}
 
+	/**
+	 * <p>withScoreCriterion.</p>
+	 *
+	 * @param orCreateScoreCriteriom a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.repo.project.data.projectList.ScoreListDataItem} object
+	 */
 	public ScoreListDataItem withScoreCriterion(NodeRef orCreateScoreCriteriom) {
 		this.setScoreCriterion(orCreateScoreCriteriom);
 		return this;
 	}
 
+	/**
+	 * <p>withWeight.</p>
+	 *
+	 * @param weight a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.project.data.projectList.ScoreListDataItem} object
+	 */
 	public ScoreListDataItem withWeight(Double weight) {
 	    this.weight = weight;
 		return this;
 	}
 	
+	/**
+	 * <p>withScore.</p>
+	 *
+	 * @param score a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.project.data.projectList.ScoreListDataItem} object
+	 */
 	public ScoreListDataItem withScore(Double score) {
 	    this.score = score;
 		return this;

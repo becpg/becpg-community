@@ -31,34 +31,74 @@ public class BeCPGUserAccount {
 
 	private Boolean notify = false;
 
+	/**
+	 * <p>Getter for the field <code>synchronizeWithIDS</code>.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object
+	 */
 	public Boolean getSynchronizeWithIDS() {
 		return synchronizeWithIDS;
 	}
 
+	/**
+	 * <p>Setter for the field <code>synchronizeWithIDS</code>.</p>
+	 *
+	 * @param synchronizeWithIDS a {@link java.lang.Boolean} object
+	 */
 	public void setSynchronizeWithIDS(Boolean synchronizeWithIDS) {
 		this.synchronizeWithIDS = synchronizeWithIDS;
 	}
 
+	/**
+	 * <p>Getter for the field <code>generatePassword</code>.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object
+	 */
 	public Boolean getGeneratePassword() {
 		return generatePassword;
 	}
 
+	/**
+	 * <p>Setter for the field <code>generatePassword</code>.</p>
+	 *
+	 * @param generatePassword a {@link java.lang.Boolean} object
+	 */
 	public void setGeneratePassword(Boolean generatePassword) {
 		this.generatePassword = generatePassword;
 	}
 
+	/**
+	 * <p>Getter for the field <code>disable</code>.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object
+	 */
 	public Boolean getDisable() {
 		return disable;
 	}
 
+	/**
+	 * <p>Setter for the field <code>disable</code>.</p>
+	 *
+	 * @param disable a {@link java.lang.Boolean} object
+	 */
 	public void setDisable(Boolean disable) {
 		this.disable = disable;
 	}
 
+	/**
+	 * <p>Getter for the field <code>newUserName</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	public String getNewUserName() {
 		return newUserName;
 	}
 
+	/**
+	 * <p>Setter for the field <code>newUserName</code>.</p>
+	 *
+	 * @param newUserName a {@link java.lang.String} object
+	 */
 	public void setNewUserName(String newUserName) {
 		this.newUserName = newUserName;
 	}
@@ -207,11 +247,13 @@ public class BeCPGUserAccount {
 		this.extraProps = extraProps;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		return Objects.hash(authorities, disable, extraProps, generatePassword, newUserName, notify, password, synchronizeWithIDS, userName);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -227,6 +269,7 @@ public class BeCPGUserAccount {
 				&& Objects.equals(synchronizeWithIDS, other.synchronizeWithIDS) && Objects.equals(userName, other.userName);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "BeCPGUserAccount [userName=" + userName + ", password=" + password + ", generatePassword=" + generatePassword

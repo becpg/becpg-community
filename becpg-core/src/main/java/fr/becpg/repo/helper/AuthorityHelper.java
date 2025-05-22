@@ -13,6 +13,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.AuthorityType;
+import org.alfresco.service.cmr.security.MutableAuthenticationService;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.namespace.QName;
@@ -20,6 +21,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.google.common.base.Objects;
@@ -49,6 +51,10 @@ public class AuthorityHelper implements InitializingBean {
 	
 	@Autowired
 	private AssociationService associationService;
+	
+	@Autowired
+	@Qualifier("AuthenticationService")
+	private MutableAuthenticationService authenticationService;
 	
 	private static AuthorityHelper instance = null;
 	
@@ -230,8 +236,27 @@ public class AuthorityHelper implements InitializingBean {
 		return false;
 	}
 	
+	/**
+	 * <p>hasAdminAuthority.</p>
+	 *
+	 * @return a boolean
+	 */
 	public static boolean hasAdminAuthority() {
 		return instance.authorityService.hasAdminAuthority();
+	}
+	
+	public static boolean isAccountEnabled(String userName) {
+		if (instance.personService.personExists(userName)) {
+			NodeRef person = instance.personService.getPerson(userName);
+			if (person != null && instance.nodeService.exists(person)) {
+				if (!instance.authenticationService.isAuthenticationMutable(userName)
+						&& instance.nodeService.hasAspect(person, ContentModel.ASPECT_PERSON_DISABLED)) {
+					return false;
+				}
+				return instance.authenticationService.getAuthenticationEnabled(userName);
+			}
+		}
+		return false;
 	}
 	
 }

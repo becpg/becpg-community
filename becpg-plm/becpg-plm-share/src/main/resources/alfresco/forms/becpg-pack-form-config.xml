@@ -326,6 +326,8 @@
 					<show id="pack:pmEcoTaxeCategory" />
 					<show id="pack:pmEcoScore" />
 					<show id="pack:pmIsNotRecyclable" />
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:isDeleted" force="true"/>
 				</field-visibility>
 			</form>
 		</forms>
@@ -341,6 +343,8 @@
 					<show id="pack:pmEcoTaxeCategory" />
 					<show id="pack:pmEcoScore" />
 					<show id="pack:pmIsNotRecyclable" />
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:isDeleted" force="true" />
 				</field-visibility>
 			</form>
 
@@ -359,6 +363,8 @@
 					<show id="pack:pmEcoTaxeCategory" />
 					<show id="pack:pmEcoScore" />
 					<show id="pack:pmIsNotRecyclable" />
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:isDeleted" force="true" />
 				</field-visibility>
 			</form>
 		</forms>

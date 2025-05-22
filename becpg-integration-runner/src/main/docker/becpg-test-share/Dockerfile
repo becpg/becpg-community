@@ -1,4 +1,4 @@
-FROM ${docker.becpg.url}/becpg-base-share:${docker.becpg.tag}
+FROM ${docker.becpg.url}/becpg-base-share:${docker.becpg.tag} AS builder
 
 ENV TOMCAT_DIR=/usr/local/tomcat
 
@@ -18,6 +18,10 @@ RUN  java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install $TOMCAT_DIR/am
 	 java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install $TOMCAT_DIR/amps_share/becpg-designer-share-${project.version}.amp webapps/share -nobackup -force && \
 	 java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install $TOMCAT_DIR/amps_share/becpg-plm-share-${project.version}.amp webapps/share -nobackup -force 
 	 
-RUN rm -rf $TOMCAT_DIR/amps_share/*
 
+FROM ${docker.becpg.url}/becpg-base-share:${docker.becpg.tag}
 
+ENV TOMCAT_DIR=/usr/local/tomcat
+
+         
+COPY --chown=33000:1000 --from=builder ${TOMCAT_DIR}/webapps/share ${TOMCAT_DIR}/webapps/share

@@ -35,6 +35,7 @@ public class ProjectRepoConsts {
 	//
 	/** Constant <code>PROJECT_GROUP_PREFIX="PROJECT_"</code> */
 	public static final String PROJECT_GROUP_PREFIX = "PROJECT_";
+	/** Constant <code>PATH_SCORE_CRITERION_TYPES="ScoreCriterionTypes"</code> */
 	public static final String PATH_SCORE_CRITERION_TYPES = "ScoreCriterionTypes";
 	
 	

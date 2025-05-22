@@ -14,6 +14,7 @@ import org.json.JSONObject;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.repo.form.FormParser;
+import fr.becpg.repo.helper.MessageHelper;
 
 /**
  * <p>BecpgFormParser class.</p>
@@ -105,7 +106,7 @@ public class BecpgFormParser implements FormParser {
 				if (cur.has(BecpgFormDefinition.PROP_LABEL)) {
 					String labelId = cur.getString(BecpgFormDefinition.PROP_LABEL);
 					if ((labelId != null) && !labelId.isEmpty()) {
-						String label = I18NUtil.getMessage(labelId, I18NUtil.getContentLocale());
+						String label = MessageHelper.getMessage(labelId, I18NUtil.getContentLocale());
 						if ((label == null) || !label.isEmpty()) {
 							label = labelId;
 						}
@@ -120,7 +121,7 @@ public class BecpgFormParser implements FormParser {
 				if (cur.has(BecpgFormDefinition.PROP_HELP)) {
 					String labelId = cur.getString(BecpgFormDefinition.PROP_HELP);
 					if ((labelId != null) && !labelId.isEmpty()) {
-						String label = I18NUtil.getMessage(labelId, I18NUtil.getContentLocale());
+						String label = MessageHelper.getMessage(labelId, I18NUtil.getContentLocale());
 						if ((label == null) || !label.isEmpty()) {
 							label = labelId;
 						}

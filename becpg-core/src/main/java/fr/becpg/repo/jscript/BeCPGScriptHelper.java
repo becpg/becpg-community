@@ -86,6 +86,8 @@ import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.activity.data.ActivityEvent;
 import fr.becpg.repo.activity.data.ActivityType;
 import fr.becpg.repo.authentication.BeCPGTicketService;
+import fr.becpg.repo.authentication.BeCPGUserAccount;
+import fr.becpg.repo.authentication.BeCPGUserAccountService;
 import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.entity.EntityDictionaryService;
@@ -100,6 +102,7 @@ import fr.becpg.repo.helper.AuthorityHelper;
 import fr.becpg.repo.helper.CheckSumHelper;
 import fr.becpg.repo.helper.GTINHelper;
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.helper.MessageHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.helper.TranslateHelper;
@@ -199,6 +202,17 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	
 	private EntityActivityService entityActivityService;
 	
+	private BeCPGUserAccountService beCPGUserAccountService;
+	
+	public void setBeCPGUserAccountService(BeCPGUserAccountService beCPGUserAccountService) {
+		this.beCPGUserAccountService = beCPGUserAccountService;
+	}
+	
+	/**
+	 * <p>Setter for the field <code>entityActivityService</code>.</p>
+	 *
+	 * @param entityActivityService a {@link fr.becpg.repo.activity.EntityActivityService} object
+	 */
 	public void setEntityActivityService(EntityActivityService entityActivityService) {
 		this.entityActivityService = entityActivityService;
 	}
@@ -712,7 +726,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 		if (!propertyDef.getConstraints().isEmpty()) {
 			for (ConstraintDefinition constraint : propertyDef.getConstraints()) {
-				if (constraint.getConstraint() instanceof DynListConstraint) {
+				if (constraint.getConstraint() instanceof DynListConstraint ) {
 					dynListConstraint = (DynListConstraint) constraint.getConstraint();
 
 				} else if ("LIST".equals(constraint.getConstraint().getType())) {
@@ -843,14 +857,38 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		return wrapValue(associationService.getTargetAssocs(nodeRef, getQName(assocQname)));
 	}
 	
+	/**
+	 * <p>hasEntitySourceAssocs.</p>
+	 *
+	 * @param nodeRef a {@link java.lang.String} object
+	 * @param assocQname a {@link java.lang.String} object
+	 * @param filter a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	public boolean hasEntitySourceAssocs(String nodeRef, String assocQname, String filter) {
 		return hasEntitySourceAssocs(new NodeRef(nodeRef), assocQname, filter);
 	}
 	
+	/**
+	 * <p>hasEntitySourceAssocs.</p>
+	 *
+	 * @param node a {@link org.alfresco.repo.jscript.ScriptNode} object
+	 * @param assocQname a {@link java.lang.String} object
+	 * @param filter a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	public boolean hasEntitySourceAssocs(ScriptNode node, String assocQname, String filter) {
 		return hasEntitySourceAssocs(node.getNodeRef(), assocQname, filter);
 	}
 	
+	/**
+	 * <p>hasEntitySourceAssocs.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param assocQname a {@link java.lang.String} object
+	 * @param filter a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	public boolean hasEntitySourceAssocs(NodeRef nodeRef, String assocQname, String filter) {
 		PagingRequest pagingRequest = new PagingRequest(1);
 		List<AssociationCriteriaFilter> filters = null;
@@ -861,14 +899,38 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		return !associationService.getEntitySourceAssocs(List.of(nodeRef), getQName(assocQname), null, false, filters, pagingRequest).isEmpty();
 	}
 	
+	/**
+	 * <p>entitySourceAssocs.</p>
+	 *
+	 * @param nodeRef a {@link java.lang.String} object
+	 * @param assocQname a {@link java.lang.String} object
+	 * @param filter a {@link java.lang.String} object
+	 * @return a {@link java.lang.Object} object
+	 */
 	public Object entitySourceAssocs(String nodeRef, String assocQname, String filter) {
 		return entitySourceAssocs(new NodeRef(nodeRef), assocQname, filter);
 	}
 	
+	/**
+	 * <p>entitySourceAssocs.</p>
+	 *
+	 * @param node a {@link org.alfresco.repo.jscript.ScriptNode} object
+	 * @param assocQname a {@link java.lang.String} object
+	 * @param filter a {@link java.lang.String} object
+	 * @return a {@link java.lang.Object} object
+	 */
 	public Object entitySourceAssocs(ScriptNode node, String assocQname, String filter) {
 		return entitySourceAssocs(node.getNodeRef(), assocQname, filter);
 	}
 	
+	/**
+	 * <p>entitySourceAssocs.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param assocQname a {@link java.lang.String} object
+	 * @param filter a {@link java.lang.String} object
+	 * @return a {@link java.lang.Object} object
+	 */
 	public Object entitySourceAssocs(NodeRef nodeRef, String assocQname, String filter) {
 		PagingRequest pagingRequest = null;
 		List<AssociationCriteriaFilter> filters = null;
@@ -916,14 +978,44 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		return filters;
 	}
 	
+	/**
+	 * <p>sourceAssocValues.</p>
+	 *
+	 * @param sourceNode a {@link org.alfresco.repo.jscript.ScriptNode} object
+	 * @param assocQname a {@link java.lang.String} object
+	 * @param maxResults a {@link java.lang.Integer} object
+	 * @param offset a {@link java.lang.Integer} object
+	 * @param includeVersions a boolean
+	 * @return a {@link java.lang.Object} object
+	 */
 	public Object sourceAssocValues(ScriptNode sourceNode, String assocQname, Integer maxResults, Integer offset, boolean includeVersions) {
 		return sourceAssocValues(sourceNode.getNodeRef(), assocQname, maxResults, offset, includeVersions);
 	}
 	
+	/**
+	 * <p>sourceAssocValues.</p>
+	 *
+	 * @param nodeRef a {@link java.lang.String} object
+	 * @param assocQname a {@link java.lang.String} object
+	 * @param maxResults a {@link java.lang.Integer} object
+	 * @param offset a {@link java.lang.Integer} object
+	 * @param includeVersions a {@link java.lang.Boolean} object
+	 * @return a {@link java.lang.Object} object
+	 */
 	public Object sourceAssocValues(String nodeRef, String assocQname, Integer maxResults, Integer offset, Boolean includeVersions) {
 		return sourceAssocValues(new NodeRef(nodeRef), assocQname, maxResults, offset, includeVersions);
 	}
 	
+	/**
+	 * <p>sourceAssocValues.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param assocQname a {@link java.lang.String} object
+	 * @param maxResults a {@link java.lang.Integer} object
+	 * @param offset a {@link java.lang.Integer} object
+	 * @param includeVersions a {@link java.lang.Boolean} object
+	 * @return a {@link java.lang.Object} object
+	 */
 	public Object sourceAssocValues(NodeRef nodeRef, String assocQname, Integer maxResults, Integer offset, Boolean includeVersions) {
 		return wrapValue(associationService.getSourcesAssocs(nodeRef, getQName(assocQname), includeVersions, maxResults, offset, true));
 	}
@@ -1196,7 +1288,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String getMessage(String messageKey) {
-		return I18NUtil.getMessage(messageKey, I18NUtil.getLocale());
+		return MessageHelper.getMessage(messageKey, I18NUtil.getLocale());
 	}
 
 	/**
@@ -1207,7 +1299,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String getMessage(String messageKey, Object... param) {
-		return I18NUtil.getMessage(messageKey, param);
+		return MessageHelper.getMessage(messageKey, param);
 	}
 
 	/**
@@ -1222,7 +1314,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		if (locale != null && !locale.isBlank()) {
 			localeObject = MLTextHelper.parseLocale(locale);
 		}
-		return I18NUtil.getMessage(messageKey, localeObject);
+		return MessageHelper.getMessage(messageKey, localeObject);
 	}
 
 	/**
@@ -1238,7 +1330,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		if (locale != null && !locale.isBlank()) {
 			localeObject = MLTextHelper.parseLocale(locale);
 		}
-		return I18NUtil.getMessage(messageKey, localeObject, param);
+		return MessageHelper.getMessage(messageKey, localeObject, param);
 	}
 
 	/**
@@ -1521,7 +1613,11 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 */
 	public boolean allowWrite(NodeRef nodeRef, String authority) {
 		return AuthenticationUtil.runAsSystem(() -> {
-			permissionService.setPermission(nodeRef, authority, PermissionService.EDITOR, true);
+			if(entityDictionaryService.isSubClass(nodeService.getType(nodeRef), ContentModel.TYPE_FOLDER)) {
+				permissionService.setPermission(nodeRef, authority, PermissionService.COORDINATOR, true);
+			} else {
+				permissionService.setPermission(nodeRef, authority, PermissionService.EDITOR, true);
+			}
 			return true;
 		});
 	}
@@ -2015,21 +2111,21 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 */
 	public boolean classifyByPropAndHierarchy(ScriptNode productNode, ScriptNode folderNode, String propHierarchy, String propPathName,
 			String locale) {
-		if (propPathName != null && propPathName.isBlank()) {
+		if (propPathName != null && !propPathName.isBlank()) {
 			String subFolderName = null;
 			String[] split = propPathName.split("\\|");
+			String propertyName = split[split.length - 1]; 
 			if (split.length == 1) {
-				QName propPathNameQName = getQName(propPathName);
+				QName propPathNameQName = getQName(propertyName);
 				Serializable propValue = nodeService.getProperty(productNode.getNodeRef(), propPathNameQName);
 				if (propValue != null) {
 					subFolderName = propValue.toString();
 				}
 			} else {
-				String assocName = split[0];
-				String property = split[split.length - 1];
-				NodeRef finalAssoc = classifyPropAndHierarchyExtractAssoc(productNode.getNodeRef(), assocName, new ArrayList<>(Arrays.asList(split)));
-				if (finalAssoc != null) {
-					Serializable propValue = nodeService.getProperty(finalAssoc, getQName(property));
+				String firstAssocName = split[0];
+				NodeRef lastAssocNodeRef = classifyPropAndHierarchyExtractAssoc(productNode.getNodeRef(), firstAssocName, new ArrayList<>(Arrays.asList(split)));
+				if (lastAssocNodeRef != null) {
+					Serializable propValue = nodeService.getProperty(lastAssocNodeRef, getQName(propertyName));
 					if (propValue != null) {
 						subFolderName = propValue.toString();
 					}
@@ -2037,7 +2133,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 			}
 			if (subFolderName != null && !subFolderName.isBlank()) {
 				if (locale != null && !locale.isBlank()) {
-					subFolderName = getMLConstraint(subFolderName, propPathName, locale);
+					subFolderName = getMLConstraint(subFolderName, propertyName, locale);
 				}
 				NodeRef childNodeRef = nodeService.getChildByName(folderNode.getNodeRef(), ContentModel.ASSOC_CONTAINS, subFolderName);
 				if (childNodeRef == null) {
@@ -2050,7 +2146,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	}
 
 	private NodeRef classifyPropAndHierarchyExtractAssoc(NodeRef nodeRef, String assocName, List<String> assocList) {
-		if (assocList.isEmpty()) {
+		if (assocList.size() == 1) {
 			return nodeRef;
 		}
 		String nextAssocName = assocList.get(0);
@@ -2244,11 +2340,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * @return a boolean
 	 */
 	public boolean isAccountEnabled(String userName) {
-		if (!authenticationService.isAuthenticationMutable(userName)
-				&& nodeService.hasAspect(personService.getPerson(userName), ContentModel.ASPECT_PERSON_DISABLED)) {
-			return false;
-		}
-		return this.authenticationService.getAuthenticationEnabled(userName);
+		return AuthorityHelper.isAccountEnabled(userName);
 	}
 
 	/**
@@ -2292,21 +2384,22 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	
 	
 	/**
-	 * 
-	 * @param scriptNode
-	 * @param activityType
-	 * @param activityEvent
+	 * <p>postEntityActivity.</p>
+	 *
+	 * @param scriptNode a {@link org.alfresco.repo.jscript.ScriptNode} object
+	 * @param activityType a {@link java.lang.String} object
+	 * @param activityEvent a {@link java.lang.String} object
 	 * @param properties
-		 * {
-			  "qname1": {
-			    "before": "value1",
-			    "after": "value2"
-			  },
-			  "qname2": {
-			    "before": "value3",
-			    "after": "value4"
-			  }
-			}
+	 * {
+	 *			  "qname1": {
+	 *			    "before": "value1",
+	 *			    "after": "value2"
+	 *			  },
+	 *			  "qname2": {
+	 *			    "before": "value3",
+	 *			    "after": "value4"
+	 *			  }
+	 *			}
 	 */
 	public void postEntityActivity(ScriptNode scriptNode, String activityType, String activityEvent, String properties) {
 		JSONObject jsonProperties = new JSONObject(properties);
@@ -2324,6 +2417,19 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 			updatedProperties.put(QName.createQName(key, namespaceService), new Pair<>(before, after));
         }
 		entityActivityService.postEntityActivity(scriptNode.getNodeRef(), ActivityType.valueOf(activityType), ActivityEvent.valueOf(activityEvent), updatedProperties);
+	}
+	
+	public ScriptNode createPerson(String userName, String firstName, String lastName, String email, String password, boolean enableAccount, boolean isIdsUser) {
+		BeCPGUserAccount beCPGUserAccount = new BeCPGUserAccount();
+		beCPGUserAccount.setUserName(userName);
+		beCPGUserAccount.setFirstName(firstName);
+		beCPGUserAccount.setLastName(lastName);
+		beCPGUserAccount.setEmail(email);
+		beCPGUserAccount.setPassword(password);
+		beCPGUserAccount.setDisable(!enableAccount);
+		beCPGUserAccount.setSynchronizeWithIDS(isIdsUser);
+		NodeRef nodeRef = beCPGUserAccountService.getOrCreateUser(beCPGUserAccount);
+		return new ScriptNode(nodeRef, serviceRegistry);
 	}
 
 }

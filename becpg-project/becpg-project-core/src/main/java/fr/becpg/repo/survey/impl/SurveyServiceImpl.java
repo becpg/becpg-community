@@ -7,7 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -72,8 +71,7 @@ public class SurveyServiceImpl implements SurveyService {
 	 */
 	/** {@inheritDoc} */
 	@Override
-	public JSONObject getSurveyData(NodeRef entityNodeRef, String dataListName,
-			Predicate<List<SurveyListDataItem>> writeAccessTester) throws JSONException {
+	public JSONObject getSurveyData(NodeRef entityNodeRef, String dataListName,Boolean disabled) throws JSONException {
 		JSONObject ret = new JSONObject();
 		L2CacheSupport.doInCacheContext(() -> AuthenticationUtil.runAsSystem(() -> {
 
@@ -95,14 +93,11 @@ public class SurveyServiceImpl implements SurveyService {
 					if (survey.getComment() != null) {
 						value.put("comment", survey.getComment());
 					}
-
 					if ((surveyQuestion.getResponseType() == null) || surveyQuestion.getResponseType().isEmpty()) {
 						for (NodeRef choice : survey.getChoices()) {
 							value.put("cid", choice.getId());
 						}
-
 					} else {
-
 						value.put("listOptions", getOptions(survey.getChoices()));
 						value.put("cid", "sub-" + surveyQuestion.getNodeRef().getId().substring(4));
 					}
@@ -113,7 +108,7 @@ public class SurveyServiceImpl implements SurveyService {
 
 			ret.put("data", data);
 			ret.put("def", definitions);
-			ret.put("disabled", writeAccessTester.negate().test(surveyListDataItems));
+			ret.put("disabled", disabled);
 			return ret;
 		}), false, true, true);
 

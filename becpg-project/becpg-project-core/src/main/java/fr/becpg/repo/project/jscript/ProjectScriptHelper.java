@@ -64,6 +64,8 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 
+	private static final Pattern formatPattern = Pattern.compile("(\\?format\\((.*)\\))$");
+	
 	private AlfrescoRepository<ProjectData> alfrescoRepository;
 
 	private EntityListDAO entityListDAO;
@@ -218,6 +220,7 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 	// {assocName|propName} --> replace with association property
 	// {assocName|@type} --> replace with association property
 	// {assocName|xpath:./path} --> replace with nodeRef found in relative assoc path
+	// {<expr>?format(<printf-style-format-pattern>)} --> format replaced value or every value of a list
 
 	/**
 	 * <p>getDeliverableUrl.</p>
@@ -304,19 +307,24 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 				QName type = nodeService.getType(nodeRef);
 				return type != null ? type.getLocalName() : "";
 			} else {
+				final Matcher formatMatcher = formatPattern.matcher(splitted[1]);
+				String formatStr = null;
+				if (formatMatcher.find()) {
+					splitted[1] = splitted[1].substring(0, splitted[1].indexOf(formatMatcher.group(1)));
+					formatStr = formatMatcher.group(2);
+				}
 				Serializable tmp = nodeService.getProperty(nodeRef, QName.createQName(splitted[1], namespaceService));
 				StringBuilder strRet = new StringBuilder();
-				
 				if(tmp instanceof List) {
 					for (Serializable subEl : (List<Serializable>) tmp) {
-						if (subEl.toString().length() > 0) {
+						if (!strRet.isEmpty()) {
 							strRet.append(",");
 						}
-						strRet.append(subEl.toString());
+						strRet.append(formatStr != null ? String.format(formatStr, subEl.toString()) : subEl.toString());
 					}
 					
 				} else if(tmp!=null) {
-					strRet.append(tmp.toString());
+					strRet.append(formatStr != null ? String.format(formatStr, tmp.toString()) : tmp.toString());
 				}
 				
 				

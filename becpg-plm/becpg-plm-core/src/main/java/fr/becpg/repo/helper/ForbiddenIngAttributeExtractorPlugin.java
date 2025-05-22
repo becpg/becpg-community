@@ -42,7 +42,7 @@ public class ForbiddenIngAttributeExtractorPlugin extends CharactAttributeExtrac
 	/** {@inheritDoc} */
 	@Override
 	public Integer getPriority() {
-		return 1;
+		return HIGH_PRIORITY;
 	}
 
 }

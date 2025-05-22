@@ -122,13 +122,15 @@ public class EntityCopyPolicy extends AbstractBeCPGPolicy implements CopyService
 			entityService.changeEntityListStates(destinationRef, EntityListState.ToValidate);
 			
 			if (propertiesToReset() != null) {
-		        for(String propertyToReset : propertiesToReset().split(",")) {	        	
-		        	QName propertyQname = QName.createQName(propertyToReset, namespaceService);	
-		        	
-		        	if (dictionaryService.getProperty(propertyQname) != null) {
-		        		nodeService.removeProperty(destinationRef, propertyQname);
-		        	} else if (dictionaryService.getAssociation(propertyQname) != null) {
-		        		associationService.update(destinationRef, propertyQname, List.of());
+		        for(String propertyToReset : propertiesToReset().split(",")) {
+		        	propertyToReset = extractProperty(propertyToReset, sourceNodeRef, destinationRef);
+		        	if (propertyToReset != null) {
+		        		QName propertyQname = QName.createQName(propertyToReset, namespaceService);	
+		        		if (dictionaryService.getProperty(propertyQname) != null) {
+		        			nodeService.removeProperty(destinationRef, propertyQname);
+		        		} else if (dictionaryService.getAssociation(propertyQname) != null) {
+		        			associationService.update(destinationRef, propertyQname, List.of());
+		        		}
 		        	}
 		        }
 	        }
@@ -155,6 +157,21 @@ public class EntityCopyPolicy extends AbstractBeCPGPolicy implements CopyService
 		}
 		
 
+	}
+
+	private String extractProperty(String propertyToReset, NodeRef sourceNodeRef, NodeRef destinationRef) {
+		String[] split = propertyToReset.split("\\|");
+		if (split.length < 2) {
+			return split[0];
+		}
+		String mode = split[1];
+		if ("branch".equals(mode) && BeCPGStateHelper.isOnBranchEntity(sourceNodeRef)) {
+			return split[0];
+		}
+		if ("copy".equals(mode) && BeCPGStateHelper.isOnCopyEntity(destinationRef)) {
+			return split[0];
+		}
+		return null;
 	}
 
 	/** {@inheritDoc} */

@@ -69,10 +69,15 @@ public class UserImporterServiceImpl implements UserImporterService {
 	public static final String ATTR_USERNAME = "username";
 	/** Constant <code>PASSWORD="password"</code> */
 	public static final String ATTR_PASSWORD = "password";
+	/** Constant <code>ATTR_SHOULD_GENERATE_PASSWORD="should_generate_password"</code> */
 	public static final String ATTR_SHOULD_GENERATE_PASSWORD = "should_generate_password";
+	/** Constant <code>ATTR_IS_IDS_USER="is_ids_user"</code> */
 	public static final String ATTR_IS_IDS_USER = "is_ids_user";
+	/** Constant <code>ATTR_NEW_USERNAME="new_username"</code> */
 	public static final String ATTR_NEW_USERNAME = "new_username";
+	/** Constant <code>ATTR_DISABLE="disable"</code> */
 	public static final String ATTR_DISABLE = "disable";
+	/** Constant <code>ATTR_DELETE="delete"</code> */
 	public static final String ATTR_DELETE = "delete";
 	/** Constant <code>NOTIFY="notify"</code> */
 	public static final String ATTR_NOTIFY = "notify";
@@ -106,6 +111,11 @@ public class UserImporterServiceImpl implements UserImporterService {
 	
 	private DictionaryService dictionaryService;
 	
+	/**
+	 * <p>Setter for the field <code>dictionaryService</code>.</p>
+	 *
+	 * @param dictionaryService a {@link org.alfresco.service.cmr.dictionary.DictionaryService} object
+	 */
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
 	}
@@ -267,7 +277,6 @@ public class UserImporterServiceImpl implements UserImporterService {
 		if ((splitted != null) && (headers != null)) {
 
 			String username = splitted[headers.get(ATTR_USERNAME)];
-			username = username != null ? username.toLowerCase() : null;
 			
 			if (headers.containsKey(ATTR_DELETE) && Boolean.TRUE.equals(Boolean.parseBoolean(splitted[headers.get(ATTR_DELETE)].toLowerCase()))) {
 				if (logger.isDebugEnabled()) {
@@ -293,7 +302,6 @@ public class UserImporterServiceImpl implements UserImporterService {
 			}
 			if (headers.containsKey(ATTR_NEW_USERNAME)) {
 				String newUserName = splitted[headers.get(ATTR_NEW_USERNAME)];
-				newUserName = newUserName != null ? newUserName.toLowerCase() : null;
 				userAccount.setNewUserName(newUserName);
 			}
 			userAccount.setNotify(headers.containsKey(ATTR_NOTIFY) && Boolean.parseBoolean(splitted[headers.get(ATTR_NOTIFY)].toLowerCase()));

@@ -147,9 +147,9 @@ public class RemoveReqCtrlViewPatch extends AbstractBeCPGPatch {
 	}
 
 	/**
-	 * <p>Setter for the field <code>nodeDAO</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @param nodeDAO a {@link org.alfresco.repo.domain.node.NodeDAO} object.
+	 * <p>Setter for the field <code>nodeDAO</code>.</p>
 	 */
 	public void setNodeDAO(NodeDAO nodeDAO) {
 		this.nodeDAO = nodeDAO;
@@ -165,9 +165,9 @@ public class RemoveReqCtrlViewPatch extends AbstractBeCPGPatch {
 	}
 
 	/**
-	 * <p>Setter for the field <code>patchDAO</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @param patchDAO a {@link org.alfresco.repo.domain.patch.PatchDAO} object.
+	 * <p>Setter for the field <code>patchDAO</code>.</p>
 	 */
 	public void setPatchDAO(PatchDAO patchDAO) {
 		this.patchDAO = patchDAO;
@@ -183,9 +183,9 @@ public class RemoveReqCtrlViewPatch extends AbstractBeCPGPatch {
 	}
 
 	/**
-	 * <p>Setter for the field <code>qnameDAO</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @param qnameDAO a {@link org.alfresco.repo.domain.qname.QNameDAO} object.
+	 * <p>Setter for the field <code>qnameDAO</code>.</p>
 	 */
 	public void setQnameDAO(QNameDAO qnameDAO) {
 		this.qnameDAO = qnameDAO;

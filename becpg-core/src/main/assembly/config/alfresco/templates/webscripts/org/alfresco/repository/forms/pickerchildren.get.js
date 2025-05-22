@@ -343,7 +343,7 @@ function findUsers(searchTerm, maxResults, results)
       //filter out  the disabled users
       var daname = (search.findNode(personRef)).properties.userName;
  
-      if(people.isAccountEnabled(daname)){
+      if(bcpg.isAccountEnabled(daname)){
           results.push(
           {
               item: createPersonResult(search.findNode(personRef)),

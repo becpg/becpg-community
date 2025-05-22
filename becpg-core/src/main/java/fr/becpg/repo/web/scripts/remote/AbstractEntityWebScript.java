@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -35,6 +36,8 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
+import org.alfresco.service.namespace.QName;
+import org.alfresco.util.Pair;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -53,6 +56,7 @@ import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.entity.remote.RemoteRateLimiter;
 import fr.becpg.repo.entity.remote.impl.HttpEntityProviderCallback;
+import fr.becpg.repo.search.AdvSearchService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.system.SystemConfigurationService;
 
@@ -126,6 +130,12 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	protected RemoteRateLimiter remoteRateLimiter;
 	
 	protected SystemConfigurationService systemConfigurationService;
+	
+	protected AdvSearchService advSearchService;
+	
+	public void setAdvSearchService(AdvSearchService advSearchService) {
+		this.advSearchService = advSearchService;
+	}
 
 	/**
 	 * <p>Setter for the field <code>systemConfigurationService</code>.</p>
@@ -192,6 +202,11 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 
 	
 
+	/**
+	 * <p>maxResultsLimit.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object
+	 */
 	protected  Integer maxResultsLimit() {
 		return Integer.parseInt(systemConfigurationService.confValue("beCPG.remote.maxResults.limit"));
 	}
@@ -220,7 +235,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	 *
 	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object.
 	 * @return a {@link java.util.List} object.
-	 * @param limit a {@link java.lang.Boolean} object
+	 * @param maxResults a {@link java.lang.Integer} object
 	 */
 	protected PagingResults<NodeRef> findEntities(WebScriptRequest req, Integer maxResults) {
 
@@ -229,12 +244,15 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		
 		Integer page = intParam(req, PARAM_PAGE);
 		
-		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery();
-
-		if ((query != null) && !query.toUpperCase().contains("TYPE")) {
-			queryBuilder.ofType(BeCPGModel.TYPE_ENTITY_V2);
+		
+		String entityQuery = null;
+		try {
+			entityQuery = extractBodyRequest(req);
+		} catch (IOException e) {
+			logger.error("Error while extracting request body: " + e.getMessage(), e);
 		}
-
+		
+		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery();
 		if ((req.getParameter(PARAM_ALL_VERSION) == null) || "false".equalsIgnoreCase(req.getParameter(PARAM_ALL_VERSION))) {
 			if((req.getParameter(PARAM_EXCLUDE_SYSTEMS) == null) || "true".equalsIgnoreCase(req.getParameter(PARAM_EXCLUDE_SYSTEMS))){
 				queryBuilder.excludeDefaults();
@@ -246,41 +264,91 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 				queryBuilder.excludeSystems();
 			}
 		}
-
-		if (maxResults == null ) {
-			queryBuilder.maxResults(RepoConsts.MAX_RESULTS_256);
-		} else {
-			queryBuilder.maxResults(maxResults);
-		}
-		
 		if (page != null ) {
 			queryBuilder.page(page);
 		}
-
-		
 		if ((path != null) && (!path.isBlank())) {
 			queryBuilder.inPath(path);
 		}
-
 		if ((query != null) && (!query.isBlank())) {
 			queryBuilder.andFTSQuery(query);
-
 		}
-
-		PagingResults<NodeRef> refs = queryBuilder.inDBIfPossible().pagingResults();
-
-		if ((refs != null) ) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Returning " + refs.getTotalResultCount() + " entities");
+		if (entityQuery != null && !entityQuery.isBlank()) {
+			JSONObject jsonEntity = new JSONObject(entityQuery);
+			Map<String, String> criteria = remoteEntityService.toSearchCriterion(jsonEntity);
+			QName type = BeCPGModel.TYPE_ENTITY_V2;
+			if (jsonEntity.has("type")) {
+				type = QName.createQName(jsonEntity.getString("type"), namespaceService);
 			}
-			return refs;
-		}
+			if (maxResults == null) {
+				maxResults = RepoConsts.MAX_RESULTS_256;
+			}
+			List<NodeRef> searchResults = advSearchService.queryAdvSearch(type, queryBuilder, criteria, maxResults);
+			int totalSize = searchResults.size();
+			int pageSize = RepoConsts.MAX_RESULTS_256;
+			if (page == null) {
+				page = 1;
+			}
+			if (maxResults == -1) {
+				pageSize = totalSize;
+			}
+			List<NodeRef> pagingNodes;
+			int start = (page - 1) * pageSize;
+			int end = Math.min(start + pageSize, totalSize);
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("No entities found for query " + queryBuilder.toString());
+			if (start >= totalSize || totalSize == 0) {
+			    pagingNodes = List.of();
+			} else {
+			    pagingNodes = searchResults.subList(start, end);
+			}
+			return new PagingResults<NodeRef>() {
+				@Override
+				public boolean hasMoreItems() {
+					return totalSize > pagingNodes.size();
+				}
+				@Override
+				public Pair<Integer, Integer> getTotalResultCount() {
+					return new Pair<>(totalSize, totalSize);
+				}
+				@Override
+				public String getQueryExecutionId() {
+					return null;
+				}
+				@Override
+				public List<NodeRef> getPage() {
+					return pagingNodes;
+				}
+			};
+		} else {
+			if ((query != null) && !query.toUpperCase().contains("TYPE")) {
+				queryBuilder.ofType(BeCPGModel.TYPE_ENTITY_V2);
+			}
+			if (maxResults == null ) {
+				queryBuilder.maxResults(RepoConsts.MAX_RESULTS_256);
+			} else {
+				queryBuilder.maxResults(maxResults);
+			}
+			PagingResults<NodeRef> refs = queryBuilder.inDBIfPossible().pagingResults();
+			if ((refs != null) ) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Returning " + refs.getTotalResultCount() + " entities");
+				}
+				return refs;
+			}
+			
+			if (logger.isDebugEnabled()) {
+				logger.debug("No entities found for query " + queryBuilder.toString());
+			}
 		}
 		return new EmptyPagingResults<>();
 
+	}
+
+	private String extractBodyRequest(WebScriptRequest req) throws IOException {
+		if (req.getContent() == null) {
+			return null;
+		}
+		return req.getContent().getContent();
 	}
 
 	/**

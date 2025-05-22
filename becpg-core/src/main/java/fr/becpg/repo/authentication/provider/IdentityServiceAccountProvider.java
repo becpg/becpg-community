@@ -2,6 +2,7 @@ package fr.becpg.repo.authentication.provider;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 import org.alfresco.repo.security.authentication.identityservice.IdentityServiceException;
 import org.alfresco.service.cmr.security.AuthorityService;
@@ -34,6 +35,10 @@ import fr.becpg.repo.authentication.BeCPGUserAccount;
  */
 @Service
 public class IdentityServiceAccountProvider {
+
+	private static final Pattern PROHIBITED_CHARS = Pattern.compile(
+        "[<>&\"$%!#?§;*~/\\\\|^=\\[\\]{}()\\p{Cntrl}]"
+    );
 
 	private static final String GET_USER_ID_ERROR = "Could not find userId from identity service for user: ";
 
@@ -96,6 +101,7 @@ public class IdentityServiceAccountProvider {
 			}
 			return false;
 		}
+		sanitizeAccount(userAccount);
 		try {
 			HttpClientBuilder builder = HttpClientBuilder.create();
 
@@ -134,6 +140,11 @@ public class IdentityServiceAccountProvider {
 		return true;
 	}
 	
+	/**
+	 * <p>deleteAccount.</p>
+	 *
+	 * @param username a {@link java.lang.String} object
+	 */
 	public void deleteAccount(String username) {
 		if (logger.isDebugEnabled()) {
         	logger.debug("deleteAccount in IDS for username: " + username);
@@ -160,6 +171,12 @@ public class IdentityServiceAccountProvider {
 	}
 
 
+	/**
+	 * <p>updateUser.</p>
+	 *
+	 * @param userAccount a {@link fr.becpg.repo.authentication.BeCPGUserAccount} object
+	 * @return a boolean
+	 */
 	public boolean updateUser(BeCPGUserAccount userAccount) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("updateUser in IDS for username: " + userAccount.getUserName());
@@ -168,6 +185,7 @@ public class IdentityServiceAccountProvider {
 		if (userId == null) {
 			throw new IllegalStateException(GET_USER_ID_ERROR + userAccount.getUserName());
 		}
+		sanitizeAccount(userAccount);
 		try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
 			HttpPut request = new HttpPut(authServerUrl + "/admin/realms/" + realm + "/users/" + userId);
 			request.setHeader("Content-Type", "application/json;charset=UTF-8");
@@ -201,6 +219,24 @@ public class IdentityServiceAccountProvider {
 		return true;
 	}
 	
+	private void sanitizeAccount(BeCPGUserAccount userAccount) {
+		userAccount.setFirstName(sanitize(userAccount.getFirstName()));
+		userAccount.setLastName(sanitize(userAccount.getLastName()));
+	}
+	
+	private String sanitize(String input) {
+        if (input == null) {
+        	return null;
+        }
+        return PROHIBITED_CHARS.matcher(input).replaceAll("");
+    }
+
+	/**
+	 * <p>updatePassword.</p>
+	 *
+	 * @param username a {@link java.lang.String} object
+	 * @param newPassword a {@link java.lang.String} object
+	 */
 	public void updatePassword(String username, String newPassword) {
 		if (logger.isDebugEnabled()) {
         	logger.debug("generatePassword in IDS for username: " + username);
@@ -271,9 +307,14 @@ public class IdentityServiceAccountProvider {
             HttpPost request = new HttpPost(authServerUrl + "/realms/" + realm + "/protocol/openid-connect/token");
             ArrayList<BasicNameValuePair> parameters = new ArrayList<>();
             parameters.add(new BasicNameValuePair("client_id", clientId));
-            parameters.add(new BasicNameValuePair("grant_type", "password"));
-            parameters.add(new BasicNameValuePair("username", identityServiceUserName));
-            parameters.add(new BasicNameValuePair("password", identityServicePassword));
+            if (clientSecret != null && !clientSecret.isBlank()) {
+            	parameters.add(new BasicNameValuePair("grant_type", "client_credentials"));
+            	parameters.add(new BasicNameValuePair("client_secret", clientSecret));
+            } else {
+            	parameters.add(new BasicNameValuePair("grant_type", "password"));
+            	parameters.add(new BasicNameValuePair("username", identityServiceUserName));
+            	parameters.add(new BasicNameValuePair("password", identityServicePassword));
+            }
             request.setEntity(new UrlEncodedFormEntity(parameters, "UTF-8"));
 
             try (CloseableHttpResponse response = httpClient.execute(request)) {
@@ -282,9 +323,10 @@ public class IdentityServiceAccountProvider {
                     if (auth.has("access_token")) {
                     	return auth.getString("access_token");
                     } else {
-						logger.error(auth.toString());
-						throw new IllegalStateException("Error while fetching access_token from identityService");
+						logger.error("Incorrect auth message: " + auth.toString());
 					}
+                } else {
+                	logger.error("Incorrect status code: "+EntityUtils.toString(response.getEntity()));
                 }
             }
         }

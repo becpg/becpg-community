@@ -367,6 +367,12 @@ public class PlmRepoConsts {
 	public static final String PATH_GS1_CATCH_METHID_CODES = "CatchMethodCodes";
 	/** Constant <code>PATH_GS1_CATCH_AREA_CODES="CatchAreaCodes"</code> */
 	public static final String PATH_GS1_CATCH_AREA_CODES = "CatchAreaCodes";
+	/** Constant <code>PATH_GS1_DUTY_FEE_TAX_AGENCY_CODES="DutyFeeTaxAgencyCodes"</code> */
+	public static final String PATH_GS1_DUTY_FEE_TAX_AGENCY_CODES = "DutyFeeTaxAgencyCodes";
+	/** Constant <code>PATH_GS1_DUTY_FEE_TAX_AGENCY_CODES="DutyFeeTaxTypeCodes"</code> */
+	public static final String PATH_GS1_DUTY_FEE_TAX_TYPE_CODES = "DutyFeeTaxTypeCodes";
+	/** Constant <code>PATH_GS1_DUTY_FEE_TAX_AGENCY_CODES="DutyFeeTaxCategoryCodes"</code> */
+	public static final String PATH_GS1_DUTY_FEE_TAX_CATEGORY_CODES = "DutyFeeTaxCategoryCodes";
 	/** Constant <code>PATH_PUBCHANNELS="PubChannels"</code> */
 	public static final String PATH_PUBCHANNELS = "PubChannels";
 	/** Constant <code>PATH_ACTIVITY_LIST="activityList"</code> */
@@ -378,6 +384,7 @@ public class PlmRepoConsts {
 	/** Constant <code>PATH_LABORATORIES="Laboratories"</code> */
 	public static final String PATH_LABORATORIES = "Laboratories";
 	
+	/** Constant <code>PATH_SURVEY_QUESTIONS="SurveyQuestions"</code> */
 	public static final String PATH_SURVEY_QUESTIONS = "SurveyQuestions";
 	
 
