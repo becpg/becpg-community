@@ -123,6 +123,8 @@
 					<show id="survey:fsLinkedHierarchy" force="true" />
 					<show id="bcpg:subsidiaryRef" force="true" />
 					<show id="bcpg:plants" force="true" />
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:isDeleted" force="true"/>
 				</field-visibility>
 				<appearance>
 					<set id="surveyQuestion" appearance="bordered-panel" label-id="becpg.forms.set.survey-question.label" />
@@ -172,6 +174,8 @@
 					</field>
 
 					<field id="survey:responseCommentLabel" set="surveyQuestion" />
+					<field id="sec:readGroups" set="surveyQuestion" />
+					<field id="bcpg:isDeleted" set="surveyQuestion" />
 
 					<field id="survey:nextQuestion" set="surveyQuestion">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -341,6 +345,8 @@
 					<show id="survey:fsLinkedHierarchy" force="true" />
 					<show id="bcpg:subsidiaryRef" force="true" />
 					<show id="bcpg:plants" force="true" />
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:isDeleted" force="true"/>
 				</field-visibility>
 				<appearance>
 					<set id="surveyQuestion" appearance="bordered-panel" label-id="becpg.forms.set.survey-question.label" />
@@ -368,6 +374,10 @@
 
 					<field id="survey:questionUrl" set="surveyQuestion" />
 
+					<field id="survey:responseCommentLabel" set="surveyQuestion" />
+					<field id="sec:readGroups" set="surveyQuestion" />
+					<field id="bcpg:isDeleted" set="surveyQuestion" />
+					
 					<field id="survey:scoreCriterion" set="surveyQuestion">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pjt:scoreCriterion</control-param>
@@ -560,6 +570,8 @@
 					<show id="survey:questionScore" />
 					<show id="survey:questionIsMandatory" />
 					<show id="survey:questionIsVisible" />
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:isDeleted" force="true"/>
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:depthLevel" label="hidden" />

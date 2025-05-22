@@ -106,6 +106,17 @@
 			</parameter>
 		</constraint>
 
+		<constraint name="bcpg:entityFormat" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>JSON</value>
+					<value>XML</value>
+					<value>NODE</value>
+				</list>
+			</parameter>
+		</constraint>
+		
 		<constraint name="bcpg:activityTypes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -160,18 +171,6 @@
 					<value>oz</value>
 					<value>cp</value>
 					<value>fl_oz</value>
-				</list>
-			</parameter>
-		</constraint>
-
-
-		<constraint name="bcpg:entityFormat" type="LIST">
-			<parameter name="allowedValues">
-				<list>
-					<value></value>
-					<value>JSON</value>
-					<value>XML</value>
-					<value>NODE</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -6522,6 +6521,9 @@
 
 		<aspect name="bcpg:archivedEntityAspect">
 		</aspect>
+		
+		<aspect name="bcpg:pendingEntityReportAspect">
+		</aspect>
 
 		<aspect name="bcpg:regulatoryAspect">
 			<properties>
@@ -6759,6 +6761,18 @@
 				</property>
 			</properties>
 		</aspect>
+		
+		  <aspect name="bcpg:externalAccessAspect">
+            <properties>
+                <property name="bcpg:externalAccessGroup">
+                    <type>d:text</type>
+                   <index enabled="true">
+                        <tokenised>false</tokenised>
+                        <facetable>false</facetable>
+                    </index>
+                </property>
+            </properties>
+         </aspect>
 
 	</aspects>
 </model>

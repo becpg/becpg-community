@@ -32,21 +32,36 @@ import fr.becpg.repo.product.data.productList.ToxListDataItem;
 import fr.becpg.repo.product.formulation.clp.HazardClassificationFormulaContext;
 import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 
+/**
+ * <p>StandardSoapTestProduct class.</p>
+ *
+ * @author matthieu
+ */
 public class StandardSoapTestProduct extends SampleProductBuilder {
 
+	/** Constant <code>H226_FORBIDDEN="Product should not contain H226"</code> */
 	public static final String H226_FORBIDDEN = "Product should not contain H226";
+	/** Constant <code>H290_DANGER_FORBIDDEN="Product should not contain H290 with Da"{trunked}</code> */
 	public static final String H290_DANGER_FORBIDDEN = "Product should not contain H290 with Danger";
+	/** Constant <code>DANGER_FORBIDDEN="Product should not contain Danger"</code> */
 	public static final String DANGER_FORBIDDEN = "Product should not contain Danger";
+	/** Constant <code>GHS07_FORBIDDEN="Product should not contain Pictogram GH"{trunked}</code> */
 	public static final String GHS07_FORBIDDEN = "Product should not contain Pictogram GHS07";
+	/** Constant <code>CLIMATE_CHANGE="Climate change"</code> */
 	public static final String CLIMATE_CHANGE = "Climate change";
 
 	// Transport subcategories
+	/** Constant <code>CLIENT_TRANSPORT_IMPACTS="Client transport carbon impact (kg CO2/"{trunked}</code> */
 	public static final String CLIENT_TRANSPORT_IMPACTS = "Client transport carbon impact (kg CO2/kg/km)";
+	/** Constant <code>SUPPLIER_TRANSPORT_IMPACT="Supplier transport carbon impact (kCO2/"{trunked}</code> */
 	public static final String SUPPLIER_TRANSPORT_IMPACT = "Supplier transport carbon impact (kCO2/kg/km)";
 
+	/** Constant <code>EPI_SCORE="EPI Score"</code> */
 	public static final String EPI_SCORE = "EPI Score";
+	/** Constant <code>SPI_SCORE="SPI Score"</code> */
 	public static final String SPI_SCORE = "SPI Score";
 
+	/** Constant <code>SUPPLIER_ECOVADIS_CERTIFICATION="Supplier Ecovadis Certification Score"</code> */
 	public static final String SUPPLIER_ECOVADIS_CERTIFICATION = "Supplier Ecovadis Certification Score";
 
 	private boolean isWithCompo = true;
@@ -55,6 +70,11 @@ public class StandardSoapTestProduct extends SampleProductBuilder {
 	private boolean isWithSpecification = false;
 	private boolean isWithToxicology = false;
 
+	/**
+	 * <p>Constructor for StandardSoapTestProduct.</p>
+	 *
+	 * @param builder a {@link fr.becpg.repo.sample.StandardSoapTestProduct.Builder} object
+	 */
 	protected StandardSoapTestProduct(Builder builder) {
 		super(builder);
 		this.isWithCompo = builder.isWithCompo;
@@ -110,16 +130,22 @@ public class StandardSoapTestProduct extends SampleProductBuilder {
 	}
 
 	// Raw Material Names
+	/** Constant <code>SODIUM_HYDROXIDE="Sodium Hydroxide"</code> */
 	public static final String SODIUM_HYDROXIDE = "Sodium Hydroxide";
+	/** Constant <code>SODIUM_CARBONATE="Sodium Carbonate"</code> */
 	public static final String SODIUM_CARBONATE = "Sodium Carbonate";
+	/** Constant <code>SODIUM_CHLORIDE="Sodium Chloride"</code> */
 	public static final String SODIUM_CHLORIDE = "Sodium Chloride";
+	/** Constant <code>OLIVE_OIL="Olive Oil"</code> */
 	public static final String OLIVE_OIL = "Olive Oil";
+	/** Constant <code>ESSENTIAL_OILS="Essential Oils Mix"</code> */
 	public static final String ESSENTIAL_OILS = "Essential Oils Mix";
 
 	protected NodeRef sodiumHydroxideNodeRef;
 	protected NodeRef oliveOilNodeRef;
 	protected NodeRef essentialOilsNodeRef;
 
+	/** {@inheritDoc} */
 	@Override
 	public FinishedProductData createTestProduct() {
 
@@ -211,6 +237,11 @@ public class StandardSoapTestProduct extends SampleProductBuilder {
 
 	}
 
+	/**
+	 * <p>createPhysicoChems.</p>
+	 *
+	 * @param soapProduct a {@link fr.becpg.repo.product.data.FinishedProductData} object
+	 */
 	protected void createPhysicoChems(FinishedProductData soapProduct) {
 		// Add physico-chemical properties
 		addPhysicoChemProperty(soapProduct, "Boiling point", HazardClassificationFormulaContext.BOILING_POINT, 78.0); // Boiling point
@@ -218,6 +249,11 @@ public class StandardSoapTestProduct extends SampleProductBuilder {
 		addPhysicoChemProperty(soapProduct, "Hydrocarbon", HazardClassificationFormulaContext.HYDROCARBON_PERC, 15.0); // Hydrocarbon percentage
 	}
 
+	/**
+	 * <p>createProductSpecifications.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	protected List<ProductSpecificationData> createProductSpecifications() {
 
 		ProductSpecificationData productSpecification = ProductSpecificationData.build().withName(uniqueName("🧼 Soap products specification 📋"))
@@ -240,6 +276,9 @@ public class StandardSoapTestProduct extends SampleProductBuilder {
 		return List.of(productSpecification);
 	}
 
+	/**
+	 * <p>initRawMaterialsWithIngredients.</p>
+	 */
 	public void initRawMaterialsWithIngredients() {
 		// Create Sodium Hydroxide raw material with ingredients
 		RawMaterialData sodiumHydroxide = RawMaterialData.build().withName(uniqueName(SODIUM_HYDROXIDE)).withQty(100d).withUnit(ProductUnit.kg)
@@ -384,6 +423,17 @@ public class StandardSoapTestProduct extends SampleProductBuilder {
 		return IngListDataItem.build().withQtyPerc(percentage).withIngredient(ing);
 	}
 
+	/**
+	 * <p>addIngredient.</p>
+	 *
+	 * @param product a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param ingName a {@link java.lang.String} object
+	 * @param percentage a {@link java.lang.Double} object
+	 * @param hazardClass a {@link java.lang.String} object
+	 * @param toxicityOral a {@link java.lang.Double} object
+	 * @param mFactor a {@link java.lang.Double} object
+	 * @param superSensitizing a {@link java.lang.Boolean} object
+	 */
 	public void addIngredient(ProductData product, String ingName, Double percentage, String hazardClass, Double toxicityOral, Double mFactor,
 			Boolean superSensitizing) {
 		if (product.getIngList() == null) {
@@ -394,6 +444,14 @@ public class StandardSoapTestProduct extends SampleProductBuilder {
 
 	}
 
+	/**
+	 * <p>addPhysicoChemProperty.</p>
+	 *
+	 * @param product a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param name a {@link java.lang.String} object
+	 * @param code a {@link java.lang.String} object
+	 * @param value a {@link java.lang.Double} object
+	 */
 	public void addPhysicoChemProperty(ProductData product, String name, String code, Double value) {
 		PhysicoChemListDataItem physicoChemList = new PhysicoChemListDataItem();
 
@@ -413,6 +471,14 @@ public class StandardSoapTestProduct extends SampleProductBuilder {
 		product.getPhysicoChemList().add(physicoChemList);
 	}
 
+	/**
+	 * <p>addLCAProperty.</p>
+	 *
+	 * @param product a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param name a {@link java.lang.String} object
+	 * @param code a {@link java.lang.String} object
+	 * @param value a {@link java.lang.Double} object
+	 */
 	public void addLCAProperty(ProductData product, String name, String code, Double value) {
 		LCAListDataItem lcaListDataItem = new LCAListDataItem();
 
@@ -434,14 +500,29 @@ public class StandardSoapTestProduct extends SampleProductBuilder {
 	}
 
 	// Getters
+	/**
+	 * <p>Getter for the field <code>sodiumHydroxideNodeRef</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public NodeRef getSodiumHydroxideNodeRef() {
 		return sodiumHydroxideNodeRef;
 	}
 
+	/**
+	 * <p>Getter for the field <code>oliveOilNodeRef</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public NodeRef getOliveOilNodeRef() {
 		return oliveOilNodeRef;
 	}
 
+	/**
+	 * <p>Getter for the field <code>essentialOilsNodeRef</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public NodeRef getEssentialOilsNodeRef() {
 		return essentialOilsNodeRef;
 	}

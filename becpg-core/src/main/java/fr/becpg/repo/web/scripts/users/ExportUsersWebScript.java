@@ -22,20 +22,36 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.helper.AttachmentHelper;
 
+/**
+ * <p>ExportUsersWebScript class.</p>
+ *
+ * @author matthieu
+ */
 public class ExportUsersWebScript extends AbstractWebScript {
 
 	private NodeService nodeService;
 
 	private PersonService personService;
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>personService</code>.</p>
+	 *
+	 * @param personService a {@link org.alfresco.service.cmr.security.PersonService} object
+	 */
 	public void setPersonService(PersonService personService) {
 		this.personService = personService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
 

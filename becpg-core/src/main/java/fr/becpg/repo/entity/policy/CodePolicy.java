@@ -31,11 +31,6 @@ public class CodePolicy extends AbstractBeCPGPolicy implements NodeServicePolici
 
 	private AutoNumService autoNumService;
 
-	/** {@inheritDoc} */
-	public void setPolicyComponent(PolicyComponent policyComponent) {
-		this.policyComponent = policyComponent;
-	}
-
 
 	/**
 	 * <p>Setter for the field <code>autoNumService</code>.</p>

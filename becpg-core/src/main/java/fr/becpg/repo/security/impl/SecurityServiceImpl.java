@@ -129,6 +129,9 @@ public class SecurityServiceImpl implements SecurityService {
 				if (!permissions.isEmpty()) {
 					accesMode = computeAccessMode(nodeRef, nodeType, permissions);
 				}
+				
+				accesMode = computePluginAccessMode(nodeRef, nodeType, accesMode);
+				
 			}
 
 			return accesMode;
@@ -141,6 +144,8 @@ public class SecurityServiceImpl implements SecurityService {
 		}
 	}
 	
+
+
 	private boolean isEntityTemplate(NodeRef nodeRef) {
 		return nodeRef != null && nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_TPL);
 	}
@@ -373,6 +378,15 @@ public class SecurityServiceImpl implements SecurityService {
 		}
 
 		return false;
+	}
+	
+	private int computePluginAccessMode(NodeRef nodeRef, QName nodeType, int accesMode) {
+		for (SecurityServicePlugin plugin : securityPlugins) {
+			if (plugin.accept(nodeType)) {
+				accesMode =  plugin.computeAccessMode(nodeRef, accesMode);
+			}
+		}
+		return accesMode;
 	}
 
 	private String computeNodeTypePropKey(QName nodeType, String propName) {

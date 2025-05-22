@@ -96,7 +96,12 @@ public class BeCPGUserAccountService {
 			if (personService.personExists(userAccount.getUserName())) {
 				personNodeRef = updateUser(userAccount, propMap);
 			} else {
+				userAccount.setUserName(userAccount.getUserName().toLowerCase());
 				personNodeRef = createUser(userAccount, propMap);
+			}
+			
+			if (userAccount.getPassword() != null && !userAccount.getPassword().isBlank()) {
+				updatePassword(userAccount.getUserName(), userAccount.getPassword(), Boolean.TRUE.equals(userAccount.getNotify()));
 			}
 			
 			updateGroups(userAccount);
@@ -166,6 +171,12 @@ public class BeCPGUserAccountService {
 		}
 	}
 
+	/**
+	 * <p>generatePassword.</p>
+	 *
+	 * @param username a {@link java.lang.String} object
+	 * @param notify a boolean
+	 */
 	public void generatePassword(String username, boolean notify) {
 		if (!personService.personExists(username)) {
 			throw new IllegalStateException("user does not exist: " + username);
@@ -176,6 +187,11 @@ public class BeCPGUserAccountService {
 		updatePassword(username, newPassword, notify);
 	}
 
+	/**
+	 * <p>deleteUser.</p>
+	 *
+	 * @param username a {@link java.lang.String} object
+	 */
 	public void deleteUser(String username) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Delete user: " + username);
@@ -257,10 +273,8 @@ public class BeCPGUserAccountService {
 		NodeRef personNodeRef = personService.getPerson(userName);
 		setIdsUser(userAccount, userName, personNodeRef, true);
 		if (userAccount.getNewUserName() != null && !userAccount.getNewUserName().isBlank()) {
+			userAccount.setNewUserName(userAccount.getNewUserName().toLowerCase());
 			renameUser(userAccount, personNodeRef);
-		}
-		if (userAccount.getPassword() != null && !userAccount.getPassword().isBlank()) {
-			updatePassword(userAccount.getUserName(), userAccount.getPassword(), Boolean.TRUE.equals(userAccount.getNotify()));
 		}
 		nodeService.addProperties(personNodeRef, propMap);
 		return personNodeRef;

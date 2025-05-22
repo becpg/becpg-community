@@ -49,7 +49,7 @@ public class RegulatoryListAttributeExtractorPlugin extends CharactAttributeExtr
 	/** {@inheritDoc} */
 	@Override
 	public Integer getPriority() {
-		return 1;
+		return HIGH_PRIORITY;
 	}
 
 }

@@ -227,7 +227,7 @@ public class BeCPGStateHelper extends BaseScopableProcessorExtension {
 	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @return a boolean
 	 */
-	public boolean isOnMergeEntity(NodeRef entityNodeRef) {
+	public static boolean isOnMergeEntity(NodeRef entityNodeRef) {
 		return isOnMergeMajorVersion(entityNodeRef) || isOnMergeMinorVersion(entityNodeRef);
 	}
 
@@ -237,7 +237,7 @@ public class BeCPGStateHelper extends BaseScopableProcessorExtension {
 	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @return a boolean
 	 */
-	public boolean isOnCreateEntity(NodeRef entityNodeRef) {
+	public static boolean isOnCreateEntity(NodeRef entityNodeRef) {
 		return hasEntity(entityNodeRef, ACTION_CREATE_ENTITY);
 	}
 	
@@ -247,7 +247,7 @@ public class BeCPGStateHelper extends BaseScopableProcessorExtension {
 	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @return a boolean
 	 */
-	public boolean isOnMergeMinorVersion(NodeRef entityNodeRef) {
+	public static boolean isOnMergeMinorVersion(NodeRef entityNodeRef) {
 		return hasEntity(entityNodeRef, ACTION_CREATE_MINOR_VERSION);
 	}
 
@@ -257,7 +257,7 @@ public class BeCPGStateHelper extends BaseScopableProcessorExtension {
 	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @return a boolean
 	 */
-	public boolean isOnMergeMajorVersion(NodeRef entityNodeRef) {
+	public static boolean isOnMergeMajorVersion(NodeRef entityNodeRef) {
 		return hasEntity(entityNodeRef, ACTION_CREATE_MAJOR_VERSION);
 	}
 
@@ -267,7 +267,7 @@ public class BeCPGStateHelper extends BaseScopableProcessorExtension {
 	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @return a boolean
 	 */
-	public boolean isOnCopyEntity(NodeRef entityNodeRef) {
+	public static boolean isOnCopyEntity(NodeRef entityNodeRef) {
 		return hasEntity(entityNodeRef, ACTION_COPY_ENTITY);
 	}
 
@@ -277,7 +277,7 @@ public class BeCPGStateHelper extends BaseScopableProcessorExtension {
 	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @return a boolean
 	 */
-	public boolean isOnFormulateEntity(NodeRef entityNodeRef) {
+	public static boolean isOnFormulateEntity(NodeRef entityNodeRef) {
 		return hasEntity(entityNodeRef, ACTION_FORMULATE_ENTITY);
 	}
 
@@ -287,11 +287,11 @@ public class BeCPGStateHelper extends BaseScopableProcessorExtension {
 	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @return a boolean
 	 */
-	public boolean isOnBranchEntity(NodeRef entityNodeRef) {
+	public static boolean isOnBranchEntity(NodeRef entityNodeRef) {
 		return hasEntity(entityNodeRef, ACTION_BRANCH_ENTITY);
 	}
 
-	private boolean hasEntity(NodeRef entityNodeRef, String state) {
+	private static boolean hasEntity(NodeRef entityNodeRef, String state) {
 		Set<NodeRef> nodeRefs = TransactionalResourceHelper.getSet(state);
 		return nodeRefs.contains(entityNodeRef);
 	}

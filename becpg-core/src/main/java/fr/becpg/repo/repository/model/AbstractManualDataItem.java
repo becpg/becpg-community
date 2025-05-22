@@ -33,7 +33,15 @@ public abstract class AbstractManualDataItem extends BeCPGDataObject implements 
 
 	
 	private static final long serialVersionUID = 4027538577640263821L;
+	
+	/**
+	 * Indicates whether this data item is manually managed.
+	 */
 	protected Boolean isManual = Boolean.FALSE;
+	
+	/**
+	 * The sort order of this data item.
+	 */
 	protected Integer sort;
 
 	/**

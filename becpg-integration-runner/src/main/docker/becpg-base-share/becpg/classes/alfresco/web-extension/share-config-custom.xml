@@ -542,6 +542,22 @@
       <visible>false</visible>
    </config>
    
+   
+     <config evaluator="string-compare" condition="AIMS">
+        <enabled>OAUTH2_ENABLED</enabled>
+        <realm>OAUTH2_REALM</realm>
+        <resource>OAUTH2_RESOURCE</resource>
+        <authServerUrl>OAUTH2_SERVER_URL</authServerUrl>
+        <secret>OAUTH2_SECRET</secret>
+        <sslRequired>none</sslRequired>
+        <publicClient>false</publicClient>
+        <autodetectBearerOnly>true</autodetectBearerOnly>
+        <alwaysRefreshToken>true</alwaysRefreshToken>
+        <principalAttribute>preferred_username</principalAttribute>
+        <enableBasicAuth>false</enableBasicAuth>
+    </config>
+   
+
    <!-- Kerberos settings -->
    <!-- To enable kerberos rename this condition to "Kerberos" -->
    <config evaluator="string-compare" condition="KerberosDisabled" replace="true">
@@ -576,6 +592,7 @@
       </kerberos>
    </config>
 
+
    <!-- Uncomment and modify the URL to Activiti Admin Console if required. -->
    <!--
    <config evaluator="string-compare" condition="ActivitiAdmin" replace="true">
@@ -596,6 +613,7 @@
             <class>org.alfresco.web.site.servlet.SlingshotAlfrescoConnector</class>
             <userHeader>X-Alfresco-Remote-User</userHeader>
          </connector>
+
          
          <!-- 
          <authenticator>
