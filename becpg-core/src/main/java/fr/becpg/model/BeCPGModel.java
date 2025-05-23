@@ -397,4 +397,24 @@ public final class BeCPGModel {
 	public static final QName PROP_CM_FROM = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "from");
 	/** Constant <code>PROP_CM_TO</code> */
 	public static final QName PROP_CM_TO = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "to");
+	
+	// AI aspect
+	/** Constant <code>ASPECT_AI</code> */
+	public static final QName ASPECT_AI = QName.createQName(BECPG_URI, "aiAspect");
+	/** Constant <code>PROP_AI_VALIDATION_CRITERIA</code> */
+	public static final QName PROP_AI_VALIDATION_CRITERIA = QName.createQName(BECPG_URI, "aiValidationCriteria");
+	/** Constant <code>PROP_AI_SUGGESTED_FIELDS</code> */
+	public static final QName PROP_AI_SUGGESTED_FIELDS = QName.createQName(BECPG_URI, "aiSuggestedFields");
+	/** Constant <code>PROP_AI_EXTRA_PROMPT</code> */
+	public static final QName PROP_AI_EXTRA_PROMPT = QName.createQName(BECPG_URI, "aiExtraPrompt");
+	
+	// AI validation aspect
+	/** Constant <code>ASPECT_AI_VALIDATION</code> */
+	public static final QName ASPECT_AI_VALIDATION = QName.createQName(BECPG_URI, "aiValidationAspect");
+	/** Constant <code>PROP_AI_VALIDATION_CRITERIA</code> */
+	public static final QName PROP_AI_VALIDATION_STATE = QName.createQName(BECPG_URI, "aiValidationState");
+	/** Constant <code>PROP_AI_SUGGESTED_FIELDS</code> */
+	public static final QName PROP_AI_VALIDATION_HINTS = QName.createQName(BECPG_URI, "aiValidationHints");
+	/** Constant <code>PROP_AI_EXTRA_PROMPT</code> */
+	public static final QName PROP_AI_VALIDATION_DATE = QName.createQName(BECPG_URI, "aiValidationDate");
 }
