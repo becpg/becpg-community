@@ -3249,11 +3249,15 @@
 					<show id="bcpg:docTypeLinkedHierarchy" force="true" />
 					<show id="bcpg:docTypeLinkedCharacts" force="true" />
 					<show id="bcpg:docTypeDestPath" force="true" />
+					<show id="bcpg:aiValidationState" force="true" />
+					<show id="bcpg:aiValidationHints" force="true" />
+					<show id="bcpg:aiValidationDate" force="true" />
 					<show id="bcpg:isDeleted" force="true" />
 				</field-visibility>
 				<appearance>
 					<set id="documentType" label-id="becpg.forms.set.document-type.label" />
 					<set id="documentTypeAutogeneration" label-id="becpg.forms.set.document-type-autogeneration.label" />
+					<set id="aiValidation" label-id="becpg.forms.set.ai-validation.label" />
 					
 					<field id="bcpg:charactName" set="documentType" >
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
@@ -3307,6 +3311,12 @@
 						</control>
 					</field>
 					<field id="bcpg:docTypeDestPath" set="documentTypeAutogeneration" />
+					
+					<field id="bcpg:aiValidationState" set="aiValidation" />
+					<field id="bcpg:aiValidationHints" set="aiValidation" >
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="bcpg:aiValidationDate" set="aiValidation" />
 				</appearance>
 			</form>
 
@@ -3378,11 +3388,15 @@
 					<show id="bcpg:docTypeLinkedHierarchy" force="true" />
 					<show id="bcpg:docTypeLinkedCharacts" force="true" />
 					<show id="bcpg:docTypeDestPath" force="true" />
+					<show id="bcpg:aiValidationState" force="true" />
+					<show id="bcpg:aiValidationHints" force="true" />
+					<show id="bcpg:aiValidationDate" force="true" />
 					<show id="bcpg:isDeleted" force="true" />
 				</field-visibility>
 				<appearance>
 					<set id="documentType" label-id="becpg.forms.set.document-type.label" />
 					<set id="documentTypeAutogeneration" label-id="becpg.forms.set.document-type-autogeneration.label" />
+					<set id="aiValidation" label-id="becpg.forms.set.ai-validation.label" />
 					
 					<field id="bcpg:charactName" set="documentType" >
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
@@ -3436,6 +3450,12 @@
 						</control>
 					</field>
 					<field id="bcpg:docTypeDestPath" set="documentTypeAutogeneration" />
+					
+					<field id="bcpg:aiValidationState" set="aiValidation" />
+					<field id="bcpg:aiValidationHints" set="aiValidation" >
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="bcpg:aiValidationDate" set="aiValidation" />
 				</appearance>
 			</form>
 		</forms>
@@ -11169,7 +11189,52 @@
 			</form>
 		</forms>
 	</config>
-
+	
+	<config evaluator="aspect" condition="bcpg:aiValidationAspect">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="bcpg:aiValidationState" />
+					<show id="bcpg:aiValidationHints" />
+					<show id="bcpg:aiValidationDate" />
+				</field-visibility>
+				<appearance>
+					<set id="aiValidation" appearance="bordered-panel" label-id="becpg.forms.set.ai-validation.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="bcpg:aiValidationState" set="aiValidation" />
+					<field id="bcpg:aiValidationHints" set="aiValidation" >
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="bcpg:aiValidationDate" set="aiValidation" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	<config evaluator="aspect" condition="bcpg:aiAspect">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="bcpg:aiValidationCriteria" />
+					<show id="bcpg:aiSuggestedFields" />
+					<show id="bcpg:aiExtraPrompt" />
+				</field-visibility>
+				<appearance>
+					<set id="ai" appearance="bordered-panel" label-id="becpg.forms.set.ai.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="bcpg:aiValidationCriteria" set="ai" >
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="bcpg:aiSuggestedFields" set="ai" >
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="bcpg:aiExtraPrompt" set="ai" >
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
 
 	<config evaluator="aspect" condition="bcpg:supplierAspect">
 		<forms>
