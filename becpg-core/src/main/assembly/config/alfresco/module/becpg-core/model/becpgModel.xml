@@ -195,8 +195,16 @@
 				</list>
 			</parameter>
 		</constraint>
-
-
+		
+		<constraint name="bcpg:aiValidationStates" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>ToValidate</value>
+					<value>Valid</value>
+					<value>Refused</value>
+				</list>
+			</parameter>
+		</constraint>
 
 	</constraints>
 
@@ -653,6 +661,9 @@
 					</target>
 				</association>
 			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:aiAspect</aspect>
+			</mandatory-aspects>
 		</type>
 	</types>
 	<aspects>
@@ -1291,6 +1302,9 @@
 					</target>
 				</association>
 			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:aiAspect</aspect>
+			</mandatory-aspects>
 		</aspect>
 
 		<aspect name="bcpg:entityTplRefAspect">
@@ -1520,8 +1534,74 @@
 			</associations>
 			<mandatory-aspects>
 				<aspect>bcpg:codeAspect</aspect>
+				<aspect>bcpg:aiValidationAspect</aspect>
 				<aspect>cm:effectivity</aspect>
 			</mandatory-aspects>
 		</aspect>
+		
+		<aspect name="bcpg:aiValidationAspect">
+			<properties>
+				<property name="bcpg:aiValidationState">
+					<type>d:text</type>
+					<default>ToValidate</default>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:aiValidationStates" />
+					</constraints>
+				</property>
+				<property name="bcpg:aiValidationHints">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+				<property name="bcpg:aiValidationDate">
+					<type>d:date</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+			</properties>
+			<associations/>
+		</aspect>
+		
+		<aspect name="bcpg:aiAspect">
+			<properties>
+				<property name="bcpg:aiValidationCriteria">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+				<property name="bcpg:aiSuggestedFields">
+					<type>d:qname</type>
+					<mandatory>false</mandatory>
+					<multiple>true</multiple>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+				<property name="bcpg:aiExtraPrompt">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+			</properties>
+			<associations/>
+		</aspect>
+		
 	</aspects>
 </model>
