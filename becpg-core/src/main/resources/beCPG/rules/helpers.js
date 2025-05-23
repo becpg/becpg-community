@@ -1140,8 +1140,9 @@ function getProjectFolder(node) {
         if (folder.parent === null) {
             return null;
         }
-
+		
         folder = folder.parent;
+        i++;
     }
 
     return null;
