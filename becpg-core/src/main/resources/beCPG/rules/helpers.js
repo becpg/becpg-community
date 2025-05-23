@@ -138,6 +138,8 @@
  * isOnFormulateEntity(node) Test we are formulating entity
  * 
  * isOnBranchEntity(node) Test we are branching entity
+ * 
+ * getProjectFolder(node) return project if node is contain in project folder
  */
 
 const SIMULATION_SITE_ID = "simulation";
@@ -1119,4 +1121,28 @@ function isOnBranchEntity(node) {
 
 function deleteExternalUser(userNode, supplierNode) {
 	bSupplier.deleteExternalUser(userNode, supplierNode);
+}
+
+/**
+ * @param {(ScriptNode|NodeRef)} node
+ * @returns {ScriptNode} project node if node is in project folder
+ */
+function getProjectFolder(node) {
+    var i = 0;
+
+    var folder = node.parent;
+	
+    while (folder.isContainer && i<4) {
+		
+        if (folder.isSubType("pjt:project")) {
+            return folder;
+        }
+        if (folder.parent === null) {
+            return null;
+        }
+
+        folder = folder.parent;
+    }
+
+    return null;
 }
