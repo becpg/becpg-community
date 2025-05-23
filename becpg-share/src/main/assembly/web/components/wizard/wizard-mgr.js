@@ -138,7 +138,7 @@
 									
                                     setNextAllowed(false);
                                     
-	                                if (!firstStepTab.hasClass("Valid")) {
+	                                if (firstStepTab != null && !firstStepTab.hasClass("Valid")) {
                         				firstStepTab.addClass("Valid");
                     				}
 
