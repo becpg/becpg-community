@@ -285,6 +285,8 @@
 				<aspect name="bcpg:autoMergeAspect" />
 				<aspect name="bcpg:linkedSearchAspect" />
 				<aspect name="bcpg:documentAspect" />
+				<aspect name="bcpg:aiAspect" />
+				<aspect name="bcpg:aiValidationAspect" />
 			</visible>
 
 			<!-- Aspects that a user can add. Same as "visible" if left empty -->
