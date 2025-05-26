@@ -139,7 +139,7 @@
  * 
  * isOnBranchEntity(node) Test we are branching entity
  * 
- * getProjectFolder(node) return project if node is contain in project folder
+ * getEntity(childNode, itemType) return first parent entity that is of type itemType
  */
 
 const SIMULATION_SITE_ID = "simulation";
@@ -1124,26 +1124,11 @@ function deleteExternalUser(userNode, supplierNode) {
 }
 
 /**
- * @param {(ScriptNode|NodeRef)} node
- * @returns {ScriptNode} project node if node is in project folder
+ * @param {ScriptNode} childNode
+ * @param {string} itemType
+ * @returns {ScriptNode} first parent entity that is of type itemType
  */
-function getProjectFolder(node) {
-    var i = 0;
-
-    var folder = node.parent;
-	
-    while (folder.isContainer && i<4) {
-		
-        if (folder.isSubType("pjt:project")) {
-            return folder;
-        }
-        if (folder.parent === null) {
-            return null;
-        }
-		
-        folder = folder.parent;
-        i++;
-    }
-
-    return null;
+function getEntity(childNode, itemType) {
+	return bcpg.getEntity(childNode, itemType);
 }
+
