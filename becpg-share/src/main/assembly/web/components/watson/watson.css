@@ -108,6 +108,26 @@
 	z-index: 1017
 }
 
+.watson-resize-handle {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 16px;
+	height: 16px;
+	background: var(--becpg-green);
+	cursor: se-resize;
+	display: none;
+	z-index: 1200;
+}
+
+#watson-container.transition .watson-resize-handle {
+	display: block;
+}
+
+#watson-chatbot-container.being-resized {
+	user-select: none;
+}
+
 #watson-container.chatbot-hidden #watson-chatbot-container,
 	#watson-container.watson-chat-shifted.chatbot-hidden #watson-chatbot-container
 	{
@@ -139,7 +159,10 @@
 	border-radius: 20px;
 	min-height: 600px;
 	min-width: 380px;
-	z-index: 1110
+	z-index: 1110;
+	position: relative;
+	resize: both;
+	overflow: hidden
 }
 
 #watson-container.transition #watson-chatbot-container .icon-close {
@@ -210,7 +233,6 @@
 	{
 	display: none
 }
-
 
 #watson-chatbot-container {
 	background-color: #fff;
