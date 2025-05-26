@@ -1602,7 +1602,7 @@
 				</field-visibility>
 			</form>
 			
-			<form id="datagrid">
+			<form id="export">
 				<field-visibility>
 					<show id="bcpg:charactName" />
 					<show id="bcpg:legalName" />
