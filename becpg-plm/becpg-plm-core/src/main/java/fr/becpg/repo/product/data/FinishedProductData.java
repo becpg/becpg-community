@@ -9,6 +9,7 @@ import org.alfresco.service.cmr.repository.MLText;
 
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
@@ -199,6 +200,11 @@ public class FinishedProductData extends ProductData {
 		return this;
 	}
 	
+	public FinishedProductData withLabelClaimList(List<LabelClaimListDataItem> labelClaimList) {
+		setLabelClaimList(labelClaimList);
+		return this;
+	}
+
 	/**
 	 * <p>withLabelingRuleList.</p>
 	 *

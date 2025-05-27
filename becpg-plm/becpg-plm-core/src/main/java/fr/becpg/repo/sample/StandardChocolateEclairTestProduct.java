@@ -14,6 +14,8 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.Pair;
 
+// Removed unused import
+
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LogisticUnitData;
@@ -26,6 +28,8 @@ import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
+import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
+import static fr.becpg.repo.product.data.productList.LabelClaimListDataItem.build;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
@@ -45,6 +49,25 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 	public static final String WATER_NAME = "Eau";
 	/** Constant <code>MILK_NAME="Lait"</code> */
 	public static final String MILK_NAME = "Lait";
+	/** Constant <code>CLAIM_EU_ORGANIC="EU_ORGANIC"</code> */
+	public static final String CLAIM_EU_ORGANIC = "EU_ORGANIC";
+	/** Constant <code>CLAIM_EU_ORGANIC_LABEL="EU organic agriculture"</code> */
+	public static final String CLAIM_EU_ORGANIC_LABEL = "EU organic agriculture";
+	/** Constant <code>CLAIM_KOSHER="KOSHER"</code> */
+	public static final String CLAIM_KOSHER = "KOSHER";
+	/** Constant <code>CLAIM_KOSHER_LABEL="Kosher"</code> */
+	public static final String CLAIM_KOSHER_LABEL = "Kosher";
+	/** Constant <code>CLAIM_HALAL="HALAL"</code> */
+	public static final String CLAIM_HALAL = "HALAL";
+	/** Constant <code>CLAIM_HALAL_LABEL="Halal"</code> */
+	public static final String CLAIM_HALAL_LABEL = "Halal";
+
+	public static final String CERT_ISO_9001 = "ISO 9001";
+	public static final String CERT_BRC = "BRC";
+	public static final String CERT_IFS = "IFS";
+	public static final String CERT_ISO_22000 = "ISO 22000";
+	public static final String CERT_FSSC_22000 = "FSSC 22000";
+	
 	/** Constant <code>SUGAR_NAME="Sucre"</code> */
 	public static final String SUGAR_NAME = "Sucre";
 	/** Constant <code>SUGAR_SUPPLIER_1_NAME="Sucre - Fournisseur 1"</code> */
@@ -113,6 +136,17 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 	protected NodeRef ingFlourNodeRef;
 	protected NodeRef ingEggNodeRef;
 	protected NodeRef ingChocolateNodeRef;
+
+	protected NodeRef euOrganicClaim;
+	protected NodeRef kosherClaim;
+	protected NodeRef halalClaim;
+
+	protected NodeRef iso9001Cert;	
+	protected NodeRef brcCert;
+	protected NodeRef ifsCert;
+	protected NodeRef iso22000Cert;
+	protected NodeRef fssc22000Cert;
+	
 
 	/**
 	 * <p>Getter for the field <code>pateChouxNodeRef</code>.</p>
@@ -265,6 +299,7 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 	private boolean isWithIngredients = false;
 	private boolean isWithSurvey = false;
 	private boolean isWithScoreList = false;
+	private boolean isWithClaim = false;
 
 	// Private constructor to enforce usage of the builder
 	private StandardChocolateEclairTestProduct(Builder builder) {
@@ -276,6 +311,7 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 		this.isWithIngredients = builder.isWithIngredients;
 		this.isWithSurvey = builder.isWithSurvey;
 		this.isWithScoreList = builder.isWithScoreList;
+		this.isWithClaim = builder.isWithClaim;
 	}
 
 	// Static inner Builder class
@@ -287,18 +323,22 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 		private boolean isWithIngredients = false;
 		private boolean isWithSurvey = false;
 		private boolean isWithScoreList = false;
-		
-		
+		private boolean isWithClaim = false;
+
+		public Builder withClaim(boolean isWithClaim) {
+			this.isWithClaim = isWithClaim;
+			return this;
+		}
+
 		public Builder withSurvey(boolean isWithSurvey) {
 			this.isWithSurvey = isWithSurvey;
 			return this;
 		}
-		
+
 		public Builder withScoreList(boolean isWithScoreList) {
 			this.isWithScoreList = isWithScoreList;
 			return this;
 		}
-		
 
 		public Builder withCompo(boolean isWithCompo) {
 			this.isWithCompo = isWithCompo;
@@ -342,6 +382,13 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 		FinishedProductData finishedProduct = FinishedProductData.build().withName("Éclair au chocolat").withUnit(ProductUnit.kg).withQty(550d)
 				.withDensity(1d);
 
+       	initCertifications();
+		
+		if (isWithClaim) {
+			initClaims();
+			finishedProduct.withLabelClaimList(createClaimList());
+		}
+
 		if (isWithCompo) {
 
 			if (pateChouxNodeRef == null) {
@@ -370,12 +417,12 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 									.withLabelingRuleType(LabelingRuleType.Prefs)));
 
 		}
-		
-		if(isWithSurvey) {
+
+		if (isWithSurvey) {
 			finishedProduct.withSurveyList(createEclairQMSSurveyList());
 		}
-		
-		if(isWithScoreList) {
+
+		if (isWithScoreList) {
 			finishedProduct.withScoreList(createScoreList());
 		}
 
@@ -383,6 +430,31 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 
 		return finishedProduct;
 
+	}
+
+	private void initClaims() {
+		euOrganicClaim = CharactTestHelper.getOrCreateClaim(nodeService, CLAIM_EU_ORGANIC, CLAIM_EU_ORGANIC_LABEL);
+		kosherClaim = CharactTestHelper.getOrCreateClaim(nodeService, CLAIM_KOSHER, CLAIM_KOSHER_LABEL);
+		halalClaim = CharactTestHelper.getOrCreateClaim(nodeService, CLAIM_HALAL, CLAIM_HALAL_LABEL);
+	}
+
+	private void initCertifications() {
+		iso9001Cert = CharactTestHelper.getOrCreateCertification(nodeService, StandardChocolateEclairTestProduct.CERT_ISO_9001, "ISO 9001 Quality Management System");
+		brcCert = CharactTestHelper.getOrCreateCertification(nodeService, StandardChocolateEclairTestProduct.CERT_BRC, "BRC Global Standard for Food Safety");
+		ifsCert = CharactTestHelper.getOrCreateCertification(nodeService, StandardChocolateEclairTestProduct.CERT_IFS, "International Featured Standards");
+		iso22000Cert = CharactTestHelper.getOrCreateCertification(nodeService, StandardChocolateEclairTestProduct.CERT_ISO_22000, "ISO 22000 Food Safety Management");
+		fssc22000Cert = CharactTestHelper.getOrCreateCertification(nodeService, StandardChocolateEclairTestProduct.CERT_FSSC_22000, "FSSC 22000 Food Safety System Certification");
+	}
+	
+
+	private List<LabelClaimListDataItem> createClaimList() {
+		LabelClaimListDataItem euOrganicItem = LabelClaimListDataItem.build().withLabelClaim(euOrganicClaim);
+
+		LabelClaimListDataItem kosherItem = LabelClaimListDataItem.build().withLabelClaim(kosherClaim);
+
+		LabelClaimListDataItem halalItem = LabelClaimListDataItem.build().withLabelClaim(halalClaim);
+
+		return List.of(euOrganicItem, kosherItem, halalItem);
 	}
 
 	/**
@@ -469,6 +541,13 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 				sugarSupplier1.withIngList(List.of(IngListDataItem.build().withQtyPerc(100d).withIngredient(ingSugarNodeRef)));
 			}
 
+			if (isWithClaim) {
+				// EU_ORGANIC claim for sugarSupplier1 - 100% applicable, 100% claimed, TRUE
+				sugarSupplier1.withLabelClaimList(List.of(LabelClaimListDataItem.build().withPercentApplicable(100d).withPercentClaim(100d)
+						.withLabelClaim(CharactTestHelper.getOrCreateClaim(nodeService, CLAIM_EU_ORGANIC,CLAIM_EU_ORGANIC_LABEL))
+						.withIsClaimed(Boolean.TRUE)));
+			}
+
 			RawMaterialData sugarSupplier2 = RawMaterialData.build().withName(SUGAR_SUPPLIER_2_NAME).withUnit(ProductUnit.kg).withPlants(
 					List.of(getOrCreateCharact(PLANT_USINE_1, PLMModel.TYPE_PLANT), getOrCreateCharact(PLANT_USINE_2, PLMModel.TYPE_PLANT)));
 			sugarSupplier2.setSuppliers(List.of(getOrCreateCharact(SUPPLIER_2, PLMModel.TYPE_SUPPLIER)));
@@ -477,12 +556,26 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 				sugarSupplier2.withIngList(List.of(IngListDataItem.build().withQtyPerc(100d).withIngredient(ingSugarNodeRef)));
 			}
 
+			if (isWithClaim) {
+				// KOSHER claim for sugarSupplier2 - 75% applicable, 50% claimed, FALSE
+				sugarSupplier2.withLabelClaimList(List.of(LabelClaimListDataItem.build().withPercentApplicable(75d).withPercentClaim(50d)
+						.withLabelClaim(CharactTestHelper.getOrCreateClaim(nodeService, CLAIM_KOSHER, CLAIM_KOSHER_LABEL)).withIsClaimed(Boolean.FALSE)));
+			}
+
 			RawMaterialData sugarSupplier3 = RawMaterialData.build().withName(SUGAR_SUPPLIER_3_NAME).withUnit(ProductUnit.kg)
 					.withPlants(List.of(getOrCreateCharact(PLANT_USINE_2, PLMModel.TYPE_PLANT)));
 			sugarSupplier3.setSuppliers(List.of(getOrCreateCharact(SUPPLIER_3, PLMModel.TYPE_SUPPLIER)));
 
 			if (isWithIngredients) {
 				sugarSupplier3.withIngList(List.of(IngListDataItem.build().withQtyPerc(100d).withIngredient(ingSugarNodeRef)));
+			}
+
+			if (isWithClaim) {
+				// HALAL claim for sugarSupplier3 - 60% applicable, 40% claimed, TRUE
+				sugarSupplier3.withLabelClaimList(List.of(LabelClaimListDataItem.build().withPercentApplicable(60d).withPercentClaim(40d)
+						.withLabelClaim(CharactTestHelper.getOrCreateClaim(nodeService, CLAIM_HALAL, CLAIM_HALAL_LABEL)).withIsClaimed(Boolean.TRUE)
+
+				));
 			}
 
 			if (isWithStocks) {
@@ -578,6 +671,11 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 									.withLabelingRuleType(LabelingRuleType.Prefs)));
 		}
 
+		// Set label claims for pateChoux
+		if (isWithClaim) {
+			pateChoux.setLabelClaimList(createClaimList());
+		}
+
 		pateChouxNodeRef = alfrescoRepository.create(destFolder, pateChoux).getNodeRef();
 
 		// Creating semi-finished product (Crème pâtissière)
@@ -595,6 +693,11 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 						CompoListDataItem.build().withQtyUsed(50d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
 								.withProduct(chocolateNodeRef)));
 
+		// Set label claims for cremePatissiere
+		if (isWithClaim) {
+			cremePatissiere.setLabelClaimList(createClaimList());
+		}
+
 		cremePatissiereNodeRef = alfrescoRepository.create(destFolder, cremePatissiere).getNodeRef();
 
 		// Creating semi-finished product (Nappage)
@@ -607,26 +710,31 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 						CompoListDataItem.build().withQtyUsed(30d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
 								.withProduct(chocolateNodeRef)));
 
+		// Set label claims for nappage
+		if (isWithClaim) {
+			nappage.setLabelClaimList(createClaimList());
+		}
+
 		nappageNodeRef = alfrescoRepository.create(destFolder, nappage).getNodeRef();
 	}
 
 	private void initIngredients() {
 
-		ingWaterNodeRef = CharactTestHelper.getOrCreateIng(nodeService,WATER_NAME);
+		ingWaterNodeRef = CharactTestHelper.getOrCreateIng(nodeService, WATER_NAME);
 
 		nodeService.addAspect(ingWaterNodeRef, PLMModel.ASPECT_WATER, new HashMap<>());
 
-		ingMilkNodeRef = CharactTestHelper.getOrCreateIng(nodeService,MILK_NAME);
+		ingMilkNodeRef = CharactTestHelper.getOrCreateIng(nodeService, MILK_NAME);
 
 		nodeService.setProperty(ingMilkNodeRef, PLMModel.PROP_EVAPORATED_RATE, 90d);
 
-		ingSugarNodeRef = CharactTestHelper.getOrCreateIng(nodeService,SUGAR_NAME);
-		ingFlourNodeRef = CharactTestHelper.getOrCreateIng(nodeService,FLOUR_NAME);
-		ingEggNodeRef = CharactTestHelper.getOrCreateIng(nodeService,EGG_NAME);
+		ingSugarNodeRef = CharactTestHelper.getOrCreateIng(nodeService, SUGAR_NAME);
+		ingFlourNodeRef = CharactTestHelper.getOrCreateIng(nodeService, FLOUR_NAME);
+		ingEggNodeRef = CharactTestHelper.getOrCreateIng(nodeService, EGG_NAME);
 
 		nodeService.setProperty(ingEggNodeRef, PLMModel.PROP_EVAPORATED_RATE, 10d);
 
-		ingChocolateNodeRef = CharactTestHelper.getOrCreateIng(nodeService,CHOCOLATE_NAME);
+		ingChocolateNodeRef = CharactTestHelper.getOrCreateIng(nodeService, CHOCOLATE_NAME);
 
 	}
 
@@ -680,140 +788,88 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 
 		});
 	}
-	
+
 	private List<SurveyListDataItem> createEclairQMSSurveyList() {
-	    // Question 1: Choux Pastry Quality Check
-	    final SurveyQuestion question1 = getOrCreateSurveyQuestion(
-	        "Evaluate the choux pastry characteristics:",
-	        PASTRY_QUALITY,
-	        ResponseType.multiChoicelist.name(),
-	        null
-	    );
+		// Question 1: Choux Pastry Quality Check
+		final SurveyQuestion question1 = getOrCreateSurveyQuestion("Evaluate the choux pastry characteristics:", PASTRY_QUALITY,
+				ResponseType.multiChoicelist.name(), null);
 
-	    getOrCreateSurveyAnswer(
-	        question1,
-	        "Perfect - Golden brown, hollow, crisp exterior (18-20cm length)",
-	        100d
-	    );
+		getOrCreateSurveyAnswer(question1, "Perfect - Golden brown, hollow, crisp exterior (18-20cm length)", 100d);
 
-	    final SurveyQuestion q1Answer1 =  getOrCreateSurveyAnswer(
-	        question1,
-	        "Minor defects - Slight color variation, size within 17-21cm",
-	        20d
-	    );
+		final SurveyQuestion q1Answer1 = getOrCreateSurveyAnswer(question1, "Minor defects - Slight color variation, size within 17-21cm", 20d);
 
-	    getOrCreateSurveyAnswer(
-	        question1,
-	        "Major defects - Improper rise, inconsistent texture",
-	        0d
-	    );
+		getOrCreateSurveyAnswer(question1, "Major defects - Improper rise, inconsistent texture", 0d);
 
-	    final SurveyListDataItem survey1 = new SurveyListDataItem();
-	    survey1.setQuestion(question1.getNodeRef());
-	    survey1.setChoices(List.of(q1Answer1.getNodeRef()));
+		final SurveyListDataItem survey1 = new SurveyListDataItem();
+		survey1.setQuestion(question1.getNodeRef());
+		survey1.setChoices(List.of(q1Answer1.getNodeRef()));
 
-	    // Question 2: Puff Pastry Layering Quality Check
-	    final SurveyQuestion question2 = getOrCreateSurveyQuestion(
-	        "Evaluate the puff pastry layering quality:",
-	        PASTRY_QUALITY,
-	        ResponseType.multiChoicelist.name(),
-	        null
-	    );
+		// Question 2: Puff Pastry Layering Quality Check
+		final SurveyQuestion question2 = getOrCreateSurveyQuestion("Evaluate the puff pastry layering quality:", PASTRY_QUALITY,
+				ResponseType.multiChoicelist.name(), null);
 
-	     getOrCreateSurveyAnswer(
-	        question2,
-	        "Ideal - Even, well-defined layers, crisp and flaky texture",
-	        100d
-	    );
+		getOrCreateSurveyAnswer(question2, "Ideal - Even, well-defined layers, crisp and flaky texture", 100d);
 
-	     final SurveyQuestion q2Answer1 = getOrCreateSurveyAnswer(
-	        question2,
-	        "Acceptable - Slight layer compression, moderate flakiness",
-	        40d
-	    );
+		final SurveyQuestion q2Answer1 = getOrCreateSurveyAnswer(question2, "Acceptable - Slight layer compression, moderate flakiness", 40d);
 
-	    getOrCreateSurveyAnswer(
-	        question2,
-	        "Defective - Dense, underbaked, or collapsed layers",
-	        0d
-	    );
+		getOrCreateSurveyAnswer(question2, "Defective - Dense, underbaked, or collapsed layers", 0d);
 
-	    final SurveyListDataItem survey2 = new SurveyListDataItem();
-	    survey2.setQuestion(question2.getNodeRef());
-	    survey2.setChoices(List.of(q2Answer1.getNodeRef()));
+		final SurveyListDataItem survey2 = new SurveyListDataItem();
+		survey2.setQuestion(question2.getNodeRef());
+		survey2.setChoices(List.of(q2Answer1.getNodeRef()));
 
-	    // Question 3: Chocolate Filling Quality
-	    final SurveyQuestion question3 = getOrCreateSurveyQuestion(
-	        "Chocolate Filling Quality Parameters:",
-	        FILLING_QUALITY,
-	        null,
-	        100d
-	    );
+		// Question 3: Chocolate Filling Quality
+		final SurveyQuestion question3 = getOrCreateSurveyQuestion("Chocolate Filling Quality Parameters:", FILLING_QUALITY, null, 100d);
 
-	    getOrCreateSurveyAnswer(
-	        question3,
-	        "Correct viscosity (65-70% chocolate content), uniform texture",
-	        100d
-	    );
+		getOrCreateSurveyAnswer(question3, "Correct viscosity (65-70% chocolate content), uniform texture", 100d);
 
-	    getOrCreateSurveyAnswer(
-	        question3,
-	        "Slight viscosity deviation (60-75% content), minor texture issues",
-	        0d
-	    );
+		getOrCreateSurveyAnswer(question3, "Slight viscosity deviation (60-75% content), minor texture issues", 0d);
 
-	    final SurveyQuestion q3Answer3 = getOrCreateSurveyAnswer(
-	        question3,
-	        "Out of specification - improper viscosity or crystallization",
-	        50d
-	    );
+		final SurveyQuestion q3Answer3 = getOrCreateSurveyAnswer(question3, "Out of specification - improper viscosity or crystallization", 50d);
 
-	    final SurveyListDataItem survey3 = new SurveyListDataItem();
-	    survey3.setQuestion(question3.getNodeRef());
-	    survey3.setChoices(List.of(q3Answer3.getNodeRef()));
+		final SurveyListDataItem survey3 = new SurveyListDataItem();
+		survey3.setQuestion(question3.getNodeRef());
+		survey3.setChoices(List.of(q3Answer3.getNodeRef()));
 
-	    return List.of(survey1, survey2, survey3);
+		return List.of(survey1, survey2, survey3);
 	}
-
 
 	private List<ScoreListDataItem> createScoreList() {
-	    return new ArrayList<>(List.of(
-	        ScoreListDataItem.build().withScoreCriterion(CharactTestHelper.getOrCreateScoreCriterion(nodeService, PASTRY_QUALITY)),
-	        ScoreListDataItem.build().withScoreCriterion(CharactTestHelper.getOrCreateScoreCriterion(nodeService, FILLING_QUALITY)),
-	        ScoreListDataItem.build().withScoreCriterion(CharactTestHelper.getOrCreateScoreCriterion(nodeService, CCP_COMPLIANCE)).withScore(80d)
-	    ));
+		return new ArrayList<>(
+				List.of(ScoreListDataItem.build().withScoreCriterion(CharactTestHelper.getOrCreateScoreCriterion(nodeService, PASTRY_QUALITY)),
+						ScoreListDataItem.build().withScoreCriterion(CharactTestHelper.getOrCreateScoreCriterion(nodeService, FILLING_QUALITY)),
+						ScoreListDataItem.build().withScoreCriterion(CharactTestHelper.getOrCreateScoreCriterion(nodeService, CCP_COMPLIANCE))
+								.withScore(80d)));
 	}
-	
-	private SurveyQuestion getOrCreateSurveyQuestion( String label, String scoreCriterion, String responseType, Double questionScore) {
-		  
-	    // Create new question if not found
-	    final SurveyQuestion question = (SurveyQuestion) alfrescoRepository.findOne(CharactTestHelper.getOrCreateSurveyQuestion(nodeService,label));
-	    question.setLabel(label);
-	    question.setScoreCriterion(CharactTestHelper.getOrCreateScoreCriterion(nodeService, scoreCriterion));
-	    
-	    if (responseType != null) {
-	        question.setResponseType(responseType);
-	    }
-	    
-	    if (questionScore != null) {
-	        question.setQuestionScore(questionScore);
-	    }
-	    
-	    return (SurveyQuestion) alfrescoRepository.save(question);
+
+	private SurveyQuestion getOrCreateSurveyQuestion(String label, String scoreCriterion, String responseType, Double questionScore) {
+
+		// Create new question if not found
+		final SurveyQuestion question = (SurveyQuestion) alfrescoRepository.findOne(CharactTestHelper.getOrCreateSurveyQuestion(nodeService, label));
+		question.setLabel(label);
+		question.setScoreCriterion(CharactTestHelper.getOrCreateScoreCriterion(nodeService, scoreCriterion));
+
+		if (responseType != null) {
+			question.setResponseType(responseType);
+		}
+
+		if (questionScore != null) {
+			question.setQuestionScore(questionScore);
+		}
+
+		return (SurveyQuestion) alfrescoRepository.save(question);
 	}
 
 	private SurveyQuestion getOrCreateSurveyAnswer(SurveyQuestion parentQuestion, String label, Double score) {
-	 final SurveyQuestion answer = (SurveyQuestion) alfrescoRepository.findOne(CharactTestHelper.getOrCreateSurveyQuestion(nodeService,label));
-	    answer.setParent(parentQuestion);
-	    answer.setLabel(label);
-	    
-	    if (score != null) {
-	        answer.setQuestionScore(score);
-	    }
+		final SurveyQuestion answer = (SurveyQuestion) alfrescoRepository.findOne(CharactTestHelper.getOrCreateSurveyQuestion(nodeService, label));
+		answer.setParent(parentQuestion);
+		answer.setLabel(label);
 
-	    return (SurveyQuestion) alfrescoRepository.save(answer);
+		if (score != null) {
+			answer.setQuestionScore(score);
+		}
+
+		return (SurveyQuestion) alfrescoRepository.save(answer);
 	}
-	    
-
 
 }
