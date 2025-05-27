@@ -9,6 +9,7 @@ import org.alfresco.service.cmr.workflow.WorkflowTaskState;
 import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
@@ -23,6 +24,7 @@ import fr.becpg.repo.supplier.SupplierPortalService;
 public class SupplierSecurityPlugin implements SecurityServicePlugin {
 
 	@Autowired
+	@Lazy
 	private SupplierPortalService supplierPortalService;
 
 	@Autowired
