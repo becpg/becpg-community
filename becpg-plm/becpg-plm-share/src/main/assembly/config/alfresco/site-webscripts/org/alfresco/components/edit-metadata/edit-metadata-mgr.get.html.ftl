@@ -1,4 +1,5 @@
 <#include "../../include/alfresco-macros.lib.ftl" />
+<#assign el=args.htmlid?js_string/>
 <@markup id="js">
   <@script src="${url.context}/res/components/entity-catalog/entity-catalog.js" group="edit-metadata"/>
   <@script src="${url.context}/res/components/user-websocket/user-websocket.js" group="edit-metadata"/>
