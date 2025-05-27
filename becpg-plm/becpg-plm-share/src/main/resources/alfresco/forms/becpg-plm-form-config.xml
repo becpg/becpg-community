@@ -3375,8 +3375,6 @@
 					<field id="bcpg:plantPackerCode" set="2-col" />
 					<field id="bcpg:plantApprovalNumbers" set="2-col" />
 					<field id="sec:readGroups" set="2-col" />
-					<field id="bcpg:erpCode" set="2-col" />
-					<field id="bcpg:eanCode" set="2-col" />
 					<field id="bcpg:isDeleted" set="2-col" />
 					<field id="bcpg:plantCertifications" mandatory="false" read-only="false" set="2-col">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
