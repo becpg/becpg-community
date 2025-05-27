@@ -2198,9 +2198,6 @@
 					</target>
 				</association>
 			</associations>
-			<mandatory-aspects>
-				<aspect>bcpg:aiAspect</aspect>
-			</mandatory-aspects>
 		</type>
 
 		<type name="bcpg:certification">
@@ -4781,9 +4778,6 @@
 					</target>
 				</association>
 			</associations>
-			<mandatory-aspects>
-				<aspect>bcpg:aiAspect</aspect>
-			</mandatory-aspects>
 		</aspect>
 
 		<aspect name="bcpg:customsCodeAspect">
@@ -6904,7 +6898,6 @@
 			</associations>
 			<mandatory-aspects>
 				<aspect>bcpg:codeAspect</aspect>
-				<aspect>bcpg:aiValidationAspect</aspect>
 				<aspect>cm:effectivity</aspect>
 			</mandatory-aspects>
 		</aspect>
