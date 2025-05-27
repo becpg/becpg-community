@@ -199,15 +199,15 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	private PersonService personService;
 
 	private RemoteUserMapper remoteUserMapper;
-	
+
 	private EntityActivityService entityActivityService;
-	
+
 	private BeCPGUserAccountService beCPGUserAccountService;
-	
+
 	public void setBeCPGUserAccountService(BeCPGUserAccountService beCPGUserAccountService) {
 		this.beCPGUserAccountService = beCPGUserAccountService;
 	}
-	
+
 	/**
 	 * <p>Setter for the field <code>entityActivityService</code>.</p>
 	 *
@@ -454,14 +454,14 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		int startIndex = endIndex;
 
 		while (startIndex > 0 && Character.isDigit(autoNumValue.charAt(startIndex - 1))) {
-		    startIndex--;
+			startIndex--;
 		}
 
 		if (startIndex < endIndex) {
-		    String counterStr = autoNumValue.substring(startIndex, endIndex);
-		    return Long.parseLong(counterStr);
+			String counterStr = autoNumValue.substring(startIndex, endIndex);
+			return Long.parseLong(counterStr);
 		} else {
-		    return null;
+			return null;
 		}
 	}
 
@@ -726,7 +726,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 		if (!propertyDef.getConstraints().isEmpty()) {
 			for (ConstraintDefinition constraint : propertyDef.getConstraints()) {
-				if (constraint.getConstraint() instanceof DynListConstraint ) {
+				if (constraint.getConstraint() instanceof DynListConstraint) {
 					dynListConstraint = (DynListConstraint) constraint.getConstraint();
 
 				} else if ("LIST".equals(constraint.getConstraint().getType())) {
@@ -756,7 +756,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * @param value a {@link java.lang.String} object.
 	 */
 	public void setMLProperty(ScriptNode sourceNode, String propQName, String locale, String value) {
-	    MLText mlText = (MLText) mlNodeService.getProperty(sourceNode.getNodeRef(), getQName(propQName));
+		MLText mlText = (MLText) mlNodeService.getProperty(sourceNode.getNodeRef(), getQName(propQName));
 		if (mlText == null) {
 			mlText = new MLText();
 		}
@@ -856,7 +856,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public Object assocValues(NodeRef nodeRef, String assocQname) {
 		return wrapValue(associationService.getTargetAssocs(nodeRef, getQName(assocQname)));
 	}
-	
+
 	/**
 	 * <p>hasEntitySourceAssocs.</p>
 	 *
@@ -868,7 +868,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public boolean hasEntitySourceAssocs(String nodeRef, String assocQname, String filter) {
 		return hasEntitySourceAssocs(new NodeRef(nodeRef), assocQname, filter);
 	}
-	
+
 	/**
 	 * <p>hasEntitySourceAssocs.</p>
 	 *
@@ -880,7 +880,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public boolean hasEntitySourceAssocs(ScriptNode node, String assocQname, String filter) {
 		return hasEntitySourceAssocs(node.getNodeRef(), assocQname, filter);
 	}
-	
+
 	/**
 	 * <p>hasEntitySourceAssocs.</p>
 	 *
@@ -898,7 +898,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		}
 		return !associationService.getEntitySourceAssocs(List.of(nodeRef), getQName(assocQname), null, false, filters, pagingRequest).isEmpty();
 	}
-	
+
 	/**
 	 * <p>entitySourceAssocs.</p>
 	 *
@@ -910,7 +910,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public Object entitySourceAssocs(String nodeRef, String assocQname, String filter) {
 		return entitySourceAssocs(new NodeRef(nodeRef), assocQname, filter);
 	}
-	
+
 	/**
 	 * <p>entitySourceAssocs.</p>
 	 *
@@ -922,7 +922,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public Object entitySourceAssocs(ScriptNode node, String assocQname, String filter) {
 		return entitySourceAssocs(node.getNodeRef(), assocQname, filter);
 	}
-	
+
 	/**
 	 * <p>entitySourceAssocs.</p>
 	 *
@@ -943,7 +943,8 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 				pagingRequest = new PagingRequest((int) jsonConfig.get("maxResults"));
 			}
 		}
-		List<EntitySourceAssoc> entitySourceAssocs = associationService.getEntitySourceAssocs(List.of(nodeRef), getQName(assocQname), null, false, filters, pagingRequest, true);
+		List<EntitySourceAssoc> entitySourceAssocs = associationService.getEntitySourceAssocs(List.of(nodeRef), getQName(assocQname), null, false,
+				filters, pagingRequest, true);
 		return wrapValue(entitySourceAssocs.stream().map(s -> s.getEntityNodeRef()).toList());
 	}
 
@@ -977,7 +978,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		}
 		return filters;
 	}
-	
+
 	/**
 	 * <p>sourceAssocValues.</p>
 	 *
@@ -991,7 +992,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public Object sourceAssocValues(ScriptNode sourceNode, String assocQname, Integer maxResults, Integer offset, boolean includeVersions) {
 		return sourceAssocValues(sourceNode.getNodeRef(), assocQname, maxResults, offset, includeVersions);
 	}
-	
+
 	/**
 	 * <p>sourceAssocValues.</p>
 	 *
@@ -1005,7 +1006,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public Object sourceAssocValues(String nodeRef, String assocQname, Integer maxResults, Integer offset, Boolean includeVersions) {
 		return sourceAssocValues(new NodeRef(nodeRef), assocQname, maxResults, offset, includeVersions);
 	}
-	
+
 	/**
 	 * <p>sourceAssocValues.</p>
 	 *
@@ -1454,6 +1455,14 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		return entityService.changeEntityListStates(entity.getNodeRef(), EntityListState.valueOf(state));
 	}
 
+	public ScriptNode getEntity(ScriptNode childNode, String itemType) {
+		NodeRef entityNodeRef = entityService.getEntityNodeRef(childNode.getNodeRef(), getQName(itemType));
+		if (entityNodeRef != null) {
+			return new ScriptNode(entityNodeRef, serviceRegistry);
+		}
+		return null;
+	}
+
 	/**
 	 * <p>copyList.</p>
 	 *
@@ -1613,7 +1622,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 */
 	public boolean allowWrite(NodeRef nodeRef, String authority) {
 		return AuthenticationUtil.runAsSystem(() -> {
-			if(entityDictionaryService.isSubClass(nodeService.getType(nodeRef), ContentModel.TYPE_FOLDER)) {
+			if (entityDictionaryService.isSubClass(nodeService.getType(nodeRef), ContentModel.TYPE_FOLDER)) {
 				permissionService.setPermission(nodeRef, authority, PermissionService.COORDINATOR, true);
 			} else {
 				permissionService.setPermission(nodeRef, authority, PermissionService.EDITOR, true);
@@ -2114,7 +2123,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		if (propPathName != null && !propPathName.isBlank()) {
 			String subFolderName = null;
 			String[] split = propPathName.split("\\|");
-			String propertyName = split[split.length - 1]; 
+			String propertyName = split[split.length - 1];
 			if (split.length == 1) {
 				QName propPathNameQName = getQName(propertyName);
 				Serializable propValue = nodeService.getProperty(productNode.getNodeRef(), propPathNameQName);
@@ -2123,7 +2132,8 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 				}
 			} else {
 				String firstAssocName = split[0];
-				NodeRef lastAssocNodeRef = classifyPropAndHierarchyExtractAssoc(productNode.getNodeRef(), firstAssocName, new ArrayList<>(Arrays.asList(split)));
+				NodeRef lastAssocNodeRef = classifyPropAndHierarchyExtractAssoc(productNode.getNodeRef(), firstAssocName,
+						new ArrayList<>(Arrays.asList(split)));
 				if (lastAssocNodeRef != null) {
 					Serializable propValue = nodeService.getProperty(lastAssocNodeRef, getQName(propertyName));
 					if (propValue != null) {
@@ -2381,8 +2391,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public boolean isSsoEnabled() {
 		return remoteUserMapper != null && (!(remoteUserMapper instanceof ActivateableBean activateableBean) || activateableBean.isActive());
 	}
-	
-	
+
 	/**
 	 * <p>postEntityActivity.</p>
 	 *
@@ -2403,23 +2412,25 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 */
 	public void postEntityActivity(ScriptNode scriptNode, String activityType, String activityEvent, String properties) {
 		JSONObject jsonProperties = new JSONObject(properties);
-        Map<QName, Pair<Serializable, Serializable>> updatedProperties = new HashMap<>();
-        for (String key : jsonProperties.keySet()) {
-        	JSONObject value = jsonProperties.getJSONObject(key);
-        	Serializable before = "";
-        	if (value.has("before")) {
-        		before = (Serializable) ScriptValueConverter.unwrapValue(value.get("before"));
-        	}
-        	Serializable after = "";
-        	if (value.has("after")) {
-        		after = (Serializable) ScriptValueConverter.unwrapValue(value.get("after"));
-        	}
+		Map<QName, Pair<Serializable, Serializable>> updatedProperties = new HashMap<>();
+		for (String key : jsonProperties.keySet()) {
+			JSONObject value = jsonProperties.getJSONObject(key);
+			Serializable before = "";
+			if (value.has("before")) {
+				before = (Serializable) ScriptValueConverter.unwrapValue(value.get("before"));
+			}
+			Serializable after = "";
+			if (value.has("after")) {
+				after = (Serializable) ScriptValueConverter.unwrapValue(value.get("after"));
+			}
 			updatedProperties.put(QName.createQName(key, namespaceService), new Pair<>(before, after));
-        }
-		entityActivityService.postEntityActivity(scriptNode.getNodeRef(), ActivityType.valueOf(activityType), ActivityEvent.valueOf(activityEvent), updatedProperties);
+		}
+		entityActivityService.postEntityActivity(scriptNode.getNodeRef(), ActivityType.valueOf(activityType), ActivityEvent.valueOf(activityEvent),
+				updatedProperties);
 	}
-	
-	public ScriptNode createPerson(String userName, String firstName, String lastName, String email, String password, boolean enableAccount, boolean isIdsUser) {
+
+	public ScriptNode createPerson(String userName, String firstName, String lastName, String email, String password, boolean enableAccount,
+			boolean isIdsUser) {
 		BeCPGUserAccount beCPGUserAccount = new BeCPGUserAccount();
 		beCPGUserAccount.setUserName(userName);
 		beCPGUserAccount.setFirstName(firstName);
