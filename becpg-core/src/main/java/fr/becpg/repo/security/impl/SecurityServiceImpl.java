@@ -320,7 +320,7 @@ public class SecurityServiceImpl implements SecurityService {
 	public boolean isCurrentUserAllowed(String securityGroup) {
 		if (!isAdmin()) {
 			Set<String> authorities = authorityService.getContainedAuthorities(AuthorityType.USER, PermissionService.GROUP_PREFIX + securityGroup,
-					true);
+					false);
 			if (!authorities.isEmpty() && !authorities.contains(AuthenticationUtil.getFullyAuthenticatedUser())) {
 				return false;
 			}
