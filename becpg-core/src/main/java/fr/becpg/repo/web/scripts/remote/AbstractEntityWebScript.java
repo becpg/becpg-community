@@ -241,9 +241,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 
 		String path = decodeParam(req.getParameter(PARAM_PATH));
 		String query = decodeParam(req.getParameter(PARAM_QUERY));
-		
 		Integer page = intParam(req, PARAM_PAGE);
-		
 		
 		String entityQuery = null;
 		try {
@@ -264,9 +262,6 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 				queryBuilder.excludeSystems();
 			}
 		}
-		if (page != null ) {
-			queryBuilder.page(page);
-		}
 		if ((path != null) && (!path.isBlank())) {
 			queryBuilder.inPath(path);
 		}
@@ -280,23 +275,24 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 			if (jsonEntity.has("type")) {
 				type = QName.createQName(jsonEntity.getString("type"), namespaceService);
 			}
+			if (jsonEntity.has("parent")) {
+				queryBuilder.parent(new NodeRef("workspace://SpacesStore/" + jsonEntity.getString("parent")));
+			}
 			if (maxResults == null) {
 				maxResults = RepoConsts.MAX_RESULTS_256;
 			}
-			List<NodeRef> searchResults = advSearchService.queryAdvSearch(type, queryBuilder, criteria, maxResults);
-			int totalSize = searchResults.size();
+			List<NodeRef> searchResults = advSearchService.queryAdvSearch(type, queryBuilder, criteria, RepoConsts.MAX_RESULTS_UNLIMITED);
+			int backEndResults = searchResults.size();
 			int pageSize = RepoConsts.MAX_RESULTS_256;
-			if (page == null) {
+			if (page == null || page <= 0) {
 				page = 1;
 			}
-			if (maxResults == -1) {
-				pageSize = totalSize;
-			}
+			int requestedResultsSize = maxResults.intValue() == RepoConsts.MAX_RESULTS_UNLIMITED ? backEndResults : Math.min(maxResults, backEndResults);
 			List<NodeRef> pagingNodes;
 			int start = (page - 1) * pageSize;
-			int end = Math.min(start + pageSize, totalSize);
+			int end = Math.min(start + pageSize, requestedResultsSize);
 
-			if (start >= totalSize || totalSize == 0) {
+			if (start >= requestedResultsSize || requestedResultsSize == 0) {
 			    pagingNodes = List.of();
 			} else {
 			    pagingNodes = searchResults.subList(start, end);
@@ -304,11 +300,11 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 			return new PagingResults<NodeRef>() {
 				@Override
 				public boolean hasMoreItems() {
-					return totalSize > pagingNodes.size();
+					return end < requestedResultsSize;
 				}
 				@Override
 				public Pair<Integer, Integer> getTotalResultCount() {
-					return new Pair<>(totalSize, totalSize);
+					return new Pair<>(pagingNodes.size(), pagingNodes.size());
 				}
 				@Override
 				public String getQueryExecutionId() {
@@ -320,6 +316,9 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 				}
 			};
 		} else {
+			if (page != null ) {
+				queryBuilder.page(page);
+			}
 			if ((query != null) && !query.toUpperCase().contains("TYPE")) {
 				queryBuilder.ofType(BeCPGModel.TYPE_ENTITY_V2);
 			}
