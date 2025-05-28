@@ -658,9 +658,7 @@ if (beCPG.module.EntityDataGridRenderers) {
                 var unit, qty;
                 if (data.value == 0) {
                     return "0";
-                } else if (data.value > 100) {
-                    return ">100 %";
-                 } else if ((Math.abs(data.value) < 0.01 && forceUnit != "perc") || forceUnit == "ppm") {
+                } else if ((Math.abs(data.value) < 0.01 && forceUnit != "perc") || forceUnit == "ppm") {
                     qty = data.value * 10000;
                     unit = " ppm";
                 } else {
