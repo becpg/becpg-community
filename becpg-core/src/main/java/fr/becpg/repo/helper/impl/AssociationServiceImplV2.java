@@ -531,7 +531,8 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 				AuthenticationUtil.getFullyAuthenticatedUser());
 
 		Predicate<Node> permissionChecker = item -> canCurrentUserRead(item.getAclId(), authorisations);
-		return queryItems("alfresco.node.select_SourcesAssocs", params, maxResults, offset, checkPermissions, permissionChecker).stream().map(Node::getNodeRef).toList();
+		return queryItems("alfresco.node.select_SourcesAssocs", params, maxResults, offset, checkPermissions, permissionChecker).stream()
+				.map(Node::getNodeRef).map(n -> tenantService.getBaseName(n)).toList();
 	}
 	
 	private <T> List<T> queryItems(String template, Map<String, Object> params, Integer maxResults, Integer offset
