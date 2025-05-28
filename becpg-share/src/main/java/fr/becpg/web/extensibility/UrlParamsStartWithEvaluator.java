@@ -40,10 +40,8 @@ public class UrlParamsStartWithEvaluator extends DefaultSubComponentEvaluator
     @Override
     public boolean evaluate(RequestContext context, Map<String, String> params)
     {
-    	
-    	
     	for(Map.Entry<String, String> param : params.entrySet() ){
-    		if(!param.getValue().startsWith(context.getParameter(param.getKey()))){
+    		if(context.getParameter(param.getKey()) == null || !context.getParameter(param.getKey())).startsWith(param.getValue()){
     			return false;
     		}
     	}
