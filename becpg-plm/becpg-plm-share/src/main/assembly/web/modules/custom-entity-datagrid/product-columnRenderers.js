@@ -600,6 +600,10 @@ if (beCPG.module.EntityDataGridRenderers) {
         renderer: function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
             if (data.value != null) {
                 var forceUnit = oColumn.forceUnit;
+                
+                if(!forceUnit){
+                    forceUnit="none";
+                }
 
 
                 if (oColumn.hidden) {
@@ -607,16 +611,16 @@ if (beCPG.module.EntityDataGridRenderers) {
                 }
                 var sigFig = 5;
 
-				var unit, qty;
-				if (data.value == 0) {
-					return "0";
-				} else if ((Math.abs(data.value) < 0.01 && !forceUnit === "perc") || forceUnit === "ppm") {
-					qty = data.value * 10000;
-					unit = " ppm";
-				} else {
-					qty = data.value;
-					unit = " %";
-				}
+                var unit, qty;
+                if (data.value == 0) {
+                    return "0";
+                } else if ((Math.abs(data.value) < 0.01 && forceUnit != "perc") || forceUnit == "ppm") {
+                    qty = data.value * 10000;
+                    unit = " ppm";
+                } else {
+                    qty = data.value;
+                    unit = " %";
+                }
 
 
 				if (oRecord.getData("itemType") == "total") {
@@ -628,11 +632,11 @@ if (beCPG.module.EntityDataGridRenderers) {
 				}
 
 
-				return Alfresco.util.encodeHTML(beCPG.util.sigFigs(qty, sigFig).toLocaleString(beCPG.util.getJSLocale(), { maximumFractionDigits: 20 }) + unit);
-			}
-			return "";
-		}
-	});
+                return Alfresco.util.encodeHTML(beCPG.util.sigFigs(qty, sigFig).toLocaleString(beCPG.util.getJSLocale(), { maximumFractionDigits: 20 }) + unit);
+            }
+            return "";
+        }
+    });
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName: ["", "bcpg:regulatoryResult"],
