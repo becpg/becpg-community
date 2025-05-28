@@ -975,7 +975,7 @@ public class ECOServiceImpl implements ECOService {
 								Entry<NodeRef, MultiLevelListData> entry = iterator.next();
 								NodeRef nodeRef = entry.getValue().getEntityNodeRef();
 								String productState = (String) nodeService.getProperty(nodeRef, PLMModel.PROP_PRODUCT_STATE);
-								if (!wUsedStatesList.contains(productState)) {
+								if (productState == null || !wUsedStatesList.contains(productState)) {
 									iterator.remove();
 								}
 							}
