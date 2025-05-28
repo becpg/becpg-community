@@ -2,7 +2,6 @@
    
    <@markup id="css" >
       <#include "../preview/include/web-preview-css-dependencies.lib.ftl" />
-      <@link href="${url.context}/res/components/print/print.css" group="entity-datalists"/>
   	  <@link href="${url.context}/res/components/entity-charact-views/reports-view.css" group="entity-datalists"/>
    </@>
    
@@ -11,7 +10,6 @@
 	  <@inlineScript group="web-preview">
 		    beCPG.constants.SHOW_DOWNLOAD_LINKS = ${showAdditionalDownloadLinks?string};
 	  </@>
-	  <@script src="${url.context}/res/components/print/print.js" group="web-preview"/>
       <@script src="${url.context}/res/components/entity-charact-views/reports-view.js" group="web-preview"/>
    </@>
 
