@@ -28,7 +28,7 @@ import org.springframework.extensions.surf.extensibility.impl.DefaultSubComponen
  * @author matthieu
  * @version $Id: $Id
  */
-public class UrlParamsEvaluator extends DefaultSubComponentEvaluator
+public class UrlParamsEqualsEvaluator extends DefaultSubComponentEvaluator
 {
 	
 	
