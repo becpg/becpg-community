@@ -404,6 +404,11 @@
 	font-weight: bold;
 }
 
+
+.datagrid span[class^="score-"]::before {
+  content: unset;
+}
+
 .project-list .nc {
 	padding-bottom: 2px;
 	padding-top: 2px;
