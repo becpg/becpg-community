@@ -25,10 +25,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.dictionary.IndexTokenisationMode;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
-import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceException;
@@ -48,7 +46,6 @@ import fr.becpg.repo.autocomplete.AutoCompleteExtractor;
 import fr.becpg.repo.autocomplete.AutoCompletePage;
 import fr.becpg.repo.autocomplete.AutoCompletePlugin;
 import fr.becpg.repo.autocomplete.AutoCompleteService;
-import fr.becpg.repo.autocomplete.impl.extractors.NodeRefAutoCompleteExtractor;
 import fr.becpg.repo.autocomplete.impl.extractors.TargetAssocAutoCompleteExtractor;
 import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.entity.EntityDictionaryService;
@@ -679,34 +676,5 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 		return BeCPGQueryHelper.isQueryMatch(query, entityName);
 	}
 
-	/**
-	 * Suggest a dalist item
-	 *
-	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param datalistType a {@link org.alfresco.service.namespace.QName} object.
-	 * @param propertyQName a {@link org.alfresco.service.namespace.QName} object.
-	 * @param query a {@link java.lang.String} object.
-	 * @param pageNum a {@link java.lang.Integer} object.
-	 * @param pageSize a {@link java.lang.Integer} object.
-	 * @return a {@link fr.becpg.repo.autocomplete.AutoCompletePage} object.
-	 */
-	protected AutoCompletePage suggestDatalistItem(NodeRef entityNodeRef, QName datalistType, QName propertyQName, String query, Integer pageNum,
-			Integer pageSize) {
-
-		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(datalistType).andPropQuery(propertyQName, prepareQuery(query))
-				.inPath(nodeService.getPath(entityNodeRef).toPrefixString(namespaceService) + "/*/*").maxResults(RepoConsts.MAX_SUGGESTIONS);
-
-		PropertyDefinition propertyDef = dictionaryService.getProperty(propertyQName);
-		// Tokenised "false" or "both"
-		if (propertyDef != null) {
-
-			if (IndexTokenisationMode.BOTH.equals(propertyDef.getIndexTokenisationMode())
-					|| (IndexTokenisationMode.FALSE.equals(propertyDef.getIndexTokenisationMode()) && isAllQuery(query))) {
-				queryBuilder.addSort(propertyQName, true);
-			}
-		}
-
-		return new AutoCompletePage(queryBuilder.list(), pageNum, pageSize, new NodeRefAutoCompleteExtractor(propertyQName, nodeService));
-	}
 
 }
