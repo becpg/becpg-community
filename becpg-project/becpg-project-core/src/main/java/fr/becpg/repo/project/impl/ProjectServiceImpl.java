@@ -69,7 +69,6 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
-import fr.becpg.repo.security.data.PermissionModel;
 import fr.becpg.repo.security.plugins.DefaultSecurityServicePlugin;
 import fr.becpg.repo.security.plugins.SecurityServicePlugin;
 
@@ -653,9 +652,9 @@ public class ProjectServiceImpl extends DefaultSecurityServicePlugin implements 
 
 	/** {@inheritDoc} */
 	@Override
-	public boolean checkIsInSecurityGroup(NodeRef nodeRef, PermissionModel permissionModel) {
+	public boolean checkIsInSecurityGroup(NodeRef nodeRef, List<NodeRef> groups) {
 		if (nodeRef != null) {
-			for (NodeRef groupNodeRef : permissionModel.getGroups()) {
+			for (NodeRef groupNodeRef : groups) {
 				String authorityName = authorityDAO.getAuthorityName(groupNodeRef);
 				if (ProjectHelper.isRoleAuhtority(authorityName)) {
 					List<NodeRef> resources = extractResources(nodeRef, Arrays.asList(groupNodeRef));
