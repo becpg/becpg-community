@@ -160,7 +160,7 @@
                   nodesToArchive : [ {
                      "nodeRef" : rel
                   } ],
-                  archiveName : encodeURIComponent(name)
+                  archiveName : name
                };
          	 
               downloadDialog.show(config);
