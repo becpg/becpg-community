@@ -30,8 +30,7 @@ import org.springframework.extensions.surf.extensibility.impl.DefaultSubComponen
  */
 public class UrlParamsStartWithEvaluator extends DefaultSubComponentEvaluator
 {
-	
-	
+
     /**
      * {@inheritDoc}
      *
@@ -41,7 +40,8 @@ public class UrlParamsStartWithEvaluator extends DefaultSubComponentEvaluator
     public boolean evaluate(RequestContext context, Map<String, String> params)
     {
     	for(Map.Entry<String, String> param : params.entrySet() ){
-    		if(context.getParameter(param.getKey()) == null || !context.getParameter(param.getKey())).startsWith(param.getValue()){
+    		if(context.getParameter(param.getKey()) == null || param.getValue()==null 
+    				|| !context.getParameter(param.getKey()).startsWith(param.getValue())){
     			return false;
     		}
     	}
