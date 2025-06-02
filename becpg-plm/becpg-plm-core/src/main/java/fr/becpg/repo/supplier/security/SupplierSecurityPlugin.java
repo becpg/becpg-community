@@ -1,5 +1,7 @@
 package fr.becpg.repo.supplier.security;
 
+import java.util.List;
+
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.workflow.WorkflowInstance;
@@ -16,7 +18,6 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.helper.AuthorityHelper;
 import fr.becpg.repo.security.SecurityService;
-import fr.becpg.repo.security.data.PermissionModel;
 import fr.becpg.repo.security.plugins.SecurityServicePlugin;
 import fr.becpg.repo.supplier.SupplierPortalService;
 
@@ -30,12 +31,12 @@ public class SupplierSecurityPlugin implements SecurityServicePlugin {
 	@Autowired
 	@Qualifier("WorkflowService")
 	private WorkflowService workflowService;
-	
+
 	@Autowired
 	private EntityDictionaryService entityDictionaryService;
 
 	@Override
-	public boolean checkIsInSecurityGroup(NodeRef entityNodeRef, PermissionModel permissionModel) {
+	public boolean checkIsInSecurityGroup(NodeRef entityNodeRef, List<NodeRef> groups) {
 		return false;
 	}
 
@@ -46,32 +47,27 @@ public class SupplierSecurityPlugin implements SecurityServicePlugin {
 
 	@Override
 	public int computeAccessMode(NodeRef entityNodeRef, int accesMode) {
-
 		if (entityNodeRef != null) {
 
 			NodeRef supplierNodeRef = supplierPortalService.getSupplierNodeRef(entityNodeRef);
-			if (supplierNodeRef != null) {
-				if (supplierPortalService.isCurrentUserInSupplierGroup(supplierNodeRef)) {
-					String supplierAccount = AuthenticationUtil.getFullyAuthenticatedUser();
-					
-					for (WorkflowInstance workflow : workflowService.getWorkflowsForContent(entityNodeRef, true)) {
-						for (WorkflowTask task : workflowService.getAssignedTasks(supplierAccount,
-								WorkflowTaskState.IN_PROGRESS)) {
-							if (task.getPath().getInstance().getId().equals(workflow.getId())) {
-								return Math.min(accesMode, SecurityService.WRITE_ACCESS);
-							}
-						}
-						
-						for (WorkflowTask task : workflowService.getPooledTasks(supplierAccount)) {
-							if (task.getPath().getInstance().getId().equals(workflow.getId())) {
-								return Math.min(accesMode, SecurityService.WRITE_ACCESS);
-							}
-						}
+			if ((supplierNodeRef != null) && supplierPortalService.isCurrentUserInSupplierGroup(supplierNodeRef)) {
+				String supplierAccount = AuthenticationUtil.getFullyAuthenticatedUser();
 
+				for (WorkflowInstance workflow : workflowService.getWorkflowsForContent(entityNodeRef, true)) {
+					for (WorkflowTask task : workflowService.getAssignedTasks(supplierAccount, WorkflowTaskState.IN_PROGRESS)) {
+						if (task.getPath().getInstance().getId().equals(workflow.getId())) {
+							return Math.min(accesMode, SecurityService.WRITE_ACCESS);
+						}
 					}
-					return Math.min(accesMode, SecurityService.READ_ACCESS);
+
+					for (WorkflowTask task : workflowService.getPooledTasks(supplierAccount)) {
+						if (task.getPath().getInstance().getId().equals(workflow.getId())) {
+							return Math.min(accesMode, SecurityService.WRITE_ACCESS);
+						}
+					}
+
 				}
-				
+				return Math.min(accesMode, SecurityService.READ_ACCESS);
 			}
 		}
 
