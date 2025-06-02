@@ -22,6 +22,7 @@ import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.cmr.version.Version;
 import org.alfresco.service.cmr.version.VersionHistory;
 import org.alfresco.service.cmr.version.VersionService;
+import org.alfresco.service.cmr.workflow.WorkflowDefinition;
 import org.alfresco.service.cmr.workflow.WorkflowPath;
 import org.alfresco.service.cmr.workflow.WorkflowService;
 import org.alfresco.service.cmr.workflow.WorkflowTask;
@@ -133,7 +134,7 @@ public class CommentActivityListener implements InitializingBean, EntityActivity
 				String match = matcher.group();
 				String username = match.substring(1);
 
-				usernames.add(username);
+				usernames.add(username.trim().replace("\u00A0", ""));
 
 				commentText = commentText.replace(match + " ", "");
 			}
@@ -156,7 +157,8 @@ public class CommentActivityListener implements InitializingBean, EntityActivity
 						
 						nodeService.addChild(packageRef, entityNodeRef, WorkflowModel.ASSOC_PACKAGE_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(itemName)));
 						
-						WorkflowPath workflowPath = workflowService.startWorkflow("activiti$activitiAdhoc:1:4", params);
+						WorkflowDefinition workflowDefinition = workflowService.getDefinitionByName("activiti$activitiAdhoc");
+						WorkflowPath workflowPath = workflowService.startWorkflow(workflowDefinition.getId(), params);
 						
 						if (workflowPath != null) {
 							nodeService.setProperty(commentNodeRef, ContentModel.PROP_DESCRIPTION, workflowPath.getInstance().getId());
