@@ -22,15 +22,17 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
+import fr.becpg.model.PublicationModel;
 
 public class RemoveDeprecatedPubAspectsPatch extends AbstractBeCPGPatch {
 
-    private static final QName ASPECT_MAILING_LIST = QName.createQName(BeCPGModel.BECPG_URI, "MailingListChannelAspect");
-    private static final QName ASPECT_CATALOGABLE = QName.createQName(BeCPGModel.BECPG_URI, "cataloguable");
-    private static final QName ASPECT_PRODUCT_CATALOG = QName.createQName(BeCPGModel.BECPG_URI, "productCatalogChannelAspect");
+    private static final QName ASPECT_MAILING_LIST = QName.createQName(PublicationModel.PUBLICATION_URI, "MailingListChannelAspect");
+    private static final QName ASPECT_CATALOGABLE = QName.createQName(PublicationModel.PUBLICATION_URI, "cataloguable");
+    private static final QName ASPECT_PRODUCT_CATALOG = QName.createQName(PublicationModel.PUBLICATION_URI, "productCatalogChannelAspect");
     
-    private static final QName TYPE_MAILING_LIST = QName.createQName(BeCPGModel.BECPG_URI, "MailingListChannel");
-    private static final QName TYPE_PRODUCT_CATALOG = QName.createQName(BeCPGModel.BECPG_URI, "productCatalog");
+    private static final QName TYPE_MAILING_LIST = QName.createQName(PublicationModel.PUBLICATION_URI, "MailingListChannel");
+    private static final QName TYPE_PRODUCT_CATALOG = QName.createQName(PublicationModel.PUBLICATION_URI, "productCatalog");
     
     
 
@@ -40,9 +42,7 @@ public class RemoveDeprecatedPubAspectsPatch extends AbstractBeCPGPatch {
     private static final int BATCH_THREADS = 4;
     private static final long INC = 1000L;
 
-    private NodeDAO nodeDAO;
-    private PatchDAO patchDAO;
-    private QNameDAO qnameDAO;
+
     private BehaviourFilter policyBehaviourFilter;
     private RuleService ruleService;
     private IntegrityChecker integrityChecker;
