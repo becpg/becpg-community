@@ -1,7 +1,10 @@
 package fr.becpg.repo.authentication.provider;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 import org.alfresco.repo.security.authentication.identityservice.IdentityServiceException;
 import org.alfresco.service.cmr.security.AuthorityService;
@@ -34,6 +37,10 @@ import fr.becpg.repo.authentication.BeCPGUserAccount;
  */
 @Service
 public class IdentityServiceAccountProvider {
+
+	private static final Pattern PROHIBITED_CHARS = Pattern.compile(
+        "[<>&\"$%!#?§;*~/\\\\|^=\\[\\]{}()\\p{Cntrl}]"
+    );
 
 	private static final String GET_USER_ID_ERROR = "Could not find userId from identity service for user: ";
 
@@ -96,6 +103,7 @@ public class IdentityServiceAccountProvider {
 			}
 			return false;
 		}
+		sanitizeAccount(userAccount);
 		try {
 			HttpClientBuilder builder = HttpClientBuilder.create();
 
@@ -179,6 +187,7 @@ public class IdentityServiceAccountProvider {
 		if (userId == null) {
 			throw new IllegalStateException(GET_USER_ID_ERROR + userAccount.getUserName());
 		}
+		sanitizeAccount(userAccount);
 		try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
 			HttpPut request = new HttpPut(authServerUrl + "/admin/realms/" + realm + "/users/" + userId);
 			request.setHeader("Content-Type", "application/json;charset=UTF-8");
@@ -212,6 +221,18 @@ public class IdentityServiceAccountProvider {
 		return true;
 	}
 	
+	private void sanitizeAccount(BeCPGUserAccount userAccount) {
+		userAccount.setFirstName(sanitize(userAccount.getFirstName()));
+		userAccount.setLastName(sanitize(userAccount.getLastName()));
+	}
+	
+	private String sanitize(String input) {
+        if (input == null) {
+        	return null;
+        }
+        return PROHIBITED_CHARS.matcher(input).replaceAll("");
+    }
+
 	/**
 	 * <p>updatePassword.</p>
 	 *
@@ -255,7 +276,8 @@ public class IdentityServiceAccountProvider {
         	logger.debug("getUserId in IDS for username: " + username);
         }
 		try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
-            HttpGet request = new HttpGet(authServerUrl + "/admin/realms/" + realm + "/users?username=" + username);
+			String encodedUsername = URLEncoder.encode(username, StandardCharsets.UTF_8.toString());
+            HttpGet request = new HttpGet(authServerUrl + "/admin/realms/" + realm + "/users?username=" + encodedUsername);
             request.setHeader("Content-Type", "application/json;charset=UTF-8");
             request.setHeader("Authorization", "Bearer " + getAdminAccessToken());
 

@@ -46,6 +46,7 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.helper.PropertiesHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.hierarchy.HierarchicalEntity;
@@ -273,7 +274,7 @@ public class HierarchyServiceImpl implements HierarchyService {
 									if (permissionService.hasPermission(finalDestinationNodeRef, PermissionService.WRITE) != AccessStatus.ALLOWED
 											&& (destinationSite == null || !authorityService.getAuthoritiesForUser(user).contains(sitePermission))
 											&& Boolean.TRUE.equals(Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.classify.rights.check")))) {
-										throw new IllegalStateException("user '"+ user + "' does not have permission to move the entity into this folder: " + finalDestinationNodeRef + ", entity :" + entityNodeRef);
+										throw new FormulateException("user '"+ user + "' does not have permission to move the entity into this folder: " + finalDestinationNodeRef + ", entity :" + entityNodeRef);
 									}
 									return null;
 								}, user);

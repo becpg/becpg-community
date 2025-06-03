@@ -29,8 +29,8 @@ public interface ExpressionService {
 	 *
 	 * @param condition a {@link java.lang.String} object
 	 * @param formulatedEntity a T object
-	 * @return a {@link java.lang.Object} object
 	 * @param <T> a T class
+	 * @return a {@link java.lang.Object} object
 	 */
 	<T extends RepositoryEntity> Object eval(String condition, T formulatedEntity);
 
@@ -61,24 +61,6 @@ public interface ExpressionService {
 	 * @return a {@link java.lang.String} object
 	 */
 	String extractExpr(JSONObject object, String exprFormat);
-	
-	/**
-	 * <p>extractExpr.</p>
-	 *
-	 * @param object a {@link org.json.NodeRef} object
-	 * @param exprFormat a {@link java.lang.String} object
-	 * @return a {@link java.lang.String} object
-	 */
-	String extractExpr(NodeRef nodeRef, String exprFormat, boolean assocName);
-	
-	/**
-	 * <p>extractExpr.</p>
-	 *
-	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
-	 * @param docNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
-	 * @param exprFormat a {@link java.lang.String} object
-	 * @param assocName a boolean
-	 * @return a {@link java.lang.String} object
-	 */
-	String extractExpr(NodeRef nodeRef, NodeRef docNodeRef, String exprFormat, boolean assocName);
+
+
 }

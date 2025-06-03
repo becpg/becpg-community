@@ -1,12 +1,12 @@
 package fr.becpg.repo.security.plugins;
 
+import java.util.List;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import fr.becpg.repo.security.data.PermissionModel;
 
 /**
  * <p>DefaultSecurityServicePlugin class.</p>
@@ -22,10 +22,10 @@ public class DefaultSecurityServicePlugin implements SecurityServicePlugin {
 
 	/** {@inheritDoc} */
 	@Override
-	public boolean checkIsInSecurityGroup(NodeRef nodeRef, PermissionModel permissionModel) {
+	public boolean checkIsInSecurityGroup(NodeRef nodeRef, List<NodeRef> groups) {
 
 		for (String currAuth : authorityService.getAuthorities()) {
-			if (permissionModel.getGroups().contains(authorityService.getAuthorityNodeRef(currAuth))) {
+			if (groups.contains(authorityService.getAuthorityNodeRef(currAuth))) {
 				return true;
 			}
 		}
@@ -37,6 +37,11 @@ public class DefaultSecurityServicePlugin implements SecurityServicePlugin {
 	@Override
 	public boolean accept(QName nodeType) {
 		return true;
+	}
+
+	@Override
+	public int computeAccessMode(NodeRef nodeRef, int accesMode) {
+		return accesMode;
 	}
 
 }

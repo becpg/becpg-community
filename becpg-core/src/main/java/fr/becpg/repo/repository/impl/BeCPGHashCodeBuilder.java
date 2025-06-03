@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.namespace.QName;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
@@ -171,7 +172,7 @@ public class BeCPGHashCodeBuilder {
 	 * @return a {@link java.lang.String} object.
 	 */
 	public static String printDiff(RepositoryEntity obj1, RepositoryEntity obj2) {
-		String ret = "";
+		StringBuilder ret = new StringBuilder();
 
 		BeanWrapper beanWrapper1 = PropertyAccessorFactory.forBeanPropertyAccess(obj1);
 		BeanWrapper beanWrapper2 = PropertyAccessorFactory.forBeanPropertyAccess(obj2);
@@ -192,23 +193,23 @@ public class BeCPGHashCodeBuilder {
 
 					if ((total1 != total2)) {
 
-						ret += "\n append :" + pd.getName()  +"  hash " + total1 + "/" + total2 + "\n";
+						ret.append( "\n append :" + pd.getName()  +"  hash " + total1 + "/" + total2 + "\n");
 						
 						if (fieldValue instanceof RepositoryEntity) {
 							// skip recursion
 							if (obj1.equals(fieldValue) && obj2.equals(fieldValue2)) continue;
-							ret += "\n-- Recur diff ";
-							ret += printDiff((RepositoryEntity) fieldValue, (RepositoryEntity) fieldValue2);
+							ret.append( "\n-- Recur diff ");
+							ret.append(printDiff((RepositoryEntity) fieldValue, (RepositoryEntity) fieldValue2));
 						} else if (fieldValue instanceof List && fieldValue2 instanceof List) {
-							ret += "\n-- Recur list:  "+((List<?>) fieldValue).size()+" "+((List<?>)fieldValue2).size();
+							ret.append( "\n-- Recur list:  "+((List<?>) fieldValue).size()+" "+((List<?>)fieldValue2).size());
 							boolean printList = false;
 							for (Object el : (List<?>) (fieldValue2)) {
 								if ((el != null) && (el instanceof RepositoryEntity)) {
 									for (Object el2 : (List<?>) (fieldValue)) {
 										
 										if (((RepositoryEntity) el).getNodeRef().equals(((RepositoryEntity) el2).getNodeRef())) {
-											ret += "-- Recur diff ";
-											ret += printDiff((RepositoryEntity) el, (RepositoryEntity) el2);
+											ret.append( "-- Recur diff ");
+											ret.append( printDiff((RepositoryEntity) el, (RepositoryEntity) el2));
 										}
 
 									}
@@ -217,14 +218,14 @@ public class BeCPGHashCodeBuilder {
 								}
 							}
 							if(printList) {
-								ret += ((List<?>) fieldValue).toString() +" - "+((List<?>) fieldValue2).toString();
+								ret.append(((List<?>) fieldValue).toString() +" - "+((List<?>) fieldValue2).toString());
 							}
 							
 						} else {
 
-							ret += " --- To save " + (fieldValue != null ? fieldValue.toString() : "null") + "/ Saved "
+							ret.append( " --- To save " + (fieldValue != null ? fieldValue.toString() : "null") + "/ Saved "
 									+ (fieldValue2 != null ? fieldValue2.toString() : "null") + " "
-									+ (fieldValue != null ? fieldValue.getClass().getName() : "") + "\n";
+									+ (fieldValue != null ? fieldValue.getClass().getName() : "") + "\n");
 						}
 
 					}
@@ -234,7 +235,7 @@ public class BeCPGHashCodeBuilder {
 		}
 
 		if (obj1.getNodeRef()!=null && !obj1.getNodeRef().equals(obj2.getNodeRef())) {
-			ret += "nodeRef differs\n";
+			ret.append("nodeRef differs\n");
 		}
 
 		int tmp1 = 0;
@@ -256,16 +257,16 @@ public class BeCPGHashCodeBuilder {
 		}
 
 		if (tmp1 != tmp2) {
-			ret += "aspect differs:\n";
+			ret.append( "aspect differs:\n");
 			if (((AspectAwareDataItem) obj1).getAspects() != null) {
-				ret += " ---- To save " + ((AspectAwareDataItem) obj1).getAspects().toString() + "\n";
+				ret.append( " ---- To save " + ((AspectAwareDataItem) obj1).getAspects().toString() + "\n");
 			}
 			if (((AspectAwareDataItem) obj2).getAspects() != null) {
-				ret += " ---- Saved " + ((AspectAwareDataItem) obj2).getAspects().toString() + "\n";
+				ret.append( " ---- Saved " + ((AspectAwareDataItem) obj2).getAspects().toString() + "\n");
 			}
 		}
 
-		return ret;
+		return ret.toString();
 	}
 
 	/**
@@ -580,7 +581,7 @@ public class BeCPGHashCodeBuilder {
 	 * @return this
 	 */
 	private long append(long total, Object object, Set<RepositoryEntity> visited) {
-		if (object == null) {
+		if (object == null || (object instanceof MLText mlText && mlText.isEmpty())) {
 			// beCPG avoid collision on NULL == 0 #1159
 			return total * (iConstant + 12);
 

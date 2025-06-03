@@ -221,11 +221,13 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 						namespaceService);
 
 				if (!DATALIST_SPECIFIC_EXTRACTOR.contains(dataListQName)) {
+					
+					String dataListName = (String) nodeService.getProperty(listNodeRef, ContentModel.PROP_NAME);
 
 					if ((datalists != null) && datalists.containsKey(dataListQName)
 							&& shouldExtractList(isExtractedProduct, context, type, dataListQName)) {
 
-						String dataListName = (String) nodeService.getProperty(listNodeRef, ContentModel.PROP_NAME);
+					
 						List<BeCPGDataObject> dataListItems = (List) datalists.get(dataListQName);
 						if (dataListName.contains("@")) {
 							dataListItems = alfrescoRepository.loadDataList(listNodeRef, dataListQName);
@@ -253,8 +255,13 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 						}
 					} else if (!BeCPGModel.TYPE_ACTIVITY_LIST.equals(dataListQName)
 							&& shouldExtractList(isExtractedProduct, context, type, dataListQName)) {
-						// extract specific datalists
-						loadDataList(dataListsElt, listNodeRef, dataListQName, context);
+
+						if ( dataListName.startsWith(RepoConsts.SMART_CONTENT_PREFIX) && isExtractedProduct) {
+							loadSmartContent(dataListsElt,entityNodeRef, listNodeRef, dataListQName, context);
+						} else {
+							// extract specific datalists
+							loadDataList(dataListsElt, listNodeRef, dataListQName, context);
+						}
 					}
 				}
 			}
@@ -419,6 +426,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		}
 
 	}
+
+
 
 	private boolean shouldExtractList(boolean isExtractedProduct, DefaultExtractorContext context, QName type, QName dataListQName) {
 		if (isExtractedProduct) {
@@ -695,8 +704,10 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	private void addInfiniteLoopError(CurrentLevelQuantities currentLevelQuantities, DefaultExtractorContext context) {
 		context.setInfiniteLoop(true);
 		String message = I18NUtil.getMessage("message.datasource.infinite-loop");
-		context.getReportData().getLogs().add(new ReportableError(ReportableErrorType.ERROR, message, MLTextHelper.getI18NMessage("message.datasource.infinite-loop"), List.of(currentLevelQuantities.getCompoListItem().getNodeRef())));
-		logger.error("Infinite loop during datasource generation due to the following item: " + currentLevelQuantities.getCompoListItem().getNodeRef());
+		context.getReportData().getLogs().add(new ReportableError(ReportableErrorType.ERROR, message,
+				MLTextHelper.getI18NMessage("message.datasource.infinite-loop"), List.of(currentLevelQuantities.getCompoListItem().getNodeRef())));
+		logger.error(
+				"Infinite loop during datasource generation due to the following item: " + currentLevelQuantities.getCompoListItem().getNodeRef());
 	}
 
 	private void loadProcessListItemForCompo(NodeRef entityNodeRef, Element processListElt, int level, CurrentLevelQuantities currentLevelQuantities,
@@ -1764,7 +1775,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 							if (c.getValue() != null) {
 								currentCost += CostCalculatingHelper.extractValue(formulatedProduct, partProduct, c);
 							}
-							
+
 							if (c.getFutureValue() != null) {
 								futureCost += c.getFutureValue();
 							}
@@ -1778,7 +1789,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 							if (c.getValue() != null) {
 								totalCurrentCost += CostCalculatingHelper.extractValue(formulatedProduct, partProduct, c);
 							}
-							
+
 							if (c.getFutureValue() != null) {
 								totalFutureCost += c.getFutureValue();
 							}

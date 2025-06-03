@@ -9,12 +9,15 @@
         "uniqueFields":[
             "bcpg:erpCode",
             "cm:name"
-        ],
+        ], 
         "fields":[
             "bcpg:legalName",
             "bcpg:useByDate|bcpg:bestBeforeDate",
             "bcpg:storageConditionsRef|bcpg:preparationTips",
             "cm:title"
+        ],
+        "protectedFields": [
+            "bcpg:productState"
         ],
         "i18nMessages" :{
 			"cm:title":"becpg.forms.field.tradeName"
@@ -40,6 +43,9 @@
         "fields":[
             "bcpg:legalName"
         ],
+        "protectedFields": [
+            "bcpg:productState"
+        ],
         "i18nMessages" :{
 			"cm:title":"becpg.forms.field.tradeName"
 		}
@@ -48,6 +54,9 @@
         "label":"Audited fields",
         "entityType":[
             "pjt:project"
+        ],
+        "protectedFields": [
+            "pjt:projectState"
         ],
         "auditedFields": [
            "pjt:projectDueDate"

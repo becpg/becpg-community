@@ -1,3 +1,4 @@
+<import resource="classpath:/alfresco/templates/org/alfresco/import/alfresco-util.js">
 <import resource="classpath:/alfresco/site-webscripts/org/alfresco/components/documentlibrary/include/toolbar.lib.js">
 <import resource="classpath:/alfresco/site-webscripts/org/alfresco/components/upload/uploadable.lib.js">
 <import resource="classpath:/alfresco/site-webscripts/org/alfresco/components/documentlibrary/include/documentlist.lib.js">
@@ -27,6 +28,8 @@ function getI18N(step,itemName){
 function main() {
 
     var wizardStruct = [];
+    
+    var nodeRef = page.url.args.nodeRef;
     
     model.comments = false;
     model.draft = false;
@@ -60,6 +63,14 @@ function main() {
       
     }
     
+    if (!model.readOnly && nodeRef) {
+        var nodeDetails = AlfrescoUtil.getNodeDetails(nodeRef, null);
+        if (nodeDetails && nodeDetails.item && nodeDetails.item.node) {
+            var node = nodeDetails.item.node;
+            model.readOnly = node.isLocked || !(node.permissions && node.permissions.user && node.permissions.user["Write"]);
+        }
+    }
+    
     // Widget instantiation metadata...
    var widget = {
       id : "WizardMgr", 
@@ -67,7 +78,7 @@ function main() {
       options : {
          siteId : (page.url.templateArgs.site != null) ? page.url.templateArgs.site : "",
          destination :  (page.url.args.destination != null) ? page.url.args.destination : "",
-         nodeRef :  (page.url.args.nodeRef != null) ? page.url.args.nodeRef : "",
+         nodeRef :  (nodeRef != null) ? nodeRef : "",
          draft : model.draft, 
          allSteps : model.allSteps,
          readOnly: model.readOnly,

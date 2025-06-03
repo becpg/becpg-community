@@ -20,6 +20,7 @@ package fr.becpg.repo.jscript;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -31,7 +32,6 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.jscript.BaseScopableProcessorExtension;
 import org.alfresco.repo.jscript.ScriptNode;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.repo.workflow.activiti.ActivitiScriptNode;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -89,13 +89,13 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 	private ServiceRegistry serviceRegistry;
 
 	private SupplierPortalService supplierPortalService;
-	
+
 	protected EntityDictionaryService entityDictionaryService;
-	
+
 	private NamespaceService namespaceService;
-	
+
 	private EntityService entityService;
-	
+
 	/**
 	 * <p>Setter for the field <code>entityService</code>.</p>
 	 *
@@ -104,7 +104,7 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 	public void setEntityService(EntityService entityService) {
 		this.entityService = entityService;
 	}
-	
+
 	/**
 	 * <p>Setter for the field <code>namespaceService</code>.</p>
 	 *
@@ -113,7 +113,7 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
-	
+
 	/**
 	 * <p>Setter for the field <code>entityDictionaryService</code>.</p>
 	 *
@@ -122,7 +122,7 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
 		this.entityDictionaryService = entityDictionaryService;
 	}
-	
+
 	/**
 	 * <p>Setter for the field <code>associationService</code>.</p>
 	 *
@@ -149,7 +149,6 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 	public void setPermissionService(PermissionService permissionService) {
 		this.permissionService = permissionService;
 	}
-
 
 	/**
 	 * <p>Setter for the field <code>projectService</code>.</p>
@@ -187,7 +186,6 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 		this.repoService = repoService;
 	}
 
-
 	/**
 	 * <p>Setter for the field <code>entityVersionService</code>.</p>
 	 *
@@ -218,9 +216,8 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 
 				if (supplierNodeRef != null) {
 
-					List<NodeRef> accountNodeRefs = associationService.getTargetAssocs(project.getNodeRef(),
-							PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
-					if (accountNodeRefs != null && (task.getResources() == null || task.getResources().isEmpty())) {
+					List<NodeRef> accountNodeRefs = associationService.getTargetAssocs(project.getNodeRef(), PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
+					if ((accountNodeRefs != null) && ((task.getResources() == null) || task.getResources().isEmpty())) {
 						if (task.getResources() == null) {
 							task.setResources(new ArrayList<>());
 						}
@@ -229,80 +226,71 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 					} else {
 						logger.info("No account provided for supplier");
 					}
-					
 
-					List<NodeRef> ret =	AuthenticationUtil.runAs(new RunAsWork<List<NodeRef>>() {
+					List<NodeRef> ret = AuthenticationUtil.runAs(() -> {
 
-						@Override
-						public List<NodeRef> doWork() throws Exception {
+						List<NodeRef> resources = projectService.extractResources(project.getNodeRef(), task.getResources());
 
-							List<NodeRef> resources = projectService.extractResources(project.getNodeRef(),
-									task.getResources());
+						resources.removeIf((resource -> ContentModel.TYPE_AUTHORITY_CONTAINER.equals(nodeService.getType(resource))));
 
-							resources.removeIf((resource -> ContentModel.TYPE_AUTHORITY_CONTAINER
-									.equals(nodeService.getType(resource))));
+						if ((resources != null) && !resources.isEmpty()) {
 
-							if ((resources != null) && !resources.isEmpty()) {
+							NodeRef dest = supplierPortalService.getOrCreateSupplierDestFolder(supplierNodeRef, resources);
 
-								NodeRef dest = supplierPortalService.getOrCreateSupplierDestFolder(supplierNodeRef,
-										resources);
-
-								if(entityNodeRef!=null && !entityNodeRef.equals(supplierNodeRef)) {
-									repoService.moveNode(entityNodeRef, dest);				
-								}
-								
-								if(!permissionService.getInheritParentPermissions(entityNodeRef)) {
-									permissionService.setInheritParentPermissions(entityNodeRef, true);
-								}
-
-								for (NodeRef resourceRef : resources) {
-									permissionService.setPermission(task.getNodeRef(),
-											(String) nodeService.getProperty(resourceRef, ContentModel.PROP_USERNAME),
-											PermissionService.CONTRIBUTOR, true);
-									
-									for (DeliverableListDataItem deliverable : ProjectHelper.getDeliverables(project,
-											task.getNodeRef())) {
-										permissionService.setPermission(deliverable.getNodeRef(),
-												(String) nodeService.getProperty(resourceRef, ContentModel.PROP_USERNAME),
-												PermissionService.CONTRIBUTOR, true);
-										if ((deliverable.getContent() != null)
-												&& ((deliverable.getScriptOrder() == null)
-														|| DeliverableScriptOrder.None.equals(deliverable.getScriptOrder()))
-												&& isInProjectFolder(deliverable.getContent(), project.getNodeRef())) {
-											String name = (String) nodeService.getProperty(deliverable.getContent(),
-													ContentModel.PROP_NAME);
-											NodeRef existingNodeWithSameName = nodeService.getChildByName(
-													entityNodeRef, ContentModel.ASSOC_CONTAINS, name);
-											if (existingNodeWithSameName != null) {
-												nodeService.deleteNode(deliverable.getContent());
-												deliverable.setContent(existingNodeWithSameName);
-											} else {
-												if(deliverable.getContent()!=null && !deliverable.getContent().equals(supplierNodeRef)) {
-													repoService.moveNode(deliverable.getContent(), entityNodeRef);
-												}
-											}
-										}
-
-									}
-								}
-							} else {
-								logger.warn("No one is assign to task");
-								task.setTaskState(TaskState.OnHold);
+							if ((entityNodeRef != null) && !entityNodeRef.equals(supplierNodeRef)) {
+								repoService.moveNode(entityNodeRef, dest);
 							}
 
-							return resources;
+							if (!permissionService.getInheritParentPermissions(entityNodeRef)) {
+								permissionService.setInheritParentPermissions(entityNodeRef, true);
+							}
+
+							String supplierGroup = supplierPortalService.getOrCreateSupplierGroup(supplierNodeRef, resources);
+
+							if (supplierGroup != null) {
+								permissionService.setPermission(entityNodeRef,  PermissionService.GROUP_PREFIX + supplierGroup, PermissionService.CONSUMER, true);
+								nodeService.setProperty(entityNodeRef,  PLMModel.PROP_EXTERNAL_ACCESS_GROUP,PermissionService.GROUP_PREFIX + supplierGroup);
+							}
+
+							for (NodeRef resourceRef : resources) {
+								permissionService.setPermission(task.getNodeRef(),
+										(String) nodeService.getProperty(resourceRef, ContentModel.PROP_USERNAME), PermissionService.CONTRIBUTOR,
+										true);
+
+								for (DeliverableListDataItem deliverable : ProjectHelper.getDeliverables(project, task.getNodeRef())) {
+									permissionService.setPermission(deliverable.getNodeRef(),
+											(String) nodeService.getProperty(resourceRef, ContentModel.PROP_USERNAME),
+											PermissionService.CONTRIBUTOR, true);
+									if ((deliverable.getContent() != null)
+											&& ((deliverable.getScriptOrder() == null)
+													|| DeliverableScriptOrder.None.equals(deliverable.getScriptOrder()))
+											&& isInProjectFolder(deliverable.getContent(), project.getNodeRef())) {
+										String name = (String) nodeService.getProperty(deliverable.getContent(), ContentModel.PROP_NAME);
+										NodeRef existingNodeWithSameName = nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS,
+												name);
+										if (existingNodeWithSameName != null) {
+											nodeService.deleteNode(deliverable.getContent());
+											deliverable.setContent(existingNodeWithSameName);
+										} else if ((deliverable.getContent() != null) && !deliverable.getContent().equals(supplierNodeRef)) {
+											repoService.moveNode(deliverable.getContent(), entityNodeRef);
+										}
+									}
+
+								}
+							}
+						} else {
+							logger.warn("No one is assign to task");
+							task.setTaskState(TaskState.OnHold);
 						}
 
+						return resources;
 					}, AuthenticationUtil.SYSTEM_USER_NAME);
 
-					return ret.stream().map(n -> new ActivitiScriptNode(n, serviceRegistry))
-							.toArray(ScriptNode[]::new);
-					
+					return ret.stream().map(n -> new ActivitiScriptNode(n, serviceRegistry)).toArray(ScriptNode[]::new);
 
 				} else {
 					logger.info("No supplier provided for entity");
 				}
-
 
 			} else {
 				logger.info("No entity provided for project");
@@ -317,13 +305,12 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 
 	private NodeRef getSupplierNodeRef(final ProjectData project, NodeRef entityNodeRef) {
 		NodeRef supplierNodeRef = supplierPortalService.getSupplierNodeRef(project.getNodeRef());
-		
-		if(supplierNodeRef == null) {
-			 supplierNodeRef = supplierPortalService.getSupplierNodeRef(entityNodeRef);
+
+		if (supplierNodeRef == null) {
+			supplierNodeRef = supplierPortalService.getSupplierNodeRef(entityNodeRef);
 		}
 		return supplierNodeRef;
 	}
-
 
 	/**
 	 * <p>
@@ -338,27 +325,27 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 		if (entityNode != null) {
 
 			NodeRef entityNodeRef = entityNode.getNodeRef();
-			
-			if(nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_AUTO_MERGE_ASPECT)
-					&& nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_AUTO_MERGE_DATE) == null) {
+
+			if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_AUTO_MERGE_ASPECT)
+					&& (nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_AUTO_MERGE_DATE) == null)) {
 				entityNodeRef = entityVersionService.mergeBranch(entityNodeRef, null);
 			}
-			
+
 			QName type = nodeService.getType(entityNodeRef);
-			
+
 			if (entityDictionaryService.isSubClass(type, PLMModel.TYPE_PRODUCT)) {
 				nodeService.setProperty(entityNodeRef, PLMModel.PROP_PRODUCT_STATE, SystemState.Valid);
 			} else if (entityDictionaryService.isSubClass(type, PLMModel.TYPE_SUPPLIER)) {
 				nodeService.setProperty(entityNodeRef, PLMModel.PROP_SUPPLIER_STATE, SystemState.Valid);
 			}
-			
+
 			return new ScriptNode(entityNodeRef, serviceRegistry, getScope());
 
 		}
 
 		return entityNode;
 	}
-	
+
 	/**
 	 * <p>extractSupplierProjectName.</p>
 	 *
@@ -371,12 +358,12 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 				Date currentDate = Calendar.getInstance().getTime();
 
 				NodeRef entityNodeRef = entityService.getEntityNodeRef(item.getNodeRef(), nodeService.getType(item.getNodeRef()));
-				
+
 				NodeRef supplierNodeRef = supplierPortalService.getSupplierNodeRef(entityNodeRef);
-				
+
 				if (supplierNodeRef != null) {
-					return supplierPortalService.createName(item.getNodeRef(), supplierNodeRef,
-							supplierPortalService.getProjectNameTpl(), currentDate);
+					return supplierPortalService.createName(item.getNodeRef(), supplierNodeRef, supplierPortalService.getProjectNameTpl(),
+							currentDate);
 				}
 			}
 		}
@@ -413,18 +400,18 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 	 * @return a {@link org.alfresco.repo.jscript.ScriptNode} object
 	 */
 	public ScriptNode createSupplierProject(ScriptNode[] items, ScriptNode projectTemplate, String[] supplierAccounts) {
-		if (items != null && items.length > 0) {
+		if ((items != null) && (items.length > 0)) {
 			List<NodeRef> supplierAccountNodeRefs = new ArrayList<>();
 
-			if(supplierAccounts!=null) {
-				for(String tmp : supplierAccounts) {
+			if (supplierAccounts != null) {
+				for (String tmp : supplierAccounts) {
 					supplierAccountNodeRefs.add(new NodeRef(tmp));
 				}
 			}
 
 			return new ActivitiScriptNode(
-						supplierPortalService.createSupplierProject(items[0].getNodeRef(), projectTemplate.getNodeRef(), supplierAccountNodeRefs),
-						serviceRegistry);
+					supplierPortalService.createSupplierProject(items[0].getNodeRef(), projectTemplate.getNodeRef(), supplierAccountNodeRefs),
+					serviceRegistry);
 
 		}
 
@@ -448,7 +435,7 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * <p>createExternalUser.</p>
 	 *
@@ -466,9 +453,10 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 				convertedExtraProps.put(QName.createQName(entry.getKey(), namespaceService), entry.getValue());
 			}
 		}
-		return new ScriptNode(supplierPortalService.createExternalUser(email, firstName, lastName, notify, convertedExtraProps), serviceRegistry, getScope());
+		return new ScriptNode(supplierPortalService.createExternalUser(email, firstName, lastName, notify, convertedExtraProps), serviceRegistry,
+				getScope());
 	}
-	
+
 	/**
 	 * <p>deleteExternalUser.</p>
 	 *
@@ -478,5 +466,5 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 	public void deleteExternalUser(ScriptNode userNode, ScriptNode supplierNode) {
 		supplierPortalService.deleteExternalUser(userNode.getNodeRef(), supplierNode.getNodeRef());
 	}
-	
+
 }

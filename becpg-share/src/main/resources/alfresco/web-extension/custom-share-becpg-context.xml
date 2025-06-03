@@ -69,7 +69,8 @@ http://www.springframework.org/schema/context/spring-context-2.5.xsd">
     <!-- Action group resolver -->
 	<bean id="becpg.resolver.doclib.actionGroup" class="fr.becpg.web.resolver.doclib.BeCPGDoclistActionGroupResolver" />
 	<!-- evaluators -->
-	<bean id="evaluator.component.becpg.params.equal" class="fr.becpg.web.extensibility.UrlParamsEvaluator" />
+	<bean id="evaluator.component.becpg.params.equal" class="fr.becpg.web.extensibility.UrlParamsEqualsEvaluator" />
+	<bean id="evaluator.component.becpg.params.startWith" class="fr.becpg.web.extensibility.UrlParamsStartWithEvaluator" />
 	<bean id="evaluator.component.becpg.custom.view" class="fr.becpg.web.extensibility.CustomViewEvaluator" />
 	<bean id="evaluator.becpg.doclib.action.entity" parent="evaluator.doclib.action.hasAspect">
 		<property name="aspects">
