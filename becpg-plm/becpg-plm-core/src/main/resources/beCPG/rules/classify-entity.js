@@ -69,7 +69,12 @@ function main() {
 			if (state == "Valid") {
 				site = getDocumentLibraryNodeRef(VALID_SITE_ID);
 			} else if ((state == "Simulation" || state == "ToValidate") && !isInSite(document, SUPPLIER_PORTAL_SITE_ID)) {
-				site = getDocumentLibraryNodeRef(SIMULATION_SITE_ID);
+				var entityFolder = getEntity(document);
+				if (!isEmpty(entityFolder) && entityFolder.isSubType("pjt:project")) {
+					wasMoved = classifyByHierarchy(document, entityFolder);
+				} else {
+					site = getDocumentLibraryNodeRef(SIMULATION_SITE_ID);
+				}
 			} else if (state == "Archived") {
 				site = getDocumentLibraryNodeRef(ARCHIVED_SITE_ID);
 			}

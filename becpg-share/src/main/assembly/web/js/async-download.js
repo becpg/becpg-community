@@ -79,8 +79,9 @@
 
 				var form = document.createElement("form");
 				form.method = "GET";
-				form.action = Alfresco.constants.PROXY_URI + "becpg/report/node/" + this._currentArchiveNodeURL + "/content/" + Alfresco.util.encodeURIPath(this._currentArchiveName);
-				document.body.appendChild(form);
+                form.style.display = "none";
+                form.action = Alfresco.constants.PROXY_URI + "becpg/report/node/" + this._currentArchiveNodeURL + "/content/" + Alfresco.util.encodeURIPath(this._currentArchiveName);
+                document.body.appendChild(form);
 
 
 				var d = form.ownerDocument;

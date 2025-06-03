@@ -1448,6 +1448,9 @@
 
 		<aspect name="bcpg:archivedEntityAspect">
 		</aspect>
+		
+		<aspect name="bcpg:pendingEntityReportAspect">
+		</aspect>
 
 		<aspect name="bcpg:httpLinkAspect">
 			<properties>

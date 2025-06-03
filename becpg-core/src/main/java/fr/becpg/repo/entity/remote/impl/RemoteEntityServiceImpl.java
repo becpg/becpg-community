@@ -21,8 +21,10 @@ package fr.becpg.repo.entity.remote.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,15 +32,21 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.query.PagingResults;
+import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
+import org.alfresco.service.cmr.dictionary.DictionaryService;
+import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -76,8 +84,10 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	private static final String CREATE_ERROR = "Cannot create or update entity: %s at format %s - %s";
 
 	@Autowired
-	RemoteServiceRegisty remoteServiceRegisty;
+	private RemoteServiceRegisty remoteServiceRegisty;
 	
+	@Autowired
+	private NamespaceService namespaceService;
 
 	@Autowired
 	private RemoteSchemaGenerator remoteSchemaGenerator;
@@ -94,6 +104,9 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	@Autowired
 	@Qualifier("ContentService")
 	private ContentService contentService;
+	
+	@Autowired
+	private DictionaryService dictionaryService;
 
 	
 	/** {@inheritDoc} */
@@ -320,5 +333,66 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 		}
 
 	}
-
+	
+	@Override
+	public Map<String, String> toSearchCriterion(JSONObject entityJson) {
+		Map<String, String> criterionMap  = new HashMap<>();
+		if (entityJson.has("cm:name")) {
+			criterionMap.put("prop_cm_name", entityJson.getString("cm:name"));
+		}
+		if (entityJson.has("bcpg:code")) {
+			criterionMap.put("prop_bcpg_code", entityJson.getString("bcpg:code"));
+		}
+		if (entityJson.has("bcpg:erpCode")) {
+			criterionMap.put("prop_bcpg_erpCode", entityJson.getString("bcpg:erpCode"));
+		}
+		if (entityJson.has("attributes")) {
+			JSONObject attributes = entityJson.getJSONObject("attributes");
+			for (String prop : attributes.keySet()) {
+				QName qName = QName.createQName(prop, namespaceService);
+				if (dictionaryService.getAssociation(qName) != null) {
+					Object value = attributes.get(prop);
+					String assocKey = "assoc_" + prop.replace(":", "_") + "_added";
+					if (value instanceof JSONObject jsonObject) {
+						criterionMap.put(assocKey, "workspace://SpacesStore/" + jsonObject.getString("id"));
+					} else if (value instanceof JSONArray jsonArray) {
+						List<String> assocValue = new ArrayList<>();
+						for (int i = 0; i < jsonArray.length(); i ++) {
+							assocValue.add("workspace://SpacesStore/" + jsonArray.getJSONObject(i).getString("id"));
+						}
+						criterionMap.put(assocKey, String.join(",", assocValue));
+					}
+				} else {
+					String propValue = attributes.getString(prop);
+					String key = "prop_" + prop.replace(":", "_");
+					PropertyDefinition propertyDef = dictionaryService.getProperty(qName);
+					if (propertyDef != null && propValue.startsWith("[") && propValue.endsWith("]") && propValue.contains(" TO ")) {
+						if (propertyDef.getDataType().getName().equals(DataTypeDefinition.DATE)
+								|| propertyDef.getDataType().getName().equals(DataTypeDefinition.DATETIME)) {
+							key += "-date-range";
+						} else {
+							key += "-range";
+						}
+						String[] split = propValue.substring(1, propValue.length() - 1).split(" TO ");
+						String lower = split[0].replace("MIN", "").replace("MAX", "");
+						String upper = split[1].replace("MIN", "").replace("MAX", "");
+						propValue = lower + "|" + upper;
+					}
+					criterionMap.put(key, propValue);
+				}
+			}
+		}
+		if (entityJson.has("datalists")) {
+			JSONObject datalists = entityJson.getJSONObject("datalists");
+			for (String datalistType : datalists.keySet()) {
+				JSONArray listItems = datalists.getJSONArray(datalistType);
+				for (int i = 0; i < listItems.length(); i++) {
+					JSONObject item = listItems.getJSONObject(i);
+					criterionMap.putAll(toSearchCriterion(item));
+				}
+			}
+		}
+		return criterionMap;
+	}
+	
 }

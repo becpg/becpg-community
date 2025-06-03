@@ -9,13 +9,19 @@ echo -e "888 \"88b d8P  Y8b  \e[38;2;0;92;102m888        8888888P\"  888  88888\
 echo -e "888  888 88888888  \e[38;2;0;92;102m888    888 888        888    888\e[38;2;0;255;189m" 
 echo -e "888 d88P Y8b.      \e[38;2;0;92;102mY88b  d88P 888        Y88b  d88P\e[38;2;0;255;189m" 
 echo -e "88888P\"   \"Y8888    \e[38;2;0;92;102m\"Y8888P\"  888         \"Y8888P88\e[0m" 
-echo -e " \e[91mCopyright (C) 2010-2024 beCPG.\e[0m"
+echo -e " \e[91mCopyright (C) 2010-2025 beCPG.\e[0m"
+
+set -e
 
 export COMPOSE_FILE_PATH=${PWD}/becpg-integration-runner/target/docker-compose.yml
 export MVN_EXEC="${PWD}/mvnw"
-export BECPG_VERSION_PROFILE=becpg_23_4_1
+export BECPG_VERSION_PROFILE=becpg_23_4_2
 
-. .env
+if [ -f .env ]; then
+  . .env
+else
+  echo "Warning: .env file not found, skipping."
+fi
 
 case "$2" in
   branch)
@@ -102,24 +108,25 @@ purge() {
 build() {
    if [ -d becpg-enterprise ]; then
     cd becpg-enterprise
-   	 $MVN_EXEC clean package $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="enterprise-test"
-     docker compose -f ./distribution/target/docker-compose-build.yml build
+  	 $MVN_EXEC package $EXTRA_ENV -DskipTests=true  -Dmaven.build.cache.enabled=true -Djacoco.skip=true -Dcheckstyle.skip=true  -Dbecpg.dockerbuild.name="enterprise-test"
+     docker compose -f ./distribution/target/docker-compose-dev.yml build
    	 cd ..
    else
-   	 $MVN_EXEC clean package $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="test"
+   	 $MVN_EXEC package $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="test"
    	 docker compose -f ./becpg-integration-runner/target/docker-compose-build.yml build
    fi 
-   
-   
+
 }
 
 install() {
   if [ -d becpg-enterprise ]; then
     cd becpg-enterprise
     $MVN_EXEC  clean install $EXTRA_ENV -DskipTests=true
-     cd ..
+    docker compose -f ./distribution/target/docker-compose-build.yml build
+    cd ..
    else
     $MVN_EXEC  clean install $EXTRA_ENV -DskipTests=true
+    docker compose -f ./becpg-integration-runner/target/docker-compose-build.yml build
   fi
   
 }
@@ -147,7 +154,7 @@ install_hotswap(){
 }
 
 tail() {
-    docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH logs -f --tail=100 becpg becpg-db becpg-share
+    docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml logs -f --tail=100 becpg-share becpg
 }
 
 test() {

@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -115,20 +116,23 @@ public class SecurityServiceImpl implements SecurityService {
 			stopWatch.start();
 		}
 		try {
-			
+
 			int accesMode = SecurityService.WRITE_ACCESS;
 
 			if (!isAdmin() && !isEntityTemplate(nodeRef)) {
 				PermissionContext permissionContext = getPermissionContext(nodeRef, nodeType, propName);
-				
+
 				if (Boolean.TRUE.equals(permissionContext.isDefaultReadOnly())) {
 					accesMode = SecurityService.READ_ACCESS;
 				}
-				
+
 				List<PermissionModel> permissions = permissionContext.getPermissions();
 				if (!permissions.isEmpty()) {
 					accesMode = computeAccessMode(nodeRef, nodeType, permissions);
 				}
+
+				accesMode = computePluginAccessMode(nodeRef, nodeType, accesMode);
+
 			}
 
 			return accesMode;
@@ -140,19 +144,19 @@ public class SecurityServiceImpl implements SecurityService {
 
 		}
 	}
-	
+
 	private boolean isEntityTemplate(NodeRef nodeRef) {
 		return nodeRef != null && nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_TPL);
 	}
 
 	private int computeAccessMode(NodeRef nodeRef, QName nodeType, List<PermissionModel> permissions) {
 		int accessMode = SecurityService.NONE_ACCESS;
-		
+
 		boolean hasReadAccess = true;
-		
+
 		for (PermissionModel permission : permissions) {
-			
-			if (isInGroup(nodeRef, nodeType, permission)) {
+
+			if (isInGroup(nodeRef, nodeType, permission.getGroups())) {
 				if (permission.isWrite()) {
 					return SecurityService.WRITE_ACCESS;
 				} else if (permission.isExclusiveRead()) {
@@ -163,38 +167,38 @@ public class SecurityServiceImpl implements SecurityService {
 					hasReadAccess = false;
 				}
 			}
-			
+
 		}
-		
+
 		if ((accessMode == SecurityService.NONE_ACCESS) && hasReadAccess) {
 			accessMode = SecurityService.READ_ACCESS;
 		}
-		
+
 		return accessMode;
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public PermissionContext getPermissionContext(NodeRef nodeRef, QName nodeType, String propName) {
-		
+
 		PermissionContext permissionContext = new PermissionContext();
-		
+
 		String cacheKey = computeCacheKey(nodeRef);
-		
+
 		Map<String, Boolean> readOnlyMap = getReadOnlyCachedMap(cacheKey);
-		
+
 		String nodeTypeKey = computeNodeTypeKey(nodeType);
 		if (readOnlyMap.containsKey(nodeTypeKey)) {
 			permissionContext.setIsDefaultReadOnly(readOnlyMap.get(nodeTypeKey));
 		}
-		
+
 		Map<String, List<PermissionModel>> permissionMap = getPermissionCachedMap(cacheKey);
-		
+
 		String nodeTypePropKey = computeNodeTypePropKey(nodeType, propName);
 		if (permissionMap.containsKey(nodeTypePropKey)) {
 			permissionContext.setPermissions(permissionMap.get(nodeTypePropKey));
 		}
-		
+
 		return permissionContext;
 
 	}
@@ -234,7 +238,7 @@ public class SecurityServiceImpl implements SecurityService {
 				for (NodeRef aclGroupNodeRef : aclGroups) {
 					ACLGroupData aclGrp = alfrescoRepository.findOne(aclGroupNodeRef);
 					QName aclGrpType = QName.createQName(aclGrp.getNodeType(), namespaceService);
-					
+
 					if (aclGrpType != null) {
 						Boolean isDefaultReadOnly = aclGrp.getIsDefaultReadOnly();
 						if (isDefaultReadOnly != null) {
@@ -290,11 +294,12 @@ public class SecurityServiceImpl implements SecurityService {
 					List<ACLEntryDataItem> aclEntries = aclGrp.getAcls();
 					if (aclEntries != null) {
 						for (ACLEntryDataItem aclEntry : aclEntries) {
-							if(aclEntry.getPropName()!=null) {
+							if (aclEntry.getPropName() != null) {
 								String key = computeNodeTypePropKey(nodeType, aclEntry.getPropName());
-								permissionMap.computeIfAbsent(key, k -> new ArrayList<>()).add(new PermissionModel(aclEntry.getAclPermission(), aclEntry.getGroupsAssignee(), aclEntry.getIsEnforceACL()));
+								permissionMap.computeIfAbsent(key, k -> new ArrayList<>()).add(
+										new PermissionModel(aclEntry.getAclPermission(), aclEntry.getGroupsAssignee(), aclEntry.getIsEnforceACL()));
 							} else {
-								logger.warn("Acl has no propName: "+aclEntry.toString());
+								logger.warn("Acl has no propName: " + aclEntry.toString());
 							}
 						}
 					}
@@ -315,7 +320,7 @@ public class SecurityServiceImpl implements SecurityService {
 	public boolean isCurrentUserAllowed(String securityGroup) {
 		if (!isAdmin()) {
 			Set<String> authorities = authorityService.getContainedAuthorities(AuthorityType.USER, PermissionService.GROUP_PREFIX + securityGroup,
-					true);
+					false);
 			if (!authorities.isEmpty() && !authorities.contains(AuthenticationUtil.getFullyAuthenticatedUser())) {
 				return false;
 			}
@@ -364,15 +369,37 @@ public class SecurityServiceImpl implements SecurityService {
 	/**
 	 * Check if current user is in corresponding group or role
 	 */
-	private boolean isInGroup(NodeRef nodeRef, QName nodeType, PermissionModel permissionModel) {
+	private boolean isInGroup(NodeRef nodeRef, QName nodeType, List<NodeRef> groups) {
 
-		for (SecurityServicePlugin plugin : securityPlugins) {
-			if (plugin.accept(nodeType) && plugin.checkIsInSecurityGroup(nodeRef, permissionModel)) {
-				return true;
+		return beCPGCacheService.getFromTransactionCache(SecurityService.class.getName()+".isInGroup", buildCacheKey(nodeRef, groups), () -> {
+
+			for (SecurityServicePlugin plugin : securityPlugins) {
+				if (plugin.accept(nodeType) && plugin.checkIsInSecurityGroup(nodeRef, groups)) {
+					return true;
+				}
 			}
-		}
 
-		return false;
+			return false;
+		});
+	}
+
+	private int computePluginAccessMode(NodeRef nodeRef, QName nodeType, int accesMode) {
+		return Math.min(accesMode,
+				beCPGCacheService.getFromTransactionCache(SecurityService.class.getName()+".computePluginAccessMode", nodeRef.getId(), () -> {
+					int pluginAccessMode = SecurityService.WRITE_ACCESS;
+					for (SecurityServicePlugin plugin : securityPlugins) {
+						if (plugin.accept(nodeType)) {
+							pluginAccessMode = plugin.computeAccessMode(nodeRef, accesMode);
+						}
+					}
+					return pluginAccessMode;
+				}));
+	}
+
+	
+
+	private String buildCacheKey(NodeRef nodeRef, List<NodeRef> groups) {
+		return nodeRef.getId() + "_" + groups.stream().sorted().map(NodeRef::getId).collect(Collectors.joining("_"));
 	}
 
 	private String computeNodeTypePropKey(QName nodeType, String propName) {
@@ -380,16 +407,16 @@ public class SecurityServiceImpl implements SecurityService {
 	}
 
 	private List<NodeRef> findAllAclGroups() {
-		List<NodeRef>  ret = new ArrayList<>();
-		
-		for(NodeRef aclGroupNodeRef : BeCPGQueryBuilder.createQuery().ofType(SecurityModel.TYPE_ACL_GROUP).inDB().list()) {
+		List<NodeRef> ret = new ArrayList<>();
+
+		for (NodeRef aclGroupNodeRef : BeCPGQueryBuilder.createQuery().ofType(SecurityModel.TYPE_ACL_GROUP).inDB().list()) {
 			Boolean isLocalPermission = (Boolean) nodeService.getProperty(aclGroupNodeRef, SecurityModel.PROP_ACL_GROUP_IS_LOCAL_PERMISSION);
-			if(!Boolean.TRUE.equals(isLocalPermission)) {
+			if (!Boolean.TRUE.equals(isLocalPermission)) {
 				ret.add(aclGroupNodeRef);
 			}
-			
+
 		}
-		
+
 		return ret;
 	}
 
@@ -398,37 +425,37 @@ public class SecurityServiceImpl implements SecurityService {
 	public List<String> getAvailablePropNames() {
 		List<String> ret = new ArrayList<>();
 
-			for (NodeRef aclGroupNodeRef : findAllAclGroups()) {
+		for (NodeRef aclGroupNodeRef : findAllAclGroups()) {
 
-				ACLGroupData aclGroup = alfrescoRepository.findOne(aclGroupNodeRef);
+			ACLGroupData aclGroup = alfrescoRepository.findOne(aclGroupNodeRef);
 
-				TypeDefinition typeDefinition = dictionaryService.getType(QName.createQName(aclGroup.getNodeType(), namespaceService));
+			TypeDefinition typeDefinition = dictionaryService.getType(QName.createQName(aclGroup.getNodeType(), namespaceService));
 
-				if ((typeDefinition != null) && (typeDefinition.getProperties() != null)) {
-					for (Map.Entry<QName, PropertyDefinition> properties : typeDefinition.getProperties().entrySet()) {
-						if (isViewableProperty(properties.getKey())) {
-							appendPropName(typeDefinition, properties, ret);
-						}
+			if ((typeDefinition != null) && (typeDefinition.getProperties() != null)) {
+				for (Map.Entry<QName, PropertyDefinition> properties : typeDefinition.getProperties().entrySet()) {
+					if (isViewableProperty(properties.getKey())) {
+						appendPropName(typeDefinition, properties, ret);
 					}
+				}
 
-					List<AspectDefinition> aspects = typeDefinition.getDefaultAspects();
+				List<AspectDefinition> aspects = typeDefinition.getDefaultAspects();
 
-					if (aspects == null) {
-						aspects = new ArrayList<>();
-					}
+				if (aspects == null) {
+					aspects = new ArrayList<>();
+				}
 
-					for (AspectDefinition aspect : aspects) {
-						if ((aspect != null) && (aspect.getProperties() != null)) {
-							for (Map.Entry<QName, PropertyDefinition> properties : aspect.getProperties().entrySet()) {
-								if (isViewableProperty(properties.getKey())) {
-									appendPropName(typeDefinition, properties, ret);
-								}
+				for (AspectDefinition aspect : aspects) {
+					if ((aspect != null) && (aspect.getProperties() != null)) {
+						for (Map.Entry<QName, PropertyDefinition> properties : aspect.getProperties().entrySet()) {
+							if (isViewableProperty(properties.getKey())) {
+								appendPropName(typeDefinition, properties, ret);
 							}
 						}
-
 					}
 
 				}
+
+			}
 		}
 
 		return ret;

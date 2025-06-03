@@ -1607,6 +1607,20 @@
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
+			
+			<form id="export">
+				<field-visibility>
+					<show id="bcpg:charactName" />
+					<show id="bcpg:legalName" />
+					<show id="bcpg:costType" />
+					<show id="bcpg:costCurrency" />
+					<show id="bcpg:costFixed" />
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:isDeleted" />
+					<show id="bcpg:costFormula" />
+				</field-visibility>
+			</form>
 		</forms>
 	</config>
 	
@@ -2699,6 +2713,24 @@
 					<show id="bcpg:color" />
 				</field-visibility>
 			</form>
+			
+			<form id="export">
+				<field-visibility>
+					<show id="gs1:nutrientTypeCode" force="true" />
+					<show id="bcpg:charactName" />
+					<show id="bcpg:legalName" />
+					<show id="bcpg:nutGroup" />
+					<show id="bcpg:nutType" />
+					<show id="bcpg:nutUnit" />
+					<show id="bcpg:nutGDA" />
+					<show id="bcpg:nutUL" />
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="rep:reportLocales" />
+					<show id="bcpg:isDeleted" />
+					<show id="bcpg:nutFormula" />
+				</field-visibility>
+			</form>
 		</forms>
 	</config>
 
@@ -3002,6 +3034,22 @@
 					<show id="sec:readGroups" force="true" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted" />
+				</field-visibility>
+			</form>
+			
+			<form id="export">
+				<field-visibility>
+					<show id="bcpg:physicoChemCode" />
+					<show id="bcpg:charactName" />
+					<show id="bcpg:legalName" />
+					<show id="bcpg:physicoChemUnit" />
+					<show id="bcpg:physicoChemType" />
+					<show id="bcpg:physicoChemFormulated" />
+					<show id="bcpg:physicoChemFormulatedFromVol" />
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:isDeleted" />
+					<show id="bcpg:physicoChemFormula" />
 				</field-visibility>
 			</form>
 		</forms>
@@ -3562,8 +3610,6 @@
 					<field id="bcpg:plantPackerCode" set="2-col" />
 					<field id="bcpg:plantApprovalNumbers" set="2-col" />
 					<field id="sec:readGroups" set="2-col" />
-					<field id="bcpg:erpCode" set="2-col" />
-					<field id="bcpg:eanCode" set="2-col" />
 					<field id="bcpg:isDeleted" set="2-col" />
 					<field id="bcpg:plantCertifications" mandatory="false" read-only="false" set="2-col">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -4776,6 +4822,21 @@
 			<form id="sub-datagrid">
 				<field-visibility>
 					<show id="cm:description" force="true" />
+				</field-visibility>
+			</form>
+			
+			<form id="export">
+				<field-visibility>
+					<show id="bcpg:labelClaimCode" />
+					<show id="bcpg:charactName" />
+					<show id="bcpg:legalName" />
+					<show id="bcpg:labelClaimType" />
+					<show id="rep:reportLocales" force="true" />
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:isDeleted" />
+					<show id="cm:content" />
+					<show id="bcpg:labelClaimFormula" />
 				</field-visibility>
 			</form>
 		</forms>
