@@ -36,6 +36,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.sql.DataSource;
 
 import org.alfresco.model.ContentModel;
@@ -275,7 +276,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 			// add nodes that are not in db
 			if (assocNodeRefs != null) {
 				for (NodeRef n : assocNodeRefs) {
-					if (!dbAssocNodeRefs.contains(n) && nodeService.exists(n)) {
+					if (dbAssocNodeRefs != null && !dbAssocNodeRefs.contains(n) && nodeService.exists(n)) {
 						if (!nodeService.hasAspect(n, ContentModel.ASPECT_PENDING_DELETE)) {
 							hasChanged = true;
 							nodeService.createAssociation(nodeRef, n, qName);
@@ -347,7 +348,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 
 	/** {@inheritDoc} */
 	@Override
-	public List<NodeRef> getChildAssocs(NodeRef listNodeRef, QName qName, QName childTypeQName, Map<String, Boolean> sortMap) {
+	public List<NodeRef> getChildAssocs(NodeRef listNodeRef, QName qName, QName childTypeQName, @Nullable Map<String, Boolean> sortMap) {
 		return getChildAssocsImpl(listNodeRef, qName, childTypeQName, sortMap);
 	}
 
@@ -531,8 +532,14 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 				AuthenticationUtil.getFullyAuthenticatedUser());
 
 		Predicate<Node> permissionChecker = item -> canCurrentUserRead(item.getAclId(), authorisations);
-		return queryItems("alfresco.node.select_SourcesAssocs", params, maxResults, offset, checkPermissions, permissionChecker).stream().map(Node::getNodeRef).toList();
+		return queryItems("alfresco.node.select_SourcesAssocs", params, maxResults, offset, checkPermissions, permissionChecker).stream()
+				.map(Node::getNodeRef).map(n -> tenantService.getBaseName(n)).toList();
 	}
+	
+	private static final  String OFFSET_PARAM = "offset";
+	private static final  String MAXRESULTS_PARAM = "maxResults";
+	
+	
 	
 	private <T> List<T> queryItems(String template, Map<String, Object> params, Integer maxResults, Integer offset
 			, boolean checkPermissions, Predicate<T> permissionChecker) {
@@ -549,11 +556,11 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 			}
 			int batchStart = 0;
 			int batchSize = 1000;
-			params.put("offset", batchStart);
-			params.put("maxResults", batchSize);
+			params.put(OFFSET_PARAM, batchStart);
+			params.put(MAXRESULTS_PARAM, batchSize);
 			int offsetCount = 0;
 			while (foundNodes.size() < maxResults) {
-				params.put("offset", batchStart);
+				params.put(OFFSET_PARAM, batchStart);
 				List<T> nextResults = sqlSessionTemplate.selectList(template, params);
 				for (T node : nextResults) {
 					if (foundNodes.size() >= maxResults) {
@@ -575,8 +582,8 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 			}
 			return foundNodes;
 		}
-		params.put("offset", offset);
-		params.put("maxResults", maxResults);
+		params.put(OFFSET_PARAM, offset);
+		params.put(MAXRESULTS_PARAM, maxResults);
 		foundNodes = sqlSessionTemplate.selectList(template, params);
 		return foundNodes;
 	}

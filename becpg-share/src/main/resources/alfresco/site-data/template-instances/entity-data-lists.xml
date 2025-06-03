@@ -242,6 +242,16 @@
 							</evaluators>
 							<url>/components/entity-charact-views/labeling-view</url>
 						</evaluation>
+						<evaluation id="survey">
+							<evaluators>
+								<evaluator type="evaluator.component.becpg.params.startWith">
+									<params>
+										<list>surveyList</list>
+									</params>
+								</evaluator>
+							</evaluators>
+							<url>/components/entity-charact-views/survey-view</url>
+						</evaluation>
 						<evaluation id="datagrid">
 							<url>/components/entity-charact-views/entity-datagrid-view</url>
 							<properties>

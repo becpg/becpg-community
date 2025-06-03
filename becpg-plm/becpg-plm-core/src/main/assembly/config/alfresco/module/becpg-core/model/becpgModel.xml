@@ -6615,6 +6615,9 @@
 
 		<aspect name="bcpg:archivedEntityAspect">
 		</aspect>
+		
+		<aspect name="bcpg:pendingEntityReportAspect">
+		</aspect>
 
 		<aspect name="bcpg:regulatoryAspect">
 			<properties>
@@ -6965,5 +6968,18 @@
 			</properties>
 			<associations/>
 		</aspect>
+
+		  <aspect name="bcpg:externalAccessAspect">
+            <properties>
+                <property name="bcpg:externalAccessGroup">
+                    <type>d:text</type>
+                   <index enabled="true">
+                        <tokenised>false</tokenised>
+                        <facetable>false</facetable>
+                    </index>
+                </property>
+            </properties>
+         </aspect>
+
 	</aspects>
 </model>
