@@ -112,7 +112,7 @@ public class EntityServiceImpl implements EntityService {
 
 	@Autowired
 	private EntityDictionaryService entityDictionaryService;
-	
+
 	@Autowired
 	private AssociationService associationService;
 
@@ -327,7 +327,7 @@ public class EntityServiceImpl implements EntityService {
 
 		// manage workingCopy
 		String wcLabel = CheckOutCheckInServiceImpl.getWorkingCopyLabel();
-		if (wcLabel!=null && imgName.endsWith(wcLabel)) {
+		if (wcLabel != null && imgName.endsWith(wcLabel)) {
 			imgName = getNameFromWorkingCopyName(imgName, wcLabel);
 		}
 
@@ -392,24 +392,34 @@ public class EntityServiceImpl implements EntityService {
 		}
 		return documentsFolderNodeRef;
 	}
-	
-	
+
 	@Override
-	public 	Map<NodeRef, NodeRef>  getDocumentsByType(NodeRef entityNodeRef) {
-    	Map<NodeRef, NodeRef> docByType  = new HashMap<>();
-            for (FileInfo folder : fileFolderService.listFolders(entityNodeRef)) {
-                for (FileInfo fileInfo : fileFolderService.listFiles(folder.getNodeRef())) {
-                    NodeRef fileNodeRef = fileInfo.getNodeRef();
-                    if (nodeService.hasAspect(fileNodeRef, BeCPGModel.ASPECT_DOCUMENT_ASPECT)) {
-                        NodeRef docType = associationService.getTargetAssoc(fileNodeRef, BeCPGModel.ASSOC_DOCUMENT_TYPE_REF);
-                        if (docType!=null) {
-                            docByType.put(docType, fileNodeRef);
-                        }
-                    }
-                }
-            }
-           return docByType;
-    }
+	public Map<NodeRef, NodeRef> getDocumentsByType(NodeRef entityNodeRef) {
+		Map<NodeRef, NodeRef> docByType = new HashMap<>();
+		for (FileInfo folder : fileFolderService.listFolders(entityNodeRef)) {
+			for (FileInfo fileInfo : fileFolderService.listFiles(folder.getNodeRef())) {
+				NodeRef fileNodeRef = fileInfo.getNodeRef();
+				if (nodeService.hasAspect(fileNodeRef, BeCPGModel.ASPECT_DOCUMENT_ASPECT)) {
+					NodeRef docType = associationService.getTargetAssoc(fileNodeRef, BeCPGModel.ASSOC_DOCUMENT_TYPE_REF);
+					if (docType != null) {
+						docByType.put(docType, fileNodeRef);
+					}
+				}
+			}
+		}
+
+		for (FileInfo fileInfo : fileFolderService.listFiles(entityNodeRef)) {
+			NodeRef fileNodeRef = fileInfo.getNodeRef();
+			if (nodeService.hasAspect(fileNodeRef, BeCPGModel.ASPECT_DOCUMENT_ASPECT)) {
+				NodeRef docType = associationService.getTargetAssoc(fileNodeRef, BeCPGModel.ASSOC_DOCUMENT_TYPE_REF);
+				if (docType != null) {
+					docByType.put(docType, fileNodeRef);
+				}
+			}
+		}
+
+		return docByType;
+	}
 
 	/** {@inheritDoc} */
 	@Override

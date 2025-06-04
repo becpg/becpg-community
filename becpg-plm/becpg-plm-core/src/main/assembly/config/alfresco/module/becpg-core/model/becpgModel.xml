@@ -96,6 +96,18 @@
 			</parameter>
 		</constraint>
 
+   
+        
+        <constraint name="bcpg:aiValidationStates" type="LIST">
+            <parameter name="allowedValues">
+                <list>
+                    <value>ToValidate</value>
+                    <value>Valid</value>
+                    <value>Refused</value>
+                </list>
+            </parameter>
+        </constraint>
+        
 
 		<constraint name="bcpg:versionTypes" type="LIST">
 			<parameter name="allowedValues">
@@ -1004,28 +1016,7 @@
 			</parameter>
 		</constraint>
 		
-		<constraint name="bcpg:documentStates" type="LIST">
-			<parameter name="allowedValues">
-				<list>
-					<value>OnHold</value>
-					<value>ToValidate</value>
-					<value>Valid</value>
-					<value>Refused</value>
-					<value>Archived</value>
-				</list>
-			</parameter>
-		</constraint>
-		
-		<constraint name="bcpg:aiValidationStates" type="LIST">
-			<parameter name="allowedValues">
-				<list>
-					<value>ToValidate</value>
-					<value>Valid</value>
-					<value>Refused</value>
-				</list>
-			</parameter>
-		</constraint>
-		
+	
 		
 		
 	</constraints>
@@ -6860,13 +6851,13 @@
 			<properties>
 				<property name="bcpg:documentState">
 					<type>d:text</type>
-					<default>OnHold</default>
+					<default>Simulation</default>
 					<index enabled="true">
 						<tokenised>false</tokenised>
 						<facetable>true</facetable>
 					</index>
 					<constraints>
-						<constraint ref="bcpg:documentStates" />
+						<constraint ref="bcpg:systemState" />
 					</constraints>
 				</property>
 				<property name="bcpg:documentIsMandatory">
@@ -6902,6 +6893,7 @@
 			<mandatory-aspects>
 				<aspect>bcpg:codeAspect</aspect>
 				<aspect>cm:effectivity</aspect>
+				<aspect>bcpg:aiValidationAspect</aspect>
 			</mandatory-aspects>
 		</aspect>
 		

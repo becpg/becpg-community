@@ -272,6 +272,16 @@
                 </bean>
                  <bean class="fr.becpg.repo.product.formulation.DocumentFormulationHandler">
                     <property name="fileFolderService" ref="fileFolderService" />
+                    <property name="policyBehaviourFilter" ref="policyBehaviourFilter"/>
+					<property name="nodeService" ref="nodeService" />
+					<property name="mlNodeService" ref="mlAwareNodeService" />
+					<property name="namespaceService" ref="namespaceService" />
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+					<property name="associationService" ref="associationService" />
+					<property name="entityService" ref="entityService" />
+					<property name="repoService" ref="repoService" />
+					<property name="expressionService" ref="expressionService" />
+					<property name="formulaService" ref="formulaService" />
                 </bean>
 
 				<bean class="fr.becpg.repo.product.formulation.FormulaFormulationHandler">

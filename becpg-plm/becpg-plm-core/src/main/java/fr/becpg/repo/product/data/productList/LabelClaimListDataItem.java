@@ -380,6 +380,14 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements Si
 		return this;
 	}
 	
+
+	public LabelClaimListDataItem withIsCertified(Boolean isCertified) {
+		if(Boolean.TRUE.equals(isCertified)){
+			this.labelClaimValue = VALUE_CERTIFIED;
+		} 
+		return this;
+	}
+	
 	/**
 	 * <p>withPercentClaim.</p>
 	 *
@@ -569,6 +577,7 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements Si
 	public Boolean shouldDetailIfZero() {
 		return true;
 	}
+
 		
 
 }

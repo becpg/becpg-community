@@ -283,7 +283,7 @@ public class StandardSoapTestProduct extends SampleProductBuilder {
 		// Create Sodium Hydroxide raw material with ingredients
 		RawMaterialData sodiumHydroxide = RawMaterialData.build().withName(uniqueName(SODIUM_HYDROXIDE)).withQty(100d).withUnit(ProductUnit.kg)
 				.withIngList(createSodiumHydroxideIngredients())
-				.withGeoOrigins(List.of(CharactTestHelper.getOrCreateGeo(nodeService, "Germany", "DE")));
+				.withGeoOrigins(List.of(CharactTestHelper.getOrCreateGeo(nodeService, "DE", "Germany")));
 
 		if (isWithScore) {
 			

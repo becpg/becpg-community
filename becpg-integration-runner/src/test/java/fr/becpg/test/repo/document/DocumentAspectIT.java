@@ -12,10 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.DocumentEffectivityType;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.document.DocumentTypeItem;
-import fr.becpg.repo.product.data.document.DocumentTypeItem.DocumentEffectivityType;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.test.PLMBaseTestCase;
 
@@ -28,10 +28,11 @@ public class DocumentAspectIT extends PLMBaseTestCase {
 	private AssociationService associationService;
 
 	@Test
-	public void testDocumentAspect() throws IOException {
+	public void testDocumentAspect() {
 
-		NodeRef charact1 = inWriteTx(() -> documentTypeItemRepository.create(getTestFolderNodeRef(), DocumentTypeItem.builder().withCharactName("Test Document Type Auto")
-				.withIsMandatory(true).withEffectivityType(DocumentEffectivityType.AUTO).withAutoExpirationDelay(30)).getNodeRef());
+		NodeRef charact1 = inWriteTx(
+				() -> documentTypeItemRepository.create(getTestFolderNodeRef(), DocumentTypeItem.builder().withCharactName("Test Document Type Auto")
+						.withIsMandatory(true).withEffectivityType(DocumentEffectivityType.AUTO).withAutoExpirationDelay(30)).getNodeRef());
 
 		// Create a document with content
 		Date date1 = new Date();
@@ -104,12 +105,12 @@ public class DocumentAspectIT extends PLMBaseTestCase {
 	}
 
 	@Test
-	public void testDocumentAspectNoneEffectivity() throws IOException {
+	public void testDocumentAspectNoneEffectivity() {
 		// Create a document with content and associate with NONE effectivity type
 		Date date1 = new Date();
 
-		NodeRef charact2 = inWriteTx(() -> documentTypeItemRepository.create(getTestFolderNodeRef(), DocumentTypeItem.builder().withCharactName("Test Document Type None")
-				.withIsMandatory(true).withEffectivityType(DocumentEffectivityType.NONE)).getNodeRef());
+		NodeRef charact2 = inWriteTx(() -> documentTypeItemRepository.create(getTestFolderNodeRef(), DocumentTypeItem.builder()
+				.withCharactName("Test Document Type None").withIsMandatory(true).withEffectivityType(DocumentEffectivityType.NONE)).getNodeRef());
 
 		NodeRef documentNodeRef = inWriteTx(() -> {
 			NodeRef docRef = createNodeWithContent(getTestFolderNodeRef(), "test_document_aspect_none.pdf", "beCPG/signature/sample_1.pdf");

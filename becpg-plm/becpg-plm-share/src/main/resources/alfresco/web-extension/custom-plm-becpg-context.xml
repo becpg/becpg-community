@@ -147,7 +147,81 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 			</bean>
 		</property>
 	</bean>
-	
+
+	<!-- bcpg:documentState indicators -->
+	<bean id="evaluator.becpg.doclib.indicator.document.simulation" parent="evaluator.doclib.action.value">
+		<property name="accessor" value="node.properties.bcpg:documentState" />
+		<property name="comparator">
+			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+				<property name="value" value="Simulation" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="evaluator.becpg.doclib.indicator.document.tovalidate" parent="evaluator.doclib.action.value">
+		<property name="accessor" value="node.properties.bcpg:documentState" />
+		<property name="comparator">
+			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+				<property name="value" value="ToValidate" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="evaluator.becpg.doclib.indicator.document.valid" parent="evaluator.doclib.action.value">
+		<property name="accessor" value="node.properties.bcpg:documentState" />
+		<property name="comparator">
+			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+				<property name="value" value="Valid" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="evaluator.becpg.doclib.indicator.document.refused" parent="evaluator.doclib.action.value">
+		<property name="accessor" value="node.properties.bcpg:documentState" />
+		<property name="comparator">
+			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+				<property name="value" value="Refused" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="evaluator.becpg.doclib.indicator.document.archived" parent="evaluator.doclib.action.value">
+		<property name="accessor" value="node.properties.bcpg:documentState" />
+		<property name="comparator">
+			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+				<property name="value" value="Archived" />
+			</bean>
+		</property>
+	</bean>
+
+	<!-- Document Type Is Mandatory Indicator -->
+	<bean id="evaluator.becpg.doclib.indicator.document.mandatory" parent="evaluator.doclib.action.value">
+		<property name="accessor" value="node.properties.bcpg:docTypeIsMandatory" />
+		<property name="comparator">
+			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+				<property name="value" value="true" />
+			</bean>
+		</property>
+	</bean>
+
+	<!-- AI Validation State indicators -->
+	<bean id="evaluator.becpg.doclib.indicator.ai.valid" parent="evaluator.doclib.action.value">
+		<property name="accessor" value="node.properties.bcpg:aiValidationState" />
+		<property name="comparator">
+			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+				<property name="value" value="Valid" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="evaluator.becpg.doclib.indicator.ai.refused" parent="evaluator.doclib.action.value">
+		<property name="accessor" value="node.properties.bcpg:aiValidationState" />
+		<property name="comparator">
+			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+				<property name="value" value="Refused" />
+			</bean>
+		</property>
+	</bean>
 	
 	<bean id="evaluator.becpg.doclib.indicator.ecm.simulated" parent="evaluator.doclib.action.value">
 		<property name="accessor" value="node.properties.ecm:ecoState" />
