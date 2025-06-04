@@ -1221,6 +1221,8 @@
 					</field>
 					<field id="bcpg:supplierPlants" mandatory="false" read-only="false" set="2-col-product-criteria">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/DataListCharact?className=bcpg:plant&amp;attributeName=cm:name&amp;filter=parentAsEntity </control-param>
+ 							<control-param name="parentAssoc">bcpg_suppliers</control-param>
 							<control-param name="isSearch">true</control-param>
 						</control>
 					</field>
@@ -1948,6 +1950,12 @@
 				</field-visibility>
 				<appearance>
 					<field id="cm:name" read-only="true"></field>
+					<field id="bcpg:supplierPlants" mandatory="false" read-only="false" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/DataListCharact?className=bcpg:plant&amp;attributeName=cm:name&amp;filter=parentAsEntity </control-param>
+							<control-param name="parentAssoc">bcpg_suppliers</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 
