@@ -176,7 +176,7 @@ public class CharactTestHelper {
 	 * @param code a {@link java.lang.String} object
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
-	public static NodeRef getOrCreateGeo(NodeService nodeService, String name, String code) {
+	public static NodeRef getOrCreateGeo(NodeService nodeService, String code, String name) {
 		Map<QName, Serializable> properties = new HashMap<>();
 		properties.put(BeCPGModel.PROP_CHARACT_NAME, name);
 		properties.put(PLMModel.PROP_GEO_ORIGIN_ISOCODE,code);
@@ -184,7 +184,7 @@ public class CharactTestHelper {
 				properties);
 	}
 
-	public static NodeRef getOrCreateClaim(NodeService nodeService, String name, String code) {
+	public static NodeRef getOrCreateClaim(NodeService nodeService, String code, String name) {
 		Map<QName, Serializable> properties = new HashMap<>();
 		properties.put(BeCPGModel.PROP_CHARACT_NAME, name);
 		properties.put(PLMModel.PROP_LABEL_CLAIM_CODE,code);
@@ -219,7 +219,6 @@ public class CharactTestHelper {
 	 */
 	public static NodeRef getOrCreateCertification(NodeService nodeService, String name, String description) {
 		Map<QName, Serializable> properties = new HashMap<>();
-		properties.put(BeCPGModel.PROP_CHARACT_NAME, name);
 		properties.put(ContentModel.PROP_DESCRIPTION, description);
 		return getOrCreateNode(nodeService, "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:Certifications", name, PLMModel.TYPE_CERTIFICATION,
 				properties);
@@ -247,6 +246,13 @@ public class CharactTestHelper {
 
 		return getOrCreateNode(nodeService, "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:Toxicities", name,
 				PLMModel.TYPE_TOX, properties);
+	}
+
+	public static NodeRef getOrCreateDocumentType(NodeService nodeService, String name) {
+		Map<QName, Serializable> properties = new HashMap<>();
+		properties.put(BeCPGModel.PROP_CHARACT_NAME, name);
+		return getOrCreateNode(nodeService, "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:DocumentTypes", name,
+				BeCPGModel.TYPE_DOCUMENT_TYPE, properties);
 	}
 
 }

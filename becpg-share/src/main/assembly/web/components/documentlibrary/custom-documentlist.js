@@ -158,6 +158,18 @@
 								  id = Alfresco.util.generateDomId(),
 								  cssClass = "effectivity";
 
+							  // Check for mandatory effectivity dates
+							  if (jsNode.hasAspect("bcpg:documentAspect") && properties["bcpg:documentIsMandatory"] === "true" && jsNode.hasAspect("cm:effectivity")) {
+								  var startEffectivity = properties["cm:from"];
+								  var endEffectivity = properties["cm:to"];
+								  
+								  // If the document is mandatory and effectivity dates are not set, add mandatory class
+								  if (startEffectivity == null && endEffectivity == null) {
+									  cssClass = "effectivity-mandatory";
+									  return '<span id="' + id + '" class="' + cssClass + '">' + this.msg("details.effectivity.none") + '</span>';
+								  }
+							  }
+							  
 							  if (jsNode.hasAspect("cm:effectivity")) {
 
 								  var startEffectivity = properties["cm:from"];
@@ -172,14 +184,15 @@
 										  if (now.getTime() < Alfresco.util.fromISO8601(startEffectivity.iso8601).getTime()) {
 											  cssClass = "effectivity-future";
 											  future = true;
-
 										  }
 									  }
 									  if (endEffectivity != null) {
 										  endEffectivityDate = Alfresco.util.formatDate(endEffectivity.iso8601, "shortDate");
 										  if (!future && endEffectivity.value != null && now.getTime() > Alfresco.util.fromISO8601(endEffectivity.iso8601).getTime()) {
 											  cssClass = "effectivity-past";
-										  }
+										  } else if( endEffectivity.value != null && now.getTime() < Alfresco.util.fromISO8601(endEffectivity.iso8601).getTime()){
+                                              cssClass = "effectivity-future";
+                                          }
 									  }
 
 									 var html = '<span id="' + id + '" class="' + cssClass + '">';
