@@ -170,8 +170,7 @@
 
 		  YAHOO.Bubbling.addDefaultAction(REVERT_EVENTCLASS, function() {
 			  var revertUrl = Alfresco.constants.PROXY_URI + 'becpg/entity/revert/' + this.rel.replace(":/", "");
-
-				document.body.style.cursor="wait";
+			  document.body.classList.add("loading-cursor");
 				
 			  Alfresco.util.Ajax
 				  .request({
@@ -184,7 +183,7 @@
 								  window.location.href = beCPG.util.entityURL(resp.json.siteId,
 									  resp.json.persistedObject, resp.json.type);
 							  }
-							document.body.style.cursor="default";
+							document.body.classList.remove("loading-cursor");
 						  },
 						  scope: this
 					  },
@@ -195,7 +194,7 @@
 									  text: response.json.message
 								  });
 							  }
-							document.body.style.cursor="default";
+							document.body.classList.remove("loading-cursor");
 						  },
 						  scope: this
 					  }
