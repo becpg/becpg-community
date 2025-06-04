@@ -121,7 +121,7 @@
                                         if (step.type == "form" || step.type == "survey") {
                                             if (step.form != null) {
                                             	Dom.get(me.id + "-step-" + step.id + "-form-submit").click();
-                                                isValid = step.form.validate(Alfresco.forms.Form.NOTIFICATION_LEVEL_CONTAINER);
+                                                isValid = me.options.readOnly || step.readOnly || step.form.validate(Alfresco.forms.Form.NOTIFICATION_LEVEL_CONTAINER);
                                             } else {
 												me.loadStep(me.options.wizardStruct[newIndex]);
 												isValid = true;
