@@ -370,6 +370,7 @@
 								<exclude>**/META-INF/**</exclude>
 								<exclude>**/*.lib.js</exclude>
 								<exclude>**/*.css</exclude>
+								<exclude>**/spel-editor/lib/**</exclude>
 								<exclude>**/*-min.js</exclude>
 								<exclude>**/*-min.css</exclude>
 							</excludes>
