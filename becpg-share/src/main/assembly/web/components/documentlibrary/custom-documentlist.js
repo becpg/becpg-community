@@ -116,7 +116,7 @@
 					         }
 
 					     this.services.basket = new beCPG.service.Basket();
-		
+						 this.services.aiSuggestion = new beCPG.service.AiSuggestion();
        
 
 				         /**
@@ -141,6 +141,9 @@
 								//beCPG 
                            	   if (!record.node.isContainer ){
    								   html += '<span class="item  item-social  item-separator">' + Alfresco.DocumentList.generateBasket(this, record) + '</span>';
+									if (record.node.aspects && record.node.aspects.indexOf("bcpg:aiValidationAspect") !== -1) {
+   								   		html += '<span class="item  item-social  item-separator">' + Alfresco.DocumentList.generateAiSuggestion(this, record) + '</span>';
+								   }
 								}
 				               if (!record.node.isContainer && Alfresco.constants.QUICKSHARE_URL)
 				               {
@@ -221,7 +224,7 @@
 
 
 
-						// Hook favourite document/folder events
+						// Hook basket events
 				         var fnBasketHandler = function DL_fnBasketHandler(layer, args)
 				         {
 				            var owner = YAHOO.Bubbling.getOwnerByTagName(args[1].anchor, "div");
@@ -232,6 +235,18 @@
 				            return true;
 				         };
 				         YAHOO.Bubbling.addDefaultAction("basket-action", fnBasketHandler);
+
+                         // Hook AI suggestion events
+				         var fnAiSuggestionHandler = function DL_fnAiSuggestionHandler(layer, args)
+				         {
+				            var owner = YAHOO.Bubbling.getOwnerByTagName(args[1].anchor, "div");
+				            if (owner !== null)
+				            {
+				               me.onAiSuggestion.call(me, args[1].target.offsetParent, owner);
+				            }
+				            return true;
+				         };
+				         YAHOO.Bubbling.addDefaultAction("ai-suggestion-action", fnAiSuggestionHandler);
 
 				      },
 										
@@ -694,7 +709,23 @@
 							this.widgets.dataTable.updateRow(oRecord, record);
 						},
 						
-						
+						/**
+						 * AI Suggestion event handler
+						 * 
+						 * @method onAiSuggestion
+						 * @param row
+						 *            {HTMLElement} DOM reference to a TR
+						 *            element (or child thereof)
+						 */
+						onAiSuggestion : function DL_onAiSuggestion(row) {
+							var elIdentifier = row;
+							if (typeof this.viewRenderers[this.options.viewRendererName] === "object") {
+								elIdentifier = this.viewRenderers[this.options.viewRendererName].getDataTableRecordIdFromRowElement(this, row);
+							}
+							var oRecord = this.widgets.dataTable.getRecord(elIdentifier), record = oRecord.getData();
+							this.services.aiSuggestion.showSuggestions(record);
+						},
+
 						/**
 						 * Like/Unlike event handler
 						 * 
@@ -1068,6 +1099,23 @@
 		if (hasComments) {
 			html += '<span class="comment-count">' + $html(node.properties["fm:commentCount"]) + '</span>';
 		}
+		return html;
+	};
+
+	/**
+	 * Generate "AI Suggestion" UI
+	 * 
+	 * @method generateAiSuggestion
+	 * @param scope
+	 *            {object} DocumentLibrary instance
+	 * @param record
+	 *            {object} File record
+	 * @return {string} HTML mark-up for AI Suggestion UI
+	 */
+	Alfresco.DocumentList.generateAiSuggestion = function DL_generateAiSuggestion(scope, record) {
+		var isEnabled =  scope.services.aiSuggestion.isEnabled(record);
+		var btnClass = isEnabled ? "ai-suggestion-action" : "ai-suggestion-action disabled";
+		var html = '<a class="' + btnClass + '" title="' + scope.msg("aisuggestion.show.tip") + '" tabindex="0">' + scope.msg("aisuggestion.show.label") + '</a>';
 		return html;
 	};
 
