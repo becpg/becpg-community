@@ -24,13 +24,16 @@ public class AustralianNutrientRegulation extends AbstractNutrientRegulation {
 	@Override
 	protected Double roundByCode(Double value, String nutrientTypeCode) {
 		if(value != null){
-			BigDecimal bd = BigDecimal.valueOf(value);
-			bd = bd.setScale(1, RoundingMode.HALF_EVEN);
-			return bd.doubleValue();
+			if (nutrientTypeCode.equals(NutrientCode.Energykcal)) {
+				return roundValue(value,1d);
+			} else if (nutrientTypeCode.equals(NutrientCode.EnergykJ)) {
+				return roundValue(value,10d);
+			}
 		}
-		else{
-			return null;
-		}
+		
+		BigDecimal bd = BigDecimal.valueOf(value);
+		bd = bd.setScale(1, RoundingMode.HALF_EVEN);
+		return bd.doubleValue();
 	}
 	
 	
