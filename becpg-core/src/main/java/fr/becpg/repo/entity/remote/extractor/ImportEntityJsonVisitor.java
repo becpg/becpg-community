@@ -67,7 +67,9 @@ public class ImportEntityJsonVisitor {
 
 	private static Log logger = LogFactory.getLog(ImportEntityJsonVisitor.class);
 
-	Set<String> ignoredKeys = new HashSet<>();
+	private Set<String> ignoredKeys = new HashSet<>();
+	
+	private Set<String> ignoredAssocs = new HashSet<>();
 
 	private EntityDictionaryService entityDictionaryService;
 
@@ -113,6 +115,7 @@ public class ImportEntityJsonVisitor {
 		ignoredKeys.add(RemoteEntityService.ATTR_SITE);
 		ignoredKeys.add(RemoteEntityService.ATTR_PARENT_ID);
 		ignoredKeys.add(RemoteEntityService.ELEM_CONTENT);
+		ignoredAssocs.add("cm:categories");
 		
 	}
 
@@ -597,7 +600,7 @@ public class ImportEntityJsonVisitor {
 			String key = iterator.next();
 			String propName = key;
 
-			if (!ignoredKeys.contains(propName)) {
+			if (!ignoredKeys.contains(propName) && !ignoredAssocs.contains(propName)) {
 				QName propQName = createQName(propName);
 
 				AssociationDefinition ad = entityDictionaryService.getAssociation(propQName);
