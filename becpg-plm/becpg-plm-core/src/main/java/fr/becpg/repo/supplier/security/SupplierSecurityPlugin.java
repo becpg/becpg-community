@@ -33,6 +33,7 @@ public class SupplierSecurityPlugin implements SecurityServicePlugin {
 	private WorkflowService workflowService;
 	
 	@Autowired
+	@Qualifier("workflowPackageImpl")
 	private WorkflowPackageComponent workflowPackageComponent;
 
 	@Autowired

@@ -73,6 +73,11 @@ div.entityFolderInstructions {
     color: red;
 }
 
+.detail .effectivity-mandatory {
+    color: red;
+    font-weight: bold;
+}
+
 .detail .effectivity-future {
     color: green;
 }
