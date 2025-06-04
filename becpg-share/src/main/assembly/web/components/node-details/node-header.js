@@ -167,6 +167,15 @@
          showBasket: false,
 
          /**
+          * Flag indicating whether or not to show AI suggestion
+          *
+          * @property showAiSuggestion
+          * @type boolean
+          * @default: false
+          */
+         showAiSuggestion: false,
+
+         /**
           * Flag indicating whether or not to show download button
           *
           * @property showDownload
@@ -363,6 +372,42 @@
 
          }
          
+         if (this.options.showAiSuggestion && !this.options.showOnlyLocation)
+          {
+              function initAiSuggestion() {
+                 
+                  var record = {
+                      nodeRef: me.options.nodeRef,
+                      siteId: me.options.siteId,
+                      type: me.nodeType,
+                      displayName: me.options.displayName,
+                      jsNode: {
+                          isContainer: false,
+                          properties: me.options.nodeProperties || {}
+                      }
+                  };
+
+                  var aiSuggestionService = new beCPG.service.AiSuggestion();
+                  var isEnabled = aiSuggestionService.isEnabled(record);
+                  
+                  var btnClass = isEnabled ? 'ai-suggestion-action' : 'ai-suggestion-action disabled';
+                  var html = '<a class="' + btnClass + '" title="' + me.msg("aisuggestion.show.tip") + '" tabindex="0">' + me.msg("aisuggestion.show.label") + '</a>';
+                  var spanEl = Dom.get(me.id + '-aisuggestion');
+                  
+                  if(spanEl != null) {
+                      spanEl.innerHTML = html;
+                      
+                      Alfresco.util.useAsButton(Selector.query("a", spanEl, true), function(e) {
+                          var aiSuggestionService = new beCPG.service.AiSuggestion();
+                           aiSuggestionService.showSuggestions(record);
+                          YAHOO.util.Event.preventDefault(e);
+                      }, null, me);
+                  }
+              }
+              
+              initAiSuggestion();
+          }
+
          // Parse the date
          if (this.options.showItemModifier && !this.options.showOnlyLocation)
          {
@@ -387,6 +432,7 @@
          var url = 'components/node-details/node-header?nodeRef={nodeRef}&rootPage={rootPage}' +
             '&rootLabelId={rootLabelId}&showFavourite={showFavourite}&showLikes={showLikes}' +
             '&showComments={showComments}&showQuickShare={showQuickShare}&showDownload={showDownload}&showPath={showPath}&showItemModifier={showItemModifier}' +
+            '&showAiSuggestion={showAiSuggestion}' +
             (this.options.pagecontext ? '&pagecontext={pagecontext}' :  '') + 
             (this.options.libraryRoot ? '&libraryRoot={libraryRoot}' :  '') +
             (this.options.siteId ? '&site={siteId}' :  '');

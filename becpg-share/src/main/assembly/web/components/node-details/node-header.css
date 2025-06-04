@@ -126,3 +126,12 @@
 .node-header  .item-social a.basket-action.enabled {
 	background-image: url(../basket/images/basket-selected_16x16.png);
 }
+
+.node-header .item-social a.ai-suggestion-action {
+	background-image: url(../documentlibrary/indicators/ai-valid-16.png);
+}
+
+.node-header .item-social a.ai-suggestion-action.disabled {
+	opacity: 0.5;
+}
+
