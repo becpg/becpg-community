@@ -289,7 +289,7 @@
                   
                   
                   onAfterFormRuntimeInit : function (layer, args) {
-                      if(!this.options.disable && this.formRuntime == null && this.id.indexOf(args[1].runtime.formId.replace("-form",""))>-1){
+                      if(!this.options.disabled && this.formRuntime == null && this.id.indexOf(args[1].runtime.formId.replace("-form",""))>-1){
                           this.formRuntime = args[1].runtime;
                       
                           this.formRuntime.removeValidation = function(fieldId){
