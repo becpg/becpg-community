@@ -148,7 +148,6 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 		</property>
 	</bean>
 
-	<!-- bcpg:documentState indicators -->
 	<bean id="evaluator.becpg.doclib.indicator.document.simulation" parent="evaluator.doclib.action.value">
 		<property name="accessor" value="node.properties.bcpg:documentState" />
 		<property name="comparator">
@@ -196,7 +195,7 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 
 	<!-- Document Type Is Mandatory Indicator -->
 	<bean id="evaluator.becpg.doclib.indicator.document.mandatory" parent="evaluator.doclib.action.value">
-		<property name="accessor" value="node.properties.bcpg:docTypeIsMandatory" />
+		<property name="accessor" value="node.properties.bcpg:documentIsMandatory" />
 		<property name="comparator">
 			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
 				<property name="value" value="true" />
@@ -204,7 +203,7 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 		</property>
 	</bean>
 
-	<!-- AI Validation State indicators -->
+	
 	<bean id="evaluator.becpg.doclib.indicator.ai.valid" parent="evaluator.doclib.action.value">
 		<property name="accessor" value="node.properties.bcpg:aiValidationState" />
 		<property name="comparator">
