@@ -24,7 +24,7 @@ function main()
         if(currentType == "document"){
             dataType = "cm:content"; 
         } else {
-		  dataType = currentType.indexOf("_") > 0 ?currentType.replace("_", ":") : "bcpg:" + currentType;
+		    dataType = currentType.indexOf("_") > 0 ?currentType.replace("_", ":") : "bcpg:" + currentType;
         }
 	}
 	
