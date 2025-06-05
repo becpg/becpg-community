@@ -28,23 +28,21 @@ import org.springframework.extensions.surf.extensibility.impl.DefaultSubComponen
  * @author matthieu
  * @version $Id: $Id
  */
-public class UrlParamsStartWithEvaluator extends DefaultSubComponentEvaluator
-{
+public class UrlParamsStartWithEvaluator extends DefaultSubComponentEvaluator {
 
-    /**
-     * {@inheritDoc}
-     *
-     * Returns true all url parameters values match
-     */
-    @Override
-    public boolean evaluate(RequestContext context, Map<String, String> params)
-    {
-    	for(Map.Entry<String, String> param : params.entrySet() ){
-    		if(context.getParameter(param.getKey()) == null || param.getValue()==null 
-    				|| !context.getParameter(param.getKey()).startsWith(param.getValue())){
-    			return false;
-    		}
-    	}
-        return true;
-    }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * Returns true all url parameters values match
+	 */
+	@Override
+	public boolean evaluate(RequestContext context, Map<String, String> params) {
+		for (Map.Entry<String, String> param : params.entrySet()) {
+			if (context.getParameter(param.getKey()) == null 
+					|| !context.getParameter(param.getKey()).startsWith(param.getValue())) {
+				return false;
+			}
+		}
+		return true;
+	}
 }
