@@ -203,6 +203,7 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 		</property>
 	</bean>
 
+
 	
 	<bean id="evaluator.becpg.doclib.indicator.ai.valid" parent="evaluator.doclib.action.value">
 		<property name="accessor" value="node.properties.bcpg:aiValidationState" />
