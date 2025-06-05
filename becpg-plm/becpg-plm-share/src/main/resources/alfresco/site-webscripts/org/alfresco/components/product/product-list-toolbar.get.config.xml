@@ -14,7 +14,7 @@
 		<type name="qa_batch" filter="Simulation,Valid,all,favourites" />
 		<type name="productSpecification" filter="all,favourites" />
 		<type name="product" filter="Simulation,ToValidate,Valid,Refused,Stopped,Archived,all,favourites" />
-		<type name="cm_content" filter="OnHold,ToValidate,Valid,Refused,Archived,all,favourites" />
+		<type name="document" filter="OnHold,ToValidate,Valid,Refused,Archived,all,favourites" />
 	</types>
 	<filters>
 		<filter type="Simulation" />
