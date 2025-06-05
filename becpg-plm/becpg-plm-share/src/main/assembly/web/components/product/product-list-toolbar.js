@@ -132,6 +132,10 @@
                         ? selectedType.replace("_", ":") 
                         : "bcpg:" + selectedType)
                     : "bcpg:product";
+                 if(selectedType == "document"){
+                    dataType = "cm:content";
+                 }   
+                    
 
                 // Définir le libellé du menu
                 this.widgets.reportingMenu.set("label", this.msg("button.download-report") + " " + Alfresco.constants.MENU_ARROW_SYMBOL);
@@ -181,10 +185,8 @@
                     });
                 };
 
-                // Récupérer les rapports pour le type de données initial
                 fetchAndAddReports(dataType);
 
-                // Logique supplémentaire pour des types de données spécifiques
                 if (dataType && (dataType.indexOf("Product") > 0 || dataType.indexOf("Material") > 0)) {
                     fetchAndAddReports("bcpg:product");
                 }
@@ -350,6 +352,10 @@
                     if (this.options.selectedType != null) {
                         dataType = this.options.selectedType.indexOf("_") > 0 ? this.options.selectedType.replace("_", ":") : "bcpg:" + this.options.selectedType;
                     }
+                    
+                    if(selectedType == "document"){
+                         dataType = "cm:content";
+                     }   
 
                     // Add search data webscript arguments
                     url += "?term=&query=" + encodeURIComponent('{datatype:"' + dataType + '"}');
