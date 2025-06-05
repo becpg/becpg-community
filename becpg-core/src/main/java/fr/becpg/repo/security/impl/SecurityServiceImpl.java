@@ -19,10 +19,12 @@ package fr.becpg.repo.security.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -131,7 +133,9 @@ public class SecurityServiceImpl implements SecurityService {
 					accesMode = computeAccessMode(nodeRef, nodeType, permissions);
 				}
 
-				accesMode = computePluginAccessMode(nodeRef, nodeType, accesMode);
+				if(nodeRef!=null) {
+					accesMode = computePluginAccessMode(nodeRef, nodeType, accesMode);
+				}
 
 			}
 
@@ -371,7 +375,7 @@ public class SecurityServiceImpl implements SecurityService {
 	 */
 	private boolean isInGroup(NodeRef nodeRef, QName nodeType, List<NodeRef> groups) {
 
-		return beCPGCacheService.getFromTransactionCache(SecurityService.class.getName()+".isInGroup", buildCacheKey(nodeRef, groups), () -> {
+		return beCPGCacheService.getFromTransactionCache(SecurityService.class.getName() + ".isInGroup", buildCacheKey(nodeRef, groups), () -> {
 
 			for (SecurityServicePlugin plugin : securityPlugins) {
 				if (plugin.accept(nodeType) && plugin.checkIsInSecurityGroup(nodeRef, groups)) {
@@ -384,8 +388,9 @@ public class SecurityServiceImpl implements SecurityService {
 	}
 
 	private int computePluginAccessMode(NodeRef nodeRef, QName nodeType, int accesMode) {
-		return Math.min(accesMode,
-				beCPGCacheService.getFromTransactionCache(SecurityService.class.getName()+".computePluginAccessMode", nodeRef.getId(), () -> {
+
+		return Math.min(accesMode, beCPGCacheService.getFromTransactionCache(SecurityService.class.getName() + ".computePluginAccessMode",
+				nodeRef.getId() , () -> {
 					int pluginAccessMode = SecurityService.WRITE_ACCESS;
 					for (SecurityServicePlugin plugin : securityPlugins) {
 						if (plugin.accept(nodeType)) {
@@ -396,10 +401,16 @@ public class SecurityServiceImpl implements SecurityService {
 				}));
 	}
 
-	
-
 	private String buildCacheKey(NodeRef nodeRef, List<NodeRef> groups) {
-		return nodeRef.getId() + "_" + groups.stream().sorted().map(NodeRef::getId).collect(Collectors.joining("_"));
+		String nodePart = (nodeRef != null) ? nodeRef.getId() : "null";
+	    String groupPart = (groups != null) ?
+	        groups.stream()
+	              .filter(Objects::nonNull)
+	              .sorted(Comparator.comparing(NodeRef::getId))
+	              .map(NodeRef::getId)
+	              .collect(Collectors.joining("_"))
+	        : "no_groups";
+	    return nodePart + "_" + groupPart;
 	}
 
 	private String computeNodeTypePropKey(QName nodeType, String propName) {
