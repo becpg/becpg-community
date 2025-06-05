@@ -53,7 +53,7 @@
                 showThumbnails: false,
                 filters: [],
                 types: [],
-                searchType : "product-list"
+                searchType: "product-list"
             },
 
             /**
@@ -127,21 +127,21 @@
 
                 // Déterminer le type de données
                 var selectedType = this.options.selectedType;
-                var dataType = selectedType 
-                    ? (selectedType.indexOf("_") > 0 
-                        ? selectedType.replace("_", ":") 
+                var dataType = selectedType
+                    ? (selectedType.indexOf("_") > 0
+                        ? selectedType.replace("_", ":")
                         : "bcpg:" + selectedType)
                     : "bcpg:product";
-                 if(selectedType == "document"){
+                if (selectedType == "document") {
                     dataType = "cm:content";
-                 }   
-                    
+                }
+
 
                 // Définir le libellé du menu
                 this.widgets.reportingMenu.set("label", this.msg("button.download-report") + " " + Alfresco.constants.MENU_ARROW_SYMBOL);
 
                 // Fonction pour vérifier si un élément est déjà présent dans le menu
-                var isReportAlreadyInMenu = function (reportValue) {
+                var isReportAlreadyInMenu = function(reportValue) {
                     var existingItems = me.widgets.reportingMenu.getMenu().getItems();
                     for (var i = 0; i < existingItems.length; i++) {
                         if (existingItems[i].value === reportValue) {
@@ -152,11 +152,11 @@
                 };
 
                 // Fonction pour récupérer et ajouter les rapports
-                var fetchAndAddReports = function (dataType) {
+                var fetchAndAddReports = function(dataType) {
                     Alfresco.util.Ajax.request({
                         url: Alfresco.constants.PROXY_URI + "becpg/report/exportsearch/templates/" + dataType,
                         successCallback: {
-                            fn: function (response) {
+                            fn: function(response) {
                                 var json = response.json;
                                 if (json && json.reportTpls) {
                                     var items = [];
@@ -249,10 +249,10 @@
                 if (isSelected) {
                     this.widgets.filter.set("label", this.msg("filter." + selectedFilter));
                 } else {
-                    this.widgets.filter.set("label", this.msg("filter.all") );
+                    this.widgets.filter.set("label", this.msg("filter.all"));
                 }
                 this.createSavedSearchSubMenu(this.widgets.filter);
-                
+
                 this.widgets.filter._menu.render();
             },
 
@@ -260,7 +260,7 @@
                 if (menuItem) {
                     this.queryExecutionId = null;
                     this.resetSelectSearch();
-                    this.widgets.filter.set("label", menuItem.cfg.getProperty("text") );
+                    this.widgets.filter.set("label", menuItem.cfg.getProperty("text"));
                     this.widgets.filter.value = menuItem.value;
 
                     this.services.preferences.set(this.options.prefsId + ".filter",
@@ -331,7 +331,12 @@
 
                 if (this.options.selectedType != null) {
                     dataType = this.options.selectedType.indexOf("_") > 0 ? this.options.selectedType.replace("_", ":") : "bcpg:" + this.options.selectedType;
+                    if (this.options.selectedType == "document") {
+                        dataType = "cm:content";
+                    }
+
                 }
+
 
                 YAHOO.Bubbling.fire("activeDataListChanged", {
                     dataList: {
@@ -351,11 +356,10 @@
 
                     if (this.options.selectedType != null) {
                         dataType = this.options.selectedType.indexOf("_") > 0 ? this.options.selectedType.replace("_", ":") : "bcpg:" + this.options.selectedType;
+                        if (this.options.selectedType == "document") {
+                            dataType = "cm:content";
+                        }
                     }
-                    
-                    if(selectedType == "document"){
-                         dataType = "cm:content";
-                     }   
 
                     // Add search data webscript arguments
                     url += "?term=&query=" + encodeURIComponent('{datatype:"' + dataType + '"}');
