@@ -13,7 +13,7 @@
 		<version>23.4.2</version>
 		<relativePath>../</relativePath>
 	</parent>
-    <version>23.4.2.8</version>
+    <version>23.4.2.9-SNAPSHOT</version>
 	<dependencies>
 		<dependency>
 			<groupId>fr.becpg</groupId>
