@@ -2163,10 +2163,6 @@
 					<type>d:text</type>
 					<index enabled="false" />
 				</property>
-				<property name="bcpg:docTypeLinkedHierarchy">
-					<type>d:noderef</type>
-					<index enabled="false" />
-				</property>
 				<property name="bcpg:docTypeLinkedTypes">
 					<type>d:text</type>
 					<multiple>true</multiple>
@@ -2184,6 +2180,17 @@
 					</source>
 					<target>
 						<class>bcpg:entityListItem</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="bcpg:docTypeLinkedHierarchy">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:linkedValue</class>
 						<mandatory>false</mandatory>
 						<many>true</many>
 					</target>
@@ -6941,11 +6948,10 @@
 					</index>
 				</property>
 				<property name="bcpg:aiSuggestedFields">
-					<type>d:qname</type>
+					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<multiple>true</multiple>
 					<index enabled="true">
-						<tokenised>false</tokenised>
+						<tokenised>both</tokenised>
 						<facetable>false</facetable>
 					</index>
 				</property>
