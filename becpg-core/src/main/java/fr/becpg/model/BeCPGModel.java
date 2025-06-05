@@ -383,14 +383,14 @@ public final class BeCPGModel {
 	public static final QName PROP_DOCUMENT_TYPE_FORMULA = QName.createQName(BECPG_URI, "docTypeFormula");
 	/** Constant <code>PROP_DOCUMENT_TYPE_FORMAT</code> */
 	public static final QName PROP_DOCUMENT_TYPE_FORMAT = QName.createQName(BECPG_URI, "docTypeNameFormat");
-	/** Constant <code>PROP_DOCUMENT_TYPE_LINKED_HIERARCHY</code> */
-	public static final QName PROP_DOCUMENT_TYPE_LINKED_HIERARCHY = QName.createQName(BECPG_URI, "docTypeLinkedHierarchy");
 	/** Constant <code>PROP_DOCUMENT_TYPE_LINKED_TYPES</code> */
 	public static final QName PROP_DOCUMENT_TYPE_LINKED_TYPES = QName.createQName(BECPG_URI, "docTypeLinkedTypes");
 	/** Constant <code>PROP_DOCUMENT_TYPE_LINKED_TYPES</code> */
 	public static final QName PROP_DOCUMENT_TYPE_PATH = QName.createQName(BECPG_URI, "docTypeDestPath");
 	/** Constant <code>ASSOC_DOCUMENT_TYPE_LINKED_CHARACTS</code> */
 	public static final QName ASSOC_DOCUMENT_TYPE_LINKED_CHARACTS = QName.createQName(BECPG_URI, "docTypeLinkedCharacts");
+	/** Constant <code>ASSOC_DOCUMENT_TYPE_LINKED_HIERARCHY</code> */
+	public static final QName ASSOC_DOCUMENT_TYPE_LINKED_HIERARCHY = QName.createQName(BECPG_URI, "docTypeLinkedHierarchy");
 	
 	// cm_effectivity aspect
 	/** Constant <code>ASPECT_CM_EFFECTIVITY_ASPECT</code> */
