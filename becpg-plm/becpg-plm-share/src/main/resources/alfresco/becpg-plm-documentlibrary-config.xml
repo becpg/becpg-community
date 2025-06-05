@@ -112,9 +112,7 @@
 			</type>
 		</types>
 		<indicators>
-			<indicator id="document-mandatory" index="15">
-				<evaluator>evaluator.becpg.doclib.indicator.document.mandatory</evaluator>
-			</indicator>
+			
 			<indicator id="entity-simulation" index="10">
 				<evaluator>evaluator.becpg.doclib.indicator.entity.simulation</evaluator>
 			</indicator>
@@ -166,21 +164,24 @@
 				<evaluator>evaluator.becpg.doclib.indicator.ecm.inProgress</evaluator>
 			</indicator>	
 			
-			<indicator id="document-simulation" index="15">
+			<indicator id="document-simulation" index="25">
 				<evaluator>evaluator.becpg.doclib.indicator.document.simulation</evaluator>
 			</indicator>
-			<indicator id="document-tovalidate" index="15">
+			<indicator id="document-tovalidate" index="25">
 				<evaluator>evaluator.becpg.doclib.indicator.document.tovalidate</evaluator>
 			</indicator>
-			<indicator id="document-valid" index="15">
+			<indicator id="document-valid" index="25">
 				<evaluator>evaluator.becpg.doclib.indicator.document.valid</evaluator>
 			</indicator>
-			<indicator id="document-refused" index="15">
+			<indicator id="document-refused" index="25">
 				<evaluator>evaluator.becpg.doclib.indicator.document.refused</evaluator>
 			</indicator>
-			<indicator id="document-archived" index="15">
+			<indicator id="document-archived" index="25">
 				<evaluator>evaluator.becpg.doclib.indicator.document.archived</evaluator>
 			</indicator>
+             <indicator id="document-mandatory" index="10">
+                <evaluator>evaluator.becpg.doclib.indicator.document.mandatory</evaluator>
+            </indicator>
 
 			<indicator id="ai-valid" index="15">
 				<evaluator>evaluator.becpg.doclib.indicator.ai.valid</evaluator>
@@ -189,7 +190,7 @@
 			<indicator id="ai-refused" index="15">
 				<evaluator>evaluator.becpg.doclib.indicator.ai.refused</evaluator>
 			</indicator>
-
+			
 		</indicators>
 		
 	</config>
