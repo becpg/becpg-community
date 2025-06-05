@@ -7,9 +7,6 @@ import java.util.List;
 import org.alfresco.repo.batch.BatchProcessWorkProvider;
 import org.alfresco.repo.batch.BatchProcessor;
 import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
-import org.alfresco.repo.domain.node.NodeDAO;
-import org.alfresco.repo.domain.patch.PatchDAO;
-import org.alfresco.repo.domain.qname.QNameDAO;
 import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -21,8 +18,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
-import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.PLMModel;
 import fr.becpg.model.PublicationModel;
 
 public class RemoveDeprecatedPubAspectsPatch extends AbstractBeCPGPatch {
@@ -193,34 +188,11 @@ public class RemoveDeprecatedPubAspectsPatch extends AbstractBeCPGPatch {
         return I18NUtil.getMessage(MSG_SUCCESS);
     }
 
-    // Getters and setters
     public void setIntegrityChecker(IntegrityChecker integrityChecker) {
         this.integrityChecker = integrityChecker;
     }
 
-    public NodeDAO getNodeDAO() {
-        return nodeDAO;
-    }
-
-    public void setNodeDAO(NodeDAO nodeDAO) {
-        this.nodeDAO = nodeDAO;
-    }
-
-    public PatchDAO getPatchDAO() {
-        return patchDAO;
-    }
-
-    public void setPatchDAO(PatchDAO patchDAO) {
-        this.patchDAO = patchDAO;
-    }
-
-    public QNameDAO getQnameDAO() {
-        return qnameDAO;
-    }
-
-    public void setQnameDAO(QNameDAO qnameDAO) {
-        this.qnameDAO = qnameDAO;
-    }
+ 
 
     public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
         this.policyBehaviourFilter = policyBehaviourFilter;
