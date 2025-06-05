@@ -69,18 +69,6 @@ public interface AttributeExtractorService {
 		 */
 		String extractPropName(QName type, NodeRef nodeRef);
 		
-		/**
-		 * Extracts the property name from a node based on its type.
-		 * 
-		 * @param type the type of the node
-		 * @param nodeRef the reference to the node
-		 * @param characNameFormat name format, can be null
-		 * @return the extracted property name
-		 */		
-		default String extractPropName(QName type, NodeRef nodeRef, String characNameFormat) {
-			return extractPropName(type, nodeRef);
-		}
-		
 		default String extractPropName(JSONObject jsonEntity) {
 			return null;
 		}
@@ -273,18 +261,6 @@ public interface AttributeExtractorService {
 	 */
 	PropertyFormats getPropertyFormats(FormatMode json,
 			boolean useServerLocale);
-
-	/**
-	 * Extracts the property name from a node based on its type.
-	 * 
-	 * @param type the type of the node
-	 * @param nodeRef the reference to the node
-	 * @param nameFormat a format string
-	 * @return the extracted property name
-	 */
-	default String extractPropName(QName type, NodeRef nodeRef, String nameFormat) {
-		return extractPropName(type, nodeRef);
-	}
 
 	
 
