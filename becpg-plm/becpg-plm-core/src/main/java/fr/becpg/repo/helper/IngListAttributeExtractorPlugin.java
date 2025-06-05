@@ -24,10 +24,9 @@ public class IngListAttributeExtractorPlugin extends CharactAttributeExtractorPl
 	
 	/** {@inheritDoc} */
 	@Override
-	public String extractPropName(QName type, NodeRef nodeRef, String characNameFormat) {
-		// get properties value, then reset, get resetted value, then reupdate with last value
+	public String extractPropName(QName type, NodeRef nodeRef) {
 		NodeRef ing = associationService.getTargetAssoc(nodeRef, PLMModel.ASSOC_INGLIST_ING);
-		return super.extractPropName(type, ing, characNameFormat);
+		return super.extractPropName(type, ing);
 	}
 
 	/** {@inheritDoc} */
