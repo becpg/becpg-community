@@ -172,16 +172,6 @@ public class DocumentFormulationIT extends PLMBaseTestCase {
 			    .withAutoExpirationDelay(3 * 365); // 3 years
 			getOrCreateDocumentTypeItem(labelCopyDocType);
 			
-			
-			getOrCreateDocumentTypeItem(DocumentTypeItem.builder()
-				    .withCharactName("Label Copy")
-				    .withLinkedTypes(List.of(PLMModel.TYPE_RAWMATERIAL.toPrefixString(namespaceService)))
-				    .withIsMandatory(true)
-				    .withNameFormat(DOC_TYPE_NAME_FORMAT)
-				    .withDestPath("SupplierDocuments")
-				    .withEffectivityType(DocumentEffectivityType.AUTO)
-				    .withAutoExpirationDelay(3 * 365));
-			
 		
 			getOrCreateDocumentTypeItem(DocumentTypeItem.builder().withCharactName("QMS Survey analysis results.xlsx")
 			.withLinkedTypes(List.of(PLMModel.TYPE_FINISHEDPRODUCT.toPrefixString(namespaceService)))
