@@ -146,6 +146,7 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 				if (!variantPackagingData.isManualTertiary()) {
 					formulatedProduct.getExtraProperties().put(GS1Model.PROP_TERTIARY_WIDTH, variantPackagingData.getTertiaryWidth());
 					formulatedProduct.getExtraProperties().put(GS1Model.PROP_TERTIARY_DEPTH, variantPackagingData.getTertiaryDepth());
+					formulatedProduct.getExtraProperties().put(GS1Model.PROP_TERTIARY_PACKAGING_TYPE_CODE, variantPackagingData.getTertiaryPackagingTypeCode());
 				}
 				
 				if(!variantPackagingData.isManualPalletInformations()) {
