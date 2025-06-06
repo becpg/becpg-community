@@ -150,7 +150,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 
     YAHOO.Bubbling.fire("registerDataGridRenderer", {
         propertyName: ["boolean_bcpg:allergenListVoluntary", "boolean_bcpg:allergenListInVoluntary",
-            "boolean_bcpg:allergenListOnSite", "boolean_bcpg:allergenListOnLine", "boolean_bcpg:allergenListIsCleaned",
+            "boolean_bcpg:allergenListOnSite", "boolean_bcpg:allergenListOnLine",
             "boolean_bcpg:packagingListIsMaster", "boolean_ecm:culTreated", "boolean_ecm:isWUsedImpacted"],
         renderer: function(oRecord, data, label, scope) {
             if (data.value) {
@@ -160,6 +160,17 @@ if (beCPG.module.EntityDataGridRenderers) {
         }
 
     });
+    
+    YAHOO.Bubbling.fire("registerDataGridRenderer", {
+           propertyName: [ "boolean_bcpg:allergenListIsCleaned"],
+           renderer: function(oRecord, data, label, scope) {
+               if (data.value) {
+                   return '<span class="green">' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+               }
+               return Alfresco.util.encodeHTML(data.displayValue);
+           }
+
+       });
 
     YAHOO.Bubbling.fire("registerDataGridRenderer", {
         propertyName: ["bcpg:lclClaimValue"],
