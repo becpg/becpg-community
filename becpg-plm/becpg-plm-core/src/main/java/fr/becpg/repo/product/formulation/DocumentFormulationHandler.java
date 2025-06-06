@@ -78,6 +78,8 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	private static final String DEFAULT_SUPPLIER_DOCUMENTS_PATH = "SupplierDocuments";
 
+	private static final String MESSAGE_DOCUMENT_MANDATORY = "message.formulate.document.mandatory";
+
 	private FileFolderService fileFolderService;
 	private NodeService nodeService;
 	private NodeService mlNodeService;
@@ -261,15 +263,37 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<ProductDa
 
 			DocumentTypeItem docTypeItem = (DocumentTypeItem) alfrescoRepository.findOne(docTypeNodeRef);
 
-			// Update document mandatory status
-			boolean isMandatory = calculateDocumentIsMandatory(productData, docTypeItem, parser, context);
+			boolean isMandatory = false;
+
+			String documentState = (String) nodeService.getProperty(docNodeRef, BeCPGModel.PROP_DOCUMENT_STATE);
+
+			//We do not delete but set mandatory to false
+			if (docTypeItem.isSynchronisedDocumentType() && !isDocTypeMatchProduct(productData, docTypeItem)) {
+
+				if (SystemState.Simulation.toString().equals(documentState)) {
+					nodeService.deleteNode(docNodeRef);
+					break;
+				}
+
+			} else {
+				// Update document mandatory status
+				isMandatory = calculateDocumentIsMandatory(productData, docTypeItem, parser, context);
+			}
 			nodeService.setProperty(docNodeRef, BeCPGModel.PROP_DOCUMENT_IS_MANDATORY, isMandatory);
+
+			if (isMandatory && SystemState.Simulation.toString().equals(documentState)) {
+				productData.getReqCtrlList()
+						.add(ReqCtrlListDataItem.forbidden()
+								.withMessage(MLTextHelper.getI18NMessage(MESSAGE_DOCUMENT_MANDATORY,
+										mlNodeService.getProperty(docTypeItem.getNodeRef(), BeCPGModel.PROP_CHARACT_NAME)))
+								.withCharact(docTypeItem.getNodeRef()).ofDataType(RequirementDataType.Completion));
+			}
 
 			// Add entity reference
 			associationService.update(docNodeRef, BeCPGModel.ASSOC_DOCUMENT_ENTITY_REF, productData.getNodeRef());
 
 			// Update document state and effectivity dates
-			updateDocumentStateAndDates(productData, docNodeRef);
+			updateDocumentState(productData, docNodeRef);
 		}
 
 		return true;
@@ -362,7 +386,7 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<ProductDa
 	}
 
 	/**
-	 * Updates document state and effectivity dates based on document type settings and current state.
+	 * Updates document state based on document type settings and current state.
 	 * <p>
 	 * This method synchronizes the document state with the product state:
 	 * - If product is Valid, the document state is set to Valid
@@ -373,17 +397,19 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<ProductDa
 	 * @param productData the product data containing the state to synchronize with
 	 * @param docNodeRef the node reference of the document to update
 	 */
-	private void updateDocumentStateAndDates(ProductData productData, NodeRef docNodeRef) {
+	private void updateDocumentState(ProductData productData, NodeRef docNodeRef) {
 
 		// Get current document state
 		String documentState = (String) nodeService.getProperty(docNodeRef, BeCPGModel.PROP_DOCUMENT_STATE);
 
-		if (SystemState.Valid.equals(productData.getState()) && !SystemState.Valid.toString().equals(documentState)) {
-			nodeService.setProperty(docNodeRef, BeCPGModel.PROP_DOCUMENT_STATE, SystemState.Valid.toString());
-		} else if (SystemState.Stopped.equals(productData.getState()) && !SystemState.Stopped.toString().equals(documentState)) {
-			nodeService.setProperty(docNodeRef, BeCPGModel.PROP_DOCUMENT_STATE, SystemState.Stopped.toString());
-		} else if (SystemState.Archived.equals(productData.getState()) && !SystemState.Archived.toString().equals(documentState)) {
-			nodeService.setProperty(docNodeRef, BeCPGModel.PROP_DOCUMENT_STATE, SystemState.Archived.toString());
+		if (SystemState.ToValidate.toString().equals(documentState)) {
+			if (SystemState.Valid.equals(productData.getState())) {
+				nodeService.setProperty(docNodeRef, BeCPGModel.PROP_DOCUMENT_STATE, SystemState.Valid.toString());
+			} else if (SystemState.Stopped.equals(productData.getState())) {
+				nodeService.setProperty(docNodeRef, BeCPGModel.PROP_DOCUMENT_STATE, SystemState.Stopped.toString());
+			} else if (SystemState.Archived.equals(productData.getState())) {
+				nodeService.setProperty(docNodeRef, BeCPGModel.PROP_DOCUMENT_STATE, SystemState.Archived.toString());
+			}
 		}
 
 	}
@@ -402,11 +428,6 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<ProductDa
 	 */
 	private boolean calculateDocumentIsMandatory(ProductData productData, DocumentTypeItem docTypeItem, ExpressionParser parser,
 			StandardEvaluationContext context) {
-
-		//We do not delete but set mandatory to false
-		if (docTypeItem.isSynchronisedDocumentType() && !isDocTypeMatchProduct(productData, docTypeItem)) {
-			return false;
-		}
 
 		// Check if explicitly mandatory
 		if (Boolean.TRUE.equals(docTypeItem.getIsMandatory())) {
@@ -435,7 +456,7 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<ProductDa
 											.withMessage(MLTextHelper.getI18NMessage(MESSAGE_DOCUMENT_FORMULATION_ERROR,
 													mlNodeService.getProperty(docTypeItem.getNodeRef(), BeCPGModel.PROP_CHARACT_NAME),
 													I18NUtil.getMessage("message.formulate.formula.incorrect.type.boolean", Locale.getDefault())))
-											.withCharact(docTypeItem.getNodeRef()).ofDataType(RequirementDataType.Labelclaim));
+											.withCharact(docTypeItem.getNodeRef()).ofDataType(RequirementDataType.Formulation));
 						}
 					}
 				}
@@ -446,7 +467,7 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<ProductDa
 						.add(ReqCtrlListDataItem.tolerated()
 								.withMessage(MLTextHelper.getI18NMessage(MESSAGE_DOCUMENT_FORMULATION_ERROR,
 										mlNodeService.getProperty(docTypeItem.getNodeRef(), BeCPGModel.PROP_CHARACT_NAME), e.getLocalizedMessage()))
-								.withCharact(docTypeItem.getNodeRef()).ofDataType(RequirementDataType.Labelclaim));
+								.withCharact(docTypeItem.getNodeRef()).ofDataType(RequirementDataType.Formulation));
 
 			}
 		}
@@ -564,7 +585,8 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<ProductDa
 
 		// Get claims
 		List<NodeRef> claims = productData.getLabelClaimList().stream()
-				.filter(p -> LabelClaimListDataItem.VALUE_CERTIFIED.equals(p.getLabelClaimValue())).map(LabelClaimListDataItem::getLabelClaim).toList();
+				.filter(p -> LabelClaimListDataItem.VALUE_CERTIFIED.equals(p.getLabelClaimValue())).map(LabelClaimListDataItem::getLabelClaim)
+				.toList();
 		if (CollectionUtils.isNotEmpty(claims)) {
 			productCharacts.addAll(claims);
 		}
