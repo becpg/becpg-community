@@ -1808,6 +1808,18 @@
                         <constraint ref="gs1:packagingTypeCodeConstraint" />
                     </constraints>
                 </property>
+                
+                <property name="gs1:tertiaryPackagingTypeCode">
+                    <type>d:text</type>
+                    <mandatory>false</mandatory>
+                    <index enabled="true">
+                        <tokenised>false</tokenised>
+                        <facetable>true</facetable>
+                    </index>
+                    <constraints>
+                        <constraint ref="gs1:packagingTypeCodeConstraint" />
+                    </constraints>
+                </property>
 
                 <property name="gs1:palletTypeCode">
                     <type>d:text</type>

@@ -156,6 +156,7 @@
           <show force="true" id="gs1:secondaryNetWeight"/>
           <show force="true" id="gs1:secondaryWeight"/>
           <show force="true" id="gs1:secondaryDataCarrierTypeCode"/>
+          <show force="true" id="gs1:tertiaryPackagingTypeCode"/>
           <show force="true" id="gs1:palletTypeCode"/>
           <show force="false" id="pack:palletLayers"/>
           <show force="false" id="pack:palletBoxesPerLayer"/>
@@ -642,6 +643,7 @@
           <field help-id="becpg.forms.help.gs1.dataCarrierTypeCode" id="gs1:secondaryDataCarrierTypeCode" mandatory="false" read-only="false" set="secondaryPackaging"/>
           
           <set appearance="bordered-panel" id="tertiaryPackaging" label-id="becpg.forms.set.tertiaryPackaging.label" parent="conditioningTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
+          <field help-id="becpg.forms.help.gs1.packagingTypeCode" id="gs1:tertiaryPackagingTypeCode" mandatory="false" read-only="false" set="tertiaryPackaging"/>
           <field help-id="becpg.forms.help.gs1.palletTypeCode" id="gs1:palletTypeCode" mandatory="false" read-only="false" set="tertiaryPackaging"/>
           <field id="pack:palletLayers" mandatory="false" read-only="false" set="tertiaryPackaging"/>
           <field id="pack:palletBoxesPerLayer" mandatory="false" read-only="false" set="tertiaryPackaging"/>
@@ -1546,6 +1548,7 @@
           <show force="true" id="gs1:secondaryNetWeight"/>
           <show force="true" id="gs1:secondaryWeight"/>
           <show force="true" id="gs1:secondaryDataCarrierTypeCode"/>
+          <show force="true" id="gs1:tertiaryPackagingTypeCode"/>
           <show force="true" id="gs1:palletTypeCode"/>
           <show force="true" id="pack:palletLayers"/>
           <show force="false" id="pack:palletBoxesPerLayer"/>
@@ -2019,6 +2022,7 @@
           <field help-id="becpg.forms.help.gs1.dataCarrierTypeCode" id="gs1:secondaryDataCarrierTypeCode" mandatory="false" read-only="false" set="secondaryPackaging"/>
           
           <set appearance="bordered-panel" id="tertiaryPackaging" label-id="becpg.forms.set.tertiaryPackaging.label" parent="conditioningTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
+          <field help-id="becpg.forms.help.gs1.packagingTypeCode" id="gs1:tertiaryPackagingTypeCode" mandatory="false" read-only="false" set="tertiaryPackaging"/>
           <field help-id="becpg.forms.help.gs1.palletTypeCode" id="gs1:palletTypeCode" mandatory="false" read-only="false" set="tertiaryPackaging"/>
           <field id="pack:palletLayers" mandatory="false" read-only="false" set="tertiaryPackaging"/>
           <field id="pack:palletBoxesPerLayer" mandatory="false" read-only="false" set="tertiaryPackaging"/>

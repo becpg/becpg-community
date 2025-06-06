@@ -127,6 +127,9 @@ public interface GS1Model {
 
 	/** Constant <code>PROP_SECONDARY_PACKAGING_TYPE_CODE</code> */
 	QName PROP_SECONDARY_PACKAGING_TYPE_CODE = QName.createQName(GS1_URI, "secondaryPackagingTypeCode");
+	
+	/** Constant <code>PROP_SECONDARY_PACKAGING_TYPE_CODE</code> */
+	QName PROP_TERTIARY_PACKAGING_TYPE_CODE = QName.createQName(GS1_URI, "tertiaryPackagingTypeCode");
 
 	/** Constant <code>TYPE_ALCOHOL_BEVERAGE_CONTAINER</code> */
 	QName TYPE_ALCOHOL_BEVERAGE_CONTAINER = QName.createQName(GS1_URI, "alcoholBeverageContainer");
