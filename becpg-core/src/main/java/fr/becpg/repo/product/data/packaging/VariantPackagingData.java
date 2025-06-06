@@ -32,6 +32,7 @@ public class VariantPackagingData implements Serializable {
 	private String packagingTypeCode;
 	private String packagingTermsAndConditionsCode;
 	private String secondaryPackagingTypeCode;
+	private String tertiaryPackagingTypeCode;
 
 	
 	private Double height;
@@ -612,6 +613,24 @@ public class VariantPackagingData implements Serializable {
 	public void setSecondaryPackagingTypeCode(String secondaryPackagingTypeCode) {
 		this.secondaryPackagingTypeCode = secondaryPackagingTypeCode;
 	}
+	
+	/**
+	 * <p>Getter for the field <code>tertiaryPackagingTypeCode</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
+	public String getTertiaryPackagingTypeCode() {
+		return tertiaryPackagingTypeCode;
+	}
+
+	/**
+	 * <p>Setter for the field <code>tertiaryPackagingTypeCode</code>.</p>
+	 *
+	 * @param secondaryPackagingTypeCode a {@link java.lang.String} object
+	 */
+	public void setTertiaryPackagingTypeCode(String tertiaryPackagingTypeCode) {
+		this.tertiaryPackagingTypeCode = tertiaryPackagingTypeCode;
+	}
 
 	/** {@inheritDoc} */
 	@Override
@@ -623,9 +642,9 @@ public class VariantPackagingData implements Serializable {
 				+ ", palletTypeCode=" + palletTypeCode + ", platformTermsAndConditionsCode=" + platformTermsAndConditionsCode + ", packagingTypeCode="
 				+ packagingTypeCode + ", packagingTermsAndConditionsCode=" + packagingTermsAndConditionsCode + ", secondaryPackagingTypeCode="
 				+ secondaryPackagingTypeCode + ", height=" + height + ", width=" + width + ", depth=" + depth + ", secondaryHeight=" + secondaryHeight
-				+ ", secondaryWidth=" + secondaryWidth + ", secondaryDepth=" + secondaryDepth + ", tertiaryWidth=" + tertiaryWidth
-				+ ", tertiaryDepth=" + tertiaryDepth + ", isManualPrimary=" + isManualPrimary + ", isManualTertiary=" + isManualTertiary
-				+ ", isManualSecondary=" + isManualSecondary + ", isManualPalletInformations=" + isManualPalletInformations + "]";
+				+ ", secondaryWidth=" + secondaryWidth + ", secondaryDepth=" + secondaryDepth + ", tertiaryPackagingTypeCode=" + tertiaryPackagingTypeCode 
+				+ ", tertiaryWidth=" + tertiaryWidth + ", tertiaryDepth=" + tertiaryDepth + ", isManualPrimary=" + isManualPrimary + ", isManualTertiary=" 
+				+ isManualTertiary + ", isManualSecondary=" + isManualSecondary + ", isManualPalletInformations=" + isManualPalletInformations + "]";
 	}
 
 	/** {@inheritDoc} */
@@ -634,8 +653,8 @@ public class VariantPackagingData implements Serializable {
 		return Objects.hash(boxesPerPallet, depth, height, isManualPalletInformations, isManualPrimary, isManualSecondary, isManualTertiary,
 				packagingTermsAndConditionsCode, packagingTypeCode, palletBoxesPerLastLayer, palletBoxesPerLayer, palletHeight, palletLayers,
 				palletNumberOnGround, palletStackingMaxWeight, palletTypeCode, platformTermsAndConditionsCode, productPerBoxes, secondaryDepth,
-				secondaryHeight, secondaryPackagingTypeCode, secondaryWidth, tarePrimary, tareSecondary, tareTertiary, tertiaryDepth, tertiaryWidth,
-				width);
+				secondaryHeight, secondaryPackagingTypeCode, secondaryWidth, tarePrimary, tareSecondary, tareTertiary, tertiaryPackagingTypeCode,
+				tertiaryDepth, tertiaryWidth, width);
 	}
 
 	/** {@inheritDoc} */
@@ -661,6 +680,7 @@ public class VariantPackagingData implements Serializable {
 				&& Objects.equals(productPerBoxes, other.productPerBoxes) && Objects.equals(secondaryDepth, other.secondaryDepth)
 				&& Objects.equals(secondaryHeight, other.secondaryHeight)
 				&& Objects.equals(secondaryPackagingTypeCode, other.secondaryPackagingTypeCode)
+				&& Objects.equals(tertiaryPackagingTypeCode, other.tertiaryPackagingTypeCode)
 				&& Objects.equals(secondaryWidth, other.secondaryWidth) && Objects.equals(tarePrimary, other.tarePrimary)
 				&& Objects.equals(tareSecondary, other.tareSecondary) && Objects.equals(tareTertiary, other.tareTertiary)
 				&& Objects.equals(tertiaryDepth, other.tertiaryDepth) && Objects.equals(tertiaryWidth, other.tertiaryWidth)
