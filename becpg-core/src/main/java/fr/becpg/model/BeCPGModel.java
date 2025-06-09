@@ -366,6 +366,8 @@ public final class BeCPGModel {
 	public static final QName ASPECT_DOCUMENT_ASPECT = QName.createQName(BECPG_URI, "documentAspect");
 	/** Constant <code>PROP_DOCUMENT_STATE</code> */
 	public static final QName PROP_DOCUMENT_STATE = QName.createQName(BECPG_URI, "documentState");
+	/** Constant <code>PROP_DOCUMENT_CATEGORY</code> */
+	public static final QName PROP_DOCUMENT_CATEGORY = QName.createQName(BECPG_URI, "documentCategory");
 	/** Constant <code>PROP_DOCUMENT_IS_MANDATORY</code> */
 	public static final QName PROP_DOCUMENT_IS_MANDATORY = QName.createQName(BECPG_URI, "documentIsMandatory");
 	/** Constant <code>ASSOC_DOCUMENT_TYPE_REF</code> */
