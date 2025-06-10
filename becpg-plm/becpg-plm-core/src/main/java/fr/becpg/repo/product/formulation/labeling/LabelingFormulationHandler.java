@@ -40,6 +40,7 @@ import fr.becpg.model.GS1Model;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
+import fr.becpg.repo.formulation.FormulatedEntityHelper;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.formulation.spel.SpelFormulaService;
 import fr.becpg.repo.formulation.spel.SpelHelper;
@@ -178,8 +179,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	@Override
 	public boolean process(ProductData formulatedProduct) {
 
-		if ((formulatedProduct.getReformulateCount() != null)
-				&& !formulatedProduct.getReformulateCount().equals(formulatedProduct.getCurrentReformulateCount())) {
+		if (!FormulatedEntityHelper.isLastFormulation(formulatedProduct)) {
 			logger.debug("Skip labeling in reformulateCount " + formulatedProduct.getCurrentReformulateCount());
 			return true;
 		}
