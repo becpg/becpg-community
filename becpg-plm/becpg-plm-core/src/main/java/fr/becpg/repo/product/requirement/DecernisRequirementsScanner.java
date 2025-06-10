@@ -21,6 +21,7 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.decernis.DecernisMode;
 import fr.becpg.repo.decernis.DecernisService;
+import fr.becpg.repo.formulation.FormulatedEntityHelper;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.CheckSumHelper;
 import fr.becpg.repo.product.data.ProductData;
@@ -91,7 +92,7 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 			return Collections.emptyList();
 		}
 		
-		if (formulatedProduct.getReformulateCount() != null && !formulatedProduct.getReformulateCount().equals(formulatedProduct.getCurrentReformulateCount())) {
+		if (!FormulatedEntityHelper.isLastFormulation(formulatedProduct)) {
 			logger.debug("Skip decernis in reformulateCount " + formulatedProduct.getCurrentReformulateCount());
 			formulatedProduct.setFormulationChainId(FormulationService.DEFAULT_CHAIN_ID);
 			return Collections.emptyList();
