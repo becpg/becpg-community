@@ -3289,6 +3289,7 @@
 				<edit-form template="tab-edit" />
 				<field-visibility>
 					<show id="bcpg:charactName" />
+					<show id="bcpg:docTypeCategory" force="true" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:docTypeIsMandatory" />
 					<show id="bcpg:docTypeEffectivityType" />
@@ -3312,10 +3313,11 @@
 					<field id="bcpg:charactName" set="documentType" >
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
+					<field id="bcpg:docTypeIsMandatory" set="documentType" />
 					<field id="cm:description" set="documentType" >
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
-					<field id="bcpg:docTypeIsMandatory" set="documentType" />
+					<field id="bcpg:docTypeCategory" set="documentType" />
 					<field id="bcpg:docTypeEffectivityType" set="documentType" >
 						<constraint-handlers>
 							<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf" event='keyup,change@[
@@ -3361,7 +3363,7 @@
 							<control-param name="saveTitle">false</control-param>
 						</control>
 					</field>
-					<field id="bcpg:docTypeDestPath" set="documentTypeAutogeneration" />
+					<field id="bcpg:docTypeDestPath" set="documentTypeAutogeneration" help-id="becpg.forms.help.docTypeDestPath" />
 					 <field id="bcpg:aiValidationCriteria" set="ai" >
                        <control template="/org/alfresco/components/form/controls/textarea.ftl" >
                         	<control-param name="rows">10</control-param>
@@ -3385,6 +3387,7 @@
 			<form id="filter">
 				<field-visibility>
 					<show id="bcpg:charactName" />
+					<show id="bcpg:docTypeCategory" force="true" />
 					<show id="bcpg:docTypeIsMandatory" />
 					<show id="bcpg:docTypeEffectivityType" />
 					<show id="bcpg:isDeleted" force="true" />
@@ -3392,6 +3395,12 @@
 				<appearance>
 					<field id="bcpg:charactName">
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:docTypeCategory" set="documentType" >
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="insertBlank">false</control-param>
+						</control>
 					</field>
 					<field id="bcpg:docTypeIsMandatory">
 						<control template="/org/alfresco/components/form/controls/boolean.ftl">
@@ -3415,6 +3424,7 @@
 			<form id="datagrid">
 				<field-visibility>
 					<show id="bcpg:charactName" />
+					<show id="bcpg:docTypeCategory" force="true" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:docTypeIsMandatory" />
 					<show id="bcpg:docTypeEffectivityType" />
@@ -3441,6 +3451,7 @@
 				<edit-form template="tab-edit" />
 				<field-visibility>
 					<show id="bcpg:charactName" />
+					<show id="bcpg:docTypeCategory" force="true" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:docTypeIsMandatory" />
 					<show id="bcpg:docTypeEffectivityType" />
@@ -3464,6 +3475,7 @@
 					<field id="bcpg:charactName" set="documentType" >
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
+					<field id="bcpg:docTypeCategory" set="documentType" />
 					<field id="cm:description" set="documentType" >
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
@@ -3513,7 +3525,7 @@
 							<control-param name="saveTitle">false</control-param>
 						</control>
 					</field>
-					<field id="bcpg:docTypeDestPath" set="documentTypeAutogeneration" />
+					<field id="bcpg:docTypeDestPath" set="documentTypeAutogeneration" help-id="becpg.forms.help.docTypeDestPath" />
 					
 					 <field id="bcpg:aiValidationCriteria" set="ai" >
                         <control template="/org/alfresco/components/form/controls/textarea.ftl" >
@@ -11238,6 +11250,7 @@
 			<form>
 				<field-visibility>
 					<show id="bcpg:documentState" />
+					<show id="bcpg:documentCategory" />
 					<show id="bcpg:documentIsMandatory" />
 					<show id="bcpg:documentTypeRef" />
 					<show id="bcpg:documentEntityRef" />
@@ -11247,6 +11260,7 @@
 						template="/org/alfresco/components/form/2-column-set.ftl" />
 						
 					<field id="bcpg:documentState" set="documentType" />
+					<field id="bcpg:documentCategory" set="documentType" read-only="true" />
 					<field id="bcpg:documentIsMandatory" set="documentType" read-only="true" />
 					<field id="bcpg:documentTypeRef" set="documentType" >
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">

@@ -184,6 +184,23 @@
 			</parameter>
 		</constraint>
 		
+		<constraint name="bcpg:documentCategories" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/Lists/bcpg:entityLists/DocumentCategories</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>bcpg:lvValue</value>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
+		</constraint>
+		
 		
 		<constraint name="bcpg:aiValidationStates" type="LIST">
 			<parameter name="allowedValues">
@@ -594,6 +611,16 @@
 		<type name="bcpg:documentType">
 			<parent>bcpg:charact</parent>
 			<properties>
+				<property name="bcpg:docTypeCategory">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:documentCategories" />
+					</constraints>
+				</property>
 				<property name="bcpg:docTypeIsMandatory">
 					<type>d:boolean</type>
 					<index enabled="true">
@@ -1499,6 +1526,16 @@
 					</index>
 					<constraints>
 						<constraint ref="bcpg:systemState" />
+					</constraints>
+				</property>
+				<property name="bcpg:documentCategory">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:documentCategories" />
 					</constraints>
 				</property>
 				<property name="bcpg:documentIsMandatory">
