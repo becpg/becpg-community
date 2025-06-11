@@ -87,6 +87,16 @@ public class ProjectData extends BeCPGDataObject
 	private Double work = 0d;
 	private Double loggedTime = 0d;
 	
+	private boolean dirtyTaskTree = false;
+	
+	public boolean isDirtyTaskTree() {
+		return dirtyTaskTree;
+	}
+	
+	public void setDirtyTaskTree(boolean dirtyTaskTree) {
+		this.dirtyTaskTree = dirtyTaskTree;
+	}
+	
 	/*
 	 * Completion scores
 	 */
