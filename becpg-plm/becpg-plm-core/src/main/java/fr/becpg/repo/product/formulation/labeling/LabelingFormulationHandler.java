@@ -193,7 +193,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			return true;
 		}
 
-
 		if (formulatedProduct.getLabelingListView().getIngLabelingList() == null) {
 			formulatedProduct.getLabelingListView().setIngLabelingList(new ArrayList<>());
 		}
@@ -465,7 +464,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		if (formulatedProduct.getLabelingListView().getIngLabelingList() != null) {
 			formulatedProduct.getLabelingListView().getIngLabelingList().retainAll(retainNodes);
 		}
-
 
 		return true;
 	}
@@ -2339,13 +2337,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							ingLabelItem.getBioOrigins().addAll(ingListItem.getData().getBioOrigin());
 						}
 
-<<<<<<< 23.2.2
-=======
+
 						if (ingListItem.getData().getComments() != null) {
 							ingLabelItem.setAdditionalInformation(ingListItem.getData().getComments());
 						}
 
->>>>>>> d50ada8 Fix #28293 - [Bug] Add priority in DeclarationFilter rules
+
 						ingLabelItem.getFootNotes().addAll(extractFootNotes(compoListDataItem, ingListItem.getData(), labelingFormulaContext));
 
 						Double qtyPerc = ingListItem.getData().getQtyPerc();
