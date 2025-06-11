@@ -263,6 +263,7 @@
                         			             '@beCPG.min($arrayOfDouble)',
                         			             '@beCPG.max($arrayOfDouble)',
 												 '@beCPG.findDuplicates($range)',
+                                                 '@beCPG.removeDuplicates($range)',
                         			             '@beCPG.formatNumber($number,$format?)',
                         			             '@beCPG.formatDate($date,$format?)',
                         			             '@beCPG.filter($range,$formula)',
