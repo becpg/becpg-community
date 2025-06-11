@@ -70,6 +70,11 @@ public abstract class AbstractFormulaFilterRule implements Serializable {
 	public boolean matchLocale(Locale locale) {
 		return locales.isEmpty() || locales.contains(locale);
 	}
+	
+	public boolean hasLocales() {
+		return !locales.isEmpty();
+	}
+	
 
 	/** {@inheritDoc} */
 	@Override
