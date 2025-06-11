@@ -9336,6 +9336,8 @@
 				<field-visibility>
 					<show id="bcpg:nutListNut" />
 					<show id="bcpg:nutListValue" />
+					<show id="bcpg:nutListFormulatedValue" />
+					<show id="bcpg:nutListUnit" />
 					<show id="bcpg:nutListValuePrepared" force="true" />
 					<show id="bcpg:nutListMini" />
 					<show id="bcpg:nutListMaxi" />
