@@ -193,6 +193,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			return true;
 		}
 
+
+		if (formulatedProduct.getLabelingListView().getIngLabelingList() == null) {
+			formulatedProduct.getLabelingListView().setIngLabelingList(new ArrayList<>());
+		}
+
 		copyTemplateLabelingRuleList(formulatedProduct);
 
 		Map<String, List<LabelingRuleListDataItem>> labelingRuleListsByGroup = getLabelingRules(formulatedProduct);
@@ -460,6 +465,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		if (formulatedProduct.getLabelingListView().getIngLabelingList() != null) {
 			formulatedProduct.getLabelingListView().getIngLabelingList().retainAll(retainNodes);
 		}
+
 
 		return true;
 	}
@@ -1464,7 +1470,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 			if (!DeclarationType.Omit.equals(declarationType)) {
 
-				
 				List<AggregateRule> aggregateRules = getAggregateRules(composite, parentComposite.getChildren(), labelingFormulaContext);
 
 				NodeRef productNodeRef = compoListDataItem.getProduct();
@@ -1494,14 +1499,18 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					volume = BigDecimal.valueOf(volume).multiply(ratio, LabelingFormulaContext.PRECISION).doubleValue();
 				}
 
-				Double qtyWithYield = (qty != null) && !DeclarationType.Group.equals(declarationType)
-						? BigDecimal.valueOf(qty).multiply(BigDecimal.valueOf(100d), LabelingFormulaContext.PRECISION)
-								.divide(BigDecimal.valueOf(calculatedYield), LabelingFormulaContext.PRECISION).doubleValue()
-						: qty;
-				Double volumeWithYield = (volume != null) && !DeclarationType.Group.equals(declarationType)
-						? BigDecimal.valueOf(volume).multiply(BigDecimal.valueOf(100d), LabelingFormulaContext.PRECISION)
-								.divide(BigDecimal.valueOf(calculatedYield), LabelingFormulaContext.PRECISION).doubleValue()
-						: volume;
+				Double qtyWithYield = qty;
+
+				if ((qty != null) && !DeclarationType.Group.equals(declarationType)) {
+					qtyWithYield = BigDecimal.valueOf(qty).multiply(BigDecimal.valueOf(100d), LabelingFormulaContext.PRECISION)
+							.divide(BigDecimal.valueOf(calculatedYield), LabelingFormulaContext.PRECISION).doubleValue();
+				}
+				Double volumeWithYield = volume;
+
+				if ((volume != null) && !DeclarationType.Group.equals(declarationType)) {
+					volumeWithYield = BigDecimal.valueOf(volume).multiply(BigDecimal.valueOf(100d), LabelingFormulaContext.PRECISION)
+							.divide(BigDecimal.valueOf(calculatedYield), LabelingFormulaContext.PRECISION).doubleValue();
+				}
 
 				if (!isLocalSemiFinished) {
 					if ((qty != null) && (componentYield != null)) {
@@ -1534,11 +1543,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				}
 
 				//Water loss
-				if ( (calculatedYield != null) && (calculatedYield.doubleValue() != 100d)
-						&& hasEvaporationData(productNodeRef)) {
+				if ((calculatedYield != null) && (calculatedYield.doubleValue() != 100d) && hasEvaporationData(productNodeRef)) {
 
 					// Override declaration type
-					if(!DeclarationType.DoNotDeclare.equals(declarationType)) {
+					if (!DeclarationType.DoNotDeclare.equals(declarationType)) {
 						declarationType = DeclarationType.DoNotDetails;
 					}
 
@@ -1585,7 +1593,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							}
 
 							// Override declaration type
-							if(!DeclarationType.DoNotDeclare.equals(declarationType)) {
+							if (!DeclarationType.DoNotDeclare.equals(declarationType)) {
 								declarationType = DeclarationType.DoNotDetails;
 							}
 
@@ -1748,7 +1756,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 							BigDecimal recurYield = BigDecimal.valueOf(calculatedYield);
 
-							if (componentYield!=null && componentYield != 100d) {
+							if (componentYield != null && componentYield != 100d) {
 								recurYield = recurYield.multiply(BigDecimal.valueOf(componentYield), LabelingFormulaContext.PRECISION)
 										.divide(BigDecimal.valueOf(100d), LabelingFormulaContext.PRECISION);
 							}
@@ -2170,7 +2178,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 
 	}
-	
+
 	@Nonnull
 	private List<AggregateRule> getAggregateRules(Composite<CompoListDataItem> component, List<Composite<CompoListDataItem>> brothers,
 			LabelingFormulaContext labelingFormulaContext) {
@@ -2331,6 +2339,13 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							ingLabelItem.getBioOrigins().addAll(ingListItem.getData().getBioOrigin());
 						}
 
+<<<<<<< 23.2.2
+=======
+						if (ingListItem.getData().getComments() != null) {
+							ingLabelItem.setAdditionalInformation(ingListItem.getData().getComments());
+						}
+
+>>>>>>> d50ada8 Fix #28293 - [Bug] Add priority in DeclarationFilter rules
 						ingLabelItem.getFootNotes().addAll(extractFootNotes(compoListDataItem, ingListItem.getData(), labelingFormulaContext));
 
 						Double qtyPerc = ingListItem.getData().getQtyPerc();
@@ -2508,8 +2523,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 		if (ingListDataItem == null) {
 			if (labelingFormulaContext.getNodeDeclarationFilters().containsKey(compoListDataItem.getProduct())) {
-				for (DeclarationFilterRule declarationFilter : labelingFormulaContext.getNodeDeclarationFilters()
-						.get(compoListDataItem.getProduct())) {
+				for (DeclarationFilterRule declarationFilter : sorted(
+						labelingFormulaContext.getNodeDeclarationFilters().get(compoListDataItem.getProduct()))) {
 					if (!declarationFilter.isThreshold() && ((declarationFilter.getFormula() == null) || labelingFormulaContext
 							.matchFormule(declarationFilter, new LabelingFormulaFilterContext(formulaService, compoListDataItem, ingListDataItem)))) {
 
@@ -2525,7 +2540,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		} else {
 
 			if (labelingFormulaContext.getNodeDeclarationFilters().containsKey(ingListDataItem.getIng())) {
-				for (DeclarationFilterRule declarationFilter : labelingFormulaContext.getNodeDeclarationFilters().get(ingListDataItem.getIng())) {
+				for (DeclarationFilterRule declarationFilter : sorted(
+						labelingFormulaContext.getNodeDeclarationFilters().get(ingListDataItem.getIng()))) {
 					if (!declarationFilter.isThreshold() && ((declarationFilter.getFormula() == null) || labelingFormulaContext
 							.matchFormule(declarationFilter, new LabelingFormulaFilterContext(formulaService, compoListDataItem, ingListDataItem)))) {
 						if (logger.isTraceEnabled()) {
@@ -2537,7 +2553,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				}
 			}
 
-			for (DeclarationFilterRule declarationFilter : labelingFormulaContext.getDeclarationFilters()) {
+			for (DeclarationFilterRule declarationFilter : sorted(labelingFormulaContext.getDeclarationFilters())) {
 				if (!declarationFilter.isThreshold() && (declarationFilter.getFormula() != null) && labelingFormulaContext
 						.matchFormule(declarationFilter, new LabelingFormulaFilterContext(formulaService, compoListDataItem, ingListDataItem))) {
 					if (logger.isTraceEnabled()) {
@@ -2573,6 +2589,21 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 		}
 		return compoListDataItem.getDeclType();
+	}
+
+	private List<DeclarationFilterRule> sorted(List<DeclarationFilterRule> toSort) {
+		return toSort.stream().sorted(Comparator.comparingInt(rule -> {
+			boolean hasFormula = rule.getFormula() != null && !rule.getFormula().isEmpty();
+			boolean hasLocales = rule.hasLocales();
+
+			if (hasFormula && hasLocales)
+				return 0; // Highest priority
+			if (hasFormula)
+				return 1; 
+			if (hasLocales)
+				return 2; 
+			return 3; 
+		})).toList();
 	}
 
 	private Set<FootNoteRule> extractFootNotes(CompoListDataItem compoListDataItem, IngListDataItem ingListDataItem,
