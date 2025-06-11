@@ -157,161 +157,204 @@
 
                     var notSigned = false;
 
-                    for (j in deliverables) {
-                        var dUrl = deliverables[j].url
-                        var hiddenWizard = false;
+					for (var j in deliverables) {
+						(function(deliverable) {
+							var dUrl = deliverable.url
+							var hiddenWizard = false;
 
-                        var mode = YAHOO.util.History.getQueryStringParameter("mode", dUrl);
-                        var wizardNodeRef = YAHOO.util.History.getQueryStringParameter("nodeRef", dUrl);
-                        var reauth = YAHOO.util.History.getQueryStringParameter("reauth", dUrl);
+							var mode = YAHOO.util.History.getQueryStringParameter("mode", dUrl);
+							var wizardNodeRef = YAHOO.util.History.getQueryStringParameter("nodeRef", dUrl);
+							var reauth = YAHOO.util.History.getQueryStringParameter("reauth", dUrl);
 
-                        var validateButtonId = this.id.replace(/assoc_pjt_workflowTask\-cntrl/g, this.options.transitionField) + "-validate";
+							var validateButtonId = this.id.replace(/assoc_pjt_workflowTask\-cntrl/g, this.options.transitionField) + "-validate";
 
-                        if (mode == "sign") {
-                            YAHOO.util.Event.onAvailable(validateButtonId, function() {
-                                Dom.addClass(validateButtonId, "hidden");
-                            }, this);
+							if (mode == "sign") {
+								YAHOO.util.Event.onAvailable(validateButtonId, function() {
+									Dom.addClass(validateButtonId, "hidden");
+								}, this);
 
-                            Alfresco.util.Ajax.request({
-                                url: Alfresco.constants.PROXY_URI + "slingshot/doclib2/node/" + wizardNodeRef.replace(":/", ""),
-                                method: Alfresco.util.Ajax.GET,
-                                responseContentType: Alfresco.util.Ajax.JSON,
-                                successCallback: {
-                                    fn: function(response) {
+								Alfresco.util.Ajax.request({
+									url: Alfresco.constants.PROXY_URI + "slingshot/doclib2/node/" + wizardNodeRef.replace(":/", ""),
+									method: Alfresco.util.Ajax.GET,
+									responseContentType: Alfresco.util.Ajax.JSON,
+									successCallback: {
+										fn: function(response) {
 
-                                        if (!notSigned && (response.json.item.node.properties["sign:status"] == "ReadyToSign" || response.json.item.node.properties["sign:status"] == "Signed")) {
-                                            YAHOO.util.Event.onAvailable(validateButtonId, function() {
-                                                Dom.removeClass(validateButtonId, "hidden");
-                                            }, this);
-                                        } else {
-                                            notSigned = true;
-                                            YAHOO.util.Event.onAvailable(validateButtonId, function() {
-                                                Dom.addClass(validateButtonId, "hidden");
-                                            }, this);
-                                        }
+											if (response.json.item.node.properties["sign:status"] == "ReadyToSign" || response.json.item.node.properties["sign:status"] == "Signed") {
+												var deliverableState = document.getElementsByClassName('node-' + deliverable.nodeRef + '|' + deliverable.state)[0];
+												if (deliverableState) {
+													Dom.removeClass(deliverableState, 'node-' + deliverable.nodeRef + '|' + deliverable.state);
+													Dom.addClass(deliverableState, 'node-' + deliverable.nodeRef + '|Completed');
+													var originalStatusClass = 'delivrable-status-' + deliverable.state;
+													var newStatusClass = 'delivrable-status-Completed';
+													function replaceStatusClass(element) {
+														if (element.classList && element.classList.contains(originalStatusClass)) {
+															element.classList.remove(originalStatusClass);
+															element.classList.add(newStatusClass);
+														}
+													}
 
-                                    },
-                                    scope: this
-                                }
-                            });
-                        } else if (dUrl != null && dUrl.length > 0 && dUrl.indexOf("wizard") > 0 && dUrl.indexOf("catalogId") > 0) {
+													// --- Update parents ---
+													var parent = deliverableState.parentNode;
+													while (parent && parent !== document.body) {
+														replaceStatusClass(parent);
+														parent = parent.parentNode;
+													}
 
-                            var catalogId = YAHOO.util.History.getQueryStringParameter("catalogId", dUrl);
+													// --- Update siblings ---
+													var siblings = deliverableState.parentNode.parentNode ? deliverableState.parentNode.parentNode.children : [];
+													for (var i = 0; i < siblings.length; i++) {
+														if (siblings[i] !== deliverableState) {
+															replaceStatusClass(siblings[i]);
+														}
+													}
 
-                            if (YAHOO.util.History.getQueryStringParameter("id", dUrl) == null) {
-                                hiddenWizard = true;
-                            }
+													// --- Update children recursively ---
+													function updateChildren(element) {
+														for (var i = 0; i < element.children.length; i++) {
+															replaceStatusClass(element.children[i]);
+															updateChildren(element.children[i]);
+														}
+													}
 
-                            if (wizardNodeRef != null && catalogId != null) {
+													updateChildren(deliverableState);
+												}
+												YAHOO.util.Event.onAvailable(validateButtonId, function() {
+													if (!notSigned) {
+														Dom.removeClass(validateButtonId, "hidden");
+													}
+												}, this);
+											} else {
+												notSigned = true;
+												YAHOO.util.Event.onAvailable(validateButtonId, function() {
+													Dom.addClass(validateButtonId, "hidden");
+												}, this);
+											}
 
-                                countCatalog++;
+										},
+										scope: this
+									}
+								});
+							} else if (dUrl != null && dUrl.length > 0 && dUrl.indexOf("wizard") > 0 && dUrl.indexOf("catalogId") > 0) {
 
-                                const hiddenClass = countCatalog > 1 ? "-" + countCatalog : "";
+								var catalogId = YAHOO.util.History.getQueryStringParameter("catalogId", dUrl);
 
-                                YAHOO.util.Event.onAvailable(validateButtonId, function() {
-                                    Dom.addClass(validateButtonId, "hidden" + hiddenClass);
-                                }, this);
+								if (YAHOO.util.History.getQueryStringParameter("id", dUrl) == null) {
+									hiddenWizard = true;
+								}
 
-                                Alfresco.util.Ajax.request({
-                                    url: Alfresco.constants.PROXY_URI + "becpg/entity/catalog/node/" + wizardNodeRef.replace(":/", "") + "?catalogId=" + catalogId,
-                                    method: Alfresco.util.Ajax.GET,
-                                    responseContentType: Alfresco.util.Ajax.JSON,
-                                    successCallback: {
-                                        fn: function(response) {
-                                            var isValid = true;
-                                            var catalogID = null;
+								if (wizardNodeRef != null && catalogId != null) {
 
-                                            if (response.json.catalogs != null && response.json.catalogs !== undefined
-                                                && Object.keys(response.json.catalogs).length > 0) {
+									countCatalog++;
 
-                                                var catalogs = response.json.catalogs;
+									const hiddenClass = countCatalog > 1 ? "-" + countCatalog : "";
 
-                                                for (var key in catalogs) {
-                                                    catalogID = catalogs[key].id;
-                                                    if (catalogs[key].missingFields !== undefined && catalogs[key].missingFields.length > 0) {
-                                                        isValid = false;
-                                                        break;
-                                                    }
-                                                }
-                                            }
+									YAHOO.util.Event.onAvailable(validateButtonId, function() {
+										Dom.addClass(validateButtonId, "hidden" + hiddenClass);
+									}, this);
 
-                                            if (isValid) {
-                                                if (!hiddenWizard) {
-                                                    var nodes = YAHOO.util.Selector.query("div.delivrable-status-Refused");
-                                                    for (var key in nodes) {
-                                                        if (catalogID == null || Dom.hasClass(nodes[key], catalogID)) {
-                                                            Dom.removeClass(nodes[key], "delivrable-status-Refused");
-                                                            Dom.addClass(nodes[key], "delivrable-status-Completed");
-                                                        }
-                                                    }
-                                                }
+									Alfresco.util.Ajax.request({
+										url: Alfresco.constants.PROXY_URI + "becpg/entity/catalog/node/" + wizardNodeRef.replace(":/", "") + "?catalogId=" + catalogId,
+										method: Alfresco.util.Ajax.GET,
+										responseContentType: Alfresco.util.Ajax.JSON,
+										successCallback: {
+											fn: function(response) {
+												var isValid = true;
+												var catalogID = null;
 
+												if (response.json.catalogs != null && response.json.catalogs !== undefined
+													&& Object.keys(response.json.catalogs).length > 0) {
 
-                                                YAHOO.util.Event.onAvailable(validateButtonId, function() {
-                                                    Dom.removeClass(validateButtonId, "hidden" + hiddenClass);
-                                                }, this);
-                                            }
-                                        },
-                                        scope: this
-                                    }
-                                });
-                            }
-                        } else if (reauth == "true") {
-                            hiddenWizard = true;
+													var catalogs = response.json.catalogs;
 
-                            YAHOO.util.Event.onAvailable(validateButtonId, function() {
-                                Dom.addClass(validateButtonId, "hidden");
+													for (var key in catalogs) {
+														catalogID = catalogs[key].id;
+														if (catalogs[key].missingFields !== undefined && catalogs[key].missingFields.length > 0) {
+															isValid = false;
+															break;
+														}
+													}
+												}
 
-                                var reauthButtonId = validateButtonId + "-reauth";
-                                if (!document.getElementById(reauthButtonId)) {
-
-                                    var spanOuter = document.createElement("span");
-                                    spanOuter.className = "yui-button yui-push-button";
-                                    spanOuter.id = reauthButtonId;
-
-                                    var spanInner = document.createElement("span");
-                                    spanInner.className = "first-child";
-
-                                    var button = document.createElement("button");
-                                    button.type = "button";
-                                    button.tabIndex = 0;
-                                    button.id = reauthButtonId + "-button";
-                                    button.innerText = me.msg("button.reauth.validate");
-
-                                    button.onclick = function() {
-                                        me.openReauthPopup(function(token) {
-                                            if (token) {
-                                                Dom.removeClass(validateButtonId, "hidden");
-                                                Dom.addClass(reauthButtonId, "hidden");
-                                            } else {
-                                                Alfresco.util.PopupManager
-                                                    .displayMessage(
-                                                        {
-                                                            text: me
-                                                                .msg("error.reauth.failed")
-                                                        });
-
-                                            }
-                                        });
-                                    };
-
-                                    // Insertion dans le DOM
-                                    spanInner.appendChild(button);
-                                    spanOuter.appendChild(spanInner);
-
-                                    var target = document.getElementById(validateButtonId);
-                                    if (target && target.parentNode) {
-                                        target.parentNode.insertBefore(spanOuter, target.nextSibling);
-                                    }
-                                }
-                            }, this);
-                        }
+												if (isValid) {
+													if (!hiddenWizard) {
+														var nodes = YAHOO.util.Selector.query("div.delivrable-status-Refused");
+														for (var key in nodes) {
+															if (catalogID == null || Dom.hasClass(nodes[key], catalogID)) {
+																Dom.removeClass(nodes[key], "delivrable-status-Refused");
+																Dom.addClass(nodes[key], "delivrable-status-Completed");
+															}
+														}
+													}
 
 
-                        if (!hiddenWizard) {
-                            deliverableHtlm += "<li>" + this.getDeliverableTitle(deliverables[j], entityNodeRef) + "</li>";
-                        }
-                    }
+													YAHOO.util.Event.onAvailable(validateButtonId, function() {
+														Dom.removeClass(validateButtonId, "hidden" + hiddenClass);
+													}, this);
+												}
+											},
+											scope: this
+										}
+									});
+								}
+							} else if (reauth == "true") {
+								hiddenWizard = true;
+
+								YAHOO.util.Event.onAvailable(validateButtonId, function() {
+									Dom.addClass(validateButtonId, "hidden");
+
+									var reauthButtonId = validateButtonId + "-reauth";
+									if (!document.getElementById(reauthButtonId)) {
+
+										var spanOuter = document.createElement("span");
+										spanOuter.className = "yui-button yui-push-button";
+										spanOuter.id = reauthButtonId;
+
+										var spanInner = document.createElement("span");
+										spanInner.className = "first-child";
+
+										var button = document.createElement("button");
+										button.type = "button";
+										button.tabIndex = 0;
+										button.id = reauthButtonId + "-button";
+										button.innerText = me.msg("button.reauth.validate");
+
+										button.onclick = function() {
+											me.openReauthPopup(function(token) {
+												if (token) {
+													Dom.removeClass(validateButtonId, "hidden");
+													Dom.addClass(reauthButtonId, "hidden");
+												} else {
+													Alfresco.util.PopupManager
+														.displayMessage(
+															{
+																text: me
+																	.msg("error.reauth.failed")
+															});
+
+												}
+											});
+										};
+
+										// Insertion dans le DOM
+										spanInner.appendChild(button);
+										spanOuter.appendChild(spanInner);
+
+										var target = document.getElementById(validateButtonId);
+										if (target && target.parentNode) {
+											target.parentNode.insertBefore(spanOuter, target.nextSibling);
+										}
+									}
+								}, this);
+							}
+
+
+							if (!hiddenWizard) {
+								deliverableHtlm += "<li>" + this.getDeliverableTitle(deliverable, entityNodeRef) + "</li>";
+							}
+
+						}).call(this, deliverables[j]);
+					}
 
                     deliverableHtlm += "</ul>";
 
