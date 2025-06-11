@@ -23,6 +23,8 @@ import java.util.function.DoubleConsumer;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nonnull;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -1462,6 +1464,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 			if (!DeclarationType.Omit.equals(declarationType)) {
 
+				
 				List<AggregateRule> aggregateRules = getAggregateRules(composite, parentComposite.getChildren(), labelingFormulaContext);
 
 				NodeRef productNodeRef = compoListDataItem.getProduct();
@@ -1535,7 +1538,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						&& hasEvaporationData(productNodeRef)) {
 
 					// Override declaration type
-					declarationType = DeclarationType.DoNotDetails;
+					if(!DeclarationType.DoNotDeclare.equals(declarationType)) {
+						declarationType = DeclarationType.DoNotDetails;
+					}
 
 					Double evaporateRate = (Double) nodeService.getProperty(productNodeRef, PLMModel.PROP_EVAPORATED_RATE);
 
@@ -1580,7 +1585,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							}
 
 							// Override declaration type
-							declarationType = DeclarationType.DoNotDetails;
+							if(!DeclarationType.DoNotDeclare.equals(declarationType)) {
+								declarationType = DeclarationType.DoNotDetails;
+							}
 
 							parent.getReconstituableDataItems()
 									.add(new ReconstituableDataItem(productNodeRef, reconstitionRate,
@@ -1741,7 +1748,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 							BigDecimal recurYield = BigDecimal.valueOf(calculatedYield);
 
-							if (componentYield != 100d) {
+							if (componentYield!=null && componentYield != 100d) {
 								recurYield = recurYield.multiply(BigDecimal.valueOf(componentYield), LabelingFormulaContext.PRECISION)
 										.divide(BigDecimal.valueOf(100d), LabelingFormulaContext.PRECISION);
 							}
@@ -1842,7 +1849,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				if (logger.isTraceEnabled()) {
 					logger.trace("Add to totalVolume ( " + compositeLabeling.getName() + "): " + +volume);
 				}
-				compositeLabeling.setVolumeTotal(compositeLabeling.getVolumeTotal() + qty);
+				compositeLabeling.setVolumeTotal(compositeLabeling.getVolumeTotal() + volume);
 			}
 
 			if ((qty != null) && (qtyWithYield != null) && !qty.equals(qtyWithYield) && (compositeLabeling.getEvaporatedQty() != null)) {
@@ -2163,7 +2170,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 
 	}
-
+	
+	@Nonnull
 	private List<AggregateRule> getAggregateRules(Composite<CompoListDataItem> component, List<Composite<CompoListDataItem>> brothers,
 			LabelingFormulaContext labelingFormulaContext) {
 		if (labelingFormulaContext.getAggregateRules().containsKey(component.getData().getProduct())) {
