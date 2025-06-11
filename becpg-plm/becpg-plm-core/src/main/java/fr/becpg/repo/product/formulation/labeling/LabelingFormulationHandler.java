@@ -1511,14 +1511,20 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 				}
 
-				Double qtyWithYield = qty != null && !DeclarationType.Group.equals(declarationType)
-						? BigDecimal.valueOf(qty).multiply(BigDecimal.valueOf(100d), LabelingFormulaContext.PRECISION)
-								.divide(BigDecimal.valueOf(calculatedYield), LabelingFormulaContext.PRECISION).doubleValue()
-						: qty;
-				Double volumeWithYield = volume != null && !DeclarationType.Group.equals(declarationType)
-						? BigDecimal.valueOf(volume).multiply(BigDecimal.valueOf(100d), LabelingFormulaContext.PRECISION)
-								.divide(BigDecimal.valueOf(calculatedYield), LabelingFormulaContext.PRECISION).doubleValue()
-						: volume;
+
+				Double qtyWithYield = qty;
+
+				if ((qty != null) && !DeclarationType.Group.equals(declarationType)) {
+					qtyWithYield = BigDecimal.valueOf(qty).multiply(BigDecimal.valueOf(100d), LabelingFormulaContext.PRECISION)
+							.divide(BigDecimal.valueOf(calculatedYield), LabelingFormulaContext.PRECISION).doubleValue();
+				}
+				Double volumeWithYield = volume;
+
+				if ((volume != null) && !DeclarationType.Group.equals(declarationType)) {
+					volumeWithYield = BigDecimal.valueOf(volume).multiply(BigDecimal.valueOf(100d), LabelingFormulaContext.PRECISION)
+							.divide(BigDecimal.valueOf(calculatedYield), LabelingFormulaContext.PRECISION).doubleValue();
+				}
+
 
 				if (!isLocalSemiFinished) {
 					if (qty != null && componentYield != null) {
@@ -1592,6 +1598,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 							// Override declaration type
 							declarationType = DeclarationType.DoNotDetails;
+
 
 							parent.getReconstituableDataItems()
 									.add(new ReconstituableDataItem(productNodeRef, reconstitionRate,
@@ -1755,6 +1762,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							BigDecimal recurYield = BigDecimal.valueOf(calculatedYield);
 
 							if (componentYield != 100d) {
+
 								recurYield = recurYield.multiply(BigDecimal.valueOf(componentYield), LabelingFormulaContext.PRECISION)
 										.divide(BigDecimal.valueOf(100d), LabelingFormulaContext.PRECISION);
 							}
@@ -2128,6 +2136,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	}
 
+
 	private List<AggregateRule> getAggregateRules(Composite<CompoListDataItem> component, List<Composite<CompoListDataItem>> brothers,
 			LabelingFormulaContext labelingFormulaContext) {
 		if (labelingFormulaContext.getAggregateRules().containsKey(component.getData().getProduct())) {
@@ -2314,6 +2323,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 						if ((ingLabelItem.getQty() == null) && (qty == null)) {
 
+
 							String message = I18NUtil.getMessage(NULL_ING_ERROR, getName(ingLabelItem));
 							ReqCtrlListDataItem error = errors.get(message);
 							if (error != null) {
@@ -2446,8 +2456,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 		if (ingListDataItem == null) {
 			if (labelingFormulaContext.getNodeDeclarationFilters().containsKey(compoListDataItem.getProduct())) {
-				for (DeclarationFilterRule declarationFilter : labelingFormulaContext.getNodeDeclarationFilters()
-						.get(compoListDataItem.getProduct())) {
+				for (DeclarationFilterRule declarationFilter : sorted(
+						labelingFormulaContext.getNodeDeclarationFilters().get(compoListDataItem.getProduct()))) {
 					if (!declarationFilter.isThreshold() && ((declarationFilter.getFormula() == null) || labelingFormulaContext
 							.matchFormule(declarationFilter, new LabelingFormulaFilterContext(formulaService, compoListDataItem, ingListDataItem)))) {
 
@@ -2463,7 +2473,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		} else {
 
 			if (labelingFormulaContext.getNodeDeclarationFilters().containsKey(ingListDataItem.getIng())) {
-				for (DeclarationFilterRule declarationFilter : labelingFormulaContext.getNodeDeclarationFilters().get(ingListDataItem.getIng())) {
+				for (DeclarationFilterRule declarationFilter : sorted(
+						labelingFormulaContext.getNodeDeclarationFilters().get(ingListDataItem.getIng()))) {
 					if (!declarationFilter.isThreshold() && ((declarationFilter.getFormula() == null) || labelingFormulaContext
 							.matchFormule(declarationFilter, new LabelingFormulaFilterContext(formulaService, compoListDataItem, ingListDataItem)))) {
 						if (logger.isTraceEnabled()) {
@@ -2475,7 +2486,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				}
 			}
 
-			for (DeclarationFilterRule declarationFilter : labelingFormulaContext.getDeclarationFilters()) {
+			for (DeclarationFilterRule declarationFilter : sorted(labelingFormulaContext.getDeclarationFilters())) {
 				if (!declarationFilter.isThreshold() && (declarationFilter.getFormula() != null) && labelingFormulaContext
 						.matchFormule(declarationFilter, new LabelingFormulaFilterContext(formulaService, compoListDataItem, ingListDataItem))) {
 					if (logger.isTraceEnabled()) {
@@ -2511,6 +2522,21 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 		}
 		return compoListDataItem.getDeclType();
+	}
+
+	private List<DeclarationFilterRule> sorted(List<DeclarationFilterRule> toSort) {
+		return toSort.stream().sorted(Comparator.comparingInt(rule -> {
+			boolean hasFormula = rule.getFormula() != null && !rule.getFormula().isEmpty();
+			boolean hasLocales = rule.hasLocales();
+
+			if (hasFormula && hasLocales)
+				return 0; // Highest priority
+			if (hasFormula)
+				return 1; 
+			if (hasLocales)
+				return 2; 
+			return 3; 
+		})).toList();
 	}
 
 	private Set<FootNoteRule> extractFootNotes(CompoListDataItem compoListDataItem, IngListDataItem ingListDataItem,
