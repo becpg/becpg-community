@@ -2426,9 +2426,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						visitIngList(ingLabelItem, product, ingListItem, omitQtyPerc, qty, volume, qty, volume, labelingFormulaContext,
 								compoListDataItem, errors, calculatedYield);
 
-					} else if (DeclarationType.Detail.equals(ingDeclarationType) && ingLabelItem.getIngList().isEmpty()) {
-						ingLabelItem.setDeclarationType(DeclarationType.DoNotDetails);
-					}
+					} 
 
 				}
 			}
