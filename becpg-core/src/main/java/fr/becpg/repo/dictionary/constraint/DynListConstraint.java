@@ -26,6 +26,8 @@ import org.alfresco.service.cmr.dictionary.ConstraintException;
 import org.alfresco.service.cmr.dictionary.DictionaryException;
 import org.alfresco.service.cmr.i18n.MessageLookup;
 import org.alfresco.service.cmr.repository.AssociationRef;
+import org.alfresco.service.cmr.repository.ContentReader;
+import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.InvalidStoreRefException;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -69,10 +71,13 @@ public class DynListConstraint extends ListOfValuesConstraint {
 	private static final Log logger = LogFactory.getLog(DynListConstraint.class);
 
 	private static final String CLASSPATH_PREFIX = "classpath:";
+	private static final String REPO_PREFIX = "repo:";
 
 	private static ServiceRegistry serviceRegistry;
 
 	private static BeCPGCacheService beCPGCacheService;
+	
+	private static ContentService contentService;
 
 	private static Set<String> pathRegistry = new HashSet<>();
 
@@ -90,6 +95,10 @@ public class DynListConstraint extends ListOfValuesConstraint {
 	private Boolean addEmptyValue = null;
 
 	private List<String> allowedValuesSuffix = null;
+	
+	public static void setContentService(ContentService contentService) {
+		DynListConstraint.contentService = contentService;
+	}
 
 	/**
 	 * <p>Setter for the field <code>allowedValuesSuffix</code>.</p>
@@ -126,7 +135,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 		this.paths = paths;
 
 		for (String path : paths) {
-			if (!path.startsWith(CLASSPATH_PREFIX)) {
+			if (!path.startsWith(CLASSPATH_PREFIX) && !path.startsWith(REPO_PREFIX)) {
 				pathRegistry.add("/app:company_home/" + AbstractBeCPGQueryBuilder.encodePath(path));
 			}
 		}
@@ -382,6 +391,8 @@ public class DynListConstraint extends ListOfValuesConstraint {
 						for (String path : paths) {
 							if (path.startsWith(CLASSPATH_PREFIX)) {
 								processClasspathResource(path, allowedValues);
+							} else if (path.startsWith(REPO_PREFIX)) {
+								processRepoResource(path, allowedValues);
 							} else {
 								processSystemList(path, allowedValues);
 							}
@@ -395,9 +406,26 @@ public class DynListConstraint extends ListOfValuesConstraint {
 
 	private void processClasspathResource(String path, Map<String, DynListEntry> allowedValues) {
 		ClassPathResource resource = new ClassPathResource(path.replace(CLASSPATH_PREFIX, ""));
-		try (InputStream in = resource.getInputStream();
-				InputStreamReader inReader = new InputStreamReader(in);
-				CSVParser csvParser = CSVFormat.DEFAULT.builder().setDelimiter(';').setQuote('"').setHeader().setSkipHeaderRecord(true).build()
+		try (InputStream in = resource.getInputStream()) {
+			processCsvInputStream(allowedValues, in);
+		} catch (IOException e) {
+			logger.error(e, e);
+		}
+	}
+
+	private void processRepoResource(String path, Map<String, DynListEntry> allowedValues) {
+		NodeRef result = BeCPGQueryBuilder.createQuery().selectNodeByPath(path.replace(REPO_PREFIX, ""));
+		if (result != null ) {
+			ContentReader reader = contentService.getReader(result, ContentModel.PROP_CONTENT);
+			processCsvInputStream(allowedValues, reader.getContentInputStream());
+		}
+	}
+
+	private void processCsvInputStream(Map<String, DynListEntry> allowedValues, InputStream in) {
+		try (InputStreamReader inReader = new InputStreamReader(in);
+				CSVParser csvParser = CSVFormat.DEFAULT.builder()
+						.setAllowMissingColumnNames(true)						
+						.setDelimiter(';').setQuote('"').setHeader().setSkipHeaderRecord(true).build()
 						.parse(inReader)) {
 
 			Set<String> locales = new HashSet<>();
@@ -409,11 +437,13 @@ public class DynListConstraint extends ListOfValuesConstraint {
 				}
 			}
 
+			boolean found = false;
 			for (CSVRecord csvRecord : csvParser) {
 				String key = getKeyFromRecord(csvRecord);
 				String filterPropValue = csvRecord.get(constraintFilterProp);
 
 				if (isValidEntry(key, filterPropValue)) {
+					found = true;
 					DynListEntry entry = new DynListEntry();
 					MLText mlText = new MLText();
 
@@ -431,11 +461,14 @@ public class DynListConstraint extends ListOfValuesConstraint {
 					allowedValues.put(key, entry);
 				}
 			}
+			if (!found) {
+				logger.error("constraintFilter not found: " + constraintFilter);
+			}
 		} catch (IOException e) {
 			logger.error(e, e);
 		}
 	}
-
+	
 	private void processSystemList(String path, Map<String, DynListEntry> allowedValues) {
 
 		NamespaceService namespaceService = serviceRegistry.getNamespaceService();
