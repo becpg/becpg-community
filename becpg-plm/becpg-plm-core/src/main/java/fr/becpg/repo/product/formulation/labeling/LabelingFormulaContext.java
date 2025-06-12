@@ -901,9 +901,14 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				return applyRoundingMode(new MessageFormat(getTextFormatByName("groupDefaultFormat", groupDefaultFormat), getContentLocale()), qty);
 			}
 			if (DeclarationType.Detail.equals(((CompositeLabeling) lblComponent).getDeclarationType())) {
-				if ((lblComponent instanceof IngItem) && !((CompositeLabeling) lblComponent).getIngList().isEmpty()) {
-					return applyRoundingMode(new MessageFormat(getTextFormatByName("subIngsDefaultFormat", subIngsDefaultFormat), getContentLocale()),
-							qty);
+				if (lblComponent instanceof IngItem) {
+					if (!((CompositeLabeling) lblComponent).getIngList().isEmpty()) {
+						return applyRoundingMode(
+								new MessageFormat(getTextFormatByName("subIngsDefaultFormat", subIngsDefaultFormat), getContentLocale()), qty);
+					} else {
+						return applyRoundingMode(new MessageFormat(getTextFormatByName("ingDefaultFormat", ingDefaultFormat), getContentLocale()),
+								qty);
+					}
 				}
 				return applyRoundingMode(new MessageFormat(getTextFormatByName("detailsDefaultFormat", detailsDefaultFormat), getContentLocale()),
 						qty);
@@ -2279,6 +2284,10 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 							}
 
 						}
+					} else if (compositeLabeling instanceof IngItem) {
+						ret.append(getLocaleSeparator(subIngsSeparator));
+					} else {
+						ret.append(getLocaleSeparator(defaultSeparator));
 					}
 				}
 				if (IngTypeItem.DEFAULT_GROUP.equals(kv.getKey())) {
@@ -2354,7 +2363,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			if (logger.isDebugEnabled()) {
 
 				logger.debug(" --" + ingName + "(" + component.getNodeRef() + ") qtyRMUsed: " + parent.getQtyTotal() + " qtyPerc " + qtyPerc
-						+ " apply precision (" + (toApplyThresholdItems.contains(component.getNodeRef()) && ((qtyPerc - qtyPrecisionThreshold) > 0))
+						+ " apply precision ("
+						+ (toApplyThresholdItems.contains(component.getNodeRef()) && (((qtyPerc != null ? qtyPerc : 0) - qtyPrecisionThreshold) > 0))
 						+ "), ratio: " + ratio);
 			}
 
@@ -2735,8 +2745,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				}
 			}
 
-			return input.replaceAll(" null| \\(null\\)| \\(\\)| \\[null\\]", "").replace(":,", ",").replaceAll(":$", "").replace(">null<", "><")
-					.replace("  ", "").trim();
+
+
+			return input.replaceAll(" null| \\(null\\)| \\(\\)| \\[null\\]| \\[\\]", "").replaceAll("null|\\(null\\)|\\(\\)|\\[null\\]|\\[\\]", "")
+					.replace(":,", ",").replaceAll(":$", "").replace(">null<", "><").replace("  ", "").trim();
+
 		}
 		return "";
 	}
@@ -2992,8 +3005,9 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 			for (Map.Entry<IngTypeItem, List<LabelingComponent>> entry : sortedIngListByType.entrySet()) {
 
-				if (prec != null) {
-					if ((prec.getKey().getOrigNodeRef() != null) && prec.getKey().getOrigNodeRef().equals(entry.getKey().getOrigNodeRef())) {
+
+				if ((prec != null)
+						&& ((prec.getKey().getOrigNodeRef() != null) && prec.getKey().getOrigNodeRef().equals(entry.getKey().getOrigNodeRef()))) {
 
 						if ((prec.getKey().getQty() != null) && (entry.getKey().getQty() != null)) {
 							prec.getKey().setQty(prec.getKey().getQty() + entry.getKey().getQty());
