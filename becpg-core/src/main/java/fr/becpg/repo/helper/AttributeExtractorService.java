@@ -22,10 +22,15 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.security.AccessStatus;
+import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.QName;
 import org.json.JSONObject;
+import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.config.format.FormatMode;
 import fr.becpg.config.format.PropertyFormats;
@@ -90,7 +95,22 @@ public interface AttributeExtractorService {
 		
 	}
 	
-	
+	public static String extractPropName(PermissionService permissionService, NodeService nodeService, QName type,
+			NodeRef nodeRef, String extractedPropName) {
+		String value;
+
+		if (permissionService.hasReadPermission(nodeRef) == AccessStatus.ALLOWED) {
+			if (extractedPropName != null) {
+				value = extractedPropName;
+			} else {
+				value = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
+			}
+		} else {
+			value = I18NUtil.getMessage("message.becpg.access.denied");
+		}
+
+		return value;
+	}
 
 	/**
 	 * <p>readExtractStructure.</p>
