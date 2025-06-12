@@ -35,6 +35,9 @@ public final class SurveyModel {
 	/** Constant <code>PROP_SURVEY_QUESTION_SCORE</code> */
 	public static final QName PROP_SURVEY_FS_LINKED_TYPE = QName.createQName(SURVEY_URI, "fsLinkedTypes");
 	
+	/** Constant <code>PROP_SURVEY_FS_SURVEY_LIST_NAME</code> */
+	public static final QName PROP_SURVEY_FS_SURVEY_LIST_NAME = QName.createQName(SURVEY_URI, "fsSurveyListName");
+	
 	/** Constant <code>TYPE_SURVEY_LIST</code> */
 	public static final QName TYPE_SURVEY_LIST = QName.createQName(SURVEY_URI, "surveyList");
 	
