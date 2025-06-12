@@ -116,7 +116,7 @@
 					         }
 
 					     this.services.basket = new beCPG.service.Basket();
-		
+						 this.services.aiSuggestion = new beCPG.service.AiSuggestion();
        
 
 				         /**
@@ -141,6 +141,9 @@
 								//beCPG 
                            	   if (!record.node.isContainer ){
    								   html += '<span class="item  item-social  item-separator">' + Alfresco.DocumentList.generateBasket(this, record) + '</span>';
+								   if (beCPG.constants.AI_ENABLED && record.node.aspects && record.node.aspects.indexOf("bcpg:aiValidationAspect") !== -1) {
+   								   		html += '<span class="item  item-social  item-separator">' + Alfresco.DocumentList.generateAiSuggestion(this, record) + '</span>';
+								   }
 								}
 				               if (!record.node.isContainer && Alfresco.constants.QUICKSHARE_URL)
 				               {
@@ -158,6 +161,18 @@
 								  id = Alfresco.util.generateDomId(),
 								  cssClass = "effectivity";
 
+							  // Check for mandatory effectivity dates
+							  if (jsNode.hasAspect("bcpg:documentAspect") && properties["bcpg:documentIsMandatory"] === "true" && jsNode.hasAspect("cm:effectivity")) {
+								  var startEffectivity = properties["cm:from"];
+								  var endEffectivity = properties["cm:to"];
+								  
+								  // If the document is mandatory and effectivity dates are not set, add mandatory class
+								  if (startEffectivity == null && endEffectivity == null) {
+									  cssClass = "effectivity-mandatory";
+									  return '<span id="' + id + '" class="' + cssClass + '">' + this.msg("details.effectivity.none") + '</span>';
+								  }
+							  }
+							  
 							  if (jsNode.hasAspect("cm:effectivity")) {
 
 								  var startEffectivity = properties["cm:from"];
@@ -172,14 +187,15 @@
 										  if (now.getTime() < Alfresco.util.fromISO8601(startEffectivity.iso8601).getTime()) {
 											  cssClass = "effectivity-future";
 											  future = true;
-
 										  }
 									  }
 									  if (endEffectivity != null) {
 										  endEffectivityDate = Alfresco.util.formatDate(endEffectivity.iso8601, "shortDate");
 										  if (!future && endEffectivity.value != null && now.getTime() > Alfresco.util.fromISO8601(endEffectivity.iso8601).getTime()) {
 											  cssClass = "effectivity-past";
-										  }
+										  } else if( endEffectivity.value != null && now.getTime() < Alfresco.util.fromISO8601(endEffectivity.iso8601).getTime()){
+                                              cssClass = "effectivity-future";
+                                          }
 									  }
 
 									 var html = '<span id="' + id + '" class="' + cssClass + '">';
@@ -208,7 +224,7 @@
 
 
 
-						// Hook favourite document/folder events
+						// Hook basket events
 				         var fnBasketHandler = function DL_fnBasketHandler(layer, args)
 				         {
 				            var owner = YAHOO.Bubbling.getOwnerByTagName(args[1].anchor, "div");
@@ -219,6 +235,18 @@
 				            return true;
 				         };
 				         YAHOO.Bubbling.addDefaultAction("basket-action", fnBasketHandler);
+
+                         // Hook AI suggestion events
+				         var fnAiSuggestionHandler = function DL_fnAiSuggestionHandler(layer, args)
+				         {
+				            var owner = YAHOO.Bubbling.getOwnerByTagName(args[1].anchor, "div");
+				            if (owner !== null)
+				            {
+				               me.onAiSuggestion.call(me, args[1].target.offsetParent, args[1].event);
+				            }
+				            return true;
+				         };
+				         YAHOO.Bubbling.addDefaultAction("ai-suggestion-action", fnAiSuggestionHandler);
 
 				      },
 										
@@ -681,7 +709,25 @@
 							this.widgets.dataTable.updateRow(oRecord, record);
 						},
 						
-						
+						/**
+						 * AI Suggestion event handler
+						 * 
+						 * @method onAiSuggestion
+						 * @param row
+						 *            {HTMLElement} DOM reference to a TR
+						 *            element (or child thereof)
+						 * @param event
+						 *            {object} The click event object for positioning
+						 */
+						onAiSuggestion : function DL_onAiSuggestion(row, event) {
+							var elIdentifier = row;
+							if (typeof this.viewRenderers[this.options.viewRendererName] === "object") {
+								elIdentifier = this.viewRenderers[this.options.viewRendererName].getDataTableRecordIdFromRowElement(this, row);
+							}
+							var oRecord = this.widgets.dataTable.getRecord(elIdentifier), record = oRecord.getData();
+							this.services.aiSuggestion.showSuggestions(record, event);
+						},
+
 						/**
 						 * Like/Unlike event handler
 						 * 
@@ -1054,6 +1100,25 @@
 				+ '" tabindex="0">' + scope.msg(i18n + "label") + '</a>';
 		if (hasComments) {
 			html += '<span class="comment-count">' + $html(node.properties["fm:commentCount"]) + '</span>';
+		}
+		return html;
+	};
+
+	/**
+	 * Generate "AI Suggestion" UI
+	 * 
+	 * @method generateAiSuggestion
+	 * @param scope
+	 *            {object} DocumentLibrary instance
+	 * @param record
+	 *            {object} File record
+	 * @return {string} HTML mark-up for AI Suggestion UI
+	 */
+	Alfresco.DocumentList.generateAiSuggestion = function DL_generateAiSuggestion(scope, record) {		
+		if ( scope.services.aiSuggestion.isEnabled(record)) {
+			html = '<a class="ai-suggestion-action enabled" title="' + scope.msg("aisuggestion.show.tip") + '" tabindex="0"></a>';
+		} else {
+			html = '<a class="ai-suggestion-action" title="' + scope.msg("aisuggestion.show.tip") + '" tabindex="0">' + scope.msg("aisuggestion.show.label") + '</a>';
 		}
 		return html;
 	};

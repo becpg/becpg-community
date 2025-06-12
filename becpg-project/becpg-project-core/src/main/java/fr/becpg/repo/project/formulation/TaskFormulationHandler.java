@@ -17,6 +17,7 @@ import org.apache.commons.logging.LogFactory;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DeliverableUrl;
 import fr.becpg.model.ProjectModel;
+import fr.becpg.repo.formulation.FormulatedEntityHelper;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.project.ProjectActivityService;
 import fr.becpg.repo.project.ProjectService;
@@ -146,28 +147,22 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 		// can start the project (manual task or task that has startdate <
 		// NOW)
 		if (visit(projectData, tasks, !isOnHold && !isTpl)) {
+			FormulatedEntityHelper.incrementReformulateCount(projectData);
+		}
 
-			if (projectData.getReformulateCount() == null) {
-				projectData.setReformulateCount(1);
-			} else if (projectData.getReformulateCount() < 3) {
-				projectData.setReformulateCount(projectData.getReformulateCount() + 1);
+		if (projectData.isDirtyTaskTree()) {
+			projectData.setDirtyTaskTree(false);
+		} else {
+			visitParents(projectData, tasks, !isOnHold && !isTpl);
+			visitProject(projectData, tasks, isTpl);
+			// exclude project template tasks from search
+			if (isTpl) {
+				projectData.getTaskList().forEach(t -> t.setIsExcludeFromSearch(true));
 			}
-
+			if (logger.isDebugEnabled()) {
+				logger.debug("After formulate tasks:" + TaskWrapper.print(projectData));
+			}
 		}
-
-		visitParents(projectData, tasks, !isOnHold && !isTpl);
-
-		visitProject(projectData, tasks, isTpl);
-
-		// exclude project template tasks from search
-		if (isTpl) {
-			projectData.getTaskList().forEach(t -> t.setIsExcludeFromSearch(true));
-		}
-
-		if (logger.isDebugEnabled()) {
-			logger.debug("After formulate tasks:" + TaskWrapper.print(projectData));
-		}
-
 		return true;
 	}
 
@@ -490,6 +485,10 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 					it.remove();
 					// note we are making progress
 					progress = true;
+				}
+				
+				if (projectData.isDirtyTaskTree()) {
+					return true;
 				}
 			}
 			// If we haven't made any progress then a cycle must exist in

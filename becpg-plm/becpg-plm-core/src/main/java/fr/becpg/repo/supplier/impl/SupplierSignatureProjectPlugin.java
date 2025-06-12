@@ -151,13 +151,25 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 
 	/** {@inheritDoc} */
 	@Override
-	public void createOrUpdateClosingTask(ProjectData project, List<NodeRef> lastTasks) {
+	public void createOrUpdateClosingTask(ProjectData project, List<NodeRef> lastTasks, TaskListDataItem firstTask) {
+		
+		// do not create closing task if there are other tasks after
+		for (NodeRef lastTask : lastTasks) {
+			for (TaskListDataItem otherTask : project.getTaskList()) {
+				if (otherTask.getPrevTasks().contains(lastTask)) {
+					return;
+				}
+			}
+		}
 		
 		String taskName = I18NUtil.getMessage("plm.supplier.portal.task.closing.name");
 		
-		TaskListDataItem closingTask = project.getTaskList().stream().filter(task -> task.getTaskName().equals(taskName)).findFirst().orElseGet(() -> projectService.createNewTask(project));
+		TaskListDataItem closingTask = project.getTaskList().stream().filter(task -> task.getTaskName().equals(taskName)).findFirst()
+				.orElseGet(() -> projectService.insertNewTask(project, lastTasks));
 
 		closingTask.setTaskName(taskName);
+		closingTask.setRefusedTask(firstTask);
+		
 	
 		NodeRef creator = personService.getPerson(project.getCreator());
 	

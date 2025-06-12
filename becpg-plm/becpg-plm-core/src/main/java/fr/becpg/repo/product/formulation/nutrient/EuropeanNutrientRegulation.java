@@ -61,7 +61,7 @@ public class EuropeanNutrientRegulation extends AbstractNutrientRegulation {
 				ret.setRule(e -> new NutrientRoundedRule(1d));
 			} else if (nutrientTypeCode.equals(NutrientCode.Fat) || nutrientTypeCode.equals(NutrientCode.CarbohydrateByDiff)
 					|| nutrientTypeCode.equals(NutrientCode.Sugar) || nutrientTypeCode.equals(NutrientCode.FiberDietary)
-					|| nutrientTypeCode.startsWith(NutrientCode.Protein)) {
+					|| nutrientTypeCode.startsWith(NutrientCode.Protein) || nutrientTypeCode.startsWith(NutrientCode.Polyols)) {
 				ret.setRule(val -> {
 					if (val >= 10) {
 						return new NutrientRoundedRule(1d);
