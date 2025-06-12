@@ -54,6 +54,7 @@ public class SurveyAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 	public AutoCompletePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
 
 		NodeRef itemId = null;
+		String dataListsName = null;
 
 		@SuppressWarnings("unchecked")
 		Map<String, String> extras = (HashMap<String, String>) props.get(AutoCompleteService.EXTRA_PARAM);
@@ -61,11 +62,18 @@ public class SurveyAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 			if (extras.get("itemId") != null) {
 				itemId = new NodeRef(extras.get("itemId"));
 			}
+			dataListsName = extras.get("dataListsName");
 		}
 
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(SurveyModel.TYPE_SURVEY_QUESTION).excludeDefaults()
 				.inSearchTemplate("%(bcpg:code survey:questionLabel)").locale(I18NUtil.getContentLocale()).andOperator().ftsLanguage();
 
+		if (dataListsName != null) {
+			queryBuilder.andFTSQuery("ISNULL:" + SurveyModel.PROP_SURVEY_FS_SURVEY_LIST_NAME + " OR ="
+					+ SurveyModel.PROP_SURVEY_FS_SURVEY_LIST_NAME + ":'' OR ="
+					+ SurveyModel.PROP_SURVEY_FS_SURVEY_LIST_NAME + ":" + dataListsName);
+		}
+		
 		if (!isAllQuery(query)) {
 			StringBuilder ftsQuery = new StringBuilder();
 			if (query.length() > 2) {
