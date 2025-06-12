@@ -150,9 +150,20 @@
                         },
 
                         onPrintClick : function (scope){
-                        	var nodeRefAsLink = scope.options.nodeRef.replace(":/", ""),
-                        	noCache = "noCache=" + new Date().getTime();
-                        	printJS(Alfresco.constants.PROXY_URI + "api/node/"+nodeRefAsLink + "/content/"+ encodeURIComponent(scope.options.name)+ "?c=force&" + noCache + "&a=false");
+                            var nodeRefAsLink = scope.options.nodeRef.replace(":/", ""),
+                                   noCache = "noCache=" + new Date().getTime(),
+                                   fileUrl = Alfresco.constants.PROXY_URI + 
+                                             "api/node/" + nodeRefAsLink + 
+                                             "/content/" + encodeURIComponent(scope.options.name) + 
+                                             "?c=force&" + noCache + "&a=false";
+
+                               var printWindow = window.open(fileUrl, '_blank');
+                               printWindow.focus();
+
+                               // Wait until the PDF is loaded before printing
+                               printWindow.onload = function () {
+                                   printWindow.print();
+                               };
                         },
                         
                         /**

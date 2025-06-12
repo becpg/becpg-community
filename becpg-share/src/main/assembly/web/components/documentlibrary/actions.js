@@ -1981,6 +1981,45 @@
 			}
 
 		},
+		
+		/**
+		* Show AI suggestions for a document
+		*
+		* @method onActionAiSuggestion
+		* @param record {object} Object literal representing the file or folder to be actioned
+		 */
+		onActionAiSuggestion: function dlA_onActionAiSuggestion(record) {
+			
+			if (YAHOO.lang.isArray(record)) {
+				// If multiple records are selected, only show suggestions for the first one
+				if (record.length > 0) {
+					this._showAiSuggestion(record[0]);
+				}
+			}
+			else {
+				this._showAiSuggestion(record);
+			}
+		},
+		
+		/**
+		* Helper function to show AI suggestions for a document
+		* 
+		* @method _showAiSuggestion
+		* @param record {object} Object literal representing the file to show suggestions for
+		* @private
+		*/
+		_showAiSuggestion: function dlA__showAiSuggestion(record) {
+			this.services.aiSuggestion = this.services.aiSuggestion || new beCPG.service.AiSuggestion();
+			
+			if (this.services.aiSuggestion.isEnabled(record)) {
+				this.services.aiSuggestion.showSuggestions(record);
+			} else {
+				Alfresco.util.PopupManager.displayMessage({
+					text: this.msg("message.ai.suggestion.not.available"),
+					displayTime: 3000
+				});
+			}
+		},
 
 		/**
 		 * Triggers the archiving and download of the currently selected documents/folders.

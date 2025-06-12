@@ -1,6 +1,8 @@
 package fr.becpg.repo.authentication.provider;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
@@ -274,7 +276,8 @@ public class IdentityServiceAccountProvider {
         	logger.debug("getUserId in IDS for username: " + username);
         }
 		try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
-            HttpGet request = new HttpGet(authServerUrl + "/admin/realms/" + realm + "/users?username=" + username);
+			String encodedUsername = URLEncoder.encode(username, StandardCharsets.UTF_8.toString());
+            HttpGet request = new HttpGet(authServerUrl + "/admin/realms/" + realm + "/users?username=" + encodedUsername);
             request.setHeader("Content-Type", "application/json;charset=UTF-8");
             request.setHeader("Authorization", "Bearer " + getAdminAccessToken());
 

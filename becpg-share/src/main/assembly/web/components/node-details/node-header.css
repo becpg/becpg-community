@@ -126,3 +126,13 @@
 .node-header  .item-social a.basket-action.enabled {
 	background-image: url(../basket/images/basket-selected_16x16.png);
 }
+
+.node-header .item-social a.ai-suggestion-action.enabled {
+	background-image: url(../entity-suggestions/images/chef-ai-enabled-16.png);
+}
+
+.node-header .item-social a.ai-suggestion-action {
+	background-image: url(../entity-suggestions/images/chef-ai-16.png);
+}
+
+
