@@ -67,7 +67,7 @@ public class TargetAssocAutoCompleteExtractor implements AutoCompleteExtractor<N
 			for (NodeRef nodeRef : nodeRefs) {
 
 				QName type = nodeService.getType(nodeRef);
-				String name = attributeExtractorService.extractPropName(type,nodeRef);
+				String name = extractPropName(type, nodeRef);
 				String cssClass = attributeExtractorService.extractMetadata(type,nodeRef);
 				Map<String, String> props = new HashMap<>(2);
 				props.put("type", type.toPrefixString(namespaceService));
@@ -91,6 +91,10 @@ public class TargetAssocAutoCompleteExtractor implements AutoCompleteExtractor<N
 			}
 		}
 		return suggestions;
+	}
+
+	protected String extractPropName(QName type, NodeRef nodeRef) {
+		return attributeExtractorService.extractPropName(type, nodeRef);
 	}
 
 }

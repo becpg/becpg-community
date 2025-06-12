@@ -1053,20 +1053,9 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	/** {@inheritDoc} */
 	@Override
 	public String extractPropName(QName type, NodeRef nodeRef) {
-		String value;
-
-		if (permissionService.hasReadPermission(nodeRef) == AccessStatus.ALLOWED) {
-			AttributeExtractorPlugin plugin = getAttributeExtractorPlugin(type);
-			if (plugin != null) {
-				value = plugin.extractPropName(type, nodeRef);
-			} else {
-				value = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
-			}
-		} else {
-			value = I18NUtil.getMessage("message.becpg.access.denied");
-		}
-
-		return value;
+		AttributeExtractorPlugin plugin = getAttributeExtractorPlugin(type);
+		return AttributeExtractorService.extractPropName(permissionService, mlNodeService, type, nodeRef,
+				plugin != null ? plugin.extractPropName(type, nodeRef) : null);
 	}
 
 	/** {@inheritDoc} */
