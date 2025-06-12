@@ -275,6 +275,17 @@
                 <value>ProductActivityTypeCode</value>
             </parameter>
         </constraint>
+        
+        <constraint name="gs1:dutyFeeTaxAgencyCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+		    <parameter name="path">
+		        <list>
+                    <value>/System/Lists/bcpg:entityLists/DutyFeeTaxAgencyCodes</value>
+		        </list>
+		    </parameter>
+		    <parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
+		</constraint>
 
         <constraint name="gs1:dutyFeeTaxCategoryCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
             <parameter name="path">
@@ -771,6 +782,17 @@
                         <facetable>true</facetable>
                     </index>
                 </property>
+                <property name="gs1:dutyFeeTaxAgencyCode">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="gs1:dutyFeeTaxAgencyCodes" />
+					</constraints>
+				</property>
                 <property name="gs1:dutyFeeTaxCategoryCode">
                     <type>d:text</type>
                     <mandatory>false</mandatory>

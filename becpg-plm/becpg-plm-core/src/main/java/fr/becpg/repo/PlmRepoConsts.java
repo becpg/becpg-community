@@ -362,6 +362,8 @@ public class PlmRepoConsts {
 	public static final String PATH_GS1_CATCH_METHID_CODES = "CatchMethodCodes";
 	/** Constant <code>PATH_GS1_CATCH_AREA_CODES="CatchAreaCodes"</code> */
 	public static final String PATH_GS1_CATCH_AREA_CODES = "CatchAreaCodes";
+	/** Constant <code>PATH_GS1_DUTY_FEE_TAX_AGENCY_CODES="DutyFeeTaxAgencyCodes"</code> */
+	public static final String PATH_GS1_DUTY_FEE_TAX_AGENCY_CODES = "DutyFeeTaxAgencyCodes";
 	/** Constant <code>PATH_PUBCHANNELS="PubChannels"</code> */
 	public static final String PATH_PUBCHANNELS = "PubChannels";
 	/** Constant <code>PATH_ACTIVITY_LIST="activityList"</code> */
