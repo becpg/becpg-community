@@ -230,6 +230,8 @@ public class PlmRepoConsts {
 	public static final String PATH_QUALITY_REPORTTEMPLATES = "QualityReportTemplates";
 	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_PRODUCTS="ExportProducts"</code> */
 	public static final String PATH_REPORTS_EXPORT_SEARCH_PRODUCTS = "ExportProducts";
+	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_DOCUMENTS="ExportDocuments"</code> */
+	public static final String PATH_REPORTS_EXPORT_SEARCH_DOCUMENTS = "ExportDocuments";
 	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_RAWMATERIAL_INGLIST="ExportRawMaterialIngList"</code> */
 	public static final String PATH_REPORTS_EXPORT_SEARCH_INGLIST = "ExportIngList";
 
@@ -401,6 +403,9 @@ public class PlmRepoConsts {
 	
 	/** Constant <code>PATH_SURVEY_QUESTIONS="SurveyQuestions"</code> */
 	public static final String PATH_SURVEY_QUESTIONS = "SurveyQuestions";
+	
+	/** Constant <code>PATH_DOCUMENT_CATEGORIES="DocumentCategories"</code> */
+	public static final String PATH_DOCUMENT_CATEGORIES = "DocumentCategories";
 	
 
 }

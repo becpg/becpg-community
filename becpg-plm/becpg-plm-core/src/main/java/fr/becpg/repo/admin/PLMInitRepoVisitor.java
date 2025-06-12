@@ -216,6 +216,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	
 	private static final String EXPORT_PROJECT_SURVEY_XLSX_PATH = "beCPG/birt/exportsearch/project/%s/ExportProjectSurvey.xlsx";
 	private static final String EXPORT_PROJECT_SCORELIST_XLSX_PATH = "beCPG/birt/exportsearch/project/%s/ExportProjectScoreList.xlsx";
+	
+	private static final String EXPORT_DOCUMENT_XLSX_PATH = "beCPG/birt/exportsearch/document/%s/ExportDocuments.xlsx";
 
 	private static final String PRODUCT_REPORT_DE_RESOURCE = "beCPG/birt/document/product/default/ProductReport_de.properties";
 	private static final String PRODUCT_REPORT_EN_US_RESOURCE = "beCPG/birt/document/product/default/ProductReport_en_US.properties";
@@ -1166,6 +1168,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_GS1_DUTY_FEE_TAX_AGENCY_CODES, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_GS1_DUTY_FEE_TAX_TYPE_CODES, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_GS1_DUTY_FEE_TAX_CATEGORY_CODES, BeCPGModel.TYPE_LIST_VALUE);
+		
+		entityLists.put(PlmRepoConsts.PATH_DOCUMENT_CATEGORIES, BeCPGModel.TYPE_LIST_VALUE);
 
 		entityLists.put(PlmRepoConsts.PATH_CONTACT_TYPES, BeCPGModel.TYPE_LIST_VALUE);
 
@@ -1817,6 +1821,16 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
 					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_PROJECTSCORELIST),
 					TranslateHelper.getLocaleAwarePath(EXPORT_PROJECT_SCORELIST_XLSX_PATH), reportTplInformation, false);
+			
+			// export search documents
+
+			NodeRef exportDocumentsNodeRef = visitFolder(exportSearchNodeRef, PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_DOCUMENTS);
+
+			reportTplInformation.setNodeType(BeCPGModel.TYPE_CONTENT);
+
+			reportTplService.createTplRptDesign(exportDocumentsNodeRef,
+					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_DOCUMENTS),
+					TranslateHelper.getLocaleAwarePath(EXPORT_DOCUMENT_XLSX_PATH), reportTplInformation, false);
 			
 			// export search NC
 

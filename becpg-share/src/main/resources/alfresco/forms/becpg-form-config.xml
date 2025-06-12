@@ -227,6 +227,7 @@ PARTICULAR
 					
 					<!--document aspect -->
 					<show id="bcpg:documentState" force="false" />
+					<show id="bcpg:documentCategory" force="false" />
 					<show id="bcpg:documentIsMandatory" force="false" />
 					<show id="bcpg:documentTypeRef" force="false" />
 					<show id="bcpg:documentEntityRef" force="false" />
@@ -295,6 +296,8 @@ PARTICULAR
 					<field id="bcpg:documentState" set="documentType" />
 					<field id="bcpg:documentIsMandatory" set="documentType"
 						read-only="true" />
+					<field id="bcpg:documentCategory" set="documentType"
+						read-only="true" />
 					<field id="bcpg:documentTypeRef" set="documentType">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -303,7 +306,6 @@ PARTICULAR
 						</control-param>
 						</control>
 					</field>
-
 					<field id="bcpg:documentEntityRef" set="documentType"
 						read-only="true">
 						<control

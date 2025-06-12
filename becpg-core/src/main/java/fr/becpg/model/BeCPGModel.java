@@ -106,6 +106,9 @@ public final class BeCPGModel {
 
 	/** Constant <code>TYPE_SYSTEM_ENTITY</code> */
 	public static final QName TYPE_SYSTEM_ENTITY = QName.createQName(BECPG_URI, "systemEntity");
+	
+	/** Constant <code>TYPE_CONTENT</code> */
+	public static final QName TYPE_CONTENT = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "content");
 
 	// autoNum
 	/** Constant <code>TYPE_AUTO_NUM</code> */
@@ -363,6 +366,8 @@ public final class BeCPGModel {
 	public static final QName ASPECT_DOCUMENT_ASPECT = QName.createQName(BECPG_URI, "documentAspect");
 	/** Constant <code>PROP_DOCUMENT_STATE</code> */
 	public static final QName PROP_DOCUMENT_STATE = QName.createQName(BECPG_URI, "documentState");
+	/** Constant <code>PROP_DOCUMENT_CATEGORY</code> */
+	public static final QName PROP_DOCUMENT_CATEGORY = QName.createQName(BECPG_URI, "documentCategory");
 	/** Constant <code>PROP_DOCUMENT_IS_MANDATORY</code> */
 	public static final QName PROP_DOCUMENT_IS_MANDATORY = QName.createQName(BECPG_URI, "documentIsMandatory");
 	/** Constant <code>ASSOC_DOCUMENT_TYPE_REF</code> */
@@ -373,6 +378,8 @@ public final class BeCPGModel {
 	// document type
 	/** Constant <code>TYPE_DOCUMENT_TYPE</code> */
 	public static final QName TYPE_DOCUMENT_TYPE = QName.createQName(BECPG_URI, "documentType");
+	/** Constant <code>PROP_DOCUMENT_TYPE_CATEGORY</code> */
+	public static final QName PROP_DOCUMENT_TYPE_CATEGORY = QName.createQName(BECPG_URI, "docTypeCategory");
 	/** Constant <code>PROP_DOCUMENT_TYPE_IS_MANDATORY</code> */
 	public static final QName PROP_DOCUMENT_TYPE_IS_MANDATORY = QName.createQName(BECPG_URI, "docTypeIsMandatory");
 	/** Constant <code>PROP_DOCUMENT_TYPE_EFFECTIVITY_TYPE</code> */
