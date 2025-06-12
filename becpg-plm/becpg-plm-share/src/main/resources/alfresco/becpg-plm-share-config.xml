@@ -182,6 +182,7 @@
 			<list id="NutrientProfiles" index="200"/>
 			<list id="LabelingTemplates" index="210"/>
 			<list id="Labels" index="220"/>
+			<list id="DocumentTypes" index="230"/>
 			
 			<!-- Lists of values -->
 			<list id="ReportParams" index="0"/>

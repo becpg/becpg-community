@@ -89,6 +89,7 @@
 					<p>${msg("watson.footer.message")}</p>
 				</div>
 			</div>
+			<div class="watson-resize-handle" id="watson-resize-handle"></div>
 			<button id="watson-chatbot-chat-activate-bar" class="chat-activate-bar">
 				<svg width="48" height="48" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
 					<g fill="none" fill-rule="evenodd">

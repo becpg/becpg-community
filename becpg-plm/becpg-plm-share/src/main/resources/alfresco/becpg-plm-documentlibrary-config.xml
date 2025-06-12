@@ -43,7 +43,6 @@
 				<aspect name="gs1:seasonalAspect"/>
 				<aspect name="gs1:pegHoleAspect"/>
 				<aspect name="gs1:animalFeedingAspect"/>
-				<aspect name="gs1:animalFeedingAspect"/>
 				
 			</visible>
 			<!-- Aspects that a user can add. Same as "visible" if left empty -->
@@ -113,6 +112,7 @@
 			</type>
 		</types>
 		<indicators>
+			
 			<indicator id="entity-simulation" index="10">
 				<evaluator>evaluator.becpg.doclib.indicator.entity.simulation</evaluator>
 			</indicator>
@@ -133,7 +133,6 @@
 				<evaluator>evaluator.becpg.doclib.indicator.entity.stopped</evaluator>
 			</indicator>
 			
-			<!-- ECM -->
 			<indicator id="ecm-automatic"  index="15">
 				<evaluator>evaluator.becpg.doclib.indicator.ecm.automatic</evaluator>
 			</indicator>
@@ -163,8 +162,57 @@
 			<indicator id="ecm-inprogress"   index="15">
 				<evaluator>evaluator.becpg.doclib.indicator.ecm.inProgress</evaluator>
 			</indicator>	
-				
+			
+			<indicator id="document-simulation" index="25">
+				<evaluator negate="true">evaluator.becpg.doclib.indicator.document.mandatory</evaluator>
+				<evaluator>evaluator.becpg.doclib.indicator.document.simulation</evaluator>
+			</indicator>
+			<indicator id="document-tovalidate" index="25">
+				<evaluator negate="true">evaluator.becpg.doclib.indicator.document.mandatory</evaluator>
+				<evaluator>evaluator.becpg.doclib.indicator.document.tovalidate</evaluator>
+			</indicator>
+			<indicator id="document-valid" index="25">
+				<evaluator negate="true">evaluator.becpg.doclib.indicator.document.mandatory</evaluator>
+				<evaluator>evaluator.becpg.doclib.indicator.document.valid</evaluator>
+			</indicator>
+			<indicator id="document-refused" index="25">
+				<evaluator negate="true">evaluator.becpg.doclib.indicator.document.mandatory</evaluator>
+				<evaluator>evaluator.becpg.doclib.indicator.document.refused</evaluator>
+			</indicator>
+			<indicator id="document-archived" index="25">
+				<evaluator negate="true">evaluator.becpg.doclib.indicator.document.mandatory</evaluator>
+				<evaluator>evaluator.becpg.doclib.indicator.document.archived</evaluator>
+			</indicator>
 
+			<indicator id="document-mandatory-simulation" index="25">
+			<evaluator>evaluator.becpg.doclib.indicator.document.mandatory</evaluator>
+                <evaluator>evaluator.becpg.doclib.indicator.document.simulation</evaluator>
+            </indicator>
+            <indicator id="document-mandatory-tovalidate" index="25">
+			<evaluator>evaluator.becpg.doclib.indicator.document.mandatory</evaluator>
+                <evaluator>evaluator.becpg.doclib.indicator.document.tovalidate</evaluator>
+            </indicator>
+            <indicator id="document-mandatory-valid" index="25">
+			<evaluator>evaluator.becpg.doclib.indicator.document.mandatory</evaluator>
+                <evaluator>evaluator.becpg.doclib.indicator.document.valid</evaluator>
+            </indicator>
+            <indicator id="document-mandatory-refused" index="25">
+			<evaluator>evaluator.becpg.doclib.indicator.document.mandatory</evaluator>
+                <evaluator>evaluator.becpg.doclib.indicator.document.refused</evaluator>
+            </indicator>
+            <indicator id="document-mandatory-archived" index="25">
+			<evaluator>evaluator.becpg.doclib.indicator.document.mandatory</evaluator>
+                <evaluator>evaluator.becpg.doclib.indicator.document.archived</evaluator>
+            </indicator>
+
+			<indicator id="ai-valid" index="15">
+				<evaluator>evaluator.becpg.doclib.indicator.ai.valid</evaluator>
+			</indicator>
+
+			<indicator id="ai-refused" index="15">
+				<evaluator>evaluator.becpg.doclib.indicator.ai.refused</evaluator>
+			</indicator>
+			
 		</indicators>
 		
 	</config>
@@ -173,8 +221,8 @@
 	<config evaluator="string-compare" condition="DocumentLibrary" replace="true">
 		<create-content>
 			 <content id="folder" label="create-content.folder" icon="folder" index="5" type="javascript">
-	            <param name="function">onNewFolder</param>
-	         </content>
+				<param name="function">onNewFolder</param>
+			</content>
 			<content id="plain-text" label="create-content.text" type="pagelink" index="10" icon="text">
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=cm:content&amp;mimeType=text/plain
 				</param>

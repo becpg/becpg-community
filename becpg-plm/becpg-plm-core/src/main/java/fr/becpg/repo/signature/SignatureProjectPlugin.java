@@ -5,6 +5,7 @@ import java.util.List;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.project.data.ProjectData;
+import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 
 /**
  * <p>SignatureProjectPlugin interface.</p>
@@ -38,8 +39,9 @@ public interface SignatureProjectPlugin {
 	 *
 	 * @param project a {@link fr.becpg.repo.project.data.ProjectData} object
 	 * @param lastsTasks a {@link java.util.List} object
+	 * @param firstTask 
 	 */
-	void createOrUpdateClosingTask(ProjectData project, List<NodeRef> lastsTasks);
+	void createOrUpdateClosingTask(ProjectData project, List<NodeRef> lastsTasks, TaskListDataItem firstTask);
 
 	/**
 	 * <p>applyTo.</p>

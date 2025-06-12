@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.entity.catalog.CataloguableEntity;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.hierarchy.HierarchicalEntity;
 import fr.becpg.repo.project.data.projectList.BudgetListDataItem;
@@ -53,7 +54,7 @@ import fr.becpg.repo.survey.data.SurveyableEntity;
 @AlfType
 @AlfQname(qname = "pjt:project")
 public class ProjectData extends BeCPGDataObject
-		implements AspectAwareDataItem, FormulatedEntity, HierarchicalEntity, StateableEntity, SurveyableEntity {
+		implements CataloguableEntity, AspectAwareDataItem, FormulatedEntity, HierarchicalEntity, StateableEntity, SurveyableEntity {
 
 	/**
 	 * 
@@ -85,6 +86,22 @@ public class ProjectData extends BeCPGDataObject
 	private Double budgetedCost = 0d;
 	private Double work = 0d;
 	private Double loggedTime = 0d;
+	
+	private boolean dirtyTaskTree = false;
+	
+	public boolean isDirtyTaskTree() {
+		return dirtyTaskTree;
+	}
+	
+	public void setDirtyTaskTree(boolean dirtyTaskTree) {
+		this.dirtyTaskTree = dirtyTaskTree;
+	}
+	
+	/*
+	 * Completion scores
+	 */
+	private String entityScore;
+	private List<String> reportLocales;
 
 	/*
 	 * Formulation
@@ -293,6 +310,47 @@ public class ProjectData extends BeCPGDataObject
 	public void setTargetStartDate(Date targetStartDate) {
 		this.targetStartDate = targetStartDate;
 	}
+	
+	/**
+	 * <p>Getter for the field <code>entityScore</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:entityScore")
+	public String getEntityScore() {
+		return entityScore;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>Setter for the field <code>entityScore</code>.</p>
+	 */
+	public void setEntityScore(String string) {
+		this.entityScore = string;
+	}
+
+	/**
+	 * <p>Getter for the field <code>reportLocales</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
+	@AlfProp
+	@AlfQname(qname = "rep:reportLocales")
+	public List<String> getReportLocales() {
+		return reportLocales;
+	}
+
+	/**
+	 * <p>Setter for the field <code>reportLocales</code>.</p>
+	 *
+	 * @param reportLocales a {@link java.util.List} object.
+	 */
+	public void setReportLocales(List<String> reportLocales) {
+		this.reportLocales = reportLocales;
+	}
+
 
 	/**
 	 * {@inheritDoc}

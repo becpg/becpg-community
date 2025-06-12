@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -534,6 +535,16 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 			Set<T> uniques = new HashSet<>();
 			return collection.stream().filter(e -> !uniques.add(e)).collect(Collectors.toSet());
 		}
+		
+		/**
+		 * Helper {@code @beCPG.removeDuplicates($collection)}
+		 *
+		 * @return Remove duplicates on the collection
+		 */
+		public <T> List<T> removeDuplicates(Collection<? extends T> collection) {
+		    return new ArrayList<>(new LinkedHashSet<>(collection));
+		}
+
 
 		/**
 		 * Helper {@code @beCPG.getQName($qname)}
