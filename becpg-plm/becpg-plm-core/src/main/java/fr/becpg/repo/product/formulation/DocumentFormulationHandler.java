@@ -266,8 +266,7 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<ProductDa
 			nodeService.setProperty(docNodeRef, BeCPGModel.PROP_DOCUMENT_IS_MANDATORY, isMandatory);
 			
 			// Update document category
-			String documentTypeCategory = (String) nodeService.getProperty(docTypeNodeRef, BeCPGModel.PROP_DOCUMENT_TYPE_CATEGORY);
-			nodeService.setProperty(docNodeRef, BeCPGModel.PROP_DOCUMENT_CATEGORY, documentTypeCategory);
+			nodeService.setProperty(docNodeRef, BeCPGModel.PROP_DOCUMENT_CATEGORY, docTypeItem.getCategory());
 			
 			// Add entity reference
 			associationService.update(docNodeRef, BeCPGModel.ASSOC_DOCUMENT_ENTITY_REF, productData.getNodeRef());
