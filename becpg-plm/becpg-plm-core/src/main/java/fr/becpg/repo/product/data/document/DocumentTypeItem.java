@@ -67,7 +67,7 @@ public class DocumentTypeItem extends BeCPGDataObject {
 	 * @return a {@link java.lang.String} object.
 	 */
 	@AlfProp
-	@AlfQname(qname = "bcpg:documentCategory")
+	@AlfQname(qname = "bcpg:docTypeCategory")
 	public String getCategory() {
 		return category;
 	}
