@@ -86,7 +86,11 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().excludeDefaults();
 
 			if (filter.getNodeType() != null) {
-				queryBuilder.ofType(filter.getNodeType());
+				if(ContentModel.TYPE_CONTENT.equals(filter.getNodeType())) {
+					queryBuilder.ofExactType(filter.getNodeType());
+				} else {
+					queryBuilder.ofType(filter.getNodeType());
+				}
 			}
 			Date from = null;
 			Date to = null;
