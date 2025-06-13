@@ -1685,6 +1685,30 @@
                         <facetable>true</facetable>
                     </index>
                 </property>
+                <property name="gs1:volume">
+                    <type>d:double</type>
+                    <mandatory>false</mandatory>
+                    <index enabled="true">
+                        <tokenised>false</tokenised>
+                        <facetable>true</facetable>
+                    </index>
+                </property>
+                <property name="gs1:secondaryVolume">
+                    <type>d:double</type>
+                    <mandatory>false</mandatory>
+                    <index enabled="true">
+                        <tokenised>false</tokenised>
+                        <facetable>true</facetable>
+                    </index>
+                </property>
+                <property name="gs1:tertiaryVolume">
+                    <type>d:double</type>
+                    <mandatory>false</mandatory>
+                    <index enabled="true">
+                        <tokenised>false</tokenised>
+                        <facetable>true</facetable>
+                    </index>
+                </property>
                 
                 <property name="gs1:stackingFactor">
                     <type>d:int</type>
