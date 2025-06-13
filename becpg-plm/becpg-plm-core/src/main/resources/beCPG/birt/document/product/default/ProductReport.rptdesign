@@ -142,7 +142,7 @@ function getConvertedCapacityInUsUnit (qty, unit, isVolume) {
     </list-property>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="452">
-            <property name="FILELIST">/home/arthur/becpg-workspace/becpg/becpg-plm/becpg-plm-core/src/main/resources/beCPG/birt/document/product/default/ProductReport.xml</property>
+            <property name="FILELIST">/home/arthur/becpg-workspace/becpg/becpg-plm/becpg-plm-core/src/main/resources/beCPG/birt/document/product/default/datasource_nutriscore.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -1889,6 +1889,16 @@ if (row["nutCode"] == "FASAT") {
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">roundedGDAPercPerContainer</text-property>
                 </structure>
+                <structure>
+                    <property name="columnName">codeReportParameters</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">codeReportParameters</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">nutrientProfilingClass</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">nutrientProfilingClass</text-property>
+                </structure>
             </list-property>
             <list-property name="filter"/>
             <list-property name="parameters"/>
@@ -2191,56 +2201,66 @@ if (row["nutCode"] == "FASAT") {
                     </structure>
                     <structure>
                         <property name="position">60</property>
+                        <property name="name">codeReportParameters</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">61</property>
+                        <property name="name">nutrientProfilingClass</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">62</property>
                         <property name="name">runningCount</property>
                         <property name="dataType">integer</property>
                     </structure>
                     <structure>
-                        <property name="position">61</property>
+                        <property name="position">63</property>
                         <property name="name">roundedGDAPercFor100g</property>
                         <property name="dataType">float</property>
                     </structure>
                     <structure>
-                        <property name="position">62</property>
+                        <property name="position">64</property>
                         <property name="name">tableCheck</property>
                         <property name="dataType">integer</property>
                     </structure>
                     <structure>
-                        <property name="position">63</property>
+                        <property name="position">65</property>
                         <property name="name">localNutSort</property>
                         <property name="dataType">integer</property>
                     </structure>
                     <structure>
-                        <property name="position">64</property>
+                        <property name="position">66</property>
                         <property name="name">regulDepthLevel_toUse</property>
                         <property name="dataType">integer</property>
                     </structure>
                     <structure>
-                        <property name="position">65</property>
+                        <property name="position">67</property>
                         <property name="name">regulDepthLevel_toUse_US_2013</property>
                         <property name="dataType">integer</property>
                     </structure>
                     <structure>
-                        <property name="position">66</property>
+                        <property name="position">68</property>
                         <property name="name">localNutSort_US_2013</property>
                         <property name="dataType">integer</property>
                     </structure>
                     <structure>
-                        <property name="position">67</property>
+                        <property name="position">69</property>
                         <property name="name">regulDepthLevel_toUse_CA_2013</property>
                         <property name="dataType">integer</property>
                     </structure>
                     <structure>
-                        <property name="position">68</property>
+                        <property name="position">70</property>
                         <property name="name">localNutSort_CA_2013</property>
                         <property name="dataType">integer</property>
                     </structure>
                     <structure>
-                        <property name="position">69</property>
+                        <property name="position">71</property>
                         <property name="name">concat_AGsat_trans_CA_2013</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">70</property>
+                        <property name="position">72</property>
                         <property name="name">concat_AGsat_trans</property>
                         <property name="dataType">string</property>
                     </structure>
@@ -2661,8 +2681,22 @@ if (row["nutCode"] == "FASAT") {
                     <property name="dataType">float</property>
                     <property name="nativeDataType">8</property>
                 </structure>
+                <structure>
+                    <property name="position">60</property>
+                    <property name="name">codeReportParameters</property>
+                    <property name="nativeName">codeReportParameters</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">61</property>
+                    <property name="name">nutrientProfilingClass</property>
+                    <property name="nativeName">nutrientProfilingClass</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/nutLists/nutList]#:#{nutCode;STRING;/@nutCode},{nutListNut;STRING;/@nutListNut},{regulDepthLevel;INT;/@regulDepthLevel},{nutSort;INT;nutListNut/nut/nutSort},{regulSort;INT;/@regulSort},{reportLocales;STRING;nutListNut/nut/reportLocales/},{roundedValue;DOUBLE;/@roundedValue},{roundedValue_US;DOUBLE;/@roundedValue_US},{roundedValuePerServing;DOUBLE;/@roundedValuePerServing},{nutListUnit;STRING;/@nutListUnit},{regulGDA;DOUBLE;/@regulGDA},{nutListGroup;STRING;/@nutListGroup},{nutListMaxi;DOUBLE;/@nutListMaxi},{nutListMini;DOUBLE;/@nutListMini},{legalName;STRING;/@legalName},{description;STRING;/description},{color;STRING;/@color},{servingSize;DOUBLE;../../../servingSize},{servingSizeUnit;STRING;../../../servingSizeUnit},{servingSizeText;STRING;../../../servingSizeText},{numberOfServings;STRING;../../../numberOfServings},{sort;INT;/@sort},{nutType;STRING;/@nutType},{reportParameters;STRING;../../../reportParameters},{roundedGDAPerc;DOUBLE;/@roundedGDAPerc},{regulBold;BOOLEAN;/@regulBold},{regulDisplayMode;STRING;/@regulDisplayMode},{regulUnit;STRING;/@regulUnit},{regulLessThan;DOUBLE;/@regulLessThan},{nutListValue;DOUBLE;/@nutListValue},{nutListValuePerServing;DOUBLE;/@nutListValuePerServing},{roundedDisplayValue;STRING;/@roundedDisplayValue},{roundedDisplayValuePerServing;STRING;/@roundedDisplayValuePerServing},{roundedDisplayValue_US_2013;STRING;/@roundedDisplayValue_US_2013},{roundedDisplayValuePerServing_US_2013;STRING;/@roundedDisplayValuePerServing_US_2013},{regulDisplayMode_US_2013;STRING;/@regulDisplayMode_US_2013},{roundedValuePerServing_US_2013;DOUBLE;/@roundedValuePerServing_US_2013},{regulGDA_US_2013;DOUBLE;/@regulGDA_US_2013},{roundedGDAPerc_US_2013;DOUBLE;/@roundedGDAPerc_US_2013},{regulSort_US_2013;INT;/@regulSort_US_2013},{regulDepthLevel_US_2013;INT;/@regulDepthLevel_US_2013},{regulBold_US_2013;BOOLEAN;/@regulBold_US_2013},{roundedValue_US_2013;DOUBLE;/@roundedValue_US_2013},{roundedDisplayValue_CA_2013;STRING;/@roundedDisplayValue_CA_2013},{roundedDisplayValuePerServing_CA_2013;STRING;/@roundedDisplayValuePerServing_CA_2013},{roundedValue_CA_2013;DOUBLE;/@roundedValue_CA_2013},{roundedValuePerServing_CA_2013;DOUBLE;/@roundedValuePerServing_CA_2013},{regulBold_CA_2013;BOOLEAN;/@regulBold_CA_2013},{regulSort_CA_2013;INT;/@regulSort_CA_2013},{regulDepthLevel_CA_2013;INT;/@regulDepthLevel_CA_2013},{regulDisplayMode_CA_2013;STRING;/@regulDisplayMode_CA_2013},{regulGDA_CA_2013;DOUBLE;/@regulGDA_CA_2013},{roundedGDAPerc_CA_2013;DOUBLE;/@roundedGDAPerc_CA_2013},{regulShowGDAPerc;BOOLEAN;/@regulShowGDAPerc},{regulShowGDAPerc_CA_2013;BOOLEAN;/@regulShowGDAPerc_CA_2013},{regulShowGDAPerc_US_2013;BOOLEAN;/@regulShowGDAPerc_US_2013},{roundedValuePerContainer;DOUBLE;/@roundedValuePerContainer},{roundedDisplayValuePerContainer;STRING;/@roundedDisplayValuePerContainer},{roundedGDAPercPerContainer;DOUBLE;/@roundedGDAPercPerContainer}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/nutLists/nutList]#:#{nutCode;STRING;/@nutCode},{nutListNut;STRING;/@nutListNut},{regulDepthLevel;INT;/@regulDepthLevel},{nutSort;INT;nutListNut/nut/nutSort},{regulSort;INT;/@regulSort},{reportLocales;STRING;nutListNut/nut/reportLocales/},{roundedValue;DOUBLE;/@roundedValue},{roundedValue_US;DOUBLE;/@roundedValue_US},{roundedValuePerServing;DOUBLE;/@roundedValuePerServing},{nutListUnit;STRING;/@nutListUnit},{regulGDA;DOUBLE;/@regulGDA},{nutListGroup;STRING;/@nutListGroup},{nutListMaxi;DOUBLE;/@nutListMaxi},{nutListMini;DOUBLE;/@nutListMini},{legalName;STRING;/@legalName},{description;STRING;/description},{color;STRING;/@color},{servingSize;DOUBLE;../../../servingSize},{servingSizeUnit;STRING;../../../servingSizeUnit},{servingSizeText;STRING;../../../servingSizeText},{numberOfServings;STRING;../../../numberOfServings},{sort;INT;/@sort},{nutType;STRING;/@nutType},{reportParameters;STRING;../../../reportParameters},{roundedGDAPerc;DOUBLE;/@roundedGDAPerc},{regulBold;BOOLEAN;/@regulBold},{regulDisplayMode;STRING;/@regulDisplayMode},{regulUnit;STRING;/@regulUnit},{regulLessThan;DOUBLE;/@regulLessThan},{nutListValue;DOUBLE;/@nutListValue},{nutListValuePerServing;DOUBLE;/@nutListValuePerServing},{roundedDisplayValue;STRING;/@roundedDisplayValue},{roundedDisplayValuePerServing;STRING;/@roundedDisplayValuePerServing},{roundedDisplayValue_US_2013;STRING;/@roundedDisplayValue_US_2013},{roundedDisplayValuePerServing_US_2013;STRING;/@roundedDisplayValuePerServing_US_2013},{regulDisplayMode_US_2013;STRING;/@regulDisplayMode_US_2013},{roundedValuePerServing_US_2013;DOUBLE;/@roundedValuePerServing_US_2013},{regulGDA_US_2013;DOUBLE;/@regulGDA_US_2013},{roundedGDAPerc_US_2013;DOUBLE;/@roundedGDAPerc_US_2013},{regulSort_US_2013;INT;/@regulSort_US_2013},{regulDepthLevel_US_2013;INT;/@regulDepthLevel_US_2013},{regulBold_US_2013;BOOLEAN;/@regulBold_US_2013},{roundedValue_US_2013;DOUBLE;/@roundedValue_US_2013},{roundedDisplayValue_CA_2013;STRING;/@roundedDisplayValue_CA_2013},{roundedDisplayValuePerServing_CA_2013;STRING;/@roundedDisplayValuePerServing_CA_2013},{roundedValue_CA_2013;DOUBLE;/@roundedValue_CA_2013},{roundedValuePerServing_CA_2013;DOUBLE;/@roundedValuePerServing_CA_2013},{regulBold_CA_2013;BOOLEAN;/@regulBold_CA_2013},{regulSort_CA_2013;INT;/@regulSort_CA_2013},{regulDepthLevel_CA_2013;INT;/@regulDepthLevel_CA_2013},{regulDisplayMode_CA_2013;STRING;/@regulDisplayMode_CA_2013},{regulGDA_CA_2013;DOUBLE;/@regulGDA_CA_2013},{roundedGDAPerc_CA_2013;DOUBLE;/@roundedGDAPerc_CA_2013},{regulShowGDAPerc;BOOLEAN;/@regulShowGDAPerc},{regulShowGDAPerc_CA_2013;BOOLEAN;/@regulShowGDAPerc_CA_2013},{regulShowGDAPerc_US_2013;BOOLEAN;/@regulShowGDAPerc_US_2013},{roundedValuePerContainer;DOUBLE;/@roundedValuePerContainer},{roundedDisplayValuePerContainer;STRING;/@roundedDisplayValuePerContainer},{roundedGDAPercPerContainer;DOUBLE;/@roundedGDAPercPerContainer},{codeReportParameters;STRING;../../../reportParameters/@code},{nutrientProfilingClass;STRING;../../../nutrientProfilingClass}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -8787,12 +8821,6 @@ dataSetRow["nutListUnit"]
                                 <property name="dataType">integer</property>
                             </structure>
                             <structure>
-                                <property name="name">reportParameters</property>
-                                <text-property name="displayName">reportParameters</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["reportParameters"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
                                 <property name="name">roundedValue</property>
                                 <text-property name="displayName">roundedValue</text-property>
                                 <expression name="expression" type="javascript">if(dataSetRow["regulLessThan"] != null 
@@ -8882,6 +8910,36 @@ dataSetRow["nutListUnit"].replace("/100g", "").replace("/100mL", "")
                                 <expression name="expression" type="javascript">dataSetRow["regulDisplayMode"]</expression>
                                 <property name="dataType">string</property>
                             </structure>
+                            <structure>
+                                <property name="name">roundedValue_1</property>
+                                <text-property name="displayName">roundedValue</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["roundedValue"]</expression>
+                                <property name="dataType">float</property>
+                            </structure>
+                            <structure>
+                                <property name="name">roundedValuePerServing_1</property>
+                                <text-property name="displayName">roundedValuePerServing</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["roundedValuePerServing"]</expression>
+                                <property name="dataType">float</property>
+                            </structure>
+                            <structure>
+                                <property name="name">nutListUnit_1</property>
+                                <text-property name="displayName">nutListUnit</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["nutListUnit"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">regulUnit_1</property>
+                                <text-property name="displayName">regulUnit</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["regulUnit"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">codeReportParameters</property>
+                                <text-property name="displayName">codeReportParameters</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["codeReportParameters"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
                         </list-property>
                         <structure name="toc"/>
                         <property name="repeatHeader">false</property>
@@ -8896,8 +8954,7 @@ dataSetRow["nutListUnit"].replace("/100g", "").replace("/100mL", "")
                         <list-property name="filter">
                             <structure>
                                 <property name="operator">is-true</property>
-                                <expression name="expr" type="javascript">row["regulDisplayMode"]=="M"
-|| (BirtStr.indexOf( reportContext.getMessage("showOptionalNutrients", reportContext.getLocale()), row["reportParameters"]) != -1 &amp;&amp; row["regulDisplayMode"]=="O")</expression>
+                                <expression name="expr" type="javascript">row["regulDisplayMode"]=="M" || (BirtStr.indexOf("showOptionalNutrients", row["codeReportParameters"]) != -1 &amp;&amp; row["regulDisplayMode"]=="O")</expression>
                                 <property name="updateAggregation">true</property>
                             </structure>
                         </list-property>
@@ -8949,26 +9006,19 @@ dataSetRow["nutListUnit"].replace("/100g", "").replace("/100mL", "")
                                 <cell id="9071">
                                     <property name="style">becpg-cell-header</property>
                                     <image id="8519">
-                                        <property name="marginTop">0.15in</property>
-                                        <property name="width">2in</property>
+                                        <property name="width">1.5in</property>
                                         <property name="dataSet">Product</property>
                                         <list-property name="visibility">
                                             <structure>
                                                 <property name="format">all</property>
-                                                <expression name="valueExpr" type="javascript">if (row["nutrientProfilingClass"] != null &amp;&amp; row["nutrientProfilingClass"] != "") {&#13;
-	(BirtStr.indexOf( reportContext.getMessage("showNutritionalScore", reportContext.getLocale()), row["reportParameters"]) == -1)&#13;
-} else {&#13;
-	true;&#13;
+                                                <expression name="valueExpr" type="javascript">if (row["nutrientProfilingClass"] != null &amp;&amp; row["nutrientProfilingClass"] != "") {
+	BirtStr.indexOf("showNutritionalScore", row._outer["codeReportParameters"]) == -1;
+} else {
+	true;
 }</expression>
                                             </structure>
                                         </list-property>
                                         <list-property name="boundDataColumns">
-                                            <structure>
-                                                <property name="name">reportParameters</property>
-                                                <text-property name="displayName">reportParameters</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["reportParameters"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
                                             <structure>
                                                 <property name="name">nutrientProfilingClass</property>
                                                 <text-property name="displayName">nutrientProfilingClass</text-property>
@@ -8976,6 +9026,7 @@ dataSetRow["nutListUnit"].replace("/100g", "").replace("/100mL", "")
                                                 <property name="dataType">string</property>
                                             </structure>
                                         </list-property>
+                                        <structure name="toc"/>
                                         <method name="onRender"><![CDATA[this.imageName = "nutri-score_" + this.getRowData().getColumnValue("nutrientProfilingClass") + ".png";]]></method>
                                         <property name="source">embed</property>
                                         <property name="imageName">logo.png</property>
@@ -9434,6 +9485,30 @@ if (! hasLetter(chaine)) {
                                 <property name="dataType">string</property>
                                 <property name="allowExport">true</property>
                             </structure>
+                            <structure>
+                                <property name="name">nutListUnit_1</property>
+                                <text-property name="displayName">nutListUnit</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["nutListUnit"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">servingSizeText_1</property>
+                                <text-property name="displayName">servingSizeText</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["servingSizeText"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">numberOfServings_1</property>
+                                <text-property name="displayName">numberOfServings</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["numberOfServings"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">codeReportParameters</property>
+                                <text-property name="displayName">codeReportParameters</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["codeReportParameters"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
                         </list-property>
                         <structure name="toc"/>
                         <property name="repeatHeader">false</property>
@@ -9449,7 +9524,7 @@ if (! hasLetter(chaine)) {
                             <structure>
                                 <property name="operator">is-true</property>
                                 <expression name="expr" type="javascript">row["regulDisplayMode_US_2013"] =="M"
-|| (BirtStr.indexOf( reportContext.getMessage("showOptionalNutrients", reportContext.getLocale()), row["reportParameters"]) != -1 &amp;&amp; row["regulDisplayMode_US_2013"]=="O")</expression>
+|| (BirtStr.indexOf("showOptionalNutrients", row["codeReportParameters"]) != -1 &amp;&amp; row["regulDisplayMode_US_2013"]=="O")</expression>
                                 <property name="updateAggregation">true</property>
                             </structure>
                         </list-property>
@@ -10373,6 +10448,30 @@ if (! hasLetter(chaine)) {
                                 <property name="dataType">string</property>
                                 <property name="allowExport">true</property>
                             </structure>
+                            <structure>
+                                <property name="name">nutListUnit_1</property>
+                                <text-property name="displayName">nutListUnit</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["nutListUnit"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">servingSizeText_1</property>
+                                <text-property name="displayName">servingSizeText</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["servingSizeText"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">codeReportParameters</property>
+                                <text-property name="displayName">codeReportParameters</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["codeReportParameters"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">runningCount_1</property>
+                                <text-property name="displayName">runningCount</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["runningCount"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
                         </list-property>
                         <structure name="toc"/>
                         <property name="repeatHeader">false</property>
@@ -10388,7 +10487,7 @@ if (! hasLetter(chaine)) {
                             <structure>
                                 <property name="operator">is-true</property>
                                 <expression name="expr" type="javascript">row["regulDisplayMode"]=="M"
-|| (BirtStr.indexOf( reportContext.getMessage("showOptionalNutrients", reportContext.getLocale()), row["reportParameters"]) != -1 &amp;&amp; row["regulDisplayMode"]=="O")</expression>
+|| (BirtStr.indexOf("showOptionalNutrients", row["codeReportParameters"]) != -1 &amp;&amp; row["regulDisplayMode"]=="O")</expression>
                                 <property name="updateAggregation">true</property>
                             </structure>
                         </list-property>
@@ -11077,6 +11176,36 @@ if (! hasLetter(chaine)) {
                                 <property name="dataType">string</property>
                                 <property name="allowExport">true</property>
                             </structure>
+                            <structure>
+                                <property name="name">nutListUnit_1</property>
+                                <text-property name="displayName">nutListUnit</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["nutListUnit"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">servingSizeText_1</property>
+                                <text-property name="displayName">servingSizeText</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["servingSizeText"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">numberOfServings_1</property>
+                                <text-property name="displayName">numberOfServings</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["numberOfServings"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">codeReportParameters</property>
+                                <text-property name="displayName">codeReportParameters</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["codeReportParameters"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">runningCount_1</property>
+                                <text-property name="displayName">runningCount</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["runningCount"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
                         </list-property>
                         <structure name="toc"/>
                         <property name="repeatHeader">false</property>
@@ -11092,7 +11221,7 @@ if (! hasLetter(chaine)) {
                             <structure>
                                 <property name="operator">is-true</property>
                                 <expression name="expr" type="javascript">row["regulDisplayMode"]=="M"
-|| (BirtStr.indexOf( reportContext.getMessage("showOptionalNutrients", reportContext.getLocale()), row["reportParameters"]) != -1 &amp;&amp; row["regulDisplayMode"]=="O")</expression>
+|| (BirtStr.indexOf("showOptionalNutrients", row["codeReportParameters"]) != -1 &amp;&amp; row["regulDisplayMode"]=="O")</expression>
                                 <property name="updateAggregation">true</property>
                             </structure>
                         </list-property>
@@ -11841,6 +11970,30 @@ if (! hasLetter(chaine)) {
                                 <expression name="expression" type="javascript">dataSetRow["concat_AGsat_trans_CA_2013"]</expression>
                                 <property name="dataType">string</property>
                             </structure>
+                            <structure>
+                                <property name="name">nutListUnit_1</property>
+                                <text-property name="displayName">nutListUnit</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["nutListUnit"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">numberOfServings_1</property>
+                                <text-property name="displayName">numberOfServings</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["numberOfServings"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">codeReportParameters</property>
+                                <text-property name="displayName">codeReportParameters</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["codeReportParameters"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">runningCount_1</property>
+                                <text-property name="displayName">runningCount</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["runningCount"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
                         </list-property>
                         <structure name="toc"/>
                         <property name="repeatHeader">false</property>
@@ -11856,7 +12009,7 @@ if (! hasLetter(chaine)) {
                             <structure>
                                 <property name="operator">is-true</property>
                                 <expression name="expr" type="javascript">row["regulDisplayMode_CA_2013"] =="M"
-|| (BirtStr.indexOf( reportContext.getMessage("showOptionalNutrients", reportContext.getLocale()), row["reportParameters"]) != -1 &amp;&amp; row["regulDisplayMode_CA_2013"]=="O")</expression>
+|| (BirtStr.indexOf("showOptionalNutrients", row["codeReportParameters"]) != -1 &amp;&amp; row["regulDisplayMode_CA_2013"]=="O")</expression>
                                 <property name="updateAggregation">true</property>
                             </structure>
                         </list-property>
@@ -12439,7 +12592,7 @@ row["roundedGDAPerc_CA_2013"] + "%";
 
 var chaine = dataSetRow["numberOfServings"];
 
-if (! hasLetter(chaine)) {
+if (!hasLetter(chaine)) {
 
     	if (Number(chaine) == 1) {
           	Number(chaine)  + " serving per container/portion par contenant";
@@ -12499,6 +12652,30 @@ if (! hasLetter(chaine)) {
                                 <expression name="expression" type="javascript">dataSetRow["concat_AGsat_trans"]</expression>
                                 <property name="dataType">string</property>
                             </structure>
+                            <structure>
+                                <property name="name">nutListUnit_1</property>
+                                <text-property name="displayName">nutListUnit</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["nutListUnit"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">numberOfServings_1</property>
+                                <text-property name="displayName">numberOfServings</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["numberOfServings"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">codeReportParameters</property>
+                                <text-property name="displayName">codeReportParameters</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["codeReportParameters"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">runningCount_1</property>
+                                <text-property name="displayName">runningCount</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["runningCount"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
                         </list-property>
                         <structure name="toc"/>
                         <property name="repeatHeader">false</property>
@@ -12514,7 +12691,7 @@ if (! hasLetter(chaine)) {
                             <structure>
                                 <property name="operator">is-true</property>
                                 <expression name="expr" type="javascript">row["regulDisplayMode"]=="M"
-|| (BirtStr.indexOf( reportContext.getMessage("showOptionalNutrients", reportContext.getLocale()), row["reportParameters"]) != -1 &amp;&amp; row["regulDisplayMode"]=="O")</expression>
+|| (BirtStr.indexOf("showOptionalNutrients", row["codeReportParameters"]) != -1 &amp;&amp; row["regulDisplayMode"]=="O")</expression>
                                 <property name="updateAggregation">true</property>
                             </structure>
                         </list-property>
