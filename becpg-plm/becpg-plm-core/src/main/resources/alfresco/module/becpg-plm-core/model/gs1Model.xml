@@ -58,6 +58,9 @@
 			<parameter name="constraintFilter">
 				<value>PackagingFunctionCode</value>
 			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
 		</constraint>
 
 		<constraint name="gs1:palletTypeCodeConstraint"
@@ -124,6 +127,9 @@
 			<parameter name="constraintFilter">
 				<value>PackagingRecyclingProcessTypeCode</value>
 			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
 		</constraint>
 
 		<constraint name="gs1:packagingShapeCodes"
@@ -135,6 +141,9 @@
 			</parameter>
 			<parameter name="constraintFilter">
 				<value>PackagingShapeCode</value>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
 			</parameter>
 		</constraint>
 
@@ -148,6 +157,9 @@
 			<parameter name="constraintFilter">
 				<value>VariableTradeItemTypeCode</value>
 			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
 		</constraint>
 
 
@@ -160,6 +172,9 @@
 			</parameter>
 			<parameter name="constraintFilter">
 				<value>TemperatureMeasurementUnitCode</value>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
 			</parameter>
 		</constraint>
 
@@ -200,6 +215,9 @@
 			<parameter name="constraintFilter">
 				<value>SpecialItemCode</value>
 			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
 		</constraint>
 
 		<constraint name="gs1:promotionTypeCodes"
@@ -211,6 +229,9 @@
 			</parameter>
 			<parameter name="constraintFilter">
 				<value>PromotionTypeCode</value>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
 			</parameter>
 		</constraint>
 
@@ -318,6 +339,9 @@
 					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
 				</list>
 			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
 			<parameter name="constraintFilter">
 				<value>TradeItemPriceTypeCode</value>
 			</parameter>
@@ -330,6 +354,9 @@
 					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
 				</list>
 			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
 			<parameter name="constraintFilter">
 				<value>ProductActivityTypeCode</value>
 			</parameter>
@@ -341,6 +368,9 @@
 				<list>
 					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
 				</list>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
 			</parameter>
 			<parameter name="constraintFilter">
 				<value>StorageStateCode</value>
@@ -355,6 +385,9 @@
 					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
 				</list>
 			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
 			<parameter name="constraintFilter">
 				<value>ProductionMethodForFishAndSeafoodCode</value>
 			</parameter>
@@ -366,6 +399,9 @@
 				<list>
 					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
 				</list>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
 			</parameter>
 			<parameter name="constraintFilter">
 				<value>OrganicProductPlaceOfFarmingCode</value>
@@ -380,6 +416,9 @@
 					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
 				</list>
 			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
 			<parameter name="constraintFilter">
 				<value>CheeseMaturationProcessContainerTypeCode</value>
 			</parameter>
@@ -393,6 +432,9 @@
 					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
 				</list>
 			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
 			<parameter name="constraintFilter">
 				<value>RennetTypeCode</value>
 			</parameter>
@@ -405,6 +447,9 @@
 				<list>
 					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
 				</list>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
 			</parameter>
 			<parameter name="constraintFilter">
 				<value>SurfaceOfCheeseAtEndOfRipeningCode</value>
@@ -494,6 +539,9 @@
 					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
 				</list>
 			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
 			<parameter name="constraintFilter">
 				<value>PrimaryAddedFlavouringCode</value>
 			</parameter>
@@ -505,6 +553,9 @@
 				<list>
 					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
 				</list>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
 			</parameter>
 			<parameter name="constraintFilter">
 				<value>SecondaryAddedFlavouringCode</value>
@@ -518,6 +569,9 @@
 					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
 				</list>
 			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
 			<parameter name="constraintFilter">
 				<value>OriginOfWineCode</value>
 			</parameter>
@@ -530,6 +584,9 @@
 					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
 				</list>
 			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
 			<parameter name="constraintFilter">
 				<value>AlcoholBeverageDistilledFromCode</value>
 			</parameter>
@@ -541,6 +598,9 @@
 				<list>
 					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
 				</list>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
 			</parameter>
 			<parameter name="constraintFilter">
 				<value>AlcoholBeverageFilteringMethodTypeCode</value>
@@ -555,6 +615,9 @@
 					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
 				</list>
 			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
 			<parameter name="constraintFilter">
 				<value>AlcoholBeverageProductionMethodTypeCode</value>
 			</parameter>
@@ -568,6 +631,9 @@
 					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
 				</list>
 			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
 			<parameter name="constraintFilter">
 				<value>SweetnessLevelOfAlcoholicBeverageCode</value>
 			</parameter>
@@ -579,6 +645,9 @@
 				<list>
 					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
 				</list>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
 			</parameter>
 			<parameter name="constraintFilter">
 				<value>AlcoholicBeverageColourCode</value>
@@ -593,6 +662,9 @@
 					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
 				</list>
 			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
 			<parameter name="constraintFilter">
 				<value>MeasurementPrecisionCode</value>
 			</parameter>
@@ -605,6 +677,9 @@
 					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
 				</list>
 			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
 			<parameter name="constraintFilter">
 				<value>ContainerMaterialCode</value>
 			</parameter>
@@ -615,6 +690,9 @@
 				<list>
 					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
 				</list>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
 			</parameter>
 			<parameter name="constraintFilter">
 				<value>ContainerProcessTypeCode</value>
@@ -628,6 +706,9 @@
 					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
 				</list>
 			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
 			<parameter name="constraintFilter">
 				<value>ContainerShapeCode</value>
 			</parameter>
@@ -638,6 +719,9 @@
 				<list>
 					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
 				</list>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
 			</parameter>
 			<parameter name="constraintFilter">
 				<value>ContainerTypeCode</value>
@@ -651,6 +735,9 @@
 					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
 				</list>
 			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
 			<parameter name="constraintFilter">
 				<value>AlcoholBeverageTypeCode</value>
 			</parameter>
@@ -662,6 +749,9 @@
 				<list>
 					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
 				</list>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
 			</parameter>
 			<parameter name="constraintFilter">
 				<value>BeerStyleTypeCode</value>
@@ -675,6 +765,9 @@
 					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
 				</list>
 			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
 			<parameter name="constraintFilter">
 				<value>ReferencedTradeItemTypeCode</value>
 			</parameter>
@@ -686,6 +779,9 @@
 				<list>
 					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
 				</list>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
 			</parameter>
 			<parameter name="constraintFilter">
 				<value>SeasonParameterCode</value>
@@ -699,6 +795,9 @@
 					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
 				</list>
 			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
 			<parameter name="constraintFilter">
 				<value>PegHoleTypeCode</value>
 			</parameter>
@@ -711,6 +810,9 @@
 					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
 				</list>
 			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
 			<parameter name="constraintFilter">
 				<value>PriceComparisonContentTypeCode</value>
 			</parameter>
@@ -722,6 +824,9 @@
 				<list>
 					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
 				</list>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
 			</parameter>
 			<parameter name="constraintFilter">
 				<value>FeedTypeCode</value>
@@ -736,6 +841,9 @@
 					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
 				</list>
 			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
 			<parameter name="constraintFilter">
 				<value>AdditionalTradeItemClassificationCodeListCode</value>
 			</parameter>
@@ -748,6 +856,9 @@
 					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
 				</list>
 			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
 			<parameter name="constraintFilter">
 				<value>GrowingMethodCode</value>
 			</parameter>
@@ -759,6 +870,9 @@
 				<list>
 					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
 				</list>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
 			</parameter>
 			<parameter name="constraintFilter">
 				<value>SustainabilityFeatureCode</value>
