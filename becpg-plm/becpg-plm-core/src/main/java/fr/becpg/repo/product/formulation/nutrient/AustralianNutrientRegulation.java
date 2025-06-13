@@ -25,10 +25,8 @@ public class AustralianNutrientRegulation extends AbstractNutrientRegulation {
 	@Override
 	protected Double roundByCode(Double value, String nutrientTypeCode) {
 		if(value != null){
-			if (nutrientTypeCode.equals(NutrientCode.Energykcal)) {
+			if (nutrientTypeCode.equals(NutrientCode.Energykcal) || nutrientTypeCode.equals(NutrientCode.EnergykJ)) {
 				return roundValue(value,1d);
-			} else if (nutrientTypeCode.equals(NutrientCode.EnergykJ)) {
-				return roundValue(value,10d);
 			}
 		}
 		
