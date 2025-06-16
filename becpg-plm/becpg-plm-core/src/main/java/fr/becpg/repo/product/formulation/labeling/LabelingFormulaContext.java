@@ -2880,13 +2880,9 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				}
 			}
 
-<<<<<<< 23.2.2
-			return input.replaceAll(" null| \\(null\\)| \\(\\)| \\[null\\]", "").replace(":,", ",").replaceAll(":$", "").replace(">null<", "><")
-					.replace("  ", "").trim();
-=======
+
 			return input.replaceAll(" null| \\(null\\)| \\(\\)| \\[null\\]| \\[\\]", "").replaceAll("null|\\(null\\)|\\(\\)|\\[null\\]|\\[\\]", "")
 					.replace(":,", ",").replaceAll(":$", "").replace(">null<", "><").replace("  ", "").trim();
->>>>>>> f25b9b9 Fix #27717 - [Bug]  Prevents premature downgrade of'Detail' declaration type during labeling
 		}
 		return "";
 	}
@@ -3151,13 +3147,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 			for (Map.Entry<IngTypeItem, List<LabelingComponent>> entry : sortedIngListByType.entrySet()) {
 
-<<<<<<< 23.2.2
 				if (prec != null) {
 					if ((prec.getKey().getOrigNodeRef() != null) && prec.getKey().getOrigNodeRef().equals(entry.getKey().getOrigNodeRef())) {
-=======
-				if ((prec != null)
-						&& ((prec.getKey().getOrigNodeRef() != null) && prec.getKey().getOrigNodeRef().equals(entry.getKey().getOrigNodeRef()))) {
->>>>>>> f25b9b9 Fix #27717 - [Bug]  Prevents premature downgrade of'Detail' declaration type during labeling
 
 						if ((prec.getKey().getQty() != null) && (entry.getKey().getQty() != null)) {
 							prec.getKey().setQty(prec.getKey().getQty() + entry.getKey().getQty());
