@@ -2337,12 +2337,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							ingLabelItem.getBioOrigins().addAll(ingListItem.getData().getBioOrigin());
 						}
 
-
-						if (ingListItem.getData().getComments() != null) {
-							ingLabelItem.setAdditionalInformation(ingListItem.getData().getComments());
-						}
-
-
 						ingLabelItem.getFootNotes().addAll(extractFootNotes(compoListDataItem, ingListItem.getData(), labelingFormulaContext));
 
 						Double qtyPerc = ingListItem.getData().getQtyPerc();
@@ -2596,10 +2590,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			if (hasFormula && hasLocales)
 				return 0; // Highest priority
 			if (hasFormula)
-				return 1; 
+				return 1;
 			if (hasLocales)
-				return 2; 
-			return 3; 
+				return 2;
+			return 3;
 		})).toList();
 	}
 
