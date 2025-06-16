@@ -45,6 +45,10 @@ public class VariantPackagingData implements Serializable {
 
 	private Double tertiaryWidth;
 	private Double tertiaryDepth;
+	
+	private Double volume;
+	private Double secondaryVolume;
+	private Double tertiaryVolume;
 
 	private boolean isManualPrimary = true;
 	private boolean isManualTertiary = true;
@@ -358,6 +362,60 @@ public class VariantPackagingData implements Serializable {
 	 */
 	public void setTertiaryDepth(Double tertiaryDepth) {
 		this.tertiaryDepth = tertiaryDepth;
+	}
+	
+	/**
+	 * <p>Getter for the field <code>volume</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
+	public Double getVolume() {
+		return volume;
+	}
+
+	/**
+	 * <p>Setter for the field <code>volume</code>.</p>
+	 *
+	 * @param volume a {@link java.lang.Double} object.
+	 */
+	public void setVolume(Double volume) {
+		this.volume = volume;
+	}
+	
+	/**
+	 * <p>Getter for the field <code>secondaryVolume</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
+	public Double getSecondaryVolume() {
+		return secondaryVolume;
+	}
+
+	/**
+	 * <p>Setter for the field <code>secondaryVolume</code>.</p>
+	 *
+	 * @param secondaryVolume a {@link java.lang.Double} object.
+	 */
+	public void setSecondaryVolume(Double secondaryVolume) {
+		this.secondaryVolume = secondaryVolume;
+	}
+	
+	/**
+	 * <p>Getter for the field <code>tertiaryVolume</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
+	public Double getTertiaryVolume() {
+		return tertiaryVolume;
+	}
+
+	/**
+	 * <p>Setter for the field <code>tertiaryVolume</code>.</p>
+	 *
+	 * @param tertiaryVolume a {@link java.lang.Double} object.
+	 */
+	public void setTertiaryVolume(Double tertiaryVolume) {
+		this.tertiaryVolume = tertiaryVolume;
 	}
 
 	/**
