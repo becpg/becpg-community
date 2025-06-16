@@ -39,8 +39,8 @@ public class DocumentTypeItem extends BeCPGDataObject {
 	private List<NodeRef> subsidiaryRefs;
 	private List<NodeRef> plants;
 
-
-
+	private String category;
+	
 	/**
 	 * <p>Getter for the field <code>charactName</code>.</p>
 	 *
@@ -59,6 +59,21 @@ public class DocumentTypeItem extends BeCPGDataObject {
 	 */
 	public void setCharactName(String charactName) {
 		this.charactName = charactName;
+	}
+	
+	/**
+	 * <p>Getter for the field <code>category</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:docTypeCategory")
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
 	}
 	
 	@AlfMultiAssoc
@@ -335,28 +350,16 @@ public class DocumentTypeItem extends BeCPGDataObject {
     }
 
 
-	/**
-	 * Returns a hash code value for this document type item.
-	 *
-	 * @return a hash code value for this object
-	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(autoExpirationDelay, charactName, destPath, effectivityType, formula, isMandatory, linkedCharactRefs,
-				linkedHierarchy, linkedTypes, nameFormat, plants, subsidiaryRefs);
+		result = prime * result + Objects.hash(autoExpirationDelay, category, charactName, destPath, effectivityType,
+				formula, isMandatory, linkedCharactRefs, linkedHierarchy, linkedTypes, nameFormat, plants,
+				subsidiaryRefs);
 		return result;
 	}
 
-	/**
-	 * Indicates whether some other object is "equal to" this one.
-     * Two DocumentTypeItem objects are considered equal if they have the same values
-     * for all their properties.
-     *
-     * @param obj the reference object with which to compare
-     * @return true if this object is the same as the obj argument; false otherwise
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -366,12 +369,14 @@ public class DocumentTypeItem extends BeCPGDataObject {
 		if (getClass() != obj.getClass())
 			return false;
 		DocumentTypeItem other = (DocumentTypeItem) obj;
-		return Objects.equals(autoExpirationDelay, other.autoExpirationDelay) && Objects.equals(charactName, other.charactName)
-				&& Objects.equals(destPath, other.destPath) && effectivityType == other.effectivityType && Objects.equals(formula, other.formula)
-				&& Objects.equals(isMandatory, other.isMandatory) && Objects.equals(linkedCharactRefs, other.linkedCharactRefs)
-				&& Objects.equals(linkedHierarchy, other.linkedHierarchy) && Objects.equals(linkedTypes, other.linkedTypes)
-				&& Objects.equals(nameFormat, other.nameFormat) && Objects.equals(plants, other.plants)
-				&& Objects.equals(subsidiaryRefs, other.subsidiaryRefs);
+		return Objects.equals(autoExpirationDelay, other.autoExpirationDelay)
+				&& Objects.equals(category, other.category) && Objects.equals(charactName, other.charactName)
+				&& Objects.equals(destPath, other.destPath) && effectivityType == other.effectivityType
+				&& Objects.equals(formula, other.formula) && Objects.equals(isMandatory, other.isMandatory)
+				&& Objects.equals(linkedCharactRefs, other.linkedCharactRefs)
+				&& Objects.equals(linkedHierarchy, other.linkedHierarchy)
+				&& Objects.equals(linkedTypes, other.linkedTypes) && Objects.equals(nameFormat, other.nameFormat)
+				&& Objects.equals(plants, other.plants) && Objects.equals(subsidiaryRefs, other.subsidiaryRefs);
 	}
 
 	/**
