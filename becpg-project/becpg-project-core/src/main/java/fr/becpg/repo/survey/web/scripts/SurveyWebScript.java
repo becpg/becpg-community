@@ -12,7 +12,6 @@ import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
-import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.survey.SurveyModel;
 import fr.becpg.repo.survey.SurveyService;
 import fr.becpg.repo.web.scripts.entity.datalist.AbstractEntityDataListWebScript;
@@ -34,7 +33,7 @@ public class SurveyWebScript extends AbstractEntityDataListWebScript {
 	private SurveyService surveyService;
 
 	protected PermissionService permissionService;
-	
+
 	/**
 	 * <p>Setter for the field <code>surveyService</code>.</p>
 	 *
@@ -72,10 +71,8 @@ public class SurveyWebScript extends AbstractEntityDataListWebScript {
 				ret.put("message", "Success");
 			} else {
 
-				ret = surveyService.getSurveyData(entityNodeRef, dataListName,
-						surveyListDataItems -> getAccess(SurveyModel.TYPE_SURVEY_LIST,
-								surveyListDataItems.stream().map(BeCPGDataObject::getNodeRef).toList(), false,
-								entityNodeRef, SurveyModel.TYPE_SURVEY_LIST.getLocalName(), null).canWrite());
+				final Access access = getAccess(SurveyModel.TYPE_SURVEY_LIST, entityNodeRef, false, null, dataListName, null);
+				ret = surveyService.getSurveyData(entityNodeRef, dataListName, !access.canWrite());
 			}
 
 			res.setContentType("application/json");
