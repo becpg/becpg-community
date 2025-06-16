@@ -316,8 +316,8 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 			compoList.add(new CompoListDataItem(null, null, null, 5d, ProductUnit.kg, 0d, DeclarationType.Detail, sf4NodeRef));
 			SF3.getCompoListView().setCompoList(compoList);
 
-			sf3.getCompoListView().setCompoList(compoList);
-			alfrescoRepository.save(sf3);
+			SF3.getCompoListView().setCompoList(compoList);
+			alfrescoRepository.save(SF3);
 
 			FinishedProductData FP1 = new FinishedProductData();
 			FP1.setName("FP1");
@@ -336,7 +336,7 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 			
 			alfrescoRepository.create(getTestFolderNodeRef(), FP1);
 
-			return fp1.getNodeRef();
+			return FP1.getNodeRef();
 		});
 		
 		inWriteTx(() -> {
@@ -351,7 +351,7 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 
 			int checks = 0;
 			
-			for (CompoListDataItem item : FP1.getCompoList()) {
+			for (CompoListDataItem item : fp1.getCompoList()) {
 				
 				SemiFinishedProductData SF = (SemiFinishedProductData) alfrescoRepository.findOne(item.getProduct());
 				
@@ -363,7 +363,8 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 					JSONObject json = new JSONObject(dynCol.toString());
 					assertEquals(3, ((JSONArray) json.get("sub")).length());
 					checks++;
-				} else if ("SF3".equals(semiFinishedProduct.getName())) {
+				} else if ("SF3".equals(SF.getName())) {
+					JSONObject json = new JSONObject(dynCol.toString());
 					assertEquals(4, ((JSONArray) json.get("sub")).length());
 					checks++;
 				}
@@ -371,7 +372,7 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 
 			assertEquals(2, checks);
 			
-			return FP1.getNodeRef();
+			return fp1.getNodeRef();
 		});
 	}
 
