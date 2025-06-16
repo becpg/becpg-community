@@ -35,7 +35,8 @@
 		if (firstStepTab == null && val) {
 			firstStepTab = $("list.first");
 		}
-		const methodName = (nextAllowed = val) ? "remove" : "add";
+		nextAllowed = val;
+		const methodName = nextAllowed ? "remove" : "add";
 		button.classList[methodName]("disabled");
 	}
 
@@ -137,7 +138,7 @@
 									
                                     setNextAllowed(false);
                                     
-	                                if (!firstStepTab.hasClass("Valid")) {
+	                                if (firstStepTab != null && !firstStepTab.hasClass("Valid")) {
                         				firstStepTab.addClass("Valid");
                     				}
 
@@ -383,7 +384,7 @@
                     const readOnly = this.options.readOnly || step.readOnly;
 	                const self = this;
 	                
-					function then(validated) {
+					function then(validated, datalists) {
 						if (step.type == "form") {
 							url = YAHOO.lang.substitute(
 	                            Alfresco.constants.URL_SERVICECONTEXT + "components/form" + "?destination={destination}" +
@@ -452,9 +453,9 @@
 	                                                Dom.get(self.id + "-step-" + step.id).innerHTML = response.serverResponse.responseText;
 	                                                step.loaded = true;
 	                                                if (step.type == "entityDataList") {
-	                                                    self.loadDataList(step);
+	                                                    self.loadDataList(step, datalists);
 	                                                } else {
-														setNextAllowed(true);
+														setNextAllowed(step.index != self.options.wizardStruct.length - 1);
 													}
 	                                            },
 	                                            scope: this
@@ -462,7 +463,7 @@
 	                                        execScripts: true
 	                                    });
 	                        } else {
-								setNextAllowed(true);
+								setNextAllowed(step.index != self.options.wizardStruct.length - 1);
 							}
 					}
 					if (!readOnly) {
@@ -470,13 +471,14 @@
 	                        url: Alfresco.constants.PROXY_URI + "becpg/entitylists/node/" + step.nodeRef.replace(":/", ""),
 	                        successCallback: {
 	                            fn: function(response) {
-									then(response.json.datalists.filter(function (datalist) {
+									const datalists = response.json.datalists;
+									then(datalists.filter(function (datalist) {
 										return datalist.name === (
 											step.type === "form" ? "View-properties" : (
 												step.type === "documents" ? "View-documents" : step.listId));
 									}).some(function (datalist) { 
 										return datalist.state === "Valid";
-									}));
+									}), datalists);
 		                        }        								 
 	                        }
 		                 });
@@ -485,33 +487,42 @@
 					}
                 },
 
-                loadDataList: function WizardMgr_loadDataList(step) {
+                loadDataList: function WizardMgr_loadDataList(step, datalists) {
                     var me = this;
-                    Alfresco.util.Ajax.jsonGet({
-                        url: Alfresco.constants.PROXY_URI + "becpg/entitylists/node/" + step.nodeRef.replace(":/", ""),
-                        successCallback: {
-                            fn: function(response) {
-                                var lists = response.json.datalists, list;
-                                for (var i = 0, ii = lists.length; i < ii; i++) {
-                                    list = lists[i];
-                                    if (list.name == step.listId) {
+                    function then(datalists) {
+                        var lists = datalists, list;
+                        for (var i = 0, ii = lists.length; i < ii; i++) {
+                            list = lists[i];
+                            if (list.name == step.listId) {
 
-                                        var stepAnchor = me.widgets.wizard.steps("getStepAnchor");
-                                        stepAnchor.parent().addClass(list.state);
+                                var stepAnchor = me.widgets.wizard.steps("getStepAnchor");
+                                stepAnchor.parent().addClass(list.state);
 
-                                        YAHOO.Bubbling.fire("simpleView-" + me.id + "-step-" + step.id + "scopedActiveDataListChanged", {
-                                            list: list.name,
-                                            dataList: list,
-                                            entity: null
-                                        });
+                                YAHOO.Bubbling.fire("simpleView-" + me.id + "-step-" + step.id + "scopedActiveDataListChanged", {
+                                    list: list.name,
+                                    dataList: list,
+                                    entity: null
+                                });
 
-                                    }
-                                }
-                                setNextAllowed(true);
-                            },
-                            scope: this
+                            }
                         }
-                    });
+                        setNextAllowed(step.index != me.options.wizardStruct.length - 1);
+                    }
+                    if (datalists == null) {
+	                    Alfresco.util.Ajax.jsonGet({
+	                        url: Alfresco.constants.PROXY_URI + "becpg/entitylists/node/" + step.nodeRef.replace(":/", ""),
+	                        successCallback: {
+	                            fn: function(response) {
+	                                var lists = response.json.datalists, list;
+	                                then(lists);
+	                                setNextAllowed(step.index != me.options.wizardStruct.length - 1);
+	                            },
+	                            scope: this
+	                        }
+	                    });
+                    } else {
+						then(datalists);
+					}
                 },
 
                 /**
