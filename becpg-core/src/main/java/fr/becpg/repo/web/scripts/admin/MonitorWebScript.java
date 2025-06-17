@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -22,6 +23,7 @@ import org.alfresco.repo.security.authentication.AbstractAuthenticationService;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.service.cmr.repository.ContentService;
+import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceException;
@@ -40,6 +42,7 @@ import com.google.common.net.HttpHeaders;
 import fr.becpg.model.SystemGroup;
 import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.license.BeCPGLicenseManager;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * <p>MonitorWebScript class.</p>
@@ -48,6 +51,8 @@ import fr.becpg.repo.license.BeCPGLicenseManager;
  * @version $Id: $Id
  */
 public class MonitorWebScript extends DeclarativeWebScript {
+
+	private static final String SOLR_STATUS = "solr_status";
 
 	private static final String VOLUMETRY_QUERY = "SELECT "
             + "ns.uri, "
