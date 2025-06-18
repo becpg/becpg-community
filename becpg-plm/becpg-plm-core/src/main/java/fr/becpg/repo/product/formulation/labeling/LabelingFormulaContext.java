@@ -2284,10 +2284,6 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 							}
 
 						}
-					} else if (compositeLabeling instanceof IngItem) {
-						ret.append(getLocaleSeparator(subIngsSeparator));
-					} else {
-						ret.append(getLocaleSeparator(defaultSeparator));
 					}
 				}
 				if (IngTypeItem.DEFAULT_GROUP.equals(kv.getKey())) {
@@ -3005,10 +3001,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 			for (Map.Entry<IngTypeItem, List<LabelingComponent>> entry : sortedIngListByType.entrySet()) {
 
-
-				if ((prec != null)
-						&& ((prec.getKey().getOrigNodeRef() != null) && prec.getKey().getOrigNodeRef().equals(entry.getKey().getOrigNodeRef()))) {
-
+				if (prec != null) {
+					if ((prec.getKey().getOrigNodeRef() != null) && prec.getKey().getOrigNodeRef().equals(entry.getKey().getOrigNodeRef())) {
 						if ((prec.getKey().getQty() != null) && (entry.getKey().getQty() != null)) {
 							prec.getKey().setQty(prec.getKey().getQty() + entry.getKey().getQty());
 						}
