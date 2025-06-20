@@ -112,6 +112,7 @@ public interface ProjectModel {
 	QName ASSOC_TL_REFUSED_TASK_REF = QName.createQName(PROJECT_URI, "tlRefusedTaskRef");
 	/** Constant <code>ASSOC_TL_RESOURCES</code> */
 	QName ASSOC_TL_RESOURCES = QName.createQName(PROJECT_URI, "tlResources");
+	QName PROP_TL_RESOURCES_ASSOC_INDEX = QName.createQName(PROJECT_URI, "tlResourcesAssocIndex");
 	/** Constant <code>ASSOC_TL_TASKLEGEND</code> */
 	QName ASSOC_TL_TASKLEGEND = QName.createQName(PROJECT_URI, "tlTaskLegend");
 	/** Constant <code>ASSOC_TL_OBSERVERS</code> */

@@ -619,6 +619,14 @@
 						<facetable>false</facetable>
 					</index>
 				</property>
+				<property name="pjt:tlResourcesAssocIndex">
+					<type>d:noderef</type>
+					<multiple>true</multiple>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
 			</properties>
 			<associations>
 				<association name="pjt:tlPrevTasks">
