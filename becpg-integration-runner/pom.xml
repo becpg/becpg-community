@@ -14,7 +14,7 @@
 		<version>4.2.3</version>
 		<relativePath>../</relativePath>
 	</parent>
-	<version>4.2.3.111</version>
+	<version>4.2.3.112-SNAPSHOT</version>
 
 	<dependencies>
 		<dependency>
