@@ -1,5 +1,6 @@
 package fr.becpg.repo.project.formulation;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -11,12 +12,16 @@ import java.util.Set;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.security.PersonService;
+import org.alfresco.service.namespace.NamespaceService;
+import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DeliverableUrl;
 import fr.becpg.model.ProjectModel;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.formulation.FormulatedEntityHelper;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.project.ProjectActivityService;
@@ -32,6 +37,7 @@ import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskState;
 import fr.becpg.repo.project.impl.ProjectHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * <p>TaskFormulationHandler class.</p>
@@ -53,8 +59,36 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 	private ProjectActivityService projectActivityService;
 
 	private NodeService nodeService;
+	
+	private PersonService personService;
+	
+	private SystemConfigurationService systemConfigurationService;
+	
+	private EntityDictionaryService entityDictionaryService;
+	
+	private NamespaceService namespaceService;
+	
+	public void setPersonService(PersonService personService) {
+		this.personService = personService;
+	}
+	
+	public void setNamespaceService(NamespaceService namespaceService) {
+		this.namespaceService = namespaceService;
+	}
+	
+	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
+		this.entityDictionaryService = entityDictionaryService;
+	}
+	
+	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
+		this.systemConfigurationService = systemConfigurationService;
+	}
 
 	AlfrescoRepository<ProjectData> alfrescoRepository;
+	
+	private String myProjectAttributes() {
+		return systemConfigurationService.confValue("project.extractor.myProjectAttributes");
+	}
 
 	/**
 	 * <p>Setter for the field <code>projectWorkflowService</code>.</p>
@@ -437,7 +471,25 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 		projectData.setCurrTasks(currTasks);
 		projectData.setLegends(currLegends);
 		projectData.setWork(work);
-
+		
+		if (!isTpl) {
+			List<NodeRef> projectOwners = new ArrayList<>();
+			for (String prop : myProjectAttributes().split(",")) {
+				QName propQname = QName.createQName(prop, namespaceService);
+				if (entityDictionaryService.isAssoc(propQname)) {
+					List<NodeRef> nodes = nodeService.getTargetAssocs(projectData.getNodeRef(), propQname).stream().map(a -> a.getTargetRef()).toList();
+					projectOwners.addAll(nodes);
+				} else {
+					Serializable person = nodeService.getProperty(projectData.getNodeRef(), propQname);
+					if (person instanceof NodeRef personNodeRef) {
+						projectOwners.add(personNodeRef);
+					} else {
+						projectOwners.add(personService.getPerson((String) person));
+					}
+				}
+			}
+			projectData.setProjectOwners(projectOwners);
+		}
 	}
 
 	private boolean visit(ProjectData projectData, Set<TaskWrapper> allTasks, boolean calculateState) {
