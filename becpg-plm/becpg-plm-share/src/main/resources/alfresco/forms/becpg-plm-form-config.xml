@@ -10216,6 +10216,7 @@
 					<show id="bcpg:filBioOrigins" />
 					<show id="bcpg:regulatoryCountries" force="true" />
 					<show id="bcpg:regulatoryUsageRef" force="true" />
+					<show id="entity_bcpg:filIngs_bcpg:ing_asColumn" />
 					<show id="fm:commentCount" force="true" />
 					<show id="bcpg:glopTarget" />
 					<show id="bcpg:glopValue" />
