@@ -346,12 +346,9 @@ public class ProjectListExtractor extends SimpleExtractor {
 			if (FILTER_MY_TASKS.equals(dataListFilter.getFilterId())) {
 				NodeRef currentUserNodeRef = personService.getPerson(AuthenticationUtil.getFullyAuthenticatedUser());
 				dataListFilter.getCriteriaMap().put("assoc_pjt_tlResources_added", currentUserNodeRef.toString());
-				results = advSearchService.queryAdvSearch(dataType, beCPGQueryBuilder, dataListFilter.getCriteriaMap(),
-						FILTER_MY_TASKS.equals(dataListFilter.getFilterId()) ? RepoConsts.MAX_RESULTS_1000 : pagination.getMaxResults());
+				results = advSearchService.queryAdvSearch(dataType, beCPGQueryBuilder, dataListFilter.getCriteriaMap(), pagination.getMaxResults());
 			} else {
-				//5000 results is Unlimited 
-				results = advSearchService.queryAdvSearch(dataType, beCPGQueryBuilder, dataListFilter.getCriteriaMap(),
-						FILTER_MY_TASKS.equals(dataListFilter.getFilterId()) ? RepoConsts.MAX_RESULTS_5000 : pagination.getMaxResults());
+				results = advSearchService.queryAdvSearch(dataType, beCPGQueryBuilder, dataListFilter.getCriteriaMap(), pagination.getMaxResults());
 				
 				if (VIEW_RESOURCES.equals(dataListFilter.getExtraParams())) {
 					for (Iterator<NodeRef> iterator = results.iterator(); iterator.hasNext();) {
@@ -363,13 +360,17 @@ public class ProjectListExtractor extends SimpleExtractor {
 				}
 				
 				if (projectResults != null) {
-					for (Iterator<NodeRef> iterator = results.iterator(); iterator.hasNext();) {
+					List<NodeRef> tempResults = new ArrayList<>();
+					for (Iterator<NodeRef> iterator = results.iterator(); iterator.hasNext() && tempResults.size() < RepoConsts.MAX_RESULTS_1000;) {
 						NodeRef nodeRef = iterator.next();
 						NodeRef entityNodeRef = entityListDAO.getEntity(nodeRef);
 						if (!projectResults.contains(entityNodeRef)) {
 							iterator.remove();
+						} else {
+							tempResults.add(nodeRef);
 						}
 					}
+					results = tempResults;
 				}
 			}
 
@@ -397,38 +398,28 @@ public class ProjectListExtractor extends SimpleExtractor {
 
 		if (!VIEW_RESOURCES.equals(dataListFilter.getExtraParams()) && !VIEW_TASKS.equals(dataListFilter.getExtraParams())) {
 			criteriaMap.putAll(dataListFilter.getCriteriaMap());
-			maxResults = RepoConsts.MAX_RESULTS_5000;
 		}
 
 		if (FILTER_MY_PROJECTS.equals(dataListFilter.getFilterId())) {
 			String userName = AuthenticationUtil.getFullyAuthenticatedUser();
 
 			NodeRef currentUserNodeRef = personService.getPerson(userName);
+			BeCPGQueryBuilder creatorQuery = dataListFilter.getSearchQuery().excludeDefaults().clone().ofType(ProjectModel.TYPE_PROJECT);
 
-			for (String prop : myProjectAttributes().split(",")) {
-				QName propQname = QName.createQName(prop, namespaceService);
-				if (entityDictionaryService.isAssoc(propQname)) {
-					criteriaMap.put("assoc_" + prop.replace(":", "_") + "_or_added", currentUserNodeRef.toString());
+			if (!criteriaMap.containsKey(PROP_PROJECT_STATE)
+					&& ((dataListFilter.getFilterParams() == null) || !dataListFilter.getFilterParams().contains("projectState"))) {
+				creatorQuery.andPropQuery(ProjectModel.PROP_PROJECT_STATE, ProjectState.InProgress.toString());
+			} else {
+				if (criteriaMap.containsKey(PROP_PROJECT_STATE)) {
+					creatorQuery.andPropQuery(ProjectModel.PROP_PROJECT_STATE, criteriaMap.get(PROP_PROJECT_STATE));
 				} else {
-					BeCPGQueryBuilder creatorQuery = dataListFilter.getSearchQuery().excludeDefaults().clone().ofType(ProjectModel.TYPE_PROJECT);
-
-					if (!criteriaMap.containsKey(PROP_PROJECT_STATE)
-							&& ((dataListFilter.getFilterParams() == null) || !dataListFilter.getFilterParams().contains("projectState"))) {
-						creatorQuery.andPropQuery(ProjectModel.PROP_PROJECT_STATE, ProjectState.InProgress.toString());
-					} else {
-						if (criteriaMap.containsKey(PROP_PROJECT_STATE)) {
-							creatorQuery.andPropQuery(ProjectModel.PROP_PROJECT_STATE, criteriaMap.get(PROP_PROJECT_STATE));
-						} else {
-							creatorQuery.andFTSQuery(dataListFilter.getFilterParams());
-						}
-					}
-
-					creatorQuery.andPropEquals(QName.createQName(prop, namespaceService), AuthenticationUtil.getFullyAuthenticatedUser());
-
-					unionResults.addAll(creatorQuery.list());
+					creatorQuery.andFTSQuery(dataListFilter.getFilterParams());
 				}
-
 			}
+
+			creatorQuery.andPropEquals(ProjectModel.PROP_PROJECT_OWNERS, currentUserNodeRef.toString());
+
+			unionResults.addAll(creatorQuery.list());
 
 			if (!criteriaMap.containsKey(PROP_PROJECT_STATE)
 					&& ((dataListFilter.getFilterParams() == null) || !dataListFilter.getFilterParams().contains("projectState"))) {
