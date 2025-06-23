@@ -10,6 +10,10 @@ if(isExternalUser(user)){
     widgetUtils.deleteObjectFromArray(model.jsonModel, "id", "HEADER_SEARCH"); 
     widgetUtils.deleteObjectFromArray(model.jsonModel, "id", "HEADER_TASKS");
     widgetUtils.deleteObjectFromArray(model.jsonModel, "id", "HEADER_REPOSITORY");
+    var headerTitle =  widgetUtils.findObject(model.jsonModel, "id", "HEADER_TITLE");
+    if (headerTitle) {
+		headerTitle.config.targetUrl = null;
+	}
 } else {
 
 	var showPeopleResults = true; 
