@@ -801,7 +801,14 @@ public class ImportEntityJsonVisitor {
 
 	private Serializable getSerializableValue(Object value, QName dataTypeName, QName propQName, RemoteJSONContext context) {
 		if (DataTypeDefinition.NODE_REF.equals(dataTypeName) || DataTypeDefinition.CATEGORY.equals(dataTypeName)) {
-			return visit((JSONObject) value, JsonVisitNodeType.ASSOC, propQName, context);
+			try {
+				return visit((JSONObject) value, JsonVisitNodeType.ASSOC, propQName, context);
+			} catch (BeCPGException e) {
+				if (Boolean.TRUE.equals(remoteParams.extractParams(RemoteParams.PARAM_FAIL_ON_ASSOC_NOT_FOUND, Boolean.TRUE))) {
+					throw e;
+				}
+				return null;
+			}
 		} else {
 
 			if (value instanceof JSONArray array) {
