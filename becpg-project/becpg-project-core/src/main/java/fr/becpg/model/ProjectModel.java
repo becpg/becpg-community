@@ -282,5 +282,7 @@ public interface ProjectModel {
 	/** Constant <code>PROP_SCORE_CRITERION_FORMULATED</code> */
 	QName PROP_SCORE_CRITERION_FORMULATED = QName.createQName(PROJECT_URI, "scoreCriterionFormulated");
 	
+	QName PROP_PROJECT_OWNERS = QName.createQName(PROJECT_URI, "projectOwners");
+	
 
 }
