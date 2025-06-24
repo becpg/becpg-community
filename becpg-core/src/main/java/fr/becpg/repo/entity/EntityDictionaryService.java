@@ -185,5 +185,5 @@ public interface EntityDictionaryService extends DictionaryService {
 	 */
 	String getDescription(ClassAttributeDefinition attributeDefinition, QName nodeType);
 	
-
+	QName getAssocIndexQName(QName assocQName);
 }
