@@ -361,6 +361,8 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 							assocValue.add("workspace://SpacesStore/" + jsonArray.getJSONObject(i).getString("id"));
 						}
 						criterionMap.put(assocKey, String.join(",", assocValue));
+					} else {
+						criterionMap.put(assocKey, value.toString());
 					}
 				} else {
 					String propValue = attributes.getString(prop);
