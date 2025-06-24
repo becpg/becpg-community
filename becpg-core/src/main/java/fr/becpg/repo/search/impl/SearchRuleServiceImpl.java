@@ -179,7 +179,7 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 			}
 
 			List<NodeRef> ret = advSearchService.queryAdvSearch(filter.getNodeType(), queryBuilder, filter.getNodeCriteria(),
-					RepoConsts.MAX_RESULTS_5000);
+					filter.getMaxResults() != null ? filter.getMaxResults() : RepoConsts.MAX_RESULTS_5000);
 
 			if ((filter.getEntityCriteria() != null) && (filter.getEntityType() != null)) {
 				ret = filterByEntityCriteria(ret, filter);
