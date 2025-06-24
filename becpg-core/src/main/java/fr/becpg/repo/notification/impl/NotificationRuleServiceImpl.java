@@ -187,6 +187,7 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 				filter.setDateFilterDelay(notification.getDays());
 				filter.setVersionFilterType(notification.getVersionFilterType());
 				filter.setDateFilterType(notification.getTimeType());
+				filter.setMaxResults(RepoConsts.MAX_RESULTS_1000);
 				
 				SearchRuleResult ret = searchRuleService.search(filter);
 				
