@@ -573,6 +573,10 @@ public class DataListFilter {
 					queryBuilder.inPath(filterData);
 				}
 				queryBuilder.excludeDefaults();
+				
+				if("document".equals(dataListName)) {
+					queryBuilder.withAspect(BeCPGModel.ASPECT_DOCUMENT_ASPECT);
+				}
 			}
 
 			queryBuilder.addSort(sortMap);

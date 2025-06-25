@@ -101,6 +101,10 @@
 					<property name="projectActivityService" ref="projectActivityService" />
 					<property name="nodeService" ref="nodeService" />
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
+					<property name="personService" ref="personService" />
+					<property name="systemConfigurationService" ref="systemConfigurationService" />
+					<property name="entityDictionaryService" ref="entityDictionaryService" />
+					<property name="namespaceService" ref="namespaceService" />
 				</bean>
 
 				<bean class="fr.becpg.repo.project.formulation.BudgetFormulationHandler">
@@ -121,7 +125,10 @@
 					<property name="projectService" ref="projectService" />
 					<property name="nodeService" ref="nodeService" />
 				</bean>
-
+                <bean class="fr.becpg.repo.entity.catalog.formulation.EntityCatalogFormulationHandler">
+                    <property name="entityCatalogService" ref="entityCatalogService" />
+                </bean>
+                
 				<bean class="fr.becpg.repo.formulation.impl.ScriptsFormulationHandler">
 					<property name="nodeService" ref="nodeService" />
 					<property name="namespaceService" ref="namespaceService" />

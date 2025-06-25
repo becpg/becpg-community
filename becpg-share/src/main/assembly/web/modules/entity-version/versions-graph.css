@@ -14,6 +14,10 @@
     visibility: inherit;
 }
 
+.loading-cursor * {
+  cursor: wait !important;
+}
+
 
 .versions-graph div.graph-nodes {
     position: absolute;

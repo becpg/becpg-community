@@ -116,6 +116,9 @@
                   <#if showBasket == "true">
                      <span id="${id}-basket" class="item item-separator item-social"></span>
                   </#if>
+                  <#if showAiSuggestion == "true">
+                     <span id="${id}-aisuggestion" class="item item-separator item-social"></span>
+                  </#if>
                   </div>
                </div>
                <div class="node-action">

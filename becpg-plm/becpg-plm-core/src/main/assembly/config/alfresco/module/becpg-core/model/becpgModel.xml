@@ -96,6 +96,18 @@
 			</parameter>
 		</constraint>
 
+   
+        
+        <constraint name="bcpg:aiValidationStates" type="LIST">
+            <parameter name="allowedValues">
+                <list>
+                    <value>ToValidate</value>
+                    <value>Valid</value>
+                    <value>Refused</value>
+                </list>
+            </parameter>
+        </constraint>
+        
 
 		<constraint name="bcpg:versionTypes" type="LIST">
 			<parameter name="allowedValues">
@@ -993,6 +1005,34 @@
 				</list>
 			</parameter>
 		</constraint>
+		
+		<constraint name="bcpg:documentEffectivityTypes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>NONE</value>
+					<value>MANUAL</value>
+					<value>AUTO</value>
+				</list>
+			</parameter>
+		</constraint>
+		
+		<constraint name="bcpg:documentCategories" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/Lists/bcpg:entityLists/DocumentCategories</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>bcpg:lvValue</value>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
+		</constraint>
+		
 	</constraints>
 
 	<types>
@@ -1751,9 +1791,7 @@
 					<index enabled="false" />
 				</property>
 			</properties>
-
 		</type>
-
 
 		<type name="bcpg:nutrientProfile">
 			<parent>bcpg:charact</parent>
@@ -2103,6 +2141,84 @@
 					</target>
 				</association>
 
+			</associations>
+		</type>
+		
+		<type name="bcpg:documentType">
+			<parent>bcpg:charact</parent>
+			<properties>
+				<property name="bcpg:docTypeCategory">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:documentCategories" />
+					</constraints>
+				</property>
+				<property name="bcpg:docTypeIsMandatory">
+					<type>d:boolean</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
+				<property name="bcpg:docTypeEffectivityType">
+					<type>d:text</type>
+					<default>NONE</default>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:documentEffectivityTypes" />
+					</constraints>
+				</property>
+				<property name="bcpg:docTypeAutoExpirationDelay">
+					<type>d:int</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:docTypeFormula">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:docTypeNameFormat">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:docTypeLinkedTypes">
+					<type>d:text</type>
+					<multiple>true</multiple>
+				</property>
+				<property name="bcpg:docTypeDestPath">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
+			</properties>
+			<associations>
+				<association name="bcpg:docTypeLinkedCharacts">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:entityListItem</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="bcpg:docTypeLinkedHierarchy">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:linkedValue</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
 			</associations>
 		</type>
 
@@ -6762,6 +6878,129 @@
 			</properties>
 		</aspect>
 		
+		<aspect name="bcpg:documentAspect">
+			<properties>
+				<property name="bcpg:documentState">
+					<type>d:text</type>
+					<default>Simulation</default>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:systemState" />
+					</constraints>
+				</property>
+				<property name="bcpg:documentCategory">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:documentCategories" />
+					</constraints>
+				</property>
+				<property name="bcpg:documentIsMandatory">
+					<type>d:boolean</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+			</properties>
+			<associations>
+				<association name="bcpg:documentTypeRef">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:documentType</class>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="bcpg:documentEntityRef">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:entityV2</class>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:codeAspect</aspect>
+				<aspect>cm:effectivity</aspect>
+				<aspect>bcpg:aiValidationAspect</aspect>
+			</mandatory-aspects>
+		</aspect>
+		
+		<aspect name="bcpg:aiValidationAspect">
+			<properties>
+				<property name="bcpg:aiValidationState">
+					<type>d:text</type>
+					<default>ToValidate</default>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:aiValidationStates" />
+					</constraints>
+				</property>
+				<property name="bcpg:aiValidationHints">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+				<property name="bcpg:aiValidationDate">
+					<type>d:date</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+			</properties>
+			<associations/>
+		</aspect>
+		
+		<aspect name="bcpg:aiAspect">
+			<properties>
+				<property name="bcpg:aiValidationCriteria">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+				<property name="bcpg:aiSuggestedFields">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+				<property name="bcpg:aiExtraPrompt">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+			</properties>
+			<associations/>
+		</aspect>
+
 		  <aspect name="bcpg:externalAccessAspect">
             <properties>
                 <property name="bcpg:externalAccessGroup">

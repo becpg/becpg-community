@@ -47,8 +47,6 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 
 	private AlfrescoRepository<ProductData> alfrescoRepository;
 
-	private EntityCatalogService entityCatalogService;
-
 	/**
 	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
 	 *
@@ -58,15 +56,6 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
-	/**
-	 * <p>Setter for the field <code>entityCatalogService</code>.</p>
-	 *
-	 * @param entityCatalogService a {@link fr.becpg.repo.entity.catalog.EntityCatalogService} object.
-	 */
-	public void setEntityCatalogService(EntityCatalogService entityCatalogService) {
-		this.entityCatalogService = entityCatalogService;
-	}
-
 	/** {@inheritDoc} */
 	@Override
 	public boolean process(ProductData product) {
@@ -74,38 +63,40 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 
 		try {
 
-			// checks if mandatory fields are present
-			JSONArray catalogs = entityCatalogService.formulateCatalogs(product, product.getReportLocales());
+			if (product.getEntityScore() != null) {
+				scores = new JSONObject(product.getEntityScore());
+				if (scores.has(EntityCatalogService.PROP_CATALOGS)) {
+					JSONArray catalogs = scores.getJSONArray(EntityCatalogService.PROP_CATALOGS);
+					extractReqCtrl(product, catalogs);
 
-			// Unique fields :
+					ReqCtrlListDataItem rclDataItem = ReqCtrlListDataItem.tolerated()
+							.withMessage(MLTextHelper.getI18NMessage(MESSAGE_NON_VALIDATED_STATE)).ofDataType(RequirementDataType.Validation);
 
-			extractReqCtrl(product, catalogs);
+					boolean shouldAdd = false;
 
-			ReqCtrlListDataItem rclDataItem = ReqCtrlListDataItem.tolerated().withMessage(MLTextHelper.getI18NMessage(MESSAGE_NON_VALIDATED_STATE))
-					.ofDataType(RequirementDataType.Validation);
+					Predicate<EffectiveDataItem> predicate = new EffectiveFilters<>(EffectiveFilters.EFFECTIVE).createPredicate(product);
 
-			boolean shouldAdd = false;
+					// visits all refs and adds rclDataItem to them if required
+					for (AbstractProductDataView view : product.getViews()) {
+						if (view.getMainDataList() != null) {
+							for (CompositionDataItem dataItem : view.getMainDataList()) {
+								if ((dataItem.getComponent() != null) && !checkProductValidity(dataItem.getComponent()) && predicate.test(dataItem)) {
+									rclDataItem.addSource(dataItem.getComponent());
+									shouldAdd = true;
 
-			Predicate<EffectiveDataItem> predicate = new EffectiveFilters<>(EffectiveFilters.EFFECTIVE).createPredicate(product);
-
-			// visits all refs and adds rclDataItem to them if required
-			for (AbstractProductDataView view : product.getViews()) {
-				if (view.getMainDataList() != null) {
-					for (CompositionDataItem dataItem : view.getMainDataList()) {
-						if ((dataItem.getComponent() != null) && !checkProductValidity(dataItem.getComponent()) && predicate.test(dataItem)) {
-							rclDataItem.addSource(dataItem.getComponent());
-							shouldAdd = true;
-
+								}
+							}
 						}
 					}
+
+					if (shouldAdd) {
+						product.getReqCtrlList().add(rclDataItem);
+					}
+
+					scores.put(EntityCatalogService.PROP_CATALOGS, catalogs);
+
 				}
 			}
-
-			if (shouldAdd) {
-				product.getReqCtrlList().add(rclDataItem);
-			}
-
-			scores.put(EntityCatalogService.PROP_CATALOGS, catalogs);
 
 		} catch (JSONException e) {
 			logger.error("Cannot create Json Score", e);

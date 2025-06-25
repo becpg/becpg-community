@@ -244,6 +244,10 @@
 			</associations>
 		</type>
 
+           <!-- To Remove for patch only -->
+		<type name="bp:MailingListChannel"/>
+		<type name="bp:productCatalog"/>
+
 
 	</types>
 	<aspects>
@@ -277,6 +281,11 @@
 			</properties>
 
 		</aspect>
+		
+		<!-- To Remove for patch only -->
+		<aspect name="bp:MailingListChannelAspect"/>
+		<aspect name="bp:cataloguable"/>
+		<aspect name="bp:productCatalogChannelAspect"/>
 
 	</aspects>
 </model>

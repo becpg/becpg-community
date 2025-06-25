@@ -21,8 +21,10 @@ package fr.becpg.repo.entity.remote.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -335,12 +337,33 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	@Override
 	public Map<String, String> toSearchCriterion(JSONObject entityJson) {
 		Map<String, String> criterionMap  = new HashMap<>();
+		if (entityJson.has("cm:name")) {
+			criterionMap.put("prop_cm_name", entityJson.getString("cm:name"));
+		}
+		if (entityJson.has("bcpg:code")) {
+			criterionMap.put("prop_bcpg_code", entityJson.getString("bcpg:code"));
+		}
+		if (entityJson.has("bcpg:erpCode")) {
+			criterionMap.put("prop_bcpg_erpCode", entityJson.getString("bcpg:erpCode"));
+		}
 		if (entityJson.has("attributes")) {
 			JSONObject attributes = entityJson.getJSONObject("attributes");
 			for (String prop : attributes.keySet()) {
 				QName qName = QName.createQName(prop, namespaceService);
 				if (dictionaryService.getAssociation(qName) != null) {
-					criterionMap.put("assoc_" + prop.replace(":", "_") + "_added", "workspace://SpacesStore/" + attributes.getJSONObject(prop).getString("id"));
+					Object value = attributes.get(prop);
+					String assocKey = "assoc_" + prop.replace(":", "_") + "_added";
+					if (value instanceof JSONObject jsonObject) {
+						criterionMap.put(assocKey, "workspace://SpacesStore/" + jsonObject.getString("id"));
+					} else if (value instanceof JSONArray jsonArray) {
+						List<String> assocValue = new ArrayList<>();
+						for (int i = 0; i < jsonArray.length(); i ++) {
+							assocValue.add("workspace://SpacesStore/" + jsonArray.getJSONObject(i).getString("id"));
+						}
+						criterionMap.put(assocKey, String.join(",", assocValue));
+					} else {
+						criterionMap.put(assocKey, value.toString());
+					}
 				} else {
 					String propValue = attributes.getString(prop);
 					String key = "prop_" + prop.replace(":", "_");
