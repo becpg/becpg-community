@@ -53,6 +53,7 @@ import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.survey.SurveyModel;
+import fr.becpg.repo.survey.SurveyService;
 import fr.becpg.repo.survey.data.SurveyListDataItem;
 import fr.becpg.repo.survey.data.SurveyQuestion;
 import fr.becpg.repo.survey.data.SurveyableEntity;
@@ -76,6 +77,8 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 	private NodeService mlNodeService;
 
 	private SpelFormulaService formulaService;
+	
+	private SurveyService surveyService;
 
 	/**
 	 * <p>Setter for the field <code>mlNodeService</code>.</p>
@@ -111,6 +114,15 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
+	}
+	
+	/**
+	 * <p>Setter for the field <code>surveyService</code>.</p>
+	 *
+	 * @param surveyService a {@link fr.becpg.repo.survey.SurveyService} object
+	 */
+	public void setSurveyService(SurveyService surveyService) {
+		this.surveyService = surveyService;
 	}
 
 	/** {@inheritDoc} */
@@ -373,7 +385,9 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 
 	private void fillScores(List<SurveyListDataItem> surveyList, Map<NodeRef, Double> scoresPerCriterion,
 			Map<NodeRef, Double> maxScoresPerCriterion) {
+		surveyList = surveyService.getVisibles(surveyList);
 		for (SurveyListDataItem s : surveyList) {
+			
 			SurveyQuestion question = (SurveyQuestion) alfrescoRepository.findOne(s.getQuestion());
 			NodeRef criterion = question.getScoreCriterion();
 
@@ -393,7 +407,7 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 		if (question.getQuestionScore() != null) {
 			return question.getQuestionScore();
 		}
-
+		// TODO query = useless & waste of resources, just search the current question list instead
 		List<NodeRef> answers = BeCPGQueryBuilder.createQuery().ofType(SurveyModel.TYPE_SURVEY_QUESTION)
 				.andPropEquals(BeCPGModel.PROP_PARENT_LEVEL, question.getNodeRef().toString())
 				.andBetween(SurveyModel.PROP_SURVEY_QUESTION_SCORE, "1", "MAX").inDB().list();
@@ -405,7 +419,8 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 	}
 
 	private double calculateQuestionScore(SurveyListDataItem s) {
-		return CollectionUtils.emptyIfNull(s.getChoices()).stream().map(alfrescoRepository::findOne).map(SurveyQuestion.class::cast)
+		return CollectionUtils.emptyIfNull(s.getChoices()).stream().map(alfrescoRepository::findOne)
+				.map(SurveyQuestion.class::cast)
 				.map(SurveyQuestion::getQuestionScore).filter(Objects::nonNull).mapToDouble(Double::doubleValue).sum();
 	}
 
