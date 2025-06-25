@@ -939,15 +939,24 @@ public class BeCPGAIMSFilter implements Filter
      * @throws IOException
      */
     private void sendRedirectForPreLogin(HttpServletRequest request, HttpServletResponse response) throws IOException
-    {
-        String originalQueryString = request.getQueryString();
-        String redirectUrl = request.getRequestURL().toString()
-                + (originalQueryString != null ? "?".concat(originalQueryString) : "");
-        UriComponents loginUri = UriComponentsBuilder.fromUriString(request.getContextPath() + SHARE_AIMS_LOGIN_PAGE).query(originalQueryString)
-                .queryParam("redirectUrl", Encode.forJava(redirectUrl)).build();
-        response.sendRedirect(loginUri.toUriString());
+{
+    String originalQueryString = request.getQueryString();
+    String redirectUrl = request.getRequestURL().toString()
+            + (originalQueryString != null ? "?" + originalQueryString : "");
+    
+    // URL encode the redirectUrl to ensure all parameters are preserved
+    String encodedRedirectUrl = URLEncoder.encode(redirectUrl, StandardCharsets.UTF_8.toString());
+    
+    if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug("Saving original URL for later redirect: " + redirectUrl);
     }
-
+    
+    String loginUri = UriComponentsBuilder.fromUriString(request.getContextPath() + SHARE_AIMS_LOGIN_PAGE)
+            .queryParam("redirectUrl", encodedRedirectUrl)
+            .build()
+            .toUriString();
+    response.sendRedirect(loginUri);
+}
     /**
      * After we have sucessfully authenticated with the IdP, the IDP sent the redirect back to the aims-login page. We
      * need to redirect back to the original URL that was called and include the framents if present
@@ -958,13 +967,27 @@ public class BeCPGAIMSFilter implements Filter
      */
     private void sendRedirectToOriginalTarget(HttpServletRequest request, HttpServletResponse response) throws IOException
     {
-        String originalUrl = request.getParameter("redirectUrl");
+        String encodedOriginalUrl = request.getParameter("redirectUrl");
 
         // If we don't have redirect URL, redirect to the home page
-        if (originalUrl == null || originalUrl.isEmpty())
+        if (encodedOriginalUrl == null || encodedOriginalUrl.isEmpty())
         {
             this.redirectStrategy.sendRedirect(request, response, "/");
             return;
+        }
+        
+        // Decode the URL that was encoded in sendRedirectForPreLogin
+        String originalUrl;
+        try {
+            originalUrl = java.net.URLDecoder.decode(encodedOriginalUrl, StandardCharsets.UTF_8.toString());
+            
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Redirecting to original URL after authentication: " + originalUrl);
+            }
+        } catch (Exception e) {
+            // If decoding fails, use the encoded URL as a fallback
+            LOGGER.error("Failed to decode redirectUrl parameter: " + e.getMessage(), e);
+            originalUrl = encodedOriginalUrl;
         }
 
         String originalFragment = request.getParameter("fragment");

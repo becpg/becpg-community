@@ -37,6 +37,7 @@ import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 import fr.becpg.repo.project.data.projectList.DeliverableScriptOrder;
+import fr.becpg.repo.project.data.projectList.DeliverableState;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskState;
 import fr.becpg.repo.project.impl.ProjectHelper;
@@ -104,6 +105,7 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 		List<NodeRef> recipients = AuthorityHelper.extractPeople(viewRecipients);
 		NodeRef lastTask = createOrUpdateSignatureTasks(project, preparedDocuments, recipients, rejectTask.getNodeRef(), rejectTask);
 		createValidatingTask(project, originalDocuments, lastTask, rejectTask);
+		project.setDirtyTaskTree(true);
 		alfrescoRepository.save(project);
 		return projectNodeRef;
 	}
@@ -122,7 +124,12 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 			} else {
 				entitySignatureFolder = nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath("Documents"));
 			}
-			List<NodeRef> documentsToSign = findDocumentsToSign(entitySignatureFolder);
+			List<NodeRef> documentsToSign = findDocumentsToSign(entitySignatureFolder, false);
+			List<NodeRef> documentsAlreadySigned = findDocumentsToSign(entitySignatureFolder, true);
+			for (NodeRef doc : documentsAlreadySigned) {
+				project.getDeliverableList().stream().filter(d -> d.getDescription().equals(nodeService.getProperty(doc, ContentModel.PROP_NAME)))
+						.forEach(d -> d.setState(DeliverableState.Completed));
+			}
 			List<NodeRef> lastsTasks = new ArrayList<>();
 			for (NodeRef documentToSign : documentsToSign) {
 				associationService.update(documentToSign, ContentModel.ASSOC_ORIGINAL, List.of());
@@ -138,8 +145,9 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 			}
 			closeSignedTasks(project);
 			if (signatureProjectPlugin != null) {
-				signatureProjectPlugin.createOrUpdateClosingTask(project, lastsTasks);
+				signatureProjectPlugin.createOrUpdateClosingTask(project, lastsTasks, firstTask);
 			}
+			project.setDirtyTaskTree(true);
 		}
 		alfrescoRepository.save(project);
 		return project.getNodeRef();
@@ -147,14 +155,23 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 
 	private void closeSignedTasks(ProjectData project) {
 		for (TaskListDataItem task : project.getTaskList()) {
-			if (project.getDeliverableList().stream()
-					.anyMatch(d -> d.getTasks() != null && d.getTasks().contains(task.getNodeRef()) && d.getContent() != null
-							&& SignatureStatus.Signed.toString().equals(nodeService.getProperty(d.getContent(), SignatureModel.PROP_STATUS)))) {
+			// Get deliverables associated with this task
+			List<DeliverableListDataItem> relatedDeliverables = project.getDeliverableList().stream()
+				.filter(d -> d.getTasks() != null && d.getTasks().contains(task.getNodeRef()))
+				.toList();
+
+			// Check if all related deliverables are signed
+			boolean allSigned = !relatedDeliverables.isEmpty() && relatedDeliverables.stream()
+				.allMatch(d -> d.getContent() != null &&
+					SignatureStatus.Signed.toString().equals(
+						nodeService.getProperty(d.getContent(), SignatureModel.PROP_STATUS)));
+
+			if (allSigned) {
 				task.setTaskState(TaskState.Completed);
 			}
 		}
 	}
-
+	
 	private NodeRef findFirstTask(NodeRef task) {
 		NodeRef previousTask = associationService.getTargetAssoc(task, ProjectModel.ASSOC_TL_PREV_TASKS);
 		if (previousTask != null) {
@@ -236,9 +253,8 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 	}
 	
 	private void createValidatingTask(ProjectData project, List<NodeRef> documents, NodeRef lastTask, TaskListDataItem rejectTask) {
-		TaskListDataItem validatingTask = projectService.createNewTask(project);
+		TaskListDataItem validatingTask = projectService.insertNewTask(project, List.of(lastTask));
 		validatingTask.setRefusedTask(rejectTask);
-		validatingTask.getPrevTasks().add(lastTask);
 		validatingTask.setTaskName(I18NUtil.getMessage("signatureWorkflow.task-checkin.name"));
 		validatingTask.setResources(new ArrayList<>());
 		NodeRef currentUser = personService.getPerson(AuthenticationUtil.getFullyAuthenticatedUser());
@@ -259,7 +275,7 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 	}
 	
 	private TaskListDataItem createRejectTask(ProjectData project, List<NodeRef> documents) {
-		TaskListDataItem rejectTask = projectService.createNewTask(project);
+		TaskListDataItem rejectTask = projectService.insertNewTask(project, null);
 		rejectTask.setTaskName(I18NUtil.getMessage("signatureWorkflow.task-reject.name"));
 		rejectTask.setDescription(I18NUtil.getMessage("signatureWorkflow.task-reject.description"));
 		rejectTask.setState(TaskState.Cancelled.toString());
@@ -284,6 +300,7 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 	private NodeRef createOrUpdateSignatureTasks(ProjectData project, List<NodeRef> documents, List<NodeRef> recipients, NodeRef previousTask,
 			TaskListDataItem rejectTask) {
 		for (NodeRef recipient : recipients) {
+			final NodeRef finalPreviousTask = previousTask;
 			String resourceFirstName = (String) nodeService.getProperty(recipient, ContentModel.PROP_FIRSTNAME);
 			String resourceLastName = (String) nodeService.getProperty(recipient, ContentModel.PROP_LASTNAME);
 			String taskName = I18NUtil.getMessage("signatureWorkflow.task-signature.name");
@@ -291,8 +308,16 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 					.filter(task -> task.getResources() != null && task.getResources().contains(recipient))
 					.filter(task -> task.getTaskName() != null && task.getTaskName().equals(taskName))
 					.findFirst()
-					.orElseGet(() -> projectService.createNewTask(project));
+					.orElseGet(() -> projectService.insertNewTask(project, List.of(finalPreviousTask)));
+			newTask.setTaskState(TaskState.Planned);
 			newTask.setRefusedTask(rejectTask);
+			for (TaskListDataItem otherTask : project.getTaskList()) {
+				if (!otherTask.equals(newTask) && otherTask.getPrevTasks().contains(previousTask)) {
+					otherTask.getPrevTasks().remove(previousTask);
+					otherTask.getPrevTasks().add(newTask.getNodeRef());
+					otherTask.setTaskState(TaskState.Planned);
+				}
+			}
 			if (!newTask.getPrevTasks().contains(previousTask)) {
 				newTask.getPrevTasks().add(previousTask);
 			}
@@ -311,12 +336,14 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 					project.getDeliverableList().add(ProjectHelper.createDeliverable(prepareDeliverableName, docName,
 							DeliverableScriptOrder.Pre, newTask, BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(),
 									"/app:company_home/app:dictionary/app:scripts/cm:prepare-signature.js")));
+				} else {
+					project.getDeliverableList().stream().filter(del -> del.getName().equals(prepareDeliverableName)).forEach(d -> d.setState(DeliverableState.Planned));
 				}
 				String urlDeliverableName = docName + resourceFirstName + resourceLastName + " - url";
 				if (project.getDeliverableList().stream().noneMatch(del -> del.getName().equals(urlDeliverableName))) {
 					project.getDeliverableList().add(ProjectHelper.createDeliverable(urlDeliverableName, docName, null, newTask, doc));
 				} else {
-					project.getDeliverableList().stream().filter(del -> del.getName().equals(urlDeliverableName)).forEach(d -> d.setContent(doc));
+					project.getDeliverableList().stream().filter(del -> del.getName().equals(urlDeliverableName)).forEach(d -> { d.setState(DeliverableState.Planned); d.setContent(doc); });
 				}
 				String signDeliverableName = docName + resourceFirstName + resourceLastName + " - sign";
 				
@@ -324,6 +351,8 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 					project.getDeliverableList().add(ProjectHelper.createDeliverable(signDeliverableName, docName,
 							DeliverableScriptOrder.Post, newTask, BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(),
 									"/app:company_home/app:dictionary/app:scripts/cm:sign-document.js")));
+				} else {
+					project.getDeliverableList().stream().filter(del -> del.getName().equals(signDeliverableName)).forEach(d -> d.setState(DeliverableState.Planned));
 				}
 			}
 			previousTask = newTask.getNodeRef();
@@ -376,7 +405,7 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 		return reportCopy;
 	}
 
-	private List<NodeRef> findDocumentsToSign(NodeRef folder) {
+	private List<NodeRef> findDocumentsToSign(NodeRef folder, boolean signed) {
 		List<NodeRef> docs = new ArrayList<>();
 		List<NodeRef> children = associationService.getChildAssocs(folder, ContentModel.ASSOC_CONTAINS);
 		for (NodeRef child : children) {
@@ -384,14 +413,15 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 			if (ContentModel.TYPE_CONTENT.equals(type)) {
 				if (nodeService.hasAspect(child, SignatureModel.ASPECT_SIGNATURE)) {
 					String status = (String) nodeService.getProperty(child, SignatureModel.PROP_STATUS);
-					if (!SignatureStatus.Signed.toString().equals(status)) {
+					if (signed && SignatureStatus.Signed.toString().equals(status) || !signed && !SignatureStatus.Signed.toString().equals(status)) {
 						docs.add(child);
 					}
 				}
 			} else if (ContentModel.TYPE_FOLDER.equals(type)) {
-				docs.addAll(findDocumentsToSign(child));
+				docs.addAll(findDocumentsToSign(child, signed));
 			}
 		}
 		return docs;
 	}
+	
 }

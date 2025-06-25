@@ -67,6 +67,7 @@ public class BatchData extends AbstractScorableEntity {
 	private BatchData entityTpl;
 
 	private String entityScore;
+	private List<String> reportLocales;
 	
 
 	private List<NodeRef> plants = new ArrayList<>();
@@ -224,6 +225,27 @@ public class BatchData extends AbstractScorableEntity {
 		return entityScore;
 	}
 
+	
+	/**
+	 * <p>Getter for the field <code>reportLocales</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
+	@AlfProp
+	@AlfQname(qname = "rep:reportLocales")
+	public List<String> getReportLocales() {
+		return reportLocales;
+	}
+
+	/**
+	 * <p>Setter for the field <code>reportLocales</code>.</p>
+	 *
+	 * @param reportLocales a {@link java.util.List} object.
+	 */
+	public void setReportLocales(List<String> reportLocales) {
+		this.reportLocales = reportLocales;
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 *

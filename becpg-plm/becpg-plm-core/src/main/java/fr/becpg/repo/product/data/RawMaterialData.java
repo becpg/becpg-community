@@ -11,6 +11,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
+import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.repository.annotation.AlfCacheable;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -21,7 +22,7 @@ import fr.becpg.repo.repository.annotation.MultiLevelLeaf;
  * <p>RawMaterialData class.</p>
  *
  * @author matthieu
- * @version $Id: $Id
+ * @version : 
  */
 @AlfType
 @AlfQname(qname = "bcpg:rawMaterial")
@@ -172,5 +173,10 @@ public class RawMaterialData extends ProductData {
 		setGeoOrigins(geoOrigins);
 		return this;
 	}
+
+    public RawMaterialData withLabelClaimList(List<LabelClaimListDataItem> labelClaimList) {
+        setLabelClaimList(labelClaimList);
+        return this;
+    }
 
 }

@@ -244,7 +244,7 @@
 						</evaluation>
 						<evaluation id="survey">
 							<evaluators>
-								<evaluator type="evaluator.component.becpg.params.equal">
+								<evaluator type="evaluator.component.becpg.params.startWith">
 									<params>
 										<list>surveyList</list>
 									</params>

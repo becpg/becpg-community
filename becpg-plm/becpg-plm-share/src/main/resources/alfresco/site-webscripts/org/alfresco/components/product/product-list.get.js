@@ -11,7 +11,7 @@ function main()
 		
 	var preferences = AlfrescoUtil.getPreferences(prefs);
 	var currentType = preferences.type!=null ? preferences.type: "finishedProduct";
-	   var filterParameters =  getFilterParameters();
+	var filterParameters =  getFilterParameters();
 	
 	model.pagination = true;
   
@@ -21,7 +21,11 @@ function main()
     var dataType = "bcpg:finishedProduct";
 
 	if (currentType != null) {
-		dataType = currentType.indexOf("_") > 0 ?currentType.replace("_", ":") : "bcpg:" + currentType;
+        if(currentType == "document"){
+            dataType = "cm:content"; 
+        } else {
+		    dataType = currentType.indexOf("_") > 0 ?currentType.replace("_", ":") : "bcpg:" + currentType;
+        }
 	}
 	
 
