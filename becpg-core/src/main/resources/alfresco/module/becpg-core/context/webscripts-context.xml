@@ -70,6 +70,11 @@
 		<property name="batchQueueService" ref="batchQueueService"/>
 	</bean>
 	
+	<bean id="webscript.fr.becpg.admin.assocIndexer.get" class="fr.becpg.repo.web.scripts.admin.AssociationIndexerWebScript" parent="webscript">
+		<property name="namespaceService" ref="NamespaceService"/>
+		<property name="associationIndexerService" ref="associationIndexerService"/>
+	</bean>
+	
 	<bean id="webscript.fr.becpg.admin.monitor.get" class="fr.becpg.repo.web.scripts.admin.MonitorWebScript" parent="webscript">
 		<property name="authenticationService" ref="authenticationService" />
 		<property name="contentService" ref="contentService"/>

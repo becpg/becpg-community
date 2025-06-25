@@ -38,6 +38,17 @@ public interface BeCPGCacheService {
 	 */
 	<T> T getFromCache(String cacheName, String cacheKey, Supplier<T> cacheDataProviderCallBack);
 	
+	/**
+	 * Gets a value from the transaction cache, computing it if not present
+	 * 
+	 * @param <T> The type of the value
+	 * @param cacheName The cache name (used as part of the transaction resource key)
+	 * @param itemKey The specific item key
+	 * @param valueSupplier The supplier to compute the value if not in cache
+	 * @return The cached or computed value
+	 */
+    <T> T getFromTransactionCache(String cacheName, String cacheKey, Supplier<T> cacheDataProviderCallBack);
+	
 
 	/**
 	 * <p>clearAllCaches.</p>

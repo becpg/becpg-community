@@ -53,25 +53,31 @@
 					<show id="bcpg:productHierarchy2" />
 					<show id="bcpg:entityTplRef" force="true" />
 					<show id="bcpg:clients" force="true" />
+					<show id="bcpg:suppliers" force="true" />
 					<show id="bcpg:plants" force="true" />
 					<show id="bcpg:productState" />
 				</field-visibility>
 				<appearance>
+					
 					<field id="cm:name" label-id="becpg.forms.field.product" />
-					<field id="bcpg:productHierarchy1" label-id="becpg.forms.field.productHierarchy1">
+					<field id="bcpg:erpCode" />
+					<field id="bcpg:productHierarchy1" label-id="becpg.forms.field.productHierarchy1" >
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
-					<field id="bcpg:productHierarchy2" label-id="becpg.forms.field.productHierarchy2">
+					<field id="bcpg:productHierarchy2" label-id="becpg.forms.field.productHierarchy2" >
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
-					<field id="bcpg:entityTplRef" mandatory="false" read-only="false">
+					<field id="bcpg:entityTplRef" mandatory="false" read-only="false" >
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:product?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
 							</control-param>
 							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productState" label-id="becpg.forms.field.productState">
+					<field id="bcpg:clients" />
+					<field id="bcpg:suppliers" />
+					<field id="bcpg:plants" />
+					<field id="bcpg:productState" label-id="becpg.forms.field.productState" >
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="isSearch">true</control-param>
 							<control-param name="insertBlank">true</control-param>
@@ -1602,7 +1608,7 @@
 				</field-visibility>
 			</form>
 			
-			<form id="datagrid">
+			<form id="export">
 				<field-visibility>
 					<show id="bcpg:charactName" />
 					<show id="bcpg:legalName" />
@@ -3273,6 +3279,275 @@
 			</form>
 		</forms>
 	</config>
+	
+	
+	
+	<!-- bcpg:documentType type (creating nodes) -->
+	<config evaluator="model-type" condition="bcpg:documentType">
+		<forms>
+			<form>
+				<edit-form template="tab-edit" />
+				<field-visibility>
+					<show id="bcpg:charactName" />
+					<show id="bcpg:docTypeCategory" force="true" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:docTypeIsMandatory" />
+					<show id="bcpg:docTypeEffectivityType" />
+					<show id="bcpg:docTypeAutoExpirationDelay" force="true" />
+					<show id="bcpg:docTypeFormula" force="true" />
+					<show id="bcpg:docTypeNameFormat" />
+					<show id="bcpg:docTypeLinkedTypes" force="true" />
+					<show id="bcpg:docTypeLinkedHierarchy" force="true" />
+					<show id="bcpg:docTypeLinkedCharacts" force="true" />
+					<show id="bcpg:docTypeDestPath" force="true" />
+			    	<show id="bcpg:aiValidationCriteria" force="true" />
+                    <show id="bcpg:aiSuggestedFields" force="true" />
+                    <show id="bcpg:aiExtraPrompt" force="true" />
+					<show id="bcpg:isDeleted" force="true" />
+				</field-visibility>
+				<appearance>
+					<set id="documentType" label-id="becpg.forms.set.document-type.label" />
+					<set id="documentTypeAutogeneration" label-id="becpg.forms.set.document-type-autogeneration.label" />
+					<set id="ai" label-id="becpg.forms.set.ai.label" />
+					
+					<field id="bcpg:charactName" set="documentType" >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:docTypeIsMandatory" set="documentType" />
+					<field id="cm:description" set="documentType" >
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="bcpg:docTypeCategory" set="documentType" />
+					<field id="bcpg:docTypeEffectivityType" set="documentType" >
+						<constraint-handlers>
+							<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf" event='keyup,change@[
+									{"prop":"prop_bcpg_docTypeAutoExpirationDelay", "condition" : "|NONE|MANUAL"}
+								]' />
+						</constraint-handlers>
+					</field>
+					<field id="bcpg:docTypeAutoExpirationDelay" set="documentType" >
+						<control template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">d</control-param>
+						</control>
+					</field>
+					<field id="bcpg:docTypeFormula" set="documentType" >
+						<control template="/org/alfresco/components/form/controls/spel-editor.ftl">
+							<control-param name="rows">10</control-param>
+						</control>
+					</field>
+					<field id="bcpg:docTypeNameFormat" set="documentType" />
+					<field id="bcpg:isDeleted" set="documentType" />
+					
+					<field id="bcpg:docTypeLinkedTypes" set="documentTypeAutogeneration" >
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/aclType</control-param>
+							<control-param name="showTooltip">false</control-param>
+							<control-param name="saveTitle">false</control-param>
+						</control>
+					</field>
+					<field id="bcpg:docTypeLinkedHierarchy" set="documentTypeAutogeneration" >
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">
+								becpg/autocomplete/allLinkedvalue/values/System/ProductHierarchy/bcpg:entityLists
+							</control-param>
+							<control-param name="extraPaths">prop_bcpg_docTypeLinkedTypes</control-param>
+							<control-param name="showTooltip">false</control-param>
+							<control-param name="saveTitle">false</control-param>
+						</control>
+					</field>
+					<field id="bcpg:docTypeLinkedCharacts" set="documentTypeAutogeneration" >
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:entityListItem?classNames=bcpg:certification,bcpg:labelClaim,survey:surveyQuestion
+							</control-param>
+							<control-param name="showTooltip">false</control-param>
+							<control-param name="saveTitle">false</control-param>
+						</control>
+					</field>
+					<field id="bcpg:docTypeDestPath" set="documentTypeAutogeneration" help-id="becpg.forms.help.docTypeDestPath" />
+					 <field id="bcpg:aiValidationCriteria" set="ai" >
+                       <control template="/org/alfresco/components/form/controls/textarea.ftl" >
+                        	<control-param name="rows">10</control-param>
+                        </control>
+                    </field>
+                   <field id="bcpg:aiSuggestedFields" set="ai" >
+                        <control template="/org/alfresco/components/form/controls/textarea.ftl" >
+                        	<control-param name="rows">4</control-param>
+                        </control>
+					</field>
+                    <field id="bcpg:aiExtraPrompt" set="ai" >
+                        <control template="/org/alfresco/components/form/controls/textarea.ftl" >
+                        	<control-param name="rows">4</control-param>
+                        </control>
+                    </field>
+                    
+					
+				</appearance>
+			</form>
+
+			<form id="filter">
+				<field-visibility>
+					<show id="bcpg:charactName" />
+					<show id="bcpg:docTypeCategory" force="true" />
+					<show id="bcpg:docTypeIsMandatory" />
+					<show id="bcpg:docTypeEffectivityType" />
+					<show id="bcpg:isDeleted" force="true" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:charactName">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:docTypeCategory" set="documentType" >
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="insertBlank">false</control-param>
+						</control>
+					</field>
+					<field id="bcpg:docTypeIsMandatory">
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:docTypeEffectivityType">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="insertBlank">false</control-param>
+						</control>
+					</field>
+					<field id="bcpg:isDeleted">
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+
+			<form id="datagrid">
+				<field-visibility>
+					<show id="bcpg:charactName" />
+					<show id="bcpg:docTypeCategory" force="true" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:docTypeIsMandatory" />
+					<show id="bcpg:docTypeEffectivityType" />
+					<show id="bcpg:docTypeAutoExpirationDelay" force="true" />
+					<show id="bcpg:docTypeNameFormat" />
+					<show id="bcpg:docTypeLinkedTypes" force="true" />
+					<show id="bcpg:docTypeLinkedHierarchy" force="true" />
+					<show id="bcpg:docTypeLinkedCharacts" force="true" />
+					<show id="bcpg:docTypeDestPath" force="true" />
+					<show id="bcpg:isDeleted" force="true" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:docTypeLinkedTypes" read-only="true" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	  
+	
+	<!-- bcpg:documentType type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:documentType">
+		<forms>
+			<form>
+				<edit-form template="tab-edit" />
+				<field-visibility>
+					<show id="bcpg:charactName" />
+					<show id="bcpg:docTypeCategory" force="true" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:docTypeIsMandatory" />
+					<show id="bcpg:docTypeEffectivityType" />
+					<show id="bcpg:docTypeAutoExpirationDelay" force="true" />
+					<show id="bcpg:docTypeFormula" force="true" />
+					<show id="bcpg:docTypeNameFormat" />
+					<show id="bcpg:docTypeLinkedTypes" force="true" />
+					<show id="bcpg:docTypeLinkedHierarchy" force="true" />
+					<show id="bcpg:docTypeLinkedCharacts" force="true" />
+					<show id="bcpg:docTypeDestPath" force="true" />
+				    <show id="bcpg:aiValidationCriteria" force="true" />
+                    <show id="bcpg:aiSuggestedFields" force="true" />
+                    <show id="bcpg:aiExtraPrompt" force="true" />
+					<show id="bcpg:isDeleted" force="true" />
+				</field-visibility>
+				<appearance>
+					<set id="documentType" label-id="becpg.forms.set.document-type.label" />
+					<set id="documentTypeAutogeneration" label-id="becpg.forms.set.document-type-autogeneration.label" />
+					<set id="ai" label-id="becpg.forms.set.ai.label" />
+					
+					<field id="bcpg:charactName" set="documentType" >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:docTypeCategory" set="documentType" />
+					<field id="cm:description" set="documentType" >
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="bcpg:docTypeIsMandatory" set="documentType" />
+					<field id="bcpg:docTypeEffectivityType" set="documentType" >
+						<constraint-handlers>
+							<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf" event='keyup,change@[
+									{"prop":"prop_bcpg_docTypeAutoExpirationDelay", "condition" : "|NONE|MANUAL"}
+								]' />
+						</constraint-handlers>
+					</field>
+					<field id="bcpg:docTypeAutoExpirationDelay" set="documentType" >
+						<control template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">d</control-param>
+						</control>
+					</field>
+					<field id="bcpg:docTypeFormula" set="documentType" >
+						<control template="/org/alfresco/components/form/controls/spel-editor.ftl">
+							<control-param name="rows">10</control-param>
+						</control>
+					</field>
+					<field id="bcpg:docTypeNameFormat" set="documentType" />
+					<field id="bcpg:isDeleted" set="documentType" />
+					
+					<field id="bcpg:docTypeLinkedTypes" set="documentTypeAutogeneration" >
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/aclType</control-param>
+							<control-param name="showTooltip">false</control-param>
+							<control-param name="saveTitle">false</control-param>
+						</control>
+					</field>
+					<field id="bcpg:docTypeLinkedHierarchy" set="documentTypeAutogeneration" >
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">
+								becpg/autocomplete/allLinkedvalue/values/System/ProductHierarchy/bcpg:entityLists
+							</control-param>
+							<control-param name="extraPaths">prop_bcpg_docTypeLinkedTypes</control-param>
+							<control-param name="showTooltip">false</control-param>
+							<control-param name="saveTitle">false</control-param>
+						</control>
+					</field>
+					<field id="bcpg:docTypeLinkedCharacts" set="documentTypeAutogeneration" >
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:entityListItem?classNames=bcpg:certification,bcpg:labelClaim,survey:surveyQuestion
+							</control-param>
+							<control-param name="showTooltip">false</control-param>
+							<control-param name="saveTitle">false</control-param>
+						</control>
+					</field>
+					<field id="bcpg:docTypeDestPath" set="documentTypeAutogeneration" help-id="becpg.forms.help.docTypeDestPath" />
+					
+					 <field id="bcpg:aiValidationCriteria" set="ai" >
+                        <control template="/org/alfresco/components/form/controls/textarea.ftl" >
+                        	<control-param name="rows">10</control-param>
+                        </control>
+                    </field>
+                    <field id="bcpg:aiSuggestedFields" set="ai" >
+                        <control template="/org/alfresco/components/form/controls/textarea.ftl" >
+                        	<control-param name="rows">4</control-param>
+                        </control>
+					</field>
+                    <field id="bcpg:aiExtraPrompt" set="ai" >
+                        <control template="/org/alfresco/components/form/controls/textarea.ftl" >
+                        	<control-param name="rows">4</control-param>
+                        </control>
+                    </field>
+					
+					
+				</appearance>
+			</form>
+		</forms>
+	</config>
 
 	<!-- bcpg:plant type (existing nodes) -->
 	<config evaluator="node-type" condition="bcpg:plant">
@@ -3375,8 +3650,6 @@
 					<field id="bcpg:plantPackerCode" set="2-col" />
 					<field id="bcpg:plantApprovalNumbers" set="2-col" />
 					<field id="sec:readGroups" set="2-col" />
-					<field id="bcpg:erpCode" set="2-col" />
-					<field id="bcpg:eanCode" set="2-col" />
 					<field id="bcpg:isDeleted" set="2-col" />
 					<field id="bcpg:plantCertifications" mandatory="false" read-only="false" set="2-col">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -5257,6 +5530,45 @@
 					<field id="bcpg:locationAddress2" help-id="becpg.forms.help.locationAddress2" />
 				</appearance>
 
+			</form>
+			
+			<form id="sub-datagrid-filter">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:supplierHierarchy1" />
+					<show id="bcpg:supplierHierarchy2" />
+					<show id="bcpg:supplierState" />
+					<show id="bcpg:locationAddress1" />
+					<show id="bcpg:locationCity" />
+					<show id="bcpg:locationCountry" />
+				</field-visibility>
+				<appearance>
+					
+					<field id="cm:name" label-id="becpg.forms.field.product" />
+					<field id="bcpg:erpCode" />
+					<field id="bcpg:supplierHierarchy1" label-id="becpg.forms.field.productHierarchy1" >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:supplierHierarchy2" label-id="becpg.forms.field.productHierarchy2" >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:supplierState" label-id="becpg.forms.field.productState" >
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:locationAddress1" help-id="becpg.forms.help.locationAddress1" >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+              		</field>
+              		<field id="bcpg:locationCity" >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+              		</field>
+              		<field id="bcpg:locationCountry" >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+              		</field>
+				</appearance>
 			</form>
 
 			<form id="product-list">
@@ -9024,6 +9336,8 @@
 				<field-visibility>
 					<show id="bcpg:nutListNut" />
 					<show id="bcpg:nutListValue" />
+					<show id="bcpg:nutListFormulatedValue" />
+					<show id="bcpg:nutListUnit" />
 					<show id="bcpg:nutListValuePrepared" force="true" />
 					<show id="bcpg:nutListMini" />
 					<show id="bcpg:nutListMaxi" />
@@ -9902,6 +10216,7 @@
 					<show id="bcpg:filBioOrigins" />
 					<show id="bcpg:regulatoryCountries" force="true" />
 					<show id="bcpg:regulatoryUsageRef" force="true" />
+					<show id="entity_bcpg:filIngs_bcpg:ing_asColumn" />
 					<show id="fm:commentCount" force="true" />
 					<show id="bcpg:glopTarget" />
 					<show id="bcpg:glopValue" />
@@ -10932,7 +11247,94 @@
 			</form>
 		</forms>
 	</config>
-
+	
+	<config evaluator="aspect" condition="bcpg:documentAspect">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="bcpg:documentState" />
+					<show id="bcpg:documentCategory" />
+					<show id="bcpg:documentIsMandatory" />
+					<show id="bcpg:documentTypeRef" />
+					<show id="bcpg:documentEntityRef" />
+				</field-visibility>
+				<appearance>
+					<set id="documentType" appearance="bordered-panel" label-id="becpg.forms.set.documentType.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+						
+					<field id="bcpg:documentState" set="documentType" />
+					<field id="bcpg:documentCategory" set="documentType" read-only="true" />
+					<field id="bcpg:documentIsMandatory" set="documentType" read-only="true" />
+					<field id="bcpg:documentTypeRef" set="documentType" >
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:documentType
+							</control-param>
+							<control-param name="showLink">false</control-param>
+						</control>
+					</field>
+					<field id="bcpg:documentEntityRef" set="documentType" read-only="true" >
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:entityV2
+							</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	<config evaluator="aspect" condition="bcpg:aiValidationAspect">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="bcpg:aiValidationState" for-mode="view" />
+					<show id="bcpg:aiValidationHints" for-mode="view" />
+					<show id="bcpg:aiValidationDate" for-mode="view" />
+				</field-visibility>
+				<appearance>
+					<set id="aiValidation" appearance="bordered-panel" label-id="becpg.forms.set.ai-validation.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="bcpg:aiValidationState" set="aiValidation" read-only="true" />
+					<field id="bcpg:aiValidationHints" set="aiValidation" read-only="true" >
+                        <control template="/org/alfresco/components/form/controls/textarea.ftl" >
+                        	<control-param name="rows">10</control-param>
+                        </control>
+                    </field>
+					<field id="bcpg:aiValidationDate" set="aiValidation" read-only="true" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	<config evaluator="aspect" condition="bcpg:aiAspect">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="bcpg:aiValidationCriteria" />
+					<show id="bcpg:aiSuggestedFields" />
+					<show id="bcpg:aiExtraPrompt" />
+				</field-visibility>
+				<appearance>
+					<set id="ai" appearance="bordered-panel" label-id="becpg.forms.set.ai.label" />
+					<field id="bcpg:aiValidationCriteria" set="ai" >
+                        <control template="/org/alfresco/components/form/controls/textarea.ftl" >
+                        	<control-param name="rows">10</control-param>
+                        </control>
+                    </field>
+					<field id="bcpg:aiSuggestedFields" set="ai" >
+                        <control template="/org/alfresco/components/form/controls/textarea.ftl" >
+                        	<control-param name="rows">4</control-param>
+                        </control>
+					</field>
+					<field id="bcpg:aiExtraPrompt" set="ai" >
+                        <control template="/org/alfresco/components/form/controls/textarea.ftl" >
+                        	<control-param name="rows">4</control-param>
+                        </control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
 
 	<config evaluator="aspect" condition="bcpg:supplierAspect">
 		<forms>

@@ -241,9 +241,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 
 		String path = decodeParam(req.getParameter(PARAM_PATH));
 		String query = decodeParam(req.getParameter(PARAM_QUERY));
-		
 		Integer page = intParam(req, PARAM_PAGE);
-		
 		
 		String entityQuery = null;
 		try {
@@ -264,9 +262,6 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 				queryBuilder.excludeSystems();
 			}
 		}
-		if (page != null ) {
-			queryBuilder.page(page);
-		}
 		if ((path != null) && (!path.isBlank())) {
 			queryBuilder.inPath(path);
 		}
@@ -280,35 +275,43 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 			if (jsonEntity.has("type")) {
 				type = QName.createQName(jsonEntity.getString("type"), namespaceService);
 			}
-			if (maxResults == null) {
-				maxResults = RepoConsts.MAX_RESULTS_256;
+			if (jsonEntity.has("parent")) {
+				queryBuilder.parent(new NodeRef("workspace://SpacesStore/" + jsonEntity.getString("parent")));
 			}
-			List<NodeRef> searchResults = advSearchService.queryAdvSearch(type, queryBuilder, criteria, maxResults);
-			int totalSize = searchResults.size();
-			int pageSize = RepoConsts.MAX_RESULTS_256;
-			if (page == null) {
+			
+			Integer pageSize = maxResults;
+			if (pageSize == null) {
+				pageSize = RepoConsts.MAX_RESULTS_256;
+			}
+			if (page == null || page <= 0 || pageSize.equals(RepoConsts.MAX_RESULTS_UNLIMITED)) {
 				page = 1;
 			}
-			if (maxResults == -1) {
-				pageSize = totalSize;
+			
+			int advSearchMaxResults = page * pageSize + 1;
+			if (pageSize == RepoConsts.MAX_RESULTS_UNLIMITED.intValue() || pageSize > RepoConsts.MAX_RESULTS_1000) {
+				advSearchMaxResults = RepoConsts.MAX_RESULTS_5000; // unlimited in advSearch
 			}
+			
+			List<NodeRef> advSearchResults = advSearchService.queryAdvSearch(type, queryBuilder, criteria, advSearchMaxResults);
+			int advSearchResultsSize = advSearchResults.size();
+			int finalResultsSize = pageSize.intValue() == RepoConsts.MAX_RESULTS_UNLIMITED ? advSearchResultsSize : Math.min(pageSize, advSearchResultsSize);
 			List<NodeRef> pagingNodes;
 			int start = (page - 1) * pageSize;
-			int end = Math.min(start + pageSize, totalSize);
+			int end = Math.min(start + pageSize, finalResultsSize);
 
-			if (start >= totalSize || totalSize == 0) {
+			if (start >= finalResultsSize || finalResultsSize == 0) {
 			    pagingNodes = List.of();
 			} else {
-			    pagingNodes = searchResults.subList(start, end);
+			    pagingNodes = advSearchResults.subList(start, end);
 			}
 			return new PagingResults<NodeRef>() {
 				@Override
 				public boolean hasMoreItems() {
-					return totalSize > pagingNodes.size();
+					return end < advSearchResultsSize;
 				}
 				@Override
 				public Pair<Integer, Integer> getTotalResultCount() {
-					return new Pair<>(totalSize, totalSize);
+					return new Pair<>(pagingNodes.size(), pagingNodes.size());
 				}
 				@Override
 				public String getQueryExecutionId() {
@@ -320,6 +323,9 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 				}
 			};
 		} else {
+			if (page != null ) {
+				queryBuilder.page(page);
+			}
 			if ((query != null) && !query.toUpperCase().contains("TYPE")) {
 				queryBuilder.ofType(BeCPGModel.TYPE_ENTITY_V2);
 			}

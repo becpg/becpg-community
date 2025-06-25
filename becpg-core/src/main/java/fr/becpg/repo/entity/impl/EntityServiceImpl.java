@@ -65,6 +65,7 @@ import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
@@ -111,6 +112,9 @@ public class EntityServiceImpl implements EntityService {
 
 	@Autowired
 	private EntityDictionaryService entityDictionaryService;
+
+	@Autowired
+	private AssociationService associationService;
 
 	private static final Set<QName> IGNORE_PARENT_ASSOC_TYPES = new HashSet<>(7);
 	static {
@@ -323,7 +327,7 @@ public class EntityServiceImpl implements EntityService {
 
 		// manage workingCopy
 		String wcLabel = CheckOutCheckInServiceImpl.getWorkingCopyLabel();
-		if (wcLabel!=null && imgName.endsWith(wcLabel)) {
+		if (wcLabel != null && imgName.endsWith(wcLabel)) {
 			imgName = getNameFromWorkingCopyName(imgName, wcLabel);
 		}
 
@@ -387,6 +391,34 @@ public class EntityServiceImpl implements EntityService {
 			documentsFolderNodeRef = fileFolderService.create(entityNodeRef, documentsFolderName, ContentModel.TYPE_FOLDER).getNodeRef();
 		}
 		return documentsFolderNodeRef;
+	}
+
+	@Override
+	public Map<NodeRef, NodeRef> getDocumentsByType(NodeRef entityNodeRef) {
+		Map<NodeRef, NodeRef> docByType = new HashMap<>();
+		for (FileInfo folder : fileFolderService.listFolders(entityNodeRef)) {
+			for (FileInfo fileInfo : fileFolderService.listFiles(folder.getNodeRef())) {
+				NodeRef fileNodeRef = fileInfo.getNodeRef();
+				if (nodeService.hasAspect(fileNodeRef, BeCPGModel.ASPECT_DOCUMENT_ASPECT)) {
+					NodeRef docType = associationService.getTargetAssoc(fileNodeRef, BeCPGModel.ASSOC_DOCUMENT_TYPE_REF);
+					if (docType != null) {
+						docByType.put(docType, fileNodeRef);
+					}
+				}
+			}
+		}
+
+		for (FileInfo fileInfo : fileFolderService.listFiles(entityNodeRef)) {
+			NodeRef fileNodeRef = fileInfo.getNodeRef();
+			if (nodeService.hasAspect(fileNodeRef, BeCPGModel.ASPECT_DOCUMENT_ASPECT)) {
+				NodeRef docType = associationService.getTargetAssoc(fileNodeRef, BeCPGModel.ASSOC_DOCUMENT_TYPE_REF);
+				if (docType != null) {
+					docByType.put(docType, fileNodeRef);
+				}
+			}
+		}
+
+		return docByType;
 	}
 
 	/** {@inheritDoc} */

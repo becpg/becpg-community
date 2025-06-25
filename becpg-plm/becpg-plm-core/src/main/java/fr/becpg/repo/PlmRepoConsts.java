@@ -217,6 +217,9 @@ public class PlmRepoConsts {
 	
 	/** Constant <code>PATH_TOX_ING="ToxIng"</code> */
 	public static final String PATH_TOX_ING = "ToxIng";
+	
+	/** Constant <code>PATH_DOCUMENT_TYPE="DocumentTypes"</code> */
+	public static final String PATH_DOCUMENT_TYPE = "DocumentTypes";
 
 	/** Constant <code>PATH_CONTACT_TYPES="ContactTypes"</code> */
 	public static final String PATH_CONTACT_TYPES = "ContactTypes";
@@ -227,6 +230,8 @@ public class PlmRepoConsts {
 	public static final String PATH_QUALITY_REPORTTEMPLATES = "QualityReportTemplates";
 	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_PRODUCTS="ExportProducts"</code> */
 	public static final String PATH_REPORTS_EXPORT_SEARCH_PRODUCTS = "ExportProducts";
+	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_DOCUMENTS="ExportDocuments"</code> */
+	public static final String PATH_REPORTS_EXPORT_SEARCH_DOCUMENTS = "ExportDocuments";
 	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_RAWMATERIAL_INGLIST="ExportRawMaterialIngList"</code> */
 	public static final String PATH_REPORTS_EXPORT_SEARCH_INGLIST = "ExportIngList";
 
@@ -330,10 +335,13 @@ public class PlmRepoConsts {
 
 	//GS1
 	/** Constant <code>PATH_GS1_PACKAGING_TYPE_CODES="PackagingTypeCodes"</code> */
+	@Deprecated
 	public static final String PATH_GS1_PACKAGING_TYPE_CODES = "PackagingTypeCodes";
 	/** Constant <code>PATH_GS1_PALLET_TYPE_CODES="PalletTypeCodes"</code> */
+	@Deprecated
 	public static final String PATH_GS1_PALLET_TYPE_CODES = "PalletTypeCodes";
 	/** Constant <code>PATH_GS1_PLATFORM_TERM_AND_CONDITIONS_CODES="PlatformTermsAndConditionsCodes"</code> */
+	@Deprecated
 	public static final String PATH_GS1_PLATFORM_TERM_AND_CONDITIONS_CODES = "PlatformTermsAndConditionsCodes";
 	/** Constant <code>PATH_GS1_SORTING_BONUS_CRITERIA="SortingBonusCriteria"</code> */
 	public static final String PATH_GS1_SORTING_BONUS_CRITERIA = "SortingBonusCriteria";
@@ -346,26 +354,35 @@ public class PlmRepoConsts {
 	public static final String PATH_GS1_DUTY_FEE_TAXES = "DutyFeeTaxes";
 
 	/** Constant <code>PATH_GS1_DATA_CARRIER_TYPE_CODES="DataCarrierTypeCode"</code> */
+	@Deprecated
 	public static final String PATH_GS1_DATA_CARRIER_TYPE_CODES = "DataCarrierTypeCode";
 	/** Constant <code>PATH_GS1_TRADE_ITEM_UNIT_DESCRIPTOR_CODES="TradeItemUnitDescriptorCode"</code> */
+	@Deprecated
 	public static final String PATH_GS1_TRADE_ITEM_UNIT_DESCRIPTOR_CODES = "TradeItemUnitDescriptorCode";
 	/** Constant <code>PATH_GS1_PACKAGING_TERMS_AND_CONDITIONS_CODES="PackagingTermsAndConditionsCode"</code> */
+	@Deprecated
 	public static final String PATH_GS1_PACKAGING_TERMS_AND_CONDITIONS_CODES = "PackagingTermsAndConditionsCode";
 	/** Constant <code>PATH_GS1_PACKAGING_RECYCLING_SCHEME_CODES="PackagingRecyclingSchemeCode"</code> */
+	@Deprecated
 	public static final String PATH_GS1_PACKAGING_RECYCLING_SCHEME_CODES = "PackagingRecyclingSchemeCode";
 	/** Constant <code>PATH_GS1_TRADE_ITEM_TRADE_CHANNELS="TradeItemTradeChannel"</code> */
+	@Deprecated
 	public static final String PATH_GS1_TRADE_ITEM_TRADE_CHANNELS = "TradeItemTradeChannel";
 	/** Constant <code>PATH_GS1_SELLING_UNITS="SellingUnitOfMeasure"</code> */
 	public static final String PATH_GS1_SELLING_UNITS = "SellingUnitOfMeasure";
 	/** Constant <code>PATH_GS1_HANDLING_INSTRUCTIONS="HandlingInstructions"</code> */
+	@Deprecated
 	public static final String PATH_GS1_HANDLING_INSTRUCTIONS = "HandlingInstructions";
 	/** Constant <code>PATH_GS1_PREPARATION_TYPE="PreparationType"</code> */
+	@Deprecated
 	public static final String PATH_GS1_PREPARATION_TYPE = "PreparationType";
 	/** Constant <code>PATH_GS1_SPECIES_FOR_FISHERY="SpeciesForFishery"</code> */
 	public static final String PATH_GS1_SPECIES_FOR_FISHERY = "SpeciesForFishery";
 	/** Constant <code>PATH_GS1_CATCH_METHID_CODES="CatchMethodCodes"</code> */
+	@Deprecated
 	public static final String PATH_GS1_CATCH_METHID_CODES = "CatchMethodCodes";
 	/** Constant <code>PATH_GS1_CATCH_AREA_CODES="CatchAreaCodes"</code> */
+	@Deprecated
 	public static final String PATH_GS1_CATCH_AREA_CODES = "CatchAreaCodes";
 	/** Constant <code>PATH_GS1_DUTY_FEE_TAX_AGENCY_CODES="DutyFeeTaxAgencyCodes"</code> */
 	public static final String PATH_GS1_DUTY_FEE_TAX_AGENCY_CODES = "DutyFeeTaxAgencyCodes";
@@ -386,6 +403,9 @@ public class PlmRepoConsts {
 	
 	/** Constant <code>PATH_SURVEY_QUESTIONS="SurveyQuestions"</code> */
 	public static final String PATH_SURVEY_QUESTIONS = "SurveyQuestions";
+	
+	/** Constant <code>PATH_DOCUMENT_CATEGORIES="DocumentCategories"</code> */
+	public static final String PATH_DOCUMENT_CATEGORIES = "DocumentCategories";
 	
 
 }

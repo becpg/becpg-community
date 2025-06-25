@@ -289,7 +289,7 @@
                   
                   
                   onAfterFormRuntimeInit : function (layer, args) {
-                      if(!this.options.disable && this.formRuntime == null && this.id.indexOf(args[1].runtime.formId.replace("-form",""))>-1){
+                      if(!this.options.disabled && this.formRuntime == null && this.id.indexOf(args[1].runtime.formId.replace("-form",""))>-1){
                           this.formRuntime = args[1].runtime;
                       
                           this.formRuntime.removeValidation = function(fieldId){
@@ -422,9 +422,15 @@
                                 }
                                 
                                 if(choice.comment){
-                                   showComment = true; 
-                                   if( choice.commentLabel && choice.commentLabel.length > 0 &&  Dom.get(this.id+'-comment_'+question.id+'-label')!=null) {
-									  Dom.get(this.id+'-comment_'+question.id+'-label').innerHTML = choice.commentLabel == "hidden" ? "" : choice.commentLabel ;
+                                   showComment = true;
+                                   if(choice.commentLabel && choice.commentLabel.length > 0 &&  Dom.get(this.id+'-comment_'+question.id+'-label')!=null) {
+									  const labelEl = Dom.get(this.id+'-comment_'+question.id+'-label');
+                                      const labelVal = choice.commentLabel == "hidden" ? "" : choice.commentLabel;
+                                      if ((labelVal || "") != "") {
+									  	labelEl.innerHTML = labelVal;
+									  } else {
+									    labelEl.remove();
+									  }
 								   }
                                 } 
                              }

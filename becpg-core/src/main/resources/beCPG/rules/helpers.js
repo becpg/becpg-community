@@ -138,6 +138,8 @@
  * isOnFormulateEntity(node) Test we are formulating entity
  * 
  * isOnBranchEntity(node) Test we are branching entity
+ * 
+ * getEntity(childNode, itemType) return first parent entity that is of type itemType
  */
 
 const SIMULATION_SITE_ID = "simulation";
@@ -1120,3 +1122,13 @@ function isOnBranchEntity(node) {
 function deleteExternalUser(userNode, supplierNode) {
 	bSupplier.deleteExternalUser(userNode, supplierNode);
 }
+
+/**
+ * @param {ScriptNode} childNode
+ * @param {string} itemType
+ * @returns {ScriptNode} first parent entity that is of type itemType
+ */
+function getEntity(childNode, itemType) {
+	return bcpg.getEntity(childNode, itemType);
+}
+

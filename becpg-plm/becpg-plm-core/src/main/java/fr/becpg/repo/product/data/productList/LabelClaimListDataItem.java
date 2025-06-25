@@ -324,11 +324,159 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements Si
 	public void setMissingLabelClaims(List<NodeRef> missingLabelClaims) {
 		this.missingLabelClaims = missingLabelClaims;
 	}
+	
+	/**
+	 * <p>withMissingLabelClaims.</p>
+	 *
+	 * @param missingLabelClaims a {@link java.util.List} object.
+	 * @return a {@link fr.becpg.repo.product.data.productList.LabelClaimListDataItem} object.
+	 */
+	public LabelClaimListDataItem withMissingLabelClaims(List<NodeRef> missingLabelClaims) {
+		setMissingLabelClaims(missingLabelClaims);
+		return this;
+	}
+	
+	/**
+	 * <p>withLabelClaim.</p>
+	 *
+	 * @param labelClaim a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link fr.becpg.repo.product.data.productList.LabelClaimListDataItem} object.
+	 */
+	public LabelClaimListDataItem withLabelClaim(NodeRef labelClaim) {
+		setLabelClaim(labelClaim);
+		return this;
+	}
+	
+	/**
+	 * <p>withType.</p>
+	 *
+	 * @param type a {@link java.lang.String} object.
+	 * @return a {@link fr.becpg.repo.product.data.productList.LabelClaimListDataItem} object.
+	 */
+	public LabelClaimListDataItem withType(String type) {
+		setType(type);
+		return this;
+	}
+	
+	/**
+	 * <p>withLabelClaimValue.</p>
+	 *
+	 * @param labelClaimValue a {@link java.lang.String} object.
+	 * @return a {@link fr.becpg.repo.product.data.productList.LabelClaimListDataItem} object.
+	 */
+	public LabelClaimListDataItem withLabelClaimValue(String labelClaimValue) {
+		setLabelClaimValue(labelClaimValue);
+		return this;
+	}
+	
+	/**
+	 * <p>withIsClaimed.</p>
+	 *
+	 * @param isClaimed a {@link java.lang.Boolean} object.
+	 * @return a {@link fr.becpg.repo.product.data.productList.LabelClaimListDataItem} object.
+	 */
+	public LabelClaimListDataItem withIsClaimed(Boolean isClaimed) {
+		setIsClaimed(isClaimed);
+		return this;
+	}
+	
+
+	public LabelClaimListDataItem withIsCertified(Boolean isCertified) {
+		if(Boolean.TRUE.equals(isCertified)){
+			this.labelClaimValue = VALUE_CERTIFIED;
+		} 
+		return this;
+	}
+	
+	/**
+	 * <p>withPercentClaim.</p>
+	 *
+	 * @param percentClaim a {@link java.lang.Double} object.
+	 * @return a {@link fr.becpg.repo.product.data.productList.LabelClaimListDataItem} object.
+	 */
+	public LabelClaimListDataItem withPercentClaim(Double percentClaim) {
+		setPercentClaim(percentClaim);
+		return this;
+	}
+	
+	/**
+	 * <p>withPercentApplicable.</p>
+	 *
+	 * @param percentApplicable a {@link java.lang.Double} object.
+	 * @return a {@link fr.becpg.repo.product.data.productList.LabelClaimListDataItem} object.
+	 */
+	public LabelClaimListDataItem withPercentApplicable(Double percentApplicable) {
+		setPercentApplicable(percentApplicable);
+		return this;
+	}
+	
+	/**
+	 * <p>withIsFormulated.</p>
+	 *
+	 * @param isFormulated a {@link java.lang.Boolean} object.
+	 * @return a {@link fr.becpg.repo.product.data.productList.LabelClaimListDataItem} object.
+	 */
+	public LabelClaimListDataItem withIsFormulated(Boolean isFormulated) {
+		setIsFormulated(isFormulated);
+		return this;
+	}
+	
+	/**
+	 * <p>withRegulatoryCountriesRef.</p>
+	 *
+	 * @param regulatoryCountriesRef a {@link java.util.List} object.
+	 * @return a {@link fr.becpg.repo.product.data.productList.LabelClaimListDataItem} object.
+	 */
+	public LabelClaimListDataItem withRegulatoryCountriesRef(List<NodeRef> regulatoryCountriesRef) {
+		setRegulatoryCountriesRef(regulatoryCountriesRef);
+		return this;
+	}
+	
+	/**
+	 * <p>withRegulatoryUsagesRef.</p>
+	 *
+	 * @param regulatoryUsagesRef a {@link java.util.List} object.
+	 * @return a {@link fr.becpg.repo.product.data.productList.LabelClaimListDataItem} object.
+	 */
+	public LabelClaimListDataItem withRegulatoryUsagesRef(List<NodeRef> regulatoryUsagesRef) {
+		setRegulatoryUsagesRef(regulatoryUsagesRef);
+		return this;
+	}
+	
+	/**
+	 * <p>withRegulatoryType.</p>
+	 *
+	 * @param regulatoryType a {@link fr.becpg.repo.product.data.constraints.RequirementType} object.
+	 * @return a {@link fr.becpg.repo.product.data.productList.LabelClaimListDataItem} object.
+	 */
+	public LabelClaimListDataItem withRegulatoryType(RequirementType regulatoryType) {
+		setRegulatoryType(regulatoryType);
+		return this;
+	}
+	
+	/**
+	 * <p>withRegulatoryMessage.</p>
+	 *
+	 * @param regulatoryMessage a {@link org.alfresco.service.cmr.repository.MLText} object.
+	 * @return a {@link fr.becpg.repo.product.data.productList.LabelClaimListDataItem} object.
+	 */
+	public LabelClaimListDataItem withRegulatoryMessage(MLText regulatoryMessage) {
+		setRegulatoryMessage(regulatoryMessage);
+		return this;
+	}
 	/**
 	 * <p>Constructor for LabelClaimListDataItem.</p>
 	 */
 	public LabelClaimListDataItem(){
 		super();
+	}
+	
+	/**
+	 * Creates a new builder for LabelClaimListDataItem
+	 * @return a new builder instance
+	 */
+	public static LabelClaimListDataItem build() {
+		return new LabelClaimListDataItem();
 	}
 	
 	
@@ -339,6 +487,7 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements Si
 	 * @param type a {@link java.lang.String} object.
 	 * @param isClaimed a {@link java.lang.Boolean} object.
 	 */
+	@Deprecated
 	public LabelClaimListDataItem(NodeRef labelClaim, String type, Boolean isClaimed) {
 		super();
 		this.labelClaim = labelClaim;
@@ -428,6 +577,7 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements Si
 	public Boolean shouldDetailIfZero() {
 		return true;
 	}
+
 		
 
 }
