@@ -1,6 +1,8 @@
 package fr.becpg.repo.autocomplete;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -37,18 +39,25 @@ public class IngListAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 
 	private static final String SOURCE_TYPE_ING = "ing";
 	
+	//private static final String PROP_CHARAC_NAME_FORMAT = "characNameFormat";
+	
+	//private final ThreadLocal<String> charactNameFormat = new ThreadLocal<>();
+	
 	@Component
 	public static class IngListAutoCompleteExtractor extends TargetAssocAutoCompleteExtractor {
 		
 		@Autowired
-		private AttributeExtractorService attributeExtractorService;
+		private PermissionService permissionService;
+		
+		@Autowired
+		private NodeService nodeService;
 		
 		@Autowired
 		private CharactAttributeExtractorPlugin charactAttributeExtractorPlugin;
 		
 		@Override
 		protected String extractPropName(QName type, NodeRef nodeRef) {
-			return attributeExtractorService.extractPropName(type, nodeRef,
+			return AttributeExtractorService.extractPropName(permissionService, nodeService, type, nodeRef,
 					charactAttributeExtractorPlugin.extractExpr(nodeRef, "{ml_bcpg:charactName} - {bcpg:casNumber}"));
 		}
 	}
@@ -61,6 +70,21 @@ public class IngListAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 	public String[] getHandleSourceTypes() {
 		return new String[] { SOURCE_TYPE_ING };
 	}
+
+	
+	/** {@inheritDoc} */
+	/*
+	@Override
+	public AutoCompletePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
+		if (props != null) {
+			@SuppressWarnings("unchecked")
+			final Map<String, String> extras = (Map<String, String>) props.get(AutoCompleteService.EXTRA_PARAM);
+			if (extras != null) {
+				charactNameFormat.set(extras.get(PROP_CHARAC_NAME_FORMAT));
+			}
+		}
+		return suggestTargetAssoc(null, PLMModel.TYPE_ING, query, pageNum, pageSize, null, props);
+	}*/
 
 	/** {@inheritDoc} */
 	@Override
