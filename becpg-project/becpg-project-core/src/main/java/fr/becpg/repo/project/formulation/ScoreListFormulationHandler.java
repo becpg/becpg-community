@@ -385,7 +385,12 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 
 	private void fillScores(List<SurveyListDataItem> surveyList, Map<NodeRef, Double> scoresPerCriterion,
 			Map<NodeRef, Double> maxScoresPerCriterion) {
-		surveyList = surveyService.getVisibles(surveyList);
+		final List<SurveyListDataItem> visibleSurveyListDataItems = surveyService.getVisibles(surveyList);
+		surveyList.stream().forEach(surveyListDataItem -> {
+			surveyListDataItem.setReportKinds(visibleSurveyListDataItems.contains(surveyListDataItem) ? null : "None");
+			alfrescoRepository.save(surveyListDataItem);
+		});
+		surveyList = visibleSurveyListDataItems;
 		for (SurveyListDataItem s : surveyList) {
 			
 			SurveyQuestion question = (SurveyQuestion) alfrescoRepository.findOne(s.getQuestion());
