@@ -175,23 +175,25 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	}
 
 	private void replaceIndexedAssocs(Map<String, String> criteria) {
-		Map<String, String> toAdd = new HashMap<>();
-		Set<String> toRemove = new HashSet<>();
-		for (String key : criteria.keySet()) {
-			if (key.startsWith("assoc_")) {
-				QName assocQName = QName.createQName(key.replace("assoc_", "").replace("_added", "").replace("_", ":"), namespaceService);
-				QName assocIndexQName = entityDictionaryService.getAssocIndexQName(assocQName);
-				if (assocIndexQName != null) {
-					String value = criteria.get(key);
-					String newKey = "prop_" + assocIndexQName.toPrefixString().replace(":", "_") + "_added";
-					toAdd.put(newKey, value);
-					toRemove.add(key);
+		if (criteria != null) {
+			Map<String, String> toAdd = new HashMap<>();
+			Set<String> toRemove = new HashSet<>();
+			for (String key : criteria.keySet()) {
+				if (key.startsWith("assoc_")) {
+					QName assocQName = QName.createQName(key.replace("assoc_", "").replace("_added", "").replace("_", ":"), namespaceService);
+					QName assocIndexQName = entityDictionaryService.getAssocIndexQName(assocQName);
+					if (assocIndexQName != null) {
+						String value = criteria.get(key);
+						String newKey = "prop_" + assocIndexQName.toPrefixString().replace(":", "_") + "_added";
+						toAdd.put(newKey, value);
+						toRemove.add(key);
+					}
 				}
 			}
-		}
-		criteria.putAll(toAdd);
-		for (String keyToRemove : toRemove) {
-			criteria.remove(keyToRemove);
+			criteria.putAll(toAdd);
+			for (String keyToRemove : toRemove) {
+				criteria.remove(keyToRemove);
+			}
 		}
 	}
 
