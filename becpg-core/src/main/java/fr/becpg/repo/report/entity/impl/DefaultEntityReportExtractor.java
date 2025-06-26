@@ -573,8 +573,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 				Class<RepositoryEntity> entityClass = repositoryEntityDefReader.getEntityClass(dataListQName);
 				if (entityClass != null) {
-					List<? extends BeCPGDataObject> dataListItems = filterDataListItems(dataListQName,
-							alfrescoRepository.loadDataList(listNodeRef, dataListQName));
+					List<BeCPGDataObject> dataListItems = alfrescoRepository.loadDataList(listNodeRef, dataListQName);
 
 					if ((dataListItems != null) && !dataListItems.isEmpty()) {
 						Element dataListElt = dataListsElt.addElement(dataListQName.getLocalName() + "s");
