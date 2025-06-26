@@ -38,7 +38,7 @@ public class SurveyListDataItem extends BeCPGDataObject {
 	
 	private Boolean generated;
 
-	private String reportKinds;
+	private List<String> reportKinds;
 	
 	/**
 	 * <p>Constructor for SurveyListDataItem.</p>
@@ -165,16 +165,16 @@ public class SurveyListDataItem extends BeCPGDataObject {
 	 */
 	@AlfProp
 	@AlfQname(qname = "rep:reportKinds")
-	public String getReportKinds() {
+	public List<String> getReportKinds() {
 		return reportKinds;
 	}
 	
 	/**
 	 * <p>Setter for the field <code>reportKinds</code>.</p>
 	 *
-	 * @param choices a {@link java.lang.String} object
+	 * @param choices a {@link java.util.List} object
 	 */
-	public void setReportKinds(String reportKinds) {
+	public void setReportKinds(List<String> reportKinds) {
 		this.reportKinds = reportKinds;
 	}
 
