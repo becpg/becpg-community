@@ -278,29 +278,36 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 			if (jsonEntity.has("parent")) {
 				queryBuilder.parent(new NodeRef("workspace://SpacesStore/" + jsonEntity.getString("parent")));
 			}
-			if (maxResults == null) {
-				maxResults = RepoConsts.MAX_RESULTS_256;
+			
+			Integer pageSize = maxResults;
+			if (pageSize == null) {
+				pageSize = RepoConsts.MAX_RESULTS_256;
 			}
-			List<NodeRef> searchResults = advSearchService.queryAdvSearch(type, queryBuilder, criteria, RepoConsts.MAX_RESULTS_UNLIMITED);
-			int backEndResults = searchResults.size();
-			int pageSize = RepoConsts.MAX_RESULTS_256;
-			if (page == null || page <= 0) {
+			if (page == null || page <= 0 || pageSize.equals(RepoConsts.MAX_RESULTS_UNLIMITED)) {
 				page = 1;
 			}
-			int requestedResultsSize = maxResults.intValue() == RepoConsts.MAX_RESULTS_UNLIMITED ? backEndResults : Math.min(maxResults, backEndResults);
+			
+			int advSearchMaxResults = page * pageSize + 1;
+			if (pageSize == RepoConsts.MAX_RESULTS_UNLIMITED.intValue() || pageSize > RepoConsts.MAX_RESULTS_1000) {
+				advSearchMaxResults = RepoConsts.MAX_RESULTS_5000; // unlimited in advSearch
+			}
+			
+			List<NodeRef> advSearchResults = advSearchService.queryAdvSearch(type, queryBuilder, criteria, advSearchMaxResults);
+			int advSearchResultsSize = advSearchResults.size();
+			int finalResultsSize = pageSize.intValue() == RepoConsts.MAX_RESULTS_UNLIMITED ? advSearchResultsSize : Math.min(pageSize, advSearchResultsSize);
 			List<NodeRef> pagingNodes;
 			int start = (page - 1) * pageSize;
-			int end = Math.min(start + pageSize, requestedResultsSize);
+			int end = Math.min(start + pageSize, finalResultsSize);
 
-			if (start >= requestedResultsSize || requestedResultsSize == 0) {
+			if (start >= finalResultsSize || finalResultsSize == 0) {
 			    pagingNodes = List.of();
 			} else {
-			    pagingNodes = searchResults.subList(start, end);
+			    pagingNodes = advSearchResults.subList(start, end);
 			}
 			return new PagingResults<NodeRef>() {
 				@Override
 				public boolean hasMoreItems() {
-					return end < requestedResultsSize;
+					return end < advSearchResultsSize;
 				}
 				@Override
 				public Pair<Integer, Integer> getTotalResultCount() {

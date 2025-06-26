@@ -305,7 +305,7 @@ public class IdentityServiceAccountProvider {
         }
 	}
 	
-	private String getAdminAccessToken() throws IOException {
+	private String getAdminAccessToken() {
         try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
             HttpPost request = new HttpPost(authServerUrl + "/realms/" + realm + "/protocol/openid-connect/token");
             ArrayList<BasicNameValuePair> parameters = new ArrayList<>();
@@ -325,15 +325,16 @@ public class IdentityServiceAccountProvider {
                     JSONObject auth = new JSONObject(EntityUtils.toString(response.getEntity()));
                     if (auth.has("access_token")) {
                     	return auth.getString("access_token");
-                    } else {
-						logger.error("Incorrect auth message: " + auth.toString());
-					}
-                } else {
-                	logger.error("Incorrect status code: "+EntityUtils.toString(response.getEntity()));
+                    }
+                    throw new IdentityServiceException("Incorrect auth message: " + auth.toString());
                 }
+                throw new IdentityServiceException("Incorrect status code: " + EntityUtils.toString(response.getEntity()));
+            } catch (IOException e) {
+            	throw new IdentityServiceException("Error while fetching access_token from identityService", e);
             }
+        } catch (IOException e) {
+        	throw new IdentityServiceException("Error while fetching access_token from identityService", e);
         }
-        throw new IOException("Error while fetching access_token from identityService");
     }
 
 	/** {@inheritDoc} */
