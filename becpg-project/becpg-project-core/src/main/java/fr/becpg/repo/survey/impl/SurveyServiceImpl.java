@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -338,6 +339,34 @@ public class SurveyServiceImpl implements SurveyService {
 			return options.toString();
 		}
 		return null;
+	}
+	
+	/** {@inheritDoc} */
+	@Override
+	public List<SurveyListDataItem> getVisibles(List<SurveyListDataItem> surveyListDataItems) {
+		final List<SurveyListDataItem> visibleSurveyListDataItems = new ArrayList<>(surveyListDataItems.size());
+		final Map<NodeRef, SurveyQuestion> nodeRefSurveyQuestions = surveyListDataItems.stream()
+				.map(SurveyListDataItem::getQuestion).map(alfrescoRepository::findOne).map(SurveyQuestion.class::cast)
+				.collect(Collectors.toMap(SurveyQuestion::getNodeRef, Function.identity()));
+		for (final SurveyListDataItem surveyListDataItem : surveyListDataItems) {
+			final SurveyQuestion surveyQuestion = nodeRefSurveyQuestions.get(surveyListDataItem.getQuestion());
+			final SurveyQuestion parent = surveyQuestion.getParent() != null ? surveyQuestion.getParent()
+					: surveyQuestion;
+			final boolean inNextQuestions = new ArrayList<>(nodeRefSurveyQuestions.values()).stream()
+					.map(this::getDefinitionChoices).flatMap(List::stream)
+					.map(nodeRef -> nodeRefSurveyQuestions.computeIfAbsent(nodeRef,
+							unused -> (SurveyQuestion) alfrescoRepository.findOne(nodeRef)))
+					.map(SurveyQuestion.class::cast).filter(question -> question.getNextQuestions() != null)
+					.anyMatch(question -> question.getNextQuestions().contains(parent));
+			final boolean inChoices = inNextQuestions
+					&& surveyListDataItems.stream().map(SurveyListDataItem::getChoices).flatMap(List::stream)
+							.map(choice -> nodeRefSurveyQuestions.get(choice).getNextQuestions()).flatMap(List::stream)
+							.anyMatch(parent::equals);
+			if (!inNextQuestions || inChoices || Boolean.TRUE.equals(parent.getIsVisible())) {
+				visibleSurveyListDataItems.add(surveyListDataItem);
+			}
+		}
+		return visibleSurveyListDataItems;
 	}
 
 }

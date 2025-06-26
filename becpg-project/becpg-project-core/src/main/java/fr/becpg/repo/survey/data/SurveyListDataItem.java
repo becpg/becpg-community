@@ -37,6 +37,8 @@ public class SurveyListDataItem extends BeCPGDataObject {
 	private Integer sort;
 	
 	private Boolean generated;
+
+	private List<String> reportKinds;
 	
 	/**
 	 * <p>Constructor for SurveyListDataItem.</p>
@@ -155,13 +157,33 @@ public class SurveyListDataItem extends BeCPGDataObject {
 	public void setGenerated(Boolean generated) {
 		this.generated = generated;
 	}
+	
+	/**
+	 * <p>Getter for the field <code>reportKinds</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
+	@AlfProp
+	@AlfQname(qname = "rep:reportKinds")
+	public List<String> getReportKinds() {
+		return reportKinds;
+	}
+	
+	/**
+	 * <p>Setter for the field <code>reportKinds</code>.</p>
+	 *
+	 * @param choices a {@link java.util.List} object
+	 */
+	public void setReportKinds(List<String> reportKinds) {
+		this.reportKinds = reportKinds;
+	}
 
 	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(choices, comment, question, generated);
+		result = prime * result + Objects.hash(choices, comment, question, generated, reportKinds);
 		return result;
 	}
 
@@ -176,13 +198,13 @@ public class SurveyListDataItem extends BeCPGDataObject {
 			return false;
 		SurveyListDataItem other = (SurveyListDataItem) obj;
 		return Objects.equals(choices, other.choices) && Objects.equals(comment, other.comment)
-				&& Objects.equals(question, other.question) && Objects.equals(generated, other.generated);
+				&& Objects.equals(question, other.question) && Objects.equals(generated, other.generated)
+				&& Objects.equals(reportKinds, other.reportKinds);
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "SurveyListDataItem [comment=" + comment + ", question=" + question + ", choices=" + choices + ", sort="
-				+ sort + ", generated=" + generated + "]";
+				+ sort + ", generated=" + generated + ", reportKinds=" + reportKinds + "]";
 	}
 }
