@@ -117,6 +117,7 @@
                     <property name="nodeService" ref="nodeService" />
                     <property name="mlNodeService" ref="mlAwareNodeService" />
                     <property name="formulaService" ref="formulaService" />
+                    <property name="surveyService" ref="surveyService" />
                 </bean>
 				<bean class="fr.becpg.repo.project.formulation.TaskOverdueFormulationHandler">
 					<property name="beCPGMailService" ref="beCPGMailService" />
