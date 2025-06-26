@@ -44,39 +44,45 @@ import fr.becpg.repo.RepoConsts;
 		 * @param pageNum a {@link java.lang.Integer} object.
 		 * @param pageSize a {@link java.lang.Integer} object.
 		 * @param listValueExtractor a {@link fr.becpg.repo.autocomplete.AutoCompleteExtractor} object.
+		 * @param characNameFormat a {@link java.util.String} object.
 		 * @param <T> a T class
 		 */
-		public <T> AutoCompletePage(List<T> fullList, Integer pageNum, Integer pageSize, AutoCompleteExtractor<T> listValueExtractor) {
-        	if(pageNum==null || pageNum <1){
-        		pageNum = 1;
-        	}
-        	
-        	if(RepoConsts.MAX_RESULTS_UNLIMITED.equals(pageSize)) {
-        		this.page = 0;
-        		 this.pageSize = fullList.size();
- 	             this.fullListSize = fullList.size();
- 	             this.results =  listValueExtractor.extract(fullList);
-        	} else {
-        	
-	            this.page = pageNum;
-	            this.pageSize = pageSize;
-	            this.fullListSize = fullList.size();
-	            
-	            int fromIndex = Math.max((page-1) * pageSize,0);
-	            int toIndex = Math.min(page * pageSize, fullListSize);
-	            
-	            if(!fullList.isEmpty() && toIndex >= fromIndex){
-	            	if(listValueExtractor == null){
-	            		results = (List<AutoCompleteEntry>) fullList.subList(fromIndex, toIndex);
-	            	}else {
-	            		results = listValueExtractor.extract(fullList.subList(fromIndex, toIndex)); 
-	            	}
-	            } else {
-	            	results = new ArrayList<>();
-	            }
-        	}
-        }
+		public <T> AutoCompletePage(List<T> fullList, Integer pageNum, Integer pageSize,
+				AutoCompleteExtractor<T> listValueExtractor, String characNameFormat) {
+			if (pageNum == null || pageNum < 1) {
+				pageNum = 1;
+			}
+
+			if (RepoConsts.MAX_RESULTS_UNLIMITED.equals(pageSize)) {
+				this.page = 0;
+				this.pageSize = fullList.size();
+				this.fullListSize = fullList.size();
+				this.results = listValueExtractor.extract(fullList, characNameFormat);
+			} else {
+
+				this.page = pageNum;
+				this.pageSize = pageSize;
+				this.fullListSize = fullList.size();
+
+				int fromIndex = Math.max((page - 1) * pageSize, 0);
+				int toIndex = Math.min(page * pageSize, fullListSize);
+
+				if (!fullList.isEmpty() && toIndex >= fromIndex) {
+					if (listValueExtractor == null) {
+						results = (List<AutoCompleteEntry>) fullList.subList(fromIndex, toIndex);
+					} else {
+						results = listValueExtractor.extract(fullList.subList(fromIndex, toIndex), characNameFormat);
+					}
+				} else {
+					results = new ArrayList<>();
+				}
+			}
+		}
      
+        public <T> AutoCompletePage(List<T> fullList, Integer pageNum, Integer pageSize,
+				AutoCompleteExtractor<T> listValueExtractor) {
+        	this(fullList, pageNum, pageSize, listValueExtractor, null);
+        }
 
 
 		/**
@@ -114,9 +120,5 @@ import fr.becpg.repo.RepoConsts;
 		public Integer getFullListSize() {
 			return fullListSize;
 		}
-
-		
-		
- 
  }
 
