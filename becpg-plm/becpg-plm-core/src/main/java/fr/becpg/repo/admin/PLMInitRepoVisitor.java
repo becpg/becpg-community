@@ -355,6 +355,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 		// Icons
 		visitFolder(systemNodeRef, RepoConsts.PATH_ICON);
+		
+		// Codes
+		visitFolder(systemNodeRef, RepoConsts.PATH_CODES);
 
 		// EntityTemplates
 		visitEntityTpls(systemNodeRef);
@@ -624,6 +627,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			}
 		}
 
+		if (Objects.equals(folderName, RepoConsts.PATH_CODES)) {
+			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/databases/gs1/gs1_codes_11_2024.csv");
+		}
 	}
 
 	private void createNotifications(NodeRef systemNodeRef) {
@@ -1153,28 +1159,12 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 		entityLists.put(PlmRepoConsts.PATH_LCA_UNITS, BeCPGModel.TYPE_LIST_VALUE);
 
-		entityLists.put(PlmRepoConsts.PATH_GS1_PACKAGING_TYPE_CODES, BeCPGModel.TYPE_LIST_VALUE);
-
-		entityLists.put(PlmRepoConsts.PATH_GS1_PACKAGING_RECYCLING_SCHEME_CODES, BeCPGModel.TYPE_LIST_VALUE);
-
-		entityLists.put(PlmRepoConsts.PATH_GS1_PALLET_TYPE_CODES, BeCPGModel.TYPE_LIST_VALUE);
-		entityLists.put(PlmRepoConsts.PATH_GS1_PLATFORM_TERM_AND_CONDITIONS_CODES, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_GS1_SORTING_BONUS_CRITERIA, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_GS1_SORTING_MALUS_CRITERIA, BeCPGModel.TYPE_LIST_VALUE);
 
-		entityLists.put(PlmRepoConsts.PATH_GS1_HANDLING_INSTRUCTIONS, BeCPGModel.TYPE_LIST_VALUE);
-		entityLists.put(PlmRepoConsts.PATH_GS1_PREPARATION_TYPE, BeCPGModel.TYPE_LIST_VALUE);
-
-		entityLists.put(PlmRepoConsts.PATH_GS1_DATA_CARRIER_TYPE_CODES, BeCPGModel.TYPE_LIST_VALUE);
-		entityLists.put(PlmRepoConsts.PATH_GS1_TRADE_ITEM_UNIT_DESCRIPTOR_CODES, BeCPGModel.TYPE_LIST_VALUE);
-		entityLists.put(PlmRepoConsts.PATH_GS1_PACKAGING_TERMS_AND_CONDITIONS_CODES, BeCPGModel.TYPE_LIST_VALUE);
-		entityLists.put(PlmRepoConsts.PATH_GS1_TRADE_ITEM_TRADE_CHANNELS, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_GS1_SELLING_UNITS, BeCPGModel.TYPE_LIST_VALUE);
 
 		entityLists.put(PlmRepoConsts.PATH_GS1_SPECIES_FOR_FISHERY, BeCPGModel.TYPE_LIST_VALUE);
-		entityLists.put(PlmRepoConsts.PATH_GS1_CATCH_METHID_CODES, BeCPGModel.TYPE_LIST_VALUE);
-		entityLists.put(PlmRepoConsts.PATH_GS1_CATCH_AREA_CODES, BeCPGModel.TYPE_LIST_VALUE);
-		
 		entityLists.put(PlmRepoConsts.PATH_GS1_DUTY_FEE_TAX_AGENCY_CODES, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_GS1_DUTY_FEE_TAX_TYPE_CODES, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_GS1_DUTY_FEE_TAX_CATEGORY_CODES, BeCPGModel.TYPE_LIST_VALUE);

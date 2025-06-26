@@ -149,6 +149,9 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 
 		// license
 		visitFolder(systemNodeRef, RepoConsts.PATH_LICENSE);
+		
+		// codes
+		visitFolder(systemNodeRef, RepoConsts.PATH_CODES);
 
 		// version
 		visitVersionFolder(entityVersionService.getEntitiesHistoryFolder());
