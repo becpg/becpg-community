@@ -38,7 +38,7 @@ public abstract class AbstractExprNameExtractor implements AttributeExtractorPlu
 	}
 	
 	private String clean(String expr) {
-		return expr!=null ? expr.replaceFirst("^ - ", "").trim() : expr;
+		return expr != null ? expr.replaceFirst("^ - ", "").replaceFirst(" - $", "").trim() : expr;
 	}
 
 
