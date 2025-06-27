@@ -54,7 +54,7 @@ public class IngListDataItem extends AbstractManualDataItem
 	 */
 	private static final long serialVersionUID = -2710240943326822672L;
 
-	private Double qtyPerc = 0d;
+	private Double qtyPerc = null;
 	
 	private Double qtyPerc1 = null;
 
@@ -70,7 +70,7 @@ public class IngListDataItem extends AbstractManualDataItem
 
 	private Double qtyPercWithSecondaryYield = null;
 
-	private Double volumeQtyPerc;
+	private Double volumeQtyPerc = null;
 
 	private List<NodeRef> geoOrigin = new LinkedList<>();
 
