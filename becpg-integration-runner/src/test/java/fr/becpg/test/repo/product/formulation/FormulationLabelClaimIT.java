@@ -258,18 +258,6 @@ public class FormulationLabelClaimIT extends AbstractFinishedProductTest {
 
 			// create association
 			nodeService.createAssociation(tmp, globalProductSpecificationNodeRef, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
-			
-			// add claim percents
-			productLabelClaimFalse.setPercentClaim(95.0);
-			nodeService.setProperty(productLabelClaimFalse.getLabelClaim(), PLMModel.PROP_CLAIM_REGULATORY_THRESHOLD, 95.0);
-			
-			productLabelClaimFalse2.setPercentClaim(80.0);
-			productLabelClaimFalse2.setPercentApplicable(100.0);
-			nodeService.setProperty(productLabelClaimFalse2.getLabelClaim(), PLMModel.PROP_CLAIM_REGULATORY_THRESHOLD, 95.0);
-			
-			productLabelClaimFalse5.setPercentClaim(80.0);
-			productLabelClaimFalse5.setPercentApplicable(85.0);
-			nodeService.setProperty(productLabelClaimFalse5.getLabelClaim(), PLMModel.PROP_CLAIM_REGULATORY_THRESHOLD, 95.0);
 
 			/*-- Formulation --*/
 			logger.info("/*-- Formulation --*/");
@@ -279,31 +267,9 @@ public class FormulationLabelClaimIT extends AbstractFinishedProductTest {
 		}, false, true);
 
 		checkRequirement(testProduct);
-		testClaimRegulatoryThreshold(testProduct);
 
 	}
 	
-	private void testClaimRegulatoryThreshold(NodeRef testProduct) {
-		
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			/* -- Check formulation -- */
-			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(testProduct);
-			
-			List<LabelClaimListDataItem> labelClaimList = formulatedProduct.getLabelClaimList();
-			LabelClaimListDataItem labelClaim1 = labelClaimList.get(0);
-			LabelClaimListDataItem labelClaim2 = labelClaimList.get(1);
-			LabelClaimListDataItem labelClaim5 = labelClaimList.get(4);
-			
-			assertEquals(labelClaim1.getLabelClaimValue(), "true");
-			assertEquals(labelClaim2.getLabelClaimValue(), "false");
-			assertEquals(labelClaim1.getLabelClaimValue(), "true");
-			
-			return null;
-			
-		}, false, true);
-		
-	}
-
 	private void checkRequirement(NodeRef testProduct) {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {

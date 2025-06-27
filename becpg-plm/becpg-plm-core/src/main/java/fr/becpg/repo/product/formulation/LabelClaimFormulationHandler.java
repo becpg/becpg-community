@@ -226,12 +226,16 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 					}
 					
 					if (regulatoryThreshold != null && percentage != null) {
-						if (regulatoryThreshold > percentage &&
-							labelClaimListDataItem.getLabelClaimValue().equals("certified")) {
-							productData.addError(MLTextHelper.getI18NMessage(MESSAGE_CERTIFIED_ERROR, 
+						if (regulatoryThreshold > percentage) {
+							if (labelClaimListDataItem.getLabelClaimValue().equals("certified") ||
+							labelClaimListDataItem.getLabelClaimValue().equals("true")) {
+								productData.addError(MLTextHelper.getI18NMessage(MESSAGE_CERTIFIED_ERROR, 
 									mlNodeService.getProperty(labelClaimListDataItem.getLabelClaim(), BeCPGModel.PROP_CHARACT_NAME),
 									percentage,
 									regulatoryThreshold));
+							}
+							
+							labelClaimListDataItem.setLabelClaimValue("false");
 						} else if (regulatoryThreshold <= percentage) {
 							labelClaimListDataItem.setLabelClaimValue("true");
 						}
