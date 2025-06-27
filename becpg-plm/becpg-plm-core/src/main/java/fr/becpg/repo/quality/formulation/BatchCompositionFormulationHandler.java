@@ -100,7 +100,7 @@ public class BatchCompositionFormulationHandler extends AbstractCompositionQtyCa
 					toAdd.setStockType(StockType.Product);
 					if(productData.getProductLossPerc()!=null) {
 						if(toAdd.getLossPerc()!=null) {
-							toAdd.setLossPerc(toAdd.getLossPerc() + productData.getProductLossPerc());
+							toAdd.setLossPerc(FormulationHelper.calculateLossPerc(productData.getProductLossPerc(), toAdd.getLossPerc()));
 						} else {
 							toAdd.setLossPerc(productData.getProductLossPerc());
 						}
