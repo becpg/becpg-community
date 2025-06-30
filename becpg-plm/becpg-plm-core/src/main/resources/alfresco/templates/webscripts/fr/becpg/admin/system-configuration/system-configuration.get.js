@@ -83,6 +83,7 @@ function main() {
 		"beCPG.formulation.costList.keepProductUnit",
 		"beCPG.formulation.score.nutriscore.regulatoryClass",
 		"beCPG.formulation.security.enforceACL",
+        "beCPG.formulation.security.forceResetACL",
 	].forEach(function(p) {
 				model.sysBeCPGAttributes[p] = { "type": "java.lang.String", "readonly": false, "qname": p, "name": p, "value": bSys.confValue(p), "set": "formulation"  }
 			});
@@ -107,8 +108,10 @@ function main() {
 				model.sysBeCPGAttributes[p] = { "type": "java.lang.String", "readonly": false, "qname": p, "name": p, "value": bSys.confValue(p), "set": "project"  }
 			});
 
+
 	model.tools = Admin.getConsoleTools("system-configuration");
 	model.metadata = Admin.getServerMetaData();
+
 }
 
 main();
