@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.dictionary.constraint.ListOfValuesConstraint;
@@ -371,7 +370,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 	private Map<String, DynListEntry> getDynListEntries() {
 		return beCPGCacheService.getFromCache(DynListConstraint.class.getName(), createCacheKey(),
 				() -> serviceRegistry.getRetryingTransactionHelper().doInTransaction(() -> {
-					logger.debug("Fill allowedValues for: " + TenantUtil.getCurrentDomain());
+					logger.debug("Fill allowedValues for: " + TenantUtil.getCurrentDomain()+ " "+ createCacheKey());
 					Map<String, DynListEntry> allowedValues = new LinkedHashMap<>();
 
 					if (Boolean.TRUE.equals(addEmptyValue)) {
@@ -481,7 +480,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 							entry.setGroups(serviceRegistry.getNodeService().getTargetAssocs(nodeRef, SecurityModel.ASSOC_READ_GROUPS).stream()
 									.map(AssociationRef::getTargetRef)
 									.map(n -> (String) serviceRegistry.getNodeService().getProperty(n, ContentModel.PROP_AUTHORITY_NAME))
-									.collect(Collectors.toList()));
+									.toList());
 							entry.setValues(mlText);
 							entry.setIsDeleted((Boolean) serviceRegistry.getNodeService().getProperty(nodeRef, BeCPGModel.PROP_IS_DELETED));
 
@@ -490,7 +489,12 @@ public class DynListConstraint extends ListOfValuesConstraint {
 
 					}
 				} else {
-					logger.warn("Node doesn't exist : " + nodeRef);
+					logger.warn("Node : " + nodeRef+ " for "+ "/app:company_home/" + AbstractBeCPGQueryBuilder.encodePath(path) + "/*");
+					if(serviceRegistry.getNodeService().exists(nodeRef)) {
+						logger.warn(" - Doesn't have the expected type  : " + constraintTypeQname+ " / type: "+ serviceRegistry.getNodeService().getType(nodeRef));
+					}  else {
+						logger.warn(" - Doesn't exists" );
+					}
 				}
 			}
 
