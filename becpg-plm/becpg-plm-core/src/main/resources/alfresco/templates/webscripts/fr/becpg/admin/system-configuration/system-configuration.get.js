@@ -95,7 +95,8 @@ function main() {
         "beCPG.formulation.ingsCalculatingWithYield",
         "beCPG.formulation.costList.keepProductUnit",
         "beCPG.formulation.score.nutriscore.regulatoryClass",
-        "beCPG.formulation.security.enforceACL"
+        "beCPG.formulation.security.enforceACL",
+        "beCPG.formulation.security.forceResetACL"
     ].forEach(function(p) {
         addAttribute(p, "formulation");
     });
