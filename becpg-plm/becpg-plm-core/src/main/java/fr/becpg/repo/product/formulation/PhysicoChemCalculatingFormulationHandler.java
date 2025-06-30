@@ -16,13 +16,11 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
-import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
-import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
 
 /**
@@ -35,27 +33,6 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 
 	private static final Log logger = LogFactory.getLog(PhysicoChemCalculatingFormulationHandler.class);
 
-	private EntityTplService entityTplService;
-
-	private AlfrescoRepository<ProductData> alfrescoRepositoryProductData;
-
-	/**
-	 * <p>Setter for the field <code>entityTplService</code>.</p>
-	 *
-	 * @param entityTplService a {@link fr.becpg.repo.entity.EntityTplService} object
-	 */
-	public void setEntityTplService(EntityTplService entityTplService) {
-		this.entityTplService = entityTplService;
-	}
-
-	/**
-	 * <p>Setter for the field <code>alfrescoRepositoryProductData</code>.</p>
-	 *
-	 * @param alfrescoRepositoryProductData a {@link fr.becpg.repo.repository.AlfrescoRepository} object
-	 */
-	public void setAlfrescoRepositoryProductData(AlfrescoRepository<ProductData> alfrescoRepositoryProductData) {
-		this.alfrescoRepositoryProductData = alfrescoRepositoryProductData;
-	}
 
 	/** {@inheritDoc} */
 	@Override
@@ -131,11 +108,11 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 
 		Map<NodeRef, List<NodeRef>> mandatoryCharacts = new HashMap<>();
 
-		NodeRef entityTplNodeRef = entityTplService.getEntityTpl(componentType);
+		ProductData entityTpl = formulatedProduct.getEntityTpl();
 
-		if (entityTplNodeRef != null) {
+		if (entityTpl != null) {
 
-			List<PhysicoChemListDataItem> physicoChemList = alfrescoRepositoryProductData.findOne(entityTplNodeRef).getPhysicoChemList();
+			List<PhysicoChemListDataItem> physicoChemList = entityTpl.getPhysicoChemList();
 
 			for (PhysicoChemListDataItem physicoChemListDataItem : formulatedProduct.getPhysicoChemList()) {
 				for (PhysicoChemListDataItem pC : physicoChemList) {
