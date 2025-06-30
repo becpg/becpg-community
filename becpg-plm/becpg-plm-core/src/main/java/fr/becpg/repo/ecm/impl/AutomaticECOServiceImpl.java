@@ -6,13 +6,19 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import org.springframework.util.StopWatch;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.error.ExceptionStackUtil;
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.batch.BatchProcessWorkProvider;
 import org.alfresco.repo.batch.BatchProcessor;
 import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
 import org.alfresco.repo.policy.BehaviourFilter;
@@ -51,7 +57,6 @@ import fr.becpg.repo.batch.BatchInfo;
 import fr.becpg.repo.batch.BatchPriority;
 import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.batch.BatchStep;
-import fr.becpg.repo.batch.BatchStepAdapter;
 import fr.becpg.repo.batch.EntityListBatchProcessWorkProvider;
 import fr.becpg.repo.ecm.AutomaticECOService;
 import fr.becpg.repo.ecm.ECOService;
@@ -68,6 +73,7 @@ import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.RepoService;
+import fr.becpg.repo.product.formulation.SecurityFormulationHandler;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -96,19 +102,19 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 
 	@Autowired
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
-	
+
 	@Autowired
 	private BeCPGAuditService beCPGAuditService;
 
 	@Autowired
 	private SystemConfigurationService systemConfigurationService;
-	
+
 	@Autowired
 	private EntityDictionaryService entityDictionaryService;
 
 	@Autowired
 	@Qualifier("namespaceService")
-    private NamespacePrefixResolver namespacePrefixResolver;
+	private NamespacePrefixResolver namespacePrefixResolver;
 
 	private Boolean shouldApplyAutomaticECO() {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.eco.automatic.apply"));
@@ -166,10 +172,10 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 
 	@Value("${becpg.batch.automaticECO.reformulateChangedEntities.batchSize}")
 	private Integer reformulateBatchSize;
-	
+
 	@Value("${becpg.batch.automaticECO.autoMergeBranch.workerThreads}")
 	private Integer autoMergeWorkerThreads;
-	
+
 	@Value("${becpg.batch.automaticECO.autoMergeBranch.batchSize}")
 	private Integer autoMergeBatchSize;
 
@@ -238,7 +244,6 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 		if (nodeService.exists(entityNodeRef)) {
 
 			String productState = (String) nodeService.getProperty(entityNodeRef, PLMModel.PROP_PRODUCT_STATE);
-
 			if ((productState == null) || productState.isEmpty() || !statesToRegister().contains(productState)) {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Skipping product state : " + productState);
@@ -304,9 +309,8 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 							logger.debug("Found automatic change order to apply :" + ecoNodeRef);
 						}
 						try {
-							transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-								return ecoService.apply(ecoNodeRef, deleteOnApply(), true, false);
-							}, false, true);
+							transactionService.getRetryingTransactionHelper()
+									.doInTransaction(() -> ecoService.apply(ecoNodeRef, deleteOnApply(), true, false), false, true);
 
 						} catch (Exception e) {
 							if (RetryingTransactionHelper.extractRetryCause(e) != null) {
@@ -352,8 +356,8 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 			public void process(NodeRef entityNodeRef) throws Throwable {
 
 				if (logger.isDebugEnabled()) {
-					logger.debug("Found product to merge: " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + " ("
-							+ entityNodeRef + ") ");
+					logger.debug("Found product to merge: " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + " (" + entityNodeRef
+							+ ") ");
 				}
 				try {
 					AuthenticationUtil.runAsSystem(() -> {
@@ -385,103 +389,161 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 	}
 
 	private boolean reformulateChangedEntities() {
-		
+		final long batchStartTime = System.currentTimeMillis();
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
-
 		String dateRange = dateFormat.format(getFromDate());
 
+		// --- Batch Setup ---
 		BatchInfo batchInfo = new BatchInfo(REFORMULATE_BATCH_ID, "becpg.batch.automaticECO.reformulateChangedEntities");
 		batchInfo.setRunAsSystem(true);
-		batchInfo.setWorkerThreads(reformulateWorkerThreads != null ? reformulateWorkerThreads : 2);
+		batchInfo.setWorkerThreads(reformulateWorkerThreads != null ? reformulateWorkerThreads : 1);
 		batchInfo.setBatchSize(reformulateBatchSize != null ? reformulateBatchSize : 1);
 		batchInfo.setPriority(BatchPriority.LOW);
-		
-		List<NodeRef> nodeRefs = transactionService.getRetryingTransactionHelper()
-				.doInTransaction(() -> BeCPGQueryBuilder.createQuery()
-						.excludeArchivedEntities()
-						.ofType(PLMModel.TYPE_PRODUCT)
-						.orBetween(ContentModel.PROP_CREATED, dateRange, "MAX")
-						.orBetween(ContentModel.PROP_MODIFIED, dateRange, "MAX")
-						.inDBIfPossible()
-						.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED)
-						.list(), false, true);
-		
-		addACLProducts(dateRange, nodeRefs);
-		
-		logger.info("modified products size: " + nodeRefs.size());
-		
-		List<NodeRef> toReformulateEntities = new ArrayList<>();
 
+		// --- Initial Node Query ---
+		@Deprecated //Use Pagination
+		List<NodeRef> initialNodeRefs = transactionService.getRetryingTransactionHelper()
+				.doInTransaction(() -> BeCPGQueryBuilder.createQuery().excludeArchivedEntities().ofType(PLMModel.TYPE_PRODUCT)
+						.orBetween(ContentModel.PROP_CREATED, dateRange, "MAX").orBetween(ContentModel.PROP_MODIFIED, dateRange, "MAX")
+						.inDBIfPossible().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list(), false, true);
+		addACLProducts(dateRange, initialNodeRefs);
+		logger.info("Initial modified products to scan: " + initialNodeRefs.size());
+
+		// --- Batch Steps Configuration ---
 		List<BatchStep<NodeRef>> steps = new ArrayList<>();
+		ExpandingWhereUsedWorkProvider workProvider = new ExpandingWhereUsedWorkProvider(initialNodeRefs);
 
-		BatchStep<NodeRef> wusedStep = new BatchStep<>();
-
+		// STEP 2: The "Consumer" - Processes entities from the priority queue.
 		BatchStep<NodeRef> formulateStep = new BatchStep<>();
-
-		wusedStep.setWorkProvider(new EntityListBatchProcessWorkProvider<>(nodeRefs));
-
-		wusedStep.setProcessWorker(new BatchProcessor.BatchProcessWorkerAdaptor<NodeRef>() {
-
-			@Override
-			public void process(NodeRef entry) throws Throwable {
-				List<NodeRef> wused = extractWUsedToFormulate(entry);
-				if (wused.isEmpty()) {
-					wused.add(entry);
-				}
-
-				for (NodeRef wusedLeaf : wused) {
-					if (!toReformulateEntities.contains(wusedLeaf)) {
-						toReformulateEntities.add(wusedLeaf);
-					}
-				}
-			}
-		});
-
-		wusedStep.setBatchStepListener(new BatchStepAdapter() {
-			@Override
-			public void afterStep() {
-				formulateStep.setWorkProvider(new EntityListBatchProcessWorkProvider<>(toReformulateEntities));
-				logger.info("reformulated entities size: " + toReformulateEntities.size());
-			}
-		});
-
-		steps.add(wusedStep);
-
-		ReformulateChangedEntitiesProcessWorker processWorker = new ReformulateChangedEntitiesProcessWorker();
-
-		formulateStep.setProcessWorker(processWorker);
+		// The work provider is now our custom pipelined provider.
+		formulateStep.setWorkProvider(workProvider);
+		formulateStep.setProcessWorker(new ReformulateChangedEntitiesProcessWorker(batchStartTime));
 		steps.add(formulateStep);
 
+		// --- Queue the Batch ---
+		// Both steps will run concurrently. The formulateStep will start as soon as
+		// the first item is available in the workQueue.
 		batchQueueService.queueBatch(batchInfo, steps);
 
 		return true;
 	}
 
+	/**
+	* A custom WorkProvider that takes an initial list of nodes, expands it by
+	* finding all "where-used" parent nodes for each, de-duplicates the entire set,
+	* sorts it by processing priority, and then provides it to the batch processor.
+	* All discovery work is done upfront in the constructor.
+	*/
+	private class ExpandingWhereUsedWorkProvider implements BatchProcessWorkProvider<NodeRef> {
+
+		private final int total;
+		private Iterator<NodeRef> workIterator;
+
+		public ExpandingWhereUsedWorkProvider(List<NodeRef> initialNodeRefs) {
+
+			// Step 3: Prepare the iterator for getNextWork().
+			this.workIterator = initialNodeRefs.iterator();
+			this.total = initialNodeRefs.size();
+
+			logger.info("Discovered a total of " + this.total + " unique nodes for reformulation.");
+
+		}
+
+		@Override
+		public long getTotalEstimatedWorkSizeLong() {
+			return this.total;
+		}
+
+		@Override
+		public Collection<NodeRef> getNextWork() {
+			if (!workIterator.hasNext()) {
+				return Collections.emptyList(); // Signal that work is complete
+			}
+
+			NodeRef entryNodeRef = workIterator.next();
+			Set<NodeRef> uniqueNodes = new LinkedHashSet<>();
+
+			// Expand the current node to include where-used parents
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				if (nodeService.exists(entryNodeRef)) {
+					uniqueNodes.add(entryNodeRef);
+					List<NodeRef> wused = extractWUsedToFormulate(entryNodeRef);
+					uniqueNodes.addAll(wused);
+				}
+				return null;
+			}, true);
+
+			// Convert to list and sort by priority
+			List<NodeRef> sortedNodes = new ArrayList<>(uniqueNodes);
+			sortedNodes.sort((node1, node2) -> transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				if (!nodeService.exists(node1)) {
+					return 1;
+				}
+				if (!nodeService.exists(node2)) {
+					return -1;
+				}
+				int priority1 = getTypePriority(nodeService.getType(node1));
+				int priority2 = getTypePriority(nodeService.getType(node2));
+				return Integer.compare(priority1, priority2);
+			}, true));
+
+			if(logger.isDebugEnabled()) {
+				logger.debug("Expanded node to " + sortedNodes.size() + " nodes for reformulation");
+			}
+			return sortedNodes;
+		}
+
+		@Override
+		public int getTotalEstimatedWorkSize() {
+			return this.total;
+		}
+
+		/**
+		 * Assigns a processing priority to a QName type. Lower numbers are processed first.
+		 */
+		private int getTypePriority(QName type) {
+			// Priority 1: Base materials that are usually children
+			if (entityDictionaryService.isSubClass(type, PLMModel.TYPE_RAWMATERIAL)
+					|| entityDictionaryService.isSubClass(type, PLMModel.TYPE_PACKAGINGMATERIAL)) {
+				return 1;
+			}
+			// Priority 2: Intermediate products
+			if (entityDictionaryService.isSubClass(type, PLMModel.TYPE_SEMIFINISHEDPRODUCT)
+					|| entityDictionaryService.isSubClass(type, PLMModel.TYPE_PACKAGINGKIT)) {
+				return 2;
+			}
+			// Priority 3: Top-level products
+			if (entityDictionaryService.isSubClass(type, PLMModel.TYPE_FINISHEDPRODUCT)) {
+				return 3;
+			}
+			// Priority 4: Other complex types
+			if (entityDictionaryService.isSubClass(type, PLMModel.TYPE_LOGISTICUNIT)) {
+				return 4;
+			}
+
+			// Default priority for anything else
+			return 10;
+		}
+	}
+
+	@Deprecated
 	private void addACLProducts(String dateRange, List<NodeRef> nodeRefs) {
 		List<NodeRef> modifiedACLs = transactionService.getRetryingTransactionHelper()
-				.doInTransaction(() -> BeCPGQueryBuilder.createQuery()
-						.excludeArchivedEntities()
-						.ofType(SecurityModel.TYPE_ACL_GROUP)
-						.orBetween(ContentModel.PROP_CREATED, dateRange, "MAX")
-						.orBetween(ContentModel.PROP_MODIFIED, dateRange, "MAX")
-						.inDBIfPossible()
-						.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED)
-						.list(), false, true);
-		
+				.doInTransaction(() -> BeCPGQueryBuilder.createQuery().excludeArchivedEntities().ofType(SecurityModel.TYPE_ACL_GROUP)
+						.orBetween(ContentModel.PROP_CREATED, dateRange, "MAX").orBetween(ContentModel.PROP_MODIFIED, dateRange, "MAX")
+						.inDBIfPossible().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list(), false, true);
+
 		for (NodeRef modifiedACL : modifiedACLs) {
 			ACLGroupData aclGroupData = (ACLGroupData) alfrescoRepository.findOne(modifiedACL);
 			String nodeTypeString = aclGroupData.getNodeType();
-			if (nodeTypeString != null && nodeTypeString.contains(":")) {
+			if ((nodeTypeString != null) && nodeTypeString.contains(":")) {
 				QName nodeType = QName.createQName(nodeTypeString.split(":")[0], nodeTypeString.split(":")[1], namespacePrefixResolver);
 				if (entityDictionaryService.isSubClass(nodeType, PLMModel.TYPE_PRODUCT) && isACLApplied(aclGroupData)) {
 					List<NodeRef> aclProducts = transactionService.getRetryingTransactionHelper()
-							.doInTransaction(() -> BeCPGQueryBuilder.createQuery()
-									.excludeArchivedEntities().ofType(nodeType)
-									.orBetween(BeCPGModel.PROP_FORMULATED_DATE, "MIN", dateRange)
-									.inDBIfPossible()
-									.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED)
-									.list(), false, true);
-					
+							.doInTransaction(() -> BeCPGQueryBuilder.createQuery().excludeArchivedEntities().ofType(nodeType)
+									.orBetween(BeCPGModel.PROP_FORMULATED_DATE, "MIN", dateRange).inDBIfPossible()
+									.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list(), false, true);
+
 					for (NodeRef aclProduct : aclProducts) {
 						if (!nodeRefs.contains(aclProduct)) {
 							nodeRefs.add(aclProduct);
@@ -495,10 +557,10 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 	private boolean isACLApplied(ACLGroupData aclGroupData) {
 		for (ACLEntryDataItem acl : aclGroupData.getAcls()) {
 			String propNameString = acl.getPropName();
-			if ("View-documents".equals(propNameString)) {
+			if (SecurityFormulationHandler.VIEW_DOCUMENTS.equals(propNameString)) {
 				return true;
 			}
-			if (propNameString != null && propNameString.contains(":") && enforceACL()) {
+			if ((propNameString != null) && propNameString.contains(":") && enforceACL()) {
 				QName propName = QName.createQName(propNameString.split(":")[0], propNameString.split(":")[1], namespacePrefixResolver);
 				if (entityDictionaryService.isSubClass(propName, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
 					return true;
@@ -507,7 +569,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 		}
 		return false;
 	}
-	
+
 	private boolean enforceACL() {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.formulation.security.enforceACL"));
 	}
@@ -517,26 +579,26 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 		cal.add(Calendar.DATE, -1);
 
 		Date dateFrom = cal.getTime();
-		
+
 		AuditQuery auditQuery = AuditQuery.createQuery().asc(false).dbAsc(false).sortBy(AuditPlugin.STARTED_AT)
 				.filter(BatchAuditPlugin.BATCH_ID, REFORMULATE_BATCH_ID).maxResults(1);
-		
+
 		List<JSONObject> lastActivityResult = beCPGAuditService.listAuditEntries(AuditType.BATCH, auditQuery);
-		
+
 		if (!lastActivityResult.isEmpty()) {
 			JSONObject lastActivity = lastActivityResult.get(0);
 			if (lastActivity.has(AuditPlugin.STARTED_AT)) {
-				
+
 				Date lastBatchStartDate = null;
-				
+
 				Object startedAt = lastActivity.get(AuditPlugin.STARTED_AT);
-				
+
 				if (startedAt instanceof Date) {
 					lastBatchStartDate = (Date) startedAt;
 				} else {
 					lastBatchStartDate = ISO8601DateFormat.parse(startedAt.toString());
 				}
-				
+
 				if (lastBatchStartDate.before(dateFrom)) {
 					dateFrom = lastBatchStartDate;
 				}
@@ -547,36 +609,75 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 
 	private class ReformulateChangedEntitiesProcessWorker extends BatchProcessor.BatchProcessWorkerAdaptor<NodeRef> {
 
+		private final long batchStartTime;
+
+		// Constructor to accept the start time
+		public ReformulateChangedEntitiesProcessWorker(long batchStartTime) {
+			this.batchStartTime = batchStartTime;
+		}
+
 		@Override
 		public void process(NodeRef toReformulate) throws Throwable {
+			// First check: Does the node still exist?
+			if (!nodeService.exists(toReformulate)) {
+				return;
+			}
 
-			if (nodeService.exists(toReformulate) && alfrescoRepository.findOne(toReformulate) instanceof FormulatedEntity) {
+			// Get the entity data
+			RepositoryEntity entity = alfrescoRepository.findOne(toReformulate);
+			if (!(entity instanceof FormulatedEntity formulatedEntity)) {
+				return;
+			}
 
+			// *** SMART FORMULATION CHECK ***
+			// Check if the entity has already been formulated during this batch run.
+			Date formulatedDate = formulatedEntity.getFormulatedDate();
+			if ((formulatedDate != null) && (formulatedDate.getTime() >= this.batchStartTime)) {
 				if (logger.isDebugEnabled()) {
-					logger.debug("Reformulating product: " + nodeService.getProperty(toReformulate, ContentModel.PROP_NAME) + " (" + toReformulate
-							+ ") ");
+					logger.debug("Skipping reformulation for " + toReformulate + " as it was already processed in this batch run.");
 				}
-				try {
-					policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
-					policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
-					policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+				return; // Skip processing
+			}
 
-					L2CacheSupport.doInCacheContext(
-							() -> AuthenticationUtil.runAsSystem(
-									() -> formulationService.formulate(toReformulate))
-							, false, true, true);
+			// If the check passes, proceed with formulation
+			if (logger.isDebugEnabled()) {
+				logger.debug("Reformulating product: " + nodeService.getProperty(toReformulate, ContentModel.PROP_NAME) + " (" + toReformulate + ")");
+			}
 
-				} catch (Throwable e) {
-					if (RetryingTransactionHelper.extractRetryCause(e) != null) {
-						logger.debug("Retrying the formulation due to exception "+e.getMessage());
-						throw e;
-					}
-					logger.error("Cannot reformulate node:" + toReformulate, e);
-				} finally {
-					policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
-					policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
-					policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+			try {
+				policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+
+				// Initialize stopwatch only in debug mode
+				StopWatch stopWatch = null;
+				String nodeName = null;
+				if (logger.isDebugEnabled()) {
+					stopWatch = new StopWatch("formulation");
+					stopWatch.start("formulate");
+					nodeName = nodeService.getProperty(toReformulate, ContentModel.PROP_NAME).toString();
 				}
+				
+				// Using L2CacheSupport is good practice.
+				L2CacheSupport.doInCacheContext(() -> AuthenticationUtil.runAsSystem(() -> formulationService.formulate(toReformulate)), false, true,
+						true);
+						
+				// Log execution time only in debug mode
+				if (logger.isDebugEnabled() && stopWatch != null) {
+					stopWatch.stop();
+					logger.debug("Formulation time for " + nodeName + " (" + toReformulate + "): " + stopWatch.getTotalTimeMillis() + " ms");
+				}
+
+			} catch (Throwable e) {
+				if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+					logger.debug("Retrying the formulation for " + toReformulate + " due to exception: " + e.getMessage());
+					throw e; // Re-throw to trigger retry
+				}
+				logger.error("Cannot reformulate node: " + toReformulate, e);
+			} finally {
+				policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 			}
 		}
 	}
@@ -586,7 +687,8 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 		QName nodeType = nodeService.getType(targetAssocNodeRef);
 
 		if (nodeType.isMatch(PLMModel.TYPE_RAWMATERIAL) || nodeType.isMatch(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT)
-				|| nodeType.isMatch(PLMModel.TYPE_SEMIFINISHEDPRODUCT) || nodeType.isMatch(PLMModel.TYPE_FINISHEDPRODUCT) || nodeType.isMatch(PLMModel.TYPE_LOGISTICUNIT)) {
+				|| nodeType.isMatch(PLMModel.TYPE_SEMIFINISHEDPRODUCT) || nodeType.isMatch(PLMModel.TYPE_FINISHEDPRODUCT)
+				|| nodeType.isMatch(PLMModel.TYPE_LOGISTICUNIT)) {
 			return PLMModel.ASSOC_COMPOLIST_PRODUCT;
 		} else if (nodeType.isMatch(PLMModel.TYPE_PACKAGINGMATERIAL) || nodeType.isMatch(PLMModel.TYPE_PACKAGINGKIT)) {
 			return PLMModel.ASSOC_PACKAGINGLIST_PRODUCT;
@@ -599,35 +701,35 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 
 	private List<NodeRef> extractWUsedToFormulate(NodeRef entityNodeRef) {
 		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			if (accept(entityNodeRef)) {
 
-				if (logger.isDebugEnabled()) {
-					logger.debug("Found modified product: " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + " (" + entityNodeRef
-							+ ") ");
-				}
-				try {
+			if (logger.isDebugEnabled()) {
+				logger.debug(
+						"Extract wused of product: " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + " (" + entityNodeRef + ") ");
+			}
+			try {
 
-					QName associationQName = evaluateWUsedAssociation(entityNodeRef);
+				QName associationQName = evaluateWUsedAssociation(entityNodeRef);
 
-					if (associationQName != null) {
-						MultiLevelListData wUsedData = wUsedListService.getWUsedEntity(Arrays.asList(entityNodeRef), WUsedOperator.AND,
-								associationQName, RepoConsts.MAX_DEPTH_LEVEL);
+				if (associationQName != null) {
+					MultiLevelListData wUsedData = wUsedListService.getWUsedEntity(Arrays.asList(entityNodeRef), WUsedOperator.AND, associationQName,
+							RepoConsts.MAX_DEPTH_LEVEL);
 
-						if (logger.isTraceEnabled()) {
-							logger.trace("WUsed to apply:" + wUsedData.toString());
-							logger.trace("Leaf size :" + wUsedData.getAllLeafs().size());
+					if (logger.isTraceEnabled()) {
+						logger.trace("WUsed to apply:" + wUsedData.toString());
+						logger.trace("Leaf size :" + wUsedData.getAllLeafs().size());
 
-						}
-
-						return wUsedData.getAllLeafs();
 					}
-				} catch (Exception e) {
-					Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
-					if (validCause != null) {
-						throw (RuntimeException) validCause;
-					}
-					logger.error(e, e);
+
+					List<NodeRef> wUsedList = new ArrayList<>(wUsedData.getAllLeafs());
+					wUsedList.removeIf(e -> !accept(e));
+					return wUsedList;
 				}
+			} catch (Exception e) {
+				Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
+				if (validCause != null) {
+					throw (RuntimeException) validCause;
+				}
+				logger.error(e, e);
 			}
 			return new ArrayList<>();
 
