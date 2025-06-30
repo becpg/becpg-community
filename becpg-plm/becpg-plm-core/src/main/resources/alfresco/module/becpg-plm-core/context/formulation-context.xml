@@ -147,6 +147,7 @@
 					<property name="associationService" ref="associationService"/>
 					<property name="fileFolderService" ref="fileFolderService"/>
 					<property name="systemConfigurationService" ref="systemConfigurationService"/>
+					<property name="beCPGCacheService" ref="beCPGCacheService"/>
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.CompositionQtyCalculatingFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
@@ -183,16 +184,12 @@
 					<property name="systemConfigurationService" ref="systemConfigurationService" />
 				</bean>
 				<bean parent="abstractSimpleFormulationHandler" class="fr.becpg.repo.product.formulation.CostsCalculatingFormulationHandler">
-					<property name="entityTplService" ref="entityTplService" />
 					<property name="formulaService" ref="formulaService" />
 					<property name="packagingHelper" ref="packagingHelper" />
-					<property name="alfrescoRepositoryProductData" ref="alfrescoRepository" />
 				</bean>
 				<bean parent="abstractSimpleFormulationHandler" class="fr.becpg.repo.product.formulation.LCACalculatingFormulationHandler">
-					<property name="entityTplService" ref="entityTplService" />
 					<property name="formulaService" ref="formulaService" />
 					<property name="packagingHelper" ref="packagingHelper" />
-					<property name="alfrescoRepositoryProductData" ref="alfrescoRepository" />
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.IngsCalculatingFormulationHandler">
 					<property name="nodeService" ref="nodeService" />
@@ -213,8 +210,6 @@
 				</bean>
 				<bean parent="abstractSimpleFormulationHandler" class="fr.becpg.repo.product.formulation.PhysicoChemCalculatingFormulationHandler">
 					<property name="formulaService" ref="formulaService" />
-					<property name="entityTplService" ref="entityTplService" />
-					<property name="alfrescoRepositoryProductData" ref="alfrescoRepository" />
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.TareFormulationHandler" />
 
