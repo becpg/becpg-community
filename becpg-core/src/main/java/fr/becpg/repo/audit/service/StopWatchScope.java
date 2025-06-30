@@ -6,7 +6,7 @@ import org.apache.commons.logging.Log;
 /**
  * <p>StopWatchScope class.</p>
  *
- * @author matthieu
+ * @author valentin
  * @version $Id: $Id
  */
 public class StopWatchScope implements AutoCloseable {
@@ -32,7 +32,7 @@ public class StopWatchScope implements AutoCloseable {
 	 */
 	public void start() {
 		if (logger.isDebugEnabled()) {
-			logger.debug("StopWatchScope start '" + scopeName + "'");
+			logger.debug("Start watching - '" + scopeName + "'");
 			stopWatch = new StopWatch();
 			stopWatch.start();
 			lastCheckpointTime = stopWatch.getTime();
@@ -44,7 +44,8 @@ public class StopWatchScope implements AutoCloseable {
 	public void close() {
 		if (logger.isDebugEnabled() && stopWatch != null) {
 			stopWatch.stop();
-			logger.debug("StopWatchScope finish '" + scopeName + "' => " + stopWatch.getTime() + " ms");
+			logger.debug("Stop watching '" + scopeName + "' in " + stopWatch.getTime() + " ms");
+
 		}
 	}
 
@@ -55,8 +56,9 @@ public class StopWatchScope implements AutoCloseable {
 	 */
 	public void addCheckpoint(String checkpointName) {
 		if (logger.isDebugEnabled() && stopWatch != null) {
-			logger.debug("StopWatchScope step '" + checkpointName + "' from '" + scopeName + "' => " + (stopWatch.getTime() - lastCheckpointTime) + " ms");
+			logger.debug(" - Step '" + checkpointName + "' from '" + scopeName + " start at " + (stopWatch.getTime()  - lastCheckpointTime) + " ms");
 			lastCheckpointTime = stopWatch.getTime();
+
 		}
 	}
 
