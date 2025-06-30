@@ -109,11 +109,25 @@ build() {
    if [ -d becpg-enterprise ]; then
     cd becpg-enterprise
   	 $MVN_EXEC package $EXTRA_ENV -DskipTests=true  -Dmaven.build.cache.enabled=true -Djacoco.skip=true -Dcheckstyle.skip=true  -Dbecpg.dockerbuild.name="enterprise-test"
-     docker compose -f ./distribution/target/docker-compose-dev.yml build
+     COMPOSE_FILE="./distribution/target/docker-compose-dev.yml"
+
+      docker compose -f $COMPOSE_FILE build becpg-base-core
+      docker compose -f $COMPOSE_FILE build becpg-base-share
+      docker compose -f $COMPOSE_FILE build becpg-test-core
+      docker compose -f $COMPOSE_FILE build becpg-test-share
+      docker compose -f $COMPOSE_FILE build becpg-enterprise-test-core
+      docker compose -f $COMPOSE_FILE build becpg-enterprise-test-share
    	 cd ..
    else
    	 $MVN_EXEC package $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="test"
    	 docker compose -f ./becpg-integration-runner/target/docker-compose-build.yml build
+   	 COMPOSE_FILE="./becpg-integration-runner/target/docker-compose-build.yml"
+
+     docker compose -f $COMPOSE_FILE build becpg-base-core
+     docker compose -f $COMPOSE_FILE build becpg-base-share
+     docker compose -f $COMPOSE_FILE build becpg-test-core
+     docker compose -f $COMPOSE_FILE build becpg-test-share
+     
    fi 
 
 }
@@ -122,11 +136,15 @@ install() {
   if [ -d becpg-enterprise ]; then
     cd becpg-enterprise
     $MVN_EXEC  clean install $EXTRA_ENV -DskipTests=true
-    docker compose -f ./distribution/target/docker-compose-build.yml build
+    COMPOSE_FILE="./distribution/target/docker-compose-build.yml"
+    
+    docker compose -f $COMPOSE_FILE build becpg-db becpg-solr becpg-mail becpg-ids becpg-http
     cd ..
    else
     $MVN_EXEC  clean install $EXTRA_ENV -DskipTests=true
-    docker compose -f ./becpg-integration-runner/target/docker-compose-build.yml build
+    COMPOSE_FILE="./becpg-integration-runner/target/docker-compose-build.yml"
+    
+    docker compose -f $COMPOSE_FILE build becpg-db becpg-solr
   fi
   
 }
