@@ -566,8 +566,9 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 									() -> formulationService.formulate(toReformulate))
 							, false, true, true);
 
-				} catch (Exception e) {
+				} catch (Throwable e) {
 					if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+						logger.debug("Retrying the formulation due to exception "+e.getMessage());
 						throw e;
 					}
 					logger.error("Cannot reformulate node:" + toReformulate, e);
