@@ -17,7 +17,6 @@ import org.apache.commons.logging.LogFactory;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
-import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.product.data.ClientData;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
@@ -25,7 +24,6 @@ import fr.becpg.repo.product.data.SupplierData;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.AbstractCostListDataItem;
 import fr.becpg.repo.product.helper.SimulationCostHelper;
-import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.model.VariantAwareDataItem;
 
 /**
@@ -38,12 +36,8 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 
 	private static final Log logger = LogFactory.getLog(AbstractCostCalculatingFormulationHandler.class);
 
-	protected EntityTplService entityTplService;
-
 	protected PackagingHelper packagingHelper;
 
-	protected AlfrescoRepository<ProductData> alfrescoRepositoryProductData;
-	
 	private static AbstractCostCalculatingFormulationHandler<?> instance;
 	
 	/**
@@ -80,15 +74,6 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 
 
 	/**
-	 * <p>Setter for the field <code>entityTplService</code>.</p>
-	 *
-	 * @param entityTplService a {@link fr.becpg.repo.entity.EntityTplService} object.
-	 */
-	public void setEntityTplService(EntityTplService entityTplService) {
-		this.entityTplService = entityTplService;
-	}
-
-	/**
 	 * <p>Setter for the field <code>packagingHelper</code>.</p>
 	 *
 	 * @param packagingHelper a {@link fr.becpg.repo.product.formulation.PackagingHelper} object.
@@ -96,16 +81,6 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 	public void setPackagingHelper(PackagingHelper packagingHelper) {
 		this.packagingHelper = packagingHelper;
 	}
-
-	/**
-	 * <p>Setter for the field <code>alfrescoRepositoryProductData</code>.</p>
-	 *
-	 * @param alfrescoRepositoryProductData a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
-	 */
-	public void setAlfrescoRepositoryProductData(AlfrescoRepository<ProductData> alfrescoRepositoryProductData) {
-		this.alfrescoRepositoryProductData = alfrescoRepositoryProductData;
-	}
-
 
 	/**
 	 * <p>setDataListVisited.</p>
@@ -319,11 +294,11 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 		
 		Map<NodeRef, List<NodeRef>> mandatoryCharacts = new HashMap<>();
 	
-		NodeRef entityTplNodeRef = entityTplService.getEntityTpl(componentType);
+		ProductData entityTpl = formulatedProduct.getEntityTpl();
 	
-		if (entityTplNodeRef != null) {
+		if (entityTpl != null) {
 	
-			List<T> costList = getDataListVisited(alfrescoRepositoryProductData.findOne(entityTplNodeRef));
+			List<T> costList = getDataListVisited(entityTpl);
 	
 			for (T costListDataItem : getDataListVisited(formulatedProduct)) {
 				for (T c : costList) {
@@ -552,7 +527,7 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 		for (T simulatedCost : getDataListVisited(formulatedProduct)) {
 			if ((simulatedCost.getComponentNodeRef() != null) && (simulatedCost.getParent() != null)) {
 
-				ProductData componentData = alfrescoRepositoryProductData.findOne(simulatedCost.getComponentNodeRef());
+				ProductData componentData = (ProductData) alfrescoRepository.findOne(simulatedCost.getComponentNodeRef());
 				Double qtyComponent = SimulationCostHelper.getComponentQuantity(formulatedProduct, componentData);
 
 				if ((simulatedCost.getSimulatedValue() != null) && simulatedCost.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM)) {
