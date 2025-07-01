@@ -186,6 +186,7 @@ public class PackagingHelper implements InitializingBean {
 						variantPackagingData.setManualTertiary(false);
 						variantPackagingData.setTertiaryWidth((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_WIDTH));
 						variantPackagingData.setTertiaryDepth((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_LENGTH));
+						variantPackagingData.setTertiaryPackagingTypeCode((String) nodeService.getProperty(dataItem.getProduct(), GS1Model.PROP_PACKAGING_TYPE_CODE));
 					}
 				
 					variantPackagingData.addTareTertiary(tare);

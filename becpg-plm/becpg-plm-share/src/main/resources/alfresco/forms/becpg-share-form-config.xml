@@ -86,47 +86,194 @@
                <show id="cm:name" />
                <show id="cm:title" force="true" />
                <show id="cm:description" force="true" />
+               <show id="cm:author" force="true" />
+               <show id="bcpg:code" force="true" />
                <show id="mimetype" />
+               
+               <show id="bcpg:documentState" force="true" />
+               <show id="bcpg:documentCategory" force="true" />
+			   <show id="bcpg:documentIsMandatory" force="true" />
+               <show id="bcpg:documentTypeRef" force="true" />
+               <show id="bcpg:documentEntityRef" force="true" />
+               <show id="entity_bcpg:documentEntityRef_bcpg:product" force="true" />
+               <show id="entity_bcpg:documentEntityRef_bcpg:supplier" force="true" />
+               
+               <show id="cm:created" />
+               <show id="cm:creator" />
                <show id="cm:modified" />
                <show id="cm:modifier" />
+                
+               <show id="cm:from" force="true" />
                <show id="cm:to" force="true" />
             </field-visibility>
             <appearance>
-               <field id="cm:name">
-					<control>
+            	
+            	<set id="mainInfo" appearance="bordered-panel"
+					label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+				<set id="documentType" appearance="bordered-panel"
+					label-id="becpg.forms.set.document-type.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+				<set id="effectivity" appearance="bordered-panel" label-id="becpg.forms.set.effectivity.label"
+					template="/org/alfresco/components/form/2-column-set.ftl" />
+				<set id="productInfo" appearance="bordered-panel"
+					label-id="becpg.forms.set.product-info.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+				<set id="supplierInfo" appearance="bordered-panel"
+					label-id="becpg.forms.set.supplier-info.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+				<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
+					template="/org/alfresco/components/form/2-column-set.ftl" />
+				
+               <field id="cm:name" set="mainInfo">
+					<control template="/org/alfresco/components/form/controls/textfield.ftl" >
 						<control-param name="forceEditable">true</control-param>
 					</control>               
                </field>
-               <field id="cm:title">
-					<control>
+               <field id="cm:title" set="mainInfo">
+					<control template="/org/alfresco/components/form/controls/textfield.ftl" >
 						<control-param name="forceEditable">true</control-param>
 					</control>               
                </field>
-               <field id="cm:description">
-					<control>
+               <field id="cm:description" set="mainInfo">
+					<control template="/org/alfresco/components/form/controls/textfield.ftl" >
+						<control-param name="forceEditable">true</control-param>
+					</control>
+               </field>
+               <field id="cm:author" set="mainInfo">
+					<control template="/org/alfresco/components/form/controls/textfield.ftl" >
+						<control-param name="forceEditable">true</control-param>
+					</control>
+               </field>
+               <field id="bcpg:code" set="mainInfo">
+					<control template="/org/alfresco/components/form/controls/textfield.ftl" >
+						<control-param name="forceEditable">true</control-param>
+					</control>
+               </field>
+               <field id="mimetype" set="mainInfo">
+                 	 <control template="/org/alfresco/components/form/controls/mimetype.ftl" >
 						<control-param name="forceEditable">true</control-param>
 					</control>               
                </field>
-               <field id="mimetype">
-                  <control template="/org/alfresco/components/form/controls/mimetype.ftl" >
-					<control-param name="forceEditable">true</control-param>
-				</control>               
-               </field>
-               <field id="cm:modifier">
-                  <control>
-                     <control-param name="forceEditable">true</control-param>
-                  </control>
-               </field>
-               <field id="cm:modified">
+               
+               <field id="entity_bcpg:documentEntityRef_bcpg:product" set="productInfo"/>
+               
+               <field id="entity_bcpg:documentEntityRef_bcpg:supplier" set="supplierInfo"/>
+               
+                <field id="cm:from" set="effectivity">
                   <control template="/org/alfresco/components/form/controls/daterange.ftl" >
 					<control-param name="forceEditable">true</control-param>
                   </control>
                </field>
-               <field id="cm:to">
+               
+               <field id="cm:to" set="effectivity">
                   <control template="/org/alfresco/components/form/controls/daterange.ftl" >
 					<control-param name="forceEditable">true</control-param>
                   </control>
                </field>
+               
+              	<field id="bcpg:documentState" set="documentType" >
+					<control template="/org/alfresco/components/form/controls/selectone.ftl">
+						<control-param name="insertBlank">true</control-param>
+						<control-param name="isSearch">true</control-param>
+					</control>
+				</field>
+				<field id="bcpg:documentCategory" set="documentType" >
+					<control template="/org/alfresco/components/form/controls/selectone.ftl">
+						<control-param name="isSearch">true</control-param>
+					</control>
+				</field>
+				<field id="bcpg:documentIsMandatory" set="documentType" >
+					<control template="/org/alfresco/components/form/controls/selectone.ftl">
+						<control-param name="insertBlank">true</control-param>
+						<control-param name="isSearch">true</control-param>
+						<control-param name="options">true|data.boolean.true,false|data.boolean.false
+						</control-param>
+					</control>
+				</field>
+				<field id="bcpg:documentTypeRef" set="documentType" >
+					<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+						<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:documentType
+						</control-param>
+						<control-param name="multipleSelectMode">true</control-param>
+					</control>
+				</field>
+					
+				<field id="bcpg:documentEntityRef" set="documentType" >
+					<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+						<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:entityV2
+						</control-param>
+						<control-param name="multipleSelectMode">true</control-param>
+					</control>
+				</field>
+               
+               <field id="cm:modifier" set="audit">
+					<control>
+						<control-param name="forceEditable">true</control-param>
+					</control>
+				</field>
+				
+				<field id="cm:modified" set="audit">
+					<control template="/org/alfresco/components/form/controls/daterange.ftl" />
+				</field>
+				<field id="cm:creator" set="audit">
+					<control>
+						<control-param name="forceEditable">true</control-param>
+					</control>
+				</field>
+				<field id="cm:created" set="audit">
+					<control template="/org/alfresco/components/form/controls/daterange.ftl" />
+				</field>
+            </appearance>
+         </form>
+         
+          <!-- Search form -->
+         <form id="product-list">
+            <field-visibility>
+               <show id="cm:name" />
+               <show id="cm:title" force="true" />
+               <show id="cm:description" force="true" />
+               <show id="bcpg:code" force="true" />
+               <show id="bcpg:documentState" force="true" />
+               <show id="bcpg:documentCategory" force="true" />
+			   <show id="bcpg:documentIsMandatory" force="true" />
+               <show id="bcpg:documentTypeRef" force="true" />
+               <show id="bcpg:documentEntityRef" force="true" />
+               
+               <show id="cm:from" force="true" />
+               <show id="cm:to" force="true" />
+                
+            </field-visibility>
+            <appearance>
+            	
+            	<set id="mainInfo" appearance="bordered-panel"
+					label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+				<set id="documentType" appearance="bordered-panel"
+					label-id="becpg.forms.set.document-type.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+				<set id="effectivity" appearance="bordered-panel" label-id="becpg.forms.set.effectivity.label"
+					template="/org/alfresco/components/form/2-column-set.ftl" />
+				
+               <field id="cm:name" set="mainInfo"/>
+               <field id="cm:title" set="mainInfo"/>
+               <field id="cm:description" set="mainInfo"/>
+               <field id="bcpg:code" read-only="true" set="mainInfo"/>
+               
+               <field id="cm:from" set="effectivity"/>
+               <field id="cm:to" set="effectivity" />
+               
+              	<field id="bcpg:documentState" set="documentType" />
+              	<field id="bcpg:documentCategory" set="documentType" read-only="true" />
+				<field id="bcpg:documentIsMandatory" set="documentType" read-only="true" />
+				<field id="bcpg:documentTypeRef" set="documentType" >
+					<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+						<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:documentType
+						</control-param>
+					</control>
+				</field>
+					
+				<field id="bcpg:documentEntityRef" set="documentType" read-only="true" >
+					<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+						<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:entityV2
+						</control-param>
+					</control>
+				</field>
+               
             </appearance>
          </form>
       </forms>

@@ -1,9 +1,9 @@
 package fr.becpg.repo.security.plugins;
 
+import java.util.List;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
-
-import fr.becpg.repo.security.data.PermissionModel;
 
 /**
  * <p>SecurityServicePlugin interface.</p>
@@ -20,7 +20,7 @@ public interface SecurityServicePlugin {
 	 * @param permissionModel a {@link fr.becpg.repo.security.data.PermissionModel} object
 	 * @return a boolean
 	 */
-	boolean checkIsInSecurityGroup(NodeRef nodeRef, PermissionModel permissionModel);
+	boolean checkIsInSecurityGroup(NodeRef nodeRef,  List<NodeRef> groups);
 
 	/**
 	 * <p>accept.</p>

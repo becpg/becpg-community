@@ -64,6 +64,10 @@
         <property name="permissionService">
             <ref bean="PermissionService" />
         </property>
+        <property name="exportChunkSize">
+            <value>${rm.export.chunk.size}</value>
+        </property>
+        
     </bean>
 	
 	

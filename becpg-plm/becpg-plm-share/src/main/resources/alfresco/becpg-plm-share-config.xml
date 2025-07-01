@@ -182,6 +182,7 @@
 			<list id="NutrientProfiles" index="200"/>
 			<list id="LabelingTemplates" index="210"/>
 			<list id="Labels" index="220"/>
+			<list id="DocumentTypes" index="230"/>
 			
 			<!-- Lists of values -->
 			<list id="ReportParams" index="0"/>
@@ -216,7 +217,7 @@
 	
 	<config evaluator="string-compare" condition="wizard">
 		<wizards>
-			<wizard id="supplier-rawMaterial" comments="true" >
+			<wizard id="supplier-rawMaterial" draft="true" comments="true" >
 				<step id="step1" labelId="becpg.wizard.supplier.properties.label"
 					titleId="becpg.wizard.supplier.properties.title" type="form"
 					formId="supplier" itemId="bcpg:rawMaterial"></step>
@@ -245,7 +246,7 @@
 				<step id="step9" labelId="becpg.wizard.supplier.documents.label"
 					titleId="becpg.wizard.supplier.documents.title" type="documents"></step>
 			</wizard>
-			<wizard id="supplier-finishedProduct" comments="true">
+			<wizard id="supplier-finishedProduct" draft="true" comments="true">
 				<step id="step1" labelId="becpg.wizard.supplier.properties.label"
 					titleId="becpg.wizard.supplier.properties.title" type="form"
 					formId="supplier" itemId="bcpg:finishedProduct"></step>
@@ -274,7 +275,7 @@
 				<step id="step9" labelId="becpg.wizard.supplier.documents.label"
 					titleId="becpg.wizard.supplier.documents.title" type="documents"></step>
 			</wizard>
-			<wizard id="supplier-semiFinishedProduct" comments="true">
+			<wizard id="supplier-semiFinishedProduct" draft="true" comments="true">
 				<step id="step1" labelId="becpg.wizard.supplier.properties.label"
 					titleId="becpg.wizard.supplier.properties.title" type="form"
 					formId="supplier" itemId="bcpg:semiFinishedProduct"></step>
@@ -303,7 +304,7 @@
 				<step id="step9" labelId="becpg.wizard.supplier.documents.label"
 					titleId="becpg.wizard.supplier.documents.title" type="documents"></step>
 			</wizard>
-			<wizard id="supplier-packagingMaterial" comments="true">
+			<wizard id="supplier-packagingMaterial" draft="true" comments="true">
 				<step id="step1" labelId="becpg.wizard.supplier.properties.label"
 					titleId="becpg.wizard.supplier.properties.title" type="form"
 					formId="supplier" itemId="bcpg:packagingMaterial"></step>
@@ -320,7 +321,7 @@
 				<step id="step5" labelId="becpg.wizard.supplier.documents.label"
 					titleId="becpg.wizard.supplier.documents.title" type="documents"></step>
 			</wizard>
-			<wizard id="supplier-packagingKit">
+			<wizard id="supplier-packagingKit" draft="true">
 				<step id="step1" labelId="becpg.wizard.supplier.properties.label"
 					titleId="becpg.wizard.supplier.properties.title" type="form"
 					formId="supplier" itemId="bcpg:packagingKit"></step>
@@ -344,7 +345,7 @@
 				<step id="step6" labelId="becpg.wizard.supplier.documents.label"
 					titleId="becpg.wizard.supplier.documents.title" type="documents"></step>
 			</wizard>
-			<wizard id="supplier-content">
+			<wizard id="supplier-content" draft="true">
 				<step id="step1" labelId="becpg.wizard.supplier.documents.label"
 					titleId="becpg.wizard.supplier.documents.title" type="documents"></step>
 			</wizard>
@@ -358,7 +359,7 @@
 					titleId="becpg.wizard.supplier.documents.title" type="documents"></step>
 			</wizard>
 			
-			<wizard id="sample-survey">
+			<wizard id="sample-survey" draft="true">
 				<step id="step1" labelId="becpg.wizard.supplier.properties.label"
 					titleId="becpg.wizard.supplier.properties.title" type="form"
 					formId="supplier" itemId="bcpg:supplier"></step>

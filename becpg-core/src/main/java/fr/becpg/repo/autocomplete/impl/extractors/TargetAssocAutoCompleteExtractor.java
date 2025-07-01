@@ -60,15 +60,15 @@ public class TargetAssocAutoCompleteExtractor implements AutoCompleteExtractor<N
 
 	/** {@inheritDoc} */
 	@Override
-	public List<AutoCompleteEntry> extract(List<NodeRef> nodeRefs) {
+	public List<AutoCompleteEntry> extract(List<NodeRef> nodeRefs, String characNameFormat) {
 
 		List<AutoCompleteEntry> suggestions = new ArrayList<>();
 		if (nodeRefs != null) {
 			for (NodeRef nodeRef : nodeRefs) {
 
 				QName type = nodeService.getType(nodeRef);
-				String name = attributeExtractorService.extractPropName(type,nodeRef);
-				String cssClass = attributeExtractorService.extractMetadata(type,nodeRef);
+				String name = attributeExtractorService.extractPropName(type, nodeRef, characNameFormat);
+				String cssClass = attributeExtractorService.extractMetadata(type, nodeRef);
 				Map<String, String> props = new HashMap<>(2);
 				props.put("type", type.toPrefixString(namespaceService));
 				String userName = AuthenticationUtil.getFullyAuthenticatedUser();
@@ -93,4 +93,8 @@ public class TargetAssocAutoCompleteExtractor implements AutoCompleteExtractor<N
 		return suggestions;
 	}
 
+	@Override
+	public List<AutoCompleteEntry> extract(List<NodeRef> values) {
+		return extract(values, null);
+	}
 }
