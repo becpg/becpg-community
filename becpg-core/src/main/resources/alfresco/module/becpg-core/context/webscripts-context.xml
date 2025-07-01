@@ -53,22 +53,6 @@
     <bean id="webscript.fr.becpg.search.savedsearch.get" class="fr.becpg.repo.web.scripts.search.GetSavedSearchWebScript" parent="webscript">
       <property name="savedSearchService" ref="SavedSearchService" />
     </bean>
-
-	<!-- Admin -->
-	<bean id="webscript.fr.becpg.admin.adminModule.get" class="fr.becpg.repo.web.scripts.admin.AdminModuleWebScript" parent="webscript">
-		<property name="repository" ref="repositoryHelper" />
-		<property name="beCPGCacheService" ref="beCPGCacheService" />
-		<property name="dictionaryDAO" ref="dictionaryDAO" />
-		<property name="entitySystemService" ref="entitySystemService" />
-		<property name="authenticationService" ref="authenticationService" />
-		<property name="tenantAdminService" ref="tenantAdminService" />
-		<property name="initVisitorService" ref="initVisitorService"/>
-		<property name="licenseManager" ref="becpgLicenseManager"/>
-		<property name="becpgSchema" value="${becpg.schema}"/>
-		<property name="authorityService" ref="authorityService"/>
-		<property name="contentService" ref="contentService"/>
-		<property name="batchQueueService" ref="batchQueueService"/>
-	</bean>
 	
 	<bean id="webscript.fr.becpg.admin.monitor.get" class="fr.becpg.repo.web.scripts.admin.MonitorWebScript" parent="webscript">
 		<property name="authenticationService" ref="authenticationService" />
@@ -80,6 +64,20 @@
 		<property name="batchQueueService" ref="batchQueueService"/>
 		<property name="dataSource" ref="dataSource"/>
 		<property name="namespaceService" ref="NamespaceService"/>
+	</bean>
+
+	<!-- Admin -->
+	<bean id="webscript.fr.becpg.admin.adminModule.get" class="fr.becpg.repo.web.scripts.admin.AdminModuleWebScript" parent="webscript.fr.becpg.admin.monitor.get">
+		<property name="repository" ref="repositoryHelper" />
+		<property name="beCPGCacheService" ref="beCPGCacheService" />
+		<property name="dictionaryDAO" ref="dictionaryDAO" />
+		<property name="entitySystemService" ref="entitySystemService" />
+		<property name="initVisitorService" ref="initVisitorService"/>
+	</bean>
+	
+	<bean id="webscript.fr.becpg.admin.assocIndexer.get" class="fr.becpg.repo.web.scripts.admin.AssociationIndexerWebScript" parent="webscript">
+		<property name="namespaceService" ref="NamespaceService"/>
+		<property name="associationIndexerService" ref="associationIndexerService"/>
 	</bean>
 
 	<bean id="webscript.fr.becpg.admin.adminTenant.get" class="fr.becpg.repo.web.scripts.admin.AdminTenantWebScript" parent="webscript">

@@ -69,7 +69,16 @@ public class SearchRuleFilter {
 	private Boolean isFilter = false;
 	
 	private Boolean excludePublishedEntities = true;
-
+	
+	private Integer maxResults = null;
+	
+	public void setMaxResults(Integer maxResults) {
+		this.maxResults = maxResults;
+	}
+	
+	public Integer getMaxResults() {
+		return maxResults;
+	}
 
 	/**
 	 * <p>Constructor for NotificationRuleFilter.</p>
@@ -464,7 +473,7 @@ public class SearchRuleFilter {
 	@Override
 	public int hashCode() {
 		return Objects.hash(currentDate, dateField, dateFilterDelay, dateFilterDelayUnit, dateFilterType, ensureDbQuery, entityCriteria, entityType,
-				nodeCriteria, nodePath, nodeType, query, versionFilterType);
+				nodeCriteria, nodePath, nodeType, query, versionFilterType, maxResults);
 	}
 
 	/** {@inheritDoc} */
@@ -482,7 +491,8 @@ public class SearchRuleFilter {
 				&& (dateFilterType == other.dateFilterType) && Objects.equals(ensureDbQuery, other.ensureDbQuery)
 				&& Objects.equals(entityCriteria, other.entityCriteria) && Objects.equals(entityType, other.entityType)
 				&& Objects.equals(nodeCriteria, other.nodeCriteria) && Objects.equals(nodePath, other.nodePath)
-				&& Objects.equals(nodeType, other.nodeType) && Objects.equals(query, other.query) && (versionFilterType == other.versionFilterType);
+				&& Objects.equals(nodeType, other.nodeType) && Objects.equals(maxResults, other.maxResults) && Objects.equals(query, other.query)
+				&& (versionFilterType == other.versionFilterType);
 	}
 
 	/** {@inheritDoc} */
@@ -491,7 +501,7 @@ public class SearchRuleFilter {
 		return "SearchRuleFilter [query=" + query + ", nodeType=" + nodeType + ", nodePath=" + nodePath + ", nodeCriteria=" + nodeCriteria
 				+ ", entityType=" + entityType + ", entityCriteria=" + entityCriteria + ", currentDate=" + currentDate + ", dateField=" + dateField
 				+ ", dateFilterType=" + dateFilterType + ", dateFilterDelay=" + dateFilterDelay + ", dateFilterDelayUnit=" + dateFilterDelayUnit
-				+ ", versionFilterType=" + versionFilterType + ", ensureDbQuery=" + ensureDbQuery + "]";
+				+ ", versionFilterType=" + versionFilterType + ", ensureDbQuery=" + ensureDbQuery + ", maxResults=" + maxResults + "]";
 	}
 
 }
