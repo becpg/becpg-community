@@ -32,7 +32,7 @@
 		             </span>
 		         </span>
 				<#elseif itemType??>	
-					<span class="entity ${itemType?replace(":","-")}">${msg("type."+itemType?replace(":","_"))}</span>
+					<span class="entity ${itemType?split(":")[1]!""}">${msg("type."+itemType?replace(":","_"))}</span>
             	</#if>
 		      </div>
 		   </div>

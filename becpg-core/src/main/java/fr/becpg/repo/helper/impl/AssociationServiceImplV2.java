@@ -923,6 +923,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 	}
 	
 	/** {@inheritDoc} */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void onDeleteAssociation(AssociationRef associationRef) {
 		if (TransactionalResourceHelper.getCount(UPDATE_ASSOC_COUNT) == 0) {
@@ -931,9 +932,18 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 				removeCachedAssoc(associationRef.getSourceRef(), associationRef.getTypeQName());
 			}
 		}
+		QName indexQName = entityDictionaryService.getAssocIndexQName(associationRef.getTypeQName());
+		if (indexQName != null) {
+			ArrayList<NodeRef> values = (ArrayList<NodeRef>) nodeService.getProperty(associationRef.getSourceRef(), indexQName);
+			if (values != null) {
+				values.remove(associationRef.getTargetRef());
+				nodeService.setProperty(associationRef.getSourceRef(), indexQName, values);
+			}
+		}
 	}
 
 	/** {@inheritDoc} */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void onCreateAssociation(AssociationRef associationRef) {
 		if (TransactionalResourceHelper.getCount(UPDATE_ASSOC_COUNT) == 0) {
@@ -941,6 +951,15 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 					&& !ignoredStoreRefs.contains(tenantService.getBaseName(associationRef.getSourceRef().getStoreRef()))) {
 				removeCachedAssoc(associationRef.getSourceRef(), associationRef.getTypeQName());
 			}
+		}
+		QName indexQName = entityDictionaryService.getAssocIndexQName(associationRef.getTypeQName());
+		if (indexQName != null) {
+			ArrayList<NodeRef> values = (ArrayList<NodeRef>) nodeService.getProperty(associationRef.getSourceRef(), indexQName);
+			if (values == null) {
+				values = new ArrayList<>();
+			}
+			values.add(associationRef.getTargetRef());
+			nodeService.setProperty(associationRef.getSourceRef(), indexQName, values);
 		}
 	}
 

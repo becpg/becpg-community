@@ -173,7 +173,7 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 	@Override
 	public void onAddAspect(NodeRef nodeRef, QName aspect) {
 
-		if (policyBehaviourFilter.isEnabled(BeCPGModel.ASPECT_DEPTH_LEVEL)) {
+		if (policyBehaviourFilter.isEnabled(nodeRef, BeCPGModel.ASPECT_DEPTH_LEVEL)) {
 			// try to avoid to do two times the work, otherwise it duplicates
 			// nodeRef in lucene index !!!
 			if (nodeService.exists(nodeRef)) {
