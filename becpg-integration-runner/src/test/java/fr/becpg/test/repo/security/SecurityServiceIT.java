@@ -365,15 +365,13 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 	public void testLocalComputeAccessMode() {
 
 		final NodeRef globalAclGroupNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			NodeRef ret = createGlobalACLGroup();
-			return ret;
+			return  createGlobalACLGroup();
 
 		}, false, true);
 
 		final NodeRef localAclGroupNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			NodeRef ret = createLocalACLGroup();
+			return  createLocalACLGroup();
 
-			return ret;
 
 		}, false, true);
 
