@@ -3289,6 +3289,7 @@
 				<edit-form template="tab-edit" />
 				<field-visibility>
 					<show id="bcpg:charactName" />
+					<show id="bcpg:docTypeCategory" force="true" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:docTypeIsMandatory" />
 					<show id="bcpg:docTypeEffectivityType" />
@@ -3312,10 +3313,11 @@
 					<field id="bcpg:charactName" set="documentType" >
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
+					<field id="bcpg:docTypeIsMandatory" set="documentType" />
 					<field id="cm:description" set="documentType" >
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
-					<field id="bcpg:docTypeIsMandatory" set="documentType" />
+					<field id="bcpg:docTypeCategory" set="documentType" />
 					<field id="bcpg:docTypeEffectivityType" set="documentType" >
 						<constraint-handlers>
 							<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf" event='keyup,change@[
@@ -3355,20 +3357,27 @@
 					</field>
 					<field id="bcpg:docTypeLinkedCharacts" set="documentTypeAutogeneration" >
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:charact</control-param>
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:entityListItem?classNames=bcpg:certification,bcpg:labelClaim,survey:surveyQuestion
+							</control-param>
 							<control-param name="showTooltip">false</control-param>
 							<control-param name="saveTitle">false</control-param>
 						</control>
 					</field>
-					<field id="bcpg:docTypeDestPath" set="documentTypeAutogeneration" />
+					<field id="bcpg:docTypeDestPath" set="documentTypeAutogeneration" help-id="becpg.forms.help.docTypeDestPath" />
 					 <field id="bcpg:aiValidationCriteria" set="ai" >
-                        <control template="/org/alfresco/components/form/controls/textarea.ftl" />
+                       <control template="/org/alfresco/components/form/controls/textarea.ftl" >
+                        	<control-param name="rows">10</control-param>
+                        </control>
                     </field>
-                    <field id="bcpg:aiSuggestedFields" set="ai" >
-                        <control template="/org/alfresco/components/form/controls/textarea.ftl" />
-                    </field>
+                   <field id="bcpg:aiSuggestedFields" set="ai" >
+                        <control template="/org/alfresco/components/form/controls/textarea.ftl" >
+                        	<control-param name="rows">4</control-param>
+                        </control>
+					</field>
                     <field id="bcpg:aiExtraPrompt" set="ai" >
-                        <control template="/org/alfresco/components/form/controls/textarea.ftl" />
+                        <control template="/org/alfresco/components/form/controls/textarea.ftl" >
+                        	<control-param name="rows">4</control-param>
+                        </control>
                     </field>
                     
 					
@@ -3378,6 +3387,7 @@
 			<form id="filter">
 				<field-visibility>
 					<show id="bcpg:charactName" />
+					<show id="bcpg:docTypeCategory" force="true" />
 					<show id="bcpg:docTypeIsMandatory" />
 					<show id="bcpg:docTypeEffectivityType" />
 					<show id="bcpg:isDeleted" force="true" />
@@ -3385,6 +3395,12 @@
 				<appearance>
 					<field id="bcpg:charactName">
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:docTypeCategory" set="documentType" >
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="insertBlank">false</control-param>
+						</control>
 					</field>
 					<field id="bcpg:docTypeIsMandatory">
 						<control template="/org/alfresco/components/form/controls/boolean.ftl">
@@ -3408,6 +3424,7 @@
 			<form id="datagrid">
 				<field-visibility>
 					<show id="bcpg:charactName" />
+					<show id="bcpg:docTypeCategory" force="true" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:docTypeIsMandatory" />
 					<show id="bcpg:docTypeEffectivityType" />
@@ -3434,6 +3451,7 @@
 				<edit-form template="tab-edit" />
 				<field-visibility>
 					<show id="bcpg:charactName" />
+					<show id="bcpg:docTypeCategory" force="true" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:docTypeIsMandatory" />
 					<show id="bcpg:docTypeEffectivityType" />
@@ -3457,6 +3475,7 @@
 					<field id="bcpg:charactName" set="documentType" >
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
+					<field id="bcpg:docTypeCategory" set="documentType" />
 					<field id="cm:description" set="documentType" >
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
@@ -3500,21 +3519,28 @@
 					</field>
 					<field id="bcpg:docTypeLinkedCharacts" set="documentTypeAutogeneration" >
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:charact</control-param>
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:entityListItem?classNames=bcpg:certification,bcpg:labelClaim,survey:surveyQuestion
+							</control-param>
 							<control-param name="showTooltip">false</control-param>
 							<control-param name="saveTitle">false</control-param>
 						</control>
 					</field>
-					<field id="bcpg:docTypeDestPath" set="documentTypeAutogeneration" />
+					<field id="bcpg:docTypeDestPath" set="documentTypeAutogeneration" help-id="becpg.forms.help.docTypeDestPath" />
 					
 					 <field id="bcpg:aiValidationCriteria" set="ai" >
-                        <control template="/org/alfresco/components/form/controls/textarea.ftl" />
+                        <control template="/org/alfresco/components/form/controls/textarea.ftl" >
+                        	<control-param name="rows">10</control-param>
+                        </control>
                     </field>
                     <field id="bcpg:aiSuggestedFields" set="ai" >
-                        <control template="/org/alfresco/components/form/controls/textarea.ftl" />
-                    </field>
+                        <control template="/org/alfresco/components/form/controls/textarea.ftl" >
+                        	<control-param name="rows">4</control-param>
+                        </control>
+					</field>
                     <field id="bcpg:aiExtraPrompt" set="ai" >
-                        <control template="/org/alfresco/components/form/controls/textarea.ftl" />
+                        <control template="/org/alfresco/components/form/controls/textarea.ftl" >
+                        	<control-param name="rows">4</control-param>
+                        </control>
                     </field>
 					
 					
@@ -9310,6 +9336,8 @@
 				<field-visibility>
 					<show id="bcpg:nutListNut" />
 					<show id="bcpg:nutListValue" />
+					<show id="bcpg:nutListFormulatedValue" />
+					<show id="bcpg:nutListUnit" />
 					<show id="bcpg:nutListValuePrepared" force="true" />
 					<show id="bcpg:nutListMini" />
 					<show id="bcpg:nutListMaxi" />
@@ -11205,108 +11233,6 @@
 				<field-visibility>
 					<show id="bcpg:productType" />
 				</field-visibility>
-			</form>
-		</forms>
-	</config>
-
-	<config evaluator="aspect" condition="bcpg:docLinkedEntitiesAspect">
-		<forms>
-			<form>
-				<field-visibility>
-					<show id="bcpg:docLinkedEntities" />
-				</field-visibility>
-			</form>
-		</forms>
-	</config>
-	
-	<config evaluator="aspect" condition="bcpg:codeAspect">
-		<forms>
-			<form>
-				<field-visibility>
-					<show id="bcpg:code" />
-				</field-visibility>
-				<appearance>
-					<field id="bcpg:code" read-only="true" />
-				</appearance>
-			</form>
-		</forms>
-	</config>
-	
-	<config evaluator="aspect" condition="bcpg:documentAspect">
-		<forms>
-			<form>
-				<field-visibility>
-					<show id="bcpg:documentState" />
-					<show id="bcpg:documentIsMandatory" />
-					<show id="bcpg:documentTypeRef" />
-					<show id="bcpg:documentEntityRef" />
-				</field-visibility>
-				<appearance>
-					<set id="documentType" appearance="bordered-panel" label-id="becpg.forms.set.documentType.label"
-						template="/org/alfresco/components/form/2-column-set.ftl" />
-						
-					<field id="bcpg:documentState" set="documentType" />
-					<field id="bcpg:documentIsMandatory" set="documentType" />
-					<field id="bcpg:documentTypeRef" set="documentType" >
-						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:documentType
-							</control-param>
-							<control-param name="showLink">false</control-param>
-						</control>
-					</field>
-					<field id="bcpg:documentEntityRef" set="documentType" >
-						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:entityV2
-							</control-param>
-						</control>
-					</field>
-				</appearance>
-			</form>
-		</forms>
-	</config>
-	
-	<config evaluator="aspect" condition="bcpg:aiValidationAspect">
-		<forms>
-			<form>
-				<field-visibility>
-					<show id="bcpg:aiValidationState" read="true"/>
-					<show id="bcpg:aiValidationHints"  read="true" />
-					<show id="bcpg:aiValidationDate"  read="true" />
-				</field-visibility>
-				<appearance>
-					<set id="aiValidation" appearance="bordered-panel" label-id="becpg.forms.set.ai-validation.label"
-						template="/org/alfresco/components/form/2-column-set.ftl" />
-					<field id="bcpg:aiValidationState" set="aiValidation" />
-					<field id="bcpg:aiValidationHints" set="aiValidation" >
-						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
-					</field>
-					<field id="bcpg:aiValidationDate" set="aiValidation" />
-				</appearance>
-			</form>
-		</forms>
-	</config>
-	
-	<config evaluator="aspect" condition="bcpg:aiAspect">
-		<forms>
-			<form>
-				<field-visibility>
-					<show id="bcpg:aiValidationCriteria" />
-					<show id="bcpg:aiSuggestedFields" />
-					<show id="bcpg:aiExtraPrompt" />
-				</field-visibility>
-				<appearance>
-					<set id="ai" appearance="bordered-panel" label-id="becpg.forms.set.ai.label"
-						template="/org/alfresco/components/form/2-column-set.ftl" />
-					<field id="bcpg:aiValidationCriteria" set="ai" >
-						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
-					</field>
-					<field id="bcpg:aiSuggestedFields" set="ai" >
-						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
-					</field>
-					<field id="bcpg:aiExtraPrompt" set="ai" >
-						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
-					</field>
-				</appearance>
 			</form>
 		</forms>
 	</config>
