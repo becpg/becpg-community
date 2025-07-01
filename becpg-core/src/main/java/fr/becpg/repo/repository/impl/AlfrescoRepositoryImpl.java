@@ -21,6 +21,7 @@ import java.beans.PropertyDescriptor;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -226,7 +227,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 						cache.remove(nodeRef);
 					}
 				} else {
-					if(cache.contains(nodeRef)){
+					if (cache.contains(nodeRef)) {
 						if (logger.isDebugEnabled()) {
 							logger.info("Clear cache of:" + nodeRef + " - " + nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
 						}
@@ -234,20 +235,16 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 					}
 				}
 			}
-		} else {
-			
-			if(cache.contains(nodeRef)){
-				if (logger.isDebugEnabled()) {
-					logger.info("Clear cache of:" + nodeRef + " - deleted");
-				}
-				cache.remove(nodeRef);
-			} else if(charactCache.contains(nodeRef)) {
-				if (logger.isDebugEnabled()) {
-					logger.info("Clear charactCache of:" + nodeRef + " - deleted");
-				}
-				charactCache.remove(nodeRef);
+		} else if (cache.contains(nodeRef)) {
+			if (logger.isDebugEnabled()) {
+				logger.info("Clear cache of:" + nodeRef + " - deleted");
 			}
-		
+			cache.remove(nodeRef);
+		} else if (charactCache.contains(nodeRef)) {
+			if (logger.isDebugEnabled()) {
+				logger.info("Clear charactCache of:" + nodeRef + " - deleted");
+			}
+			charactCache.remove(nodeRef);
 		}
 	}
 
@@ -270,58 +267,56 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 			if (isDirty(entity)) {
 
-					Map<QName, Serializable> properties = extractProperties(entity);
+				Map<QName, Serializable> properties = extractProperties(entity);
 
-					//Handle null value, it should be add because it add not needed aspects
-					Set<QName> propsToDelete = new HashSet<>();
-					for (Iterator<Map.Entry<QName, Serializable>> iterator = properties.entrySet().iterator(); iterator.hasNext();) {
-						Map.Entry<QName, Serializable> prop = iterator.next();
-						if (prop.getValue() == null) {
-							propsToDelete.add(prop.getKey());
-							iterator.remove();
-						}
+				//Handle null value, it should be add because it add not needed aspects
+				Set<QName> propsToDelete = new HashSet<>();
+				for (Iterator<Map.Entry<QName, Serializable>> iterator = properties.entrySet().iterator(); iterator.hasNext();) {
+					Map.Entry<QName, Serializable> prop = iterator.next();
+					if (prop.getValue() == null) {
+						propsToDelete.add(prop.getKey());
+						iterator.remove();
 					}
-
-					if (entity.getNodeRef() == null) {
-						if (logger.isDebugEnabled()) {
-							logger.debug("Create instanceOf :" + entity.getClass().getName());
-						}
-
-						String name = entity.getName();
-						if ((name == null) || name.isEmpty()) {
-							name = UUID.randomUUID().toString();
-						}
-
-						properties.put(ContentModel.PROP_NAME, name);
-
-						NodeRef productNodeRef = nodeService.createNode(entity.getParentNodeRef(), ContentModel.ASSOC_CONTAINS,
-								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name)),
-								repositoryEntityDefReader.getType(entity.getClass()), properties).getChildRef();
-						entity.setNodeRef(productNodeRef);
-
-					} else {
-
-						if (logger.isDebugEnabled()) {
-							logger.debug("Update instanceOf :" + entity.getClass().getName() + " " + entity.getName());
-							logger.debug(" HashDiff :" + BeCPGHashCodeBuilder.printDiff(entity,
-									findOne(entity.getNodeRef(), CacheType.NO_SHARED_CACHE, new HashMap<>())));
-						}
-
-						nodeService.addProperties(entity.getNodeRef(), properties);
-
-						removeProperties(entity.getNodeRef(), propsToDelete);
-
-					}
-
-					saveAssociations(entity);
-					saveAspects(entity);
-
-					entity.setDbHashCode(createCollisionSafeHashCode(entity));
-
-			} else {
-				if (logger.isTraceEnabled()) {
-					logger.trace("Entity " + entity.getName() + " has no change  to save (same extra properties an same hashCode) ");
 				}
+
+				if (entity.getNodeRef() == null) {
+					if (logger.isDebugEnabled()) {
+						logger.debug("Create instanceOf :" + entity.getClass().getName());
+					}
+
+					String name = entity.getName();
+					if ((name == null) || name.isEmpty()) {
+						name = UUID.randomUUID().toString();
+					}
+
+					properties.put(ContentModel.PROP_NAME, name);
+
+					NodeRef productNodeRef = nodeService.createNode(entity.getParentNodeRef(), ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name)),
+							repositoryEntityDefReader.getType(entity.getClass()), properties).getChildRef();
+					entity.setNodeRef(productNodeRef);
+
+				} else {
+
+					if (logger.isDebugEnabled()) {
+						logger.debug("Update instanceOf :" + entity.getClass().getName() + " " + entity.getName());
+						logger.debug(" HashDiff :"
+								+ BeCPGHashCodeBuilder.printDiff(entity, findOne(entity.getNodeRef(), CacheType.NO_SHARED_CACHE, new HashMap<>())));
+					}
+
+					nodeService.addProperties(entity.getNodeRef(), properties);
+
+					removeProperties(entity.getNodeRef(), propsToDelete);
+
+				}
+
+				saveAssociations(entity);
+				saveAspects(entity);
+
+				entity.setDbHashCode(createCollisionSafeHashCode(entity));
+
+			} else if (logger.isTraceEnabled()) {
+				logger.trace("Entity " + entity.getName() + " has no change  to save (same extra properties an same hashCode) ");
 			}
 
 			saveDataLists(entity);
@@ -360,11 +355,16 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 				for (Map.Entry<QName, Serializable> extraProperty : entity.getExtraProperties().entrySet()) {
 					Serializable prop = nodeService.getProperty(entity.getNodeRef(), extraProperty.getKey());
 
-					if (!(((prop == null) && (extraProperty.getValue() == null)) || ((prop != null) && prop.equals(extraProperty.getValue())))) {
+					Object updated = extraProperty.getValue();
+
+					if (!normalizedEquals(prop, updated)) {
 						shouldUpdate = true;
 						if (logger.isDebugEnabled()) {
-							logger.debug(
-									"Change detected in " + extraProperty.getKey() + " - actual: " + prop + " - new: " + extraProperty.getValue());
+							logger.debug("Change detected in: " + extraProperty.getKey() + " - actual ("
+									+ (prop != null ? prop.getClass().getName() : "null") + "): " + prop + " - new ("
+									+ (extraProperty.getValue() != null ? extraProperty.getValue().getClass().getName() : "null") + "): "
+									+ extraProperty.getValue());
+
 						}
 						break;
 					}
@@ -377,24 +377,40 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 	}
 
+	private boolean normalizedEquals(Object a, Object b) {
+		if ((a == null) || (b == null)) {
+			return a == b;
+		}
+
+		if ((a instanceof Number) && (b instanceof Number)) {
+			return new BigDecimal(a.toString()).compareTo(new BigDecimal(b.toString())) == 0;
+		}
+
+		if ((a instanceof Boolean) && (b instanceof Boolean)) {
+			return a.equals(b);
+		}
+
+		return a.toString().trim().equals(b.toString().trim());
+	}
+
 	private void saveAspects(T entity) {
-		if (entity instanceof AspectAwareDataItem) {
-			if (((AspectAwareDataItem) entity).getAspects() != null) {
-				for (QName aspect : ((AspectAwareDataItem) entity).getAspects()) {
+		if (entity instanceof AspectAwareDataItem aspectAwareDataItem) {
+			if (aspectAwareDataItem.getAspects() != null) {
+				for (QName aspect : aspectAwareDataItem.getAspects()) {
 					if (!nodeService.hasAspect(entity.getNodeRef(), aspect)) {
 						nodeService.addAspect(entity.getNodeRef(), aspect, new HashMap<>());
 					}
 				}
 			}
-			if (((AspectAwareDataItem) entity).getAspectsToRemove() != null) {
-				for (QName aspect : ((AspectAwareDataItem) entity).getAspectsToRemove()) {
+			if (aspectAwareDataItem.getAspectsToRemove() != null) {
+				for (QName aspect : aspectAwareDataItem.getAspectsToRemove()) {
 					if (nodeService.hasAspect(entity.getNodeRef(), aspect)) {
 						nodeService.removeAspect(entity.getNodeRef(), aspect);
 					}
 				}
 			}
 
-			//Reload Aspect 
+			//Reload Aspect
 			((AspectAwareDataItem) entity).setAspects(new HashSet<>(nodeService.getAspects(entity.getNodeRef())));
 		}
 	}
@@ -492,14 +508,13 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		}
 		return listContainerNodeRef;
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	private void saveDataList(NodeRef listContainerNodeRef, QName dataListContainerType, QName dataListType,
-			String dataListName, List<? extends RepositoryEntity> dataList) {
+	private void saveDataList(NodeRef listContainerNodeRef, QName dataListContainerType, QName dataListType, String dataListName,
+			List<? extends RepositoryEntity> dataList) {
 		if ((dataList != null) && (listContainerNodeRef != null)) {
-			
-			NodeRef dataListNodeRef = dataListName == null
-					? entityListDAO.getList(listContainerNodeRef, dataListContainerType)
+
+			NodeRef dataListNodeRef = dataListName == null ? entityListDAO.getList(listContainerNodeRef, dataListContainerType)
 					: entityListDAO.getList(listContainerNodeRef, dataListName);
 
 			boolean isLazyList = dataList instanceof LazyLoadingDataList;
@@ -512,12 +527,8 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 				}
 
 				dataListNodeRef = entityListDAO.createList(listContainerNodeRef, dataListContainerType);
-			} else {
-
-				if (logger.isTraceEnabled()) {
-					logger.trace("Save dataList of type : " + dataListContainerType);
-				}
-
+			} else if (logger.isTraceEnabled()) {
+				logger.trace("Save dataList of type : " + dataListContainerType);
 			}
 
 			if (dataListNodeRef != null) {
@@ -559,14 +570,14 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		}
 
 	}
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public void saveDataList(NodeRef listContainerNodeRef, QName dataListContainerType, QName dataListType,
 			List<? extends RepositoryEntity> dataList) {
 		saveDataList(listContainerNodeRef, dataListContainerType, dataListType, null, dataList);
 	}
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public void saveDataList(NodeRef listContainerNodeRef, QName dataListContainerType, String dataListName,
@@ -742,10 +753,10 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 							Object o = beanWrapper.getPropertyValue(pd.getName());
 
-							if ((o instanceof RepositoryEntity) && (((RepositoryEntity) o).getNodeRef() != null)) {
+							if ((o instanceof RepositoryEntity repoEntity) && (repoEntity.getNodeRef() != null)) {
 
 								PropertyUtils.setProperty(entity, pd.getName(),
-										findOne(((RepositoryEntity) o).getNodeRef(),
+										findOne(repoEntity.getNodeRef(),
 												pd.getPropertyType().isAnnotationPresent(AlfCacheable.class) ? CacheType.FORCE_SHARED_CACHE
 														: CacheType.STANDARD,
 												localCache));
@@ -753,10 +764,8 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 							}
 
 						}
-						if (isRefreshed) {
-							if (logger.isDebugEnabled()) {
-								logger.debug("Refresh: " + entity.getName() + " - " + pd.getName());
-							}
+						if (isRefreshed && logger.isDebugEnabled()) {
+							logger.debug("Refresh: " + entity.getName() + " - " + pd.getName());
 						}
 
 					}
@@ -772,8 +781,8 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 	}
 
 	private void loadAspects(T entity) {
-		if (entity instanceof AspectAwareDataItem) {
-			((AspectAwareDataItem) entity).setAspects(new HashSet<>(nodeService.getAspects(entity.getNodeRef())));
+		if (entity instanceof AspectAwareDataItem aspectAwareDataItem) {
+			aspectAwareDataItem.setAspects(new HashSet<>(nodeService.getAspects(entity.getNodeRef())));
 		}
 
 	}
@@ -890,14 +899,10 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 								pd.getPropertyType().isAnnotationPresent(AlfCacheable.class) ? CacheType.FORCE_SHARED_CACHE : CacheType.STANDARD,
 								localCache));
 			}
-		} else if (readMethod.isAnnotationPresent(AlfMlText.class)) {
+		} else if (readMethod.isAnnotationPresent(AlfMlText.class) || !(prop instanceof MLText)) {
 			PropertyUtils.setProperty(entity, pd.getName(), prop);
 		} else {
-			if (prop instanceof MLText) {
-				PropertyUtils.setProperty(entity, pd.getName(), MLTextHelper.getClosestValue((MLText) prop, I18NUtil.getContentLocale()));
-			} else {
-				PropertyUtils.setProperty(entity, pd.getName(), prop);
-			}
+			PropertyUtils.setProperty(entity, pd.getName(), MLTextHelper.getClosestValue((MLText) prop, I18NUtil.getContentLocale()));
 		}
 
 	}

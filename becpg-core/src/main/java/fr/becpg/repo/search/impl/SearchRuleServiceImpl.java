@@ -86,7 +86,11 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().excludeDefaults();
 
 			if (filter.getNodeType() != null) {
-				queryBuilder.ofType(filter.getNodeType());
+				if(ContentModel.TYPE_CONTENT.equals(filter.getNodeType())) {
+					queryBuilder.ofExactType(filter.getNodeType());
+				} else {
+					queryBuilder.ofType(filter.getNodeType());
+				}
 			}
 			Date from = null;
 			Date to = null;
@@ -175,7 +179,7 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 			}
 
 			List<NodeRef> ret = advSearchService.queryAdvSearch(filter.getNodeType(), queryBuilder, filter.getNodeCriteria(),
-					RepoConsts.MAX_RESULTS_5000);
+					filter.getMaxResults() != null ? filter.getMaxResults() : RepoConsts.MAX_RESULTS_5000);
 
 			if ((filter.getEntityCriteria() != null) && (filter.getEntityType() != null)) {
 				ret = filterByEntityCriteria(ret, filter);

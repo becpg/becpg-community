@@ -374,5 +374,14 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent implements 
 		return "model.override." + nodeType.toPrefixString(namespaceService).replace(":", "_") + "."
 				+ attributeDefinition.getName().toPrefixString(namespaceService).replace(":", "_");
 	}
+	
+	@Override
+	public QName getAssocIndexQName(QName assocQName) {
+		ClassAttributeDefinition indexProp = getPropDef(QName.createQName(assocQName.getNamespaceURI(), assocQName.getLocalName() + "AssocIndex"));
+		if (indexProp != null) {
+			return indexProp.getName();
+		}
+		return null;
+	}
 
 }

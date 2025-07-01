@@ -64,4 +64,10 @@ public class CharactAttributeExtractorPlugin extends AbstractExprNameExtractor {
 		return entityDictionaryService.toPrefixString(type).split(":")[1];
 	}
 
+	/** {@inheritDoc} */
+	public String extractPropName(QName type, NodeRef nodeRef, String characNameFormat) {
+		return characNameFormat != null && !characNameFormat.isBlank() ? extractExpr(nodeRef, characNameFormat)
+				: extractPropName(type, nodeRef);
+	}
+
 }
