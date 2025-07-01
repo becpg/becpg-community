@@ -459,15 +459,31 @@
 								var metadata = oRecord.getData("metadata");
 
 								var desc = '<span class="itemname ' + (metadata ? (' ' + metadata) : '') + '"><a href="' + url
-										+ '" class="theme-color-1">' + $html(displayName)
+										+ '" class="theme-color-1">' + $html(displayName);
 										
 										
-								if(oRecord.getData("itemData")!=null &&  oRecord.getData("itemData")["prop_bcpg_productState"]!=null
-										&&  oRecord.getData("itemData")["prop_bcpg_productState"].value!=null){
-									desc += '&nbsp;<span class="product-state entity-'+oRecord.getData("itemData")["prop_bcpg_productState"].value+'">['
-										+oRecord.getData("itemData")["prop_bcpg_productState"].displayValue+']</span>';
+								var itemData = oRecord.getData("itemData");
+								if (itemData != null) {
+								    var stateToDisplay = null;
+								    var props = [
+								        "prop_bcpg_productState",
+								        "prop_bcpg_supplierState",
+								        "prop_bcpg_clientState",
+								        "prop_bcpg_documentState"
+								    ];
+								
+								    for (var i = 0; i < props.length; i++) {
+								        var prop = props[i];
+								        if (itemData[prop] != null && itemData[prop].value != null) {
+								            stateToDisplay = itemData[prop];
+								            break;
+								        }
+								    }
+								
+								    if (stateToDisplay != null) {
+								        desc += ' <span class="product-state entity-' + stateToDisplay.value + '">[' + stateToDisplay.displayValue + ']</span>';
+								    }
 								}
-										
 										
 								desc += '</a>';
 								// add title (if any) to displayname area
