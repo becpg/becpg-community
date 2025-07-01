@@ -216,15 +216,15 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 		String nodeType = nodeService.getType(productData.getNodeRef()).toString();
 
 		// Batch get all datalist item types in one operation
-		Map<NodeRef, String> nodeToItemType = datalists.parallelStream().collect(Collectors.toConcurrentMap(nodeRef -> nodeRef,
+		Map<NodeRef, String> nodeToItemType = datalists.stream().collect(Collectors.toConcurrentMap(nodeRef -> nodeRef,
 				nodeRef -> (String) nodeService.getProperty(nodeRef, DataListModel.PROP_DATALISTITEMTYPE)));
 
 		// Group by permission context key to minimize context lookups
-		Map<String, List<NodeRef>> datalistsByItemType = nodeToItemType.entrySet().parallelStream().collect(
+		Map<String, List<NodeRef>> datalistsByItemType = nodeToItemType.entrySet().stream().collect(
 				Collectors.groupingBy(Map.Entry::getValue, ConcurrentHashMap::new, Collectors.mapping(Map.Entry::getKey, Collectors.toList())));
 
 		// Batch collect all permission updates
-		List<PermissionUpdate> updates = datalistsByItemType.entrySet().parallelStream().flatMap(entry -> {
+		List<PermissionUpdate> updates = datalistsByItemType.entrySet().stream().flatMap(entry -> {
 			String itemType = entry.getKey();
 			PermissionContext context = getCachedPermissionContext(productData.getNodeRef(), nodeType, itemType, contextCache);
 
@@ -259,7 +259,7 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 		final PermissionContext viewDocumentsContext = getCachedPermissionContext(productDataNodeRef, nodeType, VIEW_DOCUMENTS, contextCache);
 
 		// Batch collect all permission updates
-		List<PermissionUpdate> updates = folders.parallelStream().map(folder -> {
+		List<PermissionUpdate> updates = folders.stream().map(folder -> {
 			String folderName = folder.getName();
 			NodeRef folderNodeRef = folder.getNodeRef();
 			TemplateFolderData templateData = safeFolderData.get(folderName);
@@ -366,7 +366,7 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 		});
 
 		// Batch permission operations
-		updates.parallelStream().forEach(update -> {
+		updates.stream().forEach(update -> {
 			applyPermissionChanges(update.nodeRef(), update.toAdd(), update.toRemove(), permissionsCache);
 		});
 	}
@@ -421,10 +421,10 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 		List<FileInfo> templateFolders = fileFolderService.listFolders(entityTpl.getNodeRef());
 
 		// Pre-filter and batch process inheritance checks
-		Map<NodeRef, Boolean> batchInheritanceResults = templateFolders.parallelStream()
+		Map<NodeRef, Boolean> batchInheritanceResults = templateFolders.stream()
 				.collect(Collectors.toConcurrentMap(FileInfo::getNodeRef, folder -> getCachedInheritance(folder.getNodeRef(), inheritanceCache)));
 
-		return templateFolders.parallelStream().filter(folder -> !batchInheritanceResults.get(folder.getNodeRef()))
+		return templateFolders.stream().filter(folder -> !batchInheritanceResults.get(folder.getNodeRef()))
 				.collect(Collectors.toConcurrentMap(FileInfo::getName, folder -> {
 					NodeRef folderRef = folder.getNodeRef();
 					Set<AccessPermission> permissions = getCachedPermissions(folderRef, permissionsCache);
@@ -505,7 +505,7 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 		// Batch compute site roles for all authorities
 		Map<String, String> authorityToSiteRole = new HashMap<>();
 		if (siteInfo != null) {
-			allAuthorities.parallelStream().forEach(authority -> {
+			allAuthorities.stream().forEach(authority -> {
 				String siteRole = siteService.getMembersRole(siteInfo.getShortName(), authority);
 				if (siteRole != null) {
 					authorityToSiteRole.put(authority, siteRole);
