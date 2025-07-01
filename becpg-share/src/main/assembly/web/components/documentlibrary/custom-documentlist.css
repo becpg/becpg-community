@@ -69,8 +69,21 @@ div.entityFolderInstructions {
 	background-image: url(../basket/images/basket-selected_16x16.png);
 }
 
+.item-social a.ai-suggestion-action.enabled {
+	background-image: url(../entity-suggestions/images/chef-ai-enabled-16.png);
+}
+
+.item-social a.ai-suggestion-action {
+	background-image: url(../entity-suggestions/images/chef-ai-16.png);
+}
+
 .detail .effectivity-past {
     color: red;
+}
+
+.detail .effectivity-mandatory {
+    color: red;
+    font-weight: bold;
 }
 
 .detail .effectivity-future {

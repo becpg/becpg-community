@@ -35,6 +35,7 @@ function main()
    AlfrescoUtil.param("showComments", "true");
    AlfrescoUtil.param("showQuickShare", "true");
    AlfrescoUtil.param("showBasket", "true"); //beCPG
+   AlfrescoUtil.param("showAiSuggestion", "true"); //beCPG
    AlfrescoUtil.param("showDownload", "true");
    AlfrescoUtil.param("showPath", "true");
    AlfrescoUtil.param("libraryRoot", null);
@@ -55,6 +56,7 @@ function main()
       model.folderIcon = folderIcon;
       model.paths = AlfrescoUtil.getPaths(nodeDetails, model.rootPage, model.rootLabelId);
       model.showBasket = (!model.isContainer && model.showBasket).toString();  //beCPG
+      model.showAiSuggestion = (!model.isContainer && nodeDetails.item.node.aspects.indexOf("bcpg:aiValidationAspect") > 0 && model.showAiSuggestion).toString();  //beCPG
       model.showQuickShare = (!model.isContainer && model.showQuickShare && (config.scoped["Social"]["quickshare"].getChildValue("url") != null) && quickShareStatus.enabled).toString();
       model.isWorkingCopy = (model.item && model.item.workingCopy && model.item.workingCopy.isWorkingCopy) ? true : false;
       model.showFavourite = (model.isWorkingCopy || supressSocial ? false : model.showFavourite).toString();
@@ -110,7 +112,8 @@ function main()
             rootLabelId : model.rootLabelId,
             showOnlyLocation: (model.showOnlyLocation == "true"),
             showQuickShare: (model.showQuickShare == "true"),
-			showBasket : (model.showBasket == "true"),
+		   	showBasket : (model.showBasket == "true"),
+            showAiSuggestion : (model.showAiSuggestion == "true"),
             showFavourite : (model.showFavourite == "true"),
             showLikes : (model.showLikes == "true"),
             showComments : (model.showComments == "true"),
@@ -136,7 +139,8 @@ function main()
          nodeHeader.options.showFavourite = false;
          nodeHeader.options.showLikes = false;
          model.showQuickShare = "false";
-		 model.showBasket = "false";
+		   model.showBasket = "false";
+         model.showAiSuggestion = "false";
          model.showComments = "false";
       }
       

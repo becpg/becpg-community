@@ -7,6 +7,7 @@ import java.util.Objects;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.model.SystemState;
+import fr.becpg.repo.entity.catalog.CataloguableEntity;
 import fr.becpg.repo.hierarchy.HierarchicalEntity;
 import fr.becpg.repo.product.data.productList.ContactListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
@@ -31,7 +32,7 @@ import fr.becpg.repo.survey.data.SurveyableEntity;
  */
 @AlfType
 @AlfQname(qname = "bcpg:supplier")
-public class SupplierData extends BeCPGDataObject implements HierarchicalEntity, StateableEntity, SurveyableEntity {
+public class SupplierData extends BeCPGDataObject implements HierarchicalEntity, StateableEntity, SurveyableEntity, CataloguableEntity {
 
 	private static final long serialVersionUID = -2554133542406623412L;
 	private NodeRef hierarchy1;
@@ -48,6 +49,12 @@ public class SupplierData extends BeCPGDataObject implements HierarchicalEntity,
 
 	private SupplierData entityTpl;
 
+	/*
+	 * Completion scores
+	 */
+	private String entityScore;
+	private List<String> reportLocales;
+	
 	/*
 	 * Formulation
 	 */
@@ -134,6 +141,47 @@ public class SupplierData extends BeCPGDataObject implements HierarchicalEntity,
 		this.hierarchy2 = hierarchy2;
 	}
 
+	/*
+	 * <p>Getter for the field <code>entityScore</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:entityScore")
+	public String getEntityScore() {
+		return entityScore;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>Setter for the field <code>entityScore</code>.</p>
+	 */
+	public void setEntityScore(String string) {
+		this.entityScore = string;
+	}
+
+	/**
+	 * <p>Getter for the field <code>reportLocales</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
+	@AlfProp
+	@AlfQname(qname = "rep:reportLocales")
+	public List<String> getReportLocales() {
+		return reportLocales;
+	}
+
+	/**
+	 * <p>Setter for the field <code>reportLocales</code>.</p>
+	 *
+	 * @param reportLocales a {@link java.util.List} object.
+	 */
+	public void setReportLocales(List<String> reportLocales) {
+		this.reportLocales = reportLocales;
+	}
+
+	
 	/**
 	 * <p>Getter for the field <code>costList</code>.</p>
 	 *

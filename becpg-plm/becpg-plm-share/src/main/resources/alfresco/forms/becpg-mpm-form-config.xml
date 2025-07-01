@@ -307,7 +307,7 @@
 			<form id="security">
 				<field-visibility>
 					<show id="bcpg:variantIds" force="true"/>
-					<show id="mpm:plStep" />->									
+					<show id="mpm:plStep" />					
 					<show id="mpm:plResource" />
 					<show id="mpm:plQtyResource" />
 					<show id="mpm:plRateResource" />

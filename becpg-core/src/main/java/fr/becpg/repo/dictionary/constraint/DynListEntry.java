@@ -111,6 +111,12 @@ public class DynListEntry {
 		return Objects.equals(code, other.code) && Objects.equals(groups, other.groups) && Objects.equals(isDeleted, other.isDeleted)
 				&& Objects.equals(values, other.values);
 	}
+
+	@Override
+	public String toString() {
+		return "DynListEntry [code=" + code + ", values=" + values + ", groups=" + groups + ", isDeleted=" + isDeleted + "]";
+	}
+	
 	
 	
 	

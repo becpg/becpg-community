@@ -29,6 +29,7 @@ import org.alfresco.repo.cache.SimpleCache;
 import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.repo.tenant.TenantUtil;
 import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
+import org.alfresco.repo.transaction.TransactionalResourceHelper;
 import org.alfresco.util.cache.AsynchronouslyRefreshedCacheRegistry;
 import org.alfresco.util.cache.RefreshableCacheEvent;
 import org.alfresco.util.cache.RefreshableCacheListener;
@@ -128,9 +129,7 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 	/** {@inheritDoc} */
 	@Override
 	public <T> T getFromCache(String cacheName, String cacheKey) {
-		return getFromCache(cacheName, cacheKey, () -> {
-			return null;
-		}, false);
+		return getFromCache(cacheName, cacheKey, () ->  null, false);
 	}
 
 	/** {@inheritDoc} */
@@ -219,6 +218,54 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 
 	/** {@inheritDoc} */
 	@Override
+	public <T> T getFromTransactionCache(String cacheName, String itemKey, Supplier<T> valueSupplier) {
+		// Apply same key computation as regular cache methods
+		itemKey = computeCacheKey(itemKey);
+		
+		// Skip computation if cache is disabled
+		if (disableAllCache) {
+			return valueSupplier.get();
+		}
+
+		// Create a composite transaction resource key
+		final String txResourceKey = BeCPGCacheService.class.getName() + "." + cacheName;
+		
+		// Get the cache map from the transaction
+		Map<String, Object> resourceMap = TransactionalResourceHelper.getMap(txResourceKey);
+		
+		// Check if our item exists in the cache
+		T value = null;
+		try {
+			@SuppressWarnings("unchecked")
+			T cachedValue = (T) resourceMap.get(itemKey);
+			value = cachedValue;
+		} catch (Exception e) {
+			logger.error("Cannot get " + itemKey + " from transaction cache " + cacheName, e);
+		}
+		
+		if (value == null) {
+			if (isDebugEnable) {
+				logger.debug("Transaction cache miss " + itemKey + " in " + cacheName);
+			}
+
+			// Not in cache, calculate and store it
+			value = valueSupplier.get();
+			
+			if (value != null) {
+				resourceMap.put(itemKey, value);
+			} else if (isDebugEnable) {
+				logger.debug("Transaction data provider returned null for " + itemKey + " in " + cacheName);
+			}
+		} else if (isDebugEnable) {
+			logger.debug("Transaction cache hit " + itemKey + " in " + cacheName);
+		}
+		
+		return value;
+	}
+	
+	
+	/** {@inheritDoc} */
+	@Override
 	public void clearCache(String cacheName) {
 		registry.broadcastEvent(new BeCPGRefreshableCacheEvent(getCacheId(), cacheName), false);
 	}
@@ -244,10 +291,10 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 	/** {@inheritDoc} */
 	@Override
 	public void printCacheInfos() {
-		for (String cacheName : caches.keySet()) {
-			logger.info("Cache - " + cacheName);
-			logger.info(" - Elements - " + caches.get(cacheName).getKeys().size());
-			logger.info(" - Capacity - " + ((DefaultSimpleCache<?, ?>) caches.get(cacheName)).getMaxItems());
+		for (Map.Entry<String, SimpleCache<String, ?>> cacheEntry : caches.entrySet()) {
+			logger.info("Cache - " + cacheEntry.getKey());
+			logger.info(" - Elements - " + cacheEntry.getValue().getKeys().size());
+			logger.info(" - Capacity - " + ((DefaultSimpleCache<?, ?>) cacheEntry.getValue()).getMaxItems());
 
 		}
 
