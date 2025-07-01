@@ -1,5 +1,6 @@
 package fr.becpg.model;
 
+import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 
 /**
@@ -105,6 +106,9 @@ public final class BeCPGModel {
 
 	/** Constant <code>TYPE_SYSTEM_ENTITY</code> */
 	public static final QName TYPE_SYSTEM_ENTITY = QName.createQName(BECPG_URI, "systemEntity");
+	
+	/** Constant <code>TYPE_CONTENT</code> */
+	public static final QName TYPE_CONTENT = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "content");
 
 	// autoNum
 	/** Constant <code>TYPE_AUTO_NUM</code> */
@@ -356,5 +360,70 @@ public final class BeCPGModel {
 	public static final QName ASSOC_PLANTS = QName.createQName(BECPG_URI, "plants");
 	/** Constant <code>ASSOC_SUBSIDIARY_REF</code> */
 	public static final QName ASSOC_SUBSIDIARY_REF = QName.createQName(BECPG_URI, "subsidiaryRef");
-
+	
+	// document aspect
+	/** Constant <code>ASPECT_DOCUMENT_ASPECT</code> */
+	public static final QName ASPECT_DOCUMENT_ASPECT = QName.createQName(BECPG_URI, "documentAspect");
+	/** Constant <code>PROP_DOCUMENT_STATE</code> */
+	public static final QName PROP_DOCUMENT_STATE = QName.createQName(BECPG_URI, "documentState");
+	/** Constant <code>PROP_DOCUMENT_CATEGORY</code> */
+	public static final QName PROP_DOCUMENT_CATEGORY = QName.createQName(BECPG_URI, "documentCategory");
+	/** Constant <code>PROP_DOCUMENT_IS_MANDATORY</code> */
+	public static final QName PROP_DOCUMENT_IS_MANDATORY = QName.createQName(BECPG_URI, "documentIsMandatory");
+	/** Constant <code>ASSOC_DOCUMENT_TYPE_REF</code> */
+	public static final QName ASSOC_DOCUMENT_TYPE_REF = QName.createQName(BECPG_URI, "documentTypeRef");
+	/** Constant <code>ASSOC_DOCUMENT_ENTITY_REF</code> */
+	public static final QName ASSOC_DOCUMENT_ENTITY_REF = QName.createQName(BECPG_URI, "documentEntityRef");
+	
+	// document type
+	/** Constant <code>TYPE_DOCUMENT_TYPE</code> */
+	public static final QName TYPE_DOCUMENT_TYPE = QName.createQName(BECPG_URI, "documentType");
+	/** Constant <code>PROP_DOCUMENT_TYPE_CATEGORY</code> */
+	public static final QName PROP_DOCUMENT_TYPE_CATEGORY = QName.createQName(BECPG_URI, "docTypeCategory");
+	/** Constant <code>PROP_DOCUMENT_TYPE_IS_MANDATORY</code> */
+	public static final QName PROP_DOCUMENT_TYPE_IS_MANDATORY = QName.createQName(BECPG_URI, "docTypeIsMandatory");
+	/** Constant <code>PROP_DOCUMENT_TYPE_EFFECTIVITY_TYPE</code> */
+	public static final QName PROP_DOCUMENT_TYPE_EFFECTIVITY_TYPE = QName.createQName(BECPG_URI, "docTypeEffectivityType");
+	/** Constant <code>PROP_DOCUMENT_TYPE_AUTO_EXPIRATION_DELAY</code> */
+	public static final QName PROP_DOCUMENT_TYPE_AUTO_EXPIRATION_DELAY= QName.createQName(BECPG_URI, "docTypeAutoExpirationDelay");
+	/** Constant <code>PROP_DOCUMENT_TYPE_FORMULA</code> */
+	public static final QName PROP_DOCUMENT_TYPE_FORMULA = QName.createQName(BECPG_URI, "docTypeFormula");
+	/** Constant <code>PROP_DOCUMENT_TYPE_FORMAT</code> */
+	public static final QName PROP_DOCUMENT_TYPE_FORMAT = QName.createQName(BECPG_URI, "docTypeNameFormat");
+	/** Constant <code>PROP_DOCUMENT_TYPE_LINKED_TYPES</code> */
+	public static final QName PROP_DOCUMENT_TYPE_LINKED_TYPES = QName.createQName(BECPG_URI, "docTypeLinkedTypes");
+	/** Constant <code>PROP_DOCUMENT_TYPE_LINKED_TYPES</code> */
+	public static final QName PROP_DOCUMENT_TYPE_PATH = QName.createQName(BECPG_URI, "docTypeDestPath");
+	/** Constant <code>ASSOC_DOCUMENT_TYPE_LINKED_CHARACTS</code> */
+	public static final QName ASSOC_DOCUMENT_TYPE_LINKED_CHARACTS = QName.createQName(BECPG_URI, "docTypeLinkedCharacts");
+	/** Constant <code>ASSOC_DOCUMENT_TYPE_LINKED_HIERARCHY</code> */
+	public static final QName ASSOC_DOCUMENT_TYPE_LINKED_HIERARCHY = QName.createQName(BECPG_URI, "docTypeLinkedHierarchy");
+	
+	// cm_effectivity aspect
+	/** Constant <code>ASPECT_CM_EFFECTIVITY_ASPECT</code> */
+	public static final QName ASPECT_CM_EFFECTIVITY_ASPECT = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "effectivity");
+	/** Constant <code>PROP_CM_FROM</code> */
+	public static final QName PROP_CM_FROM = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "from");
+	/** Constant <code>PROP_CM_TO</code> */
+	public static final QName PROP_CM_TO = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "to");
+	
+	// AI aspect
+	/** Constant <code>ASPECT_AI</code> */
+	public static final QName ASPECT_AI = QName.createQName(BECPG_URI, "aiAspect");
+	/** Constant <code>PROP_AI_VALIDATION_CRITERIA</code> */
+	public static final QName PROP_AI_VALIDATION_CRITERIA = QName.createQName(BECPG_URI, "aiValidationCriteria");
+	/** Constant <code>PROP_AI_SUGGESTED_FIELDS</code> */
+	public static final QName PROP_AI_SUGGESTED_FIELDS = QName.createQName(BECPG_URI, "aiSuggestedFields");
+	/** Constant <code>PROP_AI_EXTRA_PROMPT</code> */
+	public static final QName PROP_AI_EXTRA_PROMPT = QName.createQName(BECPG_URI, "aiExtraPrompt");
+	
+	// AI validation aspect
+	/** Constant <code>ASPECT_AI_VALIDATION</code> */
+	public static final QName ASPECT_AI_VALIDATION = QName.createQName(BECPG_URI, "aiValidationAspect");
+	/** Constant <code>PROP_AI_VALIDATION_CRITERIA</code> */
+	public static final QName PROP_AI_VALIDATION_STATE = QName.createQName(BECPG_URI, "aiValidationState");
+	/** Constant <code>PROP_AI_SUGGESTED_FIELDS</code> */
+	public static final QName PROP_AI_VALIDATION_HINTS = QName.createQName(BECPG_URI, "aiValidationHints");
+	/** Constant <code>PROP_AI_EXTRA_PROMPT</code> */
+	public static final QName PROP_AI_VALIDATION_DATE = QName.createQName(BECPG_URI, "aiValidationDate");
 }

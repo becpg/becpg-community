@@ -208,4 +208,6 @@ public interface EntityService {
 	 */
 	Map<String, NodeRef> getEntityIcons();
 
+	Map<NodeRef, NodeRef> getDocumentsByType(NodeRef entityNodeRef);
+
 }

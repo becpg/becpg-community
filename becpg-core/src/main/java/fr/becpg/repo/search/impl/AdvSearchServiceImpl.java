@@ -137,13 +137,23 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 				ignoredFields.addAll(advSearchPlugin.getIgnoredFields(datatype, searchConfig));
 			}
 		}
+		
+		replaceIndexedAssocs(criteria);
 
 		addCriteriaMap(beCPGQueryBuilder, criteria, ignoredFields);
 
+		StopWatch watch = new StopWatch();
+		watch.start();
 		List<NodeRef> nodes = beCPGQueryBuilder.maxResults(maxResults).ofType(datatype).inDBIfPossible().list();
+		watch.stop();
+		if (watch.getTotalTimeSeconds() > 10 && isSearchFiltered(criteria)) {
+			logger.warn("Slow advSearch query, executed in " + watch.getTotalTimeSeconds() + " seconds. Consider indexing assocs: "
+					+ String.join(", ", criteria.keySet().stream().filter(k -> k.startsWith("assoc_"))
+							.filter(k -> criteria.get(k) != null && !criteria.get(k).isBlank()).toList()));
+		}
 
 		if (advSearchPlugins != null) {
-			StopWatch watch = null;
+			watch = null;
 			for (AdvSearchPlugin advSearchPlugin : advSearchPlugins) {
 				if (logger.isDebugEnabled()) {
 					watch = new StopWatch();
@@ -162,6 +172,29 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 		return nodes;
 
+	}
+
+	private void replaceIndexedAssocs(Map<String, String> criteria) {
+		if (criteria != null) {
+			Map<String, String> toAdd = new HashMap<>();
+			Set<String> toRemove = new HashSet<>();
+			for (String key : criteria.keySet()) {
+				if (key.startsWith("assoc_")) {
+					QName assocQName = QName.createQName(key.replace("assoc_", "").replace("_added", "").replace("_", ":"), namespaceService);
+					QName assocIndexQName = entityDictionaryService.getAssocIndexQName(assocQName);
+					if (assocIndexQName != null) {
+						String value = criteria.get(key);
+						String newKey = "prop_" + assocIndexQName.toPrefixString().replace(":", "_") + "_added";
+						toAdd.put(newKey, value);
+						toRemove.add(key);
+					}
+				}
+			}
+			criteria.putAll(toAdd);
+			for (String keyToRemove : toRemove) {
+				criteria.remove(keyToRemove);
+			}
+		}
 	}
 
 	/** {@inheritDoc} */
@@ -206,6 +239,9 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		if ((criteriaMap != null) && !criteriaMap.isEmpty()) {
 
 			boolean useSubCats = false;
+			
+			
+			
 			for (Map.Entry<String, String> criterion : criteriaMap.entrySet()) {
 
 				String key = criterion.getKey();
@@ -387,7 +423,6 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 						}
 
 					}
-
 				}
 			}
 

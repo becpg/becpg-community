@@ -284,7 +284,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			if (shouldExtractList(isExtractedProduct, context, type, PLMModel.TYPE_NUTLIST)) {
 				loadNutLists(productData, dataListsElt, context);
 			}
-
+			
 			if (!isExtractedProduct && shouldExtractList(isExtractedProduct, context, type, PLMModel.TYPE_DYNAMICCHARACTLIST)) {
 				loadDynamicCharactList(productData.getCompoListView().getDynamicCharactList(), dataListsElt);
 			}

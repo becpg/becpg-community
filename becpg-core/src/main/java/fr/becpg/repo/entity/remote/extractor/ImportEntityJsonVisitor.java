@@ -67,7 +67,9 @@ public class ImportEntityJsonVisitor {
 
 	private static Log logger = LogFactory.getLog(ImportEntityJsonVisitor.class);
 
-	Set<String> ignoredKeys = new HashSet<>();
+	private Set<String> ignoredKeys = new HashSet<>();
+	
+	private Set<String> ignoredAssocs = new HashSet<>();
 
 	private EntityDictionaryService entityDictionaryService;
 
@@ -113,6 +115,7 @@ public class ImportEntityJsonVisitor {
 		ignoredKeys.add(RemoteEntityService.ATTR_SITE);
 		ignoredKeys.add(RemoteEntityService.ATTR_PARENT_ID);
 		ignoredKeys.add(RemoteEntityService.ELEM_CONTENT);
+		ignoredAssocs.add("cm:categories");
 		
 	}
 
@@ -597,7 +600,7 @@ public class ImportEntityJsonVisitor {
 			String key = iterator.next();
 			String propName = key;
 
-			if (!ignoredKeys.contains(propName)) {
+			if (!ignoredKeys.contains(propName) && !ignoredAssocs.contains(propName)) {
 				QName propQName = createQName(propName);
 
 				AssociationDefinition ad = entityDictionaryService.getAssociation(propQName);
@@ -798,7 +801,14 @@ public class ImportEntityJsonVisitor {
 
 	private Serializable getSerializableValue(Object value, QName dataTypeName, QName propQName, RemoteJSONContext context) {
 		if (DataTypeDefinition.NODE_REF.equals(dataTypeName) || DataTypeDefinition.CATEGORY.equals(dataTypeName)) {
-			return visit((JSONObject) value, JsonVisitNodeType.ASSOC, propQName, context);
+			try {
+				return visit((JSONObject) value, JsonVisitNodeType.ASSOC, propQName, context);
+			} catch (BeCPGException e) {
+				if (Boolean.TRUE.equals(remoteParams.extractParams(RemoteParams.PARAM_FAIL_ON_ASSOC_NOT_FOUND, Boolean.TRUE))) {
+					throw e;
+				}
+				return null;
+			}
 		} else {
 
 			if (value instanceof JSONArray array) {

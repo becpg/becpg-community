@@ -552,7 +552,6 @@ span.client,
 }
 
 span.supplier,
-.entity.bcpg-supplier,
 .entity.supplier {
     background-image: var(--icon-supplier-16) !important;
     padding-left: 20px;
@@ -571,7 +570,6 @@ span.productCatalog {
 span.product,
 span.productCollection,
 span.productCollection-ToValidate,
-.entity.bcpg-productCollection,
 .entity.productCollection  {
     background-image: var(--icon-productCollection-16) !important;
     padding-left: 20px;
@@ -582,7 +580,6 @@ span.productCollection-ToValidate,
 span.product,
 span.finishedProduct,
 span.finishedProduct-ToValidate,
-.entity.bcpg-finishedProduct,
 .entity.finishedProduct  {
     background-image: var(--icon-finishedProduct-16) !important;
     padding-left: 20px;
@@ -591,7 +588,6 @@ span.finishedProduct-ToValidate,
 
 span.localSemiFinishedProduct,
 span.localSemiFinishedProduct-ToValidate,
-.entity.bcpg-localSemiFinishedProduct,
 .entity.localSemiFinishedProduct {
     background-image: var(--icon-localSemiFinishedProduct-16) !important;
     padding-left: 20px;
@@ -600,7 +596,6 @@ span.localSemiFinishedProduct-ToValidate,
 
 span.packagingKit,
 span.packagingKit-ToValidate,
-.entity.bcpg-packagingKit,
 .entity.packagingKit {
     background-image: var(--icon-packagingKit-16) !important;
     padding-left: 20px;
@@ -608,7 +603,6 @@ span.packagingKit-ToValidate,
 }
 span.packagingMaterial,
 span.packagingMaterial-ToValidate,
-.entity.bcpg-packagingMaterial,
 .entity.packagingMaterial {
     background-image: var(--icon-packagingMaterial-16) !important;
     padding-left: 20px;
@@ -622,7 +616,6 @@ span.aggregation {
 
 span.rawMaterial,
 span.rawMaterial-ToValidate,
-.entity.bcpg-rawMaterial,
 .entity.rawMaterial  {
     background-image: var(--icon-rawMaterial-16) !important;
     padding-left: 20px;
@@ -631,7 +624,6 @@ span.rawMaterial-ToValidate,
 
 span.semiFinishedProduct,
 span.semiFinishedProduct-ToValidate,
-.entity.bcpg-semiFinishedProduct,
 .entity.semiFinishedProduct {
     background-image: var(--icon-semiFinishedProduct-16) !important;
     padding-left: 20px;
@@ -640,7 +632,6 @@ span.semiFinishedProduct-ToValidate,
 
 span.logisticUnit,
 span.logisticUnit-ToValidate,
-.entity.bcpg-logisticUnit,
 .entity.logisticUnit {
     background-image: var(--icon-logisticUnit-16) !important;
     padding-left: 20px;
@@ -649,7 +640,6 @@ span.logisticUnit-ToValidate,
 
 span.resourceProduct,
 span.resourceProduct-ToValidate,
-.entity.bcpg-resourceProduct,
 .entity.resourceProduct {
     background-image: var(--icon-resourceProduct-16) !important;
     padding-left: 20px;
@@ -973,7 +963,6 @@ span.processList {
 /** Project **/
 
 span.project,
-.entity.pjt-project,
 .entity.project {
     background-image: var(--icon-project-16) !important;
     padding-left: 20px;
@@ -998,7 +987,6 @@ span.taskList {
 /** Quality **/
 
 span.nc,
-.entity.qa-nc,
 .entity.nc
  {
     background-image: url("../../components/images/filetypes/generic-nc-16.png") !important;
@@ -1007,7 +995,6 @@ span.nc,
 }
 
 span.controlPlan,
-.entity.qa-controlPlan,
 .entity.controlPlan
  {
     background-image: url("../../components/images/filetypes/generic-controlPlan-16.png") !important;
@@ -1016,7 +1003,6 @@ span.controlPlan,
 }
 
 span.productSpecification,
-.entity.bcpg-productSpecification
 .entity.productSpecification
  {
     background-image: url("../../components/images/filetypes/generic-productSpecification-16.png") !important;
@@ -1024,7 +1010,6 @@ span.productSpecification,
     background-repeat: no-repeat
 }
 span.qualityControl,
-.entity.qa-qualityControl,
 .entity.qualityControl {
     background-image: url("../../components/images/filetypes/generic-qualityControl-16.png") !important;
     padding-left: 20px;
@@ -1032,7 +1017,6 @@ span.qualityControl,
 }
 
 span.batch,
-.entity.qa-batch,
 .entity.batch {
     background-image: url("../../components/images/filetypes/generic-batch-16.png") !important;
     padding-left: 20px;
@@ -1040,7 +1024,6 @@ span.batch,
 }
 
 span.controlPoint,
-.entity.qa-controlPoint,
 .entity.controlPoint {
     background-image: url("../../components/images/filetypes/generic-controlPoint-16.png") !important;
     padding-left: 20px;
@@ -1049,7 +1032,6 @@ span.controlPoint,
 
 
 span.productMicrobioCriteria,
-.entity.bcpg-productMicrobioCriteria,
 .entity.productMicrobioCriteria
  {
     background-image: url("../../components/images/filetypes/generic-productMicrobioCriteria-16.png") !important;
@@ -1061,7 +1043,6 @@ span.productMicrobioCriteria,
 /** ECM **/
 
 span.changeOrder,
-.entity.ecm-changeOrder,
 .entity.changeOrder 
 
  {
@@ -1086,7 +1067,6 @@ span.aclEntry {
 }
 
 span.aclGroup,
-.entity.sec-aclGroup,
 .entity.aclGroup {
     background-image: url("../../components/images/filetypes/generic-aclGroup-16.png") !important;
     padding-left: 20px;
