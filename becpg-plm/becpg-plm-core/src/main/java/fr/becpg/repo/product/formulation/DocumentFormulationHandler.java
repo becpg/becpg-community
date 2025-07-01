@@ -260,11 +260,14 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<ProductDa
 			NodeRef docNodeRef = entry.getValue();
 
 			DocumentTypeItem docTypeItem = (DocumentTypeItem) alfrescoRepository.findOne(docTypeNodeRef);
-
+			
 			// Update document mandatory status
 			boolean isMandatory = calculateDocumentIsMandatory(productData, docTypeItem, parser, context);
 			nodeService.setProperty(docNodeRef, BeCPGModel.PROP_DOCUMENT_IS_MANDATORY, isMandatory);
-
+			
+			// Update document category
+			nodeService.setProperty(docNodeRef, BeCPGModel.PROP_DOCUMENT_CATEGORY, docTypeItem.getCategory());
+			
 			// Add entity reference
 			associationService.update(docNodeRef, BeCPGModel.ASSOC_DOCUMENT_ENTITY_REF, productData.getNodeRef());
 
