@@ -240,10 +240,10 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 			}
 
 			if (dynListConstraint != null) {
-				return dynListConstraint.getDisplayLabel(value, new Locale(locale));
+				return dynListConstraint.getDisplayLabel(value, MLTextHelper.parseLocale(locale));
 			}
 
-			return constraintName != null ? TranslateHelper.getConstraint(constraintName, value, new Locale(locale)) : value;
+			return constraintName != null ? TranslateHelper.getConstraint(constraintName, value, MLTextHelper.parseLocale(locale)) : value;
 		}
 
 		/**
