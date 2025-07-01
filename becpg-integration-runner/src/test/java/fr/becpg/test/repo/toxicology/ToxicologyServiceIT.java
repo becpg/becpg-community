@@ -206,6 +206,13 @@ public class ToxicologyServiceIT extends PLMBaseTestCase {
 	public void testToxListFormulation() throws Exception {
 		
 		inWriteTx(() -> {
+			nodeService.setProperty(glycerinNodeRef, PLMModel.PROP_ING_TOX_DATA, true);
+			nodeService.setProperty(citricAcidNodeRef, PLMModel.PROP_ING_TOX_DATA, true);
+			nodeService.setProperty(alpiniaNodeRef, PLMModel.PROP_ING_TOX_DATA, true);
+			return null;
+		});
+		waitForSolr();
+		inWriteTx(() -> {
 			FinishedProductData product = new FinishedProductData();
 			product.setToxList(new ArrayList<>());
 			product.setIngList(new ArrayList<>());
