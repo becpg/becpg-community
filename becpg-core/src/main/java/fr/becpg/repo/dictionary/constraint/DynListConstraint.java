@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.dictionary.constraint.ListOfValuesConstraint;
@@ -26,6 +25,8 @@ import org.alfresco.service.cmr.dictionary.ConstraintException;
 import org.alfresco.service.cmr.dictionary.DictionaryException;
 import org.alfresco.service.cmr.i18n.MessageLookup;
 import org.alfresco.service.cmr.repository.AssociationRef;
+import org.alfresco.service.cmr.repository.ContentReader;
+import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.InvalidStoreRefException;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -69,10 +70,13 @@ public class DynListConstraint extends ListOfValuesConstraint {
 	private static final Log logger = LogFactory.getLog(DynListConstraint.class);
 
 	private static final String CLASSPATH_PREFIX = "classpath:";
+	private static final String REPO_PREFIX = "repo:";
 
 	private static ServiceRegistry serviceRegistry;
 
 	private static BeCPGCacheService beCPGCacheService;
+	
+	private static ContentService contentService;
 
 	private static Set<String> pathRegistry = new HashSet<>();
 
@@ -90,6 +94,10 @@ public class DynListConstraint extends ListOfValuesConstraint {
 	private Boolean addEmptyValue = null;
 
 	private List<String> allowedValuesSuffix = null;
+	
+	public static void setContentService(ContentService contentService) {
+		DynListConstraint.contentService = contentService;
+	}
 
 	/**
 	 * <p>Setter for the field <code>allowedValuesSuffix</code>.</p>
@@ -126,7 +134,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 		this.paths = paths;
 
 		for (String path : paths) {
-			if (!path.startsWith(CLASSPATH_PREFIX)) {
+			if (!path.startsWith(CLASSPATH_PREFIX) && !path.startsWith(REPO_PREFIX)) {
 				pathRegistry.add("/app:company_home/" + AbstractBeCPGQueryBuilder.encodePath(path));
 			}
 		}
@@ -371,7 +379,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 	private Map<String, DynListEntry> getDynListEntries() {
 		return beCPGCacheService.getFromCache(DynListConstraint.class.getName(), createCacheKey(),
 				() -> serviceRegistry.getRetryingTransactionHelper().doInTransaction(() -> {
-					logger.debug("Fill allowedValues for: " + TenantUtil.getCurrentDomain());
+					logger.debug("Fill allowedValues for: " + TenantUtil.getCurrentDomain()+ " "+ createCacheKey());
 					Map<String, DynListEntry> allowedValues = new LinkedHashMap<>();
 
 					if (Boolean.TRUE.equals(addEmptyValue)) {
@@ -382,6 +390,8 @@ public class DynListConstraint extends ListOfValuesConstraint {
 						for (String path : paths) {
 							if (path.startsWith(CLASSPATH_PREFIX)) {
 								processClasspathResource(path, allowedValues);
+							} else if (path.startsWith(REPO_PREFIX)) {
+								processRepoResource(path, allowedValues);
 							} else {
 								processSystemList(path, allowedValues);
 							}
@@ -395,9 +405,26 @@ public class DynListConstraint extends ListOfValuesConstraint {
 
 	private void processClasspathResource(String path, Map<String, DynListEntry> allowedValues) {
 		ClassPathResource resource = new ClassPathResource(path.replace(CLASSPATH_PREFIX, ""));
-		try (InputStream in = resource.getInputStream();
-				InputStreamReader inReader = new InputStreamReader(in);
-				CSVParser csvParser = CSVFormat.DEFAULT.builder().setDelimiter(';').setQuote('"').setHeader().setSkipHeaderRecord(true).build()
+		try (InputStream in = resource.getInputStream()) {
+			processCsvInputStream(allowedValues, in);
+		} catch (IOException e) {
+			logger.error(e, e);
+		}
+	}
+
+	private void processRepoResource(String path, Map<String, DynListEntry> allowedValues) {
+		NodeRef result = BeCPGQueryBuilder.createQuery().selectNodeByPath(path.replace(REPO_PREFIX, ""));
+		if (result != null ) {
+			ContentReader reader = contentService.getReader(result, ContentModel.PROP_CONTENT);
+			processCsvInputStream(allowedValues, reader.getContentInputStream());
+		}
+	}
+
+	private void processCsvInputStream(Map<String, DynListEntry> allowedValues, InputStream in) {
+		try (InputStreamReader inReader = new InputStreamReader(in);
+				CSVParser csvParser = CSVFormat.DEFAULT.builder()
+						.setAllowMissingColumnNames(true)						
+						.setDelimiter(';').setQuote('"').setHeader().setSkipHeaderRecord(true).build()
 						.parse(inReader)) {
 
 			Set<String> locales = new HashSet<>();
@@ -409,11 +436,13 @@ public class DynListConstraint extends ListOfValuesConstraint {
 				}
 			}
 
+			boolean found = false;
 			for (CSVRecord csvRecord : csvParser) {
 				String key = getKeyFromRecord(csvRecord);
 				String filterPropValue = csvRecord.get(constraintFilterProp);
 
 				if (isValidEntry(key, filterPropValue)) {
+					found = true;
 					DynListEntry entry = new DynListEntry();
 					MLText mlText = new MLText();
 
@@ -431,11 +460,14 @@ public class DynListConstraint extends ListOfValuesConstraint {
 					allowedValues.put(key, entry);
 				}
 			}
+			if (!found) {
+				logger.error("constraintFilter not found: " + constraintFilter);
+			}
 		} catch (IOException e) {
 			logger.error(e, e);
 		}
 	}
-
+	
 	private void processSystemList(String path, Map<String, DynListEntry> allowedValues) {
 
 		NamespaceService namespaceService = serviceRegistry.getNamespaceService();
@@ -481,7 +513,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 							entry.setGroups(serviceRegistry.getNodeService().getTargetAssocs(nodeRef, SecurityModel.ASSOC_READ_GROUPS).stream()
 									.map(AssociationRef::getTargetRef)
 									.map(n -> (String) serviceRegistry.getNodeService().getProperty(n, ContentModel.PROP_AUTHORITY_NAME))
-									.collect(Collectors.toList()));
+									.toList());
 							entry.setValues(mlText);
 							entry.setIsDeleted((Boolean) serviceRegistry.getNodeService().getProperty(nodeRef, BeCPGModel.PROP_IS_DELETED));
 
@@ -490,7 +522,12 @@ public class DynListConstraint extends ListOfValuesConstraint {
 
 					}
 				} else {
-					logger.warn("Node doesn't exist : " + nodeRef);
+					logger.warn("Node : " + nodeRef+ " for "+ "/app:company_home/" + AbstractBeCPGQueryBuilder.encodePath(path) + "/*");
+					if(serviceRegistry.getNodeService().exists(nodeRef)) {
+						logger.warn(" - Doesn't have the expected type  : " + constraintTypeQname+ " / type: "+ serviceRegistry.getNodeService().getType(nodeRef));
+					}  else {
+						logger.warn(" - Doesn't exists" );
+					}
 				}
 			}
 

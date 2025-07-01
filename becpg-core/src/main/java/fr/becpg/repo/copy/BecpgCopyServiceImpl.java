@@ -13,6 +13,7 @@ import java.util.Set;
 
 import org.alfresco.error.AlfrescoRuntimeException;
 import org.alfresco.model.ContentModel;
+import org.alfresco.model.DataListModel;
 import org.alfresco.query.CannedQuery;
 import org.alfresco.query.CannedQueryFactory;
 import org.alfresco.query.CannedQueryParameters;
@@ -708,8 +709,10 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	            QName sourceTypeQName = internalNodeService.getType(sourceNodeRef);
 	            
 	          
-	            if (dictionaryService.isSubClass(sourceTypeQName, ContentModel.TYPE_CMOBJECT)&& !dictionaryService.isSubClass(sourceTypeQName, BeCPGModel.TYPE_ENTITYLIST_ITEM) &&
-	                    !sourceNodeAspectQNames.contains(ContentModel.ASPECT_PENDING_DELETE))
+	            if (dictionaryService.isSubClass(sourceTypeQName, ContentModel.TYPE_CMOBJECT)
+	            		&& !dictionaryService.isSubClass(sourceTypeQName, DataListModel.TYPE_DATALIST)
+	            		&& !dictionaryService.isSubClass(sourceTypeQName, BeCPGModel.TYPE_ENTITYLIST_ITEM)
+	            		&& !sourceNodeAspectQNames.contains(ContentModel.ASPECT_PENDING_DELETE))
 	            {
 	            	
 	            	  //  Link the new node to the original, but ensure that we only keep track of the last copy

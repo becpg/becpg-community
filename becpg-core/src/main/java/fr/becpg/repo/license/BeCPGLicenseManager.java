@@ -271,17 +271,20 @@ public class BeCPGLicenseManager {
 		return beCPGCacheService.getFromCache(BeCPGLicenseManager.class.getName() + ".sessions", sessionId, () -> {
 			Set<String> users = new HashSet<>(authenticationService.getUsersWithTickets(true));
 			Set<String> concurrentReadUsers = AuthorityHelper.extractPeople(PermissionService.GROUP_PREFIX + SystemGroup.LicenseReadConcurrent.toString());
+			concurrentReadUsers.removeIf(this::isSpecialLicenseUser);
 			concurrentReadUsers.retainAll(users);
 			if (concurrentReadUsers.contains(AuthenticationUtil.getRunAsUser()) && concurrentReadUsers.size() > getLicense().allowedConcurrentRead) {
 				return true;
 			}
 			Set<String> concurrentWriteUsers = AuthorityHelper.extractPeople(PermissionService.GROUP_PREFIX + SystemGroup.LicenseWriteConcurrent.toString());
 			concurrentWriteUsers.retainAll(users);
+			concurrentWriteUsers.removeIf(this::isSpecialLicenseUser);
 			if (concurrentWriteUsers.contains(AuthenticationUtil.getRunAsUser()) && concurrentWriteUsers.size() > getLicense().allowedConcurrentWrite) {
 				return true;
 			}
 			Set<String> concurrentSupplierUsers = AuthorityHelper.extractPeople(PermissionService.GROUP_PREFIX + SystemGroup.LicenseSupplierConcurrent.toString());
 			concurrentSupplierUsers.retainAll(users);
+			concurrentSupplierUsers.removeIf(this::isSpecialLicenseUser);
 			if (concurrentSupplierUsers.contains(AuthenticationUtil.getRunAsUser()) && concurrentSupplierUsers.size() > getLicense().allowedConcurrentSupplier) {
 				return true;
 			}
@@ -296,6 +299,10 @@ public class BeCPGLicenseManager {
 	 */
 	public boolean isSpecialLicenceUser() {
 		String runAsUser = AuthenticationUtil.getRunAsUser();
+		return isSpecialLicenseUser(runAsUser);
+	}
+
+	public boolean isSpecialLicenseUser(String runAsUser) {
 		if(authenticationService.getDefaultAdministratorUserNames().contains(runAsUser)) {
 			return true;
 		}
