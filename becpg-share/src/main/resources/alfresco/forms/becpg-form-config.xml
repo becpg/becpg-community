@@ -229,7 +229,7 @@ PARTICULAR
 					<show id="bcpg:documentState" force="false" />
 					<show id="bcpg:documentCategory" force="false" />
 					<show id="bcpg:documentIsMandatory" force="false" />
-					<show id="bcpg:documentTypeRef" force="false" />
+					<show id="bcpg:documentTypeRef" force="true" />
 					<show id="bcpg:documentEntityRef" force="false" />
 					
 					<!--ai validation -->
