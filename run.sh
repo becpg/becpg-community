@@ -109,7 +109,7 @@ build() {
    if [ -d becpg-enterprise ]; then
     cd becpg-enterprise
   	 $MVN_EXEC package $EXTRA_ENV -DskipTests=true  -Dmaven.build.cache.enabled=true -Djacoco.skip=true -Dcheckstyle.skip=true  -Dbecpg.dockerbuild.name="enterprise-test"
-     COMPOSE_FILE="./distribution/target/docker-compose-dev.yml"
+     COMPOSE_FILE="./distribution/target/docker-compose-build.yml"
 
       docker compose -f $COMPOSE_FILE build becpg-base-core
       docker compose -f $COMPOSE_FILE build becpg-base-share
@@ -120,7 +120,6 @@ build() {
    	 cd ..
    else
    	 $MVN_EXEC package $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="test"
-   	 docker compose -f ./becpg-integration-runner/target/docker-compose-build.yml build
    	 COMPOSE_FILE="./becpg-integration-runner/target/docker-compose-build.yml"
 
      docker compose -f $COMPOSE_FILE build becpg-base-core
