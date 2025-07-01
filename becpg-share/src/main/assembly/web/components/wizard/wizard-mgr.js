@@ -426,7 +426,7 @@
 	                        url = YAHOO.lang
 	                            .substitute(
 	                                Alfresco.constants.URL_SERVICECONTEXT + "components/survey/survey-form" +
-	                                "?list={list}&nodeRef={nodeRef}&itemType={itemType}&title={title}" + (readOnly ? "&mode={mode}" : ""),
+	                                "?list={list}&nodeRef={nodeRef}&itemType={itemType}&title={title}" + (readOnly || validated ? "&mode={mode}" : ""),
 	                                {
 	                                    nodeRef: step.nodeRef,
 	                                    list: step.listId,
