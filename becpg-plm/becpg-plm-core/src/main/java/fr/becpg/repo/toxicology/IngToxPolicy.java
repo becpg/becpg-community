@@ -77,14 +77,16 @@ public class IngToxPolicy extends AbstractBeCPGPolicy implements OnUpdatePropert
 				toxicologyService.updateToxIngAfterIngUpdate(ingNodeRef);
 				nodeService.setProperty(ingNodeRef, PLMModel.PROP_ING_TOX_DATA, false);
 			}
+			return true;
 		} else if (TOX_UPDATED_KEY.equals(key)) {
 			for (NodeRef toxNodeRef : pendingNodes) {
 				if (nodeService.exists(toxNodeRef)) {
 					toxicologyService.updateToxIngAfterToxUpdate(toxNodeRef);
 				}
 			}
+			return true;
 		}
-		return true;
+		return false;
 	}
-
+	
 }
