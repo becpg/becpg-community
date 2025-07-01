@@ -1246,58 +1246,59 @@ public class ECOServiceImpl implements ECOService {
 		
 		Set<T> toRemoveItems = new HashSet<>();
 		
+		Map<NodeRef, List<T>> targetToItems = new HashMap<>();
+		
 		for (T item : items) {
 			if (itemToWUsedData.containsKey(item)) {
-				WUsedListDataItem wUsedData = itemToWUsedData.get(item);
-
-				Date effectiveDate = ecoEffectiveDate;
-
-				if (wUsedData.getEffectiveDate() != null) {
-					effectiveDate = wUsedData.getEffectiveDate();
-				}
-
-				EffectiveFilters<EffectiveDataItem> filter = null;
-
-				boolean impactEffectivity = !ChangeOrderType.ImpactWUsed.equals(ecoData.getEcoType()) && isFuture(effectiveDate);
-
-				if (impactEffectivity) {
-					filter = new EffectiveFilters<>(effectiveDate);
-				} else {
-					filter = new EffectiveFilters<>(EffectiveFilters.EFFECTIVE);
-				}
-
-				if (filter.createPredicate(productData).test(item)) {
-
-					
-					List<ReplacementListDataItem> itemReplacements = ecoData.getReplacementList().stream().filter(remp -> getSourceItems(ecoData, remp).contains(item.getComponent())).toList();
-					
-					if (!itemReplacements.isEmpty()) {
-						
-						boolean copyItem = impactEffectivity || itemReplacements.size() > 1 || ecoData.getReplacementList().stream().anyMatch(r -> !r.equals(itemReplacements.get(0)) && getSourceItems(ecoData, r).contains(itemReplacements.get(0).getTargetItem()));
-						
-						for (ReplacementListDataItem itemReplacement : itemReplacements) {
-							
-							NodeRef target = null;
-							
-							if (ChangeOrderType.Merge.equals(ecoData.getEcoType())) {
-								target = itemReplacement.getSourceItems().get(0);
-							} else {
-								target = itemReplacement.getTargetItem();
+				List<ReplacementListDataItem> itemReplacements = ecoData.getReplacementList().stream().filter(remp -> getSourceItems(ecoData, remp).contains(item.getComponent())).toList();
+				if (!itemReplacements.isEmpty()) {
+					for (ReplacementListDataItem itemReplacement : itemReplacements) {
+						NodeRef target = itemReplacement.getTargetItem();
+						if (target != null) {
+							if (!targetToItems.containsKey(target)) {
+								targetToItems.put(target, new ArrayList<>());
 							}
-							
-							T newItem = copyOrUpdateItem(item, itemReplacement, target, wUsedData, copyItem);
-							
-							newItems.add(newItem);
-							
-							if (impactEffectivity) {
-								item.setEndEffectivity(effectiveDate);
-								newItem.setStartEffectivity(effectiveDate);
-							} else {
-								toRemoveItems.add(item);
-							}
+							targetToItems.get(target).add(item);
 						}
 					}
 				}
+			}
+		}
+		
+		for (Map.Entry<NodeRef, List<T>> entry : targetToItems.entrySet()) {
+			NodeRef target = entry.getKey();
+			List<T> replacedItems = entry.getValue();
+			
+			if (!replacedItems.isEmpty()) {
+				T firstItem = replacedItems.get(0);
+				WUsedListDataItem wUsedData = itemToWUsedData.get(firstItem);
+				Date effectiveDate = ecoEffectiveDate;
+				if (wUsedData.getEffectiveDate() != null) {
+					effectiveDate = wUsedData.getEffectiveDate();
+				}
+				
+				boolean impactEffectivity = !ChangeOrderType.ImpactWUsed.equals(ecoData.getEcoType()) && isFuture(effectiveDate);
+				
+				double totalQty = 0;
+				for (T item : replacedItems) {
+					if (item.getQty() != null) {
+						totalQty += item.getQty();
+					}
+					if (impactEffectivity) {
+						item.setEndEffectivity(effectiveDate);
+					} else {
+						toRemoveItems.add(item);
+					}
+				}
+				
+				T newItem = copyOrUpdateItem(firstItem, new ReplacementListDataItem(), target, wUsedData, true);
+				newItem.setQty(totalQty);
+				
+				if (impactEffectivity) {
+					newItem.setStartEffectivity(effectiveDate);
+				}
+				
+				newItems.add(newItem);
 			}
 		}
 		

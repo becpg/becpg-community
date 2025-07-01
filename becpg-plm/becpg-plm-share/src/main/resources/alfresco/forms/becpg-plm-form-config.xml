@@ -8668,7 +8668,7 @@
 
 					<field id="bcpg:ingListIng" set="1-col-1">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ing?extra.searchTemplate=%25(bcpg%3AcharactName%20bcpg%3AerpCode%20bcpg%3AlegalName%20bcpg%3AingCEECode%20bcpg%3AcasNumber%20bcpg%3AecNumber%20bcpg%3AceNumber%20bcpg%3AfdaNumber%20bcpg%3AfemaNumber%20bcpg%3AflNumber)&amp;excludeProps=bcpg:excludeFromSearch%7Ctrue
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ing?extra.searchTemplate=%25(bcpg%3AcharactName%20bcpg%3AerpCode%20bcpg%3AlegalName%20bcpg%3AingCEECode%20bcpg%3AcasNumber%20bcpg%3AecNumber%20bcpg%3AceNumber%20bcpg%3AfdaNumber%20bcpg%3AfemaNumber%20bcpg%3AflNumber)&amp;extra.characNameFormat=%7Bml_bcpg%3AcharactName%7D%20-%20%7Bbcpg%3AcasNumber%7D&amp;excludeProps=bcpg:excludeFromSearch%7Ctrue
 							</control-param>
 						</control>
 					</field>
@@ -9008,7 +9008,7 @@
 
 					<field id="bcpg:ingListIng" set="1-col-1">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ing?extra.searchTemplate=%25(bcpg%3AcharactName%20bcpg%3AerpCode%20bcpg%3AlegalName%20bcpg%3AingCEECode%20bcpg%3AcasNumber%20bcpg%3AecNumber%20bcpg%3AceNumber%20bcpg%3AfdaNumber%20bcpg%3AfemaNumber%20bcpg%3AflNumber)
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ing?extra.searchTemplate=%25(bcpg%3AcharactName%20bcpg%3AerpCode%20bcpg%3AlegalName%20bcpg%3AingCEECode%20bcpg%3AcasNumber%20bcpg%3AecNumber%20bcpg%3AceNumber%20bcpg%3AfdaNumber%20bcpg%3AfemaNumber%20bcpg%3AflNumber)&amp;extra.characNameFormat=%7Bml_bcpg%3AcharactName%7D%20-%20%7Bbcpg%3AcasNumber%7D
 							</control-param>
 						</control>
 					</field>
@@ -10216,6 +10216,7 @@
 					<show id="bcpg:filBioOrigins" />
 					<show id="bcpg:regulatoryCountries" force="true" />
 					<show id="bcpg:regulatoryUsageRef" force="true" />
+					<show id="entity_bcpg:filIngs_bcpg:ing_asColumn" />
 					<show id="fm:commentCount" force="true" />
 					<show id="bcpg:glopTarget" />
 					<show id="bcpg:glopValue" />

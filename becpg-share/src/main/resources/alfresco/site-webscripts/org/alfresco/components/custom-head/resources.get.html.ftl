@@ -1,9 +1,14 @@
+
 <@markup id="custom-alfrescoResources" target="alfrescoResources" action="after">
  	<@script type="text/javascript" src="${url.context}/res/js/beCPG.js" group="template-common"/>
     <@script type="text/javascript" src="${url.context}/res/js/beCPGUtils.js" group="template-common"/>
+    <@inlineScript group="template-common">
+      beCPG.constants = beCPG.constants || {};
+      beCPG.constants.AI_AUTH_TOKEN = "${beCPGAuthTocken!''}";
+      beCPG.constants.AI_ENABLED = ${isAIEnable?string};
+   </@>
     <@script type="text/javascript" src="${url.context}/res/components/basket/basket-service.js"  group="template-common" />
     <@script type="text/javascript" src="${url.context}/res/components/entity-suggestions/suggestion-service.js"  group="template-common" />
-    <@script type="text/javascript" src="${url.context}/res/components/entity-suggestions/entity-suggestions.js"  group="template-common" />
 </@markup>
 
 

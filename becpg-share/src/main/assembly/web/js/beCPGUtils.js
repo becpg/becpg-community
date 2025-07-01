@@ -523,3 +523,54 @@
     };
 
 })();
+
+Alfresco.util.message = function(p_messageId, p_messageScope)
+{
+   var msg = p_messageId;
+
+   if (typeof p_messageId != "string")
+   {
+      throw new Error("Missing or invalid argument: messageId");
+   }
+
+   var globalMsg = Alfresco.messages.global[p_messageId];
+   if (typeof globalMsg == "string")
+   {
+      msg = globalMsg;
+   }
+
+   if ((typeof p_messageScope == "string") && (typeof Alfresco.messages.scope[p_messageScope] == "object"))
+   {
+      var scopeMsg = Alfresco.messages.scope[p_messageScope][p_messageId];
+      if (typeof scopeMsg == "string")
+      {
+         msg = scopeMsg;
+      }
+   }
+   
+   var globalMsgForce = Alfresco.messages.global[p_messageId + ".force"];
+   if (typeof globalMsgForce == "string")
+   {
+      msg = globalMsgForce;
+   }
+
+   // Search/replace tokens
+   var tokens = [];
+   if ((arguments.length == 3) && (typeof arguments[2] == "object"))
+   {
+      tokens = arguments[2];
+   }
+   else
+   {
+      tokens = Array.prototype.slice.call(arguments).slice(2);
+   }
+
+   // Emulate server-side I18NUtils implementation
+   if (YAHOO.lang.isArray(tokens) && tokens.length > 0)
+   {
+      msg = msg.replace(/''/g, "'");
+   }
+   msg = YAHOO.lang.substitute(msg, tokens);
+
+   return msg;
+};

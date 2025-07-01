@@ -8,12 +8,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DocumentEffectivityType;
@@ -45,7 +47,7 @@ public class DocumentFormulationIT extends PLMBaseTestCase {
 
 	@Autowired
 	private NamespaceService namespaceService;
-	
+
 	// Constants for document types linked to product labels
 	private static final String CERT_KOSHER = "Kosher Certification";
 	private static final String CERT_HALAL = "Halal Certification";
@@ -80,24 +82,25 @@ public class DocumentFormulationIT extends PLMBaseTestCase {
 
 		//Test Auto expiration certification document type / no name format
 		getOrCreateDocumentTypeItem(DocumentTypeItem.builder().withCharactName(StandardChocolateEclairTestProduct.CERT_ISO_9001)
-				.withLinkedTypes(List.of(PLMModel.TYPE_SUPPLIER.toPrefixString(namespaceService))).withLinkedCharactRefs(List.of(iso9001Cert)).withIsMandatory(true)
-				.withDestPath("Certifications").withEffectivityType(DocumentEffectivityType.AUTO).withAutoExpirationDelay(365));
+				.withLinkedTypes(List.of(PLMModel.TYPE_SUPPLIER.toPrefixString(namespaceService))).withLinkedCharactRefs(List.of(iso9001Cert))
+				.withIsMandatory(true).withDestPath("Certifications").withEffectivityType(DocumentEffectivityType.AUTO).withAutoExpirationDelay(365));
 
 		//Test NONE expiration certification document type
 		getOrCreateDocumentTypeItem(DocumentTypeItem.builder().withCharactName(StandardChocolateEclairTestProduct.CERT_BRC)
-				.withLinkedTypes(List.of(PLMModel.TYPE_SUPPLIER.toPrefixString(namespaceService))).withLinkedCharactRefs(List.of(brcCert)).withIsMandatory(true)
-				.withNameFormat(DOC_TYPE_NAME_FORMAT).withDestPath("Certifications").withEffectivityType(DocumentEffectivityType.NONE));
+				.withLinkedTypes(List.of(PLMModel.TYPE_SUPPLIER.toPrefixString(namespaceService))).withLinkedCharactRefs(List.of(brcCert))
+				.withIsMandatory(true).withNameFormat(DOC_TYPE_NAME_FORMAT).withDestPath("Certifications")
+				.withEffectivityType(DocumentEffectivityType.NONE));
 
 		// IFS certification document type
 		getOrCreateDocumentTypeItem(DocumentTypeItem.builder().withCharactName(StandardChocolateEclairTestProduct.CERT_IFS)
-				.withLinkedTypes(List.of(PLMModel.TYPE_SUPPLIER.toPrefixString(namespaceService))).withLinkedCharactRefs(List.of(ifsCert)).withIsMandatory(false)
-				.withNameFormat(DOC_TYPE_NAME_FORMAT).withDestPath("Certifications"));
+				.withLinkedTypes(List.of(PLMModel.TYPE_SUPPLIER.toPrefixString(namespaceService))).withLinkedCharactRefs(List.of(ifsCert))
+				.withIsMandatory(false).withNameFormat(DOC_TYPE_NAME_FORMAT).withDestPath("Certifications"));
 
 		// Crisis contacts document type
 
 		getOrCreateDocumentTypeItem(DocumentTypeItem.builder().withCharactName("Crisis Contacts")
-				.withLinkedTypes(List.of(PLMModel.TYPE_SUPPLIER.toPrefixString(namespaceService))).withIsMandatory(true).withNameFormat(DOC_TYPE_NAME_FORMAT)
-				.withEffectivityType(DocumentEffectivityType.AUTO).withAutoExpirationDelay(3 * 365));
+				.withLinkedTypes(List.of(PLMModel.TYPE_SUPPLIER.toPrefixString(namespaceService))).withIsMandatory(true)
+				.withNameFormat(DOC_TYPE_NAME_FORMAT).withEffectivityType(DocumentEffectivityType.AUTO).withAutoExpirationDelay(3 * 365));
 
 	}
 
@@ -144,85 +147,63 @@ public class DocumentFormulationIT extends PLMBaseTestCase {
 	private void createRawMaterialDocumentTypes() {
 		// Japan flavor authorization attestation
 		getOrCreateDocumentTypeItem(DocumentTypeItem.builder().withCharactName("Japan Flavor Authorization")
-				.withLinkedTypes(List.of(PLMModel.TYPE_RAWMATERIAL.toPrefixString(namespaceService))).withIsMandatory(false).withNameFormat(DOC_TYPE_NAME_FORMAT)
-				.withDestPath("SupplierDocuments").withEffectivityType(DocumentEffectivityType.AUTO).withAutoExpirationDelay(3 * 365));
+				.withLinkedTypes(List.of(PLMModel.TYPE_RAWMATERIAL.toPrefixString(namespaceService))).withIsMandatory(false)
+				.withNameFormat(DOC_TYPE_NAME_FORMAT).withDestPath("SupplierDocuments").withEffectivityType(DocumentEffectivityType.AUTO)
+				.withAutoExpirationDelay(3 * 365));
 
 		// GMO attestation (mandatory)
 		DocumentTypeItem gmoDocType = DocumentTypeItem.builder().withCharactName("GMO Attestation")
-				.withLinkedTypes(List.of(PLMModel.TYPE_RAWMATERIAL.toPrefixString(namespaceService))).withFormula("ingList.?[isGMO == true].size() > 0")
-				.withNameFormat(DOC_TYPE_NAME_FORMAT).withDestPath("SupplierDocuments").withEffectivityType(DocumentEffectivityType.AUTO)
-				.withAutoExpirationDelay(3 * 365); // 3 years
+				.withLinkedTypes(List.of(PLMModel.TYPE_RAWMATERIAL.toPrefixString(namespaceService)))
+				.withFormula("ingList.?[isGMO == true].size() > 0").withNameFormat(DOC_TYPE_NAME_FORMAT).withDestPath("SupplierDocuments")
+				.withEffectivityType(DocumentEffectivityType.AUTO).withAutoExpirationDelay(3 * 365); // 3 years
 		getOrCreateDocumentTypeItem(gmoDocType);
 
 		// Non-ionization attestation (mandatory)
 		DocumentTypeItem nonIonizationDocType = DocumentTypeItem.builder().withCharactName("Non-ionization Attestation")
 				.withLinkedTypes(List.of(PLMModel.TYPE_RAWMATERIAL.toPrefixString(namespaceService)))
 
-				.withFormula("ingList.?[isIonized == false].size() > 0").withNameFormat(DOC_TYPE_NAME_FORMAT)
-				.withDestPath("SupplierDocuments").withEffectivityType(DocumentEffectivityType.AUTO).withAutoExpirationDelay(3 * 365); // 3 years
+				.withFormula("ingList.?[isIonized == false].size() > 0").withNameFormat(DOC_TYPE_NAME_FORMAT).withDestPath("SupplierDocuments")
+				.withEffectivityType(DocumentEffectivityType.AUTO).withAutoExpirationDelay(3 * 365); // 3 years
 		getOrCreateDocumentTypeItem(nonIonizationDocType);
 
-		DocumentTypeItem labelCopyDocType = DocumentTypeItem.builder()
-			    .withCharactName("Label Copy")
-			    .withLinkedTypes(List.of(PLMModel.TYPE_RAWMATERIAL.toPrefixString(namespaceService)))
-			    .withIsMandatory(true)
-			    .withNameFormat(DOC_TYPE_NAME_FORMAT)
-			    .withDestPath("SupplierDocuments")
-			    .withEffectivityType(DocumentEffectivityType.AUTO)
-			    .withAutoExpirationDelay(3 * 365); // 3 years
-			getOrCreateDocumentTypeItem(labelCopyDocType);
-			
-			
-			getOrCreateDocumentTypeItem(DocumentTypeItem.builder()
-				    .withCharactName("Label Copy")
-				    .withLinkedTypes(List.of(PLMModel.TYPE_RAWMATERIAL.toPrefixString(namespaceService)))
-				    .withIsMandatory(true)
-				    .withNameFormat(DOC_TYPE_NAME_FORMAT)
-				    .withDestPath("SupplierDocuments")
-				    .withEffectivityType(DocumentEffectivityType.AUTO)
-				    .withAutoExpirationDelay(3 * 365));
-			
-		
-			getOrCreateDocumentTypeItem(DocumentTypeItem.builder().withCharactName("QMS Survey analysis results.xlsx")
-			.withLinkedTypes(List.of(PLMModel.TYPE_FINISHEDPRODUCT.toPrefixString(namespaceService)))
-			.withLinkedCharactRefs(List.of(CharactTestHelper.getOrCreateSurveyQuestion(nodeService, "Minor defects - Slight color variation, size within 17-21cm")))
-			.withIsMandatory(true)
-			.withDestPath(".")
-			.withEffectivityType(DocumentEffectivityType.AUTO).withAutoExpirationDelay(3 * 365));
+		DocumentTypeItem labelCopyDocType = DocumentTypeItem.builder().withCharactName("Label Copy")
+				.withLinkedTypes(List.of(PLMModel.TYPE_RAWMATERIAL.toPrefixString(namespaceService))).withIsMandatory(true)
+				.withNameFormat(DOC_TYPE_NAME_FORMAT).withDestPath("SupplierDocuments").withEffectivityType(DocumentEffectivityType.AUTO)
+				.withAutoExpirationDelay(3 * 365); // 3 years
+		getOrCreateDocumentTypeItem(labelCopyDocType);
 
+		getOrCreateDocumentTypeItem(DocumentTypeItem.builder().withCharactName("QMS Survey analysis results.xlsx")
+				.withLinkedTypes(List.of(PLMModel.TYPE_FINISHEDPRODUCT.toPrefixString(namespaceService)))
+				.withLinkedCharactRefs(List
+						.of(CharactTestHelper.getOrCreateSurveyQuestion(nodeService, "Minor defects - Slight color variation, size within 17-21cm")))
+				.withIsMandatory(true).withDestPath(".").withEffectivityType(DocumentEffectivityType.AUTO).withAutoExpirationDelay(3 * 365));
 
 	}
 
 	@Test
-	public void testDocumentAspectFormulation()  {
-		StandardChocolateEclairTestProduct testProduct =	inWriteTx(() -> {
+	public void testDocumentAspectFormulation() {
+		StandardChocolateEclairTestProduct testProduct = inWriteTx(() -> {
 			// Create a test product with claims, surveys, and composition
-			StandardChocolateEclairTestProduct ret = new StandardChocolateEclairTestProduct.Builder()
-					.withAlfrescoRepository(alfrescoRepository)
-					.withNodeService(nodeService)
-					.withDestFolder(getTestFolderNodeRef()).withCompo(true).withSurvey(true).withClaim(true).build();
+			StandardChocolateEclairTestProduct ret = new StandardChocolateEclairTestProduct.Builder().withAlfrescoRepository(alfrescoRepository)
+					.withNodeService(nodeService).withDestFolder(getTestFolderNodeRef()).withCompo(true).withSurvey(true).withClaim(true).build();
 
 			FinishedProductData product = ret.createTestProduct();
 			assertNotNull("Product should be created successfully", product);
 
 			return ret;
 		});
-		
-		inWriteTx(() -> {
-			return formulationService.formulate(testProduct.getProduct());
-		});
-		
-			
+
+		inWriteTx(() -> formulationService.formulate(testProduct.getProduct()));
+
 		inWriteTx(() -> {
 			// Apply document formulation to the product
-		
+
 			// Get key nodes for testing
 			NodeRef chocolateNodeRef = testProduct.getChocolateNodeRef();
-		
+
 			NodeRef supplier1NodeRef = testProduct.getSugarSupplier1NodeRef(); // Supplier with EU_ORGANIC claim (100%, TRUE)
 			NodeRef supplier2NodeRef = testProduct.getSugarSupplier2NodeRef(); // Supplier with KOSHER claim (75%, FALSE)
 			NodeRef supplier3NodeRef = testProduct.getSugarSupplier3NodeRef(); // Supplier with HALAL claim (60%, TRUE)
-			
 
 			// 1. TEST RAW MATERIAL DOCUMENTS (CHOCOLATE NODE)
 			Map<NodeRef, NodeRef> chocolateDocumentMap = entityService.getDocumentsByType(chocolateNodeRef);
@@ -310,22 +291,46 @@ public class DocumentFormulationIT extends PLMBaseTestCase {
 			}
 			assertFalse("Supplier 3 should not have Halal Certification document", hasHalalDoc);
 
+			return null;
+		});
+
+		// Test content update
+		Map<NodeRef, NodeRef> productDocumentMap = inWriteTx(() -> {
+
 			// 4. TEST DOCUMENT STATE SYNCHRONIZATION
 			// Change the product state and verify that document states are synchronized
-			
-			Map<NodeRef, NodeRef> productDocumentMap = entityService.getDocumentsByType(testProduct.getProduct().getNodeRef());
-			List<NodeRef> productDocuments = new ArrayList<>(productDocumentMap.values());
+
+			Map<NodeRef, NodeRef> tmp = entityService.getDocumentsByType(testProduct.getProduct().getNodeRef());
+			List<NodeRef> productDocuments = new ArrayList<>(tmp.values());
 			assertFalse("Product should have related documents", productDocuments.isEmpty());
 
-			
-			testProduct.getProduct().setState( SystemState.Valid);
+			// Update the content to trigger onContentUpdate policy
+			for (NodeRef docRef : productDocuments) {
+				String docName = (String) nodeService.getProperty(docRef, ContentModel.PROP_NAME);
+				if ((docName != null) && docName.contains("QMS Survey analysis results.xlsx")) {
+					ClassPathResource resource = new ClassPathResource("beCPG/signature/sample_1.pdf");
+					ContentWriter contentWriter = contentService.getWriter(docRef, ContentModel.PROP_CONTENT, true);
+					contentWriter.setEncoding("UTF-8");
+					contentWriter.setMimetype(mimetypeService.guessMimetype("test_document_aspect.pdf", resource.getInputStream()));
+					contentWriter.putContent(resource.getInputStream());
+				}
+			}
+			return tmp;
+		});
 
-			
+		inWriteTx(() -> {
+			List<NodeRef> productDocuments = new ArrayList<>(productDocumentMap.values());
+			testProduct.getProduct().setState(SystemState.Valid);
 			formulationService.formulate(testProduct.getProduct()); // Re-formulate to synchronize document states
 
 			for (NodeRef docRef : productDocuments) {
 				String docState = (String) nodeService.getProperty(docRef, BeCPGModel.PROP_DOCUMENT_STATE);
-				assertEquals("Document state should be synchronized with product state", SystemState.Valid.toString(), docState);
+				String docName = (String) nodeService.getProperty(docRef, ContentModel.PROP_NAME);
+				if ((docName != null) && docName.contains("QMS Survey analysis results.xlsx")) {
+					assertEquals("Document state should be synchronized with product state", SystemState.Valid.toString(), docState);
+				} else {
+					assertEquals("Document state should be Simulation", SystemState.Simulation.toString(), docState);
+				}
 			}
 
 			// 5. TEST DOCUMENT FORMULATION WITH MANDATORY STATUS CHANGES
@@ -333,7 +338,7 @@ public class DocumentFormulationIT extends PLMBaseTestCase {
 			NodeRef qmsDocument = null;
 			for (NodeRef docRef : productDocuments) {
 				String docName = (String) nodeService.getProperty(docRef, ContentModel.PROP_NAME);
-				if (docName != null && docName.contains("QMS Survey analysis results.xlsx")) {
+				if ((docName != null) && docName.contains("QMS Survey analysis results.xlsx")) {
 					qmsDocument = docRef;
 					break;
 				}
@@ -345,50 +350,43 @@ public class DocumentFormulationIT extends PLMBaseTestCase {
 			assertTrue("QMS document should be mandatory", isQmsMandatory);
 
 			// Store initial mandatory status
-			boolean initialMandatoryStatus = isQmsMandatory != null && isQmsMandatory;
+			boolean initialMandatoryStatus = (isQmsMandatory != null) && isQmsMandatory;
 
 			// Get the survey responses from the product
 			List<SurveyListDataItem> surveyResponses = testProduct.getProduct().getSurveyList();
 			assertFalse("Product should have survey responses", surveyResponses.isEmpty());
 
-				                // Update the first survey response to change the mandatory status
-                surveyResponses.get(0).setChoices(
-                    List.of(CharactTestHelper.getOrCreateSurveyQuestion(
-                        nodeService, 
-                        StandardChocolateEclairTestProduct.ANSWER_PASTRY_PERFECT
-                    ))
-                );
+			// Update the first survey response to change the mandatory status
+			surveyResponses.get(0).setChoices(
+					List.of(CharactTestHelper.getOrCreateSurveyQuestion(nodeService, StandardChocolateEclairTestProduct.ANSWER_PASTRY_PERFECT)));
 
-				// Re-formulate to update document status
-				formulationService.formulate(testProduct.getProduct());
+			// Re-formulate to update document status
+			formulationService.formulate(testProduct.getProduct());
 
-				// Get the updated QMS document
-				qmsDocument = null;
-				Map<NodeRef, NodeRef> updatedDocumentMap = entityService.getDocumentsByType(testProduct.getProduct().getNodeRef());
-				for (NodeRef docRef : updatedDocumentMap.values()) {
-					String docName = (String) nodeService.getProperty(docRef, ContentModel.PROP_NAME);
-					if (docName != null && docName.contains("QMS Survey analysis results.xlsx")) {
-						qmsDocument = docRef;
-						break;
-					}
+			// Get the updated QMS document
+			qmsDocument = null;
+			Map<NodeRef, NodeRef> updatedDocumentMap = entityService.getDocumentsByType(testProduct.getProduct().getNodeRef());
+			for (NodeRef docRef : updatedDocumentMap.values()) {
+				String docName = (String) nodeService.getProperty(docRef, ContentModel.PROP_NAME);
+				if ((docName != null) && docName.contains("QMS Survey analysis results.xlsx")) {
+					qmsDocument = docRef;
+					break;
 				}
+			}
 
-				// Verify the document still exists
-				assertNotNull("QMS document should still exist after survey update", qmsDocument);
+			// Verify the document still exists
+			assertNotNull("QMS document should still exist after survey update", qmsDocument);
 
-				// Verify the mandatory status has changed
-				Boolean updatedMandatoryStatus = (Boolean) nodeService.getProperty(qmsDocument, BeCPGModel.PROP_DOCUMENT_IS_MANDATORY);
-				assertNotNull("Updated mandatory status should not be null", updatedMandatoryStatus);
+			// Verify the mandatory status has changed
+			Boolean updatedMandatoryStatus = (Boolean) nodeService.getProperty(qmsDocument, BeCPGModel.PROP_DOCUMENT_IS_MANDATORY);
+			assertNotNull("Updated mandatory status should not be null", updatedMandatoryStatus);
 
-				// Log the status change for verification
-				logger.info(String.format("QMS Document mandatory status changed from %s to %s after survey update", 
-					initialMandatoryStatus, updatedMandatoryStatus));
+			// Log the status change for verification
+			logger.info(String.format("QMS Document mandatory status changed from %s to %s after survey update", initialMandatoryStatus,
+					updatedMandatoryStatus));
 
-				// Verify the status actually changed (this assumes the survey change should affect the mandatory status)
-				assertNotEquals("Mandatory status should change after survey update", 
-					initialMandatoryStatus, updatedMandatoryStatus);
-		
-
+			// Verify the status actually changed (this assumes the survey change should affect the mandatory status)
+			assertNotEquals("Mandatory status should change after survey update", initialMandatoryStatus, updatedMandatoryStatus);
 
 			return null;
 		});

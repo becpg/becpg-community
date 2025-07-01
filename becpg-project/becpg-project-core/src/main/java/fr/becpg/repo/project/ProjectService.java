@@ -176,6 +176,6 @@ public interface ProjectService {
 	 * @param project a {@link fr.becpg.repo.project.data.ProjectData} object
 	 * @return a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object
 	 */
-	TaskListDataItem createNewTask(ProjectData project);
+	TaskListDataItem insertNewTask(ProjectData project, List<NodeRef> previousTasks);
 
 }

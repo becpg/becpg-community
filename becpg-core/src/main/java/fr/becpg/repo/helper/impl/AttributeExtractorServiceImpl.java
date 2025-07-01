@@ -1049,16 +1049,21 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		QName type = nodeService.getType(nodeRef);
 		return getAttributeExtractorPlugin(type) != null;
 	}
+	
+	@Override
+	public String extractPropName(QName type, NodeRef nodeRef) {
+		return extractPropName(type, nodeRef, null);
+	}
 
 	/** {@inheritDoc} */
 	@Override
-	public String extractPropName(QName type, NodeRef nodeRef) {
+	public String extractPropName(QName type, NodeRef nodeRef, String nameFormat) {
 		String value;
 
 		if (permissionService.hasReadPermission(nodeRef) == AccessStatus.ALLOWED) {
 			AttributeExtractorPlugin plugin = getAttributeExtractorPlugin(type);
 			if (plugin != null) {
-				value = plugin.extractPropName(type, nodeRef);
+				value = plugin.extractPropName(type, nodeRef, nameFormat);
 			} else {
 				value = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
 			}
@@ -1308,5 +1313,4 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	public PropertyFormats getPropertyFormats(FormatMode mode, boolean useServerLocale) {
 		return propertyFormatService.getPropertyFormats(mode, useServerLocale);
 	}
-
 }

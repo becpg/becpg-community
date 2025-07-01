@@ -53,6 +53,7 @@ import fr.becpg.repo.ProjectRepoConsts;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.entity.datalist.DataListSortService;
 import fr.becpg.repo.formulation.FormulationPlugin;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.AssociationService;
@@ -116,6 +117,8 @@ public class ProjectServiceImpl extends DefaultSecurityServicePlugin implements 
 	private PersonService personService;
 	@Autowired
 	private EntityListDAO entityListDAO;
+	@Autowired
+	private DataListSortService dataListSortService;
 
 	@Autowired
 	SysAdminParams sysAdminParams;
@@ -151,7 +154,7 @@ public class ProjectServiceImpl extends DefaultSecurityServicePlugin implements 
 	}
 
 	/** {@inheritDoc} */
-	@SuppressWarnings({ "deprecation", "deprecation" })
+	@SuppressWarnings({ "deprecation" })
 	@Override
 	public Set<NodeRef> updateProjectState(NodeRef projectNodeRef, String beforeState, String afterState) {
 		Set<NodeRef> toReformulates = new HashSet<>();
@@ -676,19 +679,20 @@ public class ProjectServiceImpl extends DefaultSecurityServicePlugin implements 
 
 	/** {@inheritDoc} */
 	@Override
-	public TaskListDataItem createNewTask(ProjectData project) {
+	public TaskListDataItem insertNewTask(ProjectData project, List<NodeRef> previousTasks) {
 		NodeRef listContainer = entityListDAO.getListContainer(project.getNodeRef());
-
 		NodeRef taskList = entityListDAO.getList(listContainer, ProjectModel.TYPE_TASK_LIST);
-
 		NodeRef newTaskNodeRef = entityListDAO.createListItem(taskList, ProjectModel.TYPE_TASK_LIST, null, new HashMap<>());
-
 		TaskListDataItem newTask = (TaskListDataItem) alfrescoRepository.findOne(newTaskNodeRef);
-
 		project.getTaskList().add(newTask);
-
+		if (previousTasks != null) {
+			for (NodeRef previousTask : previousTasks) {
+				newTask.getPrevTasks().add(previousTask);
+				dataListSortService.insertAfter(newTask.getNodeRef(), previousTask);
+			}
+		}
+		policyBehaviourFilter.disableBehaviour(newTaskNodeRef, BeCPGModel.ASPECT_DEPTH_LEVEL);
 		return newTask;
-
 	}
 
 }
