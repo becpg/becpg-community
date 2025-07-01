@@ -130,6 +130,7 @@
           <show force="true" id="gs1:width"/>
           <show force="true" id="gs1:depth"/>
           <show force="true" id="gs1:diameter"/>
+          <show force="true" id="gs1:volume"/>
           <show force="true" id="gs1:stackingFactor"/>
           <show force="true" id="gs1:stackingMaxWeight"/>
           <show force="false" id="pack:tare"/>
@@ -153,9 +154,11 @@
           <show force="true" id="gs1:secondaryWidth"/>
           <show force="true" id="gs1:secondaryDepth"/>
           <show force="true" id="gs1:secondaryDiameter"/>
+          <show force="true" id="gs1:secondaryVolume"/>
           <show force="true" id="gs1:secondaryNetWeight"/>
           <show force="true" id="gs1:secondaryWeight"/>
           <show force="true" id="gs1:secondaryDataCarrierTypeCode"/>
+          <show force="true" id="gs1:tertiaryPackagingTypeCode"/>
           <show force="true" id="gs1:palletTypeCode"/>
           <show force="false" id="pack:palletLayers"/>
           <show force="false" id="pack:palletBoxesPerLayer"/>
@@ -164,6 +167,7 @@
           <show force="false" id="pack:palletHeight"/>
           <show force="true" id="gs1:tertiaryWidth"/>
           <show force="true" id="gs1:tertiaryDepth"/>
+          <show force="true" id="gs1:tertiaryVolume"/>
           <show force="true" id="gs1:tertiaryDataCarrierTypeCode"/>
           <show force="false" id="pack:palletNumberOnGround"/>
           <show force="false" id="pack:palletStackingMaxWeight"/>
@@ -549,6 +553,11 @@
               <control-param name="unit">mm</control-param>
             </control>
           </field>
+          <field id="gs1:volume" mandatory="false" read-only="false" set="primaryPackaging">
+            <control template="/org/alfresco/components/form/controls/number-unit.ftl">
+              <control-param name="unit">L</control-param>
+            </control>
+          </field>
           <field id="gs1:stackingFactor" mandatory="false" read-only="false" set="primaryPackaging"/>
           <field id="gs1:stackingMaxWeight" mandatory="false" read-only="false" set="primaryPackaging">
             <control template="/org/alfresco/components/form/controls/number-unit.ftl">
@@ -615,10 +624,14 @@
               <control-param name="unit">mm</control-param>
             </control>
           </field>
-          
-           <field id="gs1:secondaryDiameter" mandatory="false" read-only="false" set="secondaryPackaging">
+          <field id="gs1:secondaryDiameter" mandatory="false" read-only="false" set="secondaryPackaging">
             <control template="/org/alfresco/components/form/controls/number-unit.ftl">
               <control-param name="unit">mm</control-param>
+            </control>
+          </field>
+          <field id="gs1:secondaryVolume" mandatory="false" read-only="false" set="secondaryPackaging">
+            <control template="/org/alfresco/components/form/controls/number-unit.ftl">
+              <control-param name="unit">L</control-param>
             </control>
           </field>
           
@@ -642,6 +655,7 @@
           <field help-id="becpg.forms.help.gs1.dataCarrierTypeCode" id="gs1:secondaryDataCarrierTypeCode" mandatory="false" read-only="false" set="secondaryPackaging"/>
           
           <set appearance="bordered-panel" id="tertiaryPackaging" label-id="becpg.forms.set.tertiaryPackaging.label" parent="conditioningTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
+          <field help-id="becpg.forms.help.gs1.packagingTypeCode" id="gs1:tertiaryPackagingTypeCode" mandatory="false" read-only="false" set="tertiaryPackaging"/>
           <field help-id="becpg.forms.help.gs1.palletTypeCode" id="gs1:palletTypeCode" mandatory="false" read-only="false" set="tertiaryPackaging"/>
           <field id="pack:palletLayers" mandatory="false" read-only="false" set="tertiaryPackaging"/>
           <field id="pack:palletBoxesPerLayer" mandatory="false" read-only="false" set="tertiaryPackaging"/>
@@ -660,6 +674,11 @@
           <field id="gs1:tertiaryDepth" mandatory="false" read-only="false" set="tertiaryPackaging">
             <control template="/org/alfresco/components/form/controls/number-unit.ftl">
               <control-param name="unit">mm</control-param>
+            </control>
+          </field>
+          <field id="gs1:tertiaryVolume" mandatory="false" read-only="false" set="tertiaryPackaging">
+            <control template="/org/alfresco/components/form/controls/number-unit.ftl">
+              <control-param name="unit">L</control-param>
             </control>
           </field>
           <field id="pack:palletNumberOnGround" mandatory="false" read-only="false" set="tertiaryPackaging"/>
@@ -1520,6 +1539,7 @@
           <show force="true" id="gs1:width"/>
           <show force="true" id="gs1:depth"/>
           <show force="true" id="gs1:diameter"/>
+          <show force="true" id="gs1:volume"/>
           <show force="true" id="gs1:stackingFactor"/>
           <show force="true" id="gs1:stackingMaxWeight"/>
           <show force="false" id="pack:tare"/>
@@ -1543,9 +1563,11 @@
           <show force="true" id="gs1:secondaryWidth"/>
           <show force="true" id="gs1:secondaryDepth"/>
           <show force="true" id="gs1:secondaryDiameter"/>
+          <show force="true" id="gs1:secondaryVolume"/>
           <show force="true" id="gs1:secondaryNetWeight"/>
           <show force="true" id="gs1:secondaryWeight"/>
           <show force="true" id="gs1:secondaryDataCarrierTypeCode"/>
+          <show force="true" id="gs1:tertiaryPackagingTypeCode"/>
           <show force="true" id="gs1:palletTypeCode"/>
           <show force="true" id="pack:palletLayers"/>
           <show force="false" id="pack:palletBoxesPerLayer"/>
@@ -1554,6 +1576,7 @@
           <show force="false" id="pack:palletHeight"/>
           <show force="true" id="gs1:tertiaryWidth"/>
           <show force="true" id="gs1:tertiaryDepth"/>
+          <show force="true" id="gs1:tertiaryVolume"/>
           <show force="true" id="gs1:tertiaryDataCarrierTypeCode"/>
           <show force="false" id="pack:palletNumberOnGround"/>
           <show force="false" id="pack:palletStackingMaxWeight"/>
@@ -1926,6 +1949,11 @@
               <control-param name="unit">mm</control-param>
             </control>
           </field>
+          <field id="gs1:volume" mandatory="false" read-only="false" set="primaryPackaging">
+            <control template="/org/alfresco/components/form/controls/number-unit.ftl">
+              <control-param name="unit">L</control-param>
+            </control>
+          </field>
           <field id="gs1:stackingFactor" mandatory="false" read-only="false" set="primaryPackaging"/>
           <field id="gs1:stackingMaxWeight" mandatory="false" read-only="false" set="primaryPackaging">
             <control template="/org/alfresco/components/form/controls/number-unit.ftl">
@@ -1992,10 +2020,14 @@
               <control-param name="unit">mm</control-param>
             </control>
           </field>
-          
-           <field id="gs1:secondaryDiameter" mandatory="false" read-only="false" set="secondaryPackaging">
+          <field id="gs1:secondaryDiameter" mandatory="false" read-only="false" set="secondaryPackaging">
             <control template="/org/alfresco/components/form/controls/number-unit.ftl">
               <control-param name="unit">mm</control-param>
+            </control>
+          </field>
+          <field id="gs1:secondaryVolume" mandatory="false" read-only="false" set="secondaryPackaging">
+            <control template="/org/alfresco/components/form/controls/number-unit.ftl">
+              <control-param name="unit">L</control-param>
             </control>
           </field>
           
@@ -2019,6 +2051,7 @@
           <field help-id="becpg.forms.help.gs1.dataCarrierTypeCode" id="gs1:secondaryDataCarrierTypeCode" mandatory="false" read-only="false" set="secondaryPackaging"/>
           
           <set appearance="bordered-panel" id="tertiaryPackaging" label-id="becpg.forms.set.tertiaryPackaging.label" parent="conditioningTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
+          <field help-id="becpg.forms.help.gs1.packagingTypeCode" id="gs1:tertiaryPackagingTypeCode" mandatory="false" read-only="false" set="tertiaryPackaging"/>
           <field help-id="becpg.forms.help.gs1.palletTypeCode" id="gs1:palletTypeCode" mandatory="false" read-only="false" set="tertiaryPackaging"/>
           <field id="pack:palletLayers" mandatory="false" read-only="false" set="tertiaryPackaging"/>
           <field id="pack:palletBoxesPerLayer" mandatory="false" read-only="false" set="tertiaryPackaging"/>
@@ -2037,6 +2070,11 @@
           <field id="gs1:tertiaryDepth" mandatory="false" read-only="false" set="tertiaryPackaging">
             <control template="/org/alfresco/components/form/controls/number-unit.ftl">
               <control-param name="unit">mm</control-param>
+            </control>
+          </field>
+          <field id="gs1:tertiaryVolume" mandatory="false" read-only="false" set="tertiaryPackaging">
+            <control template="/org/alfresco/components/form/controls/number-unit.ftl">
+              <control-param name="unit">L</control-param>
             </control>
           </field>
           <field id="pack:palletNumberOnGround" mandatory="false" read-only="false" set="tertiaryPackaging"/>

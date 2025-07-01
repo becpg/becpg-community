@@ -57,6 +57,12 @@ function main() {
 					document = checkout.checkin();
 				}
 				
+				var recipient = search.findNode(task.resources.get(0));
+				var recipients = [];
+				recipients.push(recipient);
+				var signatureUrl = bSign.getSignatureView(document, recipient, task.nodeRef);
+				urlDeliverable.url = signatureUrl;
+				
 				var suppliers = extractRecipients(document);
 				var documentName = document.properties["cm:name"];
 				var shareId = bcpg.shareContent(document);

@@ -372,7 +372,7 @@
 
          }
          
-         if (this.options.showAiSuggestion && !this.options.showOnlyLocation)
+         if (beCPG.constants.AI_ENABLED && this.options.showAiSuggestion && !this.options.showOnlyLocation)
           {
               function initAiSuggestion() {
                  
@@ -387,19 +387,20 @@
                       }
                   };
 
-                  var aiSuggestionService = new beCPG.service.AiSuggestion();
-                  var isEnabled = aiSuggestionService.isEnabled(record);
-                  
-                  var btnClass = isEnabled ? 'ai-suggestion-action' : 'ai-suggestion-action disabled';
-                  var html = '<a class="' + btnClass + '" title="' + me.msg("aisuggestion.show.tip") + '" tabindex="0">' + me.msg("aisuggestion.show.label") + '</a>';
+                  var html = "", aiSuggestionService = new beCPG.service.AiSuggestion();
+
+                  if (aiSuggestionService.isEnabled(record)) {
+							html = '<a class="ai-suggestion-action enabled" title="' + me.msg("aisuggestion.show.tip") + '" tabindex="0"></a>';
+						} else {
+							html = '<a class="ai-suggestion-action" title="' + me.msg("aisuggestion.show.tip") + '" tabindex="0">' + me.msg("aisuggestion.show.label") + '</a>';
+						}
                   var spanEl = Dom.get(me.id + '-aisuggestion');
-                  
                   if(spanEl != null) {
                       spanEl.innerHTML = html;
                       
-                      Alfresco.util.useAsButton(Selector.query("a", spanEl, true), function(e) {
-                          var aiSuggestionService = new beCPG.service.AiSuggestion();
-                           aiSuggestionService.showSuggestions(record);
+                      YAHOO.util.Event.addListener(spanEl, "click", function(e)
+                      {
+                          aiSuggestionService.showSuggestions(record, e);
                           YAHOO.util.Event.preventDefault(e);
                       }, null, me);
                   }

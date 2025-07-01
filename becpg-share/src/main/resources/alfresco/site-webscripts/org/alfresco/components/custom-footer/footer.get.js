@@ -19,6 +19,7 @@ function main() {
 		name: "beCPG.component.Basket"
 	};
 	model.widgets = [basket];
+    model.beCPGAuthTocken = getBeCPGAuthTocken(user);
 
 	model.isAIEnable = (user != null && user.capabilities["isAIUser"] != null && user.capabilities["isAIUser"] == true) || false;
 
@@ -28,7 +29,7 @@ function main() {
 			id: "Watson",
 			name: "beCPG.component.Watson",
 			options: {
-				ticket: getBeCPGAuthTocken(user),
+				ticket: model.beCPGAuthTocken,
 				locale: locale
 			}
 		};

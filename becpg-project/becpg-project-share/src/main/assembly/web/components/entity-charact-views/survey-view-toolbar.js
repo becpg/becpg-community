@@ -10,7 +10,7 @@
             right: true,
             evaluate: function(asset, entity) {
                 // Show the button for surveyList type
-                return asset.name !== null && (asset.name.indexOf("View-survey") > -1 || asset.name === "surveyList");
+                return asset.name !== null && (asset.name.indexOf("View-survey") > -1 || asset.name.indexOf("surveyList") > -1 );
             },
             createWidget: function(containerDiv, instance) {
                 var divEl = document.createElement("div");

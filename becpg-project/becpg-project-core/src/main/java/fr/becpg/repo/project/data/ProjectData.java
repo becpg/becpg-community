@@ -73,6 +73,7 @@ public class ProjectData extends BeCPGDataObject
 	private NodeRef projectTpl;
 	private Integer completionPercent = 0;
 	private List<NodeRef> entities;
+	private List<NodeRef> projectOwners;
 	private List<NodeRef> legends = new ArrayList<>();
 	private Integer overdue = 0;
 	private Integer score = 0;
@@ -86,6 +87,16 @@ public class ProjectData extends BeCPGDataObject
 	private Double budgetedCost = 0d;
 	private Double work = 0d;
 	private Double loggedTime = 0d;
+	
+	private boolean dirtyTaskTree = false;
+	
+	public boolean isDirtyTaskTree() {
+		return dirtyTaskTree;
+	}
+	
+	public void setDirtyTaskTree(boolean dirtyTaskTree) {
+		this.dirtyTaskTree = dirtyTaskTree;
+	}
 	
 	/*
 	 * Completion scores
@@ -618,6 +629,16 @@ public class ProjectData extends BeCPGDataObject
 	@AlfQname(qname = "pjt:projectEntity")
 	public List<NodeRef> getEntities() {
 		return entities;
+	}
+	
+	@AlfProp
+	@AlfQname(qname = "pjt:projectOwners")
+	public List<NodeRef> getProjectOwners() {
+		return projectOwners;
+	}
+	
+	public void setProjectOwners(List<NodeRef> projectOwners) {
+		this.projectOwners = projectOwners;
 	}
 
 	/**
