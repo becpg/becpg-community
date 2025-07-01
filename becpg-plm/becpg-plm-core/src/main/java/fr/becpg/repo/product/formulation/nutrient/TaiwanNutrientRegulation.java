@@ -45,8 +45,7 @@ public class TaiwanNutrientRegulation extends AbstractNutrientRegulation {
 	@Override
 	protected String displayValueByCode(Double value, Double roundedValue, String nutrientTypeCode, String measurementPrecision, Locale locale) {
 
-		if (measurementPrecision == null || //
-				NutMeasurementPrecision.LessThan.toString().equals(measurementPrecision) //
+		if (NutMeasurementPrecision.LessThan.toString().equals(measurementPrecision) //
 						&& (value != null && roundedValue != null && nutrientTypeCode != null //
 								&& (nutrientTypeCode.equals(NutrientCode.Energykcal) && value <= 4
 										|| ((nutrientTypeCode.equals(NutrientCode.Fat) || nutrientTypeCode.equals(NutrientCode.CarbohydrateByDiff)
