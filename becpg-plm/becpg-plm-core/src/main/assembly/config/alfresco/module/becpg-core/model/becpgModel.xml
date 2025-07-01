@@ -1016,8 +1016,22 @@
 			</parameter>
 		</constraint>
 		
-	
-		
+		<constraint name="bcpg:documentCategories" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/Lists/bcpg:entityLists/DocumentCategories</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>bcpg:lvValue</value>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
+		</constraint>
 		
 	</constraints>
 
@@ -2133,6 +2147,16 @@
 		<type name="bcpg:documentType">
 			<parent>bcpg:charact</parent>
 			<properties>
+				<property name="bcpg:docTypeCategory">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:documentCategories" />
+					</constraints>
+				</property>
 				<property name="bcpg:docTypeIsMandatory">
 					<type>d:boolean</type>
 					<index enabled="true">
@@ -2163,10 +2187,6 @@
 					<type>d:text</type>
 					<index enabled="false" />
 				</property>
-				<property name="bcpg:docTypeLinkedHierarchy">
-					<type>d:noderef</type>
-					<index enabled="false" />
-				</property>
 				<property name="bcpg:docTypeLinkedTypes">
 					<type>d:text</type>
 					<multiple>true</multiple>
@@ -2184,6 +2204,17 @@
 					</source>
 					<target>
 						<class>bcpg:entityListItem</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="bcpg:docTypeLinkedHierarchy">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:linkedValue</class>
 						<mandatory>false</mandatory>
 						<many>true</many>
 					</target>
@@ -6860,6 +6891,16 @@
 						<constraint ref="bcpg:systemState" />
 					</constraints>
 				</property>
+				<property name="bcpg:documentCategory">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:documentCategories" />
+					</constraints>
+				</property>
 				<property name="bcpg:documentIsMandatory">
 					<type>d:boolean</type>
 					<index enabled="true">
@@ -6941,11 +6982,10 @@
 					</index>
 				</property>
 				<property name="bcpg:aiSuggestedFields">
-					<type>d:qname</type>
+					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<multiple>true</multiple>
 					<index enabled="true">
-						<tokenised>false</tokenised>
+						<tokenised>both</tokenised>
 						<facetable>false</facetable>
 					</index>
 				</property>

@@ -3,30 +3,32 @@
 	GNU Lesser General Public License as published by the Free Software Foundation, 
 	either version 3 of the License, or (at your option) any later version. beCPG 
 	is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
-	without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+	without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR 
 	PURPOSE. See the GNU Lesser General Public License for more details. You 
 	should have received a copy of the GNU Lesser General Public License along 
 	with beCPG. If not, see <http://www.gnu.org/licenses/>. -->
 <alfresco-config>
 
-   <config evaluator="node-type" condition="dl:dataList" replace="true">
-      <forms>
-         <!-- Data Lists: Edit Data List details -->
-         <form>
-            <field-visibility>
-               <show id="cm:title" force="true" />
-               <show id="cm:description" force="true" />
-               <show id="cm:name" force="true" />
-            </field-visibility>
-            <edit-form template="../data-lists/forms/datalist-edit.ftl" />
-            <appearance>
-               <field id="cm:title" mandatory="true">
-                  <control template="/org/alfresco/components/form/controls/textfield.ftl" />
-               </field>
-            </appearance>
-         </form>
-      </forms>
-   </config>
+	<config evaluator="node-type" condition="dl:dataList" replace="true">
+		<forms>
+			<!-- Data Lists: Edit Data List details -->
+			<form>
+				<field-visibility>
+					<show id="cm:title" force="true" />
+					<show id="cm:description" force="true" />
+					<show id="cm:name" force="true" />
+				</field-visibility>
+				<edit-form template="../data-lists/forms/datalist-edit.ftl" />
+				<appearance>
+					<field id="cm:title" mandatory="true">
+						<control
+							template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
 
 	<!-- (creating nodes) for entityV2 -->
 
@@ -41,13 +43,14 @@
 				</field-visibility>
 				<appearance>
 					<field id="cm:title">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+						<control
+							template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 				</appearance>
 			</form>
 		</forms>
 	</config>
-	
+
 	<config evaluator="node-type" condition="bcpg:entityV2">
 		<forms>
 			<!-- Document Library Common form -->
@@ -59,7 +62,8 @@
 				</field-visibility>
 				<appearance>
 					<field id="cm:title">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+						<control
+							template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 				</appearance>
 			</form>
@@ -72,7 +76,8 @@
 				</field-visibility>
 				<appearance>
 					<field id="rep:reportLocales">
-						<control template="/org/alfresco/components/form/controls/mtlangue.ftl" />
+						<control
+							template="/org/alfresco/components/form/controls/mtlangue.ftl" />
 					</field>
 					<field id="rep:reportParameters" />
 					<field id="rep:reportTpls" />
@@ -113,13 +118,15 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:alType">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+						<control
+							template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="isSearch">true</control-param>
 							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
 					<field id="cm:created">
-						<control template="/org/alfresco/components/form/controls/daterange.ftl">
+						<control
+							template="/org/alfresco/components/form/controls/daterange.ftl">
 							<control-param name="isSearch">true</control-param>
 						</control>
 					</field>
@@ -136,7 +143,7 @@
 					<show id="cm:name" />
 					<show id="cm:title" force="true" />
 					<show id="bcpg:externalLinkUrl" />
-					<show id="bcpg:externalLinkTarget"/>
+					<show id="bcpg:externalLinkTarget" />
 					<show id="bcpg:externalLinkMediaType" />
 				</field-visibility>
 
@@ -152,138 +159,318 @@
 					<show id="cm:name" />
 					<show id="cm:title" force="true" />
 					<show id="bcpg:externalLinkUrl" />
-					<show id="bcpg:externalLinkTarget"/>
+					<show id="bcpg:externalLinkTarget" />
 					<show id="bcpg:externalLinkMediaType" />
 				</field-visibility>
 
 			</form>
 		</forms>
 	</config>
-	
-	
-	 <config evaluator="model-type" condition="cm:content">
+
+
+	<config evaluator="model-type" condition="cm:content">
 		<forms>
-				<form id="content-validation">
-					<field-visibility>
-						<show id="cm:name" />
-					</field-visibility>
+			<form id="content-validation">
+				<field-visibility>
+					<show id="cm:name" />
+				</field-visibility>
 			</form>
 		</forms>
 	</config>
-	
 
-   <config evaluator="node-type" condition="cm:folder">
+
+	<config evaluator="node-type" condition="cm:folder">
 		<forms>
-	  		<form id="wizard-doclib-simple-metadata">
-	             <field-visibility>
-               <show id="cm:name" />
-               <show id="cm:title" force="true" />
-               <show id="cm:description" force="true" />
-            </field-visibility>
-            <edit-form template="/org/alfresco/components/form/popupedit-form.ftl" />
-            <appearance>
-               <field id="cm:name">
-                 <control>
-                    <control-param name="maxLength">255</control-param>
-                 </control>
-               </field>
-               <field id="cm:title">
-                  <control template="/org/alfresco/components/form/controls/textfield.ftl" />
-               </field>
-               <field id="cm:description">
-                  <control>
-                     <control-param name="activateLinks">true</control-param>
-                  </control>
-               </field>
-            </appearance>
-	         </form>
-         </forms>
+			<form id="wizard-doclib-simple-metadata">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:title" force="true" />
+					<show id="cm:description" force="true" />
+				</field-visibility>
+				<edit-form
+					template="/org/alfresco/components/form/popupedit-form.ftl" />
+				<appearance>
+					<field id="cm:name">
+						<control>
+							<control-param name="maxLength">255</control-param>
+						</control>
+					</field>
+					<field id="cm:title">
+						<control
+							template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="cm:description">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
 	</config>
-	
-	
-	 <!-- cm:content type (existing nodes) -->
-   <config evaluator="node-type" condition="cm:content">
-      <forms>
-      
-         <!-- Document Library pop-up Edit Metadata form -->
-         <form id="doclib-simple-metadata">
-            <field-visibility>
-               <show id="cm:name" />
-               <show id="cm:title" force="true" />
-               <show id="cm:description" force="true" />
-               <!-- cm:effectivity aspect -->
-               <show id="cm:from" force="true"/>
-               <show id="cm:to" force="true"/>
-            </field-visibility>
-            <edit-form template="../documentlibrary/forms/doclib-simple-metadata.ftl" />
-            <appearance>
-               <field id="cm:name">
-                 <control>
-                    <control-param name="maxLength">255</control-param>
-                 </control>
-               </field>
-               <field id="cm:title">
-                  <control template="/org/alfresco/components/form/controls/textfield.ftl" />
-               </field>
-               <field id="cm:description">
-                  <control>
-                     <control-param name="activateLinks">true</control-param>
-                  </control>
-               </field>
-               <field id="cm:from">
-                  <control template="/org/alfresco/components/form/controls/date.ftl">
-                     <control-param name="showTime">false</control-param>
-                  </control>
-               </field>
-               <field id="cm:to">
-                  <control template="/org/alfresco/components/form/controls/date.ftl">
-                     <control-param name="showTime">false</control-param>
-                  </control>
-               </field>
-            </appearance>
-         </form>
-         
-         <form id="wizard-doclib-simple-metadata">
-            <field-visibility>
-               <show id="cm:name" />
-               <!-- cm:effectivity aspect -->
-               <show id="cm:from" force="true"/>
-               <show id="cm:to" force="true"/>
-            </field-visibility>
-             <edit-form template="/org/alfresco/components/form/popupedit-form.ftl" />
-            <appearance>
-               <field id="cm:name">
-                 <control>
-                    <control-param name="maxLength">255</control-param>
-                 </control>
-               </field>
-               <set id="effectivity"  label-id="aspect.cm_effectivity" template="/org/alfresco/components/form/2-column-set.ftl" />
-               <field set="effectivity" id="cm:from">
-                  <control template="/org/alfresco/components/form/controls/date.ftl">
-                     <control-param name="showTime">false</control-param>
-                  </control>
-               </field>
-               <field set="effectivity" id="cm:to">
-                  <control template="/org/alfresco/components/form/controls/date.ftl">
-                     <control-param name="showTime">false</control-param>
-                  </control>
-               </field>
-            </appearance>
-         </form>
-         
-      </forms>
-   </config>
-   
+
+
+	<!-- cm:content type (existing nodes) -->
+	<config evaluator="node-type" condition="cm:content">
+		<forms>
+			<form>
+				<field-visibility>
+					<!--designation -->
+					<show id="cm:name" />
+					<show id="cm:title" force="true" />
+					<show id="cm:description" force="true" />
+					<show id="cm:author" force="true" />
+					<show id="bcpg:code" force="false" />
+					<show id="bcpg:docLinkedEntities" force="false" />
+					<show id="mimetype" />
+					<show id='size' for-mode='view' />
+					
+					<!--document aspect -->
+					<show id="bcpg:documentState" force="false" />
+					<show id="bcpg:documentCategory" force="false" />
+					<show id="bcpg:documentIsMandatory" force="false" />
+					<show id="bcpg:documentTypeRef" force="true" />
+					<show id="bcpg:documentEntityRef" force="false" />
+					
+					<!--ai validation -->
+					<show id="bcpg:aiValidationState" for-mode="view" />
+					<show id="bcpg:aiValidationHints" for-mode="view" />
+					<show id="bcpg:aiValidationDate" for-mode="view" />
+
+					<!--categories -->
+					<show id="cm:taggable" force="false" />
+					<show id="cm:categories" force="false" />
+					
+					<!--effectivity -->
+					<show id="cm:from" force="false" />
+					<show id="cm:to" force="false" />
+					
+					<!--audit -->
+					<show for-mode="view" force="false" id="cm:creator" />
+					<show for-mode="view" force="false" id="cm:created" />
+					<show for-mode="view" force="false" id="cm:modifier" />
+					<show for-mode="view" force="false" id="cm:modified" />
+
+
+				</field-visibility>
+				<appearance>
+
+					<set id="mainInfo" appearance="bordered-panel"
+						label-id="becpg.forms.set.designation.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="documentType" appearance="bordered-panel"
+						label-id="becpg.forms.set.document-type.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="effectivity" appearance="bordered-panel"
+						label-id="becpg.forms.set.effectivity.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="aiValidation" appearance="bordered-panel"
+						label-id="becpg.forms.set.ai-validation.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set appearance="bordered-panel" id="categories"
+						label-id="becpg.forms.set.category.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="audit" appearance="bordered-panel"
+						label-id="becpg.forms.set.audit.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					
+					<!--designation -->
+					<field id="cm:name" set="mainInfo" />
+					<field id="cm:title" set="mainInfo" />
+					<field id="cm:description" set="mainInfo">
+						<control
+							template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
+						</control>
+					</field>
+					<field id="cm:author" set="mainInfo" />
+					<field id="bcpg:code" set="mainInfo" read-only="true" />
+					<field id="bcpg:docLinkedEntities" set="mainInfo" />
+					<field id="mimetype" set="mainInfo">
+						<control
+							template="/org/alfresco/components/form/controls/mimetype.ftl" />
+					</field>
+					<field id="size" set="mainInfo" read-only="true" />
+					
+					<!--documentType -->
+					<field id="bcpg:documentState" set="documentType" />
+					<field id="bcpg:documentIsMandatory" set="documentType"
+						read-only="true" />
+					<field id="bcpg:documentCategory" set="documentType"
+						read-only="true" />
+					<field id="bcpg:documentTypeRef" set="documentType">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">
+								becpg/autocomplete/targetassoc/associations/bcpg:documentType
+						</control-param>
+						</control>
+					</field>
+					<field id="bcpg:documentEntityRef" set="documentType"
+						read-only="true">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">
+								becpg/autocomplete/targetassoc/associations/bcpg:entityV2
+						</control-param>
+						</control>
+					</field>
+					
+					<!--effectivity -->
+					<field id="cm:from" set="effectivity" />
+					<field id="cm:to" set="effectivity" />
+					
+					<!--aiValidation -->
+					<field id="bcpg:aiValidationState" set="aiValidation" read-only="true" />
+					<field id="bcpg:aiValidationHints" set="aiValidation" read-only="true" >
+                        <control template="/org/alfresco/components/form/controls/textarea.ftl" >
+                        	<control-param name="rows">10</control-param>
+                        </control>
+                    </field>
+					<field id="bcpg:aiValidationDate" set="aiValidation" read-only="true" />
+					
+					<!--audit -->
+					<field id="cm:modifier" set="audit" />
+					<field id="cm:modified" set="audit" />
+					<field id="cm:creator" set="audit" />
+					<field id="cm:created" set="audit" />
+					
+					<!--categories -->
+					<field id="cm:taggable" mandatory="false" read-only="false"
+						set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+							<control-param name="params">aspect=cm:taggable
+							</control-param>
+							<control-param name="createNewItemUri">
+								/api/tag/workspace/SpacesStore
+						</control-param>
+							<control-param name="createNewItemIcon">tag</control-param>
+						</control>
+					</field>
+					<field id="cm:categories" mandatory="false"
+						read-only="false" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+			<!-- Document Library pop-up Edit Metadata form -->
+			<form id="doclib-simple-metadata">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:title" force="true" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:documentTypeRef" force="true" />
+					<!-- cm:effectivity aspect -->
+					<show id="cm:from" force="true" />
+					<show id="cm:to" force="true" />
+					<show id="cm:taggable" force="false" />
+				</field-visibility>
+				<edit-form
+					template="../documentlibrary/forms/doclib-simple-metadata.ftl" />
+				<appearance>
+					<set id="mainInfo" appearance="bordered-panel"
+						label-id="becpg.forms.set.designation.label" />
+					<set id="effectivity" appearance="bordered-panel"
+						label-id="becpg.forms.set.effectivity.label" />
+					<set id="categories" appearance="bordered-panel"
+						label-id="becpg.forms.set.category.label" />
+						
+					<field id="cm:name" set="mainInfo">
+						<control>
+							<control-param name="maxLength">255</control-param>
+						</control>
+					</field>
+					<field id="cm:title" set="mainInfo">
+						<control
+							template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="cm:description" set="mainInfo">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:documentTypeRef" set="mainInfo">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">
+								becpg/autocomplete/targetassoc/associations/bcpg:documentType
+						</control-param>
+						</control>
+					</field>
+					<field id="cm:from" set="effectivity">
+						<control
+							template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
+					<field id="cm:to" set="effectivity">
+						<control
+							template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
+					<field id="cm:taggable" mandatory="false" read-only="false" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+							<control-param name="params">aspect=cm:taggable
+							</control-param>
+							<control-param name="createNewItemUri">
+								/api/tag/workspace/SpacesStore
+						</control-param>
+							<control-param name="createNewItemIcon">tag</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+
+			<form id="wizard-doclib-simple-metadata">
+				<field-visibility>
+					<show id="cm:name" />
+					<!-- cm:effectivity aspect -->
+					<show id="cm:from" force="true" />
+					<show id="cm:to" force="true" />
+				</field-visibility>
+				<edit-form
+					template="/org/alfresco/components/form/popupedit-form.ftl" />
+				<appearance>
+					<field id="cm:name">
+						<control>
+							<control-param name="maxLength">255</control-param>
+						</control>
+					</field>
+					<set id="effectivity" label-id="aspect.cm_effectivity"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field set="effectivity" id="cm:from">
+						<control
+							template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
+					<field set="effectivity" id="cm:to">
+						<control
+							template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+
+		</forms>
+	</config>
+
 
 	<config evaluator="model-type" condition="bcpg:smartContentListItem">
 		<forms>
-				<form id="datagrid">
-					<field-visibility>
-						<show id="cm:content" />
-						<show id="cm:name" />
-						<show id="cm:modified" />
-						<show id="cm:modifier" />
-					</field-visibility>
+			<form id="datagrid">
+				<field-visibility>
+					<show id="cm:content" />
+					<show id="cm:name" />
+					<show id="cm:modified" />
+					<show id="cm:modifier" />
+				</field-visibility>
 			</form>
 		</forms>
 	</config>
@@ -300,16 +487,19 @@
 					<show id="bcpg:parentLevel" />
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
-					<show id="sec:readGroups" force="true"/>
+					<show id="sec:readGroups" force="true" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
 				<appearance>
 
 					<field id="bcpg:parentLevel">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/allLinkedvalue
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">
+								becpg/autocomplete/allLinkedvalue
 							</control-param>
-							<control-param name="urlParamsToPass">destination,itemId
+							<control-param name="urlParamsToPass">
+								destination,itemId
 							</control-param>
 						</control>
 					</field>
@@ -327,15 +517,18 @@
 					<show id="bcpg:lkvValue" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:parentLevel" />
-					<show id="sec:readGroups" force="true"/>
+					<show id="sec:readGroups" force="true" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:parentLevel">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/allLinkedvalue
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">
+								becpg/autocomplete/allLinkedvalue
 							</control-param>
-							<control-param name="urlParamsToPass">destination,itemId
+							<control-param name="urlParamsToPass">
+								destination,itemId
 							</control-param>
 						</control>
 					</field>
@@ -343,29 +536,32 @@
 			</form>
 
 			<!-- Data Grid view -->
-            <form id="filter">
-                <field-visibility>
-                    <show id="bcpg:depthLevel" />
-                    <show id="bcpg:code" />
-                    <show id="bcpg:erpCode" force="true" />
-                    <show id="bcpg:lkvValue" />
-                    <show id="bcpg:parentLevel" />
-                    <show id="bcpg:isDeleted" />
-                </field-visibility>
-                <appearance>
-                    <field id="bcpg:parentLevel">
-                        <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-                            <control-param name="ds">becpg/autocomplete/allLinkedvalue
+			<form id="filter">
+				<field-visibility>
+					<show id="bcpg:depthLevel" />
+					<show id="bcpg:code" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:lkvValue" />
+					<show id="bcpg:parentLevel" />
+					<show id="bcpg:isDeleted" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:parentLevel">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">
+								becpg/autocomplete/allLinkedvalue
                             </control-param>
-                            <control-param name="urlParamsToPass">list
-                            </control-param>
-                        </control>
-                    </field>
-                    <field id="bcpg:isDeleted" >
-						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+							<control-param name="urlParamsToPass">list
+							</control-param>
+						</control>
 					</field>
-                </appearance>
-            </form>
+					<field id="bcpg:isDeleted">
+						<control
+							template="/org/alfresco/components/form/controls/boolean.ftl" />
+					</field>
+				</appearance>
+			</form>
 
 			<form id="datagrid">
 				<field-visibility>
@@ -374,15 +570,18 @@
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:lkvValue" />
 					<show id="bcpg:parentLevel" />
-					<show id="sec:readGroups" force="true"/>
+					<show id="sec:readGroups" force="true" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:parentLevel">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/linkedvalue
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">
+								becpg/autocomplete/linkedvalue
 							</control-param>
-							<control-param name="urlParamsToPass">destination,itemId
+							<control-param name="urlParamsToPass">
+								destination,itemId
 							</control-param>
 						</control>
 					</field>
@@ -398,8 +597,8 @@
 				<field-visibility>
 					<show id="bcpg:lvCode" />
 					<show id="bcpg:lvValue" />
-					<show id="sec:readGroups" force="true"/>
-					<show id="bcpg:isDeleted" force="true"/>
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:isDeleted" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:lvCode" read-only="true" />
@@ -415,20 +614,21 @@
 				<field-visibility>
 					<show id="bcpg:lvCode" />
 					<show id="bcpg:lvValue" />
-					<show id="sec:readGroups" force="true"/>
-					<show id="bcpg:isDeleted" force="true"/>
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:isDeleted" force="true" />
 				</field-visibility>
 			</form>
-			
+
 			<form id="bulk-edit">
 				<field-visibility>
 					<show id="bcpg:lvValue" />
-					<show id="sec:readGroups" force="true"/>
-					<show id="bcpg:isDeleted" force="true"/>
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:isDeleted" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:isDeleted">
-						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+						<control
+							template="/org/alfresco/components/form/controls/boolean.ftl" />
 					</field>
 				</appearance>
 			</form>
@@ -439,11 +639,12 @@
 					<show id="bcpg:lvCode" />
 					<show id="bcpg:lvValue" />
 					<show id="sec:readGroups" force="true" />
-					<show id="bcpg:isDeleted"  force="true"/>
+					<show id="bcpg:isDeleted" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:isDeleted">
-						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+						<control
+							template="/org/alfresco/components/form/controls/boolean.ftl" />
 					</field>
 				</appearance>
 			</form>
@@ -452,8 +653,8 @@
 				<field-visibility>
 					<show id="bcpg:lvCode" />
 					<show id="bcpg:lvValue" />
-					<show id="sec:readGroups" force="true"/>
-					<show id="bcpg:isDeleted" force="true"/>
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:isDeleted" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:lvCode" read-only="true" />
@@ -469,14 +670,17 @@
 					<show id="bcpg:entityTplEnabled" />
 					<show id="bcpg:entityTplIsDefault" />
 					<show id="bcpg:entityTplScript" />
-					
+
 				</field-visibility>
 				<appearance>
-					<set id="template" appearance="bordered-panel" label-id="becpg.forms.set.template.label" />
+					<set id="template" appearance="bordered-panel"
+						label-id="becpg.forms.set.template.label" />
 					<field id="bcpg:entityTplEnabled" set="template" />
 					<field id="bcpg:entityTplIsDefault" set="template" />
-					<field id="bcpg:entityTplScript" set="template" mandatory="false" read-only="false">
-						<control template="/org/alfresco/components/form/controls/association.ftl">
+					<field id="bcpg:entityTplScript" set="template"
+						mandatory="false" read-only="false">
+						<control
+							template="/org/alfresco/components/form/controls/association.ftl">
 							<control-param name="startLocation">{doclib}</control-param>
 						</control>
 					</field>
@@ -484,7 +688,7 @@
 			</form>
 		</forms>
 	</config>
-	
+
 	<config evaluator="aspect" condition="bcpg:httpLinkAspect">
 		<forms>
 			<form>
@@ -497,70 +701,82 @@
 
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:httpLink1"  mandatory="false" read-only="false">
-						<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+					<field id="bcpg:httpLink1" mandatory="false"
+						read-only="false">
+						<control
+							template="/org/alfresco/components/form/controls/httplink.ftl" />
 					</field>
-					<field id="bcpg:httpLink2"  mandatory="false" read-only="false">
-						<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+					<field id="bcpg:httpLink2" mandatory="false"
+						read-only="false">
+						<control
+							template="/org/alfresco/components/form/controls/httplink.ftl" />
 					</field>
-					<field id="bcpg:httpLink3"  mandatory="false" read-only="false">
-						<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+					<field id="bcpg:httpLink3" mandatory="false"
+						read-only="false">
+						<control
+							template="/org/alfresco/components/form/controls/httplink.ftl" />
 					</field>
-					<field id="bcpg:httpLink4"  mandatory="false" read-only="false">
-						<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+					<field id="bcpg:httpLink4" mandatory="false"
+						read-only="false">
+						<control
+							template="/org/alfresco/components/form/controls/httplink.ftl" />
 					</field>
-					<field id="bcpg:httpLink5"  mandatory="false" read-only="false">
-						<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+					<field id="bcpg:httpLink5" mandatory="false"
+						read-only="false">
+						<control
+							template="/org/alfresco/components/form/controls/httplink.ftl" />
 					</field>
 				</appearance>
 			</form>
 		</forms>
 	</config>
-	
-	
-	
+
+
 	<config evaluator="aspect" condition="bcpg:autoMergeAspect">
 		<forms>
 			<form>
 				<field-visibility>
 					<show id="bcpg:autoMergeDate" />
-				    <show id="bcpg:autoMergeTo" />
+					<show id="bcpg:autoMergeTo" />
 					<show id="bcpg:autoMergeVersionType" />
 					<show id="bcpg:autoMergeComments" />
 					<show id="bcpg:autoMergeImpactWUsed" />
 				</field-visibility>
 				<appearance>
-					<set id="branch" appearance="bordered-panel" label-id="becpg.forms.set.branch.label" />
+					<set id="branch" appearance="bordered-panel"
+						label-id="becpg.forms.set.branch.label" />
 					<field id="bcpg:autoMergeDate" set="branch" />
-				    <field id="bcpg:autoMergeTo" set="branch" >
-				    	<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+					<field id="bcpg:autoMergeTo" set="branch">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/branches</control-param>
 							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
 					</field>
-				
+
 					<field id="bcpg:autoMergeVersionType" set="branch" />
-					<field id="bcpg:autoMergeComments" set="branch" >
-						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					<field id="bcpg:autoMergeComments" set="branch">
+						<control
+							template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
 					<field id="bcpg:autoMergeImpactWUsed" set="branch" />
 				</appearance>
 			</form>
 		</forms>
 	</config>
-	
+
 	<!-- Overrides Alfresco -->
 	<config evaluator="aspect" condition="cm:indexControl">
-      <forms>
-         <form>
-            <field-visibility>
-               <hide id="cm:isIndexed" />
-               <hide id="cm:isContentIndexed" />
-            </field-visibility>
-         </form>
-      </forms>
-   </config>
-   
+		<forms>
+			<form>
+				<field-visibility>
+					<hide id="cm:isIndexed" />
+					<hide id="cm:isContentIndexed" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+
 	<!-- bcpg:notificationRuleList -->
 	<config evaluator="model-type" condition="bcpg:notificationRuleList">
 		<forms>
@@ -575,92 +791,123 @@
 					<show id="bcpg:nrScript" />
 					<show id="bcpg:nrScriptMode" />
 					<show id="bcpg:nrDisabled" />
-					
+
 					<show id="bcpg:nrNodeType" />
 					<show id="bcpg:nrTarget" />
 					<show id="bcpg:nrVersionFilter" />
 					<show id="bcpg:nrConditions" />
-					
+
 					<show id="bcpg:nrSubject" />
 					<show id="bcpg:nrEmail" />
-					
+
 					<show id="bcpg:nrFrequency" />
 					<show id="bcpg:nrRecurringTimeType" />
 					<show id="bcpg:nrRecurringDay" />
 					<show id="bcpg:nrFrequencyStartDate" />
 					<show id="bcpg:nrForceNotification" />
-				
+
 					<show id="rep:reportTpls" force="true" />
 				</field-visibility>
 				<appearance>
-					<set id="notificationRule" appearance="bordered-panel" label-id="becpg.forms.set.notification-rule.label" />
-					<set id="notificationFilter" appearance="bordered-panel" label-id="becpg.forms.set.notification-filter.label" />
-					<set id="notificationEMail" appearance="bordered-panel" label-id="becpg.forms.set.notification-email.label" />
-					<set id="notificationRecurring" appearance="bordered-panel" label-id="becpg.forms.set.notification-recurring.label" />
-					<set id="notificationReport" appearance="bordered-panel" label-id="becpg.forms.set.notification-report.label" />
-					
+					<set id="notificationRule" appearance="bordered-panel"
+						label-id="becpg.forms.set.notification-rule.label" />
+					<set id="notificationFilter" appearance="bordered-panel"
+						label-id="becpg.forms.set.notification-filter.label" />
+					<set id="notificationEMail" appearance="bordered-panel"
+						label-id="becpg.forms.set.notification-email.label" />
+					<set id="notificationRecurring" appearance="bordered-panel"
+						label-id="becpg.forms.set.notification-recurring.label" />
+					<set id="notificationReport" appearance="bordered-panel"
+						label-id="becpg.forms.set.notification-report.label" />
+
 					<field id="bcpg:nrNodeType" set="notificationFilter">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/entityTypeValue</control-param>
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">
+								becpg/autocomplete/entityTypeValue</control-param>
 							<control-param name="saveTitle">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:nrTarget" set="notificationFilter">
-						<control template="/org/alfresco/components/form/controls/association.ftl">
+						<control
+							template="/org/alfresco/components/form/controls/association.ftl">
 							<control-param name="startLocation">{ancestor}</control-param>
-							<control-param name="startLocationParams">aspect=bcpg:entityListsAspect
+							<control-param name="startLocationParams">
+								aspect=bcpg:entityListsAspect
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:nrConditions" set="notificationFilter" help-id="becpg.forms.help.nrConditions" >
-						<control template="/org/alfresco/components/form/controls/config-editor.ftl">
+					<field id="bcpg:nrConditions" set="notificationFilter"
+						help-id="becpg.forms.help.nrConditions">
+						<control
+							template="/org/alfresco/components/form/controls/config-editor.ftl">
 							<control-param name="syntax">channel</control-param>
 						</control>
 					</field>
-					<field id="bcpg:nrScript" set="notificationRule" mandatory="false" read-only="false">
-						<control template="/org/alfresco/components/form/controls/association.ftl">
+					<field id="bcpg:nrScript" set="notificationRule"
+						mandatory="false" read-only="false">
+						<control
+							template="/org/alfresco/components/form/controls/association.ftl">
 							<control-param name="startLocation">{ancestor}</control-param>
-							<control-param name="startLocationParams">aspect=bcpg:entityListsAspect
+							<control-param name="startLocationParams">
+								aspect=bcpg:entityListsAspect
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:nrScriptMode" set="notificationRule" >
-						<control template="/org/alfresco/components/form/controls/selectone.ftl" />
+					<field id="bcpg:nrScriptMode" set="notificationRule">
+						<control
+							template="/org/alfresco/components/form/controls/selectone.ftl" />
 					</field>
 					<field id="bcpg:nrDisabled" set="notificationRule" />
 					<field id="bcpg:nrDateField" set="notificationRule">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/propertyDateValue</control-param>
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">
+								becpg/autocomplete/propertyDateValue</control-param>
 							<control-param name="saveTitle">false</control-param>
 						</control>
 					</field>
-					<field id="bcpg:nrTimeNumber" set="notificationRule" mandatory="true">
-						<control template="/org/alfresco/components/form/controls/number.ftl" />
+					<field id="bcpg:nrTimeNumber" set="notificationRule"
+						mandatory="true">
+						<control
+							template="/org/alfresco/components/form/controls/number.ftl" />
 					</field>
-					<field id="bcpg:nrTimeType" set="notificationRule" help-id="becpg.forms.help.notificationTimeType" />
+					<field id="bcpg:nrTimeType" set="notificationRule"
+						help-id="becpg.forms.help.notificationTimeType" />
 					<field id="bcpg:nrSubject" set="notificationEMail">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+						<control
+							template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
-					<field id="bcpg:nrNotificationAuthorities" set="notificationRule">
-						<control template="/org/alfresco/components/form/controls/authority.ftl" />
+					<field id="bcpg:nrNotificationAuthorities"
+						set="notificationRule">
+						<control
+							template="/org/alfresco/components/form/controls/authority.ftl" />
 					</field>
-					<field id="bcpg:nrFrequencyStartDate" set="notificationRecurring">
-						<control template="/org/alfresco/components/form/controls/date.ftl">
+					<field id="bcpg:nrFrequencyStartDate"
+						set="notificationRecurring">
+						<control
+							template="/org/alfresco/components/form/controls/date.ftl">
 							<control-param name="showTime">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:nrFrequency" set="notificationRecurring" />
 					<field id="bcpg:nrEmail" set="notificationEMail">
-						<control template="/org/alfresco/components/form/controls/association.ftl">
-							<control-param name="startLocation">/app:company_home/app:dictionary/app:email_templates</control-param>
+						<control
+							template="/org/alfresco/components/form/controls/association.ftl">
+							<control-param name="startLocation">
+								/app:company_home/app:dictionary/app:email_templates</control-param>
 						</control>
 					</field>
 					<field id="bcpg:nrVersionFilter" set="notificationFilter" />
-					<field id="bcpg:nrForceNotification" set="notificationRecurring" />
-					<field id="bcpg:nrRecurringTimeType" set="notificationRecurring" help-id="becpg.forms.help.notificationFrequency" />
+					<field id="bcpg:nrForceNotification"
+						set="notificationRecurring" />
+					<field id="bcpg:nrRecurringTimeType"
+						set="notificationRecurring"
+						help-id="becpg.forms.help.notificationFrequency" />
 					<field id="bcpg:nrRecurringDay" set="notificationRecurring" />
 					<field id="rep:reportTpls" set="notificationReport">
-						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">
 								becpg/autocomplete/targetassoc/associations/rep:reportTpl?excludeProps=rep%3AreportTplIsSystem%7Ctrue%2Crep%3AreportTplIsDisabled%7Ctrue&amp;filter=rep%3AreportTplType%7CExportSearch
 							</control-param>
@@ -668,7 +915,7 @@
 					</field>
 				</appearance>
 			</form>
-			
+
 			<form id="create">
 				<field-visibility>
 					<show id="bcpg:nrNotificationAuthorities" />
@@ -678,92 +925,123 @@
 					<show id="bcpg:nrScript" />
 					<show id="bcpg:nrScriptMode" />
 					<show id="bcpg:nrDisabled" />
-					
+
 					<show id="bcpg:nrNodeType" />
 					<show id="bcpg:nrTarget" />
 					<show id="bcpg:nrVersionFilter" />
 					<show id="bcpg:nrConditions" />
-					
+
 					<show id="bcpg:nrSubject" />
 					<show id="bcpg:nrEmail" />
-					
+
 					<show id="bcpg:nrFrequency" />
 					<show id="bcpg:nrRecurringTimeType" />
 					<show id="bcpg:nrRecurringDay" />
 					<show id="bcpg:nrFrequencyStartDate" />
 					<show id="bcpg:nrForceNotification" />
-				
+
 					<show id="rep:reportTpls" force="true" />
 				</field-visibility>
 				<appearance>
-					<set id="notificationRule" appearance="bordered-panel" label-id="becpg.forms.set.notification-rule.label" />
-					<set id="notificationFilter" appearance="bordered-panel" label-id="becpg.forms.set.notification-filter.label" />
-					<set id="notificationEMail" appearance="bordered-panel" label-id="becpg.forms.set.notification-email.label" />
-					<set id="notificationRecurring" appearance="bordered-panel" label-id="becpg.forms.set.notification-recurring.label" />
-					<set id="notificationReport" appearance="bordered-panel" label-id="becpg.forms.set.notification-report.label" />
-					
+					<set id="notificationRule" appearance="bordered-panel"
+						label-id="becpg.forms.set.notification-rule.label" />
+					<set id="notificationFilter" appearance="bordered-panel"
+						label-id="becpg.forms.set.notification-filter.label" />
+					<set id="notificationEMail" appearance="bordered-panel"
+						label-id="becpg.forms.set.notification-email.label" />
+					<set id="notificationRecurring" appearance="bordered-panel"
+						label-id="becpg.forms.set.notification-recurring.label" />
+					<set id="notificationReport" appearance="bordered-panel"
+						label-id="becpg.forms.set.notification-report.label" />
+
 					<field id="bcpg:nrNodeType" set="notificationFilter">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/entityTypeValue</control-param>
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">
+								becpg/autocomplete/entityTypeValue</control-param>
 							<control-param name="saveTitle">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:nrTarget" set="notificationFilter">
-						<control template="/org/alfresco/components/form/controls/association.ftl">
+						<control
+							template="/org/alfresco/components/form/controls/association.ftl">
 							<control-param name="startLocation">{ancestor}</control-param>
-							<control-param name="startLocationParams">aspect=bcpg:entityListsAspect
+							<control-param name="startLocationParams">
+								aspect=bcpg:entityListsAspect
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:nrConditions" set="notificationFilter" help-id="becpg.forms.help.nrConditions" >
-						<control template="/org/alfresco/components/form/controls/config-editor.ftl">
+					<field id="bcpg:nrConditions" set="notificationFilter"
+						help-id="becpg.forms.help.nrConditions">
+						<control
+							template="/org/alfresco/components/form/controls/config-editor.ftl">
 							<control-param name="syntax">channel</control-param>
 						</control>
 					</field>
-					<field id="bcpg:nrScript" set="notificationRule" mandatory="false" read-only="false">
-						<control template="/org/alfresco/components/form/controls/association.ftl">
+					<field id="bcpg:nrScript" set="notificationRule"
+						mandatory="false" read-only="false">
+						<control
+							template="/org/alfresco/components/form/controls/association.ftl">
 							<control-param name="startLocation">{ancestor}</control-param>
-							<control-param name="startLocationParams">aspect=bcpg:entityListsAspect
+							<control-param name="startLocationParams">
+								aspect=bcpg:entityListsAspect
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:nrScriptMode" set="notificationRule" >
-						<control template="/org/alfresco/components/form/controls/selectone.ftl" />
+					<field id="bcpg:nrScriptMode" set="notificationRule">
+						<control
+							template="/org/alfresco/components/form/controls/selectone.ftl" />
 					</field>
 					<field id="bcpg:nrDisabled" set="notificationRule" />
 					<field id="bcpg:nrDateField" set="notificationRule">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/propertyDateValue</control-param>
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">
+								becpg/autocomplete/propertyDateValue</control-param>
 							<control-param name="saveTitle">false</control-param>
 						</control>
 					</field>
-					<field id="bcpg:nrTimeNumber" set="notificationRule" mandatory="true">
-						<control template="/org/alfresco/components/form/controls/number.ftl" />
+					<field id="bcpg:nrTimeNumber" set="notificationRule"
+						mandatory="true">
+						<control
+							template="/org/alfresco/components/form/controls/number.ftl" />
 					</field>
-					<field id="bcpg:nrTimeType" set="notificationRule" help-id="becpg.forms.help.notificationTimeType" />
+					<field id="bcpg:nrTimeType" set="notificationRule"
+						help-id="becpg.forms.help.notificationTimeType" />
 					<field id="bcpg:nrSubject" set="notificationEMail">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+						<control
+							template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
-					<field id="bcpg:nrNotificationAuthorities" set="notificationRule">
-						<control template="/org/alfresco/components/form/controls/authority.ftl" />
+					<field id="bcpg:nrNotificationAuthorities"
+						set="notificationRule">
+						<control
+							template="/org/alfresco/components/form/controls/authority.ftl" />
 					</field>
-					<field id="bcpg:nrFrequencyStartDate" set="notificationRecurring">
-						<control template="/org/alfresco/components/form/controls/date.ftl">
+					<field id="bcpg:nrFrequencyStartDate"
+						set="notificationRecurring">
+						<control
+							template="/org/alfresco/components/form/controls/date.ftl">
 							<control-param name="showTime">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:nrFrequency" set="notificationRecurring" />
 					<field id="bcpg:nrEmail" set="notificationEMail">
-						<control template="/org/alfresco/components/form/controls/association.ftl">
-							<control-param name="startLocation">/app:company_home/app:dictionary/app:email_templates</control-param>
+						<control
+							template="/org/alfresco/components/form/controls/association.ftl">
+							<control-param name="startLocation">
+								/app:company_home/app:dictionary/app:email_templates</control-param>
 						</control>
 					</field>
 					<field id="bcpg:nrVersionFilter" set="notificationFilter" />
-					<field id="bcpg:nrForceNotification" set="notificationRecurring" />
-					<field id="bcpg:nrRecurringTimeType" set="notificationRecurring" help-id="becpg.forms.help.notificationFrequency" />
+					<field id="bcpg:nrForceNotification"
+						set="notificationRecurring" />
+					<field id="bcpg:nrRecurringTimeType"
+						set="notificationRecurring"
+						help-id="becpg.forms.help.notificationFrequency" />
 					<field id="bcpg:nrRecurringDay" set="notificationRecurring" />
 					<field id="rep:reportTpls" set="notificationReport">
-						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">
 								becpg/autocomplete/targetassoc/associations/rep:reportTpl?excludeProps=rep%3AreportTplIsSystem%7Ctrue%2Crep%3AreportTplIsDisabled%7Ctrue&amp;filter=rep%3AreportTplType%7CExportSearch
 							</control-param>
@@ -771,7 +1049,7 @@
 					</field>
 				</appearance>
 			</form>
-			
+
 			<!-- Filter items form -->
 			<form id="filter">
 				<field-visibility>
@@ -780,14 +1058,18 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:nrNodeType">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/entityTypeValue</control-param>
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">
+								becpg/autocomplete/entityTypeValue</control-param>
 							<control-param name="saveTitle">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:nrDateField">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/propertyDateValue</control-param>
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">
+								becpg/autocomplete/propertyDateValue</control-param>
 							<control-param name="saveTitle">false</control-param>
 						</control>
 					</field>
@@ -802,12 +1084,12 @@
 					<show id="bcpg:nrTimeType" />
 					<show id="bcpg:nrTimeNumber" />
 					<show id="bcpg:nrDateField" />
-					
+
 					<show id="bcpg:nrNodeType" />
 					<show id="bcpg:nrTarget" />
 					<show id="bcpg:nrVersionFilter" />
 					<show id="bcpg:nrEmail" />
-					
+
 					<show id="bcpg:nrFrequency" />
 					<show id="bcpg:nrRecurringTimeType" />
 					<show id="bcpg:nrRecurringDay" />
@@ -837,91 +1119,122 @@
 					<show id="bcpg:nrScript" />
 					<show id="bcpg:nrScriptMode" />
 					<show id="bcpg:nrDisabled" />
-					
+
 					<show id="bcpg:nrNodeType" />
 					<show id="bcpg:nrTarget" />
 					<show id="bcpg:nrVersionFilter" />
 					<show id="bcpg:nrConditions" />
-					
+
 					<show id="bcpg:nrSubject" />
 					<show id="bcpg:nrEmail" />
-					
+
 					<show id="bcpg:nrFrequency" />
 					<show id="bcpg:nrRecurringTimeType" />
 					<show id="bcpg:nrRecurringDay" />
 					<show id="bcpg:nrForceNotification" />
-					
+
 					<show id="rep:reportTpls" force="true" />
 				</field-visibility>
 				<appearance>
-					<set id="notificationRule" appearance="bordered-panel" label-id="becpg.forms.set.notification-rule.label" />
-					<set id="notificationFilter" appearance="bordered-panel" label-id="becpg.forms.set.notification-filter.label" />
-					<set id="notificationEMail" appearance="bordered-panel" label-id="becpg.forms.set.notification-email.label" />
-					<set id="notificationRecurring" appearance="bordered-panel" label-id="becpg.forms.set.notification-recurring.label" />
-					<set id="notificationReport" appearance="bordered-panel" label-id="becpg.forms.set.notification-report.label" />	
-					
+					<set id="notificationRule" appearance="bordered-panel"
+						label-id="becpg.forms.set.notification-rule.label" />
+					<set id="notificationFilter" appearance="bordered-panel"
+						label-id="becpg.forms.set.notification-filter.label" />
+					<set id="notificationEMail" appearance="bordered-panel"
+						label-id="becpg.forms.set.notification-email.label" />
+					<set id="notificationRecurring" appearance="bordered-panel"
+						label-id="becpg.forms.set.notification-recurring.label" />
+					<set id="notificationReport" appearance="bordered-panel"
+						label-id="becpg.forms.set.notification-report.label" />
+
 					<field id="bcpg:nrNodeType" set="notificationFilter">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/entityTypeValue</control-param>
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">
+								becpg/autocomplete/entityTypeValue</control-param>
 							<control-param name="saveTitle">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:nrTarget" set="notificationFilter">
-						<control template="/org/alfresco/components/form/controls/association.ftl">
+						<control
+							template="/org/alfresco/components/form/controls/association.ftl">
 							<control-param name="startLocation">{ancestor}</control-param>
-							<control-param name="startLocationParams">aspect=bcpg:entityListsAspect
+							<control-param name="startLocationParams">
+								aspect=bcpg:entityListsAspect
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:nrConditions" set="notificationFilter" help-id="becpg.forms.help.nrConditions" >
-						<control template="/org/alfresco/components/form/controls/config-editor.ftl">
+					<field id="bcpg:nrConditions" set="notificationFilter"
+						help-id="becpg.forms.help.nrConditions">
+						<control
+							template="/org/alfresco/components/form/controls/config-editor.ftl">
 							<control-param name="syntax">channel</control-param>
 						</control>
 					</field>
-					<field id="bcpg:nrScript" set="notificationRule" mandatory="false" read-only="false">
-						<control template="/org/alfresco/components/form/controls/association.ftl">
+					<field id="bcpg:nrScript" set="notificationRule"
+						mandatory="false" read-only="false">
+						<control
+							template="/org/alfresco/components/form/controls/association.ftl">
 							<control-param name="startLocation">{ancestor}</control-param>
-							<control-param name="startLocationParams">aspect=bcpg:entityListsAspect
+							<control-param name="startLocationParams">
+								aspect=bcpg:entityListsAspect
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:nrScriptMode" set="notificationRule" >
-						<control template="/org/alfresco/components/form/controls/selectone.ftl" />
+					<field id="bcpg:nrScriptMode" set="notificationRule">
+						<control
+							template="/org/alfresco/components/form/controls/selectone.ftl" />
 					</field>
 					<field id="bcpg:nrDisabled" set="notificationRule" />
 					<field id="bcpg:nrDateField" set="notificationRule">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/propertyDateValue</control-param>
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">
+								becpg/autocomplete/propertyDateValue</control-param>
 							<control-param name="saveTitle">false</control-param>
 						</control>
 					</field>
-					<field id="bcpg:nrTimeNumber" set="notificationRule" mandatory="true">
-						<control template="/org/alfresco/components/form/controls/number.ftl" />
+					<field id="bcpg:nrTimeNumber" set="notificationRule"
+						mandatory="true">
+						<control
+							template="/org/alfresco/components/form/controls/number.ftl" />
 					</field>
-					<field id="bcpg:nrTimeType" set="notificationRule" help-id="becpg.forms.help.notificationTimeType" />
+					<field id="bcpg:nrTimeType" set="notificationRule"
+						help-id="becpg.forms.help.notificationTimeType" />
 					<field id="bcpg:nrSubject" set="notificationEMail">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+						<control
+							template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
-					<field id="bcpg:nrNotificationAuthorities" set="notificationRule">
-						<control template="/org/alfresco/components/form/controls/authority.ftl" />
+					<field id="bcpg:nrNotificationAuthorities"
+						set="notificationRule">
+						<control
+							template="/org/alfresco/components/form/controls/authority.ftl" />
 					</field>
-					<field id="bcpg:nrFrequencyStartDate" set="notificationRecurring">
-						<control template="/org/alfresco/components/form/controls/date.ftl">
+					<field id="bcpg:nrFrequencyStartDate"
+						set="notificationRecurring">
+						<control
+							template="/org/alfresco/components/form/controls/date.ftl">
 							<control-param name="showTime">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:nrFrequency" set="notificationRecurring" />
 					<field id="bcpg:nrEmail" set="notificationEMail">
-						<control template="/org/alfresco/components/form/controls/association.ftl">
-							<control-param name="startLocation">/app:company_home/app:dictionary/app:email_templates</control-param>
+						<control
+							template="/org/alfresco/components/form/controls/association.ftl">
+							<control-param name="startLocation">
+								/app:company_home/app:dictionary/app:email_templates</control-param>
 						</control>
 					</field>
 					<field id="bcpg:nrVersionFilter" set="notificationFilter" />
-					<field id="bcpg:nrForceNotification" set="notificationRecurring" />
-					<field id="bcpg:nrRecurringTimeType" set="notificationRecurring" help-id="becpg.forms.help.notificationFrequency"/>
+					<field id="bcpg:nrForceNotification"
+						set="notificationRecurring" />
+					<field id="bcpg:nrRecurringTimeType"
+						set="notificationRecurring"
+						help-id="becpg.forms.help.notificationFrequency" />
 					<field id="bcpg:nrRecurringDay" set="notificationRecurring" />
 					<field id="rep:reportTpls" set="notificationReport">
-						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">
 								becpg/autocomplete/targetassoc/associations/rep:reportTpl?excludeProps=rep%3AreportTplIsSystem%7Ctrue%2Crep%3AreportTplIsDisabled%7Ctrue&amp;filter=rep%3AreportTplType%7CExportSearch
 							</control-param>
@@ -931,25 +1244,28 @@
 			</form>
 		</forms>
 	</config>
-	
-		<config condition="cm:person" evaluator="node-type">
+
+	<config condition="cm:person" evaluator="node-type">
 		<forms>
 			<form id="user-language">
 				<field-visibility>
 					<show id="bcpg:userContentLocale" force="true" />
-					<show id="bcpg:userLocale" force="true"  />
+					<show id="bcpg:userLocale" force="true" />
 				</field-visibility>
 				<appearance>
 					<set id="language" appearance="bordered-panel"
-						label-id="becpg.forms.set.language.label" template="/org/alfresco/components/form/1-column-set.ftl" />
+						label-id="becpg.forms.set.language.label"
+						template="/org/alfresco/components/form/1-column-set.ftl" />
 					<field id="bcpg:userContentLocale" set="language">
-						<control template="/org/alfresco/components/form/controls/mtlangue.ftl">
+						<control
+							template="/org/alfresco/components/form/controls/mtlangue.ftl">
 							<control-param name="multiple">false</control-param>
 							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:userLocale" set="language">
-						<control template="/org/alfresco/components/form/controls/mtlangue.ftl">
+						<control
+							template="/org/alfresco/components/form/controls/mtlangue.ftl">
 							<control-param name="isUserLang">true</control-param>
 							<control-param name="multiple">false</control-param>
 							<control-param name="insertBlank">true</control-param>
