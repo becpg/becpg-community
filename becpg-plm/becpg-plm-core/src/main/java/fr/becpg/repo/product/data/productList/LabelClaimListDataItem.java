@@ -78,9 +78,10 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements Si
 	private List<NodeRef> missingLabelClaims = new ArrayList<>();
 	private List<NodeRef> regulatoryCountriesRef = new ArrayList<>();
 	private List<NodeRef> regulatoryUsagesRef = new ArrayList<>();
+
 	
 	/**
-	 * <p>Getter for the field <code>regulatoryCountriesRef</code>.</p>
+	 * <p>Getter for the field <code>labelClaimRegulatoryThreshold</code>.</p>
 	 *
 	 * @return a {@link java.util.List} object
 	 */
