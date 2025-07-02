@@ -321,9 +321,9 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 	private Object toDisplayValue(Object prop, PropertyDefinition propertyDef) {
 		try {
 			String stringVal = prop.toString();
-			if (((propertyDef == null) && stringVal.contains("workspace"))
-					|| ((propertyDef != null) && DataTypeDefinition.NODE_REF.equals(propertyDef.getDataType().getName()) && (stringVal != null)
-							&& !stringVal.isBlank() && !"null".equals(stringVal)  && !"[\"\"]".equals(stringVal))) {
+			if (stringVal != null && (((propertyDef == null) && stringVal.contains("workspace"))
+					|| ((propertyDef != null) && DataTypeDefinition.NODE_REF.equals(propertyDef.getDataType().getName())
+							&& !stringVal.isBlank() && !"null".equals(stringVal)  && !"[\"\"]".equals(stringVal)))) {
 				NodeRef nodeRef = null;
 				String name = null;
 				if (Pattern.matches("\\(.*,.*\\)", stringVal)) {
@@ -337,14 +337,18 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 					
 					// case of malformed activities
 					if (lastForwardSlash == -1) {
-						JSONObject jsonNodeRef = new JSONObject(stringVal);
-						nodeRef = new NodeRef(jsonNodeRef.getJSONObject("storeRef").getString("protocol") + "://"
-								+ jsonNodeRef.getJSONObject("storeRef").getString("identifier") + "/" + jsonNodeRef.getString("id"));
+						try {
+							JSONObject jsonNodeRef = new JSONObject(stringVal);
+							nodeRef = new NodeRef(jsonNodeRef.getJSONObject("storeRef").getString("protocol") + "://"
+									+ jsonNodeRef.getJSONObject("storeRef").getString("identifier") + "/" + jsonNodeRef.getString("id"));
+						} catch (JSONException e) {
+							logger.warn("Cannot parse NodeRef: " + stringVal);
+						}
 					} else {
 						nodeRef = new NodeRef(stringVal);
 					}
 				}
-				if (nodeService.exists(nodeRef)) {
+				if (nodeRef != null && nodeService.exists(nodeRef)) {
 					if (permissionService.hasPermission(nodeRef, PermissionService.READ) == AccessStatus.ALLOWED) {
 						if (propertyDef != null) {
 							if (propertyDef.isMultiValued()) {
@@ -363,9 +367,9 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 					}
 				}
 			} else {
-				if ((prop instanceof String) && (propertyDef != null) && (DataTypeDefinition.DATE.equals(propertyDef.getDataType().getName())
+				if ((prop instanceof String stringProp) && (propertyDef != null) && (DataTypeDefinition.DATE.equals(propertyDef.getDataType().getName())
 						|| DataTypeDefinition.DATETIME.equals(propertyDef.getDataType().getName()))) {
-					return extractDate((String) prop);
+					return extractDate(stringProp);
 				}
 			}
 		} catch (JSONException | MalformedNodeRefException e) {
