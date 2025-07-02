@@ -483,8 +483,8 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 					Serializable person = nodeService.getProperty(projectData.getNodeRef(), propQname);
 					if (person instanceof NodeRef personNodeRef) {
 						projectOwners.add(personNodeRef);
-					} else {
-						projectOwners.add(personService.getPerson((String) person));
+					} else if (person instanceof String userName && personService.personExists(userName)) {
+						projectOwners.add(personService.getPerson(userName));
 					}
 				}
 			}

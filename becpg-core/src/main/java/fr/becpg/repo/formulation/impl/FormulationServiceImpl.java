@@ -242,6 +242,9 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 		} catch (Throwable e) {
 
 			if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+				if(logger.isDebugEnabled()) {
+					logger.debug("Retrying the formulation due to exception "+e.getMessage());
+				}
 				throw e;
 			}
 			
