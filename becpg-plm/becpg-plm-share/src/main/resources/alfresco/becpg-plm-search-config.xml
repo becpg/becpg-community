@@ -24,6 +24,9 @@
 			<show id="bcpg:productHierarchy1" />
 			<show id="bcpg:productHierarchy2" />
 			<show id="bcpg:productState" />
+			<show id="bcpg:supplierState" />
+			<show id="bcpg:clientState" />
+			<show id="bcpg:documentState" />
 			<show id="bcpg:code" />
 			<show id="bcpg:erpCode"/>
 			<show id="bcpg:eanCode" />
