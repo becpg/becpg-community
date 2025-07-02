@@ -334,8 +334,12 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 
 			// Error handling
 			if ((error != null) && surveyableEntity instanceof ReportableEntity reportableEntity) {
-				reportableEntity.addError(MLTextHelper.getI18NMessage("message.formulate.scoreList.error",
-						mlNodeService.getProperty(scoreListItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME), error));
+				reportableEntity
+						.addError(
+								MLTextHelper.getI18NMessage("message.formulate.scoreList.error",
+										scoreListItem.getCharactNodeRef() != null ? mlNodeService.getProperty(
+												scoreListItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME) : null,
+										error));
 			}
 		}
 	}
