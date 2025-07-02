@@ -230,7 +230,7 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<ProductDa
 	@Override
 	public boolean process(ProductData productData) {
 
-		if (productData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || (productData instanceof ProductSpecificationData)) {
+		if (productData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || (productData instanceof ProductSpecificationData) || (productData.getNodeRef() == null)) {
 			return true;
 		}
 
