@@ -1,0 +1,10 @@
+{
+  "renditions": [
+    {
+      "renditionName": "markdown",
+      "targetMediaType": "text/x-markdown",
+      "options": [
+      ]
+    }
+  ]
+}
