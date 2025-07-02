@@ -76,11 +76,6 @@
 		<property name="initVisitorService" ref="initVisitorService"/>
 	</bean>
 	
-	<bean id="webscript.fr.becpg.admin.assocIndexer.get" class="fr.becpg.repo.web.scripts.admin.AssociationIndexerWebScript" parent="webscript">
-		<property name="namespaceService" ref="NamespaceService"/>
-		<property name="associationIndexerService" ref="associationIndexerService"/>
-	</bean>
-
 	<bean id="webscript.fr.becpg.admin.adminTenant.get" class="fr.becpg.repo.web.scripts.admin.AdminTenantWebScript" parent="webscript">
 		<property name="tenantService" ref="tenantService" />
 		<property name="tenantAdminService" ref="tenantAdminService" />
