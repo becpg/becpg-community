@@ -22,12 +22,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authority.AuthorityDAO;
+import org.alfresco.repo.security.permissions.impl.AccessPermissionImpl;
 import org.alfresco.repo.site.SiteModel;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
@@ -42,7 +42,7 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.DataListModel;
 import fr.becpg.model.PLMModel;
-import fr.becpg.model.SecurityModel;
+import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
@@ -54,7 +54,6 @@ import fr.becpg.repo.security.data.PermissionContext;
 import fr.becpg.repo.security.data.PermissionModel;
 import fr.becpg.repo.system.SystemConfigurationService;
 
-
 /**
  * <p>SecurityFormulationHandler class.</p>
  *
@@ -63,388 +62,512 @@ import fr.becpg.repo.system.SystemConfigurationService;
  */
 public class SecurityFormulationHandler extends FormulationBaseHandler<ProductData> {
 
-	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(SecurityFormulationHandler.class);
-
-	private static final String VIEW_DOCUMENTS= "View-documents";
+	public static final String VIEW_DOCUMENTS = "View-documents";
+	private static final String EXTERNAL_USER_GROUP_NAME = "GROUP_ExternalUser";
 
 	private NodeService nodeService;
-
 	private SecurityService securityService;
-
 	private PermissionService permissionService;
-
 	private EntityListDAO entityListDAO;
-
 	private AuthorityDAO authorityDAO;
-
 	private SiteService siteService;
-	
 	private AssociationService associationService;
-	
 	private FileFolderService fileFolderService;
-	
 	private SystemConfigurationService systemConfigurationService;
-	
-	/**
-	 * <p>Setter for the field <code>systemConfigurationService</code>.</p>
-	 *
-	 * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
-	 */
+	private BeCPGCacheService beCPGCacheService;
+
+	// Record for template folder data
+	private record TemplateFolderData(NodeRef nodeRef, Set<AccessPermission> permissions) {
+	}
+
+	// Record for batch permission operations
+	private record PermissionUpdate(NodeRef nodeRef, Map<String, String> toAdd, Set<String> toRemove, boolean setInheritance) {
+	}
+
+	// Optimized permission context cache key
+	private record PermissionContextKey(NodeRef nodeRef, String nodeType, String itemType) {
+	}
+
 	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
 		this.systemConfigurationService = systemConfigurationService;
 	}
-	
-	/**
-	 * <p>Setter for the field <code>fileFolderService</code>.</p>
-	 *
-	 * @param fileFolderService a {@link org.alfresco.service.cmr.model.FileFolderService} object
-	 */
+
 	public void setFileFolderService(FileFolderService fileFolderService) {
 		this.fileFolderService = fileFolderService;
 	}
-	
-	/**
-	 * <p>Setter for the field <code>associationService</code>.</p>
-	 *
-	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object
-	 */
+
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
 
-	/**
-	 * <p>Getter for the field <code>entityListDAO</code>.</p>
-	 *
-	 * @return a {@link fr.becpg.repo.entity.EntityListDAO} object
-	 */
 	public EntityListDAO getEntityListDAO() {
 		return entityListDAO;
 	}
 
-	/**
-	 * <p>Setter for the field <code>entityListDAO</code>.</p>
-	 *
-	 * @param entityListDAO a {@link fr.becpg.repo.entity.EntityListDAO} object
-	 */
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
 	}
 
-	/**
-	 * <p>Getter for the field <code>authorityDAO</code>.</p>
-	 *
-	 * @return a {@link org.alfresco.repo.security.authority.AuthorityDAO} object
-	 */
 	public AuthorityDAO getAuthorityDAO() {
 		return authorityDAO;
 	}
 
-	/**
-	 * <p>Setter for the field <code>authorityDAO</code>.</p>
-	 *
-	 * @param authorityDAO a {@link org.alfresco.repo.security.authority.AuthorityDAO} object
-	 */
 	public void setAuthorityDAO(AuthorityDAO authorityDAO) {
 		this.authorityDAO = authorityDAO;
 	}
 
-	/**
-	 * <p>Getter for the field <code>securityService</code>.</p>
-	 *
-	 * @return a {@link fr.becpg.repo.security.SecurityService} object
-	 */
 	public SecurityService getSecurityService() {
 		return securityService;
 	}
 
-	/**
-	 * <p>Setter for the field <code>securityService</code>.</p>
-	 *
-	 * @param securityService a {@link fr.becpg.repo.security.SecurityService} object
-	 */
 	public void setSecurityService(SecurityService securityService) {
 		this.securityService = securityService;
 	}
 
-	/**
-	 * <p>Getter for the field <code>nodeService</code>.</p>
-	 *
-	 * @return a {@link org.alfresco.service.cmr.repository.NodeService} object
-	 */
 	public NodeService getNodeService() {
 		return nodeService;
 	}
 
-	/**
-	 * <p>Setter for the field <code>nodeService</code>.</p>
-	 *
-	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
-	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
-	/**
-	 * <p>Getter for the field <code>permissionService</code>.</p>
-	 *
-	 * @return a {@link org.alfresco.service.cmr.security.PermissionService} object
-	 */
 	public PermissionService getPermissionService() {
 		return permissionService;
 	}
 
-	/**
-	 * <p>Setter for the field <code>permissionService</code>.</p>
-	 *
-	 * @param permissionService a {@link org.alfresco.service.cmr.security.PermissionService} object
-	 */
 	public void setPermissionService(PermissionService permissionService) {
 		this.permissionService = permissionService;
 	}
 
-	/**
-	 * <p>Setter for the field <code>siteService</code>.</p>
-	 *
-	 * @param siteService a {@link org.alfresco.service.cmr.site.SiteService} object
-	 */
 	public void setSiteService(SiteService siteService) {
 		this.siteService = siteService;
 	}
-	
+
+	public void setBeCPGCacheService(BeCPGCacheService beCPGCacheService) {
+		this.beCPGCacheService = beCPGCacheService;
+	}
+
 	private boolean enforceACL() {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.formulation.security.enforceACL"));
 	}
 
-	/** {@inheritDoc} */
+	private boolean forceResetACL() {
+		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.formulation.security.forceResetACL"));
+	}
+
 	@Override
 	public boolean process(ProductData productData) throws FormulateException {
 		if (!L2CacheSupport.isCacheOnlyEnable() && isSecurityApplicable(productData)) {
-			
+
 			updateSecurityRuleFromTemplate(productData);
-			
-			NodeRef productDataNodeRef = productData.getNodeRef();
-			
-			NodeRef listContainerNodeRef = entityListDAO.getListContainer(productDataNodeRef);
-			List<NodeRef> datalists = entityListDAO.getExistingListsNodeRef(listContainerNodeRef);
 
-			SiteInfo siteInfo = siteService.getSite(productDataNodeRef);
-			
-			//Set datalist permissions
-			for(NodeRef dataListNodeRef : datalists) {
-				String dataListQName = (String)nodeService.getProperty(dataListNodeRef, DataListModel.PROP_DATALISTITEMTYPE);
-				PermissionContext permissionContext = securityService.getPermissionContext(productDataNodeRef, nodeService.getType(productDataNodeRef), dataListQName);
-				updatePermissions(productDataNodeRef, siteInfo, dataListNodeRef, permissionContext.getPermissions(), false);
+			// Initialize shared caches
+			final Map<NodeRef, Set<AccessPermission>> permissionsCache = new ConcurrentHashMap<>();
+			final Map<NodeRef, Boolean> inheritanceCache = new ConcurrentHashMap<>();
+			final Map<PermissionContextKey, PermissionContext> contextCache = new ConcurrentHashMap<>();
+
+			// Pre-warm caches with critical data
+			preWarmCaches(productData, permissionsCache, inheritanceCache, contextCache);
+
+			if (enforceACL() || forceResetACL()) {
+				processDatalistPermissions(productData, inheritanceCache, permissionsCache, contextCache);
 			}
 
-			//Set document permissions
-			for (FileInfo folder : fileFolderService.listFolders(productDataNodeRef)) {
-				NodeRef templateFolderWithSpecificPermissions = findTemplateFolderWithSpecificPermissions(folder.getNodeRef(), productData.getEntityTpl());
-				if (templateFolderWithSpecificPermissions != null) {
-					updatePermissionsFromTemplateFolder(folder.getNodeRef(), templateFolderWithSpecificPermissions);
-				} else {
-					PermissionContext permissionContext = securityService.getPermissionContext(productDataNodeRef, nodeService.getType(productDataNodeRef), VIEW_DOCUMENTS);
-					updatePermissions(productDataNodeRef, siteInfo, folder.getNodeRef(), permissionContext.getPermissions(), true);
-				}
-			}
+			processDocumentPermissions(productData, inheritanceCache, permissionsCache, contextCache);
 		}
 		return true;
 	}
 
-	private NodeRef findTemplateFolderWithSpecificPermissions(NodeRef folderNodeRef, ProductData entityTpl) {
-		List<FileInfo> templateFolders = null;
-		if (entityTpl != null) {
-			templateFolders = fileFolderService.listFolders(entityTpl.getNodeRef());
+	/**
+	 * Pre-warm all caches with data we know we'll need
+	 */
+	private void preWarmCaches(ProductData productData, Map<NodeRef, Set<AccessPermission>> permissionsCache, Map<NodeRef, Boolean> inheritanceCache,
+			Map<PermissionContextKey, PermissionContext> contextCache) {
+
+		NodeRef productDataNodeRef = productData.getNodeRef();
+		String nodeType = nodeService.getType(productDataNodeRef).toString();
+
+		if (enforceACL() || forceResetACL()) {
+			// Cache product permissions and inheritance
+			getCachedPermissions(productDataNodeRef, permissionsCache);
+			getCachedInheritance(productDataNodeRef, inheritanceCache);
 		}
-		if (templateFolders != null) {
-			String folderName = (String) nodeService.getProperty(folderNodeRef, ContentModel.PROP_NAME);
-			for (FileInfo folder : templateFolders) {
-				if (folder.getName().equals(folderName) && !permissionService.getInheritParentPermissions(folder.getNodeRef())) {
-					return folder.getNodeRef();
-				}
-			}
-		}
-		return null;
+
+		// Pre-cache common permission contexts
+		getCachedPermissionContext(productDataNodeRef, nodeType, VIEW_DOCUMENTS, contextCache);
+
 	}
 
-	private void updatePermissionsFromTemplateFolder(NodeRef folderNodeRef, NodeRef templateFolder) {
-		if (permissionService.getInheritParentPermissions(folderNodeRef)) {
-			permissionService.setInheritParentPermissions(folderNodeRef, false);
+	/**
+	 * Batch process datalist permissions with optimized grouping
+	 */
+	private void processDatalistPermissions(ProductData productData, Map<NodeRef, Boolean> inheritanceCache,
+			Map<NodeRef, Set<AccessPermission>> permissionsCache, Map<PermissionContextKey, PermissionContext> contextCache) {
+
+		NodeRef listContainerNodeRef = entityListDAO.getListContainer(productData.getNodeRef());
+		List<NodeRef> datalists = entityListDAO.getExistingListsNodeRef(listContainerNodeRef);
+
+		if (datalists.isEmpty()) {
+			return;
 		}
-		Set<AccessPermission> templateFolderPermissions = permissionService.getAllSetPermissions(templateFolder);
-		Set<AccessPermission> folderPermissions = permissionService.getAllSetPermissions(folderNodeRef);
-		if (!templateFolderPermissions.equals(folderPermissions)) {
-			folderPermissions.forEach(p -> permissionService.clearPermission(folderNodeRef, p.getAuthority()));
-			templateFolderPermissions.forEach(p -> 
-			permissionService.setPermission(folderNodeRef,p.getAuthority(), p.getPermission(), true));
+
+		String nodeType = nodeService.getType(productData.getNodeRef()).toString();
+
+		// Batch get all datalist item types in one operation
+		Map<NodeRef, String> nodeToItemType = datalists.stream().collect(Collectors.toConcurrentMap(nodeRef -> nodeRef,
+				nodeRef -> (String) nodeService.getProperty(nodeRef, DataListModel.PROP_DATALISTITEMTYPE)));
+
+		// Group by permission context key to minimize context lookups
+		Map<String, List<NodeRef>> datalistsByItemType = nodeToItemType.entrySet().stream().collect(
+				Collectors.groupingBy(Map.Entry::getValue, ConcurrentHashMap::new, Collectors.mapping(Map.Entry::getKey, Collectors.toList())));
+
+		// Batch collect all permission updates
+		List<PermissionUpdate> updates = datalistsByItemType.entrySet().stream().flatMap(entry -> {
+			String itemType = entry.getKey();
+			PermissionContext context = getCachedPermissionContext(productData.getNodeRef(), nodeType, itemType, contextCache);
+
+			return entry.getValue().stream().map(dataListNodeRef -> preparePermissionUpdate(productData, dataListNodeRef, context.getPermissions(), 
+					inheritanceCache, permissionsCache));
+		}).toList();
+
+		// Apply all updates in batch
+		applyBatchPermissionUpdates(updates, permissionsCache, inheritanceCache);
+	}
+
+	/**
+	 * Process document permissions with optimized template handling
+	 */
+	private void processDocumentPermissions(ProductData productData, Map<NodeRef, Boolean> inheritanceCache,
+			Map<NodeRef, Set<AccessPermission>> permissionsCache, Map<PermissionContextKey, PermissionContext> contextCache) {
+
+		List<FileInfo> folders = fileFolderService.listFolders(productData.getNodeRef());
+		if (folders.isEmpty()) {
+			return;
 		}
+
+		NodeRef productDataNodeRef = productData.getNodeRef();
+		String nodeType = nodeService.getType(productDataNodeRef).toString();
+
+		// Get cached template folder data
+		final Map<String, TemplateFolderData> templateFolderData = beCPGCacheService.getFromCache(SecurityFormulationHandler.class.getName(),
+				"templateFolderData", () -> precomputeTemplateFolderData(productData.getEntityTpl(), permissionsCache, inheritanceCache));
+		// Ensure we have a non-null map even if cache returns null
+		final Map<String, TemplateFolderData> safeFolderData = templateFolderData != null ? templateFolderData : Map.of();
+
+		final PermissionContext viewDocumentsContext = getCachedPermissionContext(productDataNodeRef, nodeType, VIEW_DOCUMENTS, contextCache);
+
+		// Batch collect all permission updates
+		List<PermissionUpdate> updates = folders.stream().map(folder -> {
+			String folderName = folder.getName();
+			NodeRef folderNodeRef = folder.getNodeRef();
+			TemplateFolderData templateData = safeFolderData.get(folderName);
+
+			if (templateData != null) {
+				return prepareTemplatePermissionUpdate(folderNodeRef, templateData, inheritanceCache, permissionsCache);
+			} else {
+				return preparePermissionUpdate(productData, folderNodeRef, viewDocumentsContext.getPermissions(), inheritanceCache,
+						permissionsCache);
+			}
+		}).toList();
+
+		// Apply all updates in batch
+		applyBatchPermissionUpdates(updates, permissionsCache, inheritanceCache);
+	}
+
+	/**
+	 * Cached permission context lookup
+	 */
+	private PermissionContext getCachedPermissionContext(NodeRef nodeRef, String nodeType, String itemType,
+			Map<PermissionContextKey, PermissionContext> contextCache) {
+		PermissionContextKey key = new PermissionContextKey(nodeRef, nodeType, itemType);
+		return contextCache.computeIfAbsent(key,
+				k -> securityService.getPermissionContext(k.nodeRef(), nodeService.getType(k.nodeRef()), k.itemType()));
+	}
+
+	/**
+	 * Prepare permission update without immediately applying it
+	 */
+	private PermissionUpdate preparePermissionUpdate(ProductData productData, NodeRef nodeRef, List<PermissionModel> permissionModels,
+			 Map<NodeRef, Boolean> inheritanceCache, Map<NodeRef, Set<AccessPermission>> permissionsCache) {
+
+		boolean hasParentPermissions = getCachedInheritance(nodeRef, inheritanceCache);
+		Set<AccessPermission> specificPermissionsSet = hasParentPermissions ? Set.<AccessPermission> of()
+				: getCachedPermissions(nodeRef, permissionsCache);
+
+		Map<String, String> specificPermissions = specificPermissionsSet.stream()
+				.collect(Collectors.toMap(AccessPermission::getAuthority, AccessPermission::getPermission, (a, b) -> a));
+
+		Map<String, String> parentPermissions = getCachedPermissions(nodeService.getPrimaryParent(nodeRef).getParentRef(), permissionsCache).stream()
+				.collect(Collectors.toMap(AccessPermission::getAuthority, AccessPermission::getPermission, (a, b) -> a));
+
+		Map<String, String> toAdd = new HashMap<>();
+		Set<String> toRemove = new HashSet<>();
+		boolean setInheritance = false;
+
+		if ((permissionModels != null) && !permissionModels.isEmpty() ) {
+			SiteInfo siteInfo = siteService.getSite(productData.getNodeRef());
+			List<PermissionModel> copyPermissions = copyPermissionsForSuppliers(productData, permissionModels);
+			computePermissions(siteInfo, parentPermissions, specificPermissions, copyPermissions, toAdd, toRemove);
+			setInheritance = hasParentPermissions;
+		} else {
+			// Clear all specific permissions
+			toRemove.addAll(specificPermissions.keySet());
+			setInheritance = !hasParentPermissions;
+		}
+
+		return new PermissionUpdate(nodeRef, toAdd, toRemove, setInheritance);
+	}
+
+	/**
+	 * Prepare template-based permission update
+	 */
+	private PermissionUpdate prepareTemplatePermissionUpdate(NodeRef folderNodeRef, TemplateFolderData templateData,
+			Map<NodeRef, Boolean> inheritanceCache, Map<NodeRef, Set<AccessPermission>> permissionsCache) {
+
+		boolean folderInherits = getCachedInheritance(folderNodeRef, inheritanceCache);
+		Set<AccessPermission> templatePermissions = templateData.permissions();
+		Set<AccessPermission> folderPermissions = getCachedPermissions(folderNodeRef, permissionsCache);
+
+		Map<String, String> toAdd = new HashMap<>();
+		Set<String> toRemove = new HashSet<>();
+
+		if (!templatePermissions.equals(folderPermissions)) {
+			// Clear existing permissions
+			toRemove.addAll(folderPermissions.stream().map(AccessPermission::getAuthority).collect(Collectors.toSet()));
+
+			// Add template permissions
+			templatePermissions.forEach(permission -> toAdd.put(permission.getAuthority(), permission.getPermission()));
+		}
+
+		return new PermissionUpdate(folderNodeRef, toAdd, toRemove, folderInherits);
+	}
+
+	/**
+	 * Apply batch permission updates efficiently
+	 */
+	private void applyBatchPermissionUpdates(List<PermissionUpdate> updates, Map<NodeRef, Set<AccessPermission>> permissionsCache,
+			Map<NodeRef, Boolean> inheritanceCache) {
+
+		// Group operations by type for maximum efficiency
+		Map<Boolean, List<PermissionUpdate>> groupedByInheritance = updates.stream()
+				.collect(Collectors.partitioningBy(PermissionUpdate::setInheritance));
+
+		// Process inheritance changes first (batch by true/false)
+		groupedByInheritance.get(true).forEach(update -> {
+			permissionService.setInheritParentPermissions(update.nodeRef(), false);
+			inheritanceCache.put(update.nodeRef(), false);
+		});
+
+		groupedByInheritance.get(false).stream().filter(update -> !update.toAdd().isEmpty() || !update.toRemove().isEmpty()).forEach(update -> {
+			permissionService.setInheritParentPermissions(update.nodeRef(), true);
+			inheritanceCache.put(update.nodeRef(), true);
+		});
+
+		// Batch permission operations
+		updates.stream().forEach(update -> {
+			applyPermissionChanges(update.nodeRef(), update.toAdd(), update.toRemove(), permissionsCache);
+		});
+	}
+
+	/**
+	 * Optimized permission changes application
+	 */
+	private void applyPermissionChanges(NodeRef nodeRef, Map<String, String> toAdd, Set<String> toRemove,
+			Map<NodeRef, Set<AccessPermission>> permissionsCache) {
+
+		// Batch clear operations
+		if (!toRemove.isEmpty()) {
+			toRemove.forEach(authority -> {
+				if (logger.isDebugEnabled()) {
+					logger.debug("clearing permission: " + authority + " on node: " + nodeRef);
+				}
+				permissionService.clearPermission(nodeRef, authority);
+			});
+		}
+
+		// Batch add operations
+		if (!toAdd.isEmpty()) {
+			toAdd.entrySet().forEach(entry -> {
+				String authority = entry.getKey();
+				String permission = entry.getValue();
+				if (logger.isDebugEnabled()) {
+					logger.debug("adding permission: " + authority + ";" + permission + " on node: " + nodeRef);
+				}
+				permissionService.setPermission(nodeRef, authority, permission, true);
+			});
+
+			// Update permissions cache efficiently
+			Set<AccessPermission> newPermissions = toAdd.entrySet().stream()
+					.map(entry -> new AccessPermissionImpl(entry.getKey(), null, entry.getValue(), 0)).collect(Collectors.toSet());
+			permissionsCache.put(nodeRef, newPermissions);
+		} else if (!toRemove.isEmpty()) {
+			// Clear cache if only removals
+			permissionsCache.put(nodeRef, Set.of());
+		}
+	}
+
+	/**
+	 * Optimized template folder data computation with better parallel processing
+	 */
+	private Map<String, TemplateFolderData> precomputeTemplateFolderData(ProductData entityTpl, Map<NodeRef, Set<AccessPermission>> permissionsCache,
+			Map<NodeRef, Boolean> inheritanceCache) {
+
+		if (entityTpl == null) {
+			return Map.of();
+		}
+
+		List<FileInfo> templateFolders = fileFolderService.listFolders(entityTpl.getNodeRef());
+
+		// Pre-filter and batch process inheritance checks
+		Map<NodeRef, Boolean> batchInheritanceResults = templateFolders.stream()
+				.collect(Collectors.toConcurrentMap(FileInfo::getNodeRef, folder -> getCachedInheritance(folder.getNodeRef(), inheritanceCache)));
+
+		return templateFolders.stream().filter(folder -> !batchInheritanceResults.get(folder.getNodeRef()))
+				.collect(Collectors.toConcurrentMap(FileInfo::getName, folder -> {
+					NodeRef folderRef = folder.getNodeRef();
+					Set<AccessPermission> permissions = getCachedPermissions(folderRef, permissionsCache);
+					return new TemplateFolderData(folderRef, permissions);
+				}));
+	}
+
+	private Set<AccessPermission> getCachedPermissions(NodeRef nodeRef, Map<NodeRef, Set<AccessPermission>> permissionsCache) {
+		return permissionsCache.computeIfAbsent(nodeRef, permissionService::getAllSetPermissions);
+	}
+
+	private boolean getCachedInheritance(NodeRef nodeRef, Map<NodeRef, Boolean> inheritanceCache) {
+		return inheritanceCache.computeIfAbsent(nodeRef, permissionService::getInheritParentPermissions);
 	}
 
 	private boolean isSecurityApplicable(ProductData productData) {
-		return productData.getNodeRef() != null && !productData.isEntityTemplate();
+		return (productData.getNodeRef() != null) && !productData.isEntityTemplate();
 	}
 
 	private void updateSecurityRuleFromTemplate(ProductData productData) {
-		if(productData.getEntityTpl()!=null) {
-			NodeRef tplNodeRef = productData.getEntityTpl().getNodeRef();
-			if (tplNodeRef != null && nodeService.exists(tplNodeRef)) {
-				NodeRef tplSecurityRef = associationService.getTargetAssoc(tplNodeRef, SecurityModel.ASSOC_SECURITY_REF);
-				if (tplSecurityRef != null && nodeService.exists(tplSecurityRef)) {
-					if (logger.isDebugEnabled()) {
-						logger.debug("update sec:securityRef assoc from template on node: " + productData.getNodeRef());
-					}
-					associationService.update(productData.getNodeRef(), SecurityModel.ASSOC_SECURITY_REF, tplSecurityRef);
-				}
-			}
-		}
-	}
-
-	private void updatePermissions(NodeRef productDataNodeRef, SiteInfo siteInfo, NodeRef nodeRef, List<PermissionModel> permissionModels, boolean areDocuments) {
-		
-		boolean hasParentPermissions = permissionService.getInheritParentPermissions(nodeRef);
-		Map<String, String> specificPermissions = new HashMap<>();
-		
-		if (!hasParentPermissions) {
-			for (AccessPermission permission : permissionService.getAllSetPermissions(nodeRef)) {
-				specificPermissions.put(permission.getAuthority(), permission.getPermission());
-			}
-		}
-		
-		Map<String, String> parentPermissions = new HashMap<>();
-		for (AccessPermission permission : permissionService.getAllSetPermissions(nodeService.getPrimaryParent(nodeRef).getParentRef())) {
-			parentPermissions.put(permission.getAuthority(), permission.getPermission());
-		}
-		
-		HashMap<String, String> toAdd = new HashMap<>();
-		Set<String> toRemove = new HashSet<>();
-		
-		if (permissionModels != null && !permissionModels.isEmpty() && (areDocuments || enforceACL())) {
-			
-			List<PermissionModel> copyPermissions = copyPermissionsForSuppliers(productDataNodeRef, permissionModels);
-			
+		ProductData entityTpl = productData.getEntityTpl();
+		if ((entityTpl != null) && (entityTpl.getSecurityRef() != null)) {
 			if (logger.isDebugEnabled()) {
-				logger.debug("specificPermissions: " + specificPermissions + " on node: " + nodeRef);
-				logger.debug("parentPermissions: " + parentPermissions + " on node: " + nodeRef);
-				logger.debug("permissionModels to be applied: " + copyPermissions + " on node: " + nodeRef);
+				logger.debug("update sec:securityRef assoc from template on node: " + productData.getNodeRef());
 			}
-			computePermissions(siteInfo, parentPermissions, specificPermissions, copyPermissions, toAdd, toRemove);
-			for (Entry<String, String> entry : toAdd.entrySet()) {
-				String authority = entry.getKey();
-				String permission = entry.getValue();
-				if (!specificPermissions.containsKey(authority) || !specificPermissions.get(authority).equals(permission)) {
-					if (logger.isDebugEnabled()) {
-						logger.debug("adding permission: " + authority + ";" + permission + " on node: " + nodeRef);
-					}
-					permissionService.clearPermission(nodeRef, authority);
-					permissionService.setPermission(nodeRef, authority, permission, true);
-				}
-			}
-			for (String authority : toRemove) {
-				if (logger.isDebugEnabled()) {
-					logger.debug("clearing permission: " + authority + " on node: " + nodeRef);
-				}
-				permissionService.clearPermission(nodeRef, authority);
-			}
-			if (hasParentPermissions) {
-				permissionService.setInheritParentPermissions(nodeRef, false);
-			}
-		} else {
-			for (String authority : specificPermissions.keySet()) {
-				if (logger.isDebugEnabled()) {
-					logger.debug("clearing permission: " + authority + " on node: " + nodeRef);
-				}
-				permissionService.clearPermission(nodeRef, authority);
-			}
-			if (!hasParentPermissions) {
-				permissionService.setInheritParentPermissions(nodeRef, true);
-			}
+			productData.setSecurityRef(entityTpl.getSecurityRef());
 		}
-	}
-	
-	private List<PermissionModel> copyPermissionsForSuppliers(NodeRef productDataNodeRef, List<PermissionModel> permissionModels) {
-		List<PermissionModel> copyPermissions = new ArrayList<>();
-		
-		List<NodeRef> supplierAccountNodeRefs = associationService.getTargetAssocs(productDataNodeRef, PLMModel.ASSOC_SUPPLIERS).stream()
-				.flatMap(s -> associationService.getTargetAssocs(s, PLMModel.ASSOC_SUPPLIER_ACCOUNTS).stream()).collect(Collectors.toList());
-		for (PermissionModel permissionModel : permissionModels) {
-			NodeRef externalUserGroup = permissionModel.getGroups().stream()
-					.filter(n -> "GROUP_ExternalUser".equals(authorityDAO.getAuthorityName(n))).findFirst().orElse(null);
-			if (externalUserGroup != null) {
-				List<NodeRef> newGroups = new ArrayList<>(permissionModel.getGroups());
-				newGroups.addAll(supplierAccountNodeRefs);
-				newGroups.remove(externalUserGroup);
-				PermissionModel permissionModelCopy = new PermissionModel(permissionModel.getPermission(), newGroups, permissionModel.getIsEnforceACL());
-				copyPermissions.add(permissionModelCopy);
-			} else {
-				copyPermissions.add(permissionModel);
-			}
-		}
-		return copyPermissions;
 	}
 
-	private void computePermissions(SiteInfo siteInfo, Map<String, String> parentPermissions, Map<String, String> specificPermissions, List<PermissionModel> permissionModels, HashMap<String, String> toAdd, Set<String> toRemove) {
+	/**
+	 * Optimized supplier permissions copying with batch processing
+	 */
+	private List<PermissionModel> copyPermissionsForSuppliers(ProductData productData, List<PermissionModel> permissionModels) {
+		// Check if any model has external user group first
+		boolean hasExternalUserGroup = permissionModels.stream().anyMatch(
+				model -> model.getGroups().stream().anyMatch(groupRef -> EXTERNAL_USER_GROUP_NAME.equals(authorityDAO.getAuthorityName(groupRef))));
+
+		if (!hasExternalUserGroup && (productData.getSuppliers() == null)) {
+			return permissionModels; // No processing needed
+		}
+
+		// Batch load supplier accounts once
+		List<NodeRef> supplierAccounts = productData.getSuppliers().stream()
+				.flatMap(supplierRef -> associationService.getTargetAssocs(supplierRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS).stream()).toList();
+
+		if (supplierAccounts.isEmpty()) {
+			return permissionModels; // No supplier accounts to process
+		}
+
+		return permissionModels.stream().map(model -> {
+			NodeRef externalUserGroup = model.getGroups().stream()
+					.filter(groupRef -> EXTERNAL_USER_GROUP_NAME.equals(authorityDAO.getAuthorityName(groupRef))).findFirst().orElse(null);
+
+			if (externalUserGroup != null) {
+				List<NodeRef> newGroups = new ArrayList<>(model.getGroups());
+				newGroups.remove(externalUserGroup);
+				newGroups.addAll(supplierAccounts);
+				return new PermissionModel(model.getPermission(), newGroups, model.getIsEnforceACL());
+			}
+			return model;
+		}).toList();
+	}
+
+	/**
+	 * Optimized permission computation with reduced iterations
+	 */
+	private void computePermissions(SiteInfo siteInfo, Map<String, String> parentPermissions, Map<String, String> specificPermissions,
+			List<PermissionModel> permissionModels, Map<String, String> toAdd, Set<String> toRemove) {
+
+		if ((permissionModels == null) || permissionModels.isEmpty()) {
+			return;
+		}
+
+		// Pre-compute all authority names in one batch
+		Set<String> allAuthorities = permissionModels.stream().flatMap(pm -> pm.getGroups().stream()).map(authorityDAO::getAuthorityName)
+				.collect(Collectors.toSet());
+
+		// Batch compute site roles for all authorities
+		Map<String, String> authorityToSiteRole = new HashMap<>();
+		if (siteInfo != null) {
+			allAuthorities.stream().forEach(authority -> {
+				String siteRole = siteService.getMembersRole(siteInfo.getShortName(), authority);
+				if (siteRole != null) {
+					authorityToSiteRole.put(authority, siteRole);
+				}
+			});
+		}
+
+		// Process permission models
 		for (PermissionModel permissionModel : permissionModels) {
-			String targetPermission = PermissionModel.READ_ONLY.equals(permissionModel.getPermission()) ? PermissionService.CONSUMER : PermissionService.CONTRIBUTOR;
-			
-			List<String> permissionAuthorities = permissionModel.getGroups().stream()
-					.map(n -> authorityDAO.getAuthorityName(n))
-					.collect(Collectors.toList());
-			
+			String basePermission = PermissionModel.READ_ONLY.equals(permissionModel.getPermission()) ? PermissionService.CONSUMER
+					: PermissionService.CONTRIBUTOR;
+
+			List<String> permissionAuthorities = permissionModel.getGroups().stream().map(authorityDAO::getAuthorityName).toList();
+
 			for (String authority : permissionAuthorities) {
 				boolean enforceACL = Boolean.TRUE.equals(permissionModel.getIsEnforceACL());
+				String targetPermission = basePermission;
+
+				// Optimize permission adaptation
 				if (parentPermissions.containsKey(authority) && !enforceACL) {
 					String currentPermission = parentPermissions.get(authority);
-					if (currentPermission.equals(PermissionService.CONSUMER) || currentPermission.equals(PermissionService.READ)) {
+					if (PermissionService.CONSUMER.equals(currentPermission) || PermissionService.READ.equals(currentPermission)) {
 						targetPermission = PermissionService.CONSUMER;
 					}
 				}
-				targetPermission = adaptPermissionToSite(targetPermission, siteInfo, authority, enforceACL);
+
+				// Use pre-computed site role
+				String siteRole = authorityToSiteRole.get(authority);
+				targetPermission = adaptPermissionToSite(targetPermission, siteRole, enforceACL);
 				addPermission(authority, targetPermission, toAdd, toRemove);
 			}
-			
-			// set read to parent permissions as business logic is "read for others"
+
+			// Handle read-for-others logic
 			if (PermissionModel.READ_WRITE.equals(permissionModel.getPermission())) {
-				for (String authority : parentPermissions.keySet()) {
-					addPermission(authority, PermissionService.READ, toAdd, toRemove);
-				}
-			}
-			
-			for (String authority : specificPermissions.keySet()) {
-				if (!toAdd.containsKey(authority)) {
-					toRemove.add(authority);
-				}
+				parentPermissions.keySet().forEach(authority -> addPermission(authority, PermissionService.READ, toAdd, toRemove));
 			}
 		}
+
+		// Remove specific permissions not in toAdd
+		specificPermissions.keySet().stream().filter(authority -> !toAdd.containsKey(authority)).forEach(toRemove::add);
 	}
-	
-	private String adaptPermissionToSite(String targetPermission, SiteInfo siteInfo, String authorityName, boolean enforceACL) {
-		if (siteInfo != null) {
-			String sitePermission = siteService.getMembersRole(siteInfo.getShortName(), authorityName);
-			if (sitePermission != null) {		
-				if (PermissionService.CONSUMER.equals(targetPermission) || sitePermission.contains(targetPermission)) {
-					return targetPermission;
-				}
-				if (SiteModel.SITE_COLLABORATOR.equals(sitePermission) || SiteModel.SITE_MANAGER.equals(sitePermission)) {
-					return PermissionService.COORDINATOR;
-				} 
-				if (SiteModel.SITE_CONSUMER.equals(sitePermission) && !enforceACL) {
-					return PermissionService.CONSUMER;
-				}
+
+	private String adaptPermissionToSite(String targetPermission, String sitePermission, boolean enforceACL) {
+		if (sitePermission != null) {
+			if (PermissionService.CONSUMER.equals(targetPermission) || sitePermission.contains(targetPermission)) {
+				return targetPermission;
+			}
+			if (SiteModel.SITE_COLLABORATOR.equals(sitePermission) || SiteModel.SITE_MANAGER.equals(sitePermission)) {
+				return PermissionService.COORDINATOR;
+			}
+			if (SiteModel.SITE_CONSUMER.equals(sitePermission) && !enforceACL) {
+				return PermissionService.CONSUMER;
 			}
 		}
-		
 		return targetPermission;
 	}
 
-
-	private void addPermission(String authority, String permission, HashMap<String, String> toAdd, Set<String> toRemove) {
+	private void addPermission(String authority, String permission, Map<String, String> toAdd, Set<String> toRemove) {
 		if ((PermissionService.READ.equals(permission) || PermissionService.CONSUMER.equals(permission)) && toAdd.containsKey(authority)) {
 			return;
 		}
 		toAdd.put(authority, permission);
-		if (toRemove.contains(authority)) {
-			toRemove.remove(authority);
-		}
+		toRemove.remove(authority);
 	}
-	
 }

@@ -55,7 +55,10 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 
 	/** Constant <code>MESSAGE_NULL_PERC="message.formulate.allergen.error.nullQt"{trunked}</code> */
 	public static final String MESSAGE_NULL_PERC = "message.formulate.labelClaim.error.nullQtyPerc";
-
+	
+	/** Constant <code>MESSAGE_NULL_PERC="message.formulate.allergen.error.nullQt"{trunked}</code> */
+	public static final String MESSAGE_CERTIFIED_ERROR = "message.formulate.labelClaim.certifiedError";
+	
 	private NodeService nodeService;
 
 	private NodeService mlNodeService;
@@ -205,8 +208,50 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 			computeClaimList(productData, parser, context);
 
 		}
+		
+		// sort
+		if (productData.getLabelClaimList() != null) {
+
+			productData.getLabelClaimList().forEach(labelClaimListDataItem -> {
+				if (!Boolean.TRUE.equals(labelClaimListDataItem.getIsManual())) {
+					Double regulatoryThreshold = getLabelClaimRegulatoryThreshold(labelClaimListDataItem.getLabelClaim());
+					Double percentage = null;
+					
+					if (labelClaimListDataItem.getPercentClaim() != null) {
+						if (labelClaimListDataItem.getPercentApplicable() != null) {
+							percentage = labelClaimListDataItem.getPercentClaim() / labelClaimListDataItem.getPercentApplicable() * 100;
+						} else {
+							percentage = labelClaimListDataItem.getPercentClaim();
+						}
+					}
+					
+					if (regulatoryThreshold != null && percentage != null) {
+						if (regulatoryThreshold > percentage) {
+							if (labelClaimListDataItem.getLabelClaimValue().equals("certified") ||
+							labelClaimListDataItem.getLabelClaimValue().equals("true")) {
+								productData.addError(MLTextHelper.getI18NMessage(MESSAGE_CERTIFIED_ERROR, 
+									mlNodeService.getProperty(labelClaimListDataItem.getLabelClaim(), BeCPGModel.PROP_CHARACT_NAME),
+									percentage,
+									regulatoryThreshold));
+							}
+							
+							labelClaimListDataItem.setLabelClaimValue("false");
+						} else if (regulatoryThreshold <= percentage) {
+							labelClaimListDataItem.setLabelClaimValue("true");
+						}
+					}
+				}
+			});
+
+			//sort(productData.getAllergenList());
+		}
+
 
 		return true;
+	}
+	
+	private Double getLabelClaimRegulatoryThreshold(NodeRef labelClaim) {
+		return (Double) nodeService.getProperty(labelClaim, PLMModel.PROP_CLAIM_REGULATORY_THRESHOLD);
 	}
 
 	private Set<ProductSpecificationData> extractSpecifications(List<ProductSpecificationData> specifications) {
