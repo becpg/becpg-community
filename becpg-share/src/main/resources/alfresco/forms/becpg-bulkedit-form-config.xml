@@ -38,6 +38,7 @@
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
 					<show id="cm:author" force="true" />
+					<show id="cm:owner" force="true" />
 					<show id="bcpg:code" force="true" />
 					<show id="bcpg:docLinkedEntities" force="true" />
 					<show id="mimetype" force="true" />
@@ -102,6 +103,7 @@
 						</control>
 					</field>
 					<field id="cm:author" set="mainInfo" />
+					<field id="cm:owner" set="mainInfo" />
 					<field id="bcpg:code" set="mainInfo" read-only="true" />
 					<field id="bcpg:docLinkedEntities" set="mainInfo" />
 					<field id="mimetype" set="mainInfo" read-only="true" >

@@ -93,8 +93,10 @@
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
 					<show id="cm:author" force="true" />
+					<show id="cm:owner" force="true" />
 					<show id="bcpg:code" force="true" />
 					<show id="mimetype" />
+					<show id="bcpg:docLinkedEntities" force="true" />
 
 					<show id="bcpg:documentState" force="true" />
 					<show id="bcpg:documentCategory" force="true" />
@@ -171,6 +173,13 @@
 							<control-param name="forceEditable">true</control-param>
 						</control>
 					</field>
+					<field id="cm:owner" set="mainInfo">
+						<control
+							template="/org/alfresco/components/form/controls/textfield.ftl">
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:docLinkedEntities" set="mainInfo" />
 
 					<field id="entity_bcpg:documentEntityRef_bcpg:product"
 						set="productInfo" />
