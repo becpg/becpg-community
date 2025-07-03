@@ -33,6 +33,7 @@
 			<show id="bcpg:nutrientProfilingClass" />
 			<show id="bcpg:suppliers" />
 			<show id="bcpg:clients" />
+			<show id="bcpg:documentEntityRef" />
 			<show id="cm:from" />
 			<show id="cm:to" />
 		</metadata>
