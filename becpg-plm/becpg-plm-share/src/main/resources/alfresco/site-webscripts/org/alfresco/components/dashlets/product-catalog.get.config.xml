@@ -22,6 +22,7 @@
    <types>
    	<type name="finishedProduct" filter="Simulation,ToValidate,Valid,Refused,Stopped,Archived,all,favourites"/>
    	<type name="semiFinishedProduct" filter="Simulation,ToValidate,Valid,Refused,Stopped,Archived,all,favourites"/>
+   	<type name="logisticUnit" filter="Simulation,ToValidate,Valid,Refused,Stopped,Archived,all,favourites"/>
    	<type name="rawMaterial" filter="Simulation,ToValidate,Valid,Refused,Stopped,Archived,all,favourites"/>
    	<type name="packagingMaterial" filter="Simulation,ToValidate,Valid,Refused,Stopped,Archived,all,favourites"/>
    	<type name="packagingKit" filter="Simulation,ToValidate,Valid,Refused,Stopped,Archived,all,favourites"/>
