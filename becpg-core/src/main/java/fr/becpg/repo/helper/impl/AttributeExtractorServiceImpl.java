@@ -498,7 +498,10 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				}
 			}
 
-		} else if (dataType.equals(DataTypeDefinition.DATE.toString())) {
+		} else if (dataType.equals(DataTypeDefinition.DATE.toString()) 
+                || BeCPGModel.PROP_CM_TO.equals(propertyDef.getName())
+                ||  BeCPGModel.PROP_CM_FROM.equals(propertyDef.getName())
+                ) {
 			return propertyFormats.formatDate(v);
 		} else if (dataType.equals(DataTypeDefinition.DATETIME.toString())) {
 			return propertyFormats.formatDateTime(v);
