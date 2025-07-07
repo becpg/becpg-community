@@ -154,6 +154,11 @@ public class ProductData extends AbstractScorableEntity
 	 * Parent entity
 	 */
 	private ProductData parentEntity;
+	
+	/*
+	 * Security 
+	 */
+	private NodeRef securityRef;
 
 	/*
 	 * Formulation
@@ -592,6 +597,16 @@ public class ProductData extends AbstractScorableEntity
 	 */
 	public void setClients(List<ClientData> clients) {
 		this.clients = clients;
+	}
+	
+	@AlfSingleAssoc
+	@AlfQname(qname = "sec:securityRef")
+	public NodeRef getSecurityRef() {
+		return securityRef;
+	}
+
+	public void setSecurityRef(NodeRef securityRef) {
+		this.securityRef = securityRef;
 	}
 
 	/**
@@ -2830,7 +2845,7 @@ public class ProductData extends AbstractScorableEntity
 			for (DataListFilter<ProductData, T> filter : filters) {
 				stream = stream.filter(filter.createPredicate(this));
 			}
-			return stream.collect(Collectors.toList());
+			return stream.toList();
 		}
 		return list;
 	}
@@ -3274,7 +3289,7 @@ public class ProductData extends AbstractScorableEntity
 				nutrientScore, plants, profitability, projectedQty, qty, recipeQtyUsed, recipeQtyUsedWithLossPerc, recipeVolumeUsed, reformulateCount,
 				regulatoryCountriesRef, regulatoryUsagesRef, regulatoryMode, regulatoryRecipeId, reportLocales, servingSize, servingSizeByCountry,
 				servingSizeUnit, state, tare, tareUnit, title, unit, unitPrice, unitTotalCost, updateFormulatedDate, weightPrimary, weightSecondary,
-				weightTertiary, yield, yieldVolume, suppliers);
+				weightTertiary, yield, yieldVolume, suppliers, securityRef);
 		return result;
 	}
 
@@ -3297,6 +3312,7 @@ public class ProductData extends AbstractScorableEntity
 				&& Objects.equals(netWeight, other.netWeight) && Objects.equals(netWeightSecondary, other.netWeightSecondary)
 				&& Objects.equals(netWeightTertiary, other.netWeightTertiary) && Objects.equals(nutrientClass, other.nutrientClass)
 				&& Objects.equals(nutrientProfile, other.nutrientProfile) && Objects.equals(nutrientScore, other.nutrientScore)
+				&& Objects.equals(securityRef, other.securityRef)
 				&& Objects.equals(plants, other.plants) && Objects.equals(profitability, other.profitability)
 				&& Objects.equals(projectedQty, other.projectedQty) && Objects.equals(qty, other.qty)
 				&& Objects.equals(recipeQtyUsed, other.recipeQtyUsed) && Objects.equals(recipeQtyUsedWithLossPerc, other.recipeQtyUsedWithLossPerc)

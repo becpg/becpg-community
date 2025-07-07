@@ -25,8 +25,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.dictionary.IndexTokenisationMode;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
+import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceException;
@@ -46,6 +48,7 @@ import fr.becpg.repo.autocomplete.AutoCompleteExtractor;
 import fr.becpg.repo.autocomplete.AutoCompletePage;
 import fr.becpg.repo.autocomplete.AutoCompletePlugin;
 import fr.becpg.repo.autocomplete.AutoCompleteService;
+import fr.becpg.repo.autocomplete.impl.extractors.NodeRefAutoCompleteExtractor;
 import fr.becpg.repo.autocomplete.impl.extractors.TargetAssocAutoCompleteExtractor;
 import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.entity.EntityDictionaryService;
@@ -160,9 +163,9 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * <pre>
  * {@code
  *     <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
- *          <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ing?extra.getByAssoc=bcpg:linkedSearchAssociation</control-param>
+ *          <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ing?extra.getByAssoc=bcpg:linkedSearchAssociation&extra.characNameFormat={ml_bcpg:charactName} - {bcpg:casNumber}</control-param>
  *          <control-param name="parentAssoc">bcpg_ingListIng</control-param>
- *        </control>
+ *     </control>
  * }
  * </pre>
  *
@@ -180,6 +183,8 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 
 	/** Constant <code>PROP_GET_BY_ASSOC="getByAssoc"</code> */
 	protected static final String PROP_GET_BY_ASSOC = "getByAssoc";
+	/** Constant <code>PROP_CHARAC_NAME_FORMAT="characNameFormat"</code> */
+	protected static final String PROP_CHARAC_NAME_FORMAT = "characNameFormat";
 	/** Constant <code>SOURCE_TYPE_TARGET_ASSOC="targetassoc"</code> */
 	protected static final String SOURCE_TYPE_TARGET_ASSOC = "targetassoc";
 	/** Constant <code>searchTemplate="%(cm:name bcpg:erpCode bcpg:code bcpg:l"{trunked}</code> */
@@ -265,9 +270,10 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 			extras = (HashMap<String, String>) props.get(AutoCompleteService.EXTRA_PARAM);
 			if (extras != null) {
 				String assocName = extras.get(PROP_GET_BY_ASSOC);
-
+				final String characNameFormat = extras.get(PROP_CHARAC_NAME_FORMAT);
+				
 				if ((assocName != null) && (!assocName.isBlank())) {
-					return new AutoCompletePage(getByAssoc(assocName, props), pageNum, pageSize, getTargetAssocValueExtractor());
+					return new AutoCompletePage(getByAssoc(assocName, props), pageNum, pageSize, getTargetAssocValueExtractor(), characNameFormat);
 				}
 
 			}
@@ -316,7 +322,7 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 		} else if (isAllQuery(query)) {
 			queryBuilder.addSort(ContentModel.PROP_NAME, true);
 		}
-
+		
 		if ((extras != null) && extras.containsKey(AutoCompleteService.EXTRA_PARAM_SEARCH_TEMPLATE)) {
 			template = extras.get(AutoCompleteService.EXTRA_PARAM_SEARCH_TEMPLATE);
 		}
@@ -331,8 +337,8 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 			ftsQuery.append("(" + query + ")");
 			queryBuilder.andFTSQuery(ftsQuery.toString());
 		}
-
-		return new AutoCompletePage(filter(queryBuilder, path, arrClassNames, pageSize, props), pageNum, pageSize, getTargetAssocValueExtractor());
+		
+		return new AutoCompletePage(filter(queryBuilder, path, arrClassNames, pageSize, props), pageNum, pageSize, getTargetAssocValueExtractor(), extras != null ? extras.get(PROP_CHARAC_NAME_FORMAT) : null);
 
 	}
 
@@ -732,5 +738,31 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 		return BeCPGQueryHelper.isQueryMatch(query, entityName);
 	}
 
-	
+	/**
+	 * Suggest a dalist item
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param datalistType a {@link org.alfresco.service.namespace.QName} object.
+	 * @param propertyQName a {@link org.alfresco.service.namespace.QName} object.
+	 * @param query a {@link java.lang.String} object.
+	 * @param pageNum a {@link java.lang.Integer} object.
+	 * @param pageSize a {@link java.lang.Integer} object.
+	 * @return a {@link fr.becpg.repo.autocomplete.AutoCompletePage} object.
+	 */
+	protected AutoCompletePage suggestDatalistItem(NodeRef entityNodeRef, QName datalistType, QName propertyQName, String query, Integer pageNum,
+			Integer pageSize) {
+
+		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(datalistType).andPropQuery(propertyQName, prepareQuery(query))
+				.inPath(nodeService.getPath(entityNodeRef).toPrefixString(namespaceService) + "/*/*").maxResults(RepoConsts.MAX_SUGGESTIONS);
+
+		PropertyDefinition propertyDef = dictionaryService.getProperty(propertyQName);
+		// Tokenised "false" or "both"
+		if ((propertyDef != null) && (IndexTokenisationMode.BOTH.equals(propertyDef.getIndexTokenisationMode())
+				|| (IndexTokenisationMode.FALSE.equals(propertyDef.getIndexTokenisationMode()) && isAllQuery(query)))) {
+			queryBuilder.addSort(propertyQName, true);
+		}
+
+		return new AutoCompletePage(queryBuilder.list(), pageNum, pageSize, new NodeRefAutoCompleteExtractor(propertyQName, nodeService));
+	}
+
 }

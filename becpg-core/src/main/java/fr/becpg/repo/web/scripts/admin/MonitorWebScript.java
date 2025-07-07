@@ -136,7 +136,7 @@ public class MonitorWebScript extends DeclarativeWebScript {
 			if ("beCPG Monitors".equals(req.getHeader(HttpHeaders.USER_AGENT))) {
 				ret.put("authenticated", true);
 				try {
-					List<NodeRef> result = BeCPGQueryBuilder.createQuery().inSite("valid", null).maxResults(1).list();
+					List<NodeRef> result = BeCPGQueryBuilder.createQuery().inPath("/app:company_home/cm:System/").ftsLanguage().maxResults(1).list();
 					if (!result.isEmpty()) {
 						ret.put(SOLR_STATUS, "UP");
 					} else {
@@ -222,7 +222,7 @@ public class MonitorWebScript extends DeclarativeWebScript {
 		}
 	
 		for (String user : users) {
-			if (!AuthenticationUtil.getAdminUserName().equals(user) && !user.endsWith("@becpg.fr")) {
+			if (!licenseManager.isSpecialLicenseUser(user)) {
 				Set<String> userAuthorities = authorityService.getAuthoritiesForUser(user);
 				if (userAuthorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser)
 						&& userAuthorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.LicenseSupplierConcurrent)) {
