@@ -5604,6 +5604,31 @@
 					<field id="cm:name" read-only="true"></field>
 				</appearance>
 			</form>
+			
+			<form id="datagridWUsed">
+                <field-visibility>
+                    <show id="bcpg:parentEntityRef" force="true" />
+                    <show id="cm:title" force="true" />
+                    <show id="bcpg:supplierState" />
+                    <show id="bcpg:erpCode" force="true" />
+                    <show id="bcpg:locationAddress1" force="true"/>
+                    <show id="bcpg:locationCity" force="true"/>
+                    <show id="bcpg:locationZip" force="true"/>
+                    <show id="bcpg:locationState" force="true"/>
+                    <show id="bcpg:locationCountry" force="true"/>
+                </field-visibility>
+                <appearance>
+                    <field id="bcpg:parentEntityRef" read-only="true" />
+                    <field id="cm:title" read-only="true"/>
+                    <field id="bcpg:supplierState" read-only="true" />
+                    <field id="bcpg:erpCode" read-only="true"/>
+                    <field id="bcpg:locationAddress1" read-only="true"/>
+                    <field id="bcpg:locationCity" read-only="true"/>
+                    <field id="bcpg:locationZip" read-only="true"/>
+                    <field id="bcpg:locationState" read-only="true"/>
+                    <field id="bcpg:locationCountry" read-only="true"/>
+                </appearance>
+            </form>
 		</forms>
 	</config>
 
