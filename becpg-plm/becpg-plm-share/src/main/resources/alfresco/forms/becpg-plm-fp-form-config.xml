@@ -1976,6 +1976,8 @@
           <show force="true" id="bcpg:nutrientPreparationState"/>
           <show force="true" id="bcpg:nutrientPreparedUnit"/>
           <show force="false" id="bcpg:productSpecifications"/>
+          <show force="true" id="bcpg:nutrientProfileCategory"/>
+          <show force="true" id="bcpg:nutrientProfileVersion"/>
           <show force="true" id="bcpg:useByDate"/>
           <show force="true" id="bcpg:bestBeforeDate"/>
           <show force="true" id="bcpg:periodAfterOpening"/>
@@ -2120,6 +2122,15 @@
               <control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
               <control-param name="style">width:200px</control-param>
+            </control>
+          </field>
+          <set appearance="bordered-panel" id="score" label-id="becpg.forms.set.nutrient.score.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
+          <field id="bcpg:nutrientProfileCategory" mandatory="false" read-only="false" set="score">
+            <control template="/org/alfresco/components/form/controls/selectone.ftl">
+            </control>
+          </field>
+          <field id="bcpg:nutrientProfileVersion" mandatory="false" read-only="false" set="score">
+            <control template="/org/alfresco/components/form/controls/selectone.ftl">
             </control>
           </field>
           <set appearance="bordered-panel" id="consumer" label-id="becpg.forms.set.consumer.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
