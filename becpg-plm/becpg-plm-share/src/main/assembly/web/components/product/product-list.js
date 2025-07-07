@@ -14,6 +14,9 @@
      */
     beCPG.component.ProductList = function(htmlId) {
         beCPG.component.ProductList.superclass.constructor.call(this, htmlId);
+        
+        this.options.bulkEditFormId = "bulk-edit";
+        
         return this;
     };
 

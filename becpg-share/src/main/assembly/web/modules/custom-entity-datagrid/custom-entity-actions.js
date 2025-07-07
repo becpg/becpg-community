@@ -212,7 +212,7 @@
 					+ "components/form?formId={formId}&bulkEdit=true&entityNodeRef={entityNodeRef}&fields={fields}&submissionUrl={submissionUrl}&itemKind={itemKind}&itemId={itemId}&mode={mode}&submitType={submitType}&showCancelButton=true",
 					{
 						itemKind: "type",
-						formId: "create",
+						formId: me.options.bulkEditFormId || "create",
 						itemId: itemType,
 						mode: "create",
 						entityNodeRef: me.options.entityNodeRef,
