@@ -150,11 +150,16 @@ public class FormulationLabelClaimIT extends AbstractFinishedProductTest {
 			ProductSpecificationData productSpec1 = (ProductSpecificationData) alfrescoRepository.findOne(productSpecificationNodeRef1);
 			productSpec1.setLabelClaimList(new ArrayList<LabelClaimListDataItem>());
 
-			productSpec1.getLabelClaimList().add(new LabelClaimListDataItem(labelClaimNodeRef, LABEL_CLAIM_TYPE, Boolean.TRUE));
-			productSpec1.getLabelClaimList().add(new LabelClaimListDataItem(labelClaimNodeRef2, LABEL_CLAIM_TYPE, Boolean.FALSE));
-			productSpec1.getLabelClaimList().add(new LabelClaimListDataItem(labelClaimNodeRef3, LABEL_CLAIM_TYPE, Boolean.TRUE));
-			productSpec1.getLabelClaimList().add(new LabelClaimListDataItem(labelClaimNodeRef5, LABEL_CLAIM_TYPE, Boolean.FALSE));
-			productSpec1.getLabelClaimList().add(new LabelClaimListDataItem(labelClaimNodeRef6, LABEL_CLAIM_TYPE, Boolean.TRUE));
+			productSpec1.getLabelClaimList().add(LabelClaimListDataItem.build().withLabelClaim(labelClaimNodeRef)
+					.withType(LABEL_CLAIM_TYPE).withLabelClaimValue("true"));
+			productSpec1.getLabelClaimList().add(LabelClaimListDataItem.build().withLabelClaim(labelClaimNodeRef2)
+					.withType(LABEL_CLAIM_TYPE).withLabelClaimValue("false"));
+			productSpec1.getLabelClaimList().add(LabelClaimListDataItem.build().withLabelClaim(labelClaimNodeRef3)
+					.withType(LABEL_CLAIM_TYPE).withLabelClaimValue("true"));
+			productSpec1.getLabelClaimList().add(LabelClaimListDataItem.build().withLabelClaim(labelClaimNodeRef5)
+					.withType(LABEL_CLAIM_TYPE).withLabelClaimValue("false"));
+			productSpec1.getLabelClaimList().add(LabelClaimListDataItem.build().withLabelClaim(labelClaimNodeRef6)
+					.withType(LABEL_CLAIM_TYPE).withLabelClaimValue("true"));
 			alfrescoRepository.save(productSpec1);
 
 			properties = new HashMap<>();
@@ -166,9 +171,12 @@ public class FormulationLabelClaimIT extends AbstractFinishedProductTest {
 			ProductSpecificationData productSpec2 = (ProductSpecificationData) alfrescoRepository.findOne(productSpecificationNodeRef2);
 
 			productSpec2.setLabelClaimList(new ArrayList<LabelClaimListDataItem>());
-			productSpec2.getLabelClaimList().add(new LabelClaimListDataItem(labelClaimNodeRef, LABEL_CLAIM_TYPE, Boolean.FALSE));
-			productSpec2.getLabelClaimList().add(new LabelClaimListDataItem(labelClaimNodeRef2, LABEL_CLAIM_TYPE, Boolean.TRUE));
-			productSpec2.getLabelClaimList().add(new LabelClaimListDataItem(labelClaimNodeRef5, LABEL_CLAIM_TYPE, Boolean.FALSE));
+			productSpec2.getLabelClaimList().add(LabelClaimListDataItem.build().withLabelClaim(labelClaimNodeRef)
+					.withType(LABEL_CLAIM_TYPE).withLabelClaimValue("false"));
+			productSpec2.getLabelClaimList().add(LabelClaimListDataItem.build().withLabelClaim(labelClaimNodeRef2)
+					.withType(LABEL_CLAIM_TYPE).withLabelClaimValue("true"));
+			productSpec2.getLabelClaimList().add(LabelClaimListDataItem.build().withLabelClaim(labelClaimNodeRef5)
+					.withType(LABEL_CLAIM_TYPE).withLabelClaimValue("false"));
 
 			alfrescoRepository.save(productSpec2);
 
@@ -188,16 +196,24 @@ public class FormulationLabelClaimIT extends AbstractFinishedProductTest {
 			product.setProductSpecifications(new ArrayList<ProductSpecificationData>());
 			product.getProductSpecifications().add(globalSpec);
 			product.setLabelClaimList(new ArrayList<LabelClaimListDataItem>());
-			LabelClaimListDataItem productLabelClaimFalse = new LabelClaimListDataItem(labelClaimNodeRef, LABEL_CLAIM_TYPE, Boolean.TRUE);
-			LabelClaimListDataItem productLabelClaimFalse2 = new LabelClaimListDataItem(labelClaimNodeRef2, LABEL_CLAIM_TYPE, Boolean.FALSE);
-			LabelClaimListDataItem productLabelClaimFalse4 = new LabelClaimListDataItem(labelClaimNodeRef4, LABEL_CLAIM_TYPE, Boolean.TRUE);
-			LabelClaimListDataItem productLabelClaimFalse5 = new LabelClaimListDataItem(labelClaimNodeRef5, LABEL_CLAIM_TYPE, Boolean.TRUE);
-			LabelClaimListDataItem productLabelClaimFalse6 = new LabelClaimListDataItem(labelClaimNodeRef6, LABEL_CLAIM_TYPE, Boolean.TRUE);
-			LabelClaimListDataItem productLabelClaimFalse7 = new LabelClaimListDataItem(labelClaimNodeRef7, LABEL_CLAIM_TYPE, Boolean.TRUE);
+			LabelClaimListDataItem productLabelClaimFalse = LabelClaimListDataItem.build().withLabelClaim(labelClaimNodeRef)
+					.withType(LABEL_CLAIM_TYPE).withLabelClaimValue("true");
+			LabelClaimListDataItem productLabelClaimFalse2 = LabelClaimListDataItem.build().withLabelClaim(labelClaimNodeRef2)
+					.withType(LABEL_CLAIM_TYPE).withLabelClaimValue("false");
+			LabelClaimListDataItem productLabelClaimFalse4 = LabelClaimListDataItem.build().withLabelClaim(labelClaimNodeRef4)
+					.withType(LABEL_CLAIM_TYPE).withLabelClaimValue("true");
+			LabelClaimListDataItem productLabelClaimFalse5 = LabelClaimListDataItem.build().withLabelClaim(labelClaimNodeRef5)
+					.withType(LABEL_CLAIM_TYPE).withLabelClaimValue("true");
+			LabelClaimListDataItem productLabelClaimFalse6 = LabelClaimListDataItem.build().withLabelClaim(labelClaimNodeRef6)
+					.withType(LABEL_CLAIM_TYPE).withLabelClaimValue("true");
+			LabelClaimListDataItem productLabelClaimFalse7 = LabelClaimListDataItem.build().withLabelClaim(labelClaimNodeRef7)
+					.withType(LABEL_CLAIM_TYPE).withLabelClaimValue("true");
 
-			LabelClaimListDataItem subProductLabelClaim6 = new LabelClaimListDataItem(labelClaimNodeRef6, LABEL_CLAIM_TYPE, Boolean.TRUE);
+			LabelClaimListDataItem subProductLabelClaim6 = LabelClaimListDataItem.build().withLabelClaim(labelClaimNodeRef6)
+					.withType(LABEL_CLAIM_TYPE).withLabelClaimValue("true");
 			subProductLabelClaim6.setLabelClaimValue(LabelClaimListDataItem.VALUE_EMPTY);
-			LabelClaimListDataItem subProductLabelClaim7 = new LabelClaimListDataItem(labelClaimNodeRef7, LABEL_CLAIM_TYPE, Boolean.TRUE);
+			LabelClaimListDataItem subProductLabelClaim7 = LabelClaimListDataItem.build().withLabelClaim(labelClaimNodeRef7)
+					.withType(LABEL_CLAIM_TYPE).withLabelClaimValue("true");
 			subProductLabelClaim7.setLabelClaimValue(LabelClaimListDataItem.VALUE_EMPTY);
 
 			productLabelClaimFalse.setIsManual(Boolean.TRUE);
@@ -217,11 +233,11 @@ public class FormulationLabelClaimIT extends AbstractFinishedProductTest {
 			ProductData packaging1 = (ProductData) alfrescoRepository.findOne(packagingMaterial1NodeRef);
 			if ((packaging1 != null) && (packaging1.getLabelClaimList() != null)) {
 
-				LabelClaimListDataItem subPackagingProductLabelClaim6 = new LabelClaimListDataItem(labelClaimNodeRef6, LABEL_CLAIM_TYPE,
-						Boolean.TRUE);
+				LabelClaimListDataItem subPackagingProductLabelClaim6 = LabelClaimListDataItem.build().withLabelClaim(labelClaimNodeRef6)
+						.withType(LABEL_CLAIM_TYPE).withIsClaimed(Boolean.TRUE);
 				subPackagingProductLabelClaim6.setLabelClaimValue(LabelClaimListDataItem.VALUE_EMPTY);
-				LabelClaimListDataItem subPackagingProductLabelClaim7 = new LabelClaimListDataItem(labelClaimNodeRef7, LABEL_CLAIM_TYPE,
-						Boolean.TRUE);
+				LabelClaimListDataItem subPackagingProductLabelClaim7 = LabelClaimListDataItem.build().withLabelClaim(labelClaimNodeRef4)
+						.withType(LABEL_CLAIM_TYPE).withIsClaimed(Boolean.TRUE);
 
 				packaging1.getLabelClaimList().add(subPackagingProductLabelClaim6);
 				packaging1.getLabelClaimList().add(subPackagingProductLabelClaim7);
@@ -253,7 +269,7 @@ public class FormulationLabelClaimIT extends AbstractFinishedProductTest {
 		checkRequirement(testProduct);
 
 	}
-
+	
 	private void checkRequirement(NodeRef testProduct) {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {

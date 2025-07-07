@@ -46,9 +46,15 @@ public class NutrientRoundedRule {
 			}
 			if (delta != null) {
 				// round by delta (eg: 0.5)
-				double roundedValue = (delta * Math.round(val / delta));
-				// sometime roundedValue is 0.3000000001 when 0.1 * 3 --> we round twice
-				return (Math.round(roundedValue * 1000d) / 1000d);
+				BigDecimal deltaBd = BigDecimal.valueOf(delta);
+				BigDecimal valBd = BigDecimal.valueOf(val);
+				
+				BigDecimal divided = valBd.divide(deltaBd, 15, RoundingMode.HALF_EVEN);
+				BigDecimal rounded = new BigDecimal(Math.round(divided.doubleValue()));
+				BigDecimal multiplied = deltaBd.multiply(rounded);
+				
+				// sometime roundedValue is 0.3000000001 when 0.1 * 3 --> we set scale
+				return multiplied.setScale(3, RoundingMode.HALF_EVEN).doubleValue();
 			}
 
 			return BigDecimal.valueOf(val).round(new MathContext(precision, roundingMode)).doubleValue();

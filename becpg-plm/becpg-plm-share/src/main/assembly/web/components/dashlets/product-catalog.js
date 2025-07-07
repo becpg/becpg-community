@@ -371,7 +371,8 @@
                             * Simple View
                             */
                            var id = this.id + '-preview-' + oRecord.getId();
-                           desc = '<span id="' + id + '" class="icon32"><a href="' + docDetailsUrl + '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/'  + Alfresco.util
+                           desc = '<span id="' + id + '" class="icon32' 
+                           +Alfresco.util.getFileIcon(thumbName, record.nodeType)+'"><a href="' + docDetailsUrl + '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/'  + Alfresco.util
                                  .getFileIcon(thumbName, record.nodeType) + '" alt="' + extn + '" title="' + $html(thumbName) + '" /></a></span>';
 
                            // Preview tooltip
