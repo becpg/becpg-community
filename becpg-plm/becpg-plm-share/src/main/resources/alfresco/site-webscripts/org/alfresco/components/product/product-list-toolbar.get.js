@@ -44,6 +44,7 @@ function main()
 	
 	model.selectedType = page.url.args.list ? page.url.args.list: (model.preferences.type!=null ? model.preferences.type: "finishedProduct");
 	model.selectedFilter = page.url.args.filter ? page.url.args.filter : (model.preferences.filter!=null ? model.preferences.filter: "all");
+	model.showThumbnails = model.preferences.showThumbnails !== null ? (model.preferences.showThumbnails) : false;
 
 	
 	// Widget instantiation metadata...
@@ -53,7 +54,8 @@ function main()
 	   options : {
 	      siteId : (site != null) ? site : "",
 	      selectedType: model.selectedType,
-	      selectedFilter: model.selectedFilter , 
+	      selectedFilter: model.selectedFilter,
+		  showThumbnails: model.showThumbnails,
 		  filters: getFilters(),
 		  types: getTypes(),
 	      prefsId : prefsId

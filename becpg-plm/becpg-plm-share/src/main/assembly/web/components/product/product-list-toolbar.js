@@ -65,8 +65,7 @@
             onReady: function PTL_onReady() {
                 var me = this;
 
-
-                this.widgets.filter = new YAHOO.widget.Button({
+               this.widgets.filter = new YAHOO.widget.Button({
                     type: "split",
                     label: this.msg("picker.saved-search.choose"),
                     name: "savedSearchPickerButton",
@@ -296,6 +295,10 @@
 
             onShowThumbnails: function PTL_onShowThumbnails() {
                 this.options.showThumbnails = !this.options.showThumbnails;
+                
+                // Store the preference
+                this.services.preferences.set(this.options.prefsId + ".showThumbnails", this.options.showThumbnails);
+                
                 this.reloadDataTable();
             },
 
@@ -329,7 +332,12 @@
 
                 if (this.options.selectedType != null) {
                     dataType = this.options.selectedType.indexOf("_") > 0 ? this.options.selectedType.replace("_", ":") : "bcpg:" + this.options.selectedType;
+
+                    if (this.options.selectedType == "document") {
+                        dataType = "cm:content";
+                    }
                 }
+
 
                 YAHOO.Bubbling.fire("activeDataListChanged", {
                     dataList: {
