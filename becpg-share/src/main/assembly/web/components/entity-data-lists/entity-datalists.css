@@ -20,19 +20,55 @@
 }
 
 
-.datalists div.filter
-{
+.datalists div.filter {
    padding-top: 0.5em;
-   max-height:356px;
-   transition: max-height 1s ease;
-   overflow: hidden;
+   max-height: 400px;
+   overflow-y: auto;
+   position: relative;
+   -ms-overflow-style: none;
 }
 
-
-.datalists div.filter:hover {
-	max-height:5000px;
-    transition: max-height 1s ease;
+@-moz-document url-prefix() {
+   .datalists div.filter {
+      scrollbar-width: none;
+      overflow-y: auto;
+   }
+   
+   .datalists div.filter:hover {
+      scrollbar-width: thin !important;
+      scrollbar-color: #999 #f5f5f5;
+   }
 }
+
+.datalists div.filter::-webkit-scrollbar {
+   width: 0;
+   background: transparent;
+   display: none;
+}
+
+.datalists div.filter:hover::-webkit-scrollbar {
+   width: 6px;
+   display: block;
+}
+
+.datalists div.filter:hover::-webkit-scrollbar-track {
+   background: #f8f8f8;
+   border-radius: 3px;
+}
+
+.datalists div.filter:hover::-webkit-scrollbar-thumb {
+   background: #ccc;
+   border-radius: 3px;
+}
+
+.datalists div.filter:hover::-webkit-scrollbar-thumb:hover {
+   background: #aaa;
+}
+
+.datalists div.filter:hover + .horiz-rule {
+   opacity: 0;
+}
+
 
 .datalists .no-lists
 {
@@ -139,8 +175,16 @@
 
 .datalists .horiz-rule
 {
-   border-bottom: 1px solid #c0c0c0;
+   position: relative;
+   height: 15px; /* Reduced height */
+   background: linear-gradient(to bottom, transparent, transparent 40%, rgba(240,240,240,0.5) 90%, rgba(230,230,230,0.6) 100%); /* More subtle gradient */
+   border-bottom: 1px solid #eee; /* Lighter border */
+   margin-top: -15px; /* Adjusted to match new height */
    margin-left: -10px;
+   pointer-events: none; /* Allow clicking through */
+   z-index: 1;
+   opacity: 0.7; /* Reduced opacity overall */
+   transition: opacity 0.3s ease;
 }
 
 #alf-hd .node-header {

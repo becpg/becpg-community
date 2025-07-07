@@ -230,7 +230,7 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<ProductDa
 	@Override
 	public boolean process(ProductData productData) {
 
-		if (productData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || (productData instanceof ProductSpecificationData)) {
+		if (productData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || (productData instanceof ProductSpecificationData) || (productData.getNodeRef() == null)) {
 			return true;
 		}
 
@@ -591,9 +591,12 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<ProductDa
 		List<NodeRef> productCharacts = new ArrayList<>();
 
 		// Get claims
-		List<NodeRef> claims = productData.getLabelClaimList().stream()
-				.filter(p -> LabelClaimListDataItem.VALUE_CERTIFIED.equals(p.getLabelClaimValue())).map(LabelClaimListDataItem::getLabelClaim)
-				.toList();
+		List<NodeRef> claims = CollectionUtils.isEmpty(productData.getLabelClaimList()) ? 
+				List.of() : 
+				productData.getLabelClaimList().stream()
+					.filter(p -> LabelClaimListDataItem.VALUE_CERTIFIED.equals(p.getLabelClaimValue()))
+					.map(LabelClaimListDataItem::getLabelClaim)
+					.toList();
 		if (CollectionUtils.isNotEmpty(claims)) {
 			productCharacts.addAll(claims);
 		}
@@ -604,10 +607,24 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<ProductDa
 		//			productCharacts.addAll(certifications);
 		//		}
 
-		final List<SurveyListDataItem> surveyList = SurveyableEntityHelper.getNamesSurveyLists(alfrescoRepository, productData).values().stream()
-				.filter(Objects::nonNull).flatMap(List::stream).toList();
+		// Get surveys with defensive null checks
+		Map<String, List<SurveyListDataItem>> surveyMap = SurveyableEntityHelper.getNamesSurveyLists(alfrescoRepository, productData);
+		final List<SurveyListDataItem> surveyList = surveyMap == null ? 
+				List.of() : 
+				surveyMap.values().stream()
+					.filter(Objects::nonNull)
+					.flatMap(List::stream)
+					.filter(Objects::nonNull)
+					.toList();
 
-		List<NodeRef> surveys = surveyList.stream().map(SurveyListDataItem::getChoices).flatMap(List::stream).toList();
+		List<NodeRef> surveys = surveyList.isEmpty() ? 
+				List.of() : 
+				surveyList.stream()
+					.map(SurveyListDataItem::getChoices)
+					.filter(Objects::nonNull)
+					.flatMap(List::stream)
+					.filter(Objects::nonNull)
+					.toList();
 		if (CollectionUtils.isNotEmpty(surveys)) {
 			productCharacts.addAll(surveys);
 		}
