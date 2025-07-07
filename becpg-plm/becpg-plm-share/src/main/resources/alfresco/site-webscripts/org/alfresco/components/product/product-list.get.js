@@ -11,7 +11,10 @@ function main()
 		
 	var preferences = AlfrescoUtil.getPreferences(prefs);
 	var currentType = preferences.type!=null ? preferences.type: "finishedProduct";
-	   var filterParameters =  getFilterParameters();
+
+    var showThumbnails = preferences.showThumbnails !== null ? (preferences.showThumbnails) : false;
+    
+	var filterParameters =  getFilterParameters();
 	
 	model.pagination = true;
   
@@ -37,6 +40,7 @@ function main()
        filterParameters : filterParameters,
        useFilter : true,
        usePagination: true,
+       showThumbnails : showThumbnails,
        displayTopPagination : false,
        forceLoad: true,
        columnFormId : "product-list",
