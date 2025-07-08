@@ -319,10 +319,12 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 			}
 
 			// Range from property
-			String rangeText = (String) nodeService.getProperty(scoreListItem.getCharactNodeRef(), ProjectModel.PROP_SCORE_CRITERION_RANGE);
-			if ((rangeText != null) && !rangeText.isBlank()) {
-				ScoreRangeConverter scoreRangeConverter = new ScoreRangeConverter(rangeText);
-				scoreListItem.setRange(scoreRangeConverter.getScoreLetter(scoreListItem.getScore()));
+			if (scoreListItem.getCharactNodeRef() != null) {
+				String rangeText = (String) nodeService.getProperty(scoreListItem.getCharactNodeRef(), ProjectModel.PROP_SCORE_CRITERION_RANGE);
+				if ((rangeText != null) && !rangeText.isBlank()) {
+					ScoreRangeConverter scoreRangeConverter = new ScoreRangeConverter(rangeText);
+					scoreListItem.setRange(scoreRangeConverter.getScoreLetter(scoreListItem.getScore()));
+				}
 			}
 
 			// Range from formula
@@ -332,8 +334,12 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 
 			// Error handling
 			if ((error != null) && surveyableEntity instanceof ReportableEntity reportableEntity) {
-				reportableEntity.addError(MLTextHelper.getI18NMessage("message.formulate.scoreList.error",
-						mlNodeService.getProperty(scoreListItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME), error));
+				reportableEntity
+						.addError(
+								MLTextHelper.getI18NMessage("message.formulate.scoreList.error",
+										scoreListItem.getCharactNodeRef() != null ? mlNodeService.getProperty(
+												scoreListItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME) : null,
+										error));
 			}
 		}
 	}

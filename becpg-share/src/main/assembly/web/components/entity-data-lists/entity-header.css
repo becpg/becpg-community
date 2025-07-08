@@ -119,8 +119,6 @@
     top: -1px;
     float: left;
     position: relative;
-}
-.node-header .node-bcpath .bcpath li   { 
     background-image: url('../images/bg-crumbs.png');
     background-repeat: no-repeat;
     background-position: 100% 0;
