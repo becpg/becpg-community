@@ -366,6 +366,12 @@
 					<value>Serving</value>
 					<value>GdaPerc</value>
 					<value>AsPrepared</value>
+					<value>AsPreparedServing</value>
+					<value>LabeledServing</value>
+					<value>LabeledAsPrepared</value>
+					<value>LabeledGdaPerc</value>
+					<value>LabeledValue</value>
+					<value>LabeledAsPreparedServing</value>
 				</list>
 			</parameter>
 		</constraint>

@@ -28,7 +28,7 @@ public enum NutRequirementType {
 	/*
 	 * Important don't change enum order, requirement will be sort by this order
 	 */
-	Serving, GdaPerc, AsPrepared;
+	Serving, GdaPerc, AsPrepared, LabeledServing, LabeledAsPrepared, LabeledGdaPerc, LabeledValue, LabeledAsPreparedServing, AsPreparedServing;
 
 	/**
 	 * <p>fromString.</p>
