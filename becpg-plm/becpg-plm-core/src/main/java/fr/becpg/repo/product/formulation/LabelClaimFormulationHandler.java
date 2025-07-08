@@ -209,7 +209,6 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 
 		}
 		
-		// sort
 		if (productData.getLabelClaimList() != null) {
 
 			productData.getLabelClaimList().forEach(labelClaimListDataItem -> {
@@ -225,10 +224,10 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 						}
 					}
 					
+					String labelClaimValue = labelClaimListDataItem.getLabelClaimValue();
 					if (regulatoryThreshold != null && percentage != null) {
 						if (regulatoryThreshold > percentage) {
-							if (labelClaimListDataItem.getLabelClaimValue().equals("certified") ||
-							labelClaimListDataItem.getLabelClaimValue().equals("true")) {
+							if (labelClaimValue.equals("certified") || labelClaimValue.equals("true")) {
 								productData.addError(MLTextHelper.getI18NMessage(MESSAGE_CERTIFIED_ERROR, 
 									mlNodeService.getProperty(labelClaimListDataItem.getLabelClaim(), BeCPGModel.PROP_CHARACT_NAME),
 									percentage,
@@ -236,14 +235,12 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 							}
 							
 							labelClaimListDataItem.setLabelClaimValue("false");
-						} else if (regulatoryThreshold <= percentage) {
+						} else if (regulatoryThreshold <= percentage && !labelClaimValue.equals("certified") && !labelClaimValue.equals("suitable")) {
 							labelClaimListDataItem.setLabelClaimValue("true");
 						}
 					}
 				}
 			});
-
-			//sort(productData.getAllergenList());
 		}
 
 
