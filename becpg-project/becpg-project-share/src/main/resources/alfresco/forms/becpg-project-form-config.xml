@@ -516,7 +516,7 @@
 					<show id="cm:name" />
 					<show id="pjt:projectOverdue" />
 					<show id="pjt:projectStartDate" />
-					<show id="pjt:projectDueDate" />
+					<show id="pjt:projectCompletionDate" />
 					<show id="pjt:projectState" />
 					<show id="pjt:projectHierarchy1" />
 					<show id="pjt:projectHierarchy2" />
@@ -524,15 +524,13 @@
 					<show id="pjt:projectScore"  force="true" />
 					<show id="pjt:projectManager" />
 					<show id="pjt:projectEntity" />
-					<show id="pjt:projectCompletionDate" />		
+					<show id="pjt:projectDueDate" />	
 					<show id="pjt:projectPriority" />	
 				</field-visibility>
 				<appearance>
 					 <field id="bcpg:code"
 						 read-only="true" label="datasource" />	 
 					<field id="pjt:projectCompletionDate"
-						 read-only="true"  label="datasource" />
-					<field id="pjt:projectDueDate"
 						 read-only="true"  label="datasource" />
 					<field id="pjt:projectState"  label="datasource" />
 
@@ -546,7 +544,7 @@
 			          <field id="pjt:projectScore" mandatory="false" read-only="false"/>
 			          <field id="pjt:projectManager" mandatory="false" read-only="false"/>
 			          <field id="pjt:projectEntity" mandatory="false" read-only="false"/>
-			          <field id="pjt:projectCompletionDate" mandatory="false" read-only="false"/>
+			          <field id="pjt:projectDueDate" mandatory="false" read-only="false"/>
 			          <field id="pjt:projectPriority" mandatory="false" read-only="false"/>	
 				</appearance>
 			</form>

@@ -117,30 +117,34 @@
 			   }
 		   }
 		});
-		
-		YAHOO.Bubbling.fire("registerDataGridRenderer", {
-	           propertyName : "bcpg:activityList",
-	           renderer : function(oRecord, data, label, scope, idx, length) {
-	               if( data["itemData"]){            	   
-	                   var user =data["itemData"]["prop_bcpg_alUserId"];
-	                   var alData = data["itemData"]["prop_bcpg_alData"] ? data["itemData"]["prop_bcpg_alData"] : null;
-	                   var html = "";
-	                   if(alData!=null && alData.title){
-	                       html += '<div class="project-activity-details">';
-	                       html += '   <div class="icon" title="' +  user.displayValue + '">' + Alfresco.Share.userAvatar(user.value,32) + '</div>';
-	                       html += '   <div class="details">';
-	                       if(alData.content){
-	                     	  html += '      <div class="activity-content">' + (alData.content)+'</div>';
-                          }
-	                       html += '   </div>';
-	                       html += '   <div class="clear"></div>';
-	                       html += '</div>';
-	                   }
-	                   return html;
-	               }
-	           }
-	        });
-		
+
+        YAHOO.Bubbling.fire("registerDataGridRenderer", {
+            propertyName: "bcpg:activityList",
+            renderer: function(__oRecord, data, __label, __scope, __idx, __length, __elCell, oColumn) {
+                if (data["itemData"]) {
+                    var user = data["itemData"]["prop_bcpg_alUserId"];
+                    var alData = data["itemData"]["prop_bcpg_alData"] ? data["itemData"]["prop_bcpg_alData"] : null;
+                    var html = "";
+                    if (alData != null && alData.title) {
+                        html += '<div class="project-activity-details">';
+                        html += '   <div class="icon" title="' + user.displayValue + '">' + Alfresco.Share.userAvatar(user.value, 32) + '</div>';
+                        html += '   <div class="details">';
+                        if (alData.content) {
+                            if (oColumn.tooltip) {
+                                html += '      <div class="activity-content" >' + beCPG.util.createTextTooltip(alData.content, oColumn.tooltip) + '</div>';
+                            } else {
+                                html += '      <div class="activity-content">' + (alData.content) + '</div>';
+                            }
+                        }
+                        html += '   </div>';
+                        html += '   <div class="clear"></div>';
+                        html += '</div>';
+                    }
+                    return html;
+                }
+            }
+        });
+
 
 		YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		   propertyName : "pjt:deliverableList",
