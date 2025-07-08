@@ -136,3 +136,28 @@
 }
 
 
+.node-header .node-bcpath ul.bcpath {
+     display: block;
+}
+
+
+.node-header .node-bcpath .bcpath li {
+    display: block;
+    color: #666;
+    text-decoration: none;
+    padding: 6px 17px 7px 20px;
+    margin-left: -13px;
+    top: -1px;
+    float: left;
+    position: relative;
+    background-image: url('../images/bg-crumbs.png');
+    background-repeat: no-repeat;
+    background-position: 100% 0;
+}
+
+.node-header .node-bcpath .bcpath li:hover   { 
+    color: #333;
+    background-position: 100% -48px;
+    cursor: pointer;
+}
+ 
