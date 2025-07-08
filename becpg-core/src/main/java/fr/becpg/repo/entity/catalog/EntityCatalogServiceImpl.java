@@ -230,18 +230,19 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 
 	private boolean isMatchFilter(JSONObject catalog, NodeRef entityNodeRef) throws JSONException {
 		if (catalog.has(EntityCatalogService.PROP_ENTITY_FILTER)) {
-			return isMatchFilter(catalog, alfrescoRepository.findOne(entityNodeRef));
+			return isMatchFilter(null, catalog, alfrescoRepository.findOne(entityNodeRef));
 		}
 		return true;
-
 	}
 
-	private boolean isMatchFilter(JSONObject catalog, RepositoryEntity entity) throws JSONException {
+	private boolean isMatchFilter(String catalogId, JSONObject catalog, RepositoryEntity entity) throws JSONException {
 
 		if (catalog.has(EntityCatalogService.PROP_ENTITY_FILTER)) {
-
-			return testCondition(catalog.getString(EntityCatalogService.PROP_ENTITY_FILTER), entity);
-
+			String filterQuery = catalog.getString(EntityCatalogService.PROP_ENTITY_FILTER);
+			if(filterQuery.equals("wizard") && catalogId == null) {
+				return false;
+			}
+			return testCondition(filterQuery, entity);
 		}
 		return true;
 	}
@@ -390,9 +391,9 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 			for (JSONArray catalogDef : catalogs) {
 				for (int i = 0; i < catalogDef.length(); i++) {
 					JSONObject catalog = catalogDef.getJSONObject(i);
-
+				
 					if (((catalogId == null) || catalog.getString(PROP_ID).equals(catalogId))
-							&& (isMatchEntityType(catalog, entityType, namespaceService)) && isMatchFilter(catalog, formulatedEntity)) {
+							&& (isMatchEntityType(catalog, entityType, namespaceService)) && isMatchFilter(catalogId, catalog, formulatedEntity)) {
 
 						if (logger.isDebugEnabled()) {
 							logger.debug("Formulating catalog \"" + catalog.getString(EntityCatalogService.PROP_LABEL) + "\"");

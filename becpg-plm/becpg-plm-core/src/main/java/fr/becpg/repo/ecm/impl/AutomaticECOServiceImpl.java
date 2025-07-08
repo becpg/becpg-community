@@ -6,9 +6,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
+import org.springframework.util.StopWatch;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -243,7 +244,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 		if (nodeService.exists(entityNodeRef)) {
 
 			String productState = (String) nodeService.getProperty(entityNodeRef, PLMModel.PROP_PRODUCT_STATE);
-			if (productState == null || productState.isEmpty() || !statesToRegister().contains(productState)) {
+			if ((productState == null) || productState.isEmpty() || !statesToRegister().contains(productState)) {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Skipping product state : " + productState);
 				}
@@ -308,7 +309,8 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 							logger.debug("Found automatic change order to apply :" + ecoNodeRef);
 						}
 						try {
-							transactionService.getRetryingTransactionHelper().doInTransaction(() -> ecoService.apply(ecoNodeRef, deleteOnApply(), true, false), false, true);
+							transactionService.getRetryingTransactionHelper()
+									.doInTransaction(() -> ecoService.apply(ecoNodeRef, deleteOnApply(), true, false), false, true);
 
 						} catch (Exception e) {
 							if (RetryingTransactionHelper.extractRetryCause(e) != null) {
@@ -387,117 +389,115 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 	}
 
 	private boolean reformulateChangedEntities() {
-	    final long batchStartTime = System.currentTimeMillis();
-	    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
-	    String dateRange = dateFormat.format(getFromDate());
+		final long batchStartTime = System.currentTimeMillis();
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+		String dateRange = dateFormat.format(getFromDate());
 
-	
-	    // --- Batch Setup ---
-	    BatchInfo batchInfo = new BatchInfo(REFORMULATE_BATCH_ID, "becpg.batch.automaticECO.reformulateChangedEntities");
-	    batchInfo.setRunAsSystem(true);
-	    batchInfo.setWorkerThreads(reformulateWorkerThreads != null ? reformulateWorkerThreads : 1);
-	    batchInfo.setBatchSize(reformulateBatchSize != null ? reformulateBatchSize : 1);
-	    batchInfo.setPriority(BatchPriority.LOW);
+		// --- Batch Setup ---
+		BatchInfo batchInfo = new BatchInfo(REFORMULATE_BATCH_ID, "becpg.batch.automaticECO.reformulateChangedEntities");
+		batchInfo.setRunAsSystem(true);
+		batchInfo.setWorkerThreads(reformulateWorkerThreads != null ? reformulateWorkerThreads : 1);
+		batchInfo.setBatchSize(reformulateBatchSize != null ? reformulateBatchSize : 1);
+		batchInfo.setPriority(BatchPriority.LOW);
 
-	    // --- Initial Node Query ---
-	    @Deprecated //Use Pagination
-	    List<NodeRef> initialNodeRefs = transactionService.getRetryingTransactionHelper()
-	            .doInTransaction(() -> BeCPGQueryBuilder.createQuery().excludeArchivedEntities().ofType(PLMModel.TYPE_PRODUCT)
-	                    .orBetween(ContentModel.PROP_CREATED, dateRange, "MAX").orBetween(ContentModel.PROP_MODIFIED, dateRange, "MAX")
-	                    .inDBIfPossible().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list(), false, true);
-	    addACLProducts(dateRange, initialNodeRefs);
-	    logger.info("Initial modified products to scan: " + initialNodeRefs.size());
+		// --- Initial Node Query ---
+		@Deprecated //Use Pagination
+		List<NodeRef> initialNodeRefs = transactionService.getRetryingTransactionHelper()
+				.doInTransaction(() -> BeCPGQueryBuilder.createQuery().excludeArchivedEntities().ofType(PLMModel.TYPE_PRODUCT)
+						.orBetween(ContentModel.PROP_CREATED, dateRange, "MAX").orBetween(ContentModel.PROP_MODIFIED, dateRange, "MAX")
+						.inDBIfPossible().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list(), false, true);
+		addACLProducts(dateRange, initialNodeRefs);
+		logger.info("Initial modified products to scan: " + initialNodeRefs.size());
 
-	    // --- Batch Steps Configuration ---
-	    List<BatchStep<NodeRef>> steps = new ArrayList<>();
-	    ExpandingWhereUsedWorkProvider workProvider = new ExpandingWhereUsedWorkProvider(initialNodeRefs);
+		// --- Batch Steps Configuration ---
+		List<BatchStep<NodeRef>> steps = new ArrayList<>();
+		ExpandingWhereUsedWorkProvider workProvider = new ExpandingWhereUsedWorkProvider(initialNodeRefs);
 
-	    // STEP 2: The "Consumer" - Processes entities from the priority queue.
-	    BatchStep<NodeRef> formulateStep = new BatchStep<>();
-	    // The work provider is now our custom pipelined provider.
-	    formulateStep.setWorkProvider(workProvider); 
-	    formulateStep.setProcessWorker(new ReformulateChangedEntitiesProcessWorker(batchStartTime));
-	    steps.add(formulateStep);
+		// STEP 2: The "Consumer" - Processes entities from the priority queue.
+		BatchStep<NodeRef> formulateStep = new BatchStep<>();
+		// The work provider is now our custom pipelined provider.
+		formulateStep.setWorkProvider(workProvider);
+		formulateStep.setProcessWorker(new ReformulateChangedEntitiesProcessWorker(batchStartTime));
+		steps.add(formulateStep);
 
-	    // --- Queue the Batch ---
-	    // Both steps will run concurrently. The formulateStep will start as soon as
-	    // the first item is available in the workQueue.
-	    batchQueueService.queueBatch(batchInfo, steps);
+		// --- Queue the Batch ---
+		// Both steps will run concurrently. The formulateStep will start as soon as
+		// the first item is available in the workQueue.
+		batchQueueService.queueBatch(batchInfo, steps);
 
-	    return true;
+		return true;
 	}
 
-	 /**
-     * A custom WorkProvider that takes an initial list of nodes, expands it by
-     * finding all "where-used" parent nodes for each, de-duplicates the entire set,
-     * sorts it by processing priority, and then provides it to the batch processor.
-     * All discovery work is done upfront in the constructor.
-     */
-    private class ExpandingWhereUsedWorkProvider implements BatchProcessWorkProvider<NodeRef> {
+	/**
+	* A custom WorkProvider that takes an initial list of nodes, expands it by
+	* finding all "where-used" parent nodes for each, de-duplicates the entire set,
+	* sorts it by processing priority, and then provides it to the batch processor.
+	* All discovery work is done upfront in the constructor.
+	*/
+	private class ExpandingWhereUsedWorkProvider implements BatchProcessWorkProvider<NodeRef> {
 
-        private final List<NodeRef> allWork;
-        private Iterator<NodeRef> workIterator;
+		private final int total;
+		private Iterator<NodeRef> workIterator;
 
-        public ExpandingWhereUsedWorkProvider(List<NodeRef> initialNodeRefs) {
-            // Use a LinkedHashSet to maintain insertion order while de-duplicating.
-            final Set<NodeRef> uniqueNodes = new LinkedHashSet<>();
+		public ExpandingWhereUsedWorkProvider(List<NodeRef> initialNodeRefs) {
 
-            // Step 1: Expand the initial list to include all where-used parents.
-            // This is done in a single transaction for efficiency.
-            transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-                for (NodeRef entry : initialNodeRefs) {
-                    if (nodeService.exists(entry)) {
-                        // Add the initial node itself.
-                        uniqueNodes.add(entry);
-                        // Find and add all its parents.
-                        List<NodeRef> wused = extractWUsedToFormulate(entry);
-                        uniqueNodes.addAll(wused);
-                    }
-                }
-                return null;
-            }, true);
-            
-            logger.info("Discovered a total of " + uniqueNodes.size() + " unique nodes for reformulation.");
+			// Step 3: Prepare the iterator for getNextWork().
+			this.workIterator = initialNodeRefs.iterator();
+			this.total = initialNodeRefs.size();
 
-            // Step 2: Convert the set to a list and sort it by priority.
-            this.allWork = new ArrayList<>(uniqueNodes);
-            final Comparator<NodeRef> nodeRefComparator = (node1, node2) -> {
-                // Sorting must also be transactional
-                return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-                    if (!nodeService.exists(node1)) return 1; // Non-existent nodes sort last
-                    if (!nodeService.exists(node2)) return -1;
-                    int priority1 = getTypePriority(nodeService.getType(node1));
-                    int priority2 = getTypePriority(nodeService.getType(node2));
-                    return Integer.compare(priority1, priority2);
-                }, true);
-            };
-            this.allWork.sort(nodeRefComparator);
+			logger.info("Discovered a total of " + this.total + " unique nodes for reformulation.");
 
-            // Step 3: Prepare the iterator for getNextWork().
-            this.workIterator = this.allWork.iterator();
-        }
+		}
 
-        @Override
-          public long getTotalEstimatedWorkSizeLong() {
-            return allWork.size();
-        }
+		@Override
+		public long getTotalEstimatedWorkSizeLong() {
+			return this.total;
+		}
 
-        @Override
-        public List<NodeRef> getNextWork() {
-            // This provider works with a batch size of 1, as the worker handles one node.
-            // The batch processor will call this method repeatedly.
-            if (workIterator.hasNext()) {
-                return Collections.singletonList(workIterator.next());
-            } else {
-                return Collections.emptyList(); // Signal that work is complete.
-            }
-        }
+		@Override
+		public Collection<NodeRef> getNextWork() {
+			if (!workIterator.hasNext()) {
+				return Collections.emptyList(); // Signal that work is complete
+			}
+
+			NodeRef entryNodeRef = workIterator.next();
+			Set<NodeRef> uniqueNodes = new LinkedHashSet<>();
+
+			// Expand the current node to include where-used parents
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				if (nodeService.exists(entryNodeRef)) {
+					uniqueNodes.add(entryNodeRef);
+					List<NodeRef> wused = extractWUsedToFormulate(entryNodeRef);
+					uniqueNodes.addAll(wused);
+				}
+				return null;
+			}, true);
+
+			// Convert to list and sort by priority
+			List<NodeRef> sortedNodes = new ArrayList<>(uniqueNodes);
+			sortedNodes.sort((node1, node2) -> transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				if (!nodeService.exists(node1)) {
+					return 1;
+				}
+				if (!nodeService.exists(node2)) {
+					return -1;
+				}
+				int priority1 = getTypePriority(nodeService.getType(node1));
+				int priority2 = getTypePriority(nodeService.getType(node2));
+				return Integer.compare(priority1, priority2);
+			}, true));
+
+			if(logger.isDebugEnabled()) {
+				logger.debug("Expanded node to " + sortedNodes.size() + " nodes for reformulation");
+			}
+			return sortedNodes;
+		}
 
 		@Override
 		public int getTotalEstimatedWorkSize() {
-			return allWork.size();
+			return this.total;
 		}
-		
+
 		/**
 		 * Assigns a processing priority to a QName type. Lower numbers are processed first.
 		 */
@@ -524,10 +524,9 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 			// Default priority for anything else
 			return 10;
 		}
-    }
+	}
 
-	
-    @Deprecated
+	@Deprecated
 	private void addACLProducts(String dateRange, List<NodeRef> nodeRefs) {
 		List<NodeRef> modifiedACLs = transactionService.getRetryingTransactionHelper()
 				.doInTransaction(() -> BeCPGQueryBuilder.createQuery().excludeArchivedEntities().ofType(SecurityModel.TYPE_ACL_GROUP)
@@ -650,9 +649,24 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 
+				// Initialize stopwatch only in debug mode
+				StopWatch stopWatch = null;
+				String nodeName = null;
+				if (logger.isDebugEnabled()) {
+					stopWatch = new StopWatch("formulation");
+					stopWatch.start("formulate");
+					nodeName = nodeService.getProperty(toReformulate, ContentModel.PROP_NAME).toString();
+				}
+				
 				// Using L2CacheSupport is good practice.
 				L2CacheSupport.doInCacheContext(() -> AuthenticationUtil.runAsSystem(() -> formulationService.formulate(toReformulate)), false, true,
 						true);
+						
+				// Log execution time only in debug mode
+				if (logger.isDebugEnabled() && stopWatch != null) {
+					stopWatch.stop();
+					logger.debug("Formulation time for " + nodeName + " (" + toReformulate + "): " + stopWatch.getTotalTimeMillis() + " ms");
+				}
 
 			} catch (Throwable e) {
 				if (RetryingTransactionHelper.extractRetryCause(e) != null) {
@@ -690,7 +704,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 
 			if (logger.isDebugEnabled()) {
 				logger.debug(
-						"Found modified product: " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + " (" + entityNodeRef + ") ");
+						"Extract wused of product: " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + " (" + entityNodeRef + ") ");
 			}
 			try {
 

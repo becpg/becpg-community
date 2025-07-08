@@ -252,7 +252,6 @@ public class ImportHelper {
 					MLText mlText = new MLText();
 
 					// load translations
-					boolean first = true;
 					for (int z_idx = pos; z_idx < importContext.getColumns().size() && z_idx < values.size(); z_idx++) {
 
 						// bcpg:legalName_en
@@ -262,23 +261,27 @@ public class ImportHelper {
 							String transLocalName = transColumn.contains(RepoConsts.MODEL_PREFIX_SEPARATOR)
 									? transColumn.split(RepoConsts.MODEL_PREFIX_SEPARATOR)[1]
 									: null;
-							// default locale
-							if (first) {
-								mlText.addValue(I18NUtil.getContentLocaleLang(), values.get(z_idx));
-								first = false;
-							}
+							
 							// other locales
-							else if ((transLocalName != null) && transLocalName.startsWith(qName.getLocalName() + MLTEXT_SEPARATOR)) {
-
-								String strLocale = transLocalName.replace(qName.getLocalName() + MLTEXT_SEPARATOR, "");
-								Locale locale = MLTextHelper.parseLocale(strLocale);
-								if(values.get(z_idx) == null || values.get(z_idx).isBlank()) {
-									mlText.removeValue(locale);
-								} else 	if (MLTextHelper.isSupportedLocale(locale)) {
-									mlText.addValue(locale, values.get(z_idx));
+							if ((transLocalName != null)) {
+								
+								if (transLocalName.startsWith(qName.getLocalName() + MLTEXT_SEPARATOR)) {
+									
+									String strLocale = transLocalName.replace(qName.getLocalName() + MLTEXT_SEPARATOR, "");
+									Locale locale = MLTextHelper.parseLocale(strLocale);
+									
+									if(values.get(z_idx) == null || values.get(z_idx).isBlank()) {
+										mlText.removeValue(locale);
+									} else 	if (MLTextHelper.isSupportedLocale(locale)) {
+										mlText.addValue(locale, values.get(z_idx));
+									} else {
+										throw new IllegalStateException("Unsupported locale : "+locale);
+									}
+									
 								} else {
-									throw new IllegalStateException("Unsupported locale : "+locale);
+									mlText.addValue(I18NUtil.getContentLocaleLang(), values.get(z_idx));
 								}
+								
 							} else {
 								// the translation is finished
 								break;

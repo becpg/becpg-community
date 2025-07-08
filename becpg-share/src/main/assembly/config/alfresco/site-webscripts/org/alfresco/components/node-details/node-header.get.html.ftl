@@ -75,6 +75,8 @@
                   <div class="node-path">
                      <@renderPaths paths />
                   </div>
+                  <!-- Breadcrumbs Path -->
+                  <div id="${id}-bcpath" class="hidden"></div>
                </#if>
                <#if showOnlyLocation == "false">
                   <!-- Icon -->
