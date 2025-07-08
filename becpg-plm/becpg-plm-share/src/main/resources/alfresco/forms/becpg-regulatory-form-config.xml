@@ -116,6 +116,51 @@
 					<field id="entity_bcpg:regulatoryCountries_bcpg:geoOrigin@regulatoryDatagrid" label="hidden" />
 				</appearance>
 			</form>
+			<form id="filter">
+				<field-visibility>
+					<show id="bcpg:regulatoryCountries" />
+					<show id="bcpg:regulatoryUsageRef" />
+					<show id="bcpg:regulatoryResult" />
+					<show id="bcpg:regulatoryState" />
+					<show id="bcpg:regulatoryValidationDate" />
+					<show id="bcpg:regulatoryMaximumDosage" />
+					<show id="bcpg:limitingIngredient" />
+				</field-visibility>
+				<appearance>
+					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
+						
+					<field id="bcpg:regulatoryCountries" set="2-col" >
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:regulatoryUsageRef" set="2-col" >
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+						</control>
+					</field>
+					<field id="bcpg:regulatoryResult" read-only="false" set="2-col" >
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:regulatoryState" read-only="false" set="2-col" >
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:regulatoryValidationDate" read-only="false" set="2-col" >
+						<control template="/org/alfresco/components/form/controls/daterange.ftl" />
+					</field>
+					<field id="bcpg:limitingIngredient" read-only="false" set="2-col" >
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+						</control>
+					</field>
+					<field id="bcpg:regulatoryMaximumDosage" read-only="false" set="2-col" >
+						<control template="/org/alfresco/components/form/controls/numberrange.ftl">
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
 		</forms>
 	</config>
 	
