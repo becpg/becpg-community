@@ -27,7 +27,6 @@ import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
-import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
@@ -41,6 +40,7 @@ import fr.becpg.repo.product.formulation.CompletionReqCtrlCalculatingFormulation
 import fr.becpg.repo.product.formulation.NutsCalculatingFormulationHandler;
 import fr.becpg.repo.product.requirement.NutsRequirementScanner;
 import fr.becpg.repo.product.requirement.PhysicoRequirementScanner;
+import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
 public class FormulationSpecMergeIT extends AbstractFinishedProductTest {

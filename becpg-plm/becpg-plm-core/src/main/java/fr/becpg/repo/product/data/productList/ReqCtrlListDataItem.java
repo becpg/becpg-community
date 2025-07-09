@@ -28,7 +28,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
-import fr.becpg.repo.product.data.constraints.RequirementType;
+import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;

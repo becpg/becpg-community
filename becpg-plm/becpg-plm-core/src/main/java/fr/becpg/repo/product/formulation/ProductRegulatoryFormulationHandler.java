@@ -14,12 +14,12 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.decernis.DecernisService;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.RegulatoryEntity;
-import fr.becpg.repo.product.data.constraints.RegulatoryResult;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
-import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.regulatory.RegulatoryEntity;
+import fr.becpg.repo.regulatory.RegulatoryResult;
+import fr.becpg.repo.regulatory.RequirementType;
 
 /**
  * <p>ProductRegulatoryFormulationHandler class.</p>

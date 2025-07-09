@@ -42,11 +42,11 @@ import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
-import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.constraints.SpecCompatibilityModes;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.productList.SpecCompatibilityDataItem;
 import fr.becpg.repo.product.requirement.RequirementScanner;
+import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 

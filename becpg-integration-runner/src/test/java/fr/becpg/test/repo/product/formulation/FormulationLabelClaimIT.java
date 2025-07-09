@@ -23,12 +23,12 @@ import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
-import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
 public class FormulationLabelClaimIT extends AbstractFinishedProductTest {
