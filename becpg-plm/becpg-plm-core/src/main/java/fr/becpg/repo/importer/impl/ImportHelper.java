@@ -263,7 +263,7 @@ public class ImportHelper {
 									: null;
 							
 							// other locales
-							if ((transLocalName != null)) {
+							if ((transLocalName != null) && transLocalName.startsWith(qName.getLocalName())) {
 								
 								if (transLocalName.startsWith(qName.getLocalName() + MLTEXT_SEPARATOR)) {
 									
