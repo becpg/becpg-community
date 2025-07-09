@@ -22,6 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.ProductData;
@@ -55,6 +56,8 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Product
 	private AssociationService associationService;
 
 	private NodeService nodeService;
+	
+	private EntityListDAO entityListDAO;
 
 	/**
 	 * <p>
@@ -102,6 +105,17 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Product
 	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
+	}
+	
+	/**
+	 * <p>
+	 * Setter for the field <code>entityListDAO</code>.
+	 * </p>
+	 *
+	 * @param nodeService a {@link fr.becpg.repo.entity.EntityListDAO} object.
+	 */
+	public void setEntityListDAO(EntityListDAO entityListDAO) {
+		this.entityListDAO = entityListDAO;
 	}
 
 	/** {@inheritDoc} */
@@ -245,7 +259,7 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Product
 
 		// If we are not in a test (transient) context, save the survey lists.
 		if (!SurveyableEntityHelper.isTransient(formulatedProduct)) {
-			final NodeRef dataListContainerNodeRef = alfrescoRepository.getOrCreateDataListContainer(formulatedProduct);
+			final NodeRef dataListContainerNodeRef = entityListDAO.getListContainer(formulatedProduct.getNodeRef());
 			namesSurveyLists.entrySet().stream().filter(entry -> !SurveyableEntityHelper.isDefault(entry.getKey()))
 					.forEach(entry -> alfrescoRepository.saveDataList(dataListContainerNodeRef, SurveyModel.TYPE_SURVEY_LIST, entry.getKey(),
 							entry.getValue()));
