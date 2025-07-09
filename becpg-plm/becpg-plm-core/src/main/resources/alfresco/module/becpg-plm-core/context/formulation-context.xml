@@ -266,6 +266,7 @@
                     <property name="alfrescoRepository" ref="alfrescoRepository" />
                     <property name="associationService" ref="associationService" />
                     <property name="nodeService" ref="nodeService" />
+                    <property name="entityListDAO" ref="entityListDAO" />
                 </bean>
                  <bean class="fr.becpg.repo.product.formulation.DocumentFormulationHandler">
                     <property name="fileFolderService" ref="fileFolderService" />
