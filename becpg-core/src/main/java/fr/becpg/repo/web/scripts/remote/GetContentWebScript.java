@@ -105,7 +105,7 @@ public class GetContentWebScript extends AbstractEntityWebScript {
 
 				String mimetype = reader.getMimetype();
 				String extensionPath = req.getExtensionPath();
-				if ((mimetype == null) || (mimetype.length() == 0)) {
+				if ((mimetype == null) || (mimetype.isBlank())) {
 					mimetype = MimetypeMap.MIMETYPE_BINARY;
 					int extIndex = extensionPath.lastIndexOf('.');
 					if (extIndex != -1) {
