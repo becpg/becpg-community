@@ -13,6 +13,7 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.collections4.CollectionUtils;
@@ -53,6 +54,8 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Product
 
 	private AssociationService associationService;
 
+	private NodeService nodeService;
+
 	/**
 	 * <p>
 	 * Setter for the field <code>namespaceService</code>.
@@ -88,6 +91,17 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Product
 	 */
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
+	}
+	
+	/**
+	 * <p>
+	 * Setter for the field <code>nodeService</code>.
+	 * </p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 */
+	public void setNodeService(NodeService nodeService) {
+		this.nodeService = nodeService;
 	}
 
 	/** {@inheritDoc} */
@@ -178,23 +192,23 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Product
 			if (criterion.assoc()) {
 				nodeRefStream = ((List<NodeRef>) CollectionUtils.emptyIfNull(entry.getValue())).stream()
 						.flatMap(criterionNodeRef -> associationService
-								.getSourcesAssocs(criterionNodeRef, criterion.qName()).stream());
+								.getSourcesAssocs(criterionNodeRef, criterion.qName()).stream())
+						.filter(nodeRef -> SurveyModel.TYPE_SURVEY_QUESTION.equals(nodeService.getType(nodeRef)));
 			} else {
 				nodeRefStream = BeCPGQueryBuilder.createQuery().ofType(SurveyModel.TYPE_SURVEY_QUESTION)
 						.andPropEquals(criterion.qName(), entry.getValue().get(0).toString())
 						.inDB().list().stream();
 			}
 			nodeRefStream.forEach(surveyQuestionNodeRef -> {
-				final Object found = alfrescoRepository.findOne(surveyQuestionNodeRef);
-				if (found instanceof SurveyQuestion surveyQuestion) {
-					// Check that the survey question passes the type filter and all other criteria.
-					boolean criteriaMatch = criteriaNodeRefs.keySet().stream().map(Criterion::filter)
-							.filter(filter -> !filter.equals(criterion.filter())).allMatch(filter -> filter.test(surveyQuestion));
-					if (criteriaMatch) {
-						logger.debug(String.format("Found SurveyQuestion %s matching %s criteria", surveyQuestion.getNodeRef(),
-								criterion.displayedName()));
-						surveyQuestions.add(surveyQuestion);
-					}
+				final SurveyQuestion surveyQuestion = (SurveyQuestion) alfrescoRepository
+						.findOne(surveyQuestionNodeRef);
+				// Check that the survey question passes the type filter and all other criteria.
+				boolean criteriaMatch = criteriaNodeRefs.keySet().stream().map(Criterion::filter)
+						.filter(filter -> !filter.equals(criterion.filter())).allMatch(filter -> filter.test(surveyQuestion));
+				if (criteriaMatch) {
+					logger.debug(String.format("Found SurveyQuestion %s matching %s criteria", surveyQuestion.getNodeRef(),
+							criterion.displayedName()));
+					surveyQuestions.add(surveyQuestion);
 				}
 			});
 		}
