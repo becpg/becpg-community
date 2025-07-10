@@ -1050,6 +1050,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		return getAttributeExtractorPlugin(type) != null;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public String extractPropName(QName type, NodeRef nodeRef) {
 		return extractPropName(type, nodeRef, null);

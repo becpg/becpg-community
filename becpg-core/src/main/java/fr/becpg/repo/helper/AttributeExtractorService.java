@@ -276,7 +276,7 @@ public interface AttributeExtractorService {
 
 	/**
 	 * Extracts the property name from a node based on its type.
-	 * 
+	 *
 	 * @param type the type of the node
 	 * @param nodeRef the reference to the node
 	 * @param nameFormat a format string

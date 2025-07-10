@@ -50,6 +50,11 @@ public class ArchivedEntityPolicy extends AbstractBeCPGPolicy implements OnAddAs
 
 	private static final String KEY_ASPECT_REMOVED = "aspectRemoved";
 	
+	/**
+	 * <p>Setter for the field <code>beCPGCacheService</code>.</p>
+	 *
+	 * @param beCPGCacheService a {@link fr.becpg.repo.cache.BeCPGCacheService} object
+	 */
 	public void setBeCPGCacheService(BeCPGCacheService beCPGCacheService) {
 		this.beCPGCacheService = beCPGCacheService;
 	}
