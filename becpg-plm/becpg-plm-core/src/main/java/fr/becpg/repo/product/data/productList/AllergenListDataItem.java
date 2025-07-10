@@ -15,8 +15,8 @@ import javax.annotation.Nullable;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.repo.product.data.RegulatoryEntityItem;
-import fr.becpg.repo.product.data.constraints.RequirementType;
+import fr.becpg.repo.regulatory.RegulatoryEntityItem;
+import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;

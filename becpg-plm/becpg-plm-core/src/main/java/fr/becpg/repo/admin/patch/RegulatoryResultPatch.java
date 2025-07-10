@@ -21,7 +21,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.PLMModel;
-import fr.becpg.repo.product.data.constraints.RegulatoryResult;
+import fr.becpg.repo.regulatory.RegulatoryResult;
 
 /**
  * ErrorLogPatch

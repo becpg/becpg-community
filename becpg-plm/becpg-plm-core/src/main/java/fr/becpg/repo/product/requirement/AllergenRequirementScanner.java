@@ -11,10 +11,10 @@ import org.alfresco.service.cmr.repository.MLText;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
-import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.regulatory.RequirementDataType;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
+import fr.becpg.repo.regulatory.RequirementType;
 
 /**
  * <p>AllergenRequirementScanner class.</p>
@@ -29,8 +29,8 @@ public class AllergenRequirementScanner extends AbstractRequirementScanner<Aller
 
 	/** {@inheritDoc} */
 	@Override
-	public List<ReqCtrlListDataItem> checkRequirements(ProductData formulatedProduct, List<ProductSpecificationData> specifications) {
-		List<ReqCtrlListDataItem> ret = new LinkedList<>();
+	public List<RequirementListDataItem> checkRequirements(ProductData formulatedProduct, List<ProductSpecificationData> specifications) {
+		List<RequirementListDataItem> ret = new LinkedList<>();
 
 		if ((formulatedProduct.getAllergenList() != null) && !formulatedProduct.getAllergenList().isEmpty()) {
 
@@ -61,7 +61,7 @@ public class AllergenRequirementScanner extends AbstractRequirementScanner<Aller
 									message = specDataItem.getRegulatoryMessage();
 								}
 								
-								ReqCtrlListDataItem rclDataItem = ReqCtrlListDataItem.build()
+								RequirementListDataItem rclDataItem = RequirementListDataItem.build()
 										.ofType(reqType).withMessage(message)
 										.withCharact(listDataItem.getAllergen()).ofDataType(RequirementDataType.Specification)
 										.withSources(Stream.of(listDataItem.getVoluntarySources(), listDataItem.getInVoluntarySources())

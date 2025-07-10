@@ -12,11 +12,11 @@ import org.apache.commons.logging.LogFactory;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
-import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.HazardClassificationListDataItem;
 import fr.becpg.repo.product.data.productList.HazardClassificationListDataItem.SignalWord;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.regulatory.RequirementDataType;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
+import fr.becpg.repo.regulatory.RequirementType;
 
 /**
  * <p>ClaimRequirementScanner class.</p>
@@ -33,7 +33,7 @@ public class HazardClassificationRequirementScanner extends AbstractRequirementS
 
 	/** {@inheritDoc} */
 	@Override
-	public List<ReqCtrlListDataItem> checkRequirements(ProductData formulatedProduct, 
+	public List<RequirementListDataItem> checkRequirements(ProductData formulatedProduct, 
 	        List<ProductSpecificationData> specifications) {
 	    if (logger.isDebugEnabled()) {
 	        logger.debug("Starting checkRequirements for product: " + 
@@ -41,7 +41,7 @@ public class HazardClassificationRequirementScanner extends AbstractRequirementS
 	                " with " + (specifications != null ? specifications.size() : 0) + " specifications");
 	    }
 	    
-	    List<ReqCtrlListDataItem> results = new ArrayList<>();
+	    List<RequirementListDataItem> results = new ArrayList<>();
 	    
 	    List<HazardClassificationListDataItem> visitedDataList = getDataListVisited(formulatedProduct);
 	    if (visitedDataList == null || visitedDataList.isEmpty()) {
@@ -229,7 +229,7 @@ public class HazardClassificationRequirementScanner extends AbstractRequirementS
 	/**
 	 * Helper method to process and add a requirement control item to the result list.
 	 */
-	private void processRequirement(List<ReqCtrlListDataItem> ret, 
+	private void processRequirement(List<RequirementListDataItem> ret, 
 	                                HazardClassificationListDataItem specDataItem,
 	                                HazardClassificationListDataItem listDataItem,
 	                                ProductSpecificationData specification) {
@@ -257,7 +257,7 @@ public class HazardClassificationRequirementScanner extends AbstractRequirementS
 	        }
 	    }
 
-	    ReqCtrlListDataItem reqCtrl = ReqCtrlListDataItem.build()
+	    RequirementListDataItem reqCtrl = RequirementListDataItem.build()
 	        .ofType(reqType)
 	        .withMessage(message)
 	        .withSources(Arrays.asList(listDataItem.getHazardStatement()))

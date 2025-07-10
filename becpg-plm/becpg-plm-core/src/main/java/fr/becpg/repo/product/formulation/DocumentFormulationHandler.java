@@ -39,10 +39,10 @@ import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.document.DocumentTypeItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.regulatory.RequirementDataType;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -286,7 +286,7 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<ProductDa
 
 			if (isMandatory && SystemState.Simulation.toString().equals(documentState)) {
 				productData.getReqCtrlList()
-						.add(ReqCtrlListDataItem.forbidden()
+						.add(RequirementListDataItem.forbidden()
 								.withMessage(MLTextHelper.getI18NMessage(MESSAGE_DOCUMENT_MANDATORY,
 										mlNodeService.getProperty(docTypeItem.getNodeRef(), BeCPGModel.PROP_CHARACT_NAME)))
 								.withCharact(docTypeItem.getNodeRef()).ofDataType(RequirementDataType.Completion));
@@ -459,7 +459,7 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<ProductDa
 							return mandatory;
 						} else {
 							productData.getReqCtrlList()
-									.add(ReqCtrlListDataItem.tolerated()
+									.add(RequirementListDataItem.tolerated()
 											.withMessage(MLTextHelper.getI18NMessage(MESSAGE_DOCUMENT_FORMULATION_ERROR,
 													mlNodeService.getProperty(docTypeItem.getNodeRef(), BeCPGModel.PROP_CHARACT_NAME),
 													I18NUtil.getMessage("message.formulate.formula.incorrect.type.boolean", Locale.getDefault())))
@@ -471,7 +471,7 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<ProductDa
 				logger.error("Error evaluating document mandatory formula: " + formulaText, e);
 
 				productData.getReqCtrlList()
-						.add(ReqCtrlListDataItem.tolerated()
+						.add(RequirementListDataItem.tolerated()
 								.withMessage(MLTextHelper.getI18NMessage(MESSAGE_DOCUMENT_FORMULATION_ERROR,
 										mlNodeService.getProperty(docTypeItem.getNodeRef(), BeCPGModel.PROP_CHARACT_NAME), e.getLocalizedMessage()))
 								.withCharact(docTypeItem.getNodeRef()).ofDataType(RequirementDataType.Formulation));

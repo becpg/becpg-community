@@ -1118,7 +1118,8 @@
 					<show force="true" id="bcpg:precautionOfUseRef" />
 					<show force="true" id="bcpg:preparationTips" />
 					<show force="false" id="bcpg:productMicrobioCriteriaRef" />
-
+					<show force="true" id="bcpg:nutrientProfileCategory" />
+					<show force="true" id="bcpg:nutrientProfileVersion" />
 
 					<show force="false" id="bcpg:productQty" />
 					<show force="false" id="bcpg:productUnit" />
@@ -1214,6 +1215,17 @@
 						set="consumer">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
+						</control>
+					</field>
+					
+					<set appearance="bordered-panel" id="score" label-id="becpg.forms.set.nutrient.score.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="bcpg:nutrientProfileCategory" mandatory="false" read-only="false" set="score">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+						</control>
+					</field>
+					<field id="bcpg:nutrientProfileVersion" mandatory="false" read-only="false" set="score">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 						</control>
 					</field>
 

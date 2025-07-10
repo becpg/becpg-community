@@ -37,11 +37,11 @@ import fr.becpg.repo.decernis.model.RegulatoryContextItem;
 import fr.becpg.repo.decernis.model.UsageContext;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.RestTemplateHelper;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
-import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.regulatory.RequirementDataType;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
+import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
@@ -117,7 +117,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 					} catch (HttpStatusCodeException e) {
 						logger.error("Error during Decernis recipe analysis: " + DecernisHelper.cleanError(e.getMessage()), e);
 						for (String country : countries) {
-							ReqCtrlListDataItem req = ReqCtrlListDataItem.forbidden()
+							RequirementListDataItem req = RequirementListDataItem.forbidden()
 									.withMessage(MLTextHelper.getI18NMessage("message.decernis.error",
 											"Error while creating Decernis recipe: " + DecernisHelper.cleanError(e.getMessage())))
 									.ofDataType(RequirementDataType.Formulation).withFormulationChainId(DecernisService.DECERNIS_CHAIN_ID)
@@ -144,7 +144,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 				ingredientAnalysisResults = postV5IngredientAnalysis(productContext, contextItem, countries);
 			} catch (HttpStatusCodeException e) {
 				logger.error("Error during Decernis ingredients analysis: " + DecernisHelper.cleanError(e.getMessage()), e);
-				ReqCtrlListDataItem req = ReqCtrlListDataItem.forbidden()
+				RequirementListDataItem req = RequirementListDataItem.forbidden()
 						.withMessage(MLTextHelper.getI18NMessage("message.decernis.error",
 								"Error while creating Decernis recipe: " + DecernisHelper.cleanError(e.getMessage())))
 						.ofDataType(RequirementDataType.Formulation).withFormulationChainId(DecernisService.DECERNIS_CHAIN_ID);
@@ -429,7 +429,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 														: "");
 
 										MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_PROHIBITED_ING, threshold);
-										ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ingItem.getIng(), reqMessage,
+										RequirementListDataItem reqCtrlItem = createReqCtrl(ingItem.getIng(), reqMessage,
 												RequirementType.Forbidden);
 										reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
 										reqCtrlItem.setReqMaxQty(0d);
@@ -447,7 +447,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 
 									} else if (tabularReport.getString(RESULT_INDICATOR).toLowerCase().startsWith("not listed")) {
 										MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_NOTLISTED_ING);
-										ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ingItem.getIng(), reqMessage,
+										RequirementListDataItem reqCtrlItem = createReqCtrl(ingItem.getIng(), reqMessage,
 												RequirementType.Tolerated);
 										reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
 										productContext.getRequirements().add(reqCtrlItem);
@@ -462,7 +462,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 
 										MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_PERMITTED_ING,
 												tabularReport.getString(RESULT_INDICATOR), threshold);
-										ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ingItem.getIng(), reqMessage,
+										RequirementListDataItem reqCtrlItem = createReqCtrl(ingItem.getIng(), reqMessage,
 												RequirementType.Info);
 
 										reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));

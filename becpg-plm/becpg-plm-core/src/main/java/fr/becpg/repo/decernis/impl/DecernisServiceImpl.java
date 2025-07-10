@@ -50,14 +50,14 @@ import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.RestTemplateHelper;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.RegulatoryEntity;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
-import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.regulatory.RegulatoryEntity;
+import fr.becpg.repo.regulatory.RequirementDataType;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
+import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.system.SystemConfigurationService;
@@ -181,7 +181,7 @@ public class DecernisServiceImpl  extends AbstractLifecycleBean implements Decer
 
 	/** {@inheritDoc} */
 	@Override
-	public List<ReqCtrlListDataItem> extractRequirements(ProductData product) {
+	public List<RequirementListDataItem> extractRequirements(ProductData product) {
 
 		try {
 
@@ -398,7 +398,7 @@ public class DecernisServiceImpl  extends AbstractLifecycleBean implements Decer
 			}
 		} catch (HttpStatusCodeException e) {
 			logger.error("Error while creating Decernis recipe: " + DecernisHelper.cleanError(e.getMessage()), e);
-			ReqCtrlListDataItem req = ReqCtrlListDataItem.forbidden()
+			RequirementListDataItem req = RequirementListDataItem.forbidden()
 					.withMessage(MLTextHelper.getI18NMessage("message.decernis.error", "Error while creating Decernis recipe: " + DecernisHelper.cleanError(e.getMessage())))
 					.ofDataType(RequirementDataType.Specification).withFormulationChainId(DecernisService.DECERNIS_CHAIN_ID);
 			context.getRequirements().add(req);
@@ -545,7 +545,7 @@ public class DecernisServiceImpl  extends AbstractLifecycleBean implements Decer
 		return null;
 	}
 
-	private String fetchIngredientId(IngListDataItem ingListDataItem, List<ReqCtrlListDataItem> requirements) {
+	private String fetchIngredientId(IngListDataItem ingListDataItem, List<RequirementListDataItem> requirements) {
 
 		String legalName = (String) nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_LEGAL_NAME);
 
@@ -679,8 +679,8 @@ public class DecernisServiceImpl  extends AbstractLifecycleBean implements Decer
 		return null;
 	}
 
-	private ReqCtrlListDataItem createReqCtrl(IngListDataItem ingListDataItem, MLText reqCtrlMessage, RequirementType reqType) {
-		ReqCtrlListDataItem reqCtrlItem = new ReqCtrlListDataItem();
+	private RequirementListDataItem createReqCtrl(IngListDataItem ingListDataItem, MLText reqCtrlMessage, RequirementType reqType) {
+		RequirementListDataItem reqCtrlItem = new RequirementListDataItem();
 		reqCtrlItem.setReqType(reqType);
 		if(ingListDataItem!=null) {
 			reqCtrlItem.setCharact(ingListDataItem.getNodeRef()!=null ? ingListDataItem.getNodeRef() : ingListDataItem.getIng());

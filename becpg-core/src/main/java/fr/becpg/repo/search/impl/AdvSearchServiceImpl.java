@@ -146,7 +146,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		watch.start();
 		List<NodeRef> nodes = beCPGQueryBuilder.maxResults(maxResults).ofType(datatype).inDBIfPossible().list();
 		watch.stop();
-		if (watch.getTotalTimeSeconds() > 10 && isSearchFiltered(criteria)) {
+		if (watch.getTotalTimeSeconds() > 5 && isSearchFiltered(criteria)) {
 			logger.warn("Slow advSearch query, executed in " + watch.getTotalTimeSeconds() + " seconds. Consider indexing assocs: "
 					+ String.join(", ", criteria.keySet().stream().filter(k -> k.startsWith("assoc_"))
 							.filter(k -> criteria.get(k) != null && !criteria.get(k).isBlank()).toList()));
