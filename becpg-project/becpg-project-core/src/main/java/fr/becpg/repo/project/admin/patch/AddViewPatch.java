@@ -56,11 +56,13 @@ public class AddViewPatch extends AbstractBeCPGPatch {
 	@Override
 	protected String applyInternal() throws Exception {
 
-			AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
-			
-			doForType(ProjectModel.TYPE_PROJECT);
+		AuthenticationUtil.runAsSystem(new AuthenticationUtil.RunAsWork<Void>() {
+			public Void doWork() throws Exception {
+				doForType(ProjectModel.TYPE_PROJECT);
+				return null;
+			}
+		});
 
-		
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}
 
@@ -129,17 +131,20 @@ public class AddViewPatch extends AbstractBeCPGPatch {
 
 			public void process(NodeRef entityNodeRef) throws Throwable {
 				
-				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();				
-				
-				if (nodeService.exists(entityNodeRef)) {
-					if(nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL) ||
-							nodeService.getTargetAssocs(entityNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF).isEmpty()){
-						logger.debug("Create views on entity " + entityNodeRef);
-						entityTplService.createView(entityNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
-					}					
-				} else {
-					logger.warn("entityNodeRef doesn't exist : " + entityNodeRef);
-				}
+				AuthenticationUtil.runAsSystem(new AuthenticationUtil.RunAsWork<Void>() {
+					public Void doWork() throws Exception {
+						if (nodeService.exists(entityNodeRef)) {
+							if(nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL) ||
+									nodeService.getTargetAssocs(entityNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF).isEmpty()){
+								logger.debug("Create views on entity " + entityNodeRef);
+								entityTplService.createView(entityNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
+							}					
+						} else {
+							logger.warn("entityNodeRef doesn't exist : " + entityNodeRef);
+						}
+						return null;
+					}
+				});
 
 			}
 
