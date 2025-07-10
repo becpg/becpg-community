@@ -13,11 +13,11 @@ import org.apache.commons.logging.LogFactory;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
-import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.formulation.LabelClaimFormulationHandler;
+import fr.becpg.repo.regulatory.RequirementDataType;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
+import fr.becpg.repo.regulatory.RequirementType;
 
 /**
  * <p>ClaimRequirementScanner class.</p>
@@ -34,8 +34,8 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 
 	/** {@inheritDoc} */
 	@Override
-	public List<ReqCtrlListDataItem> checkRequirements(ProductData formulatedProduct, List<ProductSpecificationData> specifications) {
-		List<ReqCtrlListDataItem> ret = new LinkedList<>();
+	public List<RequirementListDataItem> checkRequirements(ProductData formulatedProduct, List<ProductSpecificationData> specifications) {
+		List<RequirementListDataItem> ret = new LinkedList<>();
 
 		if (getDataListVisited(formulatedProduct) != null) {
 
@@ -87,7 +87,7 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 									message = specDataItem.getRegulatoryMessage();
 								}
 
-								ReqCtrlListDataItem reqCtrl = ReqCtrlListDataItem.build().ofType(reqType).withMessage(message)
+								RequirementListDataItem reqCtrl = RequirementListDataItem.build().ofType(reqType).withMessage(message)
 										.withCharact(listDataItem.getLabelClaim()).ofDataType(RequirementDataType.Specification)
 										.withRegulatoryCode(regulatoryId);
 
@@ -117,10 +117,10 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 		return MLTextHelper.getI18NMessage("message.formulate.labelClaim.value." + labelClaimValue);
 	}
 
-	private void addMissingLabelClaim(List<ReqCtrlListDataItem> ret, ProductSpecificationData specification, LabelClaimListDataItem labelClaim) {
+	private void addMissingLabelClaim(List<RequirementListDataItem> ret, ProductSpecificationData specification, LabelClaimListDataItem labelClaim) {
 		MLText message = MLTextHelper.getI18NMessage(LabelClaimFormulationHandler.MESSAGE_MISSING_CLAIM, extractName(labelClaim.getLabelClaim()));
 
-		ret.add(ReqCtrlListDataItem.forbidden().withMessage(message).withCharact(labelClaim.getLabelClaim())
+		ret.add(RequirementListDataItem.forbidden().withMessage(message).withCharact(labelClaim.getLabelClaim())
 				.ofDataType(RequirementDataType.Specification)
 				.withRegulatoryCode((specification.getRegulatoryCode() != null) && !specification.getRegulatoryCode().isBlank()
 						? specification.getRegulatoryCode()

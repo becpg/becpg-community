@@ -19,8 +19,8 @@ import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.AbstractProductDataView;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.regulatory.RequirementDataType;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.model.CompositionDataItem;
 import fr.becpg.repo.repository.model.EffectiveDataItem;
@@ -69,7 +69,7 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 					JSONArray catalogs = scores.getJSONArray(EntityCatalogService.PROP_CATALOGS);
 					extractReqCtrl(product, catalogs);
 
-					ReqCtrlListDataItem rclDataItem = ReqCtrlListDataItem.tolerated()
+					RequirementListDataItem rclDataItem = RequirementListDataItem.tolerated()
 							.withMessage(MLTextHelper.getI18NMessage(MESSAGE_NON_VALIDATED_STATE)).ofDataType(RequirementDataType.Validation);
 
 					boolean shouldAdd = false;
@@ -127,7 +127,7 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 								? MLTextHelper.getI18NMessage(MESSAGE_MANDATORY_FIELD_MISSING_LOCALIZED, displayName, catalogName, "(" + lang + ")")
 								: MLTextHelper.getI18NMessage(MESSAGE_MANDATORY_FIELD_MISSING, displayName, catalogName));
 
-						ReqCtrlListDataItem rclDataItem = ReqCtrlListDataItem.forbidden().withMessage(message)
+						RequirementListDataItem rclDataItem = RequirementListDataItem.forbidden().withMessage(message)
 								.ofDataType(RequirementDataType.Completion);
 
 						productData.getReqCtrlList().add(rclDataItem);
@@ -152,7 +152,7 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 
 						// Uniquefields
 
-						ReqCtrlListDataItem rclDataItem = ReqCtrlListDataItem.forbidden()
+						RequirementListDataItem rclDataItem = RequirementListDataItem.forbidden()
 								.withMessage(MLTextHelper.getI18NMessage(MESSAGE_NON_UNIQUE_FIELD, displayName, value)).withSources(propDuplicates)
 
 								.ofDataType(RequirementDataType.Completion);

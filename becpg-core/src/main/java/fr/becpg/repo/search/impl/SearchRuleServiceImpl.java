@@ -54,6 +54,10 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 		return new SimpleDateFormat("yyyy" + SEPARATOR + "MM" + SEPARATOR + "dd");
 	});
 
+	public void cleanupThreadLocal() {
+		formatter.remove();
+	}
+
 	@Autowired
 	private VersionService versionService;
 
@@ -86,7 +90,7 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().excludeDefaults();
 
 			if (filter.getNodeType() != null) {
-				if(ContentModel.TYPE_CONTENT.equals(filter.getNodeType())) {
+				if (ContentModel.TYPE_CONTENT.equals(filter.getNodeType())) {
 					queryBuilder.ofExactType(filter.getNodeType());
 				} else {
 					queryBuilder.ofType(filter.getNodeType());
@@ -94,20 +98,19 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 			}
 			Date from = null;
 			Date to = null;
-			
+
 			Calendar date = Calendar.getInstance();
-			
-			if(filter.getCurrentDate()!=null) {
+
+			if (filter.getCurrentDate() != null) {
 				date.setTime(filter.getCurrentDate());
-			} 
-			
+			}
 
 			String fromQuery = null;
 			String toQuery = null;
 
 			switch (filter.getDateFilterType()) {
 			case After: //[(NOW+DATE) , MAX]
-				if( filter.getDateFilterDelay()!=null) {
+				if (filter.getDateFilterDelay() != null) {
 					date.add(getDateFilterDelayUnit(filter.getDateFilterDelayUnit()), filter.getDateFilterDelay());
 				}
 				fromQuery = formatDate(filter.getDateFilterDelayUnit(), date);
@@ -116,8 +119,8 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 				to = new Date(Long.MAX_VALUE);
 				break;
 			case To: //[NOW , (NOW+DATE)]
-				if( filter.getDateFilterDelay()!=null) {
-				date.add(getDateFilterDelayUnit(filter.getDateFilterDelayUnit()), filter.getDateFilterDelay());
+				if (filter.getDateFilterDelay() != null) {
+					date.add(getDateFilterDelayUnit(filter.getDateFilterDelayUnit()), filter.getDateFilterDelay());
 				}
 				fromQuery = "NOW";
 				toQuery = formatDate(filter.getDateFilterDelayUnit(), date);
@@ -125,8 +128,8 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 				to = date.getTime();
 				break;
 			case Before: //[MIN , (NOW-DATE)]
-				if( filter.getDateFilterDelay()!=null) {
-				date.add(getDateFilterDelayUnit(filter.getDateFilterDelayUnit()), -filter.getDateFilterDelay());
+				if (filter.getDateFilterDelay() != null) {
+					date.add(getDateFilterDelayUnit(filter.getDateFilterDelayUnit()), -filter.getDateFilterDelay());
 				}
 				fromQuery = "MIN";
 				toQuery = formatDate(filter.getDateFilterDelayUnit(), date);
@@ -134,8 +137,8 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 				to = new Date();
 				break;
 			case From: //[(NOW-DATE) , NOW]
-				if( filter.getDateFilterDelay()!=null) {
-				date.add(getDateFilterDelayUnit(filter.getDateFilterDelayUnit()), -filter.getDateFilterDelay());
+				if (filter.getDateFilterDelay() != null) {
+					date.add(getDateFilterDelayUnit(filter.getDateFilterDelayUnit()), -filter.getDateFilterDelay());
 				}
 				fromQuery = formatDate(filter.getDateFilterDelayUnit(), date);
 				toQuery = "NOW";
@@ -143,7 +146,7 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 				to = new Date();
 				break;
 			case Equals: // date = NOW + X
-				if( filter.getDateFilterDelay()!=null) {
+				if (filter.getDateFilterDelay() != null) {
 					date.add(getDateFilterDelayUnit(filter.getDateFilterDelayUnit()), filter.getDateFilterDelay());
 				}
 				fromQuery = formatDate(filter.getDateFilterDelayUnit(), date);
@@ -153,9 +156,8 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 				break;
 			}
 
+			if (filter.getDateField() != null) {
 
-			if ( filter.getDateField() != null) {
-				
 				if (DateFilterType.Equals.equals(filter.getDateFilterType())) {
 					queryBuilder.andPropQuery(filter.getDateField(), fromQuery);
 				} else {
@@ -164,17 +166,17 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 
 			}
 			boolean isNotIndexedType = isNotIndexedType(filter.getNodeType());
-			boolean shouldFilterByPath  = filter.getNodePath() != null && isNotIndexedType(filter.getNodeType());
+			boolean shouldFilterByPath = filter.getNodePath() != null && isNotIndexedType(filter.getNodeType());
 
 			if (filter.getNodePath() != null && !shouldFilterByPath) {
 				queryBuilder.inSubPath(filter.getNodePath().toPrefixString(namespaceService));
 			}
 
 			if ((filter != null) && !filter.getQuery().isEmpty()) {
-				queryBuilder.andFTSQuery( String.format(filter.getQuery(), fromQuery, fromQuery, fromQuery));
+				queryBuilder.andFTSQuery(String.format(filter.getQuery(), fromQuery, fromQuery, fromQuery));
 			}
-			
-			if(Boolean.TRUE.equals(filter.getEnsureDbQuery()) || isNotIndexedType) {
+
+			if (Boolean.TRUE.equals(filter.getEnsureDbQuery()) || isNotIndexedType) {
 				queryBuilder.inDB();
 			}
 
@@ -184,10 +186,10 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 			if ((filter.getEntityCriteria() != null) && (filter.getEntityType() != null)) {
 				ret = filterByEntityCriteria(ret, filter);
 			}
-			
-			if(shouldFilterByPath) {
-				logger.info("Filter by path for type : "+filter.getNodeType());
-				ret = filterByPath(ret,  filter.getNodePath());
+
+			if (shouldFilterByPath) {
+				logger.info("Filter by path for type : " + filter.getNodeType());
+				ret = filterByPath(ret, filter.getNodePath());
 			}
 
 			//Versions history filter
@@ -239,7 +241,7 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 		}
 		return filtered;
 	}
-	
+
 	/**
 	 * Checks if a path contains another path
 	 * 
@@ -251,17 +253,17 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 		if (containerPath == null || containedPath == null) {
 			return false;
 		}
-		
+
 		// Convert paths to string for comparison
 		String containerPathStr = containerPath.toPrefixString(namespaceService);
 		String containedPathStr = containedPath.toPrefixString(namespaceService);
-		
+
 		// Check if container path starts with the contained path
 		return containerPathStr.startsWith(containedPathStr);
 	}
 
 	private boolean isNotIndexedType(QName nodeType) {
-		return nodeType != null  && BeCPGQueryBuilder.isExcludedFromIndex(nodeType);
+		return nodeType != null && BeCPGQueryBuilder.isExcludedFromIndex(nodeType);
 	}
 
 	private int getDateFilterDelayUnit(DateFilterDelayUnit dateFilterDelayUnit) {
@@ -276,37 +278,56 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 
 	}
 
+	@Deprecated
 	private List<NodeRef> filterByEntityCriteria(List<NodeRef> nodes, SearchRuleFilter filter) {
+		final int MAX_ENTITY_NODE_REF_CALLS = RepoConsts.MAX_RESULTS_1000;
+		final int MAX_RET_SIZE = RepoConsts.MAX_RESULTS_256;
+
+		// Log initial state
 		if (logger.isDebugEnabled()) {
 			logger.debug("Filter by entity criteria, size before: " + nodes.size());
 		}
+		if (nodes.size() > MAX_RET_SIZE) {
+			logger.warn("filterByEntityCriteria is not optimized for size > " + MAX_RET_SIZE + " consider filtering on initial query");
+			logger.info(" - filter: " + filter.toString());
+		}
 
-		List<NodeRef> ret = new ArrayList<>();
+		if (nodes.isEmpty()) {
+			return new ArrayList<>();
+		}
+
+		List<NodeRef> result = new ArrayList<>();
+		int entityNodeRefCallCount = 0;
+
+		List<NodeRef> entities = null;
 		if (filter.getEntityCriteria() != null && !filter.getEntityCriteria().isEmpty()) {
-
 			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(filter.getEntityType()).excludeDefaults();
-			List<NodeRef> entities = advSearchService.queryAdvSearch(filter.getEntityType(), queryBuilder, filter.getEntityCriteria(),
-					RepoConsts.MAX_RESULTS_5000);
-			for (NodeRef nodeRef : nodes) {
-				NodeRef entityRef = entityService.getEntityNodeRef(nodeRef, nodeService.getType(nodeRef));
-				if (entities.contains(entityRef)) {
-					ret.add(nodeRef);
-				}
+			entities = advSearchService.queryAdvSearch(filter.getEntityType(), queryBuilder, filter.getEntityCriteria(), RepoConsts.MAX_RESULTS_5000);
+		}
+
+		for (NodeRef nodeRef : nodes) {
+			if (entityNodeRefCallCount >= MAX_ENTITY_NODE_REF_CALLS || result.size() >= MAX_RET_SIZE) {
+				logger.warn("Maximum number of getEntityNodeRef calls (" + MAX_ENTITY_NODE_REF_CALLS + ") reached. Processing stopped.");
+				break;
 			}
 
-		} else {
-			for (NodeRef nodeRef : nodes) {
-				NodeRef entityRef = entityService.getEntityNodeRef(nodeRef, nodeService.getType(nodeRef));
-				if (entityRef != null && matchEntityType(entityRef, filter.getEntityType())) {
-					ret.add(nodeRef);
-				}
+			NodeRef entityRef = entityService.getEntityNodeRef(nodeRef, nodeService.getType(nodeRef));
+			entityNodeRefCallCount++;
+
+			boolean shouldInclude = entities != null ? entities.contains(entityRef)
+					: (entityRef != null && matchEntityType(entityRef, filter.getEntityType()));
+
+			if (shouldInclude) {
+				result.add(nodeRef);
 			}
 		}
 
 		if (logger.isDebugEnabled()) {
-			logger.debug(" - new size: " + ret.size());
+			logger.debug(" - new size: " + result.size());
+			logger.debug(" - getEntityNodeRef calls: " + entityNodeRefCallCount);
 		}
-		return ret;
+
+		return result;
 	}
 
 	private Map<String, NodeRef> getOnlyAssociatedVersions(NodeRef item, VersionFilterType versionType, Date from, Date to) {
@@ -318,7 +339,8 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 				// if versionType is MINOR, versionLabel must not match an integer
 				// if versionType is MAJOR, versionLabel must match an integer
 				// versionType = MINOR XOR versionLabel matches INT
-				final boolean versionsMatch = versionType != null && (versionType == VersionFilterType.MINOR != (Double.parseDouble(version.getVersionLabel()) % 1 == 0));
+				final boolean versionsMatch = versionType != null
+						&& (versionType == VersionFilterType.MINOR != (Double.parseDouble(version.getVersionLabel()) % 1 == 0));
 				if (versionsMatch && !RepoConsts.INITIAL_VERSION.equals(version.getVersionLabel())
 						&& (from.equals(to) ? formatter.get().format(createDate).equals(formatter.get().format(from))
 								: (createDate.after(from) && createDate.before(to)))) {

@@ -14,12 +14,12 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.decernis.DecernisService;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.RegulatoryEntity;
-import fr.becpg.repo.product.data.constraints.RegulatoryResult;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
-import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.regulatory.RegulatoryEntity;
+import fr.becpg.repo.regulatory.RegulatoryResult;
+import fr.becpg.repo.regulatory.RequirementDataType;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
+import fr.becpg.repo.regulatory.RequirementType;
 
 /**
  * <p>ProductRegulatoryFormulationHandler class.</p>
@@ -55,7 +55,7 @@ public class ProductRegulatoryFormulationHandler extends FormulationBaseHandler<
 
 	}
 
-	private void computeRegulatoryResults(RegulatoryEntity regulatoryEntity, List<ReqCtrlListDataItem> reqCtrlList) {
+	private void computeRegulatoryResults(RegulatoryEntity regulatoryEntity, List<RequirementListDataItem> reqCtrlList) {
 		boolean isProhibited = false;
 		if (regulatoryEntity instanceof RegulatoryListDataItem) {
 			((RegulatoryListDataItem) regulatoryEntity).setLimitingIngredients(null);
@@ -63,7 +63,7 @@ public class ProductRegulatoryFormulationHandler extends FormulationBaseHandler<
 		}
 		List<String> regulatoryIds = extractRegulatoryIds(regulatoryEntity);
 		for (String regulatoryId : regulatoryIds) {
-			List<ReqCtrlListDataItem> matchingRequirements = reqCtrlList.stream().filter(req -> regulatoryId.equals(req.getRegulatoryCode())).collect(Collectors.toList());
+			List<RequirementListDataItem> matchingRequirements = reqCtrlList.stream().filter(req -> regulatoryId.equals(req.getRegulatoryCode())).collect(Collectors.toList());
 			if (hasError(matchingRequirements)) {
 				regulatoryEntity.setRegulatoryResult(RegulatoryResult.ERROR);
 				if (regulatoryEntity instanceof RegulatoryListDataItem) {
@@ -72,7 +72,7 @@ public class ProductRegulatoryFormulationHandler extends FormulationBaseHandler<
 				}
 				return;
 			} else {
-				List<ReqCtrlListDataItem> maximumDosageRequirements = getMaximumDosageRequirements(matchingRequirements);
+				List<RequirementListDataItem> maximumDosageRequirements = getMaximumDosageRequirements(matchingRequirements);
 				if (!maximumDosageRequirements.isEmpty()) {
 					regulatoryEntity.setRegulatoryResult(RegulatoryResult.PROHIBITED);
 					if (regulatoryEntity instanceof RegulatoryListDataItem) {
@@ -110,8 +110,8 @@ public class ProductRegulatoryFormulationHandler extends FormulationBaseHandler<
 		return regulatoryIds;
 	}
 	
-	private boolean hasError(List<ReqCtrlListDataItem> reqList) {
-		for (ReqCtrlListDataItem req : reqList) {
+	private boolean hasError(List<RequirementListDataItem> reqList) {
+		for (RequirementListDataItem req : reqList) {
 			if (RequirementType.Forbidden.equals(req.getReqType())
 					&& RequirementDataType.Formulation.equals(req.getReqDataType())) {
 				return true;
@@ -120,9 +120,9 @@ public class ProductRegulatoryFormulationHandler extends FormulationBaseHandler<
 		return false;
 	}
 	
-	private List<ReqCtrlListDataItem> getMaximumDosageRequirements(List<ReqCtrlListDataItem> reqList) {
+	private List<RequirementListDataItem> getMaximumDosageRequirements(List<RequirementListDataItem> reqList) {
 		double minValue = Double.POSITIVE_INFINITY;
-		for (ReqCtrlListDataItem req : reqList) {
+		for (RequirementListDataItem req : reqList) {
 			if (RequirementType.Forbidden.equals(req.getReqType()) && RequirementDataType.Specification.equals(req.getReqDataType())
 					&& (req.getReqMaxQty() == null || req.getReqMaxQty() < minValue)) {
 				minValue = req.getReqMaxQty() == null ? 0d : req.getReqMaxQty();

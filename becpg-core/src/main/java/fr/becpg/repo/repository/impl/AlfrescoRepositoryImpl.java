@@ -475,7 +475,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 			NodeRef listContainerNodeRef = getOrCreateDataListContainer(entity);
 
 			for (Map.Entry<QName, List<? extends RepositoryEntity>> dataListEntry : datalists.entrySet()) {
-				saveDataList(listContainerNodeRef, dataListEntry.getKey(), dataListEntry.getKey(), dataListEntry.getValue());
+				saveDataList(listContainerNodeRef, dataListEntry.getKey(), dataListEntry.getValue());
 			}
 		}
 
@@ -490,7 +490,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 				NodeRef listContainerNodeRef = getOrCreateDataListContainer(entity);
 
 				for (Map.Entry<QName, List<? extends RepositoryEntity>> dataListEntry : datalists.entrySet()) {
-					saveDataList(listContainerNodeRef, dataListViewEntry.getKey(), dataListEntry.getKey(), dataListEntry.getValue());
+					saveDataList(listContainerNodeRef, dataListViewEntry.getKey(),  dataListEntry.getValue());
 				}
 
 			}
@@ -509,8 +509,18 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		return listContainerNodeRef;
 	}
 
+
+	/** {@inheritDoc} */
+	@Override
+	public void saveDataList(NodeRef listContainerNodeRef, QName dataListContainerType, 
+			List<? extends RepositoryEntity> dataList) {
+		saveDataList(listContainerNodeRef, dataListContainerType, null, dataList);
+	}
+
+	/** {@inheritDoc} */
 	@SuppressWarnings("unchecked")
-	private void saveDataList(NodeRef listContainerNodeRef, QName dataListContainerType, QName dataListType, String dataListName,
+	@Override
+	public void saveDataList(NodeRef listContainerNodeRef, QName dataListContainerType, String dataListName,
 			List<? extends RepositoryEntity> dataList) {
 		if ((dataList != null) && (listContainerNodeRef != null)) {
 
@@ -526,7 +536,9 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 					logger.debug("Create dataList of type : " + dataListContainerType);
 				}
 
-				dataListNodeRef = entityListDAO.createList(listContainerNodeRef, dataListContainerType);
+				dataListNodeRef = dataListName == null
+						? entityListDAO.createList(listContainerNodeRef, dataListContainerType)
+						: entityListDAO.createList(listContainerNodeRef, dataListName, dataListContainerType);
 			} else if (logger.isTraceEnabled()) {
 				logger.trace("Save dataList of type : " + dataListContainerType);
 			}
@@ -568,21 +580,6 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 			}
 		}
-
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public void saveDataList(NodeRef listContainerNodeRef, QName dataListContainerType, QName dataListType,
-			List<? extends RepositoryEntity> dataList) {
-		saveDataList(listContainerNodeRef, dataListContainerType, dataListType, null, dataList);
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public void saveDataList(NodeRef listContainerNodeRef, QName dataListContainerType, String dataListName,
-			List<? extends RepositoryEntity> dataList) {
-		saveDataList(listContainerNodeRef, dataListContainerType, null, dataListName, dataList);
 	}
 
 	/** {@inheritDoc} */
@@ -1021,6 +1018,23 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 			if (listContainerNodeRef != null) {
 				NodeRef dataListNodeRef = entityListDAO.getList(listContainerNodeRef, datalistContainerQname);
+
+				if (dataListNodeRef != null) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	/** {@inheritDoc} */
+	@Override
+	public boolean hasDataList(NodeRef entityNodeRef, String datalistName) {
+		if (entityNodeRef != null) {
+			NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
+
+			if (listContainerNodeRef != null) {
+				NodeRef dataListNodeRef = entityListDAO.getList(listContainerNodeRef, datalistName);
 
 				if (dataListNodeRef != null) {
 					return true;

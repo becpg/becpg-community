@@ -34,7 +34,7 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
 public class FormulationCheckPropsOfCompIT extends AbstractFinishedProductTest {
@@ -83,7 +83,7 @@ public class FormulationCheckPropsOfCompIT extends AbstractFinishedProductTest {
 			assertNotNull(formulatedProduct1.getReqCtrlList());
 			logger.info("formulation raised " + formulatedProduct1.getReqCtrlList().size() + " rclDataItems");
 			int checks = 0;
-			for (ReqCtrlListDataItem r : formulatedProduct1.getReqCtrlList()) {
+			for (RequirementListDataItem r : formulatedProduct1.getReqCtrlList()) {
 
 				if (!r.getReqMessage().startsWith("Impossible")) {
 					for (NodeRef source : r.getSources()) {

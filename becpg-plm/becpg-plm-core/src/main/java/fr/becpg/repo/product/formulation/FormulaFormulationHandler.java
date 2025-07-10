@@ -64,13 +64,13 @@ import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.packaging.VariantPackagingData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.DynamicCharactExecOrder;
 import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.regulatory.RequirementDataType;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.repository.model.CompositionDataItem;
@@ -262,7 +262,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 											dataListItem.getExtraProperties().put(columnName, (Serializable) value);
 
 											productData.getReqCtrlList()
-													.add(ReqCtrlListDataItem.info().withMessage(MLTextHelper
+													.add(RequirementListDataItem.info().withMessage(MLTextHelper
 															.getI18NMessage("message.formulate.formula.toolong", dynamicCharactListItem.getTitle()))
 															.ofDataType(RequirementDataType.Formulation));
 
@@ -326,7 +326,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 						dynamicCharactListItem.setErrorLog(e.getLocalizedMessage());
 
 						productData.getReqCtrlList()
-								.add(ReqCtrlListDataItem.info()
+								.add(RequirementListDataItem.info()
 										.withMessage(MLTextHelper.getI18NMessage("message.formulate.formula.error", dynamicCharactListItem.getTitle(),
 												e.getLocalizedMessage()))
 										.withSources(Arrays.asList(productData.getNodeRef())).ofDataType(RequirementDataType.Formulation));

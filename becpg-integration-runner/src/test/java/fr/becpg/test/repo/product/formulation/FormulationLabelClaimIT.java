@@ -22,13 +22,13 @@ import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
-import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.regulatory.RequirementDataType;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
+import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
 public class FormulationLabelClaimIT extends AbstractFinishedProductTest {
@@ -278,7 +278,7 @@ public class FormulationLabelClaimIT extends AbstractFinishedProductTest {
 
 			logger.info("/*-- Formulation raised " + formulatedProduct.getReqCtrlList().size() + " rclDataItem --*/");
 			int checks = 0;
-			for (ReqCtrlListDataItem rclDataItem : formulatedProduct.getReqCtrlList()) {
+			for (RequirementListDataItem rclDataItem : formulatedProduct.getReqCtrlList()) {
 				logger.info(rclDataItem.getReqMessage());
 				if ("L'allégation 'labelClaim1' doit être revendiquée".equals(rclDataItem.getReqMessage())) {
 					fail();

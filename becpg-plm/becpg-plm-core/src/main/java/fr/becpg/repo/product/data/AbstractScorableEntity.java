@@ -13,9 +13,9 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.lang3.mutable.MutableInt;
 
 import fr.becpg.repo.formulation.FormulationService;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
-import fr.becpg.repo.product.data.constraints.RequirementType;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.regulatory.RequirementDataType;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
+import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
@@ -33,7 +33,7 @@ public abstract class AbstractScorableEntity extends BeCPGDataObject implements 
 	 */
 	private static final long serialVersionUID = 3386870503758578033L;
 
-	private List<ReqCtrlListDataItem> reqCtrlList;
+	private List<RequirementListDataItem> reqCtrlList;
 
 	/**
 	 * {@inheritDoc}
@@ -43,7 +43,7 @@ public abstract class AbstractScorableEntity extends BeCPGDataObject implements 
 	@Override
 	@DataList
 	@AlfQname(qname = "bcpg:reqCtrlList")
-	public List<ReqCtrlListDataItem> getReqCtrlList() {
+	public List<RequirementListDataItem> getReqCtrlList() {
 		return reqCtrlList;
 	}
 
@@ -52,7 +52,7 @@ public abstract class AbstractScorableEntity extends BeCPGDataObject implements 
 	 *
 	 * @param reqCtrlList a {@link java.util.List} object.
 	 */
-	public void setReqCtrlList(List<ReqCtrlListDataItem> reqCtrlList) {
+	public void setReqCtrlList(List<RequirementListDataItem> reqCtrlList) {
 		this.reqCtrlList = reqCtrlList;
 	}
 
@@ -83,7 +83,7 @@ public abstract class AbstractScorableEntity extends BeCPGDataObject implements 
 	}
 
 	private void addMessage(MLText msg, RequirementType type) {
-		reqCtrlList.add(ReqCtrlListDataItem.build().ofType(type).withMessage(msg).ofDataType(RequirementDataType.Formulation));
+		reqCtrlList.add(RequirementListDataItem.build().ofType(type).withMessage(msg).ofDataType(RequirementDataType.Formulation));
 
 	}
 
@@ -91,7 +91,7 @@ public abstract class AbstractScorableEntity extends BeCPGDataObject implements 
 	@Override
 	public void addError(MLText msg, String formulationChainId, List<NodeRef> sources) {
 
-		reqCtrlList.add(ReqCtrlListDataItem.forbidden().withMessage(msg)
+		reqCtrlList.add(RequirementListDataItem.forbidden().withMessage(msg)
 				.ofDataType(RequirementDataType.Formulation).withFormulationChainId(formulationChainId).withSources(sources));
 	}
 
@@ -110,11 +110,11 @@ public abstract class AbstractScorableEntity extends BeCPGDataObject implements 
 		boolean hasChanged = false;
 
 		if (reqCtrlList != null) {
-			Map<String, ReqCtrlListDataItem> dbReqCtrlList = new HashMap<>();
-			Map<String, ReqCtrlListDataItem> newReqCtrlList = new HashMap<>();
-			List<ReqCtrlListDataItem> duplicates = new ArrayList<>();
+			Map<String, RequirementListDataItem> dbReqCtrlList = new HashMap<>();
+			Map<String, RequirementListDataItem> newReqCtrlList = new HashMap<>();
+			List<RequirementListDataItem> duplicates = new ArrayList<>();
 
-			for (ReqCtrlListDataItem r : reqCtrlList) {
+			for (RequirementListDataItem r : reqCtrlList) {
 				if (r.getNodeRef() != null) {
 					merge(dbReqCtrlList, r, duplicates);
 				} else {
@@ -122,19 +122,19 @@ public abstract class AbstractScorableEntity extends BeCPGDataObject implements 
 				}
 			}
 
-			for (ReqCtrlListDataItem dup : duplicates) {
+			for (RequirementListDataItem dup : duplicates) {
 				reqCtrlList.remove(dup);
 				hasChanged = true;
 			}
 
-			for (Entry<String, ReqCtrlListDataItem> entry : newReqCtrlList.entrySet()) {
+			for (Entry<String, RequirementListDataItem> entry : newReqCtrlList.entrySet()) {
 				if (!dbReqCtrlList.keySet().contains(entry.getKey())) {
 					hasChanged = true;
 					break;
 				}
 			}
 
-			for (Map.Entry<String, ReqCtrlListDataItem> dbKV : dbReqCtrlList.entrySet()) {
+			for (Map.Entry<String, RequirementListDataItem> dbKV : dbReqCtrlList.entrySet()) {
 				if (!newReqCtrlList.containsKey(dbKV.getKey())) {
 
 					if (((dbKV.getValue().getFormulationChainId() == null)
@@ -149,7 +149,7 @@ public abstract class AbstractScorableEntity extends BeCPGDataObject implements 
 				} else {
 
 					// update
-					ReqCtrlListDataItem newReqCtrlListDataItem = newReqCtrlList.get(dbKV.getKey());
+					RequirementListDataItem newReqCtrlListDataItem = newReqCtrlList.get(dbKV.getKey());
 					dbKV.getValue().setReqType(newReqCtrlListDataItem.getReqType());
 					dbKV.getValue().setReqMaxQty(newReqCtrlListDataItem.getReqMaxQty());
 					if (newReqCtrlListDataItem.getSources() != null) {
@@ -168,9 +168,9 @@ public abstract class AbstractScorableEntity extends BeCPGDataObject implements 
 
 			if (disabledChainIds != null) {
 
-				List<ReqCtrlListDataItem> toRemove = new ArrayList<>();
+				List<RequirementListDataItem> toRemove = new ArrayList<>();
 
-				for (ReqCtrlListDataItem reqCtrl : reqCtrlList) {
+				for (RequirementListDataItem reqCtrl : reqCtrlList) {
 					if (reqCtrl.getFormulationChainId() != null && disabledChainIds.contains(reqCtrl.getFormulationChainId())) {
 						toRemove.add(reqCtrl);
 					}
@@ -186,9 +186,9 @@ public abstract class AbstractScorableEntity extends BeCPGDataObject implements 
 		return hasChanged;
 	}
 
-	private void merge(Map<String, ReqCtrlListDataItem> reqCtrlList, ReqCtrlListDataItem r, List<ReqCtrlListDataItem> duplicates) {
+	private void merge(Map<String, RequirementListDataItem> reqCtrlList, RequirementListDataItem r, List<RequirementListDataItem> duplicates) {
 		if (reqCtrlList.containsKey(r.getKey())) {
-			ReqCtrlListDataItem dbReq = reqCtrlList.get(r.getKey());
+			RequirementListDataItem dbReq = reqCtrlList.get(r.getKey());
 
 			duplicates.add(r);
 			// Merge sources
@@ -209,17 +209,17 @@ public abstract class AbstractScorableEntity extends BeCPGDataObject implements 
 	 * Sort by type
 	 *
 	 */
-	private void sort(List<ReqCtrlListDataItem> reqCtrlList) {
+	private void sort(List<RequirementListDataItem> reqCtrlList) {
 
 		//Sort sources
-		for (ReqCtrlListDataItem r : reqCtrlList) {
+		for (RequirementListDataItem r : reqCtrlList) {
 			if (r.getSources() != null) {
 				r.getSources().sort(Comparator.comparing(NodeRef::getId));
 			}
 		}
 
 		MutableInt index = new MutableInt();
-		reqCtrlList.stream().sorted(Comparator.comparing(ReqCtrlListDataItem::getReqType, Comparator.nullsFirst(Comparator.naturalOrder())))
+		reqCtrlList.stream().sorted(Comparator.comparing(RequirementListDataItem::getReqType, Comparator.nullsFirst(Comparator.naturalOrder())))
 				.forEach(r -> r.setSort(index.getAndIncrement()));
 
 	}

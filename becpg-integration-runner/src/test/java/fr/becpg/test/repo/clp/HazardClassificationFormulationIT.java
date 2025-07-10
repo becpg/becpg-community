@@ -14,10 +14,10 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.HazardClassificationListDataItem;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.formulation.clp.HazardClassificationFormulaContext;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
+import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.repo.sample.CharactTestHelper;
 import fr.becpg.repo.sample.SampleProductBuilder;
 import fr.becpg.repo.sample.StandardSoapTestProduct;
@@ -101,7 +101,7 @@ public class HazardClassificationFormulationIT extends PLMBaseTestCase {
 			Assert.assertTrue("Physical-chemical properties should be present", hasPhysicoChemProperties);
 
 			// Verify requirement controls
-			List<ReqCtrlListDataItem> reqControls = soapTestProduct.getReqCtrlList();
+			List<RequirementListDataItem> reqControls = soapTestProduct.getReqCtrlList();
 			Assert.assertNotNull("Requirement control list should not be null", reqControls);
 
 			// Verify no forbidden requirements were generated
@@ -110,7 +110,7 @@ public class HazardClassificationFormulationIT extends PLMBaseTestCase {
 			// Track which requirements we've found
 			int foundRequirements = 0;
 
-			for (ReqCtrlListDataItem requirement : reqControls) {
+			for (RequirementListDataItem requirement : reqControls) {
 
 				// Verify each requirement
 				switch (requirement.getReqMessage()) {

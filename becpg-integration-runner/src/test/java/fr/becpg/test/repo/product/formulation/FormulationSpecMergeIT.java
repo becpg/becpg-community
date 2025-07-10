@@ -26,8 +26,6 @@ import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
-import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
@@ -35,12 +33,14 @@ import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.formulation.AllergensCalculatingFormulationHandler;
 import fr.becpg.repo.product.formulation.CompletionReqCtrlCalculatingFormulationHandler;
 import fr.becpg.repo.product.formulation.NutsCalculatingFormulationHandler;
 import fr.becpg.repo.product.requirement.NutsRequirementScanner;
 import fr.becpg.repo.product.requirement.PhysicoRequirementScanner;
+import fr.becpg.repo.regulatory.RequirementDataType;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
+import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
 public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
@@ -245,7 +245,7 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 
 			logger.info("/*-- Formulation raised " + formulatedProduct.getReqCtrlList().size() + " rclDataItem --*/");
 			int checks = 0;
-			for (ReqCtrlListDataItem rclDataItem : formulatedProduct.getReqCtrlList()) {
+			for (RequirementListDataItem rclDataItem : formulatedProduct.getReqCtrlList()) {
 				logger.info(rclDataItem.getReqMessage());
 				if ("L'allégation 'labelClaim1' doit être revendiquée".equals(rclDataItem.getReqMessage())) {
 					fail();
@@ -409,7 +409,7 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 
 			int checks = 0;
 			logger.info("Formulation raised " + finishedProduct.getReqCtrlList().size() + " rclDataItems");
-			for (ReqCtrlListDataItem r : finishedProduct.getReqCtrlList()) {
+			for (RequirementListDataItem r : finishedProduct.getReqCtrlList()) {
 
 				logger.info("reqCtrl " + r.getReqMessage() + r.getReqType() + r.getSources());
 
@@ -569,7 +569,7 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 
 			int checkMissingFields = 0;
 			int checks = 0;
-			for (ReqCtrlListDataItem r : finishedProduct.getReqCtrlList()) {
+			for (RequirementListDataItem r : finishedProduct.getReqCtrlList()) {
 				if(RequirementType.Forbidden.equals(r.getReqType())) {
 				logger.debug("Checking rclDataItem " + r.getReqMessage());
 				if (I18NUtil
@@ -703,7 +703,7 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 
 			logger.debug("/*-- Formulation raised " + formulatedProduct.getReqCtrlList().size() + " rclDataItems --*/");
 			int checks = 0;
-			for (ReqCtrlListDataItem reqCtrlList : formulatedProduct.getReqCtrlList()) {
+			for (RequirementListDataItem reqCtrlList : formulatedProduct.getReqCtrlList()) {
 				logger.debug("/*-- Checking : \"" + reqCtrlList.getReqMessage() + "\" --*/");
 
 				if (I18NUtil.getMessage(PhysicoRequirementScanner.MESSAGE_PHYSICO_NOT_IN_RANGE, "physicoChem2", "6", "8<= ", " <=8,5")
@@ -833,7 +833,7 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 
 			logger.debug("/*-- Formulation raised " + formulatedProduct.getReqCtrlList().size() + " rclDataItems --*/");
 			int checks = 0, checkMissingFields = 0;
-			for (ReqCtrlListDataItem reqCtrlList : formulatedProduct.getReqCtrlList()) {
+			for (RequirementListDataItem reqCtrlList : formulatedProduct.getReqCtrlList()) {
 				logger.debug("/*-- Checking : \"" + reqCtrlList.getReqMessage() + "\" --*/");
 
 				if (I18NUtil

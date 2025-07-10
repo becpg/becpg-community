@@ -1,10 +1,15 @@
 package fr.becpg.repo.survey.data;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.regulatory.RegulatoryEntityItem;
+import fr.becpg.repo.regulatory.RequirementType;
+import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -21,7 +26,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
  */
 @AlfType
 @AlfQname(qname = "survey:surveyList")
-public class SurveyListDataItem extends BeCPGDataObject {
+public class SurveyListDataItem extends BeCPGDataObject implements RegulatoryEntityItem {
 
 	/**
 	 * 
@@ -39,6 +44,12 @@ public class SurveyListDataItem extends BeCPGDataObject {
 	private Boolean generated;
 
 	private List<String> reportKinds;
+
+	private List<NodeRef> regulatoryCountriesRef = new ArrayList<>();
+	private List<NodeRef> regulatoryUsagesRef = new ArrayList<>();
+	private RequirementType regulatoryType;
+	private MLText regulatoryMessage;
+
 	
 	/**
 	 * <p>Constructor for SurveyListDataItem.</p>
@@ -136,6 +147,74 @@ public class SurveyListDataItem extends BeCPGDataObject {
 	public void setChoices(List<NodeRef> choices) {
 		this.choices = choices;
 	}
+
+	
+	/**
+	 * <p>Getter for the field <code>regulatoryCountriesRef</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
+	@AlfMultiAssoc
+	@AlfQname(qname = "bcpg:regulatoryCountries")
+	public List<NodeRef> getRegulatoryCountriesRef() {
+		return regulatoryCountriesRef;
+	}
+
+	/** {@inheritDoc} */
+	public void setRegulatoryCountriesRef(List<NodeRef> regulatoryCountries) {
+		this.regulatoryCountriesRef = regulatoryCountries;
+	}
+
+	/**
+	 * <p>Getter for the field <code>regulatoryUsagesRef</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
+	@AlfMultiAssoc
+	@AlfQname(qname = "bcpg:regulatoryUsageRef")
+	public List<NodeRef> getRegulatoryUsagesRef() {
+		return regulatoryUsagesRef;
+	}
+
+	/** {@inheritDoc} */
+	public void setRegulatoryUsagesRef(List<NodeRef> regulatoryUsages) {
+		this.regulatoryUsagesRef = regulatoryUsages;
+	}
+	
+	
+	/**
+	 * <p>Getter for the field <code>regulatoryType</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.constraints.RequirementType} object
+	 */
+	@AlfProp
+	@AlfQname(qname="bcpg:regulatoryType")
+	public RequirementType getRegulatoryType() {
+		return regulatoryType;
+	}
+
+	/** {@inheritDoc} */
+	public void setRegulatoryType(RequirementType regulatoryType) {
+		this.regulatoryType = regulatoryType;
+	}
+
+	/**
+	 * <p>Getter for the field <code>regulatoryMessage</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object
+	 */
+	@AlfProp
+	@AlfMlText
+	@AlfQname(qname="bcpg:regulatoryText")
+	public MLText getRegulatoryMessage() {
+		return regulatoryMessage;
+	}
+
+	/** {@inheritDoc} */
+	public void setRegulatoryMessage(MLText regulatoryMessage) {
+		this.regulatoryMessage = regulatoryMessage;
+	}
+
 	
 	/**
 	 * <p>Getter for the field <code>generated</code>.</p>
@@ -178,16 +257,15 @@ public class SurveyListDataItem extends BeCPGDataObject {
 		this.reportKinds = reportKinds;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(choices, comment, question, generated, reportKinds);
+		result = prime * result + Objects.hash(choices, comment, generated, question, regulatoryCountriesRef, regulatoryMessage, regulatoryType,
+				regulatoryUsagesRef, reportKinds, sort);
 		return result;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -197,9 +275,11 @@ public class SurveyListDataItem extends BeCPGDataObject {
 		if (getClass() != obj.getClass())
 			return false;
 		SurveyListDataItem other = (SurveyListDataItem) obj;
-		return Objects.equals(choices, other.choices) && Objects.equals(comment, other.comment)
-				&& Objects.equals(question, other.question) && Objects.equals(generated, other.generated)
-				&& Objects.equals(reportKinds, other.reportKinds);
+		return Objects.equals(choices, other.choices) && Objects.equals(comment, other.comment) && Objects.equals(generated, other.generated)
+				&& Objects.equals(question, other.question) && Objects.equals(regulatoryCountriesRef, other.regulatoryCountriesRef)
+				&& Objects.equals(regulatoryMessage, other.regulatoryMessage) && regulatoryType == other.regulatoryType
+				&& Objects.equals(regulatoryUsagesRef, other.regulatoryUsagesRef) && Objects.equals(reportKinds, other.reportKinds)
+				&& Objects.equals(sort, other.sort);
 	}
 
 	@Override

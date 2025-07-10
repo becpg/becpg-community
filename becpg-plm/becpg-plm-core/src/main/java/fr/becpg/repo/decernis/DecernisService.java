@@ -3,7 +3,7 @@ package fr.becpg.repo.decernis;
 import java.util.List;
 
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
 
 /**
  * <p>DecernisService interface.</p>
@@ -36,6 +36,6 @@ public interface DecernisService {
 	 * @param product a {@link fr.becpg.repo.product.data.ProductData} object.
 	 * @return a {@link java.util.List} object.
 	 */
-	List<ReqCtrlListDataItem> extractRequirements(ProductData product);
+	List<RequirementListDataItem> extractRequirements(ProductData product);
 
 }

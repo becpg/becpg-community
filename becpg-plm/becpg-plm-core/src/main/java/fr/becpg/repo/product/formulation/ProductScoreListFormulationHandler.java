@@ -18,9 +18,9 @@ import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.SupplierData;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.project.formulation.ScoreListFormulationHandler;
+import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
 
 /**
