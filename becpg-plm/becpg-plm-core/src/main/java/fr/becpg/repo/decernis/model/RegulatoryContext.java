@@ -8,7 +8,7 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.decernis.DecernisMode;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
 
 /**
  * <p>RegulatoryContext class.</p>
@@ -21,7 +21,7 @@ public class RegulatoryContext {
 	private ProductData product;
 	
 	private List<RegulatoryContextItem> contextItems = new ArrayList<>();
-	private List<ReqCtrlListDataItem> requirements = new LinkedList<>();
+	private List<RequirementListDataItem> requirements = new LinkedList<>();
 	private List<IngRegulatoryListDataItem> ingRegulatoryList = new LinkedList<>();
 	
 	
@@ -48,7 +48,7 @@ public class RegulatoryContext {
 	 *
 	 * @return a {@link java.util.List} object
 	 */
-	public List<ReqCtrlListDataItem> getRequirements() {
+	public List<RequirementListDataItem> getRequirements() {
 		return requirements;
 	}
 	

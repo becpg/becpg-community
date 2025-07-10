@@ -28,7 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -98,7 +98,7 @@ public class SurveyListRequirementScannerIT extends PLMBaseTestCase {
         
         int requiredCount = 0;
         
-        for (ReqCtrlListDataItem reqCtrl : formulatedProduct.getReqCtrlList()) {
+        for (RequirementListDataItem reqCtrl : formulatedProduct.getReqCtrlList()) {
             // Check for survey requirement controls
             if (reqCtrl.getReqType() == RequirementType.Forbidden) {
                 MLText mlMessage = reqCtrl.getReqMlMessage();

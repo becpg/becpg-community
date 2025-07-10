@@ -39,12 +39,12 @@ import fr.becpg.repo.formulation.spel.SpelFormulaService;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.productList.HazardClassificationListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.regulatory.RequirementDataType;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -178,7 +178,7 @@ public class HazardClassificationFormulationHandler extends FormulationBaseHandl
 					findPhysicoValue(formulatedProduct, HazardClassificationFormulaContext.HYDROCARBON_PERC, missingCharacts));
 
 			if (!missingCharacts.isEmpty()) {
-				formulatedProduct.getReqCtrlList().add(ReqCtrlListDataItem.forbidden().withMessage(MLTextHelper.getI18NMessage(MISSING_CHARACTS_MSG))
+				formulatedProduct.getReqCtrlList().add(RequirementListDataItem.forbidden().withMessage(MLTextHelper.getI18NMessage(MISSING_CHARACTS_MSG))
 						.ofDataType(RequirementDataType.Physicochem).withSources(new ArrayList<>(missingCharacts.values())));
 			}
 
@@ -220,7 +220,7 @@ public class HazardClassificationFormulationHandler extends FormulationBaseHandl
 
 							NodeRef hazardStatement = findHazardStatement(hazardCode);
 							if (hazardStatement == null) {
-								formulatedProduct.getReqCtrlList().add(ReqCtrlListDataItem.forbidden()
+								formulatedProduct.getReqCtrlList().add(RequirementListDataItem.forbidden()
 										.withMessage(MLTextHelper.getI18NMessage(HAZARD_STATEMENT_NOT_FOUND_MSG, hazardCode))
 										.withSources(Arrays.asList(formulatedProduct.getNodeRef())).ofDataType(RequirementDataType.Formulation));
 							} else {
@@ -230,7 +230,7 @@ public class HazardClassificationFormulationHandler extends FormulationBaseHandl
 									pictogram = findPictogram(pictogramCode);
 									if (pictogram == null) {
 										formulatedProduct.getReqCtrlList()
-												.add(ReqCtrlListDataItem.forbidden()
+												.add(RequirementListDataItem.forbidden()
 														.withMessage(MLTextHelper.getI18NMessage(PICTOGRAM_NOT_FOUND_MSG, pictogramCode))
 														.withSources(Arrays.asList(formulatedProduct.getNodeRef()))
 														.ofDataType(RequirementDataType.Formulation));
@@ -286,7 +286,7 @@ public class HazardClassificationFormulationHandler extends FormulationBaseHandl
 		}
 
 		formulatedProduct.getReqCtrlList()
-				.add(ReqCtrlListDataItem.info().withMessage(MLTextHelper.getI18NMessage(FORMULA_ERROR_MSG, formula, e.getLocalizedMessage()))
+				.add(RequirementListDataItem.info().withMessage(MLTextHelper.getI18NMessage(FORMULA_ERROR_MSG, formula, e.getLocalizedMessage()))
 						.withSources(Arrays.asList(formulatedProduct.getNodeRef())).ofDataType(RequirementDataType.Formulation));
 
 		logger.warn("Error in CLP formula : - " + formula);
@@ -420,7 +420,7 @@ public class HazardClassificationFormulationHandler extends FormulationBaseHandl
 
 				if (physicoCode.equals(nodeService.getProperty(physico.getPhysicoChem(), PLMModel.PROP_PHYSICO_CHEM_CODE))) {
 
-					for (ReqCtrlListDataItem reqCtrl : entity.getReqCtrlList()) {
+					for (RequirementListDataItem reqCtrl : entity.getReqCtrlList()) {
 						if (RequirementType.Forbidden.equals(reqCtrl.getReqType()) && RequirementDataType.Physicochem.equals(reqCtrl.getReqDataType())
 								&& physico.getPhysicoChem().equals(reqCtrl.getCharact())) {
 							missingCharacts.put(physicoCode, reqCtrl.getCharact());

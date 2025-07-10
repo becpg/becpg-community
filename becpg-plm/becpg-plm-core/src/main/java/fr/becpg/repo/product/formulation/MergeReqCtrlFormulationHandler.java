@@ -36,11 +36,11 @@ import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.ResourceProductData;
 import fr.becpg.repo.product.data.ScorableEntity;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.regulatory.RequirementDataType;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.system.SystemConfigurationService;
 
@@ -110,7 +110,7 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Scora
 			
 			if (maxRclSourcesToKeep() != null && maxRclSourcesToKeep() > 0) {
 
-				for (ReqCtrlListDataItem r : scorableEntity.getReqCtrlList()) {
+				for (RequirementListDataItem r : scorableEntity.getReqCtrlList()) {
 					if (r.getSources() != null) {
 						r.setSources(new ArrayList<>(r.getSources().subList(0, Math.min(r.getSources().size(), maxRclSourcesToKeep()))));
 					}
@@ -121,7 +121,7 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Scora
 		return true;
 	}
 
-	private void appendChildReq(ProductData productData, List<ReqCtrlListDataItem> reqCtrlList) {
+	private void appendChildReq(ProductData productData, List<RequirementListDataItem> reqCtrlList) {
 		if (productData.getCompoListView().getCompoList() != null) {
 			for (CompoListDataItem compoListDataItem : productData.getCompoListView().getCompoList()) {
 				NodeRef componentProductNodeRef = compoListDataItem.getProduct();
@@ -164,11 +164,11 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Scora
 		}
 	}
 
-	private Set<ReqCtrlListDataItem> reqCtrlToAdd(ProductData componentProductData) {
-		Set<ReqCtrlListDataItem> toAdd = new HashSet<>();
-		for (ReqCtrlListDataItem tmp : componentProductData.getReqCtrlList()) {
+	private Set<RequirementListDataItem> reqCtrlToAdd(ProductData componentProductData) {
+		Set<RequirementListDataItem> toAdd = new HashSet<>();
+		for (RequirementListDataItem tmp : componentProductData.getReqCtrlList()) {
 			if (tmp.getReqDataType() != RequirementDataType.Completion) {
-				ReqCtrlListDataItem reqCtl = ReqCtrlListDataItem.build().ofType(tmp.getReqType())
+				RequirementListDataItem reqCtl = RequirementListDataItem.build().ofType(tmp.getReqType())
 						.withMessage(tmp.getReqMlMessage()).withCharact(tmp.getCharact())
 						.withSources((addChildRclSources() == null || Boolean.TRUE.equals(addChildRclSources())) ? tmp.getSources() : new ArrayList<>())
 						.ofDataType(tmp.getReqDataType() != null ? tmp.getReqDataType() : RequirementDataType.Nutrient)
