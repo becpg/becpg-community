@@ -19,6 +19,7 @@ import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
+import fr.becpg.repo.survey.data.SurveyListDataItem;
 
 /**
  * <p>ReqCtrlListItemExtractor class.</p>
@@ -31,20 +32,20 @@ public class ReqCtrlListItemExtractor implements DataListItemExtractor {
 	private static final Log logger = LogFactory.getLog(ReqCtrlListItemExtractor.class);
 
 	private NodeService nodeService;
-	
+
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
-	
+
 	private EntityListDAO entityListDAO;
-	
+
 	private AssociationService associationService;
-	
+
 	/**
 	 * <p>Constructor for ReqCtrlListItemExtractor.</p>
 	 */
 	public ReqCtrlListItemExtractor() {
 		SimpleExtractor.registerDataListItemExtractor(PLMModel.TYPE_REQCTRLLIST, this);
 	}
-	
+
 	/**
 	 * <p>Setter for the field <code>nodeService</code>.</p>
 	 *
@@ -62,7 +63,7 @@ public class ReqCtrlListItemExtractor implements DataListItemExtractor {
 	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
-	
+
 	/**
 	 * <p>Setter for the field <code>entityListDAO</code>.</p>
 	 *
@@ -71,7 +72,7 @@ public class ReqCtrlListItemExtractor implements DataListItemExtractor {
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
 	}
-	
+
 	/**
 	 * <p>Setter for the field <code>associationService</code>.</p>
 	 *
@@ -80,27 +81,31 @@ public class ReqCtrlListItemExtractor implements DataListItemExtractor {
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> extractItems(NodeRef nodeRef) {
-		
+
 		List<NodeRef> extractedItems = new ArrayList<>();
-			
-			try {
-				NodeRef charact = null;
 
-				RepositoryEntity item = alfrescoRepository.findOne(nodeRef);
+		try {
+			NodeRef charact = null;
 
-				if (item instanceof IngListDataItem simpleItem) {
-					charact = simpleItem.getNodeRef();
-				} else if (item instanceof SimpleCharactDataItem simpleItem) {
-					charact = simpleItem.getCharactNodeRef();
-				} else if (item instanceof LabelClaimListDataItem labelClaimItem) {
-					charact = labelClaimItem.getLabelClaim();
-				}  else if (item instanceof IngRegulatoryListDataItem ingRegItem) {
-					charact = ingRegItem.getIng();
-				}
+			RepositoryEntity item = alfrescoRepository.findOne(nodeRef);
+
+			if (item instanceof IngListDataItem simpleItem) {
+				charact = simpleItem.getNodeRef();
+			} else if (item instanceof SimpleCharactDataItem simpleItem) {
+				charact = simpleItem.getCharactNodeRef();
+			} else if (item instanceof LabelClaimListDataItem labelClaimItem) {
+				charact = labelClaimItem.getLabelClaim();
+			} else if (item instanceof IngRegulatoryListDataItem ingRegItem) {
+				charact = ingRegItem.getIng();
+			} else if (item instanceof SurveyListDataItem ingRegItem) {
+				charact = ingRegItem.getQuestion();
+			}
+
+			if (charact != null) {
 
 				NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityListDAO.getEntity(nodeRef));
 				NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, PLMModel.TYPE_REQCTRLLIST);
@@ -109,15 +114,16 @@ public class ReqCtrlListItemExtractor implements DataListItemExtractor {
 					List<NodeRef> reqCtrlList = entityListDAO.getListItems(listNodeRef, PLMModel.TYPE_REQCTRLLIST);
 
 					for (NodeRef reqCtrl : reqCtrlList) {
-						
+
 						@SuppressWarnings("unchecked")
 						List<NodeRef> sources = (List<NodeRef>) nodeService.getProperty(reqCtrl, PLMModel.PROP_RCL_SOURCES_V2);
 
 						if (((charact != null) && charact.equals(associationService.getTargetAssoc(reqCtrl, PLMModel.ASSOC_RCL_CHARACT))
-								|| (sources!=null && sources.contains(charact)))) {
+								|| (sources != null && sources.contains(charact)))) {
 							if (item instanceof IngRegulatoryListDataItem ingRegItem) {
 								String reqCtrlCode = (String) nodeService.getProperty(reqCtrl, PLMModel.PROP_REGULATORY_CODE);
-								if (reqCtrlCode != null && ingRegItem.getRegulatoryCountries().stream().anyMatch(u -> reqCtrlCode.contains(((String) nodeService.getProperty(u, PLMModel.PROP_REGULATORY_CODE))))) {
+								if (reqCtrlCode != null && ingRegItem.getRegulatoryCountries().stream()
+										.anyMatch(u -> reqCtrlCode.contains(((String) nodeService.getProperty(u, PLMModel.PROP_REGULATORY_CODE))))) {
 									extractedItems.add(reqCtrl);
 								}
 							} else {
@@ -126,11 +132,12 @@ public class ReqCtrlListItemExtractor implements DataListItemExtractor {
 						}
 					}
 				}
-			} catch (StackOverflowError e) {
-				logger.debug("Infinity loop : " + nodeRef, e);
 			}
-			
-			return extractedItems;
+		} catch (StackOverflowError e) {
+			logger.debug("Infinity loop : " + nodeRef, e);
+		}
+
+		return extractedItems;
 	}
 
 }

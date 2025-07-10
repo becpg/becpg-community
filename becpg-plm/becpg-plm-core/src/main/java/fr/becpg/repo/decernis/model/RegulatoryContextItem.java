@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.repo.product.data.RegulatoryEntity;
+import fr.becpg.repo.regulatory.RegulatoryEntity;
 
 /**
  * <p>RegulatoryContextItem class.</p>

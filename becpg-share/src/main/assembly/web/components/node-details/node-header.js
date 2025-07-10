@@ -299,6 +299,42 @@
              }
          }
 
+         // Add breadcrumbs display functionality
+         try {
+            var pathBreadCrumbs = {};
+            if(sessionStorage.pathBreadCrumbs) {
+              pathBreadCrumbs = JSON.parse(sessionStorage.pathBreadCrumbs);
+            }
+            
+            var printBreadCumbsPath = function(path) {
+               YAHOO.util.Dom.removeClass(me.id+"-bcpath", "hidden");
+               var html = '<ul class="bcpath">';
+               for(var i = 0; i < path.length; i++) {
+                  var type = path[i].type;
+                  if(type == "pjt:taskList") {
+                     var url = Alfresco.constants.URL_PAGECONTEXT+"task-edit?taskId="+ path[i].nodeRef;
+                  } else {
+                     var url = beCPG.util.entityURL(path[i].siteId, path[i].nodeRef, type, null, path[i].listId)+"&bcPath=true";
+                  }
+                  html += '<li style="z-index:'+(20-i)+'"><span class="' + type.split(':')[1] + '" ><a href="' + url + '">' 
+                     + Alfresco.util.encodeHTML(path[i].name) + '</a></li>';
+               }
+               html += "</ul>";
+               YAHOO.util.Dom.get(me.id+"-bcpath").innerHTML = html;
+            };
+            
+            if(this.options.showPath) {
+               if(pathBreadCrumbs.currentNode != null && pathBreadCrumbs.path && pathBreadCrumbs.path.length > 0) {
+                  printBreadCumbsPath(pathBreadCrumbs.path);
+               }
+            }
+         } catch(e) {
+            // Silent error handling
+            if (console && console.error) {
+               console.error("Error displaying breadcrumbs:", e);
+            }
+         }
+         
          this.nodeType = this.options.isContainer ? "folder" : "document";
 
          if (this.options.showLikes && !this.options.showOnlyLocation && this.options.lock != "READ_ONLY_LOCK")

@@ -434,7 +434,8 @@
                                     context = "shared";
                                 }
 
-                                contentUrl = beCPG.util.entityURL(contents[0].siteId, contents[0].nodeRef, "document", context);
+                                contentUrl = beCPG.util.entityURL(contents[0].siteId, contents[0].nodeRef, "document", context)+
+                                    "&bcPath=true&bcTask="+YAHOO.util.History.getQueryStringParameter('taskId');
                             }
 
                             ret += '<span class="doc-file"><a title="' + this

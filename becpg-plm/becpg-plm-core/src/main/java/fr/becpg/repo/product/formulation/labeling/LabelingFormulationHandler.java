@@ -903,9 +903,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 			if (formulatedProduct.getProductSpecifications() != null) {
 				for (ProductSpecificationData productSpecificationData : formulatedProduct.getProductSpecifications()) {
-					for (LabelingRuleListDataItem modelLabelingRuleListDataItem : productSpecificationData.getLabelingRuleList()) {
-						if (Boolean.TRUE.equals(modelLabelingRuleListDataItem.getIsActive())) {
-							addLabelingRule(ret, modelLabelingRuleListDataItem);
+					if(productSpecificationData.getLabelingRuleList()!=null) {
+						for (LabelingRuleListDataItem modelLabelingRuleListDataItem : productSpecificationData.getLabelingRuleList()) {
+							if (Boolean.TRUE.equals(modelLabelingRuleListDataItem.getIsActive())) {
+								addLabelingRule(ret, modelLabelingRuleListDataItem);
+							}
 						}
 					}
 				}
