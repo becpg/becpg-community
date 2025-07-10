@@ -44,7 +44,13 @@
 			for (var i = 0, ii = items.length; i < ii; i++) {
 				nodeRefs.push(items[i].nodeRef);
 			}
-
+			
+			if (nodeRefs.length > 50) {
+				Alfresco.util.PopupManager.displayMessage({
+					text: this.msg("message.too.many.items", nodeRefs.length)
+				});
+				return;
+			}
 			var url = Alfresco.constants.URL_SERVICECONTEXT + "modules/entity-charact-details/entity-charact-details" + "?entityNodeRef="
 				+ this.options.entityNodeRef + "&itemType="
 				+ encodeURIComponent(this.options.itemType != null ? this.options.itemType : this.datalistMeta.itemType) + "&dataListName="
@@ -89,7 +95,13 @@
 						}
 					}
 				}
-
+				
+				if (nodeRefs.length > 50) {
+					Alfresco.util.PopupManager.displayMessage({
+						text: this.msg("message.too.many.items", nodeRefs.length)
+					});
+					return;
+				}
 				if (!assocName) {
 					me._setupPropsPicker(nodeRefs);
 				} else {
@@ -222,6 +234,13 @@
 						fields: encodeURIComponent(displayFields)
 					});
 
+			
+			if (nodeRefs.length > 50) {
+				Alfresco.util.PopupManager.displayMessage({
+					text: this.msg("message.too.many.items", nodeRefs.length)
+				});
+				return false;
+			}
 			// Using Forms Service, so always create new
 			// instance
 			var createRow = new Alfresco.module.SimpleDialog(this.id + "-bulkEditRow");
@@ -404,7 +423,13 @@
 						}
 					}
 				}
-
+				
+				if (nodeRefs.length > 50) {
+					Alfresco.util.PopupManager.displayMessage({
+						text: this.msg("message.too.many.items", nodeRefs.length)
+					});
+					return;
+				}
 				if (!assocName) {
 					window.location = Alfresco.constants.URL_PAGECONTEXT + "wused?type=" + items[0].itemType + "&nodeRefs=" + nodeRefs.join();
 				} else {
@@ -520,7 +545,13 @@
 				for (var i = 0, ii = p_items.length; i < ii; i++) {
 					nodeRefs.push(p_items[i].nodeRef);
 				}
-
+				
+				if (nodeRefs.length > 50) {
+					Alfresco.util.PopupManager.displayMessage({
+						text: this.msg("message.too.many.items", nodeRefs.length)
+					});
+					return;
+				}
 				this.modules.actions.genericAction({
 					success: {
 						event: {
@@ -576,7 +607,13 @@
 				for (var i = 0, ii = p_items.length; i < ii; i++) {
 					nodeRefs.push(p_items[i].nodeRef);
 				}
-
+				
+				if (nodeRefs.length > 50) {
+					Alfresco.util.PopupManager.displayMessage({
+						text: this.msg("message.too.many.items", nodeRefs.length)
+					});
+					return;
+				}
 				this.modules.actions.genericAction({
 					success: {
 						event: {
@@ -641,7 +678,13 @@
 				}
 				nodeRefs += items[i].nodeRef;
 			}
-
+			
+			if (nodeRefs.split(",").length > 50) {
+				Alfresco.util.PopupManager.displayMessage({
+					text: this.msg("message.too.many.items", nodeRefs.split(",").length)
+				});
+				return;
+			}
 			Alfresco.util.PopupManager.displayMessage({
 				text: this.msg("message.simulate-entity.inprogress"),
 				displayTime: 5
@@ -720,7 +763,13 @@
 				}
 				nodeRefs += items[i].nodeRef;
 			}
-
+			
+			if (nodeRefs.split(",").length > 50) {
+				Alfresco.util.PopupManager.displayMessage({
+					text: this.msg("message.too.many.items", nodeRefs.split(",").length)
+				});
+				return;
+			}
 			Alfresco.util.Ajax.request({
 				method: Alfresco.util.Ajax.DELETE,
 				responseContentType: Alfresco.util.Ajax.JSON,
@@ -771,7 +820,13 @@
 				var item = items[index];
 				nodeRefs.push(item.nodeRef.toString());
 			}
-
+			
+			if (nodeRefs.length > 50) {
+				Alfresco.util.PopupManager.displayMessage({
+					text: this.msg("message.too.many.items", nodeRefs.length)
+				});
+				return;
+			}
 			var fnActionLock = function EntityDataGrid__onActionLock() {
 				this.modules.actions.genericAction({
 					success: {
@@ -826,7 +881,13 @@
 				var item = items[index];
 				nodeRefs.push(item.nodeRef.toString());
 			}
-
+			
+			if (nodeRefs.length > 50) {
+				Alfresco.util.PopupManager.displayMessage({
+					text: this.msg("message.too.many.items", nodeRefs.length)
+				});
+				return;
+			}
 			var fnActionUnlock = function EntityDataGrid__onActionUnlock() {
 				this.modules.actions.genericAction({
 					success: {
@@ -878,6 +939,13 @@
 			for (var index in items) {
 				var item = items[index];
 				nodeRefs.push(item.nodeRef.toString());
+			}
+			
+			if (nodeRefs.length > 50) {
+				Alfresco.util.PopupManager.displayMessage({
+					text: this.msg("message.too.many.items", nodeRefs.length)
+				});
+				return;
 			}
 			Alfresco.util.PopupManager.displayPrompt({
 				title: me.msg("message.update-supplier-account.title"),
