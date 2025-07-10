@@ -29,13 +29,21 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.entity.EntityDictionaryService;
 
+/**
+ * <p>AssociationIndexerService class.</p>
+ *
+ * @author matthieu
+ */
 @Service
 public class AssociationIndexerService {
 
 	private static final Log logger = LogFactory.getLog(AssociationIndexerService.class);
 
+	/** Constant <code>BATCH_THREADS=4</code> */
 	protected static final int BATCH_THREADS = 4;
+	/** Constant <code>BATCH_SIZE=50</code> */
 	protected static final int BATCH_SIZE = 50;
+	/** Constant <code>INC=BATCH_THREADS * BATCH_SIZE * 1L</code> */
 	protected static final long INC = BATCH_THREADS * BATCH_SIZE * 1L;
 
 	@Autowired
@@ -59,6 +67,12 @@ public class AssociationIndexerService {
 	@Autowired
 	private NodeService nodeService;
 
+	/**
+	 * <p>reindexAssocs.</p>
+	 *
+	 * @param sourceName a {@link org.alfresco.service.namespace.QName} object
+	 * @param assocQName a {@link org.alfresco.service.namespace.QName} object
+	 */
 	public void reindexAssocs(QName sourceName, QName assocQName) {
 		if (entityDictionaryService.getAssocIndexQName(assocQName) == null) {
 			throw new IllegalStateException("indexQName does not exist for assoc: " + assocQName);
@@ -93,6 +107,12 @@ public class AssociationIndexerService {
 		}
 	}
 
+	/**
+	 * <p>createBatchTypeProcessor.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link org.alfresco.repo.batch.BatchProcessor} object
+	 */
 	protected BatchProcessor<NodeRef> createBatchTypeProcessor(QName type) {
 		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<>() {
 			private final long maxNodeId = nodeDAO.getMaxNodeId();
@@ -137,6 +157,12 @@ public class AssociationIndexerService {
 				BATCH_SIZE, applicationEventPublisher, logger, 500);
 	}
 
+	/**
+	 * <p>createBatchAspectProcessor.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link org.alfresco.repo.batch.BatchProcessor} object
+	 */
 	protected BatchProcessor<NodeRef> createBatchAspectProcessor(QName type) {
 		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<>() {
 			private final long maxNodeId = nodeDAO.getMaxNodeId();

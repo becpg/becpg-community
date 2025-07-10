@@ -375,6 +375,7 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent implements 
 				+ attributeDefinition.getName().toPrefixString(namespaceService).replace(":", "_");
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public QName getAssocIndexQName(QName assocQName) {
 		ClassAttributeDefinition indexProp = getPropDef(QName.createQName(assocQName.getNamespaceURI(), assocQName.getLocalName() + "AssocIndex"));

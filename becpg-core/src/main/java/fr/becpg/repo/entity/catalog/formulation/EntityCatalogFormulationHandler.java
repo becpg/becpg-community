@@ -9,6 +9,11 @@ import fr.becpg.repo.entity.catalog.CataloguableEntity;
 import fr.becpg.repo.entity.catalog.EntityCatalogService;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 
+/**
+ * <p>EntityCatalogFormulationHandler class.</p>
+ *
+ * @author matthieu
+ */
 public class EntityCatalogFormulationHandler extends FormulationBaseHandler<CataloguableEntity> {
 
 	private static final Log logger = LogFactory.getLog(EntityCatalogFormulationHandler.class);

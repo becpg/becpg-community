@@ -648,6 +648,15 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		}
 	}
 
+	/**
+	 * <p>loadSmartContent.</p>
+	 *
+	 * @param dataListsElt a {@link org.dom4j.Element} object
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param listNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param dataListQName a {@link org.alfresco.service.namespace.QName} object
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
+	 */
 	protected void loadSmartContent(Element dataListsElt, NodeRef entityNodeRef, NodeRef listNodeRef, QName dataListQName,
 			DefaultExtractorContext context) {
 		String condition = (String) nodeService.getProperty(listNodeRef, ContentModel.PROP_DESCRIPTION);

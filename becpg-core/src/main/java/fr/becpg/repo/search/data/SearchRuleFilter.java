@@ -72,10 +72,20 @@ public class SearchRuleFilter {
 	
 	private Integer maxResults = null;
 	
+	/**
+	 * <p>Setter for the field <code>maxResults</code>.</p>
+	 *
+	 * @param maxResults a {@link java.lang.Integer} object
+	 */
 	public void setMaxResults(Integer maxResults) {
 		this.maxResults = maxResults;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>maxResults</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object
+	 */
 	public Integer getMaxResults() {
 		return maxResults;
 	}
