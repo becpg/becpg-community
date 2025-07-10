@@ -90,10 +90,20 @@ public class ProjectData extends BeCPGDataObject
 	
 	private boolean dirtyTaskTree = false;
 	
+	/**
+	 * <p>isDirtyTaskTree.</p>
+	 *
+	 * @return a boolean
+	 */
 	public boolean isDirtyTaskTree() {
 		return dirtyTaskTree;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>dirtyTaskTree</code>.</p>
+	 *
+	 * @param dirtyTaskTree a boolean
+	 */
 	public void setDirtyTaskTree(boolean dirtyTaskTree) {
 		this.dirtyTaskTree = dirtyTaskTree;
 	}
@@ -631,12 +641,22 @@ public class ProjectData extends BeCPGDataObject
 		return entities;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>projectOwners</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "pjt:projectOwners")
 	public List<NodeRef> getProjectOwners() {
 		return projectOwners;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>projectOwners</code>.</p>
+	 *
+	 * @param projectOwners a {@link java.util.List} object
+	 */
 	public void setProjectOwners(List<NodeRef> projectOwners) {
 		this.projectOwners = projectOwners;
 	}

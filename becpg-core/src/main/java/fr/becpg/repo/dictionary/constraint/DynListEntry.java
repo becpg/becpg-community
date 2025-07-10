@@ -112,6 +112,7 @@ public class DynListEntry {
 				&& Objects.equals(values, other.values);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "DynListEntry [code=" + code + ", values=" + values + ", groups=" + groups + ", isDeleted=" + isDeleted + "]";

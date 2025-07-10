@@ -93,6 +93,7 @@ public class TargetAssocAutoCompleteExtractor implements AutoCompleteExtractor<N
 		return suggestions;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<AutoCompleteEntry> extract(List<NodeRef> values) {
 		return extract(values, null);

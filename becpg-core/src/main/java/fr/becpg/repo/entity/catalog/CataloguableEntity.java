@@ -26,6 +26,11 @@ public interface CataloguableEntity extends RepositoryEntity  {
 	 */
 	void setEntityScore(String string);
 
+	/**
+	 * <p>getReportLocales.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	List<String> getReportLocales();
 
 

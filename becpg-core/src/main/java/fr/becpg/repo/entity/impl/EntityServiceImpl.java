@@ -393,6 +393,7 @@ public class EntityServiceImpl implements EntityService {
 		return documentsFolderNodeRef;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Map<NodeRef, NodeRef> getDocumentsByType(NodeRef entityNodeRef) {
 		Map<NodeRef, NodeRef> docByType = new HashMap<>();

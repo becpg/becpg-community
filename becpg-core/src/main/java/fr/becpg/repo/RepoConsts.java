@@ -283,6 +283,7 @@ public class RepoConsts
 	/** Constant <code>PATH_LICENSE="license"</code> */
 	public static final String PATH_LICENSE = "license";
 	
+	/** Constant <code>PATH_CODES="Codes"</code> */
 	public static final String PATH_CODES = "Codes";
 
 	/** Constant <code>SUPPORTED_UI_LOCALES="en,en_US,fr,sv_SE,fi,es,it,pt_BR,ru,de,tr,ja_JP"</code> */

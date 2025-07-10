@@ -102,12 +102,12 @@ public abstract class AbstractEntityDataListWebScript extends AbstractWebScript 
 	 * <p>getAccess.</p>
 	 *
 	 * @param dataType a {@link org.alfresco.service.namespace.QName} object
-	 * @param entityNodeRefsList a {@link java.util.List} object
 	 * @param versionFilter a boolean
 	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @param dataListName a {@link java.lang.String} object
 	 * @param extractor a {@link fr.becpg.repo.entity.datalist.DataListExtractor} object
 	 * @return a {@link fr.becpg.repo.web.scripts.entity.datalist.AbstractEntityDataListWebScript.Access} object
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
 	protected Access getAccess(QName dataType, NodeRef entityNodeRef,
 			boolean versionFilter, NodeRef parentNodeRef, String dataListName, DataListExtractor extractor) {

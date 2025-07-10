@@ -133,6 +133,11 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	
 	protected AdvSearchService advSearchService;
 	
+	/**
+	 * <p>Setter for the field <code>advSearchService</code>.</p>
+	 *
+	 * @param advSearchService a {@link fr.becpg.repo.search.AdvSearchService} object
+	 */
 	public void setAdvSearchService(AdvSearchService advSearchService) {
 		this.advSearchService = advSearchService;
 	}

@@ -334,6 +334,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public Map<String, String> toSearchCriterion(JSONObject entityJson) {
 		Map<String, String> criterionMap  = new HashMap<>();

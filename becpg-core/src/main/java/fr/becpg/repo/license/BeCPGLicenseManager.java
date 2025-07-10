@@ -302,6 +302,12 @@ public class BeCPGLicenseManager {
 		return isSpecialLicenseUser(runAsUser);
 	}
 
+	/**
+	 * <p>isSpecialLicenseUser.</p>
+	 *
+	 * @param runAsUser a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	public boolean isSpecialLicenseUser(String runAsUser) {
 		if(authenticationService.getDefaultAdministratorUserNames().contains(runAsUser)) {
 			return true;

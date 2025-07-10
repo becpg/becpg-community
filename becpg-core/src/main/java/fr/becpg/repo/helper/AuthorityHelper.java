@@ -245,6 +245,12 @@ public class AuthorityHelper implements InitializingBean {
 		return instance.authorityService.hasAdminAuthority();
 	}
 	
+	/**
+	 * <p>isAccountEnabled.</p>
+	 *
+	 * @param userName a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	public static boolean isAccountEnabled(String userName) {
 		if (instance.personService.personExists(userName)) {
 			NodeRef person = instance.personService.getPerson(userName);
