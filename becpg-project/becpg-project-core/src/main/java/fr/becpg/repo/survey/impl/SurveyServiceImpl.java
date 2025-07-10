@@ -1,6 +1,7 @@
 package fr.becpg.repo.survey.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -26,6 +27,8 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.repository.RepositoryEntity;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
+import fr.becpg.repo.regulatory.RequirementAwareEntity;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.survey.SurveyModel;
 import fr.becpg.repo.survey.SurveyService;
@@ -81,6 +84,10 @@ public class SurveyServiceImpl implements SurveyService {
 
 			Set<SurveyQuestion> questions = new HashSet<>();
 			
+			// Get requirements if they exist
+			List<RequirementListDataItem> requirements = getRequirementsForEntity(entityNodeRef);
+			Map<String, List<RequirementListDataItem>> questionRequirements = mapRequirementsToQuestions(requirements);
+			
 			final List<SurveyListDataItem> surveyListDataItems = getSurveys(entityNodeRef, dataListName);
 
 			for (SurveyListDataItem survey : surveyListDataItems) {
@@ -88,7 +95,7 @@ public class SurveyServiceImpl implements SurveyService {
 
 				SurveyQuestion surveyQuestion = (SurveyQuestion) alfrescoRepository.findOne(survey.getQuestion());
 
-				appendQuestionDefinition(definitions, surveyQuestion, questions);
+				appendQuestionDefinition(definitions, surveyQuestion, questions, questionRequirements);
 				if ((survey.getComment() != null) || !survey.getChoices().isEmpty()) {
 					value.put("qid", survey.getQuestion().getId());
 					if (survey.getComment() != null) {
@@ -117,6 +124,41 @@ public class SurveyServiceImpl implements SurveyService {
 	}
 
 	/** {@inheritDoc} */
+	/**
+	 * Get requirements for an entity if they exist
+	 * 
+	 * @param entityNodeRef the entity node reference
+	 * @return list of requirement control items or empty list
+	 */
+	private List<RequirementListDataItem> getRequirementsForEntity(NodeRef entityNodeRef) {
+		RepositoryEntity entity = alfrescoRepository.findOne(entityNodeRef);
+	
+		if(entity instanceof RequirementAwareEntity scorableEntity){
+			return scorableEntity.getReqCtrlList();
+		}
+		return new ArrayList<>();
+	}
+	
+	/**
+	 * Maps requirements to their associated questions by NodeRef
+	 * 
+	 * @param requirements list of requirement items
+	 * @return map of question ID to list of requirements
+	 */
+	private Map<String, List<RequirementListDataItem>> mapRequirementsToQuestions(List<RequirementListDataItem> requirements) {
+		Map<String, List<RequirementListDataItem>> result = new HashMap<>();
+		for (RequirementListDataItem req : requirements) {
+			if (req.getCharact() != null) {
+				String questionId = req.getCharact().getId();
+				if (!result.containsKey(questionId)) {
+					result.put(questionId, new ArrayList<>());
+				}
+				result.get(questionId).add(req);
+			}
+		}
+		return result;
+	}
+	
 	@Override
 	public void saveSurveyData(NodeRef entityNodeRef, String dataListName, JSONObject data) throws JSONException {
 		if (data.has("data")) {
@@ -186,7 +228,8 @@ public class SurveyServiceImpl implements SurveyService {
 		return new ArrayList<>();
 	}
 
-	private void appendQuestionDefinition(JSONArray definitions, SurveyQuestion surveyQuestion, Set<SurveyQuestion> questions) throws JSONException {
+	private void appendQuestionDefinition(JSONArray definitions, SurveyQuestion surveyQuestion, Set<SurveyQuestion> questions, 
+			Map<String, List<RequirementListDataItem>> questionRequirements) throws JSONException {
 
 		if (!questions.contains(surveyQuestion)) {
 
@@ -196,6 +239,25 @@ public class SurveyServiceImpl implements SurveyService {
 			definition.put("sort", surveyQuestion.getSort());
 			definition.put("label", surveyQuestion.getLabel());
 			definition.put("start", questions.isEmpty() || Boolean.TRUE.equals(surveyQuestion.getIsVisible()));
+			
+			// Add requirements information if available for this question
+			String questionId = surveyQuestion.getNodeRef().getId();
+			if (questionRequirements.containsKey(questionId)) {
+				List<RequirementListDataItem> reqs = questionRequirements.get(questionId);
+				if (!reqs.isEmpty()) {
+					JSONArray requirementsArray = new JSONArray();
+					for (RequirementListDataItem req : reqs) {
+						JSONObject reqObj = new JSONObject();
+						reqObj.put("type", req.getReqType() != null ? req.getReqType().toString() : "Info");
+						reqObj.put("message", req.getReqMessage());
+						if (req.getRegulatoryCode() != null) {
+							reqObj.put("code", req.getRegulatoryCode());
+						}
+						requirementsArray.put(reqObj);
+					}
+					definition.put("requirements", requirementsArray);
+				}
+			}
 
 			if ((surveyQuestion.getQuestionUrl() != null) && !surveyQuestion.getQuestionUrl().isBlank()) {
 				definition.put("url", surveyQuestion.getQuestionUrl());
@@ -247,7 +309,7 @@ public class SurveyServiceImpl implements SurveyService {
 						}
 					}
 
-					appendCids(choice, surveyQuestion, definitions, questions);
+					appendCids(choice, surveyQuestion, definitions, questions, questionRequirements);
 
 					choices.put(choice);
 
@@ -259,7 +321,7 @@ public class SurveyServiceImpl implements SurveyService {
 						JSONObject choice = new JSONObject();
 						choice.put("id", defChoice.getNodeRef().getId());
 						choice.put("label", defChoice.getLabel());
-						appendCids(choice, defChoice, definitions, questions);
+						appendCids(choice, defChoice, definitions, questions, questionRequirements);
 
 						if (CommentType.text.toString().equals(defChoice.getResponseCommentType())
 								|| CommentType.textarea.toString().equals(defChoice.getResponseCommentType())) {
@@ -286,7 +348,7 @@ public class SurveyServiceImpl implements SurveyService {
 					choice.put("textarea", true);
 				}
 
-				appendCids(choice, surveyQuestion, definitions, questions);
+				appendCids(choice, surveyQuestion, definitions, questions, questionRequirements);
 
 				choices.put(choice);
 			}
@@ -301,12 +363,12 @@ public class SurveyServiceImpl implements SurveyService {
 		return responseCommentLabel == null ? null : responseCommentLabel.isBlank() ? "hidden" : responseCommentLabel;
 	}
 
-	private void appendCids(JSONObject choice, SurveyQuestion surveyQuestion, JSONArray definitions, Set<SurveyQuestion> questions) {
+	private void appendCids(JSONObject choice, SurveyQuestion surveyQuestion, JSONArray definitions, Set<SurveyQuestion> questions, Map<String, List<RequirementListDataItem>> questionRequirements) {
 		if (surveyQuestion.getNextQuestions() != null) {
 			JSONArray cids = new JSONArray();
 			for (SurveyQuestion question : surveyQuestion.getNextQuestions()) {
 				cids.put(question.getNodeRef().getId());
-				appendQuestionDefinition(definitions, question, questions);
+				appendQuestionDefinition(definitions, question, questions, questionRequirements);
 			}
 			if (cids.length() > 0) {
 				choice.put("cid", cids);

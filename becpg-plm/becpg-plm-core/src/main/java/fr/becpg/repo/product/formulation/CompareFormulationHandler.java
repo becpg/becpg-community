@@ -51,10 +51,10 @@ import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.AbstractProductDataView;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.regulatory.RequirementDataType;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.repository.model.CompositionDataItem;
 
@@ -434,7 +434,7 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 				} catch (FormulateException e) {
 					logger.warn(e, e);
 					productData.getReqCtrlList()
-							.add(ReqCtrlListDataItem.tolerated()
+							.add(RequirementListDataItem.tolerated()
 									.withMessage(
 											MLTextHelper.getI18NMessage("message.formulate.comparewith.formulate.entity.error", tmpData.getName()))
 									.ofDataType(RequirementDataType.Nutrient));

@@ -19,11 +19,11 @@ import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.regulatory.RequirementDataType;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -60,9 +60,9 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 
 	/** {@inheritDoc} */
 	@Override
-	public List<ReqCtrlListDataItem> checkRequirements(ProductData productData, List<ProductSpecificationData> specifications) {
+	public List<RequirementListDataItem> checkRequirements(ProductData productData, List<ProductSpecificationData> specifications) {
 
-		List<ReqCtrlListDataItem> reqCtrlMap = new ArrayList<>();
+		List<RequirementListDataItem> reqCtrlMap = new ArrayList<>();
 
 		if ((productData.getIngList() != null) && !productData.getIngList().isEmpty()) {
 
@@ -162,14 +162,14 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 	}
 
 	private void processForbiddenRequirements(ProductSpecificationData specification, ProductData productData, ForbiddenIngListDataItem fil,
-			List<ReqCtrlListDataItem> reqCtrlMap, Map<String, List<NodeRef>> sources) {
+			List<RequirementListDataItem> reqCtrlMap, Map<String, List<NodeRef>> sources) {
 
 		Double totalQtyPerc = calculateQtyPerc(fil, productData);
 
 		for (IngListDataItem ingListDataItem : productData.getIngList()) {
 			if (checkRuleMatchIng(ingListDataItem, fil)) {
 
-				ReqCtrlListDataItem reqCtrl = createForbiddenReq(specification, fil, ingListDataItem, sources);
+				RequirementListDataItem reqCtrl = createForbiddenReq(specification, fil, ingListDataItem, sources);
 
 				if (isQtyCheck(fil)) {
 
@@ -212,7 +212,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 	}
 
 	private void processAuthorizedRequirements(ProductData productData, List<ForbiddenIngListDataItem> requirements,
-			ProductSpecificationData specification, List<ReqCtrlListDataItem> reqCtrlMap) {
+			ProductSpecificationData specification, List<RequirementListDataItem> reqCtrlMap) {
 		for (IngListDataItem ingListDataItem : productData.getIngList()) {
 			boolean autorized = false;
 
@@ -222,7 +222,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 					if ((fil.getReqMessage() != null) && (fil.getReqMessage().getDefaultValue() != null)
 							&& (!fil.getReqMessage().getDefaultValue().isEmpty())) {
 
-						reqCtrlMap.add(ReqCtrlListDataItem.build().ofType(RequirementType.Authorized).withMessage(fil.getReqMessage())
+						reqCtrlMap.add(RequirementListDataItem.build().ofType(RequirementType.Authorized).withMessage(fil.getReqMessage())
 								.ofDataType(RequirementDataType.Specification)
 								.withCharact(ingListDataItem.getNodeRef() != null ? ingListDataItem.getNodeRef() : ingListDataItem.getIng())
 								.withSources(List.of(ingListDataItem.getIng())).withRegulatoryCode(extractRegulatoryId(fil, specification)));
@@ -232,7 +232,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 			}
 
 			if (!autorized) {
-				reqCtrlMap.add(ReqCtrlListDataItem.build().ofType(RequirementType.Forbidden)
+				reqCtrlMap.add(RequirementListDataItem.build().ofType(RequirementType.Forbidden)
 						.withMessage(MLTextHelper.getI18NMessage(MESSAGE_NOTAUTHORIZED_ING)).ofDataType(RequirementDataType.Specification)
 						.withCharact(ingListDataItem.getNodeRef() != null ? ingListDataItem.getNodeRef() : ingListDataItem.getIng())
 						.withSources(List.of(ingListDataItem.getIng())).withRegulatoryCode(extractRegulatoryId(null, specification)));
@@ -242,7 +242,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 
 	}
 
-	private ReqCtrlListDataItem createForbiddenReq(ProductSpecificationData specification, ForbiddenIngListDataItem fil,
+	private RequirementListDataItem createForbiddenReq(ProductSpecificationData specification, ForbiddenIngListDataItem fil,
 			IngListDataItem ingListDataItem, Map<String, List<NodeRef>> sources) {
 
 		MLText curMessage = fil.getReqMessage();
@@ -261,7 +261,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 			sourceList.add(ingListDataItem.getIng());
 		}
 
-		return ReqCtrlListDataItem.build().ofType(fil.getReqType()).withMessage(curMessage)
+		return RequirementListDataItem.build().ofType(fil.getReqType()).withMessage(curMessage)
 				.withCharact(ingListDataItem.getNodeRef() != null ? ingListDataItem.getNodeRef() : ingListDataItem.getIng())
 				.ofDataType(RequirementDataType.Specification).withRegulatoryCode(extractRegulatoryId(fil, specification)).withSources(sourceList);
 

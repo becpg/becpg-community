@@ -15,8 +15,8 @@ import fr.becpg.repo.product.data.ClientData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.SupplierData;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.productList.LCAListDataItem;
+import fr.becpg.repo.regulatory.RequirementDataType;
 
 /**
  * <p>LCACalculatingFormulationHandler class.</p>

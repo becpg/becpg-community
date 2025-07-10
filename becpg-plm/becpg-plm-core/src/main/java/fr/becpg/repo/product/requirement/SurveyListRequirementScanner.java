@@ -11,8 +11,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.regulatory.RequirementDataType;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.repo.survey.data.SurveyListDataItem;
 
@@ -34,8 +34,8 @@ public class SurveyListRequirementScanner extends AbstractRequirementScanner<Sur
     
     /** {@inheritDoc} */
     @Override
-    public List<ReqCtrlListDataItem> checkRequirements(ProductData formulatedProduct, List<ProductSpecificationData> specifications) {
-        List<ReqCtrlListDataItem> ret = new LinkedList<>();
+    public List<RequirementListDataItem> checkRequirements(ProductData formulatedProduct, List<ProductSpecificationData> specifications) {
+        List<RequirementListDataItem> ret = new LinkedList<>();
 
         if (formulatedProduct.getSurveyList() != null && !formulatedProduct.getSurveyList().isEmpty()) {
             
@@ -75,7 +75,7 @@ public class SurveyListRequirementScanner extends AbstractRequirementScanner<Sur
                                     }
                                 }
                                 
-                                ReqCtrlListDataItem rclDataItem = ReqCtrlListDataItem.build()
+                                RequirementListDataItem rclDataItem = RequirementListDataItem.build()
                                         .ofType(reqType).withMessage(message)
                                         .withCharact(listDataItem.getQuestion()).ofDataType(RequirementDataType.Specification)
 										.withRegulatoryCode(extractRegulatoryId(specDataItem, specification));
