@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package fr.becpg.repo.product.data.constraints;
+package fr.becpg.repo.regulatory;
 
 /**
  * <p>RequirementType class.</p>

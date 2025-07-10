@@ -1,11 +1,9 @@
-package fr.becpg.repo.product.data;
+package fr.becpg.repo.regulatory;
 
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
-
-import fr.becpg.repo.product.data.constraints.RequirementType;
 
 /**
  * <p>RegulatoryEntityItem interface.</p>

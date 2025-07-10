@@ -13,9 +13,9 @@ import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
-import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.HazardClassificationListDataItem;
 import fr.becpg.repo.product.data.productList.HazardClassificationListDataItem.SignalWord;
+import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 
 /**

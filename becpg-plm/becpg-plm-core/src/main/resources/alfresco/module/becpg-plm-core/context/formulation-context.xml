@@ -265,6 +265,7 @@
                     <property name="namespaceService" ref="namespaceService" />
                     <property name="alfrescoRepository" ref="alfrescoRepository" />
                     <property name="associationService" ref="associationService" />
+                    <property name="nodeService" ref="nodeService" />
                 </bean>
                  <bean class="fr.becpg.repo.product.formulation.DocumentFormulationHandler">
                     <property name="fileFolderService" ref="fileFolderService" />
@@ -462,6 +463,9 @@
 					<property name="mlNodeService" ref="mlAwareNodeService" />
 					<property name="addInfoReqCtrl" value="${beCPG.formulation.specification.addInfoReqCtrl}" />
 				</bean>
+                <bean class="fr.becpg.repo.product.requirement.SurveyListRequirementScanner">
+                   <property name="mlNodeService" ref="mlAwareNodeService" />
+                </bean>
 				<bean class="fr.becpg.repo.product.requirement.DecernisRequirementsScanner">
 					<property name="decernisService" ref="decernisService" />
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
