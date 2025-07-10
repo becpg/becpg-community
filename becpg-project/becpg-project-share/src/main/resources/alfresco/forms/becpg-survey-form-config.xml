@@ -42,6 +42,44 @@
 
 				</appearance>
 			</form>
+			
+	
+			<form id="edit-productSpecification">
+				<field-visibility>
+					<show id="bcpg:regulatoryType" force="true" />
+					<show id="bcpg:regulatoryText" force="true" />
+					<show id="survey:slQuestion" />
+					<show id="survey:slChoices" />
+					<show id="bcpg:regulatoryCountries" force="true" />
+					<show id="bcpg:regulatoryUsageRef" force="true" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:regulatoryType">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl" />
+					</field>
+					<field id="bcpg:regulatoryText" >
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="survey:slQuestion">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">becpg/autocomplete/survey</control-param>
+                            <control-param name="urlParamsToPass">dataListsName</control-param>
+                        </control>
+                    </field>
+                    <field id="survey:slChoices">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">becpg/autocomplete/survey</control-param>
+                            <control-param name="parentAssoc">survey_slQuestion</control-param>
+                        </control>
+                    </field>
+					<field id="bcpg:regulatoryCountries">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:regulatoryUsageRef" >
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+				</appearance>
+			</form>
 		</forms>
 	</config>
 	<config evaluator="model-type" condition="survey:surveyList">
@@ -86,11 +124,65 @@
 					</field>
 				</appearance>
 			</form>
+			<form id="create-productSpecification">
+				<field-visibility>
+					<show id="bcpg:regulatoryType" force="true" />
+					<show id="bcpg:regulatoryText" force="true" />
+					<show id="survey:slQuestion" />
+					<show id="survey:slChoices" />
+					<show id="bcpg:regulatoryCountries" force="true" />
+					<show id="bcpg:regulatoryUsageRef" force="true" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:regulatoryType">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl" />
+					</field>
+					<field id="bcpg:regulatoryText" >
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					
+					<field id="survey:slQuestion">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">becpg/autocomplete/survey</control-param>
+                            <control-param name="urlParamsToPass">dataListsName</control-param>
+                        </control>
+                    </field>
+                    <field id="survey:slChoices">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">becpg/autocomplete/survey</control-param>
+                            <control-param name="parentAssoc">survey_slQuestion</control-param>
+                        </control>
+                    </field>
+					<field id="bcpg:regulatoryCountries" >
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:regulatoryUsageRef">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					
+					
+				</appearance>
+			</form>
 			<form id="datagrid">
 				<field-visibility>
 					<show id="survey:slQuestion" />
 					<show id="survey:slChoices" />
 					<show id="survey:slComment" />
+					<show id="dataList_bcpg:reqCtrlList" />
+				</field-visibility>
+				<appearance>
+					<field id="dataList_bcpg:reqCtrlList" label-id="hidden" />
+				</appearance>
+			</form>
+			
+			<form id="datagrid-productSpecification">
+				<field-visibility>
+				     <show id="bcpg:regulatoryType" force="true" />
+					<show id="bcpg:regulatoryText" force="true" />
+					<show id="survey:slQuestion" />
+					<show id="survey:slChoices" />
+					<show id="bcpg:regulatoryCountries" force="true" />
+					<show id="bcpg:regulatoryUsageRef" force="true" />
 				</field-visibility>
 			</form>
 		</forms>

@@ -41,13 +41,13 @@ import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
-import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.formulation.AllergensCalculatingFormulationHandler;
 import fr.becpg.repo.product.formulation.CompletionReqCtrlCalculatingFormulationHandler;
+import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
 public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTest {

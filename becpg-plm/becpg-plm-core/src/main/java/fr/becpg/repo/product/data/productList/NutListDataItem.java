@@ -13,10 +13,10 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
 import fr.becpg.repo.helper.MLTextHelper;
-import fr.becpg.repo.product.data.RegulatoryEntityItem;
 import fr.becpg.repo.product.data.constraints.NutRequirementType;
-import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.formulation.nutrient.RegulationFormulationHelper;
+import fr.becpg.repo.regulatory.RegulatoryEntityItem;
+import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;

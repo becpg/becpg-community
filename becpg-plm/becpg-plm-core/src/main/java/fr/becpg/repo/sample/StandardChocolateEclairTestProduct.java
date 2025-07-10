@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
@@ -20,6 +21,7 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LogisticUnitData;
 import fr.becpg.repo.product.data.PackagingMaterialData;
+import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
@@ -33,9 +35,11 @@ import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.quality.data.dataList.StockListDataItem;
+import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.repo.survey.data.SurveyListDataItem;
 import fr.becpg.repo.survey.data.SurveyQuestion;
 import fr.becpg.repo.survey.impl.SurveyServiceImpl.ResponseType;
+import org.alfresco.service.cmr.repository.MLText;
 
 /**
  * <p>StandardChocolateEclairTestProduct class.</p>
@@ -318,7 +322,7 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 	public FinishedProductData getProduct() {
 		return product;
 	}
-
+	
 
 
 	private boolean isWithCompo = true;
@@ -329,6 +333,7 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 	private boolean isWithSurvey = false;
 	private boolean isWithScoreList = false;
 	private boolean isWithClaim = false;
+	private boolean isWithSpecification = false;
 
 	// Private constructor to enforce usage of the builder
 	private StandardChocolateEclairTestProduct(Builder builder) {
@@ -341,10 +346,12 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 		this.isWithSurvey = builder.isWithSurvey;
 		this.isWithScoreList = builder.isWithScoreList;
 		this.isWithClaim = builder.isWithClaim;
+		this.isWithSpecification = builder.isWithSpecification;
 	}
 
 	// Static inner Builder class
 	public static class Builder extends SampleProductBuilder.Builder<Builder> {
+
 		private boolean isWithCompo = true;
 		private boolean isWithLabeling = true;
 		private boolean isWithGenericRawMaterial = true;
@@ -353,6 +360,7 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 		private boolean isWithSurvey = false;
 		private boolean isWithScoreList = false;
 		private boolean isWithClaim = false;
+		private boolean isWithSpecification = false;
 
 		public Builder withClaim(boolean isWithClaim) {
 			this.isWithClaim = isWithClaim;
@@ -388,12 +396,17 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 			this.isWithStocks = isWithStocks;
 			return this;
 		}
-
+	
 		public Builder withIngredients(boolean isWithIngredients) {
 			this.isWithIngredients = isWithIngredients;
 			return this;
 		}
-
+	
+		public Builder withSpecification(boolean isWithSpecification) {
+			this.isWithSpecification = isWithSpecification;
+			return this;
+		}
+		
 		@Override
 		protected Builder self() {
 			return this;
@@ -405,7 +418,6 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 		}
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public FinishedProductData createTestProduct() {
 		 product = FinishedProductData.build().withName("Éclair au chocolat").withUnit(ProductUnit.kg).withQty(550d)
@@ -455,12 +467,75 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 			product.withScoreList(createScoreList());
 		}
 
+		if (isWithSpecification) {
+			product.setProductSpecifications(createProductSpecifications());
+		}
+
 		alfrescoRepository.create(destFolder, product);
 
 		
 		return product;
 
 	}
+	
+
+	/**
+	 * Creates product specifications for the test product.
+	 * 
+	 * @return List of product specifications
+	 */
+	protected List<ProductSpecificationData> createProductSpecifications() {
+		ProductSpecificationData specification = createSpecificationWithSurveyRequirements();
+		return List.of(specification);
+	}
+	
+	/**
+     * Creates a product specification with survey requirements that will 
+     * create a mix of matching and non-matching requirements when compared to a product
+     * 
+     * @return A product specification with survey requirements
+     */
+    private ProductSpecificationData createSpecificationWithSurveyRequirements() {
+        ProductSpecificationData specification = new ProductSpecificationData();
+        specification.setName("Chocolate Eclair Quality Specification");
+        
+        // Create survey list for the specification with requirements
+        List<SurveyListDataItem> specSurveyList = new ArrayList<>();
+        
+        // Get references to the questions
+        NodeRef pastryQuestionRef = CharactTestHelper.getOrCreateSurveyQuestion(nodeService, SURVEY_PASTRY_QUESTION);
+        NodeRef fillingQuestionRef = CharactTestHelper.getOrCreateSurveyQuestion(nodeService, SURVEY_FILLING_QUESTION);
+        
+        // Get references to the answers
+        NodeRef pastryPerfectRef = CharactTestHelper.getOrCreateSurveyQuestion(nodeService, ANSWER_PASTRY_PERFECT);
+        NodeRef fillingPerfectRef = CharactTestHelper.getOrCreateSurveyQuestion(nodeService, ANSWER_FILLING_PERFECT);
+        
+        // Setup specification survey requirements
+        // 1. Pastry quality - require perfect (product uses minor defects, should generate a Forbidden requirement)
+        SurveyListDataItem specQ1 = new SurveyListDataItem(pastryQuestionRef, true);
+        specQ1.setChoices(List.of(pastryPerfectRef));
+        specQ1.setRegulatoryType(RequirementType.Forbidden);
+        MLText pastryMessage = new MLText();
+        pastryMessage.addValue(Locale.ENGLISH, "Pastry quality must be perfect for this specification");
+        specQ1.setRegulatoryMessage(pastryMessage);
+        specSurveyList.add(specQ1);
+        
+        // 2. Filling quality - require perfect (product uses minor issues, should generate a Forbidden requirement)
+        SurveyListDataItem specQ2 = new SurveyListDataItem(fillingQuestionRef, true);
+        specQ2.setChoices(List.of(fillingPerfectRef));
+        specQ2.setRegulatoryType(RequirementType.Forbidden);
+        MLText fillingMessage = new MLText();
+        fillingMessage.addValue(Locale.ENGLISH, "Filling quality must be perfect for this specification");
+        specQ2.setRegulatoryMessage(fillingMessage);
+        specSurveyList.add(specQ2);
+        
+        // Set the survey list on the specification
+        specification.setSurveyList(specSurveyList);
+        specification = (ProductSpecificationData) alfrescoRepository.create(destFolder,specification);
+        
+        return specification;
+    }
+
 
 	private void initClaims() {
 		euOrganicClaim = CharactTestHelper.getOrCreateClaim(nodeService, CLAIM_EU_ORGANIC, CLAIM_EU_ORGANIC_LABEL);

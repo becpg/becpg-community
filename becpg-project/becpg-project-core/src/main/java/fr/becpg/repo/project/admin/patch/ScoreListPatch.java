@@ -162,6 +162,11 @@ public class ScoreListPatch extends AbstractBeCPGPatch {
 
 		nodeService.moveNode(nodeRef, criterionTypesNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
 		
+		if (Boolean.TRUE.equals(nodeService.getProperty(nodeRef, BeCPGModel.PROP_IS_DELETED))) {
+			logger.warn("Node is manually deleted: " + nodeRef);
+			return;
+		}
+		
 		boolean isMLAware = MLPropertyInterceptor.setMLAware(true);
 		try {
 			MLText mlText = (MLText) nodeService.getProperty(nodeRef, BeCPGModel.PROP_LV_VALUE);

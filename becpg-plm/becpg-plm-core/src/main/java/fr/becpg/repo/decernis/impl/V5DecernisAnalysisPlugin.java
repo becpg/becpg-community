@@ -38,10 +38,10 @@ import fr.becpg.repo.decernis.model.UsageContext;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.RestTemplateHelper;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
-import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.repo.system.SystemConfigurationService;
 
 /**

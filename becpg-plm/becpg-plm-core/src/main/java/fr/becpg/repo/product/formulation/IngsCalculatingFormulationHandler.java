@@ -42,13 +42,13 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
-import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.formulation.labeling.EvaporatedDataItem;
 import fr.becpg.repo.product.helper.IngListHelper;
+import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.variant.filters.VariantFilters;
@@ -730,9 +730,10 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 							isFound = false;
 							break;
 						}
-
-						parentIngListDataItem = parentIngListDataItem.getParent();
-						p = p.getParent();
+						if(parentIngListDataItem!=null && p!=null) {
+							parentIngListDataItem = parentIngListDataItem.getParent();
+							p = p.getParent();
+						}
 						j++;
 					}
 					if (isFound) {

@@ -1,4 +1,4 @@
-package fr.becpg.repo.product.data.constraints;
+package fr.becpg.repo.regulatory;
 
 /**
  * <p>RegulatoryResult class.</p>
