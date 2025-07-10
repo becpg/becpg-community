@@ -467,19 +467,20 @@
       },
       
 
-      getPriorityImg : function PL_getPriorityImg(record, large) {
-       if(record.itemData["prop_pjt_projectPriority"]){
-    	   var priority = record.itemData["prop_pjt_projectPriority"].value, priorityMap = {
-       
-            "1" : "high",
-            "2" : "medium",
-            "3" : "low"
-         }, priorityKey = priorityMap[priority + ""];
-         return '<img class="priority" src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/priority-' + priorityKey + '-16.png" title="' + this
-               .msg("label.priority", this.msg("priority." + priorityKey)) + '"/>';
-       } 
-       return "";
-      },
+       getPriorityImg: function PL_getPriorityImg(record, large) {
+           if (record.itemData["prop_pjt_projectPriority"]) {
+               var priority = record.itemData["prop_pjt_projectPriority"].value, priorityMap = {
+                   "1": "high",
+                   "2": "medium",
+                   "3": "low"
+               }, priorityKey = priorityMap[priority + ""];
+               if (priorityKey) {
+                   return '<img class="priority" src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/priority-' + priorityKey + '-16.png" title="' + this
+                       .msg("label.priority", this.msg("priority." + priorityKey)) + '"/>';
+               }
+           }
+           return "";
+       },
 
       getProjectTitle : function PL_getProjectTitle(record, full, large) {
          var propertiesUrl = null, dataListUrl = null, folderUrl = null, version = "";

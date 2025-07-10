@@ -48,6 +48,16 @@ public interface AlfrescoRepository<T extends RepositoryEntity>  extends CrudRep
 	 * @return a boolean.
 	 */
 	boolean hasDataList(NodeRef entityNodeRef, QName datalistContainerQname);
+	
+	/**
+	 * <p>hasDataList.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param datalistName a {@link java.lang.String} object.
+	 * @return a boolean.
+	 */
+	boolean hasDataList(NodeRef entityNodeRef, String datalistName);
+	
 	/**
 	 * <p>loadDataList.</p>
 	 *
@@ -87,10 +97,9 @@ public interface AlfrescoRepository<T extends RepositoryEntity>  extends CrudRep
 	 *
 	 * @param listContainerNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param dataListContainerType a {@link org.alfresco.service.namespace.QName} object.
-	 * @param dataListType a {@link org.alfresco.service.namespace.QName} object.
 	 * @param dataList a {@link java.util.List} object.
 	 */
-	void saveDataList(NodeRef listContainerNodeRef, QName dataListContainerType, QName dataListType, List<? extends RepositoryEntity> dataList);
+	void saveDataList(NodeRef listContainerNodeRef, QName dataListContainerType, List<? extends RepositoryEntity> dataList);
 	/**
 	 * <p>saveDataList.</p>
 	 *

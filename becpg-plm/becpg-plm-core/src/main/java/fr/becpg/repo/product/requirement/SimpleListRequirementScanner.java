@@ -13,10 +13,10 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
-import fr.becpg.repo.product.data.RegulatoryEntityItem;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
-import fr.becpg.repo.product.data.constraints.RequirementType;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.regulatory.RegulatoryEntityItem;
+import fr.becpg.repo.regulatory.RequirementDataType;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
+import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.repo.repository.model.MinMaxValueDataItem;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
 
@@ -35,8 +35,8 @@ public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem>
 
 	/** {@inheritDoc} */
 	@Override
-	public List<ReqCtrlListDataItem> checkRequirements(ProductData formulatedProduct, List<ProductSpecificationData> specifications) {
-		List<ReqCtrlListDataItem> ret = new LinkedList<>();
+	public List<RequirementListDataItem> checkRequirements(ProductData formulatedProduct, List<ProductSpecificationData> specifications) {
+		List<RequirementListDataItem> ret = new LinkedList<>();
 
 		List<T> dataListVisited = getDataListVisited(formulatedProduct);
 
@@ -112,7 +112,7 @@ public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem>
 									}
 								}
 
-								ret.add(ReqCtrlListDataItem.build().ofType(reqType).withMessage(message).withCharact(listDataItem.getCharactNodeRef())
+								ret.add(RequirementListDataItem.build().ofType(reqType).withMessage(message).withCharact(listDataItem.getCharactNodeRef())
 										.ofDataType(RequirementDataType.Specification).withReqMaxQty(reqCtrlMaxQty).withRegulatoryCode(regulatoryId));
 							}
 						}

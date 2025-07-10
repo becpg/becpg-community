@@ -22,13 +22,13 @@ import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.productList.NutDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.formulation.nutrient.RegulationFormulationHelper;
+import fr.becpg.repo.regulatory.RequirementDataType;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.repository.model.VariantAwareDataItem;
 import fr.becpg.repo.variant.filters.VariantFilters;
 import fr.becpg.repo.variant.model.VariantData;
@@ -240,7 +240,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 						if ((ul != null) && (n.getValuePerServing() > ul)) {
 							MLText message = MLTextHelper.getI18NMessage(MESSAGE_MAXIMAL_DAILY_VALUE, nut.getCharactName());
 
-							formulatedProduct.getReqCtrlList().add(ReqCtrlListDataItem.forbidden().withMessage(message).withCharact(n.getNut())
+							formulatedProduct.getReqCtrlList().add(RequirementListDataItem.forbidden().withMessage(message).withCharact(n.getNut())
 									.ofDataType(RequirementDataType.Specification));
 						}
 

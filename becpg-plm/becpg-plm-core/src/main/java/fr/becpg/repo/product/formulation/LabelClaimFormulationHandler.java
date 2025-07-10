@@ -29,11 +29,11 @@ import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
-import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.regulatory.RequirementDataType;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
+import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.model.CompositionDataItem;
 
@@ -209,7 +209,6 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 
 		}
 		
-		// sort
 		if (productData.getLabelClaimList() != null) {
 
 			productData.getLabelClaimList().forEach(labelClaimListDataItem -> {
@@ -225,10 +224,10 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 						}
 					}
 					
+					String labelClaimValue = labelClaimListDataItem.getLabelClaimValue();
 					if (regulatoryThreshold != null && percentage != null) {
 						if (regulatoryThreshold > percentage) {
-							if (labelClaimListDataItem.getLabelClaimValue().equals("certified") ||
-							labelClaimListDataItem.getLabelClaimValue().equals("true")) {
+							if (labelClaimValue.equals("certified") || labelClaimValue.equals("true")) {
 								productData.addError(MLTextHelper.getI18NMessage(MESSAGE_CERTIFIED_ERROR, 
 									mlNodeService.getProperty(labelClaimListDataItem.getLabelClaim(), BeCPGModel.PROP_CHARACT_NAME),
 									percentage,
@@ -236,14 +235,12 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 							}
 							
 							labelClaimListDataItem.setLabelClaimValue("false");
-						} else if (regulatoryThreshold <= percentage) {
+						} else if (regulatoryThreshold <= percentage && !labelClaimValue.equals("certified") && !labelClaimValue.equals("suitable")) {
 							labelClaimListDataItem.setLabelClaimValue("true");
 						}
 					}
 				}
 			});
-
-			//sort(productData.getAllergenList());
 		}
 
 
@@ -506,7 +503,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 	private void addMissingLabelClaimReq(ProductData productData, ProductData partProduct, LabelClaimListDataItem labelClaimItem) {
 
 		productData.getReqCtrlList()
-				.add(ReqCtrlListDataItem.build().ofType(RequirementType.Info)
+				.add(RequirementListDataItem.build().ofType(RequirementType.Info)
 						.withMessage(MLTextHelper.getI18NMessage(MESSAGE_MISSING_CLAIM,
 								mlNodeService.getProperty(labelClaimItem.getLabelClaim(), BeCPGModel.PROP_CHARACT_NAME)))
 						.withCharact(labelClaimItem.getLabelClaim()).ofDataType(RequirementDataType.Labelclaim)
@@ -571,7 +568,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 				if (labelClaimListDataItem.getErrorLog() != null) {
 
 					productData.getReqCtrlList()
-							.add(ReqCtrlListDataItem.tolerated()
+							.add(RequirementListDataItem.tolerated()
 									.withMessage(MLTextHelper.getI18NMessage(MESSAGE_LABELCLAIM_ERROR,
 											mlNodeService.getProperty(labelClaimListDataItem.getLabelClaim(), BeCPGModel.PROP_CHARACT_NAME),
 											labelClaimListDataItem.getErrorLog()))

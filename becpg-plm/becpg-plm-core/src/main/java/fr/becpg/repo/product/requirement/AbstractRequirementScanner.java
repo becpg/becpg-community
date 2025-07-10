@@ -13,7 +13,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
-import fr.becpg.repo.product.data.RegulatoryEntityItem;
+import fr.becpg.repo.regulatory.RegulatoryEntityItem;
 
 /**
  * <p>Abstract AbstractRequirementScanner class.</p>

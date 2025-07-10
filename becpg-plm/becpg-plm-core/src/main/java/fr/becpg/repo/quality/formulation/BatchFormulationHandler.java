@@ -22,14 +22,14 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.StockType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.quality.data.BatchData;
 import fr.becpg.repo.quality.data.dataList.AllocationListDataItem;
 import fr.becpg.repo.quality.data.dataList.StockListDataItem;
+import fr.becpg.repo.regulatory.RequirementDataType;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 
@@ -68,7 +68,7 @@ public class BatchFormulationHandler extends FormulationBaseHandler<BatchData> {
 				isVolume = batchData.getUnit().isVolume();
 			}
 
-			ReqCtrlListDataItem reqCtrl = null;
+			RequirementListDataItem reqCtrl = null;
 			Map<NodeRef, Double> rawMaterials = new HashMap<>();
 			for (CompoListDataItem compoList : batchData.getCompoList()) {
 				NodeRef productNodeRef = compoList.getProduct();
@@ -158,7 +158,7 @@ public class BatchFormulationHandler extends FormulationBaseHandler<BatchData> {
 							item.setState(SystemState.Refused);
 
 							if (reqCtrl == null) {
-								reqCtrl = ReqCtrlListDataItem.forbidden().withMessage(MLTextHelper.getI18NMessage(MESSAGE_MISSING_STOCK))
+								reqCtrl = RequirementListDataItem.forbidden().withMessage(MLTextHelper.getI18NMessage(MESSAGE_MISSING_STOCK))
 										.ofDataType(RequirementDataType.Formulation);
 
 								batchData.getReqCtrlList().add(reqCtrl);
