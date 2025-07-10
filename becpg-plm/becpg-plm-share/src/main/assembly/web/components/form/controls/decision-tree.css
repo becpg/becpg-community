@@ -58,3 +58,31 @@
 	display:block;
      padding:0 10px 10px 0;
 }
+
+/* Requirements display styles */
+.decision-tree-requirements { 
+    margin: 5px 0 10px 0; 
+}
+
+.decision-tree-requirement { 
+    margin: 2px 0; 
+    padding: 5px; 
+    border-radius: 3px; 
+    font-size: 90%; 
+}
+
+.requirement-info { 
+    background-color: #e3f2fd; 
+    color: #0d47a1; 
+    border-left: 4px solid #2196f3; 
+}
+
+.requirement-forbidden { 
+    background-color: #ffebee; 
+    color: #b71c1c; 
+    border-left: 4px solid #f44336; 
+}
+
+.requirement-code { 
+    font-weight: bold; 
+}

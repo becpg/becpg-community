@@ -19,9 +19,9 @@ import fr.becpg.repo.entity.catalog.EntityCatalogService;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.AbstractProductDataView;
 import fr.becpg.repo.product.data.ScorableEntity;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.formulation.score.ScoreCalculatingPlugin;
+import fr.becpg.repo.regulatory.RequirementDataType;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.model.CompositionDataItem;
@@ -103,7 +103,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<S
 			Set<String> visitedRclItems = new HashSet<>();
 
 			if (scorableEntity.getReqCtrlList() != null) {
-				for (ReqCtrlListDataItem rclDataItem : scorableEntity.getReqCtrlList()) {
+				for (RequirementListDataItem rclDataItem : scorableEntity.getReqCtrlList()) {
 					RequirementDataType key = rclDataItem.getReqDataType();
 					RequirementType type = rclDataItem.getReqType();
 					// make sure we don't put duplicates rclDataItems

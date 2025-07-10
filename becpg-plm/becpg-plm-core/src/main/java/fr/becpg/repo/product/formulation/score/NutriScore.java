@@ -11,9 +11,9 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ScorableEntity;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.helper.NutrientRegulatoryHelper;
+import fr.becpg.repo.regulatory.RequirementDataType;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 /**
@@ -59,7 +59,7 @@ public class NutriScore implements ScoreCalculatingPlugin {
 		} catch (Exception e) {
 			MLText errorMsg = MLTextHelper.getI18NMessage("message.formulate.formula.incorrect.nutrientProfile", e.getLocalizedMessage());
 			productData.setNutrientClass(MLTextHelper.getClosestValue(errorMsg, Locale.getDefault()));
-			productData.getReqCtrlList().add(ReqCtrlListDataItem.forbidden().withMessage(errorMsg)
+			productData.getReqCtrlList().add(RequirementListDataItem.forbidden().withMessage(errorMsg)
 					.ofDataType(RequirementDataType.Formulation));
 			if (logger.isDebugEnabled()) {
 				logger.warn("Error in nutrient score formulation :" + productData.getNodeRef());

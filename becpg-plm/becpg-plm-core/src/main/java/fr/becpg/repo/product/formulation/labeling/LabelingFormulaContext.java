@@ -70,14 +70,14 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.LabelingRuleType;
 import fr.becpg.repo.product.data.constraints.PlaceOfActivityTypeCode;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.ing.CompositeLabeling;
 import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.ing.IngTypeItem;
 import fr.becpg.repo.product.data.ing.LabelingComponent;
 import fr.becpg.repo.product.data.meat.MeatType;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.spel.LabelingFormulaFilterContext;
+import fr.becpg.repo.regulatory.RequirementDataType;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 
@@ -117,7 +117,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 	private final SpelFormulaService formulaService;
 
-	private List<ReqCtrlListDataItem> errors = new ArrayList<>();
+	private List<RequirementListDataItem> errors = new ArrayList<>();
 
 	private Map<Locale, Set<String>> detectedAllergensByLocale = new HashMap<>();
 
@@ -190,7 +190,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 *
 	 * @return a {@link java.util.List} object.
 	 */
-	public List<ReqCtrlListDataItem> getErrors() {
+	public List<RequirementListDataItem> getErrors() {
 		return errors;
 	}
 
@@ -202,7 +202,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 * @param errors
 	 *            a {@link java.util.List} object.
 	 */
-	public void setErrors(List<ReqCtrlListDataItem> errors) {
+	public void setErrors(List<RequirementListDataItem> errors) {
 		this.errors = errors;
 	}
 
@@ -3235,7 +3235,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 					return Boolean.TRUE.equals(ret);
 				} catch (Exception e) {
 
-					getEntity().getReqCtrlList().add(ReqCtrlListDataItem.forbidden().withMessage(
+					getEntity().getReqCtrlList().add(RequirementListDataItem.forbidden().withMessage(
 							MLTextHelper.getI18NMessage("message.formulate.labelRule.error", formulaFilter.getRuleName(), e.getLocalizedMessage()))
 							.ofDataType(RequirementDataType.Labelling)
 

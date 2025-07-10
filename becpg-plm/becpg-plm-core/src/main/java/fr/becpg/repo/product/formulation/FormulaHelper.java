@@ -42,13 +42,13 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.packaging.VariantPackagingData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.DynamicCharactExecOrder;
 import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.regulatory.RequirementDataType;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.model.CompositionDataItem;
 import fr.becpg.repo.security.BeCPGAccessDeniedException;
@@ -230,7 +230,7 @@ public class FormulaHelper {
 											
 											
 											entity.getReqCtrlList()
-													.add(ReqCtrlListDataItem.info()
+													.add(RequirementListDataItem.info()
 															.withMessage(MLTextHelper.getI18NMessage(
 																	"message.formulate.formula.toolong",
 																	dynamicCharactListItem.getTitle()))
@@ -296,7 +296,7 @@ public class FormulaHelper {
 
 						
 						entity.getReqCtrlList()
-						.add(ReqCtrlListDataItem.forbidden()
+						.add(RequirementListDataItem.forbidden()
 								.withMessage(MLTextHelper.getI18NMessage(
 										"message.formulate.formula.error",
 										dynamicCharactListItem.getTitle(), e.getLocalizedMessage()))
