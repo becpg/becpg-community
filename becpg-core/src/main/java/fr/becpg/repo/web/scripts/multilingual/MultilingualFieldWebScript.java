@@ -181,9 +181,9 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 					Serializable value = serviceRegistry.getNodeService().getProperty(formNodeRef, fieldQname);
 					if (value instanceof MLText mltext) {
 						mlText = mltext;
-					} else if (value instanceof String string) {
+					} else if (value instanceof String stVal) {
 						mlText = new MLText();
-						mlText.addValue(toSaveUnderLocale, (String) value);
+						mlText.addValue(toSaveUnderLocale,stVal);
 					} else {
 						mlText = new MLText();
 						mlText.addValue(toSaveUnderLocale, "");
@@ -282,7 +282,7 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 		} catch (JSONException e) {
 			throw new WebScriptException("Unable to serialize JSON", e);
 		} finally {
-			if (logger.isDebugEnabled()) {
+			if (logger.isDebugEnabled() && watch!=null) {
 				watch.stop();
 				logger.debug("MultilingualFieldWebScript execute in " + watch.getTotalTimeSeconds() + "s");
 			}

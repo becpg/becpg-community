@@ -38,9 +38,6 @@ public class LabelingAttributeExtractorPlugin implements AttributeExtractorPlugi
 	@Override
 	@Nonnull
 	public String extractPropName(@Nonnull QName type, @Nonnull NodeRef nodeRef) {
-		if (nodeRef == null) {
-			return type != null ? type.toPrefixString(namespaceService) : "";
-		}
 
 		NodeRef grp = PLMModel.TYPE_LABELINGRULELIST.equals(type) ? 
 			nodeRef : 
@@ -63,8 +60,7 @@ public class LabelingAttributeExtractorPlugin implements AttributeExtractorPlugi
 			}
 		}
 
-		// Fallback to type prefix if no title found
-		return type != null ? type.toPrefixString(namespaceService) : "";
+		return  type.toPrefixString(namespaceService) ;
 	}
 
 	/** {@inheritDoc} */

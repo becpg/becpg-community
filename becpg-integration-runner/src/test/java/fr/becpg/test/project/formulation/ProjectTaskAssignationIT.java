@@ -57,9 +57,30 @@ public class ProjectTaskAssignationIT extends AbstractProjectTestCase {
 			resources3.add(authorityGroup);
 
 			List<TaskListDataItem> taskList = new LinkedList<>();
-			taskList.add(new TaskListDataItem(null, "task1", false, 2, null, resources1, taskLegends.get(1), "activiti$projectAdhoc"));
-			taskList.add(new TaskListDataItem(null, "task2", false, 2, null, resources2, taskLegends.get(1), "activiti$projectAdhoc"));
-			taskList.add(new TaskListDataItem(null, "task3", false, 2, null, resources3, taskLegends.get(1), "activiti$projectAdhoc"));
+			taskList.add(TaskListDataItem.build()
+    .withTaskName("task1")
+    .withIsMilestone(false)
+    .withDuration(2)
+    .withPrevTasks(null)
+    .withResources(resources1)
+    .withTaskLegend(taskLegends.get(1))
+    .withWorkflowName("activiti$projectAdhoc"));
+			taskList.add(TaskListDataItem.build()
+    .withTaskName("task2")
+    .withIsMilestone(false)
+    .withDuration(2)
+    .withPrevTasks(null)
+    .withResources(resources2)
+    .withTaskLegend(taskLegends.get(1))
+    .withWorkflowName("activiti$projectAdhoc"));
+			taskList.add(TaskListDataItem.build()
+    .withTaskName("task3")
+    .withIsMilestone(false)
+    .withDuration(2)
+    .withPrevTasks(null)
+    .withResources(resources3)
+    .withTaskLegend(taskLegends.get(1))
+    .withWorkflowName("activiti$projectAdhoc"));
 			projectData.setTaskList(taskList);
 
 			projectData = (ProjectData) alfrescoRepository.save(projectData);

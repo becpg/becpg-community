@@ -24,6 +24,7 @@ import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 public class BeCPGLocaleResolver extends AcceptHeaderLocaleResolver {
 
 	/** {@inheritDoc} */
+	@SuppressWarnings("deprecation")
 	@Override
 	public Locale resolveLocale(HttpServletRequest request) {
 
