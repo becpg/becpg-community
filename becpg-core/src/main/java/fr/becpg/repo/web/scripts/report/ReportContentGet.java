@@ -115,7 +115,10 @@ public class ReportContentGet extends ContentGet {
 
 		// render content
 		QName propertyQName = ContentModel.PROP_CONTENT;
-		String contentPart = templateArgs.get(PARAM_PROPERTY);
+		String contentPart = templateArgs != null ? templateArgs.get(PARAM_PROPERTY) : null;
+		if (contentPart == null) {
+			contentPart = "";
+		}
 		if ((!contentPart.isEmpty()) && (contentPart.charAt(0) == ';')) {
 			if (contentPart.length() < 2) {
 				throw new WebScriptException(HttpServletResponse.SC_BAD_REQUEST, "Content property malformed");

@@ -393,7 +393,7 @@ public class SearchRuleFilter {
 				return fromJsonObject(new JSONObject(jsonString), namespaceService);
 			}
 		} catch (JSONException e) {
-			if (jsonString.contains("{")) {
+			if (jsonString != null && jsonString.contains("{")) {
 				logger.warn("Invalid JSON notification filter", e);
 			} else {
 				setQuery(jsonString);

@@ -676,21 +676,23 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 			String key = String.format("%s-%s-%s", dataListType, pivotKey, qtyProperty);
 			CompareResultDataItem comparisonDataItem = comparisonMap.get(key);
 
-			if ((comparisonDataItem == null)) {
-				String[] values = new String[nbEntities];
-				values[comparisonPosition] = Double.toString(qtyForProduct);
-				comparisonDataItem = new CompareResultDataItem(dataListType, charactName, pivotKey, qtyProperty, values);
-				comparisonMap.put(key, comparisonDataItem);
-			} else {
-				String value = comparisonDataItem.getValues()[comparisonPosition];
-				if (value != null) {
-					qtyForProduct += Double.parseDouble(value);
-				}
-				String qtyForProductStr = Double.toString(qtyForProduct);
-				comparisonDataItem.getValues()[comparisonPosition] = qtyForProductStr;
+			if (qtyForProduct != null) {
+				if ((comparisonDataItem == null)) {
+					String[] values = new String[nbEntities];
+					values[comparisonPosition] = Double.toString(qtyForProduct);
+					comparisonDataItem = new CompareResultDataItem(dataListType, charactName, pivotKey, qtyProperty, values);
+					comparisonMap.put(key, comparisonDataItem);
+				} else {
+					String value = comparisonDataItem.getValues()[comparisonPosition];
+					if (value != null) {
+						qtyForProduct += Double.parseDouble(value);
+					}
+					String qtyForProductStr = Double.toString(qtyForProduct);
+					comparisonDataItem.getValues()[comparisonPosition] = qtyForProductStr;
 
-				if (!qtyForProductStr.equals(comparisonDataItem.getValues()[0])) {
-					comparisonDataItem.setDifferent(true);
+					if (!qtyForProductStr.equals(comparisonDataItem.getValues()[0])) {
+						comparisonDataItem.setDifferent(true);
+					}
 				}
 			}
 
@@ -889,9 +891,8 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 
 					Map<QName, String> properties1 = new HashMap<>();
 					Map<QName, String> properties2 = new HashMap<>();
-					for (String key2 : comparisonMap.keySet()) {
-
-						CompareResultDataItem c = comparisonMap.get(key2);
+					for (Map.Entry<String, CompareResultDataItem> entry : comparisonMap.entrySet()) {
+						CompareResultDataItem c = entry.getValue();
 						properties2.put(c.getProperty(), c.getValues()[1]);
 					}
 
@@ -936,11 +937,12 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 		PropertyFormats propertyFormats = new PropertyFormats(false, COMPARE_MAX_PRECISION);
 		Map<QName, Serializable> properties1 = nodeRef1 == null ? new TreeMap<>() : nodeService.getProperties(nodeRef1);
 		Map<QName, Serializable> properties2 = nodeRef2 == null ? new TreeMap<>() : nodeService.getProperties(nodeRef2);
-		for (QName propertyQName : properties1.keySet()) {
+		for (Map.Entry<QName, Serializable> entry : properties1.entrySet()) {
+			QName propertyQName = entry.getKey();
 
 			if (isComparableProperty(propertyQName, isDataList)) {
 
-				Serializable oValue1 = properties1.get(propertyQName);
+				Serializable oValue1 = entry.getValue();
 				Serializable oValue2 = null;
 
 				if (properties2.containsKey(propertyQName)) {
@@ -953,11 +955,12 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 		}
 
 		// look for properties2 that are not in properties1
-		for (QName propertyQName : properties2.keySet()) {
+		for (Map.Entry<QName, Serializable> entry : properties2.entrySet()) {
+			QName propertyQName = entry.getKey();
 
 			if (!properties1.containsKey(propertyQName) && isComparableProperty(propertyQName, isDataList)) {
-				compareValues(dataListType, charactName, privotKey, propertyQName, null, properties2.get(propertyQName), nbEntities,
-						comparisonPosition, comparisonMap, propertyFormats);
+				compareValues(dataListType, charactName, privotKey, propertyQName, null, entry.getValue(), nbEntities, comparisonPosition,
+						comparisonMap, propertyFormats);
 			}
 		}
 
@@ -1015,11 +1018,12 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 			}
 		}
 
-		for (QName propertyQName : associations1Sorted.keySet()) {
+		for (Map.Entry<QName, List<NodeRef>> entry : associations1Sorted.entrySet()) {
+			QName propertyQName = entry.getKey();
 
 			if (isComparableProperty(propertyQName, isDataList)) {
 
-				List<NodeRef> nodeRefs1 = associations1Sorted.get(propertyQName);
+				List<NodeRef> nodeRefs1 = entry.getValue();
 				List<NodeRef> nodeRefs2 = null;
 
 				boolean isDifferent = false;
@@ -1036,11 +1040,12 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 		}
 
 		// look for properties2 that are not in properties1
-		for (QName propertyQName : associations2Sorted.keySet()) {
+		for (Map.Entry<QName, List<NodeRef>> entry : associations2Sorted.entrySet()) {
+			QName propertyQName = entry.getKey();
 
 			if (!associations1Sorted.containsKey(propertyQName) && isComparableProperty(propertyQName, isDataList)) {
-				compareAssocs(dataListType, charactName, privotKey, propertyQName, null, associations2Sorted.get(propertyQName), nbEntities,
-						comparisonPosition, comparisonMap, true);
+				compareAssocs(dataListType, charactName, privotKey, propertyQName, null, entry.getValue(), nbEntities, comparisonPosition,
+						comparisonMap, true);
 			}
 		}
 
@@ -1078,6 +1083,7 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 				comparisonPosition, isDifferent);
 	}
 
+	@SuppressWarnings("deprecation")
 	private void compareValues(QName dataListType, String charactName, String privotKey, QName propertyQName, Serializable oValue1,
 			Serializable oValue2, int nbEntities, int comparisonPosition, Map<String, CompareResultDataItem> comparisonMap,
 			PropertyFormats propertyFormats) {
@@ -1262,8 +1268,8 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 			if (qName.equals(ContentModel.PROP_NAME) || qName.equals(ContentModel.PROP_CREATOR) || qName.equals(ContentModel.PROP_CREATED)
 					|| qName.equals(ContentModel.PROP_MODIFIER) || qName.equals(ContentModel.PROP_MODIFIED) || qName.equals(BeCPGModel.PROP_SORT)
 					|| qName.equals(PLMModel.PROP_NUTLIST_ROUNDED_VALUE) || qName.equals(PLMModel.PROP_NUTLIST_PREPARED_ROUNDED_VALUE)
-					
-					) {
+
+			) {
 
 				isComparable = false;
 			}

@@ -28,6 +28,8 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
@@ -141,7 +143,7 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
     
     /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
-    public Object invoke(final MethodInvocation invocation) throws Throwable
+    public Object invoke(final @Nonnull MethodInvocation invocation) throws Throwable
     {
        
         
@@ -182,15 +184,18 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
             NodeRef pivotNodeRef = getPivotNodeRef(nodeRef);
             
             Map<QName, Serializable> properties = (Map<QName, Serializable>) invocation.proceed();
-            Map<QName, Serializable> convertedProperties = new HashMap<>(properties.size() * 2);
-            // Check each return value type
-            for (Map.Entry<QName, Serializable> entry : properties.entrySet())
-            {
-                QName propertyQName = entry.getKey();
-                Serializable value = entry.getValue();
-                Serializable convertedValue = convertOutboundProperty(nodeRef, pivotNodeRef, propertyQName, value);
-                // Add it to the return map
-                convertedProperties.put(propertyQName, convertedValue);
+            Map<QName, Serializable> convertedProperties = null;
+            if (properties != null) {
+                convertedProperties = new HashMap<>(properties.size() * 2);
+                // Check each return value type
+                for (Map.Entry<QName, Serializable> entry : properties.entrySet())
+                {
+                    QName propertyQName = entry.getKey();
+                    Serializable value = entry.getValue();
+                    Serializable convertedValue = convertOutboundProperty(nodeRef, pivotNodeRef, propertyQName, value);
+                    // Add it to the return map
+                    convertedProperties.put(propertyQName, convertedValue);
+                }
             }
             ret = convertedProperties;
             // Done

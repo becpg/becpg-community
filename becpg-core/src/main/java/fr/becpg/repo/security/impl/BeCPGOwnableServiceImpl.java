@@ -55,6 +55,7 @@ public class BeCPGOwnableServiceImpl extends OwnableServiceImpl {
 	private SimpleCache<NodeRef, String> nodeOwnerCache;
 	private TenantService tenantService;
 	private Set<String> storesToIgnorePolicies = Collections.emptySet();
+	@SuppressWarnings("deprecation")
 	private RenditionService renditionService;
 
 	/**
@@ -96,13 +97,13 @@ public class BeCPGOwnableServiceImpl extends OwnableServiceImpl {
 
 	/** {@inheritDoc} */
 	@Override
-	public void setRenditionService(RenditionService renditionService) {
+	public void setRenditionService(@SuppressWarnings("deprecation") RenditionService renditionService) {
 		this.renditionService = renditionService;
 		super.setRenditionService(renditionService);
 	}
 
-	private Set<String> URI_TO_EXCLUDES = new HashSet<>();
-	{
+	private static final  Set<String> URI_TO_EXCLUDES = new HashSet<>();
+	static {
 		URI_TO_EXCLUDES.add(DownloadModel.DOWNLOAD_MODEL_1_0_URI);
 		URI_TO_EXCLUDES.add(NamespaceService.SYSTEM_MODEL_1_0_URI);
 		URI_TO_EXCLUDES.add(NamespaceService.FORUMS_MODEL_1_0_URI);
@@ -137,7 +138,7 @@ public class BeCPGOwnableServiceImpl extends OwnableServiceImpl {
 
 			// If ownership is not explicitly set then we fall back to the
 			// creator
-			if (isRendition(nodeRef)) {
+			if (localIsRendition(nodeRef)) {
 				userName = getOwner(nodeService.getPrimaryParent(nodeRef).getParentRef());
 			} else if (nodeService.hasAspect(nodeRef, ContentModel.ASPECT_OWNABLE)) {
 				userName = DefaultTypeConverter.INSTANCE.convert(String.class, nodeService.getProperty(nodeRef, ContentModel.PROP_OWNER));
@@ -156,13 +157,13 @@ public class BeCPGOwnableServiceImpl extends OwnableServiceImpl {
 
 				}
 			}
-			cacheOwner(nodeRef, userName);
+			localCacheOwner(nodeRef, userName);
 		}
 
 		return userName;
 	}
 
-	private void cacheOwner(NodeRef nodeRef, String userName) {
+	private void localCacheOwner(NodeRef nodeRef, String userName) {
 		// do not cache owners of nodes that are from stores that ignores
 		// policies
 		// to prevent mess in nodeOwnerCache
@@ -171,7 +172,8 @@ public class BeCPGOwnableServiceImpl extends OwnableServiceImpl {
 		}
 	}
 
-	private boolean isRendition(final NodeRef node) {
+	@SuppressWarnings("deprecation")
+	private boolean localIsRendition(final NodeRef node) {
 		return AuthenticationUtil.runAs(() -> renditionService.isRendition(node), AuthenticationUtil.getSystemUserName());
 	}
 

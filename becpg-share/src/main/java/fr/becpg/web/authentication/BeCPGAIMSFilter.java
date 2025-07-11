@@ -136,7 +136,6 @@ import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.security.web.util.ThrowableAnalyzer;
 import org.springframework.security.web.util.UrlUtils;
 import org.springframework.util.MultiValueMap;
-import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -220,6 +219,7 @@ public class BeCPGAIMSFilter implements Filter
      *
      * Initialize the filter
      */
+    @Override
     public void init(FilterConfig filterConfig) throws ServletException
     {
         // Info
@@ -447,7 +447,8 @@ public class BeCPGAIMSFilter implements Filter
      * @param session              HTTP Session
      * @param authenticationResult OAuth2LoginAuthenticationToken
      */
-    private void onSuccess(HttpServletRequest request, HttpServletResponse response, HttpSession session,
+    @SuppressWarnings("deprecation")
+	private void onSuccess(HttpServletRequest request, HttpServletResponse response, HttpSession session,
                            OAuth2LoginAuthenticationToken authenticationResult)
     {
         // Info
@@ -519,7 +520,8 @@ public class BeCPGAIMSFilter implements Filter
      * @param response a {@link jakarta.servlet.http.HttpServletResponse} object
      * @throws java.lang.Exception if any.
      */
-    protected void beforeSuccess(HttpServletRequest request, HttpServletResponse response) throws Exception
+    @SuppressWarnings("deprecation")
+	protected void beforeSuccess(HttpServletRequest request, HttpServletResponse response) throws Exception
     {
         try
         {
@@ -537,7 +539,7 @@ public class BeCPGAIMSFilter implements Filter
                 Connector conn = FrameworkUtil.getConnector(session, username, AlfrescoUserFactory.ALFRESCO_ENDPOINT_ID);
                 ConnectorContext c = new ConnectorContext(HttpMethod.GET);
                 c.setContentType("application/json");
-                Response res = conn.call("/api/people/" + URLEncoder.encode(username) + "?groups=true", c);
+                Response res = conn.call("/api/people/" + URLEncoder.encode(username, StandardCharsets.UTF_8.toString()) + "?groups=true", c);
                 if (Status.STATUS_OK == res.getStatus().getCode())
                 {
                     // Assuming we get a successful response then we need to parse the response as JSON and then
@@ -548,7 +550,7 @@ public class BeCPGAIMSFilter implements Filter
 
                     // Step 2: Parse the JSON...
                     JSONParser jp = new JSONParser();
-                    Object userData = jp.parse(resStr.toString());
+                    Object userData = jp.parse(resStr);
 
                     // Step 3: Iterate through the JSON object getting all the groups that the user is a member of...
                     StringBuilder groups = new StringBuilder(512);
@@ -624,7 +626,8 @@ public class BeCPGAIMSFilter implements Filter
      * @param request
      * @throws UserFactoryException
      */
-    private void initUser(HttpServletRequest request) throws UserFactoryException
+    @SuppressWarnings("deprecation")
+	private void initUser(HttpServletRequest request) throws UserFactoryException
     {
         RequestContext context = ThreadLocalRequestContext.getRequestContext();
         if (context != null && context.getUser() == null)
@@ -700,8 +703,8 @@ public class BeCPGAIMSFilter implements Filter
             } else {
                 UriComponents requestUri = UriComponentsBuilder.fromUriString(UrlUtils.buildFullRequestUrl(request)).build();
                 UriComponents redirectUri = UriComponentsBuilder.fromUriString(authorizationRequest.getRedirectUri()).build();
-                Set<Map.Entry<String, List<String>>> requestUriParameters = new LinkedHashSet(requestUri.getQueryParams().entrySet());
-                Set<Map.Entry<String, List<String>>> redirectUriParameters = new LinkedHashSet(redirectUri.getQueryParams().entrySet());
+                Set<Map.Entry<String, List<String>>> requestUriParameters = new LinkedHashSet<>(requestUri.getQueryParams().entrySet());
+                Set<Map.Entry<String, List<String>>> redirectUriParameters = new LinkedHashSet<>(redirectUri.getQueryParams().entrySet());
                 requestUriParameters.retainAll(redirectUriParameters);
                 return Objects.equals(requestUri.getScheme(), redirectUri.getScheme()) &&
                     Objects.equals(requestUri.getUserInfo(), redirectUri.getUserInfo()) &&
@@ -739,10 +742,10 @@ public class BeCPGAIMSFilter implements Filter
             OAuth2Error error = var16.getError();
             UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(authorizationRequest
                 .getRedirectUri()).queryParam("error", new Object[]{error.getErrorCode()});
-            if (!StringUtils.isEmpty(error.getDescription())) {
+            if (error.getDescription()!=null && !error.getDescription().isBlank()) {
                 uriBuilder.queryParam("error_description", new Object[]{error.getDescription()});
             }
-            if (!StringUtils.isEmpty(error.getUri())) {
+            if (error.getUri()!=null && !error.getUri().isBlank()) {
                 uriBuilder.queryParam("error_uri", new Object[]{error.getUri()});
             }
             this.redirectStrategy.sendRedirect(request, response, uriBuilder.build().encode().toString());
@@ -1074,7 +1077,7 @@ public class BeCPGAIMSFilter implements Filter
         validators.add(new JwtTimestampValidator(Duration.of(0, ChronoUnit.MILLIS)));
         validators.add(new JwtIssuerValidator(providerDetails.getIssuerUri()));
 
-        if (!StringUtils.isEmpty(this.audience))
+        if (this.audience!=null && !this.audience.isEmpty())
         {
             validators.add(new JwtAudienceValidator(this.audience));
         }
@@ -1090,7 +1093,8 @@ public class BeCPGAIMSFilter implements Filter
             this.configuredAudience = configuredAudience;
         }
 
-        @Override
+        @SuppressWarnings("unchecked")
+		@Override
         public OAuth2TokenValidatorResult validate(Jwt token)
         {
             requireNonNull(token, "token cannot be null");
@@ -1152,10 +1156,11 @@ public class BeCPGAIMSFilter implements Filter
         return jwtDecoder.decode(oAuth2AccessToken.getTokenValue());
     }
 
-    private Jwt validateIdToken(ClientRegistration clientRegistration, String idToken) throws JwtException
+    @SuppressWarnings("unchecked")
+	private Jwt validateIdToken(ClientRegistration clientRegistration, String idToken) throws JwtException
     {
         NimbusJwtDecoder jwtDecoder = (NimbusJwtDecoder) this.jwtDecoderFactory.createDecoder(clientRegistration);
-        jwtDecoder.setJwtValidator(new DelegatingOAuth2TokenValidator(
+        jwtDecoder.setJwtValidator(new DelegatingOAuth2TokenValidator<>(
             new OAuth2TokenValidator[] { new JwtTimestampValidator(), new OidcIdTokenValidator(clientRegistration) }));
         return jwtDecoder.decode(idToken);
     }

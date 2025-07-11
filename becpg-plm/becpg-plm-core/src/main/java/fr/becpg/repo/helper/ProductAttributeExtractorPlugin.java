@@ -123,7 +123,7 @@ public class ProductAttributeExtractorPlugin extends AbstractExprNameExtractor {
 
 	/** {@inheritDoc} */
 	@Override
-	public boolean matchCriteria(@Nonnull NodeRef nodeRef, Map<String, String> criteriaMap) {
+	public boolean matchCriteria(NodeRef nodeRef, Map<String, String> criteriaMap) {
 		return matchWUsedCriteria(nodeRef, criteriaMap, PLMModel.ASSOC_COMPOLIST_PRODUCT)
 				|| matchWUsedCriteria(nodeRef, criteriaMap, PLMModel.ASSOC_PACKAGINGLIST_PRODUCT)
 				|| matchWUsedCriteria(nodeRef, criteriaMap, MPMModel.ASSOC_PL_RESOURCE);
