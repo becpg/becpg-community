@@ -86,6 +86,7 @@ import fr.becpg.repo.variant.model.VariantData;
  * @author matthieu
  * @version $Id: $Id
  */
+@SuppressWarnings("deprecation")
 @Service("productReportExtractor")
 public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 

@@ -665,65 +665,61 @@ public class IngListDataItem extends AbstractManualDataItem
 		return this;
 	}
 	
-
-	/**
-	 * <p>Constructor for IngListDataItem.</p>
-	 *
-	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param qtyPerc a {@link java.lang.Double} object.
-	 * @param geoOrigin a {@link java.util.List} object.
-	 * @param bioOrigin a {@link java.util.List} object.
-	 * @param isGMO a {@link java.lang.Boolean} object.
-	 * @param isIonized a {@link java.lang.Boolean} object.
-	 * @param processingAid a {@link java.lang.Boolean} object.
-	 * @param ing a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param isManual a {@link java.lang.Boolean} object.
-	 */
-	@Deprecated
-	public IngListDataItem(NodeRef nodeRef, Double qtyPerc, List<NodeRef> geoOrigin, List<NodeRef> bioOrigin, Boolean isGMO, Boolean isIonized,
-			Boolean processingAid, NodeRef ing, Boolean isManual) {
-		setNodeRef(nodeRef);
-		setQtyPerc(qtyPerc);
-		setGeoOrigin(geoOrigin);
-		setBioOrigin(bioOrigin);
-		setIsGMO(isGMO);
-		setIsIonized(isIonized);
-		setIng(ing);
-		setIsManual(isManual);
-		setIsProcessingAid(processingAid);
+	public IngListDataItem withGeoOrigin(List<NodeRef> geoOrigin) {
+		this.geoOrigin = geoOrigin;
+		return this;
 	}
-
+	
 	/**
-	 * <p>Constructor for IngListDataItem.</p>
+	 * <p>withGeoTransfo.</p>
 	 *
-	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param ingList a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object.
-	 * @param qtyPerc a {@link java.lang.Double} object.
-	 * @param geoOrigin a {@link java.util.List} object.
-	 * @param geoTransfo a {@link java.util.List} object.
-	 * @param bioOrigin a {@link java.util.List} object.
-	 * @param isGMO a {@link java.lang.Boolean} object.
-	 * @param isIonized a {@link java.lang.Boolean} object.
-	 * @param processingAid a {@link java.lang.Boolean} object.
-	 * @param isSupport a {@link java.lang.Boolean} object.
-	 * @param ing a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param isManual a {@link java.lang.Boolean} object.
+	 * @param geoTransfo a {@link java.util.List} of {@link org.alfresco.service.cmr.repository.NodeRef} objects
+	 * @return a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object for method chaining
 	 */
-	@Deprecated
-	public IngListDataItem(NodeRef nodeRef, IngListDataItem ingList, Double qtyPerc, List<NodeRef> geoOrigin, List<NodeRef> geoTransfo,
-			List<NodeRef> bioOrigin, Boolean isGMO, Boolean isIonized, Boolean processingAid, Boolean isSupport, NodeRef ing, Boolean isManual) {
-		setNodeRef(nodeRef);
-		setParent(ingList);
-		setQtyPerc(qtyPerc);
-		setGeoOrigin(geoOrigin);
-		setGeoTransfo(geoTransfo);
-		setBioOrigin(bioOrigin);
-		setIsGMO(isGMO);
-		setIsIonized(isIonized);
-		setIng(ing);
+	public IngListDataItem withGeoTransfo(List<NodeRef> geoTransfo) {
+		this.geoTransfo = geoTransfo;
+		return this;
+	}
+	
+	public IngListDataItem withBioOrigin(List<NodeRef> bioOrigin) {
+		this.bioOrigin = bioOrigin;
+		return this;
+	}
+	
+	public IngListDataItem withIsGMO(Boolean isGMO) {
+		this.isGMO = isGMO;
+		return this;
+	}
+	
+	public IngListDataItem withIsIonized(Boolean isIonized) {
+		this.isIonized = isIonized;
+		return this;
+	}
+	
+	public IngListDataItem withIsProcessingAid(Boolean isProcessingAid) {
+		this.isProcessingAid = isProcessingAid;
+		return this;
+	}
+	
+	public IngListDataItem withIsManual(Boolean isManual) {
 		setIsManual(isManual);
-		setIsProcessingAid(processingAid);
-		setIsSupport(isSupport);
+		return this;
+	}
+	
+	public IngListDataItem withMini(Double mini) {
+		this.mini = mini;
+		return this;
+	}
+	
+	public IngListDataItem withMaxi(Double maxi) {
+		this.maxi = maxi;
+		return this;
+	}
+	
+
+	public IngListDataItem withParent(IngListDataItem parent) {
+		this.parent = parent;
+		return this;
 	}
 
 	/**
@@ -819,4 +815,5 @@ public class IngListDataItem extends AbstractManualDataItem
 	public Boolean shouldDetailIfZero() {
 		return true;
 	}
+
 }

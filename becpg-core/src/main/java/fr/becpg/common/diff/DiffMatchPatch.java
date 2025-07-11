@@ -876,7 +876,7 @@ public class DiffMatchPatch {
 
 	    // Intentionally ignore the first and last element (don't need checking).
 	    while (nextDiff != null) {
-	        if (prevDiff != null && prevDiff.getOperation() == Operation.EQUAL && nextDiff.getOperation() == Operation.EQUAL) {
+	        if (thisDiff != null && prevDiff != null && prevDiff.getOperation() == Operation.EQUAL && nextDiff.getOperation() == Operation.EQUAL) {
 	            // This is a single edit surrounded by equalities.
 	            equality1.append(prevDiff.getText());
 	            edit.append(thisDiff.getText());

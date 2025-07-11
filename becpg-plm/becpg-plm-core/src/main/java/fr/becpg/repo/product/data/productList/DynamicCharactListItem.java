@@ -456,19 +456,6 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 		return columnName!=null && !columnName.isBlank();
 	}
 
-	/**
-	 * <p>Constructor for DynamicCharactListItem.</p>
-	 *
-	 * @param dynamicCharactTitle a {@link java.lang.String} object.
-	 * @param dynamicCharactFormula a {@link java.lang.String} object.
-	 */
-	@Deprecated
-	public DynamicCharactListItem(String dynamicCharactTitle, String dynamicCharactFormula) {
-		super();
-		this.title = dynamicCharactTitle;
-		this.formula = dynamicCharactFormula;
-	}
-
 
 	/** {@inheritDoc} */
 	@Override

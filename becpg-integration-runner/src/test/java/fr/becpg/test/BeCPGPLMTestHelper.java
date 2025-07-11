@@ -219,8 +219,7 @@ public class BeCPGPLMTestHelper {
 		// Ings
 		List<IngListDataItem> ingList = new ArrayList<>();
 		for (int j = 0; j < PLMBaseTestCase.INSTANCE2.ings.size(); j++) {
-			IngListDataItem ingListItemData = new IngListDataItem(null, 12.2d, null, null, false, false, false, PLMBaseTestCase.INSTANCE2.ings.get(j),
-					false);
+			IngListDataItem ingListItemData = IngListDataItem.build().withQtyPerc(12.2d).withGeoOrigin(null).withBioOrigin(null).withIsGMO(false).withIsIonized(false).withIsProcessingAid(false).withIngredient(PLMBaseTestCase.INSTANCE2.ings.get(j)).withIsManual(false);
 			ingList.add(ingListItemData);
 		}
 		rawMaterial.setIngList(ingList);

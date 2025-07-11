@@ -175,7 +175,7 @@ public class GlopServiceImpl implements GlopService {
 					
 					jsonResponse.put(GlopData.STATUS, GlopData.SUBOPTIMAL);
 					
-					if (logger.isDebugEnabled()) {
+					if (logger.isDebugEnabled() && stopWatch != null) {
 						stopWatch.stop();
 						logger.debug("Took " + stopWatch.getTotalTimeMillis() + " ms");
 					}
@@ -195,7 +195,7 @@ public class GlopServiceImpl implements GlopService {
 		
 		completeResponse(constraintContributionMaps, jsonResponse);
 		
-		if (logger.isDebugEnabled()) {
+		if (logger.isDebugEnabled() && stopWatch != null) {
 			stopWatch.stop();
 			logger.debug("Took " + stopWatch.getTotalTimeMillis() + " ms");
 		}

@@ -256,12 +256,54 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 			// create datalists
 			List<TaskListDataItem> taskList = new LinkedList<>();
 
-			taskList.add(new TaskListDataItem(null, "task1", false, 2, null, assigneesOne, taskLegends.get(0), "activiti$projectAdhoc"));
-			taskList.add(new TaskListDataItem(null, "task2", false, 2, null, assigneesOne, taskLegends.get(0), "activiti$projectAdhoc"));
-			taskList.add(new TaskListDataItem(null, "task3", false, 2, null, assigneesOne, taskLegends.get(1), "activiti$projectAdhoc"));
-			taskList.add(new TaskListDataItem(null, "task4", false, 2, null, assigneesTwo, taskLegends.get(1), "activiti$projectAdhoc"));
-			taskList.add(new TaskListDataItem(null, "task5", false, 2, null, assigneesTwo, taskLegends.get(1), "activiti$projectAdhoc"));
-			taskList.add(new TaskListDataItem(null, "task6", false, 2, null, assigneesTwo, taskLegends.get(2), "activiti$projectAdhoc"));
+			taskList.add(TaskListDataItem.build()
+    .withTaskName("task1")
+    .withIsMilestone(false)
+    .withDuration(2)
+    .withPrevTasks(null)
+    .withResources(assigneesOne)
+    .withTaskLegend(taskLegends.get(0))
+    .withWorkflowName("activiti$projectAdhoc"));
+			taskList.add(TaskListDataItem.build()
+    .withTaskName("task2")
+    .withIsMilestone(false)
+    .withDuration(2)
+    .withPrevTasks(null)
+    .withResources(assigneesOne)
+    .withTaskLegend(taskLegends.get(0))
+    .withWorkflowName("activiti$projectAdhoc"));
+			taskList.add(TaskListDataItem.build()
+    .withTaskName("task3")
+    .withIsMilestone(false)
+    .withDuration(2)
+    .withPrevTasks(null)
+    .withResources(assigneesOne)
+    .withTaskLegend(taskLegends.get(1))
+    .withWorkflowName("activiti$projectAdhoc"));
+			taskList.add(TaskListDataItem.build()
+    .withTaskName("task4")
+    .withIsMilestone(false)
+    .withDuration(2)
+    .withPrevTasks(null)
+    .withResources(assigneesTwo)
+    .withTaskLegend(taskLegends.get(1))
+    .withWorkflowName("activiti$projectAdhoc"));
+			taskList.add(TaskListDataItem.build()
+    .withTaskName("task5")
+    .withIsMilestone(false)
+    .withDuration(2)
+    .withPrevTasks(null)
+    .withResources(assigneesTwo)
+    .withTaskLegend(taskLegends.get(1))
+    .withWorkflowName("activiti$projectAdhoc"));
+			taskList.add(TaskListDataItem.build()
+    .withTaskName("task6")
+    .withIsMilestone(false)
+    .withDuration(2)
+    .withPrevTasks(null)
+    .withResources(assigneesTwo)
+    .withTaskLegend(taskLegends.get(2))
+    .withWorkflowName("activiti$projectAdhoc"));
 			projectTplData.setTaskList(taskList);
 
 			// create scoreList
@@ -364,15 +406,57 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 
 			// multi level tasks
 			List<TaskListDataItem> taskList = new LinkedList<>();
-			taskList.add(new TaskListDataItem(null, "task1", false, 2, null, assigneesOne, taskLegends.get(0), "activiti$projectAdhoc"));
-			taskList.add(new TaskListDataItem(null, "task2", false, 2, null, assigneesOne, taskLegends.get(0), "activiti$projectAdhoc"));
+			taskList.add(TaskListDataItem.build()
+    .withTaskName("task1")
+    .withIsMilestone(false)
+    .withDuration(2)
+    .withPrevTasks(null)
+    .withResources(assigneesOne)
+    .withTaskLegend(taskLegends.get(0))
+    .withWorkflowName("activiti$projectAdhoc"));
+			taskList.add(TaskListDataItem.build()
+    .withTaskName("task2")
+    .withIsMilestone(false)
+    .withDuration(2)
+    .withPrevTasks(null)
+    .withResources(assigneesOne)
+    .withTaskLegend(taskLegends.get(0))
+    .withWorkflowName("activiti$projectAdhoc"));
 			taskList.get(1).setParent(taskList.get(0));
-			taskList.add(new TaskListDataItem(null, "task3", false, 2, null, assigneesOne, taskLegends.get(1), "activiti$projectAdhoc"));
+			taskList.add(TaskListDataItem.build()
+    .withTaskName("task3")
+    .withIsMilestone(false)
+    .withDuration(2)
+    .withPrevTasks(null)
+    .withResources(assigneesOne)
+    .withTaskLegend(taskLegends.get(1))
+    .withWorkflowName("activiti$projectAdhoc"));
 			taskList.get(2).setParent(taskList.get(0));
-			taskList.add(new TaskListDataItem(null, "task4", false, 2, null, assigneesTwo, taskLegends.get(1), "activiti$projectAdhoc"));
-			taskList.add(new TaskListDataItem(null, "task5", false, 2, null, assigneesTwo, taskLegends.get(1), "activiti$projectAdhoc"));
+			taskList.add(TaskListDataItem.build()
+    .withTaskName("task4")
+    .withIsMilestone(false)
+    .withDuration(2)
+    .withPrevTasks(null)
+    .withResources(assigneesTwo)
+    .withTaskLegend(taskLegends.get(1))
+    .withWorkflowName("activiti$projectAdhoc"));
+			taskList.add(TaskListDataItem.build()
+    .withTaskName("task5")
+    .withIsMilestone(false)
+    .withDuration(2)
+    .withPrevTasks(null)
+    .withResources(assigneesTwo)
+    .withTaskLegend(taskLegends.get(1))
+    .withWorkflowName("activiti$projectAdhoc"));
 			taskList.get(4).setParent(taskList.get(3));
-			taskList.add(new TaskListDataItem(null, "task6", false, 2, null, assigneesTwo, taskLegends.get(2), "activiti$projectAdhoc"));
+			taskList.add(TaskListDataItem.build()
+    .withTaskName("task6")
+    .withIsMilestone(false)
+    .withDuration(2)
+    .withPrevTasks(null)
+    .withResources(assigneesTwo)
+    .withTaskLegend(taskLegends.get(2))
+    .withWorkflowName("activiti$projectAdhoc"));
 			taskList.get(5).setParent(taskList.get(3));
 			projectData.setTaskList(taskList);
 
