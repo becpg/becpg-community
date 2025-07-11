@@ -765,13 +765,11 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 	}
 
 	/**
-	 * JAAS callback handler
+	 * {@inheritDoc}
 	 *
-	 * @param callbacks Callback[]
+	 * JAAS callback handler
 	 * @exception IOException
 	 * @exception UnsupportedCallbackException
-	 * @throws java.io.IOException if any.
-	 * @throws javax.security.auth.callback.UnsupportedCallbackException if any.
 	 */
 	@Override
 	public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
@@ -1435,13 +1433,13 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 	/** Constant <code>PARAM_USERNAME="username"</code> */
 	protected static final String PARAM_USERNAME = "username";
 
-	/**
-	 * <p>beforeSuccess.</p>
-	 *
-	 * @param request a {@link jakarta.servlet.http.HttpServletRequest} object.
-	 * @param response a {@link jakarta.servlet.http.HttpServletResponse} object.
-	 * @throws java.lang.Exception if any.
-	 */
+	  /**
+	   * <p>beforeSuccess.</p>
+	   *
+	   * @param request a {@link jakarta.servlet.http.HttpServletRequest} object.
+	   * @param response a {@link jakarta.servlet.http.HttpServletResponse} object.
+	   * @throws java.lang.Exception if any.
+	   */
 	  protected void beforeSuccess(HttpServletRequest request, HttpServletResponse response) throws Exception
 	    {
 	        try

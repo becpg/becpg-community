@@ -22,6 +22,8 @@ package fr.becpg.repo.helper;
 import java.util.Collection;
 import java.util.Collections;
 
+import javax.annotation.Nonnull;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.springframework.stereotype.Service;
@@ -46,23 +48,32 @@ public class ContactListNameExtractorPlugin extends AbstractExprNameExtractor {
 
 	/** {@inheritDoc} */
 	@Override
-	public String extractPropName(QName type, NodeRef nodeRef) {
-		String ret = (String) nodeService.getProperty(nodeRef, PLMModel.PROP_CONTACT_LIST_FIRST_NAME);
-
+	@Nonnull
+	public String extractPropName(@Nonnull QName type, @Nonnull NodeRef nodeRef) {
+		String firstName = (String) nodeService.getProperty(nodeRef, PLMModel.PROP_CONTACT_LIST_FIRST_NAME);
 		String lastName = (String) nodeService.getProperty(nodeRef, PLMModel.PROP_CONTACT_LIST_LAST_NAME);
-		if ((lastName != null) && !lastName.isEmpty() && (ret != null) && !ret.isEmpty()) {
-			ret += " " + lastName;
-		} else if ((lastName != null) && !lastName.isEmpty()) {
-			return lastName;
+
+		StringBuilder nameBuilder = new StringBuilder();
+		if (firstName != null && !firstName.isEmpty()) {
+			nameBuilder.append(firstName);
 		}
 
-		return ret;
+		if (lastName != null && !lastName.isEmpty()) {
+			if (nameBuilder.length() > 0) {
+				nameBuilder.append(" ");
+			}
+			nameBuilder.append(lastName);
+		}
+
+		return nameBuilder.toString();
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public String extractMetadata(QName type, NodeRef nodeRef) {
-		return type.toPrefixString(namespaceService).split(":")[1];
+	@Nonnull
+	public String extractMetadata(@Nonnull QName type, @Nonnull NodeRef nodeRef) {
+		String[] parts = type.toPrefixString(namespaceService).split(":");
+		return parts.length > 1 ? parts[1] : "";
 	}
 
 }

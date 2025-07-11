@@ -21,12 +21,10 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.entity.EntityListDAO;
-import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
@@ -86,32 +84,32 @@ public class AlfrescoRepositoryIT extends PLMBaseTestCase {
 			for (AllergenListDataItem d : sfData.getAllergenList()) {
 
 				if (d.getAllergen().equals(allergens.get(0))) {
-					assertEquals(true, d.getVoluntary().booleanValue());
-					assertEquals(true, d.getInVoluntary().booleanValue());
+					assertEquals(true, Boolean.TRUE.equals(d.getVoluntary()));
+					assertEquals(true, Boolean.TRUE.equals(d.getInVoluntary()));
 					assertEquals(1, d.getVoluntarySources().size());
 					assertEquals(rmNodeRef, d.getVoluntarySources().get(0));
 					assertEquals(true, d.getInVoluntarySources().isEmpty());
 				}
 
 				if (d.getAllergen().equals(allergens.get(1))) {
-					assertEquals(false, d.getVoluntary().booleanValue());
-					assertEquals(true, d.getInVoluntary().booleanValue());
+					assertEquals(false, Boolean.TRUE.equals(d.getVoluntary()));
+					assertEquals(true, Boolean.TRUE.equals(d.getInVoluntary()));
 					assertEquals(true, d.getVoluntarySources().isEmpty());
 					assertEquals(1, d.getInVoluntarySources().size());
 					assertEquals(rmNodeRef, d.getInVoluntarySources().get(0));
 				}
 
 				if (d.getAllergen().equals(allergens.get(2))) {
-					assertEquals(true, d.getVoluntary().booleanValue());
-					assertEquals(false, d.getInVoluntary().booleanValue());
+					assertEquals(true, Boolean.TRUE.equals(d.getVoluntary()));
+					assertEquals(false, Boolean.TRUE.equals(d.getInVoluntary()));
 					assertEquals(true, d.getVoluntarySources().isEmpty());
 					assertEquals(1, d.getInVoluntarySources().size());
 					assertEquals(rmNodeRef, d.getInVoluntarySources().get(0));
 				}
 
 				if (d.getAllergen().equals(allergens.get(3))) {
-					assertEquals(false, d.getVoluntary().booleanValue());
-					assertEquals(false, d.getInVoluntary().booleanValue());
+					assertEquals(false, Boolean.TRUE.equals(d.getVoluntary()));
+					assertEquals(false, Boolean.TRUE.equals(d.getInVoluntary()));
 					assertEquals(1, d.getVoluntarySources().size());
 					assertEquals(rmNodeRef, d.getVoluntarySources().get(0));
 					assertEquals(true, d.getInVoluntarySources().isEmpty());

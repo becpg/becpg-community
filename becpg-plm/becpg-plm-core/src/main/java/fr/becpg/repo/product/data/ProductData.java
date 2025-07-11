@@ -600,12 +600,22 @@ public class ProductData extends AbstractScorableEntity
 		this.clients = clients;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>securityRef</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	@AlfSingleAssoc
 	@AlfQname(qname = "sec:securityRef")
 	public NodeRef getSecurityRef() {
 		return securityRef;
 	}
 
+	/**
+	 * <p>Setter for the field <code>securityRef</code>.</p>
+	 *
+	 * @param securityRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public void setSecurityRef(NodeRef securityRef) {
 		this.securityRef = securityRef;
 	}

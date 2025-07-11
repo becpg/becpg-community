@@ -382,6 +382,12 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements Si
 	}
 	
 
+	/**
+	 * <p>withIsCertified.</p>
+	 *
+	 * @param isCertified a {@link java.lang.Boolean} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.LabelClaimListDataItem} object
+	 */
 	public LabelClaimListDataItem withIsCertified(Boolean isCertified) {
 		if(Boolean.TRUE.equals(isCertified)){
 			this.labelClaimValue = VALUE_CERTIFIED;
@@ -474,6 +480,7 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements Si
 	
 	/**
 	 * Creates a new builder for LabelClaimListDataItem
+	 *
 	 * @return a new builder instance
 	 */
 	public static LabelClaimListDataItem build() {

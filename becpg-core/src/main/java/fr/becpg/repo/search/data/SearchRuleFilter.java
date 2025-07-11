@@ -386,7 +386,10 @@ public class SearchRuleFilter {
 	 */
 	public SearchRuleFilter fromJsonString(String jsonString, NamespaceService namespaceService) {
 		try {
-			if ((jsonString != null) && !jsonString.isEmpty()) {
+			if (jsonString == null) {
+				return this;
+			}
+			if (!jsonString.isEmpty()) {
 				return fromJsonObject(new JSONObject(jsonString), namespaceService);
 			}
 		} catch (JSONException e) {
